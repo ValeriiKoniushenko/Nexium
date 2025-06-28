@@ -1,0 +1,12 @@
+include_guard()
+
+function(InstallWin32MSVCFlags)
+    if(MSVC)
+        if(WIN32)
+            set(CMAKE_MSVC_RUNTIME_LIBRARY MultiThreaded)
+            set(CMAKE_CXX_FLAGS_RELEASE "/MT")
+            set(CMAKE_CXX_FLAGS_DEBUG "/MTd")
+            set(CMAKE_CXX_FLAGS_DEBUG "/MTd")
+        endif(WIN32)
+    endif()
+endfunction()
