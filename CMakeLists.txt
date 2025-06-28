@@ -32,4 +32,5 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # ========= Main deps pipeline =========
+include(FetchDependencies)
 add_subdirectory(sources)
