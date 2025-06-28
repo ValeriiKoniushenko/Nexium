@@ -9,7 +9,6 @@ include(Features)
 include(Predefinitions)
 
 # ========= Base setup & Predefinitions =========
-
 # CXX standard installing
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(REQUIRED_CXX_STANDARD cxx_std_26)   # Put preferable cxx standard. It will be checked and exported to CXX_STANDARD
@@ -26,6 +25,11 @@ InstallDebugLevel()
 # Installing of needed compile data for MSVC
 InstallWin32MSVCFlags()
 
-
+# Misc
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+# ========= Main deps pipeline =========
+add_subdirectory(sources)
