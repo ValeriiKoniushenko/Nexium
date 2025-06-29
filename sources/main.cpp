@@ -1,6 +1,10 @@
+#include "Core/StringHelper.h"
+
 #include <iostream>
 
-int main() {
-std::cout<<"Hello world" << std::endl;
-return 0;
+int main()
+{
+    Core::StringAtom h = "Hello world123";
+    std::cout << "Hello world"_atom << std::endl;
+    return 0;
 }

@@ -44,4 +44,3 @@ UseTab: Never
 InsertBraces: true
 AccessModifierOffset: -4
 BreakBeforeBinaryOperators: All
-...
