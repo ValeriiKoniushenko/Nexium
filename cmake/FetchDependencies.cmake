@@ -2,9 +2,6 @@ include (FetchContent)
 
 set_property (DIRECTORY PROPERTY EP_BASE dependencies)
 
-set (DEPENDENCIES)
-set (EXTRA_CMAKE_ARGS)
-
 FetchContent_Declare(Utils
         GIT_REPOSITORY  git@github.com:ValeriiKoniushenko/Utils.git
         GIT_TAG         origin/develop
@@ -22,6 +19,16 @@ FetchContent_Declare(Glfw
         GIT_PROGRESS    TRUE
 )
 FetchContent_MakeAvailable(Glfw)
+
+
+
+FetchContent_Declare(BetterEnums
+        GIT_REPOSITORY  git@github.com:aantron/better-enums.git
+        GIT_TAG         0.11.3
+        GIT_SHALLOW     TRUE          # Enables --depth 1
+        GIT_PROGRESS    TRUE
+)
+FetchContent_MakeAvailable(BetterEnums)
 
 
 

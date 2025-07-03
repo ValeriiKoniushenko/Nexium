@@ -4,9 +4,15 @@ project(SpriteWalker VERSION 1.0 LANGUAGES CXX)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
 include(Flags)
 include(Features)
 include(Predefinitions)
+include(Deploy)
 
 # ========= Base setup & Predefinitions =========
 # CXX standard installing
@@ -24,12 +30,6 @@ InstallDebugLevel()
 
 # Installing of needed compile data for MSVC
 InstallWin32MSVCFlags()
-
-# Misc
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # ========= Main deps pipeline =========
 add_subdirectory(dependencies)
