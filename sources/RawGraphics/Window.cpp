@@ -82,6 +82,11 @@ namespace SW
         glfwSetCursorEnterCallback(_window, CursorEnterHandler);
         glfwSetScrollCallback(_window, MouseScrollHandler);
         glfwSwapInterval(0);
+
+        if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
+        {
+            criticalThrowingLog("Impossible to initialize GLAD.");
+        }
     }
 
     bool Window::shouldClose() const

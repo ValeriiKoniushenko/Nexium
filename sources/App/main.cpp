@@ -11,12 +11,6 @@ int main()
 
     SW::GetWindow().create("Sprite Walker");
 
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
-        std::cout << "Failed to initialize GLAD" << std::endl;
-        return -1;
-    }
-
     SW::ShaderProgram shader;
     shader.setShader(SW::VertexShader("assets/shaders/color.vert"));
     shader.setShader(SW::FragmentShader("assets/shaders/color.frag"));
