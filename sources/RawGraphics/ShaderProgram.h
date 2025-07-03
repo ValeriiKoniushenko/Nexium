@@ -22,7 +22,7 @@
 
 #pragma once
 
-#include "Misc/BaseLog.h"
+#include "ModuleInfo.h"
 #include "Shader.h"
 
 namespace SW
@@ -48,9 +48,10 @@ namespace SW
 
         [[nodiscard]] spdlog::logger* getLogger() const override
         {
-            static std::shared_ptr<spdlog::logger> logger = spdlog::stdout_color_mt("Global");
-            return logger.get();
+            return RawGraphics::getLogger();
         }
+
+        [[nodiscard]] const char* getPrefix() const override { return "ShaderProgram"; }
 
         [[nodiscard]] bool isEmpty() const noexcept { return _data == 0; }
 
