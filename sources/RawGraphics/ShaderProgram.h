@@ -28,8 +28,38 @@
 namespace SW
 {
 
-    class ShaderProgram : public PW::BaseLog
+    class ShaderProgram : public PS::BaseLog
     {
+    public:
+        ~ShaderProgram() override = default;
+
+        // only r-reference
+        void setShader(FragmentShader&& shader) { _fragmentShader = std::move(shader); }
+        void setShader(VertexShader&& shader) { _vertexShader = std::move(shader); }
+
+        [[nodiscard]] const FragmentShader& getFragmentShader() const noexcept
+        {
+            return _fragmentShader;
+        }
+        [[nodiscard]] const VertexShader& getVertexShader() const noexcept { return _vertexShader; }
+
+        [[nodiscard]] FragmentShader& getFragmentShader() noexcept { return _fragmentShader; }
+        [[nodiscard]] VertexShader& getVertexShader() noexcept { return _vertexShader; }
+
+        [[nodiscard]] spdlog::logger* getLogger() const override
+        {
+            static std::shared_ptr<spdlog::logger> logger = spdlog::stdout_color_mt("Global");
+            return logger.get();
+        }
+
+        void create(const Core::StringAtom& shaderName);
+        void clear();
+
+    protected:
+        FragmentShader _fragmentShader;
+        VertexShader _vertexShader;
+        Core::StringAtom _name;
+        GLuint _data = 0;
     };
 
 } // namespace SW

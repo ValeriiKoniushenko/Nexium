@@ -1,4 +1,4 @@
-#include "RawGraphics/Shader.h"
+#include "RawGraphics/ShaderProgram.h"
 
 #include <iostream>
 

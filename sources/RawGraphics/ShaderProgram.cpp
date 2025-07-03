@@ -25,4 +25,62 @@
 namespace SW
 {
 
-}
+    void ShaderProgram::create(const Core::StringAtom& shaderName)
+    {
+        clear();
+
+        debugLog("Creating of the shader program '{}' is started."_f << shaderName);
+
+        _name = shaderName;
+        _name.shrink_to_fit();
+
+        if (_vertexShader.isEmpty())
+        {
+            criticalThrowingLog("Vertex shader is empty. Impossible to create the shader program."_f
+                                << shaderName);
+        }
+        if (_fragmentShader.isEmpty())
+        {
+            criticalThrowingLog("Vertex shader is empty. Impossible to create the shader program."_f
+                                << shaderName);
+        }
+
+        _data = glCreateProgram();
+        if (_data == 0)
+        {
+            criticalThrowingLog("glCreateProgram to create a shader program was failed for '{}'"_f
+                                << shaderName);
+        }
+
+        glAttachShader(_data, _vertexShader.data());
+        glAttachShader(_data, _fragmentShader.data());
+        glLinkProgram(_data);
+
+        int success = 0;
+        glGetProgramiv(_data, GL_LINK_STATUS, &success);
+        if (!success)
+        {
+            clear();
+
+            constexpr auto size = 512;
+            char infoLog[size];
+            glGetProgramInfoLog(_data, 512, nullptr, infoLog);
+            criticalThrowingLog("Shader program compilation error: "_f << infoLog);
+        }
+
+        debugLog("Finished: creating of the shader program '{}'"_f << shaderName);
+    }
+
+    void ShaderProgram::clear()
+    {
+        if (_data != 0)
+        {
+            glDeleteProgram(_data);
+            _data = 0;
+        }
+        _name.clear();
+        _vertexShader.clear();
+        _fragmentShader.clear();
+    }
+
+} // namespace SW

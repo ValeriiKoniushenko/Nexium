@@ -44,9 +44,22 @@ namespace SW
     // clang-format on
 
     template<ShaderType shaderType>
-    class Shader
+    class Shader final
     {
     public:
+        Shader() = default;
+        ~Shader() = default;
+
+        explicit Shader(const std::filesystem::path& path) { createFromFile(path); }
+
+        Shader(Shader&& other) noexcept { *this = std::move(other); }
+        Shader& operator=(Shader&& other) noexcept
+        {
+            _data = other._data;
+            other._data = 0;
+            return *this;
+        }
+
         [[nodiscard]] bool isEmpty() const noexcept { return _data == 0; }
         [[nodiscard]] ShaderType getShaderType() const noexcept { return shaderType; }
         [[nodiscard]] GLuint data() noexcept { return _data; }

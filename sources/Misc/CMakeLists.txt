@@ -11,6 +11,6 @@ set_source_files_properties(${SOURCES} PROPERTIES LANGUAGE CXX)
 add_library(${TARGET_NAME} STATIC ${SOURCES})
 add_library(SW::${MAIN_NAME} ALIAS ${TARGET_NAME})
 
-target_link_libraries(${TARGET_NAME} PUBLIC Utils::Core spdlog::spdlog)
+target_link_libraries(${TARGET_NAME} PUBLIC Utils spdlog::spdlog)
 
 target_include_directories(${TARGET_NAME} PUBLIC ../)
