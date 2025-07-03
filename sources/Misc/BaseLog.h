@@ -26,7 +26,7 @@
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/spdlog.h"
 
-namespace PW
+namespace PS
 {
 
     class BaseLog
@@ -124,4 +124,4 @@ namespace PW
 
     extern GlobalLog globalLog;
 
-} // namespace PW
+} // namespace PS

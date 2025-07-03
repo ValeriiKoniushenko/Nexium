@@ -22,7 +22,7 @@
 
 #include "BaseLog.h"
 
-namespace PW
+namespace PS
 {
 
     GlobalLog globalLog = {};
@@ -33,4 +33,4 @@ namespace PW
         throw std::runtime_error(str);
     }
 
-} // namespace PW
+} // namespace PS

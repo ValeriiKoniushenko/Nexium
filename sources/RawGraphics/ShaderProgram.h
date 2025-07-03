@@ -22,12 +22,13 @@
 
 #pragma once
 
+#include "Misc/BaseLog.h"
 #include "Shader.h"
 
 namespace SW
 {
 
-    class ShaderProgram
+    class ShaderProgram : public PW::BaseLog
     {
     };
 
