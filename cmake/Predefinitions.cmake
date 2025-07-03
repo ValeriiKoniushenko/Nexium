@@ -3,6 +3,7 @@ include_guard()
 function(InstallDebugLevel)
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         add_compile_definitions(GRAPHICS_DEBUG)
+        add_compile_definitions(DEBUG)
     endif()
 endfunction()
 
