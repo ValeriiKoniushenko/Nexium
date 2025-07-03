@@ -1,2 +1,2 @@
-add_subdirectory(glad)
-add_subdirectory(better-enums)
+add_subdirectory(Glad)
+add_subdirectory(BetterEnums)

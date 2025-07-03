@@ -24,43 +24,73 @@ enum class ShaderType : GLenum
     Geometry = GL_GEOMETRY_SHADER,
 };
 
-template<ShaderType>
+template<ShaderType shaderType>
 class ShaderMeta
 {
 public:
+    [[nodiscard]] bool isEmpty() const noexcept { return _data == 0; }
+    [[nodiscard, maybe_unused]] ShaderType getShaderType() const noexcept { return shaderType; }
+    [[nodiscard, maybe_unused]] bool sourcesAreLoaded() const noexcept { return _sourcesAreLoaded; }
 
-public:
     void clear()
     {
         if (_data != 0)
         {
             glDeleteShader(_data);
             _data = 0;
-}
-}
-
-void create()
-{
-    clear();
-    _data = glCreateShader(_type);
-}
-
-void loadFromFile(const std::filesystem::path& path)
-{
-    const auto sources = Utils::GetTextFileContentAs<std::string>(path);
-    if (sources.empty())
-    {
-        return;
+        }
     }
 
-    glShaderSource(_data, 1, &vertexShaderSource, NULL);
-}
+    void create()
+    {
+        clear();
+
+        _data = glCreateShader(static_cast<GLenum>(shaderType));
+
+        if (isEmpty())
+        {
+            throw std::runtime_error("Can't create gl shader.");
+        }
+    }
+
+    void loadFromFile(const std::filesystem::path& path)
+    {
+        const auto sources = Utils::GetTextFileContentAs<std::string>(path);
+        if (sources.empty())
+        {
+            return;
+        }
+        const auto* raw = sources.data();
+        glShaderSource(_data, 1, &raw, nullptr);
+    }
+
+    void compile()
+    {
+        if (!sourcesAreLoaded())
+        {
+            throw std::runtime_error("Can't compile the shader, because the sources weren't loaded.");
+        }
+
+        glCompileShader(_data);
+    }
 
 private:
-GLuint _data = 0;
-const Type _type = Type::None;
-}
-;
+    void requireNoCompileErrors()
+    {
+        int success;
+        char infoLog[512];
+        glGetShaderiv(_data, GL_COMPILE_STATUS, &success);
+        if (!success)
+        {
+            glGetShaderInfoLog(_data, 512, NULL, infoLog);
+            std::cout << "Shader compilation error\n" << infoLog << std::endl;
+        }
+    }
+
+private:
+    GLuint _data = 0;
+    bool _sourcesAreLoaded = false;
+};
 
 int main()
 {
@@ -94,8 +124,7 @@ int main()
     // vertex shader
     unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
-    // check for shader compile errors
+    glCompileShader(vertexShader); // check for shader compile errors
     int success;
     char infoLog[512];
     glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
