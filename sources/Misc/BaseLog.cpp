@@ -20,9 +20,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "Shader.h"
+#include "BaseLog.h"
 
-namespace SW
+namespace PW
 {
 
-}
+    GlobalLog globalLog = {};
+
+    void BaseLog::criticalThrowingLog(const char* str) const
+    {
+        criticalLog(str);
+        throw std::runtime_error(str);
+    }
+
+} // namespace PW

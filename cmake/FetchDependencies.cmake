@@ -31,6 +31,15 @@ FetchContent_Declare(BetterEnums
 FetchContent_MakeAvailable(BetterEnums)
 
 
+FetchContent_Declare(SpdLog
+        GIT_REPOSITORY git@github.com:gabime/spdlog.git
+        GIT_TAG v1.15.3
+        GIT_SHALLOW TRUE          # Enables --depth 1
+        GIT_PROGRESS TRUE
+)
+FetchContent_MakeAvailable(SpdLog)
+
+
 
 # FetchContent_Declare(QtBase
 #         GIT_REPOSITORY  git@github.com:qt/qtbase.git
