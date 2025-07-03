@@ -1,12 +1,5 @@
-#include "Core/Enum.h"
+#include "RawGraphics/Shader.h"
 
-// clang-format off
-#include "glad/glad.h"
-#include "GLFW/glfw3.h"
-// clang-format on
-
-#include <Utils/Functions.h>
-#include <filesystem>
 #include <iostream>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -15,82 +8,6 @@ void processInput(GLFWwindow* window);
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
-
-enum class ShaderType : GLenum
-{
-    None = 0,
-    Fragment = GL_FRAGMENT_SHADER,
-    Vertex = GL_VERTEX_SHADER,
-    Geometry = GL_GEOMETRY_SHADER,
-};
-
-template<ShaderType shaderType>
-class ShaderMeta
-{
-public:
-    [[nodiscard]] bool isEmpty() const noexcept { return _data == 0; }
-    [[nodiscard, maybe_unused]] ShaderType getShaderType() const noexcept { return shaderType; }
-    [[nodiscard, maybe_unused]] bool sourcesAreLoaded() const noexcept { return _sourcesAreLoaded; }
-
-    void clear()
-    {
-        if (_data != 0)
-        {
-            glDeleteShader(_data);
-            _data = 0;
-        }
-    }
-
-    void create()
-    {
-        clear();
-
-        _data = glCreateShader(static_cast<GLenum>(shaderType));
-
-        if (isEmpty())
-        {
-            throw std::runtime_error("Can't create gl shader.");
-        }
-    }
-
-    void loadFromFile(const std::filesystem::path& path)
-    {
-        const auto sources = Utils::GetTextFileContentAs<std::string>(path);
-        if (sources.empty())
-        {
-            return;
-        }
-        const auto* raw = sources.data();
-        glShaderSource(_data, 1, &raw, nullptr);
-    }
-
-    void compile()
-    {
-        if (!sourcesAreLoaded())
-        {
-            throw std::runtime_error("Can't compile the shader, because the sources weren't loaded.");
-        }
-
-        glCompileShader(_data);
-    }
-
-private:
-    void requireNoCompileErrors()
-    {
-        int success;
-        char infoLog[512];
-        glGetShaderiv(_data, GL_COMPILE_STATUS, &success);
-        if (!success)
-        {
-            glGetShaderInfoLog(_data, 512, NULL, infoLog);
-            std::cout << "Shader compilation error\n" << infoLog << std::endl;
-        }
-    }
-
-private:
-    GLuint _data = 0;
-    bool _sourcesAreLoaded = false;
-};
 
 int main()
 {
@@ -122,42 +39,24 @@ int main()
     // build and compile our shader program
     // ------------------------------------
     // vertex shader
-    unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader); // check for shader compile errors
-    int success;
-    char infoLog[512];
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
-        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-    }
-    // fragment shader
-    unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
-    // check for shader compile errors
-    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
-        glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
-    }
-    // link shaders
+    SW::VertexShader vertexShader;
+    vertexShader.createFromFile("assets/shaders/color.vert");
+
+    SW::FragmentShader fragmentShader;
+    fragmentShader.createFromFile("assets/shaders/color.frag");
+
     unsigned int shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
+    glAttachShader(shaderProgram, vertexShader.data());
+    glAttachShader(shaderProgram, fragmentShader.data());
     glLinkProgram(shaderProgram);
     // check for linking errors
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-    if (!success)
-    {
-        glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
-    }
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
+    // int success = 0;
+    // glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+    // if (!success)
+    // {
+    //     glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+    //     std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+    // }
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
