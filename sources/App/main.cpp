@@ -36,27 +36,10 @@ int main()
         return -1;
     }
 
-    // build and compile our shader program
-    // ------------------------------------
-    // vertex shader
-    SW::VertexShader vertexShader;
-    vertexShader.createFromFile("assets/shaders/color.vert");
-
-    SW::FragmentShader fragmentShader;
-    fragmentShader.createFromFile("assets/shaders/color.frag");
-
-    unsigned int shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader.data());
-    glAttachShader(shaderProgram, fragmentShader.data());
-    glLinkProgram(shaderProgram);
-    // check for linking errors
-    // int success = 0;
-    // glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-    // if (!success)
-    // {
-    //     glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-    //     std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
-    // }
+    SW::ShaderProgram shader;
+    shader.setShader(SW::VertexShader("assets/shaders/color.vert"));
+    shader.setShader(SW::FragmentShader("assets/shaders/color.frag"));
+    shader.create("color"_atom);
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
@@ -118,7 +101,7 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
 
         // draw our first triangle
-        glUseProgram(shaderProgram);
+        shader.use();
         glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it
                                 // every time, but we'll do so to keep things a bit more organized
         // glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -136,7 +119,6 @@ int main()
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO);
-    glDeleteProgram(shaderProgram);
 
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------

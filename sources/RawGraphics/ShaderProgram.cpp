@@ -27,12 +27,21 @@ namespace SW
 
     void ShaderProgram::create(const Core::StringAtom& shaderName)
     {
-        clear();
+        clearOnlyShaderProgram();
 
         debugLog("Creating of the shader program '{}' is started."_f << shaderName);
 
         _name = shaderName;
-        _name.shrink_to_fit();
+
+        if (!_name.isStatic())
+        {
+            _name.shrink_to_fit();
+#ifdef GRAPHICS_DEBUG
+            warnLog(
+                "The shader's '{}' vairable '_name' is not atom. Make it atom for best performance."_f
+                << _name);
+#endif
+        }
 
         if (_vertexShader.isEmpty())
         {
@@ -41,8 +50,9 @@ namespace SW
         }
         if (_fragmentShader.isEmpty())
         {
-            criticalThrowingLog("Vertex shader is empty. Impossible to create the shader program."_f
-                                << shaderName);
+            criticalThrowingLog(
+                "Fragment shader is empty. Impossible to create the shader program."_f
+                << shaderName);
         }
 
         _data = glCreateProgram();
@@ -73,14 +83,19 @@ namespace SW
 
     void ShaderProgram::clear()
     {
+        clearOnlyShaderProgram();
+        _name.clear();
+        _vertexShader.clear();
+        _fragmentShader.clear();
+    }
+
+    void ShaderProgram::clearOnlyShaderProgram()
+    {
         if (_data != 0)
         {
             glDeleteProgram(_data);
             _data = 0;
         }
-        _name.clear();
-        _vertexShader.clear();
-        _fragmentShader.clear();
     }
 
 } // namespace SW

@@ -52,8 +52,25 @@ namespace SW
             return logger.get();
         }
 
+        [[nodiscard]] bool isEmpty() const noexcept { return _data == 0; }
+
         void create(const Core::StringAtom& shaderName);
         void clear();
+#ifdef GRAPHICS_DEBUG
+        void use() const noexcept
+        {
+            if (isEmpty())
+            {
+                criticalThrowingLog("Impossible to use not-created shader program.");
+            }
+            glUseProgram(_data);
+        }
+#else
+        void use() const noexcept { glUseProgram(_data); }
+#endif
+
+    protected:
+        void clearOnlyShaderProgram();
 
     protected:
         FragmentShader _fragmentShader;

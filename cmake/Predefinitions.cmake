@@ -2,7 +2,7 @@ include_guard()
 
 function(InstallDebugLevel)
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-        add_compile_definitions(PW_DEBUG)
+        add_compile_definitions(GRAPHICS_DEBUG)
     endif()
 endfunction()
 
