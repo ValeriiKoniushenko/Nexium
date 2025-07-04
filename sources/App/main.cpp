@@ -9,7 +9,13 @@ int main()
     spdlog::set_level(spdlog::level::trace);
 #endif
 
-    SW::GetWindow().create("Sprite Walker");
+    constexpr Core::ISize2 windowSize{ 600, 600 };
+    Core::ISize2 viewportSize = windowSize;
+
+    glm::ivec2 pos{ 200, 0 };
+    viewportSize.width -= pos.x;
+
+    SW::GetWindow().create("Sprite Walker", windowSize);
 
     SW::ShaderProgram shader;
     shader.setShader(SW::VertexShader("assets/shaders/color.vert"));
@@ -46,17 +52,26 @@ int main()
 
     glBindVertexArray(0);
 
+    glViewport(pos.x, pos.y, viewportSize.width, viewportSize.height);
+
     while (!SW::GetWindow().shouldClose())
     {
+        glEnable(GL_SCISSOR_TEST);
+        glScissor(pos.x, pos.y, viewportSize.width, viewportSize.height);
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
+        glDisable(GL_SCISSOR_TEST);
+
+        glEnable(GL_SCISSOR_TEST);
+        glScissor(0, 0, pos.x, windowSize.height);
+        glClearColor(1.f, 1.f, 1.f, 1.f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        glDisable(GL_SCISSOR_TEST);
 
         shader.use();
         glBindVertexArray(VAO);
 
-        // glDrawArrays(GL_TRIANGLES, 0, 6);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        // glBindVertexArray(0); // no need to unbind it every time
 
         SW::GetWindow().swapBuffers();
         SW::GetWindow().pollEvent();

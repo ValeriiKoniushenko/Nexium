@@ -69,7 +69,7 @@ namespace SW
                = glfwCreateWindow(size.width, size.height, title.c_str(), nullptr, nullptr))))
         {
             glfwTerminate();
-            throw std::runtime_error("Failed to create GLFW window");
+            criticalThrowingLog("Failed to create GLFW window");
         }
         _size = size;
         _title = title;
