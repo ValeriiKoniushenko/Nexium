@@ -11,7 +11,6 @@ FetchContent_Declare(Utils
 FetchContent_MakeAvailable(Utils)
 
 
-
 FetchContent_Declare(Glfw
         GIT_REPOSITORY  git@github.com:glfw/glfw.git
         GIT_TAG         3.4
@@ -19,7 +18,6 @@ FetchContent_Declare(Glfw
         GIT_PROGRESS    TRUE
 )
 FetchContent_MakeAvailable(Glfw)
-
 
 
 FetchContent_Declare(BetterEnums
