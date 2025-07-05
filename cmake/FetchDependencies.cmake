@@ -38,14 +38,3 @@ FetchContent_Declare(SpdLog
         GIT_PROGRESS TRUE
 )
 FetchContent_MakeAvailable(SpdLog)
-
-
-
-# FetchContent_Declare(QtBase
-#         GIT_REPOSITORY  git@github.com:qt/qtbase.git
-#         GIT_TAG         v6.9.1
-#         GIT_SHALLOW     TRUE          # Enables --depth 1
-#         GIT_PROGRESS    TRUE
-# )
-# FetchContent_MakeAvailable(QtBase)
-
