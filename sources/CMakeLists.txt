@@ -7,3 +7,4 @@ target_link_libraries(SomeGameApp PUBLIC
         SW::RawGraphics
         SW::Editor
 )
+add_dependencies(SomeGameApp deploy)

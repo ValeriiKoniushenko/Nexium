@@ -28,33 +28,43 @@ using namespace httplib;
 
 namespace
 {
-    std::string getMimeType(const std::string& path)
+    struct MimeType
+    {
+        std::string type;
+        bool isBinary = false;
+    };
+
+    MimeType getMimeType(const std::string& path)
     {
         if (path.ends_with(".html"))
         {
-            return "text/html";
+            return { "text/html" };
         }
         if (path.ends_with(".css"))
         {
-            return "text/css";
+            return { "text/css" };
         }
         if (path.ends_with(".js"))
         {
-            return "application/javascript";
+            return { "application/javascript" };
+        }
+        if (path.ends_with(".json"))
+        {
+            return { "application/json" };
         }
         if (path.ends_with(".png"))
         {
-            return "image/png";
+            return { "image/png", true };
         }
         if (path.ends_with(".jpg") || path.ends_with(".jpeg"))
         {
-            return "image/jpeg";
+            return { "image/jpeg", true };
         }
         if (path.ends_with(".ico"))
         {
-            return "image/x-icon";
+            return { "image/x-icon", true };
         }
-        return "application/octet-stream";
+        return { "application/octet-stream" };
     }
 
 } // namespace
@@ -63,24 +73,18 @@ namespace SW
 {
     void EditorServer::initialize()
     {
+        _server.set_logger(
+            [this](const Request& request, const Response& response)
+            {
+                debugLog("Site requests: " + request.path);
+            });
+
         _server.Get(".*",
                     [](const Request& req, Response& res)
                     {
-                        std::string webPath = req.path == "/" ? "/index.html" : req.path;
-                        std::string filePath = assetsPath + webPath;
-
-                        if (std::filesystem::exists(filePath))
-                        {
-                            const auto mime = getMimeType(filePath);
-                            auto content = Utils::TryToGetTextFileContentAs<std::string>(filePath);
-
-                            res.set_content(std::move(content), mime);
-                        }
-                        else
-                        {
-                            res.status = 404;
-                            res.set_content("Not Found", "text/plain");
-                        }
+                        const std::string webPath = req.path == "/" ? "/index.html" : req.path;
+                        const std::string filePath = assetsPath + webPath;
+                        res.set_file_content(filePath);
                     });
     }
 

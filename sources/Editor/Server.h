@@ -30,7 +30,7 @@ namespace SW
     class EditorServer : public PS::BaseLog
     {
     public:
-        constexpr static std::string assetsPath = "assets/web";
+        static constexpr const char* assetsPath = "assets/web/build";
 
     public:
         void initialize();
@@ -42,4 +42,5 @@ namespace SW
     private:
         httplib::Server _server;
     };
+
 } // namespace SW
