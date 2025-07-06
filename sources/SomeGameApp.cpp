@@ -36,7 +36,8 @@ int main()
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), static_cast<void*>(0));
     glEnableVertexAttribArray(0);
 
-
+    int frames = 0;
+    const auto start = std::chrono::system_clock::now();
     while (!SW::GetWindow().shouldClose())
     {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -46,7 +47,12 @@ int main()
 
         SW::GetWindow().swapBuffers();
         SW::GetWindow().pollEvent();
+        ++frames;
     }
+    const auto end = std::chrono::system_clock::now();
+
+    const auto diff = std::chrono::duration<double>(end - start).count();
+    std::cout << "FPS: " << static_cast<double>(frames) / diff << std::endl;
 
     return 0;
 }
