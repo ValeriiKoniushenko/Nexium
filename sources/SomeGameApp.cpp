@@ -1,3 +1,5 @@
+
+#include "Editor/Server.h"
 #include "RawGraphics/GraphicsComponents.h"
 #include "RawGraphics/ShaderProgram.h"
 #include "RawGraphics/Window.h"
@@ -9,6 +11,7 @@ int main()
 #ifdef DEBUG
     spdlog::set_level(spdlog::level::trace);
 #endif
+    SW::EditorServer server;
 
     SW::GetWindow().create("Sprite Walker", { 600, 600 });
 
