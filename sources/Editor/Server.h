@@ -21,6 +21,7 @@
 // SOFTWARE.
 
 #pragma once
+#include "HttpLib/httplib.h"
 #include "ModuleInfo.h"
 
 namespace SW
@@ -29,9 +30,16 @@ namespace SW
     class EditorServer : public PS::BaseLog
     {
     public:
+        constexpr static std::string assetsPath = "assets/web";
+
+    public:
+        void initialize();
+        void start();
+
         [[nodiscard]] spdlog::logger* getLogger() const final { return Editor::getLogger(); }
         [[nodiscard]] const char* getPrefix() const override { return "Server"; }
 
     private:
+        httplib::Server _server;
     };
 } // namespace SW

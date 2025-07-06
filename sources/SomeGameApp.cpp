@@ -12,6 +12,8 @@ int main()
     spdlog::set_level(spdlog::level::trace);
 #endif
     SW::EditorServer server;
+    server.initialize();
+    server.start();
 
     SW::GetWindow().create("Sprite Walker", { 600, 600 });
 

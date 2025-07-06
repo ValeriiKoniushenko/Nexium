@@ -22,7 +22,70 @@
 
 #include "Server.h"
 
+#include "Utils/Functions.h"
+
+using namespace httplib;
+
+namespace
+{
+    std::string getMimeType(const std::string& path)
+    {
+        if (path.ends_with(".html"))
+        {
+            return "text/html";
+        }
+        if (path.ends_with(".css"))
+        {
+            return "text/css";
+        }
+        if (path.ends_with(".js"))
+        {
+            return "application/javascript";
+        }
+        if (path.ends_with(".png"))
+        {
+            return "image/png";
+        }
+        if (path.ends_with(".jpg") || path.ends_with(".jpeg"))
+        {
+            return "image/jpeg";
+        }
+        if (path.ends_with(".ico"))
+        {
+            return "image/x-icon";
+        }
+        return "application/octet-stream";
+    }
+
+} // namespace
+
 namespace SW
 {
+    void EditorServer::initialize()
+    {
+        _server.Get(".*",
+                    [](const Request& req, Response& res)
+                    {
+                        std::string webPath = req.path == "/" ? "/index.html" : req.path;
+                        std::string filePath = assetsPath + webPath;
 
+                        if (std::filesystem::exists(filePath))
+                        {
+                            const auto mime = getMimeType(filePath);
+                            auto content = Utils::TryToGetTextFileContentAs<std::string>(filePath);
+
+                            res.set_content(std::move(content), mime);
+                        }
+                        else
+                        {
+                            res.status = 404;
+                            res.set_content("Not Found", "text/plain");
+                        }
+                    });
+    }
+
+    void EditorServer::start()
+    {
+        _server.listen("localhost", 61005);
+    }
 } // namespace SW
