@@ -1,0 +1,65 @@
+// MIT License
+//
+// Copyright (c) 2019-2025 Valerii Koniushenko
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
+#pragma once
+
+#include "ShaderProgram.h"
+
+namespace SW
+{
+
+    class GraphicsComponentData final
+    {
+    public:
+        GraphicsComponentData() = default;
+        ~GraphicsComponentData();
+        GraphicsComponentData(const GraphicsComponentData& other) = default;
+        GraphicsComponentData(GraphicsComponentData&& other) noexcept = default;
+        GraphicsComponentData& operator=(const GraphicsComponentData& other) = default;
+        GraphicsComponentData& operator=(GraphicsComponentData&& other) noexcept = default;
+
+        void generate();
+
+        void setVertexBuffer(const std::vector<float>& data, GLenum usage = GL_STATIC_DRAW);
+        void setIndexBuffer(const std::vector<GLuint>& data, GLenum usage = GL_STATIC_DRAW);
+        void setShaderProgram(const ShaderProgram& sp);
+        void clear();
+        [[nodiscard]] bool isValid() const noexcept
+        {
+            return _vbo != 0 && _ebo != 0 && _vao != 0 && _shader != 0;
+        }
+
+        void directDraw() const noexcept;
+
+        [[nodiscard]] GLuint getVboId() noexcept { return _vbo; }
+        [[nodiscard]] GLuint getEboId() noexcept { return _ebo; }
+        [[nodiscard]] GLuint getVaoId() noexcept { return _vao; }
+        [[nodiscard]] GLuint getShaderId() noexcept { return _shader; }
+
+    private:
+        GLuint _vbo = 0;
+        GLuint _ebo = 0;
+        GLuint _vao = 0;
+        GLuint _shader = 0;
+    };
+
+} // namespace SW

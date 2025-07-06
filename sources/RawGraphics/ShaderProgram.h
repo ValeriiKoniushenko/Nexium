@@ -55,6 +55,8 @@ namespace SW
 
         [[nodiscard]] bool isEmpty() const noexcept { return _data == 0; }
 
+        [[nodiscard]] GLuint getShaderProgramId() const noexcept { return _data; }
+
         void create(const Core::StringAtom& shaderName);
         void clear();
 #ifdef GRAPHICS_DEBUG
