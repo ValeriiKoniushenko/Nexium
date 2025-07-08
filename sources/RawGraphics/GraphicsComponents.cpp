@@ -46,6 +46,7 @@ namespace SW
             glBufferData(GL_ARRAY_BUFFER, sizeof(float) * data.size(), data.data(), GL_STATIC_DRAW);
         }
     }
+
     void GraphicsComponentData::setIndexBuffer(const std::vector<GLuint>& data, GLenum usage)
     {
         if (_ebo != 0 && _vao != 0) [[likely]]

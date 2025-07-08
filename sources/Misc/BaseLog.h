@@ -36,7 +36,7 @@ namespace PS
 
         void infoLog(const char* str) const
         {
-            getPrefix() ? getLogger()->info("{}: {}", getPrefix(), str)
+            getPrefix() ? getLogger()->info("{} | {}", getPrefix(), str)
                         : getLogger()->info("{}", str);
         }
 
