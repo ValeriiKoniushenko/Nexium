@@ -26,49 +26,6 @@
 
 using namespace httplib;
 
-namespace
-{
-    struct MimeType
-    {
-        std::string type;
-        bool isBinary = false;
-    };
-
-    MimeType getMimeType(const std::string& path)
-    {
-        if (path.ends_with(".html"))
-        {
-            return { "text/html" };
-        }
-        if (path.ends_with(".css"))
-        {
-            return { "text/css" };
-        }
-        if (path.ends_with(".js"))
-        {
-            return { "application/javascript" };
-        }
-        if (path.ends_with(".json"))
-        {
-            return { "application/json" };
-        }
-        if (path.ends_with(".png"))
-        {
-            return { "image/png", true };
-        }
-        if (path.ends_with(".jpg") || path.ends_with(".jpeg"))
-        {
-            return { "image/jpeg", true };
-        }
-        if (path.ends_with(".ico"))
-        {
-            return { "image/x-icon", true };
-        }
-        return { "application/octet-stream" };
-    }
-
-} // namespace
-
 namespace SW
 {
     void EditorServer::initialize()
@@ -79,7 +36,7 @@ namespace SW
                 debugLog("Site requests: " + request.path);
             });
 
-        _server.Get(".*",
+        _server.Get("/api/getCountObjectOnScene",
                     [](const Request& req, Response& res)
                     {
                         const std::string webPath = req.path == "/" ? "/index.html" : req.path;
