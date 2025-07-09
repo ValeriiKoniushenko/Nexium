@@ -28,7 +28,6 @@ set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(Glfw)
 
 
-
 FetchContent_Declare(SpdLog
         GIT_REPOSITORY https://github.com/gabime/spdlog.git
         GIT_TAG v1.15.3
@@ -42,14 +41,14 @@ set(SPDLOG_BUILD_BENCH OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(SpdLog)
 
 
-# FetchContent_Declare(Assimp
-#         GIT_REPOSITORY https://github.com/assimp/assimp.git
-#         GIT_TAG v6.0.2
-#         GIT_SHALLOW TRUE
-#         GIT_PROGRESS TRUE
-# )
-# set(ASSIMP_BUILD_ZLIB ON)
-# set(ASSIMP_BUILD_ASSIMP_TOOLS ON)
-# set(ASSIMP_BUILD_TESTS OFF)
-#
-# FetchContent_MakeAvailable(Assimp)
+FetchContent_Declare(Assimp
+        GIT_REPOSITORY https://github.com/assimp/assimp.git
+        GIT_TAG v6.0.2
+        GIT_SHALLOW TRUE
+        GIT_PROGRESS TRUE
+)
+set(ASSIMP_BUILD_ZLIB ON)
+set(ASSIMP_BUILD_ASSIMP_TOOLS ON)
+set(ASSIMP_BUILD_TESTS OFF)
+
+FetchContent_MakeAvailable(Assimp)
