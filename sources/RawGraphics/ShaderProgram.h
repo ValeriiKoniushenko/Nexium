@@ -32,6 +32,9 @@ namespace SW
     {
     public:
         ~ShaderProgram() override = default;
+        ShaderProgram() = default;
+        ShaderProgram(ShaderProgram&& other) noexcept { *this = std::move(other); }
+        ShaderProgram& operator=(ShaderProgram&& other) noexcept;
 
         // only r-reference
         void setShader(FragmentShader&& shader) { _fragmentShader = std::move(shader); }
