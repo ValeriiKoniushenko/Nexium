@@ -35,12 +35,43 @@ namespace SW
         if (_areDirtyMatrices)
         {
             recalculateMatrices();
+
+            _cachedProjMatrix = glm::perspective(_fov, _size.width / _size.height, _near, _far);
+            _cachedCalculatedMatrix
+                = _cachedProjMatrix * _cachedModelMatrix; // in such context Model == View
         }
 
-        _cachedProjMatrix = glm::perspective(_fov, _size.width / _size.height, _near, _far);
-        _cachedCalculatedMatrix
-            = _cachedProjMatrix * _cachedModelMatrix; // in such context Model == View
         return _cachedCalculatedMatrix;
+    }
+
+    void BaseCamera::setFrameSize(Core::FSize2 size) noexcept
+    {
+        _size = size;
+        _areDirtyMatrices = true;
+    }
+
+    void BaseCamera::setFov(float fov) noexcept
+    {
+        _fov = fov;
+        _areDirtyMatrices = true;
+    }
+
+    void BaseCamera::setNear(float value) noexcept
+    {
+        _near = value;
+        _areDirtyMatrices = true;
+    }
+
+    void BaseCamera::setFar(float value) noexcept
+    {
+        _far = value;
+        _areDirtyMatrices = true;
+    }
+
+    void BaseCamera::setSensitive(glm::vec2 value) noexcept
+    {
+        _sensitive = value;
+        _areDirtyMatrices = true;
     }
 
 } // namespace SW

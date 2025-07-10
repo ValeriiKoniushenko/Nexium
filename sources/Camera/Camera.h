@@ -37,19 +37,19 @@ namespace SW
 
         [[nodiscard]] const glm::mat4& getMatrix();
 
-        void setFrameSize(Core::FSize2 size) noexcept { _size = size; }
+        void setFrameSize(Core::FSize2 size) noexcept;
         [[nodiscard]] Core::FSize2 getFrameSize() const noexcept { return _size; }
 
-        void setFov(float fov) noexcept { _fov = fov; }
+        void setFov(float fov) noexcept;
         [[nodiscard]] float getFov() const noexcept { return _fov; }
 
-        void setNear(float value) noexcept { _near = value; }
+        void setNear(float value) noexcept;
         [[nodiscard]] float getNear() const noexcept { return _near; }
 
-        void setFar(float value) noexcept { _far = value; }
+        void setFar(float value) noexcept;
         [[nodiscard]] float getFar() const noexcept { return _far; }
 
-        void setSensitive(glm::vec2 value) noexcept { _sensitive = value; }
+        void setSensitive(glm::vec2 value) noexcept;
         [[nodiscard]] glm::vec2 getSensitive() const noexcept { return _sensitive; }
 
     protected:
