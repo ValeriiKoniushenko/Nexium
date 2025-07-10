@@ -2,18 +2,6 @@ include(FetchContent)
 
 set(FETCHCONTENT_BASE_DIR deps)
 
-FetchContent_Declare(Utils
-        GIT_REPOSITORY https://github.com/ValeriiKoniushenko/Utils.git
-        GIT_TAG origin/develop
-)
-
-FetchContent_MakeAvailable(Utils)
-FetchContent_GetProperties(Utils SOURCE_DIR Utils_SOURCES)
-
-list(APPEND CMAKE_MODULE_PATH "${Utils_SOURCES}/cmake/FetchDependencies.cmake")
-include(${Utils_SOURCES}/cmake/FetchDependencies.cmake)
-
-
 FetchContent_Declare(Glfw
         GIT_REPOSITORY https://github.com/glfw/glfw.git
         GIT_TAG 3.4
@@ -52,3 +40,15 @@ set(ASSIMP_BUILD_ASSIMP_TOOLS ON)
 set(ASSIMP_BUILD_TESTS OFF)
 
 FetchContent_MakeAvailable(Assimp)
+
+
+FetchContent_Declare(Utils
+        GIT_REPOSITORY https://github.com/ValeriiKoniushenko/Utils.git
+        GIT_TAG origin/develop
+)
+
+FetchContent_MakeAvailable(Utils)
+FetchContent_GetProperties(Utils SOURCE_DIR Utils_SOURCES)
+
+list(APPEND CMAKE_MODULE_PATH "${Utils_SOURCES}/cmake/FetchDependencies.cmake")
+include(${Utils_SOURCES}/cmake/FetchDependencies.cmake)
