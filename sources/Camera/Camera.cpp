@@ -30,6 +30,7 @@
 
 namespace SW
 {
+
     BaseCamera::BaseCamera()
     {
     }
@@ -65,7 +66,8 @@ namespace SW
     const glm::mat4& BaseCamera::getMatrix()
     {
         _cachedProjMatrix = glm::perspective(_fov, _size.width / _size.height, _near, _far);
-        _cachedCalculatedMatrix = _cachedProjMatrix * _cachedViewMatrix;
+        _cachedCalculatedMatrix
+            = _cachedProjMatrix * _cachedModelMatrix; // in such context Model == View
         return _cachedCalculatedMatrix;
     }
 

@@ -22,24 +22,17 @@
 
 #pragma once
 
-#include "ModuleInfo.h"
-
-#define GLM_FORCE_RADIANS
-#include "glm/glm.hpp"
+#include "SceneObjects/BaseSceneObject.h"
 
 #include <Core/Size.h>
 
 namespace SW
 {
-    class BaseCamera : public PS::BaseLog
+
+    class BaseCamera : public BaseSceneObject
     {
     public:
-        [[nodiscard]] spdlog::logger* getLogger() const override { return Camera::getLogger(); }
-
         BaseCamera();
-
-        [[nodiscard]] glm::vec3 getPosition() const noexcept { return _position; }
-        void setPosition(const glm::vec3& position) noexcept { _position = position; }
 
         void rotate(const glm::vec3& value);
 
@@ -63,12 +56,10 @@ namespace SW
     protected:
         glm::mat4 _cachedProjMatrix = glm::mat4(1.f);
         glm::mat4 _cachedCalculatedMatrix = glm::mat4(1.f);
-        glm::mat4 _cachedViewMatrix = glm::mat4(1.f);
         glm::vec2 _sensitive{ 3.f, 3.f };
-        glm::vec3 _position{};
-        Core::FSize2 _size;
-        float _fov = 90.f;
+        Core::FSize2 _size = { 600, 600 };
+        float _fov = 45.f;
         float _far = 10'000.f;
-        float _near = 1.f;
+        float _near = 0.1f;
     };
 } // namespace SW
