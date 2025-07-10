@@ -27,6 +27,8 @@
 #define GLM_FORCE_RADIANS
 #include "glm/glm.hpp"
 
+#include <Core/Size.h>
+
 namespace SW
 {
     class BaseCamera : public PS::BaseLog
@@ -36,25 +38,27 @@ namespace SW
 
         BaseCamera();
 
-        [[nodiscard]] glm::vec3 getPosition() const;
-
-        void setPosition(const glm::vec3& position);
+        [[nodiscard]] glm::vec3 getPosition() const noexcept { return _position; }
+        void setPosition(const glm::vec3& position) noexcept { _position = position; }
 
         void rotate(const glm::vec3& value);
 
         [[nodiscard]] const glm::mat4& getMatrix();
 
-        void setFov(float fov);
-        [[nodiscard]] float getFov() const;
+        void setFrameSize(Core::FSize2 size) noexcept { _size = size; }
+        [[nodiscard]] Core::FSize2 getFrameSize() const noexcept { return _size; }
 
-        void setNear(float value);
-        [[nodiscard]] float getNear() const;
+        void setFov(float fov) noexcept { _fov = fov; }
+        [[nodiscard]] float getFov() const noexcept { return _fov; }
 
-        void setFar(float value);
-        [[nodiscard]] float getFar() const;
+        void setNear(float value) noexcept { _near = value; }
+        [[nodiscard]] float getNear() const noexcept { return _near; }
 
-        void setSensitive(glm::vec2 value);
-        [[nodiscard]] glm::vec2 getSensitive() const;
+        void setFar(float value) noexcept { _far = value; }
+        [[nodiscard]] float getFar() const noexcept { return _far; }
+
+        void setSensitive(glm::vec2 value) noexcept { _sensitive = value; }
+        [[nodiscard]] glm::vec2 getSensitive() const noexcept { return _sensitive; }
 
     protected:
         glm::mat4 _cachedProjMatrix = glm::mat4(1.f);
@@ -62,8 +66,9 @@ namespace SW
         glm::mat4 _cachedViewMatrix = glm::mat4(1.f);
         glm::vec2 _sensitive{ 3.f, 3.f };
         glm::vec3 _position{};
-        float fov_ = 90.f;
-        float far_ = 10'000.f;
-        float near_ = 1.f;
+        Core::FSize2 _size;
+        float _fov = 90.f;
+        float _far = 10'000.f;
+        float _near = 1.f;
     };
 } // namespace SW

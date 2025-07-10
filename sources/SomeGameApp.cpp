@@ -69,6 +69,7 @@ int main()
 
     int frames = 0;
     const auto start = std::chrono::system_clock::now();
+
     while (!SW::GetWindow().shouldClose())
     {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -83,8 +84,8 @@ int main()
         SW::GetWindow().pollEvent();
         ++frames;
     }
-    const auto end = std::chrono::system_clock::now();
 
+    const auto end = std::chrono::system_clock::now();
     const auto diff = std::chrono::duration<double>(end - start).count();
     std::cout << "FPS: " << static_cast<double>(frames) / diff << std::endl;
 

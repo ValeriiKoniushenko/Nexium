@@ -64,62 +64,9 @@ namespace SW
 
     const glm::mat4& BaseCamera::getMatrix()
     {
-        auto [width, height] = GetWindow().getSize();
-        _cachedProjMatrix = glm::perspective(
-            fov_, static_cast<float>(width) / static_cast<float>(height), near_, far_);
-
+        _cachedProjMatrix = glm::perspective(_fov, _size.width / _size.height, _near, _far);
         _cachedCalculatedMatrix = _cachedProjMatrix * _cachedViewMatrix;
         return _cachedCalculatedMatrix;
-    }
-
-    void BaseCamera::setFov(float fov)
-    {
-        fov_ = fov;
-    }
-
-    float BaseCamera::getFov() const
-    {
-        return fov_;
-    }
-
-    void BaseCamera::setNear(float value)
-    {
-        near_ = value;
-    }
-
-    float BaseCamera::getNear() const
-    {
-        return near_;
-    }
-
-    void BaseCamera::setFar(float value)
-    {
-        far_ = value;
-    }
-
-    float BaseCamera::getFar() const
-    {
-        return far_;
-    }
-
-    void BaseCamera::setSensitive(glm::vec2 value)
-    {
-        _sensitive = value;
-    }
-
-    glm::vec2 BaseCamera::getSensitive() const
-    {
-        return _sensitive;
-    }
-
-    glm::vec3 BaseCamera::getPosition() const
-    {
-        return _position;
-    }
-
-    void BaseCamera::setPosition(const glm::vec3& position)
-    {
-        _position = position;
     }
 
 } // namespace SW
