@@ -25,6 +25,19 @@
 namespace SW
 {
 
+    ShaderProgram& ShaderProgram::operator=(ShaderProgram&& other) noexcept
+    {
+        if (this != &other)
+        {
+            _fragmentShader = std::move(other._fragmentShader);
+            _vertexShader = std::move(other._vertexShader);
+            _name = std::move(other._name);
+            _data = other._data;
+            other._data = 0;
+        }
+        return *this;
+    }
+
     void ShaderProgram::create(const Core::StringAtom& shaderName)
     {
         clearOnlyShaderProgram();
