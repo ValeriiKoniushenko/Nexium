@@ -22,6 +22,7 @@
 
 #include "Camera/Camera.h"
 #include "RawGraphics/GraphicsComponents.h"
+#include "RawGraphics/ShaderManager.h"
 #include "RawGraphics/ShaderProgramMeta.h"
 #include "RawGraphics/Window.h"
 #include "assimp/Importer.hpp"
@@ -53,6 +54,10 @@ int main()
     SW::ShaderProgramMeta metaShader(SW::VertexShader("assets/shaders/color.vert"),
                                      SW::FragmentShader("assets/shaders/color.frag"), "color"_atom);
     auto shader = metaShader.generateShaderProgram();
+
+    SW::ShaderManager::instance().setVertexFileExtension(".vert");
+    SW::ShaderManager::instance().setFragmentFileExtension(".frag");
+    SW::ShaderManager::instance().loadShader("assets/shaders/");
 
     std::vector<float> vertices = {
         0.5f,  0.5f,  0.0f, // top right

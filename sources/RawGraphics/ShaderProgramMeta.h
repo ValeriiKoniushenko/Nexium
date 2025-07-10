@@ -27,6 +27,21 @@
 
 namespace SW
 {
+    enum class ShaderVariableType
+    {
+        Input,
+        Output,
+        Uniform
+    };
+
+    struct ShaderVariable
+    {
+        std::string name;
+        GLenum type;
+        GLint size;
+        GLint location;
+    };
+
     class ShaderProgramMeta final
     {
     public:
@@ -39,6 +54,9 @@ namespace SW
         void setShader(FragmentShader&& shader) { _fragmentShader = std::move(shader); }
 
         [[nodiscard]] ShaderProgram generateShaderProgram();
+
+        [[nodiscard]] std::vector<ShaderVariable> getShaderVariables(
+            ShaderVariableType variableType, ShaderType shaderType);
 
     private:
         VertexShader _vertexShader;
