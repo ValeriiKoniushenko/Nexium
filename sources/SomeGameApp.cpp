@@ -1,4 +1,5 @@
 
+#include "Camera/Camera.h"
 #include "RawGraphics/GraphicsComponents.h"
 #include "RawGraphics/ShaderProgram.h"
 #include "RawGraphics/ShaderProgramMeta.h"
@@ -25,18 +26,13 @@ int main()
         "assets/base-3d/cube.obj", aiProcess_CalcTangentSpace | aiProcess_Triangulate
                                        | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
 
-
     SW::GetWindow().create("Sprite Walker", { 600, 600 });
 
     SW::ShaderProgramMeta metaShader(SW::VertexShader("assets/shaders/color.vert"),
                                      SW::FragmentShader("assets/shaders/color.frag"), "color"_atom);
-
     auto shader = metaShader.generateShaderProgram();
 
-    // SW::ShaderProgram shader;
-    // shader.setShader(SW::VertexShader("assets/shaders/color.vert"));
-    // shader.setShader(SW::FragmentShader("assets/shaders/color.frag"));
-    // shader.create("color"_atom);
+    SW::BaseCamera camera;
 
     std::vector<float> vertices = {
         0.5f,  0.5f,  0.0f, // top right
