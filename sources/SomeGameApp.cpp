@@ -4,6 +4,9 @@
 #include "RawGraphics/ShaderProgramMeta.h"
 #include "RawGraphics/Window.h"
 
+#include <assimp/Importer.hpp>  // C++ importer interface
+#include <assimp/postprocess.h> // Post processing flags
+#include <assimp/scene.h>       // Output data structure
 #include <iostream>
 
 int main()
@@ -16,6 +19,12 @@ int main()
     // SW::EditorServer server;
     // server.initialize();
     // server.start();
+
+    Assimp::Importer importer;
+    const aiScene* scene = importer.ReadFile(
+        "assets/base-3d/cube.obj", aiProcess_CalcTangentSpace | aiProcess_Triangulate
+                                       | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
+
 
     SW::GetWindow().create("Sprite Walker", { 600, 600 });
 
