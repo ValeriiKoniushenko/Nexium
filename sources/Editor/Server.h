@@ -27,7 +27,7 @@
 namespace SW
 {
 
-    class EditorServer : public PS::BaseLog
+    class EditorServer : public BaseLog
     {
     public:
         static constexpr const char* assetsPath = "assets/web/build";

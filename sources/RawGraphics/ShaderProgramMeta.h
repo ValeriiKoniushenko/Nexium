@@ -45,11 +45,18 @@ namespace SW
     class ShaderProgramMeta final
     {
     public:
+        struct Hasher
+        {
+            [[nodiscard]] std::size_t operator()(const ShaderProgramMeta& self) const;
+        };
+
+    public:
         ShaderProgramMeta() = default;
         ShaderProgramMeta(VertexShader&& vertShader, FragmentShader&& fragShader,
                           const Core::StringAtom& shaderName);
 
-        void setShaderName(const Core::StringAtom& name) { _shaderName = name; }
+        void setShaderName(const Core::StringAtom& name);
+        void setShaderName(const std::string& name);
         void setShader(VertexShader&& shader) { _vertexShader = std::move(shader); }
         void setShader(FragmentShader&& shader) { _fragmentShader = std::move(shader); }
 

@@ -28,7 +28,7 @@
 namespace SW
 {
 
-    class ShaderProgram : public PS::BaseLog
+    class ShaderProgram : public BaseLog
     {
     public:
         ~ShaderProgram() override = default;

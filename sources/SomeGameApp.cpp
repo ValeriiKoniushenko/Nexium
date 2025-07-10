@@ -51,12 +51,9 @@ int main()
     auto& window = SW::GetWindow();
     window.create("Sprite Walker", { 600, 600 });
 
-    SW::ShaderProgramMeta metaShader(SW::VertexShader("assets/shaders/color.vert"),
-                                     SW::FragmentShader("assets/shaders/color.frag"), "color"_atom);
-    auto shader = metaShader.generateShaderProgram();
-
     auto& sm = SW::GetShaderManager();
     sm.loadShader("assets/shaders/");
+    auto shader = sm.getShaderProgram("color");
 
     std::vector<float> vertices = {
         0.5f,  0.5f,  0.0f, // top right
@@ -73,7 +70,8 @@ int main()
     element.generate();
     element.setVertexBuffer(vertices);
     element.setIndexBuffer(indices);
-    element.setShaderProgram(shader);
+    // element.setShaderProgram();
+
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), static_cast<void*>(0));
     glEnableVertexAttribArray(0);
 

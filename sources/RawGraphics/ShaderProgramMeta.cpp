@@ -27,12 +27,27 @@
 namespace SW
 {
 
+    std::size_t ShaderProgramMeta::Hasher::operator()(const ShaderProgramMeta& self) const
+    {
+        return self._shaderName.makeHash();
+    }
+
     ShaderProgramMeta::ShaderProgramMeta(VertexShader&& vertShader, FragmentShader&& fragShader,
                                          const Core::StringAtom& shaderName)
         : _vertexShader{ std::move(vertShader) },
           _fragmentShader{ std::move(fragShader) },
           _shaderName{ shaderName }
     {
+    }
+
+    void ShaderProgramMeta::setShaderName(const Core::StringAtom& name)
+    {
+        _shaderName = Core::StringAtom::Intern(name);
+    }
+
+    void ShaderProgramMeta::setShaderName(const std::string& name)
+    {
+        _shaderName = Core::StringAtom::Intern(name);
     }
 
     ShaderProgram ShaderProgramMeta::generateShaderProgram()
@@ -48,17 +63,17 @@ namespace SW
     std::vector<ShaderVariable> ShaderProgramMeta::getShaderVariables(
         ShaderVariableType variableType, ShaderType shaderType)
     {
-        if (shaderType == +ShaderType::Vertex)
+        if (shaderType == ShaderType::Vertex)
         {
             _vertexShader;
             return {};
         }
-        if (shaderType == +ShaderType::Fragment)
+        if (shaderType == ShaderType::Fragment)
         {
             _fragmentShader;
             return {};
         }
-        if (shaderType == +ShaderType::Geometry)
+        if (shaderType == ShaderType::Geometry)
         {
             return {};
         }

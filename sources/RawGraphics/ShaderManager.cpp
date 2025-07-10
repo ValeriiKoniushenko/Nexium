@@ -25,29 +25,47 @@
 namespace SW
 {
 
-    void ShaderManager::loadShader(const std::filesystem::path& path)
+    void ShaderManager::loadShader(const std::filesystem::path& inputPath)
     {
         _shaderMetas.clear();
         _validShaders = 0;
         _failedShaders = 0;
 
-        for (const auto& entry : std::filesystem::directory_iterator(path))
+        for (const auto& entry : std::filesystem::recursive_directory_iterator(inputPath))
         {
             if (!entry.is_regular_file())
             {
                 continue;
             }
 
-            const auto& filePath = entry.path();
-            const auto ext = filePath.extension().string();
-
-            if (ext != _vertexExt && ext != _fragmentExt)
+            const auto filePath = entry.path();
+            const auto extension = filePath.extension().generic_string();
+            if (!_suitableExtensions.contains(extension))
             {
                 continue;
             }
 
-            const auto baseName = filePath.stem().string();
-            int a = 0;
+            const auto baseName = filePath.stem().generic_string();
+
+            ShaderProgramMeta shader;
+            shader.setShaderName(baseName);
+
+            // here we are fetching only separated shaders. Let's join it.
+            const ShaderType type = _suitableExtensions[extension];
+            if (type == ShaderType::Vertex)
+            {
+                shader.setShader(VertexShader(filePath));
+            }
+            else if (type == ShaderType::Fragment)
+            {
+                shader.setShader(FragmentShader(filePath));
+            }
+            else
+            {
+                errorLog("Can't detect ShaderType with provided one file extension for that: '{}'"_f
+                         << extension);
+                return;
+            }
 
             // const auto vertexPath = path / (baseName + _vertexExt);
             // const auto fragmentPath = path / (baseName + _fragmentExt);
@@ -73,6 +91,11 @@ namespace SW
             //     ++_failedShaders;
             // }
         }
+    }
+
+    ShaderProgram ShaderManager::getShaderProgram(const Core::StringAtom& shaderName)
+    {
+        return {};
     }
 
 } // namespace SW

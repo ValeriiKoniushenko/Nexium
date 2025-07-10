@@ -37,7 +37,7 @@
 namespace SW
 {
 
-    class Window : public Core::StrictSingleton<Window>, public PS::BaseLog
+    class Window : public Core::StrictSingleton<Window>, public BaseLog
     {
     public:
         Window() = default;

@@ -22,7 +22,7 @@
 
 #include "BaseLog.h"
 
-namespace PS
+namespace SW
 {
 
     GlobalLog globalLog = {};

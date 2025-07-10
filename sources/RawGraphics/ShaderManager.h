@@ -23,14 +23,16 @@
 #pragma once
 
 #include "Core/Singleton.h"
-#include "Core/String.h"
+#include "ModuleInfo.h"
 #include "ShaderProgramMeta.h"
+
+#include <unordered_set>
 
 class ShaderProgram;
 
 namespace SW
 {
-    class ShaderManager : public Core::StrictSingleton<ShaderManager>
+    class ShaderManager : public Core::StrictSingleton<ShaderManager>, public BaseLog
     {
     public:
         inline static const char* const defaultVertexFileExtension = ".vert";
@@ -38,23 +40,35 @@ namespace SW
 
         void loadShader(const std::filesystem::path& path);
 
-        void setVertexFileExtension(const Core::StringAtom& ext) { _vertexExt = ext; }
-        void setFragmentFileExtension(const Core::StringAtom& ext) { _fragmentExt = ext; }
+        void pushSuitableFileExtension(std::string ext, ShaderType type)
+        {
+            _suitableExtensions.emplace(std::move(ext), type);
+        }
+        [[nodiscard]] std::unordered_map<std::string, ShaderType>& getSuitableFileExtensions()
+        {
+            return _suitableExtensions;
+        }
 
         [[nodiscard]] ShaderProgram getShaderProgram(const Core::StringAtom& shaderName);
 
-        [[nodiscard]] size_t countOfShaders() const;
-        [[nodiscard]] size_t countOfValidShaders() const;
-        [[nodiscard]] size_t countOfFailedShaders() const;
+        // [[nodiscard]] size_t countOfShaders() const;
+        // [[nodiscard]] size_t countOfValidShaders() const;
+        // [[nodiscard]] size_t countOfFailedShaders() const;
+
+        [[nodiscard]] spdlog::logger* getLogger() const override
+        {
+            return SW::RawGraphics::getLogger();
+        }
 
     private:
-        Core::StringAtom _vertexExt = Core::StringAtom::Intern(defaultVertexFileExtension);
-        Core::StringAtom _fragmentExt = Core::StringAtom::Intern(defaultFragmentFileExtension);
+        std::unordered_set<ShaderProgramMeta, ShaderProgramMeta::Hasher> _shaderMetas;
+
+        std::unordered_map<std::string, ShaderType> _suitableExtensions
+            = { { defaultFragmentFileExtension, ShaderType::Fragment },
+                { defaultVertexFileExtension, ShaderType::Vertex } };
 
         size_t _validShaders = {};
         size_t _failedShaders = {};
-
-        std::vector<ShaderProgramMeta> _shaderMetas;
     };
 
     inline ShaderManager& GetShaderManager()

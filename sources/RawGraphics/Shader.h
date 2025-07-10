@@ -27,7 +27,6 @@
 #include "GLFW/glfw3.h"
 // clang-format on
 
-#include "BetterEnums/enum.h"
 #include "Utils/Functions.h"
 
 #include <filesystem>
@@ -35,12 +34,13 @@
 namespace SW
 {
     // clang-format off
-    BETTER_ENUM(ShaderType, GLenum,
+    enum class ShaderType : GLenum
+    {
         None = 0,
         Fragment = GL_FRAGMENT_SHADER,
         Vertex = GL_VERTEX_SHADER,
         Geometry = GL_GEOMETRY_SHADER
-    );
+    };
     // clang-format on
 
     template<ShaderType shaderType>
