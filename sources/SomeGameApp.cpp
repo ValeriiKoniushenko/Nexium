@@ -47,7 +47,8 @@ int main()
         "assets/base-3d/cube.obj", aiProcess_CalcTangentSpace | aiProcess_Triangulate
                                        | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
 
-    SW::GetWindow().create("Sprite Walker", { 600, 600 });
+    auto& window = SW::GetWindow();
+    window.create("Sprite Walker", { 600, 600 });
 
     SW::ShaderProgramMeta metaShader(SW::VertexShader("assets/shaders/color.vert"),
                                      SW::FragmentShader("assets/shaders/color.frag"), "color"_atom);
@@ -83,7 +84,7 @@ int main()
     SW::BaseCamera camera;
     camera.moveForward(-10);
 
-    while (!SW::GetWindow().shouldClose())
+    while (!window.shouldClose())
     {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -92,8 +93,8 @@ int main()
         glUniformMatrix4fv(uModel, 1, GL_FALSE, glm::value_ptr(model));
         element.directDraw();
 
-        SW::GetWindow().swapBuffers();
-        SW::GetWindow().pollEvent();
+        window.swapBuffers();
+        window.pollEvent();
         ++frames;
     }
 
