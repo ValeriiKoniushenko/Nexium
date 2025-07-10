@@ -20,49 +20,37 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#pragma once
+
+#include "Core/Singleton.h"
+#include "Core/String.h"
 #include "ShaderProgramMeta.h"
 
-#include "Shader.h"
+class ShaderProgram;
 
 namespace SW
 {
-
-    ShaderProgramMeta::ShaderProgramMeta(VertexShader&& vertShader, FragmentShader&& fragShader,
-                                         const Core::StringAtom& shaderName)
-        : _vertexShader{ std::move(vertShader) },
-          _fragmentShader{ std::move(fragShader) },
-          _shaderName{ shaderName }
+    class ShaderManager : public Core::Singleton<ShaderManager>
     {
-    }
+    public:
+        void loadShader(const std::filesystem::path& path);
 
-    ShaderProgram ShaderProgramMeta::generateShaderProgram()
-    {
-        ShaderProgram shaderProgram;
-        shaderProgram.setShader(std::move(_vertexShader));
-        shaderProgram.setShader(std::move(_fragmentShader));
-        shaderProgram.create(_shaderName);
+        void setVertexFileExtension(const Core::StringAtom& ext) { _vertexExt = ext; }
+        void setFragmentFileExtension(const Core::StringAtom& ext) { _fragmentExt = ext; }
 
-        return shaderProgram;
-    }
+        [[nodiscard]] ShaderProgram getShaderProgram(const Core::StringAtom& shaderName);
 
-    std::vector<ShaderVariable> ShaderProgramMeta::getShaderVariables(
-        ShaderVariableType variableType, ShaderType shaderType)
-    {
-        if (shaderType == +ShaderType::Vertex)
-        {
-            _vertexShader;
-            return {};
-        }
-        if (shaderType == +ShaderType::Fragment)
-        {
-            _fragmentShader;
-            return {};
-        }
-        if (shaderType == +ShaderType::Geometry)
-        {
-            return {};
-        }
-        return {};
-    }
+        [[nodiscard]] size_t countOfShaders() const;
+        [[nodiscard]] size_t countOfValidShaders() const;
+        [[nodiscard]] size_t countOfFailedShaders() const;
 
+    private:
+        Core::StringAtom _vertexExt;
+        Core::StringAtom _fragmentExt;
+
+        size_t _validShaders;
+        size_t _failedShaders;
+
+        std::vector<ShaderProgramMeta> _shaderMetas;
+    };
 } // namespace SW
