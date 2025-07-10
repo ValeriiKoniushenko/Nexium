@@ -30,9 +30,12 @@ class ShaderProgram;
 
 namespace SW
 {
-    class ShaderManager : public Core::Singleton<ShaderManager>
+    class ShaderManager : public Core::StrictSingleton<ShaderManager>
     {
     public:
+        inline static const char* const defaultVertexFileExtension = ".vert";
+        inline static const char* const defaultFragmentFileExtension = ".frag";
+
         void loadShader(const std::filesystem::path& path);
 
         void setVertexFileExtension(const Core::StringAtom& ext) { _vertexExt = ext; }
@@ -45,12 +48,17 @@ namespace SW
         [[nodiscard]] size_t countOfFailedShaders() const;
 
     private:
-        Core::StringAtom _vertexExt;
-        Core::StringAtom _fragmentExt;
+        Core::StringAtom _vertexExt = Core::StringAtom::Intern(defaultVertexFileExtension);
+        Core::StringAtom _fragmentExt = Core::StringAtom::Intern(defaultFragmentFileExtension);
 
         size_t _validShaders = {};
         size_t _failedShaders = {};
 
         std::vector<ShaderProgramMeta> _shaderMetas;
     };
+
+    inline ShaderManager& GetShaderManager()
+    {
+        return ShaderManager::instance();
+    }
 } // namespace SW

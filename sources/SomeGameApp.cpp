@@ -55,9 +55,8 @@ int main()
                                      SW::FragmentShader("assets/shaders/color.frag"), "color"_atom);
     auto shader = metaShader.generateShaderProgram();
 
-    SW::ShaderManager::instance().setVertexFileExtension(".vert");
-    SW::ShaderManager::instance().setFragmentFileExtension(".frag");
-    SW::ShaderManager::instance().loadShader("assets/shaders/");
+    auto& sm = SW::GetShaderManager();
+    sm.loadShader("assets/shaders/");
 
     std::vector<float> vertices = {
         0.5f,  0.5f,  0.0f, // top right
