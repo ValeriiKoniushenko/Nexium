@@ -4,6 +4,8 @@
 #include "RawGraphics/ShaderProgram.h"
 #include "RawGraphics/ShaderProgramMeta.h"
 #include "RawGraphics/Window.h"
+
+#define GLM_FORCE_RADIANS
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
@@ -59,7 +61,7 @@ int main()
     glm::mat4 model = glm::mat4(1.0f);
     glm::mat4 view = glm::mat4(1.0f);
     view = glm::translate(view, glm::vec3(0.0f, 0.0f, -13.0f));
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), 600.0f / 600.0f, 0.1f, 10000.0f);
+    glm::mat4 projection = glm::perspective(45.0f, 600.0f / 600.0f, 0.1f, 10000.0f);
 
     const auto uProj = glGetUniformLocation(shader.getShaderProgramId(), "uProj");
     const auto uView = glGetUniformLocation(shader.getShaderProgramId(), "uView");

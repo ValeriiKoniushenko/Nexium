@@ -23,6 +23,8 @@
 #pragma once
 
 #include "ModuleInfo.h"
+
+#define GLM_FORCE_RADIANS
 #include "glm/glm.hpp"
 
 namespace SW
