@@ -22,8 +22,6 @@
 
 #include "ShaderProgramMeta.h"
 
-#include "ShaderProgram.h"
-
 namespace SW
 {
 

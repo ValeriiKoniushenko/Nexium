@@ -105,7 +105,13 @@ namespace SW
             }
         }
 
-        void validate() {}
+        void validate()
+        {
+            if (isEmpty())
+            {
+                throw std::runtime_error("Shader handle is empty.");
+            }
+        }
 
         void compile()
         {
