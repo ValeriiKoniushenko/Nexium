@@ -48,8 +48,8 @@ namespace SW
         Core::StringAtom _vertexExt;
         Core::StringAtom _fragmentExt;
 
-        size_t _validShaders;
-        size_t _failedShaders;
+        size_t _validShaders = {};
+        size_t _failedShaders = {};
 
         std::vector<ShaderProgramMeta> _shaderMetas;
     };
