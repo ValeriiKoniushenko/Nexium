@@ -30,39 +30,6 @@
 
 namespace SW
 {
-
-    BaseCamera::BaseCamera()
-    {
-    }
-
-    void BaseCamera::rotate(const glm::vec3& value_)
-    {
-        throw "not implemented";
-        // SceneObject::rotate(value); - Don't do this
-        // auto value = value_;
-        // value.x /= sensitive_.x;
-        // value.y /= sensitive_.y;
-        //
-        // rotation_.y += value.x;
-        // rotation_.x += value.y;
-        //
-        // if (rotation_.x > maxPitch_)
-        // {
-        //     rotation_.x = maxPitch_;
-        // }
-        // if (rotation_.x < -maxPitch_)
-        // {
-        //     rotation_.x = -maxPitch_;
-        // }
-        //
-        // while (rotation_.y >= 360.f)
-        // {
-        //     rotation_.y -= 360.f;
-        // }
-        //
-        // matricesAreDirty_ = true;
-    }
-
     const glm::mat4& BaseCamera::getMatrix()
     {
         _cachedProjMatrix = glm::perspective(_fov, _size.width / _size.height, _near, _far);

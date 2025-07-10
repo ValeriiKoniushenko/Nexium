@@ -32,9 +32,8 @@ namespace SW
     class BaseCamera : public BaseSceneObject
     {
     public:
-        BaseCamera();
-
-        void rotate(const glm::vec3& value);
+        BaseCamera() = default;
+        ~BaseCamera() override = default;
 
         [[nodiscard]] const glm::mat4& getMatrix();
 

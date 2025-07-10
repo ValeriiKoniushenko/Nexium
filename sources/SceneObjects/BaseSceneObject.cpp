@@ -58,6 +58,57 @@ namespace SW
         _areDirtyMatrices = true;
     }
 
+    void BaseSceneObject::setRotation(const glm::vec3& rotation) noexcept
+    {
+        _rotation = rotation;
+        _areDirtyMatrices = true;
+
+        while (_rotation.y >= 360.f)
+        {
+            _rotation.y -= 360.f;
+        }
+        while (_rotation.x >= 360.f)
+        {
+            _rotation.x -= 360.f;
+        }
+        while (_rotation.z >= 360.f)
+        {
+            _rotation.z -= 360.f;
+        }
+    }
+
+    void BaseSceneObject::rotate(const glm::vec3& value) noexcept
+    {
+        _rotation.y += value.x;
+        _rotation.x += value.y;
+        _rotation.z += value.z;
+
+        while (_rotation.y >= 360.f)
+        {
+            _rotation.y -= 360.f;
+        }
+        while (_rotation.x >= 360.f)
+        {
+            _rotation.x -= 360.f;
+        }
+        while (_rotation.z >= 360.f)
+        {
+            _rotation.z -= 360.f;
+        }
+
+        _areDirtyMatrices = true;
+    }
+
+    const glm::vec3& BaseSceneObject::getRotation() const noexcept
+    {
+        return _rotation;
+    }
+
+    glm::vec3& BaseSceneObject::getRotation() noexcept
+    {
+        return _rotation;
+    }
+
     void BaseSceneObject::setRotationX(float x) noexcept
     {
         _rotation.x = x;
@@ -206,6 +257,11 @@ namespace SW
     {
         _origin = origin;
         _areDirtyMatrices = true;
+    }
+
+    const glm::vec3& BaseSceneObject::getOrigin() const noexcept
+    {
+        return _origin;
     }
 
 } // namespace SW

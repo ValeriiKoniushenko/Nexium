@@ -30,6 +30,9 @@ namespace SW
     class BaseSceneObject
     {
     public:
+        BaseSceneObject() = default;
+        virtual ~BaseSceneObject() = default;
+
         [[nodiscard]] glm::vec3 getPosition() const noexcept;
         void setPosition(const glm::vec3& position) noexcept;
         void moveForward(float offset) noexcept;
