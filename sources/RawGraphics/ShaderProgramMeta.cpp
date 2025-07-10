@@ -40,7 +40,7 @@ namespace SW
         shaderProgram.setShader(std::move(_fragmentShader));
         shaderProgram.create(_shaderName);
 
-        return std::move(shaderProgram);
+        return shaderProgram;
     }
 
 } // namespace SW

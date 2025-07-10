@@ -30,6 +30,7 @@ namespace SW
     class ShaderProgramMeta final
     {
     public:
+        ShaderProgramMeta() = default;
         ShaderProgramMeta(VertexShader&& vertShader, FragmentShader&& fragShader,
                           const Core::StringAtom& shaderName);
 
@@ -37,11 +38,11 @@ namespace SW
         void setShader(VertexShader&& shader) { _vertexShader = std::move(shader); }
         void setShader(FragmentShader&& shader) { _fragmentShader = std::move(shader); }
 
-        ShaderProgram generateShaderProgram();
+        [[nodiscard]] ShaderProgram generateShaderProgram();
 
     private:
         VertexShader _vertexShader;
         FragmentShader _fragmentShader;
-        Core::StringAtom _shaderName{ "unnamed" };
+        Core::StringAtom _shaderName;
     };
 } // namespace SW
