@@ -37,7 +37,6 @@ int main()
                                      SW::FragmentShader("assets/shaders/color.frag"), "color"_atom);
     auto shader = metaShader.generateShaderProgram();
 
-    SW::BaseCamera camera;
 
     std::vector<float> vertices = {
         0.5f,  0.5f,  0.0f, // top right
@@ -59,13 +58,15 @@ int main()
     glEnableVertexAttribArray(0);
 
     glm::mat4 model = glm::mat4(1.0f);
-    // view = glm::translate(view, glm::vec3(0.0f, 0.0f, -13.0f));
 
     const auto uProjAndView = glGetUniformLocation(shader.getShaderProgramId(), "uProjAndView");
     const auto uModel = glGetUniformLocation(shader.getShaderProgramId(), "uModel");
 
     int frames = 0;
     const auto start = std::chrono::system_clock::now();
+
+    SW::BaseCamera camera;
+    camera.moveForward(-13);
 
     while (!SW::GetWindow().shouldClose())
     {
