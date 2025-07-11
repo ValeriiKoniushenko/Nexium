@@ -86,6 +86,12 @@ int main()
     SW::BaseCamera camera;
     camera.moveForward(-10);
 
+    window.onKeyPressed.subscribe(
+        [](int key, int, int, int)
+        {
+            int i = 123;
+        });
+
     while (!window.shouldClose())
     {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
