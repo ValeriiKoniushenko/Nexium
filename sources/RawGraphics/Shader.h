@@ -76,13 +76,13 @@ namespace SW
         void createFromFile(const std::filesystem::path& path)
         {
             create();
-            loadFromFile(path);
+            putSourcesFromFile(path);
             validate();
             compile();
         }
 
     private:
-        void loadFromFile(const std::filesystem::path& path)
+        void putSourcesFromFile(const std::filesystem::path& path)
         {
             const auto sources = Utils::GetTextFileContentAs<std::string>(path);
             if (sources.empty())
