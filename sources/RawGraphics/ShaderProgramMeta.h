@@ -27,7 +27,7 @@
 
 namespace SW
 {
-    enum class ShaderVariableType
+    enum class ShaderStorageQualifierType
     {
         Input,
         Output,
@@ -57,7 +57,11 @@ namespace SW
 
         void setShaderName(const Core::StringAtom& name);
         void setShaderName(const std::string& name);
-        void setShader(VertexShader&& shader) { _vertexShader = std::move(shader); }
+
+        void loadShaderFromPath(const std::filesystem::path, ShaderType)
+        {
+            // _vertexShader = std::move(shader);
+        }
         void setShader(FragmentShader&& shader) { _fragmentShader = std::move(shader); }
 
         [[nodiscard]] ShaderProgram generateShaderProgram();

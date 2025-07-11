@@ -67,8 +67,28 @@ namespace SW
                 ShaderProgramMeta shader;
                 shader.setShaderName(name);
 
-                shader.setShader(VertexShader(vertShaderFile));
-                shader.setShader(FragmentShader(fragShaderFile));
+                /*
+                 // final structure MUST be like that
+                 class Shader
+                 {
+                    GLuint _rawId = 0;
+                    unordered_set cachedUniforms;
+                 };
+
+                 class ShaderProgram
+                 {
+                    Shader _vertex;
+                    Shader _fragment;
+                 };
+
+                 class ShaderProgramMeta
+                 {
+                    // loading of all shaders MUST BE ONLY from this place for correct beh.
+                    ShaderProgram _shaderProgram;
+                 };
+                 */
+                // shader.setShader(VertexShader(vertShaderFile));
+                // shader.setShader(FragmentShader(fragShaderFile));
             }
             catch (std::exception exception)
             {

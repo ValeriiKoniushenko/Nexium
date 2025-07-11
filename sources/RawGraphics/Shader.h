@@ -77,7 +77,6 @@ namespace SW
         {
             create();
             putSourcesFromFile(path);
-            validate();
             compile();
         }
 
