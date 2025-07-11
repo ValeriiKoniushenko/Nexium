@@ -1,6 +1,7 @@
 add_subdirectory(Camera)
 add_subdirectory(Editor)
 add_subdirectory(Misc)
+add_subdirectory(InputDevices)
 add_subdirectory(RawGraphics)
 add_subdirectory(SceneObjects)
 

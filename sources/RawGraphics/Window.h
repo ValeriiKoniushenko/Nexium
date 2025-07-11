@@ -56,12 +56,31 @@ namespace SW
 
         [[nodiscard]] Core::ISize2 getSize() const;
 
-        void setCursorPosition(double x, double y);
+        void setCursorPosition(float x, float y);
+        void setCursorPosition(glm::vec2 position);
 
+        /**
+         * @param first 'int' - is a Key
+         * @param second 'int' - is a Scancode
+         * @param third 'int' - is an Action
+         * @param fourth 'int' - is a Mod
+         */
         Core::Delegate<void(int, int, int, int)> onKeyPressed;
+
+        /**
+         * @param unsigned int - is a Scancode
+         */
         Core::Delegate<void(unsigned int)> onTextInput;
-        Core::Delegate<void(int)> onCursorEntered;
-        Core::Delegate<void(double, double)> onMouseWheel;
+
+        /**
+         * @param bool - is Entered the cursor or no
+         */
+        Core::Delegate<void(bool)> onCursorEntered;
+
+        /**
+         * @param glm::vec2 - mouse scroll offsets (X & Y)
+         */
+        Core::Delegate<void(glm::vec2)> onMouseWheel;
 
         [[nodiscard]] spdlog::logger* getLogger() const override
         {

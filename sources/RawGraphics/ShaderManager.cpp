@@ -38,33 +38,62 @@ namespace SW
                 continue;
             }
 
-            const auto filePath = entry.path();
-            const auto extension = filePath.extension().generic_string();
-            if (!_suitableExtensions.contains(extension))
+            const auto fragShaderFile
+                = getPathToShaderBasedOn(_suitableFragExtensions, entry.path());
+            if (fragShaderFile.empty())
+            {
+                continue;
+            }
+            const auto vertShaderFile
+                = getPathToShaderBasedOn(_suitableVertExtensions, entry.path());
+            if (vertShaderFile.empty())
             {
                 continue;
             }
 
-            const auto baseName = filePath.stem().generic_string();
-
-            ShaderProgramMeta shader;
-            shader.setShaderName(baseName);
-
-            // here we are fetching only separated shaders. Let's join it.
-            const ShaderType type = _suitableExtensions[extension];
-            if (type == ShaderType::Vertex)
+            if (vertShaderFile.stem() != fragShaderFile.stem())
             {
-                shader.setShader(VertexShader(filePath));
+                warnLog("Different stem of shader files: '{}' & '{}'"_f
+                        << fragShaderFile.generic_string() << vertShaderFile.generic_string());
+                continue;
             }
-            else if (type == ShaderType::Fragment)
+
+            const auto name = std::filesystem::relative(entry.path(), inputPath).generic_string();
+
+            infoLog("Was found shader: {}"_f << name);
+
+            try
             {
-                shader.setShader(FragmentShader(filePath));
+                ShaderProgramMeta shader;
+                shader.setShaderName(name);
+
+                /*
+                 // final structure MUST be like that
+                 class Shader
+                 {
+                    GLuint _rawId = 0;
+                    unordered_set cachedUniforms;
+                 };
+
+                 class ShaderProgram
+                 {
+                    Shader _vertex;
+                    Shader _fragment;
+                 };
+
+                 class ShaderProgramMeta
+                 {
+                    // loading of all shaders MUST BE ONLY from this place for correct beh.
+                    ShaderProgram _shaderProgram;
+                 };
+                 */
+                // shader.setShader(VertexShader(vertShaderFile));
+                // shader.setShader(FragmentShader(fragShaderFile));
             }
-            else
+            catch (std::exception exception)
             {
-                errorLog("Can't detect ShaderType with provided one file extension for that: '{}'"_f
-                         << extension);
-                return;
+                errorLog("Impossible to set up the shader '{}'. Details: {}"_f << name
+                                                                               << exception.what());
             }
 
             // const auto vertexPath = path / (baseName + _vertexExt);
@@ -95,6 +124,21 @@ namespace SW
 
     ShaderProgram ShaderManager::getShaderProgram(const Core::StringAtom& shaderName)
     {
+        return {};
+    }
+
+    std::filesystem::path ShaderManager::getPathToShaderBasedOn(
+        const std::unordered_set<std::string>& set, std::filesystem::path path) const
+    {
+        for (auto&& ext : set)
+        {
+            path.replace_extension(ext);
+            if (std::filesystem::exists(path))
+            {
+                return path;
+            }
+        }
+
         return {};
     }
 

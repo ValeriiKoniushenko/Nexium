@@ -38,12 +38,13 @@ namespace
 
     void CursorEnterHandler(GLFWwindow* window, int entered)
     {
-        SW::GetWindow().onCursorEntered.trigger(entered);
+        SW::GetWindow().onCursorEntered.trigger(entered == GLFW_TRUE);
     }
 
-    void MouseScrollHandler(GLFWwindow* window, double xOffset, double yOffset)
+    void MouseScrollHandler(GLFWwindow* window, double x, double y)
     {
-        SW::GetWindow().onMouseWheel.trigger(xOffset, yOffset);
+        SW::GetWindow().onMouseWheel.trigger(
+            glm::vec2(static_cast<float>(x), static_cast<float>(y)));
         // GetWorldVariables().set("mouse-wheel-x", xOffset);
         // GetWorldVariables().set("mouse-wheel-y", yOffset);
     }
@@ -119,9 +120,14 @@ namespace SW
         return _size;
     }
 
-    void Window::setCursorPosition(double xpos, double ypos)
+    void Window::setCursorPosition(float x, float y)
     {
-        glfwSetCursorPos(_window, xpos, ypos);
+        glfwSetCursorPos(_window, x, y);
+    }
+
+    void Window::setCursorPosition(glm::vec2 position)
+    {
+        setCursorPosition(position.x, position.y);
     }
 
     Window& GetWindow()
