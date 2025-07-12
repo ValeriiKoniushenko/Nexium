@@ -58,23 +58,24 @@ namespace SW
                 continue;
             }
 
-            const auto nameWithExtension
-                = std::filesystem::relative(entry.path(), inputPath).generic_string();
+            const auto name = std::filesystem::relative(entry.path(), inputPath)
+                                  .replace_extension("")
+                                  .generic_string();
 
-            infoLog("Was found shader: {}"_f << nameWithExtension);
+            infoLog("Was found shader: {}"_f << name);
 
             try
             {
-                std::filesystem::path temp = nameWithExtension.c_str();
-                Core::StringAtom nameWithoutExtension = temp.stem().c_str();
+                ShaderProgramMeta meta;
+                meta.setShaderName(name);
+                meta.setShader(VertexShader(vertShaderFile));
+                meta.setShader(FragmentShader(fragShaderFile));
 
-                _shaderMetas[nameWithoutExtension.c_str()] = ShaderProgramMeta(
-                    VertexShader(vertShaderFile), FragmentShader(fragShaderFile),
-                    nameWithoutExtension.c_str());
+                _shaderMetas[meta.getShaderName()] = std::move(meta);
             }
             catch (std::exception exception)
             {
-                errorLog("Impossible to set up the shader '{}'. Details: {}"_f << nameWithExtension
+                errorLog("Impossible to set up the shader '{}'. Details: {}"_f << name
                                                                                << exception.what());
             }
         }

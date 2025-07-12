@@ -42,7 +42,7 @@ namespace SW
 
     bool ShaderProgramMeta::operator==(const ShaderProgramMeta& other)
     {
-        return _shaderName.compare(other._shaderName) == Core::Comparison::Equal ? true : false;
+        return _shaderName == other._shaderName;
     }
 
     void ShaderProgramMeta::setShaderName(const Core::StringAtom& name)
