@@ -58,72 +58,58 @@ namespace SW
                 continue;
             }
 
-            const auto name = std::filesystem::relative(entry.path(), inputPath).generic_string();
+            const auto nameWithExtension
+                = std::filesystem::relative(entry.path(), inputPath).generic_string();
 
-            infoLog("Was found shader: {}"_f << name);
+            infoLog("Was found shader: {}"_f << nameWithExtension);
 
             try
             {
-                ShaderProgramMeta shader;
-                shader.setShaderName(name);
+                std::filesystem::path temp = nameWithExtension.c_str();
+                Core::StringAtom nameWithoutExtension = temp.stem().c_str();
 
-                /*
-                 // final structure MUST be like that
-                 class Shader
-                 {
-                    GLuint _rawId = 0;
-                    unordered_set cachedUniforms;
-                 };
-
-                 class ShaderProgram
-                 {
-                    Shader _vertex;
-                    Shader _fragment;
-                 };
-
-                 class ShaderProgramMeta
-                 {
-                    // loading of all shaders MUST BE ONLY from this place for correct beh.
-                    ShaderProgram _shaderProgram;
-                 };
-                 */
-                // shader.setShader(VertexShader(vertShaderFile));
-                // shader.setShader(FragmentShader(fragShaderFile));
+                _shaderMetas[nameWithoutExtension.c_str()] = ShaderProgramMeta(
+                    VertexShader(vertShaderFile), FragmentShader(fragShaderFile),
+                    nameWithoutExtension.c_str());
             }
             catch (std::exception exception)
             {
-                errorLog("Impossible to set up the shader '{}'. Details: {}"_f << name
+                errorLog("Impossible to set up the shader '{}'. Details: {}"_f << nameWithExtension
                                                                                << exception.what());
             }
+        }
+    }
 
-            // const auto vertexPath = path / (baseName + _vertexExt);
-            // const auto fragmentPath = path / (baseName + _fragmentExt);
-
-            // if (!std::filesystem::exists(vertexPath) || !std::filesystem::exists(fragmentPath))
-            // {
-            //     continue;
-            // }
-
-            // try
-            // {
-            //     ShaderProgramMeta meta(VertexShader(vertexPath), FragmentShader(fragmentPath),
-            //                            baseName // имя напрямую как string
-            //     );
-
-            //     _shaderMetas.emplace_back(std::move(meta));
-            //     ++_validShaders;
-            // }
-            // catch (const std::exception& ex)
-            // {
-            //     spdlog::error("[ShaderManager] Failed to load shader '{}': {}", baseName,
-            //                   ex.what());
-            //     ++_failedShaders;
-            // }
+    void ShaderManager::pushSuitableFileExtension(std::string ext, ShaderType type)
+    {
+        if (type == ShaderType::Fragment)
+        {
+            debugLog(
+                "Was added mapping between Fragment shader & file content with extension '{}'."_f
+                << ext);
+            _suitableFragExtensions.emplace(std::move(ext));
+        }
+        else if (type == ShaderType::Vertex)
+        {
+            debugLog("Was added mapping between Vertex shader & file content with extension '{}'."_f
+                     << ext);
+            _suitableVertExtensions.emplace(std::move(ext));
+        }
+        else
+        {
+            errorLog(
+                "Was passed incorrect shader type for mapping file extensions. Extension '{}' will be ignored"_f
+                << ext);
         }
     }
 
     ShaderProgram ShaderManager::getShaderProgram(const Core::StringAtom& shaderName)
     {
+        const auto it = _shaderMetas.find(shaderName);
+        if (it != _shaderMetas.cend())
+        {
+            return it->second.generateShaderProgram();
+        }
         return {};
     }
 

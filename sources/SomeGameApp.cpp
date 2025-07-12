@@ -70,7 +70,7 @@ int main()
     element.generate();
     element.setVertexBuffer(vertices);
     element.setIndexBuffer(indices);
-    // element.setShaderProgram();
+    element.setShaderProgram(shader);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), static_cast<void*>(0));
     glEnableVertexAttribArray(0);
