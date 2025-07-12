@@ -55,19 +55,22 @@ namespace SW
         ShaderProgramMeta(VertexShader&& vertShader, FragmentShader&& fragShader,
                           const Core::StringAtom& shaderName);
 
-        void setShaderName(const Core::StringAtom& name);
+        [[nodiscard]] bool operator==(const ShaderProgramMeta& other);
+
         void setShaderName(const std::string& name);
+        void setShaderName(const Core::StringAtom& name);
+        void setShader(VertexShader&& shader) { _vertexShader = std::move(shader); }
+        void setShader(FragmentShader&& shader) { _fragmentShader = std::move(shader); }
 
         void loadShaderFromPath(const std::filesystem::path, ShaderType)
         {
             // _vertexShader = std::move(shader);
         }
-        void setShader(FragmentShader&& shader) { _fragmentShader = std::move(shader); }
 
         [[nodiscard]] ShaderProgram generateShaderProgram();
-
-        [[nodiscard]] std::vector<ShaderVariable> getShaderVariables(
-            ShaderVariableType variableType, ShaderType shaderType);
+        [[nodiscard]] Core::StringAtom getShaderName() const { return _shaderName; }
+        [[nodiscard]] std::vector<ShaderVariable> getShaderVariables(ShaderVariable variableType,
+                                                                     ShaderType shaderType);
 
     private:
         VertexShader _vertexShader;

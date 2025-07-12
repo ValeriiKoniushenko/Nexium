@@ -36,8 +36,13 @@ namespace SW
                                          const Core::StringAtom& shaderName)
         : _vertexShader{ std::move(vertShader) },
           _fragmentShader{ std::move(fragShader) },
-          _shaderName{ shaderName }
+          _shaderName{ Core::StringAtom::Intern(shaderName) }
     {
+    }
+
+    bool ShaderProgramMeta::operator==(const ShaderProgramMeta& other)
+    {
+        return _shaderName.compare(other._shaderName) == Core::Comparison::Equal ? true : false;
     }
 
     void ShaderProgramMeta::setShaderName(const Core::StringAtom& name)
@@ -60,8 +65,8 @@ namespace SW
         return shaderProgram;
     }
 
-    std::vector<ShaderVariable> ShaderProgramMeta::getShaderVariables(
-        ShaderVariableType variableType, ShaderType shaderType)
+    std::vector<ShaderVariable> ShaderProgramMeta::getShaderVariables(ShaderVariable variableType,
+                                                                      ShaderType shaderType)
     {
         if (shaderType == ShaderType::Vertex)
         {

@@ -32,7 +32,7 @@ class ShaderProgram;
 
 namespace SW
 {
-    class ShaderManager : public Core::StrictSingleton<ShaderManager>, public BaseLog
+    class ShaderManager final : public Core::StrictSingleton<ShaderManager>, public BaseLog
     {
     public:
         inline static const char* const defaultVertexFileExtension = ".vert";
@@ -40,29 +40,7 @@ namespace SW
 
         void loadShader(const std::filesystem::path& path);
 
-        void pushSuitableFileExtension(std::string ext, ShaderType type)
-        {
-            if (type == ShaderType::Fragment)
-            {
-                debugLog(
-                    "Was added mapping between Fragment shader & file content with extension '{}'."_f
-                    << ext);
-                _suitableFragExtensions.emplace(std::move(ext));
-            }
-            else if (type == ShaderType::Vertex)
-            {
-                debugLog(
-                    "Was added mapping between Vertex shader & file content with extension '{}'."_f
-                    << ext);
-                _suitableVertExtensions.emplace(std::move(ext));
-            }
-            else
-            {
-                errorLog(
-                    "Was passed incorrect shader type for mapping file extensions. Extension '{}' will be ignored"_f
-                    << ext);
-            }
-        }
+        void pushSuitableFileExtension(std::string ext, ShaderType type);
 
         [[nodiscard]] std::unordered_set<std::string>& getSuitableFragFileExtensions()
         {
@@ -75,7 +53,7 @@ namespace SW
 
         [[nodiscard]] ShaderProgram getShaderProgram(const Core::StringAtom& shaderName);
 
-        // [[nodiscard]] size_t countOfShaders() const;
+        [[nodiscard]] size_t countOfShaders() const { return _shaderMetas.size(); };
         // [[nodiscard]] size_t countOfValidShaders() const;
         // [[nodiscard]] size_t countOfFailedShaders() const;
 
@@ -89,7 +67,7 @@ namespace SW
             const std::unordered_set<std::string>& set, std::filesystem::path path) const;
 
     private:
-        std::unordered_set<ShaderProgramMeta, ShaderProgramMeta::Hasher> _shaderMetas;
+        std::unordered_map<Core::StringAtom, ShaderProgramMeta> _shaderMetas;
 
         std::unordered_set<std::string> _suitableFragExtensions = { defaultFragmentFileExtension };
         std::unordered_set<std::string> _suitableVertExtensions = { defaultVertexFileExtension };
