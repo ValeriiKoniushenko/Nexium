@@ -22,9 +22,13 @@
 
 #include "BaseSceneObject.h"
 
-#define GLM_FORCE_RADIANS
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/matrix_transform.hpp"
+
+#define GLM_ENABLE_EXPERIMENTAL
+#include "glm/gtx/string_cast.hpp"
+
+#include <iostream>
 
 namespace SW
 {
@@ -199,7 +203,7 @@ namespace SW
 
     glm::vec3 BaseSceneObject::getForwardVector() const noexcept
     {
-        auto r = glm::vec2(_rotation.x, _rotation.y);
+        const auto r = glm::vec2(glm::radians(_rotation.x), glm::radians(_rotation.y));
 
         // clang-format off
         return glm::normalize(glm::vec3{
@@ -212,8 +216,8 @@ namespace SW
 
     glm::vec3 BaseSceneObject::getUpVector() const noexcept
     {
-        auto r = glm::vec2(_rotation.x, _rotation.y);
-        r.x += -90.f;
+        auto r = glm::vec2(glm::radians(_rotation.x), glm::radians(_rotation.y));
+        r.x += glm::radians(-90.f);
 
         // clang-format off
         return glm::normalize(glm::vec3{
@@ -231,25 +235,30 @@ namespace SW
 
     void BaseSceneObject::recalculateMatrices() noexcept
     {
+        _cachedModelMatrix = glm::mat4(1.f);
+
+        _cachedModelMatrix = glm::translate(_cachedModelMatrix, _position);
+
+        _cachedModelMatrix
+            = glm::rotate(_cachedModelMatrix, glm::radians(_rotation.x), glm::vec3(1.f, 0.f, 0.f));
+        _cachedModelMatrix
+            = glm::rotate(_cachedModelMatrix, glm::radians(_rotation.y), glm::vec3(0.f, 1.f, 0.f));
+        _cachedModelMatrix
+            = glm::rotate(_cachedModelMatrix, glm::radians(_rotation.z), glm::vec3(0.f, 0.f, 1.f));
+        _cachedModelMatrix = glm::translate(_cachedModelMatrix, -_origin);
+
+        _cachedModelMatrix = glm::translate(_cachedModelMatrix, _origin);
+        _cachedModelMatrix = glm::scale(_cachedModelMatrix, _scale);
+        _cachedModelMatrix = glm::translate(_cachedModelMatrix, -_origin);
+
+        _areDirtyMatrices = false;
+    }
+
+    void BaseSceneObject::tryToRecalculateMatrices() noexcept
+    {
         if (_areDirtyMatrices)
         {
-            _cachedModelMatrix = glm::mat4(1.f);
-
-            _cachedModelMatrix = glm::translate(_cachedModelMatrix, _position);
-
-            _cachedModelMatrix = glm::rotate(_cachedModelMatrix, glm::radians(_rotation.x),
-                                             glm::vec3(1.f, 0.f, 0.f));
-            _cachedModelMatrix = glm::rotate(_cachedModelMatrix, glm::radians(_rotation.y),
-                                             glm::vec3(0.f, 1.f, 0.f));
-            _cachedModelMatrix = glm::rotate(_cachedModelMatrix, glm::radians(_rotation.z),
-                                             glm::vec3(0.f, 0.f, 1.f));
-            _cachedModelMatrix = glm::translate(_cachedModelMatrix, -_origin);
-
-            _cachedModelMatrix = glm::translate(_cachedModelMatrix, _origin);
-            _cachedModelMatrix = glm::scale(_cachedModelMatrix, _scale);
-            _cachedModelMatrix = glm::translate(_cachedModelMatrix, -_origin);
-
-            _areDirtyMatrices = false;
+            recalculateMatrices();
         }
     }
 

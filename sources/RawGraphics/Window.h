@@ -59,11 +59,13 @@ namespace SW
         void setCursorPosition(float x, float y);
         void setCursorPosition(glm::vec2 position);
 
+        [[nodiscard]] GLFWwindow* getRawWindow() noexcept { return _window; }
+
         /**
-         * @param first 'int' - is a Key
-         * @param second 'int' - is a Scancode
-         * @param third 'int' - is an Action
-         * @param fourth 'int' - is a Mod
+         * @param first 'int' - is a key
+         * @param second 'int' - is a scancode
+         * @param third 'int' - is an action: GLFW_PRESS, GLFW_RELEASE or GLFW_REPEAT
+         * @param fourth 'int' - is a mod
          */
         Core::Delegate<void(int, int, int, int)> onKeyPressed;
 

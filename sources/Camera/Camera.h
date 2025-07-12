@@ -53,6 +53,10 @@ namespace SW
         [[nodiscard]] glm::vec2 getSensitive() const noexcept { return _sensitive; }
 
     protected:
+        void recalculateCameraMatrices();
+        void tryToRecalculateCameraMatrices();
+
+    protected:
         glm::mat4 _cachedProjMatrix = glm::mat4(1.f);
         glm::mat4 _cachedCalculatedMatrix = glm::mat4(1.f);
         glm::vec2 _sensitive{ 3.f, 3.f };

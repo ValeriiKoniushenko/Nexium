@@ -21,6 +21,7 @@
 // SOFTWARE.
 
 #include "Camera/Camera.h"
+#include "InputDevices/Keyboard.h"
 #include "RawGraphics/GraphicsComponents.h"
 #include "RawGraphics/ShaderManager.h"
 #include "RawGraphics/ShaderProgramMeta.h"
@@ -28,9 +29,13 @@
 #include "assimp/Importer.hpp"
 #include "assimp/postprocess.h"
 #include "assimp/scene.h"
+
+#define GLM_ENABLE_EXPERIMENTAL
 #include "glm/gtc/type_ptr.hpp"
+#include "glm/gtx/string_cast.hpp"
 
 #include <iostream>
+#include <thread>
 
 int main()
 {
@@ -87,14 +92,45 @@ int main()
     SW::BaseCamera camera;
     camera.moveForward(-10);
 
-    window.onKeyPressed.subscribe(
-        [](int key, int, int, int)
-        {
-            int i = 123;
-        });
+    float speed = 10.f;
+    float rotateSpeed = 15.f;
 
+    std::chrono::time_point<std::chrono::system_clock> frameStart;
+    float timeDelta = 0.f;
     while (!window.shouldClose())
     {
+        frameStart = std::chrono::system_clock::now();
+        if (SW::Keyboard::isKeyPressed(GLFW_KEY_D))
+        {
+            camera.moveRight(speed * timeDelta);
+            std::cout << "Camera XYZ: " << glm::to_string(camera.getPosition()) << std::endl;
+        }
+        if (SW::Keyboard::isKeyPressed(GLFW_KEY_A))
+        {
+            camera.moveRight(-speed * timeDelta);
+            std::cout << "Camera XYZ: " << glm::to_string(camera.getPosition()) << std::endl;
+        }
+        if (SW::Keyboard::isKeyPressed(GLFW_KEY_W))
+        {
+            camera.moveUp(speed * timeDelta);
+            std::cout << "Camera XYZ: " << glm::to_string(camera.getPosition()) << std::endl;
+        }
+        if (SW::Keyboard::isKeyPressed(GLFW_KEY_S))
+        {
+            camera.moveUp(-speed * timeDelta);
+            std::cout << "Camera XYZ: " << glm::to_string(camera.getPosition()) << std::endl;
+        }
+        if (SW::Keyboard::isKeyPressed(GLFW_KEY_E))
+        {
+            std::cout << "Rotation: " << camera.getRotationY() << std::endl;
+            camera.rotateY(rotateSpeed * timeDelta);
+        }
+        if (SW::Keyboard::isKeyPressed(GLFW_KEY_Q))
+        {
+            std::cout << "Rotation: " << camera.getRotationY() << std::endl;
+            camera.rotateY(-rotateSpeed * timeDelta);
+        }
+
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
@@ -105,6 +141,12 @@ int main()
         window.swapBuffers();
         window.pollEvent();
         ++frames;
+
+        // using namespace std::chrono_literals;
+        // std::this_thread::sleep_for(10ms);
+
+        timeDelta
+            = std::chrono::duration<double>(std::chrono::system_clock::now() - frameStart).count();
     }
 
     const auto end = std::chrono::system_clock::now();

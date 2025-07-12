@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2019-2025 Valerii Koniushenko
+// Copyright (c) 2023 Valerii Koniushenko
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,6 +20,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#pragma once
+#include "Keyboard.h"
 
-#include "Core/Delegate.h"
+#include "RawGraphics/Window.h"
+
+namespace SW
+{
+
+    bool Keyboard::isKeyPressed(int key)
+    {
+        return glfwGetKey(SW::GetWindow().getRawWindow(), key) == GLFW_PRESS;
+    }
+
+    bool Keyboard::isKeyRepeated(int key)
+    {
+        return glfwGetKey(SW::GetWindow().getRawWindow(), key) == GLFW_REPEAT;
+    }
+
+    bool Keyboard::isKeyReleased(int key)
+    {
+        return glfwGetKey(SW::GetWindow().getRawWindow(), key) == GLFW_RELEASE;
+    }
+
+} // namespace SW

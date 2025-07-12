@@ -20,4 +20,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "InputAction.h"
+#pragma once
+
+namespace SW
+{
+
+    class Keyboard final
+    {
+    public:
+        Keyboard() = delete;
+
+        static bool isKeyPressed(int key);
+        static bool isKeyRepeated(int key);
+        static bool isKeyReleased(int key);
+    };
+
+} // namespace SW

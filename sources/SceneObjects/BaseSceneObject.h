@@ -22,7 +22,6 @@
 
 #pragma once
 
-#define GLM_FORCE_RADIANS
 #include "glm/glm.hpp"
 
 namespace SW
@@ -66,6 +65,7 @@ namespace SW
 
     protected:
         void recalculateMatrices() noexcept;
+        void tryToRecalculateMatrices() noexcept;
 
     protected:
         glm::mat4 _cachedModelMatrix = glm::mat4(1.f);
