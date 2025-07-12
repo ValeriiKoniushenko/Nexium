@@ -28,8 +28,6 @@
 
 #include <unordered_set>
 
-class ShaderProgram;
-
 namespace SW
 {
     class ShaderManager final : public Core::StrictSingleton<ShaderManager>, public BaseLog

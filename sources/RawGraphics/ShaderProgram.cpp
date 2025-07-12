@@ -38,13 +38,9 @@ namespace SW
         return *this;
     }
 
-    void ShaderProgram::create(const Core::StringAtom& shaderName)
+    void ShaderProgram::setName(const Core::StringAtom& name)
     {
-        clearOnlyShaderProgram();
-
-        debugLog("Creating of the shader program '{}' is started."_f << shaderName);
-
-        _name = shaderName;
+        _name = name;
 
         if (!_name.isStatic())
         {
@@ -55,6 +51,15 @@ namespace SW
                 << _name);
 #endif
         }
+    }
+
+    void ShaderProgram::create(const Core::StringAtom& shaderName)
+    {
+        clearOnlyShaderProgram();
+
+        debugLog("Creating of the shader program '{}' is started."_f << shaderName);
+
+        setName(shaderName);
 
         if (_vertexShader.isEmpty())
         {
@@ -91,7 +96,7 @@ namespace SW
             criticalThrowingLog("Shader program compilation error: "_f << infoLog);
         }
 
-        debugLog("Finished: creating of the shader program '{}'"_f << shaderName);
+        infoLog("Finished: creating of the shader program '{}'"_f << shaderName);
     }
 
     void ShaderProgram::clear()

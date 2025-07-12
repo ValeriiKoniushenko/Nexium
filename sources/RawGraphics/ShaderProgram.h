@@ -36,9 +36,9 @@ namespace SW
         ShaderProgram(ShaderProgram&& other) noexcept { *this = std::move(other); }
         ShaderProgram& operator=(ShaderProgram&& other) noexcept;
 
-        // only r-reference
         void setShader(FragmentShader&& shader) { _fragmentShader = std::move(shader); }
         void setShader(VertexShader&& shader) { _vertexShader = std::move(shader); }
+        void setName(const Core::StringAtom& name);
 
         [[nodiscard]] const FragmentShader& getFragmentShader() const noexcept
         {
