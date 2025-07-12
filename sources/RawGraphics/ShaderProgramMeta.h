@@ -84,6 +84,9 @@ namespace SW
         [[nodiscard]] Core::StringAtom getShaderName() const { return _shaderName; }
 
     private:
+        void checkShaderCompileStatus(GLuint shaderId, const std::string& shaderType);
+
+    private:
         GLuint _vertexShaderId = {};
         GLuint _fragmentShaderId = {};
         Core::StringAtom _shaderName;

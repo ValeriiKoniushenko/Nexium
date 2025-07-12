@@ -68,17 +68,8 @@ namespace SW
 
     void ShaderProgramMeta::requireNoCompileErrors()
     {
-        // constexpr auto size = 512;
-        // int success = 0;
-        // char infoLog[size];
-        // glGetShaderiv(_data, GL_COMPILE_STATUS, &success);
-        // if (!success)
-        // {
-        //     glGetShaderInfoLog(_data, size, nullptr, infoLog);
-        //     std::string msg = "Shader compilation error: ";
-        //     msg += infoLog;
-        //     throw std::runtime_error(msg);
-        // }
+        checkShaderCompileStatus(_vertexShaderId, "Vertex");
+        checkShaderCompileStatus(_fragmentShaderId, "Fragment");
     }
 
     void ShaderProgramMeta::generateShaderId()
@@ -138,6 +129,22 @@ namespace SW
         shaderProgram.create(_shaderName);
 
         return shaderProgram;
+    }
+
+    void ShaderProgramMeta::checkShaderCompileStatus(GLuint shaderId, const std::string& shaderType)
+    {
+        constexpr GLsizei logSize = 512;
+        GLint success = 0;
+        char infoLog[logSize];
+
+        glGetShaderiv(shaderId, GL_COMPILE_STATUS, &success);
+        if (!success)
+        {
+            glGetShaderInfoLog(shaderId, logSize, nullptr, infoLog);
+            std::string msg = shaderType + " shader compilation error: ";
+            msg += infoLog;
+            throw std::runtime_error(msg);
+        }
     }
 
 } // namespace SW
