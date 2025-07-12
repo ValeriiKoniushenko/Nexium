@@ -50,11 +50,13 @@ int main()
 
     auto& window = SW::GetWindow();
     window.create("Sprite Walker", { 600, 600 });
+    // SW::ShaderProgram shader;
+    //  shader.setShader(SW::FragmentShader("assets/shaders/color.frag"));
+    //  shader.setShader(SW::VertexShader("assets/shaders/color.vert"));
+    //  shader.create("color"_atom);
 
-    SW::ShaderProgram shader;
-    shader.setShader(SW::FragmentShader("assets/shaders/color.frag"));
-    shader.setShader(SW::VertexShader("assets/shaders/color.vert"));
-    shader.create("color"_atom);
+    SW::ShaderManager::instance().loadShader("assets/shaders");
+    SW::ShaderProgram shader = SW::ShaderManager::instance().getShaderProgram("color");
 
     std::vector<float> vertices = {
         0.5f,  0.5f,  0.0f, // top right

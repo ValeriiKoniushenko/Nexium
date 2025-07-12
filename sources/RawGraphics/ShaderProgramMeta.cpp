@@ -22,7 +22,7 @@
 
 #include "ShaderProgramMeta.h"
 
-#include "Shader.h"
+#include "Utils/Functions.h"
 
 namespace SW
 {
@@ -32,17 +32,92 @@ namespace SW
         return self._shaderName.makeHash();
     }
 
-    ShaderProgramMeta::ShaderProgramMeta(VertexShader&& vertShader, FragmentShader&& fragShader,
-                                         const Core::StringAtom& shaderName)
-        : _vertexShader{ std::move(vertShader) },
-          _fragmentShader{ std::move(fragShader) },
-          _shaderName{ Core::StringAtom::Intern(shaderName) }
-    {
-    }
-
     bool ShaderProgramMeta::operator==(const ShaderProgramMeta& other)
     {
         return _shaderName == other._shaderName;
+    }
+
+    void ShaderProgramMeta::create(const std::filesystem::path& vertexShaderPath,
+                                   const std::filesystem::path& fragmentShaderPath)
+    {
+        generateShaderId();
+        readSourceShaderFile(vertexShaderPath, fragmentShaderPath);
+        compileShader();
+    }
+
+    void ShaderProgramMeta::clearShaderId()
+    {
+        if (_vertexShaderId != 0)
+        {
+            glDeleteShader(_vertexShaderId);
+            _vertexShaderId = 0;
+        }
+        if (_fragmentShaderId != 0)
+        {
+            glDeleteShader(_fragmentShaderId);
+            _fragmentShaderId = 0;
+        }
+    }
+
+    void ShaderProgramMeta::compileShader()
+    {
+        glCompileShader(_vertexShaderId);
+        glCompileShader(_fragmentShaderId);
+        requireNoCompileErrors();
+    }
+
+    void ShaderProgramMeta::requireNoCompileErrors()
+    {
+        // constexpr auto size = 512;
+        // int success = 0;
+        // char infoLog[size];
+        // glGetShaderiv(_data, GL_COMPILE_STATUS, &success);
+        // if (!success)
+        // {
+        //     glGetShaderInfoLog(_data, size, nullptr, infoLog);
+        //     std::string msg = "Shader compilation error: ";
+        //     msg += infoLog;
+        //     throw std::runtime_error(msg);
+        // }
+    }
+
+    void ShaderProgramMeta::generateShaderId()
+    {
+        clearShaderId();
+
+        _vertexShaderId = glCreateShader(static_cast<GLenum>(ShaderType::Vertex));
+        if (_vertexShaderId == 0)
+        {
+            throw std::runtime_error("Can't create gl vertex shader.");
+        }
+
+        _fragmentShaderId = glCreateShader(static_cast<GLenum>(ShaderType::Fragment));
+        if (_fragmentShaderId == 0)
+        {
+            throw std::runtime_error("Can't create gl fragment shader.");
+        }
+    }
+
+    void ShaderProgramMeta::readSourceShaderFile(const std::filesystem::path& vertexShaderPath,
+                                                 const std::filesystem::path& fragmentShaderPath)
+    {
+        // VERTEX SHADER
+        const auto vertexSources = Utils::GetTextFileContentAs<std::string>(vertexShaderPath);
+        if (vertexSources.empty())
+        {
+            return;
+        }
+        const auto* vertexRaw = vertexSources.data();
+        glShaderSource(_vertexShaderId, 1, &vertexRaw, nullptr);
+
+        // FRAGMENT SAHDER
+        const auto fragmentSources = Utils::GetTextFileContentAs<std::string>(fragmentShaderPath);
+        if (fragmentSources.empty())
+        {
+            return;
+        }
+        const auto* fragmentRaw = fragmentSources.data();
+        glShaderSource(_fragmentShaderId, 1, &fragmentRaw, nullptr);
     }
 
     void ShaderProgramMeta::setShaderName(const Core::StringAtom& name)
@@ -58,31 +133,11 @@ namespace SW
     ShaderProgram ShaderProgramMeta::generateShaderProgram()
     {
         ShaderProgram shaderProgram;
-        shaderProgram.setShader(std::move(_vertexShader));
-        shaderProgram.setShader(std::move(_fragmentShader));
+        shaderProgram.setVertexShaderId(_vertexShaderId);
+        shaderProgram.setFragmentShaderId(_fragmentShaderId);
         shaderProgram.create(_shaderName);
 
         return shaderProgram;
-    }
-
-    std::vector<ShaderVariable> ShaderProgramMeta::getShaderVariables(ShaderVariable variableType,
-                                                                      ShaderType shaderType)
-    {
-        if (shaderType == ShaderType::Vertex)
-        {
-            _vertexShader;
-            return {};
-        }
-        if (shaderType == ShaderType::Fragment)
-        {
-            _fragmentShader;
-            return {};
-        }
-        if (shaderType == ShaderType::Geometry)
-        {
-            return {};
-        }
-        return {};
     }
 
 } // namespace SW

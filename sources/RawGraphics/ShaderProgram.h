@@ -23,7 +23,11 @@
 #pragma once
 
 #include "ModuleInfo.h"
-#include "Shader.h"
+
+// clang-format off
+#include "glad/glad.h"
+#include "GLFW/glfw3.h"
+// clang-format on
 
 namespace SW
 {
@@ -36,18 +40,15 @@ namespace SW
         ShaderProgram(ShaderProgram&& other) noexcept { *this = std::move(other); }
         ShaderProgram& operator=(ShaderProgram&& other) noexcept;
 
-        void setShader(FragmentShader&& shader) { _fragmentShader = std::move(shader); }
-        void setShader(VertexShader&& shader) { _vertexShader = std::move(shader); }
+        void setVertexShaderId(GLuint shader) { _vertexShaderId = shader; }
+        void setFragmentShaderId(GLuint shader) { _fragmentShaderId = shader; }
         void setName(const Core::StringAtom& name);
 
-        [[nodiscard]] const FragmentShader& getFragmentShader() const noexcept
-        {
-            return _fragmentShader;
-        }
-        [[nodiscard]] const VertexShader& getVertexShader() const noexcept { return _vertexShader; }
+        [[nodiscard]] const GLuint getFragmentShader() const noexcept { return _fragmentShaderId; }
+        [[nodiscard]] const GLuint getVertexShader() const noexcept { return _vertexShaderId; }
 
-        [[nodiscard]] FragmentShader& getFragmentShader() noexcept { return _fragmentShader; }
-        [[nodiscard]] VertexShader& getVertexShader() noexcept { return _vertexShader; }
+        [[nodiscard]] GLuint getFragmentShader() noexcept { return _fragmentShaderId; }
+        [[nodiscard]] GLuint getVertexShader() noexcept { return _vertexShaderId; }
 
         [[nodiscard]] spdlog::logger* getLogger() const override
         {
@@ -56,9 +57,9 @@ namespace SW
 
         [[nodiscard]] const char* getPrefix() const override { return "ShaderProgram"; }
 
-        [[nodiscard]] bool isEmpty() const noexcept { return _data == 0; }
+        [[nodiscard]] bool isEmpty() const noexcept { return _shaderProgramId == 0; }
 
-        [[nodiscard]] GLuint getShaderProgramId() const noexcept { return _data; }
+        [[nodiscard]] GLuint getShaderProgramId() const noexcept { return _shaderProgramId; }
 
         void create(const Core::StringAtom& shaderName);
         void clear();
@@ -69,7 +70,7 @@ namespace SW
             {
                 criticalThrowingLog("Impossible to use not-created shader program.");
             }
-            glUseProgram(_data);
+            glUseProgram(_shaderProgramId);
         }
 #else
         void use() const noexcept { glUseProgram(_data); }
@@ -79,11 +80,11 @@ namespace SW
         void clearOnlyShaderProgram();
 
     protected:
-        FragmentShader _fragmentShader;
-        VertexShader _vertexShader;
-
         Core::StringAtom _name;
-        GLuint _data = 0;
+
+        GLuint _vertexShaderId;
+        GLuint _fragmentShaderId;
+        GLuint _shaderProgramId = 0;
     };
 
 } // namespace SW

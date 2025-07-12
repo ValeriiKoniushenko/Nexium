@@ -29,11 +29,11 @@ namespace SW
     {
         if (this != &other)
         {
-            _fragmentShader = std::move(other._fragmentShader);
-            _vertexShader = std::move(other._vertexShader);
+            _fragmentShaderId = std::move(other._fragmentShaderId);
+            _vertexShaderId = std::move(other._vertexShaderId);
             _name = std::move(other._name);
-            _data = other._data;
-            other._data = 0;
+            _shaderProgramId = other._shaderProgramId;
+            other._shaderProgramId = 0;
         }
         return *this;
     }
@@ -61,38 +61,41 @@ namespace SW
 
         setName(shaderName);
 
-        if (_vertexShader.isEmpty())
+        if (_vertexShaderId == 0)
         {
             criticalThrowingLog("Vertex shader is empty. Impossible to create the shader program."_f
                                 << shaderName);
         }
-        if (_fragmentShader.isEmpty())
+        if (_fragmentShaderId == 0)
         {
             criticalThrowingLog(
                 "Fragment shader is empty. Impossible to create the shader program."_f
                 << shaderName);
         }
 
-        _data = glCreateProgram();
-        if (_data == 0)
+        _shaderProgramId = glCreateProgram();
+        if (_shaderProgramId == 0)
         {
             criticalThrowingLog("glCreateProgram to create a shader program was failed for '{}'"_f
                                 << shaderName);
         }
 
-        glAttachShader(_data, _vertexShader.data());
-        glAttachShader(_data, _fragmentShader.data());
-        glLinkProgram(_data);
+        glAttachShader(_shaderProgramId, _vertexShaderId);
+        glAttachShader(_shaderProgramId, _fragmentShaderId);
+        glLinkProgram(_shaderProgramId);
+
+        glDeleteShader(_vertexShaderId);
+        glDeleteShader(_fragmentShaderId);
 
         int success = 0;
-        glGetProgramiv(_data, GL_LINK_STATUS, &success);
+        glGetProgramiv(_shaderProgramId, GL_LINK_STATUS, &success);
         if (!success)
         {
             clear();
 
             constexpr auto size = 512;
             char infoLog[size];
-            glGetProgramInfoLog(_data, 512, nullptr, infoLog);
+            glGetProgramInfoLog(_shaderProgramId, 512, nullptr, infoLog);
             criticalThrowingLog("Shader program compilation error: "_f << infoLog);
         }
 
@@ -103,16 +106,16 @@ namespace SW
     {
         clearOnlyShaderProgram();
         _name.clear();
-        _vertexShader.clear();
-        _fragmentShader.clear();
+        _vertexShaderId = 0;
+        _fragmentShaderId = 0;
     }
 
     void ShaderProgram::clearOnlyShaderProgram()
     {
-        if (_data != 0)
+        if (_shaderProgramId != 0)
         {
-            glDeleteProgram(_data);
-            _data = 0;
+            glDeleteProgram(_shaderProgramId);
+            _shaderProgramId = 0;
         }
     }
 
