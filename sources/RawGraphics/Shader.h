@@ -50,7 +50,11 @@ namespace SW
         Shader() = default;
         ~Shader() = default;
 
-        explicit Shader(const std::filesystem::path& path) { createFromFile(path); }
+        [[deprecated("Use shader manager instaed")]] explicit Shader(
+            const std::filesystem::path& path)
+        {
+            createFromFile(path);
+        }
 
         Shader(Shader&& other) noexcept { *this = std::move(other); }
         Shader& operator=(Shader&& other) noexcept
@@ -73,7 +77,8 @@ namespace SW
             }
         }
 
-        void createFromFile(const std::filesystem::path& path)
+        [[deprecated("Use shader manager instaed")]] void createFromFile(
+            const std::filesystem::path& path)
         {
             create();
             putSourcesFromFile(path);
@@ -81,7 +86,8 @@ namespace SW
         }
 
     private:
-        void putSourcesFromFile(const std::filesystem::path& path)
+        [[deprecated("Use shader manager instaed")]] void putSourcesFromFile(
+            const std::filesystem::path& path)
         {
             const auto sources = Utils::GetTextFileContentAs<std::string>(path);
             if (sources.empty())
@@ -92,7 +98,7 @@ namespace SW
             glShaderSource(_data, 1, &raw, nullptr);
         }
 
-        void create()
+        [[deprecated("Use shader manager instaed")]] void create()
         {
             clear();
 
@@ -104,7 +110,7 @@ namespace SW
             }
         }
 
-        void validate()
+        [[deprecated("Use shader manager instaed")]] void validate()
         {
             if (isEmpty())
             {
@@ -112,13 +118,13 @@ namespace SW
             }
         }
 
-        void compile()
+        [[deprecated("Use shader manager instaed")]] void compile()
         {
             glCompileShader(_data);
             requireNoCompileErrors();
         }
 
-        void requireNoCompileErrors()
+        [[deprecated("Use shader manager instaed")]] void requireNoCompileErrors()
         {
             constexpr auto size = 512;
             int success = 0;
@@ -135,6 +141,9 @@ namespace SW
 
     private:
         GLuint _data = 0;
+        // std::unordered_set<Uniform> _uniforms;
+        // std::unordered_set<Input> _inputs;
+        // std::unordered_set<Output> _outputs;
     };
 
     using FragmentShader = Shader<ShaderType::Fragment>;

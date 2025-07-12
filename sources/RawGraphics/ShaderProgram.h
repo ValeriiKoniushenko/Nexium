@@ -81,6 +81,7 @@ namespace SW
     protected:
         FragmentShader _fragmentShader;
         VertexShader _vertexShader;
+
         Core::StringAtom _name;
         GLuint _data = 0;
     };
