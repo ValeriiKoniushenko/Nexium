@@ -62,7 +62,7 @@ int main()
 
     auto& sm = SW::ShaderManager::instance();
     sm.loadShader("assets/shaders");
-    auto* shader = sm.getShaderProgram("color");
+    auto* shader = sm.getShaderProgram("color"_atom);
     Assert(shader);
 
     std::vector<float> vertices = {

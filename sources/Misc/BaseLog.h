@@ -60,7 +60,7 @@ namespace SW
 
         void criticalLog(const char* str) const
         {
-            getPrefix() ? getLogger()->critical("{}: {}", getPrefix(), str)
+            getPrefix() ? getLogger()->critical("{} | {}", getPrefix(), str)
                         : getLogger()->critical("{}", str);
         }
 
@@ -72,7 +72,7 @@ namespace SW
 
         void errorLog(const char* str) const
         {
-            getPrefix() ? getLogger()->error("{}: {}", getPrefix(), str)
+            getPrefix() ? getLogger()->error("{} | {}", getPrefix(), str)
                         : getLogger()->error("{}", str);
         }
 
@@ -84,7 +84,7 @@ namespace SW
 
         void debugLog(const char* str) const
         {
-            getPrefix() ? getLogger()->debug("{}: {}", getPrefix(), str)
+            getPrefix() ? getLogger()->debug("{} | {}", getPrefix(), str)
                         : getLogger()->debug("{}", str);
         }
 

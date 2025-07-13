@@ -31,6 +31,8 @@ namespace SW
         _validShaders = 0;
         _failedShaders = 0;
 
+        std::unordered_set<std::string> processedShaders;
+
         for (const auto& entry : std::filesystem::recursive_directory_iterator(inputPath))
         {
             if (!entry.is_regular_file())
@@ -62,20 +64,29 @@ namespace SW
                                   .replace_extension("")
                                   .generic_string();
 
+            if (processedShaders.contains(name))
+            {
+                continue;
+            }
+
             infoLog("Was found shader: {}"_f << name);
 
             try
             {
+                processedShaders.emplace(name);
+
                 ShaderProgramMeta meta;
                 meta.setShaderName(name);
                 meta.create(vertShaderFile, fragShaderFile);
 
                 _shaderMetas[meta.getShaderName()] = std::move(meta);
+                ++_validShaders;
             }
             catch (std::exception exception)
             {
                 errorLog("Impossible to set up the shader '{}'. Details: {}"_f << name
                                                                                << exception.what());
+                ++_failedShaders;
             }
         }
     }
@@ -105,7 +116,7 @@ namespace SW
 
     ShaderProgram* ShaderManager::getShaderProgram(const Core::StringAtom& shaderName)
     {
-        // Assert(shaderName.isStatic());
+        Assert(shaderName.isStatic());
 
         if (const auto it = _shaderMetas.find(shaderName); it != _shaderMetas.cend())
         {

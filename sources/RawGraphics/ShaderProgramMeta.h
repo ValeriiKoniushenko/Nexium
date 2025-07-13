@@ -69,21 +69,14 @@ namespace SW
         void create(const std::filesystem::path& vertexShaderPath,
                     const std::filesystem::path& fragmentShaderPath);
 
-        void compileShader();
-        void requireNoCompileErrors();
-
-        void generateShaderId();
-        void readSourceShaderFile(const std::filesystem::path& vertexShaderPath,
-                                  const std::filesystem::path& fragmentShaderPath);
-
-        void setShaderName(const std::string& name);
-        void setShaderName(const Core::StringAtom& name);
-
         [[nodiscard]] ShaderProgram& getShaderProgram() noexcept { return _shaderProgram; }
         [[nodiscard]] const ShaderProgram& getShaderProgram() const noexcept
         {
             return _shaderProgram;
         }
+
+        void setShaderName(const std::string& name);
+        void setShaderName(const Core::StringAtom& name);
         [[nodiscard]] Core::StringAtom getShaderName() const { return _shaderName; }
 
         [[nodiscard]] spdlog::logger* getLogger() const override
@@ -94,13 +87,17 @@ namespace SW
         [[nodiscard]] const char* getPrefix() const override { return "ShaderProgramMeta"; }
 
     private:
+        void compileShader();
+        void requireNoCompileErrors();
+
+        void generateShaderId();
+        void readSourceShaderFile(const std::filesystem::path& vertexShaderPath,
+                                  const std::filesystem::path& fragmentShaderPath);
+
         void checkShaderCompileStatus(GLuint shaderId, const std::string& shaderType);
 
     private:
         ShaderProgram _shaderProgram;
         Core::StringAtom _shaderName;
-
-        // VertexShader _vertexShader;
-        // FragmentShader _fragmentShader;
     };
 } // namespace SW
