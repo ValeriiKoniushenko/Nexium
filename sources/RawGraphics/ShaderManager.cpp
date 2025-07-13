@@ -103,14 +103,16 @@ namespace SW
         }
     }
 
-    ShaderProgram ShaderManager::getShaderProgram(const Core::StringAtom& shaderName)
+    ShaderProgram* ShaderManager::getShaderProgram(const Core::StringAtom& shaderName)
     {
-        const auto it = _shaderMetas.find(shaderName);
-        if (it != _shaderMetas.cend())
+        // Assert(shaderName.isStatic());
+
+        if (const auto it = _shaderMetas.find(shaderName); it != _shaderMetas.cend())
         {
-            return it->second.generateShaderProgram();
+            return &it->second.getShaderProgram();
         }
-        return {};
+
+        return nullptr;
     }
 
     std::filesystem::path ShaderManager::getPathToShaderBasedOn(

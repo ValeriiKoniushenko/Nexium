@@ -60,8 +60,10 @@ int main()
     //  shader.setShader(SW::VertexShader("assets/shaders/color.vert"));
     //  shader.create("color"_atom);
 
-    SW::ShaderManager::instance().loadShader("assets/shaders");
-    SW::ShaderProgram shader = SW::ShaderManager::instance().getShaderProgram("color");
+    auto& sm = SW::ShaderManager::instance();
+    sm.loadShader("assets/shaders");
+    auto* shader = sm.getShaderProgram("color");
+    Assert(shader);
 
     std::vector<float> vertices = {
         0.5f,  0.5f,  0.0f, // top right
@@ -85,8 +87,8 @@ int main()
 
     glm::mat4 model = glm::mat4(1.0f);
 
-    const auto uProjAndView = glGetUniformLocation(shader.getShaderProgramId(), "uProjAndView");
-    const auto uModel = glGetUniformLocation(shader.getShaderProgramId(), "uModel");
+    const auto uProjAndView = glGetUniformLocation(shader->getShaderProgramId(), "uProjAndView");
+    const auto uModel = glGetUniformLocation(shader->getShaderProgramId(), "uModel");
 
     int frames = 0;
     const auto start = std::chrono::system_clock::now();

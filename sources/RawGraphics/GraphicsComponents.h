@@ -41,7 +41,8 @@ namespace SW
 
         void setVertexBuffer(const std::vector<float>& data, GLenum usage = GL_STATIC_DRAW);
         void setIndexBuffer(const std::vector<GLuint>& data, GLenum usage = GL_STATIC_DRAW);
-        void setShaderProgram(const ShaderProgram& sp);
+        void setShaderProgram(ShaderProgram* sp) noexcept;
+
         void clear();
         [[nodiscard]] bool isValid() const noexcept
         {
@@ -53,13 +54,13 @@ namespace SW
         [[nodiscard]] GLuint getVboId() noexcept { return _vbo; }
         [[nodiscard]] GLuint getEboId() noexcept { return _ebo; }
         [[nodiscard]] GLuint getVaoId() noexcept { return _vao; }
-        [[nodiscard]] GLuint getShaderId() noexcept { return _shader; }
+        [[nodiscard]] ShaderProgram* getShaderId() noexcept { return _shader; }
 
     private:
+        ShaderProgram* _shader;
         GLuint _vbo = 0;
         GLuint _ebo = 0;
         GLuint _vao = 0;
-        GLuint _shader = 0;
     };
 
 } // namespace SW

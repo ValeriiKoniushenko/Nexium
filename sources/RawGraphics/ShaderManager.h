@@ -49,7 +49,7 @@ namespace SW
             return _suitableVertExtensions;
         }
 
-        [[nodiscard]] ShaderProgram getShaderProgram(const Core::StringAtom& shaderName);
+        [[nodiscard]] ShaderProgram* getShaderProgram(const Core::StringAtom& shaderName);
 
         [[nodiscard]] size_t countOfShaders() const { return _shaderMetas.size(); };
         // [[nodiscard]] size_t countOfValidShaders() const;
@@ -59,6 +59,7 @@ namespace SW
         {
             return SW::RawGraphics::getLogger();
         }
+        [[nodiscard]] const char* getPrefix() const override { return "ShaderManager"; }
 
     private:
         [[nodiscard]] std::filesystem::path getPathToShaderBasedOn(

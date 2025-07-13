@@ -58,9 +58,9 @@ namespace SW
         }
     }
 
-    void GraphicsComponentData::setShaderProgram(const ShaderProgram& sp)
+    void GraphicsComponentData::setShaderProgram(ShaderProgram* sp) noexcept
     {
-        _shader = sp.getShaderProgramId();
+        _shader = sp;
     }
 
     void GraphicsComponentData::clear()
@@ -79,7 +79,7 @@ namespace SW
             return;
         }
 
-        glUseProgram(_shader);
+        glUseProgram(_shader->getShaderProgramId());
         glBindVertexArray(_vao);
 
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

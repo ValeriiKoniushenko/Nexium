@@ -43,50 +43,39 @@ namespace SW
         generateShaderId();
         readSourceShaderFile(vertexShaderPath, fragmentShaderPath);
         compileShader();
-    }
-
-    void ShaderProgramMeta::clearShaderId()
-    {
-        if (_vertexShaderId != 0)
-        {
-            glDeleteShader(_vertexShaderId);
-            _vertexShaderId = 0;
-        }
-        if (_fragmentShaderId != 0)
-        {
-            glDeleteShader(_fragmentShaderId);
-            _fragmentShaderId = 0;
-        }
+        _shaderProgram.create(_shaderName);
     }
 
     void ShaderProgramMeta::compileShader()
     {
-        glCompileShader(_vertexShaderId);
-        glCompileShader(_fragmentShaderId);
+        glCompileShader(_shaderProgram.getVertexShader());
+        glCompileShader(_shaderProgram.getFragmentShader());
         requireNoCompileErrors();
     }
 
     void ShaderProgramMeta::requireNoCompileErrors()
     {
-        checkShaderCompileStatus(_vertexShaderId, "Vertex");
-        checkShaderCompileStatus(_fragmentShaderId, "Fragment");
+        checkShaderCompileStatus(_shaderProgram.getVertexShader(), "Vertex");
+        checkShaderCompileStatus(_shaderProgram.getFragmentShader(), "Fragment");
     }
 
     void ShaderProgramMeta::generateShaderId()
     {
-        clearShaderId();
+        _shaderProgram.clear();
 
-        _vertexShaderId = glCreateShader(static_cast<GLenum>(ShaderType::Vertex));
-        if (_vertexShaderId == 0)
+        auto vertexShaderId = glCreateShader(static_cast<GLenum>(ShaderType::Vertex));
+        if (vertexShaderId == 0)
         {
-            throw std::runtime_error("Can't create gl vertex shader.");
+            criticalThrowingLog("Can't create gl vertex shader.");
         }
+        _shaderProgram.setVertexShaderId(vertexShaderId);
 
-        _fragmentShaderId = glCreateShader(static_cast<GLenum>(ShaderType::Fragment));
-        if (_fragmentShaderId == 0)
+        auto fragmentShaderId = glCreateShader(static_cast<GLenum>(ShaderType::Fragment));
+        if (fragmentShaderId == 0)
         {
-            throw std::runtime_error("Can't create gl fragment shader.");
+            criticalThrowingLog("Can't create gl fragment shader.");
         }
+        _shaderProgram.setFragmentShaderId(fragmentShaderId);
     }
 
     void ShaderProgramMeta::readSourceShaderFile(const std::filesystem::path& vertexShaderPath,
@@ -99,7 +88,7 @@ namespace SW
             return;
         }
         const auto* vertexRaw = vertexSources.data();
-        glShaderSource(_vertexShaderId, 1, &vertexRaw, nullptr);
+        glShaderSource(_shaderProgram.getVertexShader(), 1, &vertexRaw, nullptr);
 
         // FRAGMENT SAHDER
         const auto fragmentSources = Utils::GetTextFileContentAs<std::string>(fragmentShaderPath);
@@ -108,7 +97,7 @@ namespace SW
             return;
         }
         const auto* fragmentRaw = fragmentSources.data();
-        glShaderSource(_fragmentShaderId, 1, &fragmentRaw, nullptr);
+        glShaderSource(_shaderProgram.getFragmentShader(), 1, &fragmentRaw, nullptr);
     }
 
     void ShaderProgramMeta::setShaderName(const Core::StringAtom& name)
@@ -119,16 +108,6 @@ namespace SW
     void ShaderProgramMeta::setShaderName(const std::string& name)
     {
         _shaderName = Core::StringAtom::Intern(name);
-    }
-
-    ShaderProgram ShaderProgramMeta::generateShaderProgram()
-    {
-        ShaderProgram shaderProgram;
-        shaderProgram.setVertexShaderId(_vertexShaderId);
-        shaderProgram.setFragmentShaderId(_fragmentShaderId);
-        shaderProgram.create(_shaderName);
-
-        return shaderProgram;
     }
 
     void ShaderProgramMeta::checkShaderCompileStatus(GLuint shaderId, const std::string& shaderType)

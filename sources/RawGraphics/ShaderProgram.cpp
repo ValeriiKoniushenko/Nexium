@@ -27,12 +27,15 @@ namespace SW
 
     ShaderProgram& ShaderProgram::operator=(ShaderProgram&& other) noexcept
     {
-        if (this != &other)
+        if (this != &other) [[likely]]
         {
-            _fragmentShaderId = std::move(other._fragmentShaderId);
-            _vertexShaderId = std::move(other._vertexShaderId);
+            _fragmentShaderId = other._fragmentShaderId;
+            _vertexShaderId = other._vertexShaderId;
             _name = std::move(other._name);
             _shaderProgramId = other._shaderProgramId;
+
+            other._fragmentShaderId = 0;
+            other._vertexShaderId = 0;
             other._shaderProgramId = 0;
         }
         return *this;

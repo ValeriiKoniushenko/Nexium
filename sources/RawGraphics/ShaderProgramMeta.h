@@ -53,7 +53,7 @@ namespace SW
         GLint location;
     };
 
-    class ShaderProgramMeta final
+    class ShaderProgramMeta final : public BaseLog
     {
     public:
         struct Hasher
@@ -72,7 +72,6 @@ namespace SW
         void compileShader();
         void requireNoCompileErrors();
 
-        void clearShaderId();
         void generateShaderId();
         void readSourceShaderFile(const std::filesystem::path& vertexShaderPath,
                                   const std::filesystem::path& fragmentShaderPath);
@@ -80,15 +79,25 @@ namespace SW
         void setShaderName(const std::string& name);
         void setShaderName(const Core::StringAtom& name);
 
-        [[nodiscard]] ShaderProgram generateShaderProgram();
+        [[nodiscard]] ShaderProgram& getShaderProgram() noexcept { return _shaderProgram; }
+        [[nodiscard]] const ShaderProgram& getShaderProgram() const noexcept
+        {
+            return _shaderProgram;
+        }
         [[nodiscard]] Core::StringAtom getShaderName() const { return _shaderName; }
+
+        [[nodiscard]] spdlog::logger* getLogger() const override
+        {
+            return RawGraphics::getLogger();
+        }
+
+        [[nodiscard]] const char* getPrefix() const override { return "ShaderProgramMeta"; }
 
     private:
         void checkShaderCompileStatus(GLuint shaderId, const std::string& shaderType);
 
     private:
-        GLuint _vertexShaderId = {};
-        GLuint _fragmentShaderId = {};
+        ShaderProgram _shaderProgram;
         Core::StringAtom _shaderName;
 
         // VertexShader _vertexShader;
