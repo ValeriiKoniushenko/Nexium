@@ -68,8 +68,7 @@ namespace SW
             {
                 ShaderProgramMeta meta;
                 meta.setShaderName(name);
-                meta.setShader(VertexShader(vertShaderFile));
-                meta.setShader(FragmentShader(fragShaderFile));
+                meta.create(vertShaderFile, fragShaderFile);
 
                 _shaderMetas[meta.getShaderName()] = std::move(meta);
             }

@@ -27,6 +27,17 @@
 
 namespace SW
 {
+
+    // clang-format off
+    enum class ShaderType : GLenum
+    {
+        None = 0,
+        Fragment = GL_FRAGMENT_SHADER,
+        Vertex = GL_VERTEX_SHADER,
+        Geometry = GL_GEOMETRY_SHADER
+    };
+    // clang-format on
+
     enum class ShaderStorageQualifierType
     {
         Input,
@@ -52,29 +63,35 @@ namespace SW
 
     public:
         ShaderProgramMeta() = default;
-        ShaderProgramMeta(VertexShader&& vertShader, FragmentShader&& fragShader,
-                          const Core::StringAtom& shaderName);
 
         [[nodiscard]] bool operator==(const ShaderProgramMeta& other);
 
+        void create(const std::filesystem::path& vertexShaderPath,
+                    const std::filesystem::path& fragmentShaderPath);
+
+        void compileShader();
+        void requireNoCompileErrors();
+
+        void clearShaderId();
+        void generateShaderId();
+        void readSourceShaderFile(const std::filesystem::path& vertexShaderPath,
+                                  const std::filesystem::path& fragmentShaderPath);
+
         void setShaderName(const std::string& name);
         void setShaderName(const Core::StringAtom& name);
-        void setShader(VertexShader&& shader) { _vertexShader = std::move(shader); }
-        void setShader(FragmentShader&& shader) { _fragmentShader = std::move(shader); }
-
-        void loadShaderFromPath(const std::filesystem::path, ShaderType)
-        {
-            // _vertexShader = std::move(shader);
-        }
 
         [[nodiscard]] ShaderProgram generateShaderProgram();
         [[nodiscard]] Core::StringAtom getShaderName() const { return _shaderName; }
-        [[nodiscard]] std::vector<ShaderVariable> getShaderVariables(ShaderVariable variableType,
-                                                                     ShaderType shaderType);
 
     private:
-        VertexShader _vertexShader;
-        FragmentShader _fragmentShader;
+        void checkShaderCompileStatus(GLuint shaderId, const std::string& shaderType);
+
+    private:
+        GLuint _vertexShaderId = {};
+        GLuint _fragmentShaderId = {};
         Core::StringAtom _shaderName;
+
+        // VertexShader _vertexShader;
+        // FragmentShader _fragmentShader;
     };
 } // namespace SW
