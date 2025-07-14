@@ -101,6 +101,7 @@ namespace SW
             glGetProgramInfoLog(_shaderProgramId, 512, nullptr, infoLog);
             criticalThrowingLog("Shader program compilation error: "_f << infoLog);
         }
+
         reflectShaderVariables();
 
 #ifdef GRAPHICS_DEBUG
@@ -144,6 +145,11 @@ namespace SW
 
     void ShaderProgram::reflectShaderVariables()
     {
+        if (!glGetProgramInterfaceiv)
+        {
+            warnLog("The function: glGetProgramInterfaceiv - is unavailable.");
+            return;
+        }
         _uniforms.clear();
         _inputs.clear();
         _outputs.clear();

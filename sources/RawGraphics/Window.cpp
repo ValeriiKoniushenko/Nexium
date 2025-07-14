@@ -84,7 +84,7 @@ namespace SW
         glfwSetScrollCallback(_window, MouseScrollHandler);
         glfwSwapInterval(0);
 
-        if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
+        if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
         {
             criticalThrowingLog("Impossible to initialize GLAD.");
         }
