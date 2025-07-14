@@ -29,8 +29,37 @@
 #include "GLFW/glfw3.h"
 // clang-format on
 
+#include <unordered_set>
+
 namespace SW
 {
+
+    struct ShaderVariable
+    {
+        std::string name;
+        GLenum type;
+        GLint size;
+        GLint location;
+
+        bool operator==(const ShaderVariable& other) const
+        {
+            return name == other.name && type == other.type && size == other.size
+                   && location == other.location;
+        }
+    };
+
+    struct ShaderVariableHash
+    {
+        std::size_t operator()(const ShaderVariable& obj) const
+        {
+            std::size_t h1 = std::hash<std::string>{}(obj.name);
+            std::size_t h2 = std::hash<GLenum>{}(obj.type);
+            std::size_t h3 = std::hash<GLint>{}(obj.size);
+            std::size_t h4 = std::hash<GLint>{}(obj.location);
+
+            return (((h1 ^ (h2 << 1)) >> 1) ^ (h3 << 1)) ^ (h4 << 1);
+        }
+    };
 
     class ShaderProgram : public BaseLog
     {
@@ -50,6 +79,22 @@ namespace SW
         [[nodiscard]] bool isEmpty() const noexcept { return _shaderProgramId == 0; }
 
         [[nodiscard]] GLuint getShaderProgramId() const noexcept { return _shaderProgramId; }
+
+        [[nodiscard]] const std::unordered_set<ShaderVariable, ShaderVariableHash>& getUniforms()
+            const
+        {
+            return _uniforms;
+        }
+        [[nodiscard]] const std::unordered_set<ShaderVariable, ShaderVariableHash>& getInputs()
+            const
+        {
+            return _inputs;
+        }
+        [[nodiscard]] const std::unordered_set<ShaderVariable, ShaderVariableHash>& getOutputs()
+            const
+        {
+            return _outputs;
+        }
 
         void create(const Core::StringAtom& shaderName);
         void clear();
@@ -75,8 +120,13 @@ namespace SW
 
     protected:
         void clearOnlyShaderProgram();
+        void reflectShaderVariables();
 
     protected:
+        std::unordered_set<ShaderVariable, ShaderVariableHash> _uniforms;
+        std::unordered_set<ShaderVariable, ShaderVariableHash> _inputs;
+        std::unordered_set<ShaderVariable, ShaderVariableHash> _outputs;
+
         Core::StringAtom _name;
 
         GLuint _vertexShaderId = 0;

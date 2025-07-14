@@ -38,21 +38,6 @@ namespace SW
     };
     // clang-format on
 
-    enum class ShaderStorageQualifierType
-    {
-        Input,
-        Output,
-        Uniform
-    };
-
-    struct ShaderVariable
-    {
-        std::string name;
-        GLenum type;
-        GLint size;
-        GLint location;
-    };
-
     class ShaderProgramMeta final : public BaseLog
     {
     public:
