@@ -48,7 +48,3 @@ FetchContent_Declare(Utils
 )
 
 FetchContent_MakeAvailable(Utils)
-FetchContent_GetProperties(Utils SOURCE_DIR Utils_SOURCES)
-
-list(APPEND CMAKE_MODULE_PATH "${Utils_SOURCES}/cmake/FetchDependencies.cmake")
-include(${Utils_SOURCES}/cmake/FetchDependencies.cmake)

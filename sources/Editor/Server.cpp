@@ -36,7 +36,7 @@ namespace SW
                 debugLog("Site requests: " + request.path);
             });
 
-        _server.Get("/api/getCountObjectOnScene",
+        _server.Get("/.*",
                     [](const Request& req, Response& res)
                     {
                         const std::string webPath = req.path == "/" ? "/index.html" : req.path;

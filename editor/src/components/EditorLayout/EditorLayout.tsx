@@ -9,7 +9,7 @@ type Props = {
   onSaveLayout: (config: LayoutConfig) => void;
 };
 
-export const EditorLayout: React.FC<Props> = ({ layoutConfig, onSaveLayout }) => {
+export const EditorLayout: React.FC<Props> = ({ layoutConfig }) => {
   const layoutRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

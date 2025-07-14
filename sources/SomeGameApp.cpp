@@ -31,6 +31,7 @@
 #include "assimp/scene.h"
 
 #define GLM_ENABLE_EXPERIMENTAL
+#include "Editor/Server.h"
 #include "glm/gtc/type_ptr.hpp"
 #include "glm/gtx/string_cast.hpp"
 
@@ -44,9 +45,13 @@ int main()
 #endif
     spdlog::set_pattern("%D [%L] [%n] %v");
 
-    // SW::EditorServer server;
-    // server.initialize();
-    // server.start();
+    std::thread serverThread(
+        []()
+        {
+            SW::EditorServer server;
+            server.initialize();
+            server.start();
+        });
 
     Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile(
@@ -107,31 +112,25 @@ int main()
         if (SW::Keyboard::isKeyPressed(GLFW_KEY_D))
         {
             camera.moveRight(speed * timeDelta);
-            std::cout << "Camera XYZ: " << glm::to_string(camera.getPosition()) << std::endl;
         }
         if (SW::Keyboard::isKeyPressed(GLFW_KEY_A))
         {
             camera.moveRight(-speed * timeDelta);
-            std::cout << "Camera XYZ: " << glm::to_string(camera.getPosition()) << std::endl;
         }
         if (SW::Keyboard::isKeyPressed(GLFW_KEY_W))
         {
             camera.moveUp(speed * timeDelta);
-            std::cout << "Camera XYZ: " << glm::to_string(camera.getPosition()) << std::endl;
         }
         if (SW::Keyboard::isKeyPressed(GLFW_KEY_S))
         {
             camera.moveUp(-speed * timeDelta);
-            std::cout << "Camera XYZ: " << glm::to_string(camera.getPosition()) << std::endl;
         }
         if (SW::Keyboard::isKeyPressed(GLFW_KEY_E))
         {
-            std::cout << "Rotation: " << camera.getRotationY() << std::endl;
             camera.rotateY(rotateSpeed * timeDelta);
         }
         if (SW::Keyboard::isKeyPressed(GLFW_KEY_Q))
         {
-            std::cout << "Rotation: " << camera.getRotationY() << std::endl;
             camera.rotateY(-rotateSpeed * timeDelta);
         }
 
@@ -155,7 +154,10 @@ int main()
 
     const auto end = std::chrono::system_clock::now();
     const auto diff = std::chrono::duration<double>(end - start).count();
-    std::cout << "FPS: " << static_cast<double>(frames) / diff << std::endl;
+    const auto fps = frames / diff;
+    std::cout << "FPS: " << fps << std::endl;
+
+    serverThread.detach();
 
     return 0;
 }

@@ -62,7 +62,7 @@ namespace SW
     void Window::create(const Core::StringAtom& title, Core::ISize2 size /* = { 300, 300 }*/)
     {
         glfwInit();
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
@@ -88,6 +88,9 @@ namespace SW
         {
             criticalThrowingLog("Impossible to initialize GLAD.");
         }
+
+        debugLog("OpenGL version string: {}"_f
+                 << reinterpret_cast<const char*>(glGetString(GL_VERSION)));
     }
 
     bool Window::shouldClose() const

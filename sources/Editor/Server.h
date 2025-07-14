@@ -30,7 +30,7 @@ namespace SW
     class EditorServer : public BaseLog
     {
     public:
-        static constexpr const char* assetsPath = "assets/web/build";
+        static constexpr const char* assetsPath = "editor/dist";
 
     public:
         void initialize();
