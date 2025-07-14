@@ -34,4 +34,6 @@ InstallWin32MSVCFlags()
 # ========= Main deps pipeline =========
 add_subdirectory(dependencies)
 include(FetchDependencies)
+
 add_subdirectory(sources)
+add_subdirectory(tests)
