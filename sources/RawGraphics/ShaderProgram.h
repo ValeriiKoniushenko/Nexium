@@ -36,29 +36,17 @@ namespace SW
 
     struct ShaderVariable
     {
-        std::string name;
-        GLenum type;
-        GLint size;
-        GLint location;
+        Core::StringAtom name;
+        GLenum type = 0;
+        GLint size = 0;
+        GLint location = 0;
 
-        bool operator==(const ShaderVariable& other) const
-        {
-            return name == other.name && type == other.type && size == other.size
-                   && location == other.location;
-        }
+        bool operator==(const ShaderVariable& other) const { return name == other.name; }
     };
 
     struct ShaderVariableHash
     {
-        std::size_t operator()(const ShaderVariable& obj) const
-        {
-            std::size_t h1 = std::hash<std::string>{}(obj.name);
-            std::size_t h2 = std::hash<GLenum>{}(obj.type);
-            std::size_t h3 = std::hash<GLint>{}(obj.size);
-            std::size_t h4 = std::hash<GLint>{}(obj.location);
-
-            return (((h1 ^ (h2 << 1)) >> 1) ^ (h3 << 1)) ^ (h4 << 1);
-        }
+        std::size_t operator()(const ShaderVariable& obj) const { return obj.name.makeHash(); }
     };
 
     class ShaderProgram : public BaseLog

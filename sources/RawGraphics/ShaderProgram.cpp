@@ -103,7 +103,7 @@ namespace SW
         }
         reflectShaderVariables();
 
-        // ------------- JUST TEST: REMOVE IT AFTER PR APROVED -------------
+#ifdef GRAPHICS_DEBUG
         auto printVariables
             = [this](const char* groupName,
                      const std::unordered_set<ShaderVariable, ShaderVariableHash>& vars)
@@ -120,7 +120,7 @@ namespace SW
         printVariables("INPUTS", _inputs);
         printVariables("OUTPUTS", _outputs);
 
-        // ------------- ------------- ------------- ------------- -------------
+#endif
 
         infoLog("Finished: creating of the shader program '{}'"_f << shaderName);
     }
@@ -185,7 +185,7 @@ namespace SW
                     name.pop_back();
                 }
 
-                ShaderVariable var{ name, type, size, location };
+                ShaderVariable var{ Core::StringAtom::Intern(name), type, size, location };
                 group.output.insert(std::move(var));
             }
         }
