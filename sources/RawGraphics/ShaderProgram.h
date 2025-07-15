@@ -71,22 +71,6 @@ namespace SW
 
         [[nodiscard]] GLuint getShaderProgramId() const noexcept { return _shaderProgramId; }
 
-        [[nodiscard]] const std::unordered_set<ShaderVariable, ShaderVariableHash>& getUniforms()
-            const
-        {
-            return _uniforms;
-        }
-        [[nodiscard]] const std::unordered_set<ShaderVariable, ShaderVariableHash>& getInputs()
-            const
-        {
-            return _inputs;
-        }
-        [[nodiscard]] const std::unordered_set<ShaderVariable, ShaderVariableHash>& getOutputs()
-            const
-        {
-            return _outputs;
-        }
-
         void create(const Core::StringAtom& shaderName);
         void clear();
 #ifdef GRAPHICS_DEBUG
@@ -109,14 +93,15 @@ namespace SW
 
         [[nodiscard]] const char* getPrefix() const override { return "ShaderProgram"; }
 
-    protected:
-        void clearOnlyShaderProgram();
-        void reflectShaderVariables();
+        void __setUniformsSource(
+            const std::unordered_set<ShaderVariable, ShaderVariableHash>* source);
 
     protected:
-        std::unordered_set<ShaderVariable, ShaderVariableHash> _uniforms;
-        std::unordered_set<ShaderVariable, ShaderVariableHash> _inputs;
-        std::unordered_set<ShaderVariable, ShaderVariableHash> _outputs;
+        void clearOnlyShaderProgram();
+
+    protected:
+        // non-owner, read-only
+        const std::unordered_set<ShaderVariable, ShaderVariableHash>* _uniforms = nullptr;
 
         Core::StringAtom _name;
 

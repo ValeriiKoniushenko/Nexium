@@ -44,6 +44,8 @@ namespace SW
         readSourceShaderFile(vertexShaderPath, fragmentShaderPath);
         compileShader();
         _shaderProgram.create(_shaderName);
+        reflectShaderVariablesFor(_shaderProgram.getShaderProgramId());
+        _shaderProgram.__setUniformsSource(&_uniforms);
     }
 
     void ShaderProgramMeta::compileShader()
@@ -123,6 +125,60 @@ namespace SW
             std::string msg = shaderType + " shader compilation error: ";
             msg += infoLog;
             throw std::runtime_error(msg);
+        }
+    }
+
+    void ShaderProgramMeta::reflectShaderVariablesFor(GLuint shaderProgramId)
+    {
+        if (!glGetProgramInterfaceiv)
+        {
+            warnLog("The function: glGetProgramInterfaceiv - is unavailable.");
+            return;
+        }
+
+        _uniforms.clear();
+        _inputs.clear();
+        _outputs.clear();
+
+        struct Group
+        {
+            GLenum interfaceType;
+            std::unordered_set<ShaderVariable, ShaderVariableHash>& output;
+        };
+
+        std::vector<Group> groups = { { GL_UNIFORM, _uniforms },
+                                      { GL_PROGRAM_INPUT, _inputs },
+                                      { GL_PROGRAM_OUTPUT, _outputs } };
+
+        constexpr GLenum props[] = { GL_NAME_LENGTH, GL_TYPE, GL_LOCATION, GL_ARRAY_SIZE };
+
+        for (const auto& [interfaceType, output] : groups)
+        {
+            GLint count = 0;
+            glGetProgramInterfaceiv(shaderProgramId, interfaceType, GL_ACTIVE_RESOURCES, &count);
+
+            for (GLint i = 0; i < count; ++i)
+            {
+                GLint values[4] = {};
+                glGetProgramResourceiv(shaderProgramId, interfaceType, i, 4, props, 4, nullptr,
+                                       values);
+
+                GLint nameLen = values[0];
+                GLenum type = values[1];
+                GLint location = values[2];
+                GLint size = values[3];
+
+                std::string name(nameLen, '\0');
+                glGetProgramResourceName(shaderProgramId, interfaceType, i, nameLen, nullptr,
+                                         name.data());
+                if (!name.empty() && name.back() == '\0')
+                {
+                    name.pop_back();
+                }
+
+                ShaderVariable var{ Core::StringAtom::Intern(name), type, size, location };
+                output.insert(std::move(var));
+            }
         }
     }
 

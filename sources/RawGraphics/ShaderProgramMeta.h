@@ -60,6 +60,22 @@ namespace SW
             return _shaderProgram;
         }
 
+        [[nodiscard]] const std::unordered_set<ShaderVariable, ShaderVariableHash>& getUniforms()
+            const
+        {
+            return _uniforms;
+        }
+        [[nodiscard]] const std::unordered_set<ShaderVariable, ShaderVariableHash>& getInputs()
+            const
+        {
+            return _inputs;
+        }
+        [[nodiscard]] const std::unordered_set<ShaderVariable, ShaderVariableHash>& getOutputs()
+            const
+        {
+            return _outputs;
+        }
+
         void setShaderName(const std::string& name);
         void setShaderName(const Core::StringAtom& name);
         [[nodiscard]] Core::StringAtom getShaderName() const { return _shaderName; }
@@ -80,9 +96,14 @@ namespace SW
                                   const std::filesystem::path& fragmentShaderPath);
 
         void checkShaderCompileStatus(GLuint shaderId, const std::string& shaderType);
+        void reflectShaderVariablesFor(GLuint shaderProgramId);
 
     private:
         ShaderProgram _shaderProgram;
         Core::StringAtom _shaderName;
+
+        std::unordered_set<ShaderVariable, ShaderVariableHash> _uniforms;
+        std::unordered_set<ShaderVariable, ShaderVariableHash> _inputs;
+        std::unordered_set<ShaderVariable, ShaderVariableHash> _outputs;
     };
 } // namespace SW

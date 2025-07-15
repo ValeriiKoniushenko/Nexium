@@ -102,28 +102,7 @@ namespace SW
             criticalThrowingLog("Shader program compilation error: "_f << infoLog);
         }
 
-        reflectShaderVariables();
-
-#ifdef GRAPHICS_DEBUG
-        auto printVariables
-            = [this](const char* groupName,
-                     const std::unordered_set<ShaderVariable, ShaderVariableHash>& vars)
-        {
-            infoLog("Shader [{}] {} variables:"_f << _name << groupName);
-            for (const auto& var : vars)
-            {
-                infoLog("    name: '{}', type: {}, size: {}, location: {}"_f
-                        << var.name << (int)var.type << var.size << var.location);
-            }
-        };
-
-        printVariables("UNIFORMS", _uniforms);
-        printVariables("INPUTS", _inputs);
-        printVariables("OUTPUTS", _outputs);
-
-#endif
-
-        infoLog("Finished: creating of the shader program '{}'"_f << shaderName);
+        infoLog("The shader program '{}' linked successfully."_f << shaderName);
     }
 
     void ShaderProgram::clear()
@@ -134,66 +113,23 @@ namespace SW
         _fragmentShaderId = 0;
     }
 
+    void ShaderProgram::__setUniformsSource(
+        const std::unordered_set<ShaderVariable, ShaderVariableHash>* source)
+    {
+        if (_uniforms)
+        {
+            warnLog("Unifroms source for shader program '{}' will be owerwritten."_f << _name);
+        }
+
+        _uniforms = source;
+    }
+
     void ShaderProgram::clearOnlyShaderProgram()
     {
         if (_shaderProgramId != 0)
         {
             glDeleteProgram(_shaderProgramId);
             _shaderProgramId = 0;
-        }
-    }
-
-    void ShaderProgram::reflectShaderVariables()
-    {
-        if (!glGetProgramInterfaceiv)
-        {
-            warnLog("The function: glGetProgramInterfaceiv - is unavailable.");
-            return;
-        }
-        _uniforms.clear();
-        _inputs.clear();
-        _outputs.clear();
-
-        struct Group
-        {
-            GLenum interfaceType;
-            std::unordered_set<ShaderVariable, ShaderVariableHash>& output;
-        };
-
-        std::vector<Group> groups = { { GL_UNIFORM, _uniforms },
-                                      { GL_PROGRAM_INPUT, _inputs },
-                                      { GL_PROGRAM_OUTPUT, _outputs } };
-
-        constexpr GLenum props[] = { GL_NAME_LENGTH, GL_TYPE, GL_LOCATION, GL_ARRAY_SIZE };
-
-        for (const auto& group : groups)
-        {
-            GLint count = 0;
-            glGetProgramInterfaceiv(_shaderProgramId, group.interfaceType, GL_ACTIVE_RESOURCES,
-                                    &count);
-
-            for (GLint i = 0; i < count; ++i)
-            {
-                GLint values[4] = {};
-                glGetProgramResourceiv(_shaderProgramId, group.interfaceType, i, 4, props, 4,
-                                       nullptr, values);
-
-                GLint nameLen = values[0];
-                GLenum type = values[1];
-                GLint location = values[2];
-                GLint size = values[3];
-
-                std::string name(nameLen, '\0');
-                glGetProgramResourceName(_shaderProgramId, group.interfaceType, i, nameLen, nullptr,
-                                         name.data());
-                if (!name.empty() && name.back() == '\0')
-                {
-                    name.pop_back();
-                }
-
-                ShaderVariable var{ Core::StringAtom::Intern(name), type, size, location };
-                group.output.insert(std::move(var));
-            }
         }
     }
 
