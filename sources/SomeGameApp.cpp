@@ -136,9 +136,6 @@ int main()
         window.pollEvent();
         ++frames;
 
-        // using namespace std::chrono_literals;
-        // std::this_thread::sleep_for(10ms);
-
         timeDelta
             = std::chrono::duration<double>(std::chrono::system_clock::now() - frameStart).count();
     }
