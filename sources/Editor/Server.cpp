@@ -28,6 +28,11 @@ using namespace httplib;
 
 namespace SW
 {
+    EditorServer::~EditorServer()
+    {
+        stop();
+    }
+
     void EditorServer::initialize()
     {
         infoLog("initialization.");
@@ -40,8 +45,22 @@ namespace SW
 
     void EditorServer::start()
     {
-        infoLog("listening...");
-        _server.listen("localhost", port);
+        _thread = std::thread(
+            [this]()
+            {
+                debugLog("the thread is allocated.");
+
+                infoLog("listening...");
+                _server.listen("localhost", port);
+
+                debugLog("the thread is deallocated");
+            });
+    }
+
+    void EditorServer::stop()
+    {
+        _server.stop();
+        _thread.join();
     }
 
     void EditorServer::processGetRequest(const Request& req, Response& res)

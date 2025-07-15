@@ -38,8 +38,11 @@ namespace SW
         static constexpr int port = 61005;
 
     public:
+        ~EditorServer() override;
+
         void initialize();
         void start();
+        void stop();
 
         [[nodiscard]] spdlog::logger* getLogger() const final { return Editor::getLogger(); }
         [[nodiscard]] const char* getPrefix() const override { return "Server"; }
@@ -48,6 +51,7 @@ namespace SW
         void processGetRequest(const httplib::Request& req, httplib::Response& res);
 
     private:
+        std::thread _thread;
         httplib::Server _server;
     };
 
