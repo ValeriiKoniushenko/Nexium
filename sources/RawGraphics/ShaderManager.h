@@ -36,7 +36,7 @@ namespace SW
         inline static const char* const defaultVertexFileExtension = ".vert";
         inline static const char* const defaultFragmentFileExtension = ".frag";
 
-        void loadShader(const std::filesystem::path& path);
+        void loadShaders(const std::filesystem::path& path);
 
         void pushSuitableFileExtension(std::string ext, ShaderType type);
 

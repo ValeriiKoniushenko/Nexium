@@ -36,7 +36,6 @@
 #include "glm/gtx/string_cast.hpp"
 
 #include <iostream>
-#include <thread>
 
 int main()
 {
@@ -45,13 +44,9 @@ int main()
 #endif
     spdlog::set_pattern("%D [%L] [%n] %v");
 
-    std::thread serverThread(
-        []()
-        {
-            SW::EditorServer server;
-            server.initialize();
-            server.start();
-        });
+    auto& server = SW::GetEditorServer();
+    server.initialize();
+    server.start();
 
     Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile(
@@ -60,13 +55,9 @@ int main()
 
     auto& window = SW::GetWindow();
     window.create("Sprite Walker", { 600, 600 });
-    // SW::ShaderProgram shader;
-    //  shader.setShader(SW::FragmentShader("assets/shaders/color.frag"));
-    //  shader.setShader(SW::VertexShader("assets/shaders/color.vert"));
-    //  shader.create("color"_atom);
 
     auto& sm = SW::ShaderManager::instance();
-    sm.loadShader("assets/shaders");
+    sm.loadShaders("assets/shaders");
     auto* shader = sm.getShaderProgram("color"_atom);
     Assert(shader);
 
@@ -156,8 +147,6 @@ int main()
     const auto diff = std::chrono::duration<double>(end - start).count();
     const auto fps = frames / diff;
     std::cout << "FPS: " << fps << std::endl;
-
-    serverThread.detach();
 
     return 0;
 }

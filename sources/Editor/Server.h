@@ -24,13 +24,18 @@
 #include "HttpLib/httplib.h"
 #include "ModuleInfo.h"
 
+#include <thread>
+
 namespace SW
 {
 
-    class EditorServer : public BaseLog
+    class EditorServer : public Core::StrictSingleton<EditorServer>, public BaseLog
     {
+        SINGLETONS_FRIEND(EditorServer)
+
     public:
-        static constexpr const char* assetsPath = "editor/dist";
+        static constexpr const char* editorPath = "editor/dist";
+        static constexpr int port = 61005;
 
     public:
         void initialize();
@@ -40,7 +45,15 @@ namespace SW
         [[nodiscard]] const char* getPrefix() const override { return "Server"; }
 
     private:
+        void processGetRequest(const httplib::Request& req, httplib::Response& res);
+
+    private:
         httplib::Server _server;
     };
+
+    inline EditorServer& GetEditorServer()
+    {
+        return EditorServer::instance();
+    }
 
 } // namespace SW

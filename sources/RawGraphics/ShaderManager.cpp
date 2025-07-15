@@ -25,7 +25,7 @@
 namespace SW
 {
 
-    void ShaderManager::loadShader(const std::filesystem::path& inputPath)
+    void ShaderManager::loadShaders(const std::filesystem::path& inputPath)
     {
         _shaderMetas.clear();
         _validShaders = 0;

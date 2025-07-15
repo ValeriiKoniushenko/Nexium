@@ -30,23 +30,30 @@ namespace SW
 {
     void EditorServer::initialize()
     {
-        _server.set_logger(
-            [this](const Request& request, const Response& response)
-            {
-                debugLog("Site requests: " + request.path);
-            });
-
+        infoLog("initialization.");
         _server.Get("/.*",
-                    [](const Request& req, Response& res)
+                    [this](const Request& req, Response& res)
                     {
-                        const std::string webPath = req.path == "/" ? "/index.html" : req.path;
-                        const std::string filePath = assetsPath + webPath;
-                        res.set_file_content(filePath);
+                        processGetRequest(req, res);
                     });
     }
 
     void EditorServer::start()
     {
-        _server.listen("localhost", 61005);
+        infoLog("listening...");
+        _server.listen("localhost", port);
+    }
+
+    void EditorServer::processGetRequest(const Request& req, Response& res)
+    {
+        const std::string webPath = req.path == "/" ? "/index.html" : req.path;
+        const std::string filePath = editorPath + webPath;
+
+        if (!std::filesystem::exists(filePath))
+        {
+            debugLog("Web-editor requests file which doesn't exist: {}"_f << filePath);
+        }
+
+        res.set_file_content(filePath);
     }
 } // namespace SW

@@ -41,7 +41,10 @@ namespace SW
         GLint size = 0;
         GLint location = 0;
 
-        bool operator==(const ShaderVariable& other) const { return name == other.name; }
+        [[nodiscard]] bool operator==(const ShaderVariable& other) const
+        {
+            return name == other.name;
+        }
     };
 
     struct ShaderVariableHash
