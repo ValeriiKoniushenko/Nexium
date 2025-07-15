@@ -35,10 +35,13 @@ namespace SW
 
     public:
         static constexpr const char* editorPath = "editor/dist";
-        static constexpr int port = 61005;
+        static constexpr int defaultPort = 61005;
 
     public:
         ~EditorServer() override;
+
+        void setPort(int port);
+        [[nodiscard]] bool isRunning() const;
 
         void initialize();
         void start();
@@ -53,6 +56,7 @@ namespace SW
     private:
         std::thread _thread;
         httplib::Server _server;
+        int _port = defaultPort;
     };
 
     inline EditorServer& GetEditorServer()

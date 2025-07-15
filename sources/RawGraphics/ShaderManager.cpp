@@ -28,8 +28,7 @@ namespace SW
     void ShaderManager::loadShaders(const std::filesystem::path& inputPath)
     {
         _shaderMetas.clear();
-        _validShaders = 0;
-        _failedShaders = 0;
+        _failedShaders.clear();
 
         std::unordered_set<std::string> processedShaders;
 
@@ -80,13 +79,12 @@ namespace SW
                 meta.create(vertShaderFile, fragShaderFile);
 
                 _shaderMetas[meta.getShaderName()] = std::move(meta);
-                ++_validShaders;
             }
             catch (std::exception exception)
             {
                 errorLog("Impossible to set up the shader '{}'. Details: {}"_f << name
                                                                                << exception.what());
-                ++_failedShaders;
+                _failedShaders.emplace(std::move(name));
             }
         }
     }
@@ -124,6 +122,12 @@ namespace SW
         }
 
         return nullptr;
+    }
+
+    size_t ShaderManager::countOfValidShaders() const
+    {
+        const int count = _shaderMetas.size() - _failedShaders.size();
+        return std::max(0, count);
     }
 
     std::filesystem::path ShaderManager::getPathToShaderBasedOn(

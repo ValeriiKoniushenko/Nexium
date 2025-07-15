@@ -44,23 +44,51 @@ int main()
 #endif
     spdlog::set_pattern("%D [%L] [%n] %v");
 
+    //    _____
+    //   /  ___|
+    //   \ `--.   ___  _ __ __   __ ___  _ __
+    //    `--. \ / _ \| '__|\ \ / // _ \| '__|
+    //   /\__/ /|  __/| |    \ V /|  __/| |
+    //   \____/  \___||_|     \_/  \___||_|
+    //-------------------------------------------------
     auto& server = SW::GetEditorServer();
+    server.setPort(61005);
     server.initialize();
     server.start();
+
+    //    _    _  _             _
+    //   | |  | |(_)           | |
+    //   | |  | | _  _ __    __| |  ___ __      __
+    //   | |/\| || || '_ \  / _` | / _ \\ \ /\ / /
+    //   \  /\  /| || | | || (_| || (_) |\ V  V /
+    //    \/  \/ |_||_| |_| \__,_| \___/  \_/\_/
+    //-------------------------------------------------
+    auto& window = SW::GetWindow();
+    window.create("Sprite Walker", { 600, 600 });
+
+    //    _____  _                 _
+    //   /  ___|| |               | |
+    //   \ `--. | |__    __ _   __| |  ___  _ __  ___
+    //    `--. \| '_ \  / _` | / _` | / _ \| '__|/ __|
+    //   /\__/ /| | | || (_| || (_| ||  __/| |   \__ \
+    //   \____/ |_| |_| \__,_| \__,_| \___||_|   |___/
+    //-------------------------------------------------
+    auto& sm = SW::ShaderManager::instance();
+    sm.loadShaders("assets/shaders");
+    sm.debugLog("Was loaded {} shaders."_f << sm.countOfShaders());
+    for (const auto& notLoadedShader : sm.getFailedShaders())
+    {
+        sm.warnLog("Shader '{}' found but not loaded. It contains some error[s]."_f
+                   << notLoadedShader);
+    }
+
+    auto* shader = sm.getShaderProgram("color"_atom);
+    Assert(shader);
 
     Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile(
         "assets/base-3d/cube.obj", aiProcess_CalcTangentSpace | aiProcess_Triangulate
                                        | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
-
-    auto& window = SW::GetWindow();
-    window.create("Sprite Walker", { 600, 600 });
-
-    auto& sm = SW::ShaderManager::instance();
-    sm.loadShaders("assets/shaders");
-    auto* shader = sm.getShaderProgram("color"_atom);
-    Assert(shader);
-
     std::vector<float> vertices = {
         0.5f,  0.5f,  0.0f, // top right
         0.5f,  -0.5f, 0.0f, // bottom right

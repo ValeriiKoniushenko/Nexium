@@ -33,6 +33,23 @@ namespace SW
         stop();
     }
 
+    void EditorServer::setPort(int port)
+    {
+        if (isRunning())
+        {
+            errorLog("Can't setup server's port to {} - because it's running. Current port is: {}"_f
+                     << port << _port);
+            return;
+        }
+
+        _port = port;
+    }
+
+    bool EditorServer::isRunning() const
+    {
+        return _server.is_running();
+    }
+
     void EditorServer::initialize()
     {
         infoLog("initialization.");
@@ -51,7 +68,7 @@ namespace SW
                 debugLog("the thread is allocated.");
 
                 infoLog("listening...");
-                _server.listen("localhost", port);
+                _server.listen("localhost", _port);
 
                 debugLog("the thread is deallocated");
             });
@@ -59,6 +76,7 @@ namespace SW
 
     void EditorServer::stop()
     {
+        infoLog("was stopped.");
         _server.stop();
         _thread.join();
     }

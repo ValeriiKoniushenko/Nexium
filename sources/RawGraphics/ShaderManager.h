@@ -52,8 +52,12 @@ namespace SW
         [[nodiscard]] ShaderProgram* getShaderProgram(const Core::StringAtom& shaderName);
 
         [[nodiscard]] size_t countOfShaders() const { return _shaderMetas.size(); };
-        // [[nodiscard]] size_t countOfValidShaders() const;
-        // [[nodiscard]] size_t countOfFailedShaders() const;
+        [[nodiscard]] size_t countOfValidShaders() const;
+        [[nodiscard]] size_t countOfFailedShaders() const { return _failedShaders.size(); }
+        [[nodiscard]] const std::unordered_set<std::string>& getFailedShaders() const
+        {
+            return _failedShaders;
+        }
 
         [[nodiscard]] spdlog::logger* getLogger() const override
         {
@@ -71,8 +75,7 @@ namespace SW
         std::unordered_set<std::string> _suitableFragExtensions = { defaultFragmentFileExtension };
         std::unordered_set<std::string> _suitableVertExtensions = { defaultVertexFileExtension };
 
-        size_t _validShaders = {};
-        size_t _failedShaders = {};
+        std::unordered_set<std::string> _failedShaders;
     };
 
     inline ShaderManager& GetShaderManager()
