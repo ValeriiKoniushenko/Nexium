@@ -84,13 +84,14 @@ namespace SW
         glfwSetScrollCallback(_window, MouseScrollHandler);
         glfwSwapInterval(0);
 
-        if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+        if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
         {
             criticalThrowingLog("Impossible to initialize GLAD.");
         }
 
-        debugLog("OpenGL version string: {}"_f
-                 << reinterpret_cast<const char*>(glGetString(GL_VERSION)));
+        debugLog("OpenGL version: {}"_f << reinterpret_cast<const char*>(glGetString(GL_VERSION)));
+        debugLog("GLFW version: {}"_f
+                 << reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION)));
     }
 
     bool Window::shouldClose() const
