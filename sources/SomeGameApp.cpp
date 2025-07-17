@@ -21,6 +21,8 @@
 // SOFTWARE.
 
 #include "Camera/Camera.h"
+#include "Core/Timer.h"
+#include "Editor/Server.h"
 #include "InputDevices/Keyboard.h"
 #include "RawGraphics/GraphicsComponents.h"
 #include "RawGraphics/ShaderManager.h"
@@ -31,8 +33,6 @@
 #include "assimp/scene.h"
 
 #define GLM_ENABLE_EXPERIMENTAL
-#include "Editor/Server.h"
-#include "glm/gtc/type_ptr.hpp"
 #include "glm/gtx/string_cast.hpp"
 
 #include <iostream>
@@ -117,11 +117,11 @@ int main()
     float speed = 10.f;
     float rotateSpeed = 15.f;
 
-    std::chrono::time_point<std::chrono::system_clock> frameStart;
     float timeDelta = 0.f;
+    Core::FStopwatch clock;
     while (!window.shouldClose())
     {
-        frameStart = std::chrono::system_clock::now();
+        clock.start();
         if (SW::Keyboard::isKeyPressed(GLFW_KEY_D))
         {
             camera.moveRight(speed * timeDelta);
@@ -160,8 +160,7 @@ int main()
         window.pollEvent();
         ++frames;
 
-        timeDelta
-            = std::chrono::duration<double>(std::chrono::system_clock::now() - frameStart).count();
+        timeDelta = clock.stop();
     }
 
     const auto end = std::chrono::system_clock::now();
