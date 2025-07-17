@@ -63,7 +63,7 @@ namespace SW
     {
         _shader = sp;
 
-        if (ignoreVertexAttribSetup)
+        if (!ignoreVertexAttribSetup)
         {
             _shader->setupVertexAttribute();
         }
