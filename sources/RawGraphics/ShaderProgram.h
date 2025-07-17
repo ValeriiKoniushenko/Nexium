@@ -54,7 +54,6 @@ namespace SW
         }
     };
 
-
     class ShaderProgram : public BaseLog
     {
     public:
@@ -135,12 +134,15 @@ namespace SW
         void __setUniformsFromSources(
             const std::unordered_set<ShaderVariable, ShaderVariable::Hasher>& source);
 
+        void setupVertexAttribute();
+        void setVertexAttributeCallback(std::function<void()>&& func);
+
     protected:
         void clearOnlyShaderProgram();
 
     protected:
         std::unordered_map<Core::StringAtom, GLuint> _uniforms;
-
+        std::function<void()> _setupVertexAttribute;
         Core::StringAtom _name;
 
         GLuint _vertexShaderId = 0;

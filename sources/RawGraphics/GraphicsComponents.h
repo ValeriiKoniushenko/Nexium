@@ -41,7 +41,7 @@ namespace SW
 
         void setVertexBuffer(const std::vector<float>& data, GLenum usage = GL_STATIC_DRAW);
         void setIndexBuffer(const std::vector<GLuint>& data, GLenum usage = GL_STATIC_DRAW);
-        void setShaderProgram(ShaderProgram* sp) noexcept;
+        void setShaderProgram(ShaderProgram* sp, bool ignoreVertexAttribSetup = false);
 
         void clear();
         [[nodiscard]] bool isValid() const noexcept

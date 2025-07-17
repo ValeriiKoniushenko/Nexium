@@ -123,6 +123,23 @@ namespace SW
         }
     }
 
+    void ShaderProgram::setupVertexAttribute()
+    {
+        if (!_setupVertexAttribute) [[unlikely]]
+        {
+            Assert(false);
+            errorLog("Impossible to setup setupVertexAttribute. Setup function wasn't found.");
+            return;
+        }
+
+        _setupVertexAttribute();
+    }
+
+    void ShaderProgram::setVertexAttributeCallback(std::function<void()>&& func)
+    {
+        _setupVertexAttribute = std::forward<decltype(func)>(func);
+    }
+
     void ShaderProgram::clearOnlyShaderProgram()
     {
         if (_shaderProgramId != 0)

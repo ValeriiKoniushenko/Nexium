@@ -58,9 +58,15 @@ namespace SW
         }
     }
 
-    void GraphicsComponentData::setShaderProgram(ShaderProgram* sp) noexcept
+    void GraphicsComponentData::setShaderProgram(ShaderProgram* sp,
+                                                 bool ignoreVertexAttribSetup /* = false*/)
     {
         _shader = sp;
+
+        if (ignoreVertexAttribSetup)
+        {
+            _shader->setupVertexAttribute();
+        }
     }
 
     void GraphicsComponentData::clear()

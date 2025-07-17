@@ -83,6 +83,12 @@ int main()
     }
 
     auto* shader = sm.getShaderProgram("color"_atom);
+    shader->setVertexAttributeCallback(
+        []()
+        {
+            glEnableVertexAttribArray(0);
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+        });
     Assert(shader);
 
     Assimp::Importer importer;
@@ -105,8 +111,6 @@ int main()
     element.setVertexBuffer(vertices);
     element.setIndexBuffer(indices);
     element.setShaderProgram(shader);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), static_cast<void*>(0));
-    glEnableVertexAttribArray(0);
 
     int frames = 0;
     const auto start = std::chrono::system_clock::now();
@@ -117,8 +121,8 @@ int main()
     float speed = 10.f;
     float rotateSpeed = 15.f;
 
-    float timeDelta = 0.f;
     Core::FStopwatch clock;
+    float timeDelta = 0.f;
     while (!window.shouldClose())
     {
         clock.start();
