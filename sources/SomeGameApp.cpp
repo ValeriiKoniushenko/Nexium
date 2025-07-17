@@ -95,16 +95,27 @@ int main()
     const aiScene* scene = importer.ReadFile(
         "assets/base-3d/cube.obj", aiProcess_CalcTangentSpace | aiProcess_Triangulate
                                        | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
-    std::vector<float> vertices = {
-        0.5f,  0.5f,  0.0f, // top right
-        0.5f,  -0.5f, 0.0f, // bottom right
-        -0.5f, -0.5f, 0.0f, // bottom left
-        -0.5f, 0.5f,  0.0f  // top left
-    };
-    std::vector<GLuint> indices = {
-        0, 1, 3, // first Triangle
-        1, 2, 3  // second Triangle
-    };
+
+    std::vector<float> vertices;
+    std::vector<GLuint> indices;
+
+    auto* mesh = scene->mMeshes[0];
+    for (unsigned int i = 0; i < mesh->mNumFaces; ++i)
+    {
+        const aiFace& face = mesh->mFaces[i];
+        for (unsigned int j = 0; j < face.mNumIndices; ++j)
+        {
+            indices.push_back(face.mIndices[j]);
+        }
+    }
+
+    for (unsigned int i = 0; i < mesh->mNumVertices; ++i)
+    {
+        aiVector3D v = mesh->mVertices[i];
+        vertices.push_back(v.x);
+        vertices.push_back(v.y);
+        vertices.push_back(v.z);
+    }
 
     SW::GraphicsComponentData element;
     element.generate();
@@ -119,7 +130,7 @@ int main()
     camera.moveForward(-10);
 
     float speed = 10.f;
-    float rotateSpeed = 15.f;
+    float rotateSpeed = 25.f;
 
     Core::FStopwatch clock;
     float timeDelta = 0.f;

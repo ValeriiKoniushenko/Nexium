@@ -55,6 +55,7 @@ namespace SW
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * data.size(), data.data(),
                          GL_STATIC_DRAW);
+            _triangleCount = data.size();
         }
     }
 
@@ -75,6 +76,7 @@ namespace SW
         glDeleteBuffers(1, &_vbo);
         glDeleteVertexArrays(1, &_vao);
         _shader = 0;
+        _triangleCount = 0;
     }
 
     void GraphicsComponentData::directDraw() const noexcept
@@ -88,6 +90,6 @@ namespace SW
         _shader->use();
         glBindVertexArray(_vao);
 
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, _triangleCount, GL_UNSIGNED_INT, 0);
     }
 } // namespace SW

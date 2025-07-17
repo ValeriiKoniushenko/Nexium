@@ -58,6 +58,7 @@ namespace SW
 
     private:
         ShaderProgram* _shader;
+        uint32_t _triangleCount = 0;
         GLuint _vbo = 0;
         GLuint _ebo = 0;
         GLuint _vao = 0;
