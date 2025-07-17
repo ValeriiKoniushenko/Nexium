@@ -79,7 +79,7 @@ namespace SW
             return;
         }
 
-        glUseProgram(_shader->getShaderProgramId());
+        _shader->use();
         glBindVertexArray(_vao);
 
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

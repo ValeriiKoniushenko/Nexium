@@ -45,7 +45,7 @@ namespace SW
         compileShader();
         _shaderProgram.create(_shaderName);
         reflectShaderVariablesFor(_shaderProgram.getShaderProgramId());
-        _shaderProgram.__setUniformsSource(&_uniforms);
+        _shaderProgram.__setUniformsFromSources(_uniforms);
     }
 
     void ShaderProgramMeta::compileShader()
@@ -143,7 +143,7 @@ namespace SW
         struct Group
         {
             GLenum interfaceType;
-            std::unordered_set<ShaderVariable, ShaderVariableHash>& output;
+            std::unordered_set<ShaderVariable, ShaderVariable::Hasher>& output;
         };
 
         std::vector<Group> groups = { { GL_UNIFORM, _uniforms },

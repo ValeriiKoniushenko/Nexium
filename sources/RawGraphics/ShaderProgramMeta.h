@@ -60,17 +60,17 @@ namespace SW
             return _shaderProgram;
         }
 
-        [[nodiscard]] const std::unordered_set<ShaderVariable, ShaderVariableHash>& getUniforms()
-            const
+        [[nodiscard]] const std::unordered_set<ShaderVariable, ShaderVariable::Hasher>&
+            getUniforms() const
         {
             return _uniforms;
         }
-        [[nodiscard]] const std::unordered_set<ShaderVariable, ShaderVariableHash>& getInputs()
+        [[nodiscard]] const std::unordered_set<ShaderVariable, ShaderVariable::Hasher>& getInputs()
             const
         {
             return _inputs;
         }
-        [[nodiscard]] const std::unordered_set<ShaderVariable, ShaderVariableHash>& getOutputs()
+        [[nodiscard]] const std::unordered_set<ShaderVariable, ShaderVariable::Hasher>& getOutputs()
             const
         {
             return _outputs;
@@ -78,7 +78,7 @@ namespace SW
 
         void setShaderName(const std::string& name);
         void setShaderName(const Core::StringAtom& name);
-        [[nodiscard]] Core::StringAtom getShaderName() const { return _shaderName; }
+        [[nodiscard]] const Core::StringAtom& getShaderName() const { return _shaderName; }
 
         [[nodiscard]] spdlog::logger* getLogger() const override
         {
@@ -102,8 +102,8 @@ namespace SW
         ShaderProgram _shaderProgram;
         Core::StringAtom _shaderName;
 
-        std::unordered_set<ShaderVariable, ShaderVariableHash> _uniforms;
-        std::unordered_set<ShaderVariable, ShaderVariableHash> _inputs;
-        std::unordered_set<ShaderVariable, ShaderVariableHash> _outputs;
+        std::unordered_set<ShaderVariable, ShaderVariable::Hasher> _uniforms;
+        std::unordered_set<ShaderVariable, ShaderVariable::Hasher> _inputs;
+        std::unordered_set<ShaderVariable, ShaderVariable::Hasher> _outputs;
     };
 } // namespace SW

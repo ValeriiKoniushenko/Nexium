@@ -118,6 +118,7 @@ namespace SW
 
         if (const auto it = _shaderMetas.find(shaderName); it != _shaderMetas.cend())
         {
+            Assert(it->second.getShaderName().isStatic());
             return &it->second.getShaderProgram();
         }
 

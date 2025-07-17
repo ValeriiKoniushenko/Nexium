@@ -105,14 +105,8 @@ int main()
     element.setVertexBuffer(vertices);
     element.setIndexBuffer(indices);
     element.setShaderProgram(shader);
-
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), static_cast<void*>(0));
     glEnableVertexAttribArray(0);
-
-    glm::mat4 model = glm::mat4(1.0f);
-
-    const auto uProjAndView = glGetUniformLocation(shader->getShaderProgramId(), "uProjAndView");
-    const auto uModel = glGetUniformLocation(shader->getShaderProgramId(), "uModel");
 
     int frames = 0;
     const auto start = std::chrono::system_clock::now();
@@ -156,8 +150,10 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glUniformMatrix4fv(uProjAndView, 1, GL_FALSE, glm::value_ptr(camera.getMatrix()));
-        glUniformMatrix4fv(uModel, 1, GL_FALSE, glm::value_ptr(model));
+        shader->use();
+        shader->setUniform("uProjAndView"_atom, camera.getMatrix());
+        shader->setUniform("uModel"_atom, glm::mat4(1.0f));
+
         element.directDraw();
 
         window.swapBuffers();

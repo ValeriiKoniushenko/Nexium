@@ -29,13 +29,14 @@ namespace SW
     {
         if (this != &other) [[likely]]
         {
-            _fragmentShaderId = other._fragmentShaderId;
-            _vertexShaderId = other._vertexShaderId;
+            _uniforms = std::move(other._uniforms);
             _name = std::move(other._name);
+            _vertexShaderId = other._vertexShaderId;
+            _fragmentShaderId = other._fragmentShaderId;
             _shaderProgramId = other._shaderProgramId;
 
-            other._fragmentShaderId = 0;
             other._vertexShaderId = 0;
+            other._fragmentShaderId = 0;
             other._shaderProgramId = 0;
         }
         return *this;
@@ -113,15 +114,13 @@ namespace SW
         _fragmentShaderId = 0;
     }
 
-    void ShaderProgram::__setUniformsSource(
-        const std::unordered_set<ShaderVariable, ShaderVariableHash>* source)
+    void ShaderProgram::__setUniformsFromSources(
+        const std::unordered_set<ShaderVariable, ShaderVariable::Hasher>& source)
     {
-        if (_uniforms)
+        for (const auto& u : source)
         {
-            warnLog("Unifroms source for shader program '{}' will be owerwritten."_f << _name);
+            _uniforms[u.name] = u.location;
         }
-
-        _uniforms = source;
     }
 
     void ShaderProgram::clearOnlyShaderProgram()
@@ -131,6 +130,14 @@ namespace SW
             glDeleteProgram(_shaderProgramId);
             _shaderProgramId = 0;
         }
+    }
+
+    void ShaderProgram::debugUniform(const Core::StringAtom& name)
+    {
+#ifdef GRAPHICS_DEBUG
+        Assert(name.isStatic());
+        Assert(_uniforms[name] != -1);
+#endif
     }
 
 } // namespace SW
