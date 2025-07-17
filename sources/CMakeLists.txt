@@ -10,6 +10,5 @@ target_link_libraries(SomeGameApp PUBLIC
         SW::Camera
         SW::Editor
         SW::InputDevices
-        assimp::assimp
 )
 add_dependencies(SomeGameApp deploy)

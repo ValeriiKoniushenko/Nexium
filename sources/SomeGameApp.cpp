@@ -96,31 +96,9 @@ int main()
         "assets/base-3d/cube.obj", aiProcess_CalcTangentSpace | aiProcess_Triangulate
                                        | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
 
-    std::vector<float> vertices;
-    std::vector<GLuint> indices;
-
-    auto* mesh = scene->mMeshes[0];
-    for (unsigned int i = 0; i < mesh->mNumFaces; ++i)
-    {
-        const aiFace& face = mesh->mFaces[i];
-        for (unsigned int j = 0; j < face.mNumIndices; ++j)
-        {
-            indices.push_back(face.mIndices[j]);
-        }
-    }
-
-    for (unsigned int i = 0; i < mesh->mNumVertices; ++i)
-    {
-        aiVector3D v = mesh->mVertices[i];
-        vertices.push_back(v.x);
-        vertices.push_back(v.y);
-        vertices.push_back(v.z);
-    }
-
     SW::GraphicsComponentData element;
     element.generate();
-    element.setVertexBuffer(vertices);
-    element.setIndexBuffer(indices);
+    element.setMesh(scene->mMeshes[0]);
     element.setShaderProgram(shader);
 
     int frames = 0;

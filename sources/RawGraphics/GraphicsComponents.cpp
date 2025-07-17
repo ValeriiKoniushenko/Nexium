@@ -22,6 +22,8 @@
 
 #include "GraphicsComponents.h"
 
+#include "assimp/scene.h"
+
 namespace SW
 {
 
@@ -67,6 +69,44 @@ namespace SW
         if (!ignoreVertexAttribSetup)
         {
             _shader->setupVertexAttribute();
+        }
+    }
+
+    void GraphicsComponentData::setMesh(const aiMesh* mesh)
+    {
+        if (!mesh) [[unlikely]]
+        {
+            globalLog.errorLog("Impossible to set mesh. Mesh object is NULL.");
+            return;
+        }
+
+        std::vector<float> vertices;
+        std::vector<GLuint> indices;
+
+        for (unsigned int i = 0; i < mesh->mNumFaces; ++i)
+        {
+            const aiFace& face = mesh->mFaces[i];
+            for (unsigned int j = 0; j < face.mNumIndices; ++j)
+            {
+                indices.push_back(face.mIndices[j]);
+            }
+        }
+
+        for (unsigned int i = 0; i < mesh->mNumVertices; ++i)
+        {
+            const aiVector3D v = mesh->mVertices[i];
+            vertices.push_back(v.x);
+            vertices.push_back(v.y);
+            vertices.push_back(v.z);
+        }
+
+        setVertexBuffer(vertices);
+        setIndexBuffer(indices);
+
+        if (!mesh->mName.Empty()) [[likely]]
+        {
+            globalLog.debugLog("Mesh '{}' was loaded to the program object."_f
+                               << mesh->mName.C_Str());
         }
     }
 

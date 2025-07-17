@@ -24,6 +24,8 @@
 
 #include "ShaderProgram.h"
 
+class aiMesh;
+
 namespace SW
 {
 
@@ -42,6 +44,7 @@ namespace SW
         void setVertexBuffer(const std::vector<float>& data, GLenum usage = GL_STATIC_DRAW);
         void setIndexBuffer(const std::vector<GLuint>& data, GLenum usage = GL_STATIC_DRAW);
         void setShaderProgram(ShaderProgram* sp, bool ignoreVertexAttribSetup = false);
+        void setMesh(const aiMesh*);
 
         void clear();
         [[nodiscard]] bool isValid() const noexcept

@@ -14,6 +14,7 @@ target_link_libraries(${TARGET_NAME} PUBLIC
         SW::Glad
         glfw
         SW::Misc
+        assimp::assimp
 )
 
 target_include_directories(${TARGET_NAME} PUBLIC ../)
