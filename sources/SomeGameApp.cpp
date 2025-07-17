@@ -33,6 +33,7 @@
 #include "assimp/scene.h"
 
 #define GLM_ENABLE_EXPERIMENTAL
+#include "Misc/FPSCounter.h"
 #include "glm/gtx/string_cast.hpp"
 
 #include <iostream>
@@ -76,11 +77,11 @@ void handleInput(SW::BaseCamera& camera, float timeDelta)
         camera.rotateY(-rotateSpeed * timeDelta);
     }
 
-    if (SW::Keyboard::isKeyPressed(GLFW_KEY_R))
+    if (SW::Keyboard::isKeyPressed(GLFW_KEY_F))
     {
         camera.rotateX(rotateSpeed * timeDelta);
     }
-    if (SW::Keyboard::isKeyPressed(GLFW_KEY_F))
+    if (SW::Keyboard::isKeyPressed(GLFW_KEY_R))
     {
         camera.rotateX(-rotateSpeed * timeDelta);
     }
@@ -156,8 +157,9 @@ int main()
     Core::FStopwatch clock;
     float timeDelta = 0.f;
 
-    int frames = 0;
-    const auto start = std::chrono::system_clock::now();
+    SW::FPSCounter fpsCounter;
+    fpsCounter.start();
+
     while (!window.shouldClose())
     {
         clock.start();
@@ -174,15 +176,12 @@ int main()
 
         window.swapBuffers();
         window.pollEvent();
-        ++frames;
 
         timeDelta = clock.stop();
+        fpsCounter.newFrameUpdate();
     }
 
-    const auto end = std::chrono::system_clock::now();
-    const auto diff = std::chrono::duration<double>(end - start).count();
-    const auto fps = frames / diff;
-    std::cout << "FPS: " << fps << std::endl;
+    std::cout << "FPS: " << fpsCounter.getFPS() << std::endl;
 
     return 0;
 }
