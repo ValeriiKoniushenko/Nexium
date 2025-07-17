@@ -23,7 +23,6 @@
 #include "Camera.h"
 
 #include "RawGraphics/Window.h"
-
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/matrix_transform.hpp"
 
@@ -76,17 +75,16 @@ namespace SW
 
     void BaseCamera::recalculateCameraMatrices()
     {
-        _cachedModelMatrix = glm::mat4(1.f);
+        auto& mat = _cachedModelMatrix;
 
-        _cachedModelMatrix
-            = glm::rotate(_cachedModelMatrix, glm::radians(_rotation.x), glm::vec3(1.f, 0.f, 0.f));
-        _cachedModelMatrix
-            = glm::rotate(_cachedModelMatrix, glm::radians(_rotation.y), glm::vec3(0.f, 1.f, 0.f));
-        _cachedModelMatrix
-            = glm::rotate(_cachedModelMatrix, glm::radians(_rotation.z), glm::vec3(0.f, 0.f, 1.f));
+        mat = glm::mat4(1.f);
 
-        _cachedModelMatrix = glm::translate(_cachedModelMatrix, _position);
-        _cachedModelMatrix = glm::translate(_cachedModelMatrix, _origin);
+        mat = glm::rotate(mat, glm::radians(_rotation.x), glm::vec3(1.f, 0.f, 0.f));
+        mat = glm::rotate(mat, glm::radians(_rotation.y), glm::vec3(0.f, 1.f, 0.f));
+        mat = glm::rotate(mat, glm::radians(_rotation.z), glm::vec3(0.f, 0.f, 1.f));
+
+        mat = glm::translate(mat, _position);
+        mat = glm::translate(mat, _origin);
 
         _areDirtyMatrices = false;
     }

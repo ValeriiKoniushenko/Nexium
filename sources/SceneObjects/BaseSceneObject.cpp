@@ -121,7 +121,7 @@ namespace SW
 
     void BaseSceneObject::rotateX(float x) noexcept
     {
-        _rotation += x;
+        _rotation.x += x;
         _areDirtyMatrices = true;
         while (_rotation.x >= 360.f)
         {

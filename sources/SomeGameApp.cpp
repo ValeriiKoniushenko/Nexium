@@ -37,6 +37,55 @@
 
 #include <iostream>
 
+void handleInput(SW::BaseCamera& camera, float timeDelta)
+{
+    float speed = 10.f;
+    float rotateSpeed = 25.f;
+
+    if (SW::Keyboard::isKeyPressed(GLFW_KEY_D))
+    {
+        camera.moveRight(speed * timeDelta);
+    }
+    if (SW::Keyboard::isKeyPressed(GLFW_KEY_A))
+    {
+        camera.moveRight(-speed * timeDelta);
+    }
+    if (SW::Keyboard::isKeyPressed(GLFW_KEY_W))
+    {
+        camera.moveForward(speed * timeDelta);
+    }
+    if (SW::Keyboard::isKeyPressed(GLFW_KEY_S))
+    {
+        camera.moveForward(-speed * timeDelta);
+    }
+    if (SW::Keyboard::isKeyPressed(GLFW_KEY_SPACE))
+    {
+        camera.moveUp(speed * timeDelta);
+    }
+    if (SW::Keyboard::isKeyPressed(GLFW_KEY_C))
+    {
+        camera.moveUp(-speed * timeDelta);
+    }
+
+    if (SW::Keyboard::isKeyPressed(GLFW_KEY_E))
+    {
+        camera.rotateY(rotateSpeed * timeDelta);
+    }
+    if (SW::Keyboard::isKeyPressed(GLFW_KEY_Q))
+    {
+        camera.rotateY(-rotateSpeed * timeDelta);
+    }
+
+    if (SW::Keyboard::isKeyPressed(GLFW_KEY_R))
+    {
+        camera.rotateX(rotateSpeed * timeDelta);
+    }
+    if (SW::Keyboard::isKeyPressed(GLFW_KEY_F))
+    {
+        camera.rotateX(-rotateSpeed * timeDelta);
+    }
+}
+
 int main()
 {
 #ifdef DEBUG
@@ -101,44 +150,18 @@ int main()
     element.setMesh(scene->mMeshes[0]);
     element.setShaderProgram(shader);
 
-    int frames = 0;
-    const auto start = std::chrono::system_clock::now();
-
     SW::BaseCamera camera;
     camera.moveForward(-10);
 
-    float speed = 10.f;
-    float rotateSpeed = 25.f;
-
     Core::FStopwatch clock;
     float timeDelta = 0.f;
+
+    int frames = 0;
+    const auto start = std::chrono::system_clock::now();
     while (!window.shouldClose())
     {
         clock.start();
-        if (SW::Keyboard::isKeyPressed(GLFW_KEY_D))
-        {
-            camera.moveRight(speed * timeDelta);
-        }
-        if (SW::Keyboard::isKeyPressed(GLFW_KEY_A))
-        {
-            camera.moveRight(-speed * timeDelta);
-        }
-        if (SW::Keyboard::isKeyPressed(GLFW_KEY_W))
-        {
-            camera.moveUp(speed * timeDelta);
-        }
-        if (SW::Keyboard::isKeyPressed(GLFW_KEY_S))
-        {
-            camera.moveUp(-speed * timeDelta);
-        }
-        if (SW::Keyboard::isKeyPressed(GLFW_KEY_E))
-        {
-            camera.rotateY(rotateSpeed * timeDelta);
-        }
-        if (SW::Keyboard::isKeyPressed(GLFW_KEY_Q))
-        {
-            camera.rotateY(-rotateSpeed * timeDelta);
-        }
+        handleInput(camera, timeDelta);
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
