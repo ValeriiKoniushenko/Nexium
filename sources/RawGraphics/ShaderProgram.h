@@ -139,7 +139,6 @@ namespace SW
         void clearOnlyShaderProgram();
 
     protected:
-        // non-owner, read-only
         std::unordered_map<Core::StringAtom, GLuint> _uniforms;
 
         Core::StringAtom _name;
