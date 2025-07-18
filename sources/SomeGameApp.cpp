@@ -33,6 +33,7 @@
 #include "assimp/scene.h"
 
 #define GLM_ENABLE_EXPERIMENTAL
+#include "InputDevices/InputAction.h"
 #include "Misc/FPSCounter.h"
 #include "glm/gtx/string_cast.hpp"
 
@@ -146,6 +147,8 @@ int main()
         "assets/base-3d/cube.obj", aiProcess_CalcTangentSpace | aiProcess_Triangulate
                                        | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
 
+    float timeDelta = 0.f;
+
     SW::GraphicsComponentData element;
     element.generate();
     element.setMesh(scene->mMeshes[0]);
@@ -154,8 +157,15 @@ int main()
     SW::BaseCamera camera;
     camera.moveForward(-10);
 
+    SW::KeyboardInputAction moveUp("move Up", GLFW_KEY_W);
+    moveUp.onPress.subscribe(
+        [&]()
+        {
+            float speed = 10.f;
+            camera.moveForward(speed * timeDelta);
+        });
+
     Core::FStopwatch clock;
-    float timeDelta = 0.f;
 
     SW::FPSCounter fpsCounter;
     fpsCounter.start();
@@ -163,6 +173,7 @@ int main()
     while (!window.shouldClose())
     {
         clock.start();
+        moveUp.update();
         handleInput(camera, timeDelta);
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
