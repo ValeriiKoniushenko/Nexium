@@ -22,6 +22,8 @@
 
 #include "InputAction.h"
 
+#include "Keyboard.h"
+
 namespace SW
 {
     KeyboardInputAction::KeyboardInputAction(const Core::StringAtom& name, int key)

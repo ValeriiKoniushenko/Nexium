@@ -22,7 +22,6 @@
 
 #pragma once
 
-#include "Keyboard.h"
 #include "Mouse.h"
 #include "glm/glm.hpp"
 
@@ -33,9 +32,13 @@
 
 namespace SW
 {
-
-    template<class KeyT>
-    class InputAction : public boost::intrusive_ref_counter<InputAction<KeyT>>
+    /**
+     * @brief Base input action class for handling generic key inputs.
+     *
+     * @tparam _KeyT Type representing a key (e.g., int, enum, etc.).
+     */
+    template<class _KeyT>
+    class InputAction : public boost::intrusive_ref_counter<InputAction<_KeyT>>
     {
     private:
         enum class State
@@ -45,7 +48,13 @@ namespace SW
         };
 
     public:
+        using Self = InputAction<_KeyT>;
+        using Ptr = boost::intrusive_ptr<Self>;
+        using CPtr = boost::intrusive_ptr<const Self>;
+        template<bool isConst>
+        using AdaptivePtr = std::conditional_t<isConst, CPtr, Ptr>;
         using TimeT = std::chrono::milliseconds;
+        using KeyT = _KeyT;
 
         InputAction() = default;
 
@@ -97,7 +106,7 @@ namespace SW
 
         void setKey(KeyT key) { _key = key; }
 
-        [[nodiscard]] KeyT getKey() const { return _key; }
+        [[nodiscard]] std::optional<KeyT> getKey() const { return _key; }
 
         [[nodiscard]] bool getIsRepeatable() const { return _isRepeatable; }
 
@@ -119,9 +128,27 @@ namespace SW
         bool _isRepeatable = true;
     };
 
+    /**
+     * @brief Handles input actions specifically from the keyboard.
+     * Also, can be called as KeyboardIA.
+     * Better to create it using SW::InputManger. I.e.:
+     * @code
+     * SW::InputManger im;
+     * SW::KeyboardIA::Ptr ia = im.getOrCreateKeyboardIA("GoForward", GLFW_KEY_W);
+     * ...
+     * @endcode
+     */
     class KeyboardInputAction : public InputAction<int>
     {
     public:
+        using Parent = InputAction;
+        using Self = KeyboardInputAction;
+        using Ptr = boost::intrusive_ptr<Self>;
+        using CPtr = boost::intrusive_ptr<const Self>;
+        using KeyT = Parent::KeyT;
+
+        static Ptr Create() { return { new Self }; }
+
         KeyboardInputAction() = default;
         KeyboardInputAction(const Core::StringAtom& name, int key);
 
@@ -129,9 +156,27 @@ namespace SW
         [[nodiscard]] bool isKeyPressed() const override;
     };
 
+    /**
+     * @brief Handles input actions specifically from the mouse.
+     * Also, can be called as MousedIA
+     * Better to create it using SW::InputManger. I.e.:
+     * @code
+     * SW::InputManger im;
+     * SW::MousedIA::Ptr ia = im.getOrCreateMousedIA("ToolbarClick", GLFW_MOUSE_BUTTON_LEFT);
+     * ...
+     * @endcode
+     */
     class MouseInputAction : public InputAction<int>
     {
     public:
+        using Parent = InputAction;
+        using Self = MouseInputAction;
+        using Ptr = boost::intrusive_ptr<Self>;
+        using CPtr = boost::intrusive_ptr<const Self>;
+        using KeyT = Parent::KeyT;
+
+        static Ptr Create() { return { new Self }; }
+
         MouseInputAction();
         MouseInputAction(const Core::StringAtom& name, int key);
         explicit MouseInputAction(const Core::StringAtom& name);
@@ -150,4 +195,15 @@ namespace SW
         glm::vec2 _lastMousePosition = Mouse::getPosition();
     };
 
+    using KeyboardIA = KeyboardInputAction;
+    using MouseIA = MouseInputAction;
+
+    template<class T>
+    concept IsInputAction = requires(T) {
+        typename T::KeyT;
+        typename T::Ptr;
+        typename T::CPtr;
+        typename T::Parent;
+        std::derived_from<T, SW::InputAction<typename T::KeyT>>;
+    };
 } // namespace SW

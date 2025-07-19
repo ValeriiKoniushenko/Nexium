@@ -30,9 +30,9 @@ namespace SW
 
     glm::vec2 Mouse::getPosition()
     {
-        double xpos = 0, ypos = 0;
-        glfwGetCursorPos(GetWindow().getRawWindow(), &xpos, &ypos);
-        return { static_cast<float>(xpos), static_cast<float>(ypos) };
+        double x = 0, y = 0;
+        glfwGetCursorPos(GetWindow().getRawWindow(), &x, &y);
+        return { static_cast<float>(x), static_cast<float>(y) };
     }
 
     bool Mouse::isKeyPressed(int key)

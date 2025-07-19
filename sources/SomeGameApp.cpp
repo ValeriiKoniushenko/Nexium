@@ -34,6 +34,7 @@
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include "InputDevices/InputAction.h"
+#include "InputDevices/InputManager.h"
 #include "Misc/FPSCounter.h"
 #include "glm/gtx/string_cast.hpp"
 
@@ -157,13 +158,16 @@ int main()
     SW::BaseCamera camera;
     camera.moveForward(-10);
 
-    SW::KeyboardInputAction moveUp("move Up", GLFW_KEY_W);
-    moveUp.onPress.subscribe(
-        [&]()
-        {
-            float speed = 10.f;
-            camera.moveForward(speed * timeDelta);
-        });
+    SW::KeyboardInputManger inputs;
+    inputs.getOrCreate("move Up", GLFW_KEY_W)
+        ->onPress.subscribe(
+            [&]()
+            {
+                float speed = 10.f;
+                camera.moveForward(speed * timeDelta);
+            });
+
+    SW::KeyboardIA::CPtr d = inputs.get(GLFW_KEY_W);
 
     Core::FStopwatch clock;
 
@@ -173,8 +177,9 @@ int main()
     while (!window.shouldClose())
     {
         clock.start();
-        moveUp.update();
-        handleInput(camera, timeDelta);
+
+        inputs.update();
+        // handleInput(camera, timeDelta);
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -188,8 +193,8 @@ int main()
         window.swapBuffers();
         window.pollEvent();
 
-        timeDelta = clock.stop();
         fpsCounter.newFrameUpdate();
+        timeDelta = clock.stop();
     }
 
     std::cout << "FPS: " << fpsCounter.getFPS() << std::endl;
