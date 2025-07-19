@@ -2,6 +2,20 @@ include(FetchContent)
 
 set(FETCHCONTENT_BASE_DIR deps)
 
+FetchContent_Declare(Boost
+        GIT_REPOSITORY "https://github.com/boostorg/boost.git"
+        GIT_TAG boost-1.88.0
+        GIT_PROGRESS TRUE
+        GIT_SHALLOW TRUE
+        OVERRIDE_FIND_PACKAGE TRUE # needed to find correct Boost
+        EXCLUDE_FROM_ALL # compile only what you need
+)
+
+FetchContent_MakeAvailable(Boost)
+
+find_package(Boost 1.88.0 EXACT REQUIRED COMPONENTS filesystem)
+
+
 FetchContent_Declare(Glfw
         GIT_REPOSITORY https://github.com/glfw/glfw.git
         GIT_TAG 3.4

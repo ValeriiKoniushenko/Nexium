@@ -27,13 +27,15 @@
 #include "glm/glm.hpp"
 
 #include <Core/Delegate.h>
+#include <boost/intrusive_ptr.hpp>
+#include <boost/smart_ptr/intrusive_ref_counter.hpp>
 #include <chrono>
 
 namespace SW
 {
 
     template<class KeyT>
-    class InputAction
+    class InputAction : public boost::intrusive_ref_counter<InputAction<KeyT>>
     {
     private:
         enum class State

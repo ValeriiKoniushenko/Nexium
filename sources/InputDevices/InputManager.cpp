@@ -20,26 +20,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#pragma once
+#include "InputManager.h"
 
 namespace SW
 {
 
-    class InputManger final
+    void InputManger::update()
     {
-    public:
-        class Updater
-        {
-        };
-
-    public:
-        void update();
-
-    public:
-        InputManger() = default;
-        ~InputManger() = default;
-
-    private:
-    };
+    }
 
 } // namespace SW

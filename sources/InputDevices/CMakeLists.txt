@@ -13,6 +13,7 @@ add_library(SW::${MAIN_NAME} ALIAS ${TARGET_NAME})
 target_link_libraries(${TARGET_NAME} PUBLIC
 		glfw
 		SW::RawGraphics
+		Boost::smart_ptr
 )
 
 target_include_directories(${TARGET_NAME} PUBLIC ../)
