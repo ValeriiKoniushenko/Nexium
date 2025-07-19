@@ -97,6 +97,44 @@ namespace SW
             return _mapping[key];
         }
 
+        bool remove(typename InputT::KeyT key)
+        {
+            auto found = _mapping.find(key);
+            if (found == _mapping.cend())
+            {
+                return false;
+            }
+
+            auto nameForDelete = _nameMapping.find(found->second->getName());
+            if (nameForDelete == _nameMapping.cend())
+            {
+                Assert("Key found but name no?");
+                return false;
+            }
+
+            _mapping.erase(found);
+            _nameMapping.erase(nameForDelete);
+
+            return true;
+        }
+
+        bool remove(const Core::StringAtom& name)
+        {
+            auto nameForDelete = _nameMapping.find(name);
+            if (nameForDelete == _nameMapping.cend())
+            {
+                return false;
+            }
+
+            auto key = nameForDelete->second->getKey();
+            if (!key)
+            {
+                return false;
+            }
+
+            return remove(key.value());
+        }
+
     private:
         // ==================== PIMPLs =======================
         template<bool isConst>

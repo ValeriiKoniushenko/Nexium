@@ -167,8 +167,6 @@ int main()
                 camera.moveForward(speed * timeDelta);
             });
 
-    SW::KeyboardIA::CPtr d = inputs.get(GLFW_KEY_W);
-
     Core::FStopwatch clock;
 
     SW::FPSCounter fpsCounter;
