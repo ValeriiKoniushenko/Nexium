@@ -122,7 +122,7 @@ namespace SW
     protected:
         Core::StringAtom _name;
         std::optional<KeyT> _key{};
-        TimeT _frequency = TimeT(1);
+        TimeT _frequency = TimeT(0);
         std::chrono::system_clock::time_point _lastUpdate{};
         State _lastState = State::None;
         bool _isRepeatable = true;

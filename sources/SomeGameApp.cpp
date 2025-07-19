@@ -70,23 +70,6 @@ void handleInput(SW::BaseCamera& camera, float timeDelta)
         camera.moveUp(-speed * timeDelta);
     }
 
-    if (SW::Keyboard::isKeyPressed(GLFW_KEY_E))
-    {
-        camera.rotateY(rotateSpeed * timeDelta);
-    }
-    if (SW::Keyboard::isKeyPressed(GLFW_KEY_Q))
-    {
-        camera.rotateY(-rotateSpeed * timeDelta);
-    }
-
-    if (SW::Keyboard::isKeyPressed(GLFW_KEY_F))
-    {
-        camera.rotateX(rotateSpeed * timeDelta);
-    }
-    if (SW::Keyboard::isKeyPressed(GLFW_KEY_R))
-    {
-        camera.rotateX(-rotateSpeed * timeDelta);
-    }
 }
 
 int main()
@@ -159,13 +142,19 @@ int main()
     camera.moveForward(-10);
 
     SW::KeyboardInputManger inputs;
-    inputs.getOrCreate("move Up", GLFW_KEY_W)
-        ->onPress.subscribe(
-            [&]()
-            {
-                float speed = 10.f;
-                camera.moveForward(speed * timeDelta);
-            });
+    // clang-format off
+    float speed = 10.f, rotateSpeed = 25.f;
+    inputs.getOrCreate("moveForward", GLFW_KEY_W)->onPress.subscribe([&](){ camera.moveForward(speed * timeDelta); });
+    inputs.getOrCreate("moveBackward", GLFW_KEY_S)->onPress.subscribe([&](){ camera.moveForward(-speed * timeDelta); });
+    inputs.getOrCreate("moveRight", GLFW_KEY_D)->onPress.subscribe([&](){ camera.moveRight(speed * timeDelta); });
+    inputs.getOrCreate("moveLeft", GLFW_KEY_A)->onPress.subscribe([&](){ camera.moveRight(-speed * timeDelta); });
+    inputs.getOrCreate("moveUp", GLFW_KEY_SPACE)->onPress.subscribe([&](){ camera.moveUp(speed * timeDelta); });
+    inputs.getOrCreate("moveDown", GLFW_KEY_C)->onPress.subscribe([&](){ camera.moveUp(-speed * timeDelta); });
+    inputs.getOrCreate("yawForward", GLFW_KEY_E)->onPress.subscribe([&](){ camera.rotateY(rotateSpeed* timeDelta); });
+    inputs.getOrCreate("yawBackward", GLFW_KEY_Q)->onPress.subscribe([&](){ camera.rotateY(-rotateSpeed* timeDelta); });
+    inputs.getOrCreate("pitchForward", GLFW_KEY_F)->onPress.subscribe([&](){ camera.rotateX(rotateSpeed* timeDelta); });
+    inputs.getOrCreate("pitchBackward", GLFW_KEY_R)->onPress.subscribe([&](){ camera.rotateX(-rotateSpeed* timeDelta); });
+    // clang-format on
 
     Core::FStopwatch clock;
 

@@ -23,6 +23,7 @@
 #pragma once
 
 #include "InputAction.h"
+#include "ModuleInfo.h"
 
 #include <unordered_map>
 
@@ -30,16 +31,18 @@ namespace SW
 {
 
     template<IsInputAction _InputT>
-    class InputManger final
+    class InputManger final : public BaseLog
     {
     public:
         using Self = InputManger;
         template<bool isConst>
         using AdaptiveRawPtr = std::conditional_t<isConst, const InputManger, InputManger>*;
         using InputT = _InputT;
+        using MappingT = std::unordered_map<typename InputT::KeyT, typename InputT::Ptr>;
+        using NameMappingT = std::unordered_map<Core::StringAtom, InputT*>;
 
         InputManger() = default;
-        ~InputManger() = default;
+        ~InputManger() override = default;
 
         void update()
         {
@@ -48,6 +51,9 @@ namespace SW
                 ia->update();
             }
         }
+
+        [[nodiscard]] const MappingT& getMapping() const noexcept { return _mapping; }
+        [[nodiscard]] const NameMappingT& getNameMapping() const noexcept { return _nameMapping; }
 
         [[nodiscard]] typename InputT::Ptr getOrCreate(const Core::StringAtom& name,
                                                        typename InputT::KeyT key)
@@ -94,6 +100,9 @@ namespace SW
         {
             _mapping.emplace(key, new InputT(name, key));
             _nameMapping.emplace(name, _mapping[key].get());
+
+            debugLog("Mapping was created: '{}'"_f << name);
+
             return _mapping[key];
         }
 
@@ -111,6 +120,8 @@ namespace SW
                 Assert("Key found but name no?");
                 return false;
             }
+
+            debugLog("Mapping was removed: '{}'"_f << nameForDelete->first);
 
             _mapping.erase(found);
             _nameMapping.erase(nameForDelete);
@@ -133,6 +144,11 @@ namespace SW
             }
 
             return remove(key.value());
+        }
+
+        [[nodiscard]] spdlog::logger* getLogger() const override
+        {
+            return InputDevices::getLogger();
         }
 
     private:
@@ -173,8 +189,8 @@ namespace SW
         }
 
     private:
-        std::unordered_map<typename InputT::KeyT, typename InputT::Ptr> _mapping;
-        std::unordered_map<Core::StringAtom, InputT*> _nameMapping;
+        MappingT _mapping;
+        NameMappingT _nameMapping;
     };
 
     using KeyboardInputManger = InputManger<KeyboardInputAction>;
