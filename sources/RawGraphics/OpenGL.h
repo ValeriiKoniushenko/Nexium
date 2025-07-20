@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2023 Valerii Koniushenko
+// Copyright (c) 2019-2025 Valerii Koniushenko
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,30 +22,11 @@
 
 #pragma once
 
-#include "Core/Enum.h"
-#include "RawGraphics/OpenGL.h"
+// clang-format off
+#include "glad/glad.h"
+#include "GLFW/glfw3.h"
+// clang-format on
 
-namespace SW
-{
+#ifdef SW_TESTS_TARGET
 
-    class Keyboard final
-    {
-    public:
-        // clang-format off
-        CreateEnum(KeyState, int,
-            None,
-            Pressed = GLFW_PRESS,
-            Released = GLFW_RELEASE,
-            Repeated = GLFW_REPEAT
-        );
-        // clang-format on
-
-        Keyboard() = delete;
-
-        [[nodiscard]] static KeyState getKeyState(int key);
-        [[nodiscard]] static bool isKeyPressed(int key);
-        [[nodiscard]] static bool isKeyRepeated(int key);
-        [[nodiscard]] static bool isKeyReleased(int key);
-    };
-
-} // namespace SW
+#endif

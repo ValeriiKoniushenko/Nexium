@@ -23,11 +23,7 @@
 #pragma once
 
 #include "ModuleInfo.h"
-
-// clang-format off
-#include "glad/glad.h"
-#include "GLFW/glfw3.h"
-// clang-format on
+#include "OpenGL.h"
 
 #include <glm/fwd.hpp>
 #include <glm/gtc/type_ptr.hpp>

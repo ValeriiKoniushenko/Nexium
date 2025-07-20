@@ -22,14 +22,10 @@
 
 #pragma once
 
-// clang-format off
-#include "glad/glad.h"
-#include "GLFW/glfw3.h"
-// clang-format on
-
 #include "Core/Delegate.h"
 #include "Core/Size.h"
 #include "ModuleInfo.h"
+#include "OpenGL.h"
 
 #include <Core/Enum.h>
 #include <Core/Singleton.h>
