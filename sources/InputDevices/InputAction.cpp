@@ -79,7 +79,7 @@ namespace SW
 
         if (pos != *_lastMousePosition)
         {
-            onMove.trigger(pos - *_lastMousePosition);
+            onMove.trigger(pos - *_lastMousePosition, SpecKeysState::fillAndGet());
             _lastMousePosition = pos;
         }
     }
@@ -87,9 +87,9 @@ namespace SW
     void MouseInputAction::init()
     {
         _idActionPrivate = _onActionPrivate.subscribeAndGetID(
-            [this]()
+            [this](SpecKeysState states)
             {
-                onMouseClick.trigger(Mouse::getPosition());
+                onMouseClick.trigger(Mouse::getPosition(), states);
             });
     }
 

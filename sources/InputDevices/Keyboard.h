@@ -22,17 +22,34 @@
 
 #pragma once
 
+// clang-format off
+#include "glad/glad.h"
+#include "GLFW/glfw3.h"
+// clang-format on
+
+#include "Core/Enum.h"
+
 namespace SW
 {
 
     class Keyboard final
     {
     public:
+        // clang-format off
+        CreateEnum(KeyState, int,
+            None,
+            Pressed = GLFW_PRESS,
+            Released = GLFW_RELEASE,
+            Repeated = GLFW_REPEAT
+        );
+        // clang-format on
+
         Keyboard() = delete;
 
-        static bool isKeyPressed(int key);
-        static bool isKeyRepeated(int key);
-        static bool isKeyReleased(int key);
+        [[nodiscard]] static KeyState getKeyState(int key);
+        [[nodiscard]] static bool isKeyPressed(int key);
+        [[nodiscard]] static bool isKeyRepeated(int key);
+        [[nodiscard]] static bool isKeyReleased(int key);
     };
 
 } // namespace SW
