@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2023 Valerii Koniushenko
+// Copyright (c) 2019-2025 Valerii Koniushenko
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,33 +20,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "Mouse.h"
+#pragma once
 
-#include "RawGraphics/Window.h"
+#include "Misc/BaseLog.h"
 
-namespace SW
+namespace SW::InputDevices
 {
 
-    glm::vec2 Mouse::getPosition()
+    [[nodiscard]] inline spdlog::logger* getLogger()
     {
-        double x = 0, y = 0;
-        glfwGetCursorPos(GetWindow().getRawWindow(), &x, &y);
-        return { static_cast<float>(x), static_cast<float>(y) };
+        static std::shared_ptr<spdlog::logger> logger = spdlog::stdout_color_mt("InputDevices");
+        return logger.get();
     }
 
-    bool Mouse::isKeyPressed(int key)
-    {
-        return glfwGetMouseButton(GetWindow().getRawWindow(), key) == GLFW_PRESS;
-    }
-
-    bool Mouse::isKeyReleased(int key)
-    {
-        return glfwGetMouseButton(GetWindow().getRawWindow(), key) == GLFW_RELEASE;
-    }
-
-    bool Mouse::isKeyRepeated(int key)
-    {
-        return glfwGetMouseButton(GetWindow().getRawWindow(), key) == GLFW_REPEAT;
-    }
-
-} // namespace SW
+} // namespace SW::InputDevices

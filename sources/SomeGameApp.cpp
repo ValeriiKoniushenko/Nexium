@@ -23,70 +23,22 @@
 #include "Camera/Camera.h"
 #include "Core/Timer.h"
 #include "Editor/Server.h"
-#include "InputDevices/Keyboard.h"
+#include "InputDevices/InputManager.h"
+#include "Misc/FPSCounter.h"
 #include "RawGraphics/GraphicsComponents.h"
 #include "RawGraphics/ShaderManager.h"
-#include "RawGraphics/ShaderProgramMeta.h"
 #include "RawGraphics/Window.h"
 #include "assimp/Importer.hpp"
 #include "assimp/postprocess.h"
 #include "assimp/scene.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "Stb/Image.h"
+
 #define GLM_ENABLE_EXPERIMENTAL
-#include "InputDevices/InputAction.h"
-#include "Misc/FPSCounter.h"
 #include "glm/gtx/string_cast.hpp"
 
 #include <iostream>
-
-void handleInput(SW::BaseCamera& camera, float timeDelta)
-{
-    float speed = 10.f;
-    float rotateSpeed = 25.f;
-
-    if (SW::Keyboard::isKeyPressed(GLFW_KEY_D))
-    {
-        camera.moveRight(speed * timeDelta);
-    }
-    if (SW::Keyboard::isKeyPressed(GLFW_KEY_A))
-    {
-        camera.moveRight(-speed * timeDelta);
-    }
-    if (SW::Keyboard::isKeyPressed(GLFW_KEY_W))
-    {
-        camera.moveForward(speed * timeDelta);
-    }
-    if (SW::Keyboard::isKeyPressed(GLFW_KEY_S))
-    {
-        camera.moveForward(-speed * timeDelta);
-    }
-    if (SW::Keyboard::isKeyPressed(GLFW_KEY_SPACE))
-    {
-        camera.moveUp(speed * timeDelta);
-    }
-    if (SW::Keyboard::isKeyPressed(GLFW_KEY_C))
-    {
-        camera.moveUp(-speed * timeDelta);
-    }
-
-    if (SW::Keyboard::isKeyPressed(GLFW_KEY_E))
-    {
-        camera.rotateY(rotateSpeed * timeDelta);
-    }
-    if (SW::Keyboard::isKeyPressed(GLFW_KEY_Q))
-    {
-        camera.rotateY(-rotateSpeed * timeDelta);
-    }
-
-    if (SW::Keyboard::isKeyPressed(GLFW_KEY_F))
-    {
-        camera.rotateX(rotateSpeed * timeDelta);
-    }
-    if (SW::Keyboard::isKeyPressed(GLFW_KEY_R))
-    {
-        camera.rotateX(-rotateSpeed * timeDelta);
-    }
-}
 
 int main()
 {
@@ -101,7 +53,7 @@ int main()
     //    `--. \ / _ \| '__|\ \ / // _ \| '__|
     //   /\__/ /|  __/| |    \ V /|  __/| |
     //   \____/  \___||_|     \_/  \___||_|
-    //-------------------------------------------------
+    //------------------------------------------
     auto& server = SW::GetEditorServer();
     server.setPort(61005);
     server.initialize();
@@ -113,9 +65,10 @@ int main()
     //   | |/\| || || '_ \  / _` | / _ \\ \ /\ / /
     //   \  /\  /| || | | || (_| || (_) |\ V  V /
     //    \/  \/ |_||_| |_| \__,_| \___/  \_/\_/
-    //-------------------------------------------------
+    //----------------------------------------------
     auto& window = SW::GetWindow();
     window.create("Sprite Walker", { 600, 600 });
+    // window.toggleCursorMode();
 
     //    _____  _                 _
     //   /  ___|| |               | |
@@ -133,66 +86,158 @@ int main()
                    << notLoadedShader);
     }
 
+    // ======== Setting up[s] ==========
     auto* shader = sm.getShaderProgram("color"_atom);
+    Assert(shader);
     shader->setVertexAttributeCallback(
         []()
         {
             glEnableVertexAttribArray(0);
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), nullptr);
+
+            glEnableVertexAttribArray(1);
+            glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
+                                  reinterpret_cast<void*>(3 * sizeof(float)));
+
+            glEnableVertexAttribArray(2);
+            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
+                                  reinterpret_cast<void*>(5 * sizeof(float)));
         });
-    Assert(shader);
 
-    Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(
-        "assets/base-3d/cube.obj", aiProcess_CalcTangentSpace | aiProcess_Triangulate
-                                       | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
-
+    //    _    _               _      _     _   _
+    //   | |  | |             | |    | |   | | | |
+    //   | |  | |  ___   _ __ | |  __| |   | | | |  __ _  _ __  ___
+    //   | |/\| | / _ \ | '__|| | / _` |   | | | | / _` || '__|/ __|
+    //   \  /\  /| (_) || |   | || (_| |   \ \_/ /| (_| || |   \__ \
+    //    \/  \/  \___/ |_|   |_| \__,_|    \___/  \__,_||_|   |___/
+    //---------------------------------------------------------------
     float timeDelta = 0.f;
-
-    SW::GraphicsComponentData element;
-    element.generate();
-    element.setMesh(scene->mMeshes[0]);
-    element.setShaderProgram(shader);
-
+    glm::vec3 lightPos(1'000'000.f, 1'000'000.f, 1'000'000.f);
     SW::BaseCamera camera;
     camera.moveForward(-10);
 
-    SW::KeyboardInputAction moveUp("move Up", GLFW_KEY_W);
-    moveUp.onPress.subscribe(
-        [&]()
-        {
-            float speed = 10.f;
-            camera.moveForward(speed * timeDelta);
-        });
+    //    _____                       _        ___         _    _
+    //   |_   _|                     | |      / _ \       | |  (_)
+    //     | |   _ __   _ __   _   _ | |_    / /_\ \  ___ | |_  _   ___   _ __   ___
+    //     | |  | '_ \ | '_ \ | | | || __|   |  _  | / __|| __|| | / _ \ | '_ \ / __|
+    //    _| |_ | | | || |_) || |_| || |_    | | | || (__ | |_ | || (_) || | | |\__ \
+    //    \___/ |_| |_|| .__/  \__,_| \__|   \_| |_/ \___| \__||_| \___/ |_| |_||___/
+    //                 | |
+    //                 |_|
+    //--------------------------------------------------------------------------------
+    SW::KeyboardInputManger keyboardInput;
+    SW::MouseInputManger mouseInput;
 
+    // clang-format off
+    constexpr float speed = 10.f, rotateSpeed = 25.f, mouseSensitivity = 900.0;
+    auto getRealSpeed = [speed](SW::KeyboardIA::SpecKeysState state)
+    {
+        const float mlt = state.leftShift.cast() == SW::Keyboard::KeyState::Pressed ? 5.f : 1.f;
+        return speed * mlt;
+    };
+    keyboardInput.create("moveForward", GLFW_KEY_W)->onPress.subscribe([&](auto state){ camera.moveForward(getRealSpeed(state) * timeDelta); });
+    keyboardInput.create("moveBackward", GLFW_KEY_S)->onPress.subscribe([&](auto state){ camera.moveForward(-getRealSpeed(state) * timeDelta); });
+    keyboardInput.create("moveRight", GLFW_KEY_D)->onPress.subscribe([&](auto state){ camera.moveRight(getRealSpeed(state) * timeDelta); });
+    keyboardInput.create("moveLeft", GLFW_KEY_A)->onPress.subscribe([&](auto state){ camera.moveRight(-getRealSpeed(state) * timeDelta); });
+    keyboardInput.create("moveUp", GLFW_KEY_SPACE)->onPress.subscribe([&](auto state){ camera.moveUp(getRealSpeed(state) * timeDelta); });
+    keyboardInput.create("moveDown", GLFW_KEY_C)->onPress.subscribe([&](auto state){ camera.moveUp(-getRealSpeed(state) * timeDelta); });
+    keyboardInput.create("exit", GLFW_KEY_ESCAPE)->onPress.subscribe([&](auto){ window.close(); });
+    auto toggleCursorMode = keyboardInput.create("toggleCursorMode", GLFW_KEY_M);
+    toggleCursorMode->onPress.subscribe([&](auto) { window.toggleCursorMode(); });
+    toggleCursorMode->setIsRepeatable(false);
+    mouseInput.create("cameraView", 0)->onMove.subscribe([&](glm::vec2 delta, auto){ camera.yawAndPitch(delta * timeDelta * mouseSensitivity); });
+    // clang-format on
+
+    // ====================== MISC ==========================
+    Core::FStopwatch modelLoaderStopwatch;
+    modelLoaderStopwatch.start();
+    Assimp::Importer importer;
+    std::filesystem::path modelPath = "assets/base-3d/Models/FBX/FireHydrant.fbx";
+    const aiScene* scene = importer.ReadFile(
+        modelPath, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
+    Assert(scene);
+    SW::globalLog.infoLog("All models was loaded for: {}s"_f << modelLoaderStopwatch.stop());
+
+    std::vector<SW::GraphicsComponentData> meshes(1);
+
+    for (int i = 0; i < meshes.size(); ++i)
+    {
+        aiMesh* mesh = scene->mMeshes[i];
+
+        meshes[i].generate();
+
+        aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+        aiString texturePath;
+        if (material->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath) == AI_SUCCESS)
+        {
+            auto relative = Core::StringAtom(texturePath.C_Str()).replaceAll("\\", "/");
+            auto resolved = (modelPath.parent_path() / relative.toStdString()).lexically_normal();
+
+            int width = 0, height = 0, channels = 0;
+            stbi_set_flip_vertically_on_load(true);
+            unsigned char* data
+                = stbi_load(resolved.generic_string().c_str(), &width, &height, &channels, 0);
+            if (data)
+            {
+                meshes[i].setTexture(data, width, height, channels);
+            }
+            else
+            {
+            }
+            stbi_image_free(data);
+        }
+
+        meshes[i].setMesh(mesh, true, true);
+        meshes[i].setShaderProgram(shader);
+    }
+
+    //   ___  ___        _          _
+    //   |  \/  |       (_)        | |
+    //   | .  . |  __ _  _  _ __   | |      ___    ___   _ __
+    //   | |\/| | / _` || || '_ \  | |     / _ \  / _ \ | '_ \
+    //   | |  | || (_| || || | | | | |____| (_) || (_) || |_) |
+    //   \_|  |_/ \__,_||_||_| |_| \_____/ \___/  \___/ | .__/
+    //                                                  | |
+    //                                                  |_|
+    //-----------------------------------------------------------
     Core::FStopwatch clock;
 
     SW::FPSCounter fpsCounter;
     fpsCounter.start();
 
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+
     while (!window.shouldClose())
     {
         clock.start();
-        moveUp.update();
-        handleInput(camera, timeDelta);
+
+        keyboardInput.update();
+        mouseInput.update();
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         shader->use();
+        shader->setUniform("uObjectColor"_atom, 1.0f, 1.0f, 1.0f);
+        shader->setUniform("uLightColor"_atom, 1.0f, 1.0f, 1.0f);
+        shader->setUniform("uLightPos"_atom, lightPos);
+        shader->setUniform("uViewPos"_atom, camera.getPosition());
+        shader->setUniform("uTexture"_atom, 0);
+
         shader->setUniform("uProjAndView"_atom, camera.getMatrix());
         shader->setUniform("uModel"_atom, glm::mat4(1.0f));
 
-        element.directDraw();
+        meshes.back().directDraw();
 
         window.swapBuffers();
         window.pollEvent();
 
-        timeDelta = clock.stop();
         fpsCounter.newFrameUpdate();
+        timeDelta = clock.stop();
     }
 
-    std::cout << "FPS: " << fpsCounter.getFPS() << std::endl;
+    SW::globalLog.infoLog("FPS: {}"_f << fpsCounter.getFPS());
 
     return 0;
 }

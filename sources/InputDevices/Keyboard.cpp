@@ -27,6 +27,11 @@
 namespace SW
 {
 
+    Keyboard::KeyState Keyboard::getKeyState(int key)
+    {
+        return static_cast<KeyState>(glfwGetKey(SW::GetWindow().getRawWindow(), key));
+    }
+
     bool Keyboard::isKeyPressed(int key)
     {
         return glfwGetKey(SW::GetWindow().getRawWindow(), key) == GLFW_PRESS;

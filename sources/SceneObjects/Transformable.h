@@ -26,11 +26,11 @@
 
 namespace SW
 {
-    class BaseSceneObject
+    class Transformable
     {
     public:
-        BaseSceneObject() = default;
-        virtual ~BaseSceneObject() = default;
+        Transformable() = default;
+        virtual ~Transformable() = default;
 
         [[nodiscard]] glm::vec3 getPosition() const noexcept;
         void setPosition(const glm::vec3& position) noexcept;
@@ -73,6 +73,6 @@ namespace SW
         glm::vec3 _origin{};
         glm::vec3 _position{};
         glm::vec3 _rotation{};
-        bool _areDirtyMatrices = true;
+        bool _isDirtyModelMatrix = true;
     };
 } // namespace SW

@@ -22,18 +22,25 @@
 
 #pragma once
 
+#include "Core/StringHelper.h"
 #include "Keyboard.h"
 #include "Mouse.h"
 #include "glm/glm.hpp"
 
 #include <Core/Delegate.h>
+#include <boost/intrusive_ptr.hpp>
+#include <boost/smart_ptr/intrusive_ref_counter.hpp>
 #include <chrono>
 
 namespace SW
 {
-
-    template<class KeyT>
-    class InputAction
+    /**
+     * @brief Base input action class for handling generic key inputs.
+     *
+     * @tparam _KeyT Type representing a key (e.g., int, enum, etc.).
+     */
+    template<class _KeyT>
+    class InputAction : public boost::intrusive_ref_counter<InputAction<_KeyT>>
     {
     private:
         enum class State
@@ -43,8 +50,29 @@ namespace SW
         };
 
     public:
+        using Self = InputAction<_KeyT>;
+        using Ptr = boost::intrusive_ptr<Self>;
+        using CPtr = boost::intrusive_ptr<const Self>;
+        template<bool isConst>
+        using AdaptivePtr = std::conditional_t<isConst, CPtr, Ptr>;
         using TimeT = std::chrono::milliseconds;
+        using KeyT = _KeyT;
 
+        struct SpecKeysState
+        {
+            Keyboard::KeyState leftShift = Keyboard::KeyState::None;
+            Keyboard::KeyState leftAlt = Keyboard::KeyState::None;
+            Keyboard::KeyState leftCtrl = Keyboard::KeyState::None;
+
+            static SpecKeysState fillAndGet()
+            {
+                return { .leftShift = Keyboard::getKeyState(GLFW_KEY_LEFT_SHIFT),
+                         .leftAlt = Keyboard::getKeyState(GLFW_KEY_LEFT_ALT),
+                         .leftCtrl = Keyboard::getKeyState(GLFW_KEY_LEFT_CONTROL) };
+            }
+        };
+
+    public:
         InputAction() = default;
 
         explicit InputAction(const Core::StringAtom& name)
@@ -79,8 +107,11 @@ namespace SW
                                                               - _lastUpdate)
                             >= _frequency)
                         {
-                            onPress.trigger();
-                            _onActionPrivate.trigger();
+                            SpecKeysState specs = SpecKeysState::fillAndGet();
+
+                            onPress.trigger(specs);
+                            _onActionPrivate.trigger(specs);
+
                             _lastUpdate = std::chrono::system_clock::now();
                             _lastState = State::Pressed;
                         }
@@ -95,31 +126,53 @@ namespace SW
 
         void setKey(KeyT key) { _key = key; }
 
-        [[nodiscard]] KeyT getKey() const { return _key; }
+        [[nodiscard]] std::optional<KeyT> getKey() const { return _key; }
 
         [[nodiscard]] bool getIsRepeatable() const { return _isRepeatable; }
 
         void setIsRepeatable(bool isRepeatable) { _isRepeatable = isRepeatable; }
 
-        Core::Delegate<void()> onPress;
+        /**
+         * @brief will be called while pressing on the needed button.
+         * @param SpecKeysState states of special keys
+         */
+        Core::Delegate<void(SpecKeysState)> onPress;
 
     protected:
         [[nodiscard]] virtual bool isKeyPressed() const = 0;
-        Core::Delegate<void()> _onActionPrivate;
-        std::optional<Core::Delegate<void()>::ID> _idActionPrivate;
+
+        /**
+         * @brief will be called while pressing on the needed button.
+         * @param SpecKeysState states of special keys
+         */
+        Core::Delegate<void(SpecKeysState)> _onActionPrivate;
+        std::optional<typename decltype(_onActionPrivate)::ID> _idActionPrivate;
 
     protected:
         Core::StringAtom _name;
         std::optional<KeyT> _key{};
-        TimeT _frequency = TimeT(1);
+        TimeT _frequency = TimeT(0);
         std::chrono::system_clock::time_point _lastUpdate{};
         State _lastState = State::None;
         bool _isRepeatable = true;
     };
 
+    /**
+     * @brief Handles input actions specifically from the keyboard.
+     * Also, can be called as KeyboardIA.
+     * Better to create it using SW::KeyboardInputManger. I.e.:
+     */
     class KeyboardInputAction : public InputAction<int>
     {
     public:
+        using Parent = InputAction;
+        using Self = KeyboardInputAction;
+        using Ptr = boost::intrusive_ptr<Self>;
+        using CPtr = boost::intrusive_ptr<const Self>;
+        using KeyT = Parent::KeyT;
+
+        static Ptr Create() { return { new Self }; }
+
         KeyboardInputAction() = default;
         KeyboardInputAction(const Core::StringAtom& name, int key);
 
@@ -127,15 +180,28 @@ namespace SW
         [[nodiscard]] bool isKeyPressed() const override;
     };
 
+    /**
+     * @brief Handles input actions specifically from the mouse.
+     * Also, can be called as MousedIA
+     * Better to create it using SW::MouseInputManger. I.e.:
+     */
     class MouseInputAction : public InputAction<int>
     {
     public:
+        using Parent = InputAction;
+        using Self = MouseInputAction;
+        using Ptr = boost::intrusive_ptr<Self>;
+        using CPtr = boost::intrusive_ptr<const Self>;
+        using KeyT = Parent::KeyT;
+
+        static Ptr Create() { return { new Self }; }
+
         MouseInputAction();
         MouseInputAction(const Core::StringAtom& name, int key);
         explicit MouseInputAction(const Core::StringAtom& name);
 
-        Core::Delegate<void(glm::ivec2)> onMove;
-        Core::Delegate<void(glm::ivec2)> onMouseClick;
+        Core::Delegate<void(glm::vec2, SpecKeysState)> onMove;
+        Core::Delegate<void(glm::vec2, SpecKeysState)> onMouseClick;
 
         void update() override;
 
@@ -145,7 +211,18 @@ namespace SW
     private:
         void init();
 
-        glm::vec2 _lastMousePosition = Mouse::getPosition();
+        std::optional<glm::vec2> _lastMousePosition = {};
     };
 
+    using KeyboardIA = KeyboardInputAction;
+    using MouseIA = MouseInputAction;
+
+    template<class T>
+    concept IsInputAction = requires(T) {
+        typename T::KeyT;
+        typename T::Ptr;
+        typename T::CPtr;
+        typename T::Parent;
+        std::derived_from<T, SW::InputAction<typename T::KeyT>>;
+    };
 } // namespace SW

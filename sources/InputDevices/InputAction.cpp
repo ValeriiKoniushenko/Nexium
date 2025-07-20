@@ -22,6 +22,8 @@
 
 #include "InputAction.h"
 
+#include "Keyboard.h"
+
 namespace SW
 {
     KeyboardInputAction::KeyboardInputAction(const Core::StringAtom& name, int key)
@@ -68,19 +70,26 @@ namespace SW
     {
         InputAction::update();
 
-        if (Mouse::getPosition() != _lastMousePosition)
+        const auto pos = Mouse::getPosition();
+        if (!_lastMousePosition)
         {
-            onMove.trigger(Mouse::getPosition() - _lastMousePosition);
-            _lastMousePosition = Mouse::getPosition();
+            _lastMousePosition = pos;
+            return;
+        }
+
+        if (pos != *_lastMousePosition)
+        {
+            onMove.trigger(pos - *_lastMousePosition, SpecKeysState::fillAndGet());
+            _lastMousePosition = pos;
         }
     }
 
     void MouseInputAction::init()
     {
         _idActionPrivate = _onActionPrivate.subscribeAndGetID(
-            [this]()
+            [this](SpecKeysState states)
             {
-                onMouseClick.trigger(Mouse::getPosition());
+                onMouseClick.trigger(Mouse::getPosition(), states);
             });
     }
 

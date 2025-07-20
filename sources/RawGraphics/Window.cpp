@@ -94,6 +94,11 @@ namespace SW
                  << reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION)));
     }
 
+    void Window::close()
+    {
+        glfwSetWindowShouldClose(_window, GLFW_TRUE);
+    }
+
     bool Window::shouldClose() const
     {
         return glfwWindowShouldClose(_window);
@@ -132,6 +137,22 @@ namespace SW
     void Window::setCursorPosition(glm::vec2 position)
     {
         setCursorPosition(position.x, position.y);
+    }
+
+    void Window::setCursorMode(CursorMode mode)
+    {
+        glfwSetInputMode(GetWindow().getRawWindow(), GLFW_CURSOR, mode.cast());
+    }
+
+    Window::CursorMode Window::getCursorMode()
+    {
+        return static_cast<CursorMode>(glfwGetInputMode(GetWindow().getRawWindow(), GLFW_CURSOR));
+    }
+
+    void Window::toggleCursorMode()
+    {
+        setCursorMode(getCursorMode().cast() == CursorMode::Normal ? CursorMode::Disabled
+                                                                   : CursorMode::Normal);
     }
 
     Window& GetWindow()

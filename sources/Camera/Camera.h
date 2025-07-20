@@ -22,14 +22,14 @@
 
 #pragma once
 
-#include "SceneObjects/BaseSceneObject.h"
+#include "SceneObjects/Transformable.h"
 
 #include <Core/Size.h>
 
 namespace SW
 {
 
-    class BaseCamera : public BaseSceneObject
+    class BaseCamera : public Transformable
     {
     public:
         BaseCamera() = default;
@@ -52,6 +52,10 @@ namespace SW
         void setSensitive(glm::vec2 value) noexcept;
         [[nodiscard]] glm::vec2 getSensitive() const noexcept { return _sensitive; }
 
+        void yaw(float y);
+        void pitch(float x);
+        void yawAndPitch(glm::vec2 xy);
+
     protected:
         void recalculateCameraMatrices();
         void tryToRecalculateCameraMatrices();
@@ -64,5 +68,6 @@ namespace SW
         float _fov = 45.f;
         float _far = 10'000.f;
         float _near = 0.1f;
+        bool _isDirtyProjMatrix = true;
     };
 } // namespace SW

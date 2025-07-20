@@ -22,13 +22,185 @@
 
 #pragma once
 
+#include "InputAction.h"
+#include "ModuleInfo.h"
+
+#include <unordered_map>
+
 namespace SW
 {
 
-    class InputManger
+    template<IsInputAction _InputT>
+    class InputManger : public BaseLog
     {
     public:
-        class Updater
+        using Self = InputManger;
+        template<bool isConst>
+        using AdaptiveRawPtr = std::conditional_t<isConst, const InputManger, InputManger>*;
+        using InputT = _InputT;
+        using MappingT = std::unordered_map<typename InputT::KeyT, typename InputT::Ptr>;
+        using NameMappingT = std::unordered_map<Core::StringAtom, InputT*>;
+
+        InputManger() = default;
+        ~InputManger() override = default;
+
+        virtual void update()
         {
-            ate:
-        } // namespace SW
+            for (auto&& [_, ia] : _mapping)
+            {
+                ia->update();
+            }
+        }
+
+        [[nodiscard]] const MappingT& getMapping() const noexcept { return _mapping; }
+        [[nodiscard]] const NameMappingT& getNameMapping() const noexcept { return _nameMapping; }
+
+        [[nodiscard]] typename InputT::Ptr getOrCreate(const Core::StringAtom& name,
+                                                       typename InputT::KeyT key)
+        {
+            if (isExist(key))
+            {
+                return _mapping[key];
+            }
+
+            return create(name, key);
+        }
+
+        [[nodiscard]] bool isExist(typename InputT::KeyT key) const
+        {
+            return !!impl_get<true>(this, key);
+        }
+        [[nodiscard]] bool isExist(const Core::StringAtom& name) const
+        {
+            return !!impl_get<true>(this, name);
+        }
+
+        [[nodiscard]] typename InputT::Ptr get(typename InputT::KeyT key)
+        {
+            return impl_get<false>(this, key);
+        }
+
+        [[nodiscard]] typename InputT::CPtr get(typename InputT::KeyT key) const
+        {
+            return impl_get<true>(this, key);
+        }
+
+        [[nodiscard]] typename InputT::Ptr get(const Core::StringAtom& name)
+        {
+            return impl_get<false>(this, name);
+        }
+
+        [[nodiscard]] typename InputT::CPtr get(const Core::StringAtom& name) const
+        {
+            return impl_get<true>(this, name);
+        }
+
+        [[nodiscard]] typename InputT::Ptr create(const Core::StringAtom& name,
+                                                  typename InputT::KeyT key)
+        {
+            _mapping.emplace(key, new InputT(name, key));
+            _nameMapping.emplace(name, _mapping[key].get());
+
+            debugLog("Mapping was created: '{}'"_f << name);
+
+            return _mapping[key];
+        }
+
+        bool remove(typename InputT::KeyT key)
+        {
+            auto found = _mapping.find(key);
+            if (found == _mapping.cend())
+            {
+                return false;
+            }
+
+            auto nameForDelete = _nameMapping.find(found->second->getName());
+            if (nameForDelete == _nameMapping.cend())
+            {
+                Assert("Key found but name no?");
+                return false;
+            }
+
+            debugLog("Mapping was removed: '{}'"_f << nameForDelete->first);
+
+            _mapping.erase(found);
+            _nameMapping.erase(nameForDelete);
+
+            return true;
+        }
+
+        bool remove(const Core::StringAtom& name)
+        {
+            auto nameForDelete = _nameMapping.find(name);
+            if (nameForDelete == _nameMapping.cend())
+            {
+                return false;
+            }
+
+            auto key = nameForDelete->second->getKey();
+            if (!key)
+            {
+                return false;
+            }
+
+            return remove(key.value());
+        }
+
+        [[nodiscard]] spdlog::logger* getLogger() const override
+        {
+            return InputDevices::getLogger();
+        }
+
+    private:
+        // ==================== PIMPLs =======================
+        template<bool isConst>
+        [[nodiscard]] static std::conditional_t<isConst, typename InputT::CPtr,
+                                                typename InputT::Ptr>
+            impl_get(AdaptiveRawPtr<isConst> self, typename InputT::KeyT key)
+        {
+            auto it = self->_mapping.find(key);
+            if (it == self->_mapping.cend())
+            {
+                return {};
+            }
+
+            return it->second;
+        }
+
+        template<bool isConst>
+        [[nodiscard]] static std::conditional_t<isConst, typename InputT::CPtr,
+                                                typename InputT::Ptr>
+            impl_get(AdaptiveRawPtr<isConst> self, const Core::StringAtom& name)
+        {
+            auto it = self->_nameMapping.find(name);
+            if (it == self->_nameMapping.cend())
+            {
+                return {};
+            }
+
+            const auto key = it->second->getKey();
+            if (!key)
+            {
+                return {};
+            }
+
+            auto found = self->_mapping.find(key.value());
+            return found != self->_mapping.cend() ? found->second : nullptr;
+        }
+
+    private:
+        MappingT _mapping;
+        NameMappingT _nameMapping;
+    };
+
+    class KeyboardInputManger : public InputManger<KeyboardInputAction>
+    {
+    public:
+    };
+
+    class MouseInputManger : public InputManger<MouseInputAction>
+    {
+    public:
+    };
+
+} // namespace SW

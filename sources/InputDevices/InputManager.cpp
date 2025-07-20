@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2023 Valerii Koniushenko
+// Copyright (c) 2019-2025 Valerii Koniushenko
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,33 +20,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "Mouse.h"
-
-#include "RawGraphics/Window.h"
+#include "InputManager.h"
 
 namespace SW
 {
-
-    glm::vec2 Mouse::getPosition()
-    {
-        double x = 0, y = 0;
-        glfwGetCursorPos(GetWindow().getRawWindow(), &x, &y);
-        return { static_cast<float>(x), static_cast<float>(y) };
-    }
-
-    bool Mouse::isKeyPressed(int key)
-    {
-        return glfwGetMouseButton(GetWindow().getRawWindow(), key) == GLFW_PRESS;
-    }
-
-    bool Mouse::isKeyReleased(int key)
-    {
-        return glfwGetMouseButton(GetWindow().getRawWindow(), key) == GLFW_RELEASE;
-    }
-
-    bool Mouse::isKeyRepeated(int key)
-    {
-        return glfwGetMouseButton(GetWindow().getRawWindow(), key) == GLFW_REPEAT;
-    }
 
 } // namespace SW

@@ -23,11 +23,7 @@
 #pragma once
 
 #include "ModuleInfo.h"
-
-// clang-format off
-#include "glad/glad.h"
-#include "GLFW/glfw3.h"
-// clang-format on
+#include "OpenGL.h"
 
 #include <glm/fwd.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -85,7 +81,7 @@ namespace SW
             glUseProgram(_shaderProgramId);
         }
 #else
-        void use() const noexcept { glUseProgram(_data); }
+        void use() const noexcept { glUseProgram(_shaderProgramId); }
 #endif
 
         [[nodiscard]] spdlog::logger* getLogger() const override
@@ -107,12 +103,16 @@ namespace SW
 
         // vec2
         void setUniform(const Core::StringAtom& name, GLfloat x, GLfloat y) { glUniform2f(_uniforms[name], x,y);  debugUniform(name); }
+        void setUniform(const Core::StringAtom& name, glm::vec2 v) { setUniform(name, v.x, v.y); }
         void setUniform(const Core::StringAtom& name, GLint x, GLint y) { glUniform2i(_uniforms[name], x,y);  debugUniform(name); }
+        void setUniform(const Core::StringAtom& name, glm::ivec2 v) { setUniform(name, v.x, v.y); }
         void setUniform(const Core::StringAtom& name, GLuint x, GLuint y) { glUniform2ui(_uniforms[name], x,y);  debugUniform(name); }
 
         // vec3
         void setUniform(const Core::StringAtom& name, GLfloat x, GLfloat y, GLfloat z) { glUniform3f(_uniforms[name], x,y,z);  debugUniform(name); }
+        void setUniform(const Core::StringAtom& name, glm::vec3 v) { setUniform(name, v.x, v.y, v.z); }
         void setUniform(const Core::StringAtom& name, GLint x, GLint y, GLint z) { glUniform3i(_uniforms[name], x,y,z);  debugUniform(name); }
+        void setUniform(const Core::StringAtom& name, glm::ivec3 v) { setUniform(name, v.x, v.y, v.z); }
         void setUniform(const Core::StringAtom& name, GLuint x, GLuint y, GLuint z) { glUniform3ui(_uniforms[name], x,y,z);  debugUniform(name); }
 
         // vec4
