@@ -65,6 +65,7 @@ int main()
     //----------------------------------------------
     auto& window = SW::GetWindow();
     window.create("Sprite Walker", { 600, 600 });
+    window.toggleCursorMode();
 
     //    _____  _                 _
     //   /  ___|| |               | |
@@ -88,7 +89,11 @@ int main()
         []()
         {
             glEnableVertexAttribArray(0);
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), nullptr);
+
+            glEnableVertexAttribArray(1);
+            glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float),
+                                  reinterpret_cast<void*>(3 * sizeof(float)));
         });
     Assert(shader);
 
@@ -100,6 +105,7 @@ int main()
     //    \/  \/  \___/ |_|   |_| \__,_|    \___/  \__,_||_|   |___/
     //---------------------------------------------------------------
     float timeDelta = 0.f;
+    glm::vec3 lightPos(1'000'000.f, 1'000'000.f, 1'000'000.f);
     SW::BaseCamera camera;
     camera.moveForward(-10);
 
@@ -117,7 +123,7 @@ int main()
 
     // clang-format off
     constexpr float speed = 10.f, rotateSpeed = 25.f, mouseSensitivity = 900.0;
-    auto getRealSpeed = [speed](SW::KeyboardIA::SpecKeysState state) -> float
+    auto getRealSpeed = [speed](SW::KeyboardIA::SpecKeysState state)
     {
         const float mlt = state.leftShift.cast() == SW::Keyboard::KeyState::Pressed ? 5.f : 1.f;
         return speed * mlt;
@@ -128,14 +134,7 @@ int main()
     keyboardInput.create("moveLeft", GLFW_KEY_A)->onPress.subscribe([&](auto state){ camera.moveRight(-getRealSpeed(state) * timeDelta); });
     keyboardInput.create("moveUp", GLFW_KEY_SPACE)->onPress.subscribe([&](auto state){ camera.moveUp(getRealSpeed(state) * timeDelta); });
     keyboardInput.create("moveDown", GLFW_KEY_C)->onPress.subscribe([&](auto state){ camera.moveUp(-getRealSpeed(state) * timeDelta); });
-    keyboardInput.create("yawForward", GLFW_KEY_E)->onPress.subscribe([&](auto){ camera.yaw(rotateSpeed* timeDelta); });
-    keyboardInput.create("yawBackward", GLFW_KEY_Q)->onPress.subscribe([&](auto){ camera.yaw(-rotateSpeed* timeDelta); });
-    keyboardInput.create("pitchForward", GLFW_KEY_F)->onPress.subscribe([&](auto){ camera.pitch(rotateSpeed* timeDelta); });
-    keyboardInput.create("pitchBackward", GLFW_KEY_R)->onPress.subscribe([&](auto){ camera.pitch(-rotateSpeed* timeDelta); });
-    keyboardInput.create("resetCameraRotate", GLFW_KEY_T)->onPress.subscribe([&](auto){ camera.setRotation({}); });
     keyboardInput.create("exit", GLFW_KEY_ESCAPE)->onPress.subscribe([&](auto){ window.close(); });
-    keyboardInput.create("increaseFOV", GLFW_KEY_J)->onPress.subscribe([&](auto){ camera.setFov(camera.getFov() + 100.f * timeDelta); });
-    keyboardInput.create("decreaseFOV", GLFW_KEY_K)->onPress.subscribe([&](auto){ camera.setFov(camera.getFov() + -100.f * timeDelta); });
     auto toggleCursorMode = keyboardInput.create("toggleCursorMode", GLFW_KEY_M);
     toggleCursorMode->onPress.subscribe([&](auto) { window.toggleCursorMode(); });
     toggleCursorMode->setIsRepeatable(false);
@@ -174,8 +173,8 @@ int main()
     SW::FPSCounter fpsCounter;
     fpsCounter.start();
 
+    glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
 
     while (!window.shouldClose())
     {
@@ -185,13 +184,18 @@ int main()
         mouseInput.update();
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         shader->use();
+        shader->setUniform("uObjectColor"_atom, 1.f, 0.5f, 0.3f);
+        shader->setUniform("uLightColor"_atom, 1.0f, 1.0f, 1.0f);
+        shader->setUniform("uLightPos"_atom, lightPos);
+        shader->setUniform("uViewPos"_atom, camera.getPosition());
+
         shader->setUniform("uProjAndView"_atom, camera.getMatrix());
         shader->setUniform("uModel"_atom, glm::mat4(1.0f));
 
-        meshes[0].directDraw();
+        meshes.back().directDraw();
 
         window.swapBuffers();
         window.pollEvent();

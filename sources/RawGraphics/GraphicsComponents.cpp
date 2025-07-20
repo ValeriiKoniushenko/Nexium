@@ -98,6 +98,11 @@ namespace SW
             vertices.push_back(v.x);
             vertices.push_back(v.y);
             vertices.push_back(v.z);
+
+            const aiVector3D n = mesh->mNormals[i];
+            vertices.push_back(n.x);
+            vertices.push_back(n.y);
+            vertices.push_back(n.z);
         }
 
         setVertexBuffer(vertices);
@@ -129,6 +134,8 @@ namespace SW
 
         _shader->use();
         glBindVertexArray(_vao);
+        glBindBuffer(GL_ARRAY_BUFFER, _vbo);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
 
         glDrawElements(GL_TRIANGLES, _triangleCount, GL_UNSIGNED_INT, 0);
     }
