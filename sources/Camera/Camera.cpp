@@ -30,12 +30,21 @@ namespace SW
 {
     const glm::mat4& BaseCamera::getMatrix()
     {
-        if (_areDirtyMatrices)
+        if (_isDirtyProjMatrix)
+        {
+            _cachedProjMatrix
+                = glm::perspective(glm::radians(_fov), _size.width / _size.height, _near, _far);
+
+            _cachedCalculatedMatrix
+                = _cachedProjMatrix * _cachedModelMatrix; // in such context Model == View
+
+            _isDirtyProjMatrix = false;
+        }
+
+        if (_isDirtyModelMatrix)
         {
             recalculateCameraMatrices();
 
-            _cachedProjMatrix
-                = glm::perspective(glm::radians(_fov), _size.width / _size.height, _near, _far);
             _cachedCalculatedMatrix
                 = _cachedProjMatrix * _cachedModelMatrix; // in such context Model == View
         }
@@ -46,31 +55,31 @@ namespace SW
     void BaseCamera::setFrameSize(Core::FSize2 size) noexcept
     {
         _size = size;
-        _areDirtyMatrices = true;
+        _isDirtyProjMatrix = true;
     }
 
     void BaseCamera::setFov(float fov) noexcept
     {
         _fov = fov;
-        _areDirtyMatrices = true;
+        _isDirtyProjMatrix = true;
     }
 
     void BaseCamera::setNear(float value) noexcept
     {
         _near = value;
-        _areDirtyMatrices = true;
+        _isDirtyProjMatrix = true;
     }
 
     void BaseCamera::setFar(float value) noexcept
     {
         _far = value;
-        _areDirtyMatrices = true;
+        _isDirtyProjMatrix = true;
     }
 
     void BaseCamera::setSensitive(glm::vec2 value) noexcept
     {
         _sensitive = value;
-        _areDirtyMatrices = true;
+        _isDirtyProjMatrix = true;
     }
 
     void BaseCamera::yaw(float y)
@@ -107,12 +116,12 @@ namespace SW
         mat = glm::translate(mat, _position);
         mat = glm::translate(mat, _origin);
 
-        _areDirtyMatrices = false;
+        _isDirtyModelMatrix = false;
     }
 
     void BaseCamera::tryToRecalculateCameraMatrices()
     {
-        if (_areDirtyMatrices)
+        if (_isDirtyModelMatrix)
         {
             recalculateCameraMatrices();
         }

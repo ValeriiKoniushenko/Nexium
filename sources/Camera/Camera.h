@@ -22,14 +22,14 @@
 
 #pragma once
 
-#include "SceneObjects/BaseSceneObject.h"
+#include "SceneObjects/Transformable.h"
 
 #include <Core/Size.h>
 
 namespace SW
 {
 
-    class BaseCamera : public BaseSceneObject
+    class BaseCamera : public Transformable
     {
     public:
         BaseCamera() = default;
@@ -68,5 +68,6 @@ namespace SW
         float _fov = 45.f;
         float _far = 10'000.f;
         float _near = 0.1f;
+        bool _isDirtyProjMatrix = true;
     };
 } // namespace SW

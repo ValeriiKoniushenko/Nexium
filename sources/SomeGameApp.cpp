@@ -129,6 +129,8 @@ int main()
     keyboardInput.create("pitchBackward", GLFW_KEY_R)->onPress.subscribe([&](){ camera.pitch(-rotateSpeed* timeDelta); });
     keyboardInput.create("resetCameraRotate", GLFW_KEY_T)->onPress.subscribe([&](){ camera.setRotation({}); });
     keyboardInput.create("exit", GLFW_KEY_ESCAPE)->onPress.subscribe([&](){ window.close(); });
+    keyboardInput.create("increaseFOV", GLFW_KEY_J)->onPress.subscribe([&](){ camera.setFov(camera.getFov() + 100.f * timeDelta); });
+    keyboardInput.create("decreaseFOV", GLFW_KEY_K)->onPress.subscribe([&](){ camera.setFov(camera.getFov() + -100.f * timeDelta); });
     auto toggleCursorMode = keyboardInput.create("toggleCursorMode", GLFW_KEY_M);
     toggleCursorMode->onPress.subscribe([&]() { window.toggleCursorMode(); });
     toggleCursorMode->setIsRepeatable(false);

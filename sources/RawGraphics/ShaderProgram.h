@@ -85,7 +85,7 @@ namespace SW
             glUseProgram(_shaderProgramId);
         }
 #else
-        void use() const noexcept { glUseProgram(_data); }
+        void use() const noexcept { glUseProgram(_shaderProgramId); }
 #endif
 
         [[nodiscard]] spdlog::logger* getLogger() const override

@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "BaseSceneObject.h"
+#include "Transformable.h"
 
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/matrix_transform.hpp"
@@ -33,39 +33,39 @@
 namespace SW
 {
 
-    void BaseSceneObject::setPosition(const glm::vec3& position) noexcept
+    void Transformable::setPosition(const glm::vec3& position) noexcept
     {
         _position = position;
-        _areDirtyMatrices = true;
+        _isDirtyModelMatrix = true;
     }
 
-    glm::vec3 BaseSceneObject::getPosition() const noexcept
+    glm::vec3 Transformable::getPosition() const noexcept
     {
         return _position + _origin;
     }
 
-    void BaseSceneObject::moveForward(float offset) noexcept
+    void Transformable::moveForward(float offset) noexcept
     {
         _position += offset * getForwardVector();
-        _areDirtyMatrices = true;
+        _isDirtyModelMatrix = true;
     }
 
-    void BaseSceneObject::moveRight(float offset) noexcept
+    void Transformable::moveRight(float offset) noexcept
     {
         _position += -offset * getRightVector();
-        _areDirtyMatrices = true;
+        _isDirtyModelMatrix = true;
     }
 
-    void BaseSceneObject::moveUp(float offset) noexcept
+    void Transformable::moveUp(float offset) noexcept
     {
         _position += offset * getUpVector();
-        _areDirtyMatrices = true;
+        _isDirtyModelMatrix = true;
     }
 
-    void BaseSceneObject::setRotation(const glm::vec3& rotation) noexcept
+    void Transformable::setRotation(const glm::vec3& rotation) noexcept
     {
         _rotation = rotation;
-        _areDirtyMatrices = true;
+        _isDirtyModelMatrix = true;
 
         while (_rotation.y >= 360.f)
         {
@@ -81,7 +81,7 @@ namespace SW
         }
     }
 
-    void BaseSceneObject::rotate(const glm::vec3& value) noexcept
+    void Transformable::rotate(const glm::vec3& value) noexcept
     {
         _rotation.y += value.x;
         _rotation.x += value.y;
@@ -100,108 +100,108 @@ namespace SW
             _rotation.z -= 360.f;
         }
 
-        _areDirtyMatrices = true;
+        _isDirtyModelMatrix = true;
     }
 
-    const glm::vec3& BaseSceneObject::getRotation() const noexcept
+    const glm::vec3& Transformable::getRotation() const noexcept
     {
         return _rotation;
     }
 
-    glm::vec3& BaseSceneObject::getRotation() noexcept
+    glm::vec3& Transformable::getRotation() noexcept
     {
         return _rotation;
     }
 
-    void BaseSceneObject::setRotationX(float x) noexcept
+    void Transformable::setRotationX(float x) noexcept
     {
         _rotation.x = x;
-        _areDirtyMatrices = true;
+        _isDirtyModelMatrix = true;
     }
 
-    void BaseSceneObject::rotateX(float x) noexcept
+    void Transformable::rotateX(float x) noexcept
     {
         _rotation.x += x;
-        _areDirtyMatrices = true;
+        _isDirtyModelMatrix = true;
         while (_rotation.x >= 360.f)
         {
             _rotation.x -= 360.f;
         }
     }
 
-    float BaseSceneObject::getRotationX() const noexcept
+    float Transformable::getRotationX() const noexcept
     {
         return _rotation.x;
     }
 
-    void BaseSceneObject::setRotationY(float y) noexcept
+    void Transformable::setRotationY(float y) noexcept
     {
         _rotation.y = y;
-        _areDirtyMatrices = true;
+        _isDirtyModelMatrix = true;
         while (_rotation.y >= 360.f)
         {
             _rotation.y -= 360.f;
         }
     }
 
-    void BaseSceneObject::rotateY(float y) noexcept
+    void Transformable::rotateY(float y) noexcept
     {
         _rotation.y += y;
-        _areDirtyMatrices = true;
+        _isDirtyModelMatrix = true;
         while (_rotation.y >= 360.f)
         {
             _rotation.y -= 360.f;
         }
     }
 
-    float BaseSceneObject::getRotationY() const noexcept
+    float Transformable::getRotationY() const noexcept
     {
         return _rotation.y;
     }
 
-    void BaseSceneObject::setRotationZ(float z) noexcept
+    void Transformable::setRotationZ(float z) noexcept
     {
         _rotation.z = z;
-        _areDirtyMatrices = true;
+        _isDirtyModelMatrix = true;
         while (_rotation.z >= 360.f)
         {
             _rotation.z -= 360.f;
         }
     }
 
-    void BaseSceneObject::rotateZ(float z) noexcept
+    void Transformable::rotateZ(float z) noexcept
     {
         _rotation.z += z;
-        _areDirtyMatrices = true;
+        _isDirtyModelMatrix = true;
         while (_rotation.z >= 360.f)
         {
             _rotation.z -= 360.f;
         }
     }
 
-    float BaseSceneObject::getRotationZ() const noexcept
+    float Transformable::getRotationZ() const noexcept
     {
         return _rotation.z;
     }
 
-    void BaseSceneObject::setScale(const glm::vec3& value) noexcept
+    void Transformable::setScale(const glm::vec3& value) noexcept
     {
         _scale = value;
-        _areDirtyMatrices = true;
+        _isDirtyModelMatrix = true;
     }
 
-    void BaseSceneObject::scale(const glm::vec3& value) noexcept
+    void Transformable::scale(const glm::vec3& value) noexcept
     {
         _scale += value;
-        _areDirtyMatrices = true;
+        _isDirtyModelMatrix = true;
     }
 
-    glm::vec3 BaseSceneObject::getScale() const noexcept
+    glm::vec3 Transformable::getScale() const noexcept
     {
         return _scale;
     }
 
-    glm::vec3 BaseSceneObject::getForwardVector() const noexcept
+    glm::vec3 Transformable::getForwardVector() const noexcept
     {
         const auto r = glm::vec2(glm::radians(_rotation.x), glm::radians(_rotation.y));
 
@@ -214,7 +214,7 @@ namespace SW
         // clang-format on
     }
 
-    glm::vec3 BaseSceneObject::getUpVector() const noexcept
+    glm::vec3 Transformable::getUpVector() const noexcept
     {
         auto r = glm::vec2(glm::radians(_rotation.x), glm::radians(_rotation.y));
         r.x += glm::radians(-90.f);
@@ -228,12 +228,12 @@ namespace SW
         // clang-format on
     }
 
-    glm::vec3 BaseSceneObject::getRightVector() const noexcept
+    glm::vec3 Transformable::getRightVector() const noexcept
     {
         return glm::normalize(glm::cross(getForwardVector(), getUpVector()));
     }
 
-    void BaseSceneObject::recalculateMatrices() noexcept
+    void Transformable::recalculateMatrices() noexcept
     {
         _cachedModelMatrix = glm::mat4(1.f);
 
@@ -251,24 +251,24 @@ namespace SW
         _cachedModelMatrix = glm::scale(_cachedModelMatrix, _scale);
         _cachedModelMatrix = glm::translate(_cachedModelMatrix, -_origin);
 
-        _areDirtyMatrices = false;
+        _isDirtyModelMatrix = false;
     }
 
-    void BaseSceneObject::tryToRecalculateMatrices() noexcept
+    void Transformable::tryToRecalculateMatrices() noexcept
     {
-        if (_areDirtyMatrices)
+        if (_isDirtyModelMatrix)
         {
             recalculateMatrices();
         }
     }
 
-    void BaseSceneObject::setOrigin(const glm::vec3& origin) noexcept
+    void Transformable::setOrigin(const glm::vec3& origin) noexcept
     {
         _origin = origin;
-        _areDirtyMatrices = true;
+        _isDirtyModelMatrix = true;
     }
 
-    const glm::vec3& BaseSceneObject::getOrigin() const noexcept
+    const glm::vec3& Transformable::getOrigin() const noexcept
     {
         return _origin;
     }
