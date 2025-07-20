@@ -53,7 +53,7 @@ int main()
     //    `--. \ / _ \| '__|\ \ / // _ \| '__|
     //   /\__/ /|  __/| |    \ V /|  __/| |
     //   \____/  \___||_|     \_/  \___||_|
-    //-------------------------------------------------
+    //------------------------------------------
     auto& server = SW::GetEditorServer();
     server.setPort(61005);
     server.initialize();
@@ -65,7 +65,7 @@ int main()
     //   | |/\| || || '_ \  / _` | / _ \\ \ /\ / /
     //   \  /\  /| || | | || (_| || (_) |\ V  V /
     //    \/  \/ |_||_| |_| \__,_| \___/  \_/\_/
-    //-------------------------------------------------
+    //----------------------------------------------
     auto& window = SW::GetWindow();
     window.create("Sprite Walker", { 600, 600 });
 
@@ -85,6 +85,7 @@ int main()
                    << notLoadedShader);
     }
 
+    // ======== Setting up[s] ==========
     auto* shader = sm.getShaderProgram("color"_atom);
     shader->setVertexAttributeCallback(
         []()
@@ -94,27 +95,23 @@ int main()
         });
     Assert(shader);
 
-    Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(
-        "assets/base-3d/cube.obj", aiProcess_CalcTangentSpace | aiProcess_Triangulate
-                                       | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
-
+    //    _    _               _      _     _   _
+    //   | |  | |             | |    | |   | | | |
+    //   | |  | |  ___   _ __ | |  __| |   | | | |  __ _  _ __  ___
+    //   | |/\| | / _ \ | '__|| | / _` |   | | | | / _` || '__|/ __|
+    //   \  /\  /| (_) || |   | || (_| |   \ \_/ /| (_| || |   \__ \
+    //    \/  \/  \___/ |_|   |_| \__,_|    \___/  \__,_||_|   |___/
+    //---------------------------------------------------------------
     float timeDelta = 0.f;
-
-    SW::GraphicsComponentData element;
-    element.generate();
-    element.setMesh(scene->mMeshes[0]);
-    element.setShaderProgram(shader);
-
     SW::BaseCamera camera;
     camera.moveForward(-10);
 
-    //    _____                       _      ___         _    _
-    //   |_   _|                     | |    / _ \       | |  (_)
-    //     | |   _ __   _ __   _   _ | |_  / /_\ \  ___ | |_  _   ___   _ __   ___
-    //     | |  | '_ \ | '_ \ | | | || __| |  _  | / __|| __|| | / _ \ | '_ \ / __|
-    //    _| |_ | | | || |_) || |_| || |_  | | | || (__ | |_ | || (_) || | | |\__ \
-    //    \___/ |_| |_|| .__/  \__,_| \__| \_| |_/ \___| \__||_| \___/ |_| |_||___/
+    //    _____                       _        ___         _    _
+    //   |_   _|                     | |      / _ \       | |  (_)
+    //     | |   _ __   _ __   _   _ | |_    / /_\ \  ___ | |_  _   ___   _ __   ___
+    //     | |  | '_ \ | '_ \ | | | || __|   |  _  | / __|| __|| | / _ \ | '_ \ / __|
+    //    _| |_ | | | || |_) || |_| || |_    | | | || (__ | |_ | || (_) || | | |\__ \
+    //    \___/ |_| |_|| .__/  \__,_| \__|   \_| |_/ \___| \__||_| \___/ |_| |_||___/
     //                 | |
     //                 |_|
     //--------------------------------------------------------------------------------
@@ -141,6 +138,24 @@ int main()
     mouseInput.create("cameraView", 0)->onMove.subscribe([&](glm::vec2 delta){ camera.yawAndPitch(delta * timeDelta * mouseSensitivity); });
     // clang-format on
 
+    Assimp::Importer importer;
+    const aiScene* scene = importer.ReadFile(
+        "assets/base-3d/cube.obj", aiProcess_CalcTangentSpace | aiProcess_Triangulate
+                                       | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
+    SW::GraphicsComponentData element;
+    element.generate();
+    element.setMesh(scene->mMeshes[0]);
+    element.setShaderProgram(shader);
+
+    //   ___  ___        _          _
+    //   |  \/  |       (_)        | |
+    //   | .  . |  __ _  _  _ __   | |      ___    ___   _ __
+    //   | |\/| | / _` || || '_ \  | |     / _ \  / _ \ | '_ \
+    //   | |  | || (_| || || | | | | |____| (_) || (_) || |_) |
+    //   \_|  |_/ \__,_||_||_| |_| \_____/ \___/  \___/ | .__/
+    //                                                  | |
+    //                                                  |_|
+    //-----------------------------------------------------------
     Core::FStopwatch clock;
 
     SW::FPSCounter fpsCounter;
@@ -169,7 +184,7 @@ int main()
         timeDelta = clock.stop();
     }
 
-    std::cout << "FPS: " << fpsCounter.getFPS() << std::endl;
+    SW::globalLog.debugLog("FPS: {}"_f << fpsCounter.getFPS());
 
     return 0;
 }
