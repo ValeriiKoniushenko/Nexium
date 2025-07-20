@@ -131,12 +131,7 @@ namespace SW
     /**
      * @brief Handles input actions specifically from the keyboard.
      * Also, can be called as KeyboardIA.
-     * Better to create it using SW::InputManger. I.e.:
-     * @code
-     * SW::InputManger im;
-     * SW::KeyboardIA::Ptr ia = im.getOrCreateKeyboardIA("GoForward", GLFW_KEY_W);
-     * ...
-     * @endcode
+     * Better to create it using SW::KeyboardInputManger. I.e.:
      */
     class KeyboardInputAction : public InputAction<int>
     {
@@ -159,12 +154,7 @@ namespace SW
     /**
      * @brief Handles input actions specifically from the mouse.
      * Also, can be called as MousedIA
-     * Better to create it using SW::InputManger. I.e.:
-     * @code
-     * SW::InputManger im;
-     * SW::MousedIA::Ptr ia = im.getOrCreateMousedIA("ToolbarClick", GLFW_MOUSE_BUTTON_LEFT);
-     * ...
-     * @endcode
+     * Better to create it using SW::MouseInputManger. I.e.:
      */
     class MouseInputAction : public InputAction<int>
     {
@@ -181,8 +171,8 @@ namespace SW
         MouseInputAction(const Core::StringAtom& name, int key);
         explicit MouseInputAction(const Core::StringAtom& name);
 
-        Core::Delegate<void(glm::ivec2)> onMove;
-        Core::Delegate<void(glm::ivec2)> onMouseClick;
+        Core::Delegate<void(glm::vec2)> onMove;
+        Core::Delegate<void(glm::vec2)> onMouseClick;
 
         void update() override;
 
@@ -192,7 +182,7 @@ namespace SW
     private:
         void init();
 
-        glm::vec2 _lastMousePosition = Mouse::getPosition();
+        glm::vec2 _lastMousePosition = {};
     };
 
     using KeyboardIA = KeyboardInputAction;

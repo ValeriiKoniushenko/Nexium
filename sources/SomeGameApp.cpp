@@ -69,7 +69,6 @@ void handleInput(SW::BaseCamera& camera, float timeDelta)
     {
         camera.moveUp(-speed * timeDelta);
     }
-
 }
 
 int main()
@@ -100,6 +99,7 @@ int main()
     //-------------------------------------------------
     auto& window = SW::GetWindow();
     window.create("Sprite Walker", { 600, 600 });
+    SW::Mouse::setCursorMode(SW::Mouse::CursorMode::Disabled);
 
     //    _____  _                 _
     //   /  ___|| |               | |
@@ -141,20 +141,30 @@ int main()
     SW::BaseCamera camera;
     camera.moveForward(-10);
 
-    SW::KeyboardInputManger inputs;
+    SW::KeyboardInputManger keyboardInput;
     // clang-format off
     float speed = 10.f, rotateSpeed = 25.f;
-    inputs.getOrCreate("moveForward", GLFW_KEY_W)->onPress.subscribe([&](){ camera.moveForward(speed * timeDelta); });
-    inputs.getOrCreate("moveBackward", GLFW_KEY_S)->onPress.subscribe([&](){ camera.moveForward(-speed * timeDelta); });
-    inputs.getOrCreate("moveRight", GLFW_KEY_D)->onPress.subscribe([&](){ camera.moveRight(speed * timeDelta); });
-    inputs.getOrCreate("moveLeft", GLFW_KEY_A)->onPress.subscribe([&](){ camera.moveRight(-speed * timeDelta); });
-    inputs.getOrCreate("moveUp", GLFW_KEY_SPACE)->onPress.subscribe([&](){ camera.moveUp(speed * timeDelta); });
-    inputs.getOrCreate("moveDown", GLFW_KEY_C)->onPress.subscribe([&](){ camera.moveUp(-speed * timeDelta); });
-    inputs.getOrCreate("yawForward", GLFW_KEY_E)->onPress.subscribe([&](){ camera.rotateY(rotateSpeed* timeDelta); });
-    inputs.getOrCreate("yawBackward", GLFW_KEY_Q)->onPress.subscribe([&](){ camera.rotateY(-rotateSpeed* timeDelta); });
-    inputs.getOrCreate("pitchForward", GLFW_KEY_F)->onPress.subscribe([&](){ camera.rotateX(rotateSpeed* timeDelta); });
-    inputs.getOrCreate("pitchBackward", GLFW_KEY_R)->onPress.subscribe([&](){ camera.rotateX(-rotateSpeed* timeDelta); });
+    keyboardInput.create("moveForward", GLFW_KEY_W)->onPress.subscribe([&](){ camera.moveForward(speed * timeDelta); });
+    keyboardInput.create("moveBackward", GLFW_KEY_S)->onPress.subscribe([&](){ camera.moveForward(-speed * timeDelta); });
+    keyboardInput.create("moveRight", GLFW_KEY_D)->onPress.subscribe([&](){ camera.moveRight(speed * timeDelta); });
+    keyboardInput.create("moveLeft", GLFW_KEY_A)->onPress.subscribe([&](){ camera.moveRight(-speed * timeDelta); });
+    keyboardInput.create("moveUp", GLFW_KEY_SPACE)->onPress.subscribe([&](){ camera.moveUp(speed * timeDelta); });
+    keyboardInput.create("moveDown", GLFW_KEY_C)->onPress.subscribe([&](){ camera.moveUp(-speed * timeDelta); });
+    keyboardInput.create("yawForward", GLFW_KEY_E)->onPress.subscribe([&](){ camera.yaw(rotateSpeed* timeDelta); });
+    keyboardInput.create("yawBackward", GLFW_KEY_Q)->onPress.subscribe([&](){ camera.yaw(-rotateSpeed* timeDelta); });
+    keyboardInput.create("pitchForward", GLFW_KEY_F)->onPress.subscribe([&](){ camera.pitch(rotateSpeed* timeDelta); });
+    keyboardInput.create("pitchBackward", GLFW_KEY_R)->onPress.subscribe([&](){ camera.pitch(-rotateSpeed* timeDelta); });
+    keyboardInput.create("resetCameraRotate", GLFW_KEY_T)->onPress.subscribe([&](){ camera.setRotation({}); });
     // clang-format on
+
+    SW::MouseInputManger mouseInput;
+    mouseInput.create("cameraView", 0)
+        ->onMove.subscribe(
+            [&](glm::vec2 delta)
+            {
+                constexpr float mouseSensitivity = 900.0;
+                camera.yawAndPitch(delta * timeDelta * mouseSensitivity);
+            });
 
     Core::FStopwatch clock;
 
@@ -165,8 +175,8 @@ int main()
     {
         clock.start();
 
-        inputs.update();
-        // handleInput(camera, timeDelta);
+        keyboardInput.update();
+        mouseInput.update();
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);

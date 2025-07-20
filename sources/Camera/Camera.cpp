@@ -73,6 +73,27 @@ namespace SW
         _areDirtyMatrices = true;
     }
 
+    void BaseCamera::yaw(float y)
+    {
+        rotateY(y);
+    }
+
+    void BaseCamera::pitch(float x)
+    {
+        if (fabs(_rotation.x + x) > 90.f)
+        {
+            return;
+        }
+
+        rotateX(x);
+    }
+
+    void BaseCamera::yawAndPitch(glm::vec2 xy)
+    {
+        yaw(xy.x);
+        pitch(xy.y);
+    }
+
     void BaseCamera::recalculateCameraMatrices()
     {
         auto& mat = _cachedModelMatrix;

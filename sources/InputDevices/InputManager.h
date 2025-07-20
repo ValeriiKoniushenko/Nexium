@@ -31,7 +31,7 @@ namespace SW
 {
 
     template<IsInputAction _InputT>
-    class InputManger final : public BaseLog
+    class InputManger : public BaseLog
     {
     public:
         using Self = InputManger;
@@ -44,7 +44,7 @@ namespace SW
         InputManger() = default;
         ~InputManger() override = default;
 
-        void update()
+        virtual void update()
         {
             for (auto&& [_, ia] : _mapping)
             {
@@ -193,6 +193,14 @@ namespace SW
         NameMappingT _nameMapping;
     };
 
-    using KeyboardInputManger = InputManger<KeyboardInputAction>;
+    class KeyboardInputManger : public InputManger<KeyboardInputAction>
+    {
+    public:
+    };
+
+    class MouseInputManger : public InputManger<MouseInputAction>
+    {
+    public:
+    };
 
 } // namespace SW

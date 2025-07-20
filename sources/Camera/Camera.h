@@ -52,6 +52,10 @@ namespace SW
         void setSensitive(glm::vec2 value) noexcept;
         [[nodiscard]] glm::vec2 getSensitive() const noexcept { return _sensitive; }
 
+        void yaw(float y);
+        void pitch(float x);
+        void yawAndPitch(glm::vec2 xy);
+
     protected:
         void recalculateCameraMatrices();
         void tryToRecalculateCameraMatrices();
