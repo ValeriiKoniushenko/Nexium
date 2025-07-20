@@ -99,7 +99,6 @@ int main()
     //-------------------------------------------------
     auto& window = SW::GetWindow();
     window.create("Sprite Walker", { 600, 600 });
-    window.setCursorMode(SW::Window::CursorMode::Hidden);
 
     //    _____  _                 _
     //   /  ___|| |               | |
@@ -144,6 +143,7 @@ int main()
     SW::KeyboardInputManger keyboardInput;
     // clang-format off
     float speed = 10.f, rotateSpeed = 25.f;
+
     keyboardInput.create("moveForward", GLFW_KEY_W)->onPress.subscribe([&](){ camera.moveForward(speed * timeDelta); });
     keyboardInput.create("moveBackward", GLFW_KEY_S)->onPress.subscribe([&](){ camera.moveForward(-speed * timeDelta); });
     keyboardInput.create("moveRight", GLFW_KEY_D)->onPress.subscribe([&](){ camera.moveRight(speed * timeDelta); });
@@ -156,6 +156,9 @@ int main()
     keyboardInput.create("pitchBackward", GLFW_KEY_R)->onPress.subscribe([&](){ camera.pitch(-rotateSpeed* timeDelta); });
     keyboardInput.create("resetCameraRotate", GLFW_KEY_T)->onPress.subscribe([&](){ camera.setRotation({}); });
     keyboardInput.create("exit", GLFW_KEY_ESCAPE)->onPress.subscribe([&](){ window.close(); });
+    auto toggleCursorMode = keyboardInput.create("toggleCursorMode", GLFW_KEY_M);
+    toggleCursorMode->onPress.subscribe([&]() { window.toggleCursorMode(); });
+    toggleCursorMode->setIsRepeatable(false);
     // clang-format on
 
     SW::MouseInputManger mouseInput;

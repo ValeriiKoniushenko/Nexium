@@ -72,6 +72,7 @@ namespace SW
 
         void setCursorMode(CursorMode mode);
         CursorMode getCursorMode();
+        void toggleCursorMode();
 
         [[nodiscard]] GLFWwindow* getRawWindow() noexcept { return _window; }
 

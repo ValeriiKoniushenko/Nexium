@@ -149,6 +149,12 @@ namespace SW
         return static_cast<CursorMode>(glfwGetInputMode(GetWindow().getRawWindow(), GLFW_CURSOR));
     }
 
+    void Window::toggleCursorMode()
+    {
+        setCursorMode(getCursorMode().cast() == CursorMode::Normal ? CursorMode::Disabled
+                                                                   : CursorMode::Normal);
+    }
+
     Window& GetWindow()
     {
         return Window::instance();
