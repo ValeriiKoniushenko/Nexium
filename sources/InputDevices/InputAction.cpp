@@ -70,10 +70,17 @@ namespace SW
     {
         InputAction::update();
 
-        if (Mouse::getPosition() != _lastMousePosition)
+        const auto pos = Mouse::getPosition();
+        if (!_lastMousePosition)
         {
-            onMove.trigger(Mouse::getPosition() - _lastMousePosition);
-            _lastMousePosition = Mouse::getPosition();
+            _lastMousePosition = pos;
+            return;
+        }
+
+        if (pos != *_lastMousePosition)
+        {
+            onMove.trigger(pos - *_lastMousePosition);
+            _lastMousePosition = pos;
         }
     }
 

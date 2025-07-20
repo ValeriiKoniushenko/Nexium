@@ -31,6 +31,7 @@
 #include "Core/Size.h"
 #include "ModuleInfo.h"
 
+#include <Core/Enum.h>
 #include <Core/Singleton.h>
 #include <filesystem>
 
@@ -40,10 +41,20 @@ namespace SW
     class Window : public Core::StrictSingleton<Window>, public BaseLog
     {
     public:
+        // clang-format off
+        CreateEnum(CursorMode, int,
+            Normal = GLFW_CURSOR_NORMAL,
+            Disabled = GLFW_CURSOR_DISABLED,
+            Hidden = GLFW_CURSOR_HIDDEN
+        );
+        // clang-format on
+
+    public:
         Window() = default;
         ~Window() override;
 
         void create(const Core::StringAtom& title, Core::ISize2 size = { 300, 300 });
+        void close();
         void clear(int code);
 
         [[nodiscard]] bool shouldClose() const;
@@ -58,6 +69,9 @@ namespace SW
 
         void setCursorPosition(float x, float y);
         void setCursorPosition(glm::vec2 position);
+
+        void setCursorMode(CursorMode mode);
+        CursorMode getCursorMode();
 
         [[nodiscard]] GLFWwindow* getRawWindow() noexcept { return _window; }
 

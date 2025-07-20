@@ -21,26 +21,14 @@
 // SOFTWARE.
 
 #pragma once
+
 #include "glm/glm.hpp"
-
-#include "RawGraphics/Window.h"
-
-#include <Core/Enum.h>
 
 namespace SW
 {
 
     class Mouse
     {
-    public:
-        // clang-format off
-        CreateEnum(CursorMode, int,
-            Normal = GLFW_CURSOR_NORMAL,
-            Disabled = GLFW_CURSOR_DISABLED,
-            Hidden = GLFW_CURSOR_HIDDEN
-        );
-        // clang-format on
-
     public:
         Mouse() = delete;
 
@@ -49,9 +37,6 @@ namespace SW
         [[nodiscard]] static bool isKeyPressed(int key);
         [[nodiscard]] static bool isKeyReleased(int key);
         [[nodiscard]] static bool isKeyRepeated(int key);
-
-        static void setCursorMode(CursorMode mode);
-        static CursorMode getCursorMode();
     };
 
 } // namespace SW

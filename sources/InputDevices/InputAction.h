@@ -22,6 +22,7 @@
 
 #pragma once
 
+#include "Core/StringHelper.h"
 #include "Mouse.h"
 #include "glm/glm.hpp"
 
@@ -182,7 +183,7 @@ namespace SW
     private:
         void init();
 
-        glm::vec2 _lastMousePosition = {};
+        std::optional<glm::vec2> _lastMousePosition = {};
     };
 
     using KeyboardIA = KeyboardInputAction;

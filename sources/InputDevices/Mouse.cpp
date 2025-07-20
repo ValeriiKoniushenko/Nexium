@@ -22,8 +22,7 @@
 
 #include "Mouse.h"
 
-#include <stdexcept>
-#include <utility>
+#include "RawGraphics/Window.h"
 
 namespace SW
 {
@@ -48,16 +47,6 @@ namespace SW
     bool Mouse::isKeyRepeated(int key)
     {
         return glfwGetMouseButton(GetWindow().getRawWindow(), key) == GLFW_REPEAT;
-    }
-
-    void Mouse::setCursorMode(CursorMode mode)
-    {
-        glfwSetInputMode(GetWindow().getRawWindow(), GLFW_CURSOR, mode.cast());
-    }
-
-    Mouse::CursorMode Mouse::getCursorMode()
-    {
-        return static_cast<CursorMode>(glfwGetInputMode(GetWindow().getRawWindow(), GLFW_CURSOR));
     }
 
 } // namespace SW
