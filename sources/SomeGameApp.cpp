@@ -40,37 +40,6 @@
 
 #include <iostream>
 
-void handleInput(SW::BaseCamera& camera, float timeDelta)
-{
-    float speed = 10.f;
-    float rotateSpeed = 25.f;
-
-    if (SW::Keyboard::isKeyPressed(GLFW_KEY_D))
-    {
-        camera.moveRight(speed * timeDelta);
-    }
-    if (SW::Keyboard::isKeyPressed(GLFW_KEY_A))
-    {
-        camera.moveRight(-speed * timeDelta);
-    }
-    if (SW::Keyboard::isKeyPressed(GLFW_KEY_W))
-    {
-        camera.moveForward(speed * timeDelta);
-    }
-    if (SW::Keyboard::isKeyPressed(GLFW_KEY_S))
-    {
-        camera.moveForward(-speed * timeDelta);
-    }
-    if (SW::Keyboard::isKeyPressed(GLFW_KEY_SPACE))
-    {
-        camera.moveUp(speed * timeDelta);
-    }
-    if (SW::Keyboard::isKeyPressed(GLFW_KEY_C))
-    {
-        camera.moveUp(-speed * timeDelta);
-    }
-}
-
 int main()
 {
 #ifdef DEBUG
@@ -140,10 +109,20 @@ int main()
     SW::BaseCamera camera;
     camera.moveForward(-10);
 
+    //    _____                       _      ___         _    _
+    //   |_   _|                     | |    / _ \       | |  (_)
+    //     | |   _ __   _ __   _   _ | |_  / /_\ \  ___ | |_  _   ___   _ __   ___
+    //     | |  | '_ \ | '_ \ | | | || __| |  _  | / __|| __|| | / _ \ | '_ \ / __|
+    //    _| |_ | | | || |_) || |_| || |_  | | | || (__ | |_ | || (_) || | | |\__ \
+    //    \___/ |_| |_|| .__/  \__,_| \__| \_| |_/ \___| \__||_| \___/ |_| |_||___/
+    //                 | |
+    //                 |_|
+    //--------------------------------------------------------------------------------
     SW::KeyboardInputManger keyboardInput;
-    // clang-format off
-    float speed = 10.f, rotateSpeed = 25.f;
+    SW::MouseInputManger mouseInput;
 
+    // clang-format off
+    constexpr float speed = 10.f, rotateSpeed = 25.f, mouseSensitivity = 900.0;
     keyboardInput.create("moveForward", GLFW_KEY_W)->onPress.subscribe([&](){ camera.moveForward(speed * timeDelta); });
     keyboardInput.create("moveBackward", GLFW_KEY_S)->onPress.subscribe([&](){ camera.moveForward(-speed * timeDelta); });
     keyboardInput.create("moveRight", GLFW_KEY_D)->onPress.subscribe([&](){ camera.moveRight(speed * timeDelta); });
@@ -159,16 +138,8 @@ int main()
     auto toggleCursorMode = keyboardInput.create("toggleCursorMode", GLFW_KEY_M);
     toggleCursorMode->onPress.subscribe([&]() { window.toggleCursorMode(); });
     toggleCursorMode->setIsRepeatable(false);
+    mouseInput.create("cameraView", 0)->onMove.subscribe([&](glm::vec2 delta){ camera.yawAndPitch(delta * timeDelta * mouseSensitivity); });
     // clang-format on
-
-    SW::MouseInputManger mouseInput;
-    mouseInput.create("cameraView", 0)
-        ->onMove.subscribe(
-            [&](glm::vec2 delta)
-            {
-                constexpr float mouseSensitivity = 900.0;
-                camera.yawAndPitch(delta * timeDelta * mouseSensitivity);
-            });
 
     Core::FStopwatch clock;
 
