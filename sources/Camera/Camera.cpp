@@ -60,7 +60,7 @@ namespace SW
 
     void BaseCamera::setFov(float fov) noexcept
     {
-        _fov = fov;
+        _fov = std::clamp(fov, 30.f, 180.f);
         _isDirtyProjMatrix = true;
     }
 

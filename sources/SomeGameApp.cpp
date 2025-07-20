@@ -117,6 +117,10 @@ int main()
 
     // clang-format off
     constexpr float speed = 10.f, rotateSpeed = 25.f, mouseSensitivity = 900.0;
+    auto lShift = keyboardInput.create("lShift", GLFW_KEY_LEFT_SHIFT);
+    lShift->setIsRepeatable(false);
+    lShift->onPress.subscribe([&](){ std::cout << "Pressed\n"; });
+
     keyboardInput.create("moveForward", GLFW_KEY_W)->onPress.subscribe([&](){ camera.moveForward(speed * timeDelta); });
     keyboardInput.create("moveBackward", GLFW_KEY_S)->onPress.subscribe([&](){ camera.moveForward(-speed * timeDelta); });
     keyboardInput.create("moveRight", GLFW_KEY_D)->onPress.subscribe([&](){ camera.moveRight(speed * timeDelta); });
@@ -137,14 +141,23 @@ int main()
     mouseInput.create("cameraView", 0)->onMove.subscribe([&](glm::vec2 delta){ camera.yawAndPitch(delta * timeDelta * mouseSensitivity); });
     // clang-format on
 
+    // ====================== MISC ==========================
+    Core::FStopwatch modelLoaderStopwatch;
+    modelLoaderStopwatch.start();
     Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(
-        "assets/base-3d/cube.obj", aiProcess_CalcTangentSpace | aiProcess_Triangulate
-                                       | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
-    SW::GraphicsComponentData element;
-    element.generate();
-    element.setMesh(scene->mMeshes[0]);
-    element.setShaderProgram(shader);
+    const aiScene* scene = importer.ReadFile("assets/base-3d/FireHydrant.fbx",
+                                             aiProcess_Triangulate | aiProcess_JoinIdenticalVertices
+                                                 | aiProcess_SortByPType);
+    SW::globalLog.infoLog("All models was loaded for: {}s"_f << modelLoaderStopwatch.stop());
+
+    std::vector<SW::GraphicsComponentData> meshes(scene->mNumMeshes);
+
+    for (int i = 0; i < meshes.size(); ++i)
+    {
+        meshes[i].generate();
+        meshes[i].setMesh(scene->mMeshes[i]);
+        meshes[i].setShaderProgram(shader);
+    }
 
     //   ___  ___        _          _
     //   |  \/  |       (_)        | |
@@ -160,6 +173,9 @@ int main()
     SW::FPSCounter fpsCounter;
     fpsCounter.start();
 
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+
     while (!window.shouldClose())
     {
         clock.start();
@@ -174,7 +190,7 @@ int main()
         shader->setUniform("uProjAndView"_atom, camera.getMatrix());
         shader->setUniform("uModel"_atom, glm::mat4(1.0f));
 
-        element.directDraw();
+        meshes[0].directDraw();
 
         window.swapBuffers();
         window.pollEvent();
@@ -183,7 +199,7 @@ int main()
         timeDelta = clock.stop();
     }
 
-    SW::globalLog.debugLog("FPS: {}"_f << fpsCounter.getFPS());
+    SW::globalLog.infoLog("FPS: {}"_f << fpsCounter.getFPS());
 
     return 0;
 }
