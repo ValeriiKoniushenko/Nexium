@@ -32,6 +32,9 @@
 #include "assimp/postprocess.h"
 #include "assimp/scene.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "Stb/Image.h"
+
 #define GLM_ENABLE_EXPERIMENTAL
 #include "glm/gtx/string_cast.hpp"
 
@@ -65,7 +68,7 @@ int main()
     //----------------------------------------------
     auto& window = SW::GetWindow();
     window.create("Sprite Walker", { 600, 600 });
-    window.toggleCursorMode();
+    // window.toggleCursorMode();
 
     //    _____  _                 _
     //   /  ___|| |               | |
@@ -85,17 +88,21 @@ int main()
 
     // ======== Setting up[s] ==========
     auto* shader = sm.getShaderProgram("color"_atom);
+    Assert(shader);
     shader->setVertexAttributeCallback(
         []()
         {
             glEnableVertexAttribArray(0);
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), nullptr);
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), nullptr);
 
             glEnableVertexAttribArray(1);
-            glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float),
+            glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
                                   reinterpret_cast<void*>(3 * sizeof(float)));
+
+            glEnableVertexAttribArray(2);
+            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
+                                  reinterpret_cast<void*>(5 * sizeof(float)));
         });
-    Assert(shader);
 
     //    _    _               _      _     _   _
     //   | |  | |             | |    | |   | | | |
@@ -145,17 +152,42 @@ int main()
     Core::FStopwatch modelLoaderStopwatch;
     modelLoaderStopwatch.start();
     Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile("assets/base-3d/FireHydrant.fbx",
-                                             aiProcess_Triangulate | aiProcess_JoinIdenticalVertices
-                                                 | aiProcess_SortByPType);
+    std::filesystem::path modelPath = "assets/base-3d/Models/FBX/FireHydrant.fbx";
+    const aiScene* scene = importer.ReadFile(
+        modelPath, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
+    Assert(scene);
     SW::globalLog.infoLog("All models was loaded for: {}s"_f << modelLoaderStopwatch.stop());
 
-    std::vector<SW::GraphicsComponentData> meshes(scene->mNumMeshes);
+    std::vector<SW::GraphicsComponentData> meshes(1);
 
     for (int i = 0; i < meshes.size(); ++i)
     {
+        aiMesh* mesh = scene->mMeshes[i];
+
         meshes[i].generate();
-        meshes[i].setMesh(scene->mMeshes[i]);
+
+        aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+        aiString texturePath;
+        if (material->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath) == AI_SUCCESS)
+        {
+            auto relative = Core::StringAtom(texturePath.C_Str()).replaceAll("\\", "/");
+            auto resolved = (modelPath.parent_path() / relative.toStdString()).lexically_normal();
+
+            int width = 0, height = 0, channels = 0;
+            stbi_set_flip_vertically_on_load(true);
+            unsigned char* data
+                = stbi_load(resolved.generic_string().c_str(), &width, &height, &channels, 0);
+            if (data)
+            {
+                meshes[i].setTexture(data, width, height, channels);
+            }
+            else
+            {
+            }
+            stbi_image_free(data);
+        }
+
+        meshes[i].setMesh(mesh, true, true);
         meshes[i].setShaderProgram(shader);
     }
 
@@ -187,10 +219,11 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         shader->use();
-        shader->setUniform("uObjectColor"_atom, 1.f, 0.5f, 0.3f);
+        shader->setUniform("uObjectColor"_atom, 1.0f, 1.0f, 1.0f);
         shader->setUniform("uLightColor"_atom, 1.0f, 1.0f, 1.0f);
         shader->setUniform("uLightPos"_atom, lightPos);
         shader->setUniform("uViewPos"_atom, camera.getPosition());
+        shader->setUniform("uTexture"_atom, 0);
 
         shader->setUniform("uProjAndView"_atom, camera.getMatrix());
         shader->setUniform("uModel"_atom, glm::mat4(1.0f));

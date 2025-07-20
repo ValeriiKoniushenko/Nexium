@@ -80,7 +80,7 @@ namespace SW
 
                 _shaderMetas[meta.getShaderName()] = std::move(meta);
             }
-            catch (std::exception exception)
+            catch (const std::exception& exception)
             {
                 errorLog("Impossible to set up the shader '{}'. Details: {}"_f << name
                                                                                << exception.what());

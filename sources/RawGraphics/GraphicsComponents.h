@@ -43,8 +43,20 @@ namespace SW
 
         void setVertexBuffer(const std::vector<float>& data, GLenum usage = GL_STATIC_DRAW);
         void setIndexBuffer(const std::vector<GLuint>& data, GLenum usage = GL_STATIC_DRAW);
+        void setTexture(const unsigned char* data, uint32_t width, uint32_t height,
+                        GLuint channels);
         void setShaderProgram(ShaderProgram* sp, bool ignoreVertexAttribSetup = false);
-        void setMesh(const aiMesh*);
+
+        /**
+         * @brief loads & constructs from aiMesh GPU data.
+         * @param mesh from Assimp::Importer
+         * @param isAppendNormals if it true - than it will append to every vertex data 'normals'
+         * @param isAppendCV if it true - than it will append to every vertex data 'UV'
+         *
+         * Example of one vertex data:
+         * pos.x, pos.y, pos.z,  [normal.x, normal.y, normal.z]  [cv.x, cv.y]
+         */
+        void setMesh(const aiMesh* mesh, bool isAppendNormals = false, bool isAppendUV = false);
 
         void clear();
         [[nodiscard]] bool isValid() const noexcept
@@ -65,6 +77,7 @@ namespace SW
         GLuint _vbo = 0;
         GLuint _ebo = 0;
         GLuint _vao = 0;
+        GLuint _texture = 0;
     };
 
 } // namespace SW

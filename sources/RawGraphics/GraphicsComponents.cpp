@@ -37,6 +37,7 @@ namespace SW
         glGenVertexArrays(1, &_vao);
         glGenBuffers(1, &_vbo);
         glGenBuffers(1, &_ebo);
+        glGenTextures(1, &_texture);
     }
 
     void GraphicsComponentData::setVertexBuffer(const std::vector<float>& data, GLenum usage)
@@ -61,6 +62,30 @@ namespace SW
         }
     }
 
+    void GraphicsComponentData::setTexture(const unsigned char* data, uint32_t width,
+                                           uint32_t height, GLuint channels)
+    {
+        if (data && _ebo != 0 && _vao != 0 && _texture != 0) [[likely]]
+        {
+            GLenum format = (channels == 3) ? GL_RGB : (channels == 4) ? GL_RGBA : GL_RED;
+
+            glBindVertexArray(_vao);
+
+            glBindTexture(GL_TEXTURE_2D, _texture);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+            glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE,
+                         data);
+            glGenerateMipmap(GL_TEXTURE_2D);
+
+            glBindTexture(GL_TEXTURE_2D, 0);
+        }
+    }
+
     void GraphicsComponentData::setShaderProgram(ShaderProgram* sp,
                                                  bool ignoreVertexAttribSetup /* = false*/)
     {
@@ -72,7 +97,8 @@ namespace SW
         }
     }
 
-    void GraphicsComponentData::setMesh(const aiMesh* mesh)
+    void GraphicsComponentData::setMesh(const aiMesh* mesh, bool isAppendNormals /* = false*/,
+                                        bool isAppendUV /* = false*/)
     {
         if (!mesh) [[unlikely]]
         {
@@ -99,10 +125,28 @@ namespace SW
             vertices.push_back(v.y);
             vertices.push_back(v.z);
 
-            const aiVector3D n = mesh->mNormals[i];
-            vertices.push_back(n.x);
-            vertices.push_back(n.y);
-            vertices.push_back(n.z);
+            if (isAppendNormals)
+            {
+                const aiVector3D n = mesh->mNormals[i];
+                vertices.push_back(n.x);
+                vertices.push_back(n.y);
+                vertices.push_back(n.z);
+            }
+
+            if (isAppendUV)
+            {
+                if (mesh->HasTextureCoords(0))
+                {
+                    const auto n = mesh->mTextureCoords[0][i];
+                    vertices.push_back(n.x);
+                    vertices.push_back(n.y);
+                }
+                else
+                {
+                    vertices.push_back(0);
+                    vertices.push_back(0);
+                }
+            }
         }
 
         setVertexBuffer(vertices);
@@ -117,6 +161,7 @@ namespace SW
 
     void GraphicsComponentData::clear()
     {
+        glDeleteTextures(1, &_texture);
         glDeleteBuffers(1, &_ebo);
         glDeleteBuffers(1, &_vbo);
         glDeleteVertexArrays(1, &_vao);
@@ -136,6 +181,8 @@ namespace SW
         glBindVertexArray(_vao);
         glBindBuffer(GL_ARRAY_BUFFER, _vbo);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, _texture);
 
         glDrawElements(GL_TRIANGLES, _triangleCount, GL_UNSIGNED_INT, 0);
     }

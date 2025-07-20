@@ -4,12 +4,14 @@ out vec4 FragColor;
 
 in vec3 ioFragPos;
 in vec3 ioNormal;
+in vec2 ioUV;
 
 uniform vec3 uLightPos;
 uniform vec3 uViewPos;
 uniform vec3 uLightColor;
 uniform vec3 uObjectColor;
 
+uniform sampler2D uTexture;
 
 void main()
 {
@@ -31,5 +33,6 @@ void main()
    vec3 specular = specularStrength * spec * uLightColor;
 
    vec3 result = (ambient + diffuse + specular) * uObjectColor;
-   FragColor = vec4(result, 1.0);
+
+   FragColor = texture(uTexture, ioUV) * vec4(result, 1.0);
 }
