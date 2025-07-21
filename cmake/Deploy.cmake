@@ -12,7 +12,7 @@ else()
             COMMAND ${CMAKE_COMMAND} -E create_symlink "${CMAKE_SOURCE_DIR}/assets/" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/assets"
             COMMAND ${CMAKE_COMMAND} -E create_symlink "${CMAKE_SOURCE_DIR}/editor/" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/editor"
     )
+    add_custom_target(deploy)
     add_dependencies(deploy symlinks_to_assets)
 endif()
 
-add_custom_target(deploy)
