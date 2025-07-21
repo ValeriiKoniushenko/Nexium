@@ -52,6 +52,7 @@ FetchContent_Declare(Assimp
 set(ASSIMP_BUILD_ZLIB ON)
 set(ASSIMP_BUILD_ASSIMP_TOOLS ON)
 set(ASSIMP_BUILD_TESTS OFF)
+set(ASSIMP_BUILD_ASSIMP_TOOLS OFF)
 
 FetchContent_MakeAvailable(Assimp)
 

@@ -12,3 +12,6 @@ scripts/project_utils.py
 scripts/project_validator.py
 scripts/string_utils.py
 scripts/git_hooks
+/libs/
+/more/
+/tools/

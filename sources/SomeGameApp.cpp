@@ -154,7 +154,7 @@ int main()
     Assimp::Importer importer;
     std::filesystem::path modelPath = "assets/base-3d/Models/FBX/FireHydrant.fbx";
     const aiScene* scene = importer.ReadFile(
-        modelPath, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
+        modelPath.generic_string().c_str(), aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
     Assert(scene);
     SW::globalLog.infoLog("All models was loaded for: {}s"_f << modelLoaderStopwatch.stop());
 
