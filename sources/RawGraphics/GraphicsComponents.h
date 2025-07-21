@@ -51,7 +51,7 @@ namespace SW
          * @brief loads & constructs from aiMesh GPU data.
          * @param mesh from Assimp::Importer
          * @param isAppendNormals if it true - than it will append to every vertex data 'normals'
-         * @param isAppendCV if it true - than it will append to every vertex data 'UV'
+         * @param isAppendUV if it true - than it will append to every vertex data 'UV'
          *
          * Example of one vertex data:
          * pos.x, pos.y, pos.z,  [normal.x, normal.y, normal.z]  [cv.x, cv.y]

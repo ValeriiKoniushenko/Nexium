@@ -101,7 +101,7 @@ int main()
 
             glEnableVertexAttribArray(2);
             glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
-                                  reinterpret_cast<void*>(5 * sizeof(float)));
+                                  reinterpret_cast<void*>(6 * sizeof(float)));
         });
 
     //    _    _               _      _     _   _
