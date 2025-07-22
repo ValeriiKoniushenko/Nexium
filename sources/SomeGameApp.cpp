@@ -32,10 +32,8 @@
 #include "assimp/postprocess.h"
 #include "assimp/scene.h"
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "Stb/Image.h"
-
 #define GLM_ENABLE_EXPERIMENTAL
+#include "RawGraphics/Image.h"
 #include "glm/gtx/string_cast.hpp"
 
 #include <iostream>
@@ -174,18 +172,12 @@ int main()
             auto relative = Core::StringAtom(texturePath.C_Str()).replaceAll("\\", "/");
             auto resolved = (modelPath.parent_path() / relative.toStdString()).lexically_normal();
 
-            int width = 0, height = 0, channels = 0;
-            stbi_set_flip_vertically_on_load(true);
-            unsigned char* data
-                = stbi_load(resolved.generic_string().c_str(), &width, &height, &channels, 0);
-            if (data)
+            SW::Image image;
+            if (image.loadImageFromFile(resolved, true))
             {
-                meshes[i].setTexture(data, width, height, channels);
+                meshes[i].setTexture(image.data(), image.getSize().width, image.getSize().height,
+                                     image.getChannelAsOpenGLType());
             }
-            else
-            {
-            }
-            stbi_image_free(data);
         }
 
         meshes[i].setMesh(mesh, true, true);
