@@ -2,6 +2,15 @@ include(FetchContent)
 
 set(FETCHCONTENT_BASE_DIR deps)
 
+FetchContent_Declare(NlohmannJson
+        GIT_REPOSITORY "https://github.com/nlohmann/json.git"
+        GIT_TAG v3.12.0
+        GIT_PROGRESS TRUE
+        GIT_SHALLOW TRUE
+)
+FetchContent_MakeAvailable(NlohmannJson)
+
+
 FetchContent_Declare(Boost
         GIT_REPOSITORY "https://github.com/boostorg/boost.git"
         GIT_TAG boost-1.88.0
