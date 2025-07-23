@@ -22,8 +22,6 @@ FetchContent_Declare(Boost
 
 FetchContent_MakeAvailable(Boost)
 
-find_package(Boost 1.88.0 EXACT REQUIRED COMPONENTS filesystem)
-
 
 FetchContent_Declare(Glfw
         GIT_REPOSITORY https://github.com/glfw/glfw.git

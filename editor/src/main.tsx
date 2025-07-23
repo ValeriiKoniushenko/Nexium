@@ -4,7 +4,7 @@ import { App } from './App';
 import { ThemeProvider } from 'styled-components';
 import { GlobalStyle } from './styles/GlobalStyle';
 import { themes } from './styles/theme';
-import { ThemeToggler } from './components';
+// import { ThemeToggler } from './components';
 
 const THEME_KEY = 'editor_theme';
 
@@ -18,18 +18,17 @@ const Root = () => {
     }
   }, []);
 
-  const toggleTheme = () => {
-    setMode((prev) => {
-      const newTheme = prev === 'dark' ? 'light' : 'dark';
-      localStorage.setItem(THEME_KEY, newTheme);
-      return newTheme;
-    });
-  };
+  // const toggleTheme = () => {
+  //   setMode((prev) => {
+  //     const newTheme = prev === 'dark' ? 'light' : 'dark';
+  //     localStorage.setItem(THEME_KEY, newTheme);
+  //     return newTheme;
+  //   });
+  // };
 
   return (
     <ThemeProvider theme={themes[mode]}>
       <GlobalStyle />
-      <ThemeToggler toggleTheme={toggleTheme} currentTheme={mode} />
       <App />
     </ThemeProvider>
   );

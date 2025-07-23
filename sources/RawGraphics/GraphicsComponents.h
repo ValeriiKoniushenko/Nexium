@@ -64,7 +64,7 @@ namespace SW
             return _vbo != 0 && _ebo != 0 && _vao != 0 && _shader != 0;
         }
 
-        /*!
+        /**
          * @brief direct draw if was set up vertex, index and optionally texture buffers.
          * @details this function from the family of 'low-abstract' functionality.
          * It can give you ability for fast setup & draw to the scene but without huge

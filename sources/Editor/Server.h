@@ -45,6 +45,7 @@ namespace SW
 
         void initialize();
         void start();
+        void sync_start();
         void stop();
 
         [[nodiscard]] spdlog::logger* getLogger() const final { return Editor::getLogger(); }

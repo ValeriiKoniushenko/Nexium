@@ -65,13 +65,18 @@ namespace SW
         _thread = std::thread(
             [this]()
             {
-                debugLog("the thread is allocated.");
-
-                infoLog("listening...");
-                _server.listen("localhost", _port);
-
-                debugLog("the thread is deallocated");
+                sync_start();
             });
+    }
+
+    void EditorServer::sync_start()
+    {
+        debugLog("the thread is allocated.");
+
+        infoLog("listening...");
+        _server.listen("localhost", _port);
+
+        debugLog("the thread is deallocated");
     }
 
     void EditorServer::stop()
