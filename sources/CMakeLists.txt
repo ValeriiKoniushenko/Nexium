@@ -40,4 +40,3 @@ target_link_libraries(SomeGameApp PUBLIC
         SW::InputDevices
 )
 
-add_dependencies(SomeGameApp deploy)

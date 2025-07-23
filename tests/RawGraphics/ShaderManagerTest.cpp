@@ -17,6 +17,41 @@ protected:
     SW::ShaderManager* manager = nullptr;
 };
 
+TEST_F(ShaderManagerFixture, TestAssetsDirectoryIsNotEmpty)
+{
+    namespace fs = std::filesystem;
+    const auto testAssetsDir = fs::path("tests/assets/shaders");
+
+    if (!fs::exists(testAssetsDir))
+    {
+        spdlog::error("Directory does not exist: {}", testAssetsDir.string());
+        FAIL() << "Directory does not exist";
+    }
+
+    if (!fs::is_directory(testAssetsDir))
+    {
+        spdlog::error("Path is not a directory: {}", testAssetsDir.string());
+        FAIL() << "Path is not a directory";
+    }
+
+    bool hasFiles = false;
+    for (const auto& entry : fs::directory_iterator(testAssetsDir))
+    {
+        if (fs::is_regular_file(entry))
+        {
+            hasFiles = true;
+            break;
+        }
+    }
+
+    if (!hasFiles)
+    {
+        spdlog::warn("Directory '{}' is empty", testAssetsDir.string());
+    }
+
+    EXPECT_TRUE(hasFiles) << "Test assets directory is empty: " << testAssetsDir;
+}
+
 TEST_F(ShaderManagerFixture, CanAddNewFragmentExtension)
 {
     const auto extension = ".fsh";
@@ -46,5 +81,6 @@ TEST_F(ShaderManagerFixture, IgnoresIncorrectShaderType)
 TEST_F(ShaderManagerFixture, ReturnsEmptyShaderProgramIfNotFound)
 {
     auto shader = manager->getShaderProgram("non_existent_shader"_atom);
-    EXPECT_TRUE(shader.isEmpty());
+
+    EXPECT_EQ(shader, nullptr);
 }
