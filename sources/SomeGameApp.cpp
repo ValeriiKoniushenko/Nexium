@@ -55,7 +55,7 @@ int main()
     auto& server = SW::GetEditorServer();
     server.setPort(61005);
     server.initialize();
-    server.sync_start();
+    server.start();
 
     //    _    _  _             _
     //   | |  | |(_)           | |
