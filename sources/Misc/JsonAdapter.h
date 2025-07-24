@@ -25,6 +25,8 @@
 #include "glm/glm.hpp"
 #include "nlohmann/json.hpp"
 
+#include <Core/Size.h>
+
 namespace SW
 {
 
@@ -56,3 +58,17 @@ namespace glm
     void from_json(const nlohmann::json& j, ivec2& v);
 
 } // namespace glm
+
+namespace Core
+{
+
+    void to_json(nlohmann::json& j, FSize2);
+    void to_json(nlohmann::json& j, const FSize3&);
+    void to_json(nlohmann::json& j, ISize2);
+    void to_json(nlohmann::json& j, const ISize3&);
+    void from_json(const nlohmann::json& j, FSize2& value);
+    void from_json(const nlohmann::json& j, FSize3& value);
+    void from_json(const nlohmann::json& j, ISize2& value);
+    void from_json(const nlohmann::json& j, ISize3& value);
+
+} // namespace Core

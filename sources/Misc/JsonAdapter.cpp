@@ -24,7 +24,6 @@
 
 namespace glm
 {
-
     void to_json(nlohmann::json& j, const vec4& v)
     {
         j = { v.x, v.y, v.z, v.w };
@@ -86,10 +85,66 @@ namespace glm
     {
         j = { v.x, v.y };
     }
+
     void from_json(const nlohmann::json& j, ivec2& v)
     {
         v.x = j.at(0).get<int>();
         v.y = j.at(1).get<int>();
     }
-
 } // namespace glm
+
+namespace Core
+{
+    void to_json(nlohmann::json& j, Core::FSize2 value)
+    {
+        j["width"] = value.width;
+        j["height"] = value.height;
+    }
+
+    void to_json(nlohmann::json& j, const Core::FSize3& value)
+    {
+        j["width"] = value.width;
+        j["height"] = value.height;
+        j["deep"] = value.deep;
+    }
+
+    void to_json(nlohmann::json& j, Core::ISize2 value)
+    {
+        j["width"] = value.width;
+        j["height"] = value.height;
+    }
+
+    void to_json(nlohmann::json& j, const Core::ISize3& value)
+    {
+        j["width"] = value.width;
+        j["height"] = value.height;
+        j["deep"] = value.deep;
+    }
+
+    void from_json(const nlohmann::json& j, Core::FSize2& value)
+    {
+        value.width = j.at(0).get<float>();
+        value.height = j.at(1).get<float>();
+    }
+
+    void from_json(const nlohmann::json& j, Core::FSize3& value)
+    {
+        value.width = j.at(0).get<float>();
+        value.height = j.at(1).get<float>();
+        value.deep = j.at(2).get<float>();
+    }
+
+    void from_json(const nlohmann::json& j, Core::ISize2& value)
+    {
+        value.width = j.at(0).get<int>();
+        value.height = j.at(1).get<int>();
+    }
+
+    void from_json(const nlohmann::json& j, Core::ISize3& value)
+    {
+        value.width = j.at(0).get<int>();
+        value.height = j.at(1).get<int>();
+        value.deep = j.at(2).get<int>();
+    }
+
+} // namespace Core
