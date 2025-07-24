@@ -233,6 +233,28 @@ namespace SW
         return glm::normalize(glm::cross(getForwardVector(), getUpVector()));
     }
 
+    nlohmann::json Transformable::toJson() const
+    {
+        nlohmann::json json;
+
+        json["position"] = _position;
+        json["origin"] = _origin;
+        json["rotation"] = _rotation;
+        json["scale"] = _scale;
+
+        return json;
+    }
+
+    void Transformable::fromJson(const nlohmann::json& json)
+    {
+        _position = json["position"];
+        _origin = json["origin"];
+        _rotation = json["rotation"];
+        _scale = json["scale"];
+
+        _isDirtyModelMatrix = true;
+    }
+
     void Transformable::recalculateMatrices() noexcept
     {
         _cachedModelMatrix = glm::mat4(1.f);

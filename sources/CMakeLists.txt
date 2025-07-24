@@ -13,6 +13,7 @@ target_link_libraries(SpriteWalkerEngine INTERFACE
     SW::Editor
     SW::InputDevices
     assimp::assimp
+        SW::GameplaySystem
 )
 
 target_include_directories(SpriteWalkerEngine INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
@@ -20,7 +21,5 @@ target_include_directories(SpriteWalkerEngine INTERFACE ${CMAKE_CURRENT_SOURCE_D
 add_executable(SomeGameApp SomeGameApp.cpp)
 
 target_link_libraries(SomeGameApp PUBLIC
-        SW::Camera
-        SW::Editor
-        SW::InputDevices
+        SpriteWalkerEngine
 )

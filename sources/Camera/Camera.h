@@ -22,9 +22,8 @@
 
 #pragma once
 
+#include "Core/Size.h"
 #include "SceneObjects/Transformable.h"
-
-#include <Core/Size.h>
 
 namespace SW
 {
@@ -57,6 +56,9 @@ namespace SW
         void yaw(float y);
         void pitch(float x);
         void yawAndPitch(glm::vec2 xy);
+
+        [[nodiscard]] nlohmann::json toJson() const override;
+        void fromJson(const nlohmann::json& json) override;
 
     protected:
         void recalculateCameraMatrices();

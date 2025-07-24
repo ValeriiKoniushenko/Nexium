@@ -113,6 +113,16 @@ namespace SW
         pitch(xy.y);
     }
 
+    nlohmann::json BaseCamera::toJson() const
+    {
+        return Transformable::toJson();
+    }
+
+    void BaseCamera::fromJson(const nlohmann::json& json)
+    {
+        Transformable::fromJson(json);
+    }
+
     void BaseCamera::recalculateCameraMatrices()
     {
         auto& mat = _cachedModelMatrix;
