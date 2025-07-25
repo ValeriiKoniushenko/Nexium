@@ -28,11 +28,11 @@
 namespace SW
 {
 
-    class ActorManager : public BaseLog, public Utils::NotCopyableAndNotMoveable
+    class BaseComponent : public BaseLog
     {
     public:
         [[nodiscard]] spdlog::logger* getLogger() const override { return Framework::getLogger(); }
-        [[nodiscard]] const char* getPrefix() const override { return "ActorManager"; }
+        [[nodiscard]] const char* getPrefix() const override { return "BaseComponent"; }
     };
 
 } // namespace SW

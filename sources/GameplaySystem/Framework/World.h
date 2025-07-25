@@ -22,17 +22,25 @@
 
 #pragma once
 
+#include "GameState.h"
+#include "LevelData.h"
 #include "Misc/BaseLog.h"
 #include "ModuleInfo.h"
+#include "PlayerState.h"
 
 namespace SW
 {
 
-    class World : public BaseLog
+    class World : public BaseLog, public Utils::NotCopyableAndNotMoveable
     {
     public:
         [[nodiscard]] spdlog::logger* getLogger() const override { return Framework::getLogger(); }
         [[nodiscard]] const char* getPrefix() const override { return "World"; }
+
+    public:
+        PlayerState playerState;
+        GameState gameState;
+        LevelData levelData;
     };
 
 } // namespace SW

@@ -28,7 +28,7 @@
 namespace SW
 {
 
-    class GameState : public BaseLog
+    class GameState : public BaseLog, public Utils::NotCopyableAndNotMoveable
     {
     public:
         [[nodiscard]] spdlog::logger* getLogger() const override { return Framework::getLogger(); }

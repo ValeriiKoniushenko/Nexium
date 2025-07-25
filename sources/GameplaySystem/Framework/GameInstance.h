@@ -21,10 +21,12 @@
 // SOFTWARE.
 
 #pragma once
+
+#include "Core/Singleton.h"
 #include "Misc/BaseLog.h"
 #include "ModuleInfo.h"
-
-#include <Core/Singleton.h>
+#include "UserInterface.h"
+#include "World.h"
 
 namespace SW
 {
@@ -34,6 +36,23 @@ namespace SW
     public:
         [[nodiscard]] spdlog::logger* getLogger() const override { return Framework::getLogger(); }
         [[nodiscard]] const char* getPrefix() const override { return "GameInstance"; }
+
+    public:
+        World world;
+        UserInterface userInterface;
+
+    protected:
+    private:
     };
+
+    [[nodiscard]] inline GameInstance& GetGameInstance()
+    {
+        return GameInstance::instance();
+    }
+
+    [[nodiscard]] inline World& GetWorld()
+    {
+        return GameInstance::instance().world;
+    }
 
 } // namespace SW

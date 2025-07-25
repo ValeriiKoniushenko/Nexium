@@ -28,7 +28,7 @@
 namespace SW
 {
 
-    class CameraManager : public BaseLog
+    class CameraManager : public BaseLog, public Utils::NotCopyableAndNotMoveable
     {
     public:
         [[nodiscard]] spdlog::logger* getLogger() const override { return Framework::getLogger(); }

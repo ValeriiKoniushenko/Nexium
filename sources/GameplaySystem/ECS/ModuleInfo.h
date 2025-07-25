@@ -23,16 +23,14 @@
 #pragma once
 
 #include "Misc/BaseLog.h"
-#include "ModuleInfo.h"
 
-namespace SW
+namespace SW::Ecs
 {
 
-    class ActorManager : public BaseLog, public Utils::NotCopyableAndNotMoveable
+    [[nodiscard]] inline spdlog::logger* getLogger()
     {
-    public:
-        [[nodiscard]] spdlog::logger* getLogger() const override { return Framework::getLogger(); }
-        [[nodiscard]] const char* getPrefix() const override { return "ActorManager"; }
-    };
+        static std::shared_ptr<spdlog::logger> logger = spdlog::stdout_color_mt("ECS");
+        return logger.get();
+    }
 
-} // namespace SW
+} // namespace SW::Ecs

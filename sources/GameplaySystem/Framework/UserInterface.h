@@ -28,7 +28,7 @@
 namespace SW
 {
 
-    class UserInterface : public BaseLog
+    class UserInterface : public BaseLog, public Utils::NotCopyableAndNotMoveable
     {
     public:
         [[nodiscard]] spdlog::logger* getLogger() const override { return Framework::getLogger(); }

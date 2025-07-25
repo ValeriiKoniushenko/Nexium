@@ -28,11 +28,13 @@
 namespace SW
 {
 
-    class GameState : public BaseLog
+    class PlayerState : public BaseLog, public Utils::NotCopyableAndNotMoveable
     {
     public:
         [[nodiscard]] spdlog::logger* getLogger() const override { return Framework::getLogger(); }
-        [[nodiscard]] const char* getPrefix() const override { return "GameState"; }
+        [[nodiscard]] const char* getPrefix() const override { return "PlayerState"; }
+
+    public:
     };
 
 } // namespace SW

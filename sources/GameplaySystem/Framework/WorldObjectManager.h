@@ -28,7 +28,7 @@
 namespace SW
 {
 
-    class WorldObjectManager : public BaseLog
+    class WorldObjectManager : public BaseLog, public Utils::NotCopyableAndNotMoveable
     {
     public:
         [[nodiscard]] spdlog::logger* getLogger() const override { return Framework::getLogger(); }

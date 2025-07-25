@@ -22,17 +22,27 @@
 
 #pragma once
 
+#include "ActorManager.h"
+#include "CameraManager.h"
+#include "ControllerManager.h"
 #include "Misc/BaseLog.h"
 #include "ModuleInfo.h"
+#include "WorldObjectManager.h"
 
 namespace SW
 {
 
-    class LevelData : public BaseLog
+    class LevelData : public BaseLog, public Utils::NotCopyableAndNotMoveable
     {
     public:
         [[nodiscard]] spdlog::logger* getLogger() const override { return Framework::getLogger(); }
         [[nodiscard]] const char* getPrefix() const override { return "LevelData"; }
+
+    public:
+        WorldObjectManager worldObjectManger;
+        ActorManager actorManager;
+        ControllerManager controllerManager;
+        CameraManager cameraManager;
     };
 
 } // namespace SW

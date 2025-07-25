@@ -28,7 +28,7 @@
 namespace SW
 {
 
-    class ControllerManager : public BaseLog
+    class ControllerManager : public BaseLog, public Utils::NotCopyableAndNotMoveable
     {
     public:
         [[nodiscard]] spdlog::logger* getLogger() const override { return Framework::getLogger(); }
