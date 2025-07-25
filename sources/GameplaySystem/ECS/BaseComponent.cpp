@@ -20,38 +20,35 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#pragma once
-
-#include "Misc/BaseLog.h"
-#include "ModuleInfo.h"
-#include "boost/intrusive_ptr.hpp"
-#include "boost/smart_ptr/intrusive_ref_counter.hpp"
+#include "BaseComponent.h"
 
 namespace SW
 {
 
-    class BaseComponent : public BaseLog, public boost::intrusive_ref_counter<BaseComponent>
+    void BaseComponent::setName(Core::StringAtom name)
     {
-    public:
-        using Self = BaseComponent;
-        using Ptr = boost::intrusive_ptr<BaseComponent>;
-        using CPtr = boost::intrusive_ptr<const BaseComponent>;
+        Assert(!name.isEmpty());
+        _name = std::move(name.shrink_to_fit());
+    }
 
-    public:
-        void setName(Core::StringAtom name);
-        [[nodiscard]] const Core::StringAtom& getName() const noexcept { return _name; }
+    void BaseComponent::addChild(BaseComponent* component)
+    {
+        Assert(component);
+        if (!component)
+        {
+            return;
+        }
 
-        [[nodiscard]] const std::vector<Ptr>& getChildren() const noexcept { return _children; }
-        void addChild(BaseComponent* component);
+        Assert(component->isValid());
+        if (!component->isValid())
+        {
+            return;
+        }
+    }
 
-        [[nodiscard]] bool isValid() const;
-
-        [[nodiscard]] spdlog::logger* getLogger() const override final { return Ecs::getLogger(); }
-        [[nodiscard]] const char* getPrefix() const override { return "Component"; }
-
-    protected:
-        Core::StringAtom _name;
-        std::vector<Ptr> _children;
-    };
+    bool BaseComponent::isValid() const
+    {
+        return !_name.isEmpty();
+    }
 
 } // namespace SW
