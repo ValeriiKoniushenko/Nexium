@@ -22,13 +22,14 @@
 
 #pragma once
 
+#include "../GameplaySystem/ECS/Transformable.h"
 #include "Core/Size.h"
-#include "SceneObjects/Transformable.h"
+#include "GameplaySystem/Framework/Actor.h"
 
 namespace SW
 {
 
-    class BaseCamera : public Transformable
+    class BaseCamera : public Actor
     {
     public:
         BaseCamera() = default;
