@@ -31,8 +31,8 @@ namespace SW
     class BaseComponent : public BaseLog
     {
     public:
-        [[nodiscard]] spdlog::logger* getLogger() const override { return Framework::getLogger(); }
-        [[nodiscard]] const char* getPrefix() const override { return "BaseComponent"; }
+        [[nodiscard]] spdlog::logger* getLogger() const override { return Ecs::getLogger(); }
+        [[nodiscard]] const char* getPrefix() const override { return "Component"; }
     };
 
 } // namespace SW
