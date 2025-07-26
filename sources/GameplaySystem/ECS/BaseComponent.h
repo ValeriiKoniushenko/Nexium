@@ -67,11 +67,24 @@ namespace SW
 
         [[nodiscard]] bool operator==(const BaseComponent& other) const;
 
+        template<IsComponent T>
+        [[nodiscard]] T* castTo()
+        {
+            auto* casted = dynamic_cast<T*>(this);
+            Assert(casted);
+            return casted;
+        }
+
         void setComponentName(const Core::StringAtom& name);
         [[nodiscard]] const Core::StringAtom& getComponentName() const noexcept { return _name; }
 
+        [[nodiscard]] const BaseComponent* getParent() const noexcept { return _parent; }
+        [[nodiscard]] BaseComponent* getParent() noexcept { return _parent; }
+        [[nodiscard]] bool hasParent() const noexcept { return _parent; }
+
         [[nodiscard]] const std::list<Ptr>& getChildren() const noexcept { return _children; }
         [[nodiscard]] std::size_t getChildrenSize() const noexcept { return _children.size(); }
+        [[nodiscard]] bool hasChildren() const noexcept { return !_children.empty(); }
 
         template<IsComponent ComponentT>
         [[nodiscard]] ComponentT* addChildComponent()
@@ -82,8 +95,12 @@ namespace SW
                 return nullptr;
             }
 
+            newOne->_parent = this;
             return static_cast<ComponentT*>(_children.emplace_back(std::move(newOne)).get());
         }
+
+        bool removeChild(const BaseComponent* child);
+        bool removeChildIf(std::function<bool(const BaseComponent*)>&& pred);
 
         [[nodiscard]] bool isValid() const;
 

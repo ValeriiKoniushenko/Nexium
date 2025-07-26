@@ -57,6 +57,39 @@ namespace SW
         _name.shrink_to_fit();
     }
 
+    bool BaseComponent::removeChild(const BaseComponent* child)
+    {
+        for (auto i = _children.begin(); i != _children.end(); ++i)
+        {
+            if (i->get() == child)
+            {
+                _children.erase(i);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool BaseComponent::removeChildIf(std::function<bool(const BaseComponent*)>&& pred)
+    {
+        bool removedAtLeastOne = false;
+
+        for (auto i = _children.begin(); i != _children.end();)
+        {
+            if (pred(i->get()))
+            {
+                i = _children.erase(i);
+                removedAtLeastOne = true;
+            }
+            else
+            {
+                ++i;
+            }
+        }
+
+        return removedAtLeastOne;
+    }
+
     bool BaseComponent::isValid() const
     {
         return !_name.isEmpty();
