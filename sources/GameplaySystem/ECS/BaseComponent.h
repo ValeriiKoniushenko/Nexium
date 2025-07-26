@@ -27,8 +27,33 @@
 #include "boost/intrusive_ptr.hpp"
 #include "boost/smart_ptr/intrusive_ref_counter.hpp"
 
+#include <list>
+
+#define ECS_REGISTER_NEW_COMPONENT(CurrentClass, BaseComponentClass)                               \
+public:                                                                                            \
+    using Self = CurrentClass;                                                                     \
+    using Ptr = boost::intrusive_ptr<CurrentClass>;                                                \
+    using CPtr = boost::intrusive_ptr<const CurrentClass>;                                         \
+    inline static const auto componentType = Core::StringAtom::Intern(#CurrentClass);              \
+    [[nodiscard]] const Core::StringAtom& getComponentType() const noexcept                        \
+    {                                                                                              \
+        return CurrentClass::componentType;                                                        \
+    }                                                                                              \
+    CurrentClass(const Core::StringAtom& name = ""_atom)                                           \
+        : BaseComponentClass(&componentType, name)                                                 \
+    {                                                                                              \
+    }
+
 namespace SW
 {
+
+    class BaseComponent;
+
+    template<class T>
+    concept IsComponent = std::derived_from<T, BaseComponent> && requires(T t) {
+        { t.getComponentType() };
+        { T::componentType };
+    };
 
     class BaseComponent : public BaseLog, public boost::intrusive_ref_counter<BaseComponent>
     {
@@ -38,20 +63,74 @@ namespace SW
         using CPtr = boost::intrusive_ptr<const BaseComponent>;
 
     public:
-        void setName(Core::StringAtom name);
-        [[nodiscard]] const Core::StringAtom& getName() const noexcept { return _name; }
+        ~BaseComponent() override = default;
 
-        [[nodiscard]] const std::vector<Ptr>& getChildren() const noexcept { return _children; }
-        void addChild(BaseComponent* component);
+        [[nodiscard]] bool operator==(const BaseComponent& other) const;
+
+        void setComponentName(const Core::StringAtom& name);
+        [[nodiscard]] const Core::StringAtom& getComponentName() const noexcept { return _name; }
+
+        [[nodiscard]] const std::list<Ptr>& getChildren() const noexcept { return _children; }
+        [[nodiscard]] std::size_t getChildrenSize() const noexcept { return _children.size(); }
+
+        template<IsComponent ComponentT>
+        [[nodiscard]] ComponentT* addChildComponent()
+        {
+            typename ComponentT::Ptr newOne = new ComponentT;
+            if (!onAddChildComponentValidation(newOne.get()))
+            {
+                return nullptr;
+            }
+
+            return static_cast<ComponentT*>(_children.emplace_back(std::move(newOne)).get());
+        }
 
         [[nodiscard]] bool isValid() const;
 
         [[nodiscard]] spdlog::logger* getLogger() const override final { return Ecs::getLogger(); }
         [[nodiscard]] const char* getPrefix() const override { return "Component"; }
 
+        [[nodiscard]] std::size_t makeHash() const;
+
     protected:
+        explicit BaseComponent(const Core::StringAtom* type, const Core::StringAtom& name = ""_atom)
+            : _type{ type },
+              _name{ name }
+        {
+        }
+
+        [[nodiscard]] virtual bool onAddChildComponentValidation(const BaseComponent*)
+        {
+            return true;
+        }
+
+    protected:
+        const Core::StringAtom* const _type;
         Core::StringAtom _name;
-        std::vector<Ptr> _children;
+
+        BaseComponent* _parent = nullptr;
+        std::list<Ptr> _children;
     };
 
 } // namespace SW
+
+template<>
+struct std::hash<SW::BaseComponent>
+{
+    std::size_t operator()(const SW::BaseComponent& x) const noexcept { return x.makeHash(); }
+};
+
+template<>
+struct std::hash<SW::BaseComponent::CPtr>
+{
+    std::size_t operator()(const SW::BaseComponent::CPtr& x) const noexcept
+    {
+        return x->makeHash();
+    }
+};
+
+template<>
+struct std::hash<SW::BaseComponent::Ptr>
+{
+    std::size_t operator()(const SW::BaseComponent::Ptr& x) const noexcept { return x->makeHash(); }
+};

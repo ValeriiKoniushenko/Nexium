@@ -24,15 +24,17 @@
 
 #include "../GameplaySystem/ECS/Transformable.h"
 #include "Core/Size.h"
+#include "GameplaySystem/ECS/BaseComponent.h"
 #include "GameplaySystem/Framework/Actor.h"
 
 namespace SW
 {
 
-    class BaseCamera : public Actor
+    class BaseCamera : public Actor, public BaseComponent
     {
+        ECS_REGISTER_NEW_COMPONENT(BaseCamera, BaseComponent)
+
     public:
-        BaseCamera() = default;
         ~BaseCamera() override = default;
 
         [[nodiscard]] const glm::mat4& getMatrix();

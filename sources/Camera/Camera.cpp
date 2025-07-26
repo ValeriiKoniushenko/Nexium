@@ -28,6 +28,7 @@
 
 namespace SW
 {
+
     const glm::mat4& BaseCamera::getMatrix()
     {
         if (_isDirtyProjMatrix)

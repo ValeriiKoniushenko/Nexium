@@ -22,33 +22,58 @@
 
 #include "BaseComponent.h"
 
+namespace
+{
+    template<typename T, typename... Rest>
+    void hash_combine(std::size_t& seed, const T& v, const Rest&... rest)
+    {
+        seed ^= std::hash<T>{}(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+        (hash_combine(seed, rest), ...);
+    }
+
+} // namespace
+
 namespace SW
 {
 
-    void BaseComponent::setName(Core::StringAtom name)
+    bool BaseComponent::operator==(const BaseComponent& other) const
     {
-        Assert(!name.isEmpty());
-        _name = std::move(name.shrink_to_fit());
+        Assert(!_name.isEmpty());
+        Assert(!other._name.isEmpty());
+
+        return _name == other._name;
     }
 
-    void BaseComponent::addChild(BaseComponent* component)
+    void BaseComponent::setComponentName(const Core::StringAtom& name)
     {
-        Assert(component);
-        if (!component)
+        if (name.isEmpty()) [[unlikely]]
         {
+            Assert(false);
+            errorLog("Was passed empty name to the component.");
             return;
         }
 
-        Assert(component->isValid());
-        if (!component->isValid())
-        {
-            return;
-        }
+        _name = name;
+        _name.shrink_to_fit();
     }
 
     bool BaseComponent::isValid() const
     {
         return !_name.isEmpty();
+    }
+
+    std::size_t BaseComponent::makeHash() const
+    {
+        std::size_t seed = 0;
+
+        auto* i = this;
+        while (i)
+        {
+            hash_combine(seed, i->_name);
+            i = i->_parent;
+        }
+
+        return seed;
     }
 
 } // namespace SW
