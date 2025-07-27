@@ -122,7 +122,7 @@ namespace SW
         }
 
     protected:
-        const Core::StringAtom* const _type;
+        const Core::StringAtom* const _type = nullptr;
         Core::StringAtom _name;
 
         BaseComponent* _parent = nullptr;
