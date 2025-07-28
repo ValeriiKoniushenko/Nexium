@@ -135,6 +135,7 @@ int main()
         const float mlt = state.leftShift.cast() == SW::Keyboard::KeyState::Pressed ? 5.f : 1.f;
         return speed * mlt;
     };
+    keyboardInput.create("lookAtObject", GLFW_KEY_L)->onPress.subscribe([&](auto) { camera.lookAt(glm::vec3(0.0f, 0.0f, 0.0f)); });
     keyboardInput.create("moveForward", GLFW_KEY_W)->onPress.subscribe([&](auto state){ camera.moveForward(getRealSpeed(state) * timeDelta); });
     keyboardInput.create("moveBackward", GLFW_KEY_S)->onPress.subscribe([&](auto state){ camera.moveForward(-getRealSpeed(state) * timeDelta); });
     keyboardInput.create("moveRight", GLFW_KEY_D)->onPress.subscribe([&](auto state){ camera.moveRight(getRealSpeed(state) * timeDelta); });

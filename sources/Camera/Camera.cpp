@@ -52,6 +52,16 @@ namespace SW
         return _cachedCalculatedMatrix;
     }
 
+    void BaseCamera::lookAt(const glm::vec3& targetPosition)
+    {
+        glm::vec3 direction = glm::normalize(targetPosition - getPosition());
+
+        float yaw = glm::degrees(atan2(-direction.x, direction.z));
+        float pitch = glm::degrees(asin(direction.y));
+
+        setRotation({ pitch, yaw, 0.0f });
+    }
+
     void BaseCamera::setFrameSize(Core::FSize2 size) noexcept
     {
         _size = size;

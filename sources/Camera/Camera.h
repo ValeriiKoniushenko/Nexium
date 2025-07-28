@@ -37,6 +37,8 @@ namespace SW
 
         [[nodiscard]] const glm::mat4& getMatrix();
 
+        void lookAt(const glm::vec3& targetPosition);
+
         void setFrameSize(Core::FSize2 size) noexcept;
         [[nodiscard]] Core::FSize2 getFrameSize() const noexcept { return _size; }
 
