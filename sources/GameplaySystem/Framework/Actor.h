@@ -22,13 +22,13 @@
 
 #pragma once
 
+#include "GameplaySystem/ECS/BaseComponent.h"
 #include "GameplaySystem/ECS/Transformable.h"
-#include "Utils/CopyableAndMoveableBehaviour.h"
 
 namespace SW
 {
 
-    class Actor : public Utils::CopyableAndMoveable, public Transformable
+    class Actor : public Transformable, public ComponentHolder
     {
     public:
         Actor() = default;
@@ -42,6 +42,7 @@ namespace SW
         [[nodiscard]] nlohmann::json toJson() const override;
         void fromJson(const nlohmann::json& json) override;
 
+    public:
     protected:
     };
 

@@ -55,17 +55,13 @@ namespace SW
         { T::componentType };
     };
 
-    class BaseComponent : public BaseLog, public boost::intrusive_ref_counter<BaseComponent>
+    class AbstractComponent : public BaseLog, public boost::intrusive_ref_counter<BaseComponent>
     {
     public:
-        using Self = BaseComponent;
-        using Ptr = boost::intrusive_ptr<BaseComponent>;
-        using CPtr = boost::intrusive_ptr<const BaseComponent>;
+        ~AbstractComponent() override = default;
 
-    public:
-        ~BaseComponent() override = default;
-
-        [[nodiscard]] bool operator==(const BaseComponent& other) const;
+        [[nodiscard]] spdlog::logger* getLogger() const override final { return Ecs::getLogger(); }
+        [[nodiscard]] const char* getPrefix() const override { return "Component"; }
 
         template<IsComponent T>
         [[nodiscard]] T* castTo()
@@ -75,13 +71,18 @@ namespace SW
             return casted;
         }
 
-        void setComponentName(const Core::StringAtom& name);
-        [[nodiscard]] const Core::StringAtom& getComponentName() const noexcept { return _name; }
+    protected:
+        AbstractComponent() = default;
+    };
 
-        [[nodiscard]] const BaseComponent* getParent() const noexcept { return _parent; }
-        [[nodiscard]] BaseComponent* getParent() noexcept { return _parent; }
-        [[nodiscard]] bool hasParent() const noexcept { return _parent; }
+    class ComponentHolder : public AbstractComponent
+    {
+    public:
+        using Self = BaseComponent;
+        using Ptr = boost::intrusive_ptr<BaseComponent>;
+        using CPtr = boost::intrusive_ptr<const BaseComponent>;
 
+    public:
         [[nodiscard]] const std::list<Ptr>& getChildren() const noexcept { return _children; }
         [[nodiscard]] std::size_t getChildrenSize() const noexcept { return _children.size(); }
         [[nodiscard]] bool hasChildren() const noexcept { return !_children.empty(); }
@@ -102,10 +103,30 @@ namespace SW
         bool removeChild(const BaseComponent* child);
         bool removeChildIf(std::function<bool(const BaseComponent*)>&& pred);
 
-        [[nodiscard]] bool isValid() const;
+    protected:
+        std::list<Ptr> _children;
+    };
 
-        [[nodiscard]] spdlog::logger* getLogger() const override final { return Ecs::getLogger(); }
-        [[nodiscard]] const char* getPrefix() const override { return "Component"; }
+    class BaseComponent : public ComponentHolder
+    {
+    public:
+        using Self = BaseComponent;
+        using Ptr = boost::intrusive_ptr<BaseComponent>;
+        using CPtr = boost::intrusive_ptr<const BaseComponent>;
+
+    public:
+        ~BaseComponent() override = default;
+
+        [[nodiscard]] bool operator==(const BaseComponent& other) const;
+
+        void setComponentName(const Core::StringAtom& name);
+        [[nodiscard]] const Core::StringAtom& getComponentName() const noexcept { return _name; }
+
+        [[nodiscard]] const ComponentHolder* getParent() const noexcept { return _parent; }
+        [[nodiscard]] ComponentHolder* getParent() noexcept { return _parent; }
+        [[nodiscard]] bool hasParent() const noexcept { return _parent; }
+
+        [[nodiscard]] bool isValid() const;
 
         [[nodiscard]] std::size_t makeHash() const;
 
@@ -125,8 +146,7 @@ namespace SW
         const Core::StringAtom* const _type = nullptr;
         Core::StringAtom _name;
 
-        BaseComponent* _parent = nullptr;
-        std::list<Ptr> _children;
+        ComponentHolder* _parent = nullptr;
     };
 
 } // namespace SW

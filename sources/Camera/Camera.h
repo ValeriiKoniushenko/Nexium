@@ -22,9 +22,9 @@
 
 #pragma once
 
-#include "../GameplaySystem/ECS/Transformable.h"
 #include "Core/Size.h"
 #include "GameplaySystem/ECS/BaseComponent.h"
+#include "GameplaySystem/ECS/Transformable.h"
 #include "GameplaySystem/Framework/Actor.h"
 
 namespace SW
