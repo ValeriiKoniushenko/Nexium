@@ -218,6 +218,11 @@ int main()
             meshes.push_back(std::move(gcd));
         }
     }
+    // double side render for tree's leaf
+    meshes.at(5).setDrawModifiers({
+        { GL_CULL_FACE, SW::GraphicsComponentData::Modifier::Disable },
+        { GL_BLEND, SW::GraphicsComponentData::Modifier::Enable },
+    });
     SW::globalLog.infoLog("All models was loaded for: {}s"_f << modelLoaderStopwatch.stop());
 
     //   ___  ___        _          _
@@ -258,12 +263,7 @@ int main()
         shader->setUniform("uModel"_atom, glm::mat4(1.0f));
 
         meshes.at(4).directDraw();
-
-        glDisable(GL_CULL_FACE);
-        glEnable(GL_BLEND);
         meshes.at(5).directDraw();
-        glDisable(GL_BLEND);
-        glEnable(GL_CULL_FACE);
 
         window.swapBuffers();
         window.pollEvent();

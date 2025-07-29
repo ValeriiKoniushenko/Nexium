@@ -202,8 +202,16 @@ namespace SW
             return;
         }
 
-        for (auto modifier : _drawModifiers)
+        for (auto [val, mod] : _drawModifiers)
         {
+            if (mod.cast() == Modifier::Enable)
+            {
+                glEnable(val);
+            }
+            else if (mod.cast() == Modifier::Disable)
+            {
+                glDisable(val);
+            }
         }
 
         _shader->use();
@@ -215,8 +223,16 @@ namespace SW
 
         glDrawElements(GL_TRIANGLES, _triangleCount, GL_UNSIGNED_INT, 0);
 
-        for (auto modifier : _drawModifiers)
+        for (auto [val, mod] : _drawModifiers)
         {
+            if (mod.cast() == Modifier::Disable)
+            {
+                glEnable(val);
+            }
+            else if (mod.cast() == Modifier::Enable)
+            {
+                glDisable(val);
+            }
         }
     }
 } // namespace SW

@@ -40,6 +40,7 @@ namespace SW
             Disable,
         )
         // clang-format on
+
         public :
         GraphicsComponentData() = default;
         ~GraphicsComponentData();
@@ -113,6 +114,16 @@ namespace SW
         [[nodiscard]] GLuint getEboId() noexcept { return _ebo; }
         [[nodiscard]] GLuint getVaoId() noexcept { return _vao; }
         [[nodiscard]] ShaderProgram* getShaderId() noexcept { return _shader; }
+
+        [[nodiscard]] const std::unordered_map<GLenum, Modifier>& getDrawModifiers() const noexcept
+        {
+            return _drawModifiers;
+        }
+        void clearDrawModifiers() { _drawModifiers.clear(); }
+        void setDrawModifiers(std::unordered_map<GLenum, Modifier> value)
+        {
+            _drawModifiers = std::move(value);
+        }
 
     private:
         std::unordered_map<GLenum, Modifier> _drawModifiers;
