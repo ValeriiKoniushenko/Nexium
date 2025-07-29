@@ -11,11 +11,12 @@ if(WIN32)
     file(TO_NATIVE_PATH "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tests/assets" _dstTestAssets)
     file(TO_NATIVE_PATH "${CMAKE_SOURCE_DIR}/tests/assets/" _srcTestAssets)
     execute_process(COMMAND cmd.exe /c if not exist "${_dstTestAssets}" mklink /J "${_dstTestAssets}" "${_srcTestAssets}")
-
 else()
-    execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink "${CMAKE_SOURCE_DIR}/assets/" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/assets")
-    execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink "${CMAKE_SOURCE_DIR}/editor/" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/editor")
-
-    file(MAKE_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tests")
-    execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink "${CMAKE_SOURCE_DIR}/tests/assets/" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tests/assets")
-endif()
+    add_custom_target(symlinks_to_assets ALL
+            COMMAND ${CMAKE_COMMAND} -E create_symlink "${CMAKE_SOURCE_DIR}/assets/" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/assets"
+            COMMAND ${CMAKE_COMMAND} -E create_symlink "${CMAKE_SOURCE_DIR}/editor/" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/editor"
+            COMMAND ${CMAKE_COMMAND} -E create_symlink "${CMAKE_SOURCE_DIR}/tests/assets/" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tests/assets"
+    )
+    add_custom_target(deploy)
+    add_dependencies(deploy symlinks_to_assets)
+endif ()

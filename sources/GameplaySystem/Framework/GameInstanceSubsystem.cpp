@@ -20,49 +20,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#pragma once
-#include "HttpLib/httplib.h"
-#include "ModuleInfo.h"
-
-#include <thread>
+#include "GameInstanceSubsystem.h"
 
 namespace SW
 {
-
-    class EditorServer : public Core::StrictSingleton<EditorServer>, public BaseLog
-    {
-        SINGLETONS_FRIEND(EditorServer)
-
-    public:
-        static constexpr const char* editorPath = "editor/dist";
-        static constexpr int defaultPort = 61005;
-
-    public:
-        ~EditorServer() override;
-
-        void setPort(int port);
-        [[nodiscard]] bool isRunning() const;
-
-        void initialize();
-        void start();
-        void sync_start();
-        void stop();
-
-        [[nodiscard]] spdlog::logger* getLogger() const final { return Editor::getLogger(); }
-        [[nodiscard]] const char* getPrefix() const override { return "Server"; }
-
-    private:
-        void processGetRequest(const httplib::Request& req, httplib::Response& res);
-
-    private:
-        std::thread _thread;
-        httplib::Server _server;
-        int _port = defaultPort;
-    };
-
-    inline EditorServer& GetEditorServer()
-    {
-        return EditorServer::instance();
-    }
 
 } // namespace SW

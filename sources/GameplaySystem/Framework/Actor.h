@@ -21,48 +21,29 @@
 // SOFTWARE.
 
 #pragma once
-#include "HttpLib/httplib.h"
-#include "ModuleInfo.h"
 
-#include <thread>
+#include "GameplaySystem/ECS/BaseComponent.h"
+#include "GameplaySystem/ECS/Transformable.h"
 
 namespace SW
 {
 
-    class EditorServer : public Core::StrictSingleton<EditorServer>, public BaseLog
+    class Actor : public Transformable, public ComponentHolder
     {
-        SINGLETONS_FRIEND(EditorServer)
+    public:
+        Actor() = default;
+        ~Actor() override = default;
+        Actor(const Actor& other) = default;
+        Actor(Actor&& other) noexcept = default;
+
+        Actor& operator=(const Actor& other) = default;
+        Actor& operator=(Actor&& other) noexcept = default;
+
+        [[nodiscard]] nlohmann::json toJson() const override;
+        void fromJson(const nlohmann::json& json) override;
 
     public:
-        static constexpr const char* editorPath = "editor/dist";
-        static constexpr int defaultPort = 61005;
-
-    public:
-        ~EditorServer() override;
-
-        void setPort(int port);
-        [[nodiscard]] bool isRunning() const;
-
-        void initialize();
-        void start();
-        void sync_start();
-        void stop();
-
-        [[nodiscard]] spdlog::logger* getLogger() const final { return Editor::getLogger(); }
-        [[nodiscard]] const char* getPrefix() const override { return "Server"; }
-
-    private:
-        void processGetRequest(const httplib::Request& req, httplib::Response& res);
-
-    private:
-        std::thread _thread;
-        httplib::Server _server;
-        int _port = defaultPort;
+    protected:
     };
-
-    inline EditorServer& GetEditorServer()
-    {
-        return EditorServer::instance();
-    }
 
 } // namespace SW

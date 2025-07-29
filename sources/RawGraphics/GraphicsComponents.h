@@ -64,6 +64,40 @@ namespace SW
             return _vbo != 0 && _ebo != 0 && _vao != 0 && _shader != 0;
         }
 
+        /**
+         * @brief direct draw if was set up vertex, index and optionally texture buffers.
+         * @details this function from the family of 'low-abstract' functionality.
+         * It can give you ability for fast setup & draw to the scene but without huge
+         * or at least some small optimizations. Just hard-draw in the old-school opengl
+         * style.
+         * Example code(little bit pseudo):
+         * @code
+         * std::vector<float> vertices = {
+         *      0.5f,  0.5f, 0.0f,  // top right
+         *      0.5f, -0.5f, 0.0f,  // bottom right
+         *     -0.5f, -0.5f, 0.0f,  // bottom left
+         *     -0.5f,  0.5f, 0.0f,  // top left
+         * };
+         *
+         * std::vector<float> indices = {
+         *      0, 1, 3,  // first Triangle
+         *      1, 2, 3   // second Triangle
+         * };
+         *
+         * GraphicsComponentData x;
+         * x.generate();
+         * x.setVertexBuffer(vertices);
+         * x.setIndexBuffer(indices);
+         * x.setShaderProgram(some_compiled_shader_program);
+         *
+         * while(...)
+         * {
+         *     ...
+         *     x.directDraw();
+         *     ...
+         * }
+         * @endcode
+         */
         void directDraw() const noexcept;
 
         [[nodiscard]] GLuint getVboId() noexcept { return _vbo; }

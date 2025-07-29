@@ -67,8 +67,6 @@ namespace SW
     {
         if (data && _ebo != 0 && _vao != 0 && _texture != 0) [[likely]]
         {
-            GLenum format = (channels == 3) ? GL_RGB : (channels == 4) ? GL_RGBA : GL_RED;
-
             glBindVertexArray(_vao);
 
             glBindTexture(GL_TEXTURE_2D, _texture);
@@ -78,7 +76,7 @@ namespace SW
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-            glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE,
+            glTexImage2D(GL_TEXTURE_2D, 0, channels, width, height, 0, channels, GL_UNSIGNED_BYTE,
                          data);
             glGenerateMipmap(GL_TEXTURE_2D);
 

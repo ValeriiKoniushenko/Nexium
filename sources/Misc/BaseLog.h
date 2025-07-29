@@ -22,7 +22,7 @@
 
 #pragma once
 
-#include "Core/String.h"
+#include "Core/StringHelper.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/spdlog.h"
 

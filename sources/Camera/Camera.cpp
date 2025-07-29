@@ -28,6 +28,7 @@
 
 namespace SW
 {
+
     const glm::mat4& BaseCamera::getMatrix()
     {
         if (_isDirtyProjMatrix)
@@ -111,6 +112,27 @@ namespace SW
     {
         yaw(xy.x);
         pitch(xy.y);
+    }
+
+    nlohmann::json BaseCamera::toJson() const
+    {
+        auto json = Transformable::toJson();
+
+        json["viewport"] = _size;
+        json["fov"] = _fov;
+        json["far"] = _far;
+        json["near"] = _near;
+        return json;
+    }
+
+    void BaseCamera::fromJson(const nlohmann::json& json)
+    {
+        Transformable::fromJson(json);
+
+        _size = json["viewport"];
+        _fov = json["fov"];
+        _far = json["far"];
+        _near = json["near"];
     }
 
     void BaseCamera::recalculateCameraMatrices()

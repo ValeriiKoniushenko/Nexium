@@ -8,13 +8,15 @@
     "build": "tsc -b && vite build",
     "lint": "eslint . --ext .ts,.tsx",
     "format": "prettier --write .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "watch": "watch 'npm run build' ./src"
   },
   "dependencies": {
     "golden-layout": "^2.6.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "styled-components": "^6.1.19"
+    "styled-components": "^6.1.19",
+    "watch": "^0.13.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.1",

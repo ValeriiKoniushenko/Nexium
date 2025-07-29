@@ -22,15 +22,16 @@
 
 #pragma once
 
+#include "Misc/JsonAdapter.h"
 #include "glm/glm.hpp"
 
 namespace SW
 {
-    class Transformable
+    class Transformable : public JsonAdapter
     {
     public:
         Transformable() = default;
-        virtual ~Transformable() = default;
+        ~Transformable() override = default;
 
         [[nodiscard]] glm::vec3 getPosition() const noexcept;
         void setPosition(const glm::vec3& position) noexcept;
@@ -62,6 +63,9 @@ namespace SW
         [[nodiscard]] glm::vec3 getForwardVector() const noexcept;
         [[nodiscard]] glm::vec3 getUpVector() const noexcept;
         [[nodiscard]] glm::vec3 getRightVector() const noexcept;
+
+        [[nodiscard]] nlohmann::json toJson() const override;
+        void fromJson(const nlohmann::json& json) override;
 
     protected:
         void recalculateMatrices() noexcept;

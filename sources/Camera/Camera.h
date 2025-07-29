@@ -22,17 +22,19 @@
 
 #pragma once
 
-#include "SceneObjects/Transformable.h"
-
-#include <Core/Size.h>
+#include "Core/Size.h"
+#include "GameplaySystem/ECS/BaseComponent.h"
+#include "GameplaySystem/ECS/Transformable.h"
+#include "GameplaySystem/Framework/Actor.h"
 
 namespace SW
 {
 
-    class BaseCamera : public Transformable
+    class BaseCamera : public Actor, public BaseComponent
     {
+        ECS_REGISTER_NEW_COMPONENT(BaseCamera, BaseComponent)
+
     public:
-        BaseCamera() = default;
         ~BaseCamera() override = default;
 
         [[nodiscard]] const glm::mat4& getMatrix();
@@ -57,6 +59,9 @@ namespace SW
         void yaw(float y);
         void pitch(float x);
         void yawAndPitch(glm::vec2 xy);
+
+        [[nodiscard]] nlohmann::json toJson() const override;
+        void fromJson(const nlohmann::json& json) override;
 
     protected:
         void recalculateCameraMatrices();
