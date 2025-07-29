@@ -55,10 +55,10 @@ namespace SW
 
     void BaseCamera::lookAt(const glm::vec3& targetPosition)
     {
-        glm::vec3 direction = glm::normalize(targetPosition - getPosition());
+        const auto direction = glm::normalize(targetPosition - getPosition());
 
-        float yaw = glm::degrees(atan2(-direction.x, direction.z));
-        float pitch = glm::degrees(asin(direction.y));
+        const float yaw = glm::degrees(atan2(-direction.x, direction.z));
+        const float pitch = glm::degrees(asin(direction.y));
 
         setRotation({ pitch, yaw, 0.0f });
     }

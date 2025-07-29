@@ -150,39 +150,45 @@ int main()
     // ====================== MISC ==========================
     Core::FStopwatch modelLoaderStopwatch;
     modelLoaderStopwatch.start();
-    Assimp::Importer importer;
-    std::filesystem::path modelPath = "assets/base-3d/Models/FBX/FireHydrant.fbx";
-    const aiScene* scene = importer.ReadFile(modelPath.generic_string().c_str(),
-                                             aiProcess_Triangulate | aiProcess_JoinIdenticalVertices
-                                                 | aiProcess_SortByPType);
-    Assert(scene);
-    SW::globalLog.infoLog("All models was loaded for: {}s"_f << modelLoaderStopwatch.stop());
-
     std::vector<SW::GraphicsComponentData> meshes(1);
 
-    for (int i = 0; i < meshes.size(); ++i)
+    std::vector<std::filesystem::path> modelPaths = { "assets/base-3d/Models/FBX/FireHydrant.fbx" };
+
+    for (auto&& path : modelPaths)
     {
-        aiMesh* mesh = scene->mMeshes[i];
+        Assimp::Importer importer;
+        const aiScene* scene = importer.ReadFile(
+            path.generic_string().c_str(),
+            aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
+        Assert(scene);
+        SW::globalLog.infoLog("All models was loaded for: {}s"_f << modelLoaderStopwatch.stop());
 
-        meshes[i].generate();
-
-        aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-        aiString texturePath;
-        if (material->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath) == AI_SUCCESS)
+        for (int i = 0; i < 1; ++i)
         {
-            auto relative = Core::StringAtom(texturePath.C_Str()).replaceAll("\\", "/");
-            auto resolved = (modelPath.parent_path() / relative.toStdString()).lexically_normal();
+            aiMesh* mesh = scene->mMeshes[i];
+            Assert(mesh);
 
-            SW::Image image;
-            if (image.loadImageFromFile(resolved, true))
+            SW::GraphicsComponentData& gcd = meshes[0];
+            gcd.generate();
+
+            aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+            aiString texturePath;
+            if (material->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath) == AI_SUCCESS)
             {
-                meshes[i].setTexture(image.data(), image.getSize().width, image.getSize().height,
-                                     image.getChannelAsOpenGLType());
-            }
-        }
+                auto relative = Core::StringAtom(texturePath.C_Str()).replaceAll("\\", "/");
+                auto resolved = (path.parent_path() / relative.toStdString()).lexically_normal();
 
-        meshes[i].setMesh(mesh, true, true);
-        meshes[i].setShaderProgram(shader);
+                SW::Image image;
+                if (image.loadImageFromFile(resolved, true))
+                {
+                    gcd.setTexture(image.data(), image.getSize().width, image.getSize().height,
+                                   image.getChannelAsOpenGLType());
+                }
+            }
+
+            gcd.setMesh(mesh, true, true);
+            gcd.setShaderProgram(shader);
+        }
     }
 
     //   ___  ___        _          _
