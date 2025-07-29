@@ -150,7 +150,7 @@ int main()
     // ====================== MISC ==========================
     Core::FStopwatch modelLoaderStopwatch;
     modelLoaderStopwatch.start();
-    std::vector<SW::GraphicsComponentData> meshes(1);
+    std::vector<SW::GraphicsComponentData> meshes;
 
     std::vector<std::filesystem::path> modelPaths = { "assets/base-3d/Models/FBX/FireHydrant.fbx" };
 
@@ -168,7 +168,7 @@ int main()
             aiMesh* mesh = scene->mMeshes[i];
             Assert(mesh);
 
-            SW::GraphicsComponentData& gcd = meshes[0];
+            SW::GraphicsComponentData gcd;
             gcd.generate();
 
             aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
@@ -188,6 +188,7 @@ int main()
 
             gcd.setMesh(mesh, true, true);
             gcd.setShaderProgram(shader);
+            meshes.push_back(std::move(gcd));
         }
     }
 

@@ -34,10 +34,10 @@ namespace SW
     public:
         GraphicsComponentData() = default;
         ~GraphicsComponentData();
-        GraphicsComponentData(const GraphicsComponentData& other) = default;
-        GraphicsComponentData(GraphicsComponentData&& other) noexcept = default;
-        GraphicsComponentData& operator=(const GraphicsComponentData& other) = default;
-        GraphicsComponentData& operator=(GraphicsComponentData&& other) noexcept = default;
+        GraphicsComponentData(const GraphicsComponentData& other) = delete;
+        GraphicsComponentData(GraphicsComponentData&& other) noexcept;
+        GraphicsComponentData& operator=(const GraphicsComponentData& other) = delete;
+        GraphicsComponentData& operator=(GraphicsComponentData&& other) noexcept;
 
         void generate();
 
@@ -106,7 +106,7 @@ namespace SW
         [[nodiscard]] ShaderProgram* getShaderId() noexcept { return _shader; }
 
     private:
-        ShaderProgram* _shader;
+        ShaderProgram* _shader = nullptr;
         uint32_t _triangleCount = 0;
         GLuint _vbo = 0;
         GLuint _ebo = 0;

@@ -32,6 +32,33 @@ namespace SW
         clear();
     }
 
+    GraphicsComponentData::GraphicsComponentData(GraphicsComponentData&& other) noexcept
+    {
+        *this = std::move(other);
+    }
+
+    GraphicsComponentData& GraphicsComponentData::operator=(GraphicsComponentData&& other) noexcept
+    {
+        if (this != &other) [[likely]]
+        {
+            _shader = other._shader;
+            _triangleCount = other._triangleCount;
+            _vbo = other._vbo;
+            _ebo = other._ebo;
+            _vao = other._vao;
+            _texture = other._texture;
+
+            other._shader = nullptr;
+            other._triangleCount = 0;
+            other._vbo = 0;
+            other._ebo = 0;
+            other._vao = 0;
+            other._texture = 0;
+        }
+
+        return *this;
+    }
+
     void GraphicsComponentData::generate()
     {
         glGenVertexArrays(1, &_vao);
