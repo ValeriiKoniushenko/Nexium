@@ -91,7 +91,7 @@ int main()
     //    \/  \/ |_||_| |_| \__,_| \___/  \_/\_/
     //----------------------------------------------
     auto& window = SW::GetWindow();
-    window.create("Sprite Walker", { 600, 600 });
+    window.create("Sprite Walker", { 1200, 800 });
     // window.toggleCursorMode();
 
     //    _____  _                 _
