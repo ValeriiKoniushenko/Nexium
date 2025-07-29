@@ -34,5 +34,11 @@ void main()
 
    vec3 result = (ambient + diffuse + specular) * uObjectColor;
 
-   FragColor = texture(uTexture, ioUV) * vec4(result, 1.0);
+   vec4 texColor = texture(uTexture, ioUV) * vec4(result, 1.0);
+   if (texColor.a < 0.01)
+   {
+      discard;
+   }
+
+   FragColor = texColor;
 }

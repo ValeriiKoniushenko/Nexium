@@ -113,6 +113,7 @@ int main()
     glm::vec3 lightPos(1'000'000.f, 1'000'000.f, 1'000'000.f);
     SW::BaseCamera camera;
     camera.moveForward(-10);
+    camera.setFov(120.f);
 
     //    _____                       _        ___         _    _
     //   |_   _|                     | |      / _ \       | |  (_)
@@ -152,7 +153,7 @@ int main()
     modelLoaderStopwatch.start();
     std::vector<SW::GraphicsComponentData> meshes;
 
-    std::vector<std::filesystem::path> modelPaths = { "assets/base-3d/Models/FBX/FireHydrant.fbx" };
+    std::vector<std::filesystem::path> modelPaths = { "assets/base-3d/Models/FBX/Tree.fbx" };
 
     for (auto&& path : modelPaths)
     {
@@ -161,9 +162,8 @@ int main()
             path.generic_string().c_str(),
             aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
         Assert(scene);
-        SW::globalLog.infoLog("All models was loaded for: {}s"_f << modelLoaderStopwatch.stop());
 
-        for (int i = 0; i < 1; ++i)
+        for (int i = 0; i < scene->mNumMeshes; ++i)
         {
             aiMesh* mesh = scene->mMeshes[i];
             Assert(mesh);
@@ -191,6 +191,7 @@ int main()
             meshes.push_back(std::move(gcd));
         }
     }
+    SW::globalLog.infoLog("All models was loaded for: {}s"_f << modelLoaderStopwatch.stop());
 
     //   ___  ___        _          _
     //   |  \/  |       (_)        | |
@@ -229,7 +230,13 @@ int main()
         shader->setUniform("uProjAndView"_atom, camera.getMatrix());
         shader->setUniform("uModel"_atom, glm::mat4(1.0f));
 
-        meshes.back().directDraw();
+        meshes.at(4).directDraw();
+
+        glDisable(GL_CULL_FACE);
+        glEnable(GL_BLEND);
+        meshes.at(5).directDraw();
+        glDisable(GL_BLEND);
+        glEnable(GL_CULL_FACE);
 
         window.swapBuffers();
         window.pollEvent();
