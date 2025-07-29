@@ -24,6 +24,8 @@
 
 #include "ShaderProgram.h"
 
+#include <Core/Enum.h>
+
 class aiMesh;
 
 namespace SW
@@ -32,6 +34,13 @@ namespace SW
     class GraphicsComponentData final
     {
     public:
+        // clang-format off
+        CreateEnum(Modifier, int,
+            Enable,
+            Disable,
+        )
+        // clang-format on
+        public :
         GraphicsComponentData() = default;
         ~GraphicsComponentData();
         GraphicsComponentData(const GraphicsComponentData& other) = delete;
@@ -106,6 +115,7 @@ namespace SW
         [[nodiscard]] ShaderProgram* getShaderId() noexcept { return _shader; }
 
     private:
+        std::unordered_map<GLenum, Modifier> _drawModifiers;
         ShaderProgram* _shader = nullptr;
         uint32_t _triangleCount = 0;
         GLuint _vbo = 0;

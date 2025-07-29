@@ -202,6 +202,10 @@ namespace SW
             return;
         }
 
+        for (auto modifier : _drawModifiers)
+        {
+        }
+
         _shader->use();
         glBindVertexArray(_vao);
         glBindBuffer(GL_ARRAY_BUFFER, _vbo);
@@ -210,5 +214,9 @@ namespace SW
         glBindTexture(GL_TEXTURE_2D, _texture);
 
         glDrawElements(GL_TRIANGLES, _triangleCount, GL_UNSIGNED_INT, 0);
+
+        for (auto modifier : _drawModifiers)
+        {
+        }
     }
 } // namespace SW

@@ -38,6 +38,32 @@
 
 #include <iostream>
 
+void processMesh(aiMesh* mesh, const aiMatrix4x4& transform)
+{
+    aiVector3D min(1e10f, 1e10f, 1e10f);
+    aiVector3D max(-1e10f, -1e10f, -1e10f);
+
+    for (unsigned int i = 0; i < mesh->mNumVertices; ++i)
+    {
+        aiVector3D v = mesh->mVertices[i];
+        v *= transform;
+
+        min.x = std::min(min.x, v.x);
+        min.y = std::min(min.y, v.y);
+        min.z = std::min(min.z, v.z);
+
+        max.x = std::max(max.x, v.x);
+        max.y = std::max(max.y, v.y);
+        max.z = std::max(max.z, v.z);
+    }
+
+    aiVector3D size = max - min;
+    aiVector3D center = (max + min) * 0.5f;
+
+    std::cout << "Mesh: " << mesh->mName.C_Str() << std::endl;
+    std::cout << "Size: " << size.x << ", " << size.y << ", " << size.z << std::endl;
+}
+
 int main()
 {
 #ifdef DEBUG
@@ -168,6 +194,7 @@ int main()
             aiMesh* mesh = scene->mMeshes[i];
             Assert(mesh);
 
+            processMesh(mesh, {});
             SW::GraphicsComponentData gcd;
             gcd.generate();
 
