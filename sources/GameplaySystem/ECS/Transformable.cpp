@@ -52,13 +52,13 @@ namespace SW
 
     void Transformable::moveRight(float offset) noexcept
     {
-        _position += -offset * getRightVector();
+        _position += offset * getRightVector();
         _isDirtyModelMatrix = true;
     }
 
     void Transformable::moveUp(float offset) noexcept
     {
-        _position += offset * getUpVector();
+        _position += -offset * getUpVector();
         _isDirtyModelMatrix = true;
     }
 

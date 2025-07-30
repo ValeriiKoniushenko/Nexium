@@ -140,10 +140,10 @@ int main()
     keyboardInput.create("lookAtObject", GLFW_KEY_L)->onPress.subscribe([&](auto) { camera.lookAt(glm::vec3(0.0f, 0.0f, 0.0f)); });
     keyboardInput.create("moveForward", GLFW_KEY_W)->onPress.subscribe([&](auto state){ camera.moveForward(getRealSpeed(state) * timeDelta); });
     keyboardInput.create("moveBackward", GLFW_KEY_S)->onPress.subscribe([&](auto state){ camera.moveForward(-getRealSpeed(state) * timeDelta); });
-    keyboardInput.create("moveRight", GLFW_KEY_D)->onPress.subscribe([&](auto state){ camera.moveRight(getRealSpeed(state) * timeDelta); });
-    keyboardInput.create("moveLeft", GLFW_KEY_A)->onPress.subscribe([&](auto state){ camera.moveRight(-getRealSpeed(state) * timeDelta); });
-    keyboardInput.create("moveUp", GLFW_KEY_SPACE)->onPress.subscribe([&](auto state){ camera.moveUp(getRealSpeed(state) * timeDelta); });
-    keyboardInput.create("moveDown", GLFW_KEY_C)->onPress.subscribe([&](auto state){ camera.moveUp(-getRealSpeed(state) * timeDelta); });
+    keyboardInput.create("moveRight", GLFW_KEY_D)->onPress.subscribe([&](auto state){ camera.moveRight(-getRealSpeed(state) * timeDelta); });
+    keyboardInput.create("moveLeft", GLFW_KEY_A)->onPress.subscribe([&](auto state){ camera.moveRight(getRealSpeed(state) * timeDelta); });
+    keyboardInput.create("moveUp", GLFW_KEY_SPACE)->onPress.subscribe([&](auto state){ camera.moveUp(-getRealSpeed(state) * timeDelta); });
+    keyboardInput.create("moveDown", GLFW_KEY_C)->onPress.subscribe([&](auto state){ camera.moveUp(getRealSpeed(state) * timeDelta); });
     keyboardInput.create("exit", GLFW_KEY_ESCAPE)->onPress.subscribe([&](auto){ window.close(); });
     auto toggleCursorMode = keyboardInput.create("toggleCursorMode", GLFW_KEY_M);
     toggleCursorMode->onPress.subscribe([&](auto) { window.toggleCursorMode(); });
@@ -158,22 +158,23 @@ int main()
 
     std::vector<std::filesystem::path> modelPaths = { "assets/base-3d/Models/FBX/Tree.fbx" };
 
+    Assimp::Importer importer;
     for (auto&& path : modelPaths)
     {
-        Assimp::Importer importer;
         const aiScene* scene = importer.ReadFile(
             path.generic_string().c_str(),
             aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
-        Assert(scene);
-
-        for (int i = 0; i < scene->mNumMeshes; ++i)
+        if (Verify(scene))
         {
-            if (aiMesh* rawMesh = scene->mMeshes[i]; Verify(rawMesh))
+            for (int i = 0; i < scene->mNumMeshes; ++i)
             {
-                auto mesh = StaticMeshFactory::CreateBase(rawMesh->mName.C_Str());
-                mesh.importFrom(rawMesh, scene, path);
-                mesh.setShaderProgram(shader);
-                meshes.push_back(std::move(mesh));
+                if (aiMesh* rawMesh = scene->mMeshes[i]; Verify(rawMesh))
+                {
+                    auto mesh = StaticMeshFactory::CreateBase(rawMesh->mName.C_Str());
+                    mesh.importFrom(rawMesh, scene, path);
+                    mesh.setShaderProgram(shader);
+                    meshes.push_back(std::move(mesh));
+                }
             }
         }
     }
@@ -190,7 +191,7 @@ int main()
             {
                 for (auto&& m : meshes)
                 {
-                    m.moveRight(timeDelta * 1000.f);
+                    m.moveUp(timeDelta * 1000.f);
                 }
             });
 
