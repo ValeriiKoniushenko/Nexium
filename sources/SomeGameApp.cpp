@@ -40,35 +40,6 @@
 
 using namespace SW;
 
-void processMesh(aiMesh* mesh, const aiMatrix4x4& transform)
-{
-    Core::FStopwatch s;
-    s.start();
-    glm::vec3 min(std::numeric_limits<float>::max());
-    glm::vec3 max(std::numeric_limits<float>::min());
-
-    for (unsigned int i = 0; i < mesh->mNumVertices; ++i)
-    {
-        aiVector3D v = mesh->mVertices[i];
-        v *= transform;
-
-        min.x = std::min(min.x, v.x);
-        min.y = std::min(min.y, v.y);
-        min.z = std::min(min.z, v.z);
-
-        max.x = std::max(max.x, v.x);
-        max.y = std::max(max.y, v.y);
-        max.z = std::max(max.z, v.z);
-    }
-
-    glm::vec3 size = max - min;
-    glm::vec3 center = (max + min) * 0.5f;
-
-    std::cout << "Took time: " << s.stop() << " per verts: " << mesh->mNumVertices << std::endl;
-    std::cout << "Mesh: " << mesh->mName.C_Str() << std::endl;
-    std::cout << "Size: " << glm::to_string(glm::ivec3(size)) << std::endl;
-}
-
 int main()
 {
 #ifdef DEBUG
@@ -97,7 +68,7 @@ int main()
     //    \/  \/ |_||_| |_| \__,_| \___/  \_/\_/
     //----------------------------------------------
     auto& window = GetWindow();
-    window.create("Sprite Walker", { 1200, 800 });
+    window.create("Sprite Walker", Core::ISize2{ 1200, 800 });
     // window.toggleCursorMode();
 
     //    _____  _                 _
@@ -197,31 +168,13 @@ int main()
 
         for (int i = 0; i < scene->mNumMeshes; ++i)
         {
-            aiMesh* rawMesh = scene->mMeshes[i];
-            Assert(rawMesh);
-
-            auto mesh = StaticMeshFactory::CreateBase();
-            processMesh(rawMesh, {});
-            mesh.generate();
-
-            aiMaterial* material = scene->mMaterials[rawMesh->mMaterialIndex];
-            aiString texturePath;
-            if (material->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath) == AI_SUCCESS)
+            if (aiMesh* rawMesh = scene->mMeshes[i]; Verify(rawMesh))
             {
-                auto relative = Core::StringAtom(texturePath.C_Str()).replaceAll("\\", "/");
-                auto resolved = (path.parent_path() / relative.toStdString()).lexically_normal();
-
-                Image image;
-                if (image.loadImageFromFile(resolved, true))
-                {
-                    mesh.setTexture(image.data(), image.getSize().width, image.getSize().height,
-                                    image.getChannelAsOpenGLType());
-                }
+                auto mesh = StaticMeshFactory::CreateBase(rawMesh->mName.C_Str());
+                mesh.importFrom(rawMesh, scene, path);
+                mesh.setShaderProgram(shader);
+                meshes.push_back(std::move(mesh));
             }
-
-            mesh.setMesh(rawMesh, true, true);
-            mesh.setShaderProgram(shader);
-            meshes.push_back(std::move(mesh));
         }
     }
     // double side render for tree's leaf
@@ -230,6 +183,16 @@ int main()
         { GL_BLEND, GraphicsComponentData::Modifier::Enable },
     });
     globalLog.infoLog("All models was loaded for: {}s"_f << modelLoaderStopwatch.stop());
+
+    keyboardInput.create("moveObj", GLFW_KEY_T)
+        ->onPress.subscribe(
+            [&](auto state)
+            {
+                for (auto&& m : meshes)
+                {
+                    m.moveRight(timeDelta * 1000.f);
+                }
+            });
 
     //   ___  ___        _          _
     //   |  \/  |       (_)        | |
@@ -266,7 +229,6 @@ int main()
         shader->setUniform("uTexture"_atom, 0);
 
         shader->setUniform("uProjAndView"_atom, camera.getMatrix());
-        shader->setUniform("uModel"_atom, glm::mat4(1.0f));
 
         meshes.at(4).directDraw();
         meshes.at(5).directDraw();

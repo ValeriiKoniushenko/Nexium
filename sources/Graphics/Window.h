@@ -49,7 +49,7 @@ namespace SW
         Window() = default;
         ~Window() override;
 
-        void create(const Core::StringAtom& title, Core::ISize2 size = { 300, 300 });
+        void create(const Core::StringAtom& title, Core::ISize2 size = Core::ISize2{ 300, 300 });
         void close();
         void clear(int code);
 

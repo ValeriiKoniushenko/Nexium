@@ -194,7 +194,7 @@ namespace SW
         _triangleCount = 0;
     }
 
-    void GraphicsComponentData::directDraw() const noexcept
+    void GraphicsComponentData::directDraw() noexcept
     {
         if (!isValid()) [[unlikely]]
         {

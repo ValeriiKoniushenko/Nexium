@@ -40,6 +40,11 @@ namespace SW
         Transformable() = default;
         ~Transformable() override = default;
 
+        Transformable(const Transformable&) = default;
+        Transformable(Transformable&&) noexcept = default;
+        Transformable& operator=(const Transformable&) = default;
+        Transformable& operator=(Transformable&&) noexcept = default;
+
         [[nodiscard]] GPos3 getPosition() const noexcept;
         void setPosition(const GPos3& position) noexcept;
         void moveForward(float offset) noexcept;

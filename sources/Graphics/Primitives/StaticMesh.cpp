@@ -22,14 +22,86 @@
 
 #include "StaticMesh.h"
 
+#include "Graphics/Image.h"
+#include "assimp/Importer.hpp"
+#include "assimp/postprocess.h"
+#include "assimp/scene.h"
+
+#include <Core/Timer.h>
+
 namespace SW
 {
 
-    void StaticMesh::applyUniforms() const
+    void StaticMesh::importFrom(const aiMesh* rawMesh, const aiScene* scene,
+                                const std::filesystem::path& modelPath /* = ""*/)
+    {
+        if (!Verify(rawMesh)) [[unlikely]]
+        {
+            errorLog("Impossible to import nullptr aiMesh*");
+            return;
+        }
+
+        generate();
+
+        calculateSizeBaseOnMesh(rawMesh, {});
+        aiMaterial* material = scene->mMaterials[rawMesh->mMaterialIndex];
+        aiString texturePath;
+        if (material->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath) == AI_SUCCESS)
+        {
+            const auto relative = Core::StringAtom(texturePath.C_Str()).replaceAll("\\", "/");
+            const auto resolved
+                = (modelPath.parent_path() / relative.toStdString()).lexically_normal();
+
+            Image image;
+            if (Verify(image.loadImageFromFile(resolved, true)))
+            {
+                setTexture(image.data(), image.getSize().width, image.getSize().height,
+                           image.getChannelAsOpenGLType());
+            }
+        }
+
+        setMesh(rawMesh, true, true);
+    }
+
+    void StaticMesh::applyUniforms()
     {
         GraphicsComponentData::applyUniforms();
 
+        tryToRecalculateMatrices();
         _shader->setUniform("uModel"_atom, _cachedModelMatrix);
+    }
+
+    void StaticMesh::calculateSizeBaseOnMesh(const aiMesh* rawMesh, const aiMatrix4x4& transform)
+    {
+#ifdef DEBUG
+        Core::FStopwatch s;
+        s.start();
+#endif
+
+        glm::vec3 min(std::numeric_limits<float>::max());
+        glm::vec3 max(std::numeric_limits<float>::min());
+
+        for (unsigned int i = 0; i < rawMesh->mNumVertices; ++i)
+        {
+            aiVector3D v = rawMesh->mVertices[i];
+            v *= transform;
+
+            min.x = std::min(min.x, v.x);
+            min.y = std::min(min.y, v.y);
+            min.z = std::min(min.z, v.z);
+
+            max.x = std::max(max.x, v.x);
+            max.y = std::max(max.y, v.y);
+            max.z = std::max(max.z, v.z);
+        }
+
+        _size = Core::FSize3(max - min);
+        _center = (max + min) * 0.5f;
+
+#ifdef DEBUG
+        debugLog("'{}' processed verticies(size, center) for: {}s; Verticies' count: {}"_f
+                 << _name << s.stop() << static_cast<uint64_t>(rawMesh->mNumVertices));
+#endif
     }
 
     StaticMesh StaticMeshFactory::CreateBase(const Core::StringAtom& name /* = ""_atom*/)

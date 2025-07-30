@@ -77,6 +77,11 @@ namespace SW
     class AbstractComponent : public BaseLog, public boost::intrusive_ref_counter<BaseComponent>
     {
     public:
+        AbstractComponent(const AbstractComponent&) = default;
+        AbstractComponent(AbstractComponent&&) noexcept = default;
+        AbstractComponent& operator=(const AbstractComponent&) = default;
+        AbstractComponent& operator=(AbstractComponent&&) noexcept = default;
+
         ~AbstractComponent() override = default;
 
         [[nodiscard]] spdlog::logger* getLogger() const override final { return Ecs::getLogger(); }

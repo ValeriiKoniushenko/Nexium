@@ -71,7 +71,7 @@ namespace SW
         glm::mat4 _cachedProjMatrix = glm::mat4(1.f);
         glm::mat4 _cachedCalculatedMatrix = glm::mat4(1.f);
         glm::vec2 _sensitive{ 3.f, 3.f };
-        Core::FSize2 _size = { 600, 600 };
+        Core::FSize2 _size = Core::FSize2{ 600, 600 };
         float _fov = 45.f;
         float _far = 10'000.f;
         float _near = 0.1f;

@@ -108,7 +108,7 @@ namespace SW
          * }
          * @endcode
          */
-        void directDraw() const noexcept;
+        void directDraw() noexcept;
 
         [[nodiscard]] GLuint getVboId() noexcept { return _vbo; }
         [[nodiscard]] GLuint getEboId() noexcept { return _ebo; }
@@ -126,7 +126,7 @@ namespace SW
         }
 
     protected:
-        virtual void applyUniforms() const {}
+        virtual void applyUniforms() {}
 
     protected:
         std::unordered_map<GLenum, Modifier> _drawModifiers;

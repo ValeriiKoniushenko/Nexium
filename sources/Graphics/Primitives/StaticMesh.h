@@ -25,6 +25,12 @@
 #include "../GraphicsComponents.h"
 #include "GameplaySystem/ECS/BaseComponent.h"
 #include "GameplaySystem/ECS/Transformable.h"
+#include "assimp/matrix4x4.h"
+
+#include <filesystem>
+
+class aiMesh;
+class aiScene;
 
 namespace SW
 {
@@ -33,8 +39,19 @@ namespace SW
         ECS_REGISTER_NEW_COMPONENT_PROTECTED(StaticMesh, BaseComponent);
 
     public:
+        void importFrom(const aiMesh* mesh, const aiScene* scene,
+                        const std::filesystem::path& modelPath = "");
+
+        [[nodiscard]] Core::FSize3 getSize() const noexcept { return _size; }
+        [[nodiscard]] glm::vec3 getCenter() const noexcept { return _center; }
+
     protected:
-        void applyUniforms() const override;
+        void applyUniforms() override;
+        void calculateSizeBaseOnMesh(const aiMesh* rawMesh, const aiMatrix4x4& transform);
+
+    protected:
+        Core::FSize3 _size;
+        glm::vec3 _center;
 
         friend class StaticMeshFactory;
     };
