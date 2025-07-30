@@ -28,14 +28,24 @@
 
 namespace SW
 {
-
     class StaticMesh : public GraphicsComponentData, public Transformable, public BaseComponent
     {
-        ECS_REGISTER_NEW_COMPONENT(StaticMesh, BaseComponent)
-    public:
+        ECS_REGISTER_NEW_COMPONENT_PROTECTED(StaticMesh, BaseComponent);
 
+    public:
     protected:
         void applyUniforms() const override;
+
+        friend class StaticMeshFactory;
     };
 
+    class StaticMeshFactory
+    {
+    public:
+        StaticMeshFactory() = delete;
+
+        [[nodiscard]] static StaticMesh CreateBase(const Core::StringAtom& name = ""_atom);
+        [[nodiscard]] static StaticMesh CreateBiSide(const Core::StringAtom& name = ""_atom);
+        [[nodiscard]] static StaticMesh CreateBiBlendSide(const Core::StringAtom& name = ""_atom);
+    };
 } // namespace SW

@@ -44,6 +44,25 @@ public:                                                                         
     {                                                                                              \
     }
 
+#define ECS_REGISTER_NEW_COMPONENT_PROTECTED(CurrentClass, BaseComponentClass)                     \
+public:                                                                                            \
+    using Self = CurrentClass;                                                                     \
+    using Ptr = boost::intrusive_ptr<CurrentClass>;                                                \
+    using CPtr = boost::intrusive_ptr<const CurrentClass>;                                         \
+    inline static const auto componentType = Core::StringAtom::Intern(#CurrentClass);              \
+    [[nodiscard]] const Core::StringAtom& getComponentType() const noexcept                        \
+    {                                                                                              \
+        return CurrentClass::componentType;                                                        \
+    }                                                                                              \
+                                                                                                   \
+protected:                                                                                         \
+    CurrentClass(const Core::StringAtom& name = ""_atom)                                           \
+        : BaseComponentClass(&componentType, name)                                                 \
+    {                                                                                              \
+    }                                                                                              \
+                                                                                                   \
+public:
+
 namespace SW
 {
 

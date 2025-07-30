@@ -20,8 +20,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#pragma once
-
 #include "StaticMesh.h"
 
 namespace SW
@@ -32,6 +30,33 @@ namespace SW
         GraphicsComponentData::applyUniforms();
 
         _shader->setUniform("uModel"_atom, _cachedModelMatrix);
+    }
+
+    StaticMesh StaticMeshFactory::CreateBase(const Core::StringAtom& name /* = ""_atom*/)
+    {
+        return StaticMesh{ name };
+    }
+
+    StaticMesh StaticMeshFactory::CreateBiSide(const Core::StringAtom& name /* = ""_atom*/)
+    {
+        StaticMesh out{ name };
+
+        out.setDrawModifiers({
+            { GL_CULL_FACE, SW::GraphicsComponentData::Modifier::Disable },
+        });
+
+        return out;
+    }
+    StaticMesh StaticMeshFactory::CreateBiBlendSide(const Core::StringAtom& name)
+    {
+        StaticMesh out{ name };
+
+        out.setDrawModifiers({
+            { GL_CULL_FACE, SW::GraphicsComponentData::Modifier::Disable },
+            { GL_BLEND, SW::GraphicsComponentData::Modifier::Enable },
+        });
+
+        return out;
     }
 
 } // namespace SW

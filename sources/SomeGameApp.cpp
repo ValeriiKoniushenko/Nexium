@@ -23,20 +23,22 @@
 #include "Camera/Camera.h"
 #include "Core/Timer.h"
 #include "Editor/Server.h"
-#include "InputDevices/InputManager.h"
-#include "Misc/FPSCounter.h"
-#include "Graphics/GraphicsComponents.h"
+#include "Graphics/Image.h"
+#include "Graphics/Primitives/StaticMesh.h"
 #include "Graphics/ShaderManager.h"
 #include "Graphics/Window.h"
+#include "InputDevices/InputManager.h"
+#include "Misc/FPSCounter.h"
 #include "assimp/Importer.hpp"
 #include "assimp/postprocess.h"
 #include "assimp/scene.h"
 
 #define GLM_ENABLE_EXPERIMENTAL
-#include "Graphics/Image.h"
 #include "glm/gtx/string_cast.hpp"
 
 #include <iostream>
+
+using namespace SW;
 
 void processMesh(aiMesh* mesh, const aiMatrix4x4& transform)
 {
@@ -82,7 +84,7 @@ int main()
     //   /\__/ /|  __/| |    \ V /|  __/| |
     //   \____/  \___||_|     \_/  \___||_|
     //------------------------------------------
-    auto& server = SW::GetEditorServer();
+    auto& server = GetEditorServer();
     server.setPort(61005);
     server.initialize();
     server.start();
@@ -94,7 +96,7 @@ int main()
     //   \  /\  /| || | | || (_| || (_) |\ V  V /
     //    \/  \/ |_||_| |_| \__,_| \___/  \_/\_/
     //----------------------------------------------
-    auto& window = SW::GetWindow();
+    auto& window = GetWindow();
     window.create("Sprite Walker", { 1200, 800 });
     // window.toggleCursorMode();
 
@@ -105,7 +107,7 @@ int main()
     //   /\__/ /| | | || (_| || (_| ||  __/| |   \__ \
     //   \____/ |_| |_| \__,_| \__,_| \___||_|   |___/
     //-------------------------------------------------
-    auto& sm = SW::ShaderManager::instance();
+    auto& sm = ShaderManager::instance();
     sm.loadShaders("assets/shaders");
     sm.debugLog("Was loaded {} shaders."_f << sm.countOfShaders());
     for (const auto& notLoadedShader : sm.getFailedShaders())
@@ -141,7 +143,7 @@ int main()
     //---------------------------------------------------------------
     float timeDelta = 0.f;
     glm::vec3 lightPos(1'000'000.f, 1'000'000.f, 1'000'000.f);
-    SW::BaseCamera camera;
+    BaseCamera camera;
     camera.moveForward(-100);
     camera.setFov(90.f);
 
@@ -154,14 +156,14 @@ int main()
     //                 | |
     //                 |_|
     //--------------------------------------------------------------------------------
-    SW::KeyboardInputManger keyboardInput;
-    SW::MouseInputManger mouseInput;
+    KeyboardInputManger keyboardInput;
+    MouseInputManger mouseInput;
 
     // clang-format off
     constexpr float speed = 10.f, mouseSensitivity = 900.0;
-    auto getRealSpeed = [speed](SW::KeyboardIA::SpecKeysState state)
+    auto getRealSpeed = [speed](KeyboardIA::SpecKeysState state)
     {
-        const float mlt = state.leftShift.cast() == SW::Keyboard::KeyState::Pressed ? 5.f : 1.f;
+        const float mlt = state.leftShift.cast() == Keyboard::KeyState::Pressed ? 5.f : 1.f;
         return speed * mlt;
     };
     keyboardInput.create("lookAtObject", GLFW_KEY_L)->onPress.subscribe([&](auto) { camera.lookAt(glm::vec3(0.0f, 0.0f, 0.0f)); });
@@ -181,7 +183,7 @@ int main()
     // ====================== MISC ==========================
     Core::FStopwatch modelLoaderStopwatch;
     modelLoaderStopwatch.start();
-    std::vector<SW::GraphicsComponentData> meshes;
+    std::vector<StaticMesh> meshes;
 
     std::vector<std::filesystem::path> modelPaths = { "assets/base-3d/Models/FBX/Tree.fbx" };
 
@@ -195,39 +197,39 @@ int main()
 
         for (int i = 0; i < scene->mNumMeshes; ++i)
         {
-            aiMesh* mesh = scene->mMeshes[i];
-            Assert(mesh);
+            aiMesh* rawMesh = scene->mMeshes[i];
+            Assert(rawMesh);
 
-            processMesh(mesh, {});
-            SW::GraphicsComponentData gcd;
-            gcd.generate();
+            auto mesh = StaticMeshFactory::CreateBase();
+            processMesh(rawMesh, {});
+            mesh.generate();
 
-            aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+            aiMaterial* material = scene->mMaterials[rawMesh->mMaterialIndex];
             aiString texturePath;
             if (material->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath) == AI_SUCCESS)
             {
                 auto relative = Core::StringAtom(texturePath.C_Str()).replaceAll("\\", "/");
                 auto resolved = (path.parent_path() / relative.toStdString()).lexically_normal();
 
-                SW::Image image;
+                Image image;
                 if (image.loadImageFromFile(resolved, true))
                 {
-                    gcd.setTexture(image.data(), image.getSize().width, image.getSize().height,
-                                   image.getChannelAsOpenGLType());
+                    mesh.setTexture(image.data(), image.getSize().width, image.getSize().height,
+                                    image.getChannelAsOpenGLType());
                 }
             }
 
-            gcd.setMesh(mesh, true, true);
-            gcd.setShaderProgram(shader);
-            meshes.push_back(std::move(gcd));
+            mesh.setMesh(rawMesh, true, true);
+            mesh.setShaderProgram(shader);
+            meshes.push_back(std::move(mesh));
         }
     }
     // double side render for tree's leaf
     meshes.at(5).setDrawModifiers({
-        { GL_CULL_FACE, SW::GraphicsComponentData::Modifier::Disable },
-        { GL_BLEND, SW::GraphicsComponentData::Modifier::Enable },
+        { GL_CULL_FACE, GraphicsComponentData::Modifier::Disable },
+        { GL_BLEND, GraphicsComponentData::Modifier::Enable },
     });
-    SW::globalLog.infoLog("All models was loaded for: {}s"_f << modelLoaderStopwatch.stop());
+    globalLog.infoLog("All models was loaded for: {}s"_f << modelLoaderStopwatch.stop());
 
     //   ___  ___        _          _
     //   |  \/  |       (_)        | |
@@ -240,7 +242,7 @@ int main()
     //-----------------------------------------------------------
     Core::FStopwatch clock;
 
-    SW::FPSCounter fpsCounter;
+    FPSCounter fpsCounter;
     fpsCounter.start();
 
     glEnable(GL_DEPTH_TEST);
@@ -276,7 +278,7 @@ int main()
         timeDelta = clock.stop();
     }
 
-    SW::globalLog.infoLog("FPS: {}"_f << fpsCounter.getFPS());
+    globalLog.infoLog("FPS: {}"_f << fpsCounter.getFPS());
 
     return 0;
 }
