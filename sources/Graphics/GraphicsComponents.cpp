@@ -190,7 +190,7 @@ namespace SW
         glDeleteBuffers(1, &_ebo);
         glDeleteBuffers(1, &_vbo);
         glDeleteVertexArrays(1, &_vao);
-        _shader = 0;
+        _shader = nullptr;
         _triangleCount = 0;
     }
 
@@ -220,6 +220,8 @@ namespace SW
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, _texture);
+
+        applyUniforms();
 
         glDrawElements(GL_TRIANGLES, _triangleCount, GL_UNSIGNED_INT, 0);
 

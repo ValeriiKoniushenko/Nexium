@@ -33,15 +33,15 @@
 namespace SW
 {
 
-    void Transformable::setPosition(const glm::vec3& position) noexcept
+    void Transformable::setPosition(const GPos3& position) noexcept
     {
         _position = position;
         _isDirtyModelMatrix = true;
     }
 
-    glm::vec3 Transformable::getPosition() const noexcept
+    GPos3 Transformable::getPosition() const noexcept
     {
-        return _position + _origin;
+        return GPos3{ _position + _origin };
     }
 
     void Transformable::moveForward(float offset) noexcept

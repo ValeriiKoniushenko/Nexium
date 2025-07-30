@@ -31,7 +31,7 @@ class aiMesh;
 namespace SW
 {
 
-    class GraphicsComponentData final
+    class GraphicsComponentData
     {
     public:
         // clang-format off
@@ -43,7 +43,7 @@ namespace SW
 
     public:
         GraphicsComponentData() = default;
-        ~GraphicsComponentData();
+        virtual ~GraphicsComponentData();
         GraphicsComponentData(const GraphicsComponentData& other) = delete;
         GraphicsComponentData(GraphicsComponentData&& other) noexcept;
         GraphicsComponentData& operator=(const GraphicsComponentData& other) = delete;
@@ -125,7 +125,10 @@ namespace SW
             _drawModifiers = std::move(value);
         }
 
-    private:
+    protected:
+        virtual void applyUniforms() const {}
+
+    protected:
         std::unordered_map<GLenum, Modifier> _drawModifiers;
         ShaderProgram* _shader = nullptr;
         uint32_t _triangleCount = 0;

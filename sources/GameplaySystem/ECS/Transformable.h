@@ -25,16 +25,23 @@
 #include "Misc/JsonAdapter.h"
 #include "glm/glm.hpp"
 
+#include <Core/Position.h>
+
 namespace SW
 {
+    using GPos3 = Core::GlobalPosition3F;
+    using GPos2 = Core::GlobalPosition2F;
+    using RPos3 = Core::RelativePosition3F;
+    using RPos2 = Core::RelativePosition2F;
+
     class Transformable : public JsonAdapter
     {
     public:
         Transformable() = default;
         ~Transformable() override = default;
 
-        [[nodiscard]] glm::vec3 getPosition() const noexcept;
-        void setPosition(const glm::vec3& position) noexcept;
+        [[nodiscard]] GPos3 getPosition() const noexcept;
+        void setPosition(const GPos3& position) noexcept;
         void moveForward(float offset) noexcept;
         void moveRight(float offset) noexcept;
         void moveUp(float offset) noexcept;
@@ -75,7 +82,7 @@ namespace SW
         glm::mat4 _cachedModelMatrix = glm::mat4(1.f);
         glm::vec3 _scale = glm::vec3(1.f, 1.f, 1.f);
         glm::vec3 _origin{};
-        glm::vec3 _position{};
+        GPos3 _position{};
         glm::vec3 _rotation{};
         bool _isDirtyModelMatrix = true;
     };

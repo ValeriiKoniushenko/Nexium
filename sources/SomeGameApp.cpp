@@ -40,8 +40,10 @@
 
 void processMesh(aiMesh* mesh, const aiMatrix4x4& transform)
 {
-    aiVector3D min(1e10f, 1e10f, 1e10f);
-    aiVector3D max(-1e10f, -1e10f, -1e10f);
+    Core::FStopwatch s;
+    s.start();
+    glm::vec3 min(std::numeric_limits<float>::max());
+    glm::vec3 max(std::numeric_limits<float>::min());
 
     for (unsigned int i = 0; i < mesh->mNumVertices; ++i)
     {
@@ -57,11 +59,12 @@ void processMesh(aiMesh* mesh, const aiMatrix4x4& transform)
         max.z = std::max(max.z, v.z);
     }
 
-    aiVector3D size = max - min;
-    aiVector3D center = (max + min) * 0.5f;
+    glm::vec3 size = max - min;
+    glm::vec3 center = (max + min) * 0.5f;
 
+    std::cout << "Took time: " << s.stop() << " per verts: " << mesh->mNumVertices << std::endl;
     std::cout << "Mesh: " << mesh->mName.C_Str() << std::endl;
-    std::cout << "Size: " << size.x << ", " << size.y << ", " << size.z << std::endl;
+    std::cout << "Size: " << glm::to_string(glm::ivec3(size)) << std::endl;
 }
 
 int main()
@@ -69,6 +72,7 @@ int main()
 #ifdef DEBUG
     spdlog::set_level(spdlog::level::trace);
 #endif
+    std::cout << std::fixed << std::setprecision(15);
     spdlog::set_pattern("%D [%L] [%n] %v");
 
     //    _____
@@ -138,8 +142,8 @@ int main()
     float timeDelta = 0.f;
     glm::vec3 lightPos(1'000'000.f, 1'000'000.f, 1'000'000.f);
     SW::BaseCamera camera;
-    camera.moveForward(-10);
-    camera.setFov(120.f);
+    camera.moveForward(-100);
+    camera.setFov(90.f);
 
     //    _____                       _        ___         _    _
     //   |_   _|                     | |      / _ \       | |  (_)
@@ -154,7 +158,7 @@ int main()
     SW::MouseInputManger mouseInput;
 
     // clang-format off
-    constexpr float speed = 10.f, rotateSpeed = 25.f, mouseSensitivity = 900.0;
+    constexpr float speed = 10.f, mouseSensitivity = 900.0;
     auto getRealSpeed = [speed](SW::KeyboardIA::SpecKeysState state)
     {
         const float mlt = state.leftShift.cast() == SW::Keyboard::KeyState::Pressed ? 5.f : 1.f;
