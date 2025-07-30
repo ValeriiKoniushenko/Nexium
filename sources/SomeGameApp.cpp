@@ -134,7 +134,7 @@ int main()
     constexpr float speed = 10.f, mouseSensitivity = 900.0;
     auto getRealSpeed = [speed](KeyboardIA::SpecKeysState state)
     {
-        const float mlt = state.leftShift.cast() == Keyboard::KeyState::Pressed ? 5.f : 1.f;
+        const float mlt = state.leftShift.cast() == Keyboard::KeyState::Pressed ? 15.f : 1.f;
         return speed * mlt;
     };
     keyboardInput.create("lookAtObject", GLFW_KEY_L)->onPress.subscribe([&](auto) { camera.lookAt(glm::vec3(0.0f, 0.0f, 0.0f)); });
@@ -156,7 +156,8 @@ int main()
     modelLoaderStopwatch.start();
     std::vector<StaticMesh> meshes;
 
-    std::vector<std::filesystem::path> modelPaths = { "assets/base-3d/Models/FBX/Tree.fbx" };
+    std::vector<std::filesystem::path> modelPaths
+        = { "assets/base-3d/Models/FBX/Tree.fbx", "assets/base-3d/Models/FBX/FireHydrant.fbx" };
 
     Assimp::Importer importer;
     for (auto&& path : modelPaths)
@@ -183,17 +184,9 @@ int main()
         { GL_CULL_FACE, GraphicsComponentData::Modifier::Disable },
         { GL_BLEND, GraphicsComponentData::Modifier::Enable },
     });
-    globalLog.infoLog("All models was loaded for: {}s"_f << modelLoaderStopwatch.stop());
 
-    keyboardInput.create("moveObj", GLFW_KEY_T)
-        ->onPress.subscribe(
-            [&](auto state)
-            {
-                for (auto&& m : meshes)
-                {
-                    m.moveUp(timeDelta * 1000.f);
-                }
-            });
+    meshes.at(8).moveRight(100);
+    globalLog.infoLog("All models was loaded for: {}s"_f << modelLoaderStopwatch.stop());
 
     //   ___  ___        _          _
     //   |  \/  |       (_)        | |
@@ -233,6 +226,7 @@ int main()
 
         meshes.at(4).directDraw();
         meshes.at(5).directDraw();
+        meshes.at(8).directDraw();
 
         window.swapBuffers();
         window.pollEvent();
