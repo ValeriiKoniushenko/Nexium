@@ -25,15 +25,15 @@
 #include "Editor/Server.h"
 #include "InputDevices/InputManager.h"
 #include "Misc/FPSCounter.h"
-#include "RawGraphics/GraphicsComponents.h"
-#include "RawGraphics/ShaderManager.h"
-#include "RawGraphics/Window.h"
+#include "Graphics/GraphicsComponents.h"
+#include "Graphics/ShaderManager.h"
+#include "Graphics/Window.h"
 #include "assimp/Importer.hpp"
 #include "assimp/postprocess.h"
 #include "assimp/scene.h"
 
 #define GLM_ENABLE_EXPERIMENTAL
-#include "RawGraphics/Image.h"
+#include "Graphics/Image.h"
 #include "glm/gtx/string_cast.hpp"
 
 #include <iostream>

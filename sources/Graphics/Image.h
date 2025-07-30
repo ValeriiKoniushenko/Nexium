@@ -70,7 +70,7 @@ namespace SW
 
         [[nodiscard]] spdlog::logger* getLogger() const override
         {
-            return SW::RawGraphics::getLogger();
+            return SW::Graphics::getLogger();
         }
         [[nodiscard]] const char* getPrefix() const override { return "Image"; }
 

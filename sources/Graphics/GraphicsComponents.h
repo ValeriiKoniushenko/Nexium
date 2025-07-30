@@ -38,10 +38,10 @@ namespace SW
         CreateEnum(Modifier, int,
             Enable,
             Disable,
-        )
+        );
         // clang-format on
 
-        public :
+    public:
         GraphicsComponentData() = default;
         ~GraphicsComponentData();
         GraphicsComponentData(const GraphicsComponentData& other) = delete;

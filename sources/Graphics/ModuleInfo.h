@@ -24,7 +24,7 @@
 
 #include "Misc/BaseLog.h"
 
-namespace SW::RawGraphics
+namespace SW::Graphics
 {
 
     [[nodiscard]] inline spdlog::logger* getLogger()
@@ -33,4 +33,4 @@ namespace SW::RawGraphics
         return logger.get();
     }
 
-} // namespace SW::RawGraphics
+} // namespace SW::Graphics

@@ -23,7 +23,7 @@
 #pragma once
 
 #include "Core/Enum.h"
-#include "RawGraphics/OpenGL.h"
+#include "Graphics/OpenGL.h"
 
 namespace SW
 {

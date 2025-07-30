@@ -22,7 +22,7 @@
 
 #include "Keyboard.h"
 
-#include "RawGraphics/Window.h"
+#include "Graphics/Window.h"
 
 namespace SW
 {

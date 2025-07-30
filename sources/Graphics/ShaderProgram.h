@@ -86,7 +86,7 @@ namespace SW
 
         [[nodiscard]] spdlog::logger* getLogger() const override
         {
-            return RawGraphics::getLogger();
+            return Graphics::getLogger();
         }
 
         [[nodiscard]] const char* getPrefix() const override { return "ShaderProgram"; }

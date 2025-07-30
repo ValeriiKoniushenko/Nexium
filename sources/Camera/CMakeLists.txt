@@ -11,7 +11,7 @@ add_library(${TARGET_NAME} STATIC ${CPP_SOURCES} ${HEADERS})
 add_library(SW::${MAIN_NAME} ALIAS ${TARGET_NAME})
 
 target_link_libraries(${TARGET_NAME} PUBLIC
-        SW::RawGraphics
+        SW::Graphics
         SW::GameplaySystem
 )
 
