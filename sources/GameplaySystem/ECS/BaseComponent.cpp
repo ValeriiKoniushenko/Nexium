@@ -69,6 +69,12 @@ namespace SW
 
         return removedAtLeastOne;
     }
+    void ComponentHolder::clear()
+    {
+        AbstractComponent::clear();
+
+        _children.clear();
+    }
 
     bool BaseComponent::operator==(const BaseComponent& other) const
     {
@@ -108,6 +114,21 @@ namespace SW
         }
 
         return seed;
+    }
+
+    void BaseComponent::clear()
+    {
+        ComponentHolder::clear();
+
+        _name.clear();
+        _parent = nullptr;
+    }
+
+    void BaseComponent::onSuccessAddChildComponentValidation(BaseComponent* newComponent)
+    {
+        ComponentHolder::onSuccessAddChildComponentValidation(newComponent);
+
+        newComponent->_parent = this;
     }
 
 } // namespace SW

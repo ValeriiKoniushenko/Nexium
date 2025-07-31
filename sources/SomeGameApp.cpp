@@ -24,7 +24,7 @@
 #include "Core/Timer.h"
 #include "Editor/Server.h"
 #include "Graphics/Image.h"
-#include "Graphics/Primitives/StaticMesh.h"
+#include "Graphics/Primitives/StaticMeshBundle.h"
 #include "Graphics/ShaderManager.h"
 #include "Graphics/Window.h"
 #include "InputDevices/InputManager.h"
@@ -117,7 +117,7 @@ int main()
     BaseCamera camera;
     camera.moveForward(-100);
     camera.setFov(90.f);
-    std::vector<StaticMesh> meshes;
+    std::vector<StaticMeshBundle> meshes;
 
     //    _____                       _        ___         _    _
     //   |_   _|                     | |      / _ \       | |  (_)
@@ -138,9 +138,6 @@ int main()
         const float mlt = state.leftShift.cast() == Keyboard::KeyState::Pressed ? 15.f : 1.f;
         return speed * mlt;
     };
-    auto lookAtRandom = keyboardInput.create("lookAtObject", GLFW_KEY_L);
-    lookAtRandom->onPress.subscribe([&](auto){ camera.lookAt(meshes.at(rand() % meshes.size()).getCenter()); });
-    lookAtRandom->setIsRepeatable(false);
     keyboardInput.create("moveForward", GLFW_KEY_W)->onPress.subscribe([&](auto state){ camera.moveForward(getRealSpeed(state) * timeDelta); });
     keyboardInput.create("moveBackward", GLFW_KEY_S)->onPress.subscribe([&](auto state){ camera.moveForward(-getRealSpeed(state) * timeDelta); });
     keyboardInput.create("moveRight", GLFW_KEY_D)->onPress.subscribe([&](auto state){ camera.moveRight(-getRealSpeed(state) * timeDelta); });
@@ -158,8 +155,9 @@ int main()
     Core::FStopwatch modelLoaderStopwatch;
     modelLoaderStopwatch.start();
 
-    std::vector<std::filesystem::path> modelPaths
-        = { "assets/base-3d/Models/FBX/Tree.fbx", "assets/base-3d/Models/FBX/FireHydrant.fbx" };
+    std::vector<std::filesystem::path> modelPaths = {
+        /*"assets/base-3d/Models/FBX/Tree.fbx", */ "assets/base-3d/Models/FBX/FireHydrant.fbx"
+    };
 
     Assimp::Importer importer;
     for (auto&& path : modelPaths)
@@ -167,27 +165,15 @@ int main()
         const aiScene* scene = importer.ReadFile(
             path.generic_string().c_str(),
             aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
-        if (Verify(scene))
+        if (Verify(scene) && Verify(scene->mRootNode))
         {
-            for (int i = 0; i < scene->mNumMeshes; ++i)
-            {
-                if (aiMesh* rawMesh = scene->mMeshes[i]; Verify(rawMesh))
-                {
-                    auto mesh = StaticMeshFactory::CreateBase(rawMesh->mName.C_Str());
-                    mesh.importFrom(rawMesh, scene, path);
-                    mesh.setShaderProgram(shader);
-                    meshes.push_back(std::move(mesh));
-                }
-            }
+            StaticMeshBundle mesh;
+            mesh.importFrom(scene->mRootNode, scene, path);
+            mesh.setShaderProgram(shader);
+            meshes.push_back(std::move(mesh));
         }
     }
-    // double side render for tree's leaf
-    meshes.at(5).setDrawModifiers({
-        { GL_CULL_FACE, GraphicsComponentData::Modifier::Disable },
-        { GL_BLEND, GraphicsComponentData::Modifier::Enable },
-    });
 
-    meshes.at(8).moveRight(100);
     globalLog.infoLog("All models was loaded for: {}s"_f << modelLoaderStopwatch.stop());
 
     //   ___  ___        _          _
@@ -226,9 +212,7 @@ int main()
 
         shader->setUniform("uProjAndView"_atom, camera.getMatrix());
 
-        meshes.at(4).directDraw();
-        meshes.at(5).directDraw();
-        meshes.at(8).directDraw();
+        meshes.front().directDraw();
 
         window.swapBuffers();
         window.pollEvent();

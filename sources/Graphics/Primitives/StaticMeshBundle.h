@@ -25,44 +25,35 @@
 #include "../GraphicsComponents.h"
 #include "GameplaySystem/ECS/BaseComponent.h"
 #include "GameplaySystem/ECS/Transformable.h"
+#include "StaticMesh.h"
 #include "assimp/matrix4x4.h"
 
 #include <filesystem>
 
-class aiMesh;
+class aiNode;
 class aiScene;
 
 namespace SW
 {
-    class StaticMesh : public GraphicsComponentData, public Transformable, public BaseComponent
+    class StaticMeshBundle : public BaseComponent
     {
-        ECS_REGISTER_NEW_COMPONENT(StaticMesh, BaseComponent);
+        ECS_REGISTER_NEW_COMPONENT(StaticMeshBundle, BaseComponent);
 
     public:
-        void importFrom(const aiMesh* mesh, const aiScene* scene,
+        using MeshesT = std::vector<StaticMesh*>;
+
+    public:
+        void directDraw();
+        void importFrom(const aiNode* node, const aiScene* scene,
                         const std::filesystem::path& modelPath = "");
+        void setShaderProgram(ShaderProgram* sp, bool ignoreVertexAttribSetup = false);
 
-        [[nodiscard]] Core::FSize3 getSize() const noexcept { return _size; }
-        [[nodiscard]] glm::vec3 getCenter() const noexcept { return _center; }
+        void clear() override;
 
-    protected:
-        void applyUniforms() override;
-        void calculateSizeBaseOnMesh(const aiMesh* rawMesh, const aiMatrix4x4& transform);
+        void clearMeshes();
 
     protected:
-        Core::FSize3 _size;
-        glm::vec3 _center;
-
-        friend class StaticMeshFactory;
+        MeshesT _meshes;
     };
 
-    class StaticMeshFactory
-    {
-    public:
-        StaticMeshFactory() = delete;
-
-        [[nodiscard]] static StaticMesh CreateBase(const Core::StringAtom& name = ""_atom);
-        [[nodiscard]] static StaticMesh CreateBiSide(const Core::StringAtom& name = ""_atom);
-        [[nodiscard]] static StaticMesh CreateBiBlendSide(const Core::StringAtom& name = ""_atom);
-    };
 } // namespace SW

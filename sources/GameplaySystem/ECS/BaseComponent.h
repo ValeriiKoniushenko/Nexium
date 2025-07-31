@@ -35,7 +35,7 @@ public:                                                                         
     using Ptr = boost::intrusive_ptr<CurrentClass>;                                                \
     using CPtr = boost::intrusive_ptr<const CurrentClass>;                                         \
     inline static const auto componentType = Core::StringAtom::Intern(#CurrentClass);              \
-    [[nodiscard]] const Core::StringAtom& getComponentType() const noexcept                        \
+    [[nodiscard]] static const Core::StringAtom& GetComponentType()                                \
     {                                                                                              \
         return CurrentClass::componentType;                                                        \
     }                                                                                              \
@@ -50,7 +50,7 @@ public:                                                                         
     using Ptr = boost::intrusive_ptr<CurrentClass>;                                                \
     using CPtr = boost::intrusive_ptr<const CurrentClass>;                                         \
     inline static const auto componentType = Core::StringAtom::Intern(#CurrentClass);              \
-    [[nodiscard]] const Core::StringAtom& getComponentType() const noexcept                        \
+    [[nodiscard]] const Core::StringAtom& GetComponentType()                                       \
     {                                                                                              \
         return CurrentClass::componentType;                                                        \
     }                                                                                              \
@@ -87,6 +87,8 @@ namespace SW
         [[nodiscard]] spdlog::logger* getLogger() const override final { return Ecs::getLogger(); }
         [[nodiscard]] const char* getPrefix() const override { return "Component"; }
 
+        virtual void clear() {}
+
         template<IsComponent T>
         [[nodiscard]] T* castTo()
         {
@@ -120,12 +122,21 @@ namespace SW
                 return nullptr;
             }
 
-            newOne->_parent = this;
+            onSuccessAddChildComponentValidation(newOne.get());
             return static_cast<ComponentT*>(_children.emplace_back(std::move(newOne)).get());
         }
 
         bool removeChild(const BaseComponent* child);
         bool removeChildIf(std::function<bool(const BaseComponent*)>&& pred);
+
+        void clear() override;
+
+    protected:
+        [[nodiscard]] virtual bool onAddChildComponentValidation(const BaseComponent* newComponent)
+        {
+            return true;
+        }
+        virtual void onSuccessAddChildComponentValidation(BaseComponent* newComponent) {}
 
     protected:
         std::list<Ptr> _children;
@@ -145,6 +156,7 @@ namespace SW
 
         void setComponentName(const Core::StringAtom& name);
         [[nodiscard]] const Core::StringAtom& getComponentName() const noexcept { return _name; }
+        [[nodiscard]] const Core::StringAtom& getComponentType() const noexcept { return *_type; }
 
         [[nodiscard]] const ComponentHolder* getParent() const noexcept { return _parent; }
         [[nodiscard]] ComponentHolder* getParent() noexcept { return _parent; }
@@ -152,19 +164,27 @@ namespace SW
 
         [[nodiscard]] bool isValid() const;
 
+        template<IsComponent T>
+        [[nodiscard]] bool isTypeOf() const
+        {
+            return *_type == T::componentType;
+        }
+
         [[nodiscard]] std::size_t makeHash() const;
+
+        void clear() override;
 
     protected:
         explicit BaseComponent(const Core::StringAtom* type, const Core::StringAtom& name = ""_atom)
             : _type{ type },
               _name{ name }
         {
+#ifdef DEBUG
+            Assert(_type->isStatic());
+#endif
         }
 
-        [[nodiscard]] virtual bool onAddChildComponentValidation(const BaseComponent*)
-        {
-            return true;
-        }
+        void onSuccessAddChildComponentValidation(BaseComponent* newComponent) override;
 
     protected:
         const Core::StringAtom* const _type = nullptr;
