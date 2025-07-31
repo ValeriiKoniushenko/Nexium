@@ -32,7 +32,8 @@
 namespace
 {
     void recursiveImportFrom(SW::BaseComponent* rootComponent, const aiNode* node,
-                             const aiScene* scene, const std::filesystem::path& modelPath)
+                             const aiScene* scene, const std::filesystem::path& modelPath,
+                             SW::StaticMeshBundle::MeshesT& container)
     {
         for (uint32_t i = 0; i < node->mNumMeshes; ++i)
         {
@@ -41,11 +42,12 @@ namespace
 
             const auto meshIndex = node->mMeshes[i];
             topMesh->importFrom(scene->mMeshes[meshIndex], scene, modelPath);
+            container.push_back(topMesh);
         }
 
         for (uint32_t i = 0; i < node->mNumChildren; ++i)
         {
-            recursiveImportFrom(rootComponent, node->mChildren[i], scene, modelPath);
+            recursiveImportFrom(rootComponent, node->mChildren[i], scene, modelPath, container);
         }
     }
 } // namespace
@@ -86,9 +88,7 @@ namespace SW
         }
 
         setComponentName(modelPath.stem().c_str());
-        recursiveImportFrom(this, node, scene, modelPath);
-
-
+        recursiveImportFrom(this, node, scene, modelPath, _meshes);
     }
 
     void StaticMeshBundle::setShaderProgram(ShaderProgram* sp,

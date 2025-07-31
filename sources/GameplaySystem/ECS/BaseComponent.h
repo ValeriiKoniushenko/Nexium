@@ -22,6 +22,7 @@
 
 #pragma once
 
+#include "BaseComponent.h"
 #include "Misc/BaseLog.h"
 #include "ModuleInfo.h"
 #include "boost/intrusive_ptr.hpp"
@@ -47,6 +48,11 @@ public:                                                                         
 #define ECS_REGISTER_NEW_COMPONENT_PROTECTED(CurrentClass, BaseComponentClass)                     \
 public:                                                                                            \
     using Self = CurrentClass;                                                                     \
+    template<bool isConst>                                                                         \
+    using AdaptivePtr                                                                              \
+        = boost::intrusive_ptr<std::conditional_t<isConst, const typename Self, typename Self>>;   \
+    template<bool isConst>                                                                         \
+    using AdaptiveRawPtr = std::conditional_t<isConst, const typename Self, typename Self>*;       \
     using Ptr = boost::intrusive_ptr<CurrentClass>;                                                \
     using CPtr = boost::intrusive_ptr<const CurrentClass>;                                         \
     inline static const auto componentType = Core::StringAtom::Intern(#CurrentClass);              \
@@ -73,6 +79,9 @@ namespace SW
         { t.getComponentType() };
         { T::componentType };
     };
+
+    template<class T>
+    concept IsComponentOrVoid = IsComponent<T> || std::is_void_v<T>;
 
     class AbstractComponent : public BaseLog, public boost::intrusive_ref_counter<BaseComponent>
     {
@@ -146,6 +155,11 @@ namespace SW
     {
     public:
         using Self = BaseComponent;
+        template<bool isConst>
+        using AdaptivePtr
+            = boost::intrusive_ptr<std::conditional_t<isConst, const BaseComponent, BaseComponent>>;
+        template<bool isConst>
+        using AdaptiveRawPtr = std::conditional_t<isConst, const BaseComponent, BaseComponent>*;
         using Ptr = boost::intrusive_ptr<BaseComponent>;
         using CPtr = boost::intrusive_ptr<const BaseComponent>;
 
