@@ -22,13 +22,7 @@
 
 #pragma once
 
-#include "../GraphicsComponents.h"
-#include "GameplaySystem/ECS/BaseComponent.h"
-#include "GameplaySystem/ECS/Transformable.h"
 #include "StaticMesh.h"
-#include "assimp/matrix4x4.h"
-
-#include <filesystem>
 
 class aiNode;
 class aiScene;

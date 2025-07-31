@@ -81,6 +81,9 @@ namespace SW
     };
 
     template<class T>
+    concept IsComponentOrBase = IsComponent<T> || std::is_same_v<BaseComponent, T>;
+
+    template<class T>
     concept IsComponentOrVoid = IsComponent<T> || std::is_void_v<T>;
 
     class AbstractComponent : public BaseLog, public boost::intrusive_ref_counter<BaseComponent>
@@ -207,6 +210,50 @@ namespace SW
         ComponentHolder* _parent = nullptr;
     };
 
+    // clang-format off
+    template<IsComponentOrBase TargetComponentT, bool isConst>
+    class BaseComponentIterator final :
+        public Core::IBidirectionalIterator
+        <
+            typename TargetComponentT::template AdaptiveRawPtr<isConst>,
+            BaseComponentIterator<TargetComponentT, isConst>,
+            Utils::CopyableAndMoveable,
+            true
+        >
+    // clang-format on
+    {
+    public:
+        using ValueT = typename TargetComponentT::template AdaptiveRawPtr<isConst>;
+
+        BaseComponentIterator() = default;
+        ~BaseComponentIterator() override = default;
+
+        void swap(BaseComponentIterator& other) override { std::swap(_data, other._data); }
+        [[nodiscard]] bool operator==(const BaseComponentIterator& other) const noexcept override
+        {
+            return _data == other._data;
+        }
+        [[nodiscard]] bool operator!=(const BaseComponentIterator& other) const noexcept override
+        {
+            return _data != other._data;
+        }
+        [[nodiscard]] const ValueT operator*() const noexcept override { return _data; }
+        [[nodiscard]] const ValueT operator->() const override { return _data; }
+        [[nodiscard]] ValueT operator*() noexcept override { return _data; }
+        [[nodiscard]] ValueT operator->() noexcept override { return _data; }
+        BaseComponentIterator& operator++() noexcept override { return *this; }
+        BaseComponentIterator operator++(int) noexcept override { return *this; }
+        BaseComponentIterator& operator--() noexcept override { return *this; }
+        BaseComponentIterator operator--(int) noexcept override { return *this; }
+
+    private:
+        ValueT _data = nullptr;
+    };
+
+    template<IsComponentOrBase T = BaseComponent>
+    using ComponentIterator = BaseComponentIterator<T, false>;
+    template<IsComponentOrBase T = BaseComponent>
+    using ConstComponentIterator = BaseComponentIterator<T, true>;
 } // namespace SW
 
 template<>

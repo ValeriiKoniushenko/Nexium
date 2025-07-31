@@ -89,6 +89,8 @@ namespace SW
 
         setComponentName(modelPath.stem().c_str());
         recursiveImportFrom(this, node, scene, modelPath, _meshes);
+
+        ComponentIterator it;
     }
 
     void StaticMeshBundle::setShaderProgram(ShaderProgram* sp,
