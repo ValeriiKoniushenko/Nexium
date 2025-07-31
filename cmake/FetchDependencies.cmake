@@ -2,6 +2,38 @@ include(FetchContent)
 
 set(FETCHCONTENT_BASE_DIR deps)
 
+
+function(installBoostModule module_name boost_version)
+    string(PREPEND full_module_name sw_boost_)
+    set(full_module_name "${full_module_name}${module_name}")
+
+    FetchContent_Declare(${full_module_name}
+            GIT_REPOSITORY "https://github.com/boostorg/${module_name}.git"
+            GIT_TAG ${boost_version}
+            GIT_PROGRESS TRUE
+            GIT_SHALLOW TRUE
+    )
+    FetchContent_MakeAvailable(${full_module_name})
+endfunction()
+
+
+set(BOOST_VERSION boost-1.88.0)
+set(BOOST_MODULES
+        assert
+        static_assert
+        cmake
+        config
+        core
+        headers
+        throw_exception
+        smart_ptr
+)
+
+foreach (module IN LISTS BOOST_MODULES)
+    installBoostModule(${module} ${BOOST_VERSION})
+endforeach ()
+
+
 FetchContent_Declare(NlohmannJson
         GIT_REPOSITORY "https://github.com/nlohmann/json.git"
         GIT_TAG v3.12.0
@@ -9,18 +41,6 @@ FetchContent_Declare(NlohmannJson
         GIT_SHALLOW TRUE
 )
 FetchContent_MakeAvailable(NlohmannJson)
-
-
-FetchContent_Declare(Boost
-        GIT_REPOSITORY "https://github.com/boostorg/boost.git"
-        GIT_TAG boost-1.88.0
-        GIT_PROGRESS TRUE
-        GIT_SHALLOW TRUE
-        OVERRIDE_FIND_PACKAGE TRUE # needed to find correct Boost
-        EXCLUDE_FROM_ALL # compile only what you need
-)
-
-FetchContent_MakeAvailable(Boost)
 
 
 FetchContent_Declare(Glfw

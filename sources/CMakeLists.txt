@@ -13,7 +13,7 @@ target_link_libraries(SpriteWalkerEngine INTERFACE
     SW::Editor
     SW::InputDevices
     assimp::assimp
-        SW::GameplaySystem
+    SW::GameplaySystem
 )
 
 target_include_directories(SpriteWalkerEngine INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
