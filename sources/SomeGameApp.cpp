@@ -117,6 +117,7 @@ int main()
     BaseCamera camera;
     camera.moveForward(-100);
     camera.setFov(90.f);
+    std::vector<StaticMesh> meshes;
 
     //    _____                       _        ___         _    _
     //   |_   _|                     | |      / _ \       | |  (_)
@@ -131,13 +132,15 @@ int main()
     MouseInputManger mouseInput;
 
     // clang-format off
-    constexpr float speed = 10.f, mouseSensitivity = 900.0;
+    constexpr float speed = 10.f, mouseSensitivity = 700.0;
     auto getRealSpeed = [speed](KeyboardIA::SpecKeysState state)
     {
         const float mlt = state.leftShift.cast() == Keyboard::KeyState::Pressed ? 15.f : 1.f;
         return speed * mlt;
     };
-    keyboardInput.create("lookAtObject", GLFW_KEY_L)->onPress.subscribe([&](auto) { camera.lookAt(glm::vec3(0.0f, 0.0f, 0.0f)); });
+    auto lookAtRandom = keyboardInput.create("lookAtObject", GLFW_KEY_L);
+    lookAtRandom->onPress.subscribe([&](auto){ camera.lookAt(meshes.at(rand() % meshes.size()).getCenter()); });
+    lookAtRandom->setIsRepeatable(false);
     keyboardInput.create("moveForward", GLFW_KEY_W)->onPress.subscribe([&](auto state){ camera.moveForward(getRealSpeed(state) * timeDelta); });
     keyboardInput.create("moveBackward", GLFW_KEY_S)->onPress.subscribe([&](auto state){ camera.moveForward(-getRealSpeed(state) * timeDelta); });
     keyboardInput.create("moveRight", GLFW_KEY_D)->onPress.subscribe([&](auto state){ camera.moveRight(-getRealSpeed(state) * timeDelta); });
@@ -154,7 +157,6 @@ int main()
     // ====================== MISC ==========================
     Core::FStopwatch modelLoaderStopwatch;
     modelLoaderStopwatch.start();
-    std::vector<StaticMesh> meshes;
 
     std::vector<std::filesystem::path> modelPaths
         = { "assets/base-3d/Models/FBX/Tree.fbx", "assets/base-3d/Models/FBX/FireHydrant.fbx" };

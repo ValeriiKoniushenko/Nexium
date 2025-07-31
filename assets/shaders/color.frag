@@ -35,7 +35,7 @@ void main()
    vec3 result = (ambient + diffuse + specular) * uObjectColor;
 
    vec4 texColor = texture(uTexture, ioUV) * vec4(result, 1.0);
-   if (texColor.a < 0.01)
+   if (texColor.a < 0.1)
    {
       discard;
    }
