@@ -116,12 +116,20 @@ namespace SW
     class ComponentHolder : public AbstractComponent
     {
     public:
-        using Self = BaseComponent;
-        using Ptr = boost::intrusive_ptr<BaseComponent>;
-        using CPtr = boost::intrusive_ptr<const BaseComponent>;
+        using Self = ComponentHolder;
+        template<bool isConst>
+        using AdaptivePtr = boost::intrusive_ptr<std::conditional_t<isConst, const Self, Self>>;
+        template<bool isConst>
+        using AdaptiveRawPtr = std::conditional_t<isConst, const Self, Self>*;
+        using Ptr = boost::intrusive_ptr<Self>;
+        using CPtr = boost::intrusive_ptr<const Self>;
 
     public:
-        [[nodiscard]] const std::list<Ptr>& getChildren() const noexcept { return _children; }
+        [[nodiscard]] const std::list<boost::intrusive_ptr<BaseComponent>>& getChildren()
+            const noexcept
+        {
+            return _children;
+        }
         [[nodiscard]] std::size_t getChildrenSize() const noexcept { return _children.size(); }
         [[nodiscard]] bool hasChildren() const noexcept { return !_children.empty(); }
 
@@ -151,7 +159,7 @@ namespace SW
         virtual void onSuccessAddChildComponentValidation(BaseComponent* newComponent) {}
 
     protected:
-        std::list<Ptr> _children;
+        std::list<boost::intrusive_ptr<BaseComponent>> _children;
     };
 
     class BaseComponent : public ComponentHolder
@@ -159,17 +167,16 @@ namespace SW
     public:
         using Self = BaseComponent;
         template<bool isConst>
-        using AdaptivePtr
-            = boost::intrusive_ptr<std::conditional_t<isConst, const BaseComponent, BaseComponent>>;
+        using AdaptivePtr = boost::intrusive_ptr<std::conditional_t<isConst, const Self, Self>>;
         template<bool isConst>
-        using AdaptiveRawPtr = std::conditional_t<isConst, const BaseComponent, BaseComponent>*;
-        using Ptr = boost::intrusive_ptr<BaseComponent>;
-        using CPtr = boost::intrusive_ptr<const BaseComponent>;
+        using AdaptiveRawPtr = std::conditional_t<isConst, const Self, Self>*;
+        using Ptr = boost::intrusive_ptr<Self>;
+        using CPtr = boost::intrusive_ptr<const Self>;
 
     public:
         ~BaseComponent() override = default;
 
-        [[nodiscard]] bool operator==(const BaseComponent& other) const;
+        [[nodiscard]] bool operator==(const Self& other) const;
 
         void setComponentName(const Core::StringAtom& name);
         [[nodiscard]] const Core::StringAtom& getComponentName() const noexcept { return _name; }
@@ -225,7 +232,9 @@ namespace SW
     public:
         using ValueT = typename TargetComponentT::template AdaptiveRawPtr<isConst>;
 
-        BaseComponentIterator() = default;
+        BaseComponentIterator(ComponentHolder* root)
+            : _parent{ root },
+              _data{} {};
         ~BaseComponentIterator() override = default;
 
         void swap(BaseComponentIterator& other) override { std::swap(_data, other._data); }
@@ -247,6 +256,7 @@ namespace SW
         BaseComponentIterator operator--(int) noexcept override { return *this; }
 
     private:
+        ComponentHolder* _parent = nullptr;
         ValueT _data = nullptr;
     };
 
