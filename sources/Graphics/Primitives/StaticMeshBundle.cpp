@@ -91,12 +91,9 @@ namespace SW
         recursiveImportFrom(this, node, scene, modelPath, _meshes);
 
         ComponentIterator it(this);
-        ComponentIterator it2(this);
-        it2.swap(it);
-        it2 == it;
-        it2 != it;
-        (*it)->getComponentType();
-        it->clear();
+        ConstComponentIterator cit(this);
+        ++it;
+        ++cit;
     }
 
     void StaticMeshBundle::setShaderProgram(ShaderProgram* sp,

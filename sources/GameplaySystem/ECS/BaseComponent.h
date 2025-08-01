@@ -133,10 +133,10 @@ namespace SW
         [[nodiscard]] std::size_t getChildrenSize() const noexcept { return _children.size(); }
         [[nodiscard]] bool hasChildren() const noexcept { return !_children.empty(); }
 
-        template<IsComponent ComponentT>
-        [[nodiscard]] ComponentT* addChildComponent()
+        template<IsComponent ComponentT, class... Args>
+        [[nodiscard]] ComponentT* addChildComponent(Args&&... args)
         {
-            typename ComponentT::Ptr newOne = new ComponentT;
+            typename ComponentT::Ptr newOne = new ComponentT(std::forward<Args>(args)...);
             if (!onAddChildComponentValidation(newOne.get()))
             {
                 return nullptr;
@@ -160,6 +160,9 @@ namespace SW
 
     protected:
         std::list<boost::intrusive_ptr<BaseComponent>> _children;
+
+        template<IsComponentOrBase, bool>
+        friend class BaseComponentIterator;
     };
 
     class BaseComponent : public ComponentHolder
@@ -215,6 +218,9 @@ namespace SW
         Core::StringAtom _name;
 
         ComponentHolder* _parent = nullptr;
+
+        template<IsComponentOrBase, bool>
+        friend class BaseComponentIterator;
     };
 
     // clang-format off
@@ -232,32 +238,71 @@ namespace SW
     public:
         using ValueT = typename TargetComponentT::template AdaptiveRawPtr<isConst>;
 
-        BaseComponentIterator(ComponentHolder* root)
-            : _parent{ root },
-              _data{} {};
+        BaseComponentIterator(const ComponentHolder* root)
+            : _parent{ const_cast<ComponentHolder*>(root) }
+        {
+            if (_parent && _parent->hasChildren())
+            {
+                _iterator = _parent->_children.begin();
+            }
+        };
         ~BaseComponentIterator() override = default;
 
-        void swap(BaseComponentIterator& other) override { std::swap(_data, other._data); }
+        void swap(BaseComponentIterator& other) override { std::swap(_iterator, other._iterator); }
         [[nodiscard]] bool operator==(const BaseComponentIterator& other) const noexcept override
         {
-            return _data == other._data;
+            return getFromIter() == other.getFromIter();
         }
         [[nodiscard]] bool operator!=(const BaseComponentIterator& other) const noexcept override
         {
-            return _data != other._data;
+            return getFromIter() != other.getFromIter();
         }
-        [[nodiscard]] const ValueT operator*() const noexcept override { return _data; }
-        [[nodiscard]] const ValueT operator->() const override { return _data; }
-        [[nodiscard]] ValueT operator*() noexcept override { return _data; }
-        [[nodiscard]] ValueT operator->() noexcept override { return _data; }
-        BaseComponentIterator& operator++() noexcept override { return *this; }
+        [[nodiscard]] const ValueT operator*() const noexcept override { return getFromIter(); }
+        [[nodiscard]] const ValueT operator->() const override { return getFromIter(); }
+        [[nodiscard]] ValueT operator*() noexcept override { return getFromIter(); }
+        [[nodiscard]] ValueT operator->() noexcept override { return getFromIter(); }
+        BaseComponentIterator& operator++() noexcept override
+        {
+            next();
+            return *this;
+        }
         BaseComponentIterator operator++(int) noexcept override { return *this; }
         BaseComponentIterator& operator--() noexcept override { return *this; }
         BaseComponentIterator operator--(int) noexcept override { return *this; }
 
     private:
+        void next()
+        {
+            ++_iterator;
+
+            if (_iterator == _parent->_children.end())
+            {
+                if (_parent->_children.empty())
+                {
+                    _parent = nullptr;
+                    _iterator = {};
+
+                    if (auto* parent = dynamic_cast<BaseComponent*>(_parent);
+                        parent && parent->_parent)
+                    {
+                    }
+                }
+                else
+                {
+                    _parent = _parent->_children.front().get();
+                    _iterator = _parent->_children.begin();
+                }
+            }
+        }
+        [[nodiscard]] ValueT getFromIter() { return dynamic_cast<ValueT>(_iterator->get()); }
+        [[nodiscard]] const ValueT getFromIter() const
+        {
+            return dynamic_cast<ValueT>(_iterator->get());
+        }
+
+    private:
         ComponentHolder* _parent = nullptr;
-        ValueT _data = nullptr;
+        std::list<boost::intrusive_ptr<BaseComponent>>::iterator _iterator;
     };
 
     template<IsComponentOrBase T = BaseComponent>
