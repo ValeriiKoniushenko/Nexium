@@ -94,6 +94,7 @@ TEST(ECSBaseTests, Misc)
     EXPECT_TRUE(c.isValid());
     // EXPECT_EQ(nullptr, c.castTo<HardConstructorComponent>());
     EXPECT_NE(nullptr, c.castTo<DummyComponent>());
+    EXPECT_NE(0, c.makeHash());
 }
 
 TEST(ECSBaseTests, AddingNewChild)
@@ -109,7 +110,7 @@ TEST(ECSBaseTests, AddingNewChild)
 
     EXPECT_FALSE(root.hasParent());
     EXPECT_TRUE(root.hasChildren());
-    EXPECT_EQ(1, root.getChildrenSize());
+    EXPECT_EQ(1, root.getChildrenCount());
     EXPECT_EQ(1, root.getChildren().size());
 
     EXPECT_TRUE(top->hasParent());
@@ -162,7 +163,7 @@ TEST(ECSBaseTests, RemovingChild)
 
         EXPECT_FALSE(root.hasParent());
         EXPECT_TRUE(root.hasChildren());
-        EXPECT_EQ(1, root.getChildrenSize());
+        EXPECT_EQ(1, root.getChildrenCount());
         EXPECT_EQ(1, root.getChildren().size());
 
         EXPECT_TRUE(top->hasParent());
@@ -174,7 +175,7 @@ TEST(ECSBaseTests, RemovingChild)
         root.removeChild(top);
     }
 
-    ASSERT_EQ(0, root.getChildrenSize());
+    ASSERT_EQ(0, root.getChildrenCount());
     ASSERT_EQ(0, root.getChildren().size());
 }
 
@@ -191,7 +192,7 @@ TEST(ECSBaseTests, RemovingChildIf)
         (void)root.addChildComponent<DummyComponent>(name);
     }
 
-    ASSERT_EQ(names.size(), root.getChildrenSize());
+    ASSERT_EQ(names.size(), root.getChildrenCount());
 
     root.removeChildIf(
         [](const SW::BaseComponent* c)
@@ -199,7 +200,7 @@ TEST(ECSBaseTests, RemovingChildIf)
             return c->getComponentName() == "How";
         });
 
-    ASSERT_EQ(names.size() - 1, root.getChildrenSize());
+    ASSERT_EQ(names.size() - 1, root.getChildrenCount());
 
     root.removeChildIf(
         [](const SW::BaseComponent* c)
@@ -207,5 +208,19 @@ TEST(ECSBaseTests, RemovingChildIf)
             return c->getComponentName().front() == 'A';
         });
 
-    ASSERT_EQ(names.size() - 1 - 2, root.getChildrenSize());
+    ASSERT_EQ(names.size() - 1 - 2, root.getChildrenCount());
+}
+
+TEST_F(ECSTreeTests, EasyIteratorTest)
+{
+    SW::ComponentIterator it(root);
+
+    {
+        auto* top1 = *it;
+        ASSERT_NE(nullptr, top1);
+        ASSERT_EQ("Top1", top1->getComponentName());
+        ASSERT_EQ("DummyComponent", top1->getComponentType());
+        EXPECT_EQ(&root, top1->getParent());
+        EXPECT_EQ(1, top1->getChildrenCount());
+    }
 }

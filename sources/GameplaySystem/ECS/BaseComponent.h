@@ -130,7 +130,7 @@ namespace SW
         {
             return _children;
         }
-        [[nodiscard]] std::size_t getChildrenSize() const noexcept { return _children.size(); }
+        [[nodiscard]] std::size_t getChildrenCount() const noexcept { return _children.size(); }
         [[nodiscard]] bool hasChildren() const noexcept { return !_children.empty(); }
 
         template<IsComponent ComponentT, class... Args>
@@ -246,6 +246,10 @@ namespace SW
                 _iterator = _parent->_children.begin();
             }
         };
+
+        BaseComponentIterator(const ComponentHolder& root)
+            : BaseComponentIterator(&root) {};
+
         ~BaseComponentIterator() override = default;
 
         void swap(BaseComponentIterator& other) override { std::swap(_iterator, other._iterator); }
