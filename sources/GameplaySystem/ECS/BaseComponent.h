@@ -88,6 +88,13 @@ namespace SW
     template<class T>
     concept IsComponentOrVoid = IsComponent<T> || std::is_void_v<T>;
 
+    //
+    //     ___   _           _                       _     _____
+    //    / _ \ | |         | |                     | |   /  __ \
+    //   / /_\ \| |__   ___ | |_  _ __   __ _   ___ | |_  | /  \/
+    //   |  _  || '_ \ / __|| __|| '__| / _` | / __|| __| | |
+    //   | | | || |_) |\__ \| |_ | |   | (_| || (__ | |_  | \__/\ _
+    //   \_| |_/|_.__/ |___/ \__||_|    \__,_| \___| \__|  \____/(_)
     class AbstractComponent : public BaseLog, public boost::intrusive_ref_counter<BaseComponent>
     {
     public:
@@ -115,6 +122,13 @@ namespace SW
         AbstractComponent() = default;
     };
 
+    //
+    //    _____      _   _         _      _
+    //   /  __ \    | | | |       | |    | |
+    //   | /  \/    | |_| |  ___  | |  __| |  ___  _ __
+    //   | |        |  _  | / _ \ | | / _` | / _ \| '__|
+    //   | \__/\ _  | | | || (_) || || (_| ||  __/| |
+    //    \____/(_) \_| |_/ \___/ |_| \__,_| \___||_|
     class ComponentHolder : public AbstractComponent
     {
     public:
@@ -154,6 +168,64 @@ namespace SW
         bool removeChild(const CChildT& child) { return removeChild(child.get()); }
         bool removeChildIf(std::function<bool(const BaseComponent*)>&& pred);
 
+        // ========================== FOREACHes ==========================
+
+        /**
+         * @brief Iterate over every child and root recursively(BFS).
+         * Can take a functions of next types:
+         * 1. bool([const] TargetT*) - this function will work until it gets 'false'
+         * in return
+         * 2. void([const] TargetT*) - will iterate without stopping through all a
+         * tree
+         */
+        template<IsComponentOrBase TargetT = BaseComponent, class FuncT>
+        void forEach(FuncT&& callback)
+        {
+            impl_forEach_BFS<TargetT, false>(this, std::forward<decltype(callback)>(callback));
+        }
+
+        /**
+         * @brief Iterate over every child and root recursively(BFS).
+         * Can take a functions of next types:
+         * 1. bool(const TargetT*) - this function will work until it gets 'false'
+         * in return
+         * 2. void(const TargetT*) - will iterate without stopping through all a
+         * tree
+         */
+        template<IsComponentOrBase TargetT = BaseComponent, class FuncT>
+        void forEach(FuncT&& callback) const
+        {
+            impl_forEach_BFS<TargetT, true>(this, std::forward<decltype(callback)>(callback));
+        }
+
+        /**
+         * @brief Iterate over every child and root recursively(DFS).
+         * Can take a functions of next types:
+         * 1. bool([const] TargetT*) - this function will work until it gets 'false'
+         * in return
+         * 2. void([const] TargetT*) - will iterate without stopping through all a
+         * tree
+         */
+        template<IsComponentOrBase TargetT = BaseComponent, class FuncT>
+        void forEachDFS(FuncT&& callback)
+        {
+            impl_forEach_DFS<TargetT, false>(this, std::forward<decltype(callback)>(callback));
+        }
+
+        /**
+         * @brief Iterate over every child and root recursively(DFS).
+         * Can take a functions of next types:
+         * 1. bool(const TargetT*) - this function will work until it gets 'false'
+         * in return
+         * 2. void(const TargetT*) - will iterate without stopping through all a
+         * tree
+         */
+        template<IsComponentOrBase TargetT = BaseComponent, class FuncT>
+        void forEachDFS(FuncT&& callback) const
+        {
+            impl_forEach_DFS<TargetT, true>(this, std::forward<decltype(callback)>(callback));
+        }
+
         // ========================== MISC ==========================
         void clear() override;
 
@@ -167,8 +239,23 @@ namespace SW
     protected:
         ChildrenT _children;
         bool _isEnabled = true;
+
+    private:
+        // ===================== PIMPLs =============================
+        template<IsComponentOrBase TargetT, bool isConst, class FuncT>
+        static void impl_forEach_BFS(AdaptiveRawPtr<isConst> me, FuncT&& callback);
+
+        template<IsComponentOrBase TargetT, bool isConst, class FuncT>
+        static void impl_forEach_DFS(AdaptiveRawPtr<isConst> me, FuncT&& callback);
     };
 
+    //
+    //   ______                    _____
+    //   | ___ \                  /  __ \
+    //   | |_/ /  __ _  ___   ___ | /  \/
+    //   | ___ \ / _` |/ __| / _ \| |
+    //   | |_/ /| (_| |\__ \|  __/| \__/\ _
+    //   \____/  \__,_||___/ \___| \____/(_)
     class BaseComponent : public ComponentHolder
     {
     public:
@@ -223,6 +310,117 @@ namespace SW
         const Core::StringAtom* const _type = nullptr;
         ComponentHolder* _parent = nullptr;
     };
+
+    template<IsComponentOrBase TargetT, bool isConst, class FuncT>
+    void ComponentHolder::impl_forEach_BFS(AdaptiveRawPtr<isConst> me, FuncT&& callback)
+    {
+        if (!Verify(me)) [[unlikely]]
+        {
+            return;
+        }
+
+        using HolderPtr = AdaptiveRawPtr<isConst>;
+        using TargetPtr = typename TargetT::template AdaptiveRawPtr<isConst>;
+        std::unordered_set<HolderPtr> visited;
+        std::queue<HolderPtr> q;
+
+        visited.emplace(me);
+        q.push(me);
+
+        while (!q.empty())
+        {
+            HolderPtr root = q.front();
+            q.pop();
+
+            if (!Verify(root)) [[unlikely]]
+            {
+                me->criticalLog("ComponentHolder::impl_forEach_BFS was got nullptr for root.");
+                return;
+            }
+
+            if (auto target = dynamic_cast<TargetPtr>(root))
+            {
+                if constexpr (std::is_void_v<decltype(callback(target))>)
+                {
+                    std::invoke(std::forward<decltype(callback)>(callback), target);
+                }
+                else
+                {
+                    if (!std::invoke(std::forward<decltype(callback)>(callback), target))
+                    {
+                        return;
+                    }
+                }
+            }
+
+            for (auto comp : root->_children)
+            {
+                if (!visited.contains(comp.get()))
+                {
+                    visited.emplace(comp.get());
+                    q.push(comp.get());
+                }
+            }
+        }
+    }
+
+    template<IsComponentOrBase TargetT, bool isConst, class FuncT>
+    void ComponentHolder::impl_forEach_DFS(AdaptiveRawPtr<isConst> me, FuncT&& callback)
+    {
+        if (!Verify(me)) [[unlikely]]
+        {
+            return;
+        }
+
+        using HolderPtr = AdaptiveRawPtr<isConst>;
+        using TargetPtr = typename TargetT::template AdaptiveRawPtr<isConst>;
+        std::unordered_set<HolderPtr> visited;
+        std::stack<HolderPtr> s;
+
+        s.push(me);
+
+        while (!s.empty())
+        {
+            HolderPtr root = s.top();
+            s.pop();
+
+            if (!Verify(root)) [[unlikely]]
+            {
+                me->criticalLog("ComponentHolder::impl_forEach_DFS was got nullptr for root.");
+                return;
+            }
+
+            if (visited.contains(root))
+            {
+                continue;
+            }
+
+            visited.emplace(root);
+
+            if (auto target = dynamic_cast<TargetPtr>(root))
+            {
+                if constexpr (std::is_void_v<decltype(callback(target))>)
+                {
+                    std::invoke(std::forward<decltype(callback)>(callback), target);
+                }
+                else
+                {
+                    if (!std::invoke(std::forward<decltype(callback)>(callback), target))
+                    {
+                        return;
+                    }
+                }
+            }
+
+            for (auto i = root->_children.rbegin(); i != root->_children.rend(); ++i)
+            {
+                if (!visited.contains(i->get()))
+                {
+                    s.push(i->get());
+                }
+            }
+        }
+    }
 
 } // namespace SW
 

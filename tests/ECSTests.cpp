@@ -211,6 +211,107 @@ TEST(ECSBaseTests, RemovingChildIf)
     ASSERT_EQ(names.size() - 1 - 2, root.getChildrenCount());
 }
 
-TEST_F(ECSTreeTests, EasyIteratorTest)
+TEST_F(ECSTreeTests, BFSIteratorTest)
 {
+    Core::StringAtom trunk;
+
+    root.forEach(
+        [&](SW::BaseComponent* c)
+        {
+            trunk.push_back(c->getComponentName());
+        });
+
+    root.forEach(
+        [&](const SW::BaseComponent* c)
+        {
+            trunk.push_back(c->getComponentName());
+        });
+
+    root.forEach(
+        [&](const SW::BaseComponent* c)
+        {
+            trunk.push_back(c->getComponentName());
+            return c->getComponentName() != "Middle2";
+        });
+
+    const auto& croot = static_cast<const decltype(root)&>(root);
+
+    croot.forEach(
+        [&](const SW::BaseComponent* c)
+        {
+            trunk.push_back(c->getComponentName());
+        });
+
+    croot.forEach(
+        [&](const SW::BaseComponent* c)
+        {
+            trunk.push_back(c->getComponentName());
+            return c->getComponentName() != "Middle2";
+        });
+}
+
+TEST_F(ECSTreeTests, DFSIteratorTest)
+{
+    Core::StringAtom trunk;
+
+    root.forEachDFS(
+        [&](SW::BaseComponent* c)
+        {
+            trunk.push_back(c->getComponentName());
+        });
+
+    root.forEachDFS(
+        [&](const SW::BaseComponent* c)
+        {
+            trunk.push_back(c->getComponentName());
+        });
+
+    root.forEachDFS(
+        [&](const SW::BaseComponent* c)
+        {
+            trunk.push_back(c->getComponentName());
+            return c->getComponentName() != "Middle2";
+        });
+
+    const auto& croot = static_cast<const decltype(root)&>(root);
+
+    croot.forEachDFS(
+        [&](const SW::BaseComponent* c)
+        {
+            trunk.push_back(c->getComponentName());
+        });
+
+    croot.forEachDFS(
+        [&](const SW::BaseComponent* c)
+        {
+            trunk.push_back(c->getComponentName());
+            return c->getComponentName() != "Middle2";
+        });
+}
+
+TEST_F(ECSTreeTests, IteratorByTypeTest)
+{
+    SW::BaseComponent* found = nullptr;
+    root.forEach(
+        [&](SW::BaseComponent* c)
+        {
+            if (c->getComponentName() == "Middle2")
+            {
+                found = c;
+                return false;
+            }
+
+            return true;
+        });
+
+    ASSERT_NE(nullptr, found);
+
+    (void)found->addChildComponent<DummyComponent>("SomeName");
+
+    std::size_t count = 0;
+    // root.forEach<DummyComponent>(
+    //     [&](auto)
+    //     {
+    //         ++count;
+    //     });
 }
