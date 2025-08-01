@@ -74,7 +74,7 @@ TEST(ECSBaseTests, SimpleCreation)
     }
 }
 
-TEST(ECSBaseTests, SimpleWorkingWithChilds)
+TEST(ECSBaseTests, AddingNewChild)
 {
     DummyComponent root("Root");
     EXPECT_EQ("Root", root.getComponentName());
@@ -95,4 +95,34 @@ TEST(ECSBaseTests, SimpleWorkingWithChilds)
     EXPECT_EQ(&root, top->getParent());
     EXPECT_EQ(root.getChildren().front(), top);
     EXPECT_NE(root, *top);
+}
+
+TEST(ECSBaseTests, RemovingChild)
+{
+    DummyComponent root("Root");
+    EXPECT_EQ("Root", root.getComponentName());
+    EXPECT_EQ("DummyComponent", root.getComponentType());
+
+    {
+        auto top = root.addChildComponent<DummyComponent>();
+        top->setComponentName("Top");
+        EXPECT_EQ("Top", top->getComponentName());
+        EXPECT_EQ("DummyComponent", top->getComponentType());
+
+        EXPECT_FALSE(root.hasParent());
+        EXPECT_TRUE(root.hasChildren());
+        EXPECT_EQ(1, root.getChildrenSize());
+        EXPECT_EQ(1, root.getChildren().size());
+
+        EXPECT_TRUE(top->hasParent());
+        EXPECT_FALSE(top->hasChildren());
+        EXPECT_EQ(&root, top->getParent());
+        EXPECT_EQ(root.getChildren().front(), top);
+        EXPECT_NE(root, *top);
+
+        root.removeChild(top);
+    }
+
+    ASSERT_EQ(0, root.getChildrenSize());
+    ASSERT_EQ(0, root.getChildren().size());
 }
