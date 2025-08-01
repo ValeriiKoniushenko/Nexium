@@ -213,14 +213,4 @@ TEST(ECSBaseTests, RemovingChildIf)
 
 TEST_F(ECSTreeTests, EasyIteratorTest)
 {
-    SW::ComponentIterator it(root);
-
-    {
-        auto* top1 = *it;
-        ASSERT_NE(nullptr, top1);
-        ASSERT_EQ("Top1", top1->getComponentName());
-        ASSERT_EQ("DummyComponent", top1->getComponentType());
-        EXPECT_EQ(&root, top1->getParent());
-        EXPECT_EQ(1, top1->getChildrenCount());
-    }
 }

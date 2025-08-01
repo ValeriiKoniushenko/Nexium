@@ -29,6 +29,8 @@
 #include "boost/smart_ptr/intrusive_ref_counter.hpp"
 
 #include <list>
+#include <queue>
+#include <unordered_set>
 
 #define ECS_REGISTER_NEW_COMPONENT(CurrentClass, BaseComponentClass)                               \
 public:                                                                                            \
@@ -123,13 +125,15 @@ namespace SW
         using AdaptiveRawPtr = std::conditional_t<isConst, const Self, Self>*;
         using Ptr = boost::intrusive_ptr<Self>;
         using CPtr = boost::intrusive_ptr<const Self>;
+        using CChildT = boost::intrusive_ptr<const BaseComponent>;
+        using ChildT = boost::intrusive_ptr<BaseComponent>;
+        using ChildrenT = std::vector<boost::intrusive_ptr<BaseComponent>>;
 
     public:
-        [[nodiscard]] const std::list<boost::intrusive_ptr<BaseComponent>>& getChildren()
-            const noexcept
-        {
-            return _children;
-        }
+        // ========================== WORKING WITH CHILDREN ==========================
+        [[nodiscard]] ChildT getChildAt(std::size_t i) { return _children.at(i); }
+        [[nodiscard]] CChildT getChildAt(std::size_t i) const { return _children.at(i); }
+        [[nodiscard]] const ChildrenT& getChildren() const noexcept { return _children; }
         [[nodiscard]] std::size_t getChildrenCount() const noexcept { return _children.size(); }
         [[nodiscard]] bool hasChildren() const noexcept { return !_children.empty(); }
 
@@ -147,8 +151,10 @@ namespace SW
         }
 
         bool removeChild(const BaseComponent* child);
+        bool removeChild(const CChildT& child) { return removeChild(child.get()); }
         bool removeChildIf(std::function<bool(const BaseComponent*)>&& pred);
 
+        // ========================== MISC ==========================
         void clear() override;
 
     protected:
@@ -159,10 +165,8 @@ namespace SW
         virtual void onSuccessAddChildComponentValidation(BaseComponent* newComponent) {}
 
     protected:
-        std::list<boost::intrusive_ptr<BaseComponent>> _children;
-
-        template<IsComponentOrBase, bool>
-        friend class BaseComponentIterator;
+        ChildrenT _children;
+        bool _isEnabled = true;
     };
 
     class BaseComponent : public ComponentHolder
@@ -181,25 +185,26 @@ namespace SW
 
         [[nodiscard]] bool operator==(const Self& other) const;
 
+        // ========================== WORKING WITH NAME ==========================
         void setComponentName(const Core::StringAtom& name);
         [[nodiscard]] const Core::StringAtom& getComponentName() const noexcept { return _name; }
         [[nodiscard]] const Core::StringAtom& getComponentType() const noexcept { return *_type; }
 
+        // ========================== WORKING WITH PARENT ==========================
         [[nodiscard]] const ComponentHolder* getParent() const noexcept { return _parent; }
         [[nodiscard]] ComponentHolder* getParent() noexcept { return _parent; }
         [[nodiscard]] bool hasParent() const noexcept { return _parent; }
 
+        // ========================== MISC & TYPES ==========================
+        void clear() override;
         [[nodiscard]] bool isValid() const;
+        [[nodiscard]] std::size_t makeHash() const;
 
         template<IsComponent T>
         [[nodiscard]] bool isTypeOf() const
         {
             return *_type == T::componentType;
         }
-
-        [[nodiscard]] std::size_t makeHash() const;
-
-        void clear() override;
 
     protected:
         explicit BaseComponent(const Core::StringAtom* type, const Core::StringAtom& name = ""_atom)
@@ -214,105 +219,11 @@ namespace SW
         void onSuccessAddChildComponentValidation(BaseComponent* newComponent) override;
 
     protected:
-        const Core::StringAtom* const _type = nullptr;
         Core::StringAtom _name;
-
+        const Core::StringAtom* const _type = nullptr;
         ComponentHolder* _parent = nullptr;
-
-        template<IsComponentOrBase, bool>
-        friend class BaseComponentIterator;
     };
 
-    // clang-format off
-    template<IsComponentOrBase TargetComponentT, bool isConst>
-    class BaseComponentIterator final :
-        public Core::IBidirectionalIterator
-        <
-            typename TargetComponentT::template AdaptiveRawPtr<isConst>,
-            BaseComponentIterator<TargetComponentT, isConst>,
-            Utils::CopyableAndMoveable,
-            true
-        >
-    // clang-format on
-    {
-    public:
-        using ValueT = typename TargetComponentT::template AdaptiveRawPtr<isConst>;
-
-        BaseComponentIterator(const ComponentHolder* root)
-            : _parent{ const_cast<ComponentHolder*>(root) }
-        {
-            if (_parent && _parent->hasChildren())
-            {
-                _iterator = _parent->_children.begin();
-            }
-        };
-
-        BaseComponentIterator(const ComponentHolder& root)
-            : BaseComponentIterator(&root) {};
-
-        ~BaseComponentIterator() override = default;
-
-        void swap(BaseComponentIterator& other) override { std::swap(_iterator, other._iterator); }
-        [[nodiscard]] bool operator==(const BaseComponentIterator& other) const noexcept override
-        {
-            return getFromIter() == other.getFromIter();
-        }
-        [[nodiscard]] bool operator!=(const BaseComponentIterator& other) const noexcept override
-        {
-            return getFromIter() != other.getFromIter();
-        }
-        [[nodiscard]] const ValueT operator*() const noexcept override { return getFromIter(); }
-        [[nodiscard]] const ValueT operator->() const override { return getFromIter(); }
-        [[nodiscard]] ValueT operator*() noexcept override { return getFromIter(); }
-        [[nodiscard]] ValueT operator->() noexcept override { return getFromIter(); }
-        BaseComponentIterator& operator++() noexcept override
-        {
-            next();
-            return *this;
-        }
-        BaseComponentIterator operator++(int) noexcept override { return *this; }
-        BaseComponentIterator& operator--() noexcept override { return *this; }
-        BaseComponentIterator operator--(int) noexcept override { return *this; }
-
-    private:
-        void next()
-        {
-            ++_iterator;
-
-            if (_iterator == _parent->_children.end())
-            {
-                if (_parent->_children.empty())
-                {
-                    _parent = nullptr;
-                    _iterator = {};
-
-                    if (auto* parent = dynamic_cast<BaseComponent*>(_parent);
-                        parent && parent->_parent)
-                    {
-                    }
-                }
-                else
-                {
-                    _parent = _parent->_children.front().get();
-                    _iterator = _parent->_children.begin();
-                }
-            }
-        }
-        [[nodiscard]] ValueT getFromIter() { return dynamic_cast<ValueT>(_iterator->get()); }
-        [[nodiscard]] const ValueT getFromIter() const
-        {
-            return dynamic_cast<ValueT>(_iterator->get());
-        }
-
-    private:
-        ComponentHolder* _parent = nullptr;
-        std::list<boost::intrusive_ptr<BaseComponent>>::iterator _iterator;
-    };
-
-    template<IsComponentOrBase T = BaseComponent>
-    using ComponentIterator = BaseComponentIterator<T, false>;
-    template<IsComponentOrBase T = BaseComponent>
-    using ConstComponentIterator = BaseComponentIterator<T, true>;
 } // namespace SW
 
 template<>
