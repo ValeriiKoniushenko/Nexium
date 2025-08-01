@@ -31,6 +31,19 @@ namespace
         ECS_REGISTER_NEW_COMPONENT(DummyComponent, SW::BaseComponent);
     };
 
+    class HardConstructorComponent : public SW::BaseComponent
+    {
+        ECS_REGISTER_NEW_COMPONENT(HardConstructorComponent, SW::BaseComponent);
+
+        HardConstructorComponent(int a, const Core::StringAtom& name, std::string b)
+            : BaseComponent(&componentType, name),
+              _a(a),
+              _b(b) {};
+
+        int _a = 0;
+        std::string _b;
+    };
+
     class ECSTreeTests : public ::testing::Test
     {
     protected:
@@ -79,6 +92,8 @@ TEST(ECSBaseTests, Misc)
     DummyComponent c("SomeName");
     EXPECT_TRUE(c.isTypeOf<DummyComponent>());
     EXPECT_TRUE(c.isValid());
+    // EXPECT_EQ(nullptr, c.castTo<HardConstructorComponent>());
+    EXPECT_NE(nullptr, c.castTo<DummyComponent>());
 }
 
 TEST(ECSBaseTests, AddingNewChild)
@@ -103,23 +118,6 @@ TEST(ECSBaseTests, AddingNewChild)
     EXPECT_EQ(root.getChildren().front(), top);
     EXPECT_NE(root, *top);
 }
-
-namespace
-{
-    class HardConstructorComponent : public SW::BaseComponent
-    {
-        ECS_REGISTER_NEW_COMPONENT(HardConstructorComponent, SW::BaseComponent);
-
-        HardConstructorComponent(int a, const Core::StringAtom& name, std::string b)
-            : BaseComponent(&componentType, name),
-              _a(a),
-              _b(b) {};
-
-        int _a = 0;
-        std::string _b;
-    };
-
-} // namespace
 
 TEST(ECSBaseTests, AdvancedAddingNewChild)
 {
