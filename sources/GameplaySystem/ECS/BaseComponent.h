@@ -22,7 +22,6 @@
 
 #pragma once
 
-#include "BaseComponent.h"
 #include "Misc/BaseLog.h"
 #include "ModuleInfo.h"
 #include "boost/intrusive_ptr.hpp"
