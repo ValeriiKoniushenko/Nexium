@@ -74,6 +74,13 @@ TEST(ECSBaseTests, SimpleCreation)
     }
 }
 
+TEST(ECSBaseTests, Misc)
+{
+    DummyComponent c("SomeName");
+    EXPECT_TRUE(c.isTypeOf<DummyComponent>());
+    EXPECT_TRUE(c.isValid());
+}
+
 TEST(ECSBaseTests, AddingNewChild)
 {
     DummyComponent root("Root");
@@ -95,6 +102,52 @@ TEST(ECSBaseTests, AddingNewChild)
     EXPECT_EQ(&root, top->getParent());
     EXPECT_EQ(root.getChildren().front(), top);
     EXPECT_NE(root, *top);
+}
+
+namespace
+{
+    class HardConstructorComponent : public SW::BaseComponent
+    {
+        ECS_REGISTER_NEW_COMPONENT(HardConstructorComponent, SW::BaseComponent);
+
+        HardConstructorComponent(int a, const Core::StringAtom& name, std::string b)
+            : BaseComponent(&componentType, name),
+              _a(a),
+              _b(b) {};
+
+        int _a = 0;
+        std::string _b;
+    };
+
+} // namespace
+
+TEST(ECSBaseTests, AdvancedAddingNewChild)
+{
+    DummyComponent root("Root");
+    {
+        auto comp = root.addChildComponent<HardConstructorComponent>();
+        EXPECT_EQ("", comp->getComponentName());
+        EXPECT_FALSE(comp->isValid());
+        EXPECT_TRUE(comp->isTypeOf<HardConstructorComponent>());
+        EXPECT_EQ("HardConstructorComponent", comp->getComponentType());
+        comp->setComponentName("Wow");
+        EXPECT_TRUE(comp->isValid());
+        EXPECT_EQ(0, comp->_a);
+        EXPECT_EQ("", comp->_b);
+    }
+
+    {
+        auto comp
+            = root.addChildComponent<HardConstructorComponent>(123, "SomeName", "DummyString");
+        EXPECT_EQ("SomeName", comp->getComponentName());
+        EXPECT_TRUE(comp->isValid());
+        EXPECT_TRUE(comp->isTypeOf<HardConstructorComponent>());
+        EXPECT_EQ("HardConstructorComponent", comp->getComponentType());
+        comp->setComponentName("Wow");
+        EXPECT_TRUE(comp->isValid());
+        EXPECT_EQ(123, comp->_a);
+        EXPECT_EQ("DummyString", comp->_b);
+    }
 }
 
 TEST(ECSBaseTests, RemovingChild)
@@ -133,7 +186,7 @@ TEST(ECSBaseTests, RemovingChildIf)
     EXPECT_EQ("Root", root.getComponentName());
     EXPECT_EQ("DummyComponent", root.getComponentType());
 
-    std::vector<Core::StringAtom> names = { "Hello", "World", "How", "Are", "You", "Idk" };
+    std::vector<Core::StringAtom> names = { "Hello", "World", "How", "Are", "AYou", "Idk" };
 
     for (auto&& name : names)
     {
@@ -149,4 +202,12 @@ TEST(ECSBaseTests, RemovingChildIf)
         });
 
     ASSERT_EQ(names.size() - 1, root.getChildrenSize());
+
+    root.removeChildIf(
+        [](const SW::BaseComponent* c)
+        {
+            return c->getComponentName().front() == 'A';
+        });
+
+    ASSERT_EQ(names.size() - 1 - 2, root.getChildrenSize());
 }
