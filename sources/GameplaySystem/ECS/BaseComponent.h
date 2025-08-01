@@ -179,6 +179,7 @@ namespace SW
          * tree
          */
         template<IsComponentOrBase TargetT = BaseComponent, class FuncT>
+            requires requires(FuncT f, TargetT* ptr) { f(ptr); }
         void forEach(FuncT&& callback)
         {
             impl_forEach_BFS<TargetT, false>(this, std::forward<decltype(callback)>(callback));
@@ -193,6 +194,7 @@ namespace SW
          * tree
          */
         template<IsComponentOrBase TargetT = BaseComponent, class FuncT>
+            requires requires(FuncT f, TargetT* ptr) { f(ptr); }
         void forEach(FuncT&& callback) const
         {
             impl_forEach_BFS<TargetT, true>(this, std::forward<decltype(callback)>(callback));
@@ -207,6 +209,7 @@ namespace SW
          * tree
          */
         template<IsComponentOrBase TargetT = BaseComponent, class FuncT>
+            requires requires(FuncT f, TargetT* ptr) { f(ptr); }
         void forEachDFS(FuncT&& callback)
         {
             impl_forEach_DFS<TargetT, false>(this, std::forward<decltype(callback)>(callback));
@@ -221,6 +224,7 @@ namespace SW
          * tree
          */
         template<IsComponentOrBase TargetT = BaseComponent, class FuncT>
+            requires requires(FuncT f, TargetT* ptr) { f(ptr); }
         void forEachDFS(FuncT&& callback) const
         {
             impl_forEach_DFS<TargetT, true>(this, std::forward<decltype(callback)>(callback));

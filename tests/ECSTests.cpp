@@ -309,9 +309,9 @@ TEST_F(ECSTreeTests, IteratorByTypeTest)
     (void)found->addChildComponent<DummyComponent>("SomeName");
 
     std::size_t count = 0;
-    // root.forEach<DummyComponent>(
-    //     [&](auto)
-    //     {
-    //         ++count;
-    //     });
+    root.forEach<DummyComponent>(
+        [&](const DummyComponent*)
+        {
+            ++count;
+        });
 }
