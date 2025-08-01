@@ -173,9 +173,9 @@ namespace SW
         /**
          * @brief Iterate over every child and root recursively(BFS).
          * Can take a functions of next types:
-         * 1. bool([const] TargetT*) - this function will work until it gets 'false'
+         * 1. bool([const] BaseComponent*) - this function will work until it gets 'false'
          * in return
-         * 2. void([const] TargetT*) - will iterate without stopping through all a
+         * 2. void([const] BaseComponent*) - will iterate without stopping through all a
          * tree
          */
         template<IsComponentOrBase TargetT = BaseComponent, class FuncT>
@@ -188,9 +188,9 @@ namespace SW
         /**
          * @brief Iterate over every child and root recursively(BFS).
          * Can take a functions of next types:
-         * 1. bool(const TargetT*) - this function will work until it gets 'false'
+         * 1. bool(const BaseComponent*) - this function will work until it gets 'false'
          * in return
-         * 2. void(const TargetT*) - will iterate without stopping through all a
+         * 2. void(const BaseComponent*) - will iterate without stopping through all a
          * tree
          */
         template<IsComponentOrBase TargetT = BaseComponent, class FuncT>
@@ -203,9 +203,9 @@ namespace SW
         /**
          * @brief Iterate over every child and root recursively(DFS).
          * Can take a functions of next types:
-         * 1. bool([const] TargetT*) - this function will work until it gets 'false'
+         * 1. bool([const] BaseComponent*) - this function will work until it gets 'false'
          * in return
-         * 2. void([const] TargetT*) - will iterate without stopping through all a
+         * 2. void([const] BaseComponent*) - will iterate without stopping through all a
          * tree
          */
         template<IsComponentOrBase TargetT = BaseComponent, class FuncT>
@@ -218,9 +218,9 @@ namespace SW
         /**
          * @brief Iterate over every child and root recursively(DFS).
          * Can take a functions of next types:
-         * 1. bool(const TargetT*) - this function will work until it gets 'false'
+         * 1. bool(const BaseComponent*) - this function will work until it gets 'false'
          * in return
-         * 2. void(const TargetT*) - will iterate without stopping through all a
+         * 2. void(const BaseComponent*) - will iterate without stopping through all a
          * tree
          */
         template<IsComponentOrBase TargetT = BaseComponent, class FuncT>

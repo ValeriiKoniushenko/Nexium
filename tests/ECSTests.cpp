@@ -310,7 +310,7 @@ TEST_F(ECSTreeTests, IteratorByTypeTest)
 
     std::size_t count = 0;
     root.forEach<DummyComponent>(
-        [&](const DummyComponent*)
+        [&](SW::BaseComponent*)
         {
             ++count;
         });
