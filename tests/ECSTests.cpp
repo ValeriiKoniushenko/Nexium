@@ -126,3 +126,27 @@ TEST(ECSBaseTests, RemovingChild)
     ASSERT_EQ(0, root.getChildrenSize());
     ASSERT_EQ(0, root.getChildren().size());
 }
+
+TEST(ECSBaseTests, RemovingChildIf)
+{
+    DummyComponent root("Root");
+    EXPECT_EQ("Root", root.getComponentName());
+    EXPECT_EQ("DummyComponent", root.getComponentType());
+
+    std::vector<Core::StringAtom> names = { "Hello", "World", "How", "Are", "You", "Idk" };
+
+    for (auto&& name : names)
+    {
+        (void)root.addChildComponent<DummyComponent>(name);
+    }
+
+    ASSERT_EQ(names.size(), root.getChildrenSize());
+
+    root.removeChildIf(
+        [](const SW::BaseComponent* c)
+        {
+            return c->getComponentName() == "How";
+        });
+
+    ASSERT_EQ(names.size() - 1, root.getChildrenSize());
+}
