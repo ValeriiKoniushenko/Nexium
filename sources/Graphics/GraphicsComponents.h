@@ -23,10 +23,10 @@
 #pragma once
 
 #include "ShaderProgram.h"
+#include "assimp/mesh.h"
 
 #include <Core/Enum.h>
 
-class aiMesh;
 
 namespace SW
 {

@@ -30,9 +30,6 @@
 
 #include <filesystem>
 
-class aiNode;
-class aiScene;
-
 namespace SW
 {
     class StaticMeshBundle : public BaseComponent

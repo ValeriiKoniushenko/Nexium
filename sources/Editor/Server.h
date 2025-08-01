@@ -21,7 +21,9 @@
 // SOFTWARE.
 
 #pragma once
+
 #include "HttpLib/httplib.h"
+
 #include "ModuleInfo.h"
 
 #include <thread>

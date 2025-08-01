@@ -87,7 +87,7 @@ namespace SW
             return;
         }
 
-        setComponentName(modelPath.stem().c_str());
+        setComponentName(modelPath.stem().generic_string().c_str());
         recursiveImportFrom(this, node, scene, modelPath, _meshes);
     }
 

@@ -20,9 +20,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#include "Editor/Server.h"
+
 #include "Camera/Camera.h"
 #include "Core/Timer.h"
-#include "Editor/Server.h"
 #include "Graphics/Image.h"
 #include "Graphics/Primitives/StaticMeshBundle.h"
 #include "Graphics/ShaderManager.h"

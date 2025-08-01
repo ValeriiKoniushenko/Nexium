@@ -26,11 +26,10 @@
 #include "GameplaySystem/ECS/BaseComponent.h"
 #include "GameplaySystem/ECS/Transformable.h"
 #include "assimp/matrix4x4.h"
+#include "assimp/mesh.h"
+#include "assimp/scene.h"
 
 #include <filesystem>
-
-class aiMesh;
-class aiScene;
 
 namespace SW
 {

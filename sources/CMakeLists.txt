@@ -4,22 +4,24 @@ add_subdirectory(GameplaySystem)
 add_subdirectory(Misc)
 add_subdirectory(InputDevices)
 add_subdirectory(Graphics)
-add_subdirectory(SceneObjects)
 
 add_library(SpriteWalkerEngine INTERFACE)
 
 target_link_libraries(SpriteWalkerEngine INTERFACE
+    assimp::assimp
     SW::Camera
     SW::Editor
-    SW::InputDevices
-    assimp::assimp
     SW::GameplaySystem
+    SW::Misc
+    SW::InputDevices
+    SW::Graphics
 )
 
-target_include_directories(SpriteWalkerEngine INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(SpriteWalkerEngine INTERFACE ./)
 
 add_executable(SomeGameApp SomeGameApp.cpp)
 
 target_link_libraries(SomeGameApp PUBLIC
-        SpriteWalkerEngine
+    SpriteWalkerEngine
+    assimp
 )
