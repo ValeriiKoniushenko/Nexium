@@ -27,10 +27,56 @@ namespace SW
 
     GlobalLog globalLog = {};
 
+    nlohmann::json LogsPool::Log::toJson() const
+    {
+        nlohmann::json json;
+        json["author"] = author;
+        json["authorPrefix"] = authorPrefix;
+        json["message"] = message;
+        json["time"] = time;
+        json["level"] = spdlog::level::to_string_view(level);
+
+        return json;
+    }
+
+    void LogsPool::Log::fromJson(const nlohmann::json& json)
+    {
+        author = json["author"].get<Core::StringAtom>();
+        authorPrefix = json["authorPrefix"].get<Core::StringAtom>();
+        message = json["message"].get<Core::StringAtom>();
+        time = json["time"].get<std::time_t>();
+        level = spdlog::level::from_str(json["level"].get<std::string>());
+    }
+
+    void BaseLog::pushLog(level l, const char* str) const
+    {
+        auto* logger = getLogger();
+        logger->log(level::info, getCompleteText(str).c_str());
+
+        if (spdlog::should_log(l))
+        {
+            LogsPool::Log log;
+            log.author = logger->name();
+            log.authorPrefix = getPrefix();
+            log.message = str;
+            log.time = std::time(nullptr);
+            log.level = l;
+        }
+    }
+
     void BaseLog::criticalThrowingLog(const char* str) const
     {
         criticalLog(str);
         throw std::runtime_error(str);
     }
 
-} // namespace PS
+    Core::StringAtom BaseLog::getCompleteText(const char* str) const
+    {
+        if (auto prefix = getPrefix())
+        {
+            return ("{} | {}"_f << prefix << str).data();
+        }
+        return str;
+    }
+
+} // namespace SW

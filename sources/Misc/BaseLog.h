@@ -23,22 +23,38 @@
 #pragma once
 
 #include "Core/StringHelper.h"
+#include "JsonAdapter.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/spdlog.h"
 
+#include <Core/Enum.h>
+
 namespace SW
 {
+    class LogsPool : public Core::StrictSingleton<LogsPool>
+    {
+    public:
+        struct Log : public JsonAdapter
+        {
+            Core::StringAtom author;
+            Core::StringAtom authorPrefix;
+            Core::StringAtom message;
+            std::time_t time = {};
+            spdlog::level::level_enum level = spdlog::level::off;
+
+            [[nodiscard]] nlohmann::json toJson() const override;
+            void fromJson(const nlohmann::json& json) override;
+        };
+    };
 
     class BaseLog
     {
     public:
+        using level = spdlog::level::level_enum;
+
         virtual ~BaseLog() = default;
 
-        void infoLog(const char* str) const
-        {
-            getPrefix() ? getLogger()->info("{} | {}", getPrefix(), str)
-                        : getLogger()->info("{}", str);
-        }
+        void infoLog(const char* str) const { pushLog(level::info, str); }
 
         void infoLog(const std::string& str) const { infoLog(str.c_str()); }
 
@@ -46,11 +62,7 @@ namespace SW
 
         void infoLog(const Core::StringFormatter<char>& str) const { infoLog(str.c_str()); }
 
-        void warnLog(const char* str) const
-        {
-            getPrefix() ? getLogger()->warn("{}: {}", getPrefix(), str)
-                        : getLogger()->warn("{}", str);
-        }
+        void warnLog(const char* str) const { pushLog(level::warn, str); }
 
         void warnLog(const std::string& str) const { warnLog(str.c_str()); }
 
@@ -58,11 +70,7 @@ namespace SW
 
         void warnLog(const Core::StringFormatter<char>& str) const { warnLog(str.c_str()); }
 
-        void criticalLog(const char* str) const
-        {
-            getPrefix() ? getLogger()->critical("{} | {}", getPrefix(), str)
-                        : getLogger()->critical("{}", str);
-        }
+        void criticalLog(const char* str) const { pushLog(level::critical, str); }
 
         void criticalLog(const std::string& str) const { criticalLog(str.c_str()); }
 
@@ -70,11 +78,7 @@ namespace SW
 
         void criticalLog(const Core::StringFormatter<char>& str) const { criticalLog(str.c_str()); }
 
-        void errorLog(const char* str) const
-        {
-            getPrefix() ? getLogger()->error("{} | {}", getPrefix(), str)
-                        : getLogger()->error("{}", str);
-        }
+        void errorLog(const char* str) const { pushLog(level::err, str); }
 
         void errorLog(const std::string& str) const { errorLog(str.c_str()); }
 
@@ -82,11 +86,7 @@ namespace SW
 
         void errorLog(const Core::StringFormatter<char>& str) const { errorLog(str.c_str()); }
 
-        void debugLog(const char* str) const
-        {
-            getPrefix() ? getLogger()->debug("{} | {}", getPrefix(), str)
-                        : getLogger()->debug("{}", str);
-        }
+        void debugLog(const char* str) const { pushLog(level::debug, str); }
 
         void debugLog(const std::string& str) const { debugLog(str.c_str()); }
 
@@ -98,18 +98,22 @@ namespace SW
 
         void criticalThrowingLog(const std::string& str) const { criticalThrowingLog(str.c_str()); }
 
-        void criticalThrowingLog(const Core::StringAtom& str) const
+        void criticalThrowingLog(const Core::StringAtom& s) const
         {
-            criticalThrowingLog(str.c_str());
+            criticalThrowingLog(s.c_str());
         }
 
-        void criticalThrowingLog(const Core::StringFormatter<char>& str) const
+        void criticalThrowingLog(const Core::StringFormatter<char>& s) const
         {
-            criticalThrowingLog(str.c_str());
+            criticalThrowingLog(s.c_str());
         }
 
         [[nodiscard]] virtual const char* getPrefix() const { return nullptr; }
         [[nodiscard]] virtual spdlog::logger* getLogger() const = 0;
+
+    private:
+        [[nodiscard]] Core::StringAtom getCompleteText(const char* str) const;
+        void pushLog(level l, const char* str) const;
     };
 
     class GlobalLog : public BaseLog
