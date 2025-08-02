@@ -60,7 +60,7 @@ int main()
     auto& server = GetEditorServer();
     server.setPort(61005);
     server.initialize();
-    server.start();
+    server.sync_start();
 
     //    _    _  _             _
     //   | |  | |(_)           | |
@@ -134,10 +134,10 @@ int main()
     MouseInputManger mouseInput;
 
     // clang-format off
-    constexpr float speed = 10.f, mouseSensitivity = 700.0;
+    constexpr float speed = 50.f, mouseSensitivity = 700.0;
     auto getRealSpeed = [speed](KeyboardIA::SpecKeysState state)
     {
-        const float mlt = state.leftShift.cast() == Keyboard::KeyState::Pressed ? 15.f : 1.f;
+        const float mlt = state.leftShift.cast() == Keyboard::KeyState::Pressed ? 10.f : 1.f;
         return speed * mlt;
     };
     keyboardInput.create("moveForward", GLFW_KEY_W)->onPress.subscribe([&](auto state){ camera.moveForward(getRealSpeed(state) * timeDelta); });
@@ -154,12 +154,8 @@ int main()
     // clang-format on
 
     // ====================== MISC ==========================
-    Core::FStopwatch modelLoaderStopwatch;
-    modelLoaderStopwatch.start();
-
-    std::vector<std::filesystem::path> modelPaths = {
-        /*"assets/base-3d/Models/FBX/Tree.fbx", */ "assets/base-3d/Models/FBX/FireHydrant.fbx"
-    };
+    std::vector<std::filesystem::path> modelPaths
+        = { "assets/base-3d/Models/FBX/Tree.fbx", "assets/base-3d/Models/FBX/FireHydrant.fbx" };
 
     Assimp::Importer importer;
     for (auto&& path : modelPaths)
@@ -175,8 +171,6 @@ int main()
             meshes.push_back(std::move(mesh));
         }
     }
-
-    globalLog.infoLog("All models was loaded for: {}s"_f << modelLoaderStopwatch.stop());
 
     //   ___  ___        _          _
     //   |  \/  |       (_)        | |
@@ -211,7 +205,6 @@ int main()
         shader->setUniform("uLightPos"_atom, lightPos);
         shader->setUniform("uViewPos"_atom, camera.getPosition());
         shader->setUniform("uTexture"_atom, 0);
-
         shader->setUniform("uProjAndView"_atom, camera.getMatrix());
 
         meshes.front().directDraw();

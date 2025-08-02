@@ -91,6 +91,8 @@ namespace SW
         const std::string webPath = req.path == "/" ? "/index.html" : req.path;
         const std::string filePath = editorPath + webPath;
 
+        std::cout << req.path << std::endl;
+
         if (!std::filesystem::exists(filePath))
         {
             debugLog("Web-editor requests file which doesn't exist: {}"_f << filePath);
