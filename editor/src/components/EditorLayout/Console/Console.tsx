@@ -6,7 +6,7 @@ import {
   ConsoleLogList,
   ConsoleTopSection_FilterHolder,
 } from './Console.styled';
-import { FilterLog } from './FilterLogs';
+import { FilterLog, LogLevel } from './FilterLogs';
 import axios from 'axios';
 
 // This Interface is sync with C++ struct: LogQueue::Log
@@ -63,11 +63,11 @@ export const Console: React.FC = () => {
     <ConsoleFrame>
       <ConsoleTopSection>
         <ConsoleTopSection_FilterHolder>
-          <FilterLog thisFilter="C" />
-          <FilterLog thisFilter="E" />
-          <FilterLog thisFilter="W" />
-          <FilterLog thisFilter="I" />
-          <FilterLog thisFilter="D" />
+          <FilterLog filter={LogLevel.info} />
+          <FilterLog filter={LogLevel.debug} />
+          <FilterLog filter={LogLevel.warn} />
+          <FilterLog filter={LogLevel.err} />
+          <FilterLog filter={LogLevel.critical} />
         </ConsoleTopSection_FilterHolder>
       </ConsoleTopSection>
       <ConsoleLogList>

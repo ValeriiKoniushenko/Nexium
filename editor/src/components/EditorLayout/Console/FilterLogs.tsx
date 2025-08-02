@@ -1,11 +1,20 @@
 import React, { useState } from 'react';
 import { FilterLogsButton } from './Console.styled';
 
+export const enum LogLevel {
+  trace = 'trace',
+  debug = 'debug',
+  info = 'info',
+  warn = 'warn',
+  err = 'err',
+  critical = 'critical',
+}
+
 type Props = {
-  thisFilter: string;
+  filter: LogLevel;
 };
 
-export const FilterLog: React.FC<Props> = ({ thisFilter }) => {
+export const FilterLog: React.FC<Props> = ({ filter }) => {
   const [isActive, setIsActive] = useState(true);
 
   const toggleState = () => {
@@ -14,7 +23,7 @@ export const FilterLog: React.FC<Props> = ({ thisFilter }) => {
 
   return (
     <FilterLogsButton active={isActive} onClick={toggleState}>
-      {thisFilter}
+      {filter.toString()[0].toUpperCase()}
     </FilterLogsButton>
   );
 };
