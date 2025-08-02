@@ -88,16 +88,22 @@ namespace SW
 
     void EditorServer::processGetRequest(const Request& req, Response& res)
     {
-        const std::string webPath = req.path == "/" ? "/index.html" : req.path;
-        const std::string filePath = editorPath + webPath;
+        const Core::StringAtom apiPath = "/api";
+        const auto webPath = Core::StringAtom(req.path == "/" ? "/index.html" : req.path);
+        const std::string filePath = editorPath + webPath.toStdString();
 
-        std::cout << req.path << std::endl;
-
-        if (!std::filesystem::exists(filePath))
+        if (strncmp(webPath.c_str(), apiPath.c_str(), apiPath.size()) == 0)
         {
-            debugLog("Web-editor requests file which doesn't exist: {}"_f << filePath);
+            res.set_content("{ error: 'none'}", "application/json");
         }
+        else
+        {
+            if (!std::filesystem::exists(filePath))
+            {
+                debugLog("Web-editor requests file which doesn't exist: {}"_f << filePath);
+            }
 
-        res.set_file_content(filePath);
+            res.set_file_content(filePath);
+        }
     }
 } // namespace SW
