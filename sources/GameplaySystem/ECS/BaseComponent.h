@@ -177,11 +177,11 @@ namespace SW
          * 2. void([const] BaseComponent*) - will iterate without stopping through all a
          * tree
          */
-        template<IsComponentOrBase TargetT = BaseComponent, class FuncT>
-            requires requires(FuncT f, TargetT* ptr) { f(ptr); }
+        template<class FuncT>
         void forEach(FuncT&& callback)
         {
-            impl_forEach_BFS<TargetT, false>(this, std::forward<decltype(callback)>(callback));
+            Impl_forEach_BFS<BaseComponent, false>(this,
+                                                   std::forward<decltype(callback)>(callback));
         }
 
         /**
@@ -192,11 +192,10 @@ namespace SW
          * 2. void(const BaseComponent*) - will iterate without stopping through all a
          * tree
          */
-        template<IsComponentOrBase TargetT = BaseComponent, class FuncT>
-            requires requires(FuncT f, TargetT* ptr) { f(ptr); }
+        template<class FuncT>
         void forEach(FuncT&& callback) const
         {
-            impl_forEach_BFS<TargetT, true>(this, std::forward<decltype(callback)>(callback));
+            Impl_forEach_BFS<BaseComponent, true>(this, std::forward<decltype(callback)>(callback));
         }
 
         /**
@@ -207,11 +206,11 @@ namespace SW
          * 2. void([const] BaseComponent*) - will iterate without stopping through all a
          * tree
          */
-        template<IsComponentOrBase TargetT = BaseComponent, class FuncT>
-            requires requires(FuncT f, TargetT* ptr) { f(ptr); }
+        template<class FuncT>
         void forEachDFS(FuncT&& callback)
         {
-            impl_forEach_DFS<TargetT, false>(this, std::forward<decltype(callback)>(callback));
+            Impl_forEach_DFS<BaseComponent, false>(this,
+                                                   std::forward<decltype(callback)>(callback));
         }
 
         /**
@@ -222,11 +221,10 @@ namespace SW
          * 2. void(const BaseComponent*) - will iterate without stopping through all a
          * tree
          */
-        template<IsComponentOrBase TargetT = BaseComponent, class FuncT>
-            requires requires(FuncT f, TargetT* ptr) { f(ptr); }
+        template<class FuncT>
         void forEachDFS(FuncT&& callback) const
         {
-            impl_forEach_DFS<TargetT, true>(this, std::forward<decltype(callback)>(callback));
+            Impl_forEach_DFS<BaseComponent, true>(this, std::forward<decltype(callback)>(callback));
         }
 
         // ========================== MISC ==========================
@@ -241,15 +239,14 @@ namespace SW
 
     protected:
         ChildrenT _children;
-        bool _isEnabled = true;
 
     private:
         // ===================== PIMPLs =============================
         template<IsComponentOrBase TargetT, bool isConst, class FuncT>
-        static void impl_forEach_BFS(AdaptiveRawPtr<isConst> me, FuncT&& callback);
+        static void Impl_forEach_BFS(AdaptiveRawPtr<isConst> me, FuncT&& callback);
 
         template<IsComponentOrBase TargetT, bool isConst, class FuncT>
-        static void impl_forEach_DFS(AdaptiveRawPtr<isConst> me, FuncT&& callback);
+        static void Impl_forEach_DFS(AdaptiveRawPtr<isConst> me, FuncT&& callback);
     };
 
     //
@@ -289,6 +286,8 @@ namespace SW
         void clear() override;
         [[nodiscard]] bool isValid() const;
         [[nodiscard]] std::size_t makeHash() const;
+        [[nodiscard]] bool isEnabled() const noexcept { return _isEnabled; }
+        void setEnabled(bool v) noexcept { _isEnabled = v; }
 
         template<IsComponent T>
         [[nodiscard]] bool isTypeOf() const
@@ -298,8 +297,8 @@ namespace SW
 
     protected:
         explicit BaseComponent(const Core::StringAtom* type, const Core::StringAtom& name = ""_atom)
-            : _type{ type },
-              _name{ name }
+            : _name{ name },
+              _type{ type }
         {
 #ifdef DEBUG
             Assert(_type->isStatic());
@@ -312,10 +311,11 @@ namespace SW
         Core::StringAtom _name;
         const Core::StringAtom* const _type = nullptr;
         ComponentHolder* _parent = nullptr;
+        bool _isEnabled = true;
     };
 
     template<IsComponentOrBase TargetT, bool isConst, class FuncT>
-    void ComponentHolder::impl_forEach_BFS(AdaptiveRawPtr<isConst> me, FuncT&& callback)
+    void ComponentHolder::Impl_forEach_BFS(AdaptiveRawPtr<isConst> me, FuncT&& callback)
     {
         if (!Verify(me)) [[unlikely]]
         {
@@ -337,7 +337,7 @@ namespace SW
 
             if (!Verify(root)) [[unlikely]]
             {
-                me->criticalLog("ComponentHolder::impl_forEach_BFS was got nullptr for root.");
+                me->criticalLog("ComponentHolder::Impl_forEach_BFS was got nullptr for root.");
                 return;
             }
 
@@ -368,7 +368,7 @@ namespace SW
     }
 
     template<IsComponentOrBase TargetT, bool isConst, class FuncT>
-    void ComponentHolder::impl_forEach_DFS(AdaptiveRawPtr<isConst> me, FuncT&& callback)
+    void ComponentHolder::Impl_forEach_DFS(AdaptiveRawPtr<isConst> me, FuncT&& callback)
     {
         if (!Verify(me)) [[unlikely]]
         {
@@ -389,7 +389,7 @@ namespace SW
 
             if (!Verify(root)) [[unlikely]]
             {
-                me->criticalLog("ComponentHolder::impl_forEach_DFS was got nullptr for root.");
+                me->criticalLog("ComponentHolder::Impl_forEach_DFS was got nullptr for root.");
                 return;
             }
 

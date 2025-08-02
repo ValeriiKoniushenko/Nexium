@@ -288,30 +288,3 @@ TEST_F(ECSTreeTests, DFSIteratorTest)
             return c->getComponentName() != "Middle2";
         });
 }
-
-TEST_F(ECSTreeTests, IteratorByTypeTest)
-{
-    SW::BaseComponent* found = nullptr;
-    root.forEach(
-        [&](SW::BaseComponent* c)
-        {
-            if (c->getComponentName() == "Middle2")
-            {
-                found = c;
-                return false;
-            }
-
-            return true;
-        });
-
-    ASSERT_NE(nullptr, found);
-
-    (void)found->addChildComponent<DummyComponent>("SomeName");
-
-    std::size_t count = 0;
-    root.forEach<DummyComponent>(
-        [&](SW::BaseComponent*)
-        {
-            ++count;
-        });
-}
