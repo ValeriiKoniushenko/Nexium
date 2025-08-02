@@ -92,9 +92,16 @@ namespace SW
         const auto webPath = Core::StringAtom(req.path == "/" ? "/index.html" : req.path);
         const std::string filePath = editorPath + webPath.toStdString();
 
+        infoLog("New req: " + webPath);
         if (strncmp(webPath.c_str(), apiPath.c_str(), apiPath.size()) == 0)
         {
-            res.set_content("{ error: 'none'}", "application/json");
+            auto json = nlohmann::json::array();
+            for (auto&& log : GetLogsQueue().flush())
+            {
+                json.emplace_back(log.toJson());
+            }
+
+            res.set_content(json.dump(), "application/json");
         }
         else
         {
