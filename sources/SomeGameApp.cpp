@@ -145,6 +145,38 @@ void setupStyle()
     style->TabRounding = 4;
 }
 
+static void ShowExampleAppMainMenuBar()
+{
+    if (ImGui::BeginMainMenuBar())
+    {
+        if (ImGui::BeginMenu("File"))
+        {
+            ImGui::EndMenu();
+        }
+        if (ImGui::BeginMenu("Edit"))
+        {
+            if (ImGui::MenuItem("Undo", "CTRL+Z"))
+            {
+            }
+            if (ImGui::MenuItem("Redo", "CTRL+Y", false, false))
+            {
+            } // Disabled item
+            ImGui::Separator();
+            if (ImGui::MenuItem("Cut", "CTRL+X"))
+            {
+            }
+            if (ImGui::MenuItem("Copy", "CTRL+C"))
+            {
+            }
+            if (ImGui::MenuItem("Paste", "CTRL+V"))
+            {
+            }
+            ImGui::EndMenu();
+        }
+        ImGui::EndMainMenuBar();
+    }
+}
+
 int main()
 {
 #ifdef DEBUG
@@ -283,21 +315,26 @@ int main()
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
-    (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
+
+    ImFont* myFont = io.Fonts->AddFontFromFileTTF("assets/fonts/JetBrainsMono-Regular.ttf", 16.0f);
+    ImGui::PushFont(myFont);
+
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     setupStyle();
     ImGui_ImplGlfw_InitForOpenGL(GetWindow().getRawWindow(), true);
     ImGui_ImplOpenGL3_Init("#version 430");
 
-    GLuint fbo, tex, rbo;
+    auto render = Core::ISize2{ 400, 400 };
+    GLuint fbo = 0, tex = 0, rbo = 0;
     glGenFramebuffers(1, &fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
     // Create color texture
     glGenTextures(1, &tex);
     glBindTexture(GL_TEXTURE_2D, tex);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 400, 400, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, render.width, render.height, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, nullptr);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
@@ -305,16 +342,15 @@ int main()
     // Create and attach depth buffer (REQUIRED!)
     glGenRenderbuffers(1, &rbo);
     glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 400, 400);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, render.width, render.height);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
 
     // Check completeness
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
     {
-        throw std::runtime_error("Framebuffer is not complete!");
+        globalLog.criticalThrowingLog("Framebuffer for editor render is not complete!");
     }
-
-    glBindFramebuffer(GL_FRAMEBUFFER, 0); // Unbind after setup
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
@@ -322,17 +358,12 @@ int main()
     {
         clock.start();
         window.pollEvent();
-        if (glfwGetWindowAttrib(GetWindow().getRawWindow(), GLFW_ICONIFIED) != 0)
-        {
-            ImGui_ImplGlfw_Sleep(10);
-            continue;
-        }
 
         keyboardInput.update();
         mouseInput.update();
 
         glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-        glViewport(0, 0, 400, 400);
+        glViewport(0, 0, render.width, render.height);
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -347,17 +378,41 @@ int main()
         meshes.front().directDraw();
         glBindFramebuffer(GL_FRAMEBUFFER, 0); // Unbind after setup
 
-        glClearColor(0.4f, 0.1f, 0.3f, 1.0f);
+        glClearColor(0.45f, 0.55f, 0.60f, 1.00f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
+        ImGui::Begin("My Window");
+
+        if (ImGui::BeginTabBar("MyTabBar"))
+        {
+            if (ImGui::BeginTabItem("Tab 1"))
+            {
+                ImGui::Text("This is Tab 1");
+                ImGui::EndTabItem();
+            }
+
+            if (ImGui::BeginTabItem("Tab 2"))
+            {
+                ImGui::Text("This is Tab 2");
+                ImGui::EndTabItem();
+            }
+
+            ImGui::EndTabBar();
+        }
+
+        ImGui::End();
+
+        ShowExampleAppMainMenuBar();
         {
             ImGui::Begin("My Render View");
-            ImGui::Image((void*)(intptr_t)tex, ImVec2(400, 400));
+            ImGui::Image((void*)(intptr_t)tex, ImVec2(400, 400), ImVec2(0.0f, 1.0f),
+                         ImVec2(1.0f, 0.0f));
             ImGui::End();
         }
+        /*
         {
             ImGui::Begin("Hello, world!");
             ImGui::Text("This is some useful text.");
@@ -379,6 +434,7 @@ int main()
                         io.Framerate);
             ImGui::End();
         }
+        */
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         glBindFramebuffer(GL_FRAMEBUFFER, 0); // Back to default framebuffer
@@ -388,6 +444,9 @@ int main()
         fpsCounter.newFrameUpdate();
         timeDelta = clock.stop();
     }
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 
     globalLog.infoLog("FPS: {}"_f << fpsCounter.getFPS());
 

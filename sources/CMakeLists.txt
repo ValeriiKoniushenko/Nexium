@@ -1,4 +1,5 @@
 add_subdirectory(Camera)
+add_subdirectory(Editor)
 add_subdirectory(GameplaySystem)
 add_subdirectory(Misc)
 add_subdirectory(InputDevices)
