@@ -91,11 +91,7 @@ namespace SW
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             onTick(world.timeDelta);
-
-            if (gameEditor.isEnabled())
-            {
-                gameEditor.onTick(world.timeDelta);
-            }
+            gameEditor.onTick(world.timeDelta);
 
             window->swapBuffers();
             fpsCounter.newFrameUpdate();

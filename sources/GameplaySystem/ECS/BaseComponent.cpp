@@ -36,6 +36,14 @@ namespace
 namespace SW
 {
 
+    void AbstractComponent::tick()
+    {
+        if (_isEnabled && _isInited)
+        {
+            onTick();
+        }
+    }
+
     bool ComponentHolder::removeChild(const BaseComponent* child)
     {
         for (auto i = _children.begin(); i != _children.end(); ++i)

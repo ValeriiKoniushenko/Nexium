@@ -75,6 +75,15 @@ namespace SW
 
     void GameEditor::onTick(float delta)
     {
+        if (_isEnabled && needToDraw() )
+        {
+            ImGui_ImplOpenGL3_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+            ImGui::NewFrame();
+
+            ImGui::Render();
+            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        }
     }
 
     void GameEditor::destroy()
@@ -206,6 +215,11 @@ namespace SW
         style->GrabRounding = 3;
         style->LogSliderDeadzone = 4;
         style->TabRounding = 4;
+    }
+
+    bool GameEditor::needToDraw()
+    {
+        return !_windows.empty();
     }
 
 } // namespace SW

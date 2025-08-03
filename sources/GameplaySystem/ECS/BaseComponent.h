@@ -44,20 +44,23 @@ public:                                                                         
     CurrentClass(const Core::StringAtom& name = ""_atom)                                           \
         : BaseComponentClass(&componentType, name)                                                 \
     {                                                                                              \
-    }
+    }                                                                                              \
+                                                                                                   \
+protected:                                                                                         \
+    explicit CurrentClass(const Core::StringAtom* type, const Core::StringAtom& name = ""_atom)    \
+        : BaseComponentClass(type, name)                                                           \
+    {                                                                                              \
+    }                                                                                              \
+                                                                                                   \
+public:
 
 #define ECS_REGISTER_NEW_COMPONENT_PROTECTED(CurrentClass, BaseComponentClass)                     \
 public:                                                                                            \
     using Self = CurrentClass;                                                                     \
-    template<bool isConst>                                                                         \
-    using AdaptivePtr                                                                              \
-        = boost::intrusive_ptr<std::conditional_t<isConst, const typename Self, typename Self>>;   \
-    template<bool isConst>                                                                         \
-    using AdaptiveRawPtr = std::conditional_t<isConst, const typename Self, typename Self>*;       \
     using Ptr = boost::intrusive_ptr<CurrentClass>;                                                \
     using CPtr = boost::intrusive_ptr<const CurrentClass>;                                         \
     inline static const auto componentType = Core::StringAtom::Intern(#CurrentClass);              \
-    [[nodiscard]] const Core::StringAtom& GetComponentType()                                       \
+    [[nodiscard]] static const Core::StringAtom& GetComponentType()                                \
     {                                                                                              \
         return CurrentClass::componentType;                                                        \
     }                                                                                              \
@@ -65,6 +68,11 @@ public:                                                                         
 protected:                                                                                         \
     CurrentClass(const Core::StringAtom& name = ""_atom)                                           \
         : BaseComponentClass(&componentType, name)                                                 \
+    {                                                                                              \
+    }                                                                                              \
+                                                                                                   \
+    explicit CurrentClass(const Core::StringAtom* type, const Core::StringAtom& name = ""_atom)    \
+        : BaseComponentClass(type, name)                                                           \
     {                                                                                              \
     }                                                                                              \
                                                                                                    \
@@ -104,10 +112,12 @@ namespace SW
 
         ~AbstractComponent() override = default;
 
+        void tick();
+
         [[nodiscard]] spdlog::logger* getLogger() const override final { return Ecs::getLogger(); }
         [[nodiscard]] const char* getPrefix() const override { return "Component"; }
 
-        virtual void clear() {}
+        virtual void clear() { _isInited = false; }
 
         template<IsComponent T>
         [[nodiscard]] T* castTo()
@@ -117,8 +127,31 @@ namespace SW
             return casted;
         }
 
+        [[nodiscard]] bool isInited() const noexcept { return _isInited; }
+        [[nodiscard]] bool isEnabled() const noexcept { return _isEnabled; }
+        void setEnabled(bool v) noexcept { _isEnabled = v; }
+
     protected:
         AbstractComponent() = default;
+
+        /**
+         * @brief This method will be called automatically. Don't call it directly.
+         */
+        virtual void onInit() {}
+
+        /**
+         * @brief This method will be called automatically. Don't call it directly.
+         */
+        virtual void onTick() {}
+
+        void initialize()
+        {
+            onInit();
+            _isInited = true;
+        }
+
+        bool _isInited = false;
+        bool _isEnabled = false;
     };
 
     //
@@ -160,7 +193,16 @@ namespace SW
             }
 
             onSuccessAddChildComponentValidation(newOne.get());
-            return static_cast<ComponentT*>(_children.emplace_back(std::move(newOne)).get());
+
+            // if this parent wasn't init, lets init at least here
+            if (!_isInited)
+            {
+                initialize();
+            }
+            auto* added = _children.emplace_back(std::move(newOne)).get();
+            added->initialize();
+
+            return static_cast<ComponentT*>(added);
         }
 
         bool removeChild(const BaseComponent* child);
@@ -286,8 +328,6 @@ namespace SW
         void clear() override;
         [[nodiscard]] bool isValid() const;
         [[nodiscard]] std::size_t makeHash() const;
-        [[nodiscard]] bool isEnabled() const noexcept { return _isEnabled; }
-        void setEnabled(bool v) noexcept { _isEnabled = v; }
 
         template<IsComponent T>
         [[nodiscard]] bool isTypeOf() const
@@ -311,7 +351,6 @@ namespace SW
         Core::StringAtom _name;
         const Core::StringAtom* const _type = nullptr;
         ComponentHolder* _parent = nullptr;
-        bool _isEnabled = true;
     };
 
     template<IsComponentOrBase TargetT, bool isConst, class FuncT>

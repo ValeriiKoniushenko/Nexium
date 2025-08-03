@@ -20,27 +20,38 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "EditorWindow.h"
-
-#include "ImGui/backends/imgui_impl_glfw.h"
-#include "ImGui/backends/imgui_impl_opengl3.h"
+#include "EditorMenuBarWindow.h"
 
 namespace SW
 {
 
-    void BaseMenuBarWindowComponent::onTick()
+    void EditorMenuBarWindow::onDraw()
     {
-        if (ImGui::BeginMenuBar()) [[likely]]
+        if (ImGui::BeginMenu("File"))
         {
-            onDraw();
+            if (ImGui::MenuItem("Open"))
+            {
+                // handle open
+            }
+            if (ImGui::MenuItem("Save"))
+            {
+                // handle save
+            }
+            ImGui::EndMenu();
         }
-        ImGui::End();
+
+        if (ImGui::BeginMenu("Edit"))
+        {
+            if (ImGui::MenuItem("Undo"))
+            {
+                // handle undo
+            }
+            if (ImGui::MenuItem("Redo"))
+            {
+                // handle redo
+            }
+            ImGui::EndMenu();
+        }
     }
 
-    void BaseMenuBarWindowComponent::onInit()
-    {
-        BaseEditorWindowComponent::onInit();
-
-        _windowTitle = "Menu Bar";
-    }
 } // namespace SW

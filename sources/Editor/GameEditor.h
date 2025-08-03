@@ -22,6 +22,7 @@
 
 #pragma once
 
+#include "EditorWindow.h"
 #include "ImGui/imgui.h"
 #include "Misc/BaseLog.h"
 #include "ModuleInfo.h"
@@ -54,6 +55,10 @@ namespace SW
 
     protected:
         void setupImGuiStyles();
+        [[nodiscard]] bool needToDraw();
+
+    protected:
+        std::vector<std::unique_ptr<BaseEditorWindowComponent>> _windows;
         bool _isInitImGui = false;
         bool _isEnabled = true;
     };

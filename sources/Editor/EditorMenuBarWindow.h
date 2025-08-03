@@ -20,27 +20,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "EditorWindow.h"
+#pragma once
 
-#include "ImGui/backends/imgui_impl_glfw.h"
-#include "ImGui/backends/imgui_impl_opengl3.h"
+#include "EditorWindow.h"
 
 namespace SW
 {
-
-    void BaseMenuBarWindowComponent::onTick()
+    class EditorMenuBarWindow : public BaseMenuBarWindowComponent
     {
-        if (ImGui::BeginMenuBar()) [[likely]]
-        {
-            onDraw();
-        }
-        ImGui::End();
-    }
+    public:
+        EditorMenuBarWindow() = default;
+        ~EditorMenuBarWindow() override = default;
 
-    void BaseMenuBarWindowComponent::onInit()
-    {
-        BaseEditorWindowComponent::onInit();
-
-        _windowTitle = "Menu Bar";
-    }
+    protected:
+        void onDraw() override;
+    };
+    
 } // namespace SW

@@ -21,7 +21,46 @@
 // SOFTWARE.
 
 #pragma once
+#include "GameplaySystem/ECS/BaseComponent.h"
+#include "ImGui/imgui.h"
+
+#include "Core/String.h"
 
 namespace SW
 {
-}
+    class BaseEditorWindowComponent : public BaseComponent
+    {
+        ECS_REGISTER_NEW_COMPONENT(BaseEditorWindowComponent, BaseComponent);
+    public:
+        /**
+         * @brief Base function for draw & update
+         */
+        virtual void onTick() = 0;
+
+        [[nodiscard]] const Core::StringAtom& getWindowTitle() { return _windowTitle; }
+
+    protected:
+        virtual void onDraw() = 0;
+
+    protected:
+        Core::StringAtom _windowTitle = "Window";
+        bool _pOpen = false;
+    };
+
+    class BaseMenuBarWindowComponent : public BaseEditorWindowComponent
+    {
+        ECS_REGISTER_NEW_COMPONENT(BaseMenuBarWindowComponent, BaseEditorWindowComponent);
+    public:
+
+        void onInit() override;
+
+        /**
+         * @brief Base function for draw & update
+         */
+        void onTick() override;
+
+    protected:
+        ImGuiWindowFlags _windowFlags = 0;
+    };
+
+} // namespace SW
