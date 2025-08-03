@@ -80,9 +80,16 @@ namespace SW
     void KeyboardShortcutsTipsWindow::onDraw()
     {
         ImGui::Text("Shortcuts:");
-        ImGui::Text(" F12 - Toggle render mode");
-        ImGui::Text(" W/A/S/D - Move Control");
-        ImGui::Text(" C/Space - Down/Up");
+        ImGui::Text("    F12     - Toggle render mode");
+        ImGui::Text("    W/A/S/D - Move Control");
+        ImGui::Text("    C/Space - Down/Up");
+        ImGui::Text("    Esc     - exit");
+        ImGui::Text("");
+        ImGui::Text("Globals:");
+        ImGui::Text("Mouse sensitivity");
+        ImGui::SliderFloat("##mouseSensitivity", &gameInstance->mouseSensitivity, 100.f, 1300.f);
+        ImGui::Text("Spectator speed");
+        ImGui::SliderFloat("##spectator_speed", &gameInstance->speed, 1.f, 300.f);
     }
 
     void BaseMenuBarWindowComponent::onInit()

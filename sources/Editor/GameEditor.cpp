@@ -75,6 +75,7 @@ namespace SW
 
         auto menuBar = addNewWindow<EditorMenuBarWindow>();
         auto viewportWindow = addNewWindow<GameViewportWindow>();
+        auto tipsWindow = addNewWindow<KeyboardShortcutsTipsWindow>();
     }
 
     void GameEditor::onTick(float delta)
