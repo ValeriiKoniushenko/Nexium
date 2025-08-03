@@ -1,8 +1,5 @@
 include(FetchContent)
 
-set(FETCHCONTENT_BASE_DIR deps)
-
-
 function(installBoostModule module_name boost_version)
     string(PREPEND full_module_name sw_boost_)
     set(full_module_name "${full_module_name}${module_name}")
@@ -92,13 +89,3 @@ FetchContent_Declare(Utils
 )
 
 FetchContent_MakeAvailable(Utils)
-
-
-FetchContent_Declare(ImGui
-    GIT_REPOSITORY https://github.com/ocornut/imgui.git
-    GIT_TAG v1.92.1
-    GIT_SHALLOW TRUE
-    GIT_PROGRESS TRUE
-)
-
-FetchContent_MakeAvailable(ImGui)

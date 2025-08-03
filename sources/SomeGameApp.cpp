@@ -26,6 +26,9 @@
 #include "Graphics/Primitives/StaticMeshBundle.h"
 #include "Graphics/ShaderManager.h"
 #include "Graphics/Window.h"
+#include "ImGui/backends/imgui_impl_glfw.h"
+#include "ImGui/backends/imgui_impl_opengl3.h"
+#include "ImGui/imgui.h"
 #include "InputDevices/InputManager.h"
 #include "Misc/FPSCounter.h"
 #include "assimp/Importer.hpp"
@@ -174,9 +177,33 @@ int main()
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 
+    IMGUI_CHECKVERSION();
+    float main_scale = 1.f;
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
+    ImGui::StyleColorsDark();
+    ImGuiStyle& style = ImGui::GetStyle();
+    style.ScaleAllSizes(main_scale);
+    style.FontScaleDpi = main_scale;
+    ImGui_ImplGlfw_InitForOpenGL(GetWindow().getRawWindow(), true);
+    ImGui_ImplOpenGL3_Init("#version 430");
+
+    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+    bool a = false;
+    bool b = false;
     while (!window.shouldClose())
     {
         clock.start();
+        window.pollEvent();
+        if (glfwGetWindowAttrib(GetWindow().getRawWindow(), GLFW_ICONIFIED) != 0)
+        {
+            ImGui_ImplGlfw_Sleep(10);
+            continue;
+        }
 
         keyboardInput.update();
         mouseInput.update();
@@ -194,8 +221,43 @@ int main()
 
         meshes.front().directDraw();
 
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+        {
+            static float f = 0.0f;
+            static int counter = 0;
+
+            ImGui::Begin(
+                "Hello, world!"); // Create a window called "Hello, world!" and append into it.
+
+            ImGui::Text("This is some useful text."); // Display some text (you can use a format
+            // strings too)
+            ImGui::Checkbox("Demo Window",
+                            &a); // Edit bools storing our window open/close state
+            ImGui::Checkbox("Another Window", &b);
+
+            ImGui::SliderFloat("float", &f, 0.0f,
+                               1.0f); // Edit 1 float using a slider from 0.0f to 1.0f
+            ImGui::ColorEdit3("clear color",
+                              (float*)&clear_color); // Edit 3 floats representing a color
+
+            if (ImGui::Button("Button")) // Buttons return true when clicked (most widgets return
+                                         // true when edited/activated)
+            {
+                counter++;
+            }
+            ImGui::SameLine();
+            ImGui::Text("counter = %d", counter);
+
+            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate,
+                        io.Framerate);
+            ImGui::End();
+        }
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
         window.swapBuffers();
-        window.pollEvent();
 
         fpsCounter.newFrameUpdate();
         timeDelta = clock.stop();

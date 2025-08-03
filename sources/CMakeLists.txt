@@ -13,6 +13,7 @@ target_link_libraries(SpriteWalkerEngine INTERFACE
     SW::Misc
     SW::InputDevices
     SW::Graphics
+    SW::ImGui
 )
 
 target_include_directories(SpriteWalkerEngine INTERFACE ./)
