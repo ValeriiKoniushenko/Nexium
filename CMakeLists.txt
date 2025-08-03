@@ -39,3 +39,5 @@ include(FetchDependencies)
 
 add_subdirectory(sources)
 add_subdirectory(tests)
+
+add_subdirectory(game-example)

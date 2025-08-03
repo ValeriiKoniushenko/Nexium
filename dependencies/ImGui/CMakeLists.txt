@@ -11,9 +11,11 @@ file(GLOB HEADERS "*.h")
 add_library(${TARGET_NAME} STATIC ${CPP_SOURCES} ${HEADERS})
 add_library(SW::${MAIN_NAME} ALIAS ${TARGET_NAME})
 
-target_include_directories(${TARGET_NAME} PUBLIC ../)
+target_link_libraries(${TARGET_NAME} PUBLIC
+    glfw
+)
 
-target_link_libraries(${TARGET_NAME} PUBLIC glfw)
+target_include_directories(${TARGET_NAME} PUBLIC ../)
 
 target_compile_options(${TARGET_NAME} PRIVATE
     $<$<CONFIG:Release>:-O3>

@@ -13,6 +13,7 @@
 //  [ ] Platform: Missing mouse cursor shape/visibility support.
 //  [ ] Platform: Missing clipboard support (not supported by Glut).
 //  [ ] Platform: Missing gamepad support.
+//  [ ] Platform: Missing multi-viewport support (multiple windows).
 
 // You can use unmodified imgui_impl_* files in your project. See examples/ folder for examples of using this.
 // Prefer including the entire imgui/ repository into your project (either as a copy or as a submodule), and only build the backends you need.
@@ -34,10 +35,10 @@
 //  2018-11-30: Misc: Setting up io.BackendPlatformName so it can be displayed in the About Window.
 //  2018-03-22: Added GLUT Platform binding.
 
-#include "imgui.h"
+#include "../imgui.h"
 #ifndef IMGUI_DISABLE
 #include "imgui_impl_glut.h"
-    #define GL_SILENCE_DEPRECATION
+#define GL_SILENCE_DEPRECATION
 #ifdef __APPLE__
 #include <GLUT/glut.h>
 #else

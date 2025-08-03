@@ -38,6 +38,9 @@ namespace SW
         [[nodiscard]] const char* getPrefix() const override { return "World"; }
 
     public:
+        float timeDelta = 0.f;
+        glm::vec3 lightPos = glm::vec3(1'000'000.f, 1'000'000.f, 1'000'000.f);
+
         PlayerState playerState;
         GameState gameState;
         LevelData levelData;

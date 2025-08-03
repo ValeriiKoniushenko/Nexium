@@ -160,7 +160,7 @@ static void ShowExampleAppMainMenuBar()
             }
             if (ImGui::MenuItem("Redo", "CTRL+Y", false, false))
             {
-            } // Disabled item
+            }
             ImGui::Separator();
             if (ImGui::MenuItem("Cut", "CTRL+X"))
             {
@@ -263,22 +263,25 @@ int main()
         const float mlt = state.leftShift.cast() == Keyboard::KeyState::Pressed ? 10.f : 1.f;
         return speed * mlt;
     };
-    keyboardInput.create("moveForward", GLFW_KEY_W)->onPress.subscribe([&](auto state){ camera.moveForward(getRealSpeed(state) * timeDelta); });
-    keyboardInput.create("moveBackward", GLFW_KEY_S)->onPress.subscribe([&](auto state){ camera.moveForward(-getRealSpeed(state) * timeDelta); });
-    keyboardInput.create("moveRight", GLFW_KEY_D)->onPress.subscribe([&](auto state){ camera.moveRight(-getRealSpeed(state) * timeDelta); });
-    keyboardInput.create("moveLeft", GLFW_KEY_A)->onPress.subscribe([&](auto state){ camera.moveRight(getRealSpeed(state) * timeDelta); });
-    keyboardInput.create("moveUp", GLFW_KEY_SPACE)->onPress.subscribe([&](auto state){ camera.moveUp(-getRealSpeed(state) * timeDelta); });
-    keyboardInput.create("moveDown", GLFW_KEY_C)->onPress.subscribe([&](auto state){ camera.moveUp(getRealSpeed(state) * timeDelta); });
+    keyboardInput.create("moveForward", GLFW_KEY_W)->onPress.subscribe([&](auto state){
+camera.moveForward(getRealSpeed(state) * timeDelta); }); keyboardInput.create("moveBackward",
+GLFW_KEY_S)->onPress.subscribe([&](auto state){ camera.moveForward(-getRealSpeed(state) *
+timeDelta); }); keyboardInput.create("moveRight", GLFW_KEY_D)->onPress.subscribe([&](auto state){
+camera.moveRight(-getRealSpeed(state) * timeDelta); }); keyboardInput.create("moveLeft",
+GLFW_KEY_A)->onPress.subscribe([&](auto state){ camera.moveRight(getRealSpeed(state) * timeDelta);
+}); keyboardInput.create("moveUp", GLFW_KEY_SPACE)->onPress.subscribe([&](auto state){
+camera.moveUp(-getRealSpeed(state) * timeDelta); }); keyboardInput.create("moveDown",
+GLFW_KEY_C)->onPress.subscribe([&](auto state){ camera.moveUp(getRealSpeed(state) * timeDelta); });
     keyboardInput.create("exit", GLFW_KEY_ESCAPE)->onPress.subscribe([&](auto){ window.close(); });
     auto toggleCursorMode = keyboardInput.create("toggleCursorMode", GLFW_KEY_M);
     toggleCursorMode->onPress.subscribe([&](auto) { window.toggleCursorMode(); });
     toggleCursorMode->setIsRepeatable(false);
-    mouseInput.create("cameraView", 0)->onMove.subscribe([&](glm::vec2 delta, auto){ camera.yawAndPitch(delta * timeDelta * mouseSensitivity); });
+    mouseInput.create("cameraView", 0)->onMove.subscribe([&](glm::vec2 delta, auto){
+camera.yawAndPitch(delta * timeDelta * mouseSensitivity); });
     // clang-format on
 
     // ====================== MISC ==========================
-    std::vector<std::filesystem::path> modelPaths
-        = { /*"assets/base-3d/Models/FBX/Tree.fbx",*/ "assets/base-3d/Models/FBX/FireHydrant.fbx" };
+    std::vector<std::filesystem::path> modelPaths = { "assets/base-3d/Models/FBX/FireHydrant.fbx" };
 
     Assimp::Importer importer;
     for (auto&& path : modelPaths)
@@ -352,8 +355,6 @@ int main()
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
     while (!window.shouldClose())
     {
         clock.start();
@@ -412,7 +413,7 @@ int main()
                          ImVec2(1.0f, 0.0f));
             ImGui::End();
         }
-        /*
+
         {
             ImGui::Begin("Hello, world!");
             ImGui::Text("This is some useful text.");
@@ -423,7 +424,6 @@ int main()
             ImGui::Checkbox("Demo Window", &a);
             ImGui::Checkbox("Another Window", &b);
             ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
-            ImGui::ColorEdit3("clear color", reinterpret_cast<float*>(&clear_color));
             if (ImGui::Button("Button"))
             {
                 counter++;
@@ -434,7 +434,7 @@ int main()
                         io.Framerate);
             ImGui::End();
         }
-        */
+
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         glBindFramebuffer(GL_FRAMEBUFFER, 0); // Back to default framebuffer
@@ -452,3 +452,12 @@ int main()
 
     return 0;
 }
+
+/*
+#include "TemplateGameInstance.h"
+
+int main()
+{
+    gameInstance->init();
+}
+*/

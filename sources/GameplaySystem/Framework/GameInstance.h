@@ -23,6 +23,8 @@
 #pragma once
 
 #include "Core/Singleton.h"
+#include "Graphics/ShaderManager.h"
+#include "Graphics/Window.h"
 #include "Misc/BaseLog.h"
 #include "ModuleInfo.h"
 #include "UserInterface.h"
@@ -31,28 +33,37 @@
 namespace SW
 {
 
-    class GameInstance : public Core::StrictSingleton<GameInstance>, public BaseLog
+    class GameInstance : public BaseLog
     {
     public:
         [[nodiscard]] spdlog::logger* getLogger() const override { return Framework::getLogger(); }
         [[nodiscard]] const char* getPrefix() const override { return "GameInstance"; }
+
+        void init();
 
     public:
         World world;
         UserInterface userInterface;
 
     protected:
+        virtual void onTick() = 0;
+        virtual void onInitFinish() = 0;
+        virtual void onLoadShaders() = 0;
+
+    protected:
+        // Easy-access variables
+        ShaderManager* shaderManager = nullptr;
+        Window* window = nullptr;
+
+        // Pre-launch settings
+        std::filesystem::path assetsPath = "assets";
+        std::filesystem::path shaderPath = "assets/shaders";
+        Core::StringAtom spdlogDefaultPatter = "%D [%L] [%n] %v";
+        Core::StringAtom defaultWindowName = "Sprite Walker";
+        Core::ISize2 defaultWindowSize = Core::ISize2{ 1200, 800 };
+
     private:
+        void gameLoop();
     };
-
-    [[nodiscard]] inline GameInstance& GetGameInstance()
-    {
-        return GameInstance::instance();
-    }
-
-    [[nodiscard]] inline World& GetWorld()
-    {
-        return GameInstance::instance().world;
-    }
 
 } // namespace SW

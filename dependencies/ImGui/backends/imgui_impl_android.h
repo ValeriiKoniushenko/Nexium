@@ -8,6 +8,7 @@
 //  [ ] Platform: Clipboard support.
 //  [ ] Platform: Gamepad support.
 //  [ ] Platform: Mouse cursor shape and visibility (ImGuiBackendFlags_HasMouseCursors). Disable with 'io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange'. FIXME: Check if this is even possible with Android.
+//  [ ] Platform: Multi-viewport support (multiple windows). Not meaningful on Android.
 // Important:
 //  - Consider using SDL or GLFW backend on Android, which will be more full-featured than this.
 //  - FIXME: On-screen keyboard currently needs to be enabled by the application (see examples/ and issue #3446)
@@ -22,7 +23,7 @@
 // - Introduction, links and more at the top of imgui.cpp
 
 #pragma once
-#include "imgui.h"      // IMGUI_IMPL_API
+#include "../imgui.h"      // IMGUI_IMPL_API
 #ifndef IMGUI_DISABLE
 
 struct ANativeWindow;
