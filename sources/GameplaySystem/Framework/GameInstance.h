@@ -23,6 +23,7 @@
 #pragma once
 
 #include "Core/Singleton.h"
+#include "Editor/GameEditor.h"
 #include "Graphics/ShaderManager.h"
 #include "Graphics/Window.h"
 #include "Misc/BaseLog.h"
@@ -42,11 +43,12 @@ namespace SW
         void init();
 
     public:
+        GameEditor gameEditor;
         World world;
         UserInterface userInterface;
 
     protected:
-        virtual void onTick() = 0;
+        virtual void onTick(float delta) = 0;
         virtual void onInitFinish() = 0;
         virtual void onLoadShaders() = 0;
 

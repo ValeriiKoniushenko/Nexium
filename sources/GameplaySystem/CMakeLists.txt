@@ -14,6 +14,7 @@ add_library(SW::${MAIN_NAME} ALIAS ${TARGET_NAME})
 target_link_libraries(${TARGET_NAME} PUBLIC
     SW::Misc
     SW::Graphics
+    SW::Editor
     Boost::smart_ptr
 )
 

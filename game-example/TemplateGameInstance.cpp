@@ -50,7 +50,7 @@ void TemplateGameInstance::onLoadShaders()
     }
 }
 
-void TemplateGameInstance::onTick()
+void TemplateGameInstance::onTick(float delta)
 {
     keyboardInput.update();
     mouseInput.update();

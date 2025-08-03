@@ -22,23 +22,36 @@
 
 #pragma once
 
-#include "Camera/Camera.h"
-#include "GameplaySystem/Framework/GameInstance.h"
-#include "Graphics/Primitives/StaticMeshBundle.h"
-#include "InputDevices/InputManager.h"
+#include "Misc/BaseLog.h"
+#include "ModuleInfo.h"
+#include "Utils/CopyableAndMoveableBehaviour.h"
 
-class TemplateGameInstance : public SW::GameInstance
+namespace SW
 {
-protected:
-    void onInitFinish() override;
-    void onLoadShaders() override;
-    void onTick(float delta) override;
+    class GameEditor : public Utils::NotCopyableAndNotMoveable, public BaseLog
+    {
+    public:
+        GameEditor() = default;
+        ~GameEditor() override;
 
-protected:
-    SW::KeyboardInputManger keyboardInput;
-    SW::MouseInputManger mouseInput;
-    std::vector<SW::StaticMeshBundle> meshes;
-    SW::BaseCamera camera;
-};
+        void initialize();
 
-extern std::unique_ptr<TemplateGameInstance> gameInstance;
+        void onTick(float delta);
+        [[nodiscard]] bool isEnabled() const noexcept { return _isEnabled; }
+        void setIsEnabled(bool v) noexcept { _isEnabled = v; }
+
+        [[nodiscard]] spdlog::logger* getLogger() const override { return SW::Editor::getLogger(); }
+
+        /**
+         * @brief Totally destroy the object. Will called automatically at the destructor.
+         */
+        void destroy();
+
+    protected:
+        void setupImGuiStyles();
+
+        bool _isInitImGui = false;
+        bool _isEnabled = true;
+    };
+
+} // namespace SW
