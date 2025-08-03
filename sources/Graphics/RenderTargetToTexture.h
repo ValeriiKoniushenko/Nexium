@@ -41,7 +41,8 @@ namespace SW
         void setRenderSize(Core::ISize2 size) noexcept { _size = size; }
 
     private:
-        Core::ISize2 _size = Core::ISize2{ 800, 800 };
+        Core::ISize2 _size = Core::ISize2{ 400, 400 };
         GLuint _fbo = 0, _tex = 0, _rbo = 0;
+        bool _isGenerated = false;
     };
 } // namespace SW

@@ -29,6 +29,11 @@ namespace SW
 
     void RenderTargetToTexture::generate()
     {
+        if (_isGenerated)
+        {
+            return;
+        }
+
         glGenFramebuffers(1, &_fbo);
         glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
 
@@ -52,6 +57,8 @@ namespace SW
             globalLog.criticalThrowingLog("Framebuffer for editor render is not complete!");
         }
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        _isGenerated = true;
     }
 
     void RenderTargetToTexture::callMePreDraw()

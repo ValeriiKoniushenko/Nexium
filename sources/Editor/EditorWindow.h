@@ -21,21 +21,26 @@
 // SOFTWARE.
 
 #pragma once
+#include "Core/String.h"
 #include "GameplaySystem/ECS/BaseComponent.h"
 #include "ImGui/imgui.h"
-
-#include "Core/String.h"
 
 namespace SW
 {
     class BaseEditorWindowComponent : public BaseComponent
     {
         ECS_REGISTER_NEW_COMPONENT(BaseEditorWindowComponent, BaseComponent);
+
     public:
         [[nodiscard]] const Core::StringAtom& getWindowTitle() { return _windowTitle; }
 
     protected:
+        void onTick() override final;
+        virtual void onUpdate() {};
         virtual void onDraw() = 0;
+
+        [[nodiscard]] virtual bool beginWindowDraw() = 0;
+        virtual void endWindowDraw() = 0;
 
     protected:
         ImGuiWindowFlags _windowFlags = 0;
@@ -43,23 +48,46 @@ namespace SW
         bool _pOpen = false;
     };
 
+    class BaseFloatEditorWindowComponent : public BaseEditorWindowComponent
+    {
+        ECS_REGISTER_NEW_COMPONENT(BaseFloatEditorWindowComponent, BaseEditorWindowComponent);
+
+    public:
+        [[nodiscard]] Core::FSize2 getWindowSize() const noexcept { return _size; }
+
+    protected:
+        void onUpdate() override;
+
+    protected:
+        Core::FSize2 _size;
+    };
+
     template<class T>
-    concept IsEditorWindowComponent = std::derived_from<T, BaseEditorWindowComponent> && IsComponent<T>;
+    concept IsEditorWindowComponent
+        = std::derived_from<T, BaseEditorWindowComponent> && IsComponent<T>;
 
     class BaseMenuBarWindowComponent : public BaseEditorWindowComponent
     {
         ECS_REGISTER_NEW_COMPONENT(BaseMenuBarWindowComponent, BaseEditorWindowComponent);
-    public:
 
+    public:
         void onInit() override;
 
-        /**
-         * @brief Base function for draw & update
-         */
-        void onTick() override;
-
     protected:
-        ImGuiWindowFlags _windowFlags = 0;
+        [[nodiscard]] bool beginWindowDraw() override;
+        void endWindowDraw() override;
+    };
+
+    class GameViewportWindow : public BaseFloatEditorWindowComponent
+    {
+        ECS_REGISTER_NEW_COMPONENT(GameViewportWindow, BaseFloatEditorWindowComponent);
+
+    public:
+    protected:
+        void onInit() override;
+        [[nodiscard]] bool beginWindowDraw() override;
+        void endWindowDraw() override;
+        void onDraw() override;
     };
 
 } // namespace SW

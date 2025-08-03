@@ -74,6 +74,7 @@ namespace SW
         _isInitImGui = true;
 
         auto menuBar = addNewWindow<EditorMenuBarWindow>();
+        auto viewportWindow = addNewWindow<GameViewportWindow>();
     }
 
     void GameEditor::onTick(float delta)

@@ -67,6 +67,8 @@ namespace SW
         }
         onLoadShaders();
 
+        renderToTextureObject.generate();
+
         gameEditor.initialize();
 
         onInitFinish();
@@ -87,11 +89,31 @@ namespace SW
         {
             clock.start();
             _window->pollEvent();
-            glClearColor(0.45f, 0.55f, 0.60f, 1.00f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            onTick(world.timeDelta);
-            gameEditor.onTick(world.timeDelta);
+            if (renderMode.cast() == RenderMode::Default)
+            {
+                glClearColor(0.45f, 0.55f, 0.60f, 1.00f);
+                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                const auto size = _window->getSize();
+                glViewport(0, 0, size.width, size.height);
+                onTick(world.timeDelta);
+                gameEditor.onTick(world.timeDelta);
+            }
+            else
+            {
+                renderToTextureObject.callMePreDraw();
+                glClearColor(0.45f, 0.55f, 0.60f, 1.00f);
+                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+                const auto size = renderToTextureObject.getRenderSize();
+                glViewport(0, 0, size.width, size.height);
+                onTick(world.timeDelta);
+                renderToTextureObject.callMeAfterDraw();
+
+                glClearColor(0.45f, 0.65f, 0.40f, 1.00f);
+                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                gameEditor.onTick(world.timeDelta);
+            }
 
             _window->swapBuffers();
             fpsCounter.newFrameUpdate();

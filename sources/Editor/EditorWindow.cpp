@@ -22,18 +22,54 @@
 
 #include "EditorWindow.h"
 
+#include "../../game-example/TemplateGameInstance.h"
 #include "ImGui/backends/imgui_impl_glfw.h"
 
 namespace SW
 {
 
-    void BaseMenuBarWindowComponent::onTick()
+    void BaseEditorWindowComponent::onTick()
     {
-        if (ImGui::BeginMainMenuBar())
+        if (beginWindowDraw())
         {
+            onUpdate(); // in the future maybe will be called not every tick
             onDraw();
         }
-        ImGui::EndMainMenuBar();
+        endWindowDraw();
+    }
+
+    void BaseFloatEditorWindowComponent::onUpdate()
+    {
+        const ImVec2 size = ImGui::GetWindowSize();
+        _size = Core::FSize2{ size.x, size.y };
+    }
+
+    void GameViewportWindow::onInit()
+    {
+        BaseEditorWindowComponent::onInit();
+
+        _windowTitle = "Viewport";
+    }
+
+    bool GameViewportWindow::beginWindowDraw()
+    {
+        return ImGui::Begin(_windowTitle.c_str(), &_pOpen, _windowFlags);
+    }
+
+    void GameViewportWindow::endWindowDraw()
+    {
+        ImGui::End();
+    }
+
+    void GameViewportWindow::onDraw()
+    {
+        if (gameInstance->renderMode.cast() == GameInstance::RenderMode::ToTexture)
+        {
+            const auto& r = gameInstance->renderToTextureObject;
+            const ImVec2 renderSize = { static_cast<float>(r.getRenderSize().width),
+                                        static_cast<float>(r.getRenderSize().height) };
+            ImGui::Image(r.getTextureId(), renderSize, ImVec2(0.0f, 1.0f), ImVec2(1.0f, 0.0f));
+        }
     }
 
     void BaseMenuBarWindowComponent::onInit()
@@ -41,5 +77,15 @@ namespace SW
         BaseEditorWindowComponent::onInit();
 
         _windowTitle = "Menu Bar";
+    }
+
+    bool BaseMenuBarWindowComponent::beginWindowDraw()
+    {
+        return ImGui::BeginMainMenuBar();
+    }
+
+    void BaseMenuBarWindowComponent::endWindowDraw()
+    {
+        ImGui::EndMainMenuBar();
     }
 } // namespace SW

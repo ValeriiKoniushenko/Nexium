@@ -47,6 +47,7 @@ namespace SW
         void init();
 
     public:
+        RenderMode renderMode = RenderMode::ToTexture;
         GameEditor gameEditor;
         RenderTargetToTexture renderToTextureObject;
 
@@ -70,7 +71,6 @@ namespace SW
         Core::StringAtom _defaultWindowName = "Sprite Walker";
         Core::ISize2 _defaultWindowSize = Core::ISize2{ 1200, 800 };
 
-        RenderMode _renderMode = RenderMode::Default;
 
     private:
         void gameLoop();
