@@ -45,4 +45,5 @@ namespace SW
         GLuint _fbo = 0, _tex = 0, _rbo = 0;
         bool _isGenerated = false;
     };
+
 } // namespace SW

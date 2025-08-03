@@ -24,6 +24,8 @@
 
 int main()
 {
+    gameInstance = std::make_unique<TemplateGameInstance>();
+
     gameInstance->init();
     gameInstance.reset();
 }

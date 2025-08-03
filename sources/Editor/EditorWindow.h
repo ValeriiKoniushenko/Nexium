@@ -57,6 +57,8 @@ namespace SW
 
     protected:
         void onUpdate() override;
+        [[nodiscard]] bool beginWindowDraw() override;
+        void endWindowDraw() override;
 
     protected:
         Core::FSize2 _size;
@@ -85,8 +87,16 @@ namespace SW
     public:
     protected:
         void onInit() override;
-        [[nodiscard]] bool beginWindowDraw() override;
-        void endWindowDraw() override;
+        void onDraw() override;
+    };
+
+    class KeyboardShortcutsTipsWindow : public BaseFloatEditorWindowComponent
+    {
+        ECS_REGISTER_NEW_COMPONENT(KeyboardShortcutsTipsWindow, BaseFloatEditorWindowComponent);
+
+    public:
+    private:
+        void onInit() override;
         void onDraw() override;
     };
 

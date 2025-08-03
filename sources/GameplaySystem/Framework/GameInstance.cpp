@@ -29,6 +29,8 @@
 #include "Graphics/Window.h"
 #include "Misc/FPSCounter.h"
 
+std::unique_ptr<SW::GameInstance> gameInstance = nullptr;
+
 namespace SW
 {
 
@@ -78,6 +80,8 @@ namespace SW
 
         renderToTextureObject.generate();
         gameEditor.initialize();
+        initShortcuts();
+
         onInitFinish();
 
         gameLoop();
@@ -96,6 +100,9 @@ namespace SW
         {
             clock.start();
             _window->pollEvent();
+
+            keyboardInput.update();
+            mouseInput.update();
 
             if (renderMode.cast() == RenderMode::Default)
             {
@@ -128,5 +135,26 @@ namespace SW
         }
 
         globalLog.infoLog("FPS: {}"_f << fpsCounter.getFPS());
+    }
+    void GameInstance::initShortcuts()
+    {
+        // clang-format off
+        static auto getRealSpeed = [this](SW::KeyboardIA::SpecKeysState state)
+        {
+            const float mlt = state.leftShift.cast() == SW::Keyboard::KeyState::Pressed ? 10.f : 1.f;
+            return speed * mlt;
+        };
+        keyboardInput.create("moveForward", GLFW_KEY_W)->onPress.subscribe([&](auto state){ camera.moveForward(getRealSpeed(state) * world.timeDelta); });
+        keyboardInput.create("moveBackward", GLFW_KEY_S)->onPress.subscribe([&](auto state){ camera.moveForward(-getRealSpeed(state) * world.timeDelta); });
+        keyboardInput.create("moveRight", GLFW_KEY_D)->onPress.subscribe([&](auto state){ camera.moveRight(-getRealSpeed(state) * world.timeDelta); });
+        keyboardInput.create("moveLeft", GLFW_KEY_A)->onPress.subscribe([&](auto state){ camera.moveRight(getRealSpeed(state) *   world.timeDelta); });
+        keyboardInput.create("moveUp", GLFW_KEY_SPACE)->onPress.subscribe([&](auto state){ camera.moveUp(-getRealSpeed(state) *  world.timeDelta); });
+        keyboardInput.create("moveDown", GLFW_KEY_C)->onPress.subscribe([&](auto state){ camera.moveUp(getRealSpeed(state) *     world.timeDelta); });
+        keyboardInput.create("exit", GLFW_KEY_ESCAPE)->onPress.subscribe([&](auto){ _window->close(); });
+        const auto toggleCursorMode = keyboardInput.create("toggleCursorMode", GLFW_KEY_M);
+        toggleCursorMode->onPress.subscribe([&](auto) { _window->toggleCursorMode(); });
+        toggleCursorMode->setIsRepeatable(false);
+        mouseInput.create("cameraView", 0)->onMove.subscribe([&](glm::vec2 delta, auto){ camera.yawAndPitch(delta * world.timeDelta * mouseSensitivity); });
+        // clang-format on
     }
 } // namespace SW

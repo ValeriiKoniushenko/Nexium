@@ -22,7 +22,7 @@
 
 #include "EditorWindow.h"
 
-#include "../../game-example/TemplateGameInstance.h"
+#include "GameplaySystem/Framework/GameInstance.h"
 #include "ImGui/backends/imgui_impl_glfw.h"
 
 namespace SW
@@ -51,12 +51,12 @@ namespace SW
         _windowTitle = "Viewport";
     }
 
-    bool GameViewportWindow::beginWindowDraw()
+    bool BaseFloatEditorWindowComponent::beginWindowDraw()
     {
         return ImGui::Begin(_windowTitle.c_str(), &_pOpen, _windowFlags);
     }
 
-    void GameViewportWindow::endWindowDraw()
+    void BaseFloatEditorWindowComponent::endWindowDraw()
     {
         ImGui::End();
     }
@@ -70,6 +70,19 @@ namespace SW
                                         static_cast<float>(r.getRenderSize().height) };
             ImGui::Image(r.getTextureId(), renderSize, ImVec2(0.0f, 1.0f), ImVec2(1.0f, 0.0f));
         }
+    }
+
+    void KeyboardShortcutsTipsWindow::onInit()
+    {
+        BaseFloatEditorWindowComponent::onInit();
+    }
+
+    void KeyboardShortcutsTipsWindow::onDraw()
+    {
+        ImGui::Text("Shortcuts:");
+        ImGui::Text(" F12 - Toggle render mode");
+        ImGui::Text(" W/A/S/D - Move Control");
+        ImGui::Text(" C/Space - Down/Up");
     }
 
     void BaseMenuBarWindowComponent::onInit()

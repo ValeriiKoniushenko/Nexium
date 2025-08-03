@@ -22,10 +22,8 @@
 
 #pragma once
 
-#include "Camera/Camera.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Graphics/Primitives/StaticMeshBundle.h"
-#include "InputDevices/InputManager.h"
 
 class TemplateGameInstance : public SW::GameInstance
 {
@@ -36,7 +34,4 @@ protected:
 
 protected:
     std::vector<SW::StaticMeshBundle> meshes;
-    SW::BaseCamera camera;
 };
-
-extern std::unique_ptr<TemplateGameInstance> gameInstance;

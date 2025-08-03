@@ -22,7 +22,7 @@
 
 #pragma once
 
-#include "Core/Singleton.h"
+#include "Camera/Camera.h"
 #include "Editor/GameEditor.h"
 #include "Graphics/RenderTargetToTexture.h"
 #include "Graphics/ShaderManager.h"
@@ -47,9 +47,14 @@ namespace SW
 
         void init();
 
+    public: // Temporary place. MOVE IT !!!!
+        float speed = 50.f;
+        float mouseSensitivity = 700.0;
+        BaseCamera camera;
+
     public:
-        SW::KeyboardInputManger keyboardInput;
-        SW::MouseInputManger mouseInput;
+        KeyboardInputManger keyboardInput;
+        MouseInputManger mouseInput;
 
         RenderMode renderMode = RenderMode::ToTexture;
         GameEditor gameEditor;
@@ -75,9 +80,11 @@ namespace SW
         Core::StringAtom _defaultWindowName = "Sprite Walker";
         Core::ISize2 _defaultWindowSize = Core::ISize2{ 1200, 800 };
 
-
     private:
         void gameLoop();
+        void initShortcuts();
     };
 
 } // namespace SW
+
+extern std::unique_ptr<SW::GameInstance> gameInstance;
