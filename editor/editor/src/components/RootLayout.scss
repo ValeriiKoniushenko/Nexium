@@ -1,6 +1,0 @@
-@use '../App.scss' ;
-
-#RootLayout{
-    background-color: gray;
-    height: calc(100vh - App.$top-height - App.$bottom-height);
-}
