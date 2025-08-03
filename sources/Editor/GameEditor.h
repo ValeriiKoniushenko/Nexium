@@ -33,7 +33,8 @@ namespace SW
     class GameEditor : public Utils::NotCopyableAndNotMoveable, public BaseLog
     {
     public:
-        inline static std::filesystem::path defaultImGuiFontPath = "assets/fonts/JetBrainsMono-Regular.ttf";
+        inline static std::filesystem::path defaultImGuiFontPath
+            = "assets/fonts/JetBrainsMono-Regular.ttf";
         inline static float defaultImGuiFontSize = 16.f;
         inline static int defaultIoConfigFlagImGui = ImGuiConfigFlags_NavEnableKeyboard;
 
@@ -46,19 +47,27 @@ namespace SW
         [[nodiscard]] bool isEnabled() const noexcept { return _isEnabled; }
         void setIsEnabled(bool v) noexcept { _isEnabled = v; }
 
-        [[nodiscard]] spdlog::logger* getLogger() const override { return SW::Editor::getLogger(); }
+        template<IsEditorWindowComponent T>
+        [[nodiscard]] typename T::Ptr addNewWindow()
+        {
+            auto& a = _windows.emplace_back(new T);
+            a->initialize();
+            return boost::static_pointer_cast<T>(a);
+        }
 
         /**
          * @brief Totally destroy the object. Will called automatically at the destructor.
          */
         void destroy();
 
+        [[nodiscard]] spdlog::logger* getLogger() const override { return SW::Editor::getLogger(); }
+
     protected:
         void setupImGuiStyles();
         [[nodiscard]] bool needToDraw();
 
     protected:
-        std::vector<std::unique_ptr<BaseEditorWindowComponent>> _windows;
+        std::vector<BaseEditorWindowComponent::Ptr> _windows;
         bool _isInitImGui = false;
         bool _isEnabled = true;
     };

@@ -22,6 +22,7 @@
 
 #include "GameEditor.h"
 
+#include "EditorMenuBarWindow.h"
 #include "Graphics/Window.h"
 #include "ImGui/backends/imgui_impl_glfw.h"
 #include "ImGui/backends/imgui_impl_opengl3.h"
@@ -71,11 +72,13 @@ namespace SW
         ImGui_ImplGlfw_InitForOpenGL(GetWindow().getRawWindow(), true);
         ImGui_ImplOpenGL3_Init(GetGlslVersionShaderLike().c_str());
         _isInitImGui = true;
+
+        auto menuBar = addNewWindow<EditorMenuBarWindow>();
     }
 
     void GameEditor::onTick(float delta)
     {
-        if (_isEnabled && needToDraw() )
+        if (_isEnabled && needToDraw())
         {
             ImGui_ImplOpenGL3_NewFrame();
             ImGui_ImplGlfw_NewFrame();
@@ -94,6 +97,7 @@ namespace SW
             ImGui_ImplGlfw_Shutdown();
         }
     }
+
     void GameEditor::setupImGuiStyles()
     {
         ImGuiStyle* style = &ImGui::GetStyle();

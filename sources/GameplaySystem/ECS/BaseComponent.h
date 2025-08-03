@@ -140,6 +140,19 @@ namespace SW
         void setNoTick(bool v) { _noTick = v; }
         [[nodiscard]] bool getNoTick() const noexcept { return _noTick; }
 
+        /**
+         * @brief Call this function directly only if you sure in it.
+         * It should be called only once per one component.
+         */
+        void initialize()
+        {
+            if (!_isInited)
+            {
+                onInit();
+                _isInited = true;
+            }
+        }
+
     protected:
         AbstractComponent() = default;
 
@@ -152,12 +165,6 @@ namespace SW
          * @brief This method will be called automatically. Don't call it directly.
          */
         virtual void onTick() {}
-
-        void initialize()
-        {
-            onInit();
-            _isInited = true;
-        }
 
         bool _isInited = false;
         bool _isEnabled = false;

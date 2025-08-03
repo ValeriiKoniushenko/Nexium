@@ -32,7 +32,6 @@ namespace SW
     {
         ECS_REGISTER_NEW_COMPONENT(BaseEditorWindowComponent, BaseComponent);
     public:
-
         [[nodiscard]] const Core::StringAtom& getWindowTitle() { return _windowTitle; }
 
     protected:
@@ -42,6 +41,9 @@ namespace SW
         Core::StringAtom _windowTitle = "Window";
         bool _pOpen = false;
     };
+
+    template<class T>
+    concept IsEditorWindowComponent = std::derived_from<T, BaseEditorWindowComponent> && IsComponent<T>;
 
     class BaseMenuBarWindowComponent : public BaseEditorWindowComponent
     {
