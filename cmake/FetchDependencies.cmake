@@ -85,8 +85,20 @@ FetchContent_MakeAvailable(Assimp)
 
 
 FetchContent_Declare(Utils
-        GIT_REPOSITORY https://github.com/ValeriiKoniushenko/Utils.git
-        GIT_TAG origin/develop
+    GIT_REPOSITORY https://github.com/ValeriiKoniushenko/Utils.git
+    GIT_TAG origin/develop
+    GIT_SHALLOW TRUE
+    GIT_PROGRESS TRUE
 )
 
 FetchContent_MakeAvailable(Utils)
+
+
+FetchContent_Declare(ImGui
+    GIT_REPOSITORY https://github.com/ocornut/imgui.git
+    GIT_TAG v1.92.1
+    GIT_SHALLOW TRUE
+    GIT_PROGRESS TRUE
+)
+
+FetchContent_MakeAvailable(ImGui)

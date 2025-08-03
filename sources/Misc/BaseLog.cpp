@@ -27,85 +27,10 @@ namespace SW
 
     GlobalLog globalLog = {};
 
-    nlohmann::json LogsQueue::Log::toJson() const
-    {
-        nlohmann::json json;
-        json["author"] = author;
-        json["authorPrefix"] = authorPrefix;
-        json["message"] = message;
-        json["time"] = time;
-        auto levelStr = spdlog::level::to_string_view(level);
-        json["level"] = levelStr.data();
-
-        return json;
-    }
-
-    void LogsQueue::Log::fromJson(const nlohmann::json& json)
-    {
-        author = json["author"].get<Core::StringAtom>();
-        authorPrefix = json["authorPrefix"].get<Core::StringAtom>();
-        message = json["message"].get<Core::StringAtom>();
-        time = json["time"].get<std::time_t>();
-        level = spdlog::level::from_str(json["level"].get<std::string>());
-    }
-
-    void LogsQueue::push(Log&& log)
-    {
-        std::unique_lock lg(_mutex);
-        _q.push(std::move(log));
-    }
-
-    std::vector<LogsQueue::Log> LogsQueue::flush()
-    {
-        std::vector<LogsQueue::Log> logs;
-        std::unique_lock lg(_mutex);
-        logs.reserve(_q.size());
-
-        while (!_q.empty())
-        {
-            logs.emplace_back(_q.front());
-            _q.pop();
-        }
-
-        return logs;
-    }
-
-    LogsQueue::Log LogsQueue::frontAndPop()
-    {
-        std::unique_lock lg(_mutex);
-        auto l = _q.front();
-        _q.pop();
-        return l;
-    }
-
-    bool LogsQueue::isEmpty() const
-    {
-        std::shared_lock sl(_mutex);
-        return _q.empty();
-    }
-
-    std::size_t LogsQueue::size() const
-    {
-        std::shared_lock sl(_mutex);
-        return _q.size();
-    }
-
     void BaseLog::pushLog(level l, const char* str) const
     {
         auto* logger = getLogger();
         logger->log(level::info, getCompleteText(str).c_str());
-
-        if (spdlog::should_log(l))
-        {
-            LogsQueue::Log log;
-            log.author = logger->name();
-            log.authorPrefix = getPrefix();
-            log.message = str;
-            log.time = std::time(nullptr);
-            log.level = l;
-
-            GetLogsQueue().push(std::move(log));
-        }
     }
 
     void BaseLog::criticalThrowingLog(const char* str) const

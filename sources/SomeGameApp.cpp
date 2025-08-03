@@ -20,9 +20,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-
-#include "Editor/Server.h"
-
 #include "Camera/Camera.h"
 #include "Core/Timer.h"
 #include "Graphics/Image.h"
@@ -49,18 +46,6 @@ int main()
 #endif
     std::cout << std::fixed << std::setprecision(15);
     spdlog::set_pattern("%D [%L] [%n] %v");
-
-    //    _____
-    //   /  ___|
-    //   \ `--.   ___  _ __ __   __ ___  _ __
-    //    `--. \ / _ \| '__|\ \ / // _ \| '__|
-    //   /\__/ /|  __/| |    \ V /|  __/| |
-    //   \____/  \___||_|     \_/  \___||_|
-    //------------------------------------------
-    auto& server = GetEditorServer();
-    server.setPort(61005);
-    server.initialize();
-    server.sync_start();
 
     //    _    _  _             _
     //   | |  | |(_)           | |
@@ -155,7 +140,7 @@ int main()
 
     // ====================== MISC ==========================
     std::vector<std::filesystem::path> modelPaths
-        = { "assets/base-3d/Models/FBX/Tree.fbx", "assets/base-3d/Models/FBX/FireHydrant.fbx" };
+        = { /*"assets/base-3d/Models/FBX/Tree.fbx",*/ "assets/base-3d/Models/FBX/FireHydrant.fbx" };
 
     Assimp::Importer importer;
     for (auto&& path : modelPaths)

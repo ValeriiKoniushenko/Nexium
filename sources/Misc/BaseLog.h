@@ -33,37 +33,6 @@
 
 namespace SW
 {
-    class LogsQueue : public Core::StrictSingleton<LogsQueue>
-    {
-        SINGLETONS_FRIEND(LogsQueue)
-    public:
-        struct Log : public JsonAdapter
-        {
-            Core::StringAtom author;
-            Core::StringAtom authorPrefix;
-            Core::StringAtom message;
-            std::time_t time = {};
-            spdlog::level::level_enum level = spdlog::level::off;
-
-            [[nodiscard]] nlohmann::json toJson() const override;
-            void fromJson(const nlohmann::json& json) override;
-        };
-
-        void push(Log&& log);
-        [[nodiscard]] std::vector<Log> flush();
-        [[nodiscard]] Log frontAndPop();
-        [[nodiscard]] bool isEmpty() const;
-        [[nodiscard]] std::size_t size() const;
-
-    private:
-        std::queue<Log> _q;
-        mutable std::shared_mutex _mutex;
-    };
-
-    [[nodiscard]] inline LogsQueue& GetLogsQueue()
-    {
-        return LogsQueue::instance();
-    }
 
     class BaseLog
     {
