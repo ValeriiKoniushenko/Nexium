@@ -60,7 +60,7 @@ namespace SW
 
     Window::~Window()
     {
-        glfwTerminate();
+        destroy();
     }
 
     void Window::create(const Core::StringAtom& title, Core::ISize2 size /* = { 300, 300 }*/)
@@ -104,7 +104,12 @@ namespace SW
     void Window::close()
     {
         glfwSetWindowShouldClose(_window, GLFW_TRUE);
+    }
+
+    void Window::destroy()
+    {
         ImGui::DestroyContext();
+        glfwTerminate();
     }
 
     bool Window::shouldClose() const

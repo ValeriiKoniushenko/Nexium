@@ -51,6 +51,7 @@ namespace SW
 
         void create(const Core::StringAtom& title, Core::ISize2 size = Core::ISize2{ 300, 300 });
         void close();
+        void destroy();
         void clear(int code);
 
         [[nodiscard]] bool shouldClose() const;
