@@ -30,7 +30,7 @@ std::unique_ptr<TemplateGameInstance> gameInstance = std::make_unique<TemplateGa
 
 void TemplateGameInstance::onLoadShaders()
 {
-    auto* shader = shaderManager->getShaderProgram("color"_atom);
+    auto* shader = _shaderManager->getShaderProgram("color"_atom);
     if (Verify(shader))
     {
         shader->setVertexAttributeCallback(
@@ -55,7 +55,7 @@ void TemplateGameInstance::onTick(float delta)
     keyboardInput.update();
     mouseInput.update();
 
-    auto* shader = shaderManager->getShaderProgram("color"_atom);
+    auto* shader = _shaderManager->getShaderProgram("color"_atom);
     shader->use();
     shader->setUniform("uObjectColor"_atom, 1.0f, 1.0f, 1.0f);
     shader->setUniform("uLightColor"_atom, 1.0f, 1.0f, 1.0f);
@@ -85,9 +85,9 @@ void TemplateGameInstance::onInitFinish()
     keyboardInput.create("moveLeft", GLFW_KEY_A)->onPress.subscribe([&](auto state){ camera.moveRight(getRealSpeed(state) *   world.timeDelta); });
     keyboardInput.create("moveUp", GLFW_KEY_SPACE)->onPress.subscribe([&](auto state){ camera.moveUp(-getRealSpeed(state) *  world.timeDelta); });
     keyboardInput.create("moveDown", GLFW_KEY_C)->onPress.subscribe([&](auto state){ camera.moveUp(getRealSpeed(state) *     world.timeDelta); });
-    keyboardInput.create("exit", GLFW_KEY_ESCAPE)->onPress.subscribe([&](auto){ window->close(); });
+    keyboardInput.create("exit", GLFW_KEY_ESCAPE)->onPress.subscribe([&](auto){ _window->close(); });
     const auto toggleCursorMode = keyboardInput.create("toggleCursorMode", GLFW_KEY_M);
-    toggleCursorMode->onPress.subscribe([&](auto) { window->toggleCursorMode(); });
+    toggleCursorMode->onPress.subscribe([&](auto) { _window->toggleCursorMode(); });
     toggleCursorMode->setIsRepeatable(false);
     mouseInput.create("cameraView", 0)->onMove.subscribe([&](glm::vec2 delta, auto){ camera.yawAndPitch(delta * world.timeDelta * mouseSensitivity); });
     // clang-format on
@@ -105,7 +105,7 @@ void TemplateGameInstance::onInitFinish()
         {
             SW::StaticMeshBundle mesh;
             mesh.importFrom(scene->mRootNode, scene, path);
-            mesh.setShaderProgram(shaderManager->getShaderProgram("color"_atom));
+            mesh.setShaderProgram(_shaderManager->getShaderProgram("color"_atom));
             meshes.push_back(std::move(mesh));
         }
     }

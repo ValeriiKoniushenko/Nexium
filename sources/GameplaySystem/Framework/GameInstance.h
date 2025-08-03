@@ -24,6 +24,7 @@
 
 #include "Core/Singleton.h"
 #include "Editor/GameEditor.h"
+#include "Graphics/RenderTargetToTexture.h"
 #include "Graphics/ShaderManager.h"
 #include "Graphics/Window.h"
 #include "Misc/BaseLog.h"
@@ -37,6 +38,9 @@ namespace SW
     class GameInstance : public BaseLog
     {
     public:
+        CreateEnum(RenderMode, int, Default, ToTexture);
+
+    public:
         [[nodiscard]] spdlog::logger* getLogger() const override { return Framework::getLogger(); }
         [[nodiscard]] const char* getPrefix() const override { return "GameInstance"; }
 
@@ -44,6 +48,8 @@ namespace SW
 
     public:
         GameEditor gameEditor;
+        RenderTargetToTexture renderToTextureObject;
+
         World world;
         UserInterface userInterface;
 
@@ -54,15 +60,17 @@ namespace SW
 
     protected:
         // Easy-access variables
-        ShaderManager* shaderManager = nullptr;
-        Window* window = nullptr;
+        ShaderManager* _shaderManager = nullptr;
+        Window* _window = nullptr;
 
         // Pre-launch settings
-        std::filesystem::path assetsPath = "assets";
-        std::filesystem::path shaderPath = "assets/shaders";
-        Core::StringAtom spdlogDefaultPatter = "%D [%L] [%n] %v";
-        Core::StringAtom defaultWindowName = "Sprite Walker";
-        Core::ISize2 defaultWindowSize = Core::ISize2{ 1200, 800 };
+        std::filesystem::path _assetsPath = "assets";
+        std::filesystem::path _shaderPath = "assets/shaders";
+        Core::StringAtom _spdlogDefaultPatter = "%D [%L] [%n] %v";
+        Core::StringAtom _defaultWindowName = "Sprite Walker";
+        Core::ISize2 _defaultWindowSize = Core::ISize2{ 1200, 800 };
+
+        RenderMode _renderMode = RenderMode::Default;
 
     private:
         void gameLoop();

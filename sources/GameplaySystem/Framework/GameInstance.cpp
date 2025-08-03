@@ -38,7 +38,7 @@ namespace SW
         spdlog::set_level(spdlog::level::trace);
 #endif
         std::cout << std::fixed << std::setprecision(15);
-        spdlog::set_pattern(spdlogDefaultPatter.toStdString());
+        spdlog::set_pattern(_spdlogDefaultPatter.toStdString());
 
         //    _    _  _             _
         //   | |  | |(_)           | |
@@ -47,8 +47,8 @@ namespace SW
         //   \  /\  /| || | | || (_| || (_) |\ V  V /
         //    \/  \/ |_||_| |_| \__,_| \___/  \_/\_/
         //----------------------------------------------
-        window = &GetWindow();
-        window->create(defaultWindowName, defaultWindowSize);
+        _window = &GetWindow();
+        _window->create(_defaultWindowName, _defaultWindowSize);
 
         //    _____  _                 _
         //   /  ___|| |               | |
@@ -57,13 +57,13 @@ namespace SW
         //   /\__/ /| | | || (_| || (_| ||  __/| |   \__ \
         //   \____/ |_| |_| \__,_| \__,_| \___||_|   |___/
         //-------------------------------------------------
-        shaderManager = &GetShaderManager();
-        shaderManager->loadShaders(shaderPath);
-        shaderManager->debugLog("Was loaded {} shaders."_f << shaderManager->countOfShaders());
-        for (const auto& notLoadedShader : shaderManager->getFailedShaders())
+        _shaderManager = &GetShaderManager();
+        _shaderManager->loadShaders(_shaderPath);
+        _shaderManager->debugLog("Was loaded {} shaders."_f << _shaderManager->countOfShaders());
+        for (const auto& notLoadedShader : _shaderManager->getFailedShaders())
         {
-            shaderManager->warnLog("Shader '{}' found but not loaded. It contains some error[s]."_f
-                                   << notLoadedShader);
+            _shaderManager->warnLog("Shader '{}' found but not loaded. It contains some error[s]."_f
+                                    << notLoadedShader);
         }
         onLoadShaders();
 
@@ -83,17 +83,17 @@ namespace SW
 
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
-        while (!window->shouldClose())
+        while (!_window->shouldClose())
         {
             clock.start();
-            window->pollEvent();
+            _window->pollEvent();
             glClearColor(0.45f, 0.55f, 0.60f, 1.00f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             onTick(world.timeDelta);
             gameEditor.onTick(world.timeDelta);
 
-            window->swapBuffers();
+            _window->swapBuffers();
             fpsCounter.newFrameUpdate();
             world.timeDelta = clock.stop();
         }

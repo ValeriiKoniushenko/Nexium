@@ -104,7 +104,7 @@ int main()
         shader->setUniform("uProjAndView"_atom, camera.getMatrix());
 
         meshes.front().directDraw();
-        glBindFramebuffer(GL_FRAMEBUFFER, 0); // Unbind after setup
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         glClearColor(0.45f, 0.55f, 0.60f, 1.00f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
