@@ -90,7 +90,7 @@ namespace SW
             glClearColor(0.45f, 0.55f, 0.60f, 1.00f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            // onTick(world.timeDelta);
+            onTick(world.timeDelta);
             gameEditor.onTick(world.timeDelta);
 
             window->swapBuffers();
