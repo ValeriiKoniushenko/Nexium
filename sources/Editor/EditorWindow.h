@@ -32,10 +32,6 @@ namespace SW
     {
         ECS_REGISTER_NEW_COMPONENT(BaseEditorWindowComponent, BaseComponent);
     public:
-        /**
-         * @brief Base function for draw & update
-         */
-        virtual void onTick() = 0;
 
         [[nodiscard]] const Core::StringAtom& getWindowTitle() { return _windowTitle; }
 
