@@ -35,8 +35,6 @@ protected:
     void onTick(float delta) override;
 
 protected:
-    SW::KeyboardInputManger keyboardInput;
-    SW::MouseInputManger mouseInput;
     std::vector<SW::StaticMeshBundle> meshes;
     SW::BaseCamera camera;
 };

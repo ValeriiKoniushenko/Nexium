@@ -27,6 +27,7 @@
 #include "Graphics/RenderTargetToTexture.h"
 #include "Graphics/ShaderManager.h"
 #include "Graphics/Window.h"
+#include "InputDevices/InputManager.h"
 #include "Misc/BaseLog.h"
 #include "ModuleInfo.h"
 #include "UserInterface.h"
@@ -47,6 +48,9 @@ namespace SW
         void init();
 
     public:
+        SW::KeyboardInputManger keyboardInput;
+        SW::MouseInputManger mouseInput;
+
         RenderMode renderMode = RenderMode::ToTexture;
         GameEditor gameEditor;
         RenderTargetToTexture renderToTextureObject;

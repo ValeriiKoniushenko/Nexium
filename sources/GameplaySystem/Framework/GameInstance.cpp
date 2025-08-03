@@ -67,10 +67,17 @@ namespace SW
         }
         onLoadShaders();
 
+        auto toggleSimulation = keyboardInput.create("toggleSimulation", GLFW_KEY_F12);
+        toggleSimulation->setIsRepeatable(false);
+        toggleSimulation->onPress.subscribe(
+            [this](auto)
+            {
+                renderMode = renderMode.cast() == RenderMode::Default ? RenderMode::ToTexture
+                                                                      : RenderMode::Default;
+            });
+
         renderToTextureObject.generate();
-
         gameEditor.initialize();
-
         onInitFinish();
 
         gameLoop();
