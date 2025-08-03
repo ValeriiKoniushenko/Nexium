@@ -23,18 +23,17 @@
 #include "EditorWindow.h"
 
 #include "ImGui/backends/imgui_impl_glfw.h"
-#include "ImGui/backends/imgui_impl_opengl3.h"
 
 namespace SW
 {
 
     void BaseMenuBarWindowComponent::onTick()
     {
-        if (ImGui::BeginMenuBar()) [[likely]]
+        if (ImGui::BeginMainMenuBar())
         {
             onDraw();
         }
-        ImGui::End();
+        ImGui::EndMainMenuBar();
     }
 
     void BaseMenuBarWindowComponent::onInit()

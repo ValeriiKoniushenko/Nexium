@@ -38,6 +38,7 @@ namespace SW
         virtual void onDraw() = 0;
 
     protected:
+        ImGuiWindowFlags _windowFlags = 0;
         Core::StringAtom _windowTitle = "Window";
         bool _pOpen = false;
     };

@@ -167,7 +167,7 @@ namespace SW
         virtual void onTick() {}
 
         bool _isInited = false;
-        bool _isEnabled = false;
+        bool _isEnabled = true;
 
         // if put 'true' means that the function
         bool _noTick = false;
