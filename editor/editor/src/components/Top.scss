@@ -1,0 +1,6 @@
+@use '../App.scss' ;
+
+#Top{
+    background-color: red;
+    height: App.$top-height;
+}

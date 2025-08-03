@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import './App.css'
+import './App.scss'
 import Top from './components/Top'
 import Bottom from './components/Bottom'
 import RootLayout from './components/RootLayout'
