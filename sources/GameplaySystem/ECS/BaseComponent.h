@@ -112,6 +112,12 @@ namespace SW
 
         ~AbstractComponent() override = default;
 
+        /**
+         * @brief Call it in your main loop. After that if several conditions
+         * will be matched(is initialized, is enabled, etc) will be called
+         * onTick. Inherit from onTick - and implement your own logic for
+         * update and\or draw.
+         */
         void tick();
 
         [[nodiscard]] spdlog::logger* getLogger() const override final { return Ecs::getLogger(); }
@@ -130,6 +136,9 @@ namespace SW
         [[nodiscard]] bool isInited() const noexcept { return _isInited; }
         [[nodiscard]] bool isEnabled() const noexcept { return _isEnabled; }
         void setEnabled(bool v) noexcept { _isEnabled = v; }
+
+        void setNoTick(bool v) { _noTick = v; }
+        [[nodiscard]] bool getNoTick() const noexcept { return _noTick; }
 
     protected:
         AbstractComponent() = default;
@@ -152,6 +161,9 @@ namespace SW
 
         bool _isInited = false;
         bool _isEnabled = false;
+
+        // if put 'true' means that the function
+        bool _noTick = false;
     };
 
     //

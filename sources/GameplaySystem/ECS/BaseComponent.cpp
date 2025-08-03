@@ -38,7 +38,7 @@ namespace SW
 
     void AbstractComponent::tick()
     {
-        if (_isEnabled && _isInited)
+        if (_isEnabled && _isInited && !_noTick)
         {
             onTick();
         }
