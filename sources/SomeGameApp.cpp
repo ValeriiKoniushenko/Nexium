@@ -290,10 +290,34 @@ int main()
     ImGui_ImplGlfw_InitForOpenGL(GetWindow().getRawWindow(), true);
     ImGui_ImplOpenGL3_Init("#version 430");
 
+    GLuint fbo, tex, rbo;
+    glGenFramebuffers(1, &fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    // Create color texture
+    glGenTextures(1, &tex);
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 400, 400, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
+
+    // Create and attach depth buffer (REQUIRED!)
+    glGenRenderbuffers(1, &rbo);
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 400, 400);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+
+    // Check completeness
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+    {
+        throw std::runtime_error("Framebuffer is not complete!");
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0); // Unbind after setup
+
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-    bool a = false;
-    bool b = false;
     while (!window.shouldClose())
     {
         clock.start();
@@ -307,6 +331,8 @@ int main()
         keyboardInput.update();
         mouseInput.update();
 
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+        glViewport(0, 0, 400, 400);
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -319,17 +345,28 @@ int main()
         shader->setUniform("uProjAndView"_atom, camera.getMatrix());
 
         meshes.front().directDraw();
+        glBindFramebuffer(GL_FRAMEBUFFER, 0); // Unbind after setup
+
+        glClearColor(0.4f, 0.1f, 0.3f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
         {
-            ImGui::NewFrame();
+            ImGui::Begin("My Render View");
+            ImGui::Image((void*)(intptr_t)tex, ImVec2(400, 400));
+            ImGui::End();
+        }
+        {
             ImGui::Begin("Hello, world!");
             ImGui::Text("This is some useful text.");
-            ImGui::Checkbox("Demo Window", &a);
-            ImGui::Checkbox("Another Window", &b);
+            static bool a = false;
+            static bool b = false;
             static float f = 0;
             static int counter = 0;
+            ImGui::Checkbox("Demo Window", &a);
+            ImGui::Checkbox("Another Window", &b);
             ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
             ImGui::ColorEdit3("clear color", reinterpret_cast<float*>(&clear_color));
             if (ImGui::Button("Button"))
@@ -344,6 +381,7 @@ int main()
         }
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        glBindFramebuffer(GL_FRAMEBUFFER, 0); // Back to default framebuffer
 
         window.swapBuffers();
 
