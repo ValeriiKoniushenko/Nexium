@@ -22,6 +22,7 @@
 
 #pragma once
 
+#include "ImGui/imgui.h"
 #include "Misc/BaseLog.h"
 #include "ModuleInfo.h"
 #include "Utils/CopyableAndMoveableBehaviour.h"
@@ -31,6 +32,10 @@ namespace SW
     class GameEditor : public Utils::NotCopyableAndNotMoveable, public BaseLog
     {
     public:
+        inline static std::filesystem::path defaultImGuiFontPath = "assets/fonts/JetBrainsMono-Regular.ttf";
+        inline static float defaultImGuiFontSize = 16.f;
+        inline static int defaultIoConfigFlagImGui = ImGuiConfigFlags_NavEnableKeyboard;
+
         GameEditor() = default;
         ~GameEditor() override;
 
@@ -49,7 +54,6 @@ namespace SW
 
     protected:
         void setupImGuiStyles();
-
         bool _isInitImGui = false;
         bool _isEnabled = true;
     };

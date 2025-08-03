@@ -60,16 +60,15 @@ namespace SW
         setupImGuiStyles();
 
         ImGuiIO& io = ImGui::GetIO();
+        io.ConfigFlags |= defaultIoConfigFlagImGui;
 
-        ImFont* myFont
-            = io.Fonts->AddFontFromFileTTF("assets/fonts/JetBrainsMono-Regular.ttf", 16.0f);
+        ImFont* myFont = io.Fonts->AddFontFromFileTTF(defaultImGuiFontPath.generic_string().c_str(),
+                                                      defaultImGuiFontSize);
         ImGui::PushFont(myFont);
 
-        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
         setupImGuiStyles();
-        ImGui_ImplGlfw_InitForOpenGL(GetWindow().getRawWindow(), true);
 
+        ImGui_ImplGlfw_InitForOpenGL(GetWindow().getRawWindow(), true);
         ImGui_ImplOpenGL3_Init(GetGlslVersionShaderLike().c_str());
         _isInitImGui = true;
     }
@@ -96,6 +95,11 @@ namespace SW
         }
 
         ImVec4* colors = style->Colors;
+        if (!Verify(colors))
+        {
+            errorLog("Can't setup ImGUI colors. ImGui::GetStyle()->Colors return nullptr");
+            return;
+        }
 
         // Base colors for a pleasant and modern dark theme with dark accents
         colors[ImGuiCol_Text]
