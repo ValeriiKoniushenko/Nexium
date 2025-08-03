@@ -22,6 +22,10 @@
 
 #include "Window.h"
 
+#include "ImGui/backends/imgui_impl_glfw.h"
+#include "ImGui/backends/imgui_impl_opengl3.h"
+#include "ImGui/imgui.h"
+
 namespace
 {
 
@@ -89,6 +93,9 @@ namespace SW
             criticalThrowingLog("Impossible to initialize GLAD.");
         }
 
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+
         debugLog("OpenGL version: {}"_f << reinterpret_cast<const char*>(glGetString(GL_VERSION)));
         debugLog("GLFW version: {}"_f
                  << reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION)));
@@ -97,6 +104,7 @@ namespace SW
     void Window::close()
     {
         glfwSetWindowShouldClose(_window, GLFW_TRUE);
+        ImGui::DestroyContext();
     }
 
     bool Window::shouldClose() const

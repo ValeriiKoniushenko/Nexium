@@ -20,6 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+/*
 #include "Camera/Camera.h"
 #include "Core/Timer.h"
 #include "Graphics/Image.h"
@@ -315,8 +316,6 @@ camera.yawAndPitch(delta * timeDelta * mouseSensitivity); });
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
 
     ImFont* myFont = io.Fonts->AddFontFromFileTTF("assets/fonts/JetBrainsMono-Regular.ttf", 16.0f);
@@ -452,12 +451,12 @@ camera.yawAndPitch(delta * timeDelta * mouseSensitivity); });
 
     return 0;
 }
+*/
 
-/*
 #include "TemplateGameInstance.h"
 
 int main()
 {
     gameInstance->init();
+    gameInstance.reset();
 }
-*/

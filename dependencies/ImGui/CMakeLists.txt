@@ -21,3 +21,6 @@ target_compile_options(${TARGET_NAME} PRIVATE
     $<$<CONFIG:Release>:-O3>
     $<$<CONFIG:Debug>:-g3 -O0 -fno-inline>
 )
+
+add_executable(ImGuiExample examples/example_glfw_opengl3/main.cpp)
+target_link_libraries(ImGuiExample PUBLIC SW::ImGui SW::Glad)
