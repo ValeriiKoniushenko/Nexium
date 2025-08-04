@@ -22,6 +22,9 @@
 
 #pragma once
 
+#include "Core/Enum.h"
+#include "Core/Size.h"
+
 // clang-format off
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
@@ -30,3 +33,17 @@
 #ifdef SW_TESTS_TARGET
 
 #endif
+
+namespace SW
+{
+
+    // clang-format off
+    CreateEnum(ViewportMode, int,
+        Default,
+        ZoomIn
+    );
+    // clang-format on
+
+    void UpdateGlViewport(Core::FSize2 originalSize, const float aspectRatio, ViewportMode mode);
+
+} // namespace SW

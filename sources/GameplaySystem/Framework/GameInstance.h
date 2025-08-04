@@ -46,9 +46,11 @@ namespace SW
         [[nodiscard]] const char* getPrefix() const override { return "GameInstance"; }
 
         void init();
+        void updateViewport();
 
     public: // Temporary place. MOVE IT !!!!
         float speed = 50.f;
+        float windowAspectRatio = 16.f / 9.f;
         float mouseSensitivity = 700.0;
         BaseCamera camera;
 
@@ -83,7 +85,6 @@ namespace SW
     private:
         void gameLoop();
         void initShortcuts();
-        void updateViewport();
     };
 
 } // namespace SW

@@ -23,6 +23,7 @@
 #include "GameEditor.h"
 
 #include "EditorMenuBarWindow.h"
+#include "GameplaySystem/Framework/GameInstance.h"
 #include "Graphics/Window.h"
 #include "ImGui/backends/imgui_impl_glfw.h"
 #include "ImGui/backends/imgui_impl_opengl3.h"
@@ -76,6 +77,16 @@ namespace SW
         auto rootDocker = registerNewWindow<RootDockWindow>("Root dock space");
         auto menuBar = registerNewWindow<EditorMenuBarWindow>("Menu Bar");
         auto viewportWindow = registerNewWindow<GameViewportEWC>("Viewport");
+        viewportWindow->onSizeChanged.subscribe(
+            [this](auto outer, auto inner)
+            {
+                if (gameInstance->renderMode.cast() == GameInstance::RenderMode::Editor)
+                {
+                    gameInstance->renderToTextureObject.setRenderSize(
+                        static_cast<Core::ISize2>(inner));
+                    gameInstance->updateViewport();
+                }
+            });
         auto tipsWindow = registerNewWindow<KeyboardShortcutsEWC>("Keyboard Shortcuts");
     }
 

@@ -55,6 +55,15 @@ namespace SW
     {
         const ImVec2 size = ImGui::GetWindowSize();
         _size = Core::FSize2{ size.x, size.y };
+
+        if (_size != _oldSize)
+        {
+            const auto regionMax = ImGui::GetContentRegionMax();
+            const auto regionMin = ImGui::GetWindowContentRegionMin();
+            _innerSize = Core::FSize2(regionMax.x - regionMin.x, regionMax.y - regionMin.y);
+            onSizeChanged.trigger(_size, _innerSize);
+            _oldSize = _size;
+        }
     }
 
     void GameViewportEWC::onInit()

@@ -25,6 +25,8 @@
 #include "GameplaySystem/ECS/BaseComponent.h"
 #include "ImGui/imgui.h"
 
+#include <Core/Delegate.h>
+
 namespace SW
 {
     /**
@@ -66,9 +68,17 @@ namespace SW
 
     public:
         [[nodiscard]] Core::FSize2 getWindowSize() const noexcept { return _size; }
+        [[nodiscard]] Core::FSize2 getInnerWindowSize() const noexcept { return _innerSize; }
 
         void setFitContent(bool v);
         [[nodiscard]] bool isFitContent() const noexcept { return _isFitContent; }
+
+        /**
+         * @brief will be called while the window's size changing
+         * @param Core::FSize2 new outer(full) size
+         * @param Core::FSize2 new inner size
+         */
+        Core::Delegate<void(Core::FSize2, Core::FSize2)> onSizeChanged;
 
     protected:
         void onUpdate() override;
@@ -77,6 +87,8 @@ namespace SW
 
     protected:
         Core::FSize2 _size;
+        Core::FSize2 _innerSize;
+        Core::FSize2 _oldSize = Core::FSize2{ -1, -1 };
         bool _isFitContent = false;
     };
 

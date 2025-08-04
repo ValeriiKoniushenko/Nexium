@@ -98,9 +98,6 @@ namespace SW
                 renderToTextureObject.callMePreDraw();
                 glClearColor(0.45f, 0.55f, 0.60f, 1.00f);
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-                const auto size = renderToTextureObject.getRenderSize();
-                glViewport(0, 0, size.width, size.height);
                 onTick(world.timeDelta);
                 renderToTextureObject.callMeAfterDraw();
 
@@ -153,7 +150,12 @@ namespace SW
     {
         if (renderMode.cast() == RenderMode::GameOnly)
         {
-            _window->updateViewport(16.f / 9.f, Window::AspectRatioMode::ZoomIn);
+            _window->updateViewport(windowAspectRatio, ViewportMode::ZoomIn);
+        }
+        else
+        {
+            UpdateGlViewport(static_cast<Core::FSize2>(renderToTextureObject.getRenderSize()),
+                             windowAspectRatio, ViewportMode::ZoomIn);
         }
     }
 } // namespace SW

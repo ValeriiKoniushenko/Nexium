@@ -43,11 +43,6 @@ namespace SW
             Disabled = GLFW_CURSOR_DISABLED,
             Hidden = GLFW_CURSOR_HIDDEN
         );
-
-        CreateEnum(AspectRatioMode, int,
-            Default,
-            ZoomIn
-        );
         // clang-format on
 
     public:
@@ -65,7 +60,7 @@ namespace SW
 
         void pollEvent();
 
-        void updateViewport(float aspect, AspectRatioMode mode = AspectRatioMode::Default);
+        void updateViewport(float aspect, ViewportMode mode = ViewportMode::Default);
 
         [[nodiscard]] Core::ISize2 getSize() const;
 

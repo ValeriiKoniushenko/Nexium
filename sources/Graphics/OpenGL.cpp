@@ -20,32 +20,44 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#pragma once
-
 #include "OpenGL.h"
-
-#include <Core/Size.h>
 
 namespace SW
 {
-    class RenderTargetToTexture
+
+    void UpdateGlViewport(Core::FSize2 originalSize, const float aspectRatio, ViewportMode mode)
     {
-    public:
-        void generate();
+        Core::FSize2 view = originalSize;
+        glm::vec2 pos = {};
 
-        void callMePreDraw();
-        void callMeAfterDraw();
+        if (mode.cast() == ViewportMode::Default)
+        {
+            view.height = view.width / aspectRatio;
 
-        [[nodiscard]] GLuint getTextureId() const noexcept { return _tex; }
-        [[nodiscard]] Core::ISize2 getRenderSize() const noexcept { return _size; }
-        void setRenderSize(Core::ISize2 size);
+            if (view.height > originalSize.height)
+            {
+                view.height = originalSize.height;
+                view.width = originalSize.height * aspectRatio;
+            }
 
-        void destroy();
+            pos.x = (originalSize.width - view.width) / 2.f;
+            pos.y = (originalSize.height - view.height) / 2.f;
+        }
+        else
+        {
+            view.width = view.height * aspectRatio;
 
-    private:
-        Core::ISize2 _size = Core::ISize2{ 400, 400 };
-        GLuint _fbo = 0, _tex = 0, _rbo = 0;
-        bool _isGenerated = false;
-    };
+            if (view.width < originalSize.width)
+            {
+                view.width = originalSize.width;
+                view.height = view.width / aspectRatio;
+            }
+            pos.x = (originalSize.width - view.width) / 2.f;
+            pos.y = 0;
+        }
+
+        glViewport(static_cast<GLint>(pos.x), static_cast<GLint>(pos.y),
+                   static_cast<GLsizei>(view.width), static_cast<GLsizei>(view.height));
+    }
 
 } // namespace SW

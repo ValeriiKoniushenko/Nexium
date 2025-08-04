@@ -129,34 +129,9 @@ namespace SW
         glfwPollEvents();
     }
 
-    void Window::updateViewport(float targetAspect,
-                                AspectRatioMode mode /* = AspectRatioMode::Default*/)
+    void Window::updateViewport(float aspect, ViewportMode mode /* = ViewportMode::Default*/)
     {
-        Core::ISize2 view = _size;
-        glm::ivec2 pos = {};
-
-        if (mode.cast() == AspectRatioMode::Default)
-        {
-            view.height = static_cast<int>(static_cast<float>(view.width) / targetAspect);
-
-            if (view.height > _size.height)
-            {
-                view.height = _size.height;
-                view.width = static_cast<int>(static_cast<float>(_size.height) * targetAspect);
-            }
-
-            pos.x = (_size.width - view.width) / 2;
-            pos.y = (_size.height - view.height) / 2;
-        }
-        else
-        {
-            view.width = static_cast<int>(static_cast<float>(view.height) * targetAspect);
-
-            pos.x = (_size.width - view.width) / 2;
-            pos.y = 0;
-        }
-
-        glViewport(pos.x, pos.y, view.width, view.height);
+        UpdateGlViewport(static_cast<Core::FSize2>(_size), aspect, mode);
     }
 
     void Window::clear(int code)

@@ -64,12 +64,28 @@ namespace SW
     void RenderTargetToTexture::callMePreDraw()
     {
         glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
-        glViewport(0, 0, _size.width, _size.height);
     }
 
     void RenderTargetToTexture::callMeAfterDraw()
     {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+
+    void RenderTargetToTexture::setRenderSize(Core::ISize2 size)
+    {
+        destroy();
+        _size = size;
+        generate();
+    }
+
+    void RenderTargetToTexture::destroy()
+    {
+        glDeleteFramebuffers(1, &_fbo);
+        glDeleteTextures(1, &_tex);
+        glDeleteRenderbuffers(1, &_rbo);
+
+        _fbo = _tex = _rbo = 0;
+        _isGenerated = false;
     }
 
 } // namespace SW
