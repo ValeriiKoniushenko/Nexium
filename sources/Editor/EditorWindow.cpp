@@ -28,7 +28,7 @@
 namespace SW
 {
 
-    void BaseEditorWindowComponent::onTick()
+    void BaseEWC::onTick()
     {
         if (beginWindowDraw())
         {
@@ -38,30 +38,48 @@ namespace SW
         endWindowDraw();
     }
 
-    void BaseFloatEditorWindowComponent::onUpdate()
+    void BaseFloatEWC::setFitContent(bool v)
+    {
+        _isFitContent = v;
+        if (v)
+        {
+            _windowFlags |= ImGuiWindowFlags_AlwaysAutoResize;
+        }
+        else
+        {
+            _windowFlags &= ~ImGuiWindowFlags_AlwaysAutoResize;
+        }
+    }
+
+    void BaseFloatEWC::onUpdate()
     {
         const ImVec2 size = ImGui::GetWindowSize();
         _size = Core::FSize2{ size.x, size.y };
     }
 
-    void GameViewportWindow::onInit()
+    void GameViewportEWC::onInit()
     {
-        BaseEditorWindowComponent::onInit();
+        BaseEWC::onInit();
 
         setComponentName("Viewport");
     }
 
-    bool BaseFloatEditorWindowComponent::beginWindowDraw()
+    bool BaseFloatEWC::beginWindowDraw()
     {
+        if (_isFitContent)
+        {
+            ImGui::SetNextWindowSize(ImVec2(0, 0), ImGuiCond_Always);
+        }
+
         return ImGui::Begin(getComponentName().c_str(), &_isEnabled, _windowFlags);
     }
 
-    void BaseFloatEditorWindowComponent::endWindowDraw()
+    void BaseFloatEWC::endWindowDraw()
     {
         ImGui::End();
     }
 
-    void GameViewportWindow::onDraw()
+    void GameViewportEWC::onDraw()
     {
         if (gameInstance->renderMode.cast() == GameInstance::RenderMode::ToTexture)
         {
@@ -72,14 +90,14 @@ namespace SW
         }
     }
 
-    void KeyboardShortcutsWindow::onInit()
+    void KeyboardShortcutsEWC::onInit()
     {
-        BaseFloatEditorWindowComponent::onInit();
+        BaseFloatEWC::onInit();
 
         setComponentName("Keyboard Shortcuts");
     }
 
-    void KeyboardShortcutsWindow::onDraw()
+    void KeyboardShortcutsEWC::onDraw()
     {
         ImGui::Text("Shortcuts:");
         ImGui::Text("    F12     - Toggle render mode");
@@ -93,20 +111,59 @@ namespace SW
         ImGui::Text("Spectator speed");
         ImGui::SliderFloat("##spectator_speed", &gameInstance->speed, 1.f, 300.f);
     }
-
-    void BaseMenuBarWindowComponent::onInit()
+    void RootDockWindow::onInit()
     {
-        BaseEditorWindowComponent::onInit();
+        BaseEWC::onInit();
+
+        setComponentName("Root dock space");
+
+        _windowFlags |= ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking
+                        | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse
+                        | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove
+                        | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+    }
+
+    void RootDockWindow::onDraw()
+    {
+        ImGuiID dockSpaceId = ImGui::GetID("MyDockSpace");
+        ImGui::DockSpace(dockSpaceId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
+    }
+
+    bool RootDockWindow::beginWindowDraw()
+    {
+        ImGuiViewport* viewport = ImGui::GetMainViewport();
+        ImGui::SetNextWindowPos(viewport->Pos);
+        ImGui::SetNextWindowSize(viewport->Size);
+        ImGui::SetNextWindowViewport(viewport->ID);
+
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+
+        const auto res = ImGui::Begin(getComponentName().c_str(), &_isEnabled, _windowFlags);
+
+        ImGui::PopStyleVar(2);
+
+        return res;
+    }
+
+    void RootDockWindow::endWindowDraw()
+    {
+        ImGui::End();
+    }
+
+    void BaseMenuBarEWC::onInit()
+    {
+        BaseEWC::onInit();
 
         setComponentName("Menu Bar");
     }
 
-    bool BaseMenuBarWindowComponent::beginWindowDraw()
+    bool BaseMenuBarEWC::beginWindowDraw()
     {
         return ImGui::BeginMainMenuBar();
     }
 
-    void BaseMenuBarWindowComponent::endWindowDraw()
+    void BaseMenuBarEWC::endWindowDraw()
     {
         ImGui::EndMainMenuBar();
     }

@@ -27,9 +27,12 @@
 
 namespace SW
 {
-    class BaseEditorWindowComponent : public BaseComponent
+    /**
+     * @brief BaseEditorWindowComponent or briefly BaseEWC
+     */
+    class BaseEWC : public BaseComponent
     {
-        ECS_REGISTER_NEW_COMPONENT(BaseEditorWindowComponent, BaseComponent);
+        ECS_REGISTER_NEW_COMPONENT(BaseEWC, BaseComponent);
 
     public:
         [[nodiscard]] const Core::StringAtom& getWindowTitle() { return getComponentName(); }
@@ -49,22 +52,23 @@ namespace SW
     };
 
     template<class T>
-    concept IsEditorWindowComponent
-        = std::derived_from<T, BaseEditorWindowComponent> && IsComponent<T>;
+    concept IsEditorWindowComponent = std::derived_from<T, BaseEWC> && IsComponent<T>;
 
     template<class T>
     concept IsEditorWindowComponentOrVoid = IsEditorWindowComponent<T> || std::is_void_v<T>;
 
     template<class T>
-    concept IsEditorWindowComponentOrBase
-        = IsEditorWindowComponent<T> || std::same_as<T, BaseEditorWindowComponent>;
+    concept IsEditorWindowComponentOrBase = IsEditorWindowComponent<T> || std::same_as<T, BaseEWC>;
 
-    class BaseFloatEditorWindowComponent : public BaseEditorWindowComponent
+    class BaseFloatEWC : public BaseEWC
     {
-        ECS_REGISTER_NEW_COMPONENT(BaseFloatEditorWindowComponent, BaseEditorWindowComponent);
+        ECS_REGISTER_NEW_COMPONENT(BaseFloatEWC, BaseEWC);
 
     public:
         [[nodiscard]] Core::FSize2 getWindowSize() const noexcept { return _size; }
+
+        void setFitContent(bool v);
+        [[nodiscard]] bool isFitContent() const noexcept { return _isFitContent; }
 
     protected:
         void onUpdate() override;
@@ -73,11 +77,12 @@ namespace SW
 
     protected:
         Core::FSize2 _size;
+        bool _isFitContent = false;
     };
 
-    class BaseMenuBarWindowComponent : public BaseEditorWindowComponent
+    class BaseMenuBarEWC : public BaseEWC
     {
-        ECS_REGISTER_NEW_COMPONENT(BaseMenuBarWindowComponent, BaseEditorWindowComponent);
+        ECS_REGISTER_NEW_COMPONENT(BaseMenuBarEWC, BaseEWC);
 
     public:
         void onInit() override;
@@ -87,9 +92,9 @@ namespace SW
         void endWindowDraw() override;
     };
 
-    class GameViewportWindow : public BaseFloatEditorWindowComponent
+    class GameViewportEWC : public BaseFloatEWC
     {
-        ECS_REGISTER_NEW_COMPONENT(GameViewportWindow, BaseFloatEditorWindowComponent);
+        ECS_REGISTER_NEW_COMPONENT(GameViewportEWC, BaseFloatEWC);
 
     public:
     protected:
@@ -97,14 +102,28 @@ namespace SW
         void onDraw() override;
     };
 
-    class KeyboardShortcutsWindow : public BaseFloatEditorWindowComponent
+    class KeyboardShortcutsEWC : public BaseFloatEWC
     {
-        ECS_REGISTER_NEW_COMPONENT(KeyboardShortcutsWindow, BaseFloatEditorWindowComponent);
+        ECS_REGISTER_NEW_COMPONENT(KeyboardShortcutsEWC, BaseFloatEWC);
 
     public:
     private:
         void onInit() override;
         void onDraw() override;
+    };
+
+    class RootDockWindow : public BaseEWC
+    {
+        ECS_REGISTER_NEW_COMPONENT(RootDockWindow, BaseEWC);
+
+    public:
+    private:
+        void onInit() override;
+        void onDraw() override;
+
+    protected:
+        [[nodiscard]] bool beginWindowDraw() override;
+        void endWindowDraw() override;
     };
 
 } // namespace SW

@@ -26,7 +26,7 @@
 
 namespace SW
 {
-    class EditorMenuBarWindow : public BaseMenuBarWindowComponent
+    class EditorMenuBarWindow : public BaseMenuBarEWC
     {
     public:
         EditorMenuBarWindow() = default;

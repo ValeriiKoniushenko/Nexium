@@ -36,7 +36,8 @@ namespace SW
         inline static std::filesystem::path defaultImGuiFontPath
             = "assets/fonts/JetBrainsMono-Regular.ttf";
         inline static float defaultImGuiFontSize = 16.f;
-        inline static int defaultIoConfigFlagImGui = ImGuiConfigFlags_NavEnableKeyboard;
+        inline static int defaultIoConfigFlagImGui
+            = ImGuiConfigFlags_NavEnableKeyboard | ImGuiConfigFlags_DockingEnable;
 
         GameEditor() = default;
         ~GameEditor() override;
@@ -48,7 +49,8 @@ namespace SW
         void setIsEnabled(bool v) noexcept { _isEnabled = v; }
 
         template<IsEditorWindowComponent T>
-        [[nodiscard]] typename T::Ptr addNewWindow(const Core::StringAtom& name = ""_atom)
+        [[nodiscard]] typename T::Ptr registerNewWindow(const Core::StringAtom& name = ""_atom,
+                                                        bool isEnabled = true)
         {
             auto& a = _windows.emplace_back(new T);
             a->initialize();
@@ -56,10 +58,11 @@ namespace SW
             {
                 a->setComponentName(name);
             }
+            a->setEnabled(isEnabled);
             return boost::static_pointer_cast<T>(a);
         }
 
-        template<IsEditorWindowComponentOrBase WindowT = BaseEditorWindowComponent>
+        template<IsEditorWindowComponentOrBase WindowT = BaseEWC>
         [[nodiscard]] WindowT* getWindow(const Core::StringAtom& regexName)
         {
             for (auto&& windowIntrusive : _windows)
@@ -82,7 +85,7 @@ namespace SW
             return nullptr;
         }
 
-        template<IsEditorWindowComponentOrBase WindowT = BaseEditorWindowComponent>
+        template<IsEditorWindowComponentOrBase WindowT = BaseEWC>
         void showWindow(const Core::StringAtom& regexName)
         {
             if (auto* wnd = getWindow<WindowT>(regexName))
@@ -103,7 +106,7 @@ namespace SW
         [[nodiscard]] bool needToDraw();
 
     protected:
-        std::vector<BaseEditorWindowComponent::Ptr> _windows;
+        std::vector<BaseEWC::Ptr> _windows;
         bool _isInitImGui = false;
         bool _isEnabled = true;
     };

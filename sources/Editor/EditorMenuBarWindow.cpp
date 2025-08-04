@@ -44,11 +44,11 @@ namespace SW
         {
             if (ImGui::MenuItem("Keyboard shortcuts"))
             {
-                gameInstance->gameEditor.showWindow<KeyboardShortcutsWindow>(".*");
+                gameInstance->gameEditor.showWindow<KeyboardShortcutsEWC>(".*");
             }
             if (ImGui::MenuItem("Viewport"))
             {
-                gameInstance->gameEditor.showWindow<GameViewportWindow>("Viewport");
+                gameInstance->gameEditor.showWindow<GameViewportEWC>("Viewport");
             }
             ImGui::EndMenu();
         }
