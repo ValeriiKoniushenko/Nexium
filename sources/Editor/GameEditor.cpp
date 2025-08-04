@@ -73,10 +73,10 @@ namespace SW
         ImGui_ImplOpenGL3_Init(GetGlslVersionShaderLike().c_str());
         _isInitImGui = true;
 
-        auto rootDocker = registerNewWindow<RootDockWindow>();
-        auto menuBar = registerNewWindow<EditorMenuBarWindow>();
-        auto viewportWindow = registerNewWindow<GameViewportEWC>();
-        auto tipsWindow = registerNewWindow<KeyboardShortcutsEWC>();
+        auto rootDocker = registerNewWindow<RootDockWindow>("Root dock space");
+        auto menuBar = registerNewWindow<EditorMenuBarWindow>("Menu Bar");
+        auto viewportWindow = registerNewWindow<GameViewportEWC>("Viewport");
+        auto tipsWindow = registerNewWindow<KeyboardShortcutsEWC>("Keyboard Shortcuts");
     }
 
     void GameEditor::onTick(float delta)

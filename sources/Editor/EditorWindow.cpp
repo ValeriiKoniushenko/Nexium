@@ -60,8 +60,6 @@ namespace SW
     void GameViewportEWC::onInit()
     {
         BaseEWC::onInit();
-
-        setComponentName("Viewport");
     }
 
     bool BaseFloatEWC::beginWindowDraw()
@@ -81,7 +79,7 @@ namespace SW
 
     void GameViewportEWC::onDraw()
     {
-        if (gameInstance->renderMode.cast() == GameInstance::RenderMode::ToTexture)
+        if (gameInstance->renderMode.cast() == GameInstance::RenderMode::Editor)
         {
             const auto& r = gameInstance->renderToTextureObject;
             const ImVec2 renderSize = { static_cast<float>(r.getRenderSize().width),
@@ -93,8 +91,6 @@ namespace SW
     void KeyboardShortcutsEWC::onInit()
     {
         BaseFloatEWC::onInit();
-
-        setComponentName("Keyboard Shortcuts");
     }
 
     void KeyboardShortcutsEWC::onDraw()
@@ -114,8 +110,6 @@ namespace SW
     void RootDockWindow::onInit()
     {
         BaseEWC::onInit();
-
-        setComponentName("Root dock space");
 
         _windowFlags |= ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking
                         | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse
@@ -154,8 +148,6 @@ namespace SW
     void BaseMenuBarEWC::onInit()
     {
         BaseEWC::onInit();
-
-        setComponentName("Menu Bar");
     }
 
     bool BaseMenuBarEWC::beginWindowDraw()

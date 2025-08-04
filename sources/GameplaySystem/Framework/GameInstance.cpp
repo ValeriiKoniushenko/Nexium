@@ -83,14 +83,13 @@ namespace SW
             keyboardInput.update();
             mouseInput.update();
 
-            if (renderMode.cast() == RenderMode::Default)
+            if (renderMode.cast() == RenderMode::GameOnly)
             {
                 glClearColor(0.45f, 0.55f, 0.60f, 1.00f);
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                 const auto size = _window->getSize();
                 glViewport(0, 0, size.width, size.height);
                 onTick(world.timeDelta);
-                gameEditor.onTick(world.timeDelta);
             }
             else
             {
@@ -128,8 +127,8 @@ namespace SW
         toggleSimulation->onPress.subscribe(
             [this](auto)
             {
-                renderMode = renderMode.cast() == RenderMode::Default ? RenderMode::ToTexture
-                                                                      : RenderMode::Default;
+                renderMode = renderMode.cast() == RenderMode::GameOnly ? RenderMode::Editor
+                                                                       : RenderMode::GameOnly;
             });
 
         // clang-format off

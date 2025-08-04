@@ -39,7 +39,7 @@ namespace SW
     class GameInstance : public BaseLog
     {
     public:
-        CreateEnum(RenderMode, int, Default, ToTexture);
+        CreateEnum(RenderMode, int, GameOnly, Editor);
 
     public:
         [[nodiscard]] spdlog::logger* getLogger() const override { return Framework::getLogger(); }
@@ -56,7 +56,7 @@ namespace SW
         KeyboardInputManger keyboardInput;
         MouseInputManger mouseInput;
 
-        RenderMode renderMode = RenderMode::ToTexture;
+        RenderMode renderMode = RenderMode::Editor;
         GameEditor gameEditor;
         RenderTargetToTexture renderToTextureObject;
 
