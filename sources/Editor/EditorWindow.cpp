@@ -48,12 +48,12 @@ namespace SW
     {
         BaseEditorWindowComponent::onInit();
 
-        _windowTitle = "Viewport";
+        setComponentName("Viewport");
     }
 
     bool BaseFloatEditorWindowComponent::beginWindowDraw()
     {
-        return ImGui::Begin(_windowTitle.c_str(), &_pOpen, _windowFlags);
+        return ImGui::Begin(getComponentName().c_str(), &_isEnabled, _windowFlags);
     }
 
     void BaseFloatEditorWindowComponent::endWindowDraw()
@@ -72,12 +72,14 @@ namespace SW
         }
     }
 
-    void KeyboardShortcutsTipsWindow::onInit()
+    void KeyboardShortcutsWindow::onInit()
     {
         BaseFloatEditorWindowComponent::onInit();
+
+        setComponentName("Keyboard Shortcuts");
     }
 
-    void KeyboardShortcutsTipsWindow::onDraw()
+    void KeyboardShortcutsWindow::onDraw()
     {
         ImGui::Text("Shortcuts:");
         ImGui::Text("    F12     - Toggle render mode");
@@ -96,7 +98,7 @@ namespace SW
     {
         BaseEditorWindowComponent::onInit();
 
-        _windowTitle = "Menu Bar";
+        setComponentName("Menu Bar");
     }
 
     bool BaseMenuBarWindowComponent::beginWindowDraw()

@@ -48,11 +48,47 @@ namespace SW
         void setIsEnabled(bool v) noexcept { _isEnabled = v; }
 
         template<IsEditorWindowComponent T>
-        [[nodiscard]] typename T::Ptr addNewWindow()
+        [[nodiscard]] typename T::Ptr addNewWindow(const Core::StringAtom& name = ""_atom)
         {
             auto& a = _windows.emplace_back(new T);
             a->initialize();
+            if (name)
+            {
+                a->setComponentName(name);
+            }
             return boost::static_pointer_cast<T>(a);
+        }
+
+        template<IsEditorWindowComponentOrBase WindowT = BaseEditorWindowComponent>
+        [[nodiscard]] WindowT* getWindow(const Core::StringAtom& regexName)
+        {
+            for (auto&& windowIntrusive : _windows)
+            {
+                auto* wnd = windowIntrusive.get();
+                if (!Verify(wnd))
+                {
+                    continue;
+                }
+
+                if (auto* casted = dynamic_cast<WindowT*>(wnd))
+                {
+                    if (casted->getWindowTitle().regexMatch(regexName))
+                    {
+                        return casted;
+                    }
+                }
+            }
+
+            return nullptr;
+        }
+
+        template<IsEditorWindowComponentOrBase WindowT = BaseEditorWindowComponent>
+        void showWindow(const Core::StringAtom& regexName)
+        {
+            if (auto* wnd = getWindow<WindowT>(regexName))
+            {
+                wnd->setEnabled(true);
+            }
         }
 
         /**

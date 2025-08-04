@@ -32,7 +32,7 @@ namespace SW
         ECS_REGISTER_NEW_COMPONENT(BaseEditorWindowComponent, BaseComponent);
 
     public:
-        [[nodiscard]] const Core::StringAtom& getWindowTitle() { return _windowTitle; }
+        [[nodiscard]] const Core::StringAtom& getWindowTitle() { return getComponentName(); }
 
     protected:
         void onTick() override final;
@@ -42,11 +42,22 @@ namespace SW
         [[nodiscard]] virtual bool beginWindowDraw() = 0;
         virtual void endWindowDraw() = 0;
 
+        [[nodiscard]] bool canBeShown() const { return _isEnabled; }
+
     protected:
         ImGuiWindowFlags _windowFlags = 0;
-        Core::StringAtom _windowTitle = "Window";
-        bool _pOpen = false;
     };
+
+    template<class T>
+    concept IsEditorWindowComponent
+        = std::derived_from<T, BaseEditorWindowComponent> && IsComponent<T>;
+
+    template<class T>
+    concept IsEditorWindowComponentOrVoid = IsEditorWindowComponent<T> || std::is_void_v<T>;
+
+    template<class T>
+    concept IsEditorWindowComponentOrBase
+        = IsEditorWindowComponent<T> || std::same_as<T, BaseEditorWindowComponent>;
 
     class BaseFloatEditorWindowComponent : public BaseEditorWindowComponent
     {
@@ -63,10 +74,6 @@ namespace SW
     protected:
         Core::FSize2 _size;
     };
-
-    template<class T>
-    concept IsEditorWindowComponent
-        = std::derived_from<T, BaseEditorWindowComponent> && IsComponent<T>;
 
     class BaseMenuBarWindowComponent : public BaseEditorWindowComponent
     {
@@ -90,9 +97,9 @@ namespace SW
         void onDraw() override;
     };
 
-    class KeyboardShortcutsTipsWindow : public BaseFloatEditorWindowComponent
+    class KeyboardShortcutsWindow : public BaseFloatEditorWindowComponent
     {
-        ECS_REGISTER_NEW_COMPONENT(KeyboardShortcutsTipsWindow, BaseFloatEditorWindowComponent);
+        ECS_REGISTER_NEW_COMPONENT(KeyboardShortcutsWindow, BaseFloatEditorWindowComponent);
 
     public:
     private:

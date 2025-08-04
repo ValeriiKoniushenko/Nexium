@@ -34,6 +34,8 @@ namespace SW
 
     protected:
         void onDraw() override;
+
+    private:
     };
     
 } // namespace SW

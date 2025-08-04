@@ -22,6 +22,8 @@
 
 #include "EditorMenuBarWindow.h"
 
+#include "GameplaySystem/Framework/GameInstance.h"
+
 namespace SW
 {
 
@@ -31,24 +33,22 @@ namespace SW
         {
             if (ImGui::MenuItem("Open"))
             {
-                // handle open
             }
             if (ImGui::MenuItem("Save"))
             {
-                // handle save
             }
             ImGui::EndMenu();
         }
 
-        if (ImGui::BeginMenu("Edit"))
+        if (ImGui::BeginMenu("Windows"))
         {
-            if (ImGui::MenuItem("Undo"))
+            if (ImGui::MenuItem("Keyboard shortcuts"))
             {
-                // handle undo
+                gameInstance->gameEditor.showWindow<KeyboardShortcutsWindow>(".*");
             }
-            if (ImGui::MenuItem("Redo"))
+            if (ImGui::MenuItem("Viewport"))
             {
-                // handle redo
+                gameInstance->gameEditor.showWindow<GameViewportWindow>("Viewport");
             }
             ImGui::EndMenu();
         }

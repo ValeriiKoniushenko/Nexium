@@ -42,23 +42,11 @@ namespace SW
         std::cout << std::fixed << std::setprecision(15);
         spdlog::set_pattern(_spdlogDefaultPatter.toStdString());
 
-        //    _    _  _             _
-        //   | |  | |(_)           | |
-        //   | |  | | _  _ __    __| |  ___ __      __
-        //   | |/\| || || '_ \  / _` | / _ \\ \ /\ / /
-        //   \  /\  /| || | | || (_| || (_) |\ V  V /
-        //    \/  \/ |_||_| |_| \__,_| \___/  \_/\_/
-        //----------------------------------------------
+        //-------------------- WINDOW ---------------------
         _window = &GetWindow();
         _window->create(_defaultWindowName, _defaultWindowSize);
 
-        //    _____  _                 _
-        //   /  ___|| |               | |
-        //   \ `--. | |__    __ _   __| |  ___  _ __  ___
-        //    `--. \| '_ \  / _` | / _` | / _ \| '__|/ __|
-        //   /\__/ /| | | || (_| || (_| ||  __/| |   \__ \
-        //   \____/ |_| |_| \__,_| \__,_| \___||_|   |___/
-        //-------------------------------------------------
+        //-------------------- SHADER MANAGER ---------------------
         _shaderManager = &GetShaderManager();
         _shaderManager->loadShaders(_shaderPath);
         _shaderManager->debugLog("Was loaded {} shaders."_f << _shaderManager->countOfShaders());
@@ -69,19 +57,10 @@ namespace SW
         }
         onLoadShaders();
 
-        auto toggleSimulation = keyboardInput.create("toggleSimulation", GLFW_KEY_F12);
-        toggleSimulation->setIsRepeatable(false);
-        toggleSimulation->onPress.subscribe(
-            [this](auto)
-            {
-                renderMode = renderMode.cast() == RenderMode::Default ? RenderMode::ToTexture
-                                                                      : RenderMode::Default;
-            });
-
+        //-------------------- MISC ---------------------
         renderToTextureObject.generate();
         gameEditor.initialize();
         initShortcuts();
-
         onInitFinish();
 
         gameLoop();
@@ -138,12 +117,22 @@ namespace SW
     }
     void GameInstance::initShortcuts()
     {
-        // clang-format off
         static auto getRealSpeed = [this](SW::KeyboardIA::SpecKeysState state)
         {
-            const float mlt = state.leftShift.cast() == SW::Keyboard::KeyState::Pressed ? 10.f : 1.f;
+            const float mlt
+                = state.leftShift.cast() == SW::Keyboard::KeyState::Pressed ? 10.f : 1.f;
             return speed * mlt;
         };
+        auto toggleSimulation = keyboardInput.create("toggleSimulation", GLFW_KEY_F12);
+        toggleSimulation->setIsRepeatable(false);
+        toggleSimulation->onPress.subscribe(
+            [this](auto)
+            {
+                renderMode = renderMode.cast() == RenderMode::Default ? RenderMode::ToTexture
+                                                                      : RenderMode::Default;
+            });
+
+        // clang-format off
         keyboardInput.create("moveForward", GLFW_KEY_W)->onPress.subscribe([&](auto state){ camera.moveForward(getRealSpeed(state) * world.timeDelta); });
         keyboardInput.create("moveBackward", GLFW_KEY_S)->onPress.subscribe([&](auto state){ camera.moveForward(-getRealSpeed(state) * world.timeDelta); });
         keyboardInput.create("moveRight", GLFW_KEY_D)->onPress.subscribe([&](auto state){ camera.moveRight(-getRealSpeed(state) * world.timeDelta); });
