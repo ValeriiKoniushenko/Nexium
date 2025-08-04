@@ -121,6 +121,7 @@ namespace SW
                 = state.leftShift.cast() == SW::Keyboard::KeyState::Pressed ? 10.f : 1.f;
             return speed * mlt;
         };
+
         auto toggleSimulation = keyboardInput.create("toggleSimulation", GLFW_KEY_F12);
         toggleSimulation->setIsRepeatable(false);
         toggleSimulation->onPress.subscribe(
@@ -130,6 +131,16 @@ namespace SW
                                                                        : RenderMode::GameOnly;
                 updateViewport();
             });
+
+        mouseInput.create("cameraView", 0)
+            ->onMove.subscribe(
+                [&](glm::vec2 delta, KeyboardIA::SpecKeysState state)
+                {
+                    if (state.leftAlt.cast() != Keyboard::KeyState::Pressed)
+                    {
+                        camera.yawAndPitch(delta * world.timeDelta * mouseSensitivity);
+                    }
+                });
 
         // clang-format off
         keyboardInput.create("moveForward", GLFW_KEY_W)->onPress.subscribe([&](auto state){ camera.moveForward(getRealSpeed(state) * world.timeDelta); });
@@ -142,7 +153,6 @@ namespace SW
         const auto toggleCursorMode = keyboardInput.create("toggleCursorMode", GLFW_KEY_M);
         toggleCursorMode->onPress.subscribe([&](auto) { _window->toggleCursorMode(); });
         toggleCursorMode->setIsRepeatable(false);
-        mouseInput.create("cameraView", 0)->onMove.subscribe([&](glm::vec2 delta, auto){ camera.yawAndPitch(delta * world.timeDelta * mouseSensitivity); });
         // clang-format on
     }
 

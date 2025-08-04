@@ -109,6 +109,7 @@ namespace SW
         ImGui::Text("    W/A/S/D - Move Control");
         ImGui::Text("    C/Space - Down/Up");
         ImGui::Text("    M       - Mouse capture");
+        ImGui::Text("    Alt     - Hold to suppress a mouse");
         ImGui::Text("    Esc     - exit");
         ImGui::Text("");
         ImGui::Text("Globals:");
