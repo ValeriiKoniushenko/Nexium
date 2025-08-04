@@ -22,8 +22,6 @@
 
 #include "Window.h"
 
-#include "ImGui/backends/imgui_impl_glfw.h"
-#include "ImGui/backends/imgui_impl_opengl3.h"
 #include "ImGui/imgui.h"
 
 namespace
@@ -37,7 +35,6 @@ namespace
     void TextInputHandler(GLFWwindow* window, unsigned int scancode)
     {
         SW::GetWindow().onTextInput.trigger(scancode);
-        // GetWorldVariables().set("inputted-text", scancode);
     }
 
     void CursorEnterHandler(GLFWwindow* window, int entered)
@@ -49,8 +46,12 @@ namespace
     {
         SW::GetWindow().onMouseWheel.trigger(
             glm::vec2(static_cast<float>(x), static_cast<float>(y)));
-        // GetWorldVariables().set("mouse-wheel-x", xOffset);
-        // GetWorldVariables().set("mouse-wheel-y", yOffset);
+    }
+
+    void WindowSizeCallback(GLFWwindow* window, int width, int height)
+    {
+        SW::GetWindow().onResize.trigger(Core::ISize2(width, height));
+        SW::GetWindow().__setSize(Core::ISize2(width, height));
     }
 
 } // namespace
@@ -86,6 +87,7 @@ namespace SW
         glfwSetCharCallback(_window, TextInputHandler);
         glfwSetCursorEnterCallback(_window, CursorEnterHandler);
         glfwSetScrollCallback(_window, MouseScrollHandler);
+        glfwSetWindowSizeCallback(_window, WindowSizeCallback);
         glfwSwapInterval(0);
 
         if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
@@ -127,14 +129,39 @@ namespace SW
         glfwPollEvents();
     }
 
+    void Window::updateViewport(float targetAspect,
+                                AspectRatioMode mode /* = AspectRatioMode::Default*/)
+    {
+        Core::ISize2 view = _size;
+        glm::ivec2 pos = {};
+
+        if (mode.cast() == AspectRatioMode::Default)
+        {
+            view.height = static_cast<int>(static_cast<float>(view.width) / targetAspect);
+
+            if (view.height > _size.height)
+            {
+                view.height = _size.height;
+                view.width = static_cast<int>(static_cast<float>(_size.height) * targetAspect);
+            }
+
+            pos.x = (_size.width - view.width) / 2;
+            pos.y = (_size.height - view.height) / 2;
+        }
+        else
+        {
+            view.width = static_cast<int>(static_cast<float>(view.height) * targetAspect);
+
+            pos.x = (_size.width - view.width) / 2;
+            pos.y = 0;
+        }
+
+        glViewport(pos.x, pos.y, view.width, view.height);
+    }
+
     void Window::clear(int code)
     {
         glClear(code);
-    }
-
-    void Window::viewport(GLint x, GLint y, GLsizei width, GLsizei height)
-    {
-        glViewport(x, y, width, height);
     }
 
     Core::ISize2 Window::getSize() const

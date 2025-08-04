@@ -43,6 +43,11 @@ namespace SW
             Disabled = GLFW_CURSOR_DISABLED,
             Hidden = GLFW_CURSOR_HIDDEN
         );
+
+        CreateEnum(AspectRatioMode, int,
+            Default,
+            ZoomIn
+        );
         // clang-format on
 
     public:
@@ -60,7 +65,7 @@ namespace SW
 
         void pollEvent();
 
-        void viewport(GLint x, GLint y, GLsizei width, GLsizei height);
+        void updateViewport(float aspect, AspectRatioMode mode = AspectRatioMode::Default);
 
         [[nodiscard]] Core::ISize2 getSize() const;
 
@@ -96,11 +101,15 @@ namespace SW
          */
         Core::Delegate<void(glm::vec2)> onMouseWheel;
 
-        [[nodiscard]] spdlog::logger* getLogger() const override
-        {
-            return Graphics::getLogger();
-        }
+        /**
+         * @param Core::ISize2 - new window size
+         */
+        Core::Delegate<void(Core::ISize2)> onResize;
+
+        [[nodiscard]] spdlog::logger* getLogger() const override { return Graphics::getLogger(); }
         [[nodiscard]] const char* getPrefix() const override { return "Window"; }
+
+        void __setSize(Core::ISize2 newSize) noexcept { _size = newSize; }
 
     protected:
         GLFWwindow* _window{};

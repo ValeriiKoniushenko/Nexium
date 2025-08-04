@@ -45,7 +45,11 @@ namespace SW
         //-------------------- WINDOW ---------------------
         _window = &GetWindow();
         _window->create(_defaultWindowName, _defaultWindowSize);
-
+        _window->onResize.subscribe(
+            [this](Core::ISize2 newSize)
+            {
+                updateViewport();
+            });
         //-------------------- SHADER MANAGER ---------------------
         _shaderManager = &GetShaderManager();
         _shaderManager->loadShaders(_shaderPath);
@@ -87,8 +91,6 @@ namespace SW
             {
                 glClearColor(0.45f, 0.55f, 0.60f, 1.00f);
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-                const auto size = _window->getSize();
-                glViewport(0, 0, size.width, size.height);
                 onTick(world.timeDelta);
             }
             else
@@ -129,6 +131,7 @@ namespace SW
             {
                 renderMode = renderMode.cast() == RenderMode::GameOnly ? RenderMode::Editor
                                                                        : RenderMode::GameOnly;
+                updateViewport();
             });
 
         // clang-format off
@@ -144,5 +147,13 @@ namespace SW
         toggleCursorMode->setIsRepeatable(false);
         mouseInput.create("cameraView", 0)->onMove.subscribe([&](glm::vec2 delta, auto){ camera.yawAndPitch(delta * world.timeDelta * mouseSensitivity); });
         // clang-format on
+    }
+
+    void GameInstance::updateViewport()
+    {
+        if (renderMode.cast() == RenderMode::GameOnly)
+        {
+            _window->updateViewport(16.f / 9.f, Window::AspectRatioMode::ZoomIn);
+        }
     }
 } // namespace SW

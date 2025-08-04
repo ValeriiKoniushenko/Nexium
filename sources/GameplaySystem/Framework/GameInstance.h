@@ -83,6 +83,7 @@ namespace SW
     private:
         void gameLoop();
         void initShortcuts();
+        void updateViewport();
     };
 
 } // namespace SW
