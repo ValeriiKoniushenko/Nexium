@@ -50,6 +50,10 @@ namespace SW
             {
                 gameInstance->gameEditor.showWindow<GameViewportEWC>("Viewport");
             }
+            if (ImGui::MenuItem("Logs"))
+            {
+                gameInstance->gameEditor.showWindow<LogsWindow>("Logs");
+            }
             ImGui::EndMenu();
         }
     }

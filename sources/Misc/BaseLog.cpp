@@ -30,7 +30,21 @@ namespace SW
     void BaseLog::pushLog(level l, const char* str) const
     {
         auto* logger = getLogger();
-        logger->log(level::info, getCompleteText(str).c_str());
+        auto log = getCompleteText(str);
+        logger->log(l, log.c_str());
+
+        LogQueue::LogLine logLine;
+        logLine.level = l;
+        logLine.author = getLogger()->name().c_str();
+        logLine.message = std::move(log);
+
+        LogQueue::instance().addLog(std::move(logLine));
+    }
+
+    Core::StringAtom LogQueue::LogLine::toString() const
+    {
+        return ("[{}] [{}] {} {}"_f << spdlog::level::to_short_c_str(level) << author << message)
+            .data();
     }
 
     void BaseLog::criticalThrowingLog(const char* str) const

@@ -78,7 +78,16 @@ namespace SW
             ImGui::SetNextWindowSize(ImVec2(0, 0), ImGuiCond_Always);
         }
 
-        return ImGui::Begin(getComponentName().c_str(), &_isEnabled, _windowFlags);
+        for (auto [style, val] : _styles)
+        {
+            ImGui::PushStyleVar(style, val);
+        }
+
+        const auto res = ImGui::Begin(getComponentName().c_str(), &_isEnabled, _windowFlags);
+
+        ImGui::PopStyleVar(_styles.size());
+
+        return res;
     }
 
     void BaseFloatEWC::endWindowDraw()
@@ -136,7 +145,7 @@ namespace SW
 
     bool RootDockWindow::beginWindowDraw()
     {
-        ImGuiViewport* viewport = ImGui::GetMainViewport();
+        const ImGuiViewport* viewport = ImGui::GetMainViewport();
         ImGui::SetNextWindowPos(viewport->Pos);
         ImGui::SetNextWindowSize(viewport->Size);
         ImGui::SetNextWindowViewport(viewport->ID);
@@ -154,6 +163,88 @@ namespace SW
     void RootDockWindow::endWindowDraw()
     {
         ImGui::End();
+    }
+
+    void LogsWindow::addLog(Core::StringAtom log)
+    {
+        _logs.push_back(std::move(log.shrink_to_fit()));
+    }
+
+    void LogsWindow::clearLogs()
+    {
+        _logs.clear();
+    }
+
+    void LogsWindow::onInit()
+    {
+        BaseFloatEWC::onInit();
+    }
+
+    void LogsWindow::onDraw()
+    {
+        if (ImGui::BeginChild("ScrollingRegion", ImVec2(0, 0), ImGuiChildFlags_NavFlattened,
+                              ImGuiWindowFlags_HorizontalScrollbar))
+        {
+            if (ImGui::BeginPopupContextWindow())
+            {
+                if (ImGui::Selectable("Clear"))
+                {
+                    clearLogs();
+                }
+                ImGui::EndPopup();
+            }
+
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 1)); // Tighten spacing
+            for (const auto& log : _logs)
+            {
+                ImVec4 color;
+                bool has_color = false;
+                if (strstr(log.c_str(), "[C]"))
+                {
+                    // red
+                    color = ImVec4(229.f / 255.f, 81.f / 141.f, 0, 1.0f);
+                    has_color = true;
+                }
+                if (strstr(log.c_str(), "[E]"))
+                {
+                    // orange
+                    color = ImVec4(230.f / 255.f, 230.f / 141.f, 27.f / 255.f, 1.0f);
+                    has_color = true;
+                }
+                if (strstr(log.c_str(), "[D]"))
+                {
+                    // gray
+                    color = ImVec4(190.f / 255.f, 190.f / 141.f, 190.f / 255.f, 1.0f);
+                    has_color = true;
+                }
+
+                if (has_color)
+                {
+                    ImGui::PushStyleColor(ImGuiCol_Text, color);
+                }
+
+                ImGui::TextUnformatted(log.c_str());
+
+                if (has_color)
+                {
+                    ImGui::PopStyleColor();
+                }
+            }
+
+            ImGui::PopStyleVar();
+        }
+        ImGui::EndChild();
+    }
+
+    void LogsWindow::onUpdate()
+    {
+        BaseFloatEWC::onUpdate();
+
+        auto& q = LogQueue::instance();
+        while (!q.isEmpty())
+        {
+            _logs.push_back(std::move(q.frontAndPop().toString()));
+        }
     }
 
     void BaseMenuBarEWC::onInit()

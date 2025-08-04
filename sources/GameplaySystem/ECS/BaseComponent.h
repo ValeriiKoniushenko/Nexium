@@ -121,7 +121,6 @@ namespace SW
         void tick();
 
         [[nodiscard]] spdlog::logger* getLogger() const override final { return Ecs::getLogger(); }
-        [[nodiscard]] const char* getPrefix() const override { return "Component"; }
 
         virtual void clear() { _isInited = false; }
 

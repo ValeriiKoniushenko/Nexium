@@ -90,6 +90,7 @@ namespace SW
         Core::FSize2 _innerSize;
         Core::FSize2 _oldSize = Core::FSize2{ -1, -1 };
         bool _isFitContent = false;
+        std::unordered_map<ImGuiStyleVar_, float> _styles;
     };
 
     class BaseMenuBarEWC : public BaseEWC
@@ -136,6 +137,23 @@ namespace SW
     protected:
         [[nodiscard]] bool beginWindowDraw() override;
         void endWindowDraw() override;
+    };
+
+    class LogsWindow : public BaseFloatEWC
+    {
+        ECS_REGISTER_NEW_COMPONENT(LogsWindow, BaseFloatEWC);
+
+    public:
+        void addLog(Core::StringAtom log);
+        void clearLogs();
+
+    private:
+        void onInit() override;
+        void onDraw() override;
+        void onUpdate() override;
+
+    private:
+        std::vector<Core::StringAtom> _logs;
     };
 
 } // namespace SW

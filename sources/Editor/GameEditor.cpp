@@ -88,6 +88,7 @@ namespace SW
                 }
             });
         auto tipsWindow = registerNewWindow<KeyboardShortcutsEWC>("Keyboard Shortcuts");
+        auto logsWindow = registerNewWindow<LogsWindow>("Logs");
     }
 
     void GameEditor::onTick(float delta)

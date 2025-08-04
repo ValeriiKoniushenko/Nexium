@@ -34,6 +34,31 @@
 namespace SW
 {
 
+    class LogQueue : public Core::StrictSingleton<LogQueue>
+    {
+    public:
+        struct LogLine
+        {
+            Core::StringAtom author;
+            Core::StringAtom message;
+            spdlog::level::level_enum level = {};
+
+            [[nodiscard]] Core::StringAtom toString() const;
+        };
+
+        [[nodiscard]] bool isEmpty() const { return _q.empty(); }
+        void addLog(LogLine&& log) { _q.push(std::move(log)); }
+        [[nodiscard]] LogLine frontAndPop()
+        {
+            auto out = _q.front();
+            _q.pop();
+            return out;
+        }
+
+    private:
+        std::queue<LogLine> _q;
+    };
+
     class BaseLog
     {
     public:
