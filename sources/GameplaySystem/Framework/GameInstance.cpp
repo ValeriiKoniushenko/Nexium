@@ -74,9 +74,6 @@ namespace SW
     {
         Core::FStopwatch clock;
 
-        FPSCounter fpsCounter;
-        fpsCounter.start();
-
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
         while (!_window->shouldClose())
@@ -107,11 +104,8 @@ namespace SW
             }
 
             _window->swapBuffers();
-            fpsCounter.newFrameUpdate();
             world.timeDelta = clock.stop();
         }
-
-        globalLog.infoLog("FPS: {}"_f << fpsCounter.getFPS());
     }
     void GameInstance::initShortcuts()
     {

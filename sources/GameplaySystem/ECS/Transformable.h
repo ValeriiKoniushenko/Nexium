@@ -54,7 +54,6 @@ namespace SW
         void setRotation(const glm::vec3& rotation) noexcept;
         void rotate(const glm::vec3& value) noexcept;
         [[nodiscard]] const glm::vec3& getRotation() const noexcept;
-        [[nodiscard]] glm::vec3& getRotation() noexcept;
         void setRotationX(float x) noexcept;
         void rotateX(float x) noexcept;
         [[nodiscard]] float getRotationX() const noexcept;

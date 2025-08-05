@@ -108,11 +108,6 @@ namespace SW
         return _rotation;
     }
 
-    glm::vec3& Transformable::getRotation() noexcept
-    {
-        return _rotation;
-    }
-
     void Transformable::setRotationX(float x) noexcept
     {
         _rotation.x = x;

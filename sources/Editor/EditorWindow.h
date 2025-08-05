@@ -23,9 +23,11 @@
 #pragma once
 #include "Core/String.h"
 #include "GameplaySystem/ECS/BaseComponent.h"
+#include "GameplaySystem/Framework/Actor.h"
 #include "ImGui/imgui.h"
 
 #include <Core/Delegate.h>
+#include <Core/Timer.h>
 
 namespace SW
 {
@@ -163,6 +165,24 @@ namespace SW
 
     private:
         std::vector<LogLine> _logs;
+    };
+
+    class ActorPropertiesWindow : public BaseFloatEWC
+    {
+        ECS_REGISTER_NEW_COMPONENT(ActorPropertiesWindow, BaseFloatEWC);
+
+    public:
+        void setTargetActor(Actor* actor);
+        void resetTargetActor();
+
+    private:
+        void onInit() override;
+        void onDraw() override;
+        void onUpdate() override;
+
+    private:
+        Actor* _target = nullptr;
+        Core::Repeater _slowUpdater;
     };
 
 } // namespace SW

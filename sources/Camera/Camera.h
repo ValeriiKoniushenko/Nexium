@@ -30,10 +30,8 @@
 namespace SW
 {
 
-    class BaseCamera : public Actor, public BaseComponent
+    class BaseCamera : public Actor
     {
-        ECS_REGISTER_NEW_COMPONENT(BaseCamera, BaseComponent)
-
     public:
         ~BaseCamera() override = default;
 

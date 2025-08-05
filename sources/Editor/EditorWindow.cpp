@@ -24,6 +24,7 @@
 
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "ImGui/backends/imgui_impl_glfw.h"
+#include "ImGui/imgui_internal.h"
 
 namespace SW
 {
@@ -254,6 +255,153 @@ namespace SW
 
             addLog(std::move(qLog.toString()), qLog.level);
         }
+    }
+
+    void ActorPropertiesWindow::setTargetActor(Actor* actor)
+    {
+        _target = actor;
+    }
+
+    void ActorPropertiesWindow::resetTargetActor()
+    {
+        _target = nullptr;
+    }
+
+    void ActorPropertiesWindow::onInit()
+    {
+        BaseFloatEWC::onInit();
+
+        _slowUpdater.setRepeatTime(1.f / 30.f);
+        _slowUpdater.setCallback(
+            [this](auto)
+            {
+
+            });
+    }
+
+    void ActorPropertiesWindow::onDraw()
+    {
+        // One-row structure is:
+        // | Label | (ID Input) (ID Input) (ID Input) |
+        // For Label - static width
+        // For (ID Input):
+        //    For 'ID' - static
+        //    For 'Input' - dynamic
+        // Spacing - static
+
+        const float fullWidth = ImGui::GetContentRegionAvail().x;
+        const float labelWidth = ImGui::CalcTextSize("Location: ").x;
+        const float idWidth = ImGui::CalcTextSize("X:").x;
+        const float spacing = ImGui::GetStyle().ItemSpacing.x;
+        constexpr float componentsCount = 3.f;      // 3 -> X Y Z
+        constexpr float totalComponentsCount = 7.f; // 3 -> | Text | (ID Input) * 3 |
+        const float inputWidth
+            = (fullWidth - labelWidth - componentsCount * idWidth - totalComponentsCount * spacing)
+              / componentsCount;
+
+        auto drawVec3Control = [=](const char* label, glm::vec3& v, const float resetValue = 0.0f)
+        {
+            static constexpr ImVec4 COLOR_X = ImVec4(1.0f, 0.2f, 0.2f, 1.0f); // red
+            static constexpr ImVec4 COLOR_Y = ImVec4(0.2f, 1.0f, 0.2f, 1.0f); // green
+            static constexpr ImVec4 COLOR_Z = ImVec4(0.2f, 0.6f, 1.0f, 1.0f); // blue
+
+            ImGui::PushID(label);
+
+            ImGui::AlignTextToFramePadding();
+            ImGui::TextUnformatted(label);
+            ImGui::SameLine();
+            ImGui::Dummy(ImVec2(labelWidth - ImGui::CalcTextSize(label).x, 0));
+            ImGui::SameLine();
+
+            ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 0));
+
+            ImGui::PushStyleColor(ImGuiCol_Text, COLOR_X);
+            ImGui::TextUnformatted("X:");
+            ImGui::PopStyleColor();
+            ImGui::SameLine(0, 3.f);
+            ImGui::PushItemWidth(inputWidth);
+            ImGui::DragFloat("##X", &v.x, 0.1f, 0.0f, 0.0f, "%.3f");
+            ImGui::PopItemWidth();
+            ImGui::SameLine();
+
+            ImGui::PushStyleColor(ImGuiCol_Text, COLOR_Y);
+            ImGui::TextUnformatted("Y:");
+            ImGui::PopStyleColor();
+            ImGui::SameLine();
+            ImGui::PushItemWidth(inputWidth);
+            ImGui::DragFloat("##Y", &v.y, 0.1f, 0.0f, 0.0f, "%.3f");
+            ImGui::PopItemWidth();
+            ImGui::SameLine();
+
+            ImGui::PushStyleColor(ImGuiCol_Text, COLOR_Z);
+            ImGui::TextUnformatted("Z:");
+            ImGui::SameLine();
+            ImGui::PopStyleColor();
+            ImGui::PushItemWidth(inputWidth);
+            ImGui::DragFloat("##Z", &v.z, 0.1f, 0.0f, 0.0f, "%.3f");
+            ImGui::PopItemWidth();
+
+            ImGui::PopStyleVar();
+            ImGui::PopItemWidth();
+            ImGui::PopItemWidth();
+            ImGui::PopItemWidth();
+
+            ImGui::PopID();
+        };
+
+        glm::vec3 location = {};
+        glm::vec3 rotation = {};
+        glm::vec3 scale = {};
+        glm::vec3 origin = {};
+
+        auto* transforms = dynamic_cast<Transformable*>(_target);
+        if (transforms)
+        {
+            location = transforms->getPosition();
+            rotation = transforms->getRotation();
+            scale = transforms->getScale();
+            origin = transforms->getOrigin();
+        }
+
+        if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
+        {
+            constexpr auto rowSpacing = ImVec2(0.0f, 5.0f);
+            drawVec3Control("Location", location, 0.0f);
+            ImGui::Dummy(rowSpacing);
+            drawVec3Control("Rotation", rotation, 0.0f);
+            ImGui::Dummy(rowSpacing);
+            drawVec3Control("Origin", origin, 1.0f);
+            ImGui::Dummy(rowSpacing);
+            drawVec3Control("Scale", scale, 1.0f);
+        }
+
+        if (transforms)
+        {
+            if (location != transforms->getPosition())
+            {
+                transforms->setPosition(GPos3(location));
+            }
+            if (rotation != transforms->getRotation())
+            {
+                transforms->setRotation(rotation);
+            }
+            if (scale != transforms->getScale())
+            {
+                transforms->setScale(scale);
+            }
+            if (origin != transforms->getOrigin())
+            {
+                transforms->setOrigin(origin);
+            }
+        }
+    }
+
+    void ActorPropertiesWindow::onUpdate()
+    {
+        BaseFloatEWC::onUpdate();
+
+        _slowUpdater.startOrUpdate();
     }
 
     void BaseMenuBarEWC::onInit()
