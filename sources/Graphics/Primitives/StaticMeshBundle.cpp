@@ -37,11 +37,16 @@ namespace
     {
         for (uint32_t i = 0; i < node->mNumMeshes; ++i)
         {
-            auto* topMesh = rootComponent->addChildComponent<SW::StaticMesh>();
-            topMesh->setComponentName(node->mName.C_Str());
+            if (!strstr(node->mName.C_Str(), "_LOD0"))
+            {
+                continue;
+            }
 
-            const auto meshIndex = node->mMeshes[i];
-            topMesh->importFrom(scene->mMeshes[meshIndex], scene, modelPath);
+            auto* topMesh = rootComponent->addChildComponent<SW::StaticMesh>();
+
+            const aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
+            topMesh->setComponentName(mesh->mName.C_Str());
+            topMesh->importFrom(mesh, scene, modelPath);
             container.push_back(topMesh);
         }
 
@@ -61,7 +66,10 @@ namespace SW
         {
             if (Verify(mesh)) [[likely]]
             {
-                mesh->directDraw();
+                if (mesh->isEnabled())
+                {
+                    mesh->directDraw();
+                }
             }
         }
     }

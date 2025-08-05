@@ -43,8 +43,9 @@ namespace SW
 
         void clearMeshes();
 
-    protected:
         MeshesT _meshes;
+
+    protected:
     };
 
 } // namespace SW

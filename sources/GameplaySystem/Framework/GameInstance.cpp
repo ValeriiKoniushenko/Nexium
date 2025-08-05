@@ -122,7 +122,7 @@ namespace SW
             return speed * mlt;
         };
 
-        auto toggleSimulation = keyboardInput.create("toggleSimulation", GLFW_KEY_F12);
+        auto toggleSimulation = keyboardInput.create("toggleSimulation", GLFW_KEY_F1);
         toggleSimulation->setIsRepeatable(false);
         toggleSimulation->onPress.subscribe(
             [this](auto)

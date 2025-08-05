@@ -114,7 +114,7 @@ namespace SW
     void KeyboardShortcutsEWC::onDraw()
     {
         ImGui::Text("Shortcuts:");
-        ImGui::Text("    F12     - Toggle render mode");
+        ImGui::Text("    F1      - Toggle render mode");
         ImGui::Text("    W/A/S/D - Move Control");
         ImGui::Text("    C/Space - Down/Up");
         ImGui::Text("    M       - Mouse capture");

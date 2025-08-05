@@ -59,7 +59,10 @@ void TemplateGameInstance::onTick(float delta)
     shader->setUniform("uTexture"_atom, 0);
     shader->setUniform("uProjAndView"_atom, camera.getMatrix());
 
-    meshes.front().directDraw();
+    for (auto&& m : meshes)
+    {
+        m.directDraw();
+    }
 }
 
 void TemplateGameInstance::onInitFinish()
@@ -68,7 +71,7 @@ void TemplateGameInstance::onInitFinish()
     camera.setFov(90.f);
 
     std::vector<std::filesystem::path> modelPaths
-        = { /*"assets/base-3d/Models/FBX/Tree.fbx",*/ "assets/base-3d/Models/FBX/FireHydrant.fbx" };
+        = { "assets/base-3d/Models/FBX/Tree.fbx", "assets/base-3d/Models/FBX/FireHydrant.fbx" };
 
     Assimp::Importer importer;
     for (auto&& path : modelPaths)
@@ -83,5 +86,30 @@ void TemplateGameInstance::onInitFinish()
             mesh.setShaderProgram(_shaderManager->getShaderProgram("color"_atom));
             meshes.push_back(std::move(mesh));
         }
+    }
+
+    for (auto& mesh : meshes)
+    {
+        int counter = 0;
+        mesh.forEach(
+            [&counter](SW::BaseComponent* c)
+            {
+                // just stupid code to disable useless nodes\meshes
+                if (!c->getComponentName().find("_LOD0"))
+                {
+                    c->setEnabled(false);
+                }
+
+                if (c->getComponentName() == "Tree_LOD0")
+                {
+                    ++counter;
+                    if (counter == 2)
+                    {
+                        auto* m = dynamic_cast<SW::StaticMesh*>(c);
+                        m->setDrawModifiers(
+                            { { GL_CULL_FACE, SW::GraphicsComponentData::Modifier::Disable } });
+                    }
+                }
+            });
     }
 }

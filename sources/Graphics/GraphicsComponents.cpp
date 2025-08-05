@@ -118,6 +118,9 @@ namespace SW
 
         if (!ignoreVertexAttribSetup)
         {
+            glBindVertexArray(_vao);
+            glBindBuffer(GL_ARRAY_BUFFER, _vbo);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
             _shader->setupVertexAttribute();
         }
     }
