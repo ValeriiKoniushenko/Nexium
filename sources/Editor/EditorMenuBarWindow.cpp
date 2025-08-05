@@ -56,6 +56,19 @@ namespace SW
             }
             ImGui::EndMenu();
         }
+
+        ImGui::SameLine(ImGui::GetWindowWidth()
+                        - (ImGui::CalcTextSize(_fpsTextTemplate).x + _fpsMarginRight)
+                        - ImGui::GetStyle().ItemSpacing.x);
+        ImGui::TextUnformatted(_cachedFpsText.c_str());
+    }
+
+    void EditorMenuBarWindow::onUpdate()
+    {
+        BaseMenuBarEWC::onUpdate();
+
+        _cachedFpsText
+            = _fpsText + Core::StringAtom::MakeFrom(static_cast<int>(ImGui::GetIO().Framerate));
     }
 
 } // namespace SW

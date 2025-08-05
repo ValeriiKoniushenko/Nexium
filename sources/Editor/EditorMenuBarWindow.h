@@ -34,8 +34,13 @@ namespace SW
 
     protected:
         void onDraw() override;
+        void onUpdate() override;
 
     private:
+        inline static const char* _fpsText = "FPS: ";
+        inline static const char* _fpsTextTemplate = "FPS: 99999";
+        Core::StringAtom _cachedFpsText = _fpsText;
+        const int _fpsMarginRight = 10;
     };
     
 } // namespace SW
