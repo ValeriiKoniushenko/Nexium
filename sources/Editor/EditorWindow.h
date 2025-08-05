@@ -144,16 +144,25 @@ namespace SW
         ECS_REGISTER_NEW_COMPONENT(LogsWindow, BaseFloatEWC);
 
     public:
-        void addLog(Core::StringAtom log);
+        struct LogLine
+        {
+            Core::StringAtom message;
+            spdlog::level::level_enum level = {};
+            Core::StringAtom hashLog;
+        };
+
+    public:
+        void addLog(Core::StringAtom&& log, spdlog::level::level_enum level);
         void clearLogs();
 
     private:
         void onInit() override;
         void onDraw() override;
         void onUpdate() override;
+        void fetchLogs();
 
     private:
-        std::vector<Core::StringAtom> _logs;
+        std::vector<LogLine> _logs;
     };
 
 } // namespace SW

@@ -37,13 +37,19 @@ namespace SW
         logLine.level = l;
         logLine.author = getLogger()->name().c_str();
         logLine.message = std::move(log);
+        logLine.time = std::time(nullptr);
 
         LogQueue::instance().addLog(std::move(logLine));
     }
 
     Core::StringAtom LogQueue::LogLine::toString() const
     {
-        return ("[{}] [{}] {} {}"_f << spdlog::level::to_short_c_str(level) << author << message)
+        std::tm* tm_ptr = std::localtime(&time);
+        std::ostringstream oss;
+        oss << std::put_time(tm_ptr, "%H:%M:%S");
+
+        return ("{} [{}] [{}] {}"_f << oss.str() << spdlog::level::to_short_c_str(level) << author
+                                    << message)
             .data();
     }
 

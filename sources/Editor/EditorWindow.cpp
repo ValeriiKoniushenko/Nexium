@@ -165,9 +165,14 @@ namespace SW
         ImGui::End();
     }
 
-    void LogsWindow::addLog(Core::StringAtom log)
+    void LogsWindow::addLog(Core::StringAtom&& log, spdlog::level::level_enum level)
     {
-        _logs.push_back(std::move(log.shrink_to_fit()));
+        LogLine l;
+        l.message = std::move(log);
+        l.level = level;
+        l.hashLog = Core::StringAtom("##") + _logs.size();
+
+        _logs.push_back(std::move(l));
     }
 
     void LogsWindow::clearLogs()
@@ -195,37 +200,34 @@ namespace SW
             }
 
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 1)); // Tighten spacing
-            for (const auto& log : _logs)
+            for (auto& [message, level, hashLog] : _logs)
             {
-                ImVec4 color;
-                bool has_color = false;
-                if (strstr(log.c_str(), "[C]"))
+                std::optional<ImVec4> color;
+
+                if (level == spdlog::level::critical)
                 {
-                    // red
-                    color = ImVec4(229.f / 255.f, 81.f / 141.f, 0, 1.0f);
-                    has_color = true;
+                    color = ImVec4(229.f / 255.f, 81.f / 141.f, 0, 1.0f); // red
                 }
-                if (strstr(log.c_str(), "[E]"))
+                if (level == spdlog::level::err)
                 {
-                    // orange
-                    color = ImVec4(230.f / 255.f, 230.f / 141.f, 27.f / 255.f, 1.0f);
-                    has_color = true;
+                    color = ImVec4(230.f / 255.f, 230.f / 141.f, 27.f / 255.f, 1.0f); // orange
                 }
-                if (strstr(log.c_str(), "[D]"))
+                if (level == spdlog::level::warn)
                 {
-                    // gray
-                    color = ImVec4(190.f / 255.f, 190.f / 141.f, 190.f / 255.f, 1.0f);
-                    has_color = true;
+                    color = ImVec4(190.f / 255.f, 190.f / 141.f, 190.f / 255.f, 1.0f); // gray
                 }
 
-                if (has_color)
+                if (color)
                 {
-                    ImGui::PushStyleColor(ImGuiCol_Text, color);
+                    ImGui::PushStyleColor(ImGuiCol_Text, *color);
                 }
 
-                ImGui::TextUnformatted(log.c_str());
+                ImGui::PushItemWidth(-FLT_MIN); // Makes the next widget take full width
+                ImGui::InputText(hashLog.c_str(), message.data(), message.size() + 1,
+                                 ImGuiInputTextFlags_ReadOnly);
+                ImGui::PopItemWidth();
 
-                if (has_color)
+                if (color)
                 {
                     ImGui::PopStyleColor();
                 }
@@ -240,10 +242,17 @@ namespace SW
     {
         BaseFloatEWC::onUpdate();
 
+        fetchLogs();
+    }
+
+    void LogsWindow::fetchLogs()
+    {
         auto& q = LogQueue::instance();
         while (!q.isEmpty())
         {
-            _logs.push_back(std::move(q.frontAndPop().toString()));
+            auto qLog = q.frontAndPop();
+
+            addLog(std::move(qLog.toString()), qLog.level);
         }
     }
 

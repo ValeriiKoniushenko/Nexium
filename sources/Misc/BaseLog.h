@@ -42,6 +42,7 @@ namespace SW
             Core::StringAtom author;
             Core::StringAtom message;
             spdlog::level::level_enum level = {};
+            std::time_t time = 0;
 
             [[nodiscard]] Core::StringAtom toString() const;
         };
