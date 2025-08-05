@@ -70,9 +70,6 @@ void TemplateGameInstance::onInitFinish()
     camera.moveForward(-100);
     camera.setFov(90.f);
 
-    SW::globalLog.infoLog(
-        "Call it in your main loop. After that if several conditions will be matched(is initialized, is enabled, etc) will be called onTick. Inherit from onTick - and implement your own logic for update and or draw.");
-
     std::vector<std::filesystem::path> modelPaths
         = { "assets/base-3d/Models/FBX/Tree.fbx", "assets/base-3d/Models/FBX/FireHydrant.fbx" };
 

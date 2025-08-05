@@ -37,11 +37,6 @@ namespace
     {
         for (uint32_t i = 0; i < node->mNumMeshes; ++i)
         {
-            if (!strstr(node->mName.C_Str(), "_LOD0"))
-            {
-                continue;
-            }
-
             auto* topMesh = rootComponent->addChildComponent<SW::StaticMesh>();
 
             const aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
