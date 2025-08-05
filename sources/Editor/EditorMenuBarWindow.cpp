@@ -27,6 +27,20 @@
 namespace SW
 {
 
+    void EditorMenuBarWindow::onInit()
+    {
+        BaseMenuBarEWC::onInit();
+
+        _slowUpdater.setRepeatTime(1. / 10.);
+        _slowUpdater.setCallback(
+            [this](auto)
+            {
+                _cachedFpsText
+                    = _fpsText
+                      + Core::StringAtom::MakeFrom(static_cast<int>(ImGui::GetIO().Framerate));
+            });
+    }
+
     void EditorMenuBarWindow::onDraw()
     {
         if (ImGui::BeginMenu("File"))
@@ -67,8 +81,7 @@ namespace SW
     {
         BaseMenuBarEWC::onUpdate();
 
-        _cachedFpsText
-            = _fpsText + Core::StringAtom::MakeFrom(static_cast<int>(ImGui::GetIO().Framerate));
+        _slowUpdater.startOrUpdate();
     }
 
 } // namespace SW

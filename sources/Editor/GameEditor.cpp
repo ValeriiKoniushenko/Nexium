@@ -78,7 +78,7 @@ namespace SW
         auto menuBar = registerNewWindow<EditorMenuBarWindow>("Menu Bar");
         auto viewportWindow = registerNewWindow<GameViewportEWC>("Viewport");
         viewportWindow->onSizeChanged.subscribe(
-            [this](auto outer, auto inner)
+            [](auto outer, auto inner)
             {
                 if (gameInstance->renderMode.cast() == GameInstance::RenderMode::Editor)
                 {

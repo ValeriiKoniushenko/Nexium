@@ -24,6 +24,8 @@
 
 #include "EditorWindow.h"
 
+#include <Core/Timer.h>
+
 namespace SW
 {
     class EditorMenuBarWindow : public BaseMenuBarEWC
@@ -33,6 +35,7 @@ namespace SW
         ~EditorMenuBarWindow() override = default;
 
     protected:
+        void onInit() override;
         void onDraw() override;
         void onUpdate() override;
 
@@ -41,6 +44,8 @@ namespace SW
         inline static const char* _fpsTextTemplate = "FPS: 99999";
         Core::StringAtom _cachedFpsText = _fpsText;
         const int _fpsMarginRight = 10;
+
+        Core::Repeater _slowUpdater;
     };
     
 } // namespace SW
