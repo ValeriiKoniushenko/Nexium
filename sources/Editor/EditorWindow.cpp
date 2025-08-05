@@ -257,7 +257,7 @@ namespace SW
         }
     }
 
-    void ActorPropertiesWindow::setTargetActor(Actor* actor)
+    void ActorPropertiesWindow::setTargetActor(AbstractComponent* actor)
     {
         _target = actor;
     }
@@ -298,6 +298,7 @@ namespace SW
         const float inputWidth
             = (fullWidth - labelWidth - componentsCount * idWidth - totalComponentsCount * spacing)
               / componentsCount;
+        const float exceptLabelWidth = fullWidth - labelWidth - spacing;
 
         auto drawVec3Control = [=](const char* label, glm::vec3& v, const float resetValue = 0.0f)
         {
@@ -363,6 +364,22 @@ namespace SW
             scale = transforms->getScale();
             origin = transforms->getOrigin();
         }
+
+        ImGui::AlignTextToFramePadding();
+        ImGui::TextUnformatted("Name: ");
+        ImGui::SameLine();
+        ImGui::Dummy(ImVec2(labelWidth - ImGui::CalcTextSize("Name: ").x, 0));
+        ImGui::SameLine();
+        ImGui::PushItemWidth(exceptLabelWidth);
+        Core::StringAtom objName = ""_atom;
+        if (auto* comp = dynamic_cast<BaseComponent*>(_target))
+        {
+            objName = comp->getComponentName();
+        }
+        ImGui::InputText("##objName", objName.data(), objName.size() + 1,
+                         ImGuiInputTextFlags_ReadOnly);
+        ImGui::PopItemWidth();
+        ImGui::Dummy(ImVec2(0.0f, 10.0f));
 
         if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
         {

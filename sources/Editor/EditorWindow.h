@@ -172,7 +172,7 @@ namespace SW
         ECS_REGISTER_NEW_COMPONENT(ActorPropertiesWindow, BaseFloatEWC);
 
     public:
-        void setTargetActor(Actor* actor);
+        void setTargetActor(AbstractComponent* actor);
         void resetTargetActor();
 
     private:
@@ -181,7 +181,7 @@ namespace SW
         void onUpdate() override;
 
     private:
-        Actor* _target = nullptr;
+        AbstractComponent* _target = nullptr;
         Core::Repeater _slowUpdater;
     };
 

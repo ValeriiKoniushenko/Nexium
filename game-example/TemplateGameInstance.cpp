@@ -91,13 +91,20 @@ void TemplateGameInstance::onInitFinish()
         }
     }
 
+    SW::StaticMesh* targetMesh = nullptr;
+
     for (auto& mesh : meshes)
     {
         int counter = 0;
         mesh.forEach(
-            [&counter](SW::BaseComponent* c)
+            [&counter, &targetMesh](SW::BaseComponent* c)
             {
                 // just stupid code to disable useless nodes\meshes
+                if (c->getComponentName().find("FireHydrant_LOD0"))
+                {
+                    targetMesh = c->castTo<SW::StaticMesh>();
+                }
+
                 if (!c->getComponentName().find("_LOD0"))
                 {
                     c->setEnabled(false);
@@ -114,5 +121,10 @@ void TemplateGameInstance::onInitFinish()
                     }
                 }
             });
+    }
+
+    if (auto* wnd = gameEditor.getWindow<SW::ActorPropertiesWindow>("Actor properties"))
+    {
+        wnd->setTargetActor(targetMesh);
     }
 }
