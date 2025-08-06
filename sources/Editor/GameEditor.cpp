@@ -89,7 +89,7 @@ namespace SW
             });
         auto tipsWindow = registerNewWindow<KeyboardShortcutsEWC>("Keyboard Shortcuts");
         auto logsWindow = registerNewWindow<LogsWindow>("Logs");
-        auto actorPropertiesWindow = registerNewWindow<ActorPropertiesWindow>("Actor properties");
+        auto actorPropertiesWindow = registerNewWindow<ObjectPropertiesWindow>("Actor properties");
         // actorPropertiesWindow->setTargetActor(&gameInstance->camera);
     }
 

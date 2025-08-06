@@ -257,17 +257,17 @@ namespace SW
         }
     }
 
-    void ActorPropertiesWindow::setTargetActor(AbstractComponent* actor)
+    void ObjectPropertiesWindow::setTargetActor(AbstractComponent* actor)
     {
         _target = actor;
     }
 
-    void ActorPropertiesWindow::resetTargetActor()
+    void ObjectPropertiesWindow::resetTargetActor()
     {
         _target = nullptr;
     }
 
-    void ActorPropertiesWindow::onInit()
+    void ObjectPropertiesWindow::onInit()
     {
         BaseFloatEWC::onInit();
 
@@ -279,7 +279,7 @@ namespace SW
             });
     }
 
-    void ActorPropertiesWindow::onDraw()
+    void ObjectPropertiesWindow::onDraw()
     {
         // One-row structure is:
         // | Label | (ID Input) (ID Input) (ID Input) |
@@ -414,7 +414,7 @@ namespace SW
         }
     }
 
-    void ActorPropertiesWindow::onUpdate()
+    void ObjectPropertiesWindow::onUpdate()
     {
         BaseFloatEWC::onUpdate();
 

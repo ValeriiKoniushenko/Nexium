@@ -120,7 +120,7 @@ void TemplateGameInstance::onInitFinish()
             });
     }
 
-    if (auto* wnd = gameEditor.getWindow<SW::ActorPropertiesWindow>("Actor properties"))
+    if (auto* wnd = gameEditor.getWindow<SW::ObjectPropertiesWindow>("Actor properties"))
     {
         wnd->setTargetActor(targetMesh);
     }

@@ -167,9 +167,9 @@ namespace SW
         std::vector<LogLine> _logs;
     };
 
-    class ActorPropertiesWindow : public BaseFloatEWC
+    class ObjectPropertiesWindow : public BaseFloatEWC
     {
-        ECS_REGISTER_NEW_COMPONENT(ActorPropertiesWindow, BaseFloatEWC);
+        ECS_REGISTER_NEW_COMPONENT(ObjectPropertiesWindow, BaseFloatEWC);
 
     public:
         void setTargetActor(AbstractComponent* actor);

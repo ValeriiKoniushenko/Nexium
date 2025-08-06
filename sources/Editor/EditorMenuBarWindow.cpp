@@ -68,6 +68,10 @@ namespace SW
             {
                 gameInstance->gameEditor.showWindow<LogsWindow>("Logs");
             }
+            if (ImGui::MenuItem("ObjectPropertiesWindow"))
+            {
+                gameInstance->gameEditor.showWindow<ObjectPropertiesWindow>("Properties");
+            }
             ImGui::EndMenu();
         }
 
