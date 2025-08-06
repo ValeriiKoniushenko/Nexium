@@ -116,13 +116,10 @@ namespace SW
             json["type"] = "";
         }
 
-        for (std::size_t i = 0; i < _children.size(); ++i)
+        for (auto& child : _children)
         {
-            criticalLog("Not implemented. 106, BaseComponent");
-            break;
+            json["children"].push_back(child->toJson());
         }
-
-        errorLog("Parent 'toJson' is not implemented.");
 
         return json;
     }
