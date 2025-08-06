@@ -27,12 +27,18 @@ namespace SW
 
     nlohmann::json Actor::toJson() const
     {
-        return Transformable::toJson();
+        nlohmann::json json;
+
+        json["Transformable"] = Transformable::toJson();
+        json["ComponentHolder"] = ComponentHolder::toJson();
+
+        return json;
     }
 
     void Actor::fromJson(const nlohmann::json& json)
     {
-        Transformable::fromJson(json);
+        Transformable::fromJson(json["Transformable"]);
+        ComponentHolder::fromJson(json["ComponentHolder"]);
     }
 
 } // namespace SW

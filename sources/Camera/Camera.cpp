@@ -116,7 +116,7 @@ namespace SW
 
     nlohmann::json BaseCamera::toJson() const
     {
-        auto json = Transformable::toJson();
+        auto json = Actor::toJson();
 
         json["viewport"] = _size;
         json["fov"] = _fov;
@@ -127,12 +127,27 @@ namespace SW
 
     void BaseCamera::fromJson(const nlohmann::json& json)
     {
-        Transformable::fromJson(json);
+        Actor::fromJson(json);
+        std::cout << json.dump(4) << std::endl;
+        _size = json["viewport"].get<decltype(_size)>();
+        _fov = json["fov"].get<decltype(_fov)>();
+        _far = json["far"].get<decltype(_far)>();
+        _near = json["near"].get<decltype(_near)>();
+    }
 
-        _size = json["viewport"];
-        _fov = json["fov"];
-        _far = json["far"];
-        _near = json["near"];
+    Core::StringAtom BaseCamera::getCacheHash() const
+    {
+        return "BaseCamera";
+    }
+
+    nlohmann::json BaseCamera::toCacheData() const
+    {
+        return toJson();
+    }
+
+    void BaseCamera::fromCacheData(const nlohmann::json& data)
+    {
+        fromJson(data);
     }
 
     void BaseCamera::recalculateCameraMatrices()

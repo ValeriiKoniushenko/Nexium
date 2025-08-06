@@ -23,14 +23,14 @@
 #pragma once
 
 #include "Core/Size.h"
-#include "GameplaySystem/ECS/BaseComponent.h"
 #include "GameplaySystem/ECS/Transformable.h"
 #include "GameplaySystem/Framework/Actor.h"
+#include "Misc/JsonCacheable.h"
 
 namespace SW
 {
 
-    class BaseCamera : public Actor
+    class BaseCamera : public Actor, public JsonCacheable
     {
     public:
         ~BaseCamera() override = default;
@@ -60,6 +60,10 @@ namespace SW
 
         [[nodiscard]] nlohmann::json toJson() const override;
         void fromJson(const nlohmann::json& json) override;
+
+        [[nodiscard]] Core::StringAtom getCacheHash() const override;
+        [[nodiscard]] nlohmann::json toCacheData() const override;
+        void fromCacheData(const nlohmann::json& data) override;
 
     protected:
         void recalculateCameraMatrices();

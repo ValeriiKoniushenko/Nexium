@@ -45,7 +45,8 @@ namespace SW
         [[nodiscard]] spdlog::logger* getLogger() const override { return Framework::getLogger(); }
         [[nodiscard]] const char* getPrefix() const override { return "GameInstance"; }
 
-        void init();
+        void initialize();
+        void deinitialize();
         void updateViewport();
 
     public: // Temporary place. MOVE IT !!!!
@@ -69,6 +70,8 @@ namespace SW
         virtual void onTick(float delta) = 0;
         virtual void onInitFinish() = 0;
         virtual void onLoadShaders() = 0;
+        virtual void onInitReadCache();
+        virtual void onFinishWriteCache();
 
     protected:
         // Easy-access variables

@@ -26,6 +26,7 @@ int main()
 {
     gameInstance = std::make_unique<TemplateGameInstance>();
 
-    gameInstance->init();
+    gameInstance->initialize();
+    gameInstance->deinitialize();
     gameInstance.reset();
 }

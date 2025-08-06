@@ -44,6 +44,9 @@ namespace SW
         [[nodiscard]] Core::FSize3 getSize() const noexcept { return _size; }
         [[nodiscard]] glm::vec3 getCenter() const noexcept { return _center; }
 
+        [[nodiscard]] nlohmann::json toJson() const override;
+        void fromJson(const nlohmann::json& json) override;
+
     protected:
         void applyUniforms() override;
         void calculateSizeBaseOnMesh(const aiMesh* rawMesh, const aiMatrix4x4& transform);

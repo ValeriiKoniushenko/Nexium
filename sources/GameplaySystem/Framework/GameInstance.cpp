@@ -34,7 +34,7 @@ std::unique_ptr<SW::GameInstance> gameInstance = nullptr;
 namespace SW
 {
 
-    void GameInstance::init()
+    void GameInstance::initialize()
     {
 #ifdef DEBUG
         spdlog::set_level(spdlog::level::trace);
@@ -65,9 +65,25 @@ namespace SW
         renderToTextureObject.generate();
         gameEditor.initialize();
         initShortcuts();
+        onInitReadCache();
         onInitFinish();
 
         gameLoop();
+    }
+
+    void GameInstance::deinitialize()
+    {
+        onFinishWriteCache();
+    }
+
+    void GameInstance::onInitReadCache()
+    {
+        camera.tryReadFromCache();
+    }
+
+    void GameInstance::onFinishWriteCache()
+    {
+        camera.writeToCache();
     }
 
     void GameInstance::gameLoop()

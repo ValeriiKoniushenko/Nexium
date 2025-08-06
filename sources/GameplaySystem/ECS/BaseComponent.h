@@ -298,6 +298,9 @@ namespace SW
         // ========================== MISC ==========================
         void clear() override;
 
+        [[nodiscard]] nlohmann::json toJson() const override;
+        void fromJson(const nlohmann::json& json) override;
+
     protected:
         [[nodiscard]] virtual bool onAddChildComponentValidation(const BaseComponent* newComponent)
         {
@@ -360,6 +363,9 @@ namespace SW
         {
             return *_type == T::componentType;
         }
+
+        [[nodiscard]] nlohmann::json toJson() const override;
+        void fromJson(const nlohmann::json& json) override;
 
     protected:
         explicit BaseComponent(const Core::StringAtom* type, const Core::StringAtom& name = ""_atom)

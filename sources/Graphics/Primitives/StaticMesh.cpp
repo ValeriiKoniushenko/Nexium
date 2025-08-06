@@ -63,6 +63,22 @@ namespace SW
         setMesh(rawMesh, true, true);
     }
 
+    nlohmann::json StaticMesh::toJson() const
+    {
+        nlohmann::json json;
+
+        json["Transformable"] = Transformable::toJson();
+        json["BaseComponent"] = BaseComponent::toJson();
+
+        return json;
+    }
+
+    void StaticMesh::fromJson(const nlohmann::json& json)
+    {
+        Transformable::fromJson(json["Transformable"]);
+        BaseComponent::fromJson(json["BaseComponent"]);
+    }
+
     void StaticMesh::applyUniforms()
     {
         GraphicsComponentData::applyUniforms();

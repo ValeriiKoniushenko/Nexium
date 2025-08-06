@@ -22,23 +22,33 @@
 
 #pragma once
 #include <Core/String.h>
+#include <nlohmann/json_fwd.hpp>
 
 namespace SW
 {
 
-    class Cacheable
+    class JsonCacheable
     {
     public:
-        virtual ~Cacheable() = default;
+        virtual ~JsonCacheable() = default;
 
         /**
          * @brief Generate in your own way possible unique string.
          * After that you can find your logs with such stem(name).
          */
-        [[nodiscard]] virtual Core::StringAtom hashString() = 0;
+        void writeToCache() const;
+
+        [[nodiscard]] bool hasCache() const;
+        void readFromCache();
+        void tryReadFromCache();
 
     protected:
-        Cacheable() = default;
+        JsonCacheable() = default;
+        [[nodiscard]] virtual std::filesystem::path getCacheDir() const { return { "configs" }; };
+        [[nodiscard]] virtual Core::StringAtom getCacheHash() const = 0;
+        [[nodiscard]] virtual nlohmann::json toCacheData() const = 0;
+        virtual void fromCacheData(const nlohmann::json& data) = 0;
+        [[nodiscard]] std::filesystem::path getTargetPath() const;
     };
 
 } // namespace SW

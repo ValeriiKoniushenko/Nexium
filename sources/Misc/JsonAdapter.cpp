@@ -123,28 +123,28 @@ namespace Core
 
     void from_json(const nlohmann::json& j, Core::FSize2& value)
     {
-        value.width = j.at(0).get<float>();
-        value.height = j.at(1).get<float>();
+        value.width = j["width"].get<float>();
+        value.height = j["width"].get<float>();
     }
 
     void from_json(const nlohmann::json& j, Core::FSize3& value)
     {
-        value.width = j.at(0).get<float>();
-        value.height = j.at(1).get<float>();
-        value.deep = j.at(2).get<float>();
+        value.width = j["width"].get<float>();
+        value.height = j["height"].get<float>();
+        value.deep = j["deep"].get<float>();
     }
 
     void from_json(const nlohmann::json& j, Core::ISize2& value)
     {
-        value.width = j.at(0).get<int>();
-        value.height = j.at(1).get<int>();
+        value.width = j["width"].get<int>();
+        value.height = j["height"].get<int>();
     }
 
     void from_json(const nlohmann::json& j, Core::ISize3& value)
     {
-        value.width = j.at(0).get<int>();
-        value.height = j.at(1).get<int>();
-        value.deep = j.at(2).get<int>();
+        value.width = j["width"].get<int>();
+        value.height = j["height"].get<int>();
+        value.deep = j["deep"].get<int>();
     }
 
 } // namespace Core
