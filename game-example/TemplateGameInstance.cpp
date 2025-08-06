@@ -96,13 +96,9 @@ void TemplateGameInstance::onInitFinish()
             SW::StaticMeshBundle mesh;
             mesh.importFrom(scene->mRootNode, scene, path);
             mesh.setShaderProgram(_shaderManager->getShaderProgram("color"_atom));
+            mesh.tryReadFromCache();
             meshes.push_back(std::move(mesh));
         }
-    }
-
-    for (auto&& m : meshes)
-    {
-        m.tryReadFromCache();
     }
 
     SW::StaticMesh* targetMesh = nullptr;
