@@ -288,3 +288,9 @@ TEST_F(ECSTreeTests, DFSIteratorTest)
             return c->getComponentName() != "Middle2";
         });
 }
+
+TEST_F(ECSTreeTests, exportingToJson)
+{
+    const auto json = root.toJson();
+    std::cout << json.dump(4) << std::endl;
+}

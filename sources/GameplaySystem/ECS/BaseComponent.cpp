@@ -60,7 +60,7 @@ namespace SW
         _noTick = json["noTick"].get<bool>();
     }
 
-    bool ComponentHolder::removeChild(const BaseComponent* child)
+    bool BaseComponent::removeChild(const BaseComponent* child)
     {
         for (auto i = _children.begin(); i != _children.end(); ++i)
         {
@@ -74,7 +74,7 @@ namespace SW
         return false;
     }
 
-    bool ComponentHolder::removeChildIf(std::function<bool(const BaseComponent*)>&& pred)
+    bool BaseComponent::removeChildIf(std::function<bool(const BaseComponent*)>&& pred)
     {
         bool removedAtLeastOne = false;
 
@@ -94,29 +94,44 @@ namespace SW
         return removedAtLeastOne;
     }
 
-    void ComponentHolder::clear()
+    void BaseComponent::clear()
     {
         AbstractComponent::clear();
-
+        _name.clear();
+        _parent = nullptr;
         _children.clear();
     }
 
-    nlohmann::json ComponentHolder::toJson() const
+    nlohmann::json BaseComponent::toJson() const
     {
         auto json = AbstractComponent::toJson();
 
+        json["name"] = _name;
+        if (_type)
+        {
+            json["type"] = *_type;
+        }
+        else
+        {
+            json["type"] = "";
+        }
+
         for (std::size_t i = 0; i < _children.size(); ++i)
         {
-            criticalLog("Not implemented. 106, ComponentHolder");
+            criticalLog("Not implemented. 106, BaseComponent");
             break;
         }
+
+        errorLog("Parent 'toJson' is not implemented.");
 
         return json;
     }
 
-    void ComponentHolder::fromJson(const nlohmann::json& json)
+    void BaseComponent::fromJson(const nlohmann::json& json)
     {
         AbstractComponent::fromJson(json);
+
+        errorLog("'fromJson' is not implemented.");
     }
 
     bool BaseComponent::operator==(const BaseComponent& other) const
@@ -159,44 +174,8 @@ namespace SW
         return seed;
     }
 
-    nlohmann::json BaseComponent::toJson() const
-    {
-        auto json = ComponentHolder::toJson();
-
-        json["name"] = _name;
-        if (_type)
-        {
-            json["type"] = *_type;
-        }
-        else
-        {
-            json["type"] = "";
-        }
-
-        errorLog("Parent 'toJson' is not implemented.");
-
-        return json;
-    }
-
-    void BaseComponent::fromJson(const nlohmann::json& json)
-    {
-        ComponentHolder::fromJson(json);
-
-        errorLog("'fromJson' is not implemented.");
-    }
-
-    void BaseComponent::clear()
-    {
-        ComponentHolder::clear();
-
-        _name.clear();
-        _parent = nullptr;
-    }
-
     void BaseComponent::onSuccessAddChildComponentValidation(BaseComponent* newComponent)
     {
-        ComponentHolder::onSuccessAddChildComponentValidation(newComponent);
-
         newComponent->_parent = this;
     }
 

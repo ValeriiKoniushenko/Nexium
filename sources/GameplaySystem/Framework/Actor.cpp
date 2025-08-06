@@ -30,7 +30,7 @@ namespace SW
         nlohmann::json json;
 
         json["Transformable"] = Transformable::toJson();
-        json["ComponentHolder"] = ComponentHolder::toJson();
+        json["BaseComponent"] = BaseComponent::toJson();
 
         return json;
     }
@@ -38,7 +38,7 @@ namespace SW
     void Actor::fromJson(const nlohmann::json& json)
     {
         Transformable::fromJson(json["Transformable"]);
-        ComponentHolder::fromJson(json["ComponentHolder"]);
+        BaseComponent::fromJson(json["BaseComponent"]);
     }
 
 } // namespace SW

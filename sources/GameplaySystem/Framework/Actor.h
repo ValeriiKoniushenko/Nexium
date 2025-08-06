@@ -28,16 +28,12 @@
 namespace SW
 {
 
-    class Actor : public Transformable, public ComponentHolder
+    class Actor : public Transformable, public BaseComponent
     {
-    public:
-        Actor() = default;
-        ~Actor() override = default;
-        Actor(const Actor& other) = default;
-        Actor(Actor&& other) noexcept = default;
+        ECS_REGISTER_NEW_COMPONENT(Actor, BaseComponent);
 
-        Actor& operator=(const Actor& other) = default;
-        Actor& operator=(Actor&& other) noexcept = default;
+    public:
+        ~Actor() override = default;
 
         [[nodiscard]] nlohmann::json toJson() const override;
         void fromJson(const nlohmann::json& json) override;

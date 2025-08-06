@@ -181,16 +181,16 @@ namespace SW
     };
 
     //
-    //    _____      _   _         _      _
-    //   /  __ \    | | | |       | |    | |
-    //   | /  \/    | |_| |  ___  | |  __| |  ___  _ __
-    //   | |        |  _  | / _ \ | | / _` | / _ \| '__|
-    //   | \__/\ _  | | | || (_) || || (_| ||  __/| |
-    //    \____/(_) \_| |_/ \___/ |_| \__,_| \___||_|
-    class ComponentHolder : public AbstractComponent
+    //   ______                    _____
+    //   | ___ \                  /  __ \
+    //   | |_/ /  __ _  ___   ___ | /  \/
+    //   | ___ \ / _` |/ __| / _ \| |
+    //   | |_/ /| (_| |\__ \|  __/| \__/\ _
+    //   \____/  \__,_||___/ \___| \____/(_)
+    class BaseComponent : public AbstractComponent
     {
     public:
-        using Self = ComponentHolder;
+        using Self = BaseComponent;
         template<bool isConst>
         using AdaptivePtr = boost::intrusive_ptr<std::conditional_t<isConst, const Self, Self>>;
         template<bool isConst>
@@ -202,6 +202,33 @@ namespace SW
         using ChildrenT = std::vector<boost::intrusive_ptr<BaseComponent>>;
 
     public:
+        ~BaseComponent() override = default;
+
+        [[nodiscard]] bool operator==(const Self& other) const;
+
+        // ========================== WORKING WITH NAME ==========================
+        void setComponentName(const Core::StringAtom& name);
+        [[nodiscard]] const Core::StringAtom& getComponentName() const noexcept { return _name; }
+        [[nodiscard]] const Core::StringAtom& getComponentType() const noexcept { return *_type; }
+
+        // ========================== WORKING WITH PARENT ==========================
+        [[nodiscard]] const BaseComponent* getParent() const noexcept { return _parent; }
+        [[nodiscard]] BaseComponent* getParent() noexcept { return _parent; }
+        [[nodiscard]] bool hasParent() const noexcept { return _parent; }
+
+        // ========================== MISC & TYPES ==========================
+        void clear() override;
+        [[nodiscard]] bool isValid() const;
+        [[nodiscard]] std::size_t makeHash() const;
+
+        template<IsComponent T>
+        [[nodiscard]] bool isTypeOf() const
+        {
+            return *_type == T::componentType;
+        }
+
+        [[nodiscard]] nlohmann::json toJson() const override;
+        void fromJson(const nlohmann::json& json) override;
         // ========================== WORKING WITH CHILDREN ==========================
         [[nodiscard]] ChildT getChildAt(std::size_t i) { return _children.at(i); }
         [[nodiscard]] CChildT getChildAt(std::size_t i) const { return _children.at(i); }
@@ -295,21 +322,27 @@ namespace SW
             Impl_forEach_DFS<BaseComponent, true>(this, std::forward<decltype(callback)>(callback));
         }
 
-        // ========================== MISC ==========================
-        void clear() override;
-
-        [[nodiscard]] nlohmann::json toJson() const override;
-        void fromJson(const nlohmann::json& json) override;
-
     protected:
         [[nodiscard]] virtual bool onAddChildComponentValidation(const BaseComponent* newComponent)
         {
             return true;
         }
-        virtual void onSuccessAddChildComponentValidation(BaseComponent* newComponent) {}
+        virtual void onSuccessAddChildComponentValidation(BaseComponent* newComponent);
+
+        explicit BaseComponent(const Core::StringAtom* type, const Core::StringAtom& name = ""_atom)
+            : _name{ name },
+              _type{ type }
+        {
+#ifdef DEBUG
+            Assert(_type->isStatic());
+#endif
+        }
 
     protected:
         ChildrenT _children;
+        Core::StringAtom _name;
+        const Core::StringAtom* const _type = nullptr;
+        BaseComponent* _parent = nullptr;
 
     private:
         // ===================== PIMPLs =============================
@@ -320,73 +353,8 @@ namespace SW
         static void Impl_forEach_DFS(AdaptiveRawPtr<isConst> me, FuncT&& callback);
     };
 
-    //
-    //   ______                    _____
-    //   | ___ \                  /  __ \
-    //   | |_/ /  __ _  ___   ___ | /  \/
-    //   | ___ \ / _` |/ __| / _ \| |
-    //   | |_/ /| (_| |\__ \|  __/| \__/\ _
-    //   \____/  \__,_||___/ \___| \____/(_)
-    class BaseComponent : public ComponentHolder
-    {
-    public:
-        using Self = BaseComponent;
-        template<bool isConst>
-        using AdaptivePtr = boost::intrusive_ptr<std::conditional_t<isConst, const Self, Self>>;
-        template<bool isConst>
-        using AdaptiveRawPtr = std::conditional_t<isConst, const Self, Self>*;
-        using Ptr = boost::intrusive_ptr<Self>;
-        using CPtr = boost::intrusive_ptr<const Self>;
-
-    public:
-        ~BaseComponent() override = default;
-
-        [[nodiscard]] bool operator==(const Self& other) const;
-
-        // ========================== WORKING WITH NAME ==========================
-        void setComponentName(const Core::StringAtom& name);
-        [[nodiscard]] const Core::StringAtom& getComponentName() const noexcept { return _name; }
-        [[nodiscard]] const Core::StringAtom& getComponentType() const noexcept { return *_type; }
-
-        // ========================== WORKING WITH PARENT ==========================
-        [[nodiscard]] const ComponentHolder* getParent() const noexcept { return _parent; }
-        [[nodiscard]] ComponentHolder* getParent() noexcept { return _parent; }
-        [[nodiscard]] bool hasParent() const noexcept { return _parent; }
-
-        // ========================== MISC & TYPES ==========================
-        void clear() override;
-        [[nodiscard]] bool isValid() const;
-        [[nodiscard]] std::size_t makeHash() const;
-
-        template<IsComponent T>
-        [[nodiscard]] bool isTypeOf() const
-        {
-            return *_type == T::componentType;
-        }
-
-        [[nodiscard]] nlohmann::json toJson() const override;
-        void fromJson(const nlohmann::json& json) override;
-
-    protected:
-        explicit BaseComponent(const Core::StringAtom* type, const Core::StringAtom& name = ""_atom)
-            : _name{ name },
-              _type{ type }
-        {
-#ifdef DEBUG
-            Assert(_type->isStatic());
-#endif
-        }
-
-        void onSuccessAddChildComponentValidation(BaseComponent* newComponent) override;
-
-    protected:
-        Core::StringAtom _name;
-        const Core::StringAtom* const _type = nullptr;
-        ComponentHolder* _parent = nullptr;
-    };
-
     template<IsComponentOrBase TargetT, bool isConst, class FuncT>
-    void ComponentHolder::Impl_forEach_BFS(AdaptiveRawPtr<isConst> me, FuncT&& callback)
+    void BaseComponent::Impl_forEach_BFS(AdaptiveRawPtr<isConst> me, FuncT&& callback)
     {
         if (!Verify(me)) [[unlikely]]
         {
@@ -408,7 +376,7 @@ namespace SW
 
             if (!Verify(root)) [[unlikely]]
             {
-                me->criticalLog("ComponentHolder::Impl_forEach_BFS was got nullptr for root.");
+                me->criticalLog("BaseComponent::Impl_forEach_BFS was got nullptr for root.");
                 return;
             }
 
@@ -439,7 +407,7 @@ namespace SW
     }
 
     template<IsComponentOrBase TargetT, bool isConst, class FuncT>
-    void ComponentHolder::Impl_forEach_DFS(AdaptiveRawPtr<isConst> me, FuncT&& callback)
+    void BaseComponent::Impl_forEach_DFS(AdaptiveRawPtr<isConst> me, FuncT&& callback)
     {
         if (!Verify(me)) [[unlikely]]
         {
@@ -460,7 +428,7 @@ namespace SW
 
             if (!Verify(root)) [[unlikely]]
             {
-                me->criticalLog("ComponentHolder::Impl_forEach_DFS was got nullptr for root.");
+                me->criticalLog("BaseComponent::Impl_forEach_DFS was got nullptr for root.");
                 return;
             }
 

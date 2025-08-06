@@ -73,7 +73,15 @@ namespace SW
 
         const auto json = nlohmann::json::parse(ifs);
         ifs.close();
-        fromCacheData(json);
+        try
+        {
+            fromCacheData(json);
+        }
+        catch (std::exception& e)
+        {
+            globalLog.errorLog("Exception while reading of the cache file: '{}'. The reason: "_f
+                               << getTargetPath().generic_string() << e.what());
+        }
     }
 
     void JsonCacheable::tryReadFromCache()

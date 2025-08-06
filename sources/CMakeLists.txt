@@ -9,10 +9,11 @@ add_library(SpriteWalkerEngine INTERFACE)
 
 target_link_libraries(SpriteWalkerEngine INTERFACE
     SW::Camera
+    SW::Editor
     SW::GameplaySystem
-    SW::Misc
-    SW::InputDevices
     SW::Graphics
+    SW::InputDevices
+    SW::Misc
     SW::ImGui
     assimp
 )
