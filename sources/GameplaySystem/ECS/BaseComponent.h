@@ -55,6 +55,15 @@ protected:                                                                      
                                                                                                    \
 public:
 
+#define ECS_REGISTER_NEW_COMPONENT_TYPE(ClassName)                                                 \
+    const bool _##ClassName##_type_registration = SW::GetGlobalComponentFactory().registerNewType( \
+        ClassName::componentType,                                                                  \
+        []() -> SW::BaseComponent*                                                                 \
+        {                                                                                          \
+            return new std::conditional_t<std::is_abstract_v<ClassName>, SW::InvalidComponent,     \
+                                          ClassName>;                                              \
+        });
+
 namespace SW
 {
     class BaseComponent;
@@ -70,6 +79,23 @@ namespace SW
 
     template<class T>
     concept IsComponentOrVoid = IsComponent<T> || std::is_void_v<T>;
+
+    class GlobalComponentFactory : public Core::StrictSingleton<GlobalComponentFactory>
+    {
+        SINGLETONS_FRIEND(GlobalComponentFactory);
+
+    public:
+        BaseComponent* create(const Core::StringAtom& type);
+        bool registerNewType(Core::StringAtom type, std::function<BaseComponent*()>);
+
+    private:
+        std::unordered_map<Core::StringAtom, std::function<BaseComponent*()>> _map;
+    };
+
+    inline GlobalComponentFactory& GetGlobalComponentFactory()
+    {
+        return GlobalComponentFactory::instance();
+    }
 
     //
     //     ___   _           _                       _     _____
@@ -163,6 +189,40 @@ namespace SW
     //   | ___ \ / _` |/ __| / _ \| |
     //   | |_/ /| (_| |\__ \|  __/| \__/\ _
     //   \____/  \__,_||___/ \___| \____/(_)
+    /**
+     * @brief Base class for all your custom components.
+     * To create your own component you should do only several things:
+     * 1. Create your component's class. I.e. MyNewComponent and inherit from BaseComponent
+     * 2. Register as component: inside this class put a macros ECS_REGISTER_NEW_COMPONENT
+     * 3. Register as type: inside .cpp file put ECS_REGISTER_NEW_COMPONENT_TYPE
+     *
+     * @code{cpp}
+     * // MyNewComponent.h
+     * class MyNewComponent : public BaseComponent {
+     *      ECS_REGISTER_NEW_COMPONENT(MyNewComponent, BaseComponent);
+     * };
+     * @endcode
+     * @code{cpp}
+     * // MyNewComponent.cpp
+     * ECS_REGISTER_NEW_COMPONENT_TYPE(MyNewComponent);
+     * @endcode
+     *
+     * More complex example with MyParentComponent and MyChildComponent
+     * @code{cpp}
+     * // MyNewComponent.h
+     * class MyParentComponent : public BaseComponent {
+     *      ECS_REGISTER_NEW_COMPONENT(MyParentComponent, BaseComponent);
+     * };
+     * class MyChildComponent : public MyParentComponent {
+     *      ECS_REGISTER_NEW_COMPONENT(MyChildComponent, MyParentComponent);
+     * };
+     * @endcode
+     * @code{cpp}
+     * // MyNewComponent.cpp
+     * ECS_REGISTER_NEW_COMPONENT_TYPE(MyParentComponent);
+     * ECS_REGISTER_NEW_COMPONENT_TYPE(MyChildComponent);
+     * @endcode
+     */
     class BaseComponent : public AbstractComponent
     {
     public:
@@ -216,22 +276,26 @@ namespace SW
         [[nodiscard]] ComponentT* addChildComponent(Args&&... args)
         {
             typename ComponentT::Ptr newOne = new ComponentT(std::forward<Args>(args)...);
-            if (!onAddChildComponentValidation(newOne.get()))
+            return static_cast<ComponentT*>(rawAddChildComponent(newOne.get()));
+        }
+
+        [[nodiscard]] BaseComponent* rawAddChildComponent(BaseComponent* newOne)
+        {
+            if (!onAddChildComponentValidation(newOne))
             {
                 return nullptr;
             }
 
-            onSuccessAddChildComponentValidation(newOne.get());
+            onSuccessAddChildComponentValidation(newOne);
 
             // if this parent wasn't init, lets init at least here
             if (!isInited())
             {
                 initialize();
             }
-            auto* added = _children.emplace_back(std::move(newOne)).get();
+            auto* added = _children.emplace_back(newOne).get();
             added->initialize();
-
-            return static_cast<ComponentT*>(added);
+            return added;
         }
 
         bool removeChild(const BaseComponent* child);
@@ -327,6 +391,11 @@ namespace SW
 
         template<IsComponentOrBase TargetT, bool isConst, class FuncT>
         static void Impl_forEach_DFS(AdaptiveRawPtr<isConst> me, FuncT&& callback);
+    };
+
+    struct InvalidComponent : public BaseComponent
+    {
+        ECS_REGISTER_NEW_COMPONENT(InvalidComponent, BaseComponent);
     };
 
     template<IsComponentOrBase TargetT, bool isConst, class FuncT>

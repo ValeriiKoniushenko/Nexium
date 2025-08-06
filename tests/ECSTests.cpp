@@ -29,7 +29,21 @@ namespace
     class DummyComponent : public SW::BaseComponent
     {
         ECS_REGISTER_NEW_COMPONENT(DummyComponent, SW::BaseComponent);
+        int a = 123;
+        [[nodiscard]] nlohmann::json toJson() const override
+        {
+            auto json = SW::BaseComponent::toJson();
+            json["a"] = a;
+            return json;
+        }
+        void fromJson(const nlohmann::json& json) override
+        {
+            SW::BaseComponent::fromJson(json);
+            a = json["a"].get<int>();
+        }
     };
+
+    ECS_REGISTER_NEW_COMPONENT_TYPE(DummyComponent);
 
     class HardConstructorComponent : public SW::BaseComponent
     {
@@ -43,6 +57,8 @@ namespace
         int _a = 0;
         std::string _b;
     };
+
+    ECS_REGISTER_NEW_COMPONENT_TYPE(HardConstructorComponent);
 
     class ECSTreeTests : public ::testing::Test
     {
@@ -291,6 +307,19 @@ TEST_F(ECSTreeTests, DFSIteratorTest)
 
 TEST_F(ECSTreeTests, exportingToJson)
 {
+    (void)root.getChildAt(1)
+        ->addChildComponent<HardConstructorComponent>("Hello")
+        ->addChildComponent<HardConstructorComponent>("Hello1")
+        ->addChildComponent<HardConstructorComponent>("Hello2");
+
     const auto json = root.toJson();
-    std::cout << json.dump(4) << std::endl;
+
+    const auto dump = Core::StringAtom(json.dump(4));
+
+    DummyComponent newRoot;
+    newRoot.fromJson(json);
+    const auto newDump = Core::StringAtom(newRoot.toJson().dump(4));
+
+    std::cout << dump << std::endl;
+    EXPECT_EQ(dump, newDump);
 }

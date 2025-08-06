@@ -35,6 +35,30 @@ namespace
 
 namespace SW
 {
+    ECS_REGISTER_NEW_COMPONENT_TYPE(InvalidComponent);
+
+    BaseComponent* GlobalComponentFactory::create(const Core::StringAtom& type)
+    {
+        if (const auto found = _map.find(type); found != _map.end()) [[likely]]
+        {
+            if (found->second) [[likely]]
+            {
+                return found->second();
+            }
+        }
+
+        Assert(false,
+               "Maybe you forget to register your own component with ECS_REGISTER_NEW_COMPONENT?");
+        return nullptr;
+    }
+
+    bool GlobalComponentFactory::registerNewType(Core::StringAtom type,
+                                                 std::function<BaseComponent*()> callback)
+    {
+        Assert(type.isStatic());
+        _map.emplace(std::move(type), std::move(callback));
+        return true;
+    }
 
     void AbstractComponent::tick()
     {
@@ -56,7 +80,7 @@ namespace SW
 
     void AbstractComponent::fromJson(const nlohmann::json& json)
     {
-        _isEnabled = json["isEnabled"].get<bool>();
+        _isEnabled = json["isEnabled"];
         _noTick = json["noTick"].get<bool>();
     }
 
@@ -121,7 +145,19 @@ namespace SW
     {
         AbstractComponent::fromJson(json);
 
-        errorLog("'fromJson' is not implemented.");
+        _name = json["name"];
+        const_cast<Core::StringAtom&>(_type)
+            = Core::StringAtom::Intern(json["type"].get<std::string>());
+
+        if (json.contains("children"))
+        {
+            for (auto& childJson : json["children"])
+            {
+                auto c
+                    = rawAddChildComponent(GetGlobalComponentFactory().create(childJson["type"]));
+                c->fromJson(childJson);
+            }
+        }
     }
 
     bool BaseComponent::operator==(const BaseComponent& other) const

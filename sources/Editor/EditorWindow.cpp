@@ -29,6 +29,14 @@
 namespace SW
 {
 
+    ECS_REGISTER_NEW_COMPONENT_TYPE(BaseEWC);
+    ECS_REGISTER_NEW_COMPONENT_TYPE(BaseFloatEWC);
+    ECS_REGISTER_NEW_COMPONENT_TYPE(BaseMenuBarEWC);
+    ECS_REGISTER_NEW_COMPONENT_TYPE(KeyboardShortcutsEWC);
+    ECS_REGISTER_NEW_COMPONENT_TYPE(RootDockWindow);
+    ECS_REGISTER_NEW_COMPONENT_TYPE(LogsWindow);
+    ECS_REGISTER_NEW_COMPONENT_TYPE(ObjectPropertiesWindow);
+
     void BaseEWC::onTick()
     {
         if (beginWindowDraw())
