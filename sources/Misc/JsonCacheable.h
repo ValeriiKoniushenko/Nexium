@@ -44,7 +44,10 @@ namespace SW
 
     protected:
         JsonCacheable() = default;
-        [[nodiscard]] virtual std::filesystem::path getCacheDir() const { return { "configs" }; };
+        [[nodiscard]] virtual std::filesystem::path getCacheDir() const
+        {
+            return { "assets/configs" };
+        };
         [[nodiscard]] virtual Core::StringAtom getCacheHash() const = 0;
         [[nodiscard]] virtual nlohmann::json toCacheData() const = 0;
         virtual void fromCacheData(const nlohmann::json& data) = 0;

@@ -132,9 +132,9 @@ namespace SW
         ImGui::Text("");
         ImGui::Text("Globals:");
         ImGui::Text("Mouse sensitivity");
-        ImGui::SliderFloat("##mouseSensitivity", &gameInstance->mouseSensitivity, 100.f, 1300.f);
+        ImGui::SliderFloat("##mouseSensitivity", &gameInstance->mouseSensitivity, 0.f, 2000.f);
         ImGui::Text("Spectator speed");
-        ImGui::SliderFloat("##spectator_speed", &gameInstance->speed, 1.f, 300.f);
+        ImGui::SliderFloat("##spectator_speed", &gameInstance->speed, 1.f, 1000.f);
     }
     void RootDockWindow::onInit()
     {
