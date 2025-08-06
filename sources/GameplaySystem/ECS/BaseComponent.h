@@ -102,7 +102,10 @@ namespace SW
     //   |  _  || '_ \ / __|| __|| '__| / _` | / __|| __| | |
     //   | | | || |_) |\__ \| |_ | |   | (_| || (__ | |_  | \__/\ _
     //   \_| |_/|_.__/ |___/ \__||_|    \__,_| \___| \__|  \____/(_)
-    class AbstractComponent : public BaseLog, public boost::intrusive_ref_counter<BaseComponent>
+    class AbstractComponent :
+        public BaseLog,
+        public boost::intrusive_ref_counter<BaseComponent>,
+        public virtual JsonAdapter
     {
     public:
         AbstractComponent(const AbstractComponent&) = default;
@@ -152,6 +155,9 @@ namespace SW
             }
         }
 
+        [[nodiscard]] nlohmann::json toJson() const override;
+        void fromJson(const nlohmann::json& json) override;
+
     protected:
         AbstractComponent() = default;
 
@@ -165,11 +171,13 @@ namespace SW
          */
         virtual void onTick() {}
 
-        bool _isInited = false;
         bool _isEnabled = true;
 
-        // if put 'true' means that the function
+        // if put 'true' means that the function 'tick' will not be called.
         bool _noTick = false;
+
+    private:
+        bool _isInited = false;
     };
 
     //
@@ -213,7 +221,7 @@ namespace SW
             onSuccessAddChildComponentValidation(newOne.get());
 
             // if this parent wasn't init, lets init at least here
-            if (!_isInited)
+            if (!isInited())
             {
                 initialize();
             }

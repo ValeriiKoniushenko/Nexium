@@ -44,6 +44,22 @@ namespace SW
         }
     }
 
+    nlohmann::json AbstractComponent::toJson() const
+    {
+        nlohmann::json json;
+
+        json["isEnabled"] = _isEnabled;
+        json["noTick"] = _noTick;
+
+        return json;
+    }
+
+    void AbstractComponent::fromJson(const nlohmann::json& json)
+    {
+        _isEnabled = json["isEnabled"].get<bool>();
+        _noTick = json["noTick"].get<bool>();
+    }
+
     bool ComponentHolder::removeChild(const BaseComponent* child)
     {
         for (auto i = _children.begin(); i != _children.end(); ++i)

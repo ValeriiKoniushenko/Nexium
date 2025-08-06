@@ -34,7 +34,7 @@ namespace SW
     using RPos3 = Core::RelativePosition3F;
     using RPos2 = Core::RelativePosition2F;
 
-    class Transformable : public JsonAdapter
+    class Transformable : public virtual JsonAdapter
     {
     public:
         Transformable() = default;
