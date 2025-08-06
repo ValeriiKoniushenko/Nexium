@@ -33,45 +33,22 @@
 
 #define ECS_REGISTER_NEW_COMPONENT(CurrentClass, BaseComponentClass)                               \
 public:                                                                                            \
-    using Self = CurrentClass;                                                                     \
     using Ptr = boost::intrusive_ptr<CurrentClass>;                                                \
     using CPtr = boost::intrusive_ptr<const CurrentClass>;                                         \
+    template<bool isConst>                                                                         \
+    using AdaptivePtr                                                                              \
+        = boost::intrusive_ptr<std::conditional_t<isConst, const CurrentClass, CurrentClass>>;     \
+    template<bool isConst>                                                                         \
+    using AdaptiveRawPtr = std::conditional_t<isConst, const CurrentClass, CurrentClass>*;         \
+                                                                                                   \
     inline static const auto componentType = Core::StringAtom::Intern(#CurrentClass);              \
-    [[nodiscard]] static const Core::StringAtom& GetComponentType()                                \
-    {                                                                                              \
-        return CurrentClass::componentType;                                                        \
-    }                                                                                              \
     CurrentClass(const Core::StringAtom& name = ""_atom)                                           \
-        : BaseComponentClass(&componentType, name)                                                 \
+        : BaseComponentClass(componentType, name)                                                  \
     {                                                                                              \
     }                                                                                              \
                                                                                                    \
 protected:                                                                                         \
-    explicit CurrentClass(const Core::StringAtom* type, const Core::StringAtom& name = ""_atom)    \
-        : BaseComponentClass(type, name)                                                           \
-    {                                                                                              \
-    }                                                                                              \
-                                                                                                   \
-public:
-
-#define ECS_REGISTER_NEW_COMPONENT_PROTECTED(CurrentClass, BaseComponentClass)                     \
-public:                                                                                            \
-    using Self = CurrentClass;                                                                     \
-    using Ptr = boost::intrusive_ptr<CurrentClass>;                                                \
-    using CPtr = boost::intrusive_ptr<const CurrentClass>;                                         \
-    inline static const auto componentType = Core::StringAtom::Intern(#CurrentClass);              \
-    [[nodiscard]] static const Core::StringAtom& GetComponentType()                                \
-    {                                                                                              \
-        return CurrentClass::componentType;                                                        \
-    }                                                                                              \
-                                                                                                   \
-protected:                                                                                         \
-    CurrentClass(const Core::StringAtom& name = ""_atom)                                           \
-        : BaseComponentClass(&componentType, name)                                                 \
-    {                                                                                              \
-    }                                                                                              \
-                                                                                                   \
-    explicit CurrentClass(const Core::StringAtom* type, const Core::StringAtom& name = ""_atom)    \
+    explicit CurrentClass(const Core::StringAtom& type, const Core::StringAtom& name)              \
         : BaseComponentClass(type, name)                                                           \
     {                                                                                              \
     }                                                                                              \
@@ -80,7 +57,6 @@ public:
 
 namespace SW
 {
-
     class BaseComponent;
 
     template<class T>
@@ -209,7 +185,7 @@ namespace SW
         // ========================== WORKING WITH NAME ==========================
         void setComponentName(const Core::StringAtom& name);
         [[nodiscard]] const Core::StringAtom& getComponentName() const noexcept { return _name; }
-        [[nodiscard]] const Core::StringAtom& getComponentType() const noexcept { return *_type; }
+        [[nodiscard]] const Core::StringAtom& getComponentType() const noexcept { return _type; }
 
         // ========================== WORKING WITH PARENT ==========================
         [[nodiscard]] const BaseComponent* getParent() const noexcept { return _parent; }
@@ -224,7 +200,7 @@ namespace SW
         template<IsComponent T>
         [[nodiscard]] bool isTypeOf() const
         {
-            return *_type == T::componentType;
+            return _type == T::componentType;
         }
 
         [[nodiscard]] nlohmann::json toJson() const override;
@@ -329,19 +305,19 @@ namespace SW
         }
         virtual void onSuccessAddChildComponentValidation(BaseComponent* newComponent);
 
-        explicit BaseComponent(const Core::StringAtom* type, const Core::StringAtom& name = ""_atom)
+        explicit BaseComponent(const Core::StringAtom& type, const Core::StringAtom& name)
             : _name{ name },
               _type{ type }
         {
 #ifdef DEBUG
-            Assert(_type->isStatic());
+            Assert(_type.isStatic());
 #endif
         }
 
     protected:
         ChildrenT _children;
         Core::StringAtom _name;
-        const Core::StringAtom* const _type = nullptr;
+        const Core::StringAtom _type;
         BaseComponent* _parent = nullptr;
 
     private:

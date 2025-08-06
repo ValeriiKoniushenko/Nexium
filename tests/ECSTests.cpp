@@ -36,7 +36,7 @@ namespace
         ECS_REGISTER_NEW_COMPONENT(HardConstructorComponent, SW::BaseComponent);
 
         HardConstructorComponent(int a, const Core::StringAtom& name, std::string b)
-            : BaseComponent(&componentType, name),
+            : BaseComponent(componentType, name),
               _a(a),
               _b(b) {};
 

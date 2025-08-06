@@ -107,14 +107,7 @@ namespace SW
         auto json = AbstractComponent::toJson();
 
         json["name"] = _name;
-        if (_type)
-        {
-            json["type"] = *_type;
-        }
-        else
-        {
-            json["type"] = "";
-        }
+        json["type"] = _type;
 
         for (auto& child : _children)
         {
