@@ -78,7 +78,7 @@ namespace SW
         return json;
     }
 
-    void AbstractComponent::fromJson(const nlohmann::json& json)
+    void AbstractComponent::fromJson(const nlohmann::json& json, bool isIgnoreChildren /* = false*/)
     {
         _isEnabled = json["isEnabled"];
         _noTick = json["noTick"].get<bool>();
@@ -141,21 +141,24 @@ namespace SW
         return json;
     }
 
-    void BaseComponent::fromJson(const nlohmann::json& json)
+    void BaseComponent::fromJson(const nlohmann::json& json, bool isIgnoreChildren /* = false*/)
     {
-        AbstractComponent::fromJson(json);
+        AbstractComponent::fromJson(json, isIgnoreChildren);
 
         _name = json["name"];
         const_cast<Core::StringAtom&>(_type)
             = Core::StringAtom::Intern(json["type"].get<std::string>());
 
-        if (json.contains("children"))
+        if (!isIgnoreChildren)
         {
-            for (auto& childJson : json["children"])
+            if (json.contains("children"))
             {
-                auto c
-                    = rawAddChildComponent(GetGlobalComponentFactory().create(childJson["type"]));
-                c->fromJson(childJson);
+                for (auto& childJson : json["children"])
+                {
+                    auto c = rawAddChildComponent(
+                        GetGlobalComponentFactory().create(childJson["type"]));
+                    c->fromJson(childJson);
+                }
             }
         }
     }

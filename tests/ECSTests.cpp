@@ -36,9 +36,9 @@ namespace
             json["a"] = a;
             return json;
         }
-        void fromJson(const nlohmann::json& json) override
+        void fromJson(const nlohmann::json& json, bool isIgnoreChildren = false) override
         {
-            SW::BaseComponent::fromJson(json);
+            SW::BaseComponent::fromJson(json, isIgnoreChildren);
             a = json["a"].get<int>();
         }
     };

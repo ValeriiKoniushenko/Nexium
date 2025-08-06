@@ -158,7 +158,7 @@ namespace SW
         }
 
         [[nodiscard]] nlohmann::json toJson() const override;
-        void fromJson(const nlohmann::json& json) override;
+        void fromJson(const nlohmann::json& json, bool isIgnoreChildren = false) override;
 
     protected:
         AbstractComponent() = default;
@@ -264,7 +264,7 @@ namespace SW
         }
 
         [[nodiscard]] nlohmann::json toJson() const override;
-        void fromJson(const nlohmann::json& json) override;
+        void fromJson(const nlohmann::json& json, bool isIgnoreChildren = false) override;
         // ========================== WORKING WITH CHILDREN ==========================
         [[nodiscard]] ChildT getChildAt(std::size_t i) { return _children.at(i); }
         [[nodiscard]] CChildT getChildAt(std::size_t i) const { return _children.at(i); }

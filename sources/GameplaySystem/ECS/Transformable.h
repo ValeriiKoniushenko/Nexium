@@ -76,7 +76,7 @@ namespace SW
         [[nodiscard]] glm::vec3 getRightVector() const noexcept;
 
         [[nodiscard]] nlohmann::json toJson() const override;
-        void fromJson(const nlohmann::json& json) override;
+        void fromJson(const nlohmann::json& json, bool isIgnoreChildren = false) override;
 
     protected:
         void recalculateMatrices() noexcept;

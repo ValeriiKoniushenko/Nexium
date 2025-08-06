@@ -22,11 +22,12 @@
 
 #pragma once
 
+#include "Misc/JsonCacheable.h"
 #include "StaticMesh.h"
 
 namespace SW
 {
-    class StaticMeshBundle : public BaseComponent
+    class StaticMeshBundle : public BaseComponent, public JsonCacheable
     {
         ECS_REGISTER_NEW_COMPONENT(StaticMeshBundle, BaseComponent);
 
@@ -43,9 +44,15 @@ namespace SW
 
         void clearMeshes();
 
-        MeshesT _meshes;
+        [[nodiscard]] nlohmann::json toJson() const override;
+        void fromJson(const nlohmann::json& json, bool isIgnoreChildren = false) override;
 
     protected:
+        [[nodiscard]] Core::StringAtom getCacheHash() const override;
+        [[nodiscard]] nlohmann::json toCacheData() const override;
+        void fromCacheData(const nlohmann::json& data) override;
+
+        MeshesT _meshes;
     };
 
 } // namespace SW

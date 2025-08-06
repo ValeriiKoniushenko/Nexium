@@ -240,4 +240,34 @@ namespace SW
             }
         }
     }
+
+    nlohmann::json GraphicsComponentData::toJson() const
+    {
+        nlohmann::json json;
+        json["modifiers"] = nlohmann::json::array();
+        for (auto [val, mod] : _drawModifiers)
+        {
+            nlohmann::json modifier;
+            modifier["value"] = val;
+            modifier["modifier"] = mod.toStr();
+            json["modifiers"].push_back(std::move(modifier));
+        }
+        return json;
+    }
+
+    void GraphicsComponentData::fromJson(const nlohmann::json& json, bool isIgnoreChildren)
+    {
+        if (json.contains("modifiers"))
+        {
+            for (auto&& modifier : json["modifiers"])
+            {
+                const auto val = modifier.at("value").get<GLuint>();
+                const auto mod = Modifier::fromStr(modifier.at("modifier").get<std::string>());
+                if (mod)
+                {
+                    _drawModifiers.emplace(val, mod.value());
+                }
+            }
+        }
+    }
 } // namespace SW

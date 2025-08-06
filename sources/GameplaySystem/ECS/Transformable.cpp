@@ -240,7 +240,7 @@ namespace SW
         return json;
     }
 
-    void Transformable::fromJson(const nlohmann::json& json)
+    void Transformable::fromJson(const nlohmann::json& json, bool isIgnoreChildren/* = false*/)
     {
         _position = json["position"];
         _origin = json["origin"];

@@ -55,6 +55,8 @@ namespace
 namespace SW
 {
 
+    ECS_REGISTER_NEW_COMPONENT_TYPE(StaticMeshBundle)
+
     void StaticMeshBundle::directDraw()
     {
         for (auto* mesh : _meshes)
@@ -128,6 +130,54 @@ namespace SW
                 ++i;
             }
         }
+    }
+
+    nlohmann::json StaticMeshBundle::toJson() const
+    {
+        auto json = BaseComponent::toJson();
+
+        json["meshes"] = nlohmann::json::array();
+
+        for (const auto* m : _meshes)
+        {
+            json["meshes"].push_back(m->toJson());
+        }
+
+        return json;
+    }
+
+    void StaticMeshBundle::fromJson(const nlohmann::json& json, bool isIgnoreChildren /* = false*/)
+    {
+        BaseComponent::fromJson(json, true);
+
+        if (json.contains("meshes"))
+        {
+            nlohmann::json::array_t arr = json["meshes"];
+            if (_meshes.size() != arr.size())
+            {
+                return;
+            }
+
+            for (std::size_t i = 0; i < arr.size(); ++i)
+            {
+                _meshes.at(i)->fromJson(arr[i]);
+            }
+        }
+    }
+
+    Core::StringAtom StaticMeshBundle::getCacheHash() const
+    {
+        return getComponentName();
+    }
+
+    nlohmann::json StaticMeshBundle::toCacheData() const
+    {
+        return toJson();
+    }
+
+    void StaticMeshBundle::fromCacheData(const nlohmann::json& data)
+    {
+        fromJson(data);
     }
 
 } // namespace SW

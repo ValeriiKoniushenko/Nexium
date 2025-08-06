@@ -31,7 +31,7 @@
 namespace SW
 {
 
-    class GraphicsComponentData
+    class GraphicsComponentData : public virtual JsonAdapter
     {
     public:
         // clang-format off
@@ -43,7 +43,7 @@ namespace SW
 
     public:
         GraphicsComponentData() = default;
-        virtual ~GraphicsComponentData();
+        ~GraphicsComponentData() override;
         GraphicsComponentData(const GraphicsComponentData& other) = delete;
         GraphicsComponentData(GraphicsComponentData&& other) noexcept;
         GraphicsComponentData& operator=(const GraphicsComponentData& other) = delete;
@@ -124,6 +124,9 @@ namespace SW
         {
             _drawModifiers = std::move(value);
         }
+
+        [[nodiscard]] nlohmann::json toJson() const override;
+        void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
 
     protected:
         virtual void applyUniforms() {}

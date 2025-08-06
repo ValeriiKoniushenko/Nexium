@@ -31,6 +31,8 @@ protected:
     void onInitFinish() override;
     void onLoadShaders() override;
     void onTick(float delta) override;
+    void onInitReadCache() override;
+    void onFinishWriteCache() override;
 
 protected:
     std::vector<SW::StaticMeshBundle> meshes;

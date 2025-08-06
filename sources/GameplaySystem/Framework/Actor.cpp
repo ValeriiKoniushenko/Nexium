@@ -35,7 +35,7 @@ namespace SW
         return json;
     }
 
-    void Actor::fromJson(const nlohmann::json& json)
+    void Actor::fromJson(const nlohmann::json& json, bool isIgnoreChildren/* = false*/)
     {
         Transformable::fromJson(json["Transformable"]);
         BaseComponent::fromJson(json["BaseComponent"]);

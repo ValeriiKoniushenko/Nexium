@@ -32,6 +32,8 @@
 namespace SW
 {
 
+    ECS_REGISTER_NEW_COMPONENT_TYPE(StaticMesh)
+
     void StaticMesh::importFrom(const aiMesh* rawMesh, const aiScene* scene,
                                 const std::filesystem::path& modelPath /* = ""*/)
     {
@@ -69,14 +71,16 @@ namespace SW
 
         json["Transformable"] = Transformable::toJson();
         json["BaseComponent"] = BaseComponent::toJson();
+        json["GraphicsComponentData"] = GraphicsComponentData::toJson();
 
         return json;
     }
 
-    void StaticMesh::fromJson(const nlohmann::json& json)
+    void StaticMesh::fromJson(const nlohmann::json& json, bool isIgnoreChildren /* = false*/)
     {
-        Transformable::fromJson(json["Transformable"]);
-        BaseComponent::fromJson(json["BaseComponent"]);
+        Transformable::fromJson(json["Transformable"], isIgnoreChildren);
+        BaseComponent::fromJson(json["BaseComponent"], isIgnoreChildren);
+        GraphicsComponentData::fromJson(json["GraphicsComponentData"], isIgnoreChildren);
     }
 
     void StaticMesh::applyUniforms()

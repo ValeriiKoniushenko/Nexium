@@ -65,11 +65,23 @@ void TemplateGameInstance::onTick(float delta)
     }
 }
 
+void TemplateGameInstance::onInitReadCache()
+{
+    GameInstance::onInitReadCache();
+}
+
+void TemplateGameInstance::onFinishWriteCache()
+{
+    GameInstance::onFinishWriteCache();
+
+    for (auto& m : meshes)
+    {
+        m.writeToCache();
+    }
+}
+
 void TemplateGameInstance::onInitFinish()
 {
-    camera.moveForward(-100);
-    camera.setFov(90.f);
-
     std::vector<std::filesystem::path> modelPaths
         = { "assets/base-3d/Models/FBX/Tree.fbx", "assets/base-3d/Models/FBX/FireHydrant.fbx" };
 
@@ -88,6 +100,11 @@ void TemplateGameInstance::onInitFinish()
         }
     }
 
+    for (auto&& m : meshes)
+    {
+        m.tryReadFromCache();
+    }
+
     SW::StaticMesh* targetMesh = nullptr;
 
     for (auto& mesh : meshes)
@@ -96,27 +113,12 @@ void TemplateGameInstance::onInitFinish()
         mesh.forEach(
             [&counter, &targetMesh](SW::BaseComponent* c)
             {
-                // just stupid code to disable useless nodes\meshes
                 if (c->getComponentName().find("FireHydrant_LOD0"))
                 {
                     targetMesh = c->castTo<SW::StaticMesh>();
+                    return false;
                 }
-
-                if (!c->getComponentName().find("_LOD0"))
-                {
-                    c->setEnabled(false);
-                }
-
-                if (c->getComponentName() == "Tree_LOD0")
-                {
-                    ++counter;
-                    if (counter == 2)
-                    {
-                        auto* m = dynamic_cast<SW::StaticMesh*>(c);
-                        m->setDrawModifiers(
-                            { { GL_CULL_FACE, SW::GraphicsComponentData::Modifier::Disable } });
-                    }
-                }
+                return true;
             });
     }
 

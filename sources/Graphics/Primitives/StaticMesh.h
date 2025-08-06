@@ -45,7 +45,7 @@ namespace SW
         [[nodiscard]] glm::vec3 getCenter() const noexcept { return _center; }
 
         [[nodiscard]] nlohmann::json toJson() const override;
-        void fromJson(const nlohmann::json& json) override;
+        void fromJson(const nlohmann::json& json, bool isIgnoreChildren = false) override;
 
     protected:
         void applyUniforms() override;

@@ -36,7 +36,7 @@ namespace SW
         virtual ~JsonAdapter() = default;
 
         [[nodiscard]] virtual nlohmann::json toJson() const = 0;
-        virtual void fromJson(const nlohmann::json& json) = 0;
+        virtual void fromJson(const nlohmann::json& json, bool isIgnoreChildren = false) = 0;
     };
 
 } // namespace SW
