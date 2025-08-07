@@ -132,7 +132,7 @@ namespace SW
             return speed * mlt;
         };
 
-        auto toggleSimulation = keyboardInput.create("toggleSimulation", GLFW_KEY_F1);
+        auto toggleSimulation = keyboardInput.create("toggleSimulation", Keyboard::Key::Key_F1);
         toggleSimulation->setIsRepeatable(false);
         toggleSimulation->onPress.subscribe(
             [this](auto)
@@ -144,7 +144,7 @@ namespace SW
 
         mouseInput.create("cameraView", 0)
             ->onMove.subscribe(
-                [&](glm::vec2 delta, KeyboardIA::SpecKeysState state)
+                [&](glm::vec2 delta, MouseIA::SpecKeysState state)
                 {
                     if (state.leftAlt.cast() != Keyboard::KeyState::Pressed)
                     {
@@ -153,14 +153,14 @@ namespace SW
                 });
 
         // clang-format off
-        keyboardInput.create("moveForward", GLFW_KEY_W)->onPress.subscribe([&](auto state){ camera.moveForward(getRealSpeed(state) * world.timeDelta); });
-        keyboardInput.create("moveBackward", GLFW_KEY_S)->onPress.subscribe([&](auto state){ camera.moveForward(-getRealSpeed(state) * world.timeDelta); });
-        keyboardInput.create("moveRight", GLFW_KEY_D)->onPress.subscribe([&](auto state){ camera.moveRight(-getRealSpeed(state) * world.timeDelta); });
-        keyboardInput.create("moveLeft", GLFW_KEY_A)->onPress.subscribe([&](auto state){ camera.moveRight(getRealSpeed(state) *   world.timeDelta); });
-        keyboardInput.create("moveUp", GLFW_KEY_SPACE)->onPress.subscribe([&](auto state){ camera.moveUp(-getRealSpeed(state) *  world.timeDelta); });
-        keyboardInput.create("moveDown", GLFW_KEY_C)->onPress.subscribe([&](auto state){ camera.moveUp(getRealSpeed(state) *     world.timeDelta); });
-        keyboardInput.create("exit", GLFW_KEY_ESCAPE)->onPress.subscribe([&](auto){ _window->close(); });
-        const auto toggleCursorMode = keyboardInput.create("toggleCursorMode", GLFW_KEY_M);
+        keyboardInput.create("moveForward", Keyboard::Key::Key_W)->onPress.subscribe([&](auto state){ camera.moveForward(getRealSpeed(state) * world.timeDelta); });
+        keyboardInput.create("moveBackward", Keyboard::Key::Key_S)->onPress.subscribe([&](auto state){ camera.moveForward(-getRealSpeed(state) * world.timeDelta); });
+        keyboardInput.create("moveRight", Keyboard::Key::Key_D)->onPress.subscribe([&](auto state){ camera.moveRight(-getRealSpeed(state) * world.timeDelta); });
+        keyboardInput.create("moveLeft", Keyboard::Key::Key_A)->onPress.subscribe([&](auto state){ camera.moveRight(getRealSpeed(state) *   world.timeDelta); });
+        keyboardInput.create("moveUp", Keyboard::Key::Key_Space)->onPress.subscribe([&](auto state){ camera.moveUp(-getRealSpeed(state) *  world.timeDelta); });
+        keyboardInput.create("moveDown", Keyboard::Key::Key_C)->onPress.subscribe([&](auto state){ camera.moveUp(getRealSpeed(state) *     world.timeDelta); });
+        keyboardInput.create("exit", Keyboard::Key::Key_Escape)->onPress.subscribe([&](auto){ _window->close(); });
+        const auto toggleCursorMode = keyboardInput.create("toggleCursorMode", Keyboard::Key::Key_M);
         toggleCursorMode->onPress.subscribe([&](auto) { _window->toggleCursorMode(); });
         toggleCursorMode->setIsRepeatable(false);
         // clang-format on

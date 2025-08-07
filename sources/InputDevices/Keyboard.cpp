@@ -27,24 +27,25 @@
 namespace SW
 {
 
-    Keyboard::KeyState Keyboard::getKeyState(int key)
+    Keyboard::KeyState Keyboard::getKeyState(Key key)
     {
-        return static_cast<KeyState>(glfwGetKey(SW::GetWindow().getRawWindow(), key));
+        return static_cast<KeyState>(
+            glfwGetKey(SW::GetWindow().getRawWindow(), static_cast<int>(key)));
     }
 
-    bool Keyboard::isKeyPressed(int key)
+    bool Keyboard::isKeyPressed(Key key)
     {
-        return glfwGetKey(SW::GetWindow().getRawWindow(), key) == GLFW_PRESS;
+        return glfwGetKey(SW::GetWindow().getRawWindow(), static_cast<int>(key)) == GLFW_PRESS;
     }
 
-    bool Keyboard::isKeyRepeated(int key)
+    bool Keyboard::isKeyRepeated(Key key)
     {
-        return glfwGetKey(SW::GetWindow().getRawWindow(), key) == GLFW_REPEAT;
+        return glfwGetKey(SW::GetWindow().getRawWindow(), static_cast<int>(key)) == GLFW_REPEAT;
     }
 
-    bool Keyboard::isKeyReleased(int key)
+    bool Keyboard::isKeyReleased(Key key)
     {
-        return glfwGetKey(SW::GetWindow().getRawWindow(), key) == GLFW_RELEASE;
+        return glfwGetKey(SW::GetWindow().getRawWindow(), static_cast<int>(key)) == GLFW_RELEASE;
     }
 
 } // namespace SW

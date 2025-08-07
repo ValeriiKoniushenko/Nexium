@@ -66,9 +66,9 @@ namespace SW
 
             static SpecKeysState fillAndGet()
             {
-                return { .leftShift = Keyboard::getKeyState(GLFW_KEY_LEFT_SHIFT),
-                         .leftAlt = Keyboard::getKeyState(GLFW_KEY_LEFT_ALT),
-                         .leftCtrl = Keyboard::getKeyState(GLFW_KEY_LEFT_CONTROL) };
+                return { .leftShift = Keyboard::getKeyState(Keyboard::Key::Key_Left_Shift),
+                         .leftAlt = Keyboard::getKeyState(Keyboard::Key::Key_Left_Alt),
+                         .leftCtrl = Keyboard::getKeyState(Keyboard::Key::Key_Left_Control) };
             }
         };
 
@@ -162,7 +162,7 @@ namespace SW
      * Also, can be called as KeyboardIA.
      * Better to create it using SW::KeyboardInputManger. I.e.:
      */
-    class KeyboardInputAction : public InputAction<int>
+    class KeyboardInputAction : public InputAction<Keyboard::Key>
     {
     public:
         using Parent = InputAction;
@@ -174,7 +174,7 @@ namespace SW
         static Ptr Create() { return { new Self }; }
 
         KeyboardInputAction() = default;
-        KeyboardInputAction(const Core::StringAtom& name, int key);
+        KeyboardInputAction(const Core::StringAtom& name, KeyT key);
 
     protected:
         [[nodiscard]] bool isKeyPressed() const override;

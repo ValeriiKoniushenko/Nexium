@@ -26,7 +26,7 @@
 
 namespace SW
 {
-    KeyboardInputAction::KeyboardInputAction(const Core::StringAtom& name, int key)
+    KeyboardInputAction::KeyboardInputAction(const Core::StringAtom& name, KeyT key)
         : InputAction(name, key)
     {
     }
