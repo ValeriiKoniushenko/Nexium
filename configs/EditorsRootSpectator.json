@@ -1,0 +1,72 @@
+{
+    "BaseComponent": {
+        "isEnabled": true,
+        "name": "",
+        "noTick": false,
+        "type": "Actor"
+    },
+    "Transformable": {
+        "origin": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "position": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "rotation": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ]
+    },
+    "keyboardInput": {
+        "mapping": [
+            {
+                "action": "toggleSimulation",
+                "key": "F1"
+            },
+            {
+                "action": "moveBackward",
+                "key": "S"
+            },
+            {
+                "action": "moveForward",
+                "key": "W"
+            },
+            {
+                "action": "moveDown",
+                "key": "C"
+            },
+            {
+                "action": "moveRight",
+                "key": "D"
+            },
+            {
+                "action": "exit",
+                "key": "Escape"
+            },
+            {
+                "action": "moveLeft",
+                "key": "A"
+            },
+            {
+                "action": "moveUp",
+                "key": "Space"
+            },
+            {
+                "action": "toggleCursorMode",
+                "key": "M"
+            }
+        ]
+    },
+    "mouseSensitivity": 700.0,
+    "speed": 50.0
+}

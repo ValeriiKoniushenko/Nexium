@@ -4,6 +4,7 @@ add_subdirectory(GameplaySystem)
 add_subdirectory(Misc)
 add_subdirectory(InputDevices)
 add_subdirectory(Graphics)
+add_subdirectory(Scene)
 
 add_library(SpriteWalkerEngine INTERFACE)
 

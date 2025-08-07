@@ -20,43 +20,35 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "InputManager.h"
+#pragma once
+
+#include "Camera/Camera.h"
+#include "GameplaySystem/Framework/Actor.h"
+#include "InputDevices/InputManager.h"
 
 namespace SW
 {
-
-    nlohmann::json KeyboardInputManger::toJson() const
+    class Spectator : public Actor, public JsonCacheable
     {
-        nlohmann::json json;
+    public:
+        [[nodiscard]] nlohmann::json toJson() const override;
+        void fromJson(const nlohmann::json& json, bool isIgnoreChildren = false) override;
 
-        json["mapping"] = nlohmann::json::array();
-        for (const auto& [name, key] : _mapping)
-        {
-            nlohmann::json map;
-            map["action"] = name.toStdString();
-            map["key"] = Keyboard::KeyToString(key->getKey().value_or(Keyboard::Key_None));
+    public:
+        // TODO: Move it to Controller
+        float speed = 50.f;
+        float mouseSensitivity = 700.0;
 
-            json["mapping"].push_back(std::move(map));
-        }
+        BaseCamera camera;
+        KeyboardInputManger keyboardInput;
+        MouseInputManger mouseInput;
 
-        return json;
-    }
+    protected:
+        [[nodiscard]] Core::StringAtom getCacheHash() const override;
+        [[nodiscard]] nlohmann::json toCacheData() const override;
+        void fromCacheData(const nlohmann::json& json) override;
 
-    void KeyboardInputManger::fromJson(const nlohmann::json& json, bool isIgnoreChildren)
-    {
-        if (!json.contains("mapping"))
-        {
-            return;
-        }
-
-        for (auto&& map : json["mapping"])
-        {
-            if (auto found = getOrCreate(map["action"].get<Core::StringAtom>(), Keyboard::Key_None))
-            {
-                auto key = Core::StringAtom::Intern(map["key"].get<Core::StringAtom>());
-                found->setKey(Keyboard::FromStringToKey(key));
-            }
-        }
-    }
-
+        void onTick() override;
+        void onInit() override;
+    };
 } // namespace SW

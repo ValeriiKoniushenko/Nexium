@@ -55,9 +55,9 @@ void TemplateGameInstance::onTick(float delta)
     shader->setUniform("uObjectColor"_atom, 1.0f, 1.0f, 1.0f);
     shader->setUniform("uLightColor"_atom, 1.0f, 1.0f, 1.0f);
     shader->setUniform("uLightPos"_atom, world.lightPos);
-    shader->setUniform("uViewPos"_atom, camera.getPosition());
+    shader->setUniform("uViewPos"_atom, currentCamera->getPosition());
     shader->setUniform("uTexture"_atom, 0);
-    shader->setUniform("uProjAndView"_atom, camera.getMatrix());
+    shader->setUniform("uProjAndView"_atom, currentCamera->getMatrix());
 
     for (auto&& m : meshes)
     {

@@ -30,6 +30,7 @@
 #include "InputDevices/InputManager.h"
 #include "Misc/BaseLog.h"
 #include "ModuleInfo.h"
+#include "Scene/Spectator.h"
 #include "UserInterface.h"
 #include "World.h"
 
@@ -50,15 +51,11 @@ namespace SW
         void updateViewport();
 
     public: // Temporary place. MOVE IT !!!!
-        float speed = 50.f;
         float windowAspectRatio = 16.f / 9.f;
-        float mouseSensitivity = 700.0;
-        BaseCamera camera;
 
     public:
-        KeyboardInputManger keyboardInput;
-        MouseInputManger mouseInput;
-
+        Spectator spectator;
+        BaseCamera* currentCamera = nullptr;
         RenderMode renderMode = RenderMode::Editor;
         GameEditor gameEditor;
         RenderTargetToTexture renderToTextureObject;
@@ -87,7 +84,6 @@ namespace SW
 
     private:
         void gameLoop();
-        void initShortcuts();
     };
 
 } // namespace SW

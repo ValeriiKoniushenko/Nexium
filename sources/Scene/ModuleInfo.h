@@ -20,43 +20,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "InputManager.h"
+#pragma once
 
-namespace SW
+#include "Misc/BaseLog.h"
+
+namespace SW::Scene
 {
 
-    nlohmann::json KeyboardInputManger::toJson() const
+    [[nodiscard]] inline spdlog::logger* getLogger()
     {
-        nlohmann::json json;
-
-        json["mapping"] = nlohmann::json::array();
-        for (const auto& [name, key] : _mapping)
-        {
-            nlohmann::json map;
-            map["action"] = name.toStdString();
-            map["key"] = Keyboard::KeyToString(key->getKey().value_or(Keyboard::Key_None));
-
-            json["mapping"].push_back(std::move(map));
-        }
-
-        return json;
+        static std::shared_ptr<spdlog::logger> logger = spdlog::stdout_color_mt("Scene");
+        return logger.get();
     }
 
-    void KeyboardInputManger::fromJson(const nlohmann::json& json, bool isIgnoreChildren)
-    {
-        if (!json.contains("mapping"))
-        {
-            return;
-        }
-
-        for (auto&& map : json["mapping"])
-        {
-            if (auto found = getOrCreate(map["action"].get<Core::StringAtom>(), Keyboard::Key_None))
-            {
-                auto key = Core::StringAtom::Intern(map["key"].get<Core::StringAtom>());
-                found->setKey(Keyboard::FromStringToKey(key));
-            }
-        }
-    }
-
-} // namespace SW
+} // namespace SW::Scene

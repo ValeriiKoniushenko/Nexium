@@ -141,7 +141,7 @@ namespace SW
         void clearOnlyShaderProgram();
 
     protected:
-        std::unordered_map<Core::StringAtom, GLuint> _uniforms;
+        std::unordered_map<Core::StringAtom, GLint> _uniforms;
         std::function<void()> _setupVertexAttribute;
         Core::StringAtom _name;
 

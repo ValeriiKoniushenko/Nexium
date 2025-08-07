@@ -38,8 +38,7 @@ namespace SW
         template<bool isConst>
         using AdaptiveRawPtr = std::conditional_t<isConst, const InputManger, InputManger>*;
         using InputT = _InputT;
-        using MappingT = std::unordered_map<typename InputT::KeyT, typename InputT::Ptr>;
-        using NameMappingT = std::unordered_map<Core::StringAtom, InputT*>;
+        using MappingT = std::unordered_map<Core::StringAtom, typename InputT::Ptr>;
 
         InputManger() = default;
         ~InputManger() override = default;
@@ -53,14 +52,13 @@ namespace SW
         }
 
         [[nodiscard]] const MappingT& getMapping() const noexcept { return _mapping; }
-        [[nodiscard]] const NameMappingT& getNameMapping() const noexcept { return _nameMapping; }
 
         [[nodiscard]] typename InputT::Ptr getOrCreate(const Core::StringAtom& name,
                                                        typename InputT::KeyT key)
         {
-            if (isExist(key))
+            if (isExist(name))
             {
-                return _mapping[key];
+                return _mapping[name];
             }
 
             return create(name, key);
@@ -98,52 +96,45 @@ namespace SW
         [[nodiscard]] typename InputT::Ptr create(const Core::StringAtom& name,
                                                   typename InputT::KeyT key)
         {
-            _mapping.emplace(key, new InputT(name, key));
-            _nameMapping.emplace(name, _mapping[key].get());
-
+            if (isExist(name))
+            {
+                warnLog("Catched an attempt to overwrite keybind: {}"_f << name);
+                return _mapping[name];
+            }
+            _mapping.emplace(name, new InputT(name, key));
             debugLog("Mapping was created: '{}'"_f << name);
 
-            return _mapping[key];
+            return _mapping[name];
         }
 
-        bool remove(typename InputT::KeyT key)
+        bool remove(const Core::StringAtom& name)
         {
-            auto found = _mapping.find(key);
+            auto found = _mapping.find(name);
             if (found == _mapping.cend())
             {
                 return false;
             }
 
-            auto nameForDelete = _nameMapping.find(found->second->getName());
-            if (nameForDelete == _nameMapping.cend())
-            {
-                Assert("Key found but name no?");
-                return false;
-            }
-
-            debugLog("Mapping was removed: '{}'"_f << nameForDelete->first);
-
             _mapping.erase(found);
-            _nameMapping.erase(nameForDelete);
+            debugLog("Mapping was removed: '{}'"_f << found->first);
 
             return true;
         }
 
-        bool remove(const Core::StringAtom& name)
+        bool remove(typename InputT::KeyT key)
         {
-            auto nameForDelete = _nameMapping.find(name);
-            if (nameForDelete == _nameMapping.cend())
+            auto found = std::ranges::find(_mapping,
+                                           [key](const auto& pair)
+                                           {
+                                               return pair.second == key;
+                                           });
+
+            if (found == _mapping.cend())
             {
                 return false;
             }
 
-            auto key = nameForDelete->second->getKey();
-            if (!key)
-            {
-                return false;
-            }
-
-            return remove(key.value());
+            return remove(found->first);
         }
 
         [[nodiscard]] spdlog::logger* getLogger() const override
@@ -158,7 +149,12 @@ namespace SW
                                                 typename InputT::Ptr>
             impl_get(AdaptiveRawPtr<isConst> self, typename InputT::KeyT key)
         {
-            auto it = self->_mapping.find(key);
+            auto it = std::ranges::find_if(self->_mapping,
+                                           [key](const auto& pair)
+                                           {
+                                               return key == pair.second;
+                                           });
+
             if (it == self->_mapping.cend())
             {
                 return {};
@@ -172,30 +168,24 @@ namespace SW
                                                 typename InputT::Ptr>
             impl_get(AdaptiveRawPtr<isConst> self, const Core::StringAtom& name)
         {
-            auto it = self->_nameMapping.find(name);
-            if (it == self->_nameMapping.cend())
+            auto it = self->_mapping.find(name);
+            if (it == self->_mapping.cend())
             {
                 return {};
             }
 
-            const auto key = it->second->getKey();
-            if (!key)
-            {
-                return {};
-            }
-
-            auto found = self->_mapping.find(key.value());
-            return found != self->_mapping.cend() ? found->second : nullptr;
+            return it->second;
         }
 
-    private:
+    protected:
         MappingT _mapping;
-        NameMappingT _nameMapping;
     };
 
-    class KeyboardInputManger : public InputManger<KeyboardInputAction>
+    class KeyboardInputManger : public InputManger<KeyboardInputAction>, public JsonAdapter
     {
     public:
+        [[nodiscard]] nlohmann::json toJson() const override;
+        void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
     };
 
     class MouseInputManger : public InputManger<MouseInputAction>

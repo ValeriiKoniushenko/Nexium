@@ -64,7 +64,9 @@ namespace SW
         //-------------------- MISC ---------------------
         renderToTextureObject.generate();
         gameEditor.initialize();
-        initShortcuts();
+        spectator.initialize();
+        currentCamera = &spectator.camera;
+
         onInitReadCache();
         onInitFinish();
 
@@ -78,16 +80,20 @@ namespace SW
 
     void GameInstance::onInitReadCache()
     {
-        camera.tryReadFromCache();
     }
 
     void GameInstance::onFinishWriteCache()
     {
-        camera.writeToCache();
+        spectator.writeToCache();
     }
 
     void GameInstance::gameLoop()
     {
+        if (!Verify(currentCamera))
+        {
+            criticalThrowingLog("No registered camera");
+        }
+
         Core::FStopwatch clock;
 
         glEnable(GL_DEPTH_TEST);
@@ -97,8 +103,7 @@ namespace SW
             clock.start();
             _window->pollEvent();
 
-            keyboardInput.update();
-            mouseInput.update();
+            spectator.tick();
 
             if (renderMode.cast() == RenderMode::GameOnly)
             {
@@ -122,48 +127,6 @@ namespace SW
             _window->swapBuffers();
             world.timeDelta = clock.stop();
         }
-    }
-    void GameInstance::initShortcuts()
-    {
-        static auto getRealSpeed = [this](SW::KeyboardIA::SpecKeysState state)
-        {
-            const float mlt
-                = state.leftShift.cast() == SW::Keyboard::KeyState::Pressed ? 10.f : 1.f;
-            return speed * mlt;
-        };
-
-        auto toggleSimulation = keyboardInput.create("toggleSimulation", Keyboard::Key::Key_F1);
-        toggleSimulation->setIsRepeatable(false);
-        toggleSimulation->onPress.subscribe(
-            [this](auto)
-            {
-                renderMode = renderMode.cast() == RenderMode::GameOnly ? RenderMode::Editor
-                                                                       : RenderMode::GameOnly;
-                updateViewport();
-            });
-
-        mouseInput.create("cameraView", Mouse::Key_None)
-            ->onMove.subscribe(
-                [&](glm::vec2 delta, MouseIA::SpecKeysState state)
-                {
-                    if (state.leftAlt.cast() != Keyboard::KeyState::Pressed)
-                    {
-                        camera.yawAndPitch(delta * world.timeDelta * mouseSensitivity);
-                    }
-                });
-
-        // clang-format off
-        keyboardInput.create("moveForward", Keyboard::Key::Key_W)->onPress.subscribe([&](auto state){ camera.moveForward(getRealSpeed(state) * world.timeDelta); });
-        keyboardInput.create("moveBackward", Keyboard::Key::Key_S)->onPress.subscribe([&](auto state){ camera.moveForward(-getRealSpeed(state) * world.timeDelta); });
-        keyboardInput.create("moveRight", Keyboard::Key::Key_D)->onPress.subscribe([&](auto state){ camera.moveRight(-getRealSpeed(state) * world.timeDelta); });
-        keyboardInput.create("moveLeft", Keyboard::Key::Key_A)->onPress.subscribe([&](auto state){ camera.moveRight(getRealSpeed(state) *   world.timeDelta); });
-        keyboardInput.create("moveUp", Keyboard::Key::Key_Space)->onPress.subscribe([&](auto state){ camera.moveUp(-getRealSpeed(state) *  world.timeDelta); });
-        keyboardInput.create("moveDown", Keyboard::Key::Key_C)->onPress.subscribe([&](auto state){ camera.moveUp(getRealSpeed(state) *     world.timeDelta); });
-        keyboardInput.create("exit", Keyboard::Key::Key_Escape)->onPress.subscribe([&](auto){ _window->close(); });
-        const auto toggleCursorMode = keyboardInput.create("toggleCursorMode", Keyboard::Key::Key_M);
-        toggleCursorMode->onPress.subscribe([&](auto) { _window->toggleCursorMode(); });
-        toggleCursorMode->setIsRepeatable(false);
-        // clang-format on
     }
 
     void GameInstance::updateViewport()

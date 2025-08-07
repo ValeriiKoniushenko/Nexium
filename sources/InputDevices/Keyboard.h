@@ -33,7 +33,7 @@ namespace SW
     class Keyboard final
     {
     public:
-        enum class Key
+        enum Key
         {
             Key_None,
             Key_Space = GLFW_KEY_SPACE,
