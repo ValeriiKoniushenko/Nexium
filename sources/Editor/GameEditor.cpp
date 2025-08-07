@@ -80,11 +80,13 @@ namespace SW
         viewportWindow->onSizeChanged.subscribe(
             [](auto outer, auto inner)
             {
-                if (gameInstance->renderMode.cast() == GameInstance::RenderMode::Editor)
                 {
-                    gameInstance->renderToTextureObject.setRenderSize(
-                        static_cast<Core::ISize2>(inner));
-                    gameInstance->updateViewport();
+                    if (gameInstance->renderMode.cast() == GameInstance::RenderMode::Editor)
+                    {
+                        gameInstance->renderToTextureObject.setRenderSize(
+                            static_cast<Core::ISize2>(inner));
+                        gameInstance->updateViewport();
+                    }
                 }
             });
         auto tipsWindow = registerNewWindow<KeyboardShortcutsEWC>("Keyboard Shortcuts");

@@ -215,11 +215,11 @@ namespace SW
 
                 if (level == spdlog::level::critical)
                 {
-                    color = ImVec4(229.f / 255.f, 81.f / 141.f, 0, 1.0f); // red
+                    color = ImVec4(229.f / 255.f, 20.f / 255.f, 9.f / 255.f, 1.0f); // red
                 }
                 if (level == spdlog::level::err)
                 {
-                    color = ImVec4(230.f / 255.f, 230.f / 141.f, 27.f / 255.f, 1.0f); // orange
+                    color = ImVec4(252.f / 255.f, 148.f / 141.f, 3.f / 255.f, 1.0f); // orange
                 }
                 if (level == spdlog::level::warn)
                 {
@@ -261,7 +261,7 @@ namespace SW
         {
             auto qLog = q.frontAndPop();
 
-            addLog(std::move(qLog.toString()), qLog.level);
+            addLog(qLog.toString(), qLog.level);
         }
     }
 
@@ -281,7 +281,7 @@ namespace SW
 
         _slowUpdater.setRepeatTime(1.f / 30.f);
         _slowUpdater.setCallback(
-            [this](auto)
+            [](auto)
             {
 
             });

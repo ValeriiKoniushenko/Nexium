@@ -30,9 +30,6 @@ InstallBenchmarkDependenciesTesting()
 # Installing of debug rules
 InstallDebugLevel()
 
-# Installing of needed compile data for MSVC
-InstallWin32MSVCFlags()
-
 # ========= Main deps pipeline =========
 add_subdirectory(dependencies)
 include(FetchDependencies)

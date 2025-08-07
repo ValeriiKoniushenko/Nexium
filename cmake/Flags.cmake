@@ -1,11 +1,21 @@
 include_guard()
 
-function(InstallWin32MSVCFlags)
-    if(MSVC)
-        if(WIN32)
-            # set(CMAKE_MSVC_RUNTIME_LIBRARY MultiThreaded)
-            # set(CMAKE_CXX_FLAGS_RELEASE "/MT")
-            # set(CMAKE_CXX_FLAGS_DEBUG "/MTd")
-        endif(WIN32)
-    endif()
+function(SWAddCompileOptionsTo Target)
+    if (MSVC)
+        target_compile_options(${Target} PRIVATE "/W4" "$<$<CONFIG:RELEASE>:/O2>")
+    else ()
+        target_compile_options(${Target} PRIVATE
+            "-Wall"
+            "-Wextra"
+            # "-Werror"
+            "-Wno-error=unused-variable"
+            "-Wno-unused-variable"
+            "-Wno-unused-parameter"
+            "$<$<CONFIG:DEBUG>:-g3>"
+            "$<$<CONFIG:DEBUG>:-O0>"
+            "$<$<CONFIG:DEBUG>:-fno-inline>"
+            "$<$<CONFIG:DEBUG>:-fno-omit-frame-pointer>"
+            "$<$<CONFIG:RELEASE>:-O3>"
+        )
+    endif ()
 endfunction()

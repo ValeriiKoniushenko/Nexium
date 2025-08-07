@@ -54,7 +54,7 @@ namespace SW
         // Check completeness
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
         {
-            globalLog.criticalThrowingLog("Framebuffer for editor render is not complete!");
+            globalLog.criticalLog("Framebuffer for editor render is not complete!");
         }
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 

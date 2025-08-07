@@ -20,7 +20,5 @@ target_link_libraries(${TARGET_NAME} PUBLIC
 
 target_include_directories(${TARGET_NAME} PUBLIC ../)
 
-target_compile_options(${TARGET_NAME} PRIVATE
-    $<$<CONFIG:Release>:-O3>
-    $<$<CONFIG:Debug>:-g3 -O0 -fno-inline>
-)
+include(${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/Flags.cmake)
+SWAddCompileOptionsTo(${TARGET_NAME})
