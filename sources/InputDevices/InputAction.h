@@ -185,7 +185,7 @@ namespace SW
      * Also, can be called as MousedIA
      * Better to create it using SW::MouseInputManger. I.e.:
      */
-    class MouseInputAction : public InputAction<int>
+    class MouseInputAction : public InputAction<Mouse::Key>
     {
     public:
         using Parent = InputAction;
@@ -197,7 +197,7 @@ namespace SW
         static Ptr Create() { return { new Self }; }
 
         MouseInputAction();
-        MouseInputAction(const Core::StringAtom& name, int key);
+        MouseInputAction(const Core::StringAtom& name, KeyT key = Mouse::Key_None);
         explicit MouseInputAction(const Core::StringAtom& name);
 
         Core::Delegate<void(glm::vec2, SpecKeysState)> onMove;

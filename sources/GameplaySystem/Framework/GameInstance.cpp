@@ -142,7 +142,7 @@ namespace SW
                 updateViewport();
             });
 
-        mouseInput.create("cameraView", 0)
+        mouseInput.create("cameraView", Mouse::Key_None)
             ->onMove.subscribe(
                 [&](glm::vec2 delta, MouseIA::SpecKeysState state)
                 {

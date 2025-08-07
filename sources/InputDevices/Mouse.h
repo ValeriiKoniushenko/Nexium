@@ -22,7 +22,10 @@
 
 #pragma once
 
+#include "Graphics/OpenGL.h"
 #include "glm/glm.hpp"
+
+#include <Core/String.h>
 
 namespace SW
 {
@@ -30,13 +33,33 @@ namespace SW
     class Mouse
     {
     public:
+        enum Key
+        {
+            Key_None,
+            Key_1 = GLFW_MOUSE_BUTTON_1,
+            Key_2 = GLFW_MOUSE_BUTTON_2,
+            Key_3 = GLFW_MOUSE_BUTTON_3,
+            Key_4 = GLFW_MOUSE_BUTTON_4,
+            Key_5 = GLFW_MOUSE_BUTTON_5,
+            Key_6 = GLFW_MOUSE_BUTTON_6,
+            Key_7 = GLFW_MOUSE_BUTTON_7,
+            Key_8 = GLFW_MOUSE_BUTTON_8,
+            Key_Last = GLFW_MOUSE_BUTTON_LAST,
+            Key_Left = GLFW_MOUSE_BUTTON_LEFT,
+            Key_Right = GLFW_MOUSE_BUTTON_RIGHT,
+            Key_Middle = GLFW_MOUSE_BUTTON_MIDDLE
+        };
+
         Mouse() = delete;
+
+        [[nodiscard]] static Core::StringAtom KeyToString(Key key);
+        [[nodiscard]] static Key FromStringToKey(const Core::StringAtom& str);
 
         [[nodiscard]] static glm::vec2 getPosition();
 
-        [[nodiscard]] static bool isKeyPressed(int key);
-        [[nodiscard]] static bool isKeyReleased(int key);
-        [[nodiscard]] static bool isKeyRepeated(int key);
+        [[nodiscard]] static bool isKeyPressed(Key key);
+        [[nodiscard]] static bool isKeyReleased(Key key);
+        [[nodiscard]] static bool isKeyRepeated(Key key);
     };
 
 } // namespace SW

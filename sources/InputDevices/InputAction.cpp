@@ -45,7 +45,7 @@ namespace SW
         init();
     }
 
-    MouseInputAction::MouseInputAction(const Core::StringAtom& name, int key)
+    MouseInputAction::MouseInputAction(const Core::StringAtom& name, KeyT key)
         : InputAction(name, key)
     {
         init();

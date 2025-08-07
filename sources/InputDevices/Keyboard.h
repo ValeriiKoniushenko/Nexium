@@ -25,6 +25,8 @@
 #include "Core/Enum.h"
 #include "Graphics/OpenGL.h"
 
+#include <Core/String.h>
+
 namespace SW
 {
 
@@ -33,6 +35,7 @@ namespace SW
     public:
         enum class Key
         {
+            Key_None,
             Key_Space = GLFW_KEY_SPACE,
             Key_Apostrophe = GLFW_KEY_APOSTROPHE,
             Key_Comma = GLFW_KEY_COMMA,
@@ -166,6 +169,9 @@ namespace SW
         // clang-format on
 
         Keyboard() = delete;
+
+        [[nodiscard]] static Core::StringAtom KeyToString(Key key);
+        [[nodiscard]] static Key FromStringToKey(const Core::StringAtom& str);
 
         [[nodiscard]] static KeyState getKeyState(Key key);
         [[nodiscard]] static bool isKeyPressed(Key key);
