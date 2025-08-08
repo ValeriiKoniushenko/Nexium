@@ -32,6 +32,7 @@ namespace SW
         auto json = Actor::toJson();
         json["speed"] = speed;
         json["mouseSensitivity"] = mouseSensitivity;
+        json["camera"] = camera.toJson();
         json["keyboardInput"] = keyboardInput.toJson();
         // json["mouseInput"] = mouseInput.toJson();
 
@@ -43,6 +44,7 @@ namespace SW
         Actor::fromJson(json, isIgnoreChildren);
         speed = json["speed"];
         mouseSensitivity = json["mouseSensitivity"];
+        camera.fromJson(json["camera"], isIgnoreChildren);
         keyboardInput.fromJson(json["keyboardInput"], isIgnoreChildren);
     }
 

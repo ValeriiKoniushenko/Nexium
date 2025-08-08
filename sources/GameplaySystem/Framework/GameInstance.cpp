@@ -50,6 +50,7 @@ namespace SW
             {
                 updateViewport();
             });
+
         //-------------------- SHADER MANAGER ---------------------
         _shaderManager = &GetShaderManager();
         _shaderManager->loadShaders(_shaderPath);

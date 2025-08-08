@@ -27,43 +27,80 @@
             1.0
         ]
     },
+    "camera": {
+        "BaseComponent": {
+            "isEnabled": true,
+            "name": "",
+            "noTick": false,
+            "type": "Actor"
+        },
+        "Transformable": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "position": [
+                183.76861572265625,
+                -487.0794372558594,
+                -1056.9158935546875
+            ],
+            "rotation": [
+                12.019097328186035,
+                10.995609283447266,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        "far": 10000.0,
+        "fov": 45.0,
+        "near": 0.10000000149011612,
+        "viewport": {
+            "height": 600.0,
+            "width": 600.0
+        }
+    },
     "keyboardInput": {
         "mapping": [
             {
-                "action": "toggleSimulation",
-                "key": "F1"
-            },
-            {
-                "action": "moveBackward",
-                "key": "S"
-            },
-            {
-                "action": "moveForward",
-                "key": "W"
-            },
-            {
-                "action": "moveDown",
-                "key": "C"
-            },
-            {
-                "action": "moveRight",
-                "key": "D"
-            },
-            {
-                "action": "exit",
-                "key": "Escape"
-            },
-            {
-                "action": "moveLeft",
-                "key": "A"
+                "action": "toggleCursorMode",
+                "key": "M"
             },
             {
                 "action": "moveUp",
                 "key": "Space"
             },
             {
-                "action": "toggleCursorMode",
-                "key": "M"
+                "action": "moveLeft",
+                "key": "A"
+            },
+            {
+                "action": "exit",
+                "key": "Escape"
+            },
+            {
+                "action": "moveRight",
+                "key": "D"
+            },
+            {
+                "action": "moveDown",
+                "key": "C"
+            },
+            {
+                "action": "moveForward",
+                "key": "W"
+            },
+            {
+                "action": "moveBackward",
+                "key": "S"
+            },
+            {
+                "action": "toggleSimulation",
+                "key": "F1"
             }
         ]
     },
