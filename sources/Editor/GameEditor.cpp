@@ -92,7 +92,7 @@ namespace SW
         auto tipsWindow = registerNewWindow<KeyboardShortcutsEWC>("Keyboard Shortcuts");
         auto logsWindow = registerNewWindow<LogsWindow>("Logs");
         auto actorPropertiesWindow = registerNewWindow<ObjectPropertiesWindow>("Object Properties");
-        auto sceneTreeWindow = registerNewWindow<SceneTreeWindow>("Scene Tree");
+        auto sceneTreeWindow = registerNewWindow<SceneTreeWindow>("Scene");
     }
 
     void GameEditor::onTick(float delta)

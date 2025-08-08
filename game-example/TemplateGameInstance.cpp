@@ -91,22 +91,4 @@ void TemplateGameInstance::onInitFinish()
             gameScene.addMesh(std::move(mesh));
         }
     }
-    for (auto& mesh : gameScene.getStaticMeshBundles())
-    {
-        mesh.forEach(
-            [&](SW::BaseComponent* c)
-            {
-                if (c->getComponentName().find("FireHydrant_LOD0"))
-                {
-                    auto* targetMesh = c->castTo<SW::StaticMesh>();
-                    if (auto* wnd
-                        = gameEditor.getWindow<SW::ObjectPropertiesWindow>("Object Properties"))
-                    {
-                        wnd->setTargetActor(targetMesh);
-                    }
-                    return false;
-                }
-                return true;
-            });
-    }
 }

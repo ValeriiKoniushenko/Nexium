@@ -72,9 +72,9 @@ namespace SW
             {
                 gameInstance->gameEditor.showWindow<ObjectPropertiesWindow>("Object Properties");
             }
-            if (ImGui::MenuItem("Scene Tree"))
+            if (ImGui::MenuItem("Scene"))
             {
-                gameInstance->gameEditor.showWindow<ObjectPropertiesWindow>("Scene Tree");
+                gameInstance->gameEditor.showWindow<ObjectPropertiesWindow>("Scene");
             }
             ImGui::EndMenu();
         }

@@ -175,8 +175,8 @@ namespace SW
         ECS_REGISTER_NEW_COMPONENT(ObjectPropertiesWindow, BaseFloatEWC);
 
     public:
-        void setTargetActor(AbstractComponent* actor);
-        void resetTargetActor();
+        void setTargetObject(AbstractComponent* actor);
+        void resetTargetObject();
 
     protected:
         void onInit() override;

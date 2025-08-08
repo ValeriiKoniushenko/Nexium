@@ -62,7 +62,7 @@ namespace SW
         }
 
         template<IsEditorWindowComponentOrBase WindowT = BaseEWC>
-        [[nodiscard]] WindowT* getWindow(const Core::StringAtom& regexName)
+        [[nodiscard]] WindowT* getWindow(const Core::StringAtom& regexName = ".*")
         {
             for (auto&& windowIntrusive : _windows)
             {

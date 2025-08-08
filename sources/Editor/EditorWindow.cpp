@@ -268,12 +268,12 @@ namespace SW
         }
     }
 
-    void ObjectPropertiesWindow::setTargetActor(AbstractComponent* actor)
+    void ObjectPropertiesWindow::setTargetObject(AbstractComponent* actor)
     {
         _target = actor;
     }
 
-    void ObjectPropertiesWindow::resetTargetActor()
+    void ObjectPropertiesWindow::resetTargetObject()
     {
         _target = nullptr;
     }
@@ -505,7 +505,6 @@ namespace SW
             return;
         }
 
-        ImGui::PushID(id);
         int flags = _commonTreeFlags | ImGuiTreeNodeFlags_OpenOnArrow;
 
         if (selectedObject == n && !isInSelectedSubtree)
@@ -515,7 +514,6 @@ namespace SW
 
         if (isInSelectedSubtree)
         {
-            ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.3f, 0.5f, 0.8f, 1.0f));
             flags |= ImGuiTreeNodeFlags_Selected;
         }
 
@@ -524,26 +522,29 @@ namespace SW
             flags |= ImGuiTreeNodeFlags_Leaf;
         }
 
+        ImGui::PushID(id);
         const bool isOpened = ImGui::TreeNodeEx(n->getComponentName().c_str(), flags);
 
         if (ImGui::IsItemClicked())
         {
             selectedObject = n;
+            if (auto* wnd = gameInstance->gameEditor.getWindow<ObjectPropertiesWindow>())
+            {
+                if (wnd->isEnabled())
+                {
+                    wnd->setTargetObject(selectedObject);
+                }
+            }
         }
 
         if (isOpened)
         {
             for (auto&& child : n->getChildren())
             {
-                drawTreeNode(child.get(), ++id, isInSelectedSubtree);
+                drawTreeNode(child.get(), ++id);
             }
 
             ImGui::TreePop();
-        }
-
-        if (isInSelectedSubtree)
-        {
-            ImGui::PopStyleColor();
         }
 
         ImGui::PopID();
