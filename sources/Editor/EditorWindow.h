@@ -196,6 +196,9 @@ namespace SW
         void setScene(Scene* scene) { _scene = scene; }
         [[nodiscard]] Scene* getScene() const noexcept { return _scene; }
 
+    public:
+        BaseComponent* selectedObject = nullptr;
+
     protected:
         void onInit() override;
         void onDraw() override;
@@ -203,6 +206,10 @@ namespace SW
 
     protected:
         Scene* _scene = nullptr;
+        int _commonTreeFlags = ImGuiTreeNodeFlags_OpenOnDoubleClick;
+
+    private:
+        void drawTreeNode(BaseComponent* n, int32_t id, bool isInSelectedSubtree = false);
     };
 
 } // namespace SW

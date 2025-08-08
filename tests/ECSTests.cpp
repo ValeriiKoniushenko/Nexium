@@ -227,6 +227,29 @@ TEST(ECSBaseTests, RemovingChildIf)
     ASSERT_EQ(names.size() - 1 - 2, root.getChildrenCount());
 }
 
+TEST(ECSBaseTests, ParentInvalidating)
+{
+    DummyComponent root("Root");
+    auto* world = root.addChildComponent<DummyComponent>("World");
+
+    ASSERT_EQ(root.getChildren().size(), 1);
+    ASSERT_FALSE(root.getComponentType().isEmpty());
+    ASSERT_EQ(root.getChildAt(0)->getComponentName(), "World");
+    ASSERT_EQ(world->getParent(), &root);
+    ASSERT_EQ(world->getParent()->getComponentName(), "Root");
+
+    DummyComponent movedRoot = std::move(root);
+
+    ASSERT_EQ(root.getChildren().size(), 0);
+    ASSERT_TRUE(root.getComponentType().isEmpty());
+
+    ASSERT_EQ(movedRoot.getChildren().size(), 1);
+    ASSERT_FALSE(movedRoot.getComponentType().isEmpty());
+    ASSERT_EQ(movedRoot.getChildAt(0)->getComponentName(), "World");
+    ASSERT_EQ(world->getParent(), &movedRoot);
+    ASSERT_EQ(world->getParent()->getComponentName(), "Root");
+}
+
 TEST_F(ECSTreeTests, BFSIteratorTest)
 {
     Core::StringAtom trunk;

@@ -475,6 +475,17 @@ namespace SW
             return;
         }
 
+        auto& meshes = _scene->getStaticMeshBundles();
+        if (ImGui::TreeNodeEx("Collection", ImGuiTreeNodeFlags_DefaultOpen | _commonTreeFlags))
+        {
+            int32_t internalId = 0;
+            for (auto& mesh : meshes)
+            {
+                drawTreeNode(&mesh, internalId++);
+            }
+            ImGui::TreePop();
+        }
+
         if (sceneName != _scene->getSceneName())
         {
             _scene->setSceneName(sceneName.c_str());
@@ -484,5 +495,57 @@ namespace SW
     void SceneTreeWindow::onUpdate()
     {
         BaseFloatEWC::onUpdate();
+    }
+
+    void SceneTreeWindow::drawTreeNode(BaseComponent* n, int32_t id,
+                                       bool isInSelectedSubtree /* = false*/)
+    {
+        if (!n)
+        {
+            return;
+        }
+
+        ImGui::PushID(id);
+        int flags = _commonTreeFlags | ImGuiTreeNodeFlags_OpenOnArrow;
+
+        if (selectedObject == n && !isInSelectedSubtree)
+        {
+            isInSelectedSubtree = true;
+        }
+
+        if (isInSelectedSubtree)
+        {
+            ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.3f, 0.5f, 0.8f, 1.0f));
+            flags |= ImGuiTreeNodeFlags_Selected;
+        }
+
+        if (n->getChildrenCount() == 0)
+        {
+            flags |= ImGuiTreeNodeFlags_Leaf;
+        }
+
+        const bool isOpened = ImGui::TreeNodeEx(n->getComponentName().c_str(), flags);
+
+        if (ImGui::IsItemClicked())
+        {
+            selectedObject = n;
+        }
+
+        if (isOpened)
+        {
+            for (auto&& child : n->getChildren())
+            {
+                drawTreeNode(child.get(), ++id, isInSelectedSubtree);
+            }
+
+            ImGui::TreePop();
+        }
+
+        if (isInSelectedSubtree)
+        {
+            ImGui::PopStyleColor();
+        }
+
+        ImGui::PopID();
     }
 } // namespace SW

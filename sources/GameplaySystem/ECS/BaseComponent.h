@@ -111,9 +111,9 @@ namespace SW
     {
     public:
         AbstractComponent(const AbstractComponent&) = default;
-        AbstractComponent(AbstractComponent&&) noexcept = default;
+        AbstractComponent(AbstractComponent&& other) noexcept;
         AbstractComponent& operator=(const AbstractComponent&) = default;
-        AbstractComponent& operator=(AbstractComponent&&) noexcept = default;
+        AbstractComponent& operator=(AbstractComponent&& other) noexcept;
 
         ~AbstractComponent() override = default;
 
@@ -240,6 +240,9 @@ namespace SW
     public:
         ~BaseComponent() override = default;
 
+        BaseComponent(BaseComponent&& other) noexcept;
+        BaseComponent& operator=(BaseComponent&& other) noexcept;
+
         [[nodiscard]] bool operator==(const Self& other) const;
 
         // ========================== WORKING WITH NAME ==========================
@@ -269,6 +272,7 @@ namespace SW
         [[nodiscard]] ChildT getChildAt(std::size_t i) { return _children.at(i); }
         [[nodiscard]] CChildT getChildAt(std::size_t i) const { return _children.at(i); }
         [[nodiscard]] const ChildrenT& getChildren() const noexcept { return _children; }
+        [[nodiscard]] ChildrenT& getChildren() noexcept { return _children; }
         [[nodiscard]] std::size_t getChildrenCount() const noexcept { return _children.size(); }
         [[nodiscard]] bool hasChildren() const noexcept { return !_children.empty(); }
 

@@ -60,6 +60,27 @@ namespace SW
         return true;
     }
 
+    AbstractComponent::AbstractComponent(AbstractComponent&& other) noexcept
+    {
+        *this = std::move(other);
+    }
+
+    AbstractComponent& AbstractComponent::operator=(AbstractComponent&& other) noexcept
+    {
+        if (this != &other)
+        {
+            _isEnabled = other._isEnabled;
+            _isInited = other._isInited;
+            _noTick = other._noTick;
+
+            other._isEnabled = {};
+            other._isInited = {};
+            other._noTick = {};
+        }
+
+        return *this;
+    }
+
     void AbstractComponent::tick()
     {
         if (_isEnabled && _isInited && !_noTick)
@@ -161,6 +182,34 @@ namespace SW
                 }
             }
         }
+    }
+
+    BaseComponent::BaseComponent(BaseComponent&& other) noexcept
+    {
+        *this = std::move(other);
+    }
+
+    BaseComponent& BaseComponent::operator=(BaseComponent&& other) noexcept
+    {
+        if (this != &other)
+        {
+            AbstractComponent::operator=(std::move(other));
+            _name = std::move(other._name);
+            _children = std::move(other._children);
+            const_cast<Core::StringAtom&>(_type)
+                = std::move(const_cast<Core::StringAtom&>(other._type));
+            _parent = other._parent;
+
+            other._parent = nullptr;
+
+            // resetting to new parent because old one will be invalid
+            for (auto& child : _children)
+            {
+                child->_parent = this;
+            }
+        }
+
+        return *this;
     }
 
     bool BaseComponent::operator==(const BaseComponent& other) const
