@@ -91,8 +91,8 @@ namespace SW
             });
         auto tipsWindow = registerNewWindow<KeyboardShortcutsEWC>("Keyboard Shortcuts");
         auto logsWindow = registerNewWindow<LogsWindow>("Logs");
-        auto actorPropertiesWindow = registerNewWindow<ObjectPropertiesWindow>("Actor properties");
-        // actorPropertiesWindow->setTargetActor(&gameInstance->camera);
+        auto actorPropertiesWindow = registerNewWindow<ObjectPropertiesWindow>("Object Properties");
+        auto sceneTreeWindow = registerNewWindow<SceneTreeWindow>("Scene Tree");
     }
 
     void GameEditor::onTick(float delta)

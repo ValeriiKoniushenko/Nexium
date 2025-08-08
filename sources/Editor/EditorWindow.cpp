@@ -25,6 +25,8 @@
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "ImGui/backends/imgui_impl_glfw.h"
 #include "ImGui/imgui_internal.h"
+#include "ImGui/misc/cpp/imgui_stdlib.h"
+#include "Scene/Scene.h"
 
 namespace SW
 {
@@ -36,6 +38,7 @@ namespace SW
     ECS_REGISTER_NEW_COMPONENT_TYPE(RootDockWindow);
     ECS_REGISTER_NEW_COMPONENT_TYPE(LogsWindow);
     ECS_REGISTER_NEW_COMPONENT_TYPE(ObjectPropertiesWindow);
+    ECS_REGISTER_NEW_COMPONENT_TYPE(SceneTreeWindow);
 
     void BaseEWC::onTick()
     {
@@ -442,5 +445,44 @@ namespace SW
     void BaseMenuBarEWC::endWindowDraw()
     {
         ImGui::EndMainMenuBar();
+    }
+
+    void SceneTreeWindow::onInit()
+    {
+        BaseFloatEWC::onInit();
+
+        setScene(&gameInstance->gameScene);
+    }
+
+    void SceneTreeWindow::onDraw()
+    {
+        std::string sceneName;
+        int extraFlag = ImGuiInputTextFlags_ReadOnly;
+        if (_scene)
+        {
+            sceneName = _scene->getSceneName();
+            extraFlag = 0;
+        }
+
+        ImGui::TextUnformatted("Name: ");
+        ImGui::SameLine();
+        ImGui::PushItemWidth(-FLT_MIN); // Makes the next widget take full width
+        ImGui::InputText("##sceneName", &sceneName, extraFlag);
+        ImGui::PopItemWidth();
+
+        if (!_scene)
+        {
+            return;
+        }
+
+        if (sceneName != _scene->getSceneName())
+        {
+            _scene->setSceneName(sceneName.c_str());
+        }
+    }
+
+    void SceneTreeWindow::onUpdate()
+    {
+        BaseFloatEWC::onUpdate();
     }
 } // namespace SW

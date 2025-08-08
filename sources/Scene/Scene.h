@@ -22,6 +22,7 @@
 
 #pragma once
 #include "Graphics/Primitives/StaticMeshBundle.h"
+#include "InputDevices/ModuleInfo.h"
 
 #include <vector>
 

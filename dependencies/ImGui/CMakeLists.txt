@@ -3,7 +3,11 @@ get_filename_component(MAIN_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
 set(TARGET_NAME "__SW_${MAIN_NAME}")
 
 file(GLOB CPP_SOURCES "*.cpp")
-list(APPEND CPP_SOURCES backends/imgui_impl_opengl3.cpp backends/imgui_impl_glfw.cpp)
+list(APPEND CPP_SOURCES
+    backends/imgui_impl_opengl3.cpp
+    backends/imgui_impl_glfw.cpp
+    misc/cpp/imgui_stdlib.cpp
+)
 set_source_files_properties(${CPP_SOURCES} PROPERTIES LANGUAGE CXX)
 
 file(GLOB HEADERS "*.h")

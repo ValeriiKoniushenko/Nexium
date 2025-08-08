@@ -100,7 +100,7 @@ void TemplateGameInstance::onInitFinish()
                 {
                     auto* targetMesh = c->castTo<SW::StaticMesh>();
                     if (auto* wnd
-                        = gameEditor.getWindow<SW::ObjectPropertiesWindow>("Actor properties"))
+                        = gameEditor.getWindow<SW::ObjectPropertiesWindow>("Object Properties"))
                     {
                         wnd->setTargetActor(targetMesh);
                     }

@@ -25,12 +25,15 @@
 #include "GameplaySystem/ECS/BaseComponent.h"
 #include "GameplaySystem/Framework/Actor.h"
 #include "ImGui/imgui.h"
+#include "Scene/Scene.h"
 
 #include <Core/Delegate.h>
 #include <Core/Timer.h>
 
 namespace SW
 {
+    class Scene;
+
     /**
      * @brief BaseEditorWindowComponent or briefly BaseEWC
      */
@@ -175,14 +178,31 @@ namespace SW
         void setTargetActor(AbstractComponent* actor);
         void resetTargetActor();
 
-    private:
+    protected:
         void onInit() override;
         void onDraw() override;
         void onUpdate() override;
 
-    private:
+    protected:
         AbstractComponent* _target = nullptr;
         Core::Repeater _slowUpdater;
+    };
+
+    class SceneTreeWindow : public BaseFloatEWC
+    {
+        ECS_REGISTER_NEW_COMPONENT(SceneTreeWindow, BaseFloatEWC);
+
+    public:
+        void setScene(Scene* scene) { _scene = scene; }
+        [[nodiscard]] Scene* getScene() const noexcept { return _scene; }
+
+    protected:
+        void onInit() override;
+        void onDraw() override;
+        void onUpdate() override;
+
+    protected:
+        Scene* _scene = nullptr;
     };
 
 } // namespace SW
