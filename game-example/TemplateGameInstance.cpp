@@ -59,10 +59,7 @@ void TemplateGameInstance::onTick(float delta)
     shader->setUniform("uTexture"_atom, 0);
     shader->setUniform("uProjAndView"_atom, currentCamera->getMatrix());
 
-    for (auto&& m : meshes)
-    {
-        m.directDraw();
-    }
+    gameScene.directDraw();
 }
 
 void TemplateGameInstance::onInitReadCache()
@@ -73,11 +70,6 @@ void TemplateGameInstance::onInitReadCache()
 void TemplateGameInstance::onFinishWriteCache()
 {
     GameInstance::onFinishWriteCache();
-
-    for (auto& m : meshes)
-    {
-        m.writeToCache();
-    }
 }
 
 void TemplateGameInstance::onInitFinish()
@@ -96,30 +88,25 @@ void TemplateGameInstance::onInitFinish()
             SW::StaticMeshBundle mesh;
             mesh.importFrom(scene->mRootNode, scene, path);
             mesh.setShaderProgram(_shaderManager->getShaderProgram("color"_atom));
-            mesh.tryReadFromCache();
-            meshes.push_back(std::move(mesh));
+            gameScene.addMesh(std::move(mesh));
         }
     }
-
-    SW::StaticMesh* targetMesh = nullptr;
-
-    for (auto& mesh : meshes)
+    for (auto& mesh : gameScene.getStaticMeshBundles())
     {
-        int counter = 0;
         mesh.forEach(
-            [&counter, &targetMesh](SW::BaseComponent* c)
+            [&](SW::BaseComponent* c)
             {
                 if (c->getComponentName().find("FireHydrant_LOD0"))
                 {
-                    targetMesh = c->castTo<SW::StaticMesh>();
+                    auto* targetMesh = c->castTo<SW::StaticMesh>();
+                    if (auto* wnd
+                        = gameEditor.getWindow<SW::ObjectPropertiesWindow>("Actor properties"))
+                    {
+                        wnd->setTargetActor(targetMesh);
+                    }
                     return false;
                 }
                 return true;
             });
-    }
-
-    if (auto* wnd = gameEditor.getWindow<SW::ObjectPropertiesWindow>("Actor properties"))
-    {
-        wnd->setTargetActor(targetMesh);
     }
 }

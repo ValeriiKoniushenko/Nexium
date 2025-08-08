@@ -21,17 +21,37 @@
 // SOFTWARE.
 
 #pragma once
-
-#include "GameplaySystem/Framework/GameInstance.h"
 #include "Graphics/Primitives/StaticMeshBundle.h"
-#include "Scene/Scene.h"
 
-class TemplateGameInstance : public SW::GameInstance
+#include <vector>
+
+namespace SW
 {
-protected:
-    void onInitFinish() override;
-    void onLoadShaders() override;
-    void onTick(float delta) override;
-    void onInitReadCache() override;
-    void onFinishWriteCache() override;
-};
+    class Scene
+    {
+    public:
+        Scene() = default;
+        virtual ~Scene();
+        void directDraw();
+
+        void setSceneName(Core::StringAtom name);
+        [[nodiscard]] const Core::StringAtom& getSceneName() const noexcept;
+
+        void addMesh(StaticMeshBundle&& mesh);
+        [[nodiscard]] const std::vector<StaticMeshBundle>& getStaticMeshBundles() const noexcept
+        {
+            return _staticMeshBundles;
+        }
+        [[nodiscard]] std::vector<StaticMeshBundle>& getStaticMeshBundles() noexcept
+        {
+            return _staticMeshBundles;
+        }
+
+    protected:
+        void forceWriteToCacheAllMeshes();
+
+    protected:
+        std::vector<StaticMeshBundle> _staticMeshBundles;
+        Core::StringAtom _sceneName = "None";
+    };
+} // namespace SW

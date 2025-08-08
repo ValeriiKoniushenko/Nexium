@@ -20,18 +20,48 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#pragma once
+#include "Scene.h"
 
-#include "GameplaySystem/Framework/GameInstance.h"
-#include "Graphics/Primitives/StaticMeshBundle.h"
-#include "Scene/Scene.h"
-
-class TemplateGameInstance : public SW::GameInstance
+namespace SW
 {
-protected:
-    void onInitFinish() override;
-    void onLoadShaders() override;
-    void onTick(float delta) override;
-    void onInitReadCache() override;
-    void onFinishWriteCache() override;
-};
+    Scene::~Scene()
+    {
+        forceWriteToCacheAllMeshes();
+    }
+
+    void Scene::directDraw()
+    {
+        for (auto&& mesh : _staticMeshBundles)
+        {
+            mesh.directDraw();
+        }
+    }
+
+    void Scene::setSceneName(Core::StringAtom name)
+    {
+        if (Verify(!name.isEmpty()))
+        {
+            _sceneName = name;
+        }
+    }
+
+    const Core::StringAtom& Scene::getSceneName() const noexcept
+    {
+        return _sceneName;
+    }
+
+    void Scene::addMesh(StaticMeshBundle&& mesh)
+    {
+        _staticMeshBundles.push_back(std::move(mesh));
+        _staticMeshBundles.back().tryReadFromCache();
+    }
+
+    void Scene::forceWriteToCacheAllMeshes()
+    {
+        for (auto&& mesh : _staticMeshBundles)
+        {
+            mesh.writeToCache();
+        }
+    }
+
+} // namespace SW

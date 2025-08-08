@@ -41,13 +41,13 @@
                 0.0
             ],
             "position": [
-                183.76861572265625,
-                -487.0794372558594,
-                -1056.9158935546875
+                197.45657348632813,
+                -413.865234375,
+                -746.5709228515625
             ],
             "rotation": [
-                12.019097328186035,
-                10.995609283447266,
+                10.430184364318848,
+                -873703.375,
                 0.0
             ],
             "scale": [
@@ -67,40 +67,40 @@
     "keyboardInput": {
         "mapping": [
             {
-                "action": "toggleCursorMode",
-                "key": "M"
-            },
-            {
-                "action": "moveUp",
-                "key": "Space"
-            },
-            {
-                "action": "moveLeft",
-                "key": "A"
-            },
-            {
-                "action": "exit",
-                "key": "Escape"
-            },
-            {
-                "action": "moveRight",
-                "key": "D"
-            },
-            {
-                "action": "moveDown",
-                "key": "C"
-            },
-            {
-                "action": "moveForward",
-                "key": "W"
+                "action": "toggleSimulation",
+                "key": "F1"
             },
             {
                 "action": "moveBackward",
                 "key": "S"
             },
             {
-                "action": "toggleSimulation",
-                "key": "F1"
+                "action": "moveForward",
+                "key": "W"
+            },
+            {
+                "action": "moveDown",
+                "key": "C"
+            },
+            {
+                "action": "moveRight",
+                "key": "D"
+            },
+            {
+                "action": "exit",
+                "key": "Escape"
+            },
+            {
+                "action": "moveLeft",
+                "key": "A"
+            },
+            {
+                "action": "moveUp",
+                "key": "Space"
+            },
+            {
+                "action": "toggleCursorMode",
+                "key": "M"
             }
         ]
     },

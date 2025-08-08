@@ -30,6 +30,7 @@
 #include "InputDevices/InputManager.h"
 #include "Misc/BaseLog.h"
 #include "ModuleInfo.h"
+#include "Scene/Scene.h"
 #include "Scene/Spectator.h"
 #include "UserInterface.h"
 #include "World.h"
@@ -54,6 +55,7 @@ namespace SW
         float windowAspectRatio = 16.f / 9.f;
 
     public:
+        SW::Scene gameScene;
         Spectator spectator;
         BaseCamera* currentCamera = nullptr;
         RenderMode renderMode = RenderMode::Editor;
