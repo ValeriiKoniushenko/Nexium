@@ -60,6 +60,11 @@ namespace SW
 
     void StaticMeshBundle::draw()
     {
+        if (!_isEnabled)
+        {
+            return;
+        }
+
         if (_isDirtyModelMatrix)
         {
             recalculateMatrices();

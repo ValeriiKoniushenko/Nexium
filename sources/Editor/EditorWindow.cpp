@@ -375,21 +375,36 @@ namespace SW
             origin = asTransformable->getOrigin();
         }
 
-        std::string objName = asBaseComponent ? asBaseComponent->getComponentName().toStdString() : "";
-        int inputNameFlags = 0;
-        if (asStaticMesh)
+        if (ImGui::CollapsingHeader("General", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            inputNameFlags |= ImGuiInputTextFlags_ReadOnly;
-        }
-        ImGui::TextUnformatted("Name: ");
-        ImGui::SameLine();
-        ImGui::Dummy(ImVec2(labelWidth - ImGui::CalcTextSize("Name: ").x, 0));
-        ImGui::SameLine();
-        ImGui::PushItemWidth(exceptLabelWidth);
+            std::string objName
+                = asBaseComponent ? asBaseComponent->getComponentName().toStdString() : "";
+            int inputNameFlags = 0;
+            if (asStaticMesh)
+            {
+                inputNameFlags |= ImGuiInputTextFlags_ReadOnly;
+            }
+            ImGui::TextUnformatted("Name: ");
+            ImGui::SameLine();
+            ImGui::Dummy(ImVec2(labelWidth - ImGui::CalcTextSize("Name: ").x, 0));
+            ImGui::SameLine();
+            ImGui::PushItemWidth(exceptLabelWidth);
+            ImGui::InputText("##objName", &objName, inputNameFlags);
+            ImGui::PopItemWidth();
 
-        ImGui::InputText("##objName", &objName,
-                         inputNameFlags);
-        ImGui::PopItemWidth();
+            bool isEnabled = asBaseComponent ? asBaseComponent->isEnabled() : false;
+            ImGui::TextUnformatted("Enabled: ");
+            ImGui::SameLine();
+            ImGui::Dummy(ImVec2(labelWidth - ImGui::CalcTextSize("Enabled: ").x, 0));
+            ImGui::SameLine();
+            ImGui::Checkbox("##isEnabled", &isEnabled);
+
+            if (asBaseComponent && isEnabled != asBaseComponent->isEnabled())
+            {
+                asBaseComponent->setEnabled(isEnabled);
+            }
+        }
+
         ImGui::Dummy(ImVec2(0.0f, 10.0f));
 
         if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
