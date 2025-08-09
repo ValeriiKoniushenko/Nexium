@@ -190,9 +190,9 @@ namespace SW
         void tryDrawGraphicsComponentData(GraphicsComponentData* comp);
 
     protected:
-        static constexpr ImVec4 COLOR_X = ImVec4(1.0f, 0.2f, 0.2f, 1.0f); // red
-        static constexpr ImVec4 COLOR_Y = ImVec4(0.2f, 1.0f, 0.2f, 1.0f); // green
-        static constexpr ImVec4 COLOR_Z = ImVec4(0.2f, 0.6f, 1.0f, 1.0f); // blue
+        static constexpr ImVec4 ColorRed = ImVec4(1.0f, 0.2f, 0.2f, 1.0f); // red
+        static constexpr ImVec4 ColorGreen = ImVec4(0.2f, 1.0f, 0.2f, 1.0f); // green
+        static constexpr ImVec4 ColorBlue = ImVec4(0.2f, 0.6f, 1.0f, 1.0f); // blue
 
     private:
         AbstractComponent* _target = nullptr;
@@ -203,6 +203,7 @@ namespace SW
         Vec3Control _transformOriginControl;
         Vec3Control _transformScaleControl;
         Vec3Control _transformRotationControl;
+        Vec3Control _meshSizeControl;
 
         float _fullWidth = 0;
         float _labelWidth = 0;

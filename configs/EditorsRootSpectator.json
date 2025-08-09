@@ -41,9 +41,9 @@
                 0.0
             ],
             "position": [
-                203.76986694335938,
-                -479.50311279296875,
-                -687.3290405273438
+                214.08734130859375,
+                -593.9580078125,
+                -910.529052734375
             ],
             "rotation": [
                 13.661569595336914,
@@ -67,40 +67,40 @@
     "keyboardInput": {
         "mapping": [
             {
-                "action": "toggleSimulation",
-                "key": "F1"
-            },
-            {
-                "action": "moveBackward",
-                "key": "S"
-            },
-            {
-                "action": "moveForward",
-                "key": "W"
-            },
-            {
-                "action": "moveDown",
-                "key": "C"
-            },
-            {
-                "action": "moveRight",
-                "key": "D"
-            },
-            {
-                "action": "exit",
-                "key": "Escape"
-            },
-            {
-                "action": "moveLeft",
-                "key": "A"
+                "action": "toggleCursorMode",
+                "key": "M"
             },
             {
                 "action": "moveUp",
                 "key": "Space"
             },
             {
-                "action": "toggleCursorMode",
-                "key": "M"
+                "action": "moveLeft",
+                "key": "A"
+            },
+            {
+                "action": "exit",
+                "key": "Escape"
+            },
+            {
+                "action": "moveRight",
+                "key": "D"
+            },
+            {
+                "action": "moveDown",
+                "key": "C"
+            },
+            {
+                "action": "moveForward",
+                "key": "W"
+            },
+            {
+                "action": "moveBackward",
+                "key": "S"
+            },
+            {
+                "action": "toggleSimulation",
+                "key": "F1"
             }
         ]
     },

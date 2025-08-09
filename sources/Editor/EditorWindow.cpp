@@ -355,12 +355,29 @@ namespace SW
         _labelWidth = 80.f;
 
         _transformLocationControl.components
-            = { Vec3Control::Component{ "X:"_atom, ImVec4(1.0f, 0.2f, 0.2f, 1.0f) },
-                Vec3Control::Component{ "Y:"_atom, ImVec4(0.2f, 1.0f, 0.2f, 1.0f) },
-                Vec3Control::Component{ "Z:"_atom, ImVec4(0.2f, 0.2f, 1.0f, 1.0f) } };
-
+            = { Vec3Control::Component{ "X:"_atom, ColorRed },
+                Vec3Control::Component{ "Y:"_atom, ColorGreen },
+                Vec3Control::Component{ "Z:"_atom, ColorBlue } };
         _transformLocationControl.labelWidth = _labelWidth;
         _transformLocationControl.label = "Location:";
+
+        _transformOriginControl = _transformLocationControl;
+        _transformOriginControl.label = "Origin:";
+
+        _transformScaleControl = _transformLocationControl;
+        _transformScaleControl.label = "Scale:";
+
+        _transformRotationControl = _transformLocationControl;
+        _transformRotationControl.label = "Rotation:";
+
+        _meshSizeControl.components
+            = { Vec3Control::Component{ "W:"_atom, ColorRed },
+                Vec3Control::Component{ "H:"_atom, ColorGreen },
+                Vec3Control::Component{ "D:"_atom, ColorBlue } };
+        _meshSizeControl.labelWidth = _labelWidth;
+        _meshSizeControl.flags |= ImGuiSliderFlags_ReadOnly;
+        _meshSizeControl.label = "Size:";
+
 
         _slowUpdater.setRepeatTime(1.f / 30.f);
         _slowUpdater.setCallback(
@@ -402,51 +419,6 @@ namespace SW
         BaseFloatEWC::onUpdate();
 
         _slowUpdater.startOrUpdate();
-    }
-
-    void ObjectPropertiesWindow::drawVec3Control(const char* label, glm::vec3& v, float availSpace,
-                                                 float afterTextGap, float betweenInputsGap)
-    {
-        ImGui::PushID(label);
-
-        FixedLabel(label, _labelWidth);
-
-        float textWidth = ImGui::CalcTextSize("X:").x;
-        float inputWidth = availSpace / 3.f - textWidth - afterTextGap - betweenInputsGap;
-
-        ImGui::AlignTextToFramePadding();
-
-        ImGui::PushStyleColor(ImGuiCol_Text, COLOR_X);
-        ImGui::TextUnformatted("X:"); // here text on screen higher then others
-        ImGui::PopStyleColor();
-        ImGui::SameLine(0, afterTextGap);
-        ImGui::PushItemWidth(inputWidth);
-        ImGui::DragFloat("##X", &v.x, 0.1f, 0.0f, 0.0f, "%.2f");
-        ImGui::PopItemWidth();
-        ImGui::SameLine(0, betweenInputsGap);
-
-        textWidth = ImGui::CalcTextSize("Y:").x;
-        inputWidth = availSpace / 3.f - textWidth - afterTextGap - betweenInputsGap;
-        ImGui::PushStyleColor(ImGuiCol_Text, COLOR_Y);
-        ImGui::TextUnformatted("Y:");
-        ImGui::PopStyleColor();
-        ImGui::SameLine(0, afterTextGap);
-        ImGui::PushItemWidth(inputWidth);
-        ImGui::DragFloat("##Y", &v.y, 0.1f, 0.0f, 0.0f, "%.2f");
-        ImGui::PopItemWidth();
-        ImGui::SameLine(0, betweenInputsGap);
-
-        textWidth = ImGui::CalcTextSize("Z:").x;
-        inputWidth = availSpace / 3.f - textWidth - afterTextGap;
-        ImGui::PushStyleColor(ImGuiCol_Text, COLOR_Z);
-        ImGui::TextUnformatted("Z:");
-        ImGui::SameLine(0, afterTextGap);
-        ImGui::PopStyleColor();
-        ImGui::PushItemWidth(inputWidth);
-        ImGui::DragFloat("##Z", &v.z, 0.1f, 0.0f, 0.0f, "%.2f");
-        ImGui::PopItemWidth();
-
-        ImGui::PopID();
     }
 
     void ObjectPropertiesWindow::tryDrawTransformable(Transformable* comp)
@@ -517,50 +489,8 @@ namespace SW
 
             if (auto* asStaticMesh = dynamic_cast<StaticMesh*>(_target))
             {
-                const auto size = asStaticMesh->getSize();
-                auto width = std::format("{:.2f}", size.width);
-                auto height = std::format("{:.2f}", size.height);
-                auto deep = std::format("{:.2f}", size.deep);
-
-                FixedLabel("Size:", _labelWidth);
-
-                ImGui::PushStyleColor(ImGuiCol_Text, COLOR_X);
-                ImGui::TextUnformatted("W:");
-                ImGui::PopStyleColor();
-                ImGui::SameLine(0, 3.f);
-                ImGui::PushItemWidth(10.f);
-                ImGui::PushStyleColor(ImGuiCol_Text,
-                                      ImGui::GetStyle().Colors[ImGuiCol_TextDisabled]);
-                ImGui::InputText("##width", width.data(), width.size() + 1,
-                                 ImGuiInputTextFlags_ReadOnly);
-                ImGui::PopStyleColor();
-                ImGui::PopItemWidth();
-                ImGui::SameLine();
-
-                ImGui::PushStyleColor(ImGuiCol_Text, COLOR_Y);
-                ImGui::TextUnformatted("H:");
-                ImGui::PopStyleColor();
-                ImGui::SameLine();
-                ImGui::PushItemWidth(10.f);
-                ImGui::PushStyleColor(ImGuiCol_Text,
-                                      ImGui::GetStyle().Colors[ImGuiCol_TextDisabled]);
-                ImGui::InputText("##height", height.data(), height.size() + 1,
-                                 ImGuiInputTextFlags_ReadOnly);
-                ImGui::PopStyleColor();
-                ImGui::PopItemWidth();
-                ImGui::SameLine();
-
-                ImGui::PushStyleColor(ImGuiCol_Text, COLOR_Z);
-                ImGui::TextUnformatted("D:");
-                ImGui::SameLine();
-                ImGui::PopStyleColor();
-                ImGui::PushItemWidth(10.f);
-                ImGui::PushStyleColor(ImGuiCol_Text,
-                                      ImGui::GetStyle().Colors[ImGuiCol_TextDisabled]);
-                ImGui::InputText("##deep", deep.data(), deep.size() + 1,
-                                 ImGuiInputTextFlags_ReadOnly);
-                ImGui::PopStyleColor();
-                ImGui::PopItemWidth();
+                auto size = asStaticMesh->getSize().toGlm();
+                _meshSizeControl.draw(size, _fullWidth);
             }
 
             ImGui::Separator();

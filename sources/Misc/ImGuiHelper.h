@@ -37,6 +37,8 @@ namespace SW
             ImVec4 color = ImVec4(1.f, 1.f, 1.f, 1.f);
         };
 
+        ImGuiSliderFlags flags = ImGuiSliderFlags_None;
+
         float afterTextGap = 4.f;
         float betweenInputsGap = 8.f;
         float labelWidth = 80.f;

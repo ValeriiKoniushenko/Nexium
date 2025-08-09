@@ -64,7 +64,7 @@ namespace SW
         ImGui::EndDisabled();
     }
 
-    void Vec3Control::draw(glm::vec3& v, float availSpace)
+    void Vec3Control::draw(glm::vec3& _v, float availSpace)
     {
         ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
 
@@ -75,7 +75,9 @@ namespace SW
         FixedLabel(label.c_str(), labelWidth);
         availSpace -= labelWidth;
 
-        int id = 0;
+        float* vec[3] = { &_v.x, &_v.y, &_v.z };
+
+        int i = 0;
         for (const auto& component : components)
         {
             const float textWidth = ImGui::CalcTextSize(component.text.c_str()).x;
@@ -88,18 +90,22 @@ namespace SW
             ImGui::PushStyleColor(ImGuiCol_Text, component.color);
             ImGui::TextUnformatted(component.text.c_str());
             ImGui::PopStyleColor();
+
             ImGui::SameLine(0, afterTextGap);
 
-            ImGui::PushID(id++);
+            ImGui::PushID(i);
             ImGui::PushItemWidth(inputWidth);
-            ImGui::DragFloat("", &v.x, floatStep, floatMin, floatMax, "%.2f");
+            ImGui::DragFloat("", vec[i], floatStep, floatMin, floatMax, "%.2f", flags);
             ImGui::PopItemWidth();
             ImGui::SameLine(0, betweenInputsGap);
             ImGui::PopID();
-        }
 
+            ++i;
+        }
         ImGui::PopID();
 
         ImGui::PopStyleVar();
+
+        ImGui::Dummy(ImVec2(0, 0));
     }
 } // namespace SW
