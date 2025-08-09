@@ -365,7 +365,7 @@ namespace SW
                                         Vec3Control::Component{ "H:"_atom, ColorGreen },
                                         Vec3Control::Component{ "D:"_atom, ColorBlue } };
         _meshSizeControl.labelWidth = _labelWidth;
-        _meshSizeControl.flags |= ImGuiSliderFlags_ReadOnly;
+        _meshSizeControl.readOnly = true;
         _meshSizeControl.label = "Size:";
 
         _modifierValueVec = GraphicsComponentData::ModifiedValueAsVector();
@@ -553,16 +553,18 @@ namespace SW
                 int currentMod = originalMod;
                 int currentValueMod = originalValueMod;
                 ImGui::PushItemWidth(oneComboSize);
-                VectorCombo("##ModifierVec", &currentMod, _modifierVec);
+                VectorCombo(("##ModifierVec" + Core::StringAtom::MakeFrom(i)).c_str(), &currentMod,
+                            _modifierVec);
                 ImGui::SameLine(0, gap);
 
-                VectorCombo("##ModifierValueVec", &currentValueMod, _modifierValueVec);
+                VectorCombo(("##ModifierValueVec" + Core::StringAtom::MakeFrom(i)).c_str(),
+                            &currentValueMod, _modifierValueVec);
                 ImGui::PopItemWidth();
 
                 if (originalValueMod != currentValueMod)
                 {
                     auto newValue
-                        = GraphicsComponentData::FromString(_modifierValueVec.at(currentMod));
+                        = GraphicsComponentData::FromString(_modifierValueVec.at(currentValueMod));
 
                     objData.first = newValue;
                     isDirty = true;
@@ -578,19 +580,31 @@ namespace SW
                     }
                 }
 
-                newModifiers.emplace(objData);
-
                 ImGui::SameLine(0, gap);
 
                 ImGui::PushItemWidth(buttonSize);
                 if (ImGui::ButtonEx(delButtonText))
                 {
-                    warnLog("Hello");
+                    isDirty = true;
+                }
+                else
+                {
+                    newModifiers.push_back(objData);
                 }
                 ImGui::PopItemWidth();
 
                 ImGui::PopID();
+                ++i;
             }
+
+            ImGui::PushItemWidth(_labelWidth);
+            if (ImGui::ButtonEx("Add new item"))
+            {
+                newModifiers.push_back({GraphicsComponentData::ModifiedValue::MV_None,
+                                     GraphicsComponentData::Modifier::Disable});
+                isDirty = true;
+            }
+            ImGui::PopItemWidth();
 
             if (isDirty)
             {

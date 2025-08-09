@@ -142,12 +142,12 @@ namespace SW
         [[nodiscard]] GLuint getVaoId() noexcept { return _vao; }
         [[nodiscard]] ShaderProgram* getShaderId() noexcept { return _shader; }
 
-        [[nodiscard]] const std::unordered_map<ModifiedValue, Modifier>& getDrawModifiers() const noexcept
+        [[nodiscard]] const std::vector<std::pair<ModifiedValue, Modifier>>& getDrawModifiers() const noexcept
         {
             return _drawModifiers;
         }
         void clearDrawModifiers() { _drawModifiers.clear(); }
-        void setDrawModifiers(std::unordered_map<ModifiedValue, Modifier> value)
+        void setDrawModifiers(std::vector<std::pair<ModifiedValue, Modifier>> value)
         {
             _drawModifiers = std::move(value);
         }
@@ -161,7 +161,7 @@ namespace SW
         virtual void applyUniforms() {}
 
     protected:
-        std::unordered_map<ModifiedValue, Modifier> _drawModifiers;
+        std::vector<std::pair<ModifiedValue, Modifier>> _drawModifiers;
         ShaderProgram* _shader = nullptr;
         uint32_t _triangleCount = 0;
         GLuint _vbo = 0;

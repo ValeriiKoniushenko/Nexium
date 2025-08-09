@@ -45,6 +45,7 @@ namespace SW
         float floatStep = 1.f;
         float floatMin = 0.f;
         float floatMax = 0.f;
+        bool readOnly = false;
 
         Core::StringAtom label = ""_atom;
         std::array<Component, 3> components = { Component(), Component(), Component() };

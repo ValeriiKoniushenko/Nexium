@@ -116,7 +116,17 @@ namespace SW
 
             ImGui::PushID(i);
             ImGui::PushItemWidth(inputWidth);
+
+            if (readOnly)
+            {
+                ImGui::BeginDisabled(true);
+            }
             ImGui::DragFloat("", vec[i], floatStep, floatMin, floatMax, "%.2f", flags);
+            if (readOnly)
+            {
+                ImGui::EndDisabled();
+            }
+
             ImGui::PopItemWidth();
             ImGui::SameLine(0, i == 2 ? 0 : betweenInputsGap);
             ImGui::PopID();

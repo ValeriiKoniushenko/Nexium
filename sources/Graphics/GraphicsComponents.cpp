@@ -265,7 +265,7 @@ namespace SW
                 const auto mod = Modifier::fromStr(modifier.at("modifier").get<std::string>());
                 if (mod)
                 {
-                    _drawModifiers.emplace(val, mod.value());
+                    _drawModifiers.push_back({val, mod.value()});
                 }
             }
         }
@@ -294,7 +294,7 @@ namespace SW
         if (MV_FramebufferSrgb == v) return "FramebufferSrgb"_atom;
         if (MV_ProgramPointSize == v) return "ProgramPointSize"_atom;
         // clang-format on
-        Assert(false);
+
         return Core::StringAtom("");
     }
 
@@ -322,7 +322,7 @@ namespace SW
         if (str == "FramebufferSrgb"_atom) return MV_FramebufferSrgb;
         if (str == "ProgramPointSize"_atom) return MV_ProgramPointSize;
         // clang-format on
-        Assert(false);
+
         return ModifiedValue::MV_None;
     }
 
@@ -337,7 +337,7 @@ namespace SW
             "PolygonOffsetLine"_atom,
             "PolygonOffsetPoint"_atom,
             "PrimitiveRestart"_atom,
-            "PrimitiveRestart_fixed_index"_atom,
+            "PrimitiveRestartFixedIndex"_atom,
             "RasterizerDiscard"_atom,
             "SampleAlphaToCoverage"_atom,
             "SampleAlphaToOne"_atom,
