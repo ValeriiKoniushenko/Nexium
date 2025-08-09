@@ -11,6 +11,7 @@ function(SWAddCompileOptionsTo Target)
             "-Wno-error=unused-variable"
             "-Wno-unused-variable"
             "-Wno-unused-parameter"
+            "-Werror=return-type"
             "$<$<CONFIG:DEBUG>:-g3>"
             "$<$<CONFIG:DEBUG>:-O0>"
             "$<$<CONFIG:DEBUG>:-fno-inline>"

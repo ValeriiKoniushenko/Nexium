@@ -30,9 +30,9 @@
                     0.0
                 ],
                 "position": [
-                    -5.527242183685303,
+                    -138.76956176757813,
                     -363.5599365234375,
-                    -1257.426513671875
+                    -985.6261596679688
                 ],
                 "rotation": [
                     0.0,
@@ -62,40 +62,40 @@
     "keyboardInput": {
         "mapping": [
             {
-                "action": "toggleCursorMode",
-                "key": "M"
-            },
-            {
-                "action": "moveUp",
-                "key": "Space"
-            },
-            {
-                "action": "moveLeft",
-                "key": "A"
-            },
-            {
-                "action": "exit",
-                "key": "Escape"
-            },
-            {
-                "action": "moveRight",
-                "key": "D"
-            },
-            {
-                "action": "moveDown",
-                "key": "C"
-            },
-            {
-                "action": "moveForward",
-                "key": "W"
+                "action": "toggleSimulation",
+                "key": "F1"
             },
             {
                 "action": "moveBackward",
                 "key": "S"
             },
             {
-                "action": "toggleSimulation",
-                "key": "F1"
+                "action": "moveForward",
+                "key": "W"
+            },
+            {
+                "action": "moveDown",
+                "key": "C"
+            },
+            {
+                "action": "moveRight",
+                "key": "D"
+            },
+            {
+                "action": "exit",
+                "key": "Escape"
+            },
+            {
+                "action": "moveLeft",
+                "key": "A"
+            },
+            {
+                "action": "moveUp",
+                "key": "Space"
+            },
+            {
+                "action": "toggleCursorMode",
+                "key": "M"
             }
         ]
     },

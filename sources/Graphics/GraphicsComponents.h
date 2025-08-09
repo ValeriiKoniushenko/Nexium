@@ -66,6 +66,7 @@ namespace SW
         [[nodiscard]] static Core::StringAtom ToString(ModifiedValue v);
         [[nodiscard]] static ModifiedValue FromString(const Core::StringAtom& str);
         [[nodiscard]] static const std::vector<Core::StringAtom>& ModifiedValueAsVector();
+        [[nodiscard]] static const std::vector<Core::StringAtom>& ModifierAsVector();
 
     public:
         GraphicsComponentData() = default;

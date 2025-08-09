@@ -367,6 +367,29 @@ namespace SW
         _meshSizeControl.labelWidth = _labelWidth;
         _meshSizeControl.flags |= ImGuiSliderFlags_ReadOnly;
         _meshSizeControl.label = "Size:";
+
+        _modifierValueVec = GraphicsComponentData::ModifiedValueAsVector();
+        _modifierVec = GraphicsComponentData::ModifierAsVector();
+
+        _modifierValueRaw.clear();
+        for (auto&& value : _modifierValueVec)
+        {
+            for (auto c : value)
+            {
+                _modifierValueRaw.push_back(c);
+            }
+            _modifierValueRaw.push_back('\0');
+        }
+
+        _modifierRaw.clear();
+        for (auto&& value : _modifierVec)
+        {
+            for (auto c : value)
+            {
+                _modifierRaw.push_back(c);
+            }
+            _modifierRaw.push_back('\0');
+        }
     }
 
     void ObjectPropertiesWindow::onDraw()
@@ -504,55 +527,75 @@ namespace SW
                 return out;
             }();
 
-            /*
-            static auto indexOfCollection = [](GraphicsComponentData::Modifier mod){
-                auto it = std::find(collection.begin(), collection.end(), mod.toStr());
-                Assert(it != collection.end());
+            ImGuiStyle& style = ImGui::GetStyle();
+            const char* delButtonText = "X";
+            const float gap = 8.f;
+            const auto buttonSize
+                = ImGui::CalcTextSize(delButtonText).x + style.FramePadding.x * 2.f;
+            const auto oneComboSize = (_fullWidth - _labelWidth - buttonSize - gap * 2.f) / 2.f;
 
-                return std::distance(collection.begin(), it);
-            };
-            static const char modifierStatuses[64] = "Enable\0Disable";
-            // Construction of one line is:
-            // | <ID> | <Modifier>  <Value> | <DelBtn> |
-            // For ID & DelBtn - fixed size
-            static const auto buttonSize = ImGui::CalcTextSize("Del").x;
-            const auto freeSpace = _fullWidth - _labelWidth - _spacing * 4.f - buttonSize;
-            const auto oneComboSize = freeSpace / 2.f;
+            bool isDirty = false;
+            auto drawModifiers = comp->getDrawModifiers();
+            decltype(drawModifiers) newModifiers;
 
-            _graphicsMods.resize(0);
-            for (auto [status, val] : comp->getDrawModifiers())
+            std::size_t i = 0;
+            for (auto _objData : drawModifiers)
             {
-                _graphicsMods.push_back({ status, indexOfCollection(val) });
-            }
+                std::pair<GraphicsComponentData::ModifiedValue, GraphicsComponentData::Modifier>
+                    objData = _objData;
+                ImGui::PushID(i);
 
-            int id = 0;
-            for (auto _ : _graphicsMods)
-            {
-                ImGui::PushID(id);
-                FixedLabel((Core::StringAtom::MakeFrom(id) + "#").c_str(), _labelWidth);
+                FixedLabel((Core::StringAtom::MakeFrom(i) + "#").c_str(), _labelWidth);
 
+                const int originalMod = getIndexFromModifier(objData.second);
+                const int originalValueMod = getIndexFromModifier(objData.first);
+
+                int currentMod = originalMod;
+                int currentValueMod = originalValueMod;
                 ImGui::PushItemWidth(oneComboSize);
-                ImGui::Combo("##ModifierStatus", &_graphicsMods.at(id).second, modifierStatuses,
-                             IM_ARRAYSIZE(modifierStatuses));
-                ImGui::SameLine();
-                ImGui::Combo("##ModifierValue", &_graphicsMods.at(id).first, modifiers.data(),
-                             modifiers.size());
+                VectorCombo("##ModifierVec", &currentMod, _modifierVec);
+                ImGui::SameLine(0, gap);
+
+                VectorCombo("##ModifierValueVec", &currentValueMod, _modifierValueVec);
                 ImGui::PopItemWidth();
 
-                ImGui::SameLine();
+                if (originalValueMod != currentValueMod)
+                {
+                    auto newValue
+                        = GraphicsComponentData::FromString(_modifierValueVec.at(currentMod));
+
+                    objData.first = newValue;
+                    isDirty = true;
+                }
+                if (originalMod != currentMod)
+                {
+                    const auto newValue = GraphicsComponentData::Modifier::fromStr(
+                        _modifierVec.at(currentMod).toStdString());
+                    if (Verify(newValue.has_value()))
+                    {
+                        objData.second = newValue.value();
+                        isDirty = true;
+                    }
+                }
+
+                newModifiers.emplace(objData);
+
+                ImGui::SameLine(0, gap);
 
                 ImGui::PushItemWidth(buttonSize);
-                if (ImGui::ButtonEx("Del"))
+                if (ImGui::ButtonEx(delButtonText))
                 {
                     warnLog("Hello");
                 }
                 ImGui::PopItemWidth();
 
                 ImGui::PopID();
-                ++id;
             }
-             */
-            ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
+
+            if (isDirty)
+            {
+                comp->setDrawModifiers(std::move(newModifiers));
+            }
         }
     }
 
@@ -580,6 +623,30 @@ namespace SW
             LabelAndInputTextRO("Sub-render:", comp->getRenderTargetsCount(), _labelWidth,
                                 _fullWidth);
         }
+    }
+
+    int ObjectPropertiesWindow::getIndexFromModifier(GraphicsComponentData::ModifiedValue v) const
+    {
+        for (std::size_t i = 0; i < _modifierValueVec.size(); ++i)
+        {
+            if (GraphicsComponentData::ToString(v) == _modifierValueVec.at(i))
+            {
+                return static_cast<int>(i);
+            }
+        }
+        return -1;
+    }
+
+    int ObjectPropertiesWindow::getIndexFromModifier(GraphicsComponentData::Modifier v) const
+    {
+        for (std::size_t i = 0; i < _modifierVec.size(); ++i)
+        {
+            if (v.toStr() == _modifierVec.at(i))
+            {
+                return static_cast<int>(i);
+            }
+        }
+        return -1;
     }
 
     // ========================================================================

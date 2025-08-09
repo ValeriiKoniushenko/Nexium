@@ -64,6 +64,27 @@ namespace SW
         ImGui::EndDisabled();
     }
 
+    bool VectorCombo(Core::StringAtom label, int* current, std::vector<Core::StringAtom>& data)
+    {
+        return ImGui::Combo(
+            label.c_str(), current,
+            [](void* vec, int idx, const char** out_text)
+            {
+                auto* data = reinterpret_cast<std::vector<Core::StringAtom>*>(vec);
+
+                const auto i = static_cast<std::size_t>(idx);
+                if (i >= data->size())
+                {
+                    return false;
+                }
+
+                *out_text = data->at(i).c_str();
+
+                return true;
+            },
+            reinterpret_cast<void*>(&data), data.size());
+    }
+
     void Vec3Control::draw(glm::vec3& _v, float availSpace)
     {
         ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));

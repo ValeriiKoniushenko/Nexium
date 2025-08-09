@@ -191,9 +191,9 @@ namespace SW
         void tryDrawGraphicsComponentData(GraphicsComponentData* comp);
 
     protected:
-        static constexpr ImVec4 ColorRed = ImVec4(1.0f, 0.2f, 0.2f, 1.0f); // red
+        static constexpr ImVec4 ColorRed = ImVec4(1.0f, 0.2f, 0.2f, 1.0f);   // red
         static constexpr ImVec4 ColorGreen = ImVec4(0.2f, 1.0f, 0.2f, 1.0f); // green
-        static constexpr ImVec4 ColorBlue = ImVec4(0.2f, 0.6f, 1.0f, 1.0f); // blue
+        static constexpr ImVec4 ColorBlue = ImVec4(0.2f, 0.6f, 1.0f, 1.0f);  // blue
 
     private:
         AbstractComponent* _target = nullptr;
@@ -206,11 +206,19 @@ namespace SW
         Vec3Control _transformRotationControl;
         Vec3Control _meshSizeControl;
 
+        std::vector<Core::StringAtom> _modifierValueVec;
+        std::vector<Core::StringAtom> _modifierVec;
+        std::vector<char> _modifierValueRaw;
+        std::vector<char> _modifierRaw;
+
         float _fullWidth = 0;
         float _labelWidth = 90.f;
         const ImVec2 _overriddenSpacing = ImVec2(0, 6);
         const float _gapBetweenSections = 15.f;
 
+    private:
+        [[nodiscard]] int getIndexFromModifier(GraphicsComponentData::ModifiedValue v) const;
+        [[nodiscard]] int getIndexFromModifier(GraphicsComponentData::Modifier v) const;
     };
 
     class SceneTreeWindow : public BaseFloatEWC

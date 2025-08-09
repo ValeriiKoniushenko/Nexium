@@ -351,4 +351,12 @@ namespace SW
         };
         return out;
     }
+    const std::vector<Core::StringAtom>& GraphicsComponentData::ModifierAsVector()
+    {
+        static const std::vector<Core::StringAtom> out = {
+            "Enable",
+            "Disable",
+        };
+        return out;
+    }
 } // namespace SW

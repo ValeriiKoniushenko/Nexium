@@ -66,4 +66,6 @@ namespace SW
 
     void LabelAndCheckboxRO(Core::StringAtom label, bool v, float labelSize);
 
+    bool VectorCombo(Core::StringAtom label, int* current, std::vector<Core::StringAtom>& data);
+
 } // namespace SW
