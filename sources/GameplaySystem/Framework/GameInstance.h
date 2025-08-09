@@ -49,6 +49,7 @@ namespace SW
 
         void initialize();
         void updateViewport();
+        void toggleRenderMode();
 
     public: // Temporary place. MOVE IT !!!!
         float windowAspectRatio = 16.f / 9.f;

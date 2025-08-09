@@ -150,4 +150,11 @@ namespace SW
                              windowAspectRatio, ViewportMode::ZoomIn);
         }
     }
+
+    void GameInstance::toggleRenderMode()
+    {
+        using R = GameInstance::RenderMode;
+        renderMode = renderMode.cast() == R::GameOnly ? R::Editor : R::GameOnly;
+        gameInstance->updateViewport();
+    }
 } // namespace SW

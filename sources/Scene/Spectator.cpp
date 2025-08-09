@@ -101,11 +101,7 @@ namespace SW
         toggleSimulation->onPress.subscribe(
             [](auto)
             {
-                gameInstance->renderMode
-                    = gameInstance->renderMode.cast() == GameInstance::RenderMode::GameOnly
-                          ? GameInstance::RenderMode::Editor
-                          : GameInstance::RenderMode::GameOnly;
-                gameInstance->updateViewport();
+                gameInstance->toggleRenderMode();
             });
 
         // clang-format off
