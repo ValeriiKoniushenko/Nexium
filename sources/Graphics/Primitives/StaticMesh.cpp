@@ -83,6 +83,59 @@ namespace SW
         GraphicsComponentData::fromJson(json["GraphicsComponentData"], isIgnoreChildren);
     }
 
+    void StaticMesh::draw()
+    {
+        if (!GraphicsComponentData::isValid()) [[unlikely]]
+        {
+            Assert("Can't draw graphic component. It wasn't configured.");
+            return;
+        }
+
+        for (auto [val, mod] : _drawModifiers)
+        {
+            if (mod.cast() == Modifier::Enable)
+            {
+                glEnable(val);
+            }
+            else if (mod.cast() == Modifier::Disable)
+            {
+                glDisable(val);
+            }
+        }
+
+        _shader->use();
+        glBindVertexArray(_vao);
+        glBindBuffer(GL_ARRAY_BUFFER, _vbo);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, _texture);
+
+        applyUniforms();
+
+        glDrawElements(GL_TRIANGLES, _triangleCount, GL_UNSIGNED_INT, 0);
+
+        for (auto [val, mod] : _drawModifiers)
+        {
+            if (mod.cast() == Modifier::Disable)
+            {
+                glEnable(val);
+            }
+            else if (mod.cast() == Modifier::Enable)
+            {
+                glDisable(val);
+            }
+        }
+
+        for (auto&& comp : _children)
+        {
+            if (auto* mesh = comp->tryCastTo<StaticMesh>(); mesh && mesh->isEnabled())
+            {
+                mesh->tryToRecalculateMatrices(_cachedModelMatrix);
+                mesh->draw();
+            }
+        }
+    }
+
     void StaticMesh::applyUniforms()
     {
         GraphicsComponentData::applyUniforms();

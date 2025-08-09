@@ -27,7 +27,7 @@
 
 namespace SW
 {
-    class StaticMeshBundle : public BaseComponent, public JsonCacheable
+    class StaticMeshBundle : public BaseComponent, public JsonCacheable, public Transformable
     {
         ECS_REGISTER_NEW_COMPONENT(StaticMeshBundle, BaseComponent);
 
@@ -35,7 +35,7 @@ namespace SW
         using MeshesT = std::vector<StaticMesh*>;
 
     public:
-        void directDraw();
+        void draw();
         void importFrom(const aiNode* node, const aiScene* scene,
                         const std::filesystem::path& modelPath = "");
         void setShaderProgram(ShaderProgram* sp, bool ignoreVertexAttribSetup = false);
@@ -52,6 +52,7 @@ namespace SW
         [[nodiscard]] nlohmann::json toCacheData() const override;
         void fromCacheData(const nlohmann::json& data) override;
 
+    protected:
         MeshesT _meshes;
     };
 

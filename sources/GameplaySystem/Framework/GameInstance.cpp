@@ -95,6 +95,8 @@ namespace SW
             criticalThrowingLog("No registered camera");
         }
 
+        FPSCounter fps;
+        fps.start();
         Core::FStopwatch clock;
 
         glEnable(GL_DEPTH_TEST);
@@ -126,8 +128,11 @@ namespace SW
             }
 
             _window->swapBuffers();
+            fps.newFrameUpdate();
             world.timeDelta = clock.stop();
         }
+
+        infoLog("Total FPS for this session: {}"_f << fps.getFPS());
     }
 
     void GameInstance::updateViewport()

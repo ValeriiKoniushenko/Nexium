@@ -367,13 +367,13 @@ namespace SW
         glm::vec3 scale = {};
         glm::vec3 origin = {};
 
-        auto* transforms = dynamic_cast<Transformable*>(_target);
-        if (transforms)
+        auto* staticMeshBundle = dynamic_cast<StaticMeshBundle*>(_target);
+        if (staticMeshBundle)
         {
-            location = transforms->getPosition();
-            rotation = transforms->getRotation();
-            scale = transforms->getScale();
-            origin = transforms->getOrigin();
+            location = staticMeshBundle->getPosition();
+            rotation = staticMeshBundle->getRotation();
+            scale = staticMeshBundle->getScale();
+            origin = staticMeshBundle->getOrigin();
         }
 
         ImGui::AlignTextToFramePadding();
@@ -404,23 +404,23 @@ namespace SW
             drawVec3Control("Scale", scale, 1.0f);
         }
 
-        if (transforms)
+        if (staticMeshBundle)
         {
-            if (location != transforms->getPosition())
+            if (location != staticMeshBundle->getPosition())
             {
-                transforms->setPosition(GPos3(location));
+                staticMeshBundle->setPosition(GPos3(location));
             }
-            if (rotation != transforms->getRotation())
+            if (rotation != staticMeshBundle->getRotation())
             {
-                transforms->setRotation(rotation);
+                staticMeshBundle->setRotation(rotation);
             }
-            if (scale != transforms->getScale())
+            if (scale != staticMeshBundle->getScale())
             {
-                transforms->setScale(scale);
+                staticMeshBundle->setScale(scale);
             }
-            if (origin != transforms->getOrigin())
+            if (origin != staticMeshBundle->getOrigin())
             {
-                transforms->setOrigin(origin);
+                staticMeshBundle->setOrigin(origin);
             }
         }
     }

@@ -128,7 +128,6 @@ namespace SW
     void BaseCamera::fromJson(const nlohmann::json& json, bool isIgnoreChildren /* = false*/)
     {
         Actor::fromJson(json, isIgnoreChildren);
-        std::cout << json.dump(4) << std::endl;
         _size = json["viewport"].get<decltype(_size)>();
         _fov = json["fov"].get<decltype(_fov)>();
         _far = json["far"].get<decltype(_far)>();

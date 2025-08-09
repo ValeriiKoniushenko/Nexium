@@ -47,6 +47,8 @@ namespace SW
         [[nodiscard]] nlohmann::json toJson() const override;
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren = false) override;
 
+        void draw();
+
     protected:
         void applyUniforms() override;
         void calculateSizeBaseOnMesh(const aiMesh* rawMesh, const aiMatrix4x4& transform);

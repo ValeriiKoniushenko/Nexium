@@ -137,6 +137,13 @@ namespace SW
             return casted;
         }
 
+        template<IsComponent T>
+        [[nodiscard]] T* tryCastTo()
+        {
+            auto* casted = dynamic_cast<T*>(this);
+            return casted;
+        }
+
         [[nodiscard]] bool isInited() const noexcept { return _isInited; }
         [[nodiscard]] bool isEnabled() const noexcept { return _isEnabled; }
         void setEnabled(bool v) noexcept { _isEnabled = v; }

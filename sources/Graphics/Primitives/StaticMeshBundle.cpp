@@ -42,6 +42,7 @@ namespace
             const aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
             topMesh->setComponentName(mesh->mName.C_Str());
             topMesh->importFrom(mesh, scene, modelPath);
+
             container.push_back(topMesh);
         }
 
@@ -57,16 +58,23 @@ namespace SW
 
     ECS_REGISTER_NEW_COMPONENT_TYPE(StaticMeshBundle)
 
-    void StaticMeshBundle::directDraw()
+    void StaticMeshBundle::draw()
     {
-        for (auto* mesh : _meshes)
+        if (_isDirtyModelMatrix)
         {
-            if (Verify(mesh)) [[likely]]
+            recalculateMatrices();
+            for (auto* m : _meshes)
             {
-                if (mesh->isEnabled())
-                {
-                    mesh->directDraw();
-                }
+                m->setDirtyMatrices();
+            }
+        }
+
+        for (auto&& comp : _children)
+        {
+            if (auto* mesh = comp->tryCastTo<StaticMesh>(); mesh && mesh->isEnabled())
+            {
+                mesh->tryToRecalculateMatrices(_cachedModelMatrix);
+                mesh->draw();
             }
         }
     }

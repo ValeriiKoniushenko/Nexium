@@ -33,7 +33,7 @@ namespace SW
     {
         for (auto&& mesh : _staticMeshBundles)
         {
-            mesh.directDraw();
+            mesh.draw();
         }
     }
 

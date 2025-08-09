@@ -47,11 +47,13 @@ namespace SW
 
         [[nodiscard]] GPos3 getPosition() const noexcept;
         void setPosition(const GPos3& position) noexcept;
+        void addPosition(const GPos3& position) noexcept;
         void moveForward(float offset) noexcept;
         void moveRight(float offset) noexcept;
         void moveUp(float offset) noexcept;
 
         void setRotation(const glm::vec3& rotation) noexcept;
+        void addRotation(const glm::vec3& rotation) noexcept;
         void rotate(const glm::vec3& value) noexcept;
         [[nodiscard]] const glm::vec3& getRotation() const noexcept;
         void setRotationX(float x) noexcept;
@@ -65,10 +67,12 @@ namespace SW
         [[nodiscard]] float getRotationZ() const noexcept;
 
         void setOrigin(const glm::vec3& origin) noexcept;
+        void addOrigin(const glm::vec3& origin) noexcept;
         [[nodiscard]] const glm::vec3& getOrigin() const noexcept;
 
         void scale(const glm::vec3& value) noexcept;
         void setScale(const glm::vec3& value) noexcept;
+        void addScale(const glm::vec3& value) noexcept;
         [[nodiscard]] glm::vec3 getScale() const noexcept;
 
         [[nodiscard]] glm::vec3 getForwardVector() const noexcept;
@@ -78,9 +82,11 @@ namespace SW
         [[nodiscard]] nlohmann::json toJson() const override;
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren = false) override;
 
-    protected:
-        void recalculateMatrices() noexcept;
-        void tryToRecalculateMatrices() noexcept;
+        void recalculateMatrices(const glm::mat4& mat = glm::mat4(1.f)) noexcept;
+        void tryToRecalculateMatrices(const glm::mat4& mat = glm::mat4(1.f)) noexcept;
+
+        [[nodiscard]] glm::mat4& getModelMatrix() noexcept { return _cachedModelMatrix; }
+        void setDirtyMatrices(bool v = true) noexcept { _isDirtyModelMatrix = v; }
 
     protected:
         glm::mat4 _cachedModelMatrix = glm::mat4(1.f);

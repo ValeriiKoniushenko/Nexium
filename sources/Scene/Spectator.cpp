@@ -103,8 +103,8 @@ namespace SW
                 {
                     if (state.leftAlt.cast() != Keyboard::KeyState::Pressed)
                     {
-                        camera.yawAndPitch(delta * gameInstance->world.timeDelta
-                                           * mouseSensitivity);
+                        // camera.yawAndPitch(delta * gameInstance->world.timeDelta
+                        //                    * mouseSensitivity);
                     }
                 });
 

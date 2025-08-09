@@ -39,6 +39,11 @@ namespace SW
         _isDirtyModelMatrix = true;
     }
 
+    void Transformable::addPosition(const GPos3& position) noexcept
+    {
+        setPosition(GPos3(_position + position));
+    }
+
     GPos3 Transformable::getPosition() const noexcept
     {
         return GPos3{ _position + _origin };
@@ -79,6 +84,12 @@ namespace SW
         {
             _rotation.z -= 360.f;
         }
+    }
+
+    void Transformable::addRotation(const glm::vec3& rotation) noexcept
+    {
+        _rotation += rotation;
+        _isDirtyModelMatrix = true;
     }
 
     void Transformable::rotate(const glm::vec3& value) noexcept
@@ -185,6 +196,12 @@ namespace SW
         _isDirtyModelMatrix = true;
     }
 
+    void Transformable::addScale(const glm::vec3& value) noexcept
+    {
+        _scale += value;
+        _isDirtyModelMatrix = true;
+    }
+
     void Transformable::scale(const glm::vec3& value) noexcept
     {
         _scale += value;
@@ -240,7 +257,7 @@ namespace SW
         return json;
     }
 
-    void Transformable::fromJson(const nlohmann::json& json, bool isIgnoreChildren/* = false*/)
+    void Transformable::fromJson(const nlohmann::json& json, bool isIgnoreChildren /* = false*/)
     {
         _position = json["position"];
         _origin = json["origin"];
@@ -250,9 +267,9 @@ namespace SW
         _isDirtyModelMatrix = true;
     }
 
-    void Transformable::recalculateMatrices() noexcept
+    void Transformable::recalculateMatrices(const glm::mat4& mat) noexcept
     {
-        _cachedModelMatrix = glm::mat4(1.f);
+        _cachedModelMatrix = mat;
 
         _cachedModelMatrix = glm::translate(_cachedModelMatrix, _position);
 
@@ -271,17 +288,23 @@ namespace SW
         _isDirtyModelMatrix = false;
     }
 
-    void Transformable::tryToRecalculateMatrices() noexcept
+    void Transformable::tryToRecalculateMatrices(const glm::mat4& mat) noexcept
     {
         if (_isDirtyModelMatrix)
         {
-            recalculateMatrices();
+            recalculateMatrices(mat);
         }
     }
 
     void Transformable::setOrigin(const glm::vec3& origin) noexcept
     {
         _origin = origin;
+        _isDirtyModelMatrix = true;
+    }
+
+    void Transformable::addOrigin(const glm::vec3& origin) noexcept
+    {
+        _origin += origin;
         _isDirtyModelMatrix = true;
     }
 
