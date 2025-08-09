@@ -209,11 +209,11 @@ namespace SW
         {
             if (mod.cast() == Modifier::Enable)
             {
-                glEnable(val);
+                glEnable(static_cast<GLenum>(val));
             }
             else if (mod.cast() == Modifier::Disable)
             {
-                glDisable(val);
+                glDisable(static_cast<GLenum>(val));
             }
         }
 
@@ -232,11 +232,11 @@ namespace SW
         {
             if (mod.cast() == Modifier::Disable)
             {
-                glEnable(val);
+                glEnable(static_cast<GLenum>(val));
             }
             else if (mod.cast() == Modifier::Enable)
             {
-                glDisable(val);
+                glDisable(static_cast<GLenum>(val));
             }
         }
     }
@@ -248,7 +248,7 @@ namespace SW
         for (auto [val, mod] : _drawModifiers)
         {
             nlohmann::json modifier;
-            modifier["value"] = val;
+            modifier["value"] = ToString(val);
             modifier["modifier"] = mod.toStr();
             json["modifiers"].push_back(std::move(modifier));
         }
@@ -261,7 +261,7 @@ namespace SW
         {
             for (auto&& modifier : json["modifiers"])
             {
-                const auto val = modifier.at("value").get<GLuint>();
+                const auto val = FromString(modifier.at("value").get<Core::StringAtom>());
                 const auto mod = Modifier::fromStr(modifier.at("modifier").get<std::string>());
                 if (mod)
                 {
@@ -282,7 +282,7 @@ namespace SW
         if (MV_PolygonOffsetLine == v) return "PolygonOffsetLine"_atom;
         if (MV_PolygonOffsetPoint == v) return "PolygonOffsetPoint"_atom;
         if (MV_PrimitiveRestart == v) return "PrimitiveRestart"_atom;
-        if (MV_PrimitiveRestart_fixed_index == v) return "PrimitiveRestart_fixed_index"_atom;
+        if (MV_PrimitiveRestartFixedIndex == v) return "PrimitiveRestartFixedIndex"_atom;
         if (MV_RasterizerDiscard == v) return "RasterizerDiscard"_atom;
         if (MV_SampleAlphaToCoverage == v) return "SampleAlphaToCoverage"_atom;
         if (MV_SampleAlphaToOne == v) return "SampleAlphaToOne"_atom;
@@ -310,7 +310,7 @@ namespace SW
         if (str == "PolygonOffsetLine"_atom) return MV_PolygonOffsetLine;
         if (str == "PolygonOffsetPoint"_atom) return MV_PolygonOffsetPoint;
         if (str == "PrimitiveRestart"_atom) return MV_PrimitiveRestart;
-        if (str == "PrimitiveRestart_fixed_index"_atom) return MV_PrimitiveRestart_fixed_index;
+        if (str == "PrimitiveRestartFixedIndex"_atom) return MV_PrimitiveRestartFixedIndex;
         if (str == "RasterizerDiscard"_atom) return MV_RasterizerDiscard;
         if (str == "SampleAlphaToCoverage"_atom) return MV_SampleAlphaToCoverage;
         if (str == "SampleAlphaToOne"_atom) return MV_SampleAlphaToOne;

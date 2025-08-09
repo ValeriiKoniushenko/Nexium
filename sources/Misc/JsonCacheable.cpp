@@ -79,8 +79,13 @@ namespace SW
         }
         catch (std::exception& e)
         {
-            globalLog.errorLog("Exception while reading of the cache file: '{}'. The reason: "_f
+            globalLog.errorLog("Exception while reading of the cache file: '{}'. The reason: {}"_f
                                << getTargetPath().generic_string() << e.what());
+        }
+        catch (...)
+        {
+            globalLog.errorLog("Exception while reading of the cache file: '{}'."_f
+                               << getTargetPath().generic_string());
         }
     }
 

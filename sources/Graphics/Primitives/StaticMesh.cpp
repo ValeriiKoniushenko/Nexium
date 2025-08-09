@@ -196,7 +196,7 @@ namespace SW
         StaticMesh out{ name };
 
         out.setDrawModifiers({
-            { GL_CULL_FACE, SW::GraphicsComponentData::Modifier::Disable },
+            { SW::GraphicsComponentData::MV_CullFace, SW::GraphicsComponentData::Modifier::Disable },
         });
 
         return out;
@@ -206,8 +206,8 @@ namespace SW
         StaticMesh out{ name };
 
         out.setDrawModifiers({
-            { GL_CULL_FACE, SW::GraphicsComponentData::Modifier::Disable },
-            { GL_BLEND, SW::GraphicsComponentData::Modifier::Enable },
+            { SW::GraphicsComponentData::MV_CullFace, SW::GraphicsComponentData::Modifier::Disable },
+            { SW::GraphicsComponentData::MV_Blend, SW::GraphicsComponentData::Modifier::Enable },
         });
 
         return out;

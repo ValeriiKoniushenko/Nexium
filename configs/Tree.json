@@ -198,7 +198,7 @@
                 "modifiers": [
                     {
                         "modifier": "Disable",
-                        "value": 2884
+                        "value": "CullFace"
                     }
                 ]
             },
@@ -404,7 +404,7 @@
                 "modifiers": [
                     {
                         "modifier": "Disable",
-                        "value": 2884
+                        "value": "CullFace"
                     }
                 ]
             },

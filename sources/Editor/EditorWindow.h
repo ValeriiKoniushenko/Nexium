@@ -184,8 +184,25 @@ namespace SW
         void onUpdate() override;
 
     protected:
+        static constexpr ImVec4 COLOR_X = ImVec4(1.0f, 0.2f, 0.2f, 1.0f); // red
+        static constexpr ImVec4 COLOR_Y = ImVec4(0.2f, 1.0f, 0.2f, 1.0f); // green
+        static constexpr ImVec4 COLOR_Z = ImVec4(0.2f, 0.6f, 1.0f, 1.0f); // blue
+
+
+    private:
         AbstractComponent* _target = nullptr;
         Core::Repeater _slowUpdater;
+        std::vector<std::pair<int, int>> _graphicsMods;
+
+        float _fullWidth = 0;
+        float _labelWidth = 0;
+        float _spacing = 0;
+        float _inputWidth = 0;
+
+        const float _gapBetweenSections = 15.f;
+
+    private:
+        void drawVec3Control(const char* label, glm::vec3& vec);
     };
 
     class SceneTreeWindow : public BaseFloatEWC

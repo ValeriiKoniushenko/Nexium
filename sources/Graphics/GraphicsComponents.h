@@ -49,7 +49,7 @@ namespace SW
             MV_PolygonOffsetLine = GL_POLYGON_OFFSET_LINE,
             MV_PolygonOffsetPoint = GL_POLYGON_OFFSET_POINT,
             MV_PrimitiveRestart = GL_PRIMITIVE_RESTART,
-            MV_PrimitiveRestart_fixed_index = GL_PRIMITIVE_RESTART_FIXED_INDEX,
+            MV_PrimitiveRestartFixedIndex = GL_PRIMITIVE_RESTART_FIXED_INDEX,
             MV_RasterizerDiscard = GL_RASTERIZER_DISCARD,
             MV_SampleAlphaToCoverage = GL_SAMPLE_ALPHA_TO_COVERAGE,
             MV_SampleAlphaToOne = GL_SAMPLE_ALPHA_TO_ONE,
@@ -141,12 +141,12 @@ namespace SW
         [[nodiscard]] GLuint getVaoId() noexcept { return _vao; }
         [[nodiscard]] ShaderProgram* getShaderId() noexcept { return _shader; }
 
-        [[nodiscard]] const std::unordered_map<GLenum, Modifier>& getDrawModifiers() const noexcept
+        [[nodiscard]] const std::unordered_map<ModifiedValue, Modifier>& getDrawModifiers() const noexcept
         {
             return _drawModifiers;
         }
         void clearDrawModifiers() { _drawModifiers.clear(); }
-        void setDrawModifiers(std::unordered_map<GLenum, Modifier> value)
+        void setDrawModifiers(std::unordered_map<ModifiedValue, Modifier> value)
         {
             _drawModifiers = std::move(value);
         }
@@ -160,7 +160,7 @@ namespace SW
         virtual void applyUniforms() {}
 
     protected:
-        std::unordered_map<GLenum, Modifier> _drawModifiers;
+        std::unordered_map<ModifiedValue, Modifier> _drawModifiers;
         ShaderProgram* _shader = nullptr;
         uint32_t _triangleCount = 0;
         GLuint _vbo = 0;

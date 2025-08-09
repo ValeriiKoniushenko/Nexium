@@ -212,7 +212,7 @@ namespace SW
                 ImGui::EndPopup();
             }
 
-            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 1)); // Tighten spacing
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 1)); // Tighten _spacing
             for (auto& [message, level, hashLog] : _logs)
             {
                 std::optional<ImVec4> color;
@@ -301,58 +301,14 @@ namespace SW
         //    For 'Input' - dynamic
         // Spacing - static
 
-        static constexpr ImVec4 COLOR_X = ImVec4(1.0f, 0.2f, 0.2f, 1.0f); // red
-        static constexpr ImVec4 COLOR_Y = ImVec4(0.2f, 1.0f, 0.2f, 1.0f); // green
-        static constexpr ImVec4 COLOR_Z = ImVec4(0.2f, 0.6f, 1.0f, 1.0f); // blue
-        const float fullWidth = ImGui::GetContentRegionAvail().x;
-        const float labelWidth = ImGui::CalcTextSize("SomeLongWord: ").x;
-        const float idWidth = ImGui::CalcTextSize("X:").x;
-        const float spacing = ImGui::GetStyle().ItemSpacing.x;
+        _fullWidth = ImGui::GetContentRegionAvail().x;
+        _labelWidth = ImGui::CalcTextSize("SomeLongWord: ").x;
+        _spacing = ImGui::GetStyle().ItemSpacing.x;
         constexpr float componentsCount = 3.f;      // 3 -> X Y Z
         constexpr float totalComponentsCount = 7.f; // 3 -> | Text | (ID Input) * 3 |
-        const float inputWidth
-            = (fullWidth - labelWidth - componentsCount * idWidth - totalComponentsCount * spacing)
-              / componentsCount;
-        const float exceptLabelWidth = fullWidth - labelWidth - spacing * 2.f;
-        const float gapBetweenSections = 15.f;
-
-        auto drawVec3Control = [=](const char* label, glm::vec3& v)
-        {
-            ImGui::PushID(label);
-
-            FixedLabel(label, labelWidth);
-            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 0));
-
-            ImGui::PushStyleColor(ImGuiCol_Text, COLOR_X);
-            ImGui::TextUnformatted("X:");
-            ImGui::PopStyleColor();
-            ImGui::SameLine(0, 3.f);
-            ImGui::PushItemWidth(inputWidth);
-            ImGui::DragFloat("##X", &v.x, 0.1f, 0.0f, 0.0f, "%.3f");
-            ImGui::PopItemWidth();
-            ImGui::SameLine();
-
-            ImGui::PushStyleColor(ImGuiCol_Text, COLOR_Y);
-            ImGui::TextUnformatted("Y:");
-            ImGui::PopStyleColor();
-            ImGui::SameLine();
-            ImGui::PushItemWidth(inputWidth);
-            ImGui::DragFloat("##Y", &v.y, 0.1f, 0.0f, 0.0f, "%.3f");
-            ImGui::PopItemWidth();
-            ImGui::SameLine();
-
-            ImGui::PushStyleColor(ImGuiCol_Text, COLOR_Z);
-            ImGui::TextUnformatted("Z:");
-            ImGui::SameLine();
-            ImGui::PopStyleColor();
-            ImGui::PushItemWidth(inputWidth);
-            ImGui::DragFloat("##Z", &v.z, 0.1f, 0.0f, 0.0f, "%.3f");
-            ImGui::PopItemWidth();
-
-            ImGui::PopStyleVar();
-
-            ImGui::PopID();
-        };
+        _inputWidth = (_fullWidth - _labelWidth - componentsCount * ImGui::CalcTextSize("X:").x
+                       - totalComponentsCount * _spacing)
+                      / componentsCount;
 
         auto* asBaseComponent = dynamic_cast<BaseComponent*>(_target);
         auto* asTransformable = dynamic_cast<Transformable*>(_target);
@@ -361,14 +317,14 @@ namespace SW
 
         if (asBaseComponent && ImGui::CollapsingHeader("General", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            LabelAndInputTextRO("Name:", asBaseComponent->getComponentName(), labelWidth,
-                                fullWidth);
+            LabelAndInputTextRO("Name:", asBaseComponent->getComponentName(), _labelWidth,
+                                _fullWidth);
 
-            LabelAndInputTextRO("Type:", asBaseComponent->getComponentType(), labelWidth,
-                                fullWidth);
+            LabelAndInputTextRO("Type:", asBaseComponent->getComponentType(), _labelWidth,
+                                _fullWidth);
 
             bool isEnabled = asBaseComponent->isEnabled();
-            FixedLabel("Enabled:", labelWidth);
+            FixedLabel("Enabled:", _labelWidth);
             ImGui::Checkbox("##isEnabled", &isEnabled);
 
             if (isEnabled != asBaseComponent->isEnabled())
@@ -377,7 +333,7 @@ namespace SW
             }
         }
 
-        ImGui::Dummy(ImVec2(0.0f, gapBetweenSections));
+        ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
 
         if (asTransformable && ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
         {
@@ -413,22 +369,22 @@ namespace SW
             }
         }
 
-        ImGui::Dummy(ImVec2(0.0f, gapBetweenSections));
+        ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
 
         if (asGraphicsComponentData
             && ImGui::CollapsingHeader("Graphics", ImGuiTreeNodeFlags_DefaultOpen))
         {
             LabelAndInputTextRO(
                 "Triangles:",
-                Core::StringAtom::MakeFrom(asGraphicsComponentData->getTriangleCount()), labelWidth,
-                fullWidth);
+                Core::StringAtom::MakeFrom(asGraphicsComponentData->getTriangleCount()),
+                _labelWidth, _fullWidth);
 
             auto shaderName = ""_atom;
             if (asGraphicsComponentData->getShaderId())
             {
                 shaderName = asGraphicsComponentData->getShaderId()->getName();
             }
-            LabelAndInputTextRO("Shader: ", std::move(shaderName), labelWidth, fullWidth);
+            LabelAndInputTextRO("Shader: ", std::move(shaderName), _labelWidth, _fullWidth);
 
             if (auto* asStaticMesh = dynamic_cast<StaticMesh*>(_target))
             {
@@ -437,13 +393,13 @@ namespace SW
                 auto height = std::format("{:.2f}", size.height);
                 auto deep = std::format("{:.2f}", size.deep);
 
-                FixedLabel("Size:", labelWidth);
+                FixedLabel("Size:", _labelWidth);
 
                 ImGui::PushStyleColor(ImGuiCol_Text, COLOR_X);
                 ImGui::TextUnformatted("W:");
                 ImGui::PopStyleColor();
                 ImGui::SameLine(0, 3.f);
-                ImGui::PushItemWidth(inputWidth);
+                ImGui::PushItemWidth(_inputWidth);
                 ImGui::PushStyleColor(ImGuiCol_Text,
                                       ImGui::GetStyle().Colors[ImGuiCol_TextDisabled]);
                 ImGui::InputText("##width", width.data(), width.size() + 1,
@@ -456,7 +412,7 @@ namespace SW
                 ImGui::TextUnformatted("H:");
                 ImGui::PopStyleColor();
                 ImGui::SameLine();
-                ImGui::PushItemWidth(inputWidth);
+                ImGui::PushItemWidth(_inputWidth);
                 ImGui::PushStyleColor(ImGuiCol_Text,
                                       ImGui::GetStyle().Colors[ImGuiCol_TextDisabled]);
                 ImGui::InputText("##height", height.data(), height.size() + 1,
@@ -469,7 +425,7 @@ namespace SW
                 ImGui::TextUnformatted("D:");
                 ImGui::SameLine();
                 ImGui::PopStyleColor();
-                ImGui::PushItemWidth(inputWidth);
+                ImGui::PushItemWidth(_inputWidth);
                 ImGui::PushStyleColor(ImGuiCol_Text,
                                       ImGui::GetStyle().Colors[ImGuiCol_TextDisabled]);
                 ImGui::InputText("##deep", deep.data(), deep.size() + 1,
@@ -477,18 +433,94 @@ namespace SW
                 ImGui::PopStyleColor();
                 ImGui::PopItemWidth();
             }
+
+            ImGui::Separator();
+            FixedLabel("Modifiers:", _labelWidth);
+            ImGui::Dummy(ImVec2(0, 0));
+            static const auto collection = []()
+            {
+                auto c = GraphicsComponentData::ModifiedValueAsVector();
+                std::sort(c.begin(), c.end());
+                return c;
+            }();
+
+            static const std::vector<char> modifiers = []()
+            {
+                std::vector<char> out;
+                out.reserve(512);
+
+                for (auto&& i : collection)
+                {
+                    for (char c : i)
+                    {
+                        out.push_back(c);
+                    }
+                    out.push_back('\0');
+                }
+                return out;
+            }();
+
+            /*
+            static auto indexOfCollection = [](GraphicsComponentData::Modifier mod){
+                auto it = std::find(collection.begin(), collection.end(), mod.toStr());
+                Assert(it != collection.end());
+
+                return std::distance(collection.begin(), it);
+            };
+            static const char modifierStatuses[64] = "Enable\0Disable";
+            // Construction of one line is:
+            // | <ID> | <Modifier>  <Value> | <DelBtn> |
+            // For ID & DelBtn - fixed size
+            static const auto buttonSize = ImGui::CalcTextSize("Del").x;
+            const auto freeSpace = _fullWidth - _labelWidth - _spacing * 4.f - buttonSize;
+            const auto oneComboSize = freeSpace / 2.f;
+
+            _graphicsMods.resize(0);
+            for (auto [status, val] : asGraphicsComponentData->getDrawModifiers())
+            {
+                _graphicsMods.push_back({ status, indexOfCollection(val) });
+            }
+
+            int id = 0;
+            for (auto _ : _graphicsMods)
+            {
+                ImGui::PushID(id);
+                FixedLabel((Core::StringAtom::MakeFrom(id) + "#").c_str(), _labelWidth);
+
+                ImGui::PushItemWidth(oneComboSize);
+                ImGui::Combo("##ModifierStatus", &_graphicsMods.at(id).second, modifierStatuses,
+                             IM_ARRAYSIZE(modifierStatuses));
+                ImGui::SameLine();
+                ImGui::Combo("##ModifierValue", &_graphicsMods.at(id).first, modifiers.data(),
+                             modifiers.size());
+                ImGui::PopItemWidth();
+
+                ImGui::SameLine();
+
+                ImGui::PushItemWidth(buttonSize);
+                if (ImGui::ButtonEx("Del"))
+                {
+                    warnLog("Hello");
+                }
+                ImGui::PopItemWidth();
+
+                ImGui::PopID();
+                ++id;
+            }
+             */
+            ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
         }
 
-        ImGui::Dummy(ImVec2(0.0f, gapBetweenSections));
+        ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
 
         if (asBaseComponent && ImGui::CollapsingHeader("Component data"))
         {
-            LabelAndInputTextRO("Children:", asBaseComponent->getChildrenCount(), labelWidth,
-                                fullWidth);
-            LabelAndCheckboxRO("Inited:", asBaseComponent->isInited(), labelWidth);
+            LabelAndInputTextRO("Children:", asBaseComponent->getChildrenCount(), _labelWidth,
+                                _fullWidth);
+            LabelAndCheckboxRO("Inited:", asBaseComponent->isInited(), _labelWidth);
 
             bool tickable = asBaseComponent->getNoTick();
-            FixedLabel("No ticks:", labelWidth);
+            FixedLabel("No ticks:", _labelWidth);
             ImGui::Checkbox("##NoTick", &tickable);
             if (asBaseComponent->getNoTick() != tickable)
             {
@@ -502,6 +534,44 @@ namespace SW
         BaseFloatEWC::onUpdate();
 
         _slowUpdater.startOrUpdate();
+    }
+
+    void ObjectPropertiesWindow::drawVec3Control(const char* label, glm::vec3& v)
+    {
+        ImGui::PushID(label);
+
+        FixedLabel(label, _labelWidth);
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 0));
+
+        ImGui::PushStyleColor(ImGuiCol_Text, COLOR_X);
+        ImGui::TextUnformatted("X:");
+        ImGui::PopStyleColor();
+        ImGui::SameLine(0, 3.f);
+        ImGui::PushItemWidth(_inputWidth);
+        ImGui::DragFloat("##X", &v.x, 0.1f, 0.0f, 0.0f, "%.3f");
+        ImGui::PopItemWidth();
+        ImGui::SameLine();
+
+        ImGui::PushStyleColor(ImGuiCol_Text, COLOR_Y);
+        ImGui::TextUnformatted("Y:");
+        ImGui::PopStyleColor();
+        ImGui::SameLine();
+        ImGui::PushItemWidth(_inputWidth);
+        ImGui::DragFloat("##Y", &v.y, 0.1f, 0.0f, 0.0f, "%.3f");
+        ImGui::PopItemWidth();
+        ImGui::SameLine();
+
+        ImGui::PushStyleColor(ImGuiCol_Text, COLOR_Z);
+        ImGui::TextUnformatted("Z:");
+        ImGui::SameLine();
+        ImGui::PopStyleColor();
+        ImGui::PushItemWidth(_inputWidth);
+        ImGui::DragFloat("##Z", &v.z, 0.1f, 0.0f, 0.0f, "%.3f");
+        ImGui::PopItemWidth();
+
+        ImGui::PopStyleVar();
+
+        ImGui::PopID();
     }
 
     void BaseMenuBarEWC::onInit()
