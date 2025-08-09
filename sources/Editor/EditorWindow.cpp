@@ -252,9 +252,16 @@ namespace SW
 
     void LogsWindow::onDraw()
     {
+        bool just_added = (_lastCountOfLogs != _logs.size());
+        _lastCountOfLogs = _logs.size();
+
         if (ImGui::BeginChild("ScrollingRegion", ImVec2(0, 0), ImGuiChildFlags_NavFlattened,
                               ImGuiWindowFlags_HorizontalScrollbar))
         {
+            float scrollY_before = ImGui::GetScrollY();
+            float scrollMax_before = ImGui::GetScrollMaxY();
+            bool was_at_bottom = (scrollMax_before - scrollY_before) <= 1.0f; // tweak tolerance
+
             if (ImGui::BeginPopupContextWindow())
             {
                 if (ImGui::Selectable("Clear"))
@@ -264,6 +271,7 @@ namespace SW
                 ImGui::EndPopup();
             }
 
+            int i = 0;
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 1)); // Tighten _spacing
             for (auto& [message, level, hashLog] : _logs)
             {
@@ -296,6 +304,13 @@ namespace SW
                 {
                     ImGui::PopStyleColor();
                 }
+
+                if (just_added && i + 1 == _logs.size())
+                {
+                    ImGui::SetScrollHereY(1.0f); // align this last item's baseline to bottom
+                    // OR: ImGui::SetScrollY(ImGui::GetScrollMaxY());
+                }
+                ++i;
             }
 
             ImGui::PopStyleVar();
@@ -600,8 +615,8 @@ namespace SW
             ImGui::PushItemWidth(_labelWidth);
             if (ImGui::ButtonEx("Add new item"))
             {
-                newModifiers.push_back({GraphicsComponentData::ModifiedValue::MV_None,
-                                     GraphicsComponentData::Modifier::Disable});
+                newModifiers.push_back({ GraphicsComponentData::ModifiedValue::MV_None,
+                                         GraphicsComponentData::Modifier::Disable });
                 isDirty = true;
             }
             ImGui::PopItemWidth();

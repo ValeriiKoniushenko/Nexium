@@ -87,7 +87,6 @@ namespace SW
         tryReadFromCache();
 
         BaseCamera& camera = *getOrAddChildComponent<BaseCamera>();
-        camera.readFromCache();
 
         static auto getRealSpeed = [this](SW::KeyboardIA::SpecKeysState state)
         {

@@ -66,7 +66,7 @@ namespace SW
         std::ifstream ifs(getTargetPath());
         if (!ifs.is_open())
         {
-            globalLog.errorLog("Can't open cache file for read: "
+            globalLog.warnLog("Can't open cache file for read: "
                                + getTargetPath().generic_string());
             return;
         }

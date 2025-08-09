@@ -168,6 +168,7 @@ namespace SW
         void fetchLogs();
 
     private:
+        std::size_t _lastCountOfLogs = 0;
         std::vector<LogLine> _logs;
     };
 
