@@ -309,9 +309,9 @@ namespace SW
         const float inputWidth
             = (fullWidth - labelWidth - componentsCount * idWidth - totalComponentsCount * spacing)
               / componentsCount;
-        const float exceptLabelWidth = fullWidth - labelWidth - spacing;
+        const float exceptLabelWidth = fullWidth - labelWidth - spacing * 2.f;
 
-        auto drawVec3Control = [=](const char* label, glm::vec3& v, const float resetValue = 0.0f)
+        auto drawVec3Control = [=](const char* label, glm::vec3& v)
         {
             static constexpr ImVec4 COLOR_X = ImVec4(1.0f, 0.2f, 0.2f, 1.0f); // red
             static constexpr ImVec4 COLOR_Y = ImVec4(0.2f, 1.0f, 0.2f, 1.0f); // green
@@ -319,13 +319,11 @@ namespace SW
 
             ImGui::PushID(label);
 
-            ImGui::AlignTextToFramePadding();
             ImGui::TextUnformatted(label);
             ImGui::SameLine();
             ImGui::Dummy(ImVec2(labelWidth - ImGui::CalcTextSize(label).x, 0));
             ImGui::SameLine();
 
-            ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 0));
 
             ImGui::PushStyleColor(ImGuiCol_Text, COLOR_X);
@@ -355,9 +353,6 @@ namespace SW
             ImGui::PopItemWidth();
 
             ImGui::PopStyleVar();
-            ImGui::PopItemWidth();
-            ImGui::PopItemWidth();
-            ImGui::PopItemWidth();
 
             ImGui::PopID();
         };
@@ -367,60 +362,65 @@ namespace SW
         glm::vec3 scale = {};
         glm::vec3 origin = {};
 
-        auto* transformable = dynamic_cast<Transformable*>(_target);
-        if (transformable)
+        auto* asBaseComponent = dynamic_cast<BaseComponent*>(_target);
+        auto* asTransformable = dynamic_cast<Transformable*>(_target);
+        auto* asStaticMeshBundle = dynamic_cast<StaticMeshBundle*>(_target);
+        auto* asStaticMesh = dynamic_cast<StaticMesh*>(_target);
+
+        if (asTransformable)
         {
-            location = transformable->getPosition();
-            rotation = transformable->getRotation();
-            scale = transformable->getScale();
-            origin = transformable->getOrigin();
+            location = asTransformable->getPosition();
+            rotation = asTransformable->getRotation();
+            scale = asTransformable->getScale();
+            origin = asTransformable->getOrigin();
         }
 
-        ImGui::AlignTextToFramePadding();
+        std::string objName = asBaseComponent ? asBaseComponent->getComponentName().toStdString() : "";
+        int inputNameFlags = 0;
+        if (asStaticMesh)
+        {
+            inputNameFlags |= ImGuiInputTextFlags_ReadOnly;
+        }
         ImGui::TextUnformatted("Name: ");
         ImGui::SameLine();
         ImGui::Dummy(ImVec2(labelWidth - ImGui::CalcTextSize("Name: ").x, 0));
         ImGui::SameLine();
         ImGui::PushItemWidth(exceptLabelWidth);
-        Core::StringAtom objName = ""_atom;
-        if (auto* comp = dynamic_cast<BaseComponent*>(_target))
-        {
-            objName = comp->getComponentName();
-        }
-        ImGui::InputText("##objName", objName.data(), objName.size() + 1,
-                         ImGuiInputTextFlags_ReadOnly);
+
+        ImGui::InputText("##objName", &objName,
+                         inputNameFlags);
         ImGui::PopItemWidth();
         ImGui::Dummy(ImVec2(0.0f, 10.0f));
 
         if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
         {
             constexpr auto rowSpacing = ImVec2(0.0f, 5.0f);
-            drawVec3Control("Location", location, 0.0f);
+            drawVec3Control("Location", location);
             ImGui::Dummy(rowSpacing);
-            drawVec3Control("Rotation", rotation, 0.0f);
+            drawVec3Control("Rotation", rotation);
             ImGui::Dummy(rowSpacing);
-            drawVec3Control("Origin", origin, 1.0f);
+            drawVec3Control("Origin", origin);
             ImGui::Dummy(rowSpacing);
-            drawVec3Control("Scale", scale, 1.0f);
+            drawVec3Control("Scale", scale);
         }
 
-        if (transformable)
+        if (asTransformable)
         {
-            if (location != transformable->getPosition())
+            if (location != asTransformable->getPosition())
             {
-                transformable->setPosition(GPos3(location));
+                asTransformable->setPosition(GPos3(location));
             }
-            if (rotation != transformable->getRotation())
+            if (rotation != asTransformable->getRotation())
             {
-                transformable->setRotation(rotation);
+                asTransformable->setRotation(rotation);
             }
-            if (scale != transformable->getScale())
+            if (scale != asTransformable->getScale())
             {
-                transformable->setScale(scale);
+                asTransformable->setScale(scale);
             }
-            if (origin != transformable->getOrigin())
+            if (origin != asTransformable->getOrigin())
             {
-                transformable->setOrigin(origin);
+                asTransformable->setOrigin(origin);
             }
         }
     }
