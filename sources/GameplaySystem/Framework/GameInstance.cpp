@@ -69,23 +69,23 @@ namespace SW
         currentCamera = spectator.findFirstChildOf<BaseCamera>();
 
         onInitReadCache();
+
         onInitFinish();
 
         gameLoop();
-    }
 
-    void GameInstance::deinitialize()
-    {
         onFinishWriteCache();
     }
 
     void GameInstance::onInitReadCache()
     {
+        gameScene.readFromCache();
     }
 
     void GameInstance::onFinishWriteCache()
     {
         spectator.writeToCache();
+        gameScene.writeToCache();
     }
 
     void GameInstance::gameLoop()

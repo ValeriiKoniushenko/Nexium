@@ -28,11 +28,12 @@
 
 namespace SW
 {
-    class Scene
+    class Scene : public JsonCacheable, public JsonAdapter
     {
     public:
         Scene() = default;
-        virtual ~Scene();
+        ~Scene() override = default;
+
         void directDraw();
 
         void setSceneName(Core::StringAtom name);
@@ -47,9 +48,17 @@ namespace SW
         {
             return _staticMeshBundles;
         }
+        nlohmann::json toJson() const override;
+        void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
 
     protected:
-        void forceWriteToCacheAllMeshes();
+        std::filesystem::path getCacheDir() const override;
+        Core::StringAtom getCacheHash() const override;
+        nlohmann::json toCacheData() const override;
+        void fromCacheData(const nlohmann::json& json) override;
+
+    protected:
+        void forceWriteToCacheAllMeshes() const;
 
     protected:
         std::vector<StaticMeshBundle> _staticMeshBundles;

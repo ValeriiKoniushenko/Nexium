@@ -48,7 +48,6 @@ namespace SW
         [[nodiscard]] const char* getPrefix() const override { return "GameInstance"; }
 
         void initialize();
-        void deinitialize();
         void updateViewport();
 
     public: // Temporary place. MOVE IT !!!!
@@ -56,7 +55,9 @@ namespace SW
 
     public:
         SW::Scene gameScene;
+
         Spectator spectator;
+
         BaseCamera* currentCamera = nullptr;
         RenderMode renderMode = RenderMode::Editor;
         GameEditor gameEditor;
