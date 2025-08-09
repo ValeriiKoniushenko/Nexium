@@ -14,6 +14,7 @@ target_link_libraries(${TARGET_NAME} PUBLIC
         SW::Graphics
         SW::GameplaySystem
         SW::ImGui
+        SW::Misc
 )
 
 target_include_directories(${TARGET_NAME} PUBLIC ../)

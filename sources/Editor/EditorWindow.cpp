@@ -26,6 +26,7 @@
 #include "ImGui/backends/imgui_impl_glfw.h"
 #include "ImGui/imgui_internal.h"
 #include "ImGui/misc/cpp/imgui_stdlib.h"
+#include "Misc/ImGuiHelper.h"
 #include "Scene/Scene.h"
 
 namespace SW
@@ -310,6 +311,7 @@ namespace SW
             = (fullWidth - labelWidth - componentsCount * idWidth - totalComponentsCount * spacing)
               / componentsCount;
         const float exceptLabelWidth = fullWidth - labelWidth - spacing * 2.f;
+        const float gapBetweenSections = 15.f;
 
         auto drawVec3Control = [=](const char* label, glm::vec3& v)
         {
@@ -319,11 +321,7 @@ namespace SW
 
             ImGui::PushID(label);
 
-            ImGui::TextUnformatted(label);
-            ImGui::SameLine();
-            ImGui::Dummy(ImVec2(labelWidth - ImGui::CalcTextSize(label).x, 0));
-            ImGui::SameLine();
-
+            FixedLabel(label, labelWidth);
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 0));
 
             ImGui::PushStyleColor(ImGuiCol_Text, COLOR_X);
@@ -357,23 +355,11 @@ namespace SW
             ImGui::PopID();
         };
 
-        glm::vec3 location = {};
-        glm::vec3 rotation = {};
-        glm::vec3 scale = {};
-        glm::vec3 origin = {};
-
         auto* asBaseComponent = dynamic_cast<BaseComponent*>(_target);
         auto* asTransformable = dynamic_cast<Transformable*>(_target);
         auto* asStaticMeshBundle = dynamic_cast<StaticMeshBundle*>(_target);
         auto* asStaticMesh = dynamic_cast<StaticMesh*>(_target);
-
-        if (asTransformable)
-        {
-            location = asTransformable->getPosition();
-            rotation = asTransformable->getRotation();
-            scale = asTransformable->getScale();
-            origin = asTransformable->getOrigin();
-        }
+        auto* asGraphicsComponentData = dynamic_cast<GraphicsComponentData*>(_target);
 
         if (ImGui::CollapsingHeader("General", ImGuiTreeNodeFlags_DefaultOpen))
         {
@@ -384,19 +370,14 @@ namespace SW
             {
                 inputNameFlags |= ImGuiInputTextFlags_ReadOnly;
             }
-            ImGui::TextUnformatted("Name: ");
-            ImGui::SameLine();
-            ImGui::Dummy(ImVec2(labelWidth - ImGui::CalcTextSize("Name: ").x, 0));
-            ImGui::SameLine();
+
+            FixedLabel("Name: ", labelWidth);
             ImGui::PushItemWidth(exceptLabelWidth);
             ImGui::InputText("##objName", &objName, inputNameFlags);
             ImGui::PopItemWidth();
 
             bool isEnabled = asBaseComponent ? asBaseComponent->isEnabled() : false;
-            ImGui::TextUnformatted("Enabled: ");
-            ImGui::SameLine();
-            ImGui::Dummy(ImVec2(labelWidth - ImGui::CalcTextSize("Enabled: ").x, 0));
-            ImGui::SameLine();
+            FixedLabel("Enabled: ", labelWidth);
             ImGui::Checkbox("##isEnabled", &isEnabled);
 
             if (asBaseComponent && isEnabled != asBaseComponent->isEnabled())
@@ -405,10 +386,15 @@ namespace SW
             }
         }
 
-        ImGui::Dummy(ImVec2(0.0f, 10.0f));
+        ImGui::Dummy(ImVec2(0.0f, gapBetweenSections));
 
-        if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
+        if (asTransformable && ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
         {
+            glm::vec3 location = asTransformable->getPosition();
+            glm::vec3 rotation = asTransformable->getRotation();
+            glm::vec3 scale = asTransformable->getScale();
+            glm::vec3 origin = asTransformable->getOrigin();
+
             constexpr auto rowSpacing = ImVec2(0.0f, 5.0f);
             drawVec3Control("Location", location);
             ImGui::Dummy(rowSpacing);
@@ -417,10 +403,7 @@ namespace SW
             drawVec3Control("Origin", origin);
             ImGui::Dummy(rowSpacing);
             drawVec3Control("Scale", scale);
-        }
 
-        if (asTransformable)
-        {
             if (location != asTransformable->getPosition())
             {
                 asTransformable->setPosition(GPos3(location));
@@ -437,6 +420,16 @@ namespace SW
             {
                 asTransformable->setOrigin(origin);
             }
+        }
+
+        ImGui::Dummy(ImVec2(0.0f, gapBetweenSections));
+
+        if (asGraphicsComponentData && ImGui::CollapsingHeader("Graphics", ImGuiTreeNodeFlags_DefaultOpen))
+        {
+            FixedLabel("Triangles: ", labelWidth);
+            auto triangles
+                = Core::StringAtom::MakeFrom(asGraphicsComponentData->getTriangleCount());
+            FixedInputText(std::move(triangles), exceptLabelWidth);
         }
     }
 

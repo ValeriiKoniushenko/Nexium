@@ -22,11 +22,9 @@
 
 #pragma once
 
+#include "Core/Enum.h"
 #include "ShaderProgram.h"
 #include "assimp/mesh.h"
-
-#include <Core/Enum.h>
-
 
 namespace SW
 {
@@ -40,6 +38,34 @@ namespace SW
             Disable,
         );
         // clang-format on
+
+        enum ModifiedValue : GLenum
+        {
+            MV_Blend = GL_BLEND,
+            MV_CullFace = GL_CULL_FACE,
+            MV_DepthTest = GL_DEPTH_TEST,
+            MV_Dither = GL_DITHER,
+            MV_PolygonOffsetFill = GL_POLYGON_OFFSET_FILL,
+            MV_PolygonOffsetLine = GL_POLYGON_OFFSET_LINE,
+            MV_PolygonOffsetPoint = GL_POLYGON_OFFSET_POINT,
+            MV_PrimitiveRestart = GL_PRIMITIVE_RESTART,
+            MV_PrimitiveRestart_fixed_index = GL_PRIMITIVE_RESTART_FIXED_INDEX,
+            MV_RasterizerDiscard = GL_RASTERIZER_DISCARD,
+            MV_SampleAlphaToCoverage = GL_SAMPLE_ALPHA_TO_COVERAGE,
+            MV_SampleAlphaToOne = GL_SAMPLE_ALPHA_TO_ONE,
+            MV_SampleCoverage = GL_SAMPLE_COVERAGE,
+            MV_SampleMask = GL_SAMPLE_MASK,
+            MV_ScissorTest = GL_SCISSOR_TEST,
+            MV_StencilTest = GL_STENCIL_TEST,
+            MV_Multisample = GL_MULTISAMPLE,
+            MV_FramebufferSrgb = GL_FRAMEBUFFER_SRGB,
+            MV_ProgramPointSize = GL_PROGRAM_POINT_SIZE,
+            MV_None
+        };
+
+        [[nodiscard]] static Core::StringAtom ToString(ModifiedValue v);
+        [[nodiscard]] static ModifiedValue FromString(const Core::StringAtom& str);
+        [[nodiscard]] static const std::vector<Core::StringAtom>& ModifiedValueAsVector();
 
     public:
         GraphicsComponentData() = default;
@@ -127,6 +153,8 @@ namespace SW
 
         [[nodiscard]] nlohmann::json toJson() const override;
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
+
+        [[nodiscard]] uint32_t getTriangleCount() const noexcept { return _triangleCount; }
 
     protected:
         virtual void applyUniforms() {}
