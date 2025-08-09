@@ -226,7 +226,7 @@ namespace SW
         style->CellPadding = ImVec2(6.00f, 6.00f);
         style->ItemSpacing = ImVec2(6.00f, 6.00f);
         style->ItemInnerSpacing = ImVec2(6.00f, 6.00f);
-        style->TouchExtraPadding = ImVec2(0.00f, 5.00f);
+        style->TouchExtraPadding = ImVec2(4.00f, 4.00f);
         style->IndentSpacing = 25;
         style->ScrollbarSize = 11;
         style->GrabMinSize = 10;

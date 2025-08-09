@@ -36,16 +36,18 @@ namespace SW
         ImGui::SameLine();
     }
 
-    void FixedInputText(Core::StringAtom value, float size, int flags)
+    void InputTextRO(Core::StringAtom value, float size)
     {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetStyle().Colors[ImGuiCol_TextDisabled]);
         ImGui::PushItemWidth(size);
-        ImGui::InputText(value.c_str(), value.data(), value.size() + 1, flags);
+        ImGui::InputText(value.c_str(), value.data(), value.size() + 1, ImGuiInputTextFlags_ReadOnly);
         ImGui::PopItemWidth();
+        ImGui::PopStyleColor();
     }
 
-    void LabelAndReadOnlyValue(Core::StringAtom label, Core::StringAtom value, float labelSize, float fullSize)
+    void LabelAndInputTextRO(Core::StringAtom label, Core::StringAtom value, float labelSize, float fullSize)
     {
         FixedLabel(label.data(), labelSize);
-        FixedInputText(std::move(value), fullSize - labelSize);
+        InputTextRO(std::move(value), fullSize - labelSize);
     }
 } // namespace SW

@@ -361,26 +361,15 @@ namespace SW
         auto* asStaticMesh = dynamic_cast<StaticMesh*>(_target);
         auto* asGraphicsComponentData = dynamic_cast<GraphicsComponentData*>(_target);
 
-        if (ImGui::CollapsingHeader("General", ImGuiTreeNodeFlags_DefaultOpen))
+        if (asBaseComponent && ImGui::CollapsingHeader("General", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            std::string objName
-                = asBaseComponent ? asBaseComponent->getComponentName().toStdString() : "";
-            int inputNameFlags = 0;
-            if (asStaticMesh)
-            {
-                inputNameFlags |= ImGuiInputTextFlags_ReadOnly;
-            }
+            LabelAndInputTextRO("Name: ", asBaseComponent->getComponentName(), labelWidth, fullWidth);
 
-            FixedLabel("Name: ", labelWidth);
-            ImGui::PushItemWidth(exceptLabelWidth);
-            ImGui::InputText("##objName", &objName, inputNameFlags);
-            ImGui::PopItemWidth();
-
-            bool isEnabled = asBaseComponent ? asBaseComponent->isEnabled() : false;
+            bool isEnabled = asBaseComponent->isEnabled();
             FixedLabel("Enabled: ", labelWidth);
             ImGui::Checkbox("##isEnabled", &isEnabled);
 
-            if (asBaseComponent && isEnabled != asBaseComponent->isEnabled())
+            if (isEnabled != asBaseComponent->isEnabled())
             {
                 asBaseComponent->setEnabled(isEnabled);
             }
@@ -427,7 +416,7 @@ namespace SW
         if (asGraphicsComponentData
             && ImGui::CollapsingHeader("Graphics", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            LabelAndReadOnlyValue(
+            LabelAndInputTextRO(
                 "Triangles: ",
                 Core::StringAtom::MakeFrom(asGraphicsComponentData->getTriangleCount()), labelWidth,
                 fullWidth);
@@ -437,7 +426,7 @@ namespace SW
             {
                 shaderName = asGraphicsComponentData->getShaderId()->getName();
             }
-            LabelAndReadOnlyValue("Shader: ", std::move(shaderName), labelWidth, fullWidth);
+            LabelAndInputTextRO("Shader: ", std::move(shaderName), labelWidth, fullWidth);
         }
     }
 
@@ -541,7 +530,7 @@ namespace SW
         ImGui::PushID(id);
         const bool isOpened = ImGui::TreeNodeEx(n->getComponentName().c_str(), flags);
 
-        if (ImGui::IsItemClicked())
+        if (ImGui::IsItemClicked() || ImGui::IsItemFocused())
         {
             selectedObject = n;
             if (auto* wnd = gameInstance->gameEditor.getWindow<ObjectPropertiesWindow>())
