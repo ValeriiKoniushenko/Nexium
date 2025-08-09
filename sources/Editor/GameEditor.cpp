@@ -222,11 +222,11 @@ namespace SW
 
         // Style adjustments
         style->WindowPadding = ImVec2(8.00f, 8.00f);
-        style->FramePadding = ImVec2(5.00f, 2.00f);
+        style->FramePadding = ImVec2(5.00f, 3.00f);
         style->CellPadding = ImVec2(6.00f, 6.00f);
         style->ItemSpacing = ImVec2(6.00f, 6.00f);
         style->ItemInnerSpacing = ImVec2(6.00f, 6.00f);
-        style->TouchExtraPadding = ImVec2(0.00f, 0.00f);
+        style->TouchExtraPadding = ImVec2(0.00f, 5.00f);
         style->IndentSpacing = 25;
         style->ScrollbarSize = 11;
         style->GrabMinSize = 10;
