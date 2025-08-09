@@ -23,23 +23,31 @@
 #include "EditorWindow.h"
 
 #include "GameplaySystem/Framework/GameInstance.h"
-#include "ImGui/backends/imgui_impl_glfw.h"
 #include "ImGui/imgui_internal.h"
 #include "ImGui/misc/cpp/imgui_stdlib.h"
 #include "Misc/ImGuiHelper.h"
-#include "Scene/Scene.h"
 
 namespace SW
 {
 
-    ECS_REGISTER_NEW_COMPONENT_TYPE(BaseEWC);
-    ECS_REGISTER_NEW_COMPONENT_TYPE(BaseFloatEWC);
-    ECS_REGISTER_NEW_COMPONENT_TYPE(BaseMenuBarEWC);
-    ECS_REGISTER_NEW_COMPONENT_TYPE(KeyboardShortcutsEWC);
-    ECS_REGISTER_NEW_COMPONENT_TYPE(RootDockWindow);
-    ECS_REGISTER_NEW_COMPONENT_TYPE(LogsWindow);
-    ECS_REGISTER_NEW_COMPONENT_TYPE(ObjectPropertiesWindow);
-    ECS_REGISTER_NEW_COMPONENT_TYPE(SceneTreeWindow);
+    ECS_REGISTER_NEW_COMPONENT_TYPE(BaseEWC)
+    ECS_REGISTER_NEW_COMPONENT_TYPE(BaseFloatEWC)
+    ECS_REGISTER_NEW_COMPONENT_TYPE(BaseMenuBarEWC)
+    ECS_REGISTER_NEW_COMPONENT_TYPE(KeyboardShortcutsEWC)
+    ECS_REGISTER_NEW_COMPONENT_TYPE(RootDockWindow)
+    ECS_REGISTER_NEW_COMPONENT_TYPE(LogsWindow)
+    ECS_REGISTER_NEW_COMPONENT_TYPE(ObjectPropertiesWindow)
+    ECS_REGISTER_NEW_COMPONENT_TYPE(SceneTreeWindow)
+
+    // ========================================================================
+    //
+    //    ______
+    //    | ___ \
+    //    | |_/ /  __ _  ___   ___
+    //    | ___ \ / _` |/ __| / _ \
+    //    | |_/ /| (_| |\__ \|  __/
+    //    \____/  \__,_||___/ \___|
+    // ========================================================================
 
     void BaseEWC::onTick()
     {
@@ -51,6 +59,15 @@ namespace SW
         endWindowDraw();
     }
 
+    // ========================================================================
+    //
+    //    ______                   ______  _                _
+    //    | ___ \                  |  ___|| |              | |
+    //    | |_/ /  __ _  ___   ___ | |_   | |  ___    __ _ | |_
+    //    | ___ \ / _` |/ __| / _ \|  _|  | | / _ \  / _` || __|
+    //    | |_/ /| (_| |\__ \|  __/| |    | || (_) || (_| || |_
+    //    \____/  \__,_||___/ \___|\_|    |_| \___/  \__,_| \__|
+    // ========================================================================
     void BaseFloatEWC::setFitContent(bool v)
     {
         _isFitContent = v;
@@ -79,11 +96,6 @@ namespace SW
         }
     }
 
-    void GameViewportEWC::onInit()
-    {
-        BaseEWC::onInit();
-    }
-
     bool BaseFloatEWC::beginWindowDraw()
     {
         if (_isFitContent)
@@ -108,6 +120,22 @@ namespace SW
         ImGui::End();
     }
 
+    // ========================================================================
+    //
+    //     _   _  _                                      _
+    //    | | | |(_)                                    | |
+    //    | | | | _   ___ __      __ _ __    ___   _ __ | |_
+    //    | | | || | / _ \\ \ /\ / /| '_ \  / _ \ | '__|| __|
+    //    \ \_/ /| ||  __/ \ V  V / | |_) || (_) || |   | |_
+    //     \___/ |_| \___|  \_/\_/  | .__/  \___/ |_|    \__|
+    //                              | |
+    //                              |_|
+    // ========================================================================
+    void GameViewportEWC::onInit()
+    {
+        BaseEWC::onInit();
+    }
+
     void GameViewportEWC::onDraw()
     {
         if (gameInstance->renderMode.cast() == GameInstance::RenderMode::Editor)
@@ -119,6 +147,15 @@ namespace SW
         }
     }
 
+    // ========================================================================
+    //
+    //     _____  _                   _                 _
+    //    /  ___|| |                 | |               | |
+    //    \ `--. | |__    ___   _ __ | |_   ___  _   _ | |_  ___
+    //     `--. \| '_ \  / _ \ | '__|| __| / __|| | | || __|/ __|
+    //    /\__/ /| | | || (_) || |   | |_ | (__ | |_| || |_ \__ \
+    //    \____/ |_| |_| \___/ |_|    \__| \___| \__,_| \__||___/
+    // ========================================================================
     void KeyboardShortcutsEWC::onInit()
     {
         BaseFloatEWC::onInit();
@@ -140,6 +177,16 @@ namespace SW
         ImGui::Text("Spectator speed");
         // ImGui::SliderFloat("##spectator_speed", &gameInstance->speed, 1.f, 1000.f);
     }
+
+    // ========================================================================
+    //
+    //    ______                _   ______               _
+    //    | ___ \              | |  |  _  \             | |
+    //    | |_/ /  ___    ___  | |_ | | | |  ___    ___ | | __
+    //    |    /  / _ \  / _ \ | __|| | | | / _ \  / __|| |/ /
+    //    | |\ \ | (_) || (_) || |_ | |/ / | (_) || (__ |   <
+    //    \_| \_| \___/  \___/  \__||___/   \___/  \___||_|\_\
+    // ========================================================================
     void RootDockWindow::onInit()
     {
         BaseEWC::onInit();
@@ -178,6 +225,17 @@ namespace SW
         ImGui::End();
     }
 
+    // ========================================================================
+    //
+    //     _
+    //    | |
+    //    | |     ___   __ _ ___
+    //    | |    / _ \ / _` / __|
+    //    | |___| (_) | (_| \__ \
+    //    \_____/\___/ \__, |___/
+    //                  __/ |
+    //                 |___/
+    // ========================================================================
     void LogsWindow::addLog(Core::StringAtom&& log, spdlog::level::level_enum level)
     {
         LogLine l;
@@ -269,6 +327,17 @@ namespace SW
         }
     }
 
+    // ========================================================================
+    //
+    //     _____  _        _              _   ______
+    //    |  _  || |      (_)            | |  | ___ \
+    //    | | | || |__     _   ___   ___ | |_ | |_/ / _ __   ___   _ __   ___
+    //    | | | || '_ \   | | / _ \ / __|| __||  __/ | '__| / _ \ | '_ \ / __|
+    //    \ \_/ /| |_) |  | ||  __/| (__ | |_ | |    | |   | (_) || |_) |\__ \
+    //     \___/ |_.__/   | | \___| \___| \__|\_|    |_|    \___/ | .__/ |___/
+    //                   _/ |                                     | |
+    //                  |__/                                      |_|
+    // ========================================================================
     void ObjectPropertiesWindow::setTargetObject(AbstractComponent* actor)
     {
         _target = actor;
@@ -589,6 +658,15 @@ namespace SW
         ImGui::EndMainMenuBar();
     }
 
+    // ========================================================================
+    //
+    //     _____                           _____
+    //    /  ___|                         |_   _|
+    //    \ `--.   ___   ___  _ __    ___   | |   _ __   ___   ___
+    //     `--. \ / __| / _ \| '_ \  / _ \  | |  | '__| / _ \ / _ \
+    //    /\__/ /| (__ |  __/| | | ||  __/  | |  | |   |  __/|  __/
+    //    \____/  \___| \___||_| |_| \___|  \_/  |_|    \___| \___|
+    // ========================================================================
     void SceneTreeWindow::onInit()
     {
         BaseFloatEWC::onInit();
