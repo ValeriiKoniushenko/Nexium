@@ -75,7 +75,7 @@ namespace SW
         void fromCacheData(const nlohmann::json& json) override;
 
     protected:
-        void forceWriteToCacheAllMeshes() const;
+        void writeToCacheSeparateData() const;
 
     protected:
         std::vector<StaticMeshBundle> _staticMeshBundles;

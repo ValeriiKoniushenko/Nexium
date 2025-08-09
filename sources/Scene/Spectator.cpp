@@ -32,7 +32,6 @@ namespace SW
         auto json = Actor::toJson();
         json["speed"] = speed;
         json["mouseSensitivity"] = mouseSensitivity;
-        // json["camera"] = camera.toJson();
         json["keyboardInput"] = keyboardInput.toJson();
         // json["mouseInput"] = mouseInput.toJson();
 
@@ -50,10 +49,6 @@ namespace SW
         if (json.contains("mouseSensitivity"))
         {
             mouseSensitivity = json["mouseSensitivity"];
-        }
-        if (json.contains("camera"))
-        {
-            //camera.fromJson(json["camera"], isIgnoreChildren);
         }
         if (json.contains("keyboardInput"))
         {
@@ -89,6 +84,8 @@ namespace SW
         Actor::onInit();
 
         tryReadFromCache();
+
+
 
         static auto getRealSpeed = [this](SW::KeyboardIA::SpecKeysState state)
         {

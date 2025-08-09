@@ -52,11 +52,19 @@ namespace SW
         _staticMeshBundles.back().tryReadFromCache();
     }
 
-    void Scene::forceWriteToCacheAllMeshes() const
+    void Scene::writeToCacheSeparateData() const
     {
         for (auto&& mesh : _staticMeshBundles)
         {
             mesh.writeToCache();
+        }
+
+        for (auto&& obj : _logicalComponents)
+        {
+            if (auto* cacheableObj = dynamic_cast<JsonCacheable*>(obj.get()))
+            {
+                cacheableObj->writeToCache();
+            }
         }
     }
 
@@ -66,9 +74,15 @@ namespace SW
 
         json["sceneName"] = _sceneName;
         json["objects"] = nlohmann::json::array();
-        for (auto& m : _staticMeshBundles)
+        for (auto& obj : _staticMeshBundles)
         {
-            json["objects"].push_back(m.getComponentName());
+            json["objects"].push_back(obj.getComponentName());
+        }
+
+        json["logicalObjects"] = nlohmann::json::array();
+        for (auto& obj : _logicalComponents)
+        {
+            json["logicalObjects"].push_back(obj->getComponentName());
         }
 
         return json;
@@ -82,6 +96,11 @@ namespace SW
         }
 
         if (json.contains("objects"))
+        {
+            // do nothing now
+        }
+
+        if (json.contains("logicalObjects"))
         {
             // do nothing now
         }
@@ -99,7 +118,7 @@ namespace SW
 
     nlohmann::json Scene::toCacheData() const
     {
-        forceWriteToCacheAllMeshes();
+        writeToCacheSeparateData();
         return toJson();
     }
 
@@ -110,6 +129,10 @@ namespace SW
 
     void Scene::tick(float timeDelta)
     {
+        for (auto&& obj : _logicalComponents)
+        {
+            obj->tick();
+        }
     }
 
 } // namespace SW

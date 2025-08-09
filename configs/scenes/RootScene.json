@@ -1,4 +1,7 @@
 {
+    "logicalObjects": [
+        ""
+    ],
     "objects": [
         "Tree",
         "FireHydrant"
