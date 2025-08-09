@@ -157,7 +157,17 @@ namespace SW
     {
         auto json = AbstractComponent::toJson();
 
-        json["name"] = _name;
+        static int64_t idGen = 0;
+
+        if (_name.isEmpty())
+        {
+            json["name"] = _type + " ";
+        }
+        else
+        {
+            json["name"] = _name;
+
+        }
         json["type"] = _type;
 
         for (auto& child : _children)

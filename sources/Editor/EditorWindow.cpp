@@ -251,15 +251,11 @@ namespace SW
 
     void LogsWindow::onDraw()
     {
-        bool just_added = (_lastCountOfLogs != _logs.size());
-        _lastCountOfLogs = _logs.size();
-
         if (ImGui::BeginChild("ScrollingRegion", ImVec2(0, 0), ImGuiChildFlags_NavFlattened,
                               ImGuiWindowFlags_HorizontalScrollbar))
         {
-            float scrollY_before = ImGui::GetScrollY();
-            float scrollMax_before = ImGui::GetScrollMaxY();
-            bool was_at_bottom = (scrollMax_before - scrollY_before) <= 1.0f; // tweak tolerance
+            const bool justAdded = (_lastCountOfLogs != _logs.size());
+            _lastCountOfLogs = _logs.size();
 
             if (ImGui::BeginPopupContextWindow())
             {
@@ -270,7 +266,7 @@ namespace SW
                 ImGui::EndPopup();
             }
 
-            int i = 0;
+            std::size_t i = 0;
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 1)); // Tighten _spacing
             for (auto& [message, level, hashLog] : _logs)
             {
@@ -304,7 +300,7 @@ namespace SW
                     ImGui::PopStyleColor();
                 }
 
-                if (just_added && i + 1 == _logs.size())
+                if (justAdded && i + 1 == _logs.size())
                 {
                     ImGui::SetScrollHereY(1.0f); // align this last item's baseline to bottom
                     // OR: ImGui::SetScrollY(ImGui::GetScrollMaxY());
@@ -738,13 +734,24 @@ namespace SW
             return;
         }
 
-        auto& meshes = _scene->getStaticMeshBundles();
-        if (ImGui::TreeNodeEx("Collection", ImGuiTreeNodeFlags_DefaultOpen | _commonTreeFlags))
+        auto& graphicNodes = _scene->getStaticMeshBundles();
+        if (ImGui::TreeNodeEx("Graphic nodes", ImGuiTreeNodeFlags_DefaultOpen | _commonTreeFlags))
         {
             int32_t internalId = 0;
-            for (auto& mesh : meshes)
+            for (auto& node : graphicNodes)
             {
-                drawTreeNode(&mesh, internalId++);
+                drawTreeNode(&node, internalId++);
+            }
+            ImGui::TreePop();
+        }
+
+        auto& logicalNodes = _scene->getLogicalComponents();
+        if (ImGui::TreeNodeEx("Logical nodes", ImGuiTreeNodeFlags_DefaultOpen | _commonTreeFlags))
+        {
+            int32_t internalId = 0;
+            for (auto& node : logicalNodes)
+            {
+                drawTreeNode(node.get(), internalId++);
             }
             ImGui::TreePop();
         }

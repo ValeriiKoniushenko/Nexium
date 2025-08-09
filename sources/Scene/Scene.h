@@ -51,8 +51,14 @@ namespace SW
         {
             return _staticMeshBundles;
         }
+
         nlohmann::json toJson() const override;
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
+
+        [[nodiscard]] const std::vector<BaseComponent::Ptr>& getLogicalComponents() const noexcept
+        {
+            return _logicalComponents;
+        }
 
         /**
          * @brief You can use it to add some logical stuff. I.e.:
