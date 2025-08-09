@@ -144,7 +144,7 @@ namespace SW
     {
         auto json = BaseComponent::toJson();
 
-        json["meshes"] = nlohmann::json::array();
+        json["Transformable"] = Transformable::toJson();
 
         for (const auto* m : _meshes)
         {
@@ -157,6 +157,11 @@ namespace SW
     void StaticMeshBundle::fromJson(const nlohmann::json& json, bool isIgnoreChildren /* = false*/)
     {
         BaseComponent::fromJson(json, true);
+
+        if (json.contains("Transformable"))
+        {
+            Transformable::fromJson(json["Transformable"], isIgnoreChildren);
+        }
 
         if (json.contains("meshes"))
         {
