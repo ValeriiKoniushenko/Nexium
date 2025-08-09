@@ -65,8 +65,11 @@ namespace SW
         //-------------------- MISC ---------------------
         renderToTextureObject.generate();
         gameEditor.initialize();
-        spectator.initialize();
-        currentCamera = spectator.findFirstChildOf<BaseCamera>();
+
+        if (auto* spectator = gameScene.createAndGetLogicalComponent<Spectator>())
+        {
+            currentCamera = spectator->findFirstChildOf<BaseCamera>();
+        }
 
         onInitReadCache();
 
@@ -84,7 +87,6 @@ namespace SW
 
     void GameInstance::onFinishWriteCache()
     {
-        spectator.writeToCache();
         gameScene.writeToCache();
     }
 
@@ -101,7 +103,7 @@ namespace SW
             clock.start();
             _window->pollEvent();
 
-            spectator.tick();
+            gameScene.tick(world.timeDelta);
 
             if (renderMode.cast() == RenderMode::GameOnly)
             {

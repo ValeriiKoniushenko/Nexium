@@ -108,4 +108,8 @@ namespace SW
         fromJson(json, false);
     }
 
+    void Scene::tick(float timeDelta)
+    {
+    }
+
 } // namespace SW

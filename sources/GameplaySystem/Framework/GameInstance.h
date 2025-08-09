@@ -56,8 +56,6 @@ namespace SW
     public:
         SW::Scene gameScene;
 
-        Spectator spectator;
-
         BaseCamera* currentCamera = nullptr;
         RenderMode renderMode = RenderMode::Editor;
         GameEditor gameEditor;

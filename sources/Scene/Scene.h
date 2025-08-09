@@ -34,12 +34,15 @@ namespace SW
         Scene() = default;
         ~Scene() override = default;
 
+        void tick(float timeDelta);
+
         void directDraw();
 
         void setSceneName(Core::StringAtom name);
         [[nodiscard]] const Core::StringAtom& getSceneName() const noexcept;
 
         void addMesh(StaticMeshBundle&& mesh);
+
         [[nodiscard]] const std::vector<StaticMeshBundle>& getStaticMeshBundles() const noexcept
         {
             return _staticMeshBundles;
@@ -50,6 +53,20 @@ namespace SW
         }
         nlohmann::json toJson() const override;
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
+
+        /**
+         * @brief You can use it to add some logical stuff. I.e.:
+         * Spectator, some TriggerBoxes - in general everything
+         * that shouldn't be rendered.
+         */
+        template<IsComponent CompT, class... Args>
+        CompT* createAndGetLogicalComponent(Args&&... args)
+        {
+            typename CompT::Ptr newComp = new CompT(std::forward<Args>(args)...);
+            newComp->initialize();
+            _logicalComponents.push_back(std::move(newComp));
+            return static_cast<CompT*>(_logicalComponents.back().get());
+        }
 
     protected:
         std::filesystem::path getCacheDir() const override;
@@ -62,6 +79,7 @@ namespace SW
 
     protected:
         std::vector<StaticMeshBundle> _staticMeshBundles;
+        std::vector<BaseComponent::Ptr> _logicalComponents;
         Core::StringAtom _sceneName = "None";
     };
 } // namespace SW
