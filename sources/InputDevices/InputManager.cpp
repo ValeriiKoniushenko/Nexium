@@ -44,17 +44,16 @@ namespace SW
 
     void KeyboardInputManger::fromJson(const nlohmann::json& json, bool isIgnoreChildren)
     {
-        if (!json.contains("mapping"))
+        if (json.contains("mapping"))
         {
-            return;
-        }
-
-        for (auto&& map : json["mapping"])
-        {
-            if (auto found = getOrCreate(map["action"].get<Core::StringAtom>(), Keyboard::Key_None))
+            for (auto&& map : json["mapping"])
             {
-                auto key = Core::StringAtom::Intern(map["key"].get<Core::StringAtom>());
-                found->setKey(Keyboard::FromStringToKey(key));
+                if (auto found
+                    = getOrCreate(map["action"].get<Core::StringAtom>(), Keyboard::Key_None))
+                {
+                    auto key = Core::StringAtom::Intern(map["key"].get<Core::StringAtom>());
+                    found->setKey(Keyboard::FromStringToKey(key));
+                }
             }
         }
     }

@@ -42,10 +42,23 @@ namespace SW
     void Spectator::fromJson(const nlohmann::json& json, bool isIgnoreChildren)
     {
         Actor::fromJson(json, isIgnoreChildren);
-        speed = json["speed"];
-        mouseSensitivity = json["mouseSensitivity"];
-        camera.fromJson(json["camera"], isIgnoreChildren);
-        keyboardInput.fromJson(json["keyboardInput"], isIgnoreChildren);
+
+        if (json.contains("speed"))
+        {
+            speed = json["speed"];
+        }
+        if (json.contains("mouseSensitivity"))
+        {
+            mouseSensitivity = json["mouseSensitivity"];
+        }
+        if (json.contains("camera"))
+        {
+            camera.fromJson(json["camera"], isIgnoreChildren);
+        }
+        if (json.contains("keyboardInput"))
+        {
+            keyboardInput.fromJson(json["keyboardInput"], isIgnoreChildren);
+        }
     }
 
     Core::StringAtom Spectator::getCacheHash() const

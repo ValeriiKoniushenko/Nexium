@@ -101,8 +101,14 @@ namespace SW
 
     void AbstractComponent::fromJson(const nlohmann::json& json, bool isIgnoreChildren /* = false*/)
     {
-        _isEnabled = json["isEnabled"];
-        _noTick = json["noTick"].get<bool>();
+        if (json.contains("isEnabled"))
+        {
+            _isEnabled = json["isEnabled"];
+        }
+        if (json.contains("noTick"))
+        {
+            _noTick = json["noTick"].get<bool>();
+        }
     }
 
     bool BaseComponent::removeChild(const BaseComponent* child)
@@ -166,9 +172,15 @@ namespace SW
     {
         AbstractComponent::fromJson(json, isIgnoreChildren);
 
-        _name = json["name"];
-        const_cast<Core::StringAtom&>(_type)
-            = Core::StringAtom::Intern(json["type"].get<std::string>());
+        if (json.contains("name"))
+        {
+            _name = json["name"];
+        }
+        if (json.contains("type"))
+        {
+            const_cast<Core::StringAtom&>(_type)
+                = Core::StringAtom::Intern(json["type"].get<std::string>());
+        }
 
         if (!isIgnoreChildren)
         {

@@ -259,10 +259,22 @@ namespace SW
 
     void Transformable::fromJson(const nlohmann::json& json, bool isIgnoreChildren /* = false*/)
     {
-        _position = json["position"];
-        _origin = json["origin"];
-        _rotation = json["rotation"];
-        _scale = json["scale"];
+        if (json.contains("position"))
+        {
+            _position = json["position"];
+        }
+        if (json.contains("origin"))
+        {
+            _origin = json["origin"];
+        }
+        if (json.contains("rotation"))
+        {
+            _rotation = json["rotation"];
+        }
+        if (json.contains("scale"))
+        {
+            _scale = json["scale"];
+        }
 
         _isDirtyModelMatrix = true;
     }

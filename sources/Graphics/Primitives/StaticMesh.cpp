@@ -78,9 +78,18 @@ namespace SW
 
     void StaticMesh::fromJson(const nlohmann::json& json, bool isIgnoreChildren /* = false*/)
     {
-        Transformable::fromJson(json["Transformable"], isIgnoreChildren);
-        BaseComponent::fromJson(json["BaseComponent"], isIgnoreChildren);
-        GraphicsComponentData::fromJson(json["GraphicsComponentData"], isIgnoreChildren);
+        if (json.contains("Transformable"))
+        {
+            Transformable::fromJson(json["Transformable"], isIgnoreChildren);
+        }
+        if (json.contains("BaseComponent"))
+        {
+            BaseComponent::fromJson(json["BaseComponent"], isIgnoreChildren);
+        }
+        if (json.contains("GraphicsComponentData"))
+        {
+            GraphicsComponentData::fromJson(json["GraphicsComponentData"], isIgnoreChildren);
+        }
     }
 
     void StaticMesh::draw()

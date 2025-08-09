@@ -128,10 +128,23 @@ namespace SW
     void BaseCamera::fromJson(const nlohmann::json& json, bool isIgnoreChildren /* = false*/)
     {
         Actor::fromJson(json, isIgnoreChildren);
-        _size = json["viewport"].get<decltype(_size)>();
-        _fov = json["fov"].get<decltype(_fov)>();
-        _far = json["far"].get<decltype(_far)>();
-        _near = json["near"].get<decltype(_near)>();
+
+        if (json.contains("viewport"))
+        {
+            _size = json["viewport"].get<decltype(_size)>();
+        }
+        if (json.contains("fov"))
+        {
+            _fov = json["fov"].get<decltype(_fov)>();
+        }
+        if (json.contains("far"))
+        {
+            _far = json["far"].get<decltype(_far)>();
+        }
+        if (json.contains("near"))
+        {
+            _near = json["near"].get<decltype(_near)>();
+        }
     }
 
     Core::StringAtom BaseCamera::getCacheHash() const
