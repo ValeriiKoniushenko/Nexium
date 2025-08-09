@@ -30,5 +30,15 @@ namespace SW
     void FixedLabel(const char* label, float size);
     void InputTextRO(Core::StringAtom value, float size);
     void LabelAndInputTextRO(Core::StringAtom label, Core::StringAtom value, float labelSize,
-                               float fullSize);
+                             float fullSize);
+
+    template<class T>
+    void LabelAndInputTextRO(Core::StringAtom label, T value, float labelSize, float fullSize)
+    {
+        LabelAndInputTextRO(std::move(label), Core::StringAtom::MakeFrom(value), labelSize,
+                            fullSize);
+    }
+
+    void LabelAndCheckboxRO(Core::StringAtom label, bool v, float labelSize);
+
 } // namespace SW

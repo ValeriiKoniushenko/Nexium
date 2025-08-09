@@ -30,24 +30,38 @@ namespace SW
 {
     void FixedLabel(const char* label, float size)
     {
+#if defined(DEBUG)
+        Assert(ImGui::CalcTextSize(label).x < size);
+#endif
         ImGui::TextUnformatted(label);
-        ImGui::SameLine();
+        ImGui::SameLine(0, 0);
         ImGui::Dummy(ImVec2(size - ImGui::CalcTextSize(label).x, 0));
-        ImGui::SameLine();
+        ImGui::SameLine(0, 0);
     }
 
     void InputTextRO(Core::StringAtom value, float size)
     {
         ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetStyle().Colors[ImGuiCol_TextDisabled]);
         ImGui::PushItemWidth(size);
-        ImGui::InputText(value.c_str(), value.data(), value.size() + 1, ImGuiInputTextFlags_ReadOnly);
+        ImGui::InputText(("##" + value).c_str(), value.data(), value.size() + 1,
+                         ImGuiInputTextFlags_ReadOnly);
         ImGui::PopItemWidth();
         ImGui::PopStyleColor();
     }
 
-    void LabelAndInputTextRO(Core::StringAtom label, Core::StringAtom value, float labelSize, float fullSize)
+    void LabelAndInputTextRO(Core::StringAtom label, Core::StringAtom value, float labelSize,
+                             float fullSize)
     {
         FixedLabel(label.data(), labelSize);
         InputTextRO(std::move(value), fullSize - labelSize);
     }
+
+    void LabelAndCheckboxRO(Core::StringAtom label, bool v, float labelSize)
+    {
+        FixedLabel(label.data(), labelSize);
+        ImGui::BeginDisabled(true);
+        ImGui::Checkbox(("##" + label).c_str(), &v);
+        ImGui::EndDisabled();
+    }
+
 } // namespace SW

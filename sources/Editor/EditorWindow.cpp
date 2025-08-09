@@ -305,7 +305,7 @@ namespace SW
         static constexpr ImVec4 COLOR_Y = ImVec4(0.2f, 1.0f, 0.2f, 1.0f); // green
         static constexpr ImVec4 COLOR_Z = ImVec4(0.2f, 0.6f, 1.0f, 1.0f); // blue
         const float fullWidth = ImGui::GetContentRegionAvail().x;
-        const float labelWidth = ImGui::CalcTextSize("Location: ").x;
+        const float labelWidth = ImGui::CalcTextSize("SomeLongWord: ").x;
         const float idWidth = ImGui::CalcTextSize("X:").x;
         const float spacing = ImGui::GetStyle().ItemSpacing.x;
         constexpr float componentsCount = 3.f;      // 3 -> X Y Z
@@ -361,11 +361,14 @@ namespace SW
 
         if (asBaseComponent && ImGui::CollapsingHeader("General", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            LabelAndInputTextRO("Name: ", asBaseComponent->getComponentName(), labelWidth,
+            LabelAndInputTextRO("Name:", asBaseComponent->getComponentName(), labelWidth,
+                                fullWidth);
+
+            LabelAndInputTextRO("Type:", asBaseComponent->getComponentType(), labelWidth,
                                 fullWidth);
 
             bool isEnabled = asBaseComponent->isEnabled();
-            FixedLabel("Enabled: ", labelWidth);
+            FixedLabel("Enabled:", labelWidth);
             ImGui::Checkbox("##isEnabled", &isEnabled);
 
             if (isEnabled != asBaseComponent->isEnabled())
@@ -416,7 +419,7 @@ namespace SW
             && ImGui::CollapsingHeader("Graphics", ImGuiTreeNodeFlags_DefaultOpen))
         {
             LabelAndInputTextRO(
-                "Triangles: ",
+                "Triangles:",
                 Core::StringAtom::MakeFrom(asGraphicsComponentData->getTriangleCount()), labelWidth,
                 fullWidth);
 
@@ -434,15 +437,18 @@ namespace SW
                 auto height = std::format("{:.2f}", size.height);
                 auto deep = std::format("{:.2f}", size.deep);
 
-                FixedLabel("Size: ", labelWidth);
+                FixedLabel("Size:", labelWidth);
 
                 ImGui::PushStyleColor(ImGuiCol_Text, COLOR_X);
                 ImGui::TextUnformatted("W:");
                 ImGui::PopStyleColor();
                 ImGui::SameLine(0, 3.f);
                 ImGui::PushItemWidth(inputWidth);
+                ImGui::PushStyleColor(ImGuiCol_Text,
+                                      ImGui::GetStyle().Colors[ImGuiCol_TextDisabled]);
                 ImGui::InputText("##width", width.data(), width.size() + 1,
                                  ImGuiInputTextFlags_ReadOnly);
+                ImGui::PopStyleColor();
                 ImGui::PopItemWidth();
                 ImGui::SameLine();
 
@@ -451,8 +457,11 @@ namespace SW
                 ImGui::PopStyleColor();
                 ImGui::SameLine();
                 ImGui::PushItemWidth(inputWidth);
+                ImGui::PushStyleColor(ImGuiCol_Text,
+                                      ImGui::GetStyle().Colors[ImGuiCol_TextDisabled]);
                 ImGui::InputText("##height", height.data(), height.size() + 1,
                                  ImGuiInputTextFlags_ReadOnly);
+                ImGui::PopStyleColor();
                 ImGui::PopItemWidth();
                 ImGui::SameLine();
 
@@ -461,9 +470,29 @@ namespace SW
                 ImGui::SameLine();
                 ImGui::PopStyleColor();
                 ImGui::PushItemWidth(inputWidth);
+                ImGui::PushStyleColor(ImGuiCol_Text,
+                                      ImGui::GetStyle().Colors[ImGuiCol_TextDisabled]);
                 ImGui::InputText("##deep", deep.data(), deep.size() + 1,
                                  ImGuiInputTextFlags_ReadOnly);
+                ImGui::PopStyleColor();
                 ImGui::PopItemWidth();
+            }
+        }
+
+        ImGui::Dummy(ImVec2(0.0f, gapBetweenSections));
+
+        if (asBaseComponent && ImGui::CollapsingHeader("Component data"))
+        {
+            LabelAndInputTextRO("Children:", asBaseComponent->getChildrenCount(), labelWidth,
+                                fullWidth);
+            LabelAndCheckboxRO("Inited:", asBaseComponent->isInited(), labelWidth);
+
+            bool tickable = asBaseComponent->getNoTick();
+            FixedLabel("No ticks:", labelWidth);
+            ImGui::Checkbox("##NoTick", &tickable);
+            if (asBaseComponent->getNoTick() != tickable)
+            {
+                asBaseComponent->setNoTick(tickable);
             }
         }
     }
