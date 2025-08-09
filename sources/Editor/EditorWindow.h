@@ -25,6 +25,7 @@
 #include "GameplaySystem/ECS/BaseComponent.h"
 #include "GameplaySystem/Framework/Actor.h"
 #include "ImGui/imgui.h"
+#include "Misc/ImGuiHelper.h"
 #include "Scene/Scene.h"
 
 #include <Core/Delegate.h>
@@ -183,26 +184,35 @@ namespace SW
         void onDraw() override;
         void onUpdate() override;
 
+        void tryDrawTransformable(Transformable* comp);
+        void tryDrawBaseComponent(BaseComponent* comp);
+        void tryDrawBaseComponentExtra(BaseComponent* comp);
+        void tryDrawGraphicsComponentData(GraphicsComponentData* comp);
+
     protected:
         static constexpr ImVec4 COLOR_X = ImVec4(1.0f, 0.2f, 0.2f, 1.0f); // red
         static constexpr ImVec4 COLOR_Y = ImVec4(0.2f, 1.0f, 0.2f, 1.0f); // green
         static constexpr ImVec4 COLOR_Z = ImVec4(0.2f, 0.6f, 1.0f, 1.0f); // blue
-
 
     private:
         AbstractComponent* _target = nullptr;
         Core::Repeater _slowUpdater;
         std::vector<std::pair<int, int>> _graphicsMods;
 
+        Vec3Control _transformLocationControl;
+        Vec3Control _transformOriginControl;
+        Vec3Control _transformScaleControl;
+        Vec3Control _transformRotationControl;
+
         float _fullWidth = 0;
         float _labelWidth = 0;
-        float _spacing = 0;
-        float _inputWidth = 0;
+        const ImVec2 _overriddenSpacing = ImVec2(0, 6);
+        constexpr static float _horizontalSpacing = 4.f;
 
         const float _gapBetweenSections = 15.f;
 
     private:
-        void drawVec3Control(const char* label, glm::vec3& vec);
+        void drawVec3Control(const char* label, glm::vec3& vec, float availSpace, float afterTextGap = _horizontalSpacing, float betweenInputsGap = _horizontalSpacing * 2.f);
     };
 
     class SceneTreeWindow : public BaseFloatEWC

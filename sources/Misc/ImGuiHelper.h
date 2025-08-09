@@ -24,9 +24,32 @@
 
 #include "Core/StringHelper.h"
 #include "ImGui/imgui.h"
+#include "glm/glm.hpp"
 
 namespace SW
 {
+
+    struct Vec3Control
+    {
+        struct Component
+        {
+            Core::StringAtom text = ""_atom;
+            ImVec4 color = ImVec4(1.f, 1.f, 1.f, 1.f);
+        };
+
+        float afterTextGap = 4.f;
+        float betweenInputsGap = 8.f;
+        float labelWidth = 80.f;
+        float floatStep = 1.f;
+        float floatMin = 0.f;
+        float floatMax = 0.f;
+
+        Core::StringAtom label = ""_atom;
+        std::array<Component, 3> components = { Component(), Component(), Component() };
+
+        void draw(glm::vec3& v, float availSpace);
+    };
+
     void FixedLabel(const char* label, float size);
     void InputTextRO(Core::StringAtom value, float size);
     void LabelAndInputTextRO(Core::StringAtom label, Core::StringAtom value, float labelSize,

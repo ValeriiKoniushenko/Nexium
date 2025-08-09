@@ -352,6 +352,16 @@ namespace SW
     {
         BaseFloatEWC::onInit();
 
+        _labelWidth = 80.f;
+
+        _transformLocationControl.components
+            = { Vec3Control::Component{ "X:"_atom, ImVec4(1.0f, 0.2f, 0.2f, 1.0f) },
+                Vec3Control::Component{ "Y:"_atom, ImVec4(0.2f, 1.0f, 0.2f, 1.0f) },
+                Vec3Control::Component{ "Z:"_atom, ImVec4(0.2f, 0.2f, 1.0f, 1.0f) } };
+
+        _transformLocationControl.labelWidth = _labelWidth;
+        _transformLocationControl.label = "Location:";
+
         _slowUpdater.setRepeatTime(1.f / 30.f);
         _slowUpdater.setCallback(
             [](auto)
@@ -362,96 +372,146 @@ namespace SW
 
     void ObjectPropertiesWindow::onDraw()
     {
-        // One-row structure is:
-        // | Label | (ID Input) (ID Input) (ID Input) |
-        // For Label - static width
-        // For (ID Input):
-        //    For 'ID' - static
-        //    For 'Input' - dynamic
-        // Spacing - static
+        // A lot of stuff that should be centered or fitted.
+        // Temporary disable it
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, _overriddenSpacing);
 
         _fullWidth = ImGui::GetContentRegionAvail().x;
-        _labelWidth = ImGui::CalcTextSize("SomeLongWord: ").x;
-        _spacing = ImGui::GetStyle().ItemSpacing.x;
-        constexpr float componentsCount = 3.f;      // 3 -> X Y Z
-        constexpr float totalComponentsCount = 7.f; // 3 -> | Text | (ID Input) * 3 |
-        _inputWidth = (_fullWidth - _labelWidth - componentsCount * ImGui::CalcTextSize("X:").x
-                       - totalComponentsCount * _spacing)
-                      / componentsCount;
 
         auto* asBaseComponent = dynamic_cast<BaseComponent*>(_target);
         auto* asTransformable = dynamic_cast<Transformable*>(_target);
         auto* asStaticMeshBundle = dynamic_cast<StaticMeshBundle*>(_target);
         auto* asGraphicsComponentData = dynamic_cast<GraphicsComponentData*>(_target);
 
-        if (asBaseComponent && ImGui::CollapsingHeader("General", ImGuiTreeNodeFlags_DefaultOpen))
+        tryDrawBaseComponent(asBaseComponent);
+        ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
+
+        tryDrawTransformable(asTransformable);
+        ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
+
+        tryDrawGraphicsComponentData(asGraphicsComponentData);
+        ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
+
+        tryDrawBaseComponentExtra(asBaseComponent);
+
+        ImGui::PopStyleVar(); // ImGuiStyleVar_ItemSpacing
+    }
+
+    void ObjectPropertiesWindow::onUpdate()
+    {
+        BaseFloatEWC::onUpdate();
+
+        _slowUpdater.startOrUpdate();
+    }
+
+    void ObjectPropertiesWindow::drawVec3Control(const char* label, glm::vec3& v, float availSpace,
+                                                 float afterTextGap, float betweenInputsGap)
+    {
+        ImGui::PushID(label);
+
+        FixedLabel(label, _labelWidth);
+
+        float textWidth = ImGui::CalcTextSize("X:").x;
+        float inputWidth = availSpace / 3.f - textWidth - afterTextGap - betweenInputsGap;
+
+        ImGui::AlignTextToFramePadding();
+
+        ImGui::PushStyleColor(ImGuiCol_Text, COLOR_X);
+        ImGui::TextUnformatted("X:"); // here text on screen higher then others
+        ImGui::PopStyleColor();
+        ImGui::SameLine(0, afterTextGap);
+        ImGui::PushItemWidth(inputWidth);
+        ImGui::DragFloat("##X", &v.x, 0.1f, 0.0f, 0.0f, "%.2f");
+        ImGui::PopItemWidth();
+        ImGui::SameLine(0, betweenInputsGap);
+
+        textWidth = ImGui::CalcTextSize("Y:").x;
+        inputWidth = availSpace / 3.f - textWidth - afterTextGap - betweenInputsGap;
+        ImGui::PushStyleColor(ImGuiCol_Text, COLOR_Y);
+        ImGui::TextUnformatted("Y:");
+        ImGui::PopStyleColor();
+        ImGui::SameLine(0, afterTextGap);
+        ImGui::PushItemWidth(inputWidth);
+        ImGui::DragFloat("##Y", &v.y, 0.1f, 0.0f, 0.0f, "%.2f");
+        ImGui::PopItemWidth();
+        ImGui::SameLine(0, betweenInputsGap);
+
+        textWidth = ImGui::CalcTextSize("Z:").x;
+        inputWidth = availSpace / 3.f - textWidth - afterTextGap;
+        ImGui::PushStyleColor(ImGuiCol_Text, COLOR_Z);
+        ImGui::TextUnformatted("Z:");
+        ImGui::SameLine(0, afterTextGap);
+        ImGui::PopStyleColor();
+        ImGui::PushItemWidth(inputWidth);
+        ImGui::DragFloat("##Z", &v.z, 0.1f, 0.0f, 0.0f, "%.2f");
+        ImGui::PopItemWidth();
+
+        ImGui::PopID();
+    }
+
+    void ObjectPropertiesWindow::tryDrawTransformable(Transformable* comp)
+    {
+        if (comp && ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            LabelAndInputTextRO("Name:", asBaseComponent->getComponentName(), _labelWidth,
-                                _fullWidth);
+            glm::vec3 location = comp->getPosition();
+            glm::vec3 rotation = comp->getRotation();
+            glm::vec3 origin = comp->getOrigin();
+            glm::vec3 scale = comp->getScale();
 
-            LabelAndInputTextRO("Type:", asBaseComponent->getComponentType(), _labelWidth,
-                                _fullWidth);
+            _transformLocationControl.draw(location, _fullWidth);
+            _transformRotationControl.draw(rotation, _fullWidth);
+            _transformOriginControl.draw(origin, _fullWidth);
+            _transformScaleControl.draw(scale, _fullWidth);
 
-            bool isEnabled = asBaseComponent->isEnabled();
+            if (location != comp->getPosition())
+            {
+                comp->setPosition(GPos3(location));
+            }
+            if (rotation != comp->getRotation())
+            {
+                comp->setRotation(rotation);
+            }
+            if (scale != comp->getScale())
+            {
+                comp->setScale(scale);
+            }
+            if (origin != comp->getOrigin())
+            {
+                comp->setOrigin(origin);
+            }
+        }
+    }
+
+    void ObjectPropertiesWindow::tryDrawBaseComponent(BaseComponent* comp)
+    {
+        if (comp && ImGui::CollapsingHeader("General", ImGuiTreeNodeFlags_DefaultOpen))
+        {
+            LabelAndInputTextRO("Name:", comp->getComponentName(), _labelWidth, _fullWidth);
+
+            LabelAndInputTextRO("Type:", comp->getComponentType(), _labelWidth, _fullWidth);
+
+            bool isEnabled = comp->isEnabled();
             FixedLabel("Enabled:", _labelWidth);
             ImGui::Checkbox("##isEnabled", &isEnabled);
 
-            if (isEnabled != asBaseComponent->isEnabled())
+            if (isEnabled != comp->isEnabled())
             {
-                asBaseComponent->setEnabled(isEnabled);
+                comp->setEnabled(isEnabled);
             }
         }
+    }
 
-        ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
-
-        if (asTransformable && ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
+    void ObjectPropertiesWindow::tryDrawGraphicsComponentData(GraphicsComponentData* comp)
+    {
+        if (comp && ImGui::CollapsingHeader("Graphics", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            glm::vec3 location = asTransformable->getPosition();
-            glm::vec3 rotation = asTransformable->getRotation();
-            glm::vec3 scale = asTransformable->getScale();
-            glm::vec3 origin = asTransformable->getOrigin();
-
-            constexpr auto rowSpacing = ImVec2(0.0f, 5.0f);
-            drawVec3Control("Location", location);
-            ImGui::Dummy(rowSpacing);
-            drawVec3Control("Rotation", rotation);
-            ImGui::Dummy(rowSpacing);
-            drawVec3Control("Origin", origin);
-            ImGui::Dummy(rowSpacing);
-            drawVec3Control("Scale", scale);
-
-            if (location != asTransformable->getPosition())
-            {
-                asTransformable->setPosition(GPos3(location));
-            }
-            if (rotation != asTransformable->getRotation())
-            {
-                asTransformable->setRotation(rotation);
-            }
-            if (scale != asTransformable->getScale())
-            {
-                asTransformable->setScale(scale);
-            }
-            if (origin != asTransformable->getOrigin())
-            {
-                asTransformable->setOrigin(origin);
-            }
-        }
-
-        ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
-
-        if (asGraphicsComponentData
-            && ImGui::CollapsingHeader("Graphics", ImGuiTreeNodeFlags_DefaultOpen))
-        {
-            LabelAndInputTextRO(
-                "Triangles:",
-                Core::StringAtom::MakeFrom(asGraphicsComponentData->getTriangleCount()),
-                _labelWidth, _fullWidth);
+            LabelAndInputTextRO("Triangles:", Core::StringAtom::MakeFrom(comp->getTriangleCount()),
+                                _labelWidth, _fullWidth);
 
             auto shaderName = ""_atom;
-            if (asGraphicsComponentData->getShaderId())
+            if (comp->getShaderId())
             {
-                shaderName = asGraphicsComponentData->getShaderId()->getName();
+                shaderName = comp->getShaderId()->getName();
             }
             LabelAndInputTextRO("Shader: ", std::move(shaderName), _labelWidth, _fullWidth);
 
@@ -468,7 +528,7 @@ namespace SW
                 ImGui::TextUnformatted("W:");
                 ImGui::PopStyleColor();
                 ImGui::SameLine(0, 3.f);
-                ImGui::PushItemWidth(_inputWidth);
+                ImGui::PushItemWidth(10.f);
                 ImGui::PushStyleColor(ImGuiCol_Text,
                                       ImGui::GetStyle().Colors[ImGuiCol_TextDisabled]);
                 ImGui::InputText("##width", width.data(), width.size() + 1,
@@ -481,7 +541,7 @@ namespace SW
                 ImGui::TextUnformatted("H:");
                 ImGui::PopStyleColor();
                 ImGui::SameLine();
-                ImGui::PushItemWidth(_inputWidth);
+                ImGui::PushItemWidth(10.f);
                 ImGui::PushStyleColor(ImGuiCol_Text,
                                       ImGui::GetStyle().Colors[ImGuiCol_TextDisabled]);
                 ImGui::InputText("##height", height.data(), height.size() + 1,
@@ -494,7 +554,7 @@ namespace SW
                 ImGui::TextUnformatted("D:");
                 ImGui::SameLine();
                 ImGui::PopStyleColor();
-                ImGui::PushItemWidth(_inputWidth);
+                ImGui::PushItemWidth(10.f);
                 ImGui::PushStyleColor(ImGuiCol_Text,
                                       ImGui::GetStyle().Colors[ImGuiCol_TextDisabled]);
                 ImGui::InputText("##deep", deep.data(), deep.size() + 1,
@@ -545,7 +605,7 @@ namespace SW
             const auto oneComboSize = freeSpace / 2.f;
 
             _graphicsMods.resize(0);
-            for (auto [status, val] : asGraphicsComponentData->getDrawModifiers())
+            for (auto [status, val] : comp->getDrawModifiers())
             {
                 _graphicsMods.push_back({ status, indexOfCollection(val) });
             }
@@ -579,70 +639,34 @@ namespace SW
              */
             ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
         }
+    }
 
-        ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
-
-        if (asBaseComponent && ImGui::CollapsingHeader("Component data"))
+    void ObjectPropertiesWindow::tryDrawBaseComponentExtra(BaseComponent* comp)
+    {
+        if (comp && ImGui::CollapsingHeader("Component data"))
         {
-            LabelAndInputTextRO("Children:", asBaseComponent->getChildrenCount(), _labelWidth,
-                                _fullWidth);
-            LabelAndCheckboxRO("Inited:", asBaseComponent->isInited(), _labelWidth);
+            LabelAndInputTextRO("Children:", comp->getChildrenCount(), _labelWidth, _fullWidth);
+            LabelAndCheckboxRO("Inited:", comp->isInited(), _labelWidth);
 
-            bool tickable = asBaseComponent->getNoTick();
+            bool tickable = comp->getNoTick();
             FixedLabel("No ticks:", _labelWidth);
             ImGui::Checkbox("##NoTick", &tickable);
-            if (asBaseComponent->getNoTick() != tickable)
+            if (comp->getNoTick() != tickable)
             {
-                asBaseComponent->setNoTick(tickable);
+                comp->setNoTick(tickable);
             }
         }
     }
 
-    void ObjectPropertiesWindow::onUpdate()
-    {
-        BaseFloatEWC::onUpdate();
-
-        _slowUpdater.startOrUpdate();
-    }
-
-    void ObjectPropertiesWindow::drawVec3Control(const char* label, glm::vec3& v)
-    {
-        ImGui::PushID(label);
-
-        FixedLabel(label, _labelWidth);
-        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 0));
-
-        ImGui::PushStyleColor(ImGuiCol_Text, COLOR_X);
-        ImGui::TextUnformatted("X:");
-        ImGui::PopStyleColor();
-        ImGui::SameLine(0, 3.f);
-        ImGui::PushItemWidth(_inputWidth);
-        ImGui::DragFloat("##X", &v.x, 0.1f, 0.0f, 0.0f, "%.3f");
-        ImGui::PopItemWidth();
-        ImGui::SameLine();
-
-        ImGui::PushStyleColor(ImGuiCol_Text, COLOR_Y);
-        ImGui::TextUnformatted("Y:");
-        ImGui::PopStyleColor();
-        ImGui::SameLine();
-        ImGui::PushItemWidth(_inputWidth);
-        ImGui::DragFloat("##Y", &v.y, 0.1f, 0.0f, 0.0f, "%.3f");
-        ImGui::PopItemWidth();
-        ImGui::SameLine();
-
-        ImGui::PushStyleColor(ImGuiCol_Text, COLOR_Z);
-        ImGui::TextUnformatted("Z:");
-        ImGui::SameLine();
-        ImGui::PopStyleColor();
-        ImGui::PushItemWidth(_inputWidth);
-        ImGui::DragFloat("##Z", &v.z, 0.1f, 0.0f, 0.0f, "%.3f");
-        ImGui::PopItemWidth();
-
-        ImGui::PopStyleVar();
-
-        ImGui::PopID();
-    }
-
+    // ========================================================================
+    //
+    // ______                    ___  ___                     ______
+    // | ___ \                   |  \/  |                     | ___ \
+    // | |_/ /  __ _  ___   ___  | .  . |  ___  _ __   _   _  | |_/ /  __ _  _ __
+    // | ___ \ / _` |/ __| / _ \ | |\/| | / _ \| '_ \ | | | | | ___ \ / _` || '__|
+    // | |_/ /| (_| |\__ \|  __/ | |  | ||  __/| | | || |_| | | |_/ /| (_| || |
+    // \____/  \__,_||___/ \___| \_|  |_/ \___||_| |_| \__,_| \____/  \__,_||_|
+    // ========================================================================
     void BaseMenuBarEWC::onInit()
     {
         BaseEWC::onInit();

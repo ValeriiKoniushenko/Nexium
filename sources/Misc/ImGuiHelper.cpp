@@ -64,4 +64,42 @@ namespace SW
         ImGui::EndDisabled();
     }
 
+    void Vec3Control::draw(glm::vec3& v, float availSpace)
+    {
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+
+        ImGui::PushID(label.c_str());
+
+        ImGui::AlignTextToFramePadding();
+
+        FixedLabel(label.c_str(), labelWidth);
+        availSpace -= labelWidth;
+
+        int id = 0;
+        for (const auto& component : components)
+        {
+            const float textWidth = ImGui::CalcTextSize(component.text.c_str()).x;
+
+            // 3 - just components number
+            // 2 - because for last one we don't need a gap
+            const float inputWidth
+                = (availSpace - ((textWidth + afterTextGap) * 3.f + betweenInputsGap * 2.f)) / 3.f;
+
+            ImGui::PushStyleColor(ImGuiCol_Text, component.color);
+            ImGui::TextUnformatted(component.text.c_str());
+            ImGui::PopStyleColor();
+            ImGui::SameLine(0, afterTextGap);
+
+            ImGui::PushID(id++);
+            ImGui::PushItemWidth(inputWidth);
+            ImGui::DragFloat("", &v.x, floatStep, floatMin, floatMax, "%.2f");
+            ImGui::PopItemWidth();
+            ImGui::SameLine(0, betweenInputsGap);
+            ImGui::PopID();
+        }
+
+        ImGui::PopID();
+
+        ImGui::PopStyleVar();
+    }
 } // namespace SW
