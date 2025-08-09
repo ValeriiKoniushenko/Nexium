@@ -27,6 +27,9 @@
 
 namespace SW
 {
-    void FixedLabel(const char* label, int size);
-    void FixedInputText(Core::StringAtom value, int size, int flags = ImGuiInputTextFlags_ReadOnly);
+    void FixedLabel(const char* label, float size);
+    void FixedInputText(Core::StringAtom value, float size,
+                        int flags = ImGuiInputTextFlags_ReadOnly);
+    void LabelAndReadOnlyValue(Core::StringAtom label, Core::StringAtom value, float labelSize,
+                               float fullSize);
 } // namespace SW

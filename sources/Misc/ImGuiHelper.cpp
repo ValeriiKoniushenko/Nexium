@@ -28,18 +28,24 @@
 
 namespace SW
 {
-    void FixedLabel(const char* label, int size)
+    void FixedLabel(const char* label, float size)
     {
         ImGui::TextUnformatted(label);
         ImGui::SameLine();
         ImGui::Dummy(ImVec2(size - ImGui::CalcTextSize(label).x, 0));
         ImGui::SameLine();
     }
-    void FixedInputText(Core::StringAtom value, int size, int flags)
+
+    void FixedInputText(Core::StringAtom value, float size, int flags)
     {
         ImGui::PushItemWidth(size);
         ImGui::InputText(value.c_str(), value.data(), value.size() + 1, flags);
         ImGui::PopItemWidth();
     }
 
+    void LabelAndReadOnlyValue(Core::StringAtom label, Core::StringAtom value, float labelSize, float fullSize)
+    {
+        FixedLabel(label.data(), labelSize);
+        FixedInputText(std::move(value), fullSize - labelSize);
+    }
 } // namespace SW

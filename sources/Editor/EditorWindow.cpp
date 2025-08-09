@@ -424,12 +424,20 @@ namespace SW
 
         ImGui::Dummy(ImVec2(0.0f, gapBetweenSections));
 
-        if (asGraphicsComponentData && ImGui::CollapsingHeader("Graphics", ImGuiTreeNodeFlags_DefaultOpen))
+        if (asGraphicsComponentData
+            && ImGui::CollapsingHeader("Graphics", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            FixedLabel("Triangles: ", labelWidth);
-            auto triangles
-                = Core::StringAtom::MakeFrom(asGraphicsComponentData->getTriangleCount());
-            FixedInputText(std::move(triangles), exceptLabelWidth);
+            LabelAndReadOnlyValue(
+                "Triangles: ",
+                Core::StringAtom::MakeFrom(asGraphicsComponentData->getTriangleCount()), labelWidth,
+                fullWidth);
+
+            auto shaderName = ""_atom;
+            if (asGraphicsComponentData->getShaderId())
+            {
+                shaderName = asGraphicsComponentData->getShaderId()->getName();
+            }
+            LabelAndReadOnlyValue("Shader: ", std::move(shaderName), labelWidth, fullWidth);
         }
     }
 

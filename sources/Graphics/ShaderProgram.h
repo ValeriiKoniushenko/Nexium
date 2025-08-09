@@ -61,6 +61,7 @@ namespace SW
         void setVertexShaderId(GLuint shader) { _vertexShaderId = shader; }
         void setFragmentShaderId(GLuint shader) { _fragmentShaderId = shader; }
         void setName(const Core::StringAtom& name);
+        [[nodiscard]] const Core::StringAtom& getName() const noexcept { return _name; }
 
         [[nodiscard]] GLuint getFragmentShader() noexcept { return _fragmentShaderId; }
         [[nodiscard]] GLuint getVertexShader() noexcept { return _vertexShaderId; }
@@ -84,10 +85,7 @@ namespace SW
         void use() const noexcept { glUseProgram(_shaderProgramId); }
 #endif
 
-        [[nodiscard]] spdlog::logger* getLogger() const override
-        {
-            return Graphics::getLogger();
-        }
+        [[nodiscard]] spdlog::logger* getLogger() const override { return Graphics::getLogger(); }
 
         [[nodiscard]] const char* getPrefix() const override { return "ShaderProgram"; }
 
