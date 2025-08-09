@@ -1,10 +1,4 @@
 {
-    "BaseComponent": {
-        "isEnabled": true,
-        "name": "",
-        "noTick": false,
-        "type": "Actor"
-    },
     "Transformable": {
         "origin": [
             0.0,
@@ -27,46 +21,87 @@
             1.0
         ]
     },
+    "children": [
+        {
+            "Transformable": {
+                "origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "position": [
+                    -5.527242183685303,
+                    -363.5599365234375,
+                    -1257.426513671875
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "far": 10000.0,
+            "fov": 45.0,
+            "isEnabled": true,
+            "name": "",
+            "near": 0.10000000149011612,
+            "noTick": false,
+            "type": "BaseCamera",
+            "viewport": {
+                "height": 600.0,
+                "width": 600.0
+            }
+        }
+    ],
+    "isEnabled": true,
     "keyboardInput": {
         "mapping": [
             {
-                "action": "toggleSimulation",
-                "key": "F1"
-            },
-            {
-                "action": "moveBackward",
-                "key": "S"
-            },
-            {
-                "action": "moveForward",
-                "key": "W"
-            },
-            {
-                "action": "moveDown",
-                "key": "C"
-            },
-            {
-                "action": "moveRight",
-                "key": "D"
-            },
-            {
-                "action": "exit",
-                "key": "Escape"
-            },
-            {
-                "action": "moveLeft",
-                "key": "A"
+                "action": "toggleCursorMode",
+                "key": "M"
             },
             {
                 "action": "moveUp",
                 "key": "Space"
             },
             {
-                "action": "toggleCursorMode",
-                "key": "M"
+                "action": "moveLeft",
+                "key": "A"
+            },
+            {
+                "action": "exit",
+                "key": "Escape"
+            },
+            {
+                "action": "moveRight",
+                "key": "D"
+            },
+            {
+                "action": "moveDown",
+                "key": "C"
+            },
+            {
+                "action": "moveForward",
+                "key": "W"
+            },
+            {
+                "action": "moveBackward",
+                "key": "S"
+            },
+            {
+                "action": "toggleSimulation",
+                "key": "F1"
             }
         ]
     },
     "mouseSensitivity": 700.0,
-    "speed": 50.0
+    "name": "",
+    "noTick": false,
+    "speed": 50.0,
+    "type": "Spectator"
 }

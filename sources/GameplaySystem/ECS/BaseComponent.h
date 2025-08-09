@@ -159,8 +159,8 @@ namespace SW
         {
             if (!_isInited)
             {
-                onInit();
                 _isInited = true;
+                onInit();
             }
         }
 
@@ -275,6 +275,7 @@ namespace SW
 
         [[nodiscard]] nlohmann::json toJson() const override;
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren = false) override;
+
         // ========================== WORKING WITH CHILDREN ==========================
         [[nodiscard]] ChildT getChildAt(std::size_t i) { return _children.at(i); }
         [[nodiscard]] CChildT getChildAt(std::size_t i) const { return _children.at(i); }
@@ -282,6 +283,12 @@ namespace SW
         [[nodiscard]] ChildrenT& getChildren() noexcept { return _children; }
         [[nodiscard]] std::size_t getChildrenCount() const noexcept { return _children.size(); }
         [[nodiscard]] bool hasChildren() const noexcept { return !_children.empty(); }
+
+        template<IsComponent ComponentT>
+        [[nodiscard]] bool hasChildrenAs() const noexcept
+        {
+            return findFirstChildOf<ComponentT>();
+        }
 
         template<IsComponent ComponentT>
         [[nodiscard]] ComponentT* findFirstChildOf()
@@ -293,6 +300,18 @@ namespace SW
         [[nodiscard]] const ComponentT* findFirstChildOf() const
         {
             return Impl_findFirstChildOf<ComponentT, true>(this);
+        }
+
+        template<IsComponent ComponentT, class... Args>
+        [[nodiscard]] ComponentT* getOrAddChildComponent(Args&&... args)
+        {
+            if (auto* found = findFirstChildOf<ComponentT>())
+            {
+                return found;
+            }
+
+            typename ComponentT::Ptr newOne = new ComponentT(std::forward<Args>(args)...);
+            return static_cast<ComponentT*>(rawAddChildComponent(newOne.get()));
         }
 
         template<IsComponent ComponentT, class... Args>

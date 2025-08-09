@@ -188,8 +188,8 @@ namespace SW
             {
                 for (auto& childJson : json["children"])
                 {
-                    auto c = rawAddChildComponent(
-                        GetGlobalComponentFactory().create(childJson["type"]));
+                    auto type = Core::StringAtom::Intern(childJson["type"].get<Core::StringAtom>());
+                    auto c = rawAddChildComponent(GetGlobalComponentFactory().create(type));
                     c->fromJson(childJson);
                 }
             }

@@ -30,7 +30,9 @@ namespace SW
 {
     class Spectator : public Actor, public JsonCacheable
     {
+        ECS_REGISTER_NEW_COMPONENT(Spectator, Actor);
     public:
+
         [[nodiscard]] nlohmann::json toJson() const override;
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren = false) override;
 

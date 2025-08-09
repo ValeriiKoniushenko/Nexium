@@ -169,13 +169,7 @@ namespace SW
         ImGui::Text("    C/Space - Down/Up");
         ImGui::Text("    M       - Mouse capture");
         ImGui::Text("    Alt     - Hold to suppress a mouse");
-        ImGui::Text("    Esc     - exit");
-        ImGui::Text("");
-        ImGui::Text("Globals:");
-        ImGui::Text("Mouse sensitivity");
-        // ImGui::SliderFloat("##mouseSensitivity", &gameInstance->mouseSensitivity, 0.f, 2000.f);
-        ImGui::Text("Spectator speed");
-        // ImGui::SliderFloat("##spectator_speed", &gameInstance->speed, 1.f, 1000.f);
+        ImGui::Text("    F12     - exit");
     }
 
     // ========================================================================

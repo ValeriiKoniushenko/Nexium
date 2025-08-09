@@ -143,7 +143,7 @@ namespace SW
         colors[ImGuiCol_Text]
             = ImVec4(0.92f, 0.93f, 0.94f, 1.00f); // Light grey text for readability
         colors[ImGuiCol_TextDisabled]
-            = ImVec4(0.50f, 0.52f, 0.54f, 1.00f); // Subtle grey for disabled text
+            = ImVec4(0.56f, 0.60f, 0.56f, 1.00f); // Subtle grey for disabled text
         colors[ImGuiCol_WindowBg]
             = ImVec4(0.14f, 0.14f, 0.16f, 1.00f); // Dark background with a hint of blue
         colors[ImGuiCol_ChildBg]

@@ -27,23 +27,20 @@ namespace SW
 
     nlohmann::json Actor::toJson() const
     {
-        nlohmann::json json;
+        nlohmann::json json = BaseComponent::toJson();
 
         json["Transformable"] = Transformable::toJson();
-        json["BaseComponent"] = BaseComponent::toJson();
 
         return json;
     }
 
     void Actor::fromJson(const nlohmann::json& json, bool isIgnoreChildren /* = false*/)
     {
+        BaseComponent::fromJson(json);
+
         if (json.contains("Transformable"))
         {
             Transformable::fromJson(json["Transformable"]);
-        }
-        if (json.contains("BaseComponent"))
-        {
-            BaseComponent::fromJson(json["BaseComponent"]);
         }
     }
 
