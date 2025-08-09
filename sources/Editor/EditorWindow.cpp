@@ -301,6 +301,9 @@ namespace SW
         //    For 'Input' - dynamic
         // Spacing - static
 
+        static constexpr ImVec4 COLOR_X = ImVec4(1.0f, 0.2f, 0.2f, 1.0f); // red
+        static constexpr ImVec4 COLOR_Y = ImVec4(0.2f, 1.0f, 0.2f, 1.0f); // green
+        static constexpr ImVec4 COLOR_Z = ImVec4(0.2f, 0.6f, 1.0f, 1.0f); // blue
         const float fullWidth = ImGui::GetContentRegionAvail().x;
         const float labelWidth = ImGui::CalcTextSize("Location: ").x;
         const float idWidth = ImGui::CalcTextSize("X:").x;
@@ -315,10 +318,6 @@ namespace SW
 
         auto drawVec3Control = [=](const char* label, glm::vec3& v)
         {
-            static constexpr ImVec4 COLOR_X = ImVec4(1.0f, 0.2f, 0.2f, 1.0f); // red
-            static constexpr ImVec4 COLOR_Y = ImVec4(0.2f, 1.0f, 0.2f, 1.0f); // green
-            static constexpr ImVec4 COLOR_Z = ImVec4(0.2f, 0.6f, 1.0f, 1.0f); // blue
-
             ImGui::PushID(label);
 
             FixedLabel(label, labelWidth);
@@ -358,12 +357,12 @@ namespace SW
         auto* asBaseComponent = dynamic_cast<BaseComponent*>(_target);
         auto* asTransformable = dynamic_cast<Transformable*>(_target);
         auto* asStaticMeshBundle = dynamic_cast<StaticMeshBundle*>(_target);
-        auto* asStaticMesh = dynamic_cast<StaticMesh*>(_target);
         auto* asGraphicsComponentData = dynamic_cast<GraphicsComponentData*>(_target);
 
         if (asBaseComponent && ImGui::CollapsingHeader("General", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            LabelAndInputTextRO("Name: ", asBaseComponent->getComponentName(), labelWidth, fullWidth);
+            LabelAndInputTextRO("Name: ", asBaseComponent->getComponentName(), labelWidth,
+                                fullWidth);
 
             bool isEnabled = asBaseComponent->isEnabled();
             FixedLabel("Enabled: ", labelWidth);
@@ -427,6 +426,45 @@ namespace SW
                 shaderName = asGraphicsComponentData->getShaderId()->getName();
             }
             LabelAndInputTextRO("Shader: ", std::move(shaderName), labelWidth, fullWidth);
+
+            if (auto* asStaticMesh = dynamic_cast<StaticMesh*>(_target))
+            {
+                const auto size = asStaticMesh->getSize();
+                auto width = std::format("{:.2f}", size.width);
+                auto height = std::format("{:.2f}", size.height);
+                auto deep = std::format("{:.2f}", size.deep);
+
+                FixedLabel("Size: ", labelWidth);
+
+                ImGui::PushStyleColor(ImGuiCol_Text, COLOR_X);
+                ImGui::TextUnformatted("W:");
+                ImGui::PopStyleColor();
+                ImGui::SameLine(0, 3.f);
+                ImGui::PushItemWidth(inputWidth);
+                ImGui::InputText("##width", width.data(), width.size() + 1,
+                                 ImGuiInputTextFlags_ReadOnly);
+                ImGui::PopItemWidth();
+                ImGui::SameLine();
+
+                ImGui::PushStyleColor(ImGuiCol_Text, COLOR_Y);
+                ImGui::TextUnformatted("H:");
+                ImGui::PopStyleColor();
+                ImGui::SameLine();
+                ImGui::PushItemWidth(inputWidth);
+                ImGui::InputText("##height", height.data(), height.size() + 1,
+                                 ImGuiInputTextFlags_ReadOnly);
+                ImGui::PopItemWidth();
+                ImGui::SameLine();
+
+                ImGui::PushStyleColor(ImGuiCol_Text, COLOR_Z);
+                ImGui::TextUnformatted("D:");
+                ImGui::SameLine();
+                ImGui::PopStyleColor();
+                ImGui::PushItemWidth(inputWidth);
+                ImGui::InputText("##deep", deep.data(), deep.size() + 1,
+                                 ImGuiInputTextFlags_ReadOnly);
+                ImGui::PopItemWidth();
+            }
         }
     }
 

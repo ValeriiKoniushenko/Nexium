@@ -62,6 +62,7 @@ namespace SW
         setupImGuiStyles();
 
         ImGuiIO& io = ImGui::GetIO();
+        io.IniFilename = "configs/windows.ini";
         io.ConfigFlags |= defaultIoConfigFlagImGui;
 
         ImFont* myFont = io.Fonts->AddFontFromFileTTF(defaultImGuiFontPath.generic_string().c_str(),
