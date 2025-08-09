@@ -47,6 +47,8 @@ namespace SW
         [[nodiscard]] nlohmann::json toJson() const override;
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren = false) override;
 
+        [[nodiscard]] std::size_t getRenderTargetsCount() const noexcept { return _meshes.size(); }
+
     protected:
         [[nodiscard]] Core::StringAtom getCacheHash() const override;
         [[nodiscard]] nlohmann::json toCacheData() const override;

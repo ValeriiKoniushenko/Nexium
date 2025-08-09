@@ -97,7 +97,7 @@ namespace SW
             ImGui::PushItemWidth(inputWidth);
             ImGui::DragFloat("", vec[i], floatStep, floatMin, floatMax, "%.2f", flags);
             ImGui::PopItemWidth();
-            ImGui::SameLine(0, betweenInputsGap);
+            ImGui::SameLine(0, i == 2 ? 0 : betweenInputsGap);
             ImGui::PopID();
 
             ++i;

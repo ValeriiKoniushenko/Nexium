@@ -186,6 +186,7 @@ namespace SW
 
         void tryDrawTransformable(Transformable* comp);
         void tryDrawBaseComponent(BaseComponent* comp);
+        void tryDrawStaticMeshBundle(StaticMeshBundle* comp);
         void tryDrawBaseComponentExtra(BaseComponent* comp);
         void tryDrawGraphicsComponentData(GraphicsComponentData* comp);
 
@@ -206,14 +207,10 @@ namespace SW
         Vec3Control _meshSizeControl;
 
         float _fullWidth = 0;
-        float _labelWidth = 0;
+        float _labelWidth = 90.f;
         const ImVec2 _overriddenSpacing = ImVec2(0, 6);
-        constexpr static float _horizontalSpacing = 4.f;
-
         const float _gapBetweenSections = 15.f;
 
-    private:
-        void drawVec3Control(const char* label, glm::vec3& vec, float availSpace, float afterTextGap = _horizontalSpacing, float betweenInputsGap = _horizontalSpacing * 2.f);
     };
 
     class SceneTreeWindow : public BaseFloatEWC

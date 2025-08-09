@@ -352,12 +352,9 @@ namespace SW
     {
         BaseFloatEWC::onInit();
 
-        _labelWidth = 80.f;
-
-        _transformLocationControl.components
-            = { Vec3Control::Component{ "X:"_atom, ColorRed },
-                Vec3Control::Component{ "Y:"_atom, ColorGreen },
-                Vec3Control::Component{ "Z:"_atom, ColorBlue } };
+        _transformLocationControl.components = { Vec3Control::Component{ "X:"_atom, ColorRed },
+                                                 Vec3Control::Component{ "Y:"_atom, ColorGreen },
+                                                 Vec3Control::Component{ "Z:"_atom, ColorBlue } };
         _transformLocationControl.labelWidth = _labelWidth;
         _transformLocationControl.label = "Location:";
 
@@ -370,21 +367,12 @@ namespace SW
         _transformRotationControl = _transformLocationControl;
         _transformRotationControl.label = "Rotation:";
 
-        _meshSizeControl.components
-            = { Vec3Control::Component{ "W:"_atom, ColorRed },
-                Vec3Control::Component{ "H:"_atom, ColorGreen },
-                Vec3Control::Component{ "D:"_atom, ColorBlue } };
+        _meshSizeControl.components = { Vec3Control::Component{ "W:"_atom, ColorRed },
+                                        Vec3Control::Component{ "H:"_atom, ColorGreen },
+                                        Vec3Control::Component{ "D:"_atom, ColorBlue } };
         _meshSizeControl.labelWidth = _labelWidth;
         _meshSizeControl.flags |= ImGuiSliderFlags_ReadOnly;
         _meshSizeControl.label = "Size:";
-
-
-        _slowUpdater.setRepeatTime(1.f / 30.f);
-        _slowUpdater.setCallback(
-            [](auto)
-            {
-
-            });
     }
 
     void ObjectPropertiesWindow::onDraw()
@@ -407,6 +395,9 @@ namespace SW
         ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
 
         tryDrawGraphicsComponentData(asGraphicsComponentData);
+        ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
+
+        tryDrawStaticMeshBundle(asStaticMeshBundle);
         ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
 
         tryDrawBaseComponentExtra(asBaseComponent);
@@ -585,6 +576,15 @@ namespace SW
             {
                 comp->setNoTick(tickable);
             }
+        }
+    }
+
+    void ObjectPropertiesWindow::tryDrawStaticMeshBundle(StaticMeshBundle* comp)
+    {
+        if (comp && ImGui::CollapsingHeader("Static mesh bundle", ImGuiTreeNodeFlags_DefaultOpen))
+        {
+            LabelAndInputTextRO("Sub-render:", comp->getRenderTargetsCount(), _labelWidth,
+                                _fullWidth);
         }
     }
 
