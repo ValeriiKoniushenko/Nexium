@@ -66,7 +66,7 @@ namespace SW
         renderToTextureObject.generate();
         gameEditor.initialize();
         spectator.initialize();
-        currentCamera = &spectator.camera;
+        currentCamera = spectator.findFirstChildOf<BaseCamera>();
 
         onInitReadCache();
         onInitFinish();
@@ -90,11 +90,6 @@ namespace SW
 
     void GameInstance::gameLoop()
     {
-        if (!Verify(currentCamera))
-        {
-            criticalThrowingLog("No registered camera");
-        }
-
         FPSCounter fps;
         fps.start();
         Core::FStopwatch clock;
@@ -110,17 +105,23 @@ namespace SW
 
             if (renderMode.cast() == RenderMode::GameOnly)
             {
-                glClearColor(0.45f, 0.55f, 0.60f, 1.00f);
-                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-                onTick(world.timeDelta);
+                if (currentCamera)
+                {
+                    glClearColor(0.45f, 0.55f, 0.60f, 1.00f);
+                    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                    onTick(world.timeDelta);
+                }
             }
             else
             {
-                renderToTextureObject.callMePreDraw();
-                glClearColor(0.45f, 0.55f, 0.60f, 1.00f);
-                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-                onTick(world.timeDelta);
-                renderToTextureObject.callMeAfterDraw();
+                if (currentCamera)
+                {
+                    renderToTextureObject.callMePreDraw();
+                    glClearColor(0.45f, 0.55f, 0.60f, 1.00f);
+                    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                    onTick(world.timeDelta);
+                    renderToTextureObject.callMeAfterDraw();
+                }
 
                 glClearColor(0.45f, 0.65f, 0.40f, 1.00f);
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

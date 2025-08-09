@@ -283,6 +283,18 @@ namespace SW
         [[nodiscard]] std::size_t getChildrenCount() const noexcept { return _children.size(); }
         [[nodiscard]] bool hasChildren() const noexcept { return !_children.empty(); }
 
+        template<IsComponent ComponentT>
+        [[nodiscard]] ComponentT* findFirstChildOf()
+        {
+            return Impl_findFirstChildOf<ComponentT, false>(this);
+        }
+
+        template<IsComponent ComponentT>
+        [[nodiscard]] const ComponentT* findFirstChildOf() const
+        {
+            return Impl_findFirstChildOf<ComponentT, true>(this);
+        }
+
         template<IsComponent ComponentT, class... Args>
         [[nodiscard]] ComponentT* addChildComponent(Args&&... args)
         {
@@ -402,6 +414,10 @@ namespace SW
 
         template<IsComponentOrBase TargetT, bool isConst, class FuncT>
         static void Impl_forEach_DFS(AdaptiveRawPtr<isConst> me, FuncT&& callback);
+
+        template<IsComponent TargetT, bool isConst>
+        [[nodiscard]] static typename TargetT::template AdaptiveRawPtr<isConst>
+            Impl_findFirstChildOf(AdaptiveRawPtr<isConst> me);
     };
 
     struct InvalidComponent : public BaseComponent
@@ -518,6 +534,32 @@ namespace SW
                 }
             }
         }
+    }
+
+    template<IsComponent TargetT, bool isConst>
+    typename TargetT::template AdaptiveRawPtr<isConst> BaseComponent::Impl_findFirstChildOf(
+        BaseComponent::AdaptiveRawPtr<isConst> me)
+    {
+        typename TargetT::template AdaptiveRawPtr<isConst> found = nullptr;
+        me->forEach(
+            [&found](BaseComponent* comp)
+            {
+                Assert(comp->_type.isStatic());
+                Assert(TargetT::componentType.isStatic());
+
+                if (comp->_type == TargetT::componentType)
+                {
+#if defined(DEBUG)
+                    found = dynamic_cast<TargetT*>(comp);
+#else
+                    found = reinterpret_cast<TargetT*>(comp);
+#endif
+                    return false;
+                }
+                return true;
+            });
+
+        return found;
     }
 
 } // namespace SW

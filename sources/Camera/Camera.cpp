@@ -28,6 +28,7 @@
 
 namespace SW
 {
+    ECS_REGISTER_NEW_COMPONENT_TYPE(BaseCamera)
 
     const glm::mat4& BaseCamera::getMatrix()
     {

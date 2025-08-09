@@ -39,7 +39,6 @@ namespace SW
         float speed = 50.f;
         float mouseSensitivity = 700.0;
 
-        BaseCamera camera;
         KeyboardInputManger keyboardInput;
         MouseInputManger mouseInput;
 

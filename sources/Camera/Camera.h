@@ -32,6 +32,8 @@ namespace SW
 
     class BaseCamera : public Actor, public JsonCacheable
     {
+        ECS_REGISTER_NEW_COMPONENT(BaseCamera, Actor);
+
     public:
         ~BaseCamera() override = default;
 

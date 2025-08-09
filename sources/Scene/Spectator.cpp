@@ -32,7 +32,7 @@ namespace SW
         auto json = Actor::toJson();
         json["speed"] = speed;
         json["mouseSensitivity"] = mouseSensitivity;
-        json["camera"] = camera.toJson();
+        // json["camera"] = camera.toJson();
         json["keyboardInput"] = keyboardInput.toJson();
         // json["mouseInput"] = mouseInput.toJson();
 
@@ -53,7 +53,7 @@ namespace SW
         }
         if (json.contains("camera"))
         {
-            camera.fromJson(json["camera"], isIgnoreChildren);
+            //camera.fromJson(json["camera"], isIgnoreChildren);
         }
         if (json.contains("keyboardInput"))
         {
@@ -110,28 +110,17 @@ namespace SW
                 gameInstance->updateViewport();
             });
 
-        mouseInput.getOrCreate("cameraView", Mouse::Key_None)
-            ->onMove.subscribe(
-                [&](glm::vec2 delta, MouseIA::SpecKeysState state)
-                {
-                    if (state.leftAlt.cast() != Keyboard::KeyState::Pressed)
-                    {
-                        // camera.yawAndPitch(delta * gameInstance->world.timeDelta
-                        //                    * mouseSensitivity);
-                    }
-                });
-
         // clang-format off
-        keyboardInput.getOrCreate("moveForward", Keyboard::Key::Key_W)->onPress.subscribe([&](auto state){ camera.moveForward(getRealSpeed(state) * gameInstance->world.timeDelta); });
-        keyboardInput.getOrCreate("moveBackward", Keyboard::Key::Key_S)->onPress.subscribe([&](auto state){ camera.moveForward(-getRealSpeed(state) * gameInstance->world.timeDelta); });
-        keyboardInput.getOrCreate("moveRight", Keyboard::Key::Key_D)->onPress.subscribe([&](auto state){ camera.moveRight(-getRealSpeed(state) * gameInstance->world.timeDelta); });
-        keyboardInput.getOrCreate("moveLeft", Keyboard::Key::Key_A)->onPress.subscribe([&](auto state){ camera.moveRight(getRealSpeed(state) * gameInstance->world.timeDelta); });
-        keyboardInput.getOrCreate("moveUp", Keyboard::Key::Key_Space)->onPress.subscribe([&](auto state){ camera.moveUp(-getRealSpeed(state) * gameInstance->world.timeDelta); });
-        keyboardInput.getOrCreate("moveDown", Keyboard::Key::Key_C)->onPress.subscribe([&](auto state){ camera.moveUp(getRealSpeed(state) * gameInstance->world.timeDelta); });
-        keyboardInput.getOrCreate("exit", Keyboard::Key::Key_Escape)->onPress.subscribe([&](auto){ GetWindow().close(); });
-        const auto toggleCursorMode = keyboardInput.getOrCreate("toggleCursorMode", Keyboard::Key::Key_M);
-        toggleCursorMode->onPress.subscribe([&](auto) { GetWindow().toggleCursorMode(); });
-        toggleCursorMode->setIsRepeatable(false);
+        // keyboardInput.getOrCreate("moveForward", Keyboard::Key::Key_W)->onPress.subscribe([&](auto state){ camera.moveForward(getRealSpeed(state) * gameInstance->world.timeDelta); });
+        // keyboardInput.getOrCreate("moveBackward", Keyboard::Key::Key_S)->onPress.subscribe([&](auto state){ camera.moveForward(-getRealSpeed(state) * gameInstance->world.timeDelta); });
+        // keyboardInput.getOrCreate("moveRight", Keyboard::Key::Key_D)->onPress.subscribe([&](auto state){ camera.moveRight(-getRealSpeed(state) * gameInstance->world.timeDelta); });
+        // keyboardInput.getOrCreate("moveLeft", Keyboard::Key::Key_A)->onPress.subscribe([&](auto state){ camera.moveRight(getRealSpeed(state) * gameInstance->world.timeDelta); });
+        // keyboardInput.getOrCreate("moveUp", Keyboard::Key::Key_Space)->onPress.subscribe([&](auto state){ camera.moveUp(-getRealSpeed(state) * gameInstance->world.timeDelta); });
+        // keyboardInput.getOrCreate("moveDown", Keyboard::Key::Key_C)->onPress.subscribe([&](auto state){ camera.moveUp(getRealSpeed(state) * gameInstance->world.timeDelta); });
+        // keyboardInput.getOrCreate("exit", Keyboard::Key::Key_Escape)->onPress.subscribe([&](auto){ GetWindow().close(); });
+        // const auto toggleCursorMode = keyboardInput.getOrCreate("toggleCursorMode", Keyboard::Key::Key_M);
+        // toggleCursorMode->onPress.subscribe([&](auto) { GetWindow().toggleCursorMode(); });
+        // toggleCursorMode->setIsRepeatable(false);
         // clang-format on
     }
 } // namespace SW
