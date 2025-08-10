@@ -142,7 +142,8 @@ namespace SW
         [[nodiscard]] GLuint getVaoId() noexcept { return _vao; }
         [[nodiscard]] ShaderProgram* getShaderId() noexcept { return _shader; }
 
-        [[nodiscard]] const std::vector<std::pair<ModifiedValue, Modifier>>& getDrawModifiers() const noexcept
+        [[nodiscard]] const std::vector<std::pair<ModifiedValue, Modifier>>& getDrawModifiers()
+            const noexcept
         {
             return _drawModifiers;
         }

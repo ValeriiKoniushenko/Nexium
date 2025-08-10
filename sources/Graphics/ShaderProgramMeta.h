@@ -80,10 +80,7 @@ namespace SW
         void setShaderName(const Core::StringAtom& name);
         [[nodiscard]] const Core::StringAtom& getShaderName() const { return _shaderName; }
 
-        [[nodiscard]] spdlog::logger* getLogger() const override
-        {
-            return Graphics::getLogger();
-        }
+        [[nodiscard]] spdlog::logger* getLogger() const override { return Graphics::getLogger(); }
 
         [[nodiscard]] const char* getPrefix() const override { return "ShaderProgramMeta"; }
 

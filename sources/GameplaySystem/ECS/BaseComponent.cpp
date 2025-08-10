@@ -166,7 +166,6 @@ namespace SW
         else
         {
             json["name"] = _name;
-
         }
         json["type"] = _type;
 

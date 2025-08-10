@@ -47,5 +47,5 @@ namespace SW
 
         Core::Repeater _slowUpdater;
     };
-    
+
 } // namespace SW

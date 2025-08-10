@@ -67,7 +67,7 @@ namespace SW
         if (!ifs.is_open())
         {
             globalLog.warnLog("Can't open cache file for read: "
-                               + getTargetPath().generic_string());
+                              + getTargetPath().generic_string());
             return;
         }
 

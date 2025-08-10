@@ -265,7 +265,7 @@ namespace SW
                 const auto mod = Modifier::fromStr(modifier.at("modifier").get<std::string>());
                 if (mod)
                 {
-                    _drawModifiers.push_back({val, mod.value()});
+                    _drawModifiers.push_back({ val, mod.value() });
                 }
             }
         }

@@ -26,6 +26,8 @@
 #include "ImGui/imgui.h"
 #include "glm/glm.hpp"
 
+#include <array>
+
 namespace SW
 {
 
