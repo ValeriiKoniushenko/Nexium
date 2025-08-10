@@ -120,6 +120,7 @@ namespace SW
         auto logsWindow = registerNewWindow<LogsWindow>(ICON_FA_ALIGN_LEFT + " Logs"_atom);
         auto actorPropertiesWindow = registerNewWindow<ObjectPropertiesWindow>(ICON_FA_COG + " Object Properties"_atom);
         auto sceneTreeWindow = registerNewWindow<SceneTreeWindow>(ICON_FA_CUBES + " Scene"_atom);
+        auto assetsManagerWindowWindow = registerNewWindow<AssetsManagerWindow>(ICON_FA_FOLDER + " Assetes"_atom);
 
         auto tipsWindow = registerNewWindow<KeyboardShortcutsEWC>("Keyboard Shortcuts"_atom, false);
 

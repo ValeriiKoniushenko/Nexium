@@ -39,7 +39,7 @@ namespace SW
             = "assets/fonts/fontawesome-webfont.ttf";
 
         inline static float defaultImGuiFontSize = 16.f;
-        inline static float emojiImGuiFontScale = 0.7f;
+        inline static float emojiImGuiFontScale = 0.8f;
 
         inline static int defaultIoConfigFlagImGui
             = ImGuiConfigFlags_NavEnableKeyboard | ImGuiConfigFlags_DockingEnable;

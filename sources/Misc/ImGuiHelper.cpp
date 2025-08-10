@@ -125,7 +125,6 @@ namespace SW
 
     bool ToggleButton(const char* label, bool cond)
     {
-
         ImVec4 autoScrollButtonColor = cond ? ImGui::GetStyle().Colors[ImGuiCol_Button] : ImVec4(0, 0, 0, 0);
         ImGui::PushStyleColor(ImGuiCol_Button, autoScrollButtonColor);
         const bool isPressed = ImGui::Button(label);

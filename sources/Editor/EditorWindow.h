@@ -284,4 +284,18 @@ namespace SW
         void drawTreeNode(BaseComponent* n, int32_t id, bool isInSelectedSubtree = false);
     };
 
+    class AssetsManagerWindow : public BaseFloatEWC
+    {
+        ECS_REGISTER_NEW_COMPONENT(AssetsManagerWindow, BaseFloatEWC);
+    public:
+
+    protected:
+        void onInit() override;
+        void onDraw() override;
+        void onUpdate() override;
+
+    protected:
+
+    };
+
 } // namespace SW

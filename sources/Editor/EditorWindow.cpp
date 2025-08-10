@@ -51,6 +51,7 @@ namespace SW
     ECS_REGISTER_NEW_COMPONENT_TYPE(LogsWindow)
     ECS_REGISTER_NEW_COMPONENT_TYPE(ObjectPropertiesWindow)
     ECS_REGISTER_NEW_COMPONENT_TYPE(SceneTreeWindow)
+    ECS_REGISTER_NEW_COMPONENT_TYPE(AssetsManagerWindow)
 
     // ========================================================================
     //
@@ -275,7 +276,6 @@ namespace SW
         _toolbarToolsWidth = 0;
 
         _filterBuf.resize(1024);
-
 
         // Calculating of tools from Toolbar.
         // Repeating or 'render' code from LogsWindow::toolbarDraw
@@ -1019,7 +1019,7 @@ namespace SW
 
         if (isInSelectedSubtree)
         {
-            flags |= ImGuiTreeNodeFlags_Selected;
+            flags |= ImGuiTreeNodeFlags_Selected | ImGuiTreeNodeFlags_SpanAvailWidth;
         }
 
         if (n->getChildrenCount() == 0)
@@ -1028,7 +1028,40 @@ namespace SW
         }
 
         ImGui::PushID(id);
+
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0));
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
+        ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 0.0f);
+
+        bool isEnabled = n->isEnabled();
+        if (!isEnabled)
+        {
+            ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetStyle().Colors[ImGuiCol_TextDisabled]);
+        }
+
+        if (ImGui::Button(isEnabled ? ICON_FA_EYE : ICON_FA_EYE_SLASH))
+        {
+            n->setEnabled(!isEnabled);
+        }
+        if (!isEnabled)
+        {
+            ImGui::PopStyleColor(1);
+        }
+        ImGui::PopStyleVar(2);
+        ImGui::PopStyleColor(3);
+
+        ImGui::SameLine();
+        if (!isEnabled)
+        {
+            ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetStyle().Colors[ImGuiCol_TextDisabled]);
+        }
         const bool isOpened = ImGui::TreeNodeEx(n->getComponentName().c_str(), flags);
+        if (!isEnabled)
+        {
+            ImGui::PopStyleColor(1);
+        }
 
         if (ImGui::IsItemClicked() || ImGui::IsItemFocused())
         {
@@ -1053,5 +1086,16 @@ namespace SW
         }
 
         ImGui::PopID();
+    }
+    void AssetsManagerWindow::onInit()
+    {
+        BaseFloatEWC::onInit();
+    }
+    void AssetsManagerWindow::onDraw()
+    {
+    }
+    void AssetsManagerWindow::onUpdate()
+    {
+        BaseFloatEWC::onUpdate();
     }
 } // namespace SW
