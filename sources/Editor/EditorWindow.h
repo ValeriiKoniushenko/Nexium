@@ -156,7 +156,6 @@ namespace SW
         {
             Core::StringAtom message;
             spdlog::level::level_enum level = {};
-            Core::StringAtom hashLog;
         };
 
     public:
@@ -189,6 +188,7 @@ namespace SW
             { spdlog::level::level_enum::trace, true },
         };
 
+        std::size_t _logLimit = 500.f;
         float _defaultGap = 4.f;
         float _clearButtonWidth = 0.f;
         float _autoScrollButtonWidth = 0.f;
@@ -197,7 +197,7 @@ namespace SW
         float _toolbarToolsWidth = 150.f;
         char _filterBuf[512] = {};
         std::size_t _lastCountOfLogs = 0;
-        std::vector<LogLine> _logs;
+        std::list<LogLine> _logs;
     };
 
     class ObjectPropertiesWindow : public BaseFloatEWC

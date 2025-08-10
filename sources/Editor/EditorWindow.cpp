@@ -252,8 +252,6 @@ namespace SW
         LogLine l;
         l.message = std::move(log);
         l.level = level;
-        l.hashLog = Core::StringAtom("##") + static_cast<int>(_logs.size());
-
         _logs.push_back(std::move(l));
     }
 
@@ -342,7 +340,7 @@ namespace SW
 
             std::size_t i = 0;
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 1)); // Tighten _spacing
-            for (auto& [message, level, hashLog] : _logs)
+            for (auto& [message, level] : _logs)
             {
                 std::optional<ImVec4> color;
 
@@ -378,10 +376,12 @@ namespace SW
                     ImGui::PushStyleColor(ImGuiCol_Text, *color);
                 }
 
+                ImGui::PushID(i);
                 ImGui::PushItemWidth(-FLT_MIN); // Makes the next widget take full width
-                ImGui::InputText(hashLog.c_str(), message.data(), message.size() + 1,
+                ImGui::InputText("", message.data(), message.size() + 1,
                                  ImGuiInputTextFlags_ReadOnly);
                 ImGui::PopItemWidth();
+                ImGui::PopID();
 
                 if (color)
                 {
@@ -393,6 +393,11 @@ namespace SW
                     ImGui::SetScrollHereY(1.0f);
                 }
                 ++i;
+            }
+
+            while (_logs.size() > _logLimit)
+            {
+                _logs.pop_front();
             }
 
             ImGui::PopStyleVar();

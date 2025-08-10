@@ -107,7 +107,7 @@ namespace SW
                 }
                 // clang-format on
             });
-        r.setRepeatTime(4.f);
+        r.setRepeatTime(0.02f);
 
         FPSCounter fps;
         fps.start();
