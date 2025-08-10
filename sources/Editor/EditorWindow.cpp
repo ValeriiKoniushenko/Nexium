@@ -261,6 +261,7 @@ namespace SW
 
     void LogsWindow::onDraw()
     {
+        detectManualScroll();
         toolbarDraw();
         logsDraw();
     }
@@ -382,6 +383,13 @@ namespace SW
         }
         _streamingToolbarHeight = ImGui::GetCursorScreenPos().y - startY;
         ImGui::EndChild();
+    }
+    void LogsWindow::detectManualScroll()
+    {
+        if (ImGui::IsWindowHovered(ImGuiHoveredFlags_ChildWindows) && ImGui::GetIO().MouseWheel != 0.0f)
+        {
+            _isAutoScroll = false;
+        }
     }
 
     // ========================================================================

@@ -169,6 +169,7 @@ namespace SW
         void onUpdate() override;
 
     private:
+        void detectManualScroll();
         void fetchLogs();
         void toolbarDraw();
         void logsDraw();
@@ -213,9 +214,9 @@ namespace SW
         void tryDrawBaseCamera(BaseCamera* comp);
 
     protected:
-        static constexpr ImVec4 ColorRed = ImVec4(1.0f, 0.2f, 0.2f, 1.0f);   // red
-        static constexpr ImVec4 ColorGreen = ImVec4(0.2f, 1.0f, 0.2f, 1.0f); // green
-        static constexpr ImVec4 ColorBlue = ImVec4(0.2f, 0.6f, 1.0f, 1.0f);  // blue
+        static constexpr ImVec4 ColorRed = ImVec4(1.0f, 0.1f, 0.1f, 1.0f);   // red
+        static constexpr ImVec4 ColorGreen = ImVec4(0.1f, 1.0f, 0.1f, 1.0f); // green
+        static constexpr ImVec4 ColorBlue = ImVec4(0.1f, 0.1f, 1.0f, 1.0f);  // blue
 
     private:
         AbstractComponent* _target = nullptr;
