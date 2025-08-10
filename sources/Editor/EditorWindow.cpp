@@ -379,10 +379,10 @@ namespace SW
         _meshSizeControl.readOnly = true;
         _meshSizeControl.label = "Size:";
 
-        _viewportControl.components = { Vec2Control::Component{ "W:"_atom, ColorRed },
-                                        Vec2Control::Component{ "H:"_atom, ColorGreen } };
-        _viewportControl.labelWidth = _labelWidth;
-        _viewportControl.label = "Viewport:";
+        _frameSizeControl.components = { Vec2Control::Component{ "W:"_atom, ColorRed },
+                                         Vec2Control::Component{ "H:"_atom, ColorGreen } };
+        _frameSizeControl.labelWidth = _labelWidth;
+        _frameSizeControl.label = "Frame size:";
 
         _modifierValueVec = GraphicsComponentData::ModifiedValueAsVector();
         _modifierVec = GraphicsComponentData::ModifierAsVector();
@@ -443,31 +443,21 @@ namespace SW
     {
         if (comp && ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            glm::vec3 location = comp->getPosition();
-            glm::vec3 rotation = comp->getRotation();
-            glm::vec3 origin = comp->getOrigin();
-            glm::vec3 scale = comp->getScale();
-
-            _transformLocationControl.draw(location, _fullWidth);
-            _transformRotationControl.draw(rotation, _fullWidth);
-            _transformOriginControl.draw(origin, _fullWidth);
-            _transformScaleControl.draw(scale, _fullWidth);
-
-            if (location != comp->getPosition())
+            if (auto res = _transformLocationControl.drawAndProcess(comp->getPosition(), _fullWidth))
             {
-                comp->setPosition(GPos3(location));
+                comp->setPosition(GPos3(res.value()));
             }
-            if (rotation != comp->getRotation())
+            if (auto res = _transformRotationControl.drawAndProcess(comp->getRotation(), _fullWidth))
             {
-                comp->setRotation(rotation);
+                comp->setRotation(res.value());
             }
-            if (scale != comp->getScale())
+            if (auto res = _transformOriginControl.drawAndProcess(comp->getOrigin(), _fullWidth))
             {
-                comp->setScale(scale);
+                comp->setOrigin(res.value());
             }
-            if (origin != comp->getOrigin())
+            if (auto res = _transformScaleControl.drawAndProcess(comp->getScale(), _fullWidth))
             {
-                comp->setOrigin(origin);
+                comp->setScale(res.value());
             }
 
             ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
@@ -511,8 +501,7 @@ namespace SW
 
             if (auto* asStaticMesh = dynamic_cast<StaticMesh*>(_target))
             {
-                auto size = asStaticMesh->getSize().toGlm();
-                _meshSizeControl.draw(size, _fullWidth);
+                _meshSizeControl.drawAndProcess(asStaticMesh->getSize().toGlm(), _fullWidth);
             }
 
             ImGui::Separator();
@@ -673,11 +662,9 @@ namespace SW
                 comp->setNear(inputedNear);
             }
 
-            auto viewport = comp->getFrameSize().toGlm();
-            _viewportControl.draw(viewport, _fullWidth);
-            if (viewport != comp->getFrameSize().toGlm())
+            if (auto res = _frameSizeControl.drawAndProcess(comp->getFrameSize().toGlm(), _fullWidth))
             {
-                comp->setFrameSize(Core::FSize2(viewport));
+                comp->setFrameSize(Core::FSize2(res.value()));
             }
 
             ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));

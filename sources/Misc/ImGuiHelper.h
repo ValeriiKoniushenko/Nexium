@@ -27,6 +27,7 @@
 #include "glm/glm.hpp"
 
 #include <array>
+#include <expected>
 
 namespace SW
 {
@@ -65,6 +66,8 @@ namespace SW
             ImVec4 color = ImVec4(1.f, 1.f, 1.f, 1.f);
         };
 
+        using VecT = typename glm::vec<VecCount, float>;
+
         ImGuiSliderFlags flags = ImGuiSliderFlags_None;
 
         float afterTextGap = 4.f;
@@ -78,8 +81,16 @@ namespace SW
         Core::StringAtom label = ""_atom;
         std::array<Component, VecCount> components;
 
-        void draw(glm::vec<VecCount, float>& v, float availSpace)
+        std::expected<VecT, bool> drawAndProcess(VecT v, float availSpace)
         {
+            if (!_isInited)
+            {
+                _firstValue = v;
+                _isInited = true;
+            }
+
+            const auto originalValue = v;
+
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
 
             ImGui::PushID(label.c_str());
@@ -101,9 +112,10 @@ namespace SW
                 constexpr float parties = static_cast<float>(VecCount);
                 constexpr float partiesWithoutGap = static_cast<float>(VecCount) - 1.f;
 
-                const float inputWidth
-                    = (availSpace - ((textWidth + afterTextGap) * parties + betweenInputsGap * partiesWithoutGap))
-                      / parties;
+                const float inputWidth = (availSpace
+                                          - ((textWidth + afterTextGap) * parties
+                                             + betweenInputsGap * partiesWithoutGap))
+                                         / parties;
 
                 ImGui::PushStyleColor(ImGuiCol_Text, component.color);
                 ImGui::TextUnformatted(component.text.c_str());
@@ -135,7 +147,18 @@ namespace SW
             ImGui::PopStyleVar();
 
             ImGui::Dummy(ImVec2(0, 0));
+
+            if (originalValue == v)
+            {
+                return std::unexpected(false);
+            }
+
+            return std::expected<VecT, bool>(v);
         }
+
+    private:
+        bool _isInited = false;
+        VecT _firstValue = {};
     };
 
     using Vec4Control = VecControl<4>;

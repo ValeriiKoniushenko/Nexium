@@ -213,7 +213,7 @@ namespace SW
         Vec3Control _meshSizeControl;
 
         // For camera
-        Vec2Control _viewportControl;
+        Vec2Control _frameSizeControl;
 
         // For Graphics
         std::vector<Core::StringAtom> _modifierValueVec;
