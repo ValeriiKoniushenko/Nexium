@@ -58,6 +58,7 @@ namespace SW
     void FixedLabel(const char* label, float size);
     void InputTextRO(Core::StringAtom value, float size);
     void InputText(const Core::StringAtom& label, std::string& value, float size);
+
     void LabelAndInputTextRO(Core::StringAtom label, Core::StringAtom value, float labelSize,
                              float fullSize);
 

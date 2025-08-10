@@ -418,22 +418,11 @@ namespace SW
         auto* asBaseCamera = dynamic_cast<BaseCamera*>(_target);
 
         tryDrawBaseComponent(asBaseComponent);
-        ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
-
         tryDrawTransformable(asTransformable);
-        ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
-
         tryDrawGraphicsComponentData(asGraphicsComponentData);
-        ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
-
         tryDrawStaticMeshBundle(asStaticMeshBundle);
-        ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
-
         tryDrawBaseCamera(asBaseCamera);
-        ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
-
         tryDrawBaseComponentExtra(asBaseComponent);
-        ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
 
         ImGui::PopStyleVar(); // ImGuiStyleVar_ItemSpacing
     }
@@ -475,6 +464,8 @@ namespace SW
             {
                 comp->setOrigin(origin);
             }
+
+            ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
         }
     }
 
@@ -494,6 +485,8 @@ namespace SW
             {
                 comp->setEnabled(isEnabled);
             }
+
+            ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
         }
     }
 
@@ -626,6 +619,8 @@ namespace SW
             {
                 comp->setDrawModifiers(std::move(newModifiers));
             }
+
+            ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
         }
     }
 
@@ -643,12 +638,14 @@ namespace SW
             {
                 comp->setNoTick(tickable);
             }
+
+            ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
         }
     }
 
     void ObjectPropertiesWindow::tryDrawBaseCamera(BaseCamera* comp)
     {
-        if (comp && ImGui::CollapsingHeader("Camera"))
+        if (comp && ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen))
         {
             float inputedFov = comp->getFov();
             LabelAndInputText("FOV:", inputedFov, _labelWidth, _fullWidth);
@@ -677,6 +674,8 @@ namespace SW
             // {
             //     comp->setFrameSize(inputedViewport);
             // }
+
+            ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
         }
     }
 
@@ -686,6 +685,8 @@ namespace SW
         {
             LabelAndInputTextRO("Sub-render:", comp->getRenderTargetsCount(), _labelWidth,
                                 _fullWidth);
+
+            ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
         }
     }
 
