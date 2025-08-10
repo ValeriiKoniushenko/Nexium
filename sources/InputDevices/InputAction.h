@@ -37,10 +37,10 @@ namespace SW
     /**
      * @brief Base input action class for handling generic key inputs.
      *
-     * @tparam _KeyT Type representing a key (e.g., int, enum, etc.).
+     * @tparam KeyTParam Type representing a key (e.g., int, enum, etc.).
      */
-    template<class _KeyT>
-    class InputAction : public boost::intrusive_ref_counter<InputAction<_KeyT>>
+    template<class KeyTParam>
+    class InputAction : public boost::intrusive_ref_counter<InputAction<KeyTParam>>
     {
     private:
         enum class State
@@ -50,13 +50,13 @@ namespace SW
         };
 
     public:
-        using Self = InputAction<_KeyT>;
+        using Self = InputAction<KeyTParam>;
         using Ptr = boost::intrusive_ptr<Self>;
         using CPtr = boost::intrusive_ptr<const Self>;
         template<bool isConst>
         using AdaptivePtr = std::conditional_t<isConst, CPtr, Ptr>;
         using TimeT = std::chrono::milliseconds;
-        using KeyT = _KeyT;
+        using KeyT = KeyTParam;
 
         struct SpecKeysState
         {
@@ -75,13 +75,13 @@ namespace SW
     public:
         InputAction() = default;
 
-        explicit InputAction(const Core::StringAtom& name)
-            : _name(name)
+        explicit InputAction(Core::StringAtom name)
+            : _name(std::move(name))
         {
         }
 
-        InputAction(const Core::StringAtom& name, KeyT key)
-            : _name(name),
+        InputAction(Core::StringAtom name, KeyT key)
+            : _name(std::move(name)),
               _key(key)
         {
         }
@@ -197,7 +197,7 @@ namespace SW
         static Ptr Create() { return { new Self }; }
 
         MouseInputAction();
-        MouseInputAction(const Core::StringAtom& name, KeyT key = Mouse::Key_None);
+        explicit MouseInputAction(const Core::StringAtom& name, KeyT key = Mouse::Key_None);
         explicit MouseInputAction(const Core::StringAtom& name);
 
         Core::Delegate<void(glm::vec2, SpecKeysState)> onMove;

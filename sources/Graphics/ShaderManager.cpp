@@ -84,7 +84,7 @@ namespace SW
             {
                 errorLog("Impossible to set up the shader '{}'. Details: {}"_f << name
                                                                                << exception.what());
-                _failedShaders.emplace(std::move(name));
+                _failedShaders.emplace(name);
             }
         }
     }
@@ -127,8 +127,8 @@ namespace SW
 
     size_t ShaderManager::countOfValidShaders() const
     {
-        const int count = _shaderMetas.size() - _failedShaders.size();
-        return std::max(0, count);
+        const std::size_t count = _shaderMetas.size() - _failedShaders.size();
+        return std::max(0ul, count);
     }
 
     std::filesystem::path ShaderManager::getPathToShaderBasedOn(

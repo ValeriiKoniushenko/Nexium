@@ -30,9 +30,9 @@
                     0.0
                 ],
                 "position": [
-                    -35.15372085571289,
-                    -402.6180419921875,
-                    -1230.470458984375
+                    5.244015216827393,
+                    -328.1252136230469,
+                    -912.31298828125
                 ],
                 "rotation": [
                     0.0,
@@ -62,40 +62,40 @@
     "keyboardInput": {
         "mapping": [
             {
-                "action": "toggleSimulation",
-                "key": "F1"
-            },
-            {
-                "action": "moveBackward",
-                "key": "S"
-            },
-            {
-                "action": "moveForward",
-                "key": "W"
-            },
-            {
-                "action": "moveDown",
-                "key": "C"
-            },
-            {
-                "action": "moveRight",
-                "key": "D"
-            },
-            {
-                "action": "exit",
-                "key": "F12"
-            },
-            {
-                "action": "moveLeft",
-                "key": "A"
+                "action": "toggleCursorMode",
+                "key": "M"
             },
             {
                 "action": "moveUp",
                 "key": "Space"
             },
             {
-                "action": "toggleCursorMode",
-                "key": "M"
+                "action": "moveLeft",
+                "key": "A"
+            },
+            {
+                "action": "exit",
+                "key": "F12"
+            },
+            {
+                "action": "moveRight",
+                "key": "D"
+            },
+            {
+                "action": "moveDown",
+                "key": "C"
+            },
+            {
+                "action": "moveForward",
+                "key": "W"
+            },
+            {
+                "action": "moveBackward",
+                "key": "S"
+            },
+            {
+                "action": "toggleSimulation",
+                "key": "F1"
             }
         ]
     },

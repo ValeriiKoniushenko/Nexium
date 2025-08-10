@@ -25,7 +25,7 @@
 namespace SW
 {
 
-    void UpdateGlViewport(Core::FSize2 originalSize, const float aspectRatio, ViewportMode mode)
+    void UpdateGlViewport(Core::FSize2 originalSize, float aspectRatio, ViewportMode mode)
     {
         Core::FSize2 view = originalSize;
         glm::vec2 pos = {};

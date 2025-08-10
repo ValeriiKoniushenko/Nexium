@@ -37,7 +37,7 @@ namespace SW
     {
         if (Verify(!name.isEmpty()))
         {
-            _sceneName = name;
+            _sceneName = std::move(name);
         }
     }
 

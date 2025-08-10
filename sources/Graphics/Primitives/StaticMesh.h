@@ -45,7 +45,7 @@ namespace SW
         [[nodiscard]] glm::vec3 getCenter() const noexcept { return _center; }
 
         [[nodiscard]] nlohmann::json toJson() const override;
-        void fromJson(const nlohmann::json& json, bool isIgnoreChildren = false) override;
+        void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
 
         void draw();
 
@@ -55,7 +55,7 @@ namespace SW
 
     protected:
         Core::FSize3 _size;
-        glm::vec3 _center;
+        glm::vec3 _center = glm::vec3(0);
 
         friend class StaticMeshFactory;
     };

@@ -104,7 +104,7 @@ namespace SW
         [[nodiscard]] spdlog::logger* getLogger() const override { return Graphics::getLogger(); }
         [[nodiscard]] const char* getPrefix() const override { return "Window"; }
 
-        void __setSize(Core::ISize2 newSize) noexcept { _size = newSize; }
+        void m__setSize(Core::ISize2 newSize) noexcept { _size = newSize; }
 
     protected:
         GLFWwindow* _window{};

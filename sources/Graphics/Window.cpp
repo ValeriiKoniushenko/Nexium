@@ -51,7 +51,7 @@ namespace
     void WindowSizeCallback(GLFWwindow* window, int width, int height)
     {
         SW::GetWindow().onResize.trigger(Core::ISize2(width, height));
-        SW::GetWindow().__setSize(Core::ISize2(width, height));
+        SW::GetWindow().m__setSize(Core::ISize2(width, height));
     }
 
 } // namespace

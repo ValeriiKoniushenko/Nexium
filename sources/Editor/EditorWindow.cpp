@@ -110,7 +110,7 @@ namespace SW
 
         const auto res = ImGui::Begin(getComponentName().c_str(), &_isEnabled, _windowFlags);
 
-        ImGui::PopStyleVar(_styles.size());
+        ImGui::PopStyleVar(static_cast<int>(_styles.size()));
 
         return res;
     }
@@ -234,7 +234,7 @@ namespace SW
         LogLine l;
         l.message = std::move(log);
         l.level = level;
-        l.hashLog = Core::StringAtom("##") + _logs.size();
+        l.hashLog = Core::StringAtom("##") + static_cast<int>(_logs.size());
 
         _logs.push_back(std::move(l));
     }
@@ -553,7 +553,7 @@ namespace SW
             {
                 std::pair<GraphicsComponentData::ModifiedValue, GraphicsComponentData::Modifier>
                     objData = _objData;
-                ImGui::PushID(i);
+                ImGui::PushID(static_cast<int>(i));
 
                 FixedLabel((Core::StringAtom::MakeFrom(i) + "#").c_str(), _labelWidth);
 
@@ -610,8 +610,8 @@ namespace SW
             ImGui::PushItemWidth(_labelWidth);
             if (ImGui::ButtonEx("Add new item"))
             {
-                newModifiers.push_back({ GraphicsComponentData::ModifiedValue::MV_None,
-                                         GraphicsComponentData::Modifier::Disable });
+                newModifiers.emplace_back( GraphicsComponentData::ModifiedValue::MV_None,
+                                         GraphicsComponentData::Modifier::Disable );
                 isDirty = true;
             }
             ImGui::PopItemWidth();

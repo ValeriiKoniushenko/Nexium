@@ -36,7 +36,7 @@ namespace SW
         ~Actor() override = default;
 
         [[nodiscard]] nlohmann::json toJson() const override;
-        void fromJson(const nlohmann::json& json, bool isIgnoreChildren = false) override;
+        void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
 
     public:
     protected:

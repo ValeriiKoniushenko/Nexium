@@ -52,7 +52,7 @@ namespace SW
             return _staticMeshBundles;
         }
 
-        nlohmann::json toJson() const override;
+        [[nodiscard]] nlohmann::json toJson() const override;
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
 
         [[nodiscard]] const std::vector<BaseComponent::Ptr>& getLogicalComponents() const noexcept
@@ -75,9 +75,9 @@ namespace SW
         }
 
     protected:
-        std::filesystem::path getCacheDir() const override;
-        Core::StringAtom getCacheHash() const override;
-        nlohmann::json toCacheData() const override;
+        [[nodiscard]] std::filesystem::path getCacheDir() const override;
+        [[nodiscard]] Core::StringAtom getCacheHash() const override;
+        [[nodiscard]] nlohmann::json toCacheData() const override;
         void fromCacheData(const nlohmann::json& json) override;
 
     protected:

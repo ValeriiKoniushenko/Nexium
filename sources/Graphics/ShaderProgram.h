@@ -96,8 +96,8 @@ namespace SW
         // clang-format off
         // Scalars
         void setUniform(const Core::StringAtom& name, GLfloat value) { glUniform1f(_uniforms[name], value); debugUniform(name); }
-        void setUniform(const Core::StringAtom& name, GLint value) { glUniform1f(_uniforms[name], value); debugUniform(name); }
-        void setUniform(const Core::StringAtom& name, GLuint value) { glUniform1f(_uniforms[name], value); debugUniform(name); }
+        void setUniform(const Core::StringAtom& name, GLint value) { glUniform1i(_uniforms[name], value); debugUniform(name); }
+        void setUniform(const Core::StringAtom& name, GLuint value) { glUniform1ui(_uniforms[name], value); debugUniform(name); }
 
         // vec2
         void setUniform(const Core::StringAtom& name, GLfloat x, GLfloat y) { glUniform2f(_uniforms[name], x,y);  debugUniform(name); }
@@ -129,7 +129,7 @@ namespace SW
         void setUniform(const Core::StringAtom& name, const glm::mat4x3& value) { glUniformMatrix4x3fv(_uniforms[name], 1, GL_FALSE, glm::value_ptr(value)); debugUniform(name); }
         // clang-format on
 
-        void __setUniformsFromSources(
+        void m__setUniformsFromSources(
             const std::unordered_set<ShaderVariable, ShaderVariable::Hasher>& source);
 
         void setupVertexAttribute();

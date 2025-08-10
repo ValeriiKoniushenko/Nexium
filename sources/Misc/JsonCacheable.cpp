@@ -53,7 +53,7 @@ namespace SW
             return;
         }
 
-        out.write(data.c_str(), data.length());
+        out.write(data.c_str(), static_cast<std::streamsize>(data.length()));
     }
 
     bool JsonCacheable::hasCache() const

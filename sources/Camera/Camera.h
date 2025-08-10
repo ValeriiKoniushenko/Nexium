@@ -61,7 +61,7 @@ namespace SW
         void yawAndPitch(glm::vec2 xy);
 
         [[nodiscard]] nlohmann::json toJson() const override;
-        void fromJson(const nlohmann::json& json, bool isIgnoreChildren = false) override;
+        void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
 
         [[nodiscard]] Core::StringAtom getCacheHash() const override;
         [[nodiscard]] nlohmann::json toCacheData() const override;

@@ -34,13 +34,13 @@ namespace SW
         return json;
     }
 
-    void Actor::fromJson(const nlohmann::json& json, bool isIgnoreChildren /* = false*/)
+    void Actor::fromJson(const nlohmann::json& json, bool isIgnoreChildren)
     {
-        BaseComponent::fromJson(json);
+        BaseComponent::fromJson(json, false);
 
         if (json.contains("Transformable"))
         {
-            Transformable::fromJson(json["Transformable"]);
+            Transformable::fromJson(json["Transformable"], false);
         }
     }
 

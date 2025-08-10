@@ -177,7 +177,7 @@ namespace SW
         return json;
     }
 
-    void BaseComponent::fromJson(const nlohmann::json& json, bool isIgnoreChildren /* = false*/)
+    void BaseComponent::fromJson(const nlohmann::json& json, bool isIgnoreChildren)
     {
         AbstractComponent::fromJson(json, isIgnoreChildren);
 
@@ -199,7 +199,7 @@ namespace SW
                 {
                     auto type = Core::StringAtom::Intern(childJson["type"].get<Core::StringAtom>());
                     auto c = rawAddChildComponent(GetGlobalComponentFactory().create(type));
-                    c->fromJson(childJson);
+                    c->fromJson(childJson, false);
                 }
             }
         }

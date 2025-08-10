@@ -92,7 +92,7 @@ namespace SW
         void readSourceShaderFile(const std::filesystem::path& vertexShaderPath,
                                   const std::filesystem::path& fragmentShaderPath);
 
-        void checkShaderCompileStatus(GLuint shaderId, const std::string& shaderType);
+        static void checkShaderCompileStatus(GLuint shaderId, const std::string& shaderType);
         void reflectShaderVariablesFor(GLuint shaderProgramId);
 
     private:

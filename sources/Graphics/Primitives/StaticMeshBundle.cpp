@@ -178,7 +178,7 @@ namespace SW
 
             for (std::size_t i = 0; i < arr.size(); ++i)
             {
-                _meshes.at(i)->fromJson(arr[i]);
+                _meshes.at(i)->fromJson(arr[i], false);
             }
         }
     }
@@ -195,7 +195,7 @@ namespace SW
 
     void StaticMeshBundle::fromCacheData(const nlohmann::json& data)
     {
-        fromJson(data);
+        fromJson(data, false);
     }
 
 } // namespace SW

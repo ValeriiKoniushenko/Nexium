@@ -45,7 +45,7 @@ namespace SW
         compileShader();
         _shaderProgram.create(_shaderName);
         reflectShaderVariablesFor(_shaderProgram.getShaderProgramId());
-        _shaderProgram.__setUniformsFromSources(_uniforms);
+        _shaderProgram.m__setUniformsFromSources(_uniforms);
     }
 
     void ShaderProgramMeta::compileShader()

@@ -30,14 +30,14 @@
 namespace SW
 {
 
-    template<IsInputAction _InputT>
+    template<IsInputAction InputTParam>
     class InputManger : public BaseLog
     {
     public:
         using Self = InputManger;
         template<bool isConst>
         using AdaptiveRawPtr = std::conditional_t<isConst, const InputManger, InputManger>*;
-        using InputT = _InputT;
+        using InputT = InputTParam;
         using MappingT = std::unordered_map<Core::StringAtom, typename InputT::Ptr>;
 
         InputManger() = default;

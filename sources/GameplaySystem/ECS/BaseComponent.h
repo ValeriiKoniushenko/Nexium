@@ -42,7 +42,7 @@ public:                                                                         
     using AdaptiveRawPtr = std::conditional_t<isConst, const CurrentClass, CurrentClass>*;         \
                                                                                                    \
     inline static const auto componentType = Core::StringAtom::Intern(#CurrentClass);              \
-    CurrentClass(const Core::StringAtom& name = ""_atom)                                           \
+    explicit CurrentClass(const Core::StringAtom& name = ""_atom)                                           \
         : BaseComponentClass(componentType, name)                                                  \
     {                                                                                              \
     }                                                                                              \
@@ -125,7 +125,7 @@ namespace SW
          */
         void tick();
 
-        [[nodiscard]] spdlog::logger* getLogger() const override final { return Ecs::getLogger(); }
+        [[nodiscard]] spdlog::logger* getLogger() const final { return Ecs::getLogger(); }
 
         virtual void clear() { _isInited = false; }
 
@@ -165,7 +165,7 @@ namespace SW
         }
 
         [[nodiscard]] nlohmann::json toJson() const override;
-        void fromJson(const nlohmann::json& json, bool isIgnoreChildren = false) override;
+        void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
 
     protected:
         AbstractComponent() = default;
@@ -274,7 +274,7 @@ namespace SW
         }
 
         [[nodiscard]] nlohmann::json toJson() const override;
-        void fromJson(const nlohmann::json& json, bool isIgnoreChildren = false) override;
+        void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
 
         // ========================== WORKING WITH CHILDREN ==========================
         [[nodiscard]] ChildT getChildAt(std::size_t i) { return _children.at(i); }
@@ -411,9 +411,9 @@ namespace SW
         }
         virtual void onSuccessAddChildComponentValidation(BaseComponent* newComponent);
 
-        explicit BaseComponent(const Core::StringAtom& type, const Core::StringAtom& name)
-            : _name{ name },
-              _type{ type }
+        explicit BaseComponent(Core::StringAtom type, Core::StringAtom name)
+            : _name{ std::move(name) },
+              _type{ std::move(type) }
         {
 #ifdef DEBUG
             Assert(_type.isStatic());

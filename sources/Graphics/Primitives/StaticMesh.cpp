@@ -121,7 +121,7 @@ namespace SW
 
         applyUniforms();
 
-        glDrawElements(GL_TRIANGLES, _triangleCount, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(_triangleCount), GL_UNSIGNED_INT, nullptr);
 
         for (auto [val, mod] : _drawModifiers)
         {

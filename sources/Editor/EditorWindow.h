@@ -46,7 +46,7 @@ namespace SW
         [[nodiscard]] const Core::StringAtom& getWindowTitle() { return getComponentName(); }
 
     protected:
-        void onTick() override final;
+        void onTick() final;
         virtual void onUpdate() {};
         virtual void onDraw() = 0;
 

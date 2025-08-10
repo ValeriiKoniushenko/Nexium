@@ -58,8 +58,8 @@ namespace SW
     {
         const auto direction = glm::normalize(targetPosition - getPosition());
 
-        const float yaw = glm::degrees(atan2(-direction.x, direction.z));
-        const float pitch = glm::degrees(asin(direction.y));
+        const float yaw = static_cast<float>(glm::degrees(atan2(-direction.x, direction.z)));
+        const float pitch = static_cast<float>(glm::degrees(asin(direction.y)));
 
         setRotation({ pitch, yaw, 0.0f });
     }
@@ -101,7 +101,7 @@ namespace SW
 
     void BaseCamera::pitch(float x)
     {
-        if (fabs(_rotation.x + x) > 90.f)
+        if (static_cast<float>(fabs(_rotation.x + x)) > 90.f)
         {
             return;
         }
@@ -126,7 +126,7 @@ namespace SW
         return json;
     }
 
-    void BaseCamera::fromJson(const nlohmann::json& json, bool isIgnoreChildren /* = false*/)
+    void BaseCamera::fromJson(const nlohmann::json& json, bool isIgnoreChildren)
     {
         Actor::fromJson(json, isIgnoreChildren);
 
@@ -160,7 +160,7 @@ namespace SW
 
     void BaseCamera::fromCacheData(const nlohmann::json& data)
     {
-        fromJson(data);
+        fromJson(data, false);
     }
 
     void BaseCamera::recalculateCameraMatrices()

@@ -36,7 +36,7 @@ namespace
             json["a"] = a;
             return json;
         }
-        void fromJson(const nlohmann::json& json, bool isIgnoreChildren = false) override
+        void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override
         {
             SW::BaseComponent::fromJson(json, isIgnoreChildren);
             a = json["a"].get<int>();
@@ -52,7 +52,7 @@ namespace
         HardConstructorComponent(int a, const Core::StringAtom& name, std::string b)
             : BaseComponent(componentType, name),
               _a(a),
-              _b(b) {};
+              _b(std::move(b)) {};
 
         int _a = 0;
         std::string _b;
@@ -340,7 +340,7 @@ TEST_F(ECSTreeTests, exportingToJson)
     const auto dump = Core::StringAtom(json.dump(4));
 
     DummyComponent newRoot;
-    newRoot.fromJson(json);
+    newRoot.fromJson(json, false);
     const auto newDump = Core::StringAtom(newRoot.toJson().dump(4));
 
     std::cout << dump << std::endl;

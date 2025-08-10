@@ -45,7 +45,7 @@ namespace SW
         void clearMeshes();
 
         [[nodiscard]] nlohmann::json toJson() const override;
-        void fromJson(const nlohmann::json& json, bool isIgnoreChildren = false) override;
+        void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
 
         [[nodiscard]] std::size_t getRenderTargetsCount() const noexcept { return _meshes.size(); }
 

@@ -61,12 +61,12 @@ namespace SW
         _isGenerated = true;
     }
 
-    void RenderTargetToTexture::callMePreDraw()
+    void RenderTargetToTexture::callMePreDraw() const
     {
         glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
     }
 
-    void RenderTargetToTexture::callMeAfterDraw()
+    void RenderTargetToTexture::callMeAfterDraw() const
     {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }

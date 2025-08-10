@@ -114,7 +114,7 @@ namespace SW
         _fragmentShaderId = 0;
     }
 
-    void ShaderProgram::__setUniformsFromSources(
+    void ShaderProgram::m__setUniformsFromSources(
         const std::unordered_set<ShaderVariable, ShaderVariable::Hasher>& source)
     {
         for (const auto& u : source)

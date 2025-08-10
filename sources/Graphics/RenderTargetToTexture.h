@@ -33,8 +33,8 @@ namespace SW
     public:
         void generate();
 
-        void callMePreDraw();
-        void callMeAfterDraw();
+        void callMePreDraw() const;
+        void callMeAfterDraw() const;
 
         [[nodiscard]] GLuint getTextureId() const noexcept { return _tex; }
         [[nodiscard]] Core::ISize2 getRenderSize() const noexcept { return _size; }

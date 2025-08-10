@@ -44,6 +44,6 @@ namespace SW
     );
     // clang-format on
 
-    void UpdateGlViewport(Core::FSize2 originalSize, const float aspectRatio, ViewportMode mode);
+    void UpdateGlViewport(Core::FSize2 originalSize, float aspectRatio, ViewportMode mode);
 
 } // namespace SW

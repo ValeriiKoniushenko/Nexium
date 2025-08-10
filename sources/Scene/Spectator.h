@@ -34,7 +34,7 @@ namespace SW
 
     public:
         [[nodiscard]] nlohmann::json toJson() const override;
-        void fromJson(const nlohmann::json& json, bool isIgnoreChildren = false) override;
+        void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
 
     public:
         // TODO: Move it to Controller

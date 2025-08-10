@@ -69,7 +69,7 @@ namespace SW
 
     void Spectator::fromCacheData(const nlohmann::json& json)
     {
-        fromJson(json);
+        fromJson(json, false);
     }
 
     void Spectator::onTick()
