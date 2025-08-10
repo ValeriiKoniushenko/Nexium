@@ -29,6 +29,17 @@
 #include "Misc/IconsFontAwesome.h"
 #include "Misc/ImGuiHelper.h"
 
+namespace
+{
+    static constexpr ImVec4 ColorRed = ImVec4(1.0f, 0.1f, 0.1f, 1.0f);
+    static constexpr ImVec4 ColorGreen = ImVec4(0.1f, 1.0f, 0.1f, 1.0f);
+    static constexpr ImVec4 ColorGrey = ImVec4(0.6f, 0.6f, 0.6f, 1.0f);
+    static constexpr ImVec4 ColorYellow = ImVec4(1.f, 1.0f, 0.1f, 1.0f);
+    static constexpr ImVec4 ColorHalfYellow = ImVec4(0.8f, 0.4f, 0.1f, 1.0f);
+    static constexpr ImVec4 ColorBlue = ImVec4(0.1f, 0.1f, 1.0f, 1.0f);
+
+} // namespace
+
 namespace SW
 {
 
@@ -313,15 +324,19 @@ namespace SW
 
                 if (level == spdlog::level::critical)
                 {
-                    color = ImVec4(229.f / 255.f, 20.f / 255.f, 9.f / 255.f, 1.0f); // red
+                    color = ColorRed;
                 }
                 if (level == spdlog::level::err)
                 {
-                    color = ImVec4(252.f / 255.f, 148.f / 141.f, 3.f / 255.f, 1.0f); // orange
+                    color = ColorYellow;
                 }
                 if (level == spdlog::level::warn)
                 {
-                    color = ImVec4(190.f / 255.f, 190.f / 141.f, 190.f / 255.f, 1.0f); // gray
+                    color = ColorHalfYellow;
+                }
+                if (level == spdlog::level::debug)
+                {
+                    color = ColorGrey;
                 }
 
                 if (color)
@@ -386,7 +401,8 @@ namespace SW
     }
     void LogsWindow::detectManualScroll()
     {
-        if (ImGui::IsWindowHovered(ImGuiHoveredFlags_ChildWindows) && ImGui::GetIO().MouseWheel != 0.0f)
+        if (ImGui::IsWindowHovered(ImGuiHoveredFlags_ChildWindows)
+            && ImGui::GetIO().MouseWheel != 0.0f)
         {
             _isAutoScroll = false;
         }

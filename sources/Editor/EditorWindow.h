@@ -213,11 +213,6 @@ namespace SW
         void tryDrawGraphicsComponentData(GraphicsComponentData* comp);
         void tryDrawBaseCamera(BaseCamera* comp);
 
-    protected:
-        static constexpr ImVec4 ColorRed = ImVec4(1.0f, 0.1f, 0.1f, 1.0f);   // red
-        static constexpr ImVec4 ColorGreen = ImVec4(0.1f, 1.0f, 0.1f, 1.0f); // green
-        static constexpr ImVec4 ColorBlue = ImVec4(0.1f, 0.1f, 1.0f, 1.0f);  // blue
-
     private:
         AbstractComponent* _target = nullptr;
         Core::Repeater _slowUpdater;
