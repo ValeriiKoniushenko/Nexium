@@ -264,6 +264,8 @@ namespace SW
     {
         BaseFloatEWC::onInit();
 
+        tryReadFromCache();
+
         auto& style = ImGui::GetStyle();
 
         _clearButtonWidth = ImGui::CalcTextSize(ICON_FA_TRASH).x;
@@ -271,6 +273,9 @@ namespace SW
 
         _defaultGap = style.ItemSpacing.x;
         _toolbarToolsWidth = 0;
+
+        _filterBuf.resize(1024);
+
 
         // Calculating of tools from Toolbar.
         // Repeating or 'render' code from LogsWindow::toolbarDraw
@@ -287,9 +292,9 @@ namespace SW
         _toolbarToolsWidth += ImGui::CalcTextSize(ICON_FA_TRASH).x + style.FramePadding.x * 2.f;
         _toolbarToolsWidth += _defaultGap;
 
-        _toolbarToolsWidth += ImGui::CalcTextSize(ICON_FA_ARROW_DOWN).x + style.FramePadding.x * 2.f;
+        _toolbarToolsWidth
+            += ImGui::CalcTextSize(ICON_FA_ARROW_DOWN).x + style.FramePadding.x * 2.f;
         _toolbarToolsWidth += _defaultGap;
-
     }
 
     void LogsWindow::onDraw()
@@ -349,7 +354,8 @@ namespace SW
                     continue;
                 }
 
-                if (_filterBuf[0] != '\0' && !message.regexFind(_filterBuf, 0, 0,0,PCRE2_CASELESS ))
+                if (_filterBuf[0] != '\0'
+                    && !message.regexFind(_filterBuf, 0, 0, 0, PCRE2_CASELESS))
                 {
                     continue;
                 }
@@ -420,7 +426,7 @@ namespace SW
             ImGui::SetNextItemWidth(_innerSize.width - _toolbarToolsWidth);
             ImGui::InputTextWithHint("##LogFilter",
                                      "Your filter message. Feel free to use regex(perl).",
-                                     _filterBuf, IM_ARRAYSIZE(_filterBuf));
+                                     _filterBuf.data(), _filterBuf.size() + 1);
             ImGui::SameLine(0, _defaultGap * 3.f);
 
             // =============== Levels ====================
@@ -463,6 +469,63 @@ namespace SW
             && ImGui::GetIO().MouseWheel != 0.0f)
         {
             _isAutoScroll = false;
+        }
+    }
+
+    LogsWindow::~LogsWindow()
+    {
+        writeToCache();
+    }
+
+    std::filesystem::path LogsWindow::getCacheDir() const
+    {
+        return JsonCacheable::getCacheDir() / "editor";
+    }
+
+    Core::StringAtom LogsWindow::getCacheHash() const
+    {
+        return "LogsWindow"_atom;
+    }
+
+    nlohmann::json LogsWindow::toCacheData() const
+    {
+        nlohmann::json json;
+        json["logLimit"] = _logLimit;
+        json["filter"] = _filterBuf;
+        json["filterLevels"] = nlohmann::json::array();
+        for (auto [level, value] : _levelFilter)
+        {
+            nlohmann::json tmp;
+            tmp["level"] = std::string(spdlog::level::to_string_view(level).data());
+            tmp["value"] = value;
+            json["filterLevels"].push_back(std::move(tmp));
+        }
+
+        return json;
+    }
+
+    void LogsWindow::fromCacheData(const nlohmann::json& json)
+    {
+        if (json.contains("logLimit"))
+        {
+            _logLimit = json["logLimit"].get<decltype(_logLimit)>();
+        }
+        if (json.contains("filter"))
+        {
+            _filterBuf = json["filter"].get<decltype(_filterBuf)>();
+        }
+        if (json.contains("filterLevels"))
+        {
+            for (auto& filter : json["filterLevels"])
+            {
+                if (!filter.contains("level") || !filter.contains("value"))
+                {
+                    continue;
+                }
+
+                auto level = spdlog::level::from_str(filter["level"].get<std::string>());
+                _levelFilter[level] = filter["value"].get<bool>();
+            }
         }
     }
 

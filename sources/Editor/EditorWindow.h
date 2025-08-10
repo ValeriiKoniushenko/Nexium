@@ -147,7 +147,7 @@ namespace SW
         void endWindowDraw() override;
     };
 
-    class LogsWindow : public BaseFloatEWC
+    class LogsWindow : public BaseFloatEWC, public JsonCacheable
     {
         ECS_REGISTER_NEW_COMPONENT(LogsWindow, BaseFloatEWC);
 
@@ -159,8 +159,15 @@ namespace SW
         };
 
     public:
+        ~LogsWindow() override;
         void addLog(Core::StringAtom&& log, spdlog::level::level_enum level);
         void clearLogs();
+
+    protected:
+        std::filesystem::path getCacheDir() const override;
+        Core::StringAtom getCacheHash() const override;
+        nlohmann::json toCacheData() const override;
+        void fromCacheData(const nlohmann::json& json) override;
 
     protected:
         void onInit() override;
@@ -195,7 +202,7 @@ namespace SW
         bool _isAutoScroll = true;
         float _streamingToolbarHeight = 40.f;
         float _toolbarToolsWidth = 150.f;
-        char _filterBuf[512] = {};
+        Core::StringAtom _filterBuf;
         std::size_t _lastCountOfLogs = 0;
         std::list<LogLine> _logs;
     };
