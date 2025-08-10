@@ -92,6 +92,23 @@ namespace SW
 
     void GameInstance::gameLoop()
     {
+        Core::Repeater r;
+        r.setCallback(
+            [](auto)
+            {
+                // clang-format off
+                switch (rand() % 5)
+                {
+                    case 0:globalLog.criticalLog("Some critical log");
+                    case 1:globalLog.errorLog("Some error log");
+                    case 2:globalLog.warnLog("Some warning log");
+                    case 3:globalLog.debugLog("Some debug log");
+                    case 4:globalLog.infoLog("Some info log");
+                }
+                // clang-format on
+            });
+        r.setRepeatTime(4.f);
+
         FPSCounter fps;
         fps.start();
         Core::FStopwatch clock;
@@ -102,6 +119,7 @@ namespace SW
         {
             clock.start();
             _window->pollEvent();
+            r.startOrUpdate();
 
             gameScene.tick(world.timeDelta);
 

@@ -258,10 +258,38 @@ namespace SW
 
     void LogsWindow::onDraw()
     {
-        if (ImGui::BeginChild("ScrollingRegion", ImVec2(0, 0), ImGuiChildFlags_NavFlattened,
+        toolbarDraw();
+        logsDraw();
+    }
+
+    void LogsWindow::onUpdate()
+    {
+        BaseFloatEWC::onUpdate();
+
+        fetchLogs();
+    }
+
+    void LogsWindow::fetchLogs()
+    {
+        auto& q = LogQueue::instance();
+        while (!q.isEmpty())
+        {
+            auto qLog = q.frontAndPop();
+
+            addLog(qLog.toString(), qLog.level);
+        }
+    }
+
+    void LogsWindow::logsDraw()
+    {
+        if (ImGui::BeginChild("ScrollingRegion", ImVec2(0, 0), 0,
                               ImGuiWindowFlags_HorizontalScrollbar))
         {
-            const bool justAdded = (_lastCountOfLogs != _logs.size());
+            bool justAdded = (_lastCountOfLogs != _logs.size());
+            if (!_isAutoScroll)
+            {
+                justAdded = false;
+            }
             _lastCountOfLogs = _logs.size();
 
             if (ImGui::BeginPopupContextWindow())
@@ -309,8 +337,7 @@ namespace SW
 
                 if (justAdded && i + 1 == _logs.size())
                 {
-                    ImGui::SetScrollHereY(1.0f); // align this last item's baseline to bottom
-                    // OR: ImGui::SetScrollY(ImGui::GetScrollMaxY());
+                    ImGui::SetScrollHereY(1.0f);
                 }
                 ++i;
             }
@@ -320,22 +347,46 @@ namespace SW
         ImGui::EndChild();
     }
 
-    void LogsWindow::onUpdate()
+    void LogsWindow::toolbarDraw()
     {
-        BaseFloatEWC::onUpdate();
+        auto clearButtonWidth = ImGui::CalcTextSize(ICON_FA_TRASH).x;
+        auto autoScrollButtonWidth = ImGui::CalcTextSize(ICON_FA_ARROW_DOWN).x;
 
-        fetchLogs();
-    }
-
-    void LogsWindow::fetchLogs()
-    {
-        auto& q = LogQueue::instance();
-        while (!q.isEmpty())
+        auto startY = ImGui::GetCursorScreenPos().y;
+        ImGui::BeginChild("Toolbar", ImVec2(0, _streamingToolbarHeight));
         {
-            auto qLog = q.frontAndPop();
+            ImGui::Dummy(ImVec2(0, 0));
 
-            addLog(qLog.toString(), qLog.level);
+            // =============== Input ====================
+            ImGui::Dummy(ImVec2(0, 0));
+            ImGui::SameLine();
+            static char filterBuf[512] = {};
+            ImGui::SetNextItemWidth(_innerSize.width * 0.6f);
+            ImGui::InputTextWithHint("##LogFilter",
+                                     "Your filter message. Feel free to use regex(perl).",
+                                     filterBuf, IM_ARRAYSIZE(filterBuf));
+            ImGui::SameLine();
+
+            // =============== Input ====================
+            if (ImGui::Button(ICON_FA_TRASH))
+            {
+                clearLogs();
+            }
+            ImGui::SameLine();
+
+            // =============== AutoScroll ====================
+            bool autoScroll = _isAutoScroll;
+            ImVec4 autoScrollButtonColor = autoScroll ? ImGui::GetStyle().Colors[ImGuiCol_Button] : ImVec4(0, 0, 0, 0);
+            ImGui::PushStyleColor(ImGuiCol_Button, autoScrollButtonColor);
+
+            if (ImGui::Button(ICON_FA_ARROW_DOWN))
+            {
+                _isAutoScroll = !_isAutoScroll;
+            }
+            ImGui::PopStyleColor();
         }
+        _streamingToolbarHeight = ImGui::GetCursorScreenPos().y - startY;
+        ImGui::EndChild();
     }
 
     // ========================================================================
@@ -420,8 +471,6 @@ namespace SW
         // Temporary disable it
         ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, _overriddenSpacing);
 
-        _fullWidth = ImGui::GetContentRegionAvail().x;
-
         auto* asBaseComponent = dynamic_cast<BaseComponent*>(_target);
         auto* asTransformable = dynamic_cast<Transformable*>(_target);
         auto* asStaticMeshBundle = dynamic_cast<StaticMeshBundle*>(_target);
@@ -450,20 +499,22 @@ namespace SW
         if (comp && ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
         {
             if (auto res
-                = _transformLocationControl.drawAndProcess(comp->getPosition(), _fullWidth))
+                = _transformLocationControl.drawAndProcess(comp->getPosition(), _innerSize.width))
             {
                 comp->setPosition(GPos3(res.value()));
             }
             if (auto res
-                = _transformRotationControl.drawAndProcess(comp->getRotation(), _fullWidth))
+                = _transformRotationControl.drawAndProcess(comp->getRotation(), _innerSize.width))
             {
                 comp->setRotation(res.value());
             }
-            if (auto res = _transformOriginControl.drawAndProcess(comp->getOrigin(), _fullWidth))
+            if (auto res
+                = _transformOriginControl.drawAndProcess(comp->getOrigin(), _innerSize.width))
             {
                 comp->setOrigin(res.value());
             }
-            if (auto res = _transformScaleControl.drawAndProcess(comp->getScale(), _fullWidth))
+            if (auto res
+                = _transformScaleControl.drawAndProcess(comp->getScale(), _innerSize.width))
             {
                 comp->setScale(res.value());
             }
@@ -476,9 +527,9 @@ namespace SW
     {
         if (comp && ImGui::CollapsingHeader("General", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            LabelAndInputTextRO("Name:", comp->getComponentName(), _labelWidth, _fullWidth);
+            LabelAndInputTextRO("Name:", comp->getComponentName(), _labelWidth, _innerSize.width);
 
-            LabelAndInputTextRO("Type:", comp->getComponentType(), _labelWidth, _fullWidth);
+            LabelAndInputTextRO("Type:", comp->getComponentType(), _labelWidth, _innerSize.width);
 
             bool isEnabled = comp->isEnabled();
             FixedLabel("Enabled:", _labelWidth);
@@ -498,18 +549,18 @@ namespace SW
         if (comp && ImGui::CollapsingHeader("Graphics", ImGuiTreeNodeFlags_DefaultOpen))
         {
             LabelAndInputTextRO("Triangles:", Core::StringAtom::MakeFrom(comp->getTriangleCount()),
-                                _labelWidth, _fullWidth);
+                                _labelWidth, _innerSize.width);
 
             auto shaderName = ""_atom;
             if (comp->getShaderId())
             {
                 shaderName = comp->getShaderId()->getName();
             }
-            LabelAndInputTextRO("Shader: ", std::move(shaderName), _labelWidth, _fullWidth);
+            LabelAndInputTextRO("Shader: ", std::move(shaderName), _labelWidth, _innerSize.width);
 
             if (auto* asStaticMesh = dynamic_cast<StaticMesh*>(_target))
             {
-                _meshSizeControl.drawAndProcess(asStaticMesh->getSize().toGlm(), _fullWidth);
+                _meshSizeControl.drawAndProcess(asStaticMesh->getSize().toGlm(), _innerSize.width);
             }
 
             ImGui::Separator();
@@ -543,7 +594,8 @@ namespace SW
             const float gap = 8.f;
             const auto buttonSize
                 = ImGui::CalcTextSize(delButtonText).x + style.FramePadding.x * 2.f;
-            const auto oneComboSize = (_fullWidth - _labelWidth - buttonSize - gap * 2.f) / 2.f;
+            const auto oneComboSize
+                = (_innerSize.width - _labelWidth - buttonSize - gap * 2.f) / 2.f;
 
             bool isDirty = false;
             auto drawModifiers = comp->getDrawModifiers();
@@ -630,7 +682,8 @@ namespace SW
     {
         if (comp && ImGui::CollapsingHeader("Component data"))
         {
-            LabelAndInputTextRO("Children:", comp->getChildrenCount(), _labelWidth, _fullWidth);
+            LabelAndInputTextRO("Children:", comp->getChildrenCount(), _labelWidth,
+                                _innerSize.width);
             LabelAndCheckboxRO("Inited:", comp->isInited(), _labelWidth);
 
             bool tickable = comp->getNoTick();
@@ -650,28 +703,28 @@ namespace SW
         if (comp && ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen))
         {
             float inputedFov = comp->getFov();
-            LabelAndInputFloat("FOV:", inputedFov, _labelWidth, _fullWidth, 0.1f);
+            LabelAndInputFloat("FOV:", inputedFov, _labelWidth, _innerSize.width, 0.1f);
             if (inputedFov != comp->getFov())
             {
                 comp->setFov(inputedFov);
             }
 
             float inputedFar = comp->getFar();
-            LabelAndInputFloat("Far:", inputedFar, _labelWidth, _fullWidth, 1.f, 0.0001f);
+            LabelAndInputFloat("Far:", inputedFar, _labelWidth, _innerSize.width, 1.f, 0.0001f);
             if (inputedFar != comp->getFar())
             {
                 comp->setFar(inputedFar);
             }
 
             float inputedNear = comp->getNear();
-            LabelAndInputFloat("Near:", inputedNear, _labelWidth, _fullWidth, 0.1f, 0.0001f);
+            LabelAndInputFloat("Near:", inputedNear, _labelWidth, _innerSize.width, 0.1f, 0.0001f);
             if (inputedNear != comp->getNear())
             {
                 comp->setNear(inputedNear);
             }
 
             if (auto res
-                = _frameSizeControl.drawAndProcess(comp->getFrameSize().toGlm(), _fullWidth))
+                = _frameSizeControl.drawAndProcess(comp->getFrameSize().toGlm(), _innerSize.width))
             {
                 comp->setFrameSize(Core::FSize2(res.value()));
             }
@@ -685,7 +738,7 @@ namespace SW
         if (comp && ImGui::CollapsingHeader("Static mesh bundle", ImGuiTreeNodeFlags_DefaultOpen))
         {
             LabelAndInputTextRO("Sub-render:", comp->getRenderTargetsCount(), _labelWidth,
-                                _fullWidth);
+                                _innerSize.width);
 
             ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
         }

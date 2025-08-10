@@ -163,13 +163,29 @@ namespace SW
         void addLog(Core::StringAtom&& log, spdlog::level::level_enum level);
         void clearLogs();
 
-    private:
+    protected:
         void onInit() override;
         void onDraw() override;
         void onUpdate() override;
-        void fetchLogs();
 
     private:
+        void fetchLogs();
+        void toolbarDraw();
+        void logsDraw();
+
+    private:
+
+        inline static const std::vector<spdlog::level::level_enum> _levels = {
+            spdlog::level::level_enum::critical,
+            spdlog::level::level_enum::err,
+            spdlog::level::level_enum::warn,
+            spdlog::level::level_enum::info,
+            spdlog::level::level_enum::debug,
+            spdlog::level::level_enum::trace,
+        };
+
+        bool _isAutoScroll = true;
+        float _streamingToolbarHeight = 40.f;
         std::size_t _lastCountOfLogs = 0;
         std::vector<LogLine> _logs;
     };
@@ -223,7 +239,6 @@ namespace SW
         std::vector<char> _modifierRaw;
 
         // Base settings
-        float _fullWidth = 0;
         float _labelWidth = 90.f;
         const ImVec2 _overriddenSpacing = ImVec2(0, 6);
         const float _gapBetweenSections = 15.f;
