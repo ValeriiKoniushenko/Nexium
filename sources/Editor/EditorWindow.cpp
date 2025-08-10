@@ -254,6 +254,9 @@ namespace SW
     void LogsWindow::onInit()
     {
         BaseFloatEWC::onInit();
+
+        _clearButtonWidth = ImGui::CalcTextSize(ICON_FA_TRASH).x;
+        _autoScrollButtonWidth = ImGui::CalcTextSize(ICON_FA_ARROW_DOWN).x;
     }
 
     void LogsWindow::onDraw()
@@ -349,9 +352,6 @@ namespace SW
 
     void LogsWindow::toolbarDraw()
     {
-        auto clearButtonWidth = ImGui::CalcTextSize(ICON_FA_TRASH).x;
-        auto autoScrollButtonWidth = ImGui::CalcTextSize(ICON_FA_ARROW_DOWN).x;
-
         auto startY = ImGui::GetCursorScreenPos().y;
         ImGui::BeginChild("Toolbar", ImVec2(0, _streamingToolbarHeight));
         {
@@ -375,15 +375,10 @@ namespace SW
             ImGui::SameLine();
 
             // =============== AutoScroll ====================
-            bool autoScroll = _isAutoScroll;
-            ImVec4 autoScrollButtonColor = autoScroll ? ImGui::GetStyle().Colors[ImGuiCol_Button] : ImVec4(0, 0, 0, 0);
-            ImGui::PushStyleColor(ImGuiCol_Button, autoScrollButtonColor);
-
-            if (ImGui::Button(ICON_FA_ARROW_DOWN))
+            if (ToggleButton(ICON_FA_ARROW_DOWN, _isAutoScroll))
             {
                 _isAutoScroll = !_isAutoScroll;
             }
-            ImGui::PopStyleColor();
         }
         _streamingToolbarHeight = ImGui::GetCursorScreenPos().y - startY;
         ImGui::EndChild();

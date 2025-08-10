@@ -184,6 +184,8 @@ namespace SW
             spdlog::level::level_enum::trace,
         };
 
+        float _clearButtonWidth = 0.f;
+        float _autoScrollButtonWidth = 0.f;
         bool _isAutoScroll = true;
         float _streamingToolbarHeight = 40.f;
         std::size_t _lastCountOfLogs = 0;

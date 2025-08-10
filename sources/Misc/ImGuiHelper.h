@@ -57,6 +57,8 @@ namespace SW
 
     bool VectorCombo(Core::StringAtom label, int* current, std::vector<Core::StringAtom>& data);
 
+    bool ToggleButton(const char* lablel, bool cond);
+
     template<int VecCount>
     struct VecControl
     {
