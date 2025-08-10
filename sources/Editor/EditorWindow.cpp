@@ -266,8 +266,30 @@ namespace SW
     {
         BaseFloatEWC::onInit();
 
+        auto& style = ImGui::GetStyle();
+
         _clearButtonWidth = ImGui::CalcTextSize(ICON_FA_TRASH).x;
         _autoScrollButtonWidth = ImGui::CalcTextSize(ICON_FA_ARROW_DOWN).x;
+
+        _defaultGap = style.ItemSpacing.x;
+        _toolbarToolsWidth = 0;
+
+        _toolbarToolsWidth += _defaultGap * 3.f;
+        for (auto level : _levels)
+        {
+            auto textSize = ImGui::CalcTextSize(spdlog::level::to_short_c_str(level)).x;
+            textSize += style.FramePadding.x * 2.f;
+            textSize += _defaultGap;
+            _toolbarToolsWidth += textSize;
+        }
+        _toolbarToolsWidth += _defaultGap * 3.f;
+
+        _toolbarToolsWidth += ImGui::CalcTextSize(ICON_FA_TRASH).x + style.FramePadding.x * 2.f;
+        _toolbarToolsWidth += _defaultGap;
+
+        _toolbarToolsWidth += ImGui::CalcTextSize(ICON_FA_ARROW_DOWN).x + style.FramePadding.x * 2.f;
+        _toolbarToolsWidth += _defaultGap;
+
     }
 
     void LogsWindow::onDraw()
@@ -322,6 +344,10 @@ namespace SW
             {
                 std::optional<ImVec4> color;
 
+                if (!_levelFilter[level])
+                {
+                    continue;
+                }
                 if (level == spdlog::level::critical)
                 {
                     color = ColorRed;
@@ -368,33 +394,53 @@ namespace SW
 
     void LogsWindow::toolbarDraw()
     {
-        auto startY = ImGui::GetCursorScreenPos().y;
+        float startY = ImGui::GetCursorScreenPos().y;
         ImGui::BeginChild("Toolbar", ImVec2(0, _streamingToolbarHeight));
         {
             ImGui::Dummy(ImVec2(0, 0));
 
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+
             // =============== Input ====================
-            ImGui::Dummy(ImVec2(0, 0));
+            ImGui::Dummy(ImVec2(_defaultGap, 0));
             ImGui::SameLine();
             static char filterBuf[512] = {};
-            ImGui::SetNextItemWidth(_innerSize.width * 0.6f);
+            ImGui::SetNextItemWidth(_innerSize.width - _toolbarToolsWidth);
             ImGui::InputTextWithHint("##LogFilter",
                                      "Your filter message. Feel free to use regex(perl).",
                                      filterBuf, IM_ARRAYSIZE(filterBuf));
-            ImGui::SameLine();
+            ImGui::SameLine(0, _defaultGap * 3.f);
 
-            // =============== Input ====================
+            // =============== Levels ====================
+            for (auto level : _levels)
+            {
+                bool& status = _levelFilter[level];
+                if (ToggleButton(spdlog::level::to_short_c_str(level), status))
+                {
+                    status = !status;
+                }
+                ImGui::SameLine(0, _defaultGap);
+            }
+            ImGui::SameLine(0, _defaultGap * 3.f);
+
+            // =============== Clean logs ====================
             if (ImGui::Button(ICON_FA_TRASH))
             {
                 clearLogs();
             }
-            ImGui::SameLine();
+            ImGui::SameLine(0, _defaultGap);
 
             // =============== AutoScroll ====================
             if (ToggleButton(ICON_FA_ARROW_DOWN, _isAutoScroll))
             {
                 _isAutoScroll = !_isAutoScroll;
             }
+            ImGui::SameLine(0, 0);
+            ImGui::Dummy(ImVec2(_defaultGap, 0));
+
+            ImGui::PopStyleVar();
+
+            ImGui::Dummy(ImVec2(0, 0));
         }
         _streamingToolbarHeight = ImGui::GetCursorScreenPos().y - startY;
         ImGui::EndChild();

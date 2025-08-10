@@ -175,20 +175,26 @@ namespace SW
         void logsDraw();
 
     private:
-
         inline static const std::vector<spdlog::level::level_enum> _levels = {
-            spdlog::level::level_enum::critical,
-            spdlog::level::level_enum::err,
-            spdlog::level::level_enum::warn,
-            spdlog::level::level_enum::info,
-            spdlog::level::level_enum::debug,
-            spdlog::level::level_enum::trace,
+            spdlog::level::level_enum::critical, spdlog::level::level_enum::err,
+            spdlog::level::level_enum::warn,     spdlog::level::level_enum::info,
+            spdlog::level::level_enum::debug,    spdlog::level::level_enum::trace,
+        };
+        std::unordered_map<spdlog::level::level_enum, bool> _levelFilter = {
+            { spdlog::level::level_enum::critical, true },
+            { spdlog::level::level_enum::err, true },
+            { spdlog::level::level_enum::warn, true },
+            { spdlog::level::level_enum::info, true },
+            { spdlog::level::level_enum::debug, true },
+            { spdlog::level::level_enum::trace, true },
         };
 
+        float _defaultGap = 4.f;
         float _clearButtonWidth = 0.f;
         float _autoScrollButtonWidth = 0.f;
         bool _isAutoScroll = true;
         float _streamingToolbarHeight = 40.f;
+        float _toolbarToolsWidth = 150.f;
         std::size_t _lastCountOfLogs = 0;
         std::vector<LogLine> _logs;
     };
