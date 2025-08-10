@@ -53,9 +53,6 @@ namespace SW
         void setFar(float value) noexcept;
         [[nodiscard]] float getFar() const noexcept { return _far; }
 
-        void setSensitive(glm::vec2 value) noexcept;
-        [[nodiscard]] glm::vec2 getSensitive() const noexcept { return _sensitive; }
-
         void yaw(float y);
         void pitch(float x);
         void yawAndPitch(glm::vec2 xy);
@@ -74,7 +71,6 @@ namespace SW
     protected:
         glm::mat4 _cachedProjMatrix = glm::mat4(1.f);
         glm::mat4 _cachedCalculatedMatrix = glm::mat4(1.f);
-        glm::vec2 _sensitive{ 3.f, 3.f };
         Core::FSize2 _size = Core::FSize2{ 600, 600 };
         float _fov = 45.f;
         float _far = 10'000.f;

@@ -88,12 +88,6 @@ namespace SW
         _isDirtyProjMatrix = true;
     }
 
-    void BaseCamera::setSensitive(glm::vec2 value) noexcept
-    {
-        _sensitive = value;
-        _isDirtyProjMatrix = true;
-    }
-
     void BaseCamera::yaw(float y)
     {
         rotateY(y);

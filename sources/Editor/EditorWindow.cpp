@@ -22,6 +22,7 @@
 
 #include "EditorWindow.h"
 
+#include "Camera/Camera.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "ImGui/imgui_internal.h"
 #include "ImGui/misc/cpp/imgui_stdlib.h"
@@ -414,6 +415,7 @@ namespace SW
         auto* asTransformable = dynamic_cast<Transformable*>(_target);
         auto* asStaticMeshBundle = dynamic_cast<StaticMeshBundle*>(_target);
         auto* asGraphicsComponentData = dynamic_cast<GraphicsComponentData*>(_target);
+        auto* asBaseCamera = dynamic_cast<BaseCamera*>(_target);
 
         tryDrawBaseComponent(asBaseComponent);
         ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
@@ -427,7 +429,11 @@ namespace SW
         tryDrawStaticMeshBundle(asStaticMeshBundle);
         ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
 
+        tryDrawBaseCamera(asBaseCamera);
+        ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
+
         tryDrawBaseComponentExtra(asBaseComponent);
+        ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
 
         ImGui::PopStyleVar(); // ImGuiStyleVar_ItemSpacing
     }
@@ -610,8 +616,8 @@ namespace SW
             ImGui::PushItemWidth(_labelWidth);
             if (ImGui::ButtonEx("Add new item"))
             {
-                newModifiers.emplace_back( GraphicsComponentData::ModifiedValue::MV_None,
-                                         GraphicsComponentData::Modifier::Disable );
+                newModifiers.emplace_back(GraphicsComponentData::ModifiedValue::MV_None,
+                                          GraphicsComponentData::Modifier::Disable);
                 isDirty = true;
             }
             ImGui::PopItemWidth();
@@ -637,6 +643,40 @@ namespace SW
             {
                 comp->setNoTick(tickable);
             }
+        }
+    }
+
+    void ObjectPropertiesWindow::tryDrawBaseCamera(BaseCamera* comp)
+    {
+        if (comp && ImGui::CollapsingHeader("Camera"))
+        {
+            float inputedFov = comp->getFov();
+            LabelAndInputText("FOV:", inputedFov, _labelWidth, _fullWidth);
+            if (inputedFov != comp->getFov())
+            {
+                comp->setFov(inputedFov);
+            }
+
+            float inputedFar = comp->getFar();
+            LabelAndInputText("Far:", inputedFar, _labelWidth, _fullWidth);
+            if (inputedFar != comp->getFar())
+            {
+                comp->setFar(inputedFar);
+            }
+
+            float inputedNear = comp->getNear();
+            LabelAndInputText("Near:", inputedNear, _labelWidth, _fullWidth);
+            if (inputedNear != comp->getNear())
+            {
+                comp->setNear(inputedNear);
+            }
+
+            // float inputedViewport = comp->getFov();
+            // LabelAndInputText("Viewport:", inputedViewport, _labelWidth, _fullWidth);
+            // if (inputedViewport != comp->getFrameSize())
+            // {
+            //     comp->setFrameSize(inputedViewport);
+            // }
         }
     }
 

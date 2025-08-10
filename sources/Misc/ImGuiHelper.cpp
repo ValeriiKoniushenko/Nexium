@@ -85,6 +85,28 @@ namespace SW
             reinterpret_cast<void*>(&data), data.size());
     }
 
+    void LabelAndInputText(const Core::StringAtom& label, float& value, float labelSize,
+                           float fullSize)
+    {
+        const auto originalString = std::to_string(value);
+        std::string inputData = originalString;
+
+        FixedLabel(label.data(), labelSize);
+        InputText(label, inputData, fullSize - labelSize);
+
+        if (originalString != inputData)
+        {
+            value = std::atof(inputData.c_str());
+        }
+    }
+
+    void InputText(const Core::StringAtom& label, std::string& value, float size)
+    {
+        ImGui::PushItemWidth(size);
+        ImGui::InputText(("##" + label).c_str(), &value);
+        ImGui::PopItemWidth();
+    }
+
     void Vec3Control::draw(glm::vec3& _v, float availSpace)
     {
         ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));

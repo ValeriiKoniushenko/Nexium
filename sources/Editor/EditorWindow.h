@@ -34,6 +34,7 @@
 namespace SW
 {
     class Scene;
+    class BaseCamera;
 
     /**
      * @brief BaseEditorWindowComponent or briefly BaseEWC
@@ -190,6 +191,7 @@ namespace SW
         void tryDrawStaticMeshBundle(StaticMeshBundle* comp);
         void tryDrawBaseComponentExtra(BaseComponent* comp);
         void tryDrawGraphicsComponentData(GraphicsComponentData* comp);
+        void tryDrawBaseCamera(BaseCamera* comp);
 
     protected:
         static constexpr ImVec4 ColorRed = ImVec4(1.0f, 0.2f, 0.2f, 1.0f);   // red
