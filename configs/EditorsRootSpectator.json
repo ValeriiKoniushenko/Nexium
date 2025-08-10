@@ -30,9 +30,9 @@
                     0.0
                 ],
                 "position": [
-                    44.705543518066406,
-                    -421.77911376953125,
-                    -407.68585205078125
+                    -13.704418182373047,
+                    -429.5284729003906,
+                    -720.2706298828125
                 ],
                 "rotation": [
                     0.0,
@@ -46,7 +46,7 @@
                 ]
             },
             "far": 10000.0,
-            "fov": 120.0,
+            "fov": 83.30000305175781,
             "isEnabled": true,
             "name": "BaseCamera ",
             "near": 0.10000000149011612,
@@ -62,40 +62,40 @@
     "keyboardInput": {
         "mapping": [
             {
-                "action": "toggleCursorMode",
-                "key": "M"
-            },
-            {
-                "action": "moveUp",
-                "key": "Space"
-            },
-            {
-                "action": "moveLeft",
-                "key": "A"
-            },
-            {
-                "action": "exit",
-                "key": "F12"
-            },
-            {
-                "action": "moveRight",
-                "key": "D"
-            },
-            {
-                "action": "moveDown",
-                "key": "C"
-            },
-            {
-                "action": "moveForward",
-                "key": "W"
+                "action": "toggleSimulation",
+                "key": "F1"
             },
             {
                 "action": "moveBackward",
                 "key": "S"
             },
             {
-                "action": "toggleSimulation",
-                "key": "F1"
+                "action": "moveForward",
+                "key": "W"
+            },
+            {
+                "action": "moveDown",
+                "key": "C"
+            },
+            {
+                "action": "moveRight",
+                "key": "D"
+            },
+            {
+                "action": "exit",
+                "key": "F12"
+            },
+            {
+                "action": "moveLeft",
+                "key": "A"
+            },
+            {
+                "action": "moveUp",
+                "key": "Space"
+            },
+            {
+                "action": "toggleCursorMode",
+                "key": "M"
             }
         ]
     },

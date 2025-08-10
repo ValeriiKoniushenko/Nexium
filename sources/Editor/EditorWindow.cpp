@@ -379,6 +379,11 @@ namespace SW
         _meshSizeControl.readOnly = true;
         _meshSizeControl.label = "Size:";
 
+        _viewportControl.components = { Vec2Control::Component{ "W:"_atom, ColorRed },
+                                        Vec2Control::Component{ "H:"_atom, ColorGreen } };
+        _viewportControl.labelWidth = _labelWidth;
+        _viewportControl.label = "Viewport:";
+
         _modifierValueVec = GraphicsComponentData::ModifiedValueAsVector();
         _modifierVec = GraphicsComponentData::ModifierAsVector();
 
@@ -648,32 +653,32 @@ namespace SW
         if (comp && ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen))
         {
             float inputedFov = comp->getFov();
-            LabelAndInputText("FOV:", inputedFov, _labelWidth, _fullWidth);
+            LabelAndInputFloat("FOV:", inputedFov, _labelWidth, _fullWidth, 0.1f);
             if (inputedFov != comp->getFov())
             {
                 comp->setFov(inputedFov);
             }
 
             float inputedFar = comp->getFar();
-            LabelAndInputText("Far:", inputedFar, _labelWidth, _fullWidth);
+            LabelAndInputFloat("Far:", inputedFar, _labelWidth, _fullWidth, 1.f, 0.0001f);
             if (inputedFar != comp->getFar())
             {
                 comp->setFar(inputedFar);
             }
 
             float inputedNear = comp->getNear();
-            LabelAndInputText("Near:", inputedNear, _labelWidth, _fullWidth);
+            LabelAndInputFloat("Near:", inputedNear, _labelWidth, _fullWidth, 0.1f, 0.0001f);
             if (inputedNear != comp->getNear())
             {
                 comp->setNear(inputedNear);
             }
 
-            // float inputedViewport = comp->getFov();
-            // LabelAndInputText("Viewport:", inputedViewport, _labelWidth, _fullWidth);
-            // if (inputedViewport != comp->getFrameSize())
-            // {
-            //     comp->setFrameSize(inputedViewport);
-            // }
+            auto viewport = comp->getFrameSize().toGlm();
+            _viewportControl.draw(viewport, _fullWidth);
+            if (viewport != comp->getFrameSize().toGlm())
+            {
+                comp->setFrameSize(Core::FSize2(viewport));
+            }
 
             ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
         }

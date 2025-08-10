@@ -161,7 +161,7 @@ namespace SW
 
         if (_name.isEmpty())
         {
-            json["name"] = _type + " ";
+            json["name"] = _type;
         }
         else
         {

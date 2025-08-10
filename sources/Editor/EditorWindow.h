@@ -203,17 +203,25 @@ namespace SW
         Core::Repeater _slowUpdater;
         std::vector<std::pair<int, int>> _graphicsMods;
 
+        // For transform
         Vec3Control _transformLocationControl;
         Vec3Control _transformOriginControl;
         Vec3Control _transformScaleControl;
         Vec3Control _transformRotationControl;
+
+        // For mesh
         Vec3Control _meshSizeControl;
 
+        // For camera
+        Vec2Control _viewportControl;
+
+        // For Graphics
         std::vector<Core::StringAtom> _modifierValueVec;
         std::vector<Core::StringAtom> _modifierVec;
         std::vector<char> _modifierValueRaw;
         std::vector<char> _modifierRaw;
 
+        // Base settings
         float _fullWidth = 0;
         float _labelWidth = 90.f;
         const ImVec2 _overriddenSpacing = ImVec2(0, 6);

@@ -31,7 +31,33 @@
 namespace SW
 {
 
-    struct Vec3Control
+    void FixedLabel(const char* label, float size);
+    void InputTextRO(Core::StringAtom value, float size);
+    void InputText(const Core::StringAtom& label, std::string& value, float size);
+
+    void LabelAndInputTextRO(Core::StringAtom label, Core::StringAtom value, float labelSize,
+                             float fullSize);
+
+    void LabelAndInputText(const Core::StringAtom& label, std::string& value, float labelSize,
+                           float fullSize);
+
+    void LabelAndInputFloat(const Core::StringAtom& label, float& value, float labelSize,
+                            float fullSize, float flostep = 0, float min = 0, float max = 0,
+                            const char* format = "%.2f");
+
+    template<class T>
+    void LabelAndInputTextRO(Core::StringAtom label, T value, float labelSize, float fullSize)
+    {
+        LabelAndInputTextRO(std::move(label), Core::StringAtom::MakeFrom(value), labelSize,
+                            fullSize);
+    }
+
+    void LabelAndCheckboxRO(Core::StringAtom label, bool v, float labelSize);
+
+    bool VectorCombo(Core::StringAtom label, int* current, std::vector<Core::StringAtom>& data);
+
+    template<int VecCount>
+    struct VecControl
     {
         struct Component
         {
@@ -50,30 +76,70 @@ namespace SW
         bool readOnly = false;
 
         Core::StringAtom label = ""_atom;
-        std::array<Component, 3> components = { Component(), Component(), Component() };
+        std::array<Component, VecCount> components;
 
-        void draw(glm::vec3& v, float availSpace);
+        void draw(glm::vec<VecCount, float>& v, float availSpace)
+        {
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+
+            ImGui::PushID(label.c_str());
+
+            ImGui::AlignTextToFramePadding();
+
+            FixedLabel(label.c_str(), labelWidth);
+            availSpace -= labelWidth;
+
+            float* vec = reinterpret_cast<float*>(&v);
+
+            int i = 0;
+            for (const auto& component : components)
+            {
+                const float textWidth = ImGui::CalcTextSize(component.text.c_str()).x;
+
+                // 3 - just components number
+                // 2 - because for last one we don't need a gap
+                constexpr float parties = static_cast<float>(VecCount);
+                constexpr float partiesWithoutGap = static_cast<float>(VecCount) - 1.f;
+
+                const float inputWidth
+                    = (availSpace - ((textWidth + afterTextGap) * parties + betweenInputsGap * partiesWithoutGap))
+                      / parties;
+
+                ImGui::PushStyleColor(ImGuiCol_Text, component.color);
+                ImGui::TextUnformatted(component.text.c_str());
+                ImGui::PopStyleColor();
+
+                ImGui::SameLine(0, afterTextGap);
+
+                ImGui::PushID(i);
+                ImGui::PushItemWidth(inputWidth);
+
+                if (readOnly)
+                {
+                    ImGui::BeginDisabled(true);
+                }
+                ImGui::DragFloat("", vec + i, floatStep, floatMin, floatMax, "%.2f", flags);
+                if (readOnly)
+                {
+                    ImGui::EndDisabled();
+                }
+
+                ImGui::PopItemWidth();
+                ImGui::SameLine(0, i == 2 ? 0 : betweenInputsGap);
+                ImGui::PopID();
+
+                ++i;
+            }
+            ImGui::PopID();
+
+            ImGui::PopStyleVar();
+
+            ImGui::Dummy(ImVec2(0, 0));
+        }
     };
 
-    void FixedLabel(const char* label, float size);
-    void InputTextRO(Core::StringAtom value, float size);
-    void InputText(const Core::StringAtom& label, std::string& value, float size);
-
-    void LabelAndInputTextRO(Core::StringAtom label, Core::StringAtom value, float labelSize,
-                             float fullSize);
-
-    void LabelAndInputText(const Core::StringAtom& label, float& value, float labelSize,
-                             float fullSize);
-
-    template<class T>
-    void LabelAndInputTextRO(Core::StringAtom label, T value, float labelSize, float fullSize)
-    {
-        LabelAndInputTextRO(std::move(label), Core::StringAtom::MakeFrom(value), labelSize,
-                            fullSize);
-    }
-
-    void LabelAndCheckboxRO(Core::StringAtom label, bool v, float labelSize);
-
-    bool VectorCombo(Core::StringAtom label, int* current, std::vector<Core::StringAtom>& data);
+    using Vec4Control = VecControl<4>;
+    using Vec3Control = VecControl<3>;
+    using Vec2Control = VecControl<2>;
 
 } // namespace SW

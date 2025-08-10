@@ -22,6 +22,7 @@
 
 #include "ImGuiHelper.h"
 
+#include "Core/Math.h"
 #include "ImGui/misc/cpp/imgui_stdlib.h"
 
 #include <string>
@@ -85,10 +86,9 @@ namespace SW
             reinterpret_cast<void*>(&data), data.size());
     }
 
-    void LabelAndInputText(const Core::StringAtom& label, float& value, float labelSize,
-                           float fullSize)
+    void LabelAndInputText(const Core::StringAtom& label, std::string& originalString,
+                           float labelSize, float fullSize)
     {
-        const auto originalString = std::to_string(value);
         std::string inputData = originalString;
 
         FixedLabel(label.data(), labelSize);
@@ -96,7 +96,7 @@ namespace SW
 
         if (originalString != inputData)
         {
-            value = std::atof(inputData.c_str());
+            originalString = inputData;
         }
     }
 
@@ -107,58 +107,20 @@ namespace SW
         ImGui::PopItemWidth();
     }
 
-    void Vec3Control::draw(glm::vec3& _v, float availSpace)
+    void LabelAndInputFloat(const Core::StringAtom& label, float& value, float labelSize,
+                            float fullSize, float step, float min, float max, const char* format)
     {
-        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+        FixedLabel(label.data(), labelSize);
 
-        ImGui::PushID(label.c_str());
-
-        ImGui::AlignTextToFramePadding();
-
-        FixedLabel(label.c_str(), labelWidth);
-        availSpace -= labelWidth;
-
-        float* vec[3] = { &_v.x, &_v.y, &_v.z };
-
-        int i = 0;
-        for (const auto& component : components)
+        ImGui::PushItemWidth(fullSize - labelSize);
+        if (ImGui::DragFloat(("##" + label).c_str(), &value, step, min, max, format))
         {
-            const float textWidth = ImGui::CalcTextSize(component.text.c_str()).x;
-
-            // 3 - just components number
-            // 2 - because for last one we don't need a gap
-            const float inputWidth
-                = (availSpace - ((textWidth + afterTextGap) * 3.f + betweenInputsGap * 2.f)) / 3.f;
-
-            ImGui::PushStyleColor(ImGuiCol_Text, component.color);
-            ImGui::TextUnformatted(component.text.c_str());
-            ImGui::PopStyleColor();
-
-            ImGui::SameLine(0, afterTextGap);
-
-            ImGui::PushID(i);
-            ImGui::PushItemWidth(inputWidth);
-
-            if (readOnly)
+            if (!Math::IsZero(min) && !Math::IsZero(max))
             {
-                ImGui::BeginDisabled(true);
+                value = std::clamp(value, min, max);
             }
-            ImGui::DragFloat("", vec[i], floatStep, floatMin, floatMax, "%.2f", flags);
-            if (readOnly)
-            {
-                ImGui::EndDisabled();
-            }
-
-            ImGui::PopItemWidth();
-            ImGui::SameLine(0, i == 2 ? 0 : betweenInputsGap);
-            ImGui::PopID();
-
-            ++i;
         }
-        ImGui::PopID();
-
-        ImGui::PopStyleVar();
-
-        ImGui::Dummy(ImVec2(0, 0));
+        ImGui::PopItemWidth();
     }
+
 } // namespace SW
