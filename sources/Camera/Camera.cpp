@@ -35,7 +35,8 @@ namespace SW
         if (_isDirtyProjMatrix)
         {
             _cachedProjMatrix
-                = glm::perspective(glm::radians(_fov), _size.width / _size.height, _near, _far);
+                = glm::perspective(glm::radians(_fov),
+                                                 _frameSize.width / _frameSize.height, _near, _far);
 
             _cachedCalculatedMatrix
                 = _cachedProjMatrix * _cachedModelMatrix; // in such context Model == View
@@ -66,7 +67,7 @@ namespace SW
 
     void BaseCamera::setFrameSize(Core::FSize2 size) noexcept
     {
-        _size = size;
+        _frameSize = size;
         _isDirtyProjMatrix = true;
     }
 
@@ -113,7 +114,7 @@ namespace SW
     {
         auto json = Actor::toJson();
 
-        json["viewport"] = _size;
+        json["frameSize"] = _frameSize;
         json["fov"] = _fov;
         json["far"] = _far;
         json["near"] = _near;
@@ -124,9 +125,9 @@ namespace SW
     {
         Actor::fromJson(json, isIgnoreChildren);
 
-        if (json.contains("viewport"))
+        if (json.contains("frameSize"))
         {
-            _size = json["viewport"].get<decltype(_size)>();
+            _frameSize = json["frameSize"].get<decltype(_frameSize)>();
         }
         if (json.contains("fov"))
         {

@@ -123,28 +123,58 @@ namespace Core
 
     void from_json(const nlohmann::json& j, Core::FSize2& value)
     {
-        value.width = j["width"].get<float>();
-        value.height = j["width"].get<float>();
+        if (j.contains("width"))
+        {
+            value.width = j["width"].get<float>();
+        }
+        if (j.contains("height"))
+        {
+            value.height = j["height"].get<float>();
+        }
     }
 
     void from_json(const nlohmann::json& j, Core::FSize3& value)
     {
-        value.width = j["width"].get<float>();
-        value.height = j["height"].get<float>();
-        value.deep = j["deep"].get<float>();
+        if (j.contains("width"))
+        {
+            value.width = j["width"].get<float>();
+        }
+        if (j.contains("height"))
+        {
+            value.height = j["height"].get<float>();
+        }
+        if (j.contains("deep"))
+        {
+            value.deep = j["deep"].get<float>();
+        }
     }
 
     void from_json(const nlohmann::json& j, Core::ISize2& value)
     {
-        value.width = j["width"].get<int>();
-        value.height = j["height"].get<int>();
+        if (j.contains("width"))
+        {
+            value.width = j["width"].get<int>();
+        }
+        if (j.contains("height"))
+        {
+            value.height = j["height"].get<int>();
+        }
     }
 
     void from_json(const nlohmann::json& j, Core::ISize3& value)
     {
-        value.width = j["width"].get<int>();
-        value.height = j["height"].get<int>();
-        value.deep = j["deep"].get<int>();
+        if (j.contains("width"))
+        {
+            value.width = j["width"].get<int>();
+        }
+        if (j.contains("height"))
+        {
+            value.height = j["height"].get<int>();
+        }
+        if (j.contains("deep"))
+        {
+            value.deep = j["deep"].get<int>();
+        }
     }
 
 } // namespace Core
