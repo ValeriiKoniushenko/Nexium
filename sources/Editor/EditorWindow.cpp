@@ -26,6 +26,7 @@
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "ImGui/imgui_internal.h"
 #include "ImGui/misc/cpp/imgui_stdlib.h"
+#include "Misc/IconsFontAwesome.h"
 #include "Misc/ImGuiHelper.h"
 
 namespace SW
@@ -164,7 +165,7 @@ namespace SW
 
     void KeyboardShortcutsEWC::onDraw()
     {
-        ImGui::Text("Shortcuts:");
+        ImGui::Text("%s", (ICON_FA_BOOK + std::string("Shortcuts: ")).data());
         ImGui::Text("    F1      - Toggle render mode");
         ImGui::Text("    W/A/S/D - Move Control");
         ImGui::Text("    C/Space - Down/Up");

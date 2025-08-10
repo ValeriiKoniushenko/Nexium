@@ -35,6 +35,8 @@ namespace SW
     public:
         inline static std::filesystem::path defaultImGuiFontPath
             = "assets/fonts/JetBrainsMono-Regular.ttf";
+        inline static std::filesystem::path emojiImGuiFontPath
+            = "assets/fonts/fontawesome-webfont.ttf";
         inline static float defaultImGuiFontSize = 16.f;
         inline static int defaultIoConfigFlagImGui
             = ImGuiConfigFlags_NavEnableKeyboard | ImGuiConfigFlags_DockingEnable;

@@ -28,6 +28,7 @@
 #include "ImGui/backends/imgui_impl_glfw.h"
 #include "ImGui/backends/imgui_impl_opengl3.h"
 #include "ImGui/imgui.h"
+#include "Misc/IconsFontAwesome.h"
 
 #include <Core/Assert.h>
 
@@ -65,9 +66,47 @@ namespace SW
         io.IniFilename = "configs/windows.ini";
         io.ConfigFlags |= defaultIoConfigFlagImGui;
 
-        ImFont* myFont = io.Fonts->AddFontFromFileTTF(defaultImGuiFontPath.generic_string().c_str(),
-                                                      defaultImGuiFontSize);
-        ImGui::PushFont(myFont);
+        if (std::filesystem::exists(defaultImGuiFontPath))
+        {
+            ImFont* font = io.Fonts->AddFontFromFileTTF(
+                defaultImGuiFontPath.generic_string().c_str(), defaultImGuiFontSize);
+            if (font)
+            {
+                ImGui::PushFont(font);
+            }
+            else
+            {
+                errorLog("Main font wasn't loaded by internal reasons. Font: " + defaultImGuiFontPath.generic_string());
+            }
+        }
+        else
+        {
+            errorLog("Main font wasn't loaded. Will be used default one. File not found: "
+                     + defaultImGuiFontPath.generic_string());
+            io.Fonts->AddFontDefault();
+        }
+
+        if (std::filesystem::exists(emojiImGuiFontPath))
+        {
+            ImFontConfig config;
+            config.MergeMode = true;
+            config.PixelSnapH = true; // often helps with icons
+            static const ImWchar icon_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 }; // Font Awesome range
+            ImFont* font = io.Fonts->AddFontFromFileTTF(emojiImGuiFontPath.generic_string().c_str(),
+                                         defaultImGuiFontSize, &config, icon_ranges);
+            if (font)
+            {
+                //io.Fonts->Build();
+            }
+            else
+            {
+                errorLog("Emoji wasn't loaded by internal reasons. Font: " + emojiImGuiFontPath.generic_string());
+            }
+        }
+        else
+        {
+            errorLog("Emoji wasn't loaded. File not found: " + emojiImGuiFontPath.generic_string());
+        }
 
         setupImGuiStyles();
 
