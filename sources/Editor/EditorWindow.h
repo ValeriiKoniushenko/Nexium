@@ -88,6 +88,7 @@ namespace SW
         Core::Delegate<void(Core::FSize2, Core::FSize2)> onSizeChanged;
 
     protected:
+        void onInit() override;
         void onUpdate() override;
         [[nodiscard]] bool beginWindowDraw() override;
         void endWindowDraw() override;

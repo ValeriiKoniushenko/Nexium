@@ -93,7 +93,7 @@ namespace SW
             config.PixelSnapH = true; // often helps with icons
             static const ImWchar icon_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 }; // Font Awesome range
             ImFont* font = io.Fonts->AddFontFromFileTTF(emojiImGuiFontPath.generic_string().c_str(),
-                                         defaultImGuiFontSize, &config, icon_ranges);
+                                         defaultImGuiFontSize * emojiImGuiFontScale, &config, icon_ranges);
             if (font)
             {
                 //io.Fonts->Build();
@@ -114,9 +114,15 @@ namespace SW
         ImGui_ImplOpenGL3_Init(GetGlslVersionShaderLike().c_str());
         _isInitImGui = true;
 
-        auto rootDocker = registerNewWindow<RootDockWindow>("Root dock space");
-        auto menuBar = registerNewWindow<EditorMenuBarWindow>("Menu Bar");
-        auto viewportWindow = registerNewWindow<GameViewportEWC>("Viewport");
+        auto menuBar = registerNewWindow<EditorMenuBarWindow>("Menu Bar"_atom);
+        auto rootDocker = registerNewWindow<RootDockWindow>("Root dock space"_atom);
+        auto viewportWindow = registerNewWindow<GameViewportEWC>(ICON_FA_VIDEO_CAMERA + " Viewport"_atom);
+        auto logsWindow = registerNewWindow<LogsWindow>(ICON_FA_ALIGN_LEFT + " Logs"_atom);
+        auto actorPropertiesWindow = registerNewWindow<ObjectPropertiesWindow>(ICON_FA_COG + " Object Properties"_atom);
+        auto sceneTreeWindow = registerNewWindow<SceneTreeWindow>(ICON_FA_CUBES + " Scene"_atom);
+
+        auto tipsWindow = registerNewWindow<KeyboardShortcutsEWC>("Keyboard Shortcuts"_atom, false);
+
         viewportWindow->onSizeChanged.subscribe(
             [](auto outer, auto inner)
             {
@@ -129,10 +135,6 @@ namespace SW
                     }
                 }
             });
-        auto tipsWindow = registerNewWindow<KeyboardShortcutsEWC>("Keyboard Shortcuts");
-        auto logsWindow = registerNewWindow<LogsWindow>("Logs");
-        auto actorPropertiesWindow = registerNewWindow<ObjectPropertiesWindow>("Object Properties");
-        auto sceneTreeWindow = registerNewWindow<SceneTreeWindow>("Scene");
     }
 
     void GameEditor::onTick(float delta)

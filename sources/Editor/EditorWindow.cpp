@@ -122,6 +122,11 @@ namespace SW
         ImGui::End();
     }
 
+    void BaseFloatEWC::onInit()
+    {
+        AbstractComponent::onInit();
+    }
+
     // ========================================================================
     //
     //     _   _  _                                      _
@@ -135,7 +140,7 @@ namespace SW
     // ========================================================================
     void GameViewportEWC::onInit()
     {
-        BaseEWC::onInit();
+        BaseFloatEWC::onInit();
     }
 
     void GameViewportEWC::onDraw()
@@ -165,7 +170,7 @@ namespace SW
 
     void KeyboardShortcutsEWC::onDraw()
     {
-        ImGui::Text("%s", (ICON_FA_BOOK + std::string("Shortcuts: ")).data());
+        ImGui::Text("Shortcuts: ");
         ImGui::Text("    F1      - Toggle render mode");
         ImGui::Text("    W/A/S/D - Move Control");
         ImGui::Text("    C/Space - Down/Up");
@@ -444,11 +449,13 @@ namespace SW
     {
         if (comp && ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            if (auto res = _transformLocationControl.drawAndProcess(comp->getPosition(), _fullWidth))
+            if (auto res
+                = _transformLocationControl.drawAndProcess(comp->getPosition(), _fullWidth))
             {
                 comp->setPosition(GPos3(res.value()));
             }
-            if (auto res = _transformRotationControl.drawAndProcess(comp->getRotation(), _fullWidth))
+            if (auto res
+                = _transformRotationControl.drawAndProcess(comp->getRotation(), _fullWidth))
             {
                 comp->setRotation(res.value());
             }
@@ -663,7 +670,8 @@ namespace SW
                 comp->setNear(inputedNear);
             }
 
-            if (auto res = _frameSizeControl.drawAndProcess(comp->getFrameSize().toGlm(), _fullWidth))
+            if (auto res
+                = _frameSizeControl.drawAndProcess(comp->getFrameSize().toGlm(), _fullWidth))
             {
                 comp->setFrameSize(Core::FSize2(res.value()));
             }

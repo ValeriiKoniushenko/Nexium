@@ -37,7 +37,10 @@ namespace SW
             = "assets/fonts/JetBrainsMono-Regular.ttf";
         inline static std::filesystem::path emojiImGuiFontPath
             = "assets/fonts/fontawesome-webfont.ttf";
+
         inline static float defaultImGuiFontSize = 16.f;
+        inline static float emojiImGuiFontScale = 0.7f;
+
         inline static int defaultIoConfigFlagImGui
             = ImGuiConfigFlags_NavEnableKeyboard | ImGuiConfigFlags_DockingEnable;
 
@@ -88,7 +91,7 @@ namespace SW
         }
 
         template<IsEditorWindowComponentOrBase WindowT = BaseEWC>
-        void showWindow(const Core::StringAtom& regexName)
+        void showWindow(const Core::StringAtom& regexName = ".*")
         {
             if (auto* wnd = getWindow<WindowT>(regexName))
             {

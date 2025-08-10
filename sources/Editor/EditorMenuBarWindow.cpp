@@ -58,23 +58,23 @@ namespace SW
         {
             if (ImGui::MenuItem("Keyboard shortcuts"))
             {
-                gameInstance->gameEditor.showWindow<KeyboardShortcutsEWC>(".*");
+                gameInstance->gameEditor.showWindow<KeyboardShortcutsEWC>();
             }
             if (ImGui::MenuItem("Viewport"))
             {
-                gameInstance->gameEditor.showWindow<GameViewportEWC>("Viewport");
+                gameInstance->gameEditor.showWindow<GameViewportEWC>();
             }
             if (ImGui::MenuItem("Logs"))
             {
-                gameInstance->gameEditor.showWindow<LogsWindow>("Logs");
+                gameInstance->gameEditor.showWindow<LogsWindow>();
             }
             if (ImGui::MenuItem("Object Properties"))
             {
-                gameInstance->gameEditor.showWindow<ObjectPropertiesWindow>("Object Properties");
+                gameInstance->gameEditor.showWindow<ObjectPropertiesWindow>();
             }
             if (ImGui::MenuItem("Scene"))
             {
-                gameInstance->gameEditor.showWindow<ObjectPropertiesWindow>("Scene");
+                gameInstance->gameEditor.showWindow<SceneTreeWindow>();
             }
             ImGui::EndMenu();
         }
