@@ -195,6 +195,7 @@ namespace SW
         bool _isAutoScroll = true;
         float _streamingToolbarHeight = 40.f;
         float _toolbarToolsWidth = 150.f;
+        char _filterBuf[512] = {};
         std::size_t _lastCountOfLogs = 0;
         std::vector<LogLine> _logs;
     };

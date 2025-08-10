@@ -274,6 +274,8 @@ namespace SW
         _defaultGap = style.ItemSpacing.x;
         _toolbarToolsWidth = 0;
 
+        // Calculating of tools from Toolbar.
+        // Repeating or 'render' code from LogsWindow::toolbarDraw
         _toolbarToolsWidth += _defaultGap * 3.f;
         for (auto level : _levels)
         {
@@ -348,6 +350,12 @@ namespace SW
                 {
                     continue;
                 }
+
+                if (_filterBuf[0] != '\0' && !message.regexFind(_filterBuf, 0, 0,0,PCRE2_CASELESS ))
+                {
+                    continue;
+                }
+
                 if (level == spdlog::level::critical)
                 {
                     color = ColorRed;
@@ -404,11 +412,10 @@ namespace SW
             // =============== Input ====================
             ImGui::Dummy(ImVec2(_defaultGap, 0));
             ImGui::SameLine();
-            static char filterBuf[512] = {};
             ImGui::SetNextItemWidth(_innerSize.width - _toolbarToolsWidth);
             ImGui::InputTextWithHint("##LogFilter",
                                      "Your filter message. Feel free to use regex(perl).",
-                                     filterBuf, IM_ARRAYSIZE(filterBuf));
+                                     _filterBuf, IM_ARRAYSIZE(_filterBuf));
             ImGui::SameLine(0, _defaultGap * 3.f);
 
             // =============== Levels ====================
