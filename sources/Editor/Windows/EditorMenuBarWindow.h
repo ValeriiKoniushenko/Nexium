@@ -30,8 +30,9 @@ namespace Core
 {
     class EditorMenuBarWindowEWC : public BaseMenuBarEWC
     {
+        ECS_REGISTER_NEW_COMPONENT(EditorMenuBarWindowEWC, BaseMenuBarEWC)
+
     public:
-        EditorMenuBarWindowEWC() = default;
         ~EditorMenuBarWindowEWC() override = default;
 
     protected:

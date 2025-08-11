@@ -107,6 +107,14 @@ namespace Core
 
         void debugLog(const StringFormatter<char>& str) const { debugLog(str.c_str()); }
 
+        void traceLog(const char* str) const { pushLog(level::trace, str); }
+
+        void traceLog(const std::string& str) const { traceLog(str.c_str()); }
+
+        void traceLog(const StringAtom& str) const { traceLog(str.c_str()); }
+
+        void traceLog(const StringFormatter<char>& str) const { traceLog(str.c_str()); }
+
         void criticalThrowingLog(const char* str) const;
 
         void criticalThrowingLog(const std::string& str) const { criticalThrowingLog(str.c_str()); }

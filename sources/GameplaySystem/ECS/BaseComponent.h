@@ -51,8 +51,9 @@ public:                                                                         
 private:                                                                                           \
     inline static const bool _debugTypeTracker = []()                                              \
     {                                                                                              \
-        return GetGlobalComponentFactory()._debugTypeTracker_NotifyNewAboutType(#CurrentClass);    \
-    };                                                                                             \
+        GetGlobalComponentFactory()._debugTypeTracker_NotifyNewAboutType(#CurrentClass);           \
+        return true;                                                                               \
+    }();                                                                                           \
                                                                                                    \
 protected:                                                                                         \
     explicit CurrentClass(const StringAtom& type, const StringAtom& name)                          \
@@ -63,13 +64,14 @@ protected:                                                                      
 public:
 
 #define ECS_REGISTER_NEW_COMPONENT_TYPE(ClassName)                                                 \
-    const bool _##ClassName##_type_registration = GetGlobalComponentFactory().registerNewType(     \
-        ClassName::componentType,                                                                  \
-        []() -> BaseComponent*                                                                     \
-        {                                                                                          \
-            return new std::conditional_t<std::is_abstract_v<ClassName>, InvalidComponent,         \
-                                          ClassName>;                                              \
-        });
+    const static bool _##ClassName##_type_registration                                             \
+        = GetGlobalComponentFactory().registerNewType(                                             \
+            ClassName::componentType,                                                              \
+            []() -> BaseComponent*                                                                 \
+            {                                                                                      \
+                return new std::conditional_t<std::is_abstract_v<ClassName>, InvalidComponent,     \
+                                              ClassName>;                                          \
+            });
 
 namespace Core
 {
@@ -87,17 +89,19 @@ namespace Core
     template<class T>
     concept IsComponentOrVoid = IsComponent<T> || std::is_void_v<T>;
 
-    class GlobalComponentFactory : public StrictSingleton<GlobalComponentFactory>
+    class GlobalComponentFactory : public StrictSingleton<GlobalComponentFactory>, public BaseLog
     {
         SINGLETONS_FRIEND(GlobalComponentFactory);
 
     public:
-        [[maybe_unused]] void _debugTypeTracker_NotifyNewAboutType(StringAtom newType);
+        [[maybe_unused]] void _debugTypeTracker_NotifyNewAboutType(const StringAtom& newType);
 
         ~GlobalComponentFactory() override;
 
         BaseComponent* create(const StringAtom& type);
         bool registerNewType(StringAtom type, std::function<BaseComponent*()>);
+
+        [[nodiscard]] spdlog::logger* getLogger() const final { return Ecs::getLogger(); }
 
     private:
         std::unordered_map<StringAtom, std::function<BaseComponent*()>> _map;
