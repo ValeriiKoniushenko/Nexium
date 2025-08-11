@@ -31,11 +31,13 @@
 #include <queue>
 #include <unordered_set>
 
-// Put this macros inside your class body for every new component.
-// New component is even a component that extends previous one. I.e.
-// if you are inheriting from class Spectator, you should mark your
-// new component with ECS_REGISTER_NEW_COMPONENT(YourClass, Specatator)
-// to register this type inside ECS
+/**
+ * Put this macros inside your class body for every new component.
+ * New component is even a component that extends previous one. I.e.
+ * if you are inheriting from class Spectator, you should mark your
+ * new component with ECS_REGISTER_NEW_COMPONENT(YourClass, Specatator)
+ * to register this type inside ECS
+ */
 #define ECS_REGISTER_NEW_COMPONENT(CurrentClass, BaseComponentClass)                               \
 public:                                                                                            \
     using Ptr = boost::intrusive_ptr<CurrentClass>;                                                \
@@ -68,9 +70,11 @@ protected:                                                                      
                                                                                                    \
 public:
 
-// Also, we need this macros in .cpp file of implementation of your new type.
-// If you don't understand what means 'new type' check the macrose's descrip.
-// above, please.
+/*
+ * Also, we need this macros in .cpp file of implementation of your new type.
+ * If you don't understand what means 'new type' check the macrose's descrip.
+ * above, please.
+ */
 #define ECS_REGISTER_NEW_COMPONENT_TYPE(ClassName)                                                 \
     const static bool _##ClassName##_type_registration                                             \
         = GetGlobalComponentFactory().registerNewType(                                             \
@@ -97,6 +101,15 @@ namespace Core
     template<class T>
     concept IsComponentOrVoid = IsComponent<T> || std::is_void_v<T>;
 
+    //
+    //  _____                             ______               _
+    // /  __ \                            |  ___|             | |
+    // | /  \/  ___   _ __ ___   _ __     | |_     __ _   ___ | |_   ___   _ __  _   _
+    // | |     / _ \ | '_ ` _ \ | '_ \    |  _|   / _` | / __|| __| / _ \ | '__|| | | |
+    // | \__/\| (_) || | | | | || |_) | _ | |    | (_| || (__ | |_ | (_) || |   | |_| |
+    //  \____/ \___/ |_| |_| |_|| .__/ (_)\_|     \__,_| \___| \__| \___/ |_|    \__, |
+    //                          | |                                               __/ |
+    //                          |_|                                              |___/
     class GlobalComponentFactory : public StrictSingleton<GlobalComponentFactory>, public BaseLog
     {
         SINGLETONS_FRIEND(GlobalComponentFactory);
