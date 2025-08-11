@@ -22,7 +22,7 @@
 
 #include "UserInterface.h"
 
-namespace SW
+namespace Core
 {
 
-} // namespace SW
+} // namespace Core

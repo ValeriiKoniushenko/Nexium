@@ -31,10 +31,10 @@
 #include <Core/Singleton.h>
 #include <filesystem>
 
-namespace SW
+namespace Core
 {
 
-    class Window : public Core::StrictSingleton<Window>, public BaseLog
+    class Window : public StrictSingleton<Window>, public BaseLog
     {
     public:
         // clang-format off
@@ -49,7 +49,7 @@ namespace SW
         Window() = default;
         ~Window() override;
 
-        void create(const Core::StringAtom& title, Core::ISize2 size = Core::ISize2{ 300, 300 });
+        void create(const StringAtom& title, ISize2 size = ISize2{ 300, 300 });
         void close();
         void destroy();
         void clear(int code);
@@ -62,7 +62,7 @@ namespace SW
 
         void updateViewport(float aspect, ViewportMode mode = ViewportMode::Default);
 
-        [[nodiscard]] Core::ISize2 getSize() const;
+        [[nodiscard]] ISize2 getSize() const;
 
         void setCursorPosition(float x, float y);
         void setCursorPosition(glm::vec2 position);
@@ -79,39 +79,39 @@ namespace SW
          * @param third 'int' - is an action: GLFW_PRESS, GLFW_RELEASE or GLFW_REPEAT
          * @param fourth 'int' - is a mod
          */
-        Core::Delegate<void(int, int, int, int)> onKeyPressed;
+        Delegate<void(int, int, int, int)> onKeyPressed;
 
         /**
          * @param unsigned int - is a Scancode
          */
-        Core::Delegate<void(unsigned int)> onTextInput;
+        Delegate<void(unsigned int)> onTextInput;
 
         /**
          * @param bool - is Entered the cursor or no
          */
-        Core::Delegate<void(bool)> onCursorEntered;
+        Delegate<void(bool)> onCursorEntered;
 
         /**
          * @param glm::vec2 - mouse scroll offsets (X & Y)
          */
-        Core::Delegate<void(glm::vec2)> onMouseWheel;
+        Delegate<void(glm::vec2)> onMouseWheel;
 
         /**
-         * @param Core::ISize2 - new window size
+         * @param ISize2 - new window size
          */
-        Core::Delegate<void(Core::ISize2)> onResize;
+        Delegate<void(ISize2)> onResize;
 
         [[nodiscard]] spdlog::logger* getLogger() const override { return Graphics::getLogger(); }
         [[nodiscard]] const char* getPrefix() const override { return "Window"; }
 
-        void m__setSize(Core::ISize2 newSize) noexcept { _size = newSize; }
+        void m__setSize(ISize2 newSize) noexcept { _size = newSize; }
 
     protected:
         GLFWwindow* _window{};
-        Core::ISize2 _size{};
-        Core::StringAtom _title;
+        ISize2 _size{};
+        StringAtom _title;
     };
 
     Window& GetWindow();
 
-} // namespace SW
+} // namespace Core

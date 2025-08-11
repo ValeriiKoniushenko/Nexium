@@ -29,7 +29,7 @@
 
 namespace fs = std::filesystem;
 
-namespace SW
+namespace Core
 {
 
     void JsonCacheable::writeToCache() const
@@ -102,4 +102,4 @@ namespace SW
         return getCacheDir() / (getCacheHash().toStdString() + ".json");
     }
 
-} // namespace SW
+} // namespace Core

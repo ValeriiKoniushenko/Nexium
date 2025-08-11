@@ -29,33 +29,33 @@
 #include <array>
 #include <expected>
 
-namespace SW
+namespace Core
 {
 
     void FixedLabel(const char* label, float size);
-    void InputTextRO(Core::StringAtom value, float size);
-    void InputText(const Core::StringAtom& label, std::string& value, float size);
+    void InputTextRO(StringAtom value, float size);
+    void InputText(const StringAtom& label, std::string& value, float size);
 
-    void LabelAndInputTextRO(Core::StringAtom label, Core::StringAtom value, float labelSize,
+    void LabelAndInputTextRO(StringAtom label, StringAtom value, float labelSize,
                              float fullSize);
 
-    void LabelAndInputText(const Core::StringAtom& label, std::string& value, float labelSize,
+    void LabelAndInputText(const StringAtom& label, std::string& value, float labelSize,
                            float fullSize);
 
-    void LabelAndInputFloat(const Core::StringAtom& label, float& value, float labelSize,
+    void LabelAndInputFloat(const StringAtom& label, float& value, float labelSize,
                             float fullSize, float flostep = 0, float min = 0, float max = 0,
                             const char* format = "%.2f");
 
     template<class T>
-    void LabelAndInputTextRO(Core::StringAtom label, T value, float labelSize, float fullSize)
+    void LabelAndInputTextRO(StringAtom label, T value, float labelSize, float fullSize)
     {
-        LabelAndInputTextRO(std::move(label), Core::StringAtom::MakeFrom(value), labelSize,
+        LabelAndInputTextRO(std::move(label), StringAtom::MakeFrom(value), labelSize,
                             fullSize);
     }
 
-    void LabelAndCheckboxRO(Core::StringAtom label, bool v, float labelSize);
+    void LabelAndCheckboxRO(StringAtom label, bool v, float labelSize);
 
-    bool VectorCombo(Core::StringAtom label, int* current, std::vector<Core::StringAtom>& data);
+    bool VectorCombo(StringAtom label, int* current, std::vector<StringAtom>& data);
 
     bool ToggleButton(const char* lablel, bool cond);
 
@@ -64,7 +64,7 @@ namespace SW
     {
         struct Component
         {
-            Core::StringAtom text = ""_atom;
+            StringAtom text = ""_atom;
             ImVec4 color = ImVec4(1.f, 1.f, 1.f, 1.f);
         };
 
@@ -80,7 +80,7 @@ namespace SW
         float floatMax = 0.f;
         bool readOnly = false;
 
-        Core::StringAtom label = ""_atom;
+        StringAtom label = ""_atom;
         std::array<Component, VecCount> components;
 
         std::expected<VecT, bool> drawAndProcess(VecT v, float availSpace)
@@ -167,4 +167,4 @@ namespace SW
     using Vec3Control = VecControl<3>;
     using Vec2Control = VecControl<2>;
 
-} // namespace SW
+} // namespace Core

@@ -28,7 +28,7 @@
 #include "ModuleInfo.h"
 #include "Utils/CopyableAndMoveableBehaviour.h"
 
-namespace SW
+namespace Core
 {
     class GameEditor : public Utils::NotCopyableAndNotMoveable, public BaseLog
     {
@@ -54,7 +54,7 @@ namespace SW
         void setIsEnabled(bool v) noexcept { _isEnabled = v; }
 
         template<IsEditorWindowComponent T>
-        [[nodiscard]] typename T::Ptr registerNewWindow(const Core::StringAtom& name = ""_atom,
+        [[nodiscard]] typename T::Ptr registerNewWindow(const StringAtom& name = ""_atom,
                                                         bool isEnabled = true)
         {
             auto& a = _windows.emplace_back(new T);
@@ -68,7 +68,7 @@ namespace SW
         }
 
         template<IsEditorWindowComponentOrBase WindowT = BaseEWC>
-        [[nodiscard]] WindowT* getWindow(const Core::StringAtom& regexName = ".*")
+        [[nodiscard]] WindowT* getWindow(const StringAtom& regexName = ".*")
         {
             for (auto&& windowIntrusive : _windows)
             {
@@ -91,7 +91,7 @@ namespace SW
         }
 
         template<IsEditorWindowComponentOrBase WindowT = BaseEWC>
-        void showWindow(const Core::StringAtom& regexName = ".*")
+        void showWindow(const StringAtom& regexName = ".*")
         {
             if (auto* wnd = getWindow<WindowT>(regexName))
             {
@@ -104,7 +104,7 @@ namespace SW
          */
         void destroy();
 
-        [[nodiscard]] spdlog::logger* getLogger() const override { return SW::Editor::getLogger(); }
+        [[nodiscard]] spdlog::logger* getLogger() const override { return Editor::getLogger(); }
 
     protected:
         void setupImGuiStyles();
@@ -116,4 +116,4 @@ namespace SW
         bool _isEnabled = true;
     };
 
-} // namespace SW
+} // namespace Core

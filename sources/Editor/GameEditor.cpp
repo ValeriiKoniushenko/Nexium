@@ -32,11 +32,13 @@
 
 #include <Core/Assert.h>
 
+using namespace Core;
+
 namespace
 {
-    Core::StringAtom GetGlslVersionShaderLike()
+    StringAtom GetGlslVersionShaderLike()
     {
-        Core::StringAtom version = reinterpret_cast<const char*>(glGetString(GL_VERSION));
+        StringAtom version = reinterpret_cast<const char*>(glGetString(GL_VERSION));
         if (auto end = version.find(" "); Verify(end))
         {
             const auto i = end - version.c_str();
@@ -50,7 +52,7 @@ namespace
     }
 } // namespace
 
-namespace SW
+namespace Core
 {
 
     GameEditor::~GameEditor()
@@ -131,7 +133,7 @@ namespace SW
                     if (gameInstance->renderMode.cast() == GameInstance::RenderMode::Editor)
                     {
                         gameInstance->renderToTextureObject.setRenderSize(
-                            static_cast<Core::ISize2>(inner));
+                            static_cast<ISize2>(inner));
                         gameInstance->updateViewport();
                     }
                 }
@@ -293,4 +295,4 @@ namespace SW
         return !_windows.empty();
     }
 
-} // namespace SW
+} // namespace Core

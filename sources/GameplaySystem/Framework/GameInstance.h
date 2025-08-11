@@ -35,7 +35,7 @@
 #include "UserInterface.h"
 #include "World.h"
 
-namespace SW
+namespace Core
 {
 
     class GameInstance : public BaseLog
@@ -55,7 +55,7 @@ namespace SW
         float windowAspectRatio = 16.f / 9.f;
 
     public:
-        SW::Scene gameScene;
+        Scene gameScene;
 
         BaseCamera* currentCamera = nullptr;
         RenderMode renderMode = RenderMode::Editor;
@@ -80,14 +80,14 @@ namespace SW
         // Pre-launch settings
         std::filesystem::path _assetsPath = "assets";
         std::filesystem::path _shaderPath = "assets/shaders";
-        Core::StringAtom _spdlogDefaultPatter = "%D [%L] [%n] %v";
-        Core::StringAtom _defaultWindowName = "Sprite Walker";
-        Core::ISize2 _defaultWindowSize = Core::ISize2{ 1200, 800 };
+        StringAtom _spdlogDefaultPatter = "%D [%L] [%n] %v";
+        StringAtom _defaultWindowName = "Nexium";
+        ISize2 _defaultWindowSize = ISize2{ 1200, 800 };
 
     private:
         void gameLoop();
     };
 
-} // namespace SW
+} // namespace Core
 
-extern std::unique_ptr<SW::GameInstance> gameInstance;
+extern std::unique_ptr<Core::GameInstance> gameInstance;

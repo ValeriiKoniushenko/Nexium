@@ -22,7 +22,7 @@
 
 #include "ShaderManager.h"
 
-namespace SW
+namespace Core
 {
 
     void ShaderManager::loadShaders(const std::filesystem::path& inputPath)
@@ -112,7 +112,7 @@ namespace SW
         }
     }
 
-    ShaderProgram* ShaderManager::getShaderProgram(const Core::StringAtom& shaderName)
+    ShaderProgram* ShaderManager::getShaderProgram(const StringAtom& shaderName)
     {
         Assert(shaderName.isStatic());
 
@@ -146,4 +146,4 @@ namespace SW
         return {};
     }
 
-} // namespace SW
+} // namespace Core

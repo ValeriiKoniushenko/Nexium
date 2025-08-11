@@ -26,7 +26,7 @@
 #include "GameplaySystem/Framework/Actor.h"
 #include "InputDevices/InputManager.h"
 
-namespace SW
+namespace Core
 {
     class Spectator : public Actor, public JsonCacheable
     {
@@ -45,11 +45,11 @@ namespace SW
         MouseInputManger mouseInput;
 
     protected:
-        [[nodiscard]] Core::StringAtom getCacheHash() const override;
+        [[nodiscard]] StringAtom getCacheHash() const override;
         [[nodiscard]] nlohmann::json toCacheData() const override;
         void fromCacheData(const nlohmann::json& json) override;
 
         void onTick() override;
         void onInit() override;
     };
-} // namespace SW
+} // namespace Core

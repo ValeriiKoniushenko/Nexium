@@ -24,9 +24,9 @@
 
 #include "Keyboard.h"
 
-namespace SW
+namespace Core
 {
-    KeyboardInputAction::KeyboardInputAction(const Core::StringAtom& name, KeyT key)
+    KeyboardInputAction::KeyboardInputAction(const StringAtom& name, KeyT key)
         : InputAction(name, key)
     {
     }
@@ -45,13 +45,13 @@ namespace SW
         init();
     }
 
-    MouseInputAction::MouseInputAction(const Core::StringAtom& name, KeyT key)
+    MouseInputAction::MouseInputAction(const StringAtom& name, KeyT key)
         : InputAction(name, key)
     {
         init();
     }
 
-    MouseInputAction::MouseInputAction(const Core::StringAtom& name)
+    MouseInputAction::MouseInputAction(const StringAtom& name)
         : InputAction(name)
     {
         init();
@@ -93,4 +93,4 @@ namespace SW
             });
     }
 
-} // namespace SW
+} // namespace Core

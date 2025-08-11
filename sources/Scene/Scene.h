@@ -26,7 +26,7 @@
 
 #include <vector>
 
-namespace SW
+namespace Core
 {
     class Scene : public JsonCacheable, public JsonAdapter
     {
@@ -38,8 +38,8 @@ namespace SW
 
         void directDraw();
 
-        void setSceneName(Core::StringAtom name);
-        [[nodiscard]] const Core::StringAtom& getSceneName() const noexcept;
+        void setSceneName(StringAtom name);
+        [[nodiscard]] const StringAtom& getSceneName() const noexcept;
 
         void addMesh(StaticMeshBundle&& mesh);
 
@@ -76,7 +76,7 @@ namespace SW
 
     protected:
         [[nodiscard]] std::filesystem::path getCacheDir() const override;
-        [[nodiscard]] Core::StringAtom getCacheHash() const override;
+        [[nodiscard]] StringAtom getCacheHash() const override;
         [[nodiscard]] nlohmann::json toCacheData() const override;
         void fromCacheData(const nlohmann::json& json) override;
 
@@ -86,6 +86,6 @@ namespace SW
     protected:
         std::vector<StaticMeshBundle> _staticMeshBundles;
         std::vector<BaseComponent::Ptr> _logicalComponents;
-        Core::StringAtom _sceneName = "None";
+        StringAtom _sceneName = "None";
     };
-} // namespace SW
+} // namespace Core

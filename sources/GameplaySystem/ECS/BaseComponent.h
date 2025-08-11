@@ -41,14 +41,14 @@ public:                                                                         
     template<bool isConst>                                                                         \
     using AdaptiveRawPtr = std::conditional_t<isConst, const CurrentClass, CurrentClass>*;         \
                                                                                                    \
-    inline static const auto componentType = Core::StringAtom::Intern(#CurrentClass);              \
-    explicit CurrentClass(const Core::StringAtom& name = ""_atom)                                           \
+    inline static const auto componentType = StringAtom::Intern(#CurrentClass);              \
+    explicit CurrentClass(const StringAtom& name = ""_atom)                                           \
         : BaseComponentClass(componentType, name)                                                  \
     {                                                                                              \
     }                                                                                              \
                                                                                                    \
 protected:                                                                                         \
-    explicit CurrentClass(const Core::StringAtom& type, const Core::StringAtom& name)              \
+    explicit CurrentClass(const StringAtom& type, const StringAtom& name)              \
         : BaseComponentClass(type, name)                                                           \
     {                                                                                              \
     }                                                                                              \
@@ -56,15 +56,15 @@ protected:                                                                      
 public:
 
 #define ECS_REGISTER_NEW_COMPONENT_TYPE(ClassName)                                                 \
-    const bool _##ClassName##_type_registration = SW::GetGlobalComponentFactory().registerNewType( \
+    const bool _##ClassName##_type_registration = GetGlobalComponentFactory().registerNewType( \
         ClassName::componentType,                                                                  \
-        []() -> SW::BaseComponent*                                                                 \
+        []() -> BaseComponent*                                                                 \
         {                                                                                          \
-            return new std::conditional_t<std::is_abstract_v<ClassName>, SW::InvalidComponent,     \
+            return new std::conditional_t<std::is_abstract_v<ClassName>, InvalidComponent,     \
                                           ClassName>;                                              \
         });
 
-namespace SW
+namespace Core
 {
     class BaseComponent;
 
@@ -80,16 +80,16 @@ namespace SW
     template<class T>
     concept IsComponentOrVoid = IsComponent<T> || std::is_void_v<T>;
 
-    class GlobalComponentFactory : public Core::StrictSingleton<GlobalComponentFactory>
+    class GlobalComponentFactory : public StrictSingleton<GlobalComponentFactory>
     {
         SINGLETONS_FRIEND(GlobalComponentFactory);
 
     public:
-        BaseComponent* create(const Core::StringAtom& type);
-        bool registerNewType(Core::StringAtom type, std::function<BaseComponent*()>);
+        BaseComponent* create(const StringAtom& type);
+        bool registerNewType(StringAtom type, std::function<BaseComponent*()>);
 
     private:
-        std::unordered_map<Core::StringAtom, std::function<BaseComponent*()>> _map;
+        std::unordered_map<StringAtom, std::function<BaseComponent*()>> _map;
     };
 
     inline GlobalComponentFactory& GetGlobalComponentFactory()
@@ -253,9 +253,9 @@ namespace SW
         [[nodiscard]] bool operator==(const Self& other) const;
 
         // ========================== WORKING WITH NAME ==========================
-        void setComponentName(const Core::StringAtom& name);
-        [[nodiscard]] const Core::StringAtom& getComponentName() const noexcept { return _name; }
-        [[nodiscard]] const Core::StringAtom& getComponentType() const noexcept { return _type; }
+        void setComponentName(const StringAtom& name);
+        [[nodiscard]] const StringAtom& getComponentName() const noexcept { return _name; }
+        [[nodiscard]] const StringAtom& getComponentType() const noexcept { return _type; }
 
         // ========================== WORKING WITH PARENT ==========================
         [[nodiscard]] const BaseComponent* getParent() const noexcept { return _parent; }
@@ -411,7 +411,7 @@ namespace SW
         }
         virtual void onSuccessAddChildComponentValidation(BaseComponent* newComponent);
 
-        explicit BaseComponent(Core::StringAtom type, Core::StringAtom name)
+        explicit BaseComponent(StringAtom type, StringAtom name)
             : _name{ std::move(name) },
               _type{ std::move(type) }
         {
@@ -422,8 +422,8 @@ namespace SW
 
     protected:
         ChildrenT _children;
-        Core::StringAtom _name;
-        const Core::StringAtom _type;
+        StringAtom _name;
+        const StringAtom _type;
         BaseComponent* _parent = nullptr;
 
     private:
@@ -581,25 +581,25 @@ namespace SW
         return found;
     }
 
-} // namespace SW
+} // namespace Core
 
 template<>
-struct std::hash<SW::BaseComponent>
+struct std::hash<Core::BaseComponent>
 {
-    std::size_t operator()(const SW::BaseComponent& x) const noexcept { return x.makeHash(); }
+    std::size_t operator()(const Core::BaseComponent& x) const noexcept { return x.makeHash(); }
 };
 
 template<>
-struct std::hash<SW::BaseComponent::CPtr>
+struct std::hash<Core::BaseComponent::CPtr>
 {
-    std::size_t operator()(const SW::BaseComponent::CPtr& x) const noexcept
+    std::size_t operator()(const Core::BaseComponent::CPtr& x) const noexcept
     {
         return x->makeHash();
     }
 };
 
 template<>
-struct std::hash<SW::BaseComponent::Ptr>
+struct std::hash<Core::BaseComponent::Ptr>
 {
-    std::size_t operator()(const SW::BaseComponent::Ptr& x) const noexcept { return x->makeHash(); }
+    std::size_t operator()(const Core::BaseComponent::Ptr& x) const noexcept { return x->makeHash(); }
 };

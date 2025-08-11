@@ -24,32 +24,34 @@
 
 #include "gtest/gtest.h"
 
+using namespace Core;
+
 namespace
 {
-    class DummyComponent : public SW::BaseComponent
+    class DummyComponent : public BaseComponent
     {
-        ECS_REGISTER_NEW_COMPONENT(DummyComponent, SW::BaseComponent);
+        ECS_REGISTER_NEW_COMPONENT(DummyComponent, BaseComponent);
         int a = 123;
         [[nodiscard]] nlohmann::json toJson() const override
         {
-            auto json = SW::BaseComponent::toJson();
+            auto json = BaseComponent::toJson();
             json["a"] = a;
             return json;
         }
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override
         {
-            SW::BaseComponent::fromJson(json, isIgnoreChildren);
+            BaseComponent::fromJson(json, isIgnoreChildren);
             a = json["a"].get<int>();
         }
     };
 
     ECS_REGISTER_NEW_COMPONENT_TYPE(DummyComponent);
 
-    class HardConstructorComponent : public SW::BaseComponent
+    class HardConstructorComponent : public BaseComponent
     {
-        ECS_REGISTER_NEW_COMPONENT(HardConstructorComponent, SW::BaseComponent);
+        ECS_REGISTER_NEW_COMPONENT(HardConstructorComponent, BaseComponent);
 
-        HardConstructorComponent(int a, const Core::StringAtom& name, std::string b)
+        HardConstructorComponent(int a, const StringAtom& name, std::string b)
             : BaseComponent(componentType, name),
               _a(a),
               _b(std::move(b)) {};
@@ -201,7 +203,7 @@ TEST(ECSBaseTests, RemovingChildIf)
     EXPECT_EQ("Root", root.getComponentName());
     EXPECT_EQ("DummyComponent", root.getComponentType());
 
-    std::vector<Core::StringAtom> names = { "Hello", "World", "How", "Are", "AYou", "Idk" };
+    std::vector<StringAtom> names = { "Hello", "World", "How", "Are", "AYou", "Idk" };
 
     for (auto&& name : names)
     {
@@ -211,7 +213,7 @@ TEST(ECSBaseTests, RemovingChildIf)
     ASSERT_EQ(names.size(), root.getChildrenCount());
 
     root.removeChildIf(
-        [](const SW::BaseComponent* c)
+        [](const BaseComponent* c)
         {
             return c->getComponentName() == "How";
         });
@@ -219,7 +221,7 @@ TEST(ECSBaseTests, RemovingChildIf)
     ASSERT_EQ(names.size() - 1, root.getChildrenCount());
 
     root.removeChildIf(
-        [](const SW::BaseComponent* c)
+        [](const BaseComponent* c)
         {
             return c->getComponentName().front() == 'A';
         });
@@ -252,22 +254,22 @@ TEST(ECSBaseTests, ParentInvalidating)
 
 TEST_F(ECSTreeTests, BFSIteratorTest)
 {
-    Core::StringAtom trunk;
+    StringAtom trunk;
 
     root.forEach(
-        [&](SW::BaseComponent* c)
+        [&](BaseComponent* c)
         {
             trunk.push_back(c->getComponentName());
         });
 
     root.forEach(
-        [&](const SW::BaseComponent* c)
+        [&](const BaseComponent* c)
         {
             trunk.push_back(c->getComponentName());
         });
 
     root.forEach(
-        [&](const SW::BaseComponent* c)
+        [&](const BaseComponent* c)
         {
             trunk.push_back(c->getComponentName());
             return c->getComponentName() != "Middle2";
@@ -276,13 +278,13 @@ TEST_F(ECSTreeTests, BFSIteratorTest)
     const auto& croot = static_cast<const decltype(root)&>(root);
 
     croot.forEach(
-        [&](const SW::BaseComponent* c)
+        [&](const BaseComponent* c)
         {
             trunk.push_back(c->getComponentName());
         });
 
     croot.forEach(
-        [&](const SW::BaseComponent* c)
+        [&](const BaseComponent* c)
         {
             trunk.push_back(c->getComponentName());
             return c->getComponentName() != "Middle2";
@@ -291,22 +293,22 @@ TEST_F(ECSTreeTests, BFSIteratorTest)
 
 TEST_F(ECSTreeTests, DFSIteratorTest)
 {
-    Core::StringAtom trunk;
+    StringAtom trunk;
 
     root.forEachDFS(
-        [&](SW::BaseComponent* c)
+        [&](BaseComponent* c)
         {
             trunk.push_back(c->getComponentName());
         });
 
     root.forEachDFS(
-        [&](const SW::BaseComponent* c)
+        [&](const BaseComponent* c)
         {
             trunk.push_back(c->getComponentName());
         });
 
     root.forEachDFS(
-        [&](const SW::BaseComponent* c)
+        [&](const BaseComponent* c)
         {
             trunk.push_back(c->getComponentName());
             return c->getComponentName() != "Middle2";
@@ -315,13 +317,13 @@ TEST_F(ECSTreeTests, DFSIteratorTest)
     const auto& croot = static_cast<const decltype(root)&>(root);
 
     croot.forEachDFS(
-        [&](const SW::BaseComponent* c)
+        [&](const BaseComponent* c)
         {
             trunk.push_back(c->getComponentName());
         });
 
     croot.forEachDFS(
-        [&](const SW::BaseComponent* c)
+        [&](const BaseComponent* c)
         {
             trunk.push_back(c->getComponentName());
             return c->getComponentName() != "Middle2";
@@ -337,11 +339,11 @@ TEST_F(ECSTreeTests, exportingToJson)
 
     const auto json = root.toJson();
 
-    const auto dump = Core::StringAtom(json.dump(4));
+    const auto dump = StringAtom(json.dump(4));
 
     DummyComponent newRoot;
     newRoot.fromJson(json, false);
-    const auto newDump = Core::StringAtom(newRoot.toJson().dump(4));
+    const auto newDump = StringAtom(newRoot.toJson().dump(4));
 
     std::cout << dump << std::endl;
     EXPECT_EQ(dump, newDump);

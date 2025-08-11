@@ -22,7 +22,7 @@
 
 #include "InputManager.h"
 
-namespace SW
+namespace Core
 {
 
     nlohmann::json KeyboardInputManger::toJson() const
@@ -49,13 +49,13 @@ namespace SW
             for (auto&& map : json["mapping"])
             {
                 if (auto found
-                    = getOrCreate(map["action"].get<Core::StringAtom>(), Keyboard::Key_None))
+                    = getOrCreate(map["action"].get<StringAtom>(), Keyboard::Key_None))
                 {
-                    auto key = Core::StringAtom::Intern(map["key"].get<Core::StringAtom>());
+                    auto key = StringAtom::Intern(map["key"].get<StringAtom>());
                     found->setKey(Keyboard::FromStringToKey(key));
                 }
             }
         }
     }
 
-} // namespace SW
+} // namespace Core

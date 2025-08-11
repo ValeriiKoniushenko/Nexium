@@ -27,7 +27,7 @@
 
 #include <string>
 
-namespace SW
+namespace Core
 {
     void FixedLabel(const char* label, float size)
     {
@@ -40,7 +40,7 @@ namespace SW
         ImGui::SameLine(0, 0);
     }
 
-    void InputTextRO(Core::StringAtom value, float size)
+    void InputTextRO(StringAtom value, float size)
     {
         ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetStyle().Colors[ImGuiCol_TextDisabled]);
         ImGui::PushItemWidth(size);
@@ -50,14 +50,14 @@ namespace SW
         ImGui::PopStyleColor();
     }
 
-    void LabelAndInputTextRO(Core::StringAtom label, Core::StringAtom value, float labelSize,
+    void LabelAndInputTextRO(StringAtom label, StringAtom value, float labelSize,
                              float fullSize)
     {
         FixedLabel(label.data(), labelSize);
         InputTextRO(std::move(value), fullSize - labelSize);
     }
 
-    void LabelAndCheckboxRO(Core::StringAtom label, bool v, float labelSize)
+    void LabelAndCheckboxRO(StringAtom label, bool v, float labelSize)
     {
         FixedLabel(label.data(), labelSize);
         ImGui::BeginDisabled(true);
@@ -65,13 +65,13 @@ namespace SW
         ImGui::EndDisabled();
     }
 
-    bool VectorCombo(Core::StringAtom label, int* current, std::vector<Core::StringAtom>& data)
+    bool VectorCombo(StringAtom label, int* current, std::vector<StringAtom>& data)
     {
         return ImGui::Combo(
             label.c_str(), current,
             [](void* vec, int idx, const char** out_text)
             {
-                auto* data = reinterpret_cast<std::vector<Core::StringAtom>*>(vec);
+                auto* data = reinterpret_cast<std::vector<StringAtom>*>(vec);
 
                 const auto i = static_cast<std::size_t>(idx);
                 if (i >= data->size())
@@ -86,7 +86,7 @@ namespace SW
             reinterpret_cast<void*>(&data), data.size());
     }
 
-    void LabelAndInputText(const Core::StringAtom& label, std::string& originalString,
+    void LabelAndInputText(const StringAtom& label, std::string& originalString,
                            float labelSize, float fullSize)
     {
         std::string inputData = originalString;
@@ -100,14 +100,14 @@ namespace SW
         }
     }
 
-    void InputText(const Core::StringAtom& label, std::string& value, float size)
+    void InputText(const StringAtom& label, std::string& value, float size)
     {
         ImGui::PushItemWidth(size);
         ImGui::InputText(("##" + label).c_str(), &value);
         ImGui::PopItemWidth();
     }
 
-    void LabelAndInputFloat(const Core::StringAtom& label, float& value, float labelSize,
+    void LabelAndInputFloat(const StringAtom& label, float& value, float labelSize,
                             float fullSize, float step, float min, float max, const char* format)
     {
         FixedLabel(label.data(), labelSize);
@@ -133,4 +133,4 @@ namespace SW
         return isPressed;
     }
 
-} // namespace SW
+} // namespace Core

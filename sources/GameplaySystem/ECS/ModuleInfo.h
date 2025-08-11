@@ -24,7 +24,7 @@
 
 #include "Misc/BaseLog.h"
 
-namespace SW::Ecs
+namespace Ecs
 {
 
     [[nodiscard]] inline spdlog::logger* getLogger()
@@ -33,4 +33,4 @@ namespace SW::Ecs
         return logger.get();
     }
 
-} // namespace SW::Ecs
+} // namespace Ecs

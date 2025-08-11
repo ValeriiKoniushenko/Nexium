@@ -11,7 +11,7 @@
         },
         {
             "level": "info",
-            "value": true
+            "value": false
         },
         {
             "level": "warning",

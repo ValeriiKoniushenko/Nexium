@@ -30,7 +30,7 @@
 
 #include <iostream>
 
-namespace SW
+namespace Core
 {
 
     void Transformable::setPosition(const GPos3& position) noexcept
@@ -325,4 +325,4 @@ namespace SW
         return _origin;
     }
 
-} // namespace SW
+} // namespace Core

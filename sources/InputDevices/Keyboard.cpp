@@ -24,10 +24,10 @@
 
 #include "Graphics/Window.h"
 
-namespace SW
+namespace Core
 {
 
-    Core::StringAtom Keyboard::KeyToString(Key key)
+    StringAtom Keyboard::KeyToString(Key key)
     {
         // clang-format off
         if (key == Key::Key_None) return "None"_atom;
@@ -157,7 +157,7 @@ namespace SW
         return "None"_atom;
     }
 
-    Keyboard::Key Keyboard::FromStringToKey(const Core::StringAtom& str)
+    Keyboard::Key Keyboard::FromStringToKey(const StringAtom& str)
     {
         // clang-format off
         if (str == "None"_atom) return Key::Key_None;
@@ -290,22 +290,22 @@ namespace SW
     Keyboard::KeyState Keyboard::getKeyState(Key key)
     {
         return static_cast<KeyState>(
-            glfwGetKey(SW::GetWindow().getRawWindow(), static_cast<int>(key)));
+            glfwGetKey(GetWindow().getRawWindow(), static_cast<int>(key)));
     }
 
     bool Keyboard::isKeyPressed(Key key)
     {
-        return glfwGetKey(SW::GetWindow().getRawWindow(), static_cast<int>(key)) == GLFW_PRESS;
+        return glfwGetKey(GetWindow().getRawWindow(), static_cast<int>(key)) == GLFW_PRESS;
     }
 
     bool Keyboard::isKeyRepeated(Key key)
     {
-        return glfwGetKey(SW::GetWindow().getRawWindow(), static_cast<int>(key)) == GLFW_REPEAT;
+        return glfwGetKey(GetWindow().getRawWindow(), static_cast<int>(key)) == GLFW_REPEAT;
     }
 
     bool Keyboard::isKeyReleased(Key key)
     {
-        return glfwGetKey(SW::GetWindow().getRawWindow(), static_cast<int>(key)) == GLFW_RELEASE;
+        return glfwGetKey(GetWindow().getRawWindow(), static_cast<int>(key)) == GLFW_RELEASE;
     }
 
-} // namespace SW
+} // namespace Core

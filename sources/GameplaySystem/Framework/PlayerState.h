@@ -25,7 +25,7 @@
 #include "Misc/BaseLog.h"
 #include "ModuleInfo.h"
 
-namespace SW
+namespace Core
 {
 
     class PlayerState : public BaseLog, public Utils::NotCopyableAndNotMoveable
@@ -37,4 +37,4 @@ namespace SW
     public:
     };
 
-} // namespace SW
+} // namespace Core

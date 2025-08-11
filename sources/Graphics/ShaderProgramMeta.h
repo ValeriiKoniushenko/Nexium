@@ -25,7 +25,7 @@
 #include "Core/String.h"
 #include "ShaderProgram.h"
 
-namespace SW
+namespace Core
 {
 
     // clang-format off
@@ -77,8 +77,8 @@ namespace SW
         }
 
         void setShaderName(const std::string& name);
-        void setShaderName(const Core::StringAtom& name);
-        [[nodiscard]] const Core::StringAtom& getShaderName() const { return _shaderName; }
+        void setShaderName(const StringAtom& name);
+        [[nodiscard]] const StringAtom& getShaderName() const { return _shaderName; }
 
         [[nodiscard]] spdlog::logger* getLogger() const override { return Graphics::getLogger(); }
 
@@ -97,10 +97,10 @@ namespace SW
 
     private:
         ShaderProgram _shaderProgram;
-        Core::StringAtom _shaderName;
+        StringAtom _shaderName;
 
         std::unordered_set<ShaderVariable, ShaderVariable::Hasher> _uniforms;
         std::unordered_set<ShaderVariable, ShaderVariable::Hasher> _inputs;
         std::unordered_set<ShaderVariable, ShaderVariable::Hasher> _outputs;
     };
-} // namespace SW
+} // namespace Core

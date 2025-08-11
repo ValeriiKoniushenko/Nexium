@@ -26,6 +26,8 @@
 #include "assimp/postprocess.h"
 #include "assimp/scene.h"
 
+using namespace Core;
+
 void TemplateGameInstance::onLoadShaders()
 {
     auto* shader = _shaderManager->getShaderProgram("color"_atom);
@@ -85,7 +87,7 @@ void TemplateGameInstance::onInitFinish()
             aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
         if (Verify(scene) && Verify(scene->mRootNode))
         {
-            SW::StaticMeshBundle mesh;
+            StaticMeshBundle mesh;
             mesh.importFrom(scene->mRootNode, scene, path);
             mesh.setShaderProgram(_shaderManager->getShaderProgram("color"_atom));
             gameScene.addMesh(std::move(mesh));

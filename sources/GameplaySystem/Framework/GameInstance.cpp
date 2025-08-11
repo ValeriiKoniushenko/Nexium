@@ -29,9 +29,9 @@
 #include "Graphics/Window.h"
 #include "Misc/FPSCounter.h"
 
-std::unique_ptr<SW::GameInstance> gameInstance = nullptr;
+std::unique_ptr<Core::GameInstance> gameInstance = nullptr;
 
-namespace SW
+namespace Core
 {
 
     void GameInstance::initialize()
@@ -46,7 +46,7 @@ namespace SW
         _window = &GetWindow();
         _window->create(_defaultWindowName, _defaultWindowSize);
         _window->onResize.subscribe(
-            [this](Core::ISize2 newSize)
+            [this](ISize2 newSize)
             {
                 updateViewport();
             });
@@ -94,7 +94,7 @@ namespace SW
     {
         FPSCounter fps;
         fps.start();
-        Core::FStopwatch clock;
+        FStopwatch clock;
 
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
@@ -128,6 +128,8 @@ namespace SW
                 glClearColor(0.45f, 0.65f, 0.40f, 1.00f);
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                 gameEditor.onTick(world.timeDelta);
+
+                std::this_thread::sleep_for(std::chrono::milliseconds(20));
             }
 
             _window->swapBuffers();
@@ -146,7 +148,7 @@ namespace SW
         }
         else
         {
-            UpdateGlViewport(static_cast<Core::FSize2>(renderToTextureObject.getRenderSize()),
+            UpdateGlViewport(static_cast<FSize2>(renderToTextureObject.getRenderSize()),
                              windowAspectRatio, ViewportMode::ZoomIn);
         }
     }
@@ -157,4 +159,4 @@ namespace SW
         renderMode = renderMode.cast() == R::GameOnly ? R::Editor : R::GameOnly;
         gameInstance->updateViewport();
     }
-} // namespace SW
+} // namespace Core

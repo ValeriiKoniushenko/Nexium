@@ -26,7 +26,7 @@
 #include "Graphics/Primitives/StaticMeshBundle.h"
 #include "Scene/Scene.h"
 
-class TemplateGameInstance : public SW::GameInstance
+class TemplateGameInstance : public Core::GameInstance
 {
 protected:
     void onInitFinish() override;

@@ -85,7 +85,7 @@ struct ImGui_ImplDX11_Data
     ID3D11DepthStencilState*    pDepthStencilState;
     int                         VertexBufferSize;
     int                         IndexBufferSize;
-    ImVector<DXGI_SWAP_CHAIN_DESC> SwapChainDescsForViewports;
+    ImVector<DXGI_CoreAP_CHAIN_DESC> SwapChainDescsForViewports;
 
     ImGui_ImplDX11_Data()       { memset((void*)this, 0, sizeof(*this)); VertexBufferSize = 5000; IndexBufferSize = 10000; }
 };
@@ -700,12 +700,12 @@ struct ImGui_ImplDX11_ViewportData
 
 // Multi-Viewports: configure templates used when creating swapchains for secondary viewports. Will try them in order.
 // This is intentionally not declared in the .h file yet, so you will need to copy this declaration:
-void ImGui_ImplDX11_SetSwapChainDescs(const DXGI_SWAP_CHAIN_DESC* desc_templates, int desc_templates_count);
-void ImGui_ImplDX11_SetSwapChainDescs(const DXGI_SWAP_CHAIN_DESC* desc_templates, int desc_templates_count)
+void ImGui_ImplDX11_SetSwapChainDescs(const DXGI_CoreAP_CHAIN_DESC* desc_templates, int desc_templates_count);
+void ImGui_ImplDX11_SetSwapChainDescs(const DXGI_CoreAP_CHAIN_DESC* desc_templates, int desc_templates_count)
 {
     ImGui_ImplDX11_Data* bd = ImGui_ImplDX11_GetBackendData();
     bd->SwapChainDescsForViewports.resize(desc_templates_count);
-    memcpy(bd->SwapChainDescsForViewports.Data, desc_templates, sizeof(DXGI_SWAP_CHAIN_DESC));
+    memcpy(bd->SwapChainDescsForViewports.Data, desc_templates, sizeof(DXGI_CoreAP_CHAIN_DESC));
 }
 
 static void ImGui_ImplDX11_CreateWindow(ImGuiViewport* viewport)
@@ -722,10 +722,10 @@ static void ImGui_ImplDX11_CreateWindow(ImGuiViewport* viewport)
 
     // Create swap chain
     HRESULT hr = DXGI_ERROR_UNSUPPORTED;
-    for (const DXGI_SWAP_CHAIN_DESC& sd_template : bd->SwapChainDescsForViewports)
+    for (const DXGI_CoreAP_CHAIN_DESC& sd_template : bd->SwapChainDescsForViewports)
     {
         IM_ASSERT(sd_template.BufferDesc.Width == 0 && sd_template.BufferDesc.Height == 0 && sd_template.OutputWindow == nullptr);
-        DXGI_SWAP_CHAIN_DESC sd = sd_template;
+        DXGI_CoreAP_CHAIN_DESC sd = sd_template;
         sd.BufferDesc.Width = (UINT)viewport->Size.x;
         sd.BufferDesc.Height = (UINT)viewport->Size.y;
         sd.OutputWindow = hwnd;
@@ -808,7 +808,7 @@ static void ImGui_ImplDX11_InitMultiViewportSupport()
     platform_io.Renderer_SwapBuffers = ImGui_ImplDX11_SwapBuffers;
 
     // Default swapchain format
-    DXGI_SWAP_CHAIN_DESC sd;
+    DXGI_CoreAP_CHAIN_DESC sd;
     ZeroMemory(&sd, sizeof(sd));
     sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
     sd.SampleDesc.Count = 1;
@@ -816,7 +816,7 @@ static void ImGui_ImplDX11_InitMultiViewportSupport()
     sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
     sd.BufferCount = 1;
     sd.Windowed = TRUE;
-    sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+    sd.SwapEffect = DXGI_CoreAP_EFFECT_DISCARD;
     sd.Flags = 0;
     ImGui_ImplDX11_SetSwapChainDescs(&sd, 1);
 }

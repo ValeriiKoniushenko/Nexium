@@ -33,7 +33,7 @@
 #include <filesystem>
 #include <string>
 
-namespace SW
+namespace Core
 {
 
     class Image : public Utils::NotCopyableButMoveable, public BaseLog
@@ -58,7 +58,7 @@ namespace SW
 
         ~Image() override;
 
-        [[nodiscard]] Core::ISize2 getSize() const noexcept { return _size; }
+        [[nodiscard]] ISize2 getSize() const noexcept { return _size; }
         [[nodiscard]] Channel getChannel() const noexcept { return _channel; }
         [[nodiscard]] GLenum getChannelAsOpenGLType() const noexcept;
         [[nodiscard]] const unsigned char* data() const noexcept { return _data; }
@@ -66,11 +66,11 @@ namespace SW
 
         void clear();
         [[nodiscard]] bool isEmpty() const noexcept { return _data == nullptr; }
-        [[nodiscard]] Core::StringAtom getName() const noexcept { return _name; }
+        [[nodiscard]] StringAtom getName() const noexcept { return _name; }
 
         [[nodiscard]] spdlog::logger* getLogger() const override
         {
-            return SW::Graphics::getLogger();
+            return Graphics::getLogger();
         }
         [[nodiscard]] const char* getPrefix() const override { return "Image"; }
 
@@ -79,9 +79,9 @@ namespace SW
 
     private:
         unsigned char* _data{};
-        Core::ISize2 _size;
+        ISize2 _size;
         Channel _channel = Channel::None;
-        Core::StringAtom _name;
+        StringAtom _name;
     };
 
-} // namespace SW
+} // namespace Core

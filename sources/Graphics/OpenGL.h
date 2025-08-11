@@ -30,11 +30,11 @@
 #include "GLFW/glfw3.h"
 // clang-format on
 
-#ifdef SW_TESTS_TARGET
+#ifdef Core_TESTS_TARGET
 
 #endif
 
-namespace SW
+namespace Core
 {
 
     // clang-format off
@@ -44,6 +44,6 @@ namespace SW
     );
     // clang-format on
 
-    void UpdateGlViewport(Core::FSize2 originalSize, float aspectRatio, ViewportMode mode);
+    void UpdateGlViewport(FSize2 originalSize, float aspectRatio, ViewportMode mode);
 
-} // namespace SW
+} // namespace Core

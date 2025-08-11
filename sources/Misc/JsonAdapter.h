@@ -27,7 +27,7 @@
 
 #include <Core/Size.h>
 
-namespace SW
+namespace Core
 {
 
     class JsonAdapter
@@ -39,7 +39,7 @@ namespace SW
         virtual void fromJson(const nlohmann::json& json, bool isIgnoreChildren) = 0;
     };
 
-} // namespace SW
+} // namespace Core
 
 namespace glm
 {

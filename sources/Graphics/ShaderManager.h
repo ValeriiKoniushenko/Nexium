@@ -28,9 +28,9 @@
 
 #include <unordered_set>
 
-namespace SW
+namespace Core
 {
-    class ShaderManager final : public Core::StrictSingleton<ShaderManager>, public BaseLog
+    class ShaderManager final : public StrictSingleton<ShaderManager>, public BaseLog
     {
     public:
         inline static const char* const defaultVertexFileExtension = ".vert";
@@ -49,7 +49,7 @@ namespace SW
             return _suitableVertExtensions;
         }
 
-        [[nodiscard]] ShaderProgram* getShaderProgram(const Core::StringAtom& shaderName);
+        [[nodiscard]] ShaderProgram* getShaderProgram(const StringAtom& shaderName);
 
         [[nodiscard]] size_t countOfShaders() const { return _shaderMetas.size(); };
         [[nodiscard]] size_t countOfValidShaders() const;
@@ -61,7 +61,7 @@ namespace SW
 
         [[nodiscard]] spdlog::logger* getLogger() const override
         {
-            return SW::Graphics::getLogger();
+            return Graphics::getLogger();
         }
         [[nodiscard]] const char* getPrefix() const override { return "ShaderManager"; }
 
@@ -70,7 +70,7 @@ namespace SW
             const std::unordered_set<std::string>& set, std::filesystem::path path) const;
 
     private:
-        std::unordered_map<Core::StringAtom, ShaderProgramMeta> _shaderMetas;
+        std::unordered_map<StringAtom, ShaderProgramMeta> _shaderMetas;
 
         std::unordered_set<std::string> _suitableFragExtensions = { defaultFragmentFileExtension };
         std::unordered_set<std::string> _suitableVertExtensions = { defaultVertexFileExtension };
@@ -82,4 +82,4 @@ namespace SW
     {
         return ShaderManager::instance();
     }
-} // namespace SW
+} // namespace Core

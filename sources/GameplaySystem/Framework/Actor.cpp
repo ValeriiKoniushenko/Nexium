@@ -22,7 +22,7 @@
 
 #include "Actor.h"
 
-namespace SW
+namespace Core
 {
 
     nlohmann::json Actor::toJson() const
@@ -44,4 +44,4 @@ namespace SW
         }
     }
 
-} // namespace SW
+} // namespace Core

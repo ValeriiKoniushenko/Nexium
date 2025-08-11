@@ -26,7 +26,7 @@
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/matrix_transform.hpp"
 
-namespace SW
+namespace Core
 {
     ECS_REGISTER_NEW_COMPONENT_TYPE(BaseCamera)
 
@@ -65,7 +65,7 @@ namespace SW
         setRotation({ pitch, yaw, 0.0f });
     }
 
-    void BaseCamera::setFrameSize(Core::FSize2 size) noexcept
+    void BaseCamera::setFrameSize(FSize2 size) noexcept
     {
         _frameSize = size;
         _isDirtyProjMatrix = true;
@@ -143,7 +143,7 @@ namespace SW
         }
     }
 
-    Core::StringAtom BaseCamera::getCacheHash() const
+    StringAtom BaseCamera::getCacheHash() const
     {
         return "BaseCamera";
     }
@@ -182,4 +182,4 @@ namespace SW
         }
     }
 
-} // namespace SW
+} // namespace Core

@@ -578,7 +578,7 @@ static bool ImGui_ImplSDL3_Init(SDL_Window* window, SDL_Renderer* renderer, void
     bd->MouseCursors[ImGuiMouseCursor_ResizeAll] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_MOVE);
     bd->MouseCursors[ImGuiMouseCursor_ResizeNS] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_NS_RESIZE);
     bd->MouseCursors[ImGuiMouseCursor_ResizeEW] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_EW_RESIZE);
-    bd->MouseCursors[ImGuiMouseCursor_ResizeNESW] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_NESW_RESIZE);
+    bd->MouseCursors[ImGuiMouseCursor_ResizeNECore] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_NECore_RESIZE);
     bd->MouseCursors[ImGuiMouseCursor_ResizeNWSE] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_NWSE_RESIZE);
     bd->MouseCursors[ImGuiMouseCursor_Hand] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_POINTER);
     bd->MouseCursors[ImGuiMouseCursor_Wait] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_WAIT);
@@ -1074,7 +1074,7 @@ static void ImGui_ImplSDL3_ShowWindow(ImGuiViewport* viewport)
         LONG ex_style = ::GetWindowLong(hwnd, GWL_EXSTYLE);
         ex_style |= WS_EX_APPWINDOW;
         ex_style &= ~WS_EX_TOOLWINDOW;
-        ::ShowWindow(hwnd, SW_HIDE);
+        ::ShowWindow(hwnd, Core_HIDE);
         ::SetWindowLong(hwnd, GWL_EXSTYLE, ex_style);
     }
 #endif

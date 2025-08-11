@@ -1,6 +1,6 @@
 
 get_filename_component(MAIN_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
-set(TARGET_NAME "__SW_${MAIN_NAME}")
+set(TARGET_NAME "__Core_${MAIN_NAME}")
 
 file(GLOB_RECURSE CPP_SOURCES "*.cpp")
 set_source_files_properties(${CPP_SOURCES} PROPERTIES LANGUAGE CXX)
@@ -8,14 +8,14 @@ set_source_files_properties(${CPP_SOURCES} PROPERTIES LANGUAGE CXX)
 file(GLOB_RECURSE HEADERS "*.h")
 
 add_library(${TARGET_NAME} STATIC ${CPP_SOURCES} ${HEADERS})
-add_library(SW::${MAIN_NAME} ALIAS ${TARGET_NAME})
+add_library(Core::${MAIN_NAME} ALIAS ${TARGET_NAME})
 
 target_link_libraries(${TARGET_NAME} PUBLIC
-        SW::Graphics
-        SW::GameplaySystem
+        Core::Graphics
+        Core::GameplaySystem
 )
 
 target_include_directories(${TARGET_NAME} PUBLIC ../)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/Flags.cmake)
-SWAddCompileOptionsTo(${TARGET_NAME})
+CoreAddCompileOptionsTo(${TARGET_NAME})

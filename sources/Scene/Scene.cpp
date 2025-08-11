@@ -22,7 +22,7 @@
 
 #include "Scene.h"
 
-namespace SW
+namespace Core
 {
 
     void Scene::directDraw()
@@ -33,7 +33,7 @@ namespace SW
         }
     }
 
-    void Scene::setSceneName(Core::StringAtom name)
+    void Scene::setSceneName(StringAtom name)
     {
         if (Verify(!name.isEmpty()))
         {
@@ -41,7 +41,7 @@ namespace SW
         }
     }
 
-    const Core::StringAtom& Scene::getSceneName() const noexcept
+    const StringAtom& Scene::getSceneName() const noexcept
     {
         return _sceneName;
     }
@@ -111,7 +111,7 @@ namespace SW
         return JsonCacheable::getCacheDir() / "scenes";
     }
 
-    Core::StringAtom Scene::getCacheHash() const
+    StringAtom Scene::getCacheHash() const
     {
         return "RootScene";
     }
@@ -135,4 +135,4 @@ namespace SW
         }
     }
 
-} // namespace SW
+} // namespace Core

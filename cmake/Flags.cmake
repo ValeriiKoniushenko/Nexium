@@ -1,6 +1,6 @@
 include_guard()
 
-function(SWAddCompileOptionsTo Target)
+function(CoreAddCompileOptionsTo Target)
     if (MSVC)
         target_compile_options(${Target} PRIVATE "/W4" "$<$<CONFIG:RELEASE>:/O2>")
     else ()

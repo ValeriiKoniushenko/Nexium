@@ -24,7 +24,7 @@
 
 #include "Misc/BaseLog.h"
 
-namespace SW::Camera
+namespace Camera
 {
 
     [[nodiscard]] inline spdlog::logger* getLogger()
@@ -33,4 +33,4 @@ namespace SW::Camera
         return logger.get();
     }
 
-} // namespace SW::Camera
+} // namespace Camera

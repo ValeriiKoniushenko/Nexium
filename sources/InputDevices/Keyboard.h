@@ -27,7 +27,7 @@
 
 #include <Core/String.h>
 
-namespace SW
+namespace Core
 {
 
     class Keyboard final
@@ -170,8 +170,8 @@ namespace SW
 
         Keyboard() = delete;
 
-        [[nodiscard]] static Core::StringAtom KeyToString(Key key);
-        [[nodiscard]] static Key FromStringToKey(const Core::StringAtom& str);
+        [[nodiscard]] static StringAtom KeyToString(Key key);
+        [[nodiscard]] static Key FromStringToKey(const StringAtom& str);
 
         [[nodiscard]] static KeyState getKeyState(Key key);
         [[nodiscard]] static bool isKeyPressed(Key key);
@@ -179,4 +179,4 @@ namespace SW
         [[nodiscard]] static bool isKeyReleased(Key key);
     };
 
-} // namespace SW
+} // namespace Core

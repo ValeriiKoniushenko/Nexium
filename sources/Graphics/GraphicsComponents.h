@@ -26,7 +26,7 @@
 #include "ShaderProgram.h"
 #include "assimp/mesh.h"
 
-namespace SW
+namespace Core
 {
 
     class GraphicsComponentData : public virtual JsonAdapter
@@ -63,10 +63,10 @@ namespace SW
             MV_None
         };
 
-        [[nodiscard]] static Core::StringAtom ToString(ModifiedValue v);
-        [[nodiscard]] static ModifiedValue FromString(const Core::StringAtom& str);
-        [[nodiscard]] static const std::vector<Core::StringAtom>& ModifiedValueAsVector();
-        [[nodiscard]] static const std::vector<Core::StringAtom>& ModifierAsVector();
+        [[nodiscard]] static StringAtom ToString(ModifiedValue v);
+        [[nodiscard]] static ModifiedValue FromString(const StringAtom& str);
+        [[nodiscard]] static const std::vector<StringAtom>& ModifiedValueAsVector();
+        [[nodiscard]] static const std::vector<StringAtom>& ModifierAsVector();
 
     public:
         GraphicsComponentData() = default;
@@ -171,4 +171,4 @@ namespace SW
         GLuint _texture = 0;
     };
 
-} // namespace SW
+} // namespace Core

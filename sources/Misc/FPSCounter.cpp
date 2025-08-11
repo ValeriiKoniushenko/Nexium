@@ -22,7 +22,7 @@
 
 #include "FPSCounter.h"
 
-namespace SW
+namespace Core
 {
 
     void FPSCounter::reset()
@@ -48,4 +48,4 @@ namespace SW
         return static_cast<double>(_frames) / std::chrono::duration<double>(now - _start).count();
     }
 
-} // namespace SW
+} // namespace Core

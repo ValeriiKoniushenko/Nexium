@@ -27,7 +27,7 @@
 #include "GameplaySystem/Framework/Actor.h"
 #include "Misc/JsonCacheable.h"
 
-namespace SW
+namespace Core
 {
 
     class BaseCamera : public Actor, public JsonCacheable
@@ -41,8 +41,8 @@ namespace SW
 
         void lookAt(const glm::vec3& targetPosition);
 
-        void setFrameSize(Core::FSize2 size) noexcept;
-        [[nodiscard]] Core::FSize2 getFrameSize() const noexcept { return _frameSize; }
+        void setFrameSize(FSize2 size) noexcept;
+        [[nodiscard]] FSize2 getFrameSize() const noexcept { return _frameSize; }
 
         void setFov(float fov) noexcept;
         [[nodiscard]] float getFov() const noexcept { return _fov; }
@@ -60,7 +60,7 @@ namespace SW
         [[nodiscard]] nlohmann::json toJson() const override;
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
 
-        [[nodiscard]] Core::StringAtom getCacheHash() const override;
+        [[nodiscard]] StringAtom getCacheHash() const override;
         [[nodiscard]] nlohmann::json toCacheData() const override;
         void fromCacheData(const nlohmann::json& data) override;
 
@@ -71,10 +71,10 @@ namespace SW
     protected:
         glm::mat4 _cachedProjMatrix = glm::mat4(1.f);
         glm::mat4 _cachedCalculatedMatrix = glm::mat4(1.f);
-        Core::FSize2 _frameSize = Core::FSize2{ 600, 600 };
+        FSize2 _frameSize = FSize2{ 600, 600 };
         float _fov = 45.f;
         float _far = 10'000.f;
         float _near = 0.1f;
         bool _isDirtyProjMatrix = true;
     };
-} // namespace SW
+} // namespace Core

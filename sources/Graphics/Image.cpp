@@ -26,7 +26,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "Stb/Image.h"
 
-namespace SW
+namespace Core
 {
 
     Image::Image(const std::filesystem::path& path)
@@ -108,4 +108,4 @@ namespace SW
         _channel = Channel::None;
     }
 
-} // namespace SW
+} // namespace Core

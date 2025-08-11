@@ -519,7 +519,7 @@ static void ImGui_ImplDX9_CreateWindow(ImGuiViewport* viewport)
 
     ZeroMemory(&vd->d3dpp, sizeof(D3DPRESENT_PARAMETERS));
     vd->d3dpp.Windowed = TRUE;
-    vd->d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
+    vd->d3dpp.SwapEffect = D3DCoreAPEFFECT_DISCARD;
     vd->d3dpp.BackBufferWidth = (UINT)viewport->Size.x;
     vd->d3dpp.BackBufferHeight = (UINT)viewport->Size.y;
     vd->d3dpp.BackBufferFormat = D3DFMT_UNKNOWN;

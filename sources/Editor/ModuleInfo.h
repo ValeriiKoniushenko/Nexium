@@ -24,7 +24,7 @@
 
 #include "Misc/BaseLog.h"
 
-namespace SW::Editor
+namespace Editor
 {
 
     [[nodiscard]] inline spdlog::logger* getLogger()
@@ -33,4 +33,4 @@ namespace SW::Editor
         return logger.get();
     }
 
-} // namespace SW::Editor
+} // namespace Editor

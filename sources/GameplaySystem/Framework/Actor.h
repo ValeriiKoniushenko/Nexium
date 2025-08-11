@@ -25,7 +25,7 @@
 #include "GameplaySystem/ECS/BaseComponent.h"
 #include "GameplaySystem/ECS/Transformable.h"
 
-namespace SW
+namespace Core
 {
 
     class Actor : public Transformable, public BaseComponent
@@ -42,4 +42,4 @@ namespace SW
     protected:
     };
 
-} // namespace SW
+} // namespace Core

@@ -24,7 +24,7 @@
 
 #include "Misc/BaseLog.h"
 
-namespace SW::Scene
+namespace Scene
 {
 
     [[nodiscard]] inline spdlog::logger* getLogger()
@@ -33,4 +33,4 @@ namespace SW::Scene
         return logger.get();
     }
 
-} // namespace SW::Scene
+} // namespace Scene

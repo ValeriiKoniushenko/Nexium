@@ -197,9 +197,9 @@ GLFWAPI HGLRC glfwGetWGLContext(GLFWwindow* window);
  */
 GLFWAPI CGDirectDisplayID glfwGetCocoaMonitor(GLFWmonitor* monitor);
 
-/*! @brief Returns the `NSWindow` of the specified window.
+/*! @brief Returns the `NCoreindow` of the specified window.
  *
- *  @return The `NSWindow` of the specified window, or `nil` if an
+ *  @return The `NCoreindow` of the specified window, or `nil` if an
  *  [error](@ref error_handling) occurred.
  *
  *  @thread_safety This function may be called from any thread.  Access is not

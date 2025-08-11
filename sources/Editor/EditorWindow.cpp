@@ -40,7 +40,7 @@ namespace
 
 } // namespace
 
-namespace SW
+namespace Core
 {
 
     ECS_REGISTER_NEW_COMPONENT_TYPE(BaseEWC)
@@ -98,13 +98,13 @@ namespace SW
     void BaseFloatEWC::onUpdate()
     {
         const ImVec2 size = ImGui::GetWindowSize();
-        _size = Core::FSize2{ size.x, size.y };
+        _size = FSize2{ size.x, size.y };
 
         if (_size != _oldSize)
         {
             const auto regionMax = ImGui::GetContentRegionMax();
             const auto regionMin = ImGui::GetWindowContentRegionMin();
-            _innerSize = Core::FSize2(regionMax.x - regionMin.x, regionMax.y - regionMin.y);
+            _innerSize = FSize2(regionMax.x - regionMin.x, regionMax.y - regionMin.y);
             onSizeChanged.trigger(_size, _innerSize);
             _oldSize = _size;
         }
@@ -248,7 +248,7 @@ namespace SW
     //                  __/ |
     //                 |___/
     // ========================================================================
-    void LogsWindow::addLog(Core::StringAtom&& log, spdlog::level::level_enum level)
+    void LogsWindow::addLog(StringAtom&& log, spdlog::level::level_enum level)
     {
         LogLine l;
         l.message = std::move(log);
@@ -482,7 +482,7 @@ namespace SW
         return JsonCacheable::getCacheDir() / "editor";
     }
 
-    Core::StringAtom LogsWindow::getCacheHash() const
+    StringAtom LogsWindow::getCacheHash() const
     {
         return "LogsWindow"_atom;
     }
@@ -688,7 +688,7 @@ namespace SW
     {
         if (comp && ImGui::CollapsingHeader("Graphics", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            LabelAndInputTextRO("Triangles:", Core::StringAtom::MakeFrom(comp->getTriangleCount()),
+            LabelAndInputTextRO("Triangles:", StringAtom::MakeFrom(comp->getTriangleCount()),
                                 _labelWidth, _innerSize.width);
 
             auto shaderName = ""_atom;
@@ -748,7 +748,7 @@ namespace SW
                     objData = _objData;
                 ImGui::PushID(static_cast<int>(i));
 
-                FixedLabel((Core::StringAtom::MakeFrom(i) + "#").c_str(), _labelWidth);
+                FixedLabel((StringAtom::MakeFrom(i) + "#").c_str(), _labelWidth);
 
                 const int originalMod = getIndexFromModifier(objData.second);
                 const int originalValueMod = getIndexFromModifier(objData.first);
@@ -756,11 +756,11 @@ namespace SW
                 int currentMod = originalMod;
                 int currentValueMod = originalValueMod;
                 ImGui::PushItemWidth(oneComboSize);
-                VectorCombo(("##ModifierVec" + Core::StringAtom::MakeFrom(i)).c_str(), &currentMod,
+                VectorCombo(("##ModifierVec" + StringAtom::MakeFrom(i)).c_str(), &currentMod,
                             _modifierVec);
                 ImGui::SameLine(0, gap);
 
-                VectorCombo(("##ModifierValueVec" + Core::StringAtom::MakeFrom(i)).c_str(),
+                VectorCombo(("##ModifierValueVec" + StringAtom::MakeFrom(i)).c_str(),
                             &currentValueMod, _modifierValueVec);
                 ImGui::PopItemWidth();
 
@@ -820,7 +820,7 @@ namespace SW
 
     void ObjectPropertiesWindow::tryDrawBaseComponentExtra(BaseComponent* comp)
     {
-        if (comp && ImGui::CollapsingHeader("Component data"))
+        if (comp && ImGui::CollapsingHeader("Component data", ImGuiTreeNodeFlags_DefaultOpen))
         {
             LabelAndInputTextRO("Children:", comp->getChildrenCount(), _labelWidth,
                                 _innerSize.width);
@@ -866,7 +866,7 @@ namespace SW
             if (auto res
                 = _frameSizeControl.drawAndProcess(comp->getFrameSize().toGlm(), _innerSize.width))
             {
-                comp->setFrameSize(Core::FSize2(res.value()));
+                comp->setFrameSize(FSize2(res.value()));
             }
 
             ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
@@ -1087,15 +1087,39 @@ namespace SW
 
         ImGui::PopID();
     }
+
     void AssetsManagerWindow::onInit()
     {
         BaseFloatEWC::onInit();
     }
+
     void AssetsManagerWindow::onDraw()
     {
+        drawExplorerTree();
+        ImGui::SameLine();
+        drawExplorer();
     }
+
     void AssetsManagerWindow::onUpdate()
     {
         BaseFloatEWC::onUpdate();
     }
-} // namespace SW
+
+    void AssetsManagerWindow::drawExplorerTree()
+    {
+        if (ImGui::BeginChild("Eplorer tree", ImVec2(200.0f, 0), ImGuiChildFlags_ResizeX))
+        {
+            ImGui::Text("Hello world! LEFT");
+        }
+        ImGui::EndChild();
+    }
+
+    void AssetsManagerWindow::drawExplorer()
+    {
+        if (ImGui::BeginChild("Explorer"))
+        {
+            ImGui::Text("Hello world! Right");
+        }
+        ImGui::EndChild();
+    }
+} // namespace Core

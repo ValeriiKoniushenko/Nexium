@@ -25,7 +25,7 @@
 #include "Misc/BaseLog.h"
 #include "ModuleInfo.h"
 
-namespace SW
+namespace Core
 {
 
     class GameState : public BaseLog, public Utils::NotCopyableAndNotMoveable
@@ -35,4 +35,4 @@ namespace SW
         [[nodiscard]] const char* getPrefix() const override { return "GameState"; }
     };
 
-} // namespace SW
+} // namespace Core

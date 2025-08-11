@@ -24,7 +24,7 @@
 
 #include "assimp/scene.h"
 
-namespace SW
+namespace Core
 {
 
     GraphicsComponentData::~GraphicsComponentData()
@@ -261,7 +261,7 @@ namespace SW
         {
             for (auto&& modifier : json["modifiers"])
             {
-                const auto val = FromString(modifier.at("value").get<Core::StringAtom>());
+                const auto val = FromString(modifier.at("value").get<StringAtom>());
                 const auto mod = Modifier::fromStr(modifier.at("modifier").get<std::string>());
                 if (mod)
                 {
@@ -271,7 +271,7 @@ namespace SW
         }
     }
 
-    Core::StringAtom GraphicsComponentData::ToString(GraphicsComponentData::ModifiedValue v)
+    StringAtom GraphicsComponentData::ToString(GraphicsComponentData::ModifiedValue v)
     {
         // clang-format off
         if (MV_Blend == v) return "Blend"_atom;
@@ -295,11 +295,11 @@ namespace SW
         if (MV_ProgramPointSize == v) return "ProgramPointSize"_atom;
         // clang-format on
 
-        return Core::StringAtom("");
+        return StringAtom("");
     }
 
     GraphicsComponentData::ModifiedValue GraphicsComponentData::FromString(
-        const Core::StringAtom& str)
+        const StringAtom& str)
     {
         // clang-format off
         if (str == "Blend"_atom) return MV_Blend;
@@ -326,9 +326,9 @@ namespace SW
         return ModifiedValue::MV_None;
     }
 
-    const std::vector<Core::StringAtom>& GraphicsComponentData::ModifiedValueAsVector()
+    const std::vector<StringAtom>& GraphicsComponentData::ModifiedValueAsVector()
     {
-        static const std::vector<Core::StringAtom> out = {
+        static const std::vector<StringAtom> out = {
             "Blend"_atom,
             "CullFace"_atom,
             "DepthTest"_atom,
@@ -351,12 +351,12 @@ namespace SW
         };
         return out;
     }
-    const std::vector<Core::StringAtom>& GraphicsComponentData::ModifierAsVector()
+    const std::vector<StringAtom>& GraphicsComponentData::ModifierAsVector()
     {
-        static const std::vector<Core::StringAtom> out = {
+        static const std::vector<StringAtom> out = {
             "Enable",
             "Disable",
         };
         return out;
     }
-} // namespace SW
+} // namespace Core

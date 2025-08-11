@@ -28,7 +28,7 @@
 #include "ModuleInfo.h"
 #include "PlayerState.h"
 
-namespace SW
+namespace Core
 {
 
     class World : public BaseLog, public Utils::NotCopyableAndNotMoveable
@@ -46,4 +46,4 @@ namespace SW
         LevelData levelData;
     };
 
-} // namespace SW
+} // namespace Core

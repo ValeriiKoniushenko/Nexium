@@ -32,7 +32,7 @@
 #include <boost/smart_ptr/intrusive_ref_counter.hpp>
 #include <chrono>
 
-namespace SW
+namespace Core
 {
     /**
      * @brief Base input action class for handling generic key inputs.
@@ -75,21 +75,21 @@ namespace SW
     public:
         InputAction() = default;
 
-        explicit InputAction(Core::StringAtom name)
+        explicit InputAction(StringAtom name)
             : _name(std::move(name))
         {
         }
 
-        InputAction(Core::StringAtom name, KeyT key)
+        InputAction(StringAtom name, KeyT key)
             : _name(std::move(name)),
               _key(key)
         {
         }
         virtual ~InputAction() = default;
 
-        [[nodiscard]] const Core::StringAtom& getName() const { return _name; }
+        [[nodiscard]] const StringAtom& getName() const { return _name; }
 
-        void setName(const Core::StringAtom& newName) { _name = newName; }
+        void setName(const StringAtom& newName) { _name = newName; }
 
         void setFrequency(TimeT value) { _frequency = value; }
 
@@ -136,7 +136,7 @@ namespace SW
          * @brief will be called while pressing on the needed button.
          * @param SpecKeysState states of special keys
          */
-        Core::Delegate<void(SpecKeysState)> onPress;
+        Delegate<void(SpecKeysState)> onPress;
 
     protected:
         [[nodiscard]] virtual bool isKeyPressed() const = 0;
@@ -145,11 +145,11 @@ namespace SW
          * @brief will be called while pressing on the needed button.
          * @param SpecKeysState states of special keys
          */
-        Core::Delegate<void(SpecKeysState)> _onActionPrivate;
+        Delegate<void(SpecKeysState)> _onActionPrivate;
         std::optional<typename decltype(_onActionPrivate)::ID> _idActionPrivate;
 
     protected:
-        Core::StringAtom _name;
+        StringAtom _name;
         std::optional<KeyT> _key{};
         TimeT _frequency = TimeT(0);
         std::chrono::system_clock::time_point _lastUpdate{};
@@ -160,7 +160,7 @@ namespace SW
     /**
      * @brief Handles input actions specifically from the keyboard.
      * Also, can be called as KeyboardIA.
-     * Better to create it using SW::KeyboardInputManger. I.e.:
+     * Better to create it using KeyboardInputManger. I.e.:
      */
     class KeyboardInputAction : public InputAction<Keyboard::Key>
     {
@@ -174,7 +174,7 @@ namespace SW
         static Ptr Create() { return { new Self }; }
 
         KeyboardInputAction() = default;
-        KeyboardInputAction(const Core::StringAtom& name, KeyT key);
+        KeyboardInputAction(const StringAtom& name, KeyT key);
 
     protected:
         [[nodiscard]] bool isKeyPressed() const override;
@@ -183,7 +183,7 @@ namespace SW
     /**
      * @brief Handles input actions specifically from the mouse.
      * Also, can be called as MousedIA
-     * Better to create it using SW::MouseInputManger. I.e.:
+     * Better to create it using MouseInputManger. I.e.:
      */
     class MouseInputAction : public InputAction<Mouse::Key>
     {
@@ -197,11 +197,11 @@ namespace SW
         static Ptr Create() { return { new Self }; }
 
         MouseInputAction();
-        explicit MouseInputAction(const Core::StringAtom& name, KeyT key = Mouse::Key_None);
-        explicit MouseInputAction(const Core::StringAtom& name);
+        explicit MouseInputAction(const StringAtom& name, KeyT key = Mouse::Key_None);
+        explicit MouseInputAction(const StringAtom& name);
 
-        Core::Delegate<void(glm::vec2, SpecKeysState)> onMove;
-        Core::Delegate<void(glm::vec2, SpecKeysState)> onMouseClick;
+        Delegate<void(glm::vec2, SpecKeysState)> onMove;
+        Delegate<void(glm::vec2, SpecKeysState)> onMouseClick;
 
         void update() override;
 
@@ -223,6 +223,6 @@ namespace SW
         typename T::Ptr;
         typename T::CPtr;
         typename T::Parent;
-        std::derived_from<T, SW::InputAction<typename T::KeyT>>;
+        std::derived_from<T, InputAction<typename T::KeyT>>;
     };
-} // namespace SW
+} // namespace Core

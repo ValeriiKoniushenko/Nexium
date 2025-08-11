@@ -31,7 +31,7 @@
 
 #include <filesystem>
 
-namespace SW
+namespace Core
 {
     class StaticMesh : public GraphicsComponentData, public Transformable, public BaseComponent
     {
@@ -41,7 +41,7 @@ namespace SW
         void importFrom(const aiMesh* mesh, const aiScene* scene,
                         const std::filesystem::path& modelPath = "");
 
-        [[nodiscard]] Core::FSize3 getSize() const noexcept { return _size; }
+        [[nodiscard]] FSize3 getSize() const noexcept { return _size; }
         [[nodiscard]] glm::vec3 getCenter() const noexcept { return _center; }
 
         [[nodiscard]] nlohmann::json toJson() const override;
@@ -54,7 +54,7 @@ namespace SW
         void calculateSizeBaseOnMesh(const aiMesh* rawMesh, const aiMatrix4x4& transform);
 
     protected:
-        Core::FSize3 _size;
+        FSize3 _size;
         glm::vec3 _center = glm::vec3(0);
 
         friend class StaticMeshFactory;
@@ -65,8 +65,8 @@ namespace SW
     public:
         StaticMeshFactory() = delete;
 
-        [[nodiscard]] static StaticMesh CreateBase(const Core::StringAtom& name = ""_atom);
-        [[nodiscard]] static StaticMesh CreateBiSide(const Core::StringAtom& name = ""_atom);
-        [[nodiscard]] static StaticMesh CreateBiBlendSide(const Core::StringAtom& name = ""_atom);
+        [[nodiscard]] static StaticMesh CreateBase(const StringAtom& name = ""_atom);
+        [[nodiscard]] static StaticMesh CreateBiSide(const StringAtom& name = ""_atom);
+        [[nodiscard]] static StaticMesh CreateBiBlendSide(const StringAtom& name = ""_atom);
     };
-} // namespace SW
+} // namespace Core

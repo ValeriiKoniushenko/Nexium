@@ -27,7 +27,7 @@
 
 #include <Core/String.h>
 
-namespace SW
+namespace Core
 {
 
     class Mouse
@@ -52,8 +52,8 @@ namespace SW
 
         Mouse() = delete;
 
-        [[nodiscard]] static Core::StringAtom KeyToString(Key key);
-        [[nodiscard]] static Key FromStringToKey(const Core::StringAtom& str);
+        [[nodiscard]] static StringAtom KeyToString(Key key);
+        [[nodiscard]] static Key FromStringToKey(const StringAtom& str);
 
         [[nodiscard]] static glm::vec2 getPosition();
 
@@ -62,4 +62,4 @@ namespace SW
         [[nodiscard]] static bool isKeyRepeated(Key key);
     };
 
-} // namespace SW
+} // namespace Core

@@ -27,12 +27,12 @@
 
 #include <Core/Position.h>
 
-namespace SW
+namespace Core
 {
-    using GPos3 = Core::GlobalPosition3F;
-    using GPos2 = Core::GlobalPosition2F;
-    using RPos3 = Core::RelativePosition3F;
-    using RPos2 = Core::RelativePosition2F;
+    using GPos3 = GlobalPosition3F;
+    using GPos2 = GlobalPosition2F;
+    using RPos3 = RelativePosition3F;
+    using RPos2 = RelativePosition2F;
 
     class Transformable : public virtual JsonAdapter
     {
@@ -96,4 +96,4 @@ namespace SW
         glm::vec3 _rotation{};
         bool _isDirtyModelMatrix = true;
     };
-} // namespace SW
+} // namespace Core

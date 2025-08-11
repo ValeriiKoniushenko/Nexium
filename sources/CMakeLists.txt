@@ -6,17 +6,17 @@ add_subdirectory(InputDevices)
 add_subdirectory(Graphics)
 add_subdirectory(Scene)
 
-add_library(SpriteWalkerEngine INTERFACE)
+add_library(NexiumEngine INTERFACE)
 
-target_link_libraries(SpriteWalkerEngine INTERFACE
-    SW::Camera
-    SW::Editor
-    SW::GameplaySystem
-    SW::Graphics
-    SW::InputDevices
-    SW::Misc
-    SW::ImGui
+target_link_libraries(NexiumEngine INTERFACE
+    Core::Camera
+    Core::Editor
+    Core::GameplaySystem
+    Core::Graphics
+    Core::InputDevices
+    Core::Misc
+    Core::ImGui
     assimp
 )
 
-target_include_directories(SpriteWalkerEngine INTERFACE ./)
+target_include_directories(NexiumEngine INTERFACE ./)

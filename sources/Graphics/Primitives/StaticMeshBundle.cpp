@@ -29,15 +29,17 @@
 
 #include <Core/Timer.h>
 
+using namespace Core;
+
 namespace
 {
-    void recursiveImportFrom(SW::BaseComponent* rootComponent, const aiNode* node,
+    void recursiveImportFrom(BaseComponent* rootComponent, const aiNode* node,
                              const aiScene* scene, const std::filesystem::path& modelPath,
-                             SW::StaticMeshBundle::MeshesT& container)
+                             StaticMeshBundle::MeshesT& container)
     {
         for (uint32_t i = 0; i < node->mNumMeshes; ++i)
         {
-            auto* topMesh = rootComponent->addChildComponent<SW::StaticMesh>();
+            auto* topMesh = rootComponent->addChildComponent<StaticMesh>();
 
             const aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
             topMesh->setComponentName(mesh->mName.C_Str());
@@ -53,7 +55,7 @@ namespace
     }
 } // namespace
 
-namespace SW
+namespace Core
 {
 
     ECS_REGISTER_NEW_COMPONENT_TYPE(StaticMeshBundle)
@@ -183,7 +185,7 @@ namespace SW
         }
     }
 
-    Core::StringAtom StaticMeshBundle::getCacheHash() const
+    StringAtom StaticMeshBundle::getCacheHash() const
     {
         return getComponentName();
     }
@@ -198,4 +200,4 @@ namespace SW
         fromJson(data, false);
     }
 
-} // namespace SW
+} // namespace Core

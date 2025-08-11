@@ -24,7 +24,7 @@
 
 #include "GameplaySystem/Framework/GameInstance.h"
 
-namespace SW
+namespace Core
 {
     ECS_REGISTER_NEW_COMPONENT_TYPE(Spectator)
 
@@ -57,7 +57,7 @@ namespace SW
         }
     }
 
-    Core::StringAtom Spectator::getCacheHash() const
+    StringAtom Spectator::getCacheHash() const
     {
         return "EditorsRootSpectator";
     }
@@ -88,10 +88,10 @@ namespace SW
 
         BaseCamera& camera = *getOrAddChildComponent<BaseCamera>();
 
-        static auto getRealSpeed = [this](SW::KeyboardIA::SpecKeysState state)
+        static auto getRealSpeed = [this](KeyboardIA::SpecKeysState state)
         {
             const float mlt
-                = state.leftShift.cast() == SW::Keyboard::KeyState::Pressed ? 10.f : 1.f;
+                = state.leftShift.cast() == Keyboard::KeyState::Pressed ? 10.f : 1.f;
             return speed * mlt;
         };
 
@@ -114,4 +114,4 @@ namespace SW
         keyboardInput.getOrCreate("exit", Keyboard::Key::Key_F12)->onPress.subscribe([&](auto){ GetWindow().close(); });
         // clang-format on
     }
-} // namespace SW
+} // namespace Core

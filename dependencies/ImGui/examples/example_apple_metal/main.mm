@@ -21,7 +21,7 @@
 #include "imgui_impl_metal.h"
 #if TARGET_OS_OSX
 #include "imgui_impl_osx.h"
-@interface AppViewController : NSViewController<NSWindowDelegate>
+@interface AppViewController : NSViewController<NCoreindowDelegate>
 @end
 #else
 @interface AppViewController : UIViewController
@@ -280,7 +280,7 @@
 #if TARGET_OS_OSX
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
-@property (nonatomic, strong) NSWindow *window;
+@property (nonatomic, strong) NCoreindow *window;
 @end
 
 @implementation AppDelegate
@@ -295,8 +295,8 @@
     if (self = [super init])
     {
         NSViewController *rootViewController = [[AppViewController alloc] initWithNibName:nil bundle:nil];
-        self.window = [[NSWindow alloc] initWithContentRect:NSZeroRect
-                                                  styleMask:NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable | NSWindowStyleMaskMiniaturizable
+        self.window = [[NCoreindow alloc] initWithContentRect:NSZeroRect
+                                                  styleMask:NCoreindowStyleMaskTitled | NCoreindowStyleMaskClosable | NCoreindowStyleMaskResizable | NCoreindowStyleMaskMiniaturizable
                                                     backing:NSBackingStoreBuffered
                                                       defer:NO];
         self.window.contentViewController = rootViewController;

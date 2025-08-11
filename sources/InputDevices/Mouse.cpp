@@ -24,10 +24,10 @@
 
 #include "Graphics/Window.h"
 
-namespace SW
+namespace Core
 {
 
-    Core::StringAtom Mouse::KeyToString(Key key)
+    StringAtom Mouse::KeyToString(Key key)
     {
         // clang-format off
         if (key == Key_Last) return "Last"_atom;
@@ -47,7 +47,7 @@ namespace SW
         return "None"_atom;
     }
 
-    Mouse::Key Mouse::FromStringToKey(const Core::StringAtom& str)
+    Mouse::Key Mouse::FromStringToKey(const StringAtom& str)
     {
         // clang-format off
         if (str == "Last"_atom) return Key_Last;
@@ -89,4 +89,4 @@ namespace SW
         return glfwGetMouseButton(GetWindow().getRawWindow(), key) == GLFW_REPEAT;
     }
 
-} // namespace SW
+} // namespace Core

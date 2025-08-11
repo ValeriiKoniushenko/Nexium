@@ -24,7 +24,7 @@
 
 #include "GameplaySystem/Framework/GameInstance.h"
 
-namespace SW
+namespace Core
 {
 
     void EditorMenuBarWindow::onInit()
@@ -37,7 +37,7 @@ namespace SW
             {
                 _cachedFpsText
                     = _fpsText
-                      + Core::StringAtom::MakeFrom(static_cast<int>(ImGui::GetIO().Framerate));
+                      + StringAtom::MakeFrom(static_cast<int>(ImGui::GetIO().Framerate));
             });
     }
 
@@ -92,4 +92,4 @@ namespace SW
         _slowUpdater.startOrUpdate();
     }
 
-} // namespace SW
+} // namespace Core

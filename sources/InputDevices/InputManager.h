@@ -27,7 +27,7 @@
 
 #include <unordered_map>
 
-namespace SW
+namespace Core
 {
 
     template<IsInputAction InputTParam>
@@ -38,7 +38,7 @@ namespace SW
         template<bool isConst>
         using AdaptiveRawPtr = std::conditional_t<isConst, const InputManger, InputManger>*;
         using InputT = InputTParam;
-        using MappingT = std::unordered_map<Core::StringAtom, typename InputT::Ptr>;
+        using MappingT = std::unordered_map<StringAtom, typename InputT::Ptr>;
 
         InputManger() = default;
         ~InputManger() override = default;
@@ -53,7 +53,7 @@ namespace SW
 
         [[nodiscard]] const MappingT& getMapping() const noexcept { return _mapping; }
 
-        [[nodiscard]] typename InputT::Ptr getOrCreate(const Core::StringAtom& name,
+        [[nodiscard]] typename InputT::Ptr getOrCreate(const StringAtom& name,
                                                        typename InputT::KeyT key)
         {
             if (isExist(name))
@@ -68,7 +68,7 @@ namespace SW
         {
             return !!impl_get<true>(this, key);
         }
-        [[nodiscard]] bool isExist(const Core::StringAtom& name) const
+        [[nodiscard]] bool isExist(const StringAtom& name) const
         {
             return !!impl_get<true>(this, name);
         }
@@ -83,17 +83,17 @@ namespace SW
             return impl_get<true>(this, key);
         }
 
-        [[nodiscard]] typename InputT::Ptr get(const Core::StringAtom& name)
+        [[nodiscard]] typename InputT::Ptr get(const StringAtom& name)
         {
             return impl_get<false>(this, name);
         }
 
-        [[nodiscard]] typename InputT::CPtr get(const Core::StringAtom& name) const
+        [[nodiscard]] typename InputT::CPtr get(const StringAtom& name) const
         {
             return impl_get<true>(this, name);
         }
 
-        [[nodiscard]] typename InputT::Ptr create(const Core::StringAtom& name,
+        [[nodiscard]] typename InputT::Ptr create(const StringAtom& name,
                                                   typename InputT::KeyT key)
         {
             if (isExist(name))
@@ -107,7 +107,7 @@ namespace SW
             return _mapping[name];
         }
 
-        bool remove(const Core::StringAtom& name)
+        bool remove(const StringAtom& name)
         {
             auto found = _mapping.find(name);
             if (found == _mapping.cend())
@@ -166,7 +166,7 @@ namespace SW
         template<bool isConst>
         [[nodiscard]] static std::conditional_t<isConst, typename InputT::CPtr,
                                                 typename InputT::Ptr>
-            impl_get(AdaptiveRawPtr<isConst> self, const Core::StringAtom& name)
+            impl_get(AdaptiveRawPtr<isConst> self, const StringAtom& name)
         {
             auto it = self->_mapping.find(name);
             if (it == self->_mapping.cend())
@@ -193,4 +193,4 @@ namespace SW
     public:
     };
 
-} // namespace SW
+} // namespace Core

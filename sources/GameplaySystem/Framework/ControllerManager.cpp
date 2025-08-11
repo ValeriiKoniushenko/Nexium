@@ -22,7 +22,7 @@
 
 #include "ControllerManager.h"
 
-namespace SW
+namespace Core
 {
 
-} // namespace SW
+} // namespace Core

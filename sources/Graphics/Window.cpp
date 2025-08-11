@@ -24,39 +24,41 @@
 
 #include "ImGui/imgui.h"
 
+using namespace Core;
+
 namespace
 {
 
     void KeyPressHandler(GLFWwindow* window, int key, int scancode, int action, int mods)
     {
-        SW::GetWindow().onKeyPressed.trigger(key, scancode, action, mods);
+        GetWindow().onKeyPressed.trigger(key, scancode, action, mods);
     }
 
     void TextInputHandler(GLFWwindow* window, unsigned int scancode)
     {
-        SW::GetWindow().onTextInput.trigger(scancode);
+        GetWindow().onTextInput.trigger(scancode);
     }
 
     void CursorEnterHandler(GLFWwindow* window, int entered)
     {
-        SW::GetWindow().onCursorEntered.trigger(entered == GLFW_TRUE);
+        GetWindow().onCursorEntered.trigger(entered == GLFW_TRUE);
     }
 
     void MouseScrollHandler(GLFWwindow* window, double x, double y)
     {
-        SW::GetWindow().onMouseWheel.trigger(
+        GetWindow().onMouseWheel.trigger(
             glm::vec2(static_cast<float>(x), static_cast<float>(y)));
     }
 
     void WindowSizeCallback(GLFWwindow* window, int width, int height)
     {
-        SW::GetWindow().onResize.trigger(Core::ISize2(width, height));
-        SW::GetWindow().m__setSize(Core::ISize2(width, height));
+        GetWindow().onResize.trigger(ISize2(width, height));
+        GetWindow().m__setSize(ISize2(width, height));
     }
 
 } // namespace
 
-namespace SW
+namespace Core
 {
 
     Window::~Window()
@@ -64,7 +66,7 @@ namespace SW
         destroy();
     }
 
-    void Window::create(const Core::StringAtom& title, Core::ISize2 size /* = { 300, 300 }*/)
+    void Window::create(const StringAtom& title, ISize2 size /* = { 300, 300 }*/)
     {
         glfwInit();
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -131,7 +133,7 @@ namespace SW
 
     void Window::updateViewport(float aspect, ViewportMode mode /* = ViewportMode::Default*/)
     {
-        UpdateGlViewport(static_cast<Core::FSize2>(_size), aspect, mode);
+        UpdateGlViewport(static_cast<FSize2>(_size), aspect, mode);
     }
 
     void Window::clear(int code)
@@ -139,7 +141,7 @@ namespace SW
         glClear(code);
     }
 
-    Core::ISize2 Window::getSize() const
+    ISize2 Window::getSize() const
     {
         return _size;
     }
@@ -175,4 +177,4 @@ namespace SW
         return Window::instance();
     }
 
-} // namespace SW
+} // namespace Core

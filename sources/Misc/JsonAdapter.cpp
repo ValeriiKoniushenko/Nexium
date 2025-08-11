@@ -95,33 +95,33 @@ namespace glm
 
 namespace Core
 {
-    void to_json(nlohmann::json& j, Core::FSize2 value)
+    void to_json(nlohmann::json& j, FSize2 value)
     {
         j["width"] = value.width;
         j["height"] = value.height;
     }
 
-    void to_json(nlohmann::json& j, const Core::FSize3& value)
-    {
-        j["width"] = value.width;
-        j["height"] = value.height;
-        j["deep"] = value.deep;
-    }
-
-    void to_json(nlohmann::json& j, Core::ISize2 value)
-    {
-        j["width"] = value.width;
-        j["height"] = value.height;
-    }
-
-    void to_json(nlohmann::json& j, const Core::ISize3& value)
+    void to_json(nlohmann::json& j, const FSize3& value)
     {
         j["width"] = value.width;
         j["height"] = value.height;
         j["deep"] = value.deep;
     }
 
-    void from_json(const nlohmann::json& j, Core::FSize2& value)
+    void to_json(nlohmann::json& j, ISize2 value)
+    {
+        j["width"] = value.width;
+        j["height"] = value.height;
+    }
+
+    void to_json(nlohmann::json& j, const ISize3& value)
+    {
+        j["width"] = value.width;
+        j["height"] = value.height;
+        j["deep"] = value.deep;
+    }
+
+    void from_json(const nlohmann::json& j, FSize2& value)
     {
         if (j.contains("width"))
         {
@@ -133,7 +133,7 @@ namespace Core
         }
     }
 
-    void from_json(const nlohmann::json& j, Core::FSize3& value)
+    void from_json(const nlohmann::json& j, FSize3& value)
     {
         if (j.contains("width"))
         {
@@ -149,7 +149,7 @@ namespace Core
         }
     }
 
-    void from_json(const nlohmann::json& j, Core::ISize2& value)
+    void from_json(const nlohmann::json& j, ISize2& value)
     {
         if (j.contains("width"))
         {
@@ -161,7 +161,7 @@ namespace Core
         }
     }
 
-    void from_json(const nlohmann::json& j, Core::ISize3& value)
+    void from_json(const nlohmann::json& j, ISize3& value)
     {
         if (j.contains("width"))
         {

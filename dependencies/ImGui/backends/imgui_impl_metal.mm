@@ -468,8 +468,8 @@ static void ImGui_ImplMetal_CreateWindow(ImGuiViewport* viewport)
     ImGuiViewportDataMetal* data = IM_NEW(ImGuiViewportDataMetal)();
     viewport->RendererUserData = data;
 
-    // PlatformHandleRaw should always be a NSWindow*, whereas PlatformHandle might be a higher-level handle (e.g. GLFWWindow*, SDL_Window*).
-    // Some back-ends will leave PlatformHandleRaw == 0, in which case we assume PlatformHandle will contain the NSWindow*.
+    // PlatformHandleRaw should always be a NCoreindow*, whereas PlatformHandle might be a higher-level handle (e.g. GLFWWindow*, SDL_Window*).
+    // Some back-ends will leave PlatformHandleRaw == 0, in which case we assume PlatformHandle will contain the NCoreindow*.
     void* handle = viewport->PlatformHandleRaw ? viewport->PlatformHandleRaw : viewport->PlatformHandle;
     IM_ASSERT(handle != nullptr);
 
@@ -479,7 +479,7 @@ static void ImGui_ImplMetal_CreateWindow(ImGuiViewport* viewport)
     layer.framebufferOnly = YES;
     layer.pixelFormat = bd->SharedMetalContext.framebufferDescriptor.colorPixelFormat;
 #if TARGET_OS_OSX
-    NSWindow* window = (__bridge NSWindow*)handle;
+    NCoreindow* window = (__bridge NCoreindow*)handle;
     NSView* view = window.contentView;
     view.layer = layer;
     view.wantsLayer = YES;
@@ -515,10 +515,10 @@ static void ImGui_ImplMetal_RenderWindow(ImGuiViewport* viewport, void*)
 
 #if TARGET_OS_OSX
     void* handle = viewport->PlatformHandleRaw ? viewport->PlatformHandleRaw : viewport->PlatformHandle;
-    NSWindow* window = (__bridge NSWindow*)handle;
+    NCoreindow* window = (__bridge NCoreindow*)handle;
 
     // Always render the first frame, regardless of occlusionState, to avoid an initial flicker
-    if ((window.occlusionState & NSWindowOcclusionStateVisible) == 0 && !data->FirstFrame)
+    if ((window.occlusionState & NCoreindowOcclusionStateVisible) == 0 && !data->FirstFrame)
     {
         // Do not render windows which are completely occluded. Calling -[CAMetalLayer nextDrawable] will hang for
         // approximately 1 second if the Metal layer is completely occluded.

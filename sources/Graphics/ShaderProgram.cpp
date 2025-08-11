@@ -22,7 +22,7 @@
 
 #include "ShaderProgram.h"
 
-namespace SW
+namespace Core
 {
 
     ShaderProgram& ShaderProgram::operator=(ShaderProgram&& other) noexcept
@@ -42,7 +42,7 @@ namespace SW
         return *this;
     }
 
-    void ShaderProgram::setName(const Core::StringAtom& name)
+    void ShaderProgram::setName(const StringAtom& name)
     {
         _name = name;
 
@@ -57,7 +57,7 @@ namespace SW
         }
     }
 
-    void ShaderProgram::create(const Core::StringAtom& shaderName)
+    void ShaderProgram::create(const StringAtom& shaderName)
     {
         clearOnlyShaderProgram();
 
@@ -149,7 +149,7 @@ namespace SW
         }
     }
 
-    void ShaderProgram::debugUniform(const Core::StringAtom& name)
+    void ShaderProgram::debugUniform(const StringAtom& name)
     {
 #ifdef GRAPHICS_DEBUG
         Assert(name.isStatic());
@@ -157,4 +157,4 @@ namespace SW
 #endif
     }
 
-} // namespace SW
+} // namespace Core

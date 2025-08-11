@@ -25,7 +25,7 @@
 #include "Misc/JsonCacheable.h"
 #include "StaticMesh.h"
 
-namespace SW
+namespace Core
 {
     class StaticMeshBundle : public BaseComponent, public JsonCacheable, public Transformable
     {
@@ -50,7 +50,7 @@ namespace SW
         [[nodiscard]] std::size_t getRenderTargetsCount() const noexcept { return _meshes.size(); }
 
     protected:
-        [[nodiscard]] Core::StringAtom getCacheHash() const override;
+        [[nodiscard]] StringAtom getCacheHash() const override;
         [[nodiscard]] nlohmann::json toCacheData() const override;
         void fromCacheData(const nlohmann::json& data) override;
 
@@ -58,4 +58,4 @@ namespace SW
         MeshesT _meshes;
     };
 
-} // namespace SW
+} // namespace Core

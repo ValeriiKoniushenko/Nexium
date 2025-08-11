@@ -24,7 +24,7 @@
 
 #include "Utils/Functions.h"
 
-namespace SW
+namespace Core
 {
 
     std::size_t ShaderProgramMeta::Hasher::operator()(const ShaderProgramMeta& self) const
@@ -102,14 +102,14 @@ namespace SW
         glShaderSource(_shaderProgram.getFragmentShader(), 1, &fragmentRaw, nullptr);
     }
 
-    void ShaderProgramMeta::setShaderName(const Core::StringAtom& name)
+    void ShaderProgramMeta::setShaderName(const StringAtom& name)
     {
-        _shaderName = Core::StringAtom::Intern(name);
+        _shaderName = StringAtom::Intern(name);
     }
 
     void ShaderProgramMeta::setShaderName(const std::string& name)
     {
-        _shaderName = Core::StringAtom::Intern(name);
+        _shaderName = StringAtom::Intern(name);
     }
 
     void ShaderProgramMeta::checkShaderCompileStatus(GLuint shaderId, const std::string& shaderType)
@@ -176,10 +176,10 @@ namespace SW
                     name.pop_back();
                 }
 
-                ShaderVariable var{ Core::StringAtom::Intern(name), type, size, location };
+                ShaderVariable var{ StringAtom::Intern(name), type, size, location };
                 output.insert(std::move(var));
             }
         }
     }
 
-} // namespace SW
+} // namespace Core

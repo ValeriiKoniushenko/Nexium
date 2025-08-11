@@ -33,11 +33,11 @@ namespace
 
 } // namespace
 
-namespace SW
+namespace Core
 {
     ECS_REGISTER_NEW_COMPONENT_TYPE(InvalidComponent);
 
-    BaseComponent* GlobalComponentFactory::create(const Core::StringAtom& type)
+    BaseComponent* GlobalComponentFactory::create(const StringAtom& type)
     {
         if (const auto found = _map.find(type); found != _map.end()) [[likely]]
         {
@@ -52,7 +52,7 @@ namespace SW
         return nullptr;
     }
 
-    bool GlobalComponentFactory::registerNewType(Core::StringAtom type,
+    bool GlobalComponentFactory::registerNewType(StringAtom type,
                                                  std::function<BaseComponent*()> callback)
     {
         Assert(type.isStatic());
@@ -187,8 +187,8 @@ namespace SW
         }
         if (json.contains("type"))
         {
-            const_cast<Core::StringAtom&>(_type)
-                = Core::StringAtom::Intern(json["type"].get<std::string>());
+            const_cast<StringAtom&>(_type)
+                = StringAtom::Intern(json["type"].get<std::string>());
         }
 
         if (!isIgnoreChildren)
@@ -197,7 +197,7 @@ namespace SW
             {
                 for (auto& childJson : json["children"])
                 {
-                    auto type = Core::StringAtom::Intern(childJson["type"].get<Core::StringAtom>());
+                    auto type = StringAtom::Intern(childJson["type"].get<StringAtom>());
                     auto c = rawAddChildComponent(GetGlobalComponentFactory().create(type));
                     c->fromJson(childJson, false);
                 }
@@ -217,8 +217,8 @@ namespace SW
             AbstractComponent::operator=(std::move(other));
             _name = std::move(other._name);
             _children = std::move(other._children);
-            const_cast<Core::StringAtom&>(_type)
-                = std::move(const_cast<Core::StringAtom&>(other._type));
+            const_cast<StringAtom&>(_type)
+                = std::move(const_cast<StringAtom&>(other._type));
             _parent = other._parent;
 
             other._parent = nullptr;
@@ -241,7 +241,7 @@ namespace SW
         return _name == other._name;
     }
 
-    void BaseComponent::setComponentName(const Core::StringAtom& name)
+    void BaseComponent::setComponentName(const StringAtom& name)
     {
         if (name.isEmpty()) [[unlikely]]
         {
@@ -278,4 +278,4 @@ namespace SW
         newComponent->_parent = this;
     }
 
-} // namespace SW
+} // namespace Core

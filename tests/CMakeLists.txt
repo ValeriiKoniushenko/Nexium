@@ -6,5 +6,5 @@ add_executable(TestEngine Main.cpp
 
 target_link_libraries(TestEngine PUBLIC
     gtest
-    SpriteWalkerEngine
+    NexiumEngine
 )

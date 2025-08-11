@@ -22,7 +22,7 @@
 
 #include "BaseLog.h"
 
-namespace SW
+namespace Core
 {
 
     GlobalLog globalLog = {};
@@ -42,7 +42,7 @@ namespace SW
         LogQueue::instance().addLog(std::move(logLine));
     }
 
-    Core::StringAtom LogQueue::LogLine::toString() const
+    StringAtom LogQueue::LogLine::toString() const
     {
         std::tm* tm_ptr = std::localtime(&time);
         std::ostringstream oss;
@@ -59,7 +59,7 @@ namespace SW
         throw std::runtime_error(str);
     }
 
-    Core::StringAtom BaseLog::getCompleteText(const char* str) const
+    StringAtom BaseLog::getCompleteText(const char* str) const
     {
         if (auto prefix = getPrefix())
         {
@@ -68,4 +68,4 @@ namespace SW
         return str;
     }
 
-} // namespace SW
+} // namespace Core

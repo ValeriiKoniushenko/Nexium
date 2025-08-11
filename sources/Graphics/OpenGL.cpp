@@ -22,12 +22,12 @@
 
 #include "OpenGL.h"
 
-namespace SW
+namespace Core
 {
 
-    void UpdateGlViewport(Core::FSize2 originalSize, float aspectRatio, ViewportMode mode)
+    void UpdateGlViewport(FSize2 originalSize, float aspectRatio, ViewportMode mode)
     {
-        Core::FSize2 view = originalSize;
+        FSize2 view = originalSize;
         glm::vec2 pos = {};
 
         if (mode.cast() == ViewportMode::Default)
@@ -60,4 +60,4 @@ namespace SW
                    static_cast<GLsizei>(view.width), static_cast<GLsizei>(view.height));
     }
 
-} // namespace SW
+} // namespace Core

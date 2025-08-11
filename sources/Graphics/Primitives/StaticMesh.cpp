@@ -29,7 +29,7 @@
 
 #include <Core/Timer.h>
 
-namespace SW
+namespace Core
 {
 
     ECS_REGISTER_NEW_COMPONENT_TYPE(StaticMesh)
@@ -50,7 +50,7 @@ namespace SW
         aiString texturePath;
         if (material->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath) == AI_SUCCESS)
         {
-            const auto relative = Core::StringAtom(texturePath.C_Str()).replaceAll("\\", "/");
+            const auto relative = StringAtom(texturePath.C_Str()).replaceAll("\\", "/");
             const auto resolved
                 = (modelPath.parent_path() / relative.toStdString()).lexically_normal();
 
@@ -156,7 +156,7 @@ namespace SW
     void StaticMesh::calculateSizeBaseOnMesh(const aiMesh* rawMesh, const aiMatrix4x4& transform)
     {
 #ifdef DEBUG
-        Core::FStopwatch s;
+        FStopwatch s;
         s.start();
 #endif
 
@@ -177,7 +177,7 @@ namespace SW
             max.z = std::max(max.z, v.z);
         }
 
-        _size = Core::FSize3(max - min);
+        _size = FSize3(max - min);
         _center = (max + min) * 0.5f;
 
 #ifdef DEBUG
@@ -186,33 +186,33 @@ namespace SW
 #endif
     }
 
-    StaticMesh StaticMeshFactory::CreateBase(const Core::StringAtom& name /* = ""_atom*/)
+    StaticMesh StaticMeshFactory::CreateBase(const StringAtom& name /* = ""_atom*/)
     {
         return StaticMesh{ name };
     }
 
-    StaticMesh StaticMeshFactory::CreateBiSide(const Core::StringAtom& name /* = ""_atom*/)
+    StaticMesh StaticMeshFactory::CreateBiSide(const StringAtom& name /* = ""_atom*/)
     {
         StaticMesh out{ name };
 
         out.setDrawModifiers({
-            { SW::GraphicsComponentData::MV_CullFace,
-              SW::GraphicsComponentData::Modifier::Disable },
+            { GraphicsComponentData::MV_CullFace,
+              GraphicsComponentData::Modifier::Disable },
         });
 
         return out;
     }
-    StaticMesh StaticMeshFactory::CreateBiBlendSide(const Core::StringAtom& name)
+    StaticMesh StaticMeshFactory::CreateBiBlendSide(const StringAtom& name)
     {
         StaticMesh out{ name };
 
         out.setDrawModifiers({
-            { SW::GraphicsComponentData::MV_CullFace,
-              SW::GraphicsComponentData::Modifier::Disable },
-            { SW::GraphicsComponentData::MV_Blend, SW::GraphicsComponentData::Modifier::Enable },
+            { GraphicsComponentData::MV_CullFace,
+              GraphicsComponentData::Modifier::Disable },
+            { GraphicsComponentData::MV_Blend, GraphicsComponentData::Modifier::Enable },
         });
 
         return out;
     }
 
-} // namespace SW
+} // namespace Core

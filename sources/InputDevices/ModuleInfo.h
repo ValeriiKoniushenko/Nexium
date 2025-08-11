@@ -24,7 +24,7 @@
 
 #include "Misc/BaseLog.h"
 
-namespace SW::InputDevices
+namespace InputDevices
 {
 
     [[nodiscard]] inline spdlog::logger* getLogger()
@@ -33,4 +33,4 @@ namespace SW::InputDevices
         return logger.get();
     }
 
-} // namespace SW::InputDevices
+} // namespace InputDevices

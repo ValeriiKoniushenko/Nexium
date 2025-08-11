@@ -29,7 +29,7 @@
 #include "ModuleInfo.h"
 #include "WorldObjectManager.h"
 
-namespace SW
+namespace Core
 {
 
     class LevelData : public BaseLog, public Utils::NotCopyableAndNotMoveable
@@ -45,4 +45,4 @@ namespace SW
         CameraManager cameraManager;
     };
 
-} // namespace SW
+} // namespace Core

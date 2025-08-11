@@ -24,7 +24,7 @@
 
 #include <chrono>
 
-namespace SW
+namespace Core
 {
 
     class FPSCounter
@@ -40,4 +40,4 @@ namespace SW
         uint64_t _frames = 0;
     };
 
-} // namespace SW
+} // namespace Core

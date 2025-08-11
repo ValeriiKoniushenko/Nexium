@@ -26,7 +26,7 @@
 
 #include <Core/Size.h>
 
-namespace SW
+namespace Core
 {
     class RenderTargetToTexture
     {
@@ -37,15 +37,15 @@ namespace SW
         void callMeAfterDraw() const;
 
         [[nodiscard]] GLuint getTextureId() const noexcept { return _tex; }
-        [[nodiscard]] Core::ISize2 getRenderSize() const noexcept { return _size; }
-        void setRenderSize(Core::ISize2 size);
+        [[nodiscard]] ISize2 getRenderSize() const noexcept { return _size; }
+        void setRenderSize(ISize2 size);
 
         void destroy();
 
     private:
-        Core::ISize2 _size = Core::ISize2{ 400, 400 };
+        ISize2 _size = ISize2{ 400, 400 };
         GLuint _fbo = 0, _tex = 0, _rbo = 0;
         bool _isGenerated = false;
     };
 
-} // namespace SW
+} // namespace Core

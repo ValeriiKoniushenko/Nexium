@@ -24,7 +24,7 @@
 
 #include "Misc/BaseLog.h"
 
-namespace SW
+namespace Core
 {
 
     void RenderTargetToTexture::generate()
@@ -71,7 +71,7 @@ namespace SW
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
-    void RenderTargetToTexture::setRenderSize(Core::ISize2 size)
+    void RenderTargetToTexture::setRenderSize(ISize2 size)
     {
         destroy();
         _size = size;
@@ -88,4 +88,4 @@ namespace SW
         _isGenerated = false;
     }
 
-} // namespace SW
+} // namespace Core

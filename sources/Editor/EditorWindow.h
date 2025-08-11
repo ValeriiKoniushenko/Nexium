@@ -31,7 +31,7 @@
 #include <Core/Delegate.h>
 #include <Core/Timer.h>
 
-namespace SW
+namespace Core
 {
     class Scene;
     class BaseCamera;
@@ -44,7 +44,7 @@ namespace SW
         ECS_REGISTER_NEW_COMPONENT(BaseEWC, BaseComponent);
 
     public:
-        [[nodiscard]] const Core::StringAtom& getWindowTitle() { return getComponentName(); }
+        [[nodiscard]] const StringAtom& getWindowTitle() { return getComponentName(); }
 
     protected:
         void onTick() final;
@@ -74,18 +74,18 @@ namespace SW
         ECS_REGISTER_NEW_COMPONENT(BaseFloatEWC, BaseEWC);
 
     public:
-        [[nodiscard]] Core::FSize2 getWindowSize() const noexcept { return _size; }
-        [[nodiscard]] Core::FSize2 getInnerWindowSize() const noexcept { return _innerSize; }
+        [[nodiscard]] FSize2 getWindowSize() const noexcept { return _size; }
+        [[nodiscard]] FSize2 getInnerWindowSize() const noexcept { return _innerSize; }
 
         void setFitContent(bool v);
         [[nodiscard]] bool isFitContent() const noexcept { return _isFitContent; }
 
         /**
          * @brief will be called while the window's size changing
-         * @param Core::FSize2 new outer(full) size
-         * @param Core::FSize2 new inner size
+         * @param FSize2 new outer(full) size
+         * @param FSize2 new inner size
          */
-        Core::Delegate<void(Core::FSize2, Core::FSize2)> onSizeChanged;
+        Delegate<void(FSize2, FSize2)> onSizeChanged;
 
     protected:
         void onInit() override;
@@ -94,9 +94,9 @@ namespace SW
         void endWindowDraw() override;
 
     protected:
-        Core::FSize2 _size;
-        Core::FSize2 _innerSize;
-        Core::FSize2 _oldSize = Core::FSize2{ -1, -1 };
+        FSize2 _size;
+        FSize2 _innerSize;
+        FSize2 _oldSize = FSize2{ -1, -1 };
         bool _isFitContent = false;
         std::unordered_map<ImGuiStyleVar_, float> _styles;
     };
@@ -154,18 +154,18 @@ namespace SW
     public:
         struct LogLine
         {
-            Core::StringAtom message;
+            StringAtom message;
             spdlog::level::level_enum level = {};
         };
 
     public:
         ~LogsWindow() override;
-        void addLog(Core::StringAtom&& log, spdlog::level::level_enum level);
+        void addLog(StringAtom&& log, spdlog::level::level_enum level);
         void clearLogs();
 
     protected:
         std::filesystem::path getCacheDir() const override;
-        Core::StringAtom getCacheHash() const override;
+        StringAtom getCacheHash() const override;
         nlohmann::json toCacheData() const override;
         void fromCacheData(const nlohmann::json& json) override;
 
@@ -202,7 +202,7 @@ namespace SW
         bool _isAutoScroll = true;
         float _streamingToolbarHeight = 40.f;
         float _toolbarToolsWidth = 150.f;
-        Core::StringAtom _filterBuf;
+        StringAtom _filterBuf;
         std::size_t _lastCountOfLogs = 0;
         std::list<LogLine> _logs;
     };
@@ -229,7 +229,7 @@ namespace SW
 
     private:
         AbstractComponent* _target = nullptr;
-        Core::Repeater _slowUpdater;
+        Repeater _slowUpdater;
         std::vector<std::pair<int, int>> _graphicsMods;
 
         // For transform
@@ -245,8 +245,8 @@ namespace SW
         Vec2Control _frameSizeControl;
 
         // For Graphics
-        std::vector<Core::StringAtom> _modifierValueVec;
-        std::vector<Core::StringAtom> _modifierVec;
+        std::vector<StringAtom> _modifierValueVec;
+        std::vector<StringAtom> _modifierVec;
         std::vector<char> _modifierValueRaw;
         std::vector<char> _modifierRaw;
 
@@ -287,15 +287,16 @@ namespace SW
     class AssetsManagerWindow : public BaseFloatEWC
     {
         ECS_REGISTER_NEW_COMPONENT(AssetsManagerWindow, BaseFloatEWC);
-    public:
 
+    public:
     protected:
         void onInit() override;
         void onDraw() override;
         void onUpdate() override;
 
-    protected:
-
+    private:
+        void drawExplorerTree();
+        void drawExplorer();
     };
 
-} // namespace SW
+} // namespace Core
