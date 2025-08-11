@@ -31,7 +31,6 @@ namespace Core
 {
     ECS_REGISTER_NEW_COMPONENT_TYPE(ObjectPropertiesWindowEWC)
 
-    // ========================================================================
     //
     //     _____  _        _              _   ______
     //    |  _  || |      (_)            | |  | ___ \

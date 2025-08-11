@@ -26,7 +26,6 @@ namespace Core
 {
     ECS_REGISTER_NEW_COMPONENT_TYPE(RootDockWindowEWC)
 
-    // ========================================================================
     //
     //    ______                _   ______               _
     //    | ___ \              | |  |  _  \             | |
