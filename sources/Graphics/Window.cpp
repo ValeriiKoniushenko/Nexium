@@ -46,8 +46,7 @@ namespace
 
     void MouseScrollHandler(GLFWwindow* window, double x, double y)
     {
-        GetWindow().onMouseWheel.trigger(
-            glm::vec2(static_cast<float>(x), static_cast<float>(y)));
+        GetWindow().onMouseWheel.trigger(glm::vec2(static_cast<float>(x), static_cast<float>(y)));
     }
 
     void WindowSizeCallback(GLFWwindow* window, int width, int height)
@@ -70,7 +69,7 @@ namespace Core
     {
         glfwInit();
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
         if (!((_window
