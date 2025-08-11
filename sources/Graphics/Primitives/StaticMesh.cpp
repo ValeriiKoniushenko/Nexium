@@ -121,7 +121,8 @@ namespace Core
 
         applyUniforms();
 
-        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(_triangleCount), GL_UNSIGNED_INT, nullptr);
+        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(_triangleCount), GL_UNSIGNED_INT,
+                       nullptr);
 
         for (auto [val, mod] : _drawModifiers)
         {
@@ -196,8 +197,7 @@ namespace Core
         StaticMesh out{ name };
 
         out.setDrawModifiers({
-            { GraphicsComponentData::MV_CullFace,
-              GraphicsComponentData::Modifier::Disable },
+            { GraphicsComponentData::MV_CullFace, GraphicsComponentData::Modifier::Disable },
         });
 
         return out;
@@ -207,8 +207,7 @@ namespace Core
         StaticMesh out{ name };
 
         out.setDrawModifiers({
-            { GraphicsComponentData::MV_CullFace,
-              GraphicsComponentData::Modifier::Disable },
+            { GraphicsComponentData::MV_CullFace, GraphicsComponentData::Modifier::Disable },
             { GraphicsComponentData::MV_Blend, GraphicsComponentData::Modifier::Enable },
         });
 

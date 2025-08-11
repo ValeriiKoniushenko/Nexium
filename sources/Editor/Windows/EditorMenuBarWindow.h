@@ -22,17 +22,17 @@
 
 #pragma once
 
-#include "EditorWindow.h"
+#include "BaseWindow.h"
 
 #include <Core/Timer.h>
 
 namespace Core
 {
-    class EditorMenuBarWindow : public BaseMenuBarEWC
+    class EditorMenuBarWindowEWC : public BaseMenuBarEWC
     {
     public:
-        EditorMenuBarWindow() = default;
-        ~EditorMenuBarWindow() override = default;
+        EditorMenuBarWindowEWC() = default;
+        ~EditorMenuBarWindowEWC() override = default;
 
     protected:
         void onInit() override;

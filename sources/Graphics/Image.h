@@ -68,10 +68,7 @@ namespace Core
         [[nodiscard]] bool isEmpty() const noexcept { return _data == nullptr; }
         [[nodiscard]] StringAtom getName() const noexcept { return _name; }
 
-        [[nodiscard]] spdlog::logger* getLogger() const override
-        {
-            return Graphics::getLogger();
-        }
+        [[nodiscard]] spdlog::logger* getLogger() const override { return Graphics::getLogger(); }
         [[nodiscard]] const char* getPrefix() const override { return "Image"; }
 
     private:

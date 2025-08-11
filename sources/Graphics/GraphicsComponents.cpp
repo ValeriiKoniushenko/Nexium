@@ -298,8 +298,7 @@ namespace Core
         return StringAtom("");
     }
 
-    GraphicsComponentData::ModifiedValue GraphicsComponentData::FromString(
-        const StringAtom& str)
+    GraphicsComponentData::ModifiedValue GraphicsComponentData::FromString(const StringAtom& str)
     {
         // clang-format off
         if (str == "Blend"_atom) return MV_Blend;

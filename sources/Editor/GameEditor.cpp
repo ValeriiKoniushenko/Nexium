@@ -22,20 +22,24 @@
 
 #include "GameEditor.h"
 
-#include "EditorMenuBarWindow.h"
+#include "Editor/Windows/AssetsManagerWindow.h"
+#include "Editor/Windows/EditorMenuBarWindow.h"
+#include "Editor/Windows/GameViewport.h"
+#include "Editor/Windows/KeyboardShortcuts.h"
+#include "Editor/Windows/LogsWindow.h"
+#include "Editor/Windows/ObjectPropertiesWindow.h"
+#include "Editor/Windows/RootDockWindow.h"
+#include "Editor/Windows/SceneTreeWindow.h"
 #include "GameplaySystem/Framework/GameInstance.h"
-#include "Graphics/Window.h"
 #include "ImGui/backends/imgui_impl_glfw.h"
 #include "ImGui/backends/imgui_impl_opengl3.h"
-#include "ImGui/imgui.h"
 #include "Misc/IconsFontAwesome.h"
-
-#include <Core/Assert.h>
 
 using namespace Core;
 
 namespace
 {
+
     StringAtom GetGlslVersionShaderLike()
     {
         StringAtom version = reinterpret_cast<const char*>(glGetString(GL_VERSION));
@@ -78,7 +82,8 @@ namespace Core
             }
             else
             {
-                errorLog("Main font wasn't loaded by internal reasons. Font: " + defaultImGuiFontPath.generic_string());
+                errorLog("Main font wasn't loaded by internal reasons. Font: "
+                         + defaultImGuiFontPath.generic_string());
             }
         }
         else
@@ -93,16 +98,19 @@ namespace Core
             ImFontConfig config;
             config.MergeMode = true;
             config.PixelSnapH = true; // often helps with icons
-            static const ImWchar icon_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 }; // Font Awesome range
+            static const ImWchar icon_ranges[]
+                = { ICON_MIN_FA, ICON_MAX_FA, 0 }; // Font Awesome range
             ImFont* font = io.Fonts->AddFontFromFileTTF(emojiImGuiFontPath.generic_string().c_str(),
-                                         defaultImGuiFontSize * emojiImGuiFontScale, &config, icon_ranges);
+                                                        defaultImGuiFontSize * emojiImGuiFontScale,
+                                                        &config, icon_ranges);
             if (font)
             {
-                //io.Fonts->Build();
+                // io.Fonts->Build();
             }
             else
             {
-                errorLog("Emoji wasn't loaded by internal reasons. Font: " + emojiImGuiFontPath.generic_string());
+                errorLog("Emoji wasn't loaded by internal reasons. Font: "
+                         + emojiImGuiFontPath.generic_string());
             }
         }
         else
@@ -116,13 +124,16 @@ namespace Core
         ImGui_ImplOpenGL3_Init(GetGlslVersionShaderLike().c_str());
         _isInitImGui = true;
 
-        auto menuBar = registerNewWindow<EditorMenuBarWindow>("Menu Bar"_atom);
-        auto rootDocker = registerNewWindow<RootDockWindow>("Root dock space"_atom);
-        auto viewportWindow = registerNewWindow<GameViewportEWC>(ICON_FA_VIDEO_CAMERA + " Viewport"_atom);
-        auto logsWindow = registerNewWindow<LogsWindow>(ICON_FA_ALIGN_LEFT + " Logs"_atom);
-        auto actorPropertiesWindow = registerNewWindow<ObjectPropertiesWindow>(ICON_FA_COG + " Object Properties"_atom);
-        auto sceneTreeWindow = registerNewWindow<SceneTreeWindow>(ICON_FA_CUBES + " Scene"_atom);
-        auto assetsManagerWindowWindow = registerNewWindow<AssetsManagerWindow>(ICON_FA_FOLDER + " Assetes"_atom);
+        auto menuBar = registerNewWindow<EditorMenuBarWindowEWC>("Menu Bar"_atom);
+        auto rootDocker = registerNewWindow<RootDockWindowEWC>("Root dock space"_atom);
+        auto viewportWindow
+            = registerNewWindow<GameViewportEWC>(ICON_FA_VIDEO_CAMERA + " Viewport"_atom);
+        auto logsWindow = registerNewWindow<LogsWindowEWC>(ICON_FA_ALIGN_LEFT + " Logs"_atom);
+        auto actorPropertiesWindow
+            = registerNewWindow<ObjectPropertiesWindowEWC>(ICON_FA_COG + " Object Properties"_atom);
+        auto sceneTreeWindow = registerNewWindow<SceneTreeWindowEWC>(ICON_FA_CUBES + " Scene"_atom);
+        auto assetsManagerWindowWindow
+            = registerNewWindow<AssetsManagerWindowEWC>(ICON_FA_FOLDER + " Assetes"_atom);
 
         auto tipsWindow = registerNewWindow<KeyboardShortcutsEWC>("Keyboard Shortcuts"_atom, false);
 

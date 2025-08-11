@@ -33,8 +33,8 @@ using namespace Core;
 
 namespace
 {
-    void recursiveImportFrom(BaseComponent* rootComponent, const aiNode* node,
-                             const aiScene* scene, const std::filesystem::path& modelPath,
+    void recursiveImportFrom(BaseComponent* rootComponent, const aiNode* node, const aiScene* scene,
+                             const std::filesystem::path& modelPath,
                              StaticMeshBundle::MeshesT& container)
     {
         for (uint32_t i = 0; i < node->mNumMeshes; ++i)

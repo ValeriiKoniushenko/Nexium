@@ -20,41 +20,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "InputManager.h"
+#include "KeyboardShortcuts.h"
 
 namespace Core
 {
+    ECS_REGISTER_NEW_COMPONENT_TYPE(KeyboardShortcutsEWC)
 
-    nlohmann::json KeyboardInputManger::toJson() const
+    void KeyboardShortcutsEWC::onInit()
     {
-        nlohmann::json json;
-
-        json["mapping"] = nlohmann::json::array();
-        for (const auto& [name, key] : _mapping)
-        {
-            nlohmann::json map;
-            map["action"] = name.toStdString();
-            map["key"] = Keyboard::KeyToString(key->getKey().value_or(Keyboard::Key_None));
-
-            json["mapping"].push_back(std::move(map));
-        }
-
-        return json;
+        BaseFloatEWC::onInit();
     }
 
-    void KeyboardInputManger::fromJson(const nlohmann::json& json, bool isIgnoreChildren)
+    void KeyboardShortcutsEWC::onDraw()
     {
-        if (json.contains("mapping"))
-        {
-            for (auto&& map : json["mapping"])
-            {
-                if (auto found = getOrCreate(map["action"].get<StringAtom>(), Keyboard::Key_None))
-                {
-                    auto key = StringAtom::Intern(map["key"].get<StringAtom>());
-                    found->setKey(Keyboard::FromStringToKey(key));
-                }
-            }
-        }
+        ImGui::Text("Shortcuts: ");
+        ImGui::Text("    F1      - Toggle render mode");
+        ImGui::Text("    W/A/S/D - Move Control");
+        ImGui::Text("    C/Space - Down/Up");
+        ImGui::Text("    Alt     - Hold to suppress a mouse");
+        ImGui::Text("    F12     - exit");
     }
-
 } // namespace Core

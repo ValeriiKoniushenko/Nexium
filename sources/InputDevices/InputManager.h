@@ -93,8 +93,7 @@ namespace Core
             return impl_get<true>(this, name);
         }
 
-        [[nodiscard]] typename InputT::Ptr create(const StringAtom& name,
-                                                  typename InputT::KeyT key)
+        [[nodiscard]] typename InputT::Ptr create(const StringAtom& name, typename InputT::KeyT key)
         {
             if (isExist(name))
             {

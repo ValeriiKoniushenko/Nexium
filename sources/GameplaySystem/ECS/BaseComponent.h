@@ -41,14 +41,21 @@ public:                                                                         
     template<bool isConst>                                                                         \
     using AdaptiveRawPtr = std::conditional_t<isConst, const CurrentClass, CurrentClass>*;         \
                                                                                                    \
-    inline static const auto componentType = StringAtom::Intern(#CurrentClass);              \
-    explicit CurrentClass(const StringAtom& name = ""_atom)                                           \
+public:                                                                                            \
+    inline static const auto componentType = StringAtom::Intern(#CurrentClass);                    \
+    explicit CurrentClass(const StringAtom& name = ""_atom)                                        \
         : BaseComponentClass(componentType, name)                                                  \
     {                                                                                              \
     }                                                                                              \
                                                                                                    \
+private:                                                                                           \
+    inline static const bool _debugTypeTracker = []()                                              \
+    {                                                                                              \
+        return GetGlobalComponentFactory()._debugTypeTracker_NotifyNewAboutType(#CurrentClass);    \
+    };                                                                                             \
+                                                                                                   \
 protected:                                                                                         \
-    explicit CurrentClass(const StringAtom& type, const StringAtom& name)              \
+    explicit CurrentClass(const StringAtom& type, const StringAtom& name)                          \
         : BaseComponentClass(type, name)                                                           \
     {                                                                                              \
     }                                                                                              \
@@ -56,11 +63,11 @@ protected:                                                                      
 public:
 
 #define ECS_REGISTER_NEW_COMPONENT_TYPE(ClassName)                                                 \
-    const bool _##ClassName##_type_registration = GetGlobalComponentFactory().registerNewType( \
+    const bool _##ClassName##_type_registration = GetGlobalComponentFactory().registerNewType(     \
         ClassName::componentType,                                                                  \
-        []() -> BaseComponent*                                                                 \
+        []() -> BaseComponent*                                                                     \
         {                                                                                          \
-            return new std::conditional_t<std::is_abstract_v<ClassName>, InvalidComponent,     \
+            return new std::conditional_t<std::is_abstract_v<ClassName>, InvalidComponent,         \
                                           ClassName>;                                              \
         });
 
@@ -85,11 +92,19 @@ namespace Core
         SINGLETONS_FRIEND(GlobalComponentFactory);
 
     public:
+        [[maybe_unused]] void _debugTypeTracker_NotifyNewAboutType(StringAtom newType);
+
+        ~GlobalComponentFactory() override;
+
         BaseComponent* create(const StringAtom& type);
         bool registerNewType(StringAtom type, std::function<BaseComponent*()>);
 
     private:
         std::unordered_map<StringAtom, std::function<BaseComponent*()>> _map;
+
+#if defined(DEBUG)
+        std::unordered_map<StringAtom, uint32_t> _debugTypeTracker;
+#endif
     };
 
     inline GlobalComponentFactory& GetGlobalComponentFactory()
@@ -601,5 +616,8 @@ struct std::hash<Core::BaseComponent::CPtr>
 template<>
 struct std::hash<Core::BaseComponent::Ptr>
 {
-    std::size_t operator()(const Core::BaseComponent::Ptr& x) const noexcept { return x->makeHash(); }
+    std::size_t operator()(const Core::BaseComponent::Ptr& x) const noexcept
+    {
+        return x->makeHash();
+    }
 };

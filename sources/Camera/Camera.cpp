@@ -34,8 +34,7 @@ namespace Core
     {
         if (_isDirtyProjMatrix)
         {
-            _cachedProjMatrix
-                = glm::perspective(glm::radians(_fov),
+            _cachedProjMatrix = glm::perspective(glm::radians(_fov),
                                                  _frameSize.width / _frameSize.height, _near, _far);
 
             _cachedCalculatedMatrix

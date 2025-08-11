@@ -56,8 +56,48 @@ namespace Core
                                                  std::function<BaseComponent*()> callback)
     {
         Assert(type.isStatic());
+
+#if defined(DEBUG)
+        _debugTypeTracker_NotifyNewAboutType(type);
+#endif
+
         _map.emplace(std::move(type), std::move(callback));
         return true;
+    }
+
+    void GlobalComponentFactory::_debugTypeTracker_NotifyNewAboutType(StringAtom newType)
+    {
+#if defined(DEBUG)
+        // Should go here from ECS_REGISTER_NEW_COMPONENT[_TYPE]
+        if (_debugTypeTracker.contains(newType))
+        {
+            ++_debugTypeTracker[newType];
+        }
+        else
+        {
+            _debugTypeTracker[newType] = 1;
+        }
+#endif
+    }
+
+    GlobalComponentFactory::~GlobalComponentFactory()
+    {
+        // Debug type checker
+#if defined(DEBUG)
+        for (auto [type, counter] : _debugTypeTracker)
+        {
+            // 2 - because we should hit it from both macroses (below)
+            constexpr uint32_t hitCount = 2;
+
+            if (counter != hitCount)
+            {
+                Assert(false, ("The type '{}' wasn't fully registered. Try to find where this type was declared/"
+                               "created and add 'ECS_REGISTER_NEW_COMPONENT' to the classe's body, and "
+                               "'ECS_REGISTER_NEW_COMPONENT_TYPE' to its implementation(.cpp)"_f
+                               << type).data());
+            }
+        }
+#endif
     }
 
     AbstractComponent::AbstractComponent(AbstractComponent&& other) noexcept
@@ -187,8 +227,7 @@ namespace Core
         }
         if (json.contains("type"))
         {
-            const_cast<StringAtom&>(_type)
-                = StringAtom::Intern(json["type"].get<std::string>());
+            const_cast<StringAtom&>(_type) = StringAtom::Intern(json["type"].get<std::string>());
         }
 
         if (!isIgnoreChildren)
@@ -217,8 +256,7 @@ namespace Core
             AbstractComponent::operator=(std::move(other));
             _name = std::move(other._name);
             _children = std::move(other._children);
-            const_cast<StringAtom&>(_type)
-                = std::move(const_cast<StringAtom&>(other._type));
+            const_cast<StringAtom&>(_type) = std::move(const_cast<StringAtom&>(other._type));
             _parent = other._parent;
 
             other._parent = nullptr;

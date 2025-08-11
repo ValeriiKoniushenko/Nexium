@@ -96,6 +96,7 @@ namespace Core
         fps.start();
         FStopwatch clock;
 
+        glClearColor(0.45f, 0.55f, 0.60f, 1.00f);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
         while (!_window->shouldClose())
@@ -107,7 +108,6 @@ namespace Core
 
             if (renderMode.cast() == RenderMode::GameOnly)
             {
-                glClearColor(0.45f, 0.55f, 0.60f, 1.00f);
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                 if (currentCamera)
                 {
@@ -119,17 +119,13 @@ namespace Core
                 if (currentCamera)
                 {
                     renderToTextureObject.callMePreDraw();
-                    glClearColor(0.45f, 0.55f, 0.60f, 1.00f);
                     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                     onTick(world.timeDelta);
                     renderToTextureObject.callMeAfterDraw();
                 }
 
-                glClearColor(0.45f, 0.65f, 0.40f, 1.00f);
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                 gameEditor.onTick(world.timeDelta);
-
-                std::this_thread::sleep_for(std::chrono::milliseconds(20));
             }
 
             _window->swapBuffers();

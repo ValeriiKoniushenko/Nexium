@@ -20,41 +20,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "InputManager.h"
+#pragma once
+
+#include "BaseWindow.h"
 
 namespace Core
 {
 
-    nlohmann::json KeyboardInputManger::toJson() const
+    class KeyboardShortcutsEWC : public BaseFloatEWC
     {
-        nlohmann::json json;
+        ECS_REGISTER_NEW_COMPONENT(KeyboardShortcutsEWC, BaseFloatEWC);
 
-        json["mapping"] = nlohmann::json::array();
-        for (const auto& [name, key] : _mapping)
-        {
-            nlohmann::json map;
-            map["action"] = name.toStdString();
-            map["key"] = Keyboard::KeyToString(key->getKey().value_or(Keyboard::Key_None));
-
-            json["mapping"].push_back(std::move(map));
-        }
-
-        return json;
-    }
-
-    void KeyboardInputManger::fromJson(const nlohmann::json& json, bool isIgnoreChildren)
-    {
-        if (json.contains("mapping"))
-        {
-            for (auto&& map : json["mapping"])
-            {
-                if (auto found = getOrCreate(map["action"].get<StringAtom>(), Keyboard::Key_None))
-                {
-                    auto key = StringAtom::Intern(map["key"].get<StringAtom>());
-                    found->setKey(Keyboard::FromStringToKey(key));
-                }
-            }
-        }
-    }
+    public:
+    private:
+        void onInit() override;
+        void onDraw() override;
+    };
 
 } // namespace Core

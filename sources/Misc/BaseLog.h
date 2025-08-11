@@ -111,10 +111,7 @@ namespace Core
 
         void criticalThrowingLog(const std::string& str) const { criticalThrowingLog(str.c_str()); }
 
-        void criticalThrowingLog(const StringAtom& s) const
-        {
-            criticalThrowingLog(s.c_str());
-        }
+        void criticalThrowingLog(const StringAtom& s) const { criticalThrowingLog(s.c_str()); }
 
         void criticalThrowingLog(const StringFormatter<char>& s) const
         {

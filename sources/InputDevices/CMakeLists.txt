@@ -11,9 +11,9 @@ add_library(${TARGET_NAME} STATIC ${CPP_SOURCES} ${HEADERS})
 add_library(Core::${MAIN_NAME} ALIAS ${TARGET_NAME})
 
 target_link_libraries(${TARGET_NAME} PUBLIC
-        glfw
-        Core::Graphics
-        Boost::smart_ptr
+    glfw
+    Core::Graphics
+    Boost::smart_ptr
 )
 
 target_include_directories(${TARGET_NAME} PUBLIC ../)

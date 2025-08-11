@@ -20,41 +20,44 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "InputManager.h"
+#include "AssetsManagerWindow.h"
 
 namespace Core
 {
+    ECS_REGISTER_NEW_COMPONENT_TYPE(AssetsManagerWindowEWC)
 
-    nlohmann::json KeyboardInputManger::toJson() const
+    void AssetsManagerWindowEWC::onInit()
     {
-        nlohmann::json json;
-
-        json["mapping"] = nlohmann::json::array();
-        for (const auto& [name, key] : _mapping)
-        {
-            nlohmann::json map;
-            map["action"] = name.toStdString();
-            map["key"] = Keyboard::KeyToString(key->getKey().value_or(Keyboard::Key_None));
-
-            json["mapping"].push_back(std::move(map));
-        }
-
-        return json;
+        BaseFloatEWC::onInit();
     }
 
-    void KeyboardInputManger::fromJson(const nlohmann::json& json, bool isIgnoreChildren)
+    void AssetsManagerWindowEWC::onDraw()
     {
-        if (json.contains("mapping"))
-        {
-            for (auto&& map : json["mapping"])
-            {
-                if (auto found = getOrCreate(map["action"].get<StringAtom>(), Keyboard::Key_None))
-                {
-                    auto key = StringAtom::Intern(map["key"].get<StringAtom>());
-                    found->setKey(Keyboard::FromStringToKey(key));
-                }
-            }
-        }
+        drawExplorerTree();
+        ImGui::SameLine();
+        drawExplorer();
     }
 
+    void AssetsManagerWindowEWC::onUpdate()
+    {
+        BaseFloatEWC::onUpdate();
+    }
+
+    void AssetsManagerWindowEWC::drawExplorerTree()
+    {
+        if (ImGui::BeginChild("Eplorer tree", ImVec2(200.0f, 0), ImGuiChildFlags_ResizeX))
+        {
+            ImGui::Text("Hello world! LEFT");
+        }
+        ImGui::EndChild();
+    }
+
+    void AssetsManagerWindowEWC::drawExplorer()
+    {
+        if (ImGui::BeginChild("Explorer"))
+        {
+            ImGui::Text("Hello world! Right");
+        }
+        ImGui::EndChild();
+    }
 } // namespace Core

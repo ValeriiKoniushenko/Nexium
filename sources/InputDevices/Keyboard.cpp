@@ -289,8 +289,7 @@ namespace Core
 
     Keyboard::KeyState Keyboard::getKeyState(Key key)
     {
-        return static_cast<KeyState>(
-            glfwGetKey(GetWindow().getRawWindow(), static_cast<int>(key)));
+        return static_cast<KeyState>(glfwGetKey(GetWindow().getRawWindow(), static_cast<int>(key)));
     }
 
     bool Keyboard::isKeyPressed(Key key)

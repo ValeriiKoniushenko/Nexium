@@ -22,11 +22,10 @@
 
 #pragma once
 
-#include "EditorWindow.h"
-#include "ImGui/imgui.h"
 #include "Misc/BaseLog.h"
 #include "ModuleInfo.h"
 #include "Utils/CopyableAndMoveableBehaviour.h"
+#include "Windows/BaseWindow.h"
 
 namespace Core
 {

@@ -22,12 +22,19 @@
 
 #include "EditorMenuBarWindow.h"
 
+#include "Editor/Windows/AssetsManagerWindow.h"
+#include "Editor/Windows/GameViewport.h"
+#include "Editor/Windows/KeyboardShortcuts.h"
+#include "Editor/Windows/LogsWindow.h"
+#include "Editor/Windows/ObjectPropertiesWindow.h"
+#include "Editor/Windows/SceneTreeWindow.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 
 namespace Core
 {
+    ECS_REGISTER_NEW_COMPONENT_TYPE(EditorMenuBarWindowEWC)
 
-    void EditorMenuBarWindow::onInit()
+    void EditorMenuBarWindowEWC::onInit()
     {
         BaseMenuBarEWC::onInit();
 
@@ -36,12 +43,11 @@ namespace Core
             [this](auto)
             {
                 _cachedFpsText
-                    = _fpsText
-                      + StringAtom::MakeFrom(static_cast<int>(ImGui::GetIO().Framerate));
+                    = _fpsText + StringAtom::MakeFrom(static_cast<int>(ImGui::GetIO().Framerate));
             });
     }
 
-    void EditorMenuBarWindow::onDraw()
+    void EditorMenuBarWindowEWC::onDraw()
     {
         if (ImGui::BeginMenu("File"))
         {
@@ -66,15 +72,19 @@ namespace Core
             }
             if (ImGui::MenuItem("Logs"))
             {
-                gameInstance->gameEditor.showWindow<LogsWindow>();
+                gameInstance->gameEditor.showWindow<LogsWindowEWC>();
             }
             if (ImGui::MenuItem("Object Properties"))
             {
-                gameInstance->gameEditor.showWindow<ObjectPropertiesWindow>();
+                gameInstance->gameEditor.showWindow<ObjectPropertiesWindowEWC>();
             }
             if (ImGui::MenuItem("Scene"))
             {
-                gameInstance->gameEditor.showWindow<SceneTreeWindow>();
+                gameInstance->gameEditor.showWindow<SceneTreeWindowEWC>();
+            }
+            if (ImGui::MenuItem("Assets manager"))
+            {
+                gameInstance->gameEditor.showWindow<AssetsManagerWindowEWC>();
             }
             ImGui::EndMenu();
         }
@@ -85,7 +95,7 @@ namespace Core
         ImGui::TextUnformatted(_cachedFpsText.c_str());
     }
 
-    void EditorMenuBarWindow::onUpdate()
+    void EditorMenuBarWindowEWC::onUpdate()
     {
         BaseMenuBarEWC::onUpdate();
 

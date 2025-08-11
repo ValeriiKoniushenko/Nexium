@@ -89,7 +89,7 @@ namespace Core
         glfwSetCursorEnterCallback(_window, CursorEnterHandler);
         glfwSetScrollCallback(_window, MouseScrollHandler);
         glfwSetWindowSizeCallback(_window, WindowSizeCallback);
-        glfwSwapInterval(0);
+        glfwSwapInterval(1);
 
         if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
         {

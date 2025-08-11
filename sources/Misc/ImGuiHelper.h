@@ -36,21 +36,19 @@ namespace Core
     void InputTextRO(StringAtom value, float size);
     void InputText(const StringAtom& label, std::string& value, float size);
 
-    void LabelAndInputTextRO(StringAtom label, StringAtom value, float labelSize,
-                             float fullSize);
+    void LabelAndInputTextRO(StringAtom label, StringAtom value, float labelSize, float fullSize);
 
     void LabelAndInputText(const StringAtom& label, std::string& value, float labelSize,
                            float fullSize);
 
-    void LabelAndInputFloat(const StringAtom& label, float& value, float labelSize,
-                            float fullSize, float flostep = 0, float min = 0, float max = 0,
+    void LabelAndInputFloat(const StringAtom& label, float& value, float labelSize, float fullSize,
+                            float flostep = 0, float min = 0, float max = 0,
                             const char* format = "%.2f");
 
     template<class T>
     void LabelAndInputTextRO(StringAtom label, T value, float labelSize, float fullSize)
     {
-        LabelAndInputTextRO(std::move(label), StringAtom::MakeFrom(value), labelSize,
-                            fullSize);
+        LabelAndInputTextRO(std::move(label), StringAtom::MakeFrom(value), labelSize, fullSize);
     }
 
     void LabelAndCheckboxRO(StringAtom label, bool v, float labelSize);

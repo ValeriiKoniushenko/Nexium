@@ -50,8 +50,7 @@ namespace Core
         ImGui::PopStyleColor();
     }
 
-    void LabelAndInputTextRO(StringAtom label, StringAtom value, float labelSize,
-                             float fullSize)
+    void LabelAndInputTextRO(StringAtom label, StringAtom value, float labelSize, float fullSize)
     {
         FixedLabel(label.data(), labelSize);
         InputTextRO(std::move(value), fullSize - labelSize);
@@ -86,8 +85,8 @@ namespace Core
             reinterpret_cast<void*>(&data), data.size());
     }
 
-    void LabelAndInputText(const StringAtom& label, std::string& originalString,
-                           float labelSize, float fullSize)
+    void LabelAndInputText(const StringAtom& label, std::string& originalString, float labelSize,
+                           float fullSize)
     {
         std::string inputData = originalString;
 
@@ -107,8 +106,8 @@ namespace Core
         ImGui::PopItemWidth();
     }
 
-    void LabelAndInputFloat(const StringAtom& label, float& value, float labelSize,
-                            float fullSize, float step, float min, float max, const char* format)
+    void LabelAndInputFloat(const StringAtom& label, float& value, float labelSize, float fullSize,
+                            float step, float min, float max, const char* format)
     {
         FixedLabel(label.data(), labelSize);
 
@@ -125,7 +124,8 @@ namespace Core
 
     bool ToggleButton(const char* label, bool cond)
     {
-        ImVec4 autoScrollButtonColor = cond ? ImGui::GetStyle().Colors[ImGuiCol_Button] : ImVec4(0, 0, 0, 0);
+        ImVec4 autoScrollButtonColor
+            = cond ? ImGui::GetStyle().Colors[ImGuiCol_Button] : ImVec4(0, 0, 0, 0);
         ImGui::PushStyleColor(ImGuiCol_Button, autoScrollButtonColor);
         const bool isPressed = ImGui::Button(label);
         ImGui::PopStyleColor();
