@@ -30,9 +30,9 @@
                     0.0
                 ],
                 "position": [
-                    29.074892044067383,
-                    -495.8074951171875,
-                    -428.33575439453125
+                    67.54389953613281,
+                    -308.3498840332031,
+                    -612.8872680664063
                 ],
                 "rotation": [
                     0.0,
@@ -62,40 +62,40 @@
     "keyboardInput": {
         "mapping": [
             {
-                "action": "toggleCursorMode",
-                "key": "M"
-            },
-            {
-                "action": "moveUp",
-                "key": "Space"
-            },
-            {
-                "action": "moveLeft",
-                "key": "A"
-            },
-            {
-                "action": "exit",
-                "key": "F12"
-            },
-            {
-                "action": "moveRight",
-                "key": "D"
-            },
-            {
-                "action": "moveDown",
-                "key": "C"
-            },
-            {
-                "action": "moveForward",
-                "key": "W"
+                "action": "toggleSimulation",
+                "key": "F1"
             },
             {
                 "action": "moveBackward",
                 "key": "S"
             },
             {
-                "action": "toggleSimulation",
-                "key": "F1"
+                "action": "moveForward",
+                "key": "W"
+            },
+            {
+                "action": "moveDown",
+                "key": "C"
+            },
+            {
+                "action": "moveRight",
+                "key": "D"
+            },
+            {
+                "action": "exit",
+                "key": "F12"
+            },
+            {
+                "action": "moveLeft",
+                "key": "A"
+            },
+            {
+                "action": "moveUp",
+                "key": "Space"
+            },
+            {
+                "action": "toggleCursorMode",
+                "key": "M"
             }
         ]
     },

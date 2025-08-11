@@ -31,6 +31,11 @@
 #include <queue>
 #include <unordered_set>
 
+// Put this macros inside your class body for every new component.
+// New component is even a component that extends previous one. I.e.
+// if you are inheriting from class Spectator, you should mark your
+// new component with ECS_REGISTER_NEW_COMPONENT(YourClass, Specatator)
+// to register this type inside ECS
 #define ECS_REGISTER_NEW_COMPONENT(CurrentClass, BaseComponentClass)                               \
 public:                                                                                            \
     using Ptr = boost::intrusive_ptr<CurrentClass>;                                                \
@@ -63,6 +68,9 @@ protected:                                                                      
                                                                                                    \
 public:
 
+// Also, we need this macros in .cpp file of implementation of your new type.
+// If you don't understand what means 'new type' check the macrose's descrip.
+// above, please.
 #define ECS_REGISTER_NEW_COMPONENT_TYPE(ClassName)                                                 \
     const static bool _##ClassName##_type_registration                                             \
         = GetGlobalComponentFactory().registerNewType(                                             \
