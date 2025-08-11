@@ -70,6 +70,10 @@ namespace Core
         if (_debugTypeTracker.contains(newType))
         {
             traceLog("The type '{}' was implemented."_f << newType);
+
+            // 2 - because we should hit it from both macroses:
+            // - ECS_REGISTER_NEW_COMPONENT
+            // - ECS_REGISTER_NEW_COMPONENT_TYPE
             if (++_debugTypeTracker[newType] > 2)
             {
                 warnLog("The type '{}' was implemented more times then needed."_f << newType);
