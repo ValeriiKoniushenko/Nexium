@@ -32,6 +32,13 @@ namespace Core
         ECS_REGISTER_NEW_COMPONENT(AssetsManagerWindowEWC, BaseFloatEWC);
 
     public:
+        enum class FileFormat
+        {
+            Default,
+            Code,
+            Image
+        };
+    public:
         // Pre-launch settings TODO: MOVE IT!!!
         std::filesystem::path assetsPath = "assets";
 
@@ -41,8 +48,10 @@ namespace Core
         void onUpdate() override;
 
     private:
+        int _commonTreeFlags = ImGuiTreeNodeFlags_OpenOnDoubleClick;
         void drawExplorerTree();
         void drawExplorer();
         void drawOneLevel(const std::filesystem::path& rootPath, const std::filesystem::path& prevPath);
+        [[nodiscard]] FileFormat isCodeFileExt(const std::string& ext);
     };
 } // namespace Core

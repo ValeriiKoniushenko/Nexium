@@ -22,6 +22,8 @@
 
 #include "AssetsManagerWindow.h"
 
+#include "Misc/IconsFontAwesome.h"
+
 namespace Core
 {
     ECS_REGISTER_NEW_COMPONENT_TYPE(AssetsManagerWindowEWC)
@@ -63,30 +65,44 @@ namespace Core
         ImGui::EndChild();
     }
 
-    void AssetsManagerWindowEWC::drawOneLevel(const std::filesystem::path& rootPath, const std::filesystem::path& prevPath)
+    void AssetsManagerWindowEWC::drawOneLevel(const std::filesystem::path& rootPath,
+                                              const std::filesystem::path& prevPath)
     {
-        for (auto&& path : std::filesystem::directory_iterator(rootPath))
+        for (auto&& entry : std::filesystem::directory_iterator(rootPath))
         {
-            if (!path.is_regular_file() && !path.is_directory())
+            if (!entry.is_regular_file() && !entry.is_directory())
             {
                 continue;
             }
-            bool h = path.path().has_parent_path();
-            bool s = path.path().has_root_directory();
-            bool sd = path.path().has_root_path();
 
+            auto path = entry.path();
+            auto nodePath = std::filesystem::relative(path, rootPath).generic_string();
+            int flags = _commonTreeFlags;
 
-            const auto nodePath = std::filesystem::relative(path.path(), rootPath);
-            int flags = 0;
-            if (path.is_regular_file())
+            if (entry.is_regular_file())
             {
-                flags = ImGuiTreeNodeFlags_Leaf;
+                auto icon = ICON_FA_FILE;
+                const auto fileFormat = isCodeFileExt(path.extension());
+                if (fileFormat == FileFormat::Code)
+                {
+                    icon = ICON_FA_FILE_CODE_O;
+                }
+                else if (fileFormat == FileFormat::Image)
+                {
+                    icon = ICON_FA_FILE_IMAGE_O;
+                }
+                nodePath = icon + (" " + nodePath);
+                flags |= ImGuiTreeNodeFlags_Leaf;
+            }
+            else if (entry.is_directory())
+            {
+                nodePath = ICON_FA_FOLDER + (" " + nodePath);
             }
 
-            const bool isOpened = ImGui::TreeNodeEx(nodePath.generic_string().c_str(), flags);
+            const bool isOpened = ImGui::TreeNodeEx(nodePath.c_str(), flags);
             if (isOpened)
             {
-                if (path.is_directory())
+                if (entry.is_directory())
                 {
                     drawOneLevel(path, rootPath);
                 }
@@ -94,5 +110,69 @@ namespace Core
                 ImGui::TreePop();
             }
         }
+    }
+
+    AssetsManagerWindowEWC::FileFormat AssetsManagerWindowEWC::isCodeFileExt(const std::string& ext)
+    {
+        // clang-format off
+        if (ext == ".cpp"   ||
+            ext == ".cc"    ||
+            ext == ".cxx"   ||
+            ext == ".C"     ||
+            ext == ".c"     ||
+            ext == ".hpp"   ||
+            ext == ".hh"    ||
+            ext == ".hxx"   ||
+            ext == ".H"     ||
+            ext == ".h"     ||
+            ext == ".inl"   ||
+            ext == ".ipp"   ||
+            ext == ".pch"   ||
+            ext == ".gch"   ||
+            ext == ".lib"   ||
+            ext == ".so"    ||
+            ext == ".dll"   ||
+            ext == ".cs"    ||
+            ext == ".py"    ||
+            ext == ".pyc"   ||
+            ext == ".pyo"   ||
+            ext == ".whl"   ||
+            ext == ".pyi"   ||
+            ext == ".vert"  ||
+            ext == ".vs"    ||
+            ext == ".frag"  ||
+            ext == ".fs"    ||
+            ext == ".geom"  ||
+            ext == ".gs"    ||
+            ext == ".tesc"  ||
+            ext == ".tese"  ||
+            ext == ".comp"  ||
+            ext == ".glsl"  ||
+            ext == ".hlsl"  ||
+            ext == ".fx"    ||
+            ext == ".metal" ||
+            ext == ".spv"   ||
+            ext == ".cmake" ||
+            ext == ".pro"   ||
+            ext == ".pri"   ||
+            ext == ".json"  ||
+            ext == ".xml"   ||
+            ext == ".yml"   ||
+            ext == ".yaml"  ||
+            ext == ".ini"   ||
+            ext == ".toml") return FileFormat::Code;
+
+        if (ext == ".jpg"   ||
+            ext == ".jpeg"  ||
+            ext == ".png"   ||
+            ext == ".bmp"   ||
+            ext == ".tga"   ||
+            ext == ".psd"   ||
+            ext == ".gif"   ||
+            ext == ".hdr"   ||
+            ext == ".pic") return FileFormat::Image;
+        // clang-format on
+
+        return FileFormat::Default;
     }
 } // namespace Core
