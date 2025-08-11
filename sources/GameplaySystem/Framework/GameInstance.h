@@ -77,7 +77,7 @@ namespace Core
         ShaderManager* _shaderManager = nullptr;
         Window* _window = nullptr;
 
-        // Pre-launch settings
+        // Pre-launch settings TODO: MOVE IT!!!
         std::filesystem::path _assetsPath = "assets";
         std::filesystem::path _shaderPath = "assets/shaders";
         StringAtom _spdlogDefaultPatter = "%D [%L] [%n] %v";

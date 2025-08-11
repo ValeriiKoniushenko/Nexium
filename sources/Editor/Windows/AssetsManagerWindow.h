@@ -32,6 +32,9 @@ namespace Core
         ECS_REGISTER_NEW_COMPONENT(AssetsManagerWindowEWC, BaseFloatEWC);
 
     public:
+        // Pre-launch settings TODO: MOVE IT!!!
+        std::filesystem::path assetsPath = "assets";
+
     protected:
         void onInit() override;
         void onDraw() override;
@@ -40,5 +43,6 @@ namespace Core
     private:
         void drawExplorerTree();
         void drawExplorer();
+        void drawOneLevel(const std::filesystem::path& rootPath, const std::filesystem::path& prevPath);
     };
 } // namespace Core

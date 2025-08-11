@@ -45,9 +45,11 @@ namespace Core
 
     void AssetsManagerWindowEWC::drawExplorerTree()
     {
-        if (ImGui::BeginChild("Eplorer tree", ImVec2(200.0f, 0), ImGuiChildFlags_ResizeX))
+        if (ImGui::BeginChild("Explorer tree", ImVec2(200.0f, 0), ImGuiChildFlags_ResizeX))
         {
-            ImGui::Text("Hello world! LEFT");
+            ImGui::Dummy({}); // extra padding
+            drawOneLevel(assetsPath, assetsPath);
+            ImGui::Dummy({}); // extra padding
         }
         ImGui::EndChild();
     }
@@ -59,5 +61,38 @@ namespace Core
             ImGui::Text("Hello world! Right");
         }
         ImGui::EndChild();
+    }
+
+    void AssetsManagerWindowEWC::drawOneLevel(const std::filesystem::path& rootPath, const std::filesystem::path& prevPath)
+    {
+        for (auto&& path : std::filesystem::directory_iterator(rootPath))
+        {
+            if (!path.is_regular_file() && !path.is_directory())
+            {
+                continue;
+            }
+            bool h = path.path().has_parent_path();
+            bool s = path.path().has_root_directory();
+            bool sd = path.path().has_root_path();
+
+
+            const auto nodePath = std::filesystem::relative(path.path(), rootPath);
+            int flags = 0;
+            if (path.is_regular_file())
+            {
+                flags = ImGuiTreeNodeFlags_Leaf;
+            }
+
+            const bool isOpened = ImGui::TreeNodeEx(nodePath.generic_string().c_str(), flags);
+            if (isOpened)
+            {
+                if (path.is_directory())
+                {
+                    drawOneLevel(path, rootPath);
+                }
+
+                ImGui::TreePop();
+            }
+        }
     }
 } // namespace Core
