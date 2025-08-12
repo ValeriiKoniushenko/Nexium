@@ -45,9 +45,9 @@ namespace Core
 
     void GameViewportEWC::onDraw()
     {
-        if (gameInstance->renderMode.cast() == GameInstance::RenderMode::Editor)
+        if (gGameInstance->renderMode.cast() == GameInstance::RenderMode::Editor)
         {
-            const auto& r = gameInstance->renderToTextureObject;
+            const auto& r = gGameInstance->renderToTextureObject;
             const ImVec2 renderSize = { static_cast<float>(r.getRenderSize().width),
                                         static_cast<float>(r.getRenderSize().height) };
             ImGui::Image(r.getTextureId(), renderSize, ImVec2(0.0f, 1.0f), ImVec2(1.0f, 0.0f));

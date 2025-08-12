@@ -90,4 +90,4 @@ namespace Core
 
 } // namespace Core
 
-extern std::unique_ptr<Core::GameInstance> gameInstance;
+extern std::unique_ptr<Core::GameInstance> gGameInstance;

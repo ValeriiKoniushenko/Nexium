@@ -29,7 +29,7 @@
 #include "Graphics/Window.h"
 #include "Misc/FPSCounter.h"
 
-std::unique_ptr<Core::GameInstance> gameInstance = nullptr;
+std::unique_ptr<Core::GameInstance> gGameInstance = nullptr;
 
 namespace Core
 {
@@ -153,6 +153,6 @@ namespace Core
     {
         using R = GameInstance::RenderMode;
         renderMode = renderMode.cast() == R::GameOnly ? R::Editor : R::GameOnly;
-        gameInstance->updateViewport();
+        gGameInstance->updateViewport();
     }
 } // namespace Core

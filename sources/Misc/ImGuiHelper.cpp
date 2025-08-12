@@ -52,8 +52,10 @@ namespace Core
 
     void LabelAndInputTextRO(StringAtom label, StringAtom value, float labelSize, float fullSize)
     {
+        ImGui::PushID(label.makeHash());
         FixedLabel(label.data(), labelSize);
         InputTextRO(std::move(value), fullSize - labelSize);
+        ImGui::PopID();
     }
 
     void LabelAndCheckboxRO(StringAtom label, bool v, float labelSize)

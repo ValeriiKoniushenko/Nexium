@@ -23,16 +23,53 @@
 #pragma once
 
 #include "Core/Delegate.h"
+#include "Core/Enum.h"
+#include "Core/Singleton.h"
 #include "Core/Size.h"
+#include "InputDevices/Keyboard.h"
+#include "InputDevices/Mouse.h"
 #include "ModuleInfo.h"
 #include "OpenGL.h"
 
-#include <Core/Enum.h>
-#include <Core/Singleton.h>
 #include <filesystem>
 
 namespace Core
 {
+
+    struct DragAndDrop
+    {
+        struct Payload
+        {
+            void* data = nullptr;
+            StringAtom type;
+        };
+
+        enum class State
+        {
+            Idle,
+            Started,
+            Dragging
+        };
+
+        constexpr static float dragTreshold = 25.f;
+
+    public:
+
+        Payload payload;
+
+        [[nodiscard]] glm::vec2 getStartPos() const noexcept { return _startPos; };
+        [[nodiscard]] glm::vec2 getCurrentPos() const noexcept { return _currentPos; };
+        [[nodiscard]] State getState() const noexcept { return _state; };
+
+    private:
+        glm::vec2 _startPos;
+        glm::vec2 _currentPos;
+        State _state = State::Idle;
+
+        friend class Window;
+    };
+
+    extern DragAndDrop gDragDrop;
 
     class Window : public StrictSingleton<Window>, public BaseLog
     {
@@ -74,42 +111,60 @@ namespace Core
         [[nodiscard]] GLFWwindow* getRawWindow() noexcept { return _window; }
 
         /**
-         * @param first 'int' - is a key
-         * @param second 'int' - is a scancode
-         * @param third 'int' - is an action: GLFW_PRESS, GLFW_RELEASE or GLFW_REPEAT
-         * @param fourth 'int' - is a mod
+         * @param glm::vec2 mouse position (X & Y)
          */
-        Delegate<void(int, int, int, int)> onKeyPressed;
+        Delegate<void(glm::vec2)> onMouseMove;
 
         /**
-         * @param unsigned int - is a Scancode
+         * @param Mouse::Key is a key
+         * @param Mouse::State pressed or released
+         * @param Mouse::Mod is a mod
          */
-        Delegate<void(unsigned int)> onTextInput;
+        Delegate<void(Mouse::Key, Mouse::State, Mouse::Mod)> onMouseKeyPressed;
 
         /**
-         * @param bool - is Entered the cursor or no
-         */
-        Delegate<void(bool)> onCursorEntered;
-
-        /**
-         * @param glm::vec2 - mouse scroll offsets (X & Y)
+         * @param glm::vec2 mouse scroll offsets (X & Y)
          */
         Delegate<void(glm::vec2)> onMouseWheel;
 
         /**
-         * @param ISize2 - new window size
+         * @param Keyboard::Key is a key
+         * @param int is a scancode
+         * @param Keyboard::KeyState is an action: GLFW_PRESS, GLFW_RELEASE or GLFW_REPEAT
+         * @param int is a mod
+         */
+        Delegate<void(Keyboard::Key, int, Keyboard::KeyState, int)> onKeyPressed;
+
+        /**
+         * @param unsigned int is a Scancode
+         */
+        Delegate<void(unsigned int)> onTextInput;
+
+        /**
+         * @param bool is Entered the cursor or no
+         */
+        Delegate<void(bool)> onCursorEntered;
+
+        /**
+         * @param ISize2 new window size
          */
         Delegate<void(ISize2)> onResize;
 
         [[nodiscard]] spdlog::logger* getLogger() const override { return Graphics::getLogger(); }
         [[nodiscard]] const char* getPrefix() const override { return "Window"; }
 
-        void m__setSize(ISize2 newSize) noexcept { _size = newSize; }
-
     protected:
         GLFWwindow* _window{};
         ISize2 _size{};
         StringAtom _title;
+
+    private:
+        void registerEvents();
+
+    private:
+        decltype(onResize)::IDGuard _idOnResize;
+        decltype(onMouseMove)::IDGuard _idOnMouseMove;
+        decltype(onMouseKeyPressed)::IDGuard _idOnMouseKeyPressed;
     };
 
     Window& GetWindow();

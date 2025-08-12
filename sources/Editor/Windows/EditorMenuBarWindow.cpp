@@ -64,27 +64,27 @@ namespace Core
         {
             if (ImGui::MenuItem("Keyboard shortcuts"))
             {
-                gameInstance->gameEditor.showWindow<KeyboardShortcutsEWC>();
+                gGameInstance->gameEditor.showWindow<KeyboardShortcutsEWC>();
             }
             if (ImGui::MenuItem("Viewport"))
             {
-                gameInstance->gameEditor.showWindow<GameViewportEWC>();
+                gGameInstance->gameEditor.showWindow<GameViewportEWC>();
             }
             if (ImGui::MenuItem("Logs"))
             {
-                gameInstance->gameEditor.showWindow<LogsWindowEWC>();
+                gGameInstance->gameEditor.showWindow<LogsWindowEWC>();
             }
             if (ImGui::MenuItem("Object Properties"))
             {
-                gameInstance->gameEditor.showWindow<ObjectPropertiesWindowEWC>();
+                gGameInstance->gameEditor.showWindow<ObjectPropertiesWindowEWC>();
             }
             if (ImGui::MenuItem("Scene"))
             {
-                gameInstance->gameEditor.showWindow<SceneTreeWindowEWC>();
+                gGameInstance->gameEditor.showWindow<SceneTreeWindowEWC>();
             }
             if (ImGui::MenuItem("Assets manager"))
             {
-                gameInstance->gameEditor.showWindow<AssetsManagerWindowEWC>();
+                gGameInstance->gameEditor.showWindow<AssetsManagerWindowEWC>();
             }
             ImGui::EndMenu();
         }

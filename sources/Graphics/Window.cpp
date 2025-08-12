@@ -29,36 +29,49 @@ using namespace Core;
 namespace
 {
 
-    void KeyPressHandler(GLFWwindow* window, int key, int scancode, int action, int mods)
+    void MouseMoveHandler(GLFWwindow*, double x, double y)
     {
-        GetWindow().onKeyPressed.trigger(key, scancode, action, mods);
+        GetWindow().onMouseMove.trigger(glm::vec2(static_cast<float>(x), static_cast<float>(y)));
     }
 
-    void TextInputHandler(GLFWwindow* window, unsigned int scancode)
+    void MouseKeyPressHandler(GLFWwindow*, int button, int action, int mods)
+    {
+        GetWindow().onMouseKeyPressed.trigger(Mouse::Key(button), Mouse::State(action),
+                                              Mouse::Mod(mods));
+    }
+
+    void KeyPressHandler(auto*, int key, int scancode, int action, int mods)
+    {
+        GetWindow().onKeyPressed.trigger(Keyboard::Key(key), scancode,
+                                         Keyboard::KeyState::UnderlyingType(action), mods);
+    }
+
+    void TextInputHandler(auto*, unsigned int scancode)
     {
         GetWindow().onTextInput.trigger(scancode);
     }
 
-    void CursorEnterHandler(GLFWwindow* window, int entered)
+    void CursorEnterHandler(auto*, int entered)
     {
         GetWindow().onCursorEntered.trigger(entered == GLFW_TRUE);
     }
 
-    void MouseScrollHandler(GLFWwindow* window, double x, double y)
+    void MouseScrollHandler(auto*, double x, double y)
     {
         GetWindow().onMouseWheel.trigger(glm::vec2(static_cast<float>(x), static_cast<float>(y)));
     }
 
-    void WindowSizeCallback(GLFWwindow* window, int width, int height)
+    void WindowSizeCallback(auto*, int width, int height)
     {
         GetWindow().onResize.trigger(ISize2(width, height));
-        GetWindow().m__setSize(ISize2(width, height));
     }
 
 } // namespace
 
 namespace Core
 {
+
+    DragAndDrop gDragDrop;
 
     Window::~Window()
     {
@@ -84,12 +97,14 @@ namespace Core
         debugLog("The window was created");
 
         glfwMakeContextCurrent(_window);
+        glfwSetMouseButtonCallback(_window, MouseKeyPressHandler);
+        glfwSetCursorPosCallback(_window, MouseMoveHandler);
         glfwSetKeyCallback(_window, KeyPressHandler);
         glfwSetCharCallback(_window, TextInputHandler);
         glfwSetCursorEnterCallback(_window, CursorEnterHandler);
         glfwSetScrollCallback(_window, MouseScrollHandler);
         glfwSetWindowSizeCallback(_window, WindowSizeCallback);
-        glfwSwapInterval(1);
+        glfwSwapInterval(0);
 
         if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
         {
@@ -102,6 +117,8 @@ namespace Core
         debugLog("OpenGL version: {}"_f << reinterpret_cast<const char*>(glGetString(GL_VERSION)));
         debugLog("GLFW version: {}"_f
                  << reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION)));
+
+        registerEvents();
     }
 
     void Window::close()
@@ -169,6 +186,54 @@ namespace Core
     {
         setCursorMode(getCursorMode().cast() == CursorMode::Normal ? CursorMode::Disabled
                                                                    : CursorMode::Normal);
+    }
+
+    void Window::registerEvents()
+    {
+        _idOnResize = onResize.subscribeAndGetID(
+            [this](ISize2 size)
+            {
+                _size = size;
+            });
+
+        _idOnMouseMove = onMouseMove.subscribeAndGetID(
+            [](glm::vec2 pos)
+            {
+                if (gDragDrop._state == DragAndDrop::State::Started)
+                {
+                    if (glm::distance(pos, gDragDrop._startPos) >= DragAndDrop::dragTreshold)
+                    {
+                        gDragDrop._state = DragAndDrop::State::Dragging;
+                    }
+                }
+                if (gDragDrop._state == DragAndDrop::State::Dragging)
+                {
+                    gDragDrop._currentPos = pos;
+                }
+            });
+
+        _idOnMouseKeyPressed = onMouseKeyPressed.subscribeAndGetID(
+            [](Mouse::Key key, Mouse::State state, Mouse::Mod mod)
+            {
+                if (state == Mouse::State::Release)
+                {
+                    if (glm::distance(gDragDrop._startPos, Mouse::getPosition())
+                        >= DragAndDrop::dragTreshold)
+                    {
+                        gDragDrop._state = DragAndDrop::State::Dragging;
+                        globalLog.traceLog("Drag finished");
+                    }
+                    gDragDrop._state = DragAndDrop::State::Idle;
+                    gDragDrop.payload = {};
+                }
+                else if (state == Mouse::State::Press)
+                {
+                    globalLog.traceLog("LMB down");
+                    gDragDrop._state = DragAndDrop::State::Started;
+                    gDragDrop.payload.type = "InventoryItem";
+                    gDragDrop._startPos = Mouse::getPosition();
+                }
+            });
     }
 
     Window& GetWindow()

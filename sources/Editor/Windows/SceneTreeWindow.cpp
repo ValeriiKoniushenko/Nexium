@@ -44,7 +44,7 @@ namespace Core
     {
         BaseFloatEWC::onInit();
 
-        setScene(&gameInstance->gameScene);
+        setScene(&gGameInstance->gameScene);
     }
 
     void SceneTreeWindowEWC::onDraw()
@@ -165,7 +165,7 @@ namespace Core
         if (ImGui::IsItemClicked() || ImGui::IsItemFocused())
         {
             selectedObject = n;
-            if (auto* wnd = gameInstance->gameEditor.getWindow<ObjectPropertiesWindowEWC>())
+            if (auto* wnd = gGameInstance->gameEditor.getWindow<ObjectPropertiesWindowEWC>())
             {
                 if (wnd->isEnabled())
                 {

@@ -33,6 +33,17 @@ namespace Core
     class Mouse
     {
     public:
+        enum class Mod
+        {
+            None,
+            Shift = GLFW_MOD_SHIFT,
+            Control = GLFW_MOD_CONTROL,
+            Alt = GLFW_MOD_ALT,
+            Super = GLFW_MOD_SUPER,
+            CapsLock = GLFW_MOD_CAPS_LOCK,
+            NumLock = GLFW_MOD_NUM_LOCK
+        };
+
         enum Key
         {
             Key_None,
@@ -48,6 +59,13 @@ namespace Core
             Key_Left = GLFW_MOUSE_BUTTON_LEFT,
             Key_Right = GLFW_MOUSE_BUTTON_RIGHT,
             Key_Middle = GLFW_MOUSE_BUTTON_MIDDLE
+        };
+
+        enum class State
+        {
+            None,
+            Press = GLFW_PRESS,
+            Release = GLFW_RELEASE,
         };
 
         Mouse() = delete;

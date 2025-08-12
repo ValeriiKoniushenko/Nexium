@@ -90,7 +90,7 @@ namespace Core
             [this](SpecKeysState states)
             {
                 onMouseClick.trigger(Mouse::getPosition(), states);
-            });
+            });;
     }
 
 } // namespace Core

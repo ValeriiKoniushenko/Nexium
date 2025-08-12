@@ -100,16 +100,16 @@ namespace Core
         toggleSimulation->onPress.subscribe(
             [](auto)
             {
-                gameInstance->toggleRenderMode();
+                gGameInstance->toggleRenderMode();
             });
 
         // clang-format off
-        keyboardInput.getOrCreate("moveForward", Keyboard::Key::Key_W)->onPress.subscribe([&](auto state){ camera.moveForward(getRealSpeed(state) * gameInstance->world.timeDelta); });
-        keyboardInput.getOrCreate("moveBackward", Keyboard::Key::Key_S)->onPress.subscribe([&](auto state){ camera.moveForward(-getRealSpeed(state) * gameInstance->world.timeDelta); });
-        keyboardInput.getOrCreate("moveRight", Keyboard::Key::Key_D)->onPress.subscribe([&](auto state){ camera.moveRight(-getRealSpeed(state) * gameInstance->world.timeDelta); });
-        keyboardInput.getOrCreate("moveLeft", Keyboard::Key::Key_A)->onPress.subscribe([&](auto state){ camera.moveRight(getRealSpeed(state) * gameInstance->world.timeDelta); });
-        keyboardInput.getOrCreate("moveUp", Keyboard::Key::Key_Space)->onPress.subscribe([&](auto state){ camera.moveUp(-getRealSpeed(state) * gameInstance->world.timeDelta); });
-        keyboardInput.getOrCreate("moveDown", Keyboard::Key::Key_C)->onPress.subscribe([&](auto state){ camera.moveUp(getRealSpeed(state) * gameInstance->world.timeDelta); });
+        keyboardInput.getOrCreate("moveForward", Keyboard::Key::Key_W)->onPress.subscribe([&](auto state){ camera.moveForward(getRealSpeed(state) * gGameInstance->world.timeDelta); });
+        keyboardInput.getOrCreate("moveBackward", Keyboard::Key::Key_S)->onPress.subscribe([&](auto state){ camera.moveForward(-getRealSpeed(state) * gGameInstance->world.timeDelta); });
+        keyboardInput.getOrCreate("moveRight", Keyboard::Key::Key_D)->onPress.subscribe([&](auto state){ camera.moveRight(-getRealSpeed(state) * gGameInstance->world.timeDelta); });
+        keyboardInput.getOrCreate("moveLeft", Keyboard::Key::Key_A)->onPress.subscribe([&](auto state){ camera.moveRight(getRealSpeed(state) * gGameInstance->world.timeDelta); });
+        keyboardInput.getOrCreate("moveUp", Keyboard::Key::Key_Space)->onPress.subscribe([&](auto state){ camera.moveUp(-getRealSpeed(state) * gGameInstance->world.timeDelta); });
+        keyboardInput.getOrCreate("moveDown", Keyboard::Key::Key_C)->onPress.subscribe([&](auto state){ camera.moveUp(getRealSpeed(state) * gGameInstance->world.timeDelta); });
         keyboardInput.getOrCreate("exit", Keyboard::Key::Key_F12)->onPress.subscribe([&](auto){ GetWindow().close(); });
         // clang-format on
     }

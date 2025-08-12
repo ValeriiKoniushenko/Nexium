@@ -141,11 +141,11 @@ namespace Core
             [](auto outer, auto inner)
             {
                 {
-                    if (gameInstance->renderMode.cast() == GameInstance::RenderMode::Editor)
+                    if (gGameInstance->renderMode.cast() == GameInstance::RenderMode::Editor)
                     {
-                        gameInstance->renderToTextureObject.setRenderSize(
+                        gGameInstance->renderToTextureObject.setRenderSize(
                             static_cast<ISize2>(inner));
-                        gameInstance->updateViewport();
+                        gGameInstance->updateViewport();
                     }
                 }
             });
