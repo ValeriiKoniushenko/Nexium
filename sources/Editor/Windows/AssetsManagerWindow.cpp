@@ -273,11 +273,12 @@ namespace Core
         if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenBlockedByPopup))
         {
             ImGui::BeginTooltip();
+
             std::error_code ec;
             const auto lastWrite = std::filesystem::last_write_time(path, ec);
             if (ec)
             {
-                errorLog("Some error {}"_f << ec.message());
+                errorLog("Some error of std::filesystem::last_write_time: {}"_f << ec.message());
             }
 
             ImGui::Text("Name:      %s", originalFileName.data());
@@ -290,6 +291,14 @@ namespace Core
                 ImGui::Text("File size: %d", fileSize);
             }
             ImGui::EndTooltip();
+
+            if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+            {
+                if (entry.is_directory())
+                {
+                    _openedPath = path;
+                }
+            }
         }
 
         return clicked;

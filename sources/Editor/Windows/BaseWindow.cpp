@@ -85,6 +85,8 @@ namespace Core
 
     bool BaseFloatEWC::beginWindowDraw()
     {
+        ImGui::SetNextWindowSizeConstraints(ImVec2(300, 200), ImVec2(FLT_MAX, FLT_MAX));
+
         if (_isFitContent)
         {
             ImGui::SetNextWindowSize(ImVec2(0, 0), ImGuiCond_Always);

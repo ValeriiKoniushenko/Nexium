@@ -30,6 +30,7 @@
 #include "Editor/Windows/ObjectPropertiesWindow.h"
 #include "Editor/Windows/RootDockWindow.h"
 #include "Editor/Windows/SceneTreeWindow.h"
+#include "Editor/Windows/TextEditor.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "ImGui/backends/imgui_impl_glfw.h"
 #include "ImGui/backends/imgui_impl_opengl3.h"
@@ -136,6 +137,7 @@ namespace Core
             = registerNewWindow<AssetsManagerWindowEWC>(ICON_FA_FOLDER + " Assetes"_atom);
 
         auto tipsWindow = registerNewWindow<KeyboardShortcutsEWC>("Keyboard Shortcuts"_atom, false);
+        auto textEditor = registerNewWindow<TextEditorEWC>("Text editor"_atom, false);
 
         viewportWindow->onSizeChanged.subscribe(
             [](auto outer, auto inner)

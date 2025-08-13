@@ -29,6 +29,7 @@
 #include "Editor/Windows/ObjectPropertiesWindow.h"
 #include "Editor/Windows/SceneTreeWindow.h"
 #include "GameplaySystem/Framework/GameInstance.h"
+#include "TextEditor.h"
 
 namespace Core
 {
@@ -74,7 +75,7 @@ namespace Core
             {
                 gGameInstance->gameEditor.showWindow<LogsWindowEWC>();
             }
-            if (ImGui::MenuItem("Object Properties"))
+            if (ImGui::MenuItem("Object properties"))
             {
                 gGameInstance->gameEditor.showWindow<ObjectPropertiesWindowEWC>();
             }
@@ -86,6 +87,11 @@ namespace Core
             {
                 gGameInstance->gameEditor.showWindow<AssetsManagerWindowEWC>();
             }
+            if (ImGui::MenuItem("Text editor"))
+            {
+                gGameInstance->gameEditor.showWindow<TextEditorEWC>();
+            }
+
             ImGui::EndMenu();
         }
 
