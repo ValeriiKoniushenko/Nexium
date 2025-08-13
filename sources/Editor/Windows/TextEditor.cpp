@@ -23,6 +23,7 @@
 #include "TextEditor.h"
 
 #include "ImGui/misc/cpp/imgui_stdlib.h"
+#include "Misc/IconsFontAwesome.h"
 #include "Utils/Functions.h"
 
 namespace Core
@@ -62,6 +63,7 @@ namespace Core
         }
 
         setComponentName(_path.filename().generic_string().data());
+        _wasEdited = false;
     }
     void TextEditorEWC::drawBarMenu()
     {
@@ -80,6 +82,22 @@ namespace Core
 
                 ImGui::EndMenu();
             }
+
+            if (_wasEdited)
+            {
+                ImGui::SameLine(ImGui::GetWindowWidth()
+                                - (ImGui::CalcTextSize(ICON_FA_TIMES_CIRCLE).x + _statusMarginRight)
+                                - ImGui::GetStyle().ItemSpacing.x);
+                ImGui::TextUnformatted(ICON_FA_TIMES_CIRCLE);
+            }
+            else
+            {
+                ImGui::SameLine(ImGui::GetWindowWidth()
+                                - (ImGui::CalcTextSize(ICON_FA_CHECK_CIRCLE).x + _statusMarginRight)
+                                - ImGui::GetStyle().ItemSpacing.x);
+                ImGui::TextUnformatted(ICON_FA_CHECK_CIRCLE);
+            }
+
             ImGui::EndMenuBar();
         }
     }
@@ -102,13 +120,17 @@ namespace Core
         }
 
         file.write(_fileContent.c_str(), _fileContent.size() * sizeof(_fileContent[0]));
+        _wasEdited = false;
     }
 
     void TextEditorEWC::drawEditor()
     {
         ImGui::PushTextWrapPos();
-        ImGui::InputTextMultiline("##editor", &_fileContent,
-                                  ImVec2(_innerSize.width, _innerSize.height));
+        if (ImGui::InputTextMultiline("##editor", &_fileContent,
+                                  ImVec2(_innerSize.width, _innerSize.height)))
+        {
+            _wasEdited = true;
+        }
         ImGui::PopTextWrapPos();
     }
 } // namespace Core

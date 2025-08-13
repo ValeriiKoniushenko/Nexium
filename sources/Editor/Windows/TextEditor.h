@@ -45,6 +45,8 @@ namespace Core
     protected:
         std::filesystem::path _path;
         std::string _fileContent;
+        bool _wasEdited = false;
+        float _statusMarginRight = 10.f;
     };
 
 } // namespace Core
