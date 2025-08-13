@@ -22,12 +22,12 @@
 
 #pragma once
 
+#include "Core/Enum.h"
 #include "Core/StringHelper.h"
 #include "JsonAdapter.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/spdlog.h"
 
-#include <Core/Enum.h>
 #include <queue>
 #include <shared_mutex>
 
