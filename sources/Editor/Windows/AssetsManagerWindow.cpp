@@ -300,7 +300,7 @@ namespace Core
                 {
                     _openedPath = path;
                 }
-                else if (entry.is_regular_file())
+                else if (entry.is_regular_file() && getNodeType(entry) == NodeType::Code)
                 {
                     gGameInstance->gameEditor.showWindow<TextEditorEWC>(
                         ".*", path.generic_string().data());
