@@ -32,14 +32,16 @@ namespace Core
     void TextEditorEWC::onInit()
     {
         BaseFloatEWC::onInit();
+
+        _minWindowSize = FSize2(500.f, 500.f);
+        _windowFlags |= ImGuiWindowFlags_MenuBar;
     }
 
     void TextEditorEWC::onDraw()
     {
-        ImGui::PushTextWrapPos();
-        ImGui::InputTextMultiline("##editor", &_fileContent,
-                                  ImVec2(_innerSize.width, _innerSize.height));
-        ImGui::PopTextWrapPos();
+        drawBarMenu();
+
+        drawEditor();
     }
 
     void TextEditorEWC::putArguments(const StringAtom& args)
@@ -47,10 +49,66 @@ namespace Core
         BaseEWC::putArguments(args);
 
         _path = args.data();
+        if (_path.empty())
+        {
+            return;
+        }
+
         _fileContent = Utils::TryToGetTextFileContentAs<std::string>(_path);
         if (_fileContent.empty())
         {
             errorLog("TextEditor can't open file: {}"_f << _path.generic_string());
+            return;
         }
+
+        setComponentName(_path.filename().generic_string().data());
+    }
+    void TextEditorEWC::drawBarMenu()
+    {
+        if (ImGui::BeginMenuBar())
+        {
+            if (ImGui::BeginMenu("File"))
+            {
+                if (ImGui::MenuItem("Save"))
+                {
+                    save();
+                }
+                if (ImGui::MenuItem("Exit"))
+                {
+                    setEnabled(false);
+                }
+
+                ImGui::EndMenu();
+            }
+            ImGui::EndMenuBar();
+        }
+    }
+
+    void TextEditorEWC::save()
+    {
+        if (_path.empty())
+        {
+            return;
+        }
+
+        errno = 0;
+        std::ofstream file(_path);
+        if (!file.is_open())
+        {
+            int err = errno;
+            errorLog("File: {} - wasn't opened. Reason: {}"_f << _path.c_str()
+                                                              << std::strerror(err));
+            return;
+        }
+
+        file.write(_fileContent.c_str(), _fileContent.size() * sizeof(_fileContent[0]));
+    }
+
+    void TextEditorEWC::drawEditor()
+    {
+        ImGui::PushTextWrapPos();
+        ImGui::InputTextMultiline("##editor", &_fileContent,
+                                  ImVec2(_innerSize.width, _innerSize.height));
+        ImGui::PopTextWrapPos();
     }
 } // namespace Core

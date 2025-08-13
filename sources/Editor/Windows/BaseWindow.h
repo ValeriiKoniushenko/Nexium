@@ -95,6 +95,7 @@ namespace Core
         void endWindowDraw() override;
 
     protected:
+        FSize2 _minWindowSize = FSize2(200.f, 20.f);
         FSize2 _size;
         FSize2 _innerSize;
         FSize2 _oldSize = FSize2{ -1, -1 };
