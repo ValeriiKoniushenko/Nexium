@@ -55,8 +55,10 @@ namespace Core
         std::filesystem::path _openedPath = assetsPath;
         int _commonTreeFlags = ImGuiTreeNodeFlags_OpenOnDoubleClick;
         ImVec2 _thumbnailSize = ImVec2(70, 70);
+        bool _renderFilesInTreeView = false;
 
     private:
+        [[nodiscard]] bool hasDirAtLeastOneSubDir(const std::filesystem::path& rootPath);
         void drawExplorerTree();
         void drawExplorer();
         void drawOneLevel(const std::filesystem::path& rootPath, bool isSelected);

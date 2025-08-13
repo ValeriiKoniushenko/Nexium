@@ -17,6 +17,7 @@ function(CoreAddCompileOptionsTo Target)
             "$<$<CONFIG:DEBUG>:-fno-inline>"
             "$<$<CONFIG:DEBUG>:-fno-omit-frame-pointer>"
             "$<$<CONFIG:RELEASE>:-O3>"
+            # "$<$<CONFIG:RELEASE>:-ffast-math>"
         )
     endif ()
 endfunction()

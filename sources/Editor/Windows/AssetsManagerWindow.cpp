@@ -111,6 +111,10 @@ namespace Core
 
             if (entry.is_regular_file())
             {
+                if (!_renderFilesInTreeView)
+                {
+                    continue;
+                }
                 auto icon = ICON_FA_FILE;
                 const auto fileFormat = getNodeType(entry);
                 if (fileFormat == NodeType::Code)
@@ -127,6 +131,11 @@ namespace Core
             else if (entry.is_directory())
             {
                 nodePath = ICON_FA_FOLDER + (" " + nodePath);
+
+                if (!hasDirAtLeastOneSubDir(path))
+                {
+                    flags |= ImGuiTreeNodeFlags_Leaf;
+                }
             }
 
             const bool isOpened = ImGui::TreeNodeEx(nodePath.c_str(), flags);
@@ -309,6 +318,18 @@ namespace Core
         }
 
         return clicked;
+    }
+
+    bool AssetsManagerWindowEWC::hasDirAtLeastOneSubDir(const std::filesystem::path& rootPath)
+    {
+        for (auto&& entry : std::filesystem::directory_iterator(rootPath))
+        {
+            if (entry.is_directory())
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
 } // namespace Core

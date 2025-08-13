@@ -611,7 +611,7 @@ namespace Core
 #if defined(DEBUG)
                     found = dynamic_cast<TargetT*>(comp);
 #else
-                    found = reinterpret_cast<TargetT*>(comp);
+                    found = static_cast<TargetT*>(comp);
 #endif
                     return false;
                 }
