@@ -45,6 +45,7 @@ namespace Core
 
     public:
         [[nodiscard]] const StringAtom& getWindowTitle() { return getComponentName(); }
+        virtual void putArguments(const StringAtom& args) {}
 
     protected:
         void onTick() final;

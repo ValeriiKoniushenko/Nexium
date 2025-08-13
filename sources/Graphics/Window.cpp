@@ -221,14 +221,12 @@ namespace Core
                         >= DragAndDrop::dragTreshold)
                     {
                         gDragDrop._state = DragAndDrop::State::Dragging;
-                        globalLog.traceLog("Drag finished");
                     }
                     gDragDrop._state = DragAndDrop::State::Idle;
                     gDragDrop.payload = {};
                 }
                 else if (state == Mouse::State::Press)
                 {
-                    globalLog.traceLog("LMB down");
                     gDragDrop._state = DragAndDrop::State::Started;
                     gDragDrop.payload.type = "InventoryItem";
                     gDragDrop._startPos = Mouse::getPosition();

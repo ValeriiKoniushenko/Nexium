@@ -32,9 +32,15 @@ namespace Core
         ECS_REGISTER_NEW_COMPONENT(TextEditorEWC, BaseFloatEWC);
 
     public:
-    private:
+        void putArguments(const StringAtom& args);
+
+    protected:
         void onInit() override;
         void onDraw() override;
+
+    protected:
+        std::filesystem::path _path;
+        std::string _fileContent;
     };
 
 } // namespace Core

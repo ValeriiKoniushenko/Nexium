@@ -90,11 +90,12 @@ namespace Core
         }
 
         template<IsEditorWindowComponentOrBase WindowT = BaseEWC>
-        void showWindow(const StringAtom& regexName = ".*")
+        void showWindow(const StringAtom& regexName = ".*", const StringAtom& args = ""_atom)
         {
             if (auto* wnd = getWindow<WindowT>(regexName))
             {
                 wnd->setEnabled(true);
+                wnd->putArguments(args);
             }
         }
 

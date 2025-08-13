@@ -22,7 +22,9 @@
 
 #include "AssetsManagerWindow.h"
 
+#include "GameplaySystem/Framework/GameInstance.h"
 #include "Misc/IconsFontAwesome.h"
+#include "TextEditor.h"
 
 #include <format>
 
@@ -297,6 +299,11 @@ namespace Core
                 if (entry.is_directory())
                 {
                     _openedPath = path;
+                }
+                else if (entry.is_regular_file())
+                {
+                    gGameInstance->gameEditor.showWindow<TextEditorEWC>(
+                        ".*", path.generic_string().data());
                 }
             }
         }

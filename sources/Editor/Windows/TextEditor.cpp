@@ -22,6 +22,9 @@
 
 #include "TextEditor.h"
 
+#include "ImGui/misc/cpp/imgui_stdlib.h"
+#include "Utils/Functions.h"
+
 namespace Core
 {
     ECS_REGISTER_NEW_COMPONENT_TYPE(TextEditorEWC)
@@ -33,5 +36,21 @@ namespace Core
 
     void TextEditorEWC::onDraw()
     {
+        ImGui::PushTextWrapPos();
+        ImGui::InputTextMultiline("##editor", &_fileContent,
+                                  ImVec2(_innerSize.width, _innerSize.height));
+        ImGui::PopTextWrapPos();
+    }
+
+    void TextEditorEWC::putArguments(const StringAtom& args)
+    {
+        BaseEWC::putArguments(args);
+
+        _path = args.data();
+        _fileContent = Utils::TryToGetTextFileContentAs<std::string>(_path);
+        if (_fileContent.empty())
+        {
+            errorLog("TextEditor can't open file: {}"_f << _path.generic_string());
+        }
     }
 } // namespace Core
