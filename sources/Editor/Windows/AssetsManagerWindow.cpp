@@ -253,11 +253,17 @@ namespace Core
             if (value != originalFileName)
             {
                 std::error_code ec;
-                std::filesystem::rename(filename.data(), value, ec);
+
+                auto newPath = path.parent_path() / value;
+                std::filesystem::rename(path, newPath, ec);
                 if (ec)
                 {
                     errorLog("Can't rename file from: '{}' to '{}'. Reason: {}"_f
                              << filename << value << ec.message());
+                }
+                else
+                {
+                    path = newPath;
                 }
             }
         }
@@ -267,15 +273,20 @@ namespace Core
         if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenBlockedByPopup))
         {
             ImGui::BeginTooltip();
-            const auto fullPath = entry.path();
-            const auto lastWrite = std::filesystem::last_write_time(fullPath);
+            std::error_code ec;
+            const auto lastWrite = std::filesystem::last_write_time(path, ec);
+            if (ec)
+            {
+                errorLog("Some error {}"_f << ec.message());
+            }
+
             ImGui::Text("Name:      %s", originalFileName.data());
             ImGui::Text("Modified:  %s", std::format("{}", lastWrite).data());
-            ImGui::Text("Location:  %s", fullPath.generic_string().data());
+            ImGui::Text("Location:  %s", path.generic_string().data());
 
             if (entry.is_regular_file())
             {
-                const uint32_t fileSize = std::filesystem::file_size(fullPath);
+                const uint32_t fileSize = std::filesystem::file_size(path);
                 ImGui::Text("File size: %d", fileSize);
             }
             ImGui::EndTooltip();
