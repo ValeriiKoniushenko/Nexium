@@ -30,7 +30,7 @@ using namespace Core;
 
 void TemplateGameInstance::onLoadShaders()
 {
-    auto* shader = _shaderManager->getShaderProgram("color"_atom);
+    auto* shader = _shaderManager.getShaderProgram("color"_atom);
     if (Verify(shader))
     {
         shader->setVertexAttributeCallback(
@@ -52,7 +52,7 @@ void TemplateGameInstance::onLoadShaders()
 
 void TemplateGameInstance::onTick(float delta)
 {
-    auto* shader = _shaderManager->getShaderProgram("color"_atom);
+    auto* shader = _shaderManager.getShaderProgram("color"_atom);
     shader->use();
     shader->setUniform("uObjectColor"_atom, 1.0f, 1.0f, 1.0f);
     shader->setUniform("uLightColor"_atom, 1.0f, 1.0f, 1.0f);
@@ -89,7 +89,7 @@ void TemplateGameInstance::onInitFinish()
         {
             StaticMeshBundle mesh;
             mesh.importFrom(scene->mRootNode, scene, path);
-            mesh.setShaderProgram(_shaderManager->getShaderProgram("color"_atom));
+            mesh.setShaderProgram(_shaderManager.getShaderProgram("color"_atom));
             gameScene.addMesh(std::move(mesh));
         }
     }

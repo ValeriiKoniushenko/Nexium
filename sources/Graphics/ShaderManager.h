@@ -30,7 +30,7 @@
 
 namespace Core
 {
-    class ShaderManager final : public StrictSingleton<ShaderManager>, public BaseLog
+    class ShaderManager final : public BaseLog
     {
     public:
         inline static const char* const defaultVertexFileExtension = ".vert";
@@ -74,9 +74,4 @@ namespace Core
 
         std::unordered_set<std::string> _failedShaders;
     };
-
-    inline ShaderManager& GetShaderManager()
-    {
-        return ShaderManager::instance();
-    }
 } // namespace Core

@@ -73,8 +73,7 @@ namespace Core
         virtual void onFinishWriteCache();
 
     protected:
-        // Easy-access variables
-        ShaderManager* _shaderManager = nullptr;
+        ShaderManager _shaderManager;
         Window* _window = nullptr;
 
         // Pre-launch settings TODO: MOVE IT!!!

@@ -29,16 +29,16 @@ using namespace Core;
 class ShaderManagerFixture : public ::testing::Test
 {
 protected:
-    void SetUp() override { manager = &GetShaderManager(); }
+    void SetUp() override {  }
     void TearDown() override
     {
-        manager->getSuitableFragFileExtensions().clear();
-        manager->getSuitableVertFileExtensions().clear();
-        manager->pushSuitableFileExtension(".frag", ShaderType::Fragment);
-        manager->pushSuitableFileExtension(".vert", ShaderType::Vertex);
+        manager.getSuitableFragFileExtensions().clear();
+        manager.getSuitableVertFileExtensions().clear();
+        manager.pushSuitableFileExtension(".frag", ShaderType::Fragment);
+        manager.pushSuitableFileExtension(".vert", ShaderType::Vertex);
     }
 
-    ShaderManager* manager = nullptr;
+    ShaderManager manager;
 };
 
 TEST_F(ShaderManagerFixture, TestAssetsDirectoryIsNotEmpty)
@@ -79,32 +79,32 @@ TEST_F(ShaderManagerFixture, TestAssetsDirectoryIsNotEmpty)
 TEST_F(ShaderManagerFixture, CanAddNewFragmentExtension)
 {
     const auto extension = ".fsh";
-    manager->pushSuitableFileExtension(extension, ShaderType::Fragment);
-    auto& set = manager->getSuitableFragFileExtensions();
+    manager.pushSuitableFileExtension(extension, ShaderType::Fragment);
+    auto& set = manager.getSuitableFragFileExtensions();
     EXPECT_TRUE(set.find(extension) != set.end());
 }
 
 TEST_F(ShaderManagerFixture, CanAddNewVertexExtension)
 {
     const auto extension = ".vsh";
-    manager->pushSuitableFileExtension(extension, ShaderType::Vertex);
-    auto& set = manager->getSuitableVertFileExtensions();
+    manager.pushSuitableFileExtension(extension, ShaderType::Vertex);
+    auto& set = manager.getSuitableVertFileExtensions();
     EXPECT_TRUE(set.find(extension) != set.end());
 }
 
 TEST_F(ShaderManagerFixture, IgnoresIncorrectShaderType)
 {
     const auto extension = ".junk";
-    manager->pushSuitableFileExtension(extension, static_cast<ShaderType>(999));
-    auto& fragSet = manager->getSuitableFragFileExtensions();
-    auto& vertSet = manager->getSuitableVertFileExtensions();
+    manager.pushSuitableFileExtension(extension, static_cast<ShaderType>(999));
+    auto& fragSet = manager.getSuitableFragFileExtensions();
+    auto& vertSet = manager.getSuitableVertFileExtensions();
     EXPECT_TRUE(fragSet.find(extension) == fragSet.end());
     EXPECT_TRUE(vertSet.find(extension) == vertSet.end());
 }
 
 TEST_F(ShaderManagerFixture, ReturnsEmptyShaderProgramIfNotFound)
 {
-    auto shader = manager->getShaderProgram("non_existent_shader"_atom);
+    auto shader = manager.getShaderProgram("non_existent_shader"_atom);
 
     EXPECT_EQ(shader, nullptr);
 }

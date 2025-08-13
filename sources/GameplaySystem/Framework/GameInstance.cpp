@@ -52,12 +52,11 @@ namespace Core
             });
 
         //-------------------- SHADER MANAGER ---------------------
-        _shaderManager = &GetShaderManager();
-        _shaderManager->loadShaders(_shaderPath);
-        _shaderManager->debugLog("Was loaded {} shaders."_f << _shaderManager->countOfShaders());
-        for (const auto& notLoadedShader : _shaderManager->getFailedShaders())
+        _shaderManager.loadShaders(_shaderPath);
+        _shaderManager.debugLog("Was loaded {} shaders."_f << _shaderManager.countOfShaders());
+        for (const auto& notLoadedShader : _shaderManager.getFailedShaders())
         {
-            _shaderManager->warnLog("Shader '{}' found but not loaded. It contains some error[s]."_f
+            _shaderManager.warnLog("Shader '{}' found but not loaded. It contains some error[s]."_f
                                     << notLoadedShader);
         }
         onLoadShaders();
