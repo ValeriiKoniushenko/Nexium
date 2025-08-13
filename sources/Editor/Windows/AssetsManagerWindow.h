@@ -23,6 +23,7 @@
 #pragma once
 
 #include "BaseWindow.h"
+#include "Graphics/Texture.h"
 
 namespace Core
 {
@@ -32,12 +33,14 @@ namespace Core
         ECS_REGISTER_NEW_COMPONENT(AssetsManagerWindowEWC, BaseFloatEWC);
 
     public:
-        enum class FileFormat
+        enum class NodeType
         {
             Default,
             Code,
-            Image
+            Image,
+            Folder
         };
+
     public:
         // Pre-launch settings TODO: MOVE IT!!!
         std::filesystem::path assetsPath = "assets";
@@ -47,11 +50,19 @@ namespace Core
         void onDraw() override;
         void onUpdate() override;
 
-    private:
+    protected:
+        std::unordered_map<NodeType, Core::Texture> _nodeTypesData;
+        std::filesystem::path _openedPath = assetsPath;
         int _commonTreeFlags = ImGuiTreeNodeFlags_OpenOnDoubleClick;
+        ImVec2 _thumbnailSize = ImVec2(70, 70);
+
+    private:
         void drawExplorerTree();
         void drawExplorer();
-        void drawOneLevel(const std::filesystem::path& rootPath, const std::filesystem::path& prevPath);
-        [[nodiscard]] FileFormat isCodeFileExt(const std::string& ext);
+        void drawOneLevel(const std::filesystem::path& rootPath, bool isSelected);
+        bool drawFileThumbnail(ImTextureID texture, const std::filesystem::directory_entry& entry,
+                               ImVec2 size);
+
+        [[nodiscard]] NodeType getNodeType(const std::filesystem::directory_entry& entry);
     };
 } // namespace Core

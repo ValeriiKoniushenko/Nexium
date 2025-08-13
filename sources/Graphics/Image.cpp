@@ -34,7 +34,7 @@ namespace Core
         init();
         if (!path.empty())
         {
-            loadImageFromFile(std::move(path));
+            loadFromFile(std::move(path));
         }
     }
 
@@ -71,7 +71,7 @@ namespace Core
         return (_channel.cast() == 3) ? GL_RGB : (_channel.cast() == 4) ? GL_RGBA : GL_RED;
     }
 
-    bool Image::loadImageFromFile(const std::filesystem::path& path, bool isFlipVertically)
+    bool Image::loadFromFile(const std::filesystem::path& path, bool isFlipVertically)
     {
         if (!std::filesystem::exists(path))
         {

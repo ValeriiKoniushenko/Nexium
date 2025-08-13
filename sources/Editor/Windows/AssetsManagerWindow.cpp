@@ -24,6 +24,8 @@
 
 #include "Misc/IconsFontAwesome.h"
 
+#include <format>
+
 namespace Core
 {
     ECS_REGISTER_NEW_COMPONENT_TYPE(AssetsManagerWindowEWC)
@@ -31,6 +33,21 @@ namespace Core
     void AssetsManagerWindowEWC::onInit()
     {
         BaseFloatEWC::onInit();
+
+        const static std::unordered_map<NodeType, std::filesystem::path> paths
+            = { { NodeType::Default, "assets/images/document.png" },
+                { NodeType::Code, "assets/images/code_document.png" },
+                { NodeType::Image, "assets/images/image_document.png" },
+                { NodeType::Folder, "assets/images/folder.png" } };
+
+        for (auto&& [type, path] : paths)
+        {
+            Texture tmp;
+            if (tmp.loadFromFile(path, false))
+            {
+                _nodeTypesData.emplace(type, std::move(tmp));
+            }
+        }
     }
 
     void AssetsManagerWindowEWC::onDraw()
@@ -50,7 +67,7 @@ namespace Core
         if (ImGui::BeginChild("Explorer tree", ImVec2(200.0f, 0), ImGuiChildFlags_ResizeX))
         {
             ImGui::Dummy({}); // extra padding
-            drawOneLevel(assetsPath, assetsPath);
+            drawOneLevel(assetsPath, false);
             ImGui::Dummy({}); // extra padding
         }
         ImGui::EndChild();
@@ -60,13 +77,24 @@ namespace Core
     {
         if (ImGui::BeginChild("Explorer"))
         {
-            ImGui::Text("Hello world! Right");
+            ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0.0f);
+
+            for (auto&& entry : std::filesystem::directory_iterator(_openedPath))
+            {
+                auto path = entry.path();
+                const auto fileFormat = getNodeType(entry);
+
+                drawFileThumbnail(_nodeTypesData[fileFormat].getTextureId(), entry, _thumbnailSize);
+                ImGui::SameLine();
+            }
+
+            ImGui::PopStyleVar();
         }
         ImGui::EndChild();
     }
 
     void AssetsManagerWindowEWC::drawOneLevel(const std::filesystem::path& rootPath,
-                                              const std::filesystem::path& prevPath)
+                                              bool isSelected)
     {
         for (auto&& entry : std::filesystem::directory_iterator(rootPath))
         {
@@ -82,12 +110,12 @@ namespace Core
             if (entry.is_regular_file())
             {
                 auto icon = ICON_FA_FILE;
-                const auto fileFormat = isCodeFileExt(path.extension());
-                if (fileFormat == FileFormat::Code)
+                const auto fileFormat = getNodeType(entry);
+                if (fileFormat == NodeType::Code)
                 {
                     icon = ICON_FA_FILE_CODE_O;
                 }
-                else if (fileFormat == FileFormat::Image)
+                else if (fileFormat == NodeType::Image)
                 {
                     icon = ICON_FA_FILE_IMAGE_O;
                 }
@@ -104,16 +132,37 @@ namespace Core
             {
                 if (entry.is_directory())
                 {
-                    drawOneLevel(path, rootPath);
+                    drawOneLevel(path, isSelected);
                 }
 
                 ImGui::TreePop();
             }
+
+            if (!isSelected && ImGui::IsItemClicked())
+            {
+                if (entry.is_directory())
+                {
+                    _openedPath = path;
+                    isSelected = true;
+                }
+            }
         }
     }
 
-    AssetsManagerWindowEWC::FileFormat AssetsManagerWindowEWC::isCodeFileExt(const std::string& ext)
+    AssetsManagerWindowEWC::NodeType AssetsManagerWindowEWC::getNodeType(
+        const std::filesystem::directory_entry& entry)
     {
+        if (entry.is_directory())
+        {
+            return NodeType::Folder;
+        }
+
+        if (!entry.is_regular_file())
+        {
+            return NodeType::Default;
+        }
+
+        auto ext = entry.path().extension().generic_string();
         // clang-format off
         if (ext == ".cpp"   ||
             ext == ".cc"    ||
@@ -160,7 +209,7 @@ namespace Core
             ext == ".yml"   ||
             ext == ".yaml"  ||
             ext == ".ini"   ||
-            ext == ".toml") return FileFormat::Code;
+            ext == ".toml") return NodeType::Code;
 
         if (ext == ".jpg"   ||
             ext == ".jpeg"  ||
@@ -170,9 +219,69 @@ namespace Core
             ext == ".psd"   ||
             ext == ".gif"   ||
             ext == ".hdr"   ||
-            ext == ".pic") return FileFormat::Image;
+            ext == ".pic") return NodeType::Image;
         // clang-format on
 
-        return FileFormat::Default;
+        return NodeType::Default;
     }
+
+    bool AssetsManagerWindowEWC::drawFileThumbnail(ImTextureID texture,
+                                                   const std::filesystem::directory_entry& entry,
+                                                   ImVec2 size)
+    {
+        auto path = entry.path();
+        auto filename = path.filename().generic_string();
+        const auto originalFileName = filename;
+
+        bool clicked = false;
+
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+        ImGui::BeginGroup();
+
+        if (ImGui::ImageButton(filename.data(), texture, size))
+        {
+            clicked = true;
+        }
+        ImGui::PopStyleColor();
+
+        // Adding button's padding
+        size.x += ImGui::GetStyle().ItemSpacing.x * 2.f - 1.f;
+
+        std::string value = filename;
+        if (InputText(filename.data(), value, size.x, ImGuiInputTextFlags_EnterReturnsTrue))
+        {
+            if (value != originalFileName)
+            {
+                std::error_code ec;
+                std::filesystem::rename(filename.data(), value, ec);
+                if (ec)
+                {
+                    errorLog("Can't rename file from: '{}' to '{}'. Reason: {}"_f
+                             << filename << value << ec.message());
+                }
+            }
+        }
+
+        ImGui::EndGroup();
+
+        if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenBlockedByPopup))
+        {
+            ImGui::BeginTooltip();
+            const auto fullPath = entry.path();
+            const auto lastWrite = std::filesystem::last_write_time(fullPath);
+            ImGui::Text("Name:      %s", originalFileName.data());
+            ImGui::Text("Modified:  %s", std::format("{}", lastWrite).data());
+            ImGui::Text("Location:  %s", fullPath.generic_string().data());
+
+            if (entry.is_regular_file())
+            {
+                const uint32_t fileSize = std::filesystem::file_size(fullPath);
+                ImGui::Text("File size: %d", fileSize);
+            }
+            ImGui::EndTooltip();
+        }
+
+        return clicked;
+    }
+
 } // namespace Core

@@ -34,7 +34,7 @@ namespace Core
 
     void FixedLabel(const char* label, float size);
     void InputTextRO(StringAtom value, float size);
-    void InputText(const StringAtom& label, std::string& value, float size);
+    bool InputText(const StringAtom& label, std::string& value, float size, int flags = 0);
 
     void LabelAndInputTextRO(StringAtom label, StringAtom value, float labelSize, float fullSize);
 

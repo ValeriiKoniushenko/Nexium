@@ -101,11 +101,12 @@ namespace Core
         }
     }
 
-    void InputText(const StringAtom& label, std::string& value, float size)
+    bool InputText(const StringAtom& label, std::string& value, float size, int flags)
     {
         ImGui::PushItemWidth(size);
-        ImGui::InputText(("##" + label).c_str(), &value);
+        const auto out = ImGui::InputText(("##" + label).c_str(), &value, flags);
         ImGui::PopItemWidth();
+        return out;
     }
 
     void LabelAndInputFloat(const StringAtom& label, float& value, float labelSize, float fullSize,

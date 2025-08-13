@@ -55,7 +55,7 @@ namespace Core
                 = (modelPath.parent_path() / relative.toStdString()).lexically_normal();
 
             Image image;
-            if (Verify(image.loadImageFromFile(resolved, true)))
+            if (Verify(image.loadFromFile(resolved, true)))
             {
                 setTexture(image.data(), image.getSize().width, image.getSize().height,
                            image.getChannelAsOpenGLType());

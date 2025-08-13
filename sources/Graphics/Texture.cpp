@@ -22,19 +22,30 @@
 
 #pragma once
 
+#include "Texture.h"
+
 #include "Image.h"
 
 namespace Core
 {
 
-    class Texture
+    bool Texture::loadFromFile(const std::filesystem::path& path, bool isFlipVertically)
     {
-    public:
-        Image image;
+        Image img;
+        if (!img.loadFromFile(path, isFlipVertically))
+        {
+            return false;
+        }
 
+        glGenTextures(1, &_textureId);
+        glBindTexture(GL_TEXTURE_2D, _textureId);
 
-    private:
-        GLuint _textureId = 0;
-    };
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img.getSize().width, img.getSize().height, 0,
+                     img.getChannelAsOpenGLType(), GL_UNSIGNED_BYTE, img.data());
 
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        return true;
+    }
 } // namespace Core

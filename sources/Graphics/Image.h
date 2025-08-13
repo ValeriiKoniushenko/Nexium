@@ -62,7 +62,7 @@ namespace Core
         [[nodiscard]] Channel getChannel() const noexcept { return _channel; }
         [[nodiscard]] GLenum getChannelAsOpenGLType() const noexcept;
         [[nodiscard]] const unsigned char* data() const noexcept { return _data; }
-        bool loadImageFromFile(const std::filesystem::path&, bool isFlipVertically = true);
+        bool loadFromFile(const std::filesystem::path& path, bool isFlipVertically = true);
 
         void clear();
         [[nodiscard]] bool isEmpty() const noexcept { return _data == nullptr; }
