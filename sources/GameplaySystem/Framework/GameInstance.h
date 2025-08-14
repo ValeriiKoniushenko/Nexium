@@ -56,14 +56,15 @@ namespace Core
 
     public:
         Scene gameScene;
+        ShaderManager shaderManager;
+        World world;
+        UserInterface userInterface;
 
         BaseCamera* currentCamera = nullptr;
         RenderMode renderMode = RenderMode::Editor;
         GameEditor gameEditor;
         RenderTargetToTexture renderToTextureObject;
 
-        World world;
-        UserInterface userInterface;
 
     protected:
         virtual void onTick(float delta) = 0;
@@ -73,7 +74,6 @@ namespace Core
         virtual void onFinishWriteCache();
 
     protected:
-        ShaderManager _shaderManager;
         Window* _window = nullptr;
 
         // Pre-launch settings TODO: MOVE IT!!!

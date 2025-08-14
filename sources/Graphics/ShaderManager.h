@@ -51,6 +51,12 @@ namespace Core
 
         [[nodiscard]] ShaderProgram* getShaderProgram(const StringAtom& shaderName);
 
+        [[nodiscard]] const std::unordered_map<StringAtom, ShaderProgramMeta>& getShaderMetas()
+            const noexcept
+        {
+            return _shaderMetas;
+        };
+
         [[nodiscard]] size_t countOfShaders() const { return _shaderMetas.size(); };
         [[nodiscard]] size_t countOfValidShaders() const;
         [[nodiscard]] size_t countOfFailedShaders() const { return _failedShaders.size(); }

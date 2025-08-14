@@ -30,6 +30,7 @@
 #include "Editor/Windows/ObjectPropertiesWindow.h"
 #include "Editor/Windows/RootDockWindow.h"
 #include "Editor/Windows/SceneTreeWindow.h"
+#include "Editor/Windows/ShaderManager.h"
 #include "Editor/Windows/TextEditor.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "ImGui/backends/imgui_impl_glfw.h"
@@ -138,6 +139,7 @@ namespace Core
 
         auto tipsWindow = registerNewWindow<KeyboardShortcutsEWC>("Keyboard Shortcuts"_atom, false);
         auto textEditor = registerNewWindow<TextEditorEWC>("Text editor"_atom, false);
+        auto shaderManager = registerNewWindow<ShaderManagerEWC>("Shader manager"_atom);
 
         viewportWindow->onSizeChanged.subscribe(
             [](auto outer, auto inner)

@@ -29,6 +29,7 @@
 #include "Editor/Windows/ObjectPropertiesWindow.h"
 #include "Editor/Windows/SceneTreeWindow.h"
 #include "GameplaySystem/Framework/GameInstance.h"
+#include "ShaderManager.h"
 #include "TextEditor.h"
 
 namespace Core
@@ -90,6 +91,10 @@ namespace Core
             if (ImGui::MenuItem("Text editor"))
             {
                 gGameInstance->gameEditor.showWindow<TextEditorEWC>();
+            }
+            if (ImGui::MenuItem("Shader manager"))
+            {
+                gGameInstance->gameEditor.showWindow<ShaderManagerEWC>();
             }
 
             ImGui::EndMenu();
