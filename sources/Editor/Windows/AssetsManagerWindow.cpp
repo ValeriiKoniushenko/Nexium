@@ -50,6 +50,9 @@ namespace Core
                 _nodeTypesData.emplace(type, std::move(tmp));
             }
         }
+
+        _rootCacheNode.path = assetsPath;
+        rescanPhysicalDrive(_rootCacheNode);
     }
 
     void AssetsManagerWindowEWC::onDraw()
@@ -69,7 +72,8 @@ namespace Core
         if (ImGui::BeginChild("Explorer tree", ImVec2(200.0f, 0), ImGuiChildFlags_ResizeX))
         {
             ImGui::Dummy({}); // extra padding
-            drawOneLevel(assetsPath, false);
+            bool isSelected = false;
+            drawOneLevel(_rootCacheNode, isSelected);
             ImGui::Dummy({}); // extra padding
         }
         ImGui::EndChild();
@@ -95,68 +99,67 @@ namespace Core
         ImGui::EndChild();
     }
 
-    void AssetsManagerWindowEWC::drawOneLevel(const std::filesystem::path& rootPath,
-                                              bool isSelected)
+    void AssetsManagerWindowEWC::drawOneLevel(CacheNode& rootNode, bool& isSelected)
     {
-        for (auto&& entry : std::filesystem::directory_iterator(rootPath))
+        for (auto&& node : rootNode.children)
         {
-            if (!entry.is_regular_file() && !entry.is_directory())
-            {
-                continue;
-            }
-
-            auto path = entry.path();
-            auto nodePath = std::filesystem::relative(path, rootPath).generic_string();
             int flags = _commonTreeFlags;
+            std::string filename = node.path.filename().generic_string();
 
-            if (entry.is_regular_file())
+            if (node.type != NodeType::Folder)
             {
                 if (!_renderFilesInTreeView)
                 {
                     continue;
                 }
                 auto icon = ICON_FA_FILE;
-                const auto fileFormat = getNodeType(entry);
-                if (fileFormat == NodeType::Code)
+                if (node.type == NodeType::Code)
                 {
                     icon = ICON_FA_FILE_CODE_O;
                 }
-                else if (fileFormat == NodeType::Image)
+                else if (node.type == NodeType::Image)
                 {
                     icon = ICON_FA_FILE_IMAGE_O;
                 }
-                nodePath = icon + (" " + nodePath);
+                filename = icon + (" " + filename);
                 flags |= ImGuiTreeNodeFlags_Leaf;
             }
-            else if (entry.is_directory())
+            else
             {
-                nodePath = ICON_FA_FOLDER + (" " + nodePath);
+                filename = ICON_FA_FOLDER + (" " + filename);
 
-                if (!hasDirAtLeastOneSubDir(path))
+                auto atLeastOneFolder = std::any_of(node.children.begin(), node.children.end(),
+                                                    [](const CacheNode& n)
+                                                    {
+                                                        return n.type == NodeType::Folder;
+                                                    });
+
+                if (!atLeastOneFolder)
                 {
                     flags |= ImGuiTreeNodeFlags_Leaf;
                 }
             }
 
-            const bool isOpened = ImGui::TreeNodeEx(nodePath.c_str(), flags);
+            const bool isOpened = ImGui::TreeNodeEx(filename.c_str(), flags);
+            if (!isSelected && ImGui::IsItemClicked())
+            {
+                if (node.type == NodeType::Folder)
+                {
+                    _openedPath = node.path;
+                    std::cout << "in tree: " << _openedPath.generic_string() << std::endl;
+                    isSelected = true;
+                }
+            }
             if (isOpened)
             {
-                if (entry.is_directory())
+                if (node.type == NodeType::Folder)
                 {
-                    drawOneLevel(path, isSelected);
+                    drawOneLevel(node, isSelected);
                 }
 
                 ImGui::TreePop();
             }
 
-            if (!isSelected && ImGui::IsItemClicked())
-            {
-                if (entry.is_directory())
-                {
-                    _openedPath = path;
-                    isSelected = true;
-                }
-            }
         }
     }
 
@@ -308,6 +311,7 @@ namespace Core
                 if (entry.is_directory())
                 {
                     _openedPath = path;
+                    std::cout << "in explorer: " << _openedPath.generic_string() << std::endl;
                 }
                 else if (entry.is_regular_file() && getNodeType(entry) == NodeType::Code)
                 {
@@ -320,16 +324,27 @@ namespace Core
         return clicked;
     }
 
-    bool AssetsManagerWindowEWC::hasDirAtLeastOneSubDir(const std::filesystem::path& rootPath)
+    void AssetsManagerWindowEWC::rescanPhysicalDrive(CacheNode& node)
     {
-        for (auto&& entry : std::filesystem::directory_iterator(rootPath))
+        for (auto&& entry : std::filesystem::directory_iterator(node.path))
         {
-            if (entry.is_directory())
+            if (!entry.is_regular_file() && !entry.is_directory())
             {
-                return true;
+                continue;
+            }
+
+            const auto nodeType = getNodeType(entry);
+
+            CacheNode tmp;
+            tmp.path = entry.path();
+            tmp.type = nodeType;
+            node.children.push_back(std::move(tmp));
+
+            if (nodeType == NodeType::Folder)
+            {
+                rescanPhysicalDrive(node.children.back());
             }
         }
-        return false;
     }
 
 } // namespace Core

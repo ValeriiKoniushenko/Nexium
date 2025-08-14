@@ -51,19 +51,28 @@ namespace Core
         void onUpdate() override;
 
     protected:
+        struct CacheNode
+        {
+            NodeType type = NodeType::Default;
+            std::filesystem::path path;
+            std::vector<CacheNode> children;
+        };
+
+    protected:
         std::unordered_map<NodeType, Core::Texture> _nodeTypesData;
+        CacheNode _rootCacheNode;
         std::filesystem::path _openedPath = assetsPath;
         int _commonTreeFlags = ImGuiTreeNodeFlags_OpenOnDoubleClick;
         ImVec2 _thumbnailSize = ImVec2(70, 70);
         bool _renderFilesInTreeView = false;
 
     private:
-        [[nodiscard]] bool hasDirAtLeastOneSubDir(const std::filesystem::path& rootPath);
         void drawExplorerTree();
         void drawExplorer();
-        void drawOneLevel(const std::filesystem::path& rootPath, bool isSelected);
+        void drawOneLevel(CacheNode& node, bool& isSelected);
         bool drawFileThumbnail(ImTextureID texture, const std::filesystem::directory_entry& entry,
                                ImVec2 size);
+        void rescanPhysicalDrive(CacheNode& node);
 
         [[nodiscard]] NodeType getNodeType(const std::filesystem::directory_entry& entry);
     };
