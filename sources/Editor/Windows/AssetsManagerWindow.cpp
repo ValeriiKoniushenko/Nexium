@@ -51,8 +51,7 @@ namespace Core
             }
         }
 
-        _rootCacheNode.path = assetsPath;
-        rescanPhysicalDrive(_rootCacheNode);
+        refresh();
     }
 
     void AssetsManagerWindowEWC::onDraw()
@@ -83,6 +82,16 @@ namespace Core
     {
         if (ImGui::BeginChild("Explorer"))
         {
+            if (ImGui::BeginPopupContextWindow("ExplorerContextMenu",
+                                               ImGuiPopupFlags_MouseButtonRight))
+            {
+                if (ImGui::MenuItem("Refresh"))
+                {
+                    refresh();
+                }
+                ImGui::EndPopup();
+            }
+
             ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0.0f);
 
             for (auto&& entry : std::filesystem::directory_iterator(_openedPath))
@@ -159,7 +168,6 @@ namespace Core
 
                 ImGui::TreePop();
             }
-
         }
     }
 
@@ -345,6 +353,14 @@ namespace Core
                 rescanPhysicalDrive(node.children.back());
             }
         }
+    }
+
+    void AssetsManagerWindowEWC::refresh()
+    {
+        _rootCacheNode = {};
+
+        _rootCacheNode.path = assetsPath;
+        rescanPhysicalDrive(_rootCacheNode);
     }
 
 } // namespace Core

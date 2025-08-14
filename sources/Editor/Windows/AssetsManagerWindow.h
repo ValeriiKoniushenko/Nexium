@@ -73,6 +73,7 @@ namespace Core
         bool drawFileThumbnail(ImTextureID texture, const std::filesystem::directory_entry& entry,
                                ImVec2 size);
         void rescanPhysicalDrive(CacheNode& node);
+        void refresh();
 
         [[nodiscard]] NodeType getNodeType(const std::filesystem::directory_entry& entry);
     };
