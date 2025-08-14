@@ -61,14 +61,18 @@ namespace Core
     protected:
         std::unordered_map<NodeType, Core::Texture> _nodeTypesData;
         CacheNode _rootCacheNode;
+        StringAtom _filterBuf;
         std::filesystem::path _openedPath = assetsPath;
         int _commonTreeFlags = ImGuiTreeNodeFlags_OpenOnDoubleClick;
         ImVec2 _thumbnailSize = ImVec2(70, 70);
         bool _renderFilesInTreeView = false;
+        float _defaultGap = 4.f;
+        float _toolbarToolsWidth = 150.f;
 
     private:
         void drawExplorerTree();
         void drawExplorer();
+        void drawExplorerToolbar();
         void drawOneLevel(CacheNode& node, bool& isSelected);
         bool drawFileThumbnail(ImTextureID texture, const std::filesystem::directory_entry& entry,
                                ImVec2 size);

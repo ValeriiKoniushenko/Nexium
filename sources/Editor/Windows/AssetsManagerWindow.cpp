@@ -51,6 +51,11 @@ namespace Core
             }
         }
 
+        _filterBuf.resize(1024);
+
+        auto& style = ImGui::GetStyle();
+        _defaultGap = style.ItemSpacing.x;
+
         refresh();
     }
 
@@ -82,6 +87,8 @@ namespace Core
     {
         if (ImGui::BeginChild("Explorer"))
         {
+            drawExplorerToolbar();
+
             if (ImGui::BeginPopupContextWindow("ExplorerContextMenu",
                                                ImGuiPopupFlags_MouseButtonRight))
             {
@@ -98,6 +105,14 @@ namespace Core
             {
                 auto path = entry.path();
                 const auto fileFormat = getNodeType(entry);
+
+                if (!_filterBuf.isEmpty() && _filterBuf[0] != '\0' && !std::isspace(_filterBuf[0]))
+                {
+                    if (!StringAtom(path.generic_string()).regexFind(_filterBuf))
+                    {
+                        continue;
+                    }
+                }
 
                 drawFileThumbnail(_nodeTypesData[fileFormat].getTextureId(), entry, _thumbnailSize);
                 ImGui::SameLine();
@@ -361,6 +376,29 @@ namespace Core
 
         _rootCacheNode.path = assetsPath;
         rescanPhysicalDrive(_rootCacheNode);
+    }
+
+    void AssetsManagerWindowEWC::drawExplorerToolbar()
+    {
+        float rowHeight = ImGui::GetFrameHeightWithSpacing();
+        if (ImGui::BeginChild("ExplorerTopBar", ImVec2(0, rowHeight)))
+        {
+            ImGui::Dummy(ImVec2(0, 0));
+
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+
+            // =============== Input ====================
+            ImGui::Dummy(ImVec2(_defaultGap, 0));
+            ImGui::SameLine();
+            float width = ImGui::GetContentRegionAvail().x - _defaultGap;
+            ImGui::SetNextItemWidth(width);
+            ImGui::InputTextWithHint("##ExplorerFilter", "Regex filter...", _filterBuf.data(),
+                                     _filterBuf.size() + 1);
+            ImGui::SameLine(0, _defaultGap * 3.f);
+
+            ImGui::PopStyleVar();
+        }
+        ImGui::EndChild();
     }
 
 } // namespace Core
