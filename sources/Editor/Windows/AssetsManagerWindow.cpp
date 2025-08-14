@@ -28,6 +28,17 @@
 
 #include <format>
 
+namespace
+{
+
+    bool IsSubpath(const std::filesystem::path& original, const std::filesystem::path& sub)
+    {
+        auto rel = std::filesystem::relative(original, sub);
+        return !rel.empty() && rel.native()[0] != '.';
+    }
+
+} // namespace
+
 namespace Core
 {
     ECS_REGISTER_NEW_COMPONENT_TYPE(AssetsManagerWindowEWC)
@@ -164,6 +175,8 @@ namespace Core
                 }
             }
 
+            bool is = IsSubpath(_openedPath, rootNode.path);
+            ImGui::SetNextItemOpen(is);
             const bool isOpened = ImGui::TreeNodeEx(filename.c_str(), flags);
             if (!isSelected && ImGui::IsItemClicked())
             {
