@@ -125,7 +125,7 @@ namespace Core
 
                 if (!_filterBuf.isEmpty() && _filterBuf[0] != '\0' && !std::isspace(_filterBuf[0]))
                 {
-                    if (!StringAtom(path.generic_string()).regexFind(_filterBuf))
+                    if (!StringAtom(path.filename().generic_string()).regexFind(_filterBuf))
                     {
                         continue;
                     }
@@ -185,16 +185,14 @@ namespace Core
                 }
             }
 
-            bool is = IsSubpath(_openedPath, rootNode.path);
-            ImGui::SetNextItemOpen(is);
+            // bool isSub = IsSubpath(_openedPath, node.path);
+            // ImGui::SetNextItemOpen(node.path == _openedPath);
             const bool isOpened = ImGui::TreeNodeEx(filename.c_str(), flags);
-            if (!isSelected && ImGui::IsItemClicked())
+            if (node.type == NodeType::Folder && ImGui::IsItemHovered()
+                && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
             {
-                if (node.type == NodeType::Folder)
-                {
-                    _openedPath = node.path;
-                    isSelected = true;
-                }
+                _openedPath = node.path;
+                isSelected = true;
             }
             if (isOpened)
             {

@@ -67,7 +67,6 @@ namespace Core
         ImVec2 _thumbnailSize = ImVec2(70, 70);
         bool _renderFilesInTreeView = false;
         float _defaultGap = 4.f;
-        float _toolbarToolsWidth = 150.f;
 
     private:
         void drawExplorerTree();
