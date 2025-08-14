@@ -74,16 +74,72 @@ namespace Core
         auto&& style = ImGui::GetStyle();
         const auto availWidth = ImGui::GetContentRegionAvail().x - style.ItemSpacing.x * 2.f;
 
-
         if (ImGui::BeginChild("Shader's meta data"))
         {
             ImGui::Dummy({}); // top padding
 
-            ImGui::Dummy({});ImGui::SameLine(); // left
-            LabelAndInputTextRO("Shader name:", shader.getShaderName(), 100.f, availWidth);
+            ImGui::Dummy({}); // left
+            ImGui::SameLine();
+            LabelAndInputTextRO("Shader name:", shader.getShaderName(), _drawDetailsLabelWidth,
+                                availWidth);
 
-            ImGui::Dummy({}); // bottom padding
+            ImGui::Separator();
+
+            if (ImGui::CollapsingHeader("Uniforms", ImGuiTreeNodeFlags_DefaultOpen))
+            {
+                drawTableWith("Uniforms", shader.getUniforms());
+            }
+            ImGui::Dummy({});
+
+            if (ImGui::CollapsingHeader("Inputs"))
+            {
+                drawTableWith("Inputs", shader.getInputs());
+            }
+            ImGui::Dummy({});
+
+            if (ImGui::CollapsingHeader("Outputs"))
+            {
+                drawTableWith("Outputs", shader.getOutputs());
+            }
         }
         ImGui::EndChild();
+    }
+
+    void ShaderManagerEWC::drawTableWith(
+        const char* label,
+        const std::unordered_set<ShaderVariable, ShaderVariable::Hasher>& inputData)
+    {
+        if (ImGui::BeginTable(label, 5, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
+        {
+            int i = 0;
+            ImGui::TableSetupColumn("#");
+            ImGui::TableSetupColumn("Name");
+            ImGui::TableSetupColumn("Type");
+            ImGui::TableSetupColumn("Size");
+            ImGui::TableSetupColumn("Location");
+            ImGui::TableHeadersRow();
+
+            for (auto&& data : inputData)
+            {
+                ImGui::TableNextRow();
+
+                ImGui::TableSetColumnIndex(0);
+                ImGui::Text("%d", i++);
+
+                ImGui::TableSetColumnIndex(1);
+                ImGui::Text("%s", data.name.data());
+
+                ImGui::TableSetColumnIndex(2);
+                ImGui::Text("%d", data.type);
+
+                ImGui::TableSetColumnIndex(3);
+                ImGui::Text("%d", data.size);
+
+                ImGui::TableSetColumnIndex(4);
+                ImGui::Text("%d", data.location);
+            }
+
+            ImGui::EndTable();
+        }
     }
 } // namespace Core

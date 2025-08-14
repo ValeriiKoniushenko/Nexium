@@ -23,6 +23,7 @@
 #pragma once
 
 #include "BaseWindow.h"
+#include "Graphics/ShaderProgram.h"
 
 namespace Core
 {
@@ -37,10 +38,12 @@ namespace Core
         void onDraw() override;
         void drawList();
         void drawDetails();
+        void drawTableWith(const char* label, const std::unordered_set<ShaderVariable, ShaderVariable::Hasher>& data);
 
     protected:
         StringAtom _selectedShader;
         std::size_t _currentItem = 0;
+        std::size_t _drawDetailsLabelWidth = 100.f;
     };
 
 } // namespace Core
