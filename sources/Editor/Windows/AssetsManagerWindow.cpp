@@ -31,7 +31,7 @@
 namespace
 {
 
-    bool IsSubpath(const std::filesystem::path& original, const std::filesystem::path& sub)
+    [[maybe_unused]] bool IsSubpath(const std::filesystem::path& original, const std::filesystem::path& sub)
     {
         auto rel = std::filesystem::relative(original, sub);
         return !rel.empty() && rel.native()[0] != '.';
@@ -186,7 +186,7 @@ namespace Core
             }
 
             // bool isSub = IsSubpath(_openedPath, node.path);
-            // ImGui::SetNextItemOpen(node.path == _openedPath);
+            // ImGui::SetNextItemOpen(isSub);
             const bool isOpened = ImGui::TreeNodeEx(filename.c_str(), flags);
             if (node.type == NodeType::Folder && ImGui::IsItemHovered()
                 && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
