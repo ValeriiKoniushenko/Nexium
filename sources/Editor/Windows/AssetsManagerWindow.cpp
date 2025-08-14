@@ -100,6 +100,11 @@ namespace Core
         {
             drawExplorerToolbar();
 
+            auto& style = ImGui::GetStyle();
+            const float oneThumbnailWidth
+                = _thumbnailSize.x + style.ItemSpacing.x * 2.f + style.ItemSpacing.x;
+            const int maxCountPerWidth
+                = static_cast<int>(ImGui::GetContentRegionAvail().x / oneThumbnailWidth);
             if (ImGui::BeginPopupContextWindow("ExplorerContextMenu",
                                                ImGuiPopupFlags_MouseButtonRight))
             {
@@ -112,6 +117,7 @@ namespace Core
 
             ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0.0f);
 
+            int i = 1;
             for (auto&& entry : std::filesystem::directory_iterator(_openedPath))
             {
                 auto path = entry.path();
@@ -126,7 +132,11 @@ namespace Core
                 }
 
                 drawFileThumbnail(_nodeTypesData[fileFormat].getTextureId(), entry, _thumbnailSize);
-                ImGui::SameLine();
+                if (i % maxCountPerWidth != 0)
+                {
+                    ImGui::SameLine();
+                }
+                ++i;
             }
 
             ImGui::PopStyleVar();
@@ -183,7 +193,6 @@ namespace Core
                 if (node.type == NodeType::Folder)
                 {
                     _openedPath = node.path;
-                    std::cout << "in tree: " << _openedPath.generic_string() << std::endl;
                     isSelected = true;
                 }
             }
@@ -347,7 +356,6 @@ namespace Core
                 if (entry.is_directory())
                 {
                     _openedPath = path;
-                    std::cout << "in explorer: " << _openedPath.generic_string() << std::endl;
                 }
                 else if (entry.is_regular_file() && getNodeType(entry) == NodeType::Code)
                 {
