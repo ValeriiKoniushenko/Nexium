@@ -84,6 +84,8 @@ namespace Core
 
         [[nodiscard]] const char* getPrefix() const override { return "ShaderProgramMeta"; }
 
+        void recreateFromSources();
+
     private:
         void compileShader();
         void requireNoCompileErrors();
@@ -102,5 +104,8 @@ namespace Core
         std::unordered_set<ShaderVariable, ShaderVariable::Hasher> _uniforms;
         std::unordered_set<ShaderVariable, ShaderVariable::Hasher> _inputs;
         std::unordered_set<ShaderVariable, ShaderVariable::Hasher> _outputs;
+
+        std::filesystem::path _vertexShaderPath;
+        std::filesystem::path _fragmentShaderPath;
     };
 } // namespace Core

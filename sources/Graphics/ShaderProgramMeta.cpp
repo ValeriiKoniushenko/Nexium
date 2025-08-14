@@ -46,6 +46,9 @@ namespace Core
         _shaderProgram.create(_shaderName);
         reflectShaderVariablesFor(_shaderProgram.getShaderProgramId());
         _shaderProgram.m__setUniformsFromSources(_uniforms);
+
+        _vertexShaderPath = vertexShaderPath;
+        _fragmentShaderPath = fragmentShaderPath;
     }
 
     void ShaderProgramMeta::compileShader()
@@ -180,6 +183,17 @@ namespace Core
                 output.insert(std::move(var));
             }
         }
+    }
+
+    void ShaderProgramMeta::recreateFromSources()
+    {
+        if (_fragmentShaderPath.empty() || _vertexShaderPath.empty())
+        {
+            warnLog("Can't recreate a shader '{}', due to invalid paths"_f << _shaderName);
+            return;
+        }
+
+        create(_vertexShaderPath, _fragmentShaderPath);
     }
 
 } // namespace Core

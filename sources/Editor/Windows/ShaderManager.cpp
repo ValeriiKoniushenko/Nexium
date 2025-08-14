@@ -80,6 +80,15 @@ namespace Core
 
             ImGui::Dummy({}); // left
             ImGui::SameLine();
+            if (ImGui::Button("Reload shader"))
+            {
+                shader.recreateFromSources();
+            }
+
+            ImGui::Dummy({});
+
+            ImGui::Dummy({}); // left
+            ImGui::SameLine();
             LabelAndInputTextRO("Shader name:", shader.getShaderName(), _drawDetailsLabelWidth,
                                 availWidth);
 
@@ -101,6 +110,8 @@ namespace Core
             {
                 drawTableWith("Outputs", shader.getOutputs());
             }
+
+            ImGui::Dummy({}); // bottom padding
         }
         ImGui::EndChild();
     }
