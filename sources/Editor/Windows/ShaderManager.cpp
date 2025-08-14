@@ -23,6 +23,7 @@
 #include "ShaderManager.h"
 
 #include "GameplaySystem/Framework/GameInstance.h"
+#include "TextEditor.h"
 
 namespace Core
 {
@@ -78,19 +79,30 @@ namespace Core
         {
             ImGui::Dummy({}); // top padding
 
-            ImGui::Dummy({}); // left
-            ImGui::SameLine();
-            if (ImGui::Button("Reload shader"))
+            LabelAndInputTextRO("Shader name:", shader.getShaderName(), _drawDetailsLabelWidth,
+                                availWidth);
+
+            if (ImGui::Button("Reload shader",
+                              ImVec2(_drawDetailsLabelWidth - style.FramePadding.x * 2.f, 0.f)))
             {
                 shader.recreateFromSources();
             }
 
-            ImGui::Dummy({});
+            const auto vertPath = shader.getVertexShaderPath().generic_string();
+            if (ButtonAndInputTextRO("Edit .vert:", vertPath.data(), _drawDetailsLabelWidth,
+                                     availWidth))
+            {
+                gGameInstance->gameEditor.showWindow<TextEditorEWC>(".*", vertPath.data());
+            }
 
-            ImGui::Dummy({}); // left
-            ImGui::SameLine();
-            LabelAndInputTextRO("Shader name:", shader.getShaderName(), _drawDetailsLabelWidth,
-                                availWidth);
+            const auto fragPath = shader.getFragmentShaderPath().generic_string();
+            if (ButtonAndInputTextRO("Edit .frag:", fragPath.data(), _drawDetailsLabelWidth,
+                                     availWidth))
+            {
+                gGameInstance->gameEditor.showWindow<TextEditorEWC>(".*", fragPath.data());
+            }
+
+            ImGui::Dummy({});
 
             ImGui::Separator();
 

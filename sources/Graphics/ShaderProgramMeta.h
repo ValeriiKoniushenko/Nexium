@@ -86,6 +86,15 @@ namespace Core
 
         void recreateFromSources();
 
+        [[nodiscard]] const std::filesystem::path& getVertexShaderPath() const noexcept
+        {
+            return _vertexShaderPath;
+        };
+        [[nodiscard]] const std::filesystem::path& getFragmentShaderPath() const noexcept
+        {
+            return _fragmentShaderPath;
+        };
+
     private:
         void compileShader();
         void requireNoCompileErrors();

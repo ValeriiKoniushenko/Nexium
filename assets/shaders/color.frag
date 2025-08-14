@@ -16,7 +16,7 @@ uniform sampler2D uTexture;
 void main()
 {
    // ambient
-   float ambientStrength = 0.4;
+   float ambientStrength = 0.1;
    vec3 ambient = ambientStrength * uLightColor;
 
    // diffuse

@@ -136,4 +136,21 @@ namespace Core
         return isPressed;
     }
 
+    bool ButtonAndInputTextRO(StringAtom label, StringAtom value, float labelSize, float fullSize)
+    {
+        auto& style = ImGui::GetStyle();
+
+        labelSize -= style.FramePadding.x * 2.f;
+
+        ImGui::PushID(label.makeHash());
+        const bool isPressed = ImGui::Button(label.data(), ImVec2(labelSize, 0.f));
+
+        ImGui::SameLine(0,8.f);
+
+        InputTextRO(std::move(value), fullSize - labelSize - 8.f);
+        ImGui::PopID();
+
+        return isPressed;
+    }
+
 } // namespace Core

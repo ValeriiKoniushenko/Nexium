@@ -38,6 +38,8 @@ namespace Core
 
     void LabelAndInputTextRO(StringAtom label, StringAtom value, float labelSize, float fullSize);
 
+    bool ButtonAndInputTextRO(StringAtom label, StringAtom value, float labelSize, float fullSize);
+
     void LabelAndInputText(const StringAtom& label, std::string& value, float labelSize,
                            float fullSize);
 
