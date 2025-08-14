@@ -43,6 +43,15 @@ namespace Core
         drawBarMenu();
 
         drawEditor();
+
+        if (ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows))
+        {
+            bool ctrl = ImGui::GetIO().KeyCtrl;
+            if (ctrl && ImGui::IsKeyPressed(ImGuiKey_S, false))
+            {
+                save();
+            }
+        }
     }
 
     void TextEditorEWC::putArguments(const StringAtom& args)
@@ -127,7 +136,7 @@ namespace Core
     {
         ImGui::PushTextWrapPos();
         if (ImGui::InputTextMultiline("##editor", &_fileContent,
-                                  ImVec2(_innerSize.width, _innerSize.height)))
+                                      ImVec2(_innerSize.width, _innerSize.height)))
         {
             _wasEdited = true;
         }
