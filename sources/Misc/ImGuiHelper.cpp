@@ -145,7 +145,7 @@ namespace Core
         ImGui::PushID(label.makeHash());
         const bool isPressed = ImGui::Button(label.data(), ImVec2(labelSize, 0.f));
 
-        ImGui::SameLine(0,8.f);
+        ImGui::SameLine(0, 8.f);
 
         InputTextRO(std::move(value), fullSize - labelSize - 8.f);
         ImGui::PopID();

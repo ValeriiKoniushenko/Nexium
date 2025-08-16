@@ -54,7 +54,6 @@ namespace Core
         constexpr static float dragTreshold = 25.f;
 
     public:
-
         Payload payload;
 
         [[nodiscard]] glm::vec2 getStartPos() const noexcept { return _startPos; };

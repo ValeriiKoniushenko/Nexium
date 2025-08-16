@@ -57,7 +57,7 @@ namespace Core
         for (const auto& notLoadedShader : shaderManager.getFailedShaders())
         {
             shaderManager.warnLog("Shader '{}' found but not loaded. It contains some error[s]."_f
-                                    << notLoadedShader);
+                                  << notLoadedShader);
         }
         onLoadShaders();
 

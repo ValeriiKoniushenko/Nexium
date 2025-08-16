@@ -31,7 +31,8 @@
 namespace
 {
 
-    [[maybe_unused]] bool IsSubpath(const std::filesystem::path& original, const std::filesystem::path& sub)
+    [[maybe_unused]] bool IsSubpath(const std::filesystem::path& original,
+                                    const std::filesystem::path& sub)
     {
         auto rel = std::filesystem::relative(original, sub);
         return !rel.empty() && rel.native()[0] != '.';

@@ -65,7 +65,6 @@ namespace Core
         GameEditor gameEditor;
         RenderTargetToTexture renderToTextureObject;
 
-
     protected:
         virtual void onTick(float delta) = 0;
         virtual void onInitFinish() = 0;
