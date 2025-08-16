@@ -7,7 +7,7 @@ function(CoreAddCompileOptionsTo Target)
         target_compile_options(${Target} PRIVATE
             "-Wall"
             "-Wextra"
-            "-Wcomment"
+            "-Wno-comment"
             # "-Werror"
             "-Wno-error=unused-variable"
             "-Wno-unused-variable"
