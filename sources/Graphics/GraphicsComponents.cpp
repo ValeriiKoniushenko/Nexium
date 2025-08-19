@@ -85,7 +85,7 @@ namespace Core
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * data.size(), data.data(),
                          GL_STATIC_DRAW);
-            _triangleCount = data.size();
+            _triangleCount = static_cast<uint32_t>(data.size());
         }
     }
 

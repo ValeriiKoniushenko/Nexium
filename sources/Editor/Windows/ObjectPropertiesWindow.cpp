@@ -201,7 +201,7 @@ namespace Core
 
             if (auto* asStaticMesh = dynamic_cast<StaticMesh*>(_target))
             {
-                _meshSizeControl.drawAndProcess(asStaticMesh->getSize().toGlm(), _innerSize.width);
+                (void)_meshSizeControl.drawAndProcess(asStaticMesh->getSize().toGlm(), _innerSize.width);
             }
 
             ImGui::Separator();

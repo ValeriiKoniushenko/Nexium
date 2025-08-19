@@ -128,7 +128,7 @@ namespace Core
     size_t ShaderManager::countOfValidShaders() const
     {
         const std::size_t count = _shaderMetas.size() - _failedShaders.size();
-        return std::max(0ul, count);
+        return std::max<std::size_t>(0, count);
     }
 
     std::filesystem::path ShaderManager::getPathToShaderBasedOn(

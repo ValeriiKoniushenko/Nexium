@@ -172,7 +172,7 @@ namespace Core
                     ImGui::PushStyleColor(ImGuiCol_Text, *color);
                 }
 
-                ImGui::PushID(i);
+                ImGui::PushID(static_cast<int>(i));
                 ImGui::PushItemWidth(-FLT_MIN); // Makes the next widget take full width
                 ImGui::InputText("", message.data(), message.size() + 1,
                                  ImGuiInputTextFlags_ReadOnly);

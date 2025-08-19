@@ -66,8 +66,16 @@
                 "key": "M"
             },
             {
+                "action": "moveDown",
+                "key": "C"
+            },
+            {
                 "action": "moveUp",
                 "key": "Space"
+            },
+            {
+                "action": "moveForward",
+                "key": "W"
             },
             {
                 "action": "moveLeft",
@@ -78,20 +86,12 @@
                 "key": "F12"
             },
             {
-                "action": "moveRight",
-                "key": "D"
-            },
-            {
-                "action": "moveDown",
-                "key": "C"
-            },
-            {
-                "action": "moveForward",
-                "key": "W"
-            },
-            {
                 "action": "moveBackward",
                 "key": "S"
+            },
+            {
+                "action": "moveRight",
+                "key": "D"
             },
             {
                 "action": "toggleSimulation",

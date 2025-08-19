@@ -44,9 +44,15 @@ namespace Core
 
     StringAtom LogQueue::LogLine::toString() const
     {
-        std::tm* tm_ptr = std::localtime(&time);
+        const std::time_t rawTime = std::time(nullptr);
+        std::tm tm_struct;
+#if defined(_MSC_VER)
+        localtime_s(&tm_struct, &rawTime); // MSVC thread-safe version
+#else
+        tm_struct = *std::localtime(&time); // GCC/Clang
+#endif
         std::ostringstream oss;
-        oss << std::put_time(tm_ptr, "%H:%M:%S");
+        oss << std::put_time(&tm_struct, "%H:%M:%S");
 
         return ("{} [{}] [{}] {}"_f << oss.str() << spdlog::level::to_short_c_str(level) << author
                                     << message)

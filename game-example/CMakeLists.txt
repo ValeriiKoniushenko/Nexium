@@ -11,7 +11,4 @@ target_link_libraries(${TARGET_NAME} PUBLIC
     NexiumEngine
 )
 
-target_compile_options(${TARGET_NAME} PRIVATE
-    $<$<CONFIG:Release>:-O3>
-    $<$<CONFIG:Debug>:-g3 -O0 -fno-inline>
-)
+CoreAddCompileOptionsTo(${TARGET_NAME})

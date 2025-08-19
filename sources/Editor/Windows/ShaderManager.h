@@ -44,7 +44,7 @@ namespace Core
     protected:
         StringAtom _selectedShader;
         std::size_t _currentItem = 0;
-        std::size_t _drawDetailsLabelWidth = 140.f;
+        float _drawDetailsLabelWidth = 140.f;
     };
 
 } // namespace Core

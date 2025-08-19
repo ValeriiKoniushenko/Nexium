@@ -52,7 +52,7 @@ namespace Core
 
     void LabelAndInputTextRO(StringAtom label, StringAtom value, float labelSize, float fullSize)
     {
-        ImGui::PushID(label.makeHash());
+        ImGui::PushID(static_cast<int>(label.makeHash()));
         FixedLabel(label.data(), labelSize);
         InputTextRO(std::move(value), fullSize - labelSize);
         ImGui::PopID();
@@ -84,7 +84,7 @@ namespace Core
 
                 return true;
             },
-            reinterpret_cast<void*>(&data), data.size());
+            reinterpret_cast<void*>(&data), static_cast<int>(data.size()));
     }
 
     void LabelAndInputText(const StringAtom& label, std::string& originalString, float labelSize,
@@ -142,7 +142,7 @@ namespace Core
 
         labelSize -= style.FramePadding.x * 2.f;
 
-        ImGui::PushID(label.makeHash());
+        ImGui::PushID(static_cast<int>(label.makeHash()));
         const bool isPressed = ImGui::Button(label.data(), ImVec2(labelSize, 0.f));
 
         ImGui::SameLine(0, 8.f);

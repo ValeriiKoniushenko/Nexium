@@ -27,9 +27,9 @@
 #include "boost/intrusive_ptr.hpp"
 #include "boost/smart_ptr/intrusive_ref_counter.hpp"
 
-#include <list>
 #include <queue>
 #include <unordered_set>
+#include <stack>
 
 /**
  * Put this macros inside your class body for every new component.

@@ -92,7 +92,7 @@ namespace Core
     {
         if (json.contains("sceneName"))
         {
-            _sceneName = json["sceneName"];
+            _sceneName = json["sceneName"].get<StringAtom>();
         }
 
         if (json.contains("objects"))

@@ -75,7 +75,7 @@ namespace Core
             { spdlog::level::level_enum::trace, true },
         };
 
-        std::size_t _logLimit = 500.f;
+        std::size_t _logLimit = 500;
         float _defaultGap = 4.f;
         float _clearButtonWidth = 0.f;
         float _autoScrollButtonWidth = 0.f;

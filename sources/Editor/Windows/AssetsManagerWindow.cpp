@@ -345,7 +345,7 @@ namespace Core
 
             if (entry.is_regular_file())
             {
-                const uint32_t fileSize = std::filesystem::file_size(path);
+                const uint32_t fileSize = static_cast<uint32_t>(std::filesystem::file_size(path));
                 ImGui::Text("File size: %d", fileSize);
             }
             ImGui::EndTooltip();

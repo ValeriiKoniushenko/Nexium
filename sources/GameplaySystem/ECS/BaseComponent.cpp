@@ -250,7 +250,7 @@ namespace Core
 
         if (json.contains("name"))
         {
-            _name = json["name"];
+            _name = json["name"].get<StringAtom>();
         }
         if (json.contains("type"))
         {
