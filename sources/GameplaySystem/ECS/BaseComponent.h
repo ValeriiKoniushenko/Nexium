@@ -89,15 +89,30 @@ namespace Core
 {
     class BaseComponent;
 
+    //
+    // ========================= CONCEPTS =========================
+    /**
+     * @brief Concept to identify valid components.
+     * A type satisfies IsComponent if it inherits from BaseComponent and provides:
+     *   - a member function getComponentType()
+     *   - a static member componentType
+     */
     template<class T>
     concept IsComponent = std::derived_from<T, BaseComponent> && requires(T t) {
         { t.getComponentType() };
         { T::componentType };
     };
 
+    /**
+     * @brief Concept for either a BaseComponent-derived type or BaseComponent itself.
+     */
     template<class T>
     concept IsComponentOrBase = IsComponent<T> || std::is_same_v<BaseComponent, T>;
 
+    /**
+     * @brief Concept for either a BaseComponent-derived type or void.
+     * Useful for template functions where void indicates "no component".
+     */
     template<class T>
     concept IsComponentOrVoid = IsComponent<T> || std::is_void_v<T>;
 
@@ -110,16 +125,34 @@ namespace Core
     //  \____/ \___/ |_| |_| |_|| .__/ (_)\_|     \__,_| \___| \__| \___/ |_|    \__, |
     //                          | |                                               __/ |
     //                          |_|                                              |___/
+    /**
+     * @brief Global factory for creating and registering components by type.
+     * Manages mapping between component type names and factory functions.
+     * Provides logging and debug tracking of component types in DEBUG mode.
+     */
     class GlobalComponentFactory : public StrictSingleton<GlobalComponentFactory>, public BaseLog
     {
         SINGLETONS_FRIEND(GlobalComponentFactory);
 
     public:
+        /** @brief Notify the debug system about a new type. Only used in DEBUG mode. */
         [[maybe_unused]] void _debugTypeTracker_NotifyNewAboutType(const StringAtom& newType);
 
         ~GlobalComponentFactory() override;
 
+        /**
+         * @brief Create a component by its registered type.
+         * @param type The type identifier (StringAtom) of the component.
+         * @return Pointer to a new BaseComponent instance, or nullptr if type not registered.
+         */
         BaseComponent* create(const StringAtom& type);
+
+        /**
+         * @brief Register a new component type in the factory.
+         * @param type The type identifier (StringAtom).
+         * @param factory Function that creates instances of this type.
+         * @return True if registration succeeds, false if type already exists.
+         */
         bool registerNewType(StringAtom type, std::function<BaseComponent*()>);
 
         [[nodiscard]] spdlog::logger* getLogger() const final { return Ecs::getLogger(); }
@@ -132,6 +165,7 @@ namespace Core
 #endif
     };
 
+    /** @brief Shortcut to access the global component factory singleton. */
     inline GlobalComponentFactory& GetGlobalComponentFactory()
     {
         return GlobalComponentFactory::instance();
@@ -144,6 +178,10 @@ namespace Core
     //   |  _  || '_ \ / __|| __|| '__| / _` | / __|| __| | |
     //   | | | || |_) |\__ \| |_ | |   | (_| || (__ | |_  | \__/\ _
     //   \_| |_/|_.__/ |___/ \__||_|    \__,_| \___| \__|  \____/(_)
+    /**
+     * @brief Abstract base class for all components.
+     * Provides lifecycle hooks, ticking mechanism, and JSON serialization.
+     */
     class AbstractComponent :
         public BaseLog,
         public boost::intrusive_ref_counter<BaseComponent>,
@@ -161,14 +199,16 @@ namespace Core
          * @brief Call it in your main loop. After that if several conditions
          * will be matched(is initialized, is enabled, etc) will be called
          * onTick. Inherit from onTick - and implement your own logic for
-         * update and\or draw.
+         * update and/or draw.
          */
         void tick();
 
         [[nodiscard]] spdlog::logger* getLogger() const final { return Ecs::getLogger(); }
 
+        /** @brief Reset the component to uninitialized state. */
         virtual void clear() { _isInited = false; }
 
+        /** @brief Safe cast to a derived component type. Asserts if cast fails. */
         template<IsComponent T>
         [[nodiscard]] T* castTo()
         {
@@ -177,6 +217,7 @@ namespace Core
             return casted;
         }
 
+        /** @brief Attempt to cast to a derived component type. Returns nullptr if cast fails. */
         template<IsComponent T>
         [[nodiscard]] T* tryCastTo()
         {

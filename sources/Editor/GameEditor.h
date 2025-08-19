@@ -29,6 +29,13 @@
 
 namespace Core
 {
+
+    /**
+     * @brief Core editor class managing GUI windows and editor lifecycle.
+     *
+     * Provides initialization, ticking, and management of editor windows.
+     * Also handles font configuration and ImGui setup.
+     */
     class GameEditor : public Utils::NotCopyableAndNotMoveable, public BaseLog
     {
     public:
@@ -52,6 +59,14 @@ namespace Core
         [[nodiscard]] bool isEnabled() const noexcept { return _isEnabled; }
         void setIsEnabled(bool v) noexcept { _isEnabled = v; }
 
+        /**
+         * @brief Register a new editor window of type T.
+         * Initializes it, optionally sets its name, and enables it.
+         * @tparam T Type of the editor window component.
+         * @param name Optional name for the window.
+         * @param isEnabled Whether the window is enabled initially.
+         * @return Shared pointer to the newly registered window.
+         */
         template<IsEditorWindowComponent T>
         [[nodiscard]] typename T::Ptr registerNewWindow(const StringAtom& name = ""_atom,
                                                         bool isEnabled = true)
@@ -66,6 +81,12 @@ namespace Core
             return boost::static_pointer_cast<T>(a);
         }
 
+        /**
+         * @brief Find a window by type and optional name regex.
+         * @tparam WindowT Type of window to search for (default is BaseEWC).
+         * @param regexName Regular expression to match window title.
+         * @return Pointer to the first matching window or nullptr if none found.
+         */
         template<IsEditorWindowComponentOrBase WindowT = BaseEWC>
         [[nodiscard]] WindowT* getWindow(const StringAtom& regexName = ".*")
         {
@@ -89,6 +110,13 @@ namespace Core
             return nullptr;
         }
 
+        /**
+         * @brief Show and enable a window matching the type and regex name.
+         * Optionally pass string arguments to the window.
+         * @tparam WindowT Type of window to show (default is BaseEWC).
+         * @param regexName Regular expression to match window title.
+         * @param args Optional arguments to pass to the window.
+         */
         template<IsEditorWindowComponentOrBase WindowT = BaseEWC>
         void showWindow(const StringAtom& regexName = ".*", const StringAtom& args = ""_atom)
         {
