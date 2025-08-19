@@ -78,10 +78,7 @@ set(ASSIMP_BUILD_ASSIMP_TOOLS ON)
 set(ASSIMP_BUILD_TESTS OFF)
 set(ASSIMP_BUILD_ASSIMP_TOOLS OFF)
 
-
 FetchContent_MakeAvailable(Assimp)
-target_compile_options(assimp PRIVATE /EHsc)
-target_compile_options(assimp PRIVATE /wd4530)
 
 
 FetchContent_Declare(Utils
