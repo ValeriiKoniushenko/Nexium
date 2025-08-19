@@ -16,7 +16,7 @@ function(CoreAddCompileOptionsTo Target)
             "$<$<CONFIG:DEBUG>:/Oy->"
 
             # Release config
-            "$<$<CONFIG:RELEASE>:/O3>"
+            "$<$<CONFIG:RELEASE>:/O2>"
             # "$<$<CONFIG:RELEASE>:/fp:fast>"
         )
     else ()

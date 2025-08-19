@@ -62,12 +62,12 @@
     "keyboardInput": {
         "mapping": [
             {
-                "action": "toggleCursorMode",
-                "key": "M"
-            },
-            {
                 "action": "moveDown",
                 "key": "C"
+            },
+            {
+                "action": "toggleCursorMode",
+                "key": "M"
             },
             {
                 "action": "moveUp",
@@ -78,16 +78,16 @@
                 "key": "W"
             },
             {
-                "action": "moveLeft",
-                "key": "A"
+                "action": "moveBackward",
+                "key": "S"
             },
             {
                 "action": "exit",
                 "key": "F12"
             },
             {
-                "action": "moveBackward",
-                "key": "S"
+                "action": "moveLeft",
+                "key": "A"
             },
             {
                 "action": "moveRight",
