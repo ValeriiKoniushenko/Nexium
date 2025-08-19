@@ -25,6 +25,8 @@
 #include "BaseWindow.h"
 #include "Misc/JsonCacheable.h"
 
+#include <list>
+
 namespace Core
 {
     class LogsWindowEWC : public BaseFloatEWC, public JsonCacheable
