@@ -380,7 +380,7 @@ int main(int, char**)
     // FIXME: Retrieve client size from window itself.
     ImGui_ImplVulkanH_Window* wd = &g_MainWindowData;
     SetupVulkanWindow(wd, surface, 1280, 800);
-    ::ShowWindow(hwnd, Core_SHOWDEFAULT);
+    ::ShowWindow(hwnd, SW_SHOWDEFAULT);
     ::UpdateWindow(hwnd);
 
     // Setup Dear ImGui context

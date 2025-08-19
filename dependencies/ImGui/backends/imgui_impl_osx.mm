@@ -96,7 +96,7 @@ struct ImGui_ImplOSX_Data
     KeyEventResponder*          KeyEventResponder;
     NSTextInputContext*         InputContext;
     id                          Monitor;
-    NCoreindow*                   Window;
+    NSWindow*                   Window;
 
     ImGui_ImplOSX_Data()        { memset((void*)this, 0, sizeof(*this)); }
 };
@@ -154,7 +154,7 @@ static bool ImGui_ImplOSX_HandleEvent(NSEvent* event, NSView* view);
 
 - (void)updateImePosWithView:(NSView *)view
 {
-    NCoreindow* window = view.window;
+    NSWindow* window = view.window;
     if (!window)
         return;
 
@@ -163,7 +163,7 @@ static bool ImGui_ImplOSX_HandleEvent(NSEvent* event, NSView* view);
     {
         NSRect frame = window.frame;
         NSRect contentRect = window.contentLayoutRect;
-        if (window.styleMask & NCoreindowStyleMaskFullSizeContentView) // No title bar windows should be considered.
+        if (window.styleMask & NSWindowStyleMaskFullSizeContentView) // No title bar windows should be considered.
             contentRect = frame;
 
         NSRect firstScreenFrame = NSScreen.screens[0].frame;
@@ -464,7 +464,7 @@ bool ImGui_ImplOSX_Init(NSView* view)
     bd->MouseCursors[ImGuiMouseCursor_ResizeAll] = [NSCursor closedHandCursor];
     bd->MouseCursors[ImGuiMouseCursor_ResizeNS] = [NSCursor respondsToSelector:@selector(_windowResizeNorthSouthCursor)] ? [NSCursor _windowResizeNorthSouthCursor] : [NSCursor resizeUpDownCursor];
     bd->MouseCursors[ImGuiMouseCursor_ResizeEW] = [NSCursor respondsToSelector:@selector(_windowResizeEastWestCursor)] ? [NSCursor _windowResizeEastWestCursor] : [NSCursor resizeLeftRightCursor];
-    bd->MouseCursors[ImGuiMouseCursor_ResizeNECore] = [NSCursor respondsToSelector:@selector(_windowResizeNorthEastSouthWestCursor)] ? [NSCursor _windowResizeNorthEastSouthWestCursor] : [NSCursor closedHandCursor];
+    bd->MouseCursors[ImGuiMouseCursor_ResizeNESW] = [NSCursor respondsToSelector:@selector(_windowResizeNorthEastSouthWestCursor)] ? [NSCursor _windowResizeNorthEastSouthWestCursor] : [NSCursor closedHandCursor];
     bd->MouseCursors[ImGuiMouseCursor_ResizeNWSE] = [NSCursor respondsToSelector:@selector(_windowResizeNorthWestSouthEastCursor)] ? [NSCursor _windowResizeNorthWestSouthEastCursor] : [NSCursor closedHandCursor];
     bd->MouseCursors[ImGuiMouseCursor_Hand] = [NSCursor pointingHandCursor];
     bd->MouseCursors[ImGuiMouseCursor_Wait] = bd->MouseCursors[ImGuiMouseCursor_Progress] = [NSCursor respondsToSelector:@selector(busyButClickableCursor)] ? [NSCursor busyButClickableCursor] : [NSCursor arrowCursor];
@@ -690,7 +690,7 @@ static ImGuiMouseSource GetMouseSource(NSEvent* event)
         // macOS considers input from relative touch devices (like the trackpad or Apple Magic Mouse) to be touch input.
         // This doesn't really make sense for Dear ImGui, which expects absolute touch devices only.
         // There does not seem to be a simple way to disambiguate things here so we consider NSEventSubtypeTouch events to always come from mice.
-        // See https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/EventOverview/HandlingTouchEvents/HandlingTouchEvents.html#//apple_ref/doc/uid/10000060i-CH13-Core24
+        // See https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/EventOverview/HandlingTouchEvents/HandlingTouchEvents.html#//apple_ref/doc/uid/10000060i-CH13-SW24
         //case NSEventSubtypeTouch:
         //    return ImGuiMouseSource_TouchScreen;
         case NSEventSubtypeMouseEvent:
@@ -880,14 +880,14 @@ static void ImGui_ImplOSX_AddTrackingArea(NSView* _Nonnull view)
 
 struct ImGui_ImplOSX_ViewportData
 {
-    NCoreindow*        Window;
+    NSWindow*        Window;
     bool             WindowOwned;
 
     ImGui_ImplOSX_ViewportData()  { WindowOwned = false; }
     ~ImGui_ImplOSX_ViewportData() { IM_ASSERT(Window == nil); }
 };
 
-@interface ImGui_ImplOSX_Window: NCoreindow
+@interface ImGui_ImplOSX_Window: NSWindow
 @end
 
 @implementation ImGui_ImplOSX_Window
@@ -916,13 +916,13 @@ static void ImGui_ImplOSX_CreateWindow(ImGuiViewport* viewport)
     NSRect rect = NSMakeRect(viewport->Pos.x, viewport->Pos.y, viewport->Size.x, viewport->Size.y);
     ConvertNSRect(&rect);
 
-    NCoreindowStyleMask styleMask = 0;
+    NSWindowStyleMask styleMask = 0;
     if (viewport->Flags & ImGuiViewportFlags_NoDecoration)
-        styleMask |= NCoreindowStyleMaskBorderless;
+        styleMask |= NSWindowStyleMaskBorderless;
     else
-        styleMask |= NCoreindowStyleMaskTitled | NCoreindowStyleMaskResizable | NCoreindowStyleMaskClosable | NCoreindowStyleMaskMiniaturizable;
+        styleMask |= NSWindowStyleMaskTitled | NSWindowStyleMaskResizable | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable;
 
-    NCoreindow* window = [[ImGui_ImplOSX_Window alloc] initWithContentRect:rect
+    NSWindow* window = [[ImGui_ImplOSX_Window alloc] initWithContentRect:rect
                                                                styleMask:styleMask
                                                                  backing:NSBackingStoreBuffered
                                                                    defer:YES
@@ -949,7 +949,7 @@ static void ImGui_ImplOSX_DestroyWindow(ImGuiViewport* viewport)
 {
     if (ImGui_ImplOSX_ViewportData* vd = (ImGui_ImplOSX_ViewportData*)viewport->PlatformUserData)
     {
-        NCoreindow* window = vd->Window;
+        NSWindow* window = vd->Window;
         if (window != nil && vd->WindowOwned)
         {
             window.contentView = nil;
@@ -980,10 +980,10 @@ static ImVec2 ImGui_ImplOSX_GetWindowPos(ImGuiViewport* viewport)
     ImGui_ImplOSX_ViewportData* vd = (ImGui_ImplOSX_ViewportData*)viewport->PlatformUserData;
     IM_ASSERT(vd->Window != 0);
 
-    NCoreindow* window = vd->Window;
+    NSWindow* window = vd->Window;
     NSRect frame = window.frame;
     NSRect contentRect = window.contentLayoutRect;
-    if (window.styleMask & NCoreindowStyleMaskFullSizeContentView) // No title bar windows should be considered.
+    if (window.styleMask & NSWindowStyleMaskFullSizeContentView) // No title bar windows should be considered.
         contentRect = frame;
 
     NSRect firstScreenFrame = NSScreen.screens[0].frame;
@@ -995,7 +995,7 @@ static void ImGui_ImplOSX_SetWindowPos(ImGuiViewport* viewport, ImVec2 pos)
     ImGui_ImplOSX_ViewportData* vd = (ImGui_ImplOSX_ViewportData*)viewport->PlatformUserData;
     IM_ASSERT(vd->Window != 0);
 
-    NCoreindow* window = vd->Window;
+    NSWindow* window = vd->Window;
     NSSize size = window.frame.size;
 
     NSRect r = NSMakeRect(pos.x, pos.y, size.width, size.height);
@@ -1008,7 +1008,7 @@ static ImVec2 ImGui_ImplOSX_GetWindowSize(ImGuiViewport* viewport)
     ImGui_ImplOSX_ViewportData* vd = (ImGui_ImplOSX_ViewportData*)viewport->PlatformUserData;
     IM_ASSERT(vd->Window != 0);
 
-    NCoreindow* window = vd->Window;
+    NSWindow* window = vd->Window;
     NSSize size = window.contentLayoutRect.size;
     return ImVec2(size.width, size.height);
 }
@@ -1018,7 +1018,7 @@ static void ImGui_ImplOSX_SetWindowSize(ImGuiViewport* viewport, ImVec2 size)
     ImGui_ImplOSX_ViewportData* vd = (ImGui_ImplOSX_ViewportData*)viewport->PlatformUserData;
     IM_ASSERT(vd->Window != 0);
 
-    NCoreindow* window = vd->Window;
+    NSWindow* window = vd->Window;
     NSRect rect = window.frame;
     rect.origin.y -= (size.y - rect.size.height);
     rect.size.width = size.x;
@@ -1029,7 +1029,7 @@ static void ImGui_ImplOSX_SetWindowSize(ImGuiViewport* viewport, ImVec2 size)
 static ImVec2 ImGui_ImplOSX_GetWindowFramebufferScale(ImGuiViewport* viewport)
 {
     ImGui_ImplOSX_ViewportData* vd = (ImGui_ImplOSX_ViewportData*)viewport->PlatformUserData;
-    NCoreindow* window = vd->Window;
+    NSWindow* window = vd->Window;
     const float fb_scale = (float)[window backingScaleFactor];
     return ImVec2(fb_scale, fb_scale);
 }

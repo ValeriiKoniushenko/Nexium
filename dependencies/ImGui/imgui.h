@@ -1645,7 +1645,7 @@ enum ImGuiKey : int
     // Gamepad
     // (analog values are 0.0f to 1.0f)
     // (download controller mapping PNG/PSD at http://dearimgui.com/controls_sheets)
-    //                              // XBOX        | CoreITCH  | PLAYSTA. | -> ACTION
+    //                              // XBOX        | SWITCH  | PLAYSTA. | -> ACTION
     ImGuiKey_GamepadStart,          // Menu        | +       | Options  |
     ImGuiKey_GamepadBack,           // View        | -       | Share    |
     ImGuiKey_GamepadFaceLeft,       // X           | Y       | Square   | Tap: Toggle Menu. Hold: Windowing mode (Focus/Move/Resize windows)
@@ -2005,7 +2005,7 @@ enum ImGuiMouseCursor_
     ImGuiMouseCursor_ResizeAll,         // (Unused by Dear ImGui functions)
     ImGuiMouseCursor_ResizeNS,          // When hovering over a horizontal border
     ImGuiMouseCursor_ResizeEW,          // When hovering over a vertical border or a column
-    ImGuiMouseCursor_ResizeNECore,        // When hovering over the bottom-left corner of a window
+    ImGuiMouseCursor_ResizeNESW,        // When hovering over the bottom-left corner of a window
     ImGuiMouseCursor_ResizeNWSE,        // When hovering over the bottom-right corner of a window
     ImGuiMouseCursor_Hand,              // (Unused by Dear ImGui functions. Use for e.g. hyperlinks)
     ImGuiMouseCursor_Wait,              // When waiting for something to process/load.

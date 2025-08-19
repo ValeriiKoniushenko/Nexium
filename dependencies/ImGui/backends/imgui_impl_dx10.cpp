@@ -688,7 +688,7 @@ static void ImGui_ImplDX10_CreateWindow(ImGuiViewport* viewport)
     IM_ASSERT(hwnd != 0);
 
     // Create swap chain
-    DXGI_CoreAP_CHAIN_DESC sd;
+    DXGI_SWAP_CHAIN_DESC sd;
     ZeroMemory(&sd, sizeof(sd));
     sd.BufferDesc.Width = (UINT)viewport->Size.x;
     sd.BufferDesc.Height = (UINT)viewport->Size.y;
@@ -699,7 +699,7 @@ static void ImGui_ImplDX10_CreateWindow(ImGuiViewport* viewport)
     sd.BufferCount = 1;
     sd.OutputWindow = hwnd;
     sd.Windowed = TRUE;
-    sd.SwapEffect = DXGI_CoreAP_EFFECT_DISCARD;
+    sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
     sd.Flags = 0;
 
     IM_ASSERT(vd->SwapChain == nullptr && vd->RTView == nullptr);

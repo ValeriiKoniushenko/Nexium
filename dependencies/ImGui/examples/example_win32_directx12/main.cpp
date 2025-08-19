@@ -127,7 +127,7 @@ int main(int, char**)
     }
 
     // Show the window
-    ::ShowWindow(hwnd, Core_SHOWDEFAULT);
+    ::ShowWindow(hwnd, SW_SHOWDEFAULT);
     ::UpdateWindow(hwnd);
 
     // Setup Dear ImGui context
@@ -332,18 +332,18 @@ int main(int, char**)
 bool CreateDeviceD3D(HWND hWnd)
 {
     // Setup swap chain
-    DXGI_CoreAP_CHAIN_DESC1 sd;
+    DXGI_SWAP_CHAIN_DESC1 sd;
     {
         ZeroMemory(&sd, sizeof(sd));
         sd.BufferCount = APP_NUM_BACK_BUFFERS;
         sd.Width = 0;
         sd.Height = 0;
         sd.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-        sd.Flags = DXGI_CoreAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT;
+        sd.Flags = DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT;
         sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
         sd.SampleDesc.Count = 1;
         sd.SampleDesc.Quality = 0;
-        sd.SwapEffect = DXGI_CoreAP_EFFECT_FLIP_DISCARD;
+        sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
         sd.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
         sd.Scaling = DXGI_SCALING_STRETCH;
         sd.Stereo = FALSE;
@@ -549,7 +549,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
         {
             WaitForLastSubmittedFrame();
             CleanupRenderTarget();
-            HRESULT result = g_pSwapChain->ResizeBuffers(0, (UINT)LOWORD(lParam), (UINT)HIWORD(lParam), DXGI_FORMAT_UNKNOWN, DXGI_CoreAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT);
+            HRESULT result = g_pSwapChain->ResizeBuffers(0, (UINT)LOWORD(lParam), (UINT)HIWORD(lParam), DXGI_FORMAT_UNKNOWN, DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT);
             assert(SUCCEEDED(result) && "Failed to resize swapchain.");
             CreateRenderTarget();
         }

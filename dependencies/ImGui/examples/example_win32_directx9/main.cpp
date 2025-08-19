@@ -46,7 +46,7 @@ int main(int, char**)
     }
 
     // Show the window
-    ::ShowWindow(hwnd, Core_SHOWDEFAULT);
+    ::ShowWindow(hwnd, SW_SHOWDEFAULT);
     ::UpdateWindow(hwnd);
 
     // Setup Dear ImGui context
@@ -232,7 +232,7 @@ bool CreateDeviceD3D(HWND hWnd)
     // Create the D3DDevice
     ZeroMemory(&g_d3dpp, sizeof(g_d3dpp));
     g_d3dpp.Windowed = TRUE;
-    g_d3dpp.SwapEffect = D3DCoreAPEFFECT_DISCARD;
+    g_d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
     g_d3dpp.BackBufferFormat = D3DFMT_UNKNOWN; // Need to use an explicit format with alpha if needing per-pixel alpha composition.
     g_d3dpp.EnableAutoDepthStencil = TRUE;
     g_d3dpp.AutoDepthStencilFormat = D3DFMT_D16;

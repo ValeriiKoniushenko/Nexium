@@ -82,7 +82,7 @@ int main(int, char**)
     ImGui_ImplGlfw_InitForOther(window, true);
     ImGui_ImplMetal_Init(device);
 
-    NCoreindow *nswin = glfwGetCocoaWindow(window);
+    NSWindow *nswin = glfwGetCocoaWindow(window);
     CAMetalLayer *layer = [CAMetalLayer layer];
     layer.device = device;
     layer.pixelFormat = MTLPixelFormatBGRA8Unorm;

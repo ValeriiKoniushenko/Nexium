@@ -282,7 +282,7 @@ static bool ImGui_ImplWin32_UpdateMouseCursor(ImGuiIO& io, ImGuiMouseCursor imgu
         case ImGuiMouseCursor_ResizeAll:    win32_cursor = IDC_SIZEALL; break;
         case ImGuiMouseCursor_ResizeEW:     win32_cursor = IDC_SIZEWE; break;
         case ImGuiMouseCursor_ResizeNS:     win32_cursor = IDC_SIZENS; break;
-        case ImGuiMouseCursor_ResizeNECore:   win32_cursor = IDC_SIZENECore; break;
+        case ImGuiMouseCursor_ResizeNESW:   win32_cursor = IDC_SIZENESW; break;
         case ImGuiMouseCursor_ResizeNWSE:   win32_cursor = IDC_SIZENWSE; break;
         case ImGuiMouseCursor_Hand:         win32_cursor = IDC_HAND; break;
         case ImGuiMouseCursor_Wait:         win32_cursor = IDC_WAIT; break;
@@ -909,7 +909,7 @@ IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandlerEx(HWND hwnd, UINT msg, WPA
     {
         const RECT* suggested_rect = (RECT*)lParam;
         if (io.ConfigDpiScaleViewports)
-            ::SetWindowPos(hwnd, nullptr, suggested_rect->left, suggested_rect->top, suggested_rect->right - suggested_rect->left, suggested_rect->bottom - suggested_rect->top, CoreP_NOZORDER | CoreP_NOACTIVATE);
+            ::SetWindowPos(hwnd, nullptr, suggested_rect->left, suggested_rect->top, suggested_rect->right - suggested_rect->left, suggested_rect->bottom - suggested_rect->top, SWP_NOZORDER | SWP_NOACTIVATE);
         return 0;
     }
     }
@@ -1176,9 +1176,9 @@ static void ImGui_ImplWin32_ShowWindow(ImGuiViewport* viewport)
         ::SetWindowLongPtr(vd->Hwnd, GWLP_HWNDPARENT, (LONG_PTR)nullptr);
 
     if (viewport->Flags & ImGuiViewportFlags_NoFocusOnAppearing)
-        ::ShowWindow(vd->Hwnd, Core_SHOWNA);
+        ::ShowWindow(vd->Hwnd, SW_SHOWNA);
     else
-        ::ShowWindow(vd->Hwnd, Core_SHOW);
+        ::ShowWindow(vd->Hwnd, SW_SHOW);
 
     // Restore
     if (vd->HwndParent != NULL)
@@ -1217,7 +1217,7 @@ static void ImGui_ImplWin32_UpdateWindow(ImGuiViewport* viewport)
         // (Optional) Update TopMost state if it changed _after_ creation
         bool top_most_changed = (vd->DwExStyle & WS_EX_TOPMOST) != (new_ex_style & WS_EX_TOPMOST);
         HWND insert_after = top_most_changed ? ((viewport->Flags & ImGuiViewportFlags_TopMost) ? HWND_TOPMOST : HWND_NOTOPMOST) : 0;
-        UINT swp_flag = top_most_changed ? 0 : CoreP_NOZORDER;
+        UINT swp_flag = top_most_changed ? 0 : SWP_NOZORDER;
 
         // Apply flags and position (since it is affected by flags)
         vd->DwStyle = new_style;
@@ -1226,8 +1226,8 @@ static void ImGui_ImplWin32_UpdateWindow(ImGuiViewport* viewport)
         ::SetWindowLong(vd->Hwnd, GWL_EXSTYLE, vd->DwExStyle);
         RECT rect = { (LONG)viewport->Pos.x, (LONG)viewport->Pos.y, (LONG)(viewport->Pos.x + viewport->Size.x), (LONG)(viewport->Pos.y + viewport->Size.y) };
         ::AdjustWindowRectEx(&rect, vd->DwStyle, FALSE, vd->DwExStyle); // Client to Screen
-        ::SetWindowPos(vd->Hwnd, insert_after, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, swp_flag | CoreP_NOACTIVATE | CoreP_FRAMECHANGED);
-        ::ShowWindow(vd->Hwnd, Core_SHOWNA); // This is necessary when we alter the style
+        ::SetWindowPos(vd->Hwnd, insert_after, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, swp_flag | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+        ::ShowWindow(vd->Hwnd, SW_SHOWNA); // This is necessary when we alter the style
         viewport->PlatformRequestMove = viewport->PlatformRequestResize = true;
     }
 }
@@ -1256,7 +1256,7 @@ static void ImGui_ImplWin32_SetWindowPos(ImGuiViewport* viewport, ImVec2 pos)
     if (viewport->Flags & ImGuiViewportFlags_OwnedByApp)
         ImGui_ImplWin32_UpdateWin32StyleFromWindow(viewport); // Not our window, poll style before using
     ::AdjustWindowRectEx(&rect, vd->DwStyle, FALSE, vd->DwExStyle);
-    ::SetWindowPos(vd->Hwnd, nullptr, rect.left, rect.top, 0, 0, CoreP_NOZORDER | CoreP_NOSIZE | CoreP_NOACTIVATE);
+    ::SetWindowPos(vd->Hwnd, nullptr, rect.left, rect.top, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE);
 }
 
 static ImVec2 ImGui_ImplWin32_GetWindowSize(ImGuiViewport* viewport)
@@ -1276,7 +1276,7 @@ static void ImGui_ImplWin32_SetWindowSize(ImGuiViewport* viewport, ImVec2 size)
     if (viewport->Flags & ImGuiViewportFlags_OwnedByApp)
         ImGui_ImplWin32_UpdateWin32StyleFromWindow(viewport); // Not our window, poll style before using
     ::AdjustWindowRectEx(&rect, vd->DwStyle, FALSE, vd->DwExStyle); // Client to Screen
-    ::SetWindowPos(vd->Hwnd, nullptr, 0, 0, rect.right - rect.left, rect.bottom - rect.top, CoreP_NOZORDER | CoreP_NOMOVE | CoreP_NOACTIVATE);
+    ::SetWindowPos(vd->Hwnd, nullptr, 0, 0, rect.right - rect.left, rect.bottom - rect.top, SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE);
 }
 
 static void ImGui_ImplWin32_SetWindowFocus(ImGuiViewport* viewport)

@@ -3432,7 +3432,7 @@ static void stbi__idct_simd(stbi_uc* out, int out_stride, short data[64])
 
     // 16bit 8x8 transpose
     {
-            // these three map to a single VTRN.16, VTRN.32, and VCoreP, respectively.
+            // these three map to a single VTRN.16, VTRN.32, and VSWP, respectively.
             // whether compilers actually get this is another story, sadly.
             #define dct_trn16(x, y)                                                                \
                 {                                                                                  \
