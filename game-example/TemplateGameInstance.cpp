@@ -63,41 +63,20 @@ void TemplateGameInstance::onLoadShaders()
 
 void TemplateGameInstance::onTick(float delta)
 {
-    auto* shader = shaderManager.getShaderProgram("color"_atom);
-    shader->use();
-    shader->setUniform("uObjectColor"_atom, 1.0f, 1.0f, 1.0f);
-    shader->setUniform("uLightColor"_atom, 1.0f, 1.0f, 1.0f);
-    shader->setUniform("uLightPos"_atom, world.lightPos);
-    shader->setUniform("uViewPos"_atom, currentCamera->getPosition());
-    shader->setUniform("uTexture"_atom, 0);
-    shader->setUniform("uProjAndView"_atom, currentCamera->getMatrix());
-    gameScene.directDraw();
-
-    static GLuint VBO, VAO;
-    static bool _ = [&](){
-        float vertices[] = {
-            0.0f,  0.5f, 0.0f,  // top
-            -0.5f, -0.5f, 0.0f,  // left
-            0.5f, -0.5f, 0.0f   // right
-        };
-
-        glGenVertexArrays(1, &VAO);
-        glGenBuffers(1, &VBO);
-
-        glBindVertexArray(VAO);
-
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-        shaderManager.getShaderProgram("grid"_atom)->setupVertexAttribute();
-
-        return true;
-    }();
+    // auto* shader = shaderManager.getShaderProgram("color"_atom);
+    // shader->use();
+    // shader->setUniform("uObjectColor"_atom, 1.0f, 1.0f, 1.0f);
+    // shader->setUniform("uLightColor"_atom, 1.0f, 1.0f, 1.0f);
+    // shader->setUniform("uLightPos"_atom, world.lightPos);
+    // shader->setUniform("uViewPos"_atom, currentCamera->getPosition());
+    // shader->setUniform("uTexture"_atom, 0);
+    // shader->setUniform("uProjAndView"_atom, currentCamera->getMatrix());
+    //gameScene.directDraw();
 
     auto* gridShader = shaderManager.getShaderProgram("grid"_atom);
     gridShader->use();
-    glBindVertexArray(VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDisable(GL_CULL_FACE);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
 void TemplateGameInstance::onInitReadCache()

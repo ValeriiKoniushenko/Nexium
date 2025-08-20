@@ -152,7 +152,7 @@ namespace Core
     void ShaderProgram::debugUniform(const StringAtom& name)
     {
 #ifdef GRAPHICS_DEBUG
-        Assert(name.isStatic());
+        Assert(name.isStatic(), "Use atomic string. Add _atom to your uniform's str");
         Assert(_uniforms[name] != -1);
 #endif
     }
