@@ -85,7 +85,7 @@ namespace Core
             if (ImGui::Button("Reload shader",
                               ImVec2(_drawDetailsLabelWidth - style.FramePadding.x * 2.f, 0.f)))
             {
-                shader.recreateFromSources();
+                shader.safeRecreateFromSources();
             }
 
             const auto vertPath = shader.getVertexShaderPath().generic_string();

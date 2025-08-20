@@ -40,9 +40,18 @@ namespace Core
     void ShaderProgramMeta::create(const std::filesystem::path& vertexShaderPath,
                                    const std::filesystem::path& fragmentShaderPath)
     {
+        {
+            // fake creation to check compile errors
+            ShaderProgramMeta temp;
+            temp.generateShaderId();
+            temp.readSourceShaderFile(vertexShaderPath, fragmentShaderPath);
+            temp.compileShader();
+        }
+
         generateShaderId();
         readSourceShaderFile(vertexShaderPath, fragmentShaderPath);
         compileShader();
+
         _shaderProgram.create(_shaderName);
         reflectShaderVariablesFor(_shaderProgram.getShaderProgramId());
         _shaderProgram.m__setUniformsFromSources(_uniforms);
@@ -194,6 +203,18 @@ namespace Core
         }
 
         create(_vertexShaderPath, _fragmentShaderPath);
+    }
+
+    void ShaderProgramMeta::safeRecreateFromSources()
+    {
+        try
+        {
+            recreateFromSources();
+        }
+        catch (std::exception& err)
+        {
+            errorLog("Can't recreate a shader due to compile error[s]: {}"_f << _shaderName);
+        }
     }
 
 } // namespace Core
