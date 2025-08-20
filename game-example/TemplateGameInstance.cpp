@@ -30,10 +30,10 @@ using namespace Core;
 
 void TemplateGameInstance::onLoadShaders()
 {
-    auto* shader = shaderManager.getShaderProgram("color"_atom);
-    if (Verify(shader))
+    auto* colorShader = shaderManager.getShaderProgram("color"_atom);
+    if (Verify(colorShader))
     {
-        shader->setVertexAttributeCallback(
+        colorShader->setVertexAttributeCallback(
             []()
             {
                 glEnableVertexAttribArray(0);
@@ -48,6 +48,17 @@ void TemplateGameInstance::onLoadShaders()
                                       reinterpret_cast<void*>(6 * sizeof(float)));
             });
     }
+
+    auto* gridShader = shaderManager.getShaderProgram("grid"_atom);
+    if (Verify(gridShader))
+    {
+        gridShader->setVertexAttributeCallback(
+            []()
+            {
+                glEnableVertexAttribArray(0);
+                glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+            });
+    }
 }
 
 void TemplateGameInstance::onTick(float delta)
@@ -60,8 +71,33 @@ void TemplateGameInstance::onTick(float delta)
     shader->setUniform("uViewPos"_atom, currentCamera->getPosition());
     shader->setUniform("uTexture"_atom, 0);
     shader->setUniform("uProjAndView"_atom, currentCamera->getMatrix());
-
     gameScene.directDraw();
+
+    static GLuint VBO, VAO;
+    static bool _ = [&](){
+        float vertices[] = {
+            0.0f,  0.5f, 0.0f,  // top
+            -0.5f, -0.5f, 0.0f,  // left
+            0.5f, -0.5f, 0.0f   // right
+        };
+
+        glGenVertexArrays(1, &VAO);
+        glGenBuffers(1, &VBO);
+
+        glBindVertexArray(VAO);
+
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+        shaderManager.getShaderProgram("grid"_atom)->setupVertexAttribute();
+
+        return true;
+    }();
+
+    auto* gridShader = shaderManager.getShaderProgram("grid"_atom);
+    gridShader->use();
+    glBindVertexArray(VAO);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
 void TemplateGameInstance::onInitReadCache()
