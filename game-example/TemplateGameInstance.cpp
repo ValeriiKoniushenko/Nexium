@@ -76,13 +76,14 @@ void TemplateGameInstance::onTick(float delta)
     gridShader->use();
     gridShader->setUniform("uProjAndView"_atom, currentCamera->getMatrix());
     gridShader->setUniform("uCameraPos"_atom, currentCamera->getPosition());
-    glDisable(GL_CULL_FACE);
-    glDisable(GL_DEPTH_TEST);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glDrawArrays(GL_TRIANGLES, 0, 6);
 
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
+    glBlendFunc(GL_ONE, GL_ZERO);
+    glDisable(GL_BLEND);
 }
 
 void TemplateGameInstance::onInitReadCache()

@@ -5,10 +5,10 @@ uniform mat4 uProjAndView;
 uniform vec3 uCameraPos;
 
 const vec3 Pos[4] = vec3[4] (
-    vec3(-100.0, 0.0,-100.0), // BL
-    vec3( 100.0, 0.0,-100.0), // BR
-    vec3( 100.0, 0.0, 100.0), // TR
-    vec3(-100.0, 0.0, 100.0)  // TL
+    vec3(-1000.0, 0.0,-1000.0), // BL
+    vec3( 1000.0, 0.0,-1000.0), // BR
+    vec3( 1000.0, 0.0, 1000.0), // TR
+    vec3(-1000.0, 0.0, 1000.0)  // TL
 );
 
 const int Indicies[6] = int[6](0,2,1,2,0,3);
@@ -23,7 +23,8 @@ void main()
     pos.x += -uCameraPos.x;
     pos.z += -uCameraPos.z;
 
+    // ioWorldPos = (uProjAndView * vec4(pos, 1.0)).xyz;
     ioWorldPos = pos;
 
-    gl_Position = uProjAndView vec4(pos, 1.0);
+    gl_Position = uProjAndView * vec4(pos, 1.0);
 }
