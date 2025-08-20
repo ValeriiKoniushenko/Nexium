@@ -55,8 +55,6 @@ void TemplateGameInstance::onLoadShaders()
         gridShader->setVertexAttributeCallback(
             []()
             {
-                glEnableVertexAttribArray(0);
-                glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
             });
     }
 }
@@ -73,9 +71,11 @@ void TemplateGameInstance::onTick(float delta)
     shader->setUniform("uProjAndView"_atom, currentCamera->getMatrix());
     gameScene.directDraw();
 
+    // ================ GRID =================
     auto* gridShader = shaderManager.getShaderProgram("grid"_atom);
     gridShader->use();
     gridShader->setUniform("uProjAndView"_atom, currentCamera->getMatrix());
+    gridShader->setUniform("uCameraPos"_atom, currentCamera->getPosition());
     glDisable(GL_CULL_FACE);
     glDisable(GL_DEPTH_TEST);
 
