@@ -110,6 +110,10 @@ namespace Core
         keyboardInput.getOrCreate("moveLeft", Keyboard::Key::Key_A)->onPress.subscribe([&](auto state){ camera.moveRight(getRealSpeed(state) * gGameInstance->world.timeDelta); });
         keyboardInput.getOrCreate("moveUp", Keyboard::Key::Key_Space)->onPress.subscribe([&](auto state){ camera.moveUp(-getRealSpeed(state) * gGameInstance->world.timeDelta); });
         keyboardInput.getOrCreate("moveDown", Keyboard::Key::Key_C)->onPress.subscribe([&](auto state){ camera.moveUp(getRealSpeed(state) * gGameInstance->world.timeDelta); });
+        keyboardInput.getOrCreate("yaw+", Keyboard::Key::Key_E)->onPress.subscribe([&](auto state){ camera.yaw(30.f * gGameInstance->world.timeDelta); });
+        keyboardInput.getOrCreate("yaw-", Keyboard::Key::Key_Q)->onPress.subscribe([&](auto state){ camera.yaw(-30.f * gGameInstance->world.timeDelta); });
+        keyboardInput.getOrCreate("pitch+", Keyboard::Key::Key_R)->onPress.subscribe([&](auto state){ camera.pitch(30.f * gGameInstance->world.timeDelta); });
+        keyboardInput.getOrCreate("pitch-", Keyboard::Key::Key_F)->onPress.subscribe([&](auto state){ camera.pitch(-30.f * gGameInstance->world.timeDelta); });
         keyboardInput.getOrCreate("exit", Keyboard::Key::Key_F12)->onPress.subscribe([&](auto){ GetWindow().close(); });
         // clang-format on
     }

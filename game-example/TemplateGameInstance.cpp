@@ -63,20 +63,26 @@ void TemplateGameInstance::onLoadShaders()
 
 void TemplateGameInstance::onTick(float delta)
 {
-    // auto* shader = shaderManager.getShaderProgram("color"_atom);
-    // shader->use();
-    // shader->setUniform("uObjectColor"_atom, 1.0f, 1.0f, 1.0f);
-    // shader->setUniform("uLightColor"_atom, 1.0f, 1.0f, 1.0f);
-    // shader->setUniform("uLightPos"_atom, world.lightPos);
-    // shader->setUniform("uViewPos"_atom, currentCamera->getPosition());
-    // shader->setUniform("uTexture"_atom, 0);
-    // shader->setUniform("uProjAndView"_atom, currentCamera->getMatrix());
-    //gameScene.directDraw();
+    auto* shader = shaderManager.getShaderProgram("color"_atom);
+    shader->use();
+    shader->setUniform("uObjectColor"_atom, 1.0f, 1.0f, 1.0f);
+    shader->setUniform("uLightColor"_atom, 1.0f, 1.0f, 1.0f);
+    shader->setUniform("uLightPos"_atom, world.lightPos);
+    shader->setUniform("uViewPos"_atom, currentCamera->getPosition());
+    shader->setUniform("uTexture"_atom, 0);
+    shader->setUniform("uProjAndView"_atom, currentCamera->getMatrix());
+    gameScene.directDraw();
 
     auto* gridShader = shaderManager.getShaderProgram("grid"_atom);
     gridShader->use();
+    gridShader->setUniform("uProjAndView"_atom, currentCamera->getMatrix());
     glDisable(GL_CULL_FACE);
+    glDisable(GL_DEPTH_TEST);
+
     glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
 }
 
 void TemplateGameInstance::onInitReadCache()

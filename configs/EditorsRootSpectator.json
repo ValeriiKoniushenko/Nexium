@@ -62,40 +62,40 @@
     "keyboardInput": {
         "mapping": [
             {
-                "action": "moveDown",
-                "key": "C"
-            },
-            {
-                "action": "moveForward",
-                "key": "W"
-            },
-            {
-                "action": "toggleCursorMode",
-                "key": "M"
-            },
-            {
-                "action": "moveUp",
-                "key": "Space"
-            },
-            {
-                "action": "moveBackward",
-                "key": "S"
-            },
-            {
-                "action": "toggleSimulation",
-                "key": "F1"
-            },
-            {
-                "action": "exit",
-                "key": "F12"
+                "action": "moveLeft",
+                "key": "A"
             },
             {
                 "action": "moveRight",
                 "key": "D"
             },
             {
-                "action": "moveLeft",
-                "key": "A"
+                "action": "exit",
+                "key": "F12"
+            },
+            {
+                "action": "toggleSimulation",
+                "key": "F1"
+            },
+            {
+                "action": "moveBackward",
+                "key": "S"
+            },
+            {
+                "action": "moveUp",
+                "key": "Space"
+            },
+            {
+                "action": "toggleCursorMode",
+                "key": "M"
+            },
+            {
+                "action": "moveForward",
+                "key": "W"
+            },
+            {
+                "action": "moveDown",
+                "key": "C"
             }
         ]
     },
