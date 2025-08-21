@@ -2,13 +2,15 @@
 
 uniform mat4 uProjAndView;
 
+uniform float uGlobalGridSize = 10000.0;
+
 uniform vec3 uCameraPos;
 
 const vec3 Pos[4] = vec3[4] (
-    vec3(-1000.0, 0.0,-1000.0), // BL
-    vec3( 1000.0, 0.0,-1000.0), // BR
-    vec3( 1000.0, 0.0, 1000.0), // TR
-    vec3(-1000.0, 0.0, 1000.0)  // TL
+    vec3(-1.0, 0.0,-1.0), // BL
+    vec3( 1.0, 0.0,-1.0), // BR
+    vec3( 1.0, 0.0, 1.0), // TR
+    vec3(-1.0, 0.0, 1.0)  // TL
 );
 
 const int Indicies[6] = int[6](0,2,1,2,0,3);
@@ -19,7 +21,7 @@ void main()
 {
     int index = Indicies[gl_VertexID];
 
-    vec3 pos = Pos[index];
+    vec3 pos = Pos[index] * uGlobalGridSize;
     pos.x += -uCameraPos.x;
     pos.z += -uCameraPos.z;
 
