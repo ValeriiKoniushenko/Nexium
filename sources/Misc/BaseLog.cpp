@@ -47,9 +47,9 @@ namespace Core
         const std::time_t rawTime = std::time(nullptr);
         std::tm tm_struct;
 #if defined(_MSC_VER)
-        localtime_s(&tm_struct, &rawTime); // MSVC thread-safe version
+        localtime_s(&tm_struct, &rawTime);
 #else
-        tm_struct = *std::localtime(&time); // GCC/Clang
+        tm_struct = *std::localtime(&rawTime);
 #endif
         std::ostringstream oss;
         oss << std::put_time(&tm_struct, "%H:%M:%S");

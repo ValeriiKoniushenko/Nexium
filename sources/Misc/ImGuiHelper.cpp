@@ -138,7 +138,7 @@ namespace Core
 
     bool ButtonAndInputTextRO(StringAtom label, StringAtom value, float labelSize, float fullSize)
     {
-        auto& style = ImGui::GetStyle();
+        const auto& style = ImGui::GetStyle();
 
         labelSize -= style.FramePadding.x * 2.f;
 

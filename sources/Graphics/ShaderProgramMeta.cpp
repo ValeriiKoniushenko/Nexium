@@ -128,11 +128,11 @@ namespace Core
     {
         constexpr GLsizei logSize = 512;
         GLint success = 0;
-        char infoLog[logSize];
 
         glGetShaderiv(shaderId, GL_COMPILE_STATUS, &success);
         if (!success)
         {
+            char infoLog[logSize]{};
             glGetShaderInfoLog(shaderId, logSize, nullptr, infoLog);
             std::string msg = shaderType + " shader compilation error: ";
             msg += infoLog;

@@ -114,8 +114,8 @@ namespace Core
                 return false;
             }
 
-            _mapping.erase(found);
             debugLog("Mapping was removed: '{}'"_f << found->first);
+            _mapping.erase(found);
 
             return true;
         }
