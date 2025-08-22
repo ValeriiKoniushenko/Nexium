@@ -115,6 +115,7 @@ namespace Core
         ImGui::SameLine(0,0);
         offset -= style.ItemSpacing.x * 2.f;
 
+        /*
         offset -= _simulationButton - style.ItemSpacing.x;
         ImGui::SetCursorPosX(offset);
 
@@ -125,6 +126,7 @@ namespace Core
         }
         ImGui::SameLine(0,0);
         offset -= style.ItemSpacing.x * 2.f;
+        */
     }
 
     void EditorMenuBarWindowEWC::onUpdate()

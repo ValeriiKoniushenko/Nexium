@@ -35,8 +35,8 @@
                     -67.03602600097656
                 ],
                 "rotation": [
-                    0.9115932583808899,
-                    -33001.38671875,
+                    13.511592864990234,
+                    -33018.18359375,
                     0.0
                 ],
                 "scale": [
@@ -61,6 +61,10 @@
     "isEnabled": true,
     "keyboardInput": {
         "mapping": [
+            {
+                "action": "moveDown",
+                "key": "C"
+            },
             {
                 "action": "pitch+",
                 "key": "R"
@@ -112,10 +116,6 @@
             {
                 "action": "moveForward",
                 "key": "W"
-            },
-            {
-                "action": "moveDown",
-                "key": "C"
             }
         ]
     },
