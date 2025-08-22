@@ -30,13 +30,13 @@
                     0.0
                 ],
                 "position": [
-                    558.371826171875,
-                    -890.76708984375,
-                    -260.2350769042969
+                    551.4627075195313,
+                    -601.9807739257813,
+                    -67.03602600097656
                 ],
                 "rotation": [
-                    26.260032653808594,
-                    -293.6797790527344,
+                    0.9115932583808899,
+                    -33001.38671875,
                     0.0
                 ],
                 "scale": [
@@ -62,60 +62,64 @@
     "keyboardInput": {
         "mapping": [
             {
-                "action": "pitch-",
-                "key": "F"
-            },
-            {
                 "action": "pitch+",
                 "key": "R"
             },
             {
-                "action": "yaw+",
-                "key": "E"
+                "action": "pitch-",
+                "key": "F"
             },
             {
-                "action": "moveDown",
-                "key": "C"
-            },
-            {
-                "action": "moveForward",
-                "key": "W"
-            },
-            {
-                "action": "toggleCursorMode",
-                "key": "M"
-            },
-            {
-                "action": "yaw-",
-                "key": "Q"
-            },
-            {
-                "action": "moveUp",
-                "key": "Space"
-            },
-            {
-                "action": "moveBackward",
-                "key": "S"
+                "action": "toggleRenderMode",
+                "key": "F1"
             },
             {
                 "action": "toggleSimulation",
                 "key": "F1"
             },
             {
-                "action": "exit",
-                "key": "F12"
+                "action": "moveBackward",
+                "key": "S"
+            },
+            {
+                "action": "moveLeft",
+                "key": "A"
+            },
+            {
+                "action": "moveUp",
+                "key": "Space"
+            },
+            {
+                "action": "yaw-",
+                "key": "Q"
+            },
+            {
+                "action": "yaw+",
+                "key": "E"
             },
             {
                 "action": "moveRight",
                 "key": "D"
             },
             {
-                "action": "moveLeft",
-                "key": "A"
+                "action": "exit",
+                "key": "F12"
+            },
+            {
+                "action": "toggleCursorMode",
+                "key": "M"
+            },
+            {
+                "action": "moveForward",
+                "key": "W"
+            },
+            {
+                "action": "moveDown",
+                "key": "C"
             }
         ]
     },
-    "mouseSensitivity": 700.0,
+    "mouseSensitivity": 0.699999988079071,
     "name": "Main Spectator",
     "noTick": false,
     "speed": 50.0,

@@ -82,6 +82,8 @@ namespace Core
         void setFitContent(bool v);
         [[nodiscard]] bool isFitContent() const noexcept { return _isFitContent; }
 
+        [[nodiscard]] bool isFocused() const noexcept { return _isFocused; }
+
         /**
          * @brief will be called while the window's size changing
          * @param FSize2 new outer(full) size
@@ -101,6 +103,7 @@ namespace Core
         FSize2 _innerSize;
         FSize2 _oldSize = FSize2{ -1, -1 };
         bool _isFitContent = false;
+        bool _isFocused = false;
         std::unordered_map<ImGuiStyleVar_, float> _styles;
     };
 

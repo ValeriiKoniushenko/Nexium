@@ -73,6 +73,8 @@ namespace Core
         const ImVec2 size = ImGui::GetWindowSize();
         _size = FSize2{ size.x, size.y };
 
+        _isFocused = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows);
+
         if (_size != _oldSize)
         {
             const auto regionMax = ImGui::GetContentRegionMax();

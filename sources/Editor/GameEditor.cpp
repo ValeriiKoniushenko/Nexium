@@ -160,15 +160,6 @@ namespace Core
                 {
                     GetWindow().close();
                 });
-        auto mouseRotation = _mouseInput.getOrCreate("mouseRotation", Core::Mouse::Key_None);
-        mouseRotation->onDrag.subscribe(
-            [this](glm::vec2 delta, auto spec)
-            {
-                if (gGameInstance->currentCamera)
-                {
-                    gGameInstance->currentCamera->yawAndPitch(delta * mouseSensitivity);
-                }
-            });
     }
 
     void GameEditor::onTick(float delta)

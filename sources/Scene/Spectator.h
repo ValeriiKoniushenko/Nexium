@@ -39,7 +39,7 @@ namespace Core
     public:
         // TODO: Move it to Controller
         float speed = 50.f;
-        float mouseSensitivity = 700.0;
+        float mouseSensitivity = 0.6f;
 
         KeyboardInputManger keyboardInput;
         MouseInputManger mouseInput;

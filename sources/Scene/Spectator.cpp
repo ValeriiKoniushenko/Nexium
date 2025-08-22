@@ -22,6 +22,7 @@
 
 #include "Spectator.h"
 
+#include "Editor/Windows/GameViewport.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 
 namespace Core
@@ -94,10 +95,10 @@ namespace Core
             return speed * mlt;
         };
 
-        auto toggleSimulation
-            = keyboardInput.getOrCreate("toggleSimulation", Keyboard::Key::Key_F1);
-        toggleSimulation->setIsRepeatable(false);
-        toggleSimulation->onPress.subscribe(
+        auto toggleRenderMode
+            = keyboardInput.getOrCreate("toggleRenderMode", Keyboard::Key::Key_F1);
+        toggleRenderMode->setIsRepeatable(false);
+        toggleRenderMode->onPress.subscribe(
             [](auto)
             {
                 gGameInstance->toggleRenderMode();
@@ -110,10 +111,16 @@ namespace Core
         keyboardInput.getOrCreate("moveLeft", Keyboard::Key::Key_A)->onPress.subscribe([&](auto state){ camera.moveRight(getRealSpeed(state) * gGameInstance->world.timeDelta); });
         keyboardInput.getOrCreate("moveUp", Keyboard::Key::Key_Space)->onPress.subscribe([&](auto state){ camera.moveUp(-getRealSpeed(state) * gGameInstance->world.timeDelta); });
         keyboardInput.getOrCreate("moveDown", Keyboard::Key::Key_C)->onPress.subscribe([&](auto state){ camera.moveUp(getRealSpeed(state) * gGameInstance->world.timeDelta); });
-        keyboardInput.getOrCreate("yaw+", Keyboard::Key::Key_E)->onPress.subscribe([&](auto state){ camera.yaw(30.f * gGameInstance->world.timeDelta); });
-        keyboardInput.getOrCreate("yaw-", Keyboard::Key::Key_Q)->onPress.subscribe([&](auto state){ camera.yaw(-30.f * gGameInstance->world.timeDelta); });
-        keyboardInput.getOrCreate("pitch+", Keyboard::Key::Key_R)->onPress.subscribe([&](auto state){ camera.pitch(30.f * gGameInstance->world.timeDelta); });
-        keyboardInput.getOrCreate("pitch-", Keyboard::Key::Key_F)->onPress.subscribe([&](auto state){ camera.pitch(-30.f * gGameInstance->world.timeDelta); });
         // clang-format on
+
+        mouseInput.getOrCreate("mouseRotation", Core::Mouse::Key_None)
+            ->onDrag.subscribe(
+                [this](glm::vec2 delta, auto spec)
+                {
+                    if (gGameInstance->currentCamera)
+                    {
+                        gGameInstance->currentCamera->yawAndPitch(delta * mouseSensitivity);
+                    }
+                });
     }
 } // namespace Core

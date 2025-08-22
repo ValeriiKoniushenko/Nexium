@@ -166,7 +166,7 @@ namespace Core
         ISize2 _size{};
         StringAtom _title;
         bool _isMaximized = false;
-        bool _swapInterval = false;
+        bool _swapInterval = true;
 
     private:
         void registerEvents();

@@ -144,10 +144,8 @@ namespace Core
         [[nodiscard]] bool needToDraw();
 
     protected:
-        // Editor control settings
         KeyboardInputManger _keyboardInput;
         MouseInputManger _mouseInput;
-        float mouseSensitivity = 0.6f;
 
         std::vector<BaseEWC::Ptr> _windows;
         bool _isInitImGui = false;

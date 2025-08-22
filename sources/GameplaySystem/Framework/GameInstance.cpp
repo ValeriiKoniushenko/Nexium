@@ -24,6 +24,7 @@
 
 #include "Camera/Camera.h"
 #include "Core/Timer.h"
+#include "Editor/Windows/GameViewport.h"
 #include "Graphics/Image.h"
 #include "Graphics/ShaderManager.h"
 #include "Graphics/Window.h"
@@ -103,7 +104,7 @@ namespace Core
             clock.start();
             _window->pollEvent();
 
-            if (gameEditor.getIsRunSimulation())
+            if (auto wnd = gameEditor.getWindow<GameViewportEWC>(); wnd && wnd->isFocused())
             {
                 gameScene.tick(world.timeDelta);
             }
