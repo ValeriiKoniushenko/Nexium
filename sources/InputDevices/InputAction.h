@@ -220,6 +220,7 @@ namespace Core
         explicit MouseInputAction(const StringAtom& name, KeyT key = Mouse::Key_None);
         explicit MouseInputAction(const StringAtom& name);
 
+        Delegate<void(glm::vec2, SpecKeysState)> onDrag;
         Delegate<void(glm::vec2, SpecKeysState)> onMove;
         Delegate<void(glm::vec2, SpecKeysState)> onMouseClick;
 

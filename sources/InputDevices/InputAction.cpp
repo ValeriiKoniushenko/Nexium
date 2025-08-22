@@ -22,6 +22,7 @@
 
 #include "InputAction.h"
 
+#include "Graphics/Window.h"
 #include "Keyboard.h"
 
 namespace Core
@@ -75,6 +76,11 @@ namespace Core
         {
             _lastMousePosition = pos;
             return;
+        }
+
+        if (gDragDrop.getState() == DragAndDrop::State::Dragging)
+        {
+            onDrag.trigger(pos - *_lastMousePosition, SpecKeysState::fillAndGet());
         }
 
         if (pos != *_lastMousePosition)
