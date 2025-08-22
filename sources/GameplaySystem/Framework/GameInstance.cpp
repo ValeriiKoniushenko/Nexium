@@ -103,7 +103,10 @@ namespace Core
             clock.start();
             _window->pollEvent();
 
-            gameScene.tick(world.timeDelta);
+            if (gameEditor.getIsRunSimulation())
+            {
+                gameScene.tick(world.timeDelta);
+            }
 
             if (renderMode.cast() == RenderMode::GameOnly)
             {

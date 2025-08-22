@@ -125,15 +125,20 @@ namespace Core
         ImGui::PopItemWidth();
     }
 
-    bool ToggleButton(const char* label, bool cond)
+    bool ToggleButton(const char* label, bool cond, const ImVec4& onColor,
+                            const ImVec4& offColor)
     {
-        ImVec4 autoScrollButtonColor
-            = cond ? ImGui::GetStyle().Colors[ImGuiCol_Button] : ImVec4(0, 0, 0, 0);
-        ImGui::PushStyleColor(ImGuiCol_Button, autoScrollButtonColor);
+        ImGui::PushStyleColor(ImGuiCol_Button, cond ? onColor : offColor);
         const bool isPressed = ImGui::Button(label);
         ImGui::PopStyleColor();
 
         return isPressed;
+    }
+
+    bool ToggleButton(const char* label, bool cond)
+    {
+        return ToggleButton(label, cond, ImGui::GetStyle().Colors[ImGuiCol_Button],
+                            ImVec4(0, 0, 0, 0));
     }
 
     bool ButtonAndInputTextRO(StringAtom label, StringAtom value, float labelSize, float fullSize)

@@ -44,9 +44,9 @@ namespace Core
         inline static const char* _fpsText = "FPS: ";
         inline static const char* _fpsTextTemplate = "FPS: 99999";
         StringAtom _cachedFpsText = _fpsText;
-        const float _fpsMarginRight = 10.f;
-
         Repeater _slowUpdater;
+        float _fpsTextSize = 50.f;
+        float _simulationButton = 50.f;
     };
 
 } // namespace Core

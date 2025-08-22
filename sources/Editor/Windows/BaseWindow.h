@@ -38,6 +38,7 @@ namespace Core
     public:
         static constexpr ImVec4 ColorRed = ImVec4(1.0f, 0.1f, 0.1f, 1.0f);
         static constexpr ImVec4 ColorGreen = ImVec4(0.1f, 1.0f, 0.1f, 1.0f);
+        static constexpr ImVec4 ColorSoftGreen = ImVec4(0.1f, 0.8f, 0.1f, 0.8f);
         static constexpr ImVec4 ColorGrey = ImVec4(0.6f, 0.6f, 0.6f, 1.0f);
         static constexpr ImVec4 ColorYellow = ImVec4(1.f, 1.0f, 0.1f, 1.0f);
         static constexpr ImVec4 ColorHalfYellow = ImVec4(0.8f, 0.4f, 0.1f, 1.0f);

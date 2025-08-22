@@ -114,7 +114,6 @@ namespace Core
         keyboardInput.getOrCreate("yaw-", Keyboard::Key::Key_Q)->onPress.subscribe([&](auto state){ camera.yaw(-30.f * gGameInstance->world.timeDelta); });
         keyboardInput.getOrCreate("pitch+", Keyboard::Key::Key_R)->onPress.subscribe([&](auto state){ camera.pitch(30.f * gGameInstance->world.timeDelta); });
         keyboardInput.getOrCreate("pitch-", Keyboard::Key::Key_F)->onPress.subscribe([&](auto state){ camera.pitch(-30.f * gGameInstance->world.timeDelta); });
-        keyboardInput.getOrCreate("exit", Keyboard::Key::Key_F12)->onPress.subscribe([&](auto){ GetWindow().close(); });
         // clang-format on
     }
 } // namespace Core

@@ -57,7 +57,8 @@ namespace Core
 
     bool VectorCombo(StringAtom label, int* current, std::vector<StringAtom>& data);
 
-    bool ToggleButton(const char* lablel, bool cond);
+    bool ToggleButton(const char* label, bool cond, const ImVec4& onColor, const ImVec4& offColor);
+    bool ToggleButton(const char* label, bool cond);
 
     template<int VecCount>
     struct VecControl

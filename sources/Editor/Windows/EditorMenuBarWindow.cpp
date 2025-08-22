@@ -29,6 +29,7 @@
 #include "Editor/Windows/ObjectPropertiesWindow.h"
 #include "Editor/Windows/SceneTreeWindow.h"
 #include "GameplaySystem/Framework/GameInstance.h"
+#include "Misc/IconsFontAwesome.h"
 #include "ShaderManager.h"
 #include "TextEditor.h"
 
@@ -47,6 +48,10 @@ namespace Core
                 _cachedFpsText
                     = _fpsText + StringAtom::MakeFrom(static_cast<int>(ImGui::GetIO().Framerate));
             });
+
+        auto& style = ImGui::GetStyle();
+        _fpsTextSize = ImGui::CalcTextSize(_fpsTextTemplate).x + style.ItemSpacing.x;
+        _simulationButton = ImGui::CalcTextSize(ICON_FA_PLAY_CIRCLE).x + style.ItemSpacing.x * 2.f;
     }
 
     void EditorMenuBarWindowEWC::onDraw()
@@ -99,11 +104,27 @@ namespace Core
 
             ImGui::EndMenu();
         }
+        ImGui::SameLine(0,0);
 
-        ImGui::SameLine(ImGui::GetWindowWidth()
-                        - (ImGui::CalcTextSize(_fpsTextTemplate).x + _fpsMarginRight)
-                        - ImGui::GetStyle().ItemSpacing.x);
+        auto& style = ImGui::GetStyle();
+
+        float offset = ImGui::GetWindowWidth();
+        offset -= _fpsTextSize - style.ItemSpacing.x;
+        ImGui::SetCursorPosX(offset);
         ImGui::TextUnformatted(_cachedFpsText.c_str());
+        ImGui::SameLine(0,0);
+        offset -= style.ItemSpacing.x * 2.f;
+
+        offset -= _simulationButton - style.ItemSpacing.x;
+        ImGui::SetCursorPosX(offset);
+
+        if (ToggleButton(ICON_FA_PLAY_CIRCLE, gGameInstance->gameEditor.getIsRunSimulation(),
+                         BaseEWC::ColorSoftGreen, BaseEWC::ColorRed))
+        {
+            gGameInstance->gameEditor.toggleSimulation();
+        }
+        ImGui::SameLine(0,0);
+        offset -= style.ItemSpacing.x * 2.f;
     }
 
     void EditorMenuBarWindowEWC::onUpdate()

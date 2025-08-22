@@ -22,6 +22,7 @@
 
 #pragma once
 
+#include "InputDevices/InputManager.h"
 #include "Misc/BaseLog.h"
 #include "ModuleInfo.h"
 #include "Utils/CopyableAndMoveableBehaviour.h"
@@ -132,6 +133,10 @@ namespace Core
          */
         void destroy();
 
+        [[nodiscard]] bool getIsRunSimulation() const noexcept { return _isRunSimulation; }
+        void setIsRunSimulation(bool value) noexcept { _isRunSimulation = value; }
+        void toggleSimulation() noexcept { _isRunSimulation = !_isRunSimulation; }
+
         [[nodiscard]] spdlog::logger* getLogger() const override { return Editor::getLogger(); }
 
     protected:
@@ -139,9 +144,12 @@ namespace Core
         [[nodiscard]] bool needToDraw();
 
     protected:
+        KeyboardInputManger _keyboardInput;
+        MouseInputManger _mouseInput;
         std::vector<BaseEWC::Ptr> _windows;
         bool _isInitImGui = false;
         bool _isEnabled = true;
+        bool _isRunSimulation = false;
     };
 
 } // namespace Core

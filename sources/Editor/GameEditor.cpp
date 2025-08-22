@@ -135,7 +135,7 @@ namespace Core
             = registerNewWindow<ObjectPropertiesWindowEWC>(ICON_FA_COG + " Object Properties"_atom);
         auto sceneTreeWindow = registerNewWindow<SceneTreeWindowEWC>(ICON_FA_CUBES + " Scene"_atom);
         auto assetsManagerWindowWindow
-            = registerNewWindow<AssetsManagerWindowEWC>(ICON_FA_FOLDER + " Assetes"_atom);
+            = registerNewWindow<AssetsManagerWindowEWC>(ICON_FA_FOLDER + " Assets"_atom);
 
         auto tipsWindow = registerNewWindow<KeyboardShortcutsEWC>("Keyboard Shortcuts"_atom, false);
         auto textEditor = registerNewWindow<TextEditorEWC>("Text editor"_atom, false);
@@ -153,6 +153,8 @@ namespace Core
                     }
                 }
             });
+
+        _keyboardInput.getOrCreate("exit", Keyboard::Key::Key_F12)->onPress.subscribe([&](auto){ GetWindow().close(); });
     }
 
     void GameEditor::onTick(float delta)
@@ -163,6 +165,8 @@ namespace Core
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
 
+            _keyboardInput.update();
+            _mouseInput.update();
             for (auto&& wnd : _windows)
             {
                 wnd->tick();
