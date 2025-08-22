@@ -133,7 +133,7 @@ namespace Core
                 }
 
                 drawFileThumbnail(_nodeTypesData[fileFormat].getTextureId(), entry, _thumbnailSize);
-                if (i % maxCountPerWidth != 0)
+                if (maxCountPerWidth != 0 && i % maxCountPerWidth != 0)
                 {
                     ImGui::SameLine();
                 }
