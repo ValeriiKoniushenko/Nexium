@@ -80,19 +80,26 @@ namespace Core
 
     void Window::create(const StringAtom& title, ISize2 size /* = { 300, 300 }*/)
     {
+        tryReadFromCache();
+
         glfwInit();
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        glfwWindowHint(GLFW_MAXIMIZED, _isMaximized);
+
+        if (!hasCache())
+        {
+            _size = size;
+            _title = title;
+        }
 
         if (!((_window
-               = glfwCreateWindow(size.width, size.height, title.c_str(), nullptr, nullptr))))
+               = glfwCreateWindow(_size.width, _size.height, title.c_str(), nullptr, nullptr))))
         {
             glfwTerminate();
             criticalThrowingLog("Failed to create GLFW window");
         }
-        _size = size;
-        _title = title;
 
         debugLog("The window was created");
 
@@ -104,7 +111,7 @@ namespace Core
         glfwSetCursorEnterCallback(_window, CursorEnterHandler);
         glfwSetScrollCallback(_window, MouseScrollHandler);
         glfwSetWindowSizeCallback(_window, WindowSizeCallback);
-        glfwSwapInterval(1);
+        glfwSwapInterval(_swapInterval);
 
         if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
         {
@@ -128,6 +135,7 @@ namespace Core
 
     void Window::destroy()
     {
+        writeToCache();
         ImGui::DestroyContext();
         glfwTerminate();
     }
@@ -232,6 +240,61 @@ namespace Core
                     gDragDrop._startPos = Mouse::getPosition();
                 }
             });
+    }
+
+    StringAtom Window::getCacheHash() const
+    {
+        return "RootWindow"_atom;
+    }
+
+    nlohmann::json Window::toCacheData() const
+    {
+        return toJson();
+    }
+
+    void Window::fromCacheData(const nlohmann::json& json)
+    {
+        fromJson(json, false);
+    }
+
+    nlohmann::json Window::toJson() const
+    {
+        nlohmann::json json;
+
+        json["size"] = _size;
+        json["title"] = _title;
+
+        if (_window)
+        {
+            json["isMaximized"] = glfwGetWindowAttrib(_window, GLFW_MAXIMIZED) == GLFW_TRUE;
+        }
+
+        json["swapInterval"] = _swapInterval;
+
+        return json;
+    }
+
+    void Window::fromJson(const nlohmann::json& json, bool isIgnoreChildren)
+    {
+        if (json.contains("size"))
+        {
+            _size = json["size"].get<ISize2>();
+        }
+
+        if (json.contains("title"))
+        {
+            _title = json["title"].get<StringAtom>();
+        }
+
+        if (json.contains("isMaximized"))
+        {
+            _isMaximized = json["isMaximized"].get<bool>();
+        }
+
+        if (json.contains("swapInterval"))
+        {
+            _swapInterval = json["swapInterval"].get<bool>();
+        }
     }
 
     Window& GetWindow()

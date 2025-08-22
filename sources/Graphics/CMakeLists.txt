@@ -13,6 +13,7 @@ add_library(Core::${MAIN_NAME} ALIAS ${TARGET_NAME})
 target_link_libraries(${TARGET_NAME} PUBLIC
     Core::Glad
     Core::GameplaySystem
+    Core::Misc
     Core::Stb
     glfw
     assimp::assimp

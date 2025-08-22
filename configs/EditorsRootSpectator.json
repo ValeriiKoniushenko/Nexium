@@ -62,56 +62,56 @@
     "keyboardInput": {
         "mapping": [
             {
-                "action": "moveLeft",
-                "key": "A"
-            },
-            {
-                "action": "moveRight",
-                "key": "D"
-            },
-            {
-                "action": "exit",
-                "key": "F12"
-            },
-            {
-                "action": "toggleSimulation",
-                "key": "F1"
-            },
-            {
-                "action": "moveBackward",
-                "key": "S"
-            },
-            {
-                "action": "moveUp",
-                "key": "Space"
-            },
-            {
-                "action": "yaw-",
-                "key": "Q"
-            },
-            {
-                "action": "toggleCursorMode",
-                "key": "M"
-            },
-            {
-                "action": "moveForward",
-                "key": "W"
-            },
-            {
-                "action": "moveDown",
-                "key": "C"
-            },
-            {
-                "action": "yaw+",
-                "key": "E"
+                "action": "pitch-",
+                "key": "F"
             },
             {
                 "action": "pitch+",
                 "key": "R"
             },
             {
-                "action": "pitch-",
-                "key": "F"
+                "action": "yaw+",
+                "key": "E"
+            },
+            {
+                "action": "moveDown",
+                "key": "C"
+            },
+            {
+                "action": "moveForward",
+                "key": "W"
+            },
+            {
+                "action": "toggleCursorMode",
+                "key": "M"
+            },
+            {
+                "action": "yaw-",
+                "key": "Q"
+            },
+            {
+                "action": "moveUp",
+                "key": "Space"
+            },
+            {
+                "action": "moveBackward",
+                "key": "S"
+            },
+            {
+                "action": "toggleSimulation",
+                "key": "F1"
+            },
+            {
+                "action": "exit",
+                "key": "F12"
+            },
+            {
+                "action": "moveRight",
+                "key": "D"
+            },
+            {
+                "action": "moveLeft",
+                "key": "A"
             }
         ]
     },

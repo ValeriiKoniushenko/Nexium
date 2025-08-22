@@ -30,6 +30,7 @@
 #include "InputDevices/Mouse.h"
 #include "ModuleInfo.h"
 #include "OpenGL.h"
+#include "Misc/JsonCacheable.h"
 
 #include <filesystem>
 
@@ -70,7 +71,7 @@ namespace Core
 
     extern DragAndDrop gDragDrop;
 
-    class Window : public StrictSingleton<Window>, public BaseLog
+    class Window : public BaseLog, public JsonCacheable, public JsonAdapter, public StrictSingleton<Window>
     {
     public:
         // clang-format off
@@ -152,10 +153,20 @@ namespace Core
         [[nodiscard]] spdlog::logger* getLogger() const override { return Graphics::getLogger(); }
         [[nodiscard]] const char* getPrefix() const override { return "Window"; }
 
+        nlohmann::json toJson() const override;
+        void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
+
+    protected:
+        StringAtom getCacheHash() const override;
+        nlohmann::json toCacheData() const override;
+        void fromCacheData(const nlohmann::json& json) override;
+
     protected:
         GLFWwindow* _window{};
         ISize2 _size{};
         StringAtom _title;
+        bool _isMaximized = false;
+        bool _swapInterval = false;
 
     private:
         void registerEvents();
