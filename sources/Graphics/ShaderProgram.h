@@ -22,6 +22,7 @@
 
 #pragma once
 
+#include "Core/Color.h"
 #include "ModuleInfo.h"
 #include "OpenGL.h"
 
@@ -127,6 +128,9 @@ namespace Core
         void setUniform(const StringAtom& name, const glm::mat4x2& value) { glUniformMatrix4x2fv(_uniforms[name], 1, GL_FALSE, glm::value_ptr(value)); debugUniform(name); }
         void setUniform(const StringAtom& name, const glm::mat3x4& value) { glUniformMatrix3x4fv(_uniforms[name], 1, GL_FALSE, glm::value_ptr(value)); debugUniform(name); }
         void setUniform(const StringAtom& name, const glm::mat4x3& value) { glUniformMatrix4x3fv(_uniforms[name], 1, GL_FALSE, glm::value_ptr(value)); debugUniform(name); }
+
+        void setUniform(const StringAtom& name, const NormColor4& value) { glUniform4f(_uniforms[name], value.r, value.g, value.b, value.a);  debugUniform(name); }
+        void setUniform(const StringAtom& name, const NormColor3& value) { glUniform3f(_uniforms[name], value.r, value.g, value.b);  debugUniform(name); }
         // clang-format on
 
         void m__setUniformsFromSources(

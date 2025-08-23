@@ -27,6 +27,8 @@ namespace Core
 
     void Scene::directDraw()
     {
+        grid.draw();
+
         for (auto&& mesh : _staticMeshBundles)
         {
             mesh.draw();

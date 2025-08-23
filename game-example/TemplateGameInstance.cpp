@@ -48,15 +48,6 @@ void TemplateGameInstance::onLoadShaders()
                                       reinterpret_cast<void*>(6 * sizeof(float)));
             });
     }
-
-    auto* gridShader = shaderManager.getShaderProgram("grid"_atom);
-    if (Verify(gridShader))
-    {
-        gridShader->setVertexAttributeCallback(
-            []()
-            {
-            });
-    }
 }
 
 void TemplateGameInstance::onTick(float delta)
@@ -70,20 +61,6 @@ void TemplateGameInstance::onTick(float delta)
     shader->setUniform("uTexture"_atom, 0);
     shader->setUniform("uProjAndView"_atom, currentCamera->getMatrix());
     gameScene.directDraw();
-
-    // ================ GRID =================
-    auto* gridShader = shaderManager.getShaderProgram("grid"_atom);
-    gridShader->use();
-    gridShader->setUniform("uProjAndView"_atom, currentCamera->getMatrix());
-    gridShader->setUniform("uCameraPos"_atom, currentCamera->getPosition());
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-
-    glBlendFunc(GL_ONE, GL_ZERO);
-    glDisable(GL_BLEND);
 }
 
 void TemplateGameInstance::onInitReadCache()

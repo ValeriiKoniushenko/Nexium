@@ -1,10 +1,8 @@
 #version 430 core
 
 uniform mat4 uProjAndView;
-
-uniform float uGlobalGridSize = 10000.0;
-
 uniform vec3 uCameraPos;
+uniform float uGlobalGridSize = 10000.0;
 
 const vec3 Pos[4] = vec3[4] (
     vec3(-1.0, 0.0,-1.0), // BL

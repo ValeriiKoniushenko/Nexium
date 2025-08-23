@@ -22,6 +22,7 @@
 
 #pragma once
 #include "Graphics/Primitives/StaticMeshBundle.h"
+#include "Grid.h"
 #include "InputDevices/ModuleInfo.h"
 
 #include <vector>
@@ -73,6 +74,9 @@ namespace Core
             _logicalComponents.push_back(std::move(newComp));
             return static_cast<CompT*>(_logicalComponents.back().get());
         }
+        
+    public:
+        Grid grid;
 
     protected:
         [[nodiscard]] std::filesystem::path getCacheDir() const override;
