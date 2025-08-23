@@ -24,15 +24,12 @@
 
 #include "Core/Enum.h"
 #include "Core/Size.h"
+#include "Core/String.h"
 
 // clang-format off
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 // clang-format on
-
-#ifdef Core_TESTS_TARGET
-
-#endif
 
 namespace Core
 {
@@ -45,5 +42,7 @@ namespace Core
     // clang-format on
 
     void UpdateGlViewport(FSize2 originalSize, float aspectRatio, ViewportMode mode);
+
+    [[nodiscard]] StringAtom glTypeToString(GLenum value);
 
 } // namespace Core

@@ -150,10 +150,10 @@ namespace Core
                 ImGui::Text("%d", i++);
 
                 ImGui::TableSetColumnIndex(1);
-                ImGui::Text("%s", data.name.data());
+                ImGui::TextUnformatted(data.name.data());
 
                 ImGui::TableSetColumnIndex(2);
-                ImGui::Text("%d", data.type);
+                ImGui::TextUnformatted(glTypeToString(data.type).data());
 
                 ImGui::TableSetColumnIndex(3);
                 ImGui::Text("%d", data.size);
