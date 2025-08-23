@@ -193,9 +193,9 @@ namespace Core
                                 _labelWidth, _innerSize.width);
 
             auto shaderName = ""_atom;
-            if (comp->getShaderId())
+            if (comp->getShader())
             {
-                shaderName = comp->getShaderId()->getName();
+                shaderName = comp->getShader()->getName();
             }
             LabelAndInputTextRO("Shader: ", std::move(shaderName), _labelWidth, _innerSize.width);
 

@@ -226,7 +226,7 @@
             }
         }
     ],
-    "isEnabled": true,
+    "isEnabled": false,
     "meshes": [
         {
             "BaseComponent": {

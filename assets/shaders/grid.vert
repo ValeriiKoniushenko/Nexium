@@ -1,4 +1,4 @@
-#version 430 core
+#version 460 core
 
 uniform mat4 uProjAndView;
 uniform vec3 uCameraPos;

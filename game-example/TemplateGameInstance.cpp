@@ -48,18 +48,26 @@ void TemplateGameInstance::onLoadShaders()
                                       reinterpret_cast<void*>(6 * sizeof(float)));
             });
     }
+
+    auto* outlineShader = shaderManager.getShaderProgram("outline"_atom);
+    if (Verify(outlineShader))
+    {
+        outlineShader->setVertexAttributeCallback(
+            []()
+            {
+                glEnableVertexAttribArray(0);
+                glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), nullptr);
+
+                glEnableVertexAttribArray(1);
+                glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
+                                      reinterpret_cast<void*>(3 * sizeof(float)));
+            });
+
+    }
 }
 
 void TemplateGameInstance::onTick(float delta)
 {
-    auto* shader = shaderManager.getShaderProgram("color"_atom);
-    shader->use();
-    shader->setUniform("uObjectColor"_atom, 1.0f, 1.0f, 1.0f);
-    shader->setUniform("uLightColor"_atom, 1.0f, 1.0f, 1.0f);
-    shader->setUniform("uLightPos"_atom, world.lightPos);
-    shader->setUniform("uViewPos"_atom, currentCamera->getPosition());
-    shader->setUniform("uTexture"_atom, 0);
-    shader->setUniform("uProjAndView"_atom, currentCamera->getMatrix());
     gameScene.directDraw();
 }
 
@@ -88,7 +96,8 @@ void TemplateGameInstance::onInitFinish()
         {
             StaticMeshBundle mesh;
             mesh.importFrom(scene->mRootNode, scene, path);
-            mesh.setShaderProgram(shaderManager.getShaderProgram("color"_atom));
+            mesh.setShader(shaderManager.getShaderProgram("color"_atom));
+            mesh.setOutlineShader(shaderManager.getShaderProgram("outline"_atom));
             gameScene.addMesh(std::move(mesh));
         }
     }

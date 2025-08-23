@@ -82,7 +82,7 @@ namespace Core
         void setIndexBuffer(const std::vector<GLuint>& data, GLenum usage = GL_STATIC_DRAW);
         void setTexture(const unsigned char* data, uint32_t width, uint32_t height,
                         GLuint channels);
-        void setShaderProgram(ShaderProgram* sp, bool ignoreVertexAttribSetup = false);
+        void setShader(ShaderProgram* sp, bool ignoreVertexAttribSetup = false);
 
         /**
          * @brief loads & constructs from aiMesh GPU data.
@@ -125,7 +125,7 @@ namespace Core
          * x.generate();
          * x.setVertexBuffer(vertices);
          * x.setIndexBuffer(indices);
-         * x.setShaderProgram(some_compiled_shader_program);
+         * x.setShader(some_compiled_shader_program);
          *
          * while(...)
          * {
@@ -140,7 +140,7 @@ namespace Core
         [[nodiscard]] GLuint getVboId() noexcept { return _vbo; }
         [[nodiscard]] GLuint getEboId() noexcept { return _ebo; }
         [[nodiscard]] GLuint getVaoId() noexcept { return _vao; }
-        [[nodiscard]] ShaderProgram* getShaderId() noexcept { return _shader; }
+        [[nodiscard]] ShaderProgram* getShader() noexcept { return _shader; }
 
         [[nodiscard]] const std::vector<std::pair<ModifiedValue, Modifier>>& getDrawModifiers()
             const noexcept

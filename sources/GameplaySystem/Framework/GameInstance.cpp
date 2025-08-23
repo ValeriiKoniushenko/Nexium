@@ -99,6 +99,11 @@ namespace Core
         glClearColor(0.45f, 0.55f, 0.60f, 1.00f);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
+        glEnable(GL_STENCIL_TEST);
+        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+
+        const int clearBits = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
+
         while (!_window->shouldClose())
         {
             clock.start();
@@ -111,7 +116,7 @@ namespace Core
 
             if (renderMode.cast() == RenderMode::GameOnly)
             {
-                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                glClear(clearBits);
                 if (currentCamera)
                 {
                     onTick(world.timeDelta);
@@ -122,12 +127,12 @@ namespace Core
                 if (currentCamera)
                 {
                     renderToTextureObject.callMePreDraw();
-                    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                    glClear(clearBits);
                     onTick(world.timeDelta);
                     renderToTextureObject.callMeAfterDraw();
                 }
 
-                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                glClear(clearBits);
                 gameEditor.onTick(world.timeDelta);
             }
 

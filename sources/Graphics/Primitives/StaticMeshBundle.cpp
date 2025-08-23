@@ -111,14 +111,14 @@ namespace Core
         recursiveImportFrom(this, node, scene, modelPath, _meshes);
     }
 
-    void StaticMeshBundle::setShaderProgram(ShaderProgram* sp,
+    void StaticMeshBundle::setShader(ShaderProgram* sp,
                                             bool ignoreVertexAttribSetup /* = false*/)
     {
         for (auto* mesh : _meshes)
         {
             if (Verify(mesh)) [[likely]]
             {
-                mesh->setShaderProgram(sp, ignoreVertexAttribSetup);
+                mesh->setShader(sp, ignoreVertexAttribSetup);
             }
         }
     }
@@ -198,6 +198,17 @@ namespace Core
     void StaticMeshBundle::fromCacheData(const nlohmann::json& data)
     {
         fromJson(data, false);
+    }
+
+    void StaticMeshBundle::setOutlineShader(ShaderProgram* sp, bool ignoreVertexAttribSetup)
+    {
+        for (auto* mesh : _meshes)
+        {
+            if (Verify(mesh)) [[likely]]
+            {
+                mesh->setOutlineShader(sp, ignoreVertexAttribSetup);
+            }
+        }
     }
 
 } // namespace Core

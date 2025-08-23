@@ -22,6 +22,7 @@
 
 #include "StaticMesh.h"
 
+#include "GameplaySystem/Framework/GameInstance.h"
 #include "Graphics/Image.h"
 #include "assimp/Importer.hpp"
 #include "assimp/postprocess.h"
@@ -100,6 +101,14 @@ namespace Core
             return;
         }
 
+        if (!gGameInstance->currentCamera)
+        {
+            return;
+        }
+
+        glStencilFunc(GL_ALWAYS, 1, 0xFF);
+        glStencilMask(0xFF);
+
         for (auto [val, mod] : _drawModifiers)
         {
             if (mod.cast() == Modifier::Enable)
@@ -113,6 +122,13 @@ namespace Core
         }
 
         _shader->use();
+        _shader->setUniform("uObjectColor"_atom, 1.0f, 1.0f, 1.0f);
+        _shader->setUniform("uLightColor"_atom, 1.0f, 1.0f, 1.0f);
+        _shader->setUniform("uLightPos"_atom, gGameInstance->world.lightPos);
+        _shader->setUniform("uViewPos"_atom, gGameInstance->currentCamera->getPosition());
+        _shader->setUniform("uTexture"_atom, 0);
+        _shader->setUniform("uProjAndView"_atom, gGameInstance->currentCamera->getMatrix());
+
         glBindVertexArray(_vao);
         glBindBuffer(GL_ARRAY_BUFFER, _vbo);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
@@ -123,7 +139,6 @@ namespace Core
 
         glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(_triangleCount), GL_UNSIGNED_INT,
                        nullptr);
-
         for (auto [val, mod] : _drawModifiers)
         {
             if (mod.cast() == Modifier::Disable)
@@ -134,6 +149,11 @@ namespace Core
             {
                 glDisable(val);
             }
+        }
+
+        if (_isDrawOutline)
+        {
+            drawOutline();
         }
 
         for (auto&& comp : _children)
@@ -185,6 +205,54 @@ namespace Core
         debugLog("'{}' processed verticies(size, center) for: {}s; Verticies' count: {}"_f
                  << _name << s.stop() << static_cast<uint64_t>(rawMesh->mNumVertices));
 #endif
+    }
+
+    void StaticMesh::setOutlineShader(ShaderProgram* sp, bool ignoreVertexAttribSetup)
+    {
+        _outlineShader = sp;
+
+        if (!ignoreVertexAttribSetup)
+        {
+            glBindVertexArray(_vao);
+            glBindBuffer(GL_ARRAY_BUFFER, _vbo);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
+            _outlineShader->setupVertexAttribute();
+        }
+    }
+
+    void StaticMesh::drawOutline()
+    {
+        if (!_outlineShader)
+        {
+            return;
+        }
+
+        glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+        glStencilMask(0x00);
+        glDisable(GL_DEPTH_TEST);
+
+        auto* camera = gGameInstance->currentCamera;
+
+        _outlineShader->use();
+        _outlineShader->setUniform("uOutlineColor"_atom,
+                                   NormColor4::From(StaticMesh::outlineColor));
+        _outlineShader->setUniform("uOutlineSize"_atom, StaticMesh::outlineSize);
+        _outlineShader->setUniform("uModel"_atom, _cachedModelMatrix);
+        _outlineShader->setUniform("uProjAndView"_atom, camera->getMatrix());
+
+        const float distance = glm::length(camera->getPosition() - glm::vec3(getPosition()));
+        const float ndcDistance = distance / camera->getFar();
+        _outlineShader->setUniform("uCameraObjectNDCDistance"_atom, ndcDistance);
+
+        glBindVertexArray(_vao);
+        glBindBuffer(GL_ARRAY_BUFFER, _vbo);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
+        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(_triangleCount), GL_UNSIGNED_INT,
+                       nullptr);
+
+        glEnable(GL_DEPTH_TEST);
+        glStencilMask(0xFF);
+        glStencilFunc(GL_ALWAYS, 0, 0xFF);
     }
 
     StaticMesh StaticMeshFactory::CreateBase(const StringAtom& name /* = ""_atom*/)

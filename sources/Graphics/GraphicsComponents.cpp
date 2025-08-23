@@ -111,7 +111,7 @@ namespace Core
         }
     }
 
-    void GraphicsComponentData::setShaderProgram(ShaderProgram* sp,
+    void GraphicsComponentData::setShader(ShaderProgram* sp,
                                                  bool ignoreVertexAttribSetup /* = false*/)
     {
         _shader = sp;
@@ -358,4 +358,5 @@ namespace Core
         };
         return out;
     }
+
 } // namespace Core

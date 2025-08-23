@@ -38,7 +38,8 @@ namespace Core
         void draw();
         void importFrom(const aiNode* node, const aiScene* scene,
                         const std::filesystem::path& modelPath = "");
-        void setShaderProgram(ShaderProgram* sp, bool ignoreVertexAttribSetup = false);
+        void setShader(ShaderProgram* sp, bool ignoreVertexAttribSetup = false);
+        void setOutlineShader(ShaderProgram* sp, bool ignoreVertexAttribSetup = false);
 
         void clear() override;
 

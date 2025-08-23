@@ -38,24 +38,34 @@ namespace Core
         ECS_REGISTER_NEW_COMPONENT(StaticMesh, BaseComponent);
 
     public:
+        constexpr static Color4 outlineColor = Color4{252, 186, 3, 255};
+        constexpr static float outlineSize = 40.f;
+
+    public:
         void importFrom(const aiMesh* mesh, const aiScene* scene,
                         const std::filesystem::path& modelPath = "");
 
         [[nodiscard]] FSize3 getSize() const noexcept { return _size; }
         [[nodiscard]] glm::vec3 getCenter() const noexcept { return _center; }
 
-        [[nodiscard]] nlohmann::json toJson() const override;
-        void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
+        [[nodiscard]] ShaderProgram* getOutlineShader() noexcept { return _outlineShader; }
+        void setOutlineShader(ShaderProgram* sp, bool ignoreVertexAttribSetup = false);
 
         void draw();
+
+        [[nodiscard]] nlohmann::json toJson() const override;
+        void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
 
     protected:
         void applyUniforms() override;
         void calculateSizeBaseOnMesh(const aiMesh* rawMesh, const aiMatrix4x4& transform);
+        void drawOutline();
 
     protected:
         FSize3 _size;
         glm::vec3 _center = glm::vec3(0);
+        ShaderProgram* _outlineShader = nullptr;
+        bool _isDrawOutline = true;
 
         friend class StaticMeshFactory;
     };
