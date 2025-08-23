@@ -135,11 +135,11 @@ namespace Core
         if (ImGui::BeginTable(label, 5, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
         {
             int i = 0;
-            ImGui::TableSetupColumn("#");
-            ImGui::TableSetupColumn("Name");
-            ImGui::TableSetupColumn("Type");
-            ImGui::TableSetupColumn("Size");
-            ImGui::TableSetupColumn("Location");
+            ImGui::TableSetupColumn("#", ImGuiTableColumnFlags_WidthFixed);
+            ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthStretch);
+            ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed);
+            ImGui::TableSetupColumn("Size", ImGuiTableColumnFlags_WidthFixed);
+            ImGui::TableSetupColumn("Location", ImGuiTableColumnFlags_WidthFixed);
             ImGui::TableHeadersRow();
 
             for (auto&& data : inputData)
