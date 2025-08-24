@@ -22,6 +22,8 @@
 
 #include "ObjectSelectorManager.h"
 
+#include "Editor/Windows/ObjectPropertiesWindow.h"
+#include "GameplaySystem/Framework/GameInstance.h"
 #include "Graphics/Primitives/StaticMeshBundle.h"
 
 namespace Core
@@ -31,6 +33,14 @@ namespace Core
     {
         deselectAllAndClear();
 
+        if (auto* wnd = gGameInstance->gameEditor.getWindow<ObjectPropertiesWindowEWC>())
+        {
+            if (wnd->isEnabled())
+            {
+                wnd->setTargetObject(comp);
+            }
+        }
+
         addSelectedObject(comp);
     }
 
@@ -38,12 +48,28 @@ namespace Core
     {
         deselectAllAndClear();
 
+        if (auto* wnd = gGameInstance->gameEditor.getWindow<ObjectPropertiesWindowEWC>())
+        {
+            if (wnd->isEnabled())
+            {
+                wnd->setTargetObject(&bundle);
+            }
+        }
+
         addSelectedObject(bundle);
     }
 
     void ObjectSelectorManager::selectObject(StaticMesh& mesh)
     {
         deselectAllAndClear();
+
+        if (auto* wnd = gGameInstance->gameEditor.getWindow<ObjectPropertiesWindowEWC>())
+        {
+            if (wnd->isEnabled())
+            {
+                wnd->setTargetObject(&mesh);
+            }
+        }
 
         addSelectedObject(mesh);
     }

@@ -167,14 +167,6 @@ namespace Core
             selectedObject = n;
 
             gGameInstance->objectSelectorManager.selectObject(n);
-
-            if (auto* wnd = gGameInstance->gameEditor.getWindow<ObjectPropertiesWindowEWC>())
-            {
-                if (wnd->isEnabled())
-                {
-                    wnd->setTargetObject(selectedObject);
-                }
-            }
         }
 
         if (isOpened)
