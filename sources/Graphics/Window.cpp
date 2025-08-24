@@ -225,7 +225,7 @@ namespace Core
             {
                 if (state == Mouse::State::Release)
                 {
-                    if (glm::distance(gDragDrop._startPos, Mouse::getPosition())
+                    if (glm::distance(gDragDrop._startPos, Mouse::GetPosition())
                         >= DragAndDrop::dragTreshold)
                     {
                         gDragDrop._state = DragAndDrop::State::Dragging;
@@ -237,7 +237,7 @@ namespace Core
                 {
                     gDragDrop._state = DragAndDrop::State::Started;
                     gDragDrop.payload.type = "InventoryItem";
-                    gDragDrop._startPos = Mouse::getPosition();
+                    gDragDrop._startPos = Mouse::GetPosition();
                 }
             });
     }

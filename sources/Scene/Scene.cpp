@@ -22,11 +22,18 @@
 
 #include "Scene.h"
 
+#include "GameplaySystem/Framework/GameInstance.h"
+
 namespace Core
 {
 
     void Scene::directDraw()
     {
+        if (gGameInstance->renderMode.cast() == GameInstance::RenderMode::Editor)
+        {
+            gGameInstance->gameEditor.slowObjectPicker.update(*this);
+        }
+
         grid.draw();
 
         for (auto&& mesh : _staticMeshBundles)

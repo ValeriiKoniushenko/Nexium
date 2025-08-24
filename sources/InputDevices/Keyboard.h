@@ -174,9 +174,9 @@ namespace Core
         [[nodiscard]] static Key FromStringToKey(const StringAtom& str);
 
         [[nodiscard]] static KeyState getKeyState(Key key);
-        [[nodiscard]] static bool isKeyPressed(Key key);
+        [[nodiscard]] static bool IsKeyPressed(Key key);
         [[nodiscard]] static bool isKeyRepeated(Key key);
-        [[nodiscard]] static bool isKeyReleased(Key key);
+        [[nodiscard]] static bool IsKeyReleased(Key key);
     };
 
 } // namespace Core

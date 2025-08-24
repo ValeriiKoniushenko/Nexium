@@ -30,40 +30,7 @@ using namespace Core;
 
 void TemplateGameInstance::onLoadShaders()
 {
-    auto* colorShader = shaderManager.getShaderProgram("color"_atom);
-    if (Verify(colorShader))
-    {
-        colorShader->setVertexAttributeCallback(
-            []()
-            {
-                glEnableVertexAttribArray(0);
-                glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), nullptr);
-
-                glEnableVertexAttribArray(1);
-                glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
-                                      reinterpret_cast<void*>(3 * sizeof(float)));
-
-                glEnableVertexAttribArray(2);
-                glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
-                                      reinterpret_cast<void*>(6 * sizeof(float)));
-            });
-    }
-
-    auto* outlineShader = shaderManager.getShaderProgram("outline"_atom);
-    if (Verify(outlineShader))
-    {
-        outlineShader->setVertexAttributeCallback(
-            []()
-            {
-                glEnableVertexAttribArray(0);
-                glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), nullptr);
-
-                glEnableVertexAttribArray(1);
-                glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
-                                      reinterpret_cast<void*>(3 * sizeof(float)));
-            });
-
-    }
+    GameInstance::onLoadShaders();
 }
 
 void TemplateGameInstance::onTick(float delta)

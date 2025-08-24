@@ -292,7 +292,7 @@ namespace Core
         return static_cast<KeyState>(glfwGetKey(GetWindow().getRawWindow(), static_cast<int>(key)));
     }
 
-    bool Keyboard::isKeyPressed(Key key)
+    bool Keyboard::IsKeyPressed(Key key)
     {
         return glfwGetKey(GetWindow().getRawWindow(), static_cast<int>(key)) == GLFW_PRESS;
     }
@@ -302,7 +302,7 @@ namespace Core
         return glfwGetKey(GetWindow().getRawWindow(), static_cast<int>(key)) == GLFW_REPEAT;
     }
 
-    bool Keyboard::isKeyReleased(Key key)
+    bool Keyboard::IsKeyReleased(Key key)
     {
         return glfwGetKey(GetWindow().getRawWindow(), static_cast<int>(key)) == GLFW_RELEASE;
     }

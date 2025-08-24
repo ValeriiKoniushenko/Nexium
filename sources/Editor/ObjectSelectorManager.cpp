@@ -76,6 +76,14 @@ namespace Core
 
     void ObjectSelectorManager::deselectAllAndClear()
     {
+        if (auto* wnd = gGameInstance->gameEditor.getWindow<ObjectPropertiesWindowEWC>())
+        {
+            if (wnd->isEnabled())
+            {
+                wnd->resetTargetObject();
+            }
+        }
+
         for (auto&& mesh : _selectedObjects)
         {
             mesh->setIsDrawOutline(false);

@@ -67,19 +67,19 @@ namespace Core
         return Key_None;
     }
 
-    glm::vec2 Mouse::getPosition()
+    glm::vec2 Mouse::GetPosition()
     {
         double x = 0, y = 0;
         glfwGetCursorPos(GetWindow().getRawWindow(), &x, &y);
         return { static_cast<float>(x), static_cast<float>(y) };
     }
 
-    bool Mouse::isKeyPressed(Key key)
+    bool Mouse::IsKeyPressed(Key key)
     {
         return glfwGetMouseButton(GetWindow().getRawWindow(), key) == GLFW_PRESS;
     }
 
-    bool Mouse::isKeyReleased(Key key)
+    bool Mouse::IsKeyReleased(Key key)
     {
         return glfwGetMouseButton(GetWindow().getRawWindow(), key) == GLFW_RELEASE;
     }

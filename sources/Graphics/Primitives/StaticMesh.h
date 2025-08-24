@@ -38,7 +38,7 @@ namespace Core
         ECS_REGISTER_NEW_COMPONENT(StaticMesh, BaseComponent);
 
     public:
-        constexpr static Color4 outlineColor = Color4{252, 186, 3, 255};
+        constexpr static Color4 outlineColor = Color4{ 252, 186, 3, 255 };
         constexpr static float outlineSize = 40.f;
 
     public:
@@ -54,10 +54,22 @@ namespace Core
         void toggleIsDrawOutline() noexcept { _isDrawOutline = !_isDrawOutline; }
         [[nodiscard]] bool getIsDrawOutline() const noexcept { return _isDrawOutline; }
 
+        /**
+         * @brief will draw with default shader & logic. Single draw object!
+         */
         void draw();
+
+        /**
+         * @brief only draw call with graphics modifiers - nothing more.
+         * Before using of this function you must manually prepare the shader &
+         * 'use' it.
+         */
+        void pureDraw();
 
         [[nodiscard]] nlohmann::json toJson() const override;
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
+
+        [[nodiscard]] GLuint getID() const noexcept { return _vbo; }
 
     protected:
         void applyUniforms() override;

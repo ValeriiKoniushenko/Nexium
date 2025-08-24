@@ -25,6 +25,7 @@
 #include "InputDevices/InputManager.h"
 #include "Misc/BaseLog.h"
 #include "ModuleInfo.h"
+#include "SlowObjectPicker.h"
 #include "Utils/CopyableAndMoveableBehaviour.h"
 #include "Windows/BaseWindow.h"
 
@@ -138,6 +139,9 @@ namespace Core
         void toggleSimulation() noexcept { _isRunSimulation = !_isRunSimulation; }
 
         [[nodiscard]] spdlog::logger* getLogger() const override { return Editor::getLogger(); }
+
+    public:
+        SlowObjectPicker slowObjectPicker;
 
     protected:
         void setupImGuiStyles();

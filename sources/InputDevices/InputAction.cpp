@@ -32,11 +32,11 @@ namespace Core
     {
     }
 
-    bool KeyboardInputAction::isKeyPressed() const
+    bool KeyboardInputAction::IsKeyPressed() const
     {
         if (_key)
         {
-            return Keyboard::isKeyPressed(_key.value());
+            return Keyboard::IsKeyPressed(_key.value());
         }
         return false;
     }
@@ -58,11 +58,11 @@ namespace Core
         init();
     }
 
-    bool MouseInputAction::isKeyPressed() const
+    bool MouseInputAction::IsKeyPressed() const
     {
         if (_key)
         {
-            return Mouse::isKeyPressed(_key.value());
+            return Mouse::IsKeyPressed(_key.value());
         }
         return false;
     }
@@ -71,7 +71,7 @@ namespace Core
     {
         InputAction::update();
 
-        const auto pos = Mouse::getPosition();
+        const auto pos = Mouse::GetPosition();
         if (!_lastMousePosition)
         {
             _lastMousePosition = pos;
@@ -95,7 +95,7 @@ namespace Core
         _idActionPrivate = _onActionPrivate.subscribeAndGetID(
             [this](SpecKeysState states)
             {
-                onMouseClick.trigger(Mouse::getPosition(), states);
+                onMouseClick.trigger(Mouse::GetPosition(), states);
             });
         ;
     }

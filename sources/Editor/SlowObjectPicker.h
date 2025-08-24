@@ -22,36 +22,22 @@
 
 #pragma once
 
-#include "Graphics/Primitives/StaticMesh.h"
-
-#include <vector>
-
+#include "Graphics/RenderTargetToTexture.h"
 namespace Core
 {
-
-    class StaticMeshBundle;
-    class StaticMesh;
+    class Scene;
 
     /**
-     * @brief Use this class to select objects on the scene.
-     * @details mediator class to involve all needed functionality
-     * after picking up some scene's object.
+     * @brief yes, it's slow but convenient way to pick up an object with
+     * pixel accuracy. Only for editor's aims.
      */
-    class ObjectSelectorManager
+    class SlowObjectPicker
     {
     public:
-        void selectObject(BaseComponent* comp);
-        void selectObject(StaticMeshBundle& bundle);
-        void selectObject(StaticMesh& mesh);
+        void update(Scene& scene);
 
-        void addSelectedObject(BaseComponent* comp);
-        void addSelectedObject(StaticMeshBundle& bundle);
-        void addSelectedObject(StaticMesh& mesh);
-
-        void deselectAllAndClear();
-
-    private:
-        std::vector<StaticMesh::Ptr> _selectedObjects;
+    protected:
+        RenderTargetToTexture _canvas;
     };
 
-} // namespace Core
+}

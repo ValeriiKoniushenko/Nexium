@@ -123,6 +123,9 @@ namespace Core
             }
             else
             {
+                glClear(clearBits);
+                gameEditor.onTick(world.timeDelta);
+
                 if (currentCamera)
                 {
                     renderToTextureObject.callMePreDraw();
@@ -131,9 +134,6 @@ namespace Core
                     onTick(world.timeDelta);
                     renderToTextureObject.callMeAfterDraw();
                 }
-
-                glClear(clearBits);
-                gameEditor.onTick(world.timeDelta);
             }
 
             _window->swapBuffers();
@@ -162,5 +162,53 @@ namespace Core
         using R = GameInstance::RenderMode;
         renderMode = renderMode.cast() == R::GameOnly ? R::Editor : R::GameOnly;
         gGameInstance->updateViewport();
+    }
+
+    void GameInstance::onLoadShaders()
+    {
+        auto* colorShader = shaderManager.getShaderProgram("color"_atom);
+        if (Verify(colorShader))
+        {
+            colorShader->setVertexAttributeCallback(
+                []()
+                {
+                    glEnableVertexAttribArray(0);
+                    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), nullptr);
+
+                    glEnableVertexAttribArray(1);
+                    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
+                                          reinterpret_cast<void*>(3 * sizeof(float)));
+
+                    glEnableVertexAttribArray(2);
+                    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
+                                          reinterpret_cast<void*>(6 * sizeof(float)));
+                });
+        }
+
+        auto* outlineShader = shaderManager.getShaderProgram("outline"_atom);
+        if (Verify(outlineShader))
+        {
+            outlineShader->setVertexAttributeCallback(
+                []()
+                {
+                    glEnableVertexAttribArray(0);
+                    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), nullptr);
+
+                    glEnableVertexAttribArray(1);
+                    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
+                                          reinterpret_cast<void*>(3 * sizeof(float)));
+                });
+        }
+
+        auto* objectIdentifierShader = shaderManager.getShaderProgram("objectIdentifier"_atom);
+        if (Verify(objectIdentifierShader))
+        {
+            objectIdentifierShader->setVertexAttributeCallback(
+                []()
+                {
+                    glEnableVertexAttribArray(0);
+                    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), nullptr);
+                });
+        }
     }
 } // namespace Core

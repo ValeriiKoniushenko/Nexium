@@ -75,6 +75,11 @@ namespace Core
 
         _isFocused = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows);
 
+        auto pos = ImGui::GetWindowPos();
+        _position = glm::vec2(pos.x, pos.y);
+        pos = ImGui::GetWindowContentRegionMin();
+        _innerPosition = _position + glm::vec2(pos.x, pos.y);
+
         if (_size != _oldSize)
         {
             const auto regionMax = ImGui::GetContentRegionMax();

@@ -115,7 +115,7 @@ namespace Core
         {
             if (_key)
             {
-                if (isKeyPressed())
+                if (IsKeyPressed())
                 {
                     if (_lastState != State::Pressed || _isRepeatable)
                     {
@@ -159,7 +159,7 @@ namespace Core
          * @brief Checks if the bound key is currently pressed.
          * Must be implemented by derived classes.
          */
-        [[nodiscard]] virtual bool isKeyPressed() const = 0;
+        [[nodiscard]] virtual bool IsKeyPressed() const = 0;
 
         /**
          * @brief will be called while pressing on the needed button.
@@ -197,7 +197,7 @@ namespace Core
         KeyboardInputAction(const StringAtom& name, KeyT key);
 
     protected:
-        [[nodiscard]] bool isKeyPressed() const override;
+        [[nodiscard]] bool IsKeyPressed() const override;
     };
 
     /**
@@ -227,7 +227,7 @@ namespace Core
         void update() override;
 
     protected:
-        [[nodiscard]] bool isKeyPressed() const override;
+        [[nodiscard]] bool IsKeyPressed() const override;
 
     private:
         void init();

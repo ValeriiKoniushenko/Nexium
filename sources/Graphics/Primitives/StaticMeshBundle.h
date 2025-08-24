@@ -35,7 +35,18 @@ namespace Core
         using MeshesT = std::vector<StaticMesh*>;
 
     public:
+        /**
+         * @brief will draw with default shader & logic. Single draw bundle!
+         */
         void draw();
+
+        /**
+         * @brief only draw call with graphics modifiers - nothing more.
+         * Before using of this function you must manually prepare the shader &
+         * 'use' it.
+         */
+        void pureDraw();
+
         void importFrom(const aiNode* node, const aiScene* scene,
                         const std::filesystem::path& modelPath = "");
         void setShader(ShaderProgram* sp, bool ignoreVertexAttribSetup = false);
@@ -52,6 +63,10 @@ namespace Core
         [[nodiscard]] MeshesT& getRenderTargets() noexcept { return _meshes; }
         [[nodiscard]] const MeshesT& getRenderTargets() const noexcept { return _meshes; }
 
+        [[nodiscard]] uint32_t getID() const noexcept { return _id; }
+
+        void tryToRecalculateMatrices();
+
     protected:
         [[nodiscard]] StringAtom getCacheHash() const override;
         [[nodiscard]] nlohmann::json toCacheData() const override;
@@ -59,6 +74,9 @@ namespace Core
 
     protected:
         MeshesT _meshes;
+
+        inline static uint32_t _idGenerator = 0;
+        uint32_t _id = ++_idGenerator;
     };
 
 } // namespace Core

@@ -112,7 +112,7 @@ namespace Core
             {
                 glEnable(val);
             }
-            else if (mod.cast() == Modifier::Disable)
+            else
             {
                 glDisable(val);
             }
@@ -139,14 +139,14 @@ namespace Core
             glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
             glStencilFunc(GL_ALWAYS, 1, 0xFF);
             glStencilMask(0xFF);
-        }
-
-        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(_triangleCount), GL_UNSIGNED_INT,
-                       nullptr);
-
-        if (_isDrawOutline)
-        {
+            glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(_triangleCount), GL_UNSIGNED_INT,
+                           nullptr);
             drawOutline();
+        }
+        else
+        {
+            glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(_triangleCount), GL_UNSIGNED_INT,
+                           nullptr);
         }
 
         for (auto [val, mod] : _drawModifiers)
@@ -155,7 +155,7 @@ namespace Core
             {
                 glEnable(val);
             }
-            else if (mod.cast() == Modifier::Enable)
+            else
             {
                 glDisable(val);
             }
@@ -261,6 +261,42 @@ namespace Core
         glStencilMask(0xFF);
         glClear(GL_STENCIL_BUFFER_BIT);
         glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+    }
+
+    void StaticMesh::pureDraw()
+    {
+        for (auto [val, mod] : _drawModifiers)
+        {
+            if (mod.cast() == Modifier::Enable)
+            {
+                glEnable(val);
+            }
+            else
+            {
+                glDisable(val);
+            }
+        }
+
+        glBindVertexArray(_vao);
+        glBindBuffer(GL_ARRAY_BUFFER, _vbo);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, _texture);
+
+        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(_triangleCount), GL_UNSIGNED_INT,
+                       nullptr);
+
+        for (auto [val, mod] : _drawModifiers)
+        {
+            if (mod.cast() == Modifier::Disable)
+            {
+                glEnable(val);
+            }
+            else
+            {
+                glDisable(val);
+            }
+        }
     }
 
     StaticMesh StaticMeshFactory::CreateBase(const StringAtom& name /* = ""_atom*/)

@@ -170,8 +170,6 @@ namespace Core
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
 
-            _keyboardInput.update();
-            _mouseInput.update();
             for (auto&& wnd : _windows)
             {
                 wnd->tick();
@@ -179,6 +177,9 @@ namespace Core
 
             ImGui::Render();
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+            _keyboardInput.update();
+            _mouseInput.update();
         }
     }
 

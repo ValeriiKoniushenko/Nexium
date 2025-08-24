@@ -73,10 +73,10 @@ namespace Core
         [[nodiscard]] static StringAtom KeyToString(Key key);
         [[nodiscard]] static Key FromStringToKey(const StringAtom& str);
 
-        [[nodiscard]] static glm::vec2 getPosition();
+        [[nodiscard]] static glm::vec2 GetPosition();
 
-        [[nodiscard]] static bool isKeyPressed(Key key);
-        [[nodiscard]] static bool isKeyReleased(Key key);
+        [[nodiscard]] static bool IsKeyPressed(Key key);
+        [[nodiscard]] static bool IsKeyReleased(Key key);
         [[nodiscard]] static bool isKeyRepeated(Key key);
     };
 

@@ -211,4 +211,50 @@ namespace Core
         }
     }
 
+    void StaticMeshBundle::pureDraw()
+    {
+        if (!_isEnabled)
+        {
+            return;
+        }
+
+        if (_isDirtyModelMatrix)
+        {
+            recalculateMatrices();
+            for (auto* m : _meshes)
+            {
+                m->setDirtyMatrices();
+            }
+        }
+
+        for (auto&& comp : _children)
+        {
+            if (auto* mesh = comp->tryCastTo<StaticMesh>(); mesh && mesh->isEnabled())
+            {
+                mesh->tryToRecalculateMatrices(_cachedModelMatrix);
+                mesh->pureDraw();
+            }
+        }
+    }
+
+    void StaticMeshBundle::tryToRecalculateMatrices()
+    {
+        if (_isDirtyModelMatrix)
+        {
+            recalculateMatrices();
+            for (auto* m : _meshes)
+            {
+                m->setDirtyMatrices();
+            }
+
+            for (auto&& comp : _children)
+            {
+                if (auto* mesh = comp->tryCastTo<StaticMesh>(); mesh && mesh->isEnabled())
+                {
+                    mesh->tryToRecalculateMatrices(_cachedModelMatrix);
+                }
+            }
+        }
+    }
+
 } // namespace Core
