@@ -49,6 +49,8 @@ namespace Core
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
 
         [[nodiscard]] std::size_t getRenderTargetsCount() const noexcept { return _meshes.size(); }
+        [[nodiscard]] MeshesT& getRenderTargets() noexcept { return _meshes; }
+        [[nodiscard]] const MeshesT& getRenderTargets() const noexcept { return _meshes; }
 
     protected:
         [[nodiscard]] StringAtom getCacheHash() const override;

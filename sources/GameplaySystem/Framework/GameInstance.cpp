@@ -100,7 +100,6 @@ namespace Core
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
         glEnable(GL_STENCIL_TEST);
-        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
         const int clearBits = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
 
@@ -128,6 +127,7 @@ namespace Core
                 {
                     renderToTextureObject.callMePreDraw();
                     glClear(clearBits);
+
                     onTick(world.timeDelta);
                     renderToTextureObject.callMeAfterDraw();
                 }

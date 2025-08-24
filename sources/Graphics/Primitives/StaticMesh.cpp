@@ -106,9 +106,6 @@ namespace Core
             return;
         }
 
-        glStencilFunc(GL_ALWAYS, 1, 0xFF);
-        glStencilMask(0xFF);
-
         for (auto [val, mod] : _drawModifiers)
         {
             if (mod.cast() == Modifier::Enable)
@@ -137,8 +134,21 @@ namespace Core
 
         applyUniforms();
 
+        if (_isDrawOutline)
+        {
+            glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+            glStencilFunc(GL_ALWAYS, 1, 0xFF);
+            glStencilMask(0xFF);
+        }
+
         glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(_triangleCount), GL_UNSIGNED_INT,
                        nullptr);
+
+        if (_isDrawOutline)
+        {
+            drawOutline();
+        }
+
         for (auto [val, mod] : _drawModifiers)
         {
             if (mod.cast() == Modifier::Disable)
@@ -149,11 +159,6 @@ namespace Core
             {
                 glDisable(val);
             }
-        }
-
-        if (_isDrawOutline)
-        {
-            drawOutline();
         }
 
         for (auto&& comp : _children)
@@ -227,10 +232,6 @@ namespace Core
             return;
         }
 
-        glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-        glStencilMask(0x00);
-        glDisable(GL_DEPTH_TEST);
-
         auto* camera = gGameInstance->currentCamera;
 
         _outlineShader->use();
@@ -247,12 +248,19 @@ namespace Core
         glBindVertexArray(_vao);
         glBindBuffer(GL_ARRAY_BUFFER, _vbo);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
+
+        glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+        glStencilMask(0x00);
+        // glDisable(GL_DEPTH_TEST);
+
         glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(_triangleCount), GL_UNSIGNED_INT,
                        nullptr);
 
-        glEnable(GL_DEPTH_TEST);
+        // glEnable(GL_DEPTH_TEST);
+        glStencilFunc(GL_ALWAYS, 1, 0xFF);
         glStencilMask(0xFF);
-        glStencilFunc(GL_ALWAYS, 0, 0xFF);
+        glClear(GL_STENCIL_BUFFER_BIT);
+        glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
     }
 
     StaticMesh StaticMeshFactory::CreateBase(const StringAtom& name /* = ""_atom*/)

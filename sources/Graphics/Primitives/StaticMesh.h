@@ -50,6 +50,9 @@ namespace Core
 
         [[nodiscard]] ShaderProgram* getOutlineShader() noexcept { return _outlineShader; }
         void setOutlineShader(ShaderProgram* sp, bool ignoreVertexAttribSetup = false);
+        void setIsDrawOutline(bool value) noexcept { _isDrawOutline = value; }
+        void toggleIsDrawOutline() noexcept { _isDrawOutline = !_isDrawOutline; }
+        [[nodiscard]] bool getIsDrawOutline() const noexcept { return _isDrawOutline; }
 
         void draw();
 
@@ -65,7 +68,7 @@ namespace Core
         FSize3 _size;
         glm::vec3 _center = glm::vec3(0);
         ShaderProgram* _outlineShader = nullptr;
-        bool _isDrawOutline = true;
+        bool _isDrawOutline = false;
 
         friend class StaticMeshFactory;
     };

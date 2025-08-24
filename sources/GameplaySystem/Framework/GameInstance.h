@@ -24,6 +24,7 @@
 
 #include "Camera/Camera.h"
 #include "Editor/GameEditor.h"
+#include "Editor/ObjectSelectorManager.h"
 #include "Graphics/RenderTargetToTexture.h"
 #include "Graphics/ShaderManager.h"
 #include "Graphics/Window.h"
@@ -64,6 +65,7 @@ namespace Core
         RenderMode renderMode = RenderMode::Editor;
         GameEditor gameEditor;
         RenderTargetToTexture renderToTextureObject;
+        ObjectSelectorManager objectSelectorManager;
 
     protected:
         virtual void onTick(float delta) = 0;
