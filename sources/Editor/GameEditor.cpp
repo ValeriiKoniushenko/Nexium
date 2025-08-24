@@ -323,26 +323,28 @@ namespace Core
                 {
                     GetWindow().close();
                 });
-        _mouseInput.getOrCreate("selectObject", Mouse::Key_Left)
-            ->onMouseClick.subscribe(
-                [this](auto, auto spec)
+        auto selectObject = _mouseInput.getOrCreate("selectObject", Mouse::Key_Left);
+        selectObject->setIsRepeatable(false);
+        selectObject->onMouseClick.subscribe(
+            [this](auto, auto spec)
+            {
+                if (gDragDrop.getState() == DragAndDrop::State::Dragging)
                 {
-                    if (gDragDrop.getState() == DragAndDrop::State::Dragging)
-                    {
-                        return;
-                    }
-                    slowObjectPicker.requestPick(
-                        [](StaticMesh* mesh)
-                        {
-                            if (!mesh)
-                            {
-                                gGameInstance->objectSelectorManager.deselectAllAndClear();
-                                return;
-                            }
+                    return;
+                }
 
-                            gGameInstance->objectSelectorManager.selectObject(mesh);
-                        });
-                });
+                slowObjectPicker.requestPick(
+                    [](StaticMesh* mesh)
+                    {
+                        if (!mesh)
+                        {
+                            gGameInstance->objectSelectorManager.deselectAllAndClear();
+                            return;
+                        }
+
+                        gGameInstance->objectSelectorManager.selectObject(mesh);
+                    });
+            });
     }
 
 } // namespace Core
