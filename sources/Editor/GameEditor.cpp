@@ -336,6 +336,11 @@ namespace Core
                 slowObjectPicker.requestPick(
                     [](StaticMesh* mesh)
                     {
+                        if (auto* wnd = gGameInstance->gameEditor.getWindow<GameViewportEWC>(); !wnd || !wnd->isHovered())
+                        {
+                            return;
+                        }
+
                         if (!mesh)
                         {
                             gGameInstance->objectSelectorManager.deselectAllAndClear();

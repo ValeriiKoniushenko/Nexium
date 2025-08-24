@@ -83,6 +83,7 @@ namespace Core
         [[nodiscard]] bool isFitContent() const noexcept { return _isFitContent; }
 
         [[nodiscard]] bool isFocused() const noexcept { return _isFocused; }
+        [[nodiscard]] bool isHovered() const noexcept { return _isHovered; }
 
         [[nodiscard]] glm::vec2 getPosition() const noexcept { return _position; }
         [[nodiscard]] glm::vec2 getInnerPosition() const noexcept { return _innerPosition; }
@@ -109,6 +110,7 @@ namespace Core
         glm::vec2 _innerPosition;
         bool _isFitContent = false;
         bool _isFocused = false;
+        bool _isHovered = false;
         std::unordered_map<ImGuiStyleVar_, float> _styles;
     };
 

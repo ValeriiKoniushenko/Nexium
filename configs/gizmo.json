@@ -1,0 +1,98 @@
+{
+    "Transformable": {
+        "origin": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "position": [
+            107.0,
+            120.0,
+            0.0
+        ],
+        "rotation": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            10.0,
+            10.0,
+            10.0
+        ]
+    },
+    "children": [
+        {
+            "BaseComponent": {
+                "isEnabled": true,
+                "name": "Cone.001",
+                "noTick": false,
+                "type": "StaticMesh"
+            },
+            "GraphicsComponentData": {
+                "modifiers": []
+            },
+            "Transformable": {
+                "origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        }
+    ],
+    "isEnabled": true,
+    "meshes": [
+        {
+            "BaseComponent": {
+                "isEnabled": true,
+                "name": "Cone.001",
+                "noTick": false,
+                "type": "StaticMesh"
+            },
+            "GraphicsComponentData": {
+                "modifiers": []
+            },
+            "Transformable": {
+                "origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        }
+    ],
+    "name": "gizmo",
+    "noTick": false,
+    "type": "StaticMeshBundle"
+}

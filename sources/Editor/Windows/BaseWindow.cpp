@@ -74,6 +74,7 @@ namespace Core
         _size = FSize2{ size.x, size.y };
 
         _isFocused = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows);
+        _isHovered = ImGui::IsWindowHovered(ImGuiFocusedFlags_RootAndChildWindows);
 
         auto pos = ImGui::GetWindowPos();
         _position = glm::vec2(pos.x, pos.y);

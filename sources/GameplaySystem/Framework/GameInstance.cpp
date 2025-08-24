@@ -29,6 +29,8 @@
 #include "Graphics/ShaderManager.h"
 #include "Graphics/Window.h"
 #include "Misc/FPSCounter.h"
+#include "assimp/Importer.hpp"
+#include "assimp/postprocess.h"
 
 std::unique_ptr<Core::GameInstance> gGameInstance = nullptr;
 
@@ -73,6 +75,7 @@ namespace Core
 
         onInitReadCache();
 
+        loadCoreResources();
         onInitFinish();
 
         gameLoop();
@@ -209,6 +212,28 @@ namespace Core
                     glEnableVertexAttribArray(0);
                     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), nullptr);
                 });
+        }
+    }
+
+    void GameInstance::loadCoreResources()
+    {
+        std::vector<std::filesystem::path> modelPaths
+            = { "assets/base-3d/Models/FBX/gizmo.fbx" };
+
+        Assimp::Importer importer;
+        for (auto&& path : modelPaths)
+        {
+            const aiScene* scene = importer.ReadFile(
+                path.generic_string().c_str(),
+                aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
+            if (Verify(scene) && Verify(scene->mRootNode))
+            {
+                StaticMeshBundle mesh;
+                mesh.importFrom(scene->mRootNode, scene, path);
+                mesh.setShader(shaderManager.getShaderProgram("color"_atom));
+                mesh.setOutlineShader(shaderManager.getShaderProgram("outline"_atom));
+                gameScene.addMesh(std::move(mesh));
+            }
         }
     }
 } // namespace Core

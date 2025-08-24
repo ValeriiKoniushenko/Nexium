@@ -85,6 +85,7 @@ namespace Core
         ISize2 _defaultWindowSize = ISize2{ 1200, 800 };
 
     private:
+        void loadCoreResources();
         void gameLoop();
     };
 
