@@ -146,6 +146,7 @@ namespace Core
     protected:
         void setupImGuiStyles();
         [[nodiscard]] bool needToDraw();
+        void setupShortcuts();
 
     protected:
         KeyboardInputManger _keyboardInput;

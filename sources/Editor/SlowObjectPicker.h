@@ -26,6 +26,7 @@
 namespace Core
 {
     class Scene;
+    class StaticMesh;
 
     /**
      * @brief yes, it's slow but convenient way to pick up an object with
@@ -34,10 +35,13 @@ namespace Core
     class SlowObjectPicker
     {
     public:
+        void requestPick(std::function<void(StaticMesh*)>&& callback);
         void update(Scene& scene);
 
     protected:
         RenderTargetToTexture _canvas;
+        std::function<void(StaticMesh*)> _callback;
+        bool _requested = false;
     };
 
 }

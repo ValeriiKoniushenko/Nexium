@@ -30,7 +30,7 @@ namespace Core
 
     void SlowObjectPicker::update(Scene& scene)
     {
-        if (!Mouse::IsKeyPressed(Mouse::Key_Left))
+        if (!_requested)
         {
             return;
         }
@@ -92,6 +92,7 @@ namespace Core
             glReadPixels(pickPos.x, pickPos.y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, data);
 
             const GLuint pickedID = data[0] + data[1] * 256 + data[2] * 256 * 256;
+            StaticMesh* found = nullptr;
             for (auto&& bundle : scene.getStaticMeshBundles())
             {
                 if (!bundle.isEnabled())
@@ -99,7 +100,6 @@ namespace Core
                     continue;
                 }
 
-                bool found = false;
                 for (auto&& mesh : bundle.getRenderTargets())
                 {
                     if (!mesh->isEnabled())
@@ -109,8 +109,7 @@ namespace Core
 
                     if (mesh->getID() == pickedID)
                     {
-                        gGameInstance->objectSelectorManager.selectObject(mesh);
-                        found = true;
+                        found = mesh;
                         break;
                     }
                 }
@@ -119,11 +118,19 @@ namespace Core
                 {
                     break;
                 }
-
-                gGameInstance->objectSelectorManager.deselectAllAndClear();
             }
+
+            _callback(found);
         }
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        _requested = false;
+    }
+
+    void SlowObjectPicker::requestPick(std::function<void(StaticMesh*)>&& callback)
+    {
+        _callback = std::forward<decltype(callback)>(callback);
+        _requested = true;
     }
 
 } // namespace Core

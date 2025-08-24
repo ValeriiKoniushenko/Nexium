@@ -154,12 +154,7 @@ namespace Core
                 }
             });
 
-        _keyboardInput.getOrCreate("exit", Keyboard::Key::Key_F12)
-            ->onPress.subscribe(
-                [&](auto)
-                {
-                    GetWindow().close();
-                });
+        setupShortcuts();
     }
 
     void GameEditor::onTick(float delta)
@@ -318,6 +313,36 @@ namespace Core
     bool GameEditor::needToDraw()
     {
         return !_windows.empty();
+    }
+
+    void GameEditor::setupShortcuts()
+    {
+        _keyboardInput.getOrCreate("exit", Keyboard::Key::Key_F12)
+            ->onPress.subscribe(
+                [&](auto)
+                {
+                    GetWindow().close();
+                });
+        _mouseInput.getOrCreate("selectObject", Mouse::Key_Left)
+            ->onMouseClick.subscribe(
+                [this](auto, auto spec)
+                {
+                    if (gDragDrop.getState() == DragAndDrop::State::Dragging)
+                    {
+                        return;
+                    }
+                    slowObjectPicker.requestPick(
+                        [](StaticMesh* mesh)
+                        {
+                            if (!mesh)
+                            {
+                                gGameInstance->objectSelectorManager.deselectAllAndClear();
+                                return;
+                            }
+
+                            gGameInstance->objectSelectorManager.selectObject(mesh);
+                        });
+                });
     }
 
 } // namespace Core
