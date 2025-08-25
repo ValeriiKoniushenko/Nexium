@@ -57,7 +57,8 @@ namespace Core
 
     void Transformable::moveRight(float offset) noexcept
     {
-        _position += offset * getRightVector();
+        auto tmp = getRightVector();
+        _position += offset * tmp;
         _isDirtyModelMatrix = true;
     }
 

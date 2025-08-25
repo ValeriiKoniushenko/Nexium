@@ -67,7 +67,7 @@ void main()
     float fallOff = 1.0 - clamp(length(ioWorldPos.xz) / uGlobalGridSize, 0.0, 1.0);
     color.a *= fallOff;
 
-    if (color.a < 0.01)
+    if (color.a < 0.1)
         discard;
 
     FragColor = color;

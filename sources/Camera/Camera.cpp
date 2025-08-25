@@ -167,7 +167,7 @@ namespace Core
         mat = glm::rotate(mat, glm::radians(_rotation.y), glm::vec3(0.f, 1.f, 0.f));
         mat = glm::rotate(mat, glm::radians(_rotation.z), glm::vec3(0.f, 0.f, 1.f));
 
-        mat = glm::translate(mat, _position);
+        mat = glm::translate(mat, _position * -1.f);
         mat = glm::translate(mat, _origin);
 
         _isDirtyModelMatrix = false;

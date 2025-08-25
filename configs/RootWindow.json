@@ -4,6 +4,6 @@
         "height": 1011,
         "width": 1920
     },
-    "swapInterval": false,
+    "swapInterval": true,
     "title": "Nexium"
 }
