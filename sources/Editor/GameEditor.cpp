@@ -324,6 +324,13 @@ namespace Core
                     GetWindow().close();
                 });
 
+        _keyboardInput.getOrCreate("cancel", Keyboard::Key::Key_Escape)
+            ->onPress.subscribe(
+                [&](auto)
+                {
+                    gGameInstance->objectSelectorManager.deselectAllAndClear();
+                });
+
         auto selectObject = _mouseInput.getOrCreate("selectObject", Mouse::Key_Left);
         selectObject->setIsRepeatable(false);
         selectObject->onMouseClick.subscribe(
