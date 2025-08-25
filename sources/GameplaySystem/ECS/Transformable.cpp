@@ -67,51 +67,18 @@ namespace Core
         _isDirtyModelMatrix = true;
     }
 
-    void Transformable::setRotation(const glm::vec3& rotation) noexcept
+    void Transformable::setRotation(const glm::vec3& value) noexcept
     {
-        _rotation = rotation;
-        _isDirtyModelMatrix = true;
-
-        while (_rotation.y >= 360.f)
-        {
-            _rotation.y -= 360.f;
-        }
-        while (_rotation.x >= 360.f)
-        {
-            _rotation.x -= 360.f;
-        }
-        while (_rotation.z >= 360.f)
-        {
-            _rotation.z -= 360.f;
-        }
-    }
-
-    void Transformable::addRotation(const glm::vec3& rotation) noexcept
-    {
-        _rotation += rotation;
-        _isDirtyModelMatrix = true;
+        setRotationX(value.x);
+        setRotationY(value.y);
+        setRotationZ(value.z);
     }
 
     void Transformable::rotate(const glm::vec3& value) noexcept
     {
-        _rotation.y += value.x;
-        _rotation.x += value.y;
-        _rotation.z += value.z;
-
-        while (_rotation.y >= 360.f)
-        {
-            _rotation.y -= 360.f;
-        }
-        while (_rotation.x >= 360.f)
-        {
-            _rotation.x -= 360.f;
-        }
-        while (_rotation.z >= 360.f)
-        {
-            _rotation.z -= 360.f;
-        }
-
-        _isDirtyModelMatrix = true;
+        setRotationX(_rotation.x + value.x);
+        setRotationY(_rotation.y + value.y);
+        setRotationZ(_rotation.z + value.z);
     }
 
     const glm::vec3& Transformable::getRotation() const noexcept
@@ -127,12 +94,7 @@ namespace Core
 
     void Transformable::rotateX(float x) noexcept
     {
-        _rotation.x += x;
-        _isDirtyModelMatrix = true;
-        while (_rotation.x >= 360.f)
-        {
-            _rotation.x -= 360.f;
-        }
+        setRotationX(_rotation.x + x);
     }
 
     float Transformable::getRotationX() const noexcept
@@ -142,22 +104,13 @@ namespace Core
 
     void Transformable::setRotationY(float y) noexcept
     {
-        _rotation.y = y;
+        _rotation.y = std::fmod(y, 360.f);
         _isDirtyModelMatrix = true;
-        while (_rotation.y >= 360.f)
-        {
-            _rotation.y -= 360.f;
-        }
     }
 
     void Transformable::rotateY(float y) noexcept
     {
-        _rotation.y += y;
-        _isDirtyModelMatrix = true;
-        while (_rotation.y >= 360.f)
-        {
-            _rotation.y -= 360.f;
-        }
+        setRotationY(_rotation.y + y);
     }
 
     float Transformable::getRotationY() const noexcept
@@ -167,22 +120,13 @@ namespace Core
 
     void Transformable::setRotationZ(float z) noexcept
     {
-        _rotation.z = z;
+        _rotation.z = std::fmod(z, 360.f);
         _isDirtyModelMatrix = true;
-        while (_rotation.z >= 360.f)
-        {
-            _rotation.z -= 360.f;
-        }
     }
 
     void Transformable::rotateZ(float z) noexcept
     {
-        _rotation.z += z;
-        _isDirtyModelMatrix = true;
-        while (_rotation.z >= 360.f)
-        {
-            _rotation.z -= 360.f;
-        }
+        setRotationZ(_rotation.z + z);
     }
 
     float Transformable::getRotationZ() const noexcept

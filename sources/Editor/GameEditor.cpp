@@ -343,7 +343,7 @@ namespace Core
 
                         if (!mesh)
                         {
-                            gGameInstance->objectSelectorManager.deselectAllAndClear();
+                            // gGameInstance->objectSelectorManager.deselectAllAndClear();
                             return;
                         }
 
