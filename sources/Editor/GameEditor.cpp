@@ -323,6 +323,7 @@ namespace Core
                 {
                     GetWindow().close();
                 });
+
         auto selectObject = _mouseInput.getOrCreate("selectObject", Mouse::Key_Left);
         selectObject->setIsRepeatable(false);
         selectObject->onMouseClick.subscribe(

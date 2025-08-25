@@ -13,7 +13,7 @@
         "rotation": [
             0.0,
             0.0,
-            -90.0
+            0.0
         ],
         "scale": [
             1.0,
@@ -25,106 +25,7 @@
         {
             "BaseComponent": {
                 "isEnabled": true,
-                "name": "Cone.004",
-                "noTick": false,
-                "type": "StaticMesh"
-            },
-            "GraphicsComponentData": {
-                "modifiers": []
-            },
-            "Transformable": {
-                "origin": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "position": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "rotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            }
-        },
-        {
-            "BaseComponent": {
-                "isEnabled": true,
-                "name": "Cone.005",
-                "noTick": false,
-                "type": "StaticMesh"
-            },
-            "GraphicsComponentData": {
-                "modifiers": []
-            },
-            "Transformable": {
-                "origin": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "position": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "rotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            }
-        },
-        {
-            "BaseComponent": {
-                "isEnabled": true,
-                "name": "Cone.006",
-                "noTick": false,
-                "type": "StaticMesh"
-            },
-            "GraphicsComponentData": {
-                "modifiers": []
-            },
-            "Transformable": {
-                "origin": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "position": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "rotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            }
-        },
-        {
-            "BaseComponent": {
-                "isEnabled": true,
-                "name": "Cube.002",
+                "name": "Cone.001",
                 "noTick": false,
                 "type": "StaticMesh"
             },
@@ -160,106 +61,7 @@
         {
             "BaseComponent": {
                 "isEnabled": true,
-                "name": "Cone.004",
-                "noTick": false,
-                "type": "StaticMesh"
-            },
-            "GraphicsComponentData": {
-                "modifiers": []
-            },
-            "Transformable": {
-                "origin": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "position": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "rotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            }
-        },
-        {
-            "BaseComponent": {
-                "isEnabled": true,
-                "name": "Cone.005",
-                "noTick": false,
-                "type": "StaticMesh"
-            },
-            "GraphicsComponentData": {
-                "modifiers": []
-            },
-            "Transformable": {
-                "origin": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "position": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "rotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            }
-        },
-        {
-            "BaseComponent": {
-                "isEnabled": true,
-                "name": "Cone.006",
-                "noTick": false,
-                "type": "StaticMesh"
-            },
-            "GraphicsComponentData": {
-                "modifiers": []
-            },
-            "Transformable": {
-                "origin": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "position": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "rotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            }
-        },
-        {
-            "BaseComponent": {
-                "isEnabled": true,
-                "name": "Cube.002",
+                "name": "Cone.001",
                 "noTick": false,
                 "type": "StaticMesh"
             },
