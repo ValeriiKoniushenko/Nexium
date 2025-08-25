@@ -104,6 +104,15 @@ namespace Core
 
             ImGui::EndMenu();
         }
+
+        if (ImGui::BeginMenu("Edit"))
+        {
+            if (ImGui::MenuItem("Deselect"))
+            {
+                gGameInstance->objectSelectorManager.deselectAllAndClear();
+            }
+            ImGui::EndMenu();
+        }
         ImGui::SameLine(0,0);
 
         auto& style = ImGui::GetStyle();

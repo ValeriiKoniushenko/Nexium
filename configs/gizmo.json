@@ -25,7 +25,106 @@
         {
             "BaseComponent": {
                 "isEnabled": true,
-                "name": "Cone.001",
+                "name": "Y.001",
+                "noTick": false,
+                "type": "StaticMesh"
+            },
+            "GraphicsComponentData": {
+                "modifiers": []
+            },
+            "Transformable": {
+                "origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "BaseComponent": {
+                "isEnabled": true,
+                "name": "X.001",
+                "noTick": false,
+                "type": "StaticMesh"
+            },
+            "GraphicsComponentData": {
+                "modifiers": []
+            },
+            "Transformable": {
+                "origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "BaseComponent": {
+                "isEnabled": true,
+                "name": "Z.001",
+                "noTick": false,
+                "type": "StaticMesh"
+            },
+            "GraphicsComponentData": {
+                "modifiers": []
+            },
+            "Transformable": {
+                "origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "BaseComponent": {
+                "isEnabled": true,
+                "name": "Union.001",
                 "noTick": false,
                 "type": "StaticMesh"
             },
@@ -61,7 +160,106 @@
         {
             "BaseComponent": {
                 "isEnabled": true,
-                "name": "Cone.001",
+                "name": "Y.001",
+                "noTick": false,
+                "type": "StaticMesh"
+            },
+            "GraphicsComponentData": {
+                "modifiers": []
+            },
+            "Transformable": {
+                "origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "BaseComponent": {
+                "isEnabled": true,
+                "name": "X.001",
+                "noTick": false,
+                "type": "StaticMesh"
+            },
+            "GraphicsComponentData": {
+                "modifiers": []
+            },
+            "Transformable": {
+                "origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "BaseComponent": {
+                "isEnabled": true,
+                "name": "Z.001",
+                "noTick": false,
+                "type": "StaticMesh"
+            },
+            "GraphicsComponentData": {
+                "modifiers": []
+            },
+            "Transformable": {
+                "origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "BaseComponent": {
+                "isEnabled": true,
+                "name": "Union.001",
                 "noTick": false,
                 "type": "StaticMesh"
             },
