@@ -45,6 +45,19 @@ namespace Core
         BaseFloatEWC::onInit();
 
         setScene(&gGameInstance->gameScene);
+
+        _onSelectChangeId = gGameInstance->objectSelectorManager.onChange.subscribeAndGetID(
+            [this](BaseComponent* comp, bool newValue)
+            {
+                if (newValue)
+                {
+                    selectedObject = comp;
+                }
+                else
+                {
+                    selectedObject = nullptr;
+                }
+            });
     }
 
     void SceneTreeWindowEWC::onDraw()
@@ -74,7 +87,7 @@ namespace Core
             int32_t internalId = 0;
             for (auto& node : graphicNodes)
             {
-                drawTreeNode(&node, internalId++);
+                drawTreeNode(node.get(), internalId++);
             }
             ImGui::TreePop();
         }
@@ -116,7 +129,7 @@ namespace Core
             isInSelectedSubtree = true;
         }
 
-        if (isInSelectedSubtree)
+        if (isInSelectedSubtree || gGameInstance->objectSelectorManager.isSelected(n))
         {
             flags |= ImGuiTreeNodeFlags_Selected | ImGuiTreeNodeFlags_SpanAvailWidth;
         }
@@ -162,7 +175,7 @@ namespace Core
             ImGui::PopStyleColor(1);
         }
 
-        if (ImGui::IsItemClicked() || ImGui::IsItemFocused())
+        if (ImGui::IsItemClicked() || (ImGui::IsItemFocused() && isHovered()))
         {
             selectedObject = n;
 

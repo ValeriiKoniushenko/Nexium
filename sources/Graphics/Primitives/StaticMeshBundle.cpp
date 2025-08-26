@@ -257,4 +257,15 @@ namespace Core
         }
     }
 
+    void StaticMeshBundle::onOutlineStatusChange(bool newStatus)
+    {
+        for (auto&& mesh : _meshes)
+        {
+            if (mesh->isEnabled())
+            {
+                mesh->setIsDrawOutline(newStatus);
+            }
+        }
+    }
+
 } // namespace Core

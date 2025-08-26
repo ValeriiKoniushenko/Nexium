@@ -24,6 +24,7 @@
 
 #include "Camera/Camera.h"
 #include "GameplaySystem/ECS/Transformable.h"
+#include "GameplaySystem/Framework/GameInstance.h"
 #include "Graphics/Primitives/StaticMeshBundle.h"
 #include "ImGui/imgui_internal.h"
 
@@ -104,6 +105,19 @@ namespace Core
             }
             _modifierRaw.push_back('\0');
         }
+
+        _onSelectChangeId = gGameInstance->objectSelectorManager.onChange.subscribeAndGetID(
+            [this](BaseComponent* comp, bool newValue)
+            {
+                if (newValue)
+                {
+                    _target = comp;
+                }
+                else
+                {
+                    _target = nullptr;
+                }
+            });
     }
 
     void ObjectPropertiesWindowEWC::onDraw()
@@ -201,7 +215,8 @@ namespace Core
 
             if (auto* asStaticMesh = dynamic_cast<StaticMesh*>(_target))
             {
-                (void)_meshSizeControl.drawAndProcess(asStaticMesh->getSize().toGlm(), _innerSize.width);
+                (void)_meshSizeControl.drawAndProcess(asStaticMesh->getSize().toGlm(),
+                                                      _innerSize.width);
             }
 
             ImGui::Separator();

@@ -23,8 +23,9 @@
 #pragma once
 
 #include "Graphics/Primitives/StaticMesh.h"
+#include "Core/Delegate.h"
 
-#include <vector>
+#include <unordered_map>
 
 namespace Core
 {
@@ -41,17 +42,21 @@ namespace Core
     {
     public:
         void selectObject(BaseComponent* comp);
-        void selectObject(StaticMeshBundle& bundle);
-        void selectObject(StaticMesh& mesh);
 
         void addSelectedObject(BaseComponent* comp);
-        void addSelectedObject(StaticMeshBundle& bundle);
-        void addSelectedObject(StaticMesh& mesh);
 
         void deselectAllAndClear();
 
+        [[nodiscard]] bool isSelected(BaseComponent* comp) const;
+
+        /**
+         * @param BaseComponent* affected component
+         * @param bool selected is true; deselected is false
+         */
+        Delegate<void(BaseComponent*, bool)> onChange;
+
     private:
-        std::vector<StaticMesh::Ptr> _selectedObjects;
+        std::unordered_map<void*, BaseComponent::Ptr> _selectedObjects;
     };
 
 } // namespace Core

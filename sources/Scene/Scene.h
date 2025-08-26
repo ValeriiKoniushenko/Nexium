@@ -44,11 +44,11 @@ namespace Core
 
         void addMesh(StaticMeshBundle&& mesh);
 
-        [[nodiscard]] const std::vector<StaticMeshBundle>& getStaticMeshBundles() const noexcept
+        [[nodiscard]] const std::vector<StaticMeshBundle::Ptr>& getStaticMeshBundles() const noexcept
         {
             return _staticMeshBundles;
         }
-        [[nodiscard]] std::vector<StaticMeshBundle>& getStaticMeshBundles() noexcept
+        [[nodiscard]] std::vector<StaticMeshBundle::Ptr>& getStaticMeshBundles() noexcept
         {
             return _staticMeshBundles;
         }
@@ -88,7 +88,7 @@ namespace Core
         void writeToCacheSeparateData() const;
 
     protected:
-        std::vector<StaticMeshBundle> _staticMeshBundles;
+        std::vector<StaticMeshBundle::Ptr> _staticMeshBundles;
         std::vector<BaseComponent::Ptr> _logicalComponents;
         StringAtom _sceneName = "None";
     };

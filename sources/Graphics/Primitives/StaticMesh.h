@@ -22,9 +22,10 @@
 
 #pragma once
 
-#include "../GraphicsComponents.h"
 #include "GameplaySystem/ECS/BaseComponent.h"
 #include "GameplaySystem/ECS/Transformable.h"
+#include "Graphics/GraphicsComponents.h"
+#include "Graphics/IOutliner.h"
 #include "assimp/matrix4x4.h"
 #include "assimp/mesh.h"
 #include "assimp/scene.h"
@@ -33,7 +34,13 @@
 
 namespace Core
 {
-    class StaticMesh : public GraphicsComponentData, public Transformable, public BaseComponent
+    class StaticMeshBundle;
+
+    class StaticMesh :
+        public GraphicsComponentData,
+        public Transformable,
+        public BaseComponent,
+        public IOutliner
     {
         ECS_REGISTER_NEW_COMPONENT(StaticMesh, BaseComponent);
 
@@ -50,9 +57,9 @@ namespace Core
 
         [[nodiscard]] ShaderProgram* getOutlineShader() noexcept { return _outlineShader; }
         void setOutlineShader(ShaderProgram* sp, bool ignoreVertexAttribSetup = false);
-        void setIsDrawOutline(bool value) noexcept { _isDrawOutline = value; }
-        void toggleIsDrawOutline() noexcept { _isDrawOutline = !_isDrawOutline; }
-        [[nodiscard]] bool getIsDrawOutline() const noexcept { return _isDrawOutline; }
+
+        [[nodiscard]] StaticMeshBundle* tryToGetRootBundle();
+        [[nodiscard]] const StaticMeshBundle* tryToGetRootBundle() const;
 
         /**
          * @brief will draw with default shader & logic. Single draw object!
@@ -72,6 +79,7 @@ namespace Core
         [[nodiscard]] GLuint getID() const noexcept { return _vbo; }
 
     protected:
+        void onOutlineStatusChange(bool) override{};
         void applyUniforms() override;
         void calculateSizeBaseOnMesh(const aiMesh* rawMesh, const aiMatrix4x4& transform);
         void drawOutline();
@@ -80,7 +88,6 @@ namespace Core
         FSize3 _size;
         glm::vec3 _center = glm::vec3(0);
         ShaderProgram* _outlineShader = nullptr;
-        bool _isDrawOutline = false;
 
         friend class StaticMeshFactory;
     };

@@ -51,13 +51,13 @@ namespace Core
         shader->setUniform("uProjAndView"_atom, camera->getMatrix());
         for (auto&& bundle : scene.getStaticMeshBundles())
         {
-            if (!bundle.isEnabled())
+            if (!bundle->isEnabled())
             {
                 continue;
             }
-            bundle.tryToRecalculateMatrices();
+            bundle->tryToRecalculateMatrices();
 
-            for (auto&& mesh : bundle.getRenderTargets())
+            for (auto&& mesh : bundle->getRenderTargets())
             {
                 if (!mesh->isEnabled())
                 {
@@ -95,12 +95,12 @@ namespace Core
             StaticMesh* found = nullptr;
             for (auto&& bundle : scene.getStaticMeshBundles())
             {
-                if (!bundle.isEnabled())
+                if (!bundle->isEnabled())
                 {
                     continue;
                 }
 
-                for (auto&& mesh : bundle.getRenderTargets())
+                for (auto&& mesh : bundle->getRenderTargets())
                 {
                     if (!mesh->isEnabled())
                     {

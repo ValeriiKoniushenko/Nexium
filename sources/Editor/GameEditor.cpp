@@ -344,7 +344,8 @@ namespace Core
                 slowObjectPicker.requestPick(
                     [](StaticMesh* mesh)
                     {
-                        if (auto* wnd = gGameInstance->gameEditor.getWindow<GameViewportEWC>(); !wnd || !wnd->isHovered())
+                        if (auto* wnd = gGameInstance->gameEditor.getWindow<GameViewportEWC>();
+                            !wnd || !wnd->isHovered())
                         {
                             return;
                         }
@@ -355,7 +356,14 @@ namespace Core
                             return;
                         }
 
-                        gGameInstance->objectSelectorManager.selectObject(mesh);
+                        if (auto* bundle = mesh->tryToGetRootBundle())
+                        {
+                            gGameInstance->objectSelectorManager.selectObject(bundle);
+                        }
+                        else
+                        {
+                            gGameInstance->objectSelectorManager.selectObject(mesh);
+                        }
                     });
             });
     }

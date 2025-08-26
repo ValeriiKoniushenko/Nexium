@@ -38,7 +38,7 @@ namespace Core
 
         for (auto&& mesh : _staticMeshBundles)
         {
-            mesh.draw();
+            mesh->draw();
         }
     }
 
@@ -57,15 +57,15 @@ namespace Core
 
     void Scene::addMesh(StaticMeshBundle&& mesh)
     {
-        _staticMeshBundles.push_back(std::move(mesh));
-        _staticMeshBundles.back().tryReadFromCache();
+        _staticMeshBundles.emplace_back(new StaticMeshBundle(std::move(mesh)));
+        _staticMeshBundles.back()->tryReadFromCache();
     }
 
     void Scene::writeToCacheSeparateData() const
     {
         for (auto&& mesh : _staticMeshBundles)
         {
-            mesh.writeToCache();
+            mesh->writeToCache();
         }
 
         for (auto&& obj : _logicalComponents)
@@ -85,7 +85,7 @@ namespace Core
         json["objects"] = nlohmann::json::array();
         for (auto& obj : _staticMeshBundles)
         {
-            json["objects"].push_back(obj.getComponentName());
+            json["objects"].push_back(obj->getComponentName());
         }
 
         json["logicalObjects"] = nlohmann::json::array();

@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2019-2025 Valerii Koniushenko
+// Copyright (c) 2023 Valerii Koniushenko
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,35 +22,22 @@
 
 #pragma once
 
-#include "BaseWindow.h"
-
 namespace Core
 {
-
-    class Scene;
-
-    class SceneTreeWindowEWC : public BaseFloatEWC
+    class IOutliner
     {
-        ECS_REGISTER_NEW_COMPONENT(SceneTreeWindowEWC, BaseFloatEWC);
-
     public:
-        void setScene(Scene* scene) { _scene = scene; }
-        [[nodiscard]] Scene* getScene() const noexcept { return _scene; }
-
-    public:
-        BaseComponent* selectedObject = nullptr;
+        void setIsDrawOutline(bool value) noexcept
+        {
+            onOutlineStatusChange(_isDrawOutline = value);
+        }
+        void toggleIsDrawOutline() noexcept { setIsDrawOutline(!_isDrawOutline); }
+        [[nodiscard]] bool getIsDrawOutline() const noexcept { return _isDrawOutline; }
 
     protected:
-        void onInit() override;
-        void onDraw() override;
-        void onUpdate() override;
-
-    protected:
-        Scene* _scene = nullptr;
-        int _commonTreeFlags = ImGuiTreeNodeFlags_OpenOnDoubleClick;
-        Delegate<void(BaseComponent*,bool)>::IDGuard _onSelectChangeId;
+        virtual void onOutlineStatusChange(bool newStatus) = 0;
 
     private:
-        void drawTreeNode(BaseComponent* n, int32_t id, bool isInSelectedSubtree = false);
+        bool _isDrawOutline = false;
     };
 } // namespace Core

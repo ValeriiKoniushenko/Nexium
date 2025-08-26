@@ -27,7 +27,11 @@
 
 namespace Core
 {
-    class StaticMeshBundle : public BaseComponent, public JsonCacheable, public Transformable
+    class StaticMeshBundle :
+        public BaseComponent,
+        public JsonCacheable,
+        public Transformable,
+        public IOutliner
     {
         ECS_REGISTER_NEW_COMPONENT(StaticMeshBundle, BaseComponent);
 
@@ -68,6 +72,7 @@ namespace Core
         void tryToRecalculateMatrices();
 
     protected:
+        void onOutlineStatusChange(bool newStatus) override;
         [[nodiscard]] StringAtom getCacheHash() const override;
         [[nodiscard]] nlohmann::json toCacheData() const override;
         void fromCacheData(const nlohmann::json& data) override;

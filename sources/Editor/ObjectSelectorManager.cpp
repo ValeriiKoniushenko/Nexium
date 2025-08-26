@@ -32,61 +32,19 @@ namespace Core
     void ObjectSelectorManager::selectObject(BaseComponent* comp)
     {
         deselectAllAndClear();
-
-        if (auto* wnd = gGameInstance->gameEditor.getWindow<ObjectPropertiesWindowEWC>())
-        {
-            if (wnd->isEnabled())
-            {
-                wnd->setTargetObject(comp);
-            }
-        }
-
         addSelectedObject(comp);
-    }
-
-    void ObjectSelectorManager::selectObject(StaticMeshBundle& bundle)
-    {
-        deselectAllAndClear();
-
-        if (auto* wnd = gGameInstance->gameEditor.getWindow<ObjectPropertiesWindowEWC>())
-        {
-            if (wnd->isEnabled())
-            {
-                wnd->setTargetObject(&bundle);
-            }
-        }
-
-        addSelectedObject(bundle);
-    }
-
-    void ObjectSelectorManager::selectObject(StaticMesh& mesh)
-    {
-        deselectAllAndClear();
-
-        if (auto* wnd = gGameInstance->gameEditor.getWindow<ObjectPropertiesWindowEWC>())
-        {
-            if (wnd->isEnabled())
-            {
-                wnd->setTargetObject(&mesh);
-            }
-        }
-
-        addSelectedObject(mesh);
     }
 
     void ObjectSelectorManager::deselectAllAndClear()
     {
-        if (auto* wnd = gGameInstance->gameEditor.getWindow<ObjectPropertiesWindowEWC>())
+        for (auto&& [_, obj] : _selectedObjects)
         {
-            if (wnd->isEnabled())
+            if (auto* outliner = dynamic_cast<IOutliner*>(obj.get()))
             {
-                wnd->resetTargetObject();
+                outliner->setIsDrawOutline(false);
             }
-        }
 
-        for (auto&& mesh : _selectedObjects)
-        {
-            mesh->setIsDrawOutline(false);
+            onChange.trigger(obj.get(), false);
         }
 
         _selectedObjects.clear();
@@ -94,37 +52,18 @@ namespace Core
 
     void ObjectSelectorManager::addSelectedObject(BaseComponent* comp)
     {
-        if (!comp)
+        if (auto* outliner = dynamic_cast<IOutliner*>(comp))
         {
-            return;
+            outliner->setIsDrawOutline(true);
         }
 
-        if (auto* bundle = comp->tryCastTo<StaticMeshBundle>())
-        {
-            addSelectedObject(*bundle);
-        }
-        else if (auto* mesh = comp->tryCastTo<StaticMesh>())
-        {
-            addSelectedObject(*mesh);
-        }
-        else
-        {
-            // Assert("Was passed invalid component");
-        }
+        onChange.trigger(comp, true);
+        _selectedObjects.emplace(comp, comp);
     }
 
-    void ObjectSelectorManager::addSelectedObject(StaticMeshBundle& bundle)
+    bool ObjectSelectorManager::isSelected(BaseComponent* comp) const
     {
-        for (auto& mesh : bundle.getRenderTargets())
-        {
-            addSelectedObject(mesh);
-        }
-    }
-
-    void ObjectSelectorManager::addSelectedObject(StaticMesh& mesh)
-    {
-        mesh.setIsDrawOutline(true);
-        _selectedObjects.push_back(&mesh);
+        return _selectedObjects.contains(comp);
     }
 
 } // namespace Core

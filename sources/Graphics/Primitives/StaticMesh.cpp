@@ -22,13 +22,12 @@
 
 #include "StaticMesh.h"
 
+#include "Core/Timer.h"
+#include "StaticMeshBundle.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Graphics/Image.h"
 #include "assimp/Importer.hpp"
-#include "assimp/postprocess.h"
 #include "assimp/scene.h"
-
-#include <Core/Timer.h>
 
 namespace Core
 {
@@ -134,7 +133,7 @@ namespace Core
 
         applyUniforms();
 
-        if (_isDrawOutline)
+        if (getIsDrawOutline())
         {
             glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
             glStencilFunc(GL_ALWAYS, 1, 0xFF);
@@ -297,6 +296,27 @@ namespace Core
                 glDisable(val);
             }
         }
+    }
+
+    StaticMeshBundle* StaticMesh::tryToGetRootBundle()
+    {
+        BaseComponent* i = getParent();
+        while (i)
+        {
+            if (auto* casted = i->tryCastTo<StaticMeshBundle>())
+            {
+                return casted;
+            }
+
+            i = i->getParent();
+        }
+
+        return nullptr;
+    }
+
+    const StaticMeshBundle* StaticMesh::tryToGetRootBundle() const
+    {
+        return const_cast<StaticMesh*>(this)->tryToGetRootBundle();
     }
 
     StaticMesh StaticMeshFactory::CreateBase(const StringAtom& name /* = ""_atom*/)
