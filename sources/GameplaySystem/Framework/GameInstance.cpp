@@ -128,11 +128,11 @@ namespace Core
             {
                 glClear(clearBits);
                 gameEditor.onTick(world.timeDelta);
-
                 if (currentCamera)
                 {
                     renderToTextureObject.callMePreDraw();
                     glClear(clearBits);
+                    _gizmo.drawAndUpdate();
 
                     onTick(world.timeDelta);
                     renderToTextureObject.callMeAfterDraw();
@@ -217,23 +217,6 @@ namespace Core
 
     void GameInstance::loadCoreResources()
     {
-        std::vector<std::filesystem::path> modelPaths
-            = { "assets/base-3d/Models/FBX/gizmo.fbx" };
-
-        Assimp::Importer importer;
-        for (auto&& path : modelPaths)
-        {
-            const aiScene* scene = importer.ReadFile(
-                path.generic_string().c_str(),
-                aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
-            if (Verify(scene) && Verify(scene->mRootNode))
-            {
-                StaticMeshBundle mesh;
-                mesh.importFrom(scene->mRootNode, scene, path);
-                mesh.setShader(shaderManager.getShaderProgram("color"_atom));
-                mesh.setOutlineShader(shaderManager.getShaderProgram("outline"_atom));
-                gameScene.addMesh(std::move(mesh));
-            }
-        }
+        _gizmo.initialize();
     }
 } // namespace Core

@@ -77,6 +77,8 @@ namespace Core
     protected:
         Window* _window = nullptr;
 
+        Gizmo _gizmo;
+
         // Pre-launch settings TODO: MOVE IT!!!
         std::filesystem::path _assetsPath = "assets";
         std::filesystem::path _shaderPath = "assets/shaders";

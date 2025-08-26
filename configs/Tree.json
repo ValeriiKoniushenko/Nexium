@@ -6,7 +6,7 @@
             0.0
         ],
         "position": [
-            35.0,
+            0.0,
             0.0,
             0.0
         ],
@@ -63,7 +63,12 @@
                 "type": "StaticMesh"
             },
             "GraphicsComponentData": {
-                "modifiers": []
+                "modifiers": [
+                    {
+                        "modifier": "Disable",
+                        "value": "CullFace"
+                    }
+                ]
             },
             "Transformable": {
                 "origin": [
@@ -269,7 +274,12 @@
                 "type": "StaticMesh"
             },
             "GraphicsComponentData": {
-                "modifiers": []
+                "modifiers": [
+                    {
+                        "modifier": "Disable",
+                        "value": "CullFace"
+                    }
+                ]
             },
             "Transformable": {
                 "origin": [

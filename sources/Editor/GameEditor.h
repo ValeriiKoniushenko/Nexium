@@ -22,6 +22,7 @@
 
 #pragma once
 
+#include "Gizmo.h"
 #include "InputDevices/InputManager.h"
 #include "Misc/BaseLog.h"
 #include "ModuleInfo.h"

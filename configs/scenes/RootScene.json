@@ -3,7 +3,6 @@
         "Main Spectator"
     ],
     "objects": [
-        "gizmo",
         "Tree",
         "FireHydrant"
     ],
