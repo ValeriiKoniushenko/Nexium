@@ -331,8 +331,8 @@ namespace Core
 
         BaseComponent(BaseComponent&& other) noexcept;
         BaseComponent& operator=(BaseComponent&& other) noexcept;
-        BaseComponent(BaseComponent& other) = default;
-        BaseComponent& operator=(const BaseComponent& other) = default;
+        BaseComponent(BaseComponent& other);
+        BaseComponent& operator=(const BaseComponent& other);
 
         [[nodiscard]] bool operator==(const Self& other) const;
 
@@ -375,15 +375,15 @@ namespace Core
         }
 
         template<IsComponent ComponentT>
-        [[nodiscard]] ComponentT* findFirstChildOf()
+        [[nodiscard]] ComponentT* findFirstChildOf(const StringAtom& name = ""_atom)
         {
-            return Impl_findFirstChildOf<ComponentT, false>(this);
+            return Impl_findFirstChildOf<ComponentT, false>(this, name);
         }
 
         template<IsComponent ComponentT>
-        [[nodiscard]] const ComponentT* findFirstChildOf() const
+        [[nodiscard]] const ComponentT* findFirstChildOf(const StringAtom& name = ""_atom) const
         {
-            return Impl_findFirstChildOf<ComponentT, true>(this);
+            return Impl_findFirstChildOf<ComponentT, true>(this, name);
         }
 
         template<IsComponent ComponentT, class... Args>
@@ -520,7 +520,7 @@ namespace Core
 
         template<IsComponent TargetT, bool isConst>
         [[nodiscard]] static typename TargetT::template AdaptiveRawPtr<isConst>
-            Impl_findFirstChildOf(AdaptiveRawPtr<isConst> me);
+            Impl_findFirstChildOf(AdaptiveRawPtr<isConst> me, const StringAtom& name);
     };
 
     struct InvalidComponent : public BaseComponent
@@ -641,11 +641,12 @@ namespace Core
 
     template<IsComponent TargetT, bool isConst>
     typename TargetT::template AdaptiveRawPtr<isConst> BaseComponent::Impl_findFirstChildOf(
-        BaseComponent::AdaptiveRawPtr<isConst> me)
+        BaseComponent::AdaptiveRawPtr<isConst> me, const StringAtom& name)
     {
         typename TargetT::template AdaptiveRawPtr<isConst> found = nullptr;
+
         me->forEach(
-            [&found](BaseComponent* comp)
+            [&found, &name](BaseComponent* comp)
             {
                 Assert(comp->_type.isStatic());
                 Assert(TargetT::componentType.isStatic());
@@ -657,6 +658,15 @@ namespace Core
 #else
                     found = static_cast<TargetT*>(comp);
 #endif
+                    if (!name.isEmpty() && found)
+                    {
+                        if (found->_name == name)
+                        {
+                            return false;
+                        }
+                        return true;
+                    }
+
                     return false;
                 }
                 return true;

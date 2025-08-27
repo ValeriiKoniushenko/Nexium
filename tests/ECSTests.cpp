@@ -32,16 +32,20 @@ namespace
     {
         ECS_REGISTER_NEW_COMPONENT(DummyComponent, BaseComponent);
         int a = 123;
+        std::string name = "Lola";
+
         [[nodiscard]] nlohmann::json toJson() const override
         {
             auto json = BaseComponent::toJson();
             json["a"] = a;
+            json["name"] = name;
             return json;
         }
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override
         {
             BaseComponent::fromJson(json, isIgnoreChildren);
             a = json["a"].get<int>();
+            name = json["name"].get<std::string>();
         }
     };
 
@@ -105,12 +109,47 @@ TEST(ECSBaseTests, SimpleCreation)
     }
 }
 
+TEST(ECSBaseTests, SimpleCopy)
+{
+    DummyComponent c;
+    c.setComponentName("SomeName");
+    EXPECT_EQ("SomeName", c.getComponentName());
+    EXPECT_EQ("DummyComponent", c.getComponentType());
+    EXPECT_TRUE(c.getComponentType().isStatic());
+
+    DummyComponent copy = c;
+    EXPECT_EQ("SomeName", c.getComponentName());
+    EXPECT_EQ("DummyComponent", c.getComponentType());
+    EXPECT_TRUE(c.getComponentType().isStatic());
+
+    EXPECT_EQ("SomeName", copy.getComponentName());
+    EXPECT_EQ("DummyComponent", copy.getComponentType());
+    EXPECT_TRUE(copy.getComponentType().isStatic());
+}
+
+TEST(ECSBaseTests, SimpleMove)
+{
+    DummyComponent c;
+    c.setComponentName("SomeName");
+    EXPECT_EQ("SomeName", c.getComponentName());
+    EXPECT_EQ("DummyComponent", c.getComponentType());
+    EXPECT_TRUE(c.getComponentType().isStatic());
+
+    DummyComponent copy = std::move(c);
+    EXPECT_TRUE(c.getComponentName().isEmpty());
+    EXPECT_TRUE(c.getComponentType().isEmpty());
+
+    EXPECT_EQ("SomeName", copy.getComponentName());
+    EXPECT_EQ("DummyComponent", copy.getComponentType());
+    EXPECT_TRUE(copy.getComponentType().isStatic());
+}
+
 TEST(ECSBaseTests, Misc)
 {
     DummyComponent c("SomeName");
     EXPECT_TRUE(c.isTypeOf<DummyComponent>());
     EXPECT_TRUE(c.isValid());
-    // EXPECT_EQ(nullptr, c.castTo<HardConstructorComponent>());
+
     EXPECT_NE(nullptr, c.castTo<DummyComponent>());
     EXPECT_NE(0, c.makeHash());
 }
@@ -136,6 +175,51 @@ TEST(ECSBaseTests, AddingNewChild)
     EXPECT_EQ(&root, top->getParent());
     EXPECT_EQ(root.getChildren().front(), top);
     EXPECT_NE(root, *top);
+}
+
+TEST(ECSBaseTests, AddingNewChildAndCopy)
+{
+    DummyComponent root("Root");
+    EXPECT_EQ("Root", root.getComponentName());
+    EXPECT_EQ("DummyComponent", root.getComponentType());
+
+    {
+        auto top = root.addChildComponent<DummyComponent>();
+        top->setComponentName("Top");
+        EXPECT_EQ("Top", top->getComponentName());
+        EXPECT_EQ("DummyComponent", top->getComponentType());
+
+        ASSERT_FALSE(root.hasParent());
+        ASSERT_TRUE(root.hasChildren());
+        ASSERT_EQ(1, root.getChildrenCount());
+        ASSERT_EQ(1, root.getChildren().size());
+
+        ASSERT_TRUE(top->hasParent());
+        ASSERT_FALSE(top->hasChildren());
+        ASSERT_EQ(&root, top->getParent());
+        ASSERT_EQ(root.getChildren().front(), top);
+        ASSERT_NE(root, *top);
+    }
+
+    {
+        DummyComponent copy = root;
+
+        auto top = copy.getChildAt(0);
+        EXPECT_NE(top.get(), root.getChildAt(0).get());
+        EXPECT_EQ("Top", top->getComponentName());
+        EXPECT_EQ("DummyComponent", top->getComponentType());
+
+        ASSERT_FALSE(copy.hasParent());
+        ASSERT_TRUE(copy.hasChildren());
+        ASSERT_EQ(1, copy.getChildrenCount());
+        ASSERT_EQ(1, copy.getChildren().size());
+
+        ASSERT_TRUE(top->hasParent());
+        ASSERT_FALSE(top->hasChildren());
+        ASSERT_EQ(&copy, top->getParent());
+        ASSERT_EQ(copy.getChildren().front(), top);
+        ASSERT_NE(copy, *top);
+    }
 }
 
 TEST(ECSBaseTests, AdvancedAddingNewChild)
@@ -347,4 +431,95 @@ TEST_F(ECSTreeTests, exportingToJson)
 
     std::cout << dump << std::endl;
     EXPECT_EQ(dump, newDump);
+}
+
+TEST_F(ECSTreeTests, DeepTreeCopy)
+{
+    std::vector<BaseComponent*> rootSet;
+    std::vector<BaseComponent*> newRootSet;
+
+    root.forEach(
+        [&](auto* c)
+        {
+            rootSet.push_back(c);
+        });
+
+    DummyComponent newRoot = root;
+
+    newRoot.forEach(
+        [&](auto* c)
+        {
+            newRootSet.push_back(c);
+        });
+
+    ASSERT_FALSE(rootSet.empty());
+    ASSERT_EQ(rootSet.size(), newRootSet.size());
+
+    for (std::size_t i = 0; i < rootSet.size(); ++i)
+    {
+        auto* first = rootSet[i];
+        auto* second = newRootSet[i];
+
+        ASSERT_NE(first, second);
+        ASSERT_EQ(first->getComponentName(), second->getComponentName());
+        ASSERT_EQ(first->getComponentType(), second->getComponentType());
+        ASSERT_EQ(first->getChildrenCount(), second->getChildrenCount());
+
+        ASSERT_TRUE(first->getComponentType().isStatic());
+        ASSERT_TRUE(second->getComponentType().isStatic());
+
+        if (first->hasParent() || second->hasParent())
+        {
+            ASSERT_NE(first->getParent(), second->getParent());
+            ASSERT_EQ(*first->getParent(), *second->getParent());
+        }
+    }
+}
+
+TEST_F(ECSTreeTests, DeepTreeCopyFromSpecificMidNode)
+{
+    std::vector<BaseComponent*> rootSet;
+    std::vector<BaseComponent*> newRootSet;
+
+    auto node = root.findFirstChildOf<DummyComponent>("Top2");
+    ASSERT_NE(nullptr, node);
+
+    node->forEach(
+        [&](auto* c)
+        {
+            rootSet.push_back(c);
+        });
+
+    DummyComponent newNode = *node;
+
+    newNode.forEach(
+        [&](auto* c)
+        {
+            newRootSet.push_back(c);
+        });
+
+    ASSERT_EQ(nullptr, newNode.getParent());
+
+    ASSERT_FALSE(rootSet.empty());
+    ASSERT_EQ(rootSet.size(), newRootSet.size());
+
+    for (std::size_t i = 0; i < rootSet.size(); ++i)
+    {
+        auto* first = rootSet[i];
+        auto* second = newRootSet[i];
+
+        ASSERT_NE(first, second);
+        ASSERT_EQ(first->getComponentName(), second->getComponentName());
+        ASSERT_EQ(first->getComponentType(), second->getComponentType());
+        ASSERT_EQ(first->getChildrenCount(), second->getChildrenCount());
+
+        ASSERT_TRUE(first->getComponentType().isStatic());
+        ASSERT_TRUE(second->getComponentType().isStatic());
+
+        if (first->hasParent() && second->hasParent())
+        {
+            ASSERT_NE(first->getParent(), second->getParent());
+            ASSERT_EQ(*first->getParent(), *second->getParent());
+        }
+    }
 }

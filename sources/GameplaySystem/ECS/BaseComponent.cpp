@@ -343,4 +343,27 @@ namespace Core
         newComponent->_parent = this;
     }
 
+    BaseComponent::BaseComponent(BaseComponent& other)
+    {
+        *this = other;
+    }
+
+    BaseComponent& BaseComponent::operator=(const BaseComponent& other)
+    {
+        if (&other != this)
+        {
+            _name = other._name;
+            _type = other._type;
+
+            _children.clear();
+            for (auto& child : other._children)
+            {
+                _children.emplace_back(new BaseComponent(*child));
+                _children.back()->_parent = this;
+            }
+        }
+
+        return *this;
+    }
+
 } // namespace Core
