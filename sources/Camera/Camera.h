@@ -30,7 +30,7 @@
 namespace Core
 {
 
-    class BaseCamera : public Actor, public JsonCacheable
+    class BaseCamera : public Actor
     {
         ECS_REGISTER_NEW_COMPONENT(BaseCamera, Actor);
 

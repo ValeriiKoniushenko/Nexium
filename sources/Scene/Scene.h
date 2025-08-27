@@ -42,39 +42,30 @@ namespace Core
         void setSceneName(StringAtom name);
         [[nodiscard]] const StringAtom& getSceneName() const noexcept;
 
-        void addMesh(StaticMeshBundle&& mesh);
+        template<IsActorBased T>
+        void addActor(T&& actor, bool readFromCache = false)
+        {
+            _actors.emplace_back(new T(std::move(actor)));
 
-        [[nodiscard]] const std::vector<StaticMeshBundle::Ptr>& getStaticMeshBundles() const noexcept
-        {
-            return _staticMeshBundles;
+            if (readFromCache)
+            {
+                _actors.back()->tryReadFromCache();
+            }
         }
-        [[nodiscard]] std::vector<StaticMeshBundle::Ptr>& getStaticMeshBundles() noexcept
+
+        template<IsActorBased T, class... Args>
+        T* createAndGetActor(Args... args)
         {
-            return _staticMeshBundles;
+            _actors.emplace_back(new T(std::forward<Args>(args)...));
+            return reinterpret_cast<T*>(_actors.back().get());
         }
+
+        [[nodiscard]] const std::vector<Actor::Ptr>& getActors() const noexcept { return _actors; }
+        [[nodiscard]] std::vector<Actor::Ptr>& getActors() noexcept { return _actors; }
 
         [[nodiscard]] nlohmann::json toJson() const override;
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
 
-        [[nodiscard]] const std::vector<BaseComponent::Ptr>& getLogicalComponents() const noexcept
-        {
-            return _logicalComponents;
-        }
-
-        /**
-         * @brief You can use it to add some logical stuff. I.e.:
-         * Spectator, some TriggerBoxes - in general everything
-         * that shouldn't be rendered.
-         */
-        template<IsComponent CompT, class... Args>
-        CompT* createAndGetLogicalComponent(Args&&... args)
-        {
-            typename CompT::Ptr newComp = new CompT(std::forward<Args>(args)...);
-            newComp->initialize();
-            _logicalComponents.push_back(std::move(newComp));
-            return static_cast<CompT*>(_logicalComponents.back().get());
-        }
-        
     public:
         Grid grid;
 
@@ -88,8 +79,7 @@ namespace Core
         void writeToCacheSeparateData() const;
 
     protected:
-        std::vector<StaticMeshBundle::Ptr> _staticMeshBundles;
-        std::vector<BaseComponent::Ptr> _logicalComponents;
+        std::vector<Actor::Ptr> _actors;
         StringAtom _sceneName = "None";
     };
 } // namespace Core

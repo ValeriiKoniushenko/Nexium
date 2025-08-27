@@ -37,7 +37,7 @@ namespace Core
     //    \____/  \__,_||___/ \___|
     // ========================================================================
 
-    void BaseEWC::onTick()
+    void BaseEWC::onTick(float delta)
     {
         if (beginWindowDraw())
         {

@@ -24,11 +24,12 @@
 
 #include "GameplaySystem/ECS/BaseComponent.h"
 #include "GameplaySystem/ECS/Transformable.h"
+#include "Misc/JsonCacheable.h"
 
 namespace Core
 {
 
-    class Actor : public Transformable, public BaseComponent
+    class Actor : public Transformable, public BaseComponent, public JsonCacheable
     {
         ECS_REGISTER_NEW_COMPONENT(Actor, BaseComponent);
 
@@ -46,8 +47,23 @@ namespace Core
         [[nodiscard]] nlohmann::json toJson() const override;
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
 
-    public:
+        /**
+         * @brief will draw with default shader & logic. Single draw bundle!
+         */
+        virtual void draw() {};
+
+        /**
+         * @brief only draw call with graphics modifiers - nothing more.
+         * Before using of this function you must manually prepare the shader &
+         * 'use' it.
+         */
+        virtual void pureDraw() {};
+
+
     protected:
     };
+
+    template<class T>
+    concept IsActorBased = std::is_base_of_v<Actor, T>;
 
 } // namespace Core

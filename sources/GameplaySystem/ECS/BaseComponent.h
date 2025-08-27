@@ -201,7 +201,7 @@ namespace Core
          * onTick. Inherit from onTick - and implement your own logic for
          * update and/or draw.
          */
-        void tick();
+        void tick(float delta);
 
         [[nodiscard]] spdlog::logger* getLogger() const final { return Ecs::getLogger(); }
 
@@ -260,7 +260,7 @@ namespace Core
         /**
          * @brief This method will be called automatically. Don't call it directly.
          */
-        virtual void onTick() {}
+        virtual void onTick(float delta) {}
 
         bool _isEnabled = true;
 

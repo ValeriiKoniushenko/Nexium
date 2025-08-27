@@ -68,8 +68,9 @@ namespace Core
         renderToTextureObject.generate();
         gameEditor.initialize();
 
-        if (auto* spectator = gameScene.createAndGetLogicalComponent<Spectator>())
+        if (auto* spectator = gameScene.createAndGetActor<Spectator>())
         {
+            spectator->tryReadFromCache();
             currentCamera = spectator->findFirstChildOf<BaseCamera>();
         }
 

@@ -167,7 +167,7 @@ namespace Core
 
             for (auto&& wnd : _windows)
             {
-                wnd->tick();
+                wnd->tick(delta);
             }
 
             ImGui::Render();

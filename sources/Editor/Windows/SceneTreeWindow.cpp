@@ -81,22 +81,11 @@ namespace Core
             return;
         }
 
-        auto& graphicNodes = _scene->getStaticMeshBundles();
-        if (ImGui::TreeNodeEx("Graphic nodes", ImGuiTreeNodeFlags_DefaultOpen | _commonTreeFlags))
+        auto& actors = _scene->getActors();
+        if (ImGui::TreeNodeEx("Root", ImGuiTreeNodeFlags_DefaultOpen | _commonTreeFlags))
         {
             int32_t internalId = 0;
-            for (auto& node : graphicNodes)
-            {
-                drawTreeNode(node.get(), internalId++);
-            }
-            ImGui::TreePop();
-        }
-
-        auto& logicalNodes = _scene->getLogicalComponents();
-        if (ImGui::TreeNodeEx("Logical nodes", ImGuiTreeNodeFlags_DefaultOpen | _commonTreeFlags))
-        {
-            int32_t internalId = 0;
-            for (auto& node : logicalNodes)
+            for (auto&& node : actors)
             {
                 drawTreeNode(node.get(), internalId++);
             }

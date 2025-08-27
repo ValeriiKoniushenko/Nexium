@@ -49,7 +49,7 @@ namespace Core
         virtual void putArguments(const StringAtom& args) {}
 
     protected:
-        void onTick() final;
+        void onTick(float delta) final;
         virtual void onUpdate() {};
         virtual void onDraw() = 0;
 

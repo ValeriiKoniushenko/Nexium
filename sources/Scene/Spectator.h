@@ -28,7 +28,7 @@
 
 namespace Core
 {
-    class Spectator : public Actor, public JsonCacheable
+    class Spectator : public Actor
     {
         ECS_REGISTER_NEW_COMPONENT(Spectator, Actor);
 
@@ -49,7 +49,7 @@ namespace Core
         [[nodiscard]] nlohmann::json toCacheData() const override;
         void fromCacheData(const nlohmann::json& json) override;
 
-        void onTick() override;
+        void onTick(float delta) override;
         void onInit() override;
     };
 } // namespace Core

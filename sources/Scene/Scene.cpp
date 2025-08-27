@@ -36,7 +36,7 @@ namespace Core
 
         grid.draw();
 
-        for (auto&& mesh : _staticMeshBundles)
+        for (auto&& mesh : _actors)
         {
             mesh->draw();
         }
@@ -55,25 +55,11 @@ namespace Core
         return _sceneName;
     }
 
-    void Scene::addMesh(StaticMeshBundle&& mesh)
-    {
-        _staticMeshBundles.emplace_back(new StaticMeshBundle(std::move(mesh)));
-        _staticMeshBundles.back()->tryReadFromCache();
-    }
-
     void Scene::writeToCacheSeparateData() const
     {
-        for (auto&& mesh : _staticMeshBundles)
+        for (auto&& actor : _actors)
         {
-            mesh->writeToCache();
-        }
-
-        for (auto&& obj : _logicalComponents)
-        {
-            if (auto* cacheableObj = dynamic_cast<JsonCacheable*>(obj.get()))
-            {
-                cacheableObj->writeToCache();
-            }
+            actor->writeToCache();
         }
     }
 
@@ -83,15 +69,9 @@ namespace Core
 
         json["sceneName"] = _sceneName;
         json["objects"] = nlohmann::json::array();
-        for (auto& obj : _staticMeshBundles)
+        for (auto&& obj : _actors)
         {
             json["objects"].push_back(obj->getComponentName());
-        }
-
-        json["logicalObjects"] = nlohmann::json::array();
-        for (auto& obj : _logicalComponents)
-        {
-            json["logicalObjects"].push_back(obj->getComponentName());
         }
 
         return json;
@@ -138,9 +118,9 @@ namespace Core
 
     void Scene::tick(float timeDelta)
     {
-        for (auto&& obj : _logicalComponents)
+        for (auto&& obj : _actors)
         {
-            obj->tick();
+            obj->tick(timeDelta);
         }
     }
 

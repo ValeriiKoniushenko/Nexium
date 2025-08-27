@@ -49,9 +49,15 @@ namespace Core
 
         shader->use();
         shader->setUniform("uProjAndView"_atom, camera->getMatrix());
-        for (auto&& bundle : scene.getStaticMeshBundles())
+        for (auto&& actor : scene.getActors())
         {
-            if (!bundle->isEnabled())
+            if (!actor->isEnabled())
+            {
+                continue;
+            }
+
+            auto* bundle = actor->tryCastTo<StaticMeshBundle>();
+            if (!bundle)
             {
                 continue;
             }
@@ -93,9 +99,15 @@ namespace Core
 
             const GLuint pickedID = data[0] + data[1] * 256 + data[2] * 256 * 256;
             StaticMesh* found = nullptr;
-            for (auto&& bundle : scene.getStaticMeshBundles())
+            for (auto&& actor : scene.getActors())
             {
-                if (!bundle->isEnabled())
+                if (!actor->isEnabled())
+                {
+                    continue;
+                }
+
+                auto* bundle = actor->tryCastTo<StaticMeshBundle>();
+                if (!bundle)
                 {
                     continue;
                 }

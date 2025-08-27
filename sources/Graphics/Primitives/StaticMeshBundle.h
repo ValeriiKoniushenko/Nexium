@@ -28,7 +28,7 @@
 
 namespace Core
 {
-    class StaticMeshBundle : public Actor, public JsonCacheable, public IOutliner
+    class StaticMeshBundle : public Actor, public IOutliner
     {
         ECS_REGISTER_NEW_COMPONENT(StaticMeshBundle, Actor);
 
@@ -39,14 +39,14 @@ namespace Core
         /**
          * @brief will draw with default shader & logic. Single draw bundle!
          */
-        void draw();
+        void draw() override;
 
         /**
          * @brief only draw call with graphics modifiers - nothing more.
          * Before using of this function you must manually prepare the shader &
          * 'use' it.
          */
-        void pureDraw();
+        void pureDraw() override;
 
         void importFrom(const aiNode* node, const aiScene* scene,
                         const std::filesystem::path& modelPath = "");

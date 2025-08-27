@@ -148,11 +148,11 @@ namespace Core
         return *this;
     }
 
-    void AbstractComponent::tick()
+    void AbstractComponent::tick(float delta)
     {
         if (_isEnabled && _isInited && !_noTick)
         {
-            onTick();
+            onTick(delta);
         }
     }
 

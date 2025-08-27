@@ -65,7 +65,7 @@ void TemplateGameInstance::onInitFinish()
             mesh.importFrom(scene->mRootNode, scene, path);
             mesh.setShader(shaderManager.getShaderProgram("color"_atom));
             mesh.setOutlineShader(shaderManager.getShaderProgram("outline"_atom));
-            gameScene.addMesh(std::move(mesh));
+            gameScene.addActor(std::move(mesh), true);
         }
     }
 }

@@ -73,9 +73,9 @@ namespace Core
         fromJson(json, false);
     }
 
-    void Spectator::onTick()
+    void Spectator::onTick(float delta)
     {
-        Actor::onTick();
+        Actor::onTick(delta);
 
         keyboardInput.update();
         mouseInput.update();
