@@ -63,11 +63,12 @@ namespace Core
 
     void JsonCacheable::readFromCache()
     {
-        std::ifstream ifs(getTargetPath());
+        const auto targetPath = getTargetPath();
+        std::ifstream ifs(targetPath);
         if (!ifs.is_open())
         {
             globalLog.warnLog("Can't open cache file for read: "
-                              + getTargetPath().generic_string());
+                              + targetPath.generic_string());
             return;
         }
 
@@ -77,15 +78,22 @@ namespace Core
         {
             fromCacheData(json);
         }
+        catch (JsonAdapter::Exception& e)
+        {
+            globalLog.traceLog("Can't read cache due to: '{}'. Cache will be cleared."_f << e.message);
+            clearCache();
+        }
         catch (std::exception& e)
         {
             globalLog.errorLog("Exception while reading of the cache file: '{}'. The reason: {}"_f
-                               << getTargetPath().generic_string() << e.what());
+                               << targetPath.generic_string() << e.what());
+            clearCache();
         }
         catch (...)
         {
             globalLog.errorLog("Exception while reading of the cache file: '{}'."_f
-                               << getTargetPath().generic_string());
+                               << targetPath.generic_string());
+            clearCache();
         }
     }
 
@@ -100,6 +108,16 @@ namespace Core
     std::filesystem::path JsonCacheable::getTargetPath() const
     {
         return getCacheDir() / (getCacheHash().toStdString() + ".json");
+    }
+
+    void JsonCacheable::clearCache()
+    {
+        std::error_code ec;
+        std::filesystem::remove_all(getTargetPath(), ec);
+        if (ec)
+        {
+            globalLog.errorLog("Can't clear cache: {}"_f << ec.message());
+        }
     }
 
 } // namespace Core

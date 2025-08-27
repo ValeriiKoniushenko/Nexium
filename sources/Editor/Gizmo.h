@@ -47,6 +47,6 @@ namespace Core
     private:
         bool _isEnabled = false;
         StaticMeshBundle _mesh;
-        Delegate<void(BaseComponent*,bool)>::IDGuard _onSelectChangeId;
+        DelegateSubscriber _onSelectChangeId;
     };
 } // namespace Core

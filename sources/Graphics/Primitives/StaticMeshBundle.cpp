@@ -149,9 +149,7 @@ namespace Core
 
     nlohmann::json StaticMeshBundle::toJson() const
     {
-        auto json = BaseComponent::toJson();
-
-        json["Transformable"] = Transformable::toJson();
+        auto json = Actor::toJson();
 
         for (const auto* m : _meshes)
         {
@@ -163,12 +161,7 @@ namespace Core
 
     void StaticMeshBundle::fromJson(const nlohmann::json& json, bool isIgnoreChildren /* = false*/)
     {
-        BaseComponent::fromJson(json, true);
-
-        if (json.contains("Transformable"))
-        {
-            Transformable::fromJson(json["Transformable"], isIgnoreChildren);
-        }
+        Actor::fromJson(json, true);
 
         if (json.contains("meshes"))
         {

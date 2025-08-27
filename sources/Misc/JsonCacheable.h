@@ -41,6 +41,7 @@ namespace Core
         [[nodiscard]] bool hasCache() const;
         void readFromCache();
         void tryReadFromCache();
+        void clearCache();
 
     protected:
         JsonCacheable() = default;

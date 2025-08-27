@@ -32,6 +32,7 @@ namespace Core
     nlohmann::json Spectator::toJson() const
     {
         auto json = Actor::toJson();
+
         json["speed"] = speed;
         json["mouseSensitivity"] = mouseSensitivity;
         json["keyboardInput"] = keyboardInput.toJson();

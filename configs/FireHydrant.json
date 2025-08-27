@@ -6,9 +6,9 @@
             0.0
         ],
         "position": [
-            180.0,
+            433.0,
             0.0,
-            121.0
+            0.0
         ],
         "rotation": [
             0.0,
@@ -23,12 +23,6 @@
     },
     "children": [
         {
-            "BaseComponent": {
-                "isEnabled": false,
-                "name": "FireHydrant_LOD2",
-                "noTick": false,
-                "type": "StaticMesh"
-            },
             "GraphicsComponentData": {
                 "modifiers": []
             },
@@ -53,15 +47,13 @@
                     1.0,
                     1.0
                 ]
-            }
+            },
+            "isEnabled": false,
+            "name": "FireHydrant_LOD2",
+            "noTick": false,
+            "type": "StaticMesh"
         },
         {
-            "BaseComponent": {
-                "isEnabled": false,
-                "name": "FireHydrant_LOD1",
-                "noTick": false,
-                "type": "StaticMesh"
-            },
             "GraphicsComponentData": {
                 "modifiers": []
             },
@@ -86,15 +78,13 @@
                     1.0,
                     1.0
                 ]
-            }
+            },
+            "isEnabled": false,
+            "name": "FireHydrant_LOD1",
+            "noTick": false,
+            "type": "StaticMesh"
         },
         {
-            "BaseComponent": {
-                "isEnabled": true,
-                "name": "FireHydrant_LOD0",
-                "noTick": false,
-                "type": "StaticMesh"
-            },
             "GraphicsComponentData": {
                 "modifiers": []
             },
@@ -119,18 +109,16 @@
                     1.0,
                     1.0
                 ]
-            }
+            },
+            "isEnabled": true,
+            "name": "FireHydrant_LOD0",
+            "noTick": false,
+            "type": "StaticMesh"
         }
     ],
     "isEnabled": true,
     "meshes": [
         {
-            "BaseComponent": {
-                "isEnabled": false,
-                "name": "FireHydrant_LOD2",
-                "noTick": false,
-                "type": "StaticMesh"
-            },
             "GraphicsComponentData": {
                 "modifiers": []
             },
@@ -155,15 +143,13 @@
                     1.0,
                     1.0
                 ]
-            }
+            },
+            "isEnabled": false,
+            "name": "FireHydrant_LOD2",
+            "noTick": false,
+            "type": "StaticMesh"
         },
         {
-            "BaseComponent": {
-                "isEnabled": false,
-                "name": "FireHydrant_LOD1",
-                "noTick": false,
-                "type": "StaticMesh"
-            },
             "GraphicsComponentData": {
                 "modifiers": []
             },
@@ -188,15 +174,13 @@
                     1.0,
                     1.0
                 ]
-            }
+            },
+            "isEnabled": false,
+            "name": "FireHydrant_LOD1",
+            "noTick": false,
+            "type": "StaticMesh"
         },
         {
-            "BaseComponent": {
-                "isEnabled": true,
-                "name": "FireHydrant_LOD0",
-                "noTick": false,
-                "type": "StaticMesh"
-            },
             "GraphicsComponentData": {
                 "modifiers": []
             },
@@ -221,7 +205,11 @@
                     1.0,
                     1.0
                 ]
-            }
+            },
+            "isEnabled": true,
+            "name": "FireHydrant_LOD0",
+            "noTick": false,
+            "type": "StaticMesh"
         }
     ],
     "name": "FireHydrant",

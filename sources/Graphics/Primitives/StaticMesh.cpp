@@ -67,10 +67,8 @@ namespace Core
 
     nlohmann::json StaticMesh::toJson() const
     {
-        nlohmann::json json;
-
+        nlohmann::json json = BaseComponent::toJson();
         json["Transformable"] = Transformable::toJson();
-        json["BaseComponent"] = BaseComponent::toJson();
         json["GraphicsComponentData"] = GraphicsComponentData::toJson();
 
         return json;
@@ -78,13 +76,11 @@ namespace Core
 
     void StaticMesh::fromJson(const nlohmann::json& json, bool isIgnoreChildren /* = false*/)
     {
+        BaseComponent::fromJson(json, isIgnoreChildren);
+
         if (json.contains("Transformable"))
         {
             Transformable::fromJson(json["Transformable"], isIgnoreChildren);
-        }
-        if (json.contains("BaseComponent"))
-        {
-            BaseComponent::fromJson(json["BaseComponent"], isIgnoreChildren);
         }
         if (json.contains("GraphicsComponentData"))
         {

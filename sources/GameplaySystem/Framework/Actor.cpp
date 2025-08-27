@@ -38,7 +38,7 @@ namespace Core
 
     void Actor::fromJson(const nlohmann::json& json, bool isIgnoreChildren)
     {
-        BaseComponent::fromJson(json, false);
+        BaseComponent::fromJson(json, isIgnoreChildren);
 
         if (json.contains("Transformable"))
         {

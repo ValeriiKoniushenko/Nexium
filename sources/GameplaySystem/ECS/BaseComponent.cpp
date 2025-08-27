@@ -248,14 +248,8 @@ namespace Core
     {
         AbstractComponent::fromJson(json, isIgnoreChildren);
 
-        if (json.contains("name"))
-        {
-            _name = json["name"].get<StringAtom>();
-        }
-        if (json.contains("type"))
-        {
-            _type = StringAtom::Intern(json["type"].get<std::string>());
-        }
+        _name = requireAs<StringAtom>(json, "name");
+        _type = StringAtom::Intern(requireAs<StringAtom>(json, "type"));
 
         if (!isIgnoreChildren)
         {
@@ -263,7 +257,7 @@ namespace Core
             {
                 for (auto& childJson : json["children"])
                 {
-                    auto type = StringAtom::Intern(childJson["type"].get<StringAtom>());
+                    auto type = StringAtom::Intern(requireAs<StringAtom>(childJson, "type"));
                     auto c = rawAddChildComponent(GetGlobalComponentFactory().create(type));
                     c->fromJson(childJson, false);
                 }

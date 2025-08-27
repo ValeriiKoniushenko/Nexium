@@ -45,7 +45,7 @@ namespace Core
         template<IsActorBased T>
         void addActor(T&& actor, bool readFromCache = false)
         {
-            _actors.emplace_back(new T(std::move(actor)));
+            _actors.emplace_back(new T(std::forward<decltype(actor)>(actor)));
 
             if (readFromCache)
             {

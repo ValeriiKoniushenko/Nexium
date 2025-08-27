@@ -33,10 +33,43 @@ namespace Core
     class JsonAdapter
     {
     public:
+        struct Exception
+        {
+            explicit Exception(std::string msg)
+                : message{ std::move(msg) }
+            {
+            }
+
+            std::string message;
+        };
+
+    public:
         virtual ~JsonAdapter() = default;
 
         [[nodiscard]] virtual nlohmann::json toJson() const = 0;
         virtual void fromJson(const nlohmann::json& json, bool isIgnoreChildren) = 0;
+
+        template<class T>
+        [[nodiscard]] T requireAs(const nlohmann::json& json, const char* key)
+        {
+            if (!json.contains(key))
+            {
+                throw Exception(std::format("Can't read key: '{}'", key));
+            }
+
+            return json[key].get<T>();
+        }
+
+        template<class T>
+        [[nodiscard]] T tryGetAs(const nlohmann::json& json, const char* key)
+        {
+            if (json.contains(key))
+            {
+                return json[key].get<T>();
+            }
+
+            return {};
+        }
     };
 
 } // namespace Core

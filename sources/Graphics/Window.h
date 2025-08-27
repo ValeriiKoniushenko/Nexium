@@ -172,9 +172,9 @@ namespace Core
         void registerEvents();
 
     private:
-        decltype(onResize)::IDGuard _idOnResize;
-        decltype(onMouseMove)::IDGuard _idOnMouseMove;
-        decltype(onMouseKeyPressed)::IDGuard _idOnMouseKeyPressed;
+        DelegateSubscriber _idOnResize;
+        DelegateSubscriber _idOnMouseMove;
+        DelegateSubscriber _idOnMouseKeyPressed;
     };
 
     Window& GetWindow();

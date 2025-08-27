@@ -48,7 +48,7 @@ namespace Core
     protected:
         Scene* _scene = nullptr;
         int _commonTreeFlags = ImGuiTreeNodeFlags_OpenOnDoubleClick;
-        Delegate<void(BaseComponent*,bool)>::IDGuard _onSelectChangeId;
+        DelegateSubscriber _onSelectChangeId;
 
     private:
         void drawTreeNode(BaseComponent* n, int32_t id, bool isInSelectedSubtree = false);

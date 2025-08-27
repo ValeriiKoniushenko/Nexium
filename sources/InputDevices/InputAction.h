@@ -166,7 +166,7 @@ namespace Core
          * @param SpecKeysState states of special keys
          */
         Delegate<void(SpecKeysState)> _onActionPrivate;
-        std::optional<typename decltype(_onActionPrivate)::IDGuard> _idActionPrivate;
+        std::optional<DelegateSubscriber> _idActionPrivate;
 
     protected:
         StringAtom _name;
