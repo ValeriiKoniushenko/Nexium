@@ -22,18 +22,15 @@
 
 #pragma once
 
+#include "GameplaySystem/Framework/Actor.h"
 #include "Misc/JsonCacheable.h"
 #include "StaticMesh.h"
 
 namespace Core
 {
-    class StaticMeshBundle :
-        public BaseComponent,
-        public JsonCacheable,
-        public Transformable,
-        public IOutliner
+    class StaticMeshBundle : public Actor, public JsonCacheable, public IOutliner
     {
-        ECS_REGISTER_NEW_COMPONENT(StaticMeshBundle, BaseComponent);
+        ECS_REGISTER_NEW_COMPONENT(StaticMeshBundle, Actor);
 
     public:
         using MeshesT = std::vector<StaticMesh*>;

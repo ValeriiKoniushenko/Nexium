@@ -254,7 +254,7 @@ namespace Core
         }
         if (json.contains("type"))
         {
-            const_cast<StringAtom&>(_type) = StringAtom::Intern(json["type"].get<std::string>());
+            _type = StringAtom::Intern(json["type"].get<std::string>());
         }
 
         if (!isIgnoreChildren)
@@ -283,7 +283,7 @@ namespace Core
             AbstractComponent::operator=(std::move(other));
             _name = std::move(other._name);
             _children = std::move(other._children);
-            const_cast<StringAtom&>(_type) = std::move(const_cast<StringAtom&>(other._type));
+            _type = std::move(other._type);
             _parent = other._parent;
 
             other._parent = nullptr;

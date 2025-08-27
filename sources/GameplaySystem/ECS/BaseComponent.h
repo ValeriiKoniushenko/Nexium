@@ -28,8 +28,8 @@
 #include "boost/smart_ptr/intrusive_ref_counter.hpp"
 
 #include <queue>
-#include <unordered_set>
 #include <stack>
+#include <unordered_set>
 
 /**
  * Put this macros inside your class body for every new component.
@@ -232,11 +232,12 @@ namespace Core
         void setNoTick(bool v) { _noTick = v; }
         [[nodiscard]] bool getNoTick() const noexcept { return _noTick; }
 
-        /**
-         * @brief Call this function directly only if you sure in it.
-         * It should be called only once per one component.
-         */
-        void initialize()
+        virtual /**
+                 * @brief Call this function directly only if you sure in it.
+                 * It should be called only once per one component.
+                 */
+            void
+            initialize()
         {
             if (!_isInited)
             {
@@ -330,6 +331,8 @@ namespace Core
 
         BaseComponent(BaseComponent&& other) noexcept;
         BaseComponent& operator=(BaseComponent&& other) noexcept;
+        BaseComponent(BaseComponent& other) = default;
+        BaseComponent& operator=(const BaseComponent& other) = default;
 
         [[nodiscard]] bool operator==(const Self& other) const;
 
@@ -504,7 +507,7 @@ namespace Core
     protected:
         ChildrenT _children;
         StringAtom _name;
-        const StringAtom _type;
+        StringAtom _type;
         BaseComponent* _parent = nullptr;
 
     private:

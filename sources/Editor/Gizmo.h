@@ -24,12 +24,13 @@
 
 #include "Core/Delegate.h"
 #include "Graphics/Primitives/StaticMeshBundle.h"
+#include "GameplaySystem/Framework/Actor.h"
 
 #include <filesystem>
 
 namespace Core
 {
-    class Gizmo
+    class Gizmo : public Actor
     {
     public:
         inline static const std::filesystem::path defaultModelPath

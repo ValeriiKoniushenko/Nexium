@@ -33,6 +33,14 @@ namespace Core
         ECS_REGISTER_NEW_COMPONENT(Actor, BaseComponent);
 
     public:
+        Actor(Actor&&) = default;
+        Actor(const Actor& other)
+            : BaseComponent(other._type, other._name)
+        {
+        }
+        Actor& operator=(Actor&&) = default;
+        Actor& operator=(const Actor&) = default;
+
         ~Actor() override = default;
 
         [[nodiscard]] nlohmann::json toJson() const override;

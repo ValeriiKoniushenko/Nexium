@@ -132,7 +132,6 @@ namespace Core
                 {
                     renderToTextureObject.callMePreDraw();
                     glClear(clearBits);
-                    _gizmo.drawAndUpdate();
 
                     onTick(world.timeDelta);
                     renderToTextureObject.callMeAfterDraw();
@@ -217,6 +216,5 @@ namespace Core
 
     void GameInstance::loadCoreResources()
     {
-        _gizmo.initialize();
     }
 } // namespace Core
