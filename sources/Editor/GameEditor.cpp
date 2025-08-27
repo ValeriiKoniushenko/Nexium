@@ -358,7 +358,14 @@ namespace Core
 
                         if (auto* bundle = mesh->tryToGetRootBundle())
                         {
-                            gGameInstance->objectSelectorManager.selectObject(bundle);
+                            if (bundle->isTypeOf<Gizmo>())
+                            {
+                                int i = 1;
+                            }
+                            else
+                            {
+                                gGameInstance->objectSelectorManager.selectObject(bundle);
+                            }
                         }
                         else
                         {

@@ -1,6 +1,7 @@
 {
     "objects": [
         "Main Spectator",
+        "gizmo",
         "Tree",
         "FireHydrant"
     ],

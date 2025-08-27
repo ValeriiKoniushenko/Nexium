@@ -217,5 +217,12 @@ namespace Core
 
     void GameInstance::loadCoreResources()
     {
+        loadGizmo();
+    }
+
+    void GameInstance::loadGizmo()
+    {
+        Gizmo* gizmo = gameScene.createAndGetActor<Gizmo>();
+        gizmo->load3DModel();
     }
 } // namespace Core

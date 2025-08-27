@@ -87,6 +87,7 @@ namespace Core
     private:
         void loadCoreResources();
         void gameLoop();
+        void loadGizmo();
     };
 
 } // namespace Core

@@ -29,8 +29,28 @@
 
 namespace Core
 {
+    ECS_REGISTER_NEW_COMPONENT_TYPE(Gizmo)
 
     void Gizmo::initialize()
+    {
+        _onSelectChangeId = gGameInstance->objectSelectorManager.onChange.subscribeAndGetID(
+            [this](BaseComponent* comp, bool newStatus)
+            {
+                if (comp == this)
+                {
+                    return;
+                }
+                if (auto* trans = dynamic_cast<Transformable*>(comp))
+                {
+                    if ((_isEnabled = newStatus))
+                    {
+                        setPosition(trans->getPosition());
+                    }
+                }
+            });
+    }
+
+    void Gizmo::load3DModel()
     {
         Assimp::Importer importer;
 
@@ -39,27 +59,10 @@ namespace Core
                                 aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
         if (Verify(scene) && Verify(scene->mRootNode))
         {
-            _mesh.importFrom(scene->mRootNode, scene, defaultModelPath);
-            _mesh.setShader(gGameInstance->shaderManager.getShaderProgram("color"_atom));
-            _mesh.setOutlineShader(gGameInstance->shaderManager.getShaderProgram("outline"_atom));
+            importFrom(scene->mRootNode, scene, defaultModelPath);
+            setShader(gGameInstance->shaderManager.getShaderProgram("color"_atom));
+            setOutlineShader(gGameInstance->shaderManager.getShaderProgram("outline"_atom));
         }
-
-        _onSelectChangeId = gGameInstance->objectSelectorManager.onChange.subscribeAndGetID(
-            [this](BaseComponent* comp, bool newStatus)
-            {
-                if (auto* trans = dynamic_cast<Transformable*>(comp))
-                {
-                    if ((_isEnabled = newStatus))
-                    {
-                        _mesh.setPosition(trans->getPosition());
-                    }
-                }
-            });
-    }
-
-    void Gizmo::drawAndUpdate()
-    {
-        _mesh.draw();
     }
 
 } // namespace Core

@@ -30,23 +30,19 @@
 
 namespace Core
 {
-    class Gizmo : public Actor
+    class Gizmo : public StaticMeshBundle
     {
+        ECS_REGISTER_NEW_COMPONENT(Gizmo, StaticMeshBundle);
+
     public:
         inline static const std::filesystem::path defaultModelPath
             = "assets/base-3d/Models/FBX/gizmo.fbx";
 
     public:
-        Gizmo() = default;
-        ~Gizmo() = default;
-
         void initialize();
-
-        void drawAndUpdate();
+        void load3DModel();
 
     private:
-        bool _isEnabled = false;
-        StaticMeshBundle _mesh;
         DelegateSubscriber _onSelectChangeId;
     };
 } // namespace Core

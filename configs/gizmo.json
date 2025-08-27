@@ -23,12 +23,6 @@
     },
     "children": [
         {
-            "BaseComponent": {
-                "isEnabled": true,
-                "name": "Y.001",
-                "noTick": false,
-                "type": "StaticMesh"
-            },
             "GraphicsComponentData": {
                 "modifiers": []
             },
@@ -53,15 +47,13 @@
                     1.0,
                     1.0
                 ]
-            }
+            },
+            "isEnabled": true,
+            "name": "Y.001",
+            "noTick": false,
+            "type": "StaticMesh"
         },
         {
-            "BaseComponent": {
-                "isEnabled": true,
-                "name": "X.001",
-                "noTick": false,
-                "type": "StaticMesh"
-            },
             "GraphicsComponentData": {
                 "modifiers": []
             },
@@ -86,15 +78,13 @@
                     1.0,
                     1.0
                 ]
-            }
+            },
+            "isEnabled": true,
+            "name": "X.001",
+            "noTick": false,
+            "type": "StaticMesh"
         },
         {
-            "BaseComponent": {
-                "isEnabled": true,
-                "name": "Z.001",
-                "noTick": false,
-                "type": "StaticMesh"
-            },
             "GraphicsComponentData": {
                 "modifiers": []
             },
@@ -119,15 +109,13 @@
                     1.0,
                     1.0
                 ]
-            }
+            },
+            "isEnabled": true,
+            "name": "Z.001",
+            "noTick": false,
+            "type": "StaticMesh"
         },
         {
-            "BaseComponent": {
-                "isEnabled": true,
-                "name": "Union.001",
-                "noTick": false,
-                "type": "StaticMesh"
-            },
             "GraphicsComponentData": {
                 "modifiers": []
             },
@@ -152,18 +140,16 @@
                     1.0,
                     1.0
                 ]
-            }
+            },
+            "isEnabled": true,
+            "name": "Union.001",
+            "noTick": false,
+            "type": "StaticMesh"
         }
     ],
     "isEnabled": true,
     "meshes": [
         {
-            "BaseComponent": {
-                "isEnabled": true,
-                "name": "Y.001",
-                "noTick": false,
-                "type": "StaticMesh"
-            },
             "GraphicsComponentData": {
                 "modifiers": []
             },
@@ -188,15 +174,13 @@
                     1.0,
                     1.0
                 ]
-            }
+            },
+            "isEnabled": true,
+            "name": "Y.001",
+            "noTick": false,
+            "type": "StaticMesh"
         },
         {
-            "BaseComponent": {
-                "isEnabled": true,
-                "name": "X.001",
-                "noTick": false,
-                "type": "StaticMesh"
-            },
             "GraphicsComponentData": {
                 "modifiers": []
             },
@@ -221,15 +205,13 @@
                     1.0,
                     1.0
                 ]
-            }
+            },
+            "isEnabled": true,
+            "name": "X.001",
+            "noTick": false,
+            "type": "StaticMesh"
         },
         {
-            "BaseComponent": {
-                "isEnabled": true,
-                "name": "Z.001",
-                "noTick": false,
-                "type": "StaticMesh"
-            },
             "GraphicsComponentData": {
                 "modifiers": []
             },
@@ -254,15 +236,13 @@
                     1.0,
                     1.0
                 ]
-            }
+            },
+            "isEnabled": true,
+            "name": "Z.001",
+            "noTick": false,
+            "type": "StaticMesh"
         },
         {
-            "BaseComponent": {
-                "isEnabled": true,
-                "name": "Union.001",
-                "noTick": false,
-                "type": "StaticMesh"
-            },
             "GraphicsComponentData": {
                 "modifiers": []
             },
@@ -287,7 +267,11 @@
                     1.0,
                     1.0
                 ]
-            }
+            },
+            "isEnabled": true,
+            "name": "Union.001",
+            "noTick": false,
+            "type": "StaticMesh"
         }
     ],
     "name": "gizmo",
