@@ -63,7 +63,6 @@ namespace Core
         {
             importFrom(scene->mRootNode, scene, defaultModelPath);
             setShader(gGameInstance->shaderManager.getShaderProgram("color"_atom));
-            setOutlineShader(gGameInstance->shaderManager.getShaderProgram("outline"_atom));
         }
     }
 
@@ -102,23 +101,12 @@ namespace Core
         }
 
         auto* camera = gGameInstance->currentCamera;
-        // auto mlt = sin(glm::radians(camera->getRotationY()));
-        {
-            auto t = camera->getForwardVector();
-            std::cout << "Camera: " << t.x << " " << t.y << " " << t.z << std::endl;
-        }
-        {
-            auto t = getForwardVector();
-            std::cout << "Gizmo: " << t.x << " " << t.y << " " << t.z << std::endl;
-        }
-
         auto dot = glm::dot(camera->getForwardVector(), getForwardVector());
         if (dot < 0.f)
         {
             delta.x *= -1.f;
         }
 
-        std::cout << "Dot: " << dot << std::endl << std::endl;
         if (data->direction == Gizmo::Direction::X)
         {
             moveRight(delta.x);
