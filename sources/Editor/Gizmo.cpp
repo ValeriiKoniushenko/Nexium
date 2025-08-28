@@ -100,6 +100,15 @@ namespace Core
             return;
         }
 
+        if (state.leftShift.cast() == Keyboard::KeyState::Pressed)
+        {
+            delta /= 5.f;
+        }
+        if (state.leftAlt.cast() == Keyboard::KeyState::Pressed)
+        {
+            delta *= 5.f;
+        }
+
         auto* camera = gGameInstance->currentCamera;
 
         if (data->direction == Gizmo::Direction::X)
