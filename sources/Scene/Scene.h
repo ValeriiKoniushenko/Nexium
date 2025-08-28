@@ -46,7 +46,7 @@ namespace Core
         void addActor(T&& actor, bool readFromCache = false)
         {
             _actors.emplace_back(new T(std::forward<decltype(actor)>(actor)));
-
+            _actors.back()->initialize();
             if (readFromCache)
             {
                 _actors.back()->tryReadFromCache();
@@ -57,6 +57,7 @@ namespace Core
         T* createAndGetActor(Args... args)
         {
             _actors.emplace_back(new T(std::forward<Args>(args)...));
+            _actors.back()->initialize();
             return reinterpret_cast<T*>(_actors.back().get());
         }
 

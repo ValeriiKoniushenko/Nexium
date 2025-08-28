@@ -88,4 +88,61 @@ namespace Core
         }
     }
 
+    void Gizmo::handleDrag(glm::vec2 delta, MouseInputAction::SpecKeysState state)
+    {
+        auto* data = dynamic_cast<Gizmo::DragData*>(gDragDrop.payload.data.get());
+        if (!Verify(data))
+        {
+            return;
+        }
+
+        if (!gGameInstance->currentCamera)
+        {
+            return;
+        }
+
+        auto* camera = gGameInstance->currentCamera;
+        // auto mlt = sin(glm::radians(camera->getRotationY()));
+        {
+            auto t = camera->getForwardVector();
+            std::cout << "Camera: " << t.x << " " << t.y << " " << t.z << std::endl;
+        }
+        {
+            auto t = getForwardVector();
+            std::cout << "Gizmo: " << t.x << " " << t.y << " " << t.z << std::endl;
+        }
+
+        auto dot = glm::dot(camera->getForwardVector(), getForwardVector());
+        if (dot < 0.f)
+        {
+            delta.x *= -1.f;
+        }
+
+        std::cout << "Dot: " << dot << std::endl << std::endl;
+        if (data->direction == Gizmo::Direction::X)
+        {
+            moveRight(delta.x);
+            for (auto& obj : data->attachedObjects)
+            {
+                obj->moveRight(delta.x);
+            }
+        }
+        if (data->direction == Gizmo::Direction::Y)
+        {
+            moveUp(-delta.y);
+            for (auto& obj : data->attachedObjects)
+            {
+                obj->moveUp(-delta.y);
+            }
+        }
+        if (data->direction == Gizmo::Direction::Z)
+        {
+            moveForward(-delta.x);
+            for (auto& obj : data->attachedObjects)
+            {
+                obj->moveForward(-delta.x);
+            }
+        }
+    }
+
 } // namespace Core

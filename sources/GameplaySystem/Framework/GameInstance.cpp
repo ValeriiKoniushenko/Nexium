@@ -70,7 +70,6 @@ namespace Core
 
         if (auto* spectator = gameScene.createAndGetActor<Spectator>())
         {
-            spectator->tryReadFromCache();
             currentCamera = spectator->findFirstChildOf<BaseCamera>();
         }
 

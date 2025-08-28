@@ -59,8 +59,8 @@ namespace Core
          */
         virtual void pureDraw() {};
 
-
     protected:
+        void onInit() override;
     };
 
     template<class T>

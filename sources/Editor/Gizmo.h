@@ -26,6 +26,7 @@
 #include "GameplaySystem/Framework/Actor.h"
 #include "Graphics/Primitives/StaticMeshBundle.h"
 #include "Graphics/Window.h"
+#include "InputDevices/InputAction.h"
 
 #include <filesystem>
 
@@ -56,6 +57,7 @@ namespace Core
         void initialize();
         void load3DModel();
         void handleDragStart(StaticMesh* touchedMesh);
+        void handleDrag(glm::vec2 delta, MouseInputAction::SpecKeysState state);
 
     private:
         DelegateSubscriber _onSelectChangeId;

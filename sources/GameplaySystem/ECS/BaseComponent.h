@@ -232,12 +232,11 @@ namespace Core
         void setNoTick(bool v) { _noTick = v; }
         [[nodiscard]] bool getNoTick() const noexcept { return _noTick; }
 
-        virtual /**
-                 * @brief Call this function directly only if you sure in it.
-                 * It should be called only once per one component.
-                 */
-            void
-            initialize()
+        /**
+         * @brief Call this function directly only if you sure in it.
+         * It should be called only once per one component.
+         */
+        virtual void initialize()
         {
             if (!_isInited)
             {

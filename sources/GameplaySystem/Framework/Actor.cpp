@@ -46,4 +46,14 @@ namespace Core
         }
     }
 
+    void Actor::onInit()
+    {
+        BaseComponent::onInit();
+
+        if (_name.isEmpty())
+        {
+            _name = _type;
+        }
+    }
+
 } // namespace Core

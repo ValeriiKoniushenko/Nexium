@@ -331,7 +331,7 @@ namespace Core
                     gGameInstance->objectSelectorManager.deselectAllAndClear();
                 });
 
-        auto mouseMove = _mouseInput.getOrCreate("mouseMove", Mouse::Key_Left);
+        auto mouseMove = _mouseInput.getOrCreate("mouseMove", Mouse::Key_None);
         mouseMove->onDrag.subscribe(
             [this](auto delta, auto spec)
             {
@@ -401,36 +401,7 @@ namespace Core
                 return;
             }
 
-            auto* data = dynamic_cast<Gizmo::DragData*>(gDragDrop.payload.data.get());
-            if (!Verify(data))
-            {
-                return;
-            }
-
-            if (data->direction == Gizmo::Direction::X)
-            {
-                gizmo->moveRight(delta.x);
-                for (auto& obj : data->attachedObjects)
-                {
-                    obj->moveRight(delta.x);
-                }
-            }
-            if (data->direction == Gizmo::Direction::Y)
-            {
-                gizmo->moveUp(-delta.y);
-                for (auto& obj : data->attachedObjects)
-                {
-                    obj->moveUp(-delta.y);
-                }
-            }
-            if (data->direction == Gizmo::Direction::Z)
-            {
-                gizmo->moveForward(-delta.x);
-                for (auto& obj : data->attachedObjects)
-                {
-                    obj->moveForward(-delta.x);
-                }
-            }
+            gizmo->handleDrag(delta, state);
         }
     }
 
