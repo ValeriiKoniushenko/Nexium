@@ -348,12 +348,31 @@ namespace Core
                     {
                         return;
                     }
+
                     if (data->direction == Gizmo::Direction::X)
+                    {
                         gizmo->moveRight(delta.x);
+                        for (auto& obj : data->attachedObjects)
+                        {
+                            obj->moveRight(delta.x);
+                        }
+                    }
                     if (data->direction == Gizmo::Direction::Y)
+                    {
                         gizmo->moveUp(-delta.y);
+                        for (auto& obj : data->attachedObjects)
+                        {
+                            obj->moveUp(-delta.y);
+                        }
+                    }
                     if (data->direction == Gizmo::Direction::Z)
+                    {
                         gizmo->moveForward(-delta.x);
+                        for (auto& obj : data->attachedObjects)
+                        {
+                            obj->moveForward(-delta.x);
+                        }
+                    }
                 }
             });
 
@@ -390,18 +409,16 @@ namespace Core
                                 {
                                     gDragDrop.payload.type = "gizmo_move"_atom;
                                     Gizmo::DragData data;
-                                    char directionChar = mesh->getComponentName()[0];
-                                    if (directionChar == 'X')
+                                    char directionChar = toupper(mesh->getComponentName()[0]) - 'X';
+                                    data.direction = static_cast<Gizmo::Direction>(directionChar);
+
+                                    for (auto&& [_, obj] :
+                                         gGameInstance->objectSelectorManager.getSelectedObjects())
                                     {
-                                        data.direction = Gizmo::Direction::X;
-                                    }
-                                    if (directionChar == 'Y')
-                                    {
-                                        data.direction = Gizmo::Direction::Y;
-                                    }
-                                    if (directionChar == 'Z')
-                                    {
-                                        data.direction = Gizmo::Direction::Z;
+                                        if (auto* trans = dynamic_cast<Transformable*>(obj.get()))
+                                        {
+                                            data.attachedObjects.push_back(trans);
+                                        }
                                     }
 
                                     gDragDrop.payload.data

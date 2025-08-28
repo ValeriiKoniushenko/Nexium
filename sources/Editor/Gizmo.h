@@ -47,6 +47,7 @@ namespace Core
         struct DragData : public DragAndDrop::Data
         {
             Direction direction;
+            std::vector<Transformable*> attachedObjects;
         };
 
     public:

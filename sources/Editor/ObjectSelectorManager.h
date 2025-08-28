@@ -22,8 +22,8 @@
 
 #pragma once
 
-#include "Graphics/Primitives/StaticMesh.h"
 #include "Core/Delegate.h"
+#include "Graphics/Primitives/StaticMesh.h"
 
 #include <unordered_map>
 
@@ -48,6 +48,11 @@ namespace Core
         void deselectAllAndClear();
 
         [[nodiscard]] bool isSelected(BaseComponent* comp) const;
+
+        [[nodiscard]] std::unordered_map<void*, BaseComponent::Ptr>& getSelectedObjects()
+        {
+            return _selectedObjects;
+        }
 
         /**
          * @param BaseComponent* affected component
