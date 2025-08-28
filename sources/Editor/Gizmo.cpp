@@ -101,14 +101,13 @@ namespace Core
         }
 
         auto* camera = gGameInstance->currentCamera;
-        auto dot = glm::dot(camera->getForwardVector(), getForwardVector());
-        if (dot < 0.f)
-        {
-            delta.x *= -1.f;
-        }
 
         if (data->direction == Gizmo::Direction::X)
         {
+            if (glm::dot(camera->getForwardVector(), getForwardVector()) < 0.f)
+            {
+                delta.x *= -1.f;
+            }
             moveRight(delta.x);
             for (auto& obj : data->attachedObjects)
             {
@@ -125,6 +124,11 @@ namespace Core
         }
         if (data->direction == Gizmo::Direction::Z)
         {
+            std::cout << glm::dot(camera->getRightVector(), getForwardVector()) << std::endl;
+            if (glm::dot(camera->getRightVector(), getForwardVector()) >= 0.f)
+            {
+                delta.x *= -1.f;
+            }
             moveForward(-delta.x);
             for (auto& obj : data->attachedObjects)
             {
