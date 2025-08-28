@@ -63,6 +63,18 @@ namespace Core
         [[nodiscard]] const std::vector<Actor::Ptr>& getActors() const noexcept { return _actors; }
         [[nodiscard]] std::vector<Actor::Ptr>& getActors() noexcept { return _actors; }
 
+        template<IsActorBased T>
+        [[nodiscard]] T* getFirstActorOf()
+        {
+            auto it = std::ranges::find_if(_actors,
+                                 [](const Actor::Ptr& actor)
+                                 {
+                                     return actor->isTypeOf<T>();
+                                 });
+
+            return it == _actors.end() ? nullptr : reinterpret_cast<T*>(it->get());
+        }
+
         [[nodiscard]] nlohmann::json toJson() const override;
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
 

@@ -6,7 +6,7 @@
             0.0
         ],
         "position": [
-            0.0,
+            75.0,
             0.0,
             0.0
         ],
@@ -276,5 +276,5 @@
     ],
     "name": "gizmo",
     "noTick": false,
-    "type": "StaticMeshBundle"
+    "type": "Gizmo"
 }

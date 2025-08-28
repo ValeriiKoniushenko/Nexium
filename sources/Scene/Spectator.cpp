@@ -120,7 +120,7 @@ namespace Core
                 {
                     if (gGameInstance->currentCamera)
                     {
-                        gGameInstance->currentCamera->yawAndPitch(delta * mouseSensitivity);
+                        // gGameInstance->currentCamera->yawAndPitch(delta * mouseSensitivity);
                     }
                 });
     }

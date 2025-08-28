@@ -331,6 +331,32 @@ namespace Core
                     gGameInstance->objectSelectorManager.deselectAllAndClear();
                 });
 
+        auto mouseMove = _mouseInput.getOrCreate("mouseMove", Mouse::Key_Left);
+        mouseMove->onDrag.subscribe(
+            [this](auto delta, auto spec)
+            {
+                if (gDragDrop.payload.type == "gizmo_move"_atom)
+                {
+                    auto gizmo = gGameInstance->gameScene.getFirstActorOf<Gizmo>();
+                    if (!gizmo)
+                    {
+                        return;
+                    }
+
+                    auto* data = dynamic_cast<Gizmo::DragData*>(gDragDrop.payload.data.get());
+                    if (!Verify(data))
+                    {
+                        return;
+                    }
+                    if (data->direction == Gizmo::Direction::X)
+                        gizmo->moveRight(delta.x);
+                    if (data->direction == Gizmo::Direction::Y)
+                        gizmo->moveUp(-delta.y);
+                    if (data->direction == Gizmo::Direction::Z)
+                        gizmo->moveForward(-delta.x);
+                }
+            });
+
         auto selectObject = _mouseInput.getOrCreate("selectObject", Mouse::Key_Left);
         selectObject->setIsRepeatable(false);
         selectObject->onMouseClick.subscribe(
@@ -360,7 +386,27 @@ namespace Core
                         {
                             if (bundle->isTypeOf<Gizmo>())
                             {
-                                int i = 1;
+                                if (gDragDrop.getState() == DragAndDrop::State::Started)
+                                {
+                                    gDragDrop.payload.type = "gizmo_move"_atom;
+                                    Gizmo::DragData data;
+                                    char directionChar = mesh->getComponentName()[0];
+                                    if (directionChar == 'X')
+                                    {
+                                        data.direction = Gizmo::Direction::X;
+                                    }
+                                    if (directionChar == 'Y')
+                                    {
+                                        data.direction = Gizmo::Direction::Y;
+                                    }
+                                    if (directionChar == 'Z')
+                                    {
+                                        data.direction = Gizmo::Direction::Z;
+                                    }
+
+                                    gDragDrop.payload.data
+                                        = std::make_unique<Gizmo::DragData>(data);
+                                }
                             }
                             else
                             {

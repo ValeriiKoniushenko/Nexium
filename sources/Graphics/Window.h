@@ -28,9 +28,9 @@
 #include "Core/Size.h"
 #include "InputDevices/Keyboard.h"
 #include "InputDevices/Mouse.h"
+#include "Misc/JsonCacheable.h"
 #include "ModuleInfo.h"
 #include "OpenGL.h"
-#include "Misc/JsonCacheable.h"
 
 #include <filesystem>
 
@@ -39,9 +39,14 @@ namespace Core
 
     struct DragAndDrop
     {
+        struct Data
+        {
+            virtual ~Data() = default;
+        };
+
         struct Payload
         {
-            void* data = nullptr;
+            std::unique_ptr<Data> data;
             StringAtom type;
         };
 
@@ -71,7 +76,11 @@ namespace Core
 
     extern DragAndDrop gDragDrop;
 
-    class Window : public BaseLog, public JsonCacheable, public JsonAdapter, public StrictSingleton<Window>
+    class Window :
+        public BaseLog,
+        public JsonCacheable,
+        public JsonAdapter,
+        public StrictSingleton<Window>
     {
     public:
         // clang-format off

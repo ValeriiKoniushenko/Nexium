@@ -23,8 +23,9 @@
 #pragma once
 
 #include "Core/Delegate.h"
-#include "Graphics/Primitives/StaticMeshBundle.h"
 #include "GameplaySystem/Framework/Actor.h"
+#include "Graphics/Primitives/StaticMeshBundle.h"
+#include "Graphics/Window.h"
 
 #include <filesystem>
 
@@ -37,6 +38,16 @@ namespace Core
     public:
         inline static const std::filesystem::path defaultModelPath
             = "assets/base-3d/Models/FBX/gizmo.fbx";
+
+        enum class Direction
+        {
+            X, Y, Z
+        };
+
+        struct DragData : public DragAndDrop::Data
+        {
+            Direction direction;
+        };
 
     public:
         void initialize();
