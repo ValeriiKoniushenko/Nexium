@@ -335,107 +335,103 @@ namespace Core
         mouseMove->onDrag.subscribe(
             [this](auto delta, auto spec)
             {
-                if (gDragDrop.payload.type == "gizmo_move"_atom)
-                {
-                    auto gizmo = gGameInstance->gameScene.getFirstActorOf<Gizmo>();
-                    if (!gizmo)
-                    {
-                        return;
-                    }
-
-                    auto* data = dynamic_cast<Gizmo::DragData*>(gDragDrop.payload.data.get());
-                    if (!Verify(data))
-                    {
-                        return;
-                    }
-
-                    if (data->direction == Gizmo::Direction::X)
-                    {
-                        gizmo->moveRight(delta.x);
-                        for (auto& obj : data->attachedObjects)
-                        {
-                            obj->moveRight(delta.x);
-                        }
-                    }
-                    if (data->direction == Gizmo::Direction::Y)
-                    {
-                        gizmo->moveUp(-delta.y);
-                        for (auto& obj : data->attachedObjects)
-                        {
-                            obj->moveUp(-delta.y);
-                        }
-                    }
-                    if (data->direction == Gizmo::Direction::Z)
-                    {
-                        gizmo->moveForward(-delta.x);
-                        for (auto& obj : data->attachedObjects)
-                        {
-                            obj->moveForward(-delta.x);
-                        }
-                    }
-                }
+                handleMouseDrag(delta, spec);
             });
 
         auto selectObject = _mouseInput.getOrCreate("selectObject", Mouse::Key_Left);
         selectObject->setIsRepeatable(false);
         selectObject->onMouseClick.subscribe(
-            [this](auto, auto spec)
+            [this](auto pos, auto spec)
             {
-                if (gDragDrop.getState() == DragAndDrop::State::Dragging)
-                {
-                    return;
-                }
-
-                slowObjectPicker.requestPick(
-                    [](StaticMesh* mesh)
-                    {
-                        if (auto* wnd = gGameInstance->gameEditor.getWindow<GameViewportEWC>();
-                            !wnd || !wnd->isHovered())
-                        {
-                            return;
-                        }
-
-                        if (!mesh)
-                        {
-                            // gGameInstance->objectSelectorManager.deselectAllAndClear();
-                            return;
-                        }
-
-                        if (auto* bundle = mesh->tryToGetRootBundle())
-                        {
-                            if (bundle->isTypeOf<Gizmo>())
-                            {
-                                if (gDragDrop.getState() == DragAndDrop::State::Started)
-                                {
-                                    gDragDrop.payload.type = "gizmo_move"_atom;
-                                    Gizmo::DragData data;
-                                    char directionChar = toupper(mesh->getComponentName()[0]) - 'X';
-                                    data.direction = static_cast<Gizmo::Direction>(directionChar);
-
-                                    for (auto&& [_, obj] :
-                                         gGameInstance->objectSelectorManager.getSelectedObjects())
-                                    {
-                                        if (auto* trans = dynamic_cast<Transformable*>(obj.get()))
-                                        {
-                                            data.attachedObjects.push_back(trans);
-                                        }
-                                    }
-
-                                    gDragDrop.payload.data
-                                        = std::make_unique<Gizmo::DragData>(data);
-                                }
-                            }
-                            else
-                            {
-                                gGameInstance->objectSelectorManager.selectObject(bundle);
-                            }
-                        }
-                        else
-                        {
-                            gGameInstance->objectSelectorManager.selectObject(mesh);
-                        }
-                    });
+                handleMouseClick(pos, spec);
             });
+    }
+
+    void GameEditor::handleMouseClick(glm::vec2 pos, MouseInputAction::SpecKeysState state)
+    {
+        if (gDragDrop.getState() == DragAndDrop::State::Dragging)
+        {
+            return;
+        }
+
+        slowObjectPicker.requestPick(
+            [this](StaticMesh* mesh)
+            {
+                responseOnPick(mesh);
+            });
+    }
+
+    void GameEditor::responseOnPick(StaticMesh* mesh)
+    {
+        if (auto* wnd = gGameInstance->gameEditor.getWindow<GameViewportEWC>();
+            !wnd || !wnd->isHovered())
+        {
+            return;
+        }
+
+        if (!mesh)
+        {
+            return;
+        }
+
+        if (auto* bundle = mesh->tryToGetRootBundle())
+        {
+            if (auto* gizmo = bundle->tryCastTo<Gizmo>())
+            {
+                gizmo->handleDragStart(mesh);
+            }
+            else
+            {
+                gGameInstance->objectSelectorManager.selectObject(bundle);
+            }
+        }
+        else
+        {
+            gGameInstance->objectSelectorManager.selectObject(mesh);
+        }
+    }
+
+    void GameEditor::handleMouseDrag(glm::vec2 delta, MouseInputAction::SpecKeysState state)
+    {
+        if (gDragDrop.isTypeOf<Gizmo::DragData>())
+        {
+            auto gizmo = gGameInstance->gameScene.getFirstActorOf<Gizmo>();
+            if (!gizmo)
+            {
+                return;
+            }
+
+            auto* data = dynamic_cast<Gizmo::DragData*>(gDragDrop.payload.data.get());
+            if (!Verify(data))
+            {
+                return;
+            }
+
+            if (data->direction == Gizmo::Direction::X)
+            {
+                gizmo->moveRight(delta.x);
+                for (auto& obj : data->attachedObjects)
+                {
+                    obj->moveRight(delta.x);
+                }
+            }
+            if (data->direction == Gizmo::Direction::Y)
+            {
+                gizmo->moveUp(-delta.y);
+                for (auto& obj : data->attachedObjects)
+                {
+                    obj->moveUp(-delta.y);
+                }
+            }
+            if (data->direction == Gizmo::Direction::Z)
+            {
+                gizmo->moveForward(-delta.x);
+                for (auto& obj : data->attachedObjects)
+                {
+                    obj->moveForward(-delta.x);
+                }
+            }
+        }
     }
 
 } // namespace Core

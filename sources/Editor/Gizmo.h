@@ -46,6 +46,8 @@ namespace Core
 
         struct DragData : public DragAndDrop::Data
         {
+            inline static StringAtom dragType = "gizmo_move"_atom;
+
             Direction direction;
             std::vector<Transformable*> attachedObjects;
         };
@@ -53,6 +55,7 @@ namespace Core
     public:
         void initialize();
         void load3DModel();
+        void handleDragStart(StaticMesh* touchedMesh);
 
     private:
         DelegateSubscriber _onSelectChangeId;

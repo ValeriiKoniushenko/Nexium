@@ -236,7 +236,7 @@ namespace Core
                 else if (state == Mouse::State::Press)
                 {
                     gDragDrop._state = DragAndDrop::State::Started;
-                    gDragDrop.payload.type = "InventoryItem";
+                    gDragDrop.payload.type = ""_atom;
                     gDragDrop._startPos = Mouse::GetPosition();
                 }
             });

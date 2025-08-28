@@ -48,6 +48,8 @@ namespace Core
                     }
                 }
             });
+
+        setEnabled(false);
     }
 
     void Gizmo::load3DModel()
@@ -62,6 +64,27 @@ namespace Core
             importFrom(scene->mRootNode, scene, defaultModelPath);
             setShader(gGameInstance->shaderManager.getShaderProgram("color"_atom));
             setOutlineShader(gGameInstance->shaderManager.getShaderProgram("outline"_atom));
+        }
+    }
+
+    void Gizmo::handleDragStart(StaticMesh* touchedMesh)
+    {
+        if (gDragDrop.getState() == DragAndDrop::State::Started)
+        {
+            gDragDrop.payload.type = "gizmo_move"_atom;
+            Gizmo::DragData data;
+            char directionChar = toupper(touchedMesh->getComponentName()[0]) - 'X';
+            data.direction = static_cast<Gizmo::Direction>(directionChar);
+
+            for (auto&& [_, obj] : gGameInstance->objectSelectorManager.getSelectedObjects())
+            {
+                if (auto* trans = dynamic_cast<Transformable*>(obj.get()))
+                {
+                    data.attachedObjects.push_back(trans);
+                }
+            }
+
+            gDragDrop.payload.data = std::make_unique<Gizmo::DragData>(data);
         }
     }
 

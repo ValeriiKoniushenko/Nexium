@@ -66,6 +66,15 @@ namespace Core
         [[nodiscard]] glm::vec2 getCurrentPos() const noexcept { return _currentPos; };
         [[nodiscard]] State getState() const noexcept { return _state; };
 
+        template<class T>
+            requires std::derived_from<T, Data> && requires() { T::dragType; }
+        bool isTypeOf()
+        {
+            Assert(T::dragType.isStatic());
+            Assert(payload.type.isStatic());
+            return payload.type == T::dragType;
+        }
+
     private:
         glm::vec2 _startPos;
         glm::vec2 _currentPos;

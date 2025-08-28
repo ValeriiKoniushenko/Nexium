@@ -157,6 +157,11 @@ namespace Core
         bool _isInitImGui = false;
         bool _isEnabled = true;
         bool _isRunSimulation = false;
+
+    private:
+        void handleMouseDrag(glm::vec2 delta, MouseInputAction::SpecKeysState state);
+        void handleMouseClick(glm::vec2 pos, MouseInputAction::SpecKeysState state);
+        void responseOnPick(StaticMesh* mesh);
     };
 
 } // namespace Core

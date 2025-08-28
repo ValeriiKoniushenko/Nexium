@@ -118,9 +118,9 @@ namespace Core
             ->onDrag.subscribe(
                 [this](glm::vec2 delta, auto spec)
                 {
-                    if (gGameInstance->currentCamera)
+                    if (gGameInstance->currentCamera && !gDragDrop.isTypeOf<Gizmo::DragData>())
                     {
-                        // gGameInstance->currentCamera->yawAndPitch(delta * mouseSensitivity);
+                        gGameInstance->currentCamera->yawAndPitch(delta * mouseSensitivity);
                     }
                 });
     }
