@@ -31,9 +31,18 @@ namespace Core
 {
     ECS_REGISTER_NEW_COMPONENT_TYPE(Gizmo)
 
-    void Gizmo::drawGizmo()
+    void Gizmo::draw()
     {
-        draw();
+        glDepthFunc(GL_ALWAYS);
+        StaticMeshBundle::draw();
+        glDepthFunc(GL_LESS);
+    }
+
+    void Gizmo::pureDraw()
+    {
+        glDepthFunc(GL_ALWAYS);
+        StaticMeshBundle::pureDraw();
+        glDepthFunc(GL_LESS);
     }
 
     void Gizmo::initialize()

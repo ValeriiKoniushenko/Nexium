@@ -86,6 +86,8 @@ namespace Core
         [[nodiscard]] nlohmann::json toJson() const override;
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
 
+        [[nodiscard]] Gizmo* getGizmo() noexcept { return _gizmo; }
+
         Delegate<void(Actor*)> onActorAdded;
 
     public:

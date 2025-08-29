@@ -111,8 +111,7 @@ namespace Core
         recursiveImportFrom(this, node, scene, modelPath, _meshes);
     }
 
-    void StaticMeshBundle::setShader(ShaderProgram* sp,
-                                            bool ignoreVertexAttribSetup /* = false*/)
+    void StaticMeshBundle::setShader(ShaderProgram* sp, bool ignoreVertexAttribSetup /* = false*/)
     {
         for (auto* mesh : _meshes)
         {

@@ -58,7 +58,7 @@ namespace Core
 
         if (_gizmo)
         {
-            _gizmo->drawGizmo();
+            _gizmo->draw();
         }
     }
 

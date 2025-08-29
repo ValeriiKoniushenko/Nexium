@@ -34,6 +34,7 @@ namespace Core
     public:
         // clang-format off
         CreateEnum(Modifier, int,
+            None,
             Enable,
             Disable,
         );
@@ -148,10 +149,10 @@ namespace Core
             return _drawModifiers;
         }
         void clearDrawModifiers() { _drawModifiers.clear(); }
-        void setDrawModifiers(std::vector<std::pair<ModifiedValue, Modifier>> value)
-        {
-            _drawModifiers = std::move(value);
-        }
+        void setDrawModifiers(std::vector<std::pair<ModifiedValue, Modifier>> value);
+
+        void addDrawModifiers(ModifiedValue value, Modifier mod);
+        [[nodiscard]] Modifier getDrawModifier(ModifiedValue value);
 
         [[nodiscard]] nlohmann::json toJson() const override;
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
@@ -162,6 +163,8 @@ namespace Core
         virtual void applyUniforms() {}
 
     protected:
+        // To improve cache-line readability we use vector.
+        // But all values ModifiedValue should be unique.
         std::vector<std::pair<ModifiedValue, Modifier>> _drawModifiers;
         ShaderProgram* _shader = nullptr;
         uint32_t _triangleCount = 0;

@@ -112,7 +112,7 @@ namespace Core
     }
 
     void GraphicsComponentData::setShader(ShaderProgram* sp,
-                                                 bool ignoreVertexAttribSetup /* = false*/)
+                                          bool ignoreVertexAttribSetup /* = false*/)
     {
         _shader = sp;
 
@@ -239,6 +239,48 @@ namespace Core
                 glDisable(static_cast<GLenum>(val));
             }
         }
+    }
+
+    void GraphicsComponentData::setDrawModifiers(
+        std::vector<std::pair<ModifiedValue, Modifier>> value)
+    {
+#if defined(DEBUG)
+        std::map<ModifiedValue, int> map;
+
+        for (auto mod : value | std::views::keys)
+        {
+            map[mod]++;
+            Assert(map[mod] == 1, "The same modifier was added twice.");
+        }
+#endif
+
+        _drawModifiers = std::move(value);
+    }
+
+    void GraphicsComponentData::addDrawModifiers(ModifiedValue value, Modifier mod)
+    {
+        if (getDrawModifier(value).cast() != Modifier::None)
+        {
+            return;
+        }
+
+        _drawModifiers.emplace_back(value, mod);
+    }
+
+    GraphicsComponentData::Modifier GraphicsComponentData::getDrawModifier(ModifiedValue value)
+    {
+        const auto it = std::ranges::find_if(_drawModifiers,
+                                             [value](auto pair)
+                                             {
+                                                 return pair.first == value;
+                                             });
+
+        if (it != _drawModifiers.end())
+        {
+            return it->second;
+        }
+
+        return Modifier::None;
     }
 
     nlohmann::json GraphicsComponentData::toJson() const

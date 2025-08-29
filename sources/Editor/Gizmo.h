@@ -55,9 +55,9 @@ namespace Core
             std::vector<Transformable*> attachedObjects;
         };
 
-        void drawGizmo();
+        void draw() override;
+        void pureDraw() override;
 
-    public:
         void initialize() override;
         void load3DModel();
         void handleDragStart(StaticMesh* touchedMesh);
