@@ -29,14 +29,6 @@ namespace Core
 
     Scene::Scene()
     {
-        onActorAdded.subscribe(
-            [this](Actor* actor)
-            {
-                if (auto* g = actor->tryCastTo<Gizmo>())
-                {
-                    _gizmo = g;
-                }
-            });
     }
 
     void Scene::directDraw()
@@ -46,19 +38,27 @@ namespace Core
             gGameInstance->gameEditor.slowObjectPicker.update(*this);
         }
 
+        _postDrawBuffer.resize(0);
         grid.draw();
 
         for (auto&& mesh : _actors)
         {
-            if (mesh->isEnabled() && !mesh->isExcludedFromSceneDraw())
+            if (mesh->isEnabled())
             {
-                mesh->draw();
+                if (!mesh->isPostDraw())
+                {
+                    mesh->draw();
+                }
+                else
+                {
+                    _postDrawBuffer.push_back(mesh.get());
+                }
             }
         }
 
-        if (_gizmo)
+        for (auto&& mesh : _postDrawBuffer)
         {
-            _gizmo->draw();
+            mesh->draw();
         }
     }
 

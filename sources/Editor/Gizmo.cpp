@@ -64,7 +64,7 @@ namespace Core
             });
 
         setEnabled(false);
-        setIsExcludedFromSceneDraw(true);
+        setIsPostDraw(true);
     }
 
     void Gizmo::load3DModel()

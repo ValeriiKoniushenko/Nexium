@@ -86,8 +86,6 @@ namespace Core
         [[nodiscard]] nlohmann::json toJson() const override;
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
 
-        [[nodiscard]] Gizmo* getGizmo() noexcept { return _gizmo; }
-
         Delegate<void(Actor*)> onActorAdded;
 
     public:
@@ -103,6 +101,8 @@ namespace Core
     protected:
         std::vector<Actor::Ptr> _actors;
         StringAtom _sceneName = "None";
-        Gizmo* _gizmo = nullptr;
+
+    private:
+        std::vector<Actor*> _postDrawBuffer;
     };
 } // namespace Core

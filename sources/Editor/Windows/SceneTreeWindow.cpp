@@ -114,7 +114,7 @@ namespace Core
 
         if (const auto* actor = n->tryCastTo<Actor>())
         {
-            if (actor->isExcludedFromSceneDraw())
+            if (actor->isPostDraw())
             {
                 return;
             }

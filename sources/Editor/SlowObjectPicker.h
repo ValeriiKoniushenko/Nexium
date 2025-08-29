@@ -23,10 +23,12 @@
 #pragma once
 
 #include "Graphics/RenderTargetToTexture.h"
+
 namespace Core
 {
     class Scene;
     class StaticMesh;
+    class StaticMeshBundle;
 
     /**
      * @brief yes, it's slow but convenient way to pick up an object with
@@ -39,6 +41,7 @@ namespace Core
         void update(Scene& scene);
 
     protected:
+        std::vector<StaticMeshBundle*> _cachedPostDrawActors;
         RenderTargetToTexture _canvas;
         std::function<void(StaticMesh*)> _callback;
         bool _requested = false;

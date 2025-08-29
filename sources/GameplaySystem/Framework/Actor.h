@@ -59,16 +59,13 @@ namespace Core
          */
         virtual void pureDraw() {};
 
-        void setIsExcludedFromSceneDraw(bool value) noexcept { _isExcludedFromSceneDraw = value; }
-        [[nodiscard]] bool isExcludedFromSceneDraw() const noexcept
-        {
-            return _isExcludedFromSceneDraw;
-        }
+        void setIsPostDraw(bool value) noexcept { _isPostDraw = value; }
+        [[nodiscard]] bool isPostDraw() const noexcept { return _isPostDraw; }
 
     protected:
         void onInit() override;
 
-        bool _isExcludedFromSceneDraw = false;
+        bool _isPostDraw = false;
     };
 
     template<class T>
