@@ -27,6 +27,18 @@
 namespace Core
 {
 
+    Scene::Scene()
+    {
+        onActorAdded.subscribe(
+            [this](Actor* actor)
+            {
+                if (auto* g = actor->tryCastTo<Gizmo>())
+                {
+                    _gizmo = g;
+                }
+            });
+    }
+
     void Scene::directDraw()
     {
         if (gGameInstance->renderMode.cast() == GameInstance::RenderMode::Editor)
@@ -42,6 +54,11 @@ namespace Core
             {
                 mesh->draw();
             }
+        }
+
+        if (_gizmo)
+        {
+            _gizmo->drawGizmo();
         }
     }
 

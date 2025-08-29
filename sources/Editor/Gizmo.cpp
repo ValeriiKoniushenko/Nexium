@@ -31,6 +31,11 @@ namespace Core
 {
     ECS_REGISTER_NEW_COMPONENT_TYPE(Gizmo)
 
+    void Gizmo::drawGizmo()
+    {
+        draw();
+    }
+
     void Gizmo::initialize()
     {
         _onSelectChangeId = gGameInstance->objectSelectorManager.onChange.subscribeAndGetID(
@@ -50,6 +55,7 @@ namespace Core
             });
 
         setEnabled(false);
+        setIsExcludedFromSceneDraw(true);
     }
 
     void Gizmo::load3DModel()
@@ -62,7 +68,7 @@ namespace Core
         if (Verify(scene) && Verify(scene->mRootNode))
         {
             importFrom(scene->mRootNode, scene, defaultModelPath);
-            setShader(gGameInstance->shaderManager.getShaderProgram("color"_atom));
+            setShader(gGameInstance->shaderManager.getShaderProgram("simple_color"_atom));
         }
     }
 
@@ -70,7 +76,7 @@ namespace Core
     {
         if (gDragDrop.getState() == DragAndDrop::State::Started)
         {
-            gDragDrop.payload.type = "gizmo_move"_atom;
+            gDragDrop.payload.type = DragData::dragType;
             Gizmo::DragData data;
             char directionChar = toupper(touchedMesh->getComponentName()[0]) - 'X';
             data.direction = static_cast<Gizmo::Direction>(directionChar);

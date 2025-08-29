@@ -57,7 +57,7 @@ namespace Core
             }
 
             auto* bundle = actor->tryCastTo<StaticMeshBundle>();
-            if (!bundle || bundle->isExcludedFromSceneDraw())
+            if (!bundle)
             {
                 continue;
             }

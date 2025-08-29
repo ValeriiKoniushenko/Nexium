@@ -28,6 +28,7 @@ namespace Core
 {
 
     class Scene;
+    class Actor;
 
     class SceneTreeWindowEWC : public BaseFloatEWC
     {
@@ -51,6 +52,6 @@ namespace Core
         DelegateSubscriber _onSelectChangeId;
 
     private:
-        void drawTreeNode(BaseComponent* n, int32_t id, bool isInSelectedSubtree = false);
+        void drawTreeNode(Actor* n, int32_t id, bool isInSelectedSubtree = false);
     };
 } // namespace Core

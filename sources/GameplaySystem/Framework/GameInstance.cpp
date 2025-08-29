@@ -59,8 +59,9 @@ namespace Core
         shaderManager.debugLog("Was loaded {} shaders."_f << shaderManager.countOfShaders());
         for (const auto& notLoadedShader : shaderManager.getFailedShaders())
         {
-            shaderManager.warnLog("Shader '{}' found but not loaded. It contains some error[s]."_f
-                                  << notLoadedShader);
+            shaderManager.warnLog(
+                "Shader '{}' found but not loaded. It contains some error[s]. See above in the lo"_f
+                << notLoadedShader);
         }
         onLoadShaders();
 
@@ -210,6 +211,21 @@ namespace Core
                 {
                     glEnableVertexAttribArray(0);
                     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), nullptr);
+                });
+        }
+
+        auto* simpleColorShader = shaderManager.getShaderProgram("simple_color"_atom);
+        if (Verify(simpleColorShader))
+        {
+            simpleColorShader->setVertexAttributeCallback(
+                []()
+                {
+                    glEnableVertexAttribArray(0);
+                    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), nullptr);
+
+                    glEnableVertexAttribArray(2);
+                    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
+                                          reinterpret_cast<void*>(6 * sizeof(float)));
                 });
         }
     }

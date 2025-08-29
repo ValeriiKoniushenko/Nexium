@@ -22,6 +22,7 @@
 
 #include "SceneTreeWindow.h"
 
+#include "GameplaySystem/Framework/Actor.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "ImGui/misc/cpp/imgui_stdlib.h"
 #include "Misc/IconsFontAwesome.h"
@@ -103,10 +104,10 @@ namespace Core
         BaseFloatEWC::onUpdate();
     }
 
-    void SceneTreeWindowEWC::drawTreeNode(BaseComponent* n, int32_t id,
+    void SceneTreeWindowEWC::drawTreeNode(Actor* n, int32_t id,
                                           bool isInSelectedSubtree /* = false*/)
     {
-        if (!n)
+        if (!n || n->isExcludedFromSceneDraw())
         {
             return;
         }
@@ -175,7 +176,7 @@ namespace Core
         {
             for (auto&& child : n->getChildren())
             {
-                drawTreeNode(child.get(), ++id);
+                drawTreeNode(child->tryCastTo<Actor>(), ++id);
             }
 
             ImGui::TreePop();

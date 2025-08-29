@@ -42,7 +42,9 @@ namespace Core
 
         enum class Direction
         {
-            X, Y, Z
+            X,
+            Y,
+            Z
         };
 
         struct DragData : public DragAndDrop::Data
@@ -52,6 +54,8 @@ namespace Core
             Direction direction;
             std::vector<Transformable*> attachedObjects;
         };
+
+        void drawGizmo();
 
     public:
         void initialize() override;

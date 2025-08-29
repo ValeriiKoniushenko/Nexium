@@ -21,6 +21,7 @@
 // SOFTWARE.
 
 #pragma once
+#include "Editor/Gizmo.h"
 #include "Graphics/Primitives/StaticMeshBundle.h"
 #include "Grid.h"
 #include "InputDevices/ModuleInfo.h"
@@ -32,7 +33,7 @@ namespace Core
     class Scene : public JsonCacheable, public JsonAdapter
     {
     public:
-        Scene() = default;
+        Scene();
         ~Scene() override = default;
 
         void tick(float timeDelta);
@@ -46,10 +47,13 @@ namespace Core
         void addActor(T&& actor, bool readFromCache = false)
         {
             _actors.emplace_back(new T(std::forward<decltype(actor)>(actor)));
-            _actors.back()->initialize();
+            auto* added = _actors.back().get();
+
+            added->initialize();
+            onActorAdded.trigger(added);
             if (readFromCache)
             {
-                _actors.back()->tryReadFromCache();
+                added->tryReadFromCache();
             }
         }
 
@@ -57,8 +61,11 @@ namespace Core
         T* createAndGetActor(Args... args)
         {
             _actors.emplace_back(new T(std::forward<Args>(args)...));
-            _actors.back()->initialize();
-            return reinterpret_cast<T*>(_actors.back().get());
+            auto* added = _actors.back().get();
+
+            added->initialize();
+            onActorAdded.trigger(added);
+            return reinterpret_cast<T*>(added);
         }
 
         [[nodiscard]] const std::vector<Actor::Ptr>& getActors() const noexcept { return _actors; }
@@ -68,16 +75,18 @@ namespace Core
         [[nodiscard]] T* getFirstActorOf()
         {
             auto it = std::ranges::find_if(_actors,
-                                 [](const Actor::Ptr& actor)
-                                 {
-                                     return actor->isTypeOf<T>();
-                                 });
+                                           [](const Actor::Ptr& actor)
+                                           {
+                                               return actor->isTypeOf<T>();
+                                           });
 
             return it == _actors.end() ? nullptr : reinterpret_cast<T*>(it->get());
         }
 
         [[nodiscard]] nlohmann::json toJson() const override;
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
+
+        Delegate<void(Actor*)> onActorAdded;
 
     public:
         Grid grid;
@@ -87,12 +96,11 @@ namespace Core
         [[nodiscard]] StringAtom getCacheHash() const override;
         [[nodiscard]] nlohmann::json toCacheData() const override;
         void fromCacheData(const nlohmann::json& json) override;
-
-    protected:
         void writeToCacheSeparateData() const;
 
     protected:
         std::vector<Actor::Ptr> _actors;
         StringAtom _sceneName = "None";
+        Gizmo* _gizmo = nullptr;
     };
 } // namespace Core
