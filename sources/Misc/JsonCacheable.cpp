@@ -67,8 +67,7 @@ namespace Core
         std::ifstream ifs(targetPath);
         if (!ifs.is_open())
         {
-            globalLog.warnLog("Can't open cache file for read: "
-                              + targetPath.generic_string());
+            globalLog.warnLog("Can't open cache file for read: " + targetPath.generic_string());
             return;
         }
 
@@ -80,7 +79,8 @@ namespace Core
         }
         catch (JsonAdapter::Exception& e)
         {
-            globalLog.traceLog("Can't read cache due to: '{}'. Cache will be cleared."_f << e.message);
+            globalLog.traceLog("Can't read cache due to: '{}'. Cache will be cleared."_f
+                               << e.message);
             clearCache();
         }
         catch (std::exception& e)

@@ -113,7 +113,7 @@ namespace Core
             }
             ImGui::EndMenu();
         }
-        ImGui::SameLine(0,0);
+        ImGui::SameLine(0, 0);
 
         auto& style = ImGui::GetStyle();
 
@@ -121,7 +121,7 @@ namespace Core
         offset -= _fpsTextSize - style.ItemSpacing.x;
         ImGui::SetCursorPosX(offset);
         ImGui::TextUnformatted(_cachedFpsText.c_str());
-        ImGui::SameLine(0,0);
+        ImGui::SameLine(0, 0);
         offset -= style.ItemSpacing.x * 2.f;
 
         /*

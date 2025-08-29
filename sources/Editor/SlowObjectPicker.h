@@ -44,4 +44,4 @@ namespace Core
         bool _requested = false;
     };
 
-}
+} // namespace Core

@@ -79,7 +79,7 @@ namespace Core
         [[nodiscard]] GLuint getID() const noexcept { return _vbo; }
 
     protected:
-        void onOutlineStatusChange(bool) override{};
+        void onOutlineStatusChange(bool) override {};
         void applyUniforms() override;
         void calculateSizeBaseOnMesh(const aiMesh* rawMesh, const aiMatrix4x4& transform);
         void drawOutline();

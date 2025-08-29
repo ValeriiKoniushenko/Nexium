@@ -23,9 +23,9 @@
 #include "StaticMesh.h"
 
 #include "Core/Timer.h"
-#include "StaticMeshBundle.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Graphics/Image.h"
+#include "StaticMeshBundle.h"
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
 

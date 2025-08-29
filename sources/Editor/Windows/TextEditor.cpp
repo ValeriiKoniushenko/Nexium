@@ -124,16 +124,14 @@ namespace Core
         {
             int err = errno;
             char err_buf[256];
-            #if defined(_MSC_VER)
+#if defined(_MSC_VER)
             strerror_s(err_buf, sizeof(err_buf), err);
-            #else
+#else
             std::strncpy(err_buf, std::strerror(err), sizeof(err_buf));
-            err_buf[sizeof(err_buf)-1] = '\0';
-            #endif
+            err_buf[sizeof(err_buf) - 1] = '\0';
+#endif
 
-
-            errorLog("File: {} - wasn't opened. Reason: {}"_f << _path.c_str()
-                                                              << err_buf);
+            errorLog("File: {} - wasn't opened. Reason: {}"_f << _path.c_str() << err_buf);
             return;
         }
 
