@@ -52,6 +52,6 @@ namespace Core
         DelegateSubscriber _onSelectChangeId;
 
     private:
-        void drawTreeNode(Actor* n, int32_t id, bool isInSelectedSubtree = false);
+        void drawTreeNode(BaseComponent* n, int32_t id, bool isInSelectedSubtree = false);
     };
 } // namespace Core

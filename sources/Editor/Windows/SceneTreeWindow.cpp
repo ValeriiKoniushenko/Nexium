@@ -104,12 +104,20 @@ namespace Core
         BaseFloatEWC::onUpdate();
     }
 
-    void SceneTreeWindowEWC::drawTreeNode(Actor* n, int32_t id,
+    void SceneTreeWindowEWC::drawTreeNode(BaseComponent* n, int32_t id,
                                           bool isInSelectedSubtree /* = false*/)
     {
-        if (!n || n->isExcludedFromSceneDraw())
+        if (!n)
         {
             return;
+        }
+
+        if (const auto* actor = n->tryCastTo<Actor>())
+        {
+            if (actor->isExcludedFromSceneDraw())
+            {
+                return;
+            }
         }
 
         int flags = _commonTreeFlags | ImGuiTreeNodeFlags_OpenOnArrow;
@@ -176,7 +184,7 @@ namespace Core
         {
             for (auto&& child : n->getChildren())
             {
-                drawTreeNode(child->tryCastTo<Actor>(), ++id);
+                drawTreeNode(child.get(), ++id);
             }
 
             ImGui::TreePop();

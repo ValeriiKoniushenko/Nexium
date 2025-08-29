@@ -6,9 +6,9 @@
             0.0
         ],
         "position": [
-            -18.0,
-            20.0,
-            -198.2000732421875
+            0.0,
+            0.0,
+            0.0
         ],
         "rotation": [
             0.0,
@@ -49,7 +49,7 @@
                 ]
             },
             "isEnabled": true,
-            "name": "Y.002",
+            "name": "Y.001",
             "noTick": false,
             "type": "StaticMesh"
         },
@@ -80,7 +80,7 @@
                 ]
             },
             "isEnabled": true,
-            "name": "X.002",
+            "name": "X.001",
             "noTick": false,
             "type": "StaticMesh"
         },
@@ -111,7 +111,7 @@
                 ]
             },
             "isEnabled": true,
-            "name": "Z.002",
+            "name": "Z.001",
             "noTick": false,
             "type": "StaticMesh"
         },
@@ -142,7 +142,7 @@
                 ]
             },
             "isEnabled": true,
-            "name": "Union.002",
+            "name": "Union.001",
             "noTick": false,
             "type": "StaticMesh"
         }
@@ -176,7 +176,7 @@
                 ]
             },
             "isEnabled": true,
-            "name": "Y.002",
+            "name": "Y.001",
             "noTick": false,
             "type": "StaticMesh"
         },
@@ -207,7 +207,7 @@
                 ]
             },
             "isEnabled": true,
-            "name": "X.002",
+            "name": "X.001",
             "noTick": false,
             "type": "StaticMesh"
         },
@@ -238,7 +238,7 @@
                 ]
             },
             "isEnabled": true,
-            "name": "Z.002",
+            "name": "Z.001",
             "noTick": false,
             "type": "StaticMesh"
         },
@@ -269,7 +269,7 @@
                 ]
             },
             "isEnabled": true,
-            "name": "Union.002",
+            "name": "Union.001",
             "noTick": false,
             "type": "StaticMesh"
         }
