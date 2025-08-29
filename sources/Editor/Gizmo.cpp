@@ -133,7 +133,6 @@ namespace Core
         }
         if (data->direction == Gizmo::Direction::Z)
         {
-            std::cout << glm::dot(camera->getRightVector(), getForwardVector()) << std::endl;
             if (glm::dot(camera->getRightVector(), getForwardVector()) >= 0.f)
             {
                 delta.x *= -1.f;

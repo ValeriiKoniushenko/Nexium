@@ -38,7 +38,10 @@ namespace Core
 
         for (auto&& mesh : _actors)
         {
-            mesh->draw();
+            if (mesh->isEnabled() && !mesh->isExcludedFromSceneDraw())
+            {
+                mesh->draw();
+            }
         }
     }
 

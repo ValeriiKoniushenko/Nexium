@@ -54,7 +54,7 @@ namespace Core
         };
 
     public:
-        void initialize();
+        void initialize() override;
         void load3DModel();
         void handleDragStart(StaticMesh* touchedMesh);
         void handleDrag(glm::vec2 delta, MouseInputAction::SpecKeysState state);
