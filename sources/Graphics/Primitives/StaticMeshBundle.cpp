@@ -34,8 +34,7 @@ using namespace Core;
 namespace
 {
     void recursiveImportFrom(BaseComponent* rootComponent, const aiNode* node, const aiScene* scene,
-                             const std::filesystem::path& modelPath,
-                             StaticMeshBundle::MeshesT& container)
+                             const std::filesystem::path& modelPath)
     {
         for (uint32_t i = 0; i < node->mNumMeshes; ++i)
         {
@@ -44,13 +43,11 @@ namespace
             const aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
             topMesh->setComponentName(mesh->mName.C_Str());
             topMesh->importFrom(mesh, scene, modelPath);
-
-            container.push_back(topMesh);
         }
 
         for (uint32_t i = 0; i < node->mNumChildren; ++i)
         {
-            recursiveImportFrom(rootComponent, node->mChildren[i], scene, modelPath, container);
+            recursiveImportFrom(rootComponent, node->mChildren[i], scene, modelPath);
         }
     }
 } // namespace
@@ -67,30 +64,21 @@ namespace Core
             return;
         }
 
-        if (_isDirtyModelMatrix)
+        tryToRecalculateMatrices();
+
+        for (auto* mesh : _meshes)
         {
-            recalculateMatrices();
-            for (auto* m : _meshes)
+            if (mesh->isEnabled())
             {
-                m->setDirtyMatrices();
+                mesh->draw();
             }
         }
 
-        for (auto&& comp : _children)
+        for (auto* mesh : _bundles)
         {
-            if (!comp->isEnabled())
+            if (mesh->isEnabled())
             {
-                continue;
-            }
-
-            if (auto* mesh = comp->tryCastTo<StaticMesh>(); mesh)
-            {
-                mesh->tryToRecalculateMatrices(_cachedModelMatrix);
                 mesh->draw();
-            }
-            else if (auto* trans = dynamic_cast<Transformable*>(comp.get()); trans)
-            {
-                trans->tryToRecalculateMatrices(_cachedModelMatrix);
             }
         }
     }
@@ -117,7 +105,7 @@ namespace Core
         }
 
         setComponentName(modelPath.stem().generic_string().c_str());
-        recursiveImportFrom(this, node, scene, modelPath, _meshes);
+        recursiveImportFrom(this, node, scene, modelPath);
     }
 
     void StaticMeshBundle::setShader(ShaderProgram* sp, bool ignoreVertexAttribSetup /* = false*/)
@@ -201,6 +189,44 @@ namespace Core
         fromJson(data, false);
     }
 
+    void StaticMeshBundle::onAddChild(BaseComponent* newChild)
+    {
+        Actor::onAddChild(newChild);
+        if (auto* mesh = newChild->tryCastTo<StaticMesh>())
+        {
+            _meshes.push_back(mesh);
+        }
+
+        if (auto* mesh = newChild->tryCastTo<StaticMeshBundle>())
+        {
+            _bundles.push_back(mesh);
+        }
+
+        setDirtyMatrices();
+    }
+    void StaticMeshBundle::onRemoveChild(BaseComponent* child)
+    {
+        Actor::onRemoveChild(child);
+
+        if (auto* mesh = child->tryCastTo<StaticMesh>())
+        {
+            if (const auto it = std::ranges::find(_meshes, mesh); it != _meshes.end())
+            {
+                _meshes.erase(it);
+            }
+        }
+
+        if (auto* mesh = child->tryCastTo<StaticMeshBundle>())
+        {
+            if (const auto it = std::ranges::find(_bundles, mesh); it != _bundles.end())
+            {
+                _bundles.erase(it);
+            }
+        }
+
+        setDirtyMatrices();
+    }
+
     void StaticMeshBundle::setOutlineShader(ShaderProgram* sp, bool ignoreVertexAttribSetup)
     {
         for (auto* mesh : _meshes)
@@ -219,44 +245,34 @@ namespace Core
             return;
         }
 
-        if (_isDirtyModelMatrix)
+        tryToRecalculateMatrices();
+
+        for (auto* mesh : _meshes)
         {
-            recalculateMatrices();
-            for (auto* m : _meshes)
+            if (mesh->isEnabled())
             {
-                m->setDirtyMatrices();
+                mesh->pureDraw();
             }
         }
 
-        for (auto&& comp : _children)
+        for (auto* mesh : _bundles)
         {
-            if (auto* mesh = comp->tryCastTo<StaticMesh>(); mesh && mesh->isEnabled())
+            if (mesh->isEnabled())
             {
-                mesh->tryToRecalculateMatrices(_cachedModelMatrix);
                 mesh->pureDraw();
             }
         }
     }
 
-    void StaticMeshBundle::tryToRecalculateMatrices(const glm::mat4& mat)
+    void StaticMeshBundle::recalculateMatrices(const glm::mat4& mat)
     {
-        if (_isDirtyModelMatrix)
-        {
-            recalculateMatrices(mat);
-            for (auto* m : _meshes)
-            {
-                m->setDirtyMatrices();
-            }
+        Actor::recalculateMatrices(mat);
 
-            for (auto&& comp : _children)
+        for (auto&& comp : _children)
+        {
+            if (auto* trans = dynamic_cast<Transformable*>(comp.get()))
             {
-                if (comp->isEnabled())
-                {
-                    if (auto* trans = dynamic_cast<Transformable*>(comp.get()))
-                    {
-                        trans->tryToRecalculateMatrices(_cachedModelMatrix);
-                    }
-                }
+                trans->recalculateMatrices(_cachedModelMatrix);
             }
         }
     }

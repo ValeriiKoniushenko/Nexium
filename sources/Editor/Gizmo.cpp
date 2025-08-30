@@ -55,21 +55,15 @@ namespace Core
 
     void Gizmo::load3DModel()
     {
-        static bool isLoaded = false;
-        if (!isLoaded)
+        Assimp::Importer importer;
+
+        const aiScene* scene
+            = importer.ReadFile(defaultModelPath.generic_string().c_str(),
+                                aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
+        if (Verify(scene) && Verify(scene->mRootNode))
         {
-            Assimp::Importer importer;
-
-            const aiScene* scene
-                = importer.ReadFile(defaultModelPath.generic_string().c_str(),
-                                    aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
-            if (Verify(scene) && Verify(scene->mRootNode))
-            {
-                importFrom(scene->mRootNode, scene, defaultModelPath);
-                setShader(gGameInstance->shaderManager.getShaderProgram("simple_color"_atom));
-            }
-
-            isLoaded = true;
+            importFrom(scene->mRootNode, scene, defaultModelPath);
+            setShader(gGameInstance->shaderManager.getShaderProgram("simple_color"_atom));
         }
     }
 

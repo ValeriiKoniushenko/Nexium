@@ -180,7 +180,7 @@ namespace Core
 
     void BaseComponent::attachChild(BaseComponent* child)
     {
-        _children.push_back(child);
+        (void)rawAddChildComponent(child);
     }
 
     void BaseComponent::detachChild(BaseComponent* child)
@@ -193,11 +193,17 @@ namespace Core
 
     void BaseComponent::removeChild(const BaseComponent* child)
     {
-        const auto [first, last] = std::ranges::remove_if(_children,
-                                                          [&child](const BaseComponent::Ptr& c)
-                                                          {
-                                                              return *c == *child;
-                                                          });
+        const auto [first, last]
+            = std::ranges::remove_if(_children,
+                                     [&child, this](const BaseComponent::Ptr& c)
+                                     {
+                                         if (*c == *child)
+                                         {
+                                             onRemoveChild(c.get());
+                                             return true;
+                                         }
+                                         return false;
+                                     });
         _children.erase(first, last);
     }
 
@@ -209,9 +215,14 @@ namespace Core
         }
 
         const auto [first, last] = std::ranges::remove_if(_children,
-                                                          [&pred](const Ptr& c)
+                                                          [&pred, this](const Ptr& c)
                                                           {
-                                                              return pred(c.get());
+                                                              if (pred(c.get()))
+                                                              {
+                                                                  onRemoveChild(c.get());
+                                                                  return true;
+                                                              }
+                                                              return false;
                                                           });
         _children.erase(first, last);
     }
@@ -336,27 +347,19 @@ namespace Core
         return seed;
     }
 
-    void BaseComponent::onSuccessAddChildComponentValidation(BaseComponent* newComponent)
-    {
-        newComponent->_parent = this;
-    }
-
     BaseComponent* BaseComponent::rawAddChildComponent(BaseComponent* newOne)
     {
-        if (!onAddChildComponentValidation(newOne))
-        {
-            return nullptr;
-        }
-
-        onSuccessAddChildComponentValidation(newOne);
-
         // if this parent wasn't init, lets init at least here
         if (!isInited())
         {
             initialize();
         }
         auto* added = _children.emplace_back(newOne).get();
+        added->_parent = this;
         added->initialize();
+
+        onAddChild(added);
+
         return added;
     }
 

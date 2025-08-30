@@ -33,9 +33,6 @@ namespace Core
         ECS_REGISTER_NEW_COMPONENT(StaticMeshBundle, Actor);
 
     public:
-        using MeshesT = std::vector<StaticMesh*>;
-
-    public:
         /**
          * @brief will draw with default shader & logic. Single draw bundle!
          */
@@ -61,12 +58,15 @@ namespace Core
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
 
         [[nodiscard]] std::size_t getRenderTargetsCount() const noexcept { return _meshes.size(); }
-        [[nodiscard]] MeshesT& getRenderTargets() noexcept { return _meshes; }
-        [[nodiscard]] const MeshesT& getRenderTargets() const noexcept { return _meshes; }
+        [[nodiscard]] std::vector<StaticMesh*>& getRenderTargets() noexcept { return _meshes; }
+        [[nodiscard]] const std::vector<StaticMesh*>& getRenderTargets() const noexcept
+        {
+            return _meshes;
+        }
 
         [[nodiscard]] uint32_t getID() const noexcept { return _id; }
 
-        virtual void tryToRecalculateMatrices(const glm::mat4& mat = glm::mat4(1.f)) override;
+        void recalculateMatrices(const glm::mat4& mat = glm::mat4(1.f)) override;
 
     protected:
         void onOutlineStatusChange(bool newStatus) override;
@@ -74,8 +74,12 @@ namespace Core
         [[nodiscard]] nlohmann::json toCacheData() const override;
         void fromCacheData(const nlohmann::json& data) override;
 
+        void onAddChild(BaseComponent* newChild) override;
+        void onRemoveChild(BaseComponent* child) override;
+
     protected:
-        MeshesT _meshes;
+        std::vector<StaticMesh*> _meshes;
+        std::vector<StaticMeshBundle*> _bundles;
 
         inline static uint32_t _idGenerator = 0;
         uint32_t _id = ++_idGenerator;

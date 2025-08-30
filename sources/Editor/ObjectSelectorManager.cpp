@@ -61,10 +61,6 @@ namespace Core
         {
             _generalSelectedComponent = comp;
             (void)_generalSelectedComponent->addChildComponent<Gizmo>();
-            if (auto* trans = dynamic_cast<Transformable*>(_generalSelectedComponent))
-            {
-                trans->setDirtyMatrices(true);
-            }
         }
 
         if (auto* outliner = dynamic_cast<IOutliner*>(comp))

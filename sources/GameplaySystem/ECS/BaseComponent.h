@@ -481,11 +481,8 @@ namespace Core
         }
 
     protected:
-        [[nodiscard]] virtual bool onAddChildComponentValidation(const BaseComponent* newComponent)
-        {
-            return true;
-        }
-        virtual void onSuccessAddChildComponentValidation(BaseComponent* newComponent);
+        virtual void onAddChild(BaseComponent* newChild) {}
+        virtual void onRemoveChild(BaseComponent* child) {}
 
         explicit BaseComponent(StringAtom type, StringAtom name)
             : _name{ std::move(name) },

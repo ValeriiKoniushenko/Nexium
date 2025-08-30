@@ -212,34 +212,6 @@
             "name": "Tree_LOD0",
             "noTick": false,
             "type": "StaticMesh"
-        },
-        {
-            "Transformable": {
-                "origin": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "position": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "rotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            },
-            "isEnabled": true,
-            "name": "Gizmo",
-            "noTick": false,
-            "type": "Gizmo"
         }
     ],
     "isEnabled": true,
