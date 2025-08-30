@@ -22,6 +22,8 @@
 
 #include "Mouse.h"
 
+#include "Editor/Windows/GameViewport.h"
+#include "GameplaySystem/Framework/GameInstance.h"
 #include "Graphics/Window.h"
 
 namespace Core
@@ -72,6 +74,25 @@ namespace Core
         double x = 0, y = 0;
         glfwGetCursorPos(GetWindow().getRawWindow(), &x, &y);
         return { static_cast<float>(x), static_cast<float>(y) };
+    }
+
+    glm::vec2 Mouse::GetInViewportPosition()
+    {
+        if (gGameInstance->renderMode.cast() == GameInstance::RenderMode::Editor)
+        {
+            if (auto* wnd = gGameInstance->gameEditor.getWindow<GameViewportEWC>())
+            {
+                const auto wndPos = wnd->getInnerPosition();
+                auto mouse = Mouse::GetPosition();
+                mouse.x -= wndPos.x;
+                mouse.y -= wndPos.y;
+                mouse.y = wnd->getInnerWindowSize().height - mouse.y - 1;
+
+                return mouse;
+            }
+        }
+
+        return Mouse::GetPosition();
     }
 
     bool Mouse::IsKeyPressed(Key key)

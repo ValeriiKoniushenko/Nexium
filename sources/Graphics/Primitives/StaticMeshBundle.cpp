@@ -239,6 +239,11 @@ namespace Core
         }
     }
 
+    void StaticMeshBundle::onTick(float delta)
+    {
+        Actor::onTick(delta);
+    }
+
     void StaticMeshBundle::pureDraw(const std::function<void(StaticMesh*)>& onUniformSet,
                                     const std::function<bool(const Actor*)>& conditional)
     {

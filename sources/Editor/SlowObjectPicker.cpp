@@ -127,19 +127,22 @@ namespace Core
                     continue;
                 }
 
-                for (auto&& mesh : bundle->getRenderMeshes())
-                {
-                    if (!mesh->isEnabled())
+                bundle->forEach(
+                    [pickedID, &found](BaseComponent* component)
                     {
-                        continue;
-                    }
-
-                    if (mesh->getID() == pickedID)
-                    {
-                        found = mesh;
-                        break;
-                    }
-                }
+                        Assert(component);
+                        if (component && component->isEnabled()
+                            && component->isTypeOf<StaticMesh>())
+                        {
+                            auto* mesh = component->castTo<StaticMesh>();
+                            if (mesh->getID() == pickedID)
+                            {
+                                found = mesh;
+                                return false;
+                            }
+                        }
+                        return true;
+                    });
 
                 if (found)
                 {

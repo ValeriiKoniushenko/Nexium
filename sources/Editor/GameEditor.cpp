@@ -376,14 +376,11 @@ namespace Core
 
         if (auto* bundle = mesh->tryToGetRootBundle())
         {
-            if (auto* gizmo = bundle->tryCastTo<Gizmo>())
-            {
-                gizmo->handleDragStart(mesh);
-            }
-            else
+            if (!bundle->isIgnoreSelect())
             {
                 gGameInstance->objectSelectorManager.selectObject(bundle);
             }
+            bundle->onMousePicked(mesh);
         }
         else
         {
@@ -393,16 +390,6 @@ namespace Core
 
     void GameEditor::handleMouseDrag(glm::vec2 delta, MouseInputAction::SpecKeysState state)
     {
-        if (gDragDrop.isTypeOf<Gizmo::DragData>())
-        {
-            auto gizmo = gGameInstance->gameScene.getFirstActorOf<Gizmo>();
-            if (!gizmo)
-            {
-                return;
-            }
-
-            gizmo->handleDrag(delta, state);
-        }
     }
 
 } // namespace Core

@@ -46,12 +46,27 @@ namespace Core
         glDepthFunc(GL_LESS);
     }
 
+    void Gizmo::onMousePicked(StaticMesh* clickedPart)
+    {
+        StaticMeshBundle::onMousePicked(clickedPart);
+
+        handleDragStart(clickedPart);
+    }
+
+    void Gizmo::onTick(float delta)
+    {
+        StaticMeshBundle::onTick(delta);
+
+        handleDrag();
+    }
+
     void Gizmo::initialize()
     {
         StaticMeshBundle::initialize();
 
         load3DModel();
-        setIsPostDraw(false);
+        setIsPostDraw(true);
+        setIsIgnoreSelect(true);
     }
 
     void Gizmo::load3DModel()
@@ -77,7 +92,8 @@ namespace Core
             char directionChar = toupper(touchedMesh->getComponentName()[0]) - 'X';
             data.direction = static_cast<Gizmo::Direction>(directionChar);
 
-            for (auto&& [_, obj] : gGameInstance->objectSelectorManager.getSelectedObjects())
+            for (auto& obj :
+                 gGameInstance->objectSelectorManager.getSelectedObjects() | std::views::values)
             {
                 if (auto* trans = dynamic_cast<Transformable*>(obj.get()))
                 {
@@ -86,11 +102,18 @@ namespace Core
             }
 
             gDragDrop.payload.data = std::make_unique<Gizmo::DragData>(data);
+
+            _lastRay.reset();
         }
     }
 
-    void Gizmo::handleDrag(glm::vec2 delta, MouseInputAction::SpecKeysState state)
+    void Gizmo::handleDrag()
     {
+        if (!gDragDrop.isTypeOf<Gizmo::DragData>())
+        {
+            return;
+        }
+
         auto* data = dynamic_cast<Gizmo::DragData*>(gDragDrop.payload.data.get());
         if (!Verify(data))
         {
@@ -102,24 +125,19 @@ namespace Core
             return;
         }
 
-        if (state.leftShift.cast() == Keyboard::KeyState::Pressed)
+        auto* camera = gGameInstance->currentCamera;
+        const float distance = glm::length(camera->getPosition() - glm::vec3(getPosition()));
+        auto ray = camera->putMouseRay(distance);
+
+        if (!_lastRay)
         {
-            delta /= 5.f;
-        }
-        if (state.leftAlt.cast() == Keyboard::KeyState::Pressed)
-        {
-            delta *= 5.f;
+            _lastRay = ray;
         }
 
-        auto* camera = gGameInstance->currentCamera;
+        auto delta = ray - *_lastRay;
 
         if (data->direction == Gizmo::Direction::X)
         {
-            if (glm::dot(camera->getForwardVector(), getForwardVector()) < 0.f)
-            {
-                delta.x *= -1.f;
-            }
-            moveRight(delta.x);
             for (auto& obj : data->attachedObjects)
             {
                 obj->moveRight(delta.x);
@@ -127,7 +145,6 @@ namespace Core
         }
         if (data->direction == Gizmo::Direction::Y)
         {
-            moveUp(-delta.y);
             for (auto& obj : data->attachedObjects)
             {
                 obj->moveUp(-delta.y);
@@ -135,16 +152,13 @@ namespace Core
         }
         if (data->direction == Gizmo::Direction::Z)
         {
-            if (glm::dot(camera->getRightVector(), getForwardVector()) >= 0.f)
-            {
-                delta.x *= -1.f;
-            }
-            moveForward(-delta.x);
             for (auto& obj : data->attachedObjects)
             {
-                obj->moveForward(-delta.x);
+                obj->moveForward(delta.z);
             }
         }
+
+        _lastRay = ray;
     }
 
 } // namespace Core

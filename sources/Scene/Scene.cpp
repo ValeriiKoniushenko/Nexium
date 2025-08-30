@@ -141,6 +141,14 @@ namespace Core
         for (auto&& obj : _actors)
         {
             obj->tick(timeDelta);
+            obj->forEach(
+                [timeDelta](BaseComponent* comp)
+                {
+                    if (Verify(comp))
+                    {
+                        comp->tick(timeDelta);
+                    }
+                });
         }
     }
 

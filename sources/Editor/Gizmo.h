@@ -59,12 +59,17 @@ namespace Core
         void pureDraw(const std::function<void(StaticMesh*)>& onUniformSet,
                       const std::function<bool(const Actor*)>& conditional) override;
 
+        void onMousePicked(StaticMesh* clickedPart) override;
+        void onTick(float delta) override;
+
+    protected:
         void initialize() override;
         void load3DModel();
         void handleDragStart(StaticMesh* touchedMesh);
-        void handleDrag(glm::vec2 delta, MouseInputAction::SpecKeysState state);
+        void handleDrag();
 
     private:
         DelegateSubscriber _onSelectChangeId;
+        std::optional<glm::vec3> _lastRay;
     };
 } // namespace Core

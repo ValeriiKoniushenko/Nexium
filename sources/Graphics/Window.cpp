@@ -207,6 +207,10 @@ namespace Core
         _idOnMouseMove = onMouseMove.subscribeAndGetID(
             [](glm::vec2 pos)
             {
+                static glm::vec2 lastPos = pos;
+                gDragDrop._lastDelta = lastPos - pos;
+                lastPos = pos;
+
                 if (gDragDrop._state == DragAndDrop::State::Started)
                 {
                     if (glm::distance(pos, gDragDrop._startPos) >= DragAndDrop::dragTreshold)

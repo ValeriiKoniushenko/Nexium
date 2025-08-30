@@ -38,6 +38,7 @@ namespace Core
         ~BaseCamera() override = default;
 
         [[nodiscard]] const glm::mat4& getMatrix();
+        [[nodiscard]] const glm::mat4& getCachedProjectionMatrix() { return _cachedProjMatrix; }
 
         void lookAt(const glm::vec3& targetPosition);
 
@@ -63,6 +64,10 @@ namespace Core
         [[nodiscard]] StringAtom getCacheHash() const override;
         [[nodiscard]] nlohmann::json toCacheData() const override;
         void fromCacheData(const nlohmann::json& data) override;
+
+        [[nodiscard]] FSize2 getOutputFrameSize() const;
+
+        [[nodiscard]] glm::vec3 putMouseRay(float length);
 
     protected:
         void recalculateCameraMatrices();

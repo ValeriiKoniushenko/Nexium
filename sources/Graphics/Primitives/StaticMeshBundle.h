@@ -51,6 +51,8 @@ namespace Core
         void setShader(ShaderProgram* sp, bool ignoreVertexAttribSetup = false);
         void setOutlineShader(ShaderProgram* sp, bool ignoreVertexAttribSetup = false);
 
+        void onTick(float delta) override;
+
         void clear() override;
 
         void clearMeshes();
@@ -75,9 +77,26 @@ namespace Core
             return _bundles;
         }
 
+        /**
+         * @brief It controls will be object selected by ObjectSelectorManager or no
+         * @return true - will be ignored; false - otherwise
+         */
+        [[nodiscard]] bool isIgnoreSelect() const noexcept { return _ignoreSelect; }
+
+        /**
+         * @brief It controls will be object selected by ObjectSelectorManager or no
+         * @param value true - will be ignored; false - otherwise
+         */
+        void setIsIgnoreSelect(bool value) noexcept { _ignoreSelect = value; }
+
         [[nodiscard]] uint32_t getID() const noexcept { return _id; }
 
         void recalculateMatrices(const glm::mat4& mat = glm::mat4(1.f)) override;
+
+        /**
+         * @brief This function will be called after mouse click on this object.
+         */
+        virtual void onMousePicked(StaticMesh* clickedPart) {}
 
     protected:
         void onOutlineStatusChange(bool newStatus) override;
@@ -89,11 +108,12 @@ namespace Core
         void onRemoveChild(BaseComponent* child) override;
 
     protected:
+        inline static uint32_t _idGenerator = 0;
+
         std::vector<StaticMesh*> _meshes;
         std::vector<StaticMeshBundle*> _bundles;
-
-        inline static uint32_t _idGenerator = 0;
         uint32_t _id = ++_idGenerator;
+        bool _ignoreSelect = false;
     };
 
 } // namespace Core

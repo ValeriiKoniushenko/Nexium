@@ -74,6 +74,7 @@ namespace Core
         [[nodiscard]] static Key FromStringToKey(const StringAtom& str);
 
         [[nodiscard]] static glm::vec2 GetPosition();
+        [[nodiscard]] static glm::vec2 GetInViewportPosition();
 
         [[nodiscard]] static bool IsKeyPressed(Key key);
         [[nodiscard]] static bool IsKeyReleased(Key key);

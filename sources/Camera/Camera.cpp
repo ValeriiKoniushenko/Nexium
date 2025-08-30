@@ -22,6 +22,7 @@
 
 #include "Camera.h"
 
+#include "GameplaySystem/Framework/GameInstance.h"
 #include "Graphics/Window.h"
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/matrix_transform.hpp"
@@ -155,6 +156,33 @@ namespace Core
     void BaseCamera::fromCacheData(const nlohmann::json& data)
     {
         fromJson(data, false);
+    }
+
+    FSize2 BaseCamera::getOutputFrameSize() const
+    {
+        if (gGameInstance->renderMode.cast() == GameInstance::RenderMode::Editor)
+        {
+            return static_cast<FSize2>(gGameInstance->renderToTextureObject.getRenderSize());
+        }
+
+        return static_cast<FSize2>(GetWindow().getSize());
+    }
+
+    glm::vec3 BaseCamera::putMouseRay(float length)
+    {
+        const auto mouse = Mouse::GetInViewportPosition();
+
+        const auto frame = getOutputFrameSize();
+        const float x = (2.0f * mouse.x) / frame.width - 1.0f;
+        const float y = 1.0f - (2.0f * mouse.y) / frame.height;
+
+        const auto rayClip = glm::vec4(x, y, -1.0f, 1.0f);
+        glm::vec4 rayEye = glm::inverse(_cachedProjMatrix) * rayClip;
+        rayEye = glm::vec4(rayEye.x, rayEye.y, -1.0f, 0.0f);
+        const glm::vec3 ray_world
+            = glm::normalize(glm::vec3(glm::inverse(_cachedModelMatrix) * rayEye));
+
+        return _position + ray_world * length;
     }
 
     void BaseCamera::recalculateCameraMatrices()

@@ -30,13 +30,13 @@
                     0.0
                 ],
                 "position": [
-                    510.21405029296875,
-                    606.3697509765625,
-                    273.84906005859375
+                    66.74945068359375,
+                    197.68490600585938,
+                    324.9064636230469
                 ],
                 "rotation": [
-                    26.400108337402344,
-                    -42.00059509277344,
+                    0.0,
+                    0.0,
                     0.0
                 ],
                 "scale": [
@@ -45,6 +45,288 @@
                     1.0
                 ]
             },
+            "children": [
+                {
+                    "Transformable": {
+                        "origin": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "position": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "rotation": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    },
+                    "children": [
+                        {
+                            "GraphicsComponentData": {
+                                "modifiers": []
+                            },
+                            "Transformable": {
+                                "origin": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "position": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            },
+                            "isEnabled": true,
+                            "name": "Y.001",
+                            "noTick": false,
+                            "type": "StaticMesh"
+                        },
+                        {
+                            "GraphicsComponentData": {
+                                "modifiers": []
+                            },
+                            "Transformable": {
+                                "origin": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "position": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            },
+                            "isEnabled": true,
+                            "name": "X.001",
+                            "noTick": false,
+                            "type": "StaticMesh"
+                        },
+                        {
+                            "GraphicsComponentData": {
+                                "modifiers": []
+                            },
+                            "Transformable": {
+                                "origin": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "position": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            },
+                            "isEnabled": true,
+                            "name": "Z.001",
+                            "noTick": false,
+                            "type": "StaticMesh"
+                        },
+                        {
+                            "GraphicsComponentData": {
+                                "modifiers": []
+                            },
+                            "Transformable": {
+                                "origin": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "position": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            },
+                            "isEnabled": true,
+                            "name": "Union.001",
+                            "noTick": false,
+                            "type": "StaticMesh"
+                        }
+                    ],
+                    "isEnabled": true,
+                    "meshes": [
+                        {
+                            "GraphicsComponentData": {
+                                "modifiers": []
+                            },
+                            "Transformable": {
+                                "origin": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "position": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            },
+                            "isEnabled": true,
+                            "name": "Y.001",
+                            "noTick": false,
+                            "type": "StaticMesh"
+                        },
+                        {
+                            "GraphicsComponentData": {
+                                "modifiers": []
+                            },
+                            "Transformable": {
+                                "origin": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "position": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            },
+                            "isEnabled": true,
+                            "name": "X.001",
+                            "noTick": false,
+                            "type": "StaticMesh"
+                        },
+                        {
+                            "GraphicsComponentData": {
+                                "modifiers": []
+                            },
+                            "Transformable": {
+                                "origin": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "position": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            },
+                            "isEnabled": true,
+                            "name": "Z.001",
+                            "noTick": false,
+                            "type": "StaticMesh"
+                        },
+                        {
+                            "GraphicsComponentData": {
+                                "modifiers": []
+                            },
+                            "Transformable": {
+                                "origin": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "position": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            },
+                            "isEnabled": true,
+                            "name": "Union.001",
+                            "noTick": false,
+                            "type": "StaticMesh"
+                        }
+                    ],
+                    "name": "gizmo",
+                    "noTick": false,
+                    "type": "Gizmo"
+                }
+            ],
             "far": 10000.0,
             "fov": 75.0,
             "frameSize": {
