@@ -204,6 +204,7 @@ namespace Core
 
         setDirtyMatrices();
     }
+
     void StaticMeshBundle::onRemoveChild(BaseComponent* child)
     {
         Actor::onRemoveChild(child);

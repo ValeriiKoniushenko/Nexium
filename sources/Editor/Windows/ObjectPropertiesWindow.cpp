@@ -133,7 +133,7 @@ namespace Core
         auto* asBaseCamera = dynamic_cast<BaseCamera*>(_target);
 
         tryDrawBaseComponent(asBaseComponent);
-        tryDrawTransformable(asTransformable);
+        tryDrawTransformable(asTransformable, asBaseComponent);
         tryDrawGraphicsComponentData(asGraphicsComponentData);
         tryDrawStaticMeshBundle(asStaticMeshBundle);
         tryDrawBaseCamera(asBaseCamera);
@@ -149,29 +149,54 @@ namespace Core
         _slowUpdater.startOrUpdate();
     }
 
-    void ObjectPropertiesWindowEWC::tryDrawTransformable(Transformable* comp)
+    void ObjectPropertiesWindowEWC::tryDrawTransformable(Transformable* comp, BaseComponent* base)
     {
         if (comp && ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
         {
+            bool isChanged = false;
+
             if (auto res
                 = _transformLocationControl.drawAndProcess(comp->getPosition(), _innerSize.width))
             {
                 comp->setPosition(GPos3(res.value()));
+                isChanged = true;
             }
             if (auto res
                 = _transformRotationControl.drawAndProcess(comp->getRotation(), _innerSize.width))
             {
                 comp->setRotation(res.value());
+                isChanged = true;
             }
             if (auto res
                 = _transformOriginControl.drawAndProcess(comp->getOrigin(), _innerSize.width))
             {
                 comp->setOrigin(res.value());
+                isChanged = true;
             }
             if (auto res
                 = _transformScaleControl.drawAndProcess(comp->getScale(), _innerSize.width))
             {
                 comp->setScale(res.value());
+                isChanged = true;
+            }
+
+            if (isChanged && base)
+            {
+                if (auto* bundle = base->tryCastTo<StaticMeshBundle>())
+                {
+                    bundle->recalculateMatrices();
+                }
+                if (auto* mesh = base->tryCastTo<StaticMesh>())
+                {
+                    if (auto* bundle = mesh->tryToGetRootBundle())
+                    {
+                        bundle->recalculateMatrices();
+                    }
+                    else
+                    {
+                        mesh->recalculateMatrices();
+                    }
+                }
             }
 
             ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));

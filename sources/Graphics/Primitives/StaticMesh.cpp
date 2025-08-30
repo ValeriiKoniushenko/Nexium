@@ -158,10 +158,18 @@ namespace Core
 
         for (auto&& comp : _children)
         {
-            if (auto* mesh = comp->tryCastTo<StaticMesh>(); mesh && mesh->isEnabled())
+            if (comp->isEnabled())
             {
-                mesh->tryToRecalculateMatrices(_cachedModelMatrix);
-                mesh->draw();
+                if (auto* mesh = comp->tryCastTo<StaticMesh>())
+                {
+                    mesh->tryToRecalculateMatrices(_cachedModelMatrix);
+                    mesh->draw();
+                }
+                if (auto* bundle = comp->tryCastTo<StaticMeshBundle>())
+                {
+                    bundle->tryToRecalculateMatrices(_cachedModelMatrix);
+                    bundle->draw();
+                }
             }
         }
     }

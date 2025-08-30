@@ -46,7 +46,7 @@ namespace Core
         void onDraw() override;
         void onUpdate() override;
 
-        void tryDrawTransformable(Transformable* comp);
+        void tryDrawTransformable(Transformable* comp, BaseComponent* base);
         void tryDrawBaseComponent(BaseComponent* comp);
         void tryDrawStaticMeshBundle(StaticMeshBundle* comp);
         void tryDrawBaseComponentExtra(BaseComponent* comp);
