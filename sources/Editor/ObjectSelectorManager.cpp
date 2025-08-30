@@ -47,16 +47,20 @@ namespace Core
             onChange.trigger(obj.get(), false);
         }
 
-        _generalSelectedComponent = nullptr;
+        if (_generalSelectedComponent)
+        {
+            _generalSelectedComponent->removeChildOf<Gizmo>();
+            _generalSelectedComponent = nullptr;
+        }
         _selectedObjects.clear();
     }
 
     void ObjectSelectorManager::addSelectedObject(BaseComponent* comp)
     {
-        if (!_generalSelectedComponent)
+        if (!_generalSelectedComponent && !comp->isTypeOf<Gizmo>())
         {
             _generalSelectedComponent = comp;
-            // _generalSelectedComponent->addChildComponent<Gizmo>();
+            _generalSelectedComponent->addChildComponent<Gizmo>();
         }
 
         if (auto* outliner = dynamic_cast<IOutliner*>(comp))

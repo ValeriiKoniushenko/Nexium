@@ -191,38 +191,29 @@ namespace Core
         }
     }
 
-    bool BaseComponent::removeChild(const BaseComponent* child)
+    void BaseComponent::removeChild(const BaseComponent* child)
     {
-        for (auto i = _children.begin(); i != _children.end(); ++i)
-        {
-            if (i->get() == child)
-            {
-                _children.erase(i);
-                return true;
-            }
-        }
-
-        return false;
+        const auto [first, last] = std::ranges::remove_if(_children,
+                                                          [&child](const BaseComponent::Ptr& c)
+                                                          {
+                                                              return *c == *child;
+                                                          });
+        _children.erase(first, last);
     }
 
-    bool BaseComponent::removeChildIf(std::function<bool(const BaseComponent*)>&& pred)
+    void BaseComponent::removeChildIf(const std::function<bool(const BaseComponent*)>& pred)
     {
-        bool removedAtLeastOne = false;
-
-        for (auto i = _children.begin(); i != _children.end();)
+        if (!pred)
         {
-            if (pred(i->get()))
-            {
-                i = _children.erase(i);
-                removedAtLeastOne = true;
-            }
-            else
-            {
-                ++i;
-            }
+            return;
         }
 
-        return removedAtLeastOne;
+        const auto [first, last] = std::ranges::remove_if(_children,
+                                                          [&pred](const Ptr& c)
+                                                          {
+                                                              return pred(c.get());
+                                                          });
+        _children.erase(first, last);
     }
 
     void BaseComponent::clear()
@@ -310,7 +301,7 @@ namespace Core
         Assert(!_name.isEmpty());
         Assert(!other._name.isEmpty());
 
-        return _name == other._name;
+        return _name == other._name && _type == other._type;
     }
 
     void BaseComponent::setComponentName(const StringAtom& name)
@@ -348,6 +339,25 @@ namespace Core
     void BaseComponent::onSuccessAddChildComponentValidation(BaseComponent* newComponent)
     {
         newComponent->_parent = this;
+    }
+
+    BaseComponent* BaseComponent::rawAddChildComponent(BaseComponent* newOne)
+    {
+        if (!onAddChildComponentValidation(newOne))
+        {
+            return nullptr;
+        }
+
+        onSuccessAddChildComponentValidation(newOne);
+
+        // if this parent wasn't init, lets init at least here
+        if (!isInited())
+        {
+            initialize();
+        }
+        auto* added = _children.emplace_back(newOne).get();
+        added->initialize();
+        return added;
     }
 
     BaseComponent::BaseComponent(BaseComponent& other)

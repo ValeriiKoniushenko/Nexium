@@ -333,7 +333,7 @@ namespace Core
         BaseComponent(BaseComponent& other);
         BaseComponent& operator=(const BaseComponent& other);
 
-        [[nodiscard]] bool operator==(const Self& other) const;
+        [[nodiscard]] virtual bool operator==(const Self& other) const;
 
         // ========================== WORKING WITH NAME ==========================
         void setComponentName(const StringAtom& name);
@@ -393,8 +393,7 @@ namespace Core
                 return found;
             }
 
-            typename ComponentT::Ptr newOne = new ComponentT(std::forward<Args>(args)...);
-            return static_cast<ComponentT*>(rawAddChildComponent(newOne.get()));
+            return addChildComponent<ComponentT>(std::forward<Args>(args)...);
         }
 
         template<IsComponent ComponentT, class... Args>
@@ -407,28 +406,19 @@ namespace Core
         void attachChild(BaseComponent* child);
         void detachChild(BaseComponent* child);
 
-        [[nodiscard]] BaseComponent* rawAddChildComponent(BaseComponent* newOne)
+        void removeChild(const BaseComponent* child);
+        void removeChild(const CChildT& child) { removeChild(child.get()); }
+        void removeChildIf(const std::function<bool(const BaseComponent*)>& pred);
+
+        template<IsComponent ComponentT>
+        void removeChildOf(const StringAtom& name = ""_atom)
         {
-            if (!onAddChildComponentValidation(newOne))
-            {
-                return nullptr;
-            }
-
-            onSuccessAddChildComponentValidation(newOne);
-
-            // if this parent wasn't init, lets init at least here
-            if (!isInited())
-            {
-                initialize();
-            }
-            auto* added = _children.emplace_back(newOne).get();
-            added->initialize();
-            return added;
+            removeChildIf(
+                [](auto* child)
+                {
+                    return child->template isTypeOf<ComponentT>();
+                });
         }
-
-        bool removeChild(const BaseComponent* child);
-        bool removeChild(const CChildT& child) { return removeChild(child.get()); }
-        bool removeChildIf(std::function<bool(const BaseComponent*)>&& pred);
 
         // ========================== FOREACHes ==========================
 
@@ -513,6 +503,8 @@ namespace Core
         BaseComponent* _parent = nullptr;
 
     private:
+        [[nodiscard]] BaseComponent* rawAddChildComponent(BaseComponent* newOne);
+
         // ===================== PIMPLs =============================
         template<IsComponentOrBase TargetT, bool isConst, class FuncT>
         static void Impl_forEach_BFS(AdaptiveRawPtr<isConst> me, FuncT&& callback);
