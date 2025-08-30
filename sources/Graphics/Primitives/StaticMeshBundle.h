@@ -66,7 +66,7 @@ namespace Core
 
         [[nodiscard]] uint32_t getID() const noexcept { return _id; }
 
-        void tryToRecalculateMatrices();
+        virtual void tryToRecalculateMatrices(const glm::mat4& mat = glm::mat4(1.f)) override;
 
     protected:
         void onOutlineStatusChange(bool newStatus) override;

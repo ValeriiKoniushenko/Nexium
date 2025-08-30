@@ -81,8 +81,8 @@ namespace Core
         [[nodiscard]] nlohmann::json toJson() const override;
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
 
-        void recalculateMatrices(const glm::mat4& mat = glm::mat4(1.f)) noexcept;
-        void tryToRecalculateMatrices(const glm::mat4& mat = glm::mat4(1.f)) noexcept;
+        virtual void recalculateMatrices(const glm::mat4& mat = glm::mat4(1.f));
+        virtual void tryToRecalculateMatrices(const glm::mat4& mat = glm::mat4(1.f));
 
         [[nodiscard]] glm::mat4& getModelMatrix() noexcept { return _cachedModelMatrix; }
         void setDirtyMatrices(bool v = true) noexcept { _isDirtyModelMatrix = v; }

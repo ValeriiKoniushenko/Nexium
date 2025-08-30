@@ -224,7 +224,7 @@ namespace Core
         _isDirtyModelMatrix = true;
     }
 
-    void Transformable::recalculateMatrices(const glm::mat4& mat) noexcept
+    void Transformable::recalculateMatrices(const glm::mat4& mat)
     {
         _cachedModelMatrix = mat;
 
@@ -245,7 +245,7 @@ namespace Core
         _isDirtyModelMatrix = false;
     }
 
-    void Transformable::tryToRecalculateMatrices(const glm::mat4& mat) noexcept
+    void Transformable::tryToRecalculateMatrices(const glm::mat4& mat)
     {
         if (_isDirtyModelMatrix)
         {

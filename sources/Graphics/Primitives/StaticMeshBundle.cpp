@@ -238,11 +238,11 @@ namespace Core
         }
     }
 
-    void StaticMeshBundle::tryToRecalculateMatrices()
+    void StaticMeshBundle::tryToRecalculateMatrices(const glm::mat4& mat)
     {
         if (_isDirtyModelMatrix)
         {
-            recalculateMatrices();
+            recalculateMatrices(mat);
             for (auto* m : _meshes)
             {
                 m->setDirtyMatrices();
@@ -250,9 +250,12 @@ namespace Core
 
             for (auto&& comp : _children)
             {
-                if (auto* mesh = comp->tryCastTo<StaticMesh>(); mesh && mesh->isEnabled())
+                if (comp->isEnabled())
                 {
-                    mesh->tryToRecalculateMatrices(_cachedModelMatrix);
+                    if (auto* trans = dynamic_cast<Transformable*>(comp.get()))
+                    {
+                        trans->tryToRecalculateMatrices(_cachedModelMatrix);
+                    }
                 }
             }
         }

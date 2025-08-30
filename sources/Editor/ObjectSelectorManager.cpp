@@ -60,7 +60,11 @@ namespace Core
         if (!_generalSelectedComponent && !comp->isTypeOf<Gizmo>())
         {
             _generalSelectedComponent = comp;
-            _generalSelectedComponent->addChildComponent<Gizmo>();
+            (void)_generalSelectedComponent->addChildComponent<Gizmo>();
+            if (auto* trans = dynamic_cast<Transformable*>(_generalSelectedComponent))
+            {
+                trans->setDirtyMatrices(true);
+            }
         }
 
         if (auto* outliner = dynamic_cast<IOutliner*>(comp))
