@@ -115,29 +115,6 @@ namespace Core
         }
         glDepthFunc(GL_LESS);
 
-        /*if (scene.getGizmo())
-        {
-            // SUPER CRUTCH
-            glDepthFunc(GL_ALWAYS);
-            for (auto&& mesh : scene.getGizmo()->getRenderTargets())
-            {
-                if (!mesh->isEnabled())
-                {
-                    continue;
-                }
-
-                shader->setUniform("uModel"_atom, mesh->getModelMatrix());
-                Color3 colorId;
-                colorId.r = (mesh->getID() & 0x0000FF) >> 0;
-                colorId.g = (mesh->getID() & 0x00FF00) >> 8;
-                colorId.b = (mesh->getID() & 0xFF0000) >> 16;
-
-                shader->setUniform("uPickingColor"_atom, NormColor3::From(colorId));
-                mesh->pureDraw();
-            }
-            glDepthFunc(GL_LESS);
-        }*/
-
         glFlush();
         glFinish();
 

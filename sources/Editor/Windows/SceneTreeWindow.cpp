@@ -90,6 +90,7 @@ namespace Core
             {
                 drawTreeNode(node.get(), internalId++);
             }
+            _lastSelectedObject = selectedObject;
             ImGui::TreePop();
         }
 
@@ -177,7 +178,10 @@ namespace Core
         {
             selectedObject = n;
 
-            gGameInstance->objectSelectorManager.selectObject(n);
+            if (_lastSelectedObject != selectedObject)
+            {
+                gGameInstance->objectSelectorManager.selectObject(n);
+            }
         }
 
         if (isOpened)

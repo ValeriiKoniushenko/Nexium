@@ -37,7 +37,7 @@ namespace Core
 
     void ObjectSelectorManager::deselectAllAndClear()
     {
-        for (auto&& [_, obj] : _selectedObjects)
+        for (auto& obj : _selectedObjects | std::views::values)
         {
             if (auto* outliner = dynamic_cast<IOutliner*>(obj.get()))
             {
@@ -47,11 +47,18 @@ namespace Core
             onChange.trigger(obj.get(), false);
         }
 
+        _generalSelectedComponent = nullptr;
         _selectedObjects.clear();
     }
 
     void ObjectSelectorManager::addSelectedObject(BaseComponent* comp)
     {
+        if (!_generalSelectedComponent)
+        {
+            _generalSelectedComponent = comp;
+            // _generalSelectedComponent->addChildComponent<Gizmo>();
+        }
+
         if (auto* outliner = dynamic_cast<IOutliner*>(comp))
         {
             outliner->setIsDrawOutline(true);

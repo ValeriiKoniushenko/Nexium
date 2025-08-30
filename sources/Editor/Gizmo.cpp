@@ -47,37 +47,29 @@ namespace Core
 
     void Gizmo::initialize()
     {
-        _onSelectChangeId = gGameInstance->objectSelectorManager.onChange.subscribeAndGetID(
-            [this](BaseComponent* comp, bool newStatus)
-            {
-                if (comp == this)
-                {
-                    return;
-                }
-                if (auto* trans = dynamic_cast<Transformable*>(comp))
-                {
-                    if ((_isEnabled = newStatus))
-                    {
-                        setPosition(trans->getPosition());
-                    }
-                }
-            });
+        StaticMeshBundle::initialize();
 
-        setEnabled(false);
-        setIsPostDraw(true);
+        load3DModel();
+        setIsPostDraw(false);
     }
 
     void Gizmo::load3DModel()
     {
-        Assimp::Importer importer;
-
-        const aiScene* scene
-            = importer.ReadFile(defaultModelPath.generic_string().c_str(),
-                                aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
-        if (Verify(scene) && Verify(scene->mRootNode))
+        static bool isLoaded = false;
+        if (!isLoaded)
         {
-            importFrom(scene->mRootNode, scene, defaultModelPath);
-            setShader(gGameInstance->shaderManager.getShaderProgram("simple_color"_atom));
+            Assimp::Importer importer;
+
+            const aiScene* scene
+                = importer.ReadFile(defaultModelPath.generic_string().c_str(),
+                                    aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
+            if (Verify(scene) && Verify(scene->mRootNode))
+            {
+                importFrom(scene->mRootNode, scene, defaultModelPath);
+                setShader(gGameInstance->shaderManager.getShaderProgram("simple_color"_atom));
+            }
+
+            isLoaded = true;
         }
     }
 

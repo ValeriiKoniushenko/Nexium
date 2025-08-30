@@ -178,6 +178,19 @@ namespace Core
         }
     }
 
+    void BaseComponent::attachChild(BaseComponent* child)
+    {
+        _children.push_back(child);
+    }
+
+    void BaseComponent::detachChild(BaseComponent* child)
+    {
+        if (auto it = std::ranges::find(_children, child); it != _children.end())
+        {
+            _children.erase(it);
+        }
+    }
+
     bool BaseComponent::removeChild(const BaseComponent* child)
     {
         for (auto i = _children.begin(); i != _children.end(); ++i)

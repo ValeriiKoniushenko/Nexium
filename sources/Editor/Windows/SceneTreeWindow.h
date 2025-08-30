@@ -50,6 +50,7 @@ namespace Core
         Scene* _scene = nullptr;
         int _commonTreeFlags = ImGuiTreeNodeFlags_OpenOnDoubleClick;
         DelegateSubscriber _onSelectChangeId;
+        BaseComponent* _lastSelectedObject = nullptr;
 
     private:
         void drawTreeNode(BaseComponent* n, int32_t id, bool isInSelectedSubtree = false);

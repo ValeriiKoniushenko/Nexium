@@ -78,10 +78,19 @@ namespace Core
 
         for (auto&& comp : _children)
         {
-            if (auto* mesh = comp->tryCastTo<StaticMesh>(); mesh && mesh->isEnabled())
+            if (!comp->isEnabled())
+            {
+                continue;
+            }
+
+            if (auto* mesh = comp->tryCastTo<StaticMesh>(); mesh)
             {
                 mesh->tryToRecalculateMatrices(_cachedModelMatrix);
                 mesh->draw();
+            }
+            else if (auto* trans = dynamic_cast<Transformable*>(comp.get()); trans)
+            {
+                trans->tryToRecalculateMatrices(_cachedModelMatrix);
             }
         }
     }

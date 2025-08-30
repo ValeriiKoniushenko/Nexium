@@ -404,6 +404,9 @@ namespace Core
             return static_cast<ComponentT*>(rawAddChildComponent(newOne.get()));
         }
 
+        void attachChild(BaseComponent* child);
+        void detachChild(BaseComponent* child);
+
         [[nodiscard]] BaseComponent* rawAddChildComponent(BaseComponent* newOne)
         {
             if (!onAddChildComponentValidation(newOne))

@@ -62,6 +62,7 @@ namespace Core
 
     private:
         std::unordered_map<void*, BaseComponent::Ptr> _selectedObjects;
+        BaseComponent* _generalSelectedComponent = nullptr;
     };
 
 } // namespace Core
