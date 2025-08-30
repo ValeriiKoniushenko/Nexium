@@ -38,10 +38,11 @@ namespace Core
         glDepthFunc(GL_LESS);
     }
 
-    void Gizmo::pureDraw()
+    void Gizmo::pureDraw(const std::function<void(StaticMesh*)>& onUniformSet,
+                         const std::function<bool(const Actor*)>& conditional)
     {
         glDepthFunc(GL_ALWAYS);
-        StaticMeshBundle::pureDraw();
+        StaticMeshBundle::pureDraw(onUniformSet, conditional);
         glDepthFunc(GL_LESS);
     }
 

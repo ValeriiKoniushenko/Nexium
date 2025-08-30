@@ -71,7 +71,7 @@ namespace Core
          * Before using of this function you must manually prepare the shader &
          * 'use' it.
          */
-        void pureDraw();
+        void pureDraw(const std::function<void(StaticMesh*)>& onUniformSet);
 
         [[nodiscard]] nlohmann::json toJson() const override;
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
@@ -80,7 +80,6 @@ namespace Core
 
     protected:
         void onOutlineStatusChange(bool) override {};
-        void applyUniforms() override;
         void calculateSizeBaseOnMesh(const aiMesh* rawMesh, const aiMatrix4x4& transform);
         void drawOutline();
 

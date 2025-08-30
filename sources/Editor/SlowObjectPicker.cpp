@@ -47,7 +47,26 @@ namespace Core
             return;
         }
 
-        _cachedPostDrawActors.resize(0);
+        static auto onUniformSet = [&shader](StaticMesh* mesh)
+        {
+            shader->setUniform("uModel"_atom, mesh->getModelMatrix());
+            Color3 colorId;
+            colorId.r = (mesh->getID() & 0x0000FF) >> 0;
+            colorId.g = (mesh->getID() & 0x00FF00) >> 8;
+            colorId.b = (mesh->getID() & 0xFF0000) >> 16;
+
+            shader->setUniform("uPickingColor"_atom, NormColor3::From(colorId));
+        };
+
+        static auto preRenderCond = [](const Actor* actor)
+        {
+            return !actor->isPostDraw();
+        };
+
+        static auto postRenderCond = [](const Actor* actor)
+        {
+            return actor->isPostDraw();
+        };
 
         shader->use();
         shader->setUniform("uProjAndView"_atom, camera->getMatrix());
@@ -58,62 +77,24 @@ namespace Core
                 continue;
             }
 
-            auto* bundle = actor->tryCastTo<StaticMeshBundle>();
-            if (!bundle)
+            if (auto* bundle = actor->tryCastTo<StaticMeshBundle>())
             {
-                continue;
-            }
-
-            if (bundle->isPostDraw())
-            {
-                _cachedPostDrawActors.push_back(bundle);
-                continue;
-            }
-
-            bundle->tryToRecalculateMatrices();
-
-            for (auto&& mesh : bundle->getRenderTargets())
-            {
-                if (!mesh->isEnabled())
-                {
-                    continue;
-                }
-
-                shader->setUniform("uModel"_atom, mesh->getModelMatrix());
-                Color3 colorId;
-                colorId.r = (mesh->getID() & 0x0000FF) >> 0;
-                colorId.g = (mesh->getID() & 0x00FF00) >> 8;
-                colorId.b = (mesh->getID() & 0xFF0000) >> 16;
-
-                shader->setUniform("uPickingColor"_atom, NormColor3::From(colorId));
-                mesh->pureDraw();
+                bundle->pureDraw(onUniformSet, preRenderCond);
             }
         }
 
-        // ============= POST DRAW =================
-        glDepthFunc(GL_ALWAYS);
-        for (auto* bundle : _cachedPostDrawActors)
+        for (auto&& actor : scene.getActors())
         {
-            bundle->tryToRecalculateMatrices();
-
-            for (auto&& mesh : bundle->getRenderTargets())
+            if (!actor->isEnabled())
             {
-                if (!mesh->isEnabled())
-                {
-                    continue;
-                }
+                continue;
+            }
 
-                shader->setUniform("uModel"_atom, mesh->getModelMatrix());
-                Color3 colorId;
-                colorId.r = (mesh->getID() & 0x0000FF) >> 0;
-                colorId.g = (mesh->getID() & 0x00FF00) >> 8;
-                colorId.b = (mesh->getID() & 0xFF0000) >> 16;
-
-                shader->setUniform("uPickingColor"_atom, NormColor3::From(colorId));
-                mesh->pureDraw();
+            if (auto* bundle = actor->tryCastTo<StaticMeshBundle>())
+            {
+                bundle->pureDraw(onUniformSet, postRenderCond);
             }
         }
-        glDepthFunc(GL_LESS);
 
         glFlush();
         glFinish();
@@ -146,7 +127,7 @@ namespace Core
                     continue;
                 }
 
-                for (auto&& mesh : bundle->getRenderTargets())
+                for (auto&& mesh : bundle->getRenderMeshes())
                 {
                     if (!mesh->isEnabled())
                     {
@@ -166,7 +147,10 @@ namespace Core
                 }
             }
 
-            _callback(found);
+            if (_callback)
+            {
+                _callback(found);
+            }
         }
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

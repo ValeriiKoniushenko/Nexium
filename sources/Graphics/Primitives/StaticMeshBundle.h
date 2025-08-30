@@ -43,7 +43,8 @@ namespace Core
          * Before using of this function you must manually prepare the shader &
          * 'use' it.
          */
-        void pureDraw() override;
+        void pureDraw(const std::function<void(StaticMesh*)>& onUniformSet,
+                      const std::function<bool(const Actor*)>& conditional) override;
 
         void importFrom(const aiNode* node, const aiScene* scene,
                         const std::filesystem::path& modelPath = "");
@@ -57,11 +58,21 @@ namespace Core
         [[nodiscard]] nlohmann::json toJson() const override;
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
 
-        [[nodiscard]] std::size_t getRenderTargetsCount() const noexcept { return _meshes.size(); }
-        [[nodiscard]] std::vector<StaticMesh*>& getRenderTargets() noexcept { return _meshes; }
-        [[nodiscard]] const std::vector<StaticMesh*>& getRenderTargets() const noexcept
+        [[nodiscard]] std::size_t getRenderMeshesCount() const noexcept { return _meshes.size(); }
+        [[nodiscard]] std::vector<StaticMesh*>& getRenderMeshes() noexcept { return _meshes; }
+        [[nodiscard]] const std::vector<StaticMesh*>& getRenderMeshes() const noexcept
         {
             return _meshes;
+        }
+
+        [[nodiscard]] std::size_t getRenderBundlesCount() const noexcept { return _bundles.size(); }
+        [[nodiscard]] std::vector<StaticMeshBundle*>& getRenderBundles() noexcept
+        {
+            return _bundles;
+        }
+        [[nodiscard]] const std::vector<StaticMeshBundle*>& getRenderBundles() const noexcept
+        {
+            return _bundles;
         }
 
         [[nodiscard]] uint32_t getID() const noexcept { return _id; }

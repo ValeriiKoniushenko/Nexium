@@ -41,7 +41,6 @@ namespace Core
         void update(Scene& scene);
 
     protected:
-        std::vector<StaticMeshBundle*> _cachedPostDrawActors;
         RenderTargetToTexture _canvas;
         std::function<void(StaticMesh*)> _callback;
         bool _requested = false;

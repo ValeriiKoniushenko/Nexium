@@ -113,21 +113,22 @@ namespace Core
             }
         }
 
-        _shader->use();
-        _shader->setUniform("uObjectColor"_atom, 1.0f, 1.0f, 1.0f);
-        _shader->setUniform("uLightColor"_atom, 1.0f, 1.0f, 1.0f);
-        _shader->setUniform("uLightPos"_atom, gGameInstance->world.lightPos);
-        _shader->setUniform("uViewPos"_atom, gGameInstance->currentCamera->getPosition());
-        _shader->setUniform("uTexture"_atom, 0);
-        _shader->setUniform("uProjAndView"_atom, gGameInstance->currentCamera->getMatrix());
+        tryToRecalculateMatrices();
 
+        _shader->use();
         glBindVertexArray(_vao);
         glBindBuffer(GL_ARRAY_BUFFER, _vbo);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, _texture);
 
-        applyUniforms();
+        _shader->setUniform("uObjectColor"_atom, 1.0f, 1.0f, 1.0f);
+        _shader->setUniform("uLightColor"_atom, 1.0f, 1.0f, 1.0f);
+        _shader->setUniform("uLightPos"_atom, gGameInstance->world.lightPos);
+        _shader->setUniform("uViewPos"_atom, gGameInstance->currentCamera->getPosition());
+        _shader->setUniform("uTexture"_atom, 0);
+        _shader->setUniform("uProjAndView"_atom, gGameInstance->currentCamera->getMatrix());
+        _shader->setUniform("uModel"_atom, _cachedModelMatrix);
 
         if (getIsDrawOutline())
         {
@@ -172,14 +173,6 @@ namespace Core
                 }
             }
         }
-    }
-
-    void StaticMesh::applyUniforms()
-    {
-        GraphicsComponentData::applyUniforms();
-
-        tryToRecalculateMatrices();
-        _shader->setUniform("uModel"_atom, _cachedModelMatrix);
     }
 
     void StaticMesh::calculateSizeBaseOnMesh(const aiMesh* rawMesh, const aiMatrix4x4& transform)
@@ -266,7 +259,7 @@ namespace Core
         glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
     }
 
-    void StaticMesh::pureDraw()
+    void StaticMesh::pureDraw(const std::function<void(StaticMesh*)>& onUniformSet)
     {
         for (auto [val, mod] : _drawModifiers)
         {
@@ -285,6 +278,8 @@ namespace Core
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, _texture);
+
+        onUniformSet(this);
 
         glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(_triangleCount), GL_UNSIGNED_INT,
                        nullptr);

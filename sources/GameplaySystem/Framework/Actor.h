@@ -24,6 +24,7 @@
 
 #include "GameplaySystem/ECS/BaseComponent.h"
 #include "GameplaySystem/ECS/Transformable.h"
+#include "Graphics/Primitives/StaticMesh.h"
 #include "Misc/JsonCacheable.h"
 
 namespace Core
@@ -57,7 +58,8 @@ namespace Core
          * Before using of this function you must manually prepare the shader &
          * 'use' it.
          */
-        virtual void pureDraw() {};
+        virtual void pureDraw(const std::function<void(StaticMesh*)>& onUniformSet,
+                              const std::function<bool(const Actor*)>& conditional) {};
 
         void setIsPostDraw(bool value) noexcept { _isPostDraw = value; }
         [[nodiscard]] bool isPostDraw() const noexcept { return _isPostDraw; }

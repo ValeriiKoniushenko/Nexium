@@ -56,7 +56,8 @@ namespace Core
         };
 
         void draw() override;
-        void pureDraw() override;
+        void pureDraw(const std::function<void(StaticMesh*)>& onUniformSet,
+                      const std::function<bool(const Actor*)>& conditional) override;
 
         void initialize() override;
         void load3DModel();

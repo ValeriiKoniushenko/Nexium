@@ -239,20 +239,30 @@ namespace Core
         }
     }
 
-    void StaticMeshBundle::pureDraw()
+    void StaticMeshBundle::pureDraw(const std::function<void(StaticMesh*)>& onUniformSet,
+                                    const std::function<bool(const Actor*)>& conditional)
     {
         if (!_isEnabled)
         {
             return;
         }
 
+        bool isDraw = true;
+        if (conditional && !conditional(this))
+        {
+            isDraw = false;
+        }
+
         tryToRecalculateMatrices();
 
-        for (auto* mesh : _meshes)
+        if (isDraw)
         {
-            if (mesh->isEnabled())
+            for (auto* mesh : _meshes)
             {
-                mesh->pureDraw();
+                if (mesh->isEnabled())
+                {
+                    mesh->pureDraw(onUniformSet);
+                }
             }
         }
 
@@ -260,7 +270,7 @@ namespace Core
         {
             if (mesh->isEnabled())
             {
-                mesh->pureDraw();
+                mesh->pureDraw(onUniformSet, conditional);
             }
         }
     }

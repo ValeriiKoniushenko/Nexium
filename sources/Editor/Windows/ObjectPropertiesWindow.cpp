@@ -418,7 +418,7 @@ namespace Core
     {
         if (comp && ImGui::CollapsingHeader("Static mesh bundle", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            LabelAndInputTextRO("Sub-render:", comp->getRenderTargetsCount(), _labelWidth,
+            LabelAndInputTextRO("Sub-render:", comp->getRenderMeshesCount(), _labelWidth,
                                 _innerSize.width);
 
             ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
