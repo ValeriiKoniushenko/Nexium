@@ -363,7 +363,7 @@ namespace Core
 
     void GameEditor::responseOnPick(StaticMesh* mesh)
     {
-        if (auto* wnd = gGameInstance->gameEditor.getWindow<GameViewportEWC>();
+        if (const auto* wnd = gGameInstance->gameEditor.getWindow<GameViewportEWC>();
             !wnd || !wnd->isHovered())
         {
             return;
@@ -371,7 +371,6 @@ namespace Core
 
         if (!mesh)
         {
-            gGameInstance->objectSelectorManager.deselectAllAndClear();
             return;
         }
 

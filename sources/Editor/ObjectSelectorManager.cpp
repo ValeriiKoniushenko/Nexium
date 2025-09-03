@@ -78,7 +78,9 @@ namespace Core
 
         if (gGameInstance->currentCamera)
         {
-            if (gGameInstance->currentCamera->getOwner() == comp->getOwner())
+            auto* cameraOwner = gGameInstance->currentCamera->getOwner();
+            auto* compOwner = comp->getOwner();
+            if (cameraOwner == compOwner)
             {
                 return;
             }

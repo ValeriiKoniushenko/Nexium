@@ -57,7 +57,7 @@ namespace Core
             Dragging
         };
 
-        constexpr static float dragTreshold = 25.f;
+        constexpr static float dragTreshold = 15.f;
 
     public:
         Payload payload;

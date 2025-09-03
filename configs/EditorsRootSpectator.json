@@ -30,13 +30,13 @@
                     0.0
                 ],
                 "position": [
-                    754.1343994140625,
-                    1108.3798828125,
-                    2166.973388671875
+                    216.44178771972656,
+                    349.3951416015625,
+                    261.51715087890625
                 ],
                 "rotation": [
-                    14.400001525878906,
-                    -23.400005340576172,
+                    4.19999361038208,
+                    -41.400047302246094,
                     0.0
                 ],
                 "scale": [
@@ -46,7 +46,7 @@
                 ]
             },
             "far": 10000.0,
-            "fov": 45.0,
+            "fov": 75.0,
             "frameSize": {
                 "height": 600.0,
                 "width": 600.0
@@ -62,32 +62,32 @@
     "keyboardInput": {
         "mapping": [
             {
-                "action": "moveUp",
-                "key": "R"
-            },
-            {
-                "action": "moveLeft",
-                "key": "A"
-            },
-            {
-                "action": "moveRight",
-                "key": "D"
-            },
-            {
-                "action": "moveDown",
-                "key": "F"
-            },
-            {
-                "action": "moveForward",
-                "key": "W"
+                "action": "toggleRenderMode",
+                "key": "F1"
             },
             {
                 "action": "moveBackward",
                 "key": "S"
             },
             {
-                "action": "toggleRenderMode",
-                "key": "F1"
+                "action": "moveForward",
+                "key": "W"
+            },
+            {
+                "action": "moveDown",
+                "key": "F"
+            },
+            {
+                "action": "moveRight",
+                "key": "D"
+            },
+            {
+                "action": "moveLeft",
+                "key": "A"
+            },
+            {
+                "action": "moveUp",
+                "key": "R"
             }
         ]
     },

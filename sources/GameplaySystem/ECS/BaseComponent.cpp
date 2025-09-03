@@ -233,7 +233,14 @@ namespace Core
 
         while (comp)
         {
-            comp = comp->getParent();
+            if (comp->hasParent())
+            {
+                comp = comp->getParent();
+            }
+            else
+            {
+                break;
+            }
         }
 
         return comp;
