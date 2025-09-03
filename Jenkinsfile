@@ -52,7 +52,10 @@ pipeline {
                     stage('Prepare') {
                         steps {
                             script {
-                                isTriggeredByCron = currentBuild.getBuildCauses('hudson.triggers.TimerTrigger$TimerTriggerCause')
+                                def causes = currentBuild.getBuildCauses()
+                                echo "Causes: ${causes}"
+
+                                def isTriggeredByCron = causes.any { it._class == 'hudson.triggers.TimerTrigger$TimerTriggerCause' }
                                 if (isTriggeredByCron) {
                                     echo "Clean build preparation due to Cron task."
                                     sh """
