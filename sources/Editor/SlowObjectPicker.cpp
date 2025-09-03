@@ -41,7 +41,7 @@ namespace Core
             return;
         }
 
-        auto *shader = gGameInstance->shaderManager.getShaderProgram("objectIdentifier"_atom);
+        auto* shader = gGameInstance->shaderManager.getShaderProgram("objectIdentifier"_atom);
         if (!Verify(shader)) [[unlikely]]
         {
             return;

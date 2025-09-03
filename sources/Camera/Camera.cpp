@@ -22,12 +22,12 @@
 
 #include "Camera.h"
 
-#include <cmath>
-
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Graphics/Window.h"
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/matrix_transform.hpp"
+
+#include <cmath>
 
 namespace Core
 {
@@ -160,7 +160,7 @@ namespace Core
         fromJson(data, false);
     }
 
-    FSize2 BaseCamera::getOutputFrameSize() 
+    FSize2 BaseCamera::getOutputFrameSize()
     {
         if (gGameInstance->renderMode.cast() == GameInstance::RenderMode::Editor)
         {

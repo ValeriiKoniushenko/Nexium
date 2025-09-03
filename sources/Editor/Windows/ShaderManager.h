@@ -38,8 +38,9 @@ namespace Core
         void onDraw() override;
         void drawList();
         void drawDetails();
-        void drawTableWith(const char* label,
-                           const std::unordered_set<ShaderVariable, ShaderVariable::Hasher>& inputData);
+        void drawTableWith(
+            const char* label,
+            const std::unordered_set<ShaderVariable, ShaderVariable::Hasher>& inputData);
 
     protected:
         StringAtom _selectedShader;

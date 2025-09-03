@@ -56,9 +56,10 @@ namespace Core
     {
         BaseFloatEWC::onInit();
 
-        _transformLocationControl.components = { Vec3Control::Component{ .text="X:"_atom, .color=ColorRed },
-                                                 Vec3Control::Component{ .text="Y:"_atom, .color=ColorGreen },
-                                                 Vec3Control::Component{ .text="Z:"_atom, .color=ColorBlue } };
+        _transformLocationControl.components
+            = { Vec3Control::Component{ .text = "X:"_atom, .color = ColorRed },
+                Vec3Control::Component{ .text = "Y:"_atom, .color = ColorGreen },
+                Vec3Control::Component{ .text = "Z:"_atom, .color = ColorBlue } };
         _transformLocationControl.labelWidth = _labelWidth;
         _transformLocationControl.label = "Location:";
 
@@ -71,15 +72,17 @@ namespace Core
         _transformRotationControl = _transformLocationControl;
         _transformRotationControl.label = "Rotation:";
 
-        _meshSizeControl.components = { Vec3Control::Component{ .text="W:"_atom, .color=ColorRed },
-                                        Vec3Control::Component{ .text="H:"_atom, .color=ColorGreen },
-                                        Vec3Control::Component{ .text="D:"_atom, .color=ColorBlue } };
+        _meshSizeControl.components
+            = { Vec3Control::Component{ .text = "W:"_atom, .color = ColorRed },
+                Vec3Control::Component{ .text = "H:"_atom, .color = ColorGreen },
+                Vec3Control::Component{ .text = "D:"_atom, .color = ColorBlue } };
         _meshSizeControl.labelWidth = _labelWidth;
         _meshSizeControl.readOnly = true;
         _meshSizeControl.label = "Size:";
 
-        _frameSizeControl.components = { Vec2Control::Component{ .text="W:"_atom, .color=ColorRed },
-                                         Vec2Control::Component{ .text="H:"_atom, .color=ColorGreen } };
+        _frameSizeControl.components
+            = { Vec2Control::Component{ .text = "W:"_atom, .color = ColorRed },
+                Vec2Control::Component{ .text = "H:"_atom, .color = ColorGreen } };
         _frameSizeControl.labelWidth = _labelWidth;
         _frameSizeControl.label = "Frame size:";
 

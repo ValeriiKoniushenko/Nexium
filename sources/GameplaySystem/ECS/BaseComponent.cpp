@@ -193,17 +193,16 @@ namespace Core
 
     void BaseComponent::removeChild(const BaseComponent* child)
     {
-        const auto [first, last]
-            = std::ranges::remove_if(_children,
-                                     [&child, this](const Ptr& c)
-                                     {
-                                         if (*c == *child)
-                                         {
-                                             onRemoveChild(c.get());
-                                             return true;
-                                         }
-                                         return false;
-                                     });
+        const auto [first, last] = std::ranges::remove_if(_children,
+                                                          [&child, this](const Ptr& c)
+                                                          {
+                                                              if (*c == *child)
+                                                              {
+                                                                  onRemoveChild(c.get());
+                                                                  return true;
+                                                              }
+                                                              return false;
+                                                          });
         _children.erase(first, last);
     }
 
@@ -290,7 +289,7 @@ namespace Core
                 for (const auto& childJson : json["children"])
                 {
                     auto type = StringAtom::Intern(requireAs<StringAtom>(childJson, "type"));
-                    auto *const c = rawAddChildComponent(GetGlobalComponentFactory().create(type));
+                    auto* const c = rawAddChildComponent(GetGlobalComponentFactory().create(type));
                     c->fromJson(childJson, false);
                 }
             }
@@ -381,7 +380,8 @@ namespace Core
     }
 
     BaseComponent::BaseComponent(const BaseComponent& other)
-     : AbstractComponent(other) {
+        : AbstractComponent(other)
+    {
         *this = other;
     }
 

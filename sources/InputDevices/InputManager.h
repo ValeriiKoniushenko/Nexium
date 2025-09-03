@@ -63,10 +63,7 @@ namespace Core
             return create(name, key);
         }
 
-        [[nodiscard]] bool isExist(InputT::KeyT key) const
-        {
-            return !!impl_get<true>(this, key);
-        }
+        [[nodiscard]] bool isExist(InputT::KeyT key) const { return !!impl_get<true>(this, key); }
         [[nodiscard]] bool isExist(const StringAtom& name) const
         {
             return !!impl_get<true>(this, name);
@@ -77,10 +74,7 @@ namespace Core
             return impl_get<false>(this, key);
         }
 
-        [[nodiscard]] InputT::CPtr get(InputT::KeyT key) const
-        {
-            return impl_get<true>(this, key);
-        }
+        [[nodiscard]] InputT::CPtr get(InputT::KeyT key) const { return impl_get<true>(this, key); }
 
         [[nodiscard]] InputT::Ptr get(const StringAtom& name)
         {

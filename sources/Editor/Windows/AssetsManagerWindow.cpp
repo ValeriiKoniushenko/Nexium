@@ -158,7 +158,7 @@ namespace Core
                 {
                     continue;
                 }
-                const auto *icon = ICON_FA_FILE;
+                const auto* icon = ICON_FA_FILE;
                 if (node.type == NodeType::Code)
                 {
                     icon = ICON_FA_FILE_CODE_O;

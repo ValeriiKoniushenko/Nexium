@@ -27,8 +27,7 @@
 namespace Core
 {
 
-    Scene::Scene()
-    = default;
+    Scene::Scene() = default;
 
     void Scene::directDraw()
     {

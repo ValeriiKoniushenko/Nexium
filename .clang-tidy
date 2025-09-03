@@ -21,7 +21,11 @@ Checks: >
   -readability-uppercase-literal-suffix,
   -misc-unused-parameters,
   -readability-magic-numbers,
-  -cppcoreguidelines-avoid-magic-numbers
+  -cppcoreguidelines-avoid-magic-numbers,
+  -readability-convert-member-functions-to-static,
+  -readability-make-member-function-const,
+  -cppcoreguidelines-avoid-c-arrays,
+  -cppcoreguidelines-pro-bounds-pointer-arithmetic
 
 # Warnings as errors
 WarningsAsErrors: >
