@@ -1,29 +1,21 @@
 
-if (WIN32)
-    file(TO_NATIVE_PATH "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/assets" _dstAssets)
-    file(TO_NATIVE_PATH "${CMAKE_SOURCE_DIR}/assets/" _srcAssets)
-    execute_process(COMMAND cmd.exe /c if not exist "${_dstAssets}" mklink /J "${_dstAssets}" "${_srcAssets}")
-
-    file(TO_NATIVE_PATH "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/configs" _dstConfigs)
-    file(TO_NATIVE_PATH "${CMAKE_SOURCE_DIR}/configs/" _srcConfigs)
-    execute_process(COMMAND cmd.exe /c if not exist "${_dstConfigs}" mklink /J "${_dstConfigs}" "${_srcConfigs}")
-
-    file(MAKE_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tests")
-    file(TO_NATIVE_PATH "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tests/assets" _dstTestAssets)
-    file(TO_NATIVE_PATH "${CMAKE_SOURCE_DIR}/tests/assets/" _srcTestAssets)
-    execute_process(COMMAND cmd.exe /c if not exist "${_dstTestAssets}" mklink /J "${_dstTestAssets}" "${_srcTestAssets}")
-else ()
-    add_custom_target(symlinks_to_engine_assets ALL
-        COMMAND ${CMAKE_COMMAND} -E create_symlink "${CMAKE_SOURCE_DIR}/assets/" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/assets"
-        COMMAND ${CMAKE_COMMAND} -E create_symlink "${CMAKE_SOURCE_DIR}/configs/" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/configs"
-    )
-    add_custom_target(deploy_engine)
-    add_dependencies(deploy_engine symlinks_to_engine_assets)
-
-    add_custom_target(symlinks_to_tests_assets ALL
-        COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tests"
-        COMMAND ${CMAKE_COMMAND} -E create_symlink "${CMAKE_SOURCE_DIR}/tests/assets/" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tests/assets"
-    )
-    add_custom_target(deploy_tests)
-    add_dependencies(deploy_tests symlinks_to_tests_assets)
-endif ()
+function(Nexium_Deploy TARGET_NAME)
+    set(_srcAssets "${CMAKE_SOURCE_DIR}/assets")
+    set(_srcConfigs "${CMAKE_SOURCE_DIR}/configs")
+    set(_srcTestAssets "${CMAKE_SOURCE_DIR}/tests/assets")
+    if (WIN32)
+        add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
+            COMMAND cmd.exe /c "if not exist \"$<TARGET_FILE_DIR:${TARGET_NAME}>/tests\" mkdir \"$<TARGET_FILE_DIR:${TARGET_NAME}>/tests\""
+            COMMAND cmd.exe /c "if not exist \"$<TARGET_FILE_DIR:${TARGET_NAME}>/assets\" mklink /J \"$<TARGET_FILE_DIR:${TARGET_NAME}>/assets\" \"${_srcAssets}\""
+            COMMAND cmd.exe /c "if not exist \"$<TARGET_FILE_DIR:${TARGET_NAME}>/configs\" mklink /J \"$<TARGET_FILE_DIR:${TARGET_NAME}>/configs\" \"${_srcConfigs}\""
+            COMMAND cmd.exe /c "if not exist \"$<TARGET_FILE_DIR:${TARGET_NAME}>/tests/assets\" mklink /J \"$<TARGET_FILE_DIR:${TARGET_NAME}>/tests/assets\" \"${_srcTestAssets}\""
+        )
+    else ()
+        add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:${TARGET_NAME}>/tests"
+            COMMAND ${CMAKE_COMMAND} -E create_symlink "${_srcAssets}" "$<TARGET_FILE_DIR:${TARGET_NAME}>/assets"
+            COMMAND ${CMAKE_COMMAND} -E create_symlink "${_srcConfigs}" "$<TARGET_FILE_DIR:${TARGET_NAME}>/configs"
+            COMMAND ${CMAKE_COMMAND} -E create_symlink "${_srcTestAssets}" "$<TARGET_FILE_DIR:${TARGET_NAME}>/tests/assets"
+        )
+    endif ()
+endfunction()
