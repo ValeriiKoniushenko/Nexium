@@ -145,7 +145,7 @@ namespace Core
 
     StringAtom BaseCamera::getCacheHash() const
     {
-        return "BaseCamera";
+        return "BaseCamera"_atom;
     }
 
     nlohmann::json BaseCamera::toCacheData() const

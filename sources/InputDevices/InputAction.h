@@ -115,7 +115,7 @@ namespace Core
         {
             if (_key)
             {
-                if (IsKeyPressed())
+                if (isKeyPressed())
                 {
                     if (_lastState != State::Pressed || _isRepeatable)
                     {
@@ -125,6 +125,7 @@ namespace Core
                         {
                             SpecKeysState specs = SpecKeysState::fillAndGet();
 
+                            auto k = _key.value();
                             onPress.trigger(specs);
                             _onActionPrivate.trigger(specs);
 
@@ -159,7 +160,7 @@ namespace Core
          * @brief Checks if the bound key is currently pressed.
          * Must be implemented by derived classes.
          */
-        [[nodiscard]] virtual bool IsKeyPressed() const = 0;
+        [[nodiscard]] virtual bool isKeyPressed() const = 0;
 
         /**
          * @brief will be called while pressing on the needed button.
@@ -197,7 +198,7 @@ namespace Core
         KeyboardInputAction(const StringAtom& name, KeyT key);
 
     protected:
-        [[nodiscard]] bool IsKeyPressed() const override;
+        [[nodiscard]] bool isKeyPressed() const override;
     };
 
     /**
@@ -227,7 +228,7 @@ namespace Core
         void update() override;
 
     protected:
-        [[nodiscard]] bool IsKeyPressed() const override;
+        [[nodiscard]] bool isKeyPressed() const override;
 
     private:
         void init();

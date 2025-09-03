@@ -32,9 +32,9 @@ namespace Core
     {
     }
 
-    bool KeyboardInputAction::IsKeyPressed() const
+    bool KeyboardInputAction::isKeyPressed() const
     {
-        if (_key)
+        if (_key && _key != Keyboard::Key_None)
         {
             return Keyboard::IsKeyPressed(_key.value());
         }
@@ -58,9 +58,9 @@ namespace Core
         init();
     }
 
-    bool MouseInputAction::IsKeyPressed() const
+    bool MouseInputAction::isKeyPressed() const
     {
-        if (_key)
+        if (_key && _key != Mouse::Key_None)
         {
             return Mouse::IsKeyPressed(_key.value());
         }
@@ -80,7 +80,11 @@ namespace Core
 
         if (gDragDrop.getState() == DragAndDrop::State::Dragging)
         {
-            onDrag.trigger(pos - *_lastMousePosition, SpecKeysState::fillAndGet());
+            auto k = _key.value();
+            if (_key == Mouse::Key_None || (_key != Mouse::Key_None && isKeyPressed()))
+            {
+                onDrag.trigger(pos - *_lastMousePosition, SpecKeysState::fillAndGet());
+            }
         }
 
         if (pos != *_lastMousePosition)

@@ -46,7 +46,6 @@ namespace Core
 
         enum Key
         {
-            Key_None,
             Key_1 = GLFW_MOUSE_BUTTON_1,
             Key_2 = GLFW_MOUSE_BUTTON_2,
             Key_3 = GLFW_MOUSE_BUTTON_3,
@@ -58,7 +57,8 @@ namespace Core
             Key_Last = GLFW_MOUSE_BUTTON_LAST,
             Key_Left = GLFW_MOUSE_BUTTON_LEFT,
             Key_Right = GLFW_MOUSE_BUTTON_RIGHT,
-            Key_Middle = GLFW_MOUSE_BUTTON_MIDDLE
+            Key_Middle = GLFW_MOUSE_BUTTON_MIDDLE,
+            Key_None = ~0
         };
 
         enum class State

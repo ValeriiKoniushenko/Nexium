@@ -36,14 +36,16 @@ namespace
 
     void MouseKeyPressHandler(GLFWwindow*, int button, int action, int mods)
     {
-        GetWindow().onMouseKeyPressed.trigger(Mouse::Key(button), Mouse::State(action),
-                                              Mouse::Mod(mods));
+        GetWindow().onMouseKeyPressed.trigger(static_cast<Mouse::Key>(button),
+                                              static_cast<Mouse::State>(action),
+                                              static_cast<Mouse::Mod>(mods));
     }
 
     void KeyPressHandler(auto*, int key, int scancode, int action, int mods)
     {
-        GetWindow().onKeyPressed.trigger(Keyboard::Key(key), scancode,
-                                         Keyboard::KeyState::UnderlyingType(action), mods);
+        GetWindow().onKeyPressed.trigger(static_cast<Keyboard::Key>(key), scancode,
+                                         static_cast<Keyboard::KeyState::UnderlyingType>(action),
+                                         mods);
     }
 
     void TextInputHandler(auto*, unsigned int scancode)
@@ -236,10 +238,12 @@ namespace Core
                     }
                     gDragDrop._state = DragAndDrop::State::Idle;
                     gDragDrop.payload = {};
+                    gDragDrop._key = Mouse::Key_None;
                 }
                 else if (state == Mouse::State::Press)
                 {
                     gDragDrop._state = DragAndDrop::State::Started;
+                    gDragDrop._key = key;
                     gDragDrop.payload.type = ""_atom;
                     gDragDrop._startPos = Mouse::GetPosition();
                 }

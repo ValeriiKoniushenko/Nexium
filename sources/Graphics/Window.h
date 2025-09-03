@@ -66,6 +66,7 @@ namespace Core
         [[nodiscard]] glm::vec2 getCurrentPos() const noexcept { return _currentPos; };
         [[nodiscard]] glm::vec2 getLastDelta() const noexcept { return _lastDelta; };
         [[nodiscard]] State getState() const noexcept { return _state; };
+        [[nodiscard]] Mouse::Key getKey() const noexcept { return _key; };
 
         template<class T>
             requires std::derived_from<T, Data> && requires() { T::dragType; }
@@ -85,6 +86,7 @@ namespace Core
         glm::vec2 _lastDelta;
         glm::vec2 _startPos;
         glm::vec2 _currentPos;
+        Mouse::Key _key = Mouse::Key::Key_None;
         State _state = State::Idle;
 
         friend class Window;

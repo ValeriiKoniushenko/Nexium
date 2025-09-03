@@ -331,7 +331,7 @@ namespace Core
                     gGameInstance->objectSelectorManager.deselectAllAndClear();
                 });
 
-        auto mouseMove = _mouseInput.getOrCreate("mouseMove", Mouse::Key_None);
+        auto mouseMove = _mouseInput.getOrCreate("mouseMove", Mouse::Key_Right);
         mouseMove->onDrag.subscribe(
             [this](auto delta, auto spec)
             {

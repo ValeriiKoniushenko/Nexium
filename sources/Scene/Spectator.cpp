@@ -110,11 +110,11 @@ namespace Core
         keyboardInput.getOrCreate("moveBackward", Keyboard::Key::Key_S)->onPress.subscribe([&](auto state){ camera.moveForward(getRealSpeed(state) * gGameInstance->world.timeDelta); });
         keyboardInput.getOrCreate("moveRight", Keyboard::Key::Key_D)->onPress.subscribe([&](auto state){ camera.moveRight(getRealSpeed(state) * gGameInstance->world.timeDelta); });
         keyboardInput.getOrCreate("moveLeft", Keyboard::Key::Key_A)->onPress.subscribe([&](auto state){ camera.moveRight(-getRealSpeed(state) * gGameInstance->world.timeDelta); });
-        keyboardInput.getOrCreate("moveUp", Keyboard::Key::Key_Space)->onPress.subscribe([&](auto state){ camera.moveUp(getRealSpeed(state) * gGameInstance->world.timeDelta); });
-        keyboardInput.getOrCreate("moveDown", Keyboard::Key::Key_C)->onPress.subscribe([&](auto state){ camera.moveUp(-getRealSpeed(state) * gGameInstance->world.timeDelta); });
+        keyboardInput.getOrCreate("moveUp", Keyboard::Key::Key_R)->onPress.subscribe([&](auto state){ camera.moveUp(getRealSpeed(state) * gGameInstance->world.timeDelta); });
+        keyboardInput.getOrCreate("moveDown", Keyboard::Key::Key_F)->onPress.subscribe([&](auto state){ camera.moveUp(-getRealSpeed(state) * gGameInstance->world.timeDelta); });
         // clang-format on
 
-        mouseInput.getOrCreate("mouseRotation", Core::Mouse::Key_None)
+        mouseInput.getOrCreate("mouseRotation", Mouse::Key_Right)
             ->onDrag.subscribe(
                 [this](glm::vec2 delta, auto spec)
                 {
