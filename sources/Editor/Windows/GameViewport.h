@@ -30,9 +30,9 @@ namespace Core
     {
         ECS_REGISTER_NEW_COMPONENT(GameViewportEWC, BaseFloatEWC);
 
-    public:
     protected:
         void onInit() override;
+        void onUpdate() override;
         void onDraw() override;
     };
 } // namespace Core

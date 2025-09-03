@@ -23,6 +23,7 @@
 #include "GameViewport.h"
 
 #include "GameplaySystem/Framework/GameInstance.h"
+#include "ImGui/imgui_internal.h"
 
 namespace Core
 {
@@ -41,6 +42,16 @@ namespace Core
     void GameViewportEWC::onInit()
     {
         BaseFloatEWC::onInit();
+    }
+
+    void GameViewportEWC::onUpdate()
+    {
+        BaseFloatEWC::onUpdate();
+        if (ImGui::IsWindowHovered(ImGuiHoveredFlags_RootAndChildWindows)
+            && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+        {
+            ImGui::FocusWindow(ImGui::GetCurrentWindow());
+        }
     }
 
     void GameViewportEWC::onDraw()

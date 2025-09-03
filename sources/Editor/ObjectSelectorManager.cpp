@@ -22,9 +22,7 @@
 
 #include "ObjectSelectorManager.h"
 
-#include "Editor/Windows/ObjectPropertiesWindow.h"
 #include "GameplaySystem/Framework/GameInstance.h"
-#include "Graphics/Primitives/StaticMeshBundle.h"
 
 namespace Core
 {
