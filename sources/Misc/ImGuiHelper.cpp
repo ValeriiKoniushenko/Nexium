@@ -72,7 +72,7 @@ namespace Core
             label.c_str(), current,
             [](void* vec, int idx, const char** out_text)
             {
-                auto* data = reinterpret_cast<std::vector<StringAtom>*>(vec);
+                const auto* data = reinterpret_cast<std::vector<StringAtom>*>(vec);
 
                 const auto i = static_cast<std::size_t>(idx);
                 if (i >= data->size())
@@ -84,7 +84,7 @@ namespace Core
 
                 return true;
             },
-            reinterpret_cast<void*>(&data), static_cast<int>(data.size()));
+            &data, static_cast<int>(data.size()));
     }
 
     void LabelAndInputText(const StringAtom& label, std::string& originalString, float labelSize,

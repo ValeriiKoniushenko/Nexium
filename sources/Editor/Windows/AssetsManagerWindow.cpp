@@ -34,7 +34,7 @@ namespace
     [[maybe_unused]] bool IsSubpath(const std::filesystem::path& original,
                                     const std::filesystem::path& sub)
     {
-        auto rel = std::filesystem::relative(original, sub);
+        const auto rel = std::filesystem::relative(original, sub);
         return !rel.empty() && rel.native()[0] != '.';
     }
 
@@ -174,11 +174,11 @@ namespace Core
             {
                 filename = ICON_FA_FOLDER + (" " + filename);
 
-                auto atLeastOneFolder = std::any_of(node.children.begin(), node.children.end(),
-                                                    [](const CacheNode& n)
-                                                    {
-                                                        return n.type == NodeType::Folder;
-                                                    });
+                auto atLeastOneFolder = std::ranges::any_of(node.children,
+                                                            [](const CacheNode& n)
+                                                            {
+                                                                return n.type == NodeType::Folder;
+                                                            });
 
                 if (!atLeastOneFolder)
                 {

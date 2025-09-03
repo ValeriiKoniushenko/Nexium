@@ -45,7 +45,7 @@ namespace
     StringAtom GetGlslVersionShaderLike()
     {
         StringAtom version = reinterpret_cast<const char*>(glGetString(GL_VERSION));
-        if (auto end = version.find(" "); Verify(end))
+        if (const auto end = version.find(" "); Verify(end))
         {
             const auto i = end - version.c_str();
             version.subStr(0, i);
@@ -102,9 +102,9 @@ namespace Core
             config.PixelSnapH = true; // often helps with icons
             static const ImWchar icon_ranges[]
                 = { ICON_MIN_FA, ICON_MAX_FA, 0 }; // Font Awesome range
-            ImFont* font = io.Fonts->AddFontFromFileTTF(emojiImGuiFontPath.generic_string().c_str(),
-                                                        defaultImGuiFontSize * emojiImGuiFontScale,
-                                                        &config, icon_ranges);
+            const ImFont* font = io.Fonts->AddFontFromFileTTF(
+                emojiImGuiFontPath.generic_string().c_str(),
+                defaultImGuiFontSize * emojiImGuiFontScale, &config, icon_ranges);
             if (font)
             {
                 // io.Fonts->Build();

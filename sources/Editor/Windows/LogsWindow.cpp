@@ -117,7 +117,7 @@ namespace Core
         if (ImGui::BeginChild("ScrollingRegion", ImVec2(0, 0), 0,
                               ImGuiWindowFlags_HorizontalScrollbar))
         {
-            bool justAdded = (_lastCountOfLogs != _logs.size());
+            bool justAdded = _lastCountOfLogs != _logs.size();
             if (!_isAutoScroll)
             {
                 justAdded = false;

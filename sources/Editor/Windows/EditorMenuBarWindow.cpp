@@ -49,7 +49,7 @@ namespace Core
                     = _fpsText + StringAtom::MakeFrom(static_cast<int>(ImGui::GetIO().Framerate));
             });
 
-        auto& style = ImGui::GetStyle();
+        const auto& style = ImGui::GetStyle();
         _fpsTextSize = ImGui::CalcTextSize(_fpsTextTemplate).x + style.ItemSpacing.x;
         _simulationButton = ImGui::CalcTextSize(ICON_FA_PLAY_CIRCLE).x + style.ItemSpacing.x * 2.f;
     }
@@ -115,7 +115,7 @@ namespace Core
         }
         ImGui::SameLine(0, 0);
 
-        auto& style = ImGui::GetStyle();
+        const auto& style = ImGui::GetStyle();
 
         float offset = ImGui::GetWindowWidth();
         offset -= _fpsTextSize - style.ItemSpacing.x;

@@ -49,7 +49,7 @@ namespace Core
         constexpr static float outlineSize = 40.f;
 
     public:
-        void importFrom(const aiMesh* mesh, const aiScene* scene,
+        void importFrom(const aiMesh* rawMesh, const aiScene* scene,
                         const std::filesystem::path& modelPath = "");
 
         [[nodiscard]] FSize3 getSize() const noexcept { return _size; }
@@ -79,7 +79,7 @@ namespace Core
         [[nodiscard]] GLuint getID() const noexcept { return _vbo; }
 
     protected:
-        void onOutlineStatusChange(bool) override {};
+        void onOutlineStatusChange(bool) override {}
         void calculateSizeBaseOnMesh(const aiMesh* rawMesh, const aiMatrix4x4& transform);
         void drawOutline();
 

@@ -233,8 +233,8 @@ namespace Core
 
         _outlineShader->use();
         _outlineShader->setUniform("uOutlineColor"_atom,
-                                   NormColor4::From(StaticMesh::outlineColor));
-        _outlineShader->setUniform("uOutlineSize"_atom, StaticMesh::outlineSize);
+                                   NormColor4::From(outlineColor));
+        _outlineShader->setUniform("uOutlineSize"_atom, outlineSize);
         _outlineShader->setUniform("uModel"_atom, _cachedModelMatrix);
         _outlineShader->setUniform("uProjAndView"_atom, camera->getMatrix());
 

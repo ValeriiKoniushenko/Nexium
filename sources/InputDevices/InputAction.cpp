@@ -101,7 +101,6 @@ namespace Core
             {
                 onMouseClick.trigger(Mouse::GetPosition(), states);
             });
-        ;
     }
 
 } // namespace Core

@@ -41,8 +41,8 @@ namespace Core
         void onUpdate() override;
 
     private:
-        inline static const char* _fpsText = "FPS: ";
-        inline static const char* _fpsTextTemplate = "FPS: 99999";
+        inline static auto _fpsText = "FPS: ";
+        inline static auto _fpsTextTemplate = "FPS: 99999";
         StringAtom _cachedFpsText = _fpsText;
         Repeater _slowUpdater;
         float _fpsTextSize = 50.f;

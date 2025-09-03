@@ -53,8 +53,7 @@ namespace Core
 
         [[nodiscard]] const MappingT& getMapping() const noexcept { return _mapping; }
 
-        [[nodiscard]] typename InputT::Ptr getOrCreate(const StringAtom& name,
-                                                       typename InputT::KeyT key)
+        [[nodiscard]] InputT::Ptr getOrCreate(const StringAtom& name, InputT::KeyT key)
         {
             if (isExist(name))
             {
@@ -64,7 +63,7 @@ namespace Core
             return create(name, key);
         }
 
-        [[nodiscard]] bool isExist(typename InputT::KeyT key) const
+        [[nodiscard]] bool isExist(InputT::KeyT key) const
         {
             return !!impl_get<true>(this, key);
         }
@@ -78,22 +77,22 @@ namespace Core
             return impl_get<false>(this, key);
         }
 
-        [[nodiscard]] typename InputT::CPtr get(typename InputT::KeyT key) const
+        [[nodiscard]] InputT::CPtr get(InputT::KeyT key) const
         {
             return impl_get<true>(this, key);
         }
 
-        [[nodiscard]] typename InputT::Ptr get(const StringAtom& name)
+        [[nodiscard]] InputT::Ptr get(const StringAtom& name)
         {
             return impl_get<false>(this, name);
         }
 
-        [[nodiscard]] typename InputT::CPtr get(const StringAtom& name) const
+        [[nodiscard]] InputT::CPtr get(const StringAtom& name) const
         {
             return impl_get<true>(this, name);
         }
 
-        [[nodiscard]] typename InputT::Ptr create(const StringAtom& name, typename InputT::KeyT key)
+        [[nodiscard]] InputT::Ptr create(const StringAtom& name, InputT::KeyT key)
         {
             if (isExist(name))
             {
@@ -120,7 +119,7 @@ namespace Core
             return true;
         }
 
-        bool remove(typename InputT::KeyT key)
+        bool remove(InputT::KeyT key)
         {
             auto found = std::ranges::find(_mapping,
                                            [key](const auto& pair)
@@ -146,7 +145,7 @@ namespace Core
         template<bool isConst>
         [[nodiscard]] static std::conditional_t<isConst, typename InputT::CPtr,
                                                 typename InputT::Ptr>
-            impl_get(AdaptiveRawPtr<isConst> self, typename InputT::KeyT key)
+            impl_get(AdaptiveRawPtr<isConst> self, InputT::KeyT key)
         {
             auto it = std::ranges::find_if(self->_mapping,
                                            [key](const auto& pair)
@@ -189,7 +188,6 @@ namespace Core
 
     class MouseInputManger : public InputManger<MouseInputAction>
     {
-    public:
     };
 
 } // namespace Core

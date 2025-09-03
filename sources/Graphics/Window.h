@@ -62,11 +62,11 @@ namespace Core
     public:
         Payload payload;
 
-        [[nodiscard]] glm::vec2 getStartPos() const noexcept { return _startPos; };
-        [[nodiscard]] glm::vec2 getCurrentPos() const noexcept { return _currentPos; };
-        [[nodiscard]] glm::vec2 getLastDelta() const noexcept { return _lastDelta; };
-        [[nodiscard]] State getState() const noexcept { return _state; };
-        [[nodiscard]] Mouse::Key getKey() const noexcept { return _key; };
+        [[nodiscard]] glm::vec2 getStartPos() const noexcept { return _startPos; }
+        [[nodiscard]] glm::vec2 getCurrentPos() const noexcept { return _currentPos; }
+        [[nodiscard]] glm::vec2 getLastDelta() const noexcept { return _lastDelta; }
+        [[nodiscard]] State getState() const noexcept { return _state; }
+        [[nodiscard]] Mouse::Key getKey() const noexcept { return _key; }
 
         template<class T>
             requires std::derived_from<T, Data> && requires() { T::dragType; }

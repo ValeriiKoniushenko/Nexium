@@ -1,0 +1,217 @@
+Enabled checks:
+    clang-analyzer-apiModeling.Errno
+    clang-analyzer-apiModeling.TrustNonnull
+    clang-analyzer-apiModeling.TrustReturnsNonnull
+    clang-analyzer-apiModeling.google.GTest
+    clang-analyzer-apiModeling.llvm.CastValue
+    clang-analyzer-apiModeling.llvm.ReturnValue
+    clang-analyzer-core.BitwiseShift
+    clang-analyzer-core.CallAndMessage
+    clang-analyzer-core.CallAndMessageModeling
+    clang-analyzer-core.DereferenceModeling
+    clang-analyzer-core.DivideZero
+    clang-analyzer-core.DynamicTypePropagation
+    clang-analyzer-core.NonNullParamChecker
+    clang-analyzer-core.NonnilStringConstants
+    clang-analyzer-core.NullDereference
+    clang-analyzer-core.StackAddrEscapeBase
+    clang-analyzer-core.StackAddressEscape
+    clang-analyzer-core.UndefinedBinaryOperatorResult
+    clang-analyzer-core.VLASize
+    clang-analyzer-core.builtin.BuiltinFunctions
+    clang-analyzer-core.builtin.NoReturnFunctions
+    clang-analyzer-core.uninitialized.ArraySubscript
+    clang-analyzer-core.uninitialized.Assign
+    clang-analyzer-core.uninitialized.Branch
+    clang-analyzer-core.uninitialized.CapturedBlockVariable
+    clang-analyzer-core.uninitialized.NewArraySize
+    clang-analyzer-core.uninitialized.UndefReturn
+    clang-analyzer-cplusplus.ArrayDelete
+    clang-analyzer-cplusplus.InnerPointer
+    clang-analyzer-cplusplus.Move
+    clang-analyzer-cplusplus.NewDelete
+    clang-analyzer-cplusplus.NewDeleteLeaks
+    clang-analyzer-cplusplus.PlacementNew
+    clang-analyzer-cplusplus.PureVirtualCall
+    clang-analyzer-cplusplus.SelfAssignment
+    clang-analyzer-cplusplus.SmartPtrModeling
+    clang-analyzer-cplusplus.StringChecker
+    clang-analyzer-cplusplus.VirtualCallModeling
+    clang-analyzer-deadcode.DeadStores
+    clang-analyzer-fuchsia.HandleChecker
+    clang-analyzer-nullability.NullPassedToNonnull
+    clang-analyzer-nullability.NullReturnedFromNonnull
+    clang-analyzer-nullability.NullabilityBase
+    clang-analyzer-nullability.NullableDereferenced
+    clang-analyzer-nullability.NullablePassedToNonnull
+    clang-analyzer-nullability.NullableReturnedFromNonnull
+    clang-analyzer-optin.core.EnumCastOutOfRange
+    clang-analyzer-optin.cplusplus.UninitializedObject
+    clang-analyzer-optin.cplusplus.VirtualCall
+    clang-analyzer-optin.mpi.MPI-Checker
+    clang-analyzer-optin.osx.OSObjectCStyleCast
+    clang-analyzer-optin.osx.cocoa.localizability.EmptyLocalizationContextChecker
+    clang-analyzer-optin.osx.cocoa.localizability.NonLocalizedStringChecker
+    clang-analyzer-optin.performance.GCDAntipattern
+    clang-analyzer-optin.performance.Padding
+    clang-analyzer-optin.portability.UnixAPI
+    clang-analyzer-optin.taint.GenericTaint
+    clang-analyzer-optin.taint.TaintPropagation
+    clang-analyzer-optin.taint.TaintedAlloc
+    clang-analyzer-optin.taint.TaintedDiv
+    clang-analyzer-osx.API
+    clang-analyzer-osx.MIG
+    clang-analyzer-osx.NSOrCFErrorDerefChecker
+    clang-analyzer-osx.NumberObjectConversion
+    clang-analyzer-osx.OSObjectRetainCount
+    clang-analyzer-osx.ObjCProperty
+    clang-analyzer-osx.SecKeychainAPI
+    clang-analyzer-osx.cocoa.AtSync
+    clang-analyzer-osx.cocoa.AutoreleaseWrite
+    clang-analyzer-osx.cocoa.ClassRelease
+    clang-analyzer-osx.cocoa.Dealloc
+    clang-analyzer-osx.cocoa.IncompatibleMethodTypes
+    clang-analyzer-osx.cocoa.Loops
+    clang-analyzer-osx.cocoa.MissingSuperCall
+    clang-analyzer-osx.cocoa.NSAutoreleasePool
+    clang-analyzer-osx.cocoa.NSError
+    clang-analyzer-osx.cocoa.NilArg
+    clang-analyzer-osx.cocoa.NonNilReturnValue
+    clang-analyzer-osx.cocoa.ObjCGenerics
+    clang-analyzer-osx.cocoa.RetainCount
+    clang-analyzer-osx.cocoa.RetainCountBase
+    clang-analyzer-osx.cocoa.RunLoopAutoreleaseLeak
+    clang-analyzer-osx.cocoa.SelfInit
+    clang-analyzer-osx.cocoa.SuperDealloc
+    clang-analyzer-osx.cocoa.UnusedIvars
+    clang-analyzer-osx.cocoa.VariadicMethodTypes
+    clang-analyzer-osx.coreFoundation.CFError
+    clang-analyzer-osx.coreFoundation.CFNumber
+    clang-analyzer-osx.coreFoundation.CFRetainRelease
+    clang-analyzer-osx.coreFoundation.containers.OutOfBounds
+    clang-analyzer-osx.coreFoundation.containers.PointerSizedValues
+    clang-analyzer-security.FloatLoopCounter
+    clang-analyzer-security.MmapWriteExec
+    clang-analyzer-security.PointerSub
+    clang-analyzer-security.PutenvStackArray
+    clang-analyzer-security.SetgidSetuidOrder
+    clang-analyzer-security.cert.env.InvalidPtr
+    clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling
+    clang-analyzer-security.insecureAPI.SecuritySyntaxChecker
+    clang-analyzer-security.insecureAPI.UncheckedReturn
+    clang-analyzer-security.insecureAPI.bcmp
+    clang-analyzer-security.insecureAPI.bcopy
+    clang-analyzer-security.insecureAPI.bzero
+    clang-analyzer-security.insecureAPI.decodeValueOfObjCType
+    clang-analyzer-security.insecureAPI.getpw
+    clang-analyzer-security.insecureAPI.gets
+    clang-analyzer-security.insecureAPI.mkstemp
+    clang-analyzer-security.insecureAPI.mktemp
+    clang-analyzer-security.insecureAPI.rand
+    clang-analyzer-security.insecureAPI.strcpy
+    clang-analyzer-security.insecureAPI.vfork
+    clang-analyzer-unix.API
+    clang-analyzer-unix.BlockInCriticalSection
+    clang-analyzer-unix.Chroot
+    clang-analyzer-unix.DynamicMemoryModeling
+    clang-analyzer-unix.Errno
+    clang-analyzer-unix.Malloc
+    clang-analyzer-unix.MallocSizeof
+    clang-analyzer-unix.MismatchedDeallocator
+    clang-analyzer-unix.StdCLibraryFunctions
+    clang-analyzer-unix.Stream
+    clang-analyzer-unix.Vfork
+    clang-analyzer-unix.cstring.BadSizeArg
+    clang-analyzer-unix.cstring.CStringModeling
+    clang-analyzer-unix.cstring.NotNullTerminated
+    clang-analyzer-unix.cstring.NullArg
+    clang-analyzer-valist.CopyToSelf
+    clang-analyzer-valist.Uninitialized
+    clang-analyzer-valist.Unterminated
+    clang-analyzer-valist.ValistBase
+    clang-analyzer-webkit.NoUncountedMemberChecker
+    clang-analyzer-webkit.RefCntblBaseVirtualDtor
+    clang-analyzer-webkit.UncountedLambdaCapturesChecker
+
+Running clang-tidy for 53 files out of 421 in compilation database ...
+[ 1/53][3.3s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/Misc/ImGuiHelper.cpp
+[ 2/53][3.8s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/Graphics/OpenGL.cpp
+[ 3/53][6.4s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/Graphics/ShaderManager.cpp
+[ 4/53][6.8s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/Graphics/Texture.cpp
+[ 5/53][7.1s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/Graphics/ShaderProgramMeta.cpp
+[ 6/53][7.8s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/Editor/Gizmo.cpp
+[ 7/53][8.1s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/Editor/ObjectSelectorManager.cpp
+[ 8/53][8.1s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/Scene/Grid.cpp
+[ 9/53][8.6s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/Editor/Windows/LogsWindow.cpp
+[10/53][8.7s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/InputDevices/InputManager.cpp
+[11/53][5.4s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/GameplaySystem/Framework/ControllerManager.cpp
+[12/53][9.5s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/Scene/Spectator.cpp
+[13/53][10.5s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/Scene/Scene.cpp
+[14/53][8.0s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/Graphics/Image.cpp
+13 warnings generated.
+Suppressed 13 warnings (13 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[15/53][5.1s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/GameplaySystem/Framework/CameraManager.cpp
+[16/53][12.7s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/Editor/Windows/ShaderManager.cpp
+[17/53][12.7s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/Editor/Windows/AssetsManagerWindow.cpp
+[18/53][5.5s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/Editor/Windows/BaseWindow.cpp
+[19/53][5.1s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/GameplaySystem/Framework/PlayerState.cpp
+[20/53][13.7s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/Editor/GameEditor.cpp
+[21/53][7.3s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/Editor/SlowObjectPicker.cpp
+[22/53][5.3s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/GameplaySystem/Framework/UserInterface.cpp
+[23/53][6.4s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/InputDevices/InputAction.cpp
+/home/valerii/workspace/Nexium/sources/InputDevices/InputAction.cpp:83:18: warning: Value stored to 'k' during its initialization is never read [clang-analyzer-deadcode.DeadStores]
+   83 |             auto k = _key.value();
+      |                  ^   ~~~~~~~~~~~~
+/home/valerii/workspace/Nexium/sources/InputDevices/InputAction.cpp:83:18: note: Value stored to 'k' during its initialization is never read
+   83 |             auto k = _key.value();
+      |                  ^   ~~~~~~~~~~~~
+1 warning generated.
+
+[24/53][6.7s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/InputDevices/Mouse.cpp
+[25/53][5.2s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/Editor/Windows/RootDockWindow.cpp
+[26/53][4.0s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/Misc/JsonAdapter.cpp
+[27/53][6.0s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/Editor/Windows/TextEditor.cpp
+[28/53][4.3s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/GameplaySystem/ECS/Transformable.cpp
+[29/53][5.5s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/Editor/Windows/KeyboardShortcuts.cpp
+[30/53][4.6s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/GameplaySystem/Framework/WorldObjectManager.cpp
+[31/53][11.7s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/Editor/Windows/SceneTreeWindow.cpp
+[32/53][18.8s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/Graphics/Primitives/StaticMeshBundle.cpp
+[33/53][5.2s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/Misc/JsonCacheable.cpp
+[34/53][5.2s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/GameplaySystem/Framework/GameState.cpp
+[35/53][8.6s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/Camera/Camera.cpp
+[36/53][5.1s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/GameplaySystem/Framework/ActorManager.cpp
+[37/53][7.8s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/Graphics/Window.cpp
+[38/53][6.6s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/GameplaySystem/Framework/Actor.cpp
+[39/53][1.6s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/Misc/FPSCounter.cpp
+[40/53][4.8s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/GameplaySystem/Framework/GameInstanceSubsystem.cpp
+[41/53][5.4s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/Graphics/RenderTargetToTexture.cpp
+[42/53][7.4s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/GameplaySystem/Framework/GameInstance.cpp
+[43/53][5.3s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/InputDevices/Keyboard.cpp
+[44/53][4.9s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/Misc/BaseLog.cpp
+[45/53][6.0s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/Graphics/ShaderProgram.cpp
+[46/53][4.1s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/GameplaySystem/Framework/World.cpp
+[47/53][15.0s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/Editor/Windows/ObjectPropertiesWindow.cpp
+1 warning generated.
+Suppressed 1 warnings (1 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[48/53][4.4s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/GameplaySystem/Framework/LevelData.cpp
+[49/53][6.2s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/Editor/Windows/GameViewport.cpp
+1 warning generated.
+Suppressed 1 warnings (1 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[50/53][8.0s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/Editor/Windows/EditorMenuBarWindow.cpp
+/home/valerii/workspace/Nexium/sources/Editor/Windows/EditorMenuBarWindow.cpp:125:9: warning: Value stored to 'offset' is never read [clang-analyzer-deadcode.DeadStores]
+  125 |         offset -= style.ItemSpacing.x * 2.f;
+      |         ^         ~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/valerii/workspace/Nexium/sources/Editor/Windows/EditorMenuBarWindow.cpp:125:9: note: Value stored to 'offset' is never read
+  125 |         offset -= style.ItemSpacing.x * 2.f;
+      |         ^         ~~~~~~~~~~~~~~~~~~~~~~~~~
+1 warning generated.
+
+[51/53][8.8s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/Graphics/Primitives/StaticMesh.cpp
+[52/53][19.7s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/GameplaySystem/ECS/BaseComponent.cpp
+[53/53][10.3s] clang-tidy-20 -p=build/clang/debug /home/valerii/workspace/Nexium/sources/Graphics/GraphicsComponents.cpp

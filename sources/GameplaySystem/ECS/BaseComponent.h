@@ -32,10 +32,10 @@
 #include <unordered_set>
 
 /**
- * Put this macros inside your class body for every new component.
+ * Put these macros inside your class body for every new component.
  * New component is even a component that extends previous one. I.e.
  * if you are inheriting from class Spectator, you should mark your
- * new component with ECS_REGISTER_NEW_COMPONENT(YourClass, Specatator)
+ * new component with ECS_REGISTER_NEW_COMPONENT(YourClass, Spectator)
  * to register this type inside ECS
  */
 #define ECS_REGISTER_NEW_COMPONENT(CurrentClass, BaseComponentClass)                               \
@@ -72,7 +72,7 @@ public:
 
 /*
  * Also, we need this macros in .cpp file of implementation of your new type.
- * If you don't understand what means 'new type' check the macrose's descrip.
+ * If you don't understand what means 'new type' check the macro's description.
  * above, please.
  */
 #define ECS_REGISTER_NEW_COMPONENT_TYPE(ClassName)                                                 \
@@ -150,10 +150,10 @@ namespace Core
         /**
          * @brief Register a new component type in the factory.
          * @param type The type identifier (StringAtom).
-         * @param factory Function that creates instances of this type.
+         * @param callback Function that creates instances of this type.
          * @return True if registration succeeds, false if type already exists.
          */
-        bool registerNewType(StringAtom type, std::function<BaseComponent*()>);
+        bool registerNewType(StringAtom type, std::function<BaseComponent*()> callback);
 
         [[nodiscard]] spdlog::logger* getLogger() const final { return Ecs::getLogger(); }
 
@@ -197,7 +197,7 @@ namespace Core
 
         /**
          * @brief Call it in your main loop. After that if several conditions
-         * will be matched(is initialized, is enabled, etc) will be called
+         * will be matched(is initialized, is enabled, etc.) will be called
          * onTick. Inherit from onTick - and implement your own logic for
          * update and/or draw.
          */
@@ -206,7 +206,7 @@ namespace Core
         [[nodiscard]] spdlog::logger* getLogger() const final { return Ecs::getLogger(); }
 
         /** @brief Reset the component to uninitialized state. */
-        virtual void clear() { _isInited = false; }
+        virtual void clear() { _isInitialized = false; }
 
         /** @brief Safe cast to a derived component type. Asserts if cast fails. */
         template<IsComponent T>
@@ -225,7 +225,7 @@ namespace Core
             return casted;
         }
 
-        [[nodiscard]] bool isInited() const noexcept { return _isInited; }
+        [[nodiscard]] bool isInitialized() const noexcept { return _isInitialized; }
         [[nodiscard]] bool isEnabled() const noexcept { return _isEnabled; }
         void setEnabled(bool v) noexcept { _isEnabled = v; }
 
@@ -238,9 +238,9 @@ namespace Core
          */
         virtual void initialize()
         {
-            if (!_isInited)
+            if (!_isInitialized)
             {
-                _isInited = true;
+                _isInitialized = true;
                 onInit();
             }
         }
@@ -267,7 +267,7 @@ namespace Core
         bool _noTick = false;
 
     private:
-        bool _isInited = false;
+        bool _isInitialized = false;
     };
 
     //
@@ -330,7 +330,7 @@ namespace Core
 
         BaseComponent(BaseComponent&& other) noexcept;
         BaseComponent& operator=(BaseComponent&& other) noexcept;
-        BaseComponent(BaseComponent& other);
+        BaseComponent(const BaseComponent& other);
         BaseComponent& operator=(const BaseComponent& other);
 
         [[nodiscard]] virtual bool operator==(const Self& other) const;
@@ -425,7 +425,7 @@ namespace Core
                 });
         }
 
-        // ========================== FOREACHes ==========================
+        // ========================== FOR EACHes ==========================
 
         /**
          * @brief Iterate over every child and root recursively(BFS).
@@ -515,8 +515,8 @@ namespace Core
         static void Impl_forEach_DFS(AdaptiveRawPtr<isConst> me, FuncT&& callback);
 
         template<IsComponent TargetT, bool isConst>
-        [[nodiscard]] static typename TargetT::template AdaptiveRawPtr<isConst>
-            Impl_findFirstChildOf(AdaptiveRawPtr<isConst> me, const StringAtom& name);
+        [[nodiscard]] static TargetT::template AdaptiveRawPtr<isConst> Impl_findFirstChildOf(
+            AdaptiveRawPtr<isConst> me, const StringAtom& name);
     };
 
     struct InvalidComponent : public BaseComponent
@@ -533,7 +533,7 @@ namespace Core
         }
 
         using HolderPtr = AdaptiveRawPtr<isConst>;
-        using TargetPtr = typename TargetT::template AdaptiveRawPtr<isConst>;
+        using TargetPtr = TargetT::template AdaptiveRawPtr<isConst>;
         std::unordered_set<HolderPtr> visited;
         std::queue<HolderPtr> q;
 
@@ -586,7 +586,7 @@ namespace Core
         }
 
         using HolderPtr = AdaptiveRawPtr<isConst>;
-        using TargetPtr = typename TargetT::template AdaptiveRawPtr<isConst>;
+        using TargetPtr = TargetT::template AdaptiveRawPtr<isConst>;
         std::unordered_set<HolderPtr> visited;
         std::stack<HolderPtr> s;
 
@@ -636,8 +636,8 @@ namespace Core
     }
 
     template<IsComponent TargetT, bool isConst>
-    typename TargetT::template AdaptiveRawPtr<isConst> BaseComponent::Impl_findFirstChildOf(
-        BaseComponent::AdaptiveRawPtr<isConst> me, const StringAtom& name)
+    TargetT::template AdaptiveRawPtr<isConst> BaseComponent::Impl_findFirstChildOf(
+        AdaptiveRawPtr<isConst> me, const StringAtom& name)
     {
         typename TargetT::template AdaptiveRawPtr<isConst> found = nullptr;
 

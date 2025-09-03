@@ -22,7 +22,6 @@
 
 #pragma once
 
-#include "Core/Singleton.h"
 #include "ModuleInfo.h"
 #include "ShaderProgramMeta.h"
 
@@ -36,7 +35,7 @@ namespace Core
         inline static const char* const defaultVertexFileExtension = ".vert";
         inline static const char* const defaultFragmentFileExtension = ".frag";
 
-        void loadShaders(const std::filesystem::path& path);
+        void loadShaders(const std::filesystem::path& inputPath);
 
         void pushSuitableFileExtension(std::string ext, ShaderType type);
 
@@ -55,13 +54,13 @@ namespace Core
             const noexcept
         {
             return _shaderMetas;
-        };
+        }
         [[nodiscard]] std::unordered_map<StringAtom, ShaderProgramMeta>& getShaderMetas() noexcept
         {
             return _shaderMetas;
-        };
+        }
 
-        [[nodiscard]] size_t countOfShaders() const { return _shaderMetas.size(); };
+        [[nodiscard]] size_t countOfShaders() const { return _shaderMetas.size(); }
         [[nodiscard]] size_t countOfValidShaders() const;
         [[nodiscard]] size_t countOfFailedShaders() const { return _failedShaders.size(); }
         [[nodiscard]] const std::unordered_set<std::string>& getFailedShaders() const

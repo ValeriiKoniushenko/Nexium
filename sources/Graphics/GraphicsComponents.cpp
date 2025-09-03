@@ -313,7 +313,7 @@ namespace Core
         }
     }
 
-    StringAtom GraphicsComponentData::ToString(GraphicsComponentData::ModifiedValue v)
+    StringAtom GraphicsComponentData::ToString(ModifiedValue v)
     {
         // clang-format off
         if (MV_Blend == v) return "Blend"_atom;
@@ -364,12 +364,12 @@ namespace Core
         if (str == "ProgramPointSize"_atom) return MV_ProgramPointSize;
         // clang-format on
 
-        return ModifiedValue::MV_None;
+        return MV_None;
     }
 
     const std::vector<StringAtom>& GraphicsComponentData::ModifiedValueAsVector()
     {
-        static const std::vector<StringAtom> out = {
+        static const std::vector out = {
             "Blend"_atom,
             "CullFace"_atom,
             "DepthTest"_atom,

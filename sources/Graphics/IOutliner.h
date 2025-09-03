@@ -27,6 +27,7 @@ namespace Core
     class IOutliner
     {
     public:
+        virtual ~IOutliner() = default;
         void setIsDrawOutline(bool value) noexcept
         {
             onOutlineStatusChange(_isDrawOutline = value);

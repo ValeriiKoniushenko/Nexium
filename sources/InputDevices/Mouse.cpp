@@ -83,7 +83,7 @@ namespace Core
             if (auto* wnd = gGameInstance->gameEditor.getWindow<GameViewportEWC>())
             {
                 const auto wndPos = wnd->getInnerPosition();
-                auto mouse = Mouse::GetPosition();
+                auto mouse = GetPosition();
                 mouse.x -= wndPos.x;
                 mouse.y -= wndPos.y;
                 mouse.y = wnd->getInnerWindowSize().height - mouse.y - 1;
@@ -92,7 +92,7 @@ namespace Core
             }
         }
 
-        return Mouse::GetPosition();
+        return GetPosition();
     }
 
     bool Mouse::IsKeyPressed(Key key)

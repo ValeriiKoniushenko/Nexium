@@ -49,7 +49,7 @@ namespace Core
 
         struct DragData : public DragAndDrop::Data
         {
-            inline static StringAtom dragType = "gizmo_move"_atom;
+            inline static auto dragType = "gizmo_move"_atom;
 
             Direction direction;
             std::vector<Transformable*> attachedObjects;

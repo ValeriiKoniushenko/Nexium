@@ -40,7 +40,7 @@ namespace Core
 
     bool ButtonAndInputTextRO(StringAtom label, StringAtom value, float labelSize, float fullSize);
 
-    void LabelAndInputText(const StringAtom& label, std::string& value, float labelSize,
+    void LabelAndInputText(const StringAtom& label, std::string& originalString, float labelSize,
                            float fullSize);
 
     void LabelAndInputFloat(const StringAtom& label, float& value, float labelSize, float fullSize,
@@ -69,7 +69,7 @@ namespace Core
             ImVec4 color = ImVec4(1.f, 1.f, 1.f, 1.f);
         };
 
-        using VecT = typename glm::vec<VecCount, float>;
+        using VecT = glm::vec<VecCount, float>;
 
         ImGuiSliderFlags flags = ImGuiSliderFlags_None;
 
@@ -86,10 +86,10 @@ namespace Core
 
         std::expected<VecT, bool> drawAndProcess(VecT v, float availSpace)
         {
-            if (!_isInited)
+            if (!_isInitialized)
             {
                 _firstValue = v;
-                _isInited = true;
+                _isInitialized = true;
             }
 
             const auto originalValue = v;
@@ -103,7 +103,7 @@ namespace Core
             FixedLabel(label.c_str(), labelWidth);
             availSpace -= labelWidth;
 
-            float* vec = reinterpret_cast<float*>(&v);
+            auto vec = reinterpret_cast<float*>(&v);
 
             int i = 0;
             for (const auto& component : components)
@@ -160,7 +160,7 @@ namespace Core
         }
 
     private:
-        bool _isInited = false;
+        bool _isInitialized = false;
         VecT _firstValue = {};
     };
 

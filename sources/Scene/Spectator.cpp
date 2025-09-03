@@ -22,7 +22,6 @@
 
 #include "Spectator.h"
 
-#include "Editor/Windows/GameViewport.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 
 namespace Core

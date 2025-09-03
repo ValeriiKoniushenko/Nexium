@@ -71,7 +71,7 @@ namespace Core
         {
             traceLog("The type '{}' was implemented."_f << newType);
 
-            // 2 - because we should hit it from both macroses:
+            // 2 - because we should hit it from both macros:
             // - ECS_REGISTER_NEW_COMPONENT
             // - ECS_REGISTER_NEW_COMPONENT_TYPE
             if (++_debugTypeTracker[newType] > 2)
@@ -93,7 +93,7 @@ namespace Core
 #if defined(DEBUG)
         for (auto [type, counter] : _debugTypeTracker)
         {
-            // 2 - because we should hit it from both macroses:
+            // 2 - because we should hit it from both macros:
             // - ECS_REGISTER_NEW_COMPONENT
             // - ECS_REGISTER_NEW_COMPONENT_TYPE
             constexpr uint32_t hitCount = 2;
@@ -137,11 +137,11 @@ namespace Core
         if (this != &other)
         {
             _isEnabled = other._isEnabled;
-            _isInited = other._isInited;
+            _isInitialized = other._isInitialized;
             _noTick = other._noTick;
 
             other._isEnabled = {};
-            other._isInited = {};
+            other._isInitialized = {};
             other._noTick = {};
         }
 
@@ -150,7 +150,7 @@ namespace Core
 
     void AbstractComponent::tick(float delta)
     {
-        if (_isEnabled && _isInited && !_noTick)
+        if (_isEnabled && _isInitialized && !_noTick)
         {
             onTick(delta);
         }
@@ -185,7 +185,7 @@ namespace Core
 
     void BaseComponent::detachChild(BaseComponent* child)
     {
-        if (auto it = std::ranges::find(_children, child); it != _children.end())
+        if (const auto it = std::ranges::find(_children, child); it != _children.end())
         {
             _children.erase(it);
         }
@@ -195,7 +195,7 @@ namespace Core
     {
         const auto [first, last]
             = std::ranges::remove_if(_children,
-                                     [&child, this](const BaseComponent::Ptr& c)
+                                     [&child, this](const Ptr& c)
                                      {
                                          if (*c == *child)
                                          {
@@ -258,8 +258,6 @@ namespace Core
     {
         auto json = AbstractComponent::toJson();
 
-        static int64_t idGen = 0;
-
         if (_name.isEmpty())
         {
             json["name"] = _type;
@@ -292,7 +290,7 @@ namespace Core
                 for (auto& childJson : json["children"])
                 {
                     auto type = StringAtom::Intern(requireAs<StringAtom>(childJson, "type"));
-                    auto c = rawAddChildComponent(GetGlobalComponentFactory().create(type));
+                    const auto c = rawAddChildComponent(GetGlobalComponentFactory().create(type));
                     c->fromJson(childJson, false);
                 }
             }
@@ -317,7 +315,7 @@ namespace Core
             other._parent = nullptr;
 
             // resetting to new parent because old one will be invalid
-            for (auto& child : _children)
+            for (const auto& child : _children)
             {
                 child->_parent = this;
             }
@@ -369,7 +367,7 @@ namespace Core
     BaseComponent* BaseComponent::rawAddChildComponent(BaseComponent* newOne)
     {
         // if this parent wasn't init, lets init at least here
-        if (!isInited())
+        if (!isInitialized())
         {
             initialize();
         }
@@ -382,7 +380,7 @@ namespace Core
         return added;
     }
 
-    BaseComponent::BaseComponent(BaseComponent& other)
+    BaseComponent::BaseComponent(const BaseComponent& other)
     {
         *this = other;
     }

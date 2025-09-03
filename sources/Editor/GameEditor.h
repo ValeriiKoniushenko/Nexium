@@ -71,7 +71,7 @@ namespace Core
          * @return Shared pointer to the newly registered window.
          */
         template<IsEditorWindowComponent T>
-        [[nodiscard]] typename T::Ptr registerNewWindow(const StringAtom& name = ""_atom,
+        [[nodiscard]] T::Ptr registerNewWindow(const StringAtom& name = ""_atom,
                                                         bool isEnabled = true)
         {
             auto& a = _windows.emplace_back(new T);

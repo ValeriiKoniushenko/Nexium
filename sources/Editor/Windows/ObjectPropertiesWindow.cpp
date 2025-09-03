@@ -250,7 +250,7 @@ namespace Core
             static const auto collection = []()
             {
                 auto c = GraphicsComponentData::ModifiedValueAsVector();
-                std::sort(c.begin(), c.end());
+                std::ranges::sort(c);
                 return c;
             }();
 
@@ -365,7 +365,7 @@ namespace Core
         {
             LabelAndInputTextRO("Children:", comp->getChildrenCount(), _labelWidth,
                                 _innerSize.width);
-            LabelAndCheckboxRO("Inited:", comp->isInited(), _labelWidth);
+            LabelAndCheckboxRO("Inited:", comp->isInitialized(), _labelWidth);
 
             bool tickable = comp->getNoTick();
             FixedLabel("No ticks:", _labelWidth);

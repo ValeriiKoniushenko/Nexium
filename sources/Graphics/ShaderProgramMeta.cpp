@@ -213,7 +213,8 @@ namespace Core
         }
         catch (std::exception& err)
         {
-            errorLog("Can't recreate a shader due to compile error[s]: {}"_f << _shaderName);
+            errorLog("Can't recreate a shader '{}' due to compile error[s]: {}"_f << _shaderName
+                                                                                  << err.what());
         }
     }
 

@@ -88,9 +88,9 @@ namespace Core
         if (gDragDrop.getState() == DragAndDrop::State::Started)
         {
             gDragDrop.payload.type = DragData::dragType;
-            Gizmo::DragData data;
+            DragData data;
             char directionChar = toupper(touchedMesh->getComponentName()[0]) - 'X';
-            data.direction = static_cast<Gizmo::Direction>(directionChar);
+            data.direction = static_cast<Direction>(directionChar);
 
             for (auto& obj :
                  gGameInstance->objectSelectorManager.getSelectedObjects() | std::views::values)
@@ -101,7 +101,7 @@ namespace Core
                 }
             }
 
-            gDragDrop.payload.data = std::make_unique<Gizmo::DragData>(data);
+            gDragDrop.payload.data = std::make_unique<DragData>(data);
 
             _lastRay.reset();
         }
@@ -109,12 +109,12 @@ namespace Core
 
     void Gizmo::handleDrag()
     {
-        if (!gDragDrop.isTypeOf<Gizmo::DragData>())
+        if (!gDragDrop.isTypeOf<DragData>())
         {
             return;
         }
 
-        auto* data = dynamic_cast<Gizmo::DragData*>(gDragDrop.payload.data.get());
+        const auto* data = dynamic_cast<DragData*>(gDragDrop.payload.data.get());
         if (!Verify(data))
         {
             return;
@@ -134,23 +134,23 @@ namespace Core
             _lastRay = ray;
         }
 
-        auto delta = ray - *_lastRay;
+        const auto delta = ray - *_lastRay;
 
-        if (data->direction == Gizmo::Direction::X)
+        if (data->direction == Direction::X)
         {
             for (auto& obj : data->attachedObjects)
             {
                 obj->moveRight(delta.x);
             }
         }
-        if (data->direction == Gizmo::Direction::Y)
+        if (data->direction == Direction::Y)
         {
             for (auto& obj : data->attachedObjects)
             {
                 obj->moveUp(-delta.y);
             }
         }
-        if (data->direction == Gizmo::Direction::Z)
+        if (data->direction == Direction::Z)
         {
             for (auto& obj : data->attachedObjects)
             {

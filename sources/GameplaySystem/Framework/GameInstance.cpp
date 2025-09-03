@@ -30,7 +30,6 @@
 #include "Graphics/Window.h"
 #include "Misc/FPSCounter.h"
 #include "assimp/Importer.hpp"
-#include "assimp/postprocess.h"
 
 std::unique_ptr<Core::GameInstance> gGameInstance = nullptr;
 
@@ -112,7 +111,7 @@ namespace Core
             clock.start();
             _window->pollEvent();
 
-            if (auto wnd = gameEditor.getWindow<GameViewportEWC>(); wnd && wnd->isFocused())
+            if (const auto* wnd = gameEditor.getWindow<GameViewportEWC>(); wnd && wnd->isFocused())
             {
                 gameScene.tick(world.timeDelta);
             }
@@ -162,7 +161,7 @@ namespace Core
 
     void GameInstance::toggleRenderMode()
     {
-        using R = GameInstance::RenderMode;
+        using R = RenderMode;
         renderMode = renderMode.cast() == R::GameOnly ? R::Editor : R::GameOnly;
         gGameInstance->updateViewport();
     }
@@ -173,7 +172,7 @@ namespace Core
         if (Verify(colorShader))
         {
             colorShader->setVertexAttributeCallback(
-                []()
+                []
                 {
                     glEnableVertexAttribArray(0);
                     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), nullptr);
@@ -192,7 +191,7 @@ namespace Core
         if (Verify(outlineShader))
         {
             outlineShader->setVertexAttributeCallback(
-                []()
+                []
                 {
                     glEnableVertexAttribArray(0);
                     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), nullptr);
@@ -207,7 +206,7 @@ namespace Core
         if (Verify(objectIdentifierShader))
         {
             objectIdentifierShader->setVertexAttributeCallback(
-                []()
+                []
                 {
                     glEnableVertexAttribArray(0);
                     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), nullptr);
@@ -218,7 +217,7 @@ namespace Core
         if (Verify(simpleColorShader))
         {
             simpleColorShader->setVertexAttributeCallback(
-                []()
+                []
                 {
                     glEnableVertexAttribArray(0);
                     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), nullptr);

@@ -22,7 +22,6 @@
 
 #pragma once
 
-#include "Core/StringHelper.h"
 #include "Keyboard.h"
 #include "Mouse.h"
 #include "glm/glm.hpp"
@@ -53,7 +52,7 @@ namespace Core
         };
 
     public:
-        using Self = InputAction<KeyTParam>;
+        using Self = InputAction;
         using Ptr = boost::intrusive_ptr<Self>;
         using CPtr = boost::intrusive_ptr<const Self>;
         template<bool isConst>
@@ -190,7 +189,7 @@ namespace Core
         using Self = KeyboardInputAction;
         using Ptr = boost::intrusive_ptr<Self>;
         using CPtr = boost::intrusive_ptr<const Self>;
-        using KeyT = Parent::KeyT;
+        using KeyT = KeyT;
 
         static Ptr Create() { return { new Self }; }
 
@@ -213,7 +212,7 @@ namespace Core
         using Self = MouseInputAction;
         using Ptr = boost::intrusive_ptr<Self>;
         using CPtr = boost::intrusive_ptr<const Self>;
-        using KeyT = Parent::KeyT;
+        using KeyT = KeyT;
 
         static Ptr Create() { return { new Self }; }
 

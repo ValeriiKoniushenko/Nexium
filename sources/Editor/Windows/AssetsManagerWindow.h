@@ -59,7 +59,7 @@ namespace Core
         };
 
     protected:
-        std::unordered_map<NodeType, Core::Texture> _nodeTypesData;
+        std::unordered_map<NodeType, Texture> _nodeTypesData;
         CacheNode _rootCacheNode;
         StringAtom _filterBuf;
         std::filesystem::path _openedPath = assetsPath;
@@ -72,7 +72,7 @@ namespace Core
         void drawExplorerTree();
         void drawExplorer();
         void drawExplorerToolbar();
-        void drawOneLevel(CacheNode& node, bool& isSelected);
+        void drawOneLevel(CacheNode& rootNode, bool& isSelected);
         bool drawFileThumbnail(ImTextureID texture, const std::filesystem::directory_entry& entry,
                                ImVec2 size);
         void rescanPhysicalDrive(CacheNode& node);

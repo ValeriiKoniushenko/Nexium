@@ -67,7 +67,7 @@ namespace Core
 
     StringAtom BaseLog::getCompleteText(const char* str) const
     {
-        if (auto prefix = getPrefix())
+        if (const auto prefix = getPrefix())
         {
             return ("{} | {}"_f << prefix << str).data();
         }

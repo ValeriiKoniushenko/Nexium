@@ -173,8 +173,8 @@ namespace Core
         const auto mouse = Mouse::GetInViewportPosition();
 
         const auto frame = getOutputFrameSize();
-        const float x = (2.0f * mouse.x) / frame.width - 1.0f;
-        const float y = 1.0f - (2.0f * mouse.y) / frame.height;
+        const float x = 2.0f * mouse.x / frame.width - 1.0f;
+        const float y = 1.0f - 2.0f * mouse.y / frame.height;
 
         const auto rayClip = glm::vec4(x, y, -1.0f, 1.0f);
         glm::vec4 rayEye = glm::inverse(_cachedProjMatrix) * rayClip;

@@ -52,7 +52,7 @@ namespace Core
         void moveRight(float offset) noexcept;
         void moveUp(float offset) noexcept;
 
-        void setRotation(const glm::vec3& rotation) noexcept;
+        void setRotation(const glm::vec3& value) noexcept;
         void rotate(const glm::vec3& value) noexcept;
         [[nodiscard]] const glm::vec3& getRotation() const noexcept;
         void setRotationX(float x) noexcept;

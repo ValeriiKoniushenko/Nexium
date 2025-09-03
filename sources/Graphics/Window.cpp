@@ -189,7 +189,7 @@ namespace Core
 
     Window::CursorMode Window::getCursorMode()
     {
-        return static_cast<CursorMode>(glfwGetInputMode(GetWindow().getRawWindow(), GLFW_CURSOR));
+        return glfwGetInputMode(GetWindow().getRawWindow(), GLFW_CURSOR);
     }
 
     void Window::toggleCursorMode()
