@@ -41,7 +41,7 @@ namespace Core
             return;
         }
 
-        auto shader = gGameInstance->shaderManager.getShaderProgram("objectIdentifier"_atom);
+        auto *shader = gGameInstance->shaderManager.getShaderProgram("objectIdentifier"_atom);
         if (!Verify(shader)) [[unlikely]]
         {
             return;
@@ -112,7 +112,7 @@ namespace Core
             unsigned char data[4]{};
             glReadPixels(pickPos.x, pickPos.y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, data);
 
-            const GLuint pickedID = data[0] + data[1] * 256 + data[2] * 256 * 256;
+            const GLuint pickedID = data[0] + (data[1] * 256) + (data[2] * 256 * 256);
             StaticMesh* found = nullptr;
             for (auto&& actor : scene.getActors())
             {

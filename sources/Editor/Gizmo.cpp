@@ -89,7 +89,7 @@ namespace Core
         {
             gDragDrop.payload.type = DragData::dragType;
             DragData data;
-            char directionChar = toupper(touchedMesh->getComponentName()[0]) - 'X';
+            char const directionChar = toupper(touchedMesh->getComponentName()[0]) - 'X';
             data.direction = static_cast<Direction>(directionChar);
 
             for (auto& obj :
@@ -138,21 +138,21 @@ namespace Core
 
         if (data->direction == Direction::X)
         {
-            for (auto& obj : data->attachedObjects)
+            for (const auto& obj : data->attachedObjects)
             {
                 obj->moveRight(delta.x);
             }
         }
         if (data->direction == Direction::Y)
         {
-            for (auto& obj : data->attachedObjects)
+            for (const auto& obj : data->attachedObjects)
             {
                 obj->moveUp(-delta.y);
             }
         }
         if (data->direction == Direction::Z)
         {
-            for (auto& obj : data->attachedObjects)
+            for (const auto& obj : data->attachedObjects)
             {
                 obj->moveForward(delta.z);
             }

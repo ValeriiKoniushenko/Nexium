@@ -71,7 +71,8 @@ namespace Core
 
     glm::vec2 Mouse::GetPosition()
     {
-        double x = 0, y = 0;
+        double x = 0;
+        double y = 0;
         glfwGetCursorPos(GetWindow().getRawWindow(), &x, &y);
         return { static_cast<float>(x), static_cast<float>(y) };
     }

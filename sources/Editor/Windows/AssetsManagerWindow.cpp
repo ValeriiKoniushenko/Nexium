@@ -59,7 +59,7 @@ namespace Core
             Texture tmp;
             if (tmp.loadFromFile(path, false))
             {
-                _nodeTypesData.emplace(type, std::move(tmp));
+                _nodeTypesData.emplace(type, tmp);
             }
         }
 
@@ -103,7 +103,7 @@ namespace Core
 
             auto& style = ImGui::GetStyle();
             const float oneThumbnailWidth
-                = _thumbnailSize.x + style.ItemSpacing.x * 2.f + style.ItemSpacing.x;
+                = _thumbnailSize.x + (style.ItemSpacing.x * 2.f) + style.ItemSpacing.x;
             const int maxCountPerWidth
                 = static_cast<int>(ImGui::GetContentRegionAvail().x / oneThumbnailWidth);
             if (ImGui::BeginPopupContextWindow("ExplorerContextMenu",
@@ -121,7 +121,7 @@ namespace Core
             int i = 1;
             for (auto&& entry : std::filesystem::directory_iterator(_openedPath))
             {
-                auto path = entry.path();
+                const auto& path = entry.path();
                 const auto fileFormat = getNodeType(entry);
 
                 if (!_filterBuf.isEmpty() && _filterBuf[0] != '\0' && !std::isspace(_filterBuf[0]))
@@ -158,7 +158,7 @@ namespace Core
                 {
                     continue;
                 }
-                auto icon = ICON_FA_FILE;
+                const auto *icon = ICON_FA_FILE;
                 if (node.type == NodeType::Code)
                 {
                     icon = ICON_FA_FILE_CODE_O;
@@ -289,7 +289,7 @@ namespace Core
     {
         auto path = entry.path();
         auto filename = path.filename().generic_string();
-        const auto originalFileName = filename;
+        const auto& originalFileName = filename;
 
         bool clicked = false;
 
@@ -345,7 +345,7 @@ namespace Core
 
             if (entry.is_regular_file())
             {
-                const uint32_t fileSize = static_cast<uint32_t>(std::filesystem::file_size(path));
+                const auto fileSize = static_cast<uint32_t>(std::filesystem::file_size(path));
                 ImGui::Text("File size: %d", fileSize);
             }
             ImGui::EndTooltip();
@@ -400,7 +400,7 @@ namespace Core
 
     void AssetsManagerWindowEWC::drawExplorerToolbar()
     {
-        float rowHeight = ImGui::GetFrameHeightWithSpacing();
+        float const rowHeight = ImGui::GetFrameHeightWithSpacing();
         if (ImGui::BeginChild("ExplorerTopBar", ImVec2(0, rowHeight)))
         {
             ImGui::Dummy(ImVec2(0, 0));
@@ -410,7 +410,7 @@ namespace Core
             // =============== Input ====================
             ImGui::Dummy(ImVec2(_defaultGap, 0));
             ImGui::SameLine();
-            float width = ImGui::GetContentRegionAvail().x - _defaultGap;
+            float const width = ImGui::GetContentRegionAvail().x - _defaultGap;
             ImGui::SetNextItemWidth(width);
             ImGui::InputTextWithHint("##ExplorerFilter", "Regex filter...", _filterBuf.data(),
                                      _filterBuf.size() + 1);

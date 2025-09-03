@@ -73,7 +73,7 @@ namespace Core
         }
         auto&& shader = metas.at(_selectedShader);
         auto&& style = ImGui::GetStyle();
-        const auto availWidth = ImGui::GetContentRegionAvail().x - style.ItemSpacing.x * 2.f;
+        const auto availWidth = ImGui::GetContentRegionAvail().x - (style.ItemSpacing.x * 2.f);
 
         if (ImGui::BeginChild("Shader's meta data"))
         {
@@ -83,7 +83,7 @@ namespace Core
                                 availWidth);
 
             if (ImGui::Button("Reload shader",
-                              ImVec2(_drawDetailsLabelWidth - style.FramePadding.x * 2.f, 0.f)))
+                              ImVec2(_drawDetailsLabelWidth - (style.FramePadding.x * 2.f), 0.f)))
             {
                 shader.safeRecreateFromSources();
             }

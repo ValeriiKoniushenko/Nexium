@@ -66,7 +66,7 @@ namespace Core
         ImGui::EndDisabled();
     }
 
-    bool VectorCombo(StringAtom label, int* current, std::vector<StringAtom>& data)
+    bool VectorCombo(const StringAtom& label, int* current, std::vector<StringAtom>& data)
     {
         return ImGui::Combo(
             label.c_str(), current,

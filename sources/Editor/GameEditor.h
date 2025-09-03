@@ -72,7 +72,7 @@ namespace Core
          */
         template<IsEditorWindowComponent T>
         [[nodiscard]] T::Ptr registerNewWindow(const StringAtom& name = ""_atom,
-                                                        bool isEnabled = true)
+                                               bool isEnabled = true)
         {
             auto& a = _windows.emplace_back(new T);
             a->initialize();

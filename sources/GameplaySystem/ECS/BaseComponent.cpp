@@ -91,7 +91,7 @@ namespace Core
     {
         // Debug type checker
 #if defined(DEBUG)
-        for (auto [type, counter] : _debugTypeTracker)
+        for (const auto& [type, counter] : _debugTypeTracker)
         {
             // 2 - because we should hit it from both macros:
             // - ECS_REGISTER_NEW_COMPONENT
@@ -268,7 +268,7 @@ namespace Core
         }
         json["type"] = _type;
 
-        for (auto& child : _children)
+        for (const auto& child : _children)
         {
             json["children"].push_back(child->toJson());
         }
@@ -287,10 +287,10 @@ namespace Core
         {
             if (json.contains("children"))
             {
-                for (auto& childJson : json["children"])
+                for (const auto& childJson : json["children"])
                 {
                     auto type = StringAtom::Intern(requireAs<StringAtom>(childJson, "type"));
-                    const auto c = rawAddChildComponent(GetGlobalComponentFactory().create(type));
+                    auto *const c = rawAddChildComponent(GetGlobalComponentFactory().create(type));
                     c->fromJson(childJson, false);
                 }
             }
@@ -354,7 +354,7 @@ namespace Core
     {
         std::size_t seed = 0;
 
-        auto* i = this;
+        const auto* i = this;
         while (i)
         {
             hash_combine(seed, i->_name);
@@ -381,7 +381,7 @@ namespace Core
     }
 
     BaseComponent::BaseComponent(const BaseComponent& other)
-    {
+     : AbstractComponent(other) {
         *this = other;
     }
 
@@ -393,7 +393,7 @@ namespace Core
             _type = other._type;
 
             _children.clear();
-            for (auto& child : other._children)
+            for (const auto& child : other._children)
             {
                 _children.emplace_back(new BaseComponent(*child));
                 _children.back()->_parent = this;

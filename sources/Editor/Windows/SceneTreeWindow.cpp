@@ -146,7 +146,7 @@ namespace Core
         ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 0.0f);
 
-        bool isEnabled = n->isEnabled();
+        bool const isEnabled = n->isEnabled();
         if (!isEnabled)
         {
             ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetStyle().Colors[ImGuiCol_TextDisabled]);

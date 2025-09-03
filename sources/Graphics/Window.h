@@ -122,7 +122,7 @@ namespace Core
 
         void swapBuffers();
 
-        void pollEvent();
+        static void pollEvent();
 
         void updateViewport(float aspect, ViewportMode mode = ViewportMode::Default);
 
@@ -131,8 +131,8 @@ namespace Core
         void setCursorPosition(float x, float y);
         void setCursorPosition(glm::vec2 position);
 
-        void setCursorMode(CursorMode mode);
-        CursorMode getCursorMode();
+        static void setCursorMode(CursorMode mode);
+        static CursorMode getCursorMode();
         void toggleCursorMode();
 
         [[nodiscard]] GLFWwindow* getRawWindow() noexcept { return _window; }

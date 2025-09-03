@@ -22,6 +22,8 @@
 
 #include "Camera.h"
 
+#include <cmath>
+
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Graphics/Window.h"
 #include "glm/ext/matrix_clip_space.hpp"
@@ -59,8 +61,8 @@ namespace Core
     {
         const auto direction = glm::normalize(targetPosition - getPosition());
 
-        const float yaw = static_cast<float>(glm::degrees(atan2(-direction.x, direction.z)));
-        const float pitch = static_cast<float>(glm::degrees(asin(direction.y)));
+        const auto yaw = static_cast<float>(glm::degrees(atan2(-direction.x, direction.z)));
+        const auto pitch = static_cast<float>(glm::degrees(asin(direction.y)));
 
         setRotation({ pitch, yaw, 0.0f });
     }
@@ -96,7 +98,7 @@ namespace Core
 
     void BaseCamera::pitch(float x)
     {
-        if (static_cast<float>(fabs(_rotation.x + x)) > 90.f)
+        if (static_cast<float>(std::fabs(_rotation.x + x)) > 90.f)
         {
             return;
         }
@@ -158,7 +160,7 @@ namespace Core
         fromJson(data, false);
     }
 
-    FSize2 BaseCamera::getOutputFrameSize() const
+    FSize2 BaseCamera::getOutputFrameSize() 
     {
         if (gGameInstance->renderMode.cast() == GameInstance::RenderMode::Editor)
         {
@@ -173,8 +175,8 @@ namespace Core
         const auto mouse = Mouse::GetInViewportPosition();
 
         const auto frame = getOutputFrameSize();
-        const float x = 2.0f * mouse.x / frame.width - 1.0f;
-        const float y = 1.0f - 2.0f * mouse.y / frame.height;
+        const float x = (2.0f * mouse.x / frame.width) - 1.0f;
+        const float y = 1.0f - (2.0f * mouse.y / frame.height);
 
         const auto rayClip = glm::vec4(x, y, -1.0f, 1.0f);
         glm::vec4 rayEye = glm::inverse(_cachedProjMatrix) * rayClip;

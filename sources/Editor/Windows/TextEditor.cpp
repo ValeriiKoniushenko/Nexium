@@ -46,7 +46,7 @@ namespace Core
 
         if (ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows))
         {
-            bool ctrl = ImGui::GetIO().KeyCtrl;
+            bool const ctrl = ImGui::GetIO().KeyCtrl;
             if (ctrl && ImGui::IsKeyPressed(ImGuiKey_S, false))
             {
                 save();
@@ -122,7 +122,7 @@ namespace Core
         std::ofstream file(_path);
         if (!file.is_open())
         {
-            int err = errno;
+            int const err = errno;
             char err_buf[256];
 #if defined(_MSC_VER)
             strerror_s(err_buf, sizeof(err_buf), err);

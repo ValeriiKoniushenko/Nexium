@@ -72,7 +72,7 @@ namespace Core
         [[nodiscard]] const char* getPrefix() const override { return "ShaderManager"; }
 
     private:
-        [[nodiscard]] std::filesystem::path getPathToShaderBasedOn(
+        [[nodiscard]] static std::filesystem::path getPathToShaderBasedOn(
             const std::unordered_set<std::string>& set, std::filesystem::path path) const;
 
     private:

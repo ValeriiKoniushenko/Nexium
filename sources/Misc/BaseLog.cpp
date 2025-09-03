@@ -45,7 +45,7 @@ namespace Core
     StringAtom LogQueue::LogLine::toString() const
     {
         const std::time_t rawTime = std::time(nullptr);
-        std::tm tm_struct;
+        std::tm tm_struct{};
 #if defined(_MSC_VER)
         localtime_s(&tm_struct, &rawTime);
 #else
@@ -67,7 +67,7 @@ namespace Core
 
     StringAtom BaseLog::getCompleteText(const char* str) const
     {
-        if (const auto prefix = getPrefix())
+        if (const auto *const prefix = getPrefix())
         {
             return ("{} | {}"_f << prefix << str).data();
         }

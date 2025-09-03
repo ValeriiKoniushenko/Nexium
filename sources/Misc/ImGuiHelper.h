@@ -55,7 +55,7 @@ namespace Core
 
     void LabelAndCheckboxRO(StringAtom label, bool v, float labelSize);
 
-    bool VectorCombo(StringAtom label, int* current, std::vector<StringAtom>& data);
+    bool VectorCombo(const StringAtom& label, int* current, std::vector<StringAtom>& data);
 
     bool ToggleButton(const char* label, bool cond, const ImVec4& onColor, const ImVec4& offColor);
     bool ToggleButton(const char* label, bool cond);

@@ -56,9 +56,9 @@ namespace Core
     {
         BaseFloatEWC::onInit();
 
-        _transformLocationControl.components = { Vec3Control::Component{ "X:"_atom, ColorRed },
-                                                 Vec3Control::Component{ "Y:"_atom, ColorGreen },
-                                                 Vec3Control::Component{ "Z:"_atom, ColorBlue } };
+        _transformLocationControl.components = { Vec3Control::Component{ .text="X:"_atom, .color=ColorRed },
+                                                 Vec3Control::Component{ .text="Y:"_atom, .color=ColorGreen },
+                                                 Vec3Control::Component{ .text="Z:"_atom, .color=ColorBlue } };
         _transformLocationControl.labelWidth = _labelWidth;
         _transformLocationControl.label = "Location:";
 
@@ -71,15 +71,15 @@ namespace Core
         _transformRotationControl = _transformLocationControl;
         _transformRotationControl.label = "Rotation:";
 
-        _meshSizeControl.components = { Vec3Control::Component{ "W:"_atom, ColorRed },
-                                        Vec3Control::Component{ "H:"_atom, ColorGreen },
-                                        Vec3Control::Component{ "D:"_atom, ColorBlue } };
+        _meshSizeControl.components = { Vec3Control::Component{ .text="W:"_atom, .color=ColorRed },
+                                        Vec3Control::Component{ .text="H:"_atom, .color=ColorGreen },
+                                        Vec3Control::Component{ .text="D:"_atom, .color=ColorBlue } };
         _meshSizeControl.labelWidth = _labelWidth;
         _meshSizeControl.readOnly = true;
         _meshSizeControl.label = "Size:";
 
-        _frameSizeControl.components = { Vec2Control::Component{ "W:"_atom, ColorRed },
-                                         Vec2Control::Component{ "H:"_atom, ColorGreen } };
+        _frameSizeControl.components = { Vec2Control::Component{ .text="W:"_atom, .color=ColorRed },
+                                         Vec2Control::Component{ .text="H:"_atom, .color=ColorGreen } };
         _frameSizeControl.labelWidth = _labelWidth;
         _frameSizeControl.label = "Frame size:";
 
@@ -261,7 +261,7 @@ namespace Core
 
                 for (auto&& i : collection)
                 {
-                    for (char c : i)
+                    for (char const c : i)
                     {
                         out.push_back(c);
                     }
@@ -270,11 +270,11 @@ namespace Core
                 return out;
             }();
 
-            ImGuiStyle& style = ImGui::GetStyle();
+            ImGuiStyle const& style = ImGui::GetStyle();
             const char* delButtonText = "X";
             const float gap = 8.f;
             const auto buttonSize
-                = ImGui::CalcTextSize(delButtonText).x + style.FramePadding.x * 2.f;
+                = ImGui::CalcTextSize(delButtonText).x + (style.FramePadding.x * 2.f);
             const auto oneComboSize
                 = (_innerSize.width - _labelWidth - buttonSize - gap * 2.f) / 2.f;
 

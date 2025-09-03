@@ -46,7 +46,7 @@ namespace Core
 
     void RootDockWindowEWC::onDraw()
     {
-        ImGuiID dockSpaceId = ImGui::GetID("MyDockSpace");
+        ImGuiID const dockSpaceId = ImGui::GetID("MyDockSpace");
         ImGui::DockSpace(dockSpaceId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
     }
 

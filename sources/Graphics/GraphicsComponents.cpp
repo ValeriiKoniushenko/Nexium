@@ -226,7 +226,7 @@ namespace Core
 
         applyUniforms();
 
-        glDrawElements(GL_TRIANGLES, _triangleCount, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, _triangleCount, GL_UNSIGNED_INT, nullptr);
 
         for (auto [val, mod] : _drawModifiers)
         {
@@ -307,7 +307,7 @@ namespace Core
                 const auto mod = Modifier::fromStr(modifier.at("modifier").get<std::string>());
                 if (mod)
                 {
-                    _drawModifiers.push_back({ val, mod.value() });
+                    _drawModifiers.emplace_back(val, mod.value());
                 }
             }
         }
@@ -337,7 +337,7 @@ namespace Core
         if (MV_ProgramPointSize == v) return "ProgramPointSize"_atom;
         // clang-format on
 
-        return StringAtom("");
+        return { "" };
     }
 
     GraphicsComponentData::ModifiedValue GraphicsComponentData::FromString(const StringAtom& str)

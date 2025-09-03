@@ -34,7 +34,7 @@ namespace Core
         init();
         if (!path.empty())
         {
-            loadFromFile(std::move(path));
+            loadFromFile(path);
         }
     }
 

@@ -1,0 +1,41 @@
+---
+# Checkers
+Checks: >
+  clang-analyzer-*,
+  cppcoreguidelines-*,
+  modernize-*,
+  performance-*,
+  readability-*,
+  bugprone-*,
+  misc-*,
+  -cppcoreguidelines-pro-type-vararg,
+  -modernize-use-trailing-return-type,
+  -cppcoreguidelines-pro-type-union-access,
+  -misc-include-cleaner,
+  -readability-braces-around-statements,
+  -readability-function-cognitive-complexity,
+  -readability-named-parameter,
+  -readability-identifier-length,
+  -cppcoreguidelines-owning-memory,
+  -readability-implicit-bool-conversion,
+  -readability-uppercase-literal-suffix,
+  -misc-unused-parameters,
+  -readability-magic-numbers,
+  -cppcoreguidelines-avoid-magic-numbers
+
+# Warnings as errors
+WarningsAsErrors: >
+  clang-analyzer-*,
+  cppcoreguidelines-*, 
+  bugprone-*,
+  performance-*,
+
+# Formatting and style (optional)
+FormatStyle: file   # uses .clang-format if present
+
+# Extra options
+CheckOptions:
+  - key: modernize-use-nullptr.NullMacros
+    value: 'NULL'
+  - key: cppcoreguidelines-pro-bounds-array-to-pointer-decay.WarnOnImplicit
+    value: true

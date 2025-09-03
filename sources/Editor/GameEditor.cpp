@@ -45,7 +45,7 @@ namespace
     StringAtom GetGlslVersionShaderLike()
     {
         StringAtom version = reinterpret_cast<const char*>(glGetString(GL_VERSION));
-        if (const auto end = version.find(" "); Verify(end))
+        if (const auto* const end = version.find(" "); Verify(end))
         {
             const auto i = end - version.c_str();
             version.subStr(0, i);

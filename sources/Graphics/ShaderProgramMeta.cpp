@@ -175,10 +175,10 @@ namespace Core
                 glGetProgramResourceiv(shaderProgramId, interfaceType, i, 4, props, 4, nullptr,
                                        values);
 
-                GLint nameLen = values[0];
-                GLenum type = values[1];
-                GLint location = values[2];
-                GLint size = values[3];
+                const GLint nameLen = values[0];
+                const GLenum type = values[1];
+                const GLint location = values[2];
+                const GLint size = values[3];
 
                 std::string name(nameLen, '\0');
                 glGetProgramResourceName(shaderProgramId, interfaceType, i, nameLen, nullptr,

@@ -203,7 +203,7 @@ namespace Core
 
     void LogsWindowEWC::toolbarDraw()
     {
-        float startY = ImGui::GetCursorScreenPos().y;
+        float const startY = ImGui::GetCursorScreenPos().y;
         ImGui::BeginChild("Toolbar", ImVec2(0, _streamingToolbarHeight));
         {
             ImGui::Dummy(ImVec2(0, 0));
@@ -306,7 +306,7 @@ namespace Core
         }
         if (json.contains("filterLevels"))
         {
-            for (auto& filter : json["filterLevels"])
+            for (const auto& filter : json["filterLevels"])
             {
                 if (!filter.contains("level") || !filter.contains("value"))
                 {

@@ -65,7 +65,7 @@ namespace Core
         [[nodiscard]] nlohmann::json toCacheData() const override;
         void fromCacheData(const nlohmann::json& data) override;
 
-        [[nodiscard]] FSize2 getOutputFrameSize() const;
+        [[nodiscard]] FSize2 getOutputFrameSize();
 
         [[nodiscard]] glm::vec3 putMouseRay(float length);
 
