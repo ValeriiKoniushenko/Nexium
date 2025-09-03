@@ -227,6 +227,18 @@ namespace Core
         _children.erase(first, last);
     }
 
+    BaseComponent* BaseComponent::getOwner() noexcept
+    {
+        BaseComponent* comp = this;
+
+        while (comp)
+        {
+            comp = comp->getParent();
+        }
+
+        return comp;
+    }
+
     void BaseComponent::clear()
     {
         AbstractComponent::clear();

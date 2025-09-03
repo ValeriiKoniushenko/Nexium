@@ -186,7 +186,7 @@ namespace Core
 
         if (isOpened)
         {
-            for (auto&& child : n->getChildren())
+            for (auto& child : n->getChildren())
             {
                 drawTreeNode(child.get(), ++id);
             }

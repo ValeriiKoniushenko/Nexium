@@ -47,21 +47,13 @@ namespace Core
             onChange.trigger(obj.get(), false);
         }
 
-        if (_generalSelectedComponent)
-        {
-            _generalSelectedComponent->removeChildOf<Gizmo>();
-            _generalSelectedComponent = nullptr;
-        }
+        tryToDeselectGeneralComponent();
         _selectedObjects.clear();
     }
 
     void ObjectSelectorManager::addSelectedObject(BaseComponent* comp)
     {
-        if (!_generalSelectedComponent && !comp->isTypeOf<Gizmo>())
-        {
-            _generalSelectedComponent = comp;
-            (void)_generalSelectedComponent->addChildComponent<Gizmo>();
-        }
+        tryToSelectGeneralComponent(comp);
 
         if (auto* outliner = dynamic_cast<IOutliner*>(comp))
         {
@@ -75,6 +67,34 @@ namespace Core
     bool ObjectSelectorManager::isSelected(BaseComponent* comp) const
     {
         return _selectedObjects.contains(comp);
+    }
+
+    void ObjectSelectorManager::tryToSelectGeneralComponent(BaseComponent* comp)
+    {
+        if (_generalSelectedComponent || comp->isTypeOf<Gizmo>())
+        {
+            return;
+        }
+
+        if (gGameInstance->currentCamera)
+        {
+            if (gGameInstance->currentCamera->getOwner() == comp->getOwner())
+            {
+                return;
+            }
+        }
+
+        _generalSelectedComponent = comp;
+        (void)_generalSelectedComponent->addChildComponent<Gizmo>();
+    }
+
+    void ObjectSelectorManager::tryToDeselectGeneralComponent()
+    {
+        if (_generalSelectedComponent)
+        {
+            _generalSelectedComponent->removeChildOf<Gizmo>();
+            _generalSelectedComponent = nullptr;
+        }
     }
 
 } // namespace Core

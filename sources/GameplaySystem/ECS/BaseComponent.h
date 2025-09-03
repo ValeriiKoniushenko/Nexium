@@ -344,6 +344,11 @@ namespace Core
         [[nodiscard]] const BaseComponent* getParent() const noexcept { return _parent; }
         [[nodiscard]] BaseComponent* getParent() noexcept { return _parent; }
         [[nodiscard]] bool hasParent() const noexcept { return _parent; }
+        [[nodiscard]] BaseComponent* getOwner() noexcept;
+        [[nodiscard]] const BaseComponent* getOwner() const noexcept
+        {
+            return const_cast<Self*>(this)->getOwner();
+        }
 
         // ========================== MISC & TYPES ==========================
         void clear() override;
