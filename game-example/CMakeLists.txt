@@ -13,4 +13,4 @@ target_link_libraries(${TARGET_NAME} PUBLIC
 
 CoreAddCompileOptionsTo(${TARGET_NAME})
 
-add_dependencies(${TARGET_NAME} deploy_engine)
+Nexium_Deploy(${TARGET_NAME})
