@@ -37,6 +37,7 @@ namespace Core
     protected:
         void onTick(float delta) override;
         virtual void onDraw() = 0;
+        [[nodiscard]] ImGuiStyle& style() const { return ImGui::GetStyle(); }
     };
 
     [[nodiscard]] ImVec4 colorToImVec4(const Color4& color);

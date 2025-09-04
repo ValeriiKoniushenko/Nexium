@@ -116,6 +116,27 @@ namespace Core
         return getComponentName();
     }
 
+    void Button::setWidth(float width)
+    {
+        _size.x = width;
+    }
+
+    void Button::resetWidth()
+    {
+        _size.x = 0.0f;
+    }
+
+    float Button::getWidth() const
+    {
+        return _size.x;
+    }
+
+    ImVec2 Button::getRealSize() const
+    {
+        return ImGui::CalcItemSize(_size, _textSize.x + style().FramePadding.x * 2.0f,
+                                   _textSize.y + style().FramePadding.y * 2.0f);
+    }
+
     void Button::onDraw()
     {
         int pushedStyles = 0;

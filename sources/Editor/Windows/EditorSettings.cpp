@@ -34,6 +34,7 @@ namespace Core
 
         _button.initialize();
         _button.setText("Save");
+        _button.setWidth(10);
     }
 
     void EditorSettingsEWC::onDraw()

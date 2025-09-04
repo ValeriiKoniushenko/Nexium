@@ -56,6 +56,11 @@ namespace Core
         void setText(const StringAtom& string);
         [[nodiscard]] const StringAtom& getText() const noexcept;
 
+        void setWidth(float width);
+        void resetWidth();
+        [[nodiscard]] float getWidth() const;
+        [[nodiscard]] ImVec2 getRealSize() const;
+
     public: // delegates
         /**
          * @brief will be called when clicked
@@ -73,6 +78,7 @@ namespace Core
         std::optional<Color4> _textColor;
         std::optional<Color4> _borderColor;
         std::optional<float> _borderWidth;
+
         ImVec2 _textSize;
         ImVec2 _size;
     };
