@@ -27,10 +27,6 @@ namespace Core
 
     void HorizontalLayout::onDraw()
     {
-        for (auto& child_ : _children)
-        {
-            auto* child = child_->unsafeCastTo<Widget>();
-        }
     }
 
     void HorizontalLayout::onInitialize()

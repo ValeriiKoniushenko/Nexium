@@ -20,28 +20,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "EditorSettings.h"
+#pragma once
 
-#include "Editor/GuiComponents/Button.h"
-#include "GameplaySystem/Framework/GameInstance.h"
+#include "Widget.h"
 
 namespace Core
 {
-    ECS_REGISTER_NEW_COMPONENT_TYPE(EditorSettingsEWC)
 
-    void EditorSettingsEWC::onInitialize()
+    class VerticalLayout : public Widget
     {
-        BaseFloatEWC::onInitialize();
+        ECS_REGISTER_NEW_COMPONENT(VerticalLayout, Widget);
 
-        _layout.setSpacing(40);
-        _layout.addChildComponent<Button>()->setText("Button 1");
-        _layout.addChildComponent<Button>()->setText("Button 2");
-    }
+    public:
+        VerticalLayout& setSpacing(float value);
+        VerticalLayout& resetSpacing();
+        [[nodiscard]] float getSpacing() const;
 
-    void EditorSettingsEWC::onDraw()
-    {
-        const float tick = gGameInstance->world.timeDelta;
+    protected:
+        void onTick(float delta) override;
+        void onDraw() override;
+        void onInitialize() override;
 
-        _layout.tick(tick);
-    }
+    protected:
+        std::optional<float> _spacing;
+    };
+
 } // namespace Core

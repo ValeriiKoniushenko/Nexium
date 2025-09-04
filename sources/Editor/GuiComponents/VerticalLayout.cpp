@@ -20,28 +20,51 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "EditorSettings.h"
-
-#include "Editor/GuiComponents/Button.h"
-#include "GameplaySystem/Framework/GameInstance.h"
+#include "VerticalLayout.h"
 
 namespace Core
 {
-    ECS_REGISTER_NEW_COMPONENT_TYPE(EditorSettingsEWC)
 
-    void EditorSettingsEWC::onInitialize()
+    VerticalLayout& VerticalLayout::setSpacing(float value)
     {
-        BaseFloatEWC::onInitialize();
-
-        _layout.setSpacing(40);
-        _layout.addChildComponent<Button>()->setText("Button 1");
-        _layout.addChildComponent<Button>()->setText("Button 2");
+        _spacing = value;
+        return *this;
     }
 
-    void EditorSettingsEWC::onDraw()
+    VerticalLayout& VerticalLayout::resetSpacing()
     {
-        const float tick = gGameInstance->world.timeDelta;
-
-        _layout.tick(tick);
+        _spacing.reset();
+        return *this;
     }
+
+    float VerticalLayout::getSpacing() const
+    {
+        return _spacing.value_or(style().ItemSpacing.y);
+    }
+
+    void VerticalLayout::onTick(float delta)
+    {
+        int pushed = 0;
+
+        if (_spacing)
+        {
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing,
+                                ImVec2(style().ItemSpacing.x, *_spacing));
+            ++pushed;
+        }
+
+        Widget::onTick(delta);
+
+        ImGui::PopStyleVar(pushed);
+    }
+
+    void VerticalLayout::onDraw()
+    {
+    }
+
+    void VerticalLayout::onInitialize()
+    {
+        Widget::onInitialize();
+    }
+
 } // namespace Core

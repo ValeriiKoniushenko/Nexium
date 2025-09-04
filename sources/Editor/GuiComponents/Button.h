@@ -53,6 +53,10 @@ namespace Core
         Button& resetBorderColor();
         [[nodiscard]] std::optional<Color4> getBorderColor() const;
 
+        Button& setBorderWidth(float value);
+        Button& resetBorderWidth();
+        [[nodiscard]] std::optional<float> getBorderWidth() const;
+
         Button& setText(const StringAtom& string);
         [[nodiscard]] const StringAtom& getText() const noexcept;
 

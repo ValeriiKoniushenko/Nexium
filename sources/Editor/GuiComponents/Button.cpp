@@ -115,6 +115,23 @@ namespace Core
         return _borderColor;
     }
 
+    Button& Button::setBorderWidth(float value)
+    {
+        _borderWidth = value;
+        return *this;
+    }
+
+    Button& Button::resetBorderWidth()
+    {
+        _borderWidth.reset();
+        return *this;
+    }
+
+    std::optional<float> Button::getBorderWidth() const
+    {
+        return _borderWidth;
+    }
+
     Button& Button::setText(const StringAtom& string)
     {
         setComponentName(string);

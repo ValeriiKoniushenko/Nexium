@@ -23,7 +23,7 @@
 #pragma once
 
 #include "BaseWindow.h"
-#include "Editor/GuiComponents/HorizontalLayout.h"
+#include "Editor/GuiComponents/VerticalLayout.h"
 
 namespace Core
 {
@@ -38,7 +38,7 @@ namespace Core
         void onDraw() override;
 
     private:
-        HorizontalLayout _layout;
+        VerticalLayout _layout;
     };
 
 } // namespace Core
