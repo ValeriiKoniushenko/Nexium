@@ -163,8 +163,13 @@ namespace Core
 
     ImVec2 Button::getRealSize() const
     {
-        return ImGui::CalcItemSize(_size, _textSize.x + style().FramePadding.x * 2.0f,
-                                   _textSize.y + style().FramePadding.y * 2.0f);
+        if (_size.x == 0.f || _size.y == 0.f)
+        {
+            return ImGui::CalcItemSize(_size, _textSize.x + style().FramePadding.x * 2.0f,
+                                       _textSize.y + style().FramePadding.y * 2.0f);
+        }
+
+        return _size;
     }
 
     void Button::onDraw()
@@ -184,6 +189,8 @@ namespace Core
         {
             onClick.trigger();
         }
+
+        _size = ImGui::GetItemRectSize();
 
         ImGui::PopStyleColor(pushedStyles);
         ImGui::PopStyleVar(pushedVars);
