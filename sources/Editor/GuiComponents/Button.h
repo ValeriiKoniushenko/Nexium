@@ -65,6 +65,9 @@ namespace Core
         [[nodiscard]] float getWidth() const;
         [[nodiscard]] ImVec2 getRealSize() const;
 
+        [[nodiscard]] float getWidth() override { return getRealSize().x; }
+        [[nodiscard]] float getHeight() override { return getRealSize().y; }
+
     public: // delegates
         /**
          * @brief will be called when clicked

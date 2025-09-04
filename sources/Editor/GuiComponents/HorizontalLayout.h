@@ -32,7 +32,12 @@ namespace Core
         ECS_REGISTER_NEW_COMPONENT(HorizontalLayout, Widget);
 
     public:
+        [[nodiscard]] float getWidth() override;
+        [[nodiscard]] float getHeight() override;
+
     protected:
+        void onAddChild(BaseComponent* newChild) override;
+        void onTick(float delta) override;
         void onDraw() override;
         void onInitialize() override;
     };

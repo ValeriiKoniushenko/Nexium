@@ -34,11 +34,20 @@ namespace Core
         ECS_REGISTER_NEW_COMPONENT(Widget, BaseComponent);
 
     public:
+        [[nodiscard]] virtual float getWidth() = 0;
+        [[nodiscard]] virtual float getHeight() = 0;
+
+        [[nodiscard]] bool isAutoDraw() const noexcept { return _autoDraw; }
+        void setIsAutoDraw(bool value) noexcept { _autoDraw = value; }
+        virtual void onDraw() = 0;
+
     protected:
         bool addChildValidator(BaseComponent* newChild) override;
         void onTick(float delta) override;
-        virtual void onDraw() = 0;
         [[nodiscard]] ImGuiStyle& style() const { return ImGui::GetStyle(); }
+
+    protected:
+        bool _autoDraw = true;
     };
 
     [[nodiscard]] ImVec4 colorToImVec4(const Color4& color);

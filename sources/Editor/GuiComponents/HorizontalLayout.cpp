@@ -25,6 +25,56 @@
 namespace Core
 {
 
+    float HorizontalLayout::getWidth()
+    {
+        if (hasParent())
+        {
+            return getParent()->unsafeCastTo<Widget>()->getWidth();
+        }
+        return ImGui::GetContentRegionAvail().x;
+    }
+
+    float HorizontalLayout::getHeight()
+    {
+        if (hasParent())
+        {
+            return getParent()->unsafeCastTo<Widget>()->getHeight();
+        }
+        return ImGui::GetContentRegionAvail().y;
+    }
+    void HorizontalLayout::onAddChild(BaseComponent* newChild)
+    {
+        Widget::onAddChild(newChild);
+        newChild->unsafeCastTo<Widget>()->setIsAutoDraw(false);
+    }
+
+    void HorizontalLayout::onTick(float delta)
+    {
+        Widget::onTick(delta);
+        int pushed = 0;
+
+        float spacing = getWidth();
+        if (hasChildren())
+        {
+            for (auto& child : _children)
+            {
+                spacing -= child->unsafeCastTo<Widget>()->getWidth();
+            }
+            spacing /= _children.size() - 1;
+        }
+
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(spacing, style().ItemSpacing.y));
+        ++pushed;
+
+        for (auto&& child : _children)
+        {
+            child->unsafeCastTo<Widget>()->onDraw();
+            ImGui::SameLine();
+        }
+
+        ImGui::PopStyleVar(pushed);
+    }
+
     void HorizontalLayout::onDraw()
     {
     }

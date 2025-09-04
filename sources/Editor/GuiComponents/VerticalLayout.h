@@ -32,11 +32,15 @@ namespace Core
         ECS_REGISTER_NEW_COMPONENT(VerticalLayout, Widget);
 
     public:
+        [[nodiscard]] float getWidth() override;
+        [[nodiscard]] float getHeight() override;
+
         VerticalLayout& setSpacing(float value);
         VerticalLayout& resetSpacing();
         [[nodiscard]] float getSpacing() const;
 
     protected:
+        void onAddChild(BaseComponent* newChild) override;
         void onTick(float delta) override;
         void onDraw() override;
         void onInitialize() override;

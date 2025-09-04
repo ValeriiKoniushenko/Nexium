@@ -25,6 +25,24 @@
 namespace Core
 {
 
+    float VerticalLayout::getWidth()
+    {
+        if (hasParent())
+        {
+            return getParent()->unsafeCastTo<Widget>()->getWidth();
+        }
+        return ImGui::GetContentRegionAvail().x;
+    }
+
+    float VerticalLayout::getHeight()
+    {
+        if (hasParent())
+        {
+            return getParent()->unsafeCastTo<Widget>()->getHeight();
+        }
+        return ImGui::GetContentRegionAvail().y;
+    }
+
     VerticalLayout& VerticalLayout::setSpacing(float value)
     {
         _spacing = value;
@@ -42,8 +60,17 @@ namespace Core
         return _spacing.value_or(style().ItemSpacing.y);
     }
 
+    void VerticalLayout::onAddChild(BaseComponent* newChild)
+    {
+        Widget::onAddChild(newChild);
+
+        newChild->unsafeCastTo<Widget>()->setIsAutoDraw(false);
+    }
+
     void VerticalLayout::onTick(float delta)
     {
+        Widget::onTick(delta);
+
         int pushed = 0;
 
         if (_spacing)
@@ -53,7 +80,10 @@ namespace Core
             ++pushed;
         }
 
-        Widget::onTick(delta);
+        for (auto&& child : _children)
+        {
+            child->unsafeCastTo<Widget>()->onDraw();
+        }
 
         ImGui::PopStyleVar(pushed);
     }

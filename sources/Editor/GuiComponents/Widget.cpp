@@ -36,7 +36,10 @@ namespace Core
     {
         BaseComponent::onTick(delta);
 
-        onDraw();
+        if (_autoDraw)
+        {
+            onDraw();
+        }
     }
 
     ImVec4 colorToImVec4(const Color4& _color)

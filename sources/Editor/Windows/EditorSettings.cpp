@@ -23,6 +23,7 @@
 #include "EditorSettings.h"
 
 #include "Editor/GuiComponents/Button.h"
+#include "Editor/GuiComponents/HorizontalLayout.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 
 namespace Core
@@ -34,8 +35,10 @@ namespace Core
         BaseFloatEWC::onInitialize();
 
         _layout.setSpacing(40);
-        _layout.addChildComponent<Button>()->setText("Button 1");
-        _layout.addChildComponent<Button>()->setText("Button 2");
+        auto* horizontal = _layout.addChildComponent<HorizontalLayout>();
+        horizontal->addChildComponent<Button>()->setText("Button 1");
+        horizontal->addChildComponent<Button>()->setText("Hello world!");
+        horizontal->addChildComponent<Button>()->setText("Button 2");
     }
 
     void EditorSettingsEWC::onDraw()
