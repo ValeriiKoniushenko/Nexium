@@ -23,6 +23,7 @@
 #include "Button.h"
 
 #include "ImGui/imgui.h"
+#include "ImGui/imgui_internal.h"
 
 namespace Core
 {
@@ -31,47 +32,77 @@ namespace Core
 
     void Button::setButtonColor(const Color4& value)
     {
-        _overriddenButtonColor = value;
+        _buttonColor = value;
     }
 
     void Button::resetButtonColor()
     {
-        _overriddenButtonColor.reset();
+        _buttonColor.reset();
     }
 
-    [[nodiscard]] std::optional<Color4> Button::getButtonColor() const
+    std::optional<Color4> Button::getButtonColor() const
     {
-        return _overriddenButtonColor;
+        return _buttonColor;
+    }
+
+    void Button::setButtonHoverColor(const Color4& value)
+    {
+        _buttonHoverColor = value;
+    }
+
+    void Button::resetButtonHoverColor()
+    {
+        _buttonHoverColor.reset();
+    }
+
+    std::optional<Color4> Button::getButtonHoverColor() const
+    {
+        return _buttonHoverColor;
+    }
+
+    void Button::setButtonActiveColor(const Color4& value)
+    {
+        _buttonActiveColor = value;
+    }
+
+    void Button::resetButtonActiveColor()
+    {
+        _buttonActiveColor.reset();
+    }
+
+    std::optional<Color4> Button::getButtonActiveColor() const
+    {
+        return _buttonActiveColor;
     }
 
     void Button::setTextColor(const Color4& value)
     {
-        _overriddenTextColor = value;
+        _textColor = value;
     }
 
     void Button::resetTextColor()
     {
-        _overriddenTextColor.reset();
+        _textColor.reset();
     }
 
-    [[nodiscard]] std::optional<Color4> Button::getTextColor() const
+    std::optional<Color4> Button::getTextColor() const
     {
-        return _overriddenTextColor;
+        return _textColor;
     }
 
     void Button::setBorderColor(const Color4& value)
     {
-        _overriddenBorderColor = value;
+        _borderColor = value;
     }
 
     void Button::resetBorderColor()
     {
-        _overriddenBorderColor.reset();
+        _borderColor.reset();
     }
 
-    [[nodiscard]] std::optional<Color4> Button::getBorderColor() const
+    std::optional<Color4> Button::getBorderColor() const
     {
-        return _overriddenBorderColor;
+        return _borderColor;
     }
 
     void Button::setText(const StringAtom& string)
@@ -87,10 +118,24 @@ namespace Core
 
     void Button::onDraw()
     {
-        if (ImGui::Button(_name.c_str(), _size))
+        int pushedStyles = 0;
+        int pushedVars = 0;
+
+        pushedStyles += ImGui::OptPushStyleColor(ImGuiCol_Button, _buttonColor);
+        pushedStyles += ImGui::OptPushStyleColor(ImGuiCol_ButtonHovered, _buttonHoverColor);
+        pushedStyles += ImGui::OptPushStyleColor(ImGuiCol_ButtonActive, _buttonActiveColor);
+        pushedStyles += ImGui::OptPushStyleColor(ImGuiCol_Text, _textColor);
+        pushedStyles += ImGui::OptPushStyleColor(ImGuiCol_Border, _borderColor);
+
+        pushedVars += ImGui::OptPushStyleVar(ImGuiStyleVar_FrameBorderSize, _borderWidth);
+
+        if (ImGui::ButtonEx(_name.c_str(), _size, ImGuiButtonFlags_None, &_textSize))
         {
             onClick.trigger();
         }
+
+        ImGui::PopStyleColor(pushedStyles);
+        ImGui::PopStyleVar(pushedVars);
     }
 
     void Button::onInitialize()

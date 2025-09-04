@@ -21,7 +21,10 @@
 // SOFTWARE.
 
 #pragma once
+
+#include "Core/Color.h"
 #include "GameplaySystem/ECS/BaseComponent.h"
+#include "ImGui/imgui.h"
 
 namespace Core
 {
@@ -36,4 +39,13 @@ namespace Core
         virtual void onDraw() = 0;
     };
 
+    [[nodiscard]] ImVec4 colorToImVec4(const Color4& color);
+
 } // namespace Core
+
+namespace ImGui
+{
+    void PushStyleColor(ImGuiCol idx, const Core::Color4& col);
+    bool OptPushStyleColor(ImGuiCol idx, const std::optional<Core::Color4>& col);
+    bool OptPushStyleVar(ImGuiStyleVar idx, const std::optional<float>& col);
+} // namespace ImGui

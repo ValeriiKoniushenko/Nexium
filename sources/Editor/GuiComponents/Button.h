@@ -22,11 +22,8 @@
 
 #pragma once
 
-#include "ImGui/imgui.h"
+#include "Core/Delegate.h"
 #include "Widget.h"
-
-#include <Core/Color.h>
-#include <Core/Delegate.h>
 
 namespace Core
 {
@@ -39,6 +36,14 @@ namespace Core
         void setButtonColor(const Color4& value);
         void resetButtonColor();
         [[nodiscard]] std::optional<Color4> getButtonColor() const;
+
+        void setButtonHoverColor(const Color4& value);
+        void resetButtonHoverColor();
+        [[nodiscard]] std::optional<Color4> getButtonHoverColor() const;
+
+        void setButtonActiveColor(const Color4& value);
+        void resetButtonActiveColor();
+        [[nodiscard]] std::optional<Color4> getButtonActiveColor() const;
 
         void setTextColor(const Color4& value);
         void resetTextColor();
@@ -62,9 +67,12 @@ namespace Core
         void onInitialize() override;
 
     protected:
-        std::optional<Color4> _overriddenButtonColor;
-        std::optional<Color4> _overriddenTextColor;
-        std::optional<Color4> _overriddenBorderColor;
+        std::optional<Color4> _buttonColor;
+        std::optional<Color4> _buttonHoverColor;
+        std::optional<Color4> _buttonActiveColor;
+        std::optional<Color4> _textColor;
+        std::optional<Color4> _borderColor;
+        std::optional<float> _borderWidth;
         ImVec2 _textSize;
         ImVec2 _size;
     };

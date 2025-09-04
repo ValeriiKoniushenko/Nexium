@@ -764,7 +764,8 @@ bool ImGui::ButtonBehavior(const ImRect& bb, ImGuiID id, bool* out_hovered, bool
     return pressed;
 }
 
-bool ImGui::ButtonEx(const char* label, const ImVec2& size_arg, ImGuiButtonFlags flags)
+bool ImGui::ButtonEx(const char* label, const ImVec2& size_arg, ImGuiButtonFlags flags,
+                     const ImVec2* preCalcLabelSize)
 {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
@@ -773,7 +774,8 @@ bool ImGui::ButtonEx(const char* label, const ImVec2& size_arg, ImGuiButtonFlags
     ImGuiContext& g = *GImGui;
     const ImGuiStyle& style = g.Style;
     const ImGuiID id = window->GetID(label);
-    const ImVec2 label_size = CalcTextSize(label, NULL, true);
+    const ImVec2 label_size
+        = preCalcLabelSize ? *preCalcLabelSize : CalcTextSize(label, NULL, true);
 
     ImVec2 pos = window->DC.CursorPos;
     if ((flags & ImGuiButtonFlags_AlignTextBaseLine) && style.FramePadding.y < window->DC.CurrLineTextBaseOffset) // Try to vertically align buttons that are smaller/have no padding so that text baseline matches (bit hacky, since it shouldn't be a flag)

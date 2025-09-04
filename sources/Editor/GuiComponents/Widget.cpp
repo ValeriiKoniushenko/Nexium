@@ -34,4 +34,40 @@ namespace Core
         onDraw();
     }
 
+    ImVec4 colorToImVec4(const Color4& _color)
+    {
+        const auto color = NormColor4::From(_color);
+        return ImVec4(color.r, color.g, color.b, color.a);
+    }
+
 } // namespace Core
+
+namespace ImGui
+{
+
+    void PushStyleColor(ImGuiCol idx, const Core::Color4& col)
+    {
+        ImGui::PushStyleColor(idx, Core::colorToImVec4(col));
+    }
+
+    bool OptPushStyleColor(ImGuiCol idx, const std::optional<Core::Color4>& col)
+    {
+        if (col.has_value())
+        {
+            PushStyleColor(idx, *col);
+            return true;
+        }
+        return false;
+    }
+
+    bool OptPushStyleVar(ImGuiStyleVar idx, const std::optional<float>& col)
+    {
+        if (col.has_value())
+        {
+            PushStyleVar(idx, *col);
+            return true;
+        }
+        return false;
+    }
+
+} // namespace ImGui
