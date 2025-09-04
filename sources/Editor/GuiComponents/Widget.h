@@ -35,6 +35,7 @@ namespace Core
 
     public:
     protected:
+        bool addChildValidator(BaseComponent* newChild) override;
         void onTick(float delta) override;
         virtual void onDraw() = 0;
         [[nodiscard]] ImGuiStyle& style() const { return ImGui::GetStyle(); }

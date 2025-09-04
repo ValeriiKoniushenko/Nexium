@@ -127,7 +127,7 @@ namespace Core
             else
             {
                 glClear(clearBits);
-                gameEditor.onTick(world.timeDelta);
+                gameEditor.tick(world.timeDelta);
                 if (currentCamera)
                 {
                     renderToTextureObject.callMePreDraw();

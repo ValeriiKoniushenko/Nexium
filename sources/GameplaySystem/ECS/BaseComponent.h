@@ -217,6 +217,13 @@ namespace Core
             return casted;
         }
 
+        /** @brief Unsafe & fast cast to a derived component type. */
+        template<IsComponent T>
+        [[nodiscard]] T* unsafeCastTo()
+        {
+            return reinterpret_cast<T*>(this);
+        }
+
         /** @brief Attempt to cast to a derived component type. Returns nullptr if cast fails. */
         template<IsComponent T>
         [[nodiscard]] T* tryCastTo()
@@ -361,6 +368,11 @@ namespace Core
             return _type == T::componentType;
         }
 
+        /**
+         * @brief This method will be called automatically. Don't call it directly.
+         */
+        void onTick(float delta) override;
+
         [[nodiscard]] nlohmann::json toJson() const override;
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
 
@@ -486,6 +498,7 @@ namespace Core
         }
 
     protected:
+        virtual bool addChildValidator(BaseComponent* newChild) { return true; }
         virtual void onAddChild(BaseComponent* newChild) {}
         virtual void onRemoveChild(BaseComponent* child) {}
 

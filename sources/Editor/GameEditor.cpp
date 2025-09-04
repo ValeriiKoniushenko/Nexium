@@ -157,7 +157,7 @@ namespace Core
         setupShortcuts();
     }
 
-    void GameEditor::onTick(float delta)
+    void GameEditor::tick(float delta)
     {
         if (_isEnabled && needToDraw())
         {

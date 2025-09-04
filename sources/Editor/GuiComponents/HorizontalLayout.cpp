@@ -20,59 +20,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "Widget.h"
+#include "HorizontalLayout.h"
 
 namespace Core
 {
 
-    ECS_REGISTER_NEW_COMPONENT_TYPE(Widget)
-
-    bool Widget::addChildValidator(BaseComponent* newChild)
+    void HorizontalLayout::onDraw()
     {
-        return !!newChild->tryCastTo<Widget>();
-    }
-
-    void Widget::onTick(float delta)
-    {
-        BaseComponent::onTick(delta);
-
-        onDraw();
-    }
-
-    ImVec4 colorToImVec4(const Color4& _color)
-    {
-        const auto color = NormColor4::From(_color);
-        return ImVec4(color.r, color.g, color.b, color.a);
+        for (auto& child_ : _children)
+        {
+            auto* child = child_->unsafeCastTo<Widget>();
+        }
     }
 
 } // namespace Core
-
-namespace ImGui
-{
-
-    void PushStyleColor(ImGuiCol idx, const Core::Color4& col)
-    {
-        ImGui::PushStyleColor(idx, Core::colorToImVec4(col));
-    }
-
-    bool OptPushStyleColor(ImGuiCol idx, const std::optional<Core::Color4>& col)
-    {
-        if (col.has_value())
-        {
-            PushStyleColor(idx, *col);
-            return true;
-        }
-        return false;
-    }
-
-    bool OptPushStyleVar(ImGuiStyleVar idx, const std::optional<float>& col)
-    {
-        if (col.has_value())
-        {
-            PushStyleVar(idx, *col);
-            return true;
-        }
-        return false;
-    }
-
-} // namespace ImGui
