@@ -34,7 +34,7 @@ namespace Core
 
     public:
     protected:
-        void onInit() override;
+        void onInitialize() override;
         void onDraw() override;
         void drawList();
         void drawDetails();

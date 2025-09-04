@@ -23,8 +23,8 @@
 #include "EditorMenuBarWindow.h"
 
 #include "Editor/Windows/AssetsManagerWindow.h"
+#include "Editor/Windows/EditorSettings.h"
 #include "Editor/Windows/GameViewport.h"
-#include "Editor/Windows/KeyboardShortcuts.h"
 #include "Editor/Windows/LogsWindow.h"
 #include "Editor/Windows/ObjectPropertiesWindow.h"
 #include "Editor/Windows/SceneTreeWindow.h"
@@ -37,9 +37,9 @@ namespace Core
 {
     ECS_REGISTER_NEW_COMPONENT_TYPE(EditorMenuBarWindowEWC)
 
-    void EditorMenuBarWindowEWC::onInit()
+    void EditorMenuBarWindowEWC::onInitialize()
     {
-        BaseMenuBarEWC::onInit();
+        BaseMenuBarEWC::onInitialize();
 
         _slowUpdater.setRepeatTime(1. / 10.);
         _slowUpdater.setCallback(
@@ -64,15 +64,15 @@ namespace Core
             if (ImGui::MenuItem("Save"))
             {
             }
+            if (ImGui::MenuItem("Settings"))
+            {
+                gGameInstance->gameEditor.showWindow<EditorSettingsEWC>();
+            }
             ImGui::EndMenu();
         }
 
         if (ImGui::BeginMenu("Windows"))
         {
-            if (ImGui::MenuItem("Keyboard shortcuts"))
-            {
-                gGameInstance->gameEditor.showWindow<KeyboardShortcutsEWC>();
-            }
             if (ImGui::MenuItem("Viewport"))
             {
                 gGameInstance->gameEditor.showWindow<GameViewportEWC>();

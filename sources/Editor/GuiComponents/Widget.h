@@ -21,20 +21,19 @@
 // SOFTWARE.
 
 #pragma once
-
-#include "BaseWindow.h"
+#include "GameplaySystem/ECS/BaseComponent.h"
 
 namespace Core
 {
 
-    class KeyboardShortcutsEWC : public BaseFloatEWC
+    class Widget : public BaseComponent
     {
-        ECS_REGISTER_NEW_COMPONENT(KeyboardShortcutsEWC, BaseFloatEWC);
+        ECS_REGISTER_NEW_COMPONENT(Widget, BaseComponent);
 
     public:
-    private:
-        void onInit() override;
-        void onDraw() override;
+    protected:
+        void onTick(float delta) override;
+        virtual void onDraw() = 0;
     };
 
 } // namespace Core

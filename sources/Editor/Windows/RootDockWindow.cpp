@@ -34,9 +34,9 @@ namespace Core
     //    | |\ \ | (_) || (_) || |_ | |/ / | (_) || (__ |   <
     //    \_| \_| \___/  \___/  \__||___/   \___/  \___||_|\_\
     // ========================================================================
-    void RootDockWindowEWC::onInit()
+    void RootDockWindowEWC::onInitialize()
     {
-        BaseEWC::onInit();
+        BaseEWC::onInitialize();
 
         _windowFlags |= ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking
                         | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse

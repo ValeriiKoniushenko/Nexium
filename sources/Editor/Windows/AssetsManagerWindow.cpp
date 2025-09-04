@@ -44,9 +44,9 @@ namespace Core
 {
     ECS_REGISTER_NEW_COMPONENT_TYPE(AssetsManagerWindowEWC)
 
-    void AssetsManagerWindowEWC::onInit()
+    void AssetsManagerWindowEWC::onInitialize()
     {
-        BaseFloatEWC::onInit();
+        BaseFloatEWC::onInitialize();
 
         const static std::unordered_map<NodeType, std::filesystem::path> paths
             = { { NodeType::Default, "assets/images/document.png" },

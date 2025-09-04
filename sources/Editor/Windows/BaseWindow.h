@@ -96,7 +96,7 @@ namespace Core
         Delegate<void(FSize2, FSize2)> onSizeChanged;
 
     protected:
-        void onInit() override;
+        void onInitialize() override;
         void onUpdate() override;
         [[nodiscard]] bool beginWindowDraw() override;
         void endWindowDraw() override;
@@ -119,7 +119,7 @@ namespace Core
         ECS_REGISTER_NEW_COMPONENT(BaseMenuBarEWC, BaseEWC);
 
     public:
-        void onInit() override;
+        void onInitialize() override;
 
     protected:
         [[nodiscard]] bool beginWindowDraw() override;

@@ -20,24 +20,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#pragma once
+#include "EditorSettings.h"
 
-#include "BaseWindow.h"
+#include "GameplaySystem/Framework/GameInstance.h"
 
 namespace Core
 {
-    class RootDockWindowEWC : public BaseEWC
+    ECS_REGISTER_NEW_COMPONENT_TYPE(EditorSettingsEWC)
+
+    void EditorSettingsEWC::onInitialize()
     {
-        ECS_REGISTER_NEW_COMPONENT(RootDockWindowEWC, BaseEWC);
+        BaseFloatEWC::onInitialize();
 
-    public:
-    private:
-        void onInitialize() override;
-        void onDraw() override;
+        _button.initialize();
+        _button.setText("Save");
+    }
 
-    protected:
-        [[nodiscard]] bool beginWindowDraw() override;
-        void endWindowDraw() override;
-    };
+    void EditorSettingsEWC::onDraw()
+    {
+        const float tick = gGameInstance->world.timeDelta;
 
+        _button.tick(tick);
+    }
 } // namespace Core

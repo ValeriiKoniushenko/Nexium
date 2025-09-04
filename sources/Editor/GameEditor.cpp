@@ -24,8 +24,8 @@
 
 #include "Editor/Windows/AssetsManagerWindow.h"
 #include "Editor/Windows/EditorMenuBarWindow.h"
+#include "Editor/Windows/EditorSettings.h"
 #include "Editor/Windows/GameViewport.h"
-#include "Editor/Windows/KeyboardShortcuts.h"
 #include "Editor/Windows/LogsWindow.h"
 #include "Editor/Windows/ObjectPropertiesWindow.h"
 #include "Editor/Windows/RootDockWindow.h"
@@ -137,7 +137,7 @@ namespace Core
         auto assetsManagerWindowWindow
             = registerNewWindow<AssetsManagerWindowEWC>(ICON_FA_FOLDER + " Assets"_atom);
 
-        auto tipsWindow = registerNewWindow<KeyboardShortcutsEWC>("Keyboard Shortcuts"_atom, false);
+        auto settingsWindow = registerNewWindow<EditorSettingsEWC>("Settings"_atom, true);
         auto textEditor = registerNewWindow<TextEditorEWC>("Text editor"_atom, false);
         auto shaderManager = registerNewWindow<ShaderManagerEWC>("Shader manager"_atom);
 

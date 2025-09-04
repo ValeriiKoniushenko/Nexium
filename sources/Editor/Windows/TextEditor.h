@@ -35,7 +35,7 @@ namespace Core
         void putArguments(const StringAtom& args) override;
 
     protected:
-        void onInit() override;
+        void onInitialize() override;
         void onDraw() override;
         void drawBarMenu();
         void drawEditor();

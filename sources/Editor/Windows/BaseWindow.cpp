@@ -118,9 +118,9 @@ namespace Core
         ImGui::End();
     }
 
-    void BaseFloatEWC::onInit()
+    void BaseFloatEWC::onInitialize()
     {
-        AbstractComponent::onInit();
+        AbstractComponent::onInitialize();
     }
 
     //
@@ -131,9 +131,9 @@ namespace Core
     // | |_/ /| (_| |\__ \|  __/ | |  | ||  __/| | | || |_| | | |_/ /| (_| || |
     // \____/  \__,_||___/ \___| \_|  |_/ \___||_| |_| \__,_| \____/  \__,_||_|
     // ========================================================================
-    void BaseMenuBarEWC::onInit()
+    void BaseMenuBarEWC::onInitialize()
     {
-        BaseEWC::onInit();
+        BaseEWC::onInitialize();
     }
 
     bool BaseMenuBarEWC::beginWindowDraw()

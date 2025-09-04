@@ -20,24 +20,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "KeyboardShortcuts.h"
+#include "Widget.h"
 
 namespace Core
 {
-    ECS_REGISTER_NEW_COMPONENT_TYPE(KeyboardShortcutsEWC)
 
-    void KeyboardShortcutsEWC::onInit()
+    ECS_REGISTER_NEW_COMPONENT_TYPE(Widget)
+
+    void Widget::onTick(float delta)
     {
-        BaseFloatEWC::onInit();
+        BaseComponent::onTick(delta);
+
+        onDraw();
     }
 
-    void KeyboardShortcutsEWC::onDraw()
-    {
-        ImGui::Text("Shortcuts: ");
-        ImGui::Text("    F1      - Toggle render mode");
-        ImGui::Text("    W/A/S/D - Move Control");
-        ImGui::Text("    C/Space - Down/Up");
-        ImGui::Text("    Alt     - Hold to suppress a mouse");
-        ImGui::Text("    F12     - exit");
-    }
 } // namespace Core

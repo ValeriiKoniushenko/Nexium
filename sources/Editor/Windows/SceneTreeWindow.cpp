@@ -41,9 +41,9 @@ namespace Core
     //    /\__/ /| (__ |  __/| | | ||  __/  | |  | |   |  __/|  __/
     //    \____/  \___| \___||_| |_| \___|  \_/  |_|    \___| \___|
     // ========================================================================
-    void SceneTreeWindowEWC::onInit()
+    void SceneTreeWindowEWC::onInitialize()
     {
-        BaseFloatEWC::onInit();
+        BaseFloatEWC::onInitialize();
 
         setScene(&gGameInstance->gameScene);
 

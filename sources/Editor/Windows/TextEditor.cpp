@@ -30,9 +30,9 @@ namespace Core
 {
     ECS_REGISTER_NEW_COMPONENT_TYPE(TextEditorEWC)
 
-    void TextEditorEWC::onInit()
+    void TextEditorEWC::onInitialize()
     {
-        BaseFloatEWC::onInit();
+        BaseFloatEWC::onInitialize();
 
         _minWindowSize = FSize2(500.f, 500.f);
         _windowFlags |= ImGuiWindowFlags_MenuBar;

@@ -52,9 +52,9 @@ namespace Core
         _target = nullptr;
     }
 
-    void ObjectPropertiesWindowEWC::onInit()
+    void ObjectPropertiesWindowEWC::onInitialize()
     {
-        BaseFloatEWC::onInit();
+        BaseFloatEWC::onInitialize();
 
         _transformLocationControl.components
             = { Vec3Control::Component{ .text = "X:"_atom, .color = ColorRed },

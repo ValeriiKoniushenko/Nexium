@@ -31,7 +31,7 @@ namespace Core
         ECS_REGISTER_NEW_COMPONENT(GameViewportEWC, BaseFloatEWC);
 
     protected:
-        void onInit() override;
+        void onInitialize() override;
         void onUpdate() override;
         void onDraw() override;
     };

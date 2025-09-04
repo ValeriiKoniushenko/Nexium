@@ -51,9 +51,9 @@ namespace Core
         _logs.clear();
     }
 
-    void LogsWindowEWC::onInit()
+    void LogsWindowEWC::onInitialize()
     {
-        BaseFloatEWC::onInit();
+        BaseFloatEWC::onInitialize();
 
         tryReadFromCache();
 

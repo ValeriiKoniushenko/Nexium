@@ -39,9 +39,9 @@ namespace Core
     //                              | |
     //                              |_|
     // ========================================================================
-    void GameViewportEWC::onInit()
+    void GameViewportEWC::onInitialize()
     {
-        BaseFloatEWC::onInit();
+        BaseFloatEWC::onInitialize();
     }
 
     void GameViewportEWC::onUpdate()

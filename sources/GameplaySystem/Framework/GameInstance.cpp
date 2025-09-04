@@ -73,17 +73,17 @@ namespace Core
             currentCamera = spectator->findFirstChildOf<BaseCamera>();
         }
 
-        onInitReadCache();
+        onInitializeReadCache();
 
         loadCoreResources();
-        onInitFinish();
+        onInitializeFinish();
 
         gameLoop();
 
         onFinishWriteCache();
     }
 
-    void GameInstance::onInitReadCache()
+    void GameInstance::onInitializeReadCache()
     {
         gameScene.readFromCache();
     }

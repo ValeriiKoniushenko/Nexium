@@ -46,7 +46,7 @@ namespace Core
         std::filesystem::path assetsPath = "assets";
 
     protected:
-        void onInit() override;
+        void onInitialize() override;
         void onDraw() override;
         void onUpdate() override;
 

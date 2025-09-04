@@ -29,9 +29,9 @@ namespace Core
 {
     ECS_REGISTER_NEW_COMPONENT_TYPE(ShaderManagerEWC)
 
-    void ShaderManagerEWC::onInit()
+    void ShaderManagerEWC::onInitialize()
     {
-        BaseFloatEWC::onInit();
+        BaseFloatEWC::onInitialize();
     }
 
     void ShaderManagerEWC::onDraw()

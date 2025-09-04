@@ -22,22 +22,51 @@
 
 #pragma once
 
-#include "BaseWindow.h"
+#include "ImGui/imgui.h"
+#include "Widget.h"
+
+#include <Core/Color.h>
+#include <Core/Delegate.h>
 
 namespace Core
 {
-    class RootDockWindowEWC : public BaseEWC
+
+    class Button : public Widget
     {
-        ECS_REGISTER_NEW_COMPONENT(RootDockWindowEWC, BaseEWC);
+        ECS_REGISTER_NEW_COMPONENT(Button, Widget);
 
     public:
-    private:
-        void onInitialize() override;
-        void onDraw() override;
+        void setButtonColor(const Color4& value);
+        void resetButtonColor();
+        [[nodiscard]] std::optional<Color4> getButtonColor() const;
+
+        void setTextColor(const Color4& value);
+        void resetTextColor();
+        [[nodiscard]] std::optional<Color4> getTextColor() const;
+
+        void setBorderColor(const Color4& value);
+        void resetBorderColor();
+        [[nodiscard]] std::optional<Color4> getBorderColor() const;
+
+        void setText(const StringAtom& string);
+        [[nodiscard]] const StringAtom& getText() const noexcept;
+
+    public: // delegates
+        /**
+         * @brief will be called when clicked
+         */
+        Delegate<void()> onClick;
 
     protected:
-        [[nodiscard]] bool beginWindowDraw() override;
-        void endWindowDraw() override;
+        void onDraw() override;
+        void onInitialize() override;
+
+    protected:
+        std::optional<Color4> _overriddenButtonColor;
+        std::optional<Color4> _overriddenTextColor;
+        std::optional<Color4> _overriddenBorderColor;
+        ImVec2 _textSize;
+        ImVec2 _size;
     };
 
 } // namespace Core

@@ -23,21 +23,22 @@
 #pragma once
 
 #include "BaseWindow.h"
+#include "Editor/GuiComponents/Button.h"
 
 namespace Core
 {
-    class RootDockWindowEWC : public BaseEWC
+
+    class EditorSettingsEWC : public BaseFloatEWC
     {
-        ECS_REGISTER_NEW_COMPONENT(RootDockWindowEWC, BaseEWC);
+        ECS_REGISTER_NEW_COMPONENT(EditorSettingsEWC, BaseFloatEWC);
 
     public:
-    private:
+    protected:
         void onInitialize() override;
         void onDraw() override;
 
-    protected:
-        [[nodiscard]] bool beginWindowDraw() override;
-        void endWindowDraw() override;
+    private:
+        Button _button;
     };
 
 } // namespace Core

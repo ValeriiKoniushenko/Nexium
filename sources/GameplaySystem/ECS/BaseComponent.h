@@ -241,7 +241,7 @@ namespace Core
             if (!_isInitialized)
             {
                 _isInitialized = true;
-                onInit();
+                onInitialize();
             }
         }
 
@@ -254,7 +254,7 @@ namespace Core
         /**
          * @brief This method will be called automatically. Don't call it directly.
          */
-        virtual void onInit() {}
+        virtual void onInitialize() {}
 
         /**
          * @brief This method will be called automatically. Don't call it directly.

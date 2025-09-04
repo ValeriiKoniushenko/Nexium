@@ -69,9 +69,9 @@ namespace Core
 
     protected:
         virtual void onTick(float delta) = 0;
-        virtual void onInitFinish() = 0;
+        virtual void onInitializeFinish() = 0;
         virtual void onLoadShaders();
-        virtual void onInitReadCache();
+        virtual void onInitializeReadCache();
         virtual void onFinishWriteCache();
 
     protected:
