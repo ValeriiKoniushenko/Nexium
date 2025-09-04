@@ -33,31 +33,31 @@ namespace Core
         ECS_REGISTER_NEW_COMPONENT(Button, Widget);
 
     public:
-        void setButtonColor(const Color4& value);
-        void resetButtonColor();
+        Button& setButtonColor(const Color4& value);
+        Button& resetButtonColor();
         [[nodiscard]] std::optional<Color4> getButtonColor() const;
 
-        void setButtonHoverColor(const Color4& value);
-        void resetButtonHoverColor();
+        Button& setButtonHoverColor(const Color4& value);
+        Button& resetButtonHoverColor();
         [[nodiscard]] std::optional<Color4> getButtonHoverColor() const;
 
-        void setButtonActiveColor(const Color4& value);
-        void resetButtonActiveColor();
+        Button& setButtonActiveColor(const Color4& value);
+        Button& resetButtonActiveColor();
         [[nodiscard]] std::optional<Color4> getButtonActiveColor() const;
 
-        void setTextColor(const Color4& value);
-        void resetTextColor();
+        Button& setTextColor(const Color4& value);
+        Button& resetTextColor();
         [[nodiscard]] std::optional<Color4> getTextColor() const;
 
-        void setBorderColor(const Color4& value);
-        void resetBorderColor();
+        Button& setBorderColor(const Color4& value);
+        Button& resetBorderColor();
         [[nodiscard]] std::optional<Color4> getBorderColor() const;
 
-        void setText(const StringAtom& string);
+        Button& setText(const StringAtom& string);
         [[nodiscard]] const StringAtom& getText() const noexcept;
 
-        void setWidth(float width);
-        void resetWidth();
+        Button& setWidth(float width);
+        Button& resetWidth();
         [[nodiscard]] float getWidth() const;
         [[nodiscard]] ImVec2 getRealSize() const;
 

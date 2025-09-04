@@ -33,4 +33,9 @@ namespace Core
         }
     }
 
+    void HorizontalLayout::onInitialize()
+    {
+        Widget::onInitialize();
+    }
+
 } // namespace Core

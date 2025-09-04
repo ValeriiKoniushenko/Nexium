@@ -30,14 +30,16 @@ namespace Core
 
     ECS_REGISTER_NEW_COMPONENT_TYPE(Button)
 
-    void Button::setButtonColor(const Color4& value)
+    Button& Button::setButtonColor(const Color4& value)
     {
         _buttonColor = value;
+        return *this;
     }
 
-    void Button::resetButtonColor()
+    Button& Button::resetButtonColor()
     {
         _buttonColor.reset();
+        return *this;
     }
 
     std::optional<Color4> Button::getButtonColor() const
@@ -45,14 +47,16 @@ namespace Core
         return _buttonColor;
     }
 
-    void Button::setButtonHoverColor(const Color4& value)
+    Button& Button::setButtonHoverColor(const Color4& value)
     {
         _buttonHoverColor = value;
+        return *this;
     }
 
-    void Button::resetButtonHoverColor()
+    Button& Button::resetButtonHoverColor()
     {
         _buttonHoverColor.reset();
+        return *this;
     }
 
     std::optional<Color4> Button::getButtonHoverColor() const
@@ -60,14 +64,16 @@ namespace Core
         return _buttonHoverColor;
     }
 
-    void Button::setButtonActiveColor(const Color4& value)
+    Button& Button::setButtonActiveColor(const Color4& value)
     {
         _buttonActiveColor = value;
+        return *this;
     }
 
-    void Button::resetButtonActiveColor()
+    Button& Button::resetButtonActiveColor()
     {
         _buttonActiveColor.reset();
+        return *this;
     }
 
     std::optional<Color4> Button::getButtonActiveColor() const
@@ -75,14 +81,16 @@ namespace Core
         return _buttonActiveColor;
     }
 
-    void Button::setTextColor(const Color4& value)
+    Button& Button::setTextColor(const Color4& value)
     {
         _textColor = value;
+        return *this;
     }
 
-    void Button::resetTextColor()
+    Button& Button::resetTextColor()
     {
         _textColor.reset();
+        return *this;
     }
 
     std::optional<Color4> Button::getTextColor() const
@@ -90,14 +98,16 @@ namespace Core
         return _textColor;
     }
 
-    void Button::setBorderColor(const Color4& value)
+    Button& Button::setBorderColor(const Color4& value)
     {
         _borderColor = value;
+        return *this;
     }
 
-    void Button::resetBorderColor()
+    Button& Button::resetBorderColor()
     {
         _borderColor.reset();
+        return *this;
     }
 
     std::optional<Color4> Button::getBorderColor() const
@@ -105,10 +115,11 @@ namespace Core
         return _borderColor;
     }
 
-    void Button::setText(const StringAtom& string)
+    Button& Button::setText(const StringAtom& string)
     {
         setComponentName(string);
         _textSize = ImGui::CalcTextSize(string.c_str());
+        return *this;
     }
 
     const StringAtom& Button::getText() const noexcept
@@ -116,14 +127,16 @@ namespace Core
         return getComponentName();
     }
 
-    void Button::setWidth(float width)
+    Button& Button::setWidth(float width)
     {
         _size.x = width;
+        return *this;
     }
 
-    void Button::resetWidth()
+    Button& Button::resetWidth()
     {
         _size.x = 0.0f;
+        return *this;
     }
 
     float Button::getWidth() const
@@ -162,6 +175,8 @@ namespace Core
     void Button::onInitialize()
     {
         Widget::onInitialize();
+
+        setText("Button");
     }
 
 } // namespace Core

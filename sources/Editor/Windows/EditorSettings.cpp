@@ -22,6 +22,7 @@
 
 #include "EditorSettings.h"
 
+#include "Editor/GuiComponents/Button.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 
 namespace Core
@@ -32,14 +33,14 @@ namespace Core
     {
         BaseFloatEWC::onInitialize();
 
-        _button.initialize();
-        _button.setText("Save");
+        _layout.addChildComponent<Button>()->setText("Button 1");
+        _layout.addChildComponent<Button>()->setText("Button 2");
     }
 
     void EditorSettingsEWC::onDraw()
     {
         const float tick = gGameInstance->world.timeDelta;
 
-        _button.tick(tick);
+        _layout.tick(tick);
     }
 } // namespace Core
