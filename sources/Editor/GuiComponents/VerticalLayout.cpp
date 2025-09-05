@@ -27,6 +27,11 @@ namespace Core
 
     float VerticalLayout::getWidth() const
     {
+        if (_width)
+        {
+            return *_width;
+        }
+
         if (hasParent())
         {
             return getParent()->unsafeCastTo<Widget>()->getWidth();
@@ -36,11 +41,20 @@ namespace Core
 
     float VerticalLayout::getHeight() const
     {
-        if (hasParent())
+        if (_height)
         {
-            return getParent()->unsafeCastTo<Widget>()->getHeight();
+            return *_height;
         }
-        return ImGui::GetContentRegionAvail().y;
+
+        const float defaultGap = style().ItemSpacing.y;
+
+        float height = 0;
+        for (auto&& child : _children)
+        {
+            height += child->unsafeCastTo<Widget>()->getHeight();
+            height += _spacing.value_or(defaultGap);
+        }
+        return height != 0 ? height - _spacing.value_or(defaultGap) : 0;
     }
 
     VerticalLayout& VerticalLayout::setSpacing(float value)

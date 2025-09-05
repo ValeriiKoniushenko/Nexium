@@ -59,7 +59,7 @@ namespace Core
             Assert(align.cast() == Align::Bottom || align.cast() == Align::Top
                    || align.cast() == Align::Center);
             _verticalAlign = align;
-return *static_cast<DerivedLayout*>(this);
+            return *static_cast<DerivedLayout*>(this);
         }
         [[nodiscard]] Align getVerticalAlign() const noexcept { return _verticalAlign; }
 

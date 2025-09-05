@@ -34,7 +34,7 @@ namespace Core
     {
         BaseFloatEWC::onInitialize();
 
-        _layout.setSpacing(40);
+        //        _layout.setSpacing(40);
 
         auto* horizontal = _layout.addChildComponent<HorizontalLayout>();
         horizontal->setHorizontalAlign(HorizontalLayout::Align::Center);
