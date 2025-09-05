@@ -36,6 +36,7 @@ namespace Core
 
         //        _layout.setSpacing(40);
         _layout.setHeight(300);
+        _layout.setVerticalAlign(VerticalLayout::Align::Center);
 
         auto* horizontal = _layout.addChildComponent<HorizontalLayout>();
         horizontal->setHorizontalAlign(HorizontalLayout::Align::Center);

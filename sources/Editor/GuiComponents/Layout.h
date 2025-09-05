@@ -35,6 +35,7 @@ namespace Core
     public:
         // clang-format off
         CreateEnum(Align, int,
+            None,
             Left,           // For horizontal align
             Right,          // For horizontal align
             SpaceBetween,   // For horizontal align
@@ -84,8 +85,8 @@ namespace Core
         std::optional<float> _height;
         std::optional<float> _width;
 
-        Align _align = Align::Left;
-        Align _secondAlign = Align::Center;
+        Align _align = Align::None;
+        Align _secondAlign = Align::None;
     };
 
 } // namespace Core

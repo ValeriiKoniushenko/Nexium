@@ -113,6 +113,15 @@ namespace Core
     {
         Widget::onInitialize();
         setComponentName("HorizontalLayout");
+
+        if (getVerticalAlign().cast() == Align::None)
+        {
+            setVerticalAlign(Align::Top);
+        }
+        if (getHorizontalAlign().cast() == Align::None)
+        {
+            setHorizontalAlign(Align::Center);
+        }
     }
 
     void HorizontalLayout::drawAlignSpaceBetween()

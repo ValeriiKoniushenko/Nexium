@@ -126,8 +126,15 @@ namespace Core
         Widget::onInitialize();
         setComponentName("VerticalLayout");
         setIsDrawOutline(true);
-        setVerticalAlign(Align::Top);
-        setHorizontalAlign(Align::Center);
+
+        if (getVerticalAlign().cast() == Align::None)
+        {
+            setVerticalAlign(Align::Top);
+        }
+        if (getHorizontalAlign().cast() == Align::None)
+        {
+            setHorizontalAlign(Align::Center);
+        }
     }
 
     void VerticalLayout::drawAlignSpaceBetween()
@@ -151,6 +158,28 @@ namespace Core
     }
     void VerticalLayout::drawAlignCenter()
     {
+        if (hasChildren())
+        {
+            float spacing = getHeight();
+            for (const auto& child : _children)
+            {
+                spacing -= child->unsafeCastTo<Widget>()->getHeight();
+                spacing -= _spacing.value_or(style().ItemSpacing.y);
+            }
+            spacing += _spacing.value_or(style().ItemSpacing.y);
+            spacing /= 2.f;
+
+            ImGui::SetCursorPosY(ImGui::GetCursorPosY() + spacing);
+        }
+
+        const auto originalXCursor = ImGui::GetCursorPosX();
+        std::size_t i = 0;
+
+        for (auto&& child : _children)
+        {
+            // ImGui::SetCursorPosX(originalXCursor + _xOffsets.at(i++));
+            child->unsafeCastTo<Widget>()->draw();
+        }
     }
 
 } // namespace Core
