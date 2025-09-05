@@ -54,6 +54,7 @@ namespace Core
         void drawAlignCenter();
 
     protected:
+        std::vector<float> _xOffsets;
         std::optional<float> _spacing;
     };
 

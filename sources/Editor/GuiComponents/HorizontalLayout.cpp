@@ -117,18 +117,15 @@ namespace Core
 
     void HorizontalLayout::drawAlignSpaceBetween()
     {
-        int pushed = 0;
-
+        float spacing = 0.f;
         if (hasChildren())
         {
-            float spacing = getWidth();
+            spacing = getWidth();
             for (const auto& child : _children)
             {
                 spacing -= child->unsafeCastTo<Widget>()->getWidth();
             }
             spacing /= _children.size() - 1;
-            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(spacing, style().ItemSpacing.y));
-            ++pushed;
         }
 
         const auto originalYCursor = ImGui::GetCursorPosY();
@@ -136,12 +133,11 @@ namespace Core
         std::size_t i = 0;
         for (auto&& child : _children)
         {
+            ImGui::SetCursorPosX(ImGui::GetCursorPosX() + spacing);
             ImGui::SetCursorPosY(originalYCursor + _yOffsets.at(i++));
             child->unsafeCastTo<Widget>()->draw();
             ImGui::SameLine();
         }
-
-        ImGui::PopStyleVar(pushed);
     }
 
     void HorizontalLayout::drawAlignLeft()
