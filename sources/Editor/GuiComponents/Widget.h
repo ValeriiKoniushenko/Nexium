@@ -40,14 +40,21 @@ namespace Core
         [[nodiscard]] bool isAutoDraw() const noexcept { return _autoDraw; }
         void setIsAutoDraw(bool value) noexcept { _autoDraw = value; }
         virtual void onDraw() = 0;
+        void draw();
+
+        void setIsDrawOutline(bool value) noexcept { _isDrawOutline = value; }
+        [[nodiscard]] bool getIsDrawOutline() const noexcept { return _isDrawOutline; }
 
     protected:
         bool addChildValidator(BaseComponent* newChild) override;
         void onTick(float delta) override;
+        void drawOutline();
         [[nodiscard]] ImGuiStyle& style() const { return ImGui::GetStyle(); }
 
     protected:
         bool _autoDraw = true;
+        bool _isDrawOutline = false;
+        ImVec2 _pos;
     };
 
     [[nodiscard]] ImVec4 colorToImVec4(const Color4& color);

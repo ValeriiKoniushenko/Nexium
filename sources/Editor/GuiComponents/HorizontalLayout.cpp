@@ -36,12 +36,29 @@ namespace Core
 
     float HorizontalLayout::getHeight() const
     {
-        if (hasParent())
+        if (_autoHeight)
         {
-            return getParent()->unsafeCastTo<Widget>()->getHeight();
+            if (hasParent())
+            {
+                return getParent()->unsafeCastTo<Widget>()->getHeight();
+            }
+            return ImGui::GetContentRegionAvail().y;
         }
-        return ImGui::GetContentRegionAvail().y;
+
+        static auto cmp = [](const BaseComponent::Ptr& a, const BaseComponent::Ptr& b)
+        {
+            return a->unsafeCastTo<Widget>()->getHeight() < b->unsafeCastTo<Widget>()->getHeight();
+        };
+        const auto maxHeightEl = std::ranges::max_element(_children, cmp);
+        if (maxHeightEl == _children.end())
+        {
+            return 0;
+        }
+
+        const auto maxHeight = (*maxHeightEl)->unsafeCastTo<Widget>()->getHeight();
+        return maxHeight;
     }
+
     void HorizontalLayout::onAddChild(BaseComponent* newChild)
     {
         Widget::onAddChild(newChild);
@@ -112,7 +129,7 @@ namespace Core
         for (auto&& child : _children)
         {
             ImGui::SetCursorPosY(originalYCursor + _yOffsets.at(i++));
-            child->unsafeCastTo<Widget>()->onDraw();
+            child->unsafeCastTo<Widget>()->draw();
             ImGui::SameLine();
         }
 
@@ -126,7 +143,7 @@ namespace Core
         for (auto&& child : _children)
         {
             ImGui::SetCursorPosY(originalYCursor + _yOffsets.at(i++));
-            child->unsafeCastTo<Widget>()->onDraw();
+            child->unsafeCastTo<Widget>()->draw();
             ImGui::SameLine();
         }
     }
@@ -152,7 +169,7 @@ namespace Core
         for (auto&& child : _children)
         {
             ImGui::SetCursorPosY(originalYCursor + _yOffsets.at(i++));
-            child->unsafeCastTo<Widget>()->onDraw();
+            child->unsafeCastTo<Widget>()->draw();
             ImGui::SameLine();
         }
     }
@@ -180,7 +197,7 @@ namespace Core
         for (auto&& child : _children)
         {
             ImGui::SetCursorPosY(originalYCursor + _yOffsets.at(i++));
-            child->unsafeCastTo<Widget>()->onDraw();
+            child->unsafeCastTo<Widget>()->draw();
             ImGui::SameLine();
         }
     }
@@ -189,23 +206,27 @@ namespace Core
     {
         const auto ownHeight = getHeight();
 
-        _yOffsets.reserve(getChildrenCount());
+        _yOffsets.resize(getChildrenCount());
+        std::size_t i = 0;
         for (auto&& child : _children)
         {
             const auto w = child->unsafeCastTo<Widget>();
             if (_verticalAlign.cast() == Align::Top)
             {
-                // do nothing
+                _yOffsets.at(i) = 0;
             }
             else if (_verticalAlign.cast() == Align::Bottom)
             {
-                _yOffsets.emplace_back(ownHeight - w->getHeight());
+                _yOffsets.at(i) = ownHeight - w->getHeight();
             }
             else if (_verticalAlign.cast() == Align::Center)
             {
-                _yOffsets.emplace_back((ownHeight - w->getHeight()) / 2.f);
+                _yOffsets.at(i) = (ownHeight - w->getHeight()) / 2.f;
             }
+            ++i;
         }
+
+        Assert(_yOffsets.size() == _children.size());
     }
 
 } // namespace Core

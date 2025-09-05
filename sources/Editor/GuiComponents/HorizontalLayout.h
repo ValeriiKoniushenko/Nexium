@@ -53,6 +53,9 @@ namespace Core
         void setVerticalAlign(Align align) { _verticalAlign = align; }
         [[nodiscard]] Align getVerticalAlign() const noexcept { return _verticalAlign; }
 
+        void setAutoHeight(bool value) { _autoHeight = value; }
+        [[nodiscard]] bool getAutoHeight() const noexcept { return _autoHeight; }
+
     protected:
         void onAddChild(BaseComponent* newChild) override;
         void onTick(float delta) override;
@@ -68,7 +71,8 @@ namespace Core
     protected:
         std::vector<float> _yOffsets;
         Align _align = Align::Left;
-        Align _verticalAlign = Align::Center;
+        Align _verticalAlign = Align::Bottom;
+        bool _autoHeight = false;
     };
 
 } // namespace Core

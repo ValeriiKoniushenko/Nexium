@@ -27,6 +27,17 @@ namespace Core
 
     ECS_REGISTER_NEW_COMPONENT_TYPE(Widget)
 
+    void Widget::draw()
+    {
+        _pos = ImGui::GetCursorPos();
+        if (_isDrawOutline)
+        {
+            drawOutline();
+        }
+
+        onDraw();
+    }
+
     bool Widget::addChildValidator(BaseComponent* newChild)
     {
         return !!newChild->tryCastTo<Widget>();
@@ -38,8 +49,26 @@ namespace Core
 
         if (_autoDraw)
         {
-            onDraw();
+            draw();
         }
+    }
+
+    void Widget::drawOutline()
+    {
+        ImDrawList* draw_list = ImGui::GetWindowDrawList();
+
+        // Calculate rect corners in screen space
+        const auto size = ImVec2(getWidth(), getHeight());
+        const auto wndPos = ImGui::GetWindowPos();
+        const ImVec2 p_min = ImVec2(wndPos.x + _pos.x, wndPos.y + _pos.y);
+        const ImVec2 p_max = ImVec2(p_min.x + size.x, p_min.y + size.y);
+
+        // Draw yellow rect outline
+        draw_list->AddRect(p_min, p_max, IM_COL32(255, 255, 0, 255), // yellow color
+                           1.0f,                                     // rounding
+                           0,                                        // flags
+                           1.0f                                      // thickness
+        );
     }
 
     ImVec4 colorToImVec4(const Color4& _color)

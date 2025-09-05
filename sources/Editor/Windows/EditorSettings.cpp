@@ -38,9 +38,46 @@ namespace Core
         auto* horizontal = _layout.addChildComponent<HorizontalLayout>();
         horizontal->setHorizontalAlign(HorizontalLayout::Align::Center);
         horizontal->setHorizontalAlign(HorizontalLayout::Align::Center);
-        horizontal->addChildComponent<Button>()->setText("Button 1");
-        horizontal->addChildComponent<Button>()->setText("Hello world!").setHeight(50.f);
-        horizontal->addChildComponent<Button>()->setText("Button 2");
+        horizontal->addChildComponent<Button>()
+            ->setText("Button 1")
+            .onClick.subscribe(
+                [horizontal]()
+                {
+                    static int i = 0;
+                    if (++i > 2)
+                    {
+                        i = 0;
+                    }
+
+                    static HorizontalLayout::Align aligns[3]
+                        = { HorizontalLayout::Align::Top, HorizontalLayout::Align::Center,
+                            HorizontalLayout::Align::Bottom };
+                    horizontal->setVerticalAlign(aligns[i]);
+                });
+        horizontal->addChildComponent<Button>()
+            ->setText("Hello world!")
+            .setHeight(50.f)
+            .onClick.subscribe(
+                [horizontal]()
+                {
+                    static int i = 0;
+                    if (++i > 2)
+                    {
+                        i = 0;
+                    }
+
+                    static HorizontalLayout::Align aligns[3]
+                        = { HorizontalLayout::Align::Left, HorizontalLayout::Align::Center,
+                            HorizontalLayout::Align::Right };
+                    horizontal->setHorizontalAlign(aligns[i]);
+                });
+        horizontal->addChildComponent<Button>()
+            ->setText("Button 2")
+            .onClick.subscribe(
+                [horizontal]()
+                {
+                    horizontal->setAutoHeight(!horizontal->getAutoHeight());
+                });
     }
 
     void EditorSettingsEWC::onDraw()

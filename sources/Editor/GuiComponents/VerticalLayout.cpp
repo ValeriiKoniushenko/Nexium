@@ -82,7 +82,7 @@ namespace Core
 
         for (auto&& child : _children)
         {
-            child->unsafeCastTo<Widget>()->onDraw();
+            child->unsafeCastTo<Widget>()->draw();
         }
 
         ImGui::PopStyleVar(pushed);
