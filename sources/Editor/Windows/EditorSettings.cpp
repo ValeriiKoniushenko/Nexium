@@ -34,9 +34,9 @@ namespace Core
     {
         BaseFloatEWC::onInitialize();
 
-        _layout.setSpacing(40);
         _layout.setHeight(300);
-        _layout.setVerticalAlign(VerticalLayout::Align::Center);
+        _layout.setVerticalAlign(VerticalLayout::Align::Top);
+        _layout.setHorizontalAlign(VerticalLayout::Align::Left);
 
         auto* horizontal = _layout.addChildComponent<HorizontalLayout>();
         horizontal->setHorizontalAlign(HorizontalLayout::Align::Center);
@@ -65,23 +65,60 @@ namespace Core
                 [](Button* context)
                 {
                     static int i = 0;
+                    if (++i > 3)
+                    {
+                        i = 0;
+                    }
+
+                    static HorizontalLayout::Align aligns[4]
+                        = { HorizontalLayout::Align::Left, HorizontalLayout::Align::Center,
+                            HorizontalLayout::Align::Right, HorizontalLayout::Align::SpaceBetween };
+                    context->getParent()->castTo<HorizontalLayout>()->setHorizontalAlign(aligns[i]);
+                });
+        horizontal->addChildComponent<Button>()
+            ->setText("Button 2")
+            .onClick.subscribe(
+                [](Button* context)
+                {
+                    auto horizontal = context->getParent()->castTo<HorizontalLayout>();
+                    horizontal->setIsDrawOutline(!horizontal->getIsDrawOutline());
+                });
+
+        _layout.addChildComponent<Button>()
+            ->setText("Click me")
+            .onClick.subscribe(
+                [this](Button* context)
+                {
+                    static int i = 0;
                     if (++i > 2)
                     {
                         i = 0;
                     }
 
-                    static HorizontalLayout::Align aligns[3]
-                        = { HorizontalLayout::Align::Left, HorizontalLayout::Align::Center,
-                            HorizontalLayout::Align::Right };
-                    context->getParent()->castTo<HorizontalLayout>()->setHorizontalAlign(aligns[i]);
+                    static VerticalLayout::Align aligns[3]
+                        = { VerticalLayout::Align::Left, VerticalLayout::Align::Center,
+                            VerticalLayout::Align::Right };
+                    _layout.setHorizontalAlign(aligns[i]);
+                    context->setText(aligns[i].toStr().c_str());
                 });
-        horizontal->addChildComponent<Button>()->setText("Button 2");
-        horizontal->addChildComponent<Button>()->setText("X").onClick.subscribe(
-            [](Button* context)
-            {
-                auto horizontal = context->getParent()->castTo<HorizontalLayout>();
-                horizontal->setIsDrawOutline(!horizontal->getIsDrawOutline());
-            });
+
+        _layout.addChildComponent<Button>()
+            ->setText("Vertical layout 111")
+            .onClick.subscribe(
+                [this](Button* context)
+                {
+                    static int i = 0;
+                    if (++i > 3)
+                    {
+                        i = 0;
+                    }
+
+                    static VerticalLayout::Align aligns[4]
+                        = { VerticalLayout::Align::Top, VerticalLayout::Align::Center,
+                            VerticalLayout::Align::Bottom, VerticalLayout::Align::SpaceBetween };
+                    _layout.setVerticalAlign(aligns[i]);
+                    context->setText(aligns[i].toStr().c_str());
+                });
 
         *_layout.addChildComponent<HorizontalLayout>() = *horizontal;
     }

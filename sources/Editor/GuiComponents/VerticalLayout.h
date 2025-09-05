@@ -48,10 +48,13 @@ namespace Core
         void onDraw() override;
         void onInitialize() override;
 
-        void drawAlignSpaceBetween();
-        void drawAlignTop();
-        void drawAlignBottom();
-        void drawAlignCenter();
+        void prepareAlignSpaceBetween();
+        void prepareAlignTop();
+        void prepareAlignBottom();
+        void prepareAlignCenter();
+        void directDraw();
+
+        void calcXOffsets();
 
     protected:
         std::vector<float> _xOffsets;

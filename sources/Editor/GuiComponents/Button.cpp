@@ -136,6 +136,8 @@ namespace Core
     {
         setComponentName(string);
         _textSize = ImGui::CalcTextSize(string.c_str());
+        _size = ImGui::CalcItemSize({}, _textSize.x + style().FramePadding.x * 2.0f,
+                                    _textSize.y + style().FramePadding.y * 2.0f);
         return *this;
     }
 
@@ -196,8 +198,6 @@ namespace Core
         {
             onClick.trigger(this);
         }
-
-        _size = ImGui::GetItemRectSize();
 
         ImGui::PopStyleColor(pushedStyles);
         ImGui::PopStyleVar(pushedVars);

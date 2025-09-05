@@ -130,11 +130,14 @@ namespace Core
         if (hasChildren())
         {
             spacing = getWidth();
+            const float defaultSpacing = style().ItemSpacing.x;
             for (const auto& child : _children)
             {
                 spacing -= child->unsafeCastTo<Widget>()->getWidth();
+                spacing -= defaultSpacing;
             }
-            spacing /= _children.size() - 1;
+            spacing += defaultSpacing;
+            spacing /= _children.size() - 1ll;
         }
 
         const auto originalYCursor = ImGui::GetCursorPosY();
@@ -142,10 +145,10 @@ namespace Core
         std::size_t i = 0;
         for (auto&& child : _children)
         {
-            ImGui::SetCursorPosX(ImGui::GetCursorPosX() + spacing);
             ImGui::SetCursorPosY(originalYCursor + _yOffsets.at(i++));
             child->unsafeCastTo<Widget>()->draw();
             ImGui::SameLine();
+            ImGui::SetCursorPosX(ImGui::GetCursorPosX() + spacing);
         }
     }
 
