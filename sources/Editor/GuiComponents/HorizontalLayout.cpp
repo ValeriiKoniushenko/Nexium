@@ -24,7 +24,7 @@
 
 namespace Core
 {
-    ECS_REGISTER_NEW_COMPONENT_TYPE(HorizontalLayout);
+    ECS_REGISTER_NEW_COMPONENT_TYPE(HorizontalLayout)
 
     float HorizontalLayout::getWidth() const
     {

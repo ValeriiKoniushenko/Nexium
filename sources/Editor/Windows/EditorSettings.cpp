@@ -42,6 +42,7 @@ namespace Core
         auto* horizontal = _layout.addChildComponent<HorizontalLayout>();
         horizontal->setHorizontalAlign(HorizontalLayout::Align::Center);
         horizontal->setVerticalAlign(HorizontalLayout::Align::Center);
+        horizontal->setIsDrawOutline(true);
         horizontal->setWidth(300.f);
         horizontal->addChildComponent<Button>()
             ->setText("Button 1")
@@ -121,11 +122,12 @@ namespace Core
                     context->setText(aligns[i].toStr().c_str());
                 });
 
-        // auto labelAndButton = HorizontalLayout::Create();
-        // labelAndButton->setIsDrawOutline(true);
-        // (void)labelAndButton->addChildComponent<Label>("Some text: ")->setIsDrawOutline(true);
-        // (void)labelAndButton->addChildComponent<Button>("Click me!");
-        // _layout.attachChild(labelAndButton);
+        auto labelAndButton = HorizontalLayout::Create();
+        labelAndButton->setIsDrawOutline(true);
+        labelAndButton->addChildComponent<Label>("Some text: ")->setIsDrawOutline(true);
+        labelAndButton->addChildComponent<Button>("Click me!")->setIsDrawOutline(true);
+        _layout.attachChild(labelAndButton);
+
         *_layout.addChildComponent<HorizontalLayout>() = *horizontal;
     }
 

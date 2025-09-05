@@ -87,7 +87,7 @@ namespace Core
         const auto scrollX = ImGui::GetScrollX();
         const auto scrollY = ImGui::GetScrollY();
 
-        auto out = getBounds() + _pos + ImGui::GetWindowPos();
+        auto out = getBounds() + _pos + ImGui::GetWindowPos(); // + _pos + ;
         out.topLeft.x -= scrollX;
         out.bottomRight.x -= scrollX;
 
@@ -117,14 +117,14 @@ namespace Core
         ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
         constexpr float thickness = 1.f;
-        auto rect = getGlobalBounds();
-        rect.bottomRight += thickness;
-        rect.topLeft -= thickness;
-        draw_list->AddRect(rect.topLeft, rect.bottomRight,
-                           IM_COL32(255, 255, 0, 255), // yellow color
-                           1.0f,                                     // rounding
-                           0,                                        // flags
-                           thickness                                 // thickness
+        auto [topLeft, bottomRight] = getGlobalBounds();
+        bottomRight += thickness;
+        topLeft -= thickness;
+
+        draw_list->AddRect(topLeft, bottomRight, IM_COL32(255, 255, 0, 255), // yellow color
+                           1.0f,                                             // rounding
+                           0,                                                // flags
+                           thickness                                         // thickness
         );
     }
 

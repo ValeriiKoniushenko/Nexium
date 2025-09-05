@@ -92,7 +92,8 @@ public:                                                                         
 private:                                                                                           \
     inline static const bool _debugTypeTracker = []()                                              \
     {                                                                                              \
-        GetGlobalComponentFactory()._debugTypeTracker_NotifyNewAboutType(#CurrentClass);           \
+        GetGlobalComponentFactory()._debugTypeTracker_NotifyNewAboutType(                          \
+            StringAtom::Intern(#CurrentClass));                                                    \
         return true;                                                                               \
     }();                                                                                           \
                                                                                                    \

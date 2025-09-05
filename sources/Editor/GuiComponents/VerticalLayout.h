@@ -29,7 +29,7 @@ namespace Core
 
     class VerticalLayout : public Layout<VerticalLayout>
     {
-        ECS_REGISTER_NEW_COMPONENT(VerticalLayout, Layout);
+        ECS_REGISTER_NEW_COMPONENT(VerticalLayout, Layout<VerticalLayout>);
 
     public:
         [[nodiscard]] float getWidth() const override;
