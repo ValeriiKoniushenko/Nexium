@@ -106,8 +106,8 @@ namespace Core
         FSize2 _size;
         FSize2 _innerSize;
         FSize2 _oldSize = FSize2{ -1, -1 };
-        glm::vec2 _position;
-        glm::vec2 _innerPosition;
+        glm::vec2 _position = {};
+        glm::vec2 _innerPosition = {};
         bool _isFitContent = false;
         bool _isFocused = false;
         bool _isHovered = false;

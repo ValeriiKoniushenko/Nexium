@@ -83,9 +83,9 @@ namespace Core
         }
 
     private:
-        glm::vec2 _lastDelta;
-        glm::vec2 _startPos;
-        glm::vec2 _currentPos;
+        glm::vec2 _lastDelta = {};
+        glm::vec2 _startPos = {};
+        glm::vec2 _currentPos = {};
         Mouse::Key _key = Mouse::Key::Key_None;
         State _state = State::Idle;
 

@@ -90,8 +90,8 @@ namespace Core
         std::optional<Color4> _borderColor;
         std::optional<float> _borderWidth;
 
-        glm::vec2 _textSize;
-        glm::vec2 _size;
+        glm::vec2 _textSize = {};
+        glm::vec2 _size = {};
     };
 
 } // namespace Core

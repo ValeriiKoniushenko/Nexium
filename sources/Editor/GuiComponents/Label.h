@@ -52,7 +52,7 @@ namespace Core
     protected:
         std::optional<Color4> _textColor;
 
-        glm::vec2 _textSize;
+        glm::vec2 _textSize = {};
     };
 
 } // namespace Core

@@ -37,8 +37,8 @@ namespace Core
     public:
         struct Bounds
         {
-            glm::vec2 topLeft;
-            glm::vec2 bottomRight;
+            glm::vec2 topLeft = {};
+            glm::vec2 bottomRight = {};
 
             [[nodiscard]] float getWidth() const noexcept
             {
@@ -95,7 +95,7 @@ namespace Core
         inline static int idGen = 0;
         int id = idGen++; // internal id for ImGui
 
-        glm::vec2 _pos;
+        glm::vec2 _pos = {};
         bool _autoDraw = true;
         bool _isDrawOutline = false;
     };
