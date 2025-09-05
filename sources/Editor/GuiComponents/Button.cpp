@@ -156,11 +156,6 @@ namespace Core
         return *this;
     }
 
-    float Button::getWidth() const
-    {
-        return _size.x;
-    }
-
     Button& Button::setHeight(float height)
     {
         _size.y = height;
@@ -171,11 +166,6 @@ namespace Core
     {
         _size.y = 0.0f;
         return *this;
-    }
-
-    float Button::getHeight() const
-    {
-        return _size.y;
     }
 
     ImVec2 Button::getRealSize() const

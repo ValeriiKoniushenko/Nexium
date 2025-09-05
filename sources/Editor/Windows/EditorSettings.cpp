@@ -36,7 +36,8 @@ namespace Core
 
         _layout.setSpacing(40);
         auto* horizontal = _layout.addChildComponent<HorizontalLayout>();
-        horizontal->setAlign(HorizontalLayout::Align::Center);
+        horizontal->setHorizontalAlign(HorizontalLayout::Align::Center);
+        horizontal->setHorizontalAlign(HorizontalLayout::Align::Center);
         horizontal->addChildComponent<Button>()->setText("Button 1");
         horizontal->addChildComponent<Button>()->setText("Hello world!").setHeight(50.f);
         horizontal->addChildComponent<Button>()->setText("Button 2");

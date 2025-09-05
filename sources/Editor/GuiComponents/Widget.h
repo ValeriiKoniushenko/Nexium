@@ -34,8 +34,8 @@ namespace Core
         ECS_REGISTER_NEW_COMPONENT(Widget, BaseComponent);
 
     public:
-        [[nodiscard]] virtual float getWidth() = 0;
-        [[nodiscard]] virtual float getHeight() = 0;
+        [[nodiscard]] virtual float getWidth() const = 0;
+        [[nodiscard]] virtual float getHeight() const = 0;
 
         [[nodiscard]] bool isAutoDraw() const noexcept { return _autoDraw; }
         void setIsAutoDraw(bool value) noexcept { _autoDraw = value; }

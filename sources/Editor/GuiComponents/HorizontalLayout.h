@@ -34,19 +34,24 @@ namespace Core
     public:
         // clang-format off
         CreateEnum(Align, int,
-            Left,
-            Right,
-            SpaceBetween,
-            Center
+            Left,           // For horizontal align
+            Right,          // For horizontal align
+            SpaceBetween,   // For horizontal align
+            Center,         // For horizontal & vertical align
+            Top,            // For vertical align
+            Bottom          // For vertical align
         );
         // clang-format on
 
     public:
-        [[nodiscard]] float getWidth() override;
-        [[nodiscard]] float getHeight() override;
+        [[nodiscard]] float getWidth() const override;
+        [[nodiscard]] float getHeight() const override;
 
-        void setAlign(Align align) { _align = align; }
-        [[nodiscard]] Align getAlign() const noexcept { return _align; }
+        void setHorizontalAlign(Align align) { _align = align; }
+        [[nodiscard]] Align getHorizontalAlign() const noexcept { return _align; }
+
+        void setVerticalAlign(Align align) { _verticalAlign = align; }
+        [[nodiscard]] Align getVerticalAlign() const noexcept { return _verticalAlign; }
 
     protected:
         void onAddChild(BaseComponent* newChild) override;
@@ -61,6 +66,7 @@ namespace Core
 
     protected:
         Align _align = Align::Left;
+        Align _verticalAlign = Align::Top;
     };
 
 } // namespace Core

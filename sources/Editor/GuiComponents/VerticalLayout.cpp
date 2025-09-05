@@ -25,7 +25,7 @@
 namespace Core
 {
 
-    float VerticalLayout::getWidth()
+    float VerticalLayout::getWidth() const
     {
         if (hasParent())
         {
@@ -34,7 +34,7 @@ namespace Core
         return ImGui::GetContentRegionAvail().x;
     }
 
-    float VerticalLayout::getHeight()
+    float VerticalLayout::getHeight() const
     {
         if (hasParent())
         {

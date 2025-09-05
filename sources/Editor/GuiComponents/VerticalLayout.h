@@ -32,8 +32,8 @@ namespace Core
         ECS_REGISTER_NEW_COMPONENT(VerticalLayout, Widget);
 
     public:
-        [[nodiscard]] float getWidth() override;
-        [[nodiscard]] float getHeight() override;
+        [[nodiscard]] float getWidth() const override;
+        [[nodiscard]] float getHeight() const override;
 
         VerticalLayout& setSpacing(float value);
         VerticalLayout& resetSpacing();

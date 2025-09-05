@@ -212,24 +212,46 @@ namespace Core
         template<IsComponent T>
         [[nodiscard]] T* castTo()
         {
-            auto* casted = dynamic_cast<T*>(this);
+            auto* casted = dynamic_cast<std::remove_reference_t<T>*>(this);
+            Assert(casted);
+            return casted;
+        }
+
+        /** @brief Safe cast to a derived component type. Asserts if cast fails. */
+        template<IsComponent T>
+        [[nodiscard]] const T* castTo() const
+        {
+            auto* casted = dynamic_cast<const std::remove_reference_t<T>*>(this);
             Assert(casted);
             return casted;
         }
 
         /** @brief Unsafe & fast cast to a derived component type. */
         template<IsComponent T>
-        [[nodiscard]] T* unsafeCastTo()
+        [[nodiscard]] T* unsafeCastTo() noexcept
         {
-            return reinterpret_cast<T*>(this);
+            return reinterpret_cast<std::remove_reference_t<T>*>(this);
+        }
+
+        /** @brief Unsafe & fast cast to a derived component type. */
+        template<IsComponent T>
+        [[nodiscard]] const T* unsafeCastTo() const noexcept
+        {
+            return reinterpret_cast<const std::remove_reference_t<T>*>(this);
         }
 
         /** @brief Attempt to cast to a derived component type. Returns nullptr if cast fails. */
         template<IsComponent T>
         [[nodiscard]] T* tryCastTo()
         {
-            auto* casted = dynamic_cast<T*>(this);
-            return casted;
+            return dynamic_cast<std::remove_reference_t<T>*>(this);
+        }
+
+        /** @brief Attempt to cast to a derived component type. Returns nullptr if cast fails. */
+        template<IsComponent T>
+        [[nodiscard]] const T* tryCastTo() const
+        {
+            return dynamic_cast<const std::remove_reference_t<T>*>(this);
         }
 
         [[nodiscard]] bool isInitialized() const noexcept { return _isInitialized; }
