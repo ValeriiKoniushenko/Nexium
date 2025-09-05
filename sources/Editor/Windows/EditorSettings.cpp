@@ -45,14 +45,12 @@ namespace Core
         horizontal->addChildComponent<Button>()->setText("Hello world!").setHeight(50.f);
         horizontal->addChildComponent<Button>()->setText("Button 2");
 
-        _layout.addChildComponent<Button>()->setText("Click me").onClick.subscribe([](Button* c)
-        {
-            c->setEnabled(false);
-        });
+        _layout.addChildComponent<Button>()->setText("Click me");
 
         _layout.addChildComponent<Button>()->setText("Vertical layout");
 
         auto labelAndButton = HorizontalLayout::Create();
+        labelAndButton->setFitContent(true);
         (void)labelAndButton->addChildComponent<Label>("Some text: ");
         (void)labelAndButton->addChildComponent<Button>("Click me!");
         _layout.attachChild(labelAndButton);

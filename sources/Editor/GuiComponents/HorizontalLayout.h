@@ -35,6 +35,9 @@ namespace Core
         [[nodiscard]] float getWidth() const override;
         [[nodiscard]] float getHeight() const override;
 
+        void setFitContent(bool value) { _fitContent = value; }
+        [[nodiscard]] bool getFitContent() const noexcept { return _fitContent; }
+
     protected:
         void onAddChild(BaseComponent* newChild) override;
         void onTick(float delta) override;
@@ -49,6 +52,7 @@ namespace Core
 
     protected:
         std::vector<float> _yOffsets;
+        bool _fitContent = false;
     };
 
 } // namespace Core

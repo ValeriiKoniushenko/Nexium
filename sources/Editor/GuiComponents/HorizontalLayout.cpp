@@ -28,6 +28,23 @@ namespace Core
 
     float HorizontalLayout::getWidth() const
     {
+        if (_fitContent)
+        {
+            if (!hasChildren())
+            {
+                return 0;
+            }
+
+            const float defaultSpacing = style().ItemSpacing.x;
+            float width = 0.f;
+            for (auto& child : _children)
+            {
+                width += child->unsafeCastTo<Widget>()->getWidth();
+                width += defaultSpacing;
+            }
+            width -= defaultSpacing;
+            return width;
+        }
         if (_width)
         {
             return *_width;
