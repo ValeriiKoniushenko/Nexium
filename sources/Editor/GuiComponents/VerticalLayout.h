@@ -22,14 +22,14 @@
 
 #pragma once
 
-#include "Widget.h"
+#include "Layout.h"
 
 namespace Core
 {
 
-    class VerticalLayout : public Widget
+    class VerticalLayout : public Layout
     {
-        ECS_REGISTER_NEW_COMPONENT(VerticalLayout, Widget);
+        ECS_REGISTER_NEW_COMPONENT(VerticalLayout, Layout);
 
     public:
         [[nodiscard]] float getWidth() const override;

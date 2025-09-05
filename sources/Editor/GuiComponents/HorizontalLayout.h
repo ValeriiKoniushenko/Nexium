@@ -22,41 +22,18 @@
 
 #pragma once
 
-#include "Widget.h"
+#include "Layout.h"
 
 namespace Core
 {
 
-    class HorizontalLayout : public Widget
+    class HorizontalLayout : public Layout
     {
-        ECS_REGISTER_NEW_COMPONENT(HorizontalLayout, Widget);
-
-    public:
-        // clang-format off
-        CreateEnum(Align, int,
-            Left,           // For horizontal align
-            Right,          // For horizontal align
-            SpaceBetween,   // For horizontal align
-            Center,         // For horizontal & vertical align
-            Top,            // For vertical align
-            Bottom          // For vertical align
-        );
-        // clang-format on
+        ECS_REGISTER_NEW_COMPONENT(HorizontalLayout, Layout);
 
     public:
         [[nodiscard]] float getWidth() const override;
         [[nodiscard]] float getHeight() const override;
-
-        void setHorizontalAlign(Align align) { _align = align; }
-        [[nodiscard]] Align getHorizontalAlign() const noexcept { return _align; }
-
-        void setVerticalAlign(Align align) { _verticalAlign = align; }
-        [[nodiscard]] Align getVerticalAlign() const noexcept { return _verticalAlign; }
-
-        void setHeight(float value) { _height = value; }
-        void resetHeight() { _height.reset(); }
-        void setWidth(float value) { _width = value; }
-        void resetWidth() { _width.reset(); }
 
     protected:
         void onAddChild(BaseComponent* newChild) override;
@@ -72,11 +49,6 @@ namespace Core
 
     protected:
         std::vector<float> _yOffsets;
-        std::optional<float> _height;
-        std::optional<float> _width;
-
-        Align _align = Align::Left;
-        Align _verticalAlign = Align::Center;
     };
 
 } // namespace Core

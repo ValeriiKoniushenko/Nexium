@@ -70,7 +70,10 @@ namespace Core
     void VerticalLayout::onTick(float delta)
     {
         Widget::onTick(delta);
+    }
 
+    void VerticalLayout::onDraw()
+    {
         int pushed = 0;
 
         if (_spacing)
@@ -88,14 +91,11 @@ namespace Core
         ImGui::PopStyleVar(pushed);
     }
 
-    void VerticalLayout::onDraw()
-    {
-    }
-
     void VerticalLayout::onInitialize()
     {
         Widget::onInitialize();
         setComponentName("VerticalLayout");
+        setIsDrawOutline(true);
     }
 
 } // namespace Core
