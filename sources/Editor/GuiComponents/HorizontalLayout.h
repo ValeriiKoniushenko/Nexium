@@ -27,7 +27,7 @@
 namespace Core
 {
 
-    class HorizontalLayout : public Layout
+    class HorizontalLayout : public Layout<HorizontalLayout>
     {
         ECS_REGISTER_NEW_COMPONENT(HorizontalLayout, Layout);
 

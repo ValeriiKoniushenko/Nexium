@@ -27,6 +27,7 @@
 namespace Core
 {
 
+    template<class DerivedLayout>
     class Layout : public Widget
     {
         ECS_REGISTER_NEW_COMPONENT(Layout, Widget);
@@ -44,26 +45,44 @@ namespace Core
         // clang-format on
 
     public:
-        void setHorizontalAlign(Align align)
+        DerivedLayout& setHorizontalAlign(Align align)
         {
             Assert(align.cast() == Align::Left || align.cast() == Align::Right
                    || align.cast() == Align::Center);
             _align = align;
+            return *static_cast<DerivedLayout*>(this);
         }
         [[nodiscard]] Align getHorizontalAlign() const noexcept { return _align; }
 
-        void setVerticalAlign(Align align)
+        DerivedLayout& setVerticalAlign(Align align)
         {
             Assert(align.cast() == Align::Bottom || align.cast() == Align::Top
                    || align.cast() == Align::Center);
             _verticalAlign = align;
+return *static_cast<DerivedLayout*>(this);
         }
         [[nodiscard]] Align getVerticalAlign() const noexcept { return _verticalAlign; }
 
-        void setHeight(float value) { _height = value; }
-        void resetHeight() { _height.reset(); }
-        void setWidth(float value) { _width = value; }
-        void resetWidth() { _width.reset(); }
+        DerivedLayout& setHeight(float value)
+        {
+            _height = value;
+            return *static_cast<DerivedLayout*>(this);
+        }
+        DerivedLayout& resetHeight()
+        {
+            _height.reset();
+            return *static_cast<DerivedLayout*>(this);
+        }
+        DerivedLayout& setWidth(float value)
+        {
+            _width = value;
+            return *static_cast<DerivedLayout*>(this);
+        }
+        DerivedLayout& resetWidth()
+        {
+            _width.reset();
+            return *static_cast<DerivedLayout*>(this);
+        }
 
     protected:
         std::optional<float> _height;
