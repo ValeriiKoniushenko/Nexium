@@ -56,7 +56,7 @@ namespace Core
         return getComponentName();
     }
 
-    ImVec2 Label::getRealSize() const
+    glm::vec2 Label::getRealSize() const
     {
         return _textSize;
     }
@@ -65,7 +65,7 @@ namespace Core
     {
         int pushedStyles = 0;
 
-        pushedStyles += ImGui::OptPushStyleColor(ImGuiCol_Text, _textColor);
+pushedStyles += ImGui::OptPushStyleColor(ImGuiCol_Text, _textColor);
 
         ImGui::TextUnformatted(_name.c_str());
 

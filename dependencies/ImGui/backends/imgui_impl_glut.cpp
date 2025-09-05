@@ -296,7 +296,7 @@ void ImGui_ImplGLUT_MouseWheelFunc(int button, int dir, int x, int y)
 void ImGui_ImplGLUT_ReshapeFunc(int w, int h)
 {
     ImGuiIO& io = ImGui::GetIO();
-    io.DisplaySize = ImVec2((float)w, (float)h);
+    io.DisplaySize = glm::vec2((float)w, (float)h);
 }
 
 void ImGui_ImplGLUT_MotionFunc(int x, int y)

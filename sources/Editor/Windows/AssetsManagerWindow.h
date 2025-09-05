@@ -64,7 +64,7 @@ namespace Core
         StringAtom _filterBuf;
         std::filesystem::path _openedPath = assetsPath;
         int _commonTreeFlags = ImGuiTreeNodeFlags_OpenOnDoubleClick;
-        ImVec2 _thumbnailSize = ImVec2(70, 70);
+        glm::vec2 _thumbnailSize = glm::vec2(70, 70);
         bool _renderFilesInTreeView = false;
         float _defaultGap = 4.f;
 
@@ -74,7 +74,7 @@ namespace Core
         void drawExplorerToolbar();
         void drawOneLevel(CacheNode& rootNode, bool& isSelected);
         bool drawFileThumbnail(ImTextureID texture, const std::filesystem::directory_entry& entry,
-                               ImVec2 size);
+                               glm::vec2 size);
         void rescanPhysicalDrive(CacheNode& node);
         void refresh();
 

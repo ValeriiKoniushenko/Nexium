@@ -106,7 +106,7 @@ namespace Core
         }
         ImGui::SetCursorPosY(originalCursor.y);
 
-        ImGui::Dummy(ImVec2(0, 0));
+        ImGui::Dummy(glm::vec2(0, 0));
     }
 
     void HorizontalLayout::onInitialize()
@@ -178,7 +178,7 @@ namespace Core
                 spacing -= style().ItemSpacing.x;
             }
 
-            ImGui::Dummy(ImVec2(spacing, 0));
+            ImGui::Dummy(glm::vec2(spacing, 0));
             ImGui::SameLine();
         }
 
@@ -206,7 +206,7 @@ namespace Core
             spacing -= style().ItemSpacing.x;
             spacing /= 2.f;
 
-            ImGui::Dummy(ImVec2(spacing, 0));
+            ImGui::Dummy(glm::vec2(spacing, 0));
             ImGui::SameLine();
         }
 

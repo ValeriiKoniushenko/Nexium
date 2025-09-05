@@ -66,7 +66,7 @@ namespace Core
         Button& setHeight(float height);
         Button& resetHeight();
 
-        [[nodiscard]] ImVec2 getRealSize() const;
+        [[nodiscard]] glm::vec2 getRealSize() const;
 
         [[nodiscard]] float getWidth() const override { return getRealSize().x; }
         [[nodiscard]] float getHeight() const override { return getRealSize().y; }
@@ -90,8 +90,8 @@ namespace Core
         std::optional<Color4> _borderColor;
         std::optional<float> _borderWidth;
 
-        ImVec2 _textSize;
-        ImVec2 _size;
+        glm::vec2 _textSize;
+        glm::vec2 _size;
     };
 
 } // namespace Core

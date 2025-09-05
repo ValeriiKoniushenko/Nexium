@@ -170,7 +170,7 @@ namespace Core
         return *this;
     }
 
-    ImVec2 Button::getRealSize() const
+    glm::vec2 Button::getRealSize() const
     {
         return _size;
     }

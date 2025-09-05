@@ -24,6 +24,7 @@
 
 #include "Core/Color.h"
 #include "GameplaySystem/ECS/BaseComponent.h"
+#include "GameplaySystem/ECS/Transformable.h"
 #include "ImGui/imgui.h"
 
 namespace Core
@@ -32,6 +33,37 @@ namespace Core
     class Widget : public BaseComponent
     {
         ECS_REGISTER_NEW_COMPONENT(Widget, BaseComponent);
+
+    public:
+        struct Bounds
+        {
+            glm::vec2 topLeft;
+            glm::vec2 bottomRight;
+
+            [[nodiscard]] float getWidth() const noexcept
+            {
+                return fabs(bottomRight.x - topLeft.x);
+            }
+            [[nodiscard]] float getHeight() const noexcept
+            {
+                return fabs(bottomRight.y - topLeft.y);
+            }
+
+            [[nodiscard]] Bounds operator+(glm::vec2 offset)
+            {
+                Bounds bounds = *this;
+                bounds.topLeft += offset;
+                bounds.bottomRight += offset;
+                return bounds;
+            }
+
+            [[nodiscard]] Bounds& operator+=(glm::vec2 offset)
+            {
+                topLeft += offset;
+                bottomRight += offset;
+                return *this;
+            }
+        };
 
     public:
         Widget(Widget&& other) noexcept;
@@ -50,6 +82,9 @@ namespace Core
         void setIsDrawOutline(bool value) noexcept { _isDrawOutline = value; }
         [[nodiscard]] bool getIsDrawOutline() const noexcept { return _isDrawOutline; }
 
+        [[nodiscard]] Bounds getBounds() const noexcept;
+        [[nodiscard]] Bounds getGlobalBounds() const noexcept;
+
     protected:
         bool addChildValidator(BaseComponent* newChild) override;
         void onTick(float delta) override;
@@ -60,18 +95,15 @@ namespace Core
         inline static int idGen = 0;
         int id = idGen++; // internal id for ImGui
 
-        ImVec2 _pos;
+        glm::vec2 _pos;
         bool _autoDraw = true;
         bool _isDrawOutline = false;
     };
-
-    [[nodiscard]] ImVec4 colorToImVec4(const Color4& color);
 
 } // namespace Core
 
 namespace ImGui
 {
-    void PushStyleColor(ImGuiCol idx, const Core::Color4& col);
     bool OptPushStyleColor(ImGuiCol idx, const std::optional<Core::Color4>& col);
     bool OptPushStyleVar(ImGuiStyleVar idx, const std::optional<float>& col);
 } // namespace ImGui

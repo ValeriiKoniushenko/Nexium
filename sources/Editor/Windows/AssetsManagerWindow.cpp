@@ -85,7 +85,7 @@ namespace Core
 
     void AssetsManagerWindowEWC::drawExplorerTree()
     {
-        if (ImGui::BeginChild("Explorer tree", ImVec2(200.0f, 0), ImGuiChildFlags_ResizeX))
+        if (ImGui::BeginChild("Explorer tree", glm::vec2(200.0f, 0), ImGuiChildFlags_ResizeX))
         {
             ImGui::Dummy({}); // extra padding
             bool isSelected = false;
@@ -285,7 +285,7 @@ namespace Core
 
     bool AssetsManagerWindowEWC::drawFileThumbnail(ImTextureID texture,
                                                    const std::filesystem::directory_entry& entry,
-                                                   ImVec2 size)
+                                                   glm::vec2 size)
     {
         auto path = entry.path();
         auto filename = path.filename().generic_string();
@@ -293,7 +293,7 @@ namespace Core
 
         bool clicked = false;
 
-        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+        ImGui::PushStyleColor(ImGuiCol_Button, glm::vec4(0, 0, 0, 0));
         ImGui::BeginGroup();
 
         if (ImGui::ImageButton(filename.data(), texture, size))
@@ -401,14 +401,14 @@ namespace Core
     void AssetsManagerWindowEWC::drawExplorerToolbar()
     {
         float const rowHeight = ImGui::GetFrameHeightWithSpacing();
-        if (ImGui::BeginChild("ExplorerTopBar", ImVec2(0, rowHeight)))
+        if (ImGui::BeginChild("ExplorerTopBar", glm::vec2(0, rowHeight)))
         {
-            ImGui::Dummy(ImVec2(0, 0));
+            ImGui::Dummy(glm::vec2(0, 0));
 
-            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, glm::vec2(0, 0));
 
             // =============== Input ====================
-            ImGui::Dummy(ImVec2(_defaultGap, 0));
+            ImGui::Dummy(glm::vec2(_defaultGap, 0));
             ImGui::SameLine();
             float const width = ImGui::GetContentRegionAvail().x - _defaultGap;
             ImGui::SetNextItemWidth(width);

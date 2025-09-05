@@ -143,7 +143,7 @@ namespace Core
     {
         ImGui::PushTextWrapPos();
         if (ImGui::InputTextMultiline("##editor", &_fileContent,
-                                      ImVec2(_innerSize.width, _innerSize.height)))
+                                      glm::vec2(_innerSize.width, _innerSize.height)))
         {
             _wasEdited = true;
         }

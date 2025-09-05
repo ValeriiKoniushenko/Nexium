@@ -201,7 +201,7 @@ struct ImGui_ImplGlfw_Data
     GLFWcursor*             MouseCursors[ImGuiMouseCursor_COUNT];
     bool                    MouseIgnoreButtonUpWaitForFocusLoss;
     bool                    MouseIgnoreButtonUp;
-    ImVec2                  LastValidMousePos;
+    glm::vec2                  LastValidMousePos;
     GLFWwindow*             KeyOwnerWindows[GLFW_KEY_LAST];
     bool                    InstalledCallbacks;
     bool                    CallbacksChainForAllWindows;
@@ -514,7 +514,7 @@ void ImGui_ImplGlfw_CursorPosCallback(GLFWwindow* window, double x, double y)
         y += window_y;
     }
     io.AddMousePosEvent((float)x, (float)y);
-    bd->LastValidMousePos = ImVec2((float)x, (float)y);
+    bd->LastValidMousePos = glm::vec2((float)x, (float)y);
 }
 
 // Workaround: X11 seems to send spurious Leave/Enter events which would make us lose our position,
@@ -817,7 +817,7 @@ static void ImGui_ImplGlfw_UpdateMouseData()
     ImGuiPlatformIO& platform_io = ImGui::GetPlatformIO();
 
     ImGuiID mouse_viewport_id = 0;
-    const ImVec2 mouse_pos_prev = io.MousePos;
+    const glm::vec2 mouse_pos_prev = io.MousePos;
     for (int n = 0; n < platform_io.Viewports.Size; n++)
     {
         ImGuiViewport* viewport = platform_io.Viewports[n];
@@ -849,7 +849,7 @@ static void ImGui_ImplGlfw_UpdateMouseData()
                     mouse_x += window_x;
                     mouse_y += window_y;
                 }
-                bd->LastValidMousePos = ImVec2((float)mouse_x, (float)mouse_y);
+                bd->LastValidMousePos = glm::vec2((float)mouse_x, (float)mouse_y);
                 io.AddMousePosEvent((float)mouse_x, (float)mouse_y);
             }
         }
@@ -979,15 +979,15 @@ static void ImGui_ImplGlfw_UpdateMonitors()
         const GLFWvidmode* vid_mode = glfwGetVideoMode(glfw_monitors[n]);
         if (vid_mode == nullptr)
             continue; // Failed to get Video mode (e.g. Emscripten does not support this function)
-        monitor.MainPos = monitor.WorkPos = ImVec2((float)x, (float)y);
-        monitor.MainSize = monitor.WorkSize = ImVec2((float)vid_mode->width, (float)vid_mode->height);
+        monitor.MainPos = monitor.WorkPos = glm::vec2((float)x, (float)y);
+        monitor.MainSize = monitor.WorkSize = glm::vec2((float)vid_mode->width, (float)vid_mode->height);
 #if GLFW_HAS_MONITOR_WORK_AREA
         int w, h;
         glfwGetMonitorWorkarea(glfw_monitors[n], &x, &y, &w, &h);
         if (w > 0 && h > 0) // Workaround a small GLFW issue reporting zero on monitor changes: https://github.com/glfw/glfw/pull/1761
         {
-            monitor.WorkPos = ImVec2((float)x, (float)y);
-            monitor.WorkSize = ImVec2((float)w, (float)h);
+            monitor.WorkPos = glm::vec2((float)x, (float)y);
+            monitor.WorkSize = glm::vec2((float)w, (float)h);
         }
 #endif
         float scale = ImGui_ImplGlfw_GetContentScaleForMonitor(glfw_monitors[n]);
@@ -1026,16 +1026,16 @@ float ImGui_ImplGlfw_GetContentScaleForMonitor(GLFWmonitor* monitor)
 #endif
 }
 
-static void ImGui_ImplGlfw_GetWindowSizeAndFramebufferScale(GLFWwindow* window, ImVec2* out_size, ImVec2* out_framebuffer_scale)
+static void ImGui_ImplGlfw_GetWindowSizeAndFramebufferScale(GLFWwindow* window, glm::vec2* out_size, glm::vec2* out_framebuffer_scale)
 {
     int w, h;
     int display_w, display_h;
     glfwGetWindowSize(window, &w, &h);
     glfwGetFramebufferSize(window, &display_w, &display_h);
     if (out_size != nullptr)
-        *out_size = ImVec2((float)w, (float)h);
+        *out_size = glm::vec2((float)w, (float)h);
     if (out_framebuffer_scale != nullptr)
-        *out_framebuffer_scale = (w > 0 && h > 0) ? ImVec2((float)display_w / (float)w, (float)display_h / (float)h) : ImVec2(1.0f, 1.0f);
+        *out_framebuffer_scale = (w > 0 && h > 0) ? glm::vec2((float)display_w / (float)w, (float)display_h / (float)h) : glm::vec2(1.0f, 1.0f);
 }
 
 void ImGui_ImplGlfw_NewFrame()
@@ -1306,30 +1306,30 @@ static void ImGui_ImplGlfw_ShowWindow(ImGuiViewport* viewport)
     glfwShowWindow(vd->Window);
 }
 
-static ImVec2 ImGui_ImplGlfw_GetWindowPos(ImGuiViewport* viewport)
+static glm::vec2 ImGui_ImplGlfw_GetWindowPos(ImGuiViewport* viewport)
 {
     ImGui_ImplGlfw_ViewportData* vd = (ImGui_ImplGlfw_ViewportData*)viewport->PlatformUserData;
     int x = 0, y = 0;
     glfwGetWindowPos(vd->Window, &x, &y);
-    return ImVec2((float)x, (float)y);
+    return glm::vec2((float)x, (float)y);
 }
 
-static void ImGui_ImplGlfw_SetWindowPos(ImGuiViewport* viewport, ImVec2 pos)
+static void ImGui_ImplGlfw_SetWindowPos(ImGuiViewport* viewport, glm::vec2 pos)
 {
     ImGui_ImplGlfw_ViewportData* vd = (ImGui_ImplGlfw_ViewportData*)viewport->PlatformUserData;
     vd->IgnoreWindowPosEventFrame = ImGui::GetFrameCount();
     glfwSetWindowPos(vd->Window, (int)pos.x, (int)pos.y);
 }
 
-static ImVec2 ImGui_ImplGlfw_GetWindowSize(ImGuiViewport* viewport)
+static glm::vec2 ImGui_ImplGlfw_GetWindowSize(ImGuiViewport* viewport)
 {
     ImGui_ImplGlfw_ViewportData* vd = (ImGui_ImplGlfw_ViewportData*)viewport->PlatformUserData;
     int w = 0, h = 0;
     glfwGetWindowSize(vd->Window, &w, &h);
-    return ImVec2((float)w, (float)h);
+    return glm::vec2((float)w, (float)h);
 }
 
-static void ImGui_ImplGlfw_SetWindowSize(ImGuiViewport* viewport, ImVec2 size)
+static void ImGui_ImplGlfw_SetWindowSize(ImGuiViewport* viewport, glm::vec2 size)
 {
     ImGui_ImplGlfw_ViewportData* vd = (ImGui_ImplGlfw_ViewportData*)viewport->PlatformUserData;
 #if defined(__APPLE__) && !GLFW_HAS_OSX_WINDOW_POS_FIX
@@ -1346,10 +1346,10 @@ static void ImGui_ImplGlfw_SetWindowSize(ImGuiViewport* viewport, ImVec2 size)
     glfwSetWindowSize(vd->Window, (int)size.x, (int)size.y);
 }
 
-static ImVec2 ImGui_ImplGlfw_GetWindowFramebufferScale(ImGuiViewport* viewport)
+static glm::vec2 ImGui_ImplGlfw_GetWindowFramebufferScale(ImGuiViewport* viewport)
 {
     ImGui_ImplGlfw_ViewportData* vd = (ImGui_ImplGlfw_ViewportData*)viewport->PlatformUserData;
-    ImVec2 framebuffer_scale;
+    glm::vec2 framebuffer_scale;
     ImGui_ImplGlfw_GetWindowSizeAndFramebufferScale(vd->Window, nullptr, &framebuffer_scale);
     return framebuffer_scale;
 }

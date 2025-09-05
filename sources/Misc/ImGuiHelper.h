@@ -57,7 +57,7 @@ namespace Core
 
     bool VectorCombo(const StringAtom& label, int* current, std::vector<StringAtom>& data);
 
-    bool ToggleButton(const char* label, bool cond, const ImVec4& onColor, const ImVec4& offColor);
+    bool ToggleButton(const char* label, bool cond, const glm::vec4& onColor, const glm::vec4& offColor);
     bool ToggleButton(const char* label, bool cond);
 
     template<int VecCount>
@@ -66,7 +66,7 @@ namespace Core
         struct Component
         {
             StringAtom text = ""_atom;
-            ImVec4 color = ImVec4(1.f, 1.f, 1.f, 1.f);
+            glm::vec4 color = glm::vec4(1.f, 1.f, 1.f, 1.f);
         };
 
         using VecT = glm::vec<VecCount, float>;
@@ -94,7 +94,7 @@ namespace Core
 
             const auto originalValue = v;
 
-            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, glm::vec2(0, 0));
 
             ImGui::PushID(label.c_str());
 
@@ -149,7 +149,7 @@ namespace Core
 
             ImGui::PopStyleVar();
 
-            ImGui::Dummy(ImVec2(0, 0));
+            ImGui::Dummy(glm::vec2(0, 0));
 
             if (originalValue == v)
             {

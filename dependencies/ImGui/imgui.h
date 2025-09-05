@@ -5,7 +5,7 @@
 // - See links below.
 // - Call and read ImGui::ShowDemoWindow() in imgui_demo.cpp. All applications in examples/ are doing that.
 // - Read top of imgui.cpp for more details, links and comments.
-// - Add '#define IMGUI_DEFINE_MATH_OPERATORS' before including this file (or in imconfig.h) to access courtesy maths operators for ImVec2 and ImVec4.
+// - Add '#define IMGUI_DEFINE_MATH_OPERATORS' before including this file (or in imconfig.h) to access courtesy maths operators for glm::vec2 and glm::vec4.
 
 // Resources:
 // - FAQ ........................ https://dearimgui.com/faq (in repository as docs/FAQ.md)
@@ -66,6 +66,7 @@ Index of this file:
 #ifdef IMGUI_USER_CONFIG
 #include IMGUI_USER_CONFIG
 #endif
+#include "glm/glm.hpp"
 #include "imconfig.h"
 
 #ifndef IMGUI_DISABLE
@@ -99,7 +100,7 @@ Index of this file:
 #define IM_UNUSED(_VAR)             ((void)(_VAR))                              // Used to silence "unused variable warnings". Often useful as asserts may be stripped out from final builds.
 
 // Check that version and structures layouts are matching between compiled imgui code and caller. Read comments above DebugCheckVersionAndDataLayout() for details.
-#define IMGUI_CHECKVERSION()        ImGui::DebugCheckVersionAndDataLayout(IMGUI_VERSION, sizeof(ImGuiIO), sizeof(ImGuiStyle), sizeof(ImVec2), sizeof(ImVec4), sizeof(ImDrawVert), sizeof(ImDrawIdx))
+#define IMGUI_CHECKVERSION()        ImGui::DebugCheckVersionAndDataLayout(IMGUI_VERSION, sizeof(ImGuiIO), sizeof(ImGuiStyle), sizeof(glm::vec2), sizeof(glm::vec4), sizeof(ImDrawVert), sizeof(ImDrawIdx))
 
 // Helper Macros - IM_FMTARGS, IM_FMTLIST: Apply printf-style warnings to our formatting functions.
 // (MSVC provides an equivalent mechanism via SAL Annotations but it would require the macros in a different
@@ -285,32 +286,6 @@ typedef void    (*ImGuiSizeCallback)(ImGuiSizeCallbackData* data);              
 typedef void*   (*ImGuiMemAllocFunc)(size_t sz, void* user_data);               // Function signature for ImGui::SetAllocatorFunctions()
 typedef void    (*ImGuiMemFreeFunc)(void* ptr, void* user_data);                // Function signature for ImGui::SetAllocatorFunctions()
 
-// ImVec2: 2D vector used to store positions, sizes etc. [Compile-time configurable type]
-// - This is a frequently used type in the API. Consider using IM_VEC2_CLASS_EXTRA to create implicit cast from/to our preferred type.
-// - Add '#define IMGUI_DEFINE_MATH_OPERATORS' before including this file (or in imconfig.h) to access courtesy maths operators for ImVec2 and ImVec4.
-IM_MSVC_RUNTIME_CHECKS_OFF
-struct ImVec2
-{
-    float                                   x, y;
-    constexpr ImVec2()                      : x(0.0f), y(0.0f) { }
-    constexpr ImVec2(float _x, float _y)    : x(_x), y(_y) { }
-    float& operator[] (size_t idx)          { IM_ASSERT(idx == 0 || idx == 1); return ((float*)(void*)(char*)this)[idx]; } // We very rarely use this [] operator, so the assert overhead is fine.
-    float  operator[] (size_t idx) const    { IM_ASSERT(idx == 0 || idx == 1); return ((const float*)(const void*)(const char*)this)[idx]; }
-#ifdef IM_VEC2_CLASS_EXTRA
-    IM_VEC2_CLASS_EXTRA     // Define additional constructors and implicit cast operators in imconfig.h to convert back and forth between your math types and ImVec2.
-#endif
-};
-
-// ImVec4: 4D vector used to store clipping rectangles, colors etc. [Compile-time configurable type]
-struct ImVec4
-{
-    float                                                     x, y, z, w;
-    constexpr ImVec4()                                        : x(0.0f), y(0.0f), z(0.0f), w(0.0f) { }
-    constexpr ImVec4(float _x, float _y, float _z, float _w)  : x(_x), y(_y), z(_z), w(_w) { }
-#ifdef IM_VEC4_CLASS_EXTRA
-    IM_VEC4_CLASS_EXTRA     // Define additional constructors and implicit cast operators in imconfig.h to convert back and forth between your math types and ImVec4.
-#endif
-};
 IM_MSVC_RUNTIME_CHECKS_RESTORE
 
 //-----------------------------------------------------------------------------
@@ -439,7 +414,7 @@ namespace ImGui
     //   Consider updating your old code:
     //      BeginChild("Name", size, false)   -> Begin("Name", size, 0); or Begin("Name", size, ImGuiChildFlags_None);
     //      BeginChild("Name", size, true)    -> Begin("Name", size, ImGuiChildFlags_Borders);
-    // - Manual sizing (each axis can use a different setting e.g. ImVec2(0.0f, 400.0f)):
+    // - Manual sizing (each axis can use a different setting e.g. glm::vec2(0.0f, 400.0f)):
     //     == 0.0f: use remaining parent window size for this axis.
     //      > 0.0f: use specified size for this axis.
     //      < 0.0f: right/bottom-align to specified distance from available content boundaries.
@@ -450,8 +425,8 @@ namespace ImGui
     //   [Important: due to legacy reason, Begin/End and BeginChild/EndChild are inconsistent with all other functions
     //    such as BeginMenu/EndMenu, BeginPopup/EndPopup, etc. where the EndXXX call should only be called if the corresponding
     //    BeginXXX function returned true. Begin and BeginChild are the only odd ones out. Will be fixed in a future update.]
-    IMGUI_API bool          BeginChild(const char* str_id, const ImVec2& size = ImVec2(0, 0), ImGuiChildFlags child_flags = 0, ImGuiWindowFlags window_flags = 0);
-    IMGUI_API bool          BeginChild(ImGuiID id, const ImVec2& size = ImVec2(0, 0), ImGuiChildFlags child_flags = 0, ImGuiWindowFlags window_flags = 0);
+    IMGUI_API bool          BeginChild(const char* str_id, const glm::vec2& size = glm::vec2(0, 0), ImGuiChildFlags child_flags = 0, ImGuiWindowFlags window_flags = 0);
+    IMGUI_API bool          BeginChild(ImGuiID id, const glm::vec2& size = glm::vec2(0, 0), ImGuiChildFlags child_flags = 0, ImGuiWindowFlags window_flags = 0);
     IMGUI_API void          EndChild();
 
     // Windows Utilities
@@ -462,29 +437,29 @@ namespace ImGui
     IMGUI_API bool          IsWindowHovered(ImGuiHoveredFlags flags=0); // is current window hovered and hoverable (e.g. not blocked by a popup/modal)? See ImGuiHoveredFlags_ for options. IMPORTANT: If you are trying to check whether your mouse should be dispatched to Dear ImGui or to your underlying app, you should not use this function! Use the 'io.WantCaptureMouse' boolean for that! Refer to FAQ entry "How can I tell whether to dispatch mouse/keyboard to Dear ImGui or my application?" for details.
     IMGUI_API ImDrawList*   GetWindowDrawList();                        // get draw list associated to the current window, to append your own drawing primitives
     IMGUI_API float         GetWindowDpiScale();                        // get DPI scale currently associated to the current window's viewport.
-    IMGUI_API ImVec2        GetWindowPos();                             // get current window position in screen space (IT IS UNLIKELY YOU EVER NEED TO USE THIS. Consider always using GetCursorScreenPos() and GetContentRegionAvail() instead)
-    IMGUI_API ImVec2        GetWindowSize();                            // get current window size (IT IS UNLIKELY YOU EVER NEED TO USE THIS. Consider always using GetCursorScreenPos() and GetContentRegionAvail() instead)
+    IMGUI_API glm::vec2        GetWindowPos();                             // get current window position in screen space (IT IS UNLIKELY YOU EVER NEED TO USE THIS. Consider always using GetCursorScreenPos() and GetContentRegionAvail() instead)
+    IMGUI_API glm::vec2        GetWindowSize();                            // get current window size (IT IS UNLIKELY YOU EVER NEED TO USE THIS. Consider always using GetCursorScreenPos() and GetContentRegionAvail() instead)
     IMGUI_API float         GetWindowWidth();                           // get current window width (IT IS UNLIKELY YOU EVER NEED TO USE THIS). Shortcut for GetWindowSize().x.
     IMGUI_API float         GetWindowHeight();                          // get current window height (IT IS UNLIKELY YOU EVER NEED TO USE THIS). Shortcut for GetWindowSize().y.
     IMGUI_API ImGuiViewport*GetWindowViewport();                        // get viewport currently associated to the current window.
 
     // Window manipulation
     // - Prefer using SetNextXXX functions (before Begin) rather that SetXXX functions (after Begin).
-    IMGUI_API void          SetNextWindowPos(const ImVec2& pos, ImGuiCond cond = 0, const ImVec2& pivot = ImVec2(0, 0)); // set next window position. call before Begin(). use pivot=(0.5f,0.5f) to center on given point, etc.
-    IMGUI_API void          SetNextWindowSize(const ImVec2& size, ImGuiCond cond = 0);                  // set next window size. set axis to 0.0f to force an auto-fit on this axis. call before Begin()
-    IMGUI_API void          SetNextWindowSizeConstraints(const ImVec2& size_min, const ImVec2& size_max, ImGuiSizeCallback custom_callback = NULL, void* custom_callback_data = NULL); // set next window size limits. use 0.0f or FLT_MAX if you don't want limits. Use -1 for both min and max of same axis to preserve current size (which itself is a constraint). Use callback to apply non-trivial programmatic constraints.
-    IMGUI_API void          SetNextWindowContentSize(const ImVec2& size);                               // set next window content size (~ scrollable client area, which enforce the range of scrollbars). Not including window decorations (title bar, menu bar, etc.) nor WindowPadding. set an axis to 0.0f to leave it automatic. call before Begin()
+    IMGUI_API void          SetNextWindowPos(const glm::vec2& pos, ImGuiCond cond = 0, const glm::vec2& pivot = glm::vec2(0, 0)); // set next window position. call before Begin(). use pivot=(0.5f,0.5f) to center on given point, etc.
+    IMGUI_API void          SetNextWindowSize(const glm::vec2& size, ImGuiCond cond = 0);                  // set next window size. set axis to 0.0f to force an auto-fit on this axis. call before Begin()
+    IMGUI_API void          SetNextWindowSizeConstraints(const glm::vec2& size_min, const glm::vec2& size_max, ImGuiSizeCallback custom_callback = NULL, void* custom_callback_data = NULL); // set next window size limits. use 0.0f or FLT_MAX if you don't want limits. Use -1 for both min and max of same axis to preserve current size (which itself is a constraint). Use callback to apply non-trivial programmatic constraints.
+    IMGUI_API void          SetNextWindowContentSize(const glm::vec2& size);                               // set next window content size (~ scrollable client area, which enforce the range of scrollbars). Not including window decorations (title bar, menu bar, etc.) nor WindowPadding. set an axis to 0.0f to leave it automatic. call before Begin()
     IMGUI_API void          SetNextWindowCollapsed(bool collapsed, ImGuiCond cond = 0);                 // set next window collapsed state. call before Begin()
     IMGUI_API void          SetNextWindowFocus();                                                       // set next window to be focused / top-most. call before Begin()
-    IMGUI_API void          SetNextWindowScroll(const ImVec2& scroll);                                  // set next window scrolling value (use < 0.0f to not affect a given axis).
+    IMGUI_API void          SetNextWindowScroll(const glm::vec2& scroll);                                  // set next window scrolling value (use < 0.0f to not affect a given axis).
     IMGUI_API void          SetNextWindowBgAlpha(float alpha);                                          // set next window background color alpha. helper to easily override the Alpha component of ImGuiCol_WindowBg/ChildBg/PopupBg. you may also use ImGuiWindowFlags_NoBackground.
     IMGUI_API void          SetNextWindowViewport(ImGuiID viewport_id);                                 // set next window viewport
-    IMGUI_API void          SetWindowPos(const ImVec2& pos, ImGuiCond cond = 0);                        // (not recommended) set current window position - call within Begin()/End(). prefer using SetNextWindowPos(), as this may incur tearing and side-effects.
-    IMGUI_API void          SetWindowSize(const ImVec2& size, ImGuiCond cond = 0);                      // (not recommended) set current window size - call within Begin()/End(). set to ImVec2(0, 0) to force an auto-fit. prefer using SetNextWindowSize(), as this may incur tearing and minor side-effects.
+    IMGUI_API void          SetWindowPos(const glm::vec2& pos, ImGuiCond cond = 0);                        // (not recommended) set current window position - call within Begin()/End(). prefer using SetNextWindowPos(), as this may incur tearing and side-effects.
+    IMGUI_API void          SetWindowSize(const glm::vec2& size, ImGuiCond cond = 0);                      // (not recommended) set current window size - call within Begin()/End(). set to glm::vec2(0, 0) to force an auto-fit. prefer using SetNextWindowSize(), as this may incur tearing and minor side-effects.
     IMGUI_API void          SetWindowCollapsed(bool collapsed, ImGuiCond cond = 0);                     // (not recommended) set current window collapsed state. prefer using SetNextWindowCollapsed().
     IMGUI_API void          SetWindowFocus();                                                           // (not recommended) set current window to be focused / top-most. prefer using SetNextWindowFocus().
-    IMGUI_API void          SetWindowPos(const char* name, const ImVec2& pos, ImGuiCond cond = 0);      // set named window position.
-    IMGUI_API void          SetWindowSize(const char* name, const ImVec2& size, ImGuiCond cond = 0);    // set named window size. set axis to 0.0f to force an auto-fit on this axis.
+    IMGUI_API void          SetWindowPos(const char* name, const glm::vec2& pos, ImGuiCond cond = 0);      // set named window position.
+    IMGUI_API void          SetWindowSize(const char* name, const glm::vec2& size, ImGuiCond cond = 0);    // set named window size. set axis to 0.0f to force an auto-fit on this axis.
     IMGUI_API void          SetWindowCollapsed(const char* name, bool collapsed, ImGuiCond cond = 0);   // set named window collapsed state
     IMGUI_API void          SetWindowFocus(const char* name);                                           // set named window to be focused / top-most. use NULL to remove focus.
 
@@ -526,12 +501,12 @@ namespace ImGui
 
     // Parameters stacks (shared)
     IMGUI_API void          PushStyleColor(ImGuiCol idx, ImU32 col);                        // modify a style color. always use this if you modify the style after NewFrame().
-    IMGUI_API void          PushStyleColor(ImGuiCol idx, const ImVec4& col);
+    IMGUI_API void          PushStyleColor(ImGuiCol idx, const glm::vec4& col);
     IMGUI_API void          PopStyleColor(int count = 1);
     IMGUI_API void          PushStyleVar(ImGuiStyleVar idx, float val);                     // modify a style float variable. always use this if you modify the style after NewFrame()!
-    IMGUI_API void          PushStyleVar(ImGuiStyleVar idx, const ImVec2& val);             // modify a style ImVec2 variable. "
-    IMGUI_API void          PushStyleVarX(ImGuiStyleVar idx, float val_x);                  // modify X component of a style ImVec2 variable. "
-    IMGUI_API void          PushStyleVarY(ImGuiStyleVar idx, float val_y);                  // modify Y component of a style ImVec2 variable. "
+    IMGUI_API void          PushStyleVar(ImGuiStyleVar idx, const glm::vec2& val);             // modify a style glm::vec2 variable. "
+    IMGUI_API void          PushStyleVarX(ImGuiStyleVar idx, float val_x);                  // modify X component of a style glm::vec2 variable. "
+    IMGUI_API void          PushStyleVarY(ImGuiStyleVar idx, float val_y);                  // modify Y component of a style glm::vec2 variable. "
     IMGUI_API void          PopStyleVar(int count = 1);
     IMGUI_API void          PushItemFlag(ImGuiItemFlags option, bool enabled);              // modify specified shared item flag, e.g. PushItemFlag(ImGuiItemFlags_NoTabStop, true)
     IMGUI_API void          PopItemFlag();
@@ -546,11 +521,11 @@ namespace ImGui
 
     // Style read access
     // - Use the ShowStyleEditor() function to interactively see/edit the colors.
-    IMGUI_API ImVec2        GetFontTexUvWhitePixel();                                       // get UV coordinate for a white pixel, useful to draw custom shapes via the ImDrawList API
+    IMGUI_API glm::vec2        GetFontTexUvWhitePixel();                                       // get UV coordinate for a white pixel, useful to draw custom shapes via the ImDrawList API
     IMGUI_API ImU32         GetColorU32(ImGuiCol idx, float alpha_mul = 1.0f);              // retrieve given style color with style alpha applied and optional extra alpha multiplier, packed as a 32-bit value suitable for ImDrawList
-    IMGUI_API ImU32         GetColorU32(const ImVec4& col);                                 // retrieve given color with style alpha applied, packed as a 32-bit value suitable for ImDrawList
+    IMGUI_API ImU32         GetColorU32(const glm::vec4& col);                                 // retrieve given color with style alpha applied, packed as a 32-bit value suitable for ImDrawList
     IMGUI_API ImU32         GetColorU32(ImU32 col, float alpha_mul = 1.0f);                 // retrieve given color with style alpha applied, packed as a 32-bit value suitable for ImDrawList
-    IMGUI_API const ImVec4& GetStyleColorVec4(ImGuiCol idx);                                // retrieve style color as stored in ImGuiStyle structure. use to feed back into PushStyleColor(), otherwise use GetColorU32() to get style color with style alpha baked in.
+    IMGUI_API const glm::vec4& GetStyleColorVec4(ImGuiCol idx);                                // retrieve style color as stored in ImGuiStyle structure. use to feed back into PushStyleColor(), otherwise use GetColorU32() to get style color with style alpha baked in.
 
     // Layout cursor positioning
     // - By "cursor" we mean the current output position.
@@ -562,23 +537,23 @@ namespace ImGui
     //    - Window-local coordinates:   SameLine(offset), GetCursorPos(), SetCursorPos(), GetCursorStartPos(), PushTextWrapPos()
     //    - Window-local coordinates:   GetContentRegionMax(), GetWindowContentRegionMin(), GetWindowContentRegionMax() --> all obsoleted. YOU DON'T NEED THEM.
     // - GetCursorScreenPos() = GetCursorPos() + GetWindowPos(). GetWindowPos() is almost only ever useful to convert from window-local to absolute coordinates. Try not to use it.
-    IMGUI_API ImVec2        GetCursorScreenPos();                                           // cursor position, absolute coordinates. THIS IS YOUR BEST FRIEND (prefer using this rather than GetCursorPos(), also more useful to work with ImDrawList API).
-    IMGUI_API void          SetCursorScreenPos(const ImVec2& pos);                          // cursor position, absolute coordinates. THIS IS YOUR BEST FRIEND.
-    IMGUI_API ImVec2        GetContentRegionAvail();                                        // available space from current position. THIS IS YOUR BEST FRIEND.
-    IMGUI_API ImVec2        GetCursorPos();                                                 // [window-local] cursor position in window-local coordinates. This is not your best friend.
+    IMGUI_API glm::vec2        GetCursorScreenPos();                                           // cursor position, absolute coordinates. THIS IS YOUR BEST FRIEND (prefer using this rather than GetCursorPos(), also more useful to work with ImDrawList API).
+    IMGUI_API void          SetCursorScreenPos(const glm::vec2& pos);                          // cursor position, absolute coordinates. THIS IS YOUR BEST FRIEND.
+    IMGUI_API glm::vec2        GetContentRegionAvail();                                        // available space from current position. THIS IS YOUR BEST FRIEND.
+    IMGUI_API glm::vec2        GetCursorPos();                                                 // [window-local] cursor position in window-local coordinates. This is not your best friend.
     IMGUI_API float         GetCursorPosX();                                                // [window-local] "
     IMGUI_API float         GetCursorPosY();                                                // [window-local] "
-    IMGUI_API void          SetCursorPos(const ImVec2& local_pos);                          // [window-local] "
+    IMGUI_API void          SetCursorPos(const glm::vec2& local_pos);                          // [window-local] "
     IMGUI_API void          SetCursorPosX(float local_x);                                   // [window-local] "
     IMGUI_API void          SetCursorPosY(float local_y);                                   // [window-local] "
-    IMGUI_API ImVec2        GetCursorStartPos();                                            // [window-local] initial cursor position, in window-local coordinates. Call GetCursorScreenPos() after Begin() to get the absolute coordinates version.
+    IMGUI_API glm::vec2        GetCursorStartPos();                                            // [window-local] initial cursor position, in window-local coordinates. Call GetCursorScreenPos() after Begin() to get the absolute coordinates version.
 
     // Other layout functions
     IMGUI_API void          Separator();                                                    // separator, generally horizontal. inside a menu bar or in horizontal layout mode, this becomes a vertical separator.
     IMGUI_API void          SameLine(float offset_from_start_x=0.0f, float spacing=-1.0f);  // call between widgets or groups to layout them horizontally. X position given in window coordinates.
     IMGUI_API void          NewLine();                                                      // undo a SameLine() or force a new line when in a horizontal-layout context.
     IMGUI_API void          Spacing();                                                      // add vertical spacing.
-    IMGUI_API void          Dummy(const ImVec2& size);                                      // add a dummy item of given size. unlike InvisibleButton(), Dummy() won't take the mouse click or be navigable into.
+    IMGUI_API void          Dummy(const glm::vec2& size);                                      // add a dummy item of given size. unlike InvisibleButton(), Dummy() won't take the mouse click or be navigable into.
     IMGUI_API void          Indent(float indent_w = 0.0f);                                  // move content position toward the right, by indent_w, or style.IndentSpacing if indent_w <= 0
     IMGUI_API void          Unindent(float indent_w = 0.0f);                                // move content position back to the left, by indent_w, or style.IndentSpacing if indent_w <= 0
     IMGUI_API void          BeginGroup();                                                   // lock horizontal starting position
@@ -614,8 +589,8 @@ namespace ImGui
     IMGUI_API void          TextUnformatted(const char* text, const char* text_end = NULL); // raw text without formatting. Roughly equivalent to Text("%s", text) but: A) doesn't require null terminated string if 'text_end' is specified, B) it's faster, no memory copy is done, no buffer size limits, recommended for long chunks of text.
     IMGUI_API void          Text(const char* fmt, ...)                                      IM_FMTARGS(1); // formatted text
     IMGUI_API void          TextV(const char* fmt, va_list args)                            IM_FMTLIST(1);
-    IMGUI_API void          TextColored(const ImVec4& col, const char* fmt, ...)            IM_FMTARGS(2); // shortcut for PushStyleColor(ImGuiCol_Text, col); Text(fmt, ...); PopStyleColor();
-    IMGUI_API void          TextColoredV(const ImVec4& col, const char* fmt, va_list args)  IM_FMTLIST(2);
+    IMGUI_API void          TextColored(const glm::vec4& col, const char* fmt, ...)            IM_FMTARGS(2); // shortcut for PushStyleColor(ImGuiCol_Text, col); Text(fmt, ...); PopStyleColor();
+    IMGUI_API void          TextColoredV(const glm::vec4& col, const char* fmt, va_list args)  IM_FMTLIST(2);
     IMGUI_API void          TextDisabled(const char* fmt, ...)                              IM_FMTARGS(1); // shortcut for PushStyleColor(ImGuiCol_Text, style.Colors[ImGuiCol_TextDisabled]); Text(fmt, ...); PopStyleColor();
     IMGUI_API void          TextDisabledV(const char* fmt, va_list args)                    IM_FMTLIST(1);
     IMGUI_API void          TextWrapped(const char* fmt, ...)                               IM_FMTARGS(1); // shortcut for PushTextWrapPos(0.0f); Text(fmt, ...); PopTextWrapPos();. Note that this won't work on an auto-resizing window if there's no other widgets to extend the window width, yoy may need to set a size using SetNextWindowSize().
@@ -629,16 +604,16 @@ namespace ImGui
     // Widgets: Main
     // - Most widgets return true when the value has been changed or when pressed/selected
     // - You may also use one of the many IsItemXXX functions (e.g. IsItemActive, IsItemHovered, etc.) to query widget state.
-    IMGUI_API bool          Button(const char* label, const ImVec2& size = ImVec2(0, 0));   // button
+    IMGUI_API bool          Button(const char* label, const glm::vec2& size = glm::vec2(0, 0));   // button
     IMGUI_API bool          SmallButton(const char* label);                                 // button with (FramePadding.y == 0) to easily embed within text
-    IMGUI_API bool          InvisibleButton(const char* str_id, const ImVec2& size, ImGuiButtonFlags flags = 0); // flexible button behavior without the visuals, frequently useful to build custom behaviors using the public api (along with IsItemActive, IsItemHovered, etc.)
+    IMGUI_API bool          InvisibleButton(const char* str_id, const glm::vec2& size, ImGuiButtonFlags flags = 0); // flexible button behavior without the visuals, frequently useful to build custom behaviors using the public api (along with IsItemActive, IsItemHovered, etc.)
     IMGUI_API bool          ArrowButton(const char* str_id, ImGuiDir dir);                  // square button with an arrow shape
     IMGUI_API bool          Checkbox(const char* label, bool* v);
     IMGUI_API bool          CheckboxFlags(const char* label, int* flags, int flags_value);
     IMGUI_API bool          CheckboxFlags(const char* label, unsigned int* flags, unsigned int flags_value);
     IMGUI_API bool          RadioButton(const char* label, bool active);                    // use with e.g. if (RadioButton("one", my_value==1)) { my_value = 1; }
     IMGUI_API bool          RadioButton(const char* label, int* v, int v_button);           // shortcut to handle the above pattern when value is an integer
-    IMGUI_API void          ProgressBar(float fraction, const ImVec2& size_arg = ImVec2(-FLT_MIN, 0), const char* overlay = NULL);
+    IMGUI_API void          ProgressBar(float fraction, const glm::vec2& size_arg = glm::vec2(-FLT_MIN, 0), const char* overlay = NULL);
     IMGUI_API void          Bullet();                                                       // draw a small circle + keep the cursor on the same line. advance cursor x position by GetTreeNodeToLabelSpacing(), same distance that TreeNode() uses
     IMGUI_API bool          TextLink(const char* label);                                    // hyperlink text button, return true when clicked
     IMGUI_API bool          TextLinkOpenURL(const char* label, const char* url = NULL);     // hyperlink text button, automatically open file/url when clicked
@@ -649,9 +624,9 @@ namespace ImGui
     // - Image() pads adds style.ImageBorderSize on each side, ImageButton() adds style.FramePadding on each side.
     // - ImageButton() draws a background based on regular Button() color + optionally an inner background if specified.
     // - An obsolete version of Image(), before 1.91.9 (March 2025), had a 'tint_col' parameter which is now supported by the ImageWithBg() function.
-    IMGUI_API void          Image(ImTextureRef tex_ref, const ImVec2& image_size, const ImVec2& uv0 = ImVec2(0, 0), const ImVec2& uv1 = ImVec2(1, 1));
-    IMGUI_API void          ImageWithBg(ImTextureRef tex_ref, const ImVec2& image_size, const ImVec2& uv0 = ImVec2(0, 0), const ImVec2& uv1 = ImVec2(1, 1), const ImVec4& bg_col = ImVec4(0, 0, 0, 0), const ImVec4& tint_col = ImVec4(1, 1, 1, 1));
-    IMGUI_API bool          ImageButton(const char* str_id, ImTextureRef tex_ref, const ImVec2& image_size, const ImVec2& uv0 = ImVec2(0, 0), const ImVec2& uv1 = ImVec2(1, 1), const ImVec4& bg_col = ImVec4(0, 0, 0, 0), const ImVec4& tint_col = ImVec4(1, 1, 1, 1));
+    IMGUI_API void          Image(ImTextureRef tex_ref, const glm::vec2& image_size, const glm::vec2& uv0 = glm::vec2(0, 0), const glm::vec2& uv1 = glm::vec2(1, 1));
+    IMGUI_API void          ImageWithBg(ImTextureRef tex_ref, const glm::vec2& image_size, const glm::vec2& uv0 = glm::vec2(0, 0), const glm::vec2& uv1 = glm::vec2(1, 1), const glm::vec4& bg_col = glm::vec4(0, 0, 0, 0), const glm::vec4& tint_col = glm::vec4(1, 1, 1, 1));
+    IMGUI_API bool          ImageButton(const char* str_id, ImTextureRef tex_ref, const glm::vec2& image_size, const glm::vec2& uv0 = glm::vec2(0, 0), const glm::vec2& uv1 = glm::vec2(1, 1), const glm::vec4& bg_col = glm::vec4(0, 0, 0, 0), const glm::vec4& tint_col = glm::vec4(1, 1, 1, 1));
 
     // Widgets: Combo Box (Dropdown)
     // - The BeginCombo()/EndCombo() api allows you to manage your contents and selection state however you want it, by creating e.g. Selectable() items.
@@ -704,15 +679,15 @@ namespace ImGui
     IMGUI_API bool          SliderInt4(const char* label, int v[4], int v_min, int v_max, const char* format = "%d", ImGuiSliderFlags flags = 0);
     IMGUI_API bool          SliderScalar(const char* label, ImGuiDataType data_type, void* p_data, const void* p_min, const void* p_max, const char* format = NULL, ImGuiSliderFlags flags = 0);
     IMGUI_API bool          SliderScalarN(const char* label, ImGuiDataType data_type, void* p_data, int components, const void* p_min, const void* p_max, const char* format = NULL, ImGuiSliderFlags flags = 0);
-    IMGUI_API bool          VSliderFloat(const char* label, const ImVec2& size, float* v, float v_min, float v_max, const char* format = "%.3f", ImGuiSliderFlags flags = 0);
-    IMGUI_API bool          VSliderInt(const char* label, const ImVec2& size, int* v, int v_min, int v_max, const char* format = "%d", ImGuiSliderFlags flags = 0);
-    IMGUI_API bool          VSliderScalar(const char* label, const ImVec2& size, ImGuiDataType data_type, void* p_data, const void* p_min, const void* p_max, const char* format = NULL, ImGuiSliderFlags flags = 0);
+    IMGUI_API bool          VSliderFloat(const char* label, const glm::vec2& size, float* v, float v_min, float v_max, const char* format = "%.3f", ImGuiSliderFlags flags = 0);
+    IMGUI_API bool          VSliderInt(const char* label, const glm::vec2& size, int* v, int v_min, int v_max, const char* format = "%d", ImGuiSliderFlags flags = 0);
+    IMGUI_API bool          VSliderScalar(const char* label, const glm::vec2& size, ImGuiDataType data_type, void* p_data, const void* p_min, const void* p_max, const char* format = NULL, ImGuiSliderFlags flags = 0);
 
     // Widgets: Input with Keyboard
     // - If you want to use InputText() with std::string or any custom dynamic string type, see misc/cpp/imgui_stdlib.h and comments in imgui_demo.cpp.
     // - Most of the ImGuiInputTextFlags flags are only useful for InputText() and not for InputFloatX, InputIntX, InputDouble etc.
     IMGUI_API bool          InputText(const char* label, char* buf, size_t buf_size, ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL);
-    IMGUI_API bool          InputTextMultiline(const char* label, char* buf, size_t buf_size, const ImVec2& size = ImVec2(0, 0), ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL);
+    IMGUI_API bool          InputTextMultiline(const char* label, char* buf, size_t buf_size, const glm::vec2& size = glm::vec2(0, 0), ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL);
     IMGUI_API bool          InputTextWithHint(const char* label, const char* hint, char* buf, size_t buf_size, ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL);
     IMGUI_API bool          InputFloat(const char* label, float* v, float step = 0.0f, float step_fast = 0.0f, const char* format = "%.3f", ImGuiInputTextFlags flags = 0);
     IMGUI_API bool          InputFloat2(const char* label, float v[2], const char* format = "%.3f", ImGuiInputTextFlags flags = 0);
@@ -733,7 +708,7 @@ namespace ImGui
     IMGUI_API bool          ColorEdit4(const char* label, float col[4], ImGuiColorEditFlags flags = 0);
     IMGUI_API bool          ColorPicker3(const char* label, float col[3], ImGuiColorEditFlags flags = 0);
     IMGUI_API bool          ColorPicker4(const char* label, float col[4], ImGuiColorEditFlags flags = 0, const float* ref_col = NULL);
-    IMGUI_API bool          ColorButton(const char* desc_id, const ImVec4& col, ImGuiColorEditFlags flags = 0, const ImVec2& size = ImVec2(0, 0)); // display a color square/button, hover for details, return true when pressed.
+    IMGUI_API bool          ColorButton(const char* desc_id, const glm::vec4& col, ImGuiColorEditFlags flags = 0, const glm::vec2& size = glm::vec2(0, 0)); // display a color square/button, hover for details, return true when pressed.
     IMGUI_API void          SetColorEditOptions(ImGuiColorEditFlags flags);                     // initialize current options (generally on application startup) if you want to select a default format, picker type, etc. User will be able to change many settings, unless you pass the _NoOptions flag to your calls.
 
     // Widgets: Trees
@@ -760,8 +735,8 @@ namespace ImGui
     // Widgets: Selectables
     // - A selectable highlights when hovered, and can display another color when selected.
     // - Neighbors selectable extend their highlight bounds in order to leave no gap between them. This is so a series of selected Selectable appear contiguous.
-    IMGUI_API bool          Selectable(const char* label, bool selected = false, ImGuiSelectableFlags flags = 0, const ImVec2& size = ImVec2(0, 0)); // "bool selected" carry the selection state (read-only). Selectable() is clicked is returns true so you can modify your selection state. size.x==0.0: use remaining width, size.x>0.0: specify width. size.y==0.0: use label height, size.y>0.0: specify height
-    IMGUI_API bool          Selectable(const char* label, bool* p_selected, ImGuiSelectableFlags flags = 0, const ImVec2& size = ImVec2(0, 0));      // "bool* p_selected" point to the selection state (read-write), as a convenient helper.
+    IMGUI_API bool          Selectable(const char* label, bool selected = false, ImGuiSelectableFlags flags = 0, const glm::vec2& size = glm::vec2(0, 0)); // "bool selected" carry the selection state (read-only). Selectable() is clicked is returns true so you can modify your selection state. size.x==0.0: use remaining width, size.x>0.0: specify width. size.y==0.0: use label height, size.y>0.0: specify height
+    IMGUI_API bool          Selectable(const char* label, bool* p_selected, ImGuiSelectableFlags flags = 0, const glm::vec2& size = glm::vec2(0, 0));      // "bool* p_selected" point to the selection state (read-write), as a convenient helper.
 
     // Multi-selection system for Selectable(), Checkbox(), TreeNode() functions [BETA]
     // - This enables standard multi-selection/range-selection idioms (CTRL+Mouse/Keyboard, SHIFT+Mouse/Keyboard, etc.) in a way that also allow a clipper to be used.
@@ -782,17 +757,17 @@ namespace ImGui
     // - The simplified/old ListBox() api are helpers over BeginListBox()/EndListBox() which are kept available for convenience purpose. This is analogous to how Combos are created.
     // - Choose frame width:   size.x > 0.0f: custom  /  size.x < 0.0f or -FLT_MIN: right-align   /  size.x = 0.0f (default): use current ItemWidth
     // - Choose frame height:  size.y > 0.0f: custom  /  size.y < 0.0f or -FLT_MIN: bottom-align  /  size.y = 0.0f (default): arbitrary default height which can fit ~7 items
-    IMGUI_API bool          BeginListBox(const char* label, const ImVec2& size = ImVec2(0, 0)); // open a framed scrolling region
+    IMGUI_API bool          BeginListBox(const char* label, const glm::vec2& size = glm::vec2(0, 0)); // open a framed scrolling region
     IMGUI_API void          EndListBox();                                                       // only call EndListBox() if BeginListBox() returned true!
     IMGUI_API bool          ListBox(const char* label, int* current_item, const char* const items[], int items_count, int height_in_items = -1);
     IMGUI_API bool          ListBox(const char* label, int* current_item, const char* (*getter)(void* user_data, int idx), void* user_data, int items_count, int height_in_items = -1);
 
     // Widgets: Data Plotting
     // - Consider using ImPlot (https://github.com/epezent/implot) which is much better!
-    IMGUI_API void          PlotLines(const char* label, const float* values, int values_count, int values_offset = 0, const char* overlay_text = NULL, float scale_min = FLT_MAX, float scale_max = FLT_MAX, ImVec2 graph_size = ImVec2(0, 0), int stride = sizeof(float));
-    IMGUI_API void          PlotLines(const char* label, float(*values_getter)(void* data, int idx), void* data, int values_count, int values_offset = 0, const char* overlay_text = NULL, float scale_min = FLT_MAX, float scale_max = FLT_MAX, ImVec2 graph_size = ImVec2(0, 0));
-    IMGUI_API void          PlotHistogram(const char* label, const float* values, int values_count, int values_offset = 0, const char* overlay_text = NULL, float scale_min = FLT_MAX, float scale_max = FLT_MAX, ImVec2 graph_size = ImVec2(0, 0), int stride = sizeof(float));
-    IMGUI_API void          PlotHistogram(const char* label, float (*values_getter)(void* data, int idx), void* data, int values_count, int values_offset = 0, const char* overlay_text = NULL, float scale_min = FLT_MAX, float scale_max = FLT_MAX, ImVec2 graph_size = ImVec2(0, 0));
+    IMGUI_API void          PlotLines(const char* label, const float* values, int values_count, int values_offset = 0, const char* overlay_text = NULL, float scale_min = FLT_MAX, float scale_max = FLT_MAX, glm::vec2 graph_size = glm::vec2(0, 0), int stride = sizeof(float));
+    IMGUI_API void          PlotLines(const char* label, float(*values_getter)(void* data, int idx), void* data, int values_count, int values_offset = 0, const char* overlay_text = NULL, float scale_min = FLT_MAX, float scale_max = FLT_MAX, glm::vec2 graph_size = glm::vec2(0, 0));
+    IMGUI_API void          PlotHistogram(const char* label, const float* values, int values_count, int values_offset = 0, const char* overlay_text = NULL, float scale_min = FLT_MAX, float scale_max = FLT_MAX, glm::vec2 graph_size = glm::vec2(0, 0), int stride = sizeof(float));
+    IMGUI_API void          PlotHistogram(const char* label, float (*values_getter)(void* data, int idx), void* data, int values_count, int values_offset = 0, const char* overlay_text = NULL, float scale_min = FLT_MAX, float scale_max = FLT_MAX, glm::vec2 graph_size = glm::vec2(0, 0));
 
     // Widgets: Value() Helpers.
     // - Those are merely shortcut to calling Text() with a format string. Output single value in "name: value" format (tip: freely declare more in your code to handle your types. you can add functions to the ImGui namespace)
@@ -895,7 +870,7 @@ namespace ImGui
     //        -                   TableNextColumn()      -> Text("Hello 0") -> TableNextColumn()      -> Text("Hello 1")  // OK: TableNextColumn() automatically gets to next row!
     //        - TableNextRow()                           -> Text("Hello 0")                                               // Not OK! Missing TableSetColumnIndex() or TableNextColumn()! Text will not appear!
     // - 5. Call EndTable()
-    IMGUI_API bool          BeginTable(const char* str_id, int columns, ImGuiTableFlags flags = 0, const ImVec2& outer_size = ImVec2(0.0f, 0.0f), float inner_width = 0.0f);
+    IMGUI_API bool          BeginTable(const char* str_id, int columns, ImGuiTableFlags flags = 0, const glm::vec2& outer_size = glm::vec2(0.0f, 0.0f), float inner_width = 0.0f);
     IMGUI_API void          EndTable();                                         // only call EndTable() if BeginTable() returns true!
     IMGUI_API void          TableNextRow(ImGuiTableRowFlags row_flags = 0, float min_row_height = 0.0f); // append into the first cell of a new row.
     IMGUI_API bool          TableNextColumn();                                  // append into the next column (or first column of next row if currently in last column). Return true when column is visible.
@@ -964,7 +939,7 @@ namespace ImGui
     // - Important: Dockspaces need to be submitted _before_ any window they can host. Submit it early in your frame!
     // - Important: Dockspaces need to be kept alive if hidden, otherwise windows docked into it will be undocked.
     //   e.g. if you have multiple tabs with a dockspace inside each tab: submit the non-visible dockspaces with ImGuiDockNodeFlags_KeepAliveOnly.
-    IMGUI_API ImGuiID       DockSpace(ImGuiID dockspace_id, const ImVec2& size = ImVec2(0, 0), ImGuiDockNodeFlags flags = 0, const ImGuiWindowClass* window_class = NULL);
+    IMGUI_API ImGuiID       DockSpace(ImGuiID dockspace_id, const glm::vec2& size = glm::vec2(0, 0), ImGuiDockNodeFlags flags = 0, const ImGuiWindowClass* window_class = NULL);
     IMGUI_API ImGuiID       DockSpaceOverViewport(ImGuiID dockspace_id = 0, const ImGuiViewport* viewport = NULL, ImGuiDockNodeFlags flags = 0, const ImGuiWindowClass* window_class = NULL);
     IMGUI_API void          SetNextWindowDockID(ImGuiID dock_id, ImGuiCond cond = 0);           // set next window dock id
     IMGUI_API void          SetNextWindowClass(const ImGuiWindowClass* window_class);           // set next window class (control docking compatibility + provide hints to platform backend via custom viewport flags and platform parent/child relationship)
@@ -1004,7 +979,7 @@ namespace ImGui
 
     // Clipping
     // - Mouse hovering is affected by ImGui::PushClipRect() calls, unlike direct calls to ImDrawList::PushClipRect() which are render only.
-    IMGUI_API void          PushClipRect(const ImVec2& clip_rect_min, const ImVec2& clip_rect_max, bool intersect_with_current_clip_rect);
+    IMGUI_API void          PushClipRect(const glm::vec2& clip_rect_min, const glm::vec2& clip_rect_max, bool intersect_with_current_clip_rect);
     IMGUI_API void          PopClipRect();
 
     // Focus, Activation
@@ -1034,9 +1009,9 @@ namespace ImGui
     IMGUI_API bool          IsAnyItemActive();                                                  // is any item active?
     IMGUI_API bool          IsAnyItemFocused();                                                 // is any item focused?
     IMGUI_API ImGuiID       GetItemID();                                                        // get ID of last item (~~ often same ImGui::GetID(label) beforehand)
-    IMGUI_API ImVec2        GetItemRectMin();                                                   // get upper-left bounding rectangle of the last item (screen space)
-    IMGUI_API ImVec2        GetItemRectMax();                                                   // get lower-right bounding rectangle of the last item (screen space)
-    IMGUI_API ImVec2        GetItemRectSize();                                                  // get size of last item
+    IMGUI_API glm::vec2        GetItemRectMin();                                                   // get upper-left bounding rectangle of the last item (screen space)
+    IMGUI_API glm::vec2        GetItemRectMax();                                                   // get lower-right bounding rectangle of the last item (screen space)
+    IMGUI_API glm::vec2        GetItemRectSize();                                                  // get size of last item
 
     // Viewports
     // - Currently represents the Platform Window created by the application which is hosting our Dear ImGui windows.
@@ -1049,8 +1024,8 @@ namespace ImGui
     IMGUI_API ImDrawList*   GetForegroundDrawList(ImGuiViewport* viewport = NULL);              // get foreground draw list for the given viewport or viewport associated to the current window. this draw list will be the top-most rendered one. Useful to quickly draw shapes/text over dear imgui contents.
 
     // Miscellaneous Utilities
-    IMGUI_API bool          IsRectVisible(const ImVec2& size);                                  // test if rectangle (of given size, starting from cursor position) is visible / not clipped.
-    IMGUI_API bool          IsRectVisible(const ImVec2& rect_min, const ImVec2& rect_max);      // test if rectangle (in screen space) is visible / not clipped. to perform coarse clipping on user's side.
+    IMGUI_API bool          IsRectVisible(const glm::vec2& size);                                  // test if rectangle (of given size, starting from cursor position) is visible / not clipped.
+    IMGUI_API bool          IsRectVisible(const glm::vec2& rect_min, const glm::vec2& rect_max);      // test if rectangle (in screen space) is visible / not clipped. to perform coarse clipping on user's side.
     IMGUI_API double        GetTime();                                                          // get global imgui time. incremented by io.DeltaTime every frame.
     IMGUI_API int           GetFrameCount();                                                    // get global imgui frame count. incremented by 1 every frame.
     IMGUI_API ImDrawListSharedData* GetDrawListSharedData();                                    // you may use this when creating your own ImDrawList instances.
@@ -1059,11 +1034,11 @@ namespace ImGui
     IMGUI_API ImGuiStorage* GetStateStorage();
 
     // Text Utilities
-    IMGUI_API ImVec2        CalcTextSize(const char* text, const char* text_end = NULL, bool hide_text_after_double_hash = false, float wrap_width = -1.0f);
+    IMGUI_API glm::vec2        CalcTextSize(const char* text, const char* text_end = NULL, bool hide_text_after_double_hash = false, float wrap_width = -1.0f);
 
     // Color Utilities
-    IMGUI_API ImVec4        ColorConvertU32ToFloat4(ImU32 in);
-    IMGUI_API ImU32         ColorConvertFloat4ToU32(const ImVec4& in);
+    IMGUI_API glm::vec4        ColorConvertU32ToFloat4(ImU32 in);
+    IMGUI_API ImU32         ColorConvertFloat4ToU32(const glm::vec4& in);
     IMGUI_API void          ColorConvertRGBtoHSV(float r, float g, float b, float& out_h, float& out_s, float& out_v);
     IMGUI_API void          ColorConvertHSVtoRGB(float h, float s, float v, float& out_r, float& out_g, float& out_b);
 
@@ -1115,13 +1090,13 @@ namespace ImGui
     IMGUI_API bool          IsMouseDoubleClicked(ImGuiMouseButton button);                      // did mouse button double-clicked? Same as GetMouseClickedCount() == 2. (note that a double-click will also report IsMouseClicked() == true)
     IMGUI_API bool          IsMouseReleasedWithDelay(ImGuiMouseButton button, float delay);     // delayed mouse release (use very sparingly!). Generally used with 'delay >= io.MouseDoubleClickTime' + combined with a 'io.MouseClickedLastCount==1' test. This is a very rarely used UI idiom, but some apps use this: e.g. MS Explorer single click on an icon to rename.
     IMGUI_API int           GetMouseClickedCount(ImGuiMouseButton button);                      // return the number of successive mouse-clicks at the time where a click happen (otherwise 0).
-    IMGUI_API bool          IsMouseHoveringRect(const ImVec2& r_min, const ImVec2& r_max, bool clip = true);// is mouse hovering given bounding rect (in screen space). clipped by current clipping settings, but disregarding of other consideration of focus/window ordering/popup-block.
-    IMGUI_API bool          IsMousePosValid(const ImVec2* mouse_pos = NULL);                    // by convention we use (-FLT_MAX,-FLT_MAX) to denote that there is no mouse available
+    IMGUI_API bool          IsMouseHoveringRect(const glm::vec2& r_min, const glm::vec2& r_max, bool clip = true);// is mouse hovering given bounding rect (in screen space). clipped by current clipping settings, but disregarding of other consideration of focus/window ordering/popup-block.
+    IMGUI_API bool          IsMousePosValid(const glm::vec2* mouse_pos = NULL);                    // by convention we use (-FLT_MAX,-FLT_MAX) to denote that there is no mouse available
     IMGUI_API bool          IsAnyMouseDown();                                                   // [WILL OBSOLETE] is any mouse button held? This was designed for backends, but prefer having backend maintain a mask of held mouse buttons, because upcoming input queue system will make this invalid.
-    IMGUI_API ImVec2        GetMousePos();                                                      // shortcut to ImGui::GetIO().MousePos provided by user, to be consistent with other calls
-    IMGUI_API ImVec2        GetMousePosOnOpeningCurrentPopup();                                 // retrieve mouse position at the time of opening popup we have BeginPopup() into (helper to avoid user backing that value themselves)
+    IMGUI_API glm::vec2        GetMousePos();                                                      // shortcut to ImGui::GetIO().MousePos provided by user, to be consistent with other calls
+    IMGUI_API glm::vec2        GetMousePosOnOpeningCurrentPopup();                                 // retrieve mouse position at the time of opening popup we have BeginPopup() into (helper to avoid user backing that value themselves)
     IMGUI_API bool          IsMouseDragging(ImGuiMouseButton button, float lock_threshold = -1.0f);         // is mouse dragging? (uses io.MouseDraggingThreshold if lock_threshold < 0.0f)
-    IMGUI_API ImVec2        GetMouseDragDelta(ImGuiMouseButton button = 0, float lock_threshold = -1.0f);   // return the delta from the initial clicking position while the mouse button is pressed or was just released. This is locked and return 0.0f until the mouse moves past a distance threshold at least once (uses io.MouseDraggingThreshold if lock_threshold < 0.0f)
+    IMGUI_API glm::vec2        GetMouseDragDelta(ImGuiMouseButton button = 0, float lock_threshold = -1.0f);   // return the delta from the initial clicking position while the mouse button is pressed or was just released. This is locked and return 0.0f until the mouse moves past a distance threshold at least once (uses io.MouseDraggingThreshold if lock_threshold < 0.0f)
     IMGUI_API void          ResetMouseDragDelta(ImGuiMouseButton button = 0);                   //
     IMGUI_API ImGuiMouseCursor GetMouseCursor();                                                // get desired mouse cursor shape. Important: reset in ImGui::NewFrame(), this is updated during the frame. valid before Render(). If you use software rendering by setting io.MouseDrawCursor ImGui will render those for you
     IMGUI_API void          SetMouseCursor(ImGuiMouseCursor cursor_type);                       // set desired mouse cursor shape
@@ -1192,7 +1167,7 @@ enum ImGuiWindowFlags_
     ImGuiWindowFlags_NoSavedSettings        = 1 << 8,   // Never load/save settings in .ini file
     ImGuiWindowFlags_NoMouseInputs          = 1 << 9,   // Disable catching mouse, hovering test with pass through.
     ImGuiWindowFlags_MenuBar                = 1 << 10,  // Has a menu-bar
-    ImGuiWindowFlags_HorizontalScrollbar    = 1 << 11,  // Allow horizontal scrollbar to appear (off by default). You may use SetNextWindowContentSize(ImVec2(width,0.0f)); prior to calling Begin() to specify width. Read code in imgui_demo in the "Horizontal Scrolling" section.
+    ImGuiWindowFlags_HorizontalScrollbar    = 1 << 11,  // Allow horizontal scrollbar to appear (off by default). You may use SetNextWindowContentSize(glm::vec2(width,0.0f)); prior to calling Begin() to specify width. Read code in imgui_demo in the "Horizontal Scrolling" section.
     ImGuiWindowFlags_NoFocusOnAppearing     = 1 << 12,  // Disable taking focus when transitioning from hidden to visible state
     ImGuiWindowFlags_NoBringToFrontOnFocus  = 1 << 13,  // Disable bringing window to front when taking focus (e.g. clicking on it or programmatically giving it focus)
     ImGuiWindowFlags_AlwaysVerticalScrollbar= 1 << 14,  // Always show vertical scrollbar (even if ContentSize.y < Size.y)
@@ -1863,22 +1838,22 @@ enum ImGuiStyleVar_
     // Enum name -------------------------- // Member in ImGuiStyle structure (see ImGuiStyle for descriptions)
     ImGuiStyleVar_Alpha,                    // float     Alpha
     ImGuiStyleVar_DisabledAlpha,            // float     DisabledAlpha
-    ImGuiStyleVar_WindowPadding,            // ImVec2    WindowPadding
+    ImGuiStyleVar_WindowPadding,            // glm::vec2    WindowPadding
     ImGuiStyleVar_WindowRounding,           // float     WindowRounding
     ImGuiStyleVar_WindowBorderSize,         // float     WindowBorderSize
-    ImGuiStyleVar_WindowMinSize,            // ImVec2    WindowMinSize
-    ImGuiStyleVar_WindowTitleAlign,         // ImVec2    WindowTitleAlign
+    ImGuiStyleVar_WindowMinSize,            // glm::vec2    WindowMinSize
+    ImGuiStyleVar_WindowTitleAlign,         // glm::vec2    WindowTitleAlign
     ImGuiStyleVar_ChildRounding,            // float     ChildRounding
     ImGuiStyleVar_ChildBorderSize,          // float     ChildBorderSize
     ImGuiStyleVar_PopupRounding,            // float     PopupRounding
     ImGuiStyleVar_PopupBorderSize,          // float     PopupBorderSize
-    ImGuiStyleVar_FramePadding,             // ImVec2    FramePadding
+    ImGuiStyleVar_FramePadding,             // glm::vec2    FramePadding
     ImGuiStyleVar_FrameRounding,            // float     FrameRounding
     ImGuiStyleVar_FrameBorderSize,          // float     FrameBorderSize
-    ImGuiStyleVar_ItemSpacing,              // ImVec2    ItemSpacing
-    ImGuiStyleVar_ItemInnerSpacing,         // ImVec2    ItemInnerSpacing
+    ImGuiStyleVar_ItemSpacing,              // glm::vec2    ItemSpacing
+    ImGuiStyleVar_ItemInnerSpacing,         // glm::vec2    ItemInnerSpacing
     ImGuiStyleVar_IndentSpacing,            // float     IndentSpacing
-    ImGuiStyleVar_CellPadding,              // ImVec2    CellPadding
+    ImGuiStyleVar_CellPadding,              // glm::vec2    CellPadding
     ImGuiStyleVar_ScrollbarSize,            // float     ScrollbarSize
     ImGuiStyleVar_ScrollbarRounding,        // float     ScrollbarRounding
     ImGuiStyleVar_GrabMinSize,              // float     GrabMinSize
@@ -1891,14 +1866,14 @@ enum ImGuiStyleVar_
     ImGuiStyleVar_TabBarBorderSize,         // float     TabBarBorderSize
     ImGuiStyleVar_TabBarOverlineSize,       // float     TabBarOverlineSize
     ImGuiStyleVar_TableAngledHeadersAngle,  // float     TableAngledHeadersAngle
-    ImGuiStyleVar_TableAngledHeadersTextAlign,// ImVec2  TableAngledHeadersTextAlign
+    ImGuiStyleVar_TableAngledHeadersTextAlign,// glm::vec2  TableAngledHeadersTextAlign
     ImGuiStyleVar_TreeLinesSize,            // float     TreeLinesSize
     ImGuiStyleVar_TreeLinesRounding,        // float     TreeLinesRounding
-    ImGuiStyleVar_ButtonTextAlign,          // ImVec2    ButtonTextAlign
-    ImGuiStyleVar_SelectableTextAlign,      // ImVec2    SelectableTextAlign
+    ImGuiStyleVar_ButtonTextAlign,          // glm::vec2    ButtonTextAlign
+    ImGuiStyleVar_SelectableTextAlign,      // glm::vec2    SelectableTextAlign
     ImGuiStyleVar_SeparatorTextBorderSize,  // float     SeparatorTextBorderSize
-    ImGuiStyleVar_SeparatorTextAlign,       // ImVec2    SeparatorTextAlign
-    ImGuiStyleVar_SeparatorTextPadding,     // ImVec2    SeparatorTextPadding
+    ImGuiStyleVar_SeparatorTextAlign,       // glm::vec2    SeparatorTextAlign
+    ImGuiStyleVar_SeparatorTextPadding,     // glm::vec2    SeparatorTextPadding
     ImGuiStyleVar_DockingSeparatorSize,     // float     DockingSeparatorSize
     ImGuiStyleVar_COUNT
 };
@@ -2326,24 +2301,24 @@ struct ImGuiStyle
 
     float       Alpha;                      // Global alpha applies to everything in Dear ImGui.
     float       DisabledAlpha;              // Additional alpha multiplier applied by BeginDisabled(). Multiply over current value of Alpha.
-    ImVec2      WindowPadding;              // Padding within a window.
+    glm::vec2      WindowPadding;              // Padding within a window.
     float       WindowRounding;             // Radius of window corners rounding. Set to 0.0f to have rectangular windows. Large values tend to lead to variety of artifacts and are not recommended.
     float       WindowBorderSize;           // Thickness of border around windows. Generally set to 0.0f or 1.0f. (Other values are not well tested and more CPU/GPU costly).
     float       WindowBorderHoverPadding;   // Hit-testing extent outside/inside resizing border. Also extend determination of hovered window. Generally meaningfully larger than WindowBorderSize to make it easy to reach borders.
-    ImVec2      WindowMinSize;              // Minimum window size. This is a global setting. If you want to constrain individual windows, use SetNextWindowSizeConstraints().
-    ImVec2      WindowTitleAlign;           // Alignment for title bar text. Defaults to (0.0f,0.5f) for left-aligned,vertically centered.
+    glm::vec2      WindowMinSize;              // Minimum window size. This is a global setting. If you want to constrain individual windows, use SetNextWindowSizeConstraints().
+    glm::vec2      WindowTitleAlign;           // Alignment for title bar text. Defaults to (0.0f,0.5f) for left-aligned,vertically centered.
     ImGuiDir    WindowMenuButtonPosition;   // Side of the collapsing/docking button in the title bar (None/Left/Right). Defaults to ImGuiDir_Left.
     float       ChildRounding;              // Radius of child window corners rounding. Set to 0.0f to have rectangular windows.
     float       ChildBorderSize;            // Thickness of border around child windows. Generally set to 0.0f or 1.0f. (Other values are not well tested and more CPU/GPU costly).
     float       PopupRounding;              // Radius of popup window corners rounding. (Note that tooltip windows use WindowRounding)
     float       PopupBorderSize;            // Thickness of border around popup/tooltip windows. Generally set to 0.0f or 1.0f. (Other values are not well tested and more CPU/GPU costly).
-    ImVec2      FramePadding;               // Padding within a framed rectangle (used by most widgets).
+    glm::vec2      FramePadding;               // Padding within a framed rectangle (used by most widgets).
     float       FrameRounding;              // Radius of frame corners rounding. Set to 0.0f to have rectangular frame (used by most widgets).
     float       FrameBorderSize;            // Thickness of border around frames. Generally set to 0.0f or 1.0f. (Other values are not well tested and more CPU/GPU costly).
-    ImVec2      ItemSpacing;                // Horizontal and vertical spacing between widgets/lines.
-    ImVec2      ItemInnerSpacing;           // Horizontal and vertical spacing between within elements of a composed widget (e.g. a slider and its label).
-    ImVec2      CellPadding;                // Padding within a table cell. Cellpadding.x is locked for entire table. CellPadding.y may be altered between different rows.
-    ImVec2      TouchExtraPadding;          // Expand reactive bounding box for touch-based system where touch position is not accurate enough. Unfortunately we don't sort widgets so priority on overlap will always be given to the first widget. So don't grow this too much!
+    glm::vec2      ItemSpacing;                // Horizontal and vertical spacing between widgets/lines.
+    glm::vec2      ItemInnerSpacing;           // Horizontal and vertical spacing between within elements of a composed widget (e.g. a slider and its label).
+    glm::vec2      CellPadding;                // Padding within a table cell. Cellpadding.x is locked for entire table. CellPadding.y may be altered between different rows.
+    glm::vec2      TouchExtraPadding;          // Expand reactive bounding box for touch-based system where touch position is not accurate enough. Unfortunately we don't sort widgets so priority on overlap will always be given to the first widget. So don't grow this too much!
     float       IndentSpacing;              // Horizontal indentation when e.g. entering a tree node. Generally == (FontSize + FramePadding.x*2).
     float       ColumnsMinSpacing;          // Minimum horizontal spacing between two columns. Preferably > (FramePadding.x + 1).
     float       ScrollbarSize;              // Width of the vertical scrollbar, Height of the horizontal scrollbar.
@@ -2361,18 +2336,18 @@ struct ImGuiStyle
     float       TabBarBorderSize;           // Thickness of tab-bar separator, which takes on the tab active color to denote focus.
     float       TabBarOverlineSize;         // Thickness of tab-bar overline, which highlights the selected tab-bar.
     float       TableAngledHeadersAngle;    // Angle of angled headers (supported values range from -50.0f degrees to +50.0f degrees).
-    ImVec2      TableAngledHeadersTextAlign;// Alignment of angled headers within the cell
+    glm::vec2      TableAngledHeadersTextAlign;// Alignment of angled headers within the cell
     ImGuiTreeNodeFlags TreeLinesFlags;      // Default way to draw lines connecting TreeNode hierarchy. ImGuiTreeNodeFlags_DrawLinesNone or ImGuiTreeNodeFlags_DrawLinesFull or ImGuiTreeNodeFlags_DrawLinesToNodes.
     float       TreeLinesSize;              // Thickness of outlines when using ImGuiTreeNodeFlags_DrawLines.
     float       TreeLinesRounding;          // Radius of lines connecting child nodes to the vertical line.
     ImGuiDir    ColorButtonPosition;        // Side of the color button in the ColorEdit4 widget (left/right). Defaults to ImGuiDir_Right.
-    ImVec2      ButtonTextAlign;            // Alignment of button text when button is larger than text. Defaults to (0.5f, 0.5f) (centered).
-    ImVec2      SelectableTextAlign;        // Alignment of selectable text. Defaults to (0.0f, 0.0f) (top-left aligned). It's generally important to keep this left-aligned if you want to lay multiple items on a same line.
+    glm::vec2      ButtonTextAlign;            // Alignment of button text when button is larger than text. Defaults to (0.5f, 0.5f) (centered).
+    glm::vec2      SelectableTextAlign;        // Alignment of selectable text. Defaults to (0.0f, 0.0f) (top-left aligned). It's generally important to keep this left-aligned if you want to lay multiple items on a same line.
     float       SeparatorTextBorderSize;    // Thickness of border in SeparatorText()
-    ImVec2      SeparatorTextAlign;         // Alignment of text within the separator. Defaults to (0.0f, 0.5f) (left aligned, center).
-    ImVec2      SeparatorTextPadding;       // Horizontal offset of text from each edge of the separator + spacing on other axis. Generally small values. .y is recommended to be == FramePadding.y.
-    ImVec2      DisplayWindowPadding;       // Apply to regular windows: amount which we enforce to keep visible when moving near edges of your screen.
-    ImVec2      DisplaySafeAreaPadding;     // Apply to every windows, menus, popups, tooltips: amount where we avoid displaying contents. Adjust if you cannot see the edges of your screen (e.g. on a TV where scaling has not been configured).
+    glm::vec2      SeparatorTextAlign;         // Alignment of text within the separator. Defaults to (0.0f, 0.5f) (left aligned, center).
+    glm::vec2      SeparatorTextPadding;       // Horizontal offset of text from each edge of the separator + spacing on other axis. Generally small values. .y is recommended to be == FramePadding.y.
+    glm::vec2      DisplayWindowPadding;       // Apply to regular windows: amount which we enforce to keep visible when moving near edges of your screen.
+    glm::vec2      DisplaySafeAreaPadding;     // Apply to every windows, menus, popups, tooltips: amount where we avoid displaying contents. Adjust if you cannot see the edges of your screen (e.g. on a TV where scaling has not been configured).
     float       DockingSeparatorSize;       // Thickness of resizing border between docked windows
     float       MouseCursorScale;           // Scale software rendered mouse cursor (when io.MouseDrawCursor is enabled). We apply per-monitor DPI scaling over this scale. May be removed later.
     bool        AntiAliasedLines;           // Enable anti-aliased lines/borders. Disable if you are really tight on CPU/GPU. Latched at the beginning of the frame (copied to ImDrawList).
@@ -2382,7 +2357,7 @@ struct ImGuiStyle
     float       CircleTessellationMaxError; // Maximum error (in pixels) allowed when using AddCircle()/AddCircleFilled() or drawing rounded corner rectangles with no explicit segment count specified. Decrease for higher quality but more geometry.
 
     // Colors
-    ImVec4      Colors[ImGuiCol_COUNT];
+    glm::vec4      Colors[ImGuiCol_COUNT];
 
     // Behaviors
     // (It is possible to modify those fields mid-frame if specific behavior need it, unlike e.g. configuration fields in ImGuiIO)
@@ -2436,8 +2411,8 @@ struct ImGuiIO
 
     ImGuiConfigFlags   ConfigFlags;             // = 0              // See ImGuiConfigFlags_ enum. Set by user/application. Keyboard/Gamepad navigation options, etc.
     ImGuiBackendFlags  BackendFlags;            // = 0              // See ImGuiBackendFlags_ enum. Set by backend (imgui_impl_xxx files or custom backend) to communicate features supported by the backend.
-    ImVec2      DisplaySize;                    // <unset>          // Main display size, in pixels (== GetMainViewport()->Size). May change every frame.
-    ImVec2      DisplayFramebufferScale;        // = (1, 1)         // Main display density. For retina display where window coordinates are different from framebuffer coordinates. This will affect font density + will end up in ImDrawData::FramebufferScale.
+    glm::vec2      DisplaySize;                    // <unset>          // Main display size, in pixels (== GetMainViewport()->Size). May change every frame.
+    glm::vec2      DisplayFramebufferScale;        // = (1, 1)         // Main display density. For retina display where window coordinates are different from framebuffer coordinates. This will affect font density + will end up in ImDrawData::FramebufferScale.
     float       DeltaTime;                      // = 1.0f/60.0f     // Time elapsed since last frame, in seconds. May change every frame.
     float       IniSavingRate;                  // = 5.0f           // Minimum time between saving positions/sizes to .ini file, in seconds.
     const char* IniFilename;                    // = "imgui.ini"    // Path to .ini file (important: default "imgui.ini" is relative to current working dir!). Set NULL to disable automatic .ini loading/saving or if you want to manually call LoadIniSettingsXXX() / SaveIniSettingsXXX() functions.
@@ -2605,7 +2580,7 @@ struct ImGuiIO
     int         MetricsRenderIndices;               // Indices output during last call to Render() = number of triangles * 3
     int         MetricsRenderWindows;               // Number of visible windows
     int         MetricsActiveWindows;               // Number of active windows
-    ImVec2      MouseDelta;                         // Mouse delta. Note that this is zero if either current or previous position are invalid (-FLT_MAX,-FLT_MAX), so a disappearing/reappearing mouse won't have a huge delta.
+    glm::vec2      MouseDelta;                         // Mouse delta. Note that this is zero if either current or previous position are invalid (-FLT_MAX,-FLT_MAX), so a disappearing/reappearing mouse won't have a huge delta.
 
     //------------------------------------------------------------------
     // [Internal] Dear ImGui will maintain those fields. Forward compatibility not guaranteed!
@@ -2616,7 +2591,7 @@ struct ImGuiIO
     // Main Input State
     // (this block used to be written by backend, since 1.87 it is best to NOT write to those directly, call the AddXXX functions above instead)
     // (reading from those variables is fair game, as they are extremely unlikely to be moving anywhere)
-    ImVec2      MousePos;                           // Mouse position, in pixels. Set to ImVec2(-FLT_MAX, -FLT_MAX) if mouse is unavailable (on another screen, etc.)
+    glm::vec2      MousePos;                           // Mouse position, in pixels. Set to glm::vec2(-FLT_MAX, -FLT_MAX) if mouse is unavailable (on another screen, etc.)
     bool        MouseDown[5];                       // Mouse buttons: 0=left, 1=right, 2=middle + extras (ImGuiMouseButton_COUNT == 5). Dear ImGui mostly uses left and right buttons. Other buttons allow us to track if the mouse is being used by your application + available to user as a convenience via IsMouse** API.
     float       MouseWheel;                         // Mouse wheel Vertical: 1 unit scrolls about 5 lines text. >0 scrolls Up, <0 scrolls Down. Hold SHIFT to turn vertical scroll into horizontal scroll.
     float       MouseWheelH;                        // Mouse wheel Horizontal. >0 scrolls Left, <0 scrolls Right. Most users don't have a mouse with a horizontal wheel, may not be filled by all backends.
@@ -2631,8 +2606,8 @@ struct ImGuiIO
     ImGuiKeyChord KeyMods;                          // Key mods flags (any of ImGuiMod_Ctrl/ImGuiMod_Shift/ImGuiMod_Alt/ImGuiMod_Super flags, same as io.KeyCtrl/KeyShift/KeyAlt/KeySuper but merged into flags. Read-only, updated by NewFrame()
     ImGuiKeyData  KeysData[ImGuiKey_NamedKey_COUNT];// Key state for all known keys. MUST use 'key - ImGuiKey_NamedKey_BEGIN' as index. Use IsKeyXXX() functions to access this.
     bool        WantCaptureMouseUnlessPopupClose;   // Alternative to WantCaptureMouse: (WantCaptureMouse == true && WantCaptureMouseUnlessPopupClose == false) when a click over void is expected to close a popup.
-    ImVec2      MousePosPrev;                       // Previous mouse position (note that MouseDelta is not necessary == MousePos-MousePosPrev, in case either position is invalid)
-    ImVec2      MouseClickedPos[5];                 // Position at time of clicking
+    glm::vec2      MousePosPrev;                       // Previous mouse position (note that MouseDelta is not necessary == MousePos-MousePosPrev, in case either position is invalid)
+    glm::vec2      MouseClickedPos[5];                 // Position at time of clicking
     double      MouseClickedTime[5];                // Time of last click (used to figure out double-click)
     bool        MouseClicked[5];                    // Mouse button went from !Down to Down (same as MouseClickedCount[x] != 0)
     bool        MouseDoubleClicked[5];              // Has mouse button been double-clicked? (same as MouseClickedCount[x] == 2)
@@ -2646,7 +2621,7 @@ struct ImGuiIO
     bool        MouseCtrlLeftAsRightClick;          // (OSX) Set to true when the current click was a Ctrl+click that spawned a simulated right click
     float       MouseDownDuration[5];               // Duration the mouse button has been down (0.0f == just clicked)
     float       MouseDownDurationPrev[5];           // Previous time the mouse button has been down
-    ImVec2      MouseDragMaxDistanceAbs[5];         // Maximum distance, absolute, on each axis, of how much mouse has traveled from the clicking point
+    glm::vec2      MouseDragMaxDistanceAbs[5];         // Maximum distance, absolute, on each axis, of how much mouse has traveled from the clicking point
     float       MouseDragMaxDistanceSqr[5];         // Squared maximum distance of how much mouse has traveled from the clicking point (used for moving thresholds)
     float       PenPressure;                        // Touch/Pen pressure (0.0f to 1.0f, should be >0.0f only when MouseDown[0] == true). Helper storage currently unused by Dear ImGui.
     bool        AppFocusLost;                       // Only modify via AddFocusEvent()
@@ -2727,9 +2702,9 @@ struct ImGuiInputTextCallbackData
 struct ImGuiSizeCallbackData
 {
     void*   UserData;       // Read-only.   What user passed to SetNextWindowSizeConstraints(). Generally store an integer or float in here (need reinterpret_cast<>).
-    ImVec2  Pos;            // Read-only.   Window position, for reference.
-    ImVec2  CurrentSize;    // Read-only.   Current window size.
-    ImVec2  DesiredSize;    // Read-write.  Desired size, based on user's mouse position. Write to this field to restrain resizing.
+    glm::vec2  Pos;            // Read-only.   Window position, for reference.
+    glm::vec2  CurrentSize;    // Read-only.   Current window size.
+    glm::vec2  DesiredSize;    // Read-write.  Desired size, based on user's mouse position. Write to this field to restrain resizing.
 };
 
 // [ALPHA] Rarely used / very advanced uses only. Use with SetNextWindowClass() and DockSpace() functions.
@@ -2956,40 +2931,40 @@ struct ImGuiListClipper
 #endif
 };
 
-// Helpers: ImVec2/ImVec4 operators
+// Helpers: glm::vec2/glm::vec4 operators
 // - It is important that we are keeping those disabled by default so they don't leak in user space.
-// - This is in order to allow user enabling implicit cast operators between ImVec2/ImVec4 and their own types (using IM_VEC2_CLASS_EXTRA in imconfig.h)
-// - Add '#define IMGUI_DEFINE_MATH_OPERATORS' before including this file (or in imconfig.h) to access courtesy maths operators for ImVec2 and ImVec4.
-// - We intentionally provide ImVec2*float but not float*ImVec2: this is rare enough and we want to reduce the surface for possible user mistake.
+// - This is in order to allow user enabling implicit cast operators between glm::vec2/glm::vec4 and their own types (using IM_VEC2_CLASS_EXTRA in imconfig.h)
+// - Add '#define IMGUI_DEFINE_MATH_OPERATORS' before including this file (or in imconfig.h) to access courtesy maths operators for glm::vec2 and glm::vec4.
+// - We intentionally provide glm::vec2*float but not float*glm::vec2: this is rare enough and we want to reduce the surface for possible user mistake.
 #ifdef IMGUI_DEFINE_MATH_OPERATORS
 #define IMGUI_DEFINE_MATH_OPERATORS_IMPLEMENTED
 IM_MSVC_RUNTIME_CHECKS_OFF
-// ImVec2 operators
-inline ImVec2  operator*(const ImVec2& lhs, const float rhs)    { return ImVec2(lhs.x * rhs, lhs.y * rhs); }
-inline ImVec2  operator/(const ImVec2& lhs, const float rhs)    { return ImVec2(lhs.x / rhs, lhs.y / rhs); }
-inline ImVec2  operator+(const ImVec2& lhs, const ImVec2& rhs)  { return ImVec2(lhs.x + rhs.x, lhs.y + rhs.y); }
-inline ImVec2  operator-(const ImVec2& lhs, const ImVec2& rhs)  { return ImVec2(lhs.x - rhs.x, lhs.y - rhs.y); }
-inline ImVec2  operator*(const ImVec2& lhs, const ImVec2& rhs)  { return ImVec2(lhs.x * rhs.x, lhs.y * rhs.y); }
-inline ImVec2  operator/(const ImVec2& lhs, const ImVec2& rhs)  { return ImVec2(lhs.x / rhs.x, lhs.y / rhs.y); }
-inline ImVec2  operator-(const ImVec2& lhs)                     { return ImVec2(-lhs.x, -lhs.y); }
-inline ImVec2& operator*=(ImVec2& lhs, const float rhs)         { lhs.x *= rhs; lhs.y *= rhs; return lhs; }
-inline ImVec2& operator/=(ImVec2& lhs, const float rhs)         { lhs.x /= rhs; lhs.y /= rhs; return lhs; }
-inline ImVec2& operator+=(ImVec2& lhs, const ImVec2& rhs)       { lhs.x += rhs.x; lhs.y += rhs.y; return lhs; }
-inline ImVec2& operator-=(ImVec2& lhs, const ImVec2& rhs)       { lhs.x -= rhs.x; lhs.y -= rhs.y; return lhs; }
-inline ImVec2& operator*=(ImVec2& lhs, const ImVec2& rhs)       { lhs.x *= rhs.x; lhs.y *= rhs.y; return lhs; }
-inline ImVec2& operator/=(ImVec2& lhs, const ImVec2& rhs)       { lhs.x /= rhs.x; lhs.y /= rhs.y; return lhs; }
-inline bool    operator==(const ImVec2& lhs, const ImVec2& rhs) { return lhs.x == rhs.x && lhs.y == rhs.y; }
-inline bool    operator!=(const ImVec2& lhs, const ImVec2& rhs) { return lhs.x != rhs.x || lhs.y != rhs.y; }
-// ImVec4 operators
-inline ImVec4  operator*(const ImVec4& lhs, const float rhs)    { return ImVec4(lhs.x * rhs, lhs.y * rhs, lhs.z * rhs, lhs.w * rhs); }
-inline ImVec4  operator/(const ImVec4& lhs, const float rhs)    { return ImVec4(lhs.x / rhs, lhs.y / rhs, lhs.z / rhs, lhs.w / rhs); }
-inline ImVec4  operator+(const ImVec4& lhs, const ImVec4& rhs)  { return ImVec4(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z, lhs.w + rhs.w); }
-inline ImVec4  operator-(const ImVec4& lhs, const ImVec4& rhs)  { return ImVec4(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z, lhs.w - rhs.w); }
-inline ImVec4  operator*(const ImVec4& lhs, const ImVec4& rhs)  { return ImVec4(lhs.x * rhs.x, lhs.y * rhs.y, lhs.z * rhs.z, lhs.w * rhs.w); }
-inline ImVec4  operator/(const ImVec4& lhs, const ImVec4& rhs)  { return ImVec4(lhs.x / rhs.x, lhs.y / rhs.y, lhs.z / rhs.z, lhs.w / rhs.w); }
-inline ImVec4  operator-(const ImVec4& lhs)                     { return ImVec4(-lhs.x, -lhs.y, -lhs.z, -lhs.w); }
-inline bool    operator==(const ImVec4& lhs, const ImVec4& rhs) { return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z && lhs.w == rhs.w; }
-inline bool    operator!=(const ImVec4& lhs, const ImVec4& rhs) { return lhs.x != rhs.x || lhs.y != rhs.y || lhs.z != rhs.z || lhs.w != rhs.w; }
+// glm::vec2 operators
+inline glm::vec2  operator*(const glm::vec2& lhs, const float rhs)    { return glm::vec2(lhs.x * rhs, lhs.y * rhs); }
+inline glm::vec2  operator/(const glm::vec2& lhs, const float rhs)    { return glm::vec2(lhs.x / rhs, lhs.y / rhs); }
+inline glm::vec2  operator+(const glm::vec2& lhs, const glm::vec2& rhs)  { return glm::vec2(lhs.x + rhs.x, lhs.y + rhs.y); }
+inline glm::vec2  operator-(const glm::vec2& lhs, const glm::vec2& rhs)  { return glm::vec2(lhs.x - rhs.x, lhs.y - rhs.y); }
+inline glm::vec2  operator*(const glm::vec2& lhs, const glm::vec2& rhs)  { return glm::vec2(lhs.x * rhs.x, lhs.y * rhs.y); }
+inline glm::vec2  operator/(const glm::vec2& lhs, const glm::vec2& rhs)  { return glm::vec2(lhs.x / rhs.x, lhs.y / rhs.y); }
+inline glm::vec2  operator-(const glm::vec2& lhs)                     { return glm::vec2(-lhs.x, -lhs.y); }
+inline glm::vec2& operator*=(glm::vec2& lhs, const float rhs)         { lhs.x *= rhs; lhs.y *= rhs; return lhs; }
+inline glm::vec2& operator/=(glm::vec2& lhs, const float rhs)         { lhs.x /= rhs; lhs.y /= rhs; return lhs; }
+inline glm::vec2& operator+=(glm::vec2& lhs, const glm::vec2& rhs)       { lhs.x += rhs.x; lhs.y += rhs.y; return lhs; }
+inline glm::vec2& operator-=(glm::vec2& lhs, const glm::vec2& rhs)       { lhs.x -= rhs.x; lhs.y -= rhs.y; return lhs; }
+inline glm::vec2& operator*=(glm::vec2& lhs, const glm::vec2& rhs)       { lhs.x *= rhs.x; lhs.y *= rhs.y; return lhs; }
+inline glm::vec2& operator/=(glm::vec2& lhs, const glm::vec2& rhs)       { lhs.x /= rhs.x; lhs.y /= rhs.y; return lhs; }
+inline bool    operator==(const glm::vec2& lhs, const glm::vec2& rhs) { return lhs.x == rhs.x && lhs.y == rhs.y; }
+inline bool    operator!=(const glm::vec2& lhs, const glm::vec2& rhs) { return lhs.x != rhs.x || lhs.y != rhs.y; }
+// glm::vec4 operators
+inline glm::vec4  operator*(const glm::vec4& lhs, const float rhs)    { return glm::vec4(lhs.x * rhs, lhs.y * rhs, lhs.z * rhs, lhs.w * rhs); }
+inline glm::vec4  operator/(const glm::vec4& lhs, const float rhs)    { return glm::vec4(lhs.x / rhs, lhs.y / rhs, lhs.z / rhs, lhs.w / rhs); }
+inline glm::vec4  operator+(const glm::vec4& lhs, const glm::vec4& rhs)  { return glm::vec4(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z, lhs.w + rhs.w); }
+inline glm::vec4  operator-(const glm::vec4& lhs, const glm::vec4& rhs)  { return glm::vec4(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z, lhs.w - rhs.w); }
+inline glm::vec4  operator*(const glm::vec4& lhs, const glm::vec4& rhs)  { return glm::vec4(lhs.x * rhs.x, lhs.y * rhs.y, lhs.z * rhs.z, lhs.w * rhs.w); }
+inline glm::vec4  operator/(const glm::vec4& lhs, const glm::vec4& rhs)  { return glm::vec4(lhs.x / rhs.x, lhs.y / rhs.y, lhs.z / rhs.z, lhs.w / rhs.w); }
+inline glm::vec4  operator-(const glm::vec4& lhs)                     { return glm::vec4(-lhs.x, -lhs.y, -lhs.z, -lhs.w); }
+inline bool    operator==(const glm::vec4& lhs, const glm::vec4& rhs) { return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z && lhs.w == rhs.w; }
+inline bool    operator!=(const glm::vec4& lhs, const glm::vec4& rhs) { return lhs.x != rhs.x || lhs.y != rhs.y || lhs.z != rhs.z || lhs.w != rhs.w; }
 IM_MSVC_RUNTIME_CHECKS_RESTORE
 #endif
 
@@ -3016,21 +2991,21 @@ IM_MSVC_RUNTIME_CHECKS_RESTORE
 #define IM_COL32_BLACK       IM_COL32(0,0,0,255)        // Opaque black
 #define IM_COL32_BLACK_TRANS IM_COL32(0,0,0,0)          // Transparent black = 0x00000000
 
-// Helper: ImColor() implicitly converts colors to either ImU32 (packed 4x1 byte) or ImVec4 (4x1 float)
+// Helper: ImColor() implicitly converts colors to either ImU32 (packed 4x1 byte) or glm::vec4 (4x1 float)
 // Prefer using IM_COL32() macros if you want a guaranteed compile-time ImU32 for usage with ImDrawList API.
-// **Avoid storing ImColor! Store either u32 of ImVec4. This is not a full-featured color class. MAY OBSOLETE.
-// **None of the ImGui API are using ImColor directly but you can use it as a convenience to pass colors in either ImU32 or ImVec4 formats. Explicitly cast to ImU32 or ImVec4 if needed.
+// **Avoid storing ImColor! Store either u32 of glm::vec4. This is not a full-featured color class. MAY OBSOLETE.
+// **None of the ImGui API are using ImColor directly but you can use it as a convenience to pass colors in either ImU32 or glm::vec4 formats. Explicitly cast to ImU32 or glm::vec4 if needed.
 struct ImColor
 {
-    ImVec4          Value;
+    glm::vec4          Value;
 
     constexpr ImColor()                                             { }
     constexpr ImColor(float r, float g, float b, float a = 1.0f)    : Value(r, g, b, a) { }
-    constexpr ImColor(const ImVec4& col)                            : Value(col) {}
+    constexpr ImColor(const glm::vec4& col)                            : Value(col) {}
     constexpr ImColor(int r, int g, int b, int a = 255)             : Value((float)r * (1.0f / 255.0f), (float)g * (1.0f / 255.0f), (float)b * (1.0f / 255.0f), (float)a* (1.0f / 255.0f)) {}
     constexpr ImColor(ImU32 rgba)                                   : Value((float)((rgba >> IM_COL32_R_SHIFT) & 0xFF) * (1.0f / 255.0f), (float)((rgba >> IM_COL32_G_SHIFT) & 0xFF) * (1.0f / 255.0f), (float)((rgba >> IM_COL32_B_SHIFT) & 0xFF) * (1.0f / 255.0f), (float)((rgba >> IM_COL32_A_SHIFT) & 0xFF) * (1.0f / 255.0f)) {}
     inline operator ImU32() const                                   { return ImGui::ColorConvertFloat4ToU32(Value); }
-    inline operator ImVec4() const                                  { return Value; }
+    inline operator glm::vec4() const                                  { return Value; }
 
     // FIXME-OBSOLETE: May need to obsolete/cleanup those helpers.
     inline void    SetHSV(float h, float s, float v, float a = 1.0f){ ImGui::ColorConvertHSVtoRGB(h, s, v, Value.x, Value.y, Value.z); Value.w = a; }
@@ -3226,7 +3201,7 @@ typedef void (*ImDrawCallback)(const ImDrawList* parent_list, const ImDrawCmd* c
 // - The ClipRect/TexRef/VtxOffset fields must be contiguous as we memcmp() them together (this is asserted for).
 struct ImDrawCmd
 {
-    ImVec4          ClipRect;           // 4*4  // Clipping rectangle (x1, y1, x2, y2). Subtract ImDrawData->DisplayPos to get clipping rectangle in "viewport" coordinates
+    glm::vec4          ClipRect;           // 4*4  // Clipping rectangle (x1, y1, x2, y2). Subtract ImDrawData->DisplayPos to get clipping rectangle in "viewport" coordinates
     ImTextureRef    TexRef;             // 16   // Reference to a font/texture atlas (where backend called ImTextureData::SetTexID()) or to a user-provided texture ID (via e.g. ImGui::Image() calls). Both will lead to a ImTextureID value.
     unsigned int    VtxOffset;          // 4    // Start offset in vertex buffer. ImGuiBackendFlags_RendererHasVtxOffset: always 0, otherwise may be >0 to support meshes larger than 64K vertices with 16-bit indices.
     unsigned int    IdxOffset;          // 4    // Start offset in index buffer.
@@ -3247,14 +3222,14 @@ struct ImDrawCmd
 #ifndef IMGUI_OVERRIDE_DRAWVERT_STRUCT_LAYOUT
 struct ImDrawVert
 {
-    ImVec2  pos;
-    ImVec2  uv;
+    glm::vec2  pos;
+    glm::vec2  uv;
     ImU32   col;
 };
 #else
 // You can override the vertex format layout by defining IMGUI_OVERRIDE_DRAWVERT_STRUCT_LAYOUT in imconfig.h
-// The code expect ImVec2 pos (8 bytes), ImVec2 uv (8 bytes), ImU32 col (4 bytes), but you can re-order them or add other fields as needed to simplify integration in your engine.
-// The type has to be described within the macro (you can either declare the struct or use a typedef). This is because ImVec2/ImU32 are likely not declared at the time you'd want to set your type up.
+// The code expect glm::vec2 pos (8 bytes), glm::vec2 uv (8 bytes), ImU32 col (4 bytes), but you can re-order them or add other fields as needed to simplify integration in your engine.
+// The type has to be described within the macro (you can either declare the struct or use a typedef). This is because glm::vec2/ImU32 are likely not declared at the time you'd want to set your type up.
 // NOTE: IMGUI DOESN'T CLEAR THE STRUCTURE AND DOESN'T CALL A CONSTRUCTOR SO ANY CUSTOM FIELD WILL BE UNINITIALIZED. IF YOU ADD EXTRA FIELDS (SUCH AS A 'Z' COORDINATES) YOU WILL NEED TO CLEAR THEM DURING RENDER OR TO IGNORE THEM.
 IMGUI_OVERRIDE_DRAWVERT_STRUCT_LAYOUT;
 #endif
@@ -3262,7 +3237,7 @@ IMGUI_OVERRIDE_DRAWVERT_STRUCT_LAYOUT;
 // [Internal] For use by ImDrawList
 struct ImDrawCmdHeader
 {
-    ImVec4          ClipRect;
+    glm::vec4          ClipRect;
     ImTextureRef    TexRef;
     unsigned int    VtxOffset;
 };
@@ -3344,10 +3319,10 @@ struct ImDrawList
     ImDrawListSharedData*   _Data;              // Pointer to shared draw data (you can use ImGui::GetDrawListSharedData() to get the one from current ImGui context)
     ImDrawVert*             _VtxWritePtr;       // [Internal] point within VtxBuffer.Data after each add command (to avoid using the ImVector<> operators too much)
     ImDrawIdx*              _IdxWritePtr;       // [Internal] point within IdxBuffer.Data after each add command (to avoid using the ImVector<> operators too much)
-    ImVector<ImVec2>        _Path;              // [Internal] current path building
+    ImVector<glm::vec2>        _Path;              // [Internal] current path building
     ImDrawCmdHeader         _CmdHeader;         // [Internal] template of active commands. Fields should match those of CmdBuffer.back().
     ImDrawListSplitter      _Splitter;          // [Internal] for channels api (note: prefer using your own persistent instance of ImDrawListSplitter!)
-    ImVector<ImVec4>        _ClipRectStack;     // [Internal]
+    ImVector<glm::vec4>        _ClipRectStack;     // [Internal]
     ImVector<ImTextureRef>  _TextureStack;      // [Internal]
     ImVector<ImU8>          _CallbacksDataBuf;  // [Internal]
     float                   _FringeScale;       // [Internal] anti-alias fringe is scaled by this value, this helps to keep things sharp while zooming at vertex buffer content
@@ -3358,13 +3333,13 @@ struct ImDrawList
     IMGUI_API ImDrawList(ImDrawListSharedData* shared_data);
     IMGUI_API ~ImDrawList();
 
-    IMGUI_API void  PushClipRect(const ImVec2& clip_rect_min, const ImVec2& clip_rect_max, bool intersect_with_current_clip_rect = false);  // Render-level scissoring. This is passed down to your render function but not used for CPU-side coarse clipping. Prefer using higher-level ImGui::PushClipRect() to affect logic (hit-testing and widget culling)
+    IMGUI_API void  PushClipRect(const glm::vec2& clip_rect_min, const glm::vec2& clip_rect_max, bool intersect_with_current_clip_rect = false);  // Render-level scissoring. This is passed down to your render function but not used for CPU-side coarse clipping. Prefer using higher-level ImGui::PushClipRect() to affect logic (hit-testing and widget culling)
     IMGUI_API void  PushClipRectFullScreen();
     IMGUI_API void  PopClipRect();
     IMGUI_API void  PushTexture(ImTextureRef tex_ref);
     IMGUI_API void  PopTexture();
-    inline ImVec2   GetClipRectMin() const { const ImVec4& cr = _ClipRectStack.back(); return ImVec2(cr.x, cr.y); }
-    inline ImVec2   GetClipRectMax() const { const ImVec4& cr = _ClipRectStack.back(); return ImVec2(cr.z, cr.w); }
+    inline glm::vec2   GetClipRectMin() const { const glm::vec4& cr = _ClipRectStack.back(); return glm::vec2(cr.x, cr.y); }
+    inline glm::vec2   GetClipRectMax() const { const glm::vec4& cr = _ClipRectStack.back(); return glm::vec2(cr.z, cr.w); }
 
     // Primitives
     // - Filled shapes must always use clockwise winding order. The anti-aliasing fringe depends on it. Counter-clockwise shapes will have "inward" anti-aliasing.
@@ -3373,55 +3348,55 @@ struct ImDrawList
     //   In older versions (until Dear ImGui 1.77) the AddCircle functions defaulted to num_segments == 12.
     //   In future versions we will use textures to provide cheaper and higher-quality circles.
     //   Use AddNgon() and AddNgonFilled() functions if you need to guarantee a specific number of sides.
-    IMGUI_API void  AddLine(const ImVec2& p1, const ImVec2& p2, ImU32 col, float thickness = 1.0f);
-    IMGUI_API void  AddRect(const ImVec2& p_min, const ImVec2& p_max, ImU32 col, float rounding = 0.0f, ImDrawFlags flags = 0, float thickness = 1.0f);   // a: upper-left, b: lower-right (== upper-left + size)
-    IMGUI_API void  AddRectFilled(const ImVec2& p_min, const ImVec2& p_max, ImU32 col, float rounding = 0.0f, ImDrawFlags flags = 0);                     // a: upper-left, b: lower-right (== upper-left + size)
-    IMGUI_API void  AddRectFilledMultiColor(const ImVec2& p_min, const ImVec2& p_max, ImU32 col_upr_left, ImU32 col_upr_right, ImU32 col_bot_right, ImU32 col_bot_left);
-    IMGUI_API void  AddQuad(const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, const ImVec2& p4, ImU32 col, float thickness = 1.0f);
-    IMGUI_API void  AddQuadFilled(const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, const ImVec2& p4, ImU32 col);
-    IMGUI_API void  AddTriangle(const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, ImU32 col, float thickness = 1.0f);
-    IMGUI_API void  AddTriangleFilled(const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, ImU32 col);
-    IMGUI_API void  AddCircle(const ImVec2& center, float radius, ImU32 col, int num_segments = 0, float thickness = 1.0f);
-    IMGUI_API void  AddCircleFilled(const ImVec2& center, float radius, ImU32 col, int num_segments = 0);
-    IMGUI_API void  AddNgon(const ImVec2& center, float radius, ImU32 col, int num_segments, float thickness = 1.0f);
-    IMGUI_API void  AddNgonFilled(const ImVec2& center, float radius, ImU32 col, int num_segments);
-    IMGUI_API void  AddEllipse(const ImVec2& center, const ImVec2& radius, ImU32 col, float rot = 0.0f, int num_segments = 0, float thickness = 1.0f);
-    IMGUI_API void  AddEllipseFilled(const ImVec2& center, const ImVec2& radius, ImU32 col, float rot = 0.0f, int num_segments = 0);
-    IMGUI_API void  AddText(const ImVec2& pos, ImU32 col, const char* text_begin, const char* text_end = NULL);
-    IMGUI_API void  AddText(ImFont* font, float font_size, const ImVec2& pos, ImU32 col, const char* text_begin, const char* text_end = NULL, float wrap_width = 0.0f, const ImVec4* cpu_fine_clip_rect = NULL);
-    IMGUI_API void  AddBezierCubic(const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, const ImVec2& p4, ImU32 col, float thickness, int num_segments = 0); // Cubic Bezier (4 control points)
-    IMGUI_API void  AddBezierQuadratic(const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, ImU32 col, float thickness, int num_segments = 0);               // Quadratic Bezier (3 control points)
+    IMGUI_API void  AddLine(const glm::vec2& p1, const glm::vec2& p2, ImU32 col, float thickness = 1.0f);
+    IMGUI_API void  AddRect(const glm::vec2& p_min, const glm::vec2& p_max, ImU32 col, float rounding = 0.0f, ImDrawFlags flags = 0, float thickness = 1.0f);   // a: upper-left, b: lower-right (== upper-left + size)
+    IMGUI_API void  AddRectFilled(const glm::vec2& p_min, const glm::vec2& p_max, ImU32 col, float rounding = 0.0f, ImDrawFlags flags = 0);                     // a: upper-left, b: lower-right (== upper-left + size)
+    IMGUI_API void  AddRectFilledMultiColor(const glm::vec2& p_min, const glm::vec2& p_max, ImU32 col_upr_left, ImU32 col_upr_right, ImU32 col_bot_right, ImU32 col_bot_left);
+    IMGUI_API void  AddQuad(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, const glm::vec2& p4, ImU32 col, float thickness = 1.0f);
+    IMGUI_API void  AddQuadFilled(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, const glm::vec2& p4, ImU32 col);
+    IMGUI_API void  AddTriangle(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, ImU32 col, float thickness = 1.0f);
+    IMGUI_API void  AddTriangleFilled(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, ImU32 col);
+    IMGUI_API void  AddCircle(const glm::vec2& center, float radius, ImU32 col, int num_segments = 0, float thickness = 1.0f);
+    IMGUI_API void  AddCircleFilled(const glm::vec2& center, float radius, ImU32 col, int num_segments = 0);
+    IMGUI_API void  AddNgon(const glm::vec2& center, float radius, ImU32 col, int num_segments, float thickness = 1.0f);
+    IMGUI_API void  AddNgonFilled(const glm::vec2& center, float radius, ImU32 col, int num_segments);
+    IMGUI_API void  AddEllipse(const glm::vec2& center, const glm::vec2& radius, ImU32 col, float rot = 0.0f, int num_segments = 0, float thickness = 1.0f);
+    IMGUI_API void  AddEllipseFilled(const glm::vec2& center, const glm::vec2& radius, ImU32 col, float rot = 0.0f, int num_segments = 0);
+    IMGUI_API void  AddText(const glm::vec2& pos, ImU32 col, const char* text_begin, const char* text_end = NULL);
+    IMGUI_API void  AddText(ImFont* font, float font_size, const glm::vec2& pos, ImU32 col, const char* text_begin, const char* text_end = NULL, float wrap_width = 0.0f, const glm::vec4* cpu_fine_clip_rect = NULL);
+    IMGUI_API void  AddBezierCubic(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, const glm::vec2& p4, ImU32 col, float thickness, int num_segments = 0); // Cubic Bezier (4 control points)
+    IMGUI_API void  AddBezierQuadratic(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, ImU32 col, float thickness, int num_segments = 0);               // Quadratic Bezier (3 control points)
 
     // General polygon
     // - Only simple polygons are supported by filling functions (no self-intersections, no holes).
     // - Concave polygon fill is more expensive than convex one: it has O(N^2) complexity. Provided as a convenience for the user but not used by the main library.
-    IMGUI_API void  AddPolyline(const ImVec2* points, int num_points, ImU32 col, ImDrawFlags flags, float thickness);
-    IMGUI_API void  AddConvexPolyFilled(const ImVec2* points, int num_points, ImU32 col);
-    IMGUI_API void  AddConcavePolyFilled(const ImVec2* points, int num_points, ImU32 col);
+    IMGUI_API void  AddPolyline(const glm::vec2* points, int num_points, ImU32 col, ImDrawFlags flags, float thickness);
+    IMGUI_API void  AddConvexPolyFilled(const glm::vec2* points, int num_points, ImU32 col);
+    IMGUI_API void  AddConcavePolyFilled(const glm::vec2* points, int num_points, ImU32 col);
 
     // Image primitives
     // - Read FAQ to understand what ImTextureID/ImTextureRef are.
     // - "p_min" and "p_max" represent the upper-left and lower-right corners of the rectangle.
     // - "uv_min" and "uv_max" represent the normalized texture coordinates to use for those corners. Using (0,0)->(1,1) texture coordinates will generally display the entire texture.
-    IMGUI_API void  AddImage(ImTextureRef tex_ref, const ImVec2& p_min, const ImVec2& p_max, const ImVec2& uv_min = ImVec2(0, 0), const ImVec2& uv_max = ImVec2(1, 1), ImU32 col = IM_COL32_WHITE);
-    IMGUI_API void  AddImageQuad(ImTextureRef tex_ref, const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, const ImVec2& p4, const ImVec2& uv1 = ImVec2(0, 0), const ImVec2& uv2 = ImVec2(1, 0), const ImVec2& uv3 = ImVec2(1, 1), const ImVec2& uv4 = ImVec2(0, 1), ImU32 col = IM_COL32_WHITE);
-    IMGUI_API void  AddImageRounded(ImTextureRef tex_ref, const ImVec2& p_min, const ImVec2& p_max, const ImVec2& uv_min, const ImVec2& uv_max, ImU32 col, float rounding, ImDrawFlags flags = 0);
+    IMGUI_API void  AddImage(ImTextureRef tex_ref, const glm::vec2& p_min, const glm::vec2& p_max, const glm::vec2& uv_min = glm::vec2(0, 0), const glm::vec2& uv_max = glm::vec2(1, 1), ImU32 col = IM_COL32_WHITE);
+    IMGUI_API void  AddImageQuad(ImTextureRef tex_ref, const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, const glm::vec2& p4, const glm::vec2& uv1 = glm::vec2(0, 0), const glm::vec2& uv2 = glm::vec2(1, 0), const glm::vec2& uv3 = glm::vec2(1, 1), const glm::vec2& uv4 = glm::vec2(0, 1), ImU32 col = IM_COL32_WHITE);
+    IMGUI_API void  AddImageRounded(ImTextureRef tex_ref, const glm::vec2& p_min, const glm::vec2& p_max, const glm::vec2& uv_min, const glm::vec2& uv_max, ImU32 col, float rounding, ImDrawFlags flags = 0);
 
     // Stateful path API, add points then finish with PathFillConvex() or PathStroke()
     // - Important: filled shapes must always use clockwise winding order! The anti-aliasing fringe depends on it. Counter-clockwise shapes will have "inward" anti-aliasing.
     //   so e.g. 'PathArcTo(center, radius, PI * -0.5f, PI)' is ok, whereas 'PathArcTo(center, radius, PI, PI * -0.5f)' won't have correct anti-aliasing when followed by PathFillConvex().
     inline    void  PathClear()                                                 { _Path.Size = 0; }
-    inline    void  PathLineTo(const ImVec2& pos)                               { _Path.push_back(pos); }
-    inline    void  PathLineToMergeDuplicate(const ImVec2& pos)                 { if (_Path.Size == 0 || memcmp(&_Path.Data[_Path.Size - 1], &pos, 8) != 0) _Path.push_back(pos); }
+    inline    void  PathLineTo(const glm::vec2& pos)                               { _Path.push_back(pos); }
+    inline    void  PathLineToMergeDuplicate(const glm::vec2& pos)                 { if (_Path.Size == 0 || memcmp(&_Path.Data[_Path.Size - 1], &pos, 8) != 0) _Path.push_back(pos); }
     inline    void  PathFillConvex(ImU32 col)                                   { AddConvexPolyFilled(_Path.Data, _Path.Size, col); _Path.Size = 0; }
     inline    void  PathFillConcave(ImU32 col)                                  { AddConcavePolyFilled(_Path.Data, _Path.Size, col); _Path.Size = 0; }
     inline    void  PathStroke(ImU32 col, ImDrawFlags flags = 0, float thickness = 1.0f) { AddPolyline(_Path.Data, _Path.Size, col, flags, thickness); _Path.Size = 0; }
-    IMGUI_API void  PathArcTo(const ImVec2& center, float radius, float a_min, float a_max, int num_segments = 0);
-    IMGUI_API void  PathArcToFast(const ImVec2& center, float radius, int a_min_of_12, int a_max_of_12);                // Use precomputed angles for a 12 steps circle
-    IMGUI_API void  PathEllipticalArcTo(const ImVec2& center, const ImVec2& radius, float rot, float a_min, float a_max, int num_segments = 0); // Ellipse
-    IMGUI_API void  PathBezierCubicCurveTo(const ImVec2& p2, const ImVec2& p3, const ImVec2& p4, int num_segments = 0); // Cubic Bezier (4 control points)
-    IMGUI_API void  PathBezierQuadraticCurveTo(const ImVec2& p2, const ImVec2& p3, int num_segments = 0);               // Quadratic Bezier (3 control points)
-    IMGUI_API void  PathRect(const ImVec2& rect_min, const ImVec2& rect_max, float rounding = 0.0f, ImDrawFlags flags = 0);
+    IMGUI_API void  PathArcTo(const glm::vec2& center, float radius, float a_min, float a_max, int num_segments = 0);
+    IMGUI_API void  PathArcToFast(const glm::vec2& center, float radius, int a_min_of_12, int a_max_of_12);                // Use precomputed angles for a 12 steps circle
+    IMGUI_API void  PathEllipticalArcTo(const glm::vec2& center, const glm::vec2& radius, float rot, float a_min, float a_max, int num_segments = 0); // Ellipse
+    IMGUI_API void  PathBezierCubicCurveTo(const glm::vec2& p2, const glm::vec2& p3, const glm::vec2& p4, int num_segments = 0); // Cubic Bezier (4 control points)
+    IMGUI_API void  PathBezierQuadraticCurveTo(const glm::vec2& p2, const glm::vec2& p3, int num_segments = 0);               // Quadratic Bezier (3 control points)
+    IMGUI_API void  PathRect(const glm::vec2& rect_min, const glm::vec2& rect_max, float rounding = 0.0f, ImDrawFlags flags = 0);
 
     // Advanced: Draw Callbacks
     // - May be used to alter render state (change sampler, blending, current shader). May be used to emit custom rendering commands (difficult to do correctly, but possible).
@@ -3453,23 +3428,23 @@ struct ImDrawList
     // - All primitives needs to be reserved via PrimReserve() beforehand.
     IMGUI_API void  PrimReserve(int idx_count, int vtx_count);
     IMGUI_API void  PrimUnreserve(int idx_count, int vtx_count);
-    IMGUI_API void  PrimRect(const ImVec2& a, const ImVec2& b, ImU32 col);      // Axis aligned rectangle (composed of two triangles)
-    IMGUI_API void  PrimRectUV(const ImVec2& a, const ImVec2& b, const ImVec2& uv_a, const ImVec2& uv_b, ImU32 col);
-    IMGUI_API void  PrimQuadUV(const ImVec2& a, const ImVec2& b, const ImVec2& c, const ImVec2& d, const ImVec2& uv_a, const ImVec2& uv_b, const ImVec2& uv_c, const ImVec2& uv_d, ImU32 col);
-    inline    void  PrimWriteVtx(const ImVec2& pos, const ImVec2& uv, ImU32 col)    { _VtxWritePtr->pos = pos; _VtxWritePtr->uv = uv; _VtxWritePtr->col = col; _VtxWritePtr++; _VtxCurrentIdx++; }
+    IMGUI_API void  PrimRect(const glm::vec2& a, const glm::vec2& b, ImU32 col);      // Axis aligned rectangle (composed of two triangles)
+    IMGUI_API void  PrimRectUV(const glm::vec2& a, const glm::vec2& b, const glm::vec2& uv_a, const glm::vec2& uv_b, ImU32 col);
+    IMGUI_API void  PrimQuadUV(const glm::vec2& a, const glm::vec2& b, const glm::vec2& c, const glm::vec2& d, const glm::vec2& uv_a, const glm::vec2& uv_b, const glm::vec2& uv_c, const glm::vec2& uv_d, ImU32 col);
+    inline    void  PrimWriteVtx(const glm::vec2& pos, const glm::vec2& uv, ImU32 col)    { _VtxWritePtr->pos = pos; _VtxWritePtr->uv = uv; _VtxWritePtr->col = col; _VtxWritePtr++; _VtxCurrentIdx++; }
     inline    void  PrimWriteIdx(ImDrawIdx idx)                                     { *_IdxWritePtr = idx; _IdxWritePtr++; }
-    inline    void  PrimVtx(const ImVec2& pos, const ImVec2& uv, ImU32 col)         { PrimWriteIdx((ImDrawIdx)_VtxCurrentIdx); PrimWriteVtx(pos, uv, col); } // Write vertex with unique index
+    inline    void  PrimVtx(const glm::vec2& pos, const glm::vec2& uv, ImU32 col)         { PrimWriteIdx((ImDrawIdx)_VtxCurrentIdx); PrimWriteVtx(pos, uv, col); } // Write vertex with unique index
 
     // Obsolete names
 #ifndef IMGUI_DISABLE_OBSOLETE_FUNCTIONS
     inline    void  PushTextureID(ImTextureRef tex_ref) { PushTexture(tex_ref); }   // RENAMED in 1.92.x
     inline    void  PopTextureID()                      { PopTexture(); }           // RENAMED in 1.92.x
 #endif
-    //inline  void  AddEllipse(const ImVec2& center, float radius_x, float radius_y, ImU32 col, float rot = 0.0f, int num_segments = 0, float thickness = 1.0f) { AddEllipse(center, ImVec2(radius_x, radius_y), col, rot, num_segments, thickness); } // OBSOLETED in 1.90.5 (Mar 2024)
-    //inline  void  AddEllipseFilled(const ImVec2& center, float radius_x, float radius_y, ImU32 col, float rot = 0.0f, int num_segments = 0) { AddEllipseFilled(center, ImVec2(radius_x, radius_y), col, rot, num_segments); }                        // OBSOLETED in 1.90.5 (Mar 2024)
-    //inline  void  PathEllipticalArcTo(const ImVec2& center, float radius_x, float radius_y, float rot, float a_min, float a_max, int num_segments = 0) { PathEllipticalArcTo(center, ImVec2(radius_x, radius_y), rot, a_min, a_max, num_segments); } // OBSOLETED in 1.90.5 (Mar 2024)
-    //inline  void  AddBezierCurve(const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, const ImVec2& p4, ImU32 col, float thickness, int num_segments = 0) { AddBezierCubic(p1, p2, p3, p4, col, thickness, num_segments); }                         // OBSOLETED in 1.80 (Jan 2021)
-    //inline  void  PathBezierCurveTo(const ImVec2& p2, const ImVec2& p3, const ImVec2& p4, int num_segments = 0) { PathBezierCubicCurveTo(p2, p3, p4, num_segments); }                                                                                // OBSOLETED in 1.80 (Jan 2021)
+    //inline  void  AddEllipse(const glm::vec2& center, float radius_x, float radius_y, ImU32 col, float rot = 0.0f, int num_segments = 0, float thickness = 1.0f) { AddEllipse(center, glm::vec2(radius_x, radius_y), col, rot, num_segments, thickness); } // OBSOLETED in 1.90.5 (Mar 2024)
+    //inline  void  AddEllipseFilled(const glm::vec2& center, float radius_x, float radius_y, ImU32 col, float rot = 0.0f, int num_segments = 0) { AddEllipseFilled(center, glm::vec2(radius_x, radius_y), col, rot, num_segments); }                        // OBSOLETED in 1.90.5 (Mar 2024)
+    //inline  void  PathEllipticalArcTo(const glm::vec2& center, float radius_x, float radius_y, float rot, float a_min, float a_max, int num_segments = 0) { PathEllipticalArcTo(center, glm::vec2(radius_x, radius_y), rot, a_min, a_max, num_segments); } // OBSOLETED in 1.90.5 (Mar 2024)
+    //inline  void  AddBezierCurve(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, const glm::vec2& p4, ImU32 col, float thickness, int num_segments = 0) { AddBezierCubic(p1, p2, p3, p4, col, thickness, num_segments); }                         // OBSOLETED in 1.80 (Jan 2021)
+    //inline  void  PathBezierCurveTo(const glm::vec2& p2, const glm::vec2& p3, const glm::vec2& p4, int num_segments = 0) { PathBezierCubicCurveTo(p2, p3, p4, num_segments); }                                                                                // OBSOLETED in 1.80 (Jan 2021)
 
     // [Internal helpers]
     IMGUI_API void  _SetDrawListSharedData(ImDrawListSharedData* data);
@@ -3482,8 +3457,8 @@ struct ImDrawList
     IMGUI_API void  _OnChangedVtxOffset();
     IMGUI_API void  _SetTexture(ImTextureRef tex_ref);
     IMGUI_API int   _CalcCircleAutoSegmentCount(float radius) const;
-    IMGUI_API void  _PathArcToFastEx(const ImVec2& center, float radius, int a_min_sample, int a_max_sample, int a_step);
-    IMGUI_API void  _PathArcToN(const ImVec2& center, float radius, float a_min, float a_max, int num_segments);
+    IMGUI_API void  _PathArcToFastEx(const glm::vec2& center, float radius, int a_min_sample, int a_max_sample, int a_step);
+    IMGUI_API void  _PathArcToN(const glm::vec2& center, float radius, float a_min, float a_max, int num_segments);
 };
 
 // All draw data to render a Dear ImGui frame
@@ -3496,9 +3471,9 @@ struct ImDrawData
     int                 TotalIdxCount;      // For convenience, sum of all ImDrawList's IdxBuffer.Size
     int                 TotalVtxCount;      // For convenience, sum of all ImDrawList's VtxBuffer.Size
     ImVector<ImDrawList*> CmdLists;         // Array of ImDrawList* to render. The ImDrawLists are owned by ImGuiContext and only pointed to from here.
-    ImVec2              DisplayPos;         // Top-left position of the viewport to render (== top-left of the orthogonal projection matrix to use) (== GetMainViewport()->Pos for the main viewport, == (0.0) in most single-viewport applications)
-    ImVec2              DisplaySize;        // Size of the viewport to render (== GetMainViewport()->Size for the main viewport, == io.DisplaySize in most single-viewport applications)
-    ImVec2              FramebufferScale;   // Amount of pixels for each unit of DisplaySize. Copied from viewport->FramebufferScale (== io.DisplayFramebufferScale for main viewport). Generally (1,1) on normal display, (2,2) on OSX with Retina display.
+    glm::vec2              DisplayPos;         // Top-left position of the viewport to render (== top-left of the orthogonal projection matrix to use) (== GetMainViewport()->Pos for the main viewport, == (0.0) in most single-viewport applications)
+    glm::vec2              DisplaySize;        // Size of the viewport to render (== GetMainViewport()->Size for the main viewport, == io.DisplaySize in most single-viewport applications)
+    glm::vec2              FramebufferScale;   // Amount of pixels for each unit of DisplaySize. Copied from viewport->FramebufferScale (== io.DisplayFramebufferScale for main viewport). Generally (1,1) on normal display, (2,2) on OSX with Retina display.
     ImGuiViewport*      OwnerViewport;      // Viewport carrying the ImDrawData instance, might be of use to the renderer (generally not).
     ImVector<ImTextureData*>* Textures;     // List of textures to update. Most of the times the list is shared by all ImDrawData, has only 1 texture and it doesn't need any update. This almost always points to ImGui::GetPlatformIO().Textures[]. May be overriden or set to NULL if you want to manually update textures.
 
@@ -3507,7 +3482,7 @@ struct ImDrawData
     IMGUI_API void  Clear();
     IMGUI_API void  AddDrawList(ImDrawList* draw_list);     // Helper to add an external draw list into an existing ImDrawData.
     IMGUI_API void  DeIndexAllBuffers();                    // Helper to convert all buffers from indexed to non-indexed, in case you cannot render indexed. Note: this is slow and most likely a waste of resources. Always prefer indexed rendering!
-    IMGUI_API void  ScaleClipRects(const ImVec2& fb_scale); // Helper to scale the ClipRect field of each ImDrawCmd. Use if your final output buffer is at a different scale than Dear ImGui expects, or if there is a difference between your window resolution and framebuffer resolution.
+    IMGUI_API void  ScaleClipRects(const glm::vec2& fb_scale); // Helper to scale the ClipRect field of each ImDrawCmd. Use if your final output buffer is at a different scale than Dear ImGui expects, or if there is a difference between your window resolution and framebuffer resolution.
 };
 
 //-----------------------------------------------------------------------------
@@ -3614,8 +3589,8 @@ struct ImFontConfig
     float           SizePixels;             //          // Size in pixels for rasterizer (more or less maps to the resulting font height).
     const ImWchar*  GlyphRanges;            // NULL     // *LEGACY* THE ARRAY DATA NEEDS TO PERSIST AS LONG AS THE FONT IS ALIVE. Pointer to a user-provided list of Unicode range (2 value per range, values are inclusive, zero-terminated list).
     const ImWchar*  GlyphExcludeRanges;     // NULL     // Pointer to a small user-provided list of Unicode ranges (2 value per range, values are inclusive, zero-terminated list). This is very close to GlyphRanges[] but designed to exclude ranges from a font source, when merging fonts with overlapping glyphs. Use "Input Glyphs Overlap Detection Tool" to find about your overlapping ranges.
-    //ImVec2        GlyphExtraSpacing;      // 0, 0     // (REMOVED AT IT SEEMS LARGELY OBSOLETE. PLEASE REPORT IF YOU WERE USING THIS). Extra spacing (in pixels) between glyphs when rendered: essentially add to glyph->AdvanceX. Only X axis is supported for now.
-    ImVec2          GlyphOffset;            // 0, 0     // Offset (in pixels) all glyphs from this font input. Absolute value for default size, other sizes will scale this value.
+    //glm::vec2        GlyphExtraSpacing;      // 0, 0     // (REMOVED AT IT SEEMS LARGELY OBSOLETE. PLEASE REPORT IF YOU WERE USING THIS). Extra spacing (in pixels) between glyphs when rendered: essentially add to glyph->AdvanceX. Only X axis is supported for now.
+    glm::vec2          GlyphOffset;            // 0, 0     // Offset (in pixels) all glyphs from this font input. Absolute value for default size, other sizes will scale this value.
     float           GlyphMinAdvanceX;       // 0        // Minimum AdvanceX for glyphs, set Min to align font icons, set both Min/Max to enforce mono-space font. Absolute value for default size, other sizes will scale this value.
     float           GlyphMaxAdvanceX;       // FLT_MAX  // Maximum AdvanceX for glyphs
     float           GlyphExtraAdvanceX;     // 0        // Extra spacing (in pixels) between glyphs. Please contact us if you are using this. // FIXME-NEWATLAS: Intentionally unscaled
@@ -3678,7 +3653,7 @@ struct ImFontAtlasRect
 {
     unsigned short  x, y;               // Position (in current texture)
     unsigned short  w, h;               // Size
-    ImVec2          uv0, uv1;           // UV coordinates (in current texture)
+    glm::vec2          uv0, uv1;           // UV coordinates (in current texture)
 
     ImFontAtlasRect() { memset(this, 0, sizeof(*this)); }
 };
@@ -3825,11 +3800,11 @@ struct ImFontAtlas
     bool                        RendererHasTextures;// Copy of (BackendFlags & ImGuiBackendFlags_RendererHasTextures) from supporting context.
     bool                        TexIsBuilt;         // Set when texture was built matching current font input. Mostly useful for legacy IsBuilt() call.
     bool                        TexPixelsUseColors; // Tell whether our texture data is known to use colors (rather than just alpha channel), in order to help backend select a format or conversion process.
-    ImVec2                      TexUvScale;         // = (1.0f/TexData->TexWidth, 1.0f/TexData->TexHeight). May change as new texture gets created.
-    ImVec2                      TexUvWhitePixel;    // Texture coordinates to a white pixel. May change as new texture gets created.
+    glm::vec2                      TexUvScale;         // = (1.0f/TexData->TexWidth, 1.0f/TexData->TexHeight). May change as new texture gets created.
+    glm::vec2                      TexUvWhitePixel;    // Texture coordinates to a white pixel. May change as new texture gets created.
     ImVector<ImFont*>           Fonts;              // Hold all the fonts returned by AddFont*. Fonts[0] is the default font upon calling ImGui::NewFrame(), use ImGui::PushFont()/PopFont() to change the current font.
     ImVector<ImFontConfig>      Sources;            // Source/configuration data
-    ImVec4                      TexUvLines[IM_DRAWLIST_TEX_LINES_WIDTH_MAX + 1];  // UVs for baked anti-aliased lines
+    glm::vec4                      TexUvLines[IM_DRAWLIST_TEX_LINES_WIDTH_MAX + 1];  // UVs for baked anti-aliased lines
     int                         TexNextUniqueID;    // Next value to be stored in TexData->UniqueID
     int                         FontNextUniqueID;   // Next value to be stored in ImFont->FontID
     ImVector<ImDrawListSharedData*> DrawListSharedDatas; // List of users for this atlas. Typically one per Dear ImGui context.
@@ -3847,9 +3822,9 @@ struct ImFontAtlas
     ImFontAtlasRect             TempRect;           // For old GetCustomRectByIndex() API
     inline ImFontAtlasRectId    AddCustomRectRegular(int w, int h)                                                          { return AddCustomRect(w, h); }                             // RENAMED in 1.92.X
     inline const ImFontAtlasRect* GetCustomRectByIndex(ImFontAtlasRectId id)                                                { return GetCustomRect(id, &TempRect) ? &TempRect : NULL; } // OBSOLETED in 1.92.X
-    inline void                 CalcCustomRectUV(const ImFontAtlasRect* r, ImVec2* out_uv_min, ImVec2* out_uv_max) const    { *out_uv_min = r->uv0; *out_uv_max = r->uv1; }             // OBSOLETED in 1.92.X
-    IMGUI_API ImFontAtlasRectId AddCustomRectFontGlyph(ImFont* font, ImWchar codepoint, int w, int h, float advance_x, const ImVec2& offset = ImVec2(0, 0));                            // OBSOLETED in 1.92.X: Use custom ImFontLoader in ImFontConfig
-    IMGUI_API ImFontAtlasRectId AddCustomRectFontGlyphForSize(ImFont* font, float font_size, ImWchar codepoint, int w, int h, float advance_x, const ImVec2& offset = ImVec2(0, 0));    // ADDED AND OBSOLETED in 1.92.X
+    inline void                 CalcCustomRectUV(const ImFontAtlasRect* r, glm::vec2* out_uv_min, glm::vec2* out_uv_max) const    { *out_uv_min = r->uv0; *out_uv_max = r->uv1; }             // OBSOLETED in 1.92.X
+    IMGUI_API ImFontAtlasRectId AddCustomRectFontGlyph(ImFont* font, ImWchar codepoint, int w, int h, float advance_x, const glm::vec2& offset = glm::vec2(0, 0));                            // OBSOLETED in 1.92.X: Use custom ImFontLoader in ImFontConfig
+    IMGUI_API ImFontAtlasRectId AddCustomRectFontGlyphForSize(ImFont* font, float font_size, ImWchar codepoint, int w, int h, float advance_x, const glm::vec2& offset = glm::vec2(0, 0));    // ADDED AND OBSOLETED in 1.92.X
 #endif
     //unsigned int                      FontBuilderFlags;        // OBSOLETED in 1.92.X: Renamed to FontLoaderFlags.
     //int                               TexDesiredWidth;         // OBSOLETED in 1.92.X: Force texture width before calling Build(). Must be a power-of-two. If have many glyphs your graphics API have texture size restrictions you may want to increase texture width to decrease height)
@@ -3941,10 +3916,10 @@ struct ImFont
     // 'max_width' stops rendering after a certain width (could be turned into a 2d size). FLT_MAX to disable.
     // 'wrap_width' enable automatic word-wrapping across multiple lines to fit into given width. 0.0f to disable.
     IMGUI_API ImFontBaked*      GetFontBaked(float font_size, float density = -1.0f);  // Get or create baked data for given size
-    IMGUI_API ImVec2            CalcTextSizeA(float size, float max_width, float wrap_width, const char* text_begin, const char* text_end = NULL, const char** remaining = NULL); // utf8
+    IMGUI_API glm::vec2            CalcTextSizeA(float size, float max_width, float wrap_width, const char* text_begin, const char* text_end = NULL, const char** remaining = NULL); // utf8
     IMGUI_API const char*       CalcWordWrapPosition(float size, const char* text, const char* text_end, float wrap_width);
-    IMGUI_API void              RenderChar(ImDrawList* draw_list, float size, const ImVec2& pos, ImU32 col, ImWchar c, const ImVec4* cpu_fine_clip = NULL);
-    IMGUI_API void              RenderText(ImDrawList* draw_list, float size, const ImVec2& pos, ImU32 col, const ImVec4& clip_rect, const char* text_begin, const char* text_end, float wrap_width = 0.0f, bool cpu_fine_clip = false);
+    IMGUI_API void              RenderChar(ImDrawList* draw_list, float size, const glm::vec2& pos, ImU32 col, ImWchar c, const glm::vec4* cpu_fine_clip = NULL);
+    IMGUI_API void              RenderText(ImDrawList* draw_list, float size, const glm::vec2& pos, ImU32 col, const glm::vec4& clip_rect, const char* text_begin, const char* text_end, float wrap_width = 0.0f, bool cpu_fine_clip = false);
 #ifndef IMGUI_DISABLE_OBSOLETE_FUNCTIONS
     inline const char*          CalcWordWrapPositionA(float scale, const char* text, const char* text_end, float wrap_width) { return CalcWordWrapPosition(LegacySize * scale, text, text_end, wrap_width); }
 #endif
@@ -4010,11 +3985,11 @@ struct ImGuiViewport
 {
     ImGuiID             ID;                     // Unique identifier for the viewport
     ImGuiViewportFlags  Flags;                  // See ImGuiViewportFlags_
-    ImVec2              Pos;                    // Main Area: Position of the viewport (Dear ImGui coordinates are the same as OS desktop/native coordinates)
-    ImVec2              Size;                   // Main Area: Size of the viewport.
-    ImVec2              FramebufferScale;       // Density of the viewport for Retina display (always 1,1 on Windows, may be 2,2 etc on macOS/iOS). This will affect font rasterizer density.
-    ImVec2              WorkPos;                // Work Area: Position of the viewport minus task bars, menus bars, status bars (>= Pos)
-    ImVec2              WorkSize;               // Work Area: Size of the viewport minus task bars, menu bars, status bars (<= Size)
+    glm::vec2              Pos;                    // Main Area: Position of the viewport (Dear ImGui coordinates are the same as OS desktop/native coordinates)
+    glm::vec2              Size;                   // Main Area: Size of the viewport.
+    glm::vec2              FramebufferScale;       // Density of the viewport for Retina display (always 1,1 on Windows, may be 2,2 etc on macOS/iOS). This will affect font rasterizer density.
+    glm::vec2              WorkPos;                // Work Area: Position of the viewport minus task bars, menus bars, status bars (>= Pos)
+    glm::vec2              WorkSize;               // Work Area: Size of the viewport minus task bars, menu bars, status bars (<= Size)
     float               DpiScale;               // 1.0f = 96 DPI = No extra scale.
     ImGuiID             ParentViewportId;       // (Advanced) 0: no parent. Instruct the platform backend to setup a parent/child relationship between platform windows.
     ImDrawData*         DrawData;               // The ImDrawData corresponding to this viewport. Valid after Render() and until the next call to NewFrame().
@@ -4037,8 +4012,8 @@ struct ImGuiViewport
     ~ImGuiViewport()    { IM_ASSERT(PlatformUserData == NULL && RendererUserData == NULL); }
 
     // Helpers
-    ImVec2              GetCenter() const       { return ImVec2(Pos.x + Size.x * 0.5f, Pos.y + Size.y * 0.5f); }
-    ImVec2              GetWorkCenter() const   { return ImVec2(WorkPos.x + WorkSize.x * 0.5f, WorkPos.y + WorkSize.y * 0.5f); }
+    glm::vec2              GetCenter() const       { return glm::vec2(Pos.x + Size.x * 0.5f, Pos.y + Size.y * 0.5f); }
+    glm::vec2              GetWorkCenter() const   { return glm::vec2(WorkPos.x + WorkSize.x * 0.5f, WorkPos.y + WorkSize.y * 0.5f); }
 };
 
 //-----------------------------------------------------------------------------
@@ -4057,7 +4032,7 @@ struct ImGuiViewport
 //
 // About the coordinates system:
 // - When multi-viewports are enabled, all Dear ImGui coordinates become absolute coordinates (same as OS coordinates!)
-// - So e.g. ImGui::SetNextWindowPos(ImVec2(0,0)) will position a window relative to your primary monitor!
+// - So e.g. ImGui::SetNextWindowPos(glm::vec2(0,0)) will position a window relative to your primary monitor!
 // - If you want to position windows relative to your main application viewport, use ImGui::GetMainViewport()->Pos as a base position.
 //
 // Steps to use multi-viewports in your application, when using a default backend from the examples/ folder:
@@ -4152,11 +4127,11 @@ struct ImGuiPlatformIO
     void    (*Platform_CreateWindow)(ImGuiViewport* vp);                    // . . U . .  // Create a new platform window for the given viewport
     void    (*Platform_DestroyWindow)(ImGuiViewport* vp);                   // N . U . D  //
     void    (*Platform_ShowWindow)(ImGuiViewport* vp);                      // . . U . .  // Newly created windows are initially hidden so SetWindowPos/Size/Title can be called on them before showing the window
-    void    (*Platform_SetWindowPos)(ImGuiViewport* vp, ImVec2 pos);        // . . U . .  // Set platform window position (given the upper-left corner of client area)
-    ImVec2  (*Platform_GetWindowPos)(ImGuiViewport* vp);                    // N . . . .  //
-    void    (*Platform_SetWindowSize)(ImGuiViewport* vp, ImVec2 size);      // . . U . .  // Set platform window client area size (ignoring OS decorations such as OS title bar etc.)
-    ImVec2  (*Platform_GetWindowSize)(ImGuiViewport* vp);                   // N . . . .  // Get platform window client area size
-    ImVec2  (*Platform_GetWindowFramebufferScale)(ImGuiViewport* vp);       // N . . . .  // Return viewport density. Always 1,1 on Windows, often 2,2 on Retina display on macOS/iOS. MUST BE INTEGER VALUES.
+    void    (*Platform_SetWindowPos)(ImGuiViewport* vp, glm::vec2 pos);        // . . U . .  // Set platform window position (given the upper-left corner of client area)
+    glm::vec2  (*Platform_GetWindowPos)(ImGuiViewport* vp);                    // N . . . .  //
+    void    (*Platform_SetWindowSize)(ImGuiViewport* vp, glm::vec2 size);      // . . U . .  // Set platform window client area size (ignoring OS decorations such as OS title bar etc.)
+    glm::vec2  (*Platform_GetWindowSize)(ImGuiViewport* vp);                   // N . . . .  // Get platform window client area size
+    glm::vec2  (*Platform_GetWindowFramebufferScale)(ImGuiViewport* vp);       // N . . . .  // Return viewport density. Always 1,1 on Windows, often 2,2 on Retina display on macOS/iOS. MUST BE INTEGER VALUES.
     void    (*Platform_SetWindowFocus)(ImGuiViewport* vp);                  // N . . . .  // Move window to front and set input focus
     bool    (*Platform_GetWindowFocus)(ImGuiViewport* vp);                  // . . U . .  //
     bool    (*Platform_GetWindowMinimized)(ImGuiViewport* vp);              // N . . . .  // Get platform window minimized state. When minimized, we generally won't attempt to get/set size and contents will be culled more easily
@@ -4167,13 +4142,13 @@ struct ImGuiPlatformIO
     void    (*Platform_SwapBuffers)(ImGuiViewport* vp, void* render_arg);   // . . . R .  // (Optional) Call Present/SwapBuffers (platform side! This is often unused!). 'render_arg' is the value passed to RenderPlatformWindowsDefault().
     float   (*Platform_GetWindowDpiScale)(ImGuiViewport* vp);               // N . . . .  // (Optional) [BETA] FIXME-DPI: DPI handling: Return DPI scale for this viewport. 1.0f = 96 DPI.
     void    (*Platform_OnChangedViewport)(ImGuiViewport* vp);               // . F . . .  // (Optional) [BETA] FIXME-DPI: DPI handling: Called during Begin() every time the viewport we are outputting into changes, so backend has a chance to swap fonts to adjust style.
-    ImVec4  (*Platform_GetWindowWorkAreaInsets)(ImGuiViewport* vp);         // N . . . .  // (Optional) [BETA] Get initial work area inset for the viewport (won't be covered by main menu bar, dockspace over viewport etc.). Default to (0,0),(0,0). 'safeAreaInsets' in iOS land, 'DisplayCutout' in Android land.
+    glm::vec4  (*Platform_GetWindowWorkAreaInsets)(ImGuiViewport* vp);         // N . . . .  // (Optional) [BETA] Get initial work area inset for the viewport (won't be covered by main menu bar, dockspace over viewport etc.). Default to (0,0),(0,0). 'safeAreaInsets' in iOS land, 'DisplayCutout' in Android land.
     int     (*Platform_CreateVkSurface)(ImGuiViewport* vp, ImU64 vk_inst, const void* vk_allocators, ImU64* out_vk_surface); // (Optional) For a Vulkan Renderer to call into Platform code (since the surface creation needs to tie them both).
 
     // Renderer Backend functions (e.g. DirectX, OpenGL, Vulkan) ------------ Called by -----
     void    (*Renderer_CreateWindow)(ImGuiViewport* vp);                    // . . U . .  // Create swap chain, frame buffers etc. (called after Platform_CreateWindow)
     void    (*Renderer_DestroyWindow)(ImGuiViewport* vp);                   // N . U . D  // Destroy swap chain, frame buffers etc. (called before Platform_DestroyWindow)
-    void    (*Renderer_SetWindowSize)(ImGuiViewport* vp, ImVec2 size);      // . . U . .  // Resize swap chain, frame buffers etc. (called after Platform_SetWindowSize)
+    void    (*Renderer_SetWindowSize)(ImGuiViewport* vp, glm::vec2 size);      // . . U . .  // Resize swap chain, frame buffers etc. (called after Platform_SetWindowSize)
     void    (*Renderer_RenderWindow)(ImGuiViewport* vp, void* render_arg);  // . . . R .  // (Optional) Clear framebuffer, setup render target, then render the viewport->DrawData. 'render_arg' is the value passed to RenderPlatformWindowsDefault().
     void    (*Renderer_SwapBuffers)(ImGuiViewport* vp, void* render_arg);   // . . . R .  // (Optional) Call Present/SwapBuffers. 'render_arg' is the value passed to RenderPlatformWindowsDefault().
 
@@ -4199,11 +4174,11 @@ struct ImGuiPlatformIO
 // We use this information for multiple DPI support + clamping the position of popups and tooltips so they don't straddle multiple monitors.
 struct ImGuiPlatformMonitor
 {
-    ImVec2  MainPos, MainSize;      // Coordinates of the area displayed on this monitor (Min = upper left, Max = bottom right)
-    ImVec2  WorkPos, WorkSize;      // Coordinates without task bars / side bars / menu bars. Used to avoid positioning popups/tooltips inside this region. If you don't have this info, please copy the value for MainPos/MainSize.
+    glm::vec2  MainPos, MainSize;      // Coordinates of the area displayed on this monitor (Min = upper left, Max = bottom right)
+    glm::vec2  WorkPos, WorkSize;      // Coordinates without task bars / side bars / menu bars. Used to avoid positioning popups/tooltips inside this region. If you don't have this info, please copy the value for MainPos/MainSize.
     float   DpiScale;               // 1.0f = 96 DPI
     void*   PlatformHandle;         // Backend dependant data (e.g. HMONITOR, GLFWmonitor*, SDL Display Index, NSScreen*)
-    ImGuiPlatformMonitor()          { MainPos = MainSize = WorkPos = WorkSize = ImVec2(0, 0); DpiScale = 1.0f; PlatformHandle = NULL; }
+    ImGuiPlatformMonitor()          { MainPos = MainSize = WorkPos = WorkSize = glm::vec2(0, 0); DpiScale = 1.0f; PlatformHandle = NULL; }
 };
 
 // (Optional) Support for IME (Input Method Editor) via the platform_io.Platform_SetImeDataFn() function. Handler is called during EndFrame().
@@ -4211,7 +4186,7 @@ struct ImGuiPlatformImeData
 {
     bool    WantVisible;            // A widget wants the IME to be visible.
     bool    WantTextInput;          // A widget wants text input, not necessarily IME to be visible. This is automatically set to the upcoming value of io.WantTextInput.
-    ImVec2  InputPos;               // Position of input cursor (for IME).
+    glm::vec2  InputPos;               // Position of input cursor (for IME).
     float   InputLineHeight;        // Line height (for IME).
     ImGuiID ViewportId;             // ID of platform window/viewport.
 
@@ -4231,20 +4206,20 @@ namespace ImGui
     static inline void  PushFont(ImFont* font)                                  { PushFont(font, font ? font->LegacySize : 0.0f); }
     IMGUI_API void      SetWindowFontScale(float scale);                        // Set font scale factor for current window. Prefer using PushFont(NULL, style.FontSizeBase * factor) or use style.FontScaleMain to scale all windows.
     // OBSOLETED in 1.91.9 (from February 2025)
-    IMGUI_API void      Image(ImTextureRef tex_ref, const ImVec2& image_size, const ImVec2& uv0, const ImVec2& uv1, const ImVec4& tint_col, const ImVec4& border_col); // <-- 'border_col' was removed in favor of ImGuiCol_ImageBorder. If you use 'tint_col', use ImageWithBg() instead.
+    IMGUI_API void      Image(ImTextureRef tex_ref, const glm::vec2& image_size, const glm::vec2& uv0, const glm::vec2& uv1, const glm::vec4& tint_col, const glm::vec4& border_col); // <-- 'border_col' was removed in favor of ImGuiCol_ImageBorder. If you use 'tint_col', use ImageWithBg() instead.
     // OBSOLETED in 1.91.0 (from July 2024)
     static inline void  PushButtonRepeat(bool repeat)                           { PushItemFlag(ImGuiItemFlags_ButtonRepeat, repeat); }
     static inline void  PopButtonRepeat()                                       { PopItemFlag(); }
     static inline void  PushTabStop(bool tab_stop)                              { PushItemFlag(ImGuiItemFlags_NoTabStop, !tab_stop); }
     static inline void  PopTabStop()                                            { PopItemFlag(); }
-    IMGUI_API ImVec2    GetContentRegionMax();                                  // Content boundaries max (e.g. window boundaries including scrolling, or current column boundaries). You should never need this. Always use GetCursorScreenPos() and GetContentRegionAvail()!
-    IMGUI_API ImVec2    GetWindowContentRegionMin();                            // Content boundaries min for the window (roughly (0,0)-Scroll), in window-local coordinates. You should never need this. Always use GetCursorScreenPos() and GetContentRegionAvail()!
-    IMGUI_API ImVec2    GetWindowContentRegionMax();                            // Content boundaries max for the window (roughly (0,0)+Size-Scroll), in window-local coordinates. You should never need this. Always use GetCursorScreenPos() and GetContentRegionAvail()!
+    IMGUI_API glm::vec2    GetContentRegionMax();                                  // Content boundaries max (e.g. window boundaries including scrolling, or current column boundaries). You should never need this. Always use GetCursorScreenPos() and GetContentRegionAvail()!
+    IMGUI_API glm::vec2    GetWindowContentRegionMin();                            // Content boundaries min for the window (roughly (0,0)-Scroll), in window-local coordinates. You should never need this. Always use GetCursorScreenPos() and GetContentRegionAvail()!
+    IMGUI_API glm::vec2    GetWindowContentRegionMax();                            // Content boundaries max for the window (roughly (0,0)+Size-Scroll), in window-local coordinates. You should never need this. Always use GetCursorScreenPos() and GetContentRegionAvail()!
     // OBSOLETED in 1.90.0 (from September 2023)
-    static inline bool  BeginChildFrame(ImGuiID id, const ImVec2& size, ImGuiWindowFlags window_flags = 0)  { return BeginChild(id, size, ImGuiChildFlags_FrameStyle, window_flags); }
+    static inline bool  BeginChildFrame(ImGuiID id, const glm::vec2& size, ImGuiWindowFlags window_flags = 0)  { return BeginChild(id, size, ImGuiChildFlags_FrameStyle, window_flags); }
     static inline void  EndChildFrame()                                                                     { EndChild(); }
-    //static inline bool BeginChild(const char* str_id, const ImVec2& size_arg, bool borders, ImGuiWindowFlags window_flags){ return BeginChild(str_id, size_arg, borders ? ImGuiChildFlags_Borders : ImGuiChildFlags_None, window_flags); } // Unnecessary as true == ImGuiChildFlags_Borders
-    //static inline bool BeginChild(ImGuiID id, const ImVec2& size_arg, bool borders, ImGuiWindowFlags window_flags)        { return BeginChild(id, size_arg, borders ? ImGuiChildFlags_Borders : ImGuiChildFlags_None, window_flags);     } // Unnecessary as true == ImGuiChildFlags_Borders
+    //static inline bool BeginChild(const char* str_id, const glm::vec2& size_arg, bool borders, ImGuiWindowFlags window_flags){ return BeginChild(str_id, size_arg, borders ? ImGuiChildFlags_Borders : ImGuiChildFlags_None, window_flags); } // Unnecessary as true == ImGuiChildFlags_Borders
+    //static inline bool BeginChild(ImGuiID id, const glm::vec2& size_arg, bool borders, ImGuiWindowFlags window_flags)        { return BeginChild(id, size_arg, borders ? ImGuiChildFlags_Borders : ImGuiChildFlags_None, window_flags);     } // Unnecessary as true == ImGuiChildFlags_Borders
     static inline void  ShowStackToolWindow(bool* p_open = NULL)                { ShowIDStackToolWindow(p_open); }
     IMGUI_API bool      Combo(const char* label, int* current_item, bool (*old_callback)(void* user_data, int idx, const char** out_text), void* user_data, int items_count, int popup_max_height_in_items = -1);
     IMGUI_API bool      ListBox(const char* label, int* current_item, bool (*old_callback)(void* user_data, int idx, const char** out_text), void* user_data, int items_count, int height_in_items = -1);
@@ -4256,7 +4231,7 @@ namespace ImGui
     //static inline void  PushAllowKeyboardFocus(bool tab_stop)                                       { PushItemFlag(ImGuiItemFlags_NoTabStop, !tab_stop); }
     //static inline void  PopAllowKeyboardFocus()                                                     { PopItemFlag(); }
     //-- OBSOLETED in 1.89 (from August 2022)
-    //IMGUI_API bool      ImageButton(ImTextureID user_texture_id, const ImVec2& size, const ImVec2& uv0 = ImVec2(0, 0), const ImVec2& uv1 = ImVec2(1, 1), int frame_padding = -1, const ImVec4& bg_col = ImVec4(0, 0, 0, 0), const ImVec4& tint_col = ImVec4(1, 1, 1, 1)); // --> Use new ImageButton() signature (explicit item id, regular FramePadding). Refer to code in 1.91 if you want to grab a copy of this version.
+    //IMGUI_API bool      ImageButton(ImTextureID user_texture_id, const glm::vec2& size, const glm::vec2& uv0 = glm::vec2(0, 0), const glm::vec2& uv1 = glm::vec2(1, 1), int frame_padding = -1, const glm::vec4& bg_col = glm::vec4(0, 0, 0, 0), const glm::vec4& tint_col = glm::vec4(1, 1, 1, 1)); // --> Use new ImageButton() signature (explicit item id, regular FramePadding). Refer to code in 1.91 if you want to grab a copy of this version.
     //-- OBSOLETED in 1.88 (from May 2022)
     //static inline void  CaptureKeyboardFromApp(bool want_capture_keyboard = true)                   { SetNextFrameWantCaptureKeyboard(want_capture_keyboard); } // Renamed as name was misleading + removed default value.
     //static inline void  CaptureMouseFromApp(bool want_capture_mouse = true)                         { SetNextFrameWantCaptureMouse(want_capture_mouse); }       // Renamed as name was misleading + removed default value.
@@ -4268,8 +4243,8 @@ namespace ImGui
     //-- OBSOLETED in 1.85 (from August 2021)
     //static inline float GetWindowContentRegionWidth()                                               { return GetWindowContentRegionMax().x - GetWindowContentRegionMin().x; }
     //-- OBSOLETED in 1.81 (from February 2021)
-    //static inline bool  ListBoxHeader(const char* label, const ImVec2& size = ImVec2(0, 0))         { return BeginListBox(label, size); }
-    //static inline bool  ListBoxHeader(const char* label, int items_count, int height_in_items = -1) { float height = GetTextLineHeightWithSpacing() * ((height_in_items < 0 ? ImMin(items_count, 7) : height_in_items) + 0.25f) + GetStyle().FramePadding.y * 2.0f; return BeginListBox(label, ImVec2(0.0f, height)); } // Helper to calculate size from items_count and height_in_items
+    //static inline bool  ListBoxHeader(const char* label, const glm::vec2& size = glm::vec2(0, 0))         { return BeginListBox(label, size); }
+    //static inline bool  ListBoxHeader(const char* label, int items_count, int height_in_items = -1) { float height = GetTextLineHeightWithSpacing() * ((height_in_items < 0 ? ImMin(items_count, 7) : height_in_items) + 0.25f) + GetStyle().FramePadding.y * 2.0f; return BeginListBox(label, glm::vec2(0.0f, height)); } // Helper to calculate size from items_count and height_in_items
     //static inline void  ListBoxFooter()                                                             { EndListBox(); }
     //-- OBSOLETED in 1.79 (from August 2020)
     //static inline void  OpenPopupContextItem(const char* str_id = NULL, ImGuiMouseButton mb = 1)    { OpenPopupOnItemClick(str_id, mb); } // Bool return value removed. Use IsWindowAppearing() in BeginPopup() instead. Renamed in 1.77, renamed back in 1.79. Sorry!
@@ -4300,14 +4275,14 @@ namespace ImGui
     //static inline void  ShowTestWindow()                      { return ShowDemoWindow(); }                                        // OBSOLETED in 1.53 (between Oct 2017 and Dec 2017)
     //static inline bool  IsRootWindowFocused()                 { return IsWindowFocused(ImGuiFocusedFlags_RootWindow); }           // OBSOLETED in 1.53 (between Oct 2017 and Dec 2017)
     //static inline bool  IsRootWindowOrAnyChildFocused()       { return IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows); }  // OBSOLETED in 1.53 (between Oct 2017 and Dec 2017)
-    //static inline void  SetNextWindowContentWidth(float w)    { SetNextWindowContentSize(ImVec2(w, 0.0f)); }                      // OBSOLETED in 1.53 (between Oct 2017 and Dec 2017)
+    //static inline void  SetNextWindowContentWidth(float w)    { SetNextWindowContentSize(glm::vec2(w, 0.0f)); }                      // OBSOLETED in 1.53 (between Oct 2017 and Dec 2017)
     //static inline float GetItemsLineHeightWithSpacing()       { return GetFrameHeightWithSpacing(); }                             // OBSOLETED in 1.53 (between Oct 2017 and Dec 2017)
-    //IMGUI_API bool      Begin(char* name, bool* p_open, ImVec2 size_first_use, float bg_alpha = -1.0f, ImGuiWindowFlags flags=0); // OBSOLETED in 1.52 (between Aug 2017 and Oct 2017): Equivalent of using SetNextWindowSize(size, ImGuiCond_FirstUseEver) and SetNextWindowBgAlpha().
+    //IMGUI_API bool      Begin(char* name, bool* p_open, glm::vec2 size_first_use, float bg_alpha = -1.0f, ImGuiWindowFlags flags=0); // OBSOLETED in 1.52 (between Aug 2017 and Oct 2017): Equivalent of using SetNextWindowSize(size, ImGuiCond_FirstUseEver) and SetNextWindowBgAlpha().
     //static inline bool  IsRootWindowOrAnyChildHovered()       { return IsWindowHovered(ImGuiHoveredFlags_RootAndChildWindows); }  // OBSOLETED in 1.52 (between Aug 2017 and Oct 2017)
     //static inline void  AlignFirstTextHeightToWidgets()       { AlignTextToFramePadding(); }                                      // OBSOLETED in 1.52 (between Aug 2017 and Oct 2017)
-    //static inline void  SetNextWindowPosCenter(ImGuiCond c=0) { SetNextWindowPos(GetMainViewport()->GetCenter(), c, ImVec2(0.5f,0.5f)); } // OBSOLETED in 1.52 (between Aug 2017 and Oct 2017)
+    //static inline void  SetNextWindowPosCenter(ImGuiCond c=0) { SetNextWindowPos(GetMainViewport()->GetCenter(), c, glm::vec2(0.5f,0.5f)); } // OBSOLETED in 1.52 (between Aug 2017 and Oct 2017)
     //static inline bool  IsItemHoveredRect()                   { return IsItemHovered(ImGuiHoveredFlags_RectOnly); }               // OBSOLETED in 1.51 (between Jun 2017 and Aug 2017)
-    //static inline bool  IsPosHoveringAnyWindow(const ImVec2&) { IM_ASSERT(0); return false; }                                     // OBSOLETED in 1.51 (between Jun 2017 and Aug 2017): This was misleading and partly broken. You probably want to use the io.WantCaptureMouse flag instead.
+    //static inline bool  IsPosHoveringAnyWindow(const glm::vec2&) { IM_ASSERT(0); return false; }                                     // OBSOLETED in 1.51 (between Jun 2017 and Aug 2017): This was misleading and partly broken. You probably want to use the io.WantCaptureMouse flag instead.
     //static inline bool  IsMouseHoveringAnyWindow()            { return IsWindowHovered(ImGuiHoveredFlags_AnyWindow); }            // OBSOLETED in 1.51 (between Jun 2017 and Aug 2017)
     //static inline bool  IsMouseHoveringWindow()               { return IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByPopup | ImGuiHoveredFlags_AllowWhenBlockedByActiveItem); }       // OBSOLETED in 1.51 (between Jun 2017 and Aug 2017)
     //-- OBSOLETED in 1.50 and before
@@ -4330,9 +4305,9 @@ typedef ImFontAtlasRect ImFontAtlasCustomRect;
     unsigned int    GlyphID:31;     // Input    // [Internal] For custom font glyphs only (ID < 0x110000)
     unsigned int    GlyphColored:1; // Input    // [Internal] For custom font glyphs only: glyph is colored, removed tinting.
     float           GlyphAdvanceX;  // Input    // [Internal] For custom font glyphs only: glyph xadvance
-    ImVec2          GlyphOffset;    // Input    // [Internal] For custom font glyphs only: glyph display offset
+    glm::vec2          GlyphOffset;    // Input    // [Internal] For custom font glyphs only: glyph display offset
     ImFont*         Font;           // Input    // [Internal] For custom font glyphs only: target font
-    ImFontAtlasCustomRect()         { X = Y = 0xFFFF; Width = Height = 0; GlyphID = 0; GlyphColored = 0; GlyphAdvanceX = 0.0f; GlyphOffset = ImVec2(0, 0); Font = NULL; }
+    ImFontAtlasCustomRect()         { X = Y = 0xFFFF; Width = Height = 0; GlyphID = 0; GlyphColored = 0; GlyphAdvanceX = 0.0f; GlyphOffset = glm::vec2(0, 0); Font = NULL; }
     bool IsPacked() const           { return X != 0xFFFF; }
 };*/
 

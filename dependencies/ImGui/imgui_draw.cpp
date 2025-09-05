@@ -184,41 +184,41 @@ using namespace IMGUI_STB_NAMESPACE;
 void ImGui::StyleColorsDark(ImGuiStyle* dst)
 {
     ImGuiStyle* style = dst ? dst : &ImGui::GetStyle();
-    ImVec4* colors = style->Colors;
+    glm::vec4* colors = style->Colors;
 
-    colors[ImGuiCol_Text]                   = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
-    colors[ImGuiCol_TextDisabled]           = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
-    colors[ImGuiCol_WindowBg]               = ImVec4(0.06f, 0.06f, 0.06f, 0.94f);
-    colors[ImGuiCol_ChildBg]                = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-    colors[ImGuiCol_PopupBg]                = ImVec4(0.08f, 0.08f, 0.08f, 0.94f);
-    colors[ImGuiCol_Border]                 = ImVec4(0.43f, 0.43f, 0.50f, 0.50f);
-    colors[ImGuiCol_BorderShadow]           = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-    colors[ImGuiCol_FrameBg]                = ImVec4(0.16f, 0.29f, 0.48f, 0.54f);
-    colors[ImGuiCol_FrameBgHovered]         = ImVec4(0.26f, 0.59f, 0.98f, 0.40f);
-    colors[ImGuiCol_FrameBgActive]          = ImVec4(0.26f, 0.59f, 0.98f, 0.67f);
-    colors[ImGuiCol_TitleBg]                = ImVec4(0.04f, 0.04f, 0.04f, 1.00f);
-    colors[ImGuiCol_TitleBgActive]          = ImVec4(0.16f, 0.29f, 0.48f, 1.00f);
-    colors[ImGuiCol_TitleBgCollapsed]       = ImVec4(0.00f, 0.00f, 0.00f, 0.51f);
-    colors[ImGuiCol_MenuBarBg]              = ImVec4(0.14f, 0.14f, 0.14f, 1.00f);
-    colors[ImGuiCol_ScrollbarBg]            = ImVec4(0.02f, 0.02f, 0.02f, 0.53f);
-    colors[ImGuiCol_ScrollbarGrab]          = ImVec4(0.31f, 0.31f, 0.31f, 1.00f);
-    colors[ImGuiCol_ScrollbarGrabHovered]   = ImVec4(0.41f, 0.41f, 0.41f, 1.00f);
-    colors[ImGuiCol_ScrollbarGrabActive]    = ImVec4(0.51f, 0.51f, 0.51f, 1.00f);
-    colors[ImGuiCol_CheckMark]              = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
-    colors[ImGuiCol_SliderGrab]             = ImVec4(0.24f, 0.52f, 0.88f, 1.00f);
-    colors[ImGuiCol_SliderGrabActive]       = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
-    colors[ImGuiCol_Button]                 = ImVec4(0.26f, 0.59f, 0.98f, 0.40f);
-    colors[ImGuiCol_ButtonHovered]          = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
-    colors[ImGuiCol_ButtonActive]           = ImVec4(0.06f, 0.53f, 0.98f, 1.00f);
-    colors[ImGuiCol_Header]                 = ImVec4(0.26f, 0.59f, 0.98f, 0.31f);
-    colors[ImGuiCol_HeaderHovered]          = ImVec4(0.26f, 0.59f, 0.98f, 0.80f);
-    colors[ImGuiCol_HeaderActive]           = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
+    colors[ImGuiCol_Text]                   = glm::vec4(1.00f, 1.00f, 1.00f, 1.00f);
+    colors[ImGuiCol_TextDisabled]           = glm::vec4(0.50f, 0.50f, 0.50f, 1.00f);
+    colors[ImGuiCol_WindowBg]               = glm::vec4(0.06f, 0.06f, 0.06f, 0.94f);
+    colors[ImGuiCol_ChildBg]                = glm::vec4(0.00f, 0.00f, 0.00f, 0.00f);
+    colors[ImGuiCol_PopupBg]                = glm::vec4(0.08f, 0.08f, 0.08f, 0.94f);
+    colors[ImGuiCol_Border]                 = glm::vec4(0.43f, 0.43f, 0.50f, 0.50f);
+    colors[ImGuiCol_BorderShadow]           = glm::vec4(0.00f, 0.00f, 0.00f, 0.00f);
+    colors[ImGuiCol_FrameBg]                = glm::vec4(0.16f, 0.29f, 0.48f, 0.54f);
+    colors[ImGuiCol_FrameBgHovered]         = glm::vec4(0.26f, 0.59f, 0.98f, 0.40f);
+    colors[ImGuiCol_FrameBgActive]          = glm::vec4(0.26f, 0.59f, 0.98f, 0.67f);
+    colors[ImGuiCol_TitleBg]                = glm::vec4(0.04f, 0.04f, 0.04f, 1.00f);
+    colors[ImGuiCol_TitleBgActive]          = glm::vec4(0.16f, 0.29f, 0.48f, 1.00f);
+    colors[ImGuiCol_TitleBgCollapsed]       = glm::vec4(0.00f, 0.00f, 0.00f, 0.51f);
+    colors[ImGuiCol_MenuBarBg]              = glm::vec4(0.14f, 0.14f, 0.14f, 1.00f);
+    colors[ImGuiCol_ScrollbarBg]            = glm::vec4(0.02f, 0.02f, 0.02f, 0.53f);
+    colors[ImGuiCol_ScrollbarGrab]          = glm::vec4(0.31f, 0.31f, 0.31f, 1.00f);
+    colors[ImGuiCol_ScrollbarGrabHovered]   = glm::vec4(0.41f, 0.41f, 0.41f, 1.00f);
+    colors[ImGuiCol_ScrollbarGrabActive]    = glm::vec4(0.51f, 0.51f, 0.51f, 1.00f);
+    colors[ImGuiCol_CheckMark]              = glm::vec4(0.26f, 0.59f, 0.98f, 1.00f);
+    colors[ImGuiCol_SliderGrab]             = glm::vec4(0.24f, 0.52f, 0.88f, 1.00f);
+    colors[ImGuiCol_SliderGrabActive]       = glm::vec4(0.26f, 0.59f, 0.98f, 1.00f);
+    colors[ImGuiCol_Button]                 = glm::vec4(0.26f, 0.59f, 0.98f, 0.40f);
+    colors[ImGuiCol_ButtonHovered]          = glm::vec4(0.26f, 0.59f, 0.98f, 1.00f);
+    colors[ImGuiCol_ButtonActive]           = glm::vec4(0.06f, 0.53f, 0.98f, 1.00f);
+    colors[ImGuiCol_Header]                 = glm::vec4(0.26f, 0.59f, 0.98f, 0.31f);
+    colors[ImGuiCol_HeaderHovered]          = glm::vec4(0.26f, 0.59f, 0.98f, 0.80f);
+    colors[ImGuiCol_HeaderActive]           = glm::vec4(0.26f, 0.59f, 0.98f, 1.00f);
     colors[ImGuiCol_Separator]              = colors[ImGuiCol_Border];
-    colors[ImGuiCol_SeparatorHovered]       = ImVec4(0.10f, 0.40f, 0.75f, 0.78f);
-    colors[ImGuiCol_SeparatorActive]        = ImVec4(0.10f, 0.40f, 0.75f, 1.00f);
-    colors[ImGuiCol_ResizeGrip]             = ImVec4(0.26f, 0.59f, 0.98f, 0.20f);
-    colors[ImGuiCol_ResizeGripHovered]      = ImVec4(0.26f, 0.59f, 0.98f, 0.67f);
-    colors[ImGuiCol_ResizeGripActive]       = ImVec4(0.26f, 0.59f, 0.98f, 0.95f);
+    colors[ImGuiCol_SeparatorHovered]       = glm::vec4(0.10f, 0.40f, 0.75f, 0.78f);
+    colors[ImGuiCol_SeparatorActive]        = glm::vec4(0.10f, 0.40f, 0.75f, 1.00f);
+    colors[ImGuiCol_ResizeGrip]             = glm::vec4(0.26f, 0.59f, 0.98f, 0.20f);
+    colors[ImGuiCol_ResizeGripHovered]      = glm::vec4(0.26f, 0.59f, 0.98f, 0.67f);
+    colors[ImGuiCol_ResizeGripActive]       = glm::vec4(0.26f, 0.59f, 0.98f, 0.95f);
     colors[ImGuiCol_InputTextCursor]        = colors[ImGuiCol_Text];
     colors[ImGuiCol_TabHovered]             = colors[ImGuiCol_HeaderHovered];
     colors[ImGuiCol_Tab]                    = ImLerp(colors[ImGuiCol_Header],       colors[ImGuiCol_TitleBgActive], 0.80f);
@@ -226,66 +226,66 @@ void ImGui::StyleColorsDark(ImGuiStyle* dst)
     colors[ImGuiCol_TabSelectedOverline]    = colors[ImGuiCol_HeaderActive];
     colors[ImGuiCol_TabDimmed]              = ImLerp(colors[ImGuiCol_Tab],          colors[ImGuiCol_TitleBg], 0.80f);
     colors[ImGuiCol_TabDimmedSelected]      = ImLerp(colors[ImGuiCol_TabSelected],  colors[ImGuiCol_TitleBg], 0.40f);
-    colors[ImGuiCol_TabDimmedSelectedOverline] = ImVec4(0.50f, 0.50f, 0.50f, 0.00f);
-    colors[ImGuiCol_DockingPreview]         = colors[ImGuiCol_HeaderActive] * ImVec4(1.0f, 1.0f, 1.0f, 0.7f);
-    colors[ImGuiCol_DockingEmptyBg]         = ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
-    colors[ImGuiCol_PlotLines]              = ImVec4(0.61f, 0.61f, 0.61f, 1.00f);
-    colors[ImGuiCol_PlotLinesHovered]       = ImVec4(1.00f, 0.43f, 0.35f, 1.00f);
-    colors[ImGuiCol_PlotHistogram]          = ImVec4(0.90f, 0.70f, 0.00f, 1.00f);
-    colors[ImGuiCol_PlotHistogramHovered]   = ImVec4(1.00f, 0.60f, 0.00f, 1.00f);
-    colors[ImGuiCol_TableHeaderBg]          = ImVec4(0.19f, 0.19f, 0.20f, 1.00f);
-    colors[ImGuiCol_TableBorderStrong]      = ImVec4(0.31f, 0.31f, 0.35f, 1.00f);   // Prefer using Alpha=1.0 here
-    colors[ImGuiCol_TableBorderLight]       = ImVec4(0.23f, 0.23f, 0.25f, 1.00f);   // Prefer using Alpha=1.0 here
-    colors[ImGuiCol_TableRowBg]             = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-    colors[ImGuiCol_TableRowBgAlt]          = ImVec4(1.00f, 1.00f, 1.00f, 0.06f);
+    colors[ImGuiCol_TabDimmedSelectedOverline] = glm::vec4(0.50f, 0.50f, 0.50f, 0.00f);
+    colors[ImGuiCol_DockingPreview]         = colors[ImGuiCol_HeaderActive] * glm::vec4(1.0f, 1.0f, 1.0f, 0.7f);
+    colors[ImGuiCol_DockingEmptyBg]         = glm::vec4(0.20f, 0.20f, 0.20f, 1.00f);
+    colors[ImGuiCol_PlotLines]              = glm::vec4(0.61f, 0.61f, 0.61f, 1.00f);
+    colors[ImGuiCol_PlotLinesHovered]       = glm::vec4(1.00f, 0.43f, 0.35f, 1.00f);
+    colors[ImGuiCol_PlotHistogram]          = glm::vec4(0.90f, 0.70f, 0.00f, 1.00f);
+    colors[ImGuiCol_PlotHistogramHovered]   = glm::vec4(1.00f, 0.60f, 0.00f, 1.00f);
+    colors[ImGuiCol_TableHeaderBg]          = glm::vec4(0.19f, 0.19f, 0.20f, 1.00f);
+    colors[ImGuiCol_TableBorderStrong]      = glm::vec4(0.31f, 0.31f, 0.35f, 1.00f);   // Prefer using Alpha=1.0 here
+    colors[ImGuiCol_TableBorderLight]       = glm::vec4(0.23f, 0.23f, 0.25f, 1.00f);   // Prefer using Alpha=1.0 here
+    colors[ImGuiCol_TableRowBg]             = glm::vec4(0.00f, 0.00f, 0.00f, 0.00f);
+    colors[ImGuiCol_TableRowBgAlt]          = glm::vec4(1.00f, 1.00f, 1.00f, 0.06f);
     colors[ImGuiCol_TextLink]               = colors[ImGuiCol_HeaderActive];
-    colors[ImGuiCol_TextSelectedBg]         = ImVec4(0.26f, 0.59f, 0.98f, 0.35f);
+    colors[ImGuiCol_TextSelectedBg]         = glm::vec4(0.26f, 0.59f, 0.98f, 0.35f);
     colors[ImGuiCol_TreeLines]              = colors[ImGuiCol_Border];
-    colors[ImGuiCol_DragDropTarget]         = ImVec4(1.00f, 1.00f, 0.00f, 0.90f);
-    colors[ImGuiCol_NavCursor]              = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
-    colors[ImGuiCol_NavWindowingHighlight]  = ImVec4(1.00f, 1.00f, 1.00f, 0.70f);
-    colors[ImGuiCol_NavWindowingDimBg]      = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
-    colors[ImGuiCol_ModalWindowDimBg]       = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
+    colors[ImGuiCol_DragDropTarget]         = glm::vec4(1.00f, 1.00f, 0.00f, 0.90f);
+    colors[ImGuiCol_NavCursor]              = glm::vec4(0.26f, 0.59f, 0.98f, 1.00f);
+    colors[ImGuiCol_NavWindowingHighlight]  = glm::vec4(1.00f, 1.00f, 1.00f, 0.70f);
+    colors[ImGuiCol_NavWindowingDimBg]      = glm::vec4(0.80f, 0.80f, 0.80f, 0.20f);
+    colors[ImGuiCol_ModalWindowDimBg]       = glm::vec4(0.80f, 0.80f, 0.80f, 0.35f);
 }
 
 void ImGui::StyleColorsClassic(ImGuiStyle* dst)
 {
     ImGuiStyle* style = dst ? dst : &ImGui::GetStyle();
-    ImVec4* colors = style->Colors;
+    glm::vec4* colors = style->Colors;
 
-    colors[ImGuiCol_Text]                   = ImVec4(0.90f, 0.90f, 0.90f, 1.00f);
-    colors[ImGuiCol_TextDisabled]           = ImVec4(0.60f, 0.60f, 0.60f, 1.00f);
-    colors[ImGuiCol_WindowBg]               = ImVec4(0.00f, 0.00f, 0.00f, 0.85f);
-    colors[ImGuiCol_ChildBg]                = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-    colors[ImGuiCol_PopupBg]                = ImVec4(0.11f, 0.11f, 0.14f, 0.92f);
-    colors[ImGuiCol_Border]                 = ImVec4(0.50f, 0.50f, 0.50f, 0.50f);
-    colors[ImGuiCol_BorderShadow]           = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-    colors[ImGuiCol_FrameBg]                = ImVec4(0.43f, 0.43f, 0.43f, 0.39f);
-    colors[ImGuiCol_FrameBgHovered]         = ImVec4(0.47f, 0.47f, 0.69f, 0.40f);
-    colors[ImGuiCol_FrameBgActive]          = ImVec4(0.42f, 0.41f, 0.64f, 0.69f);
-    colors[ImGuiCol_TitleBg]                = ImVec4(0.27f, 0.27f, 0.54f, 0.83f);
-    colors[ImGuiCol_TitleBgActive]          = ImVec4(0.32f, 0.32f, 0.63f, 0.87f);
-    colors[ImGuiCol_TitleBgCollapsed]       = ImVec4(0.40f, 0.40f, 0.80f, 0.20f);
-    colors[ImGuiCol_MenuBarBg]              = ImVec4(0.40f, 0.40f, 0.55f, 0.80f);
-    colors[ImGuiCol_ScrollbarBg]            = ImVec4(0.20f, 0.25f, 0.30f, 0.60f);
-    colors[ImGuiCol_ScrollbarGrab]          = ImVec4(0.40f, 0.40f, 0.80f, 0.30f);
-    colors[ImGuiCol_ScrollbarGrabHovered]   = ImVec4(0.40f, 0.40f, 0.80f, 0.40f);
-    colors[ImGuiCol_ScrollbarGrabActive]    = ImVec4(0.41f, 0.39f, 0.80f, 0.60f);
-    colors[ImGuiCol_CheckMark]              = ImVec4(0.90f, 0.90f, 0.90f, 0.50f);
-    colors[ImGuiCol_SliderGrab]             = ImVec4(1.00f, 1.00f, 1.00f, 0.30f);
-    colors[ImGuiCol_SliderGrabActive]       = ImVec4(0.41f, 0.39f, 0.80f, 0.60f);
-    colors[ImGuiCol_Button]                 = ImVec4(0.35f, 0.40f, 0.61f, 0.62f);
-    colors[ImGuiCol_ButtonHovered]          = ImVec4(0.40f, 0.48f, 0.71f, 0.79f);
-    colors[ImGuiCol_ButtonActive]           = ImVec4(0.46f, 0.54f, 0.80f, 1.00f);
-    colors[ImGuiCol_Header]                 = ImVec4(0.40f, 0.40f, 0.90f, 0.45f);
-    colors[ImGuiCol_HeaderHovered]          = ImVec4(0.45f, 0.45f, 0.90f, 0.80f);
-    colors[ImGuiCol_HeaderActive]           = ImVec4(0.53f, 0.53f, 0.87f, 0.80f);
-    colors[ImGuiCol_Separator]              = ImVec4(0.50f, 0.50f, 0.50f, 0.60f);
-    colors[ImGuiCol_SeparatorHovered]       = ImVec4(0.60f, 0.60f, 0.70f, 1.00f);
-    colors[ImGuiCol_SeparatorActive]        = ImVec4(0.70f, 0.70f, 0.90f, 1.00f);
-    colors[ImGuiCol_ResizeGrip]             = ImVec4(1.00f, 1.00f, 1.00f, 0.10f);
-    colors[ImGuiCol_ResizeGripHovered]      = ImVec4(0.78f, 0.82f, 1.00f, 0.60f);
-    colors[ImGuiCol_ResizeGripActive]       = ImVec4(0.78f, 0.82f, 1.00f, 0.90f);
+    colors[ImGuiCol_Text]                   = glm::vec4(0.90f, 0.90f, 0.90f, 1.00f);
+    colors[ImGuiCol_TextDisabled]           = glm::vec4(0.60f, 0.60f, 0.60f, 1.00f);
+    colors[ImGuiCol_WindowBg]               = glm::vec4(0.00f, 0.00f, 0.00f, 0.85f);
+    colors[ImGuiCol_ChildBg]                = glm::vec4(0.00f, 0.00f, 0.00f, 0.00f);
+    colors[ImGuiCol_PopupBg]                = glm::vec4(0.11f, 0.11f, 0.14f, 0.92f);
+    colors[ImGuiCol_Border]                 = glm::vec4(0.50f, 0.50f, 0.50f, 0.50f);
+    colors[ImGuiCol_BorderShadow]           = glm::vec4(0.00f, 0.00f, 0.00f, 0.00f);
+    colors[ImGuiCol_FrameBg]                = glm::vec4(0.43f, 0.43f, 0.43f, 0.39f);
+    colors[ImGuiCol_FrameBgHovered]         = glm::vec4(0.47f, 0.47f, 0.69f, 0.40f);
+    colors[ImGuiCol_FrameBgActive]          = glm::vec4(0.42f, 0.41f, 0.64f, 0.69f);
+    colors[ImGuiCol_TitleBg]                = glm::vec4(0.27f, 0.27f, 0.54f, 0.83f);
+    colors[ImGuiCol_TitleBgActive]          = glm::vec4(0.32f, 0.32f, 0.63f, 0.87f);
+    colors[ImGuiCol_TitleBgCollapsed]       = glm::vec4(0.40f, 0.40f, 0.80f, 0.20f);
+    colors[ImGuiCol_MenuBarBg]              = glm::vec4(0.40f, 0.40f, 0.55f, 0.80f);
+    colors[ImGuiCol_ScrollbarBg]            = glm::vec4(0.20f, 0.25f, 0.30f, 0.60f);
+    colors[ImGuiCol_ScrollbarGrab]          = glm::vec4(0.40f, 0.40f, 0.80f, 0.30f);
+    colors[ImGuiCol_ScrollbarGrabHovered]   = glm::vec4(0.40f, 0.40f, 0.80f, 0.40f);
+    colors[ImGuiCol_ScrollbarGrabActive]    = glm::vec4(0.41f, 0.39f, 0.80f, 0.60f);
+    colors[ImGuiCol_CheckMark]              = glm::vec4(0.90f, 0.90f, 0.90f, 0.50f);
+    colors[ImGuiCol_SliderGrab]             = glm::vec4(1.00f, 1.00f, 1.00f, 0.30f);
+    colors[ImGuiCol_SliderGrabActive]       = glm::vec4(0.41f, 0.39f, 0.80f, 0.60f);
+    colors[ImGuiCol_Button]                 = glm::vec4(0.35f, 0.40f, 0.61f, 0.62f);
+    colors[ImGuiCol_ButtonHovered]          = glm::vec4(0.40f, 0.48f, 0.71f, 0.79f);
+    colors[ImGuiCol_ButtonActive]           = glm::vec4(0.46f, 0.54f, 0.80f, 1.00f);
+    colors[ImGuiCol_Header]                 = glm::vec4(0.40f, 0.40f, 0.90f, 0.45f);
+    colors[ImGuiCol_HeaderHovered]          = glm::vec4(0.45f, 0.45f, 0.90f, 0.80f);
+    colors[ImGuiCol_HeaderActive]           = glm::vec4(0.53f, 0.53f, 0.87f, 0.80f);
+    colors[ImGuiCol_Separator]              = glm::vec4(0.50f, 0.50f, 0.50f, 0.60f);
+    colors[ImGuiCol_SeparatorHovered]       = glm::vec4(0.60f, 0.60f, 0.70f, 1.00f);
+    colors[ImGuiCol_SeparatorActive]        = glm::vec4(0.70f, 0.70f, 0.90f, 1.00f);
+    colors[ImGuiCol_ResizeGrip]             = glm::vec4(1.00f, 1.00f, 1.00f, 0.10f);
+    colors[ImGuiCol_ResizeGripHovered]      = glm::vec4(0.78f, 0.82f, 1.00f, 0.60f);
+    colors[ImGuiCol_ResizeGripActive]       = glm::vec4(0.78f, 0.82f, 1.00f, 0.90f);
     colors[ImGuiCol_InputTextCursor]        = colors[ImGuiCol_Text];
     colors[ImGuiCol_TabHovered]             = colors[ImGuiCol_HeaderHovered];
     colors[ImGuiCol_Tab]                    = ImLerp(colors[ImGuiCol_Header],       colors[ImGuiCol_TitleBgActive], 0.80f);
@@ -293,67 +293,67 @@ void ImGui::StyleColorsClassic(ImGuiStyle* dst)
     colors[ImGuiCol_TabSelectedOverline]    = colors[ImGuiCol_HeaderActive];
     colors[ImGuiCol_TabDimmed]              = ImLerp(colors[ImGuiCol_Tab],          colors[ImGuiCol_TitleBg], 0.80f);
     colors[ImGuiCol_TabDimmedSelected]      = ImLerp(colors[ImGuiCol_TabSelected],  colors[ImGuiCol_TitleBg], 0.40f);
-    colors[ImGuiCol_TabDimmedSelectedOverline] = ImVec4(0.53f, 0.53f, 0.87f, 0.00f);
-    colors[ImGuiCol_DockingPreview]         = colors[ImGuiCol_Header] * ImVec4(1.0f, 1.0f, 1.0f, 0.7f);
-    colors[ImGuiCol_DockingEmptyBg]         = ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
-    colors[ImGuiCol_PlotLines]              = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
-    colors[ImGuiCol_PlotLinesHovered]       = ImVec4(0.90f, 0.70f, 0.00f, 1.00f);
-    colors[ImGuiCol_PlotHistogram]          = ImVec4(0.90f, 0.70f, 0.00f, 1.00f);
-    colors[ImGuiCol_PlotHistogramHovered]   = ImVec4(1.00f, 0.60f, 0.00f, 1.00f);
-    colors[ImGuiCol_TableHeaderBg]          = ImVec4(0.27f, 0.27f, 0.38f, 1.00f);
-    colors[ImGuiCol_TableBorderStrong]      = ImVec4(0.31f, 0.31f, 0.45f, 1.00f);   // Prefer using Alpha=1.0 here
-    colors[ImGuiCol_TableBorderLight]       = ImVec4(0.26f, 0.26f, 0.28f, 1.00f);   // Prefer using Alpha=1.0 here
-    colors[ImGuiCol_TableRowBg]             = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-    colors[ImGuiCol_TableRowBgAlt]          = ImVec4(1.00f, 1.00f, 1.00f, 0.07f);
+    colors[ImGuiCol_TabDimmedSelectedOverline] = glm::vec4(0.53f, 0.53f, 0.87f, 0.00f);
+    colors[ImGuiCol_DockingPreview]         = colors[ImGuiCol_Header] * glm::vec4(1.0f, 1.0f, 1.0f, 0.7f);
+    colors[ImGuiCol_DockingEmptyBg]         = glm::vec4(0.20f, 0.20f, 0.20f, 1.00f);
+    colors[ImGuiCol_PlotLines]              = glm::vec4(1.00f, 1.00f, 1.00f, 1.00f);
+    colors[ImGuiCol_PlotLinesHovered]       = glm::vec4(0.90f, 0.70f, 0.00f, 1.00f);
+    colors[ImGuiCol_PlotHistogram]          = glm::vec4(0.90f, 0.70f, 0.00f, 1.00f);
+    colors[ImGuiCol_PlotHistogramHovered]   = glm::vec4(1.00f, 0.60f, 0.00f, 1.00f);
+    colors[ImGuiCol_TableHeaderBg]          = glm::vec4(0.27f, 0.27f, 0.38f, 1.00f);
+    colors[ImGuiCol_TableBorderStrong]      = glm::vec4(0.31f, 0.31f, 0.45f, 1.00f);   // Prefer using Alpha=1.0 here
+    colors[ImGuiCol_TableBorderLight]       = glm::vec4(0.26f, 0.26f, 0.28f, 1.00f);   // Prefer using Alpha=1.0 here
+    colors[ImGuiCol_TableRowBg]             = glm::vec4(0.00f, 0.00f, 0.00f, 0.00f);
+    colors[ImGuiCol_TableRowBgAlt]          = glm::vec4(1.00f, 1.00f, 1.00f, 0.07f);
     colors[ImGuiCol_TextLink]               = colors[ImGuiCol_HeaderActive];
-    colors[ImGuiCol_TextSelectedBg]         = ImVec4(0.00f, 0.00f, 1.00f, 0.35f);
+    colors[ImGuiCol_TextSelectedBg]         = glm::vec4(0.00f, 0.00f, 1.00f, 0.35f);
     colors[ImGuiCol_TreeLines]              = colors[ImGuiCol_Border];
-    colors[ImGuiCol_DragDropTarget]         = ImVec4(1.00f, 1.00f, 0.00f, 0.90f);
+    colors[ImGuiCol_DragDropTarget]         = glm::vec4(1.00f, 1.00f, 0.00f, 0.90f);
     colors[ImGuiCol_NavCursor]              = colors[ImGuiCol_HeaderHovered];
-    colors[ImGuiCol_NavWindowingHighlight]  = ImVec4(1.00f, 1.00f, 1.00f, 0.70f);
-    colors[ImGuiCol_NavWindowingDimBg]      = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
-    colors[ImGuiCol_ModalWindowDimBg]       = ImVec4(0.20f, 0.20f, 0.20f, 0.35f);
+    colors[ImGuiCol_NavWindowingHighlight]  = glm::vec4(1.00f, 1.00f, 1.00f, 0.70f);
+    colors[ImGuiCol_NavWindowingDimBg]      = glm::vec4(0.80f, 0.80f, 0.80f, 0.20f);
+    colors[ImGuiCol_ModalWindowDimBg]       = glm::vec4(0.20f, 0.20f, 0.20f, 0.35f);
 }
 
 // Those light colors are better suited with a thicker font than the default one + FrameBorder
 void ImGui::StyleColorsLight(ImGuiStyle* dst)
 {
     ImGuiStyle* style = dst ? dst : &ImGui::GetStyle();
-    ImVec4* colors = style->Colors;
+    glm::vec4* colors = style->Colors;
 
-    colors[ImGuiCol_Text]                   = ImVec4(0.00f, 0.00f, 0.00f, 1.00f);
-    colors[ImGuiCol_TextDisabled]           = ImVec4(0.60f, 0.60f, 0.60f, 1.00f);
-    colors[ImGuiCol_WindowBg]               = ImVec4(0.94f, 0.94f, 0.94f, 1.00f);
-    colors[ImGuiCol_ChildBg]                = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-    colors[ImGuiCol_PopupBg]                = ImVec4(1.00f, 1.00f, 1.00f, 0.98f);
-    colors[ImGuiCol_Border]                 = ImVec4(0.00f, 0.00f, 0.00f, 0.30f);
-    colors[ImGuiCol_BorderShadow]           = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-    colors[ImGuiCol_FrameBg]                = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
-    colors[ImGuiCol_FrameBgHovered]         = ImVec4(0.26f, 0.59f, 0.98f, 0.40f);
-    colors[ImGuiCol_FrameBgActive]          = ImVec4(0.26f, 0.59f, 0.98f, 0.67f);
-    colors[ImGuiCol_TitleBg]                = ImVec4(0.96f, 0.96f, 0.96f, 1.00f);
-    colors[ImGuiCol_TitleBgActive]          = ImVec4(0.82f, 0.82f, 0.82f, 1.00f);
-    colors[ImGuiCol_TitleBgCollapsed]       = ImVec4(1.00f, 1.00f, 1.00f, 0.51f);
-    colors[ImGuiCol_MenuBarBg]              = ImVec4(0.86f, 0.86f, 0.86f, 1.00f);
-    colors[ImGuiCol_ScrollbarBg]            = ImVec4(0.98f, 0.98f, 0.98f, 0.53f);
-    colors[ImGuiCol_ScrollbarGrab]          = ImVec4(0.69f, 0.69f, 0.69f, 0.80f);
-    colors[ImGuiCol_ScrollbarGrabHovered]   = ImVec4(0.49f, 0.49f, 0.49f, 0.80f);
-    colors[ImGuiCol_ScrollbarGrabActive]    = ImVec4(0.49f, 0.49f, 0.49f, 1.00f);
-    colors[ImGuiCol_CheckMark]              = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
-    colors[ImGuiCol_SliderGrab]             = ImVec4(0.26f, 0.59f, 0.98f, 0.78f);
-    colors[ImGuiCol_SliderGrabActive]       = ImVec4(0.46f, 0.54f, 0.80f, 0.60f);
-    colors[ImGuiCol_Button]                 = ImVec4(0.26f, 0.59f, 0.98f, 0.40f);
-    colors[ImGuiCol_ButtonHovered]          = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
-    colors[ImGuiCol_ButtonActive]           = ImVec4(0.06f, 0.53f, 0.98f, 1.00f);
-    colors[ImGuiCol_Header]                 = ImVec4(0.26f, 0.59f, 0.98f, 0.31f);
-    colors[ImGuiCol_HeaderHovered]          = ImVec4(0.26f, 0.59f, 0.98f, 0.80f);
-    colors[ImGuiCol_HeaderActive]           = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
-    colors[ImGuiCol_Separator]              = ImVec4(0.39f, 0.39f, 0.39f, 0.62f);
-    colors[ImGuiCol_SeparatorHovered]       = ImVec4(0.14f, 0.44f, 0.80f, 0.78f);
-    colors[ImGuiCol_SeparatorActive]        = ImVec4(0.14f, 0.44f, 0.80f, 1.00f);
-    colors[ImGuiCol_ResizeGrip]             = ImVec4(0.35f, 0.35f, 0.35f, 0.17f);
-    colors[ImGuiCol_ResizeGripHovered]      = ImVec4(0.26f, 0.59f, 0.98f, 0.67f);
-    colors[ImGuiCol_ResizeGripActive]       = ImVec4(0.26f, 0.59f, 0.98f, 0.95f);
+    colors[ImGuiCol_Text]                   = glm::vec4(0.00f, 0.00f, 0.00f, 1.00f);
+    colors[ImGuiCol_TextDisabled]           = glm::vec4(0.60f, 0.60f, 0.60f, 1.00f);
+    colors[ImGuiCol_WindowBg]               = glm::vec4(0.94f, 0.94f, 0.94f, 1.00f);
+    colors[ImGuiCol_ChildBg]                = glm::vec4(0.00f, 0.00f, 0.00f, 0.00f);
+    colors[ImGuiCol_PopupBg]                = glm::vec4(1.00f, 1.00f, 1.00f, 0.98f);
+    colors[ImGuiCol_Border]                 = glm::vec4(0.00f, 0.00f, 0.00f, 0.30f);
+    colors[ImGuiCol_BorderShadow]           = glm::vec4(0.00f, 0.00f, 0.00f, 0.00f);
+    colors[ImGuiCol_FrameBg]                = glm::vec4(1.00f, 1.00f, 1.00f, 1.00f);
+    colors[ImGuiCol_FrameBgHovered]         = glm::vec4(0.26f, 0.59f, 0.98f, 0.40f);
+    colors[ImGuiCol_FrameBgActive]          = glm::vec4(0.26f, 0.59f, 0.98f, 0.67f);
+    colors[ImGuiCol_TitleBg]                = glm::vec4(0.96f, 0.96f, 0.96f, 1.00f);
+    colors[ImGuiCol_TitleBgActive]          = glm::vec4(0.82f, 0.82f, 0.82f, 1.00f);
+    colors[ImGuiCol_TitleBgCollapsed]       = glm::vec4(1.00f, 1.00f, 1.00f, 0.51f);
+    colors[ImGuiCol_MenuBarBg]              = glm::vec4(0.86f, 0.86f, 0.86f, 1.00f);
+    colors[ImGuiCol_ScrollbarBg]            = glm::vec4(0.98f, 0.98f, 0.98f, 0.53f);
+    colors[ImGuiCol_ScrollbarGrab]          = glm::vec4(0.69f, 0.69f, 0.69f, 0.80f);
+    colors[ImGuiCol_ScrollbarGrabHovered]   = glm::vec4(0.49f, 0.49f, 0.49f, 0.80f);
+    colors[ImGuiCol_ScrollbarGrabActive]    = glm::vec4(0.49f, 0.49f, 0.49f, 1.00f);
+    colors[ImGuiCol_CheckMark]              = glm::vec4(0.26f, 0.59f, 0.98f, 1.00f);
+    colors[ImGuiCol_SliderGrab]             = glm::vec4(0.26f, 0.59f, 0.98f, 0.78f);
+    colors[ImGuiCol_SliderGrabActive]       = glm::vec4(0.46f, 0.54f, 0.80f, 0.60f);
+    colors[ImGuiCol_Button]                 = glm::vec4(0.26f, 0.59f, 0.98f, 0.40f);
+    colors[ImGuiCol_ButtonHovered]          = glm::vec4(0.26f, 0.59f, 0.98f, 1.00f);
+    colors[ImGuiCol_ButtonActive]           = glm::vec4(0.06f, 0.53f, 0.98f, 1.00f);
+    colors[ImGuiCol_Header]                 = glm::vec4(0.26f, 0.59f, 0.98f, 0.31f);
+    colors[ImGuiCol_HeaderHovered]          = glm::vec4(0.26f, 0.59f, 0.98f, 0.80f);
+    colors[ImGuiCol_HeaderActive]           = glm::vec4(0.26f, 0.59f, 0.98f, 1.00f);
+    colors[ImGuiCol_Separator]              = glm::vec4(0.39f, 0.39f, 0.39f, 0.62f);
+    colors[ImGuiCol_SeparatorHovered]       = glm::vec4(0.14f, 0.44f, 0.80f, 0.78f);
+    colors[ImGuiCol_SeparatorActive]        = glm::vec4(0.14f, 0.44f, 0.80f, 1.00f);
+    colors[ImGuiCol_ResizeGrip]             = glm::vec4(0.35f, 0.35f, 0.35f, 0.17f);
+    colors[ImGuiCol_ResizeGripHovered]      = glm::vec4(0.26f, 0.59f, 0.98f, 0.67f);
+    colors[ImGuiCol_ResizeGripActive]       = glm::vec4(0.26f, 0.59f, 0.98f, 0.95f);
     colors[ImGuiCol_InputTextCursor]        = colors[ImGuiCol_Text];
     colors[ImGuiCol_TabHovered]             = colors[ImGuiCol_HeaderHovered];
     colors[ImGuiCol_Tab]                    = ImLerp(colors[ImGuiCol_Header],       colors[ImGuiCol_TitleBgActive], 0.90f);
@@ -361,26 +361,26 @@ void ImGui::StyleColorsLight(ImGuiStyle* dst)
     colors[ImGuiCol_TabSelectedOverline]    = colors[ImGuiCol_HeaderActive];
     colors[ImGuiCol_TabDimmed]              = ImLerp(colors[ImGuiCol_Tab],          colors[ImGuiCol_TitleBg], 0.80f);
     colors[ImGuiCol_TabDimmedSelected]      = ImLerp(colors[ImGuiCol_TabSelected],  colors[ImGuiCol_TitleBg], 0.40f);
-    colors[ImGuiCol_TabDimmedSelectedOverline] = ImVec4(0.26f, 0.59f, 1.00f, 0.00f);
-    colors[ImGuiCol_DockingPreview]         = colors[ImGuiCol_Header] * ImVec4(1.0f, 1.0f, 1.0f, 0.7f);
-    colors[ImGuiCol_DockingEmptyBg]         = ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
-    colors[ImGuiCol_PlotLines]              = ImVec4(0.39f, 0.39f, 0.39f, 1.00f);
-    colors[ImGuiCol_PlotLinesHovered]       = ImVec4(1.00f, 0.43f, 0.35f, 1.00f);
-    colors[ImGuiCol_PlotHistogram]          = ImVec4(0.90f, 0.70f, 0.00f, 1.00f);
-    colors[ImGuiCol_PlotHistogramHovered]   = ImVec4(1.00f, 0.45f, 0.00f, 1.00f);
-    colors[ImGuiCol_TableHeaderBg]          = ImVec4(0.78f, 0.87f, 0.98f, 1.00f);
-    colors[ImGuiCol_TableBorderStrong]      = ImVec4(0.57f, 0.57f, 0.64f, 1.00f);   // Prefer using Alpha=1.0 here
-    colors[ImGuiCol_TableBorderLight]       = ImVec4(0.68f, 0.68f, 0.74f, 1.00f);   // Prefer using Alpha=1.0 here
-    colors[ImGuiCol_TableRowBg]             = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-    colors[ImGuiCol_TableRowBgAlt]          = ImVec4(0.30f, 0.30f, 0.30f, 0.09f);
+    colors[ImGuiCol_TabDimmedSelectedOverline] = glm::vec4(0.26f, 0.59f, 1.00f, 0.00f);
+    colors[ImGuiCol_DockingPreview]         = colors[ImGuiCol_Header] * glm::vec4(1.0f, 1.0f, 1.0f, 0.7f);
+    colors[ImGuiCol_DockingEmptyBg]         = glm::vec4(0.20f, 0.20f, 0.20f, 1.00f);
+    colors[ImGuiCol_PlotLines]              = glm::vec4(0.39f, 0.39f, 0.39f, 1.00f);
+    colors[ImGuiCol_PlotLinesHovered]       = glm::vec4(1.00f, 0.43f, 0.35f, 1.00f);
+    colors[ImGuiCol_PlotHistogram]          = glm::vec4(0.90f, 0.70f, 0.00f, 1.00f);
+    colors[ImGuiCol_PlotHistogramHovered]   = glm::vec4(1.00f, 0.45f, 0.00f, 1.00f);
+    colors[ImGuiCol_TableHeaderBg]          = glm::vec4(0.78f, 0.87f, 0.98f, 1.00f);
+    colors[ImGuiCol_TableBorderStrong]      = glm::vec4(0.57f, 0.57f, 0.64f, 1.00f);   // Prefer using Alpha=1.0 here
+    colors[ImGuiCol_TableBorderLight]       = glm::vec4(0.68f, 0.68f, 0.74f, 1.00f);   // Prefer using Alpha=1.0 here
+    colors[ImGuiCol_TableRowBg]             = glm::vec4(0.00f, 0.00f, 0.00f, 0.00f);
+    colors[ImGuiCol_TableRowBgAlt]          = glm::vec4(0.30f, 0.30f, 0.30f, 0.09f);
     colors[ImGuiCol_TextLink]               = colors[ImGuiCol_HeaderActive];
-    colors[ImGuiCol_TextSelectedBg]         = ImVec4(0.26f, 0.59f, 0.98f, 0.35f);
+    colors[ImGuiCol_TextSelectedBg]         = glm::vec4(0.26f, 0.59f, 0.98f, 0.35f);
     colors[ImGuiCol_TreeLines]              = colors[ImGuiCol_Border];
-    colors[ImGuiCol_DragDropTarget]         = ImVec4(0.26f, 0.59f, 0.98f, 0.95f);
+    colors[ImGuiCol_DragDropTarget]         = glm::vec4(0.26f, 0.59f, 0.98f, 0.95f);
     colors[ImGuiCol_NavCursor]              = colors[ImGuiCol_HeaderHovered];
-    colors[ImGuiCol_NavWindowingHighlight]  = ImVec4(0.70f, 0.70f, 0.70f, 0.70f);
-    colors[ImGuiCol_NavWindowingDimBg]      = ImVec4(0.20f, 0.20f, 0.20f, 0.20f);
-    colors[ImGuiCol_ModalWindowDimBg]       = ImVec4(0.20f, 0.20f, 0.20f, 0.35f);
+    colors[ImGuiCol_NavWindowingHighlight]  = glm::vec4(0.70f, 0.70f, 0.70f, 0.70f);
+    colors[ImGuiCol_NavWindowingDimBg]      = glm::vec4(0.20f, 0.20f, 0.20f, 0.20f);
+    colors[ImGuiCol_ModalWindowDimBg]       = glm::vec4(0.20f, 0.20f, 0.20f, 0.35f);
 }
 
 //-----------------------------------------------------------------------------
@@ -394,7 +394,7 @@ ImDrawListSharedData::ImDrawListSharedData()
     for (int i = 0; i < IM_ARRAYSIZE(ArcFastVtx); i++)
     {
         const float a = ((float)i * 2 * IM_PI) / (float)IM_ARRAYSIZE(ArcFastVtx);
-        ArcFastVtx[i] = ImVec2(ImCos(a), ImSin(a));
+        ArcFastVtx[i] = glm::vec2(ImCos(a), ImSin(a));
     }
     ArcFastRadiusCutoff = IM_DRAWLIST_CIRCLE_AUTO_SEGMENT_CALC_R(IM_DRAWLIST_ARCFAST_SAMPLE_MAX, CircleSegmentMaxError);
 }
@@ -446,8 +446,8 @@ void ImDrawList::_ResetForNewFrame()
 {
     // Verify that the ImDrawCmd fields we want to memcmp() are contiguous in memory.
     IM_STATIC_ASSERT(offsetof(ImDrawCmd, ClipRect) == 0);
-    IM_STATIC_ASSERT(offsetof(ImDrawCmd, TexRef) == sizeof(ImVec4));
-    IM_STATIC_ASSERT(offsetof(ImDrawCmd, VtxOffset) == sizeof(ImVec4) + sizeof(ImTextureRef));
+    IM_STATIC_ASSERT(offsetof(ImDrawCmd, TexRef) == sizeof(glm::vec4));
+    IM_STATIC_ASSERT(offsetof(ImDrawCmd, VtxOffset) == sizeof(glm::vec4) + sizeof(ImTextureRef));
     if (_Splitter._Count > 1)
         _Splitter.Merge(this);
 
@@ -579,7 +579,7 @@ void ImDrawList::_OnChangedClipRect()
     // If current command is used with different settings we need to add a new command
     IM_ASSERT_PARANOID(CmdBuffer.Size > 0);
     ImDrawCmd* curr_cmd = &CmdBuffer.Data[CmdBuffer.Size - 1];
-    if (curr_cmd->ElemCount != 0 && memcmp(&curr_cmd->ClipRect, &_CmdHeader.ClipRect, sizeof(ImVec4)) != 0)
+    if (curr_cmd->ElemCount != 0 && memcmp(&curr_cmd->ClipRect, &_CmdHeader.ClipRect, sizeof(glm::vec4)) != 0)
     {
         AddDrawCmd();
         return;
@@ -648,12 +648,12 @@ int ImDrawList::_CalcCircleAutoSegmentCount(float radius) const
 }
 
 // Render-level scissoring. This is passed down to your render function but not used for CPU-side coarse clipping. Prefer using higher-level ImGui::PushClipRect() to affect logic (hit-testing and widget culling)
-void ImDrawList::PushClipRect(const ImVec2& cr_min, const ImVec2& cr_max, bool intersect_with_current_clip_rect)
+void ImDrawList::PushClipRect(const glm::vec2& cr_min, const glm::vec2& cr_max, bool intersect_with_current_clip_rect)
 {
-    ImVec4 cr(cr_min.x, cr_min.y, cr_max.x, cr_max.y);
+    glm::vec4 cr(cr_min.x, cr_min.y, cr_max.x, cr_max.y);
     if (intersect_with_current_clip_rect)
     {
-        ImVec4 current = _CmdHeader.ClipRect;
+        glm::vec4 current = _CmdHeader.ClipRect;
         if (cr.x < current.x) cr.x = current.x;
         if (cr.y < current.y) cr.y = current.y;
         if (cr.z > current.z) cr.z = current.z;
@@ -669,7 +669,7 @@ void ImDrawList::PushClipRect(const ImVec2& cr_min, const ImVec2& cr_max, bool i
 
 void ImDrawList::PushClipRectFullScreen()
 {
-    PushClipRect(ImVec2(_Data->ClipRectFullscreen.x, _Data->ClipRectFullscreen.y), ImVec2(_Data->ClipRectFullscreen.z, _Data->ClipRectFullscreen.w));
+    PushClipRect(glm::vec2(_Data->ClipRectFullscreen.x, _Data->ClipRectFullscreen.y), glm::vec2(_Data->ClipRectFullscreen.z, _Data->ClipRectFullscreen.w));
 }
 
 void ImDrawList::PopClipRect()
@@ -745,9 +745,9 @@ void ImDrawList::PrimUnreserve(int idx_count, int vtx_count)
 }
 
 // Fully unrolled with inline call to keep our debug builds decently fast.
-void ImDrawList::PrimRect(const ImVec2& a, const ImVec2& c, ImU32 col)
+void ImDrawList::PrimRect(const glm::vec2& a, const glm::vec2& c, ImU32 col)
 {
-    ImVec2 b(c.x, a.y), d(a.x, c.y), uv(_Data->TexUvWhitePixel);
+    glm::vec2 b(c.x, a.y), d(a.x, c.y), uv(_Data->TexUvWhitePixel);
     ImDrawIdx idx = (ImDrawIdx)_VtxCurrentIdx;
     _IdxWritePtr[0] = idx; _IdxWritePtr[1] = (ImDrawIdx)(idx+1); _IdxWritePtr[2] = (ImDrawIdx)(idx+2);
     _IdxWritePtr[3] = idx; _IdxWritePtr[4] = (ImDrawIdx)(idx+2); _IdxWritePtr[5] = (ImDrawIdx)(idx+3);
@@ -760,9 +760,9 @@ void ImDrawList::PrimRect(const ImVec2& a, const ImVec2& c, ImU32 col)
     _IdxWritePtr += 6;
 }
 
-void ImDrawList::PrimRectUV(const ImVec2& a, const ImVec2& c, const ImVec2& uv_a, const ImVec2& uv_c, ImU32 col)
+void ImDrawList::PrimRectUV(const glm::vec2& a, const glm::vec2& c, const glm::vec2& uv_a, const glm::vec2& uv_c, ImU32 col)
 {
-    ImVec2 b(c.x, a.y), d(a.x, c.y), uv_b(uv_c.x, uv_a.y), uv_d(uv_a.x, uv_c.y);
+    glm::vec2 b(c.x, a.y), d(a.x, c.y), uv_b(uv_c.x, uv_a.y), uv_d(uv_a.x, uv_c.y);
     ImDrawIdx idx = (ImDrawIdx)_VtxCurrentIdx;
     _IdxWritePtr[0] = idx; _IdxWritePtr[1] = (ImDrawIdx)(idx+1); _IdxWritePtr[2] = (ImDrawIdx)(idx+2);
     _IdxWritePtr[3] = idx; _IdxWritePtr[4] = (ImDrawIdx)(idx+2); _IdxWritePtr[5] = (ImDrawIdx)(idx+3);
@@ -775,7 +775,7 @@ void ImDrawList::PrimRectUV(const ImVec2& a, const ImVec2& c, const ImVec2& uv_a
     _IdxWritePtr += 6;
 }
 
-void ImDrawList::PrimQuadUV(const ImVec2& a, const ImVec2& b, const ImVec2& c, const ImVec2& d, const ImVec2& uv_a, const ImVec2& uv_b, const ImVec2& uv_c, const ImVec2& uv_d, ImU32 col)
+void ImDrawList::PrimQuadUV(const glm::vec2& a, const glm::vec2& b, const glm::vec2& c, const glm::vec2& d, const glm::vec2& uv_a, const glm::vec2& uv_b, const glm::vec2& uv_c, const glm::vec2& uv_d, ImU32 col)
 {
     ImDrawIdx idx = (ImDrawIdx)_VtxCurrentIdx;
     _IdxWritePtr[0] = idx; _IdxWritePtr[1] = (ImDrawIdx)(idx+1); _IdxWritePtr[2] = (ImDrawIdx)(idx+2);
@@ -789,7 +789,7 @@ void ImDrawList::PrimQuadUV(const ImVec2& a, const ImVec2& b, const ImVec2& c, c
     _IdxWritePtr += 6;
 }
 
-// On AddPolyline() and AddConvexPolyFilled() we intentionally avoid using ImVec2 and superfluous function calls to optimize debug/non-inlined builds.
+// On AddPolyline() and AddConvexPolyFilled() we intentionally avoid using glm::vec2 and superfluous function calls to optimize debug/non-inlined builds.
 // - Those macros expects l-values and need to be used as their own statement.
 // - Those macros are intentionally not surrounded by the 'do {} while (0)' idiom because even that translates to runtime with debug compilers.
 #define IM_NORMALIZE2F_OVER_ZERO(VX,VY)     { float d2 = VX*VX + VY*VY; if (d2 > 0.0f) { float inv_len = ImRsqrt(d2); VX *= inv_len; VY *= inv_len; } } (void)0
@@ -797,14 +797,14 @@ void ImDrawList::PrimQuadUV(const ImVec2& a, const ImVec2& b, const ImVec2& c, c
 #define IM_FIXNORMAL2F(VX,VY)               { float d2 = VX*VX + VY*VY; if (d2 > 0.000001f) { float inv_len2 = 1.0f / d2; if (inv_len2 > IM_FIXNORMAL2F_MAX_INVLEN2) inv_len2 = IM_FIXNORMAL2F_MAX_INVLEN2; VX *= inv_len2; VY *= inv_len2; } } (void)0
 
 // TODO: Thickness anti-aliased lines cap are missing their AA fringe.
-// We avoid using the ImVec2 math operators here to reduce cost to a minimum for debug/non-inlined builds.
-void ImDrawList::AddPolyline(const ImVec2* points, const int points_count, ImU32 col, ImDrawFlags flags, float thickness)
+// We avoid using the glm::vec2 math operators here to reduce cost to a minimum for debug/non-inlined builds.
+void ImDrawList::AddPolyline(const glm::vec2* points, const int points_count, ImU32 col, ImDrawFlags flags, float thickness)
 {
     if (points_count < 2 || (col & IM_COL32_A_MASK) == 0)
         return;
 
     const bool closed = (flags & ImDrawFlags_Closed) != 0;
-    const ImVec2 opaque_uv = _Data->TexUvWhitePixel;
+    const glm::vec2 opaque_uv = _Data->TexUvWhitePixel;
     const int count = closed ? points_count : points_count - 1; // The number of line segments we need to draw
     const bool thick_line = (thickness > _FringeScale);
 
@@ -834,8 +834,8 @@ void ImDrawList::AddPolyline(const ImVec2* points, const int points_count, ImU32
         // Temporary buffer
         // The first <points_count> items are normals at each line point, then after that there are either 2 or 4 temp points for each line point
         _Data->TempBuffer.reserve_discard(points_count * ((use_texture || !thick_line) ? 3 : 5));
-        ImVec2* temp_normals = _Data->TempBuffer.Data;
-        ImVec2* temp_points = temp_normals + points_count;
+        glm::vec2* temp_normals = _Data->TempBuffer.Data;
+        glm::vec2* temp_points = temp_normals + points_count;
 
         // Calculate normals (tangents) for each line segment
         for (int i1 = 0; i1 < count; i1++)
@@ -889,7 +889,7 @@ void ImDrawList::AddPolyline(const ImVec2* points, const int points_count, ImU32
                 dm_y *= half_draw_size;
 
                 // Add temporary vertices for the outer edges
-                ImVec2* out_vtx = &temp_points[i2 * 2];
+                glm::vec2* out_vtx = &temp_points[i2 * 2];
                 out_vtx[0].x = points[i2].x + dm_x;
                 out_vtx[0].y = points[i2].y + dm_y;
                 out_vtx[1].x = points[i2].x - dm_x;
@@ -919,17 +919,17 @@ void ImDrawList::AddPolyline(const ImVec2* points, const int points_count, ImU32
             if (use_texture)
             {
                 // If we're using textures we only need to emit the left/right edge vertices
-                ImVec4 tex_uvs = _Data->TexUvLines[integer_thickness];
+                glm::vec4 tex_uvs = _Data->TexUvLines[integer_thickness];
                 /*if (fractional_thickness != 0.0f) // Currently always zero when use_texture==false!
                 {
-                    const ImVec4 tex_uvs_1 = _Data->TexUvLines[integer_thickness + 1];
+                    const glm::vec4 tex_uvs_1 = _Data->TexUvLines[integer_thickness + 1];
                     tex_uvs.x = tex_uvs.x + (tex_uvs_1.x - tex_uvs.x) * fractional_thickness; // inlined ImLerp()
                     tex_uvs.y = tex_uvs.y + (tex_uvs_1.y - tex_uvs.y) * fractional_thickness;
                     tex_uvs.z = tex_uvs.z + (tex_uvs_1.z - tex_uvs.z) * fractional_thickness;
                     tex_uvs.w = tex_uvs.w + (tex_uvs_1.w - tex_uvs.w) * fractional_thickness;
                 }*/
-                ImVec2 tex_uv0(tex_uvs.x, tex_uvs.y);
-                ImVec2 tex_uv1(tex_uvs.z, tex_uvs.w);
+                glm::vec2 tex_uv0(tex_uvs.x, tex_uvs.y);
+                glm::vec2 tex_uv1(tex_uvs.z, tex_uvs.w);
                 for (int i = 0; i < points_count; i++)
                 {
                     _VtxWritePtr[0].pos = temp_points[i * 2 + 0]; _VtxWritePtr[0].uv = tex_uv0; _VtxWritePtr[0].col = col; // Left-side outer edge
@@ -987,7 +987,7 @@ void ImDrawList::AddPolyline(const ImVec2* points, const int points_count, ImU32
                 float dm_in_y = dm_y * half_inner_thickness;
 
                 // Add temporary vertices
-                ImVec2* out_vtx = &temp_points[i2 * 4];
+                glm::vec2* out_vtx = &temp_points[i2 * 4];
                 out_vtx[0].x = points[i2].x + dm_out_x;
                 out_vtx[0].y = points[i2].y + dm_out_y;
                 out_vtx[1].x = points[i2].x + dm_in_x;
@@ -1031,8 +1031,8 @@ void ImDrawList::AddPolyline(const ImVec2* points, const int points_count, ImU32
         for (int i1 = 0; i1 < count; i1++)
         {
             const int i2 = (i1 + 1) == points_count ? 0 : i1 + 1;
-            const ImVec2& p1 = points[i1];
-            const ImVec2& p2 = points[i2];
+            const glm::vec2& p1 = points[i1];
+            const glm::vec2& p2 = points[i2];
 
             float dx = p2.x - p1.x;
             float dy = p2.y - p1.y;
@@ -1054,14 +1054,14 @@ void ImDrawList::AddPolyline(const ImVec2* points, const int points_count, ImU32
     }
 }
 
-// - We intentionally avoid using ImVec2 and its math operators here to reduce cost to a minimum for debug/non-inlined builds.
+// - We intentionally avoid using glm::vec2 and its math operators here to reduce cost to a minimum for debug/non-inlined builds.
 // - Filled shapes must always use clockwise winding order. The anti-aliasing fringe depends on it. Counter-clockwise shapes will have "inward" anti-aliasing.
-void ImDrawList::AddConvexPolyFilled(const ImVec2* points, const int points_count, ImU32 col)
+void ImDrawList::AddConvexPolyFilled(const glm::vec2* points, const int points_count, ImU32 col)
 {
     if (points_count < 3 || (col & IM_COL32_A_MASK) == 0)
         return;
 
-    const ImVec2 uv = _Data->TexUvWhitePixel;
+    const glm::vec2 uv = _Data->TexUvWhitePixel;
 
     if (Flags & ImDrawListFlags_AntiAliasedFill)
     {
@@ -1083,11 +1083,11 @@ void ImDrawList::AddConvexPolyFilled(const ImVec2* points, const int points_coun
 
         // Compute normals
         _Data->TempBuffer.reserve_discard(points_count);
-        ImVec2* temp_normals = _Data->TempBuffer.Data;
+        glm::vec2* temp_normals = _Data->TempBuffer.Data;
         for (int i0 = points_count - 1, i1 = 0; i1 < points_count; i0 = i1++)
         {
-            const ImVec2& p0 = points[i0];
-            const ImVec2& p1 = points[i1];
+            const glm::vec2& p0 = points[i0];
+            const glm::vec2& p1 = points[i1];
             float dx = p1.x - p0.x;
             float dy = p1.y - p0.y;
             IM_NORMALIZE2F_OVER_ZERO(dx, dy);
@@ -1098,8 +1098,8 @@ void ImDrawList::AddConvexPolyFilled(const ImVec2* points, const int points_coun
         for (int i0 = points_count - 1, i1 = 0; i1 < points_count; i0 = i1++)
         {
             // Average normals
-            const ImVec2& n0 = temp_normals[i0];
-            const ImVec2& n1 = temp_normals[i1];
+            const glm::vec2& n0 = temp_normals[i0];
+            const glm::vec2& n1 = temp_normals[i1];
             float dm_x = (n0.x + n1.x) * 0.5f;
             float dm_y = (n0.y + n1.y) * 0.5f;
             IM_FIXNORMAL2F(dm_x, dm_y);
@@ -1138,7 +1138,7 @@ void ImDrawList::AddConvexPolyFilled(const ImVec2* points, const int points_coun
     }
 }
 
-void ImDrawList::_PathArcToFastEx(const ImVec2& center, float radius, int a_min_sample, int a_max_sample, int a_step)
+void ImDrawList::_PathArcToFastEx(const glm::vec2& center, float radius, int a_min_sample, int a_max_sample, int a_step)
 {
     if (radius < 0.5f)
     {
@@ -1176,7 +1176,7 @@ void ImDrawList::_PathArcToFastEx(const ImVec2& center, float radius, int a_min_
     }
 
     _Path.resize(_Path.Size + samples);
-    ImVec2* out_ptr = _Path.Data + (_Path.Size - samples);
+    glm::vec2* out_ptr = _Path.Data + (_Path.Size - samples);
 
     int sample_index = a_min_sample;
     if (sample_index < 0 || sample_index >= IM_DRAWLIST_ARCFAST_SAMPLE_MAX)
@@ -1194,7 +1194,7 @@ void ImDrawList::_PathArcToFastEx(const ImVec2& center, float radius, int a_min_
             if (sample_index >= IM_DRAWLIST_ARCFAST_SAMPLE_MAX)
                 sample_index -= IM_DRAWLIST_ARCFAST_SAMPLE_MAX;
 
-            const ImVec2 s = _Data->ArcFastVtx[sample_index];
+            const glm::vec2 s = _Data->ArcFastVtx[sample_index];
             out_ptr->x = center.x + s.x * radius;
             out_ptr->y = center.y + s.y * radius;
             out_ptr++;
@@ -1208,7 +1208,7 @@ void ImDrawList::_PathArcToFastEx(const ImVec2& center, float radius, int a_min_
             if (sample_index < 0)
                 sample_index += IM_DRAWLIST_ARCFAST_SAMPLE_MAX;
 
-            const ImVec2 s = _Data->ArcFastVtx[sample_index];
+            const glm::vec2 s = _Data->ArcFastVtx[sample_index];
             out_ptr->x = center.x + s.x * radius;
             out_ptr->y = center.y + s.y * radius;
             out_ptr++;
@@ -1221,7 +1221,7 @@ void ImDrawList::_PathArcToFastEx(const ImVec2& center, float radius, int a_min_
         if (normalized_max_sample < 0)
             normalized_max_sample += IM_DRAWLIST_ARCFAST_SAMPLE_MAX;
 
-        const ImVec2 s = _Data->ArcFastVtx[normalized_max_sample];
+        const glm::vec2 s = _Data->ArcFastVtx[normalized_max_sample];
         out_ptr->x = center.x + s.x * radius;
         out_ptr->y = center.y + s.y * radius;
         out_ptr++;
@@ -1230,7 +1230,7 @@ void ImDrawList::_PathArcToFastEx(const ImVec2& center, float radius, int a_min_
     IM_ASSERT_PARANOID(_Path.Data + _Path.Size == out_ptr);
 }
 
-void ImDrawList::_PathArcToN(const ImVec2& center, float radius, float a_min, float a_max, int num_segments)
+void ImDrawList::_PathArcToN(const glm::vec2& center, float radius, float a_min, float a_max, int num_segments)
 {
     if (radius < 0.5f)
     {
@@ -1244,12 +1244,12 @@ void ImDrawList::_PathArcToN(const ImVec2& center, float radius, float a_min, fl
     for (int i = 0; i <= num_segments; i++)
     {
         const float a = a_min + ((float)i / (float)num_segments) * (a_max - a_min);
-        _Path.push_back(ImVec2(center.x + ImCos(a) * radius, center.y + ImSin(a) * radius));
+        _Path.push_back(glm::vec2(center.x + ImCos(a) * radius, center.y + ImSin(a) * radius));
     }
 }
 
 // 0: East, 3: South, 6: West, 9: North, 12: East
-void ImDrawList::PathArcToFast(const ImVec2& center, float radius, int a_min_of_12, int a_max_of_12)
+void ImDrawList::PathArcToFast(const glm::vec2& center, float radius, int a_min_of_12, int a_max_of_12)
 {
     if (radius < 0.5f)
     {
@@ -1259,7 +1259,7 @@ void ImDrawList::PathArcToFast(const ImVec2& center, float radius, int a_min_of_
     _PathArcToFastEx(center, radius, a_min_of_12 * IM_DRAWLIST_ARCFAST_SAMPLE_MAX / 12, a_max_of_12 * IM_DRAWLIST_ARCFAST_SAMPLE_MAX / 12, 0);
 }
 
-void ImDrawList::PathArcTo(const ImVec2& center, float radius, float a_min, float a_max, int num_segments)
+void ImDrawList::PathArcTo(const glm::vec2& center, float radius, float a_min, float a_max, int num_segments)
 {
     if (radius < 0.5f)
     {
@@ -1294,11 +1294,11 @@ void ImDrawList::PathArcTo(const ImVec2& center, float radius, float a_min, floa
 
         _Path.reserve(_Path.Size + (a_mid_samples + 1 + (a_emit_start ? 1 : 0) + (a_emit_end ? 1 : 0)));
         if (a_emit_start)
-            _Path.push_back(ImVec2(center.x + ImCos(a_min) * radius, center.y + ImSin(a_min) * radius));
+            _Path.push_back(glm::vec2(center.x + ImCos(a_min) * radius, center.y + ImSin(a_min) * radius));
         if (a_mid_samples > 0)
             _PathArcToFastEx(center, radius, a_min_sample, a_max_sample, 0);
         if (a_emit_end)
-            _Path.push_back(ImVec2(center.x + ImCos(a_max) * radius, center.y + ImSin(a_max) * radius));
+            _Path.push_back(glm::vec2(center.x + ImCos(a_max) * radius, center.y + ImSin(a_max) * radius));
     }
     else
     {
@@ -1309,7 +1309,7 @@ void ImDrawList::PathArcTo(const ImVec2& center, float radius, float a_min, floa
     }
 }
 
-void ImDrawList::PathEllipticalArcTo(const ImVec2& center, const ImVec2& radius, float rot, float a_min, float a_max, int num_segments)
+void ImDrawList::PathEllipticalArcTo(const glm::vec2& center, const glm::vec2& radius, float rot, float a_min, float a_max, int num_segments)
 {
     if (num_segments <= 0)
         num_segments = _CalcCircleAutoSegmentCount(ImMax(radius.x, radius.y)); // A bit pessimistic, maybe there's a better computation to do here.
@@ -1321,35 +1321,35 @@ void ImDrawList::PathEllipticalArcTo(const ImVec2& center, const ImVec2& radius,
     for (int i = 0; i <= num_segments; i++)
     {
         const float a = a_min + ((float)i / (float)num_segments) * (a_max - a_min);
-        ImVec2 point(ImCos(a) * radius.x, ImSin(a) * radius.y);
-        const ImVec2 rel((point.x * cos_rot) - (point.y * sin_rot), (point.x * sin_rot) + (point.y * cos_rot));
+        glm::vec2 point(ImCos(a) * radius.x, ImSin(a) * radius.y);
+        const glm::vec2 rel((point.x * cos_rot) - (point.y * sin_rot), (point.x * sin_rot) + (point.y * cos_rot));
         point.x = rel.x + center.x;
         point.y = rel.y + center.y;
         _Path.push_back(point);
     }
 }
 
-ImVec2 ImBezierCubicCalc(const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, const ImVec2& p4, float t)
+glm::vec2 ImBezierCubicCalc(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, const glm::vec2& p4, float t)
 {
     float u = 1.0f - t;
     float w1 = u * u * u;
     float w2 = 3 * u * u * t;
     float w3 = 3 * u * t * t;
     float w4 = t * t * t;
-    return ImVec2(w1 * p1.x + w2 * p2.x + w3 * p3.x + w4 * p4.x, w1 * p1.y + w2 * p2.y + w3 * p3.y + w4 * p4.y);
+    return glm::vec2(w1 * p1.x + w2 * p2.x + w3 * p3.x + w4 * p4.x, w1 * p1.y + w2 * p2.y + w3 * p3.y + w4 * p4.y);
 }
 
-ImVec2 ImBezierQuadraticCalc(const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, float t)
+glm::vec2 ImBezierQuadraticCalc(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, float t)
 {
     float u = 1.0f - t;
     float w1 = u * u;
     float w2 = 2 * u * t;
     float w3 = t * t;
-    return ImVec2(w1 * p1.x + w2 * p2.x + w3 * p3.x, w1 * p1.y + w2 * p2.y + w3 * p3.y);
+    return glm::vec2(w1 * p1.x + w2 * p2.x + w3 * p3.x, w1 * p1.y + w2 * p2.y + w3 * p3.y);
 }
 
 // Closely mimics ImBezierCubicClosestPointCasteljau() in imgui.cpp
-static void PathBezierCubicCurveToCasteljau(ImVector<ImVec2>* path, float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4, float tess_tol, int level)
+static void PathBezierCubicCurveToCasteljau(ImVector<glm::vec2>* path, float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4, float tess_tol, int level)
 {
     float dx = x4 - x1;
     float dy = y4 - y1;
@@ -1359,7 +1359,7 @@ static void PathBezierCubicCurveToCasteljau(ImVector<ImVec2>* path, float x1, fl
     d3 = (d3 >= 0) ? d3 : -d3;
     if ((d2 + d3) * (d2 + d3) < tess_tol * (dx * dx + dy * dy))
     {
-        path->push_back(ImVec2(x4, y4));
+        path->push_back(glm::vec2(x4, y4));
     }
     else if (level < 10)
     {
@@ -1374,13 +1374,13 @@ static void PathBezierCubicCurveToCasteljau(ImVector<ImVec2>* path, float x1, fl
     }
 }
 
-static void PathBezierQuadraticCurveToCasteljau(ImVector<ImVec2>* path, float x1, float y1, float x2, float y2, float x3, float y3, float tess_tol, int level)
+static void PathBezierQuadraticCurveToCasteljau(ImVector<glm::vec2>* path, float x1, float y1, float x2, float y2, float x3, float y3, float tess_tol, int level)
 {
     float dx = x3 - x1, dy = y3 - y1;
     float det = (x2 - x3) * dy - (y2 - y3) * dx;
     if (det * det * 4.0f < tess_tol * (dx * dx + dy * dy))
     {
-        path->push_back(ImVec2(x3, y3));
+        path->push_back(glm::vec2(x3, y3));
     }
     else if (level < 10)
     {
@@ -1392,9 +1392,9 @@ static void PathBezierQuadraticCurveToCasteljau(ImVector<ImVec2>* path, float x1
     }
 }
 
-void ImDrawList::PathBezierCubicCurveTo(const ImVec2& p2, const ImVec2& p3, const ImVec2& p4, int num_segments)
+void ImDrawList::PathBezierCubicCurveTo(const glm::vec2& p2, const glm::vec2& p3, const glm::vec2& p4, int num_segments)
 {
-    ImVec2 p1 = _Path.back();
+    glm::vec2 p1 = _Path.back();
     if (num_segments == 0)
     {
         IM_ASSERT(_Data->CurveTessellationTol > 0.0f);
@@ -1408,9 +1408,9 @@ void ImDrawList::PathBezierCubicCurveTo(const ImVec2& p2, const ImVec2& p3, cons
     }
 }
 
-void ImDrawList::PathBezierQuadraticCurveTo(const ImVec2& p2, const ImVec2& p3, int num_segments)
+void ImDrawList::PathBezierQuadraticCurveTo(const glm::vec2& p2, const glm::vec2& p3, int num_segments)
 {
-    ImVec2 p1 = _Path.back();
+    glm::vec2 p1 = _Path.back();
     if (num_segments == 0)
     {
         IM_ASSERT(_Data->CurveTessellationTol > 0.0f);
@@ -1448,7 +1448,7 @@ static inline ImDrawFlags FixRectCornerFlags(ImDrawFlags flags)
     return flags;
 }
 
-void ImDrawList::PathRect(const ImVec2& a, const ImVec2& b, float rounding, ImDrawFlags flags)
+void ImDrawList::PathRect(const glm::vec2& a, const glm::vec2& b, float rounding, ImDrawFlags flags)
 {
     if (rounding >= 0.5f)
     {
@@ -1459,9 +1459,9 @@ void ImDrawList::PathRect(const ImVec2& a, const ImVec2& b, float rounding, ImDr
     if (rounding < 0.5f || (flags & ImDrawFlags_RoundCornersMask_) == ImDrawFlags_RoundCornersNone)
     {
         PathLineTo(a);
-        PathLineTo(ImVec2(b.x, a.y));
+        PathLineTo(glm::vec2(b.x, a.y));
         PathLineTo(b);
-        PathLineTo(ImVec2(a.x, b.y));
+        PathLineTo(glm::vec2(a.x, b.y));
     }
     else
     {
@@ -1469,36 +1469,36 @@ void ImDrawList::PathRect(const ImVec2& a, const ImVec2& b, float rounding, ImDr
         const float rounding_tr = (flags & ImDrawFlags_RoundCornersTopRight)    ? rounding : 0.0f;
         const float rounding_br = (flags & ImDrawFlags_RoundCornersBottomRight) ? rounding : 0.0f;
         const float rounding_bl = (flags & ImDrawFlags_RoundCornersBottomLeft)  ? rounding : 0.0f;
-        PathArcToFast(ImVec2(a.x + rounding_tl, a.y + rounding_tl), rounding_tl, 6, 9);
-        PathArcToFast(ImVec2(b.x - rounding_tr, a.y + rounding_tr), rounding_tr, 9, 12);
-        PathArcToFast(ImVec2(b.x - rounding_br, b.y - rounding_br), rounding_br, 0, 3);
-        PathArcToFast(ImVec2(a.x + rounding_bl, b.y - rounding_bl), rounding_bl, 3, 6);
+        PathArcToFast(glm::vec2(a.x + rounding_tl, a.y + rounding_tl), rounding_tl, 6, 9);
+        PathArcToFast(glm::vec2(b.x - rounding_tr, a.y + rounding_tr), rounding_tr, 9, 12);
+        PathArcToFast(glm::vec2(b.x - rounding_br, b.y - rounding_br), rounding_br, 0, 3);
+        PathArcToFast(glm::vec2(a.x + rounding_bl, b.y - rounding_bl), rounding_bl, 3, 6);
     }
 }
 
-void ImDrawList::AddLine(const ImVec2& p1, const ImVec2& p2, ImU32 col, float thickness)
+void ImDrawList::AddLine(const glm::vec2& p1, const glm::vec2& p2, ImU32 col, float thickness)
 {
     if ((col & IM_COL32_A_MASK) == 0)
         return;
-    PathLineTo(p1 + ImVec2(0.5f, 0.5f));
-    PathLineTo(p2 + ImVec2(0.5f, 0.5f));
+    PathLineTo(p1 + glm::vec2(0.5f, 0.5f));
+    PathLineTo(p2 + glm::vec2(0.5f, 0.5f));
     PathStroke(col, 0, thickness);
 }
 
 // p_min = upper-left, p_max = lower-right
 // Note we don't render 1 pixels sized rectangles properly.
-void ImDrawList::AddRect(const ImVec2& p_min, const ImVec2& p_max, ImU32 col, float rounding, ImDrawFlags flags, float thickness)
+void ImDrawList::AddRect(const glm::vec2& p_min, const glm::vec2& p_max, ImU32 col, float rounding, ImDrawFlags flags, float thickness)
 {
     if ((col & IM_COL32_A_MASK) == 0)
         return;
     if (Flags & ImDrawListFlags_AntiAliasedLines)
-        PathRect(p_min + ImVec2(0.50f, 0.50f), p_max - ImVec2(0.50f, 0.50f), rounding, flags);
+        PathRect(p_min + glm::vec2(0.50f, 0.50f), p_max - glm::vec2(0.50f, 0.50f), rounding, flags);
     else
-        PathRect(p_min + ImVec2(0.50f, 0.50f), p_max - ImVec2(0.49f, 0.49f), rounding, flags); // Better looking lower-right corner and rounded non-AA shapes.
+        PathRect(p_min + glm::vec2(0.50f, 0.50f), p_max - glm::vec2(0.49f, 0.49f), rounding, flags); // Better looking lower-right corner and rounded non-AA shapes.
     PathStroke(col, ImDrawFlags_Closed, thickness);
 }
 
-void ImDrawList::AddRectFilled(const ImVec2& p_min, const ImVec2& p_max, ImU32 col, float rounding, ImDrawFlags flags)
+void ImDrawList::AddRectFilled(const glm::vec2& p_min, const glm::vec2& p_max, ImU32 col, float rounding, ImDrawFlags flags)
 {
     if ((col & IM_COL32_A_MASK) == 0)
         return;
@@ -1515,22 +1515,22 @@ void ImDrawList::AddRectFilled(const ImVec2& p_min, const ImVec2& p_max, ImU32 c
 }
 
 // p_min = upper-left, p_max = lower-right
-void ImDrawList::AddRectFilledMultiColor(const ImVec2& p_min, const ImVec2& p_max, ImU32 col_upr_left, ImU32 col_upr_right, ImU32 col_bot_right, ImU32 col_bot_left)
+void ImDrawList::AddRectFilledMultiColor(const glm::vec2& p_min, const glm::vec2& p_max, ImU32 col_upr_left, ImU32 col_upr_right, ImU32 col_bot_right, ImU32 col_bot_left)
 {
     if (((col_upr_left | col_upr_right | col_bot_right | col_bot_left) & IM_COL32_A_MASK) == 0)
         return;
 
-    const ImVec2 uv = _Data->TexUvWhitePixel;
+    const glm::vec2 uv = _Data->TexUvWhitePixel;
     PrimReserve(6, 4);
     PrimWriteIdx((ImDrawIdx)(_VtxCurrentIdx)); PrimWriteIdx((ImDrawIdx)(_VtxCurrentIdx + 1)); PrimWriteIdx((ImDrawIdx)(_VtxCurrentIdx + 2));
     PrimWriteIdx((ImDrawIdx)(_VtxCurrentIdx)); PrimWriteIdx((ImDrawIdx)(_VtxCurrentIdx + 2)); PrimWriteIdx((ImDrawIdx)(_VtxCurrentIdx + 3));
     PrimWriteVtx(p_min, uv, col_upr_left);
-    PrimWriteVtx(ImVec2(p_max.x, p_min.y), uv, col_upr_right);
+    PrimWriteVtx(glm::vec2(p_max.x, p_min.y), uv, col_upr_right);
     PrimWriteVtx(p_max, uv, col_bot_right);
-    PrimWriteVtx(ImVec2(p_min.x, p_max.y), uv, col_bot_left);
+    PrimWriteVtx(glm::vec2(p_min.x, p_max.y), uv, col_bot_left);
 }
 
-void ImDrawList::AddQuad(const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, const ImVec2& p4, ImU32 col, float thickness)
+void ImDrawList::AddQuad(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, const glm::vec2& p4, ImU32 col, float thickness)
 {
     if ((col & IM_COL32_A_MASK) == 0)
         return;
@@ -1542,7 +1542,7 @@ void ImDrawList::AddQuad(const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, c
     PathStroke(col, ImDrawFlags_Closed, thickness);
 }
 
-void ImDrawList::AddQuadFilled(const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, const ImVec2& p4, ImU32 col)
+void ImDrawList::AddQuadFilled(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, const glm::vec2& p4, ImU32 col)
 {
     if ((col & IM_COL32_A_MASK) == 0)
         return;
@@ -1554,7 +1554,7 @@ void ImDrawList::AddQuadFilled(const ImVec2& p1, const ImVec2& p2, const ImVec2&
     PathFillConvex(col);
 }
 
-void ImDrawList::AddTriangle(const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, ImU32 col, float thickness)
+void ImDrawList::AddTriangle(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, ImU32 col, float thickness)
 {
     if ((col & IM_COL32_A_MASK) == 0)
         return;
@@ -1565,7 +1565,7 @@ void ImDrawList::AddTriangle(const ImVec2& p1, const ImVec2& p2, const ImVec2& p
     PathStroke(col, ImDrawFlags_Closed, thickness);
 }
 
-void ImDrawList::AddTriangleFilled(const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, ImU32 col)
+void ImDrawList::AddTriangleFilled(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, ImU32 col)
 {
     if ((col & IM_COL32_A_MASK) == 0)
         return;
@@ -1576,7 +1576,7 @@ void ImDrawList::AddTriangleFilled(const ImVec2& p1, const ImVec2& p2, const ImV
     PathFillConvex(col);
 }
 
-void ImDrawList::AddCircle(const ImVec2& center, float radius, ImU32 col, int num_segments, float thickness)
+void ImDrawList::AddCircle(const glm::vec2& center, float radius, ImU32 col, int num_segments, float thickness)
 {
     if ((col & IM_COL32_A_MASK) == 0 || radius < 0.5f)
         return;
@@ -1600,7 +1600,7 @@ void ImDrawList::AddCircle(const ImVec2& center, float radius, ImU32 col, int nu
     PathStroke(col, ImDrawFlags_Closed, thickness);
 }
 
-void ImDrawList::AddCircleFilled(const ImVec2& center, float radius, ImU32 col, int num_segments)
+void ImDrawList::AddCircleFilled(const glm::vec2& center, float radius, ImU32 col, int num_segments)
 {
     if ((col & IM_COL32_A_MASK) == 0 || radius < 0.5f)
         return;
@@ -1625,7 +1625,7 @@ void ImDrawList::AddCircleFilled(const ImVec2& center, float radius, ImU32 col, 
 }
 
 // Guaranteed to honor 'num_segments'
-void ImDrawList::AddNgon(const ImVec2& center, float radius, ImU32 col, int num_segments, float thickness)
+void ImDrawList::AddNgon(const glm::vec2& center, float radius, ImU32 col, int num_segments, float thickness)
 {
     if ((col & IM_COL32_A_MASK) == 0 || num_segments <= 2)
         return;
@@ -1637,7 +1637,7 @@ void ImDrawList::AddNgon(const ImVec2& center, float radius, ImU32 col, int num_
 }
 
 // Guaranteed to honor 'num_segments'
-void ImDrawList::AddNgonFilled(const ImVec2& center, float radius, ImU32 col, int num_segments)
+void ImDrawList::AddNgonFilled(const glm::vec2& center, float radius, ImU32 col, int num_segments)
 {
     if ((col & IM_COL32_A_MASK) == 0 || num_segments <= 2)
         return;
@@ -1649,7 +1649,7 @@ void ImDrawList::AddNgonFilled(const ImVec2& center, float radius, ImU32 col, in
 }
 
 // Ellipse
-void ImDrawList::AddEllipse(const ImVec2& center, const ImVec2& radius, ImU32 col, float rot, int num_segments, float thickness)
+void ImDrawList::AddEllipse(const glm::vec2& center, const glm::vec2& radius, ImU32 col, float rot, int num_segments, float thickness)
 {
     if ((col & IM_COL32_A_MASK) == 0)
         return;
@@ -1663,7 +1663,7 @@ void ImDrawList::AddEllipse(const ImVec2& center, const ImVec2& radius, ImU32 co
     PathStroke(col, true, thickness);
 }
 
-void ImDrawList::AddEllipseFilled(const ImVec2& center, const ImVec2& radius, ImU32 col, float rot, int num_segments)
+void ImDrawList::AddEllipseFilled(const glm::vec2& center, const glm::vec2& radius, ImU32 col, float rot, int num_segments)
 {
     if ((col & IM_COL32_A_MASK) == 0)
         return;
@@ -1678,7 +1678,7 @@ void ImDrawList::AddEllipseFilled(const ImVec2& center, const ImVec2& radius, Im
 }
 
 // Cubic Bezier takes 4 controls points
-void ImDrawList::AddBezierCubic(const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, const ImVec2& p4, ImU32 col, float thickness, int num_segments)
+void ImDrawList::AddBezierCubic(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, const glm::vec2& p4, ImU32 col, float thickness, int num_segments)
 {
     if ((col & IM_COL32_A_MASK) == 0)
         return;
@@ -1689,7 +1689,7 @@ void ImDrawList::AddBezierCubic(const ImVec2& p1, const ImVec2& p2, const ImVec2
 }
 
 // Quadratic Bezier takes 3 controls points
-void ImDrawList::AddBezierQuadratic(const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, ImU32 col, float thickness, int num_segments)
+void ImDrawList::AddBezierQuadratic(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, ImU32 col, float thickness, int num_segments)
 {
     if ((col & IM_COL32_A_MASK) == 0)
         return;
@@ -1699,7 +1699,7 @@ void ImDrawList::AddBezierQuadratic(const ImVec2& p1, const ImVec2& p2, const Im
     PathStroke(col, 0, thickness);
 }
 
-void ImDrawList::AddText(ImFont* font, float font_size, const ImVec2& pos, ImU32 col, const char* text_begin, const char* text_end, float wrap_width, const ImVec4* cpu_fine_clip_rect)
+void ImDrawList::AddText(ImFont* font, float font_size, const glm::vec2& pos, ImU32 col, const char* text_begin, const char* text_end, float wrap_width, const glm::vec4* cpu_fine_clip_rect)
 {
     if ((col & IM_COL32_A_MASK) == 0)
         return;
@@ -1715,7 +1715,7 @@ void ImDrawList::AddText(ImFont* font, float font_size, const ImVec2& pos, ImU32
     if (font_size == 0.0f)
         font_size = _Data->FontSize;
 
-    ImVec4 clip_rect = _CmdHeader.ClipRect;
+    glm::vec4 clip_rect = _CmdHeader.ClipRect;
     if (cpu_fine_clip_rect)
     {
         clip_rect.x = ImMax(clip_rect.x, cpu_fine_clip_rect->x);
@@ -1726,12 +1726,12 @@ void ImDrawList::AddText(ImFont* font, float font_size, const ImVec2& pos, ImU32
     font->RenderText(this, font_size, pos, col, clip_rect, text_begin, text_end, wrap_width, cpu_fine_clip_rect != NULL);
 }
 
-void ImDrawList::AddText(const ImVec2& pos, ImU32 col, const char* text_begin, const char* text_end)
+void ImDrawList::AddText(const glm::vec2& pos, ImU32 col, const char* text_begin, const char* text_end)
 {
     AddText(_Data->Font, _Data->FontSize, pos, col, text_begin, text_end);
 }
 
-void ImDrawList::AddImage(ImTextureRef tex_ref, const ImVec2& p_min, const ImVec2& p_max, const ImVec2& uv_min, const ImVec2& uv_max, ImU32 col)
+void ImDrawList::AddImage(ImTextureRef tex_ref, const glm::vec2& p_min, const glm::vec2& p_max, const glm::vec2& uv_min, const glm::vec2& uv_max, ImU32 col)
 {
     if ((col & IM_COL32_A_MASK) == 0)
         return;
@@ -1747,7 +1747,7 @@ void ImDrawList::AddImage(ImTextureRef tex_ref, const ImVec2& p_min, const ImVec
         PopTexture();
 }
 
-void ImDrawList::AddImageQuad(ImTextureRef tex_ref, const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, const ImVec2& p4, const ImVec2& uv1, const ImVec2& uv2, const ImVec2& uv3, const ImVec2& uv4, ImU32 col)
+void ImDrawList::AddImageQuad(ImTextureRef tex_ref, const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, const glm::vec2& p4, const glm::vec2& uv1, const glm::vec2& uv2, const glm::vec2& uv3, const glm::vec2& uv4, ImU32 col)
 {
     if ((col & IM_COL32_A_MASK) == 0)
         return;
@@ -1763,7 +1763,7 @@ void ImDrawList::AddImageQuad(ImTextureRef tex_ref, const ImVec2& p1, const ImVe
         PopTexture();
 }
 
-void ImDrawList::AddImageRounded(ImTextureRef tex_ref, const ImVec2& p_min, const ImVec2& p_max, const ImVec2& uv_min, const ImVec2& uv_max, ImU32 col, float rounding, ImDrawFlags flags)
+void ImDrawList::AddImageRounded(ImTextureRef tex_ref, const glm::vec2& p_min, const glm::vec2& p_max, const glm::vec2& uv_min, const glm::vec2& uv_max, ImU32 col, float rounding, ImDrawFlags flags)
 {
     if ((col & IM_COL32_A_MASK) == 0)
         return;
@@ -1811,7 +1811,7 @@ struct ImTriangulatorNode
 {
     ImTriangulatorNodeType  Type;
     int                     Index;
-    ImVec2                  Pos;
+    glm::vec2                  Pos;
     ImTriangulatorNode*     Next;
     ImTriangulatorNode*     Prev;
 
@@ -1832,15 +1832,15 @@ struct ImTriangulator
     static int EstimateTriangleCount(int points_count)      { return (points_count < 3) ? 0 : points_count - 2; }
     static int EstimateScratchBufferSize(int points_count)  { return sizeof(ImTriangulatorNode) * points_count + sizeof(ImTriangulatorNode*) * points_count * 2; }
 
-    void    Init(const ImVec2* points, int points_count, void* scratch_buffer);
+    void    Init(const glm::vec2* points, int points_count, void* scratch_buffer);
     void    GetNextTriangle(unsigned int out_triangle[3]);     // Return relative indexes for next triangle
 
     // Internal functions
-    void    BuildNodes(const ImVec2* points, int points_count);
+    void    BuildNodes(const glm::vec2* points, int points_count);
     void    BuildReflexes();
     void    BuildEars();
     void    FlipNodeList();
-    bool    IsEar(int i0, int i1, int i2, const ImVec2& v0, const ImVec2& v1, const ImVec2& v2) const;
+    bool    IsEar(int i0, int i1, int i2, const glm::vec2& v0, const glm::vec2& v1, const glm::vec2& v2) const;
     void    ReclassifyNode(ImTriangulatorNode* node);
 
     // Internal members
@@ -1853,7 +1853,7 @@ struct ImTriangulator
 // Distribute storage for nodes, ears and reflexes.
 // FIXME-OPT: if everything is convex, we could report it to caller and let it switch to an convex renderer
 // (this would require first building reflexes to bail to convex if empty, without even building nodes)
-void ImTriangulator::Init(const ImVec2* points, int points_count, void* scratch_buffer)
+void ImTriangulator::Init(const glm::vec2* points, int points_count, void* scratch_buffer)
 {
     IM_ASSERT(scratch_buffer != NULL && points_count >= 3);
     _TrianglesLeft = EstimateTriangleCount(points_count);
@@ -1865,7 +1865,7 @@ void ImTriangulator::Init(const ImVec2* points, int points_count, void* scratch_
     BuildEars();
 }
 
-void ImTriangulator::BuildNodes(const ImVec2* points, int points_count)
+void ImTriangulator::BuildNodes(const glm::vec2* points, int points_count)
 {
     for (int i = 0; i < points_count; i++)
     {
@@ -1965,7 +1965,7 @@ void ImTriangulator::FlipNodeList()
 }
 
 // A triangle is an ear is no other vertex is inside it. We can test reflexes vertices only (see reference algorithm)
-bool ImTriangulator::IsEar(int i0, int i1, int i2, const ImVec2& v0, const ImVec2& v1, const ImVec2& v2) const
+bool ImTriangulator::IsEar(int i0, int i1, int i2, const glm::vec2& v0, const glm::vec2& v1, const glm::vec2& v2) const
 {
     ImTriangulatorNode** p_end = _Reflexes.Data + _Reflexes.Size;
     for (ImTriangulatorNode** p = _Reflexes.Data; p < p_end; p++)
@@ -2010,12 +2010,12 @@ void ImTriangulator::ReclassifyNode(ImTriangulatorNode* n1)
 // It is up to caller to ensure not making costly calls that will be outside of visible area.
 // As concave fill is noticeably more expensive than other primitives, be mindful of this...
 // Caller can build AABB of points, and avoid filling if 'draw_list->_CmdHeader.ClipRect.Overlays(points_bb) == false')
-void ImDrawList::AddConcavePolyFilled(const ImVec2* points, const int points_count, ImU32 col)
+void ImDrawList::AddConcavePolyFilled(const glm::vec2* points, const int points_count, ImU32 col)
 {
     if (points_count < 3 || (col & IM_COL32_A_MASK) == 0)
         return;
 
-    const ImVec2 uv = _Data->TexUvWhitePixel;
+    const glm::vec2 uv = _Data->TexUvWhitePixel;
     ImTriangulator triangulator;
     unsigned int triangle[3];
     if (Flags & ImDrawListFlags_AntiAliasedFill)
@@ -2031,7 +2031,7 @@ void ImDrawList::AddConcavePolyFilled(const ImVec2* points, const int points_cou
         unsigned int vtx_inner_idx = _VtxCurrentIdx;
         unsigned int vtx_outer_idx = _VtxCurrentIdx + 1;
 
-        _Data->TempBuffer.reserve_discard((ImTriangulator::EstimateScratchBufferSize(points_count) + sizeof(ImVec2)) / sizeof(ImVec2));
+        _Data->TempBuffer.reserve_discard((ImTriangulator::EstimateScratchBufferSize(points_count) + sizeof(glm::vec2)) / sizeof(glm::vec2));
         triangulator.Init(points, points_count, _Data->TempBuffer.Data);
         while (triangulator._TrianglesLeft > 0)
         {
@@ -2042,11 +2042,11 @@ void ImDrawList::AddConcavePolyFilled(const ImVec2* points, const int points_cou
 
         // Compute normals
         _Data->TempBuffer.reserve_discard(points_count);
-        ImVec2* temp_normals = _Data->TempBuffer.Data;
+        glm::vec2* temp_normals = _Data->TempBuffer.Data;
         for (int i0 = points_count - 1, i1 = 0; i1 < points_count; i0 = i1++)
         {
-            const ImVec2& p0 = points[i0];
-            const ImVec2& p1 = points[i1];
+            const glm::vec2& p0 = points[i0];
+            const glm::vec2& p1 = points[i1];
             float dx = p1.x - p0.x;
             float dy = p1.y - p0.y;
             IM_NORMALIZE2F_OVER_ZERO(dx, dy);
@@ -2057,8 +2057,8 @@ void ImDrawList::AddConcavePolyFilled(const ImVec2* points, const int points_cou
         for (int i0 = points_count - 1, i1 = 0; i1 < points_count; i0 = i1++)
         {
             // Average normals
-            const ImVec2& n0 = temp_normals[i0];
-            const ImVec2& n1 = temp_normals[i1];
+            const glm::vec2& n0 = temp_normals[i0];
+            const glm::vec2& n1 = temp_normals[i1];
             float dm_x = (n0.x + n1.x) * 0.5f;
             float dm_y = (n0.y + n1.y) * 0.5f;
             IM_FIXNORMAL2F(dm_x, dm_y);
@@ -2088,7 +2088,7 @@ void ImDrawList::AddConcavePolyFilled(const ImVec2* points, const int points_cou
             _VtxWritePtr[0].pos = points[i]; _VtxWritePtr[0].uv = uv; _VtxWritePtr[0].col = col;
             _VtxWritePtr++;
         }
-        _Data->TempBuffer.reserve_discard((ImTriangulator::EstimateScratchBufferSize(points_count) + sizeof(ImVec2)) / sizeof(ImVec2));
+        _Data->TempBuffer.reserve_discard((ImTriangulator::EstimateScratchBufferSize(points_count) + sizeof(glm::vec2)) / sizeof(glm::vec2));
         triangulator.Init(points, points_count, _Data->TempBuffer.Data);
         while (triangulator._TrianglesLeft > 0)
         {
@@ -2254,7 +2254,7 @@ void ImDrawData::Clear()
     Valid = false;
     CmdListsCount = TotalIdxCount = TotalVtxCount = 0;
     CmdLists.resize(0); // The ImDrawList are NOT owned by ImDrawData but e.g. by ImGuiContext, so we don't clear them.
-    DisplayPos = DisplaySize = FramebufferScale = ImVec2(0.0f, 0.0f);
+    DisplayPos = DisplaySize = FramebufferScale = glm::vec2(0.0f, 0.0f);
     OwnerViewport = NULL;
     Textures = NULL;
 }
@@ -2334,11 +2334,11 @@ void ImDrawData::DeIndexAllBuffers()
 // Helper to scale the ClipRect field of each ImDrawCmd.
 // Use if your final output buffer is at a different scale than draw_data->DisplaySize,
 // or if there is a difference between your window resolution and framebuffer resolution.
-void ImDrawData::ScaleClipRects(const ImVec2& fb_scale)
+void ImDrawData::ScaleClipRects(const glm::vec2& fb_scale)
 {
     for (ImDrawList* draw_list : CmdLists)
         for (ImDrawCmd& cmd : draw_list->CmdBuffer)
-            cmd.ClipRect = ImVec4(cmd.ClipRect.x * fb_scale.x, cmd.ClipRect.y * fb_scale.y, cmd.ClipRect.z * fb_scale.x, cmd.ClipRect.w * fb_scale.y);
+            cmd.ClipRect = glm::vec4(cmd.ClipRect.x * fb_scale.x, cmd.ClipRect.y * fb_scale.y, cmd.ClipRect.z * fb_scale.x, cmd.ClipRect.w * fb_scale.y);
 }
 
 //-----------------------------------------------------------------------------
@@ -2346,9 +2346,9 @@ void ImDrawData::ScaleClipRects(const ImVec2& fb_scale)
 //-----------------------------------------------------------------------------
 
 // Generic linear color gradient, write to RGB fields, leave A untouched.
-void ImGui::ShadeVertsLinearColorGradientKeepAlpha(ImDrawList* draw_list, int vert_start_idx, int vert_end_idx, ImVec2 gradient_p0, ImVec2 gradient_p1, ImU32 col0, ImU32 col1)
+void ImGui::ShadeVertsLinearColorGradientKeepAlpha(ImDrawList* draw_list, int vert_start_idx, int vert_end_idx, glm::vec2 gradient_p0, glm::vec2 gradient_p1, ImU32 col0, ImU32 col1)
 {
-    ImVec2 gradient_extent = gradient_p1 - gradient_p0;
+    glm::vec2 gradient_extent = gradient_p1 - gradient_p0;
     float gradient_inv_length2 = 1.0f / ImLengthSqr(gradient_extent);
     ImDrawVert* vert_start = draw_list->VtxBuffer.Data + vert_start_idx;
     ImDrawVert* vert_end = draw_list->VtxBuffer.Data + vert_end_idx;
@@ -2370,11 +2370,11 @@ void ImGui::ShadeVertsLinearColorGradientKeepAlpha(ImDrawList* draw_list, int ve
 }
 
 // Distribute UV over (a, b) rectangle
-void ImGui::ShadeVertsLinearUV(ImDrawList* draw_list, int vert_start_idx, int vert_end_idx, const ImVec2& a, const ImVec2& b, const ImVec2& uv_a, const ImVec2& uv_b, bool clamp)
+void ImGui::ShadeVertsLinearUV(ImDrawList* draw_list, int vert_start_idx, int vert_end_idx, const glm::vec2& a, const glm::vec2& b, const glm::vec2& uv_a, const glm::vec2& uv_b, bool clamp)
 {
-    const ImVec2 size = b - a;
-    const ImVec2 uv_size = uv_b - uv_a;
-    const ImVec2 scale = ImVec2(
+    const glm::vec2 size = b - a;
+    const glm::vec2 uv_size = uv_b - uv_a;
+    const glm::vec2 scale = glm::vec2(
         size.x != 0.0f ? (uv_size.x / size.x) : 0.0f,
         size.y != 0.0f ? (uv_size.y / size.y) : 0.0f);
 
@@ -2382,19 +2382,19 @@ void ImGui::ShadeVertsLinearUV(ImDrawList* draw_list, int vert_start_idx, int ve
     ImDrawVert* vert_end = draw_list->VtxBuffer.Data + vert_end_idx;
     if (clamp)
     {
-        const ImVec2 min = ImMin(uv_a, uv_b);
-        const ImVec2 max = ImMax(uv_a, uv_b);
+        const glm::vec2 min = ImMin(uv_a, uv_b);
+        const glm::vec2 max = ImMax(uv_a, uv_b);
         for (ImDrawVert* vertex = vert_start; vertex < vert_end; ++vertex)
-            vertex->uv = ImClamp(uv_a + ImMul(ImVec2(vertex->pos.x, vertex->pos.y) - a, scale), min, max);
+            vertex->uv = ImClamp(uv_a + ImMul(glm::vec2(vertex->pos.x, vertex->pos.y) - a, scale), min, max);
     }
     else
     {
         for (ImDrawVert* vertex = vert_start; vertex < vert_end; ++vertex)
-            vertex->uv = uv_a + ImMul(ImVec2(vertex->pos.x, vertex->pos.y) - a, scale);
+            vertex->uv = uv_a + ImMul(glm::vec2(vertex->pos.x, vertex->pos.y) - a, scale);
     }
 }
 
-void ImGui::ShadeVertsTransformPos(ImDrawList* draw_list, int vert_start_idx, int vert_end_idx, const ImVec2& pivot_in, float cos_a, float sin_a, const ImVec2& pivot_out)
+void ImGui::ShadeVertsTransformPos(ImDrawList* draw_list, int vert_start_idx, int vert_end_idx, const glm::vec2& pivot_in, float cos_a, float sin_a, const glm::vec2& pivot_out)
 {
     ImDrawVert* vert_start = draw_list->VtxBuffer.Data + vert_start_idx;
     ImDrawVert* vert_end = draw_list->VtxBuffer.Data + vert_end_idx;
@@ -2609,20 +2609,20 @@ static const char FONT_ATLAS_DEFAULT_TEX_DATA_PIXELS[FONT_ATLAS_DEFAULT_TEX_DATA
     "                                                      -    XX           XX    -                                           "
 };
 
-static const ImVec2 FONT_ATLAS_DEFAULT_TEX_CURSOR_DATA[ImGuiMouseCursor_COUNT][3] =
+static const glm::vec2 FONT_ATLAS_DEFAULT_TEX_CURSOR_DATA[ImGuiMouseCursor_COUNT][3] =
 {
     // Pos ........ Size ......... Offset ......
-    { ImVec2( 0,3), ImVec2(12,19), ImVec2( 0, 0) }, // ImGuiMouseCursor_Arrow
-    { ImVec2(13,0), ImVec2( 7,16), ImVec2( 1, 8) }, // ImGuiMouseCursor_TextInput
-    { ImVec2(31,0), ImVec2(23,23), ImVec2(11,11) }, // ImGuiMouseCursor_ResizeAll
-    { ImVec2(21,0), ImVec2( 9,23), ImVec2( 4,11) }, // ImGuiMouseCursor_ResizeNS
-    { ImVec2(55,18),ImVec2(23, 9), ImVec2(11, 4) }, // ImGuiMouseCursor_ResizeEW
-    { ImVec2(73,0), ImVec2(17,17), ImVec2( 8, 8) }, // ImGuiMouseCursor_ResizeNESW
-    { ImVec2(55,0), ImVec2(17,17), ImVec2( 8, 8) }, // ImGuiMouseCursor_ResizeNWSE
-    { ImVec2(91,0), ImVec2(17,22), ImVec2( 5, 0) }, // ImGuiMouseCursor_Hand
-    { ImVec2(0,3),  ImVec2(12,19), ImVec2(0, 0) },  // ImGuiMouseCursor_Wait       // Arrow + custom code in ImGui::RenderMouseCursor()
-    { ImVec2(0,3),  ImVec2(12,19), ImVec2(0, 0) },  // ImGuiMouseCursor_Progress   // Arrow + custom code in ImGui::RenderMouseCursor()
-    { ImVec2(109,0),ImVec2(13,15), ImVec2( 6, 7) }, // ImGuiMouseCursor_NotAllowed
+    { glm::vec2( 0,3), glm::vec2(12,19), glm::vec2( 0, 0) }, // ImGuiMouseCursor_Arrow
+    { glm::vec2(13,0), glm::vec2( 7,16), glm::vec2( 1, 8) }, // ImGuiMouseCursor_TextInput
+    { glm::vec2(31,0), glm::vec2(23,23), glm::vec2(11,11) }, // ImGuiMouseCursor_ResizeAll
+    { glm::vec2(21,0), glm::vec2( 9,23), glm::vec2( 4,11) }, // ImGuiMouseCursor_ResizeNS
+    { glm::vec2(55,18),glm::vec2(23, 9), glm::vec2(11, 4) }, // ImGuiMouseCursor_ResizeEW
+    { glm::vec2(73,0), glm::vec2(17,17), glm::vec2( 8, 8) }, // ImGuiMouseCursor_ResizeNESW
+    { glm::vec2(55,0), glm::vec2(17,17), glm::vec2( 8, 8) }, // ImGuiMouseCursor_ResizeNWSE
+    { glm::vec2(91,0), glm::vec2(17,22), glm::vec2( 5, 0) }, // ImGuiMouseCursor_Hand
+    { glm::vec2(0,3),  glm::vec2(12,19), glm::vec2(0, 0) },  // ImGuiMouseCursor_Wait       // Arrow + custom code in ImGui::RenderMouseCursor()
+    { glm::vec2(0,3),  glm::vec2(12,19), glm::vec2(0, 0) },  // ImGuiMouseCursor_Progress   // Arrow + custom code in ImGui::RenderMouseCursor()
+    { glm::vec2(109,0),glm::vec2(13,15), glm::vec2( 6, 7) }, // ImGuiMouseCursor_NotAllowed
 };
 
 #define IM_FONTGLYPH_INDEX_UNUSED           ((ImU16)-1) // 0xFFFF
@@ -3283,14 +3283,14 @@ void ImFontAtlas::RemoveCustomRect(ImFontAtlasRectId id)
 //     ImFont* myfont = io.Fonts->AddFontFromFileTTF(....);
 //     myfont->GetFontBaked(16.0f);
 //     myfont->Flags |= ImFontFlags_LockBakedSizes;
-ImFontAtlasRectId ImFontAtlas::AddCustomRectFontGlyph(ImFont* font, ImWchar codepoint, int width, int height, float advance_x, const ImVec2& offset)
+ImFontAtlasRectId ImFontAtlas::AddCustomRectFontGlyph(ImFont* font, ImWchar codepoint, int width, int height, float advance_x, const glm::vec2& offset)
 {
     float font_size = font->LegacySize;
     return AddCustomRectFontGlyphForSize(font, font_size, codepoint, width, height, advance_x, offset);
 }
 // FIXME: we automatically set glyph.Colored=true by default.
 // If you need to alter this, you can write 'font->Glyphs.back()->Colored' after calling AddCustomRectFontGlyph().
-ImFontAtlasRectId ImFontAtlas::AddCustomRectFontGlyphForSize(ImFont* font, float font_size, ImWchar codepoint, int width, int height, float advance_x, const ImVec2& offset)
+ImFontAtlasRectId ImFontAtlas::AddCustomRectFontGlyphForSize(ImFont* font, float font_size, ImWchar codepoint, int width, int height, float advance_x, const glm::vec2& offset)
 {
 #ifdef IMGUI_USE_WCHAR32
     IM_ASSERT(codepoint <= IM_UNICODE_CODEPOINT_MAX);
@@ -3338,12 +3338,12 @@ bool ImFontAtlas::GetCustomRect(ImFontAtlasRectId id, ImFontAtlasRect* out_r) co
     out_r->y = r->y;
     out_r->w = r->w;
     out_r->h = r->h;
-    out_r->uv0 = ImVec2((float)(r->x), (float)(r->y)) * TexUvScale;
-    out_r->uv1 = ImVec2((float)(r->x + r->w), (float)(r->y + r->h)) * TexUvScale;
+    out_r->uv0 = glm::vec2((float)(r->x), (float)(r->y)) * TexUvScale;
+    out_r->uv1 = glm::vec2((float)(r->x + r->w), (float)(r->y + r->h)) * TexUvScale;
     return true;
 }
 
-bool ImFontAtlasGetMouseCursorTexData(ImFontAtlas* atlas, ImGuiMouseCursor cursor_type, ImVec2* out_offset, ImVec2* out_size, ImVec2 out_uv_border[2], ImVec2 out_uv_fill[2])
+bool ImFontAtlasGetMouseCursorTexData(ImFontAtlas* atlas, ImGuiMouseCursor cursor_type, glm::vec2* out_offset, glm::vec2* out_size, glm::vec2 out_uv_border[2], glm::vec2 out_uv_fill[2])
 {
     if (cursor_type <= ImGuiMouseCursor_None || cursor_type >= ImGuiMouseCursor_COUNT)
         return false;
@@ -3351,8 +3351,8 @@ bool ImFontAtlasGetMouseCursorTexData(ImFontAtlas* atlas, ImGuiMouseCursor curso
         return false;
 
     ImTextureRect* r = ImFontAtlasPackGetRect(atlas, atlas->Builder->PackIdMouseCursors);
-    ImVec2 pos = FONT_ATLAS_DEFAULT_TEX_CURSOR_DATA[cursor_type][0] + ImVec2((float)r->x, (float)r->y);
-    ImVec2 size = FONT_ATLAS_DEFAULT_TEX_CURSOR_DATA[cursor_type][1];
+    glm::vec2 pos = FONT_ATLAS_DEFAULT_TEX_CURSOR_DATA[cursor_type][0] + glm::vec2((float)r->x, (float)r->y);
+    glm::vec2 size = FONT_ATLAS_DEFAULT_TEX_CURSOR_DATA[cursor_type][1];
     *out_size = size;
     *out_offset = FONT_ATLAS_DEFAULT_TEX_CURSOR_DATA[cursor_type][2];
     out_uv_border[0] = (pos) * atlas->TexUvScale;
@@ -3369,7 +3369,7 @@ void ImFontAtlasBuildMain(ImFontAtlas* atlas)
     IM_ASSERT(!atlas->Locked && "Cannot modify a locked ImFontAtlas!");
     if (atlas->TexData && atlas->TexData->Format != atlas->TexDesiredFormat)
     {
-        ImVec2i new_tex_size = ImFontAtlasTextureGetSizeEstimate(atlas);
+        glm::ivec2 new_tex_size = ImFontAtlasTextureGetSizeEstimate(atlas);
         ImFontAtlasBuildDestroy(atlas);
         ImFontAtlasTextureAdd(atlas, new_tex_size.x, new_tex_size.y);
     }
@@ -3486,7 +3486,7 @@ static void ImFontAtlasBuildUpdateBasicTexData(ImFontAtlas* atlas)
     // Pack and store identifier so we can refresh UV coordinates on texture resize.
     // FIXME-NEWATLAS: User/custom rects where user code wants to store UV coordinates will need to do the same thing.
     ImFontAtlasBuilder* builder = atlas->Builder;
-    ImVec2i pack_size = (atlas->Flags & ImFontAtlasFlags_NoMouseCursors) ? ImVec2i(2, 2) : ImVec2i(FONT_ATLAS_DEFAULT_TEX_DATA_W * 2 + 1, FONT_ATLAS_DEFAULT_TEX_DATA_H);
+    glm::ivec2 pack_size = (atlas->Flags & ImFontAtlasFlags_NoMouseCursors) ? glm::ivec2(2, 2) : glm::ivec2(FONT_ATLAS_DEFAULT_TEX_DATA_W * 2 + 1, FONT_ATLAS_DEFAULT_TEX_DATA_H);
 
     ImFontAtlasRect r;
     bool add_and_draw = (atlas->GetCustomRect(builder->PackIdMouseCursors, &r) == false);
@@ -3512,7 +3512,7 @@ static void ImFontAtlasBuildUpdateBasicTexData(ImFontAtlas* atlas)
     }
 
     // Refresh UV coordinates
-    atlas->TexUvWhitePixel = ImVec2((r.x + 0.5f) * atlas->TexUvScale.x, (r.y + 0.5f) * atlas->TexUvScale.y);
+    atlas->TexUvWhitePixel = glm::vec2((r.x + 0.5f) * atlas->TexUvScale.x, (r.y + 0.5f) * atlas->TexUvScale.y);
 }
 
 static void ImFontAtlasBuildUpdateLinesTexData(ImFontAtlas* atlas)
@@ -3528,7 +3528,7 @@ static void ImFontAtlasBuildUpdateLinesTexData(ImFontAtlas* atlas)
     bool add_and_draw = atlas->GetCustomRect(builder->PackIdLinesTexData, &r) == false;
     if (add_and_draw)
     {
-        ImVec2i pack_size = ImVec2i(IM_DRAWLIST_TEX_LINES_WIDTH_MAX + 2, IM_DRAWLIST_TEX_LINES_WIDTH_MAX + 1);
+        glm::ivec2 pack_size = glm::ivec2(IM_DRAWLIST_TEX_LINES_WIDTH_MAX + 2, IM_DRAWLIST_TEX_LINES_WIDTH_MAX + 1);
         builder->PackIdLinesTexData = atlas->AddCustomRect(pack_size.x, pack_size.y, &r);
         IM_ASSERT(builder->PackIdLinesTexData != ImFontAtlasRectId_Invalid);
     }
@@ -3572,10 +3572,10 @@ static void ImFontAtlasBuildUpdateLinesTexData(ImFontAtlas* atlas)
         }
 
         // Refresh UV coordinates
-        ImVec2 uv0 = ImVec2((float)(r.x + pad_left - 1), (float)(r.y + y)) * atlas->TexUvScale;
-        ImVec2 uv1 = ImVec2((float)(r.x + pad_left + line_width + 1), (float)(r.y + y + 1)) * atlas->TexUvScale;
+        glm::vec2 uv0 = glm::vec2((float)(r.x + pad_left - 1), (float)(r.y + y)) * atlas->TexUvScale;
+        glm::vec2 uv1 = glm::vec2((float)(r.x + pad_left + line_width + 1), (float)(r.y + y + 1)) * atlas->TexUvScale;
         float half_v = (uv0.y + uv1.y) * 0.5f; // Calculate a constant V in the middle of the row to avoid sampling artifacts
-        atlas->TexUvLines[n] = ImVec4(uv0.x, half_v, uv1.x, half_v);
+        atlas->TexUvLines[n] = glm::vec4(uv0.x, half_v, uv1.x, half_v);
     }
 }
 
@@ -3941,7 +3941,7 @@ static void ImFontAtlasBuildSetTexture(ImFontAtlas* atlas, ImTextureData* tex)
 {
     ImTextureRef old_tex_ref = atlas->TexRef;
     atlas->TexData = tex;
-    atlas->TexUvScale = ImVec2(1.0f / tex->Width, 1.0f / tex->Height);
+    atlas->TexUvScale = glm::vec2(1.0f / tex->Width, 1.0f / tex->Height);
     atlas->TexRef._TexData = tex;
     //atlas->TexRef._TexID = tex->TexID; // <-- We intentionally don't do that. It would be misleading and betray promise that both fields aren't set.
     ImFontAtlasUpdateDrawListsTextures(atlas, old_tex_ref, atlas->TexRef);
@@ -4115,12 +4115,12 @@ void ImFontAtlasTextureMakeSpace(ImFontAtlas* atlas)
         ImFontAtlasTextureRepack(atlas, atlas->TexData->Width, atlas->TexData->Height);
 }
 
-ImVec2i ImFontAtlasTextureGetSizeEstimate(ImFontAtlas* atlas)
+glm::ivec2 ImFontAtlasTextureGetSizeEstimate(ImFontAtlas* atlas)
 {
     int min_w = ImUpperPowerOfTwo(atlas->TexMinWidth);
     int min_h = ImUpperPowerOfTwo(atlas->TexMinHeight);
     if (atlas->Builder == NULL || atlas->TexData == NULL || atlas->TexData->Status == ImTextureStatus_WantDestroy)
-        return ImVec2i(min_w, min_h);
+        return glm::ivec2(min_w, min_h);
 
     ImFontAtlasBuilder* builder = atlas->Builder;
     min_w = ImMax(ImUpperPowerOfTwo(builder->MaxRectSize.x), min_w);
@@ -4146,13 +4146,13 @@ ImVec2i ImFontAtlasTextureGetSizeEstimate(ImFontAtlas* atlas)
     }
 
     IM_ASSERT(ImIsPowerOfTwo(new_tex_w) && ImIsPowerOfTwo(new_tex_h));
-    return ImVec2i(new_tex_w, new_tex_h);
+    return glm::ivec2(new_tex_w, new_tex_h);
 }
 
 // Clear all output. Invalidates all AddCustomRect() return values!
 void ImFontAtlasBuildClear(ImFontAtlas* atlas)
 {
-    ImVec2i new_tex_size = ImFontAtlasTextureGetSizeEstimate(atlas);
+    glm::ivec2 new_tex_size = ImFontAtlasTextureGetSizeEstimate(atlas);
     ImFontAtlasBuildDestroy(atlas);
     ImFontAtlasTextureAdd(atlas, new_tex_size.x, new_tex_size.y);
     ImFontAtlasBuildInit(atlas);
@@ -4171,8 +4171,8 @@ void ImFontAtlasTextureCompact(ImFontAtlas* atlas)
     ImFontAtlasBuildDiscardBakes(atlas, 1);
 
     ImTextureData* old_tex = atlas->TexData;
-    ImVec2i old_tex_size = ImVec2i(old_tex->Width, old_tex->Height);
-    ImVec2i new_tex_size = ImFontAtlasTextureGetSizeEstimate(atlas);
+    glm::ivec2 old_tex_size = glm::ivec2(old_tex->Width, old_tex->Height);
+    glm::ivec2 new_tex_size = ImFontAtlasTextureGetSizeEstimate(atlas);
     if (builder->RectsDiscardedCount == 0 && new_tex_size.x == old_tex_size.x && new_tex_size.y == old_tex_size.y)
         return;
 
@@ -4248,8 +4248,8 @@ void ImFontAtlasPackInit(ImFontAtlas * atlas)
     IM_STATIC_ASSERT(sizeof(stbrp_context) <= sizeof(stbrp_context_opaque));
     stbrp_init_target((stbrp_context*)(void*)&builder->PackContext, tex->Width, tex->Height, builder->PackNodes.Data, builder->PackNodes.Size);
     builder->RectsPackedSurface = builder->RectsPackedCount = 0;
-    builder->MaxRectSize = ImVec2i(0, 0);
-    builder->MaxRectBounds = ImVec2i(0, 0);
+    builder->MaxRectSize = glm::ivec2(0, 0);
+    builder->MaxRectBounds = glm::ivec2(0, 0);
 }
 
 // This is essentially a free-list pattern, it may be nice to wrap it into a dedicated type.
@@ -5463,7 +5463,7 @@ const char* ImFont::CalcWordWrapPosition(float size, const char* text, const cha
     return s;
 }
 
-ImVec2 ImFont::CalcTextSizeA(float size, float max_width, float wrap_width, const char* text_begin, const char* text_end, const char** remaining)
+glm::vec2 ImFont::CalcTextSizeA(float size, float max_width, float wrap_width, const char* text_begin, const char* text_end, const char** remaining)
 {
     if (!text_end)
         text_end = text_begin + ImStrlen(text_begin); // FIXME-OPT: Need to avoid this.
@@ -5472,7 +5472,7 @@ ImVec2 ImFont::CalcTextSizeA(float size, float max_width, float wrap_width, cons
     ImFontBaked* baked = GetFontBaked(size);
     const float scale = size / baked->Size;
 
-    ImVec2 text_size = ImVec2(0, 0);
+    glm::vec2 text_size = glm::vec2(0, 0);
     float line_width = 0.0f;
 
     const bool word_wrap_enabled = (wrap_width > 0.0f);
@@ -5548,7 +5548,7 @@ ImVec2 ImFont::CalcTextSizeA(float size, float max_width, float wrap_width, cons
 }
 
 // Note: as with every ImDrawList drawing function, this expects that the font atlas texture is bound.
-void ImFont::RenderChar(ImDrawList* draw_list, float size, const ImVec2& pos, ImU32 col, ImWchar c, const ImVec4* cpu_fine_clip)
+void ImFont::RenderChar(ImDrawList* draw_list, float size, const glm::vec2& pos, ImU32 col, ImWchar c, const glm::vec4* cpu_fine_clip)
 {
     ImFontBaked* baked = GetFontBaked(size);
     const ImFontGlyph* glyph = baked->FindGlyph(c);
@@ -5583,11 +5583,11 @@ void ImFont::RenderChar(ImDrawList* draw_list, float size, const ImVec2& pos, Im
             return;
     }
     draw_list->PrimReserve(6, 4);
-    draw_list->PrimRectUV(ImVec2(x1, y1), ImVec2(x2, y2), ImVec2(u1, v1), ImVec2(u2, v2), col);
+    draw_list->PrimRectUV(glm::vec2(x1, y1), glm::vec2(x2, y2), glm::vec2(u1, v1), glm::vec2(u2, v2), col);
 }
 
 // Note: as with every ImDrawList drawing function, this expects that the font atlas texture is bound.
-void ImFont::RenderText(ImDrawList* draw_list, float size, const ImVec2& pos, ImU32 col, const ImVec4& clip_rect, const char* text_begin, const char* text_end, float wrap_width, bool cpu_fine_clip)
+void ImFont::RenderText(ImDrawList* draw_list, float size, const glm::vec2& pos, ImU32 col, const glm::vec4& clip_rect, const char* text_begin, const char* text_end, float wrap_width, bool cpu_fine_clip)
 {
     // Align to be pixel perfect
 begin:
@@ -5776,7 +5776,7 @@ begin:
         draw_list->PrimUnreserve(idx_count_max, vtx_count_max);
         draw_list->AddDrawCmd();
         //IMGUI_DEBUG_LOG("RenderText: cancel and retry to missing glyphs.\n"); // [DEBUG]
-        //draw_list->AddRectFilled(pos, pos + ImVec2(10, 10), IM_COL32(255, 0, 0, 255)); // [DEBUG]
+        //draw_list->AddRectFilled(pos, pos + glm::vec2(10, 10), IM_COL32(255, 0, 0, 255)); // [DEBUG]
         goto begin;
         //RenderText(draw_list, size, pos, col, clip_rect, text_begin, text_end, wrap_width, cpu_fine_clip); // FIXME-OPT: Would a 'goto begin' be better for code-gen?
         //return;
@@ -5808,28 +5808,28 @@ begin:
 //-----------------------------------------------------------------------------
 
 // Render an arrow aimed to be aligned with text (p_min is a position in the same space text would be positioned). To e.g. denote expanded/collapsed state
-void ImGui::RenderArrow(ImDrawList* draw_list, ImVec2 pos, ImU32 col, ImGuiDir dir, float scale)
+void ImGui::RenderArrow(ImDrawList* draw_list, glm::vec2 pos, ImU32 col, ImGuiDir dir, float scale)
 {
     const float h = draw_list->_Data->FontSize * 1.00f;
     float r = h * 0.40f * scale;
-    ImVec2 center = pos + ImVec2(h * 0.50f, h * 0.50f * scale);
+    glm::vec2 center = pos + glm::vec2(h * 0.50f, h * 0.50f * scale);
 
-    ImVec2 a, b, c;
+    glm::vec2 a, b, c;
     switch (dir)
     {
     case ImGuiDir_Up:
     case ImGuiDir_Down:
         if (dir == ImGuiDir_Up) r = -r;
-        a = ImVec2(+0.000f, +0.750f) * r;
-        b = ImVec2(-0.866f, -0.750f) * r;
-        c = ImVec2(+0.866f, -0.750f) * r;
+        a = glm::vec2(+0.000f, +0.750f) * r;
+        b = glm::vec2(-0.866f, -0.750f) * r;
+        c = glm::vec2(+0.866f, -0.750f) * r;
         break;
     case ImGuiDir_Left:
     case ImGuiDir_Right:
         if (dir == ImGuiDir_Left) r = -r;
-        a = ImVec2(+0.750f, +0.000f) * r;
-        b = ImVec2(-0.750f, +0.866f) * r;
-        c = ImVec2(-0.750f, -0.866f) * r;
+        a = glm::vec2(+0.750f, +0.000f) * r;
+        b = glm::vec2(-0.750f, +0.866f) * r;
+        c = glm::vec2(-0.750f, -0.866f) * r;
         break;
     case ImGuiDir_None:
     case ImGuiDir_COUNT:
@@ -5839,46 +5839,46 @@ void ImGui::RenderArrow(ImDrawList* draw_list, ImVec2 pos, ImU32 col, ImGuiDir d
     draw_list->AddTriangleFilled(center + a, center + b, center + c, col);
 }
 
-void ImGui::RenderBullet(ImDrawList* draw_list, ImVec2 pos, ImU32 col)
+void ImGui::RenderBullet(ImDrawList* draw_list, glm::vec2 pos, ImU32 col)
 {
     // FIXME-OPT: This should be baked in font.
     draw_list->AddCircleFilled(pos, draw_list->_Data->FontSize * 0.20f, col, 8);
 }
 
-void ImGui::RenderCheckMark(ImDrawList* draw_list, ImVec2 pos, ImU32 col, float sz)
+void ImGui::RenderCheckMark(ImDrawList* draw_list, glm::vec2 pos, ImU32 col, float sz)
 {
     float thickness = ImMax(sz / 5.0f, 1.0f);
     sz -= thickness * 0.5f;
-    pos += ImVec2(thickness * 0.25f, thickness * 0.25f);
+    pos += glm::vec2(thickness * 0.25f, thickness * 0.25f);
 
     float third = sz / 3.0f;
     float bx = pos.x + third;
     float by = pos.y + sz - third * 0.5f;
-    draw_list->PathLineTo(ImVec2(bx - third, by - third));
-    draw_list->PathLineTo(ImVec2(bx, by));
-    draw_list->PathLineTo(ImVec2(bx + third * 2.0f, by - third * 2.0f));
+    draw_list->PathLineTo(glm::vec2(bx - third, by - third));
+    draw_list->PathLineTo(glm::vec2(bx, by));
+    draw_list->PathLineTo(glm::vec2(bx + third * 2.0f, by - third * 2.0f));
     draw_list->PathStroke(col, 0, thickness);
 }
 
 // Render an arrow. 'pos' is position of the arrow tip. half_sz.x is length from base to tip. half_sz.y is length on each side.
-void ImGui::RenderArrowPointingAt(ImDrawList* draw_list, ImVec2 pos, ImVec2 half_sz, ImGuiDir direction, ImU32 col)
+void ImGui::RenderArrowPointingAt(ImDrawList* draw_list, glm::vec2 pos, glm::vec2 half_sz, ImGuiDir direction, ImU32 col)
 {
     switch (direction)
     {
-    case ImGuiDir_Left:  draw_list->AddTriangleFilled(ImVec2(pos.x + half_sz.x, pos.y - half_sz.y), ImVec2(pos.x + half_sz.x, pos.y + half_sz.y), pos, col); return;
-    case ImGuiDir_Right: draw_list->AddTriangleFilled(ImVec2(pos.x - half_sz.x, pos.y + half_sz.y), ImVec2(pos.x - half_sz.x, pos.y - half_sz.y), pos, col); return;
-    case ImGuiDir_Up:    draw_list->AddTriangleFilled(ImVec2(pos.x + half_sz.x, pos.y + half_sz.y), ImVec2(pos.x - half_sz.x, pos.y + half_sz.y), pos, col); return;
-    case ImGuiDir_Down:  draw_list->AddTriangleFilled(ImVec2(pos.x - half_sz.x, pos.y - half_sz.y), ImVec2(pos.x + half_sz.x, pos.y - half_sz.y), pos, col); return;
+    case ImGuiDir_Left:  draw_list->AddTriangleFilled(glm::vec2(pos.x + half_sz.x, pos.y - half_sz.y), glm::vec2(pos.x + half_sz.x, pos.y + half_sz.y), pos, col); return;
+    case ImGuiDir_Right: draw_list->AddTriangleFilled(glm::vec2(pos.x - half_sz.x, pos.y + half_sz.y), glm::vec2(pos.x - half_sz.x, pos.y - half_sz.y), pos, col); return;
+    case ImGuiDir_Up:    draw_list->AddTriangleFilled(glm::vec2(pos.x + half_sz.x, pos.y + half_sz.y), glm::vec2(pos.x - half_sz.x, pos.y + half_sz.y), pos, col); return;
+    case ImGuiDir_Down:  draw_list->AddTriangleFilled(glm::vec2(pos.x - half_sz.x, pos.y - half_sz.y), glm::vec2(pos.x + half_sz.x, pos.y - half_sz.y), pos, col); return;
     case ImGuiDir_None: case ImGuiDir_COUNT: break; // Fix warnings
     }
 }
 
 // This is less wide than RenderArrow() and we use in dock nodes instead of the regular RenderArrow() to denote a change of functionality,
 // and because the saved space means that the left-most tab label can stay at exactly the same position as the label of a loose window.
-void ImGui::RenderArrowDockMenu(ImDrawList* draw_list, ImVec2 p_min, float sz, ImU32 col)
+void ImGui::RenderArrowDockMenu(ImDrawList* draw_list, glm::vec2 p_min, float sz, ImU32 col)
 {
-    draw_list->AddRectFilled(p_min + ImVec2(sz * 0.20f, sz * 0.15f), p_min + ImVec2(sz * 0.80f, sz * 0.30f), col);
-    RenderArrowPointingAt(draw_list, p_min + ImVec2(sz * 0.50f, sz * 0.85f), ImVec2(sz * 0.30f, sz * 0.40f), ImGuiDir_Down, col);
+    draw_list->AddRectFilled(p_min + glm::vec2(sz * 0.20f, sz * 0.15f), p_min + glm::vec2(sz * 0.80f, sz * 0.30f), col);
+    RenderArrowPointingAt(draw_list, p_min + glm::vec2(sz * 0.50f, sz * 0.85f), glm::vec2(sz * 0.30f, sz * 0.40f), ImGuiDir_Down, col);
 }
 
 static inline float ImAcos01(float x)
@@ -5897,8 +5897,8 @@ void ImGui::RenderRectFilledRangeH(ImDrawList* draw_list, const ImRect& rect, Im
     if (x_start_norm > x_end_norm)
         ImSwap(x_start_norm, x_end_norm);
 
-    ImVec2 p0 = ImVec2(ImLerp(rect.Min.x, rect.Max.x, x_start_norm), rect.Min.y);
-    ImVec2 p1 = ImVec2(ImLerp(rect.Min.x, rect.Max.x, x_end_norm), rect.Max.y);
+    glm::vec2 p0 = glm::vec2(ImLerp(rect.Min.x, rect.Max.x, x_start_norm), rect.Min.y);
+    glm::vec2 p1 = glm::vec2(ImLerp(rect.Min.x, rect.Max.x, x_end_norm), rect.Max.y);
     if (rounding == 0.0f)
     {
         draw_list->AddRectFilled(p0, p1, col, 0.0f);
@@ -5913,18 +5913,18 @@ void ImGui::RenderRectFilledRangeH(ImDrawList* draw_list, const ImRect& rect, Im
     const float x0 = ImMax(p0.x, rect.Min.x + rounding);
     if (arc0_b == arc0_e)
     {
-        draw_list->PathLineTo(ImVec2(x0, p1.y));
-        draw_list->PathLineTo(ImVec2(x0, p0.y));
+        draw_list->PathLineTo(glm::vec2(x0, p1.y));
+        draw_list->PathLineTo(glm::vec2(x0, p0.y));
     }
     else if (arc0_b == 0.0f && arc0_e == half_pi)
     {
-        draw_list->PathArcToFast(ImVec2(x0, p1.y - rounding), rounding, 3, 6); // BL
-        draw_list->PathArcToFast(ImVec2(x0, p0.y + rounding), rounding, 6, 9); // TR
+        draw_list->PathArcToFast(glm::vec2(x0, p1.y - rounding), rounding, 3, 6); // BL
+        draw_list->PathArcToFast(glm::vec2(x0, p0.y + rounding), rounding, 6, 9); // TR
     }
     else
     {
-        draw_list->PathArcTo(ImVec2(x0, p1.y - rounding), rounding, IM_PI - arc0_e, IM_PI - arc0_b); // BL
-        draw_list->PathArcTo(ImVec2(x0, p0.y + rounding), rounding, IM_PI + arc0_b, IM_PI + arc0_e); // TR
+        draw_list->PathArcTo(glm::vec2(x0, p1.y - rounding), rounding, IM_PI - arc0_e, IM_PI - arc0_b); // BL
+        draw_list->PathArcTo(glm::vec2(x0, p0.y + rounding), rounding, IM_PI + arc0_b, IM_PI + arc0_e); // TR
     }
     if (p1.x > rect.Min.x + rounding)
     {
@@ -5933,18 +5933,18 @@ void ImGui::RenderRectFilledRangeH(ImDrawList* draw_list, const ImRect& rect, Im
         const float x1 = ImMin(p1.x, rect.Max.x - rounding);
         if (arc1_b == arc1_e)
         {
-            draw_list->PathLineTo(ImVec2(x1, p0.y));
-            draw_list->PathLineTo(ImVec2(x1, p1.y));
+            draw_list->PathLineTo(glm::vec2(x1, p0.y));
+            draw_list->PathLineTo(glm::vec2(x1, p1.y));
         }
         else if (arc1_b == 0.0f && arc1_e == half_pi)
         {
-            draw_list->PathArcToFast(ImVec2(x1, p0.y + rounding), rounding, 9, 12); // TR
-            draw_list->PathArcToFast(ImVec2(x1, p1.y - rounding), rounding, 0, 3);  // BR
+            draw_list->PathArcToFast(glm::vec2(x1, p0.y + rounding), rounding, 9, 12); // TR
+            draw_list->PathArcToFast(glm::vec2(x1, p1.y - rounding), rounding, 0, 3);  // BR
         }
         else
         {
-            draw_list->PathArcTo(ImVec2(x1, p0.y + rounding), rounding, -arc1_e, -arc1_b); // TR
-            draw_list->PathArcTo(ImVec2(x1, p1.y - rounding), rounding, +arc1_b, +arc1_e); // BR
+            draw_list->PathArcTo(glm::vec2(x1, p0.y + rounding), rounding, -arc1_e, -arc1_b); // TR
+            draw_list->PathArcTo(glm::vec2(x1, p1.y - rounding), rounding, +arc1_b, +arc1_e); // BR
         }
     }
     draw_list->PathFillConvex(col);
@@ -5956,14 +5956,14 @@ void ImGui::RenderRectFilledWithHole(ImDrawList* draw_list, const ImRect& outer,
     const bool fill_R = (inner.Max.x < outer.Max.x);
     const bool fill_U = (inner.Min.y > outer.Min.y);
     const bool fill_D = (inner.Max.y < outer.Max.y);
-    if (fill_L) draw_list->AddRectFilled(ImVec2(outer.Min.x, inner.Min.y), ImVec2(inner.Min.x, inner.Max.y), col, rounding, ImDrawFlags_RoundCornersNone | (fill_U ? 0 : ImDrawFlags_RoundCornersTopLeft)    | (fill_D ? 0 : ImDrawFlags_RoundCornersBottomLeft));
-    if (fill_R) draw_list->AddRectFilled(ImVec2(inner.Max.x, inner.Min.y), ImVec2(outer.Max.x, inner.Max.y), col, rounding, ImDrawFlags_RoundCornersNone | (fill_U ? 0 : ImDrawFlags_RoundCornersTopRight)   | (fill_D ? 0 : ImDrawFlags_RoundCornersBottomRight));
-    if (fill_U) draw_list->AddRectFilled(ImVec2(inner.Min.x, outer.Min.y), ImVec2(inner.Max.x, inner.Min.y), col, rounding, ImDrawFlags_RoundCornersNone | (fill_L ? 0 : ImDrawFlags_RoundCornersTopLeft)    | (fill_R ? 0 : ImDrawFlags_RoundCornersTopRight));
-    if (fill_D) draw_list->AddRectFilled(ImVec2(inner.Min.x, inner.Max.y), ImVec2(inner.Max.x, outer.Max.y), col, rounding, ImDrawFlags_RoundCornersNone | (fill_L ? 0 : ImDrawFlags_RoundCornersBottomLeft) | (fill_R ? 0 : ImDrawFlags_RoundCornersBottomRight));
-    if (fill_L && fill_U) draw_list->AddRectFilled(ImVec2(outer.Min.x, outer.Min.y), ImVec2(inner.Min.x, inner.Min.y), col, rounding, ImDrawFlags_RoundCornersTopLeft);
-    if (fill_R && fill_U) draw_list->AddRectFilled(ImVec2(inner.Max.x, outer.Min.y), ImVec2(outer.Max.x, inner.Min.y), col, rounding, ImDrawFlags_RoundCornersTopRight);
-    if (fill_L && fill_D) draw_list->AddRectFilled(ImVec2(outer.Min.x, inner.Max.y), ImVec2(inner.Min.x, outer.Max.y), col, rounding, ImDrawFlags_RoundCornersBottomLeft);
-    if (fill_R && fill_D) draw_list->AddRectFilled(ImVec2(inner.Max.x, inner.Max.y), ImVec2(outer.Max.x, outer.Max.y), col, rounding, ImDrawFlags_RoundCornersBottomRight);
+    if (fill_L) draw_list->AddRectFilled(glm::vec2(outer.Min.x, inner.Min.y), glm::vec2(inner.Min.x, inner.Max.y), col, rounding, ImDrawFlags_RoundCornersNone | (fill_U ? 0 : ImDrawFlags_RoundCornersTopLeft)    | (fill_D ? 0 : ImDrawFlags_RoundCornersBottomLeft));
+    if (fill_R) draw_list->AddRectFilled(glm::vec2(inner.Max.x, inner.Min.y), glm::vec2(outer.Max.x, inner.Max.y), col, rounding, ImDrawFlags_RoundCornersNone | (fill_U ? 0 : ImDrawFlags_RoundCornersTopRight)   | (fill_D ? 0 : ImDrawFlags_RoundCornersBottomRight));
+    if (fill_U) draw_list->AddRectFilled(glm::vec2(inner.Min.x, outer.Min.y), glm::vec2(inner.Max.x, inner.Min.y), col, rounding, ImDrawFlags_RoundCornersNone | (fill_L ? 0 : ImDrawFlags_RoundCornersTopLeft)    | (fill_R ? 0 : ImDrawFlags_RoundCornersTopRight));
+    if (fill_D) draw_list->AddRectFilled(glm::vec2(inner.Min.x, inner.Max.y), glm::vec2(inner.Max.x, outer.Max.y), col, rounding, ImDrawFlags_RoundCornersNone | (fill_L ? 0 : ImDrawFlags_RoundCornersBottomLeft) | (fill_R ? 0 : ImDrawFlags_RoundCornersBottomRight));
+    if (fill_L && fill_U) draw_list->AddRectFilled(glm::vec2(outer.Min.x, outer.Min.y), glm::vec2(inner.Min.x, inner.Min.y), col, rounding, ImDrawFlags_RoundCornersTopLeft);
+    if (fill_R && fill_U) draw_list->AddRectFilled(glm::vec2(inner.Max.x, outer.Min.y), glm::vec2(outer.Max.x, inner.Min.y), col, rounding, ImDrawFlags_RoundCornersTopRight);
+    if (fill_L && fill_D) draw_list->AddRectFilled(glm::vec2(outer.Min.x, inner.Max.y), glm::vec2(inner.Min.x, outer.Max.y), col, rounding, ImDrawFlags_RoundCornersBottomLeft);
+    if (fill_R && fill_D) draw_list->AddRectFilled(glm::vec2(inner.Max.x, inner.Max.y), glm::vec2(outer.Max.x, outer.Max.y), col, rounding, ImDrawFlags_RoundCornersBottomRight);
 }
 
 ImDrawFlags ImGui::CalcRoundingFlagsForRectInRect(const ImRect& r_in, const ImRect& r_outer, float threshold)
@@ -5981,7 +5981,7 @@ ImDrawFlags ImGui::CalcRoundingFlagsForRectInRect(const ImRect& r_in, const ImRe
 // NB: This is rather brittle and will show artifact when rounding this enabled if rounded corners overlap multiple cells. Caller currently responsible for avoiding that.
 // Spent a non reasonable amount of time trying to getting this right for ColorButton with rounding+anti-aliasing+ImGuiColorEditFlags_HalfAlphaPreview flag + various grid sizes and offsets, and eventually gave up... probably more reasonable to disable rounding altogether.
 // FIXME: uses ImGui::GetColorU32
-void ImGui::RenderColorRectWithAlphaCheckerboard(ImDrawList* draw_list, ImVec2 p_min, ImVec2 p_max, ImU32 col, float grid_step, ImVec2 grid_off, float rounding, ImDrawFlags flags)
+void ImGui::RenderColorRectWithAlphaCheckerboard(ImDrawList* draw_list, glm::vec2 p_min, glm::vec2 p_max, ImU32 col, float grid_step, glm::vec2 grid_off, float rounding, ImDrawFlags flags)
 {
     if ((flags & ImDrawFlags_RoundCornersMask_) == 0)
         flags = ImDrawFlags_RoundCornersDefault_;
@@ -6008,7 +6008,7 @@ void ImGui::RenderColorRectWithAlphaCheckerboard(ImDrawList* draw_list, ImVec2 p
 
                 // Combine flags
                 cell_flags = (flags == ImDrawFlags_RoundCornersNone || cell_flags == ImDrawFlags_RoundCornersNone) ? ImDrawFlags_RoundCornersNone : (cell_flags & flags);
-                draw_list->AddRectFilled(ImVec2(x1, y1), ImVec2(x2, y2), col_bg2, rounding, cell_flags);
+                draw_list->AddRectFilled(glm::vec2(x1, y1), glm::vec2(x2, y2), col_bg2, rounding, cell_flags);
             }
         }
     }

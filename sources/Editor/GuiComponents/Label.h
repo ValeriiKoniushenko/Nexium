@@ -40,7 +40,7 @@ namespace Core
         Label& setText(const StringAtom& string);
         [[nodiscard]] const StringAtom& getText() const noexcept;
 
-        [[nodiscard]] ImVec2 getRealSize() const;
+        [[nodiscard]] glm::vec2 getRealSize() const;
 
         [[nodiscard]] float getWidth() const override { return getRealSize().x; }
         [[nodiscard]] float getHeight() const override { return getRealSize().y; }
@@ -52,7 +52,7 @@ namespace Core
     protected:
         std::optional<Color4> _textColor;
 
-        ImVec2 _textSize;
+        glm::vec2 _textSize;
     };
 
 } // namespace Core

@@ -202,7 +202,7 @@ namespace Core
                 }
             }
 
-            ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
+            ImGui::Dummy(glm::vec2(0.0f, _gapBetweenSections));
         }
     }
 
@@ -223,7 +223,7 @@ namespace Core
                 comp->setEnabled(isEnabled);
             }
 
-            ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
+            ImGui::Dummy(glm::vec2(0.0f, _gapBetweenSections));
         }
     }
 
@@ -249,7 +249,7 @@ namespace Core
 
             ImGui::Separator();
             FixedLabel("Modifiers:", _labelWidth);
-            ImGui::Dummy(ImVec2(0, 0));
+            ImGui::Dummy(glm::vec2(0, 0));
             static const auto collection = []()
             {
                 auto c = GraphicsComponentData::ModifiedValueAsVector();
@@ -358,7 +358,7 @@ namespace Core
                 comp->setDrawModifiers(std::move(newModifiers));
             }
 
-            ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
+            ImGui::Dummy(glm::vec2(0.0f, _gapBetweenSections));
         }
     }
 
@@ -378,7 +378,7 @@ namespace Core
                 comp->setNoTick(tickable);
             }
 
-            ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
+            ImGui::Dummy(glm::vec2(0.0f, _gapBetweenSections));
         }
     }
 
@@ -413,7 +413,7 @@ namespace Core
                 comp->setFrameSize(FSize2(res.value()));
             }
 
-            ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
+            ImGui::Dummy(glm::vec2(0.0f, _gapBetweenSections));
         }
     }
 
@@ -424,7 +424,7 @@ namespace Core
             LabelAndInputTextRO("Sub-render:", comp->getRenderMeshesCount(), _labelWidth,
                                 _innerSize.width);
 
-            ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
+            ImGui::Dummy(glm::vec2(0.0f, _gapBetweenSections));
         }
     }
 

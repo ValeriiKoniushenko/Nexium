@@ -140,9 +140,9 @@ namespace Core
 
         ImGui::PushID(id);
 
-        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0));
-        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
+        ImGui::PushStyleColor(ImGuiCol_Button, glm::vec4(0, 0, 0, 0));
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, glm::vec4(0, 0, 0, 0));
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, glm::vec4(0, 0, 0, 0));
         ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 0.0f);
 

@@ -38,7 +38,7 @@ void MainLoopStep();
 // Our state
 static bool show_demo_window = true;
 static bool show_another_window = false;
-static ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+static glm::vec4 clear_color = glm::vec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 int main(int argc, char** argv)
 {

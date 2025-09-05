@@ -79,7 +79,7 @@ namespace Core
 
         // Base settings
         float _labelWidth = 90.f;
-        const ImVec2 _overriddenSpacing = ImVec2(0, 6);
+        const glm::vec2 _overriddenSpacing = glm::vec2(0, 6);
         const float _gapBetweenSections = 15.f;
 
     private:

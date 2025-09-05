@@ -36,7 +36,7 @@ namespace Core
 #endif
         ImGui::TextUnformatted(label);
         ImGui::SameLine(0, 0);
-        ImGui::Dummy(ImVec2(size - ImGui::CalcTextSize(label).x, 0));
+        ImGui::Dummy(glm::vec2(size - ImGui::CalcTextSize(label).x, 0));
         ImGui::SameLine(0, 0);
     }
 
@@ -125,7 +125,7 @@ namespace Core
         ImGui::PopItemWidth();
     }
 
-    bool ToggleButton(const char* label, bool cond, const ImVec4& onColor, const ImVec4& offColor)
+    bool ToggleButton(const char* label, bool cond, const glm::vec4& onColor, const glm::vec4& offColor)
     {
         ImGui::PushStyleColor(ImGuiCol_Button, cond ? onColor : offColor);
         const bool isPressed = ImGui::Button(label);
@@ -137,7 +137,7 @@ namespace Core
     bool ToggleButton(const char* label, bool cond)
     {
         return ToggleButton(label, cond, ImGui::GetStyle().Colors[ImGuiCol_Button],
-                            ImVec4(0, 0, 0, 0));
+                            glm::vec4(0, 0, 0, 0));
     }
 
     bool ButtonAndInputTextRO(StringAtom label, StringAtom value, float labelSize, float fullSize)
@@ -147,7 +147,7 @@ namespace Core
         labelSize -= style.FramePadding.x * 2.f;
 
         ImGui::PushID(static_cast<int>(label.makeHash()));
-        const bool isPressed = ImGui::Button(label.data(), ImVec2(labelSize, 0.f));
+        const bool isPressed = ImGui::Button(label.data(), glm::vec2(labelSize, 0.f));
 
         ImGui::SameLine(0, 8.f);
 

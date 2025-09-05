@@ -77,6 +77,26 @@ namespace Core
         ImGui::PopID();
     }
 
+    Widget::Bounds Widget::getBounds() const noexcept
+    {
+        return { .topLeft = glm::vec2(0), .bottomRight = glm::vec2(getWidth(), getHeight()) };
+    }
+
+    Widget::Bounds Widget::getGlobalBounds() const noexcept
+    {
+        const auto scrollX = ImGui::GetScrollX();
+        const auto scrollY = ImGui::GetScrollY();
+
+        auto out = getBounds() + _pos + ImGui::GetWindowPos();
+        out.topLeft.x -= scrollX;
+        out.bottomRight.x -= scrollX;
+
+        out.topLeft.y -= scrollY;
+        out.bottomRight.y -= scrollY;
+
+        return out;
+    }
+
     bool Widget::addChildValidator(BaseComponent* newChild)
     {
         return !!newChild->tryCastTo<Widget>();
@@ -97,27 +117,15 @@ namespace Core
         ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
         constexpr float thickness = 1.f;
-        const auto size = ImVec2(getWidth(), getHeight());
-        const auto wndPos = ImGui::GetWindowPos();
-        const auto scrollX = ImGui::GetScrollX();
-        const auto scrollY = ImGui::GetScrollY();
-        const ImVec2 p_min = ImVec2(wndPos.x + _pos.x - thickness - scrollX,
-                                    wndPos.y + _pos.y - thickness - scrollY);
-        const ImVec2 p_max
-            = ImVec2(p_min.x + size.x + thickness * 2.f, p_min.y + size.y + thickness * 2.f);
-
-        // Draw yellow rect outline
-        draw_list->AddRect(p_min, p_max, IM_COL32(255, 255, 0, 255), // yellow color
+        auto rect = getGlobalBounds();
+        rect.bottomRight += thickness;
+        rect.topLeft -= thickness;
+        draw_list->AddRect(rect.topLeft, rect.bottomRight,
+                           IM_COL32(255, 255, 0, 255), // yellow color
                            1.0f,                                     // rounding
                            0,                                        // flags
                            thickness                                 // thickness
         );
-    }
-
-    ImVec4 colorToImVec4(const Color4& _color)
-    {
-        const auto color = NormColor4::From(_color);
-        return ImVec4(color.r, color.g, color.b, color.a);
     }
 
 } // namespace Core
@@ -125,16 +133,11 @@ namespace Core
 namespace ImGui
 {
 
-    void PushStyleColor(ImGuiCol idx, const Core::Color4& col)
-    {
-        ImGui::PushStyleColor(idx, Core::colorToImVec4(col));
-    }
-
     bool OptPushStyleColor(ImGuiCol idx, const std::optional<Core::Color4>& col)
     {
         if (col.has_value())
         {
-            PushStyleColor(idx, *col);
+            PushStyleColor(idx, Core::NormColor4::From(*col));
             return true;
         }
         return false;

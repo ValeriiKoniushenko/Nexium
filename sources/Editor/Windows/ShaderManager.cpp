@@ -49,7 +49,7 @@ namespace Core
             names.push_back(shader.first.data());
         }
 
-        if (ImGui::BeginListBox("##ShaderList", ImVec2(100, -FLT_MIN)))
+        if (ImGui::BeginListBox("##ShaderList", glm::vec2(100, -FLT_MIN)))
         {
             for (std::size_t i = 0; i < names.size(); i++)
             {
@@ -83,7 +83,7 @@ namespace Core
                                 availWidth);
 
             if (ImGui::Button("Reload shader",
-                              ImVec2(_drawDetailsLabelWidth - (style.FramePadding.x * 2.f), 0.f)))
+                              glm::vec2(_drawDetailsLabelWidth - (style.FramePadding.x * 2.f), 0.f)))
             {
                 shader.safeRecreateFromSources();
             }

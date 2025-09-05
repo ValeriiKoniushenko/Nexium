@@ -121,12 +121,11 @@ namespace Core
                     context->setText(aligns[i].toStr().c_str());
                 });
 
-        auto labelAndButton = HorizontalLayout::Create();
-        labelAndButton->setIsDrawOutline(true);
-        (void)labelAndButton->addChildComponent<Label>("Some text: ")->setIsDrawOutline(true);
-        (void)labelAndButton->addChildComponent<Button>("Click me!");
-
-        _layout.attachChild(labelAndButton);
+        // auto labelAndButton = HorizontalLayout::Create();
+        // labelAndButton->setIsDrawOutline(true);
+        // (void)labelAndButton->addChildComponent<Label>("Some text: ")->setIsDrawOutline(true);
+        // (void)labelAndButton->addChildComponent<Button>("Click me!");
+        // _layout.attachChild(labelAndButton);
         *_layout.addChildComponent<HorizontalLayout>() = *horizontal;
     }
 

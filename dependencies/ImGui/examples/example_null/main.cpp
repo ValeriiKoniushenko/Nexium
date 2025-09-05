@@ -19,7 +19,7 @@ int main(int, char**)
     for (int n = 0; n < 20; n++)
     {
         printf("NewFrame() %d\n", n);
-        io.DisplaySize = ImVec2(1920, 1080);
+        io.DisplaySize = glm::vec2(1920, 1080);
         io.DeltaTime = 1.0f / 60.0f;
         ImGui::NewFrame();
 

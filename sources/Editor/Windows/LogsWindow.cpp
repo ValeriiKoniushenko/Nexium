@@ -114,7 +114,7 @@ namespace Core
 
     void LogsWindowEWC::logsDraw()
     {
-        if (ImGui::BeginChild("ScrollingRegion", ImVec2(0, 0), 0,
+        if (ImGui::BeginChild("ScrollingRegion", glm::vec2(0, 0), 0,
                               ImGuiWindowFlags_HorizontalScrollbar))
         {
             bool justAdded = _lastCountOfLogs != _logs.size();
@@ -134,10 +134,10 @@ namespace Core
             }
 
             std::size_t i = 0;
-            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 1)); // Tighten _spacing
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, glm::vec2(4, 1)); // Tighten _spacing
             for (auto& [message, level] : _logs)
             {
-                std::optional<ImVec4> color;
+                std::optional<glm::vec4> color;
 
                 if (!_levelFilter[level])
                 {
@@ -204,14 +204,14 @@ namespace Core
     void LogsWindowEWC::toolbarDraw()
     {
         float const startY = ImGui::GetCursorScreenPos().y;
-        ImGui::BeginChild("Toolbar", ImVec2(0, _streamingToolbarHeight));
+        ImGui::BeginChild("Toolbar", glm::vec2(0, _streamingToolbarHeight));
         {
-            ImGui::Dummy(ImVec2(0, 0));
+            ImGui::Dummy(glm::vec2(0, 0));
 
-            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, glm::vec2(0, 0));
 
             // =============== Input ====================
-            ImGui::Dummy(ImVec2(_defaultGap, 0));
+            ImGui::Dummy(glm::vec2(_defaultGap, 0));
             ImGui::SameLine();
             ImGui::SetNextItemWidth(_innerSize.width - _toolbarToolsWidth);
             ImGui::InputTextWithHint("##LogFilter",
@@ -244,11 +244,11 @@ namespace Core
                 _isAutoScroll = !_isAutoScroll;
             }
             ImGui::SameLine(0, 0);
-            ImGui::Dummy(ImVec2(_defaultGap, 0));
+            ImGui::Dummy(glm::vec2(_defaultGap, 0));
 
             ImGui::PopStyleVar();
 
-            ImGui::Dummy(ImVec2(0, 0));
+            ImGui::Dummy(glm::vec2(0, 0));
         }
         _streamingToolbarHeight = ImGui::GetCursorScreenPos().y - startY;
         ImGui::EndChild();

@@ -6,7 +6,7 @@
 // Do this:
 //    #define IMGUI_IMPLEMENTATION
 // Before you include this file in *one* C++ file to create the implementation.
-// Using this in your project will leak the contents of imgui_internal.h and ImVec2 operators in this compilation unit.
+// Using this in your project will leak the contents of imgui_internal.h and glm::vec2 operators in this compilation unit.
 
 #ifdef IMGUI_IMPLEMENTATION
 #define IMGUI_DEFINE_MATH_OPERATORS

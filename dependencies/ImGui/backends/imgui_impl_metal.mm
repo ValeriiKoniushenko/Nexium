@@ -265,8 +265,8 @@ void ImGui_ImplMetal_RenderDrawData(ImDrawData* draw_data, id<MTLCommandBuffer> 
     ImGui_ImplMetal_SetupRenderState(draw_data, commandBuffer, commandEncoder, renderPipelineState, vertexBuffer, 0);
 
     // Will project scissor/clipping rectangles into framebuffer space
-    ImVec2 clip_off = draw_data->DisplayPos;         // (0,0) unless using multi-viewports
-    ImVec2 clip_scale = draw_data->FramebufferScale; // (1,1) unless using retina display which are often (2,2)
+    glm::vec2 clip_off = draw_data->DisplayPos;         // (0,0) unless using multi-viewports
+    glm::vec2 clip_scale = draw_data->FramebufferScale; // (1,1) unless using retina display which are often (2,2)
 
     // Render command lists
     size_t vertexBufferOffset = 0;
@@ -291,8 +291,8 @@ void ImGui_ImplMetal_RenderDrawData(ImDrawData* draw_data, id<MTLCommandBuffer> 
             else
             {
                 // Project scissor/clipping rectangles into framebuffer space
-                ImVec2 clip_min((pcmd->ClipRect.x - clip_off.x) * clip_scale.x, (pcmd->ClipRect.y - clip_off.y) * clip_scale.y);
-                ImVec2 clip_max((pcmd->ClipRect.z - clip_off.x) * clip_scale.x, (pcmd->ClipRect.w - clip_off.y) * clip_scale.y);
+                glm::vec2 clip_min((pcmd->ClipRect.x - clip_off.x) * clip_scale.x, (pcmd->ClipRect.y - clip_off.y) * clip_scale.y);
+                glm::vec2 clip_max((pcmd->ClipRect.z - clip_off.x) * clip_scale.x, (pcmd->ClipRect.w - clip_off.y) * clip_scale.y);
 
                 // Clamp to viewport as setScissorRect() won't accept values that are off bounds
                 if (clip_min.x < 0.0f) { clip_min.x = 0.0f; }
@@ -503,7 +503,7 @@ inline static CGSize MakeScaledSize(CGSize size, CGFloat scale)
     return CGSizeMake(size.width * scale, size.height * scale);
 }
 
-static void ImGui_ImplMetal_SetWindowSize(ImGuiViewport* viewport, ImVec2 size)
+static void ImGui_ImplMetal_SetWindowSize(ImGuiViewport* viewport, glm::vec2 size)
 {
     ImGuiViewportDataMetal* data = (ImGuiViewportDataMetal*)viewport->RendererUserData;
     data->MetalLayer.drawableSize = MakeScaledSize(CGSizeMake(size.x, size.y), viewport->DpiScale);

@@ -122,7 +122,7 @@ namespace Core
         }
         ImGui::SetCursorPosY(originalCursor.y + _height.value_or(0.f));
 
-        ImGui::Dummy(ImVec2(0, 0));
+        ImGui::Dummy(glm::vec2(0, 0));
     }
 
     void VerticalLayout::onInitialize()

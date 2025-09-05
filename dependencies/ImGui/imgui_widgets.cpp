@@ -136,7 +136,7 @@ static const ImU64          IM_U64_MAX = (2ULL * 9223372036854775807LL + 1);
 // For InputTextEx()
 static bool     InputTextFilterCharacter(ImGuiContext* ctx, unsigned int* p_char, ImGuiInputTextFlags flags, ImGuiInputTextCallback callback, void* user_data, bool input_source_is_clipboard = false);
 static int      InputTextCalcTextLenAndLineCount(const char* text_begin, const char** out_text_end);
-static ImVec2   InputTextCalcTextSize(ImGuiContext* ctx, const char* text_begin, const char* text_end, const char** remaining = NULL, ImVec2* out_offset = NULL, bool stop_on_new_line = false);
+static glm::vec2   InputTextCalcTextSize(ImGuiContext* ctx, const char* text_begin, const char* text_end, const char** remaining = NULL, glm::vec2* out_offset = NULL, bool stop_on_new_line = false);
 
 //-------------------------------------------------------------------------
 // [SECTION] Widgets: Text, etc.
@@ -173,14 +173,14 @@ void ImGui::TextEx(const char* text, const char* text_end, ImGuiTextFlags flags)
     if (text_end == NULL)
         text_end = text + ImStrlen(text); // FIXME-OPT
 
-    const ImVec2 text_pos(window->DC.CursorPos.x, window->DC.CursorPos.y + window->DC.CurrLineTextBaseOffset);
+    const glm::vec2 text_pos(window->DC.CursorPos.x, window->DC.CursorPos.y + window->DC.CurrLineTextBaseOffset);
     const float wrap_pos_x = window->DC.TextWrapPos;
     const bool wrap_enabled = (wrap_pos_x >= 0.0f);
     if (text_end - text <= 2000 || wrap_enabled)
     {
         // Common case
         const float wrap_width = wrap_enabled ? CalcWrapWidthForPos(window->DC.CursorPos, wrap_pos_x) : 0.0f;
-        const ImVec2 text_size = CalcTextSize(text_begin, text_end, false, wrap_width);
+        const glm::vec2 text_size = CalcTextSize(text_begin, text_end, false, wrap_width);
 
         ImRect bb(text_pos, text_pos + text_size);
         ItemSize(text_size, 0.0f);
@@ -199,10 +199,10 @@ void ImGui::TextEx(const char* text, const char* text_end, ImGuiTextFlags flags)
         // - We use memchr(), pay attention that well optimized versions of those str/mem functions are much faster than a casually written loop.
         const char* line = text;
         const float line_height = GetTextLineHeight();
-        ImVec2 text_size(0, 0);
+        glm::vec2 text_size(0, 0);
 
         // Lines to skip (can't skip when logging text)
-        ImVec2 pos = text_pos;
+        glm::vec2 pos = text_pos;
         if (!g.LogEnabled)
         {
             int lines_skippable = (int)((window->ClipRect.Min.y - text_pos.y) / line_height);
@@ -226,7 +226,7 @@ void ImGui::TextEx(const char* text, const char* text_end, ImGuiTextFlags flags)
         // Lines to render
         if (line < text_end)
         {
-            ImRect line_rect(pos, pos + ImVec2(FLT_MAX, line_height));
+            ImRect line_rect(pos, pos + glm::vec2(FLT_MAX, line_height));
             while (line < text_end)
             {
                 if (IsClippedEx(line_rect, 0))
@@ -289,7 +289,7 @@ void ImGui::TextV(const char* fmt, va_list args)
     TextEx(text, text_end, ImGuiTextFlags_NoWidthForLargeClippedText);
 }
 
-void ImGui::TextColored(const ImVec4& col, const char* fmt, ...)
+void ImGui::TextColored(const glm::vec4& col, const char* fmt, ...)
 {
     va_list args;
     va_start(args, fmt);
@@ -297,7 +297,7 @@ void ImGui::TextColored(const ImVec4& col, const char* fmt, ...)
     va_end(args);
 }
 
-void ImGui::TextColoredV(const ImVec4& col, const char* fmt, va_list args)
+void ImGui::TextColoredV(const glm::vec4& col, const char* fmt, va_list args)
 {
     PushStyleColor(ImGuiCol_Text, col);
     TextV(fmt, args);
@@ -358,19 +358,19 @@ void ImGui::TextAlignedV(float align_x, float size_x, const char* fmt, va_list a
 
     const char* text, *text_end;
     ImFormatStringToTempBufferV(&text, &text_end, fmt, args);
-    const ImVec2 text_size = CalcTextSize(text, text_end);
-    size_x = CalcItemSize(ImVec2(size_x, 0.0f), 0.0f, text_size.y).x;
+    const glm::vec2 text_size = CalcTextSize(text, text_end);
+    size_x = CalcItemSize(glm::vec2(size_x, 0.0f), 0.0f, text_size.y).x;
 
-    ImVec2 pos(window->DC.CursorPos.x, window->DC.CursorPos.y + window->DC.CurrLineTextBaseOffset);
-    ImVec2 pos_max(pos.x + size_x, window->ClipRect.Max.y);
-    ImVec2 size(ImMin(size_x, text_size.x), text_size.y);
+    glm::vec2 pos(window->DC.CursorPos.x, window->DC.CursorPos.y + window->DC.CurrLineTextBaseOffset);
+    glm::vec2 pos_max(pos.x + size_x, window->ClipRect.Max.y);
+    glm::vec2 size(ImMin(size_x, text_size.x), text_size.y);
     window->DC.CursorMaxPos.x = ImMax(window->DC.CursorMaxPos.x, pos.x + text_size.x);
     window->DC.IdealMaxPos.x = ImMax(window->DC.IdealMaxPos.x, pos.x + text_size.x);
     if (align_x > 0.0f && text_size.x < size_x)
         pos.x += ImTrunc((size_x - text_size.x) * align_x);
     RenderTextEllipsis(window->DrawList, pos, pos_max, pos_max.x, text, text_end, &text_size);
 
-    const ImVec2 backup_max_pos = window->DC.CursorMaxPos;
+    const glm::vec2 backup_max_pos = window->DC.CursorMaxPos;
     ItemSize(size);
     ItemAdd(ImRect(pos, pos + size), 0);
     window->DC.CursorMaxPos.x = backup_max_pos.x; // Cancel out extending content size because right-aligned text would otherwise mess it up.
@@ -400,20 +400,20 @@ void ImGui::LabelTextV(const char* label, const char* fmt, va_list args)
 
     const char* value_text_begin, *value_text_end;
     ImFormatStringToTempBufferV(&value_text_begin, &value_text_end, fmt, args);
-    const ImVec2 value_size = CalcTextSize(value_text_begin, value_text_end, false);
-    const ImVec2 label_size = CalcTextSize(label, NULL, true);
+    const glm::vec2 value_size = CalcTextSize(value_text_begin, value_text_end, false);
+    const glm::vec2 label_size = CalcTextSize(label, NULL, true);
 
-    const ImVec2 pos = window->DC.CursorPos;
-    const ImRect value_bb(pos, pos + ImVec2(w, value_size.y + style.FramePadding.y * 2));
-    const ImRect total_bb(pos, pos + ImVec2(w + (label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f), ImMax(value_size.y, label_size.y) + style.FramePadding.y * 2));
+    const glm::vec2 pos = window->DC.CursorPos;
+    const ImRect value_bb(pos, pos + glm::vec2(w, value_size.y + style.FramePadding.y * 2));
+    const ImRect total_bb(pos, pos + glm::vec2(w + (label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f), ImMax(value_size.y, label_size.y) + style.FramePadding.y * 2));
     ItemSize(total_bb, style.FramePadding.y);
     if (!ItemAdd(total_bb, 0))
         return;
 
     // Render
-    RenderTextClipped(value_bb.Min + style.FramePadding, value_bb.Max, value_text_begin, value_text_end, &value_size, ImVec2(0.0f, 0.0f));
+    RenderTextClipped(value_bb.Min + style.FramePadding, value_bb.Max, value_text_begin, value_text_end, &value_size, glm::vec2(0.0f, 0.0f));
     if (label_size.x > 0.0f)
-        RenderText(ImVec2(value_bb.Max.x + style.ItemInnerSpacing.x, value_bb.Min.y + style.FramePadding.y), label);
+        RenderText(glm::vec2(value_bb.Max.x + style.ItemInnerSpacing.x, value_bb.Min.y + style.FramePadding.y), label);
 }
 
 void ImGui::BulletText(const char* fmt, ...)
@@ -436,9 +436,9 @@ void ImGui::BulletTextV(const char* fmt, va_list args)
 
     const char* text_begin, *text_end;
     ImFormatStringToTempBufferV(&text_begin, &text_end, fmt, args);
-    const ImVec2 label_size = CalcTextSize(text_begin, text_end, false);
-    const ImVec2 total_size = ImVec2(g.FontSize + (label_size.x > 0.0f ? (label_size.x + style.FramePadding.x * 2) : 0.0f), label_size.y);  // Empty text doesn't add padding
-    ImVec2 pos = window->DC.CursorPos;
+    const glm::vec2 label_size = CalcTextSize(text_begin, text_end, false);
+    const glm::vec2 total_size = glm::vec2(g.FontSize + (label_size.x > 0.0f ? (label_size.x + style.FramePadding.x * 2) : 0.0f), label_size.y);  // Empty text doesn't add padding
+    glm::vec2 pos = window->DC.CursorPos;
     pos.y += window->DC.CurrLineTextBaseOffset;
     ItemSize(total_size, 0.0f);
     const ImRect bb(pos, pos + total_size);
@@ -447,8 +447,8 @@ void ImGui::BulletTextV(const char* fmt, va_list args)
 
     // Render
     ImU32 text_col = GetColorU32(ImGuiCol_Text);
-    RenderBullet(window->DrawList, bb.Min + ImVec2(style.FramePadding.x + g.FontSize * 0.5f, g.FontSize * 0.5f), text_col);
-    RenderText(bb.Min + ImVec2(g.FontSize + style.FramePadding.x * 2, 0.0f), text_begin, text_end, false);
+    RenderBullet(window->DrawList, bb.Min + glm::vec2(style.FramePadding.x + g.FontSize * 0.5f, g.FontSize * 0.5f), text_col);
+    RenderText(bb.Min + glm::vec2(g.FontSize + style.FramePadding.x * 2, 0.0f), text_begin, text_end, false);
 }
 
 //-------------------------------------------------------------------------
@@ -764,8 +764,8 @@ bool ImGui::ButtonBehavior(const ImRect& bb, ImGuiID id, bool* out_hovered, bool
     return pressed;
 }
 
-bool ImGui::ButtonEx(const char* label, const ImVec2& size_arg, ImGuiButtonFlags flags,
-                     const ImVec2* preCalcLabelSize)
+bool ImGui::ButtonEx(const char* label, const glm::vec2& size_arg, ImGuiButtonFlags flags,
+                     const glm::vec2* preCalcLabelSize)
 {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
@@ -774,13 +774,13 @@ bool ImGui::ButtonEx(const char* label, const ImVec2& size_arg, ImGuiButtonFlags
     ImGuiContext& g = *GImGui;
     const ImGuiStyle& style = g.Style;
     const ImGuiID id = window->GetID(label);
-    const ImVec2 label_size
+    const glm::vec2 label_size
         = preCalcLabelSize ? *preCalcLabelSize : CalcTextSize(label, NULL, true);
 
-    ImVec2 pos = window->DC.CursorPos;
+    glm::vec2 pos = window->DC.CursorPos;
     if ((flags & ImGuiButtonFlags_AlignTextBaseLine) && style.FramePadding.y < window->DC.CurrLineTextBaseOffset) // Try to vertically align buttons that are smaller/have no padding so that text baseline matches (bit hacky, since it shouldn't be a flag)
         pos.y += window->DC.CurrLineTextBaseOffset - style.FramePadding.y;
-    ImVec2 size = CalcItemSize(size_arg, label_size.x + style.FramePadding.x * 2.0f, label_size.y + style.FramePadding.y * 2.0f);
+    glm::vec2 size = CalcItemSize(size_arg, label_size.x + style.FramePadding.x * 2.0f, label_size.y + style.FramePadding.y * 2.0f);
 
     const ImRect bb(pos, pos + size);
     ItemSize(size, style.FramePadding.y);
@@ -807,7 +807,7 @@ bool ImGui::ButtonEx(const char* label, const ImVec2& size_arg, ImGuiButtonFlags
     return pressed;
 }
 
-bool ImGui::Button(const char* label, const ImVec2& size_arg)
+bool ImGui::Button(const char* label, const glm::vec2& size_arg)
 {
     return ButtonEx(label, size_arg, ImGuiButtonFlags_None);
 }
@@ -818,14 +818,14 @@ bool ImGui::SmallButton(const char* label)
     ImGuiContext& g = *GImGui;
     float backup_padding_y = g.Style.FramePadding.y;
     g.Style.FramePadding.y = 0.0f;
-    bool pressed = ButtonEx(label, ImVec2(0, 0), ImGuiButtonFlags_AlignTextBaseLine);
+    bool pressed = ButtonEx(label, glm::vec2(0, 0), ImGuiButtonFlags_AlignTextBaseLine);
     g.Style.FramePadding.y = backup_padding_y;
     return pressed;
 }
 
 // Tip: use ImGui::PushID()/PopID() to push indices or pointers in the ID stack.
 // Then you can keep 'str_id' empty or the same for all your buttons (instead of creating a string based on a non-string id)
-bool ImGui::InvisibleButton(const char* str_id, const ImVec2& size_arg, ImGuiButtonFlags flags)
+bool ImGui::InvisibleButton(const char* str_id, const glm::vec2& size_arg, ImGuiButtonFlags flags)
 {
     ImGuiContext& g = *GImGui;
     ImGuiWindow* window = GetCurrentWindow();
@@ -836,7 +836,7 @@ bool ImGui::InvisibleButton(const char* str_id, const ImVec2& size_arg, ImGuiBut
     IM_ASSERT(size_arg.x != 0.0f && size_arg.y != 0.0f);
 
     const ImGuiID id = window->GetID(str_id);
-    ImVec2 size = CalcItemSize(size_arg, 0.0f, 0.0f);
+    glm::vec2 size = CalcItemSize(size_arg, 0.0f, 0.0f);
     const ImRect bb(window->DC.CursorPos, window->DC.CursorPos + size);
     ItemSize(size);
     if (!ItemAdd(bb, id, NULL, (flags & ImGuiButtonFlags_EnableNav) ? ImGuiItemFlags_None : ImGuiItemFlags_NoNav))
@@ -850,7 +850,7 @@ bool ImGui::InvisibleButton(const char* str_id, const ImVec2& size_arg, ImGuiBut
     return pressed;
 }
 
-bool ImGui::ArrowButtonEx(const char* str_id, ImGuiDir dir, ImVec2 size, ImGuiButtonFlags flags)
+bool ImGui::ArrowButtonEx(const char* str_id, ImGuiDir dir, glm::vec2 size, ImGuiButtonFlags flags)
 {
     ImGuiContext& g = *GImGui;
     ImGuiWindow* window = GetCurrentWindow();
@@ -872,7 +872,7 @@ bool ImGui::ArrowButtonEx(const char* str_id, ImGuiDir dir, ImVec2 size, ImGuiBu
     const ImU32 text_col = GetColorU32(ImGuiCol_Text);
     RenderNavCursor(bb, id);
     RenderFrame(bb.Min, bb.Max, bg_col, true, g.Style.FrameRounding);
-    RenderArrow(window->DrawList, bb.Min + ImVec2(ImMax(0.0f, (size.x - g.FontSize) * 0.5f), ImMax(0.0f, (size.y - g.FontSize) * 0.5f)), text_col, dir);
+    RenderArrow(window->DrawList, bb.Min + glm::vec2(ImMax(0.0f, (size.x - g.FontSize) * 0.5f), ImMax(0.0f, (size.y - g.FontSize) * 0.5f)), text_col, dir);
 
     IMGUI_TEST_ENGINE_ITEM_INFO(id, str_id, g.LastItemData.StatusFlags);
     return pressed;
@@ -881,18 +881,18 @@ bool ImGui::ArrowButtonEx(const char* str_id, ImGuiDir dir, ImVec2 size, ImGuiBu
 bool ImGui::ArrowButton(const char* str_id, ImGuiDir dir)
 {
     float sz = GetFrameHeight();
-    return ArrowButtonEx(str_id, dir, ImVec2(sz, sz), ImGuiButtonFlags_None);
+    return ArrowButtonEx(str_id, dir, glm::vec2(sz, sz), ImGuiButtonFlags_None);
 }
 
 // Button to close a window
-bool ImGui::CloseButton(ImGuiID id, const ImVec2& pos)
+bool ImGui::CloseButton(ImGuiID id, const glm::vec2& pos)
 {
     ImGuiContext& g = *GImGui;
     ImGuiWindow* window = g.CurrentWindow;
 
     // Tweak 1: Shrink hit-testing area if button covers an abnormally large proportion of the visible region. That's in order to facilitate moving the window away. (#3825)
     // This may better be applied as a general hit-rect reduction mechanism for all widgets to ensure the area to move window is always accessible?
-    const ImRect bb(pos, pos + ImVec2(g.FontSize, g.FontSize));
+    const ImRect bb(pos, pos + glm::vec2(g.FontSize, g.FontSize));
     ImRect bb_interact = bb;
     const float area_to_visible_ratio = window->OuterRectClipped.GetArea() / bb.GetArea();
     if (area_to_visible_ratio < 1.5f)
@@ -913,22 +913,22 @@ bool ImGui::CloseButton(ImGuiID id, const ImVec2& pos)
         window->DrawList->AddRectFilled(bb.Min, bb.Max, bg_col);
     RenderNavCursor(bb, id, ImGuiNavRenderCursorFlags_Compact);
     const ImU32 cross_col = GetColorU32(ImGuiCol_Text);
-    const ImVec2 cross_center = bb.GetCenter() - ImVec2(0.5f, 0.5f);
+    const glm::vec2 cross_center = bb.GetCenter() - glm::vec2(0.5f, 0.5f);
     const float cross_extent = g.FontSize * 0.5f * 0.7071f - 1.0f;
     const float cross_thickness = 1.0f; // FIXME-DPI
-    window->DrawList->AddLine(cross_center + ImVec2(+cross_extent, +cross_extent), cross_center + ImVec2(-cross_extent, -cross_extent), cross_col, cross_thickness);
-    window->DrawList->AddLine(cross_center + ImVec2(+cross_extent, -cross_extent), cross_center + ImVec2(-cross_extent, +cross_extent), cross_col, cross_thickness);
+    window->DrawList->AddLine(cross_center + glm::vec2(+cross_extent, +cross_extent), cross_center + glm::vec2(-cross_extent, -cross_extent), cross_col, cross_thickness);
+    window->DrawList->AddLine(cross_center + glm::vec2(+cross_extent, -cross_extent), cross_center + glm::vec2(-cross_extent, +cross_extent), cross_col, cross_thickness);
 
     return pressed;
 }
 
 // The Collapse button also functions as a Dock Menu button.
-bool ImGui::CollapseButton(ImGuiID id, const ImVec2& pos, ImGuiDockNode* dock_node)
+bool ImGui::CollapseButton(ImGuiID id, const glm::vec2& pos, ImGuiDockNode* dock_node)
 {
     ImGuiContext& g = *GImGui;
     ImGuiWindow* window = g.CurrentWindow;
 
-    ImRect bb(pos, pos + ImVec2(g.FontSize, g.FontSize));
+    ImRect bb(pos, pos + glm::vec2(g.FontSize, g.FontSize));
     bool is_clipped = !ItemAdd(bb, id);
     bool hovered, held;
     bool pressed = ButtonBehavior(bb, id, &hovered, &held, ImGuiButtonFlags_None);
@@ -1034,7 +1034,7 @@ bool ImGui::ScrollbarEx(const ImRect& bb_frame, ImGuiID id, ImGuiAxis axis, ImS6
     const bool allow_interaction = (alpha >= 1.0f);
 
     ImRect bb = bb_frame;
-    bb.Expand(ImVec2(-ImClamp(IM_TRUNC((bb_frame_width - 2.0f) * 0.5f), 0.0f, 3.0f), -ImClamp(IM_TRUNC((bb_frame_height - 2.0f) * 0.5f), 0.0f, 3.0f)));
+    bb.Expand(glm::vec2(-ImClamp(IM_TRUNC((bb_frame_width - 2.0f) * 0.5f), 0.0f, 3.0f), -ImClamp(IM_TRUNC((bb_frame_height - 2.0f) * 0.5f), 0.0f, 3.0f)));
 
     // V denote the main, longer axis of the scrollbar (= height for a vertical scrollbar)
     const float scrollbar_size_v = (axis == ImGuiAxis_X) ? bb.GetWidth() : bb.GetHeight();
@@ -1116,14 +1116,14 @@ bool ImGui::ScrollbarEx(const ImRect& bb_frame, ImGuiID id, ImGuiAxis axis, ImS6
 
 // - Read about ImTextureID/ImTextureRef here: https://github.com/ocornut/imgui/wiki/Image-Loading-and-Displaying-Examples
 // - 'uv0' and 'uv1' are texture coordinates. Read about them from the same link above.
-void ImGui::ImageWithBg(ImTextureRef tex_ref, const ImVec2& image_size, const ImVec2& uv0, const ImVec2& uv1, const ImVec4& bg_col, const ImVec4& tint_col)
+void ImGui::ImageWithBg(ImTextureRef tex_ref, const glm::vec2& image_size, const glm::vec2& uv0, const glm::vec2& uv1, const glm::vec4& bg_col, const glm::vec4& tint_col)
 {
     ImGuiContext& g = *GImGui;
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
         return;
 
-    const ImVec2 padding(g.Style.ImageBorderSize, g.Style.ImageBorderSize);
+    const glm::vec2 padding(g.Style.ImageBorderSize, g.Style.ImageBorderSize);
     const ImRect bb(window->DC.CursorPos, window->DC.CursorPos + image_size + padding * 2.0f);
     ItemSize(bb);
     if (!ItemAdd(bb, 0))
@@ -1137,32 +1137,32 @@ void ImGui::ImageWithBg(ImTextureRef tex_ref, const ImVec2& image_size, const Im
     window->DrawList->AddImage(tex_ref, bb.Min + padding, bb.Max - padding, uv0, uv1, GetColorU32(tint_col));
 }
 
-void ImGui::Image(ImTextureRef tex_ref, const ImVec2& image_size, const ImVec2& uv0, const ImVec2& uv1)
+void ImGui::Image(ImTextureRef tex_ref, const glm::vec2& image_size, const glm::vec2& uv0, const glm::vec2& uv1)
 {
     ImageWithBg(tex_ref, image_size, uv0, uv1);
 }
 
 // 1.91.9 (February 2025) removed 'tint_col' and 'border_col' parameters, made border size not depend on color value. (#8131, #8238)
 #ifndef IMGUI_DISABLE_OBSOLETE_FUNCTIONS
-void ImGui::Image(ImTextureRef tex_ref, const ImVec2& image_size, const ImVec2& uv0, const ImVec2& uv1, const ImVec4& tint_col, const ImVec4& border_col)
+void ImGui::Image(ImTextureRef tex_ref, const glm::vec2& image_size, const glm::vec2& uv0, const glm::vec2& uv1, const glm::vec4& tint_col, const glm::vec4& border_col)
 {
     ImGuiContext& g = *GImGui;
     PushStyleVar(ImGuiStyleVar_ImageBorderSize, (border_col.w > 0.0f) ? ImMax(1.0f, g.Style.ImageBorderSize) : 0.0f); // Preserve legacy behavior where border is always visible when border_col's Alpha is >0.0f
     PushStyleColor(ImGuiCol_Border, border_col);
-    ImageWithBg(tex_ref, image_size, uv0, uv1, ImVec4(0, 0, 0, 0), tint_col);
+    ImageWithBg(tex_ref, image_size, uv0, uv1, glm::vec4(0, 0, 0, 0), tint_col);
     PopStyleColor();
     PopStyleVar();
 }
 #endif
 
-bool ImGui::ImageButtonEx(ImGuiID id, ImTextureRef tex_ref, const ImVec2& image_size, const ImVec2& uv0, const ImVec2& uv1, const ImVec4& bg_col, const ImVec4& tint_col, ImGuiButtonFlags flags)
+bool ImGui::ImageButtonEx(ImGuiID id, ImTextureRef tex_ref, const glm::vec2& image_size, const glm::vec2& uv0, const glm::vec2& uv1, const glm::vec4& bg_col, const glm::vec4& tint_col, ImGuiButtonFlags flags)
 {
     ImGuiContext& g = *GImGui;
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
         return false;
 
-    const ImVec2 padding = g.Style.FramePadding;
+    const glm::vec2 padding = g.Style.FramePadding;
     const ImRect bb(window->DC.CursorPos, window->DC.CursorPos + image_size + padding * 2.0f);
     ItemSize(bb);
     if (!ItemAdd(bb, id))
@@ -1184,7 +1184,7 @@ bool ImGui::ImageButtonEx(ImGuiID id, ImTextureRef tex_ref, const ImVec2& image_
 
 // - ImageButton() adds style.FramePadding*2.0f to provided size. This is in order to facilitate fitting an image in a button.
 // - ImageButton() draws a background based on regular Button() color + optionally an inner background if specified. (#8165) // FIXME: Maybe that's not the best design?
-bool ImGui::ImageButton(const char* str_id, ImTextureRef tex_ref, const ImVec2& image_size, const ImVec2& uv0, const ImVec2& uv1, const ImVec4& bg_col, const ImVec4& tint_col)
+bool ImGui::ImageButton(const char* str_id, ImTextureRef tex_ref, const glm::vec2& image_size, const glm::vec2& uv0, const glm::vec2& uv1, const glm::vec4& bg_col, const glm::vec4& tint_col)
 {
     ImGuiContext& g = *GImGui;
     ImGuiWindow* window = g.CurrentWindow;
@@ -1201,12 +1201,12 @@ bool ImGui::ImageButton(const char* str_id, ImTextureRef tex_ref, const ImVec2& 
 // - old ImageButton() had frame_padding' override argument.
 // - new ImageButton() always use style.FramePadding.
 /*
-bool ImGui::ImageButton(ImTextureID user_texture_id, const ImVec2& size, const ImVec2& uv0, const ImVec2& uv1, int frame_padding, const ImVec4& bg_col, const ImVec4& tint_col)
+bool ImGui::ImageButton(ImTextureID user_texture_id, const glm::vec2& size, const glm::vec2& uv0, const glm::vec2& uv1, int frame_padding, const glm::vec4& bg_col, const glm::vec4& tint_col)
 {
     // Default to using texture ID as ID. User can still push string/integer prefixes.
     PushID((ImTextureID)(intptr_t)user_texture_id);
     if (frame_padding >= 0)
-        PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2((float)frame_padding, (float)frame_padding));
+        PushStyleVar(ImGuiStyleVar_FramePadding, glm::vec2((float)frame_padding, (float)frame_padding));
     bool ret = ImageButton("", user_texture_id, size, uv0, uv1, bg_col, tint_col);
     if (frame_padding >= 0)
         PopStyleVar();
@@ -1225,11 +1225,11 @@ bool ImGui::Checkbox(const char* label, bool* v)
     ImGuiContext& g = *GImGui;
     const ImGuiStyle& style = g.Style;
     const ImGuiID id = window->GetID(label);
-    const ImVec2 label_size = CalcTextSize(label, NULL, true);
+    const glm::vec2 label_size = CalcTextSize(label, NULL, true);
 
     const float square_sz = GetFrameHeight();
-    const ImVec2 pos = window->DC.CursorPos;
-    const ImRect total_bb(pos, pos + ImVec2(square_sz + (label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f), label_size.y + style.FramePadding.y * 2.0f));
+    const glm::vec2 pos = window->DC.CursorPos;
+    const ImRect total_bb(pos, pos + glm::vec2(square_sz + (label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f), label_size.y + style.FramePadding.y * 2.0f));
     ItemSize(total_bb, style.FramePadding.y);
     const bool is_visible = ItemAdd(total_bb, id);
     const bool is_multi_select = (g.LastItemData.ItemFlags & ImGuiItemFlags_IsMultiSelect) != 0;
@@ -1261,7 +1261,7 @@ bool ImGui::Checkbox(const char* label, bool* v)
         MarkItemEdited(id);
     }
 
-    const ImRect check_bb(pos, pos + ImVec2(square_sz, square_sz));
+    const ImRect check_bb(pos, pos + glm::vec2(square_sz, square_sz));
     const bool mixed_value = (g.LastItemData.ItemFlags & ImGuiItemFlags_MixedValue) != 0;
     if (is_visible)
     {
@@ -1272,16 +1272,16 @@ bool ImGui::Checkbox(const char* label, bool* v)
         {
             // Undocumented tristate/mixed/indeterminate checkbox (#2644)
             // This may seem awkwardly designed because the aim is to make ImGuiItemFlags_MixedValue supported by all widgets (not just checkbox)
-            ImVec2 pad(ImMax(1.0f, IM_TRUNC(square_sz / 3.6f)), ImMax(1.0f, IM_TRUNC(square_sz / 3.6f)));
+            glm::vec2 pad(ImMax(1.0f, IM_TRUNC(square_sz / 3.6f)), ImMax(1.0f, IM_TRUNC(square_sz / 3.6f)));
             window->DrawList->AddRectFilled(check_bb.Min + pad, check_bb.Max - pad, check_col, style.FrameRounding);
         }
         else if (*v)
         {
             const float pad = ImMax(1.0f, IM_TRUNC(square_sz / 6.0f));
-            RenderCheckMark(window->DrawList, check_bb.Min + ImVec2(pad, pad), check_col, square_sz - pad * 2.0f);
+            RenderCheckMark(window->DrawList, check_bb.Min + glm::vec2(pad, pad), check_col, square_sz - pad * 2.0f);
         }
     }
-    const ImVec2 label_pos = ImVec2(check_bb.Max.x + style.ItemInnerSpacing.x, check_bb.Min.y + style.FramePadding.y);
+    const glm::vec2 label_pos = glm::vec2(check_bb.Max.x + style.ItemInnerSpacing.x, check_bb.Min.y + style.FramePadding.y);
     if (g.LogEnabled)
         LogRenderedText(&label_pos, mixed_value ? "[~]" : *v ? "[x]" : "[ ]");
     if (is_visible && label_size.x > 0.0f)
@@ -1347,17 +1347,17 @@ bool ImGui::RadioButton(const char* label, bool active)
     ImGuiContext& g = *GImGui;
     const ImGuiStyle& style = g.Style;
     const ImGuiID id = window->GetID(label);
-    const ImVec2 label_size = CalcTextSize(label, NULL, true);
+    const glm::vec2 label_size = CalcTextSize(label, NULL, true);
 
     const float square_sz = GetFrameHeight();
-    const ImVec2 pos = window->DC.CursorPos;
-    const ImRect check_bb(pos, pos + ImVec2(square_sz, square_sz));
-    const ImRect total_bb(pos, pos + ImVec2(square_sz + (label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f), label_size.y + style.FramePadding.y * 2.0f));
+    const glm::vec2 pos = window->DC.CursorPos;
+    const ImRect check_bb(pos, pos + glm::vec2(square_sz, square_sz));
+    const ImRect total_bb(pos, pos + glm::vec2(square_sz + (label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f), label_size.y + style.FramePadding.y * 2.0f));
     ItemSize(total_bb, style.FramePadding.y);
     if (!ItemAdd(total_bb, id))
         return false;
 
-    ImVec2 center = check_bb.GetCenter();
+    glm::vec2 center = check_bb.GetCenter();
     center.x = IM_ROUND(center.x);
     center.y = IM_ROUND(center.y);
     const float radius = (square_sz - 1.0f) * 0.5f;
@@ -1378,11 +1378,11 @@ bool ImGui::RadioButton(const char* label, bool active)
 
     if (style.FrameBorderSize > 0.0f)
     {
-        window->DrawList->AddCircle(center + ImVec2(1, 1), radius, GetColorU32(ImGuiCol_BorderShadow), num_segment, style.FrameBorderSize);
+        window->DrawList->AddCircle(center + glm::vec2(1, 1), radius, GetColorU32(ImGuiCol_BorderShadow), num_segment, style.FrameBorderSize);
         window->DrawList->AddCircle(center, radius, GetColorU32(ImGuiCol_Border), num_segment, style.FrameBorderSize);
     }
 
-    ImVec2 label_pos = ImVec2(check_bb.Max.x + style.ItemInnerSpacing.x, check_bb.Min.y + style.FramePadding.y);
+    glm::vec2 label_pos = glm::vec2(check_bb.Max.x + style.ItemInnerSpacing.x, check_bb.Min.y + style.FramePadding.y);
     if (g.LogEnabled)
         LogRenderedText(&label_pos, active ? "(x)" : "( )");
     if (label_size.x > 0.0f)
@@ -1402,7 +1402,7 @@ bool ImGui::RadioButton(const char* label, int* v, int v_button)
 }
 
 // size_arg (for each axis) < 0.0f: align to end, 0.0f: auto, > 0.0f: specified size
-void ImGui::ProgressBar(float fraction, const ImVec2& size_arg, const char* overlay)
+void ImGui::ProgressBar(float fraction, const glm::vec2& size_arg, const char* overlay)
 {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
@@ -1411,8 +1411,8 @@ void ImGui::ProgressBar(float fraction, const ImVec2& size_arg, const char* over
     ImGuiContext& g = *GImGui;
     const ImGuiStyle& style = g.Style;
 
-    ImVec2 pos = window->DC.CursorPos;
-    ImVec2 size = CalcItemSize(size_arg, CalcItemWidth(), g.FontSize + style.FramePadding.y * 2.0f);
+    glm::vec2 pos = window->DC.CursorPos;
+    glm::vec2 size = CalcItemSize(size_arg, CalcItemWidth(), g.FontSize + style.FramePadding.y * 2.0f);
     ImRect bb(pos, pos + size);
     ItemSize(size, style.FramePadding.y);
     if (!ItemAdd(bb, 0))
@@ -1438,7 +1438,7 @@ void ImGui::ProgressBar(float fraction, const ImVec2& size_arg, const char* over
 
     // Render
     RenderFrame(bb.Min, bb.Max, GetColorU32(ImGuiCol_FrameBg), true, style.FrameRounding);
-    bb.Expand(ImVec2(-style.FrameBorderSize, -style.FrameBorderSize));
+    bb.Expand(glm::vec2(-style.FrameBorderSize, -style.FrameBorderSize));
     RenderRectFilledRangeH(window->DrawList, bb, GetColorU32(ImGuiCol_PlotHistogram), fill_n0, fill_n1, style.FrameRounding);
 
     // Default displaying the fraction as percentage string, but user can override it
@@ -1452,11 +1452,11 @@ void ImGui::ProgressBar(float fraction, const ImVec2& size_arg, const char* over
             overlay = overlay_buf;
         }
 
-        ImVec2 overlay_size = CalcTextSize(overlay, NULL);
+        glm::vec2 overlay_size = CalcTextSize(overlay, NULL);
         if (overlay_size.x > 0.0f)
         {
             float text_x = is_indeterminate ? (bb.Min.x + bb.Max.x - overlay_size.x) * 0.5f : ImLerp(bb.Min.x, bb.Max.x, fill_n1) + style.ItemSpacing.x;
-            RenderTextClipped(ImVec2(ImClamp(text_x, bb.Min.x, bb.Max.x - overlay_size.x - style.ItemInnerSpacing.x), bb.Min.y), bb.Max, overlay, NULL, &overlay_size, ImVec2(0.0f, 0.5f), &bb);
+            RenderTextClipped(glm::vec2(ImClamp(text_x, bb.Min.x, bb.Max.x - overlay_size.x - style.ItemInnerSpacing.x), bb.Min.y), bb.Max, overlay, NULL, &overlay_size, glm::vec2(0.0f, 0.5f), &bb);
         }
     }
 }
@@ -1470,7 +1470,7 @@ void ImGui::Bullet()
     ImGuiContext& g = *GImGui;
     const ImGuiStyle& style = g.Style;
     const float line_height = ImMax(ImMin(window->DC.CurrLineSize.y, g.FontSize + style.FramePadding.y * 2), g.FontSize);
-    const ImRect bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(g.FontSize, line_height));
+    const ImRect bb(window->DC.CursorPos, window->DC.CursorPos + glm::vec2(g.FontSize, line_height));
     ItemSize(bb);
     if (!ItemAdd(bb, 0))
     {
@@ -1480,7 +1480,7 @@ void ImGui::Bullet()
 
     // Render and stay on same line
     ImU32 text_col = GetColorU32(ImGuiCol_Text);
-    RenderBullet(window->DrawList, bb.Min + ImVec2(style.FramePadding.x + g.FontSize * 0.5f, line_height * 0.5f), text_col);
+    RenderBullet(window->DrawList, bb.Min + glm::vec2(style.FramePadding.x + g.FontSize * 0.5f, line_height * 0.5f), text_col);
     SameLine(0, style.FramePadding.x * 2.0f);
 }
 
@@ -1498,8 +1498,8 @@ bool ImGui::TextLink(const char* label)
     const ImGuiID id = window->GetID(label);
     const char* label_end = FindRenderedTextEnd(label);
 
-    ImVec2 pos(window->DC.CursorPos.x, window->DC.CursorPos.y + window->DC.CurrLineTextBaseOffset);
-    ImVec2 size = CalcTextSize(label, label_end, true);
+    glm::vec2 pos(window->DC.CursorPos.x, window->DC.CursorPos.y + window->DC.CurrLineTextBaseOffset);
+    glm::vec2 size = CalcTextSize(label, label_end, true);
     ImRect bb(pos, pos + size);
     ItemSize(size, 0.0f);
     if (!ItemAdd(bb, id))
@@ -1512,8 +1512,8 @@ bool ImGui::TextLink(const char* label)
     if (hovered)
         SetMouseCursor(ImGuiMouseCursor_Hand);
 
-    ImVec4 text_colf = g.Style.Colors[ImGuiCol_TextLink];
-    ImVec4 line_colf = text_colf;
+    glm::vec4 text_colf = g.Style.Colors[ImGuiCol_TextLink];
+    glm::vec4 line_colf = text_colf;
     {
         // FIXME-STYLE: Read comments above. This widget is NOT written in the same style as some earlier widgets,
         // as we are currently experimenting/planning a different styling system.
@@ -1530,7 +1530,7 @@ bool ImGui::TextLink(const char* label)
     }
 
     float line_y = bb.Max.y + ImFloor(g.FontBaked->Descent * g.FontBakedScale * 0.20f);
-    window->DrawList->AddLine(ImVec2(bb.Min.x, line_y), ImVec2(bb.Max.x, line_y), GetColorU32(line_colf)); // FIXME-TEXT: Underline mode // FIXME-DPI
+    window->DrawList->AddLine(glm::vec2(bb.Min.x, line_y), glm::vec2(bb.Max.x, line_y), GetColorU32(line_colf)); // FIXME-TEXT: Underline mode // FIXME-DPI
 
     PushStyleColor(ImGuiCol_Text, GetColorU32(text_colf));
     RenderText(bb.Min, label, label_end);
@@ -1576,10 +1576,10 @@ void ImGui::Spacing()
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
         return;
-    ItemSize(ImVec2(0, 0));
+    ItemSize(glm::vec2(0, 0));
 }
 
-void ImGui::Dummy(const ImVec2& size)
+void ImGui::Dummy(const glm::vec2& size)
 {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
@@ -1601,9 +1601,9 @@ void ImGui::NewLine()
     window->DC.LayoutType = ImGuiLayoutType_Vertical;
     window->DC.IsSameLine = false;
     if (window->DC.CurrLineSize.y > 0.0f)     // In the event that we are on a line with items that is smaller that FontSize high, we will preserve its height.
-        ItemSize(ImVec2(0, 0));
+        ItemSize(glm::vec2(0, 0));
     else
-        ItemSize(ImVec2(0.0f, g.FontSize));
+        ItemSize(glm::vec2(0.0f, g.FontSize));
     window->DC.LayoutType = backup_layout_type;
 }
 
@@ -1636,8 +1636,8 @@ void ImGui::SeparatorEx(ImGuiSeparatorFlags flags, float thickness)
         // Vertical separator, for menu bars (use current line height).
         float y1 = window->DC.CursorPos.y;
         float y2 = window->DC.CursorPos.y + window->DC.CurrLineSize.y;
-        const ImRect bb(ImVec2(window->DC.CursorPos.x, y1), ImVec2(window->DC.CursorPos.x + thickness, y2));
-        ItemSize(ImVec2(thickness, 0.0f));
+        const ImRect bb(glm::vec2(window->DC.CursorPos.x, y1), glm::vec2(window->DC.CursorPos.x + thickness, y2));
+        ItemSize(glm::vec2(thickness, 0.0f));
         if (!ItemAdd(bb, 0))
             return;
 
@@ -1666,8 +1666,8 @@ void ImGui::SeparatorEx(ImGuiSeparatorFlags flags, float thickness)
         // We don't provide our width to the layout so that it doesn't get feed back into AutoFit
         // FIXME: This prevents ->CursorMaxPos based bounding box evaluation from working (e.g. TableEndCell)
         const float thickness_for_layout = (thickness == 1.0f) ? 0.0f : thickness; // FIXME: See 1.70/1.71 Separator() change: makes legacy 1-px separator not affect layout yet. Should change.
-        const ImRect bb(ImVec2(x1, window->DC.CursorPos.y), ImVec2(x2, window->DC.CursorPos.y + thickness));
-        ItemSize(ImVec2(0.0f, thickness_for_layout));
+        const ImRect bb(glm::vec2(x1, window->DC.CursorPos.y), glm::vec2(x2, window->DC.CursorPos.y + thickness));
+        ItemSize(glm::vec2(0.0f, thickness_for_layout));
 
         if (ItemAdd(bb, 0))
         {
@@ -1709,13 +1709,13 @@ void ImGui::SeparatorTextEx(ImGuiID id, const char* label, const char* label_end
     ImGuiWindow* window = g.CurrentWindow;
     ImGuiStyle& style = g.Style;
 
-    const ImVec2 label_size = CalcTextSize(label, label_end, false);
-    const ImVec2 pos = window->DC.CursorPos;
-    const ImVec2 padding = style.SeparatorTextPadding;
+    const glm::vec2 label_size = CalcTextSize(label, label_end, false);
+    const glm::vec2 pos = window->DC.CursorPos;
+    const glm::vec2 padding = style.SeparatorTextPadding;
 
     const float separator_thickness = style.SeparatorTextBorderSize;
-    const ImVec2 min_size(label_size.x + extra_w + padding.x * 2.0f, ImMax(label_size.y + padding.y * 2.0f, separator_thickness));
-    const ImRect bb(pos, ImVec2(window->WorkRect.Max.x, pos.y + min_size.y));
+    const glm::vec2 min_size(label_size.x + extra_w + padding.x * 2.0f, ImMax(label_size.y + padding.y * 2.0f, separator_thickness));
+    const ImRect bb(pos, glm::vec2(window->WorkRect.Max.x, pos.y + min_size.y));
     const float text_baseline_y = ImTrunc((bb.GetHeight() - label_size.y) * style.SeparatorTextAlign.y + 0.99999f); //ImMax(padding.y, ImTrunc((style.SeparatorTextSize - label_size.y) * 0.5f));
     ItemSize(min_size, text_baseline_y);
     if (!ItemAdd(bb, id))
@@ -1726,7 +1726,7 @@ void ImGui::SeparatorTextEx(ImGuiID id, const char* label, const char* label_end
     const float seps_y = ImTrunc((bb.Min.y + bb.Max.y) * 0.5f + 0.99999f);
 
     const float label_avail_w = ImMax(0.0f, sep2_x2 - sep1_x1 - padding.x * 2.0f);
-    const ImVec2 label_pos(pos.x + padding.x + ImMax(0.0f, (label_avail_w - label_size.x - extra_w) * style.SeparatorTextAlign.x), pos.y + text_baseline_y); // FIXME-ALIGN
+    const glm::vec2 label_pos(pos.x + padding.x + ImMax(0.0f, (label_avail_w - label_size.x - extra_w) * style.SeparatorTextAlign.x), pos.y + text_baseline_y); // FIXME-ALIGN
 
     // This allows using SameLine() to position something in the 'extra_w'
     window->DC.CursorPosPrevLine.x = label_pos.x + label_size.x;
@@ -1737,19 +1737,19 @@ void ImGui::SeparatorTextEx(ImGuiID id, const char* label, const char* label_end
         const float sep1_x2 = label_pos.x - style.ItemSpacing.x;
         const float sep2_x1 = label_pos.x + label_size.x + extra_w + style.ItemSpacing.x;
         if (sep1_x2 > sep1_x1 && separator_thickness > 0.0f)
-            window->DrawList->AddLine(ImVec2(sep1_x1, seps_y), ImVec2(sep1_x2, seps_y), separator_col, separator_thickness);
+            window->DrawList->AddLine(glm::vec2(sep1_x1, seps_y), glm::vec2(sep1_x2, seps_y), separator_col, separator_thickness);
         if (sep2_x2 > sep2_x1 && separator_thickness > 0.0f)
-            window->DrawList->AddLine(ImVec2(sep2_x1, seps_y), ImVec2(sep2_x2, seps_y), separator_col, separator_thickness);
+            window->DrawList->AddLine(glm::vec2(sep2_x1, seps_y), glm::vec2(sep2_x2, seps_y), separator_col, separator_thickness);
         if (g.LogEnabled)
             LogSetNextTextDecoration("---", NULL);
-        RenderTextEllipsis(window->DrawList, label_pos, ImVec2(bb.Max.x, bb.Max.y + style.ItemSpacing.y), bb.Max.x, label, label_end, &label_size);
+        RenderTextEllipsis(window->DrawList, label_pos, glm::vec2(bb.Max.x, bb.Max.y + style.ItemSpacing.y), bb.Max.x, label, label_end, &label_size);
     }
     else
     {
         if (g.LogEnabled)
             LogText("---");
         if (separator_thickness > 0.0f)
-            window->DrawList->AddLine(ImVec2(sep1_x1, seps_y), ImVec2(sep2_x2, seps_y), separator_col, separator_thickness);
+            window->DrawList->AddLine(glm::vec2(sep1_x1, seps_y), glm::vec2(sep2_x2, seps_y), separator_col, separator_thickness);
     }
 }
 
@@ -1787,7 +1787,7 @@ bool ImGui::SplitterBehavior(const ImRect& bb, ImGuiID id, ImGuiAxis axis, float
 
     bool hovered, held;
     ImRect bb_interact = bb;
-    bb_interact.Expand(axis == ImGuiAxis_Y ? ImVec2(0.0f, hover_extend) : ImVec2(hover_extend, 0.0f));
+    bb_interact.Expand(axis == ImGuiAxis_Y ? glm::vec2(0.0f, hover_extend) : glm::vec2(hover_extend, 0.0f));
     ButtonBehavior(bb_interact, id, &hovered, &held, button_flags);
     if (hovered)
         g.LastItemData.StatusFlags |= ImGuiItemStatusFlags_HoveredRect; // for IsItemHovered(), because bb_interact is larger than bb
@@ -1813,7 +1813,7 @@ bool ImGui::SplitterBehavior(const ImRect& bb, ImGuiID id, ImGuiAxis axis, float
         {
             *size1 = ImMax(*size1 + mouse_delta, min_size1);
             *size2 = ImMax(*size2 - mouse_delta, min_size2);
-            bb_render.Translate((axis == ImGuiAxis_X) ? ImVec2(mouse_delta, 0.0f) : ImVec2(0.0f, mouse_delta));
+            bb_render.Translate((axis == ImGuiAxis_X) ? glm::vec2(mouse_delta, 0.0f) : glm::vec2(0.0f, mouse_delta));
             MarkItemEdited(id);
         }
     }
@@ -1920,11 +1920,11 @@ bool ImGui::BeginCombo(const char* label, const char* preview_value, ImGuiComboF
         IM_ASSERT((flags & (ImGuiComboFlags_NoPreview | (ImGuiComboFlags)ImGuiComboFlags_CustomPreview)) == 0);
 
     const float arrow_size = (flags & ImGuiComboFlags_NoArrowButton) ? 0.0f : GetFrameHeight();
-    const ImVec2 label_size = CalcTextSize(label, NULL, true);
+    const glm::vec2 label_size = CalcTextSize(label, NULL, true);
     const float preview_width = ((flags & ImGuiComboFlags_WidthFitPreview) && (preview_value != NULL)) ? CalcTextSize(preview_value, NULL, true).x : 0.0f;
     const float w = (flags & ImGuiComboFlags_NoPreview) ? arrow_size : ((flags & ImGuiComboFlags_WidthFitPreview) ? (arrow_size + preview_width + style.FramePadding.x * 2.0f) : CalcItemWidth());
-    const ImRect bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(w, label_size.y + style.FramePadding.y * 2.0f));
-    const ImRect total_bb(bb.Min, bb.Max + ImVec2(label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f, 0.0f));
+    const ImRect bb(window->DC.CursorPos, window->DC.CursorPos + glm::vec2(w, label_size.y + style.FramePadding.y * 2.0f));
+    const ImRect total_bb(bb.Min, bb.Max + glm::vec2(label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f, 0.0f));
     ItemSize(total_bb, style.FramePadding.y);
     if (!ItemAdd(total_bb, id, &bb))
         return false;
@@ -1945,14 +1945,14 @@ bool ImGui::BeginCombo(const char* label, const char* preview_value, ImGuiComboF
     const float value_x2 = ImMax(bb.Min.x, bb.Max.x - arrow_size);
     RenderNavCursor(bb, id);
     if (!(flags & ImGuiComboFlags_NoPreview))
-        window->DrawList->AddRectFilled(bb.Min, ImVec2(value_x2, bb.Max.y), frame_col, style.FrameRounding, (flags & ImGuiComboFlags_NoArrowButton) ? ImDrawFlags_RoundCornersAll : ImDrawFlags_RoundCornersLeft);
+        window->DrawList->AddRectFilled(bb.Min, glm::vec2(value_x2, bb.Max.y), frame_col, style.FrameRounding, (flags & ImGuiComboFlags_NoArrowButton) ? ImDrawFlags_RoundCornersAll : ImDrawFlags_RoundCornersLeft);
     if (!(flags & ImGuiComboFlags_NoArrowButton))
     {
         ImU32 bg_col = GetColorU32((popup_open || hovered) ? ImGuiCol_ButtonHovered : ImGuiCol_Button);
         ImU32 text_col = GetColorU32(ImGuiCol_Text);
-        window->DrawList->AddRectFilled(ImVec2(value_x2, bb.Min.y), bb.Max, bg_col, style.FrameRounding, (w <= arrow_size) ? ImDrawFlags_RoundCornersAll : ImDrawFlags_RoundCornersRight);
+        window->DrawList->AddRectFilled(glm::vec2(value_x2, bb.Min.y), bb.Max, bg_col, style.FrameRounding, (w <= arrow_size) ? ImDrawFlags_RoundCornersAll : ImDrawFlags_RoundCornersRight);
         if (value_x2 + arrow_size - style.FramePadding.x <= bb.Max.x)
-            RenderArrow(window->DrawList, ImVec2(value_x2 + style.FramePadding.y, bb.Min.y + style.FramePadding.y), text_col, ImGuiDir_Down, 1.0f);
+            RenderArrow(window->DrawList, glm::vec2(value_x2 + style.FramePadding.y, bb.Min.y + style.FramePadding.y), text_col, ImGuiDir_Down, 1.0f);
     }
     RenderFrameBorder(bb.Min, bb.Max, style.FrameRounding);
 
@@ -1969,10 +1969,10 @@ bool ImGui::BeginCombo(const char* label, const char* preview_value, ImGuiComboF
     {
         if (g.LogEnabled)
             LogSetNextTextDecoration("{", "}");
-        RenderTextClipped(bb.Min + style.FramePadding, ImVec2(value_x2, bb.Max.y), preview_value, NULL, NULL);
+        RenderTextClipped(bb.Min + style.FramePadding, glm::vec2(value_x2, bb.Max.y), preview_value, NULL, NULL);
     }
     if (label_size.x > 0)
-        RenderText(ImVec2(bb.Max.x + style.ItemInnerSpacing.x, bb.Min.y + style.FramePadding.y), label);
+        RenderText(glm::vec2(bb.Max.x + style.ItemInnerSpacing.x, bb.Min.y + style.FramePadding.y), label);
 
     if (!popup_open)
         return false;
@@ -2005,7 +2005,7 @@ bool ImGui::BeginComboPopup(ImGuiID popup_id, const ImRect& bb, ImGuiComboFlags 
         if (flags & ImGuiComboFlags_HeightRegular)     popup_max_height_in_items = 8;
         else if (flags & ImGuiComboFlags_HeightSmall)  popup_max_height_in_items = 4;
         else if (flags & ImGuiComboFlags_HeightLarge)  popup_max_height_in_items = 20;
-        ImVec2 constraint_min(0.0f, 0.0f), constraint_max(FLT_MAX, FLT_MAX);
+        glm::vec2 constraint_min(0.0f, 0.0f), constraint_max(FLT_MAX, FLT_MAX);
         if ((g.NextWindowData.HasFlags & ImGuiNextWindowDataFlags_HasSize) == 0 || g.NextWindowData.SizeVal.x <= 0.0f) // Don't apply constraints if user specified a size
             constraint_min.x = w;
         if ((g.NextWindowData.HasFlags & ImGuiNextWindowDataFlags_HasSize) == 0 || g.NextWindowData.SizeVal.y <= 0.0f)
@@ -2024,10 +2024,10 @@ bool ImGui::BeginComboPopup(ImGuiID popup_id, const ImRect& bb, ImGuiComboFlags 
         if (popup_window->WasActive)
         {
             // Always override 'AutoPosLastDirection' to not leave a chance for a past value to affect us.
-            ImVec2 size_expected = CalcWindowNextAutoFitSize(popup_window);
+            glm::vec2 size_expected = CalcWindowNextAutoFitSize(popup_window);
             popup_window->AutoPosLastDirection = (flags & ImGuiComboFlags_PopupAlignLeft) ? ImGuiDir_Left : ImGuiDir_Down; // Left = "Below, Toward Left", Down = "Below, Toward Right (default)"
             ImRect r_outer = GetPopupAllowedExtentRect(popup_window);
-            ImVec2 pos = FindBestWindowPosForPopupEx(bb.GetBL(), size_expected, &popup_window->AutoPosLastDirection, r_outer, bb, ImGuiPopupPositionPolicy_ComboBox);
+            glm::vec2 pos = FindBestWindowPosForPopupEx(bb.GetBL(), size_expected, &popup_window->AutoPosLastDirection, r_outer, bb, ImGuiPopupPositionPolicy_ComboBox);
             SetNextWindowPos(pos);
         }
 
@@ -2141,7 +2141,7 @@ bool ImGui::Combo(const char* label, int* current_item, const char* (*getter)(vo
 
     // The old Combo() API exposed "popup_max_height_in_items". The new more general BeginCombo() API doesn't have/need it, but we emulate it here.
     if (popup_max_height_in_items != -1 && !(g.NextWindowData.HasFlags & ImGuiNextWindowDataFlags_HasSizeConstraint))
-        SetNextWindowSizeConstraints(ImVec2(0, 0), ImVec2(FLT_MAX, CalcMaxPopupHeightFromItemCount(popup_max_height_in_items)));
+        SetNextWindowSizeConstraints(glm::vec2(0, 0), glm::vec2(FLT_MAX, CalcMaxPopupHeightFromItemCount(popup_max_height_in_items)));
 
     if (!BeginCombo(label, preview_value, ImGuiComboFlags_None))
         return false;
@@ -2684,9 +2684,9 @@ bool ImGui::DragScalar(const char* label, ImGuiDataType data_type, void* p_data,
     const ImGuiID id = window->GetID(label);
     const float w = CalcItemWidth();
 
-    const ImVec2 label_size = CalcTextSize(label, NULL, true);
-    const ImRect frame_bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(w, label_size.y + style.FramePadding.y * 2.0f));
-    const ImRect total_bb(frame_bb.Min, frame_bb.Max + ImVec2(label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f, 0.0f));
+    const glm::vec2 label_size = CalcTextSize(label, NULL, true);
+    const ImRect frame_bb(window->DC.CursorPos, window->DC.CursorPos + glm::vec2(w, label_size.y + style.FramePadding.y * 2.0f));
+    const ImRect total_bb(frame_bb.Min, frame_bb.Max + glm::vec2(label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f, 0.0f));
 
     const bool temp_input_allowed = (flags & ImGuiSliderFlags_NoInput) == 0;
     ItemSize(total_bb, style.FramePadding.y);
@@ -2763,10 +2763,10 @@ bool ImGui::DragScalar(const char* label, ImGuiDataType data_type, void* p_data,
     const char* value_buf_end = value_buf + DataTypeFormatString(value_buf, IM_ARRAYSIZE(value_buf), data_type, p_data, format);
     if (g.LogEnabled)
         LogSetNextTextDecoration("{", "}");
-    RenderTextClipped(frame_bb.Min, frame_bb.Max, value_buf, value_buf_end, NULL, ImVec2(0.5f, 0.5f));
+    RenderTextClipped(frame_bb.Min, frame_bb.Max, value_buf, value_buf_end, NULL, glm::vec2(0.5f, 0.5f));
 
     if (label_size.x > 0.0f)
-        RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);
+        RenderText(glm::vec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);
 
     IMGUI_TEST_ENGINE_ITEM_INFO(id, label, g.LastItemData.StatusFlags | (temp_input_allowed ? ImGuiItemStatusFlags_Inputable : 0));
     return value_changed;
@@ -3288,9 +3288,9 @@ bool ImGui::SliderScalar(const char* label, ImGuiDataType data_type, void* p_dat
     const ImGuiID id = window->GetID(label);
     const float w = CalcItemWidth();
 
-    const ImVec2 label_size = CalcTextSize(label, NULL, true);
-    const ImRect frame_bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(w, label_size.y + style.FramePadding.y * 2.0f));
-    const ImRect total_bb(frame_bb.Min, frame_bb.Max + ImVec2(label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f, 0.0f));
+    const glm::vec2 label_size = CalcTextSize(label, NULL, true);
+    const ImRect frame_bb(window->DC.CursorPos, window->DC.CursorPos + glm::vec2(w, label_size.y + style.FramePadding.y * 2.0f));
+    const ImRect total_bb(frame_bb.Min, frame_bb.Max + glm::vec2(label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f, 0.0f));
 
     const bool temp_input_allowed = (flags & ImGuiSliderFlags_NoInput) == 0;
     ItemSize(total_bb, style.FramePadding.y);
@@ -3354,10 +3354,10 @@ bool ImGui::SliderScalar(const char* label, ImGuiDataType data_type, void* p_dat
     const char* value_buf_end = value_buf + DataTypeFormatString(value_buf, IM_ARRAYSIZE(value_buf), data_type, p_data, format);
     if (g.LogEnabled)
         LogSetNextTextDecoration("{", "}");
-    RenderTextClipped(frame_bb.Min, frame_bb.Max, value_buf, value_buf_end, NULL, ImVec2(0.5f, 0.5f));
+    RenderTextClipped(frame_bb.Min, frame_bb.Max, value_buf, value_buf_end, NULL, glm::vec2(0.5f, 0.5f));
 
     if (label_size.x > 0.0f)
-        RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);
+        RenderText(glm::vec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);
 
     IMGUI_TEST_ENGINE_ITEM_INFO(id, label, g.LastItemData.StatusFlags | (temp_input_allowed ? ImGuiItemStatusFlags_Inputable : 0));
     return value_changed;
@@ -3450,7 +3450,7 @@ bool ImGui::SliderInt4(const char* label, int v[4], int v_min, int v_max, const 
     return SliderScalarN(label, ImGuiDataType_S32, v, 4, &v_min, &v_max, format, flags);
 }
 
-bool ImGui::VSliderScalar(const char* label, const ImVec2& size, ImGuiDataType data_type, void* p_data, const void* p_min, const void* p_max, const char* format, ImGuiSliderFlags flags)
+bool ImGui::VSliderScalar(const char* label, const glm::vec2& size, ImGuiDataType data_type, void* p_data, const void* p_min, const void* p_max, const char* format, ImGuiSliderFlags flags)
 {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
@@ -3460,9 +3460,9 @@ bool ImGui::VSliderScalar(const char* label, const ImVec2& size, ImGuiDataType d
     const ImGuiStyle& style = g.Style;
     const ImGuiID id = window->GetID(label);
 
-    const ImVec2 label_size = CalcTextSize(label, NULL, true);
+    const glm::vec2 label_size = CalcTextSize(label, NULL, true);
     const ImRect frame_bb(window->DC.CursorPos, window->DC.CursorPos + size);
-    const ImRect bb(frame_bb.Min, frame_bb.Max + ImVec2(label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f, 0.0f));
+    const ImRect bb(frame_bb.Min, frame_bb.Max + glm::vec2(label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f, 0.0f));
 
     ItemSize(bb, style.FramePadding.y);
     if (!ItemAdd(frame_bb, id))
@@ -3503,19 +3503,19 @@ bool ImGui::VSliderScalar(const char* label, const ImVec2& size, ImGuiDataType d
     // For the vertical slider we allow centered text to overlap the frame padding
     char value_buf[64];
     const char* value_buf_end = value_buf + DataTypeFormatString(value_buf, IM_ARRAYSIZE(value_buf), data_type, p_data, format);
-    RenderTextClipped(ImVec2(frame_bb.Min.x, frame_bb.Min.y + style.FramePadding.y), frame_bb.Max, value_buf, value_buf_end, NULL, ImVec2(0.5f, 0.0f));
+    RenderTextClipped(glm::vec2(frame_bb.Min.x, frame_bb.Min.y + style.FramePadding.y), frame_bb.Max, value_buf, value_buf_end, NULL, glm::vec2(0.5f, 0.0f));
     if (label_size.x > 0.0f)
-        RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);
+        RenderText(glm::vec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);
 
     return value_changed;
 }
 
-bool ImGui::VSliderFloat(const char* label, const ImVec2& size, float* v, float v_min, float v_max, const char* format, ImGuiSliderFlags flags)
+bool ImGui::VSliderFloat(const char* label, const glm::vec2& size, float* v, float v_min, float v_max, const char* format, ImGuiSliderFlags flags)
 {
     return VSliderScalar(label, size, ImGuiDataType_Float, v, &v_min, &v_max, format, flags);
 }
 
-bool ImGui::VSliderInt(const char* label, const ImVec2& size, int* v, int v_min, int v_max, const char* format, ImGuiSliderFlags flags)
+bool ImGui::VSliderInt(const char* label, const glm::vec2& size, int* v, int v_min, int v_max, const char* format, ImGuiSliderFlags flags)
 {
     return VSliderScalar(label, size, ImGuiDataType_S32, v, &v_min, &v_max, format, flags);
 }
@@ -3789,19 +3789,19 @@ bool ImGui::InputScalar(const char* label, ImGuiDataType data_type, void* p_data
         IMGUI_TEST_ENGINE_ITEM_INFO(g.LastItemData.ID, label, g.LastItemData.StatusFlags | ImGuiItemStatusFlags_Inputable);
 
         // Step buttons
-        const ImVec2 backup_frame_padding = style.FramePadding;
+        const glm::vec2 backup_frame_padding = style.FramePadding;
         style.FramePadding.x = style.FramePadding.y;
         if (flags & ImGuiInputTextFlags_ReadOnly)
             BeginDisabled();
         PushItemFlag(ImGuiItemFlags_ButtonRepeat, true);
         SameLine(0, style.ItemInnerSpacing.x);
-        if (ButtonEx("-", ImVec2(button_size, button_size)))
+        if (ButtonEx("-", glm::vec2(button_size, button_size)))
         {
             DataTypeApplyOp(data_type, '-', p_data, p_data, g.IO.KeyCtrl && p_step_fast ? p_step_fast : p_step);
             value_changed = true;
         }
         SameLine(0, style.ItemInnerSpacing.x);
-        if (ButtonEx("+", ImVec2(button_size, button_size)))
+        if (ButtonEx("+", glm::vec2(button_size, button_size)))
         {
             DataTypeApplyOp(data_type, '+', p_data, p_data, g.IO.KeyCtrl && p_step_fast ? p_step_fast : p_step);
             value_changed = true;
@@ -3933,10 +3933,10 @@ namespace ImStb
 bool ImGui::InputText(const char* label, char* buf, size_t buf_size, ImGuiInputTextFlags flags, ImGuiInputTextCallback callback, void* user_data)
 {
     IM_ASSERT(!(flags & ImGuiInputTextFlags_Multiline)); // call InputTextMultiline()
-    return InputTextEx(label, NULL, buf, (int)buf_size, ImVec2(0, 0), flags, callback, user_data);
+    return InputTextEx(label, NULL, buf, (int)buf_size, glm::vec2(0, 0), flags, callback, user_data);
 }
 
-bool ImGui::InputTextMultiline(const char* label, char* buf, size_t buf_size, const ImVec2& size, ImGuiInputTextFlags flags, ImGuiInputTextCallback callback, void* user_data)
+bool ImGui::InputTextMultiline(const char* label, char* buf, size_t buf_size, const glm::vec2& size, ImGuiInputTextFlags flags, ImGuiInputTextCallback callback, void* user_data)
 {
     return InputTextEx(label, NULL, buf, (int)buf_size, size, flags | ImGuiInputTextFlags_Multiline, callback, user_data);
 }
@@ -3944,7 +3944,7 @@ bool ImGui::InputTextMultiline(const char* label, char* buf, size_t buf_size, co
 bool ImGui::InputTextWithHint(const char* label, const char* hint, char* buf, size_t buf_size, ImGuiInputTextFlags flags, ImGuiInputTextCallback callback, void* user_data)
 {
     IM_ASSERT(!(flags & ImGuiInputTextFlags_Multiline)); // call InputTextMultiline() or  InputTextEx() manually if you need multi-line + hint.
-    return InputTextEx(label, hint, buf, (int)buf_size, ImVec2(0, 0), flags, callback, user_data);
+    return InputTextEx(label, hint, buf, (int)buf_size, glm::vec2(0, 0), flags, callback, user_data);
 }
 
 // This is only used in the path where the multiline widget is inactive.
@@ -3968,7 +3968,7 @@ static int InputTextCalcTextLenAndLineCount(const char* text_begin, const char**
 }
 
 // FIXME: Ideally we'd share code with ImFont::CalcTextSizeA()
-static ImVec2 InputTextCalcTextSize(ImGuiContext* ctx, const char* text_begin, const char* text_end, const char** remaining, ImVec2* out_offset, bool stop_on_new_line)
+static glm::vec2 InputTextCalcTextSize(ImGuiContext* ctx, const char* text_begin, const char* text_end, const char** remaining, glm::vec2* out_offset, bool stop_on_new_line)
 {
     ImGuiContext& g = *ctx;
     //ImFont* font = g.Font;
@@ -3976,7 +3976,7 @@ static ImVec2 InputTextCalcTextSize(ImGuiContext* ctx, const char* text_begin, c
     const float line_height = g.FontSize;
     const float scale = line_height / baked->Size;
 
-    ImVec2 text_size = ImVec2(0, 0);
+    glm::vec2 text_size = glm::vec2(0, 0);
     float line_width = 0.0f;
 
     const char* s = text_begin;
@@ -4007,7 +4007,7 @@ static ImVec2 InputTextCalcTextSize(ImGuiContext* ctx, const char* text_begin, c
         text_size.x = line_width;
 
     if (out_offset)
-        *out_offset = ImVec2(line_width, text_size.y + line_height);  // offset allow for the possibility of sitting after a trailing \n
+        *out_offset = glm::vec2(line_width, text_size.y + line_height);  // offset allow for the possibility of sitting after a trailing \n
 
     if (line_width > 0 || text_size.y == 0.0f)                        // whereas size.y will ignore the trailing \n
         text_size.y += line_height;
@@ -4033,7 +4033,7 @@ static void    STB_TEXTEDIT_LAYOUTROW(StbTexteditRow* r, ImGuiInputTextState* ob
 {
     const char* text = obj->TextSrc;
     const char* text_remaining = NULL;
-    const ImVec2 size = InputTextCalcTextSize(obj->Ctx, text + line_start_idx, text + obj->TextLen, &text_remaining, NULL, true);
+    const glm::vec2 size = InputTextCalcTextSize(obj->Ctx, text + line_start_idx, text + obj->TextLen, &text_remaining, NULL, true);
     r->x0 = 0.0f;
     r->x1 = size.x;
     r->baseline_y_delta = size.y;
@@ -4521,7 +4521,7 @@ void ImGui::InputTextDeactivateHook(ImGuiID id)
 // - If you want to use ImGui::InputText() with std::string, see misc/cpp/imgui_stdlib.h
 // (FIXME: Rather confusing and messy function, among the worse part of our codebase, expecting to rewrite a V2 at some point.. Partly because we are
 //  doing UTF8 > U16 > UTF8 conversions on the go to easily interface with stb_textedit. Ideally should stay in UTF-8 all the time. See https://github.com/nothings/stb/issues/188)
-bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_size, const ImVec2& size_arg, ImGuiInputTextFlags flags, ImGuiInputTextCallback callback, void* callback_user_data)
+bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_size, const glm::vec2& size_arg, ImGuiInputTextFlags flags, ImGuiInputTextCallback callback, void* callback_user_data)
 {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
@@ -4542,19 +4542,19 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
     if (is_multiline) // Open group before calling GetID() because groups tracks id created within their scope (including the scrollbar)
         BeginGroup();
     const ImGuiID id = window->GetID(label);
-    const ImVec2 label_size = CalcTextSize(label, NULL, true);
-    const ImVec2 frame_size = CalcItemSize(size_arg, CalcItemWidth(), (is_multiline ? g.FontSize * 8.0f : label_size.y) + style.FramePadding.y * 2.0f); // Arbitrary default of 8 lines high for multi-line
-    const ImVec2 total_size = ImVec2(frame_size.x + (label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f), frame_size.y);
+    const glm::vec2 label_size = CalcTextSize(label, NULL, true);
+    const glm::vec2 frame_size = CalcItemSize(size_arg, CalcItemWidth(), (is_multiline ? g.FontSize * 8.0f : label_size.y) + style.FramePadding.y * 2.0f); // Arbitrary default of 8 lines high for multi-line
+    const glm::vec2 total_size = glm::vec2(frame_size.x + (label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f), frame_size.y);
 
     const ImRect frame_bb(window->DC.CursorPos, window->DC.CursorPos + frame_size);
     const ImRect total_bb(frame_bb.Min, frame_bb.Min + total_size);
 
     ImGuiWindow* draw_window = window;
-    ImVec2 inner_size = frame_size;
+    glm::vec2 inner_size = frame_size;
     ImGuiLastItemData item_data_backup;
     if (is_multiline)
     {
-        ImVec2 backup_pos = window->DC.CursorPos;
+        glm::vec2 backup_pos = window->DC.CursorPos;
         ItemSize(total_bb, style.FramePadding.y);
         if (!ItemAdd(total_bb, id, &frame_bb, ImGuiItemFlags_Inputable))
         {
@@ -4577,7 +4577,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
         PushStyleColor(ImGuiCol_ChildBg, style.Colors[ImGuiCol_FrameBg]);
         PushStyleVar(ImGuiStyleVar_ChildRounding, style.FrameRounding);
         PushStyleVar(ImGuiStyleVar_ChildBorderSize, style.FrameBorderSize);
-        PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0)); // Ensure no clip rect so mouse hover can reach FramePadding edges
+        PushStyleVar(ImGuiStyleVar_WindowPadding, glm::vec2(0, 0)); // Ensure no clip rect so mouse hover can reach FramePadding edges
         bool child_visible = BeginChildEx(label, id, frame_bb.GetSize(), ImGuiChildFlags_Borders, ImGuiWindowFlags_NoMove);
         g.NavActivateId = backup_activate_id;
         PopStyleVar(3);
@@ -4680,7 +4680,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
         }
 
         // Find initial scroll position for right alignment
-        state->Scroll = ImVec2(0.0f, 0.0f);
+        state->Scroll = glm::vec2(0.0f, 0.0f);
         if (flags & ImGuiInputTextFlags_ElideLeft)
             state->Scroll.x += ImMax(0.0f, CalcTextSize(buf).x - frame_size.x + style.FramePadding.x * 2.0f);
 
@@ -5237,9 +5237,9 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
         RenderFrame(frame_bb.Min, frame_bb.Max, GetColorU32(ImGuiCol_FrameBg), true, style.FrameRounding);
     }
 
-    const ImVec4 clip_rect(frame_bb.Min.x, frame_bb.Min.y, frame_bb.Min.x + inner_size.x, frame_bb.Min.y + inner_size.y); // Not using frame_bb.Max because we have adjusted size
-    ImVec2 draw_pos = is_multiline ? draw_window->DC.CursorPos : frame_bb.Min + style.FramePadding;
-    ImVec2 text_size(0.0f, 0.0f);
+    const glm::vec4 clip_rect(frame_bb.Min.x, frame_bb.Min.y, frame_bb.Min.x + inner_size.x, frame_bb.Min.y + inner_size.y); // Not using frame_bb.Max because we have adjusted size
+    glm::vec2 draw_pos = is_multiline ? draw_window->DC.CursorPos : frame_bb.Min + style.FramePadding;
+    glm::vec2 text_size(0.0f, 0.0f);
 
     // Set upper limit of single-line InputTextEx() at 2 million characters strings. The current pathological worst case is a long line
     // without any carriage return, which would makes ImFont::RenderText() reserve too many vertices and probably crash. Avoid it altogether.
@@ -5282,7 +5282,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
         // FIXME: This should occur on buf_display but we'd need to maintain cursor/select_start/select_end for UTF-8.
         const char* text_begin = buf_display;
         const char* text_end = text_begin + state->TextLen;
-        ImVec2 cursor_offset, select_start_offset;
+        glm::vec2 cursor_offset, select_start_offset;
 
         {
             // Find lines numbers straddling cursor and selection min position
@@ -5318,7 +5318,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
 
             // Store text height (note that we haven't calculated text width at all, see GitHub issues #383, #1224)
             if (is_multiline)
-                text_size = ImVec2(inner_size.x, line_count * g.FontSize);
+                text_size = glm::vec2(inner_size.x, line_count * g.FontSize);
         }
 
         // Scroll
@@ -5357,7 +5357,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
         }
 
         // Draw selection
-        const ImVec2 draw_scroll = ImVec2(state->Scroll.x, 0.0f);
+        const glm::vec2 draw_scroll = glm::vec2(state->Scroll.x, 0.0f);
         if (render_selection)
         {
             const char* text_selected_begin = text_begin + ImMin(state->Stb->select_start, state->Stb->select_end);
@@ -5366,7 +5366,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
             ImU32 bg_color = GetColorU32(ImGuiCol_TextSelectedBg, render_cursor ? 1.0f : 0.6f); // FIXME: current code flow mandate that render_cursor is always true here, we are leaving the transparent one for tests.
             float bg_offy_up = is_multiline ? 0.0f : -1.0f;    // FIXME: those offsets should be part of the style? they don't play so well with multi-line selection.
             float bg_offy_dn = is_multiline ? 0.0f : 2.0f;
-            ImVec2 rect_pos = draw_pos + select_start_offset - draw_scroll;
+            glm::vec2 rect_pos = draw_pos + select_start_offset - draw_scroll;
             for (const char* p = text_selected_begin; p < text_selected_end; )
             {
                 if (rect_pos.y > clip_rect.w + g.FontSize)
@@ -5378,9 +5378,9 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
                 }
                 else
                 {
-                    ImVec2 rect_size = InputTextCalcTextSize(&g, p, text_selected_end, &p, NULL, true);
+                    glm::vec2 rect_size = InputTextCalcTextSize(&g, p, text_selected_end, &p, NULL, true);
                     if (rect_size.x <= 0.0f) rect_size.x = IM_TRUNC(g.FontBaked->GetCharAdvance((ImWchar)' ') * 0.50f); // So we can see selected empty lines
-                    ImRect rect(rect_pos + ImVec2(0.0f, bg_offy_up - g.FontSize), rect_pos + ImVec2(rect_size.x, bg_offy_dn));
+                    ImRect rect(rect_pos + glm::vec2(0.0f, bg_offy_up - g.FontSize), rect_pos + glm::vec2(rect_size.x, bg_offy_dn));
                     rect.ClipWith(clip_rect);
                     if (rect.Overlaps(clip_rect))
                         draw_window->DrawList->AddRectFilled(rect.Min, rect.Max, bg_color);
@@ -5403,7 +5403,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
         {
             state->CursorAnim += io.DeltaTime;
             bool cursor_is_visible = (!g.IO.ConfigInputTextCursorBlink) || (state->CursorAnim <= 0.0f) || ImFmod(state->CursorAnim, 1.20f) <= 0.80f;
-            ImVec2 cursor_screen_pos = ImTrunc(draw_pos + cursor_offset - draw_scroll);
+            glm::vec2 cursor_screen_pos = ImTrunc(draw_pos + cursor_offset - draw_scroll);
             ImRect cursor_screen_rect(cursor_screen_pos.x, cursor_screen_pos.y - g.FontSize + 0.5f, cursor_screen_pos.x + 1.0f, cursor_screen_pos.y - 1.5f);
             if (cursor_is_visible && cursor_screen_rect.Overlaps(clip_rect))
                 draw_window->DrawList->AddLine(cursor_screen_rect.Min, cursor_screen_rect.GetBL(), GetColorU32(ImGuiCol_InputTextCursor), 1.0f); // FIXME-DPI: Cursor thickness (#7031)
@@ -5416,7 +5416,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
                 ImGuiPlatformImeData* ime_data = &g.PlatformImeData; // (this is a public struct, passed to io.Platform_SetImeDataFn() handler)
                 ime_data->WantVisible = true;
                 ime_data->WantTextInput = true;
-                ime_data->InputPos = ImVec2(cursor_screen_pos.x - 1.0f, cursor_screen_pos.y - g.FontSize);
+                ime_data->InputPos = glm::vec2(cursor_screen_pos.x - 1.0f, cursor_screen_pos.y - g.FontSize);
                 ime_data->InputLineHeight = g.FontSize;
                 ime_data->ViewportId = window->Viewport->ID;
             }
@@ -5426,7 +5426,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
     {
         // Render text only (no selection, no cursor)
         if (is_multiline)
-            text_size = ImVec2(inner_size.x, InputTextCalcTextLenAndLineCount(buf_display, &buf_display_end) * g.FontSize); // We don't need width
+            text_size = glm::vec2(inner_size.x, InputTextCalcTextLenAndLineCount(buf_display, &buf_display_end) * g.FontSize); // We don't need width
         else if (!is_displaying_hint && g.ActiveId == id)
             buf_display_end = buf_display + state->TextLen;
         else if (!is_displaying_hint)
@@ -5438,7 +5438,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
             if (flags & ImGuiInputTextFlags_ElideLeft)
                 draw_pos.x = ImMin(draw_pos.x, frame_bb.Max.x - CalcTextSize(buf_display, NULL).x - style.FramePadding.x);
 
-            const ImVec2 draw_scroll = /*state ? ImVec2(state->Scroll.x, 0.0f) :*/ ImVec2(0.0f, 0.0f); // Preserve scroll when inactive?
+            const glm::vec2 draw_scroll = /*state ? glm::vec2(state->Scroll.x, 0.0f) :*/ glm::vec2(0.0f, 0.0f); // Preserve scroll when inactive?
             ImU32 col = GetColorU32(is_displaying_hint ? ImGuiCol_TextDisabled : ImGuiCol_Text);
             draw_window->DrawList->AddText(g.Font, g.FontSize, draw_pos - draw_scroll, col, buf_display, buf_display_end, 0.0f, is_multiline ? NULL : &clip_rect);
         }
@@ -5450,7 +5450,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
     if (is_multiline)
     {
         // For focus requests to work on our multiline we need to ensure our child ItemAdd() call specifies the ImGuiItemFlags_Inputable (see #4761, #7870)...
-        Dummy(ImVec2(text_size.x, text_size.y + style.FramePadding.y));
+        Dummy(glm::vec2(text_size.x, text_size.y + style.FramePadding.y));
         g.NextItemData.ItemFlags |= (ImGuiItemFlags)ImGuiItemFlags_Inputable | ImGuiItemFlags_NoTabStop;
         EndChild();
         item_data_backup.StatusFlags |= (g.LastItemData.StatusFlags & ImGuiItemStatusFlags_HoveredWindow);
@@ -5476,7 +5476,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
     }
 
     if (label_size.x > 0)
-        RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);
+        RenderText(glm::vec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);
 
     if (value_changed)
         MarkItemEdited(id);
@@ -5501,9 +5501,9 @@ void ImGui::DebugNodeInputTextState(ImGuiInputTextState* state)
     Text("(Internal Buffer: TextA Size: %d, Capacity: %d)", state->TextA.Size, state->TextA.Capacity);
     Text("has_preferred_x: %d (%.2f)", stb_state->has_preferred_x, stb_state->preferred_x);
     Text("undo_point: %d, redo_point: %d, undo_char_point: %d, redo_char_point: %d", undo_state->undo_point, undo_state->redo_point, undo_state->undo_char_point, undo_state->redo_char_point);
-    if (BeginChild("undopoints", ImVec2(0.0f, GetTextLineHeight() * 10), ImGuiChildFlags_Borders | ImGuiChildFlags_ResizeY)) // Visualize undo state
+    if (BeginChild("undopoints", glm::vec2(0.0f, GetTextLineHeight() * 10), ImGuiChildFlags_Borders | ImGuiChildFlags_ResizeY)) // Visualize undo state
     {
-        PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+        PushStyleVar(ImGuiStyleVar_ItemSpacing, glm::vec2(0, 0));
         for (int n = 0; n < IMSTB_TEXTEDIT_UNDOSTATECOUNT; n++)
         {
             ImStb::StbUndoRecord* undo_rec = &undo_state->undo_rec[n];
@@ -5549,7 +5549,7 @@ static void ColorEditRestoreH(const float* col, float* H)
 {
     ImGuiContext& g = *GImGui;
     IM_ASSERT(g.ColorEditCurrentID != 0);
-    if (g.ColorEditSavedID != g.ColorEditCurrentID || g.ColorEditSavedColor != ImGui::ColorConvertFloat4ToU32(ImVec4(col[0], col[1], col[2], 0)))
+    if (g.ColorEditSavedID != g.ColorEditCurrentID || g.ColorEditSavedColor != ImGui::ColorConvertFloat4ToU32(glm::vec4(col[0], col[1], col[2], 0)))
         return;
     *H = g.ColorEditSavedHue;
 }
@@ -5560,7 +5560,7 @@ static void ColorEditRestoreHS(const float* col, float* H, float* S, float* V)
 {
     ImGuiContext& g = *GImGui;
     IM_ASSERT(g.ColorEditCurrentID != 0);
-    if (g.ColorEditSavedID != g.ColorEditCurrentID || g.ColorEditSavedColor != ImGui::ColorConvertFloat4ToU32(ImVec4(col[0], col[1], col[2], 0)))
+    if (g.ColorEditSavedID != g.ColorEditCurrentID || g.ColorEditSavedColor != ImGui::ColorConvertFloat4ToU32(glm::vec4(col[0], col[1], col[2], 0)))
         return;
 
     // When S == 0, H is undefined.
@@ -5639,7 +5639,7 @@ bool ImGui::ColorEdit4(const char* label, float col[4], ImGuiColorEditFlags flag
     bool value_changed = false;
     bool value_changed_as_float = false;
 
-    const ImVec2 pos = window->DC.CursorPos;
+    const glm::vec2 pos = window->DC.CursorPos;
     const float inputs_offset_x = (style.ColorButtonPosition == ImGuiDir_Left) ? w_button : 0.0f;
     window->DC.CursorPos.x = pos.x + inputs_offset_x;
 
@@ -5719,9 +5719,9 @@ bool ImGui::ColorEdit4(const char* label, float col[4], ImGuiColorEditFlags flag
     if (!(flags & ImGuiColorEditFlags_NoSmallPreview))
     {
         const float button_offset_x = ((flags & ImGuiColorEditFlags_NoInputs) || (style.ColorButtonPosition == ImGuiDir_Left)) ? 0.0f : w_inputs + style.ItemInnerSpacing.x;
-        window->DC.CursorPos = ImVec2(pos.x + button_offset_x, pos.y);
+        window->DC.CursorPos = glm::vec2(pos.x + button_offset_x, pos.y);
 
-        const ImVec4 col_v4(col[0], col[1], col[2], alpha ? col[3] : 1.0f);
+        const glm::vec4 col_v4(col[0], col[1], col[2], alpha ? col[3] : 1.0f);
         if (ColorButton("##ColorButton", col_v4, flags))
         {
             if (!(flags & ImGuiColorEditFlags_NoPicker))
@@ -5729,7 +5729,7 @@ bool ImGui::ColorEdit4(const char* label, float col[4], ImGuiColorEditFlags flag
                 // Store current color and open a picker
                 g.ColorPickerRef = col_v4;
                 OpenPopup("picker");
-                SetNextWindowPos(g.LastItemData.Rect.GetBL() + ImVec2(0.0f, style.ItemSpacing.y));
+                SetNextWindowPos(g.LastItemData.Rect.GetBL() + glm::vec2(0.0f, style.ItemSpacing.y));
             }
         }
         if (!(flags & ImGuiColorEditFlags_NoOptions))
@@ -5775,7 +5775,7 @@ bool ImGui::ColorEdit4(const char* label, float col[4], ImGuiColorEditFlags flag
             g.ColorEditSavedSat = f[1];
             ColorConvertHSVtoRGB(f[0], f[1], f[2], f[0], f[1], f[2]);
             g.ColorEditSavedID = g.ColorEditCurrentID;
-            g.ColorEditSavedColor = ColorConvertFloat4ToU32(ImVec4(f[0], f[1], f[2], 0));
+            g.ColorEditSavedColor = ColorConvertFloat4ToU32(glm::vec4(f[0], f[1], f[2], 0));
         }
         if ((flags & ImGuiColorEditFlags_DisplayRGB) && (flags & ImGuiColorEditFlags_InputHSV))
             ColorConvertRGBtoHSV(f[0], f[1], f[2], f[0], f[1], f[2]);
@@ -5834,13 +5834,13 @@ bool ImGui::ColorPicker3(const char* label, float col[3], ImGuiColorEditFlags fl
 }
 
 // Helper for ColorPicker4()
-static void RenderArrowsForVerticalBar(ImDrawList* draw_list, ImVec2 pos, ImVec2 half_sz, float bar_w, float alpha)
+static void RenderArrowsForVerticalBar(ImDrawList* draw_list, glm::vec2 pos, glm::vec2 half_sz, float bar_w, float alpha)
 {
     ImU32 alpha8 = IM_F32_TO_INT8_SAT(alpha);
-    ImGui::RenderArrowPointingAt(draw_list, ImVec2(pos.x + half_sz.x + 1,         pos.y), ImVec2(half_sz.x + 2, half_sz.y + 1), ImGuiDir_Right, IM_COL32(0,0,0,alpha8));
-    ImGui::RenderArrowPointingAt(draw_list, ImVec2(pos.x + half_sz.x,             pos.y), half_sz,                              ImGuiDir_Right, IM_COL32(255,255,255,alpha8));
-    ImGui::RenderArrowPointingAt(draw_list, ImVec2(pos.x + bar_w - half_sz.x - 1, pos.y), ImVec2(half_sz.x + 2, half_sz.y + 1), ImGuiDir_Left,  IM_COL32(0,0,0,alpha8));
-    ImGui::RenderArrowPointingAt(draw_list, ImVec2(pos.x + bar_w - half_sz.x,     pos.y), half_sz,                              ImGuiDir_Left,  IM_COL32(255,255,255,alpha8));
+    ImGui::RenderArrowPointingAt(draw_list, glm::vec2(pos.x + half_sz.x + 1,         pos.y), glm::vec2(half_sz.x + 2, half_sz.y + 1), ImGuiDir_Right, IM_COL32(0,0,0,alpha8));
+    ImGui::RenderArrowPointingAt(draw_list, glm::vec2(pos.x + half_sz.x,             pos.y), half_sz,                              ImGuiDir_Right, IM_COL32(255,255,255,alpha8));
+    ImGui::RenderArrowPointingAt(draw_list, glm::vec2(pos.x + bar_w - half_sz.x - 1, pos.y), glm::vec2(half_sz.x + 2, half_sz.y + 1), ImGuiDir_Left,  IM_COL32(0,0,0,alpha8));
+    ImGui::RenderArrowPointingAt(draw_list, glm::vec2(pos.x + bar_w - half_sz.x,     pos.y), half_sz,                              ImGuiDir_Left,  IM_COL32(255,255,255,alpha8));
 }
 
 // Note: ColorPicker4() only accesses 3 floats if ImGuiColorEditFlags_NoAlpha flag is set.
@@ -5888,7 +5888,7 @@ bool ImGui::ColorPicker4(const char* label, float col[4], ImGuiColorEditFlags fl
     // Setup
     int components = (flags & ImGuiColorEditFlags_NoAlpha) ? 3 : 4;
     bool alpha_bar = (flags & ImGuiColorEditFlags_AlphaBar) && !(flags & ImGuiColorEditFlags_NoAlpha);
-    ImVec2 picker_pos = window->DC.CursorPos;
+    glm::vec2 picker_pos = window->DC.CursorPos;
     float square_sz = GetFrameHeight();
     float bars_width = square_sz; // Arbitrary smallish width of Hue/Alpha picking bars
     float sv_picker_size = ImMax(bars_width * 1, width - (alpha_bar ? 2 : 1) * (bars_width + style.ItemInnerSpacing.x)); // Saturation/Value picking box
@@ -5902,13 +5902,13 @@ bool ImGui::ColorPicker4(const char* label, float col[4], ImGuiColorEditFlags fl
     float wheel_thickness = sv_picker_size * 0.08f;
     float wheel_r_outer = sv_picker_size * 0.50f;
     float wheel_r_inner = wheel_r_outer - wheel_thickness;
-    ImVec2 wheel_center(picker_pos.x + (sv_picker_size + bars_width)*0.5f, picker_pos.y + sv_picker_size * 0.5f);
+    glm::vec2 wheel_center(picker_pos.x + (sv_picker_size + bars_width)*0.5f, picker_pos.y + sv_picker_size * 0.5f);
 
     // Note: the triangle is displayed rotated with triangle_pa pointing to Hue, but most coordinates stays unrotated for logic.
     float triangle_r = wheel_r_inner - (int)(sv_picker_size * 0.027f);
-    ImVec2 triangle_pa = ImVec2(triangle_r, 0.0f); // Hue point.
-    ImVec2 triangle_pb = ImVec2(triangle_r * -0.5f, triangle_r * -0.866025f); // Black point.
-    ImVec2 triangle_pc = ImVec2(triangle_r * -0.5f, triangle_r * +0.866025f); // White point.
+    glm::vec2 triangle_pa = glm::vec2(triangle_r, 0.0f); // Hue point.
+    glm::vec2 triangle_pb = glm::vec2(triangle_r * -0.5f, triangle_r * -0.866025f); // Black point.
+    glm::vec2 triangle_pc = glm::vec2(triangle_r * -0.5f, triangle_r * +0.866025f); // White point.
 
     float H = col[0], S = col[1], V = col[2];
     float R = col[0], G = col[1], B = col[2];
@@ -5929,11 +5929,11 @@ bool ImGui::ColorPicker4(const char* label, float col[4], ImGuiColorEditFlags fl
     if (flags & ImGuiColorEditFlags_PickerHueWheel)
     {
         // Hue wheel + SV triangle logic
-        InvisibleButton("hsv", ImVec2(sv_picker_size + style.ItemInnerSpacing.x + bars_width, sv_picker_size));
+        InvisibleButton("hsv", glm::vec2(sv_picker_size + style.ItemInnerSpacing.x + bars_width, sv_picker_size));
         if (IsItemActive() && !is_readonly)
         {
-            ImVec2 initial_off = g.IO.MouseClickedPos[0] - wheel_center;
-            ImVec2 current_off = g.IO.MousePos - wheel_center;
+            glm::vec2 initial_off = g.IO.MouseClickedPos[0] - wheel_center;
+            glm::vec2 current_off = g.IO.MousePos - wheel_center;
             float initial_dist2 = ImLengthSqr(initial_off);
             if (initial_dist2 >= (wheel_r_inner - 1) * (wheel_r_inner - 1) && initial_dist2 <= (wheel_r_outer + 1) * (wheel_r_outer + 1))
             {
@@ -5948,7 +5948,7 @@ bool ImGui::ColorPicker4(const char* label, float col[4], ImGuiColorEditFlags fl
             if (ImTriangleContainsPoint(triangle_pa, triangle_pb, triangle_pc, ImRotate(initial_off, cos_hue_angle, sin_hue_angle)))
             {
                 // Interacting with SV triangle
-                ImVec2 current_off_unrotated = ImRotate(current_off, cos_hue_angle, sin_hue_angle);
+                glm::vec2 current_off_unrotated = ImRotate(current_off, cos_hue_angle, sin_hue_angle);
                 if (!ImTriangleContainsPoint(triangle_pa, triangle_pb, triangle_pc, current_off_unrotated))
                     current_off_unrotated = ImTriangleClosestPoint(triangle_pa, triangle_pb, triangle_pc, current_off_unrotated);
                 float uu, vv, ww;
@@ -5964,7 +5964,7 @@ bool ImGui::ColorPicker4(const char* label, float col[4], ImGuiColorEditFlags fl
     else if (flags & ImGuiColorEditFlags_PickerHueBar)
     {
         // SV rectangle logic
-        InvisibleButton("sv", ImVec2(sv_picker_size, sv_picker_size));
+        InvisibleButton("sv", glm::vec2(sv_picker_size, sv_picker_size));
         if (IsItemActive() && !is_readonly)
         {
             S = ImSaturate((io.MousePos.x - picker_pos.x) / (sv_picker_size - 1));
@@ -5976,8 +5976,8 @@ bool ImGui::ColorPicker4(const char* label, float col[4], ImGuiColorEditFlags fl
             OpenPopupOnItemClick("context", ImGuiPopupFlags_MouseButtonRight);
 
         // Hue bar logic
-        SetCursorScreenPos(ImVec2(bar0_pos_x, picker_pos.y));
-        InvisibleButton("hue", ImVec2(bars_width, sv_picker_size));
+        SetCursorScreenPos(glm::vec2(bar0_pos_x, picker_pos.y));
+        InvisibleButton("hue", glm::vec2(bars_width, sv_picker_size));
         if (IsItemActive() && !is_readonly)
         {
             H = ImSaturate((io.MousePos.y - picker_pos.y) / (sv_picker_size - 1));
@@ -5988,8 +5988,8 @@ bool ImGui::ColorPicker4(const char* label, float col[4], ImGuiColorEditFlags fl
     // Alpha bar logic
     if (alpha_bar)
     {
-        SetCursorScreenPos(ImVec2(bar1_pos_x, picker_pos.y));
-        InvisibleButton("alpha", ImVec2(bars_width, sv_picker_size));
+        SetCursorScreenPos(glm::vec2(bar1_pos_x, picker_pos.y));
+        InvisibleButton("alpha", glm::vec2(bars_width, sv_picker_size));
         if (IsItemActive())
         {
             col[3] = 1.0f - ImSaturate((io.MousePos.y - picker_pos.y) / (sv_picker_size - 1));
@@ -6018,17 +6018,17 @@ bool ImGui::ColorPicker4(const char* label, float col[4], ImGuiColorEditFlags fl
     if (!(flags & ImGuiColorEditFlags_NoSidePreview))
     {
         PushItemFlag(ImGuiItemFlags_NoNavDefaultFocus, true);
-        ImVec4 col_v4(col[0], col[1], col[2], (flags & ImGuiColorEditFlags_NoAlpha) ? 1.0f : col[3]);
+        glm::vec4 col_v4(col[0], col[1], col[2], (flags & ImGuiColorEditFlags_NoAlpha) ? 1.0f : col[3]);
         if ((flags & ImGuiColorEditFlags_NoLabel))
             Text("Current");
 
         ImGuiColorEditFlags sub_flags_to_forward = ImGuiColorEditFlags_InputMask_ | ImGuiColorEditFlags_HDR | ImGuiColorEditFlags_AlphaMask_ | ImGuiColorEditFlags_NoTooltip;
-        ColorButton("##current", col_v4, (flags & sub_flags_to_forward), ImVec2(square_sz * 3, square_sz * 2));
+        ColorButton("##current", col_v4, (flags & sub_flags_to_forward), glm::vec2(square_sz * 3, square_sz * 2));
         if (ref_col != NULL)
         {
             Text("Original");
-            ImVec4 ref_col_v4(ref_col[0], ref_col[1], ref_col[2], (flags & ImGuiColorEditFlags_NoAlpha) ? 1.0f : ref_col[3]);
-            if (ColorButton("##original", ref_col_v4, (flags & sub_flags_to_forward), ImVec2(square_sz * 3, square_sz * 2)))
+            glm::vec4 ref_col_v4(ref_col[0], ref_col[1], ref_col[2], (flags & ImGuiColorEditFlags_NoAlpha) ? 1.0f : ref_col[3]);
+            if (ColorButton("##original", ref_col_v4, (flags & sub_flags_to_forward), glm::vec2(square_sz * 3, square_sz * 2)))
             {
                 memcpy(col, ref_col, components * sizeof(float));
                 value_changed = true;
@@ -6047,7 +6047,7 @@ bool ImGui::ColorPicker4(const char* label, float col[4], ImGuiColorEditFlags fl
             g.ColorEditSavedHue = H;
             g.ColorEditSavedSat = S;
             g.ColorEditSavedID = g.ColorEditCurrentID;
-            g.ColorEditSavedColor = ColorConvertFloat4ToU32(ImVec4(col[0], col[1], col[2], 0));
+            g.ColorEditSavedColor = ColorConvertFloat4ToU32(glm::vec4(col[0], col[1], col[2], 0));
         }
         else if (flags & ImGuiColorEditFlags_InputHSV)
         {
@@ -6118,11 +6118,11 @@ bool ImGui::ColorPicker4(const char* label, float col[4], ImGuiColorEditFlags fl
     const ImU32 col_midgrey = IM_COL32(128,128,128,style_alpha8);
     const ImU32 col_hues[6 + 1] = { IM_COL32(255,0,0,style_alpha8), IM_COL32(255,255,0,style_alpha8), IM_COL32(0,255,0,style_alpha8), IM_COL32(0,255,255,style_alpha8), IM_COL32(0,0,255,style_alpha8), IM_COL32(255,0,255,style_alpha8), IM_COL32(255,0,0,style_alpha8) };
 
-    ImVec4 hue_color_f(1, 1, 1, style.Alpha); ColorConvertHSVtoRGB(H, 1, 1, hue_color_f.x, hue_color_f.y, hue_color_f.z);
+    glm::vec4 hue_color_f(1, 1, 1, style.Alpha); ColorConvertHSVtoRGB(H, 1, 1, hue_color_f.x, hue_color_f.y, hue_color_f.z);
     ImU32 hue_color32 = ColorConvertFloat4ToU32(hue_color_f);
-    ImU32 user_col32_striped_of_alpha = ColorConvertFloat4ToU32(ImVec4(R, G, B, style.Alpha)); // Important: this is still including the main rendering/style alpha!!
+    ImU32 user_col32_striped_of_alpha = ColorConvertFloat4ToU32(glm::vec4(R, G, B, style.Alpha)); // Important: this is still including the main rendering/style alpha!!
 
-    ImVec2 sv_cursor_pos;
+    glm::vec2 sv_cursor_pos;
 
     if (flags & ImGuiColorEditFlags_PickerHueWheel)
     {
@@ -6139,15 +6139,15 @@ bool ImGui::ColorPicker4(const char* label, float col[4], ImGuiColorEditFlags fl
             const int vert_end_idx = draw_list->VtxBuffer.Size;
 
             // Paint colors over existing vertices
-            ImVec2 gradient_p0(wheel_center.x + ImCos(a0) * wheel_r_inner, wheel_center.y + ImSin(a0) * wheel_r_inner);
-            ImVec2 gradient_p1(wheel_center.x + ImCos(a1) * wheel_r_inner, wheel_center.y + ImSin(a1) * wheel_r_inner);
+            glm::vec2 gradient_p0(wheel_center.x + ImCos(a0) * wheel_r_inner, wheel_center.y + ImSin(a0) * wheel_r_inner);
+            glm::vec2 gradient_p1(wheel_center.x + ImCos(a1) * wheel_r_inner, wheel_center.y + ImSin(a1) * wheel_r_inner);
             ShadeVertsLinearColorGradientKeepAlpha(draw_list, vert_start_idx, vert_end_idx, gradient_p0, gradient_p1, col_hues[n], col_hues[n + 1]);
         }
 
         // Render Cursor + preview on Hue Wheel
         float cos_hue_angle = ImCos(H * 2.0f * IM_PI);
         float sin_hue_angle = ImSin(H * 2.0f * IM_PI);
-        ImVec2 hue_cursor_pos(wheel_center.x + cos_hue_angle * (wheel_r_inner + wheel_r_outer) * 0.5f, wheel_center.y + sin_hue_angle * (wheel_r_inner + wheel_r_outer) * 0.5f);
+        glm::vec2 hue_cursor_pos(wheel_center.x + cos_hue_angle * (wheel_r_inner + wheel_r_outer) * 0.5f, wheel_center.y + sin_hue_angle * (wheel_r_inner + wheel_r_outer) * 0.5f);
         float hue_cursor_rad = value_changed_h ? wheel_thickness * 0.65f : wheel_thickness * 0.55f;
         int hue_cursor_segments = draw_list->_CalcCircleAutoSegmentCount(hue_cursor_rad); // Lock segment count so the +1 one matches others.
         draw_list->AddCircleFilled(hue_cursor_pos, hue_cursor_rad, hue_color32, hue_cursor_segments);
@@ -6155,10 +6155,10 @@ bool ImGui::ColorPicker4(const char* label, float col[4], ImGuiColorEditFlags fl
         draw_list->AddCircle(hue_cursor_pos, hue_cursor_rad, col_white, hue_cursor_segments);
 
         // Render SV triangle (rotated according to hue)
-        ImVec2 tra = wheel_center + ImRotate(triangle_pa, cos_hue_angle, sin_hue_angle);
-        ImVec2 trb = wheel_center + ImRotate(triangle_pb, cos_hue_angle, sin_hue_angle);
-        ImVec2 trc = wheel_center + ImRotate(triangle_pc, cos_hue_angle, sin_hue_angle);
-        ImVec2 uv_white = GetFontTexUvWhitePixel();
+        glm::vec2 tra = wheel_center + ImRotate(triangle_pa, cos_hue_angle, sin_hue_angle);
+        glm::vec2 trb = wheel_center + ImRotate(triangle_pb, cos_hue_angle, sin_hue_angle);
+        glm::vec2 trc = wheel_center + ImRotate(triangle_pc, cos_hue_angle, sin_hue_angle);
+        glm::vec2 uv_white = GetFontTexUvWhitePixel();
         draw_list->PrimReserve(3, 3);
         draw_list->PrimVtx(tra, uv_white, hue_color32);
         draw_list->PrimVtx(trb, uv_white, col_black);
@@ -6169,18 +6169,18 @@ bool ImGui::ColorPicker4(const char* label, float col[4], ImGuiColorEditFlags fl
     else if (flags & ImGuiColorEditFlags_PickerHueBar)
     {
         // Render SV Square
-        draw_list->AddRectFilledMultiColor(picker_pos, picker_pos + ImVec2(sv_picker_size, sv_picker_size), col_white, hue_color32, hue_color32, col_white);
-        draw_list->AddRectFilledMultiColor(picker_pos, picker_pos + ImVec2(sv_picker_size, sv_picker_size), 0, 0, col_black, col_black);
-        RenderFrameBorder(picker_pos, picker_pos + ImVec2(sv_picker_size, sv_picker_size), 0.0f);
+        draw_list->AddRectFilledMultiColor(picker_pos, picker_pos + glm::vec2(sv_picker_size, sv_picker_size), col_white, hue_color32, hue_color32, col_white);
+        draw_list->AddRectFilledMultiColor(picker_pos, picker_pos + glm::vec2(sv_picker_size, sv_picker_size), 0, 0, col_black, col_black);
+        RenderFrameBorder(picker_pos, picker_pos + glm::vec2(sv_picker_size, sv_picker_size), 0.0f);
         sv_cursor_pos.x = ImClamp(IM_ROUND(picker_pos.x + ImSaturate(S)     * sv_picker_size), picker_pos.x + 2, picker_pos.x + sv_picker_size - 2); // Sneakily prevent the circle to stick out too much
         sv_cursor_pos.y = ImClamp(IM_ROUND(picker_pos.y + ImSaturate(1 - V) * sv_picker_size), picker_pos.y + 2, picker_pos.y + sv_picker_size - 2);
 
         // Render Hue Bar
         for (int i = 0; i < 6; ++i)
-            draw_list->AddRectFilledMultiColor(ImVec2(bar0_pos_x, picker_pos.y + i * (sv_picker_size / 6)), ImVec2(bar0_pos_x + bars_width, picker_pos.y + (i + 1) * (sv_picker_size / 6)), col_hues[i], col_hues[i], col_hues[i + 1], col_hues[i + 1]);
+            draw_list->AddRectFilledMultiColor(glm::vec2(bar0_pos_x, picker_pos.y + i * (sv_picker_size / 6)), glm::vec2(bar0_pos_x + bars_width, picker_pos.y + (i + 1) * (sv_picker_size / 6)), col_hues[i], col_hues[i], col_hues[i + 1], col_hues[i + 1]);
         float bar0_line_y = IM_ROUND(picker_pos.y + H * sv_picker_size);
-        RenderFrameBorder(ImVec2(bar0_pos_x, picker_pos.y), ImVec2(bar0_pos_x + bars_width, picker_pos.y + sv_picker_size), 0.0f);
-        RenderArrowsForVerticalBar(draw_list, ImVec2(bar0_pos_x - 1, bar0_line_y), ImVec2(bars_triangles_half_sz + 1, bars_triangles_half_sz), bars_width + 2.0f, style.Alpha);
+        RenderFrameBorder(glm::vec2(bar0_pos_x, picker_pos.y), glm::vec2(bar0_pos_x + bars_width, picker_pos.y + sv_picker_size), 0.0f);
+        RenderArrowsForVerticalBar(draw_list, glm::vec2(bar0_pos_x - 1, bar0_line_y), glm::vec2(bars_triangles_half_sz + 1, bars_triangles_half_sz), bars_width + 2.0f, style.Alpha);
     }
 
     // Render cursor/preview circle (clamp S/V within 0..1 range because floating points colors may lead HSV values to be out of range)
@@ -6195,11 +6195,11 @@ bool ImGui::ColorPicker4(const char* label, float col[4], ImGuiColorEditFlags fl
     {
         float alpha = ImSaturate(col[3]);
         ImRect bar1_bb(bar1_pos_x, picker_pos.y, bar1_pos_x + bars_width, picker_pos.y + sv_picker_size);
-        RenderColorRectWithAlphaCheckerboard(draw_list, bar1_bb.Min, bar1_bb.Max, 0, bar1_bb.GetWidth() / 2.0f, ImVec2(0.0f, 0.0f));
+        RenderColorRectWithAlphaCheckerboard(draw_list, bar1_bb.Min, bar1_bb.Max, 0, bar1_bb.GetWidth() / 2.0f, glm::vec2(0.0f, 0.0f));
         draw_list->AddRectFilledMultiColor(bar1_bb.Min, bar1_bb.Max, user_col32_striped_of_alpha, user_col32_striped_of_alpha, user_col32_striped_of_alpha & ~IM_COL32_A_MASK, user_col32_striped_of_alpha & ~IM_COL32_A_MASK);
         float bar1_line_y = IM_ROUND(picker_pos.y + (1.0f - alpha) * sv_picker_size);
         RenderFrameBorder(bar1_bb.Min, bar1_bb.Max, 0.0f);
-        RenderArrowsForVerticalBar(draw_list, ImVec2(bar1_pos_x - 1, bar1_line_y), ImVec2(bars_triangles_half_sz + 1, bars_triangles_half_sz), bars_width + 2.0f, style.Alpha);
+        RenderArrowsForVerticalBar(draw_list, glm::vec2(bar1_pos_x - 1, bar1_line_y), glm::vec2(bars_triangles_half_sz + 1, bars_triangles_half_sz), bars_width + 2.0f, style.Alpha);
     }
 
     EndGroup();
@@ -6220,7 +6220,7 @@ bool ImGui::ColorPicker4(const char* label, float col[4], ImGuiColorEditFlags fl
 // FIXME: May want to display/ignore the alpha component in the color display? Yet show it in the tooltip.
 // 'desc_id' is not called 'label' because we don't display it next to the button, but only in the tooltip.
 // Note that 'col' may be encoded in HSV if ImGuiColorEditFlags_InputHSV is set.
-bool ImGui::ColorButton(const char* desc_id, const ImVec4& col, ImGuiColorEditFlags flags, const ImVec2& size_arg)
+bool ImGui::ColorButton(const char* desc_id, const glm::vec4& col, ImGuiColorEditFlags flags, const glm::vec2& size_arg)
 {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
@@ -6229,7 +6229,7 @@ bool ImGui::ColorButton(const char* desc_id, const ImVec4& col, ImGuiColorEditFl
     ImGuiContext& g = *GImGui;
     const ImGuiID id = window->GetID(desc_id);
     const float default_size = GetFrameHeight();
-    const ImVec2 size(size_arg.x == 0.0f ? default_size : size_arg.x, size_arg.y == 0.0f ? default_size : size_arg.y);
+    const glm::vec2 size(size_arg.x == 0.0f ? default_size : size_arg.x, size_arg.y == 0.0f ? default_size : size_arg.y);
     const ImRect bb(window->DC.CursorPos, window->DC.CursorPos + size);
     ItemSize(bb, (size.y >= default_size) ? g.Style.FramePadding.y : 0.0f);
     if (!ItemAdd(bb, id))
@@ -6241,11 +6241,11 @@ bool ImGui::ColorButton(const char* desc_id, const ImVec4& col, ImGuiColorEditFl
     if (flags & (ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_AlphaOpaque))
         flags &= ~(ImGuiColorEditFlags_AlphaNoBg | ImGuiColorEditFlags_AlphaPreviewHalf);
 
-    ImVec4 col_rgb = col;
+    glm::vec4 col_rgb = col;
     if (flags & ImGuiColorEditFlags_InputHSV)
         ColorConvertHSVtoRGB(col_rgb.x, col_rgb.y, col_rgb.z, col_rgb.x, col_rgb.y, col_rgb.z);
 
-    ImVec4 col_rgb_without_alpha(col_rgb.x, col_rgb.y, col_rgb.z, 1.0f);
+    glm::vec4 col_rgb_without_alpha(col_rgb.x, col_rgb.y, col_rgb.z, 1.0f);
     float grid_step = ImMin(size.x, size.y) / 2.99f;
     float rounding = ImMin(g.Style.FrameRounding, grid_step * 0.5f);
     ImRect bb_inner = bb;
@@ -6259,17 +6259,17 @@ bool ImGui::ColorButton(const char* desc_id, const ImVec4& col, ImGuiColorEditFl
     {
         float mid_x = IM_ROUND((bb_inner.Min.x + bb_inner.Max.x) * 0.5f);
         if ((flags & ImGuiColorEditFlags_AlphaNoBg) == 0)
-            RenderColorRectWithAlphaCheckerboard(window->DrawList, ImVec2(bb_inner.Min.x + grid_step, bb_inner.Min.y), bb_inner.Max, GetColorU32(col_rgb), grid_step, ImVec2(-grid_step + off, off), rounding, ImDrawFlags_RoundCornersRight);
+            RenderColorRectWithAlphaCheckerboard(window->DrawList, glm::vec2(bb_inner.Min.x + grid_step, bb_inner.Min.y), bb_inner.Max, GetColorU32(col_rgb), grid_step, glm::vec2(-grid_step + off, off), rounding, ImDrawFlags_RoundCornersRight);
         else
-            window->DrawList->AddRectFilled(ImVec2(bb_inner.Min.x + grid_step, bb_inner.Min.y), bb_inner.Max, GetColorU32(col_rgb), rounding, ImDrawFlags_RoundCornersRight);
-        window->DrawList->AddRectFilled(bb_inner.Min, ImVec2(mid_x, bb_inner.Max.y), GetColorU32(col_rgb_without_alpha), rounding, ImDrawFlags_RoundCornersLeft);
+            window->DrawList->AddRectFilled(glm::vec2(bb_inner.Min.x + grid_step, bb_inner.Min.y), bb_inner.Max, GetColorU32(col_rgb), rounding, ImDrawFlags_RoundCornersRight);
+        window->DrawList->AddRectFilled(bb_inner.Min, glm::vec2(mid_x, bb_inner.Max.y), GetColorU32(col_rgb_without_alpha), rounding, ImDrawFlags_RoundCornersLeft);
     }
     else
     {
         // Because GetColorU32() multiplies by the global style Alpha and we don't want to display a checkerboard if the source code had no alpha
-        ImVec4 col_source = (flags & ImGuiColorEditFlags_AlphaOpaque) ? col_rgb_without_alpha : col_rgb;
+        glm::vec4 col_source = (flags & ImGuiColorEditFlags_AlphaOpaque) ? col_rgb_without_alpha : col_rgb;
         if (col_source.w < 1.0f && (flags & ImGuiColorEditFlags_AlphaNoBg) == 0)
-            RenderColorRectWithAlphaCheckerboard(window->DrawList, bb_inner.Min, bb_inner.Max, GetColorU32(col_source), grid_step, ImVec2(off, off), rounding);
+            RenderColorRectWithAlphaCheckerboard(window->DrawList, bb_inner.Min, bb_inner.Max, GetColorU32(col_source), grid_step, glm::vec2(off, off), rounding);
         else
             window->DrawList->AddRectFilled(bb_inner.Min, bb_inner.Max, GetColorU32(col_source), rounding);
     }
@@ -6336,8 +6336,8 @@ void ImGui::ColorTooltip(const char* text, const float* col, ImGuiColorEditFlags
         Separator();
     }
 
-    ImVec2 sz(g.FontSize * 3 + g.Style.FramePadding.y * 2, g.FontSize * 3 + g.Style.FramePadding.y * 2);
-    ImVec4 cf(col[0], col[1], col[2], (flags & ImGuiColorEditFlags_NoAlpha) ? 1.0f : col[3]);
+    glm::vec2 sz(g.FontSize * 3 + g.Style.FramePadding.y * 2, g.FontSize * 3 + g.Style.FramePadding.y * 2);
+    glm::vec4 cf(col[0], col[1], col[2], (flags & ImGuiColorEditFlags_NoAlpha) ? 1.0f : col[3]);
     int cr = IM_F32_TO_INT8_SAT(col[0]), cg = IM_F32_TO_INT8_SAT(col[1]), cb = IM_F32_TO_INT8_SAT(col[2]), ca = (flags & ImGuiColorEditFlags_NoAlpha) ? 255 : IM_F32_TO_INT8_SAT(col[3]);
     ImGuiColorEditFlags flags_to_forward = ImGuiColorEditFlags_InputMask_ | ImGuiColorEditFlags_AlphaMask_;
     ColorButton("##preview", cf, (flags & flags_to_forward) | ImGuiColorEditFlags_NoTooltip, sz);
@@ -6384,7 +6384,7 @@ void ImGui::ColorEditOptionsPopup(const float* col, ImGuiColorEditFlags flags)
 
     if (allow_opt_inputs || allow_opt_datatype)
         Separator();
-    if (Button("Copy as..", ImVec2(-1, 0)))
+    if (Button("Copy as..", glm::vec2(-1, 0)))
         OpenPopup("Copy");
     if (BeginPopup("Copy"))
     {
@@ -6424,7 +6424,7 @@ void ImGui::ColorPickerOptionsPopup(const float* ref_col, ImGuiColorEditFlags fl
     PushItemFlag(ImGuiItemFlags_NoMarkEdited, true);
     if (allow_opt_picker)
     {
-        ImVec2 picker_size(g.FontSize * 8, ImMax(g.FontSize * 8 - (GetFrameHeight() + g.Style.ItemInnerSpacing.x), 1.0f)); // FIXME: Picker size copied from main picker function
+        glm::vec2 picker_size(g.FontSize * 8, ImMax(g.FontSize * 8 - (GetFrameHeight() + g.Style.ItemInnerSpacing.x), 1.0f)); // FIXME: Picker size copied from main picker function
         PushItemWidth(picker_size.x);
         for (int picker_type = 0; picker_type < 2; picker_type++)
         {
@@ -6434,11 +6434,11 @@ void ImGui::ColorPickerOptionsPopup(const float* ref_col, ImGuiColorEditFlags fl
             ImGuiColorEditFlags picker_flags = ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoOptions | ImGuiColorEditFlags_NoLabel | ImGuiColorEditFlags_NoSidePreview | (flags & ImGuiColorEditFlags_NoAlpha);
             if (picker_type == 0) picker_flags |= ImGuiColorEditFlags_PickerHueBar;
             if (picker_type == 1) picker_flags |= ImGuiColorEditFlags_PickerHueWheel;
-            ImVec2 backup_pos = GetCursorScreenPos();
+            glm::vec2 backup_pos = GetCursorScreenPos();
             if (Selectable("##selectable", false, 0, picker_size)) // By default, Selectable() is closing popup
                 g.ColorEditOptions = (g.ColorEditOptions & ~ImGuiColorEditFlags_PickerMask_) | (picker_flags & ImGuiColorEditFlags_PickerMask_);
             SetCursorScreenPos(backup_pos);
-            ImVec4 previewing_ref_col;
+            glm::vec4 previewing_ref_col;
             memcpy(&previewing_ref_col, ref_col, sizeof(float) * ((picker_flags & ImGuiColorEditFlags_NoAlpha) ? 3 : 4));
             ColorPicker4("##previewing_picker", &previewing_ref_col.x, picker_flags);
             PopID();
@@ -6652,11 +6652,11 @@ bool ImGui::TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const char* l
     ImGuiContext& g = *GImGui;
     const ImGuiStyle& style = g.Style;
     const bool display_frame = (flags & ImGuiTreeNodeFlags_Framed) != 0;
-    const ImVec2 padding = (display_frame || (flags & ImGuiTreeNodeFlags_FramePadding)) ? style.FramePadding : ImVec2(style.FramePadding.x, ImMin(window->DC.CurrLineTextBaseOffset, style.FramePadding.y));
+    const glm::vec2 padding = (display_frame || (flags & ImGuiTreeNodeFlags_FramePadding)) ? style.FramePadding : glm::vec2(style.FramePadding.x, ImMin(window->DC.CurrLineTextBaseOffset, style.FramePadding.y));
 
     if (!label_end)
         label_end = FindRenderedTextEnd(label);
-    const ImVec2 label_size = CalcTextSize(label, label_end, false);
+    const glm::vec2 label_size = CalcTextSize(label, label_end, false);
 
     const float text_offset_x = g.FontSize + (display_frame ? padding.x * 3 : padding.x * 2);   // Collapsing arrow width + Spacing
     const float text_offset_y = ImMax(padding.y, window->DC.CurrLineTextBaseOffset);            // Latch before ItemSize changes it
@@ -6678,8 +6678,8 @@ bool ImGui::TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const char* l
         frame_bb.Max.x += outer_extend;
     }
 
-    ImVec2 text_pos(window->DC.CursorPos.x + text_offset_x, window->DC.CursorPos.y + text_offset_y);
-    ItemSize(ImVec2(text_width, frame_height), padding.y);
+    glm::vec2 text_pos(window->DC.CursorPos.x + text_offset_x, window->DC.CursorPos.y + text_offset_y);
+    ItemSize(glm::vec2(text_width, frame_height), padding.y);
 
     // For regular tree nodes, we arbitrary allow to click past 2 worth of ItemSpacing
     ImRect interact_bb = frame_bb;
@@ -6873,9 +6873,9 @@ bool ImGui::TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const char* l
             if (span_all_columns && !span_all_columns_label)
                 TablePopBackgroundChannel();
             if (flags & ImGuiTreeNodeFlags_Bullet)
-                RenderBullet(window->DrawList, ImVec2(text_pos.x - text_offset_x * 0.60f, text_pos.y + g.FontSize * 0.5f), text_col);
+                RenderBullet(window->DrawList, glm::vec2(text_pos.x - text_offset_x * 0.60f, text_pos.y + g.FontSize * 0.5f), text_col);
             else if (!is_leaf)
-                RenderArrow(window->DrawList, ImVec2(text_pos.x - text_offset_x + padding.x, text_pos.y), text_col, is_open ? ((flags & ImGuiTreeNodeFlags_UpsideDownArrow) ? ImGuiDir_Up : ImGuiDir_Down) : ImGuiDir_Right, 1.0f);
+                RenderArrow(window->DrawList, glm::vec2(text_pos.x - text_offset_x + padding.x, text_pos.y), text_col, is_open ? ((flags & ImGuiTreeNodeFlags_UpsideDownArrow) ? ImGuiDir_Up : ImGuiDir_Down) : ImGuiDir_Right, 1.0f);
             else // Leaf without bullet, left-adjusted text
                 text_pos.x -= text_offset_x - padding.x;
             if (flags & ImGuiTreeNodeFlags_ClipLabelForTrailingButton)
@@ -6895,15 +6895,15 @@ bool ImGui::TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const char* l
             if (span_all_columns && !span_all_columns_label)
                 TablePopBackgroundChannel();
             if (flags & ImGuiTreeNodeFlags_Bullet)
-                RenderBullet(window->DrawList, ImVec2(text_pos.x - text_offset_x * 0.5f, text_pos.y + g.FontSize * 0.5f), text_col);
+                RenderBullet(window->DrawList, glm::vec2(text_pos.x - text_offset_x * 0.5f, text_pos.y + g.FontSize * 0.5f), text_col);
             else if (!is_leaf)
-                RenderArrow(window->DrawList, ImVec2(text_pos.x - text_offset_x + padding.x, text_pos.y + g.FontSize * 0.15f), text_col, is_open ? ((flags & ImGuiTreeNodeFlags_UpsideDownArrow) ? ImGuiDir_Up : ImGuiDir_Down) : ImGuiDir_Right, 0.70f);
+                RenderArrow(window->DrawList, glm::vec2(text_pos.x - text_offset_x + padding.x, text_pos.y + g.FontSize * 0.15f), text_col, is_open ? ((flags & ImGuiTreeNodeFlags_UpsideDownArrow) ? ImGuiDir_Up : ImGuiDir_Down) : ImGuiDir_Right, 0.70f);
             if (g.LogEnabled)
                 LogSetNextTextDecoration(">", NULL);
         }
 
         if (draw_tree_lines)
-            TreeNodeDrawLineToChildNode(ImVec2(text_pos.x - text_offset_x + padding.x, text_pos.y + g.FontSize * 0.5f));
+            TreeNodeDrawLineToChildNode(glm::vec2(text_pos.x - text_offset_x + padding.x, text_pos.y + g.FontSize * 0.5f));
 
         // Label
         if (display_frame)
@@ -6926,7 +6926,7 @@ bool ImGui::TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const char* l
 
 // Draw horizontal line from our parent node
 // This is only called for visible child nodes so we are not too fussy anymore about performances
-void ImGui::TreeNodeDrawLineToChildNode(const ImVec2& target_pos)
+void ImGui::TreeNodeDrawLineToChildNode(const glm::vec2& target_pos)
 {
     ImGuiContext& g = *GImGui;
     ImGuiWindow* window = g.CurrentWindow;
@@ -6944,14 +6944,14 @@ void ImGui::TreeNodeDrawLineToChildNode(const ImVec2& target_pos)
     if (rounding > 0.0f)
     {
         x1 += 0.5f + rounding;
-        window->DrawList->PathArcToFast(ImVec2(x1, y - rounding), rounding, 6, 3);
+        window->DrawList->PathArcToFast(glm::vec2(x1, y - rounding), rounding, 6, 3);
         if (x1 < x2)
-            window->DrawList->PathLineTo(ImVec2(x2, y));
+            window->DrawList->PathLineTo(glm::vec2(x2, y));
         window->DrawList->PathStroke(GetColorU32(ImGuiCol_TreeLines), ImDrawFlags_None, g.Style.TreeLinesSize);
     }
     else
     {
-        window->DrawList->AddLine(ImVec2(x1, y), ImVec2(x2, y), GetColorU32(ImGuiCol_TreeLines), g.Style.TreeLinesSize);
+        window->DrawList->AddLine(glm::vec2(x1, y), glm::vec2(x2, y), GetColorU32(ImGuiCol_TreeLines), g.Style.TreeLinesSize);
     }
 }
 
@@ -6977,7 +6977,7 @@ void ImGui::TreeNodeDrawLineToTreePop(const ImGuiTreeNodeStackData* data)
     float x = ImTrunc(data->DrawLinesX1);
     if (data->DrawLinesTableColumn != -1)
         TablePushColumnChannel(data->DrawLinesTableColumn);
-    window->DrawList->AddLine(ImVec2(x, y1), ImVec2(x, y2), GetColorU32(ImGuiCol_TreeLines), g.Style.TreeLinesSize);
+    window->DrawList->AddLine(glm::vec2(x, y1), glm::vec2(x, y2), GetColorU32(ImGuiCol_TreeLines), g.Style.TreeLinesSize);
     if (data->DrawLinesTableColumn != -1)
         TablePopColumnChannel();
 }
@@ -7107,7 +7107,7 @@ bool ImGui::CollapsingHeader(const char* label, bool* p_visible, ImGuiTreeNodeFl
         float button_x = ImMax(g.LastItemData.Rect.Min.x, g.LastItemData.Rect.Max.x - g.Style.FramePadding.x - button_size);
         float button_y = g.LastItemData.Rect.Min.y + g.Style.FramePadding.y;
         ImGuiID close_button_id = GetIDWithSeed("#CLOSE", NULL, id);
-        if (CloseButton(close_button_id, ImVec2(button_x, button_y)))
+        if (CloseButton(close_button_id, glm::vec2(button_x, button_y)))
             *p_visible = false;
         g.LastItemData = last_item_backup;
     }
@@ -7125,7 +7125,7 @@ bool ImGui::CollapsingHeader(const char* label, bool* p_visible, ImGuiTreeNodeFl
 // But you need to make sure the ID is unique, e.g. enclose calls in PushID/PopID or use ##unique_id.
 // With this scheme, ImGuiSelectableFlags_SpanAllColumns and ImGuiSelectableFlags_AllowOverlap are also frequently used flags.
 // FIXME: Selectable() with (size.x == 0.0f) and (SelectableTextAlign.x > 0.0f) followed by SameLine() is currently not supported.
-bool ImGui::Selectable(const char* label, bool selected, ImGuiSelectableFlags flags, const ImVec2& size_arg)
+bool ImGui::Selectable(const char* label, bool selected, ImGuiSelectableFlags flags, const glm::vec2& size_arg)
 {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
@@ -7136,9 +7136,9 @@ bool ImGui::Selectable(const char* label, bool selected, ImGuiSelectableFlags fl
 
     // Submit label or explicit size to ItemSize(), whereas ItemAdd() will submit a larger/spanning rectangle.
     ImGuiID id = window->GetID(label);
-    ImVec2 label_size = CalcTextSize(label, NULL, true);
-    ImVec2 size(size_arg.x != 0.0f ? size_arg.x : label_size.x, size_arg.y != 0.0f ? size_arg.y : label_size.y);
-    ImVec2 pos = window->DC.CursorPos;
+    glm::vec2 label_size = CalcTextSize(label, NULL, true);
+    glm::vec2 size(size_arg.x != 0.0f ? size_arg.x : label_size.x, size_arg.y != 0.0f ? size_arg.y : label_size.y);
+    glm::vec2 pos = window->DC.CursorPos;
     pos.y += window->DC.CurrLineTextBaseOffset;
     ItemSize(size, 0.0f);
 
@@ -7290,7 +7290,7 @@ bool ImGui::Selectable(const char* label, bool selected, ImGuiSelectableFlags fl
 
     // Text stays at the submission position. Alignment/clipping extents ignore SpanAllColumns.
     if (is_visible)
-        RenderTextClipped(pos, ImVec2(ImMin(pos.x + size.x, window->WorkRect.Max.x), pos.y + size.y), label, NULL, &label_size, style.SelectableTextAlign, &bb);
+        RenderTextClipped(pos, glm::vec2(ImMin(pos.x + size.x, window->WorkRect.Max.x), pos.y + size.y), label, NULL, &label_size, style.SelectableTextAlign, &bb);
 
     // Automatically close popups
     if (pressed && (window->Flags & ImGuiWindowFlags_Popup) && !(flags & ImGuiSelectableFlags_NoAutoClosePopups) && (g.LastItemData.ItemFlags & ImGuiItemFlags_AutoClosePopups))
@@ -7306,7 +7306,7 @@ bool ImGui::Selectable(const char* label, bool selected, ImGuiSelectableFlags fl
     return pressed; //-V1020
 }
 
-bool ImGui::Selectable(const char* label, bool* p_selected, ImGuiSelectableFlags flags, const ImVec2& size_arg)
+bool ImGui::Selectable(const char* label, bool* p_selected, ImGuiSelectableFlags flags, const glm::vec2& size_arg)
 {
     if (Selectable(label, *p_selected, flags, size_arg))
     {
@@ -7532,7 +7532,7 @@ static void BoxSelectPreStartDrag(ImGuiID id, ImGuiSelectionUserData clicked_ite
     bs->IsStartedSetNavIdOnce = bs->IsStartedFromVoid;
     bs->KeyMods = g.IO.KeyMods;
     bs->StartPosRel = bs->EndPosRel = ImGui::WindowPosAbsToRel(g.CurrentWindow, g.IO.MousePos);
-    bs->ScrollAccum = ImVec2(0.0f, 0.0f);
+    bs->ScrollAccum = glm::vec2(0.0f, 0.0f);
 }
 
 static void BoxSelectActivateDrag(ImGuiBoxSelectState* bs, ImGuiWindow* window)
@@ -7608,9 +7608,9 @@ bool ImGui::BeginBoxSelect(const ImRect& scope_rect, ImGuiWindow* window, ImGuiI
 
     // Current frame absolute prev/current rectangles are used to toggle selection.
     // They are derived from positions relative to scrolling space.
-    ImVec2 start_pos_abs = WindowPosRelToAbs(window, bs->StartPosRel);
-    ImVec2 prev_end_pos_abs = WindowPosRelToAbs(window, bs->EndPosRel); // Clamped already
-    ImVec2 curr_end_pos_abs = g.IO.MousePos;
+    glm::vec2 start_pos_abs = WindowPosRelToAbs(window, bs->StartPosRel);
+    glm::vec2 prev_end_pos_abs = WindowPosRelToAbs(window, bs->EndPosRel); // Clamped already
+    glm::vec2 curr_end_pos_abs = g.IO.MousePos;
     if (ms_flags & ImGuiMultiSelectFlags_ScopeWindow) // Box-select scrolling only happens with ScopeWindow
         curr_end_pos_abs = ImClamp(curr_end_pos_abs, scope_rect.Min, scope_rect.Max);
     bs->BoxSelectRectPrev.Min = ImMin(start_pos_abs, prev_end_pos_abs);
@@ -7701,7 +7701,7 @@ static ImRect CalcScopeRect(ImGuiMultiSelectTempData* ms, ImGuiWindow* window)
             scope_rect = g.CurrentTable->HostClipRect;
 
         // Add inner table decoration (#7821) // FIXME: Why not baking in InnerClipRect?
-        scope_rect.Min = ImMin(scope_rect.Min + ImVec2(window->DecoInnerSizeX1, window->DecoInnerSizeY1), scope_rect.Max);
+        scope_rect.Min = ImMin(scope_rect.Min + glm::vec2(window->DecoInnerSizeX1, window->DecoInnerSizeY1), scope_rect.Max);
         return scope_rect;
     }
 }
@@ -8454,7 +8454,7 @@ void ImGuiSelectionExternalStorage::ApplyRequests(ImGuiMultiSelectIO* ms_io)
 // If you don't need a label you can pretty much directly use ImGui::BeginChild() with ImGuiChildFlags_FrameStyle.
 // Tip: To have a list filling the entire window width, use size.x = -FLT_MIN and pass an non-visible label e.g. "##empty"
 // Tip: If your vertical size is calculated from an item count (e.g. 10 * item_height) consider adding a fractional part to facilitate seeing scrolling boundaries (e.g. 10.5f * item_height).
-bool ImGui::BeginListBox(const char* label, const ImVec2& size_arg)
+bool ImGui::BeginListBox(const char* label, const glm::vec2& size_arg)
 {
     ImGuiContext& g = *GImGui;
     ImGuiWindow* window = GetCurrentWindow();
@@ -8463,14 +8463,14 @@ bool ImGui::BeginListBox(const char* label, const ImVec2& size_arg)
 
     const ImGuiStyle& style = g.Style;
     const ImGuiID id = GetID(label);
-    const ImVec2 label_size = CalcTextSize(label, NULL, true);
+    const glm::vec2 label_size = CalcTextSize(label, NULL, true);
 
     // Size default to hold ~7.25 items.
     // Fractional number of items helps seeing that we can scroll down/up without looking at scrollbar.
-    ImVec2 size = ImTrunc(CalcItemSize(size_arg, CalcItemWidth(), GetTextLineHeightWithSpacing() * 7.25f + style.FramePadding.y * 2.0f));
-    ImVec2 frame_size = ImVec2(size.x, ImMax(size.y, label_size.y));
+    glm::vec2 size = ImTrunc(CalcItemSize(size_arg, CalcItemWidth(), GetTextLineHeightWithSpacing() * 7.25f + style.FramePadding.y * 2.0f));
+    glm::vec2 frame_size = glm::vec2(size.x, ImMax(size.y, label_size.y));
     ImRect frame_bb(window->DC.CursorPos, window->DC.CursorPos + frame_size);
-    ImRect bb(frame_bb.Min, frame_bb.Max + ImVec2(label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f, 0.0f));
+    ImRect bb(frame_bb.Min, frame_bb.Max + glm::vec2(label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f, 0.0f));
     g.NextItemData.ClearFlags();
 
     if (!IsRectVisible(bb.Min, bb.Max))
@@ -8485,7 +8485,7 @@ bool ImGui::BeginListBox(const char* label, const ImVec2& size_arg)
     BeginGroup();
     if (label_size.x > 0.0f)
     {
-        ImVec2 label_pos = ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y);
+        glm::vec2 label_pos = glm::vec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y);
         RenderText(label_pos, label);
         window->DC.CursorMaxPos = ImMax(window->DC.CursorMaxPos, label_pos + label_size);
         AlignTextToFramePadding();
@@ -8522,7 +8522,7 @@ bool ImGui::ListBox(const char* label, int* current_item, const char* (*getter)(
     if (height_in_items < 0)
         height_in_items = ImMin(items_count, 7);
     float height_in_items_f = height_in_items + 0.25f;
-    ImVec2 size(0.0f, ImTrunc(GetTextLineHeightWithSpacing() * height_in_items_f + g.Style.FramePadding.y * 2.0f));
+    glm::vec2 size(0.0f, ImTrunc(GetTextLineHeightWithSpacing() * height_in_items_f + g.Style.FramePadding.y * 2.0f));
 
     if (!BeginListBox(label, size))
         return false;
@@ -8572,7 +8572,7 @@ bool ImGui::ListBox(const char* label, int* current_item, const char* (*getter)(
 // - others https://github.com/ocornut/imgui/wiki/Useful-Extensions
 //-------------------------------------------------------------------------
 
-int ImGui::PlotEx(ImGuiPlotType plot_type, const char* label, float (*values_getter)(void* data, int idx), void* data, int values_count, int values_offset, const char* overlay_text, float scale_min, float scale_max, const ImVec2& size_arg)
+int ImGui::PlotEx(ImGuiPlotType plot_type, const char* label, float (*values_getter)(void* data, int idx), void* data, int values_count, int values_offset, const char* overlay_text, float scale_min, float scale_max, const glm::vec2& size_arg)
 {
     ImGuiContext& g = *GImGui;
     ImGuiWindow* window = GetCurrentWindow();
@@ -8582,12 +8582,12 @@ int ImGui::PlotEx(ImGuiPlotType plot_type, const char* label, float (*values_get
     const ImGuiStyle& style = g.Style;
     const ImGuiID id = window->GetID(label);
 
-    const ImVec2 label_size = CalcTextSize(label, NULL, true);
-    const ImVec2 frame_size = CalcItemSize(size_arg, CalcItemWidth(), label_size.y + style.FramePadding.y * 2.0f);
+    const glm::vec2 label_size = CalcTextSize(label, NULL, true);
+    const glm::vec2 frame_size = CalcItemSize(size_arg, CalcItemWidth(), label_size.y + style.FramePadding.y * 2.0f);
 
     const ImRect frame_bb(window->DC.CursorPos, window->DC.CursorPos + frame_size);
     const ImRect inner_bb(frame_bb.Min + style.FramePadding, frame_bb.Max - style.FramePadding);
-    const ImRect total_bb(frame_bb.Min, frame_bb.Max + ImVec2(label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f, 0));
+    const ImRect total_bb(frame_bb.Min, frame_bb.Max + glm::vec2(label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f, 0));
     ItemSize(total_bb, style.FramePadding.y);
     if (!ItemAdd(total_bb, id, &frame_bb, ImGuiItemFlags_NoNav))
         return -1;
@@ -8643,7 +8643,7 @@ int ImGui::PlotEx(ImGuiPlotType plot_type, const char* label, float (*values_get
 
         float v0 = values_getter(data, (0 + values_offset) % values_count);
         float t0 = 0.0f;
-        ImVec2 tp0 = ImVec2( t0, 1.0f - ImSaturate((v0 - scale_min) * inv_scale) );                       // Point in the normalized space of our target rectangle
+        glm::vec2 tp0 = glm::vec2( t0, 1.0f - ImSaturate((v0 - scale_min) * inv_scale) );                       // Point in the normalized space of our target rectangle
         float histogram_zero_line_t = (scale_min * scale_max < 0.0f) ? (1 + scale_min * inv_scale) : (scale_min < 0.0f ? 0.0f : 1.0f);   // Where does the zero line stands
 
         const ImU32 col_base = GetColorU32((plot_type == ImGuiPlotType_Lines) ? ImGuiCol_PlotLines : ImGuiCol_PlotHistogram);
@@ -8655,11 +8655,11 @@ int ImGui::PlotEx(ImGuiPlotType plot_type, const char* label, float (*values_get
             const int v1_idx = (int)(t0 * item_count + 0.5f);
             IM_ASSERT(v1_idx >= 0 && v1_idx < values_count);
             const float v1 = values_getter(data, (v1_idx + values_offset + 1) % values_count);
-            const ImVec2 tp1 = ImVec2( t1, 1.0f - ImSaturate((v1 - scale_min) * inv_scale) );
+            const glm::vec2 tp1 = glm::vec2( t1, 1.0f - ImSaturate((v1 - scale_min) * inv_scale) );
 
             // NB: Draw calls are merged together by the DrawList system. Still, we should render our batch are lower level to save a bit of CPU.
-            ImVec2 pos0 = ImLerp(inner_bb.Min, inner_bb.Max, tp0);
-            ImVec2 pos1 = ImLerp(inner_bb.Min, inner_bb.Max, (plot_type == ImGuiPlotType_Lines) ? tp1 : ImVec2(tp1.x, histogram_zero_line_t));
+            glm::vec2 pos0 = ImLerp(inner_bb.Min, inner_bb.Max, tp0);
+            glm::vec2 pos1 = ImLerp(inner_bb.Min, inner_bb.Max, (plot_type == ImGuiPlotType_Lines) ? tp1 : glm::vec2(tp1.x, histogram_zero_line_t));
             if (plot_type == ImGuiPlotType_Lines)
             {
                 window->DrawList->AddLine(pos0, pos1, idx_hovered == v1_idx ? col_hovered : col_base);
@@ -8678,10 +8678,10 @@ int ImGui::PlotEx(ImGuiPlotType plot_type, const char* label, float (*values_get
 
     // Text overlay
     if (overlay_text)
-        RenderTextClipped(ImVec2(frame_bb.Min.x, frame_bb.Min.y + style.FramePadding.y), frame_bb.Max, overlay_text, NULL, NULL, ImVec2(0.5f, 0.0f));
+        RenderTextClipped(glm::vec2(frame_bb.Min.x, frame_bb.Min.y + style.FramePadding.y), frame_bb.Max, overlay_text, NULL, NULL, glm::vec2(0.5f, 0.0f));
 
     if (label_size.x > 0.0f)
-        RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, inner_bb.Min.y), label);
+        RenderText(glm::vec2(frame_bb.Max.x + style.ItemInnerSpacing.x, inner_bb.Min.y), label);
 
     // Return hovered index or -1 if none are hovered.
     // This is currently not exposed in the public API because we need a larger redesign of the whole thing, but in the short-term we are making it available in PlotEx().
@@ -8703,24 +8703,24 @@ static float Plot_ArrayGetter(void* data, int idx)
     return v;
 }
 
-void ImGui::PlotLines(const char* label, const float* values, int values_count, int values_offset, const char* overlay_text, float scale_min, float scale_max, ImVec2 graph_size, int stride)
+void ImGui::PlotLines(const char* label, const float* values, int values_count, int values_offset, const char* overlay_text, float scale_min, float scale_max, glm::vec2 graph_size, int stride)
 {
     ImGuiPlotArrayGetterData data(values, stride);
     PlotEx(ImGuiPlotType_Lines, label, &Plot_ArrayGetter, (void*)&data, values_count, values_offset, overlay_text, scale_min, scale_max, graph_size);
 }
 
-void ImGui::PlotLines(const char* label, float (*values_getter)(void* data, int idx), void* data, int values_count, int values_offset, const char* overlay_text, float scale_min, float scale_max, ImVec2 graph_size)
+void ImGui::PlotLines(const char* label, float (*values_getter)(void* data, int idx), void* data, int values_count, int values_offset, const char* overlay_text, float scale_min, float scale_max, glm::vec2 graph_size)
 {
     PlotEx(ImGuiPlotType_Lines, label, values_getter, data, values_count, values_offset, overlay_text, scale_min, scale_max, graph_size);
 }
 
-void ImGui::PlotHistogram(const char* label, const float* values, int values_count, int values_offset, const char* overlay_text, float scale_min, float scale_max, ImVec2 graph_size, int stride)
+void ImGui::PlotHistogram(const char* label, const float* values, int values_count, int values_offset, const char* overlay_text, float scale_min, float scale_max, glm::vec2 graph_size, int stride)
 {
     ImGuiPlotArrayGetterData data(values, stride);
     PlotEx(ImGuiPlotType_Histogram, label, &Plot_ArrayGetter, (void*)&data, values_count, values_offset, overlay_text, scale_min, scale_max, graph_size);
 }
 
-void ImGui::PlotHistogram(const char* label, float (*values_getter)(void* data, int idx), void* data, int values_count, int values_offset, const char* overlay_text, float scale_min, float scale_max, ImVec2 graph_size)
+void ImGui::PlotHistogram(const char* label, float (*values_getter)(void* data, int idx), void* data, int values_count, int values_offset, const char* overlay_text, float scale_min, float scale_max, glm::vec2 graph_size)
 {
     PlotEx(ImGuiPlotType_Histogram, label, values_getter, data, values_count, values_offset, overlay_text, scale_min, scale_max, graph_size);
 }
@@ -8844,7 +8844,7 @@ bool ImGui::BeginMenuBar()
     PushClipRect(clip_rect.Min, clip_rect.Max, false);
 
     // We overwrite CursorMaxPos because BeginGroup sets it to CursorPos (essentially the .EmitItem hack in EndMenuBar() would need something analogous here, maybe a BeginGroupEx() with flags).
-    window->DC.CursorPos = window->DC.CursorMaxPos = ImVec2(bar_rect.Min.x + window->DC.MenuBarOffset.x, bar_rect.Min.y + window->DC.MenuBarOffset.y);
+    window->DC.CursorPos = window->DC.CursorMaxPos = glm::vec2(bar_rect.Min.x + window->DC.MenuBarOffset.x, bar_rect.Min.y + window->DC.MenuBarOffset.y);
     window->DC.LayoutType = ImGuiLayoutType_Horizontal;
     window->DC.IsSameLine = false;
     window->DC.NavLayerCurrent = ImGuiNavLayer_Menu;
@@ -8897,7 +8897,7 @@ void ImGui::EndMenuBar()
     // FIXME: Extremely confusing, cleanup by (a) working on WorkRect stack system (b) not using a Group confusingly here.
     ImGuiGroupData& group_data = g.GroupStack.back();
     group_data.EmitItem = false;
-    ImVec2 restore_cursor_max_pos = group_data.BackupCursorMaxPos;
+    glm::vec2 restore_cursor_max_pos = group_data.BackupCursorMaxPos;
     window->DC.IdealMaxPos.x = ImMax(window->DC.IdealMaxPos.x, window->DC.CursorMaxPos.x - window->Scroll.x); // Convert ideal extents for scrolling layer equivalent.
     EndGroup(); // Restore position on layer 0 // FIXME: Misleading to use a group for that backup/restore
     window->DC.LayoutType = ImGuiLayoutType_Vertical;
@@ -8921,10 +8921,10 @@ bool ImGui::BeginViewportSideBar(const char* name, ImGuiViewport* viewport_p, Im
         // Calculate and set window size/position
         ImRect avail_rect = viewport->GetBuildWorkRect();
         ImGuiAxis axis = (dir == ImGuiDir_Up || dir == ImGuiDir_Down) ? ImGuiAxis_Y : ImGuiAxis_X;
-        ImVec2 pos = avail_rect.Min;
+        glm::vec2 pos = avail_rect.Min;
         if (dir == ImGuiDir_Right || dir == ImGuiDir_Down)
             pos[axis] = avail_rect.Max[axis] - axis_size;
-        ImVec2 size = avail_rect.GetSize();
+        glm::vec2 size = avail_rect.GetSize();
         size[axis] = axis_size;
         SetNextWindowPos(pos);
         SetNextWindowSize(size);
@@ -8939,7 +8939,7 @@ bool ImGui::BeginViewportSideBar(const char* name, ImGuiViewport* viewport_p, Im
     window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDocking;
     SetNextWindowViewport(viewport->ID); // Enforce viewport so we don't create our own viewport when ImGuiConfigFlags_ViewportsNoMerge is set.
     PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-    PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(0, 0)); // Lift normal size constraint
+    PushStyleVar(ImGuiStyleVar_WindowMinSize, glm::vec2(0, 0)); // Lift normal size constraint
     bool is_open = Begin(name, NULL, window_flags);
     PopStyleVar(2);
 
@@ -8957,11 +8957,11 @@ bool ImGui::BeginMainMenuBar()
     // For the main menu bar, which cannot be moved, we honor g.Style.DisplaySafeAreaPadding to ensure text can be visible on a TV set.
     // FIXME: This could be generalized as an opt-in way to clamp window->DC.CursorStartPos to avoid SafeArea?
     // FIXME: Consider removing support for safe area down the line... it's messy. Nowadays consoles have support for TV calibration in OS settings.
-    g.NextWindowData.MenuBarOffsetMinVal = ImVec2(g.Style.DisplaySafeAreaPadding.x, ImMax(g.Style.DisplaySafeAreaPadding.y - g.Style.FramePadding.y, 0.0f));
+    g.NextWindowData.MenuBarOffsetMinVal = glm::vec2(g.Style.DisplaySafeAreaPadding.x, ImMax(g.Style.DisplaySafeAreaPadding.y - g.Style.FramePadding.y, 0.0f));
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_MenuBar;
     float height = GetFrameHeight();
     bool is_open = BeginViewportSideBar("##MainMenuBar", viewport, ImGuiDir_Up, height, window_flags);
-    g.NextWindowData.MenuBarOffsetMinVal = ImVec2(0.0f, 0.0f);
+    g.NextWindowData.MenuBarOffsetMinVal = glm::vec2(0.0f, 0.0f);
     if (!is_open)
     {
         End();
@@ -9050,7 +9050,7 @@ bool ImGui::BeginMenuEx(const char* label, const char* icon, bool enabled)
     // Tag menu as used. Next time BeginMenu() with same ID is called it will append to existing menu
     g.MenusIdSubmittedThisFrame.push_back(id);
 
-    ImVec2 label_size = CalcTextSize(label, NULL, true);
+    glm::vec2 label_size = CalcTextSize(label, NULL, true);
 
     // Odd hack to allow hovering across menus of a same menu-set (otherwise we wouldn't be able to hover parent without always being a Child window)
     // This is only done for items for the menu set and not the full parent window.
@@ -9061,7 +9061,7 @@ bool ImGui::BeginMenuEx(const char* label, const char* icon, bool enabled)
     // The reference position stored in popup_pos will be used by Begin() to find a suitable position for the child menu,
     // However the final position is going to be different! It is chosen by FindBestWindowPosForPopup().
     // e.g. Menus tend to overlap each other horizontally to amplify relative Z-ordering.
-    ImVec2 popup_pos, pos = window->DC.CursorPos;
+    glm::vec2 popup_pos, pos = window->DC.CursorPos;
     PushID(label);
     if (!enabled)
         BeginDisabled();
@@ -9075,12 +9075,12 @@ bool ImGui::BeginMenuEx(const char* label, const char* icon, bool enabled)
         // Menu inside a horizontal menu bar
         // Selectable extend their highlight by half ItemSpacing in each direction.
         // For ChildMenu, the popup position will be overwritten by the call to FindBestWindowPosForPopup() in Begin()
-        popup_pos = ImVec2(pos.x - 1.0f - IM_TRUNC(style.ItemSpacing.x * 0.5f), pos.y - style.FramePadding.y + window->MenuBarHeight);
+        popup_pos = glm::vec2(pos.x - 1.0f - IM_TRUNC(style.ItemSpacing.x * 0.5f), pos.y - style.FramePadding.y + window->MenuBarHeight);
         window->DC.CursorPos.x += IM_TRUNC(style.ItemSpacing.x * 0.5f);
         PushStyleVarX(ImGuiStyleVar_ItemSpacing, style.ItemSpacing.x * 2.0f);
         float w = label_size.x;
-        ImVec2 text_pos(window->DC.CursorPos.x + offsets->OffsetLabel, window->DC.CursorPos.y + window->DC.CurrLineTextBaseOffset);
-        pressed = Selectable("", menu_is_open, selectable_flags, ImVec2(w, label_size.y));
+        glm::vec2 text_pos(window->DC.CursorPos.x + offsets->OffsetLabel, window->DC.CursorPos.y + window->DC.CurrLineTextBaseOffset);
+        pressed = Selectable("", menu_is_open, selectable_flags, glm::vec2(w, label_size.y));
         LogSetNextTextDecoration("[", "]");
         RenderText(text_pos, label);
         PopStyleVar();
@@ -9091,18 +9091,18 @@ bool ImGui::BeginMenuEx(const char* label, const char* icon, bool enabled)
         // Menu inside a regular/vertical menu
         // (In a typical menu window where all items are BeginMenu() or MenuItem() calls, extra_w will always be 0.0f.
         //  Only when they are other items sticking out we're going to add spacing, yet only register minimum width into the layout system.
-        popup_pos = ImVec2(pos.x, pos.y - style.WindowPadding.y);
+        popup_pos = glm::vec2(pos.x, pos.y - style.WindowPadding.y);
         float icon_w = (icon && icon[0]) ? CalcTextSize(icon, NULL).x : 0.0f;
         float checkmark_w = IM_TRUNC(g.FontSize * 1.20f);
         float min_w = window->DC.MenuColumns.DeclColumns(icon_w, label_size.x, 0.0f, checkmark_w); // Feedback to next frame
         float extra_w = ImMax(0.0f, GetContentRegionAvail().x - min_w);
-        ImVec2 text_pos(window->DC.CursorPos.x + offsets->OffsetLabel, window->DC.CursorPos.y + window->DC.CurrLineTextBaseOffset);
-        pressed = Selectable("", menu_is_open, selectable_flags | ImGuiSelectableFlags_SpanAvailWidth, ImVec2(min_w, label_size.y));
+        glm::vec2 text_pos(window->DC.CursorPos.x + offsets->OffsetLabel, window->DC.CursorPos.y + window->DC.CurrLineTextBaseOffset);
+        pressed = Selectable("", menu_is_open, selectable_flags | ImGuiSelectableFlags_SpanAvailWidth, glm::vec2(min_w, label_size.y));
         LogSetNextTextDecoration("", ">");
         RenderText(text_pos, label);
         if (icon_w > 0.0f)
-            RenderText(pos + ImVec2(offsets->OffsetIcon, 0.0f), icon);
-        RenderArrow(window->DrawList, pos + ImVec2(offsets->OffsetMark + extra_w + g.FontSize * 0.30f, 0.0f), GetColorU32(ImGuiCol_Text), ImGuiDir_Right);
+            RenderText(pos + glm::vec2(offsets->OffsetIcon, 0.0f), icon);
+        RenderArrow(window->DrawList, pos + glm::vec2(offsets->OffsetMark + extra_w + g.FontSize * 0.30f, 0.0f), GetColorU32(ImGuiCol_Text), ImGuiDir_Right);
     }
     if (!enabled)
         EndDisabled();
@@ -9126,9 +9126,9 @@ bool ImGui::BeginMenuEx(const char* label, const char* icon, bool enabled)
             const float ref_unit = g.FontSize; // FIXME-DPI
             const float child_dir = (window->Pos.x < child_menu_window->Pos.x) ? 1.0f : -1.0f;
             const ImRect next_window_rect = child_menu_window->Rect();
-            ImVec2 ta = (g.IO.MousePos - g.IO.MouseDelta);
-            ImVec2 tb = (child_dir > 0.0f) ? next_window_rect.GetTL() : next_window_rect.GetTR();
-            ImVec2 tc = (child_dir > 0.0f) ? next_window_rect.GetBL() : next_window_rect.GetBR();
+            glm::vec2 ta = (g.IO.MousePos - g.IO.MouseDelta);
+            glm::vec2 tb = (child_dir > 0.0f) ? next_window_rect.GetTL() : next_window_rect.GetTR();
+            glm::vec2 tc = (child_dir > 0.0f) ? next_window_rect.GetBL() : next_window_rect.GetBR();
             const float pad_farmost_h = ImClamp(ImFabs(ta.x - tb.x) * 0.30f, ref_unit * 0.5f, ref_unit * 2.5f); // Add a bit of extra slack.
             ta.x += child_dir * -0.5f;
             tb.x += child_dir * ref_unit;
@@ -9261,8 +9261,8 @@ bool ImGui::MenuItemEx(const char* label, const char* icon, const char* shortcut
 
     ImGuiContext& g = *GImGui;
     ImGuiStyle& style = g.Style;
-    ImVec2 pos = window->DC.CursorPos;
-    ImVec2 label_size = CalcTextSize(label, NULL, true);
+    glm::vec2 pos = window->DC.CursorPos;
+    glm::vec2 label_size = CalcTextSize(label, NULL, true);
 
     // See BeginMenuEx() for comments about this.
     const bool menuset_is_open = IsRootOfOpenMenuSet();
@@ -9285,9 +9285,9 @@ bool ImGui::MenuItemEx(const char* label, const char* icon, const char* shortcut
         // Note that in this situation: we don't render the shortcut, we render a highlight instead of the selected tick mark.
         float w = label_size.x;
         window->DC.CursorPos.x += IM_TRUNC(style.ItemSpacing.x * 0.5f);
-        ImVec2 text_pos(window->DC.CursorPos.x + offsets->OffsetLabel, window->DC.CursorPos.y + window->DC.CurrLineTextBaseOffset);
+        glm::vec2 text_pos(window->DC.CursorPos.x + offsets->OffsetLabel, window->DC.CursorPos.y + window->DC.CurrLineTextBaseOffset);
         PushStyleVarX(ImGuiStyleVar_ItemSpacing, style.ItemSpacing.x * 2.0f);
-        pressed = Selectable("", selected, selectable_flags, ImVec2(w, 0.0f));
+        pressed = Selectable("", selected, selectable_flags, glm::vec2(w, 0.0f));
         PopStyleVar();
         if (g.LastItemData.StatusFlags & ImGuiItemStatusFlags_Visible)
             RenderText(text_pos, label);
@@ -9303,21 +9303,21 @@ bool ImGui::MenuItemEx(const char* label, const char* icon, const char* shortcut
         float checkmark_w = IM_TRUNC(g.FontSize * 1.20f);
         float min_w = window->DC.MenuColumns.DeclColumns(icon_w, label_size.x, shortcut_w, checkmark_w); // Feedback for next frame
         float stretch_w = ImMax(0.0f, GetContentRegionAvail().x - min_w);
-        pressed = Selectable("", false, selectable_flags | ImGuiSelectableFlags_SpanAvailWidth, ImVec2(min_w, label_size.y));
+        pressed = Selectable("", false, selectable_flags | ImGuiSelectableFlags_SpanAvailWidth, glm::vec2(min_w, label_size.y));
         if (g.LastItemData.StatusFlags & ImGuiItemStatusFlags_Visible)
         {
-            RenderText(pos + ImVec2(offsets->OffsetLabel, 0.0f), label);
+            RenderText(pos + glm::vec2(offsets->OffsetLabel, 0.0f), label);
             if (icon_w > 0.0f)
-                RenderText(pos + ImVec2(offsets->OffsetIcon, 0.0f), icon);
+                RenderText(pos + glm::vec2(offsets->OffsetIcon, 0.0f), icon);
             if (shortcut_w > 0.0f)
             {
                 PushStyleColor(ImGuiCol_Text, style.Colors[ImGuiCol_TextDisabled]);
                 LogSetNextTextDecoration("(", ")");
-                RenderText(pos + ImVec2(offsets->OffsetShortcut + stretch_w, 0.0f), shortcut, NULL, false);
+                RenderText(pos + glm::vec2(offsets->OffsetShortcut + stretch_w, 0.0f), shortcut, NULL, false);
                 PopStyleColor();
             }
             if (selected)
-                RenderCheckMark(window->DrawList, pos + ImVec2(offsets->OffsetMark + stretch_w + g.FontSize * 0.40f, g.FontSize * 0.134f * 0.5f), GetColorU32(ImGuiCol_Text), g.FontSize * 0.866f);
+                RenderCheckMark(window->DrawList, pos + glm::vec2(offsets->OffsetMark + stretch_w + g.FontSize * 0.40f, g.FontSize * 0.134f * 0.5f), GetColorU32(ImGuiCol_Text), g.FontSize * 0.866f);
         }
     }
     IMGUI_TEST_ENGINE_ITEM_INFO(g.LastItemData.ID, label, g.LastItemData.StatusFlags | ImGuiItemStatusFlags_Checkable | (selected ? ImGuiItemStatusFlags_Checked : 0));
@@ -9476,7 +9476,7 @@ bool    ImGui::BeginTabBarEx(ImGuiTabBar* tab_bar, const ImRect& tab_bar_bb, ImG
     tab_bar->BackupCursorPos = window->DC.CursorPos;
     if (tab_bar->CurrFrameVisible == g.FrameCount)
     {
-        window->DC.CursorPos = ImVec2(tab_bar->BarRect.Min.x, tab_bar->BarRect.Max.y + tab_bar->ItemSpacingY);
+        window->DC.CursorPos = glm::vec2(tab_bar->BarRect.Min.x, tab_bar->BarRect.Max.y + tab_bar->ItemSpacingY);
         tab_bar->BeginCount++;
         return true;
     }
@@ -9505,7 +9505,7 @@ bool    ImGui::BeginTabBarEx(ImGuiTabBar* tab_bar, const ImRect& tab_bar_bb, ImG
     tab_bar->BeginCount = 1;
 
     // Set cursor pos in a way which only be used in the off-chance the user erroneously submits item before BeginTabItem(): items will overlap
-    window->DC.CursorPos = ImVec2(tab_bar->BarRect.Min.x, tab_bar->BarRect.Max.y + tab_bar->ItemSpacingY);
+    window->DC.CursorPos = glm::vec2(tab_bar->BarRect.Min.x, tab_bar->BarRect.Max.y + tab_bar->ItemSpacingY);
 
     // Draw separator
     // (it would be misleading to draw this in EndTabBar() suggesting that it may be drawn over tabs, as tab bar are appendable)
@@ -9513,7 +9513,7 @@ bool    ImGui::BeginTabBarEx(ImGuiTabBar* tab_bar, const ImRect& tab_bar_bb, ImG
     if (g.Style.TabBarBorderSize > 0.0f)
     {
         const float y = tab_bar->BarRect.Max.y;
-        window->DrawList->AddRectFilled(ImVec2(tab_bar->SeparatorMinX, y - g.Style.TabBarBorderSize), ImVec2(tab_bar->SeparatorMaxX, y), col);
+        window->DrawList->AddRectFilled(glm::vec2(tab_bar->SeparatorMinX, y - g.Style.TabBarBorderSize), glm::vec2(tab_bar->SeparatorMaxX, y), col);
     }
     return true;
 }
@@ -9827,7 +9827,7 @@ static void ImGui::TabBarLayout(ImGuiTabBar* tab_bar)
     // Actual layout in host window (we don't do it in BeginTabBar() so as not to waste an extra frame)
     ImGuiWindow* window = g.CurrentWindow;
     window->DC.CursorPos = tab_bar->BarRect.Min;
-    ItemSize(ImVec2(tab_bar->WidthAllTabs, tab_bar->BarRect.GetHeight()), tab_bar->FramePadding.y);
+    ItemSize(glm::vec2(tab_bar->WidthAllTabs, tab_bar->BarRect.GetHeight()), tab_bar->FramePadding.y);
     window->DC.IdealMaxPos.x = ImMax(window->DC.IdealMaxPos.x, tab_bar->BarRect.Min.x + tab_bar->WidthAllTabsIdeal);
 }
 
@@ -10019,7 +10019,7 @@ void ImGui::TabBarQueueReorder(ImGuiTabBar* tab_bar, ImGuiTabItem* tab, int offs
     tab_bar->ReorderRequestOffset = (ImS16)offset;
 }
 
-void ImGui::TabBarQueueReorderFromMousePos(ImGuiTabBar* tab_bar, ImGuiTabItem* src_tab, ImVec2 mouse_pos)
+void ImGui::TabBarQueueReorderFromMousePos(ImGuiTabBar* tab_bar, ImGuiTabItem* src_tab, glm::vec2 mouse_pos)
 {
     ImGuiContext& g = *GImGui;
     IM_ASSERT(tab_bar->ReorderRequestTabId == 0);
@@ -10046,7 +10046,7 @@ void ImGui::TabBarQueueReorderFromMousePos(ImGuiTabBar* tab_bar, ImGuiTabItem* s
         // Include spacing after tab, so when mouse cursor is between tabs we would not continue checking further tabs that are not hovered.
         const float x1 = bar_offset + dst_tab->Offset - g.Style.ItemInnerSpacing.x;
         const float x2 = bar_offset + dst_tab->Offset + dst_tab->Width + g.Style.ItemInnerSpacing.x;
-        //GetForegroundDrawList()->AddRect(ImVec2(x1, tab_bar->BarRect.Min.y), ImVec2(x2, tab_bar->BarRect.Max.y), IM_COL32(255, 0, 0, 255));
+        //GetForegroundDrawList()->AddRect(glm::vec2(x1, tab_bar->BarRect.Min.y), glm::vec2(x2, tab_bar->BarRect.Max.y), IM_COL32(255, 0, 0, 255));
         if ((dir < 0 && mouse_pos.x > x1) || (dir > 0 && mouse_pos.x < x2))
             break;
     }
@@ -10091,28 +10091,28 @@ static ImGuiTabItem* ImGui::TabBarScrollingButtons(ImGuiTabBar* tab_bar)
     ImGuiContext& g = *GImGui;
     ImGuiWindow* window = g.CurrentWindow;
 
-    const ImVec2 arrow_button_size(g.FontSize - 2.0f, g.FontSize + g.Style.FramePadding.y * 2.0f);
+    const glm::vec2 arrow_button_size(g.FontSize - 2.0f, g.FontSize + g.Style.FramePadding.y * 2.0f);
     const float scrolling_buttons_width = arrow_button_size.x * 2.0f;
 
-    const ImVec2 backup_cursor_pos = window->DC.CursorPos;
-    //window->DrawList->AddRect(ImVec2(tab_bar->BarRect.Max.x - scrolling_buttons_width, tab_bar->BarRect.Min.y), ImVec2(tab_bar->BarRect.Max.x, tab_bar->BarRect.Max.y), IM_COL32(255,0,0,255));
+    const glm::vec2 backup_cursor_pos = window->DC.CursorPos;
+    //window->DrawList->AddRect(glm::vec2(tab_bar->BarRect.Max.x - scrolling_buttons_width, tab_bar->BarRect.Min.y), glm::vec2(tab_bar->BarRect.Max.x, tab_bar->BarRect.Max.y), IM_COL32(255,0,0,255));
 
     int select_dir = 0;
-    ImVec4 arrow_col = g.Style.Colors[ImGuiCol_Text];
+    glm::vec4 arrow_col = g.Style.Colors[ImGuiCol_Text];
     arrow_col.w *= 0.5f;
 
     PushStyleColor(ImGuiCol_Text, arrow_col);
-    PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+    PushStyleColor(ImGuiCol_Button, glm::vec4(0, 0, 0, 0));
     PushItemFlag(ImGuiItemFlags_ButtonRepeat, true);
     const float backup_repeat_delay = g.IO.KeyRepeatDelay;
     const float backup_repeat_rate = g.IO.KeyRepeatRate;
     g.IO.KeyRepeatDelay = 0.250f;
     g.IO.KeyRepeatRate = 0.200f;
     float x = ImMax(tab_bar->BarRect.Min.x, tab_bar->BarRect.Max.x - scrolling_buttons_width);
-    window->DC.CursorPos = ImVec2(x, tab_bar->BarRect.Min.y);
+    window->DC.CursorPos = glm::vec2(x, tab_bar->BarRect.Min.y);
     if (ArrowButtonEx("##<", ImGuiDir_Left, arrow_button_size, ImGuiButtonFlags_PressedOnClick))
         select_dir = -1;
-    window->DC.CursorPos = ImVec2(x + arrow_button_size.x, tab_bar->BarRect.Min.y);
+    window->DC.CursorPos = glm::vec2(x + arrow_button_size.x, tab_bar->BarRect.Min.y);
     if (ArrowButtonEx("##>", ImGuiDir_Right, arrow_button_size, ImGuiButtonFlags_PressedOnClick))
         select_dir = +1;
     PopItemFlag();
@@ -10156,14 +10156,14 @@ static ImGuiTabItem* ImGui::TabBarTabListPopupButton(ImGuiTabBar* tab_bar)
 
     // We use g.Style.FramePadding.y to match the square ArrowButton size
     const float tab_list_popup_button_width = g.FontSize + g.Style.FramePadding.y;
-    const ImVec2 backup_cursor_pos = window->DC.CursorPos;
-    window->DC.CursorPos = ImVec2(tab_bar->BarRect.Min.x - g.Style.FramePadding.y, tab_bar->BarRect.Min.y);
+    const glm::vec2 backup_cursor_pos = window->DC.CursorPos;
+    window->DC.CursorPos = glm::vec2(tab_bar->BarRect.Min.x - g.Style.FramePadding.y, tab_bar->BarRect.Min.y);
     tab_bar->BarRect.Min.x += tab_list_popup_button_width;
 
-    ImVec4 arrow_col = g.Style.Colors[ImGuiCol_Text];
+    glm::vec4 arrow_col = g.Style.Colors[ImGuiCol_Text];
     arrow_col.w *= 0.5f;
     PushStyleColor(ImGuiCol_Text, arrow_col);
-    PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+    PushStyleColor(ImGuiCol_Button, glm::vec4(0, 0, 0, 0));
     bool open = BeginCombo("##v", NULL, ImGuiComboFlags_NoPreview | ImGuiComboFlags_HeightLargest);
     PopStyleColor(2);
 
@@ -10324,7 +10324,7 @@ bool    ImGui::TabItemEx(ImGuiTabBar* tab_bar, const char* label, bool* p_open, 
     tab_bar->LastTabItemIdx = (ImS16)tab_bar->Tabs.index_from_ptr(tab);
 
     // Calculate tab contents size
-    ImVec2 size = TabItemCalcSize(label, (p_open != NULL) || (flags & ImGuiTabItemFlags_UnsavedDocument));
+    glm::vec2 size = TabItemCalcSize(label, (p_open != NULL) || (flags & ImGuiTabItemFlags_UnsavedDocument));
     tab->RequestedWidth = -1.0f;
     if (g.NextItemData.HasFlags & ImGuiNextItemDataFlags_HasWidth)
         size.x = tab->RequestedWidth = g.NextItemData.Width;
@@ -10390,24 +10390,24 @@ bool    ImGui::TabItemEx(ImGuiTabBar* tab_bar, const char* label, bool* p_open, 
         tab->LastFrameSelected = g.FrameCount;
 
     // Backup current layout position
-    const ImVec2 backup_main_cursor_pos = window->DC.CursorPos;
+    const glm::vec2 backup_main_cursor_pos = window->DC.CursorPos;
 
     // Layout
     const bool is_central_section = (tab->Flags & ImGuiTabItemFlags_SectionMask_) == 0;
     size.x = tab->Width;
     if (is_central_section)
-        window->DC.CursorPos = tab_bar->BarRect.Min + ImVec2(IM_TRUNC(tab->Offset - tab_bar->ScrollingAnim), 0.0f);
+        window->DC.CursorPos = tab_bar->BarRect.Min + glm::vec2(IM_TRUNC(tab->Offset - tab_bar->ScrollingAnim), 0.0f);
     else
-        window->DC.CursorPos = tab_bar->BarRect.Min + ImVec2(tab->Offset, 0.0f);
-    ImVec2 pos = window->DC.CursorPos;
+        window->DC.CursorPos = tab_bar->BarRect.Min + glm::vec2(tab->Offset, 0.0f);
+    glm::vec2 pos = window->DC.CursorPos;
     ImRect bb(pos, pos + size);
 
     // We don't have CPU clipping primitives to clip the CloseButton (until it becomes a texture), so need to add an extra draw call (temporary in the case of vertical animation)
     const bool want_clip_rect = is_central_section && (bb.Min.x < tab_bar->ScrollingRectMinX || bb.Max.x > tab_bar->ScrollingRectMaxX);
     if (want_clip_rect)
-        PushClipRect(ImVec2(ImMax(bb.Min.x, tab_bar->ScrollingRectMinX), bb.Min.y - 1), ImVec2(tab_bar->ScrollingRectMaxX, bb.Max.y), true);
+        PushClipRect(glm::vec2(ImMax(bb.Min.x, tab_bar->ScrollingRectMinX), bb.Min.y - 1), glm::vec2(tab_bar->ScrollingRectMaxX, bb.Max.y), true);
 
-    ImVec2 backup_cursor_max_pos = window->DC.CursorMaxPos;
+    glm::vec2 backup_cursor_max_pos = window->DC.CursorMaxPos;
     ItemSize(bb.GetSize(), style.FramePadding.y);
     window->DC.CursorMaxPos = backup_cursor_max_pos;
 
@@ -10477,7 +10477,7 @@ bool    ImGui::TabItemEx(ImGuiTabBar* tab_bar, const char* label, bool* p_open, 
                 float threshold_base = g.FontSize;
                 float threshold_x = (threshold_base * 2.2f);
                 float threshold_y = (threshold_base * 1.5f) + ImClamp((ImFabs(g.IO.MouseDragMaxDistanceAbs[0].x) - threshold_base * 2.0f) * 0.20f, 0.0f, threshold_base * 4.0f);
-                //GetForegroundDrawList()->AddRect(ImVec2(bb.Min.x - threshold_x, bb.Min.y - threshold_y), ImVec2(bb.Max.x + threshold_x, bb.Max.y + threshold_y), IM_COL32_WHITE); // [DEBUG]
+                //GetForegroundDrawList()->AddRect(glm::vec2(bb.Min.x - threshold_x, bb.Min.y - threshold_y), glm::vec2(bb.Max.x + threshold_x, bb.Max.y + threshold_y), IM_COL32_WHITE); // [DEBUG]
 
                 float distance_from_edge_y = ImMax(bb.Min.y - g.IO.MousePos.y, g.IO.MousePos.y - bb.Max.y);
                 if (distance_from_edge_y >= threshold_y)
@@ -10521,19 +10521,19 @@ bool    ImGui::TabItemEx(ImGuiTabBar* tab_bar, const char* label, bool* p_open, 
         if (tab_contents_visible && (tab_bar->Flags & ImGuiTabBarFlags_DrawSelectedOverline) && style.TabBarOverlineSize > 0.0f)
         {
             // Might be moved to TabItemBackground() ?
-            ImVec2 tl = bb.GetTL() + ImVec2(0, 1.0f * g.CurrentDpiScale);
-            ImVec2 tr = bb.GetTR() + ImVec2(0, 1.0f * g.CurrentDpiScale);
+            glm::vec2 tl = bb.GetTL() + glm::vec2(0, 1.0f * g.CurrentDpiScale);
+            glm::vec2 tr = bb.GetTR() + glm::vec2(0, 1.0f * g.CurrentDpiScale);
             ImU32 overline_col = GetColorU32(tab_bar_focused ? ImGuiCol_TabSelectedOverline : ImGuiCol_TabDimmedSelectedOverline);
             if (style.TabRounding > 0.0f)
             {
                 float rounding = style.TabRounding;
-                display_draw_list->PathArcToFast(tl + ImVec2(+rounding, +rounding), rounding, 7, 9);
-                display_draw_list->PathArcToFast(tr + ImVec2(-rounding, +rounding), rounding, 9, 11);
+                display_draw_list->PathArcToFast(tl + glm::vec2(+rounding, +rounding), rounding, 7, 9);
+                display_draw_list->PathArcToFast(tr + glm::vec2(-rounding, +rounding), rounding, 9, 11);
                 display_draw_list->PathStroke(overline_col, 0, style.TabBarOverlineSize);
             }
             else
             {
-                display_draw_list->AddLine(tl - ImVec2(0.5f, 0.5f), tr - ImVec2(0.5f, 0.5f), overline_col, style.TabBarOverlineSize);
+                display_draw_list->AddLine(tl - glm::vec2(0.5f, 0.5f), tr - glm::vec2(0.5f, 0.5f), overline_col, style.TabBarOverlineSize);
             }
         }
         RenderNavCursor(bb, id);
@@ -10609,19 +10609,19 @@ void    ImGui::SetTabItemClosed(const char* label)
     }
 }
 
-ImVec2 ImGui::TabItemCalcSize(const char* label, bool has_close_button_or_unsaved_marker)
+glm::vec2 ImGui::TabItemCalcSize(const char* label, bool has_close_button_or_unsaved_marker)
 {
     ImGuiContext& g = *GImGui;
-    ImVec2 label_size = CalcTextSize(label, NULL, true);
-    ImVec2 size = ImVec2(label_size.x + g.Style.FramePadding.x, label_size.y + g.Style.FramePadding.y * 2.0f);
+    glm::vec2 label_size = CalcTextSize(label, NULL, true);
+    glm::vec2 size = glm::vec2(label_size.x + g.Style.FramePadding.x, label_size.y + g.Style.FramePadding.y * 2.0f);
     if (has_close_button_or_unsaved_marker)
         size.x += g.Style.FramePadding.x + (g.Style.ItemInnerSpacing.x + g.FontSize); // We use Y intentionally to fit the close button circle.
     else
         size.x += g.Style.FramePadding.x + 1.0f;
-    return ImVec2(ImMin(size.x, TabBarCalcMaxTabWidth()), size.y);
+    return glm::vec2(ImMin(size.x, TabBarCalcMaxTabWidth()), size.y);
 }
 
-ImVec2 ImGui::TabItemCalcSize(ImGuiWindow* window)
+glm::vec2 ImGui::TabItemCalcSize(ImGuiWindow* window)
 {
     return TabItemCalcSize(window->Name, window->HasCloseButton || (window->Flags & ImGuiWindowFlags_UnsavedDocument));
 }
@@ -10636,27 +10636,27 @@ void ImGui::TabItemBackground(ImDrawList* draw_list, const ImRect& bb, ImGuiTabI
     const float rounding = ImMax(0.0f, ImMin((flags & ImGuiTabItemFlags_Button) ? g.Style.FrameRounding : g.Style.TabRounding, width * 0.5f - 1.0f));
     const float y1 = bb.Min.y + 1.0f;
     const float y2 = bb.Max.y - g.Style.TabBarBorderSize;
-    draw_list->PathLineTo(ImVec2(bb.Min.x, y2));
-    draw_list->PathArcToFast(ImVec2(bb.Min.x + rounding, y1 + rounding), rounding, 6, 9);
-    draw_list->PathArcToFast(ImVec2(bb.Max.x - rounding, y1 + rounding), rounding, 9, 12);
-    draw_list->PathLineTo(ImVec2(bb.Max.x, y2));
+    draw_list->PathLineTo(glm::vec2(bb.Min.x, y2));
+    draw_list->PathArcToFast(glm::vec2(bb.Min.x + rounding, y1 + rounding), rounding, 6, 9);
+    draw_list->PathArcToFast(glm::vec2(bb.Max.x - rounding, y1 + rounding), rounding, 9, 12);
+    draw_list->PathLineTo(glm::vec2(bb.Max.x, y2));
     draw_list->PathFillConvex(col);
     if (g.Style.TabBorderSize > 0.0f)
     {
-        draw_list->PathLineTo(ImVec2(bb.Min.x + 0.5f, y2));
-        draw_list->PathArcToFast(ImVec2(bb.Min.x + rounding + 0.5f, y1 + rounding + 0.5f), rounding, 6, 9);
-        draw_list->PathArcToFast(ImVec2(bb.Max.x - rounding - 0.5f, y1 + rounding + 0.5f), rounding, 9, 12);
-        draw_list->PathLineTo(ImVec2(bb.Max.x - 0.5f, y2));
+        draw_list->PathLineTo(glm::vec2(bb.Min.x + 0.5f, y2));
+        draw_list->PathArcToFast(glm::vec2(bb.Min.x + rounding + 0.5f, y1 + rounding + 0.5f), rounding, 6, 9);
+        draw_list->PathArcToFast(glm::vec2(bb.Max.x - rounding - 0.5f, y1 + rounding + 0.5f), rounding, 9, 12);
+        draw_list->PathLineTo(glm::vec2(bb.Max.x - 0.5f, y2));
         draw_list->PathStroke(GetColorU32(ImGuiCol_Border), 0, g.Style.TabBorderSize);
     }
 }
 
 // Render text label (with custom clipping) + Unsaved Document marker + Close Button logic
 // We tend to lock style.FramePadding for a given tab-bar, hence the 'frame_padding' parameter.
-void ImGui::TabItemLabelAndCloseButton(ImDrawList* draw_list, const ImRect& bb, ImGuiTabItemFlags flags, ImVec2 frame_padding, const char* label, ImGuiID tab_id, ImGuiID close_button_id, bool is_contents_visible, bool* out_just_closed, bool* out_text_clipped)
+void ImGui::TabItemLabelAndCloseButton(ImDrawList* draw_list, const ImRect& bb, ImGuiTabItemFlags flags, glm::vec2 frame_padding, const char* label, ImGuiID tab_id, ImGuiID close_button_id, bool is_contents_visible, bool* out_just_closed, bool* out_text_clipped)
 {
     ImGuiContext& g = *GImGui;
-    ImVec2 label_size = CalcTextSize(label, NULL, true);
+    glm::vec2 label_size = CalcTextSize(label, NULL, true);
 
     if (out_just_closed)
         *out_just_closed = false;
@@ -10685,7 +10685,7 @@ void ImGui::TabItemLabelAndCloseButton(ImDrawList* draw_list, const ImRect& bb, 
     }
 
     const float button_sz = g.FontSize;
-    const ImVec2 button_pos(ImMax(bb.Min.x, bb.Max.x - frame_padding.x - button_sz), bb.Min.y + frame_padding.y);
+    const glm::vec2 button_pos(ImMax(bb.Min.x, bb.Max.x - frame_padding.x - button_sz), bb.Min.y + frame_padding.y);
 
     // Close Button & Unsaved Marker
     // We are relying on a subtle and confusing distinction between 'hovered' and 'g.HoveredId' which happens because we are using ImGuiButtonFlags_AllowOverlapMode + SetItemAllowOverlap()
@@ -10708,7 +10708,7 @@ void ImGui::TabItemLabelAndCloseButton(ImDrawList* draw_list, const ImRect& bb, 
     const bool unsaved_marker_visible = (flags & ImGuiTabItemFlags_UnsavedDocument) != 0 && (button_pos.x + button_sz <= bb.Max.x) && (!close_button_visible || !is_hovered);
     if (unsaved_marker_visible)
     {
-        const ImRect bullet_bb(button_pos, button_pos + ImVec2(button_sz, button_sz));
+        const ImRect bullet_bb(button_pos, button_pos + glm::vec2(button_sz, button_sz));
         RenderBullet(draw_list, bullet_bb.GetCenter(), GetColorU32(ImGuiCol_Text));
     }
     else if (close_button_visible)

@@ -287,8 +287,8 @@ void ImGui_ImplDX11_RenderDrawData(ImDrawData* draw_data)
     // (Because we merged all buffers into a single one, we maintain our own offset into them)
     int global_idx_offset = 0;
     int global_vtx_offset = 0;
-    ImVec2 clip_off = draw_data->DisplayPos;
-    ImVec2 clip_scale = draw_data->FramebufferScale;
+    glm::vec2 clip_off = draw_data->DisplayPos;
+    glm::vec2 clip_scale = draw_data->FramebufferScale;
     for (const ImDrawList* draw_list : draw_data->CmdLists)
     {
         for (int cmd_i = 0; cmd_i < draw_list->CmdBuffer.Size; cmd_i++)
@@ -306,8 +306,8 @@ void ImGui_ImplDX11_RenderDrawData(ImDrawData* draw_data)
             else
             {
                 // Project scissor/clipping rectangles into framebuffer space
-                ImVec2 clip_min((pcmd->ClipRect.x - clip_off.x) * clip_scale.x, (pcmd->ClipRect.y - clip_off.y) * clip_scale.y);
-                ImVec2 clip_max((pcmd->ClipRect.z - clip_off.x) * clip_scale.x, (pcmd->ClipRect.w - clip_off.y) * clip_scale.y);
+                glm::vec2 clip_min((pcmd->ClipRect.x - clip_off.x) * clip_scale.x, (pcmd->ClipRect.y - clip_off.y) * clip_scale.y);
+                glm::vec2 clip_max((pcmd->ClipRect.z - clip_off.x) * clip_scale.x, (pcmd->ClipRect.w - clip_off.y) * clip_scale.y);
                 if (clip_max.x <= clip_min.x || clip_max.y <= clip_min.y)
                     continue;
 
@@ -761,7 +761,7 @@ static void ImGui_ImplDX11_DestroyWindow(ImGuiViewport* viewport)
     viewport->RendererUserData = nullptr;
 }
 
-static void ImGui_ImplDX11_SetWindowSize(ImGuiViewport* viewport, ImVec2 size)
+static void ImGui_ImplDX11_SetWindowSize(ImGuiViewport* viewport, glm::vec2 size)
 {
     ImGui_ImplDX11_Data* bd = ImGui_ImplDX11_GetBackendData();
     ImGui_ImplDX11_ViewportData* vd = (ImGui_ImplDX11_ViewportData*)viewport->RendererUserData;
@@ -785,7 +785,7 @@ static void ImGui_ImplDX11_RenderWindow(ImGuiViewport* viewport, void*)
 {
     ImGui_ImplDX11_Data* bd = ImGui_ImplDX11_GetBackendData();
     ImGui_ImplDX11_ViewportData* vd = (ImGui_ImplDX11_ViewportData*)viewport->RendererUserData;
-    ImVec4 clear_color = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
+    glm::vec4 clear_color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
     bd->pd3dDeviceContext->OMSetRenderTargets(1, &vd->RTView, nullptr);
     if (!(viewport->Flags & ImGuiViewportFlags_NoRendererClear))
         bd->pd3dDeviceContext->ClearRenderTargetView(vd->RTView, (float*)&clear_color);

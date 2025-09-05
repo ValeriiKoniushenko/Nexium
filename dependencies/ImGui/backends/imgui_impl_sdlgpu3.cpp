@@ -232,8 +232,8 @@ void ImGui_ImplSDLGPU3_RenderDrawData(ImDrawData* draw_data, SDL_GPUCommandBuffe
     ImGui_ImplSDLGPU3_SetupRenderState(draw_data, pipeline, command_buffer, render_pass, fd, fb_width, fb_height);
 
     // Will project scissor/clipping rectangles into framebuffer space
-    ImVec2 clip_off = draw_data->DisplayPos;         // (0,0) unless using multi-viewports
-    ImVec2 clip_scale = draw_data->FramebufferScale; // (1,1) unless using retina display which are often (2,2)
+    glm::vec2 clip_off = draw_data->DisplayPos;         // (0,0) unless using multi-viewports
+    glm::vec2 clip_scale = draw_data->FramebufferScale; // (1,1) unless using retina display which are often (2,2)
 
     // Render command lists
     // (Because we merged all buffers into a single one, we maintain our own offset into them)
@@ -256,8 +256,8 @@ void ImGui_ImplSDLGPU3_RenderDrawData(ImDrawData* draw_data, SDL_GPUCommandBuffe
             else
             {
                 // Project scissor/clipping rectangles into framebuffer space
-                ImVec2 clip_min((pcmd->ClipRect.x - clip_off.x) * clip_scale.x, (pcmd->ClipRect.y - clip_off.y) * clip_scale.y);
-                ImVec2 clip_max((pcmd->ClipRect.z - clip_off.x) * clip_scale.x, (pcmd->ClipRect.w - clip_off.y) * clip_scale.y);
+                glm::vec2 clip_min((pcmd->ClipRect.x - clip_off.x) * clip_scale.x, (pcmd->ClipRect.y - clip_off.y) * clip_scale.y);
+                glm::vec2 clip_max((pcmd->ClipRect.z - clip_off.x) * clip_scale.x, (pcmd->ClipRect.w - clip_off.y) * clip_scale.y);
 
                 // Clamp to viewport as SDL_SetGPUScissor() won't accept values that are off bounds
                 if (clip_min.x < 0.0f) { clip_min.x = 0.0f; }

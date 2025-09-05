@@ -59,9 +59,9 @@ namespace Core
         if (gGameInstance->renderMode.cast() == GameInstance::RenderMode::Editor)
         {
             const auto& r = gGameInstance->renderToTextureObject;
-            const ImVec2 renderSize = { static_cast<float>(r.getRenderSize().width),
+            const glm::vec2 renderSize = { static_cast<float>(r.getRenderSize().width),
                                         static_cast<float>(r.getRenderSize().height) };
-            ImGui::Image(r.getTextureId(), renderSize, ImVec2(0.0f, 1.0f), ImVec2(1.0f, 0.0f));
+            ImGui::Image(r.getTextureId(), renderSize, glm::vec2(0.0f, 1.0f), glm::vec2(1.0f, 0.0f));
         }
     }
 

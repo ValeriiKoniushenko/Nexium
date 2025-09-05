@@ -375,7 +375,7 @@ bool ImGui_ImplSDL3_ProcessEvent(const SDL_Event* event)
         {
             if (ImGui_ImplSDL3_GetViewportForWindowID(event->motion.windowID) == nullptr)
                 return false;
-            ImVec2 mouse_pos((float)event->motion.x, (float)event->motion.y);
+            glm::vec2 mouse_pos((float)event->motion.x, (float)event->motion.y);
             if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
             {
                 int window_x, window_y;
@@ -894,12 +894,12 @@ static void ImGui_ImplSDL3_UpdateMonitors()
         ImGuiPlatformMonitor monitor;
         SDL_Rect r;
         SDL_GetDisplayBounds(display_id, &r);
-        monitor.MainPos = monitor.WorkPos = ImVec2((float)r.x, (float)r.y);
-        monitor.MainSize = monitor.WorkSize = ImVec2((float)r.w, (float)r.h);
+        monitor.MainPos = monitor.WorkPos = glm::vec2((float)r.x, (float)r.y);
+        monitor.MainSize = monitor.WorkSize = glm::vec2((float)r.w, (float)r.h);
         if (SDL_GetDisplayUsableBounds(display_id, &r) && r.w > 0 && r.h > 0)
         {
-            monitor.WorkPos = ImVec2((float)r.x, (float)r.y);
-            monitor.WorkSize = ImVec2((float)r.w, (float)r.h);
+            monitor.WorkPos = glm::vec2((float)r.x, (float)r.y);
+            monitor.WorkSize = glm::vec2((float)r.w, (float)r.h);
         }
         monitor.DpiScale = SDL_GetDisplayContentScale(display_id); // See https://wiki.libsdl.org/SDL3/README-highdpi for details.
         monitor.PlatformHandle = (void*)(intptr_t)n;
@@ -910,7 +910,7 @@ static void ImGui_ImplSDL3_UpdateMonitors()
     SDL_free(displays);
 }
 
-static void ImGui_ImplSDL3_GetWindowSizeAndFramebufferScale(SDL_Window* window, ImVec2* out_size, ImVec2* out_framebuffer_scale)
+static void ImGui_ImplSDL3_GetWindowSizeAndFramebufferScale(SDL_Window* window, glm::vec2* out_size, glm::vec2* out_framebuffer_scale)
 {
     int w, h;
     int display_w, display_h;
@@ -919,9 +919,9 @@ static void ImGui_ImplSDL3_GetWindowSizeAndFramebufferScale(SDL_Window* window, 
         w = h = 0;
     SDL_GetWindowSizeInPixels(window, &display_w, &display_h);
     if (out_size != nullptr)
-        *out_size = ImVec2((float)w, (float)h);
+        *out_size = glm::vec2((float)w, (float)h);
     if (out_framebuffer_scale != nullptr)
-        *out_framebuffer_scale = (w > 0 && h > 0) ? ImVec2((float)display_w / w, (float)display_h / h) : ImVec2(1.0f, 1.0f);
+        *out_framebuffer_scale = (w > 0 && h > 0) ? glm::vec2((float)display_w / w, (float)display_h / h) : glm::vec2(1.0f, 1.0f);
 }
 
 void ImGui_ImplSDL3_NewFrame()
@@ -1104,38 +1104,38 @@ static void ImGui_ImplSDL3_UpdateWindow(ImGuiViewport* viewport)
 #endif
 }
 
-static ImVec2 ImGui_ImplSDL3_GetWindowPos(ImGuiViewport* viewport)
+static glm::vec2 ImGui_ImplSDL3_GetWindowPos(ImGuiViewport* viewport)
 {
     ImGui_ImplSDL3_ViewportData* vd = (ImGui_ImplSDL3_ViewportData*)viewport->PlatformUserData;
     int x = 0, y = 0;
     SDL_GetWindowPosition(vd->Window, &x, &y);
-    return ImVec2((float)x, (float)y);
+    return glm::vec2((float)x, (float)y);
 }
 
-static void ImGui_ImplSDL3_SetWindowPos(ImGuiViewport* viewport, ImVec2 pos)
+static void ImGui_ImplSDL3_SetWindowPos(ImGuiViewport* viewport, glm::vec2 pos)
 {
     ImGui_ImplSDL3_ViewportData* vd = (ImGui_ImplSDL3_ViewportData*)viewport->PlatformUserData;
     SDL_SetWindowPosition(vd->Window, (int)pos.x, (int)pos.y);
 }
 
-static ImVec2 ImGui_ImplSDL3_GetWindowSize(ImGuiViewport* viewport)
+static glm::vec2 ImGui_ImplSDL3_GetWindowSize(ImGuiViewport* viewport)
 {
     ImGui_ImplSDL3_ViewportData* vd = (ImGui_ImplSDL3_ViewportData*)viewport->PlatformUserData;
     int w = 0, h = 0;
     SDL_GetWindowSize(vd->Window, &w, &h);
-    return ImVec2((float)w, (float)h);
+    return glm::vec2((float)w, (float)h);
 }
 
-static void ImGui_ImplSDL3_SetWindowSize(ImGuiViewport* viewport, ImVec2 size)
+static void ImGui_ImplSDL3_SetWindowSize(ImGuiViewport* viewport, glm::vec2 size)
 {
     ImGui_ImplSDL3_ViewportData* vd = (ImGui_ImplSDL3_ViewportData*)viewport->PlatformUserData;
     SDL_SetWindowSize(vd->Window, (int)size.x, (int)size.y);
 }
 
-static ImVec2 ImGui_ImplSDL3_GetWindowFramebufferScale(ImGuiViewport* viewport)
+static glm::vec2 ImGui_ImplSDL3_GetWindowFramebufferScale(ImGuiViewport* viewport)
 {
     ImGui_ImplSDL3_ViewportData* vd = (ImGui_ImplSDL3_ViewportData*)viewport->PlatformUserData;
-    ImVec2 framebuffer_scale;
+    glm::vec2 framebuffer_scale;
     ImGui_ImplSDL3_GetWindowSizeAndFramebufferScale(vd->Window, nullptr, &framebuffer_scale);
     return framebuffer_scale;
 }

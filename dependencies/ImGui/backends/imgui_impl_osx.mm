@@ -662,8 +662,8 @@ void ImGui_ImplOSX_NewFrame(NSView* view)
     if (view)
     {
         const float fb_scale = (float)[view.window backingScaleFactor];
-        io.DisplaySize = ImVec2((float)view.bounds.size.width, (float)view.bounds.size.height);
-        io.DisplayFramebufferScale = ImVec2(fb_scale, fb_scale);
+        io.DisplaySize = glm::vec2((float)view.bounds.size.width, (float)view.bounds.size.height);
+        io.DisplayFramebufferScale = glm::vec2(fb_scale, fb_scale);
     }
 
     // Setup time step
@@ -975,7 +975,7 @@ static void ImGui_ImplOSX_ShowWindow(ImGuiViewport* viewport)
     [vd->Window setIsVisible:YES];
 }
 
-static ImVec2 ImGui_ImplOSX_GetWindowPos(ImGuiViewport* viewport)
+static glm::vec2 ImGui_ImplOSX_GetWindowPos(ImGuiViewport* viewport)
 {
     ImGui_ImplOSX_ViewportData* vd = (ImGui_ImplOSX_ViewportData*)viewport->PlatformUserData;
     IM_ASSERT(vd->Window != 0);
@@ -987,10 +987,10 @@ static ImVec2 ImGui_ImplOSX_GetWindowPos(ImGuiViewport* viewport)
         contentRect = frame;
 
     NSRect firstScreenFrame = NSScreen.screens[0].frame;
-    return ImVec2(frame.origin.x, firstScreenFrame.size.height - frame.origin.y - contentRect.size.height);
+    return glm::vec2(frame.origin.x, firstScreenFrame.size.height - frame.origin.y - contentRect.size.height);
 }
 
-static void ImGui_ImplOSX_SetWindowPos(ImGuiViewport* viewport, ImVec2 pos)
+static void ImGui_ImplOSX_SetWindowPos(ImGuiViewport* viewport, glm::vec2 pos)
 {
     ImGui_ImplOSX_ViewportData* vd = (ImGui_ImplOSX_ViewportData*)viewport->PlatformUserData;
     IM_ASSERT(vd->Window != 0);
@@ -1003,17 +1003,17 @@ static void ImGui_ImplOSX_SetWindowPos(ImGuiViewport* viewport, ImVec2 pos)
     [window setFrameOrigin:r.origin];
 }
 
-static ImVec2 ImGui_ImplOSX_GetWindowSize(ImGuiViewport* viewport)
+static glm::vec2 ImGui_ImplOSX_GetWindowSize(ImGuiViewport* viewport)
 {
     ImGui_ImplOSX_ViewportData* vd = (ImGui_ImplOSX_ViewportData*)viewport->PlatformUserData;
     IM_ASSERT(vd->Window != 0);
 
     NSWindow* window = vd->Window;
     NSSize size = window.contentLayoutRect.size;
-    return ImVec2(size.width, size.height);
+    return glm::vec2(size.width, size.height);
 }
 
-static void ImGui_ImplOSX_SetWindowSize(ImGuiViewport* viewport, ImVec2 size)
+static void ImGui_ImplOSX_SetWindowSize(ImGuiViewport* viewport, glm::vec2 size)
 {
     ImGui_ImplOSX_ViewportData* vd = (ImGui_ImplOSX_ViewportData*)viewport->PlatformUserData;
     IM_ASSERT(vd->Window != 0);
@@ -1026,12 +1026,12 @@ static void ImGui_ImplOSX_SetWindowSize(ImGuiViewport* viewport, ImVec2 size)
     [window setFrame:rect display:YES];
 }
 
-static ImVec2 ImGui_ImplOSX_GetWindowFramebufferScale(ImGuiViewport* viewport)
+static glm::vec2 ImGui_ImplOSX_GetWindowFramebufferScale(ImGuiViewport* viewport)
 {
     ImGui_ImplOSX_ViewportData* vd = (ImGui_ImplOSX_ViewportData*)viewport->PlatformUserData;
     NSWindow* window = vd->Window;
     const float fb_scale = (float)[window backingScaleFactor];
-    return ImVec2(fb_scale, fb_scale);
+    return glm::vec2(fb_scale, fb_scale);
 }
 
 static void ImGui_ImplOSX_SetWindowFocus(ImGuiViewport* viewport)
@@ -1099,10 +1099,10 @@ static void ImGui_ImplOSX_UpdateMonitors()
         ConvertNSRect(&visibleFrame);
 
         ImGuiPlatformMonitor imgui_monitor;
-        imgui_monitor.MainPos = ImVec2(frame.origin.x, frame.origin.y);
-        imgui_monitor.MainSize = ImVec2(frame.size.width, frame.size.height);
-        imgui_monitor.WorkPos = ImVec2(visibleFrame.origin.x, visibleFrame.origin.y);
-        imgui_monitor.WorkSize = ImVec2(visibleFrame.size.width, visibleFrame.size.height);
+        imgui_monitor.MainPos = glm::vec2(frame.origin.x, frame.origin.y);
+        imgui_monitor.MainSize = glm::vec2(frame.size.width, frame.size.height);
+        imgui_monitor.WorkPos = glm::vec2(visibleFrame.origin.x, visibleFrame.origin.y);
+        imgui_monitor.WorkSize = glm::vec2(visibleFrame.size.width, visibleFrame.size.height);
         imgui_monitor.DpiScale = screen.backingScaleFactor;
         imgui_monitor.PlatformHandle = (__bridge_retained void*)screen;
 
