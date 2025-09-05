@@ -32,14 +32,33 @@ namespace Core
         ECS_REGISTER_NEW_COMPONENT(HorizontalLayout, Widget);
 
     public:
+        // clang-format off
+        CreateEnum(Align, int,
+            Left,
+            Right,
+            SpaceBetween
+        );
+        // clang-format on
+
+    public:
         [[nodiscard]] float getWidth() override;
         [[nodiscard]] float getHeight() override;
+
+        void setAlign(Align align) { _align = align; }
+        [[nodiscard]] Align getAlign() const noexcept { return _align; }
 
     protected:
         void onAddChild(BaseComponent* newChild) override;
         void onTick(float delta) override;
         void onDraw() override;
         void onInitialize() override;
+
+        void drawAlignSpaceBetween();
+        void drawAlignLeft();
+        void drawAlignRight();
+
+    protected:
+        Align _align = Align::Left;
     };
 
 } // namespace Core

@@ -51,12 +51,42 @@ namespace Core
     void HorizontalLayout::onTick(float delta)
     {
         Widget::onTick(delta);
+    }
+
+    void HorizontalLayout::onDraw()
+    {
+        if (_align.cast() == Align::Left)
+        {
+            drawAlignLeft();
+        }
+        else if (_align.cast() == Align::Right)
+        {
+            drawAlignRight();
+        }
+        else if (_align.cast() == Align::SpaceBetween)
+        {
+            drawAlignSpaceBetween();
+        }
+        else
+        {
+            Assert(false);
+            drawAlignLeft();
+        }
+    }
+
+    void HorizontalLayout::onInitialize()
+    {
+        Widget::onInitialize();
+    }
+
+    void HorizontalLayout::drawAlignSpaceBetween()
+    {
         int pushed = 0;
 
         float spacing = getWidth();
         if (hasChildren())
         {
-            for (auto& child : _children)
+            for (const auto& child : _children)
             {
                 spacing -= child->unsafeCastTo<Widget>()->getWidth();
             }
@@ -75,13 +105,35 @@ namespace Core
         ImGui::PopStyleVar(pushed);
     }
 
-    void HorizontalLayout::onDraw()
+    void HorizontalLayout::drawAlignLeft()
     {
+        for (auto&& child : _children)
+        {
+            child->unsafeCastTo<Widget>()->onDraw();
+            ImGui::SameLine();
+        }
     }
 
-    void HorizontalLayout::onInitialize()
+    void HorizontalLayout::drawAlignRight()
     {
-        Widget::onInitialize();
+        if (hasChildren())
+        {
+            float spacing = getWidth();
+            for (const auto& child : _children)
+            {
+                spacing -= child->unsafeCastTo<Widget>()->getWidth();
+                spacing -= style().ItemSpacing.x;
+            }
+
+            ImGui::Dummy(ImVec2(spacing, 0));
+            ImGui::SameLine();
+        }
+
+        for (auto&& child : _children)
+        {
+            child->unsafeCastTo<Widget>()->onDraw();
+            ImGui::SameLine();
+        }
     }
 
 } // namespace Core
