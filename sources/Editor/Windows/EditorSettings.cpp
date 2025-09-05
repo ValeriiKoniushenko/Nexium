@@ -35,10 +35,12 @@ namespace Core
         BaseFloatEWC::onInitialize();
 
         //        _layout.setSpacing(40);
+        _layout.setHeight(300);
 
         auto* horizontal = _layout.addChildComponent<HorizontalLayout>();
         horizontal->setHorizontalAlign(HorizontalLayout::Align::Center);
         horizontal->setVerticalAlign(HorizontalLayout::Align::Center);
+        horizontal->setWidth(300.f);
         horizontal->addChildComponent<Button>()
             ->setText("Button 1")
             .onClick.subscribe(

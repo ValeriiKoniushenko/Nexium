@@ -35,6 +35,9 @@ namespace Core
         [[nodiscard]] float getWidth() const override;
         [[nodiscard]] float getHeight() const override;
 
+        /**
+         * @brief It will work only while Top/Bottom/Center for vert. align
+         */
         VerticalLayout& setSpacing(float value);
         VerticalLayout& resetSpacing();
         [[nodiscard]] float getSpacing() const;
@@ -44,6 +47,11 @@ namespace Core
         void onTick(float delta) override;
         void onDraw() override;
         void onInitialize() override;
+
+        void drawAlignSpaceBetween();
+        void drawAlignTop();
+        void drawAlignBottom();
+        void drawAlignCenter();
 
     protected:
         std::optional<float> _spacing;

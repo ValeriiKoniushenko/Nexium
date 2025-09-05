@@ -75,7 +75,6 @@ namespace Core
     void HorizontalLayout::onDraw()
     {
         const auto originalCursor = ImGui::GetCursorPos();
-        ;
 
         calcYOffsets();
 
@@ -220,15 +219,15 @@ namespace Core
         for (auto&& child : _children)
         {
             const auto w = child->unsafeCastTo<Widget>();
-            if (_verticalAlign.cast() == Align::Top)
+            if (_secondAlign.cast() == Align::Top)
             {
                 _yOffsets.at(i) = 0;
             }
-            else if (_verticalAlign.cast() == Align::Bottom)
+            else if (_secondAlign.cast() == Align::Bottom)
             {
                 _yOffsets.at(i) = ownHeight - w->getHeight();
             }
-            else if (_verticalAlign.cast() == Align::Center)
+            else if (_secondAlign.cast() == Align::Center)
             {
                 _yOffsets.at(i) = (ownHeight - w->getHeight()) / 2.f;
             }

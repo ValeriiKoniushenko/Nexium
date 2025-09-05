@@ -47,8 +47,6 @@ namespace Core
     public:
         DerivedLayout& setHorizontalAlign(Align align)
         {
-            Assert(align.cast() == Align::Left || align.cast() == Align::Right
-                   || align.cast() == Align::Center);
             _align = align;
             return *static_cast<DerivedLayout*>(this);
         }
@@ -56,12 +54,10 @@ namespace Core
 
         DerivedLayout& setVerticalAlign(Align align)
         {
-            Assert(align.cast() == Align::Bottom || align.cast() == Align::Top
-                   || align.cast() == Align::Center);
-            _verticalAlign = align;
+            _secondAlign = align;
             return *static_cast<DerivedLayout*>(this);
         }
-        [[nodiscard]] Align getVerticalAlign() const noexcept { return _verticalAlign; }
+        [[nodiscard]] Align getVerticalAlign() const noexcept { return _secondAlign; }
 
         DerivedLayout& setHeight(float value)
         {
@@ -89,7 +85,7 @@ namespace Core
         std::optional<float> _width;
 
         Align _align = Align::Left;
-        Align _verticalAlign = Align::Center;
+        Align _secondAlign = Align::Center;
     };
 
 } // namespace Core
