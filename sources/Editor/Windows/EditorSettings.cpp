@@ -49,11 +49,18 @@ namespace Core
 
         _layout.addChildComponent<Button>()->setText("Vertical layout");
 
+        auto line = HorizontalLayout::Create();
+
         auto labelAndButton = HorizontalLayout::Create();
         labelAndButton->setFitContent(true);
         (void)labelAndButton->addChildComponent<Label>("Some text: ");
         (void)labelAndButton->addChildComponent<Button>("Click me!");
-        _layout.attachChild(labelAndButton);
+        line->attachChild(labelAndButton);
+        line->attachChild(labelAndButton);
+
+        _layout.attachChild(line);
+
+
 
         *_layout.addChildComponent<HorizontalLayout>() = *horizontal;
     }

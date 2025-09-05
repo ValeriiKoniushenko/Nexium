@@ -180,7 +180,7 @@ namespace Core
 
     void BaseComponent::attachChild(const BaseComponent::Ptr& child)
     {
-        (void)rawAddChildComponent(child.get());
+        (void)rawAddChildComponent(child->clone().get());
     }
 
     void BaseComponent::detachChild(BaseComponent* child)

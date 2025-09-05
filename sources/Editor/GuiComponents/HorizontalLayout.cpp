@@ -22,6 +22,8 @@
 
 #include "HorizontalLayout.h"
 
+#include "ImGui/imgui_internal.h"
+
 namespace Core
 {
     ECS_REGISTER_NEW_COMPONENT_TYPE(HorizontalLayout)
@@ -91,6 +93,9 @@ namespace Core
 
     void HorizontalLayout::onDraw()
     {
+        auto* window = ImGui::GetCurrentWindow();
+        window->DC.CurrLineTextBaseOffset = 0.0f;
+
         const auto originalCursor = ImGui::GetCursorPos();
 
         calcYOffsets();
