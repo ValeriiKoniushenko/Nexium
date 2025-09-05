@@ -49,6 +49,12 @@ namespace Core
                 return fabs(bottomRight.y - topLeft.y);
             }
 
+            [[nodiscard]] bool isIntersects(glm::vec2 pos)
+            {
+                return pos.x >= topLeft.x && pos.x <= bottomRight.x && pos.y >= topLeft.y
+                       && pos.y <= bottomRight.y;
+            }
+
             [[nodiscard]] Bounds operator+(glm::vec2 offset)
             {
                 Bounds bounds = *this;

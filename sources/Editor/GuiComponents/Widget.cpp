@@ -22,6 +22,9 @@
 
 #include "Widget.h"
 
+#include "InputDevices/Keyboard.h"
+#include "InputDevices/Mouse.h"
+
 namespace Core
 {
 
@@ -67,10 +70,17 @@ namespace Core
     void Widget::draw()
     {
         _pos = ImGui::GetCursorPos();
+#if defined(DEBUG)
+        if (Keyboard::IsKeyPressed(Keyboard::Key_F2) && getGlobalBounds().isIntersects(Mouse::GetPosition()))
+        {
+            drawOutline();
+        }
+#endif
         if (_isDrawOutline)
         {
             drawOutline();
         }
+
 
         ImGui::PushID(id);
         onDraw();
