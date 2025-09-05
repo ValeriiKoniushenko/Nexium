@@ -56,6 +56,11 @@ namespace Core
         void setAutoHeight(bool value) { _autoHeight = value; }
         [[nodiscard]] bool getAutoHeight() const noexcept { return _autoHeight; }
 
+        void setHeight(float value) { _height = value; }
+        void resetHeight() { _height.reset(); }
+        void setWidth(float value) { _width = value; }
+        void resetWidth() { _width.reset(); }
+
     protected:
         void onAddChild(BaseComponent* newChild) override;
         void onTick(float delta) override;
@@ -70,8 +75,11 @@ namespace Core
 
     protected:
         std::vector<float> _yOffsets;
+        std::optional<float> _height;
+        std::optional<float> _width;
+
         Align _align = Align::Left;
-        Align _verticalAlign = Align::Bottom;
+        Align _verticalAlign = Align::Center;
         bool _autoHeight = false;
     };
 

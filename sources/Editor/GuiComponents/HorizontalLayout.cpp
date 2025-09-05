@@ -24,9 +24,15 @@
 
 namespace Core
 {
+    ECS_REGISTER_NEW_COMPONENT_TYPE(HorizontalLayout);
 
     float HorizontalLayout::getWidth() const
     {
+        if (_width)
+        {
+            return *_width;
+        }
+
         if (hasParent())
         {
             return getParent()->unsafeCastTo<Widget>()->getWidth();
@@ -43,6 +49,11 @@ namespace Core
                 return getParent()->unsafeCastTo<Widget>()->getHeight();
             }
             return ImGui::GetContentRegionAvail().y;
+        }
+
+        if (_height)
+        {
+            return *_height;
         }
 
         static auto cmp = [](const BaseComponent::Ptr& a, const BaseComponent::Ptr& b)
@@ -72,7 +83,8 @@ namespace Core
 
     void HorizontalLayout::onDraw()
     {
-        const auto originalYCursor = ImGui::GetCursorPosY();
+        const auto originalCursor = ImGui::GetCursorPos();
+        ;
 
         calcYOffsets();
 
@@ -98,7 +110,12 @@ namespace Core
             drawAlignLeft();
         }
 
-        ImGui::SetCursorPosY(originalYCursor);
+        if (_width)
+        {
+            ImGui::SetCursorPosX(originalCursor.x + *_width);
+        }
+        ImGui::SetCursorPosY(originalCursor.y);
+
         ImGui::Dummy(ImVec2(0, 0));
     }
 

@@ -57,17 +57,21 @@ namespace Core
     {
         ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
-        // Calculate rect corners in screen space
+        constexpr float thickness = 1.f;
         const auto size = ImVec2(getWidth(), getHeight());
         const auto wndPos = ImGui::GetWindowPos();
-        const ImVec2 p_min = ImVec2(wndPos.x + _pos.x, wndPos.y + _pos.y);
-        const ImVec2 p_max = ImVec2(p_min.x + size.x, p_min.y + size.y);
+        const auto scrollX = ImGui::GetScrollX();
+        const auto scrollY = ImGui::GetScrollY();
+        const ImVec2 p_min = ImVec2(wndPos.x + _pos.x - thickness - scrollX,
+                                    wndPos.y + _pos.y - thickness - scrollY);
+        const ImVec2 p_max
+            = ImVec2(p_min.x + size.x + thickness * 2.f, p_min.y + size.y + thickness * 2.f);
 
         // Draw yellow rect outline
         draw_list->AddRect(p_min, p_max, IM_COL32(255, 255, 0, 255), // yellow color
                            1.0f,                                     // rounding
                            0,                                        // flags
-                           1.0f                                      // thickness
+                           thickness                                 // thickness
         );
     }
 
