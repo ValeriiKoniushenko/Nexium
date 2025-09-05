@@ -24,6 +24,7 @@
 
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
+#include "Editor/GuiComponents/Label.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 
 namespace Core
@@ -120,6 +121,12 @@ namespace Core
                     context->setText(aligns[i].toStr().c_str());
                 });
 
+        auto labelAndButton = HorizontalLayout::Create();
+        labelAndButton->setIsDrawOutline(true);
+        (void)labelAndButton->addChildComponent<Label>("Some text: ")->setIsDrawOutline(true);
+        (void)labelAndButton->addChildComponent<Button>("Click me!");
+
+        _layout.attachChild(labelAndButton);
         *_layout.addChildComponent<HorizontalLayout>() = *horizontal;
     }
 

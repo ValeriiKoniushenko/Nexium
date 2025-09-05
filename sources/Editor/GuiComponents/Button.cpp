@@ -172,12 +172,6 @@ namespace Core
 
     ImVec2 Button::getRealSize() const
     {
-        if (_size.x == 0.f || _size.y == 0.f)
-        {
-            return ImGui::CalcItemSize(_size, _textSize.x + style().FramePadding.x * 2.0f,
-                                       _textSize.y + style().FramePadding.y * 2.0f);
-        }
-
         return _size;
     }
 
@@ -207,7 +201,19 @@ namespace Core
     {
         Widget::onInitialize();
 
-        setText("Button");
+        if (_name.isEmpty())
+        {
+            setText("Button");
+        }
+        if (_textSize.x == 0.0f && _textSize.y == 0.0f)
+        {
+            setText(getComponentName());
+        }
+        if (_size.x == 0.0f && _size.y == 0.0f)
+        {
+            _size = ImGui::CalcItemSize(_size, _textSize.x + style().FramePadding.x * 2.0f,
+                                        _textSize.y + style().FramePadding.y * 2.0f);
+        }
     }
 
 } // namespace Core

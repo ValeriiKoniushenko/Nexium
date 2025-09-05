@@ -38,11 +38,16 @@ namespace Core
     {
         if constexpr (std::is_abstract_v<T>)
         {
+            Assert(false, "You are trying to create somewhere an abstract object");
             return nullptr;
         }
         else if constexpr (std::is_copy_constructible_v<T>)
         {
-            return new T(*data);
+            if (data)
+            {
+                return new T(*data);
+            }
+            return new T;
         }
         else
         {
@@ -78,6 +83,10 @@ public:                                                                         
     [[nodiscard]] BaseComponent::Ptr clone() override                                              \
     {                                                                                              \
         return static_cast<CurrentClass*>(tryAllocateECSObject<CurrentClass>(this));               \
+    }                                                                                              \
+    [[nodiscard]] static CurrentClass::Ptr Create()                                                \
+    {                                                                                              \
+        return static_cast<CurrentClass*>(tryAllocateECSObject<CurrentClass>(nullptr));            \
     }                                                                                              \
                                                                                                    \
 private:                                                                                           \
@@ -469,7 +478,23 @@ namespace Core
             return static_cast<ComponentT*>(rawAddChildComponent(newOne.get()));
         }
 
-        void attachChild(BaseComponent* child);
+        /**
+         * @brief attach existing child. Child's lifetime should be the same or more
+         * than parent. If you want to put child and don't worry about lifetime - use
+         * 'adoptChild'
+         */
+        void attachChild(const BaseComponent::Ptr& child);
+
+        /**
+         * @brief use this function if you want to transfer ownership of your object.
+         */
+        template<IsComponent ComponentT>
+        void adoptChild(ComponentT&& child)
+        {
+            // typename ComponentT::Ptr newOne = new ComponentT(std::forward<Args>(args)...);
+            // return static_cast<ComponentT*>(rawAddChildComponent(newOne.get()));
+        }
+
         void detachChild(BaseComponent* child);
 
         void removeChild(const BaseComponent* child);

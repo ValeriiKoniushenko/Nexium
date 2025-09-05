@@ -112,15 +112,18 @@ namespace Core
     void HorizontalLayout::onInitialize()
     {
         Widget::onInitialize();
-        setComponentName("HorizontalLayout");
+        if (_name.isEmpty())
+        {
+            setComponentName("HorizontalLayout");
+        }
 
         if (getVerticalAlign().cast() == Align::None)
         {
-            setVerticalAlign(Align::Top);
+            setVerticalAlign(Align::Center);
         }
         if (getHorizontalAlign().cast() == Align::None)
         {
-            setHorizontalAlign(Align::Center);
+            setHorizontalAlign(Align::Left);
         }
     }
 

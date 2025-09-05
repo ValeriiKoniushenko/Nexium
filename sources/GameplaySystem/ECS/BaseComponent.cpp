@@ -178,9 +178,9 @@ namespace Core
         }
     }
 
-    void BaseComponent::attachChild(BaseComponent* child)
+    void BaseComponent::attachChild(const BaseComponent::Ptr& child)
     {
-        (void)rawAddChildComponent(child);
+        (void)rawAddChildComponent(child.get());
     }
 
     void BaseComponent::detachChild(BaseComponent* child)

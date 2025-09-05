@@ -128,8 +128,10 @@ namespace Core
     void VerticalLayout::onInitialize()
     {
         Widget::onInitialize();
-        setComponentName("VerticalLayout");
-        setIsDrawOutline(true);
+        if (_name.isEmpty())
+        {
+            setComponentName("VerticalLayout");
+        }
 
         if (getVerticalAlign().cast() == Align::None)
         {
