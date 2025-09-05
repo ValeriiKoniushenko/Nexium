@@ -42,15 +42,6 @@ namespace Core
 
     float HorizontalLayout::getHeight() const
     {
-        if (_autoHeight)
-        {
-            if (hasParent())
-            {
-                return getParent()->unsafeCastTo<Widget>()->getHeight();
-            }
-            return ImGui::GetContentRegionAvail().y;
-        }
-
         if (_height)
         {
             return *_height;

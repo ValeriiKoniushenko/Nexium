@@ -53,9 +53,6 @@ namespace Core
         void setVerticalAlign(Align align) { _verticalAlign = align; }
         [[nodiscard]] Align getVerticalAlign() const noexcept { return _verticalAlign; }
 
-        void setAutoHeight(bool value) { _autoHeight = value; }
-        [[nodiscard]] bool getAutoHeight() const noexcept { return _autoHeight; }
-
         void setHeight(float value) { _height = value; }
         void resetHeight() { _height.reset(); }
         void setWidth(float value) { _width = value; }
@@ -80,7 +77,6 @@ namespace Core
 
         Align _align = Align::Left;
         Align _verticalAlign = Align::Center;
-        bool _autoHeight = false;
     };
 
 } // namespace Core

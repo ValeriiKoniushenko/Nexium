@@ -72,14 +72,7 @@ namespace Core
                             HorizontalLayout::Align::Right };
                     context->getParent()->castTo<HorizontalLayout>()->setHorizontalAlign(aligns[i]);
                 });
-        horizontal->addChildComponent<Button>()
-            ->setText("Button 2")
-            .onClick.subscribe(
-                [](Button* context)
-                {
-                    auto horizontal = context->getParent()->castTo<HorizontalLayout>();
-                    horizontal->setAutoHeight(!horizontal->getAutoHeight());
-                });
+        horizontal->addChildComponent<Button>()->setText("Button 2");
         horizontal->addChildComponent<Button>()->setText("X").onClick.subscribe(
             [](Button* context)
             {
