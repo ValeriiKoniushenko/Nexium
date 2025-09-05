@@ -34,7 +34,7 @@ namespace Core
     {
         BaseFloatEWC::onInitialize();
 
-        //        _layout.setSpacing(40);
+        _layout.setSpacing(40);
         _layout.setHeight(300);
         _layout.setVerticalAlign(VerticalLayout::Align::Center);
 

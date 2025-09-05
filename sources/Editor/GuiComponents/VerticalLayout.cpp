@@ -158,15 +158,17 @@ namespace Core
     }
     void VerticalLayout::drawAlignCenter()
     {
+        const float defaultSpacing = style().ItemSpacing.y;
+
         if (hasChildren())
         {
             float spacing = getHeight();
             for (const auto& child : _children)
             {
                 spacing -= child->unsafeCastTo<Widget>()->getHeight();
-                spacing -= _spacing.value_or(style().ItemSpacing.y);
+                spacing -= _spacing.value_or(defaultSpacing);
             }
-            spacing += _spacing.value_or(style().ItemSpacing.y);
+            spacing += _spacing.value_or(defaultSpacing);
             spacing /= 2.f;
 
             ImGui::SetCursorPosY(ImGui::GetCursorPosY() + spacing);
@@ -179,6 +181,10 @@ namespace Core
         {
             // ImGui::SetCursorPosX(originalXCursor + _xOffsets.at(i++));
             child->unsafeCastTo<Widget>()->draw();
+            if (_spacing)
+            {
+                ImGui::SetCursorPosY(ImGui::GetCursorPosY() + *_spacing - defaultSpacing);
+            }
         }
     }
 
