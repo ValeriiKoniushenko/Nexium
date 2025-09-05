@@ -67,6 +67,10 @@ namespace Core
         {
             drawAlignSpaceBetween();
         }
+        else if (_align.cast() == Align::Center)
+        {
+            drawAlignCenter();
+        }
         else
         {
             Assert(false);
@@ -124,6 +128,30 @@ namespace Core
                 spacing -= child->unsafeCastTo<Widget>()->getWidth();
                 spacing -= style().ItemSpacing.x;
             }
+
+            ImGui::Dummy(ImVec2(spacing, 0));
+            ImGui::SameLine();
+        }
+
+        for (auto&& child : _children)
+        {
+            child->unsafeCastTo<Widget>()->onDraw();
+            ImGui::SameLine();
+        }
+    }
+
+    void HorizontalLayout::drawAlignCenter()
+    {
+        if (hasChildren())
+        {
+            float spacing = getWidth();
+            for (const auto& child : _children)
+            {
+                spacing -= child->unsafeCastTo<Widget>()->getWidth();
+                spacing -= style().ItemSpacing.x;
+            }
+            spacing -= style().ItemSpacing.x;
+            spacing /= 2.f;
 
             ImGui::Dummy(ImVec2(spacing, 0));
             ImGui::SameLine();

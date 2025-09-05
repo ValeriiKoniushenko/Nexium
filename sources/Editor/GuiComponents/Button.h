@@ -63,6 +63,11 @@ namespace Core
         Button& setWidth(float width);
         Button& resetWidth();
         [[nodiscard]] float getWidth() const;
+
+        Button& setHeight(float height);
+        Button& resetHeight();
+        [[nodiscard]] float getHeight() const;
+
         [[nodiscard]] ImVec2 getRealSize() const;
 
         [[nodiscard]] float getWidth() override { return getRealSize().x; }

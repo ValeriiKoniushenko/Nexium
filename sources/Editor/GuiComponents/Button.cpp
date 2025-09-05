@@ -161,6 +161,23 @@ namespace Core
         return _size.x;
     }
 
+    Button& Button::setHeight(float height)
+    {
+        _size.y = height;
+        return *this;
+    }
+
+    Button& Button::resetHeight()
+    {
+        _size.y = 0.0f;
+        return *this;
+    }
+
+    float Button::getHeight() const
+    {
+        return _size.y;
+    }
+
     ImVec2 Button::getRealSize() const
     {
         if (_size.x == 0.f || _size.y == 0.f)

@@ -36,7 +36,8 @@ namespace Core
         CreateEnum(Align, int,
             Left,
             Right,
-            SpaceBetween
+            SpaceBetween,
+            Center
         );
         // clang-format on
 
@@ -56,6 +57,7 @@ namespace Core
         void drawAlignSpaceBetween();
         void drawAlignLeft();
         void drawAlignRight();
+        void drawAlignCenter();
 
     protected:
         Align _align = Align::Left;
