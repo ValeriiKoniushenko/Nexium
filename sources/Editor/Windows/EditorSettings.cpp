@@ -35,13 +35,14 @@ namespace Core
         BaseFloatEWC::onInitialize();
 
         _layout.setSpacing(40);
+
         auto* horizontal = _layout.addChildComponent<HorizontalLayout>();
         horizontal->setHorizontalAlign(HorizontalLayout::Align::Center);
         horizontal->setVerticalAlign(HorizontalLayout::Align::Center);
         horizontal->addChildComponent<Button>()
             ->setText("Button 1")
             .onClick.subscribe(
-                [horizontal]()
+                [](Button* context)
                 {
                     static int i = 0;
                     if (++i > 2)
@@ -52,13 +53,13 @@ namespace Core
                     static HorizontalLayout::Align aligns[3]
                         = { HorizontalLayout::Align::Top, HorizontalLayout::Align::Center,
                             HorizontalLayout::Align::Bottom };
-                    horizontal->setVerticalAlign(aligns[i]);
+                    context->getParent()->castTo<HorizontalLayout>()->setVerticalAlign(aligns[i]);
                 });
         horizontal->addChildComponent<Button>()
             ->setText("Hello world!")
             .setHeight(50.f)
             .onClick.subscribe(
-                [horizontal]()
+                [](Button* context)
                 {
                     static int i = 0;
                     if (++i > 2)
@@ -69,18 +70,20 @@ namespace Core
                     static HorizontalLayout::Align aligns[3]
                         = { HorizontalLayout::Align::Left, HorizontalLayout::Align::Center,
                             HorizontalLayout::Align::Right };
-                    horizontal->setHorizontalAlign(aligns[i]);
+                    context->getParent()->castTo<HorizontalLayout>()->setHorizontalAlign(aligns[i]);
                 });
         horizontal->addChildComponent<Button>()
             ->setText("Button 2")
             .onClick.subscribe(
-                [horizontal]()
+                [](Button* context)
                 {
+                    auto horizontal = context->getParent()->castTo<HorizontalLayout>();
                     horizontal->setAutoHeight(!horizontal->getAutoHeight());
                 });
         horizontal->addChildComponent<Button>()->setText("X").onClick.subscribe(
-            [horizontal]()
+            [](Button* context)
             {
+                auto horizontal = context->getParent()->castTo<HorizontalLayout>();
                 horizontal->setIsDrawOutline(!horizontal->getIsDrawOutline());
             });
 

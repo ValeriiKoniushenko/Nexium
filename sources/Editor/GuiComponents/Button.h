@@ -74,8 +74,9 @@ namespace Core
     public: // delegates
         /**
          * @brief will be called when clicked
+         * @prarm pointer to "this" context. Context of clicked button.
          */
-        Delegate<void()> onClick;
+        Delegate<void(Button*)> onClick;
 
     protected:
         void onDraw() override;

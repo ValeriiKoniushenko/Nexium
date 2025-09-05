@@ -194,7 +194,7 @@ namespace Core
 
         if (ImGui::ButtonEx(_name.c_str(), _size, ImGuiButtonFlags_None, &_textSize))
         {
-            onClick.trigger();
+            onClick.trigger(this);
         }
 
         _size = ImGui::GetItemRectSize();

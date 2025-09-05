@@ -34,6 +34,11 @@ namespace Core
         ECS_REGISTER_NEW_COMPONENT(Widget, BaseComponent);
 
     public:
+        Widget(Widget&& other) noexcept;
+        Widget& operator=(Widget&& other) noexcept;
+        Widget(const Widget& other);
+        Widget& operator=(const Widget& other);
+
         [[nodiscard]] virtual float getWidth() const = 0;
         [[nodiscard]] virtual float getHeight() const = 0;
 
@@ -52,9 +57,12 @@ namespace Core
         [[nodiscard]] ImGuiStyle& style() const { return ImGui::GetStyle(); }
 
     protected:
+        inline static int idGen = 0;
+        int id = idGen++; // internal id for ImGui
+
+        ImVec2 _pos;
         bool _autoDraw = true;
         bool _isDrawOutline = false;
-        ImVec2 _pos;
     };
 
     [[nodiscard]] ImVec4 colorToImVec4(const Color4& color);

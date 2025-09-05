@@ -413,9 +413,7 @@ namespace Core
             _children.clear();
             for (const auto& child : other._children)
             {
-                _children.emplace_back(
-                    GetGlobalComponentFactory().create(child->getComponentType()));
-                *_children.back() = *child;
+                _children.emplace_back(child->clone());
                 _children.back()->_parent = this;
             }
         }

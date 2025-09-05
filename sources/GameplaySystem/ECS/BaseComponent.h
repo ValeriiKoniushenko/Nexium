@@ -31,6 +31,27 @@
 #include <stack>
 #include <unordered_set>
 
+namespace Core
+{
+    template<class T>
+    void* tryAllocateECSObject(T* data)
+    {
+        if constexpr (std::is_abstract_v<T>)
+        {
+            return nullptr;
+        }
+        else if constexpr (std::is_copy_constructible_v<T>)
+        {
+            return new T(*data);
+        }
+        else
+        {
+            return new T;
+        }
+    }
+
+} // namespace Core
+
 /**
  * Put these macros inside your class body for every new component.
  * New component is even a component that extends previous one. I.e.
@@ -53,6 +74,10 @@ public:                                                                         
     explicit CurrentClass(const StringAtom& name = ""_atom)                                        \
         : BaseComponentClass(componentType, name)                                                  \
     {                                                                                              \
+    }                                                                                              \
+    [[nodiscard]] BaseComponent::Ptr clone() override                                              \
+    {                                                                                              \
+        return static_cast<CurrentClass*>(tryAllocateECSObject<CurrentClass>(this));               \
     }                                                                                              \
                                                                                                    \
 private:                                                                                           \
@@ -383,6 +408,8 @@ namespace Core
         void clear() override;
         [[nodiscard]] bool isValid() const;
         [[nodiscard]] std::size_t makeHash() const;
+
+        virtual BaseComponent::Ptr clone() { return nullptr; }
 
         template<IsComponent T>
         [[nodiscard]] bool isTypeOf() const
