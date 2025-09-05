@@ -45,7 +45,10 @@ namespace Core
         horizontal->addChildComponent<Button>()->setText("Hello world!").setHeight(50.f);
         horizontal->addChildComponent<Button>()->setText("Button 2");
 
-        _layout.addChildComponent<Button>()->setText("Click me");
+        _layout.addChildComponent<Button>()->setText("Click me").onClick.subscribe([](Button* c)
+        {
+            c->setEnabled(false);
+        });
 
         _layout.addChildComponent<Button>()->setText("Vertical layout");
 

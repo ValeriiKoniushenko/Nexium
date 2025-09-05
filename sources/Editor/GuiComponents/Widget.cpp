@@ -69,7 +69,13 @@ namespace Core
 
     void Widget::draw()
     {
+        if (!isEnabled())
+        {
+            return;
+        }
+
         _pos = ImGui::GetCursorPos();
+
 #if defined(DEBUG)
         if (Keyboard::IsKeyPressed(Keyboard::Key_F2) && getGlobalBounds().isIntersects(Mouse::GetPosition()))
         {
