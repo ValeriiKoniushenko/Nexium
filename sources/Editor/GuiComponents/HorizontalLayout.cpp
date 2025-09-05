@@ -55,6 +55,10 @@ namespace Core
 
     void HorizontalLayout::onDraw()
     {
+        const auto originalYCursor = ImGui::GetCursorPosY();
+
+        calcYOffsets();
+
         if (_align.cast() == Align::Left)
         {
             drawAlignLeft();
@@ -76,6 +80,9 @@ namespace Core
             Assert(false);
             drawAlignLeft();
         }
+
+        ImGui::SetCursorPosY(originalYCursor);
+        ImGui::Dummy(ImVec2(0, 0));
     }
 
     void HorizontalLayout::onInitialize()
@@ -87,21 +94,24 @@ namespace Core
     {
         int pushed = 0;
 
-        float spacing = getWidth();
         if (hasChildren())
         {
+            float spacing = getWidth();
             for (const auto& child : _children)
             {
                 spacing -= child->unsafeCastTo<Widget>()->getWidth();
             }
             spacing /= _children.size() - 1;
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(spacing, style().ItemSpacing.y));
+            ++pushed;
         }
 
-        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(spacing, style().ItemSpacing.y));
-        ++pushed;
+        const auto originalYCursor = ImGui::GetCursorPosY();
 
+        std::size_t i = 0;
         for (auto&& child : _children)
         {
+            ImGui::SetCursorPosY(originalYCursor + _yOffsets.at(i++));
             child->unsafeCastTo<Widget>()->onDraw();
             ImGui::SameLine();
         }
@@ -111,8 +121,11 @@ namespace Core
 
     void HorizontalLayout::drawAlignLeft()
     {
+        const auto originalYCursor = ImGui::GetCursorPosY();
+        std::size_t i = 0;
         for (auto&& child : _children)
         {
+            ImGui::SetCursorPosY(originalYCursor + _yOffsets.at(i++));
             child->unsafeCastTo<Widget>()->onDraw();
             ImGui::SameLine();
         }
@@ -133,8 +146,12 @@ namespace Core
             ImGui::SameLine();
         }
 
+        const auto originalYCursor = ImGui::GetCursorPosY();
+        std::size_t i = 0;
+
         for (auto&& child : _children)
         {
+            ImGui::SetCursorPosY(originalYCursor + _yOffsets.at(i++));
             child->unsafeCastTo<Widget>()->onDraw();
             ImGui::SameLine();
         }
@@ -157,10 +174,37 @@ namespace Core
             ImGui::SameLine();
         }
 
+        const auto originalYCursor = ImGui::GetCursorPosY();
+        std::size_t i = 0;
+
         for (auto&& child : _children)
         {
+            ImGui::SetCursorPosY(originalYCursor + _yOffsets.at(i++));
             child->unsafeCastTo<Widget>()->onDraw();
             ImGui::SameLine();
+        }
+    }
+
+    void HorizontalLayout::calcYOffsets()
+    {
+        const auto ownHeight = getHeight();
+
+        _yOffsets.reserve(getChildrenCount());
+        for (auto&& child : _children)
+        {
+            const auto w = child->unsafeCastTo<Widget>();
+            if (_verticalAlign.cast() == Align::Top)
+            {
+                // do nothing
+            }
+            else if (_verticalAlign.cast() == Align::Bottom)
+            {
+                _yOffsets.emplace_back(ownHeight - w->getHeight());
+            }
+            else if (_verticalAlign.cast() == Align::Center)
+            {
+                _yOffsets.emplace_back((ownHeight - w->getHeight()) / 2.f);
+            }
         }
     }
 

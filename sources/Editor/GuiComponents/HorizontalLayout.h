@@ -63,10 +63,12 @@ namespace Core
         void drawAlignLeft();
         void drawAlignRight();
         void drawAlignCenter();
+        void calcYOffsets();
 
     protected:
+        std::vector<float> _yOffsets;
         Align _align = Align::Left;
-        Align _verticalAlign = Align::Top;
+        Align _verticalAlign = Align::Center;
     };
 
 } // namespace Core
