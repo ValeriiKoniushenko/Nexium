@@ -95,6 +95,7 @@ namespace Core
     void VerticalLayout::onInitialize()
     {
         Widget::onInitialize();
+        setComponentName("VerticalLayout");
     }
 
 } // namespace Core

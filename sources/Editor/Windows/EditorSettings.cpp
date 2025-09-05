@@ -37,8 +37,7 @@ namespace Core
         _layout.setSpacing(40);
         auto* horizontal = _layout.addChildComponent<HorizontalLayout>();
         horizontal->setHorizontalAlign(HorizontalLayout::Align::Center);
-        horizontal->setWidth(400);
-        horizontal->resetWidth();
+        horizontal->setVerticalAlign(HorizontalLayout::Align::Center);
         horizontal->addChildComponent<Button>()
             ->setText("Button 1")
             .onClick.subscribe(
@@ -84,6 +83,8 @@ namespace Core
             {
                 horizontal->setIsDrawOutline(!horizontal->getIsDrawOutline());
             });
+
+        *_layout.addChildComponent<HorizontalLayout>() = *horizontal;
     }
 
     void EditorSettingsEWC::onDraw()

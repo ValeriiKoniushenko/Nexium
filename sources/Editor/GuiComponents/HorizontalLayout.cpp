@@ -56,7 +56,7 @@ namespace Core
             return *_height;
         }
 
-        static auto cmp = [](const BaseComponent::Ptr& a, const BaseComponent::Ptr& b)
+        auto cmp = [](const BaseComponent::Ptr& a, const BaseComponent::Ptr& b)
         {
             return a->unsafeCastTo<Widget>()->getHeight() < b->unsafeCastTo<Widget>()->getHeight();
         };
@@ -122,6 +122,7 @@ namespace Core
     void HorizontalLayout::onInitialize()
     {
         Widget::onInitialize();
+        setComponentName("HorizontalLayout");
     }
 
     void HorizontalLayout::drawAlignSpaceBetween()
