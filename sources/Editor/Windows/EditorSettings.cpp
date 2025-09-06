@@ -38,11 +38,11 @@ namespace Core
     {
         BaseFloatEWC::onInitialize();
 
-        auto search = HorizontalLayout::Create();
+        const auto search = HorizontalLayout::Create();
         search->setHorizontalAlign(HorizontalLayout::Align::Center);
         search->addChildComponent<Label>("Search:");
         search->addChildComponent<FloatInput>()->setFlex(Widget::Flex::FlexWidth);
-        search->addChildComponent<Combo>()->setFlex(Widget::Flex::FlexWidth);
+        search->addChildComponent<ComboView>()->setFlex(Widget::Flex::FlexWidth);
         search->addChildComponent<CheckBox>();
 
         _layout.attachChild(search);

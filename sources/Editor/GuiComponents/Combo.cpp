@@ -29,24 +29,40 @@
 namespace Core
 {
 
-    ECS_REGISTER_NEW_COMPONENT_TYPE(Combo);
+    ECS_REGISTER_NEW_COMPONENT_TYPE(BaseCombo);
+    ECS_REGISTER_NEW_COMPONENT_TYPE(ComboView);
+    ECS_REGISTER_NEW_COMPONENT_TYPE(ComboModelBased);
 
-    glm::vec2 Combo::getRealSize() const
+    glm::vec2 BaseCombo::getRealSize() const
     {
         return _size;
     }
 
-    void Combo::setWidth(float newWidth)
+    void BaseCombo::setWidth(float newWidth)
     {
         _size.x = newWidth;
     }
 
-    void Combo::setHeight(float newHeight)
+    void BaseCombo::setHeight(float newHeight)
     {
         _size.y = newHeight;
     }
 
-    void Combo::onDraw()
+    void BaseCombo::onInitialize()
+    {
+        Widget::onInitialize();
+        if (_name.isEmpty())
+        {
+            setComponentName("View"_atom);
+        }
+
+        if (_size.y == 0.f)
+        {
+            _size.y = ImGui::GetFontSize() + style().FramePadding.y * 2.0f;
+        }
+    }
+
+    void ComboView::onDraw()
     {
         ImGui::PushItemWidth(_size.x);
         StringAtom preview = _currentItem < _items.size() ? _items.at(_currentItem) : ""_atom;
@@ -71,17 +87,67 @@ namespace Core
         ImGui::PopItemWidth();
     }
 
-    void Combo::onInitialize()
+    void ComboModelBased::setDataProvider(
+        const std::function<void*(std::size_t, StringAtom&)>& callback)
     {
-        Widget::onInitialize();
-        if (_name.isEmpty())
-        {
-            setComponentName("Combo"_atom);
-        }
+        _dataProvider = callback;
+    }
 
-        if (_size.y == 0.f)
+    void ComboModelBased::setSizeProvider(const std::function<std::size_t()>& callback)
+    {
+        _sizeProvider = callback;
+    }
+
+    void ComboModelBased::setCurrentIndex(std::size_t i) noexcept
+    {
+        if (Verify(_sizeProvider && _dataProvider))
         {
-            _size.y = ImGui::CalcTextSize(_name.c_str()).y + style().FramePadding.y * 2.0f;
+            _currentIndex = std::min(i, _sizeProvider() - 1);
+            StringAtom item;
+            _currentData = _dataProvider(_currentIndex, item);
         }
     }
+
+    void ComboModelBased::onDraw()
+    {
+        if (!_dataProvider || !_sizeProvider)
+        {
+            return;
+        }
+
+        ImGui::PushItemWidth(_size.x);
+
+        _cache.resize(_sizeProvider());
+        for (std::size_t i = 0; i < _cache.size(); ++i)
+        {
+            StringAtom label;
+            void* ptr = _dataProvider(i, label);
+
+            _cache[i].first = ptr;
+            _cache[i].second = std::move(label);
+        }
+
+        const auto preview = _currentIndex < _cache.size() ? _cache.at(_currentIndex).second.c_str() : "";
+
+        if (ImGui::BeginCombo("", preview))
+        {
+            for (std::size_t i = 0; i < _cache.size(); ++i)
+            {
+                const bool isSelected = (_currentIndex == i);
+                if (ImGui::Selectable(_cache.at(i).second.c_str(), isSelected))
+                {
+                    _currentIndex = i;
+                    _currentData = _cache.at(i).first;
+                    onSelect.trigger(this, _cache.at(i).first);
+                }
+                if (isSelected)
+                {
+                    ImGui::SetItemDefaultFocus();
+                }
+            }
+            ImGui::EndCombo();
+        }
+        ImGui::PopItemWidth();
+    }
+
 } // namespace Core
