@@ -118,7 +118,7 @@ namespace Core
         Widget::onInitialize();
         if (_name.isEmpty())
         {
-            setComponentName("Input");
+            setComponentName("Input"_atom);
         }
         if (_size == glm::vec2(0))
         {

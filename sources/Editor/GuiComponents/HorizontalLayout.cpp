@@ -149,7 +149,7 @@ namespace Core
         Widget::onInitialize();
         if (_name.isEmpty())
         {
-            setComponentName("HorizontalLayout");
+            setComponentName("HorizontalLayout"_atom);
         }
 
         if (getVerticalAlign().cast() == Align::None)

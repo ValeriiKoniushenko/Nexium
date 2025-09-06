@@ -201,7 +201,7 @@ namespace Core
 
         if (_name.isEmpty())
         {
-            setText("Button");
+            setText("Button"_atom);
         }
         if (_textSize.x == 0.0f && _textSize.y == 0.0f)
         {
