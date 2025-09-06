@@ -59,6 +59,7 @@ Index of this file:
     #include <math.h>   // sqrtf, fabsf, fmodf, powf, floorf, ceilf, cosf, sinf
     #include <stdio.h>  // FILE*, sscanf
     #include <stdlib.h> // NULL, malloc, free, qsort, atoi, atof
+    #include <functional>
 
     // Enable SSE intrinsics if available
     #if (defined __SSE__ || defined __x86_64__ || defined _M_X64                                   \
@@ -2174,8 +2175,8 @@ struct IMGUI_API ImGuiInputTextState
     ImVector<char> CallbackTextBackup; // temporary storage for callback to support automatic
                                        // reconcile of undo-stack
     int BufCapacity;                   // end-user buffer capacity (include zero terminator)
-    glm::vec2 Scroll; // horizontal offset (managed manually) + vertical scrolling (pulled from
-                      // child window's own Scroll.y)
+    glm::vec2 Scroll;  // horizontal offset (managed manually) + vertical scrolling (pulled from
+                       // child window's own Scroll.y)
     float CursorAnim;  // timer for cursor blink, reset on every user action so the cursor reappears
                        // immediately
     bool CursorFollow; // set when we want scrolling to follow the current cursor position (not
@@ -3396,8 +3397,8 @@ struct ImGuiViewportP : public ImGuiViewport
     // - BeginMainMenuBar() and DockspaceOverViewport() tend to use work area to avoid stepping over
     // existing contents.
     // - Generally 'safeAreaInsets' in iOS land, 'DisplayCutout' in Android land.
-    glm::vec2 WorkInsetMin; // Work Area inset locked for the frame. GetWorkRect() always fits
-                            // within GetMainRect().
+    glm::vec2 WorkInsetMin;      // Work Area inset locked for the frame. GetWorkRect() always fits
+                                 // within GetMainRect().
     glm::vec2 WorkInsetMax;      // "
     glm::vec2 BuildWorkInsetMin; // Work Area inset accumulator for current frame, to become next
                                  // frame's WorkInset
@@ -4293,10 +4294,10 @@ struct IMGUI_API ImGuiWindowTempData
     bool IsSameLine;
     bool IsSetPos;
     glm::vec1 Indent;        // Indentation / start position from left of window (increased by
-                          // TreePush/TreePop, etc.)
-    glm::vec1 ColumnsOffset; // Offset to the current column (if ColumnsCurrent > 0). FIXME: This and
-                          // the above should be a stack to allow use cases like Tree->Column->Tree.
-                          // Need revamp columns API.
+                             // TreePush/TreePop, etc.)
+    glm::vec1 ColumnsOffset; // Offset to the current column (if ColumnsCurrent > 0). FIXME: This
+                             // and the above should be a stack to allow use cases like
+                             // Tree->Column->Tree. Need revamp columns API.
     glm::vec1 GroupOffset;
     glm::vec2
         CursorStartPosLossyness; // Record the loss of precision of CursorStartPos due to really
@@ -4383,7 +4384,7 @@ struct IMGUI_API ImGuiWindow
     glm::vec2 ContentSizeIdeal;
     glm::vec2 ContentSizeExplicit; // Size of contents/scrollable client area explicitly request by
                                    // the user via SetNextWindowContentSize().
-    glm::vec2 WindowPadding; // Window padding at the time of Begin().
+    glm::vec2 WindowPadding;       // Window padding at the time of Begin().
     float WindowRounding;   // Window rounding at the time of Begin(). May be clamped lower to avoid
                             // rendering artifacts with title bar, menu bar etc.
     float WindowBorderSize; // Window border size at the time of Begin().
@@ -4463,8 +4464,8 @@ struct IMGUI_API ImGuiWindow
                                                 // SetNextWindowCollapsed() use.
     ImGuiCond SetWindowDockAllowFlags : 8;      // store acceptable condition flags for
                                                 // SetNextWindowDock() use.
-    glm::vec2 SetWindowPosVal; // store window position when using a non-zero Pivot (position set
-                               // needs to be processed when we know the window size)
+    glm::vec2 SetWindowPosVal;   // store window position when using a non-zero Pivot (position set
+                                 // needs to be processed when we know the window size)
     glm::vec2 SetWindowPosPivot; // store window pivot for positioning. glm::vec2(0, 0) when
                                  // positioning from top-left corner; glm::vec2(0.5f, 0.5f) for
                                  // centering; glm::vec2(1, 1) for bottom right.
@@ -5040,7 +5041,7 @@ struct IMGUI_API ImGuiTableTempData
     glm::vec2
         HostBackupCursorMaxPos; // Backup of InnerWindow->DC.CursorMaxPos at the end of BeginTable()
     glm::vec1 HostBackupColumnsOffset; // Backup of OuterWindow->DC.ColumnsOffset at the end of
-                                    // BeginTable()
+                                       // BeginTable()
     float HostBackupItemWidth; // Backup of OuterWindow->DC.ItemWidth at the end of BeginTable()
     int HostBackupItemWidthStackSize; // Backup of OuterWindow->DC.ItemWidthStack.Size at the end of
                                       // BeginTable()
@@ -6105,7 +6106,9 @@ namespace ImGui
     // InputText
     IMGUI_API bool InputTextEx(const char* label, const char* hint, char* buf, int buf_size,
                                const glm::vec2& size_arg, ImGuiInputTextFlags flags,
-                               ImGuiInputTextCallback callback = NULL, void* user_data = NULL);
+                               ImGuiInputTextCallback callback = NULL, void* user_data = NULL,
+                               const std::function<void(const char*)>& onApplyNewTextCallback
+                               = nullptr);
     IMGUI_API void InputTextDeactivateHook(ImGuiID id);
     IMGUI_API bool TempInputText(const ImRect& bb, ImGuiID id, const char* label, char* buf,
                                  int buf_size, ImGuiInputTextFlags flags);

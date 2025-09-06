@@ -24,6 +24,7 @@
 
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
+#include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/Label.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 
@@ -60,9 +61,12 @@ namespace Core
 
         _layout.attachChild(line);
 
-
-
         *_layout.addChildComponent<HorizontalLayout>() = *horizontal;
+
+        auto search = HorizontalLayout::Create();
+        (void)search->addChildComponent<Label>("Search:");
+        (void)search->addChildComponent<Input>();
+        _layout.attachChild(search);
     }
 
     void EditorSettingsEWC::onDraw()
