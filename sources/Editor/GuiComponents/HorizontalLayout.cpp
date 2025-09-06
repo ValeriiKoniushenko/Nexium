@@ -141,7 +141,7 @@ namespace Core
         }
         ImGui::SetCursorPosY(originalCursor.y);
 
-        ImGui::Dummy(glm::vec2(0, 0));
+        // ImGui::Dummy(glm::vec2(0, 0));
     }
 
     void HorizontalLayout::onInitialize()

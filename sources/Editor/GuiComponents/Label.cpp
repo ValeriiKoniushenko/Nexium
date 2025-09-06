@@ -77,6 +77,8 @@ namespace Core
             out.y = _height;
         }
 
+        out.x += style().ItemSpacing.x;
+
         return out;
     }
 

@@ -20,38 +20,39 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "EditorSettings.h"
+#pragma once
 
-#include "Editor/GuiComponents/Button.h"
-#include "Editor/GuiComponents/CheckBox.h"
-#include "Editor/GuiComponents/Combo.h"
-#include "Editor/GuiComponents/HorizontalLayout.h"
-#include "Editor/GuiComponents/Input.h"
-#include "Editor/GuiComponents/Label.h"
-#include "GameplaySystem/Framework/GameInstance.h"
+#include "Core/Delegate.h"
+#include "Widget.h"
 
 namespace Core
 {
-    ECS_REGISTER_NEW_COMPONENT_TYPE(EditorSettingsEWC)
 
-    void EditorSettingsEWC::onInitialize()
+    class CheckBox : public Widget
     {
-        BaseFloatEWC::onInitialize();
+        ECS_REGISTER_NEW_COMPONENT(CheckBox, Widget);
 
-        auto search = HorizontalLayout::Create();
-        search->setHorizontalAlign(HorizontalLayout::Align::Center);
-        search->addChildComponent<Label>("Search:");
-        search->addChildComponent<FloatInput>()->setFlex(Widget::Flex::FlexWidth);
-        search->addChildComponent<Combo>()->setFlex(Widget::Flex::FlexWidth);
-        search->addChildComponent<CheckBox>();
+    public:
+        [[nodiscard]] glm::vec2 getRealSize() const;
 
-        _layout.attachChild(search);
-    }
+        [[nodiscard]] float getWidth() const override { return getRealSize().x; }
+        [[nodiscard]] float getHeight() const override { return getRealSize().y; }
+        void setWidth(float newWidth) override;
+        void setHeight(float newHeight) override;
 
-    void EditorSettingsEWC::onDraw()
-    {
-        const float tick = gGameInstance->world.timeDelta;
+        void setValue(bool value) { _currentValue = value; }
+        [[nodiscard]] bool getValue() const noexcept { return _currentValue; }
 
-        _layout.tick(tick);
-    }
+    public: // Delegates
+        Delegate<void(CheckBox*, bool)> onChange;
+
+    protected:
+        void onDraw() override;
+        void onInitialize() override;
+
+    protected:
+        glm::vec2 _size = glm::vec2(50.f, 0.f);
+        bool _currentValue = false;
+    };
+
 } // namespace Core

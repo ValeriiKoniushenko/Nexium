@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "Combo.h"
+#include "CheckBox.h"
 
 #include "ImGui/imgui_internal.h"
 #include "ImGui/misc/cpp/imgui_stdlib.h"
@@ -29,59 +29,47 @@
 namespace Core
 {
 
-    ECS_REGISTER_NEW_COMPONENT_TYPE(Combo);
+    ECS_REGISTER_NEW_COMPONENT_TYPE(CheckBox);
 
-    glm::vec2 Combo::getRealSize() const
+    glm::vec2 CheckBox::getRealSize() const
     {
         return _size;
     }
 
-    void Combo::setWidth(float newWidth)
+    void CheckBox::setWidth(float newWidth)
     {
+        Assert(false, "CheckBox doesn't support any resizing");
         _size.x = newWidth;
     }
 
-    void Combo::setHeight(float newHeight)
+    void CheckBox::setHeight(float newHeight)
     {
+        Assert(false, "CheckBox doesn't support any resizing");
         _size.y = newHeight;
     }
 
-    void Combo::onDraw()
+    void CheckBox::onDraw()
     {
         ImGui::PushItemWidth(_size.x);
-        StringAtom preview = _currentItem < _items.size() ? _items.at(_currentItem) : ""_atom;
 
-        if (ImGui::BeginCombo("", preview.c_str()))
+        const bool origValue = _currentValue;
+        ImGui::Checkbox("", &_currentValue);
+        if (origValue != _currentValue)
         {
-            for (std::size_t i = 0; i < _items.size(); ++i)
-            {
-                const bool isSelected = (_currentItem == i);
-                if (ImGui::Selectable(_items.at(i).c_str(), isSelected))
-                {
-                    _currentItem = i;
-                    onSelect.trigger(this, _items.at(i));
-                }
-                if (isSelected)
-                {
-                    ImGui::SetItemDefaultFocus();
-                }
-            }
-            ImGui::EndCombo();
+            onChange.trigger(this, _currentValue);
         }
+
         ImGui::PopItemWidth();
     }
 
-    void Combo::onInitialize()
+    void CheckBox::onInitialize()
     {
         Widget::onInitialize();
         if (_name.isEmpty())
         {
-            setComponentName("Combo"_atom);
+            setComponentName("CheckBox"_atom);
         }
 
-        if (_size.y == 0.f)
-        {
-            _size.y = ImGui::CalcTextSize(_name.c_str()).y + style().FramePadding.y * 2.0f;
-        }
+        _size = glm::vec2(ImGui::GetFrameHeight());
     }
 } // namespace Core

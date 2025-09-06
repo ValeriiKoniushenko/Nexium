@@ -45,7 +45,7 @@ namespace Core
         const std::vector<StringAtom>& getData() const noexcept { return _items; }
 
     public: // Delegates
-        Delegate<void(StringAtom)> onSelect;
+        Delegate<void(Combo*, StringAtom)> onSelect;
 
     protected:
         void onDraw() override;

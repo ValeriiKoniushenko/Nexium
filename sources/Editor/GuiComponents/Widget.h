@@ -102,6 +102,9 @@ namespace Core
         [[nodiscard]] Flex getFlex() const noexcept { return _flex; }
         void setFlex(Flex flex) noexcept { _flex = flex; }
 
+        void setIsReadOnly(bool value) noexcept { _isReadOnly = value; }
+        [[nodiscard]] bool isReadOnly() const noexcept { return _isReadOnly; }
+
     protected:
         bool addChildValidator(BaseComponent* newChild) override;
         void onTick(float delta) override;
