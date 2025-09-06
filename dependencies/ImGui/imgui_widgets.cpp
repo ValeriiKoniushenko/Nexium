@@ -1025,7 +1025,7 @@ bool ImGui::ButtonBehavior(const ImRect& bb, ImGuiID id, bool* out_hovered, bool
     return pressed;
 }
 
-bool ImGui::ButtonEx(const char* label, const glm::vec2& size_arg, ImGuiButtonFlags flags,
+bool ImGui::ButtonEx(const char* label, glm::vec2 size_arg, ImGuiButtonFlags flags,
                      const glm::vec2* preCalcLabelSize)
 {
     ImGuiWindow* window = GetCurrentWindow();
@@ -1086,7 +1086,7 @@ bool ImGui::ButtonEx(const char* label, const glm::vec2& size_arg, ImGuiButtonFl
     return pressed;
 }
 
-bool ImGui::Button(const char* label, const glm::vec2& size_arg)
+bool ImGui::Button(const char* label, glm::vec2 size_arg)
 {
     return ButtonEx(label, size_arg, ImGuiButtonFlags_None);
 }
@@ -1105,7 +1105,7 @@ bool ImGui::SmallButton(const char* label)
 // Tip: use ImGui::PushID()/PopID() to push indices or pointers in the ID stack.
 // Then you can keep 'str_id' empty or the same for all your buttons (instead of creating a string
 // based on a non-string id)
-bool ImGui::InvisibleButton(const char* str_id, const glm::vec2& size_arg, ImGuiButtonFlags flags)
+bool ImGui::InvisibleButton(const char* str_id, glm::vec2 size_arg, ImGuiButtonFlags flags)
 {
     ImGuiContext& g = *GImGui;
     ImGuiWindow* window = GetCurrentWindow();
@@ -1181,7 +1181,7 @@ bool ImGui::ArrowButton(const char* str_id, ImGuiDir dir)
 }
 
 // Button to close a window
-bool ImGui::CloseButton(ImGuiID id, const glm::vec2& pos)
+bool ImGui::CloseButton(ImGuiID id, glm::vec2 pos)
 {
     ImGuiContext& g = *GImGui;
     ImGuiWindow* window = g.CurrentWindow;
@@ -1233,7 +1233,7 @@ bool ImGui::CloseButton(ImGuiID id, const glm::vec2& pos)
 }
 
 // The Collapse button also functions as a Dock Menu button.
-bool ImGui::CollapseButton(ImGuiID id, const glm::vec2& pos, ImGuiDockNode* dock_node)
+bool ImGui::CollapseButton(ImGuiID id, glm::vec2 pos, ImGuiDockNode* dock_node)
 {
     ImGuiContext& g = *GImGui;
     ImGuiWindow* window = g.CurrentWindow;
@@ -1506,8 +1506,8 @@ bool ImGui::ScrollbarEx(const ImRect& bb_frame, ImGuiID id, ImGuiAxis axis, ImS6
 // - Read about ImTextureID/ImTextureRef here:
 // https://github.com/ocornut/imgui/wiki/Image-Loading-and-Displaying-Examples
 // - 'uv0' and 'uv1' are texture coordinates. Read about them from the same link above.
-void ImGui::ImageWithBg(ImTextureRef tex_ref, const glm::vec2& image_size, const glm::vec2& uv0,
-                        const glm::vec2& uv1, const glm::vec4& bg_col, const glm::vec4& tint_col)
+void ImGui::ImageWithBg(ImTextureRef tex_ref, glm::vec2 image_size, glm::vec2 uv0,
+                        glm::vec2 uv1, const glm::vec4& bg_col, const glm::vec4& tint_col)
 {
     ImGuiContext& g = *GImGui;
     ImGuiWindow* window = GetCurrentWindow();
@@ -1538,8 +1538,8 @@ void ImGui::ImageWithBg(ImTextureRef tex_ref, const glm::vec2& image_size, const
                                GetColorU32(tint_col));
 }
 
-void ImGui::Image(ImTextureRef tex_ref, const glm::vec2& image_size, const glm::vec2& uv0,
-                  const glm::vec2& uv1)
+void ImGui::Image(ImTextureRef tex_ref, glm::vec2 image_size, glm::vec2 uv0,
+                  glm::vec2 uv1)
 {
     ImageWithBg(tex_ref, image_size, uv0, uv1);
 }
@@ -1547,8 +1547,8 @@ void ImGui::Image(ImTextureRef tex_ref, const glm::vec2& image_size, const glm::
     // 1.91.9 (February 2025) removed 'tint_col' and 'border_col' parameters, made border size not
     // depend on color value. (#8131, #8238)
     #ifndef IMGUI_DISABLE_OBSOLETE_FUNCTIONS
-void ImGui::Image(ImTextureRef tex_ref, const glm::vec2& image_size, const glm::vec2& uv0,
-                  const glm::vec2& uv1, const glm::vec4& tint_col, const glm::vec4& border_col)
+void ImGui::Image(ImTextureRef tex_ref, glm::vec2 image_size, glm::vec2 uv0,
+                  glm::vec2 uv1, const glm::vec4& tint_col, const glm::vec4& border_col)
 {
     ImGuiContext& g = *GImGui;
     PushStyleVar(ImGuiStyleVar_ImageBorderSize,
@@ -1562,8 +1562,8 @@ void ImGui::Image(ImTextureRef tex_ref, const glm::vec2& image_size, const glm::
 }
     #endif
 
-bool ImGui::ImageButtonEx(ImGuiID id, ImTextureRef tex_ref, const glm::vec2& image_size,
-                          const glm::vec2& uv0, const glm::vec2& uv1, const glm::vec4& bg_col,
+bool ImGui::ImageButtonEx(ImGuiID id, ImTextureRef tex_ref, glm::vec2 image_size,
+                          glm::vec2 uv0, glm::vec2 uv1, const glm::vec4& bg_col,
                           const glm::vec4& tint_col, ImGuiButtonFlags flags)
 {
     ImGuiContext& g = *GImGui;
@@ -1605,8 +1605,8 @@ bool ImGui::ImageButtonEx(ImGuiID id, ImTextureRef tex_ref, const glm::vec2& ima
 // fitting an image in a button.
 // - ImageButton() draws a background based on regular Button() color + optionally an inner
 // background if specified. (#8165) // FIXME: Maybe that's not the best design?
-bool ImGui::ImageButton(const char* str_id, ImTextureRef tex_ref, const glm::vec2& image_size,
-                        const glm::vec2& uv0, const glm::vec2& uv1, const glm::vec4& bg_col,
+bool ImGui::ImageButton(const char* str_id, ImTextureRef tex_ref, glm::vec2 image_size,
+                        glm::vec2 uv0, glm::vec2 uv1, const glm::vec4& bg_col,
                         const glm::vec4& tint_col)
 {
     ImGuiContext& g = *GImGui;
@@ -1627,8 +1627,8 @@ bool ImGui::ImageButton(const char* str_id, ImTextureRef tex_ref, const glm::vec
     // - old ImageButton() had frame_padding' override argument.
     // - new ImageButton() always use style.FramePadding.
     /*
-    bool ImGui::ImageButton(ImTextureID user_texture_id, const glm::vec2& size, const glm::vec2&
-    uv0, const glm::vec2& uv1, int frame_padding, const glm::vec4& bg_col, const glm::vec4&
+    bool ImGui::ImageButton(ImTextureID user_texture_id, glm::vec2 size, glm::vec2
+    uv0, glm::vec2 uv1, int frame_padding, const glm::vec4& bg_col, const glm::vec4&
     tint_col)
     {
         // Default to using texture ID as ID. User can still push string/integer prefixes.
@@ -1890,7 +1890,7 @@ bool ImGui::RadioButton(const char* label, int* v, int v_button)
 }
 
 // size_arg (for each axis) < 0.0f: align to end, 0.0f: auto, > 0.0f: specified size
-void ImGui::ProgressBar(float fraction, const glm::vec2& size_arg, const char* overlay)
+void ImGui::ProgressBar(float fraction, glm::vec2 size_arg, const char* overlay)
 {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
@@ -2107,7 +2107,7 @@ void ImGui::Spacing()
     ItemSize(glm::vec2(0, 0));
 }
 
-void ImGui::Dummy(const glm::vec2& size)
+void ImGui::Dummy(glm::vec2 size)
 {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
@@ -4923,7 +4923,7 @@ bool ImGui::SliderInt4(const char* label, int v[4], int v_min, int v_max, const 
     return SliderScalarN(label, ImGuiDataType_S32, v, 4, &v_min, &v_max, format, flags);
 }
 
-bool ImGui::VSliderScalar(const char* label, const glm::vec2& size, ImGuiDataType data_type,
+bool ImGui::VSliderScalar(const char* label, glm::vec2 size, ImGuiDataType data_type,
                           void* p_data, const void* p_min, const void* p_max, const char* format,
                           ImGuiSliderFlags flags)
 {
@@ -5014,13 +5014,13 @@ bool ImGui::VSliderScalar(const char* label, const glm::vec2& size, ImGuiDataTyp
     return value_changed;
 }
 
-bool ImGui::VSliderFloat(const char* label, const glm::vec2& size, float* v, float v_min,
+bool ImGui::VSliderFloat(const char* label, glm::vec2 size, float* v, float v_min,
                          float v_max, const char* format, ImGuiSliderFlags flags)
 {
     return VSliderScalar(label, size, ImGuiDataType_Float, v, &v_min, &v_max, format, flags);
 }
 
-bool ImGui::VSliderInt(const char* label, const glm::vec2& size, int* v, int v_min, int v_max,
+bool ImGui::VSliderInt(const char* label, glm::vec2 size, int* v, int v_min, int v_max,
                        const char* format, ImGuiSliderFlags flags)
 {
     return VSliderScalar(label, size, ImGuiDataType_S32, v, &v_min, &v_max, format, flags);
@@ -5567,7 +5567,7 @@ bool ImGui::InputText(const char* label, char* buf, size_t buf_size, ImGuiInputT
                        user_data);
 }
 
-bool ImGui::InputTextMultiline(const char* label, char* buf, size_t buf_size, const glm::vec2& size,
+bool ImGui::InputTextMultiline(const char* label, char* buf, size_t buf_size, glm::vec2 size,
                                ImGuiInputTextFlags flags, ImGuiInputTextCallback callback,
                                void* user_data)
 {
@@ -6410,7 +6410,7 @@ void ImGui::InputTextDeactivateHook(ImGuiID id)
 //  doing UTF8 > U16 > UTF8 conversions on the go to easily interface with stb_textedit. Ideally
 //  should stay in UTF-8 all the time. See https://github.com/nothings/stb/issues/188)
 bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_size,
-                        const glm::vec2& size_arg, ImGuiInputTextFlags flags,
+                        glm::vec2 size_arg, ImGuiInputTextFlags flags,
                         ImGuiInputTextCallback callback, void* callback_user_data,
                         const std::function<void(const char*)>& onApplyNewTextCallback)
 {
@@ -8792,7 +8792,7 @@ bool ImGui::ColorPicker4(const char* label, float col[4], ImGuiColorEditFlags fl
 // tooltip. 'desc_id' is not called 'label' because we don't display it next to the button, but only
 // in the tooltip. Note that 'col' may be encoded in HSV if ImGuiColorEditFlags_InputHSV is set.
 bool ImGui::ColorButton(const char* desc_id, const glm::vec4& col, ImGuiColorEditFlags flags,
-                        const glm::vec2& size_arg)
+                        glm::vec2 size_arg)
 {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
@@ -9830,7 +9830,7 @@ bool ImGui::TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const char* l
 
 // Draw horizontal line from our parent node
 // This is only called for visible child nodes so we are not too fussy anymore about performances
-void ImGui::TreeNodeDrawLineToChildNode(const glm::vec2& target_pos)
+void ImGui::TreeNodeDrawLineToChildNode(glm::vec2 target_pos)
 {
     ImGuiContext& g = *GImGui;
     ImGuiWindow* window = g.CurrentWindow;
@@ -10085,7 +10085,7 @@ bool ImGui::CollapsingHeader(const char* label, bool* p_visible, ImGuiTreeNodeFl
 // FIXME: Selectable() with (size.x == 0.0f) and (SelectableTextAlign.x > 0.0f) followed by
 // SameLine() is currently not supported.
 bool ImGui::Selectable(const char* label, bool selected, ImGuiSelectableFlags flags,
-                       const glm::vec2& size_arg)
+                       glm::vec2 size_arg)
 {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
@@ -10354,7 +10354,7 @@ bool ImGui::Selectable(const char* label, bool selected, ImGuiSelectableFlags fl
 }
 
 bool ImGui::Selectable(const char* label, bool* p_selected, ImGuiSelectableFlags flags,
-                       const glm::vec2& size_arg)
+                       glm::vec2 size_arg)
 {
     if (Selectable(label, *p_selected, flags, size_arg))
     {
@@ -11918,7 +11918,7 @@ void ImGuiSelectionExternalStorage::ApplyRequests(ImGuiMultiSelectIO* ms_io)
 // entire window width, use size.x = -FLT_MIN and pass an non-visible label e.g. "##empty" Tip: If
 // your vertical size is calculated from an item count (e.g. 10 * item_height) consider adding a
 // fractional part to facilitate seeing scrolling boundaries (e.g. 10.5f * item_height).
-bool ImGui::BeginListBox(const char* label, const glm::vec2& size_arg)
+bool ImGui::BeginListBox(const char* label, glm::vec2 size_arg)
 {
     ImGuiContext& g = *GImGui;
     ImGuiWindow* window = GetCurrentWindow();
@@ -12072,7 +12072,7 @@ bool ImGui::ListBox(const char* label, int* current_item,
 int ImGui::PlotEx(ImGuiPlotType plot_type, const char* label,
                   float (*values_getter)(void* data, int idx), void* data, int values_count,
                   int values_offset, const char* overlay_text, float scale_min, float scale_max,
-                  const glm::vec2& size_arg)
+                  glm::vec2 size_arg)
 {
     ImGuiContext& g = *GImGui;
     ImGuiWindow* window = GetCurrentWindow();

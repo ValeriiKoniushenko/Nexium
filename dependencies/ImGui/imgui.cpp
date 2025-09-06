@@ -1337,7 +1337,7 @@ static void             UpdateFontsEndFrame();
 static void             UpdateTexturesNewFrame();
 static void             UpdateTexturesEndFrame();
 static void             UpdateSettings();
-static int              UpdateWindowManualResize(ImGuiWindow* window, const glm::vec2& size_auto_fit, int* border_hovered, int* border_held, int resize_grip_count, ImU32 resize_grip_col[4], const ImRect& visibility_rect);
+static int              UpdateWindowManualResize(ImGuiWindow* window, glm::vec2 size_auto_fit, int* border_hovered, int* border_held, int resize_grip_count, ImU32 resize_grip_col[4], const ImRect& visibility_rect);
 static void             RenderWindowOuterBorders(ImGuiWindow* window);
 static void             RenderWindowDecorations(ImGuiWindow* window, const ImRect& title_bar_rect, bool title_bar_is_highlight, bool handle_borders_and_resize_grips, int resize_grip_count, const ImU32 resize_grip_col[4], float resize_grip_draw_size);
 static void             RenderWindowTitleBarContents(ImGuiWindow* window, const ImRect& title_bar_rect, const char* name, bool* p_open);
@@ -1348,7 +1348,7 @@ static void             SetLastItemDataForChildWindowItem(ImGuiWindow* window, c
 
 // Viewports
 const ImGuiID           IMGUI_VIEWPORT_DEFAULT_ID = 0x11111111; // Using an arbitrary constant instead of e.g. ImHashStr("ViewportDefault", 0); so it's easier to spot in the debugger. The exact value doesn't matter.
-static ImGuiViewportP*  AddUpdateViewport(ImGuiWindow* window, ImGuiID id, const glm::vec2& platform_pos, const glm::vec2& size, ImGuiViewportFlags flags);
+static ImGuiViewportP*  AddUpdateViewport(ImGuiWindow* window, ImGuiID id, glm::vec2 platform_pos, glm::vec2 size, ImGuiViewportFlags flags);
 static void             DestroyViewport(ImGuiViewportP* viewport);
 static void             UpdateViewportsNewFrame();
 static void             UpdateViewportsEndFrame();
@@ -1357,7 +1357,7 @@ static void             WindowSyncOwnedViewport(ImGuiWindow* window, ImGuiWindow
 static bool             UpdateTryMergeWindowIntoHostViewport(ImGuiWindow* window, ImGuiViewportP* host_viewport);
 static bool             UpdateTryMergeWindowIntoHostViewports(ImGuiWindow* window);
 static bool             GetWindowAlwaysWantOwnViewport(ImGuiWindow* window);
-static int              FindPlatformMonitorForPos(const glm::vec2& pos);
+static int              FindPlatformMonitorForPos(glm::vec2 pos);
 static int              FindPlatformMonitorForRect(const ImRect& r);
 static void             UpdateViewportPlatformMonitor(ImGuiViewportP* viewport);
 
@@ -1985,7 +1985,7 @@ ImGuiPlatformIO::ImGuiPlatformIO()
 // [SECTION] MISC HELPERS/UTILITIES (Geometry functions)
 //-----------------------------------------------------------------------------
 
-glm::vec2 ImBezierCubicClosestPoint(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, const glm::vec2& p4, const glm::vec2& p, int num_segments)
+glm::vec2 ImBezierCubicClosestPoint(glm::vec2 p1, glm::vec2 p2, glm::vec2 p3, glm::vec2 p4, glm::vec2 p, int num_segments)
 {
     IM_ASSERT(num_segments > 0); // Use ImBezierCubicClosestPointCasteljau()
     glm::vec2 p_last = p1;
@@ -2008,7 +2008,7 @@ glm::vec2 ImBezierCubicClosestPoint(const glm::vec2& p1, const glm::vec2& p2, co
 }
 
 // Closely mimics PathBezierToCasteljau() in imgui_draw.cpp
-static void ImBezierCubicClosestPointCasteljauStep(const glm::vec2& p, glm::vec2& p_closest, glm::vec2& p_last, float& p_closest_dist2, float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4, float tess_tol, int level)
+static void ImBezierCubicClosestPointCasteljauStep(glm::vec2 p, glm::vec2& p_closest, glm::vec2& p_last, float& p_closest_dist2, float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4, float tess_tol, int level)
 {
     float dx = x4 - x1;
     float dy = y4 - y1;
@@ -2043,7 +2043,7 @@ static void ImBezierCubicClosestPointCasteljauStep(const glm::vec2& p, glm::vec2
 
 // tess_tol is generally the same value you would find in ImGui::GetStyle().CurveTessellationTol
 // Because those ImXXX functions are lower-level than ImGui:: we cannot access this value automatically.
-glm::vec2 ImBezierCubicClosestPointCasteljau(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, const glm::vec2& p4, const glm::vec2& p, float tess_tol)
+glm::vec2 ImBezierCubicClosestPointCasteljau(glm::vec2 p1, glm::vec2 p2, glm::vec2 p3, glm::vec2 p4, glm::vec2 p, float tess_tol)
 {
     IM_ASSERT(tess_tol > 0.0f);
     glm::vec2 p_last = p1;
@@ -2053,7 +2053,7 @@ glm::vec2 ImBezierCubicClosestPointCasteljau(const glm::vec2& p1, const glm::vec
     return p_closest;
 }
 
-glm::vec2 ImLineClosestPoint(const glm::vec2& a, const glm::vec2& b, const glm::vec2& p)
+glm::vec2 ImLineClosestPoint(glm::vec2 a, glm::vec2 b, glm::vec2 p)
 {
     glm::vec2 ap = p - a;
     glm::vec2 ab_dir = b - a;
@@ -2066,7 +2066,7 @@ glm::vec2 ImLineClosestPoint(const glm::vec2& a, const glm::vec2& b, const glm::
     return a + ab_dir * dot / ab_len_sqr;
 }
 
-bool ImTriangleContainsPoint(const glm::vec2& a, const glm::vec2& b, const glm::vec2& c, const glm::vec2& p)
+bool ImTriangleContainsPoint(glm::vec2 a, glm::vec2 b, glm::vec2 c, glm::vec2 p)
 {
     bool b1 = ((p.x - b.x) * (a.y - b.y) - (p.y - b.y) * (a.x - b.x)) < 0.0f;
     bool b2 = ((p.x - c.x) * (b.y - c.y) - (p.y - c.y) * (b.x - c.x)) < 0.0f;
@@ -2074,7 +2074,7 @@ bool ImTriangleContainsPoint(const glm::vec2& a, const glm::vec2& b, const glm::
     return ((b1 == b2) && (b2 == b3));
 }
 
-void ImTriangleBarycentricCoords(const glm::vec2& a, const glm::vec2& b, const glm::vec2& c, const glm::vec2& p, float& out_u, float& out_v, float& out_w)
+void ImTriangleBarycentricCoords(glm::vec2 a, glm::vec2 b, glm::vec2 c, glm::vec2 p, float& out_u, float& out_v, float& out_w)
 {
     glm::vec2 v0 = b - a;
     glm::vec2 v1 = c - a;
@@ -2085,7 +2085,7 @@ void ImTriangleBarycentricCoords(const glm::vec2& a, const glm::vec2& b, const g
     out_u = 1.0f - out_v - out_w;
 }
 
-glm::vec2 ImTriangleClosestPoint(const glm::vec2& a, const glm::vec2& b, const glm::vec2& c, const glm::vec2& p)
+glm::vec2 ImTriangleClosestPoint(glm::vec2 a, glm::vec2 b, glm::vec2 c, glm::vec2 p)
 {
     glm::vec2 proj_ab = ImLineClosestPoint(a, b, p);
     glm::vec2 proj_bc = ImLineClosestPoint(b, c, p);
@@ -3639,7 +3639,7 @@ void ImGui::PushStyleVarY(ImGuiStyleVar idx, float val_y)
     pvar->y = val_y;
 }
 
-void ImGui::PushStyleVar(ImGuiStyleVar idx, const glm::vec2& val)
+void ImGui::PushStyleVar(ImGuiStyleVar idx, glm::vec2 val)
 {
     ImGuiContext& g = *GImGui;
     const ImGuiStyleVarInfo* var_info = GetStyleVarInfo(idx);
@@ -3811,7 +3811,7 @@ void ImGui::RenderTextWrapped(glm::vec2 pos, const char* text, const char* text_
 // FIXME-OPT: Since we have or calculate text_size we could coarse clip whole block immediately, especially for text above draw_list->DrawList.
 // Effectively as this is called from widget doing their own coarse clipping it's not very valuable presently. Next time function will take
 // better advantage of the render function taking size into account for coarse clipping.
-void ImGui::RenderTextClippedEx(ImDrawList* draw_list, const glm::vec2& pos_min, const glm::vec2& pos_max, const char* text, const char* text_display_end, const glm::vec2* text_size_if_known, const glm::vec2& align, const ImRect* clip_rect)
+void ImGui::RenderTextClippedEx(ImDrawList* draw_list, glm::vec2 pos_min, glm::vec2 pos_max, const char* text, const char* text_display_end, const glm::vec2* text_size_if_known, glm::vec2 align, const ImRect* clip_rect)
 {
     // Perform CPU side clipping for single clipped element to avoid using scissor state
     glm::vec2 pos = pos_min;
@@ -3839,7 +3839,7 @@ void ImGui::RenderTextClippedEx(ImDrawList* draw_list, const glm::vec2& pos_min,
     }
 }
 
-void ImGui::RenderTextClipped(const glm::vec2& pos_min, const glm::vec2& pos_max, const char* text, const char* text_end, const glm::vec2* text_size_if_known, const glm::vec2& align, const ImRect* clip_rect)
+void ImGui::RenderTextClipped(glm::vec2 pos_min, glm::vec2 pos_max, const char* text, const char* text_end, const glm::vec2* text_size_if_known, glm::vec2 align, const ImRect* clip_rect)
 {
     // Hide anything after a '##' string
     const char* text_display_end = FindRenderedTextEnd(text, text_end);
@@ -3858,7 +3858,7 @@ void ImGui::RenderTextClipped(const glm::vec2& pos_min, const glm::vec2& pos_max
 // This is made more complex because we have dissociated the layout rectangle (pos_min..pos_max) from 'ellipsis_max_x' which may be beyond it.
 // This is because in the context of tabs we selectively hide part of the text when the Close Button appears, but we don't want the ellipsis to move.
 // (BREAKING) On 2025/04/16 we removed the 'float clip_max_x' parameters which was preceeding 'float ellipsis_max' and was the same value for 99% of users.
-void ImGui::RenderTextEllipsis(ImDrawList* draw_list, const glm::vec2& pos_min, const glm::vec2& pos_max, float ellipsis_max_x, const char* text, const char* text_end_full, const glm::vec2* text_size_if_known)
+void ImGui::RenderTextEllipsis(ImDrawList* draw_list, glm::vec2 pos_min, glm::vec2 pos_max, float ellipsis_max_x, const char* text, const char* text_end_full, const glm::vec2* text_size_if_known)
 {
     ImGuiContext& g = *GImGui;
     if (text_end_full == NULL)
@@ -4990,7 +4990,7 @@ static void ImGui::SetLastItemDataForChildWindowItem(ImGuiWindow* window, const 
     SetLastItemData(window->ChildId, g.CurrentItemFlags, window->DC.ChildItemStatusFlags, rect);
 }
 
-float ImGui::CalcWrapWidthForPos(const glm::vec2& pos, float wrap_pos_x)
+float ImGui::CalcWrapWidthForPos(glm::vec2 pos, float wrap_pos_x)
 {
     if (wrap_pos_x < 0.0f)
         return 0.0f;
@@ -5355,7 +5355,7 @@ void ImGui::UpdateMouseMovingWindowEndFrame()
 
 // This is called during NewFrame()->UpdateViewportsNewFrame() only.
 // Need to keep in sync with SetWindowPos()
-static void TranslateWindow(ImGuiWindow* window, const glm::vec2& delta)
+static void TranslateWindow(ImGuiWindow* window, glm::vec2 delta)
 {
     window->Pos += delta;
     window->ClipRect.Translate(delta);
@@ -5382,7 +5382,7 @@ static bool IsWindowActiveAndVisible(ImGuiWindow* window)
 }
 
 // The reason this is exposed in imgui_internal.h is: on touch-based system that don't have hovering, we want to dispatch inputs to the right target (imgui vs imgui+app)
-void ImGui::UpdateHoveredWindowAndCaptureFlags(const glm::vec2& mouse_pos)
+void ImGui::UpdateHoveredWindowAndCaptureFlags(glm::vec2 mouse_pos)
 {
     ImGuiContext& g = *GImGui;
     ImGuiIO& io = g.IO;
@@ -5876,7 +5876,7 @@ static void InitViewportDrawData(ImGuiViewportP* viewport)
 //   more specialized SetWindowClipRectBeforeSetChannel() to avoid extraneous updates of underlying ImDrawCmds.
 // - This is analogous to PushFont()/PopFont() in the sense that are a mixing a global stack and a window stack,
 //   which in the case of ClipRect is not so problematic but tends to be more restrictive for fonts.
-void ImGui::PushClipRect(const glm::vec2& clip_rect_min, const glm::vec2& clip_rect_max, bool intersect_with_current_clip_rect)
+void ImGui::PushClipRect(glm::vec2 clip_rect_min, glm::vec2 clip_rect_max, bool intersect_with_current_clip_rect)
 {
     ImGuiWindow* window = GetCurrentWindow();
     window->DrawList->PushClipRect(clip_rect_min, clip_rect_max, intersect_with_current_clip_rect);
@@ -6234,7 +6234,7 @@ glm::vec2 ImGui::CalcTextSize(const char* text, const char* text_end, bool hide_
 //   with SetWindowPos() and not SetNextWindowPos() will have that rectangle lagging by a frame at the time FindHoveredWindow() is
 //   called, aka before the next Begin(). Moving window isn't affected.
 // - The 'find_first_and_in_any_viewport = true' mode is only used by TestEngine. It is simpler to maintain here.
-void ImGui::FindHoveredWindowEx(const glm::vec2& pos, bool find_first_and_in_any_viewport, ImGuiWindow** out_hovered_window, ImGuiWindow** out_hovered_window_under_moving_window)
+void ImGui::FindHoveredWindowEx(glm::vec2 pos, bool find_first_and_in_any_viewport, ImGuiWindow** out_hovered_window, ImGuiWindow** out_hovered_window_under_moving_window)
 {
     ImGuiContext& g = *GImGui;
     ImGuiWindow* hovered_window = NULL;
@@ -6468,18 +6468,18 @@ glm::vec2 ImGui::GetItemRectSize()
 
 // Prior to v1.90 2023/10/16, the BeginChild() function took a 'bool border = false' parameter instead of 'ImGuiChildFlags child_flags = 0'.
 // ImGuiChildFlags_Borders is defined as always == 1 in order to allow old code passing 'true'. Read comments in imgui.h for details!
-bool ImGui::BeginChild(const char* str_id, const glm::vec2& size_arg, ImGuiChildFlags child_flags, ImGuiWindowFlags window_flags)
+bool ImGui::BeginChild(const char* str_id, glm::vec2 size_arg, ImGuiChildFlags child_flags, ImGuiWindowFlags window_flags)
 {
     ImGuiID id = GetCurrentWindow()->GetID(str_id);
     return BeginChildEx(str_id, id, size_arg, child_flags, window_flags);
 }
 
-bool ImGui::BeginChild(ImGuiID id, const glm::vec2& size_arg, ImGuiChildFlags child_flags, ImGuiWindowFlags window_flags)
+bool ImGui::BeginChild(ImGuiID id, glm::vec2 size_arg, ImGuiChildFlags child_flags, ImGuiWindowFlags window_flags)
 {
     return BeginChildEx(NULL, id, size_arg, child_flags, window_flags);
 }
 
-bool ImGui::BeginChildEx(const char* name, ImGuiID id, const glm::vec2& size_arg, ImGuiChildFlags child_flags, ImGuiWindowFlags window_flags)
+bool ImGui::BeginChildEx(const char* name, ImGuiID id, glm::vec2 size_arg, ImGuiChildFlags child_flags, ImGuiWindowFlags window_flags)
 {
     ImGuiContext& g = *GImGui;
     ImGuiWindow* parent_window = g.CurrentWindow;
@@ -6786,7 +6786,7 @@ static inline glm::vec2 CalcWindowMinSize(ImGuiWindow* window)
     return size_min;
 }
 
-static glm::vec2 CalcWindowSizeAfterConstraint(ImGuiWindow* window, const glm::vec2& size_desired)
+static glm::vec2 CalcWindowSizeAfterConstraint(ImGuiWindow* window, glm::vec2 size_desired)
 {
     ImGuiContext& g = *GImGui;
     glm::vec2 new_size = size_desired;
@@ -6835,7 +6835,7 @@ static void CalcWindowContentSizes(ImGuiWindow* window, glm::vec2* content_size_
     content_size_ideal->y = (window->ContentSizeExplicit.y != 0.0f) ? window->ContentSizeExplicit.y : ImTrunc64(ImMax(window->DC.CursorMaxPos.y, window->DC.IdealMaxPos.y) - window->DC.CursorStartPos.y);
 }
 
-static glm::vec2 CalcWindowAutoFitSize(ImGuiWindow* window, const glm::vec2& size_contents)
+static glm::vec2 CalcWindowAutoFitSize(ImGuiWindow* window, glm::vec2 size_contents)
 {
     ImGuiContext& g = *GImGui;
     ImGuiStyle& style = g.Style;
@@ -6906,7 +6906,7 @@ static ImGuiCol GetWindowBgColorIdx(ImGuiWindow* window)
     return ImGuiCol_WindowBg;
 }
 
-static void CalcResizePosSizeFromAnyCorner(ImGuiWindow* window, const glm::vec2& corner_target, const glm::vec2& corner_norm, glm::vec2* out_pos, glm::vec2* out_size)
+static void CalcResizePosSizeFromAnyCorner(ImGuiWindow* window, glm::vec2 corner_target, glm::vec2 corner_norm, glm::vec2* out_pos, glm::vec2* out_size)
 {
     glm::vec2 pos_min = ImLerp(corner_target, window->Pos, corner_norm);                // Expected window upper-left
     glm::vec2 pos_max = ImLerp(window->Pos + window->Size, corner_target, corner_norm); // Expected window lower-right
@@ -6986,7 +6986,7 @@ ImGuiID ImGui::GetWindowResizeBorderID(ImGuiWindow* window, ImGuiDir dir)
 
 // Handle resize for: Resize Grips, Borders, Gamepad
 // Return true when using auto-fit (double-click on resize grip)
-static int ImGui::UpdateWindowManualResize(ImGuiWindow* window, const glm::vec2& size_auto_fit, int* border_hovered, int* border_held, int resize_grip_count, ImU32 resize_grip_col[4], const ImRect& visibility_rect)
+static int ImGui::UpdateWindowManualResize(ImGuiWindow* window, glm::vec2 size_auto_fit, int* border_hovered, int* border_held, int resize_grip_count, ImU32 resize_grip_col[4], const ImRect& visibility_rect)
 {
     ImGuiContext& g = *GImGui;
     ImGuiWindowFlags flags = window->Flags;
@@ -8838,7 +8838,7 @@ glm::vec2 ImGui::GetWindowPos()
     return window->Pos;
 }
 
-void ImGui::SetWindowPos(ImGuiWindow* window, const glm::vec2& pos, ImGuiCond cond)
+void ImGui::SetWindowPos(ImGuiWindow* window, glm::vec2 pos, ImGuiCond cond)
 {
     // Test condition (NB: bit 0 is always true) and clear flags for next time
     if (cond && (window->SetWindowPosAllowFlags & cond) == 0)
@@ -8862,13 +8862,13 @@ void ImGui::SetWindowPos(ImGuiWindow* window, const glm::vec2& pos, ImGuiCond co
     window->DC.CursorStartPos += offset;
 }
 
-void ImGui::SetWindowPos(const glm::vec2& pos, ImGuiCond cond)
+void ImGui::SetWindowPos(glm::vec2 pos, ImGuiCond cond)
 {
     ImGuiWindow* window = GetCurrentWindowRead();
     SetWindowPos(window, pos, cond);
 }
 
-void ImGui::SetWindowPos(const char* name, const glm::vec2& pos, ImGuiCond cond)
+void ImGui::SetWindowPos(const char* name, glm::vec2 pos, ImGuiCond cond)
 {
     if (ImGuiWindow* window = FindWindowByName(name))
         SetWindowPos(window, pos, cond);
@@ -8880,7 +8880,7 @@ glm::vec2 ImGui::GetWindowSize()
     return window->Size;
 }
 
-void ImGui::SetWindowSize(ImGuiWindow* window, const glm::vec2& size, ImGuiCond cond)
+void ImGui::SetWindowSize(ImGuiWindow* window, glm::vec2 size, ImGuiCond cond)
 {
     // Test condition (NB: bit 0 is always true) and clear flags for next time
     if (cond && (window->SetWindowSizeAllowFlags & cond) == 0)
@@ -8909,12 +8909,12 @@ void ImGui::SetWindowSize(ImGuiWindow* window, const glm::vec2& size, ImGuiCond 
         MarkIniSettingsDirty(window);
 }
 
-void ImGui::SetWindowSize(const glm::vec2& size, ImGuiCond cond)
+void ImGui::SetWindowSize(glm::vec2 size, ImGuiCond cond)
 {
     SetWindowSize(GImGui->CurrentWindow, size, cond);
 }
 
-void ImGui::SetWindowSize(const char* name, const glm::vec2& size, ImGuiCond cond)
+void ImGui::SetWindowSize(const char* name, glm::vec2 size, ImGuiCond cond)
 {
     if (ImGuiWindow* window = FindWindowByName(name))
         SetWindowSize(window, size, cond);
@@ -8933,7 +8933,7 @@ void ImGui::SetWindowCollapsed(ImGuiWindow* window, bool collapsed, ImGuiCond co
     window->WantCollapseToggle = (window->Collapsed != collapsed);
 }
 
-void ImGui::SetWindowHitTestHole(ImGuiWindow* window, const glm::vec2& pos, const glm::vec2& size)
+void ImGui::SetWindowHitTestHole(ImGuiWindow* window, glm::vec2 pos, glm::vec2 size)
 {
     IM_ASSERT(window->HitTestHoleSize.x == 0);     // We don't support multiple holes/hit test filters
     window->HitTestHoleSize = glm::i16vec2(size);
@@ -8969,7 +8969,7 @@ void ImGui::SetWindowCollapsed(const char* name, bool collapsed, ImGuiCond cond)
         SetWindowCollapsed(window, collapsed, cond);
 }
 
-void ImGui::SetNextWindowPos(const glm::vec2& pos, ImGuiCond cond, const glm::vec2& pivot)
+void ImGui::SetNextWindowPos(glm::vec2 pos, ImGuiCond cond, glm::vec2 pivot)
 {
     ImGuiContext& g = *GImGui;
     IM_ASSERT(cond == 0 || ImIsPowerOfTwo(cond)); // Make sure the user doesn't attempt to combine multiple condition flags.
@@ -8980,7 +8980,7 @@ void ImGui::SetNextWindowPos(const glm::vec2& pos, ImGuiCond cond, const glm::ve
     g.NextWindowData.PosUndock = true;
 }
 
-void ImGui::SetNextWindowSize(const glm::vec2& size, ImGuiCond cond)
+void ImGui::SetNextWindowSize(glm::vec2 size, ImGuiCond cond)
 {
     ImGuiContext& g = *GImGui;
     IM_ASSERT(cond == 0 || ImIsPowerOfTwo(cond)); // Make sure the user doesn't attempt to combine multiple condition flags.
@@ -8993,7 +8993,7 @@ void ImGui::SetNextWindowSize(const glm::vec2& size, ImGuiCond cond)
 // - Use 0.0f as min or FLT_MAX as max if you don't want limits, e.g. size_min = (500.0f, 0.0f), size_max = (FLT_MAX, FLT_MAX) sets a minimum width.
 // - Use -1 for both min and max of same axis to preserve current size which itself is a constraint.
 // - See "Demo->Examples->Constrained-resizing window" for examples.
-void ImGui::SetNextWindowSizeConstraints(const glm::vec2& size_min, const glm::vec2& size_max, ImGuiSizeCallback custom_callback, void* custom_callback_user_data)
+void ImGui::SetNextWindowSizeConstraints(glm::vec2 size_min, glm::vec2 size_max, ImGuiSizeCallback custom_callback, void* custom_callback_user_data)
 {
     ImGuiContext& g = *GImGui;
     g.NextWindowData.HasFlags |= ImGuiNextWindowDataFlags_HasSizeConstraint;
@@ -9004,14 +9004,14 @@ void ImGui::SetNextWindowSizeConstraints(const glm::vec2& size_min, const glm::v
 
 // Content size = inner scrollable rectangle, padded with WindowPadding.
 // SetNextWindowContentSize(glm::vec2(100,100) + ImGuiWindowFlags_AlwaysAutoResize will always allow submitting a 100x100 item.
-void ImGui::SetNextWindowContentSize(const glm::vec2& size)
+void ImGui::SetNextWindowContentSize(glm::vec2 size)
 {
     ImGuiContext& g = *GImGui;
     g.NextWindowData.HasFlags |= ImGuiNextWindowDataFlags_HasContentSize;
     g.NextWindowData.ContentSizeVal = ImTrunc(size);
 }
 
-void ImGui::SetNextWindowScroll(const glm::vec2& scroll)
+void ImGui::SetNextWindowScroll(glm::vec2 scroll)
 {
     ImGuiContext& g = *GImGui;
     g.NextWindowData.HasFlags |= ImGuiNextWindowDataFlags_HasScroll;
@@ -9258,13 +9258,13 @@ ImGuiStorage* ImGui::GetStateStorage()
     return window->DC.StateStorage;
 }
 
-bool ImGui::IsRectVisible(const glm::vec2& size)
+bool ImGui::IsRectVisible(glm::vec2 size)
 {
     ImGuiWindow* window = GImGui->CurrentWindow;
     return window->ClipRect.Overlaps(ImRect(window->DC.CursorPos, window->DC.CursorPos + size));
 }
 
-bool ImGui::IsRectVisible(const glm::vec2& rect_min, const glm::vec2& rect_max)
+bool ImGui::IsRectVisible(glm::vec2 rect_min, glm::vec2 rect_max)
 {
     ImGuiWindow* window = GImGui->CurrentWindow;
     return window->ClipRect.Overlaps(ImRect(rect_min, rect_max));
@@ -9574,7 +9574,7 @@ ImGuiID ImGuiWindow::GetID(int n)
 
 // This is only used in rare/specific situations to manufacture an ID out of nowhere.
 // FIXME: Consider instead storing last non-zero ID + count of successive zero-ID, and combine those?
-ImGuiID ImGuiWindow::GetIDFromPos(const glm::vec2& p_abs)
+ImGuiID ImGuiWindow::GetIDFromPos(glm::vec2 p_abs)
 {
     ImGuiID seed = IDStack.back();
     glm::vec2 p_rel = ImGui::WindowPosAbsToRel(this, p_abs);
@@ -10330,7 +10330,7 @@ int ImGui::GetMouseClickedCount(ImGuiMouseButton button)
 // Test if mouse cursor is hovering given rectangle
 // NB- Rectangle is clipped by our current clip setting
 // NB- Expand the rectangle to be generous on imprecise inputs systems (g.Style.TouchExtraPadding)
-bool ImGui::IsMouseHoveringRect(const glm::vec2& r_min, const glm::vec2& r_max, bool clip)
+bool ImGui::IsMouseHoveringRect(glm::vec2 r_min, glm::vec2 r_max, bool clip)
 {
     ImGuiContext& g = *GImGui;
 
@@ -10375,7 +10375,7 @@ glm::vec2 ImGui::GetMousePos()
 
 // This is called TeleportMousePos() and not SetMousePos() to emphasis that setting MousePosPrev will effectively clear mouse delta as well.
 // It is expected you only call this if (io.BackendFlags & ImGuiBackendFlags_HasSetMousePos) is set and supported by backend.
-void ImGui::TeleportMousePos(const glm::vec2& pos)
+void ImGui::TeleportMousePos(glm::vec2 pos)
 {
     ImGuiContext& g = *GImGui;
     g.IO.MousePos = g.IO.MousePosPrev = pos;
@@ -10641,7 +10641,7 @@ static void LockWheelingWindow(ImGuiWindow* window, float wheel_amount)
     }
 }
 
-static ImGuiWindow* FindBestWheelingWindow(const glm::vec2& wheel)
+static ImGuiWindow* FindBestWheelingWindow(glm::vec2 wheel)
 {
     // For each axis, find window in the hierarchy that may want to use scrolling
     ImGuiContext& g = *GImGui;
@@ -11789,7 +11789,7 @@ IM_MSVC_RUNTIME_CHECKS_RESTORE
 // See comments in ItemAdd() about how/why the size provided to ItemSize() vs ItemAdd() may often different.
 // THIS IS IN THE PERFORMANCE CRITICAL PATH.
 IM_MSVC_RUNTIME_CHECKS_OFF
-void ImGui::ItemSize(const glm::vec2& size, float text_baseline_y)
+void ImGui::ItemSize(glm::vec2 size, float text_baseline_y)
 {
     ImGuiContext& g = *GImGui;
     ImGuiWindow* window = g.CurrentWindow;
@@ -11863,7 +11863,7 @@ glm::vec2 ImGui::GetCursorScreenPos()
     return window->DC.CursorPos;
 }
 
-void ImGui::SetCursorScreenPos(const glm::vec2& pos)
+void ImGui::SetCursorScreenPos(glm::vec2 pos)
 {
     ImGuiWindow* window = GetCurrentWindow();
     window->DC.CursorPos = pos;
@@ -11891,7 +11891,7 @@ float ImGui::GetCursorPosY()
     return window->DC.CursorPos.y - window->Pos.y + window->Scroll.y;
 }
 
-void ImGui::SetCursorPos(const glm::vec2& local_pos)
+void ImGui::SetCursorPos(glm::vec2 local_pos)
 {
     ImGuiWindow* window = GetCurrentWindow();
     window->DC.CursorPos = window->Pos - window->Scroll + local_pos;
@@ -13012,7 +13012,7 @@ bool ImGui::BeginPopupContextVoid(const char* str_id, ImGuiPopupFlags popup_flag
 // (r_outer is usually equivalent to the viewport rectangle minus padding, but when multi-viewports are enabled and monitor
 //  information are available, it may represent the entire platform monitor from the frame of reference of the current viewport.
 //  this allows us to have tooltips/popups displayed out of the parent viewport.)
-glm::vec2 ImGui::FindBestWindowPosForPopupEx(const glm::vec2& ref_pos, const glm::vec2& size, ImGuiDir* last_dir, const ImRect& r_outer, const ImRect& r_avoid, ImGuiPopupPositionPolicy policy)
+glm::vec2 ImGui::FindBestWindowPosForPopupEx(glm::vec2 ref_pos, glm::vec2 size, ImGuiDir* last_dir, const ImRect& r_outer, const ImRect& r_avoid, ImGuiPopupPositionPolicy policy)
 {
     glm::vec2 base_pos_clamped = ImClamp(ref_pos, r_outer.Min, r_outer.Max - size);
     //GetForegroundDrawList()->AddRect(r_avoid.Min, r_avoid.Max, IM_COL32(255,0,0,255));
@@ -16266,7 +16266,7 @@ static bool ImGui::UpdateTryMergeWindowIntoHostViewports(ImGuiWindow* window)
 
 // Translate Dear ImGui windows when a Host Viewport has been moved
 // (This additionally keeps windows at the same place when ImGuiConfigFlags_ViewportsEnable is toggled!)
-void ImGui::TranslateWindowsInViewport(ImGuiViewportP* viewport, const glm::vec2& old_pos, const glm::vec2& new_pos, const glm::vec2& old_size, const glm::vec2& new_size)
+void ImGui::TranslateWindowsInViewport(ImGuiViewportP* viewport, glm::vec2 old_pos, glm::vec2 new_pos, glm::vec2 old_size, glm::vec2 new_size)
 {
     ImGuiContext& g = *GImGui;
     //IMGUI_DEBUG_LOG_VIEWPORT("[viewport] TranslateWindowsInViewport 0x%08X\n", viewport->ID);
@@ -16305,7 +16305,7 @@ void ImGui::ScaleWindowsInViewport(ImGuiViewportP* viewport, float scale)
 // If the backend doesn't set MouseLastHoveredViewport or doesn't honor ImGuiViewportFlags_NoInputs, we do a search ourselves.
 // A) It won't take account of the possibility that non-imgui windows may be in-between our dragged window and our target window.
 // B) It requires Platform_GetWindowFocus to be implemented by backend.
-ImGuiViewportP* ImGui::FindHoveredViewportFromPlatformWindowStack(const glm::vec2& mouse_platform_pos)
+ImGuiViewportP* ImGui::FindHoveredViewportFromPlatformWindowStack(glm::vec2 mouse_platform_pos)
 {
     ImGuiContext& g = *GImGui;
     ImGuiViewportP* best_candidate = NULL;
@@ -16588,7 +16588,7 @@ static void ImGui::UpdateViewportsEndFrame()
 }
 
 // FIXME: We should ideally refactor the system to call this every frame (we currently don't)
-ImGuiViewportP* ImGui::AddUpdateViewport(ImGuiWindow* window, ImGuiID id, const glm::vec2& pos, const glm::vec2& size, ImGuiViewportFlags flags)
+ImGuiViewportP* ImGui::AddUpdateViewport(ImGuiWindow* window, ImGuiID id, glm::vec2 pos, glm::vec2 size, ImGuiViewportFlags flags)
 {
     ImGuiContext& g = *GImGui;
     IM_ASSERT(id != 0);
@@ -17042,7 +17042,7 @@ void ImGui::RenderPlatformWindowsDefault(void* platform_render_arg, void* render
     }
 }
 
-static int ImGui::FindPlatformMonitorForPos(const glm::vec2& pos)
+static int ImGui::FindPlatformMonitorForPos(glm::vec2 pos)
 {
     ImGuiContext& g = *GImGui;
     for (int monitor_n = 0; monitor_n < g.PlatformIO.Monitors.Size; monitor_n++)
@@ -17898,7 +17898,7 @@ void ImGui::DockContextProcessDock(ImGuiContext* ctx, ImGuiDockRequest* req)
 // Solution:
 //   When undocking a window we currently force its maximum size to 90% of the host viewport or monitor.
 // Reevaluate this when we implement preserving docked/undocked size ("docking_wip/undocked_size" branch).
-static glm::vec2 FixLargeWindowsWhenUndocking(const glm::vec2& size, ImGuiViewport* ref_viewport)
+static glm::vec2 FixLargeWindowsWhenUndocking(glm::vec2 size, ImGuiViewport* ref_viewport)
 {
     if (ref_viewport == NULL)
         return size;
@@ -19978,7 +19978,7 @@ void ImGui::SetWindowDock(ImGuiWindow* window, ImGuiID dock_id, ImGuiCond cond)
 // The Central Node is always displayed even when empty and shrink/extend according to the requested size of its neighbors.
 // DockSpace() needs to be submitted _before_ any window they can host. If you use a dockspace, submit it early in your app.
 // When ImGuiDockNodeFlags_KeepAliveOnly is set, nothing is submitted in the current window (function may be called from any location).
-ImGuiID ImGui::DockSpace(ImGuiID dockspace_id, const glm::vec2& size_arg, ImGuiDockNodeFlags flags, const ImGuiWindowClass* window_class)
+ImGuiID ImGui::DockSpace(ImGuiID dockspace_id, glm::vec2 size_arg, ImGuiDockNodeFlags flags, const ImGuiWindowClass* window_class)
 {
     ImGuiContext& g = *GImGui;
     ImGuiWindow* window = GetCurrentWindowRead();
@@ -23214,7 +23214,7 @@ void ImGui::DebugLogV(const char* fmt, va_list args)
 }
 
 // FIXME-LAYOUT: To be done automatically via layout mode once we rework ItemSize/ItemAdd into ItemLayout.
-static void SameLineOrWrap(const glm::vec2& size)
+static void SameLineOrWrap(glm::vec2 size)
 {
     ImGuiContext& g = *GImGui;
     ImGuiWindow* window = g.CurrentWindow;

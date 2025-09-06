@@ -813,15 +813,15 @@ T ImSubClampOverflow(T a, T b, T mn, T mx)
     return a - b;
 }
 // - Misc maths helpers
-inline glm::vec2 ImMin(const glm::vec2& lhs, const glm::vec2& rhs)
+inline glm::vec2 ImMin(glm::vec2 lhs, glm::vec2 rhs)
 {
     return glm::vec2(lhs.x < rhs.x ? lhs.x : rhs.x, lhs.y < rhs.y ? lhs.y : rhs.y);
 }
-inline glm::vec2 ImMax(const glm::vec2& lhs, const glm::vec2& rhs)
+inline glm::vec2 ImMax(glm::vec2 lhs, glm::vec2 rhs)
 {
     return glm::vec2(lhs.x >= rhs.x ? lhs.x : rhs.x, lhs.y >= rhs.y ? lhs.y : rhs.y);
 }
-inline glm::vec2 ImClamp(const glm::vec2& v, const glm::vec2& mn, const glm::vec2& mx)
+inline glm::vec2 ImClamp(glm::vec2 v, glm::vec2 mn, glm::vec2 mx)
 {
     return glm::vec2((v.x < mn.x)   ? mn.x
                      : (v.x > mx.x) ? mx.x
@@ -830,11 +830,11 @@ inline glm::vec2 ImClamp(const glm::vec2& v, const glm::vec2& mn, const glm::vec
                      : (v.y > mx.y) ? mx.y
                                     : v.y);
 }
-inline glm::vec2 ImLerp(const glm::vec2& a, const glm::vec2& b, float t)
+inline glm::vec2 ImLerp(glm::vec2 a, glm::vec2 b, float t)
 {
     return glm::vec2(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t);
 }
-inline glm::vec2 ImLerp(const glm::vec2& a, const glm::vec2& b, const glm::vec2& t)
+inline glm::vec2 ImLerp(glm::vec2 a, glm::vec2 b, glm::vec2 t)
 {
     return glm::vec2(a.x + (b.x - a.x) * t.x, a.y + (b.y - a.y) * t.y);
 }
@@ -847,7 +847,7 @@ inline float ImSaturate(float f)
 {
     return (f < 0.0f) ? 0.0f : (f > 1.0f) ? 1.0f : f;
 }
-inline float ImLengthSqr(const glm::vec2& lhs)
+inline float ImLengthSqr(glm::vec2 lhs)
 {
     return (lhs.x * lhs.x) + (lhs.y * lhs.y);
 }
@@ -855,7 +855,7 @@ inline float ImLengthSqr(const glm::vec4& lhs)
 {
     return (lhs.x * lhs.x) + (lhs.y * lhs.y) + (lhs.z * lhs.z) + (lhs.w * lhs.w);
 }
-inline float ImInvLength(const glm::vec2& lhs, float fail_value)
+inline float ImInvLength(glm::vec2 lhs, float fail_value)
 {
     float d = (lhs.x * lhs.x) + (lhs.y * lhs.y);
     if (d > 0.0f)
@@ -868,7 +868,7 @@ inline float ImTrunc(float f)
 {
     return (float)(int)(f);
 }
-inline glm::vec2 ImTrunc(const glm::vec2& v)
+inline glm::vec2 ImTrunc(glm::vec2 v)
 {
     return glm::vec2((float)(int)(v.x), (float)(int)(v.y));
 }
@@ -876,7 +876,7 @@ inline float ImFloor(float f)
 {
     return (float)((f >= 0 || (float)(int)f == f) ? (int)f : (int)f - 1);
 } // Decent replacement for floorf()
-inline glm::vec2 ImFloor(const glm::vec2& v)
+inline glm::vec2 ImFloor(glm::vec2 v)
 {
     return glm::vec2(ImFloor(v.x), ImFloor(v.y));
 }
@@ -892,11 +892,11 @@ inline int ImModPositive(int a, int b)
 {
     return (a + b) % b;
 }
-inline float ImDot(const glm::vec2& a, const glm::vec2& b)
+inline float ImDot(glm::vec2 a, glm::vec2 b)
 {
     return a.x * b.x + a.y * b.y;
 }
-inline glm::vec2 ImRotate(const glm::vec2& v, float cos_a, float sin_a)
+inline glm::vec2 ImRotate(glm::vec2 v, float cos_a, float sin_a)
 {
     return glm::vec2(v.x * cos_a - v.y * sin_a, v.x * sin_a + v.y * cos_a);
 }
@@ -916,7 +916,7 @@ inline float ImLinearRemapClamp(float s0, float s1, float d0, float d1, float x)
 {
     return ImSaturate((x - s0) / (s1 - s0)) * (d1 - d0) + d0;
 }
-inline glm::vec2 ImMul(const glm::vec2& lhs, const glm::vec2& rhs)
+inline glm::vec2 ImMul(glm::vec2 lhs, glm::vec2 rhs)
 {
     return glm::vec2(lhs.x * rhs.x, lhs.y * rhs.y);
 }
@@ -933,32 +933,32 @@ inline float ImExponentialMovingAverage(float avg, float sample, int n)
 IM_MSVC_RUNTIME_CHECKS_RESTORE
 
 // Helpers: Geometry
-IMGUI_API glm::vec2 ImBezierCubicCalc(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3,
-                                      const glm::vec2& p4, float t);
+IMGUI_API glm::vec2 ImBezierCubicCalc(glm::vec2 p1, glm::vec2 p2, glm::vec2 p3,
+                                      glm::vec2 p4, float t);
 IMGUI_API glm::vec2 ImBezierCubicClosestPoint(
-    const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, const glm::vec2& p4,
-    const glm::vec2& p,
+    glm::vec2 p1, glm::vec2 p2, glm::vec2 p3, glm::vec2 p4,
+    glm::vec2 p,
     int num_segments); // For curves with explicit number of segments
 IMGUI_API glm::vec2 ImBezierCubicClosestPointCasteljau(
-    const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, const glm::vec2& p4,
-    const glm::vec2& p,
+    glm::vec2 p1, glm::vec2 p2, glm::vec2 p3, glm::vec2 p4,
+    glm::vec2 p,
     float
         tess_tol); // For auto-tessellated curves you can use tess_tol = style.CurveTessellationTol
-IMGUI_API glm::vec2 ImBezierQuadraticCalc(const glm::vec2& p1, const glm::vec2& p2,
-                                          const glm::vec2& p3, float t);
-IMGUI_API glm::vec2 ImLineClosestPoint(const glm::vec2& a, const glm::vec2& b, const glm::vec2& p);
-IMGUI_API bool ImTriangleContainsPoint(const glm::vec2& a, const glm::vec2& b, const glm::vec2& c,
-                                       const glm::vec2& p);
-IMGUI_API glm::vec2 ImTriangleClosestPoint(const glm::vec2& a, const glm::vec2& b,
-                                           const glm::vec2& c, const glm::vec2& p);
-IMGUI_API void ImTriangleBarycentricCoords(const glm::vec2& a, const glm::vec2& b,
-                                           const glm::vec2& c, const glm::vec2& p, float& out_u,
+IMGUI_API glm::vec2 ImBezierQuadraticCalc(glm::vec2 p1, glm::vec2 p2,
+                                          glm::vec2 p3, float t);
+IMGUI_API glm::vec2 ImLineClosestPoint(glm::vec2 a, glm::vec2 b, glm::vec2 p);
+IMGUI_API bool ImTriangleContainsPoint(glm::vec2 a, glm::vec2 b, glm::vec2 c,
+                                       glm::vec2 p);
+IMGUI_API glm::vec2 ImTriangleClosestPoint(glm::vec2 a, glm::vec2 b,
+                                           glm::vec2 c, glm::vec2 p);
+IMGUI_API void ImTriangleBarycentricCoords(glm::vec2 a, glm::vec2 b,
+                                           glm::vec2 c, glm::vec2 p, float& out_u,
                                            float& out_v, float& out_w);
-inline float ImTriangleArea(const glm::vec2& a, const glm::vec2& b, const glm::vec2& c)
+inline float ImTriangleArea(glm::vec2 a, glm::vec2 b, glm::vec2 c)
 {
     return ImFabs((a.x * (b.y - c.y)) + (b.x * (c.y - a.y)) + (c.x * (a.y - b.y))) * 0.5f;
 }
-inline bool ImTriangleIsClockwise(const glm::vec2& a, const glm::vec2& b, const glm::vec2& c)
+inline bool ImTriangleIsClockwise(glm::vec2 a, glm::vec2 b, glm::vec2 c)
 {
     return ((b.x - a.x) * (c.y - b.y)) - ((c.x - b.x) * (b.y - a.y)) > 0.0f;
 }
@@ -980,7 +980,7 @@ struct IMGUI_API ImRect
           Max(0.0f, 0.0f)
     {
     }
-    constexpr ImRect(const glm::vec2& min, const glm::vec2& max)
+    constexpr ImRect(glm::vec2 min, glm::vec2 max)
         : Min(min),
           Max(max)
     {
@@ -1008,7 +1008,7 @@ struct IMGUI_API ImRect
     glm::vec2 GetTR() const { return glm::vec2(Max.x, Min.y); } // Top-right
     glm::vec2 GetBL() const { return glm::vec2(Min.x, Max.y); } // Bottom-left
     glm::vec2 GetBR() const { return Max; }                     // Bottom-right
-    bool Contains(const glm::vec2& p) const
+    bool Contains(glm::vec2 p) const
     {
         return p.x >= Min.x && p.y >= Min.y && p.x < Max.x && p.y < Max.y;
     }
@@ -1016,7 +1016,7 @@ struct IMGUI_API ImRect
     {
         return r.Min.x >= Min.x && r.Min.y >= Min.y && r.Max.x <= Max.x && r.Max.y <= Max.y;
     }
-    bool ContainsWithPad(const glm::vec2& p, const glm::vec2& pad) const
+    bool ContainsWithPad(glm::vec2 p, glm::vec2 pad) const
     {
         return p.x >= Min.x - pad.x && p.y >= Min.y - pad.y && p.x < Max.x + pad.x
                && p.y < Max.y + pad.y;
@@ -1025,7 +1025,7 @@ struct IMGUI_API ImRect
     {
         return r.Min.y < Max.y && r.Max.y > Min.y && r.Min.x < Max.x && r.Max.x > Min.x;
     }
-    void Add(const glm::vec2& p)
+    void Add(glm::vec2 p)
     {
         if (Min.x > p.x)
         {
@@ -1070,14 +1070,14 @@ struct IMGUI_API ImRect
         Max.x += amount;
         Max.y += amount;
     }
-    void Expand(const glm::vec2& amount)
+    void Expand(glm::vec2 amount)
     {
         Min.x -= amount.x;
         Min.y -= amount.y;
         Max.x += amount.x;
         Max.y += amount.y;
     }
-    void Translate(const glm::vec2& d)
+    void Translate(glm::vec2 d)
     {
         Min.x += d.x;
         Min.y += d.y;
@@ -3435,11 +3435,11 @@ struct ImGuiViewportP : public ImGuiViewport
 
     // Calculate work rect pos/size given a set of offset (we have 1 pair of offset for rect locked
     // from last frame data, and 1 pair for currently building rect)
-    glm::vec2 CalcWorkRectPos(const glm::vec2& inset_min) const
+    glm::vec2 CalcWorkRectPos(glm::vec2 inset_min) const
     {
         return glm::vec2(Pos.x + inset_min.x, Pos.y + inset_min.y);
     }
-    glm::vec2 CalcWorkRectSize(const glm::vec2& inset_min, const glm::vec2& inset_max) const
+    glm::vec2 CalcWorkRectSize(glm::vec2 inset_min, glm::vec2 inset_max) const
     {
         return glm::vec2(ImMax(0.0f, Size.x - inset_min.x - inset_max.x),
                          ImMax(0.0f, Size.y - inset_min.y - inset_max.y));
@@ -4576,7 +4576,7 @@ public:
     ImGuiID GetID(const char* str, const char* str_end = NULL);
     ImGuiID GetID(const void* ptr);
     ImGuiID GetID(int n);
-    ImGuiID GetIDFromPos(const glm::vec2& p_abs);
+    ImGuiID GetIDFromPos(glm::vec2 p_abs);
     ImGuiID GetIDFromRectangle(const ImRect& r_abs);
 
     // We don't use g.FontSize because the window may be != g.CurrentWindow.
@@ -5134,11 +5134,11 @@ namespace ImGui
     IMGUI_API bool IsWindowWithinBeginStackOf(ImGuiWindow* window, ImGuiWindow* potential_parent);
     IMGUI_API bool IsWindowAbove(ImGuiWindow* potential_above, ImGuiWindow* potential_below);
     IMGUI_API bool IsWindowNavFocusable(ImGuiWindow* window);
-    IMGUI_API void SetWindowPos(ImGuiWindow* window, const glm::vec2& pos, ImGuiCond cond = 0);
-    IMGUI_API void SetWindowSize(ImGuiWindow* window, const glm::vec2& size, ImGuiCond cond = 0);
+    IMGUI_API void SetWindowPos(ImGuiWindow* window, glm::vec2 pos, ImGuiCond cond = 0);
+    IMGUI_API void SetWindowSize(ImGuiWindow* window, glm::vec2 size, ImGuiCond cond = 0);
     IMGUI_API void SetWindowCollapsed(ImGuiWindow* window, bool collapsed, ImGuiCond cond = 0);
-    IMGUI_API void SetWindowHitTestHole(ImGuiWindow* window, const glm::vec2& pos,
-                                        const glm::vec2& size);
+    IMGUI_API void SetWindowHitTestHole(ImGuiWindow* window, glm::vec2 pos,
+                                        glm::vec2 size);
     IMGUI_API void SetWindowHiddenAndSkipItemsForCurrentFrame(ImGuiWindow* window);
     inline void SetWindowParentWindowForFocusRoute(ImGuiWindow* window, ImGuiWindow* parent_window)
     {
@@ -5154,12 +5154,12 @@ namespace ImGui
         glm::vec2 off = window->DC.CursorStartPos;
         return ImRect(r.Min.x + off.x, r.Min.y + off.y, r.Max.x + off.x, r.Max.y + off.y);
     }
-    inline glm::vec2 WindowPosAbsToRel(ImGuiWindow* window, const glm::vec2& p)
+    inline glm::vec2 WindowPosAbsToRel(ImGuiWindow* window, glm::vec2 p)
     {
         glm::vec2 off = window->DC.CursorStartPos;
         return glm::vec2(p.x - off.x, p.y - off.y);
     }
-    inline glm::vec2 WindowPosRelToAbs(ImGuiWindow* window, const glm::vec2& p)
+    inline glm::vec2 WindowPosRelToAbs(ImGuiWindow* window, glm::vec2 p)
     {
         glm::vec2 off = window->DC.CursorStartPos;
         return glm::vec2(p.x + off.x, p.y + off.y);
@@ -5217,8 +5217,8 @@ namespace ImGui
 
     // NewFrame
     IMGUI_API void UpdateInputEvents(bool trickle_fast_inputs);
-    IMGUI_API void UpdateHoveredWindowAndCaptureFlags(const glm::vec2& mouse_pos);
-    IMGUI_API void FindHoveredWindowEx(const glm::vec2& pos, bool find_first_and_in_any_viewport,
+    IMGUI_API void UpdateHoveredWindowAndCaptureFlags(glm::vec2 mouse_pos);
+    IMGUI_API void FindHoveredWindowEx(glm::vec2 pos, bool find_first_and_in_any_viewport,
                                        ImGuiWindow** out_hovered_window,
                                        ImGuiWindow** out_hovered_window_under_moving_window);
     IMGUI_API void StartMouseMovingWindow(ImGuiWindow* window);
@@ -5234,16 +5234,16 @@ namespace ImGui
     IMGUI_API void CallContextHooks(ImGuiContext* context, ImGuiContextHookType type);
 
     // Viewports
-    IMGUI_API void TranslateWindowsInViewport(ImGuiViewportP* viewport, const glm::vec2& old_pos,
-                                              const glm::vec2& new_pos, const glm::vec2& old_size,
-                                              const glm::vec2& new_size);
+    IMGUI_API void TranslateWindowsInViewport(ImGuiViewportP* viewport, glm::vec2 old_pos,
+                                              glm::vec2 new_pos, glm::vec2 old_size,
+                                              glm::vec2 new_size);
     IMGUI_API void ScaleWindowsInViewport(ImGuiViewportP* viewport, float scale);
     IMGUI_API void DestroyPlatformWindow(ImGuiViewportP* viewport);
     IMGUI_API void SetWindowViewport(ImGuiWindow* window, ImGuiViewportP* viewport);
     IMGUI_API void SetCurrentViewport(ImGuiWindow* window, ImGuiViewportP* viewport);
     IMGUI_API const ImGuiPlatformMonitor* GetViewportPlatformMonitor(ImGuiViewport* viewport);
     IMGUI_API ImGuiViewportP* FindHoveredViewportFromPlatformWindowStack(
-        const glm::vec2& mouse_platform_pos);
+        glm::vec2 mouse_platform_pos);
 
     // Settings
     IMGUI_API void MarkIniSettingsDirty();
@@ -5322,7 +5322,7 @@ namespace ImGui
     IMGUI_API ImGuiID GetIDWithSeed(int n, ImGuiID seed);
 
     // Basic Helpers for widget code
-    IMGUI_API void ItemSize(const glm::vec2& size, float text_baseline_y = -1.0f);
+    IMGUI_API void ItemSize(glm::vec2 size, float text_baseline_y = -1.0f);
     inline void ItemSize(const ImRect& bb, float text_baseline_y = -1.0f)
     {
         ItemSize(bb.GetSize(), text_baseline_y);
@@ -5335,7 +5335,7 @@ namespace ImGui
     IMGUI_API void SetLastItemData(ImGuiID item_id, ImGuiItemFlags item_flags,
                                    ImGuiItemStatusFlags status_flags, const ImRect& item_rect);
     IMGUI_API glm::vec2 CalcItemSize(glm::vec2 size, float default_w, float default_h);
-    IMGUI_API float CalcWrapWidthForPos(const glm::vec2& pos, float wrap_pos_x);
+    IMGUI_API float CalcWrapWidthForPos(glm::vec2 pos, float wrap_pos_x);
     IMGUI_API void PushMultiItemsWidths(int components, float width_full);
     IMGUI_API void ShrinkWidths(ImGuiShrinkWidthItem* items, int count, float width_excess,
                                 float width_min);
@@ -5356,7 +5356,7 @@ namespace ImGui
     IMGUI_API void LogSetNextTextDecoration(const char* prefix, const char* suffix);
 
     // Childs
-    IMGUI_API bool BeginChildEx(const char* name, ImGuiID id, const glm::vec2& size_arg,
+    IMGUI_API bool BeginChildEx(const char* name, ImGuiID id, glm::vec2 size_arg,
                                 ImGuiChildFlags child_flags, ImGuiWindowFlags window_flags);
 
     // Popups, Modals
@@ -5374,7 +5374,7 @@ namespace ImGui
     IMGUI_API ImGuiWindow* GetTopMostAndVisiblePopupModal();
     IMGUI_API ImGuiWindow* FindBlockingModal(ImGuiWindow* window);
     IMGUI_API glm::vec2 FindBestWindowPosForPopup(ImGuiWindow* window);
-    IMGUI_API glm::vec2 FindBestWindowPosForPopupEx(const glm::vec2& ref_pos, const glm::vec2& size,
+    IMGUI_API glm::vec2 FindBestWindowPosForPopupEx(glm::vec2 ref_pos, glm::vec2 size,
                                                     ImGuiDir* last_dir, const ImRect& r_outer,
                                                     const ImRect& r_avoid,
                                                     ImGuiPopupPositionPolicy policy);
@@ -5510,7 +5510,7 @@ namespace ImGui
                                             float repeat_rate);
     IMGUI_API void GetTypematicRepeatRate(ImGuiInputFlags flags, float* repeat_delay,
                                           float* repeat_rate);
-    IMGUI_API void TeleportMousePos(const glm::vec2& pos);
+    IMGUI_API void TeleportMousePos(glm::vec2 pos);
     IMGUI_API void SetActiveIdUsingAllKeyboardKeys();
     inline bool IsActiveIdUsingNavDir(ImGuiDir dir)
     {
@@ -5848,7 +5848,7 @@ namespace ImGui
     IMGUI_API ImGuiTable* TableFindByID(ImGuiID id);
     IMGUI_API bool BeginTableEx(const char* name, ImGuiID id, int columns_count,
                                 ImGuiTableFlags flags = 0,
-                                const glm::vec2& outer_size = glm::vec2(0, 0),
+                                glm::vec2 outer_size = glm::vec2(0, 0),
                                 float inner_width = 0.0f);
     IMGUI_API void TableBeginInitMemory(ImGuiTable* table, int columns_count);
     IMGUI_API void TableBeginApplyRequests(ImGuiTable* table);
@@ -5950,18 +5950,18 @@ namespace ImGui
                               bool hide_text_after_hash = true);
     IMGUI_API void RenderTextWrapped(glm::vec2 pos, const char* text, const char* text_end,
                                      float wrap_width);
-    IMGUI_API void RenderTextClipped(const glm::vec2& pos_min, const glm::vec2& pos_max,
+    IMGUI_API void RenderTextClipped(glm::vec2 pos_min, glm::vec2 pos_max,
                                      const char* text, const char* text_end,
                                      const glm::vec2* text_size_if_known,
-                                     const glm::vec2& align = glm::vec2(0, 0),
+                                     glm::vec2 align = glm::vec2(0, 0),
                                      const ImRect* clip_rect = NULL);
-    IMGUI_API void RenderTextClippedEx(ImDrawList* draw_list, const glm::vec2& pos_min,
-                                       const glm::vec2& pos_max, const char* text,
+    IMGUI_API void RenderTextClippedEx(ImDrawList* draw_list, glm::vec2 pos_min,
+                                       glm::vec2 pos_max, const char* text,
                                        const char* text_end, const glm::vec2* text_size_if_known,
-                                       const glm::vec2& align = glm::vec2(0, 0),
+                                       glm::vec2 align = glm::vec2(0, 0),
                                        const ImRect* clip_rect = NULL);
-    IMGUI_API void RenderTextEllipsis(ImDrawList* draw_list, const glm::vec2& pos_min,
-                                      const glm::vec2& pos_max, float ellipsis_max_x,
+    IMGUI_API void RenderTextEllipsis(ImDrawList* draw_list, glm::vec2 pos_min,
+                                      glm::vec2 pos_max, float ellipsis_max_x,
                                       const char* text, const char* text_end,
                                       const glm::vec2* text_size_if_known);
     IMGUI_API void RenderFrame(glm::vec2 p_min, glm::vec2 p_max, ImU32 fill_col,
@@ -6011,13 +6011,13 @@ namespace ImGui
     IMGUI_API void TextAlignedV(float align_x, float size_x, const char* fmt, va_list args);
 
     // Widgets
-    IMGUI_API bool ButtonEx(const char* label, const glm::vec2& size_arg = glm::vec2(0, 0),
+    IMGUI_API bool ButtonEx(const char* label, glm::vec2 size_arg = glm::vec2(0, 0),
                             ImGuiButtonFlags flags = 0,
                             const glm::vec2* preCalcLabelSize = nullptr);
     IMGUI_API bool ArrowButtonEx(const char* str_id, ImGuiDir dir, glm::vec2 size_arg,
                                  ImGuiButtonFlags flags = 0);
-    IMGUI_API bool ImageButtonEx(ImGuiID id, ImTextureRef tex_ref, const glm::vec2& image_size,
-                                 const glm::vec2& uv0, const glm::vec2& uv1,
+    IMGUI_API bool ImageButtonEx(ImGuiID id, ImTextureRef tex_ref, glm::vec2 image_size,
+                                 glm::vec2 uv0, glm::vec2 uv1,
                                  const glm::vec4& bg_col, const glm::vec4& tint_col,
                                  ImGuiButtonFlags flags = 0);
     IMGUI_API void SeparatorEx(ImGuiSeparatorFlags flags, float thickness = 1.0f);
@@ -6027,8 +6027,8 @@ namespace ImGui
     IMGUI_API bool CheckboxFlags(const char* label, ImU64* flags, ImU64 flags_value);
 
     // Widgets: Window Decorations
-    IMGUI_API bool CloseButton(ImGuiID id, const glm::vec2& pos);
-    IMGUI_API bool CollapseButton(ImGuiID id, const glm::vec2& pos, ImGuiDockNode* dock_node);
+    IMGUI_API bool CloseButton(ImGuiID id, glm::vec2 pos);
+    IMGUI_API bool CollapseButton(ImGuiID id, glm::vec2 pos, ImGuiDockNode* dock_node);
     IMGUI_API void Scrollbar(ImGuiAxis axis);
     IMGUI_API bool ScrollbarEx(const ImRect& bb, ImGuiID id, ImGuiAxis axis, ImS64* p_scroll_v,
                                ImS64 avail_v, ImS64 contents_v,
@@ -6055,7 +6055,7 @@ namespace ImGui
     // Widgets: Tree Nodes
     IMGUI_API bool TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const char* label,
                                     const char* label_end = NULL);
-    IMGUI_API void TreeNodeDrawLineToChildNode(const glm::vec2& target_pos);
+    IMGUI_API void TreeNodeDrawLineToChildNode(glm::vec2 target_pos);
     IMGUI_API void TreeNodeDrawLineToTreePop(const ImGuiTreeNodeStackData* data);
     IMGUI_API void TreePushOverrideID(ImGuiID id);
     IMGUI_API bool TreeNodeGetOpen(ImGuiID storage_id);
@@ -6105,7 +6105,7 @@ namespace ImGui
 
     // InputText
     IMGUI_API bool InputTextEx(const char* label, const char* hint, char* buf, int buf_size,
-                               const glm::vec2& size_arg, ImGuiInputTextFlags flags,
+                               glm::vec2 size_arg, ImGuiInputTextFlags flags,
                                ImGuiInputTextCallback callback = NULL, void* user_data = NULL,
                                const std::function<void(const char*)>& onApplyNewTextCallback
                                = nullptr);
@@ -6143,7 +6143,7 @@ namespace ImGui
     IMGUI_API int PlotEx(ImGuiPlotType plot_type, const char* label,
                          float (*values_getter)(void* data, int idx), void* data, int values_count,
                          int values_offset, const char* overlay_text, float scale_min,
-                         float scale_max, const glm::vec2& size_arg);
+                         float scale_max, glm::vec2 size_arg);
 
     // Shade functions (write over already created vertices)
     IMGUI_API void ShadeVertsLinearColorGradientKeepAlpha(ImDrawList* draw_list, int vert_start_idx,
@@ -6151,11 +6151,11 @@ namespace ImGui
                                                           glm::vec2 gradient_p1, ImU32 col0,
                                                           ImU32 col1);
     IMGUI_API void ShadeVertsLinearUV(ImDrawList* draw_list, int vert_start_idx, int vert_end_idx,
-                                      const glm::vec2& a, const glm::vec2& b, const glm::vec2& uv_a,
-                                      const glm::vec2& uv_b, bool clamp);
+                                      glm::vec2 a, glm::vec2 b, glm::vec2 uv_a,
+                                      glm::vec2 uv_b, bool clamp);
     IMGUI_API void ShadeVertsTransformPos(ImDrawList* draw_list, int vert_start_idx,
-                                          int vert_end_idx, const glm::vec2& pivot_in, float cos_a,
-                                          float sin_a, const glm::vec2& pivot_out);
+                                          int vert_end_idx, glm::vec2 pivot_in, float cos_a,
+                                          float sin_a, glm::vec2 pivot_out);
 
     // Garbage collection
     IMGUI_API void GcCompactTransientMiscBuffers();

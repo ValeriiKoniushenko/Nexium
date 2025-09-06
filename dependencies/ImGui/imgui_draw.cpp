@@ -648,7 +648,7 @@ int ImDrawList::_CalcCircleAutoSegmentCount(float radius) const
 }
 
 // Render-level scissoring. This is passed down to your render function but not used for CPU-side coarse clipping. Prefer using higher-level ImGui::PushClipRect() to affect logic (hit-testing and widget culling)
-void ImDrawList::PushClipRect(const glm::vec2& cr_min, const glm::vec2& cr_max, bool intersect_with_current_clip_rect)
+void ImDrawList::PushClipRect(glm::vec2 cr_min, glm::vec2 cr_max, bool intersect_with_current_clip_rect)
 {
     glm::vec4 cr(cr_min.x, cr_min.y, cr_max.x, cr_max.y);
     if (intersect_with_current_clip_rect)
@@ -745,7 +745,7 @@ void ImDrawList::PrimUnreserve(int idx_count, int vtx_count)
 }
 
 // Fully unrolled with inline call to keep our debug builds decently fast.
-void ImDrawList::PrimRect(const glm::vec2& a, const glm::vec2& c, ImU32 col)
+void ImDrawList::PrimRect(glm::vec2 a, glm::vec2 c, ImU32 col)
 {
     glm::vec2 b(c.x, a.y), d(a.x, c.y), uv(_Data->TexUvWhitePixel);
     ImDrawIdx idx = (ImDrawIdx)_VtxCurrentIdx;
@@ -760,7 +760,7 @@ void ImDrawList::PrimRect(const glm::vec2& a, const glm::vec2& c, ImU32 col)
     _IdxWritePtr += 6;
 }
 
-void ImDrawList::PrimRectUV(const glm::vec2& a, const glm::vec2& c, const glm::vec2& uv_a, const glm::vec2& uv_c, ImU32 col)
+void ImDrawList::PrimRectUV(glm::vec2 a, glm::vec2 c, glm::vec2 uv_a, glm::vec2 uv_c, ImU32 col)
 {
     glm::vec2 b(c.x, a.y), d(a.x, c.y), uv_b(uv_c.x, uv_a.y), uv_d(uv_a.x, uv_c.y);
     ImDrawIdx idx = (ImDrawIdx)_VtxCurrentIdx;
@@ -775,7 +775,7 @@ void ImDrawList::PrimRectUV(const glm::vec2& a, const glm::vec2& c, const glm::v
     _IdxWritePtr += 6;
 }
 
-void ImDrawList::PrimQuadUV(const glm::vec2& a, const glm::vec2& b, const glm::vec2& c, const glm::vec2& d, const glm::vec2& uv_a, const glm::vec2& uv_b, const glm::vec2& uv_c, const glm::vec2& uv_d, ImU32 col)
+void ImDrawList::PrimQuadUV(glm::vec2 a, glm::vec2 b, glm::vec2 c, glm::vec2 d, glm::vec2 uv_a, glm::vec2 uv_b, glm::vec2 uv_c, glm::vec2 uv_d, ImU32 col)
 {
     ImDrawIdx idx = (ImDrawIdx)_VtxCurrentIdx;
     _IdxWritePtr[0] = idx; _IdxWritePtr[1] = (ImDrawIdx)(idx+1); _IdxWritePtr[2] = (ImDrawIdx)(idx+2);
@@ -1031,8 +1031,8 @@ void ImDrawList::AddPolyline(const glm::vec2* points, const int points_count, Im
         for (int i1 = 0; i1 < count; i1++)
         {
             const int i2 = (i1 + 1) == points_count ? 0 : i1 + 1;
-            const glm::vec2& p1 = points[i1];
-            const glm::vec2& p2 = points[i2];
+            glm::vec2 p1 = points[i1];
+            glm::vec2 p2 = points[i2];
 
             float dx = p2.x - p1.x;
             float dy = p2.y - p1.y;
@@ -1086,8 +1086,8 @@ void ImDrawList::AddConvexPolyFilled(const glm::vec2* points, const int points_c
         glm::vec2* temp_normals = _Data->TempBuffer.Data;
         for (int i0 = points_count - 1, i1 = 0; i1 < points_count; i0 = i1++)
         {
-            const glm::vec2& p0 = points[i0];
-            const glm::vec2& p1 = points[i1];
+            glm::vec2 p0 = points[i0];
+            glm::vec2 p1 = points[i1];
             float dx = p1.x - p0.x;
             float dy = p1.y - p0.y;
             IM_NORMALIZE2F_OVER_ZERO(dx, dy);
@@ -1098,8 +1098,8 @@ void ImDrawList::AddConvexPolyFilled(const glm::vec2* points, const int points_c
         for (int i0 = points_count - 1, i1 = 0; i1 < points_count; i0 = i1++)
         {
             // Average normals
-            const glm::vec2& n0 = temp_normals[i0];
-            const glm::vec2& n1 = temp_normals[i1];
+            glm::vec2 n0 = temp_normals[i0];
+            glm::vec2 n1 = temp_normals[i1];
             float dm_x = (n0.x + n1.x) * 0.5f;
             float dm_y = (n0.y + n1.y) * 0.5f;
             IM_FIXNORMAL2F(dm_x, dm_y);
@@ -1138,7 +1138,7 @@ void ImDrawList::AddConvexPolyFilled(const glm::vec2* points, const int points_c
     }
 }
 
-void ImDrawList::_PathArcToFastEx(const glm::vec2& center, float radius, int a_min_sample, int a_max_sample, int a_step)
+void ImDrawList::_PathArcToFastEx(glm::vec2 center, float radius, int a_min_sample, int a_max_sample, int a_step)
 {
     if (radius < 0.5f)
     {
@@ -1230,7 +1230,7 @@ void ImDrawList::_PathArcToFastEx(const glm::vec2& center, float radius, int a_m
     IM_ASSERT_PARANOID(_Path.Data + _Path.Size == out_ptr);
 }
 
-void ImDrawList::_PathArcToN(const glm::vec2& center, float radius, float a_min, float a_max, int num_segments)
+void ImDrawList::_PathArcToN(glm::vec2 center, float radius, float a_min, float a_max, int num_segments)
 {
     if (radius < 0.5f)
     {
@@ -1249,7 +1249,7 @@ void ImDrawList::_PathArcToN(const glm::vec2& center, float radius, float a_min,
 }
 
 // 0: East, 3: South, 6: West, 9: North, 12: East
-void ImDrawList::PathArcToFast(const glm::vec2& center, float radius, int a_min_of_12, int a_max_of_12)
+void ImDrawList::PathArcToFast(glm::vec2 center, float radius, int a_min_of_12, int a_max_of_12)
 {
     if (radius < 0.5f)
     {
@@ -1259,7 +1259,7 @@ void ImDrawList::PathArcToFast(const glm::vec2& center, float radius, int a_min_
     _PathArcToFastEx(center, radius, a_min_of_12 * IM_DRAWLIST_ARCFAST_SAMPLE_MAX / 12, a_max_of_12 * IM_DRAWLIST_ARCFAST_SAMPLE_MAX / 12, 0);
 }
 
-void ImDrawList::PathArcTo(const glm::vec2& center, float radius, float a_min, float a_max, int num_segments)
+void ImDrawList::PathArcTo(glm::vec2 center, float radius, float a_min, float a_max, int num_segments)
 {
     if (radius < 0.5f)
     {
@@ -1309,7 +1309,7 @@ void ImDrawList::PathArcTo(const glm::vec2& center, float radius, float a_min, f
     }
 }
 
-void ImDrawList::PathEllipticalArcTo(const glm::vec2& center, const glm::vec2& radius, float rot, float a_min, float a_max, int num_segments)
+void ImDrawList::PathEllipticalArcTo(glm::vec2 center, glm::vec2 radius, float rot, float a_min, float a_max, int num_segments)
 {
     if (num_segments <= 0)
         num_segments = _CalcCircleAutoSegmentCount(ImMax(radius.x, radius.y)); // A bit pessimistic, maybe there's a better computation to do here.
@@ -1329,7 +1329,7 @@ void ImDrawList::PathEllipticalArcTo(const glm::vec2& center, const glm::vec2& r
     }
 }
 
-glm::vec2 ImBezierCubicCalc(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, const glm::vec2& p4, float t)
+glm::vec2 ImBezierCubicCalc(glm::vec2 p1, glm::vec2 p2, glm::vec2 p3, glm::vec2 p4, float t)
 {
     float u = 1.0f - t;
     float w1 = u * u * u;
@@ -1339,7 +1339,7 @@ glm::vec2 ImBezierCubicCalc(const glm::vec2& p1, const glm::vec2& p2, const glm:
     return glm::vec2(w1 * p1.x + w2 * p2.x + w3 * p3.x + w4 * p4.x, w1 * p1.y + w2 * p2.y + w3 * p3.y + w4 * p4.y);
 }
 
-glm::vec2 ImBezierQuadraticCalc(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, float t)
+glm::vec2 ImBezierQuadraticCalc(glm::vec2 p1, glm::vec2 p2, glm::vec2 p3, float t)
 {
     float u = 1.0f - t;
     float w1 = u * u;
@@ -1392,7 +1392,7 @@ static void PathBezierQuadraticCurveToCasteljau(ImVector<glm::vec2>* path, float
     }
 }
 
-void ImDrawList::PathBezierCubicCurveTo(const glm::vec2& p2, const glm::vec2& p3, const glm::vec2& p4, int num_segments)
+void ImDrawList::PathBezierCubicCurveTo(glm::vec2 p2, glm::vec2 p3, glm::vec2 p4, int num_segments)
 {
     glm::vec2 p1 = _Path.back();
     if (num_segments == 0)
@@ -1408,7 +1408,7 @@ void ImDrawList::PathBezierCubicCurveTo(const glm::vec2& p2, const glm::vec2& p3
     }
 }
 
-void ImDrawList::PathBezierQuadraticCurveTo(const glm::vec2& p2, const glm::vec2& p3, int num_segments)
+void ImDrawList::PathBezierQuadraticCurveTo(glm::vec2 p2, glm::vec2 p3, int num_segments)
 {
     glm::vec2 p1 = _Path.back();
     if (num_segments == 0)
@@ -1448,7 +1448,7 @@ static inline ImDrawFlags FixRectCornerFlags(ImDrawFlags flags)
     return flags;
 }
 
-void ImDrawList::PathRect(const glm::vec2& a, const glm::vec2& b, float rounding, ImDrawFlags flags)
+void ImDrawList::PathRect(glm::vec2 a, glm::vec2 b, float rounding, ImDrawFlags flags)
 {
     if (rounding >= 0.5f)
     {
@@ -1476,7 +1476,7 @@ void ImDrawList::PathRect(const glm::vec2& a, const glm::vec2& b, float rounding
     }
 }
 
-void ImDrawList::AddLine(const glm::vec2& p1, const glm::vec2& p2, ImU32 col, float thickness)
+void ImDrawList::AddLine(glm::vec2 p1, glm::vec2 p2, ImU32 col, float thickness)
 {
     if ((col & IM_COL32_A_MASK) == 0)
         return;
@@ -1487,7 +1487,7 @@ void ImDrawList::AddLine(const glm::vec2& p1, const glm::vec2& p2, ImU32 col, fl
 
 // p_min = upper-left, p_max = lower-right
 // Note we don't render 1 pixels sized rectangles properly.
-void ImDrawList::AddRect(const glm::vec2& p_min, const glm::vec2& p_max, ImU32 col, float rounding, ImDrawFlags flags, float thickness)
+void ImDrawList::AddRect(glm::vec2 p_min, glm::vec2 p_max, ImU32 col, float rounding, ImDrawFlags flags, float thickness)
 {
     if ((col & IM_COL32_A_MASK) == 0)
         return;
@@ -1498,7 +1498,7 @@ void ImDrawList::AddRect(const glm::vec2& p_min, const glm::vec2& p_max, ImU32 c
     PathStroke(col, ImDrawFlags_Closed, thickness);
 }
 
-void ImDrawList::AddRectFilled(const glm::vec2& p_min, const glm::vec2& p_max, ImU32 col, float rounding, ImDrawFlags flags)
+void ImDrawList::AddRectFilled(glm::vec2 p_min, glm::vec2 p_max, ImU32 col, float rounding, ImDrawFlags flags)
 {
     if ((col & IM_COL32_A_MASK) == 0)
         return;
@@ -1515,7 +1515,7 @@ void ImDrawList::AddRectFilled(const glm::vec2& p_min, const glm::vec2& p_max, I
 }
 
 // p_min = upper-left, p_max = lower-right
-void ImDrawList::AddRectFilledMultiColor(const glm::vec2& p_min, const glm::vec2& p_max, ImU32 col_upr_left, ImU32 col_upr_right, ImU32 col_bot_right, ImU32 col_bot_left)
+void ImDrawList::AddRectFilledMultiColor(glm::vec2 p_min, glm::vec2 p_max, ImU32 col_upr_left, ImU32 col_upr_right, ImU32 col_bot_right, ImU32 col_bot_left)
 {
     if (((col_upr_left | col_upr_right | col_bot_right | col_bot_left) & IM_COL32_A_MASK) == 0)
         return;
@@ -1530,7 +1530,7 @@ void ImDrawList::AddRectFilledMultiColor(const glm::vec2& p_min, const glm::vec2
     PrimWriteVtx(glm::vec2(p_min.x, p_max.y), uv, col_bot_left);
 }
 
-void ImDrawList::AddQuad(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, const glm::vec2& p4, ImU32 col, float thickness)
+void ImDrawList::AddQuad(glm::vec2 p1, glm::vec2 p2, glm::vec2 p3, glm::vec2 p4, ImU32 col, float thickness)
 {
     if ((col & IM_COL32_A_MASK) == 0)
         return;
@@ -1542,7 +1542,7 @@ void ImDrawList::AddQuad(const glm::vec2& p1, const glm::vec2& p2, const glm::ve
     PathStroke(col, ImDrawFlags_Closed, thickness);
 }
 
-void ImDrawList::AddQuadFilled(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, const glm::vec2& p4, ImU32 col)
+void ImDrawList::AddQuadFilled(glm::vec2 p1, glm::vec2 p2, glm::vec2 p3, glm::vec2 p4, ImU32 col)
 {
     if ((col & IM_COL32_A_MASK) == 0)
         return;
@@ -1554,7 +1554,7 @@ void ImDrawList::AddQuadFilled(const glm::vec2& p1, const glm::vec2& p2, const g
     PathFillConvex(col);
 }
 
-void ImDrawList::AddTriangle(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, ImU32 col, float thickness)
+void ImDrawList::AddTriangle(glm::vec2 p1, glm::vec2 p2, glm::vec2 p3, ImU32 col, float thickness)
 {
     if ((col & IM_COL32_A_MASK) == 0)
         return;
@@ -1565,7 +1565,7 @@ void ImDrawList::AddTriangle(const glm::vec2& p1, const glm::vec2& p2, const glm
     PathStroke(col, ImDrawFlags_Closed, thickness);
 }
 
-void ImDrawList::AddTriangleFilled(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, ImU32 col)
+void ImDrawList::AddTriangleFilled(glm::vec2 p1, glm::vec2 p2, glm::vec2 p3, ImU32 col)
 {
     if ((col & IM_COL32_A_MASK) == 0)
         return;
@@ -1576,7 +1576,7 @@ void ImDrawList::AddTriangleFilled(const glm::vec2& p1, const glm::vec2& p2, con
     PathFillConvex(col);
 }
 
-void ImDrawList::AddCircle(const glm::vec2& center, float radius, ImU32 col, int num_segments, float thickness)
+void ImDrawList::AddCircle(glm::vec2 center, float radius, ImU32 col, int num_segments, float thickness)
 {
     if ((col & IM_COL32_A_MASK) == 0 || radius < 0.5f)
         return;
@@ -1600,7 +1600,7 @@ void ImDrawList::AddCircle(const glm::vec2& center, float radius, ImU32 col, int
     PathStroke(col, ImDrawFlags_Closed, thickness);
 }
 
-void ImDrawList::AddCircleFilled(const glm::vec2& center, float radius, ImU32 col, int num_segments)
+void ImDrawList::AddCircleFilled(glm::vec2 center, float radius, ImU32 col, int num_segments)
 {
     if ((col & IM_COL32_A_MASK) == 0 || radius < 0.5f)
         return;
@@ -1625,7 +1625,7 @@ void ImDrawList::AddCircleFilled(const glm::vec2& center, float radius, ImU32 co
 }
 
 // Guaranteed to honor 'num_segments'
-void ImDrawList::AddNgon(const glm::vec2& center, float radius, ImU32 col, int num_segments, float thickness)
+void ImDrawList::AddNgon(glm::vec2 center, float radius, ImU32 col, int num_segments, float thickness)
 {
     if ((col & IM_COL32_A_MASK) == 0 || num_segments <= 2)
         return;
@@ -1637,7 +1637,7 @@ void ImDrawList::AddNgon(const glm::vec2& center, float radius, ImU32 col, int n
 }
 
 // Guaranteed to honor 'num_segments'
-void ImDrawList::AddNgonFilled(const glm::vec2& center, float radius, ImU32 col, int num_segments)
+void ImDrawList::AddNgonFilled(glm::vec2 center, float radius, ImU32 col, int num_segments)
 {
     if ((col & IM_COL32_A_MASK) == 0 || num_segments <= 2)
         return;
@@ -1649,7 +1649,7 @@ void ImDrawList::AddNgonFilled(const glm::vec2& center, float radius, ImU32 col,
 }
 
 // Ellipse
-void ImDrawList::AddEllipse(const glm::vec2& center, const glm::vec2& radius, ImU32 col, float rot, int num_segments, float thickness)
+void ImDrawList::AddEllipse(glm::vec2 center, glm::vec2 radius, ImU32 col, float rot, int num_segments, float thickness)
 {
     if ((col & IM_COL32_A_MASK) == 0)
         return;
@@ -1663,7 +1663,7 @@ void ImDrawList::AddEllipse(const glm::vec2& center, const glm::vec2& radius, Im
     PathStroke(col, true, thickness);
 }
 
-void ImDrawList::AddEllipseFilled(const glm::vec2& center, const glm::vec2& radius, ImU32 col, float rot, int num_segments)
+void ImDrawList::AddEllipseFilled(glm::vec2 center, glm::vec2 radius, ImU32 col, float rot, int num_segments)
 {
     if ((col & IM_COL32_A_MASK) == 0)
         return;
@@ -1678,7 +1678,7 @@ void ImDrawList::AddEllipseFilled(const glm::vec2& center, const glm::vec2& radi
 }
 
 // Cubic Bezier takes 4 controls points
-void ImDrawList::AddBezierCubic(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, const glm::vec2& p4, ImU32 col, float thickness, int num_segments)
+void ImDrawList::AddBezierCubic(glm::vec2 p1, glm::vec2 p2, glm::vec2 p3, glm::vec2 p4, ImU32 col, float thickness, int num_segments)
 {
     if ((col & IM_COL32_A_MASK) == 0)
         return;
@@ -1689,7 +1689,7 @@ void ImDrawList::AddBezierCubic(const glm::vec2& p1, const glm::vec2& p2, const 
 }
 
 // Quadratic Bezier takes 3 controls points
-void ImDrawList::AddBezierQuadratic(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, ImU32 col, float thickness, int num_segments)
+void ImDrawList::AddBezierQuadratic(glm::vec2 p1, glm::vec2 p2, glm::vec2 p3, ImU32 col, float thickness, int num_segments)
 {
     if ((col & IM_COL32_A_MASK) == 0)
         return;
@@ -1699,7 +1699,7 @@ void ImDrawList::AddBezierQuadratic(const glm::vec2& p1, const glm::vec2& p2, co
     PathStroke(col, 0, thickness);
 }
 
-void ImDrawList::AddText(ImFont* font, float font_size, const glm::vec2& pos, ImU32 col, const char* text_begin, const char* text_end, float wrap_width, const glm::vec4* cpu_fine_clip_rect)
+void ImDrawList::AddText(ImFont* font, float font_size, glm::vec2 pos, ImU32 col, const char* text_begin, const char* text_end, float wrap_width, const glm::vec4* cpu_fine_clip_rect)
 {
     if ((col & IM_COL32_A_MASK) == 0)
         return;
@@ -1726,12 +1726,12 @@ void ImDrawList::AddText(ImFont* font, float font_size, const glm::vec2& pos, Im
     font->RenderText(this, font_size, pos, col, clip_rect, text_begin, text_end, wrap_width, cpu_fine_clip_rect != NULL);
 }
 
-void ImDrawList::AddText(const glm::vec2& pos, ImU32 col, const char* text_begin, const char* text_end)
+void ImDrawList::AddText(glm::vec2 pos, ImU32 col, const char* text_begin, const char* text_end)
 {
     AddText(_Data->Font, _Data->FontSize, pos, col, text_begin, text_end);
 }
 
-void ImDrawList::AddImage(ImTextureRef tex_ref, const glm::vec2& p_min, const glm::vec2& p_max, const glm::vec2& uv_min, const glm::vec2& uv_max, ImU32 col)
+void ImDrawList::AddImage(ImTextureRef tex_ref, glm::vec2 p_min, glm::vec2 p_max, glm::vec2 uv_min, glm::vec2 uv_max, ImU32 col)
 {
     if ((col & IM_COL32_A_MASK) == 0)
         return;
@@ -1747,7 +1747,7 @@ void ImDrawList::AddImage(ImTextureRef tex_ref, const glm::vec2& p_min, const gl
         PopTexture();
 }
 
-void ImDrawList::AddImageQuad(ImTextureRef tex_ref, const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, const glm::vec2& p4, const glm::vec2& uv1, const glm::vec2& uv2, const glm::vec2& uv3, const glm::vec2& uv4, ImU32 col)
+void ImDrawList::AddImageQuad(ImTextureRef tex_ref, glm::vec2 p1, glm::vec2 p2, glm::vec2 p3, glm::vec2 p4, glm::vec2 uv1, glm::vec2 uv2, glm::vec2 uv3, glm::vec2 uv4, ImU32 col)
 {
     if ((col & IM_COL32_A_MASK) == 0)
         return;
@@ -1763,7 +1763,7 @@ void ImDrawList::AddImageQuad(ImTextureRef tex_ref, const glm::vec2& p1, const g
         PopTexture();
 }
 
-void ImDrawList::AddImageRounded(ImTextureRef tex_ref, const glm::vec2& p_min, const glm::vec2& p_max, const glm::vec2& uv_min, const glm::vec2& uv_max, ImU32 col, float rounding, ImDrawFlags flags)
+void ImDrawList::AddImageRounded(ImTextureRef tex_ref, glm::vec2 p_min, glm::vec2 p_max, glm::vec2 uv_min, glm::vec2 uv_max, ImU32 col, float rounding, ImDrawFlags flags)
 {
     if ((col & IM_COL32_A_MASK) == 0)
         return;
@@ -1840,7 +1840,7 @@ struct ImTriangulator
     void    BuildReflexes();
     void    BuildEars();
     void    FlipNodeList();
-    bool    IsEar(int i0, int i1, int i2, const glm::vec2& v0, const glm::vec2& v1, const glm::vec2& v2) const;
+    bool    IsEar(int i0, int i1, int i2, glm::vec2 v0, glm::vec2 v1, glm::vec2 v2) const;
     void    ReclassifyNode(ImTriangulatorNode* node);
 
     // Internal members
@@ -1965,7 +1965,7 @@ void ImTriangulator::FlipNodeList()
 }
 
 // A triangle is an ear is no other vertex is inside it. We can test reflexes vertices only (see reference algorithm)
-bool ImTriangulator::IsEar(int i0, int i1, int i2, const glm::vec2& v0, const glm::vec2& v1, const glm::vec2& v2) const
+bool ImTriangulator::IsEar(int i0, int i1, int i2, glm::vec2 v0, glm::vec2 v1, glm::vec2 v2) const
 {
     ImTriangulatorNode** p_end = _Reflexes.Data + _Reflexes.Size;
     for (ImTriangulatorNode** p = _Reflexes.Data; p < p_end; p++)
@@ -2045,8 +2045,8 @@ void ImDrawList::AddConcavePolyFilled(const glm::vec2* points, const int points_
         glm::vec2* temp_normals = _Data->TempBuffer.Data;
         for (int i0 = points_count - 1, i1 = 0; i1 < points_count; i0 = i1++)
         {
-            const glm::vec2& p0 = points[i0];
-            const glm::vec2& p1 = points[i1];
+            glm::vec2 p0 = points[i0];
+            glm::vec2 p1 = points[i1];
             float dx = p1.x - p0.x;
             float dy = p1.y - p0.y;
             IM_NORMALIZE2F_OVER_ZERO(dx, dy);
@@ -2057,8 +2057,8 @@ void ImDrawList::AddConcavePolyFilled(const glm::vec2* points, const int points_
         for (int i0 = points_count - 1, i1 = 0; i1 < points_count; i0 = i1++)
         {
             // Average normals
-            const glm::vec2& n0 = temp_normals[i0];
-            const glm::vec2& n1 = temp_normals[i1];
+            glm::vec2 n0 = temp_normals[i0];
+            glm::vec2 n1 = temp_normals[i1];
             float dm_x = (n0.x + n1.x) * 0.5f;
             float dm_y = (n0.y + n1.y) * 0.5f;
             IM_FIXNORMAL2F(dm_x, dm_y);
@@ -2334,7 +2334,7 @@ void ImDrawData::DeIndexAllBuffers()
 // Helper to scale the ClipRect field of each ImDrawCmd.
 // Use if your final output buffer is at a different scale than draw_data->DisplaySize,
 // or if there is a difference between your window resolution and framebuffer resolution.
-void ImDrawData::ScaleClipRects(const glm::vec2& fb_scale)
+void ImDrawData::ScaleClipRects(glm::vec2 fb_scale)
 {
     for (ImDrawList* draw_list : CmdLists)
         for (ImDrawCmd& cmd : draw_list->CmdBuffer)
@@ -2370,7 +2370,7 @@ void ImGui::ShadeVertsLinearColorGradientKeepAlpha(ImDrawList* draw_list, int ve
 }
 
 // Distribute UV over (a, b) rectangle
-void ImGui::ShadeVertsLinearUV(ImDrawList* draw_list, int vert_start_idx, int vert_end_idx, const glm::vec2& a, const glm::vec2& b, const glm::vec2& uv_a, const glm::vec2& uv_b, bool clamp)
+void ImGui::ShadeVertsLinearUV(ImDrawList* draw_list, int vert_start_idx, int vert_end_idx, glm::vec2 a, glm::vec2 b, glm::vec2 uv_a, glm::vec2 uv_b, bool clamp)
 {
     const glm::vec2 size = b - a;
     const glm::vec2 uv_size = uv_b - uv_a;
@@ -2394,7 +2394,7 @@ void ImGui::ShadeVertsLinearUV(ImDrawList* draw_list, int vert_start_idx, int ve
     }
 }
 
-void ImGui::ShadeVertsTransformPos(ImDrawList* draw_list, int vert_start_idx, int vert_end_idx, const glm::vec2& pivot_in, float cos_a, float sin_a, const glm::vec2& pivot_out)
+void ImGui::ShadeVertsTransformPos(ImDrawList* draw_list, int vert_start_idx, int vert_end_idx, glm::vec2 pivot_in, float cos_a, float sin_a, glm::vec2 pivot_out)
 {
     ImDrawVert* vert_start = draw_list->VtxBuffer.Data + vert_start_idx;
     ImDrawVert* vert_end = draw_list->VtxBuffer.Data + vert_end_idx;
@@ -3283,14 +3283,14 @@ void ImFontAtlas::RemoveCustomRect(ImFontAtlasRectId id)
 //     ImFont* myfont = io.Fonts->AddFontFromFileTTF(....);
 //     myfont->GetFontBaked(16.0f);
 //     myfont->Flags |= ImFontFlags_LockBakedSizes;
-ImFontAtlasRectId ImFontAtlas::AddCustomRectFontGlyph(ImFont* font, ImWchar codepoint, int width, int height, float advance_x, const glm::vec2& offset)
+ImFontAtlasRectId ImFontAtlas::AddCustomRectFontGlyph(ImFont* font, ImWchar codepoint, int width, int height, float advance_x, glm::vec2 offset)
 {
     float font_size = font->LegacySize;
     return AddCustomRectFontGlyphForSize(font, font_size, codepoint, width, height, advance_x, offset);
 }
 // FIXME: we automatically set glyph.Colored=true by default.
 // If you need to alter this, you can write 'font->Glyphs.back()->Colored' after calling AddCustomRectFontGlyph().
-ImFontAtlasRectId ImFontAtlas::AddCustomRectFontGlyphForSize(ImFont* font, float font_size, ImWchar codepoint, int width, int height, float advance_x, const glm::vec2& offset)
+ImFontAtlasRectId ImFontAtlas::AddCustomRectFontGlyphForSize(ImFont* font, float font_size, ImWchar codepoint, int width, int height, float advance_x, glm::vec2 offset)
 {
 #ifdef IMGUI_USE_WCHAR32
     IM_ASSERT(codepoint <= IM_UNICODE_CODEPOINT_MAX);
@@ -5548,7 +5548,7 @@ glm::vec2 ImFont::CalcTextSizeA(float size, float max_width, float wrap_width, c
 }
 
 // Note: as with every ImDrawList drawing function, this expects that the font atlas texture is bound.
-void ImFont::RenderChar(ImDrawList* draw_list, float size, const glm::vec2& pos, ImU32 col, ImWchar c, const glm::vec4* cpu_fine_clip)
+void ImFont::RenderChar(ImDrawList* draw_list, float size, glm::vec2 pos, ImU32 col, ImWchar c, const glm::vec4* cpu_fine_clip)
 {
     ImFontBaked* baked = GetFontBaked(size);
     const ImFontGlyph* glyph = baked->FindGlyph(c);
@@ -5587,7 +5587,7 @@ void ImFont::RenderChar(ImDrawList* draw_list, float size, const glm::vec2& pos,
 }
 
 // Note: as with every ImDrawList drawing function, this expects that the font atlas texture is bound.
-void ImFont::RenderText(ImDrawList* draw_list, float size, const glm::vec2& pos, ImU32 col, const glm::vec4& clip_rect, const char* text_begin, const char* text_end, float wrap_width, bool cpu_fine_clip)
+void ImFont::RenderText(ImDrawList* draw_list, float size, glm::vec2 pos, ImU32 col, const glm::vec4& clip_rect, const char* text_begin, const char* text_end, float wrap_width, bool cpu_fine_clip)
 {
     // Align to be pixel perfect
 begin:
