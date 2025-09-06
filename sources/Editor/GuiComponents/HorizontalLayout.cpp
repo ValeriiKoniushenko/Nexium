@@ -48,56 +48,12 @@ namespace Core
             return width;
         }
 
-        bool atLeastOneWithFlex = false;
         for (auto&& child : _children)
         {
             if (child->unsafeCastTo<Widget>()->getFlex().cast() != Widget::Flex::Fixed)
             {
-                atLeastOneWithFlex = true;
-                break;
+                return ImGui::GetContentRegionAvail().x;
             }
-        }
-
-        if (atLeastOneWithFlex)
-        {
-            const float defaultSpacing = style().ItemSpacing.x;
-            float width = ImGui::GetContentRegionAvail().x;
-
-            int fixedCount = 0;
-            int flexWidthCount = 0;
-            for (auto&& child : _children)
-            {
-                const auto w = child->unsafeCastTo<Widget>();
-                const auto type = w->getFlex().cast();
-                if (type == Widget::Flex::Fixed)
-                {
-                    width -= w->getWidth();
-                    width -= defaultSpacing;
-                    ++fixedCount;
-                }
-                else if (type == Widget::Flex::FlexWidth)
-                {
-                    ++flexWidthCount;
-                }
-            }
-            if (fixedCount != 0)
-            {
-                width += defaultSpacing;
-            }
-
-            int deCounter = flexWidthCount;
-            for (auto& child : _children)
-            {
-                auto w = child->unsafeCastTo<Widget>();
-                if (w->getFlex().cast() == Widget::Flex::FlexWidth)
-                {
-                    const float gap = deCounter != 0 ? defaultSpacing : 0;
-                    w->setWidth(width / static_cast<float>(flexWidthCount) - gap);
-                    --deCounter;
-                }
-            }
-
-            return ImGui::GetContentRegionAvail().x;
         }
 
         if (_width)
@@ -142,6 +98,8 @@ namespace Core
     void HorizontalLayout::onTick(float delta)
     {
         Widget::onTick(delta);
+
+        recalcFlexChildren();
     }
 
     void HorizontalLayout::onDraw()
@@ -303,4 +261,56 @@ namespace Core
         }
     }
 
+    void HorizontalLayout::recalcFlexChildren()
+    {
+        bool atLeastOneWithFlex = false;
+        for (auto&& child : _children)
+        {
+            if (child->unsafeCastTo<Widget>()->getFlex().cast() != Widget::Flex::Fixed)
+            {
+                atLeastOneWithFlex = true;
+                break;
+            }
+        }
+
+        if (atLeastOneWithFlex)
+        {
+            const float defaultSpacing = style().ItemSpacing.x;
+            float width = ImGui::GetContentRegionAvail().x;
+
+            int fixedCount = 0;
+            int flexWidthCount = 0;
+            for (auto&& child : _children)
+            {
+                const auto w = child->unsafeCastTo<Widget>();
+                const auto type = w->getFlex().cast();
+                if (type == Widget::Flex::Fixed)
+                {
+                    width -= w->getWidth();
+                    width -= defaultSpacing;
+                    ++fixedCount;
+                }
+                else if (type == Widget::Flex::FlexWidth)
+                {
+                    ++flexWidthCount;
+                }
+            }
+            if (fixedCount != 0)
+            {
+                width += defaultSpacing;
+            }
+
+            int deCounter = flexWidthCount;
+            for (auto& child : _children)
+            {
+                auto w = child->unsafeCastTo<Widget>();
+                if (w->getFlex().cast() == Widget::Flex::FlexWidth)
+                {
+                    const float gap = deCounter != 0 ? defaultSpacing : 0;
+                    w->setWidth(width / static_cast<float>(flexWidthCount) - gap);
+                    --deCounter;
+                }
+            }
+        }
+    }
 } // namespace Core

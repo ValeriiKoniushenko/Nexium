@@ -65,7 +65,7 @@ namespace Core
 
         auto search = HorizontalLayout::Create();
         // search->setFitContent(true);
-        search->setHorizontalAlign(HorizontalLayout::Align::SpaceBetween);
+        search->setHorizontalAlign(HorizontalLayout::Align::Left);
         (void)search->addChildComponent<Label>("Search:")->setFlex(Widget::Flex::FlexWidth);
         search->addChildComponent<Input>()->setFlex(Widget::Flex::FlexWidth);
         search->addChildComponent<Button>("X")->setFlex(Widget::Flex::FlexWidth);

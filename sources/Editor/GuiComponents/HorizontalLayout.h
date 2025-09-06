@@ -50,6 +50,7 @@ namespace Core
         void prepareAlignCenter();
         void calcYOffsets();
         void directDraw();
+        void recalcFlexChildren();
 
     protected:
         std::vector<float> _yOffsets;
