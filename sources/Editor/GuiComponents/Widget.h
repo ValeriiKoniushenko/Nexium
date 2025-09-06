@@ -106,6 +106,8 @@ namespace Core
         bool addChildValidator(BaseComponent* newChild) override;
         void onTick(float delta) override;
         void drawOutline();
+        virtual void preDraw();
+        virtual void postDraw();
         [[nodiscard]] ImGuiStyle& style() const { return ImGui::GetStyle(); }
 
     protected:
@@ -116,6 +118,7 @@ namespace Core
         Flex _flex = Flex::Fixed;
         bool _autoDraw = true;
         bool _isDrawOutline = false;
+        bool _isReadOnly = true;
     };
 
 } // namespace Core

@@ -79,7 +79,8 @@ namespace Core
         _pos = ImGui::GetCursorPos();
 
 #if defined(DEBUG)
-        if (Keyboard::IsKeyPressed(Keyboard::Key_F2) && getGlobalBounds().isIntersects(Mouse::GetPosition()))
+        if (Keyboard::IsKeyPressed(Keyboard::Key_F2)
+            && getGlobalBounds().isIntersects(Mouse::GetPosition()))
         {
             drawOutline();
         }
@@ -89,9 +90,10 @@ namespace Core
             drawOutline();
         }
 
-
         ImGui::PushID(id);
+        preDraw();
         onDraw();
+        postDraw();
         ImGui::PopID();
     }
 
@@ -144,6 +146,22 @@ namespace Core
                            0,                                                // flags
                            thickness                                         // thickness
         );
+    }
+
+    void Widget::preDraw()
+    {
+        if (_isReadOnly)
+        {
+            ImGui::BeginDisabled(true);
+        }
+    }
+
+    void Widget::postDraw()
+    {
+        if (_isReadOnly)
+        {
+            ImGui::EndDisabled();
+        }
     }
 
 } // namespace Core

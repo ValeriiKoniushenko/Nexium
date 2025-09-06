@@ -156,7 +156,6 @@ namespace Core
 {
     class BaseComponent;
 
-    //
     // ========================= CONCEPTS =========================
     /**
      * @brief Concept to identify valid components.

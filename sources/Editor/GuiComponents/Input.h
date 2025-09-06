@@ -97,10 +97,7 @@ namespace Core
         void setMax(Type value) noexcept { _max = value; }
         [[nodiscard]] Type getMax() const noexcept { return _max; }
 
-        void setPrecision(int p) noexcept
-        {
-            _precisionStr[2] = std::clamp(p, 0, 7);
-        }
+        void setPrecision(int p) noexcept { _precisionStr[2] = std::clamp(p, 0, 7); }
 
         [[nodiscard]] int getPrecision() const noexcept { return _precisionStr[2] - '0'; }
 
@@ -111,19 +108,30 @@ namespace Core
         void onDraw() override
         {
             ImGui::PushItemWidth(_size.x);
-            ImGui::DragFloat("", &_buffer, _step, _min, _max, _precisionStr.c_str(),
-                             ImGuiSliderFlags_None);
+
+            if constexpr (std::is_same_v<float, Type>)
+            {
+                ImGui::DragFloat("", &_buffer, _step, _min, _max, _precisionStr.c_str(),
+                                 ImGuiSliderFlags_None);
+            }
+            else if constexpr (std::is_same_v<int, Type>)
+            {
+                ImGui::DragInt("", &_buffer, _step, _min, _max, "%d",
+                                 ImGuiSliderFlags_None);
+            }
             ImGui::PopItemWidth();
         }
 
     protected:
         StringAtom _precisionStr = "%.2f";
         Type _buffer = 0;
-        Type _step = 0.1f;
+        float _step = 0.1f;
         Type _min = std::numeric_limits<Type>::min();
         Type _max = std::numeric_limits<Type>::max();
     };
 
+    using DoubleInput = NumInput<double>;
     using FloatInput = NumInput<float>;
+    using IntInput = NumInput<int>;
 
 } // namespace Core

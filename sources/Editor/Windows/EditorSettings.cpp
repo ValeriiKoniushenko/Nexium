@@ -26,7 +26,6 @@
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/Label.h"
-#include "Editor/GuiComponents/Spacer.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 
 namespace Core
@@ -41,7 +40,7 @@ namespace Core
         search->setHorizontalAlign(HorizontalLayout::Align::Left);
         search->addChildComponent<Label>("Search:");
         search->addChildComponent<FloatInput>()->setFlex(Widget::Flex::FlexWidth);
-        search->addChildComponent<Button>("X");
+        search->addChildComponent<IntInput>()->setFlex(Widget::Flex::FlexWidth);
         _layout.attachChild(search);
     }
 
