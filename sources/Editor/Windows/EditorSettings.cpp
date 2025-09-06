@@ -40,10 +40,9 @@ namespace Core
         auto search = HorizontalLayout::Create();
         search->setHorizontalAlign(HorizontalLayout::Align::Left);
         search->addChildComponent<Label>("Search:");
-        search->addChildComponent<Input>()->setFlex(Widget::Flex::FlexWidth);
+        search->addChildComponent<FloatInput>()->setFlex(Widget::Flex::FlexWidth);
         search->addChildComponent<Button>("X");
         _layout.attachChild(search);
-
     }
 
     void EditorSettingsEWC::onDraw()

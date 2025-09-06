@@ -22,24 +22,59 @@
 
 #include "Input.h"
 
-#include "ImGui/imgui_internal.h"
-#include "ImGui/misc/cpp/imgui_stdlib.h"
-#include "Misc/ImGuiHelper.h"
-
-namespace
+namespace Core
 {
 
-    struct InputTextCallback_UserData
-    {
-        std::string* Str;
-        ImGuiInputTextCallback ChainCallback = nullptr;
-        void* ChainCallbackUserData = nullptr;
-    };
+    ECS_REGISTER_NEW_COMPONENT_TYPE(BaseInput);
+    ECS_REGISTER_NEW_COMPONENT_TYPE(TextInput);
 
-    int InputTextCallback(ImGuiInputTextCallbackData* data)
+    void BaseInput::setTextColor(const Color4& value)
     {
-        const InputTextCallback_UserData* user_data
-            = static_cast<InputTextCallback_UserData*>(data->UserData);
+        _textColor = value;
+    }
+
+    void BaseInput::resetTextColor()
+    {
+        _textColor.reset();
+    }
+
+    std::optional<Color4> BaseInput::getTextColor() const
+    {
+        return _textColor;
+    }
+
+    glm::vec2 BaseInput::getRealSize() const
+    {
+        return _size;
+    }
+
+    void BaseInput::setWidth(float newWidth)
+    {
+        _size.x = newWidth;
+    }
+
+    void BaseInput::setHeight(float newHeight)
+    {
+        _size.y = newHeight;
+    }
+
+    void BaseInput::onInitialize()
+    {
+        Widget::onInitialize();
+        if (_name.isEmpty())
+        {
+            setComponentName("Input"_atom);
+        }
+        if (_size == glm::vec2(0))
+        {
+            _size.x = 100.f;
+            _size.y = ImGui::CalcTextSize("X").y + style().FramePadding.y * 2.0f;
+        }
+    }
+
+    int TextInput::InputTextCallback(ImGuiInputTextCallbackData* data)
+    {
+        const auto* user_data = static_cast<InputTextCallback_UserData*>(data->UserData);
         if (data->EventFlag == ImGuiInputTextFlags_CallbackResize)
         {
             std::string* str = user_data->Str;
@@ -55,46 +90,8 @@ namespace
         }
         return 0;
     }
-} // namespace
 
-namespace Core
-{
-
-    ECS_REGISTER_NEW_COMPONENT_TYPE(Input);
-
-    Input& Input::setTextColor(const Color4& value)
-    {
-        _textColor = value;
-        return *this;
-    }
-
-    Input& Input::resetTextColor()
-    {
-        _textColor.reset();
-        return *this;
-    }
-
-    std::optional<Color4> Input::getTextColor() const
-    {
-        return _textColor;
-    }
-
-    glm::vec2 Input::getRealSize() const
-    {
-        return _size;
-    }
-
-    void Input::setWidth(float newWidth)
-    {
-        _size.x = newWidth;
-    }
-
-    void Input::setHeight(float newHeight)
-    {
-        _size.y = newHeight;
-    }
-
-    void Input::onDraw()
+    void TextInput::onDraw()
     {
         int pushedStyles = 0;
 
@@ -105,7 +102,8 @@ namespace Core
         InputTextCallback_UserData cb_user_data;
         cb_user_data.Str = &_buffer;
         ImGui::InputTextEx("", nullptr, _buffer.data(), _buffer.capacity() + 1, _size, flags,
-                           InputTextCallback, &cb_user_data, [this](const char* newText)
+                           InputTextCallback, &cb_user_data,
+                           [this](const char* newText)
                            {
                                onInput.trigger(newText);
                            });
@@ -113,17 +111,4 @@ namespace Core
         ImGui::PopStyleColor(pushedStyles);
     }
 
-    void Input::onInitialize()
-    {
-        Widget::onInitialize();
-        if (_name.isEmpty())
-        {
-            setComponentName("Input"_atom);
-        }
-        if (_size == glm::vec2(0))
-        {
-            _size.x = 100.f;
-            _size.y = ImGui::CalcTextSize("X").y + style().FramePadding.y * 2.0f;
-        }
-    }
 } // namespace Core

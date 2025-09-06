@@ -23,18 +23,20 @@
 #pragma once
 
 #include "Core/Delegate.h"
+#include "ImGui/imgui_internal.h"
+#include "ImGui/misc/cpp/imgui_stdlib.h"
 #include "Widget.h"
 
 namespace Core
 {
 
-    class Input : public Widget
+    class BaseInput : public Widget
     {
-        ECS_REGISTER_NEW_COMPONENT(Input, Widget);
+        ECS_REGISTER_NEW_COMPONENT(BaseInput, Widget);
 
     public:
-        Input& setTextColor(const Color4& value);
-        Input& resetTextColor();
+        void setTextColor(const Color4& value);
+        void resetTextColor();
         [[nodiscard]] std::optional<Color4> getTextColor() const;
 
         [[nodiscard]] glm::vec2 getRealSize() const;
@@ -44,6 +46,19 @@ namespace Core
         void setWidth(float newWidth) override;
         void setHeight(float newHeight) override;
 
+    protected:
+        void onInitialize() override;
+
+    protected:
+        std::optional<Color4> _textColor;
+        glm::vec2 _size = {};
+    };
+
+    class TextInput : public BaseInput
+    {
+        ECS_REGISTER_NEW_COMPONENT(TextInput, BaseInput);
+
+    public:
         void setInputtedData(std::string data) { _buffer = std::move(data); }
         [[nodiscard]] const std::string& getInputtedData() const noexcept { return _buffer; }
 
@@ -51,13 +66,64 @@ namespace Core
         Delegate<void(const char*)> onInput;
 
     protected:
+        struct InputTextCallback_UserData
+        {
+            std::string* Str;
+            ImGuiInputTextCallback ChainCallback = nullptr;
+            void* ChainCallbackUserData = nullptr;
+        };
+
+        static int InputTextCallback(ImGuiInputTextCallbackData* data);
+
         void onDraw() override;
-        void onInitialize() override;
 
     protected:
         std::string _buffer;
-        std::optional<Color4> _textColor;
-        glm::vec2 _size = {};
     };
+
+    template<Utils::IsArithmetic Type>
+    class NumInput : public BaseInput
+    {
+        ECS_REGISTER_NEW_TEMPLATE_COMPONENT(NumInput<Type>, BaseInput);
+
+    public:
+        void setInputtedData(Type data) { _buffer = data; }
+        [[nodiscard]] Type getInputtedData() const noexcept { return _buffer; }
+
+        void setStep(Type value) noexcept { _step = value; }
+        [[nodiscard]] Type getStep() const noexcept { return _step; }
+        void setMin(Type value) noexcept { _min = value; }
+        [[nodiscard]] Type getMin() const noexcept { return _min; }
+        void setMax(Type value) noexcept { _max = value; }
+        [[nodiscard]] Type getMax() const noexcept { return _max; }
+
+        void setPrecision(int p) noexcept
+        {
+            _precisionStr[2] = std::clamp(p, 0, 7);
+        }
+
+        [[nodiscard]] int getPrecision() const noexcept { return _precisionStr[2] - '0'; }
+
+    public: // Delegates
+        Delegate<void(Type)> onInput;
+
+    protected:
+        void onDraw() override
+        {
+            ImGui::PushItemWidth(_size.x);
+            ImGui::DragFloat("", &_buffer, _step, _min, _max, _precisionStr.c_str(),
+                             ImGuiSliderFlags_None);
+            ImGui::PopItemWidth();
+        }
+
+    protected:
+        StringAtom _precisionStr = "%.2f";
+        Type _buffer = 0;
+        Type _step = 0.1f;
+        Type _min = std::numeric_limits<Type>::min();
+        Type _max = std::numeric_limits<Type>::max();
+    };
+
+    using FloatInput = NumInput<float>;
 
 } // namespace Core

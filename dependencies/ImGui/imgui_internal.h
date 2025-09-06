@@ -52,7 +52,7 @@ Index of this file:
 //-----------------------------------------------------------------------------
 
     #ifndef IMGUI_VERSION
-        #include "../imgui.h"
+        #include "imgui.h"
     #endif
 
     #include <limits.h> // INT_MIN, INT_MAX
