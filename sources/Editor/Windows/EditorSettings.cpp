@@ -26,6 +26,7 @@
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/Label.h"
+#include "Editor/GuiComponents/Spacer.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 
 namespace Core
@@ -36,41 +37,13 @@ namespace Core
     {
         BaseFloatEWC::onInitialize();
 
-        _layout.setVerticalAlign(VerticalLayout::Align::Top);
-        _layout.setHorizontalAlign(VerticalLayout::Align::Left);
-
-        auto* horizontal = _layout.addChildComponent<HorizontalLayout>();
-        horizontal->setHorizontalAlign(HorizontalLayout::Align::Center);
-        horizontal->setVerticalAlign(HorizontalLayout::Align::Center);
-        horizontal->addChildComponent<Button>()->setText("Button 1");
-        horizontal->addChildComponent<Button>()->setText("Hello world!").setHeight(50.f);
-        horizontal->addChildComponent<Button>()->setText("Button 2");
-
-        _layout.addChildComponent<Button>()->setText("Click me");
-
-        _layout.addChildComponent<Button>()->setText("Vertical layout");
-
-        auto line = HorizontalLayout::Create();
-
-        auto labelAndButton = HorizontalLayout::Create();
-        labelAndButton->setFitContent(true);
-        (void)labelAndButton->addChildComponent<Label>("Some text: ");
-        (void)labelAndButton->addChildComponent<Button>("Click me!");
-        line->attachChild(labelAndButton);
-        line->attachChild(labelAndButton);
-
-        _layout.attachChild(line);
-
-        *_layout.addChildComponent<HorizontalLayout>() = *horizontal;
-
         auto search = HorizontalLayout::Create();
-        // search->setFitContent(true);
         search->setHorizontalAlign(HorizontalLayout::Align::Left);
-        (void)search->addChildComponent<Label>("Search:");
-        auto* input = search->addChildComponent<Input>();
-        input->setFlex(Widget::Flex::FlexWidth);
-        (void)search->addChildComponent<Button>("X");
+        search->addChildComponent<Label>("Search:");
+        search->addChildComponent<Input>()->setFlex(Widget::Flex::FlexWidth);
+        search->addChildComponent<Button>("X");
         _layout.attachChild(search);
+
     }
 
     void EditorSettingsEWC::onDraw()

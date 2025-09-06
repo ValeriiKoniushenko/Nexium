@@ -473,7 +473,7 @@ namespace Core
         }
 
         template<IsComponent ComponentT, class... Args>
-        [[nodiscard]] ComponentT* addChildComponent(Args&&... args)
+        ComponentT* addChildComponent(Args&&... args)
         {
             typename ComponentT::Ptr newOne = new ComponentT(std::forward<Args>(args)...);
             return static_cast<ComponentT*>(rawAddChildComponent(newOne.get()));
