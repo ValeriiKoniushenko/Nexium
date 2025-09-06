@@ -41,7 +41,7 @@ namespace Core
         const auto search = HorizontalLayout::Create();
         search->setHorizontalAlign(HorizontalLayout::Align::Center);
         search->addChildComponent<Label>("Search:");
-        search->addChildComponent<FloatInput>()->setFlex(Widget::Flex::FlexWidth);
+        search->addChildComponent<TextInput>()->setFlex(Widget::Flex::FlexWidth);
         search->addChildComponent<ComboView>()->setFlex(Widget::Flex::FlexWidth);
         search->addChildComponent<CheckBox>();
 

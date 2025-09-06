@@ -62,6 +62,9 @@ namespace Core
         void setInputtedData(std::string data) { _buffer = std::move(data); }
         [[nodiscard]] const std::string& getInputtedData() const noexcept { return _buffer; }
 
+        void setPlaceholder(StringAtom placeholder) { _placeholder = std::move(placeholder); }
+        [[nodiscard]] const StringAtom& getPlaceholder() const noexcept { return _placeholder; }
+
     public: // Delegates
         Delegate<void(const char*)> onInput;
 
@@ -79,6 +82,7 @@ namespace Core
 
     protected:
         std::string _buffer;
+        StringAtom _placeholder = "DDD"_atom;
     };
 
     template<Utils::IsArithmetic Type>

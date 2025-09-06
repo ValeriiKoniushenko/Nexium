@@ -101,7 +101,7 @@ namespace Core
 
         InputTextCallback_UserData cb_user_data;
         cb_user_data.Str = &_buffer;
-        ImGui::InputTextEx("", nullptr, _buffer.data(), _buffer.capacity() + 1, _size, flags,
+        ImGui::InputTextEx("", _placeholder.c_str(), _buffer.data(), _buffer.capacity() + 1, _size, flags,
                            InputTextCallback, &cb_user_data,
                            [this](const char* newText)
                            {
