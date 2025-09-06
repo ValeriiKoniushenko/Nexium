@@ -29,12 +29,12 @@ namespace Core
 
     void Label::setWidth(float newWidth)
     {
-        _textSize.x = newWidth;
+        _width = newWidth;
     }
 
     void Label::setHeight(float newHeight)
     {
-        _textSize.y = newHeight;
+        _height = newHeight;
     }
 
     Label& Label::setTextColor(const Color4& value)
@@ -68,7 +68,19 @@ namespace Core
 
     glm::vec2 Label::getRealSize() const
     {
-        return _textSize;
+        auto out = _textSize;
+
+        if (_width != -1.0f)
+        {
+            out.x = _width;
+        }
+
+        if (_height != -1.0f)
+        {
+            out.y = _height;
+        }
+
+        return out;
     }
 
     void Label::onDraw()
@@ -77,7 +89,19 @@ namespace Core
 
         pushedStyles += ImGui::OptPushStyleColor(ImGuiCol_Text, _textColor);
 
+        const auto defaultCursor = ImGui::GetCursorPos();
+        if (_width != -1.0f)
+        {
+            ImGui::SetCursorPosX(defaultCursor.x + (_width - _textSize.x) / 2.f);
+        }
+
         ImGui::TextUnformatted(_name.c_str());
+
+        if (_width != -1.0f)
+        {
+            ImGui::SetCursorPosX(defaultCursor.x + _width);
+            ImGui::Dummy(glm::vec2(0, 0));
+        }
 
         ImGui::PopStyleColor(pushedStyles);
     }

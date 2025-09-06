@@ -56,6 +56,8 @@ namespace Core
         std::optional<Color4> _textColor;
 
         glm::vec2 _textSize = {};
+        float _width = -1.0f;
+        float _height = -1.0f;
     };
 
 } // namespace Core
