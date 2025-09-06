@@ -36,11 +36,11 @@ namespace Core
         void setWidth(float newWidth) override;
         void setHeight(float newHeight) override;
 
-        Label& setTextColor(const Color4& value);
-        Label& resetTextColor();
+        void setTextColor(const Color4& value);
+        void resetTextColor();
         [[nodiscard]] std::optional<Color4> getTextColor() const;
 
-        Label& setText(const StringAtom& string);
+        void setText(const StringAtom& string);
         [[nodiscard]] const StringAtom& getText() const noexcept;
 
         [[nodiscard]] glm::vec2 getRealSize() const;

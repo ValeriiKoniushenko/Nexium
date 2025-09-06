@@ -33,38 +33,38 @@ namespace Core
         ECS_REGISTER_NEW_COMPONENT(Button, Widget);
 
     public:
-        Button& setButtonColor(const Color4& value);
-        Button& resetButtonColor();
+        void setButtonColor(const Color4& value);
+        void resetButtonColor();
         [[nodiscard]] std::optional<Color4> getButtonColor() const;
 
-        Button& setButtonHoverColor(const Color4& value);
-        Button& resetButtonHoverColor();
+        void setButtonHoverColor(const Color4& value);
+        void resetButtonHoverColor();
         [[nodiscard]] std::optional<Color4> getButtonHoverColor() const;
 
-        Button& setButtonActiveColor(const Color4& value);
-        Button& resetButtonActiveColor();
+        void setButtonActiveColor(const Color4& value);
+        void resetButtonActiveColor();
         [[nodiscard]] std::optional<Color4> getButtonActiveColor() const;
 
-        Button& setTextColor(const Color4& value);
-        Button& resetTextColor();
+        void setTextColor(const Color4& value);
+        void resetTextColor();
         [[nodiscard]] std::optional<Color4> getTextColor() const;
 
-        Button& setBorderColor(const Color4& value);
-        Button& resetBorderColor();
+        void setBorderColor(const Color4& value);
+        void resetBorderColor();
         [[nodiscard]] std::optional<Color4> getBorderColor() const;
 
-        Button& setBorderWidth(float value);
-        Button& resetBorderWidth();
+        void setBorderWidth(float value);
+        void resetBorderWidth();
         [[nodiscard]] std::optional<float> getBorderWidth() const;
 
-        Button& setText(const StringAtom& string);
+        void setText(const StringAtom& string);
         [[nodiscard]] const StringAtom& getText() const noexcept;
 
         void setWidth(float width) override;
-        Button& resetWidth();
+        void resetWidth();
 
         void setHeight(float height) override;
-        Button& resetHeight();
+        void resetHeight();
 
         [[nodiscard]] glm::vec2 getRealSize() const;
 

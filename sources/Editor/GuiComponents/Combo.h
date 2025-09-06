@@ -22,46 +22,39 @@
 
 #pragma once
 
+#include "Core/Delegate.h"
 #include "Widget.h"
 
 namespace Core
 {
 
-    class Layout : public Widget
+    class Combo : public Widget
     {
-        ECS_REGISTER_NEW_COMPONENT(Layout, Widget);
+        ECS_REGISTER_NEW_COMPONENT(Combo, Widget);
 
     public:
-        // clang-format off
-        CreateEnum(Align, int,
-            None,
-            Left,           // For horizontal align
-            Right,          // For horizontal align
-            SpaceBetween,   // For horizontal align
-            Center,         // For horizontal & vertical align
-            Top,            // For vertical align
-            Bottom          // For vertical align
-        );
-        // clang-format on
+        [[nodiscard]] glm::vec2 getRealSize() const;
 
-    public:
-        void setHorizontalAlign(Align align) { _align = align; }
-        [[nodiscard]] Align getHorizontalAlign() const noexcept { return _align; }
+        [[nodiscard]] float getWidth() const override { return getRealSize().x; }
+        [[nodiscard]] float getHeight() const override { return getRealSize().y; }
+        void setWidth(float newWidth) override;
+        void setHeight(float newHeight) override;
 
-        void setVerticalAlign(Align align) { _secondAlign = align; }
-        [[nodiscard]] Align getVerticalAlign() const noexcept { return _secondAlign; }
+        void setData(std::vector<StringAtom>&& items) { _items = std::move(items); }
+        void setData(const std::vector<StringAtom>& items) { _items = items; }
+        const std::vector<StringAtom>& getData() const noexcept { return _items; }
 
-        void setHeight(float value) override { _height = value; }
-        void resetHeight() { _height.reset(); }
-        void setWidth(float value) override { _width = value; }
-        void resetWidth() { _width.reset(); }
+    public: // Delegates
+        Delegate<void(StringAtom)> onSelect;
 
     protected:
-        std::optional<float> _height;
-        std::optional<float> _width;
+        void onDraw() override;
+        void onInitialize() override;
 
-        Align _align = Align::None;
-        Align _secondAlign = Align::None;
+    protected:
+        std::vector<StringAtom> _items;
+        glm::vec2 _size = glm::vec2(50.f, 0.f);
+        std::size_t _currentItem = 0;
     };
 
 } // namespace Core

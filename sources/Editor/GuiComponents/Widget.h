@@ -118,7 +118,7 @@ namespace Core
         Flex _flex = Flex::Fixed;
         bool _autoDraw = true;
         bool _isDrawOutline = false;
-        bool _isReadOnly = true;
+        bool _isReadOnly = false;
     };
 
 } // namespace Core

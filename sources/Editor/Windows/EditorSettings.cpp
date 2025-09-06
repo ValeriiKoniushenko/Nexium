@@ -23,6 +23,7 @@
 #include "EditorSettings.h"
 
 #include "Editor/GuiComponents/Button.h"
+#include "Editor/GuiComponents/Combo.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/Label.h"
@@ -40,7 +41,8 @@ namespace Core
         search->setHorizontalAlign(HorizontalLayout::Align::Left);
         search->addChildComponent<Label>("Search:");
         search->addChildComponent<FloatInput>()->setFlex(Widget::Flex::FlexWidth);
-        search->addChildComponent<IntInput>()->setFlex(Widget::Flex::FlexWidth);
+        search->addChildComponent<Combo>()->setFlex(Widget::Flex::FlexWidth);
+
         _layout.attachChild(search);
     }
 

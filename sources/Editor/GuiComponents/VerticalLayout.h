@@ -27,9 +27,9 @@
 namespace Core
 {
 
-    class VerticalLayout : public Layout<VerticalLayout>
+    class VerticalLayout : public Layout
     {
-        ECS_REGISTER_NEW_COMPONENT(VerticalLayout, Layout<VerticalLayout>);
+        ECS_REGISTER_NEW_COMPONENT(VerticalLayout, Layout);
 
     public:
         [[nodiscard]] float getWidth() const override;
@@ -38,8 +38,8 @@ namespace Core
         /**
          * @brief It will work only while Top/Bottom/Center for vert. align
          */
-        VerticalLayout& setSpacing(float value);
-        VerticalLayout& resetSpacing();
+        void setSpacing(float value);
+        void resetSpacing();
         [[nodiscard]] float getSpacing() const;
 
     protected:

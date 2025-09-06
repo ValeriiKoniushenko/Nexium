@@ -27,9 +27,9 @@
 namespace Core
 {
 
-    class HorizontalLayout : public Layout<HorizontalLayout>
+    class HorizontalLayout : public Layout
     {
-        ECS_REGISTER_NEW_COMPONENT(HorizontalLayout, Layout<HorizontalLayout>);
+        ECS_REGISTER_NEW_COMPONENT(HorizontalLayout, Layout);
 
     public:
         [[nodiscard]] float getWidth() const override;

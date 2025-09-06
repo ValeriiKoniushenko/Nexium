@@ -37,16 +37,14 @@ namespace Core
         _height = newHeight;
     }
 
-    Label& Label::setTextColor(const Color4& value)
+    void Label::setTextColor(const Color4& value)
     {
         _textColor = value;
-        return *this;
     }
 
-    Label& Label::resetTextColor()
+    void Label::resetTextColor()
     {
         _textColor.reset();
-        return *this;
     }
 
     std::optional<Color4> Label::getTextColor() const
@@ -54,11 +52,10 @@ namespace Core
         return _textColor;
     }
 
-    Label& Label::setText(const StringAtom& string)
+    void Label::setText(const StringAtom& string)
     {
         setComponentName(string);
         _textSize = ImGui::CalcTextSize(string.c_str());
-        return *this;
     }
 
     const StringAtom& Label::getText() const noexcept

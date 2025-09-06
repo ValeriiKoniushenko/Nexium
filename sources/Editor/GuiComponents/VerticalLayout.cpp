@@ -59,16 +59,14 @@ namespace Core
         return height != 0 ? height - _spacing.value_or(defaultGap) : 0;
     }
 
-    VerticalLayout& VerticalLayout::setSpacing(float value)
+    void VerticalLayout::setSpacing(float value)
     {
         _spacing = value;
-        return *this;
     }
 
-    VerticalLayout& VerticalLayout::resetSpacing()
+    void VerticalLayout::resetSpacing()
     {
         _spacing.reset();
-        return *this;
     }
 
     float VerticalLayout::getSpacing() const
