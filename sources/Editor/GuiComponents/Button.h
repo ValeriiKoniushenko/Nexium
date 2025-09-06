@@ -60,10 +60,10 @@ namespace Core
         Button& setText(const StringAtom& string);
         [[nodiscard]] const StringAtom& getText() const noexcept;
 
-        Button& setWidth(float width);
+        void setWidth(float width) override;
         Button& resetWidth();
 
-        Button& setHeight(float height);
+        void setHeight(float height) override;
         Button& resetHeight();
 
         [[nodiscard]] glm::vec2 getRealSize() const;

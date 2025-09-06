@@ -30,7 +30,56 @@ namespace Core
 
     float HorizontalLayout::getWidth() const
     {
-        if (_fitContent)
+        bool atLeastOneWithFlex = false;
+        for (auto&& child : _children)
+        {
+            if (child->unsafeCastTo<Widget>()->getFlex().cast() != Widget::Flex::Fixed)
+            {
+                atLeastOneWithFlex = true;
+                break;
+            }
+        }
+
+        if (atLeastOneWithFlex)
+        {
+            const float defaultSpacing = style().ItemSpacing.x;
+            float width = ImGui::GetContentRegionAvail().x;
+
+            int fixedCount = 0;
+            int flexWidthCount = 0;
+            for (auto&& child : _children)
+            {
+                const auto w = child->unsafeCastTo<Widget>();
+                const auto type = w->getFlex().cast();
+                if (type == Widget::Flex::Fixed)
+                {
+                    width -= w->getWidth();
+                    width -= defaultSpacing;
+                    ++fixedCount;
+                }
+                else if (type == Widget::Flex::FlexWidth)
+                {
+                    ++flexWidthCount;
+                }
+            }
+            if (fixedCount != 0)
+            {
+                width += defaultSpacing;
+            }
+
+            for (auto& child : _children)
+            {
+                auto w = child->unsafeCastTo<Widget>();
+                if (w->getFlex().cast() == Widget::Flex::FlexWidth)
+                {
+                    w->setWidth(width / static_cast<float>(flexWidthCount));
+                }
+            }
+
+            return ImGui::GetContentRegionAvail().x;
+        }
+
+        if (_fitContent && !atLeastOneWithFlex)
         {
             if (!hasChildren())
             {
@@ -47,6 +96,7 @@ namespace Core
             width -= defaultSpacing;
             return width;
         }
+
         if (_width)
         {
             return *_width;
@@ -102,25 +152,27 @@ namespace Core
 
         if (_align.cast() == Align::Left)
         {
-            drawAlignLeft();
+            prepareAlignLeft();
         }
         else if (_align.cast() == Align::Right)
         {
-            drawAlignRight();
+            prepareAlignRight();
         }
         else if (_align.cast() == Align::SpaceBetween)
         {
-            drawAlignSpaceBetween();
+            prepareAlignSpaceBetween();
         }
         else if (_align.cast() == Align::Center)
         {
-            drawAlignCenter();
+            prepareAlignCenter();
         }
         else
         {
             Assert(false);
-            drawAlignLeft();
+            prepareAlignLeft();
         }
+
+        directDraw();
 
         if (_width)
         {
@@ -149,47 +201,28 @@ namespace Core
         }
     }
 
-    void HorizontalLayout::drawAlignSpaceBetween()
+    void HorizontalLayout::prepareAlignSpaceBetween()
     {
-        float spacing = 0.f;
         if (hasChildren())
         {
-            spacing = getWidth();
+            _spacing = getWidth();
             const float defaultSpacing = style().ItemSpacing.x;
             for (const auto& child : _children)
             {
-                spacing -= child->unsafeCastTo<Widget>()->getWidth();
-                spacing -= defaultSpacing;
+                _spacing -= child->unsafeCastTo<Widget>()->getWidth();
+                _spacing -= defaultSpacing;
             }
-            spacing += defaultSpacing;
-            spacing /= _children.size() - 1ll;
-        }
-
-        const auto originalYCursor = ImGui::GetCursorPosY();
-
-        std::size_t i = 0;
-        for (auto&& child : _children)
-        {
-            ImGui::SetCursorPosY(originalYCursor + _yOffsets.at(i++));
-            child->unsafeCastTo<Widget>()->draw();
-            ImGui::SameLine();
-            ImGui::SetCursorPosX(ImGui::GetCursorPosX() + spacing);
+            _spacing += defaultSpacing;
+            _spacing /= _children.size() - 1ll;
         }
     }
 
-    void HorizontalLayout::drawAlignLeft()
+    void HorizontalLayout::prepareAlignLeft()
     {
-        const auto originalYCursor = ImGui::GetCursorPosY();
-        std::size_t i = 0;
-        for (auto&& child : _children)
-        {
-            ImGui::SetCursorPosY(originalYCursor + _yOffsets.at(i++));
-            child->unsafeCastTo<Widget>()->draw();
-            ImGui::SameLine();
-        }
+        // do nothing
     }
 
-    void HorizontalLayout::drawAlignRight()
+    void HorizontalLayout::prepareAlignRight()
     {
         if (hasChildren())
         {
@@ -203,19 +236,9 @@ namespace Core
             ImGui::Dummy(glm::vec2(spacing, 0));
             ImGui::SameLine();
         }
-
-        const auto originalYCursor = ImGui::GetCursorPosY();
-        std::size_t i = 0;
-
-        for (auto&& child : _children)
-        {
-            ImGui::SetCursorPosY(originalYCursor + _yOffsets.at(i++));
-            child->unsafeCastTo<Widget>()->draw();
-            ImGui::SameLine();
-        }
     }
 
-    void HorizontalLayout::drawAlignCenter()
+    void HorizontalLayout::prepareAlignCenter()
     {
         if (hasChildren())
         {
@@ -229,16 +252,6 @@ namespace Core
             spacing /= 2.f;
 
             ImGui::Dummy(glm::vec2(spacing, 0));
-            ImGui::SameLine();
-        }
-
-        const auto originalYCursor = ImGui::GetCursorPosY();
-        std::size_t i = 0;
-
-        for (auto&& child : _children)
-        {
-            ImGui::SetCursorPosY(originalYCursor + _yOffsets.at(i++));
-            child->unsafeCastTo<Widget>()->draw();
             ImGui::SameLine();
         }
     }
@@ -268,6 +281,23 @@ namespace Core
         }
 
         Assert(_yOffsets.size() == _children.size());
+    }
+
+    void HorizontalLayout::directDraw()
+    {
+        const auto originalYCursor = ImGui::GetCursorPosY();
+        std::size_t i = 0;
+
+        for (auto&& child : _children)
+        {
+            ImGui::SetCursorPosY(originalYCursor + _yOffsets.at(i++));
+            child->unsafeCastTo<Widget>()->draw();
+            ImGui::SameLine();
+            if (_align.cast() == Align::SpaceBetween)
+            {
+                ImGui::SetCursorPosX(ImGui::GetCursorPosX() + _spacing);
+            }
+        }
     }
 
 } // namespace Core

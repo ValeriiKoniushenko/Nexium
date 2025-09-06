@@ -146,10 +146,9 @@ namespace Core
         return getComponentName();
     }
 
-    Button& Button::setWidth(float width)
+    void Button::setWidth(float width)
     {
         _size.x = width;
-        return *this;
     }
 
     Button& Button::resetWidth()
@@ -158,10 +157,9 @@ namespace Core
         return *this;
     }
 
-    Button& Button::setHeight(float height)
+    void Button::setHeight(float height)
     {
         _size.y = height;
-        return *this;
     }
 
     Button& Button::resetHeight()

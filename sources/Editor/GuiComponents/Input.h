@@ -41,6 +41,8 @@ namespace Core
 
         [[nodiscard]] float getWidth() const override { return getRealSize().x; }
         [[nodiscard]] float getHeight() const override { return getRealSize().y; }
+        void setWidth(float newWidth) override;
+        void setHeight(float newHeight) override;
 
         void setInputtedData(std::string data) { _buffer = std::move(data); }
         [[nodiscard]] const std::string& getInputtedData() const noexcept { return _buffer; }

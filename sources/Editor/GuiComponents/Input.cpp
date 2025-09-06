@@ -84,6 +84,16 @@ namespace Core
         return _size;
     }
 
+    void Input::setWidth(float newWidth)
+    {
+        _size.x = newWidth;
+    }
+
+    void Input::setHeight(float newHeight)
+    {
+        _size.y = newHeight;
+    }
+
     void Input::onDraw()
     {
         int pushedStyles = 0;

@@ -60,20 +60,18 @@ namespace Core
         }
         [[nodiscard]] Align getVerticalAlign() const noexcept { return _secondAlign; }
 
-        DerivedLayout& setHeight(float value)
+        void setHeight(float value) override
         {
             _height = value;
-            return *static_cast<DerivedLayout*>(this);
         }
         DerivedLayout& resetHeight()
         {
             _height.reset();
             return *static_cast<DerivedLayout*>(this);
         }
-        DerivedLayout& setWidth(float value)
+        void setWidth(float value) override
         {
             _width = value;
-            return *static_cast<DerivedLayout*>(this);
         }
         DerivedLayout& resetWidth()
         {

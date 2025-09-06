@@ -33,6 +33,9 @@ namespace Core
         ECS_REGISTER_NEW_COMPONENT(Label, Widget);
 
     public:
+        void setWidth(float newWidth) override;
+        void setHeight(float newHeight) override;
+
         Label& setTextColor(const Color4& value);
         Label& resetTextColor();
         [[nodiscard]] std::optional<Color4> getTextColor() const;

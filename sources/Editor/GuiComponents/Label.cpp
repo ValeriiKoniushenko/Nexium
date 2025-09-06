@@ -27,6 +27,16 @@ namespace Core
 
     ECS_REGISTER_NEW_COMPONENT_TYPE(Label);
 
+    void Label::setWidth(float newWidth)
+    {
+        _textSize.x = newWidth;
+    }
+
+    void Label::setHeight(float newHeight)
+    {
+        _textSize.y = newHeight;
+    }
+
     Label& Label::setTextColor(const Color4& value)
     {
         _textColor = value;

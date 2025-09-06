@@ -44,14 +44,19 @@ namespace Core
         void onDraw() override;
         void onInitialize() override;
 
-        void drawAlignSpaceBetween();
-        void drawAlignLeft();
-        void drawAlignRight();
-        void drawAlignCenter();
+        void prepareAlignSpaceBetween();
+        void prepareAlignLeft();
+        void prepareAlignRight();
+        void prepareAlignCenter();
         void calcYOffsets();
+        void directDraw();
 
     protected:
         std::vector<float> _yOffsets;
+
+        // for space between
+        float _spacing = 0.f;
+
         bool _fitContent = false;
     };
 

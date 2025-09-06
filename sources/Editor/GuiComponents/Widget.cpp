@@ -42,6 +42,7 @@ namespace Core
         if (&other != this)
         {
             _pos = other._pos;
+            _flex = other._flex;
             _autoDraw = other._autoDraw;
             _isDrawOutline = other._isDrawOutline;
         }
@@ -61,6 +62,7 @@ namespace Core
             BaseComponent::operator=(other);
 
             _pos = other._pos;
+            _flex = other._flex;
             _autoDraw = other._autoDraw;
             _isDrawOutline = other._isDrawOutline;
         }

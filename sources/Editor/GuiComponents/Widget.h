@@ -35,6 +35,12 @@ namespace Core
         ECS_REGISTER_NEW_COMPONENT(Widget, BaseComponent);
 
     public:
+        // clang-format off
+        CreateEnum(Flex, int,
+            Fixed,
+            FlexWidth
+        );
+        // clang-format on
         struct Bounds
         {
             glm::vec2 topLeft = {};
@@ -79,6 +85,8 @@ namespace Core
 
         [[nodiscard]] virtual float getWidth() const = 0;
         [[nodiscard]] virtual float getHeight() const = 0;
+        virtual void setWidth(float newWidth) = 0;
+        virtual void setHeight(float newHeight) = 0;
 
         [[nodiscard]] bool isAutoDraw() const noexcept { return _autoDraw; }
         void setIsAutoDraw(bool value) noexcept { _autoDraw = value; }
@@ -91,6 +99,9 @@ namespace Core
         [[nodiscard]] Bounds getBounds() const noexcept;
         [[nodiscard]] Bounds getGlobalBounds() const noexcept;
 
+        [[nodiscard]] Flex getFlex() const noexcept { return _flex; }
+        void setFlex(Flex flex) noexcept { _flex = flex; }
+
     protected:
         bool addChildValidator(BaseComponent* newChild) override;
         void onTick(float delta) override;
@@ -102,6 +113,7 @@ namespace Core
         int id = idGen++; // internal id for ImGui
 
         glm::vec2 _pos = {};
+        Flex _flex = Flex::Fixed;
         bool _autoDraw = true;
         bool _isDrawOutline = false;
     };
