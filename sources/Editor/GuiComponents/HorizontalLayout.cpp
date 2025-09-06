@@ -139,9 +139,9 @@ namespace Core
         {
             ImGui::SetCursorPosX(originalCursor.x + *_width);
         }
-        ImGui::SetCursorPosY(originalCursor.y);
+        ImGui::SetCursorPosY(originalCursor.y + getHeight());
 
-        // ImGui::Dummy(glm::vec2(0, 0));
+        ImGui::Dummy(glm::vec2(0, 0));
     }
 
     void HorizontalLayout::onInitialize()
@@ -251,13 +251,19 @@ namespace Core
 
         for (auto&& child : _children)
         {
-            ImGui::SetCursorPosY(originalYCursor + _yOffsets.at(i++));
+            ImGui::SetCursorPosY(originalYCursor + _yOffsets.at(i));
             child->unsafeCastTo<Widget>()->draw();
-            ImGui::SameLine();
-            if (_align.cast() == Align::SpaceBetween)
+
+            if (i != _children.size() - 1)
             {
-                ImGui::SetCursorPosX(ImGui::GetCursorPosX() + _spacing);
+                ImGui::SameLine();
+                if (_align.cast() == Align::SpaceBetween)
+                {
+                    ImGui::SetCursorPosX(ImGui::GetCursorPosX() + _spacing);
+                }
             }
+
+            ++i;
         }
     }
 

@@ -81,9 +81,23 @@ namespace Core
         newChild->unsafeCastTo<Widget>()->setIsAutoDraw(false);
     }
 
+    void VerticalLayout::recalcFlexChildren()
+    {
+        const auto ownWidth = getWidth();
+        for (auto&& child : _children)
+        {
+            const auto w = child->unsafeCastTo<Widget>();
+            if (w->getFlex().cast() == Widget::Flex::FlexWidth)
+            {
+                w->setWidth(ownWidth);
+            }
+        }
+    }
+
     void VerticalLayout::onTick(float delta)
     {
         Widget::onTick(delta);
+        recalcFlexChildren();
     }
 
     void VerticalLayout::onDraw()

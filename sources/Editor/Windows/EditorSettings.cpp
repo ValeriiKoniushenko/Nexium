@@ -28,6 +28,7 @@
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/Label.h"
+#include "Editor/GuiComponents/List.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 
 namespace Core
@@ -38,13 +39,15 @@ namespace Core
     {
         BaseFloatEWC::onInitialize();
 
+        _layout.addChildComponent<ListView>()->setFlex(Widget::Flex::FlexWidth);
+
         const auto search = HorizontalLayout::Create();
         search->setHorizontalAlign(HorizontalLayout::Align::Center);
         search->addChildComponent<Label>("Search:");
         search->addChildComponent<TextInput>()->setFlex(Widget::Flex::FlexWidth);
-        search->addChildComponent<ComboView>()->setFlex(Widget::Flex::FlexWidth);
         search->addChildComponent<CheckBox>();
 
+        _layout.attachChild(search);
         _layout.attachChild(search);
     }
 

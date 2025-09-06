@@ -44,6 +44,7 @@ namespace Core
 
     protected:
         void onAddChild(BaseComponent* newChild) override;
+        void recalcFlexChildren();
         void onTick(float delta) override;
         void onDraw() override;
         void onInitialize() override;
