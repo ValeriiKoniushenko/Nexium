@@ -67,12 +67,15 @@ namespace Core
                 width += defaultSpacing;
             }
 
+            int deCounter = flexWidthCount;
             for (auto& child : _children)
             {
                 auto w = child->unsafeCastTo<Widget>();
                 if (w->getFlex().cast() == Widget::Flex::FlexWidth)
                 {
-                    w->setWidth(width / static_cast<float>(flexWidthCount));
+                    const float gap = deCounter != 0 ? defaultSpacing : 0;
+                    w->setWidth(width / static_cast<float>(flexWidthCount) - gap);
+                    --deCounter;
                 }
             }
 

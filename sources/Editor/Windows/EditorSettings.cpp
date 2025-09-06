@@ -68,7 +68,7 @@ namespace Core
         search->setHorizontalAlign(HorizontalLayout::Align::SpaceBetween);
         (void)search->addChildComponent<Label>("Search:");
         search->addChildComponent<Input>()->setFlex(Widget::Flex::FlexWidth);
-        (void)search->addChildComponent<Button>("X");
+        search->addChildComponent<Button>("X")->setFlex(Widget::Flex::FlexWidth);
         _layout.attachChild(search);
     }
 
