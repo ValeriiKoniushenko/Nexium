@@ -22,6 +22,3 @@ target_link_libraries(${TARGET_NAME} PUBLIC
 target_include_directories(${TARGET_NAME} PUBLIC ../)
 
 CoreAddCompileOptionsTo(${TARGET_NAME})
-
-add_executable(ImGuiExample examples/example_glfw_opengl3/main.cpp)
-target_link_libraries(ImGuiExample PUBLIC Core::ImGui Core::Glad)
