@@ -23,11 +23,14 @@
 #pragma once
 
 #include "BaseWindow.h"
+#include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "Graphics/ShaderProgram.h"
 
 namespace Core
 {
+
+    class TextInput;
 
     class ShaderManagerEWC : public BaseFloatEWC
     {
@@ -51,7 +54,11 @@ namespace Core
 
         // cached data from ShaderManager
         std::vector<StringAtom> _cachedShader;
-        std::string _validExtensions;
+
+        // GUI
+        IntInput* _totalShaders = nullptr;
+        IntInput* _failedShaders = nullptr;
+        TextInput* _validExtensions = nullptr;
 
         StringAtom _selectedShader;
         std::size_t _currentItem = 0;

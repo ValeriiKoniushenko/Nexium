@@ -24,7 +24,6 @@
 
 #include "Editor/GuiComponents/Combo.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
-#include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/Label.h"
 #include "Editor/GuiComponents/Spacer.h"
 #include "GameplaySystem/Framework/GameInstance.h"
@@ -37,8 +36,6 @@ namespace Core
     void ShaderManagerEWC::onInitialize()
     {
         BaseFloatEWC::onInitialize();
-
-        invalidateShaderCache();
 
         constexpr float defaultLabelWidth = 140.0f;
 
@@ -53,10 +50,9 @@ namespace Core
                 label->setText("Total shaders:");
                 label->setWidth(defaultLabelWidth);
 
-                auto* input = l->addChildComponent<IntInput>();
-                input->setIsDisabled(true);
-                input->setFlex(Widget::Flex::FlexWidth);
-                input->setInputtedData(GetShaderManager().countOfShaders());
+                _totalShaders = l->addChildComponent<IntInput>();
+                _totalShaders->setIsDisabled(true);
+                _totalShaders->setFlex(Widget::Flex::FlexWidth);
             }
 
             // Count of invalid
@@ -68,10 +64,9 @@ namespace Core
                 label->setText("With errors:");
                 label->setWidth(defaultLabelWidth);
 
-                auto* input = l->addChildComponent<IntInput>();
-                input->setIsDisabled(true);
-                input->setFlex(Widget::Flex::FlexWidth);
-                input->setInputtedData(GetShaderManager().countOfFailedShaders());
+                _failedShaders = l->addChildComponent<IntInput>();
+                _failedShaders->setIsDisabled(true);
+                _failedShaders->setFlex(Widget::Flex::FlexWidth);
             }
         }
 
@@ -81,10 +76,9 @@ namespace Core
             label->setText("Valid extensions:");
             label->setWidth(defaultLabelWidth);
 
-            auto* input = ext->addChildComponent<TextInput>();
-            input->setReadOnly(true);
-            input->setFlex(Widget::Flex::FlexWidth);
-            input->setInputtedData(_validExtensions);
+            _validExtensions = ext->addChildComponent<TextInput>();
+            _validExtensions->setReadOnly(true);
+            _validExtensions->setFlex(Widget::Flex::FlexWidth);
         }
 
         {
@@ -120,6 +114,8 @@ namespace Core
         }
 
         // ================ SHADER SELECT ======================
+
+        invalidateShaderCache();
     }
 
     void ShaderManagerEWC::onDraw()
@@ -273,21 +269,25 @@ namespace Core
         }
         std::ranges::sort(_cachedShader);
 
-        _validExtensions.clear();
+        std::string extensions;
         for (auto&& extension : GetShaderManager().getSuitableFragFileExtensions())
         {
-            _validExtensions += extension;
-            _validExtensions.push_back(' ');
+            extensions += extension;
+            extensions.push_back(' ');
         }
         for (auto&& extension : GetShaderManager().getSuitableVertFileExtensions())
         {
-            _validExtensions += extension;
-            _validExtensions.push_back(' ');
+            extensions += extension;
+            extensions.push_back(' ');
         }
 
-        while (!_validExtensions.empty() && _validExtensions.back() == ' ')
+        while (!extensions.empty() && extensions.back() == ' ')
         {
-            _validExtensions.pop_back();
+            extensions.pop_back();
         }
+        _validExtensions->setInputtedData(extensions);
+
+        _totalShaders->setInputtedData(GetShaderManager().countOfShaders());
+        _failedShaders->setInputtedData(GetShaderManager().countOfFailedShaders());
     }
 } // namespace Core
