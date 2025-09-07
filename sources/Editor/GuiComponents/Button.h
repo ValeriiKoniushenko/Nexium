@@ -99,7 +99,6 @@ namespace Core
     class ToggleButton : public Button
     {
         ECS_REGISTER_NEW_COMPONENT(ToggleButton, Button);
-    public:
 
     public: // Delegates
         /**

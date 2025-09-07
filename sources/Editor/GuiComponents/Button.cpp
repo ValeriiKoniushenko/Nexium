@@ -220,6 +220,7 @@ namespace Core
 
         ImGui::PushStyleColor(ImGuiCol_Button, color);
     }
+
     void ToggleButton::postDraw()
     {
         Button::postDraw();

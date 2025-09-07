@@ -287,27 +287,30 @@ namespace Core
 
         // Style adjustments
         style->WindowPadding = glm::vec2(8.00f, 8.00f);
-        style->FramePadding = glm::vec2(5.00f, 3.00f);
+        style->FramePadding = glm::vec2(4.00f, 4.00f);
         style->CellPadding = glm::vec2(6.00f, 6.00f);
         style->ItemSpacing = glm::vec2(6.00f, 6.00f);
         style->ItemInnerSpacing = glm::vec2(6.00f, 6.00f);
         style->TouchExtraPadding = glm::vec2(4.00f, 4.00f);
         style->IndentSpacing = 25;
-        style->ScrollbarSize = 11;
+        style->ScrollbarSize = 10;
         style->GrabMinSize = 10;
         style->WindowBorderSize = 1;
         style->ChildBorderSize = 1;
         style->PopupBorderSize = 1;
         style->FrameBorderSize = 1;
         style->TabBorderSize = 1;
-        style->WindowRounding = 7;
-        style->ChildRounding = 4;
-        style->FrameRounding = 3;
-        style->PopupRounding = 4;
-        style->ScrollbarRounding = 9;
-        style->GrabRounding = 3;
         style->LogSliderDeadzone = 4;
-        style->TabRounding = 4;
+
+        constexpr float rounding = 4.f;
+        style->WindowRounding = rounding * 2.f;
+        style->ChildRounding = rounding;
+        style->PopupRounding = rounding;
+        style->FrameRounding = rounding;
+        style->ScrollbarRounding = rounding * 2.f;
+        style->GrabRounding = rounding;
+        style->TabRounding = rounding;
+        style->TreeLinesRounding = rounding;
     }
 
     bool GameEditor::needToDraw()
