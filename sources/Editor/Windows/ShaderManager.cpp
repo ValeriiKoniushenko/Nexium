@@ -98,19 +98,8 @@ namespace Core
             auto* label = shaderSelect->addChildComponent<Label>("Shader:");
             label->setWidth(defaultLabelWidth);
 
-            auto* combo = shaderSelect->addChildComponent<ComboModelBased>();
-            combo->setFlex(Widget::Flex::FlexWidth);
-            combo->setDataProvider(
-                [this](std::size_t i, StringAtom& label) -> void*
-                {
-                    label = _cachedShader.at(i);
-                    return nullptr;
-                });
-            combo->setSizeProvider(
-                [this]() -> std::size_t
-                {
-                    return _cachedShader.size();
-                });
+            _comboView = shaderSelect->addChildComponent<ComboView>();
+            _comboView->setFlex(Widget::Flex::FlexWidth);
         }
 
         // ================ SHADER SELECT ======================
@@ -261,33 +250,47 @@ namespace Core
 
     void ShaderManagerEWC::invalidateShaderCache()
     {
-        _cachedShader.clear();
-        _cachedShader.reserve(gGameInstance->shaderManager.getShaderMetas().size());
-        for (auto&& shader : gGameInstance->shaderManager.getShaderMetas())
+        if (_comboView)
         {
-            _cachedShader.push_back(shader.first.data());
-        }
-        std::ranges::sort(_cachedShader);
-
-        std::string extensions;
-        for (auto&& extension : GetShaderManager().getSuitableFragFileExtensions())
-        {
-            extensions += extension;
-            extensions.push_back(' ');
-        }
-        for (auto&& extension : GetShaderManager().getSuitableVertFileExtensions())
-        {
-            extensions += extension;
-            extensions.push_back(' ');
+            std::vector<StringAtom> shaders;
+            shaders.reserve(gGameInstance->shaderManager.getShaderMetas().size());
+            for (auto&& shader : gGameInstance->shaderManager.getShaderMetas())
+            {
+                shaders.push_back(shader.first.data());
+            }
+            std::ranges::sort(shaders);
+            _comboView->setData(shaders);
         }
 
-        while (!extensions.empty() && extensions.back() == ' ')
+        if (_validExtensions)
         {
-            extensions.pop_back();
-        }
-        _validExtensions->setInputtedData(extensions);
+            std::string extensions;
+            for (auto&& extension : GetShaderManager().getSuitableFragFileExtensions())
+            {
+                extensions += extension;
+                extensions.push_back(' ');
+            }
+            for (auto&& extension : GetShaderManager().getSuitableVertFileExtensions())
+            {
+                extensions += extension;
+                extensions.push_back(' ');
+            }
 
-        _totalShaders->setInputtedData(GetShaderManager().countOfShaders());
-        _failedShaders->setInputtedData(GetShaderManager().countOfFailedShaders());
+            while (!extensions.empty() && extensions.back() == ' ')
+            {
+                extensions.pop_back();
+            }
+            _validExtensions->setInputtedData(extensions);
+        }
+
+        if (_totalShaders)
+        {
+            _totalShaders->setInputtedData(GetShaderManager().countOfShaders());
+        }
+
+        if (_failedShaders)
+        {
+            _failedShaders->setInputtedData(GetShaderManager().countOfFailedShaders());
+        }
     }
 } // namespace Core

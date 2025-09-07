@@ -31,6 +31,7 @@ namespace Core
 {
 
     class TextInput;
+    class ComboView;
 
     class ShaderManagerEWC : public BaseFloatEWC
     {
@@ -52,13 +53,11 @@ namespace Core
         VerticalLayout _headLayout;
         VerticalLayout _generalLayout;
 
-        // cached data from ShaderManager
-        std::vector<StringAtom> _cachedShader;
-
         // GUI
         IntInput* _totalShaders = nullptr;
         IntInput* _failedShaders = nullptr;
         TextInput* _validExtensions = nullptr;
+        ComboView* _comboView = nullptr;
 
         StringAtom _selectedShader;
         std::size_t _currentItem = 0;
