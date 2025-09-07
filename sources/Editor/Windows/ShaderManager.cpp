@@ -54,7 +54,7 @@ namespace Core
                 label->setWidth(defaultLabelWidth);
 
                 auto* input = l->addChildComponent<IntInput>();
-                input->setIsReadOnly(true);
+                input->setIsDisabled(true);
                 input->setFlex(Widget::Flex::FlexWidth);
                 input->setInputtedData(GetShaderManager().countOfShaders());
             }
@@ -69,7 +69,7 @@ namespace Core
                 label->setWidth(defaultLabelWidth);
 
                 auto* input = l->addChildComponent<IntInput>();
-                input->setIsReadOnly(true);
+                input->setIsDisabled(true);
                 input->setFlex(Widget::Flex::FlexWidth);
                 input->setInputtedData(GetShaderManager().countOfFailedShaders());
             }
@@ -82,7 +82,7 @@ namespace Core
             label->setWidth(defaultLabelWidth);
 
             auto* input = ext->addChildComponent<TextInput>();
-            input->setIsReadOnly(true);
+            input->setReadOnly(true);
             input->setFlex(Widget::Flex::FlexWidth);
             input->setInputtedData(_validExtensions);
         }
@@ -94,7 +94,7 @@ namespace Core
             label->setWidth(defaultLabelWidth);
 
             auto* input = ext->addChildComponent<TextInput>();
-            input->setIsReadOnly(true);
+            input->setReadOnly(true);
             input->setFlex(Widget::Flex::FlexWidth);
             input->setInputtedData(GetShaderManager().getInputDir().generic_string());
         }
@@ -283,6 +283,11 @@ namespace Core
         {
             _validExtensions += extension;
             _validExtensions.push_back(' ');
+        }
+
+        while (!_validExtensions.empty() && _validExtensions.back() == ' ')
+        {
+            _validExtensions.pop_back();
         }
     }
 } // namespace Core

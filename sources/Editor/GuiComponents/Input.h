@@ -65,6 +65,9 @@ namespace Core
         void setPlaceholder(StringAtom placeholder) { _placeholder = std::move(placeholder); }
         [[nodiscard]] const StringAtom& getPlaceholder() const noexcept { return _placeholder; }
 
+        void setReadOnly(bool value);
+        [[nodiscard]] bool isReadOnly() const noexcept;
+
     public: // Delegates
         Delegate<void(const char*)> onInput;
 
@@ -82,7 +85,8 @@ namespace Core
 
     protected:
         std::string _buffer;
-        StringAtom _placeholder = "DDD"_atom;
+        StringAtom _placeholder = ""_atom;
+        int _flags = ImGuiInputTextFlags_None;
     };
 
     template<Utils::IsArithmetic Type>
@@ -116,12 +120,11 @@ namespace Core
             if constexpr (std::is_same_v<float, Type>)
             {
                 ImGui::DragFloat("", &_buffer, _step, _min, _max, _precisionStr.c_str(),
-                                 ImGuiSliderFlags_None);
+                                 ImGuiInputTextFlags_None);
             }
             else if constexpr (std::is_same_v<int, Type>)
             {
-                ImGui::DragInt("", &_buffer, _step, _min, _max, "%d",
-                                 ImGuiSliderFlags_None);
+                ImGui::DragInt("", &_buffer, _step, _min, _max, "%d", ImGuiInputTextFlags_None);
             }
             ImGui::PopItemWidth();
         }

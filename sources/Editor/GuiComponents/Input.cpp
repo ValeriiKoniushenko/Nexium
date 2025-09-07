@@ -58,6 +58,16 @@ namespace Core
         _size.y = newHeight;
     }
 
+    void TextInput::setReadOnly(bool value)
+    {
+        _flags |= ImGuiInputTextFlags_ReadOnly;
+    }
+
+    bool TextInput::isReadOnly() const noexcept
+    {
+        return _flags & ImGuiInputTextFlags_ReadOnly;
+    }
+
     void BaseInput::onInitialize()
     {
         Widget::onInitialize();
@@ -97,16 +107,26 @@ namespace Core
 
         pushedStyles += ImGui::OptPushStyleColor(ImGuiCol_Text, _textColor);
 
-        int flags = ImGuiInputTextFlags_CallbackResize;
+        const int flags = ImGuiInputTextFlags_CallbackResize | _flags;
+        const bool isRO = isReadOnly();
+        if (isRO)
+        {
+            ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
+        }
 
         InputTextCallback_UserData cb_user_data;
         cb_user_data.Str = &_buffer;
-        ImGui::InputTextEx("", _placeholder.c_str(), _buffer.data(), _buffer.capacity() + 1, _size, flags,
-                           InputTextCallback, &cb_user_data,
+        ImGui::InputTextEx("", _placeholder.c_str(), _buffer.data(), _buffer.capacity() + 1, _size,
+                           flags, InputTextCallback, &cb_user_data,
                            [this](const char* newText)
                            {
                                onInput.trigger(newText);
                            });
+
+        if (isRO)
+        {
+            ImGui::PopStyleVar();
+        }
 
         ImGui::PopStyleColor(pushedStyles);
     }

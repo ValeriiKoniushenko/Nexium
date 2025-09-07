@@ -150,7 +150,7 @@ namespace Core
 
     void Widget::preDraw()
     {
-        if (_isReadOnly)
+        if (_isDisabled)
         {
             ImGui::BeginDisabled(true);
         }
@@ -158,7 +158,7 @@ namespace Core
 
     void Widget::postDraw()
     {
-        if (_isReadOnly)
+        if (_isDisabled)
         {
             ImGui::EndDisabled();
         }

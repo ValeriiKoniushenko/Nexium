@@ -113,8 +113,8 @@ namespace Core
         [[nodiscard]] Flex getFlex() const noexcept { return _flex; }
         void setFlex(Flex flex) noexcept { _flex = flex; }
 
-        void setIsReadOnly(bool value) noexcept { _isReadOnly = value; }
-        [[nodiscard]] bool isReadOnly() const noexcept { return _isReadOnly; }
+        void setIsDisabled(bool value) noexcept { _isDisabled = value; }
+        [[nodiscard]] bool isDisabled() const noexcept { return _isDisabled; }
 
     protected:
         bool addChildValidator(BaseComponent* newChild) override;
@@ -132,7 +132,7 @@ namespace Core
         Flex _flex = Flex::Fixed;
         bool _autoDraw = true;
         bool _isDrawOutline = false;
-        bool _isReadOnly = false;
+        bool _isDisabled = false;
     };
 
 } // namespace Core
