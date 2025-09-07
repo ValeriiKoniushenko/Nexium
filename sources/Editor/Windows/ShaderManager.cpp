@@ -22,6 +22,7 @@
 
 #include "ShaderManager.h"
 
+#include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/Combo.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Label.h"
@@ -33,10 +34,8 @@ namespace Core
 {
     ECS_REGISTER_NEW_COMPONENT_TYPE(ShaderManagerEWC)
 
-    void ShaderManagerEWC::onInitialize()
+    void ShaderManagerEWC::createGui()
     {
-        BaseFloatEWC::onInitialize();
-
         constexpr float defaultLabelWidth = 140.0f;
 
         // ================ HEAD LAYOUT ======================
@@ -100,11 +99,92 @@ namespace Core
 
             _comboView = shaderSelect->addChildComponent<ComboView>();
             _comboView->setFlex(Widget::Flex::FlexWidth);
+            _comboView->onSelect.subscribe(
+                [this](ComboView*, StringAtom key)
+                {
+                    selectShader(key);
+                });
         }
 
-        // ================ SHADER SELECT ======================
+        // ================ SELECTED SHADER ======================
+        {
+            auto* name = _selectedShaderLayout.addChildComponent<HorizontalLayout>();
+            auto* label = name->addChildComponent<Label>("Shader name:");
+            label->setWidth(defaultLabelWidth);
 
+            _shaderName = name->addChildComponent<TextInput>();
+            _shaderName->setReadOnly(true);
+            _shaderName->setFlex(Widget::Flex::FlexWidth);
+        }
+
+        {
+            auto* path = _selectedShaderLayout.addChildComponent<HorizontalLayout>();
+            auto* label = path->addChildComponent<Label>("Path to .vert:");
+            label->setWidth(defaultLabelWidth);
+
+            _vertPath = path->addChildComponent<TextInput>();
+            _vertPath->setReadOnly(true);
+            _vertPath->setFlex(Widget::Flex::FlexWidth);
+
+            auto* edit = path->addChildComponent<Button>("Edit");
+            edit->onClick.subscribe(
+                [this](Button*)
+                {
+                    if (_vertPath)
+                    {
+                        openEditor(_vertPath->getInputtedData());
+                    }
+                });
+        }
+
+        {
+            auto* path = _selectedShaderLayout.addChildComponent<HorizontalLayout>();
+            auto* label = path->addChildComponent<Label>("Path to .frag:");
+            label->setWidth(defaultLabelWidth);
+
+            _fragPath = path->addChildComponent<TextInput>();
+            _fragPath->setReadOnly(true);
+            _fragPath->setFlex(Widget::Flex::FlexWidth);
+
+            auto* edit = path->addChildComponent<Button>("Edit");
+            edit->onClick.subscribe(
+                [this](Button*)
+                {
+                    if (_fragPath)
+                    {
+                        openEditor(_fragPath->getInputtedData());
+                    }
+                });
+        }
+
+        _selectedShaderLayout.addChildComponent<Spacer>();
+
+        {
+            auto* recompile = _selectedShaderLayout.addChildComponent<Button>("Recompile");
+            recompile->setFlex(Widget::Flex::FlexWidth);
+            recompile->onClick.subscribe(
+                [this](Button*)
+                {
+                    recompileSelectedShader();
+                });
+
+            _recompileResult = _selectedShaderLayout.addChildComponent<Label>();
+            _recompileResult->setFlex(Widget::Flex::FlexWidth);
+            _recompileResult->setText("");
+        }
+
+        _selectedShaderLayout.addChildComponent<Spacer>();
+    }
+    void ShaderManagerEWC::onInitialize()
+    {
+        BaseFloatEWC::onInitialize();
+
+        createGui();
         invalidateShaderCache();
+        if (_comboView)
+        {
+            selectShader(_comboView->getSelectedString());
+        }
     }
 
     void ShaderManagerEWC::onDraw()
@@ -112,102 +192,32 @@ namespace Core
         const float dt = gGameInstance->world.timeDelta;
         _headLayout.tick(dt);
 
+        ImGui::Dummy({ 0, ImGui::GetStyle().ItemSpacing.y * 2.f });
         if (ImGui::CollapsingHeader("General", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            _generalLayout.tick(dt);
+            _selectedShaderLayout.tick(dt);
         }
 
-        drawList();
-        ImGui::SameLine();
-        drawDetails();
-    }
-
-    void ShaderManagerEWC::drawList()
-    {
-        std::vector<const char*> names;
-        for (auto&& shader : gGameInstance->shaderManager.getShaderMetas())
+        if (_selectedRawShader)
         {
-            names.push_back(shader.first.data());
-        }
-
-        if (ImGui::BeginListBox("##ShaderList", glm::vec2(100, -FLT_MIN)))
-        {
-            for (std::size_t i = 0; i < names.size(); i++)
-            {
-                if (ImGui::Selectable(names[i], _currentItem == i))
-                {
-                    _currentItem = i;
-                }
-            }
-            ImGui::EndListBox();
-        }
-
-        _selectedShader = names.at(_currentItem);
-    }
-
-    void ShaderManagerEWC::drawDetails()
-    {
-        auto&& metas = gGameInstance->shaderManager.getShaderMetas();
-        if (!metas.contains(_selectedShader))
-        {
-            return;
-        }
-        auto&& shader = metas.at(_selectedShader);
-        auto&& style = ImGui::GetStyle();
-        const auto availWidth = ImGui::GetContentRegionAvail().x - (style.ItemSpacing.x * 2.f);
-
-        if (ImGui::BeginChild("Shader's meta data"))
-        {
-            ImGui::Dummy({}); // top padding
-
-            LabelAndInputTextRO("Shader name:", shader.getShaderName(), _drawDetailsLabelWidth,
-                                availWidth);
-
-            if (ImGui::Button(
-                    "Reload shader",
-                    glm::vec2(_drawDetailsLabelWidth - (style.FramePadding.x * 2.f), 0.f)))
-            {
-                shader.safeRecreateFromSources();
-            }
-
-            const auto vertPath = shader.getVertexShaderPath().generic_string();
-            if (ButtonAndInputTextRO("Edit .vert:", vertPath.data(), _drawDetailsLabelWidth,
-                                     availWidth))
-            {
-                gGameInstance->gameEditor.showWindow<TextEditorEWC>(".*", vertPath.data());
-            }
-
-            const auto fragPath = shader.getFragmentShaderPath().generic_string();
-            if (ButtonAndInputTextRO("Edit .frag:", fragPath.data(), _drawDetailsLabelWidth,
-                                     availWidth))
-            {
-                gGameInstance->gameEditor.showWindow<TextEditorEWC>(".*", fragPath.data());
-            }
-
-            ImGui::Dummy({});
-
-            ImGui::Separator();
-
             if (ImGui::CollapsingHeader("Uniforms", ImGuiTreeNodeFlags_DefaultOpen))
             {
-                drawTableWith("Uniforms", shader.getUniforms());
+                drawTableWith("Uniforms", _selectedRawShader->getUniforms());
             }
             ImGui::Dummy({});
 
-            if (ImGui::CollapsingHeader("Inputs"))
+            if (ImGui::CollapsingHeader("Inputs", ImGuiTreeNodeFlags_DefaultOpen))
             {
-                drawTableWith("Inputs", shader.getInputs());
+                drawTableWith("Inputs", _selectedRawShader->getInputs());
             }
             ImGui::Dummy({});
 
-            if (ImGui::CollapsingHeader("Outputs"))
+            if (ImGui::CollapsingHeader("Outputs", ImGuiTreeNodeFlags_DefaultOpen))
             {
-                drawTableWith("Outputs", shader.getOutputs());
+                drawTableWith("Outputs", _selectedRawShader->getOutputs());
             }
-
-            ImGui::Dummy({}); // bottom padding
         }
-        ImGui::EndChild();
+
     }
 
     void ShaderManagerEWC::drawTableWith(
@@ -292,5 +302,77 @@ namespace Core
         {
             _failedShaders->setInputtedData(GetShaderManager().countOfFailedShaders());
         }
+    }
+
+    void ShaderManagerEWC::openEditor(const std::filesystem::path& path)
+    {
+        openEditor(path.generic_string());
+    }
+
+    void ShaderManagerEWC::openEditor(const std::string& path)
+    {
+        GetEditor().showWindow<TextEditorEWC>(".*", path.data());
+    }
+
+    void ShaderManagerEWC::recompileSelectedShader()
+    {
+        if (!_shaderName)
+        {
+            return;
+        }
+
+        const auto name = StringAtom(_shaderName->getInputtedData());
+        if (name.isEmpty())
+        {
+            return;
+        }
+
+        auto&& metas = GetShaderManager().getShaderMetas();
+        if (Verify(metas.contains(name)))
+        {
+            bool result = metas[name].safeRecreateFromSources();
+
+            if (_recompileResult)
+            {
+                if (result)
+                {
+                    _recompileResult->setTextColor(Color4::From(NormColor4(ColorSoftGreen)));
+                    _recompileResult->setText("Successfully recompiled");
+                }
+                else
+                {
+                    _recompileResult->setTextColor(Color4::From(NormColor4(ColorRed)));
+                    _recompileResult->setText("Recompile failed. Check logs for details.");
+                }
+            }
+        }
+    }
+
+    void ShaderManagerEWC::selectShader(const StringAtom& name)
+    {
+        auto&& metas = GetShaderManager().getShaderMetas();
+        if (!Verify(metas.contains(name)))
+        {
+            errorLog("Selected shader: {} - not found."_f << name);
+            return;
+        }
+
+        auto&& shader = metas[name];
+        if (_shaderName)
+        {
+            _shaderName->setInputtedData(shader.getShaderName().toStdString());
+        }
+
+        if (_fragPath)
+        {
+            _fragPath->setInputtedData(shader.getFragmentShaderPath().generic_string());
+        }
+
+        if (_vertPath)
+        {
+            _vertPath->setInputtedData(shader.getVertexShaderPath().generic_string());
+        }
+
+        _selectedRawShader = &shader;
     }
 } // namespace Core

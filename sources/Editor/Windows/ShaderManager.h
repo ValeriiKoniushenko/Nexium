@@ -29,9 +29,14 @@
 
 namespace Core
 {
+    class ShaderProgramMeta;
+}
+namespace Core
+{
 
     class TextInput;
     class ComboView;
+    class Label;
 
     class ShaderManagerEWC : public BaseFloatEWC
     {
@@ -39,6 +44,7 @@ namespace Core
 
     public:
     protected:
+        void createGui();
         void onInitialize() override;
         void onDraw() override;
         void drawList();
@@ -48,16 +54,27 @@ namespace Core
             const std::unordered_set<ShaderVariable, ShaderVariable::Hasher>& inputData);
 
         void invalidateShaderCache();
+        void openEditor(const std::filesystem::path& path);
+        void openEditor(const std::string& path);
+        void recompileSelectedShader();
+        void selectShader(const StringAtom& name);
 
     protected:
         VerticalLayout _headLayout;
-        VerticalLayout _generalLayout;
+        VerticalLayout _selectedShaderLayout;
 
-        // GUI
+        // =========== GUI ===========
+        // general
         IntInput* _totalShaders = nullptr;
         IntInput* _failedShaders = nullptr;
         TextInput* _validExtensions = nullptr;
         ComboView* _comboView = nullptr;
+        // selected shader
+        TextInput* _shaderName = nullptr;
+        TextInput* _fragPath = nullptr;
+        TextInput* _vertPath = nullptr;
+        Label* _recompileResult = nullptr;
+        ShaderProgramMeta* _selectedRawShader = nullptr;
 
         StringAtom _selectedShader;
         std::size_t _currentItem = 0;

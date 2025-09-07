@@ -121,7 +121,7 @@ namespace Core
         Widget::onInitialize();
         if (_name.isEmpty())
         {
-            setText("Label"_atom);
+            // setText("Label"_atom);
         }
 
         if (_textSize.x == 0.f && _textSize.y == 0.f)

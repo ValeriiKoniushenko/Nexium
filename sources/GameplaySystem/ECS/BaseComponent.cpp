@@ -343,8 +343,8 @@ namespace Core
     {
         if (name.isEmpty()) [[unlikely]]
         {
-            Assert(false);
-            errorLog("Was passed empty name to the component.");
+            // Assert(false);
+            // errorLog("Was passed empty name to the component.");
             return;
         }
 
