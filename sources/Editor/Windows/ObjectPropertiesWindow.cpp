@@ -224,6 +224,40 @@ namespace Core
 
         // ================= BaseComponent-extra ====================
         {
+            auto* row = _baseComponentExtraLayout.addChildComponent<HorizontalLayout>();
+            auto* label = row->addChildComponent<Label>("Parent");
+            label->setWidth(defaultLabelWidthBig);
+
+            _parentName = row->addChildComponent<TextInput>();
+            _parentName->setFlex(Widget::Flex::FlexWidth);
+            _parentName->setDisabled(true);
+        }
+
+        {
+            auto* row = _baseComponentExtraLayout.addChildComponent<HorizontalLayout>();
+            auto* label = row->addChildComponent<Label>("Children count");
+            label->setWidth(defaultLabelWidthBig);
+
+            _childrenCount = row->addChildComponent<IntInput>();
+            _childrenCount->setFlex(Widget::Flex::FlexWidth);
+            _childrenCount->setDisabled(true);
+        }
+
+        {
+            auto* row = _baseComponentExtraLayout.addChildComponent<HorizontalLayout>();
+            auto* label = row->addChildComponent<Label>("Is initialized");
+            label->setWidth(defaultLabelWidthBig);
+
+            _isInited = row->addChildComponent<CheckBox>();
+            _isInited->setDisabled(true);
+        }
+
+        {
+            auto* row = _baseComponentExtraLayout.addChildComponent<HorizontalLayout>();
+            auto* label = row->addChildComponent<Label>("Disabled ticks");
+            label->setWidth(defaultLabelWidthBig);
+
+            _disabledTicks = row->addChildComponent<CheckBox>();
         }
 
         // ================= GraphicsComponent ====================
@@ -237,20 +271,39 @@ namespace Core
 
     void ObjectPropertiesWindowEWC::registerGuiEvents()
     {
-        _objectIsEnabled->onChange.subscribe(
-            [this](auto*, bool newStatus)
-            {
-                if (_target)
+        if (_objectIsEnabled)
+        {
+            _objectIsEnabled->onChange.subscribe(
+                [this](auto*, bool newStatus)
                 {
-                    _target->setEnabled(newStatus);
-                }
-            });
+                    if (_target)
+                    {
+                        _target->setEnabled(newStatus);
+                    }
+                });
+        }
+
+        if (_disabledTicks)
+        {
+            _disabledTicks->onChange.subscribe(
+                [this](auto*, bool newStatus)
+                {
+                    if (_target)
+                    {
+                        _target->setNoTick(newStatus);
+                    }
+                });
+        }
     }
 
     void ObjectPropertiesWindowEWC::tryDrawTransformable(Transformable* comp, BaseComponent* base)
     {
         if (comp && ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
         {
+            const float dt = GetWorld().timeDelta;
+
+            _transformableLayout.tick(dt);
+
             bool isChanged = false;
 
             if (auto res
@@ -465,17 +518,30 @@ namespace Core
     {
         if (comp && ImGui::CollapsingHeader("Component data", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            LabelAndInputTextRO("Children:", comp->getChildrenCount(), _labelWidth,
-                                _innerSize.width);
-            LabelAndCheckboxRO("Inited:", comp->isInitialized(), _labelWidth);
+            const float dt = GetWorld().timeDelta;
 
-            bool tickable = comp->getNoTick();
-            FixedLabel("No ticks:", _labelWidth);
-            ImGui::Checkbox("##NoTick", &tickable);
-            if (comp->getNoTick() != tickable)
+            if (_childrenCount)
             {
-                comp->setNoTick(tickable);
+                _childrenCount->setInputtedData(comp->getChildrenCount());
             }
+            if (_isInited)
+            {
+                _isInited->setValue(comp->isInitialized());
+            }
+            if (_disabledTicks)
+            {
+                _disabledTicks->setValue(comp->getNoTick());
+            }
+            if (_parentName && comp->hasParent())
+            {
+                auto str = comp->getParent()->getComponentName().toStdString();
+                str += "(";
+                str += comp->getParent()->getComponentType().toStdString();
+                str += ")";
+                _parentName->setInputtedData(std::move(str));
+            }
+
+            _baseComponentExtraLayout.tick(dt);
 
             ImGui::Dummy(glm::vec2(0.0f, _gapBetweenSections));
         }
@@ -485,6 +551,9 @@ namespace Core
     {
         if (comp && ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen))
         {
+            const float dt = GetWorld().timeDelta;
+
+            _baseCameraLayout.tick(dt);
             float inputedFov = comp->getFov();
             LabelAndInputFloat("FOV:", inputedFov, _labelWidth, _innerSize.width, 0.1f);
             if (inputedFov != comp->getFov())

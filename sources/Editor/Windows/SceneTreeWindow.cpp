@@ -105,19 +105,19 @@ namespace Core
         BaseFloatEWC::onUpdate();
     }
 
-    void SceneTreeWindowEWC::drawTreeNode(BaseComponent* n, int32_t id,
+    bool SceneTreeWindowEWC::drawTreeNode(BaseComponent* n, int32_t id,
                                           bool isInSelectedSubtree /* = false*/)
     {
         if (!n)
         {
-            return;
+            return true;
         }
 
         if (const auto* actor = n->tryCastTo<Actor>())
         {
             if (actor->isPostDraw())
             {
-                return;
+                return true;
             }
         }
 
@@ -181,6 +181,12 @@ namespace Core
             if (_lastSelectedObject != selectedObject)
             {
                 gGameInstance->objectSelectorManager.selectObject(n);
+                ImGui::PopID();
+                if (isOpened)
+                {
+                    ImGui::TreePop();
+                }
+                return false;
             }
         }
 
@@ -188,12 +194,19 @@ namespace Core
         {
             for (auto& child : n->getChildren())
             {
-                drawTreeNode(child.get(), ++id);
+                if (!drawTreeNode(child.get(), ++id))
+                {
+                    ImGui::PopID();
+                    ImGui::TreePop();
+                    return false;
+                }
             }
 
             ImGui::TreePop();
         }
 
         ImGui::PopID();
+
+        return true;
     }
 } // namespace Core

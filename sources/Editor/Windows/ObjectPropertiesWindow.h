@@ -76,14 +76,19 @@ namespace Core
 
         // BaseComponent-extra section:
         VerticalLayout _baseComponentExtraLayout;
-
+        TextInput* _parentName = nullptr;
+        IntInput* _childrenCount = nullptr;
+        CheckBox* _isInited = nullptr;
+        CheckBox* _disabledTicks = nullptr;
 
         // GraphicsComponent section:
         VerticalLayout _graphicsComponentLayout;
 
-
         // BaseCamera section:
         VerticalLayout _baseCameraLayout;
+
+        // Transformable section:
+        VerticalLayout _transformableLayout;
 
 
         AbstractComponent* _target = nullptr;

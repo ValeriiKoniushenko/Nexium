@@ -54,6 +54,6 @@ namespace Core
         BaseComponent* _lastSelectedObject = nullptr;
 
     private:
-        void drawTreeNode(BaseComponent* n, int32_t id, bool isInSelectedSubtree = false);
+        bool drawTreeNode(BaseComponent* n, int32_t id, bool isInSelectedSubtree = false);
     };
 } // namespace Core
