@@ -173,6 +173,27 @@ namespace Core
         }
     }
 
+    std::size_t StaticMeshBundle::getRenderableTriangles() const
+    {
+        std::size_t out = 0;
+        for (const auto* mesh : _meshes)
+        {
+            if (mesh->isEnabled())
+            {
+                out += mesh->getTriangleCount();
+            }
+        }
+        for (const auto* bundle : _bundles)
+        {
+            if (bundle->isEnabled() && !bundle->isPostDraw())
+            {
+                out += bundle->getRenderBundlesCount();
+            }
+        }
+
+        return out;
+    }
+
     StringAtom StaticMeshBundle::getCacheHash() const
     {
         return getComponentName();

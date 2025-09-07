@@ -117,6 +117,7 @@ namespace Core
         {
             ImGui::PushItemWidth(_size.x);
 
+            const auto old = _buffer;
             if constexpr (std::is_same_v<float, Type>)
             {
                 ImGui::DragFloat("", &_buffer, _step, _min, _max, _precisionStr.c_str(),
@@ -126,6 +127,12 @@ namespace Core
             {
                 ImGui::DragInt("", &_buffer, _step, _min, _max, "%d", ImGuiInputTextFlags_None);
             }
+
+            if (old != _buffer)
+            {
+                onInput.trigger(_buffer);
+            }
+
             ImGui::PopItemWidth();
         }
 

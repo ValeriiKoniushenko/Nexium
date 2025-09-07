@@ -266,6 +266,37 @@ namespace Core
 
         // ================= BaseCamera ====================
         {
+            auto* row = _baseCameraLayout.addChildComponent<HorizontalLayout>();
+            auto* label = row->addChildComponent<Label>("FOV");
+            label->setWidth(defaultLabelWidthBig);
+
+            _cameraFov = row->addChildComponent<FloatInput>();
+            _cameraFov->setFlex(Widget::Flex::FlexWidth);
+            _cameraFov->setMin(BaseCamera::minFov);
+            _cameraFov->setMax(BaseCamera::maxFov);
+            _cameraFov->setStep(1.f);
+        }
+        {
+            auto* row = _baseCameraLayout.addChildComponent<HorizontalLayout>();
+            auto* label = row->addChildComponent<Label>("Far plane");
+            label->setWidth(defaultLabelWidthBig);
+
+            _cameraFar = row->addChildComponent<FloatInput>();
+            _cameraFar->setFlex(Widget::Flex::FlexWidth);
+            _cameraFar->setMin(100.f);
+            _cameraFar->setMax(1'000'000.f);
+            _cameraFar->setStep(100.f);
+        }
+        {
+            auto* row = _baseCameraLayout.addChildComponent<HorizontalLayout>();
+            auto* label = row->addChildComponent<Label>("Near plane");
+            label->setWidth(defaultLabelWidthBig);
+
+            _cameraNear = row->addChildComponent<FloatInput>();
+            _cameraNear->setFlex(Widget::Flex::FlexWidth);
+            _cameraNear->setMin(0.1f);
+            _cameraNear->setMax(1000.f);
+            _cameraNear->setStep(0.1f);
         }
     }
 
@@ -291,6 +322,42 @@ namespace Core
                     if (_target)
                     {
                         _target->setNoTick(newStatus);
+                    }
+                });
+        }
+
+        if (_cameraFov)
+        {
+            _cameraFov->onInput.subscribe(
+                [this](float newValue)
+                {
+                    if (auto* camera = _target->tryCastTo<BaseCamera>())
+                    {
+                        camera->setFov(newValue);
+                    }
+                });
+        }
+
+        if (_cameraFar)
+        {
+            _cameraFar->onInput.subscribe(
+                [this](float newValue)
+                {
+                    if (auto* camera = _target->tryCastTo<BaseCamera>())
+                    {
+                        camera->setFar(newValue);
+                    }
+                });
+        }
+
+        if (_cameraNear)
+        {
+            _cameraNear->onInput.subscribe(
+                [this](float newValue)
+                {
+                    if (auto* camera = _target->tryCastTo<BaseCamera>())
+                    {
+                        camera->setNear(newValue);
                     }
                 });
         }
@@ -554,25 +621,18 @@ namespace Core
             const float dt = GetWorld().timeDelta;
 
             _baseCameraLayout.tick(dt);
-            float inputedFov = comp->getFov();
-            LabelAndInputFloat("FOV:", inputedFov, _labelWidth, _innerSize.width, 0.1f);
-            if (inputedFov != comp->getFov())
-            {
-                comp->setFov(inputedFov);
-            }
 
-            float inputedFar = comp->getFar();
-            LabelAndInputFloat("Far:", inputedFar, _labelWidth, _innerSize.width, 1.f, 0.0001f);
-            if (inputedFar != comp->getFar())
+            if (_cameraFov)
             {
-                comp->setFar(inputedFar);
+                _cameraFov->setInputtedData(comp->getFov());
             }
-
-            float inputedNear = comp->getNear();
-            LabelAndInputFloat("Near:", inputedNear, _labelWidth, _innerSize.width, 0.1f, 0.0001f);
-            if (inputedNear != comp->getNear())
+            if (_cameraFar)
             {
-                comp->setNear(inputedNear);
+                _cameraFar->setInputtedData(comp->getFar());
+            }
+            if (_cameraNear)
+            {
+                _cameraNear->setInputtedData(comp->getNear());
             }
 
             if (auto res

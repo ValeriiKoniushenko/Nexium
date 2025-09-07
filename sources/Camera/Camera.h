@@ -35,6 +35,10 @@ namespace Core
         ECS_REGISTER_NEW_COMPONENT(BaseCamera, Actor);
 
     public:
+        constexpr static float minFov = 5.f;
+        constexpr static float maxFov = 175.f;
+
+    public:
         ~BaseCamera() override = default;
 
         [[nodiscard]] const glm::mat4& getMatrix();

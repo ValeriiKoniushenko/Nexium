@@ -86,6 +86,10 @@ namespace Core
 
         // BaseCamera section:
         VerticalLayout _baseCameraLayout;
+        FloatInput* _cameraFov = nullptr;
+        FloatInput* _cameraFar = nullptr;
+        FloatInput* _cameraNear = nullptr;
+
 
         // Transformable section:
         VerticalLayout _transformableLayout;

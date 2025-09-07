@@ -75,7 +75,7 @@ namespace Core
 
     void BaseCamera::setFov(float fov) noexcept
     {
-        _fov = std::clamp(fov, 30.f, 180.f);
+        _fov = std::clamp(fov, minFov, maxFov);
         _isDirtyProjMatrix = true;
     }
 
