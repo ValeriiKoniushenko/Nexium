@@ -48,12 +48,16 @@ namespace Core
         [[nodiscard]] float getWidth() const override { return getRealSize().x; }
         [[nodiscard]] float getHeight() const override { return getRealSize().y; }
 
+        void setHorizontalAlign(Align align) { _align = align; }
+        [[nodiscard]] Align getHorizontalAlign() const noexcept { return _align; }
+
     protected:
         void onDraw() override;
         void onInitialize() override;
 
     protected:
         std::optional<Color4> _textColor;
+        Align _align = Align::Left;
 
         glm::vec2 _textSize = {};
         float _width = -1.0f;

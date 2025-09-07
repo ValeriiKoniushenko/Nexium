@@ -22,6 +22,11 @@
 
 #include "ShaderManager.h"
 
+#include "Editor/GuiComponents/Combo.h"
+#include "Editor/GuiComponents/HorizontalLayout.h"
+#include "Editor/GuiComponents/Input.h"
+#include "Editor/GuiComponents/Label.h"
+#include "Editor/GuiComponents/Spacer.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "TextEditor.h"
 
@@ -32,10 +37,101 @@ namespace Core
     void ShaderManagerEWC::onInitialize()
     {
         BaseFloatEWC::onInitialize();
+
+        invalidateShaderCache();
+
+        constexpr float defaultLabelWidth = 140.0f;
+
+        // ================ HEAD LAYOUT ======================
+        {
+            // Count of valid
+            {
+                auto* l = _headLayout.addChildComponent<HorizontalLayout>();
+                l->setFlex(Widget::Flex::FlexWidth);
+
+                auto* label = l->addChildComponent<Label>();
+                label->setText("Total shaders:");
+                label->setWidth(defaultLabelWidth);
+
+                auto* input = l->addChildComponent<IntInput>();
+                input->setIsReadOnly(true);
+                input->setFlex(Widget::Flex::FlexWidth);
+                input->setInputtedData(GetShaderManager().countOfShaders());
+            }
+
+            // Count of invalid
+            {
+                auto* l = _headLayout.addChildComponent<HorizontalLayout>();
+                l->setFlex(Widget::Flex::FlexWidth);
+
+                auto* label = l->addChildComponent<Label>();
+                label->setText("With errors:");
+                label->setWidth(defaultLabelWidth);
+
+                auto* input = l->addChildComponent<IntInput>();
+                input->setIsReadOnly(true);
+                input->setFlex(Widget::Flex::FlexWidth);
+                input->setInputtedData(GetShaderManager().countOfFailedShaders());
+            }
+        }
+
+        {
+            auto* ext = _headLayout.addChildComponent<HorizontalLayout>();
+            auto* label = ext->addChildComponent<Label>();
+            label->setText("Valid extensions:");
+            label->setWidth(defaultLabelWidth);
+
+            auto* input = ext->addChildComponent<TextInput>();
+            input->setIsReadOnly(true);
+            input->setFlex(Widget::Flex::FlexWidth);
+            input->setInputtedData(_validExtensions);
+        }
+
+        {
+            auto* ext = _headLayout.addChildComponent<HorizontalLayout>();
+            auto* label = ext->addChildComponent<Label>();
+            label->setText("Root shader dir:");
+            label->setWidth(defaultLabelWidth);
+
+            auto* input = ext->addChildComponent<TextInput>();
+            input->setIsReadOnly(true);
+            input->setFlex(Widget::Flex::FlexWidth);
+            input->setInputtedData(GetShaderManager().getInputDir().generic_string());
+        }
+
+        {
+            auto* shaderSelect = _headLayout.addChildComponent<HorizontalLayout>();
+            auto* label = shaderSelect->addChildComponent<Label>("Shader:");
+            label->setWidth(defaultLabelWidth);
+
+            auto* combo = shaderSelect->addChildComponent<ComboModelBased>();
+            combo->setFlex(Widget::Flex::FlexWidth);
+            combo->setDataProvider(
+                [this](std::size_t i, StringAtom& label) -> void*
+                {
+                    label = _cachedShader.at(i);
+                    return nullptr;
+                });
+            combo->setSizeProvider(
+                [this]() -> std::size_t
+                {
+                    return _cachedShader.size();
+                });
+        }
+
+        // ================ SHADER SELECT ======================
     }
 
     void ShaderManagerEWC::onDraw()
     {
+        const float dt = gGameInstance->world.timeDelta;
+        _headLayout.tick(dt);
+
+        if (ImGui::CollapsingHeader("General", ImGuiTreeNodeFlags_DefaultOpen))
+        {
+            _generalLayout.tick(dt);
+        }
+
         drawList();
         ImGui::SameLine();
         drawDetails();
@@ -82,8 +178,9 @@ namespace Core
             LabelAndInputTextRO("Shader name:", shader.getShaderName(), _drawDetailsLabelWidth,
                                 availWidth);
 
-            if (ImGui::Button("Reload shader",
-                              glm::vec2(_drawDetailsLabelWidth - (style.FramePadding.x * 2.f), 0.f)))
+            if (ImGui::Button(
+                    "Reload shader",
+                    glm::vec2(_drawDetailsLabelWidth - (style.FramePadding.x * 2.f), 0.f)))
             {
                 shader.safeRecreateFromSources();
             }
@@ -163,6 +260,29 @@ namespace Core
             }
 
             ImGui::EndTable();
+        }
+    }
+
+    void ShaderManagerEWC::invalidateShaderCache()
+    {
+        _cachedShader.clear();
+        _cachedShader.reserve(gGameInstance->shaderManager.getShaderMetas().size());
+        for (auto&& shader : gGameInstance->shaderManager.getShaderMetas())
+        {
+            _cachedShader.push_back(shader.first.data());
+        }
+        std::ranges::sort(_cachedShader);
+
+        _validExtensions.clear();
+        for (auto&& extension : GetShaderManager().getSuitableFragFileExtensions())
+        {
+            _validExtensions += extension;
+            _validExtensions.push_back(' ');
+        }
+        for (auto&& extension : GetShaderManager().getSuitableVertFileExtensions())
+        {
+            _validExtensions += extension;
+            _validExtensions.push_back(' ');
         }
     }
 } // namespace Core

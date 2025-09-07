@@ -134,7 +134,7 @@ namespace Core
         {
             ImGui::SetCursorPosX(originalCursor.x + *_width);
         }
-        ImGui::SetCursorPosY(originalCursor.y + _height.value_or(0.f));
+        ImGui::SetCursorPosY(originalCursor.y + getHeight());
 
         ImGui::Dummy(glm::vec2(0, 0));
     }

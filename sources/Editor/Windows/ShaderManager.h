@@ -23,6 +23,7 @@
 #pragma once
 
 #include "BaseWindow.h"
+#include "Editor/GuiComponents/VerticalLayout.h"
 #include "Graphics/ShaderProgram.h"
 
 namespace Core
@@ -42,7 +43,16 @@ namespace Core
             const char* label,
             const std::unordered_set<ShaderVariable, ShaderVariable::Hasher>& inputData);
 
+        void invalidateShaderCache();
+
     protected:
+        VerticalLayout _headLayout;
+        VerticalLayout _generalLayout;
+
+        // cached data from ShaderManager
+        std::vector<StringAtom> _cachedShader;
+        std::string _validExtensions;
+
         StringAtom _selectedShader;
         std::size_t _currentItem = 0;
         float _drawDetailsLabelWidth = 140.f;

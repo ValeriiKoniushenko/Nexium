@@ -89,7 +89,20 @@ namespace Core
         const auto defaultCursor = ImGui::GetCursorPos();
         if (_width != -1.0f)
         {
-            ImGui::SetCursorPosX(defaultCursor.x + (_width - _textSize.x) / 2.f);
+            float offset = 0;
+            if (_align.cast() == Align::Left)
+            {
+                // do nothing
+            }
+            else if (_align.cast() == Align::Center)
+            {
+                offset = (_width - _textSize.x) / 2.f;
+            }
+            else if (_align.cast() == Align::Right)
+            {
+                offset = _width - _textSize.x;
+            }
+            ImGui::SetCursorPosX(defaultCursor.x + offset);
         }
 
         ImGui::TextUnformatted(_name.c_str());

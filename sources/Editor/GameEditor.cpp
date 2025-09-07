@@ -137,7 +137,7 @@ namespace Core
         auto assetsManagerWindowWindow
             = registerNewWindow<AssetsManagerWindowEWC>(ICON_FA_FOLDER + " Assets"_atom);
 
-        auto settingsWindow = registerNewWindow<EditorSettingsEWC>("Settings"_atom, true);
+        auto settingsWindow = registerNewWindow<EditorSettingsEWC>("Settings"_atom, false);
         auto textEditor = registerNewWindow<TextEditorEWC>("Text editor"_atom, false);
         auto shaderManager = registerNewWindow<ShaderManagerEWC>("Shader manager"_atom);
 
@@ -302,7 +302,7 @@ namespace Core
         style->TabBorderSize = 1;
         style->LogSliderDeadzone = 4;
 
-        constexpr float rounding = 4.f;
+        constexpr float rounding = 6.f;
         style->WindowRounding = rounding * 2.f;
         style->ChildRounding = rounding;
         style->PopupRounding = rounding;

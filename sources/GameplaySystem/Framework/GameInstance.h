@@ -89,6 +89,10 @@ namespace Core
         void gameLoop();
     };
 
+    [[nodiscard]] ShaderManager& GetShaderManager();
+    [[nodiscard]] GameEditor& GetEditor();
+    [[nodiscard]] World& GetWorld();
+
 } // namespace Core
 
 extern std::unique_ptr<Core::GameInstance> gGameInstance;

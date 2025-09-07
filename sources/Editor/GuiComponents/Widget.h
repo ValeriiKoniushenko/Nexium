@@ -35,7 +35,18 @@ namespace Core
         ECS_REGISTER_NEW_COMPONENT(Widget, BaseComponent);
 
     public:
+
         // clang-format off
+        CreateEnum(Align, int,
+            None,
+            Left,           // For horizontal align
+            Right,          // For horizontal align
+            SpaceBetween,   // For horizontal align
+            Center,         // For horizontal & vertical align
+            Top,            // For vertical align
+            Bottom          // For vertical align
+        );
+
         CreateEnum(Flex, int,
             Fixed,
             FlexWidth

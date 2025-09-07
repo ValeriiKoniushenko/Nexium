@@ -36,6 +36,21 @@ std::unique_ptr<Core::GameInstance> gGameInstance = nullptr;
 namespace Core
 {
 
+    ShaderManager& GetShaderManager()
+    {
+        return gGameInstance->shaderManager;
+    }
+
+    GameEditor& GetEditor()
+    {
+        return gGameInstance->gameEditor;
+    }
+
+    World& GetWorld()
+    {
+        return gGameInstance->world;
+    }
+
     void GameInstance::initialize()
     {
 #ifdef DEBUG

@@ -52,7 +52,7 @@ namespace Core
         {
             if (child->unsafeCastTo<Widget>()->getFlex().cast() != Widget::Flex::Fixed)
             {
-                return ImGui::GetContentRegionAvail().x;
+                return _width.value_or(ImGui::GetContentRegionAvail().x);
             }
         }
 
@@ -156,6 +156,7 @@ namespace Core
         {
             setVerticalAlign(Align::Center);
         }
+
         if (getHorizontalAlign().cast() == Align::None)
         {
             setHorizontalAlign(Align::Left);
@@ -171,9 +172,9 @@ namespace Core
             for (const auto& child : _children)
             {
                 _spacing -= child->unsafeCastTo<Widget>()->getWidth();
-                _spacing -= defaultSpacing;
+                //_spacing -= defaultSpacing;
             }
-            _spacing += defaultSpacing;
+            //_spacing += defaultSpacing;
             _spacing /= _children.size() - 1ll;
         }
     }
@@ -194,8 +195,7 @@ namespace Core
                 spacing -= style().ItemSpacing.x;
             }
 
-            ImGui::Dummy(glm::vec2(spacing, 0));
-            ImGui::SameLine();
+            ImGui::SetCursorPosX(ImGui::GetCursorPosX() + spacing);
         }
     }
 
@@ -282,7 +282,7 @@ namespace Core
         if (atLeastOneWithFlex)
         {
             const float defaultSpacing = style().ItemSpacing.x;
-            float width = ImGui::GetContentRegionAvail().x;
+            float width = _width.value_or(ImGui::GetContentRegionAvail().x);
 
             int fixedCount = 0;
             int flexWidthCount = 0;
@@ -313,7 +313,9 @@ namespace Core
                 if (w->getFlex().cast() == Widget::Flex::FlexWidth)
                 {
                     const float gap = deCounter != 0 ? defaultSpacing : 0;
-                    w->setWidth(width / static_cast<float>(flexWidthCount) - gap);
+                    const float finalWidth
+                        = std::max(10.f, width / static_cast<float>(flexWidthCount) - gap);
+                    w->setWidth(finalWidth);
                     --deCounter;
                 }
             }

@@ -48,7 +48,8 @@ namespace Core
 
     protected:
         Scene* _scene = nullptr;
-        int _commonTreeFlags = ImGuiTreeNodeFlags_OpenOnDoubleClick;
+        int _commonTreeFlags
+            = ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
         DelegateSubscriber _onSelectChangeId;
         BaseComponent* _lastSelectedObject = nullptr;
 

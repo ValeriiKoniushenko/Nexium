@@ -68,6 +68,8 @@ namespace Core
             return _failedShaders;
         }
 
+        [[nodiscard]] const std::filesystem::path& getInputDir() const noexcept { return _inputPath; }
+
         [[nodiscard]] spdlog::logger* getLogger() const override { return Graphics::getLogger(); }
         [[nodiscard]] const char* getPrefix() const override { return "ShaderManager"; }
 
@@ -82,5 +84,7 @@ namespace Core
         std::unordered_set<std::string> _suitableVertExtensions = { defaultVertexFileExtension };
 
         std::unordered_set<std::string> _failedShaders;
+
+        std::filesystem::path _inputPath;
     };
 } // namespace Core
