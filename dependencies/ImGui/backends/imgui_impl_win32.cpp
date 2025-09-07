@@ -457,10 +457,10 @@ static BOOL CALLBACK ImGui_ImplWin32_UpdateMonitors_EnumFunc(HMONITOR monitor, H
     if (!::GetMonitorInfo(monitor, &info))
         return TRUE;
     ImGuiPlatformMonitor imgui_monitor;
-    imgui_monitor.MainPos = ImVec2((float)info.rcMonitor.left, (float)info.rcMonitor.top);
-    imgui_monitor.MainSize = ImVec2((float)(info.rcMonitor.right - info.rcMonitor.left), (float)(info.rcMonitor.bottom - info.rcMonitor.top));
-    imgui_monitor.WorkPos = ImVec2((float)info.rcWork.left, (float)info.rcWork.top);
-    imgui_monitor.WorkSize = ImVec2((float)(info.rcWork.right - info.rcWork.left), (float)(info.rcWork.bottom - info.rcWork.top));
+    imgui_monitor.MainPos = glm::vec2((float)info.rcMonitor.left, (float)info.rcMonitor.top);
+    imgui_monitor.MainSize = glm::vec2((float)(info.rcMonitor.right - info.rcMonitor.left), (float)(info.rcMonitor.bottom - info.rcMonitor.top));
+    imgui_monitor.WorkPos = glm::vec2((float)info.rcWork.left, (float)info.rcWork.top);
+    imgui_monitor.WorkSize = glm::vec2((float)(info.rcWork.right - info.rcWork.left), (float)(info.rcWork.bottom - info.rcWork.top));
     imgui_monitor.DpiScale = ImGui_ImplWin32_GetDpiScaleForMonitor(monitor);
     imgui_monitor.PlatformHandle = (void*)monitor;
     if (imgui_monitor.DpiScale <= 0.0f)
@@ -491,7 +491,7 @@ void    ImGui_ImplWin32_NewFrame()
     // Setup display size (every frame to accommodate for window resizing)
     RECT rect = { 0, 0, 0, 0 };
     ::GetClientRect(bd->hWnd, &rect);
-    io.DisplaySize = ImVec2((float)(rect.right - rect.left), (float)(rect.bottom - rect.top));
+    io.DisplaySize = glm::vec2((float)(rect.right - rect.left), (float)(rect.bottom - rect.top));
     if (bd->WantUpdateMonitors)
         ImGui_ImplWin32_UpdateMonitors();
 
@@ -1232,13 +1232,13 @@ static void ImGui_ImplWin32_UpdateWindow(ImGuiViewport* viewport)
     }
 }
 
-static ImVec2 ImGui_ImplWin32_GetWindowPos(ImGuiViewport* viewport)
+static glm::vec2 ImGui_ImplWin32_GetWindowPos(ImGuiViewport* viewport)
 {
     ImGui_ImplWin32_ViewportData* vd = (ImGui_ImplWin32_ViewportData*)viewport->PlatformUserData;
     IM_ASSERT(vd->Hwnd != 0);
     POINT pos = { 0, 0 };
     ::ClientToScreen(vd->Hwnd, &pos);
-    return ImVec2((float)pos.x, (float)pos.y);
+    return glm::vec2((float)pos.x, (float)pos.y);
 }
 
 static void ImGui_ImplWin32_UpdateWin32StyleFromWindow(ImGuiViewport* viewport)
@@ -1248,7 +1248,7 @@ static void ImGui_ImplWin32_UpdateWin32StyleFromWindow(ImGuiViewport* viewport)
     vd->DwExStyle = ::GetWindowLongW(vd->Hwnd, GWL_EXSTYLE);
 }
 
-static void ImGui_ImplWin32_SetWindowPos(ImGuiViewport* viewport, ImVec2 pos)
+static void ImGui_ImplWin32_SetWindowPos(ImGuiViewport* viewport, glm::vec2 pos)
 {
     ImGui_ImplWin32_ViewportData* vd = (ImGui_ImplWin32_ViewportData*)viewport->PlatformUserData;
     IM_ASSERT(vd->Hwnd != 0);
@@ -1259,16 +1259,16 @@ static void ImGui_ImplWin32_SetWindowPos(ImGuiViewport* viewport, ImVec2 pos)
     ::SetWindowPos(vd->Hwnd, nullptr, rect.left, rect.top, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE);
 }
 
-static ImVec2 ImGui_ImplWin32_GetWindowSize(ImGuiViewport* viewport)
+static glm::vec2 ImGui_ImplWin32_GetWindowSize(ImGuiViewport* viewport)
 {
     ImGui_ImplWin32_ViewportData* vd = (ImGui_ImplWin32_ViewportData*)viewport->PlatformUserData;
     IM_ASSERT(vd->Hwnd != 0);
     RECT rect;
     ::GetClientRect(vd->Hwnd, &rect);
-    return ImVec2(float(rect.right - rect.left), float(rect.bottom - rect.top));
+    return glm::vec2(float(rect.right - rect.left), float(rect.bottom - rect.top));
 }
 
-static void ImGui_ImplWin32_SetWindowSize(ImGuiViewport* viewport, ImVec2 size)
+static void ImGui_ImplWin32_SetWindowSize(ImGuiViewport* viewport, glm::vec2 size)
 {
     ImGui_ImplWin32_ViewportData* vd = (ImGui_ImplWin32_ViewportData*)viewport->PlatformUserData;
     IM_ASSERT(vd->Hwnd != 0);
@@ -1350,10 +1350,10 @@ static void ImGui_ImplWin32_OnChangedViewport(ImGuiViewport* viewport)
     (void)viewport;
 #if 0
     ImGuiStyle default_style;
-    //default_style.WindowPadding = ImVec2(0, 0);
+    //default_style.WindowPadding = glm::vec2(0, 0);
     //default_style.WindowBorderSize = 0.0f;
     //default_style.ItemSpacing.y = 3.0f;
-    //default_style.FramePadding = ImVec2(0, 0);
+    //default_style.FramePadding = glm::vec2(0, 0);
     default_style.ScaleAllSizes(viewport->DpiScale);
     ImGuiStyle& style = ImGui::GetStyle();
     style = default_style;

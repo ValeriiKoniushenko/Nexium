@@ -178,9 +178,9 @@ namespace Core
         }
     }
 
-    void BaseComponent::attachChild(BaseComponent* child)
+    void BaseComponent::attachChild(const BaseComponent::Ptr& child)
     {
-        (void)rawAddChildComponent(child);
+        (void)rawAddChildComponent(child->clone().get());
     }
 
     void BaseComponent::detachChild(BaseComponent* child)
@@ -251,6 +251,14 @@ namespace Core
         _name.clear();
         _parent = nullptr;
         _children.clear();
+    }
+
+    void BaseComponent::onTick(float delta)
+    {
+        for (auto&& child : _children)
+        {
+            child->tick(delta);
+        }
     }
 
     nlohmann::json BaseComponent::toJson() const
@@ -335,8 +343,8 @@ namespace Core
     {
         if (name.isEmpty()) [[unlikely]]
         {
-            Assert(false);
-            errorLog("Was passed empty name to the component.");
+            // Assert(false);
+            // errorLog("Was passed empty name to the component.");
             return;
         }
 
@@ -365,6 +373,16 @@ namespace Core
 
     BaseComponent* BaseComponent::rawAddChildComponent(BaseComponent* newOne)
     {
+        if (!newOne)
+        {
+            return nullptr;
+        }
+
+        if (!addChildValidator(newOne))
+        {
+            return nullptr;
+        }
+
         // if this parent wasn't init, lets init at least here
         if (!isInitialized())
         {
@@ -395,7 +413,7 @@ namespace Core
             _children.clear();
             for (const auto& child : other._children)
             {
-                _children.emplace_back(new BaseComponent(*child));
+                _children.emplace_back(child->clone());
                 _children.back()->_parent = this;
             }
         }

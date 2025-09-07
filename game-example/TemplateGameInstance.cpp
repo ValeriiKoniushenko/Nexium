@@ -38,9 +38,9 @@ void TemplateGameInstance::onTick(float delta)
     gameScene.directDraw();
 }
 
-void TemplateGameInstance::onInitReadCache()
+void TemplateGameInstance::onInitializeReadCache()
 {
-    GameInstance::onInitReadCache();
+    GameInstance::onInitializeReadCache();
 }
 
 void TemplateGameInstance::onFinishWriteCache()
@@ -48,7 +48,7 @@ void TemplateGameInstance::onFinishWriteCache()
     GameInstance::onFinishWriteCache();
 }
 
-void TemplateGameInstance::onInitFinish()
+void TemplateGameInstance::onInitializeFinish()
 {
     std::vector<std::filesystem::path> modelPaths
         = { "assets/base-3d/Models/FBX/Tree.fbx", "assets/base-3d/Models/FBX/FireHydrant.fbx" };

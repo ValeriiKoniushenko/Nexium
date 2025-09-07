@@ -58,7 +58,7 @@ namespace Core
 
         void initialize();
 
-        void onTick(float delta);
+        void tick(float delta);
         [[nodiscard]] bool isEnabled() const noexcept { return _isEnabled; }
         void setIsEnabled(bool v) noexcept { _isEnabled = v; }
 

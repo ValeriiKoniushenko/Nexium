@@ -20,21 +20,43 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#pragma once
+#include "Spacer.h"
 
-#include "BaseWindow.h"
+#include "ImGui/imgui_internal.h"
+#include "ImGui/misc/cpp/imgui_stdlib.h"
+#include "Misc/ImGuiHelper.h"
 
 namespace Core
 {
 
-    class KeyboardShortcutsEWC : public BaseFloatEWC
+    ECS_REGISTER_NEW_COMPONENT_TYPE(Spacer);
+    
+    glm::vec2 Spacer::getRealSize() const
     {
-        ECS_REGISTER_NEW_COMPONENT(KeyboardShortcutsEWC, BaseFloatEWC);
+        return _size;
+    }
 
-    public:
-    private:
-        void onInit() override;
-        void onDraw() override;
-    };
+    void Spacer::setWidth(float newWidth)
+    {
+        _size.x = newWidth;
+    }
 
+    void Spacer::setHeight(float newHeight)
+    {
+        _size.y = newHeight;
+    }
+
+    void Spacer::onDraw()
+    {
+        ImGui::Dummy(_size);
+    }
+
+    void Spacer::onInitialize()
+    {
+        Widget::onInitialize();
+        if (_name.isEmpty())
+        {
+            setComponentName("Spacer"_atom);
+        }
+    }
 } // namespace Core

@@ -20,7 +20,7 @@ More information at: https://docs.microsoft.com/en-us/visualstudio/debugger/just
 
     <!-- Disable stepping into trivial functions -->
     <Function>
-        <Name>(ImVec2|ImVec4|ImStrv)::.+</Name>
+        <Name>(glm::vec2|glm::vec4|ImStrv)::.+</Name>
         <Action>NoStepInto</Action>
     </Function>
     <Function>

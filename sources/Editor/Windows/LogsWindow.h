@@ -52,7 +52,7 @@ namespace Core
         void fromCacheData(const nlohmann::json& json) override;
 
     protected:
-        void onInit() override;
+        void onInitialize() override;
         void onDraw() override;
         void onUpdate() override;
 

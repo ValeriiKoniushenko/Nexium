@@ -20,24 +20,56 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "KeyboardShortcuts.h"
+#include "CheckBox.h"
+
+#include "ImGui/imgui_internal.h"
+#include "ImGui/misc/cpp/imgui_stdlib.h"
+#include "Misc/ImGuiHelper.h"
 
 namespace Core
 {
-    ECS_REGISTER_NEW_COMPONENT_TYPE(KeyboardShortcutsEWC)
 
-    void KeyboardShortcutsEWC::onInit()
+    ECS_REGISTER_NEW_COMPONENT_TYPE(CheckBox);
+
+    glm::vec2 CheckBox::getRealSize() const
     {
-        BaseFloatEWC::onInit();
+        return _size;
     }
 
-    void KeyboardShortcutsEWC::onDraw()
+    void CheckBox::setWidth(float newWidth)
     {
-        ImGui::Text("Shortcuts: ");
-        ImGui::Text("    F1      - Toggle render mode");
-        ImGui::Text("    W/A/S/D - Move Control");
-        ImGui::Text("    C/Space - Down/Up");
-        ImGui::Text("    Alt     - Hold to suppress a mouse");
-        ImGui::Text("    F12     - exit");
+        Assert(false, "CheckBox doesn't support any resizing");
+        _size.x = newWidth;
+    }
+
+    void CheckBox::setHeight(float newHeight)
+    {
+        Assert(false, "CheckBox doesn't support any resizing");
+        _size.y = newHeight;
+    }
+
+    void CheckBox::onDraw()
+    {
+        ImGui::PushItemWidth(_size.x);
+
+        const bool origValue = _currentValue;
+        ImGui::Checkbox("", &_currentValue);
+        if (origValue != _currentValue)
+        {
+            onChange.trigger(this, _currentValue);
+        }
+
+        ImGui::PopItemWidth();
+    }
+
+    void CheckBox::onInitialize()
+    {
+        Widget::onInitialize();
+        if (_name.isEmpty())
+        {
+            setComponentName("CheckBox"_atom);
+        }
+
+        _size = glm::vec2(ImGui::GetFrameHeight());
     }
 } // namespace Core

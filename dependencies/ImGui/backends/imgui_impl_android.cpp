@@ -292,9 +292,9 @@ void ImGui_ImplAndroid_NewFrame()
     int display_width = window_width;
     int display_height = window_height;
 
-    io.DisplaySize = ImVec2((float)window_width, (float)window_height);
+    io.DisplaySize = glm::vec2((float)window_width, (float)window_height);
     if (window_width > 0 && window_height > 0)
-        io.DisplayFramebufferScale = ImVec2((float)display_width / window_width, (float)display_height / window_height);
+        io.DisplayFramebufferScale = glm::vec2((float)display_width / window_width, (float)display_height / window_height);
 
     // Setup time step
     struct timespec current_timespec;

@@ -81,8 +81,8 @@
 
 struct ImDrawVertAllegro
 {
-    ImVec2          pos;
-    ImVec2          uv;
+    glm::vec2          pos;
+    glm::vec2          uv;
     ALLEGRO_COLOR   col;
 };
 
@@ -199,7 +199,7 @@ void ImGui_ImplAllegro5_RenderDrawData(ImDrawData* draw_data)
 #endif
 
         // Render command lists
-        ImVec2 clip_off = draw_data->DisplayPos;
+        glm::vec2 clip_off = draw_data->DisplayPos;
         for (int cmd_i = 0; cmd_i < draw_list->CmdBuffer.Size; cmd_i++)
         {
             const ImDrawCmd* pcmd = &draw_list->CmdBuffer[cmd_i];
@@ -215,8 +215,8 @@ void ImGui_ImplAllegro5_RenderDrawData(ImDrawData* draw_data)
             else
             {
                 // Project scissor/clipping rectangles into framebuffer space
-                ImVec2 clip_min(pcmd->ClipRect.x - clip_off.x, pcmd->ClipRect.y - clip_off.y);
-                ImVec2 clip_max(pcmd->ClipRect.z - clip_off.x, pcmd->ClipRect.w - clip_off.y);
+                glm::vec2 clip_min(pcmd->ClipRect.x - clip_off.x, pcmd->ClipRect.y - clip_off.y);
+                glm::vec2 clip_max(pcmd->ClipRect.z - clip_off.x, pcmd->ClipRect.w - clip_off.y);
                 if (clip_max.x <= clip_min.x || clip_max.y <= clip_min.y)
                     continue;
 
@@ -653,7 +653,7 @@ void ImGui_ImplAllegro5_NewFrame()
     int w, h;
     w = al_get_display_width(bd->Display);
     h = al_get_display_height(bd->Display);
-    io.DisplaySize = ImVec2((float)w, (float)h);
+    io.DisplaySize = glm::vec2((float)w, (float)h);
 
     // Setup time step
     double current_time = al_get_time();

@@ -33,11 +33,11 @@ More information at: https://docs.microsoft.com/en-us/visualstudio/debugger/crea
   </Expand>
 </Type>
 
-<Type Name="ImVec2">
+<Type Name="glm::vec2">
   <DisplayString>{{x={x,g} y={y,g}}}</DisplayString>
 </Type>
 
-<Type Name="ImVec4">
+<Type Name="glm::vec4">
   <DisplayString>{{x={x,g} y={y,g} z={z,g} w={w,g}}}</DisplayString>
 </Type>
 

@@ -29,9 +29,9 @@
 class TemplateGameInstance : public Core::GameInstance
 {
 protected:
-    void onInitFinish() override;
+    void onInitializeFinish() override;
     void onLoadShaders() override;
     void onTick(float delta) override;
-    void onInitReadCache() override;
+    void onInitializeReadCache() override;
     void onFinishWriteCache() override;
 };

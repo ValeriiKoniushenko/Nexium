@@ -1,0 +1,261 @@
+// MIT License
+//
+// Copyright (c) 2019-2025 Valerii Koniushenko
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
+#include "VerticalLayout.h"
+
+namespace Core
+{
+
+    ECS_REGISTER_NEW_COMPONENT_TYPE(VerticalLayout)
+
+    float VerticalLayout::getWidth() const
+    {
+        if (_width)
+        {
+            return *_width;
+        }
+
+        if (hasParent())
+        {
+            return getParent()->unsafeCastTo<Widget>()->getWidth();
+        }
+        return ImGui::GetContentRegionAvail().x;
+    }
+
+    float VerticalLayout::getHeight() const
+    {
+        if (_height)
+        {
+            return *_height;
+        }
+
+        const float defaultGap = style().ItemSpacing.y;
+
+        float height = 0;
+        for (auto&& child : _children)
+        {
+            height += child->unsafeCastTo<Widget>()->getHeight();
+            height += _spacing.value_or(defaultGap);
+        }
+        return height != 0 ? height - _spacing.value_or(defaultGap) : 0;
+    }
+
+    void VerticalLayout::setSpacing(float value)
+    {
+        _spacing = value;
+    }
+
+    void VerticalLayout::resetSpacing()
+    {
+        _spacing.reset();
+    }
+
+    float VerticalLayout::getSpacing() const
+    {
+        return _spacing.value_or(style().ItemSpacing.y);
+    }
+
+    void VerticalLayout::onAddChild(BaseComponent* newChild)
+    {
+        Widget::onAddChild(newChild);
+
+        newChild->unsafeCastTo<Widget>()->setIsAutoDraw(false);
+    }
+
+    void VerticalLayout::recalcFlexChildren()
+    {
+        const auto ownWidth = getWidth();
+        for (auto&& child : _children)
+        {
+            const auto w = child->unsafeCastTo<Widget>();
+            if (w->getFlex().cast() == Widget::Flex::FlexWidth)
+            {
+                w->setWidth(ownWidth);
+            }
+        }
+    }
+
+    void VerticalLayout::onTick(float delta)
+    {
+        Widget::onTick(delta);
+        recalcFlexChildren();
+    }
+
+    void VerticalLayout::onDraw()
+    {
+        const auto originalCursor = ImGui::GetCursorPos();
+
+        calcXOffsets();
+
+        if (_secondAlign.cast() == Align::Top)
+        {
+            prepareAlignTop();
+        }
+        else if (_secondAlign.cast() == Align::Bottom)
+        {
+            prepareAlignBottom();
+        }
+        else if (_secondAlign.cast() == Align::SpaceBetween)
+        {
+            prepareAlignSpaceBetween();
+        }
+        else if (_secondAlign.cast() == Align::Center)
+        {
+            prepareAlignCenter();
+        }
+        else
+        {
+            Assert(false);
+            prepareAlignTop();
+        }
+
+        directDraw();
+
+        if (_width)
+        {
+            ImGui::SetCursorPosX(originalCursor.x + *_width);
+        }
+        ImGui::SetCursorPosY(originalCursor.y + getHeight());
+
+        ImGui::Dummy(glm::vec2(0, 0));
+    }
+
+    void VerticalLayout::onInitialize()
+    {
+        Widget::onInitialize();
+        if (_name.isEmpty())
+        {
+            setComponentName("VerticalLayout"_atom);
+        }
+
+        if (getVerticalAlign().cast() == Align::None)
+        {
+            setVerticalAlign(Align::Top);
+        }
+        if (getHorizontalAlign().cast() == Align::None)
+        {
+            setHorizontalAlign(Align::Center);
+        }
+    }
+
+    void VerticalLayout::prepareAlignSpaceBetween()
+    {
+        // do nothing
+    }
+
+    void VerticalLayout::prepareAlignTop()
+    {
+        // do nothing
+    }
+
+    void VerticalLayout::prepareAlignBottom()
+    {
+        const float defaultSpacing = style().ItemSpacing.y;
+
+        if (hasChildren())
+        {
+            float spacing = getHeight();
+            for (const auto& child : _children)
+            {
+                spacing -= child->unsafeCastTo<Widget>()->getHeight();
+                spacing -= _spacing.value_or(defaultSpacing);
+            }
+            spacing += _spacing.value_or(defaultSpacing);
+            ImGui::SetCursorPosY(ImGui::GetCursorPosY() + spacing);
+        }
+    }
+    void VerticalLayout::prepareAlignCenter()
+    {
+        const float defaultSpacing = style().ItemSpacing.y;
+
+        if (hasChildren())
+        {
+            float spacing = getHeight();
+            for (const auto& child : _children)
+            {
+                spacing -= child->unsafeCastTo<Widget>()->getHeight();
+                spacing -= _spacing.value_or(defaultSpacing);
+            }
+            spacing += _spacing.value_or(defaultSpacing);
+            spacing /= 2.f;
+
+            ImGui::SetCursorPosY(ImGui::GetCursorPosY() + spacing);
+        }
+    }
+
+    void VerticalLayout::directDraw()
+    {
+        const auto originalXCursor = ImGui::GetCursorPosX();
+
+        float space = _spacing.value_or(0.f);
+        if (_secondAlign.cast() == Align::SpaceBetween && hasChildren())
+        {
+            space = getHeight();
+            for (auto&& child : _children)
+            {
+                space -= child->unsafeCastTo<Widget>()->getHeight();
+            }
+            space /= _children.size() - 1ll;
+        }
+
+        std::size_t i = 0;
+
+        const float defaultSpacing = style().ItemSpacing.y;
+        for (auto&& child : _children)
+        {
+            ImGui::SetCursorPosX(originalXCursor + _xOffsets.at(i++));
+            child->unsafeCastTo<Widget>()->draw();
+            if (space != 0.f)
+            {
+                ImGui::SetCursorPosY(ImGui::GetCursorPosY() + space - defaultSpacing);
+            }
+        }
+    }
+
+    void VerticalLayout::calcXOffsets()
+    {
+        const auto ownWidth = getWidth();
+
+        _xOffsets.resize(getChildrenCount());
+        std::size_t i = 0;
+        for (auto&& child : _children)
+        {
+            const auto w = child->unsafeCastTo<Widget>();
+            if (_align.cast() == Align::Left)
+            {
+                _xOffsets.at(i) = 0;
+            }
+            else if (_align.cast() == Align::Right)
+            {
+                _xOffsets.at(i) = ownWidth - w->getWidth();
+            }
+            else if (_align.cast() == Align::Center)
+            {
+                _xOffsets.at(i) = (ownWidth - w->getWidth()) / 2.f;
+            }
+            ++i;
+        }
+
+        Assert(_xOffsets.size() == _children.size());
+    }
+
+} // namespace Core

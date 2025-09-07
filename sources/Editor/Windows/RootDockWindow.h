@@ -32,7 +32,7 @@ namespace Core
 
     public:
     private:
-        void onInit() override;
+        void onInitialize() override;
         void onDraw() override;
 
     protected:

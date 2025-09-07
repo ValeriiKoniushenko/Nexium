@@ -46,9 +46,9 @@ namespace Core
         }
     }
 
-    void Actor::onInit()
+    void Actor::onInitialize()
     {
-        BaseComponent::onInit();
+        BaseComponent::onInitialize();
 
         if (_name.isEmpty())
         {

@@ -70,7 +70,7 @@ namespace Core
 
     void BaseFloatEWC::onUpdate()
     {
-        const ImVec2 size = ImGui::GetWindowSize();
+        const glm::vec2 size = ImGui::GetWindowSize();
         _size = FSize2{ size.x, size.y };
 
         _isFocused = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows);
@@ -93,12 +93,12 @@ namespace Core
 
     bool BaseFloatEWC::beginWindowDraw()
     {
-        ImGui::SetNextWindowSizeConstraints(ImVec2(_minWindowSize.width, _minWindowSize.height),
-                                            ImVec2(FLT_MAX, FLT_MAX));
+        ImGui::SetNextWindowSizeConstraints(glm::vec2(_minWindowSize.width, _minWindowSize.height),
+                                            glm::vec2(FLT_MAX, FLT_MAX));
 
         if (_isFitContent)
         {
-            ImGui::SetNextWindowSize(ImVec2(0, 0), ImGuiCond_Always);
+            ImGui::SetNextWindowSize(glm::vec2(0, 0), ImGuiCond_Always);
         }
 
         for (auto [style, val] : _styles)
@@ -118,9 +118,9 @@ namespace Core
         ImGui::End();
     }
 
-    void BaseFloatEWC::onInit()
+    void BaseFloatEWC::onInitialize()
     {
-        AbstractComponent::onInit();
+        AbstractComponent::onInitialize();
     }
 
     //
@@ -131,9 +131,9 @@ namespace Core
     // | |_/ /| (_| |\__ \|  __/ | |  | ||  __/| | | || |_| | | |_/ /| (_| || |
     // \____/  \__,_||___/ \___| \_|  |_/ \___||_| |_| \__,_| \____/  \__,_||_|
     // ========================================================================
-    void BaseMenuBarEWC::onInit()
+    void BaseMenuBarEWC::onInitialize()
     {
-        BaseEWC::onInit();
+        BaseEWC::onInitialize();
     }
 
     bool BaseMenuBarEWC::beginWindowDraw()

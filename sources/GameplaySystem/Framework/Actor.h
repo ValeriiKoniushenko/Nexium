@@ -65,7 +65,7 @@ namespace Core
         [[nodiscard]] bool isPostDraw() const noexcept { return _isPostDraw; }
 
     protected:
-        void onInit() override;
+        void onInitialize() override;
 
         bool _isPostDraw = false;
     };

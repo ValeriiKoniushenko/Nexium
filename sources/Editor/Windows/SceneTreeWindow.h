@@ -42,17 +42,18 @@ namespace Core
         BaseComponent* selectedObject = nullptr;
 
     protected:
-        void onInit() override;
+        void onInitialize() override;
         void onDraw() override;
         void onUpdate() override;
 
     protected:
         Scene* _scene = nullptr;
-        int _commonTreeFlags = ImGuiTreeNodeFlags_OpenOnDoubleClick;
+        int _commonTreeFlags
+            = ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
         DelegateSubscriber _onSelectChangeId;
         BaseComponent* _lastSelectedObject = nullptr;
 
     private:
-        void drawTreeNode(BaseComponent* n, int32_t id, bool isInSelectedSubtree = false);
+        bool drawTreeNode(BaseComponent* n, int32_t id, bool isInSelectedSubtree = false);
     };
 } // namespace Core

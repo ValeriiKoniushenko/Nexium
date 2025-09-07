@@ -50,6 +50,6 @@ namespace Core
         void fromCacheData(const nlohmann::json& json) override;
 
         void onTick(float delta) override;
-        void onInit() override;
+        void onInitialize() override;
     };
 } // namespace Core

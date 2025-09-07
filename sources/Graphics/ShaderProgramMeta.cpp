@@ -205,16 +205,18 @@ namespace Core
         create(_vertexShaderPath, _fragmentShaderPath);
     }
 
-    void ShaderProgramMeta::safeRecreateFromSources()
+    bool ShaderProgramMeta::safeRecreateFromSources()
     {
         try
         {
             recreateFromSources();
+            return true;
         }
         catch (std::exception& err)
         {
             errorLog("Can't recreate a shader '{}' due to compile error[s]: {}"_f << _shaderName
                                                                                   << err.what());
+            return false;
         }
     }
 

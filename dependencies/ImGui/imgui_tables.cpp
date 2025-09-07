@@ -77,7 +77,7 @@ Index of this file:
 //-----------------------------------------------------------------------------
 // About 'outer_size':
 // Its meaning needs to differ slightly depending on if we are using ScrollX/ScrollY flags.
-// Default value is ImVec2(0.0f, 0.0f).
+// Default value is glm::vec2(0.0f, 0.0f).
 //   X
 //   - outer_size.x <= 0.0f  ->  Right-align from window/work-rect right-most edge. With -FLT_MIN or 0.0f will align exactly on right-most edge.
 //   - outer_size.x  > 0.0f  ->  Set Fixed width.
@@ -308,13 +308,13 @@ ImGuiTable* ImGui::TableFindByID(ImGuiID id)
 }
 
 // Read about "TABLE SIZING" at the top of this file.
-bool    ImGui::BeginTable(const char* str_id, int columns_count, ImGuiTableFlags flags, const ImVec2& outer_size, float inner_width)
+bool    ImGui::BeginTable(const char* str_id, int columns_count, ImGuiTableFlags flags, glm::vec2 outer_size, float inner_width)
 {
     ImGuiID id = GetID(str_id);
     return BeginTableEx(str_id, id, columns_count, flags, outer_size, inner_width);
 }
 
-bool    ImGui::BeginTableEx(const char* name, ImGuiID id, int columns_count, ImGuiTableFlags flags, const ImVec2& outer_size, float inner_width)
+bool    ImGui::BeginTableEx(const char* name, ImGuiID id, int columns_count, ImGuiTableFlags flags, glm::vec2 outer_size, float inner_width)
 {
     ImGuiContext& g = *GImGui;
     ImGuiWindow* outer_window = GetCurrentWindow();
@@ -334,8 +334,8 @@ bool    ImGui::BeginTableEx(const char* name, ImGuiID id, int columns_count, ImG
     // - always reserving the pooled ImGuiTable data ahead for a fully clipped table (minor IMHO). Also the 'outer_window_is_measuring_size' criteria may already be defeating this in some situations.
     // - always performing the GetOrAddByKey() O(log N) query in g.Tables.Map[].
     const bool use_child_window = (flags & (ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY)) != 0;
-    const ImVec2 avail_size = GetContentRegionAvail();
-    const ImVec2 actual_outer_size = ImTrunc(CalcItemSize(outer_size, ImMax(avail_size.x, 1.0f), use_child_window ? ImMax(avail_size.y, 1.0f) : 0.0f));
+    const glm::vec2 avail_size = GetContentRegionAvail();
+    const glm::vec2 actual_outer_size = ImTrunc(CalcItemSize(outer_size, ImMax(avail_size.x, 1.0f), use_child_window ? ImMax(avail_size.y, 1.0f) : 0.0f));
     const ImRect outer_rect(outer_window->DC.CursorPos, outer_window->DC.CursorPos + actual_outer_size);
     const bool outer_window_is_measuring_size = (outer_window->AutoFitFramesX > 0) || (outer_window->AutoFitFramesY > 0); // Doesn't apply to AlwaysAutoResize windows!
     if (use_child_window && IsClippedEx(outer_rect, 0) && !outer_window_is_measuring_size)
@@ -402,7 +402,7 @@ bool    ImGui::BeginTableEx(const char* name, ImGuiID id, int columns_count, ImG
     {
         // Ensure no vertical scrollbar appears if we only want horizontal one, to make flag consistent
         // (we have no other way to disable vertical scrollbar of a window while keeping the horizontal one showing)
-        ImVec2 override_content_size(FLT_MAX, FLT_MAX);
+        glm::vec2 override_content_size(FLT_MAX, FLT_MAX);
         if ((flags & ImGuiTableFlags_ScrollX) && !(flags & ImGuiTableFlags_ScrollY))
             override_content_size.y = FLT_MIN;
 
@@ -414,12 +414,12 @@ bool    ImGui::BeginTableEx(const char* name, ImGuiID id, int columns_count, ImG
             override_content_size.x = inner_width;
 
         if (override_content_size.x != FLT_MAX || override_content_size.y != FLT_MAX)
-            SetNextWindowContentSize(ImVec2(override_content_size.x != FLT_MAX ? override_content_size.x : 0.0f, override_content_size.y != FLT_MAX ? override_content_size.y : 0.0f));
+            SetNextWindowContentSize(glm::vec2(override_content_size.x != FLT_MAX ? override_content_size.x : 0.0f, override_content_size.y != FLT_MAX ? override_content_size.y : 0.0f));
 
         // Reset scroll if we are reactivating it
         if ((previous_flags & (ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY)) == 0)
             if ((g.NextWindowData.HasFlags & ImGuiNextWindowDataFlags_HasScroll) == 0)
-                SetNextWindowScroll(ImVec2(0.0f, 0.0f));
+                SetNextWindowScroll(glm::vec2(0.0f, 0.0f));
 
         // Create scrolling region (without border and zero window padding)
         ImGuiChildFlags child_child_flags = (g.NextWindowData.HasFlags & ImGuiNextWindowDataFlags_HasChildFlags) ? g.NextWindowData.ChildFlags : ImGuiChildFlags_None;
@@ -472,7 +472,7 @@ bool    ImGui::BeginTableEx(const char* name, ImGuiID id, int columns_count, ImG
     temp_data->HostBackupCursorMaxPos = inner_window->DC.CursorMaxPos;
     temp_data->HostBackupItemWidth = outer_window->DC.ItemWidth;
     temp_data->HostBackupItemWidthStackSize = outer_window->DC.ItemWidthStack.Size;
-    inner_window->DC.PrevLineSize = inner_window->DC.CurrLineSize = ImVec2(0.0f, 0.0f);
+    inner_window->DC.PrevLineSize = inner_window->DC.CurrLineSize = glm::vec2(0.0f, 0.0f);
 
     // Make borders not overlap our contents by offsetting HostClipRect (#6765, #7428, #3752)
     // (we normally shouldn't alter HostClipRect as we rely on TableMergeDrawChannels() expanding non-clipped column toward the
@@ -1488,7 +1488,7 @@ void    ImGui::EndTable()
     PopID();
 
     // Restore window data that we modified
-    const ImVec2 backup_outer_max_pos = outer_window->DC.CursorMaxPos;
+    const glm::vec2 backup_outer_max_pos = outer_window->DC.CursorMaxPos;
     inner_window->WorkRect = temp_data->HostBackupWorkRect;
     inner_window->ParentWorkRect = temp_data->HostBackupParentWorkRect;
     inner_window->SkipItems = table->HostSkipItems;
@@ -1935,8 +1935,8 @@ void ImGui::TableBeginRow(ImGuiTable* table)
     table->RowIndentOffsetX = window->DC.Indent.x - table->HostIndentX; // Lock indent
 
     window->DC.PrevLineTextBaseOffset = 0.0f;
-    window->DC.CursorPosPrevLine = ImVec2(window->DC.CursorPos.x, window->DC.CursorPos.y + table->RowCellPaddingY); // This allows users to call SameLine() to share LineSize between columns.
-    window->DC.PrevLineSize = window->DC.CurrLineSize = ImVec2(0.0f, 0.0f); // This allows users to call SameLine() to share LineSize between columns, and to call it from first column too.
+    window->DC.CursorPosPrevLine = glm::vec2(window->DC.CursorPos.x, window->DC.CursorPos.y + table->RowCellPaddingY); // This allows users to call SameLine() to share LineSize between columns.
+    window->DC.PrevLineSize = window->DC.CurrLineSize = glm::vec2(0.0f, 0.0f); // This allows users to call SameLine() to share LineSize between columns, and to call it from first column too.
     window->DC.IsSameLine = window->DC.IsSetPos = false;
     window->DC.CursorMaxPos.y = next_y1;
 
@@ -2046,11 +2046,11 @@ void ImGui::TableEndRow(ImGuiTable* table)
 
         // Draw top border
         if (top_border_col && bg_y1 >= table->BgClipRect.Min.y && bg_y1 < table->BgClipRect.Max.y)
-            window->DrawList->AddLine(ImVec2(table->BorderX1, bg_y1), ImVec2(table->BorderX2, bg_y1), top_border_col, border_size);
+            window->DrawList->AddLine(glm::vec2(table->BorderX1, bg_y1), glm::vec2(table->BorderX2, bg_y1), top_border_col, border_size);
 
         // Draw bottom border at the row unfreezing mark (always strong)
         if (draw_strong_bottom_border && bg_y2 >= table->BgClipRect.Min.y && bg_y2 < table->BgClipRect.Max.y)
-            window->DrawList->AddLine(ImVec2(table->BorderX1, bg_y2), ImVec2(table->BorderX2, bg_y2), table->BorderColorStrong, border_size);
+            window->DrawList->AddLine(glm::vec2(table->BorderX1, bg_y2), glm::vec2(table->BorderX2, bg_y2), table->BorderColorStrong, border_size);
     }
 
     // End frozen rows (when we are past the last frozen row line, teleport cursor and alter clipping rectangle)
@@ -2662,7 +2662,7 @@ void ImGui::TableMergeDrawChannels(ImGuiTable* table)
                 merge_group->ClipRect = ImRect(+FLT_MAX, +FLT_MAX, -FLT_MAX, -FLT_MAX);
             ImBitArraySetBit(merge_group->ChannelsMask, channel_no);
             merge_group->ChannelsCount++;
-            merge_group->ClipRect.Add(src_channel->_CmdBuffer[0].ClipRect);
+            merge_group->ClipRect.Add(glm::vec2(src_channel->_CmdBuffer[0].ClipRect));
             merge_group_mask |= (1 << merge_group_n);
         }
 
@@ -2681,8 +2681,8 @@ void ImGui::TableMergeDrawChannels(ImGuiTable* table)
                 continue;
             char buf[32];
             ImFormatString(buf, 32, "MG%d:%d", merge_group_n, merge_group->ChannelsCount);
-            ImVec2 text_pos = merge_group->ClipRect.Min + ImVec2(4, 4);
-            ImVec2 text_size = CalcTextSize(buf, NULL);
+            glm::vec2 text_pos = merge_group->ClipRect.Min + glm::vec2(4, 4);
+            glm::vec2 text_size = CalcTextSize(buf, NULL);
             GetForegroundDrawList()->AddRectFilled(text_pos, text_pos + text_size, IM_COL32(0, 0, 0, 255));
             GetForegroundDrawList()->AddText(text_pos, IM_COL32(255, 255, 0, 255), buf, NULL);
             GetForegroundDrawList()->AddRect(merge_group->ClipRect.Min, merge_group->ClipRect.Max, IM_COL32(255, 255, 0, 255));
@@ -2820,7 +2820,7 @@ void ImGui::TableDrawBorders(ImGuiTable* table)
             // Always draw full height border when being resized/hovered, or on the delimitation of frozen column scrolling.
             float draw_y2 = (is_hovered || is_resized || is_frozen_separator || (table->Flags & (ImGuiTableFlags_NoBordersInBody | ImGuiTableFlags_NoBordersInBodyUntilResize)) == 0) ? draw_y2_body : draw_y2_head;
             if (draw_y2 > draw_y1)
-                inner_drawlist->AddLine(ImVec2(column->MaxX, draw_y1), ImVec2(column->MaxX, draw_y2), TableGetColumnBorderCol(table, order_n, column_n), border_size);
+                inner_drawlist->AddLine(glm::vec2(column->MaxX, draw_y1), glm::vec2(column->MaxX, draw_y2), TableGetColumnBorderCol(table, order_n, column_n), border_size);
         }
     }
 
@@ -2841,13 +2841,13 @@ void ImGui::TableDrawBorders(ImGuiTable* table)
         }
         else if (table->Flags & ImGuiTableFlags_BordersOuterV)
         {
-            inner_drawlist->AddLine(outer_border.Min, ImVec2(outer_border.Min.x, outer_border.Max.y), outer_col, border_size);
-            inner_drawlist->AddLine(ImVec2(outer_border.Max.x, outer_border.Min.y), outer_border.Max, outer_col, border_size);
+            inner_drawlist->AddLine(outer_border.Min, glm::vec2(outer_border.Min.x, outer_border.Max.y), outer_col, border_size);
+            inner_drawlist->AddLine(glm::vec2(outer_border.Max.x, outer_border.Min.y), outer_border.Max, outer_col, border_size);
         }
         else if (table->Flags & ImGuiTableFlags_BordersOuterH)
         {
-            inner_drawlist->AddLine(outer_border.Min, ImVec2(outer_border.Max.x, outer_border.Min.y), outer_col, border_size);
-            inner_drawlist->AddLine(ImVec2(outer_border.Min.x, outer_border.Max.y), outer_border.Max, outer_col, border_size);
+            inner_drawlist->AddLine(outer_border.Min, glm::vec2(outer_border.Max.x, outer_border.Min.y), outer_col, border_size);
+            inner_drawlist->AddLine(glm::vec2(outer_border.Min.x, outer_border.Max.y), outer_border.Max, outer_col, border_size);
         }
     }
     if ((table->Flags & ImGuiTableFlags_BordersInnerH) && table->RowPosY2 < table->OuterRect.Max.y)
@@ -2855,7 +2855,7 @@ void ImGui::TableDrawBorders(ImGuiTable* table)
         // Draw bottom-most row border between it is above outer border.
         const float border_y = table->RowPosY2;
         if (border_y >= table->BgClipRect.Min.y && border_y < table->BgClipRect.Max.y)
-            inner_drawlist->AddLine(ImVec2(table->BorderX1, border_y), ImVec2(table->BorderX2, border_y), table->BorderColorLight, border_size);
+            inner_drawlist->AddLine(glm::vec2(table->BorderX1, border_y), glm::vec2(table->BorderX2, border_y), table->BorderColorLight, border_size);
     }
 
     inner_drawlist->PopClipRect();
@@ -3138,7 +3138,7 @@ void ImGui::TableHeadersRow()
     }
 
     // Allow opening popup from the right-most section after the last column.
-    ImVec2 mouse_pos = ImGui::GetMousePos();
+    glm::vec2 mouse_pos = ImGui::GetMousePos();
     if (IsMouseReleased(1) && TableGetHoveredColumn() == columns_count)
         if (mouse_pos.y >= row_y1 && mouse_pos.y < row_y1 + row_height)
             TableOpenContextMenu(columns_count); // Will open a non-column-specific popup.
@@ -3169,8 +3169,8 @@ void ImGui::TableHeader(const char* label)
     if (label == NULL)
         label = "";
     const char* label_end = FindRenderedTextEnd(label);
-    ImVec2 label_size = CalcTextSize(label, label_end, true);
-    ImVec2 label_pos = window->DC.CursorPos;
+    glm::vec2 label_size = CalcTextSize(label, label_end, true);
+    glm::vec2 label_pos = window->DC.CursorPos;
 
     // If we already got a row height, there's use that.
     // FIXME-TABLE: Padding problem if the correct outer-padding CellBgRect strays off our ClipRect?
@@ -3203,7 +3203,7 @@ void ImGui::TableHeader(const char* label)
     // Keep header highlighted when context menu is open.
     ImGuiID id = window->GetID(label);
     ImRect bb(cell_r.Min.x, cell_r.Min.y, cell_r.Max.x, ImMax(cell_r.Max.y, cell_r.Min.y + label_height + g.Style.CellPadding.y * 2.0f));
-    ItemSize(ImVec2(0.0f, label_height)); // Don't declare unclipped width, it'll be fed ContentMaxPosHeadersIdeal
+    ItemSize(glm::vec2(0.0f, label_height)); // Don't declare unclipped width, it'll be fed ContentMaxPosHeadersIdeal
     if (!ItemAdd(bb, id))
         return;
 
@@ -3263,11 +3263,11 @@ void ImGui::TableHeader(const char* label)
             if (column->SortOrder > 0)
             {
                 PushStyleColor(ImGuiCol_Text, GetColorU32(ImGuiCol_Text, 0.70f));
-                RenderText(ImVec2(x + g.Style.ItemInnerSpacing.x, y), sort_order_suf);
+                RenderText(glm::vec2(x + g.Style.ItemInnerSpacing.x, y), sort_order_suf);
                 PopStyleColor();
                 x += w_sort_text;
             }
-            RenderArrow(window->DrawList, ImVec2(x, y), GetColorU32(ImGuiCol_Text), column->SortDirection == ImGuiSortDirection_Ascending ? ImGuiDir_Up : ImGuiDir_Down, ARROW_SCALE);
+            RenderArrow(window->DrawList, glm::vec2(x, y), GetColorU32(ImGuiCol_Text), column->SortDirection == ImGuiSortDirection_Ascending ? ImGuiDir_Up : ImGuiDir_Down, ARROW_SCALE);
         }
 
         // Handle clicking on column header to adjust Sort Order
@@ -3280,8 +3280,8 @@ void ImGui::TableHeader(const char* label)
 
     // Render clipped label. Clipping here ensure that in the majority of situations, all our header cells will
     // be merged into a single draw call.
-    //window->DrawList->AddCircleFilled(ImVec2(ellipsis_max, label_pos.y), 40, IM_COL32_WHITE);
-    RenderTextEllipsis(window->DrawList, label_pos, ImVec2(ellipsis_max, bb.Max.y), ellipsis_max, label, label_end, &label_size);
+    //window->DrawList->AddCircleFilled(glm::vec2(ellipsis_max, label_pos.y), 40, IM_COL32_WHITE);
+    RenderTextEllipsis(window->DrawList, label_pos, glm::vec2(ellipsis_max, bb.Max.y), ellipsis_max, label, label_end, &label_size);
 
     const bool text_clipped = label_size.x > (ellipsis_max - label_pos.x);
     if (text_clipped && hovered && g.ActiveId == 0)
@@ -3352,15 +3352,15 @@ void ImGui::TableAngledHeadersRowEx(ImGuiID row_id, float angle, float max_label
     const float sin_a = ImSin(angle);
     const float label_cos_a = flip_label ? ImCos(angle + IM_PI) : cos_a;
     const float label_sin_a = flip_label ? ImSin(angle + IM_PI) : sin_a;
-    const ImVec2 unit_right = ImVec2(cos_a, sin_a);
+    const glm::vec2 unit_right = glm::vec2(cos_a, sin_a);
 
     // Calculate our base metrics and set angled headers data _before_ the first call to TableNextRow()
     // FIXME-STYLE: Would it be better for user to submit 'max_label_width' or 'row_height' ? One can be derived from the other.
     const float header_height = g.FontSize + g.Style.CellPadding.x * 2.0f;
-    const float row_height = ImTrunc(ImFabs(ImRotate(ImVec2(max_label_width, flip_label ? +header_height : -header_height), cos_a, sin_a).y));
+    const float row_height = ImTrunc(ImFabs(ImRotate(glm::vec2(max_label_width, flip_label ? +header_height : -header_height), cos_a, sin_a).y));
     table->AngledHeadersHeight = row_height;
     table->AngledHeadersSlope = (sin_a != 0.0f) ? (cos_a / sin_a) : 0.0f;
-    const ImVec2 header_angled_vector = unit_right * (row_height / -sin_a); // vector from bottom-left to top-left, and from bottom-right to top-right
+    const glm::vec2 header_angled_vector = unit_right * (row_height / -sin_a); // vector from bottom-left to top-left, and from bottom-right to top-right
 
     // Declare row, override and draw our own background
     TableNextRow(ImGuiTableRowFlags_Headers, row_height);
@@ -3372,16 +3372,16 @@ void ImGui::TableAngledHeadersRowEx(ImGuiID row_id, float angle, float max_label
         clip_rect_min_x = ImMax(clip_rect_min_x, table->Columns[table->FreezeColumnsCount - 1].MaxX);
     TableSetBgColor(ImGuiTableBgTarget_RowBg0, 0); // Cancel
     PushClipRect(table->BgClipRect.Min, table->BgClipRect.Max, false); // Span all columns
-    draw_list->AddRectFilled(ImVec2(table->BgClipRect.Min.x, row_r.Min.y), ImVec2(table->BgClipRect.Max.x, row_r.Max.y), GetColorU32(ImGuiCol_TableHeaderBg, 0.25f)); // FIXME-STYLE: Change row background with an arbitrary color.
-    PushClipRect(ImVec2(clip_rect_min_x, table->BgClipRect.Min.y), table->BgClipRect.Max, true); // Span all columns
+    draw_list->AddRectFilled(glm::vec2(table->BgClipRect.Min.x, row_r.Min.y), glm::vec2(table->BgClipRect.Max.x, row_r.Max.y), GetColorU32(ImGuiCol_TableHeaderBg, 0.25f)); // FIXME-STYLE: Change row background with an arbitrary color.
+    PushClipRect(glm::vec2(clip_rect_min_x, table->BgClipRect.Min.y), table->BgClipRect.Max, true); // Span all columns
 
     ButtonBehavior(row_r, row_id, NULL, NULL);
     KeepAliveID(row_id);
 
     const float ascent_scaled = g.FontBaked->Ascent * g.FontBakedScale; // FIXME: Standardize those scaling factors better
     const float line_off_for_ascent_x = (ImMax((g.FontSize - ascent_scaled) * 0.5f, 0.0f) / -sin_a) * (flip_label ? -1.0f : 1.0f);
-    const ImVec2 padding = g.Style.CellPadding; // We will always use swapped component
-    const ImVec2 align = g.Style.TableAngledHeadersTextAlign;
+    const glm::vec2 padding = g.Style.CellPadding; // We will always use swapped component
+    const glm::vec2 align = g.Style.TableAngledHeadersTextAlign;
 
     // Draw background and labels in first pass, then all borders.
     float max_x = -FLT_MAX;
@@ -3392,9 +3392,9 @@ void ImGui::TableAngledHeadersRowEx(ImGuiID row_id, float angle, float max_label
             const int column_n = request->Index;
             ImGuiTableColumn* column = &table->Columns[column_n];
 
-            ImVec2 bg_shape[4];
-            bg_shape[0] = ImVec2(column->MaxX, row_r.Max.y);
-            bg_shape[1] = ImVec2(column->MinX, row_r.Max.y);
+            glm::vec2 bg_shape[4];
+            bg_shape[0] = glm::vec2(column->MaxX, row_r.Max.y);
+            bg_shape[1] = glm::vec2(column->MinX, row_r.Max.y);
             bg_shape[2] = bg_shape[1] + header_angled_vector;
             bg_shape[3] = bg_shape[0] + header_angled_vector;
             if (pass == 0)
@@ -3427,10 +3427,10 @@ void ImGui::TableAngledHeadersRowEx(ImGuiID row_id, float angle, float max_label
                         label_name_eol = label_name_end;
 
                     // FIXME: Individual line clipping for right-most column is broken for negative angles.
-                    ImVec2 label_size = CalcTextSize(label_name, label_name_eol);
+                    glm::vec2 label_size = CalcTextSize(label_name, label_name_eol);
                     float clip_width = max_label_width - padding.y; // Using padding.y*2.0f would be symmetrical but hide more text.
                     float clip_height = ImMin(label_size.y, column->ClipRect.Max.x - column->WorkMinX - line_off_curr_x);
-                    ImRect clip_r(window->ClipRect.Min, window->ClipRect.Min + ImVec2(clip_width, clip_height));
+                    ImRect clip_r(window->ClipRect.Min, window->ClipRect.Min + glm::vec2(clip_width, clip_height));
                     int vtx_idx_begin = draw_list->_VtxCurrentIdx;
                     PushStyleColor(ImGuiCol_Text, request->TextColor);
                     RenderTextEllipsis(draw_list, clip_r.Min, clip_r.Max, clip_r.Max.x, label_name, label_name_eol, &label_size);
@@ -3442,8 +3442,8 @@ void ImGui::TableAngledHeadersRowEx(ImGuiID row_id, float angle, float max_label
                     const float vertical_offset = available_space * align.y * (flip_label ? -1.0f : 1.0f);
 
                     // Rotate and offset label
-                    ImVec2 pivot_in = ImVec2(window->ClipRect.Min.x - vertical_offset, window->ClipRect.Min.y + label_size.y);
-                    ImVec2 pivot_out = ImVec2(column->WorkMinX, row_r.Max.y);
+                    glm::vec2 pivot_in = glm::vec2(window->ClipRect.Min.x - vertical_offset, window->ClipRect.Min.y + label_size.y);
+                    glm::vec2 pivot_out = glm::vec2(column->WorkMinX, row_r.Max.y);
                     line_off_curr_x += flip_label ? -line_off_step_x : line_off_step_x;
                     pivot_out += unit_right * padding.y;
                     if (flip_label)
@@ -4143,7 +4143,7 @@ void ImGui::DebugNodeTableSettings(ImGuiTableSettings*) {}
 // the subsequent single call to SetCurrentChannel() does it things once.
 void ImGui::SetWindowClipRectBeforeSetChannel(ImGuiWindow* window, const ImRect& clip_rect)
 {
-    ImVec4 clip_rect_vec4 = clip_rect.ToVec4();
+    glm::vec4 clip_rect_vec4 = clip_rect.ToVec4();
     window->ClipRect = clip_rect;
     window->DrawList->_CmdHeader.ClipRect = clip_rect_vec4;
     window->DrawList->_ClipRectStack.Data[window->DrawList->_ClipRectStack.Size - 1] = clip_rect_vec4;
@@ -4452,7 +4452,7 @@ void ImGui::NextColumn()
     }
     window->DC.CursorPos.x = IM_TRUNC(window->Pos.x + window->DC.Indent.x + window->DC.ColumnsOffset.x);
     window->DC.CursorPos.y = columns->LineMinY;
-    window->DC.CurrLineSize = ImVec2(0.0f, 0.0f);
+    window->DC.CurrLineSize = glm::vec2(0.0f, 0.0f);
     window->DC.CurrLineTextBaseOffset = 0.0f;
 
     // FIXME-COLUMNS: Share code with BeginColumns() - move code on columns setup.
@@ -4498,7 +4498,7 @@ void ImGui::EndColumns()
             float x = window->Pos.x + GetColumnOffset(n);
             const ImGuiID column_id = columns->ID + ImGuiID(n);
             const float column_hit_hw = ImTrunc(COLUMNS_HIT_RECT_HALF_THICKNESS * g.CurrentDpiScale);
-            const ImRect column_hit_rect(ImVec2(x - column_hit_hw, y1), ImVec2(x + column_hit_hw, y2));
+            const ImRect column_hit_rect(glm::vec2(x - column_hit_hw, y1), glm::vec2(x + column_hit_hw, y2));
             if (!ItemAdd(column_hit_rect, column_id, NULL, ImGuiItemFlags_NoNav))
                 continue;
 
@@ -4515,7 +4515,7 @@ void ImGui::EndColumns()
             // Draw column
             const ImU32 col = GetColorU32(held ? ImGuiCol_SeparatorActive : hovered ? ImGuiCol_SeparatorHovered : ImGuiCol_Separator);
             const float xi = IM_TRUNC(x);
-            window->DrawList->AddLine(ImVec2(xi, y1 + 1.0f), ImVec2(xi, y2), col);
+            window->DrawList->AddLine(glm::vec2(xi, y1 + 1.0f), glm::vec2(xi, y2), col);
         }
 
         // Apply dragging after drawing the column lines, so our rendered lines are in sync with how items were displayed during the frame.

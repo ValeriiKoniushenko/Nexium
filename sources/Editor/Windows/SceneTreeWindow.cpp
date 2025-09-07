@@ -41,9 +41,9 @@ namespace Core
     //    /\__/ /| (__ |  __/| | | ||  __/  | |  | |   |  __/|  __/
     //    \____/  \___| \___||_| |_| \___|  \_/  |_|    \___| \___|
     // ========================================================================
-    void SceneTreeWindowEWC::onInit()
+    void SceneTreeWindowEWC::onInitialize()
     {
-        BaseFloatEWC::onInit();
+        BaseFloatEWC::onInitialize();
 
         setScene(&gGameInstance->gameScene);
 
@@ -105,19 +105,20 @@ namespace Core
         BaseFloatEWC::onUpdate();
     }
 
-    void SceneTreeWindowEWC::drawTreeNode(BaseComponent* n, int32_t id,
+    bool SceneTreeWindowEWC::drawTreeNode(BaseComponent* n, int32_t id,
                                           bool isInSelectedSubtree /* = false*/)
     {
         if (!n)
         {
-            return;
+            return true;
         }
 
         if (const auto* actor = n->tryCastTo<Actor>())
         {
+            // Trying to exclude NOW any post draw actors.
             if (actor->isPostDraw())
             {
-                return;
+                return true;
             }
         }
 
@@ -140,9 +141,9 @@ namespace Core
 
         ImGui::PushID(id);
 
-        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0));
-        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
+        ImGui::PushStyleColor(ImGuiCol_Button, glm::vec4(0, 0, 0, 0));
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, glm::vec4(0, 0, 0, 0));
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, glm::vec4(0, 0, 0, 0));
         ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 0.0f);
 
@@ -181,6 +182,12 @@ namespace Core
             if (_lastSelectedObject != selectedObject)
             {
                 gGameInstance->objectSelectorManager.selectObject(n);
+                ImGui::PopID();
+                if (isOpened)
+                {
+                    ImGui::TreePop();
+                }
+                return false;
             }
         }
 
@@ -188,12 +195,19 @@ namespace Core
         {
             for (auto& child : n->getChildren())
             {
-                drawTreeNode(child.get(), ++id);
+                if (!drawTreeNode(child.get(), ++id))
+                {
+                    ImGui::PopID();
+                    ImGui::TreePop();
+                    return false;
+                }
             }
 
             ImGui::TreePop();
         }
 
         ImGui::PopID();
+
+        return true;
     }
 } // namespace Core

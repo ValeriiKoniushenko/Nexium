@@ -29,6 +29,7 @@ namespace Core
     {
         _shaderMetas.clear();
         _failedShaders.clear();
+        _inputPath = inputPath;
 
         std::unordered_set<std::string> processedShaders;
 

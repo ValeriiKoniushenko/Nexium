@@ -36,6 +36,21 @@ std::unique_ptr<Core::GameInstance> gGameInstance = nullptr;
 namespace Core
 {
 
+    ShaderManager& GetShaderManager()
+    {
+        return gGameInstance->shaderManager;
+    }
+
+    GameEditor& GetEditor()
+    {
+        return gGameInstance->gameEditor;
+    }
+
+    World& GetWorld()
+    {
+        return gGameInstance->world;
+    }
+
     void GameInstance::initialize()
     {
 #ifdef DEBUG
@@ -73,17 +88,17 @@ namespace Core
             currentCamera = spectator->findFirstChildOf<BaseCamera>();
         }
 
-        onInitReadCache();
+        onInitializeReadCache();
 
         loadCoreResources();
-        onInitFinish();
+        onInitializeFinish();
 
         gameLoop();
 
         onFinishWriteCache();
     }
 
-    void GameInstance::onInitReadCache()
+    void GameInstance::onInitializeReadCache()
     {
         gameScene.readFromCache();
     }
@@ -127,7 +142,7 @@ namespace Core
             else
             {
                 glClear(clearBits);
-                gameEditor.onTick(world.timeDelta);
+                gameEditor.tick(world.timeDelta);
                 if (currentCamera)
                 {
                     renderToTextureObject.callMePreDraw();

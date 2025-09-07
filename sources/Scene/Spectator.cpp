@@ -81,9 +81,9 @@ namespace Core
         mouseInput.update();
     }
 
-    void Spectator::onInit()
+    void Spectator::onInitialize()
     {
-        Actor::onInit();
+        Actor::onInitialize();
 
         tryReadFromCache();
 

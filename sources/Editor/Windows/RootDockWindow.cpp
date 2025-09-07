@@ -22,6 +22,8 @@
 
 #include "RootDockWindow.h"
 
+#include "ImGui/imgui_internal.h"
+
 namespace Core
 {
     ECS_REGISTER_NEW_COMPONENT_TYPE(RootDockWindowEWC)
@@ -34,9 +36,9 @@ namespace Core
     //    | |\ \ | (_) || (_) || |_ | |/ / | (_) || (__ |   <
     //    \_| \_| \___/  \___/  \__||___/   \___/  \___||_|\_\
     // ========================================================================
-    void RootDockWindowEWC::onInit()
+    void RootDockWindowEWC::onInitialize()
     {
-        BaseEWC::onInit();
+        BaseEWC::onInitialize();
 
         _windowFlags |= ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking
                         | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse
@@ -47,7 +49,7 @@ namespace Core
     void RootDockWindowEWC::onDraw()
     {
         ImGuiID const dockSpaceId = ImGui::GetID("MyDockSpace");
-        ImGui::DockSpace(dockSpaceId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
+        ImGui::DockSpace(dockSpaceId, glm::vec2(0.0f, 0.0f), ImGuiDockNodeFlags_NoWindowMenuButton);
     }
 
     bool RootDockWindowEWC::beginWindowDraw()

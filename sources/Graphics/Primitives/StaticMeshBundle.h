@@ -67,6 +67,7 @@ namespace Core
             return _meshes;
         }
 
+        [[nodiscard]] std::size_t getRenderableTriangles() const;
         [[nodiscard]] std::size_t getRenderBundlesCount() const noexcept { return _bundles.size(); }
         [[nodiscard]] std::vector<StaticMeshBundle*>& getRenderBundles() noexcept
         {

@@ -23,6 +23,10 @@
 #include "ObjectPropertiesWindow.h"
 
 #include "Camera/Camera.h"
+#include "Editor/GuiComponents/CheckBox.h"
+#include "Editor/GuiComponents/HorizontalLayout.h"
+#include "Editor/GuiComponents/Input.h"
+#include "Editor/GuiComponents/Label.h"
 #include "GameplaySystem/ECS/Transformable.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Graphics/Primitives/StaticMeshBundle.h"
@@ -52,9 +56,12 @@ namespace Core
         _target = nullptr;
     }
 
-    void ObjectPropertiesWindowEWC::onInit()
+    void ObjectPropertiesWindowEWC::onInitialize()
     {
-        BaseFloatEWC::onInit();
+        BaseFloatEWC::onInitialize();
+
+        createGui();
+        registerGuiEvents();
 
         _transformLocationControl.components
             = { Vec3Control::Component{ .text = "X:"_atom, .color = ColorRed },
@@ -152,10 +159,244 @@ namespace Core
         _slowUpdater.startOrUpdate();
     }
 
+    void ObjectPropertiesWindowEWC::createGui()
+    {
+        constexpr float defaultLabelWidth = 100.0f;
+        constexpr float defaultLabelWidthBig = 150.0f;
+        // ================= General ====================
+        {
+            auto* name = _generalInfoLayout.addChildComponent<HorizontalLayout>();
+            auto* label = name->addChildComponent<Label>("Name");
+            label->setWidth(defaultLabelWidth);
+
+            _objectName = name->addChildComponent<TextInput>();
+            _objectName->setFlex(Widget::Flex::FlexWidth);
+            _objectName->setReadOnly(true);
+        }
+
+        {
+            auto* type = _generalInfoLayout.addChildComponent<HorizontalLayout>();
+            auto* label = type->addChildComponent<Label>("Type");
+            label->setWidth(defaultLabelWidth);
+
+            _objectType = type->addChildComponent<TextInput>();
+            _objectType->setFlex(Widget::Flex::FlexWidth);
+            _objectType->setReadOnly(true);
+        }
+
+        {
+            auto* enabled = _generalInfoLayout.addChildComponent<HorizontalLayout>();
+            auto* label = enabled->addChildComponent<Label>("Enabled");
+            label->setWidth(defaultLabelWidth);
+
+            _objectIsEnabled = enabled->addChildComponent<CheckBox>();
+        }
+
+        // ================= StaticMeshBundle ====================
+        {
+            auto* subRender = _staticMeshBundleLayout.addChildComponent<HorizontalLayout>();
+            auto* label = subRender->addChildComponent<Label>("Sub-render meshes");
+            label->setWidth(defaultLabelWidthBig);
+
+            _renderMeshesCount = subRender->addChildComponent<IntInput>();
+            _renderMeshesCount->setFlex(Widget::Flex::FlexWidth);
+            _renderMeshesCount->setDisabled(true);
+        }
+
+        {
+            auto* subRender = _staticMeshBundleLayout.addChildComponent<HorizontalLayout>();
+            auto* label = subRender->addChildComponent<Label>("Sub-render bundles");
+            label->setWidth(defaultLabelWidthBig);
+
+            _renderBundlesCount = subRender->addChildComponent<IntInput>();
+            _renderBundlesCount->setFlex(Widget::Flex::FlexWidth);
+            _renderBundlesCount->setDisabled(true);
+        }
+
+        {
+            auto* subRender = _staticMeshBundleLayout.addChildComponent<HorizontalLayout>();
+            auto* label = subRender->addChildComponent<Label>("Hidden from scene");
+            label->setWidth(defaultLabelWidthBig);
+
+            _ignoreMouseSelectBundle = subRender->addChildComponent<CheckBox>();
+            _ignoreMouseSelectBundle->setDisabled(true);
+        }
+
+        // ================= BaseComponent-extra ====================
+        {
+            auto* row = _baseComponentExtraLayout.addChildComponent<HorizontalLayout>();
+            auto* label = row->addChildComponent<Label>("Parent");
+            label->setWidth(defaultLabelWidthBig);
+
+            _parentName = row->addChildComponent<TextInput>();
+            _parentName->setFlex(Widget::Flex::FlexWidth);
+            _parentName->setDisabled(true);
+        }
+
+        {
+            auto* row = _baseComponentExtraLayout.addChildComponent<HorizontalLayout>();
+            auto* label = row->addChildComponent<Label>("Children count");
+            label->setWidth(defaultLabelWidthBig);
+
+            _childrenCount = row->addChildComponent<IntInput>();
+            _childrenCount->setFlex(Widget::Flex::FlexWidth);
+            _childrenCount->setDisabled(true);
+        }
+
+        {
+            auto* row = _baseComponentExtraLayout.addChildComponent<HorizontalLayout>("BaseComp is initialized");
+            auto* label = row->addChildComponent<Label>("Is initialized");
+            label->setWidth(defaultLabelWidthBig);
+
+            _isInited = row->addChildComponent<CheckBox>();
+            _isInited->setDisabled(true);
+        }
+
+        {
+            auto* row = _baseComponentExtraLayout.addChildComponent<HorizontalLayout>();
+            auto* label = row->addChildComponent<Label>("Disabled ticks");
+            label->setWidth(defaultLabelWidthBig);
+
+            _disabledTicks = row->addChildComponent<CheckBox>();
+        }
+
+        // ================= GraphicsComponent ====================
+        {
+        }
+
+        // ================= BaseCamera ====================
+        {
+            auto* row = _baseCameraLayout.addChildComponent<HorizontalLayout>();
+            auto* label = row->addChildComponent<Label>("FOV");
+            label->setWidth(defaultLabelWidthBig);
+
+            _cameraFov = row->addChildComponent<FloatInput>();
+            _cameraFov->setFlex(Widget::Flex::FlexWidth);
+            _cameraFov->setMin(BaseCamera::minFov);
+            _cameraFov->setMax(BaseCamera::maxFov);
+            _cameraFov->setStep(1.f);
+        }
+        {
+            auto* row = _baseCameraLayout.addChildComponent<HorizontalLayout>();
+            auto* label = row->addChildComponent<Label>("Far plane");
+            label->setWidth(defaultLabelWidthBig);
+
+            _cameraFar = row->addChildComponent<FloatInput>();
+            _cameraFar->setFlex(Widget::Flex::FlexWidth);
+            _cameraFar->setMin(100.f);
+            _cameraFar->setMax(1'000'000.f);
+            _cameraFar->setStep(100.f);
+        }
+        {
+            auto* row = _baseCameraLayout.addChildComponent<HorizontalLayout>();
+            auto* label = row->addChildComponent<Label>("Near plane");
+            label->setWidth(defaultLabelWidthBig);
+
+            _cameraNear = row->addChildComponent<FloatInput>();
+            _cameraNear->setFlex(Widget::Flex::FlexWidth);
+            _cameraNear->setMin(0.1f);
+            _cameraNear->setMax(1000.f);
+            _cameraNear->setStep(0.1f);
+        }
+        {
+            auto* row = _baseCameraLayout.addChildComponent<HorizontalLayout>("Camera h-layout");
+            auto* label = row->addChildComponent<Label>("Frame size");
+            label->setWidth(defaultLabelWidthBig);
+
+            auto* doubleComp = row->addChildComponent<HorizontalLayout>("Camera d-comp");
+            doubleComp->setFlex(Widget::Flex::FlexWidth);
+            doubleComp->setHorizontalAlign(Widget::Align::SpaceBetween);
+
+            auto* width = doubleComp->addChildComponent<HorizontalLayout>("Camera W");
+            width->setFlex(Widget::Flex::FlexWidth);
+            _cameraFrameWidth = width->addChildComponent<IntInput>();
+            _cameraFrameWidth->setFlex(Widget::Flex::FlexWidth);
+            _cameraFrameWidth->setDisabled(true);
+            auto* w = width->addChildComponent<Label>("W");
+            w->setTextColor(Color4::From(NormColor4(ColorRed)));
+
+
+            auto* height = doubleComp->addChildComponent<HorizontalLayout>("Camera H");
+            width->setFlex(Widget::Flex::FlexWidth);
+            _cameraFrameHeight = height->addChildComponent<IntInput>();
+            _cameraFrameHeight->setFlex(Widget::Flex::FlexWidth);
+            _cameraFrameHeight->setDisabled(true);
+            auto* h = width->addChildComponent<Label>("H");
+            h->setTextColor(Color4::From(NormColor4(ColorGreen)));
+        }
+    }
+
+    void ObjectPropertiesWindowEWC::registerGuiEvents()
+    {
+        if (_objectIsEnabled)
+        {
+            _objectIsEnabled->onChange.subscribe(
+                [this](auto*, bool newStatus)
+                {
+                    if (_target)
+                    {
+                        _target->setEnabled(newStatus);
+                    }
+                });
+        }
+
+        if (_disabledTicks)
+        {
+            _disabledTicks->onChange.subscribe(
+                [this](auto*, bool newStatus)
+                {
+                    if (_target)
+                    {
+                        _target->setNoTick(newStatus);
+                    }
+                });
+        }
+
+        if (_cameraFov)
+        {
+            _cameraFov->onInput.subscribe(
+                [this](float newValue)
+                {
+                    if (auto* camera = _target->tryCastTo<BaseCamera>())
+                    {
+                        camera->setFov(newValue);
+                    }
+                });
+        }
+
+        if (_cameraFar)
+        {
+            _cameraFar->onInput.subscribe(
+                [this](float newValue)
+                {
+                    if (auto* camera = _target->tryCastTo<BaseCamera>())
+                    {
+                        camera->setFar(newValue);
+                    }
+                });
+        }
+
+        if (_cameraNear)
+        {
+            _cameraNear->onInput.subscribe(
+                [this](float newValue)
+                {
+                    if (auto* camera = _target->tryCastTo<BaseCamera>())
+                    {
+                        camera->setNear(newValue);
+                    }
+                });
+        }
+    }
+
     void ObjectPropertiesWindowEWC::tryDrawTransformable(Transformable* comp, BaseComponent* base)
     {
         if (comp && ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
         {
+            const float dt = GetWorld().timeDelta;
+
+            _transformableLayout.tick(dt);
+
             bool isChanged = false;
 
             if (auto res
@@ -202,7 +443,7 @@ namespace Core
                 }
             }
 
-            ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
+            ImGui::Dummy(glm::vec2(0.0f, _gapBetweenSections));
         }
     }
 
@@ -210,20 +451,24 @@ namespace Core
     {
         if (comp && ImGui::CollapsingHeader("General", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            LabelAndInputTextRO("Name:", comp->getComponentName(), _labelWidth, _innerSize.width);
+            const float dt = GetWorld().timeDelta;
 
-            LabelAndInputTextRO("Type:", comp->getComponentType(), _labelWidth, _innerSize.width);
-
-            bool isEnabled = comp->isEnabled();
-            FixedLabel("Enabled:", _labelWidth);
-            ImGui::Checkbox("##isEnabled", &isEnabled);
-
-            if (isEnabled != comp->isEnabled())
+            if (_objectName)
             {
-                comp->setEnabled(isEnabled);
+                _objectName->setInputtedData(comp->getComponentName().toStdString());
             }
 
-            ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
+            if (_objectType)
+            {
+                _objectType->setInputtedData(comp->getComponentType().toStdString());
+            }
+
+            if (_objectIsEnabled)
+            {
+                _objectIsEnabled->setValue(comp->isEnabled());
+            }
+
+            _generalInfoLayout.tick(dt);
         }
     }
 
@@ -249,7 +494,7 @@ namespace Core
 
             ImGui::Separator();
             FixedLabel("Modifiers:", _labelWidth);
-            ImGui::Dummy(ImVec2(0, 0));
+            ImGui::Dummy(glm::vec2(0, 0));
             static const auto collection = []()
             {
                 auto c = GraphicsComponentData::ModifiedValueAsVector();
@@ -358,7 +603,7 @@ namespace Core
                 comp->setDrawModifiers(std::move(newModifiers));
             }
 
-            ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
+            ImGui::Dummy(glm::vec2(0.0f, _gapBetweenSections));
         }
     }
 
@@ -366,19 +611,32 @@ namespace Core
     {
         if (comp && ImGui::CollapsingHeader("Component data", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            LabelAndInputTextRO("Children:", comp->getChildrenCount(), _labelWidth,
-                                _innerSize.width);
-            LabelAndCheckboxRO("Inited:", comp->isInitialized(), _labelWidth);
+            const float dt = GetWorld().timeDelta;
 
-            bool tickable = comp->getNoTick();
-            FixedLabel("No ticks:", _labelWidth);
-            ImGui::Checkbox("##NoTick", &tickable);
-            if (comp->getNoTick() != tickable)
+            if (_childrenCount)
             {
-                comp->setNoTick(tickable);
+                _childrenCount->setInputtedData(comp->getChildrenCount());
+            }
+            if (_isInited)
+            {
+                _isInited->setValue(comp->isInitialized());
+            }
+            if (_disabledTicks)
+            {
+                _disabledTicks->setValue(comp->getNoTick());
+            }
+            if (_parentName && comp->hasParent())
+            {
+                auto str = comp->getParent()->getComponentName().toStdString();
+                str += "(";
+                str += comp->getParent()->getComponentType().toStdString();
+                str += ")";
+                _parentName->setInputtedData(std::move(str));
             }
 
-            ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
+            _baseComponentExtraLayout.tick(dt);
+
+            ImGui::Dummy(glm::vec2(0.0f, _gapBetweenSections));
         }
     }
 
@@ -386,25 +644,21 @@ namespace Core
     {
         if (comp && ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            float inputedFov = comp->getFov();
-            LabelAndInputFloat("FOV:", inputedFov, _labelWidth, _innerSize.width, 0.1f);
-            if (inputedFov != comp->getFov())
-            {
-                comp->setFov(inputedFov);
-            }
+            const float dt = GetWorld().timeDelta;
 
-            float inputedFar = comp->getFar();
-            LabelAndInputFloat("Far:", inputedFar, _labelWidth, _innerSize.width, 1.f, 0.0001f);
-            if (inputedFar != comp->getFar())
-            {
-                comp->setFar(inputedFar);
-            }
+            _baseCameraLayout.tick(dt);
 
-            float inputedNear = comp->getNear();
-            LabelAndInputFloat("Near:", inputedNear, _labelWidth, _innerSize.width, 0.1f, 0.0001f);
-            if (inputedNear != comp->getNear())
+            if (_cameraFov)
             {
-                comp->setNear(inputedNear);
+                _cameraFov->setInputtedData(comp->getFov());
+            }
+            if (_cameraFar)
+            {
+                _cameraFar->setInputtedData(comp->getFar());
+            }
+            if (_cameraNear)
+            {
+                _cameraNear->setInputtedData(comp->getNear());
             }
 
             if (auto res
@@ -413,7 +667,7 @@ namespace Core
                 comp->setFrameSize(FSize2(res.value()));
             }
 
-            ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
+            ImGui::Dummy(glm::vec2(0.0f, _gapBetweenSections));
         }
     }
 
@@ -421,10 +675,24 @@ namespace Core
     {
         if (comp && ImGui::CollapsingHeader("Static mesh bundle", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            LabelAndInputTextRO("Sub-render:", comp->getRenderMeshesCount(), _labelWidth,
-                                _innerSize.width);
+            const float dt = GetWorld().timeDelta;
 
-            ImGui::Dummy(ImVec2(0.0f, _gapBetweenSections));
+            if (_renderMeshesCount)
+            {
+                _renderMeshesCount->setInputtedData(comp->getRenderMeshesCount());
+            }
+
+            if (_renderBundlesCount)
+            {
+                _renderBundlesCount->setInputtedData(comp->getRenderBundlesCount());
+            }
+
+            if (_ignoreMouseSelectBundle)
+            {
+                _ignoreMouseSelectBundle->setValue(comp->isIgnoreSelect());
+            }
+
+            _staticMeshBundleLayout.tick(dt);
         }
     }
 
