@@ -46,6 +46,7 @@ namespace Core
         search->addChildComponent<Label>("Search:");
         search->addChildComponent<TextInput>()->setFlex(Widget::Flex::FlexWidth);
         search->addChildComponent<CheckBox>();
+        search->addChildComponent<class ToggleButton>();
 
         _layout.attachChild(search);
         _layout.attachChild(search);

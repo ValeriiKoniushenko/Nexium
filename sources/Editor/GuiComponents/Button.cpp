@@ -29,6 +29,7 @@ namespace Core
 {
 
     ECS_REGISTER_NEW_COMPONENT_TYPE(Button)
+    ECS_REGISTER_NEW_COMPONENT_TYPE(ToggleButton)
 
     void Button::setButtonColor(const Color4& value)
     {
@@ -174,6 +175,7 @@ namespace Core
         if (ImGui::ButtonEx(_name.c_str(), _size, ImGuiButtonFlags_None, &_textSize))
         {
             onClick.trigger(this);
+            onClickEvent();
         }
 
         ImGui::PopStyleColor(pushedStyles);
@@ -197,6 +199,37 @@ namespace Core
             _size = ImGui::CalcItemSize(_size, _textSize.x + style().FramePadding.x * 2.0f,
                                         _textSize.y + style().FramePadding.y * 2.0f);
         }
+    }
+
+    void ToggleButton::preDraw()
+    {
+        Button::preDraw();
+
+        NormColor4 color = Color4(0, 0, 0, 0);
+        if (_isActive)
+        {
+            if (_buttonColor)
+            {
+                color = NormColor4::From(*_buttonColor);
+            }
+            else
+            {
+                color = NormColor4(style().Colors[ImGuiCol_Button]);
+            }
+        }
+
+        ImGui::PushStyleColor(ImGuiCol_Button, color);
+    }
+    void ToggleButton::postDraw()
+    {
+        Button::postDraw();
+        ImGui::PopStyleColor();
+    }
+
+    void ToggleButton::onClickEvent()
+    {
+        _isActive = !_isActive;
+        onToggle.trigger(this, _isActive);
     }
 
 } // namespace Core

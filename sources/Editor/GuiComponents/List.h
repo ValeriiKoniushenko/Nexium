@@ -40,11 +40,14 @@ namespace Core
         void setWidth(float newWidth) override;
         void setHeight(float newHeight) override;
 
+        void setRegexFilter(const StringAtom& filter) { _filter = filter; }
+        [[nodiscard]] const StringAtom& getFilter() const noexcept { return _filter; }
+
     protected:
-        void onDraw() override;
         void onInitialize() override;
 
     protected:
+        StringAtom _filter = ""_atom;
         glm::vec2 _size = glm::vec2(100.f, 150.f);
     };
 

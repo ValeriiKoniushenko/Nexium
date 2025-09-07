@@ -82,6 +82,8 @@ namespace Core
         void onDraw() override;
         void onInitialize() override;
 
+        virtual void onClickEvent() {}
+
     protected:
         std::optional<Color4> _buttonColor;
         std::optional<Color4> _buttonHoverColor;
@@ -92,6 +94,28 @@ namespace Core
 
         glm::vec2 _textSize = {};
         glm::vec2 _size = {};
+    };
+
+    class ToggleButton : public Button
+    {
+        ECS_REGISTER_NEW_COMPONENT(ToggleButton, Button);
+    public:
+
+    public: // Delegates
+        /**
+         * @brief will be called when toggled
+         * @prarm ToggleButton* pointer to "this" context. Context of the clicked button.
+         * @prarm bool true - if it becomes active; false - in another case
+         */
+        Delegate<void(ToggleButton*, bool)> onToggle;
+
+    protected:
+        void preDraw() override;
+        void postDraw() override;
+        void onClickEvent() override;
+
+    protected:
+        bool _isActive = true;
     };
 
 } // namespace Core

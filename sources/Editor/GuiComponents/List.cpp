@@ -48,10 +48,6 @@ namespace Core
         _size.y = newHeight;
     }
 
-    void BaseList::onDraw()
-    {
-    }
-
     void BaseList::onInitialize()
     {
         Widget::onInitialize();
@@ -67,6 +63,11 @@ namespace Core
         {
             for (std::size_t i = 0; i < _items.size(); ++i)
             {
+                if (!_filter.isEmpty() && !_items.at(i).regexMatch(_filter))
+                {
+                    continue;
+                }
+
                 const bool isSelected = (_currentItem == i);
                 if (ImGui::Selectable(_items.at(i).c_str(), isSelected))
                 {
@@ -124,8 +125,14 @@ namespace Core
         {
             for (std::size_t i = 0; i < _cache.size(); ++i)
             {
+                const auto& string = _cache.at(i).second;
+                if (!_filter.isEmpty() && !string.regexMatch(_filter))
+                {
+                    continue;
+                }
+
                 const bool isSelected = (_currentIndex == i);
-                if (ImGui::Selectable(_cache.at(i).second.c_str(), isSelected))
+                if (ImGui::Selectable(string.c_str(), isSelected))
                 {
                     _currentIndex = i;
                     _currentData = _cache.at(i).first;
