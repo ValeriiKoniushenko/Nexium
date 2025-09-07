@@ -244,7 +244,7 @@ namespace Core
         }
 
         {
-            auto* row = _baseComponentExtraLayout.addChildComponent<HorizontalLayout>();
+            auto* row = _baseComponentExtraLayout.addChildComponent<HorizontalLayout>("BaseComp is initialized");
             auto* label = row->addChildComponent<Label>("Is initialized");
             label->setWidth(defaultLabelWidthBig);
 
@@ -297,6 +297,32 @@ namespace Core
             _cameraNear->setMin(0.1f);
             _cameraNear->setMax(1000.f);
             _cameraNear->setStep(0.1f);
+        }
+        {
+            auto* row = _baseCameraLayout.addChildComponent<HorizontalLayout>("Camera h-layout");
+            auto* label = row->addChildComponent<Label>("Frame size");
+            label->setWidth(defaultLabelWidthBig);
+
+            auto* doubleComp = row->addChildComponent<HorizontalLayout>("Camera d-comp");
+            doubleComp->setFlex(Widget::Flex::FlexWidth);
+            doubleComp->setHorizontalAlign(Widget::Align::SpaceBetween);
+
+            auto* width = doubleComp->addChildComponent<HorizontalLayout>("Camera W");
+            width->setFlex(Widget::Flex::FlexWidth);
+            _cameraFrameWidth = width->addChildComponent<IntInput>();
+            _cameraFrameWidth->setFlex(Widget::Flex::FlexWidth);
+            _cameraFrameWidth->setDisabled(true);
+            auto* w = width->addChildComponent<Label>("W");
+            w->setTextColor(Color4::From(NormColor4(ColorRed)));
+
+
+            auto* height = doubleComp->addChildComponent<HorizontalLayout>("Camera H");
+            width->setFlex(Widget::Flex::FlexWidth);
+            _cameraFrameHeight = height->addChildComponent<IntInput>();
+            _cameraFrameHeight->setFlex(Widget::Flex::FlexWidth);
+            _cameraFrameHeight->setDisabled(true);
+            auto* h = width->addChildComponent<Label>("H");
+            h->setTextColor(Color4::From(NormColor4(ColorGreen)));
         }
     }
 

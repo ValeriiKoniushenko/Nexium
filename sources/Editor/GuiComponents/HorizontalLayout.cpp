@@ -28,6 +28,12 @@ namespace Core
 {
     ECS_REGISTER_NEW_COMPONENT_TYPE(HorizontalLayout)
 
+    HorizontalLayout::HorizontalLayout(const StringAtom& name)
+        : Layout(componentType, name)
+    {
+        _flex = Flex::FlexWidth;
+    }
+
     float HorizontalLayout::getWidth() const
     {
         if (_fitContent)
@@ -48,24 +54,25 @@ namespace Core
             return width;
         }
 
-        for (auto&& child : _children)
-        {
-            if (child->unsafeCastTo<Widget>()->getFlex().cast() != Widget::Flex::Fixed)
-            {
-                return _width.value_or(ImGui::GetContentRegionAvail().x);
-            }
-        }
-
         if (_width)
         {
             return *_width;
         }
 
-        if (hasParent())
+        if (hasParent() && _flex.cast() == Flex::FlexWidth)
         {
             return getParent()->unsafeCastTo<Widget>()->getWidth();
         }
-        return ImGui::GetContentRegionAvail().x;
+
+        float width = 0.f;
+        for (auto&& child : _children)
+        {
+            auto* w = child->unsafeCastTo<Widget>();
+            {
+                width += w->getWidth();
+            }
+        }
+        return width;
     }
 
     float HorizontalLayout::getHeight() const

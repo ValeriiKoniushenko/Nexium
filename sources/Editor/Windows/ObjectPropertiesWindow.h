@@ -30,6 +30,10 @@
 
 namespace Core
 {
+    class HorizontalLayout;
+}
+namespace Core
+{
     class CheckBox;
     class TextInput;
 
@@ -89,7 +93,8 @@ namespace Core
         FloatInput* _cameraFov = nullptr;
         FloatInput* _cameraFar = nullptr;
         FloatInput* _cameraNear = nullptr;
-
+        IntInput* _cameraFrameWidth = nullptr;
+        IntInput* _cameraFrameHeight = nullptr;
 
         // Transformable section:
         VerticalLayout _transformableLayout;

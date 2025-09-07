@@ -20,47 +20,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#pragma once
-
 #include "Layout.h"
 
 namespace Core
 {
 
-    class HorizontalLayout : public Layout
-    {
-        ECS_REGISTER_NEW_COMPONENT_NO_CNSTR(HorizontalLayout, Layout);
-
-    public:
-        explicit HorizontalLayout(const StringAtom& name = ""_atom);
-
-        [[nodiscard]] float getWidth() const override;
-        [[nodiscard]] float getHeight() const override;
-
-        void setFitContent(bool value) { _fitContent = value; }
-        [[nodiscard]] bool getFitContent() const noexcept { return _fitContent; }
-
-    protected:
-        void onAddChild(BaseComponent* newChild) override;
-        void onTick(float delta) override;
-        void onDraw() override;
-        void onInitialize() override;
-
-        void prepareAlignSpaceBetween();
-        void prepareAlignLeft();
-        void prepareAlignRight();
-        void prepareAlignCenter();
-        void calcYOffsets();
-        void directDraw();
-        void recalcFlexChildren();
-
-    protected:
-        std::vector<float> _yOffsets;
-
-        // for space between
-        float _spacing = 0.f;
-
-        bool _fitContent = false;
-    };
+    ECS_REGISTER_NEW_COMPONENT_TYPE(Layout)
 
 } // namespace Core
