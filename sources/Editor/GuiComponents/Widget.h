@@ -113,7 +113,7 @@ namespace Core
         [[nodiscard]] Flex getFlex() const noexcept { return _flex; }
         void setFlex(Flex flex) noexcept { _flex = flex; }
 
-        void setIsDisabled(bool value) noexcept { _isDisabled = value; }
+        void setDisabled(bool value) noexcept { _isDisabled = value; }
         [[nodiscard]] bool isDisabled() const noexcept { return _isDisabled; }
 
     protected:

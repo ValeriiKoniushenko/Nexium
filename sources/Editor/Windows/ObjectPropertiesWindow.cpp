@@ -23,6 +23,10 @@
 #include "ObjectPropertiesWindow.h"
 
 #include "Camera/Camera.h"
+#include "Editor/GuiComponents/CheckBox.h"
+#include "Editor/GuiComponents/HorizontalLayout.h"
+#include "Editor/GuiComponents/Input.h"
+#include "Editor/GuiComponents/Label.h"
 #include "GameplaySystem/ECS/Transformable.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Graphics/Primitives/StaticMeshBundle.h"
@@ -55,6 +59,9 @@ namespace Core
     void ObjectPropertiesWindowEWC::onInitialize()
     {
         BaseFloatEWC::onInitialize();
+
+        createGui();
+        registerGuiEvents();
 
         _transformLocationControl.components
             = { Vec3Control::Component{ .text = "X:"_atom, .color = ColorRed },
@@ -152,6 +159,94 @@ namespace Core
         _slowUpdater.startOrUpdate();
     }
 
+    void ObjectPropertiesWindowEWC::createGui()
+    {
+        constexpr float defaultLabelWidth = 100.0f;
+        constexpr float defaultLabelWidthBig = 150.0f;
+        // ================= General ====================
+        {
+            auto* name = _generalInfoLayout.addChildComponent<HorizontalLayout>();
+            auto* label = name->addChildComponent<Label>("Name");
+            label->setWidth(defaultLabelWidth);
+
+            _objectName = name->addChildComponent<TextInput>();
+            _objectName->setFlex(Widget::Flex::FlexWidth);
+            _objectName->setReadOnly(true);
+        }
+
+        {
+            auto* type = _generalInfoLayout.addChildComponent<HorizontalLayout>();
+            auto* label = type->addChildComponent<Label>("Type");
+            label->setWidth(defaultLabelWidth);
+
+            _objectType = type->addChildComponent<TextInput>();
+            _objectType->setFlex(Widget::Flex::FlexWidth);
+            _objectType->setReadOnly(true);
+        }
+
+        {
+            auto* enabled = _generalInfoLayout.addChildComponent<HorizontalLayout>();
+            auto* label = enabled->addChildComponent<Label>("Enabled");
+            label->setWidth(defaultLabelWidth);
+
+            _objectIsEnabled = enabled->addChildComponent<CheckBox>();
+        }
+
+        // ================= StaticMeshBundle ====================
+        {
+            auto* subRender = _staticMeshBundleLayout.addChildComponent<HorizontalLayout>();
+            auto* label = subRender->addChildComponent<Label>("Sub-render meshes");
+            label->setWidth(defaultLabelWidthBig);
+
+            _renderMeshesCount = subRender->addChildComponent<IntInput>();
+            _renderMeshesCount->setFlex(Widget::Flex::FlexWidth);
+            _renderMeshesCount->setDisabled(true);
+        }
+
+        {
+            auto* subRender = _staticMeshBundleLayout.addChildComponent<HorizontalLayout>();
+            auto* label = subRender->addChildComponent<Label>("Sub-render bundles");
+            label->setWidth(defaultLabelWidthBig);
+
+            _renderBundlesCount = subRender->addChildComponent<IntInput>();
+            _renderBundlesCount->setFlex(Widget::Flex::FlexWidth);
+            _renderBundlesCount->setDisabled(true);
+        }
+
+        {
+            auto* subRender = _staticMeshBundleLayout.addChildComponent<HorizontalLayout>();
+            auto* label = subRender->addChildComponent<Label>("Hidden from scene");
+            label->setWidth(defaultLabelWidthBig);
+
+            _ignoreMouseSelectBundle = subRender->addChildComponent<CheckBox>();
+            _ignoreMouseSelectBundle->setDisabled(true);
+        }
+
+        // ================= BaseComponent-extra ====================
+        {
+        }
+
+        // ================= GraphicsComponent ====================
+        {
+        }
+
+        // ================= BaseCamera ====================
+        {
+        }
+    }
+
+    void ObjectPropertiesWindowEWC::registerGuiEvents()
+    {
+        _objectIsEnabled->onChange.subscribe(
+            [this](auto*, bool newStatus)
+            {
+                if (_target)
+                {
+                    _target->setEnabled(newStatus);
+                }
+            });
+    }
+
     void ObjectPropertiesWindowEWC::tryDrawTransformable(Transformable* comp, BaseComponent* base)
     {
         if (comp && ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
@@ -210,20 +305,24 @@ namespace Core
     {
         if (comp && ImGui::CollapsingHeader("General", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            LabelAndInputTextRO("Name:", comp->getComponentName(), _labelWidth, _innerSize.width);
+            const float dt = GetWorld().timeDelta;
 
-            LabelAndInputTextRO("Type:", comp->getComponentType(), _labelWidth, _innerSize.width);
-
-            bool isEnabled = comp->isEnabled();
-            FixedLabel("Enabled:", _labelWidth);
-            ImGui::Checkbox("##isEnabled", &isEnabled);
-
-            if (isEnabled != comp->isEnabled())
+            if (_objectName)
             {
-                comp->setEnabled(isEnabled);
+                _objectName->setInputtedData(comp->getComponentName().toStdString());
             }
 
-            ImGui::Dummy(glm::vec2(0.0f, _gapBetweenSections));
+            if (_objectType)
+            {
+                _objectType->setInputtedData(comp->getComponentType().toStdString());
+            }
+
+            if (_objectIsEnabled)
+            {
+                _objectIsEnabled->setValue(comp->isEnabled());
+            }
+
+            _generalInfoLayout.tick(dt);
         }
     }
 
@@ -421,10 +520,24 @@ namespace Core
     {
         if (comp && ImGui::CollapsingHeader("Static mesh bundle", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            LabelAndInputTextRO("Sub-render:", comp->getRenderMeshesCount(), _labelWidth,
-                                _innerSize.width);
+            const float dt = GetWorld().timeDelta;
 
-            ImGui::Dummy(glm::vec2(0.0f, _gapBetweenSections));
+            if (_renderMeshesCount)
+            {
+                _renderMeshesCount->setInputtedData(comp->getRenderMeshesCount());
+            }
+
+            if (_renderBundlesCount)
+            {
+                _renderBundlesCount->setInputtedData(comp->getRenderBundlesCount());
+            }
+
+            if (_ignoreMouseSelectBundle)
+            {
+                _ignoreMouseSelectBundle->setValue(comp->isIgnoreSelect());
+            }
+
+            _staticMeshBundleLayout.tick(dt);
         }
     }
 

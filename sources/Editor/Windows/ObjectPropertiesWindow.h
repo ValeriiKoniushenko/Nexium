@@ -24,10 +24,14 @@
 
 #include "BaseWindow.h"
 #include "Core/Timer.h"
+#include "Editor/GuiComponents/VerticalLayout.h"
+#include "Editor/GuiComponents/Input.h"
 #include "Graphics/GraphicsComponents.h"
 
 namespace Core
 {
+    class CheckBox;
+    class TextInput;
 
     class Transformable;
     class StaticMeshBundle;
@@ -46,14 +50,42 @@ namespace Core
         void onDraw() override;
         void onUpdate() override;
 
-        void tryDrawTransformable(Transformable* comp, BaseComponent* base);
+        void createGui();
+        void registerGuiEvents();
+
         void tryDrawBaseComponent(BaseComponent* comp);
+        void tryDrawTransformable(Transformable* comp, BaseComponent* base);
         void tryDrawStaticMeshBundle(StaticMeshBundle* comp);
         void tryDrawBaseComponentExtra(BaseComponent* comp);
         void tryDrawGraphicsComponentData(GraphicsComponentData* comp);
         void tryDrawBaseCamera(BaseCamera* comp);
 
     private:
+        // ============= GUI =============
+        // General section:
+        VerticalLayout _generalInfoLayout;
+        TextInput* _objectName = nullptr;
+        TextInput* _objectType = nullptr;
+        CheckBox* _objectIsEnabled = nullptr;
+
+        // StaticMeshBundle section:
+        VerticalLayout _staticMeshBundleLayout;
+        IntInput* _renderMeshesCount = nullptr;
+        IntInput* _renderBundlesCount = nullptr;
+        CheckBox* _ignoreMouseSelectBundle = nullptr;
+
+        // BaseComponent-extra section:
+        VerticalLayout _baseComponentExtraLayout;
+
+
+        // GraphicsComponent section:
+        VerticalLayout _graphicsComponentLayout;
+
+
+        // BaseCamera section:
+        VerticalLayout _baseCameraLayout;
+
+
         AbstractComponent* _target = nullptr;
         Repeater _slowUpdater;
         std::vector<std::pair<int, int>> _graphicsMods;

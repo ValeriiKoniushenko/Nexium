@@ -47,8 +47,6 @@ namespace Core
         void createGui();
         void onInitialize() override;
         void onDraw() override;
-        void drawList();
-        void drawDetails();
         void drawTableWith(
             const char* label,
             const std::unordered_set<ShaderVariable, ShaderVariable::Hasher>& inputData);

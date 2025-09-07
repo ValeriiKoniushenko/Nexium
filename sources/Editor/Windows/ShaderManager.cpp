@@ -46,11 +46,11 @@ namespace Core
                 l->setFlex(Widget::Flex::FlexWidth);
 
                 auto* label = l->addChildComponent<Label>();
-                label->setText("Total shaders:");
+                label->setText("Total shaders");
                 label->setWidth(defaultLabelWidth);
 
                 _totalShaders = l->addChildComponent<IntInput>();
-                _totalShaders->setIsDisabled(true);
+                _totalShaders->setDisabled(true);
                 _totalShaders->setFlex(Widget::Flex::FlexWidth);
             }
 
@@ -60,11 +60,11 @@ namespace Core
                 l->setFlex(Widget::Flex::FlexWidth);
 
                 auto* label = l->addChildComponent<Label>();
-                label->setText("With errors:");
+                label->setText("With errors");
                 label->setWidth(defaultLabelWidth);
 
                 _failedShaders = l->addChildComponent<IntInput>();
-                _failedShaders->setIsDisabled(true);
+                _failedShaders->setDisabled(true);
                 _failedShaders->setFlex(Widget::Flex::FlexWidth);
             }
         }
@@ -72,7 +72,7 @@ namespace Core
         {
             auto* ext = _headLayout.addChildComponent<HorizontalLayout>();
             auto* label = ext->addChildComponent<Label>();
-            label->setText("Valid extensions:");
+            label->setText("Valid extensions");
             label->setWidth(defaultLabelWidth);
 
             _validExtensions = ext->addChildComponent<TextInput>();
@@ -83,7 +83,7 @@ namespace Core
         {
             auto* ext = _headLayout.addChildComponent<HorizontalLayout>();
             auto* label = ext->addChildComponent<Label>();
-            label->setText("Root shader dir:");
+            label->setText("Root shader dir");
             label->setWidth(defaultLabelWidth);
 
             auto* input = ext->addChildComponent<TextInput>();
@@ -94,7 +94,7 @@ namespace Core
 
         {
             auto* shaderSelect = _headLayout.addChildComponent<HorizontalLayout>();
-            auto* label = shaderSelect->addChildComponent<Label>("Shader:");
+            auto* label = shaderSelect->addChildComponent<Label>("Shader");
             label->setWidth(defaultLabelWidth);
 
             _comboView = shaderSelect->addChildComponent<ComboView>();
@@ -109,7 +109,7 @@ namespace Core
         // ================ SELECTED SHADER ======================
         {
             auto* name = _selectedShaderLayout.addChildComponent<HorizontalLayout>();
-            auto* label = name->addChildComponent<Label>("Shader name:");
+            auto* label = name->addChildComponent<Label>("Shader name");
             label->setWidth(defaultLabelWidth);
 
             _shaderName = name->addChildComponent<TextInput>();
@@ -119,7 +119,7 @@ namespace Core
 
         {
             auto* path = _selectedShaderLayout.addChildComponent<HorizontalLayout>();
-            auto* label = path->addChildComponent<Label>("Path to .vert:");
+            auto* label = path->addChildComponent<Label>("Path to .vert");
             label->setWidth(defaultLabelWidth);
 
             _vertPath = path->addChildComponent<TextInput>();
@@ -139,7 +139,7 @@ namespace Core
 
         {
             auto* path = _selectedShaderLayout.addChildComponent<HorizontalLayout>();
-            auto* label = path->addChildComponent<Label>("Path to .frag:");
+            auto* label = path->addChildComponent<Label>("Path to .frag");
             label->setWidth(defaultLabelWidth);
 
             _fragPath = path->addChildComponent<TextInput>();
@@ -175,6 +175,7 @@ namespace Core
 
         _selectedShaderLayout.addChildComponent<Spacer>();
     }
+
     void ShaderManagerEWC::onInitialize()
     {
         BaseFloatEWC::onInitialize();
