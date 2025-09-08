@@ -29,9 +29,9 @@
 namespace Core
 {
 
-    ECS_REGISTER_NEW_COMPONENT_TYPE(BaseCombo);
-    ECS_REGISTER_NEW_COMPONENT_TYPE(ComboView);
-    ECS_REGISTER_NEW_COMPONENT_TYPE(ComboModelBased);
+    ECS_REGISTER_NEW_TYPE(BaseCombo);
+    ECS_REGISTER_NEW_TYPE(ComboView);
+    ECS_REGISTER_NEW_TYPE(ComboModelBased);
 
     glm::vec2 BaseCombo::getRealSize() const
     {

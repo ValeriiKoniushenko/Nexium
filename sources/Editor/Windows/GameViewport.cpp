@@ -27,7 +27,7 @@
 
 namespace Core
 {
-    ECS_REGISTER_NEW_COMPONENT_TYPE(GameViewportEWC)
+    ECS_REGISTER_NEW_TYPE(GameViewportEWC)
 
     //
     //     _   _  _                                      _

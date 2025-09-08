@@ -49,7 +49,7 @@ namespace
         }
     };
 
-    ECS_REGISTER_NEW_COMPONENT_TYPE(DummyComponent);
+    ECS_REGISTER_NEW_TYPE(DummyComponent);
 
     class HardConstructorComponent : public BaseComponent
     {
@@ -64,7 +64,7 @@ namespace
         std::string _b;
     };
 
-    ECS_REGISTER_NEW_COMPONENT_TYPE(HardConstructorComponent);
+    ECS_REGISTER_NEW_TYPE(HardConstructorComponent);
 
     class ECSTreeTests : public ::testing::Test
     {

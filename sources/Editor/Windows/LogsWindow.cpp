@@ -26,7 +26,7 @@
 
 namespace Core
 {
-    ECS_REGISTER_NEW_COMPONENT_TYPE(LogsWindowEWC)
+    ECS_REGISTER_NEW_TYPE(LogsWindowEWC)
 
     //
     //     _

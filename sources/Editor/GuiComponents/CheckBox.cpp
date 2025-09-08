@@ -29,7 +29,7 @@
 namespace Core
 {
 
-    ECS_REGISTER_NEW_COMPONENT_TYPE(CheckBox);
+    ECS_REGISTER_NEW_TYPE(CheckBox);
 
     glm::vec2 CheckBox::getRealSize() const
     {

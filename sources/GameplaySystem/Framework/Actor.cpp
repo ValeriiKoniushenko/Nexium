@@ -25,7 +25,7 @@
 namespace Core
 {
 
-    ECS_REGISTER_NEW_COMPONENT_TYPE(Actor);
+    ECS_REGISTER_NEW_TYPE(Actor);
 
     nlohmann::json Actor::toJson() const
     {

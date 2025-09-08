@@ -35,7 +35,7 @@ namespace
 
 namespace Core
 {
-    ECS_REGISTER_NEW_COMPONENT_TYPE(InvalidComponent);
+    ECS_REGISTER_NEW_TYPE(InvalidComponent);
 
     BaseComponent* GlobalComponentFactory::create(const StringAtom& type)
     {
@@ -73,7 +73,7 @@ namespace Core
 
             // 2 - because we should hit it from both macros:
             // - ECS_REGISTER_NEW_COMPONENT
-            // - ECS_REGISTER_NEW_COMPONENT_TYPE
+            // - ECS_REGISTER_NEW_TYPE
             if (++_debugTypeTracker[newType] > 2)
             {
                 warnLog("The type '{}' was implemented more times then needed."_f << newType);
@@ -95,7 +95,7 @@ namespace Core
         {
             // 2 - because we should hit it from both macros:
             // - ECS_REGISTER_NEW_COMPONENT
-            // - ECS_REGISTER_NEW_COMPONENT_TYPE
+            // - ECS_REGISTER_NEW_TYPE
             constexpr uint32_t hitCount = 2;
 
             if (counter < hitCount)
@@ -104,7 +104,7 @@ namespace Core
                     false,
                     ("The type '{}' wasn't fully registered. Try to find where this type was declared/"
                      "created and add 'ECS_REGISTER_NEW_COMPONENT' to the classe's body, and "
-                     "'ECS_REGISTER_NEW_COMPONENT_TYPE' to its implementation(.cpp)"
+                     "'ECS_REGISTER_NEW_TYPE' to its implementation(.cpp)"
                      " Also, you can enable(if it's disabled) spdlog::level::trace and check what "
                      "type was declared and what type was implemented"_f
                      << type)
@@ -117,7 +117,7 @@ namespace Core
                     ("New unknown component wasn't registered. Somewhere you inherited with new type"
                      " from base type '{}'. If you inherit from the component you must register your"
                      " new type with 'ECS_REGISTER_NEW_COMPONENT' inside classe's body, and "
-                     "register a type with 'ECS_REGISTER_NEW_COMPONENT_TYPE' inside .cpp file."
+                     "register a type with 'ECS_REGISTER_NEW_TYPE' inside .cpp file."
                      " Also, you can enable(if it's disabled) spdlog::level::trace and check what "
                      "type was declared and what type was implemented"_f
                      << type)

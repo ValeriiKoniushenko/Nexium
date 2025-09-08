@@ -26,7 +26,7 @@
 
 namespace Core
 {
-    ECS_REGISTER_NEW_COMPONENT_TYPE(Spectator)
+    ECS_REGISTER_NEW_TYPE(Spectator)
 
     nlohmann::json Spectator::toJson() const
     {

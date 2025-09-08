@@ -25,6 +25,6 @@
 namespace Core
 {
 
-    ECS_REGISTER_NEW_COMPONENT_TYPE(Layout)
+    ECS_REGISTER_NEW_TYPE(Layout)
 
 } // namespace Core

@@ -32,7 +32,7 @@
 namespace Core
 {
 
-    ECS_REGISTER_NEW_COMPONENT_TYPE(StaticMesh)
+    ECS_REGISTER_NEW_TYPE(StaticMesh)
 
     void StaticMesh::importFrom(const aiMesh* rawMesh, const aiScene* scene,
                                 const std::filesystem::path& modelPath /* = ""*/)

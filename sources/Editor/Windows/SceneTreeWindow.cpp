@@ -31,7 +31,7 @@
 
 namespace Core
 {
-    ECS_REGISTER_NEW_COMPONENT_TYPE(SceneTreeWindowEWC)
+    ECS_REGISTER_NEW_TYPE(SceneTreeWindowEWC)
 
     //
     //     _____                           _____

@@ -25,8 +25,8 @@
 namespace Core
 {
 
-    ECS_REGISTER_NEW_COMPONENT_TYPE(BaseInput);
-    ECS_REGISTER_NEW_COMPONENT_TYPE(TextInput);
+    ECS_REGISTER_NEW_TYPE(BaseInput);
+    ECS_REGISTER_NEW_TYPE(TextInput);
 
     void BaseInput::setTextColor(const Color4& value)
     {

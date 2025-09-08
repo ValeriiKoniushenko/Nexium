@@ -28,8 +28,8 @@
 namespace Core
 {
 
-    ECS_REGISTER_NEW_COMPONENT_TYPE(Button)
-    ECS_REGISTER_NEW_COMPONENT_TYPE(ToggleButton)
+    ECS_REGISTER_NEW_TYPE(Button)
+    ECS_REGISTER_NEW_TYPE(ToggleButton)
 
     void Button::setButtonColor(const Color4& value)
     {

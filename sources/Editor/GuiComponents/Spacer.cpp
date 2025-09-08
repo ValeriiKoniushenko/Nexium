@@ -29,8 +29,14 @@
 namespace Core
 {
 
-    ECS_REGISTER_NEW_COMPONENT_TYPE(Spacer);
-    
+    ECS_REGISTER_NEW_TYPE(Spacer);
+
+    Spacer::Spacer(const StringAtom& name)
+        : Widget(componentType, name)
+    {
+        _size.x = style().ItemSpacing.x;
+    }
+
     glm::vec2 Spacer::getRealSize() const
     {
         return _size;

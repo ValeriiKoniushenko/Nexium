@@ -35,7 +35,7 @@
 
 namespace Core
 {
-    ECS_REGISTER_NEW_COMPONENT_TYPE(EditorMenuBarWindowEWC)
+    ECS_REGISTER_NEW_TYPE(EditorMenuBarWindowEWC)
 
     void EditorMenuBarWindowEWC::onInitialize()
     {

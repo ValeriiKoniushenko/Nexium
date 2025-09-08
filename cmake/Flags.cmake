@@ -20,7 +20,7 @@ function(CoreAddCompileOptionsTo Target)
             # "$<$<CONFIG:RELEASE>:/fp:fast>"
         )
 
-        target_compile_definitions(${Target} -DNOMINMAX)
+        target_compile_definitions(${Target} PRIVATE -DNOMINMAX)
     else ()
         target_compile_options(${Target} PRIVATE
             "-Wall"

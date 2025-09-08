@@ -30,9 +30,11 @@ namespace Core
 
     class Spacer : public Widget
     {
-        ECS_REGISTER_NEW_COMPONENT(Spacer, Widget);
+        ECS_REGISTER_NEW_COMPONENT_NO_CNSTR(Spacer, Widget);
 
     public:
+        Spacer(const StringAtom& name = ""_atom);
+
         [[nodiscard]] glm::vec2 getRealSize() const;
 
         [[nodiscard]] float getWidth() const override { return getRealSize().x; }

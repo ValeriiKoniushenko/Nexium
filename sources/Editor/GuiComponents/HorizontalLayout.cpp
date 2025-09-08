@@ -26,7 +26,7 @@
 
 namespace Core
 {
-    ECS_REGISTER_NEW_COMPONENT_TYPE(HorizontalLayout)
+    ECS_REGISTER_NEW_TYPE(HorizontalLayout)
 
     HorizontalLayout::HorizontalLayout(const StringAtom& name)
         : Layout(componentType, name)

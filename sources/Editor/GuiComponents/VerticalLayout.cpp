@@ -25,7 +25,7 @@
 namespace Core
 {
 
-    ECS_REGISTER_NEW_COMPONENT_TYPE(VerticalLayout)
+    ECS_REGISTER_NEW_TYPE(VerticalLayout)
 
     float VerticalLayout::getWidth() const
     {

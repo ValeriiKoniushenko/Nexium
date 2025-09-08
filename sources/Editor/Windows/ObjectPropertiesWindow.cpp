@@ -27,6 +27,7 @@
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/Label.h"
+#include "Editor/GuiComponents/Spacer.h"
 #include "GameplaySystem/ECS/Transformable.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Graphics/Primitives/StaticMeshBundle.h"
@@ -34,7 +35,7 @@
 
 namespace Core
 {
-    ECS_REGISTER_NEW_COMPONENT_TYPE(ObjectPropertiesWindowEWC)
+    ECS_REGISTER_NEW_TYPE(ObjectPropertiesWindowEWC)
 
     //
     //     _____  _        _              _   ______
@@ -304,25 +305,26 @@ namespace Core
             label->setWidth(defaultLabelWidthBig);
 
             auto* doubleComp = row->addChildComponent<HorizontalLayout>("Camera d-comp");
-            doubleComp->setFlex(Widget::Flex::FlexWidth);
             doubleComp->setHorizontalAlign(Widget::Align::SpaceBetween);
 
             auto* width = doubleComp->addChildComponent<HorizontalLayout>("Camera W");
-            width->setFlex(Widget::Flex::FlexWidth);
+            auto* w = width->addChildComponent<Label>("W:");
+            w->setTextColor(Color4::From(NormColor4(ColorRed)));
+            width->addChildComponent<Spacer>();
             _cameraFrameWidth = width->addChildComponent<IntInput>();
             _cameraFrameWidth->setFlex(Widget::Flex::FlexWidth);
             _cameraFrameWidth->setDisabled(true);
-            auto* w = width->addChildComponent<Label>("W");
-            w->setTextColor(Color4::From(NormColor4(ColorRed)));
 
+            doubleComp->addChildComponent<Spacer>();
+            doubleComp->addChildComponent<Spacer>();
 
             auto* height = doubleComp->addChildComponent<HorizontalLayout>("Camera H");
-            width->setFlex(Widget::Flex::FlexWidth);
+            auto* h = height->addChildComponent<Label>("H:");
+            h->setTextColor(Color4::From(NormColor4(ColorGreen)));
+            height->addChildComponent<Spacer>();
             _cameraFrameHeight = height->addChildComponent<IntInput>();
             _cameraFrameHeight->setFlex(Widget::Flex::FlexWidth);
             _cameraFrameHeight->setDisabled(true);
-            auto* h = width->addChildComponent<Label>("H");
-            h->setTextColor(Color4::From(NormColor4(ColorGreen)));
         }
     }
 

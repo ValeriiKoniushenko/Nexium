@@ -28,7 +28,7 @@
 namespace Core
 {
 
-    ECS_REGISTER_NEW_COMPONENT_TYPE(Widget)
+    ECS_REGISTER_NEW_TYPE(Widget)
 
     Widget::Widget(Widget&& other) noexcept
         : BaseComponent(componentType, other._name)

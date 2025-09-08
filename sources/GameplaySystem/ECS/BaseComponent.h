@@ -132,7 +132,7 @@ public:                                                                         
  * If you don't understand what means 'new type' check the macro's description
  * above, please.
  */
-#define ECS_REGISTER_NEW_COMPONENT_TYPE(ClassName)                                                 \
+#define ECS_REGISTER_NEW_TYPE(ClassName)                                                           \
     const static bool _##ClassName##_type_registration                                             \
         = GetGlobalComponentFactory().registerNewType(                                             \
             StringAtom::Intern(#ClassName),                                                        \
@@ -396,7 +396,7 @@ namespace Core
      * To create your own component you should do only several things:
      * 1. Create your component's class. I.e. MyNewComponent and inherit from BaseComponent
      * 2. Register as component: inside this class put a macros ECS_REGISTER_NEW_COMPONENT
-     * 3. Register as type: inside .cpp file put ECS_REGISTER_NEW_COMPONENT_TYPE
+     * 3. Register as type: inside .cpp file put ECS_REGISTER_NEW_TYPE
      *
      * @code{cpp}
      * // MyNewComponent.h
@@ -406,7 +406,7 @@ namespace Core
      * @endcode
      * @code{cpp}
      * // MyNewComponent.cpp
-     * ECS_REGISTER_NEW_COMPONENT_TYPE(MyNewComponent);
+     * ECS_REGISTER_NEW_TYPE(MyNewComponent);
      * @endcode
      *
      * More complex example with MyParentComponent and MyChildComponent
@@ -421,8 +421,8 @@ namespace Core
      * @endcode
      * @code{cpp}
      * // MyNewComponent.cpp
-     * ECS_REGISTER_NEW_COMPONENT_TYPE(MyParentComponent);
-     * ECS_REGISTER_NEW_COMPONENT_TYPE(MyChildComponent);
+     * ECS_REGISTER_NEW_TYPE(MyParentComponent);
+     * ECS_REGISTER_NEW_TYPE(MyChildComponent);
      * @endcode
      */
     class BaseComponent : public AbstractComponent

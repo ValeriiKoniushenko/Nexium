@@ -42,7 +42,7 @@ namespace
 
 namespace Core
 {
-    ECS_REGISTER_NEW_COMPONENT_TYPE(AssetsManagerWindowEWC)
+    ECS_REGISTER_NEW_TYPE(AssetsManagerWindowEWC)
 
     void AssetsManagerWindowEWC::onInitialize()
     {
