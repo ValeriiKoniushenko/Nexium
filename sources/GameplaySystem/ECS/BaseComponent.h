@@ -31,32 +31,9 @@
 #include <stack>
 #include <unordered_set>
 
-namespace Core
-{
-    template<class T>
-    void* tryAllocateECSObject(T* data)
-    {
-        if constexpr (std::is_abstract_v<T>)
-        {
-            Assert(false, "You are trying to create somewhere an abstract object");
-            return nullptr;
-        }
-        else if constexpr (std::is_copy_constructible_v<T>)
-        {
-            if (data)
-            {
-                return new T(*data);
-            }
-            return new T;
-        }
-        else
-        {
-            return new T;
-        }
-    }
-
-} // namespace Core
-
+// ===============================================================
+//                         ECS INTERNAL
+// ===============================================================
 #define _HEADER_ECS_REGISTER_NEW_COMPONENT(CurrentClass, BaseComponentClass)                       \
 public:                                                                                            \
     using Ptr = boost::intrusive_ptr<CurrentClass>;                                                \
@@ -96,6 +73,7 @@ public:                                                                         
         : BaseComponentClass(componentType, name)                                                  \
     {                                                                                              \
     }
+// ===============================================================
 
 /**
  * Put these macros inside your class body for every new component.
@@ -154,26 +132,33 @@ public:                                                                         
  * If you don't understand what means 'new type' check the macro's description
  * above, please.
  */
-#define ECS_REGISTER_NEW_COMPONENT_TYPE(ClassName)                                                 \
-    const static bool _##ClassName##_type_registration                                             \
-        = GetGlobalComponentFactory().registerNewType(                                             \
-            StringAtom::Intern(#ClassName),                                                        \
-            []() -> BaseComponent*                                                                 \
-            {                                                                                      \
-                return new std::conditional_t<std::is_abstract_v<ClassName>, InvalidComponent,     \
-                                              ClassName>;                                          \
-            });                                                                                    \
-    const StringAtom ClassName::componentType = StringAtom::Intern(#ClassName);                    \
-    const bool ClassName::_debugTypeTracker = []()                                                 \
-    {                                                                                              \
-        GetGlobalComponentFactory()._debugTypeTracker_NotifyNewAboutType(                          \
-            StringAtom::Intern(#ClassName));                                                       \
-        return true;                                                                               \
-    }();
+#define ECS_REGISTER_NEW_COMPONENT_TYPE(ClassName) ((void)(0))
 
 namespace Core
 {
     class BaseComponent;
+
+    template<class T>
+    void* tryAllocateECSObject(T* data)
+    {
+        if constexpr (std::is_abstract_v<T>)
+        {
+            Assert(false, "You are trying to create somewhere an abstract object");
+            return nullptr;
+        }
+        else if constexpr (std::is_copy_constructible_v<T>)
+        {
+            if (data)
+            {
+                return new T(*data);
+            }
+            return new T;
+        }
+        else
+        {
+            return new T;
+        }
+    }
 
     // ========================= CONCEPTS =========================
     /**

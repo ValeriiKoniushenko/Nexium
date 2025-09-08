@@ -94,7 +94,7 @@ namespace Core
     template<Utils::IsArithmetic Type>
     class NumInput : public BaseInput
     {
-        ECS_REGISTER_NEW_TEMPLATE_COMPONENT(NumInput<Type>, BaseInput);
+        ECS_REGISTER_NEW_TEMPLATE_COMPONENT(NumInput, BaseInput);
 
     public:
         void setInputtedData(Type data) { _buffer = data; }

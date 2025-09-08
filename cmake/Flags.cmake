@@ -19,6 +19,8 @@ function(CoreAddCompileOptionsTo Target)
             "$<$<CONFIG:RELEASE>:/O2>"
             # "$<$<CONFIG:RELEASE>:/fp:fast>"
         )
+
+        target_compile_definitions(${Target} -DNOMINMAX)
     else ()
         target_compile_options(${Target} PRIVATE
             "-Wall"
