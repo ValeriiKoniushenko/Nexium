@@ -31,7 +31,10 @@ namespace Core
     HorizontalLayout::HorizontalLayout(const StringAtom& name)
         : Layout(componentType, name)
     {
-        _flex = Flex::FlexWidth;
+        setComponentName("HorizontalLayout"_atom);
+        setFlex(Flex::FlexWidth);
+        setVerticalAlign(Align::Center);
+        setHorizontalAlign(Align::Left);
     }
 
     float HorizontalLayout::getWidth() const
@@ -154,20 +157,6 @@ namespace Core
     void HorizontalLayout::onInitialize()
     {
         Widget::onInitialize();
-        if (_name.isEmpty())
-        {
-            setComponentName("HorizontalLayout"_atom);
-        }
-
-        if (getVerticalAlign().cast() == Align::None)
-        {
-            setVerticalAlign(Align::Center);
-        }
-
-        if (getHorizontalAlign().cast() == Align::None)
-        {
-            setHorizontalAlign(Align::Left);
-        }
     }
 
     void HorizontalLayout::prepareAlignSpaceBetween()

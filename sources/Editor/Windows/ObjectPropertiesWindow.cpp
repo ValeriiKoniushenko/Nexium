@@ -33,6 +33,71 @@
 #include "Graphics/Primitives/StaticMeshBundle.h"
 #include "ImGui/imgui_internal.h"
 
+using namespace Core;
+
+namespace
+{
+    using HLayout = HorizontalLayout;
+
+    // =========================================================
+    //                 GUI STANDARD TEMPLATES
+    // =========================================================
+
+    HLayout::Ptr CreateHLayoutAndLabel(const char* label, bool isReadOnly)
+    {
+        if (!Verify(label))
+        {
+            return nullptr;
+        }
+
+        auto row = HLayout::Create();
+        row->setComponentName("H-Layout({}): {}"_f << (isReadOnly ? "RO" : "W") << label);
+        row->addChildComponent<Label>(label)->setWidth(
+            ObjectPropertiesWindowEWC::defaultLabelWidthBig);
+
+        return row;
+    }
+
+    template<class T>
+        requires std::derived_from<T, BaseInput>
+    HLayout::Ptr Create(const char* label, bool isReadOnly)
+    {
+        if (!Verify(label))
+        {
+            return nullptr;
+        }
+
+        auto row = CreateHLayoutAndLabel(label, isReadOnly);
+
+        auto* comp = row->addChildComponent<T>("Input: {}"_f << label);
+        comp->setFlex(Widget::Flex::FlexWidth);
+        comp->setDisabled(isReadOnly);
+
+        return row;
+    }
+
+    template<class T>
+        requires std::is_same_v<T, CheckBox>
+    HLayout::Ptr Create(const char* label, bool isReadOnly)
+    {
+        using namespace Core;
+
+        if (!Verify(label))
+        {
+            return nullptr;
+        }
+
+        auto row = CreateHLayoutAndLabel(label, isReadOnly);
+
+        auto* comp = row->addChildComponent<CheckBox>("CheckBox: {}"_f << label);
+        comp->setDisabled(isReadOnly);
+
+        return row;
+    }
+    // =========================================================
+
+} // namespace
+
 namespace Core
 {
     ECS_REGISTER_NEW_TYPE(ObjectPropertiesWindowEWC)
@@ -164,157 +229,119 @@ namespace Core
 
     void ObjectPropertiesWindowEWC::createGui()
     {
-        constexpr float defaultLabelWidth = 100.0f;
-        constexpr float defaultLabelWidthBig = 150.0f;
         // ================= General ====================
         {
-            auto* name = _generalInfoLayout.addChildComponent<HorizontalLayout>();
-            auto* label = name->addChildComponent<Label>("Name");
-            label->setWidth(defaultLabelWidth);
+            auto& out = _generalInfoLayout;
 
-            _objectName = name->addChildComponent<TextInput>();
-            _objectName->setFlex(Widget::Flex::FlexWidth);
-            _objectName->setReadOnly(true);
-        }
+            out.attachChild(::Create<TextInput>("Name", true));
+            _objectName = out.getLastChildAs<HLayout>()->getLastChildAs<TextInput>().get();
 
-        {
-            auto* type = _generalInfoLayout.addChildComponent<HorizontalLayout>();
-            auto* label = type->addChildComponent<Label>("Type");
-            label->setWidth(defaultLabelWidth);
+            out.attachChild(::Create<TextInput>("Type", true));
+            _objectType = out.getLastChildAs<HLayout>()->getLastChildAs<TextInput>().get();
 
-            _objectType = type->addChildComponent<TextInput>();
-            _objectType->setFlex(Widget::Flex::FlexWidth);
-            _objectType->setReadOnly(true);
-        }
-
-        {
-            auto* enabled = _generalInfoLayout.addChildComponent<HorizontalLayout>();
-            auto* label = enabled->addChildComponent<Label>("Enabled");
-            label->setWidth(defaultLabelWidth);
-
-            _objectIsEnabled = enabled->addChildComponent<CheckBox>();
+            out.attachChild(::Create<CheckBox>("Enabled", false));
+            _objectIsEnabled = out.getLastChildAs<HLayout>()->getLastChildAs<CheckBox>().get();
         }
 
         // ================= StaticMeshBundle ====================
         {
-            auto* subRender = _staticMeshBundleLayout.addChildComponent<HorizontalLayout>();
-            auto* label = subRender->addChildComponent<Label>("Sub-render meshes");
-            label->setWidth(defaultLabelWidthBig);
+            auto& out = _staticMeshBundleLayout;
 
-            _renderMeshesCount = subRender->addChildComponent<IntInput>();
-            _renderMeshesCount->setFlex(Widget::Flex::FlexWidth);
-            _renderMeshesCount->setDisabled(true);
-        }
+            out.attachChild(::Create<IntInput>("Sub-render meshes", true));
+            _renderMeshesCount = out.getLastChildAs<HLayout>()->getLastChildAs<IntInput>().get();
 
-        {
-            auto* subRender = _staticMeshBundleLayout.addChildComponent<HorizontalLayout>();
-            auto* label = subRender->addChildComponent<Label>("Sub-render bundles");
-            label->setWidth(defaultLabelWidthBig);
+            out.attachChild(::Create<IntInput>("Sub-render bundles", true));
+            _renderBundlesCount = out.getLastChildAs<HLayout>()->getLastChildAs<IntInput>().get();
 
-            _renderBundlesCount = subRender->addChildComponent<IntInput>();
-            _renderBundlesCount->setFlex(Widget::Flex::FlexWidth);
-            _renderBundlesCount->setDisabled(true);
-        }
+            out.attachChild(::Create<IntInput>("Active triangles", true));
+            _activeTrianglesCount = out.getLastChildAs<HLayout>()->getLastChildAs<IntInput>().get();
 
-        {
-            auto* subRender = _staticMeshBundleLayout.addChildComponent<HorizontalLayout>();
-            auto* label = subRender->addChildComponent<Label>("Hidden from scene");
-            label->setWidth(defaultLabelWidthBig);
-
-            _ignoreMouseSelectBundle = subRender->addChildComponent<CheckBox>();
-            _ignoreMouseSelectBundle->setDisabled(true);
+            out.attachChild(::Create<CheckBox>("Hidden from scene", true));
+            _ignoreMouseSelectBundle
+                = out.getLastChildAs<HLayout>()->getLastChildAs<CheckBox>().get();
         }
 
         // ================= BaseComponent-extra ====================
         {
-            auto* row = _baseComponentExtraLayout.addChildComponent<HorizontalLayout>();
-            auto* label = row->addChildComponent<Label>("Parent");
-            label->setWidth(defaultLabelWidthBig);
+            auto& out = _baseComponentExtraLayout;
 
-            _parentName = row->addChildComponent<TextInput>();
-            _parentName->setFlex(Widget::Flex::FlexWidth);
-            _parentName->setDisabled(true);
+            out.attachChild(::Create<TextInput>("Parent", true));
+            _parentName = out.getLastChildAs<HLayout>()->getLastChildAs<TextInput>().get();
+
+            out.attachChild(::Create<IntInput>("Children count", true));
+            _childrenCount = out.getLastChildAs<HLayout>()->getLastChildAs<IntInput>().get();
+
+            out.attachChild(::Create<CheckBox>("Is initialized", true));
+            _isInited = out.getLastChildAs<HLayout>()->getLastChildAs<CheckBox>().get();
+
+            out.attachChild(::Create<CheckBox>("Disabled ticks", false));
+            _disabledTicks = out.getLastChildAs<HLayout>()->getLastChildAs<CheckBox>().get();
         }
 
+        // ================= StaticMesh ====================
         {
-            auto* row = _baseComponentExtraLayout.addChildComponent<HorizontalLayout>();
-            auto* label = row->addChildComponent<Label>("Children count");
-            label->setWidth(defaultLabelWidthBig);
+            auto& out = _staticMeshLayout;
 
-            _childrenCount = row->addChildComponent<IntInput>();
-            _childrenCount->setFlex(Widget::Flex::FlexWidth);
-            _childrenCount->setDisabled(true);
-        }
-
-        {
-            auto* row = _baseComponentExtraLayout.addChildComponent<HorizontalLayout>(
-                "BaseComp is initialized");
-            auto* label = row->addChildComponent<Label>("Is initialized");
-            label->setWidth(defaultLabelWidthBig);
-
-            _isInited = row->addChildComponent<CheckBox>();
-            _isInited->setDisabled(true);
-        }
-
-        {
-            auto* row = _baseComponentExtraLayout.addChildComponent<HorizontalLayout>();
-            auto* label = row->addChildComponent<Label>("Disabled ticks");
-            label->setWidth(defaultLabelWidthBig);
-
-            _disabledTicks = row->addChildComponent<CheckBox>();
+            out.attachChild(::Create<TextInput>("Outline shader name", true));
+            _outlineShader = out.getLastChildAs<HLayout>()->getLastChildAs<TextInput>().get();
         }
 
         // ================= GraphicsComponent ====================
         {
+            auto& out = _graphicsComponentLayout;
+            out.attachChild(::Create<IntInput>("Triangles", true));
+            _graphicsTriangles = out.getLastChildAs<HLayout>()->getLastChildAs<IntInput>().get();
+
+            out.attachChild(::Create<TextInput>("Shader name", true));
+            _graphicsShader = out.getLastChildAs<HLayout>()->getLastChildAs<TextInput>().get();
+
+            out.attachChild(::Create<IntInput>("VBO ID", true));
+            _graphicsVBO = out.getLastChildAs<HLayout>()->getLastChildAs<IntInput>().get();
+
+            out.attachChild(::Create<IntInput>("VAO ID", true));
+            _graphicsVAO = out.getLastChildAs<HLayout>()->getLastChildAs<IntInput>().get();
+
+            out.attachChild(::Create<IntInput>("EBO ID", true));
+            _graphicsEBO = out.getLastChildAs<HLayout>()->getLastChildAs<IntInput>().get();
+
+            out.attachChild(::Create<IntInput>("Texture ID", true));
+            _graphicsTexture = out.getLastChildAs<HLayout>()->getLastChildAs<IntInput>().get();
         }
 
         // ================= BaseCamera ====================
-        // FOV
         {
-            auto* row = _baseCameraLayout.addChildComponent<HorizontalLayout>();
-            auto* label = row->addChildComponent<Label>("FOV");
-            label->setWidth(defaultLabelWidthBig);
+            auto& out = _baseCameraLayout;
 
-            _cameraFov = row->addChildComponent<FloatInput>();
-            _cameraFov->setFlex(Widget::Flex::FlexWidth);
+            out.attachChild(::Create<FloatInput>("FOV", false));
+            _cameraFov = out.getLastChildAs<HLayout>()->getLastChildAs<FloatInput>().get();
             _cameraFov->setMin(BaseCamera::minFov);
             _cameraFov->setMax(BaseCamera::maxFov);
             _cameraFov->setStep(1.f);
-        }
-        // Far plane
-        {
-            auto* row = _baseCameraLayout.addChildComponent<HorizontalLayout>();
-            auto* label = row->addChildComponent<Label>("Far plane");
-            label->setWidth(defaultLabelWidthBig);
 
-            _cameraFar = row->addChildComponent<FloatInput>();
-            _cameraFar->setFlex(Widget::Flex::FlexWidth);
+            out.attachChild(::Create<FloatInput>("Far plane", false));
+            _cameraFar = out.getLastChildAs<HLayout>()->getLastChildAs<FloatInput>().get();
             _cameraFar->setMin(100.f);
             _cameraFar->setMax(1'000'000.f);
             _cameraFar->setStep(100.f);
-        }
-        // Near plane
-        {
-            auto* row = _baseCameraLayout.addChildComponent<HorizontalLayout>();
-            auto* label = row->addChildComponent<Label>("Near plane");
-            label->setWidth(defaultLabelWidthBig);
 
-            _cameraNear = row->addChildComponent<FloatInput>();
-            _cameraNear->setFlex(Widget::Flex::FlexWidth);
+            out.attachChild(::Create<FloatInput>("Near plane", false));
+            _cameraNear = out.getLastChildAs<HLayout>()->getLastChildAs<FloatInput>().get();
             _cameraNear->setMin(0.1f);
             _cameraNear->setMax(1000.f);
             _cameraNear->setStep(0.1f);
         }
+
         // Frame size
         {
-            auto* row = _baseCameraLayout.addChildComponent<HorizontalLayout>("Camera h-layout");
-            auto* label = row->addChildComponent<Label>("Frame size");
-            label->setWidth(defaultLabelWidthBig);
+            auto& out = _baseCameraLayout;
 
-            auto* doubleComp = row->addChildComponent<HorizontalLayout>("Camera d-comp");
+            out.attachChild(CreateHLayoutAndLabel("Frame size", false));
+            auto* mainRow = out.getLastChildAs<HLayout>().get();
+
+            auto* doubleComp = mainRow->addChildComponent<HLayout>("Camera d-comp");
             doubleComp->setHorizontalAlign(Widget::Align::SpaceBetween);
 
-            auto* width = doubleComp->addChildComponent<HorizontalLayout>("Camera W");
+            auto* width = doubleComp->addChildComponent<HLayout>("Camera W");
             auto* w = width->addChildComponent<Label>("W:");
             w->setTextColor(Color4::From(NormColor4(ColorRed)));
             width->addChildComponent<Spacer>();
@@ -323,7 +350,7 @@ namespace Core
 
             doubleComp->addChildComponent<Spacer>()->scaleCurrentWidth(2.f);
 
-            auto* height = doubleComp->addChildComponent<HorizontalLayout>("Camera H");
+            auto* height = doubleComp->addChildComponent<HLayout>("Camera H");
             auto* h = height->addChildComponent<Label>("H:");
             h->setTextColor(Color4::From(NormColor4(ColorGreen)));
             height->addChildComponent<Spacer>();
@@ -332,14 +359,15 @@ namespace Core
         }
         // Output size
         {
-            auto* row = _baseCameraLayout.addChildComponent<HorizontalLayout>();
-            auto* label = row->addChildComponent<Label>("Output size");
-            label->setWidth(defaultLabelWidthBig);
+            auto& out = _baseCameraLayout;
 
-            auto* doubleComp = row->addChildComponent<HorizontalLayout>();
+            out.attachChild(CreateHLayoutAndLabel("Output size", true));
+            auto* mainRow = out.getLastChildAs<HLayout>().get();
+
+            auto* doubleComp = mainRow->addChildComponent<HLayout>();
             doubleComp->setHorizontalAlign(Widget::Align::SpaceBetween);
 
-            auto* width = doubleComp->addChildComponent<HorizontalLayout>();
+            auto* width = doubleComp->addChildComponent<HLayout>();
             auto* w = width->addChildComponent<Label>("W:");
             w->setTextColor(Color4::From(NormColor4(ColorRed)));
             width->addChildComponent<Spacer>();
@@ -349,7 +377,7 @@ namespace Core
 
             doubleComp->addChildComponent<Spacer>()->scaleCurrentWidth(2.f);
 
-            auto* height = doubleComp->addChildComponent<HorizontalLayout>();
+            auto* height = doubleComp->addChildComponent<HLayout>();
             auto* h = height->addChildComponent<Label>("H:");
             h->setTextColor(Color4::From(NormColor4(ColorGreen)));
             height->addChildComponent<Spacer>();
@@ -702,12 +730,16 @@ namespace Core
             {
                 _disabledTicks->setValue(comp->getNoTick());
             }
-            if (_parentName && comp->hasParent())
+            if (_parentName)
             {
-                auto str = comp->getParent()->getComponentName().toStdString();
-                str += "(";
-                str += comp->getParent()->getComponentType().toStdString();
-                str += ")";
+                std::string str = "None";
+                if (comp->hasParent())
+                {
+                    str = comp->getParent()->getComponentName().toStdString();
+                    str += "(";
+                    str += comp->getParent()->getComponentType().toStdString();
+                    str += ")";
+                }
                 _parentName->setInputtedData(std::move(str));
             }
 
@@ -723,6 +755,15 @@ namespace Core
         {
             const float dt = GetWorld().timeDelta;
 
+            if (_outlineShader)
+            {
+                std::string shader = "None";
+                if (comp->getOutlineShader())
+                {
+                    shader = comp->getOutlineShader()->getName().toStdString();
+                }
+                _outlineShader->setInputtedData(shader);
+            }
             _staticMeshLayout.tick(dt);
         }
     }
@@ -785,6 +826,11 @@ namespace Core
             if (_ignoreMouseSelectBundle)
             {
                 _ignoreMouseSelectBundle->setValue(comp->isIgnoreSelect());
+            }
+
+            if (_activeTrianglesCount)
+            {
+                _activeTrianglesCount->setInputtedData(comp->getRenderableTriangles());
             }
 
             _staticMeshBundleLayout.tick(dt);

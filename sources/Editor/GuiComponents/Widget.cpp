@@ -30,45 +30,6 @@ namespace Core
 
     ECS_REGISTER_NEW_TYPE(Widget)
 
-    Widget::Widget(Widget&& other) noexcept
-        : BaseComponent(componentType, other._name)
-    {
-        *this = std::move(other);
-    }
-
-    Widget& Widget::operator=(Widget&& other) noexcept
-    {
-        BaseComponent::operator=(std::move(other));
-        if (&other != this)
-        {
-            _pos = other._pos;
-            _flex = other._flex;
-            _autoDraw = other._autoDraw;
-            _isDrawOutline = other._isDrawOutline;
-        }
-        return *this;
-    }
-
-    Widget::Widget(const Widget& other)
-        : BaseComponent(componentType, other._name)
-    {
-        *this = other;
-    }
-
-    Widget& Widget::operator=(const Widget& other)
-    {
-        if (&other != this)
-        {
-            BaseComponent::operator=(other);
-
-            _pos = other._pos;
-            _flex = other._flex;
-            _autoDraw = other._autoDraw;
-            _isDrawOutline = other._isDrawOutline;
-        }
-        return *this;
-    }
-
     void Widget::draw()
     {
         if (!isEnabled())

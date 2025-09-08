@@ -47,6 +47,10 @@ namespace Core
         ECS_REGISTER_NEW_COMPONENT(ObjectPropertiesWindowEWC, BaseFloatEWC);
 
     public:
+        static constexpr float defaultLabelWidth = 100.0f;
+        static constexpr float defaultLabelWidthBig = 150.0f;
+
+    public:
         void setTargetObject(AbstractComponent* actor);
         void resetTargetObject();
 
@@ -78,6 +82,7 @@ namespace Core
         VerticalLayout _staticMeshBundleLayout;
         IntInput* _renderMeshesCount = nullptr;
         IntInput* _renderBundlesCount = nullptr;
+        IntInput* _activeTrianglesCount = nullptr;
         CheckBox* _ignoreMouseSelectBundle = nullptr;
 
         // BaseComponent-extra section:
@@ -89,7 +94,7 @@ namespace Core
 
         // GraphicsComponent section:
         VerticalLayout _graphicsComponentLayout;
-        FloatInput* _graphicsTriangles = nullptr;
+        IntInput* _graphicsTriangles = nullptr;
         TextInput* _graphicsShader = nullptr;
         IntInput* _graphicsVBO = nullptr;
         IntInput* _graphicsVAO = nullptr;
@@ -108,6 +113,7 @@ namespace Core
 
         // StaticMesh section:
         VerticalLayout _staticMeshLayout;
+        TextInput* _outlineShader = nullptr;
 
         // Transformable section:
         VerticalLayout _transformableLayout;

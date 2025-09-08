@@ -27,6 +27,14 @@ namespace Core
 
     ECS_REGISTER_NEW_TYPE(VerticalLayout)
 
+    VerticalLayout::VerticalLayout(const StringAtom& name)
+        : Layout(componentType, name)
+    {
+        setComponentName("VerticalLayout"_atom);
+        setVerticalAlign(Align::Top);
+        setHorizontalAlign(Align::Center);
+    }
+
     float VerticalLayout::getWidth() const
     {
         if (_width)
@@ -142,19 +150,6 @@ namespace Core
     void VerticalLayout::onInitialize()
     {
         Widget::onInitialize();
-        if (_name.isEmpty())
-        {
-            setComponentName("VerticalLayout"_atom);
-        }
-
-        if (getVerticalAlign().cast() == Align::None)
-        {
-            setVerticalAlign(Align::Top);
-        }
-        if (getHorizontalAlign().cast() == Align::None)
-        {
-            setHorizontalAlign(Align::Center);
-        }
     }
 
     void VerticalLayout::prepareAlignSpaceBetween()

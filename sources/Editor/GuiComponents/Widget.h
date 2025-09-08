@@ -89,11 +89,6 @@ namespace Core
         };
 
     public:
-        Widget(Widget&& other) noexcept;
-        Widget& operator=(Widget&& other) noexcept;
-        Widget(const Widget& other);
-        Widget& operator=(const Widget& other);
-
         [[nodiscard]] virtual float getWidth() const = 0;
         [[nodiscard]] virtual float getHeight() const = 0;
         virtual void setWidth(float newWidth) = 0;

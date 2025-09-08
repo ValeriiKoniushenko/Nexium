@@ -486,6 +486,29 @@ namespace Core
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
 
         // ========================== WORKING WITH CHILDREN ==========================
+        [[nodiscard]] ChildT getFirstChild() { return _children.front(); }
+        [[nodiscard]] ChildT getLastChild() { return _children.back(); }
+
+        template<IsComponent T>
+        [[nodiscard]] T::Ptr getFirstChildAs()
+        {
+            if (auto&& child = _children.front())
+            {
+                return child->castTo<T>();
+            }
+            return nullptr;
+        }
+
+        template<IsComponent T>
+        [[nodiscard]] T::Ptr getLastChildAs()
+        {
+            if (auto&& child = _children.back())
+            {
+                return child->castTo<T>();
+            }
+            return nullptr;
+        }
+
         [[nodiscard]] ChildT getChildAt(std::size_t i) { return _children.at(i); }
         [[nodiscard]] CChildT getChildAt(std::size_t i) const { return _children.at(i); }
         [[nodiscard]] const ChildrenT& getChildren() const noexcept { return _children; }

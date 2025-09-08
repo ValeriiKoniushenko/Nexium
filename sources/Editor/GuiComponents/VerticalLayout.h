@@ -29,9 +29,11 @@ namespace Core
 
     class VerticalLayout : public Layout
     {
-        ECS_REGISTER_NEW_COMPONENT(VerticalLayout, Layout);
+        ECS_REGISTER_NEW_COMPONENT_NO_CNSTR(VerticalLayout, Layout);
 
     public:
+        explicit VerticalLayout(const StringAtom& name = "");
+
         [[nodiscard]] float getWidth() const override;
         [[nodiscard]] float getHeight() const override;
 
