@@ -201,7 +201,7 @@ struct ImGui_ImplGlfw_Data
     GLFWcursor*             MouseCursors[ImGuiMouseCursor_COUNT];
     bool                    MouseIgnoreButtonUpWaitForFocusLoss;
     bool                    MouseIgnoreButtonUp;
-    glm::vec2                  LastValidMousePos;
+    glm::vec2                  LastValidMousePos = glm::vec2(0);
     GLFWwindow*             KeyOwnerWindows[GLFW_KEY_LAST];
     bool                    InstalledCallbacks;
     bool                    CallbacksChainForAllWindows;
@@ -1349,7 +1349,7 @@ static void ImGui_ImplGlfw_SetWindowSize(ImGuiViewport* viewport, glm::vec2 size
 static glm::vec2 ImGui_ImplGlfw_GetWindowFramebufferScale(ImGuiViewport* viewport)
 {
     ImGui_ImplGlfw_ViewportData* vd = (ImGui_ImplGlfw_ViewportData*)viewport->PlatformUserData;
-    glm::vec2 framebuffer_scale;
+    glm::vec2 framebuffer_scale = glm::vec2(0);
     ImGui_ImplGlfw_GetWindowSizeAndFramebufferScale(vd->Window, nullptr, &framebuffer_scale);
     return framebuffer_scale;
 }

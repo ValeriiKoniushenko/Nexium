@@ -1989,7 +1989,7 @@ glm::vec2 ImBezierCubicClosestPoint(glm::vec2 p1, glm::vec2 p2, glm::vec2 p3, gl
 {
     IM_ASSERT(num_segments > 0); // Use ImBezierCubicClosestPointCasteljau()
     glm::vec2 p_last = p1;
-    glm::vec2 p_closest;
+    glm::vec2 p_closest = glm::vec2(0);
     float p_closest_dist2 = FLT_MAX;
     float t_step = 1.0f / (float)num_segments;
     for (int i_step = 1; i_step <= num_segments; i_step++)
@@ -2047,7 +2047,7 @@ glm::vec2 ImBezierCubicClosestPointCasteljau(glm::vec2 p1, glm::vec2 p2, glm::ve
 {
     IM_ASSERT(tess_tol > 0.0f);
     glm::vec2 p_last = p1;
-    glm::vec2 p_closest;
+    glm::vec2 p_closest = glm::vec2(0);
     float p_closest_dist2 = FLT_MAX;
     ImBezierCubicClosestPointCasteljauStep(p, p_closest, p_last, p_closest_dist2, p1.x, p1.y, p2.x, p2.y, p3.x, p3.y, p4.x, p4.y, tess_tol, 0);
     return p_closest;
@@ -6768,7 +6768,7 @@ static inline glm::vec2 CalcWindowMinSize(ImGuiWindow* window)
     // FIXME: Essentially we want to restrict manual resizing to WindowMinSize+Decoration, and allow api resizing to be smaller.
     // Perhaps should tend further a neater test for this.
     ImGuiContext& g = *GImGui;
-    glm::vec2 size_min;
+    glm::vec2 size_min = glm::vec2(0);
     if ((window->Flags & ImGuiWindowFlags_ChildWindow) && !(window->Flags & ImGuiWindowFlags_Popup))
     {
         size_min.x = (window->ChildFlags & ImGuiChildFlags_ResizeX) ? g.Style.WindowMinSize.x : 4.0f;
@@ -6889,8 +6889,8 @@ static glm::vec2 CalcWindowAutoFitSize(ImGuiWindow* window, glm::vec2 size_conte
 
 glm::vec2 ImGui::CalcWindowNextAutoFitSize(ImGuiWindow* window)
 {
-    glm::vec2 size_contents_current;
-    glm::vec2 size_contents_ideal;
+    glm::vec2 size_contents_current = glm::vec2(0);
+    glm::vec2 size_contents_ideal = glm::vec2(0);
     CalcWindowContentSizes(window, &size_contents_current, &size_contents_ideal);
     glm::vec2 size_auto_fit = CalcWindowAutoFitSize(window, size_contents_ideal);
     glm::vec2 size_final = CalcWindowSizeAfterConstraint(window, size_auto_fit);
@@ -6923,8 +6923,8 @@ static void CalcResizePosSizeFromAnyCorner(ImGuiWindow* window, glm::vec2 corner
 // Data for resizing from resize grip / corner
 struct ImGuiResizeGripDef
 {
-    glm::vec2  CornerPosN;
-    glm::vec2  InnerDir;
+    glm::vec2  CornerPosN = glm::vec2(0);
+    glm::vec2  InnerDir = glm::vec2(0);
     int     AngleMin12, AngleMax12;
 };
 static const ImGuiResizeGripDef resize_grip_def[4] =
@@ -6938,8 +6938,8 @@ static const ImGuiResizeGripDef resize_grip_def[4] =
 // Data for resizing from borders
 struct ImGuiResizeBorderDef
 {
-    glm::vec2  InnerDir;               // Normal toward inside
-    glm::vec2  SegmentN1, SegmentN2;   // End positions, normalized (0,0: upper left)
+    glm::vec2  InnerDir = glm::vec2(0);               // Normal toward inside
+    glm::vec2  SegmentN1 = glm::vec2(0), SegmentN2 = glm::vec2(0);   // End positions, normalized (0,0: upper left)
     float   OuterAngle;             // Angle toward outside
 };
 static const ImGuiResizeBorderDef resize_border_def[4] =
@@ -7166,7 +7166,7 @@ static int ImGui::UpdateWindowManualResize(ImGuiWindow* window, glm::vec2 size_a
     // Not even sure the callback works here.
     if (g.NavWindowingTarget && g.NavWindowingTarget->RootWindowDockTree == window)
     {
-        glm::vec2 nav_resize_dir;
+        glm::vec2 nav_resize_dir = glm::vec2(0);
         if (g.NavInputSource == ImGuiInputSource_Keyboard && g.IO.KeyShift)
             nav_resize_dir = GetKeyMagnitude2d(ImGuiKey_LeftArrow, ImGuiKey_RightArrow, ImGuiKey_UpArrow, ImGuiKey_DownArrow);
         if (g.NavInputSource == ImGuiInputSource_Gamepad)
@@ -7431,8 +7431,8 @@ void ImGui::RenderWindowTitleBarContents(ImGuiWindow* window, const ImRect& titl
     float pad_l = style.FramePadding.x;
     float pad_r = style.FramePadding.x;
     float button_sz = g.FontSize;
-    glm::vec2 close_button_pos;
-    glm::vec2 collapse_button_pos;
+    glm::vec2 close_button_pos = glm::vec2(0);
+    glm::vec2 collapse_button_pos = glm::vec2(0);
     if (has_close_button)
     {
         close_button_pos = glm::vec2(title_bar_rect.Max.x - pad_r - button_sz, title_bar_rect.Min.y + style.FramePadding.y);
@@ -7489,7 +7489,7 @@ void ImGui::RenderWindowTitleBarContents(ImGuiWindow* window, const ImRect& titl
     ImRect clip_r(layout_r.Min.x, layout_r.Min.y, ImMin(layout_r.Max.x + g.Style.ItemInnerSpacing.x, title_bar_rect.Max.x), layout_r.Max.y);
     if (flags & ImGuiWindowFlags_UnsavedDocument)
     {
-        glm::vec2 marker_pos;
+        glm::vec2 marker_pos = glm::vec2(0);
         marker_pos.x = ImClamp(layout_r.Min.x + (layout_r.GetWidth() - text_size.x) * style.WindowTitleAlign.x + text_size.x, layout_r.Min.x, layout_r.Max.x);
         marker_pos.y = (layout_r.Min.y + layout_r.Max.y) * 0.5f;
         if (marker_pos.x > layout_r.Min.x)
@@ -10695,7 +10695,7 @@ void ImGui::UpdateMouseWheel()
             LockWheelingWindow(NULL, 0.0f);
     }
 
-    glm::vec2 wheel;
+    glm::vec2 wheel = glm::vec2(0);
     wheel.x = TestKeyOwner(ImGuiKey_MouseWheelX, ImGuiKeyOwner_NoOwner) ? g.IO.MouseWheelH : 0.0f;
     wheel.y = TestKeyOwner(ImGuiKey_MouseWheelY, ImGuiKeyOwner_NoOwner) ? g.IO.MouseWheel : 0.0f;
 
@@ -12013,7 +12013,7 @@ float ImGui::CalcItemWidth()
 // The 4.0f here may be changed to match CalcItemWidth() and/or BeginChild() (right now we have a mismatch which is harmless but undesirable)
 glm::vec2 ImGui::CalcItemSize(glm::vec2 size, float default_w, float default_h)
 {
-    glm::vec2 avail;
+    glm::vec2 avail = glm::vec2(0);
     if (size.x < 0.0f || size.y < 0.0f)
         avail = GetContentRegionAvail();
 
@@ -13027,7 +13027,7 @@ glm::vec2 ImGui::FindBestWindowPosForPopupEx(glm::vec2 ref_pos, glm::vec2 size, 
             const ImGuiDir dir = (n == -1) ? *last_dir : dir_prefered_order[n];
             if (n != -1 && dir == *last_dir) // Already tried this direction?
                 continue;
-            glm::vec2 pos;
+            glm::vec2 pos = glm::vec2(0);
             if (dir == ImGuiDir_Down)  pos = glm::vec2(r_avoid.Min.x, r_avoid.Max.y);          // Below, Toward Right (default)
             if (dir == ImGuiDir_Right) pos = glm::vec2(r_avoid.Min.x, r_avoid.Min.y - size.y); // Above, Toward Right
             if (dir == ImGuiDir_Left)  pos = glm::vec2(r_avoid.Max.x - size.x, r_avoid.Max.y); // Below, Toward Left
@@ -13059,7 +13059,7 @@ glm::vec2 ImGui::FindBestWindowPosForPopupEx(glm::vec2 ref_pos, glm::vec2 size, 
             if (avail_h < size.y && (dir == ImGuiDir_Up || dir == ImGuiDir_Down))
                 continue;
 
-            glm::vec2 pos;
+            glm::vec2 pos = glm::vec2(0);
             pos.x = (dir == ImGuiDir_Left) ? r_avoid.Min.x - size.x : (dir == ImGuiDir_Right) ? r_avoid.Max.x : base_pos_clamped.x;
             pos.y = (dir == ImGuiDir_Up) ? r_avoid.Min.y - size.y : (dir == ImGuiDir_Down) ? r_avoid.Max.y : base_pos_clamped.y;
 
@@ -15012,7 +15012,7 @@ static void ImGui::NavUpdateWindowing()
     // Move window
     if (g.NavWindowingTarget && !(g.NavWindowingTarget->Flags & ImGuiWindowFlags_NoMove))
     {
-        glm::vec2 nav_move_dir;
+        glm::vec2 nav_move_dir = glm::vec2(0);
         if (g.NavInputSource == ImGuiInputSource_Keyboard && !io.KeyShift)
             nav_move_dir = GetKeyMagnitude2d(ImGuiKey_LeftArrow, ImGuiKey_RightArrow, ImGuiKey_UpArrow, ImGuiKey_DownArrow);
         if (g.NavInputSource == ImGuiInputSource_Gamepad)
@@ -18965,8 +18965,8 @@ static void ImGui::DockNodeUpdateTabBar(ImGuiDockNode* node, ImGuiWindow* host_w
 
     // Layout
     ImRect title_bar_rect, tab_bar_rect;
-    glm::vec2 window_menu_button_pos;
-    glm::vec2 close_button_pos;
+    glm::vec2 window_menu_button_pos = glm::vec2(0);
+    glm::vec2 close_button_pos = glm::vec2(0);
     DockNodeCalcTabBarLayout(node, &title_bar_rect, &tab_bar_rect, &window_menu_button_pos, &close_button_pos);
 
     // Submit new tabs, they will be added as Unsorted and sorted below based on relative DockOrder value.
@@ -19310,7 +19310,7 @@ bool ImGui::DockNodeCalcDropRectsAndTestMousePos(const ImRect& parent, ImGuiDir 
     const float hs_for_central_nodes = ImMin(g.FontSize * 1.5f, ImMax(g.FontSize * 0.5f, parent_smaller_axis / 8.0f));
     float hs_w; // Half-size, longer axis
     float hs_h; // Half-size, smaller axis
-    glm::vec2 off; // Distance from edge or center
+    glm::vec2 off = glm::vec2(0); // Distance from edge or center
     if (outer_docking)
     {
         //hs_w = ImTrunc(ImClamp(parent_smaller_axis - hs_for_central_nodes * 4.0f, g.FontSize * 0.5f, g.FontSize * 8.0f));

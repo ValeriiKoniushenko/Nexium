@@ -972,8 +972,8 @@ IM_MSVC_RUNTIME_CHECKS_OFF
 // NB: we can't rely on glm::vec2 math operators being available here!
 struct IMGUI_API ImRect
 {
-    glm::vec2 Min; // Upper-left
-    glm::vec2 Max; // Lower-right
+    glm::vec2 Min = glm::vec2(0); // Upper-left
+    glm::vec2 Max = glm::vec2(0); // Lower-right
 
     constexpr ImRect()
         : Min(0.0f, 0.0f),
@@ -1646,7 +1646,7 @@ IMGUI_API ImGuiStoragePair* ImLowerBound(ImGuiStoragePair* in_begin, ImGuiStorag
 // that case, watch out for future changes to this structure.
 struct IMGUI_API ImDrawListSharedData
 {
-    glm::vec2 TexUvWhitePixel;   // UV of white pixel in the atlas (== FontAtlas->TexUvWhitePixel)
+    glm::vec2 TexUvWhitePixel = glm::vec2(0);   // UV of white pixel in the atlas (== FontAtlas->TexUvWhitePixel)
     const glm::vec4* TexUvLines; // UV of anti-aliased lines in the atlas (== FontAtlas->TexUvLines)
     ImFontAtlas* FontAtlas;      // Current font atlas
     ImFont* Font;                // Current font (used for simplified AddText overload)
@@ -2081,9 +2081,9 @@ enum ImGuiPlotType
 struct IMGUI_API ImGuiComboPreviewData
 {
     ImRect PreviewRect;
-    glm::vec2 BackupCursorPos;
-    glm::vec2 BackupCursorMaxPos;
-    glm::vec2 BackupCursorPosPrevLine;
+    glm::vec2 BackupCursorPos = glm::vec2(0);
+    glm::vec2 BackupCursorMaxPos = glm::vec2(0);
+    glm::vec2 BackupCursorPosPrevLine = glm::vec2(0);
     float BackupPrevLineTextBaseOffset;
     ImGuiLayoutType BackupLayout;
 
@@ -2094,12 +2094,12 @@ struct IMGUI_API ImGuiComboPreviewData
 struct IMGUI_API ImGuiGroupData
 {
     ImGuiID WindowID;
-    glm::vec2 BackupCursorPos;
-    glm::vec2 BackupCursorMaxPos;
-    glm::vec2 BackupCursorPosPrevLine;
-    glm::vec1 BackupIndent;
-    glm::vec1 BackupGroupOffset;
-    glm::vec2 BackupCurrLineSize;
+    glm::vec2 BackupCursorPos = {};
+    glm::vec2 BackupCursorMaxPos = {};
+    glm::vec2 BackupCursorPosPrevLine = {};
+    glm::vec1 BackupIndent = {};
+    glm::vec1 BackupGroupOffset = {};
+    glm::vec2 BackupCurrLineSize = {};
     float BackupCurrLineTextBaseOffset;
     ImGuiID BackupActiveIdIsAlive;
     bool BackupDeactivatedIdIsAlive;
@@ -2175,7 +2175,7 @@ struct IMGUI_API ImGuiInputTextState
     ImVector<char> CallbackTextBackup; // temporary storage for callback to support automatic
                                        // reconcile of undo-stack
     int BufCapacity;                   // end-user buffer capacity (include zero terminator)
-    glm::vec2 Scroll;  // horizontal offset (managed manually) + vertical scrolling (pulled from
+    glm::vec2 Scroll = glm::vec2(0);  // horizontal offset (managed manually) + vertical scrolling (pulled from
                        // child window's own Scroll.y)
     float CursorAnim;  // timer for cursor blink, reset on every user action so the cursor reappears
                        // immediately
@@ -2268,11 +2268,11 @@ struct ImGuiNextWindowData
     ImGuiCond SizeCond;
     ImGuiCond CollapsedCond;
     ImGuiCond DockCond;
-    glm::vec2 PosVal;
-    glm::vec2 PosPivotVal;
-    glm::vec2 SizeVal;
-    glm::vec2 ContentSizeVal;
-    glm::vec2 ScrollVal;
+    glm::vec2 PosVal = glm::vec2(0);
+    glm::vec2 PosPivotVal = glm::vec2(0);
+    glm::vec2 SizeVal = glm::vec2(0);
+    glm::vec2 ContentSizeVal = glm::vec2(0);
+    glm::vec2 ScrollVal = glm::vec2(0);
     ImGuiWindowFlags WindowFlags; // Only honored by BeginTable()
     ImGuiChildFlags ChildFlags;
     bool PosUndock;
@@ -2285,7 +2285,7 @@ struct ImGuiNextWindowData
     ImGuiID DockId;
     ImGuiWindowClass WindowClass;
     glm::vec2
-        MenuBarOffsetMinVal; // (Always on) This is not exposed publicly, so we don't clear it and
+        MenuBarOffsetMinVal = glm::vec2(0); // (Always on) This is not exposed publicly, so we don't clear it and
                              // it doesn't have a corresponding flag (could we? for consistency?)
     ImGuiWindowRefreshFlags RefreshFlagsVal;
 
@@ -2458,10 +2458,10 @@ struct ImGuiPopupData
     int OpenFrameCount;   // Set on OpenPopup()
     ImGuiID OpenParentId; // Set on OpenPopup(), we need this to differentiate multiple menu sets
                           // from each others (e.g. inside menu bar vs loose menu items)
-    glm::vec2 OpenPopupPos; // Set on OpenPopup(), preferred popup position (typically ==
+    glm::vec2 OpenPopupPos = glm::vec2(0); // Set on OpenPopup(), preferred popup position (typically ==
                             // OpenMousePos when using mouse)
     glm::vec2
-        OpenMousePos; // Set on OpenPopup(), copy of mouse position at the time of opening popup
+        OpenMousePos = glm::vec2(0); // Set on OpenPopup(), copy of mouse position at the time of opening popup
 
     ImGuiPopupData()
     {
@@ -3050,9 +3050,9 @@ struct ImGuiBoxSelectState
     bool RequestClear;
     ImGuiKeyChord KeyMods : 16; // Latched key-mods for box-select logic.
     glm::vec2
-        StartPosRel;     // Start position in window-contents relative space (to support scrolling)
-    glm::vec2 EndPosRel; // End position in window-contents relative space
-    glm::vec2 ScrollAccum; // Scrolling accumulator (to behave at high-frame spaces)
+        StartPosRel = glm::vec2(0);     // Start position in window-contents relative space (to support scrolling)
+    glm::vec2 EndPosRel = glm::vec2(0); // End position in window-contents relative space
+    glm::vec2 ScrollAccum = glm::vec2(0); // Scrolling accumulator (to behave at high-frame spaces)
     ImGuiWindow* Window;
 
     // Temporary/Transient data
@@ -3084,8 +3084,8 @@ struct IMGUI_API ImGuiMultiSelectTempData
     ImGuiID FocusScopeId; // Copied from g.CurrentFocusScopeId (unless another selection scope was
                           // pushed manually)
     ImGuiMultiSelectFlags Flags;
-    glm::vec2 ScopeRectMin;
-    glm::vec2 BackupCursorMaxPos;
+    glm::vec2 ScopeRectMin = glm::vec2(0);
+    glm::vec2 BackupCursorMaxPos = glm::vec2(0);
     ImGuiSelectionUserData
         LastSubmittedItem; // Copy of last submitted item data, used to merge output ranges.
     ImGuiID BoxSelectId;
@@ -3248,9 +3248,9 @@ struct IMGUI_API ImGuiDockNode
                                     // Consider switching to an array.
     ImVector<ImGuiWindow*> Windows; // Note: unordered list! Iterate TabBar->Tabs for user-order.
     ImGuiTabBar* TabBar;
-    glm::vec2 Pos;     // Current position
-    glm::vec2 Size;    // Current size
-    glm::vec2 SizeRef; // [Split node only] Last explicitly written-to size (overridden when using a
+    glm::vec2 Pos = glm::vec2(0);     // Current position
+    glm::vec2 Size = glm::vec2(0);    // Current size
+    glm::vec2 SizeRef = glm::vec2(0); // [Split node only] Last explicitly written-to size (overridden when using a
                        // splitter affecting the node), used to calculate Size.
     ImGuiAxis SplitAxis;          // [Split node only] Split axis (X or Y)
     ImGuiWindowClass WindowClass; // [Root node only]
@@ -3372,8 +3372,8 @@ struct ImGuiViewportP : public ImGuiViewport
                                // focused (by comparing this value between two viewport we have an
                                // implicit viewport z-order we use as fallback)
     ImGuiID LastNameHash;
-    glm::vec2 LastPos;
-    glm::vec2 LastSize;
+    glm::vec2 LastPos = glm::vec2(0);
+    glm::vec2 LastSize = glm::vec2(0);
     float
         Alpha; // Window opacity (when dragging dockable windows/viewports we make them transparent)
     float LastAlpha;
@@ -3388,21 +3388,21 @@ struct ImGuiViewportP : public ImGuiViewport
                                   // is set and to draw most debug overlays.
     ImDrawData DrawDataP;
     ImDrawDataBuilder DrawDataBuilder; // Temporary data while building final ImDrawData
-    glm::vec2 LastPlatformPos;
-    glm::vec2 LastPlatformSize;
-    glm::vec2 LastRendererSize;
+    glm::vec2 LastPlatformPos = glm::vec2(0);
+    glm::vec2 LastPlatformSize = glm::vec2(0);
+    glm::vec2 LastRendererSize = glm::vec2(0);
 
     // Per-viewport work area
     // - Insets are >= 0.0f values, distance from viewport corners to work area.
     // - BeginMainMenuBar() and DockspaceOverViewport() tend to use work area to avoid stepping over
     // existing contents.
     // - Generally 'safeAreaInsets' in iOS land, 'DisplayCutout' in Android land.
-    glm::vec2 WorkInsetMin;      // Work Area inset locked for the frame. GetWorkRect() always fits
+    glm::vec2 WorkInsetMin = glm::vec2(0);      // Work Area inset locked for the frame. GetWorkRect() always fits
                                  // within GetMainRect().
-    glm::vec2 WorkInsetMax;      // "
-    glm::vec2 BuildWorkInsetMin; // Work Area inset accumulator for current frame, to become next
+    glm::vec2 WorkInsetMax = glm::vec2(0);      // "
+    glm::vec2 BuildWorkInsetMin = glm::vec2(0); // Work Area inset accumulator for current frame, to become next
                                  // frame's WorkInset
-    glm::vec2 BuildWorkInsetMax; // "
+    glm::vec2 BuildWorkInsetMax = glm::vec2(0); // "
 
     ImGuiViewportP()
     {
@@ -3787,12 +3787,12 @@ struct ImGuiContext
         WheelingWindow; // Track the window we started mouse-wheeling on. Until a timer elapse or
                         // mouse has moved, generally keep scrolling the same window even if during
                         // the course of scrolling the mouse ends up hovering a child window.
-    glm::vec2 WheelingWindowRefMousePos;
+    glm::vec2 WheelingWindowRefMousePos = glm::vec2(0);
     int WheelingWindowStartFrame; // This may be set one frame before WheelingWindow is != NULL
     int WheelingWindowScrolledFrame;
     float WheelingWindowReleaseTimer;
-    glm::vec2 WheelingWindowWheelRemainder;
-    glm::vec2 WheelingAxisAvg;
+    glm::vec2 WheelingWindowWheelRemainder = glm::vec2(0);
+    glm::vec2 WheelingAxisAvg = glm::vec2(0);
 
     // Item/widgets state and tracking information
     ImGuiID DebugDrawIdConflictsId; // Set when we detect multiple items with the same identifier
@@ -3828,7 +3828,7 @@ struct ImGuiContext
     bool ActiveIdHasBeenEditedThisFrame;
     bool ActiveIdFromShortcut;
     int ActiveIdMouseButton : 8;
-    glm::vec2 ActiveIdClickOffset; // Clicked offset from upper-left corner, if applicable
+    glm::vec2 ActiveIdClickOffset = glm::vec2(0); // Clicked offset from upper-left corner, if applicable
                                    // (currently only set by ButtonBehavior)
     ImGuiWindow* ActiveIdWindow;
     ImGuiInputSource ActiveIdSource; // Activating source: ImGuiInputSource_Mouse OR
@@ -4040,8 +4040,8 @@ struct ImGuiContext
     ImGuiInputSource NavWindowingInputSource;
     bool NavWindowingToggleLayer;
     ImGuiKey NavWindowingToggleKey;
-    glm::vec2 NavWindowingAccumDeltaPos;
-    glm::vec2 NavWindowingAccumDeltaSize;
+    glm::vec2 NavWindowingAccumDeltaPos = glm::vec2(0);
+    glm::vec2 NavWindowingAccumDeltaSize = glm::vec2(0);
 
     // Render
     float DimBgRatio; // 0.0..1.0 animation when fading in a dimming background (for modal window
@@ -4119,7 +4119,7 @@ struct ImGuiContext
     // Mouse state
     ImGuiMouseCursor MouseCursor;
     float MouseStationaryTimer; // Time the mouse has been stationary (with some loose heuristic)
-    glm::vec2 MouseLastValidPos;
+    glm::vec2 MouseLastValidPos = glm::vec2(0);
 
     // Widget state
     ImGuiInputTextState InputTextState;
@@ -4212,7 +4212,7 @@ struct ImGuiContext
     // Error Handling
     ImGuiErrorCallback ErrorCallback; // = NULL. May be exposed in public API eventually.
     void* ErrorCallbackUserData;      // = NULL
-    glm::vec2 ErrorTooltipLockedPos;
+    glm::vec2 ErrorTooltipLockedPos = glm::vec2(0);
     bool ErrorFirst;
     int ErrorCountCurrentFrame; // [Internal] Number of errors submitted this frame.
     ImGuiErrorRecoveryState StackSizesInNewFrame;               // [Internal]
@@ -4277,30 +4277,30 @@ struct ImGuiContext
 struct IMGUI_API ImGuiWindowTempData
 {
     // Layout
-    glm::vec2 CursorPos; // Current emitting position, in absolute coordinates.
-    glm::vec2 CursorPosPrevLine;
-    glm::vec2 CursorStartPos; // Initial position after Begin(), generally ~ window position +
+    glm::vec2 CursorPos = glm::vec2(0); // Current emitting position, in absolute coordinates.
+    glm::vec2 CursorPosPrevLine = glm::vec2(0);
+    glm::vec2 CursorStartPos = glm::vec2(0); // Initial position after Begin(), generally ~ window position +
                               // WindowPadding.
     glm::vec2
-        CursorMaxPos; // Used to implicitly calculate ContentSize at the beginning of next frame,
+        CursorMaxPos = glm::vec2(0); // Used to implicitly calculate ContentSize at the beginning of next frame,
                       // for scrolling range and auto-resize. Always growing during the frame.
-    glm::vec2 IdealMaxPos; // Used to implicitly calculate ContentSizeIdeal at the beginning of next
+    glm::vec2 IdealMaxPos = glm::vec2(0); // Used to implicitly calculate ContentSizeIdeal at the beginning of next
                            // frame, for auto-resize only. Always growing during the frame.
-    glm::vec2 CurrLineSize;
-    glm::vec2 PrevLineSize;
+    glm::vec2 CurrLineSize = glm::vec2(0);
+    glm::vec2 PrevLineSize = glm::vec2(0);
     float CurrLineTextBaseOffset; // Baseline offset (0.0f by default on a new line, generally ==
                                   // style.FramePadding.y when a framed item has been added).
     float PrevLineTextBaseOffset;
     bool IsSameLine;
     bool IsSetPos;
-    glm::vec1 Indent;        // Indentation / start position from left of window (increased by
+    glm::vec1 Indent = {};        // Indentation / start position from left of window (increased by
                              // TreePush/TreePop, etc.)
-    glm::vec1 ColumnsOffset; // Offset to the current column (if ColumnsCurrent > 0). FIXME: This
+    glm::vec1 ColumnsOffset = {}; // Offset to the current column (if ColumnsCurrent > 0). FIXME: This
                              // and the above should be a stack to allow use cases like
                              // Tree->Column->Tree. Need revamp columns API.
-    glm::vec1 GroupOffset;
+    glm::vec1 GroupOffset = {};
     glm::vec2
-        CursorStartPosLossyness; // Record the loss of precision of CursorStartPos due to really
+        CursorStartPosLossyness = glm::vec2(0); // Record the loss of precision of CursorStartPos due to really
                                  // large scrolling amount. This is used by clipper to compensate
                                  // and fix the most common use case of large scroll area.
 
@@ -4317,7 +4317,7 @@ struct IMGUI_API ImGuiWindowTempData
 
     // Miscellaneous
     bool MenuBarAppending;   // FIXME: Remove this
-    glm::vec2 MenuBarOffset; // MenuBarOffset.x is sort of equivalent of a per-layer CursorPos.x,
+    glm::vec2 MenuBarOffset = glm::vec2(0); // MenuBarOffset.x is sort of equivalent of a per-layer CursorPos.x,
                              // saved/restored as we switch to the menu bar. The only situation when
                              // MenuBarOffset.y is > 0 if when (SafeAreaPadding.y > FramePadding.y),
                              // often used on TVs.
@@ -4369,22 +4369,22 @@ struct IMGUI_API ImGuiWindow
                               // if their viewport was discarded.
     ImGuiID ViewportId; // We backup the viewport id (since the viewport may disappear or never be
                         // created if the window is inactive)
-    glm::vec2 ViewportPos; // We backup the viewport position (since the viewport may disappear or
+    glm::vec2 ViewportPos = glm::vec2(0); // We backup the viewport position (since the viewport may disappear or
                            // never be created if the window is inactive)
     int ViewportAllowPlatformMonitorExtend; // Reset to -1 every frame (index is guaranteed to be
                                             // valid between NewFrame..EndFrame), only used in the
                                             // Appearing frame of a tooltip/popup to enforce
                                             // clamping to a given monitor
-    glm::vec2 Pos;                          // Position (always rounded-up to nearest pixel)
-    glm::vec2 Size;                         // Current size (==SizeFull or collapsed title bar size)
-    glm::vec2 SizeFull;                     // Size when non collapsed
-    glm::vec2 ContentSize; // Size of contents/scrollable client area (calculated from the extents
+    glm::vec2 Pos = glm::vec2(0);                          // Position (always rounded-up to nearest pixel)
+    glm::vec2 Size = glm::vec2(0);                         // Current size (==SizeFull or collapsed title bar size)
+    glm::vec2 SizeFull = glm::vec2(0);                     // Size when non collapsed
+    glm::vec2 ContentSize = glm::vec2(0); // Size of contents/scrollable client area (calculated from the extents
                            // reach of the cursor) from previous frame. Does not include window
                            // decoration or window padding.
-    glm::vec2 ContentSizeIdeal;
-    glm::vec2 ContentSizeExplicit; // Size of contents/scrollable client area explicitly request by
+    glm::vec2 ContentSizeIdeal = glm::vec2(0);
+    glm::vec2 ContentSizeExplicit = glm::vec2(0); // Size of contents/scrollable client area explicitly request by
                                    // the user via SetNextWindowContentSize().
-    glm::vec2 WindowPadding;       // Window padding at the time of Begin().
+    glm::vec2 WindowPadding = glm::vec2(0);       // Window padding at the time of Begin().
     float WindowRounding;   // Window rounding at the time of Begin(). May be clamped lower to avoid
                             // rendering artifacts with title bar, menu bar etc.
     float WindowBorderSize; // Window border size at the time of Begin().
@@ -4408,15 +4408,15 @@ struct IMGUI_API ImGuiWindow
                          // child window to parent window)
     ImGuiID PopupId; // ID in the popup stack when this window is used as a popup/menu (because we
                      // use generic Name/ID for recycling)
-    glm::vec2 Scroll;
-    glm::vec2 ScrollMax;
+    glm::vec2 Scroll = glm::vec2(0);
+    glm::vec2 ScrollMax = glm::vec2(0);
     glm::vec2
-        ScrollTarget; // target scroll position. stored as cursor position with scrolling canceled
+        ScrollTarget = glm::vec2(0); // target scroll position. stored as cursor position with scrolling canceled
                       // out, so the highest point is always 0.0f. (FLT_MAX for no change)
-    glm::vec2 ScrollTargetCenterRatio;  // 0.0f = scroll so that target position is at top, 0.5f =
+    glm::vec2 ScrollTargetCenterRatio = glm::vec2(0);  // 0.0f = scroll so that target position is at top, 0.5f =
                                         // scroll so that target position is centered
-    glm::vec2 ScrollTargetEdgeSnapDist; // 0.0f = no snapping, >0.0f snapping threshold
-    glm::vec2 ScrollbarSizes; // Size taken by each scrollbars on their smaller axis. Pay attention!
+    glm::vec2 ScrollTargetEdgeSnapDist = glm::vec2(0); // 0.0f = no snapping, >0.0f snapping threshold
+    glm::vec2 ScrollbarSizes = glm::vec2(0); // Size taken by each scrollbars on their smaller axis. Pay attention!
                               // ScrollbarSizes.x == width of the vertical scrollbar,
                               // ScrollbarSizes.y = height of the horizontal scrollbar.
     bool ScrollbarX, ScrollbarY;            // Are scrollbars visible?
@@ -4464,9 +4464,9 @@ struct IMGUI_API ImGuiWindow
                                                 // SetNextWindowCollapsed() use.
     ImGuiCond SetWindowDockAllowFlags : 8;      // store acceptable condition flags for
                                                 // SetNextWindowDock() use.
-    glm::vec2 SetWindowPosVal;   // store window position when using a non-zero Pivot (position set
+    glm::vec2 SetWindowPosVal = glm::vec2(0);   // store window position when using a non-zero Pivot (position set
                                  // needs to be processed when we know the window size)
-    glm::vec2 SetWindowPosPivot; // store window pivot for positioning. glm::vec2(0, 0) when
+    glm::vec2 SetWindowPosPivot = glm::vec2(0); // store window pivot for positioning. glm::vec2(0, 0) when
                                  // positioning from top-left corner; glm::vec2(0.5f, 0.5f) for
                                  // centering; glm::vec2(1, 1) for bottom right.
 
@@ -4698,8 +4698,8 @@ struct IMGUI_API ImGuiTabBar
     ImS16 TabsActiveCount; // Number of tabs submitted this frame.
     ImS16 LastTabItemIdx;  // Index of last BeginTabItem() tab for use by EndTabItem()
     float ItemSpacingY;
-    glm::vec2 FramePadding; // style.FramePadding locked at the time of BeginTabBar()
-    glm::vec2 BackupCursorPos;
+    glm::vec2 FramePadding = glm::vec2(0); // style.FramePadding locked at the time of BeginTabBar()
+    glm::vec2 BackupCursorPos = glm::vec2(0);
     ImGuiTextBuffer TabsNames; // For non-docking tab bar we re-append names in a contiguous buffer.
 
     ImGuiTabBar();
@@ -5028,19 +5028,19 @@ struct IMGUI_API ImGuiTableTempData
     float AngledHeadersExtraWidth;                        // Used in EndTable()
     ImVector<ImGuiTableHeaderData> AngledHeadersRequests; // Used in TableAngledHeadersRow()
 
-    glm::vec2 UserOuterSize; // outer_size.x passed to BeginTable()
+    glm::vec2 UserOuterSize = glm::vec2(0); // outer_size.x passed to BeginTable()
     ImDrawListSplitter DrawSplitter;
 
     ImRect HostBackupWorkRect;       // Backup of InnerWindow->WorkRect at the end of BeginTable()
     ImRect HostBackupParentWorkRect; // Backup of InnerWindow->ParentWorkRect at the end of
                                      // BeginTable()
     glm::vec2
-        HostBackupPrevLineSize; // Backup of InnerWindow->DC.PrevLineSize at the end of BeginTable()
+        HostBackupPrevLineSize = glm::vec2(0); // Backup of InnerWindow->DC.PrevLineSize at the end of BeginTable()
     glm::vec2
-        HostBackupCurrLineSize; // Backup of InnerWindow->DC.CurrLineSize at the end of BeginTable()
+        HostBackupCurrLineSize = glm::vec2(0); // Backup of InnerWindow->DC.CurrLineSize at the end of BeginTable()
     glm::vec2
-        HostBackupCursorMaxPos; // Backup of InnerWindow->DC.CursorMaxPos at the end of BeginTable()
-    glm::vec1 HostBackupColumnsOffset; // Backup of OuterWindow->DC.ColumnsOffset at the end of
+        HostBackupCursorMaxPos = glm::vec2(0); // Backup of InnerWindow->DC.CursorMaxPos at the end of BeginTable()
+    glm::vec1 HostBackupColumnsOffset = glm::vec2(0); // Backup of OuterWindow->DC.ColumnsOffset at the end of
                                        // BeginTable()
     float HostBackupItemWidth; // Backup of OuterWindow->DC.ItemWidth at the end of BeginTable()
     int HostBackupItemWidthStackSize; // Backup of OuterWindow->DC.ItemWidthStack.Size at the end of

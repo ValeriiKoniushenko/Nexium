@@ -81,8 +81,8 @@
 
 struct ImDrawVertAllegro
 {
-    glm::vec2          pos;
-    glm::vec2          uv;
+    glm::vec2          pos = glm::vec2(0);
+    glm::vec2          uv = glm::vec2(0);
     ALLEGRO_COLOR   col;
 };
 

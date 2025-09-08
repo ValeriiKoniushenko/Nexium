@@ -1135,7 +1135,7 @@ static void ImGui_ImplSDL3_SetWindowSize(ImGuiViewport* viewport, glm::vec2 size
 static glm::vec2 ImGui_ImplSDL3_GetWindowFramebufferScale(ImGuiViewport* viewport)
 {
     ImGui_ImplSDL3_ViewportData* vd = (ImGui_ImplSDL3_ViewportData*)viewport->PlatformUserData;
-    glm::vec2 framebuffer_scale;
+    glm::vec2 framebuffer_scale = glm::vec2(0);
     ImGui_ImplSDL3_GetWindowSizeAndFramebufferScale(vd->Window, nullptr, &framebuffer_scale);
     return framebuffer_scale;
 }

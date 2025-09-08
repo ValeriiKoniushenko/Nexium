@@ -1811,7 +1811,7 @@ struct ImTriangulatorNode
 {
     ImTriangulatorNodeType  Type;
     int                     Index;
-    glm::vec2                  Pos;
+    glm::vec2                  Pos = glm::vec2(0);
     ImTriangulatorNode*     Next;
     ImTriangulatorNode*     Prev;
 

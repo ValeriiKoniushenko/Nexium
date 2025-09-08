@@ -128,7 +128,7 @@ void ImGui_ImplSDLRenderer2_RenderDrawData(ImDrawData* draw_data, SDL_Renderer* 
     float rsx = 1.0f;
     float rsy = 1.0f;
     SDL_RenderGetScale(renderer, &rsx, &rsy);
-    glm::vec2 render_scale;
+    glm::vec2 render_scale = glm::vec2(0);
     render_scale.x = (rsx == 1.0f) ? draw_data->FramebufferScale.x : 1.0f;
     render_scale.y = (rsy == 1.0f) ? draw_data->FramebufferScale.y : 1.0f;
 

@@ -8650,7 +8650,7 @@ bool ImGui::ColorPicker4(const char* label, float col[4], ImGuiColorEditFlags fl
         R, G, B,
         style.Alpha)); // Important: this is still including the main rendering/style alpha!!
 
-    glm::vec2 sv_cursor_pos;
+    glm::vec2 sv_cursor_pos = glm::vec2(0);
 
     if (flags & ImGuiColorEditFlags_PickerHueWheel)
     {

@@ -1188,7 +1188,7 @@ static glm::vec2 ImGui_ImplSDL2_GetWindowFramebufferScale(ImGuiViewport* viewpor
 {
     // FIXME: SDL_Renderer does not support multi-viewport.
     ImGui_ImplSDL2_ViewportData* vd = (ImGui_ImplSDL2_ViewportData*)viewport->PlatformUserData;
-    glm::vec2 framebuffer_scale;
+    glm::vec2 framebuffer_scale = glm::vec2(0);
     ImGui_ImplSDL2_GetWindowSizeAndFramebufferScale(vd->Window, nullptr, nullptr, &framebuffer_scale);
     return framebuffer_scale;
 }
