@@ -42,6 +42,9 @@ namespace Core
         void setWidth(float newWidth) override;
         void setHeight(float newHeight) override;
 
+        void scaleCurrentWidth(float mlt);
+        void scaleCurrentHeight(float mlt);
+
     protected:
         void onDraw() override;
         void onInitialize() override;

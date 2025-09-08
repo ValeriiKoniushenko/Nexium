@@ -30,9 +30,9 @@
                     0.0
                 ],
                 "position": [
-                    649.9998779296875,
-                    345.01214599609375,
-                    -39.257347106933594
+                    753.6990356445313,
+                    359.04473876953125,
+                    56.08237075805664
                 ],
                 "rotation": [
                     5.999995231628418,
@@ -48,8 +48,8 @@
             "far": 10000.0,
             "fov": 75.0,
             "frameSize": {
-                "height": 600.0,
-                "width": 600.0
+                "height": 100.0,
+                "width": 100.0
             },
             "isEnabled": true,
             "name": "BaseCamera",
@@ -62,32 +62,32 @@
     "keyboardInput": {
         "mapping": [
             {
-                "action": "toggleRenderMode",
-                "key": "F1"
-            },
-            {
-                "action": "moveBackward",
-                "key": "S"
-            },
-            {
-                "action": "moveForward",
-                "key": "W"
-            },
-            {
-                "action": "moveDown",
-                "key": "F"
-            },
-            {
-                "action": "moveRight",
-                "key": "D"
+                "action": "moveUp",
+                "key": "R"
             },
             {
                 "action": "moveLeft",
                 "key": "A"
             },
             {
-                "action": "moveUp",
-                "key": "R"
+                "action": "moveRight",
+                "key": "D"
+            },
+            {
+                "action": "moveDown",
+                "key": "F"
+            },
+            {
+                "action": "moveForward",
+                "key": "W"
+            },
+            {
+                "action": "moveBackward",
+                "key": "S"
+            },
+            {
+                "action": "toggleRenderMode",
+                "key": "F1"
             }
         ]
     },

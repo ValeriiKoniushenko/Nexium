@@ -24,9 +24,10 @@
 
 #include "BaseWindow.h"
 #include "Core/Timer.h"
-#include "Editor/GuiComponents/VerticalLayout.h"
 #include "Editor/GuiComponents/Input.h"
+#include "Editor/GuiComponents/VerticalLayout.h"
 #include "Graphics/GraphicsComponents.h"
+#include "Graphics/Primitives/StaticMesh.h"
 
 namespace Core
 {
@@ -61,6 +62,7 @@ namespace Core
         void tryDrawTransformable(Transformable* comp, BaseComponent* base);
         void tryDrawStaticMeshBundle(StaticMeshBundle* comp);
         void tryDrawBaseComponentExtra(BaseComponent* comp);
+        void tryDrawStaticMesh(StaticMesh* static_mesh);
         void tryDrawGraphicsComponentData(GraphicsComponentData* comp);
         void tryDrawBaseCamera(BaseCamera* comp);
 
@@ -87,6 +89,12 @@ namespace Core
 
         // GraphicsComponent section:
         VerticalLayout _graphicsComponentLayout;
+        FloatInput* _graphicsTriangles = nullptr;
+        TextInput* _graphicsShader = nullptr;
+        IntInput* _graphicsVBO = nullptr;
+        IntInput* _graphicsVAO = nullptr;
+        IntInput* _graphicsEBO = nullptr;
+        IntInput* _graphicsTexture = nullptr;
 
         // BaseCamera section:
         VerticalLayout _baseCameraLayout;
@@ -95,6 +103,11 @@ namespace Core
         FloatInput* _cameraNear = nullptr;
         IntInput* _cameraFrameWidth = nullptr;
         IntInput* _cameraFrameHeight = nullptr;
+        IntInput* _cameraOutputWidth = nullptr;
+        IntInput* _cameraOutputHeight = nullptr;
+
+        // StaticMesh section:
+        VerticalLayout _staticMeshLayout;
 
         // Transformable section:
         VerticalLayout _transformableLayout;

@@ -141,12 +141,14 @@ namespace Core
         auto* asTransformable = dynamic_cast<Transformable*>(_target);
         auto* asStaticMeshBundle = dynamic_cast<StaticMeshBundle*>(_target);
         auto* asGraphicsComponentData = dynamic_cast<GraphicsComponentData*>(_target);
+        auto* asStaticMesh = dynamic_cast<StaticMesh*>(_target);
         auto* asBaseCamera = dynamic_cast<BaseCamera*>(_target);
 
         tryDrawBaseComponent(asBaseComponent);
         tryDrawTransformable(asTransformable, asBaseComponent);
-        tryDrawGraphicsComponentData(asGraphicsComponentData);
         tryDrawStaticMeshBundle(asStaticMeshBundle);
+        tryDrawStaticMesh(asStaticMesh);
+        tryDrawGraphicsComponentData(asGraphicsComponentData);
         tryDrawBaseCamera(asBaseCamera);
         tryDrawBaseComponentExtra(asBaseComponent);
 
@@ -245,7 +247,8 @@ namespace Core
         }
 
         {
-            auto* row = _baseComponentExtraLayout.addChildComponent<HorizontalLayout>("BaseComp is initialized");
+            auto* row = _baseComponentExtraLayout.addChildComponent<HorizontalLayout>(
+                "BaseComp is initialized");
             auto* label = row->addChildComponent<Label>("Is initialized");
             label->setWidth(defaultLabelWidthBig);
 
@@ -266,6 +269,7 @@ namespace Core
         }
 
         // ================= BaseCamera ====================
+        // FOV
         {
             auto* row = _baseCameraLayout.addChildComponent<HorizontalLayout>();
             auto* label = row->addChildComponent<Label>("FOV");
@@ -277,6 +281,7 @@ namespace Core
             _cameraFov->setMax(BaseCamera::maxFov);
             _cameraFov->setStep(1.f);
         }
+        // Far plane
         {
             auto* row = _baseCameraLayout.addChildComponent<HorizontalLayout>();
             auto* label = row->addChildComponent<Label>("Far plane");
@@ -288,6 +293,7 @@ namespace Core
             _cameraFar->setMax(1'000'000.f);
             _cameraFar->setStep(100.f);
         }
+        // Near plane
         {
             auto* row = _baseCameraLayout.addChildComponent<HorizontalLayout>();
             auto* label = row->addChildComponent<Label>("Near plane");
@@ -299,6 +305,7 @@ namespace Core
             _cameraNear->setMax(1000.f);
             _cameraNear->setStep(0.1f);
         }
+        // Frame size
         {
             auto* row = _baseCameraLayout.addChildComponent<HorizontalLayout>("Camera h-layout");
             auto* label = row->addChildComponent<Label>("Frame size");
@@ -313,10 +320,8 @@ namespace Core
             width->addChildComponent<Spacer>();
             _cameraFrameWidth = width->addChildComponent<IntInput>();
             _cameraFrameWidth->setFlex(Widget::Flex::FlexWidth);
-            _cameraFrameWidth->setDisabled(true);
 
-            doubleComp->addChildComponent<Spacer>();
-            doubleComp->addChildComponent<Spacer>();
+            doubleComp->addChildComponent<Spacer>()->scaleCurrentWidth(2.f);
 
             auto* height = doubleComp->addChildComponent<HorizontalLayout>("Camera H");
             auto* h = height->addChildComponent<Label>("H:");
@@ -324,7 +329,33 @@ namespace Core
             height->addChildComponent<Spacer>();
             _cameraFrameHeight = height->addChildComponent<IntInput>();
             _cameraFrameHeight->setFlex(Widget::Flex::FlexWidth);
-            _cameraFrameHeight->setDisabled(true);
+        }
+        // Output size
+        {
+            auto* row = _baseCameraLayout.addChildComponent<HorizontalLayout>();
+            auto* label = row->addChildComponent<Label>("Output size");
+            label->setWidth(defaultLabelWidthBig);
+
+            auto* doubleComp = row->addChildComponent<HorizontalLayout>();
+            doubleComp->setHorizontalAlign(Widget::Align::SpaceBetween);
+
+            auto* width = doubleComp->addChildComponent<HorizontalLayout>();
+            auto* w = width->addChildComponent<Label>("W:");
+            w->setTextColor(Color4::From(NormColor4(ColorRed)));
+            width->addChildComponent<Spacer>();
+            _cameraOutputWidth = width->addChildComponent<IntInput>();
+            _cameraOutputWidth->setFlex(Widget::Flex::FlexWidth);
+            _cameraOutputWidth->setDisabled(true);
+
+            doubleComp->addChildComponent<Spacer>()->scaleCurrentWidth(2.f);
+
+            auto* height = doubleComp->addChildComponent<HorizontalLayout>();
+            auto* h = height->addChildComponent<Label>("H:");
+            h->setTextColor(Color4::From(NormColor4(ColorGreen)));
+            height->addChildComponent<Spacer>();
+            _cameraOutputHeight = height->addChildComponent<IntInput>();
+            _cameraOutputHeight->setFlex(Widget::Flex::FlexWidth);
+            _cameraOutputHeight->setDisabled(true);
         }
     }
 
@@ -386,6 +417,32 @@ namespace Core
                     if (auto* camera = _target->tryCastTo<BaseCamera>())
                     {
                         camera->setNear(newValue);
+                    }
+                });
+        }
+        if (_cameraFrameHeight)
+        {
+            _cameraFrameHeight->onInput.subscribe(
+                [this](float newValue)
+                {
+                    if (auto* camera = _target->tryCastTo<BaseCamera>())
+                    {
+                        auto frame = camera->getFrameSize();
+                        frame.height = newValue;
+                        camera->setFrameSize(frame);
+                    }
+                });
+        }
+        if (_cameraFrameWidth)
+        {
+            _cameraFrameWidth->onInput.subscribe(
+                [this](float newValue)
+                {
+                    if (auto* camera = _target->tryCastTo<BaseCamera>())
+                    {
+                        auto frame = camera->getFrameSize();
+                        frame.width = newValue;
+                        camera->setFrameSize(frame);
                     }
                 });
         }
@@ -478,21 +535,39 @@ namespace Core
     {
         if (comp && ImGui::CollapsingHeader("Graphics", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            LabelAndInputTextRO("Triangles:", StringAtom::MakeFrom(comp->getTriangleCount()),
-                                _labelWidth, _innerSize.width);
+            const float dt = GetWorld().timeDelta;
 
-            auto shaderName = ""_atom;
-            if (comp->getShader())
+            if (_graphicsTriangles)
             {
-                shaderName = comp->getShader()->getName();
+                _graphicsTriangles->setInputtedData(comp->getTriangleCount());
             }
-            LabelAndInputTextRO("Shader: ", std::move(shaderName), _labelWidth, _innerSize.width);
 
-            if (auto* asStaticMesh = dynamic_cast<StaticMesh*>(_target))
+            if (_graphicsShader)
             {
-                (void)_meshSizeControl.drawAndProcess(asStaticMesh->getSize().toGlm(),
-                                                      _innerSize.width);
+                _graphicsShader->setInputtedData(comp->getShader()->getName().toStdString());
             }
+
+            if (_graphicsVBO)
+            {
+                _graphicsVBO->setInputtedData(comp->getVboId());
+            }
+
+            if (_graphicsVAO)
+            {
+                _graphicsVAO->setInputtedData(comp->getVboId());
+            }
+
+            if (_graphicsEBO)
+            {
+                _graphicsEBO->setInputtedData(comp->getEboId());
+            }
+
+            if (_graphicsTexture)
+            {
+                _graphicsTexture->setInputtedData(comp->getTextureId());
+            }
+
+            _graphicsComponentLayout.tick(dt);
 
             ImGui::Separator();
             FixedLabel("Modifiers:", _labelWidth);
@@ -642,13 +717,21 @@ namespace Core
         }
     }
 
+    void ObjectPropertiesWindowEWC::tryDrawStaticMesh(StaticMesh* comp)
+    {
+        if (comp && ImGui::CollapsingHeader("Static mesh", ImGuiTreeNodeFlags_DefaultOpen))
+        {
+            const float dt = GetWorld().timeDelta;
+
+            _staticMeshLayout.tick(dt);
+        }
+    }
+
     void ObjectPropertiesWindowEWC::tryDrawBaseCamera(BaseCamera* comp)
     {
         if (comp && ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen))
         {
             const float dt = GetWorld().timeDelta;
-
-            _baseCameraLayout.tick(dt);
 
             if (_cameraFov)
             {
@@ -662,14 +745,24 @@ namespace Core
             {
                 _cameraNear->setInputtedData(comp->getNear());
             }
-
-            if (auto res
-                = _frameSizeControl.drawAndProcess(comp->getFrameSize().toGlm(), _innerSize.width))
+            if (_cameraFrameHeight)
             {
-                comp->setFrameSize(FSize2(res.value()));
+                _cameraFrameHeight->setInputtedData(comp->getFrameSize().height);
+            }
+            if (_cameraFrameWidth)
+            {
+                _cameraFrameWidth->setInputtedData(comp->getFrameSize().width);
+            }
+            if (_cameraOutputWidth)
+            {
+                _cameraOutputWidth->setInputtedData(comp->getOutputFrameSize().height);
+            }
+            if (_cameraOutputHeight)
+            {
+                _cameraOutputHeight->setInputtedData(comp->getOutputFrameSize().width);
             }
 
-            ImGui::Dummy(glm::vec2(0.0f, _gapBetweenSections));
+            _baseCameraLayout.tick(dt);
         }
     }
 

@@ -141,6 +141,7 @@ namespace Core
         [[nodiscard]] GLuint getVboId() noexcept { return _vbo; }
         [[nodiscard]] GLuint getEboId() noexcept { return _ebo; }
         [[nodiscard]] GLuint getVaoId() noexcept { return _vao; }
+        [[nodiscard]] GLuint getTextureId() noexcept { return _texture; }
         [[nodiscard]] ShaderProgram* getShader() noexcept { return _shader; }
 
         [[nodiscard]] const std::vector<std::pair<ModifiedValue, Modifier>>& getDrawModifiers()

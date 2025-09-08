@@ -34,7 +34,7 @@ namespace Core
     Spacer::Spacer(const StringAtom& name)
         : Widget(componentType, name)
     {
-        _size.x = style().ItemSpacing.x;
+        _size = style().ItemSpacing;
     }
 
     glm::vec2 Spacer::getRealSize() const
@@ -50,6 +50,16 @@ namespace Core
     void Spacer::setHeight(float newHeight)
     {
         _size.y = newHeight;
+    }
+
+    void Spacer::scaleCurrentWidth(float mlt)
+    {
+        _size.x *= mlt;
+    }
+
+    void Spacer::scaleCurrentHeight(float mlt)
+    {
+        _size.y *= mlt;
     }
 
     void Spacer::onDraw()
