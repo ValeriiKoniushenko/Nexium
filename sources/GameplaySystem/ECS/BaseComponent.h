@@ -47,11 +47,11 @@ public:                                                                         
 public:                                                                                            \
     [[nodiscard]] BaseComponent::Ptr clone() override                                              \
     {                                                                                              \
-        return static_cast<CurrentClass*>(tryAllocateECSObject<CurrentClass>(this));               \
+        return static_cast<CurrentClass*>(_tryAllocateECSObject<CurrentClass>(this));              \
     }                                                                                              \
     [[nodiscard]] static CurrentClass::Ptr Create()                                                \
     {                                                                                              \
-        return static_cast<CurrentClass*>(tryAllocateECSObject<CurrentClass>(nullptr));            \
+        return static_cast<CurrentClass*>(_tryAllocateECSObject<CurrentClass>(nullptr));           \
     }                                                                                              \
                                                                                                    \
 protected:                                                                                         \
@@ -132,14 +132,29 @@ public:                                                                         
  * If you don't understand what means 'new type' check the macro's description
  * above, please.
  */
-#define ECS_REGISTER_NEW_COMPONENT_TYPE(ClassName) ((void)(0))
+#define ECS_REGISTER_NEW_COMPONENT_TYPE(ClassName)                                                 \
+    const static bool _##ClassName##_type_registration                                             \
+        = GetGlobalComponentFactory().registerNewType(                                             \
+            StringAtom::Intern(#ClassName),                                                        \
+            []() -> BaseComponent*                                                                 \
+            {                                                                                      \
+                return new std::conditional_t<std::is_abstract_v<ClassName>, InvalidComponent,     \
+                                              ClassName>;                                          \
+            });                                                                                    \
+    const StringAtom ClassName::componentType = StringAtom::Intern(#ClassName);                    \
+    const bool ClassName::_debugTypeTracker = []()                                                 \
+    {                                                                                              \
+        GetGlobalComponentFactory()._debugTypeTracker_NotifyNewAboutType(                          \
+            StringAtom::Intern(#ClassName));                                                       \
+        return true;                                                                               \
+    }();
 
 namespace Core
 {
     class BaseComponent;
 
     template<class T>
-    void* tryAllocateECSObject(T* data)
+    void* _tryAllocateECSObject(T* data)
     {
         if constexpr (std::is_abstract_v<T>)
         {
