@@ -27,6 +27,8 @@
 #include "ImGui/misc/cpp/imgui_stdlib.h"
 #include "Widget.h"
 
+#include <limits>
+
 namespace Core
 {
 
