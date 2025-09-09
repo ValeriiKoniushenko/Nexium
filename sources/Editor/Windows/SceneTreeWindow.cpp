@@ -47,7 +47,7 @@ namespace Core
 
         setScene(&gGameInstance->gameScene);
 
-        _onSelectChangeId = gGameInstance->objectSelectorManager.onChange.subscribeAndGetID(
+        gGameInstance->objectSelectorManager.onChange.subscribe(
             [this](BaseComponent* comp, bool newValue)
             {
                 if (newValue)

@@ -182,7 +182,7 @@ namespace Core
             _modifierRaw.push_back('\0');
         }
 
-        _onSelectChangeId = gGameInstance->objectSelectorManager.onChange.subscribeAndGetID(
+        gGameInstance->objectSelectorManager.onChange.subscribe(
             [this](BaseComponent* comp, bool newValue)
             {
                 if (newValue)

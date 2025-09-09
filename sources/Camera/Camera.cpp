@@ -41,7 +41,7 @@ namespace Core
                                                  _frameSize.width / _frameSize.height, _near, _far);
 
             _cachedCalculatedMatrix
-                = _cachedProjMatrix * _cachedModelMatrix; // in such context Model == View
+                = _cachedProjMatrix * _cachedModelMatrix; // in such a context Model == View
 
             _isDirtyProjMatrix = false;
         }

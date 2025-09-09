@@ -96,7 +96,7 @@ namespace Core
 
     void MouseInputAction::init()
     {
-        _idActionPrivate = _onActionPrivate.subscribeAndGetID(
+        _onActionPrivate.subscribe(
             [this](SpecKeysState states)
             {
                 onMouseClick.trigger(Mouse::GetPosition(), states);

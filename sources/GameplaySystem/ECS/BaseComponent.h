@@ -34,42 +34,47 @@
 // ===============================================================
 //                         ECS INTERNAL
 // ===============================================================
-#define _HEADER_ECS_REGISTER_NEW_COMPONENT(CurrentClass, BaseComponentClass)                       \
+#define _ECS_REGISTER_NEW_COMPONENT___HEAD(ClassName, TypeName, BaseComponentClass)                \
 public:                                                                                            \
-    using Ptr = boost::intrusive_ptr<CurrentClass>;                                                \
-    using CPtr = boost::intrusive_ptr<const CurrentClass>;                                         \
+    using Ptr = boost::intrusive_ptr<TypeName>;                                                    \
+    using CPtr = boost::intrusive_ptr<const TypeName>;                                             \
     template<bool isConst>                                                                         \
     using AdaptivePtr                                                                              \
-        = boost::intrusive_ptr<std::conditional_t<isConst, const CurrentClass, CurrentClass>>;     \
+        = boost::intrusive_ptr<std::conditional_t<isConst, const TypeName, TypeName>>;             \
     template<bool isConst>                                                                         \
-    using AdaptiveRawPtr = std::conditional_t<isConst, const CurrentClass, CurrentClass>*;         \
+    using AdaptiveRawPtr = std::conditional_t<isConst, const TypeName, TypeName>*;                 \
                                                                                                    \
 public:                                                                                            \
     [[nodiscard]] BaseComponent::Ptr clone() override                                              \
     {                                                                                              \
-        return static_cast<CurrentClass*>(_tryAllocateECSObject<CurrentClass>(this));              \
+        return static_cast<TypeName*>(_tryAllocateECSObject<TypeName>(this));                      \
     }                                                                                              \
-    [[nodiscard]] static CurrentClass::Ptr Create()                                                \
+    [[nodiscard]] static Ptr Create()                                                              \
     {                                                                                              \
-        return static_cast<CurrentClass*>(_tryAllocateECSObject<CurrentClass>(nullptr));           \
+        return static_cast<TypeName*>(_tryAllocateECSObject<TypeName>(nullptr));                   \
     }                                                                                              \
                                                                                                    \
 protected:                                                                                         \
-    explicit CurrentClass(const StringAtom& type, const StringAtom& name)                          \
+    explicit ClassName(const StringAtom& type, const StringAtom& name)                             \
         : BaseComponentClass(type, name)                                                           \
     {                                                                                              \
     }
 
-#define _ECS_REGISTER_NEW_COMPONENT(CurrentClass, BaseComponentClass)                              \
-    _HEADER_ECS_REGISTER_NEW_COMPONENT(CurrentClass, BaseComponentClass)                           \
+// ---------------------------------------------------------
+
+#define _ECS_REGISTER_NEW_COMPONENT(ClassName, TypeName, BaseComponentClass)                       \
+    _ECS_REGISTER_NEW_COMPONENT___HEAD(ClassName, TypeName, BaseComponentClass)                    \
 private:                                                                                           \
     static const bool _debugTypeTracker;                                                           \
+    static const bool _##ClassName##_type_registration;                                            \
                                                                                                    \
 public:                                                                                            \
     static const StringAtom componentType;
 
-#define _ECS_NEW_CONSTRUCTOR(CurrentClass, BaseComponentClass)                                     \
-    explicit CurrentClass(const StringAtom& name = ""_atom)                                        \
+// ---------------------------------------------------------
+
+#define _ECS_DEFAULT_PUBLIC_CONSTRUCTOR(ClassName, BaseComponentClass)                             \
+    explicit ClassName(const StringAtom& name = ""_atom)                                           \
         : BaseComponentClass(componentType, name)                                                  \
     {                                                                                              \
     }
@@ -77,77 +82,102 @@ public:                                                                         
 
 /**
  * Put these macros inside your class body for every new component.
- * New component is even a component that extends previous one. I.e.
- * if you are inheriting from class Spectator, you should mark your
+ * New component is even a component that extends the previous one. I.e.,
+ * if you are inherited from class Spectator, you should mark your
  * new component with ECS_REGISTER_NEW_COMPONENT(YourClass, Spectator)
  * to register this type inside ECS
  */
-#define ECS_REGISTER_NEW_COMPONENT(CurrentClass, BaseComponentClass)                               \
-    _ECS_REGISTER_NEW_COMPONENT(CurrentClass, BaseComponentClass)                                  \
-    _ECS_NEW_CONSTRUCTOR(CurrentClass, BaseComponentClass)
+#define ECS_REGISTER_NEW_COMPONENT(ClassName, BaseComponentClass)                                  \
+    _ECS_REGISTER_NEW_COMPONENT(ClassName, ClassName, BaseComponentClass)                          \
+    _ECS_DEFAULT_PUBLIC_CONSTRUCTOR(ClassName, BaseComponentClass)
 
 /**
- * !! Non-constructor version of similar macro above. !!
+ * !! The non-constructor version of the similar macro above. !!
  * Put these macros inside your class body for every new component.
- * New component is even a component that extends previous one. I.e.
- * if you are inheriting from class Spectator, you should mark your
+ * New component is even a component that extends the previous one. I.e.,
+ * if you are inherited from class Spectator, you should mark your
  * new component with ECS_REGISTER_NEW_COMPONENT(YourClass, Spectator)
  * to register this type inside ECS
  */
-#define ECS_REGISTER_NEW_COMPONENT_NO_CNSTR(CurrentClass, BaseComponentClass)                      \
-    _ECS_REGISTER_NEW_COMPONENT(CurrentClass, BaseComponentClass)
+#define ECS_REGISTER_NEW_COMPONENT_NO_CNSTR(ClassName, BaseComponentClass)                         \
+    _ECS_REGISTER_NEW_COMPONENT(ClassName, ClassName, BaseComponentClass)
 
-/**                                                                                                \
- * Put these macros inside your template class body for every new component.                       \
- * New component is even a component that extends previous one. I.e.                               \
- * if you are inheriting from class Spectator, you should !NOT! mark your                          \
- * new component with ECS_REGISTER_NEW_COMPONENT(YourClass, Spectator) due                         \
- * to this is template class.                                                                      \
+/**
+ * Put these macros inside your template class body for every new component.
+ * New component is even a component that extends the previous one. I.e.,
+ * if you are inherited from class Spectator, you should !NOT! mark your
+ * new component with ECS_REGISTER_NEW_COMPONENT(YourClass, Spectator) due
+ * to this is template class.
  */
-#define ECS_REGISTER_NEW_TEMPLATE_COMPONENT(CurrentClass, BaseComponentClass)                      \
-    _HEADER_ECS_REGISTER_NEW_COMPONENT(CurrentClass, BaseComponentClass)                           \
+#define ECS_REGISTER_NEW_TEMPLATE_COMPONENT(ClassName, ClassType, BaseComponentClass)              \
+    _ECS_REGISTER_NEW_COMPONENT(ClassName, ClassType, BaseComponentClass)                          \
 public:                                                                                            \
-    _ECS_NEW_CONSTRUCTOR(CurrentClass, BaseComponentClass)                                         \
-private:                                                                                           \
-    inline const static bool __ecs_typeRegistration = GetGlobalComponentFactory().registerNewType( \
-        CurrentClass::componentType,                                                               \
-        []() -> BaseComponent*                                                                     \
-        {                                                                                          \
-            return new std::conditional_t<std::is_abstract_v<CurrentClass>, InvalidComponent,      \
-                                          CurrentClass>;                                           \
-        });                                                                                        \
-                                                                                                   \
-    inline const static bool __ecs_debugTypeTracker = []()                                         \
-    {                                                                                              \
-        GetGlobalComponentFactory()._debugTypeTracker_NotifyNewAboutType(                          \
-            StringAtom::Intern(#CurrentClass));                                                    \
-        return true;                                                                               \
-    }();                                                                                           \
-                                                                                                   \
-public:                                                                                            \
-    inline static const StringAtom componentType = StringAtom::Intern(#CurrentClass);
+    _ECS_DEFAULT_PUBLIC_CONSTRUCTOR(ClassName, BaseComponentClass)
 
-/*
- * Also, we need this macros in .cpp file of implementation of your new type.
+/**
+ * !! The non-constructor version of the similar macro above. !!
+ * Put these macros inside your template class body for every new component.
+ * New component is even a component that extends the previous one. I.e.,
+ * if you are inherited from class Spectator, you should !NOT! mark your
+ * new component with ECS_REGISTER_NEW_COMPONENT(YourClass, Spectator) due
+ * to this is template class.
+ */
+#define ECS_REGISTER_NEW_TEMPLATE_COMPONENT_NO_CNSTR(ClassName, ClassType, BaseComponentClass)     \
+    _ECS_REGISTER_NEW_COMPONENT(ClassName, ClassType, BaseComponentClass)
+
+/**
+ * Also, we need this macro in .cpp file of implementation of your new type.
  * If you don't understand what means 'new type' check the macro's description
  * above, please.
  */
 #define ECS_REGISTER_NEW_TYPE(ClassName)                                                           \
-    const static bool _##ClassName##_type_registration                                             \
+    const bool ClassName::_##ClassName##_type_registration                                  \
         = GetGlobalComponentFactory().registerNewType(                                             \
-            StringAtom::Intern(#ClassName),                                                        \
+            StringAtom::Intern(typeid(ClassName).name()),                                          \
             []() -> BaseComponent*                                                                 \
             {                                                                                      \
                 return new std::conditional_t<std::is_abstract_v<ClassName>, InvalidComponent,     \
                                               ClassName>;                                          \
             });                                                                                    \
-    const StringAtom ClassName::componentType = StringAtom::Intern(#ClassName);                    \
+                                                                                                   \
+    const StringAtom ClassName::componentType = StringAtom::Intern(typeid(ClassName).name());      \
+                                                                                                   \
     const bool ClassName::_debugTypeTracker = []()                                                 \
     {                                                                                              \
         GetGlobalComponentFactory()._debugTypeTracker_NotifyNewAboutType(                          \
-            StringAtom::Intern(#ClassName));                                                       \
+            StringAtom::Intern(typeid(ClassName).name()));                                         \
         return true;                                                                               \
     }();
+
+#define _ECS_UNPAREN(...) __VA_ARGS__
+
+/**
+ * Also, we need this macro in .cpp file of implementation of your new type.
+ * If you don't understand what means 'new type' check the macro's description
+ * above, please.
+ */
+#define ECS_REGISTER_NEW_TEMPLATE_TYPE(ClassName, TypeName, Template)                              \
+    template<_ECS_UNPAREN(Template)>                                                               \
+    const bool _ECS_UNPAREN(TypeName)::_##ClassName##_type_registration                            \
+        = GetGlobalComponentFactory().registerNewType(                                             \
+            StringAtom::Intern(typeid(_ECS_UNPAREN(TypeName)).name()),                             \
+            []() -> BaseComponent*                                                                 \
+            {                                                                                      \
+                return new std::conditional_t<std::is_abstract_v<_ECS_UNPAREN(TypeName)>,          \
+                                              InvalidComponent, _ECS_UNPAREN(TypeName)>;           \
+            });                                                                                    \
+                                                                                                   \
+    template<_ECS_UNPAREN(Template)>                                                               \
+    const bool _ECS_UNPAREN(TypeName)::_debugTypeTracker = []()                                    \
+    {                                                                                              \
+        GetGlobalComponentFactory()._debugTypeTracker_NotifyNewAboutType(                          \
+            StringAtom::Intern(typeid(_ECS_UNPAREN(TypeName)).name()));                            \
+        return true;                                                                               \
+    }();                                                                                           \
+                                                                                                   \
+    template<_ECS_UNPAREN(Template)>                                                               \
+    const StringAtom _ECS_UNPAREN(TypeName)::componentType                                         \
+        = StringAtom::Intern(typeid(_ECS_UNPAREN(TypeName)).name());
 
 namespace Core
 {

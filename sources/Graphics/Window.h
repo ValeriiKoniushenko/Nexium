@@ -197,11 +197,6 @@ namespace Core
 
     private:
         void registerEvents();
-
-    private:
-        DelegateSubscriber _idOnResize;
-        DelegateSubscriber _idOnMouseMove;
-        DelegateSubscriber _idOnMouseKeyPressed;
     };
 
     Window& GetWindow();

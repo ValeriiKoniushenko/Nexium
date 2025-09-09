@@ -94,7 +94,7 @@ namespace Core
     template<Utils::IsArithmetic Type>
     class NumInput : public BaseInput
     {
-        ECS_REGISTER_NEW_TEMPLATE_COMPONENT(NumInput, BaseInput);
+        ECS_REGISTER_NEW_TEMPLATE_COMPONENT(NumInput, NumInput<Type>, BaseInput)
 
     public:
         void setInputtedData(Type data) { _buffer = data; }
@@ -145,6 +145,8 @@ namespace Core
         Type _min = std::numeric_limits<Type>::min();
         Type _max = std::numeric_limits<Type>::max();
     };
+
+    ECS_REGISTER_NEW_TEMPLATE_TYPE(NumInput, NumInput<Type>, Utils::IsArithmetic Type)
 
     using DoubleInput = NumInput<double>;
     using FloatInput = NumInput<float>;

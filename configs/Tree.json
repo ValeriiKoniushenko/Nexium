@@ -51,7 +51,7 @@
             "isEnabled": false,
             "name": "Tree_LOD1",
             "noTick": false,
-            "type": "StaticMesh"
+            "type": "class Core::StaticMesh"
         },
         {
             "GraphicsComponentData": {
@@ -82,7 +82,7 @@
             "isEnabled": false,
             "name": "Tree_LOD1",
             "noTick": false,
-            "type": "StaticMesh"
+            "type": "class Core::StaticMesh"
         },
         {
             "GraphicsComponentData": {
@@ -113,7 +113,7 @@
             "isEnabled": false,
             "name": "Tree_LOD2",
             "noTick": false,
-            "type": "StaticMesh"
+            "type": "class Core::StaticMesh"
         },
         {
             "GraphicsComponentData": {
@@ -144,7 +144,7 @@
             "isEnabled": false,
             "name": "Tree_LOD2",
             "noTick": false,
-            "type": "StaticMesh"
+            "type": "class Core::StaticMesh"
         },
         {
             "GraphicsComponentData": {
@@ -175,7 +175,7 @@
             "isEnabled": true,
             "name": "Tree_LOD0",
             "noTick": false,
-            "type": "StaticMesh"
+            "type": "class Core::StaticMesh"
         },
         {
             "GraphicsComponentData": {
@@ -211,7 +211,7 @@
             "isEnabled": true,
             "name": "Tree_LOD0",
             "noTick": false,
-            "type": "StaticMesh"
+            "type": "class Core::StaticMesh"
         }
     ],
     "isEnabled": true,
@@ -245,7 +245,7 @@
             "isEnabled": false,
             "name": "Tree_LOD1",
             "noTick": false,
-            "type": "StaticMesh"
+            "type": "class Core::StaticMesh"
         },
         {
             "GraphicsComponentData": {
@@ -276,7 +276,7 @@
             "isEnabled": false,
             "name": "Tree_LOD1",
             "noTick": false,
-            "type": "StaticMesh"
+            "type": "class Core::StaticMesh"
         },
         {
             "GraphicsComponentData": {
@@ -307,7 +307,7 @@
             "isEnabled": false,
             "name": "Tree_LOD2",
             "noTick": false,
-            "type": "StaticMesh"
+            "type": "class Core::StaticMesh"
         },
         {
             "GraphicsComponentData": {
@@ -338,7 +338,7 @@
             "isEnabled": false,
             "name": "Tree_LOD2",
             "noTick": false,
-            "type": "StaticMesh"
+            "type": "class Core::StaticMesh"
         },
         {
             "GraphicsComponentData": {
@@ -369,7 +369,7 @@
             "isEnabled": true,
             "name": "Tree_LOD0",
             "noTick": false,
-            "type": "StaticMesh"
+            "type": "class Core::StaticMesh"
         },
         {
             "GraphicsComponentData": {
@@ -405,10 +405,10 @@
             "isEnabled": true,
             "name": "Tree_LOD0",
             "noTick": false,
-            "type": "StaticMesh"
+            "type": "class Core::StaticMesh"
         }
     ],
     "name": "Tree",
     "noTick": false,
-    "type": "StaticMeshBundle"
+    "type": "class Core::StaticMeshBundle"
 }

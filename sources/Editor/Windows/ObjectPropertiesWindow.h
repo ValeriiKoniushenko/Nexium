@@ -122,7 +122,6 @@ namespace Core
         AbstractComponent* _target = nullptr;
         Repeater _slowUpdater;
         std::vector<std::pair<int, int>> _graphicsMods;
-        DelegateSubscriber _onSelectChangeId;
 
         // For transform
         Vec3Control _transformLocationControl;

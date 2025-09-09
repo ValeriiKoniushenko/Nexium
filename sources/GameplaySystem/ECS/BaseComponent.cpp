@@ -47,6 +47,11 @@ namespace Core
             }
         }
 
+        for (const auto& pair : _map)
+        {
+            std::cout << pair.first << std::endl;
+        }
+
         Assert(false,
                "Maybe you forget to register your own component with ECS_REGISTER_NEW_COMPONENT?");
         return nullptr;

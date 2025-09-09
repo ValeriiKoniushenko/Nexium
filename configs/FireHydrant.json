@@ -51,7 +51,7 @@
             "isEnabled": false,
             "name": "FireHydrant_LOD2",
             "noTick": false,
-            "type": "StaticMesh"
+            "type": "class Core::StaticMesh"
         },
         {
             "GraphicsComponentData": {
@@ -82,7 +82,7 @@
             "isEnabled": false,
             "name": "FireHydrant_LOD1",
             "noTick": false,
-            "type": "StaticMesh"
+            "type": "class Core::StaticMesh"
         },
         {
             "GraphicsComponentData": {
@@ -113,7 +113,7 @@
             "isEnabled": true,
             "name": "FireHydrant_LOD0",
             "noTick": false,
-            "type": "StaticMesh"
+            "type": "class Core::StaticMesh"
         }
     ],
     "isEnabled": true,
@@ -147,7 +147,7 @@
             "isEnabled": false,
             "name": "FireHydrant_LOD2",
             "noTick": false,
-            "type": "StaticMesh"
+            "type": "class Core::StaticMesh"
         },
         {
             "GraphicsComponentData": {
@@ -178,7 +178,7 @@
             "isEnabled": false,
             "name": "FireHydrant_LOD1",
             "noTick": false,
-            "type": "StaticMesh"
+            "type": "class Core::StaticMesh"
         },
         {
             "GraphicsComponentData": {
@@ -209,10 +209,10 @@
             "isEnabled": true,
             "name": "FireHydrant_LOD0",
             "noTick": false,
-            "type": "StaticMesh"
+            "type": "class Core::StaticMesh"
         }
     ],
     "name": "FireHydrant",
     "noTick": false,
-    "type": "StaticMeshBundle"
+    "type": "class Core::StaticMeshBundle"
 }

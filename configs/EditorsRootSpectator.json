@@ -55,7 +55,7 @@
             "name": "BaseCamera",
             "near": 0.10000000149011612,
             "noTick": false,
-            "type": "BaseCamera"
+            "type": "class Core::BaseCamera"
         }
     ],
     "isEnabled": true,
@@ -66,8 +66,16 @@
                 "key": "R"
             },
             {
+                "action": "moveForward",
+                "key": "W"
+            },
+            {
                 "action": "moveLeft",
                 "key": "A"
+            },
+            {
+                "action": "moveBackward",
+                "key": "S"
             },
             {
                 "action": "moveRight",
@@ -76,14 +84,6 @@
             {
                 "action": "moveDown",
                 "key": "F"
-            },
-            {
-                "action": "moveForward",
-                "key": "W"
-            },
-            {
-                "action": "moveBackward",
-                "key": "S"
             },
             {
                 "action": "toggleRenderMode",
@@ -95,5 +95,5 @@
     "name": "Spectator",
     "noTick": false,
     "speed": 50.0,
-    "type": "Spectator"
+    "type": "class Core::Spectator"
 }

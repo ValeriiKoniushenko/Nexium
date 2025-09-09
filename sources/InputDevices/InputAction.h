@@ -124,7 +124,6 @@ namespace Core
                         {
                             SpecKeysState specs = SpecKeysState::fillAndGet();
 
-                            auto k = _key.value();
                             onPress.trigger(specs);
                             _onActionPrivate.trigger(specs);
 
@@ -162,11 +161,10 @@ namespace Core
         [[nodiscard]] virtual bool isKeyPressed() const = 0;
 
         /**
-         * @brief will be called while pressing on the needed button.
+         * @brief will be called while pressing on the necessary button.
          * @param SpecKeysState states of special keys
          */
         Delegate<void(SpecKeysState)> _onActionPrivate;
-        std::optional<DelegateSubscriber> _idActionPrivate;
 
     protected:
         StringAtom _name;

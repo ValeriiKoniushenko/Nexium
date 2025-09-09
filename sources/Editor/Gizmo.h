@@ -69,7 +69,6 @@ namespace Core
         void handleDrag();
 
     private:
-        DelegateSubscriber _onSelectChangeId;
         std::optional<glm::vec3> _lastRay;
     };
 } // namespace Core
