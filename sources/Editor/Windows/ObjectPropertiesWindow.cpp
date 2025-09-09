@@ -451,12 +451,12 @@ namespace Core
         if (_cameraFrameHeight)
         {
             _cameraFrameHeight->onInput.subscribe(
-                [this](float newValue)
+                [this](int newValue)
                 {
                     if (auto* camera = _target->tryCastTo<BaseCamera>())
                     {
                         auto frame = camera->getFrameSize();
-                        frame.height = newValue;
+                        frame.height = static_cast<float>(newValue);
                         camera->setFrameSize(frame);
                     }
                 });
@@ -464,12 +464,12 @@ namespace Core
         if (_cameraFrameWidth)
         {
             _cameraFrameWidth->onInput.subscribe(
-                [this](float newValue)
+                [this](int newValue)
                 {
                     if (auto* camera = _target->tryCastTo<BaseCamera>())
                     {
                         auto frame = camera->getFrameSize();
-                        frame.width = newValue;
+                        frame.width = static_cast<float>(newValue);
                         camera->setFrameSize(frame);
                     }
                 });
@@ -720,7 +720,7 @@ namespace Core
 
             if (_childrenCount)
             {
-                _childrenCount->setInputtedData(comp->getChildrenCount());
+                _childrenCount->setInputtedData(static_cast<int>(comp->getChildrenCount()));
             }
             if (_isInited)
             {
@@ -788,19 +788,21 @@ namespace Core
             }
             if (_cameraFrameHeight)
             {
-                _cameraFrameHeight->setInputtedData(comp->getFrameSize().height);
+                _cameraFrameHeight->setInputtedData(static_cast<int>(comp->getFrameSize().height));
             }
             if (_cameraFrameWidth)
             {
-                _cameraFrameWidth->setInputtedData(comp->getFrameSize().width);
+                _cameraFrameWidth->setInputtedData(static_cast<int>(comp->getFrameSize().width));
             }
             if (_cameraOutputWidth)
             {
-                _cameraOutputWidth->setInputtedData(comp->getOutputFrameSize().height);
+                _cameraOutputWidth->setInputtedData(
+                    static_cast<int>(comp->getOutputFrameSize().height));
             }
             if (_cameraOutputHeight)
             {
-                _cameraOutputHeight->setInputtedData(comp->getOutputFrameSize().width);
+                _cameraOutputHeight->setInputtedData(
+                    static_cast<int>(comp->getOutputFrameSize().width));
             }
 
             _baseCameraLayout.tick(dt);
@@ -815,12 +817,13 @@ namespace Core
 
             if (_renderMeshesCount)
             {
-                _renderMeshesCount->setInputtedData(comp->getRenderMeshesCount());
+                _renderMeshesCount->setInputtedData(static_cast<int>(comp->getRenderMeshesCount()));
             }
 
             if (_renderBundlesCount)
             {
-                _renderBundlesCount->setInputtedData(comp->getRenderBundlesCount());
+                _renderBundlesCount->setInputtedData(
+                    static_cast<int>(comp->getRenderBundlesCount()));
             }
 
             if (_ignoreMouseSelectBundle)
@@ -830,7 +833,8 @@ namespace Core
 
             if (_activeTrianglesCount)
             {
-                _activeTrianglesCount->setInputtedData(comp->getRenderableTriangles());
+                _activeTrianglesCount->setInputtedData(
+                    static_cast<int>(comp->getRenderableTriangles()));
             }
 
             _staticMeshBundleLayout.tick(dt);

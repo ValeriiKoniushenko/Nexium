@@ -296,12 +296,12 @@ namespace Core
 
         if (_totalShaders)
         {
-            _totalShaders->setInputtedData(GetShaderManager().countOfShaders());
+            _totalShaders->setInputtedData(static_cast<int>(GetShaderManager().countOfShaders()));
         }
 
         if (_failedShaders)
         {
-            _failedShaders->setInputtedData(GetShaderManager().countOfFailedShaders());
+            _failedShaders->setInputtedData(static_cast<int>(GetShaderManager().countOfFailedShaders()));
         }
     }
 

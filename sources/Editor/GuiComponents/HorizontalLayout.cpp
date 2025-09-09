@@ -164,13 +164,10 @@ namespace Core
         if (hasChildren())
         {
             _spacing = getWidth();
-            const float defaultSpacing = style().ItemSpacing.x;
             for (const auto& child : _children)
             {
                 _spacing -= child->unsafeCastTo<Widget>()->getWidth();
-                //_spacing -= defaultSpacing;
             }
-            //_spacing += defaultSpacing;
             _spacing /= _children.size() - 1ll;
         }
     }

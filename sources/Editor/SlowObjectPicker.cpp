@@ -51,9 +51,9 @@ namespace Core
         {
             shader->setUniform("uModel"_atom, mesh->getModelMatrix());
             Color3 colorId;
-            colorId.r = (mesh->getID() & 0x0000FF) >> 0;
-            colorId.g = (mesh->getID() & 0x00FF00) >> 8;
-            colorId.b = (mesh->getID() & 0xFF0000) >> 16;
+            colorId.r = static_cast<uint8_t>((mesh->getID() & 0x0000FF) >> 0);
+            colorId.g = static_cast<uint8_t>((mesh->getID() & 0x00FF00) >> 8);
+            colorId.b = static_cast<uint8_t>((mesh->getID() & 0xFF0000) >> 16);
 
             shader->setUniform("uPickingColor"_atom, NormColor3::From(colorId));
         };
