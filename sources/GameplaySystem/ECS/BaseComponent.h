@@ -29,6 +29,7 @@
 
 #include <queue>
 #include <stack>
+#include <typeindex>
 #include <unordered_set>
 
 // ===============================================================
@@ -66,10 +67,10 @@ public:
 
 // ---------------------------------------------------------
 
-#define _ECS_COMPONENT_IMPL(TypeName, Template)                                                    \
+#define _ECS_COMPONENT_IMPL(TypeName, Template, TypeNameAsStr)                                                    \
     Template const StringAtom TypeName::componentType = []                                         \
     {                                                                                              \
-        auto newType = StringAtom::Intern(#TypeName);                                              \
+        auto newType = StringAtom::Intern(TypeNameAsStr);                                \
         GetGlobalComponentFactory().registerNewType(                                               \
             newType,                                                                               \
             [] -> BaseComponent*                                                                   \
@@ -148,7 +149,7 @@ public:
 #define ECS_COMPONENT_DECL_NO_CNSTR(ClassName, BaseComponentClass)                                 \
     _ECS_COMPONENT_DECL(ClassName, ClassName, BaseComponentClass)
 
-#define ECS_COMPONENT_IMPL(ClassName) _ECS_COMPONENT_IMPL(ClassName, ;)
+#define ECS_COMPONENT_IMPL(ClassName) _ECS_COMPONENT_IMPL(ClassName, ;, #ClassName)
 
 //
 //
@@ -158,6 +159,7 @@ public:
 //
 //
 /**
+ * WARNING!!! Template ECS doesn't support any reflection due to type mangling by compiler!
  * @brief Use this macro inside your class body to declare new component.
  * @param ClassName only name of your class
  * @param BaseComponentClass put type of your parent here
@@ -222,7 +224,7 @@ public:
     _ECS_COMPONENT_DECL(ClassName, BRACKETS(ClassName<__VA_ARGS__>), BaseComponentClass)
 
 #define ECS_TEMPLATE_COMPONENT_IMPL(TypeName, Template)                                            \
-    _ECS_COMPONENT_IMPL(BRACKETS(TypeName), BRACKETS(template<Template>))
+    _ECS_COMPONENT_IMPL(BRACKETS(TypeName), BRACKETS(template<Template>), typeid(TypeName).name())
 
 namespace Core
 {
@@ -627,21 +629,10 @@ namespace Core
         }
 
         /**
-         * @brief attach existing child. Child's lifetime should be the same or more
-         * than parent. If you want to put child and don't worry about lifetime - use
-         * 'adoptChild'
+         * @brief attach existing child or just new one. Your child will be cloned
+         * to this class/owner
          */
         void attachChild(const BaseComponent::Ptr& child);
-
-        /**
-         * @brief use this function if you want to transfer ownership of your object.
-         */
-        template<IsComponent ComponentT>
-        void adoptChild(ComponentT&& child)
-        {
-            // typename ComponentT::Ptr newOne = new ComponentT(std::forward<Args>(args)...);
-            // return static_cast<ComponentT*>(rawAddChildComponent(newOne.get()));
-        }
 
         void detachChild(BaseComponent* child);
 

@@ -31,7 +31,10 @@ namespace Core
     HorizontalLayout::HorizontalLayout(const StringAtom& name)
         : Layout(componentType, name)
     {
-        setComponentName("HorizontalLayout"_atom);
+        if (name.isEmpty())
+        {
+            setComponentName("HorizontalLayout"_atom);
+        }
         setFlex(Flex::FlexWidth);
         setVerticalAlign(Align::Center);
         setHorizontalAlign(Align::Left);
@@ -147,7 +150,7 @@ namespace Core
 
         if (_width)
         {
-            ImGui::SetCursorPosX(originalCursor.x + *_width);
+            ImGui::SetCursorPosX(originalCursor.x + *_width - style().ItemSpacing.x);
         }
         ImGui::SetCursorPosY(originalCursor.y + getHeight());
 

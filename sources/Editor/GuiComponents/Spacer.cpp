@@ -34,12 +34,11 @@ namespace Core
     Spacer::Spacer(const StringAtom& name)
         : Widget(componentType, name)
     {
-        _size = style().ItemSpacing;
     }
 
     glm::vec2 Spacer::getRealSize() const
     {
-        return _size;
+        return _size + style().ItemSpacing;
     }
 
     void Spacer::setWidth(float newWidth)

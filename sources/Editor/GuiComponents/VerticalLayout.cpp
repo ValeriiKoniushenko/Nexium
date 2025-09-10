@@ -30,7 +30,10 @@ namespace Core
     VerticalLayout::VerticalLayout(const StringAtom& name)
         : Layout(componentType, name)
     {
-        setComponentName("VerticalLayout"_atom);
+        if (name.isEmpty())
+        {
+            setComponentName("VerticalLayout"_atom);
+        }
         setVerticalAlign(Align::Top);
         setHorizontalAlign(Align::Center);
     }

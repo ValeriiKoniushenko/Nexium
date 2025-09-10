@@ -198,10 +198,6 @@ namespace Core
 
     void ObjectPropertiesWindowEWC::onDraw()
     {
-        // A lot of stuff that should be centered or fitted.
-        // Temporary disable it
-        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, _overriddenSpacing);
-
         auto* asBaseComponent = dynamic_cast<BaseComponent*>(_target);
         auto* asTransformable = dynamic_cast<Transformable*>(_target);
         auto* asStaticMeshBundle = dynamic_cast<StaticMeshBundle*>(_target);
@@ -216,8 +212,6 @@ namespace Core
         tryDrawGraphicsComponentData(asGraphicsComponentData);
         tryDrawBaseCamera(asBaseCamera);
         tryDrawBaseComponentExtra(asBaseComponent);
-
-        ImGui::PopStyleVar(); // ImGuiStyleVar_ItemSpacing
     }
 
     void ObjectPropertiesWindowEWC::onUpdate()
@@ -335,7 +329,7 @@ namespace Core
         {
             auto& out = _baseCameraLayout;
 
-            out.attachChild(CreateHLayoutAndLabel("Frame size", false));
+            out.attachChild(CreateHLayoutAndLabel("Frame size(ration)", false));
             auto* mainRow = out.getLastChildAs<HLayout>().get();
 
             auto* doubleComp = mainRow->addChildComponent<HLayout>("Camera d-comp");
@@ -343,17 +337,15 @@ namespace Core
 
             auto* width = doubleComp->addChildComponent<HLayout>("Camera W");
             auto* w = width->addChildComponent<Label>("W:");
+            w->setWidth(10.f); // negative margin
             w->setTextColor(Color4::From(NormColor4(ColorRed)));
-            width->addChildComponent<Spacer>();
             _cameraFrameWidth = width->addChildComponent<IntInput>();
             _cameraFrameWidth->setFlex(Widget::Flex::FlexWidth);
 
-            doubleComp->addChildComponent<Spacer>()->scaleCurrentWidth(2.f);
-
             auto* height = doubleComp->addChildComponent<HLayout>("Camera H");
             auto* h = height->addChildComponent<Label>("H:");
+            h->setWidth(10.f); // negative margin
             h->setTextColor(Color4::From(NormColor4(ColorGreen)));
-            height->addChildComponent<Spacer>();
             _cameraFrameHeight = height->addChildComponent<IntInput>();
             _cameraFrameHeight->setFlex(Widget::Flex::FlexWidth);
         }
@@ -369,18 +361,16 @@ namespace Core
 
             auto* width = doubleComp->addChildComponent<HLayout>();
             auto* w = width->addChildComponent<Label>("W:");
+            w->setWidth(10.f); // negative margin
             w->setTextColor(Color4::From(NormColor4(ColorRed)));
-            width->addChildComponent<Spacer>();
             _cameraOutputWidth = width->addChildComponent<IntInput>();
             _cameraOutputWidth->setFlex(Widget::Flex::FlexWidth);
             _cameraOutputWidth->setDisabled(true);
 
-            doubleComp->addChildComponent<Spacer>()->scaleCurrentWidth(2.f);
-
             auto* height = doubleComp->addChildComponent<HLayout>();
             auto* h = height->addChildComponent<Label>("H:");
+            h->setWidth(10.f); // negative margin
             h->setTextColor(Color4::From(NormColor4(ColorGreen)));
-            height->addChildComponent<Spacer>();
             _cameraOutputHeight = height->addChildComponent<IntInput>();
             _cameraOutputHeight->setFlex(Widget::Flex::FlexWidth);
             _cameraOutputHeight->setDisabled(true);
