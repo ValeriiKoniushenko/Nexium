@@ -42,7 +42,7 @@ namespace Core
         public BaseComponent,
         public IOutliner
     {
-        ECS_REGISTER_NEW_COMPONENT(StaticMesh, BaseComponent);
+        ECS_COMPONENT_DECL(StaticMesh, BaseComponent);
 
     public:
         constexpr static Color4 outlineColor = Color4{ 252, 186, 3, 255 };

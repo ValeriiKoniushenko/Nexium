@@ -29,7 +29,7 @@ namespace Core
 
     class TextEditorEWC : public BaseFloatEWC
     {
-        ECS_REGISTER_NEW_COMPONENT(TextEditorEWC, BaseFloatEWC);
+        ECS_COMPONENT_DECL(TextEditorEWC, BaseFloatEWC);
 
     public:
         void putArguments(const StringAtom& args) override;

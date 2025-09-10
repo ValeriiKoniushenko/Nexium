@@ -30,7 +30,7 @@ namespace Core
 
     class AssetsManagerWindowEWC : public BaseFloatEWC
     {
-        ECS_REGISTER_NEW_COMPONENT(AssetsManagerWindowEWC, BaseFloatEWC);
+        ECS_COMPONENT_DECL(AssetsManagerWindowEWC, BaseFloatEWC);
 
     public:
         enum class NodeType

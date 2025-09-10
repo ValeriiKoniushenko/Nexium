@@ -32,7 +32,7 @@ namespace Core
 
     class Actor : public Transformable, public BaseComponent, public JsonCacheable
     {
-        ECS_REGISTER_NEW_COMPONENT(Actor, BaseComponent);
+        ECS_COMPONENT_DECL(Actor, BaseComponent);
 
     public:
         Actor(Actor&&) = default;

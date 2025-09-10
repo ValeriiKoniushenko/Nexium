@@ -35,7 +35,7 @@ namespace
 
 namespace Core
 {
-    ECS_REGISTER_NEW_TYPE(InvalidComponent);
+    ECS_COMPONENT_IMPL(InvalidComponent);
 
     BaseComponent* GlobalComponentFactory::create(const StringAtom& type)
     {

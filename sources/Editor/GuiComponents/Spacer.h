@@ -30,7 +30,7 @@ namespace Core
 
     class Spacer : public Widget
     {
-        ECS_REGISTER_NEW_COMPONENT_NO_CNSTR(Spacer, Widget);
+        ECS_COMPONENT_DECL_NO_CNSTR(Spacer, Widget);
 
     public:
         Spacer(const StringAtom& name = ""_atom);

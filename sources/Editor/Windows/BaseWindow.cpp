@@ -24,9 +24,9 @@
 
 namespace Core
 {
-    ECS_REGISTER_NEW_TYPE(BaseEWC)
-    ECS_REGISTER_NEW_TYPE(BaseFloatEWC)
-    ECS_REGISTER_NEW_TYPE(BaseMenuBarEWC)
+    ECS_COMPONENT_IMPL(BaseEWC)
+    ECS_COMPONENT_IMPL(BaseFloatEWC)
+    ECS_COMPONENT_IMPL(BaseMenuBarEWC)
 
     //
     //    ______

@@ -44,7 +44,7 @@ namespace Core
 
     class ObjectPropertiesWindowEWC : public BaseFloatEWC
     {
-        ECS_REGISTER_NEW_COMPONENT(ObjectPropertiesWindowEWC, BaseFloatEWC);
+        ECS_COMPONENT_DECL(ObjectPropertiesWindowEWC, BaseFloatEWC);
 
     public:
         static constexpr float defaultLabelWidth = 100.0f;

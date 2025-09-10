@@ -29,9 +29,9 @@
 namespace Core
 {
 
-    ECS_REGISTER_NEW_TYPE(BaseList);
-    ECS_REGISTER_NEW_TYPE(ListView);
-    ECS_REGISTER_NEW_TYPE(ListModelBased);
+    ECS_COMPONENT_IMPL(BaseList);
+    ECS_COMPONENT_IMPL(ListView);
+    ECS_COMPONENT_IMPL(ListModelBased);
 
     glm::vec2 BaseList::getRealSize() const
     {

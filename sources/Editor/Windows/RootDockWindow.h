@@ -28,7 +28,7 @@ namespace Core
 {
     class RootDockWindowEWC : public BaseEWC
     {
-        ECS_REGISTER_NEW_COMPONENT(RootDockWindowEWC, BaseEWC);
+        ECS_COMPONENT_DECL(RootDockWindowEWC, BaseEWC);
 
     public:
     private:

@@ -31,7 +31,7 @@ namespace Core
 {
     class LogsWindowEWC : public BaseFloatEWC, public JsonCacheable
     {
-        ECS_REGISTER_NEW_COMPONENT(LogsWindowEWC, BaseFloatEWC);
+        ECS_COMPONENT_DECL(LogsWindowEWC, BaseFloatEWC);
 
     public:
         struct LogLine

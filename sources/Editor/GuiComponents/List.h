@@ -30,7 +30,7 @@ namespace Core
 
     class BaseList : public Widget
     {
-        ECS_REGISTER_NEW_COMPONENT(BaseList, Widget);
+        ECS_COMPONENT_DECL(BaseList, Widget);
 
     public:
         [[nodiscard]] glm::vec2 getRealSize() const;
@@ -53,7 +53,7 @@ namespace Core
 
     class ListView : public BaseList
     {
-        ECS_REGISTER_NEW_COMPONENT(ListView, BaseList);
+        ECS_COMPONENT_DECL(ListView, BaseList);
 
     public:
         void setData(std::vector<StringAtom>&& items) { _items = std::move(items); }
@@ -79,7 +79,7 @@ namespace Core
 
     class ListModelBased : public BaseList
     {
-        ECS_REGISTER_NEW_COMPONENT(ListModelBased, BaseList);
+        ECS_COMPONENT_DECL(ListModelBased, BaseList);
 
     public:
         /**

@@ -28,7 +28,7 @@ namespace Core
 {
     class GameViewportEWC : public BaseFloatEWC
     {
-        ECS_REGISTER_NEW_COMPONENT(GameViewportEWC, BaseFloatEWC);
+        ECS_COMPONENT_DECL(GameViewportEWC, BaseFloatEWC);
 
     protected:
         void onInitialize() override;

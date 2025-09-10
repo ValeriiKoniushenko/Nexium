@@ -29,7 +29,7 @@ namespace Core
 
     class VerticalLayout : public Layout
     {
-        ECS_REGISTER_NEW_COMPONENT_NO_CNSTR(VerticalLayout, Layout);
+        ECS_COMPONENT_DECL_NO_CNSTR(VerticalLayout, Layout);
 
     public:
         explicit VerticalLayout(const StringAtom& name = "");

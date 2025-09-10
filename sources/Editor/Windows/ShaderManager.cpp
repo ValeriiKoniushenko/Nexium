@@ -32,7 +32,7 @@
 
 namespace Core
 {
-    ECS_REGISTER_NEW_TYPE(ShaderManagerEWC)
+    ECS_COMPONENT_IMPL(ShaderManagerEWC)
 
     void ShaderManagerEWC::createGui()
     {

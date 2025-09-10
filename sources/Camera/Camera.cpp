@@ -31,7 +31,7 @@
 
 namespace Core
 {
-    ECS_REGISTER_NEW_TYPE(BaseCamera)
+    ECS_COMPONENT_IMPL(BaseCamera)
 
     const glm::mat4& BaseCamera::getMatrix()
     {

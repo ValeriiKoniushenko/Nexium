@@ -28,7 +28,7 @@
 
 namespace Core
 {
-    ECS_REGISTER_NEW_TYPE(TextEditorEWC)
+    ECS_COMPONENT_IMPL(TextEditorEWC)
 
     void TextEditorEWC::onInitialize()
     {

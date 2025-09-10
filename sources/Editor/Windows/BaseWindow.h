@@ -33,7 +33,7 @@ namespace Core
      */
     class BaseEWC : public BaseComponent
     {
-        ECS_REGISTER_NEW_COMPONENT(BaseEWC, BaseComponent);
+        ECS_COMPONENT_DECL(BaseEWC, BaseComponent);
 
     public:
         static constexpr glm::vec4 ColorRed = glm::vec4(1.0f, 0.1f, 0.1f, 1.0f);
@@ -73,7 +73,7 @@ namespace Core
 
     class BaseFloatEWC : public BaseEWC
     {
-        ECS_REGISTER_NEW_COMPONENT(BaseFloatEWC, BaseEWC);
+        ECS_COMPONENT_DECL(BaseFloatEWC, BaseEWC);
 
     public:
         [[nodiscard]] FSize2 getWindowSize() const noexcept { return _size; }
@@ -116,7 +116,7 @@ namespace Core
 
     class BaseMenuBarEWC : public BaseEWC
     {
-        ECS_REGISTER_NEW_COMPONENT(BaseMenuBarEWC, BaseEWC);
+        ECS_COMPONENT_DECL(BaseMenuBarEWC, BaseEWC);
 
     public:
         void onInitialize() override;

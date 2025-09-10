@@ -32,7 +32,7 @@ namespace Core
 
     class SceneTreeWindowEWC : public BaseFloatEWC
     {
-        ECS_REGISTER_NEW_COMPONENT(SceneTreeWindowEWC, BaseFloatEWC);
+        ECS_COMPONENT_DECL(SceneTreeWindowEWC, BaseFloatEWC);
 
     public:
         void setScene(Scene* scene) { _scene = scene; }

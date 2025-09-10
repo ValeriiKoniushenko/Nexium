@@ -35,7 +35,7 @@ namespace Core
 
     class BaseInput : public Widget
     {
-        ECS_REGISTER_NEW_COMPONENT(BaseInput, Widget);
+        ECS_COMPONENT_DECL(BaseInput, Widget);
 
     public:
         void setTextColor(const Color4& value);
@@ -59,7 +59,7 @@ namespace Core
 
     class TextInput : public BaseInput
     {
-        ECS_REGISTER_NEW_COMPONENT(TextInput, BaseInput);
+        ECS_COMPONENT_DECL(TextInput, BaseInput);
 
     public:
         void setInputtedData(std::string data) { _buffer = std::move(data); }
@@ -95,7 +95,7 @@ namespace Core
     template<Utils::IsArithmetic Type>
     class NumInput : public BaseInput
     {
-        ECS_REGISTER_NEW_TEMPLATE_COMPONENT(NumInput, BaseInput, Type)
+        ECS_TEMPLATE_COMPONENT_DECL(NumInput, BaseInput, Type)
 
     public:
         void setInputtedData(Type data) { _buffer = data; }
@@ -150,7 +150,7 @@ namespace Core
     template<std::size_t Size, Utils::IsArithmetic Type>
     class VecNumInput : public BaseInput
     {
-        ECS_REGISTER_NEW_TEMPLATE_COMPONENT_NO_CNSTR(VecNumInput, BaseInput, Size, Type);
+        ECS_TEMPLATE_COMPONENT_DECL_NO_CNSTR(VecNumInput, BaseInput, Size, Type);
 
     public:
         explicit VecNumInput(const StringAtom& name)
@@ -164,9 +164,9 @@ namespace Core
     protected:
     };
 
-    ECS_REGISTER_NEW_TEMPLATE_TYPE(BRACKETS(VecNumInput<Size, Type>),
-                                   BRACKETS(std::size_t Size, Utils::IsArithmetic Type))
-    ECS_REGISTER_NEW_TEMPLATE_TYPE(BRACKETS(NumInput<Type>), BRACKETS(Utils::IsArithmetic Type))
+    ECS_TEMPLATE_COMPONENT_IMPL(BRACKETS(VecNumInput<Size, Type>),
+                                BRACKETS(std::size_t Size, Utils::IsArithmetic Type))
+    ECS_TEMPLATE_COMPONENT_IMPL(BRACKETS(NumInput<Type>), BRACKETS(Utils::IsArithmetic Type))
 
     using DoubleInput = NumInput<double>;
     using FloatInput = NumInput<float>;

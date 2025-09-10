@@ -54,7 +54,7 @@ namespace
 namespace Core
 {
 
-    ECS_REGISTER_NEW_TYPE(StaticMeshBundle)
+    ECS_COMPONENT_IMPL(StaticMeshBundle)
 
     void StaticMeshBundle::draw()
     {

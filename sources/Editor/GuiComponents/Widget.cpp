@@ -28,7 +28,7 @@
 namespace Core
 {
 
-    ECS_REGISTER_NEW_TYPE(Widget)
+    ECS_COMPONENT_IMPL(Widget)
 
     void Widget::draw()
     {

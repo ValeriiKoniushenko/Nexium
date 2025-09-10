@@ -29,7 +29,7 @@ namespace Core
 
     class Layout : public Widget
     {
-        ECS_REGISTER_NEW_COMPONENT(Layout, Widget);
+        ECS_COMPONENT_DECL(Layout, Widget);
 
     public:
         void setHorizontalAlign(Align align) { _align = align; }

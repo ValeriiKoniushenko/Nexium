@@ -40,7 +40,7 @@ namespace Core
 
     class ShaderManagerEWC : public BaseFloatEWC
     {
-        ECS_REGISTER_NEW_COMPONENT(ShaderManagerEWC, BaseFloatEWC);
+        ECS_COMPONENT_DECL(ShaderManagerEWC, BaseFloatEWC);
 
     public:
     protected:

@@ -25,7 +25,7 @@
 namespace Core
 {
 
-    ECS_REGISTER_NEW_TYPE(Label);
+    ECS_COMPONENT_IMPL(Label);
 
     void Label::setWidth(float newWidth)
     {

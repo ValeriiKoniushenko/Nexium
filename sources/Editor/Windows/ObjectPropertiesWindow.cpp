@@ -100,7 +100,7 @@ namespace
 
 namespace Core
 {
-    ECS_REGISTER_NEW_TYPE(ObjectPropertiesWindowEWC)
+    ECS_COMPONENT_IMPL(ObjectPropertiesWindowEWC)
 
     //
     //     _____  _        _              _   ______

@@ -32,7 +32,7 @@ namespace Core
 
     class Widget : public BaseComponent
     {
-        ECS_REGISTER_NEW_COMPONENT(Widget, BaseComponent);
+        ECS_COMPONENT_DECL(Widget, BaseComponent);
 
     public:
 

@@ -33,7 +33,7 @@
 
 namespace Core
 {
-    ECS_REGISTER_NEW_TYPE(EditorSettingsEWC)
+    ECS_COMPONENT_IMPL(EditorSettingsEWC)
 
     void EditorSettingsEWC::onInitialize()
     {

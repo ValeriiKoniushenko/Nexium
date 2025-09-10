@@ -30,7 +30,7 @@ namespace Core
 
     class Label : public Widget
     {
-        ECS_REGISTER_NEW_COMPONENT(Label, Widget);
+        ECS_COMPONENT_DECL(Label, Widget);
 
     public:
         void setWidth(float newWidth) override;

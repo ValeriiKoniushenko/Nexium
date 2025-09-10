@@ -30,7 +30,7 @@ namespace
 {
     class DummyComponent : public BaseComponent
     {
-        ECS_REGISTER_NEW_COMPONENT(DummyComponent, BaseComponent);
+        ECS_COMPONENT_DECL(DummyComponent, BaseComponent);
         int a = 123;
         std::string name = "Lola";
 
@@ -49,11 +49,11 @@ namespace
         }
     };
 
-    ECS_REGISTER_NEW_TYPE(DummyComponent);
+    ECS_COMPONENT_IMPL(DummyComponent);
 
     class HardConstructorComponent : public BaseComponent
     {
-        ECS_REGISTER_NEW_COMPONENT(HardConstructorComponent, BaseComponent);
+        ECS_COMPONENT_DECL(HardConstructorComponent, BaseComponent);
 
         HardConstructorComponent(int a, const StringAtom& name, std::string b)
             : BaseComponent(componentType, name),
@@ -64,7 +64,7 @@ namespace
         std::string _b;
     };
 
-    ECS_REGISTER_NEW_TYPE(HardConstructorComponent);
+    ECS_COMPONENT_IMPL(HardConstructorComponent);
 
     class ECSTreeTests : public ::testing::Test
     {

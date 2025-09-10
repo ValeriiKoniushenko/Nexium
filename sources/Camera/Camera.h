@@ -32,7 +32,7 @@ namespace Core
 
     class BaseCamera : public Actor
     {
-        ECS_REGISTER_NEW_COMPONENT(BaseCamera, Actor);
+        ECS_COMPONENT_DECL(BaseCamera, Actor);
 
     public:
         constexpr static float minFov = 5.f;

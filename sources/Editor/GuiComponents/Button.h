@@ -30,7 +30,7 @@ namespace Core
 
     class Button : public Widget
     {
-        ECS_REGISTER_NEW_COMPONENT(Button, Widget);
+        ECS_COMPONENT_DECL(Button, Widget);
 
     public:
         void setButtonColor(const Color4& value);
@@ -98,7 +98,7 @@ namespace Core
 
     class ToggleButton : public Button
     {
-        ECS_REGISTER_NEW_COMPONENT(ToggleButton, Button);
+        ECS_COMPONENT_DECL(ToggleButton, Button);
 
     public: // Delegates
         /**

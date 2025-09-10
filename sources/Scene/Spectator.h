@@ -30,7 +30,7 @@ namespace Core
 {
     class Spectator : public Actor
     {
-        ECS_REGISTER_NEW_COMPONENT(Spectator, Actor);
+        ECS_COMPONENT_DECL(Spectator, Actor);
 
     public:
         [[nodiscard]] nlohmann::json toJson() const override;

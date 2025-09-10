@@ -25,7 +25,7 @@
 namespace Core
 {
 
-    ECS_REGISTER_NEW_TYPE(VerticalLayout)
+    ECS_COMPONENT_IMPL(VerticalLayout)
 
     VerticalLayout::VerticalLayout(const StringAtom& name)
         : Layout(componentType, name)

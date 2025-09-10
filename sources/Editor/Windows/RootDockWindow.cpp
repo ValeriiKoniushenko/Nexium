@@ -26,7 +26,7 @@
 
 namespace Core
 {
-    ECS_REGISTER_NEW_TYPE(RootDockWindowEWC)
+    ECS_COMPONENT_IMPL(RootDockWindowEWC)
 
     //
     //    ______                _   ______               _

@@ -30,7 +30,7 @@ namespace Core
 
     class CheckBox : public Widget
     {
-        ECS_REGISTER_NEW_COMPONENT(CheckBox, Widget);
+        ECS_COMPONENT_DECL(CheckBox, Widget);
 
     public:
         [[nodiscard]] glm::vec2 getRealSize() const;

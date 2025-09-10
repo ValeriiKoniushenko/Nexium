@@ -30,7 +30,7 @@ namespace Core
 
     class EditorSettingsEWC : public BaseFloatEWC
     {
-        ECS_REGISTER_NEW_COMPONENT(EditorSettingsEWC, BaseFloatEWC);
+        ECS_COMPONENT_DECL(EditorSettingsEWC, BaseFloatEWC);
 
     public:
     protected:

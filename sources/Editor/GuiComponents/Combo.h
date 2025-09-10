@@ -29,7 +29,7 @@ namespace Core
 {
     class BaseCombo : public Widget
     {
-        ECS_REGISTER_NEW_COMPONENT(BaseCombo, Widget);
+        ECS_COMPONENT_DECL(BaseCombo, Widget);
 
     public:
         [[nodiscard]] glm::vec2 getRealSize() const;
@@ -48,7 +48,7 @@ namespace Core
 
     class ComboView : public BaseCombo
     {
-        ECS_REGISTER_NEW_COMPONENT(ComboView, BaseCombo);
+        ECS_COMPONENT_DECL(ComboView, BaseCombo);
 
     public:
         void setData(std::vector<StringAtom>&& items) { _items = std::move(items); }
@@ -78,7 +78,7 @@ namespace Core
 
     class ComboModelBased : public BaseCombo
     {
-        ECS_REGISTER_NEW_COMPONENT(ComboModelBased, BaseCombo);
+        ECS_COMPONENT_DECL(ComboModelBased, BaseCombo);
 
     public:
         /**

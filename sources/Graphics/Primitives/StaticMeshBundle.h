@@ -30,7 +30,7 @@ namespace Core
 {
     class StaticMeshBundle : public Actor, public IOutliner
     {
-        ECS_REGISTER_NEW_COMPONENT(StaticMeshBundle, Actor);
+        ECS_COMPONENT_DECL(StaticMeshBundle, Actor);
 
     public:
         /**

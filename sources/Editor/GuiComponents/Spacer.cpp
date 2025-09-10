@@ -29,7 +29,7 @@
 namespace Core
 {
 
-    ECS_REGISTER_NEW_TYPE(Spacer);
+    ECS_COMPONENT_IMPL(Spacer);
 
     Spacer::Spacer(const StringAtom& name)
         : Widget(componentType, name)

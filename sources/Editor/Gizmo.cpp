@@ -29,7 +29,7 @@
 
 namespace Core
 {
-    ECS_REGISTER_NEW_TYPE(Gizmo)
+    ECS_COMPONENT_IMPL(Gizmo)
 
     void Gizmo::draw()
     {

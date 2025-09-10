@@ -34,7 +34,7 @@ namespace Core
 {
     class Gizmo : public StaticMeshBundle
     {
-        ECS_REGISTER_NEW_COMPONENT(Gizmo, StaticMeshBundle);
+        ECS_COMPONENT_DECL(Gizmo, StaticMeshBundle);
 
     public:
         inline static const std::filesystem::path defaultModelPath

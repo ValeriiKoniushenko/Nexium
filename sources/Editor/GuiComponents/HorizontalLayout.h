@@ -29,7 +29,7 @@ namespace Core
 
     class HorizontalLayout : public Layout
     {
-        ECS_REGISTER_NEW_COMPONENT_NO_CNSTR(HorizontalLayout, Layout);
+        ECS_COMPONENT_DECL_NO_CNSTR(HorizontalLayout, Layout);
 
     public:
         explicit HorizontalLayout(const StringAtom& name = ""_atom);
