@@ -58,17 +58,53 @@ protected:                                                                      
     explicit ClassName(const StringAtom& type, const StringAtom& name)                             \
         : BaseComponentClass(type, name)                                                           \
     {                                                                                              \
-    }
+    }                                                                                              \
+                                                                                                   \
+public:
+
+// ---------------------------------------------------------
+
+#define _ECS_REGISTER_NEW_TEMPLATE_COMPONENT(ClassName, BaseComponentClass, ...)                   \
+public:                                                                                            \
+    using Ptr = boost::intrusive_ptr<ClassName<__VA_ARGS__>>;                                      \
+    using CPtr = boost::intrusive_ptr<const ClassName>;                                            \
+    template<bool isConst>                                                                         \
+    using AdaptivePtr = boost::intrusive_ptr<                                                      \
+        std::conditional_t<isConst, const ClassName<__VA_ARGS__>, ClassName<__VA_ARGS__>>>;        \
+    template<bool isConst>                                                                         \
+    using AdaptiveRawPtr                                                                           \
+        = std::conditional_t<isConst, const ClassName<__VA_ARGS__>, ClassName<__VA_ARGS__>>*;      \
+                                                                                                   \
+    static const StringAtom componentType;                                                         \
+                                                                                                   \
+public:                                                                                            \
+    [[nodiscard]] BaseComponent::Ptr clone() override                                              \
+    {                                                                                              \
+        return static_cast<ClassName<__VA_ARGS__>*>(                                               \
+            _tryAllocateECSObject<ClassName<__VA_ARGS__>>(this));                                  \
+    }                                                                                              \
+    [[nodiscard]] static Ptr Create()                                                              \
+    {                                                                                              \
+        return static_cast<ClassName<__VA_ARGS__>*>(                                               \
+            _tryAllocateECSObject<ClassName<__VA_ARGS__>>(nullptr));                               \
+    }                                                                                              \
+                                                                                                   \
+protected:                                                                                         \
+    explicit ClassName(const StringAtom& type, const StringAtom& name)                             \
+        : BaseComponentClass(type, name)                                                           \
+    {                                                                                              \
+    }                                                                                              \
+                                                                                                   \
+private:                                                                                           \
+    static const bool _debugTypeTracker;                                                           \
+    static const bool _typeRegistration;                                                           \
+                                                                                                   \
+public:
 
 // ---------------------------------------------------------
 
 #define _ECS_REGISTER_NEW_COMPONENT(ClassName, TypeName, BaseComponentClass)                       \
     _ECS_REGISTER_NEW_COMPONENT___HEAD(ClassName, TypeName, BaseComponentClass)                    \
-private:                                                                                           \
-    static const bool _debugTypeTracker;                                                           \
-    static const bool _##ClassName##_type_registration;                                            \
-                                                                                                   \
-public:                                                                                            \
     static const StringAtom componentType;
 
 // ---------------------------------------------------------
@@ -78,6 +114,9 @@ public:                                                                         
         : BaseComponentClass(componentType, name)                                                  \
     {                                                                                              \
     }
+
+#define BRACKETS(...) __VA_ARGS__
+
 // ===============================================================
 
 /**
@@ -109,21 +148,21 @@ public:                                                                         
  * new component with ECS_REGISTER_NEW_COMPONENT(YourClass, Spectator) due
  * to this is template class.
  */
-#define ECS_REGISTER_NEW_TEMPLATE_COMPONENT(ClassName, ClassType, BaseComponentClass)              \
-    _ECS_REGISTER_NEW_COMPONENT(ClassName, ClassType, BaseComponentClass)                          \
-public:                                                                                            \
+#define ECS_REGISTER_NEW_TEMPLATE_COMPONENT(ClassName, BaseComponentClass, ...)                    \
+    _ECS_REGISTER_NEW_TEMPLATE_COMPONENT(ClassName, BaseComponentClass, __VA_ARGS__)               \
     _ECS_DEFAULT_PUBLIC_CONSTRUCTOR(ClassName, BaseComponentClass)
 
 /**
  * !! The non-constructor version of the similar macro above. !!
+ * Sounds bad, but it needs improvements, I'll try to fix it in the future.
  * Put these macros inside your template class body for every new component.
  * New component is even a component that extends the previous one. I.e.,
  * if you are inherited from class Spectator, you should !NOT! mark your
  * new component with ECS_REGISTER_NEW_COMPONENT(YourClass, Spectator) due
  * to this is template class.
  */
-#define ECS_REGISTER_NEW_TEMPLATE_COMPONENT_NO_CNSTR(ClassName, ClassType, BaseComponentClass)     \
-    _ECS_REGISTER_NEW_COMPONENT(ClassName, ClassType, BaseComponentClass)
+#define ECS_REGISTER_NEW_TEMPLATE_COMPONENT_NO_CNSTR(ClassName, BaseComponentClass, ...)           \
+    _ECS_REGISTER_NEW_TEMPLATE_COMPONENT(ClassName, BaseComponentClass, __VA_ARGS__)
 
 /**
  * Also, we need this macro in .cpp file of implementation of your new type.
@@ -131,53 +170,47 @@ public:                                                                         
  * above, please.
  */
 #define ECS_REGISTER_NEW_TYPE(ClassName)                                                           \
-    const bool ClassName::_##ClassName##_type_registration                                  \
-        = GetGlobalComponentFactory().registerNewType(                                             \
-            StringAtom::Intern(typeid(ClassName).name()),                                          \
-            []() -> BaseComponent*                                                                 \
-            {                                                                                      \
-                return new std::conditional_t<std::is_abstract_v<ClassName>, InvalidComponent,     \
-                                              ClassName>;                                          \
-            });                                                                                    \
-                                                                                                   \
-    const StringAtom ClassName::componentType = StringAtom::Intern(typeid(ClassName).name());      \
-                                                                                                   \
-    const bool ClassName::_debugTypeTracker = []()                                                 \
+    const StringAtom ClassName::componentType = []                                                 \
     {                                                                                              \
-        GetGlobalComponentFactory()._debugTypeTracker_NotifyNewAboutType(                          \
-            StringAtom::Intern(typeid(ClassName).name()));                                         \
-        return true;                                                                               \
+        auto newType = StringAtom::Intern(#ClassName);                                             \
+        auto& factory = GetGlobalComponentFactory();                                               \
+        factory._debugTypeTracker_NotifyNewAboutType(newType);                                     \
+        factory.registerNewType(newType,                                                           \
+                                [] -> BaseComponent*                                               \
+                                {                                                                  \
+                                    return new std::conditional_t<std::is_abstract_v<ClassName>,   \
+                                                                  InvalidComponent, ClassName>;    \
+                                });                                                                \
+        return newType;                                                                            \
     }();
-
-#define _ECS_UNPAREN(...) __VA_ARGS__
 
 /**
  * Also, we need this macro in .cpp file of implementation of your new type.
  * If you don't understand what means 'new type' check the macro's description
  * above, please.
  */
-#define ECS_REGISTER_NEW_TEMPLATE_TYPE(ClassName, TypeName, Template)                              \
-    template<_ECS_UNPAREN(Template)>                                                               \
-    const bool _ECS_UNPAREN(TypeName)::_##ClassName##_type_registration                            \
+#define ECS_REGISTER_NEW_TEMPLATE_TYPE(TypeName, Template)                                         \
+    template<BRACKETS(Template)>                                                                   \
+    const bool BRACKETS(TypeName)::_typeRegistration                                               \
         = GetGlobalComponentFactory().registerNewType(                                             \
-            StringAtom::Intern(typeid(_ECS_UNPAREN(TypeName)).name()),                             \
+            StringAtom::Intern(typeid(BRACKETS(TypeName)).name()),                                 \
             []() -> BaseComponent*                                                                 \
             {                                                                                      \
-                return new std::conditional_t<std::is_abstract_v<_ECS_UNPAREN(TypeName)>,          \
-                                              InvalidComponent, _ECS_UNPAREN(TypeName)>;           \
+                return new std::conditional_t<std::is_abstract_v<BRACKETS(TypeName)>,              \
+                                              InvalidComponent, BRACKETS(TypeName)>;               \
             });                                                                                    \
                                                                                                    \
-    template<_ECS_UNPAREN(Template)>                                                               \
-    const bool _ECS_UNPAREN(TypeName)::_debugTypeTracker = []()                                    \
+    template<BRACKETS(Template)>                                                                   \
+    const bool BRACKETS(TypeName)::_debugTypeTracker = []()                                        \
     {                                                                                              \
         GetGlobalComponentFactory()._debugTypeTracker_NotifyNewAboutType(                          \
-            StringAtom::Intern(typeid(_ECS_UNPAREN(TypeName)).name()));                            \
+            StringAtom::Intern(typeid(BRACKETS(TypeName)).name()));                                \
         return true;                                                                               \
     }();                                                                                           \
                                                                                                    \
-    template<_ECS_UNPAREN(Template)>                                                               \
-    const StringAtom _ECS_UNPAREN(TypeName)::componentType                                         \
-        = StringAtom::Intern(typeid(_ECS_UNPAREN(TypeName)).name());
+    template<BRACKETS(Template)>                                                                   \
+    const StringAtom BRACKETS(TypeName)::componentType                                             \
+        = StringAtom::Intern(typeid(BRACKETS(TypeName)).name());
 
 namespace Core
 {
@@ -268,7 +301,7 @@ namespace Core
          * @param callback Function that creates instances of this type.
          * @return True if registration succeeds, false if type already exists.
          */
-        bool registerNewType(StringAtom type, std::function<BaseComponent*()> callback);
+        bool registerNewType(const StringAtom& type, std::function<BaseComponent*()> callback);
 
         [[nodiscard]] spdlog::logger* getLogger() const final { return Ecs::getLogger(); }
 

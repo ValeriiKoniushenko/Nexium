@@ -25,6 +25,7 @@
 #include "Core/Delegate.h"
 #include "ImGui/imgui_internal.h"
 #include "ImGui/misc/cpp/imgui_stdlib.h"
+#include "Label.h"
 #include "Widget.h"
 
 #include <limits>
@@ -94,7 +95,7 @@ namespace Core
     template<Utils::IsArithmetic Type>
     class NumInput : public BaseInput
     {
-        ECS_REGISTER_NEW_TEMPLATE_COMPONENT(NumInput, NumInput<Type>, BaseInput)
+        ECS_REGISTER_NEW_TEMPLATE_COMPONENT(NumInput, BaseInput, Type)
 
     public:
         void setInputtedData(Type data) { _buffer = data; }
@@ -146,7 +147,26 @@ namespace Core
         Type _max = std::numeric_limits<Type>::max();
     };
 
-    ECS_REGISTER_NEW_TEMPLATE_TYPE(NumInput, NumInput<Type>, Utils::IsArithmetic Type)
+    template<std::size_t Size, Utils::IsArithmetic Type>
+    class VecNumInput : public BaseInput
+    {
+        ECS_REGISTER_NEW_TEMPLATE_COMPONENT_NO_CNSTR(VecNumInput, BaseInput, Size, Type);
+
+    public:
+        explicit VecNumInput(const StringAtom& name)
+            : BaseInput(componentType, name)
+        {
+        }
+
+        std::array<NumInput<Type>, Size> inputs;
+        std::array<Label, Size> labels;
+
+    protected:
+    };
+
+    ECS_REGISTER_NEW_TEMPLATE_TYPE(BRACKETS(VecNumInput<Size, Type>),
+                                   BRACKETS(std::size_t Size, Utils::IsArithmetic Type))
+    ECS_REGISTER_NEW_TEMPLATE_TYPE(BRACKETS(NumInput<Type>), BRACKETS(Utils::IsArithmetic Type))
 
     using DoubleInput = NumInput<double>;
     using FloatInput = NumInput<float>;

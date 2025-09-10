@@ -55,7 +55,7 @@
             "name": "BaseCamera",
             "near": 0.10000000149011612,
             "noTick": false,
-            "type": "class Core::BaseCamera"
+            "type": "BaseCamera"
         }
     ],
     "isEnabled": true,
@@ -95,5 +95,5 @@
     "name": "Spectator",
     "noTick": false,
     "speed": 50.0,
-    "type": "class Core::Spectator"
+    "type": "Spectator"
 }

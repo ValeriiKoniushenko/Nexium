@@ -57,14 +57,14 @@ namespace Core
         return nullptr;
     }
 
-    bool GlobalComponentFactory::registerNewType(StringAtom type,
+    bool GlobalComponentFactory::registerNewType(const StringAtom& type,
                                                  std::function<BaseComponent*()> callback)
     {
         Assert(type.isStatic());
 #if defined(DEBUG)
         _debugTypeTracker_NotifyNewAboutType(type);
 #endif
-        _map.emplace(std::move(type), std::move(callback));
+        _map.emplace(type, std::move(callback));
         return true;
     }
 

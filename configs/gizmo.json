@@ -51,7 +51,7 @@
             "isEnabled": true,
             "name": "Y.001",
             "noTick": false,
-            "type": "class Core::StaticMesh"
+            "type": "StaticMesh"
         },
         {
             "GraphicsComponentData": {
@@ -82,7 +82,7 @@
             "isEnabled": true,
             "name": "X.001",
             "noTick": false,
-            "type": "class Core::StaticMesh"
+            "type": "StaticMesh"
         },
         {
             "GraphicsComponentData": {
@@ -113,7 +113,7 @@
             "isEnabled": true,
             "name": "Z.001",
             "noTick": false,
-            "type": "class Core::StaticMesh"
+            "type": "StaticMesh"
         },
         {
             "GraphicsComponentData": {
@@ -144,7 +144,7 @@
             "isEnabled": true,
             "name": "Union.001",
             "noTick": false,
-            "type": "class Core::StaticMesh"
+            "type": "StaticMesh"
         }
     ],
     "isEnabled": true,
@@ -178,7 +178,7 @@
             "isEnabled": true,
             "name": "Y.001",
             "noTick": false,
-            "type": "class Core::StaticMesh"
+            "type": "StaticMesh"
         },
         {
             "GraphicsComponentData": {
@@ -209,7 +209,7 @@
             "isEnabled": true,
             "name": "X.001",
             "noTick": false,
-            "type": "class Core::StaticMesh"
+            "type": "StaticMesh"
         },
         {
             "GraphicsComponentData": {
@@ -240,7 +240,7 @@
             "isEnabled": true,
             "name": "Z.001",
             "noTick": false,
-            "type": "class Core::StaticMesh"
+            "type": "StaticMesh"
         },
         {
             "GraphicsComponentData": {
@@ -271,10 +271,10 @@
             "isEnabled": true,
             "name": "Union.001",
             "noTick": false,
-            "type": "class Core::StaticMesh"
+            "type": "StaticMesh"
         }
     ],
     "name": "gizmo",
     "noTick": false,
-    "type": "class Core::Gizmo"
+    "type": "Gizmo"
 }
