@@ -25,7 +25,7 @@
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_internal.h"
 
-namespace Core
+namespace Core::Gui
 {
 
     ECS_COMPONENT_IMPL(Button)
@@ -233,4 +233,4 @@ namespace Core
         onToggle.trigger(this, _isActive);
     }
 
-} // namespace Core
+} // namespace Core::Gui

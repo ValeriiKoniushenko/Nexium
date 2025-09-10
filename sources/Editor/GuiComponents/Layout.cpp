@@ -22,9 +22,9 @@
 
 #include "Layout.h"
 
-namespace Core
+namespace Core::Gui
 {
 
     ECS_COMPONENT_IMPL(Layout)
 
-} // namespace Core
+} // namespace Core::Gui

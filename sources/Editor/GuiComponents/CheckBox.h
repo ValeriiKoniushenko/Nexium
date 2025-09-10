@@ -25,7 +25,7 @@
 #include "Core/Delegate.h"
 #include "Widget.h"
 
-namespace Core
+namespace Core::Gui
 {
 
     class CheckBox : public Widget
@@ -55,4 +55,4 @@ namespace Core
         bool _currentValue = false;
     };
 
-} // namespace Core
+} // namespace Core::Gui

@@ -25,7 +25,7 @@
 #include "InputDevices/Keyboard.h"
 #include "InputDevices/Mouse.h"
 
-namespace Core
+namespace Core::Gui
 {
 
     ECS_COMPONENT_IMPL(Widget)
@@ -125,7 +125,7 @@ namespace Core
         }
     }
 
-} // namespace Core
+} // namespace Core::Gui
 
 namespace ImGui
 {

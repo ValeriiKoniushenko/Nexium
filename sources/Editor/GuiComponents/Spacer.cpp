@@ -26,7 +26,7 @@
 #include "ImGui/misc/cpp/imgui_stdlib.h"
 #include "Misc/ImGuiHelper.h"
 
-namespace Core
+namespace Core::Gui
 {
 
     ECS_COMPONENT_IMPL(Spacer);
@@ -74,4 +74,4 @@ namespace Core
             setComponentName("Spacer"_atom);
         }
     }
-} // namespace Core
+} // namespace Core::Gui

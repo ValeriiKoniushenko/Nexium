@@ -24,7 +24,7 @@
 
 #include "Layout.h"
 
-namespace Core
+namespace Core::Gui
 {
 
     class VerticalLayout : public Layout
@@ -64,4 +64,4 @@ namespace Core
         std::optional<float> _spacing;
     };
 
-} // namespace Core
+} // namespace Core::Gui

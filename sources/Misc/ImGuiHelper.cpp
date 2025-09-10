@@ -125,7 +125,8 @@ namespace Core
         ImGui::PopItemWidth();
     }
 
-    bool ToggleButton(const char* label, bool cond, const glm::vec4& onColor, const glm::vec4& offColor)
+    bool ToggleButton(const char* label, bool cond, const glm::vec4& onColor,
+                      const glm::vec4& offColor)
     {
         ImGui::PushStyleColor(ImGuiCol_Button, cond ? onColor : offColor);
         const bool isPressed = ImGui::Button(label);

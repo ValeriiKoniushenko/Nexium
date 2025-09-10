@@ -27,9 +27,12 @@
 #include "Editor/GuiComponents/Combo.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Label.h"
+#include "Editor/GuiComponents/Misc.h"
 #include "Editor/GuiComponents/Spacer.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "TextEditor.h"
+
+using namespace Core::Gui;
 
 namespace Core
 {
@@ -173,8 +176,6 @@ namespace Core
             _recompileResult->setFlex(Widget::Flex::FlexWidth);
             _recompileResult->setText("");
         }
-
-        _selectedShaderLayout.addChildComponent<Spacer>();
     }
 
     void ShaderManagerEWC::onInitialize()
@@ -195,31 +196,30 @@ namespace Core
         _headLayout.tick(dt);
 
         ImGui::Dummy({ 0, ImGui::GetStyle().ItemSpacing.y * 2.f });
-        if (ImGui::CollapsingHeader("General", ImGuiTreeNodeFlags_DefaultOpen))
+        if (Gui::CollapsingHeader("General", ImGuiTreeNodeFlags_DefaultOpen))
         {
             _selectedShaderLayout.tick(dt);
         }
 
         if (_selectedRawShader)
         {
-            if (ImGui::CollapsingHeader("Uniforms", ImGuiTreeNodeFlags_DefaultOpen))
+            if (Gui::CollapsingHeader("Uniforms", ImGuiTreeNodeFlags_DefaultOpen))
             {
                 drawTableWith("Uniforms", _selectedRawShader->getUniforms());
             }
             ImGui::Dummy({});
 
-            if (ImGui::CollapsingHeader("Inputs", ImGuiTreeNodeFlags_DefaultOpen))
+            if (Gui::CollapsingHeader("Inputs", ImGuiTreeNodeFlags_DefaultOpen))
             {
                 drawTableWith("Inputs", _selectedRawShader->getInputs());
             }
             ImGui::Dummy({});
 
-            if (ImGui::CollapsingHeader("Outputs", ImGuiTreeNodeFlags_DefaultOpen))
+            if (Gui::CollapsingHeader("Outputs", ImGuiTreeNodeFlags_DefaultOpen))
             {
                 drawTableWith("Outputs", _selectedRawShader->getOutputs());
             }
         }
-
     }
 
     void ShaderManagerEWC::drawTableWith(
@@ -302,7 +302,8 @@ namespace Core
 
         if (_failedShaders)
         {
-            _failedShaders->setInputtedData(static_cast<int>(GetShaderManager().countOfFailedShaders()));
+            _failedShaders->setInputtedData(
+                static_cast<int>(GetShaderManager().countOfFailedShaders()));
         }
     }
 

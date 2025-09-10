@@ -212,11 +212,12 @@ namespace Core
             = glm::vec4(0.14f, 0.14f, 0.16f, 1.00f); // Dark background with a hint of blue
         colors[ImGuiCol_ChildBg]
             = glm::vec4(0.16f, 0.16f, 0.18f, 1.00f); // Slightly lighter for child elements
-        colors[ImGuiCol_PopupBg] = glm::vec4(0.18f, 0.18f, 0.20f, 1.00f);        // Popup background
-        colors[ImGuiCol_Border] = glm::vec4(0.28f, 0.29f, 0.30f, 0.60f);         // Soft border color
-        colors[ImGuiCol_BorderShadow] = glm::vec4(0.00f, 0.00f, 0.00f, 0.00f);   // No border shadow
-        colors[ImGuiCol_FrameBg] = glm::vec4(0.20f, 0.22f, 0.24f, 1.00f);        // Frame background
-        colors[ImGuiCol_FrameBgHovered] = glm::vec4(0.22f, 0.24f, 0.26f, 1.00f); // Frame hover effect
+        colors[ImGuiCol_PopupBg] = glm::vec4(0.18f, 0.18f, 0.20f, 1.00f);      // Popup background
+        colors[ImGuiCol_Border] = glm::vec4(0.28f, 0.29f, 0.30f, 0.60f);       // Soft border color
+        colors[ImGuiCol_BorderShadow] = glm::vec4(0.00f, 0.00f, 0.00f, 0.00f); // No border shadow
+        colors[ImGuiCol_FrameBg] = glm::vec4(0.20f, 0.22f, 0.24f, 1.00f);      // Frame background
+        colors[ImGuiCol_FrameBgHovered]
+            = glm::vec4(0.22f, 0.24f, 0.26f, 1.00f); // Frame hover effect
         colors[ImGuiCol_FrameBgActive]
             = glm::vec4(0.24f, 0.26f, 0.28f, 1.00f);                      // Active frame background
         colors[ImGuiCol_TitleBg] = glm::vec4(0.14f, 0.14f, 0.16f, 1.00f); // Title background
@@ -224,40 +225,45 @@ namespace Core
             = glm::vec4(0.16f, 0.16f, 0.18f, 1.00f); // Active title background
         colors[ImGuiCol_TitleBgCollapsed]
             = glm::vec4(0.14f, 0.14f, 0.16f, 1.00f); // Collapsed title background
-        colors[ImGuiCol_MenuBarBg] = glm::vec4(0.20f, 0.20f, 0.22f, 1.00f);   // Menu bar background
-        colors[ImGuiCol_ScrollbarBg] = glm::vec4(0.16f, 0.16f, 0.18f, 1.00f); // Scrollbar background
+        colors[ImGuiCol_MenuBarBg] = glm::vec4(0.20f, 0.20f, 0.22f, 1.00f); // Menu bar background
+        colors[ImGuiCol_ScrollbarBg]
+            = glm::vec4(0.16f, 0.16f, 0.18f, 1.00f); // Scrollbar background
         colors[ImGuiCol_ScrollbarGrab]
             = glm::vec4(0.24f, 0.26f, 0.28f, 1.00f); // Dark accent for scrollbar grab
         colors[ImGuiCol_ScrollbarGrabHovered]
             = glm::vec4(0.28f, 0.30f, 0.32f, 1.00f); // Scrollbar grab hover
         colors[ImGuiCol_ScrollbarGrabActive]
-            = glm::vec4(0.32f, 0.34f, 0.36f, 1.00f);                         // Scrollbar grab active
-        colors[ImGuiCol_CheckMark] = glm::vec4(0.46f, 0.56f, 0.66f, 1.00f);  // Dark blue checkmark
-        colors[ImGuiCol_SliderGrab] = glm::vec4(0.36f, 0.46f, 0.56f, 1.00f); // Dark blue slider grab
+            = glm::vec4(0.32f, 0.34f, 0.36f, 1.00f);                        // Scrollbar grab active
+        colors[ImGuiCol_CheckMark] = glm::vec4(0.46f, 0.56f, 0.66f, 1.00f); // Dark blue checkmark
+        colors[ImGuiCol_SliderGrab]
+            = glm::vec4(0.36f, 0.46f, 0.56f, 1.00f); // Dark blue slider grab
         colors[ImGuiCol_SliderGrabActive]
-            = glm::vec4(0.40f, 0.50f, 0.60f, 1.00f);                            // Active slider grab
-        colors[ImGuiCol_Button] = glm::vec4(0.24f, 0.34f, 0.44f, 1.00f);        // Dark blue button
-        colors[ImGuiCol_ButtonHovered] = glm::vec4(0.28f, 0.38f, 0.48f, 1.00f); // Button hover effect
-        colors[ImGuiCol_ButtonActive] = glm::vec4(0.32f, 0.42f, 0.52f, 1.00f);  // Active button
+            = glm::vec4(0.40f, 0.50f, 0.60f, 1.00f);                     // Active slider grab
+        colors[ImGuiCol_Button] = glm::vec4(0.24f, 0.34f, 0.44f, 1.00f); // Dark blue button
+        colors[ImGuiCol_ButtonHovered]
+            = glm::vec4(0.28f, 0.38f, 0.48f, 1.00f); // Button hover effect
+        colors[ImGuiCol_ButtonActive] = glm::vec4(0.32f, 0.42f, 0.52f, 1.00f); // Active button
         colors[ImGuiCol_Header]
             = glm::vec4(0.24f, 0.34f, 0.44f, 1.00f); // Header color similar to button
-        colors[ImGuiCol_HeaderHovered] = glm::vec4(0.28f, 0.38f, 0.48f, 1.00f); // Header hover effect
-        colors[ImGuiCol_HeaderActive] = glm::vec4(0.32f, 0.42f, 0.52f, 1.00f);  // Active header
-        colors[ImGuiCol_Separator] = glm::vec4(0.28f, 0.29f, 0.30f, 1.00f);     // Separator color
+        colors[ImGuiCol_HeaderHovered]
+            = glm::vec4(0.28f, 0.38f, 0.48f, 1.00f); // Header hover effect
+        colors[ImGuiCol_HeaderActive] = glm::vec4(0.32f, 0.42f, 0.52f, 1.00f); // Active header
+        colors[ImGuiCol_Separator] = glm::vec4(0.28f, 0.29f, 0.30f, 1.00f);    // Separator color
         colors[ImGuiCol_SeparatorHovered]
             = glm::vec4(0.46f, 0.56f, 0.66f, 1.00f); // Hover effect for separator
-        colors[ImGuiCol_SeparatorActive] = glm::vec4(0.46f, 0.56f, 0.66f, 1.00f); // Active separator
-        colors[ImGuiCol_ResizeGrip] = glm::vec4(0.36f, 0.46f, 0.56f, 1.00f);      // Resize grip
+        colors[ImGuiCol_SeparatorActive]
+            = glm::vec4(0.46f, 0.56f, 0.66f, 1.00f);                         // Active separator
+        colors[ImGuiCol_ResizeGrip] = glm::vec4(0.36f, 0.46f, 0.56f, 1.00f); // Resize grip
         colors[ImGuiCol_ResizeGripHovered]
             = glm::vec4(0.40f, 0.50f, 0.60f, 1.00f); // Hover effect for resize grip
         colors[ImGuiCol_ResizeGripActive]
-            = glm::vec4(0.44f, 0.54f, 0.64f, 1.00f);                           // Active resize grip
-        colors[ImGuiCol_Tab] = glm::vec4(0.20f, 0.22f, 0.24f, 1.00f);          // Inactive tab
-        colors[ImGuiCol_TabHovered] = glm::vec4(0.28f, 0.38f, 0.48f, 1.00f);   // Hover effect for tab
-        colors[ImGuiCol_TabActive] = glm::vec4(0.24f, 0.34f, 0.44f, 1.00f);    // Active tab color
+            = glm::vec4(0.44f, 0.54f, 0.64f, 1.00f);                         // Active resize grip
+        colors[ImGuiCol_Tab] = glm::vec4(0.20f, 0.22f, 0.24f, 1.00f);        // Inactive tab
+        colors[ImGuiCol_TabHovered] = glm::vec4(0.28f, 0.38f, 0.48f, 1.00f); // Hover effect for tab
+        colors[ImGuiCol_TabActive] = glm::vec4(0.24f, 0.34f, 0.44f, 1.00f);  // Active tab color
         colors[ImGuiCol_TabUnfocused] = glm::vec4(0.20f, 0.22f, 0.24f, 1.00f); // Unfocused tab
         colors[ImGuiCol_TabUnfocusedActive]
-            = glm::vec4(0.24f, 0.34f, 0.44f, 1.00f);                        // Active but unfocused tab
+            = glm::vec4(0.24f, 0.34f, 0.44f, 1.00f); // Active but unfocused tab
         colors[ImGuiCol_PlotLines] = glm::vec4(0.46f, 0.56f, 0.66f, 1.00f); // Plot lines
         colors[ImGuiCol_PlotLinesHovered]
             = glm::vec4(0.46f, 0.56f, 0.66f, 1.00f); // Hover effect for plot lines
@@ -269,15 +275,16 @@ namespace Core
         colors[ImGuiCol_TableBorderStrong]
             = glm::vec4(0.28f, 0.29f, 0.30f, 1.00f); // Strong border for tables
         colors[ImGuiCol_TableBorderLight]
-            = glm::vec4(0.24f, 0.25f, 0.26f, 1.00f);                         // Light border for tables
+            = glm::vec4(0.24f, 0.25f, 0.26f, 1.00f); // Light border for tables
         colors[ImGuiCol_TableRowBg] = glm::vec4(0.20f, 0.22f, 0.24f, 1.00f); // Table row background
         colors[ImGuiCol_TableRowBgAlt]
             = glm::vec4(0.22f, 0.24f, 0.26f, 1.00f); // Alternate row background
         colors[ImGuiCol_TextSelectedBg]
             = glm::vec4(0.24f, 0.34f, 0.44f, 0.35f); // Selected text background
         colors[ImGuiCol_DragDropTarget]
-            = glm::vec4(0.46f, 0.56f, 0.66f, 0.90f);                           // Drag and drop target
-        colors[ImGuiCol_NavHighlight] = glm::vec4(0.46f, 0.56f, 0.66f, 1.00f); // Navigation highlight
+            = glm::vec4(0.46f, 0.56f, 0.66f, 0.90f); // Drag and drop target
+        colors[ImGuiCol_NavHighlight]
+            = glm::vec4(0.46f, 0.56f, 0.66f, 1.00f); // Navigation highlight
         colors[ImGuiCol_NavWindowingHighlight]
             = glm::vec4(1.00f, 1.00f, 1.00f, 0.70f); // Windowing highlight
         colors[ImGuiCol_NavWindowingDimBg]

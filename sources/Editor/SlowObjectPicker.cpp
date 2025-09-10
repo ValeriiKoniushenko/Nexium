@@ -110,7 +110,8 @@ namespace Core
             pickPos.y = wnd->getInnerWindowSize().height - pickPos.y - 1;
 
             unsigned char data[4]{};
-            glReadPixels(static_cast<GLint>(pickPos.x), static_cast<GLint>(pickPos.y), 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, data);
+            glReadPixels(static_cast<GLint>(pickPos.x), static_cast<GLint>(pickPos.y), 1, 1,
+                         GL_RGBA, GL_UNSIGNED_BYTE, data);
 
             const GLuint pickedID = data[0] + (data[1] * 256) + (data[2] * 256 * 256);
             StaticMesh* found = nullptr;

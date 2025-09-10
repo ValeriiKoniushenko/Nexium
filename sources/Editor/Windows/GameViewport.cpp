@@ -60,8 +60,9 @@ namespace Core
         {
             const auto& r = gGameInstance->renderToTextureObject;
             const glm::vec2 renderSize = { static_cast<float>(r.getRenderSize().width),
-                                        static_cast<float>(r.getRenderSize().height) };
-            ImGui::Image(r.getTextureId(), renderSize, glm::vec2(0.0f, 1.0f), glm::vec2(1.0f, 0.0f));
+                                           static_cast<float>(r.getRenderSize().height) };
+            ImGui::Image(r.getTextureId(), renderSize, glm::vec2(0.0f, 1.0f),
+                         glm::vec2(1.0f, 0.0f));
         }
     }
 

@@ -27,7 +27,7 @@
 #include "GameplaySystem/ECS/Transformable.h"
 #include "ImGui/imgui.h"
 
-namespace Core
+namespace Core::Gui
 {
 
     class Widget : public BaseComponent
@@ -136,7 +136,7 @@ namespace Core
         bool _isDisabledWidget = false;
     };
 
-} // namespace Core
+} // namespace Core::Gui
 
 namespace ImGui
 {

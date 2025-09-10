@@ -22,7 +22,7 @@
 
 #include "Label.h"
 
-namespace Core
+namespace Core::Gui
 {
 
     ECS_COMPONENT_IMPL(Label);
@@ -129,4 +129,4 @@ namespace Core
             setText(getComponentName());
         }
     }
-} // namespace Core
+} // namespace Core::Gui

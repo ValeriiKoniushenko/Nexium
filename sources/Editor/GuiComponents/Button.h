@@ -25,7 +25,7 @@
 #include "Core/Delegate.h"
 #include "Widget.h"
 
-namespace Core
+namespace Core::Gui
 {
 
     class Button : public Widget
@@ -117,4 +117,4 @@ namespace Core
         bool _isActive = true;
     };
 
-} // namespace Core
+} // namespace Core::Gui

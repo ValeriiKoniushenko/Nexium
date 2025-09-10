@@ -24,7 +24,7 @@
 
 #include "ImGui/imgui_internal.h"
 
-namespace Core
+namespace Core::Gui
 {
     ECS_COMPONENT_IMPL(HorizontalLayout)
 
@@ -312,4 +312,4 @@ namespace Core
             }
         }
     }
-} // namespace Core
+} // namespace Core::Gui

@@ -33,10 +33,12 @@ namespace Core
 }
 namespace Core
 {
-
-    class TextInput;
-    class ComboView;
-    class Label;
+    namespace Gui
+    {
+        class TextInput;
+        class ComboView;
+        class Label;
+    } // namespace Gui
 
     class ShaderManagerEWC : public BaseFloatEWC
     {
@@ -58,20 +60,21 @@ namespace Core
         void selectShader(const StringAtom& name);
 
     protected:
-        VerticalLayout _headLayout;
-        VerticalLayout _selectedShaderLayout;
+        Gui::VerticalLayout _headLayout;
+        Gui::VerticalLayout _selectedShaderLayout;
 
         // =========== GUI ===========
         // general
-        IntInput* _totalShaders = nullptr;
-        IntInput* _failedShaders = nullptr;
-        TextInput* _validExtensions = nullptr;
-        ComboView* _comboView = nullptr;
+        Gui::IntInput* _totalShaders = nullptr;
+        Gui::IntInput* _failedShaders = nullptr;
+        Gui::TextInput* _validExtensions = nullptr;
+        Gui::ComboView* _comboView = nullptr;
         // selected shader
-        TextInput* _shaderName = nullptr;
-        TextInput* _fragPath = nullptr;
-        TextInput* _vertPath = nullptr;
-        Label* _recompileResult = nullptr;
+        Gui::TextInput* _shaderName = nullptr;
+        Gui::TextInput* _fragPath = nullptr;
+        Gui::TextInput* _vertPath = nullptr;
+        Gui::Label* _recompileResult = nullptr;
+
         ShaderProgramMeta* _selectedRawShader = nullptr;
 
         StringAtom _selectedShader;

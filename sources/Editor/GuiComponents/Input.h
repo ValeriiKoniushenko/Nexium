@@ -29,7 +29,7 @@
 
 #include <limits>
 
-namespace Core
+namespace Core::Gui
 {
 
     class BaseInput : public Widget
@@ -151,4 +151,4 @@ namespace Core
     using FloatInput = NumInput<float>;
     using IntInput = NumInput<int>;
 
-} // namespace Core
+} // namespace Core::Gui

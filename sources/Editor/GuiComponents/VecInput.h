@@ -28,15 +28,14 @@
 #include "Label.h"
 #include "Widget.h"
 
-#include <limits>
-
-namespace Core
+namespace Core::Gui
 {
 
     template<std::size_t Size, Utils::IsArithmetic Type>
     class VecNumInput : public HorizontalLayout
     {
         ECS_TEMPLATE_COMPONENT_DECL(VecNumInput, HorizontalLayout, Size, Type);
+        static_assert(Size >= 1 && Size <= 4, "Size must >= 0 && <= 4");
 
     public:
         std::array<NumInput<Type>*, Size> inputs;
@@ -79,7 +78,6 @@ namespace Core
                 }
             }
         }
-
 
         void setInputtedData(const glm::vec<Size, Type>& data)
         {
@@ -130,10 +128,10 @@ namespace Core
             HorizontalLayout::onInitialize();
 
             const std::vector<std::pair<Color4, StringAtom>> defaults = {
-                { Config::ColorRed, "X"_atom },
-                { Config::ColorGreen, "Y"_atom },
-                { Config::ColorBlue, "Z"_atom },
-                { Config::ColorYellow, "W"_atom },
+                { Config::ColorRed, "X:"_atom },
+                { Config::ColorGreen, "Y:"_atom },
+                { Config::ColorBlue, "Z:"_atom },
+                { Config::ColorYellow, "W:"_atom },
             };
 
             _children.clear();
@@ -174,4 +172,4 @@ namespace Core
     using Float2Input = VecNumInput<2, float>;
     using Double2Input = VecNumInput<2, double>;
 
-} // namespace Core
+} // namespace Core::Gui

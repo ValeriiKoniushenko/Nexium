@@ -36,8 +36,11 @@ namespace Core
 }
 namespace Core
 {
-    class CheckBox;
-    class TextInput;
+    namespace Gui
+    {
+        class CheckBox;
+        class TextInput;
+    } // namespace Gui
 
     class Transformable;
     class StaticMeshBundle;
@@ -74,53 +77,52 @@ namespace Core
     private:
         // ============= GUI =============
         // General section:
-        VerticalLayout _generalInfoLayout;
-        TextInput* _objectName = nullptr;
-        TextInput* _objectType = nullptr;
-        CheckBox* _objectIsEnabled = nullptr;
+        Gui::VerticalLayout _generalInfoLayout;
+        Gui::TextInput* _objectName = nullptr;
+        Gui::TextInput* _objectType = nullptr;
+        Gui::CheckBox* _objectIsEnabled = nullptr;
 
         // StaticMeshBundle section:
-        VerticalLayout _staticMeshBundleLayout;
-        IntInput* _renderMeshesCount = nullptr;
-        IntInput* _renderBundlesCount = nullptr;
-        IntInput* _activeTrianglesCount = nullptr;
-        CheckBox* _ignoreMouseSelectBundle = nullptr;
+        Gui::VerticalLayout _staticMeshBundleLayout;
+        Gui::IntInput* _renderMeshesCount = nullptr;
+        Gui::IntInput* _renderBundlesCount = nullptr;
+        Gui::IntInput* _activeTrianglesCount = nullptr;
+        Gui::CheckBox* _ignoreMouseSelectBundle = nullptr;
 
         // BaseComponent-extra section:
-        VerticalLayout _baseComponentExtraLayout;
-        TextInput* _parentName = nullptr;
-        IntInput* _childrenCount = nullptr;
-        CheckBox* _isInited = nullptr;
-        CheckBox* _disabledTicks = nullptr;
+        Gui::VerticalLayout _baseComponentExtraLayout;
+        Gui::TextInput* _parentName = nullptr;
+        Gui::IntInput* _childrenCount = nullptr;
+        Gui::CheckBox* _isInited = nullptr;
+        Gui::CheckBox* _disabledTicks = nullptr;
 
         // GraphicsComponent section:
-        VerticalLayout _graphicsComponentLayout;
-        IntInput* _graphicsTriangles = nullptr;
-        TextInput* _graphicsShader = nullptr;
-        IntInput* _graphicsVBO = nullptr;
-        IntInput* _graphicsVAO = nullptr;
-        IntInput* _graphicsEBO = nullptr;
-        IntInput* _graphicsTexture = nullptr;
+        Gui::VerticalLayout _graphicsComponentLayout;
+        Gui::IntInput* _graphicsTriangles = nullptr;
+        Gui::TextInput* _graphicsShader = nullptr;
+        Gui::IntInput* _graphicsVBO = nullptr;
+        Gui::IntInput* _graphicsVAO = nullptr;
+        Gui::IntInput* _graphicsEBO = nullptr;
+        Gui::IntInput* _graphicsTexture = nullptr;
 
         // BaseCamera section:
-        VerticalLayout _baseCameraLayout;
-        FloatInput* _cameraFov = nullptr;
-        FloatInput* _cameraFar = nullptr;
-        FloatInput* _cameraNear = nullptr;
-        Float2Input* _cameraFrame = nullptr;
-        Float2Input* _cameraOutput = nullptr;
+        Gui::VerticalLayout _baseCameraLayout;
+        Gui::FloatInput* _cameraFov = nullptr;
+        Gui::FloatInput* _cameraFar = nullptr;
+        Gui::FloatInput* _cameraNear = nullptr;
+        Gui::Float2Input* _cameraFrame = nullptr;
+        Gui::Float2Input* _cameraOutput = nullptr;
 
         // StaticMesh section:
-        VerticalLayout _staticMeshLayout;
-        TextInput* _outlineShader = nullptr;
+        Gui::VerticalLayout _staticMeshLayout;
+        Gui::TextInput* _outlineShader = nullptr;
 
         // Transformable section:
-        VerticalLayout _transformableLayout;
-        Float3Input* _transformPosition = nullptr;
-        Float3Input* _transformRotation = nullptr;
-        Float3Input* _transformScale = nullptr;
-        Float3Input* _transformOrigin = nullptr;
-
+        Gui::VerticalLayout _transformableLayout;
+        Gui::Float3Input* _transformPosition = nullptr;
+        Gui::Float3Input* _transformRotation = nullptr;
+        Gui::Float3Input* _transformScale = nullptr;
+        Gui::Float3Input* _transformOrigin = nullptr;
 
         AbstractComponent* _target = nullptr;
         Repeater _slowUpdater;

@@ -26,7 +26,7 @@
 #include "ImGui/misc/cpp/imgui_stdlib.h"
 #include "Misc/ImGuiHelper.h"
 
-namespace Core
+namespace Core::Gui
 {
 
     ECS_COMPONENT_IMPL(BaseCombo);
@@ -127,7 +127,8 @@ namespace Core
             _cache[i].second = std::move(label);
         }
 
-        const auto preview = _currentIndex < _cache.size() ? _cache.at(_currentIndex).second.c_str() : "";
+        const auto preview
+            = _currentIndex < _cache.size() ? _cache.at(_currentIndex).second.c_str() : "";
 
         if (ImGui::BeginCombo("", preview))
         {
@@ -150,4 +151,4 @@ namespace Core
         ImGui::PopItemWidth();
     }
 
-} // namespace Core
+} // namespace Core::Gui

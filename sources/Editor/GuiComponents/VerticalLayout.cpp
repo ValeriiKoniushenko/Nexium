@@ -22,7 +22,7 @@
 
 #include "VerticalLayout.h"
 
-namespace Core
+namespace Core::Gui
 {
 
     ECS_COMPONENT_IMPL(VerticalLayout)
@@ -256,4 +256,4 @@ namespace Core
         Assert(_xOffsets.size() == _children.size());
     }
 
-} // namespace Core
+} // namespace Core::Gui

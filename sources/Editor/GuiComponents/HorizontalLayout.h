@@ -24,7 +24,7 @@
 
 #include "Layout.h"
 
-namespace Core
+namespace Core::Gui
 {
 
     class HorizontalLayout : public Layout
@@ -63,4 +63,4 @@ namespace Core
         bool _fitContent = false;
     };
 
-} // namespace Core
+} // namespace Core::Gui

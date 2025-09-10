@@ -31,6 +31,8 @@
 #include "Editor/GuiComponents/List.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 
+using namespace Core::Gui;
+
 namespace Core
 {
     ECS_COMPONENT_IMPL(EditorSettingsEWC)

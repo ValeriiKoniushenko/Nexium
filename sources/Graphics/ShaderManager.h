@@ -68,7 +68,10 @@ namespace Core
             return _failedShaders;
         }
 
-        [[nodiscard]] const std::filesystem::path& getInputDir() const noexcept { return _inputPath; }
+        [[nodiscard]] const std::filesystem::path& getInputDir() const noexcept
+        {
+            return _inputPath;
+        }
 
         [[nodiscard]] spdlog::logger* getLogger() const override { return Graphics::getLogger(); }
         [[nodiscard]] const char* getPrefix() const override { return "ShaderManager"; }

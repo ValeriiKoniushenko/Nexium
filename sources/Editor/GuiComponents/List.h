@@ -25,7 +25,7 @@
 #include "Core/Delegate.h"
 #include "Widget.h"
 
-namespace Core
+namespace Core::Gui
 {
 
     class BaseList : public Widget
@@ -73,7 +73,7 @@ namespace Core
         void onDraw() override;
 
     protected:
-        std::vector<StringAtom> _items = {"Hello", "World", "How are you my man?????", "Hahha"};
+        std::vector<StringAtom> _items = { "Hello", "World", "How are you my man?????", "Hahha" };
         std::size_t _currentItem = 0;
     };
 
@@ -121,5 +121,4 @@ namespace Core
         std::size_t _currentIndex = 0;
     };
 
-
-} // namespace Core
+} // namespace Core::Gui

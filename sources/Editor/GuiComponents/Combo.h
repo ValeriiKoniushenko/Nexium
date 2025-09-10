@@ -25,7 +25,7 @@
 #include "Core/Delegate.h"
 #include "Widget.h"
 
-namespace Core
+namespace Core::Gui
 {
     class BaseCombo : public Widget
     {
@@ -120,4 +120,4 @@ namespace Core
         std::size_t _currentIndex = 0;
     };
 
-} // namespace Core
+} // namespace Core::Gui

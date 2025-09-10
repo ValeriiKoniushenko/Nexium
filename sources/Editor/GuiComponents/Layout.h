@@ -24,7 +24,7 @@
 
 #include "Widget.h"
 
-namespace Core
+namespace Core::Gui
 {
 
     class Layout : public Widget
@@ -51,4 +51,4 @@ namespace Core
         Align _secondAlign = Align::None;
     };
 
-} // namespace Core
+} // namespace Core::Gui

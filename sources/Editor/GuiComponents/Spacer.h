@@ -25,7 +25,7 @@
 #include "Core/Delegate.h"
 #include "Widget.h"
 
-namespace Core
+namespace Core::Gui
 {
 
     class Spacer : public Widget
@@ -53,4 +53,4 @@ namespace Core
         glm::vec2 _size = {};
     };
 
-} // namespace Core
+} // namespace Core::Gui

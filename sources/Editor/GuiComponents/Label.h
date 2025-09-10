@@ -25,7 +25,7 @@
 #include "Core/Delegate.h"
 #include "Widget.h"
 
-namespace Core
+namespace Core::Gui
 {
 
     class Label : public Widget
@@ -64,4 +64,4 @@ namespace Core
         float _height = -1.0f;
     };
 
-} // namespace Core
+} // namespace Core::Gui

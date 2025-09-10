@@ -38,7 +38,7 @@ namespace Core
         void onDraw() override;
 
     private:
-        VerticalLayout _layout;
+        Gui::VerticalLayout _layout;
     };
 
 } // namespace Core

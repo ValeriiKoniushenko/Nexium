@@ -85,7 +85,7 @@ namespace Core
         [[nodiscard]] const char* getPrefix() const override { return "ShaderProgramMeta"; }
 
         void recreateFromSources();
-        bool     safeRecreateFromSources();
+        bool safeRecreateFromSources();
 
         [[nodiscard]] const std::filesystem::path& getVertexShaderPath() const noexcept
         {

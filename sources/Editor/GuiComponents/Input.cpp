@@ -22,7 +22,7 @@
 
 #include "Input.h"
 
-namespace Core
+namespace Core::Gui
 {
 
     ECS_COMPONENT_IMPL(BaseInput);
@@ -124,7 +124,6 @@ namespace Core
                                onInput.trigger(newText);
                            });
 
-
         if (isRO)
         {
             ImGui::PopStyleVar();
@@ -133,4 +132,4 @@ namespace Core
         ImGui::PopStyleColor(pushedStyles);
     }
 
-} // namespace Core
+} // namespace Core::Gui

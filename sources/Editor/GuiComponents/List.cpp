@@ -26,7 +26,7 @@
 #include "ImGui/misc/cpp/imgui_stdlib.h"
 #include "Misc/ImGuiHelper.h"
 
-namespace Core
+namespace Core::Gui
 {
 
     ECS_COMPONENT_IMPL(BaseList);
@@ -147,4 +147,4 @@ namespace Core
         }
     }
 
-} // namespace Core
+} // namespace Core::Gui

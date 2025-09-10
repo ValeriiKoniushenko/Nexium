@@ -28,6 +28,7 @@
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/Label.h"
+#include "Editor/GuiComponents/Misc.h"
 #include "Editor/GuiComponents/Spacer.h"
 #include "GameplaySystem/ECS/Transformable.h"
 #include "GameplaySystem/Framework/GameInstance.h"
@@ -35,10 +36,11 @@
 #include "ImGui/imgui_internal.h"
 
 using namespace Core;
+using namespace Core::Gui;
 
 namespace
 {
-    using HLayout = HorizontalLayout;
+    using HLayout = Gui::HorizontalLayout;
 
     // =========================================================
     //                 GUI STANDARD TEMPLATES
@@ -485,7 +487,7 @@ namespace Core
 
     void ObjectPropertiesWindowEWC::tryDrawTransformable(Transformable* comp, BaseComponent* base)
     {
-        if (comp && ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
+        if (comp && Gui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
         {
             const float dt = GetWorld().timeDelta;
 
@@ -515,7 +517,7 @@ namespace Core
 
     void ObjectPropertiesWindowEWC::tryDrawBaseComponent(BaseComponent* comp)
     {
-        if (comp && ImGui::CollapsingHeader("General", ImGuiTreeNodeFlags_DefaultOpen))
+        if (comp && Gui::CollapsingHeader("General", ImGuiTreeNodeFlags_DefaultOpen))
         {
             const float dt = GetWorld().timeDelta;
 
@@ -540,7 +542,7 @@ namespace Core
 
     void ObjectPropertiesWindowEWC::tryDrawGraphicsComponentData(GraphicsComponentData* comp)
     {
-        if (comp && ImGui::CollapsingHeader("Graphics", ImGuiTreeNodeFlags_DefaultOpen))
+        if (comp && Gui::CollapsingHeader("Graphics", ImGuiTreeNodeFlags_DefaultOpen))
         {
             const float dt = GetWorld().timeDelta;
 
@@ -693,7 +695,7 @@ namespace Core
 
     void ObjectPropertiesWindowEWC::tryDrawBaseComponentExtra(BaseComponent* comp)
     {
-        if (comp && ImGui::CollapsingHeader("Component data", ImGuiTreeNodeFlags_DefaultOpen))
+        if (comp && Gui::CollapsingHeader("Component data", ImGuiTreeNodeFlags_DefaultOpen))
         {
             const float dt = GetWorld().timeDelta;
 
@@ -730,7 +732,7 @@ namespace Core
 
     void ObjectPropertiesWindowEWC::tryDrawStaticMesh(StaticMesh* comp)
     {
-        if (comp && ImGui::CollapsingHeader("Static mesh", ImGuiTreeNodeFlags_DefaultOpen))
+        if (comp && Gui::CollapsingHeader("Static mesh", ImGuiTreeNodeFlags_DefaultOpen))
         {
             const float dt = GetWorld().timeDelta;
 
@@ -749,7 +751,7 @@ namespace Core
 
     void ObjectPropertiesWindowEWC::tryDrawBaseCamera(BaseCamera* comp)
     {
-        if (comp && ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen))
+        if (comp && Gui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen))
         {
             const float dt = GetWorld().timeDelta;
 
@@ -780,7 +782,7 @@ namespace Core
 
     void ObjectPropertiesWindowEWC::tryDrawStaticMeshBundle(StaticMeshBundle* comp)
     {
-        if (comp && ImGui::CollapsingHeader("Static mesh bundle", ImGuiTreeNodeFlags_DefaultOpen))
+        if (comp && Gui::CollapsingHeader("Static mesh bundle", ImGuiTreeNodeFlags_DefaultOpen))
         {
             const float dt = GetWorld().timeDelta;
 
