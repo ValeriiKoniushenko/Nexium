@@ -324,28 +324,32 @@ namespace Core
             _cameraNear->setMin(0.1f);
             _cameraNear->setMax(1000.f);
             _cameraNear->setStep(0.1f);
-        }
-
-        // Frame size
-        {
-            auto& out = _baseCameraLayout;
 
             out.attachChild(CreateHLayoutAndLabel("Frame size(ration)", false));
-            auto* mainRow = out.getLastChildAs<HLayout>().get();
-
-            _cameraFrame = mainRow->addChildComponent<Float2Input>();
+            _cameraFrame = out.getLastChildAs<HLayout>()->addChildComponent<Float2Input>();
             _cameraFrame->setLabelText({ 'W', 'H' });
-        }
-        // Output size
-        {
-            auto& out = _baseCameraLayout;
 
             out.attachChild(CreateHLayoutAndLabel("Output size", true));
-            auto* mainRow = out.getLastChildAs<HLayout>().get();
-
-            _cameraOutput = mainRow->addChildComponent<Float2Input>();
+            _cameraOutput = out.getLastChildAs<HLayout>()->addChildComponent<Float2Input>();
             _cameraOutput->setLabelText({ 'W', 'H' });
             _cameraOutput->setReadOnly(true);
+        }
+
+        // ================= BaseCamera ====================
+        {
+            auto& out = _transformableLayout;
+
+            out.attachChild(CreateHLayoutAndLabel("Position", false));
+            _transformPosition = out.getLastChildAs<HLayout>()->addChildComponent<Float3Input>();
+
+            out.attachChild(CreateHLayoutAndLabel("Rotation", false));
+            _transformRotation = out.getLastChildAs<HLayout>()->addChildComponent<Float3Input>();
+
+            out.attachChild(CreateHLayoutAndLabel("Scale", false));
+            _transformScale = out.getLastChildAs<HLayout>()->addChildComponent<Float3Input>();
+
+            out.attachChild(CreateHLayoutAndLabel("Origin", false));
+            _transformOrigin = out.getLastChildAs<HLayout>()->addChildComponent<Float3Input>();
         }
     }
 
@@ -421,6 +425,62 @@ namespace Core
                     }
                 });
         }
+        if (_transformPosition)
+        {
+            _transformPosition->onInput.subscribe(
+                [this](auto newValue)
+                {
+                    if (_target)
+                    {
+                        if (auto* trans = dynamic_cast<Transformable*>(_target))
+                        {
+                            trans->setPosition(GPos3(newValue));
+                        }
+                    }
+                });
+        }
+        if (_transformRotation)
+        {
+            _transformRotation->onInput.subscribe(
+                [this](auto newValue)
+                {
+                    if (_target)
+                    {
+                        if (auto* trans = dynamic_cast<Transformable*>(_target))
+                        {
+                            trans->setRotation(newValue);
+                        }
+                    }
+                });
+        }
+        if (_transformScale)
+        {
+            _transformScale->onInput.subscribe(
+                [this](auto newValue)
+                {
+                    if (_target)
+                    {
+                        if (auto* trans = dynamic_cast<Transformable*>(_target))
+                        {
+                            trans->setScale(newValue);
+                        }
+                    }
+                });
+        }
+        if (_transformOrigin)
+        {
+            _transformOrigin->onInput.subscribe(
+                [this](auto newValue)
+                {
+                    if (_target)
+                    {
+                        if (auto* trans = dynamic_cast<Transformable*>(_target))
+                        {
+                            trans->setOrigin(newValue);
+                        }
+                    }
+                });
+        }
     }
 
     void ObjectPropertiesWindowEWC::tryDrawTransformable(Transformable* comp, BaseComponent* base)
@@ -429,55 +489,27 @@ namespace Core
         {
             const float dt = GetWorld().timeDelta;
 
+            if (_transformPosition)
+            {
+                _transformPosition->setInputtedData(comp->getPosition());
+            }
+
+            if (_transformRotation)
+            {
+                _transformRotation->setInputtedData(comp->getRotation());
+            }
+
+            if (_transformScale)
+            {
+                _transformScale->setInputtedData(comp->getScale());
+            }
+
+            if (_transformOrigin)
+            {
+                _transformOrigin->setInputtedData(comp->getOrigin());
+            }
+
             _transformableLayout.tick(dt);
-
-            bool isChanged = false;
-
-            if (auto res
-                = _transformLocationControl.drawAndProcess(comp->getPosition(), _innerSize.width))
-            {
-                comp->setPosition(GPos3(res.value()));
-                isChanged = true;
-            }
-            if (auto res
-                = _transformRotationControl.drawAndProcess(comp->getRotation(), _innerSize.width))
-            {
-                comp->setRotation(res.value());
-                isChanged = true;
-            }
-            if (auto res
-                = _transformOriginControl.drawAndProcess(comp->getOrigin(), _innerSize.width))
-            {
-                comp->setOrigin(res.value());
-                isChanged = true;
-            }
-            if (auto res
-                = _transformScaleControl.drawAndProcess(comp->getScale(), _innerSize.width))
-            {
-                comp->setScale(res.value());
-                isChanged = true;
-            }
-
-            if (isChanged && base)
-            {
-                if (auto* bundle = base->tryCastTo<StaticMeshBundle>())
-                {
-                    bundle->recalculateMatrices();
-                }
-                if (auto* mesh = base->tryCastTo<StaticMesh>())
-                {
-                    if (auto* bundle = mesh->tryToGetRootBundle())
-                    {
-                        bundle->recalculateMatrices();
-                    }
-                    else
-                    {
-                        mesh->recalculateMatrices();
-                    }
-                }
-            }
-
-            ImGui::Dummy(glm::vec2(0.0f, _gapBetweenSections));
         }
     }
 

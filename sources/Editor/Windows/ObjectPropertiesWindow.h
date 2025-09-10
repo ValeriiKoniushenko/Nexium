@@ -25,6 +25,7 @@
 #include "BaseWindow.h"
 #include "Core/Timer.h"
 #include "Editor/GuiComponents/Input.h"
+#include "Editor/GuiComponents/VecInput.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "Graphics/GraphicsComponents.h"
 #include "Graphics/Primitives/StaticMesh.h"
@@ -115,6 +116,10 @@ namespace Core
 
         // Transformable section:
         VerticalLayout _transformableLayout;
+        Float3Input* _transformPosition = nullptr;
+        Float3Input* _transformRotation = nullptr;
+        Float3Input* _transformScale = nullptr;
+        Float3Input* _transformOrigin = nullptr;
 
 
         AbstractComponent* _target = nullptr;
