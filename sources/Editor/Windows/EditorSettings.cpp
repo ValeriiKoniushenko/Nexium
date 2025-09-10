@@ -57,7 +57,7 @@ namespace Core
     void EditorSettingsEWC::onDraw()
     {
         const float tick = gGameInstance->world.timeDelta;
-        if (ImGui::TreeNodeEx("Hello", ImGuiTreeNodeFlags_SpanFullWidth))
+        if (ImGui::TreeNodeEx("", ImGuiTreeNodeFlags_SpanFullWidth))
         {
             ImGui::TreePop();
         }

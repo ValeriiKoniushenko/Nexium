@@ -35,6 +35,7 @@ namespace Core
     {
         _position = position;
         _isDirtyModelMatrix = true;
+        onDirtyMatrix();
     }
 
     void Transformable::addPosition(const GPos3& position) noexcept
@@ -51,6 +52,7 @@ namespace Core
     {
         _position += offset * getForwardVector();
         _isDirtyModelMatrix = true;
+        onDirtyMatrix();
     }
 
     void Transformable::moveRight(float offset) noexcept
@@ -58,12 +60,14 @@ namespace Core
         auto tmp = getRightVector();
         _position += offset * tmp;
         _isDirtyModelMatrix = true;
+        onDirtyMatrix();
     }
 
     void Transformable::moveUp(float offset) noexcept
     {
         _position += -offset * getUpVector();
         _isDirtyModelMatrix = true;
+        onDirtyMatrix();
     }
 
     void Transformable::setRotation(const glm::vec3& value) noexcept
@@ -89,6 +93,7 @@ namespace Core
     {
         _rotation.x = x;
         _isDirtyModelMatrix = true;
+        onDirtyMatrix();
     }
 
     void Transformable::rotateX(float x) noexcept
@@ -105,6 +110,7 @@ namespace Core
     {
         _rotation.y = std::fmod(y, 360.f);
         _isDirtyModelMatrix = true;
+        onDirtyMatrix();
     }
 
     void Transformable::rotateY(float y) noexcept
@@ -121,6 +127,7 @@ namespace Core
     {
         _rotation.z = std::fmod(z, 360.f);
         _isDirtyModelMatrix = true;
+        onDirtyMatrix();
     }
 
     void Transformable::rotateZ(float z) noexcept
@@ -137,18 +144,21 @@ namespace Core
     {
         _scale = value;
         _isDirtyModelMatrix = true;
+        onDirtyMatrix();
     }
 
     void Transformable::addScale(const glm::vec3& value) noexcept
     {
         _scale += value;
         _isDirtyModelMatrix = true;
+        onDirtyMatrix();
     }
 
     void Transformable::scale(const glm::vec3& value) noexcept
     {
         _scale += value;
         _isDirtyModelMatrix = true;
+        onDirtyMatrix();
     }
 
     glm::vec3 Transformable::getScale() const noexcept
@@ -220,6 +230,7 @@ namespace Core
         }
 
         _isDirtyModelMatrix = true;
+        onDirtyMatrix();
     }
 
     void Transformable::recalculateMatrices(const glm::mat4& mat)
@@ -255,12 +266,14 @@ namespace Core
     {
         _origin = origin;
         _isDirtyModelMatrix = true;
+        onDirtyMatrix();
     }
 
     void Transformable::addOrigin(const glm::vec3& origin) noexcept
     {
         _origin += origin;
         _isDirtyModelMatrix = true;
+        onDirtyMatrix();
     }
 
     const glm::vec3& Transformable::getOrigin() const noexcept

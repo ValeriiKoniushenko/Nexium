@@ -62,7 +62,7 @@ namespace Core
         [[nodiscard]] const StaticMeshBundle* tryToGetRootBundle() const;
 
         /**
-         * @brief will draw with default shader & logic. Single draw object!
+         * @brief will draw with the default shader & logic. Single draw object!
          */
         void draw();
 
@@ -78,7 +78,10 @@ namespace Core
 
         [[nodiscard]] GLuint getID() const noexcept { return _vbo; }
 
+        void recalculateMatrices(const glm::mat4& mat = glm::mat4(1.f)) override;
+
     protected:
+        void onDirtyMatrix() override;
         void onOutlineStatusChange(bool) override {}
         void calculateSizeBaseOnMesh(const aiMesh* rawMesh, const aiMatrix4x4& transform);
         void drawOutline();

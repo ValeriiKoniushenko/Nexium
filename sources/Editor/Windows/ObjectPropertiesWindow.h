@@ -128,18 +128,6 @@ namespace Core
         Repeater _slowUpdater;
         std::vector<std::pair<int, int>> _graphicsMods;
 
-        // For transform
-        Vec3Control _transformLocationControl;
-        Vec3Control _transformOriginControl;
-        Vec3Control _transformScaleControl;
-        Vec3Control _transformRotationControl;
-
-        // For mesh
-        Vec3Control _meshSizeControl;
-
-        // For camera
-        Vec2Control _frameSizeControl;
-
         // For Graphics
         std::vector<StringAtom> _modifierValueVec;
         std::vector<StringAtom> _modifierVec;

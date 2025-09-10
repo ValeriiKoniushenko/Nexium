@@ -88,6 +88,9 @@ namespace Core
         void setDirtyMatrices(bool v = true) noexcept { _isDirtyModelMatrix = v; }
 
     protected:
+        virtual void onDirtyMatrix() {}
+
+    protected:
         glm::mat4 _cachedModelMatrix = glm::mat4(1.f);
         glm::vec3 _scale = glm::vec3(1.f, 1.f, 1.f);
         glm::vec3 _origin{};

@@ -89,6 +89,18 @@ namespace Core
         }
     }
 
+    void StaticMesh::onDirtyMatrix()
+    {
+        if (auto* bundle = tryToGetRootBundle())
+        {
+            bundle->recalculateMatrices();
+        }
+        else
+        {
+            recalculateMatrices();
+        }
+    }
+
     void StaticMesh::draw()
     {
         if (!GraphicsComponentData::isValid()) [[unlikely]]
@@ -257,6 +269,26 @@ namespace Core
         glStencilMask(0xFF);
         glClear(GL_STENCIL_BUFFER_BIT);
         glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+    }
+
+    void StaticMesh::recalculateMatrices(const glm::mat4& mat)
+    {
+        Transformable::recalculateMatrices(mat);
+        for (auto&& comp : _children)
+        {
+            if (auto* bundle = dynamic_cast<StaticMeshBundle*>(comp.get()))
+            {
+                bundle->recalculateMatrices(_cachedModelMatrix);
+            }
+            else if (auto* mesh = dynamic_cast<StaticMesh*>(comp.get()))
+            {
+                mesh->recalculateMatrices(_cachedModelMatrix);
+            }
+            else if (auto* trans = dynamic_cast<Transformable*>(comp.get()))
+            {
+                trans->recalculateMatrices(_cachedModelMatrix);
+            }
+        }
     }
 
     void StaticMesh::pureDraw(const std::function<void(StaticMesh*)>& onUniformSet)

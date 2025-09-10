@@ -46,7 +46,8 @@ namespace
     //                 GUI STANDARD TEMPLATES
     // =========================================================
 
-    HLayout::Ptr CreateHLayoutAndLabel(const char* label, bool isReadOnly)
+    HLayout::Ptr CreateHLayoutAndLabel(const char* label, bool isReadOnly,
+                                       float size = ObjectPropertiesWindowEWC::defaultLabelWidthBig)
     {
         if (!Verify(label))
         {
@@ -55,22 +56,22 @@ namespace
 
         auto row = HLayout::Create();
         row->setComponentName("H-Layout({}): {}"_f << (isReadOnly ? "RO" : "W") << label);
-        row->addChildComponent<Label>(label)->setWidth(
-            ObjectPropertiesWindowEWC::defaultLabelWidthBig);
+        row->addChildComponent<Label>(label)->setWidth(size);
 
         return row;
     }
 
     template<class T>
         requires std::derived_from<T, BaseInput>
-    HLayout::Ptr Create(const char* label, bool isReadOnly)
+    HLayout::Ptr Create(const char* label, bool isReadOnly,
+                        float size = ObjectPropertiesWindowEWC::defaultLabelWidthBig)
     {
         if (!Verify(label))
         {
             return nullptr;
         }
 
-        auto row = CreateHLayoutAndLabel(label, isReadOnly);
+        auto row = CreateHLayoutAndLabel(label, isReadOnly, size);
 
         auto* comp = row->addChildComponent<T>("Input: {}"_f << label);
         comp->setFlex(Widget::Flex::FlexWidth);
@@ -81,7 +82,8 @@ namespace
 
     template<class T>
         requires std::is_same_v<T, CheckBox>
-    HLayout::Ptr Create(const char* label, bool isReadOnly)
+    HLayout::Ptr Create(const char* label, bool isReadOnly,
+                        float size = ObjectPropertiesWindowEWC::defaultLabelWidthBig)
     {
         using namespace Core;
 
@@ -90,7 +92,7 @@ namespace
             return nullptr;
         }
 
-        auto row = CreateHLayoutAndLabel(label, isReadOnly);
+        auto row = CreateHLayoutAndLabel(label, isReadOnly, size);
 
         auto* comp = row->addChildComponent<CheckBox>("CheckBox: {}"_f << label);
         comp->disableWidget(isReadOnly);
@@ -131,36 +133,6 @@ namespace Core
 
         createGui();
         registerGuiEvents();
-
-        _transformLocationControl.components
-            = { Vec3Control::Component{ .text = "X:"_atom, .color = Config::ColorRed },
-                Vec3Control::Component{ .text = "Y:"_atom, .color = Config::ColorGreen },
-                Vec3Control::Component{ .text = "Z:"_atom, .color = Config::ColorBlue } };
-        _transformLocationControl.labelWidth = _labelWidth;
-        _transformLocationControl.label = "Location:";
-
-        _transformOriginControl = _transformLocationControl;
-        _transformOriginControl.label = "Origin:";
-
-        _transformScaleControl = _transformLocationControl;
-        _transformScaleControl.label = "Scale:";
-
-        _transformRotationControl = _transformLocationControl;
-        _transformRotationControl.label = "Rotation:";
-
-        _meshSizeControl.components
-            = { Vec3Control::Component{ .text = "W:"_atom, .color = Config::ColorRed },
-                Vec3Control::Component{ .text = "H:"_atom, .color = Config::ColorGreen },
-                Vec3Control::Component{ .text = "D:"_atom, .color = Config::ColorBlue } };
-        _meshSizeControl.labelWidth = _labelWidth;
-        _meshSizeControl.readOnly = true;
-        _meshSizeControl.label = "Size:";
-
-        _frameSizeControl.components
-            = { Vec2Control::Component{ .text = "W:"_atom, .color = Config::ColorRed },
-                Vec2Control::Component{ .text = "H:"_atom, .color = Config::ColorGreen } };
-        _frameSizeControl.labelWidth = _labelWidth;
-        _frameSizeControl.label = "Frame size:";
 
         _modifierValueVec = GraphicsComponentData::ModifiedValueAsVector();
         _modifierVec = GraphicsComponentData::ModifierAsVector();
@@ -230,13 +202,13 @@ namespace Core
         {
             auto& out = _generalInfoLayout;
 
-            out.attachChild(::Create<TextInput>("Name", true));
+            out.attachChild(::Create<TextInput>("Name", true, defaultLabelWidth));
             _objectName = out.getLastChildAs<HLayout>()->getLastChildAs<TextInput>().get();
 
-            out.attachChild(::Create<TextInput>("Type", true));
+            out.attachChild(::Create<TextInput>("Type", true, defaultLabelWidth));
             _objectType = out.getLastChildAs<HLayout>()->getLastChildAs<TextInput>().get();
 
-            out.attachChild(::Create<CheckBox>("Enabled", false));
+            out.attachChild(::Create<CheckBox>("Enabled", false, defaultLabelWidth));
             _objectIsEnabled = out.getLastChildAs<HLayout>()->getLastChildAs<CheckBox>().get();
         }
 
@@ -337,20 +309,20 @@ namespace Core
             _cameraOutput->setReadOnly(true);
         }
 
-        // ================= BaseCamera ====================
+        // ================= Transform ====================
         {
             auto& out = _transformableLayout;
 
-            out.attachChild(CreateHLayoutAndLabel("Position", false));
+            out.attachChild(CreateHLayoutAndLabel("Position", false, defaultLabelWidth));
             _transformPosition = out.getLastChildAs<HLayout>()->addChildComponent<Float3Input>();
 
-            out.attachChild(CreateHLayoutAndLabel("Rotation", false));
+            out.attachChild(CreateHLayoutAndLabel("Rotation", false, defaultLabelWidth));
             _transformRotation = out.getLastChildAs<HLayout>()->addChildComponent<Float3Input>();
 
-            out.attachChild(CreateHLayoutAndLabel("Scale", false));
+            out.attachChild(CreateHLayoutAndLabel("Scale", false, defaultLabelWidth));
             _transformScale = out.getLastChildAs<HLayout>()->addChildComponent<Float3Input>();
 
-            out.attachChild(CreateHLayoutAndLabel("Origin", false));
+            out.attachChild(CreateHLayoutAndLabel("Origin", false, defaultLabelWidth));
             _transformOrigin = out.getLastChildAs<HLayout>()->addChildComponent<Float3Input>();
         }
     }
