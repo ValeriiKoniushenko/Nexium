@@ -218,7 +218,7 @@ namespace Core
         for (auto&& child : _children)
         {
             ImGui::SetCursorPosX(originalXCursor + _xOffsets.at(i++));
-            child->unsafeCastTo<Widget>()->draw();
+            child->unsafeCastTo<Widget>()->unhandledDraw();
             if (space != 0.f)
             {
                 ImGui::SetCursorPosY(ImGui::GetCursorPosY() + space - defaultSpacing);

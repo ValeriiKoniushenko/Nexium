@@ -35,7 +35,6 @@ namespace Core
         ECS_COMPONENT_DECL(Widget, BaseComponent);
 
     public:
-
         // clang-format off
         CreateEnum(Align, int,
             None,
@@ -96,8 +95,6 @@ namespace Core
 
         [[nodiscard]] bool isAutoDraw() const noexcept { return _autoDraw; }
         void setIsAutoDraw(bool value) noexcept { _autoDraw = value; }
-        virtual void onDraw() = 0;
-        void draw();
 
         void setIsDrawOutline(bool value) noexcept { _isDrawOutline = value; }
         [[nodiscard]] bool getIsDrawOutline() const noexcept { return _isDrawOutline; }
@@ -111,9 +108,18 @@ namespace Core
         void setDisabled(bool value) noexcept { _isDisabled = value; }
         [[nodiscard]] bool isDisabled() const noexcept { return _isDisabled; }
 
+        /**
+         * @brief Don't use this function to draw your component.
+         * That's for internal usage.
+         * If you want to draw your component - call the function BaseComponent::tick
+         */
+        void unhandledDraw();
+
     protected:
+        virtual void onDraw() = 0;
         bool addChildValidator(BaseComponent* newChild) override;
         void onTick(float delta) override;
+
         void drawOutline();
         virtual void preDraw();
         virtual void postDraw();

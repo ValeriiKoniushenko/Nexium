@@ -245,7 +245,7 @@ namespace Core
         for (auto&& child : _children)
         {
             ImGui::SetCursorPosY(originalYCursor + _yOffsets.at(i));
-            child->unsafeCastTo<Widget>()->draw();
+            child->unsafeCastTo<Widget>()->unhandledDraw();
 
             if (i != _children.size() - 1)
             {

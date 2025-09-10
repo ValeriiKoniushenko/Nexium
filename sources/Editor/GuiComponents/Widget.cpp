@@ -30,7 +30,7 @@ namespace Core
 
     ECS_COMPONENT_IMPL(Widget)
 
-    void Widget::draw()
+    void Widget::unhandledDraw()
     {
         if (!isEnabled())
         {
@@ -89,7 +89,7 @@ namespace Core
 
         if (_autoDraw)
         {
-            draw();
+            unhandledDraw();
         }
     }
 
