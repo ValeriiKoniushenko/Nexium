@@ -111,7 +111,7 @@ namespace Core
 
     void Widget::preDraw()
     {
-        if (_isDisabled)
+        if (_isDisabledWidget)
         {
             ImGui::BeginDisabled(true);
         }
@@ -119,7 +119,7 @@ namespace Core
 
     void Widget::postDraw()
     {
-        if (_isDisabled)
+        if (_isDisabledWidget)
         {
             ImGui::EndDisabled();
         }

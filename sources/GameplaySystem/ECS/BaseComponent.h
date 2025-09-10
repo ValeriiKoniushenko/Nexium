@@ -67,10 +67,10 @@ public:
 
 // ---------------------------------------------------------
 
-#define _ECS_COMPONENT_IMPL(TypeName, Template, TypeNameAsStr)                                                    \
+#define _ECS_COMPONENT_IMPL(TypeName, Template, TypeNameAsStr)                                     \
     Template const StringAtom TypeName::componentType = []                                         \
     {                                                                                              \
-        auto newType = StringAtom::Intern(TypeNameAsStr);                                \
+        auto newType = StringAtom::Intern(TypeNameAsStr);                                          \
         GetGlobalComponentFactory().registerNewType(                                               \
             newType,                                                                               \
             [] -> BaseComponent*                                                                   \
@@ -488,10 +488,10 @@ namespace Core
      *      ECS_COMPONENT_DECL(MyChildComponent, MyParentComponent);
      * };
      * @endcode
-     * This ECS_COMPONENT_DECL macros will create one default constructor. And
-     * it can take optionally a component's name. If you want to create a component's
-     * constructor by your own hand use instead ECS_COMPONENT_DECL_NO_CNSTR.
-     * To get more info about that check declaration of this macro.
+     * This ECS_COMPONENT_DECL macro will create one default constructor. And
+     * it can optionally take a component's name. If you want to create a component's
+     * constructor by your own hand, use instead ECS_COMPONENT_DECL_NO_CNSTR.
+     * To get more info about that, check the declaration of this macro.
      * Implementation of new components:
      * @code{cpp}
      * // MyNewComponent.cpp
@@ -499,7 +499,7 @@ namespace Core
      * ECS_COMPONENT_IMPL(MyChildComponent);
      * @endcode
      * But, if you still want to create a class, but not usual but template - see
-     * declaration(and comment above) of macro ECS_TEMPLATE_COMPONENT_DECL
+     * declaration (and comment above) of macro ECS_TEMPLATE_COMPONENT_DECL
      */
     class BaseComponent : public AbstractComponent
     {
@@ -535,6 +535,19 @@ namespace Core
         [[nodiscard]] BaseComponent* getParent() noexcept { return _parent; }
         [[nodiscard]] bool hasParent() const noexcept { return _parent; }
         [[nodiscard]] BaseComponent* getOwner() noexcept;
+
+        template<IsComponent T>
+        [[nodiscard]] const T* getParentAs() const noexcept
+        {
+            return _parent ? _parent->template tryCastTo<T>() : nullptr;
+        }
+
+        template<IsComponent T>
+        [[nodiscard]] T* getParentAs() noexcept
+        {
+            return _parent ? _parent->template tryCastTo<T>() : nullptr;
+        }
+
         [[nodiscard]] const BaseComponent* getOwner() const noexcept
         {
             return const_cast<Self*>(this)->getOwner();
@@ -542,7 +555,7 @@ namespace Core
 
         // ========================== MISC & TYPES ==========================
         void clear() override;
-        [[nodiscard]] bool isValid() const;
+        [[nodiscard]] virtual bool isValid() const;
         [[nodiscard]] std::size_t makeHash() const;
 
         virtual BaseComponent::Ptr clone() { return nullptr; }

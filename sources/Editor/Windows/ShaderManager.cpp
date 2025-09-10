@@ -51,7 +51,7 @@ namespace Core
                 label->setWidth(defaultLabelWidth);
 
                 _totalShaders = l->addChildComponent<IntInput>();
-                _totalShaders->setDisabled(true);
+                _totalShaders->disableWidget(true);
                 _totalShaders->setFlex(Widget::Flex::FlexWidth);
             }
 
@@ -65,7 +65,7 @@ namespace Core
                 label->setWidth(defaultLabelWidth);
 
                 _failedShaders = l->addChildComponent<IntInput>();
-                _failedShaders->setDisabled(true);
+                _failedShaders->disableWidget(true);
                 _failedShaders->setFlex(Widget::Flex::FlexWidth);
             }
         }

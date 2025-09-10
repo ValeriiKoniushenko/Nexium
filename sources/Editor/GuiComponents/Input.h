@@ -23,6 +23,7 @@
 #pragma once
 
 #include "Core/Delegate.h"
+#include "Editor/Configs.h"
 #include "HorizontalLayout.h"
 #include "ImGui/imgui_internal.h"
 #include "ImGui/misc/cpp/imgui_stdlib.h"
@@ -149,26 +150,127 @@ namespace Core
     };
 
     template<std::size_t Size, Utils::IsArithmetic Type>
-    class VecNumInput : public BaseInput
+    class VecNumInput : public HorizontalLayout
     {
-        ECS_TEMPLATE_COMPONENT_DECL_NO_CNSTR(VecNumInput, BaseInput, Size, Type);
+        ECS_TEMPLATE_COMPONENT_DECL(VecNumInput, HorizontalLayout, Size, Type);
 
     public:
-        std::array<NumInput<Type>, Size> inputs;
-        std::array<Label, Size> labels;
+        std::array<NumInput<Type>*, Size> inputs;
+        std::array<Label*, Size> labels;
+
+        void setLabelText(std::array<char, Size> newText)
+        {
+            for (std::size_t i = 0; i < Size; ++i)
+            {
+                if (Verify(labels[i])) [[likely]]
+                {
+                    StringAtom text;
+                    text.resize(2);
+                    text[0] = newText[i];
+                    text[1] = ':';
+                    text.toUpperCase();
+                    labels[i]->setText(text);
+                }
+            }
+        }
+
+        void setLabelColor(std::array<Color4, Size> data)
+        {
+            for (std::size_t i = 0; i < Size; ++i)
+            {
+                if (Verify(labels[i])) [[likely]]
+                {
+                    labels[i]->setTextColor(data[i]);
+                }
+            }
+        }
+
+        void setReadOnly(bool val)
+        {
+            for (std::size_t i = 0; i < Size; ++i)
+            {
+                if (Verify(inputs[i])) [[likely]]
+                {
+                    inputs[i]->disableWidget(val);
+                }
+            }
+        }
+
+
+        void setInputtedData(const glm::vec<Size, Type>& data)
+        {
+            auto* raw = reinterpret_cast<const Type*>(&data);
+            for (std::size_t i = 0; i < Size; ++i)
+            {
+                if (Verify(inputs[i])) [[likely]]
+                {
+                    inputs[i]->setInputtedData(raw[i]);
+                }
+            }
+        }
+
+        [[nodiscard]] glm::vec<Size, Type> getInputtedData() const
+        {
+            glm::vec<Size, Type> result;
+            auto* raw = reinterpret_cast<Type*>(&result);
+            for (std::size_t i = 0; i < Size; ++i)
+            {
+                if (Verify(inputs[i])) [[likely]]
+                {
+                    raw[i] = inputs[i]->getInputtedData();
+                }
+            }
+
+            return result;
+        }
+
+        [[nodiscard]] bool isValid() const override
+        {
+            for (std::size_t i = 0; i < Size; ++i)
+            {
+                if (!inputs[i])
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+    public: // Delegates
+        Delegate<void(glm::vec<Size, Type>)> onInput;
 
     protected:
         void onInitialize() override
         {
-            BaseInput::onInitialize();
+            HorizontalLayout::onInitialize();
+
+            const std::vector<std::pair<Color4, StringAtom>> defaults = {
+                { Config::ColorRed, "X"_atom },
+                { Config::ColorGreen, "Y"_atom },
+                { Config::ColorBlue, "Z"_atom },
+                { Config::ColorYellow, "W"_atom },
+            };
 
             _children.clear();
 
+            setFlex(Flex::FlexWidth);
+            setHorizontalAlign(Align::SpaceBetween);
             for (std::size_t i = 0; i < Size; ++i)
             {
                 auto* hLayout = addChildComponent<HorizontalLayout>();
                 labels[i] = hLayout->template addChildComponent<Label>();
+                labels[i]->setTextColor(defaults[i].first);
+                labels[i]->setText(defaults[i].second);
+                labels[i]->setWidth(10.f);
+
                 inputs[i] = hLayout->template addChildComponent<NumInput<Type>>();
+                inputs[i]->setFlex(Flex::FlexWidth);
+                inputs[i]->onInput.subscribe(
+                    [this](auto)
+                    {
+                        onInput.trigger(getInputtedData());
+                    });
             }
         }
     };

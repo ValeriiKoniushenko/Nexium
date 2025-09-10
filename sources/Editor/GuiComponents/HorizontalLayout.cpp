@@ -65,11 +65,6 @@ namespace Core
             return *_width;
         }
 
-        if (hasParent() && _flex.cast() == Flex::FlexWidth)
-        {
-            return getParent()->unsafeCastTo<Widget>()->getWidth();
-        }
-
         float width = 0.f;
         for (auto&& child : _children)
         {

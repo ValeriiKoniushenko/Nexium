@@ -106,10 +106,8 @@ namespace Core
         FloatInput* _cameraFov = nullptr;
         FloatInput* _cameraFar = nullptr;
         FloatInput* _cameraNear = nullptr;
-        IntInput* _cameraFrameWidth = nullptr;
-        IntInput* _cameraFrameHeight = nullptr;
-        IntInput* _cameraOutputWidth = nullptr;
-        IntInput* _cameraOutputHeight = nullptr;
+        Float2Input* _cameraFrame = nullptr;
+        Float2Input* _cameraOutput = nullptr;
 
         // StaticMesh section:
         VerticalLayout _staticMeshLayout;

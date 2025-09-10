@@ -72,7 +72,7 @@ namespace
 
         auto* comp = row->addChildComponent<T>("Input: {}"_f << label);
         comp->setFlex(Widget::Flex::FlexWidth);
-        comp->setDisabled(isReadOnly);
+        comp->disableWidget(isReadOnly);
 
         return row;
     }
@@ -91,7 +91,7 @@ namespace
         auto row = CreateHLayoutAndLabel(label, isReadOnly);
 
         auto* comp = row->addChildComponent<CheckBox>("CheckBox: {}"_f << label);
-        comp->setDisabled(isReadOnly);
+        comp->disableWidget(isReadOnly);
 
         return row;
     }
@@ -333,22 +333,8 @@ namespace Core
             out.attachChild(CreateHLayoutAndLabel("Frame size(ration)", false));
             auto* mainRow = out.getLastChildAs<HLayout>().get();
 
-            auto* doubleComp = mainRow->addChildComponent<HLayout>("Camera d-comp");
-            doubleComp->setHorizontalAlign(Widget::Align::SpaceBetween);
-
-            auto* width = doubleComp->addChildComponent<HLayout>("Camera W");
-            auto* w = width->addChildComponent<Label>("W:");
-            w->setWidth(10.f); // negative margin
-            w->setTextColor(Config::ColorRed);
-            _cameraFrameWidth = width->addChildComponent<IntInput>();
-            _cameraFrameWidth->setFlex(Widget::Flex::FlexWidth);
-
-            auto* height = doubleComp->addChildComponent<HLayout>("Camera H");
-            auto* h = height->addChildComponent<Label>("H:");
-            h->setWidth(10.f); // negative margin
-            h->setTextColor(Config::ColorGreen);
-            _cameraFrameHeight = height->addChildComponent<IntInput>();
-            _cameraFrameHeight->setFlex(Widget::Flex::FlexWidth);
+            _cameraFrame = mainRow->addChildComponent<Float2Input>();
+            _cameraFrame->setLabelText({ 'W', 'H' });
         }
         // Output size
         {
@@ -357,24 +343,9 @@ namespace Core
             out.attachChild(CreateHLayoutAndLabel("Output size", true));
             auto* mainRow = out.getLastChildAs<HLayout>().get();
 
-            auto* doubleComp = mainRow->addChildComponent<HLayout>();
-            doubleComp->setHorizontalAlign(Widget::Align::SpaceBetween);
-
-            auto* width = doubleComp->addChildComponent<HLayout>();
-            auto* w = width->addChildComponent<Label>("W:");
-            w->setWidth(10.f); // negative margin
-            w->setTextColor(Config::ColorRed);
-            _cameraOutputWidth = width->addChildComponent<IntInput>();
-            _cameraOutputWidth->setFlex(Widget::Flex::FlexWidth);
-            _cameraOutputWidth->setDisabled(true);
-
-            auto* height = doubleComp->addChildComponent<HLayout>();
-            auto* h = height->addChildComponent<Label>("H:");
-            h->setWidth(10.f); // negative margin
-            h->setTextColor(Config::ColorGreen);
-            _cameraOutputHeight = height->addChildComponent<IntInput>();
-            _cameraOutputHeight->setFlex(Widget::Flex::FlexWidth);
-            _cameraOutputHeight->setDisabled(true);
+            _cameraOutput = mainRow->addChildComponent<Float2Input>();
+            _cameraOutput->setLabelText({ 'W', 'H' });
+            _cameraOutput->setReadOnly(true);
         }
     }
 
@@ -439,29 +410,14 @@ namespace Core
                     }
                 });
         }
-        if (_cameraFrameHeight)
+        if (_cameraFrame)
         {
-            _cameraFrameHeight->onInput.subscribe(
-                [this](int newValue)
+            _cameraFrame->onInput.subscribe(
+                [this](glm::vec2 newValue)
                 {
                     if (auto* camera = _target->tryCastTo<BaseCamera>())
                     {
-                        auto frame = camera->getFrameSize();
-                        frame.height = static_cast<float>(newValue);
-                        camera->setFrameSize(frame);
-                    }
-                });
-        }
-        if (_cameraFrameWidth)
-        {
-            _cameraFrameWidth->onInput.subscribe(
-                [this](int newValue)
-                {
-                    if (auto* camera = _target->tryCastTo<BaseCamera>())
-                    {
-                        auto frame = camera->getFrameSize();
-                        frame.width = static_cast<float>(newValue);
-                        camera->setFrameSize(frame);
+                        camera->setFrameSize(FSize2(newValue));
                     }
                 });
         }
@@ -777,23 +733,13 @@ namespace Core
             {
                 _cameraNear->setInputtedData(comp->getNear());
             }
-            if (_cameraFrameHeight)
+            if (_cameraFrame)
             {
-                _cameraFrameHeight->setInputtedData(static_cast<int>(comp->getFrameSize().height));
+                _cameraFrame->setInputtedData(comp->getFrameSize().toGlm());
             }
-            if (_cameraFrameWidth)
+            if (_cameraOutput)
             {
-                _cameraFrameWidth->setInputtedData(static_cast<int>(comp->getFrameSize().width));
-            }
-            if (_cameraOutputWidth)
-            {
-                _cameraOutputWidth->setInputtedData(
-                    static_cast<int>(comp->getOutputFrameSize().height));
-            }
-            if (_cameraOutputHeight)
-            {
-                _cameraOutputHeight->setInputtedData(
-                    static_cast<int>(comp->getOutputFrameSize().width));
+                _cameraOutput->setInputtedData(comp->getOutputFrameSize().toGlm());
             }
 
             _baseCameraLayout.tick(dt);

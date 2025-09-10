@@ -105,8 +105,8 @@ namespace Core
         [[nodiscard]] Flex getFlex() const noexcept { return _flex; }
         void setFlex(Flex flex) noexcept { _flex = flex; }
 
-        void setDisabled(bool value) noexcept { _isDisabled = value; }
-        [[nodiscard]] bool isDisabled() const noexcept { return _isDisabled; }
+        void disableWidget(bool value) noexcept { _isDisabledWidget = value; }
+        [[nodiscard]] bool isDisabledWidget() const noexcept { return _isDisabledWidget; }
 
         /**
          * @brief Don't use this function to draw your component.
@@ -133,7 +133,7 @@ namespace Core
         Flex _flex = Flex::Fixed;
         bool _autoDraw = true;
         bool _isDrawOutline = false;
-        bool _isDisabled = false;
+        bool _isDisabledWidget = false;
     };
 
 } // namespace Core
