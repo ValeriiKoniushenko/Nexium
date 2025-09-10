@@ -53,7 +53,7 @@ namespace Core
             "macros. Look at the documentation, or check commen above the class Core::BaseComponent "
             "to get more details."_f
                 << type).data());
-        return new InvalidComponent();
+        return nullptr;
     }
 
     bool GlobalComponentFactory::registerNewType(const StringAtom& type,

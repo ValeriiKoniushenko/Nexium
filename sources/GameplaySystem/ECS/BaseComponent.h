@@ -99,7 +99,8 @@ public:
 // ===============================================================
 //             !NON! TEMPLATE COMPONENT REGISTRATION
 // ===============================================================
-
+//
+//
 /**
  * @brief Use this macro inside your class body to declare new component.
  * @param ClassName only name of your class
@@ -108,7 +109,7 @@ public:
  * with name 'componentType'. You can refer to this static field to get type of you component.
  * Also, this macro will create default constructor which can optionally take one argument -
  * new component's name. Example:
- * @code
+ * @code{cpp}
  * // Foo.h
  * class Foo : public BaseComponent
  * {
@@ -131,7 +132,7 @@ public:
  * @endcode
  * Let's implement your new type. For that just put in the .cpp file for you class
  * the last macro: ECS_COMPONENT_IMPL and pass only class name.
- * @code
+ * @code{cpp}
  * // Foo.cpp
  * ECS_COMPONENT_IMPL(Foo);
  * ECS_COMPONENT_IMPL(FooBar);
@@ -154,7 +155,8 @@ public:
 // ===============================================================
 //                TEMPLATE COMPONENT REGISTRATION
 // ===============================================================
-
+//
+//
 /**
  * @brief Use this macro inside your class body to declare new component.
  * @param ClassName only name of your class
@@ -173,7 +175,7 @@ public:
  * @endcode
  * That's only component declaration! To implement it just continue reading...
  * More complex example:
- * @code
+ * @code{cpp}
  * template<std::size_t Size, class T>
  * class FooBar : public SomeCounterComponent
  * {
@@ -196,7 +198,7 @@ public:
  * ECS_TEMPLATE_COMPONENT_IMPL and pass full class name with all template params,
  * and all parameters of your template (above your class). But, due to compiler
  * specific behavior you MUST wrap first and second argument with macro BRACKETS.
- * @code
+ * @code{cpp}
  * // declaration of you classed above! Now only implementations:
  * ECS_TEMPLATE_COMPONENT_IMPL(
  *      BRACKETS(Foo<T>),
@@ -287,6 +289,8 @@ namespace Core
      * @brief Global factory for creating and registering components by type.
      * Manages mapping between component type names and factory functions.
      * Provides logging and debug tracking of component types in DEBUG mode.
+     * Try to don't use by your own hands, it will register new component
+     * automatically. How? See first comment above class BaseComponent
      */
     class GlobalComponentFactory : public StrictSingleton<GlobalComponentFactory>, public BaseLog
     {
@@ -459,20 +463,19 @@ namespace Core
      * @brief Base class for all your custom components.
      * To create your own component you should do only several things:
      * 1. Create your component's class. I.e. MyNewComponent and inherit from BaseComponent
-     * 2. Register as component: inside this class put a macros ECS_COMPONENT_DECL
+     * 2. Register as component: inside your new class put a macros ECS_COMPONENT_DECL
      * 3. Register as type: inside .cpp file put ECS_COMPONENT_IMPL
-     *
      * @code{cpp}
      * // MyNewComponent.h
      * class MyNewComponent : public BaseComponent {
      *      ECS_COMPONENT_DECL(MyNewComponent, BaseComponent);
      * };
      * @endcode
+     * Implementation of new component:
      * @code{cpp}
      * // MyNewComponent.cpp
      * ECS_COMPONENT_IMPL(MyNewComponent);
      * @endcode
-     *
      * More complex example with MyParentComponent and MyChildComponent
      * @code{cpp}
      * // MyNewComponent.h
@@ -483,11 +486,18 @@ namespace Core
      *      ECS_COMPONENT_DECL(MyChildComponent, MyParentComponent);
      * };
      * @endcode
+     * This ECS_COMPONENT_DECL macros will create one default constructor. And
+     * it can take optionally a component's name. If you want to create a component's
+     * constructor by your own hand use instead ECS_COMPONENT_DECL_NO_CNSTR.
+     * To get more info about that check declaration of this macro.
+     * Implementation of new components:
      * @code{cpp}
      * // MyNewComponent.cpp
      * ECS_COMPONENT_IMPL(MyParentComponent);
      * ECS_COMPONENT_IMPL(MyChildComponent);
      * @endcode
+     * But, if you still want to create a class, but not usual but template - see
+     * declaration(and comment above) of macro ECS_TEMPLATE_COMPONENT_DECL
      */
     class BaseComponent : public AbstractComponent
     {
