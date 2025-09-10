@@ -23,6 +23,7 @@
 #include "ObjectPropertiesWindow.h"
 
 #include "Camera/Camera.h"
+#include "Editor/Configs.h"
 #include "Editor/GuiComponents/CheckBox.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
@@ -130,9 +131,9 @@ namespace Core
         registerGuiEvents();
 
         _transformLocationControl.components
-            = { Vec3Control::Component{ .text = "X:"_atom, .color = ColorRed },
-                Vec3Control::Component{ .text = "Y:"_atom, .color = ColorGreen },
-                Vec3Control::Component{ .text = "Z:"_atom, .color = ColorBlue } };
+            = { Vec3Control::Component{ .text = "X:"_atom, .color = Config::ColorRed },
+                Vec3Control::Component{ .text = "Y:"_atom, .color = Config::ColorGreen },
+                Vec3Control::Component{ .text = "Z:"_atom, .color = Config::ColorBlue } };
         _transformLocationControl.labelWidth = _labelWidth;
         _transformLocationControl.label = "Location:";
 
@@ -146,16 +147,16 @@ namespace Core
         _transformRotationControl.label = "Rotation:";
 
         _meshSizeControl.components
-            = { Vec3Control::Component{ .text = "W:"_atom, .color = ColorRed },
-                Vec3Control::Component{ .text = "H:"_atom, .color = ColorGreen },
-                Vec3Control::Component{ .text = "D:"_atom, .color = ColorBlue } };
+            = { Vec3Control::Component{ .text = "W:"_atom, .color = Config::ColorRed },
+                Vec3Control::Component{ .text = "H:"_atom, .color = Config::ColorGreen },
+                Vec3Control::Component{ .text = "D:"_atom, .color = Config::ColorBlue } };
         _meshSizeControl.labelWidth = _labelWidth;
         _meshSizeControl.readOnly = true;
         _meshSizeControl.label = "Size:";
 
         _frameSizeControl.components
-            = { Vec2Control::Component{ .text = "W:"_atom, .color = ColorRed },
-                Vec2Control::Component{ .text = "H:"_atom, .color = ColorGreen } };
+            = { Vec2Control::Component{ .text = "W:"_atom, .color = Config::ColorRed },
+                Vec2Control::Component{ .text = "H:"_atom, .color = Config::ColorGreen } };
         _frameSizeControl.labelWidth = _labelWidth;
         _frameSizeControl.label = "Frame size:";
 
@@ -338,14 +339,14 @@ namespace Core
             auto* width = doubleComp->addChildComponent<HLayout>("Camera W");
             auto* w = width->addChildComponent<Label>("W:");
             w->setWidth(10.f); // negative margin
-            w->setTextColor(Color4::From(NormColor4(ColorRed)));
+            w->setTextColor(Config::ColorRed);
             _cameraFrameWidth = width->addChildComponent<IntInput>();
             _cameraFrameWidth->setFlex(Widget::Flex::FlexWidth);
 
             auto* height = doubleComp->addChildComponent<HLayout>("Camera H");
             auto* h = height->addChildComponent<Label>("H:");
             h->setWidth(10.f); // negative margin
-            h->setTextColor(Color4::From(NormColor4(ColorGreen)));
+            h->setTextColor(Config::ColorGreen);
             _cameraFrameHeight = height->addChildComponent<IntInput>();
             _cameraFrameHeight->setFlex(Widget::Flex::FlexWidth);
         }
@@ -362,7 +363,7 @@ namespace Core
             auto* width = doubleComp->addChildComponent<HLayout>();
             auto* w = width->addChildComponent<Label>("W:");
             w->setWidth(10.f); // negative margin
-            w->setTextColor(Color4::From(NormColor4(ColorRed)));
+            w->setTextColor(Config::ColorRed);
             _cameraOutputWidth = width->addChildComponent<IntInput>();
             _cameraOutputWidth->setFlex(Widget::Flex::FlexWidth);
             _cameraOutputWidth->setDisabled(true);
@@ -370,7 +371,7 @@ namespace Core
             auto* height = doubleComp->addChildComponent<HLayout>();
             auto* h = height->addChildComponent<Label>("H:");
             h->setWidth(10.f); // negative margin
-            h->setTextColor(Color4::From(NormColor4(ColorGreen)));
+            h->setTextColor(Config::ColorGreen);
             _cameraOutputHeight = height->addChildComponent<IntInput>();
             _cameraOutputHeight->setFlex(Widget::Flex::FlexWidth);
             _cameraOutputHeight->setDisabled(true);

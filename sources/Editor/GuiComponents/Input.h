@@ -23,6 +23,7 @@
 #pragma once
 
 #include "Core/Delegate.h"
+#include "HorizontalLayout.h"
 #include "ImGui/imgui_internal.h"
 #include "ImGui/misc/cpp/imgui_stdlib.h"
 #include "Label.h"
@@ -153,15 +154,23 @@ namespace Core
         ECS_TEMPLATE_COMPONENT_DECL_NO_CNSTR(VecNumInput, BaseInput, Size, Type);
 
     public:
-        explicit VecNumInput(const StringAtom& name)
-            : BaseInput(componentType, name)
-        {
-        }
-
         std::array<NumInput<Type>, Size> inputs;
         std::array<Label, Size> labels;
 
     protected:
+        void onInitialize() override
+        {
+            BaseInput::onInitialize();
+
+            _children.clear();
+
+            for (std::size_t i = 0; i < Size; ++i)
+            {
+                auto* hLayout = addChildComponent<HorizontalLayout>();
+                labels[i] = hLayout->template addChildComponent<Label>();
+                inputs[i] = hLayout->template addChildComponent<NumInput<Type>>();
+            }
+        }
     };
 
     ECS_TEMPLATE_COMPONENT_IMPL(BRACKETS(VecNumInput<Size, Type>),
@@ -171,5 +180,17 @@ namespace Core
     using DoubleInput = NumInput<double>;
     using FloatInput = NumInput<float>;
     using IntInput = NumInput<int>;
+
+    using Int4Input = VecNumInput<4, int>;
+    using Float4Input = VecNumInput<4, float>;
+    using Double4Input = VecNumInput<4, double>;
+
+    using Int3Input = VecNumInput<3, int>;
+    using Float3Input = VecNumInput<3, float>;
+    using Double3Input = VecNumInput<3, double>;
+
+    using Int2Input = VecNumInput<2, int>;
+    using Float2Input = VecNumInput<2, float>;
+    using Double2Input = VecNumInput<2, double>;
 
 } // namespace Core

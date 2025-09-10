@@ -22,6 +22,7 @@
 
 #include "LogsWindow.h"
 
+#include "Editor/Configs.h"
 #include "Misc/IconsFontAwesome.h"
 
 namespace Core
@@ -152,19 +153,19 @@ namespace Core
 
                 if (level == spdlog::level::critical)
                 {
-                    color = ColorRed;
+                    color = Config::ColorRed;
                 }
                 if (level == spdlog::level::err)
                 {
-                    color = ColorYellow;
+                    color = Config::ColorYellow;
                 }
                 if (level == spdlog::level::warn)
                 {
-                    color = ColorHalfYellow;
+                    color = Config::ColorHalfYellow;
                 }
                 if (level == spdlog::level::debug)
                 {
-                    color = ColorGrey;
+                    color = Config::ColorGrey;
                 }
 
                 if (color)

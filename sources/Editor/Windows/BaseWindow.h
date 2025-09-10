@@ -36,15 +36,6 @@ namespace Core
         ECS_COMPONENT_DECL(BaseEWC, BaseComponent);
 
     public:
-        static constexpr glm::vec4 ColorRed = glm::vec4(1.0f, 0.1f, 0.1f, 1.0f);
-        static constexpr glm::vec4 ColorGreen = glm::vec4(0.1f, 1.0f, 0.1f, 1.0f);
-        static constexpr glm::vec4 ColorSoftGreen = glm::vec4(0.1f, 0.8f, 0.1f, 0.8f);
-        static constexpr glm::vec4 ColorGrey = glm::vec4(0.6f, 0.6f, 0.6f, 1.0f);
-        static constexpr glm::vec4 ColorYellow = glm::vec4(1.f, 1.0f, 0.1f, 1.0f);
-        static constexpr glm::vec4 ColorHalfYellow = glm::vec4(0.8f, 0.4f, 0.1f, 1.0f);
-        static constexpr glm::vec4 ColorBlue = glm::vec4(0.1f, 0.1f, 1.0f, 1.0f);
-
-    public:
         [[nodiscard]] const StringAtom& getWindowTitle() { return getComponentName(); }
         virtual void putArguments(const StringAtom& args) {}
 

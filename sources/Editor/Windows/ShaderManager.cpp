@@ -22,6 +22,7 @@
 
 #include "ShaderManager.h"
 
+#include "Editor/Configs.h"
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/Combo.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
@@ -337,12 +338,12 @@ namespace Core
             {
                 if (result)
                 {
-                    _recompileResult->setTextColor(Color4::From(NormColor4(ColorSoftGreen)));
+                    _recompileResult->setTextColor(Config::ColorSoftGreen);
                     _recompileResult->setText("Successfully recompiled");
                 }
                 else
                 {
-                    _recompileResult->setTextColor(Color4::From(NormColor4(ColorRed)));
+                    _recompileResult->setTextColor(Config::ColorRed);
                     _recompileResult->setText("Recompile failed. Check logs for details.");
                 }
             }
