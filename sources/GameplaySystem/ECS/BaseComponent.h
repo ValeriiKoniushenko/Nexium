@@ -95,10 +95,6 @@ protected:                                                                      
     {                                                                                              \
     }                                                                                              \
                                                                                                    \
-private:                                                                                           \
-    static const bool _debugTypeTracker;                                                           \
-    static const bool _typeRegistration;                                                           \
-                                                                                                   \
 public:
 
 // ---------------------------------------------------------
@@ -173,14 +169,13 @@ public:
     const StringAtom ClassName::componentType = []                                                 \
     {                                                                                              \
         auto newType = StringAtom::Intern(#ClassName);                                             \
-        auto& factory = GetGlobalComponentFactory();                                               \
-        factory._debugTypeTracker_NotifyNewAboutType(newType);                                     \
-        factory.registerNewType(newType,                                                           \
-                                [] -> BaseComponent*                                               \
-                                {                                                                  \
-                                    return new std::conditional_t<std::is_abstract_v<ClassName>,   \
-                                                                  InvalidComponent, ClassName>;    \
-                                });                                                                \
+        GetGlobalComponentFactory().registerNewType(                                               \
+            newType,                                                                               \
+            [] -> BaseComponent*                                                                   \
+            {                                                                                      \
+                return new std::conditional_t<std::is_abstract_v<ClassName>, InvalidComponent,     \
+                                              ClassName>;                                          \
+            });                                                                                    \
         return newType;                                                                            \
     }();
 
@@ -191,26 +186,18 @@ public:
  */
 #define ECS_REGISTER_NEW_TEMPLATE_TYPE(TypeName, Template)                                         \
     template<BRACKETS(Template)>                                                                   \
-    const bool BRACKETS(TypeName)::_typeRegistration                                               \
-        = GetGlobalComponentFactory().registerNewType(                                             \
-            StringAtom::Intern(typeid(BRACKETS(TypeName)).name()),                                 \
-            []() -> BaseComponent*                                                                 \
+    const StringAtom BRACKETS(TypeName)::componentType = []                                        \
+    {                                                                                              \
+        auto type = StringAtom::Intern(typeid(BRACKETS(TypeName)).name());                         \
+        GetGlobalComponentFactory().registerNewType(                                               \
+            type,                                                                                  \
+            [] -> BaseComponent*                                                                   \
             {                                                                                      \
                 return new std::conditional_t<std::is_abstract_v<BRACKETS(TypeName)>,              \
                                               InvalidComponent, BRACKETS(TypeName)>;               \
             });                                                                                    \
-                                                                                                   \
-    template<BRACKETS(Template)>                                                                   \
-    const bool BRACKETS(TypeName)::_debugTypeTracker = []()                                        \
-    {                                                                                              \
-        GetGlobalComponentFactory()._debugTypeTracker_NotifyNewAboutType(                          \
-            StringAtom::Intern(typeid(BRACKETS(TypeName)).name()));                                \
-        return true;                                                                               \
-    }();                                                                                           \
-                                                                                                   \
-    template<BRACKETS(Template)>                                                                   \
-    const StringAtom BRACKETS(TypeName)::componentType                                             \
-        = StringAtom::Intern(typeid(BRACKETS(TypeName)).name());
+        return type;                                                                               \
+    }();
 
 namespace Core
 {
@@ -283,11 +270,6 @@ namespace Core
         SINGLETONS_FRIEND(GlobalComponentFactory);
 
     public:
-        /** @brief Notify the debug system about a new type. Only used in DEBUG mode. */
-        [[maybe_unused]] void _debugTypeTracker_NotifyNewAboutType(const StringAtom& newType);
-
-        ~GlobalComponentFactory() override;
-
         /**
          * @brief Create a component by its registered type.
          * @param type The type identifier (StringAtom) of the component.
@@ -307,10 +289,6 @@ namespace Core
 
     private:
         std::unordered_map<StringAtom, std::function<BaseComponent*()>> _map;
-
-#if defined(DEBUG)
-        std::unordered_map<StringAtom, uint32_t> _debugTypeTracker;
-#endif
     };
 
     /** @brief Shortcut to access the global component factory singleton. */

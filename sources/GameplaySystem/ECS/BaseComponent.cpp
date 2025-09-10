@@ -47,89 +47,30 @@ namespace Core
             }
         }
 
-        for (const auto& pair : _map)
-        {
-            std::cout << pair.first << std::endl;
-        }
-
-        Assert(false,
-               "Maybe you forget to register your own component with ECS_REGISTER_NEW_COMPONENT?");
-        return nullptr;
+        Assert(
+            false,
+            ("Can't reflect the type '{}'. Maybe you forgot to register your class with needed "
+            "macros. Look at the documentation, or check commen above the class Core::BaseComponent "
+            "to get more details."_f
+                << type).data());
+        return new InvalidComponent();
     }
 
     bool GlobalComponentFactory::registerNewType(const StringAtom& type,
                                                  std::function<BaseComponent*()> callback)
     {
         Assert(type.isStatic());
+
 #if defined(DEBUG)
-        _debugTypeTracker_NotifyNewAboutType(type);
+        if (_map.contains(type))
+        {
+            criticalLog("You're trying to register the type '{}' second(or more) time."_f << type);
+        }
 #endif
         _map.emplace(type, std::move(callback));
+        traceLog("Type '{}' has been registered."_f << type);
+
         return true;
-    }
-
-    void GlobalComponentFactory::_debugTypeTracker_NotifyNewAboutType(const StringAtom& newType)
-    {
-#if defined(DEBUG)
-        // Should go here from ECS_REGISTER_NEW_COMPONENT[_TYPE]
-        if (_debugTypeTracker.contains(newType))
-        {
-            traceLog("The type '{}' was implemented."_f << newType);
-
-            // 2 - because we should hit it from both macros:
-            // - ECS_REGISTER_NEW_COMPONENT
-            // - ECS_REGISTER_NEW_TYPE
-            if (++_debugTypeTracker[newType] > 2)
-            {
-                warnLog("The type '{}' was implemented more times then needed."_f << newType);
-            }
-        }
-        else
-        {
-            traceLog("The type '{}' was declared."_f << newType);
-            _debugTypeTracker[newType] = 1;
-        }
-#endif
-    }
-
-    GlobalComponentFactory::~GlobalComponentFactory()
-    {
-        // Debug type checker
-#if defined(DEBUG)
-        for (const auto& [type, counter] : _debugTypeTracker)
-        {
-            // 2 - because we should hit it from both macros:
-            // - ECS_REGISTER_NEW_COMPONENT
-            // - ECS_REGISTER_NEW_TYPE
-            constexpr uint32_t hitCount = 2;
-
-            if (counter < hitCount)
-            {
-                Assert(
-                    false,
-                    ("The type '{}' wasn't fully registered. Try to find where this type was declared/"
-                     "created and add 'ECS_REGISTER_NEW_COMPONENT' to the classe's body, and "
-                     "'ECS_REGISTER_NEW_TYPE' to its implementation(.cpp)"
-                     " Also, you can enable(if it's disabled) spdlog::level::trace and check what "
-                     "type was declared and what type was implemented"_f
-                     << type)
-                        .data());
-            }
-            if (counter > hitCount)
-            {
-                Assert(
-                    false,
-                    ("New unknown component wasn't registered. Somewhere you inherited with new type"
-                     " from base type '{}'. If you inherit from the component you must register your"
-                     " new type with 'ECS_REGISTER_NEW_COMPONENT' inside classe's body, and "
-                     "register a type with 'ECS_REGISTER_NEW_TYPE' inside .cpp file."
-                     " Also, you can enable(if it's disabled) spdlog::level::trace and check what "
-                     "type was declared and what type was implemented"_f
-                     << type)
-                        .data());
-            }
-        }
-#endif
     }
 
     AbstractComponent::AbstractComponent(AbstractComponent&& other) noexcept

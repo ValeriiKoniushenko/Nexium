@@ -62,32 +62,32 @@
     "keyboardInput": {
         "mapping": [
             {
-                "action": "moveUp",
-                "key": "R"
+                "action": "moveRight",
+                "key": "D"
             },
             {
-                "action": "moveForward",
-                "key": "W"
-            },
-            {
-                "action": "moveLeft",
-                "key": "A"
+                "action": "toggleRenderMode",
+                "key": "F1"
             },
             {
                 "action": "moveBackward",
                 "key": "S"
             },
             {
-                "action": "moveRight",
-                "key": "D"
+                "action": "moveLeft",
+                "key": "A"
             },
             {
                 "action": "moveDown",
                 "key": "F"
             },
             {
-                "action": "toggleRenderMode",
-                "key": "F1"
+                "action": "moveForward",
+                "key": "W"
+            },
+            {
+                "action": "moveUp",
+                "key": "R"
             }
         ]
     },
