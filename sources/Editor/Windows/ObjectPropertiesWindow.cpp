@@ -460,6 +460,33 @@ namespace Core
                     }
                 });
         }
+        if (_graphicsModifiers)
+        {
+            _graphicsModifiers->onSave.subscribe(
+                [this](const auto& data)
+                {
+                    if (!_target)
+                    {
+                        return;
+                    }
+                    if (auto* graph = dynamic_cast<GraphicsComponentData*>(_target))
+                    {
+                        graph->setDrawModifiers(data);
+                    }
+                });
+            _graphicsModifiers->onReset.subscribe(
+                [this](auto& out)
+                {
+                    if (!_target)
+                    {
+                        return;
+                    }
+                    if (auto* graph = dynamic_cast<GraphicsComponentData*>(_target))
+                    {
+                        out = graph->getDrawModifiers();
+                    }
+                });
+        }
     }
 
     void ObjectPropertiesWindowEWC::tryDrawTransformable(Transformable* comp, BaseComponent* base)
@@ -676,6 +703,10 @@ namespace Core
         if (auto* comp = dynamic_cast<GraphicsComponentData*>(abstComp))
         {
             _graphicsModifiers->setData(comp->getDrawModifiers());
+        }
+        else
+        {
+            _graphicsModifiers->setData({});
         }
     }
 

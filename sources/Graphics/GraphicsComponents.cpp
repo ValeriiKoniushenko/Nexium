@@ -248,7 +248,7 @@ namespace Core
 
         for (auto& [value, modifier] : values)
         {
-            map[modifier.cast()]++;
+            map[value]++;
             Assert(map[value] == 1, "The same modifier was added twice.");
         }
 #endif
@@ -263,7 +263,7 @@ namespace Core
 
         for (const auto& [value, modifier] : values)
         {
-            map[modifier.cast()]++;
+            map[value]++;
             Assert(map[value] == 1, "The same modifier was added twice.");
         }
 #endif

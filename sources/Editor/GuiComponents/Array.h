@@ -88,6 +88,8 @@ namespace Core::Gui
         Delegate<void()> onChange;
         Delegate<void(std::size_t, T&)> onAdd;
         Delegate<void(std::size_t)> onEraseAt;
+        Delegate<void(const std::vector<T>&)> onSave;
+        Delegate<void(std::vector<T>&)> onReset;
 
     public:
         void eraseAt(std::size_t i)
@@ -188,9 +190,25 @@ namespace Core::Gui
                 }
             }
 
-            // Add button creating
-            auto* addButton = addChildComponent<Button>();
-            addButton->setText("Add new item");
+            // Buttons creating
+            auto* buttonsHolder = addChildComponent<HorizontalLayout>();
+
+            auto* saveButton = buttonsHolder->template addChildComponent<Button>("Save");
+            saveButton->setFlex(Flex::FlexWidth);
+            if (_isReadOnly)
+            {
+                saveButton->disableWidget(_isReadOnly);
+            }
+            else
+            {
+                saveButton->onClick.subscribe(
+                    [this](auto*)
+                    {
+                        onSave.trigger(_data);
+                    });
+            }
+
+            auto* addButton = buttonsHolder->template addChildComponent<Button>("Add new item");
             addButton->setFlex(Flex::FlexWidth);
             if (_isReadOnly)
             {
@@ -202,6 +220,22 @@ namespace Core::Gui
                     [this](auto*)
                     {
                         addEmpty();
+                    });
+            }
+
+            auto* resetButton = buttonsHolder->template addChildComponent<Button>("Reset");
+            resetButton->setFlex(Flex::FlexWidth);
+            if (_isReadOnly)
+            {
+                resetButton->disableWidget(_isReadOnly);
+            }
+            else
+            {
+                resetButton->onClick.subscribe(
+                    [this](auto*)
+                    {
+                        onReset.trigger(_data);
+                        makeDirty();
                     });
             }
         }
