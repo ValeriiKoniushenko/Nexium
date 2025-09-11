@@ -84,14 +84,6 @@ namespace Core::Gui
     {
         int pushedStyles = 0;
 
-        if (!getComponentName().isEmpty())
-        {
-            if (getComponentName() == "World")
-            {
-                int i = 1;
-            }
-        }
-
         pushedStyles += ImGui::OptPushStyleColor(ImGuiCol_Text, _textColor);
 
         const auto defaultCursor = ImGui::GetCursorPos();

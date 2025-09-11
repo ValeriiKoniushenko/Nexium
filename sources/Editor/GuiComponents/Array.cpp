@@ -63,6 +63,12 @@ namespace Core::Gui
         }
     }
 
+    void BaseArray::eraseAt(std::size_t i)
+    {
+        onEraseAt(i);
+        _isDirty = true;
+    }
+
     void BaseArray::recreate()
     {
         _children.clear();
@@ -73,6 +79,22 @@ namespace Core::Gui
             cell->setIndexText(i);
             *cell->content = std::move(*getFilledContent(i));
             cell->content->setIsAutoDraw(false);
+
+            cell->deleteButton->onClick.subscribe(
+                [this, i](auto*)
+                {
+                    eraseAt(i);
+                });
+        }
+    }
+    void BaseArray::onTick(float delta)
+    {
+        VerticalLayout::onTick(delta);
+
+        if (_isDirty)
+        {
+            recreate();
+            _isDirty = false;
         }
     }
 
@@ -85,6 +107,11 @@ namespace Core::Gui
         setHorizontalAlign(Align::Center);
 
         recreate();
+    }
+
+    void StringArray::onEraseAt(std::size_t i)
+    {
+        _data.erase(_data.begin() + i);
     }
 
     HorizontalLayout::Ptr StringArray::getFilledContent(std::size_t i)

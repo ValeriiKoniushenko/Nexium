@@ -51,13 +51,18 @@ namespace Core::Gui
         };
 
     public:
+        void eraseAt(std::size_t i);
         [[nodiscard]] virtual std::size_t getSize() const = 0;
 
     protected:
+        virtual void onEraseAt(std::size_t i) = 0;
         [[nodiscard]] virtual HorizontalLayout::Ptr getFilledContent(std::size_t i) = 0;
         void recreate();
-
+        void onTick(float delta) override;
         void onInitialize() override;
+
+    protected:
+        bool _isDirty = true;
     };
 
     class StringArray : public BaseArray
@@ -68,6 +73,7 @@ namespace Core::Gui
         std::size_t getSize() const override { return _data.size(); }
 
     protected:
+        void onEraseAt(std::size_t i) override;
         [[nodiscard]] HorizontalLayout::Ptr getFilledContent(std::size_t i) override;
 
     protected:
