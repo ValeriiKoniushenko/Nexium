@@ -157,6 +157,7 @@ namespace Core::Gui
             setComponentName("Array"_atom);
             setVerticalAlign(Align::Top);
             setHorizontalAlign(Align::Center);
+            setFlex(Flex::FlexWidth);
 
             recreate();
         }
@@ -226,6 +227,7 @@ namespace Core::Gui
     {
         auto l = HorizontalLayout::Create();
         auto label = l->addChildComponent<Label>();
+        label->setFlex(Widget::Flex::FlexWidth);
         label->setText(str);
         return l;
     })>;

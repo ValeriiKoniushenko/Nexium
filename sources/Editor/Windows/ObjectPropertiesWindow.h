@@ -94,6 +94,8 @@ namespace Core
         Gui::VerticalLayout _baseComponentExtraLayout;
         Gui::TextInput* _parentName = nullptr;
         Gui::IntInput* _childrenCount = nullptr;
+        Gui::StringArray* _childrenList = nullptr;
+        void setChildListData(AbstractComponent* comp);
         Gui::CheckBox* _isInited = nullptr;
         Gui::CheckBox* _disabledTicks = nullptr;
 
@@ -124,8 +126,6 @@ namespace Core
         Gui::Float3Input* _transformRotation = nullptr;
         Gui::Float3Input* _transformScale = nullptr;
         Gui::Float3Input* _transformOrigin = nullptr;
-
-        Gui::StringArray _array;
 
         AbstractComponent* _target = nullptr;
         Repeater _slowUpdater;

@@ -99,6 +99,25 @@ namespace
 
         return row;
     }
+
+    template<IsComponent T>
+    HLayout::Ptr CreateEx(const char* label, bool isReadOnly,
+                          float size = ObjectPropertiesWindowEWC::defaultLabelWidthBig)
+    {
+        using namespace Core;
+
+        if (!Verify(label))
+        {
+            return nullptr;
+        }
+
+        auto row = CreateHLayoutAndLabel(label, isReadOnly, size);
+
+        auto* comp = row->addChildComponent<T>("{}: {}"_f << T::componentType << label);
+
+        return row;
+    }
+
     // =========================================================
 
 } // namespace
@@ -120,6 +139,7 @@ namespace Core
     void ObjectPropertiesWindowEWC::setTargetObject(AbstractComponent* actor)
     {
         _target = actor;
+        setChildListData(_target);
     }
 
     void ObjectPropertiesWindowEWC::resetTargetObject()
@@ -162,19 +182,17 @@ namespace Core
             {
                 if (newValue)
                 {
-                    _target = comp;
+                    setTargetObject(comp);
                 }
                 else
                 {
-                    _target = nullptr;
+                    resetTargetObject();
                 }
             });
     }
 
     void ObjectPropertiesWindowEWC::onDraw()
     {
-        _array.tick(GetWorld().timeDelta);
-
         auto* asBaseComponent = dynamic_cast<BaseComponent*>(_target);
         auto* asTransformable = dynamic_cast<Transformable*>(_target);
         auto* asStaticMeshBundle = dynamic_cast<StaticMeshBundle*>(_target);
@@ -200,8 +218,6 @@ namespace Core
 
     void ObjectPropertiesWindowEWC::createGui()
     {
-        _array.initialize();
-
         // ================= General ====================
         {
             auto& out = _generalInfoLayout;
@@ -249,6 +265,10 @@ namespace Core
 
             out.attachChild(::Create<CheckBox>("Disabled ticks", false));
             _disabledTicks = out.getLastChildAs<HLayout>()->getLastChildAs<CheckBox>().get();
+
+            out.attachChild(::CreateEx<StringArray>("Children", true));
+            _childrenList = out.getLastChildAs<HLayout>()->getLastChildAs<StringArray>().get();
+            _childrenList->setReadOnly(true);
         }
 
         // ================= StaticMesh ====================
@@ -693,7 +713,7 @@ namespace Core
                 if (comp->hasParent())
                 {
                     str = comp->getParent()->getComponentName().toStdString();
-                    str += "(";
+                    str += " (";
                     str += comp->getParent()->getComponentType().toStdString();
                     str += ")";
                 }
@@ -753,6 +773,30 @@ namespace Core
             }
 
             _baseCameraLayout.tick(dt);
+        }
+    }
+
+    void ObjectPropertiesWindowEWC::setChildListData(AbstractComponent* abstComp)
+    {
+        if (!_childrenList || !abstComp)
+        {
+            return;
+        }
+
+        if (auto* comp = dynamic_cast<BaseComponent*>(abstComp))
+        {
+            std::vector<StringAtom> childrenStrs;
+            childrenStrs.reserve(comp->getChildrenCount());
+            for (auto&& child : comp->getChildren())
+            {
+                StringAtom str = child->getComponentName();
+                str += " (";
+                str += child->getComponentType();
+                str += ")";
+                childrenStrs.push_back(std::move(str));
+            }
+
+            _childrenList->setData(std::move(childrenStrs));
         }
     }
 

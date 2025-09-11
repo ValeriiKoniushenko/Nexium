@@ -22,6 +22,8 @@
 
 #include "Label.h"
 
+#include "ImGui/imgui_internal.h"
+
 namespace Core::Gui
 {
 
@@ -30,6 +32,7 @@ namespace Core::Gui
     void Label::setWidth(float newWidth)
     {
         _width = newWidth;
+        invalidateTextCache();
     }
 
     void Label::setHeight(float newHeight)
@@ -55,7 +58,7 @@ namespace Core::Gui
     void Label::setText(const StringAtom& string)
     {
         setComponentName(string);
-        _textSize = ImGui::CalcTextSize(string.c_str());
+        invalidateTextCache();
     }
 
     const StringAtom& Label::getText() const noexcept
@@ -105,7 +108,7 @@ namespace Core::Gui
             ImGui::SetCursorPosX(defaultCursor.x + offset);
         }
 
-        ImGui::TextUnformatted(_name.c_str());
+        ImGui::TextEx(_cachedText.c_str(), nullptr, ImGuiTextFlags_None);
 
         if (_width != -1.0f)
         {
@@ -127,6 +130,36 @@ namespace Core::Gui
         if (_textSize.x == 0.f && _textSize.y == 0.f)
         {
             setText(getComponentName());
+        }
+    }
+
+    void Label::invalidateTextCache()
+    {
+        auto originalSize = ImGui::CalcTextSize(_name.c_str());
+
+        if (_isTruncateLongText && _width != -1.0f && originalSize.x > _width)
+        {
+            _cachedText.resize(0);
+
+            _textSize = { _width, originalSize.y };
+            const char* ellipsis = "..";
+            float finalWidth = ImGui::CalcTextSize(ellipsis).x;
+
+            for (auto c : _name)
+            {
+                finalWidth += ImGui::CalcTextSize(&c, &c + 1).x;
+                if (finalWidth >= _width + style().ItemSpacing.x)
+                {
+                    break;
+                }
+                _cachedText += c;
+            }
+            _cachedText += ellipsis;
+        }
+        else
+        {
+            _textSize = originalSize;
+            _cachedText = _name;
         }
     }
 } // namespace Core::Gui

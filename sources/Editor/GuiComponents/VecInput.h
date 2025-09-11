@@ -144,6 +144,7 @@ namespace Core::Gui
                 labels[i] = hLayout->template addChildComponent<Label>();
                 labels[i]->setTextColor(defaults[i].first);
                 labels[i]->setText(defaults[i].second);
+                labels[i]->setTruncateLongText(false);
                 labels[i]->setWidth(10.f);
 
                 inputs[i] = hLayout->template addChildComponent<NumInput<Type>>();

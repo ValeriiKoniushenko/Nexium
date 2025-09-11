@@ -34,6 +34,7 @@ namespace Core::Gui
         {
             setComponentName("VerticalLayout"_atom);
         }
+        setFlex(Flex::FlexWidth);
         setVerticalAlign(Align::Top);
         setHorizontalAlign(Align::Center);
     }

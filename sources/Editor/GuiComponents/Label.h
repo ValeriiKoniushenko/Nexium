@@ -51,17 +51,24 @@ namespace Core::Gui
         void setHorizontalAlign(Align align) { _align = align; }
         [[nodiscard]] Align getHorizontalAlign() const noexcept { return _align; }
 
+        void setTruncateLongText(bool value) noexcept { _isTruncateLongText = value; }
+        [[nodiscard]] bool getTruncateLongText() const noexcept { return _isTruncateLongText; }
+
     protected:
         void onDraw() override;
         void onInitialize() override;
+        void invalidateTextCache();
 
     protected:
         std::optional<Color4> _textColor;
+        StringAtom _cachedText;
         Align _align = Align::Left;
 
         glm::vec2 _textSize = {};
         float _width = -1.0f;
         float _height = -1.0f;
+
+        bool _isTruncateLongText = true;
     };
 
 } // namespace Core::Gui
