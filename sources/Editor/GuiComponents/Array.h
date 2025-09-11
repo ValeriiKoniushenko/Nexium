@@ -176,7 +176,7 @@ namespace Core::Gui
 
                 if (_isReadOnly)
                 {
-                    cell->deleteButton->disableWidget(_isReadOnly);
+                    cell->deleteButton->setEnabled(false);
                 }
                 else
                 {

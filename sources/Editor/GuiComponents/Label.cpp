@@ -148,11 +148,11 @@ namespace Core::Gui
             for (auto c : _name)
             {
                 finalWidth += ImGui::CalcTextSize(&c, &c + 1).x;
+                _cachedText += c;
                 if (finalWidth >= _width + style().ItemSpacing.x)
                 {
                     break;
                 }
-                _cachedText += c;
             }
             _cachedText += ellipsis;
         }

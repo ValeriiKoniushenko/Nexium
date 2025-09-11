@@ -51,7 +51,11 @@ namespace Core::Gui
         void setHorizontalAlign(Align align) { _align = align; }
         [[nodiscard]] Align getHorizontalAlign() const noexcept { return _align; }
 
-        void setTruncateLongText(bool value) noexcept { _isTruncateLongText = value; }
+        void setTruncateLongText(bool value) noexcept
+        {
+            _isTruncateLongText = value;
+            invalidateTextCache();
+        }
         [[nodiscard]] bool getTruncateLongText() const noexcept { return _isTruncateLongText; }
 
     protected:

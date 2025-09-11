@@ -53,6 +53,10 @@ namespace Core::Gui
             float width = 0.f;
             for (auto& child : _children)
             {
+                if (!child->isEnabled())
+                {
+                    continue;
+                }
                 width += child->unsafeCastTo<Widget>()->getWidth();
                 width += defaultSpacing;
             }
@@ -68,8 +72,9 @@ namespace Core::Gui
         float width = 0.f;
         for (auto&& child : _children)
         {
-            auto* w = child->unsafeCastTo<Widget>();
+            if (child->isEnabled())
             {
+                auto* w = child->unsafeCastTo<Widget>();
                 width += w->getWidth();
             }
         }
@@ -163,6 +168,10 @@ namespace Core::Gui
             _spacing = getWidth();
             for (const auto& child : _children)
             {
+                if (!child->isEnabled())
+                {
+                    continue;
+                }
                 _spacing -= child->unsafeCastTo<Widget>()->getWidth();
             }
             _spacing /= _children.size() - 1ll;
@@ -181,6 +190,10 @@ namespace Core::Gui
             float spacing = getWidth();
             for (const auto& child : _children)
             {
+                if (!child->isEnabled())
+                {
+                    continue;
+                }
                 spacing -= child->unsafeCastTo<Widget>()->getWidth();
                 spacing -= style().ItemSpacing.x;
             }
@@ -196,6 +209,10 @@ namespace Core::Gui
             float spacing = getWidth();
             for (const auto& child : _children)
             {
+                if (!child->isEnabled())
+                {
+                    continue;
+                }
                 spacing -= child->unsafeCastTo<Widget>()->getWidth();
                 spacing -= style().ItemSpacing.x;
             }
@@ -215,6 +232,10 @@ namespace Core::Gui
         std::size_t i = 0;
         for (auto&& child : _children)
         {
+            if (!child->isEnabled())
+            {
+                continue;
+            }
             const auto w = child->unsafeCastTo<Widget>();
             if (_secondAlign.cast() == Align::Top)
             {
@@ -241,6 +262,10 @@ namespace Core::Gui
 
         for (auto&& child : _children)
         {
+            if (!child->isEnabled())
+            {
+                continue;
+            }
             ImGui::SetCursorPosY(originalYCursor + _yOffsets.at(i));
             child->unsafeCastTo<Widget>()->unhandledDraw();
 
@@ -262,6 +287,10 @@ namespace Core::Gui
         bool atLeastOneWithFlex = false;
         for (auto&& child : _children)
         {
+            if (!child->isEnabled())
+            {
+                continue;
+            }
             if (child->unsafeCastTo<Widget>()->getFlex().cast() != Widget::Flex::Fixed)
             {
                 atLeastOneWithFlex = true;
@@ -278,6 +307,10 @@ namespace Core::Gui
             int flexWidthCount = 0;
             for (auto&& child : _children)
             {
+                if (!child->isEnabled())
+                {
+                    continue;
+                }
                 const auto w = child->unsafeCastTo<Widget>();
                 const auto type = w->getFlex().cast();
                 if (type == Widget::Flex::Fixed)
@@ -299,6 +332,10 @@ namespace Core::Gui
             int deCounter = flexWidthCount;
             for (auto& child : _children)
             {
+                if (!child->isEnabled())
+                {
+                    continue;
+                }
                 auto w = child->unsafeCastTo<Widget>();
                 if (w->getFlex().cast() == Widget::Flex::FlexWidth)
                 {
