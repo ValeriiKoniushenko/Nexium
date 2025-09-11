@@ -107,8 +107,8 @@ namespace Core::Gui
 
     void VerticalLayout::onTick(float delta)
     {
-        Widget::onTick(delta);
         recalcFlexChildren();
+        Widget::onTick(delta);
     }
 
     void VerticalLayout::onDraw()

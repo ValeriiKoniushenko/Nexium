@@ -105,9 +105,8 @@ namespace Core::Gui
 
     void HorizontalLayout::onTick(float delta)
     {
-        Widget::onTick(delta);
-
         recalcFlexChildren();
+        Widget::onTick(delta);
     }
 
     void HorizontalLayout::onDraw()

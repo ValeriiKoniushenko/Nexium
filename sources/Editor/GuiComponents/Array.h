@@ -22,62 +22,188 @@
 
 #pragma once
 
+#include "Button.h"
 #include "HorizontalLayout.h"
+#include "Input.h"
+#include "Label.h"
+#include "Misc/IconsFontAwesome.h"
 #include "VerticalLayout.h"
+
+#include <Core/Delegate.h>
 
 namespace Core::Gui
 {
     class Button;
     class Label;
 
+    class ArrayCell : public HorizontalLayout
+    {
+        ECS_COMPONENT_DECL_NO_CNSTR(ArrayCell, HorizontalLayout);
+
+    public:
+        Label* label = nullptr;
+        HorizontalLayout* content = nullptr;
+        Button* deleteButton = nullptr;
+
+    public:
+        explicit ArrayCell(const StringAtom& name = "")
+            : HorizontalLayout(componentType, name)
+        {
+            if (name.isEmpty())
+            {
+                setComponentName("ArrayCell"_atom);
+            }
+            setFlex(Flex::FlexWidth);
+            setVerticalAlign(Align::Center);
+            setHorizontalAlign(Align::Left);
+
+            label = addChildComponent<Label>();
+
+            content = addChildComponent<HorizontalLayout>();
+            content->setFlex(Flex::FlexWidth);
+            content->setHorizontalAlign(Align::SpaceBetween);
+            content->setVerticalAlign(Align::Center);
+
+            deleteButton = addChildComponent<Button>();
+            deleteButton->setText(ICON_FA_TRASH);
+        }
+
+        void setIndexText(std::size_t i)
+        {
+            if (Verify(label))
+            {
+                label->setText(StringAtom::MakeFrom(i) + "#"_atom);
+            }
+        }
+    };
+
+    template<class T, class ArrayCellViewerFunc>
     class BaseArray : public VerticalLayout
     {
-        ECS_COMPONENT_DECL(BaseArray, VerticalLayout);
+        ECS_TEMPLATE_COMPONENT_DECL(BaseArray, VerticalLayout, T, ArrayCellViewerFunc);
 
     public:
-        class Cell : public HorizontalLayout
+        Delegate<void()> onChange;
+        Delegate<void(std::size_t, T&)> onAdd;
+        Delegate<void(std::size_t)> onEraseAt;
+
+    public:
+        void eraseAt(std::size_t i)
         {
-            ECS_COMPONENT_DECL_NO_CNSTR(Cell, HorizontalLayout);
+            if (Verify(i < _data.size()))
+            {
+                _data.erase(_data.begin() + i);
+                onEraseAt.trigger(i);
+                makeDirty();
+            }
+        }
 
-        public:
-            Label* label = nullptr;
-            HorizontalLayout* content = nullptr;
-            Button* deleteButton = nullptr;
+        void addEmpty()
+        {
+            makeDirty();
+            _data.emplace_back();
+            onAdd.trigger(_data.size() - 1, _data.back());
+        }
 
-        public:
-            explicit Cell(const StringAtom& name = "");
+        void add(const T& data)
+        {
+            _data.emplace_back(data);
+            makeDirty();
+            onAdd.trigger(_data.size() - 1, _data.back());
+        }
 
-            void setIndexText(std::size_t i);
-        };
+        [[nodiscard]] virtual std::size_t size() const { return _data.size(); }
 
-    public:
-        void eraseAt(std::size_t i);
-        [[nodiscard]] virtual std::size_t getSize() const = 0;
+        [[nodiscard]] const T& operator[](std::size_t i) const { return _data.at(i); }
+        [[nodiscard]] T& operator[](std::size_t i) { return _data.at(i); }
+
+        [[nodiscard]] const std::vector<T>& getData() const { return _data; }
+        void setData(const std::vector<T>& data)
+        {
+            _data = data;
+            makeDirty();
+        }
+        void setData(std::vector<T>&& data)
+        {
+            _data = std::move(data);
+            makeDirty();
+        }
 
     protected:
-        virtual void onEraseAt(std::size_t i) = 0;
-        [[nodiscard]] virtual HorizontalLayout::Ptr getFilledContent(std::size_t i) = 0;
-        void recreate();
-        void onTick(float delta) override;
-        void onInitialize() override;
+        void onTick(float delta) override
+        {
+            VerticalLayout::onTick(delta);
+
+            if (_isDirty)
+            {
+                recreate();
+                _isDirty = false;
+            }
+        }
+
+        void onInitialize() override
+        {
+            VerticalLayout::onInitialize();
+
+            setComponentName("Array"_atom);
+            setVerticalAlign(Align::Top);
+            setHorizontalAlign(Align::Center);
+
+            recreate();
+        }
+
+        void recreate()
+        {
+            _children.clear();
+
+            // Children creating
+            for (std::size_t i = 0; i < size(); ++i)
+            {
+                auto* cell = addChildComponent<ArrayCell>();
+                cell->setIndexText(i);
+                *cell->content = std::move(*(ArrayCellViewerFunc{}(_data.at(i))));
+                cell->content->setIsAutoDraw(false);
+
+                cell->deleteButton->onClick.subscribe(
+                    [this, i](auto*)
+                    {
+                        eraseAt(i);
+                    });
+            }
+
+            // Add button creating
+            auto* add = addChildComponent<Button>();
+            add->setText("Add new item");
+            add->setFlex(Flex::FlexWidth);
+            add->onClick.subscribe(
+                [this](auto*)
+                {
+                    addEmpty();
+                });
+        }
+
+        void makeDirty()
+        {
+            onChange.trigger();
+            _isDirty = true;
+        }
 
     protected:
+        std::vector<T> _data;
+
+    private:
         bool _isDirty = true;
     };
 
-    class StringArray : public BaseArray
+    ECS_TEMPLATE_COMPONENT_IMPL(BRACKETS(BaseArray<T, ArrayCellViewerFunc>),
+                                BRACKETS(class T, class ArrayCellViewerFunc))
+
+    using StringArray = BaseArray<StringAtom, decltype([](const StringAtom& str) -> HorizontalLayout::Ptr
     {
-        ECS_COMPONENT_DECL(StringArray, BaseArray);
-
-    public:
-        std::size_t getSize() const override { return _data.size(); }
-
-    protected:
-        void onEraseAt(std::size_t i) override;
-        [[nodiscard]] HorizontalLayout::Ptr getFilledContent(std::size_t i) override;
-
-    protected:
-        std::vector<StringAtom> _data = { "Hello", "World" };
-    };
+        auto l = HorizontalLayout::Create();
+        auto label = l->addChildComponent<Label>();
+        label->setText(str);
+        return l;
+    })>;
 
 } // namespace Core::Gui
