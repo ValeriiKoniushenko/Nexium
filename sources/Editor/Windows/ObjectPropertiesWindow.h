@@ -25,16 +25,13 @@
 #include "BaseWindow.h"
 #include "Core/Timer.h"
 #include "Editor/GuiComponents/Array.h"
+#include "Editor/GuiComponents/Combo.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/VecInput.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "Graphics/GraphicsComponents.h"
 #include "Graphics/Primitives/StaticMesh.h"
 
-namespace Core
-{
-    class HorizontalLayout;
-}
 namespace Core
 {
     namespace Gui
@@ -46,6 +43,41 @@ namespace Core
     class Transformable;
     class StaticMeshBundle;
     class BaseCamera;
+
+    using GraphicsModifiersArray =
+        Gui::BaseArray<GraphicsComponentData::ModifierParam,
+            decltype([](const GraphicsComponentData::ModifierParam& data)
+                -> Gui::HorizontalLayout::Ptr
+            {
+                auto l = Gui::HorizontalLayout::Create();
+                const auto comboModifier = l->addChildComponent<Gui::ComboModelBased>();
+                comboModifier->setDataProvider([](std::size_t i, StringAtom& out) -> const void*
+                {
+                    out = GraphicsComponentData::ModifierAsStringVector().at(i);
+                    return &GraphicsComponentData::ModifierAsStringVector().at(i);
+                });
+                comboModifier->setSizeProvider([]{ return GraphicsComponentData::ModifierAsStringVector().size(); });
+                comboModifier->setFlex(Gui::Widget::Flex::FlexWidth);
+                comboModifier->setCurrentIndex(data.modifier.cast() - 1);
+
+                const auto comboValues = l->addChildComponent<Gui::ComboModelBased>();
+                comboValues->setDataProvider([](std::size_t i, StringAtom& out) -> const void*
+                {
+                    out = GraphicsComponentData::ModifiedValueAsStringVector().at(i);
+                    return &GraphicsComponentData::ModifiedValueAsStringVector().at(i);
+                });
+                comboValues->setSizeProvider([]{ return GraphicsComponentData::ModifiedValueAsStringVector().size(); });
+                comboValues->setFlex(Gui::Widget::Flex::FlexWidth);
+
+                auto it = std::ranges::find(GraphicsComponentData::ModifiedValueAsStringVector(),
+                    GraphicsComponentData::ToString(data.value));
+                if (it != GraphicsComponentData::ModifiedValueAsStringVector().end())
+                {
+                    comboValues->setCurrentIndex(std::distance(GraphicsComponentData::ModifiedValueAsStringVector().begin(), it));
+                }
+                return l;
+            })
+    >;
 
     class ObjectPropertiesWindowEWC : public BaseFloatEWC
     {
@@ -107,6 +139,8 @@ namespace Core
         Gui::IntInput* _graphicsVAO = nullptr;
         Gui::IntInput* _graphicsEBO = nullptr;
         Gui::IntInput* _graphicsTexture = nullptr;
+        GraphicsModifiersArray* _graphicsModifiers = nullptr;
+        void setGraphicsModifiers(AbstractComponent* comp);
 
         // BaseCamera section:
         Gui::VerticalLayout _baseCameraLayout;
@@ -128,23 +162,6 @@ namespace Core
         Gui::Float3Input* _transformOrigin = nullptr;
 
         AbstractComponent* _target = nullptr;
-        Repeater _slowUpdater;
-        std::vector<std::pair<int, int>> _graphicsMods;
-
-        // For Graphics
-        std::vector<StringAtom> _modifierValueVec;
-        std::vector<StringAtom> _modifierVec;
-        std::vector<char> _modifierValueRaw;
-        std::vector<char> _modifierRaw;
-
-        // Base settings
-        float _labelWidth = 90.f;
-        const glm::vec2 _overriddenSpacing = glm::vec2(0, 6);
-        const float _gapBetweenSections = 15.f;
-
-    private:
-        [[nodiscard]] int getIndexFromModifier(GraphicsComponentData::ModifiedValue v) const;
-        [[nodiscard]] int getIndexFromModifier(GraphicsComponentData::Modifier v) const;
     };
 
 } // namespace Core

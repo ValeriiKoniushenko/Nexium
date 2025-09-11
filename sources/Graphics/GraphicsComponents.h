@@ -64,10 +64,16 @@ namespace Core
             MV_None
         };
 
+        struct ModifierParam
+        {
+            ModifiedValue value = MV_None;
+            Modifier modifier = Modifier::None;
+        };
+
         [[nodiscard]] static StringAtom ToString(ModifiedValue v);
         [[nodiscard]] static ModifiedValue FromString(const StringAtom& str);
-        [[nodiscard]] static const std::vector<StringAtom>& ModifiedValueAsVector();
-        [[nodiscard]] static const std::vector<StringAtom>& ModifierAsVector();
+        [[nodiscard]] static const std::vector<StringAtom>& ModifiedValueAsStringVector();
+        [[nodiscard]] static const std::vector<StringAtom>& ModifierAsStringVector();
 
     public:
         GraphicsComponentData() = default;
@@ -105,8 +111,8 @@ namespace Core
         /**
          * @brief direct draw if was set up vertex, index and optionally texture buffers.
          * @details this function from the family of 'low-abstract' functionality.
-         * It can give you ability for fast setup & draw to the scene but without huge
-         * or at least some small optimizations. Just hard-draw in the old-school opengl
+         * It can give you the ability for fast setup & draw to the scene but without huge
+         * or at least some small optimizations. Just hard-drawn in the old-school opengl
          * style.
          * Example code(little bit pseudo):
          * @code
@@ -144,13 +150,13 @@ namespace Core
         [[nodiscard]] GLuint getTextureId() noexcept { return _texture; }
         [[nodiscard]] ShaderProgram* getShader() noexcept { return _shader; }
 
-        [[nodiscard]] const std::vector<std::pair<ModifiedValue, Modifier>>& getDrawModifiers()
-            const noexcept
+        [[nodiscard]] const std::vector<ModifierParam>& getDrawModifiers() const noexcept
         {
             return _drawModifiers;
         }
         void clearDrawModifiers() { _drawModifiers.clear(); }
-        void setDrawModifiers(std::vector<std::pair<ModifiedValue, Modifier>> value);
+        void setDrawModifiers(std::vector<ModifierParam>&& values);
+        void setDrawModifiers(const std::vector<ModifierParam>& values);
 
         void addDrawModifiers(ModifiedValue value, Modifier mod);
         [[nodiscard]] Modifier getDrawModifier(ModifiedValue value);
@@ -166,7 +172,7 @@ namespace Core
     protected:
         // To improve cache-line readability we use vector.
         // But all values ModifiedValue should be unique.
-        std::vector<std::pair<ModifiedValue, Modifier>> _drawModifiers;
+        std::vector<ModifierParam> _drawModifiers;
         ShaderProgram* _shader = nullptr;
         uint32_t _triangleCount = 0;
         GLuint _vbo = 0;

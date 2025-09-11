@@ -140,6 +140,7 @@ namespace Core
     {
         _target = actor;
         setChildListData(_target);
+        setGraphicsModifiers(_target);
     }
 
     void ObjectPropertiesWindowEWC::resetTargetObject()
@@ -153,29 +154,6 @@ namespace Core
 
         createGui();
         registerGuiEvents();
-
-        _modifierValueVec = GraphicsComponentData::ModifiedValueAsVector();
-        _modifierVec = GraphicsComponentData::ModifierAsVector();
-
-        _modifierValueRaw.clear();
-        for (auto&& value : _modifierValueVec)
-        {
-            for (auto c : value)
-            {
-                _modifierValueRaw.push_back(c);
-            }
-            _modifierValueRaw.push_back('\0');
-        }
-
-        _modifierRaw.clear();
-        for (auto&& value : _modifierVec)
-        {
-            for (auto c : value)
-            {
-                _modifierRaw.push_back(c);
-            }
-            _modifierRaw.push_back('\0');
-        }
 
         gGameInstance->objectSelectorManager.onChange.subscribe(
             [this](BaseComponent* comp, bool newValue)
@@ -212,8 +190,6 @@ namespace Core
     void ObjectPropertiesWindowEWC::onUpdate()
     {
         BaseFloatEWC::onUpdate();
-
-        _slowUpdater.startOrUpdate();
     }
 
     void ObjectPropertiesWindowEWC::createGui()
@@ -299,6 +275,11 @@ namespace Core
 
             out.attachChild(::Create<IntInput>("Texture ID", true));
             _graphicsTexture = out.getLastChildAs<HLayout>()->getLastChildAs<IntInput>().get();
+
+            out.attachChild(::CreateEx<GraphicsModifiersArray>("Graphic modifier", false));
+            out.getLastChildAs<HLayout>()->setVerticalAlign(Widget::Align::Top);
+            _graphicsModifiers
+                = out.getLastChildAs<HLayout>()->getLastChildAs<GraphicsModifiersArray>().get();
         }
 
         // ================= BaseCamera ====================
@@ -573,119 +554,6 @@ namespace Core
             }
 
             _graphicsComponentLayout.tick(dt);
-
-            ImGui::Separator();
-            FixedLabel("Modifiers:", _labelWidth);
-            ImGui::Dummy(glm::vec2(0, 0));
-            static const auto collection = []()
-            {
-                auto c = GraphicsComponentData::ModifiedValueAsVector();
-                std::ranges::sort(c);
-                return c;
-            }();
-
-            static const std::vector<char> modifiers = []()
-            {
-                std::vector<char> out;
-                out.reserve(512);
-
-                for (auto&& i : collection)
-                {
-                    for (char const c : i)
-                    {
-                        out.push_back(c);
-                    }
-                    out.push_back('\0');
-                }
-                return out;
-            }();
-
-            ImGuiStyle const& style = ImGui::GetStyle();
-            const char* delButtonText = "X";
-            const float gap = 8.f;
-            const auto buttonSize
-                = ImGui::CalcTextSize(delButtonText).x + (style.FramePadding.x * 2.f);
-            const auto oneComboSize
-                = (_innerSize.width - _labelWidth - buttonSize - gap * 2.f) / 2.f;
-
-            bool isDirty = false;
-            auto drawModifiers = comp->getDrawModifiers();
-            decltype(drawModifiers) newModifiers;
-
-            std::size_t i = 0;
-            for (auto _objData : drawModifiers)
-            {
-                std::pair<GraphicsComponentData::ModifiedValue, GraphicsComponentData::Modifier>
-                    objData = _objData;
-                ImGui::PushID(static_cast<int>(i));
-
-                FixedLabel((StringAtom::MakeFrom(i) + "#").c_str(), _labelWidth);
-
-                const int originalMod = getIndexFromModifier(objData.second);
-                const int originalValueMod = getIndexFromModifier(objData.first);
-
-                int currentMod = originalMod;
-                int currentValueMod = originalValueMod;
-                ImGui::PushItemWidth(oneComboSize);
-                VectorCombo(("##ModifierVec" + StringAtom::MakeFrom(i)).c_str(), &currentMod,
-                            _modifierVec);
-                ImGui::SameLine(0, gap);
-
-                VectorCombo(("##ModifierValueVec" + StringAtom::MakeFrom(i)).c_str(),
-                            &currentValueMod, _modifierValueVec);
-                ImGui::PopItemWidth();
-
-                if (originalValueMod != currentValueMod)
-                {
-                    auto newValue
-                        = GraphicsComponentData::FromString(_modifierValueVec.at(currentValueMod));
-
-                    objData.first = newValue;
-                    isDirty = true;
-                }
-                if (originalMod != currentMod)
-                {
-                    const auto newValue = GraphicsComponentData::Modifier::fromStr(
-                        _modifierVec.at(currentMod).toStdString());
-                    if (Verify(newValue.has_value()))
-                    {
-                        objData.second = newValue.value();
-                        isDirty = true;
-                    }
-                }
-
-                ImGui::SameLine(0, gap);
-
-                ImGui::PushItemWidth(buttonSize);
-                if (ImGui::ButtonEx(delButtonText))
-                {
-                    isDirty = true;
-                }
-                else
-                {
-                    newModifiers.push_back(objData);
-                }
-                ImGui::PopItemWidth();
-
-                ImGui::PopID();
-                ++i;
-            }
-
-            ImGui::PushItemWidth(_labelWidth);
-            if (ImGui::ButtonEx("Add new item"))
-            {
-                newModifiers.emplace_back(GraphicsComponentData::ModifiedValue::MV_None,
-                                          GraphicsComponentData::Modifier::Disable);
-                isDirty = true;
-            }
-            ImGui::PopItemWidth();
-
-            if (isDirty)
-            {
-                comp->setDrawModifiers(std::move(newModifiers));
-            }
-
-            ImGui::Dummy(glm::vec2(0.0f, _gapBetweenSections));
         }
     }
 
@@ -721,8 +589,6 @@ namespace Core
             }
 
             _baseComponentExtraLayout.tick(dt);
-
-            ImGui::Dummy(glm::vec2(0.0f, _gapBetweenSections));
         }
     }
 
@@ -800,6 +666,19 @@ namespace Core
         }
     }
 
+    void ObjectPropertiesWindowEWC::setGraphicsModifiers(AbstractComponent* abstComp)
+    {
+        if (!_graphicsModifiers || !abstComp)
+        {
+            return;
+        }
+
+        if (auto* comp = dynamic_cast<GraphicsComponentData*>(abstComp))
+        {
+            _graphicsModifiers->setData(comp->getDrawModifiers());
+        }
+    }
+
     void ObjectPropertiesWindowEWC::tryDrawStaticMeshBundle(StaticMeshBundle* comp)
     {
         if (comp && Gui::CollapsingHeader("Static mesh bundle", ImGuiTreeNodeFlags_DefaultOpen))
@@ -830,31 +709,6 @@ namespace Core
 
             _staticMeshBundleLayout.tick(dt);
         }
-    }
-
-    int ObjectPropertiesWindowEWC::getIndexFromModifier(
-        GraphicsComponentData::ModifiedValue v) const
-    {
-        for (std::size_t i = 0; i < _modifierValueVec.size(); ++i)
-        {
-            if (GraphicsComponentData::ToString(v) == _modifierValueVec.at(i))
-            {
-                return static_cast<int>(i);
-            }
-        }
-        return -1;
-    }
-
-    int ObjectPropertiesWindowEWC::getIndexFromModifier(GraphicsComponentData::Modifier v) const
-    {
-        for (std::size_t i = 0; i < _modifierVec.size(); ++i)
-        {
-            if (v.toStr() == _modifierVec.at(i))
-            {
-                return static_cast<int>(i);
-            }
-        }
-        return -1;
     }
 
 } // namespace Core

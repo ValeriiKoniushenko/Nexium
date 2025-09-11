@@ -83,40 +83,40 @@ namespace Core::Gui
     public:
         /**
          * @brief Set your own data provider. Just a function that will do a few things:
-         * 1. Get index of element, that want to be processed(by you)
-         * 2. Fill up second argument StringAtom with some string. It will be shown for user
+         * 1. Get index of an element that wants to be processed (by you)
+         * 2. Fill up the second argument StringAtom with some string. It will be shown for user
          * 3. Return a pointer to your data. It will be used only by you in the future. If you want
-         * to get 'an index' to your data, you can just fetch current pointer(index), and get the
-         * pointer to your data.
+         * to get 'an index' to your data, you can just fetch the current pointer (index) and get
+         * the pointer to your data.
          */
-        void setDataProvider(const std::function<void*(std::size_t, StringAtom&)>& callback);
+        void setDataProvider(const std::function<const void*(std::size_t, StringAtom&)>& callback);
 
         /**
          * @brief Set your own data provider. Just a function that will do a few things:
-         * 1. Get index of element, that want to be processed(by you)
-         * 2. Fill up second argument StringAtom with some string. It will be shown for user
+         * 1. Get index of an element that wants to be processed (by you)
+         * 2. Fill up the second argument StringAtom with some string. It will be shown for user
          * 3. Return a pointer to your data. It will be used only by you in the future. If you want
-         * to get 'an index' to your data, you can just fetch current pointer(index), and get the
-         * pointer to your data.
+         * to get 'an index' to your data, you can just fetch the current pointer (index) and get
+         * the pointer to your data.
          */
         void setSizeProvider(const std::function<std::size_t()>& callback);
 
         void setCurrentIndex(std::size_t i) noexcept;
 
         [[nodiscard]] std::size_t getCurrentIndex() const noexcept { return _currentIndex; }
-        [[nodiscard]] void* getCurrentData() const noexcept { return _currentData; }
+        [[nodiscard]] const void* getCurrentData() const noexcept { return _currentData; }
 
     public: // Delegates
-        Delegate<void(ComboModelBased*, void*)> onSelect;
+        Delegate<void(ComboModelBased*, const void*)> onSelect;
 
     protected:
         void onDraw() override;
 
     protected:
-        std::function<void*(std::size_t, StringAtom&)> _dataProvider;
+        std::function<const void*(std::size_t, StringAtom&)> _dataProvider;
         std::function<std::size_t()> _sizeProvider;
-        std::vector<std::pair<void*, StringAtom>> _cache;
-        void* _currentData = nullptr;
+        std::vector<std::pair<const void*, StringAtom>> _cache;
+        const void* _currentData = nullptr;
         std::size_t _currentIndex = 0;
     };
 

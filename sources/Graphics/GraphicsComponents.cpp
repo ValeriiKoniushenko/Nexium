@@ -241,20 +241,34 @@ namespace Core
         }
     }
 
-    void GraphicsComponentData::setDrawModifiers(
-        std::vector<std::pair<ModifiedValue, Modifier>> value)
+    void GraphicsComponentData::setDrawModifiers(std::vector<ModifierParam>&& values)
     {
 #if defined(DEBUG)
-        std::map<ModifiedValue, int> map;
+        std::map<GLenum, int> map;
 
-        for (auto mod : value | std::views::keys)
+        for (auto& [value, modifier] : values)
         {
-            map[mod]++;
-            Assert(map[mod] == 1, "The same modifier was added twice.");
+            map[modifier.cast()]++;
+            Assert(map[value] == 1, "The same modifier was added twice.");
         }
 #endif
 
-        _drawModifiers = std::move(value);
+        _drawModifiers = std::move(values);
+    }
+
+    void GraphicsComponentData::setDrawModifiers(const std::vector<ModifierParam>& values)
+    {
+#if defined(DEBUG)
+        std::map<GLenum, int> map;
+
+        for (const auto& [value, modifier] : values)
+        {
+            map[modifier.cast()]++;
+            Assert(map[value] == 1, "The same modifier was added twice.");
+        }
+#endif
+
+        _drawModifiers = values;
     }
 
     void GraphicsComponentData::addDrawModifiers(ModifiedValue value, Modifier mod)
@@ -272,12 +286,12 @@ namespace Core
         const auto it = std::ranges::find_if(_drawModifiers,
                                              [value](auto pair)
                                              {
-                                                 return pair.first == value;
+                                                 return pair.value == value;
                                              });
 
         if (it != _drawModifiers.end())
         {
-            return it->second;
+            return it->modifier;
         }
 
         return Modifier::None;
@@ -367,7 +381,7 @@ namespace Core
         return MV_None;
     }
 
-    const std::vector<StringAtom>& GraphicsComponentData::ModifiedValueAsVector()
+    const std::vector<StringAtom>& GraphicsComponentData::ModifiedValueAsStringVector()
     {
         static const std::vector out = {
             "Blend"_atom,
@@ -392,7 +406,7 @@ namespace Core
         };
         return out;
     }
-    const std::vector<StringAtom>& GraphicsComponentData::ModifierAsVector()
+    const std::vector<StringAtom>& GraphicsComponentData::ModifierAsStringVector()
     {
         static const std::vector<StringAtom> out = {
             "Enable",

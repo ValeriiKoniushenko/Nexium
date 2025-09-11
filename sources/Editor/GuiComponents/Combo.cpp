@@ -88,7 +88,7 @@ namespace Core::Gui
     }
 
     void ComboModelBased::setDataProvider(
-        const std::function<void*(std::size_t, StringAtom&)>& callback)
+        const std::function<const void*(std::size_t, StringAtom&)>& callback)
     {
         _dataProvider = callback;
     }
@@ -121,7 +121,7 @@ namespace Core::Gui
         for (std::size_t i = 0; i < _cache.size(); ++i)
         {
             StringAtom label;
-            void* ptr = _dataProvider(i, label);
+            const void* ptr = _dataProvider(i, label);
 
             _cache[i].first = ptr;
             _cache[i].second = std::move(label);

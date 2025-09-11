@@ -116,12 +116,13 @@ namespace Core::Gui
 
     void VerticalLayout::onTick(float delta)
     {
-        recalcFlexChildren();
         Widget::onTick(delta);
     }
 
     void VerticalLayout::onDraw()
     {
+        recalcFlexChildren();
+
         const auto originalCursor = ImGui::GetCursorPos();
 
         calcXOffsets();

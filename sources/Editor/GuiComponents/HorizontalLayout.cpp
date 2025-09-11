@@ -110,12 +110,13 @@ namespace Core::Gui
 
     void HorizontalLayout::onTick(float delta)
     {
-        recalcFlexChildren();
         Widget::onTick(delta);
     }
 
     void HorizontalLayout::onDraw()
     {
+        recalcFlexChildren();
+
         auto* window = ImGui::GetCurrentWindow();
         window->DC.CurrLineTextBaseOffset = 0.0f;
 
