@@ -83,6 +83,8 @@ namespace Core::Gui
         ECS_TEMPLATE_COMPONENT_DECL(BaseArray, VerticalLayout, T, ArrayCellViewerFunc);
 
     public:
+        constexpr static bool isConst = std::is_const_v<T>;
+
         Delegate<void()> onChange;
         Delegate<void(std::size_t, T&)> onAdd;
         Delegate<void(std::size_t)> onEraseAt;
@@ -129,6 +131,13 @@ namespace Core::Gui
             makeDirty();
         }
 
+        void setReadOnly(bool value)
+        {
+            _isReadOnly = value;
+            makeDirty();
+        }
+        [[nodiscard]] bool isReadOnly() const { return _isReadOnly; }
+
     protected:
         void onTick(float delta) override
         {
@@ -164,22 +173,36 @@ namespace Core::Gui
                 *cell->content = std::move(*(ArrayCellViewerFunc{}(_data.at(i))));
                 cell->content->setIsAutoDraw(false);
 
-                cell->deleteButton->onClick.subscribe(
-                    [this, i](auto*)
-                    {
-                        eraseAt(i);
-                    });
+                if (_isReadOnly)
+                {
+                    cell->deleteButton->disableWidget(_isReadOnly);
+                }
+                else
+                {
+                    cell->deleteButton->onClick.subscribe(
+                        [this, i](auto*)
+                        {
+                            eraseAt(i);
+                        });
+                }
             }
 
             // Add button creating
-            auto* add = addChildComponent<Button>();
-            add->setText("Add new item");
-            add->setFlex(Flex::FlexWidth);
-            add->onClick.subscribe(
-                [this](auto*)
-                {
-                    addEmpty();
-                });
+            auto* addButton = addChildComponent<Button>();
+            addButton->setText("Add new item");
+            addButton->setFlex(Flex::FlexWidth);
+            if (_isReadOnly)
+            {
+                addButton->disableWidget(_isReadOnly);
+            }
+            else
+            {
+                addButton->onClick.subscribe(
+                    [this](auto*)
+                    {
+                        addEmpty();
+                    });
+            }
         }
 
         void makeDirty()
@@ -193,6 +216,7 @@ namespace Core::Gui
 
     private:
         bool _isDirty = true;
+        bool _isReadOnly = false;
     };
 
     ECS_TEMPLATE_COMPONENT_IMPL(BRACKETS(BaseArray<T, ArrayCellViewerFunc>),
