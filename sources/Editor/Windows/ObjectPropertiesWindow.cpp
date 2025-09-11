@@ -173,6 +173,8 @@ namespace Core
 
     void ObjectPropertiesWindowEWC::onDraw()
     {
+        _array.tick(GetWorld().timeDelta);
+
         auto* asBaseComponent = dynamic_cast<BaseComponent*>(_target);
         auto* asTransformable = dynamic_cast<Transformable*>(_target);
         auto* asStaticMeshBundle = dynamic_cast<StaticMeshBundle*>(_target);
@@ -198,6 +200,8 @@ namespace Core
 
     void ObjectPropertiesWindowEWC::createGui()
     {
+        _array.initialize();
+
         // ================= General ====================
         {
             auto& out = _generalInfoLayout;

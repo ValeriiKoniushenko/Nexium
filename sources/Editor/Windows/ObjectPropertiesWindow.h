@@ -24,6 +24,7 @@
 
 #include "BaseWindow.h"
 #include "Core/Timer.h"
+#include "Editor/GuiComponents/Array.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/VecInput.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
@@ -123,6 +124,8 @@ namespace Core
         Gui::Float3Input* _transformRotation = nullptr;
         Gui::Float3Input* _transformScale = nullptr;
         Gui::Float3Input* _transformOrigin = nullptr;
+
+        Gui::StringArray _array;
 
         AbstractComponent* _target = nullptr;
         Repeater _slowUpdater;
