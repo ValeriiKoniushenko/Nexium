@@ -58,8 +58,10 @@ namespace Core
         void openPath(const std::filesystem::path& path);
         void copyFrom(const std::filesystem::path& path);
         void cutFrom(const std::filesystem::path& path);
-        void pasteTo(const std::filesystem::path& path);
+        void pasteTo(std::filesystem::path path);
         void deleteAt(const std::filesystem::path& path);
+        [[nodiscard]] std::filesystem::path getExclusiveFileName(
+            const std::filesystem::path& path) const;
 
     protected:
         struct CacheNode

@@ -188,9 +188,17 @@ namespace Core
         _selectedPath = path;
     }
 
-    void AssetsManagerWindowEWC::pasteTo(const std::filesystem::path& path)
+    void AssetsManagerWindowEWC::pasteTo(std::filesystem::path path)
     {
         std::error_code er;
+
+        if (_selectedPath.has_filename())
+        {
+            if (std::filesystem::exists(path / _selectedPath.filename()))
+            {
+                path = getExclusiveFileName(_selectedPath);
+            }
+        }
 
         std::filesystem::copy(_selectedPath, path, std::filesystem::copy_options::recursive, er);
 
@@ -215,6 +223,38 @@ namespace Core
         {
             errorLog("Error while deleting of file: " + er.message());
         }
+
+        refresh();
+    }
+
+    std::filesystem::path AssetsManagerWindowEWC::getExclusiveFileName(
+        const std::filesystem::path& path) const
+    {
+        if (path.empty())
+        {
+            return path;
+        }
+
+        auto filename = path.filename().generic_string();
+        auto parentPath = path.parent_path();
+
+        while (std::filesystem::exists(parentPath / filename))
+        {
+            const auto num = std::atoi(filename.c_str());
+            while (!filename.empty() && std::isdigit(filename[0]))
+            {
+                filename.erase(filename.begin());
+            }
+
+            if (!filename.empty() && filename[0] != '_')
+            {
+                filename = "_" + filename;
+            }
+
+            filename = std::to_string(num + 1) + filename;
+        }
+
+        return parentPath / filename;
     }
 
     bool AssetsManagerWindowEWC::isFiltered(const std::filesystem::path& p) const
@@ -460,6 +500,7 @@ namespace Core
         const auto& originalFileName = filename;
         bool needOpen = false;
         const bool isSelected = path == _selectedPath;
+        bool invalidate = false;
 
         if (isSelected)
         {
@@ -496,36 +537,45 @@ namespace Core
             {
                 cutFrom(path);
             }
-            if (!_selectedPath.empty() && ImGui::MenuItem("Paste"))
+            if (!_selectedPath.empty() && entry.is_directory() && ImGui::MenuItem("Paste"))
             {
+                pasteTo(path);
+            }
+            if (ImGui::MenuItem("Delete"))
+            {
+                deleteAt(path);
+                invalidate = true;
             }
             ImGui::EndPopup();
         }
 
-        std::string value = filename;
-        if (InputText(filename.data(), value, size.x, ImGuiInputTextFlags_EnterReturnsTrue))
+        if (!invalidate)
         {
-            if (value != originalFileName)
+            std::string value = filename;
+            if (InputText(filename.data(), value, size.x, ImGuiInputTextFlags_EnterReturnsTrue))
             {
-                std::error_code ec;
+                if (value != originalFileName)
+                {
+                    std::error_code ec;
 
-                const auto newPath = path.parent_path() / value;
-                std::filesystem::rename(path, newPath, ec);
-                if (ec)
-                {
-                    errorLog("Can't rename file from: '{}' to '{}'. Reason: {}"_f
-                             << filename << value << ec.message());
-                }
-                else
-                {
-                    path = newPath;
+                    const auto newPath = path.parent_path() / value;
+                    std::filesystem::rename(path, newPath, ec);
+                    if (ec)
+                    {
+                        errorLog("Can't rename file from: '{}' to '{}'. Reason: {}"_f
+                                 << filename << value << ec.message());
+                    }
+                    else
+                    {
+                        path = newPath;
+                    }
                 }
             }
         }
 
         ImGui::EndGroup();
 
-        if (ImGui::IsItemHovered())
+        if (ImGui::IsItemHovered() && !invalidate)
         {
             ImGui::BeginTooltip();
 
@@ -548,7 +598,7 @@ namespace Core
             ImGui::EndTooltip();
         }
 
-        if (needOpen)
+        if (needOpen && !invalidate)
         {
             if (entry.is_directory())
             {
