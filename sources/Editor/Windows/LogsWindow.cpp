@@ -114,11 +114,12 @@ namespace Core
     {
         const auto defaultSpace = ImGui::GetStyle().ItemSpacing.x;
         const auto finalWidth = ImGui::GetContentRegionAvail().x - defaultSpace;
+        const float inputPadding
+            = ImGui::GetStyle().FramePadding.x * 2.0f + 20.0f; // tweak 20.0f as needed
 
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + defaultSpace);
 
-        if (ImGui::BeginChild("ScrollingRegion", glm::vec2(finalWidth, 0), 0,
-                              ImGuiWindowFlags_HorizontalScrollbar))
+        if (ImGui::BeginChild("ScrollingRegion", glm::vec2(finalWidth, 0), 0))
         {
             bool justAdded = _lastCountOfLogs != _logs.size();
             if (!_isAutoScroll)
@@ -165,10 +166,9 @@ namespace Core
                 ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
                 ImGui::PushID(static_cast<int>(i));
 
-                ImGui::PushItemWidth(-FLT_MIN);
+                ImGui::SetNextItemWidth(ImGui::CalcTextSize(message.c_str()).x + inputPadding);
                 ImGui::InputText("", message.data(), message.size() + 1,
                                  ImGuiInputTextFlags_ReadOnly);
-                ImGui::PopItemWidth();
 
                 ImGui::PopID();
 
@@ -179,7 +179,6 @@ namespace Core
                 {
                     ImGui::SetScrollHereY(1.0f);
                 }
-                ++i;
             }
 
             ImGui::PopStyleVar(2);
