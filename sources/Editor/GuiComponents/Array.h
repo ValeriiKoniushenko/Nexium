@@ -77,10 +77,19 @@ namespace Core::Gui
         }
     };
 
-    template<class T, class ArrayCellViewerFunc>
+    /**
+     * @brief it provides a user-based GUI array.
+     * @tparam T is your data to save inside this array and show the user.
+     * @tparam ArrayCellViewerFunc pass a function of type Gui::HorizontalLayout::Ptr(const T&)
+     * It should construct ready to use, filled HorizontalLayout as viewer of you data.
+     * @tparam ViewFetchFunc provide a function which will take a HorizontalLayout and return
+     * data of your type T: T(HorizontalLayout*)
+     */
+    template<class T, class ArrayCellViewerFunc, class ViewFetchFunc>
     class BaseArray : public VerticalLayout
     {
-        ECS_TEMPLATE_COMPONENT_DECL(BaseArray, VerticalLayout, T, ArrayCellViewerFunc);
+        ECS_TEMPLATE_COMPONENT_DECL(BaseArray, VerticalLayout, T, ArrayCellViewerFunc,
+                                    ViewFetchFunc);
 
     public:
         constexpr static bool isConst = std::is_const_v<T>;
@@ -141,6 +150,20 @@ namespace Core::Gui
         [[nodiscard]] bool isReadOnly() const { return _isReadOnly; }
 
     protected:
+        void updateLocalDataWithView()
+        {
+            for (std::size_t i = 0; i < size() && i < getChildrenCount(); ++i)
+            {
+                if (auto* cell = getChildAt(i)->template castTo<ArrayCell>(); Verify(cell))
+                {
+                    if (Verify(cell->content))
+                    {
+                        _data[i] = ViewFetchFunc{}(cell->content);
+                    }
+                }
+            }
+        }
+
         void onTick(float delta) override
         {
             VerticalLayout::onTick(delta);
@@ -204,6 +227,7 @@ namespace Core::Gui
                 saveButton->onClick.subscribe(
                     [this](auto*)
                     {
+                        updateLocalDataWithView();
                         onSave.trigger(_data);
                     });
             }
@@ -254,8 +278,8 @@ namespace Core::Gui
         bool _isReadOnly = false;
     };
 
-    ECS_TEMPLATE_COMPONENT_IMPL(BRACKETS(BaseArray<T, ArrayCellViewerFunc>),
-                                BRACKETS(class T, class ArrayCellViewerFunc))
+    ECS_TEMPLATE_COMPONENT_IMPL(BRACKETS(BaseArray<T, ArrayCellViewerFunc, ViewFetchFunc>),
+                                BRACKETS(class T, class ArrayCellViewerFunc, class ViewFetchFunc))
 
     using StringArray = BaseArray<StringAtom, decltype([](const StringAtom& str) -> HorizontalLayout::Ptr
     {
@@ -264,6 +288,9 @@ namespace Core::Gui
         label->setFlex(Widget::Flex::FlexWidth);
         label->setText(str);
         return l;
+    }), decltype([](HorizontalLayout* layout) -> StringAtom
+    {
+        return layout->getFirstChildAs<Label>()->getText();
     })>;
 
 } // namespace Core::Gui

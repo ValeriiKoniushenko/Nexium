@@ -51,31 +51,61 @@ namespace Core
             {
                 auto l = Gui::HorizontalLayout::Create();
                 const auto comboModifier = l->addChildComponent<Gui::ComboModelBased>();
-                comboModifier->setDataProvider([](std::size_t i, StringAtom& out) -> const void*
-                {
-                    out = GraphicsComponentData::ModifierAsStringVector().at(i);
-                    return &GraphicsComponentData::ModifierAsStringVector().at(i);
-                });
-                comboModifier->setSizeProvider([]{ return GraphicsComponentData::ModifierAsStringVector().size(); });
+                comboModifier->setDataProvider(
+                    [](std::size_t i, StringAtom& out) -> const void*
+                    {
+                        out = GraphicsComponentData::ModifierAsStringVector().at(i);
+                        return &GraphicsComponentData::ModifierAsStringVector().at(i);
+                    });
+                comboModifier->setSizeProvider(
+                    []
+                    {
+                        return GraphicsComponentData::ModifierAsStringVector().size();
+                    });
                 comboModifier->setFlex(Gui::Widget::Flex::FlexWidth);
                 comboModifier->setCurrentIndex(data.modifier.cast() - 1);
 
                 const auto comboValues = l->addChildComponent<Gui::ComboModelBased>();
-                comboValues->setDataProvider([](std::size_t i, StringAtom& out) -> const void*
-                {
-                    out = GraphicsComponentData::ModifiedValueAsStringVector().at(i);
-                    return &GraphicsComponentData::ModifiedValueAsStringVector().at(i);
-                });
-                comboValues->setSizeProvider([]{ return GraphicsComponentData::ModifiedValueAsStringVector().size(); });
+                comboValues->setDataProvider(
+                    [](std::size_t i, StringAtom& out) -> const void*
+                    {
+                        out = GraphicsComponentData::ModifiedValueAsStringVector().at(i);
+                        return &GraphicsComponentData::ModifiedValueAsStringVector().at(i);
+                    });
+                comboValues->setSizeProvider(
+                    []
+                    {
+                        return GraphicsComponentData::ModifiedValueAsStringVector().size();
+                    });
                 comboValues->setFlex(Gui::Widget::Flex::FlexWidth);
 
                 auto it = std::ranges::find(GraphicsComponentData::ModifiedValueAsStringVector(),
-                    GraphicsComponentData::ToString(data.value));
+                                            GraphicsComponentData::ToString(data.value));
                 if (it != GraphicsComponentData::ModifiedValueAsStringVector().end())
                 {
-                    comboValues->setCurrentIndex(std::distance(GraphicsComponentData::ModifiedValueAsStringVector().begin(), it));
+                    comboValues->setCurrentIndex(
+                        std::distance(GraphicsComponentData::ModifiedValueAsStringVector().begin(), it));
                 }
                 return l;
+            }),
+            decltype([](Gui::HorizontalLayout* layout)
+                -> GraphicsComponentData::ModifierParam
+            {
+                GraphicsComponentData::ModifierParam out;
+
+                if (auto modifier = layout->getFirstChildAs<Gui::ComboModelBased>(); Verify(!!modifier))
+                {
+                    auto str = GraphicsComponentData::ModifierAsStringVector()[modifier->getCurrentIndex()];
+                    out.modifier = GraphicsComponentData::Modifier::fromStr(str.c_str()).value();
+                }
+
+                if (auto value = layout->getLastChildAs<Gui::ComboModelBased>(); Verify(!!value))
+                {
+                    auto str = GraphicsComponentData::ModifiedValueAsStringVector()[value->getCurrentIndex()];
+                    out.value = GraphicsComponentData::FromString(str);
+                }
+
+                return out;
             })
     >;
 
