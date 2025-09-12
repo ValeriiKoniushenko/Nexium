@@ -121,13 +121,6 @@ namespace Core
 
         if (ImGui::BeginChild("ScrollingRegion", glm::vec2(finalWidth, 0), 0))
         {
-            bool justAdded = _lastCountOfLogs != _logs.size();
-            if (!_isAutoScroll)
-            {
-                justAdded = false;
-            }
-            _lastCountOfLogs = _logs.size();
-
             ImGui::PushStyleColor(ImGuiCol_FrameBg, IM_COL32(0, 0, 0, 0));
             ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, IM_COL32(0, 0, 0, 0));
             ImGui::PushStyleColor(ImGuiCol_FrameBgActive, IM_COL32(0, 0, 0, 0));
@@ -138,61 +131,40 @@ namespace Core
 
             auto w = getFitLogsCountOnScreen();
 
+            ImGui::Dummy({ 0, 100.f });
+
             for (std::size_t i = 0; i < _logs.size(); ++i)
             {
                 auto& message = _logs[i].message;
                 auto level = _logs[i].level;
 
-                if (_levelFilter[level] && !_levelFilter[level]->isActive())
+                if (!_levelFilter[level]->isActive() || canBeFiltered(message))
                 {
                     continue;
                 }
 
-                if (_filterBuf[0] != '\0')
-                {
-                    if (_regexModeButton->isActive()
-                        && message.regexFind(_filterBuf, 0, 0, 0, PCRE2_CASELESS))
-                    {
-                        continue;
-                    }
-                    else if (message.find(_filterBuf))
-                    {
-                        continue;
-                    }
-                }
-
                 ImGui::PushStyleColor(ImGuiCol_Text, NormColor4::From(_levelColor.at(level)));
-
                 ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
-                ImGui::PushID(static_cast<int>(i));
-
                 ImGui::SetNextItemWidth(ImGui::CalcTextSize(message.c_str()).x + inputPadding);
+
+                ImGui::PushID(static_cast<int>(i));
                 ImGui::InputText("", message.data(), message.size() + 1,
                                  ImGuiInputTextFlags_ReadOnly);
-
                 ImGui::PopID();
 
                 ImGui::PopStyleColor();
                 ImGui::PopStyleVar();
-
-                if (justAdded && i + 1 == _logs.size())
-                {
-                    ImGui::SetScrollHereY(1.0f);
-                }
             }
 
             ImGui::PopStyleVar(2);
             ImGui::PopStyleColor(4);
 
-            /*while (_logs.size() > _logLimit)
-            {
-                _logs.pop_front();
-            }*/
-
             _lastLogAreaHeight = ImGui::GetWindowSize().y;
-            if (!Math::IsZero(ImGui::GetScrollY()))
+            _lastScrollY = ImGui::GetScrollY();
+            _lastScrollMaxY = ImGui::GetScrollMaxY();
+            if (!Math::IsZero(_lastScrollY))
             {
-                _lastScrollPercent = ImGui::GetScrollY() / ImGui::GetScrollMaxY();
+                _lastScrollPercent = _lastScrollY / _lastScrollMaxY;
             }
             else
             {
@@ -202,12 +174,29 @@ namespace Core
         ImGui::EndChild();
     }
 
-    std::size_t LogsWindowEWC::getFitLogsCountOnScreen() const
+    float LogsWindowEWC::getFitLogsCountOnScreen() const
     {
         const auto inputHeight = ImGui::GetTextLineHeight()
                                  + ImGui::GetStyle().FramePadding.y * 2.0f + _betweenLogsSpace;
 
         return std::ceil(_lastLogAreaHeight / inputHeight);
+    }
+
+    bool LogsWindowEWC::canBeFiltered(const StringAtom& msg)
+    {
+        if (_filterBuf[0] != '\0')
+        {
+            if (_regexModeButton->isActive() && msg.regexFind(_filterBuf, 0, 0, 0, PCRE2_CASELESS))
+            {
+                return true;
+            }
+            if (msg.find(_filterBuf))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     void LogsWindowEWC::detectManualScroll()

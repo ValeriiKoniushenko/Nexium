@@ -64,15 +64,11 @@ namespace Core
         void detectManualScroll();
         void fetchLogs();
         void logsDraw();
-        [[nodiscard]] std::size_t getFitLogsCountOnScreen() const;
+        [[nodiscard]] float getFitLogsCountOnScreen() const;
+
+        [[nodiscard]] bool canBeFiltered(const StringAtom& msg);
 
     private:
-        inline static const std::vector<spdlog::level::level_enum> _levels = {
-            spdlog::level::level_enum::critical, spdlog::level::level_enum::err,
-            spdlog::level::level_enum::warn,     spdlog::level::level_enum::info,
-            spdlog::level::level_enum::debug,    spdlog::level::level_enum::trace,
-        };
-
         // ========= Toolbar ==========
         Gui::HorizontalLayout _toolbar;
         Gui::TextInput* _searchInput = nullptr;
@@ -101,9 +97,12 @@ namespace Core
         bool _isAutoScroll = true;
         float _betweenLogsSpace = 0.f;
         float _lastLogAreaHeight = 100.f;
+
+        float _lastScrollY = 0.f;
+        float _lastScrollMaxY = 0.f;
         float _lastScrollPercent = 0.f;
+
         StringAtom _filterBuf;
-        std::size_t _lastCountOfLogs = 0;
         std::vector<LogLine> _logs;
     };
 } // namespace Core
