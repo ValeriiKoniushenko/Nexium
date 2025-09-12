@@ -81,6 +81,13 @@ namespace Core
         _searchInput->setFlex(Gui::Widget::Flex::FlexWidth);
         _toolbar.setFlex(Gui::Widget::Flex::FlexWidth);
 
+        // Events
+        _clearButton->onClick.subscribe(
+            [this](auto)
+            {
+                clearLogs();
+            });
+
         tryReadFromCache();
     }
 
@@ -129,10 +136,6 @@ namespace Core
 
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, glm::vec2(0, _betweenLogsSpace));
 
-            auto w = getFitLogsCountOnScreen();
-
-            ImGui::Dummy({ 0, 100.f });
-
             for (std::size_t i = 0; i < _logs.size(); ++i)
             {
                 auto& message = _logs[i].message;
@@ -144,7 +147,6 @@ namespace Core
                 }
 
                 ImGui::PushStyleColor(ImGuiCol_Text, NormColor4::From(_levelColor.at(level)));
-                ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
                 ImGui::SetNextItemWidth(ImGui::CalcTextSize(message.c_str()).x + inputPadding);
 
                 ImGui::PushID(static_cast<int>(i));
@@ -153,7 +155,6 @@ namespace Core
                 ImGui::PopID();
 
                 ImGui::PopStyleColor();
-                ImGui::PopStyleVar();
             }
 
             ImGui::PopStyleVar(2);
@@ -184,16 +185,14 @@ namespace Core
 
     bool LogsWindowEWC::canBeFiltered(const StringAtom& msg)
     {
-        if (_filterBuf[0] != '\0')
+        auto&& str = _searchInput->getInputtedData();
+        if (!str.empty() && str.front() != '\0')
         {
-            if (_regexModeButton->isActive() && msg.regexFind(_filterBuf, 0, 0, 0, PCRE2_CASELESS))
+            if (_regexModeButton->isActive())
             {
-                return true;
+                return !msg.regexFind(str.c_str(), 0, 0, 0, PCRE2_CASELESS).isMatched();
             }
-            if (msg.find(_filterBuf))
-            {
-                return true;
-            }
+            return !msg.find(str.c_str());
         }
 
         return false;
@@ -227,7 +226,14 @@ namespace Core
     {
         nlohmann::json json;
         json["logLimit"] = _logLimit;
-        json["filter"] = _filterBuf;
+        if (Verify(_searchInput))
+        {
+            json["filter"] = _searchInput->getInputtedData();
+        }
+        if (Verify(_regexModeButton))
+        {
+            json["regexMode"] = _regexModeButton->isActive();
+        }
         json["filterLevels"] = nlohmann::json::array();
         for (auto [level, button] : _levelFilter)
         {
@@ -248,7 +254,17 @@ namespace Core
         }
         if (json.contains("filter"))
         {
-            _filterBuf = json["filter"].get<decltype(_filterBuf)>();
+            if (Verify(_searchInput))
+            {
+                _searchInput->setInputtedData(json["filter"].get<std::string>());
+            }
+        }
+        if (json.contains("regexMode"))
+        {
+            if (Verify(_regexModeButton))
+            {
+                _regexModeButton->setActive(json["regexMode"].get<bool>());
+            }
         }
         if (json.contains("filterLevels"))
         {

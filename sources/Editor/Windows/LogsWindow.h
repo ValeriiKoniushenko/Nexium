@@ -102,7 +102,6 @@ namespace Core
         float _lastScrollMaxY = 0.f;
         float _lastScrollPercent = 0.f;
 
-        StringAtom _filterBuf;
         std::vector<LogLine> _logs;
     };
 } // namespace Core

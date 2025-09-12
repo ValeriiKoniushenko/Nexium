@@ -114,17 +114,26 @@ namespace Core
         fps.start();
         FStopwatch clock;
 
+        Repeater r;
+        r.setRepeatTime(2.);
+        r.setCallback(
+            [this](double)
+            {
+                infoLog("Hello");
+            });
+
         glClearColor(0.45f, 0.55f, 0.60f, 1.00f);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
         glEnable(GL_STENCIL_TEST);
 
-        const int clearBits = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
+        constexpr int clearBits = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
 
         while (!_window->shouldClose())
         {
             clock.start();
             _window->pollEvent();
+            r.startOrUpdate();
 
             if (const auto* wnd = gameEditor.getWindow<GameViewportEWC>(); wnd && wnd->isFocused())
             {
