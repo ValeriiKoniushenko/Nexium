@@ -22,6 +22,7 @@
 
 #include "AssetsManagerWindow.h"
 
+#include "Editor/GuiComponents/Spacer.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Misc/IconsFontAwesome.h"
 #include "TextEditor.h"
@@ -38,11 +39,56 @@ namespace
         return !rel.empty() && rel.native()[0] != '.';
     }
 
+    std::string PrettyBytes(uint64_t bytes)
+    {
+        static const std::array<const char*, 6> suffixes = { "B", "KB", "MB", "GB", "TB", "PB" };
+
+        if (bytes == 0)
+        {
+            return "0 B";
+        }
+
+        int i = 0;
+        double count = static_cast<double>(bytes);
+
+        while (count >= 1024.0 && i < static_cast<int>(suffixes.size()) - 1)
+        {
+            count /= 1024.0;
+            ++i;
+        }
+
+        std::ostringstream out;
+        out << std::fixed << std::setprecision(count < 10 ? 2 : (count < 100 ? 1 : 0)) << count
+            << ' ' << suffixes[i];
+
+        return out.str();
+    }
+
 } // namespace
 
 namespace Core
 {
+    namespace Gui
+    {
+        class Spacer;
+    }
     ECS_COMPONENT_IMPL(AssetsManagerWindowEWC)
+
+    void AssetsManagerWindowEWC::tryOpenParentDir()
+    {
+        if (_openedPath.has_parent_path())
+        {
+            openPath(_openedPath.parent_path());
+        }
+    }
+
+    void AssetsManagerWindowEWC::tryOpenPath(const std::filesystem::path& p)
+    {
+        if (std::filesystem::exists(p))
+        {
+            openPath(p);
+        }
+    }
 
     void AssetsManagerWindowEWC::onInitialize()
     {
@@ -68,6 +114,47 @@ namespace Core
             return true;
         }();
 
+        const auto gap = ImGui::GetStyle().WindowPadding.x;
+
+        // Structure
+        _toolbarLayout.setPaddings(glm::vec4(gap));
+
+        _backButton = _toolbarLayout.addChildComponent<Gui::Button>(ICON_FA_CHEVRON_LEFT);
+        _toolbarLayout.addChildComponent<Gui::Spacer>();
+        _refreshButton = _toolbarLayout.addChildComponent<Gui::Button>(ICON_FA_REFRESH);
+        _pathInput = _toolbarLayout.addChildComponent<Gui::TextInput>();
+        _toolbarLayout.addChildComponent<Gui::Spacer>();
+        _filterInput = _toolbarLayout.addChildComponent<Gui::TextInput>();
+
+        // Style
+        _backButton->setWidth(_backButton->getHeight());
+        _refreshButton->setWidth(_refreshButton->getHeight());
+        _pathInput->setFlex(Gui::Widget::Flex::FlexWidth);
+        _filterInput->setWidth(150.f);
+        _filterInput->setPlaceholder("Filter...");
+
+        // Events
+        _backButton->onClick.subscribe(
+            [this](auto)
+            {
+                tryOpenParentDir();
+            });
+        _refreshButton->onClick.subscribe(
+            [this](auto)
+            {
+                refresh();
+            });
+        _pathInput->onInput.subscribe(
+            [this](const char* path)
+            {
+                if (path)
+                {
+                    tryOpenPath(std::filesystem::path(path));
+                }
+            });
+
+        openPath(assetsPath);
+
         refresh();
     }
 
@@ -83,20 +170,78 @@ namespace Core
         BaseFloatEWC::onUpdate();
     }
 
+    void AssetsManagerWindowEWC::openPath(const std::filesystem::path& path)
+    {
+        _openedPath = path;
+        _pathInput->setInputtedData(_openedPath.generic_string());
+    }
+
+    void AssetsManagerWindowEWC::copyFrom(const std::filesystem::path& path)
+    {
+        _isCopy = true;
+        _selectedPath = path;
+    }
+
+    void AssetsManagerWindowEWC::cutFrom(const std::filesystem::path& path)
+    {
+        _isCopy = false;
+        _selectedPath = path;
+    }
+
+    void AssetsManagerWindowEWC::pasteTo(const std::filesystem::path& path)
+    {
+        std::error_code er;
+
+        std::filesystem::copy(_selectedPath, path, std::filesystem::copy_options::recursive, er);
+
+        if (er)
+        {
+            errorLog("Error while copying of file: " + er.message());
+        }
+        else if (!_isCopy)
+        {
+            deleteAt(_selectedPath);
+        }
+
+        _selectedPath.clear();
+        refresh();
+    }
+
+    void AssetsManagerWindowEWC::deleteAt(const std::filesystem::path& path)
+    {
+        std::error_code er;
+        std::filesystem::remove_all(path, er);
+        if (er)
+        {
+            errorLog("Error while deleting of file: " + er.message());
+        }
+    }
+
+    bool AssetsManagerWindowEWC::isFiltered(const std::filesystem::path& p) const
+    {
+        if (!_filterInput)
+        {
+            return false;
+        }
+
+        auto&& filter = _filterInput->getInputtedData();
+
+        if (filter.empty() || filter[0] == '\0')
+        {
+            return false;
+        }
+
+        return p.generic_string().find(filter) == std::string::npos;
+    }
+
     void AssetsManagerWindowEWC::drawExplorerTree()
     {
-        const auto defaultSpace = ImGui::GetStyle().ItemSpacing;
         if (ImGui::BeginChild("Explorer tree", glm::vec2(200.0f, 0), ImGuiChildFlags_ResizeX))
         {
-            ImGui::Dummy(defaultSpace);
-            ImGui::Indent(defaultSpace.x);
-
+            ImGui::Dummy({});
             bool isSelected = false;
             drawOneLevel(_rootCacheNode, isSelected);
-            ImGui::Dummy({}); // extra padding
-
-            ImGui::Unindent(defaultSpace.x);
-            ImGui::Dummy(defaultSpace);
+            ImGui::Dummy({});
         }
         ImGui::EndChild();
     }
@@ -104,29 +249,41 @@ namespace Core
     void AssetsManagerWindowEWC::drawExplorer()
     {
         const auto defaultSpace = ImGui::GetStyle().ItemSpacing;
+        const auto padding = ImGui::GetStyle().WindowPadding.x;
 
         if (ImGui::BeginChild("Explorer"))
         {
-            drawExplorerToolbar();
+            _toolbarLayout.tick(GetWorld().timeDelta);
+            const auto availX = ImGui::GetContentRegionAvail().x - padding * 2.f;
 
-            ImGui::Dummy(defaultSpace);
-            ImGui::Indent(defaultSpace.x);
-
-            auto& style = ImGui::GetStyle();
-            const float oneThumbnailWidth
-                = _thumbnailSize.x + (style.ItemSpacing.x * 2.f) + style.ItemSpacing.x;
             const int maxCountPerWidth
-                = static_cast<int>(ImGui::GetContentRegionAvail().x / oneThumbnailWidth);
+                = static_cast<int>(availX / (_thumbnailSize.x + defaultSpace.x)) - 1;
+
             if (ImGui::BeginPopupContextWindow("ExplorerContextMenu",
-                                               ImGuiPopupFlags_MouseButtonRight))
+                                               ImGuiPopupFlags_MouseButtonRight
+                                                   | ImGuiPopupFlags_NoOpenOverItems))
             {
+                if (ImGui::MenuItem("Back"))
+                {
+                    tryOpenParentDir();
+                }
+                if (!_selectedPath.empty() && ImGui::MenuItem("Paste"))
+                {
+                    pasteTo(_openedPath);
+                }
                 if (ImGui::MenuItem("Refresh"))
                 {
                     refresh();
                 }
+                if (ImGui::MenuItem("To root"))
+                {
+                    openPath(assetsPath);
+                }
+
                 ImGui::EndPopup();
             }
 
+            ImGui::SetCursorPosX(ImGui::GetCursorPosX() + padding);
             ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0.0f);
 
             int i = 1;
@@ -135,14 +292,10 @@ namespace Core
                 const auto& path = entry.path();
                 const auto fileFormat = getNodeType(entry);
 
-                // if (!_filterBuf.isEmpty() && _filterBuf[0] != '\0' &&
-                // !std::isspace(_filterBuf[0]))
-                // {
-                //     if (!StringAtom(path.filename().generic_string()).regexFind(_filterBuf))
-                //     {
-                //         continue;
-                //     }
-                // }
+                if (isFiltered(path))
+                {
+                    continue;
+                }
 
                 drawFileThumbnail(_nodeTypesData[fileFormat].getTextureId(), entry, _thumbnailSize);
                 if (maxCountPerWidth != 0 && i % maxCountPerWidth != 0)
@@ -154,8 +307,7 @@ namespace Core
 
             ImGui::PopStyleVar();
 
-            ImGui::Unindent(defaultSpace.x);
-            ImGui::Dummy(defaultSpace);
+            ImGui::Dummy({});
         }
         ImGui::EndChild();
     }
@@ -207,7 +359,7 @@ namespace Core
             if (node.type == NodeType::Folder && ImGui::IsItemHovered()
                 && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
             {
-                _openedPath = node.path;
+                openPath(node.path);
                 isSelected = true;
             }
 
@@ -299,27 +451,56 @@ namespace Core
         return NodeType::Default;
     }
 
-    bool AssetsManagerWindowEWC::drawFileThumbnail(ImTextureID texture,
+    void AssetsManagerWindowEWC::drawFileThumbnail(ImTextureID texture,
                                                    const std::filesystem::directory_entry& entry,
                                                    glm::vec2 size)
     {
         auto path = entry.path();
         auto filename = path.filename().generic_string();
         const auto& originalFileName = filename;
+        bool needOpen = false;
+        const bool isSelected = path == _selectedPath;
 
-        bool clicked = false;
+        if (isSelected)
+        {
+            ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.6f);
+        }
 
-        ImGui::PushStyleColor(ImGuiCol_Button, glm::vec4(0, 0, 0, 0));
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetStyle().ItemSpacing.x);
+
         ImGui::BeginGroup();
 
-        if (ImGui::ImageButton(filename.data(), texture, size))
-        {
-            clicked = true;
-        }
+        size -= ImGui::GetStyle().FramePadding * 2.f;
+        ImGui::PushStyleColor(ImGuiCol_Button, glm::vec4(0, 0, 0, 0));
+        ImGui::ImageButton(filename.data(), texture, size);
         ImGui::PopStyleColor();
+        size += ImGui::GetStyle().FramePadding * 2.f;
 
-        // Adding button's padding
-        size.x += ImGui::GetStyle().ItemSpacing.x * 2.f - 1.f;
+        if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+        {
+            needOpen = true;
+        }
+
+        if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
+        {
+            ImGui::OpenPopup(filename.c_str());
+        }
+
+        if (ImGui::BeginPopup(filename.c_str()))
+        {
+            if (ImGui::MenuItem("Copy"))
+            {
+                copyFrom(path);
+            }
+            if (ImGui::MenuItem("Cut"))
+            {
+                cutFrom(path);
+            }
+            if (!_selectedPath.empty() && ImGui::MenuItem("Paste"))
+            {
+            }
+            ImGui::EndPopup();
+        }
 
         std::string value = filename;
         if (InputText(filename.data(), value, size.x, ImGuiInputTextFlags_EnterReturnsTrue))
@@ -328,7 +509,7 @@ namespace Core
             {
                 std::error_code ec;
 
-                auto newPath = path.parent_path() / value;
+                const auto newPath = path.parent_path() / value;
                 std::filesystem::rename(path, newPath, ec);
                 if (ec)
                 {
@@ -344,7 +525,7 @@ namespace Core
 
         ImGui::EndGroup();
 
-        if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenBlockedByPopup))
+        if (ImGui::IsItemHovered())
         {
             ImGui::BeginTooltip();
 
@@ -362,25 +543,30 @@ namespace Core
             if (entry.is_regular_file())
             {
                 const auto fileSize = static_cast<uint32_t>(std::filesystem::file_size(path));
-                ImGui::Text("File size: %d", fileSize);
+                ImGui::Text("File size: %s", PrettyBytes(fileSize).c_str());
             }
             ImGui::EndTooltip();
+        }
 
-            if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+        if (needOpen)
+        {
+            if (entry.is_directory())
             {
-                if (entry.is_directory())
-                {
-                    _openedPath = path;
-                }
-                else if (entry.is_regular_file() && getNodeType(entry) == NodeType::Code)
-                {
-                    gGameInstance->gameEditor.showWindow<TextEditorEWC>(
-                        ".*", path.generic_string().data());
-                }
+                openPath(path);
+            }
+            else if (entry.is_regular_file() && getNodeType(entry) == NodeType::Code)
+            {
+                gGameInstance->gameEditor.showWindow<TextEditorEWC>(".*",
+                                                                    path.generic_string().data());
             }
         }
 
-        return clicked;
+        if (isSelected)
+        {
+            ImGui::PopStyleVar();
+        }
+
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetStyle().ItemSpacing.x);
     }
 
     void AssetsManagerWindowEWC::rescanPhysicalDrive(CacheNode& node)
@@ -412,10 +598,6 @@ namespace Core
 
         _rootCacheNode.path = assetsPath;
         rescanPhysicalDrive(_rootCacheNode);
-    }
-
-    void AssetsManagerWindowEWC::drawExplorerToolbar()
-    {
     }
 
 } // namespace Core

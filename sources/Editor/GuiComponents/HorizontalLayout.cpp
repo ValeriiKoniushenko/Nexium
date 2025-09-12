@@ -75,7 +75,7 @@ namespace Core::Gui
         }
 
         float width = 0.f;
-        std::size_t fixedCount = 0;
+        // std::size_t fixedCount = 0;
         std::size_t flexWidthCount = 0;
         std::size_t total = 0;
         for (auto&& child : _children)
@@ -87,7 +87,7 @@ namespace Core::Gui
                 ++total;
                 if (w->getFlex().cast() == Widget::Flex::Fixed)
                 {
-                    ++fixedCount;
+                    // ++fixedCount;
                 }
                 else
                 {
@@ -113,7 +113,7 @@ namespace Core::Gui
     {
         if (_height)
         {
-            return *_height;
+            return *_height + (_paddings.z + _paddings.w);
         }
 
         auto cmp = [](const BaseComponent::Ptr& a, const BaseComponent::Ptr& b)
@@ -127,7 +127,7 @@ namespace Core::Gui
         }
 
         const auto maxHeight = (*maxHeightEl)->unsafeCastTo<Widget>()->getHeight();
-        return maxHeight;
+        return maxHeight + (_paddings.z + _paddings.w);
     }
 
     void HorizontalLayout::onAddChild(BaseComponent* newChild)
@@ -298,6 +298,8 @@ namespace Core::Gui
         const auto defaultSpacing = style().ItemSpacing.x;
         std::size_t i = 0;
 
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + _paddings.x);
+
         for (auto&& child : _children)
         {
             if (!child->isEnabled())
@@ -328,7 +330,7 @@ namespace Core::Gui
         if (atLeastOne(Flex::FlexWidth))
         {
             const float defaultSpacing = style().ItemSpacing.x;
-            float width = getWidth();
+            float width = getWidth() - (_paddings.x + _paddings.y);
 
             int fixedCount = 0;
             int flexWidthCount = 0;
