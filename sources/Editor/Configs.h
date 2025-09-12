@@ -30,6 +30,8 @@ namespace Core::Config
     static constexpr auto ColorGreen = Color4(25, 255, 25, 255);
     static constexpr auto ColorSoftGreen = Color4(25, 204, 25, 204);
     static constexpr auto ColorGrey = Color4(153, 153, 153, 255);
+    static constexpr auto ColorSoftWhite = Color4(204, 204, 204, 255);
+    static constexpr auto ColorWhite = Color4(234, 237, 239, 255);
     static constexpr auto ColorYellow = Color4(255, 255, 25, 255);
     static constexpr auto ColorHalfYellow = Color4(204, 102, 25, 255);
     static constexpr auto ColorBlue = Color4(25, 25, 255, 255);

@@ -27,4 +27,20 @@ namespace Core::Gui
 
     ECS_COMPONENT_IMPL(Layout)
 
+    bool Layout::atLeastOne(Widget::Flex f)
+    {
+        for (auto&& child : _children)
+        {
+            if (child->isEnabled())
+            {
+                if (child->unsafeCastTo<Widget>()->getFlex() == f)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
 } // namespace Core::Gui

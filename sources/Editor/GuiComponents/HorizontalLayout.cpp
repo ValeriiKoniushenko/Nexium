@@ -69,15 +69,43 @@ namespace Core::Gui
             return *_width;
         }
 
+        if (!hasParent())
+        {
+            return ImGui::GetContentRegionAvail().x;
+        }
+
         float width = 0.f;
+        std::size_t fixedCount = 0;
+        std::size_t flexWidthCount = 0;
+        std::size_t total = 0;
         for (auto&& child : _children)
         {
             if (child->isEnabled())
             {
                 auto* w = child->unsafeCastTo<Widget>();
                 width += w->getWidth();
+                ++total;
+                if (w->getFlex().cast() == Widget::Flex::Fixed)
+                {
+                    ++fixedCount;
+                }
+                else
+                {
+                    ++flexWidthCount;
+                }
             }
         }
+
+        if (total == flexWidthCount)
+        {
+            return width;
+        }
+
+        if (total > 1)
+        {
+            width += style().ItemSpacing.x * static_cast<float>(total - 1);
+        }
+
         return width;
     }
 
@@ -117,9 +145,6 @@ namespace Core::Gui
     {
         recalcFlexChildren();
 
-        auto* window = ImGui::GetCurrentWindow();
-        window->DC.CurrLineTextBaseOffset = 0.0f;
-
         const auto originalCursor = ImGui::GetCursorPos();
 
         calcYOffsets();
@@ -152,9 +177,13 @@ namespace Core::Gui
         {
             ImGui::SetCursorPosX(originalCursor.x + *_width - style().ItemSpacing.x);
         }
-        ImGui::SetCursorPosY(originalCursor.y + getHeight());
 
-        ImGui::Dummy(glm::vec2(0, 0));
+        ImGui::SetCursorPosY(originalCursor.y + getHeight() + style().ItemSpacing.y);
+
+        if (!hasParent())
+        {
+            ImGui::SetCursorPosX(originalCursor.x - style().ItemSpacing.x);
+        }
     }
 
     void HorizontalLayout::onInitialize()
@@ -164,8 +193,9 @@ namespace Core::Gui
 
     void HorizontalLayout::prepareAlignSpaceBetween()
     {
-        if (hasChildren())
+        if (hasChildren() && !atLeastOne(Flex::FlexWidth))
         {
+            std::size_t i = 0;
             _spacing = getWidth();
             for (const auto& child : _children)
             {
@@ -174,8 +204,14 @@ namespace Core::Gui
                     continue;
                 }
                 _spacing -= child->unsafeCastTo<Widget>()->getWidth();
+                ++i;
             }
-            _spacing /= _children.size() - 1ll;
+
+            _spacing /= static_cast<float>(i <= 1 ? 1 : i - 1);
+        }
+        else
+        {
+            _spacing = 0;
         }
     }
 
@@ -186,7 +222,7 @@ namespace Core::Gui
 
     void HorizontalLayout::prepareAlignRight()
     {
-        if (hasChildren())
+        if (hasChildren() && !atLeastOne(Flex::FlexWidth))
         {
             float spacing = getWidth();
             for (const auto& child : _children)
@@ -205,7 +241,7 @@ namespace Core::Gui
 
     void HorizontalLayout::prepareAlignCenter()
     {
-        if (hasChildren())
+        if (hasChildren() && !atLeastOne(Flex::FlexWidth))
         {
             float spacing = getWidth();
             for (const auto& child : _children)
@@ -259,6 +295,7 @@ namespace Core::Gui
     void HorizontalLayout::directDraw()
     {
         const auto originalYCursor = ImGui::GetCursorPosY();
+        const auto defaultSpacing = style().ItemSpacing.x;
         std::size_t i = 0;
 
         for (auto&& child : _children)
@@ -267,12 +304,15 @@ namespace Core::Gui
             {
                 continue;
             }
+            auto start = ImGui::GetCursorPosX();
             ImGui::SetCursorPosY(originalYCursor + _yOffsets.at(i));
             child->unsafeCastTo<Widget>()->unhandledDraw();
 
+            const auto childWidth = child->unsafeCastTo<Widget>()->getWidth();
+            const auto end = start + childWidth;
+            ImGui::SetCursorPosX(end + defaultSpacing);
             if (i != _children.size() - 1)
             {
-                ImGui::SameLine();
                 if (_align.cast() == Align::SpaceBetween)
                 {
                     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + _spacing);
@@ -285,24 +325,10 @@ namespace Core::Gui
 
     void HorizontalLayout::recalcFlexChildren()
     {
-        bool atLeastOneWithFlex = false;
-        for (auto&& child : _children)
-        {
-            if (!child->isEnabled())
-            {
-                continue;
-            }
-            if (child->unsafeCastTo<Widget>()->getFlex().cast() != Widget::Flex::Fixed)
-            {
-                atLeastOneWithFlex = true;
-                break;
-            }
-        }
-
-        if (atLeastOneWithFlex)
+        if (atLeastOne(Flex::FlexWidth))
         {
             const float defaultSpacing = style().ItemSpacing.x;
-            float width = _width.value_or(ImGui::GetContentRegionAvail().x);
+            float width = getWidth();
 
             int fixedCount = 0;
             int flexWidthCount = 0;
@@ -342,9 +368,13 @@ namespace Core::Gui
                 {
                     const float gap = deCounter != 0 ? defaultSpacing : 0;
                     const float finalWidth
-                        = std::max(10.f, width / static_cast<float>(flexWidthCount) - gap);
+                        = std::max(0.f, width / static_cast<float>(flexWidthCount) - gap);
                     w->setWidth(finalWidth);
                     --deCounter;
+                }
+                if (deCounter == 0)
+                {
+                    break;
                 }
             }
         }

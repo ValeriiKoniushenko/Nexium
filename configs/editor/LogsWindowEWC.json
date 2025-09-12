@@ -3,15 +3,15 @@
     "filterLevels": [
         {
             "level": "trace",
-            "value": false
+            "value": true
         },
         {
             "level": "debug",
-            "value": false
+            "value": true
         },
         {
             "level": "info",
-            "value": false
+            "value": true
         },
         {
             "level": "warning",

@@ -103,10 +103,13 @@ namespace Core::Gui
     public: // Delegates
         /**
          * @brief will be called when toggled
-         * @prarm ToggleButton* pointer to "this" context. Context of the clicked button.
+         * @prarm ToggleButton* a pointer to "this" context. Context of the clicked button.
          * @prarm bool true - if it becomes active; false - in another case
          */
         Delegate<void(ToggleButton*, bool)> onToggle;
+
+        void setActive(bool value) noexcept { _isActive = value; }
+        [[nodiscard]] bool isActive() const noexcept { return _isActive; }
 
     protected:
         void preDraw() override;

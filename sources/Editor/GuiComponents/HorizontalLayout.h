@@ -37,7 +37,11 @@ namespace Core::Gui
         [[nodiscard]] float getWidth() const override;
         [[nodiscard]] float getHeight() const override;
 
-        void setFitContent(bool value) { _fitContent = value; }
+        void setFitContent(bool value)
+        {
+            _fitContent = value;
+            setFlex(Flex::Fixed);
+        }
         [[nodiscard]] bool getFitContent() const noexcept { return _fitContent; }
 
     protected:

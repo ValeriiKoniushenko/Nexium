@@ -23,6 +23,10 @@
 #pragma once
 
 #include "BaseWindow.h"
+#include "Editor/Configs.h"
+#include "Editor/GuiComponents/Button.h"
+#include "Editor/GuiComponents/HorizontalLayout.h"
+#include "Editor/GuiComponents/Input.h"
 #include "Misc/JsonCacheable.h"
 
 #include <list>
@@ -59,8 +63,8 @@ namespace Core
     private:
         void detectManualScroll();
         void fetchLogs();
-        void toolbarDraw();
         void logsDraw();
+        [[nodiscard]] std::size_t getFitLogsCountOnScreen() const;
 
     private:
         inline static const std::vector<spdlog::level::level_enum> _levels = {
@@ -68,24 +72,38 @@ namespace Core
             spdlog::level::level_enum::warn,     spdlog::level::level_enum::info,
             spdlog::level::level_enum::debug,    spdlog::level::level_enum::trace,
         };
-        std::unordered_map<spdlog::level::level_enum, bool> _levelFilter = {
-            { spdlog::level::level_enum::critical, true },
-            { spdlog::level::level_enum::err, true },
-            { spdlog::level::level_enum::warn, true },
-            { spdlog::level::level_enum::info, true },
-            { spdlog::level::level_enum::debug, true },
-            { spdlog::level::level_enum::trace, true },
+
+        // ========= Toolbar ==========
+        Gui::HorizontalLayout _toolbar;
+        Gui::TextInput* _searchInput = nullptr;
+        Gui::ToggleButton* _regexModeButton = nullptr;
+        Gui::ToggleButton* _autoScrollButton = nullptr;
+        Gui::Button* _clearButton = nullptr;
+        // Log levels
+        std::unordered_map<spdlog::level::level_enum, Gui::ToggleButton*> _levelFilter = {
+            { spdlog::level::level_enum::critical, nullptr },
+            { spdlog::level::level_enum::err, nullptr },
+            { spdlog::level::level_enum::warn, nullptr },
+            { spdlog::level::level_enum::info, nullptr },
+            { spdlog::level::level_enum::debug, nullptr },
+            { spdlog::level::level_enum::trace, nullptr },
         };
 
+        inline static const std::unordered_map<spdlog::level::level_enum, Color4> _levelColor
+            = { { spdlog::level::level_enum::critical, Config::ColorRed },
+                { spdlog::level::level_enum::err, Config::ColorYellow },
+                { spdlog::level::level_enum::warn, Config::ColorHalfYellow },
+                { spdlog::level::level_enum::info, Config::ColorWhite },
+                { spdlog::level::level_enum::debug, Config::ColorSoftWhite },
+                { spdlog::level::level_enum::trace, Config::ColorGrey } };
+
         std::size_t _logLimit = 500;
-        float _defaultGap = 4.f;
-        float _clearButtonWidth = 0.f;
-        float _autoScrollButtonWidth = 0.f;
         bool _isAutoScroll = true;
-        float _streamingToolbarHeight = 40.f;
-        float _toolbarToolsWidth = 150.f;
+        float _betweenLogsSpace = 0.f;
+        float _lastLogAreaHeight = 100.f;
+        float _lastScrollPercent = 0.f;
         StringAtom _filterBuf;
         std::size_t _lastCountOfLogs = 0;
-        std::list<LogLine> _logs;
+        std::vector<LogLine> _logs;
     };
 } // namespace Core

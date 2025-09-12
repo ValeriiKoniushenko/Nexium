@@ -23,6 +23,9 @@
 #include "LogsWindow.h"
 
 #include "Editor/Configs.h"
+#include "Editor/GuiComponents/Input.h"
+#include "Editor/GuiComponents/Spacer.h"
+#include "GameplaySystem/Framework/GameInstance.h"
 #include "Misc/IconsFontAwesome.h"
 
 namespace Core
@@ -56,42 +59,36 @@ namespace Core
     {
         BaseFloatEWC::onInitialize();
 
-        tryReadFromCache();
+        // Structure & ordering
+        _searchInput = _toolbar.addChildComponent<Gui::TextInput>();
+        _regexModeButton = _toolbar.addChildComponent<Gui::ToggleButton>(".*");
+        _toolbar.addChildComponent<Gui::Spacer>();
 
-        auto& style = ImGui::GetStyle();
-
-        _clearButtonWidth = ImGui::CalcTextSize(ICON_FA_TRASH).x;
-        _autoScrollButtonWidth = ImGui::CalcTextSize(ICON_FA_ARROW_DOWN).x;
-
-        _defaultGap = style.ItemSpacing.x;
-        _toolbarToolsWidth = 0;
-
-        _filterBuf.resize(1024);
-
-        // Calculating of tools from Toolbar.
-        // Repeating or 'render' code from LogsWindowEWC::toolbarDraw
-        _toolbarToolsWidth += _defaultGap * 3.f;
-        for (auto level : _levels)
+        auto* levelHolder = _toolbar.addChildComponent<Gui::HorizontalLayout>("LogLevels");
+        for (auto& [severity, ptr] : _levelFilter)
         {
-            auto textSize = ImGui::CalcTextSize(spdlog::level::to_short_c_str(level)).x;
-            textSize += style.FramePadding.x * 2.f;
-            textSize += _defaultGap;
-            _toolbarToolsWidth += textSize;
+            ptr = levelHolder->addChildComponent<Gui::ToggleButton>(
+                spdlog::level::to_short_c_str(severity));
         }
-        _toolbarToolsWidth += _defaultGap * 3.f;
 
-        _toolbarToolsWidth += ImGui::CalcTextSize(ICON_FA_TRASH).x + style.FramePadding.x * 2.f;
-        _toolbarToolsWidth += _defaultGap;
+        _toolbar.addChildComponent<Gui::Spacer>();
+        _autoScrollButton = _toolbar.addChildComponent<Gui::ToggleButton>(ICON_FA_ARROW_DOWN);
+        _clearButton = _toolbar.addChildComponent<Gui::Button>(ICON_FA_TRASH);
 
-        _toolbarToolsWidth
-            += ImGui::CalcTextSize(ICON_FA_ARROW_DOWN).x + style.FramePadding.x * 2.f;
-        _toolbarToolsWidth += _defaultGap;
+        // Styles
+        levelHolder->setFlex(Gui::Widget::Flex::Fixed);
+
+        _searchInput->setFlex(Gui::Widget::Flex::FlexWidth);
+        _toolbar.setFlex(Gui::Widget::Flex::FlexWidth);
+
+        tryReadFromCache();
     }
 
     void LogsWindowEWC::onDraw()
     {
         detectManualScroll();
-        toolbarDraw();
+        _toolbar.tick(GetWorld().timeDelta);
+
         logsDraw();
     }
 
@@ -115,7 +112,12 @@ namespace Core
 
     void LogsWindowEWC::logsDraw()
     {
-        if (ImGui::BeginChild("ScrollingRegion", glm::vec2(0, 0), 0,
+        const auto defaultSpace = ImGui::GetStyle().ItemSpacing.x;
+        const auto finalWidth = ImGui::GetContentRegionAvail().x - defaultSpace;
+
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + defaultSpace);
+
+        if (ImGui::BeginChild("ScrollingRegion", glm::vec2(finalWidth, 0), 0,
                               ImGuiWindowFlags_HorizontalScrollbar))
         {
             bool justAdded = _lastCountOfLogs != _logs.size();
@@ -125,65 +127,53 @@ namespace Core
             }
             _lastCountOfLogs = _logs.size();
 
-            if (ImGui::BeginPopupContextWindow())
-            {
-                if (ImGui::Selectable("Clear"))
-                {
-                    clearLogs();
-                }
-                ImGui::EndPopup();
-            }
+            ImGui::PushStyleColor(ImGuiCol_FrameBg, IM_COL32(0, 0, 0, 0));
+            ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, IM_COL32(0, 0, 0, 0));
+            ImGui::PushStyleColor(ImGuiCol_FrameBgActive, IM_COL32(0, 0, 0, 0));
+            ImGui::PushStyleColor(ImGuiCol_Border, IM_COL32(0, 0, 0, 0));
+            ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0.0f);
 
-            std::size_t i = 0;
-            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, glm::vec2(4, 1)); // Tighten _spacing
-            for (auto& [message, level] : _logs)
-            {
-                std::optional<glm::vec4> color;
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, glm::vec2(0, _betweenLogsSpace));
 
-                if (!_levelFilter[level])
+            auto w = getFitLogsCountOnScreen();
+
+            for (std::size_t i = 0; i < _logs.size(); ++i)
+            {
+                auto& message = _logs[i].message;
+                auto level = _logs[i].level;
+
+                if (_levelFilter[level] && !_levelFilter[level]->isActive())
                 {
                     continue;
                 }
 
-                if (_filterBuf[0] != '\0'
-                    && !message.regexFind(_filterBuf, 0, 0, 0, PCRE2_CASELESS))
+                if (_filterBuf[0] != '\0')
                 {
-                    continue;
+                    if (_regexModeButton->isActive()
+                        && message.regexFind(_filterBuf, 0, 0, 0, PCRE2_CASELESS))
+                    {
+                        continue;
+                    }
+                    else if (message.find(_filterBuf))
+                    {
+                        continue;
+                    }
                 }
 
-                if (level == spdlog::level::critical)
-                {
-                    color = Config::ColorRed;
-                }
-                if (level == spdlog::level::err)
-                {
-                    color = Config::ColorYellow;
-                }
-                if (level == spdlog::level::warn)
-                {
-                    color = Config::ColorHalfYellow;
-                }
-                if (level == spdlog::level::debug)
-                {
-                    color = Config::ColorGrey;
-                }
+                ImGui::PushStyleColor(ImGuiCol_Text, NormColor4::From(_levelColor.at(level)));
 
-                if (color)
-                {
-                    ImGui::PushStyleColor(ImGuiCol_Text, *color);
-                }
-
+                ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
                 ImGui::PushID(static_cast<int>(i));
-                ImGui::PushItemWidth(-FLT_MIN); // Makes the next widget take full width
+
+                ImGui::PushItemWidth(-FLT_MIN);
                 ImGui::InputText("", message.data(), message.size() + 1,
                                  ImGuiInputTextFlags_ReadOnly);
                 ImGui::PopItemWidth();
+
                 ImGui::PopID();
 
-                if (color)
-                {
-                    ImGui::PopStyleColor();
-                }
+                ImGui::PopStyleColor();
+                ImGui::PopStyleVar();
 
                 if (justAdded && i + 1 == _logs.size())
                 {
@@ -192,68 +182,35 @@ namespace Core
                 ++i;
             }
 
-            while (_logs.size() > _logLimit)
+            ImGui::PopStyleVar(2);
+            ImGui::PopStyleColor(4);
+
+            /*while (_logs.size() > _logLimit)
             {
                 _logs.pop_front();
-            }
+            }*/
 
-            ImGui::PopStyleVar();
+            _lastLogAreaHeight = ImGui::GetWindowSize().y;
+            if (!Math::IsZero(ImGui::GetScrollY()))
+            {
+                _lastScrollPercent = ImGui::GetScrollY() / ImGui::GetScrollMaxY();
+            }
+            else
+            {
+                _lastScrollPercent = 0.0f;
+            }
         }
         ImGui::EndChild();
     }
 
-    void LogsWindowEWC::toolbarDraw()
+    std::size_t LogsWindowEWC::getFitLogsCountOnScreen() const
     {
-        float const startY = ImGui::GetCursorScreenPos().y;
-        ImGui::BeginChild("Toolbar", glm::vec2(0, _streamingToolbarHeight));
-        {
-            ImGui::Dummy(glm::vec2(0, 0));
+        const auto inputHeight = ImGui::GetTextLineHeight()
+                                 + ImGui::GetStyle().FramePadding.y * 2.0f + _betweenLogsSpace;
 
-            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, glm::vec2(0, 0));
-
-            // =============== Input ====================
-            ImGui::Dummy(glm::vec2(_defaultGap, 0));
-            ImGui::SameLine();
-            ImGui::SetNextItemWidth(_innerSize.width - _toolbarToolsWidth);
-            ImGui::InputTextWithHint("##LogFilter",
-                                     "Your filter message. Feel free to use regex(perl).",
-                                     _filterBuf.data(), _filterBuf.size() + 1);
-            ImGui::SameLine(0, _defaultGap * 3.f);
-
-            // =============== Levels ====================
-            for (auto level : _levels)
-            {
-                bool& status = _levelFilter[level];
-                if (ToggleButton(spdlog::level::to_short_c_str(level), status))
-                {
-                    status = !status;
-                }
-                ImGui::SameLine(0, _defaultGap);
-            }
-            ImGui::SameLine(0, _defaultGap * 3.f);
-
-            // =============== Clean logs ====================
-            if (ImGui::Button(ICON_FA_TRASH))
-            {
-                clearLogs();
-            }
-            ImGui::SameLine(0, _defaultGap);
-
-            // =============== AutoScroll ====================
-            if (ToggleButton(ICON_FA_ARROW_DOWN, _isAutoScroll))
-            {
-                _isAutoScroll = !_isAutoScroll;
-            }
-            ImGui::SameLine(0, 0);
-            ImGui::Dummy(glm::vec2(_defaultGap, 0));
-
-            ImGui::PopStyleVar();
-
-            ImGui::Dummy(glm::vec2(0, 0));
-        }
-        _streamingToolbarHeight = ImGui::GetCursorScreenPos().y - startY;
-        ImGui::EndChild();
+        return std::ceil(_lastLogAreaHeight / inputHeight);
     }
+
     void LogsWindowEWC::detectManualScroll()
     {
         if (ImGui::IsWindowHovered(ImGuiHoveredFlags_ChildWindows)
@@ -284,11 +241,11 @@ namespace Core
         json["logLimit"] = _logLimit;
         json["filter"] = _filterBuf;
         json["filterLevels"] = nlohmann::json::array();
-        for (auto [level, value] : _levelFilter)
+        for (auto [level, button] : _levelFilter)
         {
             nlohmann::json tmp;
             tmp["level"] = std::string(spdlog::level::to_string_view(level).data());
-            tmp["value"] = value;
+            tmp["value"] = button->isActive();
             json["filterLevels"].push_back(std::move(tmp));
         }
 
@@ -315,7 +272,10 @@ namespace Core
                 }
 
                 auto level = spdlog::level::from_str(filter["level"].get<std::string>());
-                _levelFilter[level] = filter["value"].get<bool>();
+                if (Verify(_levelFilter[level]))
+                {
+                    _levelFilter[level]->setActive(filter["value"].get<bool>());
+                }
             }
         }
     }

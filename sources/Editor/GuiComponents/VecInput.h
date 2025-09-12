@@ -137,7 +137,7 @@ namespace Core::Gui
             _children.clear();
 
             setFlex(Flex::FlexWidth);
-            setHorizontalAlign(Align::SpaceBetween);
+            setHorizontalAlign(Align::Left);
             for (std::size_t i = 0; i < Size; ++i)
             {
                 auto* hLayout = addChildComponent<HorizontalLayout>();
