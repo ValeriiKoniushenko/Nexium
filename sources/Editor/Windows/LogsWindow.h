@@ -94,7 +94,6 @@ namespace Core
                 { spdlog::level::level_enum::trace, Config::ColorGrey } };
 
         std::size_t _logLimit = 500;
-        bool _isAutoScroll = true;
         float _betweenLogsSpace = 0.f;
         float _lastLogAreaHeight = 100.f;
 
@@ -102,6 +101,7 @@ namespace Core
         float _lastScrollMaxY = 0.f;
         float _lastScrollPercent = 0.f;
 
+        bool _needScroll = false;
         std::vector<LogLine> _logs;
     };
 } // namespace Core

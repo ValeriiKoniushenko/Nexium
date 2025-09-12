@@ -87,6 +87,14 @@ namespace Core
             {
                 clearLogs();
             });
+        _autoScrollButton->onToggle.subscribe(
+            [this](auto, bool newState)
+            {
+                if (newState)
+                {
+                    _needScroll = true;
+                }
+            });
 
         tryReadFromCache();
     }
@@ -109,6 +117,12 @@ namespace Core
     void LogsWindowEWC::fetchLogs()
     {
         auto& q = LogQueue::instance();
+
+        if (!q.isEmpty() && (_autoScrollButton && _autoScrollButton->isActive()))
+        {
+            _needScroll = true;
+        }
+
         while (!q.isEmpty())
         {
             auto qLog = q.frontAndPop();
@@ -171,6 +185,23 @@ namespace Core
             {
                 _lastScrollPercent = 0.0f;
             }
+
+            const bool atBottom = ImGui::GetScrollY() >= ImGui::GetScrollMaxY() - 5.0f;
+            if (atBottom && !_autoScrollButton->isActive())
+            {
+                _autoScrollButton->setActive(true);
+            }
+
+            if (_needScroll || (_autoScrollButton->isActive() && atBottom))
+            {
+                ImGui::SetScrollHereY(1.0f);
+                _needScroll = false;
+            }
+            else if (ImGui::IsWindowHovered(ImGuiHoveredFlags_ChildWindows)
+                     && ImGui::GetIO().MouseWheel != 0.0f)
+            {
+                _autoScrollButton->setActive(false);
+            }
         }
         ImGui::EndChild();
     }
@@ -200,11 +231,6 @@ namespace Core
 
     void LogsWindowEWC::detectManualScroll()
     {
-        if (ImGui::IsWindowHovered(ImGuiHoveredFlags_ChildWindows)
-            && ImGui::GetIO().MouseWheel != 0.0f)
-        {
-            _isAutoScroll = false;
-        }
     }
 
     LogsWindowEWC::~LogsWindowEWC()
