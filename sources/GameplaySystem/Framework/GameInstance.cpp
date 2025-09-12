@@ -114,14 +114,6 @@ namespace Core
         fps.start();
         FStopwatch clock;
 
-        Repeater r;
-        r.setRepeatTime(2.);
-        r.setCallback(
-            [this](double)
-            {
-                infoLog("Hello");
-            });
-
         glClearColor(0.45f, 0.55f, 0.60f, 1.00f);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
@@ -133,7 +125,6 @@ namespace Core
         {
             clock.start();
             _window->pollEvent();
-            r.startOrUpdate();
 
             if (const auto* wnd = gameEditor.getWindow<GameViewportEWC>(); wnd && wnd->isFocused())
             {

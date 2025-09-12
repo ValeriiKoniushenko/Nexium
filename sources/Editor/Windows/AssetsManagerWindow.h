@@ -59,14 +59,14 @@ namespace Core
         };
 
     protected:
-        std::unordered_map<NodeType, Texture> _nodeTypesData;
+        inline static std::unordered_map<NodeType, Texture> _nodeTypesData;
+
         CacheNode _rootCacheNode;
         StringAtom _filterBuf;
         std::filesystem::path _openedPath = assetsPath;
         int _commonTreeFlags = ImGuiTreeNodeFlags_OpenOnDoubleClick;
         glm::vec2 _thumbnailSize = glm::vec2(70, 70);
         bool _renderFilesInTreeView = false;
-        float _defaultGap = 4.f;
 
     private:
         void drawExplorerTree();

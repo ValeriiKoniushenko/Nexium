@@ -48,25 +48,25 @@ namespace Core
     {
         BaseFloatEWC::onInitialize();
 
-        const static std::unordered_map<NodeType, std::filesystem::path> paths
-            = { { NodeType::Default, "assets/images/document.png" },
-                { NodeType::Code, "assets/images/code_document.png" },
-                { NodeType::Image, "assets/images/image_document.png" },
-                { NodeType::Folder, "assets/images/folder.png" } };
-
-        for (auto&& [type, path] : paths)
+        static bool _ = []()
         {
-            Texture tmp;
-            if (tmp.loadFromFile(path, false))
+            std::unordered_map<NodeType, std::filesystem::path> paths
+                = { { NodeType::Default, "assets/images/document.png" },
+                    { NodeType::Code, "assets/images/code_document.png" },
+                    { NodeType::Image, "assets/images/image_document.png" },
+                    { NodeType::Folder, "assets/images/folder.png" } };
+
+            for (auto&& [type, path] : paths)
             {
-                _nodeTypesData.emplace(type, tmp);
+                Texture tmp;
+                if (tmp.loadFromFile(path, false))
+                {
+                    _nodeTypesData.emplace(type, tmp);
+                }
             }
-        }
 
-        _filterBuf.resize(1024);
-
-        auto& style = ImGui::GetStyle();
-        _defaultGap = style.ItemSpacing.x;
+            return true;
+        }();
 
         refresh();
     }
@@ -85,21 +85,32 @@ namespace Core
 
     void AssetsManagerWindowEWC::drawExplorerTree()
     {
+        const auto defaultSpace = ImGui::GetStyle().ItemSpacing;
         if (ImGui::BeginChild("Explorer tree", glm::vec2(200.0f, 0), ImGuiChildFlags_ResizeX))
         {
-            ImGui::Dummy({}); // extra padding
+            ImGui::Dummy(defaultSpace);
+            ImGui::Indent(defaultSpace.x);
+
             bool isSelected = false;
             drawOneLevel(_rootCacheNode, isSelected);
             ImGui::Dummy({}); // extra padding
+
+            ImGui::Unindent(defaultSpace.x);
+            ImGui::Dummy(defaultSpace);
         }
         ImGui::EndChild();
     }
 
     void AssetsManagerWindowEWC::drawExplorer()
     {
+        const auto defaultSpace = ImGui::GetStyle().ItemSpacing;
+
         if (ImGui::BeginChild("Explorer"))
         {
             drawExplorerToolbar();
+
+            ImGui::Dummy(defaultSpace);
+            ImGui::Indent(defaultSpace.x);
 
             auto& style = ImGui::GetStyle();
             const float oneThumbnailWidth
@@ -124,13 +135,14 @@ namespace Core
                 const auto& path = entry.path();
                 const auto fileFormat = getNodeType(entry);
 
-                if (!_filterBuf.isEmpty() && _filterBuf[0] != '\0' && !std::isspace(_filterBuf[0]))
-                {
-                    if (!StringAtom(path.filename().generic_string()).regexFind(_filterBuf))
-                    {
-                        continue;
-                    }
-                }
+                // if (!_filterBuf.isEmpty() && _filterBuf[0] != '\0' &&
+                // !std::isspace(_filterBuf[0]))
+                // {
+                //     if (!StringAtom(path.filename().generic_string()).regexFind(_filterBuf))
+                //     {
+                //         continue;
+                //     }
+                // }
 
                 drawFileThumbnail(_nodeTypesData[fileFormat].getTextureId(), entry, _thumbnailSize);
                 if (maxCountPerWidth != 0 && i % maxCountPerWidth != 0)
@@ -141,6 +153,9 @@ namespace Core
             }
 
             ImGui::PopStyleVar();
+
+            ImGui::Unindent(defaultSpace.x);
+            ImGui::Dummy(defaultSpace);
         }
         ImGui::EndChild();
     }
@@ -186,15 +201,16 @@ namespace Core
                 }
             }
 
-            // bool isSub = IsSubpath(_openedPath, node.path);
-            // ImGui::SetNextItemOpen(isSub);
             const bool isOpened = ImGui::TreeNodeEx(filename.c_str(), flags);
+
+            // Check for LMB click to check content
             if (node.type == NodeType::Folder && ImGui::IsItemHovered()
-                && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+                && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
             {
                 _openedPath = node.path;
                 isSelected = true;
             }
+
             if (isOpened)
             {
                 if (node.type == NodeType::Folder)
@@ -400,25 +416,6 @@ namespace Core
 
     void AssetsManagerWindowEWC::drawExplorerToolbar()
     {
-        float const rowHeight = ImGui::GetFrameHeightWithSpacing();
-        if (ImGui::BeginChild("ExplorerTopBar", glm::vec2(0, rowHeight)))
-        {
-            ImGui::Dummy(glm::vec2(0, 0));
-
-            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, glm::vec2(0, 0));
-
-            // =============== Input ====================
-            ImGui::Dummy(glm::vec2(_defaultGap, 0));
-            ImGui::SameLine();
-            float const width = ImGui::GetContentRegionAvail().x - _defaultGap;
-            ImGui::SetNextItemWidth(width);
-            ImGui::InputTextWithHint("##ExplorerFilter", "Regex filter...", _filterBuf.data(),
-                                     _filterBuf.size() + 1);
-            ImGui::SameLine(0, _defaultGap * 3.f);
-
-            ImGui::PopStyleVar();
-        }
-        ImGui::EndChild();
     }
 
 } // namespace Core
