@@ -71,81 +71,24 @@ namespace Core
     {
         setupImGuiStyles();
 
-        ImGuiIO& io = ImGui::GetIO();
-        io.IniFilename = "configs/windows.ini";
-        io.ConfigFlags |= defaultIoConfigFlagImGui;
-
-        if (std::filesystem::exists(defaultImGuiFontPath))
-        {
-            ImFont* font = io.Fonts->AddFontFromFileTTF(
-                defaultImGuiFontPath.generic_string().c_str(), defaultImGuiFontSize);
-            if (font)
-            {
-                ImGui::PushFont(font);
-            }
-            else
-            {
-                errorLog("Main font wasn't loaded by internal reasons. Font: "
-                         + defaultImGuiFontPath.generic_string());
-            }
-        }
-        else
-        {
-            errorLog("Main font wasn't loaded. Will be used default one. File not found: "
-                     + defaultImGuiFontPath.generic_string());
-            io.Fonts->AddFontDefault();
-        }
-
-        if (std::filesystem::exists(emojiImGuiFontPath))
-        {
-            ImFontConfig config;
-            config.MergeMode = true;
-            config.PixelSnapH = true; // often helps with icons
-            static const ImWchar icon_ranges[]
-                = { ICON_MIN_FA, ICON_MAX_FA, 0 }; // Font Awesome range
-            const ImFont* font = io.Fonts->AddFontFromFileTTF(
-                emojiImGuiFontPath.generic_string().c_str(),
-                defaultImGuiFontSize * emojiImGuiFontScale, &config, icon_ranges);
-            if (font)
-            {
-                // io.Fonts->Build();
-            }
-            else
-            {
-                errorLog("Emoji wasn't loaded by internal reasons. Font: "
-                         + emojiImGuiFontPath.generic_string());
-            }
-        }
-        else
-        {
-            errorLog("Emoji wasn't loaded. File not found: " + emojiImGuiFontPath.generic_string());
-        }
-
-        setupImGuiStyles();
-
         ImGui_ImplGlfw_InitForOpenGL(GetWindow().getRawWindow(), true);
         ImGui_ImplOpenGL3_Init(GetGlslVersionShaderLike().c_str());
         _isInitImGui = true;
 
-        auto menuBar = registerNewWindow<EditorMenuBarWindowEWC>("Menu Bar"_atom);
-        auto rootDocker = registerNewWindow<RootDockWindowEWC>("Root dock space"_atom);
-        auto viewportWindow
-            = registerNewWindow<GameViewportEWC>(ICON_FA_VIDEO_CAMERA + " Viewport"_atom);
-        auto logsWindow = registerNewWindow<LogsWindowEWC>(ICON_FA_ALIGN_LEFT + " Logs"_atom);
-        auto actorPropertiesWindow
-            = registerNewWindow<ObjectPropertiesWindowEWC>(ICON_FA_COG + " Object Properties"_atom);
-        auto sceneTreeWindow = registerNewWindow<SceneTreeWindowEWC>(ICON_FA_CUBES + " Scene"_atom);
-        auto assetsManagerWindowWindow
-            = registerNewWindow<AssetsManagerWindowEWC>(ICON_FA_FOLDER + " Assets"_atom);
+        registerNewWindow<EditorMenuBarWindowEWC>("Menu Bar"_atom);
+        registerNewWindow<RootDockWindowEWC>("Root dock space"_atom);
+        registerNewWindow<LogsWindowEWC>("Logs"_atom);
+        registerNewWindow<ObjectPropertiesWindowEWC>("Object Properties"_atom);
+        registerNewWindow<SceneTreeWindowEWC>("Scene"_atom);
+        registerNewWindow<AssetsManagerWindowEWC>("Assets"_atom);
+        registerNewWindow<EditorSettingsEWC>("Settings"_atom, false);
+        registerNewWindow<TextEditorEWC>("Text editor"_atom, false);
+        registerNewWindow<ImageViewerEWC>("Image viewer"_atom, false);
+        registerNewWindow<ShaderManagerEWC>("Shader manager"_atom);
 
-        auto settingsWindow = registerNewWindow<EditorSettingsEWC>("Settings"_atom, false);
-        auto textEditor = registerNewWindow<TextEditorEWC>("Text editor"_atom, false);
-        auto imageEditor = registerNewWindow<ImageViewerEWC>("Image viewer"_atom, false);
-        auto shaderManager = registerNewWindow<ShaderManagerEWC>("Shader manager"_atom);
-
-        viewportWindow->onSizeChanged.subscribe(
-            [](auto outer, auto inner)
-            {
+        registerNewWindow<GameViewportEWC>("Viewport"_atom)
+            ->onSizeChanged.subscribe(
+                [](auto outer, auto inner)
                 {
                     if (gGameInstance->renderMode.cast() == GameInstance::RenderMode::Editor)
                     {
@@ -153,8 +96,7 @@ namespace Core
                             static_cast<ISize2>(inner));
                         gGameInstance->updateViewport();
                     }
-                }
-            });
+                });
 
         setupShortcuts();
     }
@@ -191,6 +133,52 @@ namespace Core
 
     void GameEditor::setupImGuiStyles()
     {
+        ImGuiIO& io = ImGui::GetIO();
+        io.IniFilename = "configs/windows.ini";
+        io.ConfigFlags |= defaultIoConfigFlagImGui;
+
+        if (std::filesystem::exists(defaultImGuiFontPath))
+        {
+            ImFont* font = io.Fonts->AddFontFromFileTTF(
+                defaultImGuiFontPath.generic_string().c_str(), defaultImGuiFontSize);
+            if (font)
+            {
+                ImGui::PushFont(font);
+            }
+            else
+            {
+                errorLog("Main font wasn't loaded by internal reasons. Font: "
+                         + defaultImGuiFontPath.generic_string());
+            }
+        }
+        else
+        {
+            errorLog("Main font wasn't loaded. Will be used default one. File not found: "
+                     + defaultImGuiFontPath.generic_string());
+            io.Fonts->AddFontDefault();
+        }
+
+        if (std::filesystem::exists(emojiImGuiFontPath))
+        {
+            ImFontConfig config;
+            config.MergeMode = true;
+            config.PixelSnapH = true; // often helps with icons
+            static constexpr ImWchar iconRanges[]
+                = { ICON_MIN_FA, ICON_MAX_FA, 0 }; // Font Awesome range
+            const ImFont* font = io.Fonts->AddFontFromFileTTF(
+                emojiImGuiFontPath.generic_string().c_str(),
+                defaultImGuiFontSize * emojiImGuiFontScale, &config, iconRanges);
+            if (!font)
+            {
+                errorLog("Emoji wasn't loaded by internal reasons. Font: "
+                         + emojiImGuiFontPath.generic_string());
+            }
+        }
+        else
+        {
+            errorLog("Emoji wasn't loaded. File not found: " + emojiImGuiFontPath.generic_string());
+        }
+
         ImGuiStyle* style = &ImGui::GetStyle();
         if (!Verify(style))
         {
@@ -205,94 +193,61 @@ namespace Core
             return;
         }
 
-        // Base colors for a pleasant and modern dark theme with dark accents
-        colors[ImGuiCol_Text]
-            = glm::vec4(0.92f, 0.93f, 0.94f, 1.00f); // Light grey text for readability
-        colors[ImGuiCol_TextDisabled]
-            = glm::vec4(0.56f, 0.60f, 0.56f, 1.00f); // Subtle grey for disabled text
-        colors[ImGuiCol_WindowBg]
-            = glm::vec4(0.14f, 0.14f, 0.16f, 1.00f); // Dark background with a hint of blue
-        colors[ImGuiCol_ChildBg]
-            = glm::vec4(0.16f, 0.16f, 0.18f, 1.00f); // Slightly lighter for child elements
-        colors[ImGuiCol_PopupBg] = glm::vec4(0.18f, 0.18f, 0.20f, 1.00f);      // Popup background
-        colors[ImGuiCol_Border] = glm::vec4(0.28f, 0.29f, 0.30f, 0.60f);       // Soft border color
-        colors[ImGuiCol_BorderShadow] = glm::vec4(0.00f, 0.00f, 0.00f, 0.00f); // No border shadow
-        colors[ImGuiCol_FrameBg] = glm::vec4(0.20f, 0.22f, 0.24f, 1.00f);      // Frame background
-        colors[ImGuiCol_FrameBgHovered]
-            = glm::vec4(0.22f, 0.24f, 0.26f, 1.00f); // Frame hover effect
-        colors[ImGuiCol_FrameBgActive]
-            = glm::vec4(0.24f, 0.26f, 0.28f, 1.00f);                      // Active frame background
-        colors[ImGuiCol_TitleBg] = glm::vec4(0.14f, 0.14f, 0.16f, 1.00f); // Title background
-        colors[ImGuiCol_TitleBgActive]
-            = glm::vec4(0.16f, 0.16f, 0.18f, 1.00f); // Active title background
-        colors[ImGuiCol_TitleBgCollapsed]
-            = glm::vec4(0.14f, 0.14f, 0.16f, 1.00f); // Collapsed title background
-        colors[ImGuiCol_MenuBarBg] = glm::vec4(0.20f, 0.20f, 0.22f, 1.00f); // Menu bar background
-        colors[ImGuiCol_ScrollbarBg]
-            = glm::vec4(0.16f, 0.16f, 0.18f, 1.00f); // Scrollbar background
-        colors[ImGuiCol_ScrollbarGrab]
-            = glm::vec4(0.24f, 0.26f, 0.28f, 1.00f); // Dark accent for scrollbar grab
-        colors[ImGuiCol_ScrollbarGrabHovered]
-            = glm::vec4(0.28f, 0.30f, 0.32f, 1.00f); // Scrollbar grab hover
-        colors[ImGuiCol_ScrollbarGrabActive]
-            = glm::vec4(0.32f, 0.34f, 0.36f, 1.00f);                        // Scrollbar grab active
-        colors[ImGuiCol_CheckMark] = glm::vec4(0.46f, 0.56f, 0.66f, 1.00f); // Dark blue checkmark
-        colors[ImGuiCol_SliderGrab]
-            = glm::vec4(0.36f, 0.46f, 0.56f, 1.00f); // Dark blue slider grab
-        colors[ImGuiCol_SliderGrabActive]
-            = glm::vec4(0.40f, 0.50f, 0.60f, 1.00f);                     // Active slider grab
-        colors[ImGuiCol_Button] = glm::vec4(0.24f, 0.34f, 0.44f, 1.00f); // Dark blue button
-        colors[ImGuiCol_ButtonHovered]
-            = glm::vec4(0.28f, 0.38f, 0.48f, 1.00f); // Button hover effect
-        colors[ImGuiCol_ButtonActive] = glm::vec4(0.32f, 0.42f, 0.52f, 1.00f); // Active button
-        colors[ImGuiCol_Header]
-            = glm::vec4(0.24f, 0.34f, 0.44f, 1.00f); // Header color similar to button
-        colors[ImGuiCol_HeaderHovered]
-            = glm::vec4(0.28f, 0.38f, 0.48f, 1.00f); // Header hover effect
-        colors[ImGuiCol_HeaderActive] = glm::vec4(0.32f, 0.42f, 0.52f, 1.00f); // Active header
-        colors[ImGuiCol_Separator] = glm::vec4(0.28f, 0.29f, 0.30f, 1.00f);    // Separator color
-        colors[ImGuiCol_SeparatorHovered]
-            = glm::vec4(0.46f, 0.56f, 0.66f, 1.00f); // Hover effect for separator
-        colors[ImGuiCol_SeparatorActive]
-            = glm::vec4(0.46f, 0.56f, 0.66f, 1.00f);                         // Active separator
-        colors[ImGuiCol_ResizeGrip] = glm::vec4(0.36f, 0.46f, 0.56f, 1.00f); // Resize grip
-        colors[ImGuiCol_ResizeGripHovered]
-            = glm::vec4(0.40f, 0.50f, 0.60f, 1.00f); // Hover effect for resize grip
-        colors[ImGuiCol_ResizeGripActive]
-            = glm::vec4(0.44f, 0.54f, 0.64f, 1.00f);                         // Active resize grip
-        colors[ImGuiCol_Tab] = glm::vec4(0.20f, 0.22f, 0.24f, 1.00f);        // Inactive tab
-        colors[ImGuiCol_TabHovered] = glm::vec4(0.28f, 0.38f, 0.48f, 1.00f); // Hover effect for tab
-        colors[ImGuiCol_TabActive] = glm::vec4(0.24f, 0.34f, 0.44f, 1.00f);  // Active tab color
-        colors[ImGuiCol_TabUnfocused] = glm::vec4(0.20f, 0.22f, 0.24f, 1.00f); // Unfocused tab
-        colors[ImGuiCol_TabUnfocusedActive]
-            = glm::vec4(0.24f, 0.34f, 0.44f, 1.00f); // Active but unfocused tab
-        colors[ImGuiCol_PlotLines] = glm::vec4(0.46f, 0.56f, 0.66f, 1.00f); // Plot lines
-        colors[ImGuiCol_PlotLinesHovered]
-            = glm::vec4(0.46f, 0.56f, 0.66f, 1.00f); // Hover effect for plot lines
-        colors[ImGuiCol_PlotHistogram] = glm::vec4(0.36f, 0.46f, 0.56f, 1.00f); // Histogram color
-        colors[ImGuiCol_PlotHistogramHovered]
-            = glm::vec4(0.40f, 0.50f, 0.60f, 1.00f); // Hover effect for histogram
-        colors[ImGuiCol_TableHeaderBg]
-            = glm::vec4(0.20f, 0.22f, 0.24f, 1.00f); // Table header background
-        colors[ImGuiCol_TableBorderStrong]
-            = glm::vec4(0.28f, 0.29f, 0.30f, 1.00f); // Strong border for tables
-        colors[ImGuiCol_TableBorderLight]
-            = glm::vec4(0.24f, 0.25f, 0.26f, 1.00f); // Light border for tables
-        colors[ImGuiCol_TableRowBg] = glm::vec4(0.20f, 0.22f, 0.24f, 1.00f); // Table row background
-        colors[ImGuiCol_TableRowBgAlt]
-            = glm::vec4(0.22f, 0.24f, 0.26f, 1.00f); // Alternate row background
-        colors[ImGuiCol_TextSelectedBg]
-            = glm::vec4(0.24f, 0.34f, 0.44f, 0.35f); // Selected text background
-        colors[ImGuiCol_DragDropTarget]
-            = glm::vec4(0.46f, 0.56f, 0.66f, 0.90f); // Drag and drop target
-        colors[ImGuiCol_NavHighlight]
-            = glm::vec4(0.46f, 0.56f, 0.66f, 1.00f); // Navigation highlight
-        colors[ImGuiCol_NavWindowingHighlight]
-            = glm::vec4(1.00f, 1.00f, 1.00f, 0.70f); // Windowing highlight
-        colors[ImGuiCol_NavWindowingDimBg]
-            = glm::vec4(0.80f, 0.80f, 0.80f, 0.20f); // Dim background for windowing
-        colors[ImGuiCol_ModalWindowDimBg]
-            = glm::vec4(0.80f, 0.80f, 0.80f, 0.35f); // Dim background for modal windows
+        // clang-format off
+        colors[ImGuiCol_Text]                  = Color4(234, 237, 239, 255).toNorm(); // Light grey text for readability
+        colors[ImGuiCol_TextDisabled]          = Color4(142, 153, 142, 255).toNorm(); // Subtle grey for disabled text
+        colors[ImGuiCol_WindowBg]              = Color4(35, 35, 40, 255).toNorm(); // Dark background with a hint of blue
+        colors[ImGuiCol_ChildBg]               = Color4(40, 40, 45, 255).toNorm(); // Slightly lighter for child elements
+        colors[ImGuiCol_PopupBg]               = Color4(45, 45, 51, 255).toNorm(); // Popup background
+        colors[ImGuiCol_Border]                = Color4(71, 73, 76, 153).toNorm(); // Soft border color
+        colors[ImGuiCol_BorderShadow]          = Color4(0, 0, 0, 0).toNorm(); // No border shadow
+        colors[ImGuiCol_FrameBg]               = Color4(51, 56, 61, 255).toNorm(); // Frame background
+        colors[ImGuiCol_FrameBgHovered]        = Color4(56, 61, 66, 255).toNorm(); // Frame hover effect
+        colors[ImGuiCol_FrameBgActive]         = Color4(61, 66, 71, 255).toNorm(); // Active frame background
+        colors[ImGuiCol_TitleBg]               = Color4(35, 35, 40, 255).toNorm(); // Title background
+        colors[ImGuiCol_TitleBgActive]         = Color4(40, 40, 45, 255).toNorm(); // Active title background
+        colors[ImGuiCol_TitleBgCollapsed]      = Color4(35, 35, 40, 255).toNorm(); // Collapsed title background
+        colors[ImGuiCol_MenuBarBg]             = Color4(51, 51, 56, 255).toNorm(); // Menu bar background
+        colors[ImGuiCol_ScrollbarBg]           = Color4(40, 40, 45, 255).toNorm(); // Scrollbar background
+        colors[ImGuiCol_ScrollbarGrab]         = Color4(61, 66, 71, 255).toNorm(); // Dark accent for scrollbar grab
+        colors[ImGuiCol_ScrollbarGrabHovered]  = Color4(71, 76, 81, 255).toNorm(); // Scrollbar grab hover
+        colors[ImGuiCol_ScrollbarGrabActive]   = Color4(81, 86, 91, 255).toNorm(); // Scrollbar grab active
+        colors[ImGuiCol_CheckMark]             = Color4(117, 142, 168, 255).toNorm(); // Dark blue checkmark
+        colors[ImGuiCol_SliderGrab]            = Color4(91, 117, 142, 255).toNorm(); // Dark blue slider grab
+        colors[ImGuiCol_SliderGrabActive]      = Color4(102, 127, 153, 255).toNorm(); // Active slider grab
+        colors[ImGuiCol_Button]                = Color4(61, 86, 112, 255).toNorm(); // Dark blue button
+        colors[ImGuiCol_ButtonHovered]         = Color4(71, 96, 122, 255).toNorm(); // Button hover effect
+        colors[ImGuiCol_ButtonActive]          = Color4(81, 107, 132, 255).toNorm(); // Active button
+        colors[ImGuiCol_Header]                = Color4(61, 86, 112, 255).toNorm(); // Header color similar to button
+        colors[ImGuiCol_HeaderHovered]         = Color4(71, 96, 122, 255).toNorm(); // Header hover effect
+        colors[ImGuiCol_HeaderActive]          = Color4(81, 107, 132, 255).toNorm(); // Active header
+        colors[ImGuiCol_Separator]             = Color4(71, 73, 76, 255).toNorm(); // Separator color
+        colors[ImGuiCol_SeparatorHovered]      = Color4(117, 142, 168, 255).toNorm(); // Hover effect for separator
+        colors[ImGuiCol_SeparatorActive]       = Color4(117, 142, 168, 255).toNorm(); // Active separator
+        colors[ImGuiCol_ResizeGrip]            = Color4(91, 117, 142, 255).toNorm(); // Resize grip
+        colors[ImGuiCol_ResizeGripHovered]     = Color4(102, 127, 153, 255).toNorm(); // Hover effect for resize grip
+        colors[ImGuiCol_ResizeGripActive]      = Color4(112, 137, 163, 255).toNorm(); // Active resize grip
+        colors[ImGuiCol_Tab]                   = Color4(51, 56, 61, 255).toNorm(); // Inactive tab
+        colors[ImGuiCol_TabHovered]            = Color4(71, 96, 122, 255).toNorm(); // Hover effect for tab
+        colors[ImGuiCol_TabActive]             = Color4(61, 86, 112, 255).toNorm(); // Active tab color
+        colors[ImGuiCol_TabUnfocused]          = Color4(51, 56, 61, 255).toNorm(); // Unfocused tab
+        colors[ImGuiCol_TabUnfocusedActive]    = Color4(61, 86, 112, 255).toNorm(); // Active but unfocused tab
+        colors[ImGuiCol_PlotLines]             = Color4(117, 142, 168, 255).toNorm(); // Plot lines
+        colors[ImGuiCol_PlotLinesHovered]      = Color4(117, 142, 168, 255).toNorm(); // Hover effect for plot lines
+        colors[ImGuiCol_PlotHistogram]         = Color4(91, 117, 142, 255).toNorm(); // Histogram color
+        colors[ImGuiCol_PlotHistogramHovered]  = Color4(102, 127, 153, 255).toNorm(); // Hover effect for histogram
+        colors[ImGuiCol_TableHeaderBg]         = Color4(51, 56, 61, 255).toNorm(); // Table header background
+        colors[ImGuiCol_TableBorderStrong]     = Color4(71, 73, 76, 255).toNorm(); // Strong border for tables
+        colors[ImGuiCol_TableBorderLight]      = Color4(61, 63, 66, 255).toNorm(); // Light border for tables
+        colors[ImGuiCol_TableRowBg]            = Color4(51, 56, 61, 255).toNorm(); // Table row background
+        colors[ImGuiCol_TableRowBgAlt]         = Color4(56, 61, 66, 255).toNorm(); // Alternate row background
+        colors[ImGuiCol_TextSelectedBg]        = Color4(61, 86, 112, 89).toNorm(); // Selected text background
+        colors[ImGuiCol_DragDropTarget]        = Color4(117, 142, 168, 229).toNorm(); // Drag and drop target
+        colors[ImGuiCol_NavHighlight]          = Color4(117, 142, 168, 255).toNorm(); // Navigation highlight
+        colors[ImGuiCol_NavWindowingHighlight] = Color4(255, 255, 255, 178).toNorm(); // Windowing highlight
+        colors[ImGuiCol_NavWindowingDimBg]     = Color4(204, 204, 204, 51).toNorm(); // Dim background for windowing
+        colors[ImGuiCol_ModalWindowDimBg]      = Color4(204, 204, 204, 89).toNorm(); // Dim background for modal windows
+        // clang-format on
 
         // Style adjustments
         style->WindowPadding = glm::vec2(8.00f, 8.00f);

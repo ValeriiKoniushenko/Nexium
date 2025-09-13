@@ -96,14 +96,14 @@ namespace Core
             {
                 ImGui::SameLine(ImGui::GetWindowWidth()
                                 - (ImGui::CalcTextSize(ICON_FA_TIMES_CIRCLE).x + _statusMarginRight)
-                                - ImGui::GetStyle().ItemSpacing.x);
+                                - ImGui::GetStyle().ItemSpacing.x - 10.f);
                 ImGui::TextUnformatted(ICON_FA_TIMES_CIRCLE);
             }
             else
             {
                 ImGui::SameLine(ImGui::GetWindowWidth()
                                 - (ImGui::CalcTextSize(ICON_FA_CHECK_CIRCLE).x + _statusMarginRight)
-                                - ImGui::GetStyle().ItemSpacing.x);
+                                - ImGui::GetStyle().ItemSpacing.x - 10.f);
                 ImGui::TextUnformatted(ICON_FA_CHECK_CIRCLE);
             }
 

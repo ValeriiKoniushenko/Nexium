@@ -68,18 +68,23 @@ namespace Core
          * @tparam T Type of the editor window component.
          * @param name Optional name for the window.
          * @param isEnabled Whether the window is enabled initially.
-         * @return Shared pointer to the newly registered window.
+         * @return Shared a pointer to the newly registered window.
          */
         template<IsEditorWindowComponent T>
-        [[nodiscard]] T::Ptr registerNewWindow(const StringAtom& name = ""_atom,
-                                               bool isEnabled = true)
+        T::Ptr registerNewWindow(StringAtom name, bool isEnabled = true)
         {
+            if (!Verify(!!name))
+            {
+                return nullptr;
+            }
+
             auto& a = _windows.emplace_back(new T);
             a->initialize();
-            if (name)
+            if (a->getIcon())
             {
-                a->setComponentName(name);
+                name = a->getIcon() + (" " + name);
             }
+            a->setComponentName(std::move(name));
             a->setEnabled(isEnabled);
             return boost::static_pointer_cast<T>(a);
         }
@@ -87,7 +92,7 @@ namespace Core
         /**
          * @brief Find a window by type and optional name regex.
          * @tparam WindowT Type of window to search for (default is BaseEWC).
-         * @param regexName Regular expression to match window title.
+         * @param regexName Regular expression to match the window title.
          * @return Pointer to the first matching window or nullptr if none found.
          */
         template<IsEditorWindowComponentOrBase WindowT = BaseEWC>

@@ -232,7 +232,7 @@ namespace Core::Gui
                     });
             }
 
-            auto* addButton = buttonsHolder->template addChildComponent<Button>("Add new item");
+            auto* addButton = buttonsHolder->template addChildComponent<Button>("Add");
             addButton->setFlex(Flex::FlexWidth);
             if (_isReadOnly)
             {

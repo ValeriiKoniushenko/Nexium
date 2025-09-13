@@ -49,6 +49,8 @@ namespace Core
         void addLog(StringAtom&& log, spdlog::level::level_enum level);
         void clearLogs();
 
+        [[nodiscard]] const char* getIcon() override { return ICON_FA_ALIGN_LEFT; }
+
     protected:
         std::filesystem::path getCacheDir() const override;
         StringAtom getCacheHash() const override;

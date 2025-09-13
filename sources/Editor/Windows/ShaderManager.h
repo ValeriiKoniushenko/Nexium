@@ -45,6 +45,8 @@ namespace Core
         ECS_COMPONENT_DECL(ShaderManagerEWC, BaseFloatEWC);
 
     public:
+        [[nodiscard]] const char* getIcon() override { return ICON_FA_COGS; }
+
     protected:
         void createGui();
         void onInitialize() override;

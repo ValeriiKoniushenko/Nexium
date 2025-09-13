@@ -29,9 +29,23 @@
 #include "Editor/Windows/ObjectPropertiesWindow.h"
 #include "Editor/Windows/SceneTreeWindow.h"
 #include "GameplaySystem/Framework/GameInstance.h"
+#include "ImageViewer.h"
 #include "Misc/IconsFontAwesome.h"
 #include "ShaderManager.h"
 #include "TextEditor.h"
+
+namespace
+{
+    template<Core::IsEditorWindowComponent T>
+    void WindowMenuItem()
+    {
+        if (ImGui::MenuItem(gGameInstance->gameEditor.getWindow<T>()->getComponentName().c_str()))
+        {
+            gGameInstance->gameEditor.showWindow<T>();
+        }
+    }
+
+} // namespace
 
 namespace Core
 {
@@ -58,13 +72,10 @@ namespace Core
     {
         if (ImGui::BeginMenu("File"))
         {
-            if (ImGui::MenuItem("Open"))
+            if (ImGui::MenuItem(ICON_FA_FLOPPY_O " Save all"))
             {
             }
-            if (ImGui::MenuItem("Save"))
-            {
-            }
-            if (ImGui::MenuItem("Settings"))
+            if (ImGui::MenuItem(ICON_FA_COG " Settings"))
             {
                 gGameInstance->gameEditor.showWindow<EditorSettingsEWC>();
             }
@@ -73,34 +84,15 @@ namespace Core
 
         if (ImGui::BeginMenu("Windows"))
         {
-            if (ImGui::MenuItem("Viewport"))
-            {
-                gGameInstance->gameEditor.showWindow<GameViewportEWC>();
-            }
-            if (ImGui::MenuItem("Logs"))
-            {
-                gGameInstance->gameEditor.showWindow<LogsWindowEWC>();
-            }
-            if (ImGui::MenuItem("Object properties"))
-            {
-                gGameInstance->gameEditor.showWindow<ObjectPropertiesWindowEWC>();
-            }
-            if (ImGui::MenuItem("Scene"))
-            {
-                gGameInstance->gameEditor.showWindow<SceneTreeWindowEWC>();
-            }
-            if (ImGui::MenuItem("Assets manager"))
-            {
-                gGameInstance->gameEditor.showWindow<AssetsManagerWindowEWC>();
-            }
-            if (ImGui::MenuItem("Text editor"))
-            {
-                gGameInstance->gameEditor.showWindow<TextEditorEWC>();
-            }
-            if (ImGui::MenuItem("Shader manager"))
-            {
-                gGameInstance->gameEditor.showWindow<ShaderManagerEWC>();
-            }
+            WindowMenuItem<GameViewportEWC>();
+            WindowMenuItem<LogsWindowEWC>();
+            WindowMenuItem<ObjectPropertiesWindowEWC>();
+            WindowMenuItem<SceneTreeWindowEWC>();
+            WindowMenuItem<AssetsManagerWindowEWC>();
+            WindowMenuItem<ShaderManagerEWC>();
+            ImGui::Separator();
+            WindowMenuItem<TextEditorEWC>();
+            WindowMenuItem<ImageViewerEWC>();
 
             ImGui::EndMenu();
         }

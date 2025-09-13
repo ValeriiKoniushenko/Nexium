@@ -38,6 +38,8 @@ namespace Core
         void setScene(Scene* scene) { _scene = scene; }
         [[nodiscard]] Scene* getScene() const noexcept { return _scene; }
 
+        [[nodiscard]] const char* getIcon() override { return ICON_FA_GLOBE; }
+
     public:
         BaseComponent* selectedObject = nullptr;
 

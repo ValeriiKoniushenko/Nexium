@@ -288,14 +288,13 @@ namespace Core
 
     void BaseComponent::setComponentName(const StringAtom& name)
     {
-        if (name.isEmpty()) [[unlikely]]
-        {
-            // Assert(false);
-            // errorLog("Was passed empty name to the component.");
-            return;
-        }
-
         _name = name;
+        _name.shrink_to_fit();
+    }
+
+    void BaseComponent::setComponentName(StringAtom&& name)
+    {
+        _name = std::move(name);
         _name.shrink_to_fit();
     }
 

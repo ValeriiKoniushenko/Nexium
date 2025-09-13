@@ -43,6 +43,8 @@ namespace Core
         void tryOpenParentDir();
         void tryOpenPath(const std::filesystem::path& p);
 
+        [[nodiscard]] const char* getIcon() override { return ICON_FA_FOLDER; }
+
     protected:
         void onInitialize() override;
         void onDraw() override;

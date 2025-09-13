@@ -36,15 +36,17 @@ namespace Core
 
         void putArguments(const StringAtom& args) override;
 
+        [[nodiscard]] const char* getIcon() override { return ICON_FA_PICTURE_O; }
+
     protected:
         void onInitialize() override;
         void onUpdate() override;
         void onDraw() override;
 
     protected:
-        std::string _path;
         Texture _image;
-        float _zoom = 1.0f;
+        std::string _path;
         glm::vec2 _offset = {};
+        float _zoom = 1.0f;
     };
 } // namespace Core

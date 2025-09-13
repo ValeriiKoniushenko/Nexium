@@ -24,6 +24,7 @@
 
 #include "Core/Delegate.h"
 #include "GameplaySystem/ECS/BaseComponent.h"
+#include "Misc/IconsFontAwesome.h"
 #include "Misc/ImGuiHelper.h"
 
 namespace Core
@@ -38,6 +39,8 @@ namespace Core
     public:
         [[nodiscard]] const StringAtom& getWindowTitle() { return getComponentName(); }
         virtual void putArguments(const StringAtom& args) {}
+
+        [[nodiscard]] virtual const char* getIcon() { return nullptr; }
 
     protected:
         void onTick(float delta) final;

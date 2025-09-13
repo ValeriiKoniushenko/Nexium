@@ -243,6 +243,7 @@ namespace Core
             _disabledTicks = out.getLastChildAs<HLayout>()->getLastChildAs<CheckBox>().get();
 
             out.attachChild(::CreateEx<StringArray>("Children", true));
+            out.getLastChildAs<HLayout>()->setVerticalAlign(Widget::Align::Top);
             _childrenList = out.getLastChildAs<HLayout>()->getLastChildAs<StringArray>().get();
             _childrenList->setReadOnly(true);
         }

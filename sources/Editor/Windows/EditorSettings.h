@@ -33,6 +33,8 @@ namespace Core
         ECS_COMPONENT_DECL(EditorSettingsEWC, BaseFloatEWC);
 
     public:
+        [[nodiscard]] const char* getIcon() override { return ICON_FA_COG; }
+
     protected:
         void onInitialize() override;
         void onDraw() override;

@@ -68,7 +68,6 @@ namespace Core
             _zoom = std::max(0.1f, _zoom + ImGui::GetIO().MouseWheel * 0.1f);
         }
 
-        // Middle mouse drag to pan
         if (ImGui::IsWindowHovered() && ImGui::IsMouseDragging(ImGuiMouseButton_Right))
         {
             const auto drag = ImGui::GetMouseDragDelta(ImGuiMouseButton_Middle);

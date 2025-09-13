@@ -120,6 +120,7 @@ namespace Core
     public:
         void setTargetObject(AbstractComponent* actor);
         void resetTargetObject();
+        [[nodiscard]] const char* getIcon() override { return ICON_FA_EXCLAMATION_CIRCLE; }
 
     protected:
         void onInitialize() override;

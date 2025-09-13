@@ -527,6 +527,7 @@ namespace Core
 
         // ========================== WORKING WITH NAME ==========================
         void setComponentName(const StringAtom& name);
+        void setComponentName(StringAtom&& name);
         [[nodiscard]] const StringAtom& getComponentName() const noexcept { return _name; }
         [[nodiscard]] const StringAtom& getComponentType() const noexcept { return _type; }
 
