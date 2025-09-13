@@ -23,6 +23,7 @@
 #pragma once
 
 #include "Core/Color.h"
+#include "Core/Size.h"
 #include "ImGui/imgui.h"
 
 #include <filesystem>
@@ -60,5 +61,9 @@ namespace Core::Config
 
     static constexpr int defaultEditorImGuiFlags
         = ImGuiConfigFlags_NavEnableKeyboard | ImGuiConfigFlags_DockingEnable;
+
+    inline static const char* spdlogPattern = "%D [%L] [%n] %v";
+    inline static const char* defaultWindowName = "Nexium Engine";
+    static constexpr ISize2 defaultWindowSize = ISize2{ 1200, 800 };
 
 } // namespace Core::Config

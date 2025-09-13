@@ -57,11 +57,11 @@ namespace Core
         spdlog::set_level(spdlog::level::trace);
 #endif
         std::cout << std::fixed << std::setprecision(15);
-        spdlog::set_pattern(_spdlogDefaultPatter.toStdString());
+        spdlog::set_pattern(Config::spdlogPattern);
 
         //-------------------- WINDOW ---------------------
         _window = &GetWindow();
-        _window->create(_defaultWindowName, _defaultWindowSize);
+        _window->create(Config::defaultWindowName, Config::defaultWindowSize);
         _window->onResize.subscribe(
             [this](ISize2 newSize)
             {

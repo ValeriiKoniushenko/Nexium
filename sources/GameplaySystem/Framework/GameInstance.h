@@ -77,11 +77,6 @@ namespace Core
     protected:
         Window* _window = nullptr;
 
-        // Pre-launch settings TODO: MOVE IT!!!
-        StringAtom _spdlogDefaultPatter = "%D [%L] [%n] %v";
-        StringAtom _defaultWindowName = "Nexium";
-        ISize2 _defaultWindowSize = ISize2{ 1200, 800 };
-
     private:
         void loadCoreResources();
         void gameLoop();

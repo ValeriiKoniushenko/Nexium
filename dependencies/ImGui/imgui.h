@@ -2364,7 +2364,6 @@ enum ImGuiTreeNodeFlags_
                                                  // table (label will still fit in current column)
     ImGuiTreeNodeFlags_LabelSpanAllColumns
         = 1 << 15, // Label will span all columns of its container table
-    // ImGuiTreeNodeFlags_NoScrollOnOpen     = 1 << 16,  // FIXME: TODO: Disable automatic scroll on
     // TreePop() if node got just open and contents is not visible
     ImGuiTreeNodeFlags_NavLeftJumpsToParent
         = 1 << 17, // Nav: left arrow moves back to parent. This is processed in TreePop() when
@@ -2585,8 +2584,6 @@ enum ImGuiHoveredFlags_
     ImGuiHoveredFlags_AllowWhenBlockedByPopup
         = 1 << 5, // Return true even if a popup window is normally blocking access to this
                   // item/window
-    // ImGuiHoveredFlags_AllowWhenBlockedByModal     = 1 << 6,   // Return true even if a modal
-    // popup window is normally blocking access to this item/window. FIXME-TODO: Unavailable yet.
     ImGuiHoveredFlags_AllowWhenBlockedByActiveItem
         = 1 << 7, // Return true even if an active item is blocking access to this item/window.
                   // Useful for Drag and Drop patterns.

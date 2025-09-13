@@ -796,7 +796,6 @@ void ImDrawList::PrimQuadUV(glm::vec2 a, glm::vec2 b, glm::vec2 c, glm::vec2 d, 
 #define IM_FIXNORMAL2F_MAX_INVLEN2          100.0f // 500.0f (see #4053, #3366)
 #define IM_FIXNORMAL2F(VX,VY)               { float d2 = VX*VX + VY*VY; if (d2 > 0.000001f) { float inv_len2 = 1.0f / d2; if (inv_len2 > IM_FIXNORMAL2F_MAX_INVLEN2) inv_len2 = IM_FIXNORMAL2F_MAX_INVLEN2; VX *= inv_len2; VY *= inv_len2; } } (void)0
 
-// TODO: Thickness anti-aliased lines cap are missing their AA fringe.
 // We avoid using the glm::vec2 math operators here to reduce cost to a minimum for debug/non-inlined builds.
 void ImDrawList::AddPolyline(const glm::vec2* points, const int points_count, ImU32 col, ImDrawFlags flags, float thickness)
 {
