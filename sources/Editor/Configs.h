@@ -23,9 +23,14 @@
 #pragma once
 
 #include "Core/Color.h"
+#include "ImGui/imgui.h"
+
+#include <filesystem>
 
 namespace Core::Config
 {
+
+    // Default color pallet
     static constexpr auto ColorRed = Color4(255, 25, 25, 255);
     static constexpr auto ColorGreen = Color4(25, 255, 25, 255);
     static constexpr auto ColorSoftGreen = Color4(25, 204, 25, 204);
@@ -35,5 +40,25 @@ namespace Core::Config
     static constexpr auto ColorYellow = Color4(255, 255, 25, 255);
     static constexpr auto ColorHalfYellow = Color4(204, 102, 25, 255);
     static constexpr auto ColorBlue = Color4(25, 25, 255, 255);
+
+    namespace Path
+    {
+
+        inline static std::filesystem::path assets = "assets";
+        inline static std::filesystem::path fonts = assets / "fonts";
+        inline static std::filesystem::path shaders = assets / "shaders";
+        inline static std::filesystem::path images = assets / "images";
+        inline static std::filesystem::path objects3d = assets / "objects-3d";
+
+        inline static std::filesystem::path editorFont = fonts / "JetBrainsMono-Regular.ttf";
+        inline static std::filesystem::path fontAwesome = fonts / "fontawesome-webfont.ttf";
+
+    } // namespace Path
+
+    static constexpr float defaultEditorFontSize = 16.f;
+    static constexpr float defaultEmojiScale = 0.8f;
+
+    static constexpr int defaultEditorImGuiFlags
+        = ImGuiConfigFlags_NavEnableKeyboard | ImGuiConfigFlags_DockingEnable;
 
 } // namespace Core::Config

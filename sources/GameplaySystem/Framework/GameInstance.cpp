@@ -69,7 +69,7 @@ namespace Core
             });
 
         //-------------------- SHADER MANAGER ---------------------
-        shaderManager.loadShaders(_shaderPath);
+        shaderManager.loadShaders(Config::Path::shaders);
         shaderManager.debugLog("Was loaded {} shaders."_f << shaderManager.countOfShaders());
         for (const auto& notLoadedShader : shaderManager.getFailedShaders())
         {

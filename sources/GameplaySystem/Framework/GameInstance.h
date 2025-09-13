@@ -78,8 +78,6 @@ namespace Core
         Window* _window = nullptr;
 
         // Pre-launch settings TODO: MOVE IT!!!
-        std::filesystem::path _assetsPath = "assets";
-        std::filesystem::path _shaderPath = "assets/shaders";
         StringAtom _spdlogDefaultPatter = "%D [%L] [%n] %v";
         StringAtom _defaultWindowName = "Nexium";
         ISize2 _defaultWindowSize = ISize2{ 1200, 800 };

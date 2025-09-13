@@ -50,8 +50,8 @@ void TemplateGameInstance::onFinishWriteCache()
 
 void TemplateGameInstance::onInitializeFinish()
 {
-    std::vector<std::filesystem::path> modelPaths
-        = { "assets/base-3d/Models/FBX/Tree.fbx", "assets/base-3d/Models/FBX/FireHydrant.fbx" };
+    std::vector modelPaths = { Config::Path::objects3d / "Models/FBX/Tree.fbx",
+                               Config::Path::objects3d / "Models/FBX/FireHydrant.fbx" };
 
     Assimp::Importer importer;
     for (auto&& path : modelPaths)

@@ -99,10 +99,10 @@ namespace Core
             using NodeType = AssetsManager::NodeType;
 
             std::unordered_map<NodeType, std::filesystem::path> paths
-                = { { NodeType::Default, "assets/images/document.png" },
-                    { NodeType::Code, "assets/images/code_document.png" },
-                    { NodeType::Image, "assets/images/image_document.png" },
-                    { NodeType::Folder, "assets/images/folder.png" } };
+                = { { NodeType::Default, Config::Path::images / "document.png" },
+                    { NodeType::Code, Config::Path::images / "code_document.png" },
+                    { NodeType::Image, Config::Path::images / "image_document.png" },
+                    { NodeType::Folder, Config::Path::images / "folder.png" } };
 
             for (auto&& [type, path] : paths)
             {
@@ -155,7 +155,7 @@ namespace Core
                 }
             });
 
-        openPath(assetsPath);
+        openPath(Config::Path::assets);
 
         refresh();
     }
@@ -319,7 +319,7 @@ namespace Core
                 }
                 if (ImGui::MenuItem("To root"))
                 {
-                    openPath(assetsPath);
+                    openPath(Config::Path::assets);
                 }
 
                 ImGui::EndPopup();
@@ -571,7 +571,7 @@ namespace Core
     {
         _rootCacheNode = {};
 
-        _rootCacheNode.path = assetsPath;
+        _rootCacheNode.path = Config::Path::assets;
         rescanPhysicalDrive(_rootCacheNode);
     }
 

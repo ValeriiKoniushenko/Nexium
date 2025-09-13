@@ -37,9 +37,6 @@ namespace Core
         ECS_COMPONENT_DECL(AssetsManagerWindowEWC, BaseFloatEWC);
 
     public:
-        // Pre-launch settings TODO: MOVE IT!!!
-        std::filesystem::path assetsPath = "assets";
-
         void tryOpenParentDir();
         void tryOpenPath(const std::filesystem::path& p);
 

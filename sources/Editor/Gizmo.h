@@ -22,6 +22,7 @@
 
 #pragma once
 
+#include "Configs.h"
 #include "Core/Delegate.h"
 #include "GameplaySystem/Framework/Actor.h"
 #include "Graphics/Primitives/StaticMeshBundle.h"
@@ -37,9 +38,6 @@ namespace Core
         ECS_COMPONENT_DECL(Gizmo, StaticMeshBundle);
 
     public:
-        inline static const std::filesystem::path defaultModelPath
-            = "assets/base-3d/Models/FBX/gizmo.fbx";
-
         enum class Direction
         {
             X,

@@ -71,6 +71,8 @@ namespace Core
 
     void Gizmo::load3DModel()
     {
+        const auto defaultModelPath = Config::Path::objects3d / "Models/FBX/gizmo.fbx";
+
         static Assimp::Importer importer;
         static const aiScene* scene
             = importer.ReadFile(defaultModelPath.generic_string().c_str(),

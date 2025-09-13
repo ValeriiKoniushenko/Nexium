@@ -135,12 +135,12 @@ namespace Core
     {
         ImGuiIO& io = ImGui::GetIO();
         io.IniFilename = "configs/windows.ini";
-        io.ConfigFlags |= defaultIoConfigFlagImGui;
+        io.ConfigFlags |= Config::defaultEditorImGuiFlags;
 
-        if (std::filesystem::exists(defaultImGuiFontPath))
+        if (std::filesystem::exists(Config::Path::editorFont))
         {
             ImFont* font = io.Fonts->AddFontFromFileTTF(
-                defaultImGuiFontPath.generic_string().c_str(), defaultImGuiFontSize);
+                Config::Path::editorFont.generic_string().c_str(), Config::defaultEditorFontSize);
             if (font)
             {
                 ImGui::PushFont(font);
@@ -148,17 +148,17 @@ namespace Core
             else
             {
                 errorLog("Main font wasn't loaded by internal reasons. Font: "
-                         + defaultImGuiFontPath.generic_string());
+                         + Config::Path::editorFont.generic_string());
             }
         }
         else
         {
             errorLog("Main font wasn't loaded. Will be used default one. File not found: "
-                     + defaultImGuiFontPath.generic_string());
+                     + Config::Path::editorFont.generic_string());
             io.Fonts->AddFontDefault();
         }
 
-        if (std::filesystem::exists(emojiImGuiFontPath))
+        if (std::filesystem::exists(Config::Path::fontAwesome))
         {
             ImFontConfig config;
             config.MergeMode = true;
@@ -166,17 +166,18 @@ namespace Core
             static constexpr ImWchar iconRanges[]
                 = { ICON_MIN_FA, ICON_MAX_FA, 0 }; // Font Awesome range
             const ImFont* font = io.Fonts->AddFontFromFileTTF(
-                emojiImGuiFontPath.generic_string().c_str(),
-                defaultImGuiFontSize * emojiImGuiFontScale, &config, iconRanges);
+                Config::Path::fontAwesome.generic_string().c_str(),
+                Config::defaultEditorFontSize * Config::defaultEmojiScale, &config, iconRanges);
             if (!font)
             {
                 errorLog("Emoji wasn't loaded by internal reasons. Font: "
-                         + emojiImGuiFontPath.generic_string());
+                         + Config::Path::fontAwesome.generic_string());
             }
         }
         else
         {
-            errorLog("Emoji wasn't loaded. File not found: " + emojiImGuiFontPath.generic_string());
+            errorLog("Emoji wasn't loaded. File not found: "
+                     + Config::Path::fontAwesome.generic_string());
         }
 
         ImGuiStyle* style = &ImGui::GetStyle();
