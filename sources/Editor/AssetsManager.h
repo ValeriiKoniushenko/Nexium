@@ -20,32 +20,31 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "Texture.h"
+#pragma once
 
-#include "Image.h"
+#include <filesystem>
 
 namespace Core
 {
 
-    bool Texture::loadFromFile(const std::filesystem::path& path, bool isFlipVertically)
+    /**
+     * @brief this class is a bridge between GameEditor & Assets. It can help you to manage,
+     * view and edit some assets using Editor's tools.
+     */
+    class AssetsManager
     {
-        Image img;
-        if (!img.loadFromFile(path, isFlipVertically))
+    public:
+        enum class NodeType
         {
-            return false;
-        }
+            Default,
+            Code,
+            Image,
+            Folder
+        };
 
-        _size = img.getSize();
+        static void tryToOpenFile(const std::filesystem::directory_entry& path);
 
-        glGenTextures(1, &_textureId);
-        glBindTexture(GL_TEXTURE_2D, _textureId);
+        [[nodiscard]] static NodeType getNodeType(const std::filesystem::directory_entry& entry);
+    };
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img.getSize().width, img.getSize().height, 0,
-                     img.getChannelAsOpenGLType(), GL_UNSIGNED_BYTE, img.data());
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-        return true;
-    }
 } // namespace Core

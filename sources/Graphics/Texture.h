@@ -36,8 +36,13 @@ namespace Core
 
         [[nodiscard]] GLuint getTextureId() noexcept { return _textureId; }
 
+        [[nodiscard]] ISize2 getSize() const noexcept { return _size; }
+
+        [[nodiscard]] bool isValid() const noexcept { return _textureId != 0; }
+
     private:
         GLuint _textureId = 0;
+        ISize2 _size;
     };
 
 } // namespace Core

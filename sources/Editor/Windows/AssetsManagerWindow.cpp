@@ -96,6 +96,8 @@ namespace Core
 
         static bool _ = []()
         {
+            using NodeType = AssetsManager::NodeType;
+
             std::unordered_map<NodeType, std::filesystem::path> paths
                 = { { NodeType::Default, "assets/images/document.png" },
                     { NodeType::Code, "assets/images/code_document.png" },
@@ -297,7 +299,7 @@ namespace Core
             const auto availX = ImGui::GetContentRegionAvail().x - padding * 2.f;
 
             const int maxCountPerWidth
-                = static_cast<int>(availX / (_thumbnailSize.x + defaultSpace.x)) - 1;
+                = static_cast<int>(availX / (_thumbnailSize.x + defaultSpace.x * 2.f));
 
             if (ImGui::BeginPopupContextWindow("ExplorerContextMenu",
                                                ImGuiPopupFlags_MouseButtonRight
@@ -330,7 +332,7 @@ namespace Core
             for (auto&& entry : std::filesystem::directory_iterator(_openedPath))
             {
                 const auto& path = entry.path();
-                const auto fileFormat = getNodeType(entry);
+                const auto fileFormat = AssetsManager::getNodeType(entry);
 
                 if (isFiltered(path))
                 {
@@ -359,6 +361,8 @@ namespace Core
             int flags = _commonTreeFlags;
             std::string filename = node.path.filename().generic_string();
 
+            using NodeType = AssetsManager::NodeType;
+
             if (node.type != NodeType::Folder)
             {
                 if (!_renderFilesInTreeView)
@@ -377,20 +381,18 @@ namespace Core
                 filename = icon + (" " + filename);
                 flags |= ImGuiTreeNodeFlags_Leaf;
             }
-            else
+
+            filename = ICON_FA_FOLDER + (" " + filename);
+
+            auto atLeastOneFolder = std::ranges::any_of(node.children,
+                                                        [](const CacheNode& n)
+                                                        {
+                                                            return n.type == NodeType::Folder;
+                                                        });
+
+            if (!atLeastOneFolder)
             {
-                filename = ICON_FA_FOLDER + (" " + filename);
-
-                auto atLeastOneFolder = std::ranges::any_of(node.children,
-                                                            [](const CacheNode& n)
-                                                            {
-                                                                return n.type == NodeType::Folder;
-                                                            });
-
-                if (!atLeastOneFolder)
-                {
-                    flags |= ImGuiTreeNodeFlags_Leaf;
-                }
+                flags |= ImGuiTreeNodeFlags_Leaf;
             }
 
             const bool isOpened = ImGui::TreeNodeEx(filename.c_str(), flags);
@@ -413,82 +415,6 @@ namespace Core
                 ImGui::TreePop();
             }
         }
-    }
-
-    AssetsManagerWindowEWC::NodeType AssetsManagerWindowEWC::getNodeType(
-        const std::filesystem::directory_entry& entry)
-    {
-        if (entry.is_directory())
-        {
-            return NodeType::Folder;
-        }
-
-        if (!entry.is_regular_file())
-        {
-            return NodeType::Default;
-        }
-
-        auto ext = entry.path().extension().generic_string();
-        // clang-format off
-        if (ext == ".cpp"   ||
-            ext == ".cc"    ||
-            ext == ".cxx"   ||
-            ext == ".C"     ||
-            ext == ".c"     ||
-            ext == ".hpp"   ||
-            ext == ".hh"    ||
-            ext == ".hxx"   ||
-            ext == ".H"     ||
-            ext == ".h"     ||
-            ext == ".inl"   ||
-            ext == ".ipp"   ||
-            ext == ".pch"   ||
-            ext == ".gch"   ||
-            ext == ".lib"   ||
-            ext == ".so"    ||
-            ext == ".dll"   ||
-            ext == ".cs"    ||
-            ext == ".py"    ||
-            ext == ".pyc"   ||
-            ext == ".pyo"   ||
-            ext == ".whl"   ||
-            ext == ".pyi"   ||
-            ext == ".vert"  ||
-            ext == ".vs"    ||
-            ext == ".frag"  ||
-            ext == ".fs"    ||
-            ext == ".geom"  ||
-            ext == ".gs"    ||
-            ext == ".tesc"  ||
-            ext == ".tese"  ||
-            ext == ".comp"  ||
-            ext == ".glsl"  ||
-            ext == ".hlsl"  ||
-            ext == ".fx"    ||
-            ext == ".metal" ||
-            ext == ".spv"   ||
-            ext == ".cmake" ||
-            ext == ".pro"   ||
-            ext == ".pri"   ||
-            ext == ".json"  ||
-            ext == ".xml"   ||
-            ext == ".yml"   ||
-            ext == ".yaml"  ||
-            ext == ".ini"   ||
-            ext == ".toml") return NodeType::Code;
-
-        if (ext == ".jpg"   ||
-            ext == ".jpeg"  ||
-            ext == ".png"   ||
-            ext == ".bmp"   ||
-            ext == ".tga"   ||
-            ext == ".psd"   ||
-            ext == ".gif"   ||
-            ext == ".hdr"   ||
-            ext == ".pic") return NodeType::Image;
-        // clang-format on
-
-        return NodeType::Default;
     }
 
     void AssetsManagerWindowEWC::drawFileThumbnail(ImTextureID texture,
@@ -604,10 +530,9 @@ namespace Core
             {
                 openPath(path);
             }
-            else if (entry.is_regular_file() && getNodeType(entry) == NodeType::Code)
+            else if (entry.is_regular_file())
             {
-                gGameInstance->gameEditor.showWindow<TextEditorEWC>(".*",
-                                                                    path.generic_string().data());
+                AssetsManager::tryToOpenFile(entry);
             }
         }
 
@@ -628,14 +553,14 @@ namespace Core
                 continue;
             }
 
-            const auto nodeType = getNodeType(entry);
+            const auto nodeType = AssetsManager::getNodeType(entry);
 
             CacheNode tmp;
             tmp.path = entry.path();
             tmp.type = nodeType;
             node.children.push_back(std::move(tmp));
 
-            if (nodeType == NodeType::Folder)
+            if (nodeType == AssetsManager::NodeType::Folder)
             {
                 rescanPhysicalDrive(node.children.back());
             }

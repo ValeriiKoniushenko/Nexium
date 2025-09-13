@@ -20,32 +20,31 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "Texture.h"
+#pragma once
 
-#include "Image.h"
+#include "BaseWindow.h"
+#include "Graphics/Texture.h"
 
 namespace Core
 {
-
-    bool Texture::loadFromFile(const std::filesystem::path& path, bool isFlipVertically)
+    class ImageViewerEWC : public BaseFloatEWC
     {
-        Image img;
-        if (!img.loadFromFile(path, isFlipVertically))
-        {
-            return false;
-        }
+        ECS_COMPONENT_DECL(ImageViewerEWC, BaseFloatEWC);
 
-        _size = img.getSize();
+    public:
+        void openImageFromFile(const std::filesystem::path& path);
 
-        glGenTextures(1, &_textureId);
-        glBindTexture(GL_TEXTURE_2D, _textureId);
+        void putArguments(const StringAtom& args) override;
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img.getSize().width, img.getSize().height, 0,
-                     img.getChannelAsOpenGLType(), GL_UNSIGNED_BYTE, img.data());
+    protected:
+        void onInitialize() override;
+        void onUpdate() override;
+        void onDraw() override;
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-        return true;
-    }
+    protected:
+        std::string _path;
+        Texture _image;
+        float _zoom = 1.0f;
+        glm::vec2 _offset = {};
+    };
 } // namespace Core

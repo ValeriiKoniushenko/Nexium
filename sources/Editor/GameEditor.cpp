@@ -36,6 +36,7 @@
 #include "ImGui/backends/imgui_impl_glfw.h"
 #include "ImGui/backends/imgui_impl_opengl3.h"
 #include "Misc/IconsFontAwesome.h"
+#include "Windows/ImageViewer.h"
 
 using namespace Core;
 
@@ -139,6 +140,7 @@ namespace Core
 
         auto settingsWindow = registerNewWindow<EditorSettingsEWC>("Settings"_atom, false);
         auto textEditor = registerNewWindow<TextEditorEWC>("Text editor"_atom, false);
+        auto imageEditor = registerNewWindow<ImageViewerEWC>("Image viewer"_atom, false);
         auto shaderManager = registerNewWindow<ShaderManagerEWC>("Shader manager"_atom);
 
         viewportWindow->onSizeChanged.subscribe(

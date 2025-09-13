@@ -115,9 +115,9 @@ namespace Core
 
         /**
          * @brief Show and enable a window matching the type and regex name.
-         * Optionally pass string arguments to the window.
+         * Optionally, pass string arguments to the window.
          * @tparam WindowT Type of window to show (default is BaseEWC).
-         * @param regexName Regular expression to match window title.
+         * @param regexName Regular expression to match the window title.
          * @param args Optional arguments to pass to the window.
          */
         template<IsEditorWindowComponentOrBase WindowT = BaseEWC>
@@ -131,7 +131,7 @@ namespace Core
         }
 
         /**
-         * @brief Totally destroy the object. Will called automatically at the destructor.
+         * @brief Totally destroy the object. Will call automatically at the destructor.
          */
         void destroy();
 

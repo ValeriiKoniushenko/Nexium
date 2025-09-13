@@ -23,6 +23,7 @@
 #pragma once
 
 #include "BaseWindow.h"
+#include "Editor/AssetsManager.h"
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
@@ -34,15 +35,6 @@ namespace Core
     class AssetsManagerWindowEWC : public BaseFloatEWC
     {
         ECS_COMPONENT_DECL(AssetsManagerWindowEWC, BaseFloatEWC);
-
-    public:
-        enum class NodeType
-        {
-            Default,
-            Code,
-            Image,
-            Folder
-        };
 
     public:
         // Pre-launch settings TODO: MOVE IT!!!
@@ -66,13 +58,13 @@ namespace Core
     protected:
         struct CacheNode
         {
-            NodeType type = NodeType::Default;
+            AssetsManager::NodeType type = AssetsManager::NodeType::Default;
             std::filesystem::path path;
             std::vector<CacheNode> children;
         };
 
     protected:
-        inline static std::unordered_map<NodeType, Texture> _nodeTypesData;
+        inline static std::unordered_map<AssetsManager::NodeType, Texture> _nodeTypesData;
 
         Gui::HorizontalLayout _toolbarLayout;
         Gui::Button* _refreshButton = nullptr;
@@ -97,8 +89,6 @@ namespace Core
                                glm::vec2 size);
         void rescanPhysicalDrive(CacheNode& node);
         void refresh();
-
-        [[nodiscard]] NodeType getNodeType(const std::filesystem::directory_entry& entry);
 
     private:
         std::filesystem::path _openedPath;

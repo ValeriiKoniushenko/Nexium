@@ -79,6 +79,7 @@ namespace Core
         levelHolder->setFlex(Gui::Widget::Flex::Fixed);
 
         _searchInput->setFlex(Gui::Widget::Flex::FlexWidth);
+        _searchInput->setPlaceholder("Filter...");
         _toolbar.setFlex(Gui::Widget::Flex::FlexWidth);
 
         // Events
