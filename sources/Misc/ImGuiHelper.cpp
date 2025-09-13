@@ -29,11 +29,21 @@
 
 namespace Core
 {
+
+    bool InputText(const StringAtom& label, std::string& value, float size, int flags)
+    {
+        ImGui::PushItemWidth(size);
+        const auto out = ImGui::InputText(("##" + label).c_str(), &value, flags);
+        ImGui::PopItemWidth();
+        return out;
+    }
+
+#if 0
     void FixedLabel(const char* label, float size)
     {
-#if defined(DEBUG)
+    #if defined(DEBUG)
         Assert(ImGui::CalcTextSize(label).x < size);
-#endif
+    #endif
         ImGui::TextUnformatted(label);
         ImGui::SameLine(0, 0);
         ImGui::Dummy(glm::vec2(size - ImGui::CalcTextSize(label).x, 0));
@@ -101,14 +111,6 @@ namespace Core
         }
     }
 
-    bool InputText(const StringAtom& label, std::string& value, float size, int flags)
-    {
-        ImGui::PushItemWidth(size);
-        const auto out = ImGui::InputText(("##" + label).c_str(), &value, flags);
-        ImGui::PopItemWidth();
-        return out;
-    }
-
     void LabelAndInputFloat(const StringAtom& label, float& value, float labelSize, float fullSize,
                             float step, float min, float max, const char* format)
     {
@@ -157,5 +159,7 @@ namespace Core
 
         return isPressed;
     }
+
+#endif
 
 } // namespace Core

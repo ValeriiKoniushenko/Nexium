@@ -32,9 +32,12 @@
 namespace Core
 {
 
+    // Deprecated too, but still some modules use it
+    bool InputText(const StringAtom& label, std::string& value, float size, int flags = 0);
+
+#if 0 // Deprecated
     void FixedLabel(const char* label, float size);
     void InputTextRO(StringAtom value, float size);
-    bool InputText(const StringAtom& label, std::string& value, float size, int flags = 0);
 
     void LabelAndInputTextRO(StringAtom label, StringAtom value, float labelSize, float fullSize);
 
@@ -168,5 +171,6 @@ namespace Core
     using Vec4Control = VecControl<4>;
     using Vec3Control = VecControl<3>;
     using Vec2Control = VecControl<2>;
+#endif
 
 } // namespace Core
