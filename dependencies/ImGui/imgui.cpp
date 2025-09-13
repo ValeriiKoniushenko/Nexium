@@ -26,26 +26,6 @@
  CONTROLS GUIDE
  ==============
 
- - MOUSE CONTROLS
-   - Mouse wheel:                   Scroll vertically.
-   - SHIFT+Mouse wheel:             Scroll horizontally.
-   - Click [X]:                     Close a window, available when 'bool* p_open' is passed to ImGui::Begin().
-   - Click ^, Double-Click title:   Collapse window.
-   - Drag on corner/border:         Resize window (double-click to auto fit window to its contents).
-   - Drag on any empty space:       Move window (unless io.ConfigWindowsMoveFromTitleBarOnly = true).
-   - Left-click outside popup:      Close popup stack (right-click over underlying popup: Partially close popup stack).
-
- - TEXT EDITOR
-   - Hold SHIFT or Drag Mouse:      Select text.
-   - CTRL+Left/Right:               Word jump.
-   - CTRL+Shift+Left/Right:         Select words.
-   - CTRL+A or Double-Click:        Select All.
-   - CTRL+X, CTRL+C, CTRL+V:        Use OS clipboard.
-   - CTRL+Z                         Undo.
-   - CTRL+Y or CTRL+Shift+Z:        Redo.
-   - ESCAPE:                        Revert text to its original value.
-   - On OSX, controls are automatically adjusted to match standard OSX text editing 2ts and behaviors.
-
  - KEYBOARD CONTROLS
    - Basic:
      - Tab, SHIFT+Tab               Cycle through text editable fields.

@@ -29,53 +29,16 @@
 // - Test Engine & Automation ... https://github.com/ocornut/imgui_test_engine (test suite, test
 // engine to automate your apps)
 
-// For first-time users having issues compiling/linking/running/loading fonts:
-// please post in https://github.com/ocornut/imgui/discussions if you cannot find a solution in
-// resources above. Everything else should be asked in 'Issues'! We are building a database of
-// cross-linked knowledge there.
-
 // Library Version
 // (Integer encoded as XYYZZ for use in #if preprocessor conditionals, e.g. '#if IMGUI_VERSION_NUM
 // >= 12345')
 
 #define IMGUI_VERSION      "1.92.2 WIP"
 #define IMGUI_VERSION_NUM  19213
-#define IMGUI_HAS_TABLE    // Added BeginTable() - from IMGUI_VERSION_NUM >= 18000
-#define IMGUI_HAS_TEXTURES // Added ImGuiBackendFlags_RendererHasTextures - from IMGUI_VERSION_NUM
-                           // >= 19198
-#define IMGUI_HAS_VIEWPORT // In 'docking' WIP branch.
-#define IMGUI_HAS_DOCK     // In 'docking' WIP branch.
-
-/*
-
-Index of this file:
-// [SECTION] Header mess
-// [SECTION] Forward declarations and basic types
-// [SECTION] Texture identifiers (ImTextureID, ImTextureRef)
-// [SECTION] Dear ImGui end-user API functions
-// [SECTION] Flags & Enumerations
-// [SECTION] Tables API flags and structures (ImGuiTableFlags, ImGuiTableColumnFlags,
-ImGuiTableRowFlags, ImGuiTableBgTarget, ImGuiTableSortSpecs, ImGuiTableColumnSortSpecs)
-// [SECTION] Helpers: Debug log, Memory allocations macros, ImVector<>
-// [SECTION] ImGuiStyle
-// [SECTION] ImGuiIO
-// [SECTION] Misc data structures (ImGuiInputTextCallbackData, ImGuiSizeCallbackData,
-ImGuiWindowClass, ImGuiPayload)
-// [SECTION] Helpers (ImGuiOnceUponAFrame, ImGuiTextFilter, ImGuiTextBuffer, ImGuiStorage,
-ImGuiListClipper, Math Operators, ImColor)
-// [SECTION] Multi-Select API flags and structures (ImGuiMultiSelectFlags, ImGuiMultiSelectIO,
-ImGuiSelectionRequest, ImGuiSelectionBasicStorage, ImGuiSelectionExternalStorage)
-// [SECTION] Drawing API (ImDrawCallback, ImDrawCmd, ImDrawIdx, ImDrawVert, ImDrawChannel,
-ImDrawListSplitter, ImDrawFlags, ImDrawListFlags, ImDrawList, ImDrawData)
-// [SECTION] Texture API (ImTextureFormat, ImTextureStatus, ImTextureRect, ImTextureData)
-// [SECTION] Font API (ImFontConfig, ImFontGlyph, ImFontGlyphRangesBuilder, ImFontAtlasFlags,
-ImFontAtlas, ImFontBaked, ImFont)
-// [SECTION] Viewports (ImGuiViewportFlags, ImGuiViewport)
-// [SECTION] ImGuiPlatformIO + other Platform Dependent Interfaces (ImGuiPlatformMonitor,
-ImGuiPlatformImeData)
-// [SECTION] Obsolete functions and types
-
-*/
+#define IMGUI_HAS_TABLE
+#define IMGUI_HAS_TEXTURES
+#define IMGUI_HAS_VIEWPORT
+#define IMGUI_HAS_DOCK
 
 #pragma once
 
