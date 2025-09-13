@@ -40,7 +40,7 @@ namespace Core
             {
             }
 
-            std::string message;
+            std::string message = "";
         };
 
     public:
@@ -50,7 +50,7 @@ namespace Core
         virtual void fromJson(const nlohmann::json& json, bool isIgnoreChildren) = 0;
 
         template<class T>
-        [[nodiscard]] T requireAs(const nlohmann::json& json, const char* key)
+        [[nodiscard]] T requireAs(const char* key, const nlohmann::json& json)
         {
             if (!json.contains(key))
             {
@@ -61,7 +61,7 @@ namespace Core
         }
 
         template<class T>
-        [[nodiscard]] T tryGetAs(const nlohmann::json& json, const char* key)
+        [[nodiscard]] T tryReadJsonAs(const char* key, const nlohmann::json& json)
         {
             if (json.contains(key))
             {
@@ -69,6 +69,16 @@ namespace Core
             }
 
             return {};
+        }
+
+        template<class T>
+            requires(!std::derived_from<T, JsonAdapter>)
+        void tryReadJsonTo(T& out, const char* key, const nlohmann::json& json)
+        {
+            if (json.contains(key))
+            {
+                out = json[key].get<T>();
+            }
         }
     };
 

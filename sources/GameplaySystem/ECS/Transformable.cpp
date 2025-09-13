@@ -212,22 +212,10 @@ namespace Core
 
     void Transformable::fromJson(const nlohmann::json& json, bool isIgnoreChildren /* = false*/)
     {
-        if (json.contains("position"))
-        {
-            _position = json["position"];
-        }
-        if (json.contains("origin"))
-        {
-            _origin = json["origin"];
-        }
-        if (json.contains("rotation"))
-        {
-            _rotation = json["rotation"];
-        }
-        if (json.contains("scale"))
-        {
-            _scale = json["scale"];
-        }
+        tryReadJsonTo(_position, "position", json);
+        tryReadJsonTo(_origin, "origin", json);
+        tryReadJsonTo(_rotation, "rotation", json);
+        tryReadJsonTo(_scale, "scale", json);
 
         _isDirtyModelMatrix = true;
         onDirtyMatrix();

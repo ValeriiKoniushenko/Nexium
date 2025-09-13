@@ -115,14 +115,8 @@ namespace Core
 
     void AbstractComponent::fromJson(const nlohmann::json& json, bool isIgnoreChildren /* = false*/)
     {
-        if (json.contains("isEnabled"))
-        {
-            _isEnabled = json["isEnabled"];
-        }
-        if (json.contains("noTick"))
-        {
-            _noTick = json["noTick"].get<bool>();
-        }
+        tryReadJsonTo(_isEnabled, "isEnabled", json);
+        tryReadJsonTo(_noTick, "noTick", json);
     }
 
     void BaseComponent::attachChild(const BaseComponent::Ptr& child)
@@ -234,8 +228,8 @@ namespace Core
     {
         AbstractComponent::fromJson(json, isIgnoreChildren);
 
-        _name = requireAs<StringAtom>(json, "name");
-        _type = StringAtom::Intern(requireAs<StringAtom>(json, "type"));
+        _name = requireAs<StringAtom>("name", json);
+        _type = StringAtom::Intern(requireAs<StringAtom>("type", json));
 
         if (!isIgnoreChildren)
         {
@@ -243,7 +237,7 @@ namespace Core
             {
                 for (const auto& childJson : json["children"])
                 {
-                    auto type = StringAtom::Intern(requireAs<StringAtom>(childJson, "type"));
+                    auto type = StringAtom::Intern(requireAs<StringAtom>("type", childJson));
                     auto* const c = rawAddChildComponent(GetGlobalComponentFactory().create(type));
                     c->fromJson(childJson, false);
                 }

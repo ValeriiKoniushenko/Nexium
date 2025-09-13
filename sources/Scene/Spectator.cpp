@@ -44,14 +44,9 @@ namespace Core
     {
         Actor::fromJson(json, isIgnoreChildren);
 
-        if (json.contains("speed"))
-        {
-            speed = json["speed"];
-        }
-        if (json.contains("mouseSensitivity"))
-        {
-            mouseSensitivity = json["mouseSensitivity"];
-        }
+        tryReadJsonTo(speed, "speed", json);
+        tryReadJsonTo(mouseSensitivity, "mouseSensitivity", json);
+
         if (json.contains("keyboardInput"))
         {
             keyboardInput.fromJson(json["keyboardInput"], isIgnoreChildren);

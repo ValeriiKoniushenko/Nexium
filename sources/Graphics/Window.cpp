@@ -284,25 +284,10 @@ namespace Core
 
     void Window::fromJson(const nlohmann::json& json, bool isIgnoreChildren)
     {
-        if (json.contains("size"))
-        {
-            _size = json["size"].get<ISize2>();
-        }
-
-        if (json.contains("title"))
-        {
-            _title = json["title"].get<StringAtom>();
-        }
-
-        if (json.contains("isMaximized"))
-        {
-            _isMaximized = json["isMaximized"].get<bool>();
-        }
-
-        if (json.contains("swapInterval"))
-        {
-            _swapInterval = json["swapInterval"].get<bool>();
-        }
+        tryReadJsonTo(_size, "size", json);
+        tryReadJsonTo(_title, "title", json);
+        tryReadJsonTo(_isMaximized, "isMaximized", json);
+        tryReadJsonTo(_swapInterval, "vSync", json);
     }
 
     Window& GetWindow()

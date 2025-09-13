@@ -97,10 +97,7 @@ namespace Core
 
     void Scene::fromJson(const nlohmann::json& json, bool isIgnoreChildren)
     {
-        if (json.contains("sceneName"))
-        {
-            _sceneName = json["sceneName"].get<StringAtom>();
-        }
+        tryReadJsonTo(_sceneName, "sceneName", json);
 
         if (json.contains("objects"))
         {

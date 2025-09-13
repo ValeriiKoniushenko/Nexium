@@ -275,23 +275,15 @@ namespace Core
 
     void LogsWindowEWC::fromCacheData(const nlohmann::json& json)
     {
-        if (json.contains("logLimit"))
+        tryReadJsonTo(_logLimit, "logLimit", json);
+
+        if (json.contains("filter") && Verify(_searchInput))
         {
-            _logLimit = json["logLimit"].get<decltype(_logLimit)>();
+            _searchInput->setInputtedData(json["filter"].get<std::string>());
         }
-        if (json.contains("filter"))
+        if (json.contains("regexMode") && Verify(_regexModeButton))
         {
-            if (Verify(_searchInput))
-            {
-                _searchInput->setInputtedData(json["filter"].get<std::string>());
-            }
-        }
-        if (json.contains("regexMode"))
-        {
-            if (Verify(_regexModeButton))
-            {
-                _regexModeButton->setActive(json["regexMode"].get<bool>());
-            }
+            _regexModeButton->setActive(json["regexMode"].get<bool>());
         }
         if (json.contains("filterLevels"))
         {

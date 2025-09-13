@@ -127,22 +127,10 @@ namespace Core
     {
         Actor::fromJson(json, isIgnoreChildren);
 
-        if (json.contains("frameSize"))
-        {
-            _frameSize = json["frameSize"].get<decltype(_frameSize)>();
-        }
-        if (json.contains("fov"))
-        {
-            _fov = json["fov"].get<decltype(_fov)>();
-        }
-        if (json.contains("far"))
-        {
-            _far = json["far"].get<decltype(_far)>();
-        }
-        if (json.contains("near"))
-        {
-            _near = json["near"].get<decltype(_near)>();
-        }
+        tryReadJsonTo(_frameSize, "frameSize", json);
+        tryReadJsonTo(_fov, "fov", json);
+        tryReadJsonTo(_far, "far", json);
+        tryReadJsonTo(_near, "near", json);
     }
 
     StringAtom BaseCamera::getCacheHash() const
