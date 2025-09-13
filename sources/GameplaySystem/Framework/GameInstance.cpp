@@ -234,7 +234,7 @@ namespace Core
                 });
         }
 
-        auto* simpleColorShader = shaderManager.getShaderProgram("simple_color"_atom);
+        auto* simpleColorShader = shaderManager.getShaderProgram("pickUpColorFiller"_atom);
         if (Verify(simpleColorShader))
         {
             simpleColorShader->setVertexAttributeCallback(

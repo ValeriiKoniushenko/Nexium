@@ -80,7 +80,7 @@ namespace Core
         if (Verify(scene) && Verify(scene->mRootNode))
         {
             importFrom(scene->mRootNode, scene, defaultModelPath);
-            setShader(gGameInstance->shaderManager.getShaderProgram("simple_color"_atom));
+            setShader(gGameInstance->shaderManager.getShaderProgram("pickUpColorFiller"_atom));
         }
     }
 
