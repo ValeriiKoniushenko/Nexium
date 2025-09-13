@@ -105,6 +105,8 @@ namespace Core
 
         setComponentName(modelPath.stem().generic_string().c_str());
         recursiveImportFrom(this, node, scene, modelPath);
+
+        globalLog.debugLog("MeshBundle '{}' was loaded to the world."_f << _name);
     }
 
     void StaticMeshBundle::setShader(ShaderProgram* sp, bool ignoreVertexAttribSetup /* = false*/)

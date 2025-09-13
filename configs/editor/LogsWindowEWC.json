@@ -3,7 +3,7 @@
     "filterLevels": [
         {
             "level": "trace",
-            "value": true
+            "value": false
         },
         {
             "level": "debug",

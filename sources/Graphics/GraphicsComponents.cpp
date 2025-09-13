@@ -180,11 +180,11 @@ namespace Core
         setVertexBuffer(vertices);
         setIndexBuffer(indices);
 
-        if (!mesh->mName.Empty()) [[likely]]
-        {
-            globalLog.debugLog("Mesh '{}' was loaded to the program object."_f
-                               << mesh->mName.C_Str());
-        }
+        // if (!mesh->mName.Empty()) [[likely]]
+        // {
+        //     globalLog.debugLog("Mesh '{}' was loaded to the world."_f
+        //                        << mesh->mName.C_Str());
+        // }
     }
 
     void GraphicsComponentData::clear()

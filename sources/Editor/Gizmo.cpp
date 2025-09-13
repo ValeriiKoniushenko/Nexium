@@ -71,9 +71,8 @@ namespace Core
 
     void Gizmo::load3DModel()
     {
-        Assimp::Importer importer;
-
-        const aiScene* scene
+        static Assimp::Importer importer;
+        static const aiScene* scene
             = importer.ReadFile(defaultModelPath.generic_string().c_str(),
                                 aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
         if (Verify(scene) && Verify(scene->mRootNode))

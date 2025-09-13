@@ -153,6 +153,12 @@ namespace Core
                 }
             }
 
+            if (glfwGetWindowAttrib(_window->getRawWindow(), GLFW_ICONIFIED)
+                || glfwGetWindowAttrib(_window->getRawWindow(), GLFW_FOCUSED) == GLFW_FALSE)
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            }
+
             _window->swapBuffers();
             fps.newFrameUpdate();
             world.timeDelta = clock.stop();

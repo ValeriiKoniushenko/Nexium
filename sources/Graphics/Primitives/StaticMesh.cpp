@@ -214,11 +214,6 @@ namespace Core
 
         _size = FSize3(max - min);
         _center = (max + min) * 0.5f;
-
-#ifdef DEBUG
-        debugLog("'{}' processed verticies(size, center) for: {}s; Verticies' count: {}"_f
-                 << _name << s.stop() << static_cast<uint64_t>(rawMesh->mNumVertices));
-#endif
     }
 
     void StaticMesh::setOutlineShader(ShaderProgram* sp, bool ignoreVertexAttribSetup)
