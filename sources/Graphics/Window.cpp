@@ -277,7 +277,7 @@ namespace Core
             json["isMaximized"] = glfwGetWindowAttrib(_window, GLFW_MAXIMIZED) == GLFW_TRUE;
         }
 
-        json["swapInterval"] = _swapInterval;
+        json["vSync"] = _swapInterval;
 
         return json;
     }

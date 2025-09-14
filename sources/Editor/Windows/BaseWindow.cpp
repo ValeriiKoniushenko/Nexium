@@ -43,6 +43,7 @@ namespace Core
         {
             onUpdate(); // in the future maybe will be called not every tick
             onDraw();
+            preOpenedEndWindowDraw();
         }
         endWindowDraw();
     }

@@ -25,6 +25,7 @@
 #include "Editor/GuiComponents/Spacer.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Misc/IconsFontAwesome.h"
+#include "ModalPopUp.h"
 #include "TextEditor.h"
 
 #include <format>
@@ -469,7 +470,16 @@ namespace Core
             }
             if (ImGui::MenuItem("Delete"))
             {
-                deleteAt(path);
+                ModalPopUp::Open("Do you really want to delete a file: {}?"_f
+                                     << path.generic_string(),
+                                 [this, path](bool isOk)
+                                 {
+                                     if (isOk)
+                                     {
+                                         deleteAt(path);
+                                     }
+                                 });
+
                 invalidate = true;
             }
             ImGui::EndPopup();

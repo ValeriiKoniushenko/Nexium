@@ -4,6 +4,6 @@
         "height": 846,
         "width": 1701
     },
-    "swapInterval": true,
-    "title": "Nexium"
+    "title": "Nexium",
+    "vSync": false
 }

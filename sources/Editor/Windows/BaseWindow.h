@@ -49,6 +49,7 @@ namespace Core
 
         [[nodiscard]] virtual bool beginWindowDraw() = 0;
         virtual void endWindowDraw() = 0;
+        virtual void preOpenedEndWindowDraw() {}
 
         [[nodiscard]] bool canBeShown() const { return _isEnabled; }
 

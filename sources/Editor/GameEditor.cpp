@@ -37,6 +37,7 @@
 #include "ImGui/backends/imgui_impl_opengl3.h"
 #include "Misc/IconsFontAwesome.h"
 #include "Windows/ImageViewer.h"
+#include "Windows/ModalPopUp.h"
 
 using namespace Core;
 
@@ -85,6 +86,7 @@ namespace Core
         registerNewWindow<TextEditorEWC>("Text editor"_atom, false);
         registerNewWindow<ImageViewerEWC>("Image viewer"_atom, false);
         registerNewWindow<ShaderManagerEWC>("Shader manager"_atom);
+        registerNewWindow<ModalPopUp>("PopUp"_atom);
 
         registerNewWindow<GameViewportEWC>("Viewport"_atom)
             ->onSizeChanged.subscribe(
