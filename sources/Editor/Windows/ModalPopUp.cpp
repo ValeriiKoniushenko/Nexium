@@ -41,6 +41,38 @@ namespace Core
         GetEditor().getWindow<ModalPopUp>()->open(std::move(text), okOrCancelCallback);
     }
 
+    void ModalPopUp::onInitialize()
+    {
+        BaseEWC::onInitialize();
+
+        _okButton = _layout.addChildComponent<Gui::Button>("OK");
+        _cancelButton = _layout.addChildComponent<Gui::Button>("Cancel");
+
+        _okButton->setWidth(120.f);
+        _cancelButton->setWidth(120.f);
+
+        _layout.setHorizontalAlign(Gui::Widget::Align::Center);
+
+        _okButton->onClick.subscribe(
+            [this](Gui::Button*)
+            {
+                if (Verify(!!_okOrCancelCallback))
+                {
+                    _okOrCancelCallback(true);
+                }
+                ImGui::CloseCurrentPopup();
+            });
+        _cancelButton->onClick.subscribe(
+            [this](Gui::Button*)
+            {
+                if (Verify(!!_okOrCancelCallback))
+                {
+                    _okOrCancelCallback(false);
+                }
+                ImGui::CloseCurrentPopup();
+            });
+    }
+
     void ModalPopUp::onDraw()
     {
         if (!Verify(!_text.isEmpty() && _okOrCancelCallback))
@@ -48,22 +80,17 @@ namespace Core
             return;
         }
 
-        ImGui::TextUnformatted(_text.c_str());
+        ImGui::PushTextWrapPos(350.f);
+        ImGui::TextWrapped("%s", _text.c_str());
+        ImGui::PopTextWrapPos();
+
+        ImGui::Dummy({});
         ImGui::Separator();
+        ImGui::Dummy({});
 
-        if (ImGui::Button("OK", glm::vec2(120, 0)))
-        {
-            _okOrCancelCallback(true);
-            ImGui::CloseCurrentPopup();
-        }
+        _layout.tick(GetWorld().timeDelta);
 
-        ImGui::SameLine();
-
-        if (ImGui::Button("Cancel", glm::vec2(120, 0)))
-        {
-            _okOrCancelCallback(false);
-            ImGui::CloseCurrentPopup();
-        }
+        ImGui::Dummy({});
     }
     void ModalPopUp::preOpenedEndWindowDraw()
     {

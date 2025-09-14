@@ -23,6 +23,8 @@
 #pragma once
 
 #include "BaseWindow.h"
+#include "Editor/GuiComponents/Button.h"
+#include "Editor/GuiComponents/HorizontalLayout.h"
 
 namespace Core
 {
@@ -36,11 +38,17 @@ namespace Core
         static void Open(StringAtom text, const std::function<void(bool)>& okOrCancelCallback);
 
     protected:
+        void onInitialize() override;
         void onDraw() override;
         void preOpenedEndWindowDraw() override;
 
         [[nodiscard]] bool beginWindowDraw() override;
         void endWindowDraw() override;
+
+    protected:
+        Gui::HorizontalLayout _layout;
+        Gui::Button* _okButton;
+        Gui::Button* _cancelButton;
 
         std::function<void(bool)> _okOrCancelCallback;
         StringAtom _text;
