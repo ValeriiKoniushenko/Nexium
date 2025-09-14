@@ -124,6 +124,7 @@ namespace Core
 
         _backButton = _toolbarLayout.addChildComponent<Gui::Button>(ICON_FA_CHEVRON_LEFT);
         _toolbarLayout.addChildComponent<Gui::Spacer>();
+        _homeButton = _toolbarLayout.addChildComponent<Gui::Button>(ICON_FA_HOME);
         _refreshButton = _toolbarLayout.addChildComponent<Gui::Button>(ICON_FA_REFRESH);
         _pathInput = _toolbarLayout.addChildComponent<Gui::TextInput>();
         _toolbarLayout.addChildComponent<Gui::Spacer>();
@@ -132,6 +133,7 @@ namespace Core
         // Style
         _backButton->setWidth(_backButton->getHeight());
         _refreshButton->setWidth(_refreshButton->getHeight());
+        _homeButton->setWidth(_homeButton->getHeight());
         _pathInput->setFlex(Gui::Widget::Flex::FlexWidth);
         _filterInput->setWidth(150.f);
         _filterInput->setPlaceholder("Filter...");
@@ -146,6 +148,11 @@ namespace Core
             [this](auto)
             {
                 refresh();
+            });
+        _homeButton->onClick.subscribe(
+            [this](auto)
+            {
+                openPath(Config::Path::assets);
             });
         _pathInput->onInput.subscribe(
             [this](const char* path)

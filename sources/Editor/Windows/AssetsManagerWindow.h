@@ -67,6 +67,7 @@ namespace Core
 
         Gui::HorizontalLayout _toolbarLayout;
         Gui::Button* _refreshButton = nullptr;
+        Gui::Button* _homeButton = nullptr;
         Gui::Button* _backButton = nullptr;
         Gui::TextInput* _pathInput = nullptr;
         Gui::TextInput* _filterInput = nullptr;
