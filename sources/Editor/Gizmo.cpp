@@ -60,6 +60,11 @@ namespace Core
         handleDrag();
     }
 
+    nlohmann::json Gizmo::toJson() const
+    {
+        return StaticMeshBundle::toJson();
+    }
+
     void Gizmo::initialize()
     {
         StaticMeshBundle::initialize();

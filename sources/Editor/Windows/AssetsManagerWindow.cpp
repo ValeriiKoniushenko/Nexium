@@ -69,10 +69,7 @@ namespace
 
 namespace Core
 {
-    namespace Gui
-    {
-        class Spacer;
-    }
+
     ECS_COMPONENT_IMPL(AssetsManagerWindowEWC)
 
     void AssetsManagerWindowEWC::tryOpenParentDir()

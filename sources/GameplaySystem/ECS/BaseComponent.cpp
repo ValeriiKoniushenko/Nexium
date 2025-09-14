@@ -22,6 +22,8 @@
 
 #include "BaseComponent.h"
 
+#include "Editor/Gizmo.h"
+
 namespace
 {
     template<typename T, typename... Rest>
@@ -218,6 +220,12 @@ namespace Core
 
         for (const auto& child : _children)
         {
+            // Excluded from cache
+            if (dynamic_cast<Gizmo*>(child.get()))
+            {
+                continue;
+            }
+
             json["children"].push_back(child->toJson());
         }
 
