@@ -81,11 +81,12 @@ pipeline {
 
                                     if (attempt == 2) {
                                         echo "Previous build was FAILED. Let's try clear rebuild"
+                                        sh """
+                                            rm -rf build
+                                        """
                                     }
                                     try {
                                         sh """
-                                            # rm -rf build
-
                                             cmake -S . -B ${buildDir} \
                                                   -DCMAKE_C_COMPILER=${C_COMPILER}          \
                                                   -DCMAKE_CXX_COMPILER=${CPP_COMPILER}      \
@@ -112,112 +113,6 @@ pipeline {
                             }
                         }
                     }
-
-                    /*stage('Run') {
-                        steps {
-                            script {
-                                def (C_COMPILER, CPP_COMPILER) = COMPILER_PAIR.split(':')
-                                def success = false
-
-                                try {
-                                    sh """
-                                        cd build/${C_COMPILER}/${BUILD_TYPE}/bin
-                                        ./TestEngine --gtest_output=xml:gtest_result.xml
-                                        cd ../../../../
-                                    """
-                                    success = true
-                                } catch(err){
-                                }
-
-                                addEmbeddableBadgeConfiguration(
-                                    id: "linuxTests_${C_COMPILER}_${BUILD_TYPE}",
-                                    subject: "Linux | ${C_COMPILER} | ${BUILD_TYPE}",
-                                    status: (success ? "passed" : "failed"),
-                                    color: (success ? "green" : "red")
-                                )
-                            }
-                        }
-                    }*/
-
-                    /*stage('Gen Test Results') {
-                        when {
-                           expression { BUILD_TYPE == 'Debug' }
-                        }
-
-                        steps {
-                            script {
-                                def (C_COMPILER, CPP_COMPILER) = COMPILER_PAIR.split(':')
-
-                                junit "build/${C_COMPILER}/${BUILD_TYPE}/bin/gtest_result.xml"
-                            }
-                        }
-                    }*/
-
-                    /*stage('Test Coverage') {
-                        when {
-                           expression { BUILD_TYPE == 'Debug' && COMPILER_PAIR == "clang:clang++" }
-                        }
-
-                        steps {
-                            script {
-                                def BIN_PATH = "build/clang/Debug/bin"
-
-                                sh """
-                                    llvm-profdata merge -output=${BIN_PATH}/default.profdata ${BIN_PATH}/default.profraw
-
-                                    llvm-cov show ./${BIN_PATH}/TestEngine \
-                                        -instr-profile=${BIN_PATH}/default.profdata \
-                                        -format=html \
-                                        -output-dir=coverage_report \
-                                        --ignore-filename-regex="(build/.*)|(tests/.*)"
-                                """
-
-                                publishHTML([reportDir: 'coverage_report', reportFiles: 'index.html', reportName: 'LLVM Coverage'])
-
-                                def report = readFile("coverage_report/index.html")
-
-                                def coverage = 0.0
-                                def m = (report =~ /Totals\s*\<\/pre\>\<\/td\>\<td\s+class='[\w-]+'\>\<pre\>\s*([\d\.]+)%/)
-                                if (m.find()) {
-                                    coverage = m.group(1).toDouble()
-                                }
-                                m = null
-
-                                def color = coverage > 90 ? "green" :
-                                            coverage > 70 ? "yellow" : "red"
-
-                                def badgeJson = """{
-                                    "schemaVersion": 1,
-                                    "label": "coverage",
-                                    "message": "${coverage}%",
-                                    "color": "${color}"
-                                }"""
-                                writeFile(file: "coverage-badge.json", text: badgeJson)
-                                archiveArtifacts artifacts: "coverage-badge.json", fingerprint: true
-
-                            }
-                        }
-                    }*/
-
-                    /*stage('Package Artifacts') {
-                        when {
-                           expression { BUILD_TYPE == 'Release' }
-                        }
-
-                        steps {
-                            script {
-                                def (C_COMPILER, CPP_COMPILER) = COMPILER_PAIR.split(':')
-                                def BUILD_PATH = "build/${C_COMPILER}/${BUILD_TYPE}"
-                                def ARCHIVE_NAME = "${env.JOB_NAME}-${C_COMPILER}.tar.gz"
-
-                                sh """
-                                    rm -f ${ARCHIVE_NAME}
-                                    tar czf ${ARCHIVE_NAME} -C ${BUILD_PATH}/bin .
-                                """
-                                archiveArtifacts artifacts: "${ARCHIVE_NAME}", fingerprint: true
-                            }
-                        }
-                    }*/
                 }
             }
         }
@@ -261,6 +156,9 @@ pipeline {
 
                                     if (attempt == 2) {
                                         echo "Previous build was FAILED. Let's try clear rebuild"
+                                        bat """
+                                            IF EXIST build rmdir /S /Q build
+                                        """
                                     }
                                     try {
                                         bat """
@@ -286,46 +184,6 @@ pipeline {
                             }
                         }
                     }
-
-                    /*stage('Run') {
-                        steps {
-                            script {
-                                def success = false
-                                try {
-                                    bat """
-                                        build\\bin\\%BUILD_TYPE%\\TestEngine.exe --gtest_output=xml:build\\bin\\%BUILD_TYPE%\\gtest_result.xml
-                                    """
-                                    success = true
-                                } catch(err) {
-                                }
-
-                                addEmbeddableBadgeConfiguration(
-                                    id: "windowsTests_${BUILD_TYPE}",
-                                    subject: "Win11 | ${BUILD_TYPE}",
-                                    status: (success ? "passed" : "failed"),
-                                    color: (success ? "green" : "red")
-                                )
-                            }
-                        }
-                    }*/
-
-                    /*stage('Package Artifacts') {
-                        when {
-                            expression { BUILD_TYPE == 'Release' }
-                        }
-                        steps {
-                            script {
-                                def BUILD_PATH = "build"
-                                def ARCHIVE_NAME = "${env.JOB_NAME}-Win64.zip"
-
-                                bat """
-                                    if exist ${ARCHIVE_NAME} del /Q ${ARCHIVE_NAME}
-                                    powershell Compress-Archive -Path ${BUILD_PATH}\\bin\\%BUILD_TYPE%\\* -DestinationPath ${ARCHIVE_NAME}
-                                """
-                                archiveArtifacts artifacts: "${ARCHIVE_NAME}", fingerprint: true
-                            }
-                        }
-                    }*/
                 }
             }
         }
