@@ -322,9 +322,9 @@ namespace Core
                 {
                     refresh();
                 }
-                if (ImGui::MenuItem("To root"))
+                if (ImGui::MenuItem("Open in explorer"))
                 {
-                    openPath(Config::Path::assets);
+                    AssetsManager::openPathFromOSExplorer(_openedPath);
                 }
 
                 ImGui::EndPopup();
@@ -486,6 +486,11 @@ namespace Core
 
                 invalidate = true;
             }
+            if (ImGui::MenuItem("Open in explorer"))
+            {
+                AssetsManager::openPathFromOSExplorer(entry.is_directory() ? path : _openedPath);
+            }
+
             ImGui::EndPopup();
         }
 

@@ -1,8 +1,8 @@
 {
-    "isMaximized": false,
+    "isMaximized": true,
     "size": {
-        "height": 846,
-        "width": 1701
+        "height": 1011,
+        "width": 1920
     },
     "title": "Nexium",
     "vSync": false

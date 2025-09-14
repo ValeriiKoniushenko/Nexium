@@ -126,4 +126,16 @@ namespace Core
         return NodeType::Default;
     }
 
+    void AssetsManager::openPathFromOSExplorer(const std::filesystem::path& path)
+    {
+#ifdef _WIN32
+        const std::string command = "explorer \"" + path.generic_string() + "\"";
+#elif __APPLE__
+        const std::string command = "open \"" + path.generic_string() + "\"";
+#else
+        const std::string command = "xdg-open \"" + path.generic_string() + "\"";
+#endif
+        std::system(command.c_str());
+    }
+
 } // namespace Core

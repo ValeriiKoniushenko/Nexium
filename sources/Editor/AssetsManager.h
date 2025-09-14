@@ -45,6 +45,8 @@ namespace Core
         static void tryToOpenFile(const std::filesystem::directory_entry& path);
 
         [[nodiscard]] static NodeType getNodeType(const std::filesystem::directory_entry& entry);
+
+        static void openPathFromOSExplorer(const std::filesystem::path& path);
     };
 
 } // namespace Core
