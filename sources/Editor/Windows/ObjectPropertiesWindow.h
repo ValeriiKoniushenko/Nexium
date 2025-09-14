@@ -62,7 +62,7 @@ namespace Core
                     {
                         return GraphicsComponentData::ModifierAsStringVector().size();
                     });
-                comboModifier->setFlex(Gui::Widget::Flex::FlexWidth);
+                comboModifier->setFlex(Gui::Flex::FlexWidth);
                 comboModifier->setCurrentIndex(data.modifier.cast() - 1);
 
                 const auto comboValues = l->addChildComponent<Gui::ComboModelBased>();
@@ -77,7 +77,7 @@ namespace Core
                     {
                         return GraphicsComponentData::ModifiedValueAsStringVector().size();
                     });
-                comboValues->setFlex(Gui::Widget::Flex::FlexWidth);
+                comboValues->setFlex(Gui::Flex::FlexWidth);
 
                 auto it = std::ranges::find(GraphicsComponentData::ModifiedValueAsStringVector(),
                                             GraphicsComponentData::ToString(data.value));

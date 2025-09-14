@@ -44,7 +44,7 @@ namespace Core::Gui
         void resetWidth() { _width.reset(); }
 
     protected:
-        [[nodiscard]] bool atLeastOne(Widget::Flex f);
+        [[nodiscard]] bool atLeastOne(Flex f);
 
     protected:
         std::optional<float> _height;

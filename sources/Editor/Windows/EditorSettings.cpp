@@ -41,26 +41,32 @@ namespace Core
     {
         BaseFloatEWC::onInitialize();
 
-        _layout.addChildComponent<ListView>()->setFlex(Widget::Flex::FlexWidth);
+        _layout.addChildComponent<ListView>()->setFlex(Flex::FlexWidth);
 
         const auto search = HorizontalLayout::Create();
-        search->setHorizontalAlign(HorizontalLayout::Align::Center);
+        search->setHorizontalAlign(Align::Center);
         search->addChildComponent<Label>("Search:");
-        search->addChildComponent<TextInput>()->setFlex(Widget::Flex::FlexWidth);
+        search->addChildComponent<TextInput>()->setFlex(Flex::FlexWidth);
         search->addChildComponent<CheckBox>();
-        search->addChildComponent<class ToggleButton>();
+        search->addChildComponent<ToggleButton>();
 
         _layout.attachChild(search);
         _layout.attachChild(search);
+
+        _texture.loadFromFile(Config::Path::images / "redcolor.png");
     }
 
     void EditorSettingsEWC::onDraw()
     {
         const float tick = gGameInstance->world.timeDelta;
-        if (ImGui::TreeNodeEx("", ImGuiTreeNodeFlags_SpanFullWidth))
-        {
-            ImGui::TreePop();
-        }
-        _layout.tick(tick);
+
+        auto s = ImGui::GetCursorPosX();
+        ImGui::ImageButton("SMTH1", _texture.getTextureId(), { 64, 64 });
+        ImGui::SameLine();
+        auto s1 = ImGui::GetCursorPosX();
+        ImGui::ImageButton("SMTH2", _texture.getTextureId(), { 64, 64 });
+        auto s2 = ImGui::GetCursorPosX();
+
+        int i = 1;
     }
 } // namespace Core

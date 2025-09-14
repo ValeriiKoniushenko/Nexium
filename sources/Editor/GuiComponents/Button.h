@@ -72,11 +72,7 @@ namespace Core::Gui
         [[nodiscard]] float getHeight() const override { return getRealSize().y; }
 
     public: // delegates
-        /**
-         * @brief will be called when clicked
-         * @prarm pointer to "this" context. Context of clicked button.
-         */
-        Delegate<void(Button*)> onClick;
+        Delegate<void()> onClick;
 
     protected:
         void onDraw() override;
@@ -103,10 +99,9 @@ namespace Core::Gui
     public: // Delegates
         /**
          * @brief will be called when toggled
-         * @prarm ToggleButton* a pointer to "this" context. Context of the clicked button.
          * @prarm bool true - if it becomes active; false - in another case
          */
-        Delegate<void(ToggleButton*, bool)> onToggle;
+        Delegate<void(bool)> onToggle;
 
         void setActive(bool value) noexcept { _isActive = value; }
         [[nodiscard]] bool isActive() const noexcept { return _isActive; }

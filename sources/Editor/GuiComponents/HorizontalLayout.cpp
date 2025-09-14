@@ -85,7 +85,7 @@ namespace Core::Gui
                 auto* w = child->unsafeCastTo<Widget>();
                 width += w->getWidth();
                 ++total;
-                if (w->getFlex().cast() == Widget::Flex::Fixed)
+                if (w->getFlex().cast() == Flex::Fixed)
                 {
                     // ++fixedCount;
                 }
@@ -342,13 +342,13 @@ namespace Core::Gui
                 }
                 const auto w = child->unsafeCastTo<Widget>();
                 const auto type = w->getFlex().cast();
-                if (type == Widget::Flex::Fixed)
+                if (type == Flex::Fixed)
                 {
                     width -= w->getWidth();
                     width -= defaultSpacing;
                     ++fixedCount;
                 }
-                else if (type == Widget::Flex::FlexWidth)
+                else if (type == Flex::FlexWidth)
                 {
                     ++flexWidthCount;
                 }
@@ -366,7 +366,7 @@ namespace Core::Gui
                     continue;
                 }
                 auto w = child->unsafeCastTo<Widget>();
-                if (w->getFlex().cast() == Widget::Flex::FlexWidth)
+                if (w->getFlex().cast() == Flex::FlexWidth)
                 {
                     const float gap = deCounter != 0 ? defaultSpacing : 0;
                     const float finalWidth

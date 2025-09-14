@@ -47,7 +47,7 @@ namespace Core
             // Count of valid
             {
                 auto* l = _headLayout.addChildComponent<HorizontalLayout>();
-                l->setFlex(Widget::Flex::FlexWidth);
+                l->setFlex(Flex::FlexWidth);
 
                 auto* label = l->addChildComponent<Label>();
                 label->setText("Total shaders");
@@ -55,13 +55,13 @@ namespace Core
 
                 _totalShaders = l->addChildComponent<IntInput>();
                 _totalShaders->disableWidget(true);
-                _totalShaders->setFlex(Widget::Flex::FlexWidth);
+                _totalShaders->setFlex(Flex::FlexWidth);
             }
 
             // Count of invalid
             {
                 auto* l = _headLayout.addChildComponent<HorizontalLayout>();
-                l->setFlex(Widget::Flex::FlexWidth);
+                l->setFlex(Flex::FlexWidth);
 
                 auto* label = l->addChildComponent<Label>();
                 label->setText("With errors");
@@ -69,7 +69,7 @@ namespace Core
 
                 _failedShaders = l->addChildComponent<IntInput>();
                 _failedShaders->disableWidget(true);
-                _failedShaders->setFlex(Widget::Flex::FlexWidth);
+                _failedShaders->setFlex(Flex::FlexWidth);
             }
         }
 
@@ -81,7 +81,7 @@ namespace Core
 
             _validExtensions = ext->addChildComponent<TextInput>();
             _validExtensions->setReadOnly(true);
-            _validExtensions->setFlex(Widget::Flex::FlexWidth);
+            _validExtensions->setFlex(Flex::FlexWidth);
         }
 
         {
@@ -92,7 +92,7 @@ namespace Core
 
             auto* input = ext->addChildComponent<TextInput>();
             input->setReadOnly(true);
-            input->setFlex(Widget::Flex::FlexWidth);
+            input->setFlex(Flex::FlexWidth);
             input->setInputtedData(GetShaderManager().getInputDir().generic_string());
         }
 
@@ -102,9 +102,9 @@ namespace Core
             label->setWidth(defaultLabelWidth);
 
             _comboView = shaderSelect->addChildComponent<ComboView>();
-            _comboView->setFlex(Widget::Flex::FlexWidth);
+            _comboView->setFlex(Flex::FlexWidth);
             _comboView->onSelect.subscribe(
-                [this](ComboView*, StringAtom key)
+                [this](StringAtom key)
                 {
                     selectShader(key);
                 });
@@ -118,7 +118,7 @@ namespace Core
 
             _shaderName = name->addChildComponent<TextInput>();
             _shaderName->setReadOnly(true);
-            _shaderName->setFlex(Widget::Flex::FlexWidth);
+            _shaderName->setFlex(Flex::FlexWidth);
         }
 
         {
@@ -128,11 +128,11 @@ namespace Core
 
             _vertPath = path->addChildComponent<TextInput>();
             _vertPath->setReadOnly(true);
-            _vertPath->setFlex(Widget::Flex::FlexWidth);
+            _vertPath->setFlex(Flex::FlexWidth);
 
             auto* edit = path->addChildComponent<Button>("Edit");
             edit->onClick.subscribe(
-                [this](Button*)
+                [this]()
                 {
                     if (_vertPath)
                     {
@@ -148,11 +148,11 @@ namespace Core
 
             _fragPath = path->addChildComponent<TextInput>();
             _fragPath->setReadOnly(true);
-            _fragPath->setFlex(Widget::Flex::FlexWidth);
+            _fragPath->setFlex(Flex::FlexWidth);
 
             auto* edit = path->addChildComponent<Button>("Edit");
             edit->onClick.subscribe(
-                [this](Button*)
+                [this]()
                 {
                     if (_fragPath)
                     {
@@ -165,15 +165,15 @@ namespace Core
 
         {
             auto* recompile = _selectedShaderLayout.addChildComponent<Button>("Recompile");
-            recompile->setFlex(Widget::Flex::FlexWidth);
+            recompile->setFlex(Flex::FlexWidth);
             recompile->onClick.subscribe(
-                [this](Button*)
+                [this]()
                 {
                     recompileSelectedShader();
                 });
 
             _recompileResult = _selectedShaderLayout.addChildComponent<Label>();
-            _recompileResult->setFlex(Widget::Flex::FlexWidth);
+            _recompileResult->setFlex(Flex::FlexWidth);
             _recompileResult->setText("");
         }
     }

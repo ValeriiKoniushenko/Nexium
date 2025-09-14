@@ -29,28 +29,28 @@
 
 namespace Core::Gui
 {
+    // clang-format off
+    CreateEnum(Align, int,
+        None,
+        Left,           // For horizontal align
+        Right,          // For horizontal align
+        SpaceBetween,   // For horizontal align
+        Center,         // For horizontal & vertical align
+        Top,            // For vertical align
+        Bottom          // For vertical align
+    );
+
+    CreateEnum(Flex, int,
+        Fixed,
+        FlexWidth
+    );
+    // clang-format on
 
     class Widget : public BaseComponent
     {
         ECS_COMPONENT_DECL(Widget, BaseComponent);
 
     public:
-        // clang-format off
-        CreateEnum(Align, int,
-            None,
-            Left,           // For horizontal align
-            Right,          // For horizontal align
-            SpaceBetween,   // For horizontal align
-            Center,         // For horizontal & vertical align
-            Top,            // For vertical align
-            Bottom          // For vertical align
-        );
-
-        CreateEnum(Flex, int,
-            Fixed,
-            FlexWidth
-        );
-        // clang-format on
         struct Bounds
         {
             glm::vec2 topLeft = {};

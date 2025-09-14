@@ -51,10 +51,10 @@ namespace Core
         _okButton->setWidth(120.f);
         _cancelButton->setWidth(120.f);
 
-        _layout.setHorizontalAlign(Gui::Widget::Align::Center);
+        _layout.setHorizontalAlign(Gui::Align::Center);
 
         _okButton->onClick.subscribe(
-            [this](Gui::Button*)
+            [this]()
             {
                 if (Verify(!!_okOrCancelCallback))
                 {
@@ -63,7 +63,7 @@ namespace Core
                 ImGui::CloseCurrentPopup();
             });
         _cancelButton->onClick.subscribe(
-            [this](Gui::Button*)
+            [this]()
             {
                 if (Verify(!!_okOrCancelCallback))
                 {

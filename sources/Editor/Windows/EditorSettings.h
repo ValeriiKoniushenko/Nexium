@@ -24,6 +24,7 @@
 
 #include "BaseWindow.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
+#include "Graphics/Texture.h"
 
 namespace Core
 {
@@ -41,6 +42,7 @@ namespace Core
 
     private:
         Gui::VerticalLayout _layout;
+        Texture _texture;
     };
 
 } // namespace Core

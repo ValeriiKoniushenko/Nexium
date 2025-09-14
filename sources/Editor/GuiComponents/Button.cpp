@@ -174,7 +174,7 @@ namespace Core::Gui
 
         if (ImGui::ButtonEx(_name.c_str(), _size, ImGuiButtonFlags_None, &_textSize))
         {
-            onClick.trigger(this);
+            onClick.trigger();
             onClickEvent();
         }
 
@@ -230,7 +230,7 @@ namespace Core::Gui
     void ToggleButton::onClickEvent()
     {
         _isActive = !_isActive;
-        onToggle.trigger(this, _isActive);
+        onToggle.trigger(_isActive);
     }
 
 } // namespace Core::Gui

@@ -76,20 +76,20 @@ namespace Core
         _clearButton = _toolbar.addChildComponent<Gui::Button>(ICON_FA_TRASH);
 
         // Styles
-        levelHolder->setFlex(Gui::Widget::Flex::Fixed);
+        levelHolder->setFlex(Gui::Flex::Fixed);
 
-        _searchInput->setFlex(Gui::Widget::Flex::FlexWidth);
+        _searchInput->setFlex(Gui::Flex::FlexWidth);
         _searchInput->setPlaceholder("Filter...");
-        _toolbar.setFlex(Gui::Widget::Flex::FlexWidth);
+        _toolbar.setFlex(Gui::Flex::FlexWidth);
 
         // Events
         _clearButton->onClick.subscribe(
-            [this](auto)
+            [this]()
             {
                 clearLogs();
             });
         _autoScrollButton->onToggle.subscribe(
-            [this](auto, bool newState)
+            [this](bool newState)
             {
                 if (newState)
                 {

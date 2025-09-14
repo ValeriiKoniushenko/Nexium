@@ -206,7 +206,7 @@ namespace Core::Gui
                 else
                 {
                     cell->deleteButton->onClick.subscribe(
-                        [this, i](auto*)
+                        [this, i]()
                         {
                             eraseAt(i);
                         });
@@ -225,7 +225,7 @@ namespace Core::Gui
             else
             {
                 saveButton->onClick.subscribe(
-                    [this](auto*)
+                    [this]()
                     {
                         updateLocalDataWithView();
                         onSave.trigger(_data);
@@ -241,7 +241,7 @@ namespace Core::Gui
             else
             {
                 addButton->onClick.subscribe(
-                    [this](auto*)
+                    [this]()
                     {
                         addEmpty();
                     });
@@ -256,7 +256,7 @@ namespace Core::Gui
             else
             {
                 resetButton->onClick.subscribe(
-                    [this](auto*)
+                    [this]()
                     {
                         onReset.trigger(_data);
                         makeDirty();
@@ -285,7 +285,7 @@ namespace Core::Gui
     {
         auto l = HorizontalLayout::Create();
         auto label = l->addChildComponent<Label>();
-        label->setFlex(Widget::Flex::FlexWidth);
+        label->setFlex(Flex::FlexWidth);
         label->setText(str);
         return l;
     }), decltype([](HorizontalLayout* layout) -> StringAtom

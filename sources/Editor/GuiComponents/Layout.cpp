@@ -27,7 +27,7 @@ namespace Core::Gui
 
     ECS_COMPONENT_IMPL(Layout)
 
-    bool Layout::atLeastOne(Widget::Flex f)
+    bool Layout::atLeastOne(Flex f)
     {
         for (auto&& child : _children)
         {

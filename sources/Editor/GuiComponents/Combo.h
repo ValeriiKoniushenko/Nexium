@@ -66,7 +66,7 @@ namespace Core::Gui
         }
 
     public: // Delegates
-        Delegate<void(ComboView*, StringAtom)> onSelect;
+        Delegate<void(StringAtom)> onSelect;
 
     protected:
         void onDraw() override;
@@ -107,7 +107,7 @@ namespace Core::Gui
         [[nodiscard]] const void* getCurrentData() const noexcept { return _currentData; }
 
     public: // Delegates
-        Delegate<void(ComboModelBased*, const void*)> onSelect;
+        Delegate<void(const void*)> onSelect;
 
     protected:
         void onDraw() override;

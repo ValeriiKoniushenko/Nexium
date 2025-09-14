@@ -131,23 +131,23 @@ namespace Core
         _backButton->setWidth(_backButton->getHeight());
         _refreshButton->setWidth(_refreshButton->getHeight());
         _homeButton->setWidth(_homeButton->getHeight());
-        _pathInput->setFlex(Gui::Widget::Flex::FlexWidth);
+        _pathInput->setFlex(Gui::Flex::FlexWidth);
         _filterInput->setWidth(150.f);
         _filterInput->setPlaceholder("Filter...");
 
         // Events
         _backButton->onClick.subscribe(
-            [this](auto)
+            [this]()
             {
                 tryOpenParentDir();
             });
         _refreshButton->onClick.subscribe(
-            [this](auto)
+            [this]()
             {
                 refresh();
             });
         _homeButton->onClick.subscribe(
-            [this](auto)
+            [this]()
             {
                 openPath(Config::Path::assets);
             });

@@ -74,7 +74,7 @@ namespace
         auto row = CreateHLayoutAndLabel(label, isReadOnly, size);
 
         auto* comp = row->addChildComponent<T>("Input: {}"_f << label);
-        comp->setFlex(Widget::Flex::FlexWidth);
+        comp->setFlex(Flex::FlexWidth);
         comp->disableWidget(isReadOnly);
 
         return row;
@@ -243,7 +243,7 @@ namespace Core
             _disabledTicks = out.getLastChildAs<HLayout>()->getLastChildAs<CheckBox>().get();
 
             out.attachChild(::CreateEx<StringArray>("Children", true));
-            out.getLastChildAs<HLayout>()->setVerticalAlign(Widget::Align::Top);
+            out.getLastChildAs<HLayout>()->setVerticalAlign(Align::Top);
             _childrenList = out.getLastChildAs<HLayout>()->getLastChildAs<StringArray>().get();
             _childrenList->setReadOnly(true);
         }
@@ -278,7 +278,7 @@ namespace Core
             _graphicsTexture = out.getLastChildAs<HLayout>()->getLastChildAs<IntInput>().get();
 
             out.attachChild(::CreateEx<GraphicsModifiersArray>("Graphic modifier", false));
-            out.getLastChildAs<HLayout>()->setVerticalAlign(Widget::Align::Top);
+            out.getLastChildAs<HLayout>()->setVerticalAlign(Align::Top);
             _graphicsModifiers
                 = out.getLastChildAs<HLayout>()->getLastChildAs<GraphicsModifiersArray>().get();
         }
@@ -338,7 +338,7 @@ namespace Core
         if (_objectIsEnabled)
         {
             _objectIsEnabled->onChange.subscribe(
-                [this](auto*, bool newStatus)
+                [this](bool newStatus)
                 {
                     if (_target)
                     {
@@ -350,7 +350,7 @@ namespace Core
         if (_disabledTicks)
         {
             _disabledTicks->onChange.subscribe(
-                [this](auto*, bool newStatus)
+                [this](bool newStatus)
                 {
                     if (_target)
                     {

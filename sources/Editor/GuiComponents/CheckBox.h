@@ -44,7 +44,7 @@ namespace Core::Gui
         [[nodiscard]] bool getValue() const noexcept { return _currentValue; }
 
     public: // Delegates
-        Delegate<void(CheckBox*, bool)> onChange;
+        Delegate<void(bool)> onChange;
 
     protected:
         void onDraw() override;

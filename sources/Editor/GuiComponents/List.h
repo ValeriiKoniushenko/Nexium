@@ -67,7 +67,7 @@ namespace Core::Gui
         [[nodiscard]] std::size_t getCurrentIndex() const noexcept { return _currentItem; }
 
     public: // Delegates
-        Delegate<void(ListView*, StringAtom)> onSelect;
+        Delegate<void(StringAtom)> onSelect;
 
     protected:
         void onDraw() override;
@@ -108,7 +108,7 @@ namespace Core::Gui
         [[nodiscard]] void* getCurrentData() const noexcept { return _currentData; }
 
     public: // Delegates
-        Delegate<void(ListModelBased*, void*)> onSelect;
+        Delegate<void(void*)> onSelect;
 
     protected:
         void onDraw() override;

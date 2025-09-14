@@ -107,7 +107,7 @@ namespace Core::Gui
                 continue;
             }
             const auto w = child->unsafeCastTo<Widget>();
-            if (w->getFlex().cast() == Widget::Flex::FlexWidth)
+            if (w->getFlex().cast() == Flex::FlexWidth)
             {
                 w->setWidth(ownWidth);
             }
