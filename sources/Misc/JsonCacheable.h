@@ -34,7 +34,7 @@ namespace Core
 
         /**
          * @brief Generate in your own way possible unique string.
-         * After that you can find your logs with such stem(name).
+         * After that, you can find your logs with such stem(name).
          */
         void writeToCache() const;
 
