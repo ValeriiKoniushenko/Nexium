@@ -23,6 +23,7 @@
 #pragma once
 
 #include "BaseWindow.h"
+#include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "Graphics/Texture.h"
 
@@ -42,7 +43,7 @@ namespace Core
 
     private:
         Gui::VerticalLayout _layout;
-        Texture _texture;
+        Gui::ImageButton* _button = nullptr;
     };
 
 } // namespace Core

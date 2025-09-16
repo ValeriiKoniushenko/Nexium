@@ -30,6 +30,7 @@ namespace Core::Gui
 
     ECS_COMPONENT_IMPL(Button)
     ECS_COMPONENT_IMPL(ToggleButton)
+    ECS_COMPONENT_IMPL(ImageButton)
 
     void Button::setButtonColor(const Color4& value)
     {
@@ -159,6 +160,21 @@ namespace Core::Gui
         return _size;
     }
 
+    void Button::setBorderRound(float value)
+    {
+        _borderRound = value;
+    }
+
+    void Button::resetBorderRound()
+    {
+        _borderRound.reset();
+    }
+
+    std::optional<float> Button::getBorderRound() const
+    {
+        return _borderRound;
+    }
+
     void Button::onDraw()
     {
         int pushedStyles = 0;
@@ -171,15 +187,21 @@ namespace Core::Gui
         pushedStyles += ImGui::OptPushStyleColor(ImGuiCol_Border, _borderColor);
 
         pushedVars += ImGui::OptPushStyleVar(ImGuiStyleVar_FrameBorderSize, _borderWidth);
+        pushedVars += ImGui::OptPushStyleVar(ImGuiStyleVar_FrameRounding, _borderRound);
 
+        onButtonDraw();
+
+        ImGui::PopStyleColor(pushedStyles);
+        ImGui::PopStyleVar(pushedVars);
+    }
+
+    void Button::onButtonDraw()
+    {
         if (ImGui::ButtonEx(_name.c_str(), _size, ImGuiButtonFlags_None, &_textSize))
         {
             onClick.trigger();
             onClickEvent();
         }
-
-        ImGui::PopStyleColor(pushedStyles);
-        ImGui::PopStyleVar(pushedVars);
     }
 
     void Button::onInitialize()
@@ -231,6 +253,60 @@ namespace Core::Gui
     {
         _isActive = !_isActive;
         onToggle.trigger(_isActive);
+    }
+
+    void ImageButton::preDraw()
+    {
+        Button::preDraw();
+    }
+
+    void ImageButton::onButtonDraw()
+    {
+        // Button::onButtonDraw(); - don't call!!!
+
+        using namespace ImGui;
+
+        ImGuiContext& g = *GImGui;
+        ImGuiWindow* window = GetCurrentWindow();
+        if (window->SkipItems)
+        {
+            return;
+        }
+
+        const glm::vec2 padding = _paddingSize.value_or(g.Style.FramePadding);
+        const ImRect bb(window->DC.CursorPos, window->DC.CursorPos + _size + padding * 2.0f);
+        ItemSize(bb);
+        if (!ItemAdd(bb, id))
+        {
+            return;
+        }
+
+        constexpr auto bg_col = glm::vec4(0, 0, 0, 0);
+        bool hovered, held;
+        bool pressed = ButtonBehavior(bb, id, &hovered, &held, 0);
+
+        // Render
+        const float alpha = (held && hovered) ? 0.95f : hovered ? 0.8f : 1.f;
+        const ImU32 col = GetColorU32((held && hovered) ? ImGuiCol_ButtonActive
+                                      : hovered         ? ImGuiCol_ButtonHovered
+                                                        : ImGuiCol_Button,
+                                      alpha);
+        RenderNavCursor(bb, id);
+        RenderFrame(bb.Min, bb.Max, col, true,
+                    ImClamp((float)ImMin(padding.x, padding.y), 0.0f, g.Style.FrameRounding));
+        if (bg_col.w > 0.0f)
+        {
+            window->DrawList->AddRectFilled(bb.Min + padding, bb.Max - padding,
+                                            GetColorU32(bg_col));
+        }
+        window->DrawList->AddImage(_texture.getTextureId(), bb.Min + padding, bb.Max - padding,
+                                   glm::vec2(0), glm::vec2(1),
+                                   GetColorU32(glm::vec4(1, 1, 1, alpha)));
+    }
+
+    void ImageButton::postDraw()
+    {
+        Button::postDraw();
     }
 
 } // namespace Core::Gui

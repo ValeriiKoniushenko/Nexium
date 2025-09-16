@@ -53,20 +53,20 @@ namespace Core
         _layout.attachChild(search);
         _layout.attachChild(search);
 
-        _texture.loadFromFile(Config::Path::images / "redcolor.png");
+        Texture texture;
+        texture.loadFromFile(Config::Path::images / "redcolor.png");
+
+        _button = _layout.addChildComponent<Gui::ImageButton>();
+        _button->setImage(texture);
+        _button->setBorderColor({ 0, 0, 255, 255 });
+        // _button->setBorderWidth(10.f);
+        // _button->setBorderRound(10.f);
     }
 
     void EditorSettingsEWC::onDraw()
     {
         const float tick = gGameInstance->world.timeDelta;
-
-        auto s = ImGui::GetCursorPosX();
-        ImGui::ImageButton("SMTH1", _texture.getTextureId(), { 64, 64 });
-        ImGui::SameLine();
-        auto s1 = ImGui::GetCursorPosX();
-        ImGui::ImageButton("SMTH2", _texture.getTextureId(), { 64, 64 });
-        auto s2 = ImGui::GetCursorPosX();
-
-        int i = 1;
+        _layout.tick(tick);
     }
+
 } // namespace Core

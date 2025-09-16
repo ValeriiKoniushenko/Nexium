@@ -23,6 +23,7 @@
 #pragma once
 
 #include "Core/Delegate.h"
+#include "Graphics/Texture.h"
 #include "Widget.h"
 
 namespace Core::Gui
@@ -71,11 +72,16 @@ namespace Core::Gui
         [[nodiscard]] float getWidth() const override { return getRealSize().x; }
         [[nodiscard]] float getHeight() const override { return getRealSize().y; }
 
+        void setBorderRound(float value);
+        void resetBorderRound();
+        [[nodiscard]] std::optional<float> getBorderRound() const;
+
     public: // delegates
         Delegate<void()> onClick;
 
     protected:
-        void onDraw() override;
+        void onDraw() final;
+        virtual void onButtonDraw();
         void onInitialize() override;
 
         virtual void onClickEvent() {}
@@ -86,6 +92,7 @@ namespace Core::Gui
         std::optional<Color4> _buttonActiveColor;
         std::optional<Color4> _textColor;
         std::optional<Color4> _borderColor;
+        std::optional<float> _borderRound;
         std::optional<float> _borderWidth;
 
         glm::vec2 _textSize = {};
@@ -113,6 +120,27 @@ namespace Core::Gui
 
     protected:
         bool _isActive = true;
+    };
+
+    class ImageButton : public Button
+    {
+        ECS_COMPONENT_DECL(ImageButton, Button);
+
+    public:
+        void setImage(const Texture& texture) noexcept { _texture = texture; }
+        [[nodiscard]] const Texture& getImage() const noexcept { return _texture; }
+
+        void setPaddingSize(glm::vec2 value) { _paddingSize = value; }
+        [[nodiscard]] std::optional<glm::vec2> getPaddingSize() const { return _paddingSize; }
+
+    protected:
+        void preDraw() override;
+        void onButtonDraw() override;
+        void postDraw() override;
+
+    protected:
+        std::optional<glm::vec2> _paddingSize;
+        Texture _texture;
     };
 
 } // namespace Core::Gui
