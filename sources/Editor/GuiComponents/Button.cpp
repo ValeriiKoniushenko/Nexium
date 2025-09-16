@@ -283,7 +283,11 @@ namespace Core::Gui
 
         constexpr auto bg_col = glm::vec4(0, 0, 0, 0);
         bool hovered, held;
-        bool pressed = ButtonBehavior(bb, id, &hovered, &held, 0);
+        if (ButtonBehavior(bb, id, &hovered, &held, 0))
+        {
+            onClick.trigger();
+            onClickEvent();
+        }
 
         // Render
         const float alpha = (held && hovered) ? 0.95f : hovered ? 0.8f : 1.f;
