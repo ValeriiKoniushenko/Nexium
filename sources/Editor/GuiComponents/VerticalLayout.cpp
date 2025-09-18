@@ -162,7 +162,7 @@ namespace Core::Gui
 
     void VerticalLayout::onInitialize()
     {
-        Widget::onInitialize();
+        Layout::onInitialize();
     }
 
     void VerticalLayout::prepareAlignSpaceBetween()

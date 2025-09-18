@@ -50,7 +50,9 @@ public:                                                                         
 public:                                                                                            \
     [[nodiscard]] BaseComponent::Ptr clone() override                                              \
     {                                                                                              \
-        return static_cast<TypeName*>(_tryAllocateECSObject<TypeName>(this));                      \
+        auto out = static_cast<TypeName*>(_tryAllocateECSObject<TypeName>(this));                  \
+        out->invalidate();                                                                         \
+        return out;                                                                                \
     }                                                                                              \
     [[nodiscard]] static Ptr Create()                                                              \
     {                                                                                              \
@@ -428,6 +430,12 @@ namespace Core
                 onInitialize();
             }
         }
+
+        /**
+         * @brief Call this function if you want to this object was
+         * reinited later.
+         */
+        void invalidate() { _isInitialized = false; }
 
         [[nodiscard]] nlohmann::json toJson() const override;
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;

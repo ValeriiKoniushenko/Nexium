@@ -276,14 +276,14 @@ namespace Core::Gui
         const glm::vec2 padding = _paddingSize.value_or(g.Style.FramePadding);
         const ImRect bb(window->DC.CursorPos, window->DC.CursorPos + _size + padding * 2.0f);
         ItemSize(bb);
-        if (!ItemAdd(bb, id))
+        if (!ItemAdd(bb, _id))
         {
             return;
         }
 
         constexpr auto bg_col = glm::vec4(0, 0, 0, 0);
         bool hovered, held;
-        if (ButtonBehavior(bb, id, &hovered, &held, 0))
+        if (ButtonBehavior(bb, _id, &hovered, &held, 0))
         {
             onClick.trigger();
             onClickEvent();
@@ -295,7 +295,7 @@ namespace Core::Gui
                                       : hovered         ? ImGuiCol_ButtonHovered
                                                         : ImGuiCol_Button,
                                       alpha);
-        RenderNavCursor(bb, id);
+        RenderNavCursor(bb, _id);
         RenderFrame(bb.Min, bb.Max, col, true,
                     ImClamp((float)ImMin(padding.x, padding.y), 0.0f, g.Style.FrameRounding));
         if (bg_col.w > 0.0f)

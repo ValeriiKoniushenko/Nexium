@@ -188,7 +188,7 @@ namespace Core::Gui
 
     void HorizontalLayout::onInitialize()
     {
-        Widget::onInitialize();
+        Layout::onInitialize();
     }
 
     void HorizontalLayout::prepareAlignSpaceBetween()

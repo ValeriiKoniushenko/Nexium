@@ -119,6 +119,7 @@ namespace Core::Gui
         virtual void onDraw() = 0;
         bool addChildValidator(BaseComponent* newChild) override;
         void onTick(float delta) override;
+        void onInitialize() override;
 
         void drawOutline();
         virtual void preDraw();
@@ -127,7 +128,7 @@ namespace Core::Gui
 
     protected:
         inline static int idGen = 0;
-        int id = idGen++; // internal id for ImGui
+        int _id = 0; // internal id for ImGui
 
         glm::vec2 _pos = {};
         Flex _flex = Flex::Fixed;

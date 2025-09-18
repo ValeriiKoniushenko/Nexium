@@ -45,6 +45,7 @@ namespace Core::Gui
 
     protected:
         [[nodiscard]] bool atLeastOne(Flex f);
+        void onInitialize() override;
 
     protected:
         std::optional<float> _height;

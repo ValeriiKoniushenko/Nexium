@@ -51,7 +51,7 @@ namespace Core::Gui
             drawOutline();
         }
 
-        ImGui::PushID(id);
+        ImGui::PushID(_id);
         preDraw();
         onDraw();
         postDraw();
@@ -91,6 +91,12 @@ namespace Core::Gui
         {
             unhandledDraw();
         }
+    }
+
+    void Widget::onInitialize()
+    {
+        BaseComponent::onInitialize();
+        _id = idGen++;
     }
 
     void Widget::drawOutline()
