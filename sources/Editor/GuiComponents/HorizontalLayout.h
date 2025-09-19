@@ -44,9 +44,6 @@ namespace Core::Gui
         }
         [[nodiscard]] bool getFitContent() const noexcept { return _fitContent; }
 
-        void setPaddings(const glm::vec4& lrtb) { _paddings = lrtb; }
-        [[nodiscard]] const glm::vec4& getPaddings() const noexcept { return _paddings; }
-
     protected:
         void onAddChild(BaseComponent* newChild) override;
         void onTick(float delta) override;
@@ -63,9 +60,6 @@ namespace Core::Gui
 
     protected:
         std::vector<float> _yOffsets;
-
-        // Left Right Top Bottom
-        glm::vec4 _paddings = {};
 
         // for space between
         float _spacing = 0.f;

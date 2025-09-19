@@ -41,32 +41,76 @@ namespace Core
     {
         BaseFloatEWC::onInitialize();
 
-        _layout.addChildComponent<ListView>()->setFlex(Flex::FlexWidth);
-
-        const auto search = HorizontalLayout::Create();
-        search->setHorizontalAlign(Align::Center);
-        search->addChildComponent<Label>("Search:");
-        search->addChildComponent<TextInput>()->setFlex(Flex::FlexWidth);
-        search->addChildComponent<CheckBox>();
-        search->addChildComponent<ToggleButton>();
-
-        _layout.attachChild(search);
-        _layout.attachChild(search);
-
-        Texture texture;
-        texture.loadFromFile(Config::Path::images / "redcolor.png");
-
-        _button = _layout.addChildComponent<Gui::ImageButton>();
-        _button->setImage(texture);
-        _button->setBorderColor({ 0, 0, 255, 255 });
-        // _button->setBorderWidth(10.f);
-        // _button->setBorderRound(10.f);
+        setupCommonLayoutSettings();
+        createPage_Keymap();
     }
 
     void EditorSettingsEWC::onDraw()
     {
         const float tick = gGameInstance->world.timeDelta;
-        _layout.tick(tick);
+
+        if (ImGui::BeginChild("MainMenu", glm::vec2(120.f, 0), ImGuiChildFlags_ResizeX))
+        {
+            drawSettingsTree();
+        }
+        ImGui::EndChild();
+
+        ImGui::SameLine();
+
+        if (ImGui::BeginChild("SettingChild"))
+        {
+            _layouts[_currentMenu].tick(tick);
+        }
+        ImGui::EndChild();
+    }
+
+    void EditorSettingsEWC::drawSettingsTree()
+    {
+        if (ImGui::TreeNodeEx("Keymap",
+                              ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_SpanAvailWidth))
+        {
+            ImGui::TreePop();
+        }
+        if (ImGui::IsItemClicked() || (ImGui::IsItemFocused() && isHovered()))
+        {
+            _currentMenu = Menu_Keymap;
+        }
+
+        if (ImGui::TreeNodeEx("About", ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_SpanAvailWidth))
+        {
+            ImGui::TreePop();
+        }
+        if (ImGui::IsItemClicked() || (ImGui::IsItemFocused() && isHovered()))
+        {
+            _currentMenu = Menu_About;
+        }
+    }
+
+    void EditorSettingsEWC::setupCommonLayoutSettings()
+    {
+        const auto gap = ImGui::GetStyle().WindowPadding.x * 4.f;
+        for (auto& layout : _layouts)
+        {
+            layout.setPaddings(gap, gap, 0, 0);
+        }
+    }
+
+    void EditorSettingsEWC::createPage_Keymap()
+    {
+        auto& layout = _layouts[Menu_Keymap];
+
+        auto line = HorizontalLayout::Create();
+        line->setComponentName("Label-Key line holder");
+        line->setFlex(Flex::FlexWidth);
+        line->setHorizontalAlign(Align::SpaceBetween);
+        line->addChildComponent<Label>("Switch Editor/Game mode");
+        auto* holder = line->addChildComponent<HorizontalLayout>();
+        holder->setComponentName("Button changer + reset");
+        holder->setFlex(Flex::Fixed);
+        holder->addChildComponent<Button>("None");
+        holder->addChildComponent<Button>(ICON_FA_SHARE);
+
+        layout.attachChild(line);
     }
 
 } // namespace Core

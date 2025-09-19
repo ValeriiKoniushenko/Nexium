@@ -38,12 +38,25 @@ namespace Core
         [[nodiscard]] const char* getIcon() override { return ICON_FA_COG; }
 
     protected:
+        enum Menu
+        {
+            Menu_Keymap,
+            Menu_About,
+            Menu_COUNT
+        };
+
+    protected:
         void onInitialize() override;
         void onDraw() override;
 
-    private:
-        Gui::VerticalLayout _layout;
-        Gui::ImageButton* _button = nullptr;
+        void drawSettingsTree();
+
+        void setupCommonLayoutSettings();
+        void createPage_Keymap();
+
+    protected:
+        Gui::VerticalLayout _layouts[Menu_COUNT];
+        Menu _currentMenu = static_cast<Menu>(0);
     };
 
 } // namespace Core

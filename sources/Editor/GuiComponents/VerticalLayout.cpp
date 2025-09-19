@@ -57,7 +57,7 @@ namespace Core::Gui
     {
         if (_height)
         {
-            return *_height;
+            return *_height + (_paddings.z + _paddings.w);
         }
 
         const float defaultGap = style().ItemSpacing.y;
@@ -72,7 +72,13 @@ namespace Core::Gui
             height += child->unsafeCastTo<Widget>()->getHeight();
             height += _spacing.value_or(defaultGap);
         }
-        return height != 0 ? height - _spacing.value_or(defaultGap) : 0;
+
+        if (height != 0)
+        {
+            return height - _spacing.value_or(defaultGap) + (_paddings.z + _paddings.w);
+        }
+
+        return 0;
     }
 
     void VerticalLayout::setSpacing(float value)
@@ -99,7 +105,7 @@ namespace Core::Gui
 
     void VerticalLayout::recalcFlexChildren()
     {
-        const auto ownWidth = getWidth();
+        const auto ownWidth = getWidth() - (_paddings.x + _paddings.y);
         for (auto&& child : _children)
         {
             if (!child->isEnabled())
@@ -236,6 +242,8 @@ namespace Core::Gui
             }
             space /= _children.size() - 1ll;
         }
+
+        // ImGui::SetCursorPosY(ImGui::GetCursorPosX() + _paddings.z);
 
         std::size_t i = 0;
 
