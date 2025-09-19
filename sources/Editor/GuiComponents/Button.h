@@ -61,11 +61,18 @@ namespace Core::Gui
         void setText(const StringAtom& string);
         [[nodiscard]] const StringAtom& getText() const noexcept;
 
+        void setMinWidth(float width) noexcept;
+        [[nodiscard]] float getMinWidth() const noexcept { return _minSize.x; }
         void setWidth(float width) override;
         void resetWidth();
 
+        void setMinHeight(float height) noexcept;
+        [[nodiscard]] float getMinHeight() const noexcept { return _minSize.y; }
         void setHeight(float height) override;
         void resetHeight();
+
+        void setSize(glm::vec2 size) noexcept;
+        void setMinSize(glm::vec2 size) noexcept;
 
         [[nodiscard]] glm::vec2 getRealSize() const;
 
@@ -97,6 +104,7 @@ namespace Core::Gui
 
         glm::vec2 _textSize = {};
         glm::vec2 _size = {};
+        glm::vec2 _minSize = {};
     };
 
     class ToggleButton : public Button

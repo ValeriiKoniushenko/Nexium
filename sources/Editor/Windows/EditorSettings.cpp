@@ -95,6 +95,8 @@ namespace Core
         auto* holder = addChildComponent<HorizontalLayout>();
         holder->setFlex(Flex::Fixed);
         _button = holder->addChildComponent<Button>("None");
+        _button->setMinWidth(80.f);
+
         _resetButton = holder->addChildComponent<Button>(ICON_FA_SHARE);
     }
 

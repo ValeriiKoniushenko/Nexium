@@ -126,8 +126,8 @@ namespace Core::Gui
     {
         setComponentName(string);
         _textSize = ImGui::CalcTextSize(string.c_str());
-        _size = ImGui::CalcItemSize({}, _textSize.x + style().FramePadding.x * 2.0f,
-                                    _textSize.y + style().FramePadding.y * 2.0f);
+        setSize(ImGui::CalcItemSize({}, _textSize.x + style().FramePadding.x * 2.0f,
+                                    _textSize.y + style().FramePadding.y * 2.0f));
     }
 
     const StringAtom& Button::getText() const noexcept
@@ -135,9 +135,18 @@ namespace Core::Gui
         return getComponentName();
     }
 
+    void Button::setMinWidth(float width) noexcept
+    {
+        _minSize.x = std::max(0.f, width);
+        if (_size.x < _minSize.x)
+        {
+            _size.x = _minSize.x;
+        }
+    }
+
     void Button::setWidth(float width)
     {
-        _size.x = width;
+        _size.x = std::max(_minSize.x, width);
     }
 
     void Button::resetWidth()
@@ -145,14 +154,35 @@ namespace Core::Gui
         _size.x = 0.0f;
     }
 
+    void Button::setMinHeight(float height) noexcept
+    {
+        _minSize.y = std::max(0.f, height);
+        if (_size.y < _minSize.y)
+        {
+            _size.y = _minSize.y;
+        }
+    }
+
     void Button::setHeight(float height)
     {
-        _size.y = height;
+        _size.y = std::max(_minSize.y, height);
     }
 
     void Button::resetHeight()
     {
         _size.y = 0.0f;
+    }
+
+    void Button::setSize(glm::vec2 size) noexcept
+    {
+        setWidth(size.x);
+        setHeight(size.y);
+    }
+
+    void Button::setMinSize(glm::vec2 size) noexcept
+    {
+        setMinWidth(size.x);
+        setMinHeight(size.y);
     }
 
     glm::vec2 Button::getRealSize() const
@@ -218,8 +248,8 @@ namespace Core::Gui
         }
         if (_size.x == 0.0f && _size.y == 0.0f)
         {
-            _size = ImGui::CalcItemSize(_size, _textSize.x + style().FramePadding.x * 2.0f,
-                                        _textSize.y + style().FramePadding.y * 2.0f);
+            setSize(ImGui::CalcItemSize(_size, _textSize.x + style().FramePadding.x * 2.0f,
+                                        _textSize.y + style().FramePadding.y * 2.0f));
         }
     }
 

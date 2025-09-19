@@ -71,6 +71,7 @@ namespace Core
     void GameEditor::initialize()
     {
         setupImGuiStyles();
+        setupShortcuts();
 
         ImGui_ImplGlfw_InitForOpenGL(GetWindow().getRawWindow(), true);
         ImGui_ImplOpenGL3_Init(GetGlslVersionShaderLike().c_str());
@@ -99,8 +100,6 @@ namespace Core
                         gGameInstance->updateViewport();
                     }
                 });
-
-        setupShortcuts();
     }
 
     void GameEditor::tick(float delta)
