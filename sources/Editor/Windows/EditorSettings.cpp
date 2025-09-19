@@ -29,6 +29,8 @@
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/Label.h"
 #include "Editor/GuiComponents/List.h"
+#include "Editor/GuiComponents/Separator.h"
+#include "Editor/GuiComponents/Spacer.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 
 using namespace Core::Gui;
@@ -88,16 +90,20 @@ namespace Core
 
     void EditorSettingsEWC::setupCommonLayoutSettings()
     {
-        const auto gap = ImGui::GetStyle().WindowPadding.x * 4.f;
+        const auto gap = ImGui::GetStyle().WindowPadding.x;
         for (auto& layout : _layouts)
         {
-            layout.setPaddings(gap, gap, gap, gap);
+            layout.setPaddings(gap, gap, 0, 0);
         }
     }
 
     void EditorSettingsEWC::createPage_Keymap()
     {
         auto& layout = _layouts[Menu_Keymap];
+
+        layout.addChildComponent<Spacer>();
+        layout.addChildComponent<Label>()->setText("General");
+        layout.addChildComponent<Separator>();
 
         auto line = HorizontalLayout::Create();
         line->setComponentName("Label-Key line holder");

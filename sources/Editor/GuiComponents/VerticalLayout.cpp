@@ -286,18 +286,18 @@ namespace Core::Gui
             {
                 continue;
             }
-            const auto w = child->unsafeCastTo<Widget>();
-            if (_align.cast() == Align::Left)
+            _xOffsets.at(i) = 0;
+            const auto w = child->unsafeCastTo<Widget>()->getWidth();
+            if (w != -1.f)
             {
-                _xOffsets.at(i) = 0;
-            }
-            else if (_align.cast() == Align::Right)
-            {
-                _xOffsets.at(i) = ownWidth - w->getWidth();
-            }
-            else if (_align.cast() == Align::Center)
-            {
-                _xOffsets.at(i) = (ownWidth - w->getWidth()) / 2.f;
+                if (_align.cast() == Align::Right)
+                {
+                    _xOffsets.at(i) = ownWidth - w;
+                }
+                else if (_align.cast() == Align::Center)
+                {
+                    _xOffsets.at(i) = (ownWidth - w) / 2.f;
+                }
             }
             ++i;
         }
