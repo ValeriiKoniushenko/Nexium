@@ -243,7 +243,10 @@ namespace Core::Gui
             space /= _children.size() - 1ll;
         }
 
-        // ImGui::SetCursorPosY(ImGui::GetCursorPosX() + _paddings.z);
+        if (_paddings.z != 0.f)
+        {
+            ImGui::SetCursorPosY(ImGui::GetCursorPosY() + _paddings.z);
+        }
 
         std::size_t i = 0;
 
@@ -254,12 +257,20 @@ namespace Core::Gui
             {
                 continue;
             }
-            ImGui::SetCursorPosX(originalXCursor + _xOffsets.at(i++));
+            ImGui::SetCursorPosX(originalXCursor + _xOffsets.at(i));
+
             child->unsafeCastTo<Widget>()->unhandledDraw();
             if (space != 0.f)
             {
                 ImGui::SetCursorPosY(ImGui::GetCursorPosY() + space - defaultSpacing);
             }
+
+            ++i;
+        }
+
+        if (_paddings.w != 0.f)
+        {
+            ImGui::SetCursorPosY(ImGui::GetCursorPosY() + _paddings.w);
         }
     }
 

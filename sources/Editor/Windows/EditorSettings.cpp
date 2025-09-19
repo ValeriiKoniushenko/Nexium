@@ -91,7 +91,7 @@ namespace Core
         const auto gap = ImGui::GetStyle().WindowPadding.x * 4.f;
         for (auto& layout : _layouts)
         {
-            layout.setPaddings(gap, gap, 0, 0);
+            layout.setPaddings(gap, gap, gap, gap);
         }
     }
 
@@ -110,6 +110,8 @@ namespace Core
         holder->addChildComponent<Button>("None");
         holder->addChildComponent<Button>(ICON_FA_SHARE);
 
+        layout.attachChild(line);
+        layout.attachChild(line);
         layout.attachChild(line);
     }
 

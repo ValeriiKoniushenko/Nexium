@@ -103,13 +103,13 @@ namespace Core::Gui
     {
         ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
-        constexpr float thickness = 1.f;
+        constexpr float thickness = 2.f;
         auto [topLeft, bottomRight] = getGlobalBounds();
         bottomRight += thickness;
-        topLeft -= thickness;
+        topLeft -= thickness / 2.f;
 
         draw_list->AddRect(topLeft, bottomRight, IM_COL32(255, 255, 0, 255), // yellow color
-                           1.0f,                                             // rounding
+                           0.0f,                                             // rounding
                            0,                                                // flags
                            thickness                                         // thickness
         );
