@@ -25,6 +25,7 @@
 #include "Core/Color.h"
 #include "Core/Size.h"
 #include "ImGui/imgui.h"
+#include "InputDevices/Keyboard.h"
 
 #include <filesystem>
 
@@ -55,6 +56,11 @@ namespace Core::Config
         inline static std::filesystem::path fontAwesome = fonts / "fontawesome-webfont.ttf";
 
     } // namespace Path
+
+    namespace Keyboard
+    {
+        inline static auto editorImGuiShowRect = Core::Keyboard::Key::Key_F2;
+    }
 
     static constexpr float defaultEditorFontSize = 16.f;
     static constexpr float defaultEmojiScale = 0.8f;

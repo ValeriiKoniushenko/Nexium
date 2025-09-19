@@ -38,11 +38,68 @@ using namespace Core::Gui;
 namespace Core
 {
     ECS_COMPONENT_IMPL(EditorSettingsEWC)
+    ECS_COMPONENT_IMPL(EditorSettingsEWC::KeymapItem)
 
-    void EditorSettingsEWC::onInitialize()
+    bool EditorSettingsEWC::KeymapItem::containsString(const StringAtom& str)
     {
-        BaseFloatEWC::onInitialize();
+        if (Verify(_label && _button))
+        {
+            Assert(!_label->getComponentName().isEmpty());
 
+            if (_label->getComponentName().findIgnoreCase(str) != nullptr)
+            {
+                return true;
+            }
+
+            if (_button->getComponentName().findIgnoreCase(str) != nullptr)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    void EditorSettingsEWC::KeymapItem::setLabel(const StringAtom& label)
+    {
+        if (Verify(_label))
+        {
+            _label->setText(label);
+        }
+    }
+
+    void EditorSettingsEWC::KeymapItem::setButtonName(const StringAtom& label)
+    {
+        if (Verify(_button))
+        {
+            _button->setText(label);
+        }
+    }
+    void EditorSettingsEWC::KeymapItem::setReadOnly(bool value)
+    {
+        if (Verify(_button))
+        {
+            _button->disableWidget(value);
+            _resetButton->disableWidget(value);
+        }
+    }
+
+    void EditorSettingsEWC::KeymapItem::onInitialize()
+    {
+        HorizontalLayout::onInitialize();
+
+        setComponentName("KeymapItem");
+        setFlex(Flex::FlexWidth);
+        setHorizontalAlign(Align::SpaceBetween);
+        _label = addChildComponent<Label>("Undefined command");
+        auto* holder = addChildComponent<HorizontalLayout>();
+        holder->setFlex(Flex::Fixed);
+        _button = holder->addChildComponent<Button>("None");
+        _resetButton = holder->addChildComponent<Button>(ICON_FA_SHARE);
+    }
+
+    void EditorSettingsEWC::onOpen()
+    {
         setupCommonLayoutSettings();
         createPage_Keymap();
     }
@@ -100,25 +157,28 @@ namespace Core
     void EditorSettingsEWC::createPage_Keymap()
     {
         auto& layout = _layouts[Menu_Keymap];
+        layout.clear();
 
         layout.addChildComponent<Spacer>();
         layout.addChildComponent<Label>()->setText("General");
         layout.addChildComponent<Separator>();
 
-        auto line = HorizontalLayout::Create();
-        line->setComponentName("Label-Key line holder");
-        line->setFlex(Flex::FlexWidth);
-        line->setHorizontalAlign(Align::SpaceBetween);
-        line->addChildComponent<Label>("Switch Editor/Game mode");
-        auto* holder = line->addChildComponent<HorizontalLayout>();
-        holder->setComponentName("Button changer + reset");
-        holder->setFlex(Flex::Fixed);
-        holder->addChildComponent<Button>("None");
-        holder->addChildComponent<Button>(ICON_FA_SHARE);
+        for (auto&& input : GetEditor().keyboardInput.getMapping())
+        {
+            const auto item = layout.addChildComponent<KeymapItem>();
+            item->setReadOnly(true);
+            item->setLabel(input.first);
+            item->setButtonName(
+                Keyboard::KeyToString(input.second->getKey().value_or(Keyboard::Key_None)));
+        }
 
-        layout.attachChild(line);
-        layout.attachChild(line);
-        layout.attachChild(line);
+        // static keys
+        {
+            const auto item = layout.addChildComponent<KeymapItem>();
+            item->setReadOnly(true);
+            item->setLabel("Show ImGui debug rects");
+            item->setButtonName(Keyboard::KeyToString(Core::Config::Keyboard::editorImGuiShowRect));
+        }
     }
 
 } // namespace Core

@@ -22,6 +22,7 @@
 
 #include "Widget.h"
 
+#include "Editor/Configs.h"
 #include "InputDevices/Keyboard.h"
 #include "InputDevices/Mouse.h"
 
@@ -40,7 +41,7 @@ namespace Core::Gui
         _pos = ImGui::GetCursorPos();
 
 #if defined(DEBUG)
-        if (Keyboard::IsKeyPressed(Keyboard::Key_F2)
+        if (Keyboard::IsKeyPressed(Core::Config::Keyboard::editorImGuiShowRect)
             && getGlobalBounds().isIntersects(Mouse::GetPosition()))
         {
             drawOutline();

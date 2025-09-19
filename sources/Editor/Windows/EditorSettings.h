@@ -24,15 +24,40 @@
 
 #include "BaseWindow.h"
 #include "Editor/GuiComponents/Button.h"
+#include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "Graphics/Texture.h"
 
 namespace Core
 {
+    namespace Gui
+    {
+        class Label;
+    }
 
     class EditorSettingsEWC : public BaseFloatEWC
     {
         ECS_COMPONENT_DECL(EditorSettingsEWC, BaseFloatEWC);
+
+    public:
+        class KeymapItem : public Gui::HorizontalLayout
+        {
+            ECS_COMPONENT_DECL(KeymapItem, HorizontalLayout);
+
+        public:
+            [[nodiscard]] bool containsString(const StringAtom& str);
+            void setLabel(const StringAtom& label);
+            void setButtonName(const StringAtom& label);
+            void setReadOnly(bool value = true);
+
+        protected:
+            void onInitialize() override;
+
+        protected:
+            Gui::Label* _label = nullptr;
+            Gui::Button* _button = nullptr;
+            Gui::Button* _resetButton = nullptr;
+        };
 
     public:
         [[nodiscard]] const char* getIcon() override { return ICON_FA_COG; }
@@ -46,7 +71,7 @@ namespace Core
         };
 
     protected:
-        void onInitialize() override;
+        void onOpen() override;
         void onDraw() override;
 
         void drawSettingsTree();

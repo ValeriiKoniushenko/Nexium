@@ -119,8 +119,8 @@ namespace Core
             ImGui::Render();
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-            _keyboardInput.update();
-            _mouseInput.update();
+            keyboardInput.update();
+            mouseInput.update();
         }
     }
 
@@ -287,28 +287,28 @@ namespace Core
 
     void GameEditor::setupShortcuts()
     {
-        _keyboardInput.getOrCreate("exit", Keyboard::Key::Key_F12)
+        keyboardInput.getOrCreate("Close editor", Keyboard::Key::Key_F12)
             ->onPress.subscribe(
                 [&](auto)
                 {
                     GetWindow().close();
                 });
 
-        _keyboardInput.getOrCreate("cancel", Keyboard::Key::Key_Escape)
+        keyboardInput.getOrCreate("Cancel action", Keyboard::Key::Key_Escape)
             ->onPress.subscribe(
                 [&](auto)
                 {
                     gGameInstance->objectSelectorManager.deselectAllAndClear();
                 });
 
-        auto mouseMove = _mouseInput.getOrCreate("mouseMove", Mouse::Key_Right);
+        auto mouseMove = mouseInput.getOrCreate("mouseMove", Mouse::Key_Right);
         mouseMove->onDrag.subscribe(
             [this](auto delta, auto spec)
             {
                 handleMouseDrag(delta, spec);
             });
 
-        auto selectObject = _mouseInput.getOrCreate("selectObject", Mouse::Key_Left);
+        auto selectObject = mouseInput.getOrCreate("selectObject", Mouse::Key_Left);
         selectObject->setIsRepeatable(false);
         selectObject->onMouseClick.subscribe(
             [this](auto pos, auto spec)

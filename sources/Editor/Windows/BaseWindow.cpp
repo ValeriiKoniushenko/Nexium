@@ -37,6 +37,22 @@ namespace Core
     //    \____/  \__,_||___/ \___|
     // ========================================================================
 
+    void BaseEWC::openWindow(const StringAtom& args)
+    {
+        setEnabled(true);
+        onOpen();
+        if (!args.isEmpty())
+        {
+            putArguments(args);
+        }
+    }
+
+    void BaseEWC::closeWindow()
+    {
+        setEnabled(false);
+        onClose();
+    }
+
     void BaseEWC::onTick(float delta)
     {
         if (beginWindowDraw())

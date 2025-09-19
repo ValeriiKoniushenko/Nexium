@@ -42,7 +42,12 @@ namespace Core
 
         [[nodiscard]] virtual const char* getIcon() { return nullptr; }
 
+        void openWindow(const StringAtom& args = ""_atom);
+        void closeWindow();
+
     protected:
+        virtual void onOpen() {}
+        virtual void onClose() {}
         void onTick(float delta) final;
         virtual void onUpdate() {};
         virtual void onDraw() = 0;
