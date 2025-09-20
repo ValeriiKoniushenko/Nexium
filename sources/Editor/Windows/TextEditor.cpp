@@ -131,7 +131,7 @@ namespace Core
             err_buf[sizeof(err_buf) - 1] = '\0';
 #endif
 
-            errorLog("File: {} - wasn't opened. Reason: {}"_f << _path.c_str() << err_buf);
+            errorLog("File: {} - wasn't opened. Reason: {}"_f << _path << err_buf);
             return;
         }
 
