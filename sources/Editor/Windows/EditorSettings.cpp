@@ -40,6 +40,7 @@ namespace Core
     ECS_COMPONENT_IMPL(EditorSettingsEWC)
     ECS_COMPONENT_IMPL(EditorSettingsEWC::BaseListItem)
     ECS_COMPONENT_IMPL(EditorSettingsEWC::KeymapItem)
+    ECS_COMPONENT_IMPL(EditorSettingsEWC::ColorItem)
 
     bool EditorSettingsEWC::BaseListItem::containsString(const StringAtom& str)
     {
@@ -119,6 +120,32 @@ namespace Core
         _button->setMinWidth(80.f);
 
         _resetButton = holder->addChildComponent<Button>(ICON_FA_SHARE);
+    }
+
+    void EditorSettingsEWC::ColorItem::setReadOnly(bool value)
+    {
+        if (Verify(_colorInput))
+        {
+            _colorInput->setReadOnly(value);
+        }
+    }
+
+    void EditorSettingsEWC::ColorItem::setInputData(const StringAtom& data)
+    {
+        if (Verify(_colorInput))
+        {
+            _colorInput->setInputtedData(data.data());
+        }
+    }
+
+    void EditorSettingsEWC::ColorItem::onInitialize()
+    {
+        BaseListItem::onInitialize();
+
+        auto* holder = addChildComponent<HorizontalLayout>();
+        holder->setFlex(Flex::Fixed);
+        _colorInput = holder->addChildComponent<TextInput>();
+        _colorInput->setWidth(130.f);
     }
 
     void EditorSettingsEWC::onOpen()
@@ -250,6 +277,11 @@ namespace Core
 
         for (int i = 0; i < ImGuiCol_COUNT; ++i)
         {
+            auto color = layout.addChildComponent<ColorItem>();
+            color->setLabel(ImGui::GetStyleColorName(i));
+            color->setReadOnly(true);
+            auto data = Core::Color4::From(NormColor4(colors[i]));
+            color->setInputData("{},{},{},{}"_f << data.x << data.y << data.z << data.w);
         }
     }
 

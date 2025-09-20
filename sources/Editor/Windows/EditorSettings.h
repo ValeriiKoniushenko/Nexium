@@ -25,6 +25,7 @@
 #include "BaseWindow.h"
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
+#include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "Graphics/Texture.h"
 
@@ -71,6 +72,21 @@ namespace Core
         protected:
             Gui::Button* _button = nullptr;
             Gui::Button* _resetButton = nullptr;
+        };
+
+        class ColorItem : public BaseListItem
+        {
+            ECS_COMPONENT_DECL(ColorItem, BaseListItem);
+
+        public:
+            void setReadOnly(bool value = true) override;
+            void setInputData(const StringAtom& data);
+
+        protected:
+            void onInitialize() override;
+
+        protected:
+            Gui::TextInput* _colorInput = nullptr;
         };
 
     public:
