@@ -30,9 +30,9 @@
                     0.0
                 ],
                 "position": [
-                    894.772216796875,
-                    503.1069641113281,
-                    271.9025573730469
+                    761.3760986328125,
+                    492.6815185546875,
+                    298.8154602050781
                 ],
                 "rotation": [
                     5.999996185302734,
@@ -62,32 +62,28 @@
     "keyboardInput": {
         "mapping": [
             {
-                "action": "moveUp",
-                "key": "R"
-            },
-            {
-                "action": "moveForward",
+                "action": "Move forward",
                 "key": "W"
             },
             {
-                "action": "moveDown",
-                "key": "F"
+                "action": "Move right",
+                "key": "D"
             },
             {
-                "action": "moveLeft",
-                "key": "A"
+                "action": "Move up",
+                "key": "R"
             },
             {
-                "action": "moveBackward",
+                "action": "Move backward",
                 "key": "S"
             },
             {
-                "action": "toggleRenderMode",
-                "key": "F1"
+                "action": "Move left",
+                "key": "A"
             },
             {
-                "action": "moveRight",
-                "key": "D"
+                "action": "Move down",
+                "key": "F"
             }
         ]
     },

@@ -43,12 +43,22 @@ namespace Core::Gui
         void setWidth(float value) override { _width = value; }
         void resetWidth() { _width.reset(); }
 
+        void setPaddings(float left, float right, float top = 0, float bottom = 0)
+        {
+            _paddings = glm::vec4(left, right, top, bottom);
+        }
+        void setPaddings(const glm::vec4& lrtb) { _paddings = lrtb; }
+        [[nodiscard]] const glm::vec4& getPaddings() const noexcept { return _paddings; }
+
     protected:
         [[nodiscard]] bool atLeastOne(Flex f);
+        void onInitialize() override;
 
     protected:
         std::optional<float> _height;
         std::optional<float> _width;
+        // Left Right Top Bottom
+        glm::vec4 _paddings = {};
 
         Align _align = Align::None;
         Align _secondAlign = Align::None;

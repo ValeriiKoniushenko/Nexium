@@ -22,6 +22,7 @@
 
 #include "Widget.h"
 
+#include "Editor/Configs.h"
 #include "InputDevices/Keyboard.h"
 #include "InputDevices/Mouse.h"
 
@@ -40,7 +41,7 @@ namespace Core::Gui
         _pos = ImGui::GetCursorPos();
 
 #if defined(DEBUG)
-        if (Keyboard::IsKeyPressed(Keyboard::Key_F2)
+        if (Keyboard::IsKeyPressed(Core::Config::Keyboard::editorImGuiShowRect)
             && getGlobalBounds().isIntersects(Mouse::GetPosition()))
         {
             drawOutline();
@@ -51,7 +52,7 @@ namespace Core::Gui
             drawOutline();
         }
 
-        ImGui::PushID(id);
+        ImGui::PushID(_id);
         preDraw();
         onDraw();
         postDraw();
@@ -93,17 +94,23 @@ namespace Core::Gui
         }
     }
 
+    void Widget::onInitialize()
+    {
+        BaseComponent::onInitialize();
+        _id = idGen++;
+    }
+
     void Widget::drawOutline()
     {
         ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
-        constexpr float thickness = 1.f;
+        constexpr float thickness = 2.f;
         auto [topLeft, bottomRight] = getGlobalBounds();
         bottomRight += thickness;
-        topLeft -= thickness;
+        topLeft -= thickness / 2.f;
 
         draw_list->AddRect(topLeft, bottomRight, IM_COL32(255, 255, 0, 255), // yellow color
-                           1.0f,                                             // rounding
+                           0.0f,                                             // rounding
                            0,                                                // flags
                            thickness                                         // thickness
         );

@@ -43,4 +43,9 @@ namespace Core::Gui
         return false;
     }
 
+    void Layout::onInitialize()
+    {
+        Widget::onInitialize();
+    }
+
 } // namespace Core::Gui

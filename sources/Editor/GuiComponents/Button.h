@@ -23,6 +23,7 @@
 #pragma once
 
 #include "Core/Delegate.h"
+#include "Graphics/Texture.h"
 #include "Widget.h"
 
 namespace Core::Gui
@@ -60,22 +61,34 @@ namespace Core::Gui
         void setText(const StringAtom& string);
         [[nodiscard]] const StringAtom& getText() const noexcept;
 
+        void setMinWidth(float width) noexcept;
+        [[nodiscard]] float getMinWidth() const noexcept { return _minSize.x; }
         void setWidth(float width) override;
         void resetWidth();
 
+        void setMinHeight(float height) noexcept;
+        [[nodiscard]] float getMinHeight() const noexcept { return _minSize.y; }
         void setHeight(float height) override;
         void resetHeight();
+
+        void setSize(glm::vec2 size) noexcept;
+        void setMinSize(glm::vec2 size) noexcept;
 
         [[nodiscard]] glm::vec2 getRealSize() const;
 
         [[nodiscard]] float getWidth() const override { return getRealSize().x; }
         [[nodiscard]] float getHeight() const override { return getRealSize().y; }
 
+        void setBorderRound(float value);
+        void resetBorderRound();
+        [[nodiscard]] std::optional<float> getBorderRound() const;
+
     public: // delegates
         Delegate<void()> onClick;
 
     protected:
-        void onDraw() override;
+        void onDraw() final;
+        virtual void onButtonDraw();
         void onInitialize() override;
 
         virtual void onClickEvent() {}
@@ -86,10 +99,12 @@ namespace Core::Gui
         std::optional<Color4> _buttonActiveColor;
         std::optional<Color4> _textColor;
         std::optional<Color4> _borderColor;
+        std::optional<float> _borderRound;
         std::optional<float> _borderWidth;
 
         glm::vec2 _textSize = {};
         glm::vec2 _size = {};
+        glm::vec2 _minSize = {};
     };
 
     class ToggleButton : public Button
@@ -113,6 +128,27 @@ namespace Core::Gui
 
     protected:
         bool _isActive = true;
+    };
+
+    class ImageButton : public Button
+    {
+        ECS_COMPONENT_DECL(ImageButton, Button);
+
+    public:
+        void setImage(const Texture& texture) noexcept { _texture = texture; }
+        [[nodiscard]] const Texture& getImage() const noexcept { return _texture; }
+
+        void setPaddingSize(glm::vec2 value) { _paddingSize = value; }
+        [[nodiscard]] std::optional<glm::vec2> getPaddingSize() const { return _paddingSize; }
+
+    protected:
+        void preDraw() override;
+        void onButtonDraw() override;
+        void postDraw() override;
+
+    protected:
+        std::optional<glm::vec2> _paddingSize;
+        Texture _texture;
     };
 
 } // namespace Core::Gui

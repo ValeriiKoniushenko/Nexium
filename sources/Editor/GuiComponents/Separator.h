@@ -22,49 +22,23 @@
 
 #pragma once
 
-#include "Layout.h"
+#include "Widget.h"
 
 namespace Core::Gui
 {
 
-    class HorizontalLayout : public Layout
+    class Separator : public Widget
     {
-        ECS_COMPONENT_DECL_NO_CNSTR(HorizontalLayout, Layout);
+        ECS_COMPONENT_DECL(Separator, Widget);
 
     public:
-        explicit HorizontalLayout(const StringAtom& name = ""_atom);
-
-        [[nodiscard]] float getWidth() const override;
-        [[nodiscard]] float getHeight() const override;
-
-        void setFitContent(bool value)
-        {
-            _fitContent = value;
-            setFlex(Flex::Fixed);
-        }
-        [[nodiscard]] bool getFitContent() const noexcept { return _fitContent; }
+        [[nodiscard]] float getWidth() const override { return -1; }
+        [[nodiscard]] float getHeight() const override { return 1; }
+        void setWidth(float) override { Assert(false, "Impossible to set size for Separator"); }
+        void setHeight(float) override { Assert(false, "Impossible to set size for Separator"); }
 
     protected:
-        void onAddChild(BaseComponent* newChild) override;
-        void onTick(float delta) override;
         void onDraw() override;
-        void onInitialize() override;
-
-        void prepareAlignSpaceBetween();
-        void prepareAlignLeft();
-        void prepareAlignRight();
-        void prepareAlignCenter();
-        void calcYOffsets();
-        void directDraw();
-        void recalcFlexChildren();
-
-    protected:
-        std::vector<float> _yOffsets;
-
-        // for space between
-        float _spacing = 0.f;
-
-        bool _fitContent = false;
     };
 
 } // namespace Core::Gui

@@ -90,22 +90,13 @@ namespace Core
             return speed * mlt;
         };
 
-        auto toggleRenderMode
-            = keyboardInput.getOrCreate("toggleRenderMode", Keyboard::Key::Key_F1);
-        toggleRenderMode->setIsRepeatable(false);
-        toggleRenderMode->onPress.subscribe(
-            [](auto)
-            {
-                gGameInstance->toggleRenderMode();
-            });
-
         // clang-format off
-        keyboardInput.getOrCreate("moveForward", Keyboard::Key::Key_W)->onPress.subscribe([&](auto state){ camera.moveForward(-getRealSpeed(state) * gGameInstance->world.timeDelta); });
-        keyboardInput.getOrCreate("moveBackward", Keyboard::Key::Key_S)->onPress.subscribe([&](auto state){ camera.moveForward(getRealSpeed(state) * gGameInstance->world.timeDelta); });
-        keyboardInput.getOrCreate("moveRight", Keyboard::Key::Key_D)->onPress.subscribe([&](auto state){ camera.moveRight(getRealSpeed(state) * gGameInstance->world.timeDelta); });
-        keyboardInput.getOrCreate("moveLeft", Keyboard::Key::Key_A)->onPress.subscribe([&](auto state){ camera.moveRight(-getRealSpeed(state) * gGameInstance->world.timeDelta); });
-        keyboardInput.getOrCreate("moveUp", Keyboard::Key::Key_R)->onPress.subscribe([&](auto state){ camera.moveUp(getRealSpeed(state) * gGameInstance->world.timeDelta); });
-        keyboardInput.getOrCreate("moveDown", Keyboard::Key::Key_F)->onPress.subscribe([&](auto state){ camera.moveUp(-getRealSpeed(state) * gGameInstance->world.timeDelta); });
+        keyboardInput.getOrCreate("Move forward", Keyboard::Key::Key_W)->onPress.subscribe([&](auto state){ camera.moveForward(-getRealSpeed(state) * gGameInstance->world.timeDelta); });
+        keyboardInput.getOrCreate("Move backward", Keyboard::Key::Key_S)->onPress.subscribe([&](auto state){ camera.moveForward(getRealSpeed(state) * gGameInstance->world.timeDelta); });
+        keyboardInput.getOrCreate("Move right", Keyboard::Key::Key_D)->onPress.subscribe([&](auto state){ camera.moveRight(getRealSpeed(state) * gGameInstance->world.timeDelta); });
+        keyboardInput.getOrCreate("Move left", Keyboard::Key::Key_A)->onPress.subscribe([&](auto state){ camera.moveRight(-getRealSpeed(state) * gGameInstance->world.timeDelta); });
+        keyboardInput.getOrCreate("Move up", Keyboard::Key::Key_R)->onPress.subscribe([&](auto state){ camera.moveUp(getRealSpeed(state) * gGameInstance->world.timeDelta); });
+        keyboardInput.getOrCreate("Move down", Keyboard::Key::Key_F)->onPress.subscribe([&](auto state){ camera.moveUp(-getRealSpeed(state) * gGameInstance->world.timeDelta); });
         // clang-format on
 
         mouseInput.getOrCreate("mouseRotation", Mouse::Key_Right)

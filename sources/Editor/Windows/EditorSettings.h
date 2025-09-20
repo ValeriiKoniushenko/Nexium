@@ -23,26 +23,97 @@
 #pragma once
 
 #include "BaseWindow.h"
+#include "Editor/GuiComponents/Button.h"
+#include "Editor/GuiComponents/HorizontalLayout.h"
+#include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "Graphics/Texture.h"
 
 namespace Core
 {
+    namespace Gui
+    {
+        class Label;
+    }
 
     class EditorSettingsEWC : public BaseFloatEWC
     {
         ECS_COMPONENT_DECL(EditorSettingsEWC, BaseFloatEWC);
 
     public:
+        class BaseListItem : public Gui::HorizontalLayout
+        {
+            ECS_COMPONENT_DECL(BaseListItem, HorizontalLayout);
+
+        public:
+            [[nodiscard]] virtual bool containsString(const StringAtom& str);
+            virtual void setReadOnly(bool value = true) = 0;
+            void setLabel(const StringAtom& label);
+
+        protected:
+            void onInitialize() override;
+
+        protected:
+            Gui::Label* _label = nullptr;
+        };
+
+        class KeymapItem : public BaseListItem
+        {
+            ECS_COMPONENT_DECL(KeymapItem, BaseListItem);
+
+        public:
+            void setButtonName(const StringAtom& label);
+            void setReadOnly(bool value = true) override;
+            [[nodiscard]] bool containsString(const StringAtom& str) override;
+
+        protected:
+            void onInitialize() override;
+
+        protected:
+            Gui::Button* _button = nullptr;
+            Gui::Button* _resetButton = nullptr;
+        };
+
+        class ColorItem : public BaseListItem
+        {
+            ECS_COMPONENT_DECL(ColorItem, BaseListItem);
+
+        public:
+            void setReadOnly(bool value = true) override;
+            void setInputData(const StringAtom& data);
+
+        protected:
+            void onInitialize() override;
+
+        protected:
+            Gui::TextInput* _colorInput = nullptr;
+        };
+
+    public:
         [[nodiscard]] const char* getIcon() override { return ICON_FA_COG; }
 
     protected:
-        void onInitialize() override;
+        enum Menu
+        {
+            Menu_Appearance,
+            Menu_Keymap,
+            Menu_COUNT
+        };
+
+    protected:
+        void onOpen() override;
         void onDraw() override;
 
-    private:
-        Gui::VerticalLayout _layout;
-        Texture _texture;
+        void drawSettingsTree();
+
+        void setupCommonLayoutSettings();
+        void createPage_Keymap();
+        void createPage_Appearance();
+
+    protected:
+        Gui::VerticalLayout _layouts[Menu_COUNT];
+        Menu _currentMenu = static_cast<Menu>(0);
+        int _defaultTreeNodeFlags = ImGuiTreeNodeFlags_SpanAvailWidth;
     };
 
 } // namespace Core

@@ -57,7 +57,7 @@ namespace Core::Gui
     {
         if (_height)
         {
-            return *_height;
+            return *_height + (_paddings.z + _paddings.w);
         }
 
         const float defaultGap = style().ItemSpacing.y;
@@ -72,7 +72,13 @@ namespace Core::Gui
             height += child->unsafeCastTo<Widget>()->getHeight();
             height += _spacing.value_or(defaultGap);
         }
-        return height != 0 ? height - _spacing.value_or(defaultGap) : 0;
+
+        if (height != 0)
+        {
+            return height - _spacing.value_or(defaultGap) + (_paddings.z + _paddings.w);
+        }
+
+        return 0;
     }
 
     void VerticalLayout::setSpacing(float value)
@@ -99,7 +105,7 @@ namespace Core::Gui
 
     void VerticalLayout::recalcFlexChildren()
     {
-        const auto ownWidth = getWidth();
+        const auto ownWidth = getWidth() - (_paddings.x + _paddings.y);
         for (auto&& child : _children)
         {
             if (!child->isEnabled())
@@ -162,7 +168,7 @@ namespace Core::Gui
 
     void VerticalLayout::onInitialize()
     {
-        Widget::onInitialize();
+        Layout::onInitialize();
     }
 
     void VerticalLayout::prepareAlignSpaceBetween()
@@ -237,6 +243,11 @@ namespace Core::Gui
             space /= _children.size() - 1ll;
         }
 
+        if (_paddings.z != 0.f)
+        {
+            ImGui::SetCursorPosY(ImGui::GetCursorPosY() + _paddings.z);
+        }
+
         std::size_t i = 0;
 
         const float defaultSpacing = style().ItemSpacing.y;
@@ -246,12 +257,20 @@ namespace Core::Gui
             {
                 continue;
             }
-            ImGui::SetCursorPosX(originalXCursor + _xOffsets.at(i++));
+            ImGui::SetCursorPosX(originalXCursor + _xOffsets.at(i));
+
             child->unsafeCastTo<Widget>()->unhandledDraw();
             if (space != 0.f)
             {
                 ImGui::SetCursorPosY(ImGui::GetCursorPosY() + space - defaultSpacing);
             }
+
+            ++i;
+        }
+
+        if (_paddings.w != 0.f)
+        {
+            ImGui::SetCursorPosY(ImGui::GetCursorPosY() + _paddings.w);
         }
     }
 
@@ -267,18 +286,18 @@ namespace Core::Gui
             {
                 continue;
             }
-            const auto w = child->unsafeCastTo<Widget>();
-            if (_align.cast() == Align::Left)
+            _xOffsets.at(i) = 0;
+            const auto w = child->unsafeCastTo<Widget>()->getWidth();
+            if (w != -1.f)
             {
-                _xOffsets.at(i) = 0;
-            }
-            else if (_align.cast() == Align::Right)
-            {
-                _xOffsets.at(i) = ownWidth - w->getWidth();
-            }
-            else if (_align.cast() == Align::Center)
-            {
-                _xOffsets.at(i) = (ownWidth - w->getWidth()) / 2.f;
+                if (_align.cast() == Align::Right)
+                {
+                    _xOffsets.at(i) = ownWidth - w;
+                }
+                else if (_align.cast() == Align::Center)
+                {
+                    _xOffsets.at(i) = (ownWidth - w) / 2.f;
+                }
             }
             ++i;
         }

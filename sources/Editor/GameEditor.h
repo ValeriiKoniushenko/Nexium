@@ -74,7 +74,15 @@ namespace Core
                 name = a->getIcon() + (" " + name);
             }
             a->setComponentName(std::move(name));
-            a->setEnabled(isEnabled);
+            if (isEnabled)
+            {
+                a->openWindow();
+            }
+            else
+            {
+                a->closeWindow();
+            }
+
             return boost::static_pointer_cast<T>(a);
         }
 
@@ -119,8 +127,7 @@ namespace Core
         {
             if (auto* wnd = getWindow<WindowT>(regexName))
             {
-                wnd->setEnabled(true);
-                wnd->putArguments(args);
+                wnd->openWindow(args);
             }
         }
 
@@ -137,6 +144,8 @@ namespace Core
 
     public:
         SlowObjectPicker slowObjectPicker;
+        KeyboardInputManger keyboardInput;
+        MouseInputManger mouseInput;
 
     protected:
         void setupImGuiStyles();
@@ -144,9 +153,6 @@ namespace Core
         void setupShortcuts();
 
     protected:
-        KeyboardInputManger _keyboardInput;
-        MouseInputManger _mouseInput;
-
         std::vector<BaseEWC::Ptr> _windows;
         bool _isInitImGui = false;
         bool _isEnabled = true;

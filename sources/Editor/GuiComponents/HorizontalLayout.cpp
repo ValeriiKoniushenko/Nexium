@@ -188,7 +188,7 @@ namespace Core::Gui
 
     void HorizontalLayout::onInitialize()
     {
-        Widget::onInitialize();
+        Layout::onInitialize();
     }
 
     void HorizontalLayout::prepareAlignSpaceBetween()
@@ -311,15 +311,20 @@ namespace Core::Gui
             child->unsafeCastTo<Widget>()->unhandledDraw();
 
             const auto childWidth = child->unsafeCastTo<Widget>()->getWidth();
-            const auto end = start + childWidth;
-            ImGui::SetCursorPosX(end + defaultSpacing);
+            auto finalOffset = start + childWidth;
+
             if (i != _children.size() - 1)
             {
                 if (_align.cast() == Align::SpaceBetween)
                 {
-                    ImGui::SetCursorPosX(ImGui::GetCursorPosX() + _spacing);
+                    finalOffset += _spacing;
+                }
+                else
+                {
+                    finalOffset += defaultSpacing;
                 }
             }
+            ImGui::SetCursorPosX(finalOffset);
 
             ++i;
         }
