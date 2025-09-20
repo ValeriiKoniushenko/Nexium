@@ -292,6 +292,14 @@ namespace Core
                 {
                     GetWindow().close();
                 });
+        auto toggleRenderMode
+            = keyboardInput.getOrCreate("Toggle render mode", Keyboard::Key::Key_F1);
+        toggleRenderMode->setIsRepeatable(false);
+        toggleRenderMode->onPress.subscribe(
+            [](auto)
+            {
+                gGameInstance->toggleRenderMode();
+            });
 
         keyboardInput.getOrCreate("Cancel action", Keyboard::Key::Key_Escape)
             ->onPress.subscribe(

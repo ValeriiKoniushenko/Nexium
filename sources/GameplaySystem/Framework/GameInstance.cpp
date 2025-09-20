@@ -81,12 +81,13 @@ namespace Core
 
         //-------------------- MISC ---------------------
         renderToTextureObject.generate();
-        gameEditor.initialize();
 
         if (auto* spectator = gameScene.createAndGetActor<Spectator>())
         {
             currentCamera = spectator->findFirstChildOf<BaseCamera>();
         }
+
+        gameEditor.initialize();
 
         onInitializeReadCache();
 
@@ -134,6 +135,9 @@ namespace Core
             if (renderMode.cast() == RenderMode::GameOnly)
             {
                 glClear(clearBits);
+
+                gameEditor.keyboardInput.update(); // force update
+
                 if (currentCamera)
                 {
                     onTick(world.timeDelta);

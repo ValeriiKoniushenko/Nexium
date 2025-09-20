@@ -165,13 +165,12 @@ namespace Core
         layout.addChildComponent<Label>()->setText("General");
         layout.addChildComponent<Separator>();
 
-        for (auto&& input : GetEditor().keyboardInput.getMapping())
+        for (const auto& [fst, snd] : GetEditor().keyboardInput.getMapping())
         {
             const auto item = layout.addChildComponent<KeymapItem>();
             item->setReadOnly(true);
-            item->setLabel(input.first);
-            item->setButtonName(
-                Keyboard::KeyToString(input.second->getKey().value_or(Keyboard::Key_None)));
+            item->setLabel(fst);
+            item->setButtonName(Keyboard::KeyToString(snd->getKey().value_or(Keyboard::Key_None)));
         }
 
         // static keys
@@ -180,6 +179,23 @@ namespace Core
             item->setReadOnly(true);
             item->setLabel("Show ImGui debug rects");
             item->setButtonName(Keyboard::KeyToString(Core::Config::Keyboard::editorImGuiShowRect));
+        }
+
+        if (auto spectator = gGameInstance->gameScene.getFirstActorOf<Spectator>();
+            Verify(spectator))
+        {
+            layout.addChildComponent<Spacer>();
+            layout.addChildComponent<Label>()->setText("Spectator");
+            layout.addChildComponent<Separator>();
+
+            for (const auto& [fst, snd] : spectator->keyboardInput.getMapping())
+            {
+                const auto item = layout.addChildComponent<KeymapItem>();
+                item->setReadOnly(true);
+                item->setLabel(fst + (snd->onPress.isEmpty() ? "(disabled)" : ""));
+                item->setButtonName(
+                    Keyboard::KeyToString(snd->getKey().value_or(Keyboard::Key_None)));
+            }
         }
     }
 
