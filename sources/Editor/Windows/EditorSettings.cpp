@@ -38,20 +38,16 @@ using namespace Core::Gui;
 namespace Core
 {
     ECS_COMPONENT_IMPL(EditorSettingsEWC)
+    ECS_COMPONENT_IMPL(EditorSettingsEWC::BaseListItem)
     ECS_COMPONENT_IMPL(EditorSettingsEWC::KeymapItem)
 
-    bool EditorSettingsEWC::KeymapItem::containsString(const StringAtom& str)
+    bool EditorSettingsEWC::BaseListItem::containsString(const StringAtom& str)
     {
-        if (Verify(_label && _button))
+        if (Verify(_label))
         {
             Assert(!_label->getComponentName().isEmpty());
 
             if (_label->getComponentName().findIgnoreCase(str) != nullptr)
-            {
-                return true;
-            }
-
-            if (_button->getComponentName().findIgnoreCase(str) != nullptr)
             {
                 return true;
             }
@@ -60,7 +56,7 @@ namespace Core
         return false;
     }
 
-    void EditorSettingsEWC::KeymapItem::setLabel(const StringAtom& label)
+    void EditorSettingsEWC::BaseListItem::setLabel(const StringAtom& label)
     {
         if (Verify(_label))
         {
@@ -68,13 +64,16 @@ namespace Core
         }
     }
 
-    void EditorSettingsEWC::KeymapItem::setButtonName(const StringAtom& label)
+    void EditorSettingsEWC::BaseListItem::onInitialize()
     {
-        if (Verify(_button))
-        {
-            _button->setText(label);
-        }
+        HorizontalLayout::onInitialize();
+
+        setComponentName("ListItem");
+        setFlex(Flex::FlexWidth);
+        setHorizontalAlign(Align::SpaceBetween);
+        _label = addChildComponent<Label>("Undefined");
     }
+
     void EditorSettingsEWC::KeymapItem::setReadOnly(bool value)
     {
         if (Verify(_button))
@@ -84,14 +83,36 @@ namespace Core
         }
     }
 
+    bool EditorSettingsEWC::KeymapItem::containsString(const StringAtom& str)
+    {
+        if (BaseListItem::containsString(str))
+        {
+            return true;
+        }
+
+        if (Verify(_button))
+        {
+            if (_button->getComponentName().findIgnoreCase(str) != nullptr)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    void EditorSettingsEWC::KeymapItem::setButtonName(const StringAtom& label)
+    {
+        if (Verify(_button))
+        {
+            _button->setText(label);
+        }
+    }
+
     void EditorSettingsEWC::KeymapItem::onInitialize()
     {
-        HorizontalLayout::onInitialize();
+        BaseListItem::onInitialize();
 
-        setComponentName("KeymapItem");
-        setFlex(Flex::FlexWidth);
-        setHorizontalAlign(Align::SpaceBetween);
-        _label = addChildComponent<Label>("Undefined command");
         auto* holder = addChildComponent<HorizontalLayout>();
         holder->setFlex(Flex::Fixed);
         _button = holder->addChildComponent<Button>("None");
@@ -103,6 +124,7 @@ namespace Core
     void EditorSettingsEWC::onOpen()
     {
         setupCommonLayoutSettings();
+        createPage_Appearance();
         createPage_Keymap();
     }
 
@@ -127,23 +149,27 @@ namespace Core
 
     void EditorSettingsEWC::drawSettingsTree()
     {
-        if (ImGui::TreeNodeEx("Keymap",
-                              ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_SpanAvailWidth))
+        int flag = _defaultTreeNodeFlags | ImGuiTreeNodeFlags_Leaf;
+
+        if (ImGui::TreeNodeEx(
+                "Appearance",
+                flag | (_currentMenu == Menu_Appearance ? ImGuiTreeNodeFlags_Selected : 0)))
+        {
+            ImGui::TreePop();
+        }
+        if (ImGui::IsItemClicked() || (ImGui::IsItemFocused() && isHovered()))
+        {
+            _currentMenu = Menu_Appearance;
+        }
+
+        if (ImGui::TreeNodeEx(
+                "Keymap", flag | (_currentMenu == Menu_Keymap ? ImGuiTreeNodeFlags_Selected : 0)))
         {
             ImGui::TreePop();
         }
         if (ImGui::IsItemClicked() || (ImGui::IsItemFocused() && isHovered()))
         {
             _currentMenu = Menu_Keymap;
-        }
-
-        if (ImGui::TreeNodeEx("About", ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_SpanAvailWidth))
-        {
-            ImGui::TreePop();
-        }
-        if (ImGui::IsItemClicked() || (ImGui::IsItemFocused() && isHovered()))
-        {
-            _currentMenu = Menu_About;
         }
     }
 
@@ -196,6 +222,34 @@ namespace Core
                 item->setButtonName(
                     Keyboard::KeyToString(snd->getKey().value_or(Keyboard::Key_None)));
             }
+        }
+    }
+
+    void EditorSettingsEWC::createPage_Appearance()
+    {
+        auto& layout = _layouts[Menu_Appearance];
+        layout.clear();
+
+        layout.addChildComponent<Spacer>();
+        layout.addChildComponent<Label>()->setText("Color pallet");
+        layout.addChildComponent<Separator>();
+
+        ImGuiStyle* style = &ImGui::GetStyle();
+        if (!Verify(style))
+        {
+            errorLog("Can't setup ImGUI styles. ImGui::GetStyle() return nullptr");
+            return;
+        }
+
+        glm::vec4* colors = style->Colors;
+        if (!Verify(colors))
+        {
+            errorLog("Can't setup ImGUI colors. ImGui::GetStyle()->Colors return nullptr");
+            return;
+        }
+
+        for (int i = 0; i < ImGuiCol_COUNT; ++i)
+        {
         }
     }
 

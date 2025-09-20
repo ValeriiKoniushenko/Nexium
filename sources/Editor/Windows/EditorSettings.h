@@ -40,21 +40,35 @@ namespace Core
         ECS_COMPONENT_DECL(EditorSettingsEWC, BaseFloatEWC);
 
     public:
-        class KeymapItem : public Gui::HorizontalLayout
+        class BaseListItem : public Gui::HorizontalLayout
         {
-            ECS_COMPONENT_DECL(KeymapItem, HorizontalLayout);
+            ECS_COMPONENT_DECL(BaseListItem, HorizontalLayout);
 
         public:
-            [[nodiscard]] bool containsString(const StringAtom& str);
+            [[nodiscard]] virtual bool containsString(const StringAtom& str);
+            virtual void setReadOnly(bool value = true) = 0;
             void setLabel(const StringAtom& label);
-            void setButtonName(const StringAtom& label);
-            void setReadOnly(bool value = true);
 
         protected:
             void onInitialize() override;
 
         protected:
             Gui::Label* _label = nullptr;
+        };
+
+        class KeymapItem : public BaseListItem
+        {
+            ECS_COMPONENT_DECL(KeymapItem, BaseListItem);
+
+        public:
+            void setButtonName(const StringAtom& label);
+            void setReadOnly(bool value = true) override;
+            [[nodiscard]] bool containsString(const StringAtom& str) override;
+
+        protected:
+            void onInitialize() override;
+
+        protected:
             Gui::Button* _button = nullptr;
             Gui::Button* _resetButton = nullptr;
         };
@@ -65,8 +79,8 @@ namespace Core
     protected:
         enum Menu
         {
+            Menu_Appearance,
             Menu_Keymap,
-            Menu_About,
             Menu_COUNT
         };
 
@@ -78,10 +92,12 @@ namespace Core
 
         void setupCommonLayoutSettings();
         void createPage_Keymap();
+        void createPage_Appearance();
 
     protected:
         Gui::VerticalLayout _layouts[Menu_COUNT];
         Menu _currentMenu = static_cast<Menu>(0);
+        int _defaultTreeNodeFlags = ImGuiTreeNodeFlags_SpanAvailWidth;
     };
 
 } // namespace Core

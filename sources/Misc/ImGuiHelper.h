@@ -29,6 +29,12 @@
 #include <array>
 #include <expected>
 
+namespace ImGui
+{
+    [[nodiscard]] Core::StringAtom ToString_ImGuiCol_(ImGuiCol_ val);
+    [[nodiscard]] Core::StringAtom ToString_ImGuiStyleVar_(ImGuiStyleVar_ val);
+} // namespace ImGui
+
 namespace Core
 {
 

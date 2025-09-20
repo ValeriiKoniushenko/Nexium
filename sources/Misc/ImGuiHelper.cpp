@@ -27,6 +27,129 @@
 
 #include <string>
 
+namespace ImGui
+{
+    Core::StringAtom ToString_ImGuiCol_(ImGuiCol_ val)
+    {
+        // clang-format off
+        if (val == ImGuiCol_Text) return "Text"_atom;
+        if (val == ImGuiCol_TextDisabled) return "TextDisabled"_atom;
+        if (val == ImGuiCol_WindowBg) return "WindowBg"_atom;
+        if (val == ImGuiCol_ChildBg) return "ChildBg"_atom;
+        if (val == ImGuiCol_PopupBg) return "PopupBg"_atom;
+        if (val == ImGuiCol_Border) return "Border"_atom;
+        if (val == ImGuiCol_BorderShadow) return "BorderShadow"_atom;
+        if (val == ImGuiCol_FrameBg) return "FrameBg"_atom;
+        if (val == ImGuiCol_FrameBgHovered) return "FrameBgHovered"_atom;
+        if (val == ImGuiCol_FrameBgActive) return "FrameBgActive"_atom;
+        if (val == ImGuiCol_TitleBg) return "TitleBg"_atom;
+        if (val == ImGuiCol_TitleBgActive) return "TitleBgActive"_atom;
+        if (val == ImGuiCol_TitleBgCollapsed) return "TitleBgCollapsed"_atom;
+        if (val == ImGuiCol_MenuBarBg) return "MenuBarBg"_atom;
+        if (val == ImGuiCol_ScrollbarBg) return "ScrollbarBg"_atom;
+        if (val == ImGuiCol_ScrollbarGrab) return "ScrollbarGrab"_atom;
+        if (val == ImGuiCol_ScrollbarGrabHovered) return "ScrollbarGrabHovered"_atom;
+        if (val == ImGuiCol_ScrollbarGrabActive) return "ScrollbarGrabActive"_atom;
+        if (val == ImGuiCol_CheckMark) return "CheckMark"_atom;
+        if (val == ImGuiCol_SliderGrab) return "SliderGrab"_atom;
+        if (val == ImGuiCol_SliderGrabActive) return "SliderGrabActive"_atom;
+        if (val == ImGuiCol_Button) return "Button"_atom;
+        if (val == ImGuiCol_ButtonHovered) return "ButtonHovered"_atom;
+        if (val == ImGuiCol_ButtonActive) return "ButtonActive"_atom;
+        if (val == ImGuiCol_Header) return "Header"_atom;
+        if (val == ImGuiCol_HeaderHovered) return "HeaderHovered"_atom;
+        if (val == ImGuiCol_HeaderActive) return "HeaderActive"_atom;
+        if (val == ImGuiCol_Separator) return "Separator"_atom;
+        if (val == ImGuiCol_SeparatorHovered) return "SeparatorHovered"_atom;
+        if (val == ImGuiCol_SeparatorActive) return "SeparatorActive"_atom;
+        if (val == ImGuiCol_ResizeGrip) return "ResizeGrip"_atom;
+        if (val == ImGuiCol_ResizeGripHovered) return "ResizeGripHovered"_atom;
+        if (val == ImGuiCol_ResizeGripActive) return "ResizeGripActive"_atom;
+        if (val == ImGuiCol_InputTextCursor) return "InputTextCursor"_atom;
+        if (val == ImGuiCol_TabHovered) return "TabHovered"_atom;
+        if (val == ImGuiCol_Tab) return "Tab"_atom;
+        if (val == ImGuiCol_TabSelected) return "TabSelected"_atom;
+        if (val == ImGuiCol_TabSelectedOverline) return "TabSelectedOverline"_atom;
+        if (val == ImGuiCol_TabDimmed) return "TabDimmed"_atom;
+        if (val == ImGuiCol_TabDimmedSelected) return "TabDimmedSelected"_atom;
+        if (val == ImGuiCol_TabDimmedSelectedOverline) return "TabDimmedSelectedOverline"_atom;
+        if (val == ImGuiCol_DockingPreview) return "DockingPreview"_atom;
+        if (val == ImGuiCol_DockingEmptyBg) return "DockingEmptyBg"_atom;
+        if (val == ImGuiCol_PlotLines) return "PlotLines"_atom;
+        if (val == ImGuiCol_PlotLinesHovered) return "PlotLinesHovered"_atom;
+        if (val == ImGuiCol_PlotHistogram) return "PlotHistogram"_atom;
+        if (val == ImGuiCol_PlotHistogramHovered) return "PlotHistogramHovered"_atom;
+        if (val == ImGuiCol_TableHeaderBg) return "TableHeaderBg"_atom;
+        if (val == ImGuiCol_TableBorderStrong) return "TableBorderStrong"_atom;
+        if (val == ImGuiCol_TableBorderLight) return "TableBorderLight"_atom;
+        if (val == ImGuiCol_TableRowBg) return "TableRowBg"_atom;
+        if (val == ImGuiCol_TableRowBgAlt) return "TableRowBgAlt"_atom;
+        if (val == ImGuiCol_TextLink) return "TextLink"_atom;
+        if (val == ImGuiCol_TextSelectedBg) return "TextSelectedBg"_atom;
+        if (val == ImGuiCol_TreeLines) return "TreeLines"_atom;
+        if (val == ImGuiCol_DragDropTarget) return "DragDropTarget"_atom;
+        if (val == ImGuiCol_NavCursor) return "NavCursor"_atom;
+        if (val == ImGuiCol_NavWindowingHighlight) return "NavWindowingHighlight"_atom;
+        if (val == ImGuiCol_NavWindowingDimBg) return "NavWindowingDimBg"_atom;
+        if (val == ImGuiCol_ModalWindowDimBg) return "ModalWindowDimBg"_atom;
+        // clang-format on
+
+        Assert(false);
+
+        return ""_atom;
+    }
+
+    Core::StringAtom ToString_ImGuiStyleVar_(ImGuiStyleVar_ val)
+    {
+        // clang-format off
+        if (val == ImGuiStyleVar_Alpha) return "Alpha"_atom;
+        if (val == ImGuiStyleVar_DisabledAlpha) return "DisabledAlpha"_atom;
+        if (val == ImGuiStyleVar_WindowPadding) return "WindowPadding"_atom;
+        if (val == ImGuiStyleVar_WindowRounding) return "WindowRounding"_atom;
+        if (val == ImGuiStyleVar_WindowBorderSize) return "WindowBorderSize"_atom;
+        if (val == ImGuiStyleVar_WindowMinSize) return "WindowMinSize"_atom;
+        if (val == ImGuiStyleVar_WindowTitleAlign) return "WindowTitleAlign"_atom;
+        if (val == ImGuiStyleVar_ChildRounding) return "ChildRounding"_atom;
+        if (val == ImGuiStyleVar_ChildBorderSize) return "ChildBorderSize"_atom;
+        if (val == ImGuiStyleVar_PopupRounding) return "PopupRounding"_atom;
+        if (val == ImGuiStyleVar_PopupBorderSize) return "PopupBorderSize"_atom;
+        if (val == ImGuiStyleVar_FramePadding) return "FramePadding"_atom;
+        if (val == ImGuiStyleVar_FrameRounding) return "FrameRounding"_atom;
+        if (val == ImGuiStyleVar_FrameBorderSize) return "FrameBorderSize"_atom;
+        if (val == ImGuiStyleVar_ItemSpacing) return "ItemSpacing"_atom;
+        if (val == ImGuiStyleVar_ItemInnerSpacing) return "ItemInnerSpacing"_atom;
+        if (val == ImGuiStyleVar_IndentSpacing) return "IndentSpacing"_atom;
+        if (val == ImGuiStyleVar_CellPadding) return "CellPadding"_atom;
+        if (val == ImGuiStyleVar_ScrollbarSize) return "ScrollbarSize"_atom;
+        if (val == ImGuiStyleVar_ScrollbarRounding) return "ScrollbarRounding"_atom;
+        if (val == ImGuiStyleVar_GrabMinSize) return "GrabMinSize"_atom;
+        if (val == ImGuiStyleVar_GrabRounding) return "GrabRounding"_atom;
+        if (val == ImGuiStyleVar_ImageBorderSize) return "ImageBorderSize"_atom;
+        if (val == ImGuiStyleVar_TabRounding) return "TabRounding"_atom;
+        if (val == ImGuiStyleVar_TabBorderSize) return "TabBorderSize"_atom;
+        if (val == ImGuiStyleVar_TabMinWidthBase) return "TabMinWidthBase"_atom;
+        if (val == ImGuiStyleVar_TabMinWidthShrink) return "TabMinWidthShrink"_atom;
+        if (val == ImGuiStyleVar_TabBarBorderSize) return "TabBarBorderSize"_atom;
+        if (val == ImGuiStyleVar_TabBarOverlineSize) return "TabBarOverlineSize"_atom;
+        if (val == ImGuiStyleVar_TableAngledHeadersAngle) return "TableAngledHeadersAngle"_atom;
+        if (val == ImGuiStyleVar_TableAngledHeadersTextAlign) return "TableAngledHeadersTextAlign"_atom;
+        if (val == ImGuiStyleVar_TreeLinesSize) return "TreeLinesSize"_atom;
+        if (val == ImGuiStyleVar_TreeLinesRounding) return "TreeLinesRounding"_atom;
+        if (val == ImGuiStyleVar_ButtonTextAlign) return "ButtonTextAlign"_atom;
+        if (val == ImGuiStyleVar_SelectableTextAlign) return "SelectableTextAlign"_atom;
+        if (val == ImGuiStyleVar_SeparatorTextBorderSize) return "SeparatorTextBorderSize"_atom;
+        if (val == ImGuiStyleVar_SeparatorTextAlign) return "SeparatorTextAlign"_atom;
+        if (val == ImGuiStyleVar_SeparatorTextPadding) return "SeparatorTextPadding"_atom;
+        if (val == ImGuiStyleVar_DockingSeparatorSize) return "DockingSeparatorSize"_atom;
+        // clang-format on
+
+        Assert(false);
+
+        return ""_atom;
+    }
+
+} // namespace ImGui
+
 namespace Core
 {
 
