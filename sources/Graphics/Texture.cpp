@@ -22,10 +22,31 @@
 
 #include "Texture.h"
 
-#include "Image.h"
-
 namespace Core
 {
+
+    Texture::Texture(Texture&& other) noexcept
+    {
+        *this = std::move(other);
+    }
+
+    Texture& Texture::operator=(Texture&& other) noexcept
+    {
+        if (&other != this) [[likely]]
+        {
+            _textureId = other._textureId;
+            _size = other._size;
+
+            other._textureId = 0;
+            other._size = {};
+        }
+        return *this;
+    }
+
+    Texture::~Texture()
+    {
+        release();
+    }
 
     bool Texture::loadFromFile(const std::filesystem::path& path, bool isFlipVertically)
     {
@@ -48,4 +69,12 @@ namespace Core
 
         return true;
     }
+
+    void Texture::release()
+    {
+        glDeleteTextures(1, &_textureId);
+        _textureId = 0;
+        _size = {};
+    }
+
 } // namespace Core

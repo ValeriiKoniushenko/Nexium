@@ -107,7 +107,7 @@ namespace Core
                 Texture tmp;
                 if (tmp.loadFromFile(path, false))
                 {
-                    _nodeTypesData.emplace(type, tmp);
+                    _nodeTypesData.emplace(type, std::move(tmp));
                 }
             }
 

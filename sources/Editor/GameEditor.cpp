@@ -83,7 +83,7 @@ namespace Core
         registerNewWindow<ObjectPropertiesWindowEWC>("Object Properties"_atom);
         registerNewWindow<SceneTreeWindowEWC>("Scene"_atom);
         registerNewWindow<AssetsManagerWindowEWC>("Assets"_atom);
-        registerNewWindow<EditorSettingsEWC>("Settings"_atom, true);
+        registerNewWindow<EditorSettingsEWC>("Settings"_atom, false);
         registerNewWindow<TextEditorEWC>("Text editor"_atom, false);
         registerNewWindow<ImageViewerEWC>("Image viewer"_atom, false);
         registerNewWindow<ShaderManagerEWC>("Shader manager"_atom);

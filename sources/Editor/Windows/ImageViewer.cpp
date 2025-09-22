@@ -34,7 +34,12 @@ namespace Core
 
     void ImageViewerEWC::openImageFromFile(const std::filesystem::path& path)
     {
-        if (_image.loadFromFile(path, false))
+        if (!_image)
+        {
+            _image = std::make_unique<Texture>();
+        }
+
+        if (_image->loadFromFile(path, false))
         {
             _path = path.generic_string();
         }
@@ -58,7 +63,7 @@ namespace Core
 
     void ImageViewerEWC::onDraw()
     {
-        if (!_image.isValid())
+        if (_image && !_image->isValid())
         {
             return;
         }
@@ -76,11 +81,11 @@ namespace Core
             _offset.y += drag.y;
         }
         const auto displaySize
-            = glm::vec2(_image.getSize().width * _zoom, _image.getSize().height * _zoom);
+            = glm::vec2(_image->getSize().width * _zoom, _image->getSize().height * _zoom);
         ImGui::SetCursorPos(ImGui::GetCursorPos() + _offset);
 
-        ImGui::Text("%s: %dx%d", _path.c_str(), _image.getSize().width, _image.getSize().height);
-        ImGui::Image(_image.getTextureId(), displaySize);
+        ImGui::Text("%s: %dx%d", _path.c_str(), _image->getSize().width, _image->getSize().height);
+        ImGui::Image(_image->getTextureId(), displaySize);
     }
 
 } // namespace Core

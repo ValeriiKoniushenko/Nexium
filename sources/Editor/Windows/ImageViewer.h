@@ -44,7 +44,7 @@ namespace Core
         void onDraw() override;
 
     protected:
-        Texture _image;
+        std::unique_ptr<Texture> _image;
         std::string _path;
         glm::vec2 _offset = {};
         float _zoom = 1.0f;

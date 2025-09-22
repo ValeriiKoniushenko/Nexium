@@ -22,27 +22,35 @@
 
 #pragma once
 
+#include "Image.h"
 #include "OpenGL.h"
 
 #include <filesystem>
 
 namespace Core
 {
-
     class Texture
     {
     public:
+        Texture() = default;
+        Texture(const Texture&) = delete;
+        Texture& operator=(const Texture&) = delete;
+        Texture(Texture&&) noexcept;
+        Texture& operator=(Texture&&) noexcept;
+
+        virtual ~Texture();
+
         bool loadFromFile(const std::filesystem::path& path, bool isFlipVertically = true);
 
         [[nodiscard]] GLuint getTextureId() noexcept { return _textureId; }
 
+        [[nodiscard]] bool isValid() const noexcept { return _textureId != 0; }
         [[nodiscard]] ISize2 getSize() const noexcept { return _size; }
 
-        [[nodiscard]] bool isValid() const noexcept { return _textureId != 0; }
+        void release();
 
-    private:
+    protected:
         GLuint _textureId = 0;
         ISize2 _size;
     };
-
 } // namespace Core
