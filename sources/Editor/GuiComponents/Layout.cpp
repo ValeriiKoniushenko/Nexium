@@ -46,6 +46,14 @@ namespace Core::Gui
     void Layout::onInitialize()
     {
         Widget::onInitialize();
+
+        for (auto&& child : _children)
+        {
+            if (!child->isInitialized())
+            {
+                child->initialize();
+            }
+        }
     }
 
 } // namespace Core::Gui

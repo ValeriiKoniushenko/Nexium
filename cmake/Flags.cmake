@@ -33,8 +33,11 @@ function(CoreAddCompileOptionsTo Target)
             "-Werror=return-type"
 
             # Debug config
-            "$<$<CONFIG:DEBUG>:-g3>"
+            "$<$<CONFIG:DEBUG>:-g>"
+            "$<$<CONFIG:DEBUG>:-gdwarf-5>"
             "$<$<CONFIG:DEBUG>:-O0>"
+            "$<$<CONFIG:DEBUG>:-gsplit-dwarf>"
+            "$<$<CONFIG:DEBUG>:-fdebug-info-for-profiling>"
             "$<$<CONFIG:DEBUG>:-fno-inline>"
             "$<$<CONFIG:DEBUG>:-fno-omit-frame-pointer>"
 

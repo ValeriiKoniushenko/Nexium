@@ -355,6 +355,7 @@ namespace Core
     {
         if (&other != this)
         {
+            AbstractComponent::operator=(other);
             _name = other._name;
             _type = other._type;
 
