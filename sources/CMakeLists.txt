@@ -1,3 +1,4 @@
+add_subdirectory(AssetsManager)
 add_subdirectory(Camera)
 add_subdirectory(Editor)
 add_subdirectory(GameplaySystem)

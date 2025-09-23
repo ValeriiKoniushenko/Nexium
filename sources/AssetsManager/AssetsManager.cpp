@@ -21,18 +21,3 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
-#pragma once
-
-#include "Misc/BaseLog.h"
-
-namespace Ecs
-{
-
-    [[nodiscard]] inline spdlog::logger* getLogger()
-    {
-        static std::shared_ptr<spdlog::logger> logger = spdlog::stdout_color_mt("ECS");
-        return logger.get();
-    }
-
-} // namespace Ecs
