@@ -22,11 +22,8 @@
  * SOFTWARE.
  */
 
-#include "AssetsManager.h"
+#include "TextureAsset.h"
 
 namespace Core
 {
-    void AssetsManager::rescanFileSystem()
-    {
-    }
 } // namespace Core

@@ -54,6 +54,8 @@ namespace Core::Config
         inline static std::filesystem::path images = assets / "images";
         inline static std::filesystem::path objects3d = assets / "objects-3d";
 
+        inline static std::filesystem::path bakedAssets = assets / "baked";
+
         inline static std::filesystem::path editorFont = fonts / "JetBrainsMono-Regular.ttf";
         inline static std::filesystem::path fontAwesome = fonts / "fontawesome-webfont.ttf";
 

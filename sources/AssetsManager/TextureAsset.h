@@ -22,11 +22,23 @@
  * SOFTWARE.
  */
 
-#include "AssetsManager.h"
+#pragma once
+
+#include "BaseAsset.h"
 
 namespace Core
 {
-    void AssetsManager::rescanFileSystem()
+    class TextureAsset : public BaseAsset
     {
-    }
+    public:
+        ~TextureAsset() override = default;
+
+        [[nodiscard]] bool isLoaded() const override;
+
+    protected:
+        void onLoad() override;
+        void onUnload() override;
+
+    protected:
+    };
 } // namespace Core

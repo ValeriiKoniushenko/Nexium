@@ -22,11 +22,9 @@
  * SOFTWARE.
  */
 
-#include "AssetsManager.h"
+#include "BaseAsset.h"
 
 namespace Core
 {
-    void AssetsManager::rescanFileSystem()
-    {
-    }
+
 } // namespace Core

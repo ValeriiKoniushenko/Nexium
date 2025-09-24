@@ -22,11 +22,29 @@
  * SOFTWARE.
  */
 
-#include "AssetsManager.h"
+#pragma once
+
+#include "Core/String.h"
 
 namespace Core
 {
-    void AssetsManager::rescanFileSystem()
+
+    class BaseAsset
     {
-    }
+    public:
+        virtual ~BaseAsset() = default;
+
+        [[nodiscard]] virtual bool isLoaded() const = 0;
+
+        [[nodiscard]] const StringAtom& getPath() const { return _path; }
+
+    protected:
+        virtual void onLoad() = 0;
+        virtual void onUnload() = 0;
+
+    protected:
+        StringAtom _path;
+        uint32_t _refCount = 0;
+    };
+
 } // namespace Core
