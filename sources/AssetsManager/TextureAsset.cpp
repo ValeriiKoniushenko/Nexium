@@ -30,7 +30,7 @@ namespace Core
     {
         Assert(!_path.empty());
         _data.release();
-        _data.loadFromFile(_path);
+        _data.loadFromFile(_path, _isFlipVertically);
         traceLog("Loaded: " + _path.generic_string());
     }
 
@@ -43,5 +43,10 @@ namespace Core
     void TextureAsset::onFillData(nlohmann::json&& json)
     {
         BaseAsset::onFillData(std::forward<decltype(json)>(json));
+
+        if (json.contains("isFlipVertically"))
+        {
+            _isFlipVertically = json["isFlipVertically"].get<bool>();
+        }
     }
 } // namespace Core

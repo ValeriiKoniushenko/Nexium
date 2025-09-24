@@ -48,6 +48,9 @@ namespace Core
 
     protected:
         Texture _data;
+
+        // properties
+        bool _isFlipVertically = false;
     };
 
     using NXTexture = AssetRef<TextureAsset>;

@@ -1,3 +1,4 @@
 {
-  "path": "images/image_document.png"
+  "path": "images/image_document.png",
+  "isFlipVertically": false
 }

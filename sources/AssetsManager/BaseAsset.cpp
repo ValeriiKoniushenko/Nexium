@@ -33,7 +33,16 @@ namespace Core
 
     void BaseAsset::onFillData(nlohmann::json&& json)
     {
-        _path = Config::Path::assets / json["path"].get<std::filesystem::path>();
+        if (Verify(json.contains("path")))
+        {
+            _path = Config::Path::assets / json["path"].get<std::filesystem::path>();
+        }
+        else
+        {
+            errorLog(
+                "The asset '{}' is configured incorrectly. The property 'path' is not determined."_f
+                << _logicPath);
+        }
     }
 
 } // namespace Core
