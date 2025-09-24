@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "BaseAsset.h"
+#include "TextureAsset.h"
 
 #include <unordered_map>
 
@@ -35,8 +35,8 @@ namespace Core
      * In general this class we must use to manage some assets. It stores & works
      * not directly with a file at the filesystem, but with some 'view' to this file
      * in the engine's context. I.e.:
-     * - Texture (.png, .jpeg, ...) -> .ntex
-     * - 3D Model (.fbx, .obj, ...) -> .n3dmesh
+     * - Texture (.png, .jpeg, ...) -> .nxtex
+     * - 3D Model (.fbx, .obj, ...) -> .nx3dmesh
      * - XXX thing (.XXX) -> .nXXX
      * @details What are .nX files:
      * .nX files are a type of data that doesn't contain the referred content itself
@@ -91,7 +91,9 @@ namespace Core
         // Will reindex everything inside the folder Config::Path::assets
         void rescanFileSystem();
 
+        // [[nodiscard]] NXTexture getTexture(const StringAtom& logicPath);
+
     protected:
-        std::unordered_map<StringAtom, BaseAsset> _textures;
+        std::unordered_map<StringAtom, std::unique_ptr<BaseAsset>> _textures;
     };
 } // namespace Core

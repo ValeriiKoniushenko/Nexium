@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "AssetsManager/AssetsManager.h"
 #include "Camera/Camera.h"
 #include "Editor/GameEditor.h"
 #include "Editor/ObjectSelectorManager.h"
@@ -62,6 +63,7 @@ namespace Core
         ShaderManager shaderManager;
         World world;
         UserInterface userInterface;
+        AssetsManager assets;
 
         BaseCamera* currentCamera = nullptr;
         RenderMode renderMode = RenderMode::Editor;
@@ -87,7 +89,7 @@ namespace Core
     [[nodiscard]] ShaderManager& GetShaderManager();
     [[nodiscard]] GameEditor& GetEditor();
     [[nodiscard]] World& GetWorld();
-
+    [[nodiscard]] AssetsManager& GetAssetsManager();
 } // namespace Core
 
 extern std::unique_ptr<Core::GameInstance> gGameInstance;

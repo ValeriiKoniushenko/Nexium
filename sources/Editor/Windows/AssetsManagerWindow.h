@@ -59,13 +59,13 @@ namespace Core
     protected:
         struct CacheNode
         {
-            AssetsManager::NodeType type = AssetsManager::NodeType::Default;
+            EditorAssetsManager::NodeType type = EditorAssetsManager::NodeType::Default;
             std::filesystem::path path;
             std::vector<CacheNode> children;
         };
 
     protected:
-        inline static std::unordered_map<AssetsManager::NodeType, Texture> _nodeTypesData;
+        inline static std::unordered_map<EditorAssetsManager::NodeType, Texture> _nodeTypesData;
 
         Gui::HorizontalLayout _toolbarLayout;
         Gui::Button* _refreshButton = nullptr;

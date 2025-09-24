@@ -53,6 +53,11 @@ namespace Core
         return gGameInstance->world;
     }
 
+    AssetsManager& GetAssetsManager()
+    {
+        return gGameInstance->assets;
+    }
+
     void GameInstance::initialize()
     {
 #ifdef DEBUG
@@ -69,6 +74,9 @@ namespace Core
             {
                 updateViewport();
             });
+
+        //-------------------- ASSETS MANAGER ---------------------
+        GetAssetsManager().rescanFileSystem();
 
         //-------------------- SHADER MANAGER ---------------------
         shaderManager.loadShaders(Config::Path::shaders);

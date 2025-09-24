@@ -24,9 +24,38 @@
 
 #include "AssetsManager.h"
 
+#include "Editor/Configs.h"
+
 namespace Core
 {
     void AssetsManager::rescanFileSystem()
     {
+        for (const auto& entry :
+             std::filesystem::recursive_directory_iterator(Config::Path::bakedAssets))
+        {
+            if (!entry.is_regular_file())
+            {
+                continue;
+            }
+
+            const auto absPath = std::filesystem::absolute(entry.path());
+            const auto ext = absPath.extension().generic_string();
+
+            // check for non baked
+            if (ext.size() < 3 && strncmp(ext.c_str(), ".nx", 3) != 0)
+            {
+                continue;
+            }
+
+            if (ext == ".nxtex")
+            {
+                int i = 1;
+            }
+        }
     }
+
+    // NXTexture AssetsManager::getTexture(const StringAtom& logicPath)
+    // {
+    //
+    // }
 } // namespace Core

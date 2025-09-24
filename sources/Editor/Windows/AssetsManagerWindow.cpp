@@ -96,7 +96,9 @@ namespace Core
 
         static bool _ = []()
         {
-            using NodeType = AssetsManager::NodeType;
+            using NodeType = EditorAssetsManager::NodeType;
+
+            // GetAssetsManager();
 
             std::unordered_map<NodeType, std::filesystem::path> paths
                 = { { NodeType::Default, Config::Path::images / "document.png" },
@@ -326,7 +328,7 @@ namespace Core
                 }
                 if (ImGui::MenuItem("Open in explorer"))
                 {
-                    AssetsManager::openPathFromOSExplorer(_openedPath);
+                    EditorAssetsManager::openPathFromOSExplorer(_openedPath);
                 }
 
                 ImGui::EndPopup();
@@ -339,7 +341,7 @@ namespace Core
             for (auto&& entry : std::filesystem::directory_iterator(_openedPath))
             {
                 const auto& path = entry.path();
-                const auto fileFormat = AssetsManager::getNodeType(entry);
+                const auto fileFormat = EditorAssetsManager::getNodeType(entry);
 
                 if (isFiltered(path))
                 {
@@ -368,7 +370,7 @@ namespace Core
             int flags = _commonTreeFlags;
             std::string filename = node.path.filename().generic_string();
 
-            using NodeType = AssetsManager::NodeType;
+            using NodeType = EditorAssetsManager::NodeType;
 
             if (node.type != NodeType::Folder)
             {
@@ -490,7 +492,8 @@ namespace Core
             }
             if (ImGui::MenuItem("Open in explorer"))
             {
-                AssetsManager::openPathFromOSExplorer(entry.is_directory() ? path : _openedPath);
+                EditorAssetsManager::openPathFromOSExplorer(entry.is_directory() ? path
+                                                                                 : _openedPath);
             }
 
             ImGui::EndPopup();
@@ -553,7 +556,7 @@ namespace Core
             }
             else if (entry.is_regular_file())
             {
-                AssetsManager::tryToOpenFile(entry);
+                EditorAssetsManager::tryToOpenFile(entry);
             }
         }
 
@@ -574,14 +577,14 @@ namespace Core
                 continue;
             }
 
-            const auto nodeType = AssetsManager::getNodeType(entry);
+            const auto nodeType = EditorAssetsManager::getNodeType(entry);
 
             CacheNode tmp;
             tmp.path = entry.path();
             tmp.type = nodeType;
             node.children.push_back(std::move(tmp));
 
-            if (nodeType == AssetsManager::NodeType::Folder)
+            if (nodeType == EditorAssetsManager::NodeType::Folder)
             {
                 rescanPhysicalDrive(node.children.back());
             }

@@ -28,23 +28,51 @@
 
 namespace Core
 {
-
     class BaseAsset
     {
     public:
         virtual ~BaseAsset() = default;
 
-        [[nodiscard]] virtual bool isLoaded() const = 0;
+        [[nodiscard]] bool isLoaded() const { return _refCount > 1; }
 
         [[nodiscard]] const StringAtom& getPath() const { return _path; }
 
     protected:
-        virtual void onLoad() = 0;
-        virtual void onUnload() = 0;
+        virtual void onLoadRequest() = 0;
+        virtual void onUnloadRequest() = 0;
 
     protected:
         StringAtom _path;
         uint32_t _refCount = 0;
+
+        template<class T>
+        friend class AssetRef;
     };
 
+    template<class T>
+    class AssetRef
+    {
+    public:
+        explicit AssetRef(BaseAsset& asset)
+            : _asset(asset)
+        {
+            if (++_asset._refCount > 0)
+            {
+                _asset.onLoadRequest();
+            }
+        }
+
+        ~AssetRef()
+        {
+            Assert(_asset._refCount != 0,
+                   "Invalid ref count, it will be less than zero - impossible.");
+            if (--_asset._refCount == 0)
+            {
+                _asset.onUnloadRequest();
+            }
+        }
+
+    private:
+        BaseAsset& _asset;
+    };
 } // namespace Core

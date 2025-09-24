@@ -33,12 +33,12 @@ namespace Core
     public:
         ~TextureAsset() override = default;
 
-        [[nodiscard]] bool isLoaded() const override;
-
     protected:
-        void onLoad() override;
-        void onUnload() override;
+        void onLoadRequest() override;
+        void onUnloadRequest() override;
 
     protected:
     };
+
+    using NXTexture = AssetRef<TextureAsset>;
 } // namespace Core

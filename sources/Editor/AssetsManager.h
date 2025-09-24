@@ -33,7 +33,7 @@ namespace Core
      * @brief this class is a bridge between GameEditor & Assets. It can help you to manage,
      * view and edit some assets using Editor's tools.
      */
-    class AssetsManager
+    class EditorAssetsManager
     {
     public:
         enum class NodeType

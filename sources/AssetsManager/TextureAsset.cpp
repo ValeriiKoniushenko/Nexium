@@ -26,4 +26,11 @@
 
 namespace Core
 {
+    void TextureAsset::onLoadRequest()
+    {
+    }
+
+    void TextureAsset::onUnloadRequest()
+    {
+    }
 } // namespace Core

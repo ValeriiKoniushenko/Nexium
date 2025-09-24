@@ -17,6 +17,7 @@ target_link_libraries(${TARGET_NAME} PUBLIC
     Core::Editor
     Core::InputDevices
     Core::Scene
+	Core::AssetsManager
 )
 
 target_include_directories(${TARGET_NAME} PUBLIC ../)

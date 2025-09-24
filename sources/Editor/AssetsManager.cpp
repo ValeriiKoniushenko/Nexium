@@ -31,7 +31,7 @@
 namespace Core
 {
 
-    void AssetsManager::tryToOpenFile(const std::filesystem::directory_entry& entry)
+    void EditorAssetsManager::tryToOpenFile(const std::filesystem::directory_entry& entry)
     {
         if (!entry.is_regular_file())
         {
@@ -52,7 +52,7 @@ namespace Core
         }
     }
 
-    AssetsManager::NodeType AssetsManager::getNodeType(
+    EditorAssetsManager::NodeType EditorAssetsManager::getNodeType(
         const std::filesystem::directory_entry& entry)
     {
         if (entry.is_directory())
@@ -128,7 +128,7 @@ namespace Core
         return NodeType::Default;
     }
 
-    void AssetsManager::openPathFromOSExplorer(const std::filesystem::path& path)
+    void EditorAssetsManager::openPathFromOSExplorer(const std::filesystem::path& path)
     {
 #ifdef _WIN32
         const std::string command = "explorer \"" + path.generic_string() + "\"";
