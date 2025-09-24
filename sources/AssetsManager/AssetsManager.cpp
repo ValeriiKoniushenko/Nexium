@@ -30,6 +30,8 @@ namespace Core
 {
     void AssetsManager::rescanFileSystem()
     {
+        const auto absBasePath = std::filesystem::absolute(Config::Path::assets);
+
         for (const auto& entry :
              std::filesystem::recursive_directory_iterator(Config::Path::bakedAssets))
         {
@@ -40,6 +42,7 @@ namespace Core
 
             const auto absPath = std::filesystem::absolute(entry.path());
             const auto ext = absPath.extension().generic_string();
+            auto relPath = std::filesystem::relative(absPath, absBasePath).generic_string();
 
             // check for non baked
             if (ext.size() < 3 && strncmp(ext.c_str(), ".nx", 3) != 0)
@@ -49,7 +52,8 @@ namespace Core
 
             if (ext == ".nxtex")
             {
-                int i = 1;
+                auto id = StringAtom::Intern(relPath);
+                _textures.emplace(id, std::make_unique<TextureAsset>());
             }
         }
     }
