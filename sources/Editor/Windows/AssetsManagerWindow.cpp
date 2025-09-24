@@ -98,7 +98,7 @@ namespace Core
         {
             using NodeType = EditorAssetsManager::NodeType;
 
-            // GetAssetsManager();
+            auto f = GetAssetsManager().getTexture("baked/folder.nxtex"_atom);
 
             std::unordered_map<NodeType, std::filesystem::path> paths
                 = { { NodeType::Default, Config::Path::images / "document.png" },

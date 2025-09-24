@@ -37,10 +37,10 @@ namespace Core
 
         [[nodiscard]] const StringAtom& getPath() const { return _path; }
 
-    protected:
         virtual void onLoadRequest() = 0;
         virtual void onUnloadRequest() = 0;
 
+    protected:
     protected:
         StringAtom _path;
         uint32_t _refCount = 0;
@@ -53,7 +53,7 @@ namespace Core
     class AssetRef
     {
     public:
-        explicit AssetRef(BaseAsset& asset)
+        explicit AssetRef(T& asset)
             : _asset(asset)
         {
             if (++_asset._refCount > 0)
@@ -61,6 +61,13 @@ namespace Core
                 _asset.onLoadRequest();
             }
         }
+
+        [[nodiscard]] T& get() { return _asset; }
+        [[nodiscard]] const T& get() const { return _asset; }
+        [[nodiscard]] T& operator*() { return _asset; }
+        [[nodiscard]] const T& operator*() const { return _asset; }
+        [[nodiscard]] T& operator->() { return _asset; }
+        [[nodiscard]] const T& operator->() const { return _asset; }
 
         ~AssetRef()
         {
@@ -73,6 +80,6 @@ namespace Core
         }
 
     private:
-        BaseAsset& _asset;
+        T& _asset;
     };
 } // namespace Core

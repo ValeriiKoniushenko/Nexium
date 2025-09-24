@@ -91,7 +91,7 @@ namespace Core
         // Will reindex everything inside the folder Config::Path::assets
         void rescanFileSystem();
 
-        // [[nodiscard]] NXTexture getTexture(const StringAtom& logicPath);
+        [[nodiscard]] NXTexture getTexture(const StringAtom& logicPath);
 
     protected:
         std::unordered_map<StringAtom, std::unique_ptr<BaseAsset>> _textures;

@@ -33,7 +33,6 @@ namespace Core
     public:
         ~TextureAsset() override = default;
 
-    protected:
         void onLoadRequest() override;
         void onUnloadRequest() override;
 

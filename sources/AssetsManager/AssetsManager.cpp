@@ -58,8 +58,15 @@ namespace Core
         }
     }
 
-    // NXTexture AssetsManager::getTexture(const StringAtom& logicPath)
-    // {
-    //
-    // }
+    NXTexture AssetsManager::getTexture(const StringAtom& logicPath)
+    {
+        Assert(logicPath.isStatic(), "You must use only _atom strings!");
+
+        if (!_textures.contains(logicPath))
+        {
+            throw std::runtime_error("Texture not found!");
+        }
+
+        return NXTexture(reinterpret_cast<TextureAsset&>(*_textures.at(logicPath)));
+    }
 } // namespace Core
