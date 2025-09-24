@@ -1,9 +1,9 @@
 {
-    "filter": "",
+    "filter": "AssetsM",
     "filterLevels": [
         {
             "level": "trace",
-            "value": false
+            "value": true
         },
         {
             "level": "debug",

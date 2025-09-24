@@ -32,9 +32,10 @@
 
 #include <format>
 
+using NodeType = Core::EditorAssetsManager::NodeType;
+
 namespace
 {
-
     [[maybe_unused]] bool IsSubpath(const std::filesystem::path& original,
                                     const std::filesystem::path& sub)
     {
@@ -94,29 +95,12 @@ namespace Core
     {
         BaseFloatEWC::onInitialize();
 
-        static bool _ = []()
-        {
-            using NodeType = EditorAssetsManager::NodeType;
-
-            auto f = GetAssetsManager().getTexture("baked/folder.nxtex"_atom);
-
-            std::unordered_map<NodeType, std::filesystem::path> paths
-                = { { NodeType::Default, Config::Path::images / "document.png" },
-                    { NodeType::Code, Config::Path::images / "code_document.png" },
-                    { NodeType::Image, Config::Path::images / "image_document.png" },
-                    { NodeType::Folder, Config::Path::images / "folder.png" } };
-
-            for (auto&& [type, path] : paths)
-            {
-                Texture tmp;
-                if (tmp.loadFromFile(path, false))
-                {
-                    _nodeTypesData.emplace(type, std::move(tmp));
-                }
-            }
-
-            return true;
-        }();
+        _nodeTypesData = {
+            { NodeType::Default, GetAssetsManager().getTexture("baked/document.nxtex"_atom) },
+            { NodeType::Code, GetAssetsManager().getTexture("baked/code_document.nxtex"_atom) },
+            { NodeType::Image, GetAssetsManager().getTexture("baked/image_document.nxtex"_atom) },
+            { NodeType::Folder, GetAssetsManager().getTexture("baked/folder.nxtex"_atom) },
+        };
 
         const auto gap = ImGui::GetStyle().WindowPadding.x;
 
@@ -348,11 +332,13 @@ namespace Core
                     continue;
                 }
 
-                drawFileThumbnail(_nodeTypesData[fileFormat].getTextureId(), entry, _thumbnailSize);
+                drawFileThumbnail(_nodeTypesData[fileFormat]->getData().getTextureId(), entry,
+                                  _thumbnailSize);
                 if (maxCountPerWidth != 0 && i % maxCountPerWidth != 0)
                 {
                     ImGui::SameLine();
                 }
+
                 ++i;
             }
 
@@ -369,8 +355,6 @@ namespace Core
         {
             int flags = _commonTreeFlags;
             std::string filename = node.path.filename().generic_string();
-
-            using NodeType = EditorAssetsManager::NodeType;
 
             if (node.type != NodeType::Folder)
             {

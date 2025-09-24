@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "AssetsManager/TextureAsset.h"
 #include "BaseWindow.h"
 #include "Editor/AssetsManager.h"
 #include "Editor/GuiComponents/Button.h"
@@ -65,7 +66,7 @@ namespace Core
         };
 
     protected:
-        inline static std::unordered_map<EditorAssetsManager::NodeType, Texture> _nodeTypesData;
+        std::unordered_map<EditorAssetsManager::NodeType, NXTexture> _nodeTypesData;
 
         Gui::HorizontalLayout _toolbarLayout;
         Gui::Button* _refreshButton = nullptr;

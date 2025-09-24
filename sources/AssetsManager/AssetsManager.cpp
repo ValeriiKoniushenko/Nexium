@@ -26,6 +26,8 @@
 
 #include "Editor/Configs.h"
 
+#include <Utils/Functions.h>
+
 namespace Core
 {
     void AssetsManager::rescanFileSystem()
@@ -53,7 +55,9 @@ namespace Core
             if (ext == ".nxtex")
             {
                 auto id = StringAtom::Intern(relPath);
-                _textures.emplace(id, std::make_unique<TextureAsset>());
+                auto&& pair = _textures.emplace(id, std::make_unique<TextureAsset>(id));
+                pair.first->second->onFillData(
+                    nlohmann::json::parse(Utils::GetTextFileContentAs<std::string>(absPath)));
             }
         }
     }

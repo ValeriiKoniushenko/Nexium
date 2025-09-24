@@ -87,6 +87,10 @@ namespace Core
     public:
         AssetsManager() = default;
         ~AssetsManager() = default;
+        AssetsManager(const AssetsManager&) = delete;
+        AssetsManager(AssetsManager&&) = delete;
+        AssetsManager& operator=(const AssetsManager&) = delete;
+        AssetsManager& operator=(AssetsManager&&) = delete;
 
         // Will reindex everything inside the folder Config::Path::assets
         void rescanFileSystem();

@@ -25,25 +25,43 @@
 #pragma once
 
 #include "Core/String.h"
+#include "Misc/BaseLog.h"
+#include "ModuleInfo.h"
+#include "nlohmann/json.hpp"
 
 namespace Core
 {
-    class BaseAsset
+    class BaseAsset : public BaseLog
     {
     public:
+        explicit BaseAsset(const StringAtom& logicPath)
+            : _logicPath(logicPath)
+        {
+        }
+
         virtual ~BaseAsset() = default;
 
         [[nodiscard]] bool isLoaded() const { return _refCount > 1; }
 
-        [[nodiscard]] const StringAtom& getPath() const { return _path; }
+        [[nodiscard]] const StringAtom& getLogicPath() const { return _logicPath; }
+        [[nodiscard]] const std::filesystem::path& getRealPath() const { return _path; }
 
         virtual void onLoadRequest() = 0;
         virtual void onUnloadRequest() = 0;
 
+        virtual void onFillData(nlohmann::json&& json);
+
+        [[nodiscard]] spdlog::logger* getLogger() const override
+        {
+            return AssetsManager::getLogger();
+        }
+
     protected:
-    protected:
-        StringAtom _path;
+        StringAtom _logicPath;
         uint32_t _refCount = 0;
+
+        // .nx file data
+        std::filesystem::path _path;
 
         template<class T>
         friend class AssetRef;
@@ -53,33 +71,86 @@ namespace Core
     class AssetRef
     {
     public:
+        AssetRef() = default;
+
         explicit AssetRef(T& asset)
-            : _asset(asset)
+            : _asset(&asset)
         {
-            if (++_asset._refCount > 0)
+            increaseRef();
+        }
+
+        AssetRef(const AssetRef& other)
+            : _asset(other._asset)
+        {
+            increaseRef();
+        }
+
+        AssetRef(AssetRef&& other) noexcept
+            : _asset(other._asset)
+        {
+            other._asset = nullptr;
+        }
+
+        AssetRef& operator=(const AssetRef& other)
+        {
+            if (this != &other) [[likely]]
             {
-                _asset.onLoadRequest();
+                decreaseRef();
+                _asset = &other._asset;
+                increaseRef();
+            }
+            return *this;
+        }
+
+        AssetRef& operator=(AssetRef&& other) noexcept
+        {
+            if (this != &other) [[likely]]
+            {
+                decreaseRef();
+                _asset = &other._asset;
+                increaseRef();
+
+                other._asset = nullptr;
+            }
+            return *this;
+        }
+
+        [[nodiscard]] T* get() { return _asset; }
+        [[nodiscard]] const T* get() const { return _asset; }
+        [[nodiscard]] T& operator*() { return *_asset; }
+        [[nodiscard]] const T& operator*() const { return *_asset; }
+        [[nodiscard]] T* operator->() { return _asset; }
+        [[nodiscard]] const T* operator->() const { return _asset; }
+
+        [[nodiscard]] operator bool() const noexcept { return _asset != nullptr; }
+        [[nodiscard]] bool isValid() const noexcept { return _asset != nullptr; }
+
+        ~AssetRef() { decreaseRef(); }
+
+    private:
+        void increaseRef()
+        {
+            if (_asset && ++_asset->_refCount == 1)
+            {
+                _asset->onLoadRequest();
             }
         }
 
-        [[nodiscard]] T& get() { return _asset; }
-        [[nodiscard]] const T& get() const { return _asset; }
-        [[nodiscard]] T& operator*() { return _asset; }
-        [[nodiscard]] const T& operator*() const { return _asset; }
-        [[nodiscard]] T& operator->() { return _asset; }
-        [[nodiscard]] const T& operator->() const { return _asset; }
-
-        ~AssetRef()
+        void decreaseRef()
         {
-            Assert(_asset._refCount != 0,
-                   "Invalid ref count, it will be less than zero - impossible.");
-            if (--_asset._refCount == 0)
+            if (_asset)
             {
-                _asset.onUnloadRequest();
+                Assert(_asset->_refCount != 0,
+                       "Invalid ref count, it will be less than zero - impossible.");
+
+                if (--_asset->_refCount == 0)
+                {
+                    _asset->onUnloadRequest();
+                }
             }
         }
 
     private:
-        T& _asset;
+        T* _asset = nullptr;
     };
 } // namespace Core

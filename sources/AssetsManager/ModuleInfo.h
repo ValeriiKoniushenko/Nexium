@@ -26,7 +26,7 @@
 
 #include "Misc/BaseLog.h"
 
-namespace Camera
+namespace AssetsManager
 {
 
     [[nodiscard]] inline spdlog::logger* getLogger()
@@ -35,4 +35,4 @@ namespace Camera
         return logger.get();
     }
 
-} // namespace Camera
+} // namespace AssetsManager

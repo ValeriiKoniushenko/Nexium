@@ -25,18 +25,29 @@
 #pragma once
 
 #include "BaseAsset.h"
+#include "Graphics/Texture.h"
 
 namespace Core
 {
     class TextureAsset : public BaseAsset
     {
     public:
+        explicit TextureAsset(const StringAtom& logicPath)
+            : BaseAsset(logicPath)
+        {
+        }
+
         ~TextureAsset() override = default;
 
         void onLoadRequest() override;
         void onUnloadRequest() override;
+        void onFillData(nlohmann::json&& json) override;
+
+        [[nodiscard]] const Texture& getData() const noexcept { return _data; }
+        [[nodiscard]] Texture& getData() noexcept { return _data; }
 
     protected:
+        Texture _data;
     };
 
     using NXTexture = AssetRef<TextureAsset>;

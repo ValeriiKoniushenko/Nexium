@@ -24,7 +24,16 @@
 
 #include "BaseAsset.h"
 
+#include "Editor/Configs.h"
+
+#include <fstream>
+
 namespace Core
 {
+
+    void BaseAsset::onFillData(nlohmann::json&& json)
+    {
+        _path = Config::Path::assets / json["path"].get<std::filesystem::path>();
+    }
 
 } // namespace Core
