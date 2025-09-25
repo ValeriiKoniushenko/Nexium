@@ -37,7 +37,7 @@ namespace Core
             return;
         }
 
-        auto* gridShader = gGameInstance->shaderManager.getShaderProgram("grid"_atom);
+        auto* gridShader = GetShaderManager().getShaderProgram("grid"_atom);
         if (Verify(gridShader) && gGameInstance->currentCamera)
         {
             gridShader->use();

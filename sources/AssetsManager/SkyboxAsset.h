@@ -22,13 +22,53 @@
  * SOFTWARE.
  */
 
+#pragma once
+
 #include "BaseAsset.h"
-
-#include "Editor/Configs.h"
-
-#include <fstream>
+#include "Graphics/GraphicsComponents.h"
+#include "Graphics/Texture.h"
 
 namespace Core
 {
+    class SkyboxAsset : public BaseAsset
+    {
+    public:
+        enum class Direction
+        {
+            Right,
+            Left,
+            Top,
+            Bottom,
+            Front,
+            Back,
+        };
 
+    public:
+        explicit SkyboxAsset(const StringAtom& logicPath)
+            : BaseAsset(logicPath)
+        {
+        }
+
+        void draw();
+
+        ~SkyboxAsset() override = default;
+
+        void onLoadRequest() override;
+        void onUnloadRequest() override;
+        void onFillData(nlohmann::json&& json) override;
+
+        [[nodiscard]] const char* getPrefix() const override { return "Skybox"; }
+
+    protected:
+        // opengl data
+        GLuint _cubeMapId = 0;
+        GLuint skyboxVAO = 0;
+        GLuint skyboxVBO = 0;
+
+        // properties
+        std::array<std::filesystem::path, 6> _paths;
+        bool _isFlipVertically = false;
+    };
+
+    using NXSkybox = AssetRef<SkyboxAsset>;
 } // namespace Core

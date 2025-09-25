@@ -1,0 +1,9 @@
+{
+  "pathToTop": "images/skybox/top.png",
+  "pathToBottom": "images/skybox/bottom.png",
+  "pathToBack": "images/skybox/back.png",
+  "pathToFront": "images/skybox/front.png",
+  "pathToLeft": "images/skybox/left.png",
+  "pathToRight": "images/skybox/right.png",
+  "isFlipVertically": false
+}

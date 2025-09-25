@@ -77,8 +77,8 @@ namespace Core
     {
         if (!std::filesystem::exists(path))
         {
-            errorLog("Provided path is invalid. Can't load image. Path: {}"_f
-                     << path.lexically_normal().generic_string());
+            criticalLog("Provided path is invalid. Can't load image. Path: {}"_f
+                        << path.lexically_normal().generic_string());
             return false;
         }
 

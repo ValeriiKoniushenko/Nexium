@@ -32,6 +32,8 @@ namespace Core
 {
     void AssetsManager::rescanFileSystem()
     {
+        _textures.clear();
+
         const auto absBasePath = std::filesystem::absolute(Config::Path::assets);
 
         for (const auto& entry :
@@ -59,12 +61,22 @@ namespace Core
                 pair.first->second->onFillData(
                     nlohmann::json::parse(Utils::GetTextFileContentAs<std::string>(absPath)));
             }
+            else if (ext == ".nxsky")
+            {
+                auto id = StringAtom::Intern(relPath);
+                auto&& pair = _skyboxes.emplace(id, std::make_unique<SkyboxAsset>(id));
+                pair.first->second->onFillData(
+                    nlohmann::json::parse(Utils::GetTextFileContentAs<std::string>(absPath)));
+            }
         }
     }
 
     NXTexture AssetsManager::getTexture(const StringAtom& logicPath)
     {
-        Assert(logicPath.isStatic(), "You must use only _atom strings!");
+        if (!validatePath(logicPath, ".nxtex"))
+        {
+            return NXTexture();
+        }
 
         if (!_textures.contains(logicPath))
         {
@@ -72,5 +84,51 @@ namespace Core
         }
 
         return NXTexture(reinterpret_cast<TextureAsset&>(*_textures.at(logicPath)));
+    }
+
+    NXSkybox AssetsManager::getSkybox(const StringAtom& logicPath)
+    {
+        if (!validatePath(logicPath, ".nxsky"))
+        {
+            return NXSkybox();
+        }
+
+        if (!_skyboxes.contains(logicPath))
+        {
+            criticalLog("Skybox not found by the next path: {}"_f << logicPath);
+            return NXSkybox();
+        }
+
+        return NXSkybox(reinterpret_cast<SkyboxAsset&>(*_skyboxes.at(logicPath)));
+    }
+
+    bool AssetsManager::validatePath(const StringAtom& logicPath, const char* requiredExt)
+    {
+        if (logicPath.isEmpty() || !requiredExt)
+        {
+            Assert(false);
+            traceLog("Path is empty");
+            return false;
+        }
+
+        Assert(logicPath.isStatic(), "You must use only _atom strings!");
+
+        auto* found = logicPath.reverseFind(".nx");
+        if (!found)
+        {
+            Assert(false);
+            traceLog("Invalid file extension was passed");
+            return false;
+        }
+
+        if (strcmp(found, requiredExt) != 0)
+        {
+            Assert(false);
+            traceLog("Path is invalid. Expected extension is {} but passed {}"_f << requiredExt
+                                                                                 << found);
+            return false;
+        }
+
+        return true;
     }
 } // namespace Core

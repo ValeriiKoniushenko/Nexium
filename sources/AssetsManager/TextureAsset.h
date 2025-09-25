@@ -46,8 +46,12 @@ namespace Core
         [[nodiscard]] const Texture& getData() const noexcept { return _data; }
         [[nodiscard]] Texture& getData() noexcept { return _data; }
 
+        [[nodiscard]] const char* getPrefix() const override { return "Texture"; }
+
     protected:
         Texture _data;
+
+        std::filesystem::path _path;
 
         // properties
         bool _isFlipVertically = false;

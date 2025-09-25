@@ -39,17 +39,16 @@ namespace Core
         {
         }
 
-        virtual ~BaseAsset() = default;
+        virtual ~BaseAsset() override = default;
 
         [[nodiscard]] bool isLoaded() const { return _refCount > 1; }
 
         [[nodiscard]] const StringAtom& getLogicPath() const { return _logicPath; }
-        [[nodiscard]] const std::filesystem::path& getRealPath() const { return _path; }
 
         virtual void onLoadRequest() = 0;
         virtual void onUnloadRequest() = 0;
 
-        virtual void onFillData(nlohmann::json&& json);
+        virtual void onFillData(nlohmann::json&& json) = 0;
 
         [[nodiscard]] spdlog::logger* getLogger() const override
         {
@@ -59,9 +58,6 @@ namespace Core
     protected:
         StringAtom _logicPath;
         uint32_t _refCount = 0;
-
-        // .nx file data
-        std::filesystem::path _path;
 
         template<class T>
         friend class AssetRef;
@@ -108,7 +104,6 @@ namespace Core
             {
                 decreaseRef();
                 _asset = other._asset;
-                increaseRef();
 
                 other._asset = nullptr;
             }

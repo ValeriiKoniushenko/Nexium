@@ -31,6 +31,8 @@ namespace Core
 
     void BaseLog::pushLog(level l, const char* str) const
     {
+        Assert(l != level::critical);
+
         auto* logger = getLogger();
         auto log = getCompleteText(str);
         logger->log(l, log.c_str());

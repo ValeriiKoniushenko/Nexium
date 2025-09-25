@@ -60,6 +60,8 @@ namespace Core
         {
             mesh->draw();
         }
+
+        skybox->draw();
     }
 
     void Scene::setSceneName(StringAtom name)
@@ -131,6 +133,11 @@ namespace Core
     void Scene::fromCacheData(const nlohmann::json& json)
     {
         fromJson(json, false);
+    }
+
+    void Scene::initialize()
+    {
+        skybox = GetAssetsManager().getSkybox("baked/skybox/default.nxsky"_atom);
     }
 
     void Scene::tick(float timeDelta)

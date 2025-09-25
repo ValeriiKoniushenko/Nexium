@@ -41,7 +41,7 @@ namespace Core
     class Image : public Utils::NotCopyableButMoveable, public BaseLog
     {
     public:
-        // Next values were taken from the stb_image.h documentation.
+        // The next values were taken from the stb_image.h documentation.
         // clang-format off
 	    CreateEnum(Channel, int,
 		    None = 0,

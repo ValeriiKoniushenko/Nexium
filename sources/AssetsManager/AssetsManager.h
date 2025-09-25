@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "SkyboxAsset.h"
 #include "TextureAsset.h"
 
 #include <unordered_map>
@@ -82,11 +83,11 @@ namespace Core
      * auto texture = GetAssetsManager().getTexture("/path/to/my/texture.png");
      * @endcode
      */
-    class AssetsManager
+    class AssetsManager : public BaseLog
     {
     public:
         AssetsManager() = default;
-        ~AssetsManager() = default;
+        ~AssetsManager() override = default;
         AssetsManager(const AssetsManager&) = delete;
         AssetsManager(AssetsManager&&) = delete;
         AssetsManager& operator=(const AssetsManager&) = delete;
@@ -96,8 +97,18 @@ namespace Core
         void rescanFileSystem();
 
         [[nodiscard]] NXTexture getTexture(const StringAtom& logicPath);
+        [[nodiscard]] NXSkybox getSkybox(const StringAtom& logicPath);
+
+        [[nodiscard]] spdlog::logger* getLogger() const override
+        {
+            return ::AssetsManager::getLogger();
+        }
+
+    protected:
+        [[nodiscard]] bool validatePath(const StringAtom& logicPath, const char* requiredExt);
 
     protected:
         std::unordered_map<StringAtom, std::unique_ptr<BaseAsset>> _textures;
+        std::unordered_map<StringAtom, std::unique_ptr<BaseAsset>> _skyboxes;
     };
 } // namespace Core

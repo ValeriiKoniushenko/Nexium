@@ -24,25 +24,35 @@
 
 #include "TextureAsset.h"
 
+#include "Editor/Configs.h"
+
 namespace Core
 {
     void TextureAsset::onLoadRequest()
     {
-        Assert(!_path.empty());
         _data.release();
         _data.loadFromFile(_path, _isFlipVertically);
-        traceLog("Loaded: " + _path.generic_string());
+        traceLog("Loaded: " + _logicPath);
     }
 
     void TextureAsset::onUnloadRequest()
     {
-        traceLog("Unloaded: " + _path.generic_string());
+        traceLog("Unloaded: " + _logicPath);
         _data.release();
     }
 
     void TextureAsset::onFillData(nlohmann::json&& json)
     {
-        BaseAsset::onFillData(std::forward<decltype(json)>(json));
+        if (Verify(json.contains("path")))
+        {
+            _path = Config::Path::assets / json["path"].get<std::filesystem::path>();
+        }
+        else
+        {
+            errorLog(
+                "The asset '{}' is configured incorrectly. The property 'path' is not determined."_f
+                << _logicPath);
+        }
 
         if (json.contains("isFlipVertically"))
         {

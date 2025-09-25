@@ -23,10 +23,11 @@
  */
 
 #pragma once
-#include "Editor/Gizmo.h"
+
+#include "AssetsManager/SkyboxAsset.h"
+#include "Core/Delegate.h"
 #include "Graphics/Primitives/StaticMeshBundle.h"
 #include "Grid.h"
-#include "InputDevices/ModuleInfo.h"
 
 #include <vector>
 
@@ -37,6 +38,8 @@ namespace Core
     public:
         Scene();
         ~Scene() override = default;
+
+        void initialize();
 
         void tick(float timeDelta);
 
@@ -92,6 +95,7 @@ namespace Core
 
     public:
         Grid grid;
+        NXSkybox skybox;
 
     protected:
         [[nodiscard]] std::filesystem::path getCacheDir() const override;
