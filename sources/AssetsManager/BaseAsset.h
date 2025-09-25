@@ -96,7 +96,7 @@ namespace Core
             if (this != &other) [[likely]]
             {
                 decreaseRef();
-                _asset = &other._asset;
+                _asset = other._asset;
                 increaseRef();
             }
             return *this;
@@ -107,7 +107,7 @@ namespace Core
             if (this != &other) [[likely]]
             {
                 decreaseRef();
-                _asset = &other._asset;
+                _asset = other._asset;
                 increaseRef();
 
                 other._asset = nullptr;

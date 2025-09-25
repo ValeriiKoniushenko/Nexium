@@ -138,7 +138,7 @@ namespace Core::Gui
         ECS_COMPONENT_DECL(ImageButton, Button);
 
     public:
-        // void setImage(const NXTexture& texture) { _texture = texture; }
+        void setImage(const NXTexture& texture) { _texture = texture; }
         [[nodiscard]] const NXTexture& getImage() const noexcept { return _texture; }
 
         void setPaddingSize(glm::vec2 value) { _paddingSize = value; }
