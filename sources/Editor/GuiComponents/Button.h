@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "AssetsManager/TextureAsset.h"
 #include "Core/Delegate.h"
 #include "Graphics/Texture.h"
 #include "Widget.h"
@@ -137,8 +138,8 @@ namespace Core::Gui
         ECS_COMPONENT_DECL(ImageButton, Button);
 
     public:
-        // void setImage(Texture&& texture) noexcept { _texture = texture; }
-        [[nodiscard]] const Texture& getImage() const noexcept { return _texture; }
+        // void setImage(const NXTexture& texture) { _texture = texture; }
+        [[nodiscard]] const NXTexture& getImage() const noexcept { return _texture; }
 
         void setPaddingSize(glm::vec2 value) { _paddingSize = value; }
         [[nodiscard]] std::optional<glm::vec2> getPaddingSize() const { return _paddingSize; }
@@ -150,7 +151,7 @@ namespace Core::Gui
 
     protected:
         std::optional<glm::vec2> _paddingSize;
-        Texture _texture;
+        NXTexture _texture;
     };
 
 } // namespace Core::Gui

@@ -335,8 +335,8 @@ namespace Core::Gui
             window->DrawList->AddRectFilled(bb.Min + padding, bb.Max - padding,
                                             GetColorU32(bg_col));
         }
-        window->DrawList->AddImage(_texture.getTextureId(), bb.Min + padding, bb.Max - padding,
-                                   glm::vec2(0), glm::vec2(1),
+        window->DrawList->AddImage(_texture->getData().getTextureId(), bb.Min + padding,
+                                   bb.Max - padding, glm::vec2(0), glm::vec2(1),
                                    GetColorU32(glm::vec4(1, 1, 1, alpha)));
     }
 
