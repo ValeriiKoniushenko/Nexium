@@ -8,7 +8,7 @@ Nexium is completely free and open source under the very permissive MIT license.
 
 99.9% of Nexium Engine was developed by Valerii Koniushenko. Also, it has previous versions, mainly: VaKon2D, VaKon3D, Segalay - you can find it on the author's repositories [Valerii Koniushenko](https://github.com/ValeriiKoniushenko).
 
-<img width="1919" height="1048" alt="image" src="https://github.com/user-attachments/assets/adb49306-8c19-4ed4-b0d5-65e18a5d730b" />
+<img width="1832" height="1009" alt="image" src="https://github.com/user-attachments/assets/cfe20fe5-d5a8-47ec-9b8f-0233c77e5fa3" />
 
 ## Getting the engine
 
