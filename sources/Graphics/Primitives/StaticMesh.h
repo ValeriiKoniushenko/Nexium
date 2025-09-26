@@ -87,7 +87,6 @@ namespace Core
             colorId.g = static_cast<uint8_t>((id & 0x00FF00) >> 8);
             colorId.b = static_cast<uint8_t>((id & 0xFF0000) >> 16);
 
-            std::cout << colorId << std::endl;
             return colorId;
         }
 
