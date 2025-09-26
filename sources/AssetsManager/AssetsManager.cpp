@@ -57,14 +57,14 @@ namespace Core
             if (ext == ".nxtex")
             {
                 auto id = StringAtom::Intern(relPath);
-                auto&& pair = _textures.emplace(id, std::make_unique<TextureAsset>(id));
+                auto&& pair = _textures.emplace(id, new TextureAsset(id));
                 pair.first->second->onFillData(
                     nlohmann::json::parse(Utils::GetTextFileContentAs<std::string>(absPath)));
             }
             else if (ext == ".nxsky")
             {
                 auto id = StringAtom::Intern(relPath);
-                auto&& pair = _skyboxes.emplace(id, std::make_unique<SkyboxAsset>(id));
+                auto&& pair = _skyboxes.emplace(id, new SkyboxAsset(id));
                 pair.first->second->onFillData(
                     nlohmann::json::parse(Utils::GetTextFileContentAs<std::string>(absPath)));
             }
@@ -100,6 +100,12 @@ namespace Core
         }
 
         return NXSkybox(reinterpret_cast<SkyboxAsset&>(*_skyboxes.at(logicPath)));
+    }
+
+    void AssetsManager::unloadAllResources()
+    {
+        _textures.clear();
+        _skyboxes.clear();
     }
 
     bool AssetsManager::validatePath(const StringAtom& logicPath, const char* requiredExt)

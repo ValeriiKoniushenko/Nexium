@@ -104,11 +104,13 @@ namespace Core
             return ::AssetsManager::getLogger();
         }
 
+        void unloadAllResources();
+
     protected:
         [[nodiscard]] bool validatePath(const StringAtom& logicPath, const char* requiredExt);
 
     protected:
-        std::unordered_map<StringAtom, std::unique_ptr<BaseAsset>> _textures;
-        std::unordered_map<StringAtom, std::unique_ptr<BaseAsset>> _skyboxes;
+        std::unordered_map<StringAtom, AssetRef<BaseAsset>> _textures;
+        std::unordered_map<StringAtom, AssetRef<BaseAsset>> _skyboxes;
     };
 } // namespace Core

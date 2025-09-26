@@ -75,6 +75,12 @@ namespace Core
             increaseRef();
         }
 
+        explicit AssetRef(T* ptr)
+            : _asset(ptr)
+        {
+            increaseRef();
+        }
+
         AssetRef(const AssetRef& other)
             : _asset(other._asset)
         {
@@ -125,7 +131,11 @@ namespace Core
     private:
         void increaseRef()
         {
-            if (_asset && ++_asset->_refCount == 1)
+            // why 2? The first ref is placing at AssetManager like some dummy asset
+            // we just know that it was indexed by the system.
+            // With the second ref - the final code wants to use it. So, we must
+            // load it.
+            if (_asset && ++_asset->_refCount == 2)
             {
                 _asset->onLoadRequest();
             }
@@ -138,9 +148,19 @@ namespace Core
                 Assert(_asset->_refCount != 0,
                        "Invalid ref count, it will be less than zero - impossible.");
 
-                if (--_asset->_refCount == 0)
+                --_asset->_refCount;
+
+                // why 1? see the logic of increaseRef above. The same sense
+                // but with reverse logic.
+                if (_asset->_refCount == 1)
                 {
                     _asset->onUnloadRequest();
+                }
+
+                if (_asset->_refCount == 0)
+                {
+                    delete _asset;
+                    _asset = nullptr;
                 }
             }
         }

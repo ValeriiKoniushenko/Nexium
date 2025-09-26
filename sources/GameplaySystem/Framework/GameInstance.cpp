@@ -118,6 +118,11 @@ namespace Core
     void GameInstance::onFinishWriteCache()
     {
         gameScene.writeToCache();
+
+        auto s = GetAssetsManager().getSkybox("baked/skybox/default.nxsky"_atom);
+        assets.unloadAllResources();
+
+        int i = 1;
     }
 
     void GameInstance::gameLoop()
