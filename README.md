@@ -1,7 +1,7 @@
 # Nexium Engine
 
 ## 3D cross-platform game engine
-**Nexium Engine is a feature-packed, cross-platform game engine to create 3D games from a unified interface. It provides a comprehensive set of common tools, so that users can focus on making games without having to reinvent the wheel.** Now, it is currenty under active development. In the future games can be exported with one click to a number of platforms, including the major desktop platforms (Linux, macOS, Windows), mobile platforms (Android, iOS)
+**Nexium Engine is a feature-packed, cross-platform game engine to create 3D games from a unified interface. It provides a comprehensive set of common tools so that users can focus on making games without having to reinvent the wheel.** Now, it is currenty under active development. In the future games can be exported with one click to a number of platforms, including the major desktop platforms (Linux, macOS, Windows), mobile platforms (Android, iOS)
 
 ## Free, open source
 Nexium is completely free and open source under the very permissive MIT license. No strings attached, no royalties, nothing. The users' games are theirs, down to the last line of engine code. Nexium's development is fully independent, and it is not intended for profit.
@@ -13,7 +13,7 @@ Nexium is completely free and open source under the very permissive MIT license.
 ## Getting the engine
 
 ### Binary downloads
-Now, we do not have such options. Because it is improving and modifying almost every day. But, you can build it on your own machine from the source code.
+Now, we do not have such options. Because it is improving and modifying almost every day. But you can build it on your own machine from the source code.
 
 ### Compiling from source
 
@@ -39,7 +39,7 @@ cmake --build build
 
 #### Pre-requirements
 
-1. You need to install next components to build the project.
+1. You need to install the next components to build the project.
    ```
    sudo apt install libwayland-dev libx11-dev libxi-dev libxrandr-dev libxinerama-dev libxkbcommon-dev libxcursor-dev libgl1-mesa-dev
    ```
@@ -56,17 +56,20 @@ cmake --build build
 ```
 
 ## Documentation and demos
-Take into account, due to active develompment the real game & engine were not devided. So, now you can write you own game as a part of the engine. It will be fixed in the nearest future.
-Also, you can find a Demo Game in the root of the project under the name 'game-example'. After successfull building you can run it by the next path: ```<build_dir>/bin/TemplateGame```.
+Take into account, due to active development, the real game & engine were not divided. So, now you can write your own game as a part of the engine. It will be fixed in the nearest future.
+Also, you can find a Demo Game in the root of the project under the name 'game-example'.~~~~ After successfully building
+you can run it by the next path: ```<build_dir>/bin/TemplateGame```.
 
-About documentation: the same reason. After first beta version all documentation will be added here.
+About documentation: the same reason. After the first beta version, all documentation will be added here.
 
 ## Stability
 
 [![Jenkins](https://img.shields.io/badge/jenkins-%232C5263.svg?style=for-the-badge&logo=jenkins&logoColor=white)](https://jenkins.vakon.space/job/Nexium/)
 
-- [![](http://jenkins.vakon.space/job/Nexium/lastBuild/badge/icon?config=windowsBuild_Debug)](https://jenkins.vakon.space/job/Nexium/lastBuild/)  [![](http://jenkins.vakon.space/job/Nexium/lastBuild/badge/icon?config=windowsBuild_Release)](https://jenkins.vakon.space/job/Nexium/lastBuild/)
-- [![](http://jenkins.vakon.space/job/Nexium/lastBuild/badge/icon?config=linuxBuild_gcc_Debug)](https://jenkins.vakon.space/job/Nexium/lastBuild/)  [![](http://jenkins.vakon.space/job/Nexium/lastBuild/badge/icon?config=linuxBuild_gcc_Release)](https://jenkins.vakon.space/job/Nexium/lastBuild/)
-- [![](http://jenkins.vakon.space/job/Nexium/lastBuild/badge/icon?config=linuxBuild_clang_Debug)](https://jenkins.vakon.space/job/Nexium/lastBuild/)  [![](http://jenkins.vakon.space/job/Nexium/lastBuild/badge/icon?config=linuxBuild_clang_Release)](https://jenkins.vakon.space/job/Nexium/lastBuild/)
+**Builds**:
+
+- [![MSVC Debug](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fjenkins.vakon.space%2Fjob%2FNexium%2Fjob%2FWinBuild_MSVC_Debug%2F&label=MSVC%20Debug)](https://jenkins.vakon.space/job/Nexium/job/WinBuild_MSVC_Debug/) [![MSVC Release](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fjenkins.vakon.space%2Fjob%2FNexium%2Fjob%2FWinBuild_MSVC_Release%2F&label=MSVC%20Release)](https://jenkins.vakon.space/job/Nexium/job/WinBuild_MSVC_Release/)
+- [![GCC Debug](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fjenkins.vakon.space%2Fjob%2FNexium%2Fjob%2FLinuxBuild_GCC_Debug%2F&label=GCC%20Debug)](https://jenkins.vakon.space/job/Nexium/job/LinuxBuild_GCC_Debug/) [![GCC Release](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fjenkins.vakon.space%2Fjob%2FNexium%2Fjob%2FLinuxBuild_GCC_Release%2F&label=GCC%20Release)](https://jenkins.vakon.space/job/Nexium/job/LinuxBuild_GCC_Release/)
+- [![Clang Debug](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fjenkins.vakon.space%2Fjob%2FNexium%2Fjob%2FLinuxBuild_Clang_Debug%2F&label=Clang%20Debug)](https://jenkins.vakon.space/job/Nexium/job/LinuxBuild_Clang_Debug/) [![Clang Release](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fjenkins.vakon.space%2Fjob%2FNexium%2Fjob%2FLinuxBuild_Clang_Release%2F&label=Clang%20Release)](https://jenkins.vakon.space/job/Nexium/job/LinuxBuild_Clang_Release/)
 
 
