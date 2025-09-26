@@ -71,7 +71,7 @@ namespace Core
 
     void GraphicsComponentData::setVertexBuffer(const std::vector<float>& data, GLenum usage)
     {
-        if (_vbo != 0 && _vao != 0) [[likely]]
+        if (Verify(_vbo != 0 && _vao != 0)) [[likely]]
         {
             glBindVertexArray(_vao);
             glBindBuffer(GL_ARRAY_BUFFER, _vbo);
@@ -81,7 +81,7 @@ namespace Core
 
     void GraphicsComponentData::setIndexBuffer(const std::vector<GLuint>& data, GLenum usage)
     {
-        if (_ebo != 0 && _vao != 0) [[likely]]
+        if (Verify(_ebo != 0 && _vao != 0)) [[likely]]
         {
             glBindVertexArray(_vao);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
@@ -91,10 +91,10 @@ namespace Core
         }
     }
 
-    void GraphicsComponentData::setTexture(const unsigned char* data, uint32_t width,
-                                           uint32_t height, GLuint channels)
+    void GraphicsComponentData::setTexture2D(const unsigned char* data, uint32_t width,
+                                             uint32_t height, GLuint channels)
     {
-        if (data && _ebo != 0 && _vao != 0 && _texture != 0) [[likely]]
+        if (Verify(data && _ebo != 0 && _vao != 0 && _texture != 0)) [[likely]]
         {
             glBindVertexArray(_vao);
 
@@ -120,6 +120,7 @@ namespace Core
 
         if (!ignoreVertexAttribSetup)
         {
+            Assert(_vao != 0);
             glBindVertexArray(_vao);
             glBindBuffer(GL_ARRAY_BUFFER, _vbo);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
@@ -199,7 +200,7 @@ namespace Core
         _triangleCount = 0;
     }
 
-    void GraphicsComponentData::directDraw() noexcept
+    void GraphicsComponentData::directDraw(GLenum bindTextureType, GLenum textureIndex) noexcept
     {
         if (!isValid()) [[unlikely]]
         {
@@ -223,8 +224,8 @@ namespace Core
         glBindVertexArray(_vao);
         glBindBuffer(GL_ARRAY_BUFFER, _vbo);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, _texture);
+        glActiveTexture(GL_TEXTURE0 + textureIndex);
+        glBindTexture(bindTextureType, _texture);
 
         applyUniforms();
 

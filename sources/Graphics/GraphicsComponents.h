@@ -89,8 +89,8 @@ namespace Core
 
         void setVertexBuffer(const std::vector<float>& data, GLenum usage = GL_STATIC_DRAW);
         void setIndexBuffer(const std::vector<GLuint>& data, GLenum usage = GL_STATIC_DRAW);
-        void setTexture(const unsigned char* data, uint32_t width, uint32_t height,
-                        GLuint channels);
+        void setTexture2D(const unsigned char* data, uint32_t width, uint32_t height,
+                          GLuint channels);
         void setShader(ShaderProgram* sp, bool ignoreVertexAttribSetup = false);
 
         /**
@@ -144,7 +144,7 @@ namespace Core
          * }
          * @endcode
          */
-        void directDraw() noexcept;
+        void directDraw(GLenum bindTextureType = GL_TEXTURE_2D, GLenum textureIndex = 0) noexcept;
 
         [[nodiscard]] GLuint getVboId() noexcept { return _vbo; }
         [[nodiscard]] GLuint getEboId() noexcept { return _ebo; }
@@ -168,11 +168,38 @@ namespace Core
 
         [[nodiscard]] uint32_t getTriangleCount() const noexcept { return _triangleCount; }
 
+        // =========== LOW LEVEL functionality ================
+
+        void bindVAO() const noexcept
+        {
+            Assert(_vao != 0);
+            glBindVertexArray(_vao);
+        }
+        void unbindVao() const noexcept { glBindVertexArray(0); }
+
+        void bindVBO() const noexcept
+        {
+            Assert(_vbo != 0);
+            glBindBuffer(GL_ARRAY_BUFFER, _vbo);
+        }
+
+        void bindEBO() const noexcept
+        {
+            Assert(_ebo != 0);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
+        }
+
+        void bindTexture(GLenum type = GL_TEXTURE_2D) const noexcept
+        {
+            Assert(_texture != 0);
+            glBindTexture(type, _texture);
+        }
+
     protected:
         virtual void applyUniforms() {}
 
     protected:
-        // To improve cache-line readability we use vector.
+        // To improve cache-line readability, we use vector.
         // But all values ModifiedValue should be unique.
         std::vector<ModifierParam> _drawModifiers;
         ShaderProgram* _shader = nullptr;

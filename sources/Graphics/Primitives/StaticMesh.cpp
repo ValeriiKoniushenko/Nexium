@@ -60,8 +60,8 @@ namespace Core
             Assert(resolved.is_relative());
             if (Verify(image.loadFromFile(resolved, true)))
             {
-                setTexture(image.data(), image.getSize().width, image.getSize().height,
-                           image.getChannelAsOpenGLType());
+                setTexture2D(image.data(), image.getSize().width, image.getSize().height,
+                             image.getChannelAsOpenGLType());
             }
         }
 

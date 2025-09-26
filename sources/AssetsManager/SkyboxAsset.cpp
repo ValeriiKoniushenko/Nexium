@@ -36,27 +36,20 @@ namespace Core
         auto view = glm::mat4(1.f);
         view = glm::rotate(view, glm::radians(camera->getRotationX()), glm::vec3(1.f, 0.f, 0.f));
         view = glm::rotate(view, glm::radians(camera->getRotationY()), glm::vec3(0.f, 1.f, 0.f));
+
         shader->use();
         shader->setUniform("uView"_atom, view);
         shader->setUniform("uProj"_atom, camera->getCachedProjectionMatrix());
 
-        glDisable(GL_CULL_FACE);
         glDepthFunc(GL_LEQUAL);
-
-        glBindVertexArray(skyboxVAO);
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, _cubeMapId);
-        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr);
-
+        _gcd.directDraw(GL_TEXTURE_CUBE_MAP, 0);
         glDepthFunc(GL_LESS);
-        glEnable(GL_CULL_FACE);
     }
 
     void SkyboxAsset::onLoadRequest()
     {
         // clang-format off
-        float skyboxVertices[] = {
-            // positions
+        const std::vector<float> skyboxVertices = {
             -1.0f,  1.0f, -1.0f,  // 0
             -1.0f, -1.0f, -1.0f,  // 1
              1.0f, -1.0f, -1.0f,  // 2
@@ -66,7 +59,7 @@ namespace Core
              1.0f, -1.0f,  1.0f,  // 6
              1.0f,  1.0f,  1.0f   // 7
         };
-        unsigned int skyboxIndices[] = {
+        const std::vector<GLuint> skyboxIndices = {
             // back face
             0, 1, 2,
             2, 3, 0,
@@ -86,29 +79,24 @@ namespace Core
             1, 2, 6,
             6, 5, 1
         };
-
         // clang-format on
 
+        std::vector<GraphicsComponentData::ModifierParam> modifiers
+            = { { GraphicsComponentData::MV_CullFace, GraphicsComponentData::Modifier::Disable } };
+
         auto* shader = GetShaderManager().getShaderProgram("skybox"_atom);
+
+        _gcd.generate();
+        _gcd.setShader(GetShaderManager().getShaderProgram("skybox"_atom));
+        _gcd.setVertexBuffer(skyboxVertices);
+        _gcd.setIndexBuffer(skyboxIndices);
+        _gcd.setDrawModifiers(std::move(modifiers));
+
         shader->use();
+        shader->setUniform("uSkybox"_atom, 0);
 
-        glGenVertexArrays(1, &skyboxVAO);
-        glGenBuffers(1, &skyboxVBO);
-        glGenBuffers(1, &skyboxEBO);
-        glGenTextures(1, &_cubeMapId);
-
-        glBindVertexArray(skyboxVAO);
-
-        glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, skyboxEBO);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(skyboxIndices), &skyboxIndices,
-                     GL_STATIC_DRAW);
-
-        glBindTexture(GL_TEXTURE_CUBE_MAP, _cubeMapId);
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+        _gcd.bindVAO();
+        _gcd.bindTexture(GL_TEXTURE_CUBE_MAP);
 
         int size = -1;
         for (std::size_t i = 0; i < _paths.size(); ++i)
@@ -138,8 +126,7 @@ namespace Core
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-        shader->setUniform("uSkybox"_atom, 1);
-        glBindVertexArray(0);
+        _gcd.unbindVao();
 
         traceLog("Loaded: " + _logicPath);
     }
@@ -147,11 +134,7 @@ namespace Core
     void SkyboxAsset::onUnloadRequest()
     {
         traceLog("Unloaded: " + _logicPath);
-
-        glDeleteVertexArrays(1, &skyboxVAO);
-        glDeleteBuffers(1, &skyboxVBO);
-        glDeleteTextures(1, &_cubeMapId);
-        skyboxVAO = skyboxVBO = _cubeMapId = 0;
+        _gcd.clear();
     }
 
     void SkyboxAsset::onFillData(nlohmann::json&& json)

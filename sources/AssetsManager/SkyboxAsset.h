@@ -60,12 +60,7 @@ namespace Core
         [[nodiscard]] const char* getPrefix() const override { return "Skybox"; }
 
     protected:
-        // opengl data
-        GLuint _cubeMapId = 0;
-        GLuint skyboxVAO = 0;
-        GLuint skyboxVBO = 0;
-        GLuint skyboxEBO = 0;
-
+        GraphicsComponentData _gcd;
         // properties
         std::array<std::filesystem::path, 6> _paths;
         bool _isFlipVertically = false;
