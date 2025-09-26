@@ -31,11 +31,14 @@ namespace Core
     void SkyboxAsset::draw()
     {
         auto* shader = GetShaderManager().getShaderProgram("skybox"_atom);
+        auto* camera = gGameInstance->currentCamera;
 
+        auto view = glm::mat4(1.f);
+        view = glm::rotate(view, glm::radians(camera->getRotationX()), glm::vec3(1.f, 0.f, 0.f));
+        view = glm::rotate(view, glm::radians(camera->getRotationY()), glm::vec3(0.f, 1.f, 0.f));
         shader->use();
-        shader->setUniform("uView"_atom,
-                           glm::mat4(glm::mat3(gGameInstance->currentCamera->getMatrix())));
-        shader->setUniform("uProj"_atom, gGameInstance->currentCamera->getCachedProjectionMatrix());
+        shader->setUniform("uView"_atom, view);
+        shader->setUniform("uProj"_atom, camera->getCachedProjectionMatrix());
 
         glDisable(GL_CULL_FACE);
         glDepthFunc(GL_LEQUAL);
