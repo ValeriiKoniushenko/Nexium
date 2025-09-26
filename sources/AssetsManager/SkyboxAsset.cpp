@@ -120,7 +120,7 @@ namespace Core
         for (std::size_t i = 0; i < _paths.size(); ++i)
         {
             Image img;
-            if (img.loadFromFile(Config::Path::assets / _paths[i], _isFlipVertically))
+            if (img.loadFromFile(_paths[i], _isFlipVertically))
             {
                 if (size == -1)
                 {

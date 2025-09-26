@@ -27,6 +27,7 @@
 #include "SkyboxAsset.h"
 #include "TextureAsset.h"
 
+#include <set>
 #include <unordered_map>
 
 namespace Core
@@ -86,7 +87,7 @@ namespace Core
     class AssetsManager : public BaseLog
     {
     public:
-        AssetsManager() = default;
+        AssetsManager();
         ~AssetsManager() override = default;
         AssetsManager(const AssetsManager&) = delete;
         AssetsManager(AssetsManager&&) = delete;
@@ -106,10 +107,13 @@ namespace Core
 
         void unloadAllResources();
 
+        void registerNewAssetPath(std::filesystem::path logicPath);
+
     protected:
         [[nodiscard]] bool validatePath(const StringAtom& logicPath, const char* requiredExt);
 
     protected:
+        std::set<std::filesystem::path> _registeredPaths;
         std::unordered_map<StringAtom, AssetRef<BaseAsset>> _textures;
         std::unordered_map<StringAtom, AssetRef<BaseAsset>> _skyboxes;
     };

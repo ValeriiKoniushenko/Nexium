@@ -45,7 +45,7 @@ namespace Core
     {
         if (Verify(json.contains("path")))
         {
-            _path = Config::Path::assets / json["path"].get<std::filesystem::path>();
+            _path = json["path"].get<std::filesystem::path>();
         }
         else
         {

@@ -30,43 +30,49 @@
 
 namespace Core
 {
+    AssetsManager::AssetsManager()
+    {
+        registerNewAssetPath(Config::Path::assets);
+    }
+
     void AssetsManager::rescanFileSystem()
     {
         _textures.clear();
 
-        const auto absBasePath = std::filesystem::absolute(Config::Path::assets);
-
-        for (const auto& entry :
-             std::filesystem::recursive_directory_iterator(Config::Path::bakedAssets))
+        for (auto&& path : _registeredPaths)
         {
-            if (!entry.is_regular_file())
+            const auto absBasePath = std::filesystem::absolute(path);
+            for (const auto& entry : std::filesystem::recursive_directory_iterator(path))
             {
-                continue;
-            }
+                if (!entry.is_regular_file())
+                {
+                    continue;
+                }
 
-            const auto absPath = std::filesystem::absolute(entry.path());
-            const auto ext = absPath.extension().generic_string();
-            auto relPath = std::filesystem::relative(absPath, absBasePath).generic_string();
+                const auto absPath = std::filesystem::absolute(entry.path());
+                const auto ext = absPath.extension().generic_string();
+                auto relPath = std::filesystem::relative(absPath, absBasePath).generic_string();
 
-            // check for non baked
-            if (ext.size() < 3 && strncmp(ext.c_str(), ".nx", 3) != 0)
-            {
-                continue;
-            }
+                // check for non baked
+                if (ext.size() < 3 && strncmp(ext.c_str(), ".nx", 3) != 0)
+                {
+                    continue;
+                }
 
-            if (ext == ".nxtex")
-            {
-                auto id = StringAtom::Intern(relPath);
-                auto&& pair = _textures.emplace(id, new TextureAsset(id));
-                pair.first->second->onFillData(
-                    nlohmann::json::parse(Utils::GetTextFileContentAs<std::string>(absPath)));
-            }
-            else if (ext == ".nxsky")
-            {
-                auto id = StringAtom::Intern(relPath);
-                auto&& pair = _skyboxes.emplace(id, new SkyboxAsset(id));
-                pair.first->second->onFillData(
-                    nlohmann::json::parse(Utils::GetTextFileContentAs<std::string>(absPath)));
+                if (ext == ".nxtex")
+                {
+                    auto id = StringAtom::Intern(relPath);
+                    auto&& pair = _textures.emplace(id, new TextureAsset(id));
+                    pair.first->second->onFillData(
+                        nlohmann::json::parse(Utils::GetTextFileContentAs<std::string>(absPath)));
+                }
+                else if (ext == ".nxsky")
+                {
+                    auto id = StringAtom::Intern(relPath);
+                    auto&& pair = _skyboxes.emplace(id, new SkyboxAsset(id));
+                    pair.first->second->onFillData(
+                        nlohmann::json::parse(Utils::GetTextFileContentAs<std::string>(absPath)));
+                }
             }
         }
     }
@@ -106,6 +112,12 @@ namespace Core
     {
         _textures.clear();
         _skyboxes.clear();
+    }
+
+    void AssetsManager::registerNewAssetPath(std::filesystem::path path)
+    {
+        infoLog("Registered new asset path: " + path.generic_string());
+        _registeredPaths.emplace(std::move(path));
     }
 
     bool AssetsManager::validatePath(const StringAtom& logicPath, const char* requiredExt)
