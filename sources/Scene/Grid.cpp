@@ -45,11 +45,11 @@ namespace Core
             gridShader->setUniform("uProjAndView"_atom, gGameInstance->currentCamera->getMatrix());
             gridShader->setUniform("uCameraPos"_atom, gGameInstance->currentCamera->getPosition());
             gridShader->setUniform("uGlobalGridSize"_atom, _gridSize);
-            gridShader->setUniform("uMinimalDistanceBetweenPixels"_atom,
-                                   _minimalDistanceBetweenPixels);
+            /*gridShader->setUniform("uMinimalDistanceBetweenPixels"_atom,
+                                   _minimalDistanceBetweenPixels);*/
             gridShader->setUniform("uGridCellSize"_atom, _cellSize);
-            gridShader->setUniform("uGridColorThin"_atom, _gridColorThin);
-            gridShader->setUniform("uGridColorThick"_atom, _gridColorThick);
+            // gridShader->setUniform("uGridColorThin"_atom, _gridColorThin);
+            // gridShader->setUniform("uGridColorThick"_atom, _gridColorThick);
 
             glEnable(GL_BLEND);
             glDisable(GL_CULL_FACE);

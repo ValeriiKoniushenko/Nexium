@@ -4,9 +4,9 @@
 out vec4 FragColor;
 
 uniform float uGlobalGridSize = 10000.0;
-uniform float uMinimalDistanceBetweenPixels = 2.0;
-uniform float uGridCellSize = 25.0;
-uniform vec4 uGridColorThin = vec4(0.5, 0.5, 0.5, 1.0);
+uniform float uMinimalDistanceBetweenPixels = 2.5;
+uniform float uGridCellSize = 100.0;
+uniform vec4 uGridColorThin = vec4(0.5, 0.5, 0.5, 0.5);
 uniform vec4 uGridColorThick = vec4(0.0, 0.0, 0.0, 1.0);
 
 in vec3 ioWorldPos;
@@ -28,17 +28,16 @@ void main()
     float gridCellSizeLod1 = gridCellSizeLod0 * 10.0;
     float gridCellSizeLod2 = gridCellSizeLod1 * 10.0;
 
-    dudv *= 2.0;
 
-    vec2 res = vec2(1.0) - (mod(ioWorldPos.xz, gridCellSizeLod0) / dudv);
+    vec2 res = vec2(1.0) - (mod(ioWorldPos.xz, gridCellSizeLod0) / (dudv * 1.25));
     res = vec2(1.0) - abs(clamp(res, vec2(0.0), vec2(1.0)) * 2.0 - vec2(1.0));
     float lod0a = max(res.x, res.y);
 
-    res = vec2(1.0) - (mod(ioWorldPos.xz, gridCellSizeLod1) / dudv);
+    res = vec2(1.0) - (mod(ioWorldPos.xz, gridCellSizeLod1) / (dudv * 2.4));
     res = vec2(1.0) - abs(clamp(res, vec2(0.0), vec2(1.0)) * 2.0 - vec2(1.0));
     float lod1a = max(res.x, res.y);
 
-    res = vec2(1.0) - (mod(ioWorldPos.xz, gridCellSizeLod2) / dudv);
+    res = vec2(1.0) - (mod(ioWorldPos.xz, gridCellSizeLod2) / (dudv * 4.0));
     res = vec2(1.0) - abs(clamp(res, vec2(0.0), vec2(1.0)) * 2.0 - vec2(1.0));
     float lod2a = max(res.x, res.y);
 

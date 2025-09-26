@@ -31,26 +31,27 @@ namespace Core
     class Grid
     {
     public:
-        [[nodiscard]] const NormColor4& getGridColorThin() const noexcept { return _gridColorThin; }
+        /*[[nodiscard]] const NormColor4& getGridColorThin() const noexcept { return _gridColorThin;
+        }
         [[nodiscard]] const NormColor4& getGridColorThick() const noexcept
         {
             return _gridColorThick;
-        }
+        }*/
         [[nodiscard]] float getGridSize() const noexcept { return _gridSize; }
         [[nodiscard]] float getCellSize() const noexcept { return _cellSize; }
-        [[nodiscard]] float getMinimalDistanceBetweenPixels() const noexcept
+        /*[[nodiscard]] float getMinimalDistanceBetweenPixels() const noexcept
         {
             return _minimalDistanceBetweenPixels;
-        }
+        }*/
 
-        void setGridColorThin(const NormColor4& value) noexcept { _gridColorThin = value; }
-        void setGridColorThick(const NormColor4& value) noexcept { _gridColorThick = value; }
+        // void setGridColorThin(const NormColor4& value) noexcept { _gridColorThin = value; }
+        // void setGridColorThick(const NormColor4& value) noexcept { _gridColorThick = value; }
         void setGridSize(float value) noexcept { _gridSize = value; }
         void setCellSize(float value) noexcept { _cellSize = value; }
-        void setMinimalDistanceBetweenPixels(float value) noexcept
+        /*void setMinimalDistanceBetweenPixels(float value) noexcept
         {
             _minimalDistanceBetweenPixels = value;
-        }
+        }*/
 
         [[nodiscard]] bool isDraw() const noexcept { return _isDraw; }
         void setIsDraw(bool value) noexcept { _isDraw = value; }
@@ -58,11 +59,11 @@ namespace Core
         void draw();
 
     protected:
-        NormColor4 _gridColorThin = NormColor4(0.5, 0.5, 0.5, 1.0);
-        NormColor4 _gridColorThick = NormColor4(0.0, 0.0, 0.0, 1.0);
+        // NormColor4 _gridColorThin = NormColor4(0.6, 0.6, 0.6, 1.0);
+        // NormColor4 _gridColorThick = NormColor4(0.1, 0.1, 0.1, 1.0);
         float _gridSize = 10'000.f;
-        float _cellSize = 25.f;
-        float _minimalDistanceBetweenPixels = 2.f;
+        float _cellSize = 100.f;
+        // float _minimalDistanceBetweenPixels = 2.f;
         bool _isDraw = true;
     };
 } // namespace Core
