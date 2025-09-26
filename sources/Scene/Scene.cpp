@@ -77,6 +77,12 @@ namespace Core
         return _sceneName;
     }
 
+    void Scene::addActor(NXMesh3D& mesh, bool readFromCache)
+    {
+        addActor<StaticMeshBundle>(mesh->getMesh());
+        _assetsMesh3D.emplace_back(mesh);
+    }
+
     void Scene::writeToCacheSeparateData() const
     {
         for (auto&& actor : _actors)
@@ -137,7 +143,7 @@ namespace Core
 
     void Scene::initialize()
     {
-        skybox = GetAssetsManager().getSkybox("baked/skybox/default.nxsky"_atom);
+        skybox = GetAssetsManager().getSkybox("assets/baked/skybox/default.nxsky"_atom);
     }
 
     void Scene::tick(float timeDelta)

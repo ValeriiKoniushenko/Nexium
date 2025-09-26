@@ -6,9 +6,9 @@
             0.0
         ],
         "position": [
-            108.83464050292969,
+            1068.6461181640625,
             0.0,
-            -101.989013671875
+            0.0
         ],
         "rotation": [
             0.0,
@@ -179,12 +179,7 @@
         },
         {
             "GraphicsComponentData": {
-                "modifiers": [
-                    {
-                        "modifier": "Disable",
-                        "value": "CullFace"
-                    }
-                ]
+                "modifiers": []
             },
             "Transformable": {
                 "origin": [
@@ -373,12 +368,7 @@
         },
         {
             "GraphicsComponentData": {
-                "modifiers": [
-                    {
-                        "modifier": "Disable",
-                        "value": "CullFace"
-                    }
-                ]
+                "modifiers": []
             },
             "Transformable": {
                 "origin": [

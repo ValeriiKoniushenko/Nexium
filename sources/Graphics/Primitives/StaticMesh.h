@@ -78,7 +78,23 @@ namespace Core
         [[nodiscard]] nlohmann::json toJson() const override;
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
 
-        [[nodiscard]] GLuint getID() const noexcept { return _vbo; }
+        [[nodiscard]] Color3 toUniqueColor() const noexcept
+        {
+            const auto id = _vbo ^ reinterpret_cast<std::uintptr_t>(this);
+
+            Color3 colorId;
+            colorId.r = static_cast<uint8_t>((id & 0x0000FF) >> 0);
+            colorId.g = static_cast<uint8_t>((id & 0x00FF00) >> 8);
+            colorId.b = static_cast<uint8_t>((id & 0xFF0000) >> 16);
+
+            std::cout << colorId << std::endl;
+            return colorId;
+        }
+
+        [[nodiscard]] bool isMatchUniqueColor(Color3 color) const noexcept
+        {
+            return toUniqueColor() == color;
+        }
 
         void recalculateMatrices(const glm::mat4& mat = glm::mat4(1.f)) override;
 

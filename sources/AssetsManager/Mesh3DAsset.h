@@ -25,40 +25,52 @@
 #pragma once
 
 #include "BaseAsset.h"
+#include "Graphics/GraphicsComponents.h"
+#include "Graphics/Primitives/StaticMeshBundle.h"
 #include "Graphics/Texture.h"
+#include "assimp/postprocess.h"
+
+namespace Assimp
+{
+    [[nodiscard]] Core::StringAtom aiPostProcessStepsToString(aiPostProcessSteps);
+    [[nodiscard]] std::optional<aiPostProcessSteps> aiPostProcessStepsFromString(
+        const Core::StringAtom& val);
+} // namespace Assimp
 
 namespace Core
 {
-    class TextureAsset : public BaseAsset
+    class Mesh3DAsset : public BaseAsset
     {
     public:
-        inline static const char* fileExtension = ".nxtex";
+        inline static const char* fileExtension = ".nxmesh3d";
 
     public:
-        explicit TextureAsset(const StringAtom& logicPath)
+        explicit Mesh3DAsset(const StringAtom& logicPath)
             : BaseAsset(logicPath)
         {
         }
 
-        ~TextureAsset() override = default;
+        void draw();
+
+        ~Mesh3DAsset() override = default;
 
         void onLoadRequest() override;
         void onUnloadRequest() override;
         void onFillData(nlohmann::json&& json) override;
 
-        [[nodiscard]] const Texture& getData() const noexcept { return _data; }
-        [[nodiscard]] Texture& getData() noexcept { return _data; }
+        [[nodiscard]] const char* getPrefix() const override { return "Mesh3D"; }
 
-        [[nodiscard]] const char* getPrefix() const override { return "Texture"; }
+        [[nodiscard]] StaticMeshBundle& getMesh() noexcept { return _mesh; }
 
     protected:
-        Texture _data;
-
-        std::filesystem::path _path;
+        StaticMeshBundle _mesh;
 
         // properties
-        bool _isFlipVertically = false;
+        std::filesystem::path _pathToModel;
+        StringAtom _mainShader;
+        StringAtom _outlineShader;
+        int _assimpPostProcess = 0;
     };
 
-    using NXTexture = AssetRef<TextureAsset>;
+    using NXMesh3D = AssetRef<Mesh3DAsset>;
 } // namespace Core

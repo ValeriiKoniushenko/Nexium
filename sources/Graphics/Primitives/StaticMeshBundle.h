@@ -35,8 +35,13 @@ namespace Core
         ECS_COMPONENT_DECL(StaticMeshBundle, Actor);
 
     public:
+        StaticMeshBundle(const StaticMeshBundle& other);
+        StaticMeshBundle(StaticMeshBundle&& other) = default;
+        StaticMeshBundle& operator=(const StaticMeshBundle& other);
+        StaticMeshBundle& operator=(StaticMeshBundle&& other) = default;
+
         /**
-         * @brief will draw with default shader & logic. Single draw bundle!
+         * @brief will draw with the default shader & logic. Single draw bundle!
          */
         void draw() override;
 
@@ -109,6 +114,7 @@ namespace Core
 
         void onAddChild(BaseComponent* newChild) override;
         void onRemoveChild(BaseComponent* child) override;
+        void invalidateFastAccessContainers();
 
     protected:
         inline static uint32_t _idGenerator = 0;

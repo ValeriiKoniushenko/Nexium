@@ -58,6 +58,25 @@ namespace Core
 
     ECS_COMPONENT_IMPL(StaticMeshBundle)
 
+    StaticMeshBundle::StaticMeshBundle(const StaticMeshBundle& other)
+        : Actor(componentType, other._name)
+    {
+        *this = other;
+    }
+
+    StaticMeshBundle& StaticMeshBundle::operator=(const StaticMeshBundle& other)
+    {
+        if (this != &other)
+        {
+            Actor::operator=(other);
+            _ignoreSelect = other._ignoreSelect;
+
+            invalidateFastAccessContainers();
+        }
+
+        return *this;
+    }
+
     void StaticMeshBundle::draw()
     {
         if (!_isEnabled)
@@ -113,6 +132,11 @@ namespace Core
 
     void StaticMeshBundle::setShader(ShaderProgram* sp, bool ignoreVertexAttribSetup /* = false*/)
     {
+        if (!Verify(sp))
+        {
+            return;
+        }
+
         for (auto* mesh : _meshes)
         {
             if (Verify(mesh)) [[likely]]
@@ -250,6 +274,25 @@ namespace Core
         }
 
         setDirtyMatrices();
+    }
+
+    void StaticMeshBundle::invalidateFastAccessContainers()
+    {
+        _meshes.clear();
+        _bundles.clear();
+
+        for (auto& child : _children)
+        {
+            if (auto* mesh = child->tryCastTo<StaticMesh>())
+            {
+                _meshes.push_back(mesh);
+            }
+            else if (auto* bundle = child->tryCastTo<StaticMeshBundle>())
+            {
+                bundle->invalidateFastAccessContainers();
+                _bundles.push_back(bundle);
+            }
+        }
     }
 
     void StaticMeshBundle::setOutlineShader(ShaderProgram* sp, bool ignoreVertexAttribSetup)

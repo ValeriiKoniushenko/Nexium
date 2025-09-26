@@ -24,6 +24,7 @@
 
 #include "AssetsManagerWindow.h"
 
+#include "AssetsManager/Mesh3DAsset.h"
 #include "Editor/GuiComponents/Spacer.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Misc/IconsFontAwesome.h"
@@ -96,10 +97,13 @@ namespace Core
         BaseFloatEWC::onInitialize();
 
         _nodeTypesData = {
-            { NodeType::Default, GetAssetsManager().getTexture("baked/document.nxtex"_atom) },
-            { NodeType::Code, GetAssetsManager().getTexture("baked/code_document.nxtex"_atom) },
-            { NodeType::Image, GetAssetsManager().getTexture("baked/image_document.nxtex"_atom) },
-            { NodeType::Folder, GetAssetsManager().getTexture("baked/folder.nxtex"_atom) },
+            { NodeType::Default,
+              GetAssetsManager().getTexture("assets/baked/document.nxtex"_atom) },
+            { NodeType::Code,
+              GetAssetsManager().getTexture("assets/baked/code_document.nxtex"_atom) },
+            { NodeType::Image,
+              GetAssetsManager().getTexture("assets/baked/image_document.nxtex"_atom) },
+            { NodeType::Folder, GetAssetsManager().getTexture("assets/baked/folder.nxtex"_atom) },
         };
 
         const auto gap = ImGui::GetStyle().WindowPadding.x;
@@ -478,6 +482,14 @@ namespace Core
             {
                 EditorAssetsManager::openPathFromOSExplorer(entry.is_directory() ? path
                                                                                  : _openedPath);
+            }
+            if (path.extension().generic_string() == NXMesh3D::AssetT::fileExtension)
+            {
+                if (ImGui::MenuItem("Spawn on scene"))
+                {
+                    GetAssetsManager().spawnMesh3DOnScene(
+                        StringAtom::Intern(path.generic_string()));
+                }
             }
 
             ImGui::EndPopup();

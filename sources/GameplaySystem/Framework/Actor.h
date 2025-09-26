@@ -41,6 +41,7 @@ namespace Core
         Actor(const Actor& other)
             : BaseComponent(other._type, other._name)
         {
+            *this = other;
         }
         Actor& operator=(Actor&&) = default;
         Actor& operator=(const Actor&) = default;
@@ -51,7 +52,7 @@ namespace Core
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
 
         /**
-         * @brief will draw with default shader & logic. Single draw bundle!
+         * @brief will draw with the default shader & logic. Single draw bundle!
          */
         virtual void draw() {};
 

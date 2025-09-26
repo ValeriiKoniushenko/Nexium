@@ -1,6 +1,9 @@
 {
     "objects": [
         "Spectator",
+        "FireHydrant",
+        "Tree",
+        "Tree",
         "Tree",
         "FireHydrant"
     ],

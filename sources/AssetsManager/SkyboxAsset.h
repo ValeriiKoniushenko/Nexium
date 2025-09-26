@@ -33,6 +33,8 @@ namespace Core
     class SkyboxAsset : public BaseAsset
     {
     public:
+        inline static const char* fileExtension = ".nxsky";
+
         enum class Direction
         {
             Right,

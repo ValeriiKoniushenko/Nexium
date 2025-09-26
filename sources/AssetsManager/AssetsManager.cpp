@@ -25,6 +25,8 @@
 #include "AssetsManager.h"
 
 #include "Editor/Configs.h"
+#include "GameplaySystem/Framework/GameInstance.h"
+#include "Mesh3DAsset.h"
 
 #include <Utils/Functions.h>
 
@@ -41,7 +43,6 @@ namespace Core
 
         for (auto&& path : _registeredPaths)
         {
-            const auto absBasePath = std::filesystem::absolute(path);
             for (const auto& entry : std::filesystem::recursive_directory_iterator(path))
             {
                 if (!entry.is_regular_file())
@@ -51,27 +52,31 @@ namespace Core
 
                 const auto absPath = std::filesystem::absolute(entry.path());
                 const auto ext = absPath.extension().generic_string();
-                auto relPath = std::filesystem::relative(absPath, absBasePath).generic_string();
 
                 // check for non baked
-                if (ext.size() < 3 && strncmp(ext.c_str(), ".nx", 3) != 0)
+                if (ext.size() < 3 || strncmp(ext.c_str(), ".nx", 3) != 0)
                 {
                     continue;
                 }
 
-                if (ext == ".nxtex")
+                auto id = StringAtom::Intern(entry.path().generic_string());
+                if (ext == NXTexture::AssetT::fileExtension)
                 {
-                    auto id = StringAtom::Intern(relPath);
-                    auto&& pair = _textures.emplace(id, new TextureAsset(id));
-                    pair.first->second->onFillData(
-                        nlohmann::json::parse(Utils::GetTextFileContentAs<std::string>(absPath)));
+                    _textures.emplace(id, new TextureAsset(id))
+                        .first->second->onFillData(nlohmann::json::parse(
+                            Utils::GetTextFileContentAs<std::string>(absPath)));
                 }
-                else if (ext == ".nxsky")
+                else if (ext == NXSkybox::AssetT::fileExtension)
                 {
-                    auto id = StringAtom::Intern(relPath);
-                    auto&& pair = _skyboxes.emplace(id, new SkyboxAsset(id));
-                    pair.first->second->onFillData(
-                        nlohmann::json::parse(Utils::GetTextFileContentAs<std::string>(absPath)));
+                    _skyboxes.emplace(id, new SkyboxAsset(id))
+                        .first->second->onFillData(nlohmann::json::parse(
+                            Utils::GetTextFileContentAs<std::string>(absPath)));
+                }
+                else if (ext == NXMesh3D::AssetT::fileExtension)
+                {
+                    _mesh3ds.emplace(id, new Mesh3DAsset(id))
+                        .first->second->onFillData(nlohmann::json::parse(
+                            Utils::GetTextFileContentAs<std::string>(absPath)));
                 }
             }
         }
@@ -79,7 +84,7 @@ namespace Core
 
     NXTexture AssetsManager::getTexture(const StringAtom& logicPath)
     {
-        if (!validatePath(logicPath, ".nxtex"))
+        if (!validatePath(logicPath, NXTexture::AssetT::fileExtension))
         {
             return NXTexture();
         }
@@ -94,7 +99,7 @@ namespace Core
 
     NXSkybox AssetsManager::getSkybox(const StringAtom& logicPath)
     {
-        if (!validatePath(logicPath, ".nxsky"))
+        if (!validatePath(logicPath, NXSkybox::AssetT::fileExtension))
         {
             return NXSkybox();
         }
@@ -108,6 +113,22 @@ namespace Core
         return NXSkybox(reinterpret_cast<SkyboxAsset&>(*_skyboxes.at(logicPath)));
     }
 
+    NXMesh3D AssetsManager::getMesh3D(const StringAtom& logicPath)
+    {
+        if (!validatePath(logicPath, NXMesh3D::AssetT::fileExtension))
+        {
+            return NXMesh3D();
+        }
+
+        if (!_mesh3ds.contains(logicPath))
+        {
+            criticalLog("Mesh3D not found by the next path: {}"_f << logicPath);
+            return NXMesh3D();
+        }
+
+        return NXMesh3D(reinterpret_cast<Mesh3DAsset&>(*_mesh3ds.at(logicPath)));
+    }
+
     void AssetsManager::unloadAllResources()
     {
         _textures.clear();
@@ -118,6 +139,14 @@ namespace Core
     {
         infoLog("Registered new asset path: " + path.generic_string());
         _registeredPaths.emplace(std::move(path));
+    }
+
+    void AssetsManager::spawnMesh3DOnScene(const StringAtom& logicPath)
+    {
+        if (auto&& mesh = getMesh3D(logicPath))
+        {
+            gGameInstance->gameScene.addActor(mesh);
+        }
     }
 
     bool AssetsManager::validatePath(const StringAtom& logicPath, const char* requiredExt)

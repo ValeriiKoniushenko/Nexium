@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "AssetsManager/Mesh3DAsset.h"
 #include "AssetsManager/SkyboxAsset.h"
 #include "Core/Delegate.h"
 #include "Graphics/Primitives/StaticMeshBundle.h"
@@ -61,6 +62,22 @@ namespace Core
                 added->tryReadFromCache();
             }
         }
+
+        template<IsActorBased T>
+        void addActor(const T& actor, bool readFromCache = false)
+        {
+            _actors.emplace_back(boost::static_pointer_cast<Actor>(actor.clone()));
+            auto* added = _actors.back().get();
+
+            added->initialize();
+            onActorAdded.trigger(added);
+            if (readFromCache)
+            {
+                added->tryReadFromCache();
+            }
+        }
+
+        void addActor(NXMesh3D& mesh, bool readFromCache = false);
 
         template<IsActorBased T, class... Args>
         T* createAndGetActor(Args... args)
@@ -105,7 +122,12 @@ namespace Core
         void writeToCacheSeparateData() const;
 
     protected:
+        // TODO: change to another data structure!!! It's awful
+        // data owner
         std::vector<Actor::Ptr> _actors;
+        // non-owner
+        std::vector<NXMesh3D> _assetsMesh3D;
+
         StringAtom _sceneName = "None";
 
     private:

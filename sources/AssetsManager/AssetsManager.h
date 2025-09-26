@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "Mesh3DAsset.h"
 #include "SkyboxAsset.h"
 #include "TextureAsset.h"
 
@@ -99,6 +100,7 @@ namespace Core
 
         [[nodiscard]] NXTexture getTexture(const StringAtom& logicPath);
         [[nodiscard]] NXSkybox getSkybox(const StringAtom& logicPath);
+        [[nodiscard]] NXMesh3D getMesh3D(const StringAtom& logicPath);
 
         [[nodiscard]] spdlog::logger* getLogger() const override
         {
@@ -109,6 +111,8 @@ namespace Core
 
         void registerNewAssetPath(std::filesystem::path logicPath);
 
+        void spawnMesh3DOnScene(const StringAtom& logicPath);
+
     protected:
         [[nodiscard]] bool validatePath(const StringAtom& logicPath, const char* requiredExt);
 
@@ -116,5 +120,6 @@ namespace Core
         std::set<std::filesystem::path> _registeredPaths;
         std::unordered_map<StringAtom, AssetRef<BaseAsset>> _textures;
         std::unordered_map<StringAtom, AssetRef<BaseAsset>> _skyboxes;
+        std::unordered_map<StringAtom, AssetRef<BaseAsset>> _mesh3ds;
     };
 } // namespace Core

@@ -50,7 +50,7 @@ public:                                                                         
     static const StringAtom componentType;                                                         \
                                                                                                    \
 public:                                                                                            \
-    [[nodiscard]] BaseComponent::Ptr clone() override                                              \
+    [[nodiscard]] BaseComponent::Ptr clone() const override                                        \
     {                                                                                              \
         auto out = static_cast<TypeName*>(_tryAllocateECSObject<TypeName>(this));                  \
         out->invalidate();                                                                         \
@@ -235,7 +235,7 @@ namespace Core
     class BaseComponent;
 
     template<class T>
-    void* _tryAllocateECSObject(T* data)
+    void* _tryAllocateECSObject(const T* data)
     {
         if constexpr (std::is_abstract_v<T>)
         {
@@ -569,7 +569,7 @@ namespace Core
         [[nodiscard]] virtual bool isValid() const;
         [[nodiscard]] std::size_t makeHash() const;
 
-        virtual BaseComponent::Ptr clone() { return nullptr; }
+        virtual BaseComponent::Ptr clone() const { return nullptr; }
 
         template<IsComponent T>
         [[nodiscard]] bool isTypeOf() const

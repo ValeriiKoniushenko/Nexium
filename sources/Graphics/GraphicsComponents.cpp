@@ -34,9 +34,29 @@ namespace Core
         clear();
     }
 
+    GraphicsComponentData::GraphicsComponentData(const GraphicsComponentData& other)
+    {
+        *this = other;
+    }
+
     GraphicsComponentData::GraphicsComponentData(GraphicsComponentData&& other) noexcept
     {
         *this = std::move(other);
+    }
+
+    GraphicsComponentData& GraphicsComponentData::operator=(const GraphicsComponentData& other)
+    {
+        if (this != &other) [[likely]]
+        {
+            _shader = other._shader;
+            _triangleCount = other._triangleCount;
+            _vbo = other._vbo;
+            _ebo = other._ebo;
+            _vao = other._vao;
+            _texture = other._texture;
+        }
+
+        return *this;
     }
 
     GraphicsComponentData& GraphicsComponentData::operator=(GraphicsComponentData&& other) noexcept

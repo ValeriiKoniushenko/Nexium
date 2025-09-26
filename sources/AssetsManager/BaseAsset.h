@@ -67,6 +67,9 @@ namespace Core
     class AssetRef
     {
     public:
+        using AssetT = T;
+
+    public:
         AssetRef() = default;
 
         explicit AssetRef(T& asset)

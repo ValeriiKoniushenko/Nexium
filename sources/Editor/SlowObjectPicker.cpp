@@ -52,12 +52,7 @@ namespace Core
         static auto onUniformSet = [&shader](StaticMesh* mesh)
         {
             shader->setUniform("uModel"_atom, mesh->getModelMatrix());
-            Color3 colorId;
-            colorId.r = static_cast<uint8_t>((mesh->getID() & 0x0000FF) >> 0);
-            colorId.g = static_cast<uint8_t>((mesh->getID() & 0x00FF00) >> 8);
-            colorId.b = static_cast<uint8_t>((mesh->getID() & 0xFF0000) >> 16);
-
-            shader->setUniform("uPickingColor"_atom, NormColor3::From(colorId));
+            shader->setUniform("uPickingColor"_atom, NormColor3::From(mesh->toUniqueColor()));
         };
 
         static auto preRenderCond = [](const Actor* actor)
@@ -111,11 +106,12 @@ namespace Core
             pickPos.y -= wndPos.y;
             pickPos.y = wnd->getInnerWindowSize().height - pickPos.y - 1;
 
-            unsigned char data[4]{};
+            unsigned char pickedData[4] = { 0 };
             glReadPixels(static_cast<GLint>(pickPos.x), static_cast<GLint>(pickPos.y), 1, 1,
-                         GL_RGBA, GL_UNSIGNED_BYTE, data);
+                         GL_RGBA, GL_UNSIGNED_BYTE, pickedData);
 
-            const GLuint pickedID = data[0] + (data[1] * 256) + (data[2] * 256 * 256);
+            Color3 pickedColor{ pickedData[0], pickedData[1], pickedData[2] };
+
             StaticMesh* found = nullptr;
             for (auto&& actor : scene.getActors())
             {
@@ -131,14 +127,14 @@ namespace Core
                 }
 
                 bundle->forEach(
-                    [pickedID, &found](BaseComponent* component)
+                    [pickedColor, &found](BaseComponent* component)
                     {
                         Assert(component);
                         if (component && component->isEnabled()
                             && component->isTypeOf<StaticMesh>())
                         {
                             auto* mesh = component->castTo<StaticMesh>();
-                            if (mesh->getID() == pickedID)
+                            if (mesh->isMatchUniqueColor(pickedColor))
                             {
                                 found = mesh;
                                 return false;

@@ -80,9 +80,9 @@ namespace Core
     public:
         GraphicsComponentData() = default;
         ~GraphicsComponentData() override;
-        GraphicsComponentData(const GraphicsComponentData& other) = delete;
+        GraphicsComponentData(const GraphicsComponentData& other);
         GraphicsComponentData(GraphicsComponentData&& other) noexcept;
-        GraphicsComponentData& operator=(const GraphicsComponentData& other) = delete;
+        GraphicsComponentData& operator=(const GraphicsComponentData& other);
         GraphicsComponentData& operator=(GraphicsComponentData&& other) noexcept;
 
         void generate();
