@@ -46,7 +46,7 @@ namespace Core
         glBindVertexArray(skyboxVAO);
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_CUBE_MAP, _cubeMapId);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr);
 
         glDepthFunc(GL_LESS);
         glEnable(GL_CULL_FACE);
@@ -57,48 +57,36 @@ namespace Core
         // clang-format off
         float skyboxVertices[] = {
             // positions
-            -1.0f,  1.0f, -1.0f,
-            -1.0f, -1.0f, -1.0f,
-             1.0f, -1.0f, -1.0f,
-             1.0f, -1.0f, -1.0f,
-             1.0f,  1.0f, -1.0f,
-            -1.0f,  1.0f, -1.0f,
-
-            -1.0f, -1.0f,  1.0f,
-            -1.0f, -1.0f, -1.0f,
-            -1.0f,  1.0f, -1.0f,
-            -1.0f,  1.0f, -1.0f,
-            -1.0f,  1.0f,  1.0f,
-            -1.0f, -1.0f,  1.0f,
-
-             1.0f, -1.0f, -1.0f,
-             1.0f, -1.0f,  1.0f,
-             1.0f,  1.0f,  1.0f,
-             1.0f,  1.0f,  1.0f,
-             1.0f,  1.0f, -1.0f,
-             1.0f, -1.0f, -1.0f,
-
-            -1.0f, -1.0f,  1.0f,
-            -1.0f,  1.0f,  1.0f,
-             1.0f,  1.0f,  1.0f,
-             1.0f,  1.0f,  1.0f,
-             1.0f, -1.0f,  1.0f,
-            -1.0f, -1.0f,  1.0f,
-
-            -1.0f,  1.0f, -1.0f,
-             1.0f,  1.0f, -1.0f,
-             1.0f,  1.0f,  1.0f,
-             1.0f,  1.0f,  1.0f,
-            -1.0f,  1.0f,  1.0f,
-            -1.0f,  1.0f, -1.0f,
-
-            -1.0f, -1.0f, -1.0f,
-            -1.0f, -1.0f,  1.0f,
-             1.0f, -1.0f, -1.0f,
-             1.0f, -1.0f, -1.0f,
-            -1.0f, -1.0f,  1.0f,
-             1.0f, -1.0f,  1.0f
+            -1.0f,  1.0f, -1.0f,  // 0
+            -1.0f, -1.0f, -1.0f,  // 1
+             1.0f, -1.0f, -1.0f,  // 2
+             1.0f,  1.0f, -1.0f,  // 3
+            -1.0f,  1.0f,  1.0f,  // 4
+            -1.0f, -1.0f,  1.0f,  // 5
+             1.0f, -1.0f,  1.0f,  // 6
+             1.0f,  1.0f,  1.0f   // 7
         };
+        unsigned int skyboxIndices[] = {
+            // back face
+            0, 1, 2,
+            2, 3, 0,
+            // left face
+            1, 5, 4,
+            4, 0, 1,
+            // right face
+            2, 6, 7,
+            7, 3, 2,
+            // front face
+            5, 6, 7,
+            7, 4, 5,
+            // top face
+            4, 7, 3,
+            3, 0, 4,
+            // bottom face
+            1, 2, 6,
+            6, 5, 1
+        };
+
         // clang-format on
 
         auto* shader = GetShaderManager().getShaderProgram("skybox"_atom);
@@ -106,11 +94,17 @@ namespace Core
 
         glGenVertexArrays(1, &skyboxVAO);
         glGenBuffers(1, &skyboxVBO);
+        glGenBuffers(1, &skyboxEBO);
         glGenTextures(1, &_cubeMapId);
 
         glBindVertexArray(skyboxVAO);
+
         glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
         glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, skyboxEBO);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(skyboxIndices), &skyboxIndices,
+                     GL_STATIC_DRAW);
 
         glBindTexture(GL_TEXTURE_CUBE_MAP, _cubeMapId);
         glEnableVertexAttribArray(0);

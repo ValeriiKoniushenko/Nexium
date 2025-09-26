@@ -64,6 +64,7 @@ namespace Core
         GLuint _cubeMapId = 0;
         GLuint skyboxVAO = 0;
         GLuint skyboxVBO = 0;
+        GLuint skyboxEBO = 0;
 
         // properties
         std::array<std::filesystem::path, 6> _paths;
