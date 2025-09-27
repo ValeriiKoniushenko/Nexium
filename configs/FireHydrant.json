@@ -48,68 +48,6 @@
                     1.0
                 ]
             },
-            "isEnabled": false,
-            "name": "FireHydrant_LOD2",
-            "noTick": false,
-            "type": "StaticMesh"
-        },
-        {
-            "GraphicsComponentData": {
-                "modifiers": []
-            },
-            "Transformable": {
-                "origin": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "position": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "rotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            },
-            "isEnabled": false,
-            "name": "FireHydrant_LOD1",
-            "noTick": false,
-            "type": "StaticMesh"
-        },
-        {
-            "GraphicsComponentData": {
-                "modifiers": []
-            },
-            "Transformable": {
-                "origin": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "position": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "rotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            },
             "isEnabled": true,
             "name": "FireHydrant_LOD0",
             "noTick": false,
@@ -118,68 +56,6 @@
     ],
     "isEnabled": true,
     "meshes": [
-        {
-            "GraphicsComponentData": {
-                "modifiers": []
-            },
-            "Transformable": {
-                "origin": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "position": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "rotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            },
-            "isEnabled": false,
-            "name": "FireHydrant_LOD2",
-            "noTick": false,
-            "type": "StaticMesh"
-        },
-        {
-            "GraphicsComponentData": {
-                "modifiers": []
-            },
-            "Transformable": {
-                "origin": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "position": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "rotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            },
-            "isEnabled": false,
-            "name": "FireHydrant_LOD1",
-            "noTick": false,
-            "type": "StaticMesh"
-        },
         {
             "GraphicsComponentData": {
                 "modifiers": []

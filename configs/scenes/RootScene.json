@@ -1,7 +1,8 @@
 {
     "objects": [
         "Spectator",
-        "FireHydrant"
+        "FireHydrant",
+        "Treesblend"
     ],
     "sceneName": "NewScene"
 }

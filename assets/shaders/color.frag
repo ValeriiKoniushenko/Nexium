@@ -9,8 +9,8 @@ in vec2 ioUV;
 
 uniform vec3 uLightPos;
 uniform vec3 uViewPos;
-uniform vec3 uLightColor;
-uniform vec3 uObjectColor;
+uniform vec3 uLightColor = vec3(1, 1, 1);
+uniform vec3 uObjectColor = vec3(1, 1, 0);
 
 uniform sampler2D uTexture;
 

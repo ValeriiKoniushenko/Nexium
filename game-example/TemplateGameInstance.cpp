@@ -52,15 +52,18 @@ void TemplateGameInstance::onFinishWriteCache()
 
 void TemplateGameInstance::onInitializeFinish()
 {
-    std::vector modelPaths = { Config::Path::objects3d / "Models/FBX/FireHydrant.fbx" };
+    std::vector modelPaths = { Config::Path::objects3d / "Models/FBX/FireHydrant.fbx",
+                               Config::Path::objects3d / "Models/FBX/Treesblend.fbx" };
 
     Assimp::Importer importer;
     for (auto&& path : modelPaths)
     {
         const aiScene* scene = importer.ReadFile(
             path.generic_string().c_str(),
-            aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
-        if (ASSERT_VAL(scene) && ASSERT_VAL(scene->mRootNode)) {
+                                aiProcess_Triangulate | aiProcess_JoinIdenticalVertices
+                                    | aiProcess_SortByPType | aiProcess_PreTransformVertices);
+        if (ASSERT_VAL(scene) && ASSERT_VAL(scene->mRootNode))
+        {
             StaticMeshBundle mesh;
             mesh.importFrom(scene->mRootNode, scene, path);
             mesh.setShader(shaderManager.getShaderProgram("color"_atom));
