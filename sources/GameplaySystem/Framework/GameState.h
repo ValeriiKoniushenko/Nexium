@@ -29,12 +29,10 @@
 
 namespace Core
 {
-
     class GameState : public BaseLog, public Utils::NotCopyableAndNotMoveable
     {
     public:
         [[nodiscard]] spdlog::logger* getLogger() const override { return Framework::getLogger(); }
         [[nodiscard]] const char* getPrefix() const override { return "GameState"; }
     };
-
 } // namespace Core

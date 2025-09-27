@@ -34,7 +34,6 @@
 
 namespace Core
 {
-
     /**
      * @brief Core editor class managing GUI windows and editor lifecycle.
      *
@@ -45,11 +44,13 @@ namespace Core
     {
     public:
         GameEditor() = default;
+
         ~GameEditor() override;
 
         void initialize();
 
         void tick(float delta);
+
         [[nodiscard]] bool isEnabled() const noexcept { return _isEnabled; }
         void setIsEnabled(bool v) noexcept { _isEnabled = v; }
 
@@ -64,7 +65,7 @@ namespace Core
         template<IsEditorWindowComponent T>
         T::Ptr registerNewWindow(StringAtom name, bool isEnabled = true)
         {
-            if (!Verify(!!name))
+            if (!ASSERT_VAL(!!name))
             {
                 return nullptr;
             }
@@ -100,7 +101,7 @@ namespace Core
             for (auto&& windowIntrusive : _windows)
             {
                 auto* wnd = windowIntrusive.get();
-                if (!Verify(wnd))
+                if (!ASSERT_VAL(wnd))
                 {
                     continue;
                 }
@@ -151,7 +152,9 @@ namespace Core
 
     protected:
         void setupImGuiStyles();
+
         [[nodiscard]] bool needToDraw();
+
         void setupShortcuts();
 
     protected:
@@ -162,8 +165,9 @@ namespace Core
 
     private:
         void handleMouseDrag(glm::vec2 delta, MouseInputAction::SpecKeysState state);
+
         void handleMouseClick(glm::vec2 pos, MouseInputAction::SpecKeysState state);
+
         void responseOnPick(StaticMesh* mesh);
     };
-
 } // namespace Core

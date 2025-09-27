@@ -28,7 +28,6 @@
 
 namespace Core
 {
-
     StringAtom Keyboard::KeyToString(Key key)
     {
         // clang-format off
@@ -308,5 +307,4 @@ namespace Core
     {
         return glfwGetKey(GetWindow().getRawWindow(), key) == GLFW_RELEASE;
     }
-
 } // namespace Core

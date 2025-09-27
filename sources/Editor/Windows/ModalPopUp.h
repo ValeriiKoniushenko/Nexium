@@ -30,21 +30,24 @@
 
 namespace Core
 {
-
     class ModalPopUp : public BaseEWC
     {
         ECS_COMPONENT_DECL(ModalPopUp, BaseEWC);
 
     public:
         void open(StringAtom text, const std::function<void(bool)>& okOrCancelCallback);
+
         static void Open(StringAtom text, const std::function<void(bool)>& okOrCancelCallback);
 
     protected:
         void onInitialize() override;
+
         void onDraw() override;
+
         void preOpenedEndWindowDraw() override;
 
         [[nodiscard]] bool beginWindowDraw() override;
+
         void endWindowDraw() override;
 
     protected:
@@ -58,5 +61,4 @@ namespace Core
 
         bool _hasOpenRequest = false;
     };
-
 } // namespace Core

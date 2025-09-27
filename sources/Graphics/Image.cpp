@@ -30,7 +30,6 @@
 
 namespace Core
 {
-
     Image::Image(const std::filesystem::path& path)
     {
         init();
@@ -109,5 +108,4 @@ namespace Core
         _size = {};
         _channel = Channel::None;
     }
-
 } // namespace Core

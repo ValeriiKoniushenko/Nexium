@@ -25,7 +25,7 @@
 #pragma once
 
 #include "Core/Enum.h"
-#include "Core/StringHelper.h"
+#include "Core/String.h"
 #include "JsonAdapter.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/spdlog.h"
@@ -35,7 +35,6 @@
 
 namespace Core
 {
-
     class LogQueue : public StrictSingleton<LogQueue>
     {
     public:
@@ -51,6 +50,7 @@ namespace Core
 
         [[nodiscard]] bool isEmpty() const { return _q.empty(); }
         void addLog(LogLine&& log) { _q.push(std::move(log)); }
+
         [[nodiscard]] LogLine frontAndPop()
         {
             auto out = _q.front();
@@ -129,10 +129,12 @@ namespace Core
         }
 
         [[nodiscard]] virtual const char* getPrefix() const { return nullptr; }
+
         [[nodiscard]] virtual spdlog::logger* getLogger() const = 0;
 
     private:
         [[nodiscard]] StringAtom getCompleteText(const char* str) const;
+
         void pushLog(level l, const char* str) const;
     };
 
@@ -147,5 +149,4 @@ namespace Core
     };
 
     extern GlobalLog globalLog;
-
 } // namespace Core

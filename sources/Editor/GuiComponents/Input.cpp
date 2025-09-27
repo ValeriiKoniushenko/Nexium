@@ -26,7 +26,6 @@
 
 namespace Core::Gui
 {
-
     ECS_COMPONENT_IMPL(BaseInput);
     ECS_COMPONENT_IMPL(TextInput);
 
@@ -133,5 +132,4 @@ namespace Core::Gui
 
         ImGui::PopStyleColor(pushedStyles);
     }
-
 } // namespace Core::Gui

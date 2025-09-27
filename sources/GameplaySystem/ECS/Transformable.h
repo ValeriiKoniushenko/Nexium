@@ -40,50 +40,79 @@ namespace Core
     {
     public:
         Transformable() = default;
+
         ~Transformable() override = default;
 
         Transformable(const Transformable&) = default;
+
         Transformable(Transformable&&) noexcept = default;
+
         Transformable& operator=(const Transformable&) = default;
+
         Transformable& operator=(Transformable&&) noexcept = default;
 
         [[nodiscard]] GPos3 getPosition() const noexcept;
+
         void setPosition(const GPos3& position) noexcept;
+
         void addPosition(const GPos3& position) noexcept;
+
         void moveForward(float offset) noexcept;
+
         void moveRight(float offset) noexcept;
+
         void moveUp(float offset) noexcept;
 
         void setRotation(const glm::vec3& value) noexcept;
+
         void rotate(const glm::vec3& value) noexcept;
+
         [[nodiscard]] const glm::vec3& getRotation() const noexcept;
+
         void setRotationX(float x) noexcept;
+
         void rotateX(float x) noexcept;
+
         [[nodiscard]] float getRotationX() const noexcept;
+
         void setRotationY(float y) noexcept;
+
         void rotateY(float y) noexcept;
+
         [[nodiscard]] float getRotationY() const noexcept;
+
         void setRotationZ(float z) noexcept;
+
         void rotateZ(float z) noexcept;
+
         [[nodiscard]] float getRotationZ() const noexcept;
 
         void setOrigin(const glm::vec3& origin) noexcept;
+
         void addOrigin(const glm::vec3& origin) noexcept;
+
         [[nodiscard]] const glm::vec3& getOrigin() const noexcept;
 
         void scale(const glm::vec3& value) noexcept;
+
         void setScale(const glm::vec3& value) noexcept;
+
         void addScale(const glm::vec3& value) noexcept;
+
         [[nodiscard]] glm::vec3 getScale() const noexcept;
 
         [[nodiscard]] glm::vec3 getForwardVector() const noexcept;
+
         [[nodiscard]] glm::vec3 getUpVector() const noexcept;
+
         [[nodiscard]] glm::vec3 getRightVector() const noexcept;
 
         [[nodiscard]] nlohmann::json toJson() const override;
+
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
 
         virtual void recalculateMatrices(const glm::mat4& mat = glm::mat4(1.f));
+
         void tryToRecalculateMatrices(const glm::mat4& mat = glm::mat4(1.f));
 
         [[nodiscard]] glm::mat4& getModelMatrix() noexcept { return _cachedModelMatrix; }

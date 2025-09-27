@@ -29,20 +29,23 @@
 
 namespace Core::Gui
 {
-
     class Label : public Widget
     {
         ECS_COMPONENT_DECL(Label, Widget);
 
     public:
         void setWidth(float newWidth) override;
+
         void setHeight(float newHeight) override;
 
         void setTextColor(const Color4& value);
+
         void resetTextColor();
+
         [[nodiscard]] std::optional<Color4> getTextColor() const;
 
         void setText(const StringAtom& string);
+
         [[nodiscard]] const StringAtom& getText() const noexcept;
 
         [[nodiscard]] glm::vec2 getRealSize() const;
@@ -58,11 +61,14 @@ namespace Core::Gui
             _isTruncateLongText = value;
             invalidateTextCache();
         }
+
         [[nodiscard]] bool getTruncateLongText() const noexcept { return _isTruncateLongText; }
 
     protected:
         void onDraw() override;
+
         void onInitialize() override;
+
         void invalidateTextCache();
 
     protected:
@@ -76,5 +82,4 @@ namespace Core::Gui
 
         bool _isTruncateLongText = true;
     };
-
 } // namespace Core::Gui

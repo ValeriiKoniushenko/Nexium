@@ -31,7 +31,6 @@
 
 namespace Core
 {
-
     bool InputText(const StringAtom& label, std::string& value, float size, int flags)
     {
         ImGui::PushItemWidth(size);
@@ -41,19 +40,18 @@ namespace Core
     }
 
 #if 0
-    void FixedLabel(const char* label, float size)
-    {
+    void FixedLabel(const char *label, float size) {
+
     #if defined(DEBUG)
-        Assert(ImGui::CalcTextSize(label).x < size);
+    ASSERT (ImGui::CalcTextSize(label).x<size);
     #endif
-        ImGui::TextUnformatted(label);
-        ImGui::SameLine(0, 0);
-        ImGui::Dummy(glm::vec2(size - ImGui::CalcTextSize(label).x, 0));
-        ImGui::SameLine(0, 0);
+    ImGui::TextUnformatted (label);
+    ImGui::SameLine (0, 0);
+    ImGui::Dummy (glm::vec2(size- ImGui::CalcTextSize (label).x, 0));
+    ImGui::SameLine (0, 0);
     }
 
-    void InputTextRO(StringAtom value, float size)
-    {
+    void InputTextRO(StringAtom value, float size) {
         ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetStyle().Colors[ImGuiCol_TextDisabled]);
         ImGui::PushItemWidth(size);
         ImGui::InputText(("##" + value).c_str(), value.data(), value.size() + 1,
@@ -62,33 +60,28 @@ namespace Core
         ImGui::PopStyleColor();
     }
 
-    void LabelAndInputTextRO(StringAtom label, StringAtom value, float labelSize, float fullSize)
-    {
+    void LabelAndInputTextRO(StringAtom label, StringAtom value, float labelSize, float fullSize) {
         ImGui::PushID(static_cast<int>(label.makeHash()));
         FixedLabel(label.data(), labelSize);
         InputTextRO(std::move(value), fullSize - labelSize);
         ImGui::PopID();
     }
 
-    void LabelAndCheckboxRO(StringAtom label, bool v, float labelSize)
-    {
+    void LabelAndCheckboxRO(StringAtom label, bool v, float labelSize) {
         FixedLabel(label.data(), labelSize);
         ImGui::BeginDisabled(true);
         ImGui::Checkbox(("##" + label).c_str(), &v);
         ImGui::EndDisabled();
     }
 
-    bool VectorCombo(const StringAtom& label, int* current, std::vector<StringAtom>& data)
-    {
+    bool VectorCombo(const StringAtom &label, int *current, std::vector<StringAtom> &data) {
         return ImGui::Combo(
             label.c_str(), current,
-            [](void* vec, int idx, const char** out_text)
-            {
-                const auto* data = reinterpret_cast<std::vector<StringAtom>*>(vec);
+            [](void *vec, int idx, const char **out_text) {
+                const auto *data = reinterpret_cast<std::vector<StringAtom> *>(vec);
 
                 const auto i = static_cast<std::size_t>(idx);
-                if (i >= data->size())
-                {
+                if (i >= data->size()) {
                     return false;
                 }
 
@@ -99,39 +92,33 @@ namespace Core
             &data, static_cast<int>(data.size()));
     }
 
-    void LabelAndInputText(const StringAtom& label, std::string& originalString, float labelSize,
-                           float fullSize)
-    {
+    void LabelAndInputText(const StringAtom &label, std::string &originalString, float labelSize,
+                           float fullSize) {
         std::string inputData = originalString;
 
         FixedLabel(label.data(), labelSize);
         InputText(label, inputData, fullSize - labelSize);
 
-        if (originalString != inputData)
-        {
+        if (originalString != inputData) {
             originalString = inputData;
         }
     }
 
-    void LabelAndInputFloat(const StringAtom& label, float& value, float labelSize, float fullSize,
-                            float step, float min, float max, const char* format)
-    {
+    void LabelAndInputFloat(const StringAtom &label, float &value, float labelSize, float fullSize,
+                            float step, float min, float max, const char *format) {
         FixedLabel(label.data(), labelSize);
 
         ImGui::PushItemWidth(fullSize - labelSize);
-        if (ImGui::DragFloat(("##" + label).c_str(), &value, step, min, max, format))
-        {
-            if (!Math::IsZero(min) && !Math::IsZero(max))
-            {
+        if (ImGui::DragFloat(("##" + label).c_str(), &value, step, min, max, format)) {
+            if (!Math::IsZero(min) && !Math::IsZero(max)) {
                 value = std::clamp(value, min, max);
             }
         }
         ImGui::PopItemWidth();
     }
 
-    bool ToggleButton(const char* label, bool cond, const glm::vec4& onColor,
-                      const glm::vec4& offColor)
-    {
+    bool ToggleButton(const char *label, bool cond, const glm::vec4 &onColor,
+                      const glm::vec4 &offColor) {
         ImGui::PushStyleColor(ImGuiCol_Button, cond ? onColor : offColor);
         const bool isPressed = ImGui::Button(label);
         ImGui::PopStyleColor();
@@ -139,15 +126,13 @@ namespace Core
         return isPressed;
     }
 
-    bool ToggleButton(const char* label, bool cond)
-    {
+    bool ToggleButton(const char *label, bool cond) {
         return ToggleButton(label, cond, ImGui::GetStyle().Colors[ImGuiCol_Button],
                             glm::vec4(0, 0, 0, 0));
     }
 
-    bool ButtonAndInputTextRO(StringAtom label, StringAtom value, float labelSize, float fullSize)
-    {
-        const auto& style = ImGui::GetStyle();
+    bool ButtonAndInputTextRO(StringAtom label, StringAtom value, float labelSize, float fullSize) {
+        const auto &style = ImGui::GetStyle();
 
         labelSize -= style.FramePadding.x * 2.f;
 
@@ -163,5 +148,4 @@ namespace Core
     }
 
 #endif
-
 } // namespace Core

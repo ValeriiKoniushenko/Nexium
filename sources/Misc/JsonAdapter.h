@@ -31,7 +31,6 @@
 
 namespace Core
 {
-
     class JsonAdapter
     {
     public:
@@ -49,6 +48,7 @@ namespace Core
         virtual ~JsonAdapter() = default;
 
         [[nodiscard]] virtual nlohmann::json toJson() const = 0;
+
         virtual void fromJson(const nlohmann::json& json, bool isIgnoreChildren) = 0;
 
         template<class T>
@@ -83,37 +83,50 @@ namespace Core
             }
         }
     };
-
 } // namespace Core
 
 namespace glm
 {
     void to_json(nlohmann::json& j, const vec4& v);
+
     void to_json(nlohmann::json& j, const vec3& v);
+
     void to_json(nlohmann::json& j, const vec2& v);
+
     void to_json(nlohmann::json& j, const ivec4& v);
+
     void to_json(nlohmann::json& j, const ivec3& v);
+
     void to_json(nlohmann::json& j, const ivec2& v);
 
     void from_json(const nlohmann::json& j, vec4& v);
-    void from_json(const nlohmann::json& j, vec3& v);
-    void from_json(const nlohmann::json& j, vec2& v);
-    void from_json(const nlohmann::json& j, ivec4& v);
-    void from_json(const nlohmann::json& j, ivec3& v);
-    void from_json(const nlohmann::json& j, ivec2& v);
 
+    void from_json(const nlohmann::json& j, vec3& v);
+
+    void from_json(const nlohmann::json& j, vec2& v);
+
+    void from_json(const nlohmann::json& j, ivec4& v);
+
+    void from_json(const nlohmann::json& j, ivec3& v);
+
+    void from_json(const nlohmann::json& j, ivec2& v);
 } // namespace glm
 
 namespace Core
 {
-
     void to_json(nlohmann::json& j, FSize2);
-    void to_json(nlohmann::json& j, const FSize3&);
-    void to_json(nlohmann::json& j, ISize2);
-    void to_json(nlohmann::json& j, const ISize3&);
-    void from_json(const nlohmann::json& j, FSize2& value);
-    void from_json(const nlohmann::json& j, FSize3& value);
-    void from_json(const nlohmann::json& j, ISize2& value);
-    void from_json(const nlohmann::json& j, ISize3& value);
 
+    void to_json(nlohmann::json& j, const FSize3&);
+
+    void to_json(nlohmann::json& j, ISize2);
+
+    void to_json(nlohmann::json& j, const ISize3&);
+
+    void from_json(const nlohmann::json& j, FSize2& value);
+
+    void from_json(const nlohmann::json& j, FSize3& value);
+
+    void from_json(const nlohmann::json& j, ISize2& value);
+
+    void from_json(const nlohmann::json& j, ISize3& value);
 } // namespace Core

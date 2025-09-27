@@ -26,7 +26,6 @@
 
 namespace Core
 {
-
     void UpdateGlViewport(FSize2 originalSize, float aspectRatio, ViewportMode mode)
     {
         FSize2 view = originalSize;
@@ -172,5 +171,4 @@ namespace Core
                 return "unknown"_atom;
         }
     }
-
 } // namespace Core

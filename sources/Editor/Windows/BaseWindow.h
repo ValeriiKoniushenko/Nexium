@@ -40,22 +40,30 @@ namespace Core
 
     public:
         [[nodiscard]] const StringAtom& getWindowTitle() { return getComponentName(); }
+
         virtual void putArguments(const StringAtom& args) {}
 
         [[nodiscard]] virtual const char* getIcon() { return nullptr; }
 
         void openWindow(const StringAtom& args = ""_atom);
+
         void closeWindow();
 
     protected:
         virtual void onOpen() {}
+
         virtual void onClose() {}
+
         void onTick(float delta) final;
+
         virtual void onUpdate() {};
+
         virtual void onDraw() = 0;
 
         [[nodiscard]] virtual bool beginWindowDraw() = 0;
+
         virtual void endWindowDraw() = 0;
+
         virtual void preOpenedEndWindowDraw() {}
 
         [[nodiscard]] bool canBeShown() const { return _isEnabled; }
@@ -82,6 +90,7 @@ namespace Core
         [[nodiscard]] FSize2 getInnerWindowSize() const noexcept { return _innerSize; }
 
         void setFitContent(bool v);
+
         [[nodiscard]] bool isFitContent() const noexcept { return _isFitContent; }
 
         [[nodiscard]] bool isFocused() const noexcept { return _isFocused; }
@@ -99,8 +108,11 @@ namespace Core
 
     protected:
         void onInitialize() override;
+
         void onUpdate() override;
+
         [[nodiscard]] bool beginWindowDraw() override;
+
         void endWindowDraw() override;
 
     protected:
@@ -125,6 +137,7 @@ namespace Core
 
     protected:
         [[nodiscard]] bool beginWindowDraw() override;
+
         void endWindowDraw() override;
     };
 } // namespace Core

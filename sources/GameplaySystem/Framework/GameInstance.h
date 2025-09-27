@@ -41,7 +41,6 @@
 
 namespace Core
 {
-
     class GameInstance : public BaseLog
     {
     public:
@@ -52,7 +51,9 @@ namespace Core
         [[nodiscard]] const char* getPrefix() const override { return "GameInstance"; }
 
         void initialize();
+
         void updateViewport();
+
         void toggleRenderMode();
 
     public: // Temporary place. MOVE IT !!!!
@@ -73,9 +74,13 @@ namespace Core
 
     protected:
         virtual void onTick(float delta) = 0;
+
         virtual void onInitializeFinish() = 0;
+
         virtual void onLoadShaders();
+
         virtual void onInitializeReadCache();
+
         virtual void onFinishWriteCache();
 
     protected:
@@ -83,12 +88,16 @@ namespace Core
 
     private:
         void loadCoreResources();
+
         void gameLoop();
     };
 
     [[nodiscard]] ShaderManager& GetShaderManager();
+
     [[nodiscard]] GameEditor& GetEditor();
+
     [[nodiscard]] World& GetWorld();
+
     [[nodiscard]] AssetsManager& GetAssetsManager();
 } // namespace Core
 

@@ -30,7 +30,6 @@
 
 namespace Core::Gui
 {
-
     ECS_COMPONENT_IMPL(CheckBox);
 
     glm::vec2 CheckBox::getRealSize() const
@@ -40,13 +39,13 @@ namespace Core::Gui
 
     void CheckBox::setWidth(float newWidth)
     {
-        Assert(false, "CheckBox doesn't support any resizing");
+        ASSERT(false, "CheckBox doesn't support any resizing");
         _size.x = newWidth;
     }
 
     void CheckBox::setHeight(float newHeight)
     {
-        Assert(false, "CheckBox doesn't support any resizing");
+        ASSERT(false, "CheckBox doesn't support any resizing");
         _size.y = newHeight;
     }
 

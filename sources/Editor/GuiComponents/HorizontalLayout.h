@@ -28,7 +28,6 @@
 
 namespace Core::Gui
 {
-
     class HorizontalLayout : public Layout
     {
         ECS_COMPONENT_DECL_NO_CNSTR(HorizontalLayout, Layout);
@@ -37,6 +36,7 @@ namespace Core::Gui
         explicit HorizontalLayout(const StringAtom& name = ""_atom);
 
         [[nodiscard]] float getWidth() const override;
+
         [[nodiscard]] float getHeight() const override;
 
         void setFitContent(bool value)
@@ -44,20 +44,30 @@ namespace Core::Gui
             _fitContent = value;
             setFlex(Flex::Fixed);
         }
+
         [[nodiscard]] bool getFitContent() const noexcept { return _fitContent; }
 
     protected:
         void onAddChild(BaseComponent* newChild) override;
+
         void onTick(float delta) override;
+
         void onDraw() override;
+
         void onInitialize() override;
 
         void prepareAlignSpaceBetween();
+
         void prepareAlignLeft();
+
         void prepareAlignRight();
+
         void prepareAlignCenter();
+
         void calcYOffsets();
+
         void directDraw();
+
         void recalcFlexChildren();
 
     protected:
@@ -68,5 +78,4 @@ namespace Core::Gui
 
         bool _fitContent = false;
     };
-
 } // namespace Core::Gui

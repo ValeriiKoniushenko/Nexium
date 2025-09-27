@@ -67,5 +67,4 @@ namespace Core
                          glm::vec2(1.0f, 0.0f));
         }
     }
-
 } // namespace Core

@@ -32,22 +32,26 @@
 
 namespace Core::Gui
 {
-
     template<std::size_t Size, Utils::IsArithmetic Type>
     class VecNumInput : public HorizontalLayout
     {
         ECS_TEMPLATE_COMPONENT_DECL(VecNumInput, HorizontalLayout, Size, Type);
+
         static_assert(Size >= 1 && Size <= 4, "Size must >= 0 && <= 4");
 
     public:
-        std::array<NumInput<Type>*, Size> inputs;
+        std::array<NumInput<Type>*
+
+                   ,
+                   Size>
+            inputs;
         std::array<Label*, Size> labels;
 
         void setLabelText(std::array<char, Size> newText)
         {
             for (std::size_t i = 0; i < Size; ++i)
             {
-                if (Verify(labels[i])) [[likely]]
+                if (ASSERT_VAL(labels[i])) [[likely]]
                 {
                     StringAtom text;
                     text.resize(2);
@@ -63,7 +67,7 @@ namespace Core::Gui
         {
             for (std::size_t i = 0; i < Size; ++i)
             {
-                if (Verify(labels[i])) [[likely]]
+                if (ASSERT_VAL(labels[i])) [[likely]]
                 {
                     labels[i]->setTextColor(data[i]);
                 }
@@ -74,7 +78,7 @@ namespace Core::Gui
         {
             for (std::size_t i = 0; i < Size; ++i)
             {
-                if (Verify(inputs[i])) [[likely]]
+                if (ASSERT_VAL(inputs[i])) [[likely]]
                 {
                     inputs[i]->disableWidget(val);
                 }
@@ -86,7 +90,7 @@ namespace Core::Gui
             auto* raw = reinterpret_cast<const Type*>(&data);
             for (std::size_t i = 0; i < Size; ++i)
             {
-                if (Verify(inputs[i])) [[likely]]
+                if (ASSERT_VAL(inputs[i])) [[likely]]
                 {
                     inputs[i]->setInputtedData(raw[i]);
                 }
@@ -99,7 +103,7 @@ namespace Core::Gui
             auto* raw = reinterpret_cast<Type*>(&result);
             for (std::size_t i = 0; i < Size; ++i)
             {
-                if (Verify(inputs[i])) [[likely]]
+                if (ASSERT_VAL(inputs[i])) [[likely]]
                 {
                     raw[i] = inputs[i]->getInputtedData();
                 }
@@ -161,7 +165,9 @@ namespace Core::Gui
     };
 
     ECS_TEMPLATE_COMPONENT_IMPL(BRACKETS(VecNumInput<Size, Type>),
-                                BRACKETS(std::size_t Size, Utils::IsArithmetic Type))
+                                BRACKETS(std::size_t Size, Utils::IsArithmetic Type)
+
+    )
 
     using Int4Input = VecNumInput<4, int>;
     using Float4Input = VecNumInput<4, float>;
@@ -174,5 +180,4 @@ namespace Core::Gui
     using Int2Input = VecNumInput<2, int>;
     using Float2Input = VecNumInput<2, float>;
     using Double2Input = VecNumInput<2, double>;
-
 } // namespace Core::Gui

@@ -26,12 +26,10 @@
 
 namespace Core::Gui
 {
-
     bool CollapsingHeader(const char* label, ImGuiTreeNodeFlags flags)
     {
         ImGui::Dummy({ 0, ImGui::GetStyle().ItemSpacing.y });
         auto out = ImGui::CollapsingHeader(label, flags);
         return out;
     }
-
 } // namespace Core::Gui

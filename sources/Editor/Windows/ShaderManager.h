@@ -33,6 +33,7 @@ namespace Core
 {
     class ShaderProgramMeta;
 }
+
 namespace Core
 {
     namespace Gui
@@ -51,16 +52,23 @@ namespace Core
 
     protected:
         void createGui();
+
         void onInitialize() override;
+
         void onDraw() override;
+
         void drawTableWith(
             const char* label,
             const std::unordered_set<ShaderVariable, ShaderVariable::Hasher>& inputData);
 
         void invalidateShaderCache();
+
         void openEditor(const std::filesystem::path& path);
+
         void openEditor(const std::string& path);
+
         void recompileSelectedShader();
+
         void selectShader(const StringAtom& name);
 
     protected:
@@ -85,5 +93,4 @@ namespace Core
         std::size_t _currentItem = 0;
         float _drawDetailsLabelWidth = 140.f;
     };
-
 } // namespace Core

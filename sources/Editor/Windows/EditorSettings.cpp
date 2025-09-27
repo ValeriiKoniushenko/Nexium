@@ -46,9 +46,9 @@ namespace Core
 
     bool EditorSettingsEWC::BaseListItem::containsString(const StringAtom& str)
     {
-        if (Verify(_label))
+        if (ASSERT_VAL(_label))
         {
-            Assert(!_label->getComponentName().isEmpty());
+            ASSERT(!_label->getComponentName().isEmpty());
 
             if (_label->getComponentName().findIgnoreCase(str) != nullptr)
             {
@@ -61,7 +61,7 @@ namespace Core
 
     void EditorSettingsEWC::BaseListItem::setLabel(const StringAtom& label)
     {
-        if (Verify(_label))
+        if (ASSERT_VAL(_label))
         {
             _label->setText(label);
         }
@@ -79,7 +79,7 @@ namespace Core
 
     void EditorSettingsEWC::KeymapItem::setReadOnly(bool value)
     {
-        if (Verify(_button))
+        if (ASSERT_VAL(_button))
         {
             _button->disableWidget(value);
             _resetButton->disableWidget(value);
@@ -93,7 +93,7 @@ namespace Core
             return true;
         }
 
-        if (Verify(_button))
+        if (ASSERT_VAL(_button))
         {
             if (_button->getComponentName().findIgnoreCase(str) != nullptr)
             {
@@ -106,7 +106,7 @@ namespace Core
 
     void EditorSettingsEWC::KeymapItem::setButtonName(const StringAtom& label)
     {
-        if (Verify(_button))
+        if (ASSERT_VAL(_button))
         {
             _button->setText(label);
         }
@@ -126,7 +126,7 @@ namespace Core
 
     void EditorSettingsEWC::ColorItem::setReadOnly(bool value)
     {
-        if (Verify(_colorInput))
+        if (ASSERT_VAL(_colorInput))
         {
             _colorInput->setReadOnly(value);
         }
@@ -134,7 +134,7 @@ namespace Core
 
     void EditorSettingsEWC::ColorItem::setInputData(const StringAtom& data)
     {
-        if (Verify(_colorInput))
+        if (ASSERT_VAL(_colorInput))
         {
             _colorInput->setInputtedData(data.data());
         }
@@ -237,7 +237,7 @@ namespace Core
         }
 
         if (auto spectator = gGameInstance->gameScene.getFirstActorOf<Spectator>();
-            Verify(spectator))
+            ASSERT_VAL(spectator))
         {
             layout.addChildComponent<Spacer>();
             layout.addChildComponent<Label>()->setText("Spectator");
@@ -264,14 +264,14 @@ namespace Core
         layout.addChildComponent<Separator>();
 
         ImGuiStyle* style = &ImGui::GetStyle();
-        if (!Verify(style))
+        if (!ASSERT_VAL(style))
         {
             errorLog("Can't setup ImGUI styles. ImGui::GetStyle() return nullptr");
             return;
         }
 
         glm::vec4* colors = style->Colors;
-        if (!Verify(colors))
+        if (!ASSERT_VAL(colors))
         {
             errorLog("Can't setup ImGUI colors. ImGui::GetStyle()->Colors return nullptr");
             return;
@@ -286,5 +286,4 @@ namespace Core
             color->setInputData("{},{},{},{}"_f << data.x << data.y << data.z << data.w);
         }
     }
-
 } // namespace Core

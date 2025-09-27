@@ -26,7 +26,6 @@
 
 namespace Core
 {
-
     void FPSCounter::reset()
     {
         _start = {};
@@ -49,5 +48,4 @@ namespace Core
         const auto now = std::chrono::system_clock::now();
         return static_cast<double>(_frames) / std::chrono::duration<double>(now - _start).count();
     }
-
 } // namespace Core

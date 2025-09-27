@@ -48,26 +48,36 @@ namespace Core
 
     public:
         ~LogsWindowEWC() override;
+
         void addLog(StringAtom&& log, spdlog::level::level_enum level);
+
         void clearLogs();
 
         [[nodiscard]] const char* getIcon() override { return ICON_FA_ALIGN_LEFT; }
 
     protected:
         std::filesystem::path getCacheDir() const override;
+
         StringAtom getCacheHash() const override;
+
         nlohmann::json toCacheData() const override;
+
         void fromCacheData(const nlohmann::json& json) override;
 
     protected:
         void onInitialize() override;
+
         void onDraw() override;
+
         void onUpdate() override;
 
     private:
         void detectManualScroll();
+
         void fetchLogs();
+
         void logsDraw();
+
         [[nodiscard]] float getFitLogsCountOnScreen() const;
 
         [[nodiscard]] bool canBeFiltered(const StringAtom& msg);

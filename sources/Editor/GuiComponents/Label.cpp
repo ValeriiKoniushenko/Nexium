@@ -28,7 +28,6 @@
 
 namespace Core::Gui
 {
-
     ECS_COMPONENT_IMPL(Label);
 
     void Label::setWidth(float newWidth)

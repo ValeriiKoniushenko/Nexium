@@ -46,6 +46,7 @@ namespace Core
         [[nodiscard]] const StringAtom& getLogicPath() const { return _logicPath; }
 
         virtual void onLoadRequest() = 0;
+
         virtual void onUnloadRequest() = 0;
 
         virtual void onFillData(nlohmann::json&& json) = 0;
@@ -148,7 +149,7 @@ namespace Core
         {
             if (_asset)
             {
-                Assert(_asset->_refCount != 0,
+                ASSERT(_asset->_refCount != 0,
                        "Invalid ref count, it will be less than zero - impossible.");
 
                 --_asset->_refCount;

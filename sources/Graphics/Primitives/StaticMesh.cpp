@@ -33,13 +33,12 @@
 
 namespace Core
 {
-
     ECS_COMPONENT_IMPL(StaticMesh)
 
     void StaticMesh::importFrom(const aiMesh* rawMesh, const aiScene* scene,
                                 const std::filesystem::path& modelPath /* = ""*/)
     {
-        if (!Verify(rawMesh)) [[unlikely]]
+        if (!ASSERT_VAL(rawMesh)) [[unlikely]]
         {
             errorLog("Impossible to import nullptr aiMesh*");
             return;
@@ -57,8 +56,8 @@ namespace Core
                 = (modelPath.parent_path() / relative.toStdString()).lexically_normal();
 
             Image image;
-            Assert(resolved.is_relative());
-            if (Verify(image.loadFromFile(resolved, true)))
+            ASSERT(resolved.is_relative());
+            if (ASSERT_VAL(image.loadFromFile(resolved, true)))
             {
                 setTexture2D(image.data(), image.getSize().width, image.getSize().height,
                              image.getChannelAsOpenGLType());
@@ -107,7 +106,7 @@ namespace Core
     {
         if (!GraphicsComponentData::isValid()) [[unlikely]]
         {
-            Assert("Can't draw graphic component. It wasn't configured.");
+            ASSERT("Can't draw graphic component. It wasn't configured.");
             return;
         }
 
@@ -362,6 +361,7 @@ namespace Core
 
         return out;
     }
+
     StaticMesh StaticMeshFactory::CreateBiBlendSide(const StringAtom& name)
     {
         StaticMesh out{ name };
@@ -373,5 +373,4 @@ namespace Core
 
         return out;
     }
-
 } // namespace Core

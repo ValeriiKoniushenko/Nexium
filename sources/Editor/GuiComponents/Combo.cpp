@@ -30,7 +30,6 @@
 
 namespace Core::Gui
 {
-
     ECS_COMPONENT_IMPL(BaseCombo);
     ECS_COMPONENT_IMPL(ComboView);
     ECS_COMPONENT_IMPL(ComboModelBased);
@@ -90,6 +89,7 @@ namespace Core::Gui
     }
 
     void ComboModelBased::setDataProvider(
+
         const std::function<const void*(std::size_t, StringAtom&)>& callback)
     {
         _dataProvider = callback;
@@ -102,7 +102,7 @@ namespace Core::Gui
 
     void ComboModelBased::setCurrentIndex(std::size_t i) noexcept
     {
-        if (Verify(_sizeProvider && _dataProvider))
+        if (ASSERT_VAL(_sizeProvider && _dataProvider))
         {
             _currentIndex = std::min(i, _sizeProvider() - 1);
             StringAtom item;
@@ -152,5 +152,4 @@ namespace Core::Gui
         }
         ImGui::PopItemWidth();
     }
-
 } // namespace Core::Gui

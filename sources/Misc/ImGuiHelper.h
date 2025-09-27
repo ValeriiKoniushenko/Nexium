@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "Core/StringHelper.h"
+#include "Core/String.h"
 #include "ImGui/imgui.h"
 #include "glm/glm.hpp"
 
@@ -33,44 +33,40 @@
 
 namespace Core
 {
-
     // Deprecated too, but still some modules use it
     bool InputText(const StringAtom& label, std::string& value, float size, int flags = 0);
 
 #if 0 // Deprecated
-    void FixedLabel(const char* label, float size);
+    void FixedLabel(const char *label, float size);
     void InputTextRO(StringAtom value, float size);
 
     void LabelAndInputTextRO(StringAtom label, StringAtom value, float labelSize, float fullSize);
 
     bool ButtonAndInputTextRO(StringAtom label, StringAtom value, float labelSize, float fullSize);
 
-    void LabelAndInputText(const StringAtom& label, std::string& originalString, float labelSize,
+    void LabelAndInputText(const StringAtom &label, std::string &originalString, float labelSize,
                            float fullSize);
 
-    void LabelAndInputFloat(const StringAtom& label, float& value, float labelSize, float fullSize,
+    void LabelAndInputFloat(const StringAtom &label, float &value, float labelSize, float fullSize,
                             float flostep = 0, float min = 0, float max = 0,
-                            const char* format = "%.2f");
+                            const char *format = "%.2f");
 
     template<class T>
-    void LabelAndInputTextRO(StringAtom label, T value, float labelSize, float fullSize)
-    {
+    void LabelAndInputTextRO(StringAtom label, T value, float labelSize, float fullSize) {
         LabelAndInputTextRO(std::move(label), StringAtom::MakeFrom(value), labelSize, fullSize);
     }
 
     void LabelAndCheckboxRO(StringAtom label, bool v, float labelSize);
 
-    bool VectorCombo(const StringAtom& label, int* current, std::vector<StringAtom>& data);
+    bool VectorCombo(const StringAtom &label, int *current, std::vector<StringAtom> &data);
 
-    bool ToggleButton(const char* label, bool cond, const glm::vec4& onColor,
-                      const glm::vec4& offColor);
-    bool ToggleButton(const char* label, bool cond);
+    bool ToggleButton(const char *label, bool cond, const glm::vec4 &onColor,
+                      const glm::vec4 &offColor);
+    bool ToggleButton(const char *label, bool cond);
 
     template<int VecCount>
-    struct VecControl
-    {
-        struct Component
-        {
+    struct VecControl {
+        struct Component {
             StringAtom text = ""_atom;
             glm::vec4 color = glm::vec4(1.f, 1.f, 1.f, 1.f);
         };
@@ -90,10 +86,8 @@ namespace Core
         StringAtom label = ""_atom;
         std::array<Component, VecCount> components;
 
-        std::expected<VecT, bool> drawAndProcess(VecT v, float availSpace)
-        {
-            if (!_isInitialized)
-            {
+        std::expected<VecT, bool> drawAndProcess(VecT v, float availSpace) {
+            if (!_isInitialized) {
                 _firstValue = v;
                 _isInitialized = true;
             }
@@ -109,11 +103,10 @@ namespace Core
             FixedLabel(label.c_str(), labelWidth);
             availSpace -= labelWidth;
 
-            auto vec = reinterpret_cast<float*>(&v);
+            auto vec = reinterpret_cast<float *>(&v);
 
             int i = 0;
-            for (const auto& component : components)
-            {
+            for (const auto &component: components) {
                 const float textWidth = ImGui::CalcTextSize(component.text.c_str()).x;
 
                 // 3 - just components number
@@ -135,13 +128,11 @@ namespace Core
                 ImGui::PushID(i);
                 ImGui::PushItemWidth(inputWidth);
 
-                if (readOnly)
-                {
+                if (readOnly) {
                     ImGui::BeginDisabled(true);
                 }
                 ImGui::DragFloat("", vec + i, floatStep, floatMin, floatMax, "%.2f", flags);
-                if (readOnly)
-                {
+                if (readOnly) {
                     ImGui::EndDisabled();
                 }
 
@@ -157,8 +148,7 @@ namespace Core
 
             ImGui::Dummy(glm::vec2(0, 0));
 
-            if (originalValue == v)
-            {
+            if (originalValue == v) {
                 return std::unexpected(false);
             }
 
@@ -174,5 +164,4 @@ namespace Core
     using Vec3Control = VecControl<3>;
     using Vec2Control = VecControl<2>;
 #endif
-
 } // namespace Core

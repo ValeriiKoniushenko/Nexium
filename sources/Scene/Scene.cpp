@@ -28,7 +28,6 @@
 
 namespace Core
 {
-
     Scene::Scene() = default;
 
     void Scene::directDraw()
@@ -66,7 +65,7 @@ namespace Core
 
     void Scene::setSceneName(StringAtom name)
     {
-        if (Verify(!name.isEmpty()))
+        if (ASSERT_VAL(!name.isEmpty()))
         {
             _sceneName = std::move(name);
         }
@@ -153,5 +152,4 @@ namespace Core
             obj->tick(timeDelta);
         }
     }
-
 } // namespace Core

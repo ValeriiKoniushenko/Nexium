@@ -38,6 +38,7 @@ namespace Core
     {
     public:
         Scene();
+
         ~Scene() override = default;
 
         void initialize();
@@ -47,6 +48,7 @@ namespace Core
         void directDraw();
 
         void setSceneName(StringAtom name);
+
         [[nodiscard]] const StringAtom& getSceneName() const noexcept;
 
         template<IsActorBased T>
@@ -106,6 +108,7 @@ namespace Core
         }
 
         [[nodiscard]] nlohmann::json toJson() const override;
+
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
 
         Delegate<void(Actor*)> onActorAdded;
@@ -116,9 +119,13 @@ namespace Core
 
     protected:
         [[nodiscard]] std::filesystem::path getCacheDir() const override;
+
         [[nodiscard]] StringAtom getCacheHash() const override;
+
         [[nodiscard]] nlohmann::json toCacheData() const override;
+
         void fromCacheData(const nlohmann::json& json) override;
+
         void writeToCacheSeparateData() const;
 
     protected:

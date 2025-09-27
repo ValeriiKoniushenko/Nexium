@@ -31,7 +31,6 @@
 
 namespace Core
 {
-
     class BaseCamera : public Actor
     {
         ECS_COMPONENT_DECL(BaseCamera, Actor);
@@ -44,31 +43,41 @@ namespace Core
         ~BaseCamera() override = default;
 
         [[nodiscard]] const glm::mat4& getMatrix();
+
         [[nodiscard]] const glm::mat4& getCachedProjectionMatrix() { return _cachedProjMatrix; }
 
         void lookAt(const glm::vec3& targetPosition);
 
         void setFrameSize(FSize2 size) noexcept;
+
         [[nodiscard]] FSize2 getFrameSize() const noexcept { return _frameSize; }
 
         void setFov(float fov) noexcept;
+
         [[nodiscard]] float getFov() const noexcept { return _fov; }
 
         void setNear(float value) noexcept;
+
         [[nodiscard]] float getNear() const noexcept { return _near; }
 
         void setFar(float value) noexcept;
+
         [[nodiscard]] float getFar() const noexcept { return _far; }
 
         void yaw(float y);
+
         void pitch(float x);
+
         void yawAndPitch(glm::vec2 xy);
 
         [[nodiscard]] nlohmann::json toJson() const override;
+
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
 
         [[nodiscard]] StringAtom getCacheHash() const override;
+
         [[nodiscard]] nlohmann::json toCacheData() const override;
+
         void fromCacheData(const nlohmann::json& data) override;
 
         [[nodiscard]] FSize2 getOutputFrameSize();
@@ -77,6 +86,7 @@ namespace Core
 
     protected:
         void recalculateCameraMatrices();
+
         void tryToRecalculateCameraMatrices();
 
     protected:

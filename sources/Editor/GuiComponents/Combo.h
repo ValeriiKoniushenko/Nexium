@@ -38,7 +38,9 @@ namespace Core::Gui
 
         [[nodiscard]] float getWidth() const override { return getRealSize().x; }
         [[nodiscard]] float getHeight() const override { return getRealSize().y; }
+
         void setWidth(float newWidth) override;
+
         void setHeight(float newHeight) override;
 
     protected:
@@ -61,7 +63,9 @@ namespace Core::Gui
         {
             _currentItem = std::min(i, _items.size() - 1);
         }
+
         [[nodiscard]] std::size_t getCurrentIndex() const noexcept { return _currentItem; }
+
         [[nodiscard]] const StringAtom& getSelectedString() const
         {
             return _items.at(_currentItem);
@@ -121,5 +125,4 @@ namespace Core::Gui
         const void* _currentData = nullptr;
         std::size_t _currentIndex = 0;
     };
-
 } // namespace Core::Gui

@@ -26,7 +26,6 @@
 
 namespace Core::Gui
 {
-
     ECS_COMPONENT_IMPL(VerticalLayout)
 
     VerticalLayout::VerticalLayout(const StringAtom& name)
@@ -153,7 +152,7 @@ namespace Core::Gui
         }
         else
         {
-            Assert(false);
+            ASSERT(false);
             prepareAlignTop();
         }
 
@@ -203,6 +202,7 @@ namespace Core::Gui
             ImGui::SetCursorPosY(ImGui::GetCursorPosY() + spacing);
         }
     }
+
     void VerticalLayout::prepareAlignCenter()
     {
         const float defaultSpacing = style().ItemSpacing.y;
@@ -304,7 +304,6 @@ namespace Core::Gui
             ++i;
         }
 
-        Assert(_xOffsets.size() == _children.size());
+        ASSERT(_xOffsets.size() == _children.size());
     }
-
 } // namespace Core::Gui

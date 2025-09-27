@@ -28,7 +28,6 @@
 
 namespace Core
 {
-
     void RenderTargetToTexture::generate()
     {
         if (_isGenerated)
@@ -89,5 +88,4 @@ namespace Core
         _fbo = _tex = _rbo = 0;
         _isGenerated = false;
     }
-
 } // namespace Core

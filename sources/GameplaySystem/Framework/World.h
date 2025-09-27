@@ -32,7 +32,6 @@
 
 namespace Core
 {
-
     class World : public BaseLog, public Utils::NotCopyableAndNotMoveable
     {
     public:
@@ -47,5 +46,4 @@ namespace Core
         GameState gameState;
         LevelData levelData;
     };
-
 } // namespace Core

@@ -75,5 +75,4 @@ namespace Core
     {
         ImGui::End();
     }
-
 } // namespace Core

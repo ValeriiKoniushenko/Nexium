@@ -26,7 +26,6 @@
 
 namespace Core::Gui
 {
-
     ECS_COMPONENT_IMPL(Layout)
 
     bool Layout::atLeastOne(Flex f)
@@ -57,5 +56,4 @@ namespace Core::Gui
             }
         }
     }
-
 } // namespace Core::Gui

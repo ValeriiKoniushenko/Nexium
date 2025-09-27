@@ -89,5 +89,4 @@ namespace Core
         ImGui::Text("%s: %dx%d", _path.c_str(), _image->getSize().width, _image->getSize().height);
         ImGui::Image(_image->getTextureId(), displaySize);
     }
-
 } // namespace Core

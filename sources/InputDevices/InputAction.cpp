@@ -36,7 +36,10 @@ namespace Core
 
     bool KeyboardInputAction::isKeyPressed() const
     {
-        if (_key && _key != Keyboard::Key_None)
+        if (_key
+            && _key
+
+                   != Keyboard::Key_None)
         {
             return Keyboard::IsKeyPressed(_key.value());
         }
@@ -62,7 +65,10 @@ namespace Core
 
     bool MouseInputAction::isKeyPressed() const
     {
-        if (_key && _key != Mouse::Key_None)
+        if (_key
+            && _key
+
+                   != Mouse::Key_None)
         {
             return Mouse::IsKeyPressed(_key.value());
         }
@@ -104,5 +110,4 @@ namespace Core
                 onMouseClick.trigger(Mouse::GetPosition(), states);
             });
     }
-
 } // namespace Core

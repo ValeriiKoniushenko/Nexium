@@ -30,10 +30,12 @@ namespace Core
     {
     public:
         virtual ~IOutliner() = default;
+
         void setIsDrawOutline(bool value) noexcept
         {
             onOutlineStatusChange(_isDrawOutline = value);
         }
+
         void toggleIsDrawOutline() noexcept { setIsDrawOutline(!_isDrawOutline); }
         [[nodiscard]] bool getIsDrawOutline() const noexcept { return _isDrawOutline; }
 

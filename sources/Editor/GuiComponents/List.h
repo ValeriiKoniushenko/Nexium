@@ -29,7 +29,6 @@
 
 namespace Core::Gui
 {
-
     class BaseList : public Widget
     {
         ECS_COMPONENT_DECL(BaseList, Widget);
@@ -39,7 +38,9 @@ namespace Core::Gui
 
         [[nodiscard]] float getWidth() const override { return getRealSize().x; }
         [[nodiscard]] float getHeight() const override { return getRealSize().y; }
+
         void setWidth(float newWidth) override;
+
         void setHeight(float newHeight) override;
 
         void setRegexFilter(const StringAtom& filter) { _filter = filter; }
@@ -66,6 +67,7 @@ namespace Core::Gui
         {
             _currentItem = std::min(i, _items.size() - 1);
         }
+
         [[nodiscard]] std::size_t getCurrentIndex() const noexcept { return _currentItem; }
 
     public: // Delegates
@@ -122,5 +124,4 @@ namespace Core::Gui
         void* _currentData = nullptr;
         std::size_t _currentIndex = 0;
     };
-
 } // namespace Core::Gui

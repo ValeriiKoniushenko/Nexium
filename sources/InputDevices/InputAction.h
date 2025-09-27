@@ -96,6 +96,7 @@ namespace Core
               _key(key)
         {
         }
+
         virtual ~InputAction() = default;
 
         [[nodiscard]] const StringAtom& getName() const { return _name; }
@@ -194,6 +195,7 @@ namespace Core
         static Ptr Create() { return { new Self }; }
 
         KeyboardInputAction() = default;
+
         KeyboardInputAction(const StringAtom& name, KeyT key);
 
     protected:
@@ -217,7 +219,9 @@ namespace Core
         static Ptr Create() { return { new Self }; }
 
         MouseInputAction();
+
         explicit MouseInputAction(const StringAtom& name, KeyT key = Mouse::Key_None);
+
         explicit MouseInputAction(const StringAtom& name);
 
         Delegate<void(glm::vec2, SpecKeysState)> onDrag;

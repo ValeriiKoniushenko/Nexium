@@ -33,6 +33,7 @@
 namespace Assimp
 {
     [[nodiscard]] Core::StringAtom aiPostProcessStepsToString(aiPostProcessSteps);
+
     [[nodiscard]] std::optional<aiPostProcessSteps> aiPostProcessStepsFromString(
         const Core::StringAtom& val);
 } // namespace Assimp
@@ -55,7 +56,9 @@ namespace Core
         ~Mesh3DAsset() override = default;
 
         void onLoadRequest() override;
+
         void onUnloadRequest() override;
+
         void onFillData(nlohmann::json&& json) override;
 
         [[nodiscard]] const char* getPrefix() const override { return "Mesh3D"; }

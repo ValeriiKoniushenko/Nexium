@@ -35,7 +35,6 @@
 
 namespace Core
 {
-
     // clang-format off
     CreateEnum(ViewportMode, int,
         Default,
@@ -46,5 +45,4 @@ namespace Core
     void UpdateGlViewport(FSize2 originalSize, float aspectRatio, ViewportMode mode);
 
     [[nodiscard]] StringAtom glTypeToString(GLenum value);
-
 } // namespace Core

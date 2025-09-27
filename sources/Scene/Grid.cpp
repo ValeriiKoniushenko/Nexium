@@ -29,7 +29,6 @@
 
 namespace Core
 {
-
     void Grid::draw()
     {
         if (!_isDraw)
@@ -38,7 +37,7 @@ namespace Core
         }
 
         auto* gridShader = GetShaderManager().getShaderProgram("grid"_atom);
-        if (Verify(gridShader) && gGameInstance->currentCamera)
+        if (ASSERT_VAL(gridShader) && gGameInstance->currentCamera)
         {
             gridShader->use();
 
@@ -62,5 +61,4 @@ namespace Core
             glDisable(GL_BLEND);
         }
     }
-
 } // namespace Core

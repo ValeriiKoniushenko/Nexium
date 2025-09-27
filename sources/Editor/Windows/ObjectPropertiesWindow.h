@@ -47,21 +47,18 @@ namespace Core
     class BaseCamera;
 
     using GraphicsModifiersArray =
-        Gui::BaseArray<GraphicsComponentData::ModifierParam,
-            decltype([](const GraphicsComponentData::ModifierParam& data)
-                -> Gui::HorizontalLayout::Ptr
-            {
+    Gui::BaseArray<GraphicsComponentData::ModifierParam,
+        decltype([](const GraphicsComponentData::ModifierParam &data)
+        -> Gui::HorizontalLayout::Ptr {
                 auto l = Gui::HorizontalLayout::Create();
                 const auto comboModifier = l->addChildComponent<Gui::ComboModelBased>();
                 comboModifier->setDataProvider(
-                    [](std::size_t i, StringAtom& out) -> const void*
-                    {
+                    [](std::size_t i, StringAtom &out) -> const void * {
                         out = GraphicsComponentData::ModifierAsStringVector().at(i);
                         return &GraphicsComponentData::ModifierAsStringVector().at(i);
                     });
                 comboModifier->setSizeProvider(
-                    []
-                    {
+                    [] {
                         return GraphicsComponentData::ModifierAsStringVector().size();
                     });
                 comboModifier->setFlex(Gui::Flex::FlexWidth);
@@ -69,40 +66,34 @@ namespace Core
 
                 const auto comboValues = l->addChildComponent<Gui::ComboModelBased>();
                 comboValues->setDataProvider(
-                    [](std::size_t i, StringAtom& out) -> const void*
-                    {
+                    [](std::size_t i, StringAtom &out) -> const void * {
                         out = GraphicsComponentData::ModifiedValueAsStringVector().at(i);
                         return &GraphicsComponentData::ModifiedValueAsStringVector().at(i);
                     });
                 comboValues->setSizeProvider(
-                    []
-                    {
+                    [] {
                         return GraphicsComponentData::ModifiedValueAsStringVector().size();
                     });
                 comboValues->setFlex(Gui::Flex::FlexWidth);
 
                 auto it = std::ranges::find(GraphicsComponentData::ModifiedValueAsStringVector(),
                                             GraphicsComponentData::ToString(data.value));
-                if (it != GraphicsComponentData::ModifiedValueAsStringVector().end())
-                {
+                if (it != GraphicsComponentData::ModifiedValueAsStringVector().end()) {
                     comboValues->setCurrentIndex(
                         std::distance(GraphicsComponentData::ModifiedValueAsStringVector().begin(), it));
                 }
                 return l;
             }),
-            decltype([](Gui::HorizontalLayout* layout)
-                -> GraphicsComponentData::ModifierParam
-            {
+        decltype([](Gui::HorizontalLayout *layout)
+        -> GraphicsComponentData::ModifierParam {
                 GraphicsComponentData::ModifierParam out;
 
-                if (auto modifier = layout->getFirstChildAs<Gui::ComboModelBased>(); Verify(!!modifier))
-                {
+                if (auto modifier = layout->getFirstChildAs<Gui::ComboModelBased>(); ASSERT_VAL(!!modifier)) {
                     auto str = GraphicsComponentData::ModifierAsStringVector()[modifier->getCurrentIndex()];
                     out.modifier = GraphicsComponentData::Modifier::fromStr(str.c_str()).value();
                 }
 
-                if (auto value = layout->getLastChildAs<Gui::ComboModelBased>(); Verify(!!value))
-                {
+                if (auto value = layout->getLastChildAs<Gui::ComboModelBased>(); ASSERT_VAL(!!value)) {
                     auto str = GraphicsComponentData::ModifiedValueAsStringVector()[value->getCurrentIndex()];
                     out.value = GraphicsComponentData::FromString(str);
                 }
@@ -121,23 +112,34 @@ namespace Core
 
     public:
         void setTargetObject(AbstractComponent* actor);
+
         void resetTargetObject();
+
         [[nodiscard]] const char* getIcon() override { return ICON_FA_EXCLAMATION_CIRCLE; }
 
     protected:
         void onInitialize() override;
+
         void onDraw() override;
+
         void onUpdate() override;
 
         void createGui();
+
         void registerGuiEvents();
 
         void tryDrawBaseComponent(BaseComponent* comp);
+
         void tryDrawTransformable(Transformable* comp, BaseComponent* base);
+
         void tryDrawStaticMeshBundle(StaticMeshBundle* comp);
+
         void tryDrawBaseComponentExtra(BaseComponent* comp);
+
         void tryDrawStaticMesh(StaticMesh* static_mesh);
+
         void tryDrawGraphicsComponentData(GraphicsComponentData* comp);
+
         void tryDrawBaseCamera(BaseCamera* comp);
 
     private:
@@ -160,7 +162,9 @@ namespace Core
         Gui::TextInput* _parentName = nullptr;
         Gui::IntInput* _childrenCount = nullptr;
         Gui::StringArray* _childrenList = nullptr;
+
         void setChildListData(AbstractComponent* comp);
+
         Gui::CheckBox* _isInited = nullptr;
         Gui::CheckBox* _disabledTicks = nullptr;
 
@@ -173,6 +177,7 @@ namespace Core
         Gui::IntInput* _graphicsEBO = nullptr;
         Gui::IntInput* _graphicsTexture = nullptr;
         GraphicsModifiersArray* _graphicsModifiers = nullptr;
+
         void setGraphicsModifiers(AbstractComponent* comp);
 
         // BaseCamera section:
@@ -196,5 +201,4 @@ namespace Core
 
         AbstractComponent* _target = nullptr;
     };
-
 } // namespace Core

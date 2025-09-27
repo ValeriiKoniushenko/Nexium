@@ -29,7 +29,6 @@
 
 namespace Core
 {
-
     void SlowObjectPicker::update(Scene& scene)
     {
         if (!_requested)
@@ -44,7 +43,7 @@ namespace Core
         }
 
         auto* shader = gGameInstance->shaderManager.getShaderProgram("objectIdentifier"_atom);
-        if (!Verify(shader)) [[unlikely]]
+        if (!ASSERT_VAL(shader)) [[unlikely]]
         {
             return;
         }
@@ -129,7 +128,7 @@ namespace Core
                 bundle->forEach(
                     [pickedColor, &found](BaseComponent* component)
                     {
-                        Assert(component);
+                        ASSERT(component);
                         if (component && component->isEnabled()
                             && component->isTypeOf<StaticMesh>())
                         {
@@ -164,5 +163,4 @@ namespace Core
         _callback = std::forward<decltype(callback)>(callback);
         _requested = true;
     }
-
 } // namespace Core

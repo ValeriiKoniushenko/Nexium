@@ -26,7 +26,6 @@
 
 namespace Core
 {
-
     nlohmann::json KeyboardInputManger::toJson() const
     {
         nlohmann::json json;
@@ -58,5 +57,4 @@ namespace Core
             }
         }
     }
-
 } // namespace Core

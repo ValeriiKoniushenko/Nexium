@@ -28,7 +28,6 @@
 
 namespace Core
 {
-
     /**
      * @brief this class is a bridge between GameEditor & Assets. It can help you to manage,
      * view and edit some assets using Editor's tools.
@@ -50,5 +49,4 @@ namespace Core
 
         static void openPathFromOSExplorer(const std::filesystem::path& path);
     };
-
 } // namespace Core

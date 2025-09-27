@@ -67,7 +67,7 @@ namespace Assimp
         if (val == aiProcess_Triangulate) return "Triangulate"_atom;
         if (val == aiProcess_ValidateDataStructure) return "ValidateDataStructure"_atom;
         // clang-format on
-        Assert(false);
+        ASSERT(false);
         return Core::StringAtom(""_atom);
     }
 
@@ -108,15 +108,13 @@ namespace Assimp
         if (val == "ValidateDataStructure"_atom) return aiProcess_ValidateDataStructure;
         // clang-format on
 
-        Assert(false);
+        ASSERT(false);
         return std::nullopt;
     }
-
 } // namespace Assimp
 
 namespace Core
 {
-
     void Mesh3DAsset::onLoadRequest()
     {
         auto& sm = GetShaderManager();
@@ -124,7 +122,7 @@ namespace Core
         const aiScene* scene
             = importer.ReadFile(_pathToModel.generic_string().c_str(), _assimpPostProcess);
 
-        if (Verify(scene) && Verify(scene->mRootNode))
+        if (ASSERT_VAL(scene) && ASSERT_VAL(scene->mRootNode))
         {
             _mesh.importFrom(scene->mRootNode, scene, _pathToModel);
             if (_mainShader && !_mainShader.isEmpty())
@@ -170,7 +168,7 @@ namespace Core
                 else
                 {
                     errorLog("Invalid value '{}' for property 'assimpPostProcess'"_f << asString);
-                    Assert(false);
+                    ASSERT(false);
                 }
             }
         }

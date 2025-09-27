@@ -29,7 +29,6 @@
 
 namespace Core::Gui
 {
-
     class Spacer : public Widget
     {
         ECS_COMPONENT_DECL_NO_CNSTR(Spacer, Widget);
@@ -41,18 +40,21 @@ namespace Core::Gui
 
         [[nodiscard]] float getWidth() const override { return getRealSize().x; }
         [[nodiscard]] float getHeight() const override { return getRealSize().y; }
+
         void setWidth(float newWidth) override;
+
         void setHeight(float newHeight) override;
 
         void scaleCurrentWidth(float mlt);
+
         void scaleCurrentHeight(float mlt);
 
     protected:
         void onDraw() override;
+
         void onInitialize() override;
 
     protected:
         glm::vec2 _size = {};
     };
-
 } // namespace Core::Gui

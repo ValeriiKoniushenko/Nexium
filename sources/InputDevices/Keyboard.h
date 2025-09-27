@@ -31,7 +31,6 @@
 
 namespace Core
 {
-
     class Keyboard final
     {
     public:
@@ -173,12 +172,15 @@ namespace Core
         Keyboard() = delete;
 
         [[nodiscard]] static StringAtom KeyToString(Key key);
+
         [[nodiscard]] static Key FromStringToKey(const StringAtom& str);
 
         [[nodiscard]] static KeyState getKeyState(Key key);
+
         [[nodiscard]] static bool IsKeyPressed(Key key);
+
         [[nodiscard]] static bool isKeyRepeated(Key key);
+
         [[nodiscard]] static bool IsKeyReleased(Key key);
     };
-
 } // namespace Core

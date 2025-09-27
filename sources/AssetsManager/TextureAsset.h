@@ -43,7 +43,9 @@ namespace Core
         ~TextureAsset() override = default;
 
         void onLoadRequest() override;
+
         void onUnloadRequest() override;
+
         void onFillData(nlohmann::json&& json) override;
 
         [[nodiscard]] const Texture& getData() const noexcept { return _data; }

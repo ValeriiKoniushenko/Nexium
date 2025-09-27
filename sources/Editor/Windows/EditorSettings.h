@@ -49,7 +49,9 @@ namespace Core
 
         public:
             [[nodiscard]] virtual bool containsString(const StringAtom& str);
+
             virtual void setReadOnly(bool value = true) = 0;
+
             void setLabel(const StringAtom& label);
 
         protected:
@@ -65,7 +67,9 @@ namespace Core
 
         public:
             void setButtonName(const StringAtom& label);
+
             void setReadOnly(bool value = true) override;
+
             [[nodiscard]] bool containsString(const StringAtom& str) override;
 
         protected:
@@ -82,6 +86,7 @@ namespace Core
 
         public:
             void setReadOnly(bool value = true) override;
+
             void setInputData(const StringAtom& data);
 
         protected:
@@ -104,12 +109,15 @@ namespace Core
 
     protected:
         void onOpen() override;
+
         void onDraw() override;
 
         void drawSettingsTree();
 
         void setupCommonLayoutSettings();
+
         void createPage_Keymap();
+
         void createPage_Appearance();
 
     protected:
@@ -117,5 +125,4 @@ namespace Core
         Menu _currentMenu = static_cast<Menu>(0);
         int _defaultTreeNodeFlags = ImGuiTreeNodeFlags_SpanAvailWidth;
     };
-
 } // namespace Core

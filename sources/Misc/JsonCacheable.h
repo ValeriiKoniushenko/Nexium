@@ -28,7 +28,6 @@
 
 namespace Core
 {
-
     class JsonCacheable
     {
     public:
@@ -41,17 +40,24 @@ namespace Core
         void writeToCache() const;
 
         [[nodiscard]] bool hasCache() const;
+
         void readFromCache();
+
         void tryReadFromCache();
+
         void clearCache();
 
     protected:
         JsonCacheable() = default;
+
         [[nodiscard]] virtual std::filesystem::path getCacheDir() const { return { "configs" }; }
+
         [[nodiscard]] virtual StringAtom getCacheHash() const = 0;
+
         [[nodiscard]] virtual nlohmann::json toCacheData() const = 0;
+
         virtual void fromCacheData(const nlohmann::json& json) = 0;
+
         [[nodiscard]] std::filesystem::path getTargetPath() const;
     };
-
 } // namespace Core

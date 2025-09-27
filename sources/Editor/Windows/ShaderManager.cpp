@@ -74,7 +74,6 @@ namespace Core
                 _failedShaders->setFlex(Flex::FlexWidth);
             }
         }
-
         {
             auto* ext = _headLayout.addChildComponent<HorizontalLayout>();
             auto* label = ext->addChildComponent<Label>();
@@ -85,7 +84,6 @@ namespace Core
             _validExtensions->setReadOnly(true);
             _validExtensions->setFlex(Flex::FlexWidth);
         }
-
         {
             auto* ext = _headLayout.addChildComponent<HorizontalLayout>();
             auto* label = ext->addChildComponent<Label>();
@@ -97,7 +95,6 @@ namespace Core
             input->setFlex(Flex::FlexWidth);
             input->setInputtedData(GetShaderManager().getInputDir().generic_string());
         }
-
         {
             auto* shaderSelect = _headLayout.addChildComponent<HorizontalLayout>();
             auto* label = shaderSelect->addChildComponent<Label>("Shader");
@@ -122,7 +119,6 @@ namespace Core
             _shaderName->setReadOnly(true);
             _shaderName->setFlex(Flex::FlexWidth);
         }
-
         {
             auto* path = _selectedShaderLayout.addChildComponent<HorizontalLayout>();
             auto* label = path->addChildComponent<Label>("Path to .vert");
@@ -142,7 +138,6 @@ namespace Core
                     }
                 });
         }
-
         {
             auto* path = _selectedShaderLayout.addChildComponent<HorizontalLayout>();
             auto* label = path->addChildComponent<Label>("Path to .frag");
@@ -164,7 +159,6 @@ namespace Core
         }
 
         _selectedShaderLayout.addChildComponent<Spacer>();
-
         {
             auto* recompile = _selectedShaderLayout.addChildComponent<Button>("Recompile");
             recompile->setFlex(Flex::FlexWidth);
@@ -333,7 +327,7 @@ namespace Core
         }
 
         auto&& metas = GetShaderManager().getShaderMetas();
-        if (Verify(metas.contains(name)))
+        if (ASSERT_VAL(metas.contains(name)))
         {
             bool result = metas[name].safeRecreateFromSources();
 
@@ -356,7 +350,7 @@ namespace Core
     void ShaderManagerEWC::selectShader(const StringAtom& name)
     {
         auto&& metas = GetShaderManager().getShaderMetas();
-        if (!Verify(metas.contains(name)))
+        if (!ASSERT_VAL(metas.contains(name)))
         {
             errorLog("Selected shader: {} - not found."_f << name);
             return;

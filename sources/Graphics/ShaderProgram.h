@@ -34,7 +34,6 @@
 
 namespace Core
 {
-
     struct ShaderVariable
     {
         struct Hasher
@@ -57,13 +56,18 @@ namespace Core
     {
     public:
         ~ShaderProgram() override = default;
+
         ShaderProgram() = default;
+
         ShaderProgram(ShaderProgram&& other) noexcept { *this = std::move(other); }
+
         ShaderProgram& operator=(ShaderProgram&& other) noexcept;
 
         void setVertexShaderId(GLuint shader) { _vertexShaderId = shader; }
         void setFragmentShaderId(GLuint shader) { _fragmentShaderId = shader; }
+
         void setName(const StringAtom& name);
+
         [[nodiscard]] const StringAtom& getName() const noexcept { return _name; }
 
         [[nodiscard]] GLuint getFragmentShader() noexcept { return _fragmentShaderId; }
@@ -74,6 +78,7 @@ namespace Core
         [[nodiscard]] GLuint getShaderProgramId() const noexcept { return _shaderProgramId; }
 
         void create(const StringAtom& shaderName);
+
         void clear();
 #ifdef GRAPHICS_DEBUG
         void use() const noexcept
@@ -139,6 +144,7 @@ namespace Core
             const std::unordered_set<ShaderVariable, ShaderVariable::Hasher>& source);
 
         void setupVertexAttribute();
+
         void setVertexAttributeCallback(std::function<void()>&& func);
 
     protected:
@@ -156,5 +162,4 @@ namespace Core
     private:
         [[maybe_unused]] void debugUniform(const StringAtom& name);
     };
-
 } // namespace Core

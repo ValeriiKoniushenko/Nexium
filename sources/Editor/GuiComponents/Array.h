@@ -72,7 +72,7 @@ namespace Core::Gui
 
         void setIndexText(std::size_t i)
         {
-            if (Verify(label))
+            if (ASSERT_VAL(label))
             {
                 label->setText(StringAtom::MakeFrom(i) + "#"_atom);
             }
@@ -105,7 +105,7 @@ namespace Core::Gui
     public:
         void eraseAt(std::size_t i)
         {
-            if (Verify(i < _data.size()))
+            if (ASSERT_VAL(i < _data.size()))
             {
                 _data.erase(_data.begin() + i);
                 onEraseAt.trigger(i);
@@ -133,11 +133,13 @@ namespace Core::Gui
         [[nodiscard]] T& operator[](std::size_t i) { return _data.at(i); }
 
         [[nodiscard]] const std::vector<T>& getData() const { return _data; }
+
         void setData(const std::vector<T>& data)
         {
             _data = data;
             makeDirty();
         }
+
         void setData(std::vector<T>&& data)
         {
             _data = std::move(data);
@@ -149,6 +151,7 @@ namespace Core::Gui
             _isReadOnly = value;
             makeDirty();
         }
+
         [[nodiscard]] bool isReadOnly() const { return _isReadOnly; }
 
     protected:
@@ -156,9 +159,9 @@ namespace Core::Gui
         {
             for (std::size_t i = 0; i < size() && i < getChildrenCount(); ++i)
             {
-                if (auto* cell = getChildAt(i)->template castTo<ArrayCell>(); Verify(cell))
+                if (auto* cell = getChildAt(i)->template castTo<ArrayCell>(); ASSERT_VAL(cell))
                 {
-                    if (Verify(cell->content))
+                    if (ASSERT_VAL(cell->content))
                     {
                         _data[i] = ViewFetchFunc{}(cell->content);
                     }
@@ -281,18 +284,17 @@ namespace Core::Gui
     };
 
     ECS_TEMPLATE_COMPONENT_IMPL(BRACKETS(BaseArray<T, ArrayCellViewerFunc, ViewFetchFunc>),
-                                BRACKETS(class T, class ArrayCellViewerFunc, class ViewFetchFunc))
+                                BRACKETS(class T, class ArrayCellViewerFunc, class ViewFetchFunc)
 
-    using StringArray = BaseArray<StringAtom, decltype([](const StringAtom& str) -> HorizontalLayout::Ptr
-    {
+    )
+
+    using StringArray = BaseArray<StringAtom, decltype([](const StringAtom &str) -> HorizontalLayout::Ptr {
         auto l = HorizontalLayout::Create();
         auto label = l->addChildComponent<Label>();
         label->setFlex(Flex::FlexWidth);
         label->setText(str);
         return l;
-    }), decltype([](HorizontalLayout* layout) -> StringAtom
-    {
+    }), decltype([](HorizontalLayout *layout) -> StringAtom {
         return layout->getFirstChildAs<Label>()->getText();
     })>;
-
 } // namespace Core::Gui

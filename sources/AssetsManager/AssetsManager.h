@@ -89,17 +89,24 @@ namespace Core
     {
     public:
         AssetsManager();
+
         ~AssetsManager() override = default;
+
         AssetsManager(const AssetsManager&) = delete;
+
         AssetsManager(AssetsManager&&) = delete;
+
         AssetsManager& operator=(const AssetsManager&) = delete;
+
         AssetsManager& operator=(AssetsManager&&) = delete;
 
         // Will reindex everything inside the folder Config::Path::assets
         void rescanFileSystem();
 
         [[nodiscard]] NXTexture getTexture(const StringAtom& logicPath);
+
         [[nodiscard]] NXSkybox getSkybox(const StringAtom& logicPath);
+
         [[nodiscard]] NXMesh3D getMesh3D(const StringAtom& logicPath);
 
         [[nodiscard]] spdlog::logger* getLogger() const override

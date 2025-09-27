@@ -34,26 +34,34 @@
 
 namespace Core
 {
-
     class AssetsManagerWindowEWC : public BaseFloatEWC
     {
         ECS_COMPONENT_DECL(AssetsManagerWindowEWC, BaseFloatEWC);
 
     public:
         void tryOpenParentDir();
+
         void tryOpenPath(const std::filesystem::path& p);
 
         [[nodiscard]] const char* getIcon() override { return ICON_FA_FOLDER; }
 
     protected:
         void onInitialize() override;
+
         void onDraw() override;
+
         void onUpdate() override;
+
         void openPath(const std::filesystem::path& path);
+
         void copyFrom(const std::filesystem::path& path);
+
         void cutFrom(const std::filesystem::path& path);
+
         void pasteTo(std::filesystem::path path);
+
         void deleteAt(const std::filesystem::path& path);
+
         [[nodiscard]] std::filesystem::path getExclusiveFileName(
             const std::filesystem::path& path) const;
 
@@ -86,11 +94,16 @@ namespace Core
         [[nodiscard]] bool isFiltered(const std::filesystem::path& p) const;
 
         void drawExplorerTree();
+
         void drawExplorer();
+
         void drawOneLevel(CacheNode& rootNode, bool& isSelected);
+
         void drawFileThumbnail(ImTextureID texture, const std::filesystem::directory_entry& entry,
                                glm::vec2 size);
+
         void rescanPhysicalDrive(CacheNode& node);
+
         void refresh();
 
     private:

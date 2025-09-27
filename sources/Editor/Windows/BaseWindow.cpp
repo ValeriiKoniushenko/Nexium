@@ -164,5 +164,4 @@ namespace Core
     {
         ImGui::EndMainMenuBar();
     }
-
 } // namespace Core

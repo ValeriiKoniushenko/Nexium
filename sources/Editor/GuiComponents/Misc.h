@@ -28,7 +28,5 @@
 
 namespace Core::Gui
 {
-
     [[nodiscard]] bool CollapsingHeader(const char* label, ImGuiTreeNodeFlags flags);
-
 } // namespace Core::Gui

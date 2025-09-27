@@ -55,7 +55,6 @@ namespace
 
 namespace Core
 {
-
     ECS_COMPONENT_IMPL(StaticMeshBundle)
 
     StaticMeshBundle::StaticMeshBundle(const StaticMeshBundle& other)
@@ -106,12 +105,12 @@ namespace Core
     void StaticMeshBundle::importFrom(const aiNode* node, const aiScene* scene,
                                       const std::filesystem::path& modelPath)
     {
-        if (!Verify(node))
+        if (!ASSERT_VAL(node))
         {
             errorLog("Can't import model[s] for static mesh bundle, so node is nullptr");
             return;
         }
-        if (!Verify(scene))
+        if (!ASSERT_VAL(scene))
         {
             errorLog("Can't import model[s] for static mesh bundle, so scene is nullptr");
             return;
@@ -132,14 +131,14 @@ namespace Core
 
     void StaticMeshBundle::setShader(ShaderProgram* sp, bool ignoreVertexAttribSetup /* = false*/)
     {
-        if (!Verify(sp))
+        if (!ASSERT_VAL(sp))
         {
             return;
         }
 
         for (auto* mesh : _meshes)
         {
-            if (Verify(mesh)) [[likely]]
+            if (ASSERT_VAL(mesh)) [[likely]]
             {
                 mesh->setShader(sp, ignoreVertexAttribSetup);
             }
@@ -299,7 +298,7 @@ namespace Core
     {
         for (auto* mesh : _meshes)
         {
-            if (Verify(mesh)) [[likely]]
+            if (ASSERT_VAL(mesh)) [[likely]]
             {
                 mesh->setOutlineShader(sp, ignoreVertexAttribSetup);
             }
@@ -312,6 +311,7 @@ namespace Core
     }
 
     void StaticMeshBundle::pureDraw(const std::function<void(StaticMesh*)>& onUniformSet,
+
                                     const std::function<bool(const Actor*)>& conditional)
     {
         if (!_isEnabled)
@@ -378,5 +378,4 @@ namespace Core
             }
         }
     }
-
 } // namespace Core

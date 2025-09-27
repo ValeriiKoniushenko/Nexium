@@ -36,6 +36,7 @@ namespace Core
 
     public:
         [[nodiscard]] nlohmann::json toJson() const override;
+
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
 
     public:
@@ -48,10 +49,13 @@ namespace Core
 
     protected:
         [[nodiscard]] StringAtom getCacheHash() const override;
+
         [[nodiscard]] nlohmann::json toCacheData() const override;
+
         void fromCacheData(const nlohmann::json& json) override;
 
         void onTick(float delta) override;
+
         void onInitialize() override;
     };
 } // namespace Core

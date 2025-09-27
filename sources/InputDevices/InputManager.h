@@ -31,7 +31,6 @@
 
 namespace Core
 {
-
     template<IsInputAction InputTParam>
     class InputManger : public BaseLog
     {
@@ -43,6 +42,7 @@ namespace Core
         using MappingT = std::unordered_map<StringAtom, typename InputT::Ptr>;
 
         InputManger() = default;
+
         ~InputManger() override = default;
 
         virtual void update()
@@ -66,6 +66,7 @@ namespace Core
         }
 
         [[nodiscard]] bool isExist(InputT::KeyT key) const { return !!impl_get<true>(this, key); }
+
         [[nodiscard]] bool isExist(const StringAtom& name) const
         {
             return !!impl_get<true>(this, name);
@@ -179,11 +180,11 @@ namespace Core
     {
     public:
         [[nodiscard]] nlohmann::json toJson() const override;
+
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
     };
 
     class MouseInputManger : public InputManger<MouseInputAction>
     {
     };
-
 } // namespace Core

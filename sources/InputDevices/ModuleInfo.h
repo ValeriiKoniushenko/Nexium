@@ -28,11 +28,9 @@
 
 namespace InputDevices
 {
-
     [[nodiscard]] inline spdlog::logger* getLogger()
     {
         static std::shared_ptr<spdlog::logger> logger = spdlog::stdout_color_mt("InputDevices");
         return logger.get();
     }
-
 } // namespace InputDevices

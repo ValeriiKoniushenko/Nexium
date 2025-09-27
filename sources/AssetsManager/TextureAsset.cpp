@@ -43,7 +43,7 @@ namespace Core
 
     void TextureAsset::onFillData(nlohmann::json&& json)
     {
-        if (Verify(json.contains("path")))
+        if (ASSERT_VAL(json.contains("path")))
         {
             _path = json["path"].get<std::filesystem::path>();
         }

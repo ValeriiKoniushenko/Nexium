@@ -26,12 +26,10 @@
 
 namespace Core::Gui
 {
-
     ECS_COMPONENT_IMPL(Separator);
 
     void Separator::onDraw()
     {
         ImGui::Separator();
     }
-
 } // namespace Core::Gui

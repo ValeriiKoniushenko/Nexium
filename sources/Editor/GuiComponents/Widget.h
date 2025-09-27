@@ -62,6 +62,7 @@ namespace Core::Gui
             {
                 return fabs(bottomRight.x - topLeft.x);
             }
+
             [[nodiscard]] float getHeight() const noexcept
             {
                 return fabs(bottomRight.y - topLeft.y);
@@ -91,8 +92,11 @@ namespace Core::Gui
 
     public:
         [[nodiscard]] virtual float getWidth() const = 0;
+
         [[nodiscard]] virtual float getHeight() const = 0;
+
         virtual void setWidth(float newWidth) = 0;
+
         virtual void setHeight(float newHeight) = 0;
 
         [[nodiscard]] bool isAutoDraw() const noexcept { return _autoDraw; }
@@ -102,6 +106,7 @@ namespace Core::Gui
         [[nodiscard]] bool getIsDrawOutline() const noexcept { return _isDrawOutline; }
 
         [[nodiscard]] Bounds getBounds() const noexcept;
+
         [[nodiscard]] Bounds getGlobalBounds() const noexcept;
 
         [[nodiscard]] Flex getFlex() const noexcept { return _flex; }
@@ -119,13 +124,19 @@ namespace Core::Gui
 
     protected:
         virtual void onDraw() = 0;
+
         bool addChildValidator(BaseComponent* newChild) override;
+
         void onTick(float delta) override;
+
         void onInitialize() override;
 
         void drawOutline();
+
         virtual void preDraw();
+
         virtual void postDraw();
+
         [[nodiscard]] ImGuiStyle& style() const { return ImGui::GetStyle(); }
 
     protected:
@@ -138,11 +149,11 @@ namespace Core::Gui
         bool _isDrawOutline = false;
         bool _isDisabledWidget = false;
     };
-
 } // namespace Core::Gui
 
 namespace ImGui
 {
     bool OptPushStyleColor(ImGuiCol idx, const std::optional<Core::Color4>& col);
+
     bool OptPushStyleVar(ImGuiStyleVar idx, const std::optional<float>& col);
 } // namespace ImGui

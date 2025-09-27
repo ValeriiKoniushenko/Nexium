@@ -76,6 +76,7 @@ namespace Core
         setComponentName(_path.filename().generic_string().data());
         _wasEdited = false;
     }
+
     void TextEditorEWC::drawBarMenu()
     {
         if (ImGui::BeginMenuBar())

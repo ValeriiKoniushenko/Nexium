@@ -26,12 +26,11 @@
 
 namespace Core
 {
-
     GlobalLog globalLog = {};
 
     void BaseLog::pushLog(level l, const char* str) const
     {
-        Assert(l != level::critical);
+        ASSERT(l != level::critical);
 
         auto* logger = getLogger();
         auto log = getCompleteText(str);
@@ -77,5 +76,4 @@ namespace Core
         }
         return str;
     }
-
 } // namespace Core

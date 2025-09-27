@@ -28,11 +28,9 @@
 
 namespace Scene
 {
-
     [[nodiscard]] inline spdlog::logger* getLogger()
     {
         static std::shared_ptr<spdlog::logger> logger = spdlog::stdout_color_mt("Scene");
         return logger.get();
     }
-
 } // namespace Scene

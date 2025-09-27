@@ -28,7 +28,6 @@
 
 namespace Core
 {
-
     std::size_t ShaderProgramMeta::Hasher::operator()(const ShaderProgramMeta& self) const
     {
         return self._shaderName.makeHash();
@@ -221,5 +220,4 @@ namespace Core
             return false;
         }
     }
-
 } // namespace Core

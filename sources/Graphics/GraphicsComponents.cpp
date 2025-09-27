@@ -28,7 +28,6 @@
 
 namespace Core
 {
-
     GraphicsComponentData::~GraphicsComponentData()
     {
         clear();
@@ -91,7 +90,7 @@ namespace Core
 
     void GraphicsComponentData::setVertexBuffer(const std::vector<float>& data, GLenum usage)
     {
-        if (Verify(_vbo != 0 && _vao != 0)) [[likely]]
+        if (ASSERT_VAL(_vbo != 0 && _vao != 0)) [[likely]]
         {
             glBindVertexArray(_vao);
             glBindBuffer(GL_ARRAY_BUFFER, _vbo);
@@ -101,7 +100,7 @@ namespace Core
 
     void GraphicsComponentData::setIndexBuffer(const std::vector<GLuint>& data, GLenum usage)
     {
-        if (Verify(_ebo != 0 && _vao != 0)) [[likely]]
+        if (ASSERT_VAL(_ebo != 0 && _vao != 0)) [[likely]]
         {
             glBindVertexArray(_vao);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
@@ -114,7 +113,7 @@ namespace Core
     void GraphicsComponentData::setTexture2D(const unsigned char* data, uint32_t width,
                                              uint32_t height, GLuint channels)
     {
-        if (Verify(data && _ebo != 0 && _vao != 0 && _texture != 0)) [[likely]]
+        if (ASSERT_VAL(data && _ebo != 0 && _vao != 0 && _texture != 0)) [[likely]]
         {
             glBindVertexArray(_vao);
 
@@ -140,7 +139,7 @@ namespace Core
 
         if (!ignoreVertexAttribSetup)
         {
-            Assert(_vao != 0);
+            ASSERT(_vao != 0);
             glBindVertexArray(_vao);
             glBindBuffer(GL_ARRAY_BUFFER, _vbo);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
@@ -224,7 +223,7 @@ namespace Core
     {
         if (!isValid()) [[unlikely]]
         {
-            Assert("Can't draw graphic component. It wasn't configured.");
+            ASSERT("Can't draw graphic component. It wasn't configured.");
             return;
         }
 
@@ -272,7 +271,7 @@ namespace Core
         for (auto& [value, modifier] : values)
         {
             map[value]++;
-            Assert(map[value] == 1, "The same modifier was added twice.");
+            ASSERT(map[value] == 1, "The same modifier was added twice.");
         }
 #endif
 
@@ -287,7 +286,7 @@ namespace Core
         for (const auto& [value, modifier] : values)
         {
             map[value]++;
-            Assert(map[value] == 1, "The same modifier was added twice.");
+            ASSERT(map[value] == 1, "The same modifier was added twice.");
         }
 #endif
 
@@ -429,6 +428,7 @@ namespace Core
         };
         return out;
     }
+
     const std::vector<StringAtom>& GraphicsComponentData::ModifierAsStringVector()
     {
         static const std::vector<StringAtom> out = {
@@ -437,5 +437,4 @@ namespace Core
         };
         return out;
     }
-
 } // namespace Core

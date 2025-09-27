@@ -32,7 +32,6 @@
 
 namespace Core
 {
-
     void Transformable::setPosition(const GPos3& position) noexcept
     {
         _position = position;
@@ -270,5 +269,4 @@ namespace Core
     {
         return _origin;
     }
-
 } // namespace Core

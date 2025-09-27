@@ -58,9 +58,11 @@ namespace Core
         [[nodiscard]] glm::vec3 getCenter() const noexcept { return _center; }
 
         [[nodiscard]] ShaderProgram* getOutlineShader() noexcept { return _outlineShader; }
+
         void setOutlineShader(ShaderProgram* sp, bool ignoreVertexAttribSetup = false);
 
         [[nodiscard]] StaticMeshBundle* tryToGetRootBundle();
+
         [[nodiscard]] const StaticMeshBundle* tryToGetRootBundle() const;
 
         /**
@@ -76,6 +78,7 @@ namespace Core
         void pureDraw(const std::function<void(StaticMesh*)>& onUniformSet);
 
         [[nodiscard]] nlohmann::json toJson() const override;
+
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
 
         [[nodiscard]] Color3 toUniqueColor() const noexcept
@@ -99,8 +102,11 @@ namespace Core
 
     protected:
         void onDirtyMatrix() override;
+
         void onOutlineStatusChange(bool) override {}
+
         void calculateSizeBaseOnMesh(const aiMesh* rawMesh, const aiMatrix4x4& transform);
+
         void drawOutline();
 
     protected:
@@ -117,7 +123,9 @@ namespace Core
         StaticMeshFactory() = delete;
 
         [[nodiscard]] static StaticMesh CreateBase(const StringAtom& name = ""_atom);
+
         [[nodiscard]] static StaticMesh CreateBiSide(const StringAtom& name = ""_atom);
+
         [[nodiscard]] static StaticMesh CreateBiBlendSide(const StringAtom& name = ""_atom);
     };
 } // namespace Core

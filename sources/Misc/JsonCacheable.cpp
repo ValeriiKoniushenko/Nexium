@@ -33,11 +33,10 @@ namespace fs = std::filesystem;
 
 namespace Core
 {
-
     void JsonCacheable::writeToCache() const
     {
         fs::create_directories(getCacheDir());
-        if (!Verify(fs::exists(getCacheDir())))
+        if (!ASSERT_VAL(fs::exists(getCacheDir())))
         {
             globalLog.errorLog("Can't create a dirs for cache. Provided path: "
                                + getCacheDir().generic_string());
@@ -121,5 +120,4 @@ namespace Core
             globalLog.errorLog("Can't clear cache: {}"_f << ec.message());
         }
     }
-
 } // namespace Core

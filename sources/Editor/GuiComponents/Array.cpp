@@ -26,7 +26,5 @@
 
 namespace Core::Gui
 {
-
     ECS_COMPONENT_IMPL(ArrayCell)
-
 } // namespace Core::Gui

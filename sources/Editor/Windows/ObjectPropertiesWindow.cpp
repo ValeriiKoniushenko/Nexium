@@ -51,7 +51,7 @@ namespace
     HLayout::Ptr CreateHLayoutAndLabel(const char* label, bool isReadOnly,
                                        float size = ObjectPropertiesWindowEWC::defaultLabelWidthBig)
     {
-        if (!Verify(label))
+        if (!ASSERT_VAL(label))
         {
             return nullptr;
         }
@@ -68,7 +68,7 @@ namespace
     HLayout::Ptr Create(const char* label, bool isReadOnly,
                         float size = ObjectPropertiesWindowEWC::defaultLabelWidthBig)
     {
-        if (!Verify(label))
+        if (!ASSERT_VAL(label))
         {
             return nullptr;
         }
@@ -89,7 +89,7 @@ namespace
     {
         using namespace Core;
 
-        if (!Verify(label))
+        if (!ASSERT_VAL(label))
         {
             return nullptr;
         }
@@ -108,7 +108,7 @@ namespace
     {
         using namespace Core;
 
-        if (!Verify(label))
+        if (!ASSERT_VAL(label))
         {
             return nullptr;
         }
@@ -121,7 +121,6 @@ namespace
     }
 
     // =========================================================
-
 } // namespace
 
 namespace Core
@@ -744,5 +743,4 @@ namespace Core
             _staticMeshBundleLayout.tick(dt);
         }
     }
-
 } // namespace Core

@@ -43,6 +43,7 @@ namespace glm
     {
         j = { v.x, v.y, v.z };
     }
+
     void from_json(const nlohmann::json& j, vec3& v)
     {
         v.x = j.at(0).get<float>();
@@ -54,6 +55,7 @@ namespace glm
     {
         j = { v.x, v.y };
     }
+
     void from_json(const nlohmann::json& j, vec2& v)
     {
         v.x = j.at(0).get<float>();
@@ -64,6 +66,7 @@ namespace glm
     {
         j = { v.x, v.y, v.z, v.w };
     }
+
     void from_json(const nlohmann::json& j, ivec4& v)
     {
         v.x = j.at(0).get<int>();
@@ -76,6 +79,7 @@ namespace glm
     {
         j = { v.x, v.y, v.z };
     }
+
     void from_json(const nlohmann::json& j, ivec3& v)
     {
         v.x = j.at(0).get<int>();
@@ -178,5 +182,4 @@ namespace Core
             value.deep = j["deep"].get<int>();
         }
     }
-
 } // namespace Core

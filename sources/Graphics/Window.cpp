@@ -30,7 +30,6 @@ using namespace Core;
 
 namespace
 {
-
     void MouseMoveHandler(GLFWwindow*, double x, double y)
     {
         GetWindow().onMouseMove.trigger(glm::vec2(static_cast<float>(x), static_cast<float>(y)));
@@ -69,12 +68,10 @@ namespace
     {
         GetWindow().onResize.trigger(ISize2(width, height));
     }
-
 } // namespace
 
 namespace Core
 {
-
     DragAndDrop gDragDrop;
 
     Window::~Window()
@@ -296,5 +293,4 @@ namespace Core
     {
         return Window::instance();
     }
-
 } // namespace Core

@@ -41,6 +41,7 @@ namespace Core
     }
 
     void Gizmo::pureDraw(const std::function<void(StaticMesh*)>& onUniformSet,
+
                          const std::function<bool(const Actor*)>& conditional)
     {
         glDepthFunc(GL_ALWAYS);
@@ -84,7 +85,7 @@ namespace Core
         static const aiScene* scene
             = importer.ReadFile(defaultModelPath.generic_string().c_str(),
                                 aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
-        if (Verify(scene) && Verify(scene->mRootNode))
+        if (ASSERT_VAL(scene) && ASSERT_VAL(scene->mRootNode))
         {
             importFrom(scene->mRootNode, scene, defaultModelPath);
             setShader(gGameInstance->shaderManager.getShaderProgram("pickUpColorFiller"_atom));
@@ -125,7 +126,7 @@ namespace Core
         }
 
         const auto* data = dynamic_cast<DragData*>(gDragDrop.payload.data.get());
-        if (!Verify(data))
+        if (!ASSERT_VAL(data))
         {
             return;
         }
@@ -170,5 +171,4 @@ namespace Core
 
         _lastRay = ray;
     }
-
 } // namespace Core

@@ -30,7 +30,6 @@
 
 namespace Core::Gui
 {
-
     ECS_COMPONENT_IMPL(Widget)
 
     void Widget::unhandledDraw()
@@ -133,12 +132,10 @@ namespace Core::Gui
             ImGui::EndDisabled();
         }
     }
-
 } // namespace Core::Gui
 
 namespace ImGui
 {
-
     bool OptPushStyleColor(ImGuiCol idx, const std::optional<Core::Color4>& col)
     {
         if (col.has_value())
@@ -158,5 +155,4 @@ namespace ImGui
         }
         return false;
     }
-
 } // namespace ImGui

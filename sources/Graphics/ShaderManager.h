@@ -45,6 +45,7 @@ namespace Core
         {
             return _suitableFragExtensions;
         }
+
         [[nodiscard]] std::unordered_set<std::string>& getSuitableVertFileExtensions()
         {
             return _suitableVertExtensions;
@@ -57,14 +58,18 @@ namespace Core
         {
             return _shaderMetas;
         }
+
         [[nodiscard]] std::unordered_map<StringAtom, ShaderProgramMeta>& getShaderMetas() noexcept
         {
             return _shaderMetas;
         }
 
         [[nodiscard]] size_t countOfShaders() const { return _shaderMetas.size(); }
+
         [[nodiscard]] size_t countOfValidShaders() const;
+
         [[nodiscard]] size_t countOfFailedShaders() const { return _failedShaders.size(); }
+
         [[nodiscard]] const std::unordered_set<std::string>& getFailedShaders() const
         {
             return _failedShaders;

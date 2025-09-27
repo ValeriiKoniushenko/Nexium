@@ -36,8 +36,11 @@ namespace Core
 
     public:
         StaticMeshBundle(const StaticMeshBundle& other);
+
         StaticMeshBundle(StaticMeshBundle&& other) = default;
+
         StaticMeshBundle& operator=(const StaticMeshBundle& other);
+
         StaticMeshBundle& operator=(StaticMeshBundle&& other) = default;
 
         /**
@@ -55,7 +58,9 @@ namespace Core
 
         void importFrom(const aiNode* node, const aiScene* scene,
                         const std::filesystem::path& modelPath = "");
+
         void setShader(ShaderProgram* sp, bool ignoreVertexAttribSetup = false);
+
         void setOutlineShader(ShaderProgram* sp, bool ignoreVertexAttribSetup = false);
 
         void onTick(float delta) override;
@@ -65,21 +70,26 @@ namespace Core
         void clearMeshes();
 
         [[nodiscard]] nlohmann::json toJson() const override;
+
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
 
         [[nodiscard]] std::size_t getRenderMeshesCount() const noexcept { return _meshes.size(); }
         [[nodiscard]] std::vector<StaticMesh*>& getRenderMeshes() noexcept { return _meshes; }
+
         [[nodiscard]] const std::vector<StaticMesh*>& getRenderMeshes() const noexcept
         {
             return _meshes;
         }
 
         [[nodiscard]] std::size_t getRenderableTriangles() const;
+
         [[nodiscard]] std::size_t getRenderBundlesCount() const noexcept { return _bundles.size(); }
+
         [[nodiscard]] std::vector<StaticMeshBundle*>& getRenderBundles() noexcept
         {
             return _bundles;
         }
+
         [[nodiscard]] const std::vector<StaticMeshBundle*>& getRenderBundles() const noexcept
         {
             return _bundles;
@@ -108,12 +118,17 @@ namespace Core
 
     protected:
         void onOutlineStatusChange(bool newStatus) override;
+
         [[nodiscard]] StringAtom getCacheHash() const override;
+
         [[nodiscard]] nlohmann::json toCacheData() const override;
+
         void fromCacheData(const nlohmann::json& data) override;
 
         void onAddChild(BaseComponent* newChild) override;
+
         void onRemoveChild(BaseComponent* child) override;
+
         void invalidateFastAccessContainers();
 
     protected:
@@ -124,5 +139,4 @@ namespace Core
         uint32_t _id = ++_idGenerator;
         bool _ignoreSelect = false;
     };
-
 } // namespace Core

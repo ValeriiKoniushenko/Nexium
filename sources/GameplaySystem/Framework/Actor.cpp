@@ -26,7 +26,6 @@
 
 namespace Core
 {
-
     ECS_COMPONENT_IMPL(Actor);
 
     nlohmann::json Actor::toJson() const
@@ -57,5 +56,4 @@ namespace Core
             _name = _type;
         }
     }
-
 } // namespace Core

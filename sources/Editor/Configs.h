@@ -33,7 +33,6 @@
 
 namespace Core::Config
 {
-
     // Default color pallet
     static constexpr auto ColorRed = Color4(255, 25, 25, 255);
     static constexpr auto ColorGreen = Color4(25, 255, 25, 255);
@@ -47,7 +46,6 @@ namespace Core::Config
 
     namespace Path
     {
-
         inline static std::filesystem::path assets = "assets";
         inline static std::filesystem::path fonts = assets / "fonts";
         inline static std::filesystem::path shaders = assets / "shaders";
@@ -58,7 +56,6 @@ namespace Core::Config
 
         inline static std::filesystem::path editorFont = fonts / "JetBrainsMono-Regular.ttf";
         inline static std::filesystem::path fontAwesome = fonts / "fontawesome-webfont.ttf";
-
     } // namespace Path
 
     namespace Keyboard
@@ -75,5 +72,4 @@ namespace Core::Config
     inline static const char* spdlogPattern = "%D [%L] [%n] %v";
     inline static const char* defaultWindowName = "Nexium Engine";
     static constexpr ISize2 defaultWindowSize = ISize2{ 1200, 800 };
-
 } // namespace Core::Config

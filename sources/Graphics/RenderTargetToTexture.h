@@ -36,10 +36,12 @@ namespace Core
         void generate();
 
         void callMePreDraw() const;
+
         void callMeAfterDraw() const;
 
         [[nodiscard]] GLuint getTextureId() const noexcept { return _tex; }
         [[nodiscard]] ISize2 getRenderSize() const noexcept { return _size; }
+
         void setRenderSize(ISize2 size);
 
         void destroy();
@@ -49,5 +51,4 @@ namespace Core
         GLuint _fbo = 0, _tex = 0, _rbo = 0;
         bool _isGenerated = false;
     };
-
 } // namespace Core

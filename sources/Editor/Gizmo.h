@@ -56,18 +56,23 @@ namespace Core
         };
 
         void draw() override;
+
         void pureDraw(const std::function<void(StaticMesh*)>& onUniformSet,
                       const std::function<bool(const Actor*)>& conditional) override;
 
         void onMousePicked(StaticMesh* clickedPart) override;
+
         void onTick(float delta) override;
 
         [[nodiscard]] nlohmann::json toJson() const override;
 
     protected:
         void initialize() override;
+
         void load3DModel();
+
         void handleDragStart(StaticMesh* touchedMesh);
+
         void handleDrag();
 
     private:

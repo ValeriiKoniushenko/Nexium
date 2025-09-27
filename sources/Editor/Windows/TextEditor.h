@@ -28,19 +28,22 @@
 
 namespace Core
 {
-
     class TextEditorEWC : public BaseFloatEWC
     {
         ECS_COMPONENT_DECL(TextEditorEWC, BaseFloatEWC);
 
     public:
         void putArguments(const StringAtom& args) override;
+
         [[nodiscard]] const char* getIcon() override { return ICON_FA_FILE_TEXT; }
 
     protected:
         void onInitialize() override;
+
         void onDraw() override;
+
         void drawBarMenu();
+
         void drawEditor();
 
         void save();
@@ -51,5 +54,4 @@ namespace Core
         bool _wasEdited = false;
         float _statusMarginRight = 10.f;
     };
-
 } // namespace Core

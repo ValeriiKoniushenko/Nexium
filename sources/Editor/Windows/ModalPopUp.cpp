@@ -28,7 +28,6 @@
 
 namespace Core
 {
-
     ECS_COMPONENT_IMPL(ModalPopUp);
 
     void ModalPopUp::open(StringAtom text, const std::function<void(bool)>& okOrCancelCallback)
@@ -58,7 +57,7 @@ namespace Core
         _okButton->onClick.subscribe(
             [this]()
             {
-                if (Verify(!!_okOrCancelCallback))
+                if (ASSERT_VAL(!!_okOrCancelCallback))
                 {
                     _okOrCancelCallback(true);
                 }
@@ -67,7 +66,7 @@ namespace Core
         _cancelButton->onClick.subscribe(
             [this]()
             {
-                if (Verify(!!_okOrCancelCallback))
+                if (ASSERT_VAL(!!_okOrCancelCallback))
                 {
                     _okOrCancelCallback(false);
                 }
@@ -77,7 +76,7 @@ namespace Core
 
     void ModalPopUp::onDraw()
     {
-        if (!Verify(!_text.isEmpty() && _okOrCancelCallback))
+        if (!ASSERT_VAL(!_text.isEmpty() && _okOrCancelCallback))
         {
             return;
         }
@@ -94,6 +93,7 @@ namespace Core
 
         ImGui::Dummy({});
     }
+
     void ModalPopUp::preOpenedEndWindowDraw()
     {
         ImGui::EndPopup();
@@ -112,5 +112,4 @@ namespace Core
     void ModalPopUp::endWindowDraw()
     {
     }
-
 } // namespace Core

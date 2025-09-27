@@ -26,7 +26,6 @@
 
 namespace Core
 {
-
     void ShaderManager::loadShaders(const std::filesystem::path& inputPath)
     {
         _shaderMetas.clear();
@@ -117,11 +116,11 @@ namespace Core
 
     ShaderProgram* ShaderManager::getShaderProgram(const StringAtom& shaderName)
     {
-        Assert(shaderName.isStatic());
+        ASSERT(shaderName.isStatic());
 
         if (const auto it = _shaderMetas.find(shaderName); it != _shaderMetas.cend())
         {
-            Assert(it->second.getShaderName().isStatic());
+            ASSERT(it->second.getShaderName().isStatic());
             return &it->second.getShaderProgram();
         }
 
@@ -148,5 +147,4 @@ namespace Core
 
         return {};
     }
-
 } // namespace Core

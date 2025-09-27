@@ -239,7 +239,7 @@ namespace Core
     {
         if constexpr (std::is_abstract_v<T>)
         {
-            Assert(false, "You are trying to create somewhere an abstract object");
+            ASSERT(false, "You are trying to create somewhere an abstract object");
             return nullptr;
         }
         else if constexpr (std::is_copy_constructible_v<T>)
@@ -348,8 +348,11 @@ namespace Core
     {
     public:
         AbstractComponent(const AbstractComponent&) = default;
+
         AbstractComponent(AbstractComponent&& other) noexcept;
+
         AbstractComponent& operator=(const AbstractComponent&) = default;
+
         AbstractComponent& operator=(AbstractComponent&& other) noexcept;
 
         ~AbstractComponent() override = default;
@@ -367,21 +370,21 @@ namespace Core
         /** @brief Reset the component to uninitialized state. */
         virtual void clear() { _isInitialized = false; }
 
-        /** @brief Safe cast to a derived component type. Asserts if cast fails. */
+        /** @brief Safe cast to a derived component type. ASSERTs if cast fails. */
         template<IsComponent T>
         [[nodiscard]] T* castTo()
         {
             auto* casted = dynamic_cast<std::remove_reference_t<T>*>(this);
-            Assert(casted);
+            ASSERT(casted);
             return casted;
         }
 
-        /** @brief Safe cast to a derived component type. Asserts if cast fails. */
+        /** @brief Safe cast to a derived component type. ASSERTs if cast fails. */
         template<IsComponent T>
         [[nodiscard]] const T* castTo() const
         {
             auto* casted = dynamic_cast<const std::remove_reference_t<T>*>(this);
-            Assert(casted);
+            ASSERT(casted);
             return casted;
         }
 
@@ -440,6 +443,7 @@ namespace Core
         void invalidate() { _isInitialized = false; }
 
         [[nodiscard]] nlohmann::json toJson() const override;
+
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
 
     protected:
@@ -529,15 +533,20 @@ namespace Core
         ~BaseComponent() override = default;
 
         BaseComponent(BaseComponent&& other) noexcept;
+
         BaseComponent& operator=(BaseComponent&& other) noexcept;
+
         BaseComponent(const BaseComponent& other);
+
         BaseComponent& operator=(const BaseComponent& other);
 
         [[nodiscard]] virtual bool operator==(const Self& other) const;
 
         // ========================== WORKING WITH NAME ==========================
         void setComponentName(const StringAtom& name);
+
         void setComponentName(StringAtom&& name);
+
         [[nodiscard]] const StringAtom& getComponentName() const noexcept { return _name; }
         [[nodiscard]] const StringAtom& getComponentType() const noexcept { return _type; }
 
@@ -545,6 +554,7 @@ namespace Core
         [[nodiscard]] const BaseComponent* getParent() const noexcept { return _parent; }
         [[nodiscard]] BaseComponent* getParent() noexcept { return _parent; }
         [[nodiscard]] bool hasParent() const noexcept { return _parent; }
+
         [[nodiscard]] BaseComponent* getOwner() noexcept;
 
         template<IsComponent T>
@@ -566,7 +576,9 @@ namespace Core
 
         // ========================== MISC & TYPES ==========================
         void clear() override;
+
         [[nodiscard]] virtual bool isValid() const;
+
         [[nodiscard]] std::size_t makeHash() const;
 
         virtual BaseComponent::Ptr clone() const { return nullptr; }
@@ -583,6 +595,7 @@ namespace Core
         void onTick(float delta) override;
 
         [[nodiscard]] nlohmann::json toJson() const override;
+
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
 
         // ========================== WORKING WITH CHILDREN ==========================
@@ -661,7 +674,9 @@ namespace Core
         void detachChild(BaseComponent* child);
 
         void removeChild(const BaseComponent* child);
+
         void removeChild(const CChildT& child) { removeChild(child.get()); }
+
         void removeChildIf(const std::function<bool(const BaseComponent*)>& pred);
 
         template<IsComponent ComponentT>
@@ -736,7 +751,9 @@ namespace Core
 
     protected:
         virtual bool addChildValidator(BaseComponent* newChild) { return true; }
+
         virtual void onAddChild(BaseComponent* newChild) {}
+
         virtual void onRemoveChild(BaseComponent* child) {}
 
         explicit BaseComponent(StringAtom type, StringAtom name)
@@ -744,7 +761,7 @@ namespace Core
               _type{ std::move(type) }
         {
 #ifdef DEBUG
-            Assert(_type.isStatic());
+            ASSERT(_type.isStatic());
 #endif
         }
 
@@ -777,7 +794,7 @@ namespace Core
     template<IsComponentOrBase TargetT, bool isConst, class FuncT>
     void BaseComponent::Impl_forEach_BFS(AdaptiveRawPtr<isConst> me, FuncT&& callback)
     {
-        if (!Verify(me)) [[unlikely]]
+        if (!ASSERT_VAL(me)) [[unlikely]]
         {
             return;
         }
@@ -795,7 +812,7 @@ namespace Core
             HolderPtr root = q.front();
             q.pop();
 
-            if (!Verify(root)) [[unlikely]]
+            if (!ASSERT_VAL(root)) [[unlikely]]
             {
                 me->criticalLog("BaseComponent::Impl_forEach_BFS was got nullptr for root.");
                 return;
@@ -830,7 +847,7 @@ namespace Core
     template<IsComponentOrBase TargetT, bool isConst, class FuncT>
     void BaseComponent::Impl_forEach_DFS(AdaptiveRawPtr<isConst> me, FuncT&& callback)
     {
-        if (!Verify(me)) [[unlikely]]
+        if (!ASSERT_VAL(me)) [[unlikely]]
         {
             return;
         }
@@ -847,7 +864,7 @@ namespace Core
             HolderPtr root = s.top();
             s.pop();
 
-            if (!Verify(root)) [[unlikely]]
+            if (!ASSERT_VAL(root)) [[unlikely]]
             {
                 me->criticalLog("BaseComponent::Impl_forEach_DFS was got nullptr for root.");
                 return;
@@ -894,8 +911,8 @@ namespace Core
         me->forEach(
             [&found, &name](BaseComponent* comp)
             {
-                Assert(comp->_type.isStatic());
-                Assert(TargetT::componentType.isStatic());
+                ASSERT(comp->_type.isStatic());
+                ASSERT(TargetT::componentType.isStatic());
 
                 if (comp->_type == TargetT::componentType)
                 {
@@ -920,7 +937,6 @@ namespace Core
 
         return found;
     }
-
 } // namespace Core
 
 template<>

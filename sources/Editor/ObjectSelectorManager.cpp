@@ -28,7 +28,6 @@
 
 namespace Core
 {
-
     void ObjectSelectorManager::selectObject(BaseComponent* comp)
     {
         deselectAllAndClear();
@@ -98,5 +97,4 @@ namespace Core
             _generalSelectedComponent = nullptr;
         }
     }
-
 } // namespace Core

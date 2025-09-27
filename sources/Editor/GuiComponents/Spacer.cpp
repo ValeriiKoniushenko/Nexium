@@ -30,7 +30,6 @@
 
 namespace Core::Gui
 {
-
     ECS_COMPONENT_IMPL(Spacer);
 
     Spacer::Spacer(const StringAtom& name)

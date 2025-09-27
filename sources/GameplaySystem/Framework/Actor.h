@@ -31,24 +31,27 @@
 
 namespace Core
 {
-
     class Actor : public Transformable, public BaseComponent, public JsonCacheable
     {
         ECS_COMPONENT_DECL(Actor, BaseComponent);
 
     public:
         Actor(Actor&&) = default;
+
         Actor(const Actor& other)
             : BaseComponent(other._type, other._name)
         {
             *this = other;
         }
+
         Actor& operator=(Actor&&) = default;
+
         Actor& operator=(const Actor&) = default;
 
         ~Actor() override = default;
 
         [[nodiscard]] nlohmann::json toJson() const override;
+
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
 
         /**
@@ -75,5 +78,4 @@ namespace Core
 
     template<class T>
     concept IsActorBased = std::is_base_of_v<Actor, T>;
-
 } // namespace Core

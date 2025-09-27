@@ -33,21 +33,24 @@
 
 namespace Core::Gui
 {
-
     class BaseInput : public Widget
     {
         ECS_COMPONENT_DECL(BaseInput, Widget);
 
     public:
         void setTextColor(const Color4& value);
+
         void resetTextColor();
+
         [[nodiscard]] std::optional<Color4> getTextColor() const;
 
         [[nodiscard]] glm::vec2 getRealSize() const;
 
         [[nodiscard]] float getWidth() const override { return getRealSize().x; }
         [[nodiscard]] float getHeight() const override { return getRealSize().y; }
+
         void setWidth(float newWidth) override;
+
         void setHeight(float newHeight) override;
 
     protected:
@@ -70,6 +73,7 @@ namespace Core::Gui
         [[nodiscard]] const StringAtom& getPlaceholder() const noexcept { return _placeholder; }
 
         void setReadOnly(bool value);
+
         [[nodiscard]] bool isReadOnly() const noexcept;
 
     public: // Delegates
@@ -147,10 +151,12 @@ namespace Core::Gui
         Type _min = std::numeric_limits<Type>::lowest();
         Type _max = std::numeric_limits<Type>::max();
     };
-    ECS_TEMPLATE_COMPONENT_IMPL(BRACKETS(NumInput<Type>), BRACKETS(Utils::IsArithmetic Type))
+
+    ECS_TEMPLATE_COMPONENT_IMPL(BRACKETS(NumInput<Type>), BRACKETS(Utils::IsArithmetic Type)
+
+    )
 
     using DoubleInput = NumInput<double>;
     using FloatInput = NumInput<float>;
     using IntInput = NumInput<int>;
-
 } // namespace Core::Gui

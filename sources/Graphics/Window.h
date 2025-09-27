@@ -38,7 +38,6 @@
 
 namespace Core
 {
-
     struct DragAndDrop
     {
         struct Data
@@ -79,8 +78,8 @@ namespace Core
                 return false;
             }
 
-            Assert(T::dragType.isStatic());
-            Assert(payload.type.isStatic());
+            ASSERT(T::dragType.isStatic());
+            ASSERT(payload.type.isStatic());
             return payload.type == T::dragType;
         }
 
@@ -113,11 +112,15 @@ namespace Core
 
     public:
         Window() = default;
+
         ~Window() override;
 
         void create(const StringAtom& title, ISize2 size = ISize2{ 300, 300 });
+
         void close();
+
         void destroy();
+
         void clear(int code);
 
         [[nodiscard]] bool shouldClose() const;
@@ -131,10 +134,13 @@ namespace Core
         [[nodiscard]] ISize2 getSize() const;
 
         void setCursorPosition(float x, float y);
+
         void setCursorPosition(glm::vec2 position);
 
         static void setCursorMode(CursorMode mode);
+
         static CursorMode getCursorMode();
+
         void toggleCursorMode();
 
         [[nodiscard]] GLFWwindow* getRawWindow() noexcept { return _window; }
@@ -183,11 +189,14 @@ namespace Core
         [[nodiscard]] const char* getPrefix() const override { return "Window"; }
 
         nlohmann::json toJson() const override;
+
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
 
     protected:
         StringAtom getCacheHash() const override;
+
         nlohmann::json toCacheData() const override;
+
         void fromCacheData(const nlohmann::json& json) override;
 
     protected:
@@ -202,5 +211,4 @@ namespace Core
     };
 
     Window& GetWindow();
-
 } // namespace Core

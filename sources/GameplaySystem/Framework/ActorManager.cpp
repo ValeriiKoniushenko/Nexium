@@ -26,5 +26,4 @@
 
 namespace Core
 {
-
 } // namespace Core

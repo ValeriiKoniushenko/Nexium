@@ -60,8 +60,7 @@ void TemplateGameInstance::onInitializeFinish()
         const aiScene* scene = importer.ReadFile(
             path.generic_string().c_str(),
             aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
-        if (Verify(scene) && Verify(scene->mRootNode))
-        {
+        if (ASSERT_VAL(scene) && ASSERT_VAL(scene->mRootNode)) {
             StaticMeshBundle mesh;
             mesh.importFrom(scene->mRootNode, scene, path);
             mesh.setShader(shaderManager.getShaderProgram("color"_atom));

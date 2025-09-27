@@ -29,7 +29,6 @@
 
 namespace Core
 {
-
     class PlayerState : public BaseLog, public Utils::NotCopyableAndNotMoveable
     {
     public:
@@ -38,5 +37,4 @@ namespace Core
 
     public:
     };
-
 } // namespace Core

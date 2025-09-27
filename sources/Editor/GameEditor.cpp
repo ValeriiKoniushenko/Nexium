@@ -45,11 +45,10 @@ using namespace Core;
 
 namespace
 {
-
     StringAtom GetGlslVersionShaderLike()
     {
         StringAtom version = reinterpret_cast<const char*>(glGetString(GL_VERSION));
-        if (const auto* const end = version.find(" "); Verify(end))
+        if (const auto* const end = version.find(" "); ASSERT_VAL(end))
         {
             const auto i = end - version.c_str();
             version.subStr(0, i);
@@ -64,7 +63,6 @@ namespace
 
 namespace Core
 {
-
     GameEditor::~GameEditor()
     {
         destroy();
@@ -184,14 +182,14 @@ namespace Core
         }
 
         ImGuiStyle* style = &ImGui::GetStyle();
-        if (!Verify(style))
+        if (!ASSERT_VAL(style))
         {
             errorLog("Can't setup ImGUI styles. ImGui::GetStyle() return nullptr");
             return;
         }
 
         glm::vec4* colors = style->Colors;
-        if (!Verify(colors))
+        if (!ASSERT_VAL(colors))
         {
             errorLog("Can't setup ImGUI colors. ImGui::GetStyle()->Colors return nullptr");
             return;
@@ -370,5 +368,4 @@ namespace Core
     void GameEditor::handleMouseDrag(glm::vec2 delta, MouseInputAction::SpecKeysState state)
     {
     }
-
 } // namespace Core

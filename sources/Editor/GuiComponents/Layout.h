@@ -28,7 +28,6 @@
 
 namespace Core::Gui
 {
-
     class Layout : public Widget
     {
         ECS_COMPONENT_DECL(Layout, Widget);
@@ -49,11 +48,13 @@ namespace Core::Gui
         {
             _paddings = glm::vec4(left, right, top, bottom);
         }
+
         void setPaddings(const glm::vec4& lrtb) { _paddings = lrtb; }
         [[nodiscard]] const glm::vec4& getPaddings() const noexcept { return _paddings; }
 
     protected:
         [[nodiscard]] bool atLeastOne(Flex f);
+
         void onInitialize() override;
 
     protected:
@@ -65,5 +66,4 @@ namespace Core::Gui
         Align _align = Align::None;
         Align _secondAlign = Align::None;
     };
-
 } // namespace Core::Gui

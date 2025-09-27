@@ -37,7 +37,6 @@
 
 namespace Core
 {
-
     class Image : public Utils::NotCopyableButMoveable, public BaseLog
     {
     public:
@@ -56,17 +55,22 @@ namespace Core
         explicit Image(const std::filesystem::path& path = "");
 
         Image(Image&& obj) noexcept;
+
         Image& operator=(Image&& obj) noexcept;
 
         ~Image() override;
 
         [[nodiscard]] ISize2 getSize() const noexcept { return _size; }
         [[nodiscard]] Channel getChannel() const noexcept { return _channel; }
+
         [[nodiscard]] GLenum getChannelAsOpenGLType() const noexcept;
+
         [[nodiscard]] const unsigned char* data() const noexcept { return _data; }
+
         bool loadFromFile(const std::filesystem::path& path, bool isFlipVertically = true);
 
         void clear();
+
         [[nodiscard]] bool isEmpty() const noexcept { return _data == nullptr; }
         [[nodiscard]] StringAtom getName() const noexcept { return _name; }
 
@@ -82,5 +86,4 @@ namespace Core
         Channel _channel = Channel::None;
         StringAtom _name;
     };
-
 } // namespace Core

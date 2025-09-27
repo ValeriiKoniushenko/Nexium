@@ -68,12 +68,10 @@ namespace
 
         return out.str();
     }
-
 } // namespace
 
 namespace Core
 {
-
     ECS_COMPONENT_IMPL(AssetsManagerWindowEWC)
 
     void AssetsManagerWindowEWC::tryOpenParentDir()
@@ -594,5 +592,4 @@ namespace Core
         _rootCacheNode.path = Config::Path::assets;
         rescanPhysicalDrive(_rootCacheNode);
     }
-
 } // namespace Core

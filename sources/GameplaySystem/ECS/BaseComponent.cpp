@@ -34,7 +34,6 @@ namespace
         seed ^= std::hash<T>{}(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
         (hash_combine(seed, rest), ...);
     }
-
 } // namespace
 
 namespace Core
@@ -51,7 +50,7 @@ namespace Core
             }
         }
 
-        Assert(
+        ASSERT(
             false,
             ("Can't reflect the type '{}'. Maybe you forgot to register your class with needed "
              "macros. Look at the documentation, or check commen above the class Core::BaseComponent "
@@ -64,7 +63,7 @@ namespace Core
     bool GlobalComponentFactory::registerNewType(const StringAtom& type,
                                                  std::function<BaseComponent*()> callback)
     {
-        Assert(type.isStatic());
+        ASSERT(type.isStatic());
 
 #if defined(DEBUG)
         if (_map.contains(type))
@@ -284,8 +283,8 @@ namespace Core
 
     bool BaseComponent::operator==(const BaseComponent& other) const
     {
-        Assert(!_name.isEmpty());
-        Assert(!other._name.isEmpty());
+        ASSERT(!_name.isEmpty());
+        ASSERT(!other._name.isEmpty());
 
         return _name == other._name && _type == other._type;
     }
@@ -371,5 +370,4 @@ namespace Core
 
         return *this;
     }
-
 } // namespace Core

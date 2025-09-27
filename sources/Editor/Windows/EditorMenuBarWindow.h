@@ -39,7 +39,9 @@ namespace Core
 
     protected:
         void onInitialize() override;
+
         void onDraw() override;
+
         void onUpdate() override;
 
     private:
@@ -50,5 +52,4 @@ namespace Core
         float _fpsTextSize = 50.f;
         float _simulationButton = 50.f;
     };
-
 } // namespace Core

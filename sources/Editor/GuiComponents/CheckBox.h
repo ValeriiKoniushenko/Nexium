@@ -29,7 +29,6 @@
 
 namespace Core::Gui
 {
-
     class CheckBox : public Widget
     {
         ECS_COMPONENT_DECL(CheckBox, Widget);
@@ -39,7 +38,9 @@ namespace Core::Gui
 
         [[nodiscard]] float getWidth() const override { return getRealSize().x; }
         [[nodiscard]] float getHeight() const override { return getRealSize().y; }
+
         void setWidth(float newWidth) override;
+
         void setHeight(float newHeight) override;
 
         void setValue(bool value) { _currentValue = value; }
@@ -50,11 +51,11 @@ namespace Core::Gui
 
     protected:
         void onDraw() override;
+
         void onInitialize() override;
 
     protected:
         glm::vec2 _size = glm::vec2(50.f, 0.f);
         bool _currentValue = false;
     };
-
 } // namespace Core::Gui

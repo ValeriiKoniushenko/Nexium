@@ -33,7 +33,6 @@
 
 namespace Core
 {
-
     class LevelData : public BaseLog, public Utils::NotCopyableAndNotMoveable
     {
     public:
@@ -46,5 +45,4 @@ namespace Core
         ControllerManager controllerManager;
         CameraManager cameraManager;
     };
-
 } // namespace Core

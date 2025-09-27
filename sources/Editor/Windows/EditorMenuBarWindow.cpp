@@ -46,7 +46,6 @@ namespace
             gGameInstance->gameEditor.showWindow<T>();
         }
     }
-
 } // namespace
 
 namespace Core
@@ -138,5 +137,4 @@ namespace Core
 
         _slowUpdater.startOrUpdate();
     }
-
 } // namespace Core

@@ -29,7 +29,6 @@
 
 namespace Core::Gui
 {
-
     ECS_COMPONENT_IMPL(Button)
     ECS_COMPONENT_IMPL(ToggleButton)
     ECS_COMPONENT_IMPL(ImageButton)
@@ -344,5 +343,4 @@ namespace Core::Gui
     {
         Button::postDraw();
     }
-
 } // namespace Core::Gui

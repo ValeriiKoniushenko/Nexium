@@ -35,7 +35,10 @@ namespace Core
 {
     ECS_COMPONENT_IMPL(BaseCamera)
 
-    const glm::mat4& BaseCamera::getMatrix()
+    const glm
+
+        ::mat4&
+        BaseCamera::getMatrix()
     {
         if (_isDirtyProjMatrix)
         {
@@ -200,5 +203,4 @@ namespace Core
             recalculateCameraMatrices();
         }
     }
-
 } // namespace Core

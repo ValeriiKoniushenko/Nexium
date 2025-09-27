@@ -40,6 +40,7 @@ namespace Core
     {
     public:
         void requestPick(std::function<void(StaticMesh*)>&& callback);
+
         void update(Scene& scene);
 
     protected:
@@ -47,5 +48,4 @@ namespace Core
         std::function<void(StaticMesh*)> _callback;
         bool _requested = false;
     };
-
 } // namespace Core

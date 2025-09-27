@@ -30,7 +30,6 @@
 
 namespace Core
 {
-
     StringAtom Mouse::KeyToString(Key key)
     {
         // clang-format off
@@ -112,5 +111,4 @@ namespace Core
     {
         return glfwGetMouseButton(GetWindow().getRawWindow(), key) == GLFW_REPEAT;
     }
-
 } // namespace Core

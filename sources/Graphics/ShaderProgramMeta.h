@@ -29,7 +29,6 @@
 
 namespace Core
 {
-
     // clang-format off
     enum class ShaderType : GLenum
     {
@@ -57,6 +56,7 @@ namespace Core
                     const std::filesystem::path& fragmentShaderPath);
 
         [[nodiscard]] ShaderProgram& getShaderProgram() noexcept { return _shaderProgram; }
+
         [[nodiscard]] const ShaderProgram& getShaderProgram() const noexcept
         {
             return _shaderProgram;
@@ -67,11 +67,13 @@ namespace Core
         {
             return _uniforms;
         }
+
         [[nodiscard]] const std::unordered_set<ShaderVariable, ShaderVariable::Hasher>& getInputs()
             const
         {
             return _inputs;
         }
+
         [[nodiscard]] const std::unordered_set<ShaderVariable, ShaderVariable::Hasher>& getOutputs()
             const
         {
@@ -79,7 +81,9 @@ namespace Core
         }
 
         void setShaderName(const std::string& name);
+
         void setShaderName(const StringAtom& name);
+
         [[nodiscard]] const StringAtom& getShaderName() const { return _shaderName; }
 
         [[nodiscard]] spdlog::logger* getLogger() const override { return Graphics::getLogger(); }
@@ -87,12 +91,14 @@ namespace Core
         [[nodiscard]] const char* getPrefix() const override { return "ShaderProgramMeta"; }
 
         void recreateFromSources();
+
         bool safeRecreateFromSources();
 
         [[nodiscard]] const std::filesystem::path& getVertexShaderPath() const noexcept
         {
             return _vertexShaderPath;
         }
+
         [[nodiscard]] const std::filesystem::path& getFragmentShaderPath() const noexcept
         {
             return _fragmentShaderPath;
@@ -100,13 +106,16 @@ namespace Core
 
     private:
         void compileShader();
+
         void requireNoCompileErrors();
 
         void generateShaderId();
+
         void readSourceShaderFile(const std::filesystem::path& vertexShaderPath,
                                   const std::filesystem::path& fragmentShaderPath);
 
         static void checkShaderCompileStatus(GLuint shaderId, const std::string& shaderType);
+
         void reflectShaderVariablesFor(GLuint shaderProgramId);
 
     private:

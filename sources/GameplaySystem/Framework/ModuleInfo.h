@@ -28,11 +28,9 @@
 
 namespace Framework
 {
-
     [[nodiscard]] inline spdlog::logger* getLogger()
     {
         static std::shared_ptr<spdlog::logger> logger = spdlog::stdout_color_mt("Framework");
         return logger.get();
     }
-
 } // namespace Framework

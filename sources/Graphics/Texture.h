@@ -35,9 +35,13 @@ namespace Core
     {
     public:
         Texture() = default;
+
         Texture(const Texture&) = delete;
+
         Texture& operator=(const Texture&) = delete;
+
         Texture(Texture&&) noexcept;
+
         Texture& operator=(Texture&&) noexcept;
 
         virtual ~Texture();

@@ -30,7 +30,6 @@
 
 namespace Core
 {
-
     void EditorAssetsManager::tryToOpenFile(const std::filesystem::directory_entry& entry)
     {
         if (!entry.is_regular_file())
@@ -139,5 +138,4 @@ namespace Core
 #endif
         std::system(command.c_str());
     }
-
 } // namespace Core

@@ -141,7 +141,7 @@ namespace Core
     {
         auto getPath = [this, &json](const char* prop, Direction dir)
         {
-            if (Verify(json.contains(prop)))
+            if (ASSERT_VAL(json.contains(prop)))
             {
                 _paths.at(static_cast<std::size_t>(dir)) = json[prop].get<std::filesystem::path>();
             }

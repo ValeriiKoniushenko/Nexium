@@ -30,7 +30,6 @@
 
 namespace Core
 {
-
     class GraphicsComponentData : public virtual JsonAdapter
     {
     public:
@@ -73,24 +72,35 @@ namespace Core
         };
 
         [[nodiscard]] static StringAtom ToString(ModifiedValue v);
+
         [[nodiscard]] static ModifiedValue FromString(const StringAtom& str);
+
         [[nodiscard]] static const std::vector<StringAtom>& ModifiedValueAsStringVector();
+
         [[nodiscard]] static const std::vector<StringAtom>& ModifierAsStringVector();
 
     public:
         GraphicsComponentData() = default;
+
         ~GraphicsComponentData() override;
+
         GraphicsComponentData(const GraphicsComponentData& other);
+
         GraphicsComponentData(GraphicsComponentData&& other) noexcept;
+
         GraphicsComponentData& operator=(const GraphicsComponentData& other);
+
         GraphicsComponentData& operator=(GraphicsComponentData&& other) noexcept;
 
         void generate();
 
         void setVertexBuffer(const std::vector<float>& data, GLenum usage = GL_STATIC_DRAW);
+
         void setIndexBuffer(const std::vector<GLuint>& data, GLenum usage = GL_STATIC_DRAW);
+
         void setTexture2D(const unsigned char* data, uint32_t width, uint32_t height,
                           GLuint channels);
+
         void setShader(ShaderProgram* sp, bool ignoreVertexAttribSetup = false);
 
         /**
@@ -105,6 +115,7 @@ namespace Core
         void setMesh(const aiMesh* mesh, bool isAppendNormals = false, bool isAppendUV = false);
 
         void clear();
+
         [[nodiscard]] bool isValid() const noexcept
         {
             return _vbo != 0 && _ebo != 0 && _vao != 0 && _shader != 0;
@@ -156,14 +167,19 @@ namespace Core
         {
             return _drawModifiers;
         }
+
         void clearDrawModifiers() { _drawModifiers.clear(); }
+
         void setDrawModifiers(std::vector<ModifierParam>&& values);
+
         void setDrawModifiers(const std::vector<ModifierParam>& values);
 
         void addDrawModifiers(ModifiedValue value, Modifier mod);
+
         [[nodiscard]] Modifier getDrawModifier(ModifiedValue value);
 
         [[nodiscard]] nlohmann::json toJson() const override;
+
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
 
         [[nodiscard]] uint32_t getTriangleCount() const noexcept { return _triangleCount; }
@@ -172,26 +188,27 @@ namespace Core
 
         void bindVAO() const noexcept
         {
-            Assert(_vao != 0);
+            ASSERT(_vao != 0);
             glBindVertexArray(_vao);
         }
+
         void unbindVao() const noexcept { glBindVertexArray(0); }
 
         void bindVBO() const noexcept
         {
-            Assert(_vbo != 0);
+            ASSERT(_vbo != 0);
             glBindBuffer(GL_ARRAY_BUFFER, _vbo);
         }
 
         void bindEBO() const noexcept
         {
-            Assert(_ebo != 0);
+            ASSERT(_ebo != 0);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
         }
 
         void bindTexture(GLenum type = GL_TEXTURE_2D) const noexcept
         {
-            Assert(_texture != 0);
+            ASSERT(_texture != 0);
             glBindTexture(type, _texture);
         }
 
@@ -209,5 +226,4 @@ namespace Core
         GLuint _vao = 0;
         GLuint _texture = 0;
     };
-
 } // namespace Core

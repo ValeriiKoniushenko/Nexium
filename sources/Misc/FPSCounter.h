@@ -28,18 +28,19 @@
 
 namespace Core
 {
-
     class FPSCounter
     {
     public:
         void reset();
+
         void start();
+
         void newFrameUpdate();
+
         [[nodiscard]] double getFPS() const;
 
     private:
         std::chrono::system_clock::time_point _start;
         uint64_t _frames = 0;
     };
-
 } // namespace Core

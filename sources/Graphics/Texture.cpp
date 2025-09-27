@@ -26,7 +26,6 @@
 
 namespace Core
 {
-
     Texture::Texture(Texture&& other) noexcept
     {
         *this = std::move(other);
@@ -78,5 +77,4 @@ namespace Core
         _textureId = 0;
         _size = {};
     }
-
 } // namespace Core

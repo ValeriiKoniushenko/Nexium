@@ -31,7 +31,6 @@
 
 namespace Core
 {
-
     class StaticMeshBundle;
     class StaticMesh;
 
@@ -64,11 +63,11 @@ namespace Core
 
     private:
         void tryToSelectGeneralComponent(BaseComponent* comp);
+
         void tryToDeselectGeneralComponent();
 
     private:
         std::unordered_map<void*, BaseComponent::Ptr> _selectedObjects;
         BaseComponent* _generalSelectedComponent = nullptr;
     };
-
 } // namespace Core

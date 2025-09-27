@@ -56,7 +56,9 @@ namespace Core
         ~SkyboxAsset() override = default;
 
         void onLoadRequest() override;
+
         void onUnloadRequest() override;
+
         void onFillData(nlohmann::json&& json) override;
 
         [[nodiscard]] const char* getPrefix() const override { return "Skybox"; }

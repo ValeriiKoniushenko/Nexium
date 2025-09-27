@@ -37,7 +37,6 @@ std::unique_ptr<Core::GameInstance> gGameInstance = nullptr;
 
 namespace Core
 {
-
     ShaderManager& GetShaderManager()
     {
         return gGameInstance->shaderManager;
@@ -206,7 +205,7 @@ namespace Core
     void GameInstance::onLoadShaders()
     {
         auto* colorShader = shaderManager.getShaderProgram("color"_atom);
-        if (Verify(colorShader))
+        if (ASSERT_VAL(colorShader))
         {
             colorShader->setVertexAttributeCallback(
                 []
@@ -225,7 +224,7 @@ namespace Core
         }
 
         auto* outlineShader = shaderManager.getShaderProgram("outline"_atom);
-        if (Verify(outlineShader))
+        if (ASSERT_VAL(outlineShader))
         {
             outlineShader->setVertexAttributeCallback(
                 []
@@ -240,7 +239,7 @@ namespace Core
         }
 
         auto* objectIdentifierShader = shaderManager.getShaderProgram("objectIdentifier"_atom);
-        if (Verify(objectIdentifierShader))
+        if (ASSERT_VAL(objectIdentifierShader))
         {
             objectIdentifierShader->setVertexAttributeCallback(
                 []
@@ -251,7 +250,7 @@ namespace Core
         }
 
         auto* simpleColorShader = shaderManager.getShaderProgram("pickUpColorFiller"_atom);
-        if (Verify(simpleColorShader))
+        if (ASSERT_VAL(simpleColorShader))
         {
             simpleColorShader->setVertexAttributeCallback(
                 []
@@ -266,7 +265,7 @@ namespace Core
         }
 
         auto* skyboxShader = shaderManager.getShaderProgram("skybox"_atom);
-        if (Verify(skyboxShader))
+        if (ASSERT_VAL(skyboxShader))
         {
             skyboxShader->setVertexAttributeCallback(
                 []

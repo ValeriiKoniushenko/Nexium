@@ -28,7 +28,6 @@
 
 namespace Core::Gui
 {
-
     class VerticalLayout : public Layout
     {
         ECS_COMPONENT_DECL_NO_CNSTR(VerticalLayout, Layout);
@@ -37,26 +36,37 @@ namespace Core::Gui
         explicit VerticalLayout(const StringAtom& name = "");
 
         [[nodiscard]] float getWidth() const override;
+
         [[nodiscard]] float getHeight() const override;
 
         /**
          * @brief It will work only while Top/Bottom/Center for vert. align
          */
         void setSpacing(float value);
+
         void resetSpacing();
+
         [[nodiscard]] float getSpacing() const;
 
     protected:
         void onAddChild(BaseComponent* newChild) override;
+
         void recalcFlexChildren();
+
         void onTick(float delta) override;
+
         void onDraw() override;
+
         void onInitialize() override;
 
         void prepareAlignSpaceBetween();
+
         void prepareAlignTop();
+
         void prepareAlignBottom();
+
         void prepareAlignCenter();
+
         void directDraw();
 
         void calcXOffsets();
@@ -65,5 +75,4 @@ namespace Core::Gui
         std::vector<float> _xOffsets;
         std::optional<float> _spacing;
     };
-
 } // namespace Core::Gui

@@ -28,7 +28,6 @@
 
 namespace Core
 {
-
     class Scene;
     class Actor;
 
@@ -47,7 +46,9 @@ namespace Core
 
     protected:
         void onInitialize() override;
+
         void onDraw() override;
+
         void onUpdate() override;
 
     protected:

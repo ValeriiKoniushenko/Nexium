@@ -35,11 +35,12 @@ namespace Core
     public:
     private:
         void onInitialize() override;
+
         void onDraw() override;
 
     protected:
         [[nodiscard]] bool beginWindowDraw() override;
+
         void endWindowDraw() override;
     };
-
 } // namespace Core
