@@ -1,0 +1,590 @@
+{
+    "Transformable": {
+        "origin": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "position": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "rotation": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ]
+    },
+    "children": [
+        {
+            "GraphicsComponentData": {
+                "modifiers": []
+            },
+            "Transformable": {
+                "origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "isEnabled": true,
+            "name": "tree.007-0",
+            "noTick": false,
+            "type": "StaticMesh"
+        },
+        {
+            "GraphicsComponentData": {
+                "modifiers": []
+            },
+            "Transformable": {
+                "origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "isEnabled": true,
+            "name": "tree.007-1",
+            "noTick": false,
+            "type": "StaticMesh"
+        },
+        {
+            "GraphicsComponentData": {
+                "modifiers": []
+            },
+            "Transformable": {
+                "origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "isEnabled": true,
+            "name": "tree-0",
+            "noTick": false,
+            "type": "StaticMesh"
+        },
+        {
+            "GraphicsComponentData": {
+                "modifiers": []
+            },
+            "Transformable": {
+                "origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "isEnabled": true,
+            "name": "tree-1",
+            "noTick": false,
+            "type": "StaticMesh"
+        },
+        {
+            "GraphicsComponentData": {
+                "modifiers": []
+            },
+            "Transformable": {
+                "origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "isEnabled": true,
+            "name": "tree.001-0",
+            "noTick": false,
+            "type": "StaticMesh"
+        },
+        {
+            "GraphicsComponentData": {
+                "modifiers": []
+            },
+            "Transformable": {
+                "origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "isEnabled": true,
+            "name": "tree.001-1",
+            "noTick": false,
+            "type": "StaticMesh"
+        },
+        {
+            "GraphicsComponentData": {
+                "modifiers": []
+            },
+            "Transformable": {
+                "origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "isEnabled": true,
+            "name": "tree.005",
+            "noTick": false,
+            "type": "StaticMesh"
+        },
+        {
+            "GraphicsComponentData": {
+                "modifiers": []
+            },
+            "Transformable": {
+                "origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "isEnabled": true,
+            "name": "Cube.019",
+            "noTick": false,
+            "type": "StaticMesh"
+        },
+        {
+            "GraphicsComponentData": {
+                "modifiers": []
+            },
+            "Transformable": {
+                "origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "isEnabled": true,
+            "name": "Cube.004",
+            "noTick": false,
+            "type": "StaticMesh"
+        }
+    ],
+    "isEnabled": true,
+    "meshes": [
+        {
+            "GraphicsComponentData": {
+                "modifiers": []
+            },
+            "Transformable": {
+                "origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "isEnabled": true,
+            "name": "tree.007-0",
+            "noTick": false,
+            "type": "StaticMesh"
+        },
+        {
+            "GraphicsComponentData": {
+                "modifiers": []
+            },
+            "Transformable": {
+                "origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "isEnabled": true,
+            "name": "tree.007-1",
+            "noTick": false,
+            "type": "StaticMesh"
+        },
+        {
+            "GraphicsComponentData": {
+                "modifiers": []
+            },
+            "Transformable": {
+                "origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "isEnabled": true,
+            "name": "tree-0",
+            "noTick": false,
+            "type": "StaticMesh"
+        },
+        {
+            "GraphicsComponentData": {
+                "modifiers": []
+            },
+            "Transformable": {
+                "origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "isEnabled": true,
+            "name": "tree-1",
+            "noTick": false,
+            "type": "StaticMesh"
+        },
+        {
+            "GraphicsComponentData": {
+                "modifiers": []
+            },
+            "Transformable": {
+                "origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "isEnabled": true,
+            "name": "tree.001-0",
+            "noTick": false,
+            "type": "StaticMesh"
+        },
+        {
+            "GraphicsComponentData": {
+                "modifiers": []
+            },
+            "Transformable": {
+                "origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "isEnabled": true,
+            "name": "tree.001-1",
+            "noTick": false,
+            "type": "StaticMesh"
+        },
+        {
+            "GraphicsComponentData": {
+                "modifiers": []
+            },
+            "Transformable": {
+                "origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "isEnabled": true,
+            "name": "tree.005",
+            "noTick": false,
+            "type": "StaticMesh"
+        },
+        {
+            "GraphicsComponentData": {
+                "modifiers": []
+            },
+            "Transformable": {
+                "origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "isEnabled": true,
+            "name": "Cube.019",
+            "noTick": false,
+            "type": "StaticMesh"
+        },
+        {
+            "GraphicsComponentData": {
+                "modifiers": []
+            },
+            "Transformable": {
+                "origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "isEnabled": true,
+            "name": "Cube.004",
+            "noTick": false,
+            "type": "StaticMesh"
+        }
+    ],
+    "name": "ConiferousForestAssetsPack",
+    "noTick": false,
+    "type": "StaticMeshBundle"
+}

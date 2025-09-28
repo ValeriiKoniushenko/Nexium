@@ -57,7 +57,7 @@ namespace Core
                       const std::function<bool(const Actor*)>& conditional) override;
 
         void importFrom(const aiNode* node, const aiScene* scene,
-                        const std::filesystem::path& modelPath = "");
+                        const std::filesystem::path& modelPath = "", float scale = 1.f);
 
         void setShader(ShaderProgram* sp, bool ignoreVertexAttribSetup = false);
 

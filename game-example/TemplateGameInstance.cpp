@@ -53,19 +53,19 @@ void TemplateGameInstance::onFinishWriteCache()
 void TemplateGameInstance::onInitializeFinish()
 {
     std::vector modelPaths = { Config::Path::objects3d / "Models/FBX/FireHydrant.fbx",
-                               Config::Path::objects3d / "Models/FBX/Treesblend.fbx" };
+                               Config::Path::objects3d / "ConiferousForestAssetsPack.glb" };
 
     Assimp::Importer importer;
     for (auto&& path : modelPaths)
     {
         const aiScene* scene = importer.ReadFile(
             path.generic_string().c_str(),
-                                aiProcess_Triangulate | aiProcess_JoinIdenticalVertices
-                                    | aiProcess_SortByPType | aiProcess_PreTransformVertices);
+            aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType
+                | aiProcess_PreTransformVertices | aiProcess_GlobalScale);
         if (ASSERT_VAL(scene) && ASSERT_VAL(scene->mRootNode))
         {
             StaticMeshBundle mesh;
-            mesh.importFrom(scene->mRootNode, scene, path);
+            mesh.importFrom(scene->mRootNode, scene, path, 100.f);
             mesh.setShader(shaderManager.getShaderProgram("color"_atom));
             mesh.setOutlineShader(shaderManager.getShaderProgram("outline"_atom));
             gameScene.addActor(std::move(mesh), true);

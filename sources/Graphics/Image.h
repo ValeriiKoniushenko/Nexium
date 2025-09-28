@@ -62,12 +62,14 @@ namespace Core
 
         [[nodiscard]] ISize2 getSize() const noexcept { return _size; }
         [[nodiscard]] Channel getChannel() const noexcept { return _channel; }
+        [[nodiscard]] int getChannelsCount() const noexcept { return _channel.cast(); }
 
         [[nodiscard]] GLenum getChannelAsOpenGLType() const noexcept;
 
         [[nodiscard]] const unsigned char* data() const noexcept { return _data; }
 
         bool loadFromFile(const std::filesystem::path& path, bool isFlipVertically = true);
+        bool loadFromMemory(const uint8_t* data, std::size_t size, bool isFlipVertically = true);
 
         void clear();
 

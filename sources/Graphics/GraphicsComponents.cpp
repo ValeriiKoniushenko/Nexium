@@ -111,10 +111,16 @@ namespace Core
     }
 
     void GraphicsComponentData::setTexture2D(const unsigned char* data, uint32_t width,
-                                             uint32_t height, GLuint channels)
+                                             uint32_t height, int channelsCount)
     {
         if (ASSERT_VAL(data && _ebo != 0 && _vao != 0 && _texture != 0)) [[likely]]
         {
+            if (!ASSERT_VAL(channelsCount >= 3 && channelsCount <= 4,
+                            "Impossible count of channels"))
+            {
+                return;
+            }
+
             glBindVertexArray(_vao);
 
             glBindTexture(GL_TEXTURE_2D, _texture);
@@ -124,8 +130,11 @@ namespace Core
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-            glTexImage2D(GL_TEXTURE_2D, 0, channels, width, height, 0, channels, GL_UNSIGNED_BYTE,
-                         data);
+            const GLenum format = (channelsCount == 4) ? GL_RGBA : GL_RGB;
+            const GLenum internalFormat = (channelsCount == 4) ? GL_RGBA8 : GL_RGB8;
+
+            glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format,
+                         GL_UNSIGNED_BYTE, data);
             glGenerateMipmap(GL_TEXTURE_2D);
 
             glBindTexture(GL_TEXTURE_2D, 0);
@@ -148,7 +157,7 @@ namespace Core
     }
 
     void GraphicsComponentData::setMesh(const aiMesh* mesh, bool isAppendNormals /* = false*/,
-                                        bool isAppendUV /* = false*/)
+                                        bool isAppendUV /* = false*/, float scale /* = 1.f*/)
     {
         if (!mesh) [[unlikely]]
         {
@@ -170,7 +179,7 @@ namespace Core
 
         for (unsigned int i = 0; i < mesh->mNumVertices; ++i)
         {
-            const aiVector3D v = mesh->mVertices[i];
+            const aiVector3D v = mesh->mVertices[i] * scale;
             vertices.push_back(v.x);
             vertices.push_back(v.y);
             vertices.push_back(v.z);

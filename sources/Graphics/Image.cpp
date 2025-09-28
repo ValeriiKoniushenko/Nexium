@@ -88,12 +88,36 @@ namespace Core
         if (isEmpty())
         {
             clear();
-            criticalThrowingLog("stblib can't load the image by unknown reasons. Image path: {}"_f
-                                << path.lexically_normal().generic_string());
+            criticalLog("stbi lib can't load the image by unknown reasons. Image path: {}"_f
+                        << path.lexically_normal().generic_string());
         }
 
         _channel = channel;
         _name = path.lexically_normal().generic_string();
+
+        return true;
+    }
+
+    bool Image::loadFromMemory(const uint8_t* data, std::size_t size, bool isFlipVertically)
+    {
+        if (!data)
+        {
+            criticalLog("Provided data is nullptr. Can't load image.");
+            return false;
+        }
+
+        clear();
+        stbi_set_flip_vertically_on_load(isFlipVertically);
+        int channel = 0;
+        _data = stbi_load_from_memory(data, size, &_size.width, &_size.height, &channel, 0);
+        if (isEmpty())
+        {
+            clear();
+            criticalLog("stbi lib can't load the image from memory by unknown reasons");
+        }
+
+        _channel = channel;
+        _name = "None"_atom;
 
         return true;
     }

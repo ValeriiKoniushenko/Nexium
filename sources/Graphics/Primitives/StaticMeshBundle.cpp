@@ -35,7 +35,7 @@ using namespace Core;
 namespace
 {
     void recursiveImportFrom(BaseComponent* rootComponent, const aiNode* node, const aiScene* scene,
-                             const std::filesystem::path& modelPath)
+                             const std::filesystem::path& modelPath, float scale)
     {
         for (uint32_t i = 0; i < node->mNumMeshes; ++i)
         {
@@ -43,12 +43,12 @@ namespace
 
             const aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
             topMesh->setComponentName(mesh->mName.C_Str());
-            topMesh->importFrom(mesh, scene, modelPath);
+            topMesh->importFrom(mesh, scene, modelPath, scale);
         }
 
         for (uint32_t i = 0; i < node->mNumChildren; ++i)
         {
-            recursiveImportFrom(rootComponent, node->mChildren[i], scene, modelPath);
+            recursiveImportFrom(rootComponent, node->mChildren[i], scene, modelPath, scale);
         }
     }
 } // namespace
@@ -103,7 +103,8 @@ namespace Core
     }
 
     void StaticMeshBundle::importFrom(const aiNode* node, const aiScene* scene,
-                                      const std::filesystem::path& modelPath)
+                                      const std::filesystem::path& modelPath,
+                                      float scale /* = 1.f*/)
     {
         if (!ASSERT_VAL(node))
         {
@@ -124,7 +125,7 @@ namespace Core
         }
 
         setComponentName(modelPath.stem().generic_string().c_str());
-        recursiveImportFrom(this, node, scene, modelPath);
+        recursiveImportFrom(this, node, scene, modelPath, scale);
 
         globalLog.debugLog("MeshBundle '{}' was loaded to the world."_f << _name);
     }

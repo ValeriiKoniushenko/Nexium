@@ -52,7 +52,7 @@ namespace Core
 
     public:
         void importFrom(const aiMesh* rawMesh, const aiScene* scene,
-                        const std::filesystem::path& modelPath = "");
+                        const std::filesystem::path& modelPath = "", float scale = 1.f);
 
         [[nodiscard]] FSize3 getSize() const noexcept { return _size; }
         [[nodiscard]] glm::vec3 getCenter() const noexcept { return _center; }

@@ -99,7 +99,7 @@ namespace Core
         void setIndexBuffer(const std::vector<GLuint>& data, GLenum usage = GL_STATIC_DRAW);
 
         void setTexture2D(const unsigned char* data, uint32_t width, uint32_t height,
-                          GLuint channels);
+                          int channelsCount);
 
         void setShader(ShaderProgram* sp, bool ignoreVertexAttribSetup = false);
 
@@ -108,11 +108,13 @@ namespace Core
          * @param mesh from Assimp::Importer
          * @param isAppendNormals if it true - than it will append to every vertex data 'normals'
          * @param isAppendUV if it true - than it will append to every vertex data 'UV'
+         * @param scale mesh scaler
          *
          * Example of one vertex data:
          * pos.x, pos.y, pos.z,  [normal.x, normal.y, normal.z]  [cv.x, cv.y]
          */
-        void setMesh(const aiMesh* mesh, bool isAppendNormals = false, bool isAppendUV = false);
+        void setMesh(const aiMesh* mesh, bool isAppendNormals = false, bool isAppendUV = false,
+                     float scale = 1.f);
 
         void clear();
 

@@ -36,7 +36,8 @@ namespace Core
     ECS_COMPONENT_IMPL(StaticMesh)
 
     void StaticMesh::importFrom(const aiMesh* rawMesh, const aiScene* scene,
-                                const std::filesystem::path& modelPath /* = ""*/)
+                                const std::filesystem::path& modelPath /* = ""*/,
+                                float scale /* = 1.f*/)
     {
         if (!ASSERT_VAL(rawMesh)) [[unlikely]]
         {
@@ -51,20 +52,29 @@ namespace Core
         aiString texturePath;
         if (material->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath) == AI_SUCCESS)
         {
-            const auto relative = StringAtom(texturePath.C_Str()).replaceAll("\\", "/");
-            const auto resolved
-                = (modelPath.parent_path() / relative.toStdString()).lexically_normal();
-
             Image image;
-            ASSERT(resolved.is_relative());
-            if (ASSERT_VAL(image.loadFromFile(resolved, true)))
+            if (const aiTexture* tex = scene->GetEmbeddedTexture(texturePath.C_Str()))
+            {
+                image.loadFromMemory(reinterpret_cast<const uint8_t*>(tex->pcData), tex->mWidth);
+            }
+            else
+            {
+                const auto relative = StringAtom(texturePath.C_Str()).replaceAll("\\", "/");
+                const auto resolved
+                    = (modelPath.parent_path() / relative.toStdString()).lexically_normal();
+
+                ASSERT(resolved.is_relative());
+                image.loadFromFile(resolved, true);
+            }
+
+            if (!image.isEmpty())
             {
                 setTexture2D(image.data(), image.getSize().width, image.getSize().height,
-                             image.getChannelAsOpenGLType());
+                             image.getChannelsCount());
             }
         }
 
-        setMesh(rawMesh, true, true);
+        setMesh(rawMesh, true, true, scale);
     }
 
     nlohmann::json StaticMesh::toJson() const
