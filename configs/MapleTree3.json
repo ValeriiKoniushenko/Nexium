@@ -1,0 +1,156 @@
+{
+    "Transformable": {
+        "origin": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "position": [
+            1500.0,
+            0.0,
+            358.9981994628906
+        ],
+        "rotation": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ]
+    },
+    "children": [
+        {
+            "GraphicsComponentData": {
+                "modifiers": []
+            },
+            "Transformable": {
+                "origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "isEnabled": true,
+            "name": "MapleTree_3-0",
+            "noTick": false,
+            "type": "StaticMesh"
+        },
+        {
+            "GraphicsComponentData": {
+                "modifiers": []
+            },
+            "Transformable": {
+                "origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "isEnabled": true,
+            "name": "MapleTree_3-1",
+            "noTick": false,
+            "type": "StaticMesh"
+        }
+    ],
+    "isEnabled": true,
+    "meshes": [
+        {
+            "GraphicsComponentData": {
+                "modifiers": []
+            },
+            "Transformable": {
+                "origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "isEnabled": true,
+            "name": "MapleTree_3-0",
+            "noTick": false,
+            "type": "StaticMesh"
+        },
+        {
+            "GraphicsComponentData": {
+                "modifiers": []
+            },
+            "Transformable": {
+                "origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "isEnabled": true,
+            "name": "MapleTree_3-1",
+            "noTick": false,
+            "type": "StaticMesh"
+        }
+    ],
+    "name": "MapleTree3",
+    "noTick": false,
+    "type": "StaticMeshBundle"
+}

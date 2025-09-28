@@ -1,0 +1,94 @@
+{
+    "Transformable": {
+        "origin": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "position": [
+            500.0,
+            0.0,
+            -112.80743408203125
+        ],
+        "rotation": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ]
+    },
+    "children": [
+        {
+            "GraphicsComponentData": {
+                "modifiers": []
+            },
+            "Transformable": {
+                "origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "isEnabled": true,
+            "name": "Rock_2",
+            "noTick": false,
+            "type": "StaticMesh"
+        }
+    ],
+    "isEnabled": true,
+    "meshes": [
+        {
+            "GraphicsComponentData": {
+                "modifiers": []
+            },
+            "Transformable": {
+                "origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "isEnabled": true,
+            "name": "Rock_2",
+            "noTick": false,
+            "type": "StaticMesh"
+        }
+    ],
+    "name": "Rock2",
+    "noTick": false,
+    "type": "StaticMeshBundle"
+}

@@ -52,8 +52,14 @@ void TemplateGameInstance::onFinishWriteCache()
 
 void TemplateGameInstance::onInitializeFinish()
 {
-    std::vector modelPaths = { Config::Path::objects3d / "Models/FBX/FireHydrant.fbx",
-                               Config::Path::objects3d / "ConiferousForestAssetsPack.glb" };
+    std::vector modelPaths = {
+        Config::Path::objects3d / "Nature/Tree1.glb",
+        Config::Path::objects3d / "Nature/Tree2.glb",
+        ///
+        Config::Path::objects3d / "Nature/Rock1.glb",
+        Config::Path::objects3d / "Nature/Rock2.glb",
+        ///
+    };
 
     Assimp::Importer importer;
     for (auto&& path : modelPaths)
