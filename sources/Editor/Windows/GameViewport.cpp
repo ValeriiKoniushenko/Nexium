@@ -58,7 +58,7 @@ namespace Core
 
     void GameViewportEWC::onDraw()
     {
-        if (gGameInstance->renderMode.cast() == GameInstance::RenderMode::Editor)
+        if (gGameInstance->renderMode == GameInstance::RenderMode::Editor)
         {
             const auto& r = gGameInstance->gameViewport;
             const glm::vec2 renderSize = { static_cast<float>(r.getRenderSize().width),

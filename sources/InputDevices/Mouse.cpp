@@ -80,7 +80,7 @@ namespace Core
 
     glm::vec2 Mouse::GetInViewportPosition()
     {
-        if (gGameInstance->renderMode.cast() == GameInstance::RenderMode::Editor)
+        if (gGameInstance->renderMode == GameInstance::RenderMode::Editor)
         {
             if (auto* wnd = gGameInstance->gameEditor.getWindow<GameViewportEWC>())
             {

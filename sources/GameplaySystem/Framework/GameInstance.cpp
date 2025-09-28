@@ -65,6 +65,8 @@ namespace Core
         std::cout << std::fixed << std::setprecision(15);
         spdlog::set_pattern(Config::spdlogPattern);
 
+        tryReadFromCache();
+
         //-------------------- WINDOW ---------------------
         window = &GetWindow();
         window->create(Config::defaultWindowName, Config::defaultWindowSize);
@@ -117,6 +119,7 @@ namespace Core
     {
         gameEditor.saveAll();
         gameScene.writeToCache();
+        writeToCache();
 
         onSaveAll();
     }
@@ -144,7 +147,7 @@ namespace Core
                 gameScene.tick(world.timeDelta);
             }
 
-            if (renderMode.cast() == RenderMode::GameOnly)
+            if (renderMode == RenderMode::GameOnly)
             {
                 glClear(clearBits);
 
@@ -152,6 +155,7 @@ namespace Core
 
                 if (currentCamera)
                 {
+                    gameScene.directDraw();
                     onTick(world.timeDelta);
                 }
             }
@@ -186,7 +190,7 @@ namespace Core
 
     void GameInstance::updateViewport()
     {
-        if (renderMode.cast() == RenderMode::GameOnly)
+        if (renderMode == RenderMode::GameOnly)
         {
             window->updateViewport(Config::windowAspectRatio, ViewportMode::ZoomIn);
         }
@@ -200,7 +204,7 @@ namespace Core
     void GameInstance::toggleRenderMode()
     {
         using R = RenderMode;
-        renderMode = renderMode.cast() == R::GameOnly ? R::Editor : R::GameOnly;
+        renderMode = renderMode == R::GameOnly ? R::Editor : R::GameOnly;
         gGameInstance->updateViewport();
     }
 
@@ -278,6 +282,27 @@ namespace Core
         }
 
         onLoadShaders();
+    }
+
+    StringAtom GameInstance::getCacheHash() const
+    {
+        return "GameInstance"_atom;
+    }
+
+    nlohmann::json GameInstance::toCacheData() const
+    {
+        nlohmann::json json;
+
+        json["renderMode"] = static_cast<int>(renderMode);
+        return json;
+    }
+
+    void GameInstance::fromCacheData(const nlohmann::json& json)
+    {
+        if (json.contains("renderMode"))
+        {
+            renderMode = static_cast<RenderMode>(json["renderMode"].get<int>());
+        }
     }
 
     void GameInstance::loadCoreResources()

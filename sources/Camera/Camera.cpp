@@ -155,7 +155,7 @@ namespace Core
 
     FSize2 BaseCamera::getOutputFrameSize()
     {
-        if (gGameInstance->renderMode.cast() == GameInstance::RenderMode::Editor)
+        if (gGameInstance->renderMode == GameInstance::RenderMode::Editor)
         {
             return static_cast<FSize2>(gGameInstance->gameViewport.getRenderSize());
         }

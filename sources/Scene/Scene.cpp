@@ -32,7 +32,7 @@ namespace Core
 
     void Scene::directDraw()
     {
-        if (gGameInstance->renderMode.cast() == GameInstance::RenderMode::Editor)
+        if (gGameInstance->renderMode == GameInstance::RenderMode::Editor)
         {
             gGameInstance->gameEditor.slowObjectPicker.update(*this);
         }

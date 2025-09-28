@@ -93,7 +93,7 @@ namespace Core
             ->onSizeChanged.subscribe(
                 [](auto outer, auto inner)
                 {
-                    if (gGameInstance->renderMode.cast() == GameInstance::RenderMode::Editor)
+                    if (gGameInstance->renderMode == GameInstance::RenderMode::Editor)
                     {
                         gGameInstance->gameViewport.setRenderSize(static_cast<ISize2>(inner));
                         gGameInstance->updateViewport();

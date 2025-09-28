@@ -41,10 +41,14 @@
 
 namespace Core
 {
-    class GameInstance : public BaseLog
+    class GameInstance : public BaseLog, public JsonCacheable
     {
     public:
-        CreateEnum(RenderMode, int, GameOnly, Editor);
+        enum class RenderMode
+        {
+            GameOnly,
+            Editor
+        };
 
     public:
         [[nodiscard]] spdlog::logger* getLogger() const override { return Framework::getLogger(); }
@@ -79,7 +83,10 @@ namespace Core
         virtual void onLoadCoreResources() {}
         virtual void onInitializeReadCache() {}
 
-    protected:
+        [[nodiscard]] StringAtom getCacheHash() const override;
+        [[nodiscard]] nlohmann::json toCacheData() const override;
+        void fromCacheData(const nlohmann::json& json) override;
+
     private:
         void loadCoreResources();
         void startUpReadCache();
