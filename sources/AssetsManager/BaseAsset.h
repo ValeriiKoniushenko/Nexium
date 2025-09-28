@@ -149,8 +149,8 @@ namespace Core
         {
             if (_asset)
             {
-                ASSERT(_asset->_refCount != 0,
-                       "Invalid ref count, it will be less than zero - impossible.");
+                DEBUG_ASSERT(_asset->_refCount != 0,
+                             "Invalid ref count, it will be less than zero - impossible.");
 
                 --_asset->_refCount;
 

@@ -65,7 +65,7 @@ namespace Core
         template<IsEditorWindowComponent T>
         T::Ptr registerNewWindow(StringAtom name, bool isEnabled = true)
         {
-            if (!ASSERT_VAL(!!name))
+            if (!DEBUG_ASSERT_VAL(!!name))
             {
                 return nullptr;
             }
@@ -101,7 +101,7 @@ namespace Core
             for (auto&& windowIntrusive : _windows)
             {
                 auto* wnd = windowIntrusive.get();
-                if (!ASSERT_VAL(wnd))
+                if (!DEBUG_ASSERT_VAL(wnd))
                 {
                     continue;
                 }

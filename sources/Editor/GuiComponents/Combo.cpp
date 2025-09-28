@@ -102,7 +102,7 @@ namespace Core::Gui
 
     void ComboModelBased::setCurrentIndex(std::size_t i) noexcept
     {
-        if (ASSERT_VAL(_sizeProvider && _dataProvider))
+        if (DEBUG_ASSERT_VAL(_sizeProvider && _dataProvider))
         {
             _currentIndex = std::min(i, _sizeProvider() - 1);
             StringAtom item;

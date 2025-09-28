@@ -239,7 +239,7 @@ namespace Core
     {
         if constexpr (std::is_abstract_v<T>)
         {
-            ASSERT(false, "You are trying to create somewhere an abstract object");
+            DEBUG_ASSERT(false, "You are trying to create somewhere an abstract object");
             return nullptr;
         }
         else if constexpr (std::is_copy_constructible_v<T>)
@@ -370,21 +370,21 @@ namespace Core
         /** @brief Reset the component to uninitialized state. */
         virtual void clear() { _isInitialized = false; }
 
-        /** @brief Safe cast to a derived component type. ASSERTs if cast fails. */
+        /** @brief Safe cast to a derived component type. DEBUG_ASSERTs if cast fails. */
         template<IsComponent T>
         [[nodiscard]] T* castTo()
         {
             auto* casted = dynamic_cast<std::remove_reference_t<T>*>(this);
-            ASSERT(casted);
+            DEBUG_ASSERT(casted);
             return casted;
         }
 
-        /** @brief Safe cast to a derived component type. ASSERTs if cast fails. */
+        /** @brief Safe cast to a derived component type. DEBUG_ASSERTs if cast fails. */
         template<IsComponent T>
         [[nodiscard]] const T* castTo() const
         {
             auto* casted = dynamic_cast<const std::remove_reference_t<T>*>(this);
-            ASSERT(casted);
+            DEBUG_ASSERT(casted);
             return casted;
         }
 
@@ -761,7 +761,7 @@ namespace Core
               _type{ std::move(type) }
         {
 #ifdef DEBUG
-            ASSERT(_type.isStatic());
+            DEBUG_ASSERT(_type.isStatic());
 #endif
         }
 
@@ -794,7 +794,7 @@ namespace Core
     template<IsComponentOrBase TargetT, bool isConst, class FuncT>
     void BaseComponent::Impl_forEach_BFS(AdaptiveRawPtr<isConst> me, FuncT&& callback)
     {
-        if (!ASSERT_VAL(me)) [[unlikely]]
+        if (!DEBUG_ASSERT_VAL(me)) [[unlikely]]
         {
             return;
         }
@@ -812,7 +812,7 @@ namespace Core
             HolderPtr root = q.front();
             q.pop();
 
-            if (!ASSERT_VAL(root)) [[unlikely]]
+            if (!DEBUG_ASSERT_VAL(root)) [[unlikely]]
             {
                 me->criticalLog("BaseComponent::Impl_forEach_BFS was got nullptr for root.");
                 return;
@@ -847,7 +847,7 @@ namespace Core
     template<IsComponentOrBase TargetT, bool isConst, class FuncT>
     void BaseComponent::Impl_forEach_DFS(AdaptiveRawPtr<isConst> me, FuncT&& callback)
     {
-        if (!ASSERT_VAL(me)) [[unlikely]]
+        if (!DEBUG_ASSERT_VAL(me)) [[unlikely]]
         {
             return;
         }
@@ -864,7 +864,7 @@ namespace Core
             HolderPtr root = s.top();
             s.pop();
 
-            if (!ASSERT_VAL(root)) [[unlikely]]
+            if (!DEBUG_ASSERT_VAL(root)) [[unlikely]]
             {
                 me->criticalLog("BaseComponent::Impl_forEach_DFS was got nullptr for root.");
                 return;
@@ -911,8 +911,8 @@ namespace Core
         me->forEach(
             [&found, &name](BaseComponent* comp)
             {
-                ASSERT(comp->_type.isStatic());
-                ASSERT(TargetT::componentType.isStatic());
+                DEBUG_ASSERT(comp->_type.isStatic());
+                DEBUG_ASSERT(TargetT::componentType.isStatic());
 
                 if (comp->_type == TargetT::componentType)
                 {

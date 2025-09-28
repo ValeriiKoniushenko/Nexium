@@ -72,7 +72,7 @@ namespace Core::Gui
 
         void setIndexText(std::size_t i)
         {
-            if (ASSERT_VAL(label))
+            if (DEBUG_ASSERT_VAL(label))
             {
                 label->setText(StringAtom::MakeFrom(i) + "#"_atom);
             }
@@ -105,7 +105,7 @@ namespace Core::Gui
     public:
         void eraseAt(std::size_t i)
         {
-            if (ASSERT_VAL(i < _data.size()))
+            if (DEBUG_ASSERT_VAL(i < _data.size()))
             {
                 _data.erase(_data.begin() + i);
                 onEraseAt.trigger(i);
@@ -159,9 +159,10 @@ namespace Core::Gui
         {
             for (std::size_t i = 0; i < size() && i < getChildrenCount(); ++i)
             {
-                if (auto* cell = getChildAt(i)->template castTo<ArrayCell>(); ASSERT_VAL(cell))
+                if (auto* cell = getChildAt(i)->template castTo<ArrayCell>();
+                    DEBUG_ASSERT_VAL(cell))
                 {
-                    if (ASSERT_VAL(cell->content))
+                    if (DEBUG_ASSERT_VAL(cell->content))
                     {
                         _data[i] = ViewFetchFunc{}(cell->content);
                     }

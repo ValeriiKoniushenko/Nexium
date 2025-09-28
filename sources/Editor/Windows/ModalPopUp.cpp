@@ -57,7 +57,7 @@ namespace Core
         _okButton->onClick.subscribe(
             [this]()
             {
-                if (ASSERT_VAL(!!_okOrCancelCallback))
+                if (DEBUG_ASSERT_VAL(!!_okOrCancelCallback))
                 {
                     _okOrCancelCallback(true);
                 }
@@ -66,7 +66,7 @@ namespace Core
         _cancelButton->onClick.subscribe(
             [this]()
             {
-                if (ASSERT_VAL(!!_okOrCancelCallback))
+                if (DEBUG_ASSERT_VAL(!!_okOrCancelCallback))
                 {
                     _okOrCancelCallback(false);
                 }
@@ -76,7 +76,7 @@ namespace Core
 
     void ModalPopUp::onDraw()
     {
-        if (!ASSERT_VAL(!_text.isEmpty() && _okOrCancelCallback))
+        if (!DEBUG_ASSERT_VAL(!_text.isEmpty() && _okOrCancelCallback))
         {
             return;
         }

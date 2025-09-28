@@ -50,7 +50,7 @@ namespace Core
             }
         }
 
-        ASSERT(
+        DEBUG_ASSERT(
             false,
             ("Can't reflect the type '{}'. Maybe you forgot to register your class with needed "
              "macros. Look at the documentation, or check commen above the class Core::BaseComponent "
@@ -63,7 +63,7 @@ namespace Core
     bool GlobalComponentFactory::registerNewType(const StringAtom& type,
                                                  std::function<BaseComponent*()> callback)
     {
-        ASSERT(type.isStatic());
+        DEBUG_ASSERT(type.isStatic());
 
 #if defined(DEBUG)
         if (_map.contains(type))
@@ -283,8 +283,8 @@ namespace Core
 
     bool BaseComponent::operator==(const BaseComponent& other) const
     {
-        ASSERT(!_name.isEmpty());
-        ASSERT(!other._name.isEmpty());
+        DEBUG_ASSERT(!_name.isEmpty());
+        DEBUG_ASSERT(!other._name.isEmpty());
 
         return _name == other._name && _type == other._type;
     }

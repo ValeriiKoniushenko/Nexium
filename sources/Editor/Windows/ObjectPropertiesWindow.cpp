@@ -51,7 +51,7 @@ namespace
     HLayout::Ptr CreateHLayoutAndLabel(const char* label, bool isReadOnly,
                                        float size = ObjectPropertiesWindowEWC::defaultLabelWidthBig)
     {
-        if (!ASSERT_VAL(label))
+        if (!DEBUG_ASSERT_VAL(label))
         {
             return nullptr;
         }
@@ -68,7 +68,7 @@ namespace
     HLayout::Ptr Create(const char* label, bool isReadOnly,
                         float size = ObjectPropertiesWindowEWC::defaultLabelWidthBig)
     {
-        if (!ASSERT_VAL(label))
+        if (!DEBUG_ASSERT_VAL(label))
         {
             return nullptr;
         }
@@ -89,7 +89,7 @@ namespace
     {
         using namespace Core;
 
-        if (!ASSERT_VAL(label))
+        if (!DEBUG_ASSERT_VAL(label))
         {
             return nullptr;
         }
@@ -108,7 +108,7 @@ namespace
     {
         using namespace Core;
 
-        if (!ASSERT_VAL(label))
+        if (!DEBUG_ASSERT_VAL(label))
         {
             return nullptr;
         }

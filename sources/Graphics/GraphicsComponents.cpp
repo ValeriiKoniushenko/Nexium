@@ -90,7 +90,7 @@ namespace Core
 
     void GraphicsComponentData::setVertexBuffer(const std::vector<float>& data, GLenum usage)
     {
-        if (ASSERT_VAL(_vbo != 0 && _vao != 0)) [[likely]]
+        if (DEBUG_ASSERT_VAL(_vbo != 0 && _vao != 0)) [[likely]]
         {
             glBindVertexArray(_vao);
             glBindBuffer(GL_ARRAY_BUFFER, _vbo);
@@ -100,7 +100,7 @@ namespace Core
 
     void GraphicsComponentData::setIndexBuffer(const std::vector<GLuint>& data, GLenum usage)
     {
-        if (ASSERT_VAL(_ebo != 0 && _vao != 0)) [[likely]]
+        if (DEBUG_ASSERT_VAL(_ebo != 0 && _vao != 0)) [[likely]]
         {
             glBindVertexArray(_vao);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
@@ -113,10 +113,10 @@ namespace Core
     void GraphicsComponentData::setTexture2D(const unsigned char* data, uint32_t width,
                                              uint32_t height, int channelsCount)
     {
-        if (ASSERT_VAL(data && _ebo != 0 && _vao != 0 && _texture != 0)) [[likely]]
+        if (DEBUG_ASSERT_VAL(data && _ebo != 0 && _vao != 0 && _texture != 0)) [[likely]]
         {
-            if (!ASSERT_VAL(channelsCount >= 3 && channelsCount <= 4,
-                            "Impossible count of channels"))
+            if (!DEBUG_ASSERT_VAL(channelsCount >= 3 && channelsCount <= 4,
+                                  "Impossible count of channels"))
             {
                 return;
             }
@@ -148,7 +148,7 @@ namespace Core
 
         if (!ignoreVertexAttribSetup)
         {
-            ASSERT(_vao != 0);
+            DEBUG_ASSERT(_vao != 0);
             glBindVertexArray(_vao);
             glBindBuffer(GL_ARRAY_BUFFER, _vbo);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
@@ -232,7 +232,7 @@ namespace Core
     {
         if (!isValid()) [[unlikely]]
         {
-            ASSERT("Can't draw graphic component. It wasn't configured.");
+            DEBUG_ASSERT("Can't draw graphic component. It wasn't configured.");
             return;
         }
 
@@ -280,7 +280,7 @@ namespace Core
         for (auto& [value, modifier] : values)
         {
             map[value]++;
-            ASSERT(map[value] == 1, "The same modifier was added twice.");
+            DEBUG_ASSERT(map[value] == 1, "The same modifier was added twice.");
         }
 #endif
 
@@ -295,7 +295,7 @@ namespace Core
         for (const auto& [value, modifier] : values)
         {
             map[value]++;
-            ASSERT(map[value] == 1, "The same modifier was added twice.");
+            DEBUG_ASSERT(map[value] == 1, "The same modifier was added twice.");
         }
 #endif
 

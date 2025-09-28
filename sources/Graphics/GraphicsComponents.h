@@ -190,7 +190,7 @@ namespace Core
 
         void bindVAO() const noexcept
         {
-            ASSERT(_vao != 0);
+            DEBUG_ASSERT(_vao != 0);
             glBindVertexArray(_vao);
         }
 
@@ -198,19 +198,19 @@ namespace Core
 
         void bindVBO() const noexcept
         {
-            ASSERT(_vbo != 0);
+            DEBUG_ASSERT(_vbo != 0);
             glBindBuffer(GL_ARRAY_BUFFER, _vbo);
         }
 
         void bindEBO() const noexcept
         {
-            ASSERT(_ebo != 0);
+            DEBUG_ASSERT(_ebo != 0);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
         }
 
         void bindTexture(GLenum type = GL_TEXTURE_2D) const noexcept
         {
-            ASSERT(_texture != 0);
+            DEBUG_ASSERT(_texture != 0);
             glBindTexture(type, _texture);
         }
 

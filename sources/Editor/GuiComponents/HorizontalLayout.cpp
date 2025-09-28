@@ -169,7 +169,7 @@ namespace Core::Gui
         }
         else
         {
-            ASSERT(false);
+            DEBUG_ASSERT(false);
             prepareAlignLeft();
         }
 
@@ -291,7 +291,7 @@ namespace Core::Gui
             ++i;
         }
 
-        ASSERT(_yOffsets.size() == _children.size());
+        DEBUG_ASSERT(_yOffsets.size() == _children.size());
     }
 
     void HorizontalLayout::directDraw()

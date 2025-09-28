@@ -35,8 +35,14 @@ namespace Core::Gui
     public:
         [[nodiscard]] float getWidth() const override { return -1; }
         [[nodiscard]] float getHeight() const override { return 1; }
-        void setWidth(float) override { ASSERT(false, "Impossible to set size for Separator"); }
-        void setHeight(float) override { ASSERT(false, "Impossible to set size for Separator"); }
+        void setWidth(float) override
+        {
+            DEBUG_ASSERT(false, "Impossible to set size for Separator");
+        }
+        void setHeight(float) override
+        {
+            DEBUG_ASSERT(false, "Impossible to set size for Separator");
+        }
 
     protected:
         void onDraw() override;

@@ -88,12 +88,12 @@ namespace Core
         -> GraphicsComponentData::ModifierParam {
                 GraphicsComponentData::ModifierParam out;
 
-                if (auto modifier = layout->getFirstChildAs<Gui::ComboModelBased>(); ASSERT_VAL(!!modifier)) {
+                if (auto modifier = layout->getFirstChildAs<Gui::ComboModelBased>(); DEBUG_ASSERT_VAL(!!modifier)) {
                     auto str = GraphicsComponentData::ModifierAsStringVector()[modifier->getCurrentIndex()];
                     out.modifier = GraphicsComponentData::Modifier::fromStr(str.c_str()).value();
                 }
 
-                if (auto value = layout->getLastChildAs<Gui::ComboModelBased>(); ASSERT_VAL(!!value)) {
+                if (auto value = layout->getLastChildAs<Gui::ComboModelBased>(); DEBUG_ASSERT_VAL(!!value)) {
                     auto str = GraphicsComponentData::ModifiedValueAsStringVector()[value->getCurrentIndex()];
                     out.value = GraphicsComponentData::FromString(str);
                 }

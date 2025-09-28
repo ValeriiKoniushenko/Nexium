@@ -66,9 +66,9 @@ namespace Core
         spdlog::set_pattern(Config::spdlogPattern);
 
         //-------------------- WINDOW ---------------------
-        _window = &GetWindow();
-        _window->create(Config::defaultWindowName, Config::defaultWindowSize);
-        _window->onResize.subscribe(
+        window = &GetWindow();
+        window->create(Config::defaultWindowName, Config::defaultWindowSize);
+        window->onResize.subscribe(
             [this](ISize2 newSize)
             {
                 updateViewport();
@@ -82,11 +82,11 @@ namespace Core
         shaderManager.debugLog("Was loaded {} shaders."_f << shaderManager.countOfShaders());
         for (const auto& notLoadedShader : shaderManager.getFailedShaders())
         {
-            shaderManager.warnLog(
+            shaderManager.criticalLog(
                 "Shader '{}' found but not loaded. It contains some error[s]. See above in the lo"_f
                 << notLoadedShader);
         }
-        loadShaders();
+        initializeShaders();
 
         //-------------------- MISC ---------------------
         gameViewport.generate();
@@ -99,15 +99,15 @@ namespace Core
         gameEditor.initialize();
         gameScene.initialize();
 
-        initializeReadCache();
+        startUpReadCache();
         loadCoreResources();
 
-        gameLoop();
+        runMainLoop();
 
         saveAll();
     }
 
-    void GameInstance::initializeReadCache()
+    void GameInstance::startUpReadCache()
     {
         gameScene.readFromCache();
         onInitializeReadCache();
@@ -121,7 +121,7 @@ namespace Core
         onSaveAll();
     }
 
-    void GameInstance::gameLoop()
+    void GameInstance::runMainLoop()
     {
         FPSCounter fps;
         fps.start();
@@ -134,10 +134,10 @@ namespace Core
 
         constexpr int clearBits = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
 
-        while (!_window->shouldClose())
+        while (!window->shouldClose())
         {
             clock.start();
-            _window->pollEvent();
+            window->pollEvent();
 
             if (const auto* wnd = gameEditor.getWindow<GameViewportEWC>(); wnd && wnd->isFocused())
             {
@@ -170,13 +170,13 @@ namespace Core
                 }
             }
 
-            if (glfwGetWindowAttrib(_window->getRawWindow(), GLFW_ICONIFIED)
-                || glfwGetWindowAttrib(_window->getRawWindow(), GLFW_FOCUSED) == GLFW_FALSE)
+            if (glfwGetWindowAttrib(window->getRawWindow(), GLFW_ICONIFIED)
+                || glfwGetWindowAttrib(window->getRawWindow(), GLFW_FOCUSED) == GLFW_FALSE)
             {
                 std::this_thread::sleep_for(std::chrono::milliseconds(50));
             }
 
-            _window->swapBuffers();
+            window->swapBuffers();
             fps.newFrameUpdate();
             world.timeDelta = clock.stop();
         }
@@ -188,7 +188,7 @@ namespace Core
     {
         if (renderMode.cast() == RenderMode::GameOnly)
         {
-            _window->updateViewport(Config::windowAspectRatio, ViewportMode::ZoomIn);
+            window->updateViewport(Config::windowAspectRatio, ViewportMode::ZoomIn);
         }
         else
         {
@@ -204,10 +204,10 @@ namespace Core
         gGameInstance->updateViewport();
     }
 
-    void GameInstance::loadShaders()
+    void GameInstance::initializeShaders()
     {
         auto* colorShader = shaderManager.getShaderProgram("color"_atom);
-        if (ASSERT_VAL(colorShader))
+        if (DEBUG_ASSERT_VAL(colorShader))
         {
             colorShader->setVertexAttributeCallback(
                 []
@@ -226,7 +226,7 @@ namespace Core
         }
 
         auto* outlineShader = shaderManager.getShaderProgram("outline"_atom);
-        if (ASSERT_VAL(outlineShader))
+        if (DEBUG_ASSERT_VAL(outlineShader))
         {
             outlineShader->setVertexAttributeCallback(
                 []
@@ -241,7 +241,7 @@ namespace Core
         }
 
         auto* objectIdentifierShader = shaderManager.getShaderProgram("objectIdentifier"_atom);
-        if (ASSERT_VAL(objectIdentifierShader))
+        if (DEBUG_ASSERT_VAL(objectIdentifierShader))
         {
             objectIdentifierShader->setVertexAttributeCallback(
                 []
@@ -252,7 +252,7 @@ namespace Core
         }
 
         auto* simpleColorShader = shaderManager.getShaderProgram("pickUpColorFiller"_atom);
-        if (ASSERT_VAL(simpleColorShader))
+        if (DEBUG_ASSERT_VAL(simpleColorShader))
         {
             simpleColorShader->setVertexAttributeCallback(
                 []
@@ -267,7 +267,7 @@ namespace Core
         }
 
         auto* skyboxShader = shaderManager.getShaderProgram("skybox"_atom);
-        if (ASSERT_VAL(skyboxShader))
+        if (DEBUG_ASSERT_VAL(skyboxShader))
         {
             skyboxShader->setVertexAttributeCallback(
                 []

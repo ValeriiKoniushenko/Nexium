@@ -30,7 +30,7 @@ namespace Core
 
     void BaseLog::pushLog(level l, const char* str) const
     {
-        ASSERT(l != level::critical);
+        DEBUG_ASSERT(l != level::critical);
 
         auto* logger = getLogger();
         auto log = getCompleteText(str);

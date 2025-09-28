@@ -255,11 +255,11 @@ namespace Core
     {
         nlohmann::json json;
         json["logLimit"] = _logLimit;
-        if (ASSERT_VAL(_searchInput))
+        if (DEBUG_ASSERT_VAL(_searchInput))
         {
             json["filter"] = _searchInput->getInputtedData();
         }
-        if (ASSERT_VAL(_regexModeButton))
+        if (DEBUG_ASSERT_VAL(_regexModeButton))
         {
             json["regexMode"] = _regexModeButton->isActive();
         }
@@ -279,11 +279,11 @@ namespace Core
     {
         tryReadJsonTo(_logLimit, "logLimit", json);
 
-        if (json.contains("filter") && ASSERT_VAL(_searchInput))
+        if (json.contains("filter") && DEBUG_ASSERT_VAL(_searchInput))
         {
             _searchInput->setInputtedData(json["filter"].get<std::string>());
         }
-        if (json.contains("regexMode") && ASSERT_VAL(_regexModeButton))
+        if (json.contains("regexMode") && DEBUG_ASSERT_VAL(_regexModeButton))
         {
             _regexModeButton->setActive(json["regexMode"].get<bool>());
         }
@@ -297,7 +297,7 @@ namespace Core
                 }
 
                 auto level = spdlog::level::from_str(filter["level"].get<std::string>());
-                if (ASSERT_VAL(_levelFilter[level]))
+                if (DEBUG_ASSERT_VAL(_levelFilter[level]))
                 {
                     _levelFilter[level]->setActive(filter["value"].get<bool>());
                 }

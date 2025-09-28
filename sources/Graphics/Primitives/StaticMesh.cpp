@@ -39,7 +39,7 @@ namespace Core
                                 const std::filesystem::path& modelPath /* = ""*/,
                                 float scale /* = 1.f*/)
     {
-        if (!ASSERT_VAL(rawMesh)) [[unlikely]]
+        if (!DEBUG_ASSERT_VAL(rawMesh)) [[unlikely]]
         {
             errorLog("Impossible to import nullptr aiMesh*");
             return;
@@ -63,7 +63,7 @@ namespace Core
                 const auto resolved
                     = (modelPath.parent_path() / relative.toStdString()).lexically_normal();
 
-                ASSERT(resolved.is_relative());
+                DEBUG_ASSERT(resolved.is_relative());
                 image.loadFromFile(resolved, true);
             }
 
@@ -116,7 +116,7 @@ namespace Core
     {
         if (!GraphicsComponentData::isValid()) [[unlikely]]
         {
-            ASSERT("Can't draw graphic component. It wasn't configured.");
+            DEBUG_ASSERT("Can't draw graphic component. It wasn't configured.");
             return;
         }
 

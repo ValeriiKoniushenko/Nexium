@@ -48,7 +48,7 @@ namespace
     StringAtom GetGlslVersionShaderLike()
     {
         StringAtom version = reinterpret_cast<const char*>(glGetString(GL_VERSION));
-        if (const auto* const end = version.find(" "); ASSERT_VAL(end))
+        if (const auto* const end = version.find(" "); DEBUG_ASSERT_VAL(end))
         {
             const auto i = end - version.c_str();
             version.subStr(0, i);
@@ -185,14 +185,14 @@ namespace Core
         }
 
         ImGuiStyle* style = &ImGui::GetStyle();
-        if (!ASSERT_VAL(style))
+        if (!DEBUG_ASSERT_VAL(style))
         {
             errorLog("Can't setup ImGUI styles. ImGui::GetStyle() return nullptr");
             return;
         }
 
         glm::vec4* colors = style->Colors;
-        if (!ASSERT_VAL(colors))
+        if (!DEBUG_ASSERT_VAL(colors))
         {
             errorLog("Can't setup ImGUI colors. ImGui::GetStyle()->Colors return nullptr");
             return;

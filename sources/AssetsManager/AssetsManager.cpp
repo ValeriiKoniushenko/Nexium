@@ -153,24 +153,24 @@ namespace Core
     {
         if (logicPath.isEmpty() || !requiredExt)
         {
-            ASSERT(false);
+            DEBUG_ASSERT(false);
             traceLog("Path is empty");
             return false;
         }
 
-        ASSERT(logicPath.isStatic(), "You must use only _atom strings!");
+        DEBUG_ASSERT(logicPath.isStatic(), "You must use only _atom strings!");
 
         auto* found = logicPath.reverseFind(".nx");
         if (!found)
         {
-            ASSERT(false);
+            DEBUG_ASSERT(false);
             traceLog("Invalid file extension was passed");
             return false;
         }
 
         if (strcmp(found, requiredExt) != 0)
         {
-            ASSERT(false);
+            DEBUG_ASSERT(false);
             traceLog("Path is invalid. Expected extension is {} but passed {}"_f << requiredExt
                                                                                  << found);
             return false;

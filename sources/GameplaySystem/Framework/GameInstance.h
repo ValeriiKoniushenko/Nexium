@@ -70,6 +70,7 @@ namespace Core
         GameEditor gameEditor;
         RenderTargetToTexture gameViewport;
         ObjectSelectorManager objectSelectorManager;
+        Window* window = nullptr;
 
     protected:
         virtual void onSaveAll() {}
@@ -79,13 +80,11 @@ namespace Core
         virtual void onInitializeReadCache() {}
 
     protected:
-        Window* _window = nullptr;
-
     private:
         void loadCoreResources();
-        void initializeReadCache();
-        void loadShaders();
-        void gameLoop();
+        void startUpReadCache();
+        void initializeShaders();
+        void runMainLoop();
     };
 
     [[nodiscard]] ShaderManager& GetShaderManager();

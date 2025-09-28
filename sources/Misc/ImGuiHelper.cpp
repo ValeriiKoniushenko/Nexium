@@ -43,7 +43,7 @@ namespace Core
     void FixedLabel(const char *label, float size) {
 
     #if defined(DEBUG)
-    ASSERT (ImGui::CalcTextSize(label).x<size);
+    DEBUG_ASSERT (ImGui::CalcTextSize(label).x<size);
     #endif
     ImGui::TextUnformatted (label);
     ImGui::SameLine (0, 0);
