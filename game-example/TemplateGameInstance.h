@@ -28,15 +28,8 @@
 #include "Graphics/Primitives/StaticMeshBundle.h"
 #include "Scene/Scene.h"
 
-class TemplateGameInstance : public Core::GameInstance {
+class TemplateGameInstance : public Core::GameInstance
+{
 protected:
-    void onInitializeFinish() override;
-
-    void onLoadShaders() override;
-
-    void onTick(float delta) override;
-
-    void onInitializeReadCache() override;
-
-    void onFinishWriteCache() override;
+    void onLoadCoreResources() override;
 };

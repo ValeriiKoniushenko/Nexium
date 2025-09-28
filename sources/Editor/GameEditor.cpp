@@ -95,8 +95,7 @@ namespace Core
                 {
                     if (gGameInstance->renderMode.cast() == GameInstance::RenderMode::Editor)
                     {
-                        gGameInstance->renderToTextureObject.setRenderSize(
-                            static_cast<ISize2>(inner));
+                        gGameInstance->gameViewport.setRenderSize(static_cast<ISize2>(inner));
                         gGameInstance->updateViewport();
                     }
                 });
@@ -130,6 +129,10 @@ namespace Core
             ImGui_ImplOpenGL3_Shutdown();
             ImGui_ImplGlfw_Shutdown();
         }
+    }
+
+    void GameEditor::saveAll()
+    {
     }
 
     void GameEditor::setupImGuiStyles()

@@ -145,6 +145,8 @@ namespace Core
 
         [[nodiscard]] spdlog::logger* getLogger() const override { return Editor::getLogger(); }
 
+        void saveAll();
+
     public:
         SlowObjectPicker slowObjectPicker;
         KeyboardInputManger keyboardInput;
@@ -152,9 +154,7 @@ namespace Core
 
     protected:
         void setupImGuiStyles();
-
         [[nodiscard]] bool needToDraw();
-
         void setupShortcuts();
 
     protected:
@@ -165,9 +165,7 @@ namespace Core
 
     private:
         void handleMouseDrag(glm::vec2 delta, MouseInputAction::SpecKeysState state);
-
         void handleMouseClick(glm::vec2 pos, MouseInputAction::SpecKeysState state);
-
         void responseOnPick(StaticMesh* mesh);
     };
 } // namespace Core

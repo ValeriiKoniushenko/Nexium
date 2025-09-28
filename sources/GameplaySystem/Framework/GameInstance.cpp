@@ -86,10 +86,10 @@ namespace Core
                 "Shader '{}' found but not loaded. It contains some error[s]. See above in the lo"_f
                 << notLoadedShader);
         }
-        onLoadShaders();
+        loadShaders();
 
         //-------------------- MISC ---------------------
-        renderToTextureObject.generate();
+        gameViewport.generate();
 
         if (auto* spectator = gameScene.createAndGetActor<Spectator>())
         {
@@ -99,25 +99,26 @@ namespace Core
         gameEditor.initialize();
         gameScene.initialize();
 
-        onInitializeReadCache();
-
+        initializeReadCache();
         loadCoreResources();
-        onInitializeFinish();
 
         gameLoop();
 
-        onFinishWriteCache();
+        saveAll();
     }
 
-    void GameInstance::onInitializeReadCache()
+    void GameInstance::initializeReadCache()
     {
         gameScene.readFromCache();
+        onInitializeReadCache();
     }
 
-    void GameInstance::onFinishWriteCache()
+    void GameInstance::saveAll()
     {
+        gameEditor.saveAll();
         gameScene.writeToCache();
-        assets.unloadAllResources();
+
+        onSaveAll();
     }
 
     void GameInstance::gameLoop()
@@ -160,11 +161,12 @@ namespace Core
                 gameEditor.tick(world.timeDelta);
                 if (currentCamera)
                 {
-                    renderToTextureObject.callMePreDraw();
+                    gameViewport.callMePreDraw();
                     glClear(clearBits);
 
+                    gameScene.directDraw();
                     onTick(world.timeDelta);
-                    renderToTextureObject.callMeAfterDraw();
+                    gameViewport.callMeAfterDraw();
                 }
             }
 
@@ -186,12 +188,12 @@ namespace Core
     {
         if (renderMode.cast() == RenderMode::GameOnly)
         {
-            _window->updateViewport(windowAspectRatio, ViewportMode::ZoomIn);
+            _window->updateViewport(Config::windowAspectRatio, ViewportMode::ZoomIn);
         }
         else
         {
-            UpdateGlViewport(static_cast<FSize2>(renderToTextureObject.getRenderSize()),
-                             windowAspectRatio, ViewportMode::ZoomIn);
+            UpdateGlViewport(static_cast<FSize2>(gameViewport.getRenderSize()),
+                             Config::windowAspectRatio, ViewportMode::ZoomIn);
         }
     }
 
@@ -202,7 +204,7 @@ namespace Core
         gGameInstance->updateViewport();
     }
 
-    void GameInstance::onLoadShaders()
+    void GameInstance::loadShaders()
     {
         auto* colorShader = shaderManager.getShaderProgram("color"_atom);
         if (ASSERT_VAL(colorShader))
@@ -274,9 +276,12 @@ namespace Core
                     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
                 });
         }
+
+        onLoadShaders();
     }
 
     void GameInstance::loadCoreResources()
     {
+        onLoadCoreResources();
     }
 } // namespace Core

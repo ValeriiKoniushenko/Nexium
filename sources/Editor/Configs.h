@@ -63,6 +63,7 @@ namespace Core::Config
         inline static auto editorImGuiShowRect = Core::Keyboard::Key::Key_F2;
     }
 
+    static constexpr float windowAspectRatio = 16.f / 9.f;
     static constexpr float defaultEditorFontSize = 16.f;
     static constexpr float defaultEmojiScale = 0.8f;
 

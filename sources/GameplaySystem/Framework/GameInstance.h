@@ -56,8 +56,7 @@ namespace Core
 
         void toggleRenderMode();
 
-    public: // Temporary place. MOVE IT !!!!
-        float windowAspectRatio = 16.f / 9.f;
+        void saveAll();
 
     public:
         Scene gameScene;
@@ -69,26 +68,23 @@ namespace Core
         BaseCamera* currentCamera = nullptr;
         RenderMode renderMode = RenderMode::Editor;
         GameEditor gameEditor;
-        RenderTargetToTexture renderToTextureObject;
+        RenderTargetToTexture gameViewport;
         ObjectSelectorManager objectSelectorManager;
 
     protected:
-        virtual void onTick(float delta) = 0;
-
-        virtual void onInitializeFinish() = 0;
-
-        virtual void onLoadShaders();
-
-        virtual void onInitializeReadCache();
-
-        virtual void onFinishWriteCache();
+        virtual void onSaveAll() {}
+        virtual void onTick(float delta) {}
+        virtual void onLoadShaders() {}
+        virtual void onLoadCoreResources() {}
+        virtual void onInitializeReadCache() {}
 
     protected:
         Window* _window = nullptr;
 
     private:
         void loadCoreResources();
-
+        void initializeReadCache();
+        void loadShaders();
         void gameLoop();
     };
 

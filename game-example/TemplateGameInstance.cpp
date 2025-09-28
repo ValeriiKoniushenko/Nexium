@@ -30,35 +30,13 @@
 
 using namespace Core;
 
-void TemplateGameInstance::onLoadShaders()
-{
-    GameInstance::onLoadShaders();
-}
-
-void TemplateGameInstance::onTick(float delta)
-{
-    gameScene.directDraw();
-}
-
-void TemplateGameInstance::onInitializeReadCache()
-{
-    GameInstance::onInitializeReadCache();
-}
-
-void TemplateGameInstance::onFinishWriteCache()
-{
-    GameInstance::onFinishWriteCache();
-}
-
-void TemplateGameInstance::onInitializeFinish()
+void TemplateGameInstance::onLoadCoreResources()
 {
     std::vector modelPaths = {
         Config::Path::objects3d / "Nature/Tree1.glb",
         Config::Path::objects3d / "Nature/Tree2.glb",
-        ///
         Config::Path::objects3d / "Nature/Rock1.glb",
         Config::Path::objects3d / "Nature/Rock2.glb",
-        ///
     };
 
     Assimp::Importer importer;
