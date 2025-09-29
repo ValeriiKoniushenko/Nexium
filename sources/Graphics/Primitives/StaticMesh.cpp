@@ -31,6 +31,25 @@
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
 
+namespace
+{
+    // TODO: MOVE IT!!!
+    struct alignas(16) ShaderLight
+    {
+        float ambientStrength;  // offset 0
+        float specularStrength; // offset 4
+        float minLightStrength; // offset 8
+        float specularPow;      // offset 12
+
+        glm::vec4 color;    // offset 16 (vec3 -> vec4)
+        glm::vec4 position; // offset 32
+        glm::vec4 viewPos;  // offset 48
+    };
+
+    static_assert(sizeof(ShaderLight) % 16 == 0);
+
+} // namespace
+
 namespace Core
 {
     ECS_COMPONENT_IMPL(StaticMesh)
@@ -146,14 +165,22 @@ namespace Core
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, _texture);
 
+        glBindBuffer(GL_UNIFORM_BUFFER, _uboLight);
+
         const auto& lightning = GetWorld().lightning;
-        _shader->setUniform("uAmbientStrength"_atom, lightning.ambientStrength);
-        _shader->setUniform("uMinLightStrength"_atom, lightning.minLightStrength);
-        _shader->setUniform("uSpecularStrength"_atom, lightning.specularStrength);
-        _shader->setUniform("uSpecularPow"_atom, lightning.specularPow);
-        _shader->setUniform("uLightColor"_atom, lightning.color);
-        _shader->setUniform("uLightPos"_atom, lightning.position);
-        _shader->setUniform("uViewPos"_atom, gGameInstance->currentCamera->getPosition());
+        ShaderLight light{ lightning.ambientStrength,
+                           lightning.specularStrength,
+                           lightning.minLightStrength,
+                           lightning.specularPow,
+                           glm::vec4(lightning.color.toGlm(), 0.0f),
+                           glm::vec4(lightning.position, 0.0f),
+                           glm::vec4(gGameInstance->currentCamera->getPosition(), 0.0f) };
+
+        static unsigned int lights_index
+            = glGetUniformBlockIndex(_shader->getShaderProgramId(), "Lights");
+        glUniformBlockBinding(_shader->getShaderProgramId(), lights_index, 0);
+        glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(ShaderLight), &light);
+
         _shader->setUniform("uTexture"_atom, 0);
         _shader->setUniform("uProjAndView"_atom, gGameInstance->currentCamera->getMatrix());
         _shader->setUniform("uModel"_atom, _cachedModelMatrix);
@@ -269,12 +296,10 @@ namespace Core
 
         glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
         glStencilMask(0x00);
-        // glDisable(GL_DEPTH_TEST);
 
         glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(_triangleCount), GL_UNSIGNED_INT,
                        nullptr);
 
-        // glEnable(GL_DEPTH_TEST);
         glStencilFunc(GL_ALWAYS, 1, 0xFF);
         glStencilMask(0xFF);
         glClear(GL_STENCIL_BUFFER_BIT);
@@ -337,6 +362,26 @@ namespace Core
                 glDisable(val);
             }
         }
+    }
+
+    void StaticMesh::generate()
+    {
+        GraphicsComponentData::generate();
+        glGenBuffers(1, &_uboLight);
+        glBindBuffer(GL_UNIFORM_BUFFER, _uboLight);
+        glBufferData(GL_UNIFORM_BUFFER, sizeof(ShaderLight), nullptr, GL_STATIC_DRAW);
+
+        glBindBufferBase(GL_UNIFORM_BUFFER, 0, _uboLight);
+        glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    }
+
+    void StaticMesh::clear()
+    {
+        GraphicsComponentData::clear();
+        BaseComponent::clear();
+
+        glDeleteBuffers(1, &_uboLight);
+        _uboLight = 0;
     }
 
     StaticMeshBundle* StaticMesh::tryToGetRootBundle()

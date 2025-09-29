@@ -77,6 +77,9 @@ namespace Core
          */
         void pureDraw(const std::function<void(StaticMesh*)>& onUniformSet);
 
+        void generate() override;
+        void clear() override;
+
         [[nodiscard]] nlohmann::json toJson() const override;
 
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
@@ -113,6 +116,7 @@ namespace Core
         FSize3 _size;
         glm::vec3 _center = glm::vec3(0);
         ShaderProgram* _outlineShader = nullptr;
+        GLuint _uboLight = 0;
 
         friend class StaticMeshFactory;
     };

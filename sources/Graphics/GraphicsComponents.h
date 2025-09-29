@@ -92,7 +92,7 @@ namespace Core
 
         GraphicsComponentData& operator=(GraphicsComponentData&& other) noexcept;
 
-        void generate();
+        virtual void generate();
 
         void setVertexBuffer(const std::vector<float>& data, GLenum usage = GL_STATIC_DRAW);
 
@@ -116,7 +116,7 @@ namespace Core
         void setMesh(const aiMesh* mesh, bool isAppendNormals = false, bool isAppendUV = false,
                      float scale = 1.f);
 
-        void clear();
+        virtual void clear();
 
         [[nodiscard]] bool isValid() const noexcept
         {
