@@ -28,6 +28,7 @@ namespace Core::Gui
 {
     ECS_COMPONENT_IMPL(BaseInput);
     ECS_COMPONENT_IMPL(TextInput);
+    ECS_COMPONENT_IMPL(Color3Input);
 
     void BaseInput::setTextColor(const Color4& value)
     {
@@ -132,4 +133,44 @@ namespace Core::Gui
 
         ImGui::PopStyleColor(pushedStyles);
     }
+
+    void Color3Input::setInputtedData(const Color3& data)
+    {
+        _buffer = data.toNorm();
+        _stringBuffer = "{} {} {}"_f << data.r << data.g << data.b;
+    }
+
+    void Color3Input::onDraw()
+    {
+        int pushedStyles = 3;
+
+        pushedStyles += ImGui::OptPushStyleColor(ImGuiCol_Text, _textColor);
+
+        ImGui::PushStyleColor(ImGuiCol_Button, glm::vec4(_buffer.toGlm(), 1.f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, glm::vec4(_buffer.toGlm(), 1.f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, glm::vec4(_buffer.toGlm(), 1.f));
+
+        if (ImGui::Button(_stringBuffer.c_str(), _size))
+        {
+            ImGui::OpenPopup("ColorPickerPopup");
+        }
+
+        if (ImGui::BeginPopup("ColorPickerPopup"))
+        {
+            glm::vec3 input = _buffer;
+            ImGui::ColorPicker3("##picker", &input.x,
+                                ImGuiColorEditFlags_NoLabel | ImGuiColorEditFlags_NoSidePreview);
+
+            if (input != _buffer)
+            {
+                setInputtedData(NormColor3(input));
+                onInput.trigger(_buffer.toColor());
+            }
+
+            ImGui::EndPopup();
+        }
+
+        ImGui::PopStyleColor(pushedStyles);
+    }
+
 } // namespace Core::Gui

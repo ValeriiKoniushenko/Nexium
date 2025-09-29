@@ -152,9 +152,28 @@ namespace Core::Gui
         Type _max = std::numeric_limits<Type>::max();
     };
 
-    ECS_TEMPLATE_COMPONENT_IMPL(BRACKETS(NumInput<Type>), BRACKETS(Utils::IsArithmetic Type)
+    ECS_TEMPLATE_COMPONENT_IMPL(BRACKETS(NumInput<Type>), BRACKETS(Utils::IsArithmetic Type))
 
-    )
+    class Color3Input : public BaseInput
+    {
+        ECS_COMPONENT_DECL(Color3Input, BaseInput);
+
+    public:
+        void setInputtedData(const Color3& data);
+        void setInputtedData(const NormColor3& data) { setInputtedData(data.toColor()); }
+        [[nodiscard]] Color3 getInputtedData() const noexcept { return _buffer.toColor(); }
+
+    public: // Delegates
+        Delegate<void(const Color3&)> onInput;
+
+    protected:
+        void onDraw() override;
+
+    protected:
+        NormColor3 _buffer{};
+        StringAtom _stringBuffer = "0 0 0";
+        int _flags = ImGuiInputTextFlags_None;
+    };
 
     using DoubleInput = NumInput<double>;
     using FloatInput = NumInput<float>;

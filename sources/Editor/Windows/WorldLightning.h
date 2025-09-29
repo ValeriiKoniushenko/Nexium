@@ -25,6 +25,8 @@
 #pragma once
 
 #include "BaseWindow.h"
+#include "Editor/GuiComponents/Input.h"
+#include "Editor/GuiComponents/VerticalLayout.h"
 #include "Graphics/Texture.h"
 
 namespace Core
@@ -42,5 +44,9 @@ namespace Core
         void onUpdate() override;
 
         void onDraw() override;
+
+    protected:
+        Gui::VerticalLayout _layout;
+        Gui::Color3Input* _lightColor = nullptr;
     };
 } // namespace Core

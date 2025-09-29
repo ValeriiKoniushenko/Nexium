@@ -33,6 +33,8 @@ namespace Core
     void WorldLightningEWC::onInitialize()
     {
         BaseFloatEWC::onInitialize();
+
+        _lightColor = _layout.addChildComponent<Gui::Color3Input>();
     }
 
     void WorldLightningEWC::onUpdate()
@@ -41,5 +43,6 @@ namespace Core
 
     void WorldLightningEWC::onDraw()
     {
+        _layout.tick(GetWorld().timeDelta);
     }
 } // namespace Core
