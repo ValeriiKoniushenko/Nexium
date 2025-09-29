@@ -146,9 +146,13 @@ namespace Core
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, _texture);
 
-        _shader->setUniform("uObjectColor"_atom, 1.0f, 1.0f, 1.0f);
-        _shader->setUniform("uLightColor"_atom, GetWorld().lightning.color);
-        _shader->setUniform("uLightPos"_atom, GetWorld().lightning.position);
+        auto& lightning = GetWorld().lightning;
+        // _shader->setUniform("uAmbientStrength"_atom, lightning.ambientStrength);
+        // _shader->setUniform("uMinLightStrength"_atom, lightning.minLightStrength);
+        // _shader->setUniform("uSpecularStrength"_atom, lightning.specularStrength);
+        // _shader->setUniform("uSpecularPow"_atom, lightning.specularPow);
+        // _shader->setUniform("uLightColor"_atom, lightning.color);
+        _shader->setUniform("uLightPos"_atom, lightning.position);
         _shader->setUniform("uViewPos"_atom, gGameInstance->currentCamera->getPosition());
         _shader->setUniform("uTexture"_atom, 0);
         _shader->setUniform("uProjAndView"_atom, gGameInstance->currentCamera->getMatrix());

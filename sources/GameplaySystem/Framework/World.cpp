@@ -32,6 +32,9 @@ namespace Core
 
         json["position"] = position;
         json["color"] = color;
+        json["ambientStrength"] = ambientStrength;
+        json["specularStrength"] = specularStrength;
+        json["specularPow"] = specularPow;
 
         return json;
     }
@@ -40,6 +43,9 @@ namespace Core
     {
         tryReadJsonTo(position, "position", json);
         tryReadJsonTo(color, "color", json);
+        tryReadJsonTo(ambientStrength, "ambientStrength", json);
+        tryReadJsonTo(specularStrength, "specularStrength", json);
+        tryReadJsonTo(specularPow, "specularPow", json);
     }
 
     std::filesystem::path World::getCacheDir() const

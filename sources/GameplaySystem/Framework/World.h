@@ -38,6 +38,10 @@ namespace Core
     {
         glm::vec3 position = glm::vec3(1'000'000.f, 1'000'000.f, 1'000'000.f);
         NormColor3 color = NormColor3(1.f);
+        float ambientStrength = 1.f;
+        float minLightStrength = 0.2f;
+        float specularStrength = 0.5f;
+        int specularPow = 32;
 
         [[nodiscard]] nlohmann::json toJson() const override;
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;

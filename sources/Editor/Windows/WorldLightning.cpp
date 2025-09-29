@@ -40,12 +40,60 @@ namespace Core
             auto* h = _layout.addChildComponent<Gui::HorizontalLayout>();
             h->setHorizontalAlign(Gui::Align::SpaceBetween);
             h->addChildComponent<Gui::Label>("Light color");
-            _lightColor = h->addChildComponent<Gui::Color3Input>();
-            _lightColor->setInputtedData(GetWorld().lightning.color);
-            _lightColor->onInput.subscribe(
+            auto* input = h->addChildComponent<Gui::Color3Input>();
+            input->setInputtedData(GetWorld().lightning.color);
+            input->onInput.subscribe(
                 [](Color3 color)
                 {
                     GetWorld().lightning.color = color.toNorm();
+                });
+        }
+        {
+            auto* h = _layout.addChildComponent<Gui::HorizontalLayout>();
+            h->setHorizontalAlign(Gui::Align::SpaceBetween);
+            h->addChildComponent<Gui::Label>("Ambient strength");
+            auto* input = h->addChildComponent<Gui::FloatInput>();
+            input->setInputtedData(GetWorld().lightning.ambientStrength);
+            input->onInput.subscribe(
+                [](float value)
+                {
+                    GetWorld().lightning.ambientStrength = value;
+                });
+        }
+        {
+            auto* h = _layout.addChildComponent<Gui::HorizontalLayout>();
+            h->setHorizontalAlign(Gui::Align::SpaceBetween);
+            h->addChildComponent<Gui::Label>("Min light strength");
+            auto* input = h->addChildComponent<Gui::FloatInput>();
+            input->setInputtedData(GetWorld().lightning.minLightStrength);
+            input->onInput.subscribe(
+                [](float value)
+                {
+                    GetWorld().lightning.minLightStrength = value;
+                });
+        }
+        {
+            auto* h = _layout.addChildComponent<Gui::HorizontalLayout>();
+            h->setHorizontalAlign(Gui::Align::SpaceBetween);
+            h->addChildComponent<Gui::Label>("Specular strength");
+            auto* input = h->addChildComponent<Gui::FloatInput>();
+            input->setInputtedData(GetWorld().lightning.specularStrength);
+            input->onInput.subscribe(
+                [](float value)
+                {
+                    GetWorld().lightning.specularStrength = value;
+                });
+        }
+        {
+            auto* h = _layout.addChildComponent<Gui::HorizontalLayout>();
+            h->setHorizontalAlign(Gui::Align::SpaceBetween);
+            h->addChildComponent<Gui::Label>("Specular pow");
+            auto* input = h->addChildComponent<Gui::FloatInput>();
+            input->setInputtedData(GetWorld().lightning.specularPow);
+            input->onInput.subscribe(
+                [](float value)
+                {
+                    GetWorld().lightning.specularPow = value;
                 });
         }
     }

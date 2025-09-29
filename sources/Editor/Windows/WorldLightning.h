@@ -47,6 +47,5 @@ namespace Core
 
     protected:
         Gui::VerticalLayout _layout;
-        Gui::Color3Input* _lightColor = nullptr;
     };
 } // namespace Core
