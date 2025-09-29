@@ -32,6 +32,7 @@ namespace Core
 
         json["position"] = position;
         json["color"] = color;
+        json["minLightStrength"] = minLightStrength;
         json["ambientStrength"] = ambientStrength;
         json["specularStrength"] = specularStrength;
         json["specularPow"] = specularPow;
@@ -43,6 +44,7 @@ namespace Core
     {
         tryReadJsonTo(position, "position", json);
         tryReadJsonTo(color, "color", json);
+        tryReadJsonTo(minLightStrength, "minLightStrength", json);
         tryReadJsonTo(ambientStrength, "ambientStrength", json);
         tryReadJsonTo(specularStrength, "specularStrength", json);
         tryReadJsonTo(specularPow, "specularPow", json);

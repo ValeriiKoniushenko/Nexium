@@ -149,7 +149,7 @@ namespace Core
         const auto& lightning = GetWorld().lightning;
         _shader->setUniform("uAmbientStrength"_atom, lightning.ambientStrength);
         _shader->setUniform("uMinLightStrength"_atom, lightning.minLightStrength);
-        //_shader->setUniform("uSpecularStrength"_atom, lightning.specularStrength);
+        _shader->setUniform("uSpecularStrength"_atom, lightning.specularStrength);
         _shader->setUniform("uSpecularPow"_atom, lightning.specularPow);
         _shader->setUniform("uLightColor"_atom, lightning.color);
         _shader->setUniform("uLightPos"_atom, lightning.position);

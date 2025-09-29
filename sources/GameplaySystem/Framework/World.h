@@ -41,7 +41,7 @@ namespace Core
         float ambientStrength = 1.f;
         float minLightStrength = 0.2f;
         float specularStrength = 0.5f;
-        int specularPow = 32;
+        float specularPow = 32.f;
 
         [[nodiscard]] nlohmann::json toJson() const override;
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
