@@ -142,7 +142,8 @@ namespace Core
             clock.start();
             window->pollEvent();
 
-            if (const auto* wnd = gameEditor.getWindow<GameViewportEWC>(); wnd && wnd->isFocused())
+            if (const auto* wnd = gameEditor.getWindow<GameViewportEWC>();
+                (wnd && wnd->isFocused()) || renderMode == RenderMode::GameOnly)
             {
                 gameScene.tick(world.timeDelta);
             }

@@ -40,6 +40,7 @@
 #include "Misc/IconsFontAwesome.h"
 #include "Windows/ImageViewer.h"
 #include "Windows/ModalPopUp.h"
+#include "Windows/WorldLightning.h"
 
 using namespace Core;
 
@@ -88,6 +89,7 @@ namespace Core
         registerNewWindow<ImageViewerEWC>("Image viewer"_atom, false);
         registerNewWindow<ShaderManagerEWC>("Shader manager"_atom);
         registerNewWindow<ModalPopUp>("PopUp"_atom);
+        registerNewWindow<WorldLightningEWC>("World Lightning"_atom, false);
 
         registerNewWindow<GameViewportEWC>("Viewport"_atom)
             ->onSizeChanged.subscribe(

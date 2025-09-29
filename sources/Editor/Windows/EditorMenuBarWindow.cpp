@@ -35,6 +35,7 @@
 #include "Misc/IconsFontAwesome.h"
 #include "ShaderManager.h"
 #include "TextEditor.h"
+#include "WorldLightning.h"
 
 namespace
 {
@@ -84,6 +85,15 @@ namespace Core
             ImGui::EndMenu();
         }
 
+        if (ImGui::BeginMenu("Edit"))
+        {
+            if (ImGui::MenuItem("Deselect"))
+            {
+                gGameInstance->objectSelectorManager.deselectAllAndClear();
+            }
+            ImGui::EndMenu();
+        }
+
         if (ImGui::BeginMenu("Windows"))
         {
             WindowMenuItem<GameViewportEWC>();
@@ -99,14 +109,12 @@ namespace Core
             ImGui::EndMenu();
         }
 
-        if (ImGui::BeginMenu("Edit"))
+        if (ImGui::BeginMenu("World"))
         {
-            if (ImGui::MenuItem("Deselect"))
-            {
-                gGameInstance->objectSelectorManager.deselectAllAndClear();
-            }
+            WindowMenuItem<WorldLightningEWC>();
             ImGui::EndMenu();
         }
+
         ImGui::SameLine(0, 0);
 
         const auto& style = ImGui::GetStyle();
