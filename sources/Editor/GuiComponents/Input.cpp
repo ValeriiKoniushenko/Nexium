@@ -144,6 +144,7 @@ namespace Core::Gui
     {
         int pushedStyles = 3;
 
+        _textColor = NormColor4(glm::vec4(glm::vec3(1.f) - _buffer.toGlm(), 1.f)).toColor();
         pushedStyles += ImGui::OptPushStyleColor(ImGuiCol_Text, _textColor);
 
         ImGui::PushStyleColor(ImGuiCol_Button, glm::vec4(_buffer.toGlm(), 1.f));

@@ -24,26 +24,44 @@
 
 #pragma once
 
+#include "Core/Color.h"
 #include "GameState.h"
 #include "LevelData.h"
 #include "Misc/BaseLog.h"
+#include "Misc/JsonCacheable.h"
 #include "ModuleInfo.h"
 #include "PlayerState.h"
 
 namespace Core
 {
-    class World : public BaseLog, public Utils::NotCopyableAndNotMoveable
+    struct LightningProps : public JsonAdapter
+    {
+        glm::vec3 position = glm::vec3(1'000'000.f, 1'000'000.f, 1'000'000.f);
+        NormColor3 color = NormColor3(1.f);
+
+        [[nodiscard]] nlohmann::json toJson() const override;
+        void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
+    };
+
+    class World : public BaseLog, public JsonCacheable, public Utils::NotCopyableAndNotMoveable
     {
     public:
         [[nodiscard]] spdlog::logger* getLogger() const override { return Framework::getLogger(); }
         [[nodiscard]] const char* getPrefix() const override { return "World"; }
 
+    protected:
+        [[nodiscard]] std::filesystem::path getCacheDir() const override;
+        [[nodiscard]] StringAtom getCacheHash() const override;
+        [[nodiscard]] nlohmann::json toCacheData() const override;
+        void fromCacheData(const nlohmann::json& json) override;
+
     public:
         float timeDelta = 0.f;
-        glm::vec3 lightPos = glm::vec3(1'000'000.f, 1'000'000.f, 1'000'000.f);
 
+        LightningProps lightning;
         PlayerState playerState;
         GameState gameState;
         LevelData levelData;
+        StringAtom worldName = "Default";
     };
 } // namespace Core

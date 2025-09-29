@@ -26,4 +26,51 @@
 
 namespace Core
 {
+    nlohmann::json LightningProps::toJson() const
+    {
+        nlohmann::json json;
+
+        json["position"] = position;
+        json["color"] = color;
+
+        return json;
+    }
+
+    void LightningProps::fromJson(const nlohmann::json& json, bool isIgnoreChildren)
+    {
+        tryReadJsonTo(position, "position", json);
+        tryReadJsonTo(color, "color", json);
+    }
+
+    std::filesystem::path World::getCacheDir() const
+    {
+        return JsonCacheable::getCacheDir() / "World";
+    }
+
+    StringAtom World::getCacheHash() const
+    {
+        return worldName;
+    }
+
+    nlohmann::json World::toCacheData() const
+    {
+        nlohmann::json json;
+
+        json["worldName"] = worldName;
+        json["lightning"] = lightning.toJson();
+
+        return json;
+    }
+
+    void World::fromCacheData(const nlohmann::json& json)
+    {
+        if (json.contains("worldName"))
+        {
+            worldName = json["worldName"].get<StringAtom>();
+        }
+        if (json.contains("lightning"))
+        {
+            lightning.fromJson(json["lightning"], false);
+        }
+    }
 } // namespace Core

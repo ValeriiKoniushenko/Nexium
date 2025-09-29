@@ -111,7 +111,8 @@ namespace Core
 
     void GameInstance::startUpReadCache()
     {
-        gameScene.readFromCache();
+        world.tryReadFromCache();
+        gameScene.tryReadFromCache();
         onInitializeReadCache();
     }
 
@@ -119,6 +120,7 @@ namespace Core
     {
         gameEditor.saveAll();
         gameScene.writeToCache();
+        world.writeToCache();
         writeToCache();
 
         onSaveAll();

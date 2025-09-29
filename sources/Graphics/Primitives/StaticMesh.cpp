@@ -147,8 +147,8 @@ namespace Core
         glBindTexture(GL_TEXTURE_2D, _texture);
 
         _shader->setUniform("uObjectColor"_atom, 1.0f, 1.0f, 1.0f);
-        _shader->setUniform("uLightColor"_atom, 1.0f, 1.0f, 1.0f);
-        _shader->setUniform("uLightPos"_atom, gGameInstance->world.lightPos);
+        _shader->setUniform("uLightColor"_atom, GetWorld().lightning.color);
+        _shader->setUniform("uLightPos"_atom, GetWorld().lightning.position);
         _shader->setUniform("uViewPos"_atom, gGameInstance->currentCamera->getPosition());
         _shader->setUniform("uTexture"_atom, 0);
         _shader->setUniform("uProjAndView"_atom, gGameInstance->currentCamera->getMatrix());

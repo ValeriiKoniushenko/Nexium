@@ -24,6 +24,8 @@
 
 #include "WorldLightning.h"
 
+#include "Editor/GuiComponents/HorizontalLayout.h"
+#include "Editor/GuiComponents/Label.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 
 namespace Core
@@ -34,7 +36,18 @@ namespace Core
     {
         BaseFloatEWC::onInitialize();
 
-        _lightColor = _layout.addChildComponent<Gui::Color3Input>();
+        {
+            auto* h = _layout.addChildComponent<Gui::HorizontalLayout>();
+            h->setHorizontalAlign(Gui::Align::SpaceBetween);
+            h->addChildComponent<Gui::Label>("Light color");
+            _lightColor = h->addChildComponent<Gui::Color3Input>();
+            _lightColor->setInputtedData(GetWorld().lightning.color);
+            _lightColor->onInput.subscribe(
+                [](Color3 color)
+                {
+                    GetWorld().lightning.color = color.toNorm();
+                });
+        }
     }
 
     void WorldLightningEWC::onUpdate()
