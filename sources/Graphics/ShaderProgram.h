@@ -43,13 +43,34 @@ namespace Core
 
         StringAtom name;
         GLenum type = 0;
-        GLint size = 0;
-        GLint location = 0;
+
+        union
+        {
+            GLint location = 0;
+            GLint offset;
+        };
 
         [[nodiscard]] bool operator==(const ShaderVariable& other) const
         {
             return name == other.name;
         }
+    };
+
+    // UBO = UniformBufferObject
+    struct ShaderUBO
+    {
+        struct Hasher
+        {
+            std::size_t operator()(const ShaderUBO& obj) const { return obj.name.makeHash(); }
+        };
+
+        StringAtom name;
+        GLuint binding = 0;
+        GLuint size = 0;
+
+        std::vector<ShaderVariable> vars;
+
+        [[nodiscard]] bool operator==(const ShaderUBO& other) const { return name == other.name; }
     };
 
     class ShaderProgram : public BaseLog

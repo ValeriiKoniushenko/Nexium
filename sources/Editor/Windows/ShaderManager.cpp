@@ -205,6 +205,12 @@ namespace Core
             }
             ImGui::Dummy({});
 
+            if (Gui::CollapsingHeader("UBOs", ImGuiTreeNodeFlags_DefaultOpen))
+            {
+                drawUBOs(_selectedRawShader->getUBOs());
+            }
+            ImGui::Dummy({});
+
             if (Gui::CollapsingHeader("Inputs", ImGuiTreeNodeFlags_DefaultOpen))
             {
                 drawTableWith("Inputs", _selectedRawShader->getInputs());
@@ -222,13 +228,12 @@ namespace Core
         const char* label,
         const std::unordered_set<ShaderVariable, ShaderVariable::Hasher>& inputData)
     {
-        if (ImGui::BeginTable(label, 5, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
+        if (ImGui::BeginTable(label, 4, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
         {
             int i = 0;
             ImGui::TableSetupColumn("#", ImGuiTableColumnFlags_WidthFixed);
             ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthStretch);
             ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed);
-            ImGui::TableSetupColumn("Size", ImGuiTableColumnFlags_WidthFixed);
             ImGui::TableSetupColumn("Location", ImGuiTableColumnFlags_WidthFixed);
             ImGui::TableHeadersRow();
 
@@ -243,16 +248,51 @@ namespace Core
                 ImGui::TextUnformatted(data.name.data());
 
                 ImGui::TableSetColumnIndex(2);
-                ImGui::TextUnformatted(glTypeToString(data.type).data());
+                ImGui::TextUnformatted(glTypeToString(data.type));
 
                 ImGui::TableSetColumnIndex(3);
-                ImGui::Text("%d", data.size);
-
-                ImGui::TableSetColumnIndex(4);
                 ImGui::Text("%d", data.location);
             }
 
             ImGui::EndTable();
+        }
+    }
+
+    void ShaderManagerEWC::drawUBOs(const std::unordered_set<ShaderUBO, ShaderUBO::Hasher>& ubos)
+    {
+        for (auto&& ubo : ubos)
+        {
+            ImGui::Text("Name: %s", ubo.name.data());
+            ImGui::Text("Binding index: %d", ubo.binding);
+            if (ImGui::BeginTable(ubo.name.c_str(), 4,
+                                  ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
+            {
+                int i = 0;
+                ImGui::TableSetupColumn("#", ImGuiTableColumnFlags_WidthFixed);
+                ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthStretch);
+                ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed);
+                ImGui::TableSetupColumn("Offset", ImGuiTableColumnFlags_WidthFixed);
+                ImGui::TableHeadersRow();
+
+                for (auto&& data : ubo.vars)
+                {
+                    ImGui::TableNextRow();
+
+                    ImGui::TableSetColumnIndex(0);
+                    ImGui::Text("%d", i++);
+
+                    ImGui::TableSetColumnIndex(1);
+                    ImGui::TextUnformatted(data.name.data());
+
+                    ImGui::TableSetColumnIndex(2);
+                    ImGui::TextUnformatted(glTypeToString(data.type));
+
+                    ImGui::TableSetColumnIndex(3);
+                    ImGui::Text("%d", data.offset);
+                }
+
+                ImGui::EndTable();
+            }
         }
     }
 

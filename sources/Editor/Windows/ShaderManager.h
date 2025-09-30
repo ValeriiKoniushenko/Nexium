@@ -61,6 +61,7 @@ namespace Core
             const char* label,
             const std::unordered_set<ShaderVariable, ShaderVariable::Hasher>& inputData);
 
+        void drawUBOs(const std::unordered_set<ShaderUBO, ShaderUBO::Hasher>& ubos);
         void invalidateShaderCache();
 
         void openEditor(const std::filesystem::path& path);

@@ -26,6 +26,8 @@
 
 #include "Utils/Functions.h"
 
+#include <spdlog/async_logger.h>
+
 namespace Core
 {
     std::size_t ShaderProgramMeta::Hasher::operator()(const ShaderProgramMeta& self) const
@@ -55,6 +57,7 @@ namespace Core
 
         _shaderProgram.create(_shaderName);
         reflectShaderVariablesFor(_shaderProgram.getShaderProgramId());
+        reflectShaderUniformBlocksFor(_shaderProgram.getShaderProgramId());
         _shaderProgram.m__setUniformsFromSources(_uniforms);
 
         _vertexShaderPath = vertexShaderPath;
@@ -163,7 +166,7 @@ namespace Core
                                       { GL_PROGRAM_INPUT, _inputs },
                                       { GL_PROGRAM_OUTPUT, _outputs } };
 
-        constexpr GLenum props[] = { GL_NAME_LENGTH, GL_TYPE, GL_LOCATION, GL_ARRAY_SIZE };
+        constexpr GLenum props[] = { GL_NAME_LENGTH, GL_TYPE, GL_LOCATION };
 
         for (const auto& [interfaceType, output] : groups)
         {
@@ -172,14 +175,18 @@ namespace Core
 
             for (GLint i = 0; i < count; ++i)
             {
-                GLint values[4] = {};
-                glGetProgramResourceiv(shaderProgramId, interfaceType, i, 4, props, 4, nullptr,
+                GLint values[3] = {};
+                glGetProgramResourceiv(shaderProgramId, interfaceType, i, 3, props, 3, nullptr,
                                        values);
 
                 const GLint nameLen = values[0];
                 const GLenum type = values[1];
                 const GLint location = values[2];
-                const GLint size = values[3];
+
+                if (location == -1)
+                {
+                    continue;
+                }
 
                 std::string name(nameLen, '\0');
                 glGetProgramResourceName(shaderProgramId, interfaceType, i, nameLen, nullptr,
@@ -189,9 +196,90 @@ namespace Core
                     name.pop_back();
                 }
 
-                ShaderVariable var{ StringAtom::Intern(name), type, size, location };
-                output.insert(std::move(var));
+                output.insert(ShaderVariable{ StringAtom::Intern(name), type, { location } });
             }
+        }
+    }
+
+    void ShaderProgramMeta::reflectShaderUniformBlocksFor(GLuint shaderProgramId)
+    {
+        if (!glGetProgramInterfaceiv)
+        {
+            warnLog("The function: glGetProgramInterfaceiv - is unavailable.");
+            return;
+        }
+
+        _uniformBufferObjects.clear();
+
+        constexpr GLenum props[] = { GL_NUM_ACTIVE_VARIABLES, GL_ACTIVE_VARIABLES,
+                                     GL_BUFFER_BINDING, GL_BUFFER_DATA_SIZE };
+        constexpr GLenum lineProps[] = { GL_NAME_LENGTH, GL_TYPE, GL_OFFSET };
+
+        GLint count = 0;
+        glGetProgramInterfaceiv(shaderProgramId, GL_UNIFORM_BLOCK, GL_ACTIVE_RESOURCES, &count);
+
+        for (GLint i = 0; i < count; ++i)
+        {
+            ShaderUBO outData;
+
+            // =========== Getting main data ===========
+            GLint values[4] = {};
+            glGetProgramResourceiv(shaderProgramId, GL_UNIFORM_BLOCK, i, 4, props, 4, nullptr,
+                                   values);
+
+            outData.vars.resize(values[0]);
+            outData.binding = values[2];
+            outData.size = values[3];
+
+            // =========== Getting name ===========
+            GLint nameLen = 0;
+            glGetProgramResourceiv(shaderProgramId, GL_UNIFORM_BLOCK, i, 1,
+                                   (const GLenum[]){ GL_NAME_LENGTH }, 1, nullptr, &nameLen);
+            std::string blockName(nameLen, '\0');
+            glGetProgramResourceName(shaderProgramId, GL_UNIFORM_BLOCK, i, nameLen, nullptr,
+                                     blockName.data());
+            if (!blockName.empty() && blockName.back() == '\0')
+            {
+                blockName.pop_back();
+            }
+            outData.name = StringAtom::Intern(blockName);
+
+            // =========== Getting fields/vars ===========
+            std::vector<GLint> vars(outData.vars.size());
+            glGetProgramResourceiv(shaderProgramId, GL_UNIFORM_BLOCK, i, 1,
+                                   (const GLenum[]){ GL_ACTIVE_VARIABLES }, outData.vars.size(),
+                                   nullptr, vars.data());
+
+            std::size_t varIndex = 0;
+            for (const GLint varId : vars)
+            {
+                ShaderVariable var;
+
+                GLint uboContent[3] = {};
+                glGetProgramResourceiv(shaderProgramId, GL_UNIFORM, varId, 3, lineProps, 3, nullptr,
+                                       uboContent);
+
+                var.name.resize(uboContent[0]);
+                glGetProgramResourceName(shaderProgramId, GL_UNIFORM, varId, uboContent[0], nullptr,
+                                         var.name.data());
+                if (!var.name.isEmpty() && var.name.back() == '\0')
+                {
+                    var.name.pop_back();
+                }
+
+                var.type = uboContent[1];
+                var.offset = uboContent[2];
+
+                outData.vars.at(varIndex++) = std::move(var);
+            }
+
+            std::ranges::sort(outData.vars,
+                              [](const ShaderVariable& a, const ShaderVariable& b)
+                              {
+                                  return a.offset < b.offset;
+                              });
+
+            _uniformBufferObjects.insert(std::move(outData));
         }
     }
 

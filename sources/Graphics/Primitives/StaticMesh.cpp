@@ -164,20 +164,18 @@ namespace Core
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, _texture);
-
         glBindBuffer(GL_UNIFORM_BUFFER, _uboLight);
 
         const auto& lightning = GetWorld().lightning;
-        ShaderLight light{ lightning.ambientStrength,
-                           lightning.specularStrength,
-                           lightning.minLightStrength,
-                           lightning.specularPow,
-                           glm::vec4(lightning.color.toGlm(), 0.0f),
-                           glm::vec4(lightning.position, 0.0f),
-                           glm::vec4(gGameInstance->currentCamera->getPosition(), 0.0f) };
+        const ShaderLight light{ lightning.ambientStrength,
+                                 lightning.specularStrength,
+                                 lightning.minLightStrength,
+                                 lightning.specularPow,
+                                 glm::vec4(lightning.color.toGlm(), 0.0f),
+                                 glm::vec4(lightning.position, 0.0f),
+                                 glm::vec4(gGameInstance->currentCamera->getPosition(), 0.0f) };
 
-        static unsigned int lights_index
-            = glGetUniformBlockIndex(_shader->getShaderProgramId(), "Lights");
+        unsigned int lights_index = glGetUniformBlockIndex(_shader->getShaderProgramId(), "Lights");
         glUniformBlockBinding(_shader->getShaderProgramId(), lights_index, 0);
         glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(ShaderLight), &light);
 

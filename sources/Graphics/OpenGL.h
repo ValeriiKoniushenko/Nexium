@@ -44,5 +44,5 @@ namespace Core
 
     void UpdateGlViewport(FSize2 originalSize, float aspectRatio, ViewportMode mode);
 
-    [[nodiscard]] StringAtom glTypeToString(GLenum value);
+    [[nodiscard]] const char* glTypeToString(GLenum value);
 } // namespace Core

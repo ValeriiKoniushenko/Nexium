@@ -68,6 +68,11 @@ namespace Core
             return _uniforms;
         }
 
+        [[nodiscard]] const std::unordered_set<ShaderUBO, ShaderUBO::Hasher>& getUBOs() const
+        {
+            return _uniformBufferObjects;
+        }
+
         [[nodiscard]] const std::unordered_set<ShaderVariable, ShaderVariable::Hasher>& getInputs()
             const
         {
@@ -117,6 +122,7 @@ namespace Core
         static void checkShaderCompileStatus(GLuint shaderId, const std::string& shaderType);
 
         void reflectShaderVariablesFor(GLuint shaderProgramId);
+        void reflectShaderUniformBlocksFor(GLuint shaderProgramId);
 
     private:
         ShaderProgram _shaderProgram;
@@ -125,6 +131,7 @@ namespace Core
         std::unordered_set<ShaderVariable, ShaderVariable::Hasher> _uniforms;
         std::unordered_set<ShaderVariable, ShaderVariable::Hasher> _inputs;
         std::unordered_set<ShaderVariable, ShaderVariable::Hasher> _outputs;
+        std::unordered_set<ShaderUBO, ShaderUBO::Hasher> _uniformBufferObjects;
 
         std::filesystem::path _vertexShaderPath;
         std::filesystem::path _fragmentShaderPath;

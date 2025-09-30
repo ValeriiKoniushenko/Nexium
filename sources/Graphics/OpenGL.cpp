@@ -61,114 +61,63 @@ namespace Core
                    static_cast<GLsizei>(view.width), static_cast<GLsizei>(view.height));
     }
 
-    StringAtom glTypeToString(GLenum value)
+    const char* glTypeToString(GLenum value)
     {
-        switch (value)
-        {
-            case GL_FLOAT:
-                return "float"_atom;
-            case GL_FLOAT_VEC2:
-                return "vec2"_atom;
-            case GL_FLOAT_VEC3:
-                return "vec3"_atom;
-            case GL_FLOAT_VEC4:
-                return "vec4"_atom;
-            case GL_DOUBLE:
-                return "double"_atom;
-            case GL_DOUBLE_VEC2:
-                return "dvec2"_atom;
-            case GL_DOUBLE_VEC3:
-                return "dvec3"_atom;
-            case GL_DOUBLE_VEC4:
-                return "dvec4"_atom;
-            case GL_INT:
-                return "int"_atom;
-            case GL_INT_VEC2:
-                return "ivec2"_atom;
-            case GL_INT_VEC3:
-                return "ivec3"_atom;
-            case GL_INT_VEC4:
-                return "ivec4"_atom;
-            case GL_UNSIGNED_INT:
-                return "uint"_atom;
-            case GL_UNSIGNED_INT_VEC2:
-                return "uvec2"_atom;
-            case GL_UNSIGNED_INT_VEC3:
-                return "uvec3"_atom;
-            case GL_UNSIGNED_INT_VEC4:
-                return "uvec4"_atom;
-            case GL_BOOL:
-                return "bool"_atom;
-            case GL_BOOL_VEC2:
-                return "bvec2"_atom;
-            case GL_BOOL_VEC3:
-                return "bvec3"_atom;
-            case GL_BOOL_VEC4:
-                return "bvec4"_atom;
-            case GL_FLOAT_MAT2:
-                return "mat2"_atom;
-            case GL_FLOAT_MAT3:
-                return "mat3"_atom;
-            case GL_FLOAT_MAT4:
-                return "mat4"_atom;
-            case GL_FLOAT_MAT2x3:
-                return "mat2x3"_atom;
-            case GL_FLOAT_MAT3x2:
-                return "mat3x2"_atom;
-            case GL_FLOAT_MAT2x4:
-                return "mat2x4"_atom;
-            case GL_FLOAT_MAT4x2:
-                return "mat4x2"_atom;
-            case GL_FLOAT_MAT3x4:
-                return "mat3x4"_atom;
-            case GL_FLOAT_MAT4x3:
-                return "mat4x3"_atom;
-            case GL_SAMPLER_2D:
-                return "sampler2D"_atom;
-            case GL_SAMPLER_CUBE:
-                return "samplerCube"_atom;
-            case GL_SAMPLER_3D:
-                return "sampler3D"_atom;
-            case GL_SAMPLER_2D_SHADOW:
-                return "sampler2DShadow"_atom;
-            case GL_SAMPLER_CUBE_SHADOW:
-                return "samplerCubeShadow"_atom;
-            case GL_SAMPLER_1D:
-                return "sampler1D"_atom;
-            case GL_SAMPLER_1D_SHADOW:
-                return "sampler1DShadow"_atom;
-            case GL_SAMPLER_2D_ARRAY:
-                return "sampler2DArray"_atom;
-            case GL_SAMPLER_2D_ARRAY_SHADOW:
-                return "sampler2DArrayShadow"_atom;
-            case GL_SAMPLER_BUFFER:
-                return "samplerBuffer"_atom;
-            case GL_SAMPLER_2D_MULTISAMPLE:
-                return "sampler2DMS"_atom;
-            case GL_SAMPLER_2D_MULTISAMPLE_ARRAY:
-                return "sampler2DMSArray"_atom;
-            case GL_SAMPLER_CUBE_MAP_ARRAY:
-                return "samplerCubeArray"_atom;
-            case GL_SAMPLER_CUBE_MAP_ARRAY_SHADOW:
-                return "samplerCubeArrayShadow"_atom;
-            case GL_INT_SAMPLER_2D:
-                return "isampler2D"_atom;
-            case GL_INT_SAMPLER_3D:
-                return "isampler3D"_atom;
-            case GL_INT_SAMPLER_CUBE:
-                return "isamplerCube"_atom;
-            case GL_INT_SAMPLER_BUFFER:
-                return "isamplerBuffer"_atom;
-            case GL_UNSIGNED_INT_SAMPLER_2D:
-                return "usampler2D"_atom;
-            case GL_UNSIGNED_INT_SAMPLER_3D:
-                return "usampler3D"_atom;
-            case GL_UNSIGNED_INT_SAMPLER_CUBE:
-                return "usamplerCube"_atom;
-            case GL_UNSIGNED_INT_SAMPLER_BUFFER:
-                return "usamplerBuffer"_atom;
-            default:
-                return "unknown"_atom;
-        }
+        static std::unordered_map<GLenum, const char*> types
+            = { { GL_FLOAT, "float" },
+                { GL_FLOAT_VEC2, "vec2" },
+                { GL_FLOAT_VEC3, "vec3" },
+                { GL_FLOAT_VEC4, "vec4" },
+                { GL_DOUBLE, "double" },
+                { GL_DOUBLE_VEC2, "dvec2" },
+                { GL_DOUBLE_VEC3, "dvec3" },
+                { GL_DOUBLE_VEC4, "dvec4" },
+                { GL_INT, "int" },
+                { GL_INT_VEC2, "ivec2" },
+                { GL_INT_VEC3, "ivec3" },
+                { GL_INT_VEC4, "ivec4" },
+                { GL_UNSIGNED_INT, "uint" },
+                { GL_UNSIGNED_INT_VEC2, "uvec2" },
+                { GL_UNSIGNED_INT_VEC3, "uvec3" },
+                { GL_UNSIGNED_INT_VEC4, "uvec4" },
+                { GL_BOOL, "bool" },
+                { GL_BOOL_VEC2, "bvec2" },
+                { GL_BOOL_VEC3, "bvec3" },
+                { GL_BOOL_VEC4, "bvec4" },
+                { GL_FLOAT_MAT2, "mat2" },
+                { GL_FLOAT_MAT3, "mat3" },
+                { GL_FLOAT_MAT4, "mat4" },
+                { GL_FLOAT_MAT2x3, "mat2x3" },
+                { GL_FLOAT_MAT3x2, "mat3x2" },
+                { GL_FLOAT_MAT2x4, "mat2x4" },
+                { GL_FLOAT_MAT4x2, "mat4x2" },
+                { GL_FLOAT_MAT3x4, "mat3x4" },
+                { GL_FLOAT_MAT4x3, "mat4x3" },
+                { GL_SAMPLER_2D, "sampler2D" },
+                { GL_SAMPLER_CUBE, "samplerCube" },
+                { GL_SAMPLER_3D, "sampler3D" },
+                { GL_SAMPLER_2D_SHADOW, "sampler2DShadow" },
+                { GL_SAMPLER_CUBE_SHADOW, "samplerCubeShadow" },
+                { GL_SAMPLER_1D, "sampler1D" },
+                { GL_SAMPLER_1D_SHADOW, "sampler1DShadow" },
+                { GL_SAMPLER_2D_ARRAY, "sampler2DArray" },
+                { GL_SAMPLER_2D_ARRAY_SHADOW, "sampler2DArrayShadow" },
+                { GL_SAMPLER_BUFFER, "samplerBuffer" },
+                { GL_SAMPLER_2D_MULTISAMPLE, "sampler2DMS" },
+                { GL_SAMPLER_2D_MULTISAMPLE_ARRAY, "sampler2DMSArray" },
+                { GL_SAMPLER_CUBE_MAP_ARRAY, "samplerCubeArray" },
+                { GL_SAMPLER_CUBE_MAP_ARRAY_SHADOW, "samplerCubeArrayShadow" },
+                { GL_INT_SAMPLER_2D, "isampler2D" },
+                { GL_INT_SAMPLER_3D, "isampler3D" },
+                { GL_INT_SAMPLER_CUBE, "isamplerCube" },
+                { GL_INT_SAMPLER_BUFFER, "isamplerBuffer" },
+                { GL_UNSIGNED_INT_SAMPLER_2D, "usampler2D" },
+                { GL_UNSIGNED_INT_SAMPLER_3D, "usampler3D" },
+                { GL_UNSIGNED_INT_SAMPLER_CUBE, "usamplerCube" },
+                { GL_UNSIGNED_INT_SAMPLER_BUFFER, "usamplerBuffer" } };
+
+        DEBUG_ASSERT(types.find(value) != types.end(), "Was passed invalid GL type.");
+
+        return types[value];
     }
 } // namespace Core
