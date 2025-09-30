@@ -26,6 +26,7 @@
 
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Label.h"
+#include "Editor/GuiComponents/VecInput.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 
 namespace Core
@@ -94,6 +95,28 @@ namespace Core
                 [](float value)
                 {
                     GetWorld().lightning.specularPow = value;
+                });
+        }
+        {
+            auto* h = _layout.addChildComponent<Gui::HorizontalLayout>();
+            h->setHorizontalAlign(Gui::Align::SpaceBetween);
+            h->addChildComponent<Gui::Label>("Sun light direction");
+            auto* input = h->addChildComponent<Gui::Float3Input>();
+            input->setFlex(Gui::Flex::Fixed);
+            input->setWidth(240.f);
+
+            for (auto* i : input->inputs)
+            {
+                i->setMin(-1.f);
+                i->setMax(1.f);
+                i->setStep(.01f);
+            }
+
+            input->setInputtedData(GetWorld().lightning.sunDirection);
+            input->onInput.subscribe(
+                [](glm::vec3 value)
+                {
+                    GetWorld().lightning.sunDirection = value;
                 });
         }
     }

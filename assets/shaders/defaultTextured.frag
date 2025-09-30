@@ -13,7 +13,7 @@ layout(std140, binding = 0) uniform Light {
     float specularPow;
 
     vec3 color;
-    vec3 lightPos;
+    vec3 lightDir;
     vec3 viewPos;
 };
 
@@ -26,7 +26,6 @@ void main()
 
     // diffuse
     vec3 norm = normalize(ioNormal);
-    vec3 lightDir = normalize(lightPos - ioFragPos);
     vec3 viewDir = normalize(viewPos - ioFragPos);
     float diffuse = max(dot(norm, lightDir), minLightStrength);
 

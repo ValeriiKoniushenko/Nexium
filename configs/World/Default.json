@@ -6,14 +6,14 @@
             1.0,
             1.0
         ],
-        "minLightStrength": 0.20000000298023224,
+        "minLightStrength": 0.30000001192092896,
         "position": [
             1000000.0,
             1000000.0,
             1000000.0
         ],
-        "specularPow": 1.0,
-        "specularStrength": 0.10000000149011612
+        "specularPow": 2.0,
+        "specularStrength": 0.20000000298023224
     },
     "worldName": "Default"
 }

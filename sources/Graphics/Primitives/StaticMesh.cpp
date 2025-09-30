@@ -38,14 +38,13 @@ namespace
     {
         struct alignas(16) Light
         {
-            float ambientStrength;  // offset 0
-            float specularStrength; // offset 4
-            float minLightStrength; // offset 8
-            float specularPow;      // offset 12
-
-            glm::vec4 color;    // offset 16 (vec3 -> vec4)
-            glm::vec4 position; // offset 32
-            glm::vec4 viewPos;  // offset 48
+            alignas(4) float ambientStrength;   // offset 0
+            alignas(4) float specularStrength;  // offset 4
+            alignas(4) float minLightStrength;  // offset 8
+            alignas(4) float specularPow;       // offset 12
+            alignas(16) glm::vec3 color;        // offset 16
+            alignas(16) glm::vec3 sunDirection; // offset 32
+            alignas(16) glm::vec3 viewPos;      // offset 48
         };
         static_assert(sizeof(Light) % 16 == 0);
 
@@ -176,11 +175,10 @@ namespace Core
         const auto& lightning = GetWorld().lightning;
         _shader->setUniformObject(
             ShaderReflector_default::uLight,
-            ShaderReflector_default::Light{
-                lightning.ambientStrength, lightning.specularStrength, lightning.minLightStrength,
-                lightning.specularPow, glm::vec4(lightning.color.toGlm(), 0.0f),
-                glm::vec4(lightning.position, 0.0f),
-                glm::vec4(gGameInstance->currentCamera->getPosition(), 0.0f) });
+            ShaderReflector_default::Light{ lightning.ambientStrength, lightning.specularStrength,
+                                            lightning.minLightStrength, lightning.specularPow,
+                                            lightning.color.toGlm(), lightning.sunDirection,
+                                            gGameInstance->currentCamera->getPosition() });
 
         _shader->setUniform(ShaderReflector_default::uTexture, 0);
         _shader->setUniform(ShaderReflector_default::uProjAndView,
