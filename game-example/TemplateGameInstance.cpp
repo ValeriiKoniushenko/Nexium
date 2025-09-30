@@ -50,7 +50,7 @@ void TemplateGameInstance::onLoadCoreResources()
         {
             StaticMeshBundle mesh;
             mesh.importFrom(scene->mRootNode, scene, path, 100.f);
-            mesh.setShader(shaderManager.getShaderProgram("default"_atom));
+            mesh.setShader(shaderManager.getShaderProgram("defaultTextured"_atom));
             mesh.setOutlineShader(shaderManager.getShaderProgram("outline"_atom));
             gameScene.addActor(std::move(mesh), true);
         }

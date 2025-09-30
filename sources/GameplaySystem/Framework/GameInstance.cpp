@@ -213,7 +213,7 @@ namespace Core
 
     void GameInstance::initializeShaders()
     {
-        auto* defaultShader = shaderManager.getShaderProgram("default"_atom);
+        auto* defaultShader = shaderManager.getShaderProgram("defaultTextured"_atom);
         if (DEBUG_ASSERT_VAL(defaultShader))
         {
             defaultShader->setVertexAttributeCallback(
