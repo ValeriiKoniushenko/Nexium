@@ -24,12 +24,15 @@
 
 #include "ShaderProgram.h"
 
+#include "ShaderProgramMeta.h"
+
 namespace Core
 {
     ShaderProgram& ShaderProgram::operator=(ShaderProgram&& other) noexcept
     {
         if (this != &other) [[likely]]
         {
+            _ubos = std::move(other._ubos);
             _uniforms = std::move(other._uniforms);
             _name = std::move(other._name);
             _vertexShaderId = other._vertexShaderId;
@@ -115,12 +118,16 @@ namespace Core
         _fragmentShaderId = 0;
     }
 
-    void ShaderProgram::m__setUniformsFromSources(
-        const std::unordered_set<ShaderVariable, ShaderVariable::Hasher>& source)
+    void ShaderProgram::setDataFromMeta(const ShaderProgramMeta& meta)
     {
-        for (const auto& u : source)
+        for (const auto& u : meta.getUniforms())
         {
             _uniforms[u.name] = u.location;
+        }
+
+        for (const auto& u : meta.getUBOs())
+        {
+            _ubos[u.name] = u.binding;
         }
     }
 
@@ -150,11 +157,12 @@ namespace Core
         }
     }
 
-    void ShaderProgram::debugUniform(const StringAtom& name)
+    void ShaderProgram::debugUniform(const StringAtom& name) const
     {
 #ifdef GRAPHICS_DEBUG
         DEBUG_ASSERT(name.isStatic(), "Use atomic string. Add _atom to your uniform's str");
-        DEBUG_ASSERT(_uniforms[name] != -1);
+        DEBUG_ASSERT(_uniforms.contains(name));
+        DEBUG_ASSERT(_uniforms.at(name) != -1);
 #endif
     }
 } // namespace Core

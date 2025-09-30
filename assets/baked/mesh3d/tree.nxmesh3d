@@ -1,6 +1,6 @@
 {
   "path": "assets/objects-3d/Models/FBX/Tree.fbx",
-  "mainShader": "color",
+  "mainShader": "default",
   "outlineShader": "outline",
   "assimpPostProcess": [
     "Triangulate",

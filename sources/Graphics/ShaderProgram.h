@@ -34,6 +34,8 @@
 
 namespace Core
 {
+    class ShaderProgramMeta;
+
     struct ShaderVariable
     {
         struct Hasher
@@ -120,49 +122,60 @@ namespace Core
 
         // ================= UNIFORMs =====================
         // All uniform function below MUST be force inlined.
-        // So, declare & implement it on spot.
+        // So, declare & implement it on the spot.
 
         // clang-format off
         // Scalars
-        void setUniform(const StringAtom& name, GLfloat value) { glUniform1f(_uniforms[name], value); debugUniform(name); }
-        void setUniform(const StringAtom& name, GLint value) { glUniform1i(_uniforms[name], value); debugUniform(name); }
-        void setUniform(const StringAtom& name, GLuint value) { glUniform1ui(_uniforms[name], value); debugUniform(name); }
+        void setUniform(const StringAtom& name, GLfloat value) const {  debugUniform(name); glUniform1f(_uniforms.at(name), value); }
+        void setUniform(const StringAtom& name, GLint value) const {  debugUniform(name); glUniform1i(_uniforms.at(name), value); }
+        void setUniform(const StringAtom& name, GLuint value) const {  debugUniform(name); glUniform1ui(_uniforms.at(name), value); }
 
         // vec2
-        void setUniform(const StringAtom& name, GLfloat x, GLfloat y) { glUniform2f(_uniforms[name], x,y);  debugUniform(name); }
-        void setUniform(const StringAtom& name, glm::vec2 v) { setUniform(name, v.x, v.y); }
-        void setUniform(const StringAtom& name, GLint x, GLint y) { glUniform2i(_uniforms[name], x,y);  debugUniform(name); }
-        void setUniform(const StringAtom& name, glm::ivec2 v) { setUniform(name, v.x, v.y); }
-        void setUniform(const StringAtom& name, GLuint x, GLuint y) { glUniform2ui(_uniforms[name], x,y);  debugUniform(name); }
+        void setUniform(const StringAtom& name, GLfloat x, GLfloat y) const { debugUniform(name); glUniform2f(_uniforms.at(name), x,y); }
+        void setUniform(const StringAtom& name, glm::vec2 v) const { setUniform(name, v.x, v.y); }
+        void setUniform(const StringAtom& name, GLint x, GLint y) const { debugUniform(name); glUniform2i(_uniforms.at(name), x,y); }
+        void setUniform(const StringAtom& name, glm::ivec2 v) const { setUniform(name, v.x, v.y); }
+        void setUniform(const StringAtom& name, GLuint x, GLuint y) const { debugUniform(name); glUniform2ui(_uniforms.at(name), x,y); }
 
         // vec3
-        void setUniform(const StringAtom& name, GLfloat x, GLfloat y, GLfloat z) { glUniform3f(_uniforms[name], x,y,z);  debugUniform(name); }
-        void setUniform(const StringAtom& name, glm::vec3 v) { setUniform(name, v.x, v.y, v.z); }
-        void setUniform(const StringAtom& name, GLint x, GLint y, GLint z) { glUniform3i(_uniforms[name], x,y,z);  debugUniform(name); }
-        void setUniform(const StringAtom& name, glm::ivec3 v) { setUniform(name, v.x, v.y, v.z); }
-        void setUniform(const StringAtom& name, GLuint x, GLuint y, GLuint z) { glUniform3ui(_uniforms[name], x,y,z);  debugUniform(name); }
+        void setUniform(const StringAtom& name, GLfloat x, GLfloat y, GLfloat z) const { debugUniform(name); glUniform3f(_uniforms.at(name), x,y,z); }
+        void setUniform(const StringAtom& name, glm::vec3 v) const { setUniform(name, v.x, v.y, v.z); }
+        void setUniform(const StringAtom& name, GLint x, GLint y, GLint z) const { debugUniform(name); glUniform3i(_uniforms.at(name), x,y,z); }
+        void setUniform(const StringAtom& name, glm::ivec3 v) const { setUniform(name, v.x, v.y, v.z); }
+        void setUniform(const StringAtom& name, GLuint x, GLuint y, GLuint z) const { debugUniform(name); glUniform3ui(_uniforms.at(name), x,y,z); }
 
         // vec4
-        void setUniform(const StringAtom& name, GLfloat x, GLfloat y, GLfloat z, GLfloat w) { glUniform4f(_uniforms[name], x,y,z,w);  debugUniform(name); }
-        void setUniform(const StringAtom& name, GLint x, GLint y, GLint z, GLint w) { glUniform4i(_uniforms[name], x,y,z,w);  debugUniform(name); }
-        void setUniform(const StringAtom& name, GLuint x, GLuint y, GLuint z, GLuint w) { glUniform4ui(_uniforms[name], x,y,z,w);  debugUniform(name); }
+        void setUniform(const StringAtom& name, GLfloat x, GLfloat y, GLfloat z, GLfloat w) const { debugUniform(name); glUniform4f(_uniforms.at(name), x,y,z,w); }
+        void setUniform(const StringAtom& name, GLint x, GLint y, GLint z, GLint w) const { debugUniform(name); glUniform4i(_uniforms.at(name), x,y,z,w); }
+        void setUniform(const StringAtom& name, GLuint x, GLuint y, GLuint z, GLuint w) const { debugUniform(name); glUniform4ui(_uniforms.at(name), x,y,z,w); }
 
-        void setUniform(const StringAtom& name, const glm::mat2& value) { glUniformMatrix2fv(_uniforms[name], 1, GL_FALSE, glm::value_ptr(value)); debugUniform(name); }
-        void setUniform(const StringAtom& name, const glm::mat3& value) { glUniformMatrix3fv(_uniforms[name], 1, GL_FALSE, glm::value_ptr(value)); debugUniform(name); }
-        void setUniform(const StringAtom& name, const glm::mat4& value) { glUniformMatrix4fv(_uniforms[name], 1, GL_FALSE, glm::value_ptr(value)); debugUniform(name); }
-        void setUniform(const StringAtom& name, const glm::mat2x3& value) { glUniformMatrix2x3fv(_uniforms[name], 1, GL_FALSE, glm::value_ptr(value)); debugUniform(name); }
-        void setUniform(const StringAtom& name, const glm::mat3x2& value) { glUniformMatrix3x2fv(_uniforms[name], 1, GL_FALSE, glm::value_ptr(value)); debugUniform(name); }
-        void setUniform(const StringAtom& name, const glm::mat2x4& value) { glUniformMatrix2x4fv(_uniforms[name], 1, GL_FALSE, glm::value_ptr(value)); debugUniform(name); }
-        void setUniform(const StringAtom& name, const glm::mat4x2& value) { glUniformMatrix4x2fv(_uniforms[name], 1, GL_FALSE, glm::value_ptr(value)); debugUniform(name); }
-        void setUniform(const StringAtom& name, const glm::mat3x4& value) { glUniformMatrix3x4fv(_uniforms[name], 1, GL_FALSE, glm::value_ptr(value)); debugUniform(name); }
-        void setUniform(const StringAtom& name, const glm::mat4x3& value) { glUniformMatrix4x3fv(_uniforms[name], 1, GL_FALSE, glm::value_ptr(value)); debugUniform(name); }
+        void setUniform(const StringAtom& name, const glm::mat2& value) const { debugUniform(name); glUniformMatrix2fv(_uniforms.at(name), 1, GL_FALSE, glm::value_ptr(value)); }
+        void setUniform(const StringAtom& name, const glm::mat3& value) const { debugUniform(name); glUniformMatrix3fv(_uniforms.at(name), 1, GL_FALSE, glm::value_ptr(value)); }
+        void setUniform(const StringAtom& name, const glm::mat4& value) const { debugUniform(name); glUniformMatrix4fv(_uniforms.at(name), 1, GL_FALSE, glm::value_ptr(value)); }
+        void setUniform(const StringAtom& name, const glm::mat2x3& value) const { debugUniform(name); glUniformMatrix2x3fv(_uniforms.at(name), 1, GL_FALSE, glm::value_ptr(value)); }
+        void setUniform(const StringAtom& name, const glm::mat3x2& value) const { debugUniform(name); glUniformMatrix3x2fv(_uniforms.at(name), 1, GL_FALSE, glm::value_ptr(value)); }
+        void setUniform(const StringAtom& name, const glm::mat2x4& value) const { debugUniform(name); glUniformMatrix2x4fv(_uniforms.at(name), 1, GL_FALSE, glm::value_ptr(value)); }
+        void setUniform(const StringAtom& name, const glm::mat4x2& value) const { debugUniform(name); glUniformMatrix4x2fv(_uniforms.at(name), 1, GL_FALSE, glm::value_ptr(value)); }
+        void setUniform(const StringAtom& name, const glm::mat3x4& value) const { debugUniform(name); glUniformMatrix3x4fv(_uniforms.at(name), 1, GL_FALSE, glm::value_ptr(value)); }
+        void setUniform(const StringAtom& name, const glm::mat4x3& value) const { debugUniform(name); glUniformMatrix4x3fv(_uniforms.at(name), 1, GL_FALSE, glm::value_ptr(value)); }
 
-        void setUniform(const StringAtom& name, const NormColor4& value) { glUniform4f(_uniforms[name], value.r, value.g, value.b, value.a);  debugUniform(name); }
-        void setUniform(const StringAtom& name, const NormColor3& value) { glUniform3f(_uniforms[name], value.r, value.g, value.b);  debugUniform(name); }
+        void setUniform(const StringAtom& name, const NormColor4& value) const { debugUniform(name); glUniform4f(_uniforms.at(name), value.r, value.g, value.b, value.a); }
+        void setUniform(const StringAtom& name, const NormColor3& value) const { debugUniform(name); glUniform3f(_uniforms.at(name), value.r, value.g, value.b); }
         // clang-format on
 
-        void m__setUniformsFromSources(
-            const std::unordered_set<ShaderVariable, ShaderVariable::Hasher>& source);
+        template<typename T>
+        void setUniformObject(const StringAtom& name, T&& value) const
+        {
+#ifdef GRAPHICS_DEBUG
+            DEBUG_ASSERT(name.isStatic(), "Use atomic string. Add _atom to your uniform's str");
+            DEBUG_ASSERT(_ubos.contains(name));
+            DEBUG_ASSERT(_ubos.at(name) != 0);
+#endif
+            glUniformBlockBinding(_shaderProgramId, _ubos.at(name), 0);
+            glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(T), &value);
+        }
+
+        void setDataFromMeta(const ShaderProgramMeta& source);
 
         void setupVertexAttribute();
 
@@ -173,6 +186,8 @@ namespace Core
 
     protected:
         std::unordered_map<StringAtom, GLint> _uniforms;
+        std::unordered_map<StringAtom, GLuint> _ubos;
+
         std::function<void()> _setupVertexAttribute;
         StringAtom _name;
 
@@ -181,6 +196,6 @@ namespace Core
         GLuint _shaderProgramId = 0;
 
     private:
-        [[maybe_unused]] void debugUniform(const StringAtom& name);
+        [[maybe_unused]] void debugUniform(const StringAtom& name) const;
     };
 } // namespace Core

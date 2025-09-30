@@ -213,10 +213,10 @@ namespace Core
 
     void GameInstance::initializeShaders()
     {
-        auto* colorShader = shaderManager.getShaderProgram("color"_atom);
-        if (DEBUG_ASSERT_VAL(colorShader))
+        auto* defaultShader = shaderManager.getShaderProgram("default"_atom);
+        if (DEBUG_ASSERT_VAL(defaultShader))
         {
-            colorShader->setVertexAttributeCallback(
+            defaultShader->setVertexAttributeCallback(
                 []
                 {
                     glEnableVertexAttribArray(0);

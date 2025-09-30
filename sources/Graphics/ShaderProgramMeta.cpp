@@ -43,14 +43,6 @@ namespace Core
     void ShaderProgramMeta::create(const std::filesystem::path& vertexShaderPath,
                                    const std::filesystem::path& fragmentShaderPath)
     {
-        {
-            // fake creation to check compile errors
-            ShaderProgramMeta temp;
-            temp.generateShaderId();
-            temp.readSourceShaderFile(vertexShaderPath, fragmentShaderPath);
-            temp.compileShader();
-        }
-
         generateShaderId();
         readSourceShaderFile(vertexShaderPath, fragmentShaderPath);
         compileShader();
@@ -58,7 +50,7 @@ namespace Core
         _shaderProgram.create(_shaderName);
         reflectShaderVariablesFor(_shaderProgram.getShaderProgramId());
         reflectShaderUniformBlocksFor(_shaderProgram.getShaderProgramId());
-        _shaderProgram.m__setUniformsFromSources(_uniforms);
+        _shaderProgram.setDataFromMeta(*this);
 
         _vertexShaderPath = vertexShaderPath;
         _fragmentShaderPath = fragmentShaderPath;

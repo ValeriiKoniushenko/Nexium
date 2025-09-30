@@ -1,6 +1,6 @@
 {
   "path": "assets/objects-3d/Models/FBX/FireHydrant.fbx",
-  "mainShader": "color",
+  "mainShader": "default",
   "outlineShader": "outline",
   "assimpPostProcess": [
     "Triangulate",
