@@ -297,6 +297,17 @@ namespace Core
                 {
                     GetWindow().close();
                 });
+        auto saveKey = keyboardInput.getOrCreate("Save [Ctrl]", Keyboard::Key::Key_S);
+        saveKey->setIsRepeatable(false);
+        saveKey->onPress.subscribe(
+            [&](const KeyboardIA::SpecKeysState& spec)
+            {
+                if (spec.leftCtrl.cast() == Keyboard::KeyState::Pressed)
+                {
+                    gGameInstance->saveAll();
+                }
+            });
+
         auto toggleRenderMode
             = keyboardInput.getOrCreate("Toggle render mode", Keyboard::Key::Key_F1);
         toggleRenderMode->setIsRepeatable(false);
