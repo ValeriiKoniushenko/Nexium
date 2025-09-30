@@ -121,6 +121,7 @@ namespace Core
         gameEditor.saveAll();
         gameScene.writeToCache();
         world.writeToCache();
+        ImGui::SaveIniSettingsToDisk(ImGui::GetIO().IniFilename);
         writeToCache();
 
         onSaveAll();
