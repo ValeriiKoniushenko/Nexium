@@ -30,24 +30,24 @@ namespace Core
     {
         nlohmann::json json;
 
-        json["position"] = position;
         json["color"] = color;
         json["minLightStrength"] = minLightStrength;
         json["ambientStrength"] = ambientStrength;
         json["specularStrength"] = specularStrength;
         json["specularPow"] = specularPow;
+        json["sunDirection"] = sunDirection;
 
         return json;
     }
 
     void LightningProps::fromJson(const nlohmann::json& json, bool isIgnoreChildren)
     {
-        tryReadJsonTo(position, "position", json);
         tryReadJsonTo(color, "color", json);
         tryReadJsonTo(minLightStrength, "minLightStrength", json);
         tryReadJsonTo(ambientStrength, "ambientStrength", json);
         tryReadJsonTo(specularStrength, "specularStrength", json);
         tryReadJsonTo(specularPow, "specularPow", json);
+        tryReadJsonTo(sunDirection, "sunDirection", json);
     }
 
     std::filesystem::path World::getCacheDir() const

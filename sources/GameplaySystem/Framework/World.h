@@ -36,13 +36,12 @@ namespace Core
 {
     struct LightningProps : public JsonAdapter
     {
-        glm::vec3 position = glm::vec3(1'000'000.f, 1'000'000.f, 1'000'000.f);
-        NormColor3 color = NormColor3(1.f);
         float ambientStrength = 1.f;
         float minLightStrength = 0.2f;
         float specularStrength = 0.5f;
         float specularPow = 32.f;
         glm::vec3 sunDirection = glm::vec3(0.5f);
+        NormColor3 color = NormColor3(1.f);
 
         [[nodiscard]] nlohmann::json toJson() const override;
         void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;

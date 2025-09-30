@@ -26,6 +26,7 @@
 
 #include "BaseWindow.h"
 #include "Editor/GuiComponents/Input.h"
+#include "Editor/GuiComponents/VecInput.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "Graphics/Texture.h"
 
@@ -36,16 +37,23 @@ namespace Core
         ECS_COMPONENT_DECL(WorldLightningEWC, BaseFloatEWC);
 
     public:
-        [[nodiscard]] const char* getIcon() override { return ICON_FA_PICTURE_O; }
+        [[nodiscard]] const char* getIcon() override { return ICON_FA_SUN_O; }
 
     protected:
         void onInitialize() override;
-
+        void onOpen() override;
         void onUpdate() override;
 
         void onDraw() override;
 
     protected:
         Gui::VerticalLayout _layout;
+
+        Gui::Color3Input* _color3Input = nullptr;
+        Gui::FloatInput* _ambientStrength = nullptr;
+        Gui::FloatInput* _minLightStrength = nullptr;
+        Gui::FloatInput* _specularStrength = nullptr;
+        Gui::FloatInput* _specularPow = nullptr;
+        Gui::Float3Input* _sunDirection = nullptr;
     };
 } // namespace Core
