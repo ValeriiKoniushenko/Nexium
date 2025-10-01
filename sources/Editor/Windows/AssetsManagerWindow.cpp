@@ -32,6 +32,7 @@
 #include "TextEditor.h"
 
 #include <format>
+#include <fstream>
 
 using NodeType = Core::EditorAssetsManager::NodeType;
 
@@ -266,6 +267,69 @@ namespace Core
         refresh();
     }
 
+    void AssetsManagerWindowEWC::createFolder(const std::filesystem::path& path)
+    {
+        std::error_code er;
+        std::filesystem::create_directory(path, er);
+        if (er)
+        {
+            errorLog("Error while creating of the directory: " + er.message());
+        }
+
+        refresh();
+    }
+
+    void AssetsManagerWindowEWC::createFolderAutoName(const std::filesystem::path& basePath)
+    {
+        if (!std::filesystem::exists(basePath))
+        {
+            errorLog("Attempt to create a folder with non-existing path: "
+                     + basePath.generic_string());
+            return;
+        }
+
+        const std::string baseName = "NewFolder_";
+        std::size_t i = 0;
+        while (std::filesystem::exists(basePath / (baseName + std::to_string(i++))))
+        {
+        }
+
+        createFolder(basePath / (baseName + std::to_string(i)));
+    }
+
+    void AssetsManagerWindowEWC::createFile(const std::filesystem::path& path)
+    {
+        if (std::filesystem::exists(path))
+        {
+            errorLog("You are trying to create a file, but a file with such name already exists: "
+                     + path.generic_string());
+            return;
+        }
+
+        std::ofstream file(path);
+        file.close();
+
+        refresh();
+    }
+
+    void AssetsManagerWindowEWC::createFileAutoName(const std::filesystem::path& basePath)
+    {
+        if (!std::filesystem::exists(basePath))
+        {
+            errorLog("Attempt to create a file with non-existing path: "
+                     + basePath.generic_string());
+            return;
+        }
+
+        const std::string baseName = "NewFile_";
+        std::size_t i = 0;
+        while (std::filesystem::exists(basePath / (baseName + std::to_string(i++))))
+        {
+        }
+
+        createFile(basePath / (baseName + std::to_string(i)));
+    }
+
     std::filesystem::path AssetsManagerWindowEWC::getExclusiveFileName(
         const std::filesystem::path& path) const
     {
@@ -342,18 +406,29 @@ namespace Core
                                                ImGuiPopupFlags_MouseButtonRight
                                                    | ImGuiPopupFlags_NoOpenOverItems))
             {
-                if (ImGui::MenuItem("Back"))
+                if (ImGui::MenuItem(ICON_FA_CHEVRON_LEFT " Back"))
                 {
                     tryOpenParentDir();
                 }
-                if (!_selectedPath.empty() && ImGui::MenuItem("Paste"))
+                if (!_selectedPath.empty() && ImGui::MenuItem(ICON_FA_ARROW_DOWN " Paste"))
                 {
                     pasteTo(_openedPath);
                 }
-                if (ImGui::MenuItem("Refresh"))
+                if (ImGui::MenuItem(ICON_FA_REFRESH " Refresh"))
                 {
                     refresh();
                 }
+                if (ImGui::MenuItem(ICON_FA_PLUS " Create a folder"))
+                {
+                    createFolderAutoName(_openedPath);
+                }
+                if (ImGui::MenuItem(ICON_FA_PLUS " Create a file"))
+                {
+                    createFileAutoName(_openedPath);
+                }
+
+                ImGui::Separator();
+
                 if (ImGui::MenuItem("Open in explorer"))
                 {
                     EditorAssetsManager::openPathFromOSExplorer(_openedPath);
@@ -494,21 +569,23 @@ namespace Core
 
         if (ImGui::BeginPopup(filename.c_str()))
         {
-            if (ImGui::MenuItem("Copy"))
+            if (ImGui::MenuItem(ICON_FA_FILES_O " Copy"))
             {
                 copyFrom(path);
             }
-            if (ImGui::MenuItem("Cut"))
+            if (ImGui::MenuItem(ICON_FA_SCISSORS " Cut"))
             {
                 cutFrom(path);
             }
-            if (!_selectedPath.empty() && entry.is_directory() && ImGui::MenuItem("Paste"))
+            if (!_selectedPath.empty() && entry.is_directory()
+                && ImGui::MenuItem(ICON_FA_ARROW_DOWN " Paste"))
             {
                 pasteTo(path);
             }
-            if (ImGui::MenuItem("Delete"))
+            if (ImGui::MenuItem(ICON_FA_TRASH " Delete"))
             {
-                ModalPopUp::Open("Do you really want to delete a file: {}?"_f
+                ModalPopUp::Open("Do you really want to delete the {}: {}?"_f
+                                     << (entry.is_directory() ? "directory" : "file")
                                      << path.generic_string(),
                                  [this, path](bool isOk)
                                  {
@@ -520,6 +597,9 @@ namespace Core
 
                 invalidate = true;
             }
+
+            ImGui::Separator();
+
             if (ImGui::MenuItem("Open in explorer"))
             {
                 EditorAssetsManager::openPathFromOSExplorer(entry.is_directory() ? path

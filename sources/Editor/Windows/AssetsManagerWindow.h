@@ -56,18 +56,17 @@ namespace Core
         void onInitialize() override;
 
         void onDraw() override;
-
         void onUpdate() override;
-
         void openPath(const std::filesystem::path& path);
 
         void copyFrom(const std::filesystem::path& path);
-
         void cutFrom(const std::filesystem::path& path);
-
         void pasteTo(std::filesystem::path path);
-
         void deleteAt(const std::filesystem::path& path);
+        void createFolder(const std::filesystem::path& path);
+        void createFolderAutoName(const std::filesystem::path& basePath);
+        void createFile(const std::filesystem::path& path);
+        void createFileAutoName(const std::filesystem::path& basePath);
 
         [[nodiscard]] std::filesystem::path getExclusiveFileName(
             const std::filesystem::path& path) const;
