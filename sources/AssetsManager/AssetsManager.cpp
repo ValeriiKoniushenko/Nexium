@@ -33,7 +33,8 @@
 #include <memory>
 
 #ifdef _WIN32
-    #include <commdlg.h>
+    #include <Commdlg.h>
+    #include <cstdafx>
     #include <windows.h>
 #endif
 
@@ -192,7 +193,7 @@ namespace Core
         ofn.nFilterIndex = 1;
         ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 
-        isPressedOk = GetOpenFileName(&ofn) == TRUE;
+        isPressedOk = GetOpenFileNameA(&ofn) == TRUE;
 #else
         std::string cmd = "zenity --file-selection --file-filter=";
         if (filter.empty())
