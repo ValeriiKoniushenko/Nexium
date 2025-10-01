@@ -47,11 +47,12 @@ namespace Core
     public:
         [[nodiscard]] const char* getIcon() override { return ICON_FA_COG; }
 
-        void refresh();
         void save();
         void openFromFileSystem();
+        void discardChanges();
 
     protected:
+        void fetchFromAssetsManager();
         void onInitialize() override;
         void onDraw() override;
         void drawBarMenu();
@@ -67,6 +68,8 @@ namespace Core
         Gui::ComboModelBased* _mainShaderCombo = nullptr;
         Gui::ComboModelBased* _outlineShaderCombo = nullptr;
         Gui::FloatInput* _scaleInput = nullptr;
+
+        bool _isModified = false;
 
         NXMesh3D _targetMesh;
     };

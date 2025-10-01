@@ -84,6 +84,11 @@ namespace Core
             h->addChildComponent<Label>("Model path")->setWidth(defaultLabelWidth);
             _modelInput = h->addChildComponent<TextInput>();
             _modelInput->setFlex(Flex::FlexWidth);
+            _modelInput->onInput.subscribe(
+                [this](auto)
+                {
+                    _isModified = true;
+                });
         }
 
         {
@@ -94,6 +99,11 @@ namespace Core
             _mainShaderCombo->setWidth(240.f);
             _mainShaderCombo->setDataProvider(shaderDataProvider);
             _mainShaderCombo->setSizeProvider(shaderSizeProvider);
+            _mainShaderCombo->onSelect.subscribe(
+                [this](auto)
+                {
+                    _isModified = true;
+                });
         }
         {
             auto* h = _layout.addChildComponent<HorizontalLayout>();
@@ -103,6 +113,11 @@ namespace Core
             _outlineShaderCombo->setWidth(240.f);
             _outlineShaderCombo->setDataProvider(shaderDataProvider);
             _outlineShaderCombo->setSizeProvider(shaderSizeProvider);
+            _outlineShaderCombo->onSelect.subscribe(
+                [this](auto)
+                {
+                    _isModified = true;
+                });
         }
         {
             auto* h = _layout.addChildComponent<HorizontalLayout>();
@@ -112,9 +127,14 @@ namespace Core
             _scaleInput->setWidth(240.f);
             _scaleInput->setMin(0.0f);
             _scaleInput->setStep(0.1f);
+            _scaleInput->onInput.subscribe(
+                [this](auto)
+                {
+                    _isModified = true;
+                });
         }
 
-        refresh();
+        fetchFromAssetsManager();
     }
 
     void NxMesh3DEditorEWC::onDraw()
@@ -122,6 +142,15 @@ namespace Core
         drawBarMenu();
 
         _layout.tick(GetWorld().timeDelta);
+
+        if (ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows))
+        {
+            bool const ctrl = ImGui::GetIO().KeyCtrl;
+            if (ctrl && ImGui::IsKeyPressed(ImGuiKey_S, false))
+            {
+                save();
+            }
+        }
     }
 
     void NxMesh3DEditorEWC::drawBarMenu()
@@ -138,6 +167,11 @@ namespace Core
                 {
                     save();
                 }
+                if (ImGui::MenuItem(ICON_FA_TIMES " Discard changes"))
+                {
+                    discardChanges();
+                }
+                ImGui::Separator();
                 if (ImGui::MenuItem(ICON_FA_POWER_OFF " Exit"))
                 {
                     closeWindow();
@@ -148,17 +182,20 @@ namespace Core
 
             if (!_filePath.empty())
             {
-                ImGui::SameLine(ImGui::GetWindowWidth()
-                                - (ImGui::CalcTextSize(_filePath.generic_string().c_str()).x)
+                std::string str = (_isModified ? "Modified" : "No changes");
+                str += " | ";
+                str += _filePath.generic_string();
+
+                ImGui::SameLine(ImGui::GetWindowWidth() - (ImGui::CalcTextSize(str.c_str()).x)
                                 - ImGui::GetStyle().ItemSpacing.x * 3.f);
-                ImGui::TextUnformatted(_filePath.generic_string().c_str());
+                ImGui::TextUnformatted(str.c_str());
             }
 
             ImGui::EndMenuBar();
         }
     }
 
-    void NxMesh3DEditorEWC::refresh()
+    void NxMesh3DEditorEWC::fetchFromAssetsManager()
     {
         if (!_targetMesh.isValid())
         {
@@ -173,10 +210,13 @@ namespace Core
         _outlineShaderCombo->setCurrentIndex(
             convertShaderNameToIndex(_targetMesh->getOutlineShader()));
         _scaleInput->setInputtedData(_targetMesh->getScale());
+
+        _isModified = false;
     }
 
     void NxMesh3DEditorEWC::save()
     {
+        _isModified = false;
     }
 
     void NxMesh3DEditorEWC::openFromFileSystem()
@@ -189,7 +229,17 @@ namespace Core
 
         _filePath = path.toStdString();
         _targetMesh = GetAssetsManager().getMesh3D(StringAtom::Intern(path));
-        refresh();
+        fetchFromAssetsManager();
+    }
+
+    void NxMesh3DEditorEWC::discardChanges()
+    {
+        if (!_filePath.empty())
+        {
+            _targetMesh
+                = GetAssetsManager().getMesh3D(StringAtom::Intern(_filePath.generic_string()));
+            fetchFromAssetsManager();
+        }
     }
 
     void NxMesh3DEditorEWC::setEnabledStatusForAllProps(bool isEnabled)
