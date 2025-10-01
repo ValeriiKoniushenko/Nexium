@@ -50,6 +50,7 @@ namespace Core
         _windowFlags |= ImGuiWindowFlags_MenuBar;
 
         constexpr float defaultLabelWidth = 140.0f;
+        constexpr float defaultModifierWidth = 300.0f;
 
         auto shaderDataProvider = [](std::size_t inputIndex, StringAtom& out) -> const void*
         {
@@ -96,7 +97,7 @@ namespace Core
             h->setHorizontalAlign(Align::SpaceBetween);
             h->addChildComponent<Label>("Main shader")->setWidth(defaultLabelWidth);
             _mainShaderCombo = h->addChildComponent<ComboModelBased>();
-            _mainShaderCombo->setWidth(240.f);
+            _mainShaderCombo->setWidth(defaultModifierWidth);
             _mainShaderCombo->setDataProvider(shaderDataProvider);
             _mainShaderCombo->setSizeProvider(shaderSizeProvider);
             _mainShaderCombo->onSelect.subscribe(
@@ -110,7 +111,7 @@ namespace Core
             h->setHorizontalAlign(Align::SpaceBetween);
             h->addChildComponent<Label>("Outline shader")->setWidth(defaultLabelWidth);
             _outlineShaderCombo = h->addChildComponent<ComboModelBased>();
-            _outlineShaderCombo->setWidth(240.f);
+            _outlineShaderCombo->setWidth(defaultModifierWidth);
             _outlineShaderCombo->setDataProvider(shaderDataProvider);
             _outlineShaderCombo->setSizeProvider(shaderSizeProvider);
             _outlineShaderCombo->onSelect.subscribe(
@@ -124,13 +125,37 @@ namespace Core
             h->setHorizontalAlign(Align::SpaceBetween);
             h->addChildComponent<Label>("Scale")->setWidth(defaultLabelWidth);
             _scaleInput = h->addChildComponent<FloatInput>();
-            _scaleInput->setWidth(240.f);
+            _scaleInput->setWidth(defaultModifierWidth);
             _scaleInput->setMin(0.0f);
             _scaleInput->setStep(0.1f);
             _scaleInput->onInput.subscribe(
                 [this](auto)
                 {
                     _isModified = true;
+                });
+        }
+
+        {
+            auto* h = _layout.addChildComponent<HorizontalLayout>();
+            h->setHorizontalAlign(Align::SpaceBetween);
+            h->setVerticalAlign(Align::Top);
+            h->addChildComponent<Label>("Post loading flags")->setWidth(defaultLabelWidth);
+            _postProcessArray = h->addChildComponent<AssimpPostProcessArray>();
+            _postProcessArray->setWidth(defaultModifierWidth);
+            _postProcessArray->setFlex(Flex::Fixed);
+            _postProcessArray->onChange.subscribe(
+                [this]()
+                {
+                    _isModified = true;
+                });
+            _postProcessArray->onSave.subscribe(
+                [this](const std::vector<aiPostProcessSteps>& data)
+                {
+                    _postProcessFlags = 0;
+                    for (auto el : data)
+                    {
+                        _postProcessFlags |= el;
+                    }
                 });
         }
 
@@ -211,6 +236,18 @@ namespace Core
             convertShaderNameToIndex(_targetMesh->getOutlineShader()));
         _scaleInput->setInputtedData(_targetMesh->getScale());
 
+        _postProcessFlags = _targetMesh->getAssimpPostProcessFlags();
+        _postProcessArray->clearData();
+        for (std::size_t i = 0; i < sizeof(int) * 8; ++i)
+        {
+            const auto flag = static_cast<aiPostProcessSteps>(
+                (1 << i) & _targetMesh->getAssimpPostProcessFlags());
+            if (flag != 0)
+            {
+                _postProcessArray->add(flag);
+            }
+        }
+
         _isModified = false;
     }
 
@@ -249,6 +286,7 @@ namespace Core
         _mainShaderCombo->disableWidget(!isEnabled);
         _outlineShaderCombo->disableWidget(!isEnabled);
         _scaleInput->disableWidget(!isEnabled);
+        _postProcessArray->disableWidget(!isEnabled);
     }
 
     std::size_t NxMesh3DEditorEWC::convertShaderNameToIndex(const StringAtom& shaderName) const

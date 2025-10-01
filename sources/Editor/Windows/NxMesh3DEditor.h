@@ -26,7 +26,9 @@
 
 #include "AssetsManager/Mesh3DAsset.h"
 #include "BaseWindow.h"
+#include "Editor/GuiComponents/Array.h"
 #include "Editor/GuiComponents/Button.h"
+#include "Editor/GuiComponents/Combo.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
@@ -37,8 +39,45 @@ namespace Core
     namespace Gui
     {
         class Label;
-        class ComboModelBased;
     } // namespace Gui
+
+    using AssimpPostProcessArray =
+    Gui::BaseArray<aiPostProcessSteps,
+        decltype([](aiPostProcessSteps data)
+        -> Gui::HorizontalLayout::Ptr {
+                auto l = Gui::HorizontalLayout::Create();
+                const auto combo = l->addChildComponent<Gui::ComboModelBased>();
+
+                combo->setDataProvider(
+                    [](std::size_t i, StringAtom &out) -> const void * {
+                        out = Assimp::aiPostProcessStepsToString(Assimp::aiPostProcessStepsAsVector[i]);
+                        return nullptr;
+                    });
+                combo->setSizeProvider(
+                    [] {
+                        return Assimp::aiPostProcessStepsAsVector.size();
+                    });
+                combo->setFlex(Gui::Flex::FlexWidth);
+
+                const auto it = std::ranges::find(Assimp::aiPostProcessStepsAsVector, data);
+                if (it != Assimp::aiPostProcessStepsAsVector.end()) {
+                    combo->setCurrentIndex(it - Assimp::aiPostProcessStepsAsVector.begin());
+                }
+                return l;
+            }),
+        decltype([](Gui::HorizontalLayout *layout)
+        -> aiPostProcessSteps {
+                if (auto modifier = layout->getFirstChildAs<Gui::ComboModelBased>()) {
+                    return Assimp::aiPostProcessStepsAsVector[modifier->getCurrentIndex()];
+                }
+                else
+                {
+                    DEBUG_ASSERT(false);
+                }
+
+                return static_cast<aiPostProcessSteps>(0);
+            })
+    >;
 
     class NxMesh3DEditorEWC : public BaseFloatEWC
     {
@@ -68,6 +107,8 @@ namespace Core
         Gui::ComboModelBased* _mainShaderCombo = nullptr;
         Gui::ComboModelBased* _outlineShaderCombo = nullptr;
         Gui::FloatInput* _scaleInput = nullptr;
+        AssimpPostProcessArray* _postProcessArray = nullptr;
+        int _postProcessFlags = 0;
 
         bool _isModified = false;
 

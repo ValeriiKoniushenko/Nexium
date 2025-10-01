@@ -111,6 +111,42 @@ namespace Assimp
         DEBUG_ASSERT(false);
         return std::nullopt;
     }
+
+    const std::vector<aiPostProcessSteps> aiPostProcessStepsAsVector = {
+        aiProcess_CalcTangentSpace,
+        aiProcess_Debone,
+        aiProcess_DropNormals,
+        aiProcess_EmbedTextures,
+        aiProcess_FindDegenerates,
+        aiProcess_FindInstances,
+        aiProcess_FindInvalidData,
+        aiProcess_FixInfacingNormals,
+        aiProcess_FlipUVs,
+        aiProcess_FlipWindingOrder,
+        aiProcess_ForceGenNormals,
+        aiProcess_GenBoundingBoxes,
+        aiProcess_GenNormals,
+        aiProcess_GenSmoothNormals,
+        aiProcess_GenUVCoords,
+        aiProcess_GlobalScale,
+        aiProcess_ImproveCacheLocality,
+        aiProcess_JoinIdenticalVertices,
+        aiProcess_LimitBoneWeights,
+        aiProcess_MakeLeftHanded,
+        aiProcess_OptimizeGraph,
+        aiProcess_OptimizeMeshes,
+        aiProcess_PopulateArmatureData,
+        aiProcess_PreTransformVertices,
+        aiProcess_RemoveComponent,
+        aiProcess_RemoveRedundantMaterials,
+        aiProcess_SortByPType,
+        aiProcess_SplitByBoneCount,
+        aiProcess_SplitLargeMeshes,
+        aiProcess_TransformUVCoords,
+        aiProcess_Triangulate,
+        aiProcess_ValidateDataStructure,
+    };
+
 } // namespace Assimp
 
 namespace Core

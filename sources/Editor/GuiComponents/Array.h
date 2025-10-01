@@ -109,6 +109,7 @@ namespace Core::Gui
             {
                 _data.erase(_data.begin() + i);
                 onEraseAt.trigger(i);
+                onChange.trigger();
                 makeDirty();
             }
         }
@@ -118,6 +119,7 @@ namespace Core::Gui
             makeDirty();
             _data.emplace_back();
             onAdd.trigger(_data.size() - 1, _data.back());
+            onChange.trigger();
         }
 
         void add(const T& data)
@@ -125,6 +127,7 @@ namespace Core::Gui
             _data.emplace_back(data);
             makeDirty();
             onAdd.trigger(_data.size() - 1, _data.back());
+            onChange.trigger();
         }
 
         [[nodiscard]] virtual std::size_t size() const { return _data.size(); }
@@ -137,12 +140,21 @@ namespace Core::Gui
         void setData(const std::vector<T>& data)
         {
             _data = data;
+            onChange.trigger();
             makeDirty();
         }
 
         void setData(std::vector<T>&& data)
         {
             _data = std::move(data);
+            onChange.trigger();
+            makeDirty();
+        }
+
+        void clearData()
+        {
+            _data.clear();
+            onChange.trigger();
             makeDirty();
         }
 
@@ -235,6 +247,7 @@ namespace Core::Gui
                     {
                         updateLocalDataWithView();
                         onSave.trigger(_data);
+                        onChange.trigger();
                     });
             }
 
@@ -265,6 +278,7 @@ namespace Core::Gui
                     [this]()
                     {
                         onReset.trigger(_data);
+                        onChange.trigger();
                         makeDirty();
                     });
             }
