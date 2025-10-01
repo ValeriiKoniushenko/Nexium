@@ -230,7 +230,7 @@ namespace Core
         setEnabledStatusForAllProps(true);
 
         _logicalPathInput->setInputtedData(_targetMesh->getLogicPath().toStdString());
-        _modelInput->setInputtedData(_targetMesh->getPathToMode());
+        _modelInput->setInputtedData(_targetMesh->getPathToMode().generic_string());
         _mainShaderCombo->setCurrentIndex(convertShaderNameToIndex(_targetMesh->getMainShader()));
         _outlineShaderCombo->setCurrentIndex(
             convertShaderNameToIndex(_targetMesh->getOutlineShader()));
