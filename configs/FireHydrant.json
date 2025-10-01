@@ -6,9 +6,9 @@
             0.0
         ],
         "position": [
-            -187.07080078125,
             0.0,
-            320.6780700683594
+            0.0,
+            490.63043212890625
         ],
         "rotation": [
             0.0,
@@ -49,7 +49,7 @@
                 ]
             },
             "isEnabled": true,
-            "name": "NormalTree_2-0",
+            "name": "FireHydrant_LOD2",
             "noTick": false,
             "type": "StaticMesh"
         },
@@ -80,7 +80,38 @@
                 ]
             },
             "isEnabled": true,
-            "name": "NormalTree_2-1",
+            "name": "FireHydrant_LOD1",
+            "noTick": false,
+            "type": "StaticMesh"
+        },
+        {
+            "GraphicsComponentData": {
+                "modifiers": []
+            },
+            "Transformable": {
+                "origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "isEnabled": true,
+            "name": "FireHydrant_LOD0",
             "noTick": false,
             "type": "StaticMesh"
         }
@@ -114,7 +145,7 @@
                 ]
             },
             "isEnabled": true,
-            "name": "NormalTree_2-0",
+            "name": "FireHydrant_LOD2",
             "noTick": false,
             "type": "StaticMesh"
         },
@@ -145,12 +176,43 @@
                 ]
             },
             "isEnabled": true,
-            "name": "NormalTree_2-1",
+            "name": "FireHydrant_LOD1",
+            "noTick": false,
+            "type": "StaticMesh"
+        },
+        {
+            "GraphicsComponentData": {
+                "modifiers": []
+            },
+            "Transformable": {
+                "origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "isEnabled": true,
+            "name": "FireHydrant_LOD0",
             "noTick": false,
             "type": "StaticMesh"
         }
     ],
-    "name": "Tree2",
+    "name": "FireHydrant",
     "noTick": false,
     "type": "StaticMeshBundle"
 }

@@ -6,9 +6,9 @@
             0.0
         ],
         "position": [
-            -187.07080078125,
+            -193.51129150390625,
             0.0,
-            320.6780700683594
+            -82.63714599609375
         ],
         "rotation": [
             0.0,
@@ -49,38 +49,7 @@
                 ]
             },
             "isEnabled": true,
-            "name": "NormalTree_2-0",
-            "noTick": false,
-            "type": "StaticMesh"
-        },
-        {
-            "GraphicsComponentData": {
-                "modifiers": []
-            },
-            "Transformable": {
-                "origin": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "position": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "rotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            },
-            "isEnabled": true,
-            "name": "NormalTree_2-1",
+            "name": "Plant_1",
             "noTick": false,
             "type": "StaticMesh"
         }
@@ -114,43 +83,12 @@
                 ]
             },
             "isEnabled": true,
-            "name": "NormalTree_2-0",
-            "noTick": false,
-            "type": "StaticMesh"
-        },
-        {
-            "GraphicsComponentData": {
-                "modifiers": []
-            },
-            "Transformable": {
-                "origin": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "position": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "rotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            },
-            "isEnabled": true,
-            "name": "NormalTree_2-1",
+            "name": "Plant_1",
             "noTick": false,
             "type": "StaticMesh"
         }
     ],
-    "name": "Tree2",
+    "name": "Bush3",
     "noTick": false,
     "type": "StaticMeshBundle"
 }

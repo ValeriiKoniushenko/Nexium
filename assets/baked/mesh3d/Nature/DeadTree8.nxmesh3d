@@ -1,0 +1,13 @@
+{
+  "path": "assets/objects-3d/Nature/DeadTree8.glb",
+  "mainShader": "defaultTextured",
+  "outlineShader": "outline",
+  "scale": 100.0,
+  "assimpPostProcess": [
+    "Triangulate",
+    "JoinIdenticalVertices",
+    "SortByPType",
+    "PreTransformVertices",
+    "GlobalScale"
+  ]
+}
