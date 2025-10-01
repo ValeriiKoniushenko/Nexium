@@ -1,15 +1,6 @@
 {
     "objects": [
-        "Spectator",
-        "Tree",
-        "PineTree1",
-        "Tree2",
-        "Flower3",
-        "FireHydrant",
-        "DeadTree2",
-        "RegularGrass",
-        "Bush3",
-        "PineTree1"
+        "Spectator"
     ],
     "sceneName": "NewScene"
 }

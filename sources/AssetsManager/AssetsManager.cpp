@@ -29,6 +29,13 @@
 #include "Mesh3DAsset.h"
 
 #include <Utils/Functions.h>
+#include <array>
+#include <memory>
+
+#ifdef _WIN32
+    #include <commdlg.h>
+    #include <windows.h>
+#endif
 
 namespace Core
 {
@@ -147,6 +154,68 @@ namespace Core
         {
             gGameInstance->gameScene.addActor(mesh);
         }
+    }
+
+    StringAtom AssetsManager::OpenFileSelectionDialog(const std::vector<std::string>& filter)
+    {
+        constexpr std::size_t maxFilePath = 4096;
+        std::array<char, maxFilePath> buffer{};
+
+        bool isPressedOk = false;
+#ifdef _WIN32
+        OPENFILENAME ofn;
+        ZeroMemory(&ofn, sizeof(ofn));
+        ofn.lStructSize = sizeof(ofn);
+        ofn.hwndOwner = nullptr;
+        ofn.lpstrFile = buffer.data();
+        ofn.nMaxFile = MAX_PATH;
+        ofn.lpstrFilter = "All\0*.*\0Text\0*.TXT\0";
+        ofn.nFilterIndex = 1;
+        ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+
+        isPressedOk = GetOpenFileName(&ofn) == TRUE;
+#else
+        std::string cmd = "zenity --file-selection --file-filter=";
+        if (filter.empty())
+        {
+            cmd += "*";
+        }
+        else
+        {
+            cmd += "\"";
+            for (const auto& f : filter)
+            {
+                cmd += f + " ";
+            }
+            cmd.pop_back();
+            cmd += "\"";
+        }
+
+        const std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd.c_str(), "r"), pclose);
+        if (!pipe)
+        {
+            Core::globalLog.criticalLog("Can't open CMD for file selection dialog");
+            return {};
+        }
+
+        fgets(buffer.data(), buffer.size(), pipe.get());
+        isPressedOk = buffer[0] != '\0';
+#endif
+
+        if (!isPressedOk)
+        {
+            return {};
+        }
+
+        StringAtom out(buffer.data(), strlen(buffer.data()));
+        out.trim('\n');
+
+        if (std::filesystem::is_directory(out.data()))
+        {
+            return {};
+        }
+
+        return out;
     }
 
     bool AssetsManager::validatePath(const StringAtom& logicPath, const char* requiredExt)

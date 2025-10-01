@@ -33,6 +33,7 @@
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "ImageViewer.h"
 #include "Misc/IconsFontAwesome.h"
+#include "NxMesh3DEditor.h"
 #include "ShaderManager.h"
 #include "TextEditor.h"
 #include "WorldLightning.h"
@@ -104,6 +105,7 @@ namespace Core
             WindowMenuItem<ShaderManagerEWC>();
             ImGui::Separator();
             WindowMenuItem<TextEditorEWC>();
+            WindowMenuItem<NxMesh3DEditorEWC>();
             WindowMenuItem<ImageViewerEWC>();
 
             ImGui::EndMenu();
