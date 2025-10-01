@@ -51,8 +51,6 @@ namespace Core
         {
         }
 
-        void draw();
-
         ~Mesh3DAsset() override = default;
 
         void onLoadRequest() override;
@@ -72,6 +70,7 @@ namespace Core
         std::filesystem::path _pathToModel;
         StringAtom _mainShader;
         StringAtom _outlineShader;
+        float _scale = 1.f;
         int _assimpPostProcess = 0;
     };
 

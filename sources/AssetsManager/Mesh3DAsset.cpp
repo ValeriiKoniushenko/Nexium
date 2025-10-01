@@ -124,7 +124,7 @@ namespace Core
 
         if (DEBUG_ASSERT_VAL(scene) && DEBUG_ASSERT_VAL(scene->mRootNode))
         {
-            _mesh.importFrom(scene->mRootNode, scene, _pathToModel);
+            _mesh.importFrom(scene->mRootNode, scene, _pathToModel, _scale);
             if (_mainShader && !_mainShader.isEmpty())
             {
                 _mesh.setShader(sm.getShaderProgram(_mainShader));
@@ -154,6 +154,10 @@ namespace Core
         if (json.contains("outlineShader"))
         {
             _outlineShader = StringAtom::Intern(json["outlineShader"].get<StringAtom>());
+        }
+        if (json.contains("scale"))
+        {
+            _scale = json["scale"].get<float>();
         }
         if (json.contains("assimpPostProcess"))
         {

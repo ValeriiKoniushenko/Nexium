@@ -130,6 +130,7 @@ namespace Core
             { NodeType::Image,
               GetAssetsManager().getTexture("assets/baked/image_document.nxtex"_atom) },
             { NodeType::Folder, GetAssetsManager().getTexture("assets/baked/folder.nxtex"_atom) },
+            { NodeType::NxFile, GetAssetsManager().getTexture("assets/baked/nxfile.nxtex"_atom) },
         };
 
         const auto gap = ImGui::GetStyle().WindowPadding.x;

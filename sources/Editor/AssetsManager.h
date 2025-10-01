@@ -40,7 +40,8 @@ namespace Core
             Default,
             Code,
             Image,
-            Folder
+            Folder,
+            NxFile
         };
 
         static void tryToOpenFile(const std::filesystem::directory_entry& path);

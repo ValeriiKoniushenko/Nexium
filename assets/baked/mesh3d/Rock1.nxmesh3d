@@ -2,9 +2,12 @@
   "path": "assets/objects-3d/Nature/Rock1.glb",
   "mainShader": "defaultTextured",
   "outlineShader": "outline",
+  "scale": 100.0,
   "assimpPostProcess": [
     "Triangulate",
     "JoinIdenticalVertices",
-    "SortByPType"
+    "SortByPType",
+    "PreTransformVertices",
+    "GlobalScale"
   ]
 }

@@ -113,6 +113,11 @@ namespace Core
             ext == ".ini"   ||
             ext == ".toml") return NodeType::Code;
 
+        if (ext.rfind(".nx") != std::string::npos)
+        {
+            return NodeType::NxFile;
+        }
+
         if (ext == ".jpg"   ||
             ext == ".jpeg"  ||
             ext == ".png"   ||
