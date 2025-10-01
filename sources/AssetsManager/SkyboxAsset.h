@@ -59,9 +59,12 @@ namespace Core
 
         void onUnloadRequest() override;
 
-        void onFillData(nlohmann::json&& json) override;
+        void onReadData(nlohmann::json&& json) override;
 
         [[nodiscard]] const char* getPrefix() const override { return "Skybox"; }
+
+    protected:
+        [[nodiscard]] nlohmann::json onWriteData() const override;
 
     protected:
         GraphicsComponentData _gcd;

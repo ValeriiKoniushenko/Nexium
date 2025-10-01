@@ -97,6 +97,7 @@ namespace Core
         void drawBarMenu();
         void setEnabledStatusForAllProps(bool isEnabled);
         [[nodiscard]] std::size_t convertShaderNameToIndex(const StringAtom& shaderName) const;
+        [[nodiscard]] StringAtom convertIndexToShaderName(std::size_t index) const;
 
     protected:
         Gui::VerticalLayout _layout;
@@ -112,6 +113,6 @@ namespace Core
 
         bool _isModified = false;
 
-        NXMesh3D _targetMesh;
+        NXMesh3D _targetAsset;
     };
 } // namespace Core

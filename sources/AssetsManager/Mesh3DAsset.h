@@ -59,8 +59,6 @@ namespace Core
 
         void onUnloadRequest() override;
 
-        void onFillData(nlohmann::json&& json) override;
-
         [[nodiscard]] const char* getPrefix() const override { return "Mesh3D"; }
 
         [[nodiscard]] StaticMeshBundle& getMesh() noexcept { return _mesh; }
@@ -70,6 +68,16 @@ namespace Core
         [[nodiscard]] const StringAtom& getOutlineShader() const noexcept;
         [[nodiscard]] float getScale() const noexcept;
         [[nodiscard]] int getAssimpPostProcessFlags() const noexcept;
+
+        void setPathToModel(const std::filesystem::path& value);
+        void setMainShader(const StringAtom& value);
+        void setOutlineShader(const StringAtom& value);
+        void setScale(float value);
+        void setAssimpPostProcessFlags(int value);
+
+    protected:
+        void onReadData(nlohmann::json&& json) override;
+        [[nodiscard]] nlohmann::json onWriteData() const override;
 
     protected:
         StaticMeshBundle _mesh;

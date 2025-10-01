@@ -41,7 +41,7 @@ namespace Core
         _data.release();
     }
 
-    void TextureAsset::onFillData(nlohmann::json&& json)
+    void TextureAsset::onReadData(nlohmann::json&& json)
     {
         if (DEBUG_ASSERT_VAL(json.contains("path")))
         {
@@ -58,5 +58,12 @@ namespace Core
         {
             _isFlipVertically = json["isFlipVertically"].get<bool>();
         }
+    }
+
+    nlohmann::json TextureAsset::onWriteData() const
+    {
+        nlohmann::json json;
+
+        return json;
     }
 } // namespace Core

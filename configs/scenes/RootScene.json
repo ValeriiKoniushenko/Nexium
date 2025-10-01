@@ -1,6 +1,7 @@
 {
     "objects": [
-        "Spectator"
+        "Spectator",
+        "FireHydrant"
     ],
     "sceneName": "NewScene"
 }

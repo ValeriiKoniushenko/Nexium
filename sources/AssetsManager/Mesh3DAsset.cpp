@@ -203,7 +203,32 @@ namespace Core
         return _assimpPostProcess;
     }
 
-    void Mesh3DAsset::onFillData(nlohmann::json&& json)
+    void Mesh3DAsset::setPathToModel(const std::filesystem::path& value)
+    {
+        _pathToModel = value;
+    }
+
+    void Mesh3DAsset::setMainShader(const StringAtom& value)
+    {
+        _mainShader = value;
+    }
+
+    void Mesh3DAsset::setOutlineShader(const StringAtom& value)
+    {
+        _outlineShader = value;
+    }
+
+    void Mesh3DAsset::setScale(float value)
+    {
+        _scale = value;
+    }
+
+    void Mesh3DAsset::setAssimpPostProcessFlags(int value)
+    {
+        _assimpPostProcess = value;
+    }
+
+    void Mesh3DAsset::onReadData(nlohmann::json&& json)
     {
         if (json.contains("path"))
         {
@@ -238,5 +263,26 @@ namespace Core
                 }
             }
         }
+    }
+
+    nlohmann::json Mesh3DAsset::onWriteData() const
+    {
+        nlohmann::json json;
+
+        json["path"] = _pathToModel;
+        json["mainShader"] = _mainShader;
+        json["outlineShader"] = _outlineShader;
+        json["scale"] = _scale;
+        json["assimpPostProcess"] = nlohmann::json::array();
+        for (std::size_t i = 0; i < sizeof(int) * 8; ++i)
+        {
+            const auto flag = static_cast<aiPostProcessSteps>((1 << i) & _assimpPostProcess);
+            if (flag != 0)
+            {
+                json["assimpPostProcess"].push_back(Assimp::aiPostProcessStepsToString(flag));
+            }
+        }
+
+        return json;
     }
 } // namespace Core

@@ -26,8 +26,35 @@
 
 #include "Editor/Configs.h"
 
+#include <Utils/Functions.h>
 #include <fstream>
 
 namespace Core
 {
+
+    void BaseAsset::attachAndReadFromFile(const std::filesystem::path& path)
+    {
+        _assetPath = path;
+
+        onReadData(nlohmann::json::parse(Utils::GetTextFileContentAs<std::string>(path)));
+    }
+
+    void BaseAsset::writeToFile()
+    {
+        if (_assetPath.empty())
+        {
+            DEBUG_ASSERT(false, "File is not sync!");
+            return;
+        }
+
+        const auto data = onWriteData().dump(4);
+        std::ofstream out(_assetPath);
+        if (!out.is_open())
+        {
+            criticalLog("Can't open file for write: {}"_f << _assetPath);
+            return;
+        }
+        out.write(data.c_str(), static_cast<std::streamsize>(data.length()));
+    }
+
 } // namespace Core

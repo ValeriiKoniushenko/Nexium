@@ -1,11 +1,11 @@
 {
-  "path": "assets/objects-3d/Models/FBX/FireHydrant.fbx",
-  "mainShader": "defaultTextured",
-  "outlineShader": "outline",
-  "assimpPostProcess": [
-    "Triangulate",
-    "JoinIdenticalVertices",
-    "SortByPType"
-  ],
-  "scale": 1
+    "assimpPostProcess": [
+        "JoinIdenticalVertices",
+        "Triangulate",
+        "SortByPType"
+    ],
+    "mainShader": "defaultTextured",
+    "outlineShader": "outline",
+    "path": "assets/objects-3d/Models/FBX/FireHydrant.fbx",
+    "scale": 1.0
 }

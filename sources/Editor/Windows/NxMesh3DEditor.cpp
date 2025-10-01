@@ -222,26 +222,26 @@ namespace Core
 
     void NxMesh3DEditorEWC::fetchFromAssetsManager()
     {
-        if (!_targetMesh.isValid())
+        if (!_targetAsset.isValid())
         {
             setEnabledStatusForAllProps(false);
             return;
         }
         setEnabledStatusForAllProps(true);
 
-        _logicalPathInput->setInputtedData(_targetMesh->getLogicPath().toStdString());
-        _modelInput->setInputtedData(_targetMesh->getPathToMode().generic_string());
-        _mainShaderCombo->setCurrentIndex(convertShaderNameToIndex(_targetMesh->getMainShader()));
+        _logicalPathInput->setInputtedData(_targetAsset->getLogicPath().toStdString());
+        _modelInput->setInputtedData(_targetAsset->getPathToMode().generic_string());
+        _mainShaderCombo->setCurrentIndex(convertShaderNameToIndex(_targetAsset->getMainShader()));
         _outlineShaderCombo->setCurrentIndex(
-            convertShaderNameToIndex(_targetMesh->getOutlineShader()));
-        _scaleInput->setInputtedData(_targetMesh->getScale());
+            convertShaderNameToIndex(_targetAsset->getOutlineShader()));
+        _scaleInput->setInputtedData(_targetAsset->getScale());
 
-        _postProcessFlags = _targetMesh->getAssimpPostProcessFlags();
+        _postProcessFlags = _targetAsset->getAssimpPostProcessFlags();
         _postProcessArray->clearData();
         for (std::size_t i = 0; i < sizeof(int) * 8; ++i)
         {
             const auto flag = static_cast<aiPostProcessSteps>(
-                (1 << i) & _targetMesh->getAssimpPostProcessFlags());
+                (1 << i) & _targetAsset->getAssimpPostProcessFlags());
             if (flag != 0)
             {
                 _postProcessArray->add(flag);
@@ -253,6 +253,19 @@ namespace Core
 
     void NxMesh3DEditorEWC::save()
     {
+        if (!_targetAsset.isValid())
+        {
+            return;
+        }
+
+        _targetAsset->setPathToModel(_modelInput->getInputtedData().c_str());
+        _targetAsset->setMainShader(convertIndexToShaderName(_mainShaderCombo->getCurrentIndex()));
+        _targetAsset->setOutlineShader(
+            convertIndexToShaderName(_outlineShaderCombo->getCurrentIndex()));
+        _targetAsset->setScale(_scaleInput->getInputtedData());
+        _targetAsset->setAssimpPostProcessFlags(_postProcessFlags);
+        _targetAsset->writeToFile();
+
         _isModified = false;
     }
 
@@ -265,7 +278,7 @@ namespace Core
         }
 
         _filePath = path.toStdString();
-        _targetMesh = GetAssetsManager().getMesh3D(StringAtom::Intern(path));
+        _targetAsset = GetAssetsManager().getMesh3D(StringAtom::Intern(path));
         fetchFromAssetsManager();
     }
 
@@ -273,7 +286,7 @@ namespace Core
     {
         if (!_filePath.empty())
         {
-            _targetMesh
+            _targetAsset
                 = GetAssetsManager().getMesh3D(StringAtom::Intern(_filePath.generic_string()));
             fetchFromAssetsManager();
         }
@@ -293,6 +306,14 @@ namespace Core
     {
         const auto it = GetShaderManager().getShaderMetas().find(shaderName);
         return std::distance(GetShaderManager().getShaderMetas().begin(), it);
+    }
+
+    StringAtom NxMesh3DEditorEWC::convertIndexToShaderName(std::size_t index) const
+    {
+        auto it = GetShaderManager().getShaderMetas().begin();
+        std::advance(it, index);
+        DEBUG_ASSERT(it != GetShaderManager().getShaderMetas().end());
+        return it->first;
     }
 
 } // namespace Core

@@ -34,7 +34,7 @@
 
 #ifdef _WIN32
     #include <Commdlg.h>
-    #include <cstdafx>
+    #include <stdafx.h>
     #include <windows.h>
 #endif
 
@@ -71,20 +71,17 @@ namespace Core
                 if (ext == NXTexture::AssetT::fileExtension)
                 {
                     _textures.emplace(id, new TextureAsset(id))
-                        .first->second->onFillData(nlohmann::json::parse(
-                            Utils::GetTextFileContentAs<std::string>(absPath)));
+                        .first->second->attachAndReadFromFile(absPath);
                 }
                 else if (ext == NXSkybox::AssetT::fileExtension)
                 {
                     _skyboxes.emplace(id, new SkyboxAsset(id))
-                        .first->second->onFillData(nlohmann::json::parse(
-                            Utils::GetTextFileContentAs<std::string>(absPath)));
+                        .first->second->attachAndReadFromFile(absPath);
                 }
                 else if (ext == NXMesh3D::AssetT::fileExtension)
                 {
                     _mesh3ds.emplace(id, new Mesh3DAsset(id))
-                        .first->second->onFillData(nlohmann::json::parse(
-                            Utils::GetTextFileContentAs<std::string>(absPath)));
+                        .first->second->attachAndReadFromFile(absPath);
                 }
             }
         }

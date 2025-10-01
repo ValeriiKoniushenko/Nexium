@@ -137,7 +137,7 @@ namespace Core
         _gcd.clear();
     }
 
-    void SkyboxAsset::onFillData(nlohmann::json&& json)
+    void SkyboxAsset::onReadData(nlohmann::json&& json)
     {
         auto getPath = [this, &json](const char* prop, Direction dir)
         {
@@ -158,5 +158,12 @@ namespace Core
         {
             _isFlipVertically = json["isFlipVertically"].get<bool>();
         }
+    }
+
+    nlohmann::json SkyboxAsset::onWriteData() const
+    {
+        nlohmann::json json;
+
+        return json;
     }
 } // namespace Core

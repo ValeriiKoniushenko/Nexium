@@ -49,7 +49,8 @@ namespace Core
 
         virtual void onUnloadRequest() = 0;
 
-        virtual void onFillData(nlohmann::json&& json) = 0;
+        void attachAndReadFromFile(const std::filesystem::path& path);
+        void writeToFile();
 
         [[nodiscard]] spdlog::logger* getLogger() const override
         {
@@ -57,6 +58,11 @@ namespace Core
         }
 
     protected:
+        [[nodiscard]] virtual nlohmann::json onWriteData() const = 0;
+        virtual void onReadData(nlohmann::json&& json) = 0;
+
+    protected:
+        std::filesystem::path _assetPath;
         StringAtom _logicPath;
         uint32_t _refCount = 0;
 
