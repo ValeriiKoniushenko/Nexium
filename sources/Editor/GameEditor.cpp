@@ -92,7 +92,7 @@ namespace Core
         registerNewWindow<ShaderManagerEWC>("Shader manager"_atom);
         registerNewWindow<ModalPopUp>("PopUp"_atom);
         registerNewWindow<WorldLightningEWC>("World Lightning"_atom, false);
-        registerNewWindow<NxMesh3DEditorEWC>("NX Mesh3D Editor"_atom, false);
+        registerNewWindow<NxMesh3DEditorEWC>("NX Mesh3D Editor"_atom, true);
 
         registerNewWindow<GameViewportEWC>("Viewport"_atom)
             ->onSizeChanged.subscribe(

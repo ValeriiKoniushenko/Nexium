@@ -35,6 +35,8 @@
 #include "Editor/GuiComponents/Spacer.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 
+#include <iterator>
+
 using namespace Core::Gui;
 
 namespace Core
@@ -45,35 +47,95 @@ namespace Core
     {
         BaseFloatEWC::onInitialize();
 
+        constexpr float defaultLabelWidth = 140.0f;
         {
             auto* h = _layout.addChildComponent<HorizontalLayout>();
 
-            auto* input = h->addChildComponent<TextInput>();
-            input->setFlex(Gui::Flex::FlexWidth);
-            input->setReadOnly(true);
-            input->setPlaceholder("Press 'Open' to open some .nxmesh3d file");
-
+            _pathInput = h->addChildComponent<TextInput>();
+            _pathInput->setFlex(Gui::Flex::FlexWidth);
+            _pathInput->setReadOnly(true);
+            _pathInput->setPlaceholder("Press 'Open' to open some .nxmesh3d file");
             auto* button = h->addChildComponent<Button>("Open");
             button->onClick.subscribe(
-                [input]
+                [this]
                 {
                     const auto path = AssetsManager::OpenFileSelectionDialog({ "*.nxmesh3d" });
                     if (path.isEmpty())
                     {
-                        input->setInputtedData("Error. Invalid file or path");
+                        _pathInput->setInputtedData("Error. Invalid file or path");
+                        return;
                     }
                     else
                     {
-                        input->setInputtedData(path.toStdString());
+                        _pathInput->setInputtedData(path.toStdString());
                     }
+
+                    _targetMesh = GetAssetsManager().getMesh3D(StringAtom::Intern(path));
+                    refresh();
                 });
         }
+
+        _layout.addChildComponent<Separator>();
+
+        {
+            auto* h = _layout.addChildComponent<HorizontalLayout>();
+            h->addChildComponent<Label>("Model path")->setWidth(defaultLabelWidth);
+            _modelInput = h->addChildComponent<TextInput>();
+            _modelInput->setFlex(Flex::FlexWidth);
+        }
+
+        auto shaderDataProvider = [](std::size_t inputIndex, StringAtom& out) -> const void*
+        {
+            auto it = GetShaderManager().getShaderMetas().begin();
+            std::advance(it, inputIndex);
+            if (it == GetShaderManager().getShaderMetas().end())
+            {
+                DEBUG_ASSERT(false, "Internal error, can't get specified shader");
+                return nullptr;
+            }
+
+            out = it->first;
+            return nullptr;
+        };
+        auto shaderSizeProvider = []
+        {
+            return GetShaderManager().getShaderMetas().size();
+        };
+
+        {
+            auto* h = _layout.addChildComponent<HorizontalLayout>();
+            h->setHorizontalAlign(Align::SpaceBetween);
+            h->addChildComponent<Label>("Main shader")->setWidth(defaultLabelWidth);
+            _mainShaderCombo = h->addChildComponent<ComboModelBased>();
+            _mainShaderCombo->setWidth(240.f);
+            _mainShaderCombo->setDataProvider(shaderDataProvider);
+            _mainShaderCombo->setSizeProvider(shaderSizeProvider);
+        }
+        {
+            auto* h = _layout.addChildComponent<HorizontalLayout>();
+            h->setHorizontalAlign(Align::SpaceBetween);
+            h->addChildComponent<Label>("Outline shader")->setWidth(defaultLabelWidth);
+            _outlineShaderCombo = h->addChildComponent<ComboModelBased>();
+            _outlineShaderCombo->setWidth(240.f);
+            _outlineShaderCombo->setDataProvider(shaderDataProvider);
+            _outlineShaderCombo->setSizeProvider(shaderSizeProvider);
+        }
+        {
+            auto* h = _layout.addChildComponent<HorizontalLayout>();
+            h->setHorizontalAlign(Align::SpaceBetween);
+            h->addChildComponent<Label>("Scale")->setWidth(defaultLabelWidth);
+            _scaleInput = h->addChildComponent<FloatInput>();
+            _scaleInput->setWidth(240.f);
+            _scaleInput->setMin(0.0f);
+            _scaleInput->setStep(0.1f);
+        }
+
+        refresh();
     }
 
     void NxMesh3DEditorEWC::onDraw()
     {
         const float tick = gGameInstance->world.timeDelta;
-
         // if (ImGui::BeginChild("Properties", glm::vec2(200.f, 0), ImGuiChildFlags_ResizeX))
         {
             _layout.tick(tick);
@@ -86,6 +148,36 @@ namespace Core
         {
         }
         ImGui::EndChild();*/
+    }
+
+    void NxMesh3DEditorEWC::refresh()
+    {
+        if (!_targetMesh.isValid())
+        {
+            setEnabledStatusForAllProps(false);
+            return;
+        }
+        setEnabledStatusForAllProps(true);
+
+        _modelInput->setInputtedData(_targetMesh->getPathToMode());
+        _mainShaderCombo->setCurrentIndex(convertShaderNameToIndex(_targetMesh->getMainShader()));
+        _outlineShaderCombo->setCurrentIndex(
+            convertShaderNameToIndex(_targetMesh->getOutlineShader()));
+        _scaleInput->setInputtedData(_targetMesh->getScale());
+    }
+
+    void NxMesh3DEditorEWC::setEnabledStatusForAllProps(bool isEnabled)
+    {
+        _modelInput->disableWidget(!isEnabled);
+        _mainShaderCombo->disableWidget(!isEnabled);
+        _outlineShaderCombo->disableWidget(!isEnabled);
+        _scaleInput->disableWidget(!isEnabled);
+    }
+
+    std::size_t NxMesh3DEditorEWC::convertShaderNameToIndex(const StringAtom& shaderName) const
+    {
+        auto it = GetShaderManager().getShaderMetas().find(shaderName);
+        return std::distance(GetShaderManager().getShaderMetas().begin(), it);
     }
 
 } // namespace Core

@@ -57,6 +57,11 @@ namespace Core
 {
     ECS_COMPONENT_IMPL(StaticMeshBundle)
 
+    StaticMeshBundle::~StaticMeshBundle()
+    {
+        privateClear();
+    }
+
     StaticMeshBundle::StaticMeshBundle(const StaticMeshBundle& other)
         : Actor(componentType, other._name)
     {
@@ -148,9 +153,7 @@ namespace Core
 
     void StaticMeshBundle::clear()
     {
-        BaseComponent::clear();
-
-        clearMeshes();
+        privateClear();
     }
 
     void StaticMeshBundle::clearMeshes()
@@ -293,6 +296,13 @@ namespace Core
                 _bundles.push_back(bundle);
             }
         }
+    }
+
+    void StaticMeshBundle::privateClear()
+    {
+        BaseComponent::clear();
+
+        clearMeshes();
     }
 
     void StaticMeshBundle::setOutlineShader(ShaderProgram* sp, bool ignoreVertexAttribSetup)

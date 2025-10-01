@@ -120,6 +120,8 @@ namespace Core
 
         void spawnMesh3DOnScene(const StringAtom& logicPath);
 
+        [[nodiscard]] const std::set<std::filesystem::path>& getRegisteredPaths() const noexcept;
+
         [[nodiscard]] static StringAtom OpenFileSelectionDialog(
             const std::vector<std::string>& filter);
 

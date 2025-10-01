@@ -129,6 +129,19 @@ namespace Core
 
         if (!_mesh3ds.contains(logicPath))
         {
+            std::filesystem::path path = logicPath.data();
+            for (auto&& registered : GetAssetsManager().getRegisteredPaths())
+            {
+                const auto canonical = std::filesystem::canonical(registered);
+                const auto realRegistered = std::filesystem::absolute(canonical).parent_path();
+                const auto relative = std::filesystem::relative(path, realRegistered);
+                if (_mesh3ds.contains(StringAtom(relative.generic_string())))
+                {
+                    return NXMesh3D(reinterpret_cast<Mesh3DAsset&>(
+                        *_mesh3ds.at(StringAtom(relative.generic_string()))));
+                }
+            }
+
             criticalLog("Mesh3D not found by the next path: {}"_f << logicPath);
             return NXMesh3D();
         }
@@ -154,6 +167,11 @@ namespace Core
         {
             gGameInstance->gameScene.addActor(mesh);
         }
+    }
+
+    const std::set<std::filesystem::path>& AssetsManager::getRegisteredPaths() const noexcept
+    {
+        return _registeredPaths;
     }
 
     StringAtom AssetsManager::OpenFileSelectionDialog(const std::vector<std::string>& filter)

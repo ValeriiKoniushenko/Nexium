@@ -227,5 +227,8 @@ namespace Core
         GLuint _ebo = 0;
         GLuint _vao = 0;
         GLuint _texture = 0;
+
+    private:
+        void privateClear();
     };
 } // namespace Core

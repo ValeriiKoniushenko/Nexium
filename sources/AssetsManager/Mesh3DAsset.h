@@ -63,6 +63,12 @@ namespace Core
 
         [[nodiscard]] StaticMeshBundle& getMesh() noexcept { return _mesh; }
 
+        [[nodiscard]] const std::filesystem::path& getPathToMode() const noexcept;
+        [[nodiscard]] const StringAtom& getMainShader() const noexcept;
+        [[nodiscard]] const StringAtom& getOutlineShader() const noexcept;
+        [[nodiscard]] float getScale() const noexcept;
+        [[nodiscard]] int getAssimpPostProcessFlags() const noexcept;
+
     protected:
         StaticMeshBundle _mesh;
 

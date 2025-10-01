@@ -30,7 +30,7 @@ namespace Core
 {
     GraphicsComponentData::~GraphicsComponentData()
     {
-        clear();
+        privateClear();
     }
 
     GraphicsComponentData::GraphicsComponentData(const GraphicsComponentData& other)
@@ -220,12 +220,7 @@ namespace Core
 
     void GraphicsComponentData::clear()
     {
-        glDeleteTextures(1, &_texture);
-        glDeleteBuffers(1, &_ebo);
-        glDeleteBuffers(1, &_vbo);
-        glDeleteVertexArrays(1, &_vao);
-        _shader = nullptr;
-        _triangleCount = 0;
+        privateClear();
     }
 
     void GraphicsComponentData::directDraw(GLenum bindTextureType, GLenum textureIndex) noexcept
@@ -356,6 +351,16 @@ namespace Core
                 }
             }
         }
+    }
+
+    void GraphicsComponentData::privateClear()
+    {
+        glDeleteTextures(1, &_texture);
+        glDeleteBuffers(1, &_ebo);
+        glDeleteBuffers(1, &_vbo);
+        glDeleteVertexArrays(1, &_vao);
+        _shader = nullptr;
+        _triangleCount = 0;
     }
 
     StringAtom GraphicsComponentData::ToString(ModifiedValue v)

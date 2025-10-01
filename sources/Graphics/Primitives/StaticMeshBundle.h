@@ -35,6 +35,8 @@ namespace Core
         ECS_COMPONENT_DECL(StaticMeshBundle, Actor);
 
     public:
+        ~StaticMeshBundle() override;
+
         StaticMeshBundle(const StaticMeshBundle& other);
 
         StaticMeshBundle(StaticMeshBundle&& other) = default;
@@ -138,5 +140,8 @@ namespace Core
         std::vector<StaticMeshBundle*> _bundles;
         uint32_t _id = ++_idGenerator;
         bool _ignoreSelect = false;
+
+    private:
+        void privateClear();
     };
 } // namespace Core

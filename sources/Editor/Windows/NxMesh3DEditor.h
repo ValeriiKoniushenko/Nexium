@@ -37,7 +37,8 @@ namespace Core
     namespace Gui
     {
         class Label;
-    }
+        class ComboModelBased;
+    } // namespace Gui
 
     class NxMesh3DEditorEWC : public BaseFloatEWC
     {
@@ -49,9 +50,19 @@ namespace Core
     protected:
         void onInitialize() override;
         void onDraw() override;
+        void refresh();
+        void setEnabledStatusForAllProps(bool isEnabled);
+        [[nodiscard]] std::size_t convertShaderNameToIndex(const StringAtom& shaderName) const;
 
     protected:
         Gui::VerticalLayout _layout;
-        NXMesh3D* _targetMesh = nullptr;
+        Gui::TextInput* _pathInput = nullptr;
+
+        Gui::TextInput* _modelInput = nullptr;
+        Gui::ComboModelBased* _mainShaderCombo = nullptr;
+        Gui::ComboModelBased* _outlineShaderCombo = nullptr;
+        Gui::FloatInput* _scaleInput = nullptr;
+
+        NXMesh3D _targetMesh;
     };
 } // namespace Core

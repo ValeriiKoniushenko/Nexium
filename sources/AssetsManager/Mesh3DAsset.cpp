@@ -139,6 +139,32 @@ namespace Core
 
     void Mesh3DAsset::onUnloadRequest()
     {
+        _mesh.clear();
+    }
+
+    const std::filesystem::path& Mesh3DAsset::getPathToMode() const noexcept
+    {
+        return _pathToModel;
+    }
+
+    const StringAtom& Mesh3DAsset::getMainShader() const noexcept
+    {
+        return _mainShader;
+    }
+
+    const StringAtom& Mesh3DAsset::getOutlineShader() const noexcept
+    {
+        return _outlineShader;
+    }
+
+    float Mesh3DAsset::getScale() const noexcept
+    {
+        return _scale;
+    }
+
+    int Mesh3DAsset::getAssimpPostProcessFlags() const noexcept
+    {
+        return _assimpPostProcess;
     }
 
     void Mesh3DAsset::onFillData(nlohmann::json&& json)
