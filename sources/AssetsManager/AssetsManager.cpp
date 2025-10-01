@@ -129,7 +129,7 @@ namespace Core
 
         if (!_mesh3ds.contains(logicPath))
         {
-            std::filesystem::path path = logicPath.data();
+            const std::filesystem::path path = logicPath.data();
             for (auto&& registered : GetAssetsManager().getRegisteredPaths())
             {
                 const auto canonical = std::filesystem::canonical(registered);
@@ -153,6 +153,7 @@ namespace Core
     {
         _textures.clear();
         _skyboxes.clear();
+        _mesh3ds.clear();
     }
 
     void AssetsManager::registerNewAssetPath(std::filesystem::path path)

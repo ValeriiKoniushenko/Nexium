@@ -47,42 +47,9 @@ namespace Core
     {
         BaseFloatEWC::onInitialize();
 
+        _windowFlags |= ImGuiWindowFlags_MenuBar;
+
         constexpr float defaultLabelWidth = 140.0f;
-        {
-            auto* h = _layout.addChildComponent<HorizontalLayout>();
-
-            _pathInput = h->addChildComponent<TextInput>();
-            _pathInput->setFlex(Gui::Flex::FlexWidth);
-            _pathInput->setReadOnly(true);
-            _pathInput->setPlaceholder("Press 'Open' to open some .nxmesh3d file");
-            auto* button = h->addChildComponent<Button>("Open");
-            button->onClick.subscribe(
-                [this]
-                {
-                    const auto path = AssetsManager::OpenFileSelectionDialog({ "*.nxmesh3d" });
-                    if (path.isEmpty())
-                    {
-                        _pathInput->setInputtedData("Error. Invalid file or path");
-                        return;
-                    }
-                    else
-                    {
-                        _pathInput->setInputtedData(path.toStdString());
-                    }
-
-                    _targetMesh = GetAssetsManager().getMesh3D(StringAtom::Intern(path));
-                    refresh();
-                });
-        }
-
-        _layout.addChildComponent<Separator>();
-
-        {
-            auto* h = _layout.addChildComponent<HorizontalLayout>();
-            h->addChildComponent<Label>("Model path")->setWidth(defaultLabelWidth);
-            _modelInput = h->addChildComponent<TextInput>();
-            _modelInput->setFlex(Flex::FlexWidth);
-        }
 
         auto shaderDataProvider = [](std::size_t inputIndex, StringAtom& out) -> const void*
         {
@@ -101,6 +68,23 @@ namespace Core
         {
             return GetShaderManager().getShaderMetas().size();
         };
+
+        {
+            auto* h = _layout.addChildComponent<HorizontalLayout>();
+            h->addChildComponent<Label>("Logical path")->setWidth(defaultLabelWidth);
+            _logicalPathInput = h->addChildComponent<TextInput>();
+            _logicalPathInput->setFlex(Flex::FlexWidth);
+            _logicalPathInput->setReadOnly(true);
+        }
+
+        _layout.addChildComponent<Separator>();
+
+        {
+            auto* h = _layout.addChildComponent<HorizontalLayout>();
+            h->addChildComponent<Label>("Model path")->setWidth(defaultLabelWidth);
+            _modelInput = h->addChildComponent<TextInput>();
+            _modelInput->setFlex(Flex::FlexWidth);
+        }
 
         {
             auto* h = _layout.addChildComponent<HorizontalLayout>();
@@ -135,19 +119,43 @@ namespace Core
 
     void NxMesh3DEditorEWC::onDraw()
     {
-        const float tick = gGameInstance->world.timeDelta;
-        // if (ImGui::BeginChild("Properties", glm::vec2(200.f, 0), ImGuiChildFlags_ResizeX))
-        {
-            _layout.tick(tick);
-        }
-        // ImGui::EndChild();
+        drawBarMenu();
 
-        /*ImGui::SameLine();
+        _layout.tick(GetWorld().timeDelta);
+    }
 
-        if (ImGui::BeginChild("View"))
+    void NxMesh3DEditorEWC::drawBarMenu()
+    {
+        if (ImGui::BeginMenuBar())
         {
+            if (ImGui::BeginMenu("File"))
+            {
+                if (ImGui::MenuItem(ICON_FA_FILE_O " Open"))
+                {
+                    openFromFileSystem();
+                }
+                if (ImGui::MenuItem(ICON_FA_FLOPPY_O " Save"))
+                {
+                    save();
+                }
+                if (ImGui::MenuItem(ICON_FA_POWER_OFF " Exit"))
+                {
+                    closeWindow();
+                }
+
+                ImGui::EndMenu();
+            }
+
+            if (!_filePath.empty())
+            {
+                ImGui::SameLine(ImGui::GetWindowWidth()
+                                - (ImGui::CalcTextSize(_filePath.generic_string().c_str()).x)
+                                - ImGui::GetStyle().ItemSpacing.x * 3.f);
+                ImGui::TextUnformatted(_filePath.generic_string().c_str());
+            }
+
+            ImGui::EndMenuBar();
         }
-        ImGui::EndChild();*/
     }
 
     void NxMesh3DEditorEWC::refresh()
@@ -159,6 +167,7 @@ namespace Core
         }
         setEnabledStatusForAllProps(true);
 
+        _logicalPathInput->setInputtedData(_targetMesh->getLogicPath().toStdString());
         _modelInput->setInputtedData(_targetMesh->getPathToMode());
         _mainShaderCombo->setCurrentIndex(convertShaderNameToIndex(_targetMesh->getMainShader()));
         _outlineShaderCombo->setCurrentIndex(
@@ -166,8 +175,26 @@ namespace Core
         _scaleInput->setInputtedData(_targetMesh->getScale());
     }
 
+    void NxMesh3DEditorEWC::save()
+    {
+    }
+
+    void NxMesh3DEditorEWC::openFromFileSystem()
+    {
+        const auto path = AssetsManager::OpenFileSelectionDialog({ "*.nxmesh3d" });
+        if (path.isEmpty())
+        {
+            return;
+        }
+
+        _filePath = path.toStdString();
+        _targetMesh = GetAssetsManager().getMesh3D(StringAtom::Intern(path));
+        refresh();
+    }
+
     void NxMesh3DEditorEWC::setEnabledStatusForAllProps(bool isEnabled)
     {
+        _logicalPathInput->disableWidget(!isEnabled);
         _modelInput->disableWidget(!isEnabled);
         _mainShaderCombo->disableWidget(!isEnabled);
         _outlineShaderCombo->disableWidget(!isEnabled);
@@ -176,7 +203,7 @@ namespace Core
 
     std::size_t NxMesh3DEditorEWC::convertShaderNameToIndex(const StringAtom& shaderName) const
     {
-        auto it = GetShaderManager().getShaderMetas().find(shaderName);
+        const auto it = GetShaderManager().getShaderMetas().find(shaderName);
         return std::distance(GetShaderManager().getShaderMetas().begin(), it);
     }
 

@@ -83,13 +83,13 @@ namespace Core
         {
             if (ImGui::BeginMenu("File"))
             {
-                if (ImGui::MenuItem("Save"))
+                if (ImGui::MenuItem(ICON_FA_FLOPPY_O " Save"))
                 {
                     save();
                 }
-                if (ImGui::MenuItem("Exit"))
+                if (ImGui::MenuItem(ICON_FA_POWER_OFF " Exit"))
                 {
-                    setEnabled(false);
+                    closeWindow();
                 }
 
                 ImGui::EndMenu();
@@ -99,14 +99,14 @@ namespace Core
             {
                 ImGui::SameLine(ImGui::GetWindowWidth()
                                 - (ImGui::CalcTextSize(ICON_FA_TIMES_CIRCLE).x + _statusMarginRight)
-                                - ImGui::GetStyle().ItemSpacing.x - 10.f);
+                                - ImGui::GetStyle().ItemSpacing.x * 3.f);
                 ImGui::TextUnformatted(ICON_FA_TIMES_CIRCLE);
             }
             else
             {
                 ImGui::SameLine(ImGui::GetWindowWidth()
                                 - (ImGui::CalcTextSize(ICON_FA_CHECK_CIRCLE).x + _statusMarginRight)
-                                - ImGui::GetStyle().ItemSpacing.x - 10.f);
+                                - ImGui::GetStyle().ItemSpacing.x * 3.f);
                 ImGui::TextUnformatted(ICON_FA_CHECK_CIRCLE);
             }
 

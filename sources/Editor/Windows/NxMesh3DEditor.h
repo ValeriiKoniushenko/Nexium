@@ -47,17 +47,22 @@ namespace Core
     public:
         [[nodiscard]] const char* getIcon() override { return ICON_FA_COG; }
 
+        void refresh();
+        void save();
+        void openFromFileSystem();
+
     protected:
         void onInitialize() override;
         void onDraw() override;
-        void refresh();
+        void drawBarMenu();
         void setEnabledStatusForAllProps(bool isEnabled);
         [[nodiscard]] std::size_t convertShaderNameToIndex(const StringAtom& shaderName) const;
 
     protected:
         Gui::VerticalLayout _layout;
-        Gui::TextInput* _pathInput = nullptr;
+        std::filesystem::path _filePath;
 
+        Gui::TextInput* _logicalPathInput = nullptr;
         Gui::TextInput* _modelInput = nullptr;
         Gui::ComboModelBased* _mainShaderCombo = nullptr;
         Gui::ComboModelBased* _outlineShaderCombo = nullptr;
