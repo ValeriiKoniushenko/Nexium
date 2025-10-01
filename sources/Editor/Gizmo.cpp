@@ -83,7 +83,7 @@ namespace Core
 
         static Assimp::Importer importer;
         static const aiScene* scene
-            = importer.ReadFile(defaultModelPath.generic_string().c_str(),
+            = importer.ReadFile(defaultModelPath.string().c_str(),
                                 aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
         if (DEBUG_ASSERT_VAL(scene) && DEBUG_ASSERT_VAL(scene->mRootNode))
         {

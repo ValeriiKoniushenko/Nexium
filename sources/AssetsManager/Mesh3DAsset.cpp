@@ -156,7 +156,7 @@ namespace Core
         auto& sm = GetShaderManager();
         Assimp::Importer importer;
         const aiScene* scene
-            = importer.ReadFile(_pathToModel.generic_string().c_str(), _assimpPostProcess);
+            = importer.ReadFile(_pathToModel.string().c_str(), _assimpPostProcess);
 
         if (DEBUG_ASSERT_VAL(scene) && DEBUG_ASSERT_VAL(scene->mRootNode))
         {

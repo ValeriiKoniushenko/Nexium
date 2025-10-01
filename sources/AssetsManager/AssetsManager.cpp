@@ -33,9 +33,10 @@
 #include <memory>
 
 #ifdef _WIN32
+// clang-format off
+    #include <Windows.h>
     #include <Commdlg.h>
-    #include <stdafx.h>
-    #include <windows.h>
+// clang-format on
 #endif
 
 namespace Core
@@ -130,13 +131,29 @@ namespace Core
             const std::filesystem::path path = logicPath.data();
             for (auto&& registered : GetAssetsManager().getRegisteredPaths())
             {
-                const auto canonical = std::filesystem::canonical(registered);
-                const auto realRegistered = std::filesystem::absolute(canonical).parent_path();
-                const auto relative = std::filesystem::relative(path, realRegistered);
-                if (_mesh3ds.contains(StringAtom(relative.generic_string())))
+                try
                 {
-                    return NXMesh3D(reinterpret_cast<Mesh3DAsset&>(
-                        *_mesh3ds.at(StringAtom(relative.generic_string()))));
+                    auto canonical = std::filesystem::weakly_canonical(registered);
+                    if (canonical.is_relative())
+                    {
+                        canonical = NEXIUM_PROJECT_DIR / registered;
+                    }
+
+                    const auto realRegistered = std::filesystem::absolute(canonical).parent_path();
+                    const auto relative = std::filesystem::relative(path, realRegistered);
+                    if (_mesh3ds.contains(StringAtom(relative.generic_string())))
+                    {
+                        return NXMesh3D(reinterpret_cast<Mesh3DAsset&>(
+                            *_mesh3ds.at(StringAtom(relative.generic_string()))));
+                    }
+                }
+                catch (const std::filesystem::filesystem_error& e)
+                {
+                    errorLog("Can't resolve a path due to internal error, of was met junction symlink: {}"_f << e.what());
+                }
+                catch (...)
+                {
+                    errorLog("Can't resolve a path due to internal error, of was met junction symlink");
                 }
             }
 
@@ -186,7 +203,20 @@ namespace Core
         ofn.hwndOwner = nullptr;
         ofn.lpstrFile = buffer.data();
         ofn.nMaxFile = MAX_PATH;
-        ofn.lpstrFilter = "All\0*.*\0Text\0*.TXT\0";
+        std::string filterStr;
+        filterStr = "All Files\0*\0";
+        if (filter.empty())
+        {
+        }
+        else
+        {
+            /*for (auto&& filterPath : filter)
+            {
+                filterStr += filterPath;
+            }*/
+        }
+
+        ofn.lpstrFilter = filterStr.c_str();
         ofn.nFilterIndex = 1;
         ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 

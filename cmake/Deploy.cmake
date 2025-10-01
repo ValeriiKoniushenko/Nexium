@@ -6,9 +6,9 @@ function(Nexium_Deploy TARGET_NAME)
     if (WIN32)
         add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
             COMMAND cmd.exe /c "if not exist \"$<TARGET_FILE_DIR:${TARGET_NAME}>/tests\" mkdir \"$<TARGET_FILE_DIR:${TARGET_NAME}>/tests\""
-            COMMAND cmd.exe /c "if not exist \"$<TARGET_FILE_DIR:${TARGET_NAME}>/assets\" mklink /J \"$<TARGET_FILE_DIR:${TARGET_NAME}>/assets\" \"${_srcAssets}\""
-            COMMAND cmd.exe /c "if not exist \"$<TARGET_FILE_DIR:${TARGET_NAME}>/configs\" mklink /J \"$<TARGET_FILE_DIR:${TARGET_NAME}>/configs\" \"${_srcConfigs}\""
-            COMMAND cmd.exe /c "if not exist \"$<TARGET_FILE_DIR:${TARGET_NAME}>/tests/assets\" mklink /J \"$<TARGET_FILE_DIR:${TARGET_NAME}>/tests/assets\" \"${_srcTestAssets}\""
+            COMMAND cmd.exe /c "xcopy /E /I /Y \"${_srcAssets}\" \"$<TARGET_FILE_DIR:${TARGET_NAME}>/assets\" >nul"
+            COMMAND cmd.exe /c "xcopy /E /I /Y \"${_srcConfigs}\" \"$<TARGET_FILE_DIR:${TARGET_NAME}>/configs\" >nul"
+            COMMAND cmd.exe /c "xcopy /E /I /Y \"${_srcTestAssets}\" \"$<TARGET_FILE_DIR:${TARGET_NAME}>/tests\\assets\" >nul"
         )
     else ()
         add_custom_command(TARGET ${TARGET_NAME} POST_BUILD

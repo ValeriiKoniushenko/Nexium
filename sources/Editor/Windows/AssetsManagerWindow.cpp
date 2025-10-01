@@ -441,8 +441,10 @@ namespace Core
             ImGui::SetCursorPosX(ImGui::GetCursorPosX() + padding);
             ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0.0f);
 
+            std::error_code ec;
+
             int i = 1;
-            for (auto&& entry : std::filesystem::directory_iterator(_openedPath))
+            for (auto&& entry : std::filesystem::directory_iterator(_openedPath, ec))
             {
                 const auto& path = entry.path();
                 const auto fileFormat = EditorAssetsManager::getNodeType(entry);
@@ -460,6 +462,11 @@ namespace Core
                 }
 
                 ++i;
+            }
+
+            if (ec)
+            {
+                DEBUG_ASSERT(false, ec.message().c_str());
             }
 
             ImGui::PopStyleVar();
