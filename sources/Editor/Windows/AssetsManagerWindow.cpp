@@ -74,6 +74,11 @@ namespace Core
 {
     ECS_COMPONENT_IMPL(AssetsManagerWindowEWC)
 
+    AssetsManagerWindowEWC::~AssetsManagerWindowEWC()
+    {
+        writeToCache();
+    }
+
     void AssetsManagerWindowEWC::tryOpenParentDir()
     {
         if (_openedPath.has_parent_path())
@@ -90,9 +95,31 @@ namespace Core
         }
     }
 
+    StringAtom AssetsManagerWindowEWC::getCacheHash() const
+    {
+        return "AssetsManagerWindowEWC"_atom;
+    }
+
+    nlohmann::json AssetsManagerWindowEWC::toCacheData() const
+    {
+        nlohmann::json j;
+        j["openedPath"] = _openedPath;
+        return j;
+    }
+
+    void AssetsManagerWindowEWC::fromCacheData(const nlohmann::json& json)
+    {
+        if (json.contains("openedPath"))
+        {
+            _openedPath = json["openedPath"].get<std::filesystem::path>();
+        }
+    }
+
     void AssetsManagerWindowEWC::onInitialize()
     {
         BaseFloatEWC::onInitialize();
+
+        tryReadFromCache();
 
         _nodeTypesData = {
             { NodeType::Default,
@@ -150,7 +177,14 @@ namespace Core
                 }
             });
 
-        openPath(Config::Path::assets);
+        if (_openedPath.empty())
+        {
+            openPath(Config::Path::assets);
+        }
+        else
+        {
+            openPath(_openedPath);
+        }
 
         refresh();
     }
@@ -160,6 +194,14 @@ namespace Core
         drawExplorerTree();
         ImGui::SameLine();
         drawExplorer();
+
+        if (ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows))
+        {
+            if (ImGui::IsKeyPressed(ImGuiKey_Backspace, false))
+            {
+                tryOpenParentDir();
+            }
+        }
     }
 
     void AssetsManagerWindowEWC::onUpdate()
@@ -438,7 +480,9 @@ namespace Core
         ImGui::PopStyleColor();
         size += ImGui::GetStyle().FramePadding * 2.f;
 
-        if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+        if (ImGui::IsItemHovered()
+            && (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)
+                || ImGui::IsKeyPressed(ImGuiKey_Enter, false)))
         {
             needOpen = true;
         }

@@ -31,21 +31,28 @@
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Graphics/Texture.h"
+#include "Misc/JsonCacheable.h"
 
 namespace Core
 {
-    class AssetsManagerWindowEWC : public BaseFloatEWC
+    class AssetsManagerWindowEWC : public BaseFloatEWC, public JsonCacheable
     {
         ECS_COMPONENT_DECL(AssetsManagerWindowEWC, BaseFloatEWC);
 
     public:
-        void tryOpenParentDir();
+        ~AssetsManagerWindowEWC() override;
 
+    public:
+        void tryOpenParentDir();
         void tryOpenPath(const std::filesystem::path& p);
 
         [[nodiscard]] const char* getIcon() override { return ICON_FA_FOLDER; }
 
     protected:
+        [[nodiscard]] StringAtom getCacheHash() const override;
+        [[nodiscard]] nlohmann::json toCacheData() const override;
+        void fromCacheData(const nlohmann::json& json) override;
+
         void onInitialize() override;
 
         void onDraw() override;

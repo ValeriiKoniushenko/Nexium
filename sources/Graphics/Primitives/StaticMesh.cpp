@@ -145,7 +145,7 @@ namespace Core
             return;
         }
 
-        if (!gGameInstance->currentCamera)
+        if (!gGameInstance->currentCamera) [[unlikely]]
         {
             return;
         }

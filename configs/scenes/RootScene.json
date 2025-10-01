@@ -1,10 +1,6 @@
 {
     "objects": [
-        "Spectator",
-        "Tree1",
-        "Tree2",
-        "Rock1",
-        "Rock2"
+        "Spectator"
     ],
     "sceneName": "NewScene"
 }
