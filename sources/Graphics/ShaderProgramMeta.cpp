@@ -225,8 +225,9 @@ namespace Core
 
             // =========== Getting name ===========
             GLint nameLen = 0;
-            glGetProgramResourceiv(shaderProgramId, GL_UNIFORM_BLOCK, i, 1,
-                                   (const GLenum[]){ GL_NAME_LENGTH }, 1, nullptr, &nameLen);
+            constexpr GLenum nameLenEnum = GL_NAME_LENGTH;
+            glGetProgramResourceiv(shaderProgramId, GL_UNIFORM_BLOCK, i, 1, &nameLenEnum, 1,
+                                   nullptr, &nameLen);
             std::string blockName(nameLen, '\0');
             glGetProgramResourceName(shaderProgramId, GL_UNIFORM_BLOCK, i, nameLen, nullptr,
                                      blockName.data());
@@ -238,9 +239,9 @@ namespace Core
 
             // =========== Getting fields/vars ===========
             std::vector<GLint> vars(outData.vars.size());
-            glGetProgramResourceiv(shaderProgramId, GL_UNIFORM_BLOCK, i, 1,
-                                   (const GLenum[]){ GL_ACTIVE_VARIABLES }, outData.vars.size(),
-                                   nullptr, vars.data());
+            constexpr GLenum activeVarsEnum = GL_ACTIVE_VARIABLES;
+            glGetProgramResourceiv(shaderProgramId, GL_UNIFORM_BLOCK, i, 1, &activeVarsEnum,
+                                   outData.vars.size(), nullptr, vars.data());
 
             std::size_t varIndex = 0;
             for (const GLint varId : vars)
