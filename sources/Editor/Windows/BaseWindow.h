@@ -49,6 +49,8 @@ namespace Core
 
         void closeWindow();
 
+        void requestFocus() noexcept;
+
     protected:
         virtual void onOpen() {}
 
@@ -70,6 +72,7 @@ namespace Core
 
     protected:
         ImGuiWindowFlags _windowFlags = 0;
+        bool _wasFocusRequested = false;
     };
 
     template<class T>

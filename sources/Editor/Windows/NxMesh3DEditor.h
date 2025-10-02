@@ -88,7 +88,10 @@ namespace Core
 
         void save();
         void openFromFileSystem();
+        void openFromPath(const std::filesystem::path& path);
         void discardChanges();
+
+        void putArguments(const StringAtom& args) override;
 
     protected:
         void fetchFromAssetsManager();

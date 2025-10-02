@@ -271,14 +271,18 @@ namespace Core
 
     void NxMesh3DEditorEWC::openFromFileSystem()
     {
-        const auto path = AssetsManager::OpenFileSelectionDialog({ "*.nxmesh3d" });
-        if (path.isEmpty())
+        openFromPath(AssetsManager::OpenFileSelectionDialog({ "*.nxmesh3d" }).toStdStringView());
+    }
+
+    void NxMesh3DEditorEWC::openFromPath(const std::filesystem::path& path)
+    {
+        if (path.empty())
         {
             return;
         }
 
-        _filePath = path.toStdString();
-        _targetAsset = GetAssetsManager().getMesh3D(StringAtom::Intern(path));
+        _filePath = path;
+        _targetAsset = GetAssetsManager().getMesh3D(StringAtom::Intern(path.generic_string()));
         fetchFromAssetsManager();
     }
 
@@ -290,6 +294,11 @@ namespace Core
                 = GetAssetsManager().getMesh3D(StringAtom::Intern(_filePath.generic_string()));
             fetchFromAssetsManager();
         }
+    }
+    void NxMesh3DEditorEWC::putArguments(const StringAtom& args)
+    {
+        BaseFloatEWC::putArguments(args);
+        openFromPath(args.toStdStringView());
     }
 
     void NxMesh3DEditorEWC::setEnabledStatusForAllProps(bool isEnabled)

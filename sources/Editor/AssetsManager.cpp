@@ -26,6 +26,7 @@
 
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Windows/ImageViewer.h"
+#include "Windows/NxMesh3DEditor.h"
 #include "Windows/TextEditor.h"
 
 namespace Core
@@ -48,6 +49,26 @@ namespace Core
         {
             gGameInstance->gameEditor.showWindow<ImageViewerEWC>(
                 ".*", entry.path().generic_string().data());
+        }
+        else if (type == NodeType::NxFile)
+        {
+            tryToOpenNxFile(entry);
+        }
+    }
+
+    void EditorAssetsManager::tryToOpenNxFile(const std::filesystem::directory_entry& entry)
+    {
+        if (getNodeType(entry) != NodeType::NxFile)
+        {
+            return;
+        }
+
+        const auto path = entry.path();
+        auto ext = path.extension().generic_string();
+        if (ext == NXMesh3D::AssetT::fileExtension)
+        {
+            gGameInstance->gameEditor.showWindow<NxMesh3DEditorEWC>(".*",
+                                                                    path.generic_string().data());
         }
     }
 

@@ -583,6 +583,10 @@ namespace Core
 
         if (ImGui::BeginPopup(filename.c_str()))
         {
+            if (ImGui::MenuItem(ICON_FA_FOLDER_OPEN_O " Open"))
+            {
+                needOpen = true;
+            }
             if (ImGui::MenuItem(ICON_FA_FILES_O " Copy"))
             {
                 copyFrom(path);

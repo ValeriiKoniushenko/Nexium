@@ -45,6 +45,7 @@ namespace Core
         };
 
         static void tryToOpenFile(const std::filesystem::directory_entry& path);
+        static void tryToOpenNxFile(const std::filesystem::directory_entry& path);
 
         [[nodiscard]] static NodeType getNodeType(const std::filesystem::directory_entry& entry);
 

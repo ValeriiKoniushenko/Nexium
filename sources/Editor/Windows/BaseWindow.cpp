@@ -43,6 +43,7 @@ namespace Core
     {
         setEnabled(true);
         onOpen();
+        requestFocus();
         if (!args.isEmpty())
         {
             putArguments(args);
@@ -53,6 +54,11 @@ namespace Core
     {
         setEnabled(false);
         onClose();
+    }
+
+    void BaseEWC::requestFocus() noexcept
+    {
+        _wasFocusRequested = true;
     }
 
     void BaseEWC::onTick(float delta)
@@ -126,6 +132,11 @@ namespace Core
         }
 
         const auto res = ImGui::Begin(getComponentName().c_str(), &_isEnabled, _windowFlags);
+        if (_wasFocusRequested)
+        {
+            ImGui::SetWindowFocus(getComponentName().c_str());
+            _wasFocusRequested = false;
+        }
 
         ImGui::PopStyleVar(static_cast<int>(_styles.size()));
 
