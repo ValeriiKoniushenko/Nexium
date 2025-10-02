@@ -125,6 +125,8 @@ namespace Core
 
         [[nodiscard]] nlohmann::json toCacheData() const override;
 
+        [[nodiscard]] std::filesystem::path getCacheDir() const override;
+
         void fromCacheData(const nlohmann::json& data) override;
 
         void onAddChild(BaseComponent* newChild) override;

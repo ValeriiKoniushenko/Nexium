@@ -2,9 +2,6 @@ cmake_minimum_required(VERSION 3.30..)
 
 project(Nexium VERSION 1.0 LANGUAGES CXX)
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
-
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -13,10 +10,9 @@ add_compile_definitions(DONT_USE_CPP_LIB_STACKTRACE)
 
 add_compile_definitions(NEXIUM_PROJECT_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
 
-include(Flags)
-include(Features)
-include(Predefinitions)
-include(Deploy)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Flags.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Features.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Predefinitions.cmake)
 
 # ========= Base setup & Predefinitions =========
 # CXX standard installing
@@ -34,9 +30,10 @@ InstallDebugLevel()
 
 # ========= Main deps pipeline =========
 add_subdirectory(dependencies)
-include(FetchDependencies)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FetchDependencies.cmake)
 
 add_subdirectory(sources)
 add_subdirectory(tests)
 
+# TODO: in the future it must be removed
 add_subdirectory(game-example)

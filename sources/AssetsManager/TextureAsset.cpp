@@ -45,7 +45,7 @@ namespace Core
     {
         if (DEBUG_ASSERT_VAL(json.contains("path")))
         {
-            _path = json["path"].get<std::filesystem::path>();
+            _path = Config::Path::projectAbsPath / json["path"].get<std::filesystem::path>();
         }
         else
         {

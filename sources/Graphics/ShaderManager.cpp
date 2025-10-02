@@ -32,62 +32,69 @@ namespace Core
         _failedShaders.clear();
         _inputPath = inputPath;
 
-        std::unordered_set<std::string> processedShaders;
-
-        for (const auto& entry : std::filesystem::recursive_directory_iterator(inputPath))
+        try
         {
-            if (!entry.is_regular_file())
+            std::unordered_set<std::string> processedShaders;
+            for (const auto& entry : std::filesystem::recursive_directory_iterator(inputPath))
             {
-                continue;
+                if (!entry.is_regular_file())
+                {
+                    continue;
+                }
+
+                const auto fragShaderFile
+                    = getPathToShaderBasedOn(_suitableFragExtensions, entry.path());
+                if (fragShaderFile.empty())
+                {
+                    continue;
+                }
+                const auto vertShaderFile
+                    = getPathToShaderBasedOn(_suitableVertExtensions, entry.path());
+                if (vertShaderFile.empty())
+                {
+                    continue;
+                }
+
+                if (vertShaderFile.stem() != fragShaderFile.stem())
+                {
+                    warnLog("Different stem of shader files: '{}' & '{}'"_f
+                            << fragShaderFile.generic_string() << vertShaderFile.generic_string());
+                    continue;
+                }
+
+                const auto name = std::filesystem::relative(entry.path(), inputPath)
+                                      .replace_extension("")
+                                      .generic_string();
+
+                if (processedShaders.contains(name))
+                {
+                    continue;
+                }
+
+                infoLog("Was found shader: {}"_f << name);
+
+                try
+                {
+                    processedShaders.emplace(name);
+
+                    ShaderProgramMeta meta;
+                    meta.setShaderName(name);
+                    meta.create(vertShaderFile, fragShaderFile);
+
+                    _shaderMetas[meta.getShaderName()] = std::move(meta);
+                }
+                catch (const std::exception& exception)
+                {
+                    criticalLog("Impossible to set up the shader '{}'. Details: {}"_f
+                                << name << exception.what());
+                    _failedShaders.emplace(name);
+                }
             }
-
-            const auto fragShaderFile
-                = getPathToShaderBasedOn(_suitableFragExtensions, entry.path());
-            if (fragShaderFile.empty())
-            {
-                continue;
-            }
-            const auto vertShaderFile
-                = getPathToShaderBasedOn(_suitableVertExtensions, entry.path());
-            if (vertShaderFile.empty())
-            {
-                continue;
-            }
-
-            if (vertShaderFile.stem() != fragShaderFile.stem())
-            {
-                warnLog("Different stem of shader files: '{}' & '{}'"_f
-                        << fragShaderFile.generic_string() << vertShaderFile.generic_string());
-                continue;
-            }
-
-            const auto name = std::filesystem::relative(entry.path(), inputPath)
-                                  .replace_extension("")
-                                  .generic_string();
-
-            if (processedShaders.contains(name))
-            {
-                continue;
-            }
-
-            infoLog("Was found shader: {}"_f << name);
-
-            try
-            {
-                processedShaders.emplace(name);
-
-                ShaderProgramMeta meta;
-                meta.setShaderName(name);
-                meta.create(vertShaderFile, fragShaderFile);
-
-                _shaderMetas[meta.getShaderName()] = std::move(meta);
-            }
-            catch (const std::exception& exception)
-            {
-                errorLog("Impossible to set up the shader '{}'. Details: {}"_f << name
-                                                                               << exception.what());
-                _failedShaders.emplace(name);
-            }
+        }
+        catch (std::filesystem::filesystem_error& e)
+        {
+            errorLog("Got a error while scanning a folder '{}' for assets. Details: {}"_f
+                     << inputPath.generic_string() << e.what());
         }
     }
 

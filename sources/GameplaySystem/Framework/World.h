@@ -51,7 +51,7 @@ namespace Core
     {
     public:
         [[nodiscard]] spdlog::logger* getLogger() const override { return Framework::getLogger(); }
-        [[nodiscard]] const char* getPrefix() const override { return "World"; }
+        [[nodiscard]] const char* getPrefix() const override { return "world"; }
 
     protected:
         [[nodiscard]] std::filesystem::path getCacheDir() const override;

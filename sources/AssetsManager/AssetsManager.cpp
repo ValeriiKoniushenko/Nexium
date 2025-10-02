@@ -62,7 +62,7 @@ namespace
                     std::filesystem::path normalized;
                     if (registered.is_relative())
                     {
-                        normalized = NEXIUM_PROJECT_DIR;
+                        normalized = Config::Path::projectAbsPath;
                     }
                     normalized /= registered;
 
@@ -109,38 +109,48 @@ namespace Core
 
         for (auto&& path : _registeredPaths)
         {
-            for (const auto& entry : std::filesystem::recursive_directory_iterator(path))
+            try
             {
-                if (!entry.is_regular_file())
+                for (const auto& entry : std::filesystem::recursive_directory_iterator(path))
                 {
-                    continue;
-                }
+                    if (!entry.is_regular_file())
+                    {
+                        continue;
+                    }
 
-                const auto absPath = std::filesystem::absolute(entry.path());
-                const auto ext = absPath.extension().generic_string();
+                    const auto absPath = std::filesystem::absolute(entry.path());
+                    const auto ext = absPath.extension().generic_string();
 
-                // check for non baked
-                if (ext.size() < 3 || strncmp(ext.c_str(), ".nx", 3) != 0)
-                {
-                    continue;
-                }
+                    // check for non baked
+                    if (ext.size() < 3 || strncmp(ext.c_str(), ".nx", 3) != 0)
+                    {
+                        continue;
+                    }
 
-                auto id = StringAtom::Intern(entry.path().generic_string());
-                if (ext == NXTexture::AssetT::fileExtension)
-                {
-                    _textures.emplace(id, new TextureAsset(id))
-                        .first->second->attachAndReadFromFile(absPath);
+                    auto relPath = std::filesystem::relative(absPath, Config::Path::projectAbsPath);
+
+                    auto id = StringAtom::Intern(relPath.generic_string());
+                    if (ext == NXTexture::AssetT::fileExtension)
+                    {
+                        _textures.emplace(id, new TextureAsset(id))
+                            .first->second->attachAndReadFromFile(absPath);
+                    }
+                    else if (ext == NXSkybox::AssetT::fileExtension)
+                    {
+                        _skyboxes.emplace(id, new SkyboxAsset(id))
+                            .first->second->attachAndReadFromFile(absPath);
+                    }
+                    else if (ext == NXMesh3D::AssetT::fileExtension)
+                    {
+                        _mesh3ds.emplace(id, new Mesh3DAsset(id))
+                            .first->second->attachAndReadFromFile(absPath);
+                    }
                 }
-                else if (ext == NXSkybox::AssetT::fileExtension)
-                {
-                    _skyboxes.emplace(id, new SkyboxAsset(id))
-                        .first->second->attachAndReadFromFile(absPath);
-                }
-                else if (ext == NXMesh3D::AssetT::fileExtension)
-                {
-                    _mesh3ds.emplace(id, new Mesh3DAsset(id))
-                        .first->second->attachAndReadFromFile(absPath);
-                }
+            }
+            catch (std::filesystem::filesystem_error& e)
+            {
+                criticalLog("Got a error while scanning a folder '{}' for assets. Details: {}"_f
+                            << path.generic_string() << e.what());
             }
         }
     }

@@ -24,6 +24,7 @@
 
 #include "StaticMeshBundle.h"
 
+#include "Editor/Configs.h"
 #include "Graphics/Image.h"
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
@@ -233,6 +234,10 @@ namespace Core
     nlohmann::json StaticMeshBundle::toCacheData() const
     {
         return toJson();
+    }
+    std::filesystem::path StaticMeshBundle::getCacheDir() const
+    {
+        return JsonCacheable::getCacheDir() / Config::Path::gameConfigModel3DsDir;
     }
 
     void StaticMeshBundle::fromCacheData(const nlohmann::json& data)

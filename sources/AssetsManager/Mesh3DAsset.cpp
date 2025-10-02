@@ -231,7 +231,7 @@ namespace Core
     {
         if (json.contains("path"))
         {
-            _pathToModel = NEXIUM_PROJECT_DIR / json["path"].get<std::filesystem::path>();
+            _pathToModel = Config::Path::projectAbsPath / json["path"].get<std::filesystem::path>();
         }
         if (json.contains("mainShader"))
         {

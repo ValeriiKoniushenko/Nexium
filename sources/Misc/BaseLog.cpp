@@ -30,8 +30,6 @@ namespace Core
 
     void BaseLog::pushLog(level l, const char* str) const
     {
-        DEBUG_ASSERT(l != level::critical);
-
         auto* logger = getLogger();
         auto log = getCompleteText(str);
         logger->log(l, log.c_str());
@@ -43,6 +41,7 @@ namespace Core
         logLine.time = std::time(nullptr);
 
         LogQueue::instance().addLog(std::move(logLine));
+        DEBUG_ASSERT(l != level::critical, str);
     }
 
     StringAtom LogQueue::LogLine::toString() const

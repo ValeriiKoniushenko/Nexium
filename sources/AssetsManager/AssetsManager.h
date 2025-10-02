@@ -117,7 +117,7 @@ namespace Core
 
         void unloadAllResources();
 
-        void registerNewAssetPath(std::filesystem::path logicPath);
+        void registerNewAssetPath(std::filesystem::path path);
 
         void spawnMesh3DOnScene(const StringAtom& logicPath);
 

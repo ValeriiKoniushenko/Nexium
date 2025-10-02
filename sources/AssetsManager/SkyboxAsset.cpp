@@ -143,7 +143,8 @@ namespace Core
         {
             if (DEBUG_ASSERT_VAL(json.contains(prop)))
             {
-                _paths.at(static_cast<std::size_t>(dir)) = json[prop].get<std::filesystem::path>();
+                _paths.at(static_cast<std::size_t>(dir))
+                    = Config::Path::projectAbsPath / json[prop].get<std::filesystem::path>();
             }
         };
 

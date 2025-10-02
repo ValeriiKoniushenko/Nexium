@@ -37,16 +37,17 @@ namespace Core
         explicit BaseAsset(const StringAtom& logicPath)
             : _logicPath(logicPath)
         {
+            DEBUG_ASSERT(std::filesystem::path(_logicPath.c_str()).is_relative(),
+                         "Logic path must be relative. It's ID, it's not a real path.");
         }
 
-        virtual ~BaseAsset() override = default;
+        ~BaseAsset() override = default;
 
         [[nodiscard]] bool isLoaded() const { return _refCount > 1; }
 
         [[nodiscard]] const StringAtom& getLogicPath() const { return _logicPath; }
 
         virtual void onLoadRequest() = 0;
-
         virtual void onUnloadRequest() = 0;
 
         void attachAndReadFromFile(const std::filesystem::path& path);

@@ -49,6 +49,7 @@ namespace Core
         [[nodiscard]] const char* getIcon() override { return ICON_FA_FOLDER; }
 
     protected:
+        [[nodiscard]] std::filesystem::path getCacheDir() const override;
         [[nodiscard]] StringAtom getCacheHash() const override;
         [[nodiscard]] nlohmann::json toCacheData() const override;
         void fromCacheData(const nlohmann::json& json) override;

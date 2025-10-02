@@ -96,9 +96,14 @@ namespace Core
         }
     }
 
+    std::filesystem::path AssetsManagerWindowEWC::getCacheDir() const
+    {
+        return JsonCacheable::getCacheDir() / Config::Path::editorConfigDir;
+    }
+
     StringAtom AssetsManagerWindowEWC::getCacheHash() const
     {
-        return "AssetsManagerWindowEWC"_atom;
+        return "AssetsManagerWindow"_atom;
     }
 
     nlohmann::json AssetsManagerWindowEWC::toCacheData() const
@@ -441,32 +446,33 @@ namespace Core
             ImGui::SetCursorPosX(ImGui::GetCursorPosX() + padding);
             ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0.0f);
 
-            std::error_code ec;
-
-            int i = 1;
-            for (auto&& entry : std::filesystem::directory_iterator(NEXIUM_PROJECT_DIR / _openedPath, ec))
+            try
             {
-                const auto& path = entry.path();
-                const auto fileFormat = EditorAssetsManager::getNodeType(entry);
-
-                if (isFiltered(path))
+                int i = 1;
+                for (auto&& entry : std::filesystem::directory_iterator(_openedPath))
                 {
-                    continue;
-                }
+                    const auto& path = entry.path();
+                    const auto fileFormat = EditorAssetsManager::getNodeType(entry);
 
-                drawFileThumbnail(_nodeTypesData[fileFormat]->getData().getTextureId(), entry,
-                                  _thumbnailSize);
-                if (maxCountPerWidth != 0 && i % maxCountPerWidth != 0)
-                {
-                    ImGui::SameLine();
-                }
+                    if (isFiltered(path))
+                    {
+                        continue;
+                    }
 
-                ++i;
+                    drawFileThumbnail(_nodeTypesData[fileFormat]->getData().getTextureId(), entry,
+                                      _thumbnailSize);
+                    if (maxCountPerWidth != 0 && i % maxCountPerWidth != 0)
+                    {
+                        ImGui::SameLine();
+                    }
+
+                    ++i;
+                }
             }
-
-            if (ec)
+            catch (std::filesystem::filesystem_error& e)
             {
-                DEBUG_ASSERT(false, ec.message().c_str());
+                criticalLog("Got a error while scanning a folder '{}' for assets. Details: {}"_f
+                            << _openedPath.generic_string() << e.what());
             }
 
             ImGui::PopStyleVar();
@@ -696,24 +702,32 @@ namespace Core
 
     void AssetsManagerWindowEWC::rescanPhysicalDrive(CacheNode& node)
     {
-        for (auto&& entry : std::filesystem::directory_iterator(node.path))
+        try
         {
-            if (!entry.is_regular_file() && !entry.is_directory())
+            for (auto&& entry : std::filesystem::directory_iterator(node.path))
             {
-                continue;
+                if (!entry.is_regular_file() && !entry.is_directory())
+                {
+                    continue;
+                }
+
+                const auto nodeType = EditorAssetsManager::getNodeType(entry);
+
+                CacheNode tmp;
+                tmp.path = entry.path();
+                tmp.type = nodeType;
+                node.children.push_back(std::move(tmp));
+
+                if (nodeType == EditorAssetsManager::NodeType::Folder)
+                {
+                    rescanPhysicalDrive(node.children.back());
+                }
             }
-
-            const auto nodeType = EditorAssetsManager::getNodeType(entry);
-
-            CacheNode tmp;
-            tmp.path = entry.path();
-            tmp.type = nodeType;
-            node.children.push_back(std::move(tmp));
-
-            if (nodeType == EditorAssetsManager::NodeType::Folder)
-            {
-                rescanPhysicalDrive(node.children.back());
-            }
+        }
+        catch (std::filesystem::filesystem_error& e)
+        {
+            criticalLog("Got a error while scanning a folder '{}' for assets. Details: {}"_f
+                        << node.path.generic_string() << e.what());
         }
     }
 

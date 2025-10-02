@@ -12,5 +12,3 @@ target_link_libraries(${TARGET_NAME} PUBLIC
 )
 
 CoreAddCompileOptionsTo(${TARGET_NAME})
-
-Nexium_Deploy(${TARGET_NAME})

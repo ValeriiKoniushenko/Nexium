@@ -243,7 +243,7 @@ namespace Core
 
     std::filesystem::path LogsWindowEWC::getCacheDir() const
     {
-        return JsonCacheable::getCacheDir() / "editor";
+        return JsonCacheable::getCacheDir() / Config::Path::editorConfigDir;
     }
 
     StringAtom LogsWindowEWC::getCacheHash() const
