@@ -28,7 +28,6 @@
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Mesh3DAsset.h"
 
-#include <Utils/Functions.h>
 #include <array>
 #include <memory>
 
@@ -38,6 +37,64 @@
     #include <Commdlg.h>
 // clang-format on
 #endif
+
+using namespace Core;
+
+namespace
+{
+
+    template<class T>
+    T getAssetOf(const StringAtom& logicPath,
+                 std::unordered_map<StringAtom, AssetRef<BaseAsset>>& lookupContainer)
+    {
+        if (!GetAssetsManager().validatePath(logicPath, T::AssetT::fileExtension))
+        {
+            return T();
+        }
+
+        if (!lookupContainer.contains(logicPath))
+        {
+            const std::filesystem::path path = logicPath.data();
+            for (auto&& registered : GetAssetsManager().getRegisteredPaths())
+            {
+                try
+                {
+                    std::filesystem::path normalized;
+                    if (registered.is_relative())
+                    {
+                        normalized = NEXIUM_PROJECT_DIR;
+                    }
+                    normalized /= registered;
+
+                    const auto realRegistered = std::filesystem::absolute(normalized).parent_path();
+                    const auto relative = std::filesystem::relative(path, realRegistered);
+                    if (lookupContainer.contains(StringAtom(relative.generic_string())))
+                    {
+                        return T(reinterpret_cast<T::AssetT&>(
+                            *lookupContainer.at(StringAtom(relative.generic_string()))));
+                    }
+                }
+                catch (const std::filesystem::filesystem_error& e)
+                {
+                    GetAssetsManager().errorLog(
+                        "Can't resolve a path due to internal error, of was met junction symlink: {}"_f
+                        << e.what());
+                }
+                catch (...)
+                {
+                    GetAssetsManager().errorLog(
+                        "Can't resolve a path due to internal error, of was met junction symlink");
+                }
+            }
+
+            GetAssetsManager().criticalLog("The asset is not found by the next path: {}"_f
+                                           << logicPath);
+            return T();
+        }
+
+        return T(reinterpret_cast<T::AssetT&>(*lookupContainer.at(logicPath)));
+    }
+} // namespace
 
 namespace Core
 {
@@ -90,78 +147,17 @@ namespace Core
 
     NXTexture AssetsManager::getTexture(const StringAtom& logicPath)
     {
-        if (!validatePath(logicPath, NXTexture::AssetT::fileExtension))
-        {
-            return NXTexture();
-        }
-
-        if (!_textures.contains(logicPath))
-        {
-            throw std::runtime_error("Texture not found!");
-        }
-
-        return NXTexture(reinterpret_cast<TextureAsset&>(*_textures.at(logicPath)));
+        return getAssetOf<NXTexture>(logicPath, _textures);
     }
 
     NXSkybox AssetsManager::getSkybox(const StringAtom& logicPath)
     {
-        if (!validatePath(logicPath, NXSkybox::AssetT::fileExtension))
-        {
-            return NXSkybox();
-        }
-
-        if (!_skyboxes.contains(logicPath))
-        {
-            criticalLog("Skybox not found by the next path: {}"_f << logicPath);
-            return NXSkybox();
-        }
-
-        return NXSkybox(reinterpret_cast<SkyboxAsset&>(*_skyboxes.at(logicPath)));
+        return getAssetOf<NXSkybox>(logicPath, _skyboxes);
     }
 
     NXMesh3D AssetsManager::getMesh3D(const StringAtom& logicPath)
     {
-        if (!validatePath(logicPath, NXMesh3D::AssetT::fileExtension))
-        {
-            return NXMesh3D();
-        }
-
-        if (!_mesh3ds.contains(logicPath))
-        {
-            const std::filesystem::path path = logicPath.data();
-            for (auto&& registered : GetAssetsManager().getRegisteredPaths())
-            {
-                try
-                {
-                    auto canonical = std::filesystem::weakly_canonical(registered);
-                    if (canonical.is_relative())
-                    {
-                        canonical = NEXIUM_PROJECT_DIR / registered;
-                    }
-
-                    const auto realRegistered = std::filesystem::absolute(canonical).parent_path();
-                    const auto relative = std::filesystem::relative(path, realRegistered);
-                    if (_mesh3ds.contains(StringAtom(relative.generic_string())))
-                    {
-                        return NXMesh3D(reinterpret_cast<Mesh3DAsset&>(
-                            *_mesh3ds.at(StringAtom(relative.generic_string()))));
-                    }
-                }
-                catch (const std::filesystem::filesystem_error& e)
-                {
-                    errorLog("Can't resolve a path due to internal error, of was met junction symlink: {}"_f << e.what());
-                }
-                catch (...)
-                {
-                    errorLog("Can't resolve a path due to internal error, of was met junction symlink");
-                }
-            }
-
-            criticalLog("Mesh3D not found by the next path: {}"_f << logicPath);
-            return NXMesh3D();
-        }
-
-        return NXMesh3D(reinterpret_cast<Mesh3DAsset&>(*_mesh3ds.at(logicPath)));
+        return getAssetOf<NXMesh3D>(logicPath, _mesh3ds);
     }
 
     void AssetsManager::unloadAllResources()

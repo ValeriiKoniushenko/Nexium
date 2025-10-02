@@ -27,6 +27,7 @@
 #include "Mesh3DAsset.h"
 #include "SkyboxAsset.h"
 #include "TextureAsset.h"
+#include "Utils/Functions.h"
 
 #include <set>
 #include <unordered_map>
@@ -125,7 +126,6 @@ namespace Core
         [[nodiscard]] static StringAtom OpenFileSelectionDialog(
             const std::vector<std::string>& filter);
 
-    protected:
         [[nodiscard]] bool validatePath(const StringAtom& logicPath, const char* requiredExt);
 
     protected:
@@ -134,4 +134,5 @@ namespace Core
         std::unordered_map<StringAtom, AssetRef<BaseAsset>> _skyboxes;
         std::unordered_map<StringAtom, AssetRef<BaseAsset>> _mesh3ds;
     };
+
 } // namespace Core
