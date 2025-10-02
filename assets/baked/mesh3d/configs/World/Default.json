@@ -1,0 +1,19 @@
+{
+    "lightning": {
+        "ambientStrength": 0.8999999761581421,
+        "color": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "minLightStrength": 0.3499999940395355,
+        "specularPow": 0.5,
+        "specularStrength": 0.10000000149011612,
+        "sunDirection": [
+            0.8799999952316284,
+            0.8899999856948853,
+            0.8999999761581421
+        ]
+    },
+    "worldName": "Default"
+}

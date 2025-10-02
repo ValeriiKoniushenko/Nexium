@@ -88,7 +88,6 @@ namespace Core
                 const auto resolved
                     = (modelPath.parent_path() / relative.toStdString()).lexically_normal();
 
-                DEBUG_ASSERT(resolved.is_relative());
                 image.loadFromFile(resolved, true);
             }
 

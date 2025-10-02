@@ -444,7 +444,7 @@ namespace Core
             std::error_code ec;
 
             int i = 1;
-            for (auto&& entry : std::filesystem::directory_iterator(_openedPath, ec))
+            for (auto&& entry : std::filesystem::directory_iterator(NEXIUM_PROJECT_DIR / _openedPath, ec))
             {
                 const auto& path = entry.path();
                 const auto fileFormat = EditorAssetsManager::getNodeType(entry);
