@@ -89,6 +89,16 @@ namespace Core
     class AssetsManager : public BaseLog
     {
     public:
+        enum class NodeType
+        {
+            Default,
+            Code,
+            Image,
+            Folder,
+            NxFile
+        };
+
+    public:
         AssetsManager();
 
         ~AssetsManager() override = default;
@@ -127,6 +137,11 @@ namespace Core
             const std::vector<std::string>& filter);
 
         [[nodiscard]] bool validatePath(const StringAtom& logicPath, const char* requiredExt);
+
+        static void tryToOpenFile(const std::filesystem::directory_entry& path);
+        static void tryToOpenNxFile(const std::filesystem::directory_entry& path);
+        [[nodiscard]] static NodeType getNodeType(const std::filesystem::directory_entry& entry);
+        static void openPathFromOSExplorer(const std::filesystem::path& path);
 
     protected:
         std::set<std::filesystem::path> _registeredPaths;

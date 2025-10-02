@@ -25,6 +25,9 @@
 #include "AssetsManager.h"
 
 #include "Editor/Configs.h"
+#include "Editor/Windows/ImageViewer.h"
+#include "Editor/Windows/NxMesh3DEditor.h"
+#include "Editor/Windows/TextEditor.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Mesh3DAsset.h"
 
@@ -299,5 +302,139 @@ namespace Core
         }
 
         return true;
+    }
+
+    void AssetsManager::tryToOpenFile(const std::filesystem::directory_entry& entry)
+    {
+        if (!entry.is_regular_file())
+        {
+            return;
+        }
+
+        auto type = getNodeType(entry);
+
+        if (type == NodeType::Code)
+        {
+            gGameInstance->gameEditor.showWindow<TextEditorEWC>(
+                ".*", entry.path().generic_string().data());
+        }
+        else if (type == NodeType::Image)
+        {
+            gGameInstance->gameEditor.showWindow<ImageViewerEWC>(
+                ".*", entry.path().generic_string().data());
+        }
+        else if (type == NodeType::NxFile)
+        {
+            tryToOpenNxFile(entry);
+        }
+    }
+
+    void AssetsManager::tryToOpenNxFile(const std::filesystem::directory_entry& entry)
+    {
+        if (getNodeType(entry) != NodeType::NxFile)
+        {
+            return;
+        }
+
+        const auto path = entry.path();
+        auto ext = path.extension().generic_string();
+        if (ext == NXMesh3D::AssetT::fileExtension)
+        {
+            gGameInstance->gameEditor.showWindow<NxMesh3DEditorEWC>(".*",
+                                                                    path.generic_string().data());
+        }
+    }
+
+    AssetsManager::NodeType AssetsManager::getNodeType(
+        const std::filesystem::directory_entry& entry)
+    {
+        if (entry.is_directory())
+        {
+            return NodeType::Folder;
+        }
+
+        if (!entry.is_regular_file())
+        {
+            return NodeType::Default;
+        }
+
+        auto ext = entry.path().extension().generic_string();
+        // clang-format off
+        if (ext == ".cpp"   ||
+            ext == ".cc"    ||
+            ext == ".cxx"   ||
+            ext == ".C"     ||
+            ext == ".c"     ||
+            ext == ".hpp"   ||
+            ext == ".hh"    ||
+            ext == ".hxx"   ||
+            ext == ".H"     ||
+            ext == ".h"     ||
+            ext == ".inl"   ||
+            ext == ".ipp"   ||
+            ext == ".pch"   ||
+            ext == ".gch"   ||
+            ext == ".lib"   ||
+            ext == ".so"    ||
+            ext == ".dll"   ||
+            ext == ".cs"    ||
+            ext == ".py"    ||
+            ext == ".pyc"   ||
+            ext == ".pyo"   ||
+            ext == ".whl"   ||
+            ext == ".pyi"   ||
+            ext == ".vert"  ||
+            ext == ".vs"    ||
+            ext == ".frag"  ||
+            ext == ".fs"    ||
+            ext == ".geom"  ||
+            ext == ".gs"    ||
+            ext == ".tesc"  ||
+            ext == ".tese"  ||
+            ext == ".comp"  ||
+            ext == ".glsl"  ||
+            ext == ".hlsl"  ||
+            ext == ".fx"    ||
+            ext == ".metal" ||
+            ext == ".spv"   ||
+            ext == ".cmake" ||
+            ext == ".pro"   ||
+            ext == ".pri"   ||
+            ext == ".json"  ||
+            ext == ".xml"   ||
+            ext == ".yml"   ||
+            ext == ".yaml"  ||
+            ext == ".ini"   ||
+            ext == ".toml") return NodeType::Code;
+
+        if (ext.rfind(".nx") != std::string::npos)
+        {
+            return NodeType::NxFile;
+        }
+
+        if (ext == ".jpg"   ||
+            ext == ".jpeg"  ||
+            ext == ".png"   ||
+            ext == ".bmp"   ||
+            ext == ".tga"   ||
+            ext == ".psd"   ||
+            ext == ".gif"   ||
+            ext == ".hdr"   ||
+            ext == ".pic") return NodeType::Image;
+        // clang-format on
+
+        return NodeType::Default;
+    }
+
+    void AssetsManager::openPathFromOSExplorer(const std::filesystem::path& path)
+    {
+#ifdef _WIN32
+        const std::string command = "explorer \"" + path.generic_string() + "\"";
+#elif __APPLE__
+        const std::string command = "open \"" + path.generic_string() + "\"";
+#else
+        const std::string command = "xdg-open \"" + path.generic_string() + "\"";
+#endif
+        std::system(command.c_str());
     }
 } // namespace Core

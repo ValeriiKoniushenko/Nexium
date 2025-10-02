@@ -34,7 +34,7 @@
 #include <format>
 #include <fstream>
 
-using NodeType = Core::EditorAssetsManager::NodeType;
+using NodeType = Core::AssetsManager::NodeType;
 
 namespace
 {
@@ -437,7 +437,7 @@ namespace Core
 
                 if (ImGui::MenuItem("Open in explorer"))
                 {
-                    EditorAssetsManager::openPathFromOSExplorer(_openedPath);
+                    AssetsManager::openPathFromOSExplorer(_openedPath);
                 }
 
                 ImGui::EndPopup();
@@ -452,7 +452,7 @@ namespace Core
                 for (auto&& entry : std::filesystem::directory_iterator(_openedPath))
                 {
                     const auto& path = entry.path();
-                    const auto fileFormat = EditorAssetsManager::getNodeType(entry);
+                    const auto fileFormat = AssetsManager::getNodeType(entry);
 
                     if (isFiltered(path))
                     {
@@ -620,8 +620,7 @@ namespace Core
 
             if (ImGui::MenuItem("Open in explorer"))
             {
-                EditorAssetsManager::openPathFromOSExplorer(entry.is_directory() ? path
-                                                                                 : _openedPath);
+                AssetsManager::openPathFromOSExplorer(entry.is_directory() ? path : _openedPath);
             }
             if (path.extension().generic_string() == NXMesh3D::AssetT::fileExtension)
             {
@@ -692,7 +691,7 @@ namespace Core
             }
             else if (entry.is_regular_file())
             {
-                EditorAssetsManager::tryToOpenFile(entry);
+                AssetsManager::tryToOpenFile(entry);
             }
         }
 
@@ -715,14 +714,14 @@ namespace Core
                     continue;
                 }
 
-                const auto nodeType = EditorAssetsManager::getNodeType(entry);
+                const auto nodeType = AssetsManager::getNodeType(entry);
 
                 CacheNode tmp;
                 tmp.path = entry.path();
                 tmp.type = nodeType;
                 node.children.push_back(std::move(tmp));
 
-                if (nodeType == EditorAssetsManager::NodeType::Folder)
+                if (nodeType == AssetsManager::NodeType::Folder)
                 {
                     rescanPhysicalDrive(node.children.back());
                 }

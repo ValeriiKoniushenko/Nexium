@@ -24,13 +24,12 @@
 
 #pragma once
 
+#include "AssetsManager/AssetsManager.h"
 #include "AssetsManager/TextureAsset.h"
 #include "BaseWindow.h"
-#include "Editor/AssetsManager.h"
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
-#include "Graphics/Texture.h"
 #include "Misc/JsonCacheable.h"
 
 namespace Core
@@ -75,13 +74,13 @@ namespace Core
     protected:
         struct CacheNode
         {
-            EditorAssetsManager::NodeType type = EditorAssetsManager::NodeType::Default;
+            AssetsManager::NodeType type = AssetsManager::NodeType::Default;
             std::filesystem::path path;
             std::vector<CacheNode> children;
         };
 
     protected:
-        std::unordered_map<EditorAssetsManager::NodeType, NXTexture> _nodeTypesData;
+        std::unordered_map<AssetsManager::NodeType, NXTexture> _nodeTypesData;
 
         Gui::HorizontalLayout _toolbarLayout;
         Gui::Button* _refreshButton = nullptr;
