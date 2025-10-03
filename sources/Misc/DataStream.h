@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "Core/String.h"
 #include "nlohmann/json.hpp"
 
 #include <functional>
@@ -153,5 +154,18 @@ namespace Core
         virtual ~IDataStreamBridge() = default;
 
         virtual void ioFieldsUpdate(DataStream& stream) = 0;
+
+        [[nodiscard]] bool hasCache() const;
+
+        void writeToCache();
+        void readFromCache();
+        void tryReadFromCache();
+
+        void clearCache();
+
+    protected:
+        [[nodiscard]] virtual std::filesystem::path getCacheDir() const { return { "configs" }; }
+        [[nodiscard]] virtual StringAtom getCacheHash() const = 0;
+        [[nodiscard]] std::filesystem::path getTargetCachePath() const;
     };
 } // namespace Core

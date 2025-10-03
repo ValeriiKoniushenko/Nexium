@@ -71,6 +71,9 @@ namespace
                 });
         }
 
+    protected:
+        StringAtom getCacheHash() const override { return "SomeData"_atom; }
+
     private:
         int age = 19;
         std::string name = "Andriy";
