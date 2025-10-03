@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "Editor/Configs.h"
+#include "../../Misc/Configs.h"
 #include "HorizontalLayout.h"
 #include "Input.h"
 #include "Label.h"

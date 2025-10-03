@@ -22,7 +22,7 @@
 
 #include "Graphics/ShaderManager.h"
 
-#include "Editor/Configs.h"
+#include "../../sources/Misc/Configs.h"
 
 #include "gtest/gtest.h"
 

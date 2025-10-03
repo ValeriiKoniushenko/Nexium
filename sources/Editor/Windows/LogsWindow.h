@@ -24,8 +24,8 @@
 
 #pragma once
 
+#include "../../Misc/Configs.h"
 #include "BaseWindow.h"
-#include "Editor/Configs.h"
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"

@@ -29,12 +29,13 @@
 #include "Core/Delegate.h"
 #include "Graphics/Primitives/StaticMeshBundle.h"
 #include "Grid.h"
+#include "Misc/DataStream.h"
 
 #include <vector>
 
 namespace Core
 {
-    class Scene : public JsonCacheable, public JsonAdapter
+    class Scene : public IDataStreamBridge
     {
     public:
         Scene();
@@ -48,6 +49,8 @@ namespace Core
         void directDraw();
 
         void setSceneName(StringAtom name);
+
+        void ioFieldsUpdate(DataStream& stream) override;
 
         [[nodiscard]] const StringAtom& getSceneName() const noexcept;
 
@@ -107,10 +110,6 @@ namespace Core
             return it == _actors.end() ? nullptr : reinterpret_cast<T*>(it->get());
         }
 
-        [[nodiscard]] nlohmann::json toJson() const override;
-
-        void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
-
         Delegate<void(Actor*)> onActorAdded;
 
     public:
@@ -122,10 +121,6 @@ namespace Core
 
         [[nodiscard]] StringAtom getCacheHash() const override;
 
-        [[nodiscard]] nlohmann::json toCacheData() const override;
-
-        void fromCacheData(const nlohmann::json& json) override;
-
         void writeToCacheSeparateData() const;
 
     protected:
@@ -135,7 +130,7 @@ namespace Core
         // non-owner
         std::vector<NXMesh3D> _assetsMesh3D;
 
-        StringAtom _sceneName = "None";
+        StringAtom _sceneName = "Default";
 
     private:
         std::vector<Actor*> _postDrawBuffer;

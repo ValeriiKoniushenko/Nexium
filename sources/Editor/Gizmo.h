@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "Configs.h"
+#include "../Misc/Configs.h"
 #include "Core/Delegate.h"
 #include "GameplaySystem/Framework/Actor.h"
 #include "Graphics/Primitives/StaticMeshBundle.h"

@@ -24,7 +24,7 @@
 
 #include "ShaderManager.h"
 
-#include "Editor/Configs.h"
+#include "../../Misc/Configs.h"
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/Combo.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"

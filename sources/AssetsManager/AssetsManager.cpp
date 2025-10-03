@@ -24,7 +24,7 @@
 
 #include "AssetsManager.h"
 
-#include "Editor/Configs.h"
+#include "../Misc/Configs.h"
 #include "Editor/Windows/ImageViewer.h"
 #include "Editor/Windows/NxMesh3DEditor.h"
 #include "Editor/Windows/TextEditor.h"

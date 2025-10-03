@@ -24,7 +24,7 @@
 
 #include "TextureAsset.h"
 
-#include "Editor/Configs.h"
+#include "../Misc/Configs.h"
 
 namespace Core
 {

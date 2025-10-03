@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "Configs.h"
 #include "Core/String.h"
 #include "nlohmann/json.hpp"
 
@@ -60,7 +61,7 @@ namespace Core
         [[nodiscard]] Mode getMode() const noexcept { return _mode; }
 
         template<class T>
-        Result updateField(const char* key, T& field)
+        Result updateField(const char* key, T& field, const T& defaultValue = {})
         {
             if (!key)
             {
@@ -72,6 +73,7 @@ namespace Core
             {
                 if (!contains(key))
                 {
+                    field = defaultValue;
                     _errors.emplace_back(Result::ReadFailed, key);
                     return Result::ReadFailed;
                 }
@@ -164,7 +166,10 @@ namespace Core
         void clearCache();
 
     protected:
-        [[nodiscard]] virtual std::filesystem::path getCacheDir() const { return { "configs" }; }
+        [[nodiscard]] virtual std::filesystem::path getCacheDir() const
+        {
+            return Config::Path::projectAbsPath / "configs";
+        }
         [[nodiscard]] virtual StringAtom getCacheHash() const = 0;
         [[nodiscard]] std::filesystem::path getTargetCachePath() const;
     };

@@ -24,8 +24,8 @@
 
 #include "ObjectPropertiesWindow.h"
 
+#include "../../Misc/Configs.h"
 #include "Camera/Camera.h"
-#include "Editor/Configs.h"
 #include "Editor/GuiComponents/CheckBox.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"

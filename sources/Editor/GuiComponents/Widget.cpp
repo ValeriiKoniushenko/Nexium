@@ -24,7 +24,7 @@
 
 #include "Widget.h"
 
-#include "Editor/Configs.h"
+#include "../../Misc/Configs.h"
 #include "InputDevices/Keyboard.h"
 #include "InputDevices/Mouse.h"
 

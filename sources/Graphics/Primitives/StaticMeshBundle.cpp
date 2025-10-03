@@ -24,7 +24,7 @@
 
 #include "StaticMeshBundle.h"
 
-#include "Editor/Configs.h"
+#include "../../Misc/Configs.h"
 #include "Graphics/Image.h"
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"

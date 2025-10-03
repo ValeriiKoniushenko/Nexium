@@ -16,6 +16,7 @@ target_link_libraries(${TARGET_NAME} PUBLIC
     spdlog::spdlog
     nlohmann_json
     Core::ImGui
+    Core::InputDevices
 )
 
 target_include_directories(${TARGET_NAME} PUBLIC ../)

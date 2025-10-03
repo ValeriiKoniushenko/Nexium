@@ -24,7 +24,7 @@
 
 #include "LogsWindow.h"
 
-#include "Editor/Configs.h"
+#include "../../Misc/Configs.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/Spacer.h"
 #include "GameplaySystem/Framework/GameInstance.h"

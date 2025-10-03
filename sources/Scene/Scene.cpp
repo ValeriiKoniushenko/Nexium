@@ -71,6 +71,11 @@ namespace Core
         }
     }
 
+    void Scene::ioFieldsUpdate(DataStream& stream)
+    {
+        stream.updateField("sceneName", _sceneName, "Default"_dyn);
+    }
+
     const StringAtom& Scene::getSceneName() const noexcept
     {
         return _sceneName;
@@ -90,54 +95,14 @@ namespace Core
         }
     }
 
-    nlohmann::json Scene::toJson() const
-    {
-        nlohmann::json json;
-
-        json["sceneName"] = _sceneName;
-        json["objects"] = nlohmann::json::array();
-        for (auto&& obj : _actors)
-        {
-            json["objects"].push_back(obj->getComponentName());
-        }
-
-        return json;
-    }
-
-    void Scene::fromJson(const nlohmann::json& json, bool isIgnoreChildren)
-    {
-        tryReadJsonTo(_sceneName, "sceneName", json);
-
-        if (json.contains("objects"))
-        {
-            // do nothing now
-        }
-
-        if (json.contains("logicalObjects"))
-        {
-            // do nothing now
-        }
-    }
-
     std::filesystem::path Scene::getCacheDir() const
     {
-        return JsonCacheable::getCacheDir() / "scenes";
+        return IDataStreamBridge::getCacheDir() / "scenes";
     }
 
     StringAtom Scene::getCacheHash() const
     {
-        return "RootScene";
-    }
-
-    nlohmann::json Scene::toCacheData() const
-    {
-        writeToCacheSeparateData();
-        return toJson();
-    }
-
-    void Scene::fromCacheData(const nlohmann::json& json)
-    {
-        fromJson(json, false);
+        return _sceneName;
     }
 
     void Scene::initialize()

@@ -24,7 +24,7 @@
 
 #include "BaseAsset.h"
 
-#include "Editor/Configs.h"
+#include "../Misc/Configs.h"
 
 #include <Utils/Functions.h>
 #include <fstream>
