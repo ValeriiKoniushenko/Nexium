@@ -8,7 +8,7 @@ file(GLOB_RECURSE HEADERS "*.h")
 add_executable(${TARGET_NAME} ${CPP_SOURCES} ${HEADERS})
 
 target_link_libraries(${TARGET_NAME} PUBLIC
-    NexiumEngine
+    Core::GameplaySystem
 )
 
 CoreAddCompileOptionsTo(${TARGET_NAME})

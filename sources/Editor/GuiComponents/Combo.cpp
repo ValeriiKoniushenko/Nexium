@@ -26,7 +26,6 @@
 
 #include "ImGui/imgui_internal.h"
 #include "ImGui/misc/cpp/imgui_stdlib.h"
-#include "Misc/ImGuiHelper.h"
 
 namespace Core::Gui
 {

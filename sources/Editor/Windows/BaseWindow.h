@@ -26,8 +26,8 @@
 
 #include "Core/Delegate.h"
 #include "GameplaySystem/ECS/BaseComponent.h"
+#include "ImGui/imgui.h"
 #include "Misc/IconsFontAwesome.h"
-#include "Misc/ImGuiHelper.h"
 
 namespace Core
 {

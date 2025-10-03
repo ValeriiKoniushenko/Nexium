@@ -13,10 +13,8 @@ add_library(Core::${MAIN_NAME} ALIAS ${TARGET_NAME})
 
 target_link_libraries(${TARGET_NAME} PUBLIC
     Core::Misc
-    Core::Camera
-    Core::Editor
-    Core::InputDevices
     Core::Scene
+    Core::Editor
     Core::AssetsManager
 )
 

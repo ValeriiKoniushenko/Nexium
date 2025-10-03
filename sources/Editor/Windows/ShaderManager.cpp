@@ -24,7 +24,6 @@
 
 #include "ShaderManager.h"
 
-#include "../../Misc/Configs.h"
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/Combo.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
@@ -32,6 +31,7 @@
 #include "Editor/GuiComponents/Misc.h"
 #include "Editor/GuiComponents/Spacer.h"
 #include "GameplaySystem/Framework/GameInstance.h"
+#include "Misc/Configs.h"
 #include "TextEditor.h"
 
 using namespace Core::Gui;

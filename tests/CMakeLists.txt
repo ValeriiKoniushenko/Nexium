@@ -8,7 +8,7 @@ add_executable(EngineTests ${CPP_SOURCES} ${HEADERS})
 
 target_link_libraries(EngineTests PUBLIC
     gtest
-    NexiumEngine
+    __Core_GameplaySystem
 )
 
 CoreAddCompileOptionsTo(EngineTests)

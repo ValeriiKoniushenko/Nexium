@@ -12,7 +12,8 @@ add_library(${TARGET_NAME} STATIC ${CPP_SOURCES} ${HEADERS})
 add_library(Core::${MAIN_NAME} ALIAS ${TARGET_NAME})
 
 target_link_libraries(${TARGET_NAME} PUBLIC
-    Utils
+    Utils::Core
+    Utils::Utils
     spdlog::spdlog
     nlohmann_json
     Core::ImGui
