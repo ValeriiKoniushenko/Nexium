@@ -22,6 +22,8 @@
 
 #include "Graphics/ShaderManager.h"
 
+#include "Editor/Configs.h"
+
 #include "gtest/gtest.h"
 
 using namespace Core;
@@ -44,7 +46,7 @@ protected:
 TEST_F(ShaderManagerFixture, TestAssetsDirectoryIsNotEmpty)
 {
     namespace fs = std::filesystem;
-    const auto testAssetsDir = fs::path("tests/assets/shaders");
+    const auto testAssetsDir = Core::Config::Path::projectAbsPath / "tests/assets/shaders";
 
     if (!fs::exists(testAssetsDir))
     {

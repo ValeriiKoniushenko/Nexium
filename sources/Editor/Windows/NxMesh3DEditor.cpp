@@ -295,6 +295,7 @@ namespace Core
             fetchFromAssetsManager();
         }
     }
+
     void NxMesh3DEditorEWC::putArguments(const StringAtom& args)
     {
         BaseFloatEWC::putArguments(args);

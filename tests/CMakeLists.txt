@@ -1,10 +1,14 @@
 
-add_executable(TestEngine Main.cpp
-    Graphics/ShaderManagerTest.cpp
-    ECSTests.cpp
-)
+file(GLOB_RECURSE CPP_SOURCES "*.cpp")
+set_source_files_properties(${CPP_SOURCES} PROPERTIES LANGUAGE CXX)
 
-target_link_libraries(TestEngine PUBLIC
+file(GLOB_RECURSE HEADERS "*.h")
+
+add_executable(EngineTests ${CPP_SOURCES} ${HEADERS})
+
+target_link_libraries(EngineTests PUBLIC
     gtest
     NexiumEngine
 )
+
+CoreAddCompileOptionsTo(EngineTests)
