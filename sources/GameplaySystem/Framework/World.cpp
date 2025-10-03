@@ -26,33 +26,30 @@
 
 namespace Core
 {
-    nlohmann::json LightningProps::toJson() const
+
+    std::filesystem::path LightningProps::getCacheDir() const
     {
-        nlohmann::json json;
-
-        json["color"] = color;
-        json["minLightStrength"] = minLightStrength;
-        json["ambientStrength"] = ambientStrength;
-        json["specularStrength"] = specularStrength;
-        json["specularPow"] = specularPow;
-        json["sunDirection"] = sunDirection;
-
-        return json;
+        return IDataStreamBridge::getCacheDir() / "LightningProps";
     }
 
-    void LightningProps::fromJson(const nlohmann::json& json, bool isIgnoreChildren)
+    StringAtom LightningProps::getCacheHash() const
     {
-        tryReadJsonTo(color, "color", json);
-        tryReadJsonTo(minLightStrength, "minLightStrength", json);
-        tryReadJsonTo(ambientStrength, "ambientStrength", json);
-        tryReadJsonTo(specularStrength, "specularStrength", json);
-        tryReadJsonTo(specularPow, "specularPow", json);
-        tryReadJsonTo(sunDirection, "sunDirection", json);
+        return "LightningProps";
+    }
+
+    void LightningProps::ioFieldsUpdate(DataStream& stream)
+    {
+        stream.updateField("color", color);
+        stream.updateField("minLightStrength", minLightStrength);
+        stream.updateField("ambientStrength", ambientStrength);
+        stream.updateField("specularStrength", specularStrength);
+        stream.updateField("specularPow", specularPow);
+        stream.updateField("sunDirection", sunDirection);
     }
 
     std::filesystem::path World::getCacheDir() const
     {
-        return JsonCacheable::getCacheDir() / "World";
+        return IDataStreamBridge::getCacheDir() / "World";
     }
 
     StringAtom World::getCacheHash() const
@@ -60,25 +57,9 @@ namespace Core
         return worldName;
     }
 
-    nlohmann::json World::toCacheData() const
+    void World::ioFieldsUpdate(DataStream& stream)
     {
-        nlohmann::json json;
-
-        json["worldName"] = worldName;
-        json["lightning"] = lightning.toJson();
-
-        return json;
+        stream.updateField("worldName", worldName, "Default"_dyn);
     }
 
-    void World::fromCacheData(const nlohmann::json& json)
-    {
-        if (json.contains("worldName"))
-        {
-            worldName = json["worldName"].get<StringAtom>();
-        }
-        if (json.contains("lightning"))
-        {
-            lightning.fromJson(json["lightning"], false);
-        }
-    }
 } // namespace Core

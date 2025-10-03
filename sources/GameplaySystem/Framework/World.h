@@ -28,13 +28,14 @@
 #include "GameState.h"
 #include "LevelData.h"
 #include "Misc/BaseLog.h"
+#include "Misc/DataStream.h"
 #include "Misc/JsonCacheable.h"
 #include "ModuleInfo.h"
 #include "PlayerState.h"
 
 namespace Core
 {
-    struct LightningProps : public JsonAdapter
+    struct LightningProps : public IDataStreamBridge
     {
         float ambientStrength = 1.f;
         float minLightStrength = 0.2f;
@@ -43,21 +44,16 @@ namespace Core
         glm::vec3 sunDirection = glm::vec3(0.5f);
         NormColor3 color = NormColor3(1.f);
 
-        [[nodiscard]] nlohmann::json toJson() const override;
-        void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
+        [[nodiscard]] std::filesystem::path getCacheDir() const override;
+        [[nodiscard]] StringAtom getCacheHash() const override;
+        void ioFieldsUpdate(DataStream& stream) override;
     };
 
-    class World : public BaseLog, public JsonCacheable, public Utils::NotCopyableAndNotMoveable
+    class World : public BaseLog, public IDataStreamBridge
     {
     public:
         [[nodiscard]] spdlog::logger* getLogger() const override { return Framework::getLogger(); }
         [[nodiscard]] const char* getPrefix() const override { return "world"; }
-
-    protected:
-        [[nodiscard]] std::filesystem::path getCacheDir() const override;
-        [[nodiscard]] StringAtom getCacheHash() const override;
-        [[nodiscard]] nlohmann::json toCacheData() const override;
-        void fromCacheData(const nlohmann::json& json) override;
 
     public:
         float timeDelta = 0.f;
@@ -67,5 +63,10 @@ namespace Core
         GameState gameState;
         LevelData levelData;
         StringAtom worldName = "Default";
+
+    protected:
+        [[nodiscard]] std::filesystem::path getCacheDir() const override;
+        [[nodiscard]] StringAtom getCacheHash() const override;
+        void ioFieldsUpdate(DataStream& stream) override;
     };
 } // namespace Core

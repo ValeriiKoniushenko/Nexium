@@ -15,6 +15,7 @@ target_link_libraries(${TARGET_NAME} PUBLIC
     Core::GameplaySystem
     Core::ImGui
     Core::Misc
+    Core::Camera
     Core::AssetsManager
 )
 
