@@ -26,6 +26,8 @@
 
 #include "nlohmann/json.hpp"
 
+#include <functional>
+
 namespace Core
 {
 
@@ -43,8 +45,11 @@ namespace Core
             Success,
             ReadFailed,
             WriteFailed,
-            InvalidPassedData
+            InvalidPassedData,
+            CustomProcessingError
         };
+
+        using Json = nlohmann::json;
 
     public:
         DataStream() = default;
@@ -80,6 +85,46 @@ namespace Core
             return Result::Success;
         }
 
+        template<class T, class ReaderFunc, class WriterFunc>
+        Result updateField(const char* key, T& field, ReaderFunc&& reader, WriterFunc&& writer)
+        {
+            if (!key)
+            {
+                _errors.emplace_back(Result::InvalidPassedData, "nullptr");
+                return Result::InvalidPassedData;
+            }
+
+            try
+            {
+                if (_mode == Mode::Input)
+                {
+                    if (!contains(key))
+                    {
+                        _errors.emplace_back(Result::ReadFailed, key);
+                        return Result::ReadFailed;
+                    }
+
+                    reader(field, _json[key]);
+                }
+                else
+                {
+                    _json[key] = writer(field);
+                }
+            }
+            catch (const std::exception& er)
+            {
+                _errors.emplace_back(Result::CustomProcessingError, er.what());
+                return Result::CustomProcessingError;
+            }
+            catch (...)
+            {
+                _errors.emplace_back(Result::CustomProcessingError, "Undefined internal error");
+                return Result::CustomProcessingError;
+            }
+
+            return Result::Success;
+        }
+
         template<class T>
         [[nodiscard]] T get(const char* key)
         {
@@ -94,12 +139,12 @@ namespace Core
             return _errors;
         }
 
-        [[nodiscard]] nlohmann::json& getRaw() noexcept { return _json; }
-        [[nodiscard]] const nlohmann::json& getRaw() const noexcept { return _json; }
+        [[nodiscard]] Json& getRaw() noexcept { return _json; }
+        [[nodiscard]] const Json& getRaw() const noexcept { return _json; }
 
     protected:
         std::vector<std::pair<Result, std::string>> _errors;
-        nlohmann::json _json;
+        Json _json;
         Mode _mode = Mode::Input;
     };
 

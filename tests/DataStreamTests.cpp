@@ -43,6 +43,32 @@ namespace
             stream.updateField("age", age);
             stream.updateField("name", name);
             stream.updateField("vec", vec);
+            stream.updateField(
+                "container", container,
+                [](std::unordered_map<std::string, Cell>& out, const DataStream::Json& json) -> void
+                {
+                    for (auto& [key, el] : json.items())
+                    {
+                        Cell tmp;
+                        tmp.a = el["a"].get<int>();
+                        tmp.b = el["b"].get<int>();
+
+                        out[key] = tmp;
+                    }
+                },
+                [](const std::unordered_map<std::string, Cell>& out) -> DataStream::Json
+                {
+                    DataStream::Json json;
+                    for (auto&& [key, value] : out)
+                    {
+                        DataStream::Json cell;
+                        cell["a"] = value.a;
+                        cell["b"] = value.b;
+
+                        json[key] = cell;
+                    }
+                    return json;
+                });
         }
 
     private:
@@ -100,4 +126,7 @@ TEST(DataStreamTests, CustomClass)
     ASSERT_TRUE(stream.contains("age"));
     ASSERT_EQ(19, stream.get<int>("age"));
     ASSERT_TRUE(stream.contains("vec"));
+
+    stream.setMode(DataStream::Mode::Input);
+    data.ioFieldsUpdate(stream);
 }
