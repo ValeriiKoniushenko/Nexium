@@ -14,13 +14,16 @@ add_library(Core::${MAIN_NAME} ALIAS ${TARGET_NAME})
 target_link_libraries(${TARGET_NAME} PUBLIC
     Utils::Core
     Utils::Utils
+
     spdlog::spdlog
     nlohmann_json
+    Boost::smart_ptr
+
     Core::ImGui
     Core::InputDevices
 )
 
 target_include_directories(${TARGET_NAME} PUBLIC ../)
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/Flags.cmake)
+
 CoreAddCompileOptionsTo(${TARGET_NAME})

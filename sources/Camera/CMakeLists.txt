@@ -17,5 +17,5 @@ target_link_libraries(${TARGET_NAME} PUBLIC
 
 target_include_directories(${TARGET_NAME} PUBLIC ../)
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/Flags.cmake)
+
 CoreAddCompileOptionsTo(${TARGET_NAME})

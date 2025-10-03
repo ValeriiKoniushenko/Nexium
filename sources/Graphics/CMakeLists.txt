@@ -12,14 +12,17 @@ add_library(Core::${MAIN_NAME} ALIAS ${TARGET_NAME})
 
 target_link_libraries(${TARGET_NAME} PUBLIC
     Core::Glad
-    Core::GameplaySystem
     Core::Misc
     Core::Stb
     glfw
     assimp::assimp
 )
 
+target_link_libraries(${TARGET_NAME} PRIVATE
+    Core::GameplaySystem
+)
+
+
 target_include_directories(${TARGET_NAME} PUBLIC ../)
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/Flags.cmake)
 CoreAddCompileOptionsTo(${TARGET_NAME})
