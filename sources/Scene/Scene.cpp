@@ -97,7 +97,7 @@ namespace Core
 
     std::filesystem::path Scene::getCacheDir() const
     {
-        return IDataStreamBridge::getCacheDir() / "scenes";
+        return "scenes";
     }
 
     StringAtom Scene::getCacheHash() const

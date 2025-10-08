@@ -25,7 +25,6 @@
 #pragma once
 
 #include "GameplaySystem/Framework/Actor.h"
-#include "Misc/JsonCacheable.h"
 #include "StaticMesh.h"
 
 namespace Core
@@ -70,10 +69,7 @@ namespace Core
         void clear() override;
 
         void clearMeshes();
-
-        [[nodiscard]] nlohmann::json toJson() const override;
-
-        void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
+        void ioFieldsUpdate(DataStream& stream) override;
 
         [[nodiscard]] std::size_t getRenderMeshesCount() const noexcept { return _meshes.size(); }
         [[nodiscard]] std::vector<StaticMesh*>& getRenderMeshes() noexcept { return _meshes; }
@@ -114,7 +110,7 @@ namespace Core
         void recalculateMatrices(const glm::mat4& mat = glm::mat4(1.f)) override;
 
         /**
-         * @brief This function will be called after mouse click on this object.
+         * @brief This function will be called after a mouse click on this object.
          */
         virtual void onMousePicked(StaticMesh* clickedPart) {}
 
@@ -123,11 +119,7 @@ namespace Core
 
         [[nodiscard]] StringAtom getCacheHash() const override;
 
-        [[nodiscard]] nlohmann::json toCacheData() const override;
-
         [[nodiscard]] std::filesystem::path getCacheDir() const override;
-
-        void fromCacheData(const nlohmann::json& data) override;
 
         void onAddChild(BaseComponent* newChild) override;
 

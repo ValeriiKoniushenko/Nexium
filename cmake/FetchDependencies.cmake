@@ -77,8 +77,12 @@ set(ASSIMP_BUILD_ZLIB ON)
 set(ASSIMP_BUILD_ASSIMP_TOOLS ON)
 set(ASSIMP_BUILD_TESTS OFF)
 set(ASSIMP_BUILD_ASSIMP_TOOLS OFF)
-
 FetchContent_MakeAvailable(Assimp)
+
+target_compile_options(assimp PRIVATE
+    $<$<CXX_COMPILER_ID:MSVC>:/w>
+    $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:-w>
+)
 
 
 FetchContent_Declare(Utils

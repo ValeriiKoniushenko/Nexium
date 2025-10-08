@@ -25,6 +25,7 @@
 #pragma once
 
 #include "InputAction.h"
+#include "Misc/DataStream.h"
 #include "ModuleInfo.h"
 
 #include <unordered_map>
@@ -176,12 +177,9 @@ namespace Core
         MappingT _mapping;
     };
 
-    class KeyboardInputManger : public InputManger<KeyboardInputAction>, public JsonAdapter
+    class KeyboardInputManger : public InputManger<KeyboardInputAction>, public IDataStreamBridge
     {
     public:
-        [[nodiscard]] nlohmann::json toJson() const override;
-
-        void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
     };
 
     class MouseInputManger : public InputManger<MouseInputAction>

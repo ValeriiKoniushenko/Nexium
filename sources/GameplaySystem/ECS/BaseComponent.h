@@ -25,6 +25,7 @@
 #pragma once
 
 #include "Misc/BaseLog.h"
+#include "Misc/DataStream.h"
 #include "ModuleInfo.h"
 #include "boost/intrusive_ptr.hpp"
 #include "boost/smart_ptr/intrusive_ref_counter.hpp"
@@ -344,7 +345,7 @@ namespace Core
     class AbstractComponent :
         public BaseLog,
         public boost::intrusive_ref_counter<BaseComponent>,
-        public virtual JsonAdapter
+        public IDataStreamBridge
     {
     public:
         AbstractComponent(const AbstractComponent&) = default;
@@ -441,10 +442,6 @@ namespace Core
          * reinited later.
          */
         void invalidate() { _isInitialized = false; }
-
-        [[nodiscard]] nlohmann::json toJson() const override;
-
-        void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
 
     protected:
         AbstractComponent() = default;
@@ -594,9 +591,7 @@ namespace Core
          */
         void onTick(float delta) override;
 
-        [[nodiscard]] nlohmann::json toJson() const override;
-
-        void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
+        void ioFieldsUpdate(DataStream& stream) override;
 
         // ========================== WORKING WITH CHILDREN ==========================
         [[nodiscard]] ChildT getFirstChild() { return _children.front(); }
@@ -764,6 +759,8 @@ namespace Core
             DEBUG_ASSERT(_type.isStatic());
 #endif
         }
+
+        [[nodiscard]] StringAtom getCacheHash() const override;
 
     protected:
         ChildrenT _children;

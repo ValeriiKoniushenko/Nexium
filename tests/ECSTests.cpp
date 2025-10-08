@@ -1,24 +1,26 @@
-// MIT License
-//
-// Copyright (c) 2019-2025 Valerii Koniushenko
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
+/*
+ * MIT License
+ *
+ * Copyright (c) 2018-2025 Valerii Koniushenko
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
 #include "GameplaySystem/ECS/BaseComponent.h"
 
@@ -34,18 +36,11 @@ namespace
         int a = 123;
         std::string name = "Lola";
 
-        [[nodiscard]] nlohmann::json toJson() const override
+        void ioFieldsUpdate(DataStream& stream) override
         {
-            auto json = BaseComponent::toJson();
-            json["a"] = a;
-            json["name"] = name;
-            return json;
-        }
-        void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override
-        {
-            BaseComponent::fromJson(json, isIgnoreChildren);
-            a = json["a"].get<int>();
-            name = json["name"].get<std::string>();
+            BaseComponent::ioFieldsUpdate(stream);
+            stream.updateField("a", a);
+            stream.updateField("name", name);
         }
     };
 
@@ -343,19 +338,19 @@ TEST_F(ECSTreeTests, BFSIteratorTest)
     root.forEach(
         [&](BaseComponent* c)
         {
-            trunk.push_back(c->getComponentName());
+            trunk.pushBack(c->getComponentName());
         });
 
     root.forEach(
         [&](const BaseComponent* c)
         {
-            trunk.push_back(c->getComponentName());
+            trunk.pushBack(c->getComponentName());
         });
 
     root.forEach(
         [&](const BaseComponent* c)
         {
-            trunk.push_back(c->getComponentName());
+            trunk.pushBack(c->getComponentName());
             return c->getComponentName() != "Middle2";
         });
 
@@ -364,13 +359,13 @@ TEST_F(ECSTreeTests, BFSIteratorTest)
     croot.forEach(
         [&](const BaseComponent* c)
         {
-            trunk.push_back(c->getComponentName());
+            trunk.pushBack(c->getComponentName());
         });
 
     croot.forEach(
         [&](const BaseComponent* c)
         {
-            trunk.push_back(c->getComponentName());
+            trunk.pushBack(c->getComponentName());
             return c->getComponentName() != "Middle2";
         });
 }
@@ -382,19 +377,19 @@ TEST_F(ECSTreeTests, DFSIteratorTest)
     root.forEachDFS(
         [&](BaseComponent* c)
         {
-            trunk.push_back(c->getComponentName());
+            trunk.pushBack(c->getComponentName());
         });
 
     root.forEachDFS(
         [&](const BaseComponent* c)
         {
-            trunk.push_back(c->getComponentName());
+            trunk.pushBack(c->getComponentName());
         });
 
     root.forEachDFS(
         [&](const BaseComponent* c)
         {
-            trunk.push_back(c->getComponentName());
+            trunk.pushBack(c->getComponentName());
             return c->getComponentName() != "Middle2";
         });
 
@@ -403,13 +398,13 @@ TEST_F(ECSTreeTests, DFSIteratorTest)
     croot.forEachDFS(
         [&](const BaseComponent* c)
         {
-            trunk.push_back(c->getComponentName());
+            trunk.pushBack(c->getComponentName());
         });
 
     croot.forEachDFS(
         [&](const BaseComponent* c)
         {
-            trunk.push_back(c->getComponentName());
+            trunk.pushBack(c->getComponentName());
             return c->getComponentName() != "Middle2";
         });
 }

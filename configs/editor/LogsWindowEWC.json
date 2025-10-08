@@ -1,31 +1,13 @@
 {
     "filter": "AssetsM",
-    "filterLevels": [
-        {
-            "level": "trace",
-            "value": true
-        },
-        {
-            "level": "debug",
-            "value": true
-        },
-        {
-            "level": "info",
-            "value": true
-        },
-        {
-            "level": "warning",
-            "value": true
-        },
-        {
-            "level": "error",
-            "value": true
-        },
-        {
-            "level": "critical",
-            "value": true
-        }
-    ],
     "logLimit": 500,
-    "regexMode": false
+    "regexMode": false,
+    "severityFilters": {
+        "critical": true,
+        "debug": true,
+        "error": true,
+        "info": true,
+        "trace": false,
+        "warning": true
+    }
 }

@@ -25,12 +25,13 @@
 #pragma once
 
 #include "Core/Enum.h"
+#include "Misc/DataStream.h"
 #include "ShaderProgram.h"
 #include "assimp/mesh.h"
 
 namespace Core
 {
-    class GraphicsComponentData : public virtual JsonAdapter
+    class GraphicsComponentData : public IDataStreamBridge
     {
     public:
         // clang-format off
@@ -180,9 +181,7 @@ namespace Core
 
         [[nodiscard]] Modifier getDrawModifier(ModifiedValue value);
 
-        [[nodiscard]] nlohmann::json toJson() const override;
-
-        void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
+        void ioFieldsUpdate(DataStream& stream) override;
 
         [[nodiscard]] uint32_t getTriangleCount() const noexcept { return _triangleCount; }
 
@@ -216,6 +215,7 @@ namespace Core
 
     protected:
         virtual void applyUniforms() {}
+        StringAtom getCacheHash() const override;
 
     protected:
         // To improve cache-line readability, we use vector.

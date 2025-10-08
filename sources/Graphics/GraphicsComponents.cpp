@@ -323,6 +323,26 @@ namespace Core
         return Modifier::None;
     }
 
+    void GraphicsComponentData::ioFieldsUpdate(DataStream& stream)
+    {
+        stream.array("modifiers",
+                     [this](DataStream& out)
+                     {
+                         for (auto [val, mod] : _drawModifiers)
+                         {
+                             nlohmann::json modifier;
+                             modifier["value"] = ToString(val);
+                             modifier["modifier"] = mod.toStr();
+                             json["modifiers"].push_back(std::move(modifier));
+                         }
+                     });
+    }
+
+    StringAtom GraphicsComponentData::getCacheHash() const
+    {
+        return "GraphicsComponentData"_atom;
+    }
+
     nlohmann::json GraphicsComponentData::toJson() const
     {
         nlohmann::json json;

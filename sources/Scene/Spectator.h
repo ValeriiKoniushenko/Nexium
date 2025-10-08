@@ -35,11 +35,6 @@ namespace Core
         ECS_COMPONENT_DECL(Spectator, Actor);
 
     public:
-        [[nodiscard]] nlohmann::json toJson() const override;
-
-        void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
-
-    public:
         // TODO: Move it to Controller
         float speed = 50.f;
         float mouseSensitivity = 0.6f;
@@ -47,12 +42,11 @@ namespace Core
         KeyboardInputManger keyboardInput;
         MouseInputManger mouseInput;
 
+    public:
+        void ioFieldsUpdate(DataStream& stream) override;
+
     protected:
         [[nodiscard]] StringAtom getCacheHash() const override;
-
-        [[nodiscard]] nlohmann::json toCacheData() const override;
-
-        void fromCacheData(const nlohmann::json& json) override;
 
         void onTick(float delta) override;
 

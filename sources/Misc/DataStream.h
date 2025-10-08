@@ -26,7 +26,7 @@
 
 #include "Configs.h"
 #include "Core/String.h"
-#include "nlohmann/json.hpp"
+#include "Misc/JsonAdapter.h"
 
 #include <functional>
 
@@ -60,6 +60,13 @@ namespace Core
         void setMode(Mode mode) noexcept { _mode = mode; }
         [[nodiscard]] Mode getMode() const noexcept { return _mode; }
 
+        /**
+         * @tparam T data type. Can be any data that is convenient for you.
+         * @param key name inside a cache system
+         * @param field data type that will be read/write
+         * @param defaultValue default value
+         * @return the result of an operation
+         */
         template<class T>
         Result updateField(const char* key, T& field, const T& defaultValue = {})
         {
@@ -88,8 +95,20 @@ namespace Core
             return Result::Success;
         }
 
+        /**
+         * @tparam T data type. Can be any data that is convenient for you.
+         * @tparam ReaderFunc should take T& and const nlohmann::json& and manually fetch data to T.
+         * No return.
+         * @tparam WriterFunc should take const nlohmann::json& process it and return T
+         * @param key name inside a cache system
+         * @param field data type that will be read/write
+         * @param reader callback for reading
+         * @param writer callback for writing
+         * @return
+         */
         template<class T, class ReaderFunc, class WriterFunc>
-        Result updateField(const char* key, T& field, ReaderFunc&& reader, WriterFunc&& writer)
+        Result updateField(const char* key, T& field, const ReaderFunc& reader,
+                           const WriterFunc& writer)
         {
             if (!key)
             {
@@ -128,6 +147,8 @@ namespace Core
             return Result::Success;
         }
 
+        Result nesting(const char* key, const std::function<void(DataStream&)>& callback);
+
         template<class T>
         [[nodiscard]] T get(const char* key)
         {
@@ -165,11 +186,14 @@ namespace Core
 
         void clearCache();
 
-    protected:
-        [[nodiscard]] virtual std::filesystem::path getCacheDir() const
+        [[nodiscard]] std::filesystem::path getCachePath() const
         {
-            return Config::Path::projectAbsPath / "configs";
+            return Config::Path::projectAbsPath / "configs" / getCacheDir();
         }
+
+    protected:
+        [[nodiscard]] virtual std::filesystem::path getCacheDir() const { return {}; }
+
         [[nodiscard]] virtual StringAtom getCacheHash() const = 0;
         [[nodiscard]] std::filesystem::path getTargetCachePath() const;
     };

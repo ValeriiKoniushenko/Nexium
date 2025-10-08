@@ -28,23 +28,10 @@ namespace Core
 {
     ECS_COMPONENT_IMPL(Actor);
 
-    nlohmann::json Actor::toJson() const
+    void Actor::ioFieldsUpdate(DataStream& stream)
     {
-        nlohmann::json json = BaseComponent::toJson();
-
-        json["Transformable"] = Transformable::toJson();
-
-        return json;
-    }
-
-    void Actor::fromJson(const nlohmann::json& json, bool isIgnoreChildren)
-    {
-        BaseComponent::fromJson(json, isIgnoreChildren);
-
-        if (json.contains("Transformable"))
-        {
-            Transformable::fromJson(json["Transformable"], false);
-        }
+        BaseComponent::ioFieldsUpdate(stream);
+        Transformable::ioFieldsUpdate(stream);
     }
 
     void Actor::onInitialize()

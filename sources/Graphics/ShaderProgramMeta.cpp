@@ -257,7 +257,7 @@ namespace Core
                                          var.name.data());
                 if (!var.name.isEmpty() && var.name.back() == '\0')
                 {
-                    var.name.pop_back();
+                    var.name.popBack();
                 }
 
                 var.type = uboContent[1];

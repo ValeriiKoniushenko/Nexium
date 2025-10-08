@@ -1,7 +1,6 @@
 ---
 # Checkers
-Checks: >
-  clang-analyzer-*,
+Checks: "clang-analyzer-*,
   cppcoreguidelines-*,
   modernize-*,
   performance-*,
@@ -24,22 +23,27 @@ Checks: >
   -cppcoreguidelines-avoid-magic-numbers,
   -readability-convert-member-functions-to-static,
   -readability-make-member-function-const,
-  -cppcoreguidelines-avoid-c-arrays,
-  -cppcoreguidelines-pro-bounds-pointer-arithmetic
-
+  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+  -cppcoreguidelines-avoid-do-while,
+  -cppcoreguidelines-pro-type-reinterpret-cast,
+  -readability-use-concise-preprocessor-directives,
+  -bugprone-easily-swappable-parameters,
+  -readability-redundant-access-specifiers,
+  -cppcoreguidelines-explicit-conversions,
+  -readability-identifier-naming,
+  -cppcoreguidelines-non-private-member-variables-in-classes,
+  -misc-non-private-member-variables-in-classes,
+  -bugprone-assignment-in-if-condition,
+  -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
+  -cppcoreguidelines-macro-usage,
+  -readability-const-return-type,
+  -bugprone-crtp-constructor-accessibility,
+  -cppcoreguidelines-special-member-functions,
+  -bugprone-reserved-identifier
+"
 # Warnings as errors
-WarningsAsErrors: >
-  clang-analyzer-*,
-  cppcoreguidelines-*, 
-  bugprone-*,
-  performance-*,
+WarningsAsErrors: ""
+HeaderFilterRegex: '.*/sources/.*'
 
 # Formatting and style (optional)
 FormatStyle: file   # uses .clang-format if present
-
-# Extra options
-CheckOptions:
-  - key: modernize-use-nullptr.NullMacros
-    value: 'NULL'
-  - key: cppcoreguidelines-pro-bounds-array-to-pointer-decay.WarnOnImplicit
-    value: true

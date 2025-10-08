@@ -143,16 +143,6 @@ namespace Core
         return "BaseCamera"_atom;
     }
 
-    nlohmann::json BaseCamera::toCacheData() const
-    {
-        return toJson();
-    }
-
-    void BaseCamera::fromCacheData(const nlohmann::json& data)
-    {
-        fromJson(data, false);
-    }
-
     FSize2 BaseCamera::getOutputFrameSize()
     {
         if (gGameInstance->renderMode == GameInstance::RenderMode::Editor)

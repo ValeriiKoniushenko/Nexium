@@ -205,7 +205,15 @@ namespace Core
         }
     }
 
-    nlohmann::json BaseComponent::toJson() const
+    void BaseComponent::ioFieldsUpdate(DataStream& stream)
+    {
+        stream.updateField("name", _name, _type);
+        stream.updateField("type", _type);
+        // stream.updateField("children", _children);
+        globalLog.criticalLog("IT DOESN'T WORK!!!");
+    }
+
+    /*nlohmann::json BaseComponent::toJson() const
     {
         auto json = AbstractComponent::toJson();
 
@@ -252,7 +260,7 @@ namespace Core
                 }
             }
         }
-    }
+    }*/
 
     BaseComponent::BaseComponent(BaseComponent&& other) noexcept
     {
@@ -292,13 +300,13 @@ namespace Core
     void BaseComponent::setComponentName(const StringAtom& name)
     {
         _name = name;
-        _name.shrink_to_fit();
+        _name.shrinkToFit();
     }
 
     void BaseComponent::setComponentName(StringAtom&& name)
     {
         _name = std::move(name);
-        _name.shrink_to_fit();
+        _name.shrinkToFit();
     }
 
     bool BaseComponent::isValid() const
@@ -318,6 +326,11 @@ namespace Core
         }
 
         return seed;
+    }
+
+    StringAtom BaseComponent::getCacheHash() const
+    {
+        return _type + _name;
     }
 
     BaseComponent* BaseComponent::rawAddChildComponent(BaseComponent* newOne)

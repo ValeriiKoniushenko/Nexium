@@ -52,7 +52,7 @@ namespace Core
 
         if (!_name.isStatic())
         {
-            _name.shrink_to_fit();
+            _name.shrinkToFit();
 #ifdef GRAPHICS_DEBUG
             warnLog(
                 "The shader's '{}' vairable '_name' is not atom. Make it atom for best performance."_f

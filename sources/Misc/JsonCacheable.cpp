@@ -25,6 +25,7 @@
 #include "JsonCacheable.h"
 
 #include "BaseLog.h"
+#include "JsonAdapter.h"
 
 #include <filesystem>
 #include <fstream>

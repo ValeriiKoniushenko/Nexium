@@ -173,36 +173,9 @@ namespace Core
             }
         }
     }
-
-    nlohmann::json StaticMeshBundle::toJson() const
+    void StaticMeshBundle::ioFieldsUpdate(DataStream& stream)
     {
-        auto json = Actor::toJson();
-
-        for (const auto* m : _meshes)
-        {
-            json["meshes"].push_back(m->toJson());
-        }
-
-        return json;
-    }
-
-    void StaticMeshBundle::fromJson(const nlohmann::json& json, bool isIgnoreChildren /* = false*/)
-    {
-        Actor::fromJson(json, true);
-
-        if (json.contains("meshes"))
-        {
-            nlohmann::json::array_t arr = json["meshes"];
-            if (_meshes.size() != arr.size())
-            {
-                return;
-            }
-
-            for (std::size_t i = 0; i < arr.size(); ++i)
-            {
-                _meshes.at(i)->fromJson(arr[i], false);
-            }
-        }
+        Actor::ioFieldsUpdate(stream);
     }
 
     std::size_t StaticMeshBundle::getRenderableTriangles() const
@@ -231,18 +204,9 @@ namespace Core
         return getComponentName();
     }
 
-    nlohmann::json StaticMeshBundle::toCacheData() const
-    {
-        return toJson();
-    }
     std::filesystem::path StaticMeshBundle::getCacheDir() const
     {
-        return JsonCacheable::getCacheDir() / Config::Path::gameConfigModel3DsDir;
-    }
-
-    void StaticMeshBundle::fromCacheData(const nlohmann::json& data)
-    {
-        fromJson(data, false);
+        return Config::Path::gameConfigModel3DsDir;
     }
 
     void StaticMeshBundle::onAddChild(BaseComponent* newChild)

@@ -84,7 +84,8 @@ namespace Core
             }
             else
             {
-                const auto relative = StringAtom(texturePath.C_Str()).replaceAll("\\", "/");
+                auto relative = StringAtom(texturePath.C_Str());
+                relative.replaceAll("\\", "/");
                 const auto resolved
                     = (modelPath.parent_path() / relative.toStdString()).lexically_normal();
 

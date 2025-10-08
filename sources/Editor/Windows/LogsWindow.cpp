@@ -241,67 +241,45 @@ namespace Core
         writeToCache();
     }
 
+    void LogsWindowEWC::ioFieldsUpdate(DataStream& stream)
+    {
+        stream.updateField("logLimit", _logLimit);
+        if (DEBUG_ASSERT_VAL(_searchInput))
+        {
+            std::string out = _searchInput->getInputtedData();
+            stream.updateField("filter", out);
+            _searchInput->setInputtedData(out);
+        }
+        if (DEBUG_ASSERT_VAL(_regexModeButton))
+        {
+            bool out = _regexModeButton->isActive();
+            stream.updateField("regexMode", out);
+            _regexModeButton->setActive(out);
+        }
+
+        stream.nesting("severityFilters",
+                       [this](DataStream& nested)
+                       {
+                           for (auto [severity, ptr] : _levelFilter)
+                           {
+                               if (DEBUG_ASSERT_VAL(ptr))
+                               {
+                                   bool out = ptr->isActive();
+                                   nested.updateField(
+                                       spdlog::level::to_string_view(severity).data(), out);
+                                   ptr->setActive(out);
+                               }
+                           }
+                       });
+    }
+
     std::filesystem::path LogsWindowEWC::getCacheDir() const
     {
-        return JsonCacheable::getCacheDir() / Config::Path::editorConfigDir;
+        return Config::Path::editorConfigDir;
     }
 
     StringAtom LogsWindowEWC::getCacheHash() const
     {
         return "LogsWindowEWC"_atom;
-    }
-
-    nlohmann::json LogsWindowEWC::toCacheData() const
-    {
-        nlohmann::json json;
-        json["logLimit"] = _logLimit;
-        if (DEBUG_ASSERT_VAL(_searchInput))
-        {
-            json["filter"] = _searchInput->getInputtedData();
-        }
-        if (DEBUG_ASSERT_VAL(_regexModeButton))
-        {
-            json["regexMode"] = _regexModeButton->isActive();
-        }
-        json["filterLevels"] = nlohmann::json::array();
-        for (auto [level, button] : _levelFilter)
-        {
-            nlohmann::json tmp;
-            tmp["level"] = std::string(spdlog::level::to_string_view(level).data());
-            tmp["value"] = button->isActive();
-            json["filterLevels"].push_back(std::move(tmp));
-        }
-
-        return json;
-    }
-
-    void LogsWindowEWC::fromCacheData(const nlohmann::json& json)
-    {
-        tryReadJsonTo(_logLimit, "logLimit", json);
-
-        if (json.contains("filter") && DEBUG_ASSERT_VAL(_searchInput))
-        {
-            _searchInput->setInputtedData(json["filter"].get<std::string>());
-        }
-        if (json.contains("regexMode") && DEBUG_ASSERT_VAL(_regexModeButton))
-        {
-            _regexModeButton->setActive(json["regexMode"].get<bool>());
-        }
-        if (json.contains("filterLevels"))
-        {
-            for (const auto& filter : json["filterLevels"])
-            {
-                if (!filter.contains("level") || !filter.contains("value"))
-                {
-                    continue;
-                }
-
-                auto level = spdlog::level::from_str(filter["level"].get<std::string>());
-                if (DEBUG_ASSERT_VAL(_levelFilter[level]))
-                {
-                    _levelFilter[level]->setActive(filter["value"].get<bool>());
-                }
-            }
-        }
     }
 } // namespace Core

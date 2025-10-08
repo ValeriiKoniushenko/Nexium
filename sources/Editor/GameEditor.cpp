@@ -56,7 +56,8 @@ namespace
             version.subStr(0, i);
             version.replaceAll(".", "");
             version.trim(' ');
-            return version.push_front("#version ");
+            version.pushFront("#version ");
+            return version;
         }
 
         return "#version 430";
@@ -143,7 +144,9 @@ namespace Core
     void GameEditor::setupImGuiStyles()
     {
         ImGuiIO& io = ImGui::GetIO();
-        io.IniFilename = "configs/windows.ini";
+        static const auto savePath
+            = (Config::Path::projectAbsPath / "configs/windows.ini").generic_string();
+        io.IniFilename = savePath.c_str();
         io.ConfigFlags |= Config::defaultEditorImGuiFlags;
 
         if (std::filesystem::exists(Config::Path::editorFont))

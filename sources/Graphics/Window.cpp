@@ -249,44 +249,22 @@ namespace Core
             });
     }
 
+    void Window::ioFieldsUpdate(DataStream& stream)
+    {
+        stream.updateField("size", _size);
+        stream.updateField("title", _title);
+
+        bool bIsMaximized
+            = _window ? glfwGetWindowAttrib(_window, GLFW_MAXIMIZED) == GLFW_TRUE : false;
+        stream.updateField("isMaximized", bIsMaximized);
+        _isMaximized = bIsMaximized;
+
+        stream.updateField("vSync", _swapInterval);
+    }
+
     StringAtom Window::getCacheHash() const
     {
         return "RootWindow"_atom;
-    }
-
-    nlohmann::json Window::toCacheData() const
-    {
-        return toJson();
-    }
-
-    void Window::fromCacheData(const nlohmann::json& json)
-    {
-        fromJson(json, false);
-    }
-
-    nlohmann::json Window::toJson() const
-    {
-        nlohmann::json json;
-
-        json["size"] = _size;
-        json["title"] = _title;
-
-        if (_window)
-        {
-            json["isMaximized"] = glfwGetWindowAttrib(_window, GLFW_MAXIMIZED) == GLFW_TRUE;
-        }
-
-        json["vSync"] = _swapInterval;
-
-        return json;
-    }
-
-    void Window::fromJson(const nlohmann::json& json, bool isIgnoreChildren)
-    {
-        tryReadJsonTo(_size, "size", json);
-        tryReadJsonTo(_title, "title", json);
-        tryReadJsonTo(_isMaximized, "isMaximized", json);
-        tryReadJsonTo(_swapInterval, "vSync", json);
     }
 
     Window& GetWindow()

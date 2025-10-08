@@ -29,13 +29,13 @@
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Misc/Configs.h"
-#include "Misc/JsonCacheable.h"
+#include "Misc/DataStream.h"
 
 #include <list>
 
 namespace Core
 {
-    class LogsWindowEWC : public BaseFloatEWC, public JsonCacheable
+    class LogsWindowEWC : public BaseFloatEWC, public IDataStreamBridge
     {
         ECS_COMPONENT_DECL(LogsWindowEWC, BaseFloatEWC);
 
@@ -55,16 +55,13 @@ namespace Core
 
         [[nodiscard]] const char* getIcon() override { return ICON_FA_ALIGN_LEFT; }
 
+        void ioFieldsUpdate(DataStream& stream) override;
+
     protected:
         std::filesystem::path getCacheDir() const override;
 
         StringAtom getCacheHash() const override;
 
-        nlohmann::json toCacheData() const override;
-
-        void fromCacheData(const nlohmann::json& json) override;
-
-    protected:
         void onInitialize() override;
 
         void onDraw() override;

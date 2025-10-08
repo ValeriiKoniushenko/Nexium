@@ -24,7 +24,8 @@
 
 #include "TemplateGameInstance.h"
 
-int main() {
+int main()
+{
     gGameInstance = std::make_unique<TemplateGameInstance>();
 
     gGameInstance->initialize();

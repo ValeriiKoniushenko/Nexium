@@ -41,7 +41,7 @@
 
 namespace Core
 {
-    class GameInstance : public BaseLog, public JsonCacheable
+    class GameInstance : public BaseLog, public IDataStreamBridge
     {
     public:
         enum class RenderMode
@@ -61,6 +61,8 @@ namespace Core
         void toggleRenderMode();
 
         void saveAll();
+
+        void ioFieldsUpdate(DataStream& stream) override;
 
     public:
         Scene gameScene;
@@ -84,8 +86,6 @@ namespace Core
         virtual void onInitializeReadCache() {}
 
         [[nodiscard]] StringAtom getCacheHash() const override;
-        [[nodiscard]] nlohmann::json toCacheData() const override;
-        void fromCacheData(const nlohmann::json& json) override;
 
     private:
         void loadCoreResources();

@@ -199,27 +199,18 @@ namespace Core
         return glm::normalize(glm::cross(getForwardVector(), getUpVector()));
     }
 
-    nlohmann::json Transformable::toJson() const
+    void Transformable::ioFieldsUpdate(DataStream& stream)
     {
-        nlohmann::json json;
+        stream.updateField("position", _position);
+        stream.updateField("origin", _origin);
+        stream.updateField("rotation", _rotation);
+        stream.updateField("scale", _scale);
 
-        json["position"] = _position;
-        json["origin"] = _origin;
-        json["rotation"] = _rotation;
-        json["scale"] = _scale;
-
-        return json;
-    }
-
-    void Transformable::fromJson(const nlohmann::json& json, bool isIgnoreChildren /* = false*/)
-    {
-        tryReadJsonTo(_position, "position", json);
-        tryReadJsonTo(_origin, "origin", json);
-        tryReadJsonTo(_rotation, "rotation", json);
-        tryReadJsonTo(_scale, "scale", json);
-
-        _isDirtyModelMatrix = true;
-        onDirtyMatrix();
+        if (stream.getMode() == DataStream::Mode::Input)
+        {
+            _isDirtyModelMatrix = true;
+            onDirtyMatrix();
+        }
     }
 
     void Transformable::recalculateMatrices(const glm::mat4& mat)

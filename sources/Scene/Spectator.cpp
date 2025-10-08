@@ -60,16 +60,6 @@ namespace Core
         return "EditorsRootSpectator";
     }
 
-    nlohmann::json Spectator::toCacheData() const
-    {
-        return toJson();
-    }
-
-    void Spectator::fromCacheData(const nlohmann::json& json)
-    {
-        fromJson(json, false);
-    }
-
     void Spectator::onTick(float delta)
     {
         Actor::onTick(delta);

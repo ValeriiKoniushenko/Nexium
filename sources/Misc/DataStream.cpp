@@ -34,6 +34,51 @@ namespace fs = std::filesystem;
 namespace Core
 {
 
+    DataStream::Result DataStream::nesting(const char* key,
+                                           const std::function<void(DataStream&)>& callback)
+    {
+        if (!key)
+        {
+            _errors.emplace_back(Result::InvalidPassedData, "nullptr");
+            return Result::InvalidPassedData;
+        }
+
+        try
+        {
+            DataStream nestedStream;
+            nestedStream.setMode(_mode);
+
+            if (_mode == Mode::Input)
+            {
+                if (!contains(key))
+                {
+                    _errors.emplace_back(Result::ReadFailed, key);
+                    return Result::ReadFailed;
+                }
+
+                nestedStream.getRaw() = _json[key];
+                callback(nestedStream);
+            }
+            else
+            {
+                callback(nestedStream);
+                _json[key] = nestedStream.getRaw();
+            }
+        }
+        catch (const std::exception& er)
+        {
+            _errors.emplace_back(Result::CustomProcessingError, er.what());
+            return Result::CustomProcessingError;
+        }
+        catch (...)
+        {
+            _errors.emplace_back(Result::CustomProcessingError, "Undefined internal error");
+            return Result::CustomProcessingError;
+        }
+
+        return Result::Success;
+    }
+
     bool DataStream::contains(const char* key) const
     {
         return _json.contains(key);
@@ -59,14 +104,6 @@ namespace Core
         }
 
         const auto fullPath = getTargetCachePath();
-        if (fs::exists(fullPath))
-        {
-            DEBUG_ASSERT(false);
-            globalLog.errorLog(
-                "[Cache system] The final IDataStreamBridge::getCacheHash is not unique for this object {}. Can't write data to save. Make it unique and try again."_f
-                << getCacheHash());
-            return;
-        }
 
         DataStream stream;
         stream.setMode(DataStream::Mode::Output);

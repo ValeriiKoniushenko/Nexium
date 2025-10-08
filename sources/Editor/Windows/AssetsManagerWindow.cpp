@@ -105,29 +105,19 @@ namespace Core
         }
     }
 
+    void AssetsManagerWindowEWC::ioFieldsUpdate(DataStream& stream)
+    {
+        stream.updateField("openedPath", _openedPath);
+    }
+
     std::filesystem::path AssetsManagerWindowEWC::getCacheDir() const
     {
-        return JsonCacheable::getCacheDir() / Config::Path::editorConfigDir;
+        return Config::Path::editorConfigDir;
     }
 
     StringAtom AssetsManagerWindowEWC::getCacheHash() const
     {
         return "AssetsManagerWindow"_atom;
-    }
-
-    nlohmann::json AssetsManagerWindowEWC::toCacheData() const
-    {
-        nlohmann::json j;
-        j["openedPath"] = _openedPath;
-        return j;
-    }
-
-    void AssetsManagerWindowEWC::fromCacheData(const nlohmann::json& json)
-    {
-        if (json.contains("openedPath"))
-        {
-            _openedPath = json["openedPath"].get<std::filesystem::path>();
-        }
     }
 
     void AssetsManagerWindowEWC::onInitialize()

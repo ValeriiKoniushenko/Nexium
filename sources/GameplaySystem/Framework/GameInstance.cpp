@@ -127,6 +127,13 @@ namespace Core
         onSaveAll();
     }
 
+    void GameInstance::ioFieldsUpdate(DataStream& stream)
+    {
+        int iRenderMode = static_cast<int>(renderMode);
+        stream.updateField("renderMode", iRenderMode);
+        renderMode = static_cast<RenderMode>(iRenderMode);
+    }
+
     void GameInstance::runMainLoop()
     {
         FPSCounter fps;
@@ -291,22 +298,6 @@ namespace Core
     StringAtom GameInstance::getCacheHash() const
     {
         return "GameInstance"_atom;
-    }
-
-    nlohmann::json GameInstance::toCacheData() const
-    {
-        nlohmann::json json;
-
-        json["renderMode"] = static_cast<int>(renderMode);
-        return json;
-    }
-
-    void GameInstance::fromCacheData(const nlohmann::json& json)
-    {
-        if (json.contains("renderMode"))
-        {
-            renderMode = static_cast<RenderMode>(json["renderMode"].get<int>());
-        }
     }
 
     void GameInstance::loadCoreResources()

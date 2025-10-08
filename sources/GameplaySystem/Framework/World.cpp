@@ -29,7 +29,7 @@ namespace Core
 
     std::filesystem::path LightningProps::getCacheDir() const
     {
-        return IDataStreamBridge::getCacheDir() / "LightningProps";
+        return "LightningProps";
     }
 
     StringAtom LightningProps::getCacheHash() const
@@ -49,7 +49,7 @@ namespace Core
 
     std::filesystem::path World::getCacheDir() const
     {
-        return IDataStreamBridge::getCacheDir() / "World";
+        return "World";
     }
 
     StringAtom World::getCacheHash() const

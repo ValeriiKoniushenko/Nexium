@@ -30,7 +30,7 @@
 #include "Core/Size.h"
 #include "InputDevices/Keyboard.h"
 #include "InputDevices/Mouse.h"
-#include "Misc/JsonCacheable.h"
+#include "Misc/DataStream.h"
 #include "ModuleInfo.h"
 #include "OpenGL.h"
 
@@ -95,11 +95,7 @@ namespace Core
 
     extern DragAndDrop gDragDrop;
 
-    class Window :
-        public BaseLog,
-        public JsonCacheable,
-        public JsonAdapter,
-        public StrictSingleton<Window>
+    class Window : public BaseLog, public IDataStreamBridge, public StrictSingleton<Window>
     {
     public:
         // clang-format off
@@ -188,16 +184,10 @@ namespace Core
         [[nodiscard]] spdlog::logger* getLogger() const override { return Graphics::getLogger(); }
         [[nodiscard]] const char* getPrefix() const override { return "Window"; }
 
-        nlohmann::json toJson() const override;
-
-        void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
+        void ioFieldsUpdate(DataStream& stream) override;
 
     protected:
         StringAtom getCacheHash() const override;
-
-        nlohmann::json toCacheData() const override;
-
-        void fromCacheData(const nlohmann::json& json) override;
 
     protected:
         GLFWwindow* _window{};

@@ -30,28 +30,26 @@
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
-#include "Misc/JsonCacheable.h"
+#include "Misc/DataStream.h"
 
 namespace Core
 {
-    class AssetsManagerWindowEWC : public BaseFloatEWC, public JsonCacheable
+    class AssetsManagerWindowEWC : public BaseFloatEWC, public IDataStreamBridge
     {
         ECS_COMPONENT_DECL(AssetsManagerWindowEWC, BaseFloatEWC);
 
     public:
         ~AssetsManagerWindowEWC() override;
 
-    public:
         void tryOpenParentDir();
         void tryOpenPath(const std::filesystem::path& p);
 
         [[nodiscard]] const char* getIcon() override { return ICON_FA_FOLDER; }
+        void ioFieldsUpdate(DataStream& stream) override;
 
     protected:
         [[nodiscard]] std::filesystem::path getCacheDir() const override;
         [[nodiscard]] StringAtom getCacheHash() const override;
-        [[nodiscard]] nlohmann::json toCacheData() const override;
-        void fromCacheData(const nlohmann::json& json) override;
 
         void onInitialize() override;
 

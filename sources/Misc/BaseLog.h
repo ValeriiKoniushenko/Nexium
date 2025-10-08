@@ -26,7 +26,6 @@
 
 #include "Core/Enum.h"
 #include "Core/String.h"
-#include "JsonAdapter.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/spdlog.h"
 

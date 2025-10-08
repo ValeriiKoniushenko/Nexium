@@ -27,32 +27,24 @@
 #include "GameplaySystem/ECS/BaseComponent.h"
 #include "GameplaySystem/ECS/Transformable.h"
 #include "Graphics/Primitives/StaticMesh.h"
-#include "Misc/JsonCacheable.h"
+#include "Misc/DataStream.h"
 
 namespace Core
 {
-    class Actor : public Transformable, public BaseComponent, public JsonCacheable
+    class Actor : public Transformable, public BaseComponent
     {
         ECS_COMPONENT_DECL(Actor, BaseComponent);
 
     public:
         Actor(Actor&&) = default;
-
         Actor(const Actor& other)
             : BaseComponent(other._type, other._name)
         {
             *this = other;
         }
-
         Actor& operator=(Actor&&) = default;
-
         Actor& operator=(const Actor&) = default;
-
         ~Actor() override = default;
-
-        [[nodiscard]] nlohmann::json toJson() const override;
-
-        void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
 
         /**
          * @brief will draw with the default shader & logic. Single draw bundle!
@@ -69,6 +61,8 @@ namespace Core
 
         void setIsPostDraw(bool value) noexcept { _isPostDraw = value; }
         [[nodiscard]] bool isPostDraw() const noexcept { return _isPostDraw; }
+
+        void ioFieldsUpdate(DataStream& stream) override;
 
     protected:
         void onInitialize() override;

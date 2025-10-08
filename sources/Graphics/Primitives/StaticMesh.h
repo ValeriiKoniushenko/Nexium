@@ -80,10 +80,6 @@ namespace Core
         void generate() override;
         void clear() override;
 
-        [[nodiscard]] nlohmann::json toJson() const override;
-
-        void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
-
         [[nodiscard]] Color3 toUniqueColor() const noexcept
         {
             const auto id = _vbo ^ reinterpret_cast<std::uintptr_t>(this);

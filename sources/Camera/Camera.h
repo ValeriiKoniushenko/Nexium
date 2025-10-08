@@ -27,7 +27,6 @@
 #include "Core/Size.h"
 #include "GameplaySystem/ECS/Transformable.h"
 #include "GameplaySystem/Framework/Actor.h"
-#include "Misc/JsonCacheable.h"
 
 namespace Core
 {
@@ -70,15 +69,8 @@ namespace Core
 
         void yawAndPitch(glm::vec2 xy);
 
-        [[nodiscard]] nlohmann::json toJson() const override;
-
-        void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
-
+        void ioFieldsUpdate(DataStream& stream) override;
         [[nodiscard]] StringAtom getCacheHash() const override;
-
-        [[nodiscard]] nlohmann::json toCacheData() const override;
-
-        void fromCacheData(const nlohmann::json& data) override;
 
         [[nodiscard]] FSize2 getOutputFrameSize();
 

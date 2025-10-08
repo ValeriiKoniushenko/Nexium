@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "Misc/JsonAdapter.h"
+#include "Misc/DataStream.h"
 #include "glm/glm.hpp"
 
 #include <Core/Position.h>
@@ -36,7 +36,7 @@ namespace Core
     using RPos3 = RelativePosition3F;
     using RPos2 = RelativePosition2F;
 
-    class Transformable : public virtual JsonAdapter
+    class Transformable : public IDataStreamBridge
     {
     public:
         Transformable() = default;
@@ -107,9 +107,7 @@ namespace Core
 
         [[nodiscard]] glm::vec3 getRightVector() const noexcept;
 
-        [[nodiscard]] nlohmann::json toJson() const override;
-
-        void fromJson(const nlohmann::json& json, bool isIgnoreChildren) override;
+        void ioFieldsUpdate(DataStream& stream) override;
 
         virtual void recalculateMatrices(const glm::mat4& mat = glm::mat4(1.f));
 
