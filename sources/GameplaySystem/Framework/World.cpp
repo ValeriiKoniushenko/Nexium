@@ -49,7 +49,7 @@ namespace Core
 
     std::filesystem::path World::getCacheDir() const
     {
-        return "World";
+        return "world";
     }
 
     StringAtom World::getCacheHash() const

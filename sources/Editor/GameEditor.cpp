@@ -144,9 +144,6 @@ namespace Core
     void GameEditor::setupImGuiStyles()
     {
         ImGuiIO& io = ImGui::GetIO();
-        static const auto savePath
-            = (Config::Path::projectAbsPath / "configs/windows.ini").generic_string();
-        io.IniFilename = savePath.c_str();
         io.ConfigFlags |= Config::defaultEditorImGuiFlags;
 
         if (std::filesystem::exists(Config::Path::editorFont))

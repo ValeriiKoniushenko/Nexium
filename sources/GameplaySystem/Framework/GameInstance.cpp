@@ -31,6 +31,7 @@
 #include "Graphics/ShaderManager.h"
 #include "Graphics/Window.h"
 #include "Misc/FPSCounter.h"
+#include "Scene/Spectator.h"
 #include "assimp/Importer.hpp"
 
 std::unique_ptr<Core::GameInstance> gGameInstance = nullptr;
@@ -114,6 +115,7 @@ namespace Core
         world.tryReadFromCache();
         gameScene.tryReadFromCache();
         onInitializeReadCache();
+        ImGui::LoadIniSettingsFromDisk(Config::Path::imGuiWindowsIni.c_str());
     }
 
     void GameInstance::saveAll()
@@ -121,7 +123,7 @@ namespace Core
         gameEditor.saveAll();
         gameScene.writeToCache();
         world.writeToCache();
-        ImGui::SaveIniSettingsToDisk(ImGui::GetIO().IniFilename);
+        ImGui::SaveIniSettingsToDisk(Config::Path::imGuiWindowsIni.c_str());
         writeToCache();
 
         onSaveAll();

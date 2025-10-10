@@ -34,6 +34,7 @@
 #include "Editor/GuiComponents/Separator.h"
 #include "Editor/GuiComponents/Spacer.h"
 #include "GameplaySystem/Framework/GameInstance.h"
+#include "Scene/Spectator.h"
 
 using namespace Core::Gui;
 

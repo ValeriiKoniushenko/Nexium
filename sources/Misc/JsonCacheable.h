@@ -23,6 +23,8 @@
  */
 
 #pragma once
+#include "Configs.h"
+
 #include <Core/String.h>
 #include <nlohmann/json_fwd.hpp>
 
@@ -50,7 +52,10 @@ namespace Core
     protected:
         JsonCacheable() = default;
 
-        [[nodiscard]] virtual std::filesystem::path getCacheDir() const { return { "configs" }; }
+        [[nodiscard]] virtual std::filesystem::path getCacheDir() const
+        {
+            return Core::Config::Path::configDir;
+        }
 
         [[nodiscard]] virtual StringAtom getCacheHash() const = 0;
 

@@ -25,6 +25,7 @@
 #include "JsonCacheable.h"
 
 #include "BaseLog.h"
+#include "Configs.h"
 #include "JsonAdapter.h"
 
 #include <filesystem>
@@ -109,7 +110,8 @@ namespace Core
 
     std::filesystem::path JsonCacheable::getTargetPath() const
     {
-        return getCacheDir() / (getCacheHash().toStdString() + ".json");
+        return Config::Path::projectAbsPath / Config::Path::configDir / getCacheDir()
+               / (getCacheHash().toStdString() + ".json");
     }
 
     void JsonCacheable::clearCache()

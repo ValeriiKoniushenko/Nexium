@@ -122,6 +122,7 @@ namespace Core
         }
 
         errno = 0;
+
         std::ofstream file(_path);
         if (!file.is_open())
         {

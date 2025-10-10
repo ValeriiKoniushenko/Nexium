@@ -1,24 +1,26 @@
-// MIT License
-//
-// Copyright (c) 2018-2025 Valerii Koniushenko
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
+/*
+ * MIT License
+ *
+ * Copyright (c) 2018-2025 Valerii Koniushenko
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
 #include "BaseComponent.h"
 
@@ -198,8 +200,14 @@ namespace Core
         AbstractComponent::ioFieldsUpdate(stream);
         stream.updateField("name", _name, _type);
         stream.updateField("type", _type);
-        // stream.updateField("children", _children);
-        DEBUG_ASSERT(false, "Not implemented");
+        stream.array("children",
+                     [this](DataStream& out)
+                     {
+                         for (auto& child : _children)
+                         {
+                             out.updateField(*child);
+                         }
+                     });
     }
 
     /*nlohmann::json BaseComponent::toJson() const
@@ -228,27 +236,6 @@ namespace Core
         }
 
         return json;
-    }
-
-    void BaseComponent::fromJson(const nlohmann::json& json, bool isIgnoreChildren)
-    {
-        AbstractComponent::fromJson(json, isIgnoreChildren);
-
-        _name = requireAs<StringAtom>("name", json);
-        _type = StringAtom::Intern(requireAs<StringAtom>("type", json));
-
-        if (!isIgnoreChildren)
-        {
-            if (json.contains("children"))
-            {
-                for (const auto& childJson : json["children"])
-                {
-                    auto type = StringAtom::Intern(requireAs<StringAtom>("type", childJson));
-                    auto* const c = rawAddChildComponent(GetGlobalComponentFactory().create(type));
-                    c->fromJson(childJson, false);
-                }
-            }
-        }
     }*/
 
     BaseComponent::BaseComponent(BaseComponent&& other) noexcept

@@ -31,11 +31,8 @@
 #include "Graphics/RenderTargetToTexture.h"
 #include "Graphics/ShaderManager.h"
 #include "Graphics/Window.h"
-#include "InputDevices/InputManager.h"
-#include "Misc/BaseLog.h"
 #include "ModuleInfo.h"
 #include "Scene/Scene.h"
-#include "Scene/Spectator.h"
 #include "UserInterface.h"
 #include "World.h"
 

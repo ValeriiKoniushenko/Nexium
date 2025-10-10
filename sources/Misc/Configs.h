@@ -47,6 +47,7 @@ namespace Core::Config
     namespace Path
     {
         inline static std::filesystem::path gameConfigModel3DsDir = "model3ds";
+        inline static std::filesystem::path configDir = "config";
         inline static std::filesystem::path editorConfigDir = "editor";
         inline static std::filesystem::path projectAbsPath = NEXIUM_PROJECT_DIR;
         inline static std::filesystem::path assets = projectAbsPath / "assets";
@@ -54,6 +55,8 @@ namespace Core::Config
         inline static std::filesystem::path shaders = assets / "shaders";
         inline static std::filesystem::path images = assets / "images";
         inline static std::filesystem::path objects3d = assets / "objects-3d";
+        inline static std::filesystem::path imGuiWindowsIni
+            = projectAbsPath / configDir / "windows.ini";
 
         inline static std::filesystem::path editorFont = fonts / "JetBrainsMono-Regular.ttf";
         inline static std::filesystem::path fontAwesome = fonts / "fontawesome-webfont.ttf";

@@ -95,6 +95,52 @@ namespace Core
         return Result::Success;
     }
 
+    DataStream::Result DataStream::array(const char* key,
+                                         const std::function<void(DataStream&)>& callback)
+    {
+        if (!key)
+        {
+            _errors.emplace_back(Result::InvalidPassedData, "nullptr");
+            return Result::InvalidPassedData;
+        }
+
+        try
+        {
+            DataStream nestedStream;
+            nestedStream.setMode(_mode);
+
+            if (_mode == Mode::Input)
+            {
+                if (!contains(key))
+                {
+                    _errors.emplace_back(Result::ReadFailed, key);
+                    return Result::ReadFailed;
+                }
+
+                nestedStream.getRaw() = _json[key];
+                callback(nestedStream);
+            }
+            else
+            {
+                nestedStream.getRaw() = nlohmann::json::array();
+                callback(nestedStream);
+                _json[key] = nestedStream.getRaw();
+            }
+        }
+        catch (const std::exception& er)
+        {
+            _errors.emplace_back(Result::CustomProcessingError, er.what());
+            return Result::CustomProcessingError;
+        }
+        catch (...)
+        {
+            _errors.emplace_back(Result::CustomProcessingError, "Undefined internal error");
+            return Result::CustomProcessingError;
+        }
+
+        return Result::Success;
+    }
+
     bool DataStream::contains(const char* key) const
     {
         return _json.contains(key);
@@ -107,16 +153,21 @@ namespace Core
 
     void IDataStreamBridge::writeToCache()
     {
-        std::error_code ec;
-        fs::create_directories(getCacheDir(), ec);
-        if (!fs::exists(getCacheDir()) || ec)
+        if (auto dir = getCacheDir(); !dir.empty())
         {
-            DEBUG_ASSERT(false);
-            globalLog.errorLog(
-                "[Cache system] Can't create a dirs for cache for this object {}. Provided path: {}.{}"_f
-                << getCacheHash() << getCacheDir().generic_string()
-                << (ec ? " Details:" + ec.message() : ""));
-            return;
+            std::error_code ec;
+            dir = getTargetCacheDirPath();
+
+            fs::create_directories(dir, ec);
+            if (!fs::exists(dir) || ec)
+            {
+                DEBUG_ASSERT(false);
+                globalLog.errorLog(
+                    "[Cache system] Can't create a dirs for cache for this object {}. Provided path: {}.{}"_f
+                    << getCacheHash() << dir.generic_string()
+                    << (ec ? " Details:" + ec.message() : ""));
+                return;
+            }
         }
 
         const auto fullPath = getTargetCachePath();
@@ -125,6 +176,7 @@ namespace Core
         stream.setMode(DataStream::Mode::Output);
         ioFieldsUpdate(stream);
         const auto data = stream.getRaw().dump(4);
+
         std::ofstream out(fullPath);
         if (!out.is_open())
         {
@@ -195,7 +247,12 @@ namespace Core
 
     std::filesystem::path IDataStreamBridge::getTargetCachePath() const
     {
-        return getCacheDir() / (getCacheHash().toStdString() + ".json");
+        return getTargetCacheDirPath() / (getCacheHash().toStdString() + ".json");
+    }
+
+    std::filesystem::path IDataStreamBridge::getTargetCacheDirPath() const
+    {
+        return Config::Path::projectAbsPath / Config::Path::configDir / getCacheDir();
     }
 
 } // namespace Core

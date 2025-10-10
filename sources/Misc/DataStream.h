@@ -52,15 +52,11 @@ namespace Core
 
         void clearCache();
 
-        [[nodiscard]] std::filesystem::path getCachePath() const
-        {
-            return Config::Path::projectAbsPath / "configs" / getCacheDir();
-        }
+        [[nodiscard]] std::filesystem::path getTargetCachePath() const;
+        [[nodiscard]] std::filesystem::path getTargetCacheDirPath() const;
 
     protected:
         [[nodiscard]] virtual std::filesystem::path getCacheDir() const { return {}; }
-
-        [[nodiscard]] std::filesystem::path getTargetCachePath() const;
     };
 
     class DataStream
@@ -180,6 +176,7 @@ namespace Core
         }
 
         Result nesting(const char* key, const std::function<void(DataStream&)>& callback);
+        Result array(const char* key, const std::function<void(DataStream&)>& callback);
 
         template<class T>
         [[nodiscard]] T get(const char* key)

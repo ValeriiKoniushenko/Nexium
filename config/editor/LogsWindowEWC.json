@@ -1,0 +1,18 @@
+{
+    "children": [],
+    "filter": "",
+    "isEnabled": true,
+    "logLimit": 500,
+    "name": " Logs",
+    "noTick": false,
+    "regexMode": true,
+    "severityFilters": {
+        "critical": true,
+        "debug": true,
+        "error": true,
+        "info": true,
+        "trace": true,
+        "warning": true
+    },
+    "type": "LogsWindowEWC"
+}

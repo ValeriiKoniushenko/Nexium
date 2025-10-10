@@ -121,6 +121,8 @@ namespace Core
 
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
+        ImGuiIO& io = ImGui::GetIO();
+        io.IniFilename = nullptr;
 
         debugLog("OpenGL version: {}"_f << reinterpret_cast<const char*>(glGetString(GL_VERSION)));
         debugLog("GLFW version: {}"_f

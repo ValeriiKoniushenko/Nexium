@@ -409,25 +409,6 @@ TEST_F(ECSTreeTests, DFSIteratorTest)
         });
 }
 
-/*TEST_F(ECSTreeTests, exportingToJson)
-{
-    (void)root.getChildAt(1)
-        ->addChildComponent<HardConstructorComponent>("Hello")
-        ->addChildComponent<HardConstructorComponent>("Hello1")
-        ->addChildComponent<HardConstructorComponent>("Hello2");
-
-    const auto json = root.toJson();
-
-    const auto dump = StringAtom(json.dump(4));
-
-    DummyComponent newRoot;
-    newRoot.fromJson(json, false);
-    const auto newDump = StringAtom(newRoot.toJson().dump(4));
-
-    std::cout << dump << std::endl;
-    EXPECT_EQ(dump, newDump);
-}*/
-
 TEST_F(ECSTreeTests, DeepTreeCopy)
 {
     std::vector<BaseComponent*> rootSet;
