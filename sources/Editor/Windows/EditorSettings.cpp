@@ -234,7 +234,7 @@ namespace Core
             const auto item = layout.addChildComponent<KeymapItem>();
             item->setReadOnly(true);
             item->setLabel("Show ImGui debug rects");
-            item->setButtonName(Keyboard::KeyToString(Core::Config::Keyboard::editorImGuiShowRect));
+            item->setButtonName(Keyboard::KeyToString(Config::Input::editorImGuiShowRect));
         }
 
         if (auto spectator = gGameInstance->gameScene.getFirstActorOf<Spectator>();

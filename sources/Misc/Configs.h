@@ -34,37 +34,35 @@
 namespace Core::Config
 {
     // Default color pallet
-    static constexpr auto ColorRed = Color4(255, 25, 25, 255);
-    static constexpr auto ColorGreen = Color4(25, 255, 25, 255);
-    static constexpr auto ColorSoftGreen = Color4(25, 204, 25, 204);
-    static constexpr auto ColorGrey = Color4(153, 153, 153, 255);
-    static constexpr auto ColorSoftWhite = Color4(190, 190, 190, 255);
-    static constexpr auto ColorWhite = Color4(234, 237, 239, 255);
-    static constexpr auto ColorYellow = Color4(255, 255, 25, 255);
-    static constexpr auto ColorHalfYellow = Color4(204, 102, 25, 255);
-    static constexpr auto ColorBlue = Color4(25, 25, 255, 255);
+    constexpr Color4 ColorRed = Color4(255, 25, 25, 255);
+    constexpr Color4 ColorGreen = Color4(25, 255, 25, 255);
+    constexpr Color4 ColorSoftGreen = Color4(25, 204, 25, 204);
+    constexpr Color4 ColorGrey = Color4(153, 153, 153, 255);
+    constexpr Color4 ColorSoftWhite = Color4(190, 190, 190, 255);
+    constexpr Color4 ColorWhite = Color4(234, 237, 239, 255);
+    constexpr Color4 ColorYellow = Color4(255, 255, 25, 255);
+    constexpr Color4 ColorHalfYellow = Color4(204, 102, 25, 255);
+    constexpr Color4 ColorBlue = Color4(25, 25, 255, 255);
 
     namespace Path
     {
-        inline static std::filesystem::path gameConfigModel3DsDir = "model3ds";
-        inline static std::filesystem::path configDir = "config";
-        inline static std::filesystem::path editorConfigDir = "editor";
-        inline static std::filesystem::path projectAbsPath = NEXIUM_PROJECT_DIR;
-        inline static std::filesystem::path assets = projectAbsPath / "assets";
-        inline static std::filesystem::path fonts = assets / "fonts";
-        inline static std::filesystem::path shaders = assets / "shaders";
-        inline static std::filesystem::path images = assets / "images";
-        inline static std::filesystem::path objects3d = assets / "objects-3d";
-        inline static std::filesystem::path imGuiWindowsIni
-            = projectAbsPath / configDir / "windows.ini";
-
-        inline static std::filesystem::path editorFont = fonts / "JetBrainsMono-Regular.ttf";
-        inline static std::filesystem::path fontAwesome = fonts / "fontawesome-webfont.ttf";
+        extern const std::filesystem::path gameConfigModel3DsDir;
+        extern const std::filesystem::path configDir;
+        extern const std::filesystem::path editorConfigDir;
+        extern const std::filesystem::path projectAbsPath;
+        extern const std::filesystem::path assets;
+        extern const std::filesystem::path fonts;
+        extern const std::filesystem::path shaders;
+        extern const std::filesystem::path images;
+        extern const std::filesystem::path objects3d;
+        extern const std::filesystem::path imGuiWindowsIni;
+        extern const std::filesystem::path editorFont;
+        extern const std::filesystem::path fontAwesome;
     } // namespace Path
 
-    namespace Keyboard
+    namespace Input
     {
-        inline static auto editorImGuiShowRect = Core::Keyboard::Key::Key_F2;
+        constexpr Keyboard::Key editorImGuiShowRect = Keyboard::Key::Key_F2;
     }
 
     static constexpr float windowAspectRatio = 16.f / 9.f;
