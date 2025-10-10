@@ -33,7 +33,7 @@
 namespace Core
 {
     template<IsInputAction InputTParam>
-    class InputManger : public BaseLog
+    class InputManger : public BaseLog, public IDataStreamBridge
     {
     public:
         using Self = InputManger;
@@ -177,12 +177,24 @@ namespace Core
         MappingT _mapping;
     };
 
-    class KeyboardInputManger : public InputManger<KeyboardInputAction>, public IDataStreamBridge
+    class KeyboardInputManger : public InputManger<KeyboardInputAction>
     {
     public:
+        void ioFieldsUpdate(DataStream& stream) override;
+
+    protected:
+        [[nodiscard]] StringAtom getCacheHash() const override
+        {
+            return "KeyboardInputManger"_atom;
+        }
     };
 
     class MouseInputManger : public InputManger<MouseInputAction>
     {
+    public:
+        void ioFieldsUpdate(DataStream& stream) override;
+
+    protected:
+        [[nodiscard]] StringAtom getCacheHash() const override { return "MouseInputManger"_atom; }
     };
 } // namespace Core

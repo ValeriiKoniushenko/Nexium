@@ -26,7 +26,7 @@
 
 namespace Core
 {
-    nlohmann::json KeyboardInputManger::toJson() const
+    /*nlohmann::json KeyboardInputManger::toJson() const
     {
         nlohmann::json json;
 
@@ -56,5 +56,14 @@ namespace Core
                 }
             }
         }
+    }*/
+
+    void KeyboardInputManger::ioFieldsUpdate(DataStream& stream)
+    {
+        DEBUG_ASSERT(false, "Not implemented");
+    }
+
+    void MouseInputManger::ioFieldsUpdate(DataStream& stream)
+    {
     }
 } // namespace Core

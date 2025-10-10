@@ -1,26 +1,24 @@
-/*
- * MIT License
- *
- * Copyright (c) 2018-2025 Valerii Koniushenko
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+// MIT License
+//
+// Copyright (c) 2018-2025 Valerii Koniushenko
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
 
 #include "BaseComponent.h"
 
@@ -106,20 +104,10 @@ namespace Core
         }
     }
 
-    nlohmann::json AbstractComponent::toJson() const
+    void AbstractComponent::ioFieldsUpdate(DataStream& stream)
     {
-        nlohmann::json json;
-
-        json["isEnabled"] = _isEnabled;
-        json["noTick"] = _noTick;
-
-        return json;
-    }
-
-    void AbstractComponent::fromJson(const nlohmann::json& json, bool isIgnoreChildren /* = false*/)
-    {
-        tryReadJsonTo(_isEnabled, "isEnabled", json);
-        tryReadJsonTo(_noTick, "noTick", json);
+        stream.updateField("isEnabled", _isEnabled);
+        stream.updateField("noTick", _noTick);
     }
 
     void BaseComponent::attachChild(const BaseComponent::Ptr& child)
@@ -207,10 +195,11 @@ namespace Core
 
     void BaseComponent::ioFieldsUpdate(DataStream& stream)
     {
+        AbstractComponent::ioFieldsUpdate(stream);
         stream.updateField("name", _name, _type);
         stream.updateField("type", _type);
         // stream.updateField("children", _children);
-        globalLog.criticalLog("IT DOESN'T WORK!!!");
+        DEBUG_ASSERT(false, "Not implemented");
     }
 
     /*nlohmann::json BaseComponent::toJson() const

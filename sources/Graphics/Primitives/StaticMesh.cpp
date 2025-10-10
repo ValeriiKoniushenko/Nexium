@@ -102,27 +102,9 @@ namespace Core
         setMesh(rawMesh, true, true, scale);
     }
 
-    nlohmann::json StaticMesh::toJson() const
+    StringAtom StaticMesh::getCacheHash() const
     {
-        nlohmann::json json = BaseComponent::toJson();
-        json["Transformable"] = Transformable::toJson();
-        json["GraphicsComponentData"] = GraphicsComponentData::toJson();
-
-        return json;
-    }
-
-    void StaticMesh::fromJson(const nlohmann::json& json, bool isIgnoreChildren /* = false*/)
-    {
-        BaseComponent::fromJson(json, isIgnoreChildren);
-
-        if (json.contains("Transformable"))
-        {
-            Transformable::fromJson(json["Transformable"], isIgnoreChildren);
-        }
-        if (json.contains("GraphicsComponentData"))
-        {
-            GraphicsComponentData::fromJson(json["GraphicsComponentData"], isIgnoreChildren);
-        }
+        return getComponentName();
     }
 
     void StaticMesh::onDirtyMatrix()
@@ -324,6 +306,16 @@ namespace Core
                 trans->recalculateMatrices(_cachedModelMatrix);
             }
         }
+    }
+
+    void StaticMesh::ioFieldsUpdate(DataStream& stream)
+    {
+        BaseComponent::ioFieldsUpdate(stream);
+        Transformable::ioFieldsUpdate(stream);
+        GraphicsComponentData::ioFieldsUpdate(stream);
+
+        stream.updateField("size", _size);
+        stream.updateField("center", _center);
     }
 
     void StaticMesh::pureDraw(const std::function<void(StaticMesh*)>& onUniformSet)

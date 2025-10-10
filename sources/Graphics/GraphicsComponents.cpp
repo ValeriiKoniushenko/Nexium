@@ -325,7 +325,9 @@ namespace Core
 
     void GraphicsComponentData::ioFieldsUpdate(DataStream& stream)
     {
-        stream.array("modifiers",
+        DEBUG_ASSERT(false, "Not implemented");
+
+        /*stream.array("modifiers",
                      [this](DataStream& out)
                      {
                          for (auto [val, mod] : _drawModifiers)
@@ -335,7 +337,7 @@ namespace Core
                              modifier["modifier"] = mod.toStr();
                              json["modifiers"].push_back(std::move(modifier));
                          }
-                     });
+                     });*/
     }
 
     StringAtom GraphicsComponentData::getCacheHash() const
@@ -343,7 +345,7 @@ namespace Core
         return "GraphicsComponentData"_atom;
     }
 
-    nlohmann::json GraphicsComponentData::toJson() const
+    /*nlohmann::json GraphicsComponentData::toJson() const
     {
         nlohmann::json json;
         json["modifiers"] = nlohmann::json::array();
@@ -371,7 +373,7 @@ namespace Core
                 }
             }
         }
-    }
+    }*/
 
     void GraphicsComponentData::privateClear()
     {

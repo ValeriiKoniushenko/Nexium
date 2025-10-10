@@ -99,7 +99,11 @@ namespace Core
 
         void recalculateMatrices(const glm::mat4& mat = glm::mat4(1.f)) override;
 
+        void ioFieldsUpdate(DataStream& stream) override;
+
     protected:
+        [[nodiscard]] StringAtom getCacheHash() const override;
+
         void onDirtyMatrix() override;
 
         void onOutlineStatusChange(bool) override {}

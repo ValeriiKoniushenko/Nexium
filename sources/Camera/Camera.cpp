@@ -1,26 +1,24 @@
-/*
- * MIT License
- *
- * Copyright (c) 2018-2025 Valerii Koniushenko
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+// MIT License
+//
+// Copyright (c) 2018-2025 Valerii Koniushenko
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
 
 #include "Camera.h"
 
@@ -117,30 +115,9 @@ namespace Core
         pitch(xy.y);
     }
 
-    nlohmann::json BaseCamera::toJson() const
-    {
-        auto json = Actor::toJson();
-
-        json["frameSize"] = _frameSize;
-        json["fov"] = _fov;
-        json["far"] = _far;
-        json["near"] = _near;
-        return json;
-    }
-
-    void BaseCamera::fromJson(const nlohmann::json& json, bool isIgnoreChildren)
-    {
-        Actor::fromJson(json, isIgnoreChildren);
-
-        tryReadJsonTo(_frameSize, "frameSize", json);
-        tryReadJsonTo(_fov, "fov", json);
-        tryReadJsonTo(_far, "far", json);
-        tryReadJsonTo(_near, "near", json);
-    }
-
     StringAtom BaseCamera::getCacheHash() const
     {
-        return "BaseCamera"_atom;
+        return "BaseCamera"_atom + "_" + getComponentName();
     }
 
     FSize2 BaseCamera::getOutputFrameSize()
@@ -192,5 +169,15 @@ namespace Core
         {
             recalculateCameraMatrices();
         }
+    }
+
+    void BaseCamera::ioFieldsUpdate(DataStream& stream)
+    {
+        Actor::ioFieldsUpdate(stream);
+
+        stream.updateField("frameSize", _frameSize);
+        stream.updateField("fov", _fov);
+        stream.updateField("far", _far);
+        stream.updateField("near", _near);
     }
 } // namespace Core

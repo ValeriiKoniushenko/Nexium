@@ -30,29 +30,13 @@ namespace Core
 {
     ECS_COMPONENT_IMPL(Spectator)
 
-    nlohmann::json Spectator::toJson() const
+    void Spectator::ioFieldsUpdate(DataStream& stream)
     {
-        auto json = Actor::toJson();
-
-        json["speed"] = speed;
-        json["mouseSensitivity"] = mouseSensitivity;
-        json["keyboardInput"] = keyboardInput.toJson();
-        // json["mouseInput"] = mouseInput.toJson();
-
-        return json;
-    }
-
-    void Spectator::fromJson(const nlohmann::json& json, bool isIgnoreChildren)
-    {
-        Actor::fromJson(json, isIgnoreChildren);
-
-        tryReadJsonTo(speed, "speed", json);
-        tryReadJsonTo(mouseSensitivity, "mouseSensitivity", json);
-
-        if (json.contains("keyboardInput"))
-        {
-            keyboardInput.fromJson(json["keyboardInput"], isIgnoreChildren);
-        }
+        Actor::ioFieldsUpdate(stream);
+        stream.updateField("speed", speed);
+        stream.updateField("mouseSensitivity", mouseSensitivity);
+        stream.updateField(keyboardInput);
+        // stream.updateField("mouseInput", mouseInput);
     }
 
     StringAtom Spectator::getCacheHash() const

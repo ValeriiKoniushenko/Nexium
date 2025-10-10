@@ -32,6 +32,36 @@
 
 namespace Core
 {
+    class DataStream;
+
+    struct IDataUpdateBridge
+    {
+        virtual ~IDataUpdateBridge() = default;
+
+        virtual void ioFieldsUpdate(DataStream& stream) = 0;
+        [[nodiscard]] virtual StringAtom getCacheHash() const = 0;
+    };
+
+    struct IDataStreamBridge : public IDataUpdateBridge
+    {
+        [[nodiscard]] bool hasCache() const;
+
+        void writeToCache();
+        void readFromCache();
+        void tryReadFromCache();
+
+        void clearCache();
+
+        [[nodiscard]] std::filesystem::path getCachePath() const
+        {
+            return Config::Path::projectAbsPath / "configs" / getCacheDir();
+        }
+
+    protected:
+        [[nodiscard]] virtual std::filesystem::path getCacheDir() const { return {}; }
+
+        [[nodiscard]] std::filesystem::path getTargetCachePath() const;
+    };
 
     class DataStream
     {
@@ -94,6 +124,8 @@ namespace Core
 
             return Result::Success;
         }
+
+        Result updateField(IDataUpdateBridge& bridge);
 
         /**
          * @tparam T data type. Can be any data that is convenient for you.
@@ -172,29 +204,4 @@ namespace Core
         Mode _mode = Mode::Input;
     };
 
-    struct IDataStreamBridge
-    {
-        virtual ~IDataStreamBridge() = default;
-
-        virtual void ioFieldsUpdate(DataStream& stream) = 0;
-
-        [[nodiscard]] bool hasCache() const;
-
-        void writeToCache();
-        void readFromCache();
-        void tryReadFromCache();
-
-        void clearCache();
-
-        [[nodiscard]] std::filesystem::path getCachePath() const
-        {
-            return Config::Path::projectAbsPath / "configs" / getCacheDir();
-        }
-
-    protected:
-        [[nodiscard]] virtual std::filesystem::path getCacheDir() const { return {}; }
-
-        [[nodiscard]] virtual StringAtom getCacheHash() const = 0;
-        [[nodiscard]] std::filesystem::path getTargetCachePath() const;
-    };
 } // namespace Core

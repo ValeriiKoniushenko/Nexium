@@ -34,6 +34,22 @@ namespace fs = std::filesystem;
 namespace Core
 {
 
+    DataStream::Result DataStream::updateField(IDataUpdateBridge& bridge)
+    {
+        if (_mode == Mode::Input)
+        {
+            if (!contains(bridge.getCacheHash().c_str()))
+            {
+                _errors.emplace_back(Result::ReadFailed, bridge.getCacheHash().c_str());
+                return Result::ReadFailed;
+            }
+        }
+
+        bridge.ioFieldsUpdate(*this);
+
+        return Result::Success;
+    }
+
     DataStream::Result DataStream::nesting(const char* key,
                                            const std::function<void(DataStream&)>& callback)
     {

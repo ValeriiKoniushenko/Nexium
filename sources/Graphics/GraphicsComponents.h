@@ -31,7 +31,7 @@
 
 namespace Core
 {
-    class GraphicsComponentData : public IDataStreamBridge
+    class GraphicsComponentData : public IDataUpdateBridge
     {
     public:
         // clang-format off

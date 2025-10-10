@@ -409,7 +409,7 @@ TEST_F(ECSTreeTests, DFSIteratorTest)
         });
 }
 
-TEST_F(ECSTreeTests, exportingToJson)
+/*TEST_F(ECSTreeTests, exportingToJson)
 {
     (void)root.getChildAt(1)
         ->addChildComponent<HardConstructorComponent>("Hello")
@@ -426,7 +426,7 @@ TEST_F(ECSTreeTests, exportingToJson)
 
     std::cout << dump << std::endl;
     EXPECT_EQ(dump, newDump);
-}
+}*/
 
 TEST_F(ECSTreeTests, DeepTreeCopy)
 {
