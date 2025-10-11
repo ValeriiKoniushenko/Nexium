@@ -6,6 +6,6 @@
     ],
     "mainShader": "defaultTextured",
     "outlineShader": "outline",
-    "path": "assets/objects-3d/Models/FBX/FireHydrant.fbx",
+    "path": "/home/valerii/workspace/Nexium/assets/objects-3d/Models/FBX/FireHydrant.fbx",
     "scale": 1.0
 }
