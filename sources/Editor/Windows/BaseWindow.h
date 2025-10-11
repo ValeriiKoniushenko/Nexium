@@ -58,7 +58,7 @@ namespace Core
 
         void onTick(float delta) final;
 
-        virtual void onUpdate() {};
+        virtual void onUpdate() {}
 
         virtual void onDraw() = 0;
 
