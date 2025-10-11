@@ -1,24 +1,26 @@
-// MIT License
-//
-// Copyright (c) 2019-2025 Valerii Koniushenko
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
+/*
+ * MIT License
+ *
+ * Copyright (c) 2018-2025 Valerii Koniushenko
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
 #include "Misc/DataStream.h"
 
@@ -40,10 +42,10 @@ namespace
     public:
         void ioFieldsUpdate(DataStream& stream) override
         {
-            stream.updateField("age", age);
-            stream.updateField("name", name);
-            stream.updateField("vec", vec);
-            stream.updateField(
+            stream.field("age", age);
+            stream.field("name", name);
+            stream.field("vec", vec);
+            stream.field(
                 "container", container,
                 [](std::unordered_map<std::string, Cell>& out, const DataStream::Json& json) -> void
                 {
@@ -90,7 +92,7 @@ TEST(DataStreamTests, Output)
 
     std::string str = "World";
     stream.setMode(DataStream::Mode::Output);
-    ASSERT_EQ(DataStream::Result::Success, stream.updateField("key", str));
+    ASSERT_EQ(DataStream::Result::Success, stream.field("key", str));
 
     ASSERT_TRUE(stream.contains("key"));
     ASSERT_EQ("World", stream.get<std::string>("key"));
@@ -103,7 +105,7 @@ TEST(DataStreamTests, Input)
     {
         std::string str = "World";
         stream.setMode(DataStream::Mode::Output);
-        ASSERT_EQ(DataStream::Result::Success, stream.updateField("key", str));
+        ASSERT_EQ(DataStream::Result::Success, stream.field("key", str));
     }
 
     std::string str;
@@ -111,7 +113,7 @@ TEST(DataStreamTests, Input)
 
     ASSERT_TRUE(str.empty());
     ASSERT_TRUE(stream.contains("key"));
-    ASSERT_EQ(DataStream::Result::Success, stream.updateField("key", str));
+    ASSERT_EQ(DataStream::Result::Success, stream.field("key", str));
     ASSERT_EQ("World", str);
 }
 

@@ -76,8 +76,7 @@ namespace Core
         void setAssimpPostProcessFlags(int value);
 
     protected:
-        void onReadData(nlohmann::json&& json) override;
-        [[nodiscard]] nlohmann::json onWriteData() const override;
+        void ioFieldsUpdate(DataStream& stream) override;
 
     protected:
         StaticMeshBundle _mesh;

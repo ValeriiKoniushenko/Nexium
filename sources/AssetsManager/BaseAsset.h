@@ -26,6 +26,7 @@
 
 #include "Core/String.h"
 #include "Misc/BaseLog.h"
+#include "Misc/DataStream.h"
 #include "ModuleInfo.h"
 #include "nlohmann/json.hpp"
 
@@ -59,8 +60,7 @@ namespace Core
         }
 
     protected:
-        [[nodiscard]] virtual nlohmann::json onWriteData() const = 0;
-        virtual void onReadData(nlohmann::json&& json) = 0;
+        virtual void ioFieldsUpdate(DataStream& stream) = 0;
 
     protected:
         std::filesystem::path _assetPath;

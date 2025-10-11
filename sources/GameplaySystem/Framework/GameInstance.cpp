@@ -132,7 +132,7 @@ namespace Core
     void GameInstance::ioFieldsUpdate(DataStream& stream)
     {
         int iRenderMode = static_cast<int>(renderMode);
-        stream.updateField("renderMode", iRenderMode);
+        stream.field("renderMode", iRenderMode);
         renderMode = static_cast<RenderMode>(iRenderMode);
     }
 

@@ -36,14 +36,8 @@ namespace Core
     {
     }
 
-    void CameraAsset::onReadData(nlohmann::json&& json)
+    void CameraAsset::ioFieldsUpdate(DataStream& stream)
     {
     }
 
-    nlohmann::json CameraAsset::onWriteData() const
-    {
-        nlohmann::json json;
-
-        return json;
-    }
 } // namespace Core

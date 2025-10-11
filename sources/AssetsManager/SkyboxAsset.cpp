@@ -102,7 +102,7 @@ namespace Core
         for (std::size_t i = 0; i < _paths.size(); ++i)
         {
             Image img;
-            if (img.loadFromFile(_paths[i], _isFlipVertically))
+            if (img.loadFromFile(Config::Path::projectAbsPath / _paths[i], _isFlipVertically))
             {
                 if (size == -1)
                 {
@@ -137,34 +137,20 @@ namespace Core
         _gcd.clear();
     }
 
-    void SkyboxAsset::onReadData(nlohmann::json&& json)
+    void SkyboxAsset::ioFieldsUpdate(DataStream& stream)
     {
-        auto getPath = [this, &json](const char* prop, Direction dir)
+        auto componentPath = [this, &stream](const char* prop, Direction dir)
         {
-            if (DEBUG_ASSERT_VAL(json.contains(prop)))
-            {
-                _paths.at(static_cast<std::size_t>(dir))
-                    = Config::Path::projectAbsPath / json[prop].get<std::filesystem::path>();
-            }
+            stream.field(prop, _paths.at(static_cast<std::size_t>(dir)));
         };
 
-        getPath("pathToTop", Direction::Top);
-        getPath("pathToBottom", Direction::Bottom);
-        getPath("pathToBack", Direction::Back);
-        getPath("pathToFront", Direction::Front);
-        getPath("pathToLeft", Direction::Left);
-        getPath("pathToRight", Direction::Right);
-
-        if (json.contains("isFlipVertically"))
-        {
-            _isFlipVertically = json["isFlipVertically"].get<bool>();
-        }
+        componentPath("pathToTop", Direction::Top);
+        componentPath("pathToBottom", Direction::Bottom);
+        componentPath("pathToBack", Direction::Back);
+        componentPath("pathToFront", Direction::Front);
+        componentPath("pathToLeft", Direction::Left);
+        componentPath("pathToRight", Direction::Right);
+        stream.field("isFlipVertically", _isFlipVertically);
     }
 
-    nlohmann::json SkyboxAsset::onWriteData() const
-    {
-        nlohmann::json json;
-
-        return json;
-    }
 } // namespace Core

@@ -46,15 +46,13 @@ namespace Core
 
         void onUnloadRequest() override;
 
-        void onReadData(nlohmann::json&& json) override;
-
         [[nodiscard]] const Texture& getData() const noexcept { return _data; }
         [[nodiscard]] Texture& getData() noexcept { return _data; }
 
         [[nodiscard]] const char* getPrefix() const override { return "Texture"; }
 
     protected:
-        [[nodiscard]] nlohmann::json onWriteData() const override;
+        void ioFieldsUpdate(DataStream& stream) override;
 
     protected:
         Texture _data;

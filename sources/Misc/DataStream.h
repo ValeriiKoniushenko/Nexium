@@ -94,7 +94,7 @@ namespace Core
          * @return the result of an operation
          */
         template<class T>
-        Result updateField(const char* key, T& field, const T& defaultValue = {})
+        Result field(const char* key, T& field, const T& defaultValue = {})
         {
             if (!key)
             {
@@ -121,7 +121,7 @@ namespace Core
             return Result::Success;
         }
 
-        Result updateField(IDataUpdateBridge& bridge);
+        Result field(IDataUpdateBridge& bridge);
 
         /**
          * @tparam T data type. Can be any data that is convenient for you.
@@ -135,8 +135,7 @@ namespace Core
          * @return
          */
         template<class T, class ReaderFunc, class WriterFunc>
-        Result updateField(const char* key, T& field, const ReaderFunc& reader,
-                           const WriterFunc& writer)
+        Result field(const char* key, T& field, const ReaderFunc& reader, const WriterFunc& writer)
         {
             if (!key)
             {

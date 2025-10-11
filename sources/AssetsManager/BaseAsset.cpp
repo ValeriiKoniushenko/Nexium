@@ -36,18 +36,36 @@ namespace Core
     {
         _assetPath = path;
 
-        onReadData(nlohmann::json::parse(Utils::GetTextFileContentAs<std::string>(path)));
+        if (_assetPath.empty())
+        {
+            criticalLog("Invalid path to asset: {}"_f << _assetPath);
+            DEBUG_ASSERT(false);
+            return;
+        }
+
+        DataStream stream;
+        stream.setMode(DataStream::Mode::Input);
+        stream.getRaw()
+            = nlohmann::json::parse(Utils::GetTextFileContentAs<std::string>(_assetPath));
+        ioFieldsUpdate(stream);
     }
 
     void BaseAsset::writeToFile()
     {
         if (_assetPath.empty())
         {
-            DEBUG_ASSERT(false, "File is not sync!");
+            criticalLog("Invalid path to asset: {}"_f << _assetPath);
+            DEBUG_ASSERT(false);
             return;
         }
 
-        const auto data = onWriteData().dump(4);
+        DataStream stream;
+        stream.setMode(DataStream::Mode::Output);
+        stream.getRaw()
+            = nlohmann::json::parse(Utils::GetTextFileContentAs<std::string>(_assetPath));
+        ioFieldsUpdate(stream);
+
+        const auto data = stream.getRaw().dump(4);
         std::ofstream out(_assetPath);
         if (!out.is_open())
         {

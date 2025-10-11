@@ -253,15 +253,15 @@ namespace Core
 
     void Window::ioFieldsUpdate(DataStream& stream)
     {
-        stream.updateField("size", _size);
-        stream.updateField("title", _title);
+        stream.field("size", _size);
+        stream.field("title", _title);
 
         bool bIsMaximized
             = _window ? glfwGetWindowAttrib(_window, GLFW_MAXIMIZED) == GLFW_TRUE : false;
-        stream.updateField("isMaximized", bIsMaximized);
+        stream.field("isMaximized", bIsMaximized);
         _isMaximized = bIsMaximized;
 
-        stream.updateField("vSync", _swapInterval);
+        stream.field("vSync", _swapInterval);
     }
 
     StringAtom Window::getCacheHash() const

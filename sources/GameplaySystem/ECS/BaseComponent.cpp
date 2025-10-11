@@ -108,8 +108,8 @@ namespace Core
 
     void AbstractComponent::ioFieldsUpdate(DataStream& stream)
     {
-        stream.updateField("isEnabled", _isEnabled);
-        stream.updateField("noTick", _noTick);
+        stream.field("isEnabled", _isEnabled);
+        stream.field("noTick", _noTick);
     }
 
     void BaseComponent::attachChild(const BaseComponent::Ptr& child)
@@ -198,14 +198,14 @@ namespace Core
     void BaseComponent::ioFieldsUpdate(DataStream& stream)
     {
         AbstractComponent::ioFieldsUpdate(stream);
-        stream.updateField("name", _name, _type);
-        stream.updateField("type", _type);
+        stream.field("name", _name, _type);
+        stream.field("type", _type);
         stream.array("children",
                      [this](DataStream& out)
                      {
                          for (auto& child : _children)
                          {
-                             out.updateField(*child);
+                             out.field(*child);
                          }
                      });
     }

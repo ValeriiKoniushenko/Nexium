@@ -34,7 +34,7 @@ namespace fs = std::filesystem;
 namespace Core
 {
 
-    DataStream::Result DataStream::updateField(IDataUpdateBridge& bridge)
+    DataStream::Result DataStream::field(IDataUpdateBridge& bridge)
     {
         if (_mode == Mode::Input)
         {

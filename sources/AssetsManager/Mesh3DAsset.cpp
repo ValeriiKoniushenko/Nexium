@@ -226,7 +226,11 @@ namespace Core
     {
         _assimpPostProcess = value;
     }
+    void Mesh3DAsset::ioFieldsUpdate(DataStream& stream)
+    {
+    }
 
+    /*
     void Mesh3DAsset::onReadData(nlohmann::json&& json)
     {
         if (json.contains("path"))
@@ -283,5 +287,5 @@ namespace Core
         }
 
         return json;
-    }
+    }*/
 } // namespace Core

@@ -39,8 +39,8 @@ namespace
         void ioFieldsUpdate(DataStream& stream) override
         {
             BaseComponent::ioFieldsUpdate(stream);
-            stream.updateField("a", a);
-            stream.updateField("name", name);
+            stream.field("a", a);
+            stream.field("name", name);
         }
     };
 

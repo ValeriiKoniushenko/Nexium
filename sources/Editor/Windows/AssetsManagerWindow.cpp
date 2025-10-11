@@ -103,7 +103,7 @@ namespace Core
     void AssetsManagerWindowEWC::ioFieldsUpdate(DataStream& stream)
     {
         BaseFloatEWC::ioFieldsUpdate(stream);
-        stream.updateField("openedPath", _openedPath);
+        stream.field("openedPath", _openedPath);
     }
 
     void AssetsManagerWindowEWC::onInitialize()

@@ -39,12 +39,12 @@ namespace Core
 
     void LightningProps::ioFieldsUpdate(DataStream& stream)
     {
-        stream.updateField("color", color);
-        stream.updateField("minLightStrength", minLightStrength);
-        stream.updateField("ambientStrength", ambientStrength);
-        stream.updateField("specularStrength", specularStrength);
-        stream.updateField("specularPow", specularPow);
-        stream.updateField("sunDirection", sunDirection);
+        stream.field("color", color);
+        stream.field("minLightStrength", minLightStrength);
+        stream.field("ambientStrength", ambientStrength);
+        stream.field("specularStrength", specularStrength);
+        stream.field("specularPow", specularPow);
+        stream.field("sunDirection", sunDirection);
     }
 
     std::filesystem::path World::getCacheDir() const
@@ -59,7 +59,7 @@ namespace Core
 
     void World::ioFieldsUpdate(DataStream& stream)
     {
-        stream.updateField("worldName", worldName, "Default"_dyn);
+        stream.field("worldName", worldName, "Default"_dyn);
     }
 
 } // namespace Core

@@ -73,7 +73,7 @@ namespace Core
 
     void Scene::ioFieldsUpdate(DataStream& stream)
     {
-        stream.updateField("sceneName", _sceneName, "Default"_dyn);
+        stream.field("sceneName", _sceneName, "Default"_dyn);
     }
 
     const StringAtom& Scene::getSceneName() const noexcept

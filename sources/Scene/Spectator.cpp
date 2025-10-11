@@ -33,10 +33,10 @@ namespace Core
     void Spectator::ioFieldsUpdate(DataStream& stream)
     {
         Actor::ioFieldsUpdate(stream);
-        stream.updateField("speed", speed);
-        stream.updateField("mouseSensitivity", mouseSensitivity);
-        stream.updateField(keyboardInput);
-        // stream.updateField("mouseInput", mouseInput);
+        stream.field("speed", speed);
+        stream.field("mouseSensitivity", mouseSensitivity);
+        stream.field(keyboardInput);
+        // stream.field("mouseInput", mouseInput);
     }
 
     StringAtom Spectator::getCacheHash() const

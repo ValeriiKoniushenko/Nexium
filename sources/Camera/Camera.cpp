@@ -177,9 +177,9 @@ namespace Core
     {
         Actor::ioFieldsUpdate(stream);
 
-        stream.updateField("frameSize", _frameSize);
-        stream.updateField("fov", _fov);
-        stream.updateField("far", _far);
-        stream.updateField("near", _near);
+        stream.field("frameSize", _frameSize);
+        stream.field("fov", _fov);
+        stream.field("far", _far);
+        stream.field("near", _near);
     }
 } // namespace Core

@@ -314,8 +314,8 @@ namespace Core
         Transformable::ioFieldsUpdate(stream);
         GraphicsComponentData::ioFieldsUpdate(stream);
 
-        stream.updateField("size", _size);
-        stream.updateField("center", _center);
+        stream.field("size", _size);
+        stream.field("center", _center);
     }
 
     void StaticMesh::pureDraw(const std::function<void(StaticMesh*)>& onUniformSet)

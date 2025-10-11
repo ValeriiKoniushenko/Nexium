@@ -65,8 +65,7 @@ namespace Core
         [[nodiscard]] BaseCamera& getData() noexcept { return _data; }
 
     protected:
-        void onReadData(nlohmann::json&& json) override;
-        [[nodiscard]] nlohmann::json onWriteData() const override;
+        void ioFieldsUpdate(DataStream& stream) override;
 
     protected:
         BaseCamera _data;
