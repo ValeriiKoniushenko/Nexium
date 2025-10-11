@@ -210,34 +210,6 @@ namespace Core
                      });
     }
 
-    /*nlohmann::json BaseComponent::toJson() const
-    {
-        auto json = AbstractComponent::toJson();
-
-        if (_name.isEmpty())
-        {
-            json["name"] = _type;
-        }
-        else
-        {
-            json["name"] = _name;
-        }
-        json["type"] = _type;
-
-        for (const auto& child : _children)
-        {
-            // Excluded from cache
-            if (dynamic_cast<Gizmo*>(child.get()))
-            {
-                continue;
-            }
-
-            json["children"].push_back(child->toJson());
-        }
-
-        return json;
-    }*/
-
     BaseComponent::BaseComponent(BaseComponent&& other) noexcept
     {
         *this = std::move(other);

@@ -26,10 +26,11 @@
 
 namespace Core
 {
-    /*nlohmann::json KeyboardInputManger::toJson() const
-    {
-        nlohmann::json json;
 
+    void KeyboardInputManger::ioFieldsUpdate(DataStream& stream)
+    {
+        DEBUG_ASSERT(false, "Not implemented");
+        /*
         json["mapping"] = nlohmann::json::array();
         for (const auto& [name, key] : _mapping)
         {
@@ -39,28 +40,7 @@ namespace Core
 
             json["mapping"].push_back(std::move(map));
         }
-
-        return json;
-    }
-
-    void KeyboardInputManger::fromJson(const nlohmann::json& json, bool isIgnoreChildren)
-    {
-        if (json.contains("mapping"))
-        {
-            for (auto&& map : json["mapping"])
-            {
-                if (auto found = getOrCreate(map["action"].get<StringAtom>(), Keyboard::Key_None))
-                {
-                    auto key = StringAtom::Intern(map["key"].get<StringAtom>());
-                    found->setKey(Keyboard::FromStringToKey(key));
-                }
-            }
-        }
-    }*/
-
-    void KeyboardInputManger::ioFieldsUpdate(DataStream& stream)
-    {
-        DEBUG_ASSERT(false, "Not implemented");
+         */
     }
 
     void MouseInputManger::ioFieldsUpdate(DataStream& stream)

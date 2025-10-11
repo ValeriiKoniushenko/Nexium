@@ -1,8 +1,8 @@
 {
-    "isMaximized": false,
+    "isMaximized": true,
     "size": {
-        "height": 800,
-        "width": 1200
+        "height": 1011,
+        "width": 1920
     },
     "title": "Nexium Engine",
     "vSync": true
