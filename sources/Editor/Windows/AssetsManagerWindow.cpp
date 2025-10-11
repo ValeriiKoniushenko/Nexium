@@ -84,11 +84,6 @@ namespace Core
 {
     ECS_COMPONENT_IMPL(AssetsManagerWindowEWC)
 
-    AssetsManagerWindowEWC::~AssetsManagerWindowEWC()
-    {
-        writeToCache();
-    }
-
     void AssetsManagerWindowEWC::tryOpenParentDir()
     {
         if (_openedPath.has_parent_path())
@@ -109,16 +104,6 @@ namespace Core
     {
         BaseFloatEWC::ioFieldsUpdate(stream);
         stream.updateField("openedPath", _openedPath);
-    }
-
-    std::filesystem::path AssetsManagerWindowEWC::getCacheDir() const
-    {
-        return Config::Path::editorConfigDir;
-    }
-
-    StringAtom AssetsManagerWindowEWC::getCacheHash() const
-    {
-        return "AssetsManagerWindow"_atom;
     }
 
     void AssetsManagerWindowEWC::onInitialize()

@@ -72,6 +72,30 @@ namespace Core
         endWindowDraw();
     }
 
+    StringAtom BaseEWC::getCacheHash() const
+    {
+        StringAtom normName;
+        for (char c : getComponentName())
+        {
+            if (c == '_' || std::isalnum(c))
+            {
+                normName += c;
+            }
+        }
+
+        if (normName.isEmpty())
+        {
+            normName = "None";
+        }
+
+        return getComponentType() + "_" + normName;
+    }
+
+    std::filesystem::path BaseEWC::getCacheDir() const
+    {
+        return Config::Path::editorConfigDir;
+    }
+
     //
     //    ______                   ______  _                _
     //    | ___ \                  |  ___|| |              | |

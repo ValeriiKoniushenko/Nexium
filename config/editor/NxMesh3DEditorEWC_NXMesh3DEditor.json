@@ -1,0 +1,7 @@
+{
+    "children": [],
+    "isEnabled": true,
+    "name": " NX Mesh3D Editor",
+    "noTick": false,
+    "type": "NxMesh3DEditorEWC"
+}

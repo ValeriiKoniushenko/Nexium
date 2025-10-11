@@ -101,8 +101,6 @@ namespace Core
     public:
         AssetsManager();
 
-        ~AssetsManager() override = default;
-
         AssetsManager(const AssetsManager&) = delete;
 
         AssetsManager(AssetsManager&&) = delete;

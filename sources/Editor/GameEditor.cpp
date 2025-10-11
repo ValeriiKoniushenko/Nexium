@@ -139,6 +139,10 @@ namespace Core
 
     void GameEditor::saveAll()
     {
+        for (auto& wnd : _windows)
+        {
+            wnd->writeToCache();
+        }
     }
 
     void GameEditor::setupImGuiStyles()

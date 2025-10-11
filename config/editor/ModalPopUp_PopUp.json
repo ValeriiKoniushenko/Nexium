@@ -1,0 +1,7 @@
+{
+    "children": [],
+    "isEnabled": true,
+    "name": "PopUp",
+    "noTick": false,
+    "type": "ModalPopUp"
+}

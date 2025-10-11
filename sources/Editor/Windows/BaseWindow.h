@@ -70,6 +70,9 @@ namespace Core
 
         [[nodiscard]] bool canBeShown() const { return _isEnabled; }
 
+        [[nodiscard]] StringAtom getCacheHash() const override;
+        [[nodiscard]] std::filesystem::path getCacheDir() const override;
+
     protected:
         ImGuiWindowFlags _windowFlags = 0;
         bool _wasFocusRequested = false;

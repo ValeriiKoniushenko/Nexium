@@ -1,0 +1,7 @@
+{
+    "children": [],
+    "isEnabled": true,
+    "name": " Shader manager",
+    "noTick": false,
+    "type": "ShaderManagerEWC"
+}

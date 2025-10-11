@@ -1,0 +1,7 @@
+{
+    "children": [],
+    "isEnabled": false,
+    "name": " World Lightning",
+    "noTick": false,
+    "type": "WorldLightningEWC"
+}
