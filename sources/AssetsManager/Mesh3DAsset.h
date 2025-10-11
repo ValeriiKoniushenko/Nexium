@@ -77,6 +77,8 @@ namespace Core
 
     protected:
         void ioFieldsUpdate(DataStream& stream) override;
+        [[nodiscard]] int readAssimpPostProcessFromCache(nlohmann::json& cache);
+        [[nodiscard]] nlohmann::json assimpPostProcessToCache(int assimpFlags);
 
     protected:
         StaticMeshBundle _mesh;

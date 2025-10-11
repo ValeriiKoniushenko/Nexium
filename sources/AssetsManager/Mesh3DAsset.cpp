@@ -155,11 +155,13 @@ namespace Core
     {
         auto& sm = GetShaderManager();
         Assimp::Importer importer;
-        const aiScene* scene = importer.ReadFile(_pathToModel.string().c_str(), _assimpPostProcess);
+        const aiScene* scene = importer.ReadFile(
+            (Config::Path::projectAbsPath / _pathToModel).string().c_str(), _assimpPostProcess);
 
         if (DEBUG_ASSERT_VAL(scene) && DEBUG_ASSERT_VAL(scene->mRootNode))
         {
-            _mesh.importFrom(scene->mRootNode, scene, _pathToModel, _scale);
+            _mesh.importFrom(scene->mRootNode, scene, Config::Path::projectAbsPath / _pathToModel,
+                             _scale);
             if (_mainShader && !_mainShader.isEmpty())
             {
                 _mesh.setShader(sm.getShaderProgram(_mainShader));
@@ -226,8 +228,67 @@ namespace Core
     {
         _assimpPostProcess = value;
     }
+
     void Mesh3DAsset::ioFieldsUpdate(DataStream& stream)
     {
+        stream.field("path", _pathToModel);
+        stream.field("mainShader", _mainShader);
+        if (stream.getMode() == DataStream::Mode::Input)
+        {
+            _mainShader = StringAtom::Intern(_mainShader);
+        }
+        stream.field("outlineShader", _outlineShader);
+        if (stream.getMode() == DataStream::Mode::Input)
+        {
+            _outlineShader = StringAtom::Intern(_outlineShader);
+        }
+        stream.field("scale", _scale);
+        stream.field(
+            "assimpPostProcess", _assimpPostProcess,
+            [this](int& out, nlohmann::json& s)
+            {
+                out = readAssimpPostProcessFromCache(s);
+            },
+            [this](int assimpFlags)
+            {
+                return assimpPostProcessToCache(assimpFlags);
+            });
+    }
+
+    int Mesh3DAsset::readAssimpPostProcessFromCache(nlohmann::json& s)
+    {
+        int out = 0;
+        for (const auto& el : s)
+        {
+            const auto asString = el.get<StringAtom>();
+            if (auto value = Assimp::aiPostProcessStepsFromString(asString))
+            {
+                out |= *value;
+            }
+            else
+            {
+                errorLog("Invalid value '{}' for property 'assimpPostProcess'"_f << asString);
+                DEBUG_ASSERT(false);
+            }
+        }
+
+        return out;
+    }
+
+    nlohmann::json Mesh3DAsset::assimpPostProcessToCache(int assimpFlags)
+    {
+        auto out = nlohmann::json::array();
+
+        for (std::size_t i = 0; i < sizeof(int) * 8; ++i)
+        {
+            const auto flag = static_cast<aiPostProcessSteps>((1 << i) & assimpFlags);
+            if (flag != 0)
+            {
+                out.push_back(Assimp::aiPostProcessStepsToString(flag));
+            }
+        }
+
+        return out;
     }
 
     /*
