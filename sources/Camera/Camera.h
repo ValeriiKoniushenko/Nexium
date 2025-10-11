@@ -85,7 +85,7 @@ namespace Core
         glm::mat4 _cachedProjMatrix = glm::mat4(1.f);
         glm::mat4 _cachedCalculatedMatrix = glm::mat4(1.f);
         FSize2 _frameSize = FSize2{ 600, 600 };
-        float _fov = 45.f;
+        float _fov = 75.f;
         float _far = 10'000.f;
         float _near = 0.1f;
         bool _isDirtyProjMatrix = true;
