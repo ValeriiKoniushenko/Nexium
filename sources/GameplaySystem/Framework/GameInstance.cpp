@@ -112,6 +112,7 @@ namespace Core
 
     void GameInstance::startUpReadCache()
     {
+        gameEditor.readFromCache();
         world.tryReadFromCache();
         gameScene.tryReadFromCache();
         onInitializeReadCache();
@@ -120,7 +121,7 @@ namespace Core
 
     void GameInstance::saveAll()
     {
-        gameEditor.saveAll();
+        gameEditor.writeToCache();
         gameScene.writeToCache();
         world.writeToCache();
         ImGui::SaveIniSettingsToDisk(Config::Path::imGuiWindowsIni.generic_string().c_str());

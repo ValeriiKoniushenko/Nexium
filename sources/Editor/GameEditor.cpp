@@ -137,11 +137,19 @@ namespace Core
         }
     }
 
-    void GameEditor::saveAll()
+    void GameEditor::writeToCache()
     {
         for (auto& wnd : _windows)
         {
             wnd->writeToCache();
+        }
+    }
+
+    void GameEditor::readFromCache()
+    {
+        for (auto& wnd : _windows)
+        {
+            wnd->tryReadFromCache();
         }
     }
 

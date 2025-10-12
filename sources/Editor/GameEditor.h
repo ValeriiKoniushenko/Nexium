@@ -145,7 +145,8 @@ namespace Core
 
         [[nodiscard]] spdlog::logger* getLogger() const override { return Editor::getLogger(); }
 
-        void saveAll();
+        void writeToCache();
+        void readFromCache();
 
     public:
         SlowObjectPicker slowObjectPicker;
