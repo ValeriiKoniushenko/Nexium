@@ -116,7 +116,7 @@ namespace Core::Gui
         [[nodiscard]] bool isDisabledWidget() const noexcept { return _isDisabledWidget; }
 
         /**
-         * @brief Don't use this function to draw your component.
+         * Don't use this function to draw your component.
          * That's for internal usage.
          * If you want to draw your component - call the function BaseComponent::tick
          */

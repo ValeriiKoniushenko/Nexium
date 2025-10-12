@@ -1,24 +1,26 @@
-// MIT License
-//
-// Copyright (c) 2018-2025 Valerii Koniushenko
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
+/*
+ * MIT License
+ *
+ * Copyright (c) 2018-2025 Valerii Koniushenko
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
 #pragma once
 
@@ -106,7 +108,7 @@ public:
 //
 //
 /**
- * @brief Use this macro inside your class body to declare new component.
+ * Use this macro inside your class body to declare new component.
  * @param ClassName only name of your class
  * @param BaseComponentClass put type of your parent here
  * @details It will register a component, and will be added new static field to your class
@@ -163,7 +165,7 @@ public:
 //
 /**
  * WARNING!!! Template ECS doesn't support any reflection due to type mangling by compiler!
- * @brief Use this macro inside your class body to declare new component.
+ * Use this macro inside your class body to declare new component.
  * @param ClassName only name of your class
  * @param BaseComponentClass put type of your parent here
  * @param ... all you template identifiers, separated with comma
@@ -257,7 +259,7 @@ namespace Core
 
     // ========================= CONCEPTS =========================
     /**
-     * @brief Concept to identify valid components.
+     * Concept to identify valid components.
      * A type satisfies IsComponent if it inherits from BaseComponent and provides:
      *   - a member function getComponentType()
      *   - a static member componentType
@@ -269,13 +271,13 @@ namespace Core
     };
 
     /**
-     * @brief Concept for either a BaseComponent-derived type or BaseComponent itself.
+     * Concept for either a BaseComponent-derived type or BaseComponent itself.
      */
     template<class T>
     concept IsComponentOrBase = IsComponent<T> || std::is_same_v<BaseComponent, T>;
 
     /**
-     * @brief Concept for either a BaseComponent-derived type or void.
+     * Concept for either a BaseComponent-derived type or void.
      * Useful for template functions where void indicates "no component".
      */
     template<class T>
@@ -291,7 +293,7 @@ namespace Core
     //                          | |                                               __/ |
     //                          |_|                                              |___/
     /**
-     * @brief Global factory for creating and registering components by type.
+     * Global factory for creating and registering components by type.
      * Manages mapping between component type names and factory functions.
      * Provides logging and debug tracking of component types in DEBUG mode.
      * Try to don't use by your own hands, it will register new component
@@ -303,14 +305,14 @@ namespace Core
 
     public:
         /**
-         * @brief Create a component by its registered type.
+         * Create a component by its registered type.
          * @param type The type identifier (StringAtom) of the component.
          * @return Pointer to a new BaseComponent instance, or nullptr if type not registered.
          */
         BaseComponent* create(const StringAtom& type);
 
         /**
-         * @brief Register a new component type in the factory.
+         * Register a new component type in the factory.
          * @param type The type identifier (StringAtom).
          * @param callback Function that creates instances of this type.
          * @return True if registration succeeds, false if type already exists.
@@ -323,7 +325,7 @@ namespace Core
         std::unordered_map<StringAtom, std::function<BaseComponent*()>> _map;
     };
 
-    /** @brief Shortcut to access the global component factory singleton. */
+    /** Shortcut to access the global component factory singleton. */
     inline GlobalComponentFactory& GetGlobalComponentFactory()
     {
         return GlobalComponentFactory::instance();
@@ -337,7 +339,7 @@ namespace Core
     //   | | | || |_) |\__ \| |_ | |   | (_| || (__ | |_  | \__/\ _
     //   \_| |_/|_.__/ |___/ \__||_|    \__,_| \___| \__|  \____/(_)
     /**
-     * @brief Abstract base class for all components.
+     * Abstract base class for all components.
      * Provides lifecycle hooks, ticking mechanism, and JSON serialization.
      */
     class AbstractComponent :
@@ -357,7 +359,7 @@ namespace Core
         ~AbstractComponent() override = default;
 
         /**
-         * @brief Call it in your main loop. After that if several conditions
+         * Call it in your main loop. After that if several conditions
          * will be matched(is initialized, is enabled, etc.) will be called
          * onTick. Inherit from onTick - and implement your own logic for
          * update and/or draw.
@@ -368,10 +370,10 @@ namespace Core
 
         [[nodiscard]] spdlog::logger* getLogger() const final { return Ecs::getLogger(); }
 
-        /** @brief Reset the component to uninitialized state. */
+        /** Reset the component to uninitialized state. */
         virtual void clear() { _isInitialized = false; }
 
-        /** @brief Safe cast to a derived component type. DEBUG_ASSERTs if cast fails. */
+        /** Safe cast to a derived component type. DEBUG_ASSERTs if cast fails. */
         template<IsComponent T>
         [[nodiscard]] T* castTo()
         {
@@ -380,7 +382,7 @@ namespace Core
             return casted;
         }
 
-        /** @brief Safe cast to a derived component type. DEBUG_ASSERTs if cast fails. */
+        /** Safe cast to a derived component type. DEBUG_ASSERTs if cast fails. */
         template<IsComponent T>
         [[nodiscard]] const T* castTo() const
         {
@@ -389,28 +391,28 @@ namespace Core
             return casted;
         }
 
-        /** @brief Unsafe & fast cast to a derived component type. */
+        /** Unsafe & fast cast to a derived component type. */
         template<IsComponent T>
         [[nodiscard]] T* unsafeCastTo() noexcept
         {
             return reinterpret_cast<std::remove_reference_t<T>*>(this);
         }
 
-        /** @brief Unsafe & fast cast to a derived component type. */
+        /** Unsafe & fast cast to a derived component type. */
         template<IsComponent T>
         [[nodiscard]] const T* unsafeCastTo() const noexcept
         {
             return reinterpret_cast<const std::remove_reference_t<T>*>(this);
         }
 
-        /** @brief Attempt to cast to a derived component type. Returns nullptr if cast fails. */
+        /** Attempt to cast to a derived component type. Returns nullptr if cast fails. */
         template<IsComponent T>
         [[nodiscard]] T* tryCastTo()
         {
             return dynamic_cast<std::remove_reference_t<T>*>(this);
         }
 
-        /** @brief Attempt to cast to a derived component type. Returns nullptr if cast fails. */
+        /** Attempt to cast to a derived component type. Returns nullptr if cast fails. */
         template<IsComponent T>
         [[nodiscard]] const T* tryCastTo() const
         {
@@ -425,7 +427,7 @@ namespace Core
         [[nodiscard]] bool getNoTick() const noexcept { return _noTick; }
 
         /**
-         * @brief Call this function directly only if you sure in it.
+         * Call this function directly only if you sure in it.
          * It should be called only once per one component.
          */
         virtual void initialize()
@@ -438,7 +440,7 @@ namespace Core
         }
 
         /**
-         * @brief Call this function if you want to this object was
+         * Call this function if you want to this object was
          * reinited later.
          */
         void invalidate() { _isInitialized = false; }
@@ -447,12 +449,12 @@ namespace Core
         AbstractComponent() = default;
 
         /**
-         * @brief This method will be called automatically. Don't call it directly.
+         * This method will be called automatically. Don't call it directly.
          */
         virtual void onInitialize() {}
 
         /**
-         * @brief This method will be called automatically. Don't call it directly.
+         * This method will be called automatically. Don't call it directly.
          */
         virtual void onTick(float delta) {}
 
@@ -473,7 +475,7 @@ namespace Core
     //   | |_/ /| (_| |\__ \|  __/| \__/\ _
     //   \____/  \__,_||___/ \___| \____/(_)
     /**
-     * @brief Base class for all your custom components.
+     * Base class for all your custom components.
      * To create your own component you should do only several things:
      * 1. Create your component's class. I.e. MyNewComponent and inherit from BaseComponent
      * 2. Register as component: inside your new class put a macros ECS_COMPONENT_DECL
@@ -587,7 +589,7 @@ namespace Core
         }
 
         /**
-         * @brief This method will be called automatically. Don't call it directly.
+         * This method will be called automatically. Don't call it directly.
          */
         void onTick(float delta) override;
 
@@ -661,7 +663,7 @@ namespace Core
         }
 
         /**
-         * @brief attach existing child or just new one. Your child will be cloned
+         * attach existing child or just new one. Your child will be cloned
          * to this class/owner
          */
         void attachChild(const BaseComponent::Ptr& child);
@@ -687,7 +689,7 @@ namespace Core
         // ========================== FOR EACHes ==========================
 
         /**
-         * @brief Iterate over every child and root recursively(BFS).
+         * Iterate over every child and root recursively(BFS).
          * Can take a functions of next types:
          * 1. bool([const] BaseComponent*) - this function will work until it gets 'false'
          * in return
@@ -702,7 +704,7 @@ namespace Core
         }
 
         /**
-         * @brief Iterate over every child and root recursively(BFS).
+         * Iterate over every child and root recursively(BFS).
          * Can take a functions of next types:
          * 1. bool(const BaseComponent*) - this function will work until it gets 'false'
          * in return
@@ -716,7 +718,7 @@ namespace Core
         }
 
         /**
-         * @brief Iterate over every child and root recursively(DFS).
+         * Iterate over every child and root recursively(DFS).
          * Can take a functions of next types:
          * 1. bool([const] BaseComponent*) - this function will work until it gets 'false'
          * in return
@@ -731,7 +733,7 @@ namespace Core
         }
 
         /**
-         * @brief Iterate over every child and root recursively(DFS).
+         * Iterate over every child and root recursively(DFS).
          * Can take a functions of next types:
          * 1. bool(const BaseComponent*) - this function will work until it gets 'false'
          * in return

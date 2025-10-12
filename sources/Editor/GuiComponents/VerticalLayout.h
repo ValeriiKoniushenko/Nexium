@@ -40,7 +40,7 @@ namespace Core::Gui
         [[nodiscard]] float getHeight() const override;
 
         /**
-         * @brief It will work only while Top/Bottom/Center for vert. align
+         * It will work only while Top/Bottom/Center for vert. align
          */
         void setSpacing(float value);
 

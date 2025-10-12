@@ -32,7 +32,7 @@
 namespace Core
 {
     /**
-     * @brief BaseEditorWindowComponent or briefly BaseEWC
+     * BaseEditorWindowComponent or briefly BaseEWC
      */
     class BaseEWC : public BaseComponent
     {
@@ -106,7 +106,7 @@ namespace Core
         [[nodiscard]] glm::vec2 getInnerPosition() const noexcept { return _innerPosition; }
 
         /**
-         * @brief will be called while the window's size changing
+         * will be called while the window's size changing
          * @param FSize2 new outer(full) size
          * @param FSize2 new inner size
          */

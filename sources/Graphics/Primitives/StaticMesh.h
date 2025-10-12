@@ -66,12 +66,12 @@ namespace Core
         [[nodiscard]] const StaticMeshBundle* tryToGetRootBundle() const;
 
         /**
-         * @brief will draw with the default shader & logic. Single draw object!
+         * will draw with the default shader & logic. Single draw object!
          */
         void draw();
 
         /**
-         * @brief only draw call with graphics modifiers - nothing more.
+         * only draw call with graphics modifiers - nothing more.
          * Before using of this function you must manually prepare the shader &
          * 'use' it.
          */

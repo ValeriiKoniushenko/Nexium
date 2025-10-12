@@ -35,7 +35,7 @@
 namespace Core
 {
     /**
-     * @brief Assets manager class to get/load/find/free some asset.
+     * Assets manager class to get/load/find/free some asset.
      * In general this class we must use to manage some assets. It stores & works
      * not directly with a file at the filesystem, but with some 'view' to this file
      * in the engine's context. I.e.:

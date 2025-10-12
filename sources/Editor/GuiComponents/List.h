@@ -87,7 +87,7 @@ namespace Core::Gui
 
     public:
         /**
-         * @brief Set your own data provider. Just a function that will do a few things:
+         * Set your own data provider. Just a function that will do a few things:
          * 1. Get index of element, that want to be processed(by you)
          * 2. Fill up second argument StringAtom with some string. It will be shown for user
          * 3. Return a pointer to your data. It will be used only by you in the future. If you want
@@ -97,7 +97,7 @@ namespace Core::Gui
         void setDataProvider(const std::function<void*(std::size_t, StringAtom&)>& callback);
 
         /**
-         * @brief Set your own data provider. Just a function that will do a few things:
+         * Set your own data provider. Just a function that will do a few things:
          * 1. Get index of element, that want to be processed(by you)
          * 2. Fill up second argument StringAtom with some string. It will be shown for user
          * 3. Return a pointer to your data. It will be used only by you in the future. If you want

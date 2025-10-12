@@ -105,7 +105,7 @@ namespace Core
         void setShader(ShaderProgram* sp, bool ignoreVertexAttribSetup = false);
 
         /**
-         * @brief loads & constructs from aiMesh GPU data.
+         * loads & constructs from aiMesh GPU data.
          * @param mesh from Assimp::Importer
          * @param isAppendNormals if it true - than it will append to every vertex data 'normals'
          * @param isAppendUV if it true - than it will append to every vertex data 'UV'
@@ -125,7 +125,7 @@ namespace Core
         }
 
         /**
-         * @brief direct draw if was set up vertex, index and optionally texture buffers.
+         * direct draw if was set up vertex, index and optionally texture buffers.
          * @details this function from the family of 'low-abstract' functionality.
          * It can give you the ability for fast setup & draw to the scene but without huge
          * or at least some small optimizations. Just hard-drawn in the old-school opengl

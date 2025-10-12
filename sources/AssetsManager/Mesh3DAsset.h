@@ -61,7 +61,7 @@ namespace Core
 
         [[nodiscard]] const char* getPrefix() const override { return "Mesh3D"; }
 
-        [[nodiscard]] StaticMeshBundle& getMesh() noexcept { return _mesh; }
+        [[nodiscard]] StaticMeshBundle& getData() noexcept { return _data; }
 
         [[nodiscard]] const std::filesystem::path& getPathToMode() const noexcept;
         [[nodiscard]] const StringAtom& getMainShader() const noexcept;
@@ -77,11 +77,13 @@ namespace Core
 
     protected:
         void ioFieldsUpdate(DataStream& stream) override;
+
+    private:
         [[nodiscard]] int readAssimpPostProcessFromCache(nlohmann::json& cache);
         [[nodiscard]] nlohmann::json assimpPostProcessToCache(int assimpFlags);
 
     protected:
-        StaticMeshBundle _mesh;
+        StaticMeshBundle _data;
 
         // properties
         std::filesystem::path _pathToModel;

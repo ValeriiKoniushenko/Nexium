@@ -83,7 +83,7 @@ namespace Core
 
     void Scene::addActor(NXMesh3D& mesh, bool readFromCache)
     {
-        addActor<StaticMeshBundle>(mesh->getMesh());
+        addActor<StaticMeshBundle>(mesh->getData());
         _assetsMesh3D.emplace_back(mesh);
     }
 

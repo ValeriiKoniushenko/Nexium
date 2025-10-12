@@ -139,7 +139,7 @@ namespace Core::Gui
 
     public: // Delegates
         /**
-         * @brief will be called when toggled
+         * will be called when toggled
          * @prarm bool true - if it becomes active; false - in another case
          */
         Delegate<void(bool)> onToggle;

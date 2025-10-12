@@ -35,7 +35,7 @@
 namespace Core
 {
     /**
-     * @brief Core editor class managing GUI windows and editor lifecycle.
+     * Core editor class managing GUI windows and editor lifecycle.
      *
      * Provides initialization, ticking, and management of editor windows.
      * Also handles font configuration and ImGui setup.
@@ -55,7 +55,7 @@ namespace Core
         void setIsEnabled(bool v) noexcept { _isEnabled = v; }
 
         /**
-         * @brief Register a new editor window of type T.
+         * Register a new editor window of type T.
          * Initializes it, optionally sets its name, and enables it.
          * @tparam T Type of the editor window component.
          * @param name Optional name for the window.
@@ -90,7 +90,7 @@ namespace Core
         }
 
         /**
-         * @brief Find a window by type and optional name regex.
+         * Find a window by type and optional name regex.
          * @tparam WindowT Type of window to search for (default is BaseEWC).
          * @param regexName Regular expression to match the window title.
          * @return Pointer to the first matching window or nullptr if none found.
@@ -119,7 +119,7 @@ namespace Core
         }
 
         /**
-         * @brief Show and enable a window matching the type and regex name.
+         * Show and enable a window matching the type and regex name.
          * Optionally, pass string arguments to the window.
          * @tparam WindowT Type of window to show (default is BaseEWC).
          * @param regexName Regular expression to match the window title.
@@ -135,7 +135,7 @@ namespace Core
         }
 
         /**
-         * @brief Totally destroy the object. Will call automatically at the destructor.
+         * Totally destroy the object. Will call automatically at the destructor.
          */
         void destroy();
 

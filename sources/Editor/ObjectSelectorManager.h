@@ -35,7 +35,7 @@ namespace Core
     class StaticMesh;
 
     /**
-     * @brief Use this class to select objects on the scene.
+     * Use this class to select objects on the scene.
      * @details mediator class to involve all needed functionality
      * after picking up some scene's object.
      */

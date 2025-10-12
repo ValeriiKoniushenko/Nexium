@@ -160,15 +160,15 @@ namespace Core
 
         if (DEBUG_ASSERT_VAL(scene) && DEBUG_ASSERT_VAL(scene->mRootNode))
         {
-            _mesh.importFrom(scene->mRootNode, scene, Config::Path::projectAbsPath / _pathToModel,
+            _data.importFrom(scene->mRootNode, scene, Config::Path::projectAbsPath / _pathToModel,
                              _scale);
             if (_mainShader && !_mainShader.isEmpty())
             {
-                _mesh.setShader(sm.getShaderProgram(_mainShader));
+                _data.setShader(sm.getShaderProgram(_mainShader));
             }
             if (_outlineShader && !_outlineShader.isEmpty())
             {
-                _mesh.setOutlineShader(sm.getShaderProgram(_outlineShader));
+                _data.setOutlineShader(sm.getShaderProgram(_outlineShader));
             }
             // gGameInstance->gameScene.addActor(std::move(mesh), true);
         }
@@ -176,7 +176,7 @@ namespace Core
 
     void Mesh3DAsset::onUnloadRequest()
     {
-        _mesh.clear();
+        _data.clear();
     }
 
     const std::filesystem::path& Mesh3DAsset::getPathToMode() const noexcept

@@ -80,7 +80,7 @@ namespace Core::Gui
     };
 
     /**
-     * @brief it provides a user-based GUI array.
+     * it provides a user-based GUI array.
      * @tparam T is your data to save inside this array and show the user.
      * @tparam ArrayCellViewerFunc pass a function of type Gui::HorizontalLayout::Ptr(const T&)
      * It should construct ready to use, filled HorizontalLayout as viewer of you data.

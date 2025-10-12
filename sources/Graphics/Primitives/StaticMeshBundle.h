@@ -45,12 +45,12 @@ namespace Core
         StaticMeshBundle& operator=(StaticMeshBundle&& other) = default;
 
         /**
-         * @brief will draw with the default shader & logic. Single draw bundle!
+         * will draw with the default shader & logic. Single draw bundle!
          */
         void draw() override;
 
         /**
-         * @brief only draw call with graphics modifiers - nothing more.
+         * only draw call with graphics modifiers - nothing more.
          * Before using of this function you must manually prepare the shader &
          * 'use' it.
          */
@@ -94,13 +94,13 @@ namespace Core
         }
 
         /**
-         * @brief It controls will be object selected by ObjectSelectorManager or no
+         * It controls will be object selected by ObjectSelectorManager or no
          * @return true - will be ignored; false - otherwise
          */
         [[nodiscard]] bool isIgnoreSelect() const noexcept { return _ignoreSelect; }
 
         /**
-         * @brief It controls will be object selected by ObjectSelectorManager or no
+         * It controls will be object selected by ObjectSelectorManager or no
          * @param value true - will be ignored; false - otherwise
          */
         void setIsIgnoreSelect(bool value) noexcept { _ignoreSelect = value; }
@@ -110,7 +110,7 @@ namespace Core
         void recalculateMatrices(const glm::mat4& mat = glm::mat4(1.f)) override;
 
         /**
-         * @brief This function will be called after a mouse click on this object.
+         * This function will be called after a mouse click on this object.
          */
         virtual void onMousePicked(StaticMesh* clickedPart) {}
 
