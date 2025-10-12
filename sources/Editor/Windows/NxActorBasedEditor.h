@@ -32,28 +32,46 @@
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
-#include "Graphics/Texture.h"
+#include "GameplaySystem/Framework/GameInstance.h"
 #include "NxEditorBaseEditor.h"
 
 namespace Core
 {
 
+    template<IsActorBased T>
     class NxActorBasedEditorEWC : public NxEditorBaseEditorEWC
     {
-        ECS_COMPONENT_DECL(NxActorBasedEditorEWC, NxEditorBaseEditorEWC);
+        ECS_TEMPLATE_COMPONENT_DECL(NxActorBasedEditorEWC, NxEditorBaseEditorEWC, T);
 
     public:
     protected:
-        void onInitialize() override;
-        void onDraw() override;
+        void onInitialize() override
+        {
+            NxEditorBaseEditorEWC::onInitialize();
 
-        void onDiscardChanges() override;
-        void onSave() override;
-        void onOpenFromPath(const std::filesystem::path& path) override;
+            constexpr float defaultLabelWidth = 140.0f;
+            constexpr float defaultModifierWidth = 300.0f;
+        }
+
+        void onDraw() override
+        {
+            NxEditorBaseEditorEWC::onDraw();
+
+            _actorLayout.tick(GetWorld().timeDelta);
+        }
+
+        void onDiscardChanges() override {}
+
+        void onOpenFromPath(const std::filesystem::path& path) override {}
+
+        void onSave() override {}
 
     protected:
         Gui::VerticalLayout _actorLayout;
 
-        // Actor* _targetActor = nullptr;
+        BaseActorAsset<T>* _targetActor = nullptr;
     };
+
+    ECS_TEMPLATE_COMPONENT_IMPL(NxActorBasedEditorEWC<T>, IsActorBased T);
+
 } // namespace Core

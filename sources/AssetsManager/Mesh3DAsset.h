@@ -47,6 +47,7 @@ namespace Core
     {
     public:
         inline static const char* fileExtension = ".nxmesh3d";
+        using ValueT = StaticMeshBundle;
 
     public:
         explicit Mesh3DAsset(const StringAtom& logicPath)

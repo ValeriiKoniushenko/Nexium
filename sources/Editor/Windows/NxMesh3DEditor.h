@@ -27,7 +27,6 @@
 #include "AssetsManager/Mesh3DAsset.h"
 #include "BaseWindow.h"
 #include "Editor/GuiComponents/Array.h"
-#include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/Combo.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
@@ -80,9 +79,9 @@ namespace Core
             })
     >;
 
-    class NxMesh3DEditorEWC : public NxActorBasedEditorEWC
+    class NxMesh3DEditorEWC : public NxActorBasedEditorEWC<NXMesh3D::AssetT::ValueT>
     {
-        ECS_COMPONENT_DECL(NxMesh3DEditorEWC, NxActorBasedEditorEWC);
+        ECS_COMPONENT_DECL(NxMesh3DEditorEWC, NxActorBasedEditorEWC<NXMesh3D::AssetT::ValueT>);
 
     public:
         [[nodiscard]] const char* getIcon() override { return ICON_FA_COG; }
