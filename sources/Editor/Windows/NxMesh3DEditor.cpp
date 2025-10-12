@@ -45,9 +45,7 @@ namespace Core
 
     void NxMesh3DEditorEWC::onInitialize()
     {
-        BaseFloatEWC::onInitialize();
-
-        _windowFlags |= ImGuiWindowFlags_MenuBar;
+        NxActorBasedEditorEWC::onInitialize();
 
         constexpr float defaultLabelWidth = 140.0f;
         constexpr float defaultModifierWidth = 300.0f;
@@ -164,70 +162,17 @@ namespace Core
 
     void NxMesh3DEditorEWC::onDraw()
     {
-        drawBarMenu();
+        NxActorBasedEditorEWC::onDraw();
 
         _layout.tick(GetWorld().timeDelta);
-
-        if (ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows))
-        {
-            bool const ctrl = ImGui::GetIO().KeyCtrl;
-            if (ctrl && ImGui::IsKeyPressed(ImGuiKey_S, false))
-            {
-                save();
-            }
-        }
-    }
-
-    void NxMesh3DEditorEWC::drawBarMenu()
-    {
-        if (ImGui::BeginMenuBar())
-        {
-            if (ImGui::BeginMenu("File"))
-            {
-                if (ImGui::MenuItem(ICON_FA_FILE_O " Open"))
-                {
-                    openFromFileSystem();
-                }
-                if (ImGui::MenuItem(ICON_FA_FLOPPY_O " Save"))
-                {
-                    save();
-                }
-                if (ImGui::MenuItem(ICON_FA_TIMES " Discard changes"))
-                {
-                    discardChanges();
-                }
-                ImGui::Separator();
-                if (ImGui::MenuItem(ICON_FA_POWER_OFF " Exit"))
-                {
-                    closeWindow();
-                }
-
-                ImGui::EndMenu();
-            }
-
-            if (!_filePath.empty())
-            {
-                std::string str = (_isModified ? "Modified" : "No changes");
-                str += " | ";
-                str += _filePath.generic_string();
-
-                ImGui::SameLine(ImGui::GetWindowWidth() - (ImGui::CalcTextSize(str.c_str()).x)
-                                - ImGui::GetStyle().ItemSpacing.x * 3.f);
-                ImGui::TextUnformatted(str.c_str());
-            }
-
-            ImGui::EndMenuBar();
-        }
     }
 
     void NxMesh3DEditorEWC::fetchFromAssetsManager()
     {
         if (!_targetAsset.isValid())
         {
-            setEnabledStatusForAllProps(false);
             return;
         }
-        setEnabledStatusForAllProps(true);
 
         _logicalPathInput->setInputtedData(_targetAsset->getLogicPath().toStdString());
         _modelInput->setInputtedData(_targetAsset->getPathToMode().generic_string());
@@ -251,67 +196,6 @@ namespace Core
         _isModified = false;
     }
 
-    void NxMesh3DEditorEWC::save()
-    {
-        if (!_targetAsset.isValid())
-        {
-            return;
-        }
-
-        _targetAsset->setPathToModel(_modelInput->getInputtedData().c_str());
-        _targetAsset->setMainShader(convertIndexToShaderName(_mainShaderCombo->getCurrentIndex()));
-        _targetAsset->setOutlineShader(
-            convertIndexToShaderName(_outlineShaderCombo->getCurrentIndex()));
-        _targetAsset->setOnLoadScale(_onLoadScale->getInputtedData());
-        _targetAsset->setAssimpPostProcessFlags(_postProcessFlags);
-        _targetAsset->writeToFile();
-
-        _isModified = false;
-    }
-
-    void NxMesh3DEditorEWC::openFromFileSystem()
-    {
-        openFromPath(AssetsManager::OpenFileSelectionDialog({ "*.nxmesh3d" }).toStdStringView());
-    }
-
-    void NxMesh3DEditorEWC::openFromPath(const std::filesystem::path& path)
-    {
-        if (path.empty())
-        {
-            return;
-        }
-
-        _filePath = path;
-        _targetAsset = GetAssetsManager().getMesh3D(StringAtom::Intern(path.generic_string()));
-        fetchFromAssetsManager();
-    }
-
-    void NxMesh3DEditorEWC::discardChanges()
-    {
-        if (!_filePath.empty())
-        {
-            _targetAsset
-                = GetAssetsManager().getMesh3D(StringAtom::Intern(_filePath.generic_string()));
-            fetchFromAssetsManager();
-        }
-    }
-
-    void NxMesh3DEditorEWC::putArguments(const StringAtom& args)
-    {
-        BaseFloatEWC::putArguments(args);
-        openFromPath(args.toStdStringView());
-    }
-
-    void NxMesh3DEditorEWC::setEnabledStatusForAllProps(bool isEnabled)
-    {
-        _logicalPathInput->disableWidget(!isEnabled);
-        _modelInput->disableWidget(!isEnabled);
-        _mainShaderCombo->disableWidget(!isEnabled);
-        _outlineShaderCombo->disableWidget(!isEnabled);
-        _onLoadScale->disableWidget(!isEnabled);
-        _postProcessArray->disableWidget(!isEnabled);
-    }
-
     std::size_t NxMesh3DEditorEWC::convertShaderNameToIndex(const StringAtom& shaderName) const
     {
         const auto it = GetShaderManager().getShaderMetas().find(shaderName);
@@ -324,6 +208,35 @@ namespace Core
         std::advance(it, index);
         DEBUG_ASSERT(it != GetShaderManager().getShaderMetas().end());
         return it->first;
+    }
+
+    void NxMesh3DEditorEWC::onDiscardChanges()
+    {
+        NxActorBasedEditorEWC::onDiscardChanges();
+
+        _targetAsset = GetAssetsManager().getMesh3D(StringAtom::Intern(_filePath.generic_string()));
+        // _targetActor = _targetAsset->;
+        fetchFromAssetsManager();
+    }
+
+    void NxMesh3DEditorEWC::onSave()
+    {
+        NxActorBasedEditorEWC::onSave();
+
+        _targetAsset->setPathToModel(_modelInput->getInputtedData().c_str());
+        _targetAsset->setMainShader(convertIndexToShaderName(_mainShaderCombo->getCurrentIndex()));
+        _targetAsset->setOutlineShader(
+            convertIndexToShaderName(_outlineShaderCombo->getCurrentIndex()));
+        _targetAsset->setOnLoadScale(_onLoadScale->getInputtedData());
+        _targetAsset->setAssimpPostProcessFlags(_postProcessFlags);
+        _targetAsset->writeToFile();
+    }
+
+    void NxMesh3DEditorEWC::onOpenFromPath(const std::filesystem::path& path)
+    {
+        NxActorBasedEditorEWC::onOpenFromPath(path);
+        _targetAsset = GetAssetsManager().getMesh3D(StringAtom::Intern(path.generic_string()));
+        fetchFromAssetsManager();
     }
 
 } // namespace Core

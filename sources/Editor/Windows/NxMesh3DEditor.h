@@ -33,6 +33,7 @@
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "Graphics/Texture.h"
+#include "NxActorBasedEditor.h"
 
 namespace Core
 {
@@ -79,28 +80,23 @@ namespace Core
             })
     >;
 
-    class NxMesh3DEditorEWC : public BaseFloatEWC
+    class NxMesh3DEditorEWC : public NxActorBasedEditorEWC
     {
-        ECS_COMPONENT_DECL(NxMesh3DEditorEWC, BaseFloatEWC);
+        ECS_COMPONENT_DECL(NxMesh3DEditorEWC, NxActorBasedEditorEWC);
 
     public:
         [[nodiscard]] const char* getIcon() override { return ICON_FA_COG; }
-
-        void save();
-        void openFromFileSystem();
-        void openFromPath(const std::filesystem::path& path);
-        void discardChanges();
-
-        void putArguments(const StringAtom& args) override;
 
     protected:
         void fetchFromAssetsManager();
         void onInitialize() override;
         void onDraw() override;
-        void drawBarMenu();
-        void setEnabledStatusForAllProps(bool isEnabled);
         [[nodiscard]] std::size_t convertShaderNameToIndex(const StringAtom& shaderName) const;
         [[nodiscard]] StringAtom convertIndexToShaderName(std::size_t index) const;
+
+        void onDiscardChanges() override;
+        void onSave() override;
+        void onOpenFromPath(const std::filesystem::path& path) override;
 
     protected:
         Gui::VerticalLayout _layout;
