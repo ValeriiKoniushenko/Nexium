@@ -123,12 +123,12 @@ namespace Core
         {
             auto* h = _layout.addChildComponent<HorizontalLayout>();
             h->setHorizontalAlign(Align::SpaceBetween);
-            h->addChildComponent<Label>("Scale")->setWidth(defaultLabelWidth);
-            _scaleInput = h->addChildComponent<FloatInput>();
-            _scaleInput->setWidth(defaultModifierWidth);
-            _scaleInput->setMin(0.0f);
-            _scaleInput->setStep(0.1f);
-            _scaleInput->onInput.subscribe(
+            h->addChildComponent<Label>("On load scale")->setWidth(defaultLabelWidth);
+            _onLoadScale = h->addChildComponent<FloatInput>();
+            _onLoadScale->setWidth(defaultModifierWidth);
+            _onLoadScale->setMin(0.0f);
+            _onLoadScale->setStep(0.1f);
+            _onLoadScale->onInput.subscribe(
                 [this](auto)
                 {
                     _isModified = true;
@@ -234,7 +234,7 @@ namespace Core
         _mainShaderCombo->setCurrentIndex(convertShaderNameToIndex(_targetAsset->getMainShader()));
         _outlineShaderCombo->setCurrentIndex(
             convertShaderNameToIndex(_targetAsset->getOutlineShader()));
-        _scaleInput->setInputtedData(_targetAsset->getScale());
+        _onLoadScale->setInputtedData(_targetAsset->getOnLoadScale());
 
         _postProcessFlags = _targetAsset->getAssimpPostProcessFlags();
         _postProcessArray->clearData();
@@ -262,7 +262,7 @@ namespace Core
         _targetAsset->setMainShader(convertIndexToShaderName(_mainShaderCombo->getCurrentIndex()));
         _targetAsset->setOutlineShader(
             convertIndexToShaderName(_outlineShaderCombo->getCurrentIndex()));
-        _targetAsset->setScale(_scaleInput->getInputtedData());
+        _targetAsset->setOnLoadScale(_onLoadScale->getInputtedData());
         _targetAsset->setAssimpPostProcessFlags(_postProcessFlags);
         _targetAsset->writeToFile();
 
@@ -308,7 +308,7 @@ namespace Core
         _modelInput->disableWidget(!isEnabled);
         _mainShaderCombo->disableWidget(!isEnabled);
         _outlineShaderCombo->disableWidget(!isEnabled);
-        _scaleInput->disableWidget(!isEnabled);
+        _onLoadScale->disableWidget(!isEnabled);
         _postProcessArray->disableWidget(!isEnabled);
     }
 

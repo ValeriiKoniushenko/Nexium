@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "BaseActorAsset.h"
 #include "BaseAsset.h"
 #include "Graphics/GraphicsComponents.h"
 #include "Graphics/Primitives/StaticMeshBundle.h"
@@ -42,14 +43,14 @@ namespace Assimp
 
 namespace Core
 {
-    class Mesh3DAsset : public BaseAsset
+    class Mesh3DAsset : public BaseActorAsset<StaticMeshBundle>
     {
     public:
         inline static const char* fileExtension = ".nxmesh3d";
 
     public:
         explicit Mesh3DAsset(const StringAtom& logicPath)
-            : BaseAsset(logicPath)
+            : BaseActorAsset(logicPath)
         {
         }
 
@@ -61,19 +62,17 @@ namespace Core
 
         [[nodiscard]] const char* getPrefix() const override { return "Mesh3D"; }
 
-        [[nodiscard]] StaticMeshBundle& getData() noexcept { return _data; }
-
         [[nodiscard]] const std::filesystem::path& getPathToMode() const noexcept;
         [[nodiscard]] const StringAtom& getMainShader() const noexcept;
         [[nodiscard]] const StringAtom& getOutlineShader() const noexcept;
-        [[nodiscard]] float getScale() const noexcept;
         [[nodiscard]] int getAssimpPostProcessFlags() const noexcept;
+        [[nodiscard]] float getOnLoadScale() const noexcept;
 
         void setPathToModel(const std::filesystem::path& value);
         void setMainShader(const StringAtom& value);
         void setOutlineShader(const StringAtom& value);
-        void setScale(float value);
         void setAssimpPostProcessFlags(int value);
+        void setOnLoadScale(float value);
 
     protected:
         void ioFieldsUpdate(DataStream& stream) override;
@@ -82,15 +81,12 @@ namespace Core
         [[nodiscard]] int readAssimpPostProcessFromCache(nlohmann::json& cache);
         [[nodiscard]] nlohmann::json assimpPostProcessToCache(int assimpFlags);
 
-    protected:
-        StaticMeshBundle _data;
-
-        // properties
+    protected: // properties
         std::filesystem::path _pathToModel;
         StringAtom _mainShader;
         StringAtom _outlineShader;
-        float _scale = 1.f;
         int _assimpPostProcess = 0;
+        float _onLoadScale = 1.f;
     };
 
     using NXMesh3D = AssetRef<Mesh3DAsset>;

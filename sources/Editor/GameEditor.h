@@ -158,15 +158,15 @@ namespace Core
         [[nodiscard]] bool needToDraw();
         void setupShortcuts();
 
+    private:
+        void handleMouseDrag(glm::vec2 delta, MouseInputAction::SpecKeysState state);
+        void handleMouseClick(glm::vec2 pos, MouseInputAction::SpecKeysState state);
+        void responseOnPick(StaticMesh* mesh);
+
     protected:
         std::vector<BaseEWC::Ptr> _windows;
         bool _isInitImGui = false;
         bool _isEnabled = true;
         bool _isRunSimulation = false;
-
-    private:
-        void handleMouseDrag(glm::vec2 delta, MouseInputAction::SpecKeysState state);
-        void handleMouseClick(glm::vec2 pos, MouseInputAction::SpecKeysState state);
-        void responseOnPick(StaticMesh* mesh);
     };
 } // namespace Core

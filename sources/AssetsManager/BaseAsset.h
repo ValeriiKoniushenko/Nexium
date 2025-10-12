@@ -72,6 +72,12 @@ namespace Core
     };
 
     template<class T>
+    concept IsAsset = requires(T) {
+        { T::fileExtension };
+        requires std::derived_from<T, BaseAsset>;
+    };
+
+    template<class T>
     class AssetRef
     {
     public:

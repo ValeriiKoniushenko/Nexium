@@ -2,7 +2,7 @@
   "path": "assets/objects-3d/Nature/MapleTree5.glb",
   "mainShader": "defaultTextured",
   "outlineShader": "outline",
-  "scale": 100.0,
+  "onLoadScale": 100.0,
   "assimpPostProcess": [
     "Triangulate",
     "JoinIdenticalVertices",

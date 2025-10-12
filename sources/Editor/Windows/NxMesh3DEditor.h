@@ -110,7 +110,7 @@ namespace Core
         Gui::TextInput* _modelInput = nullptr;
         Gui::ComboModelBased* _mainShaderCombo = nullptr;
         Gui::ComboModelBased* _outlineShaderCombo = nullptr;
-        Gui::FloatInput* _scaleInput = nullptr;
+        Gui::FloatInput* _onLoadScale = nullptr;
         AssimpPostProcessArray* _postProcessArray = nullptr;
         int _postProcessFlags = 0;
 

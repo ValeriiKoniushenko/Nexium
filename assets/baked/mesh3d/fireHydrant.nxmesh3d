@@ -4,8 +4,29 @@
         "Triangulate",
         "SortByPType"
     ],
+    "isPostDraw": false,
     "mainShader": "defaultTextured",
+    "onLoadScale": 1.0,
+    "origin": [
+        0.0,
+        0.0,
+        0.0
+    ],
     "outlineShader": "outline",
     "path": "/home/valerii/workspace/Nexium/assets/objects-3d/Models/FBX/FireHydrant.fbx",
-    "scale": 1.0
+    "position": [
+        0.0,
+        0.0,
+        0.0
+    ],
+    "rotation": [
+        0.0,
+        0.0,
+        0.0
+    ],
+    "scale": [
+        1.0,
+        1.0,
+        1.0
+    ]
 }

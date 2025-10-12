@@ -161,7 +161,7 @@ namespace Core
         if (DEBUG_ASSERT_VAL(scene) && DEBUG_ASSERT_VAL(scene->mRootNode))
         {
             _data.importFrom(scene->mRootNode, scene, Config::Path::projectAbsPath / _pathToModel,
-                             _scale);
+                             _onLoadScale);
             if (_mainShader && !_mainShader.isEmpty())
             {
                 _data.setShader(sm.getShaderProgram(_mainShader));
@@ -170,7 +170,8 @@ namespace Core
             {
                 _data.setOutlineShader(sm.getShaderProgram(_outlineShader));
             }
-            // gGameInstance->gameScene.addActor(std::move(mesh), true);
+
+            applyAssetSettingsToObject();
         }
     }
 
@@ -194,9 +195,9 @@ namespace Core
         return _outlineShader;
     }
 
-    float Mesh3DAsset::getScale() const noexcept
+    float Mesh3DAsset::getOnLoadScale() const noexcept
     {
-        return _scale;
+        return _onLoadScale;
     }
 
     int Mesh3DAsset::getAssimpPostProcessFlags() const noexcept
@@ -219,9 +220,9 @@ namespace Core
         _outlineShader = value;
     }
 
-    void Mesh3DAsset::setScale(float value)
+    void Mesh3DAsset::setOnLoadScale(float value)
     {
-        _scale = value;
+        _onLoadScale = value;
     }
 
     void Mesh3DAsset::setAssimpPostProcessFlags(int value)
@@ -231,6 +232,8 @@ namespace Core
 
     void Mesh3DAsset::ioFieldsUpdate(DataStream& stream)
     {
+        BaseActorAsset::ioFieldsUpdate(stream);
+
         stream.field("path", _pathToModel);
         stream.field("mainShader", _mainShader);
         if (stream.getMode() == DataStream::Mode::Input)
@@ -242,7 +245,7 @@ namespace Core
         {
             _outlineShader = StringAtom::Intern(_outlineShader);
         }
-        stream.field("scale", _scale);
+        stream.field("onLoadScale", _onLoadScale);
         stream.field(
             "assimpPostProcess", _assimpPostProcess,
             [this](int& out, nlohmann::json& s)
