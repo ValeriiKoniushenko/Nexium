@@ -36,7 +36,7 @@ namespace Core::Gui
         ECS_TEMPLATE_COMPONENT_DECL_NO_CNSTR(LabelRow, HorizontalLayout, T);
 
     public:
-        explicit LabelRow(StringAtom labelText, Align hAlign = Align::SpaceBetween)
+        explicit LabelRow(StringAtom labelText = ""_atom, Align hAlign = Align::SpaceBetween)
             : HorizontalLayout(componentType, labelText)
         {
             label = addChildComponent<Label>();
