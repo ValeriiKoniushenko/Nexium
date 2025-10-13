@@ -48,7 +48,7 @@ namespace Core
         NxActorBasedEditorEWC::onInitialize();
 
         constexpr float defaultLabelWidth = 140.0f;
-        constexpr float defaultModifierWidth = 300.0f;
+        constexpr float defaultModifierWidth = 340.0f;
 
         auto shaderDataProvider = [](std::size_t inputIndex, StringAtom& out) -> const void*
         {
@@ -154,7 +154,10 @@ namespace Core
     {
         NxActorBasedEditorEWC::onDraw();
 
-        _layout.tick(GetWorld().timeDelta);
+        if (Gui::CollapsingHeader("Mesh3D properties", ImGuiTreeNodeFlags_DefaultOpen))
+        {
+            _layout.tick(GetWorld().timeDelta);
+        }
     }
 
     void NxMesh3DEditorEWC::updateGuiBasedOnAsset()

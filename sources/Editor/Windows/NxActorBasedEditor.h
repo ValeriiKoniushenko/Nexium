@@ -33,7 +33,9 @@
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/LabelRow.h"
+#include "Editor/GuiComponents/Misc.h"
 #include "Editor/GuiComponents/Separator.h"
+#include "Editor/GuiComponents/VecInput.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "NxEditorBaseEditor.h"
@@ -52,30 +54,53 @@ namespace Core
         {
             NxEditorBaseEditorEWC::onInitialize();
 
-            constexpr float defaultLabelWidth = 140.0f;
-            constexpr float defaultModifierWidth = 300.0f;
+            constexpr float labelWidth = 140.0f;
+            constexpr float inputWidth = 340.0f;
 
             using namespace Gui;
 
             {
-                _logicalPath = _actorLayout.addChildComponent<LabelRow<TextInput>>(
-                    "Logical path", defaultLabelWidth);
+                _logicalPath = _mainActorLayout.addChildComponent<LabelRow<TextInput>>(
+                    "Logical path", labelWidth);
                 _logicalPath->input->setFlex(Flex::FlexWidth);
                 _logicalPath->input->setReadOnly(true);
             }
 
-            _actorLayout.addChildComponent<Separator>();
+            _actorPostDraw
+                = _subActorLayout.addChildComponent<LabelRow<CheckBox>>("Post draw", labelWidth);
 
-            {
-                _actorLayout.addChildComponent<LabelRow<CheckBox>>("Post draw", defaultLabelWidth);
-            }
+            _actorPosition
+                = _subActorLayout.addChildComponent<LabelRow<Float3Input>>("Position", labelWidth);
+            _actorPosition->input->setWidth(inputWidth);
+            _actorPosition->input->setFlex(Flex::Fixed);
+
+            _actorRotation
+                = _subActorLayout.addChildComponent<LabelRow<Float3Input>>("Rotation", labelWidth);
+            _actorRotation->input->setWidth(inputWidth);
+            _actorRotation->input->setFlex(Flex::Fixed);
+
+            _actorScale
+                = _subActorLayout.addChildComponent<LabelRow<Float3Input>>("Scale", labelWidth);
+            _actorScale->input->setWidth(inputWidth);
+            _actorScale->input->setFlex(Flex::Fixed);
+
+            _actorOrigin
+                = _subActorLayout.addChildComponent<LabelRow<Float3Input>>("Origin", labelWidth);
+            _actorOrigin->input->setWidth(inputWidth);
+            _actorOrigin->input->setFlex(Flex::Fixed);
         }
 
         void onDraw() override
         {
             NxEditorBaseEditorEWC::onDraw();
 
-            _actorLayout.tick(GetWorld().timeDelta);
+            const auto dt = GetWorld().timeDelta;
+            _mainActorLayout.tick(dt);
+
+            if (Gui::CollapsingHeader("Actor properties", ImGuiTreeNodeFlags_DefaultOpen))
+            {
+                _subActorLayout.tick(dt);
+            }
         }
 
         void onDiscardChanges() override {}
@@ -93,9 +118,15 @@ namespace Core
         }
 
     protected:
-        Gui::VerticalLayout _actorLayout;
+        Gui::VerticalLayout _mainActorLayout;
+        Gui::VerticalLayout _subActorLayout;
 
         Gui::LabelRow<Gui::TextInput>* _logicalPath = nullptr;
+        Gui::LabelRow<Gui::CheckBox>* _actorPostDraw = nullptr;
+        Gui::LabelRow<Gui::Float3Input>* _actorPosition = nullptr;
+        Gui::LabelRow<Gui::Float3Input>* _actorRotation = nullptr;
+        Gui::LabelRow<Gui::Float3Input>* _actorScale = nullptr;
+        Gui::LabelRow<Gui::Float3Input>* _actorOrigin = nullptr;
 
         BaseActorAsset<T>* _targetActor = nullptr;
     };
