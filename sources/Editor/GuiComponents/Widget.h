@@ -149,6 +149,10 @@ namespace Core::Gui
         bool _isDrawOutline = false;
         bool _isDisabledWidget = false;
     };
+
+    template<class T>
+    concept IsWidget = std::derived_from<T, Widget>;
+
 } // namespace Core::Gui
 
 namespace ImGui

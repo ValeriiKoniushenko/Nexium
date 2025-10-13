@@ -28,9 +28,11 @@
 #include "BaseWindow.h"
 #include "Editor/GuiComponents/Array.h"
 #include "Editor/GuiComponents/Button.h"
+#include "Editor/GuiComponents/CheckBox.h"
 #include "Editor/GuiComponents/Combo.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
+#include "Editor/GuiComponents/LabelRow.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "NxEditorBaseEditor.h"
@@ -51,6 +53,12 @@ namespace Core
 
             constexpr float defaultLabelWidth = 140.0f;
             constexpr float defaultModifierWidth = 300.0f;
+
+            using namespace Gui;
+
+            {
+                _actorLayout.addChildComponent<LabelRow<CheckBox>>("Post draw");
+            }
         }
 
         void onDraw() override
@@ -61,8 +69,6 @@ namespace Core
         }
 
         void onDiscardChanges() override {}
-
-        void onOpenFromPath(const std::filesystem::path& path) override {}
 
         void onSave() override {}
 

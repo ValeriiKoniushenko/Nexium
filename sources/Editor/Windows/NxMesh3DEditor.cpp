@@ -234,8 +234,8 @@ namespace Core
 
     void NxMesh3DEditorEWC::onOpenFromPath(const std::filesystem::path& path)
     {
-        NxActorBasedEditorEWC::onOpenFromPath(path);
         _targetAsset = GetAssetsManager().getMesh3D(StringAtom::Intern(path.generic_string()));
+        _targetActor = _targetAsset.get();
         fetchFromAssetsManager();
     }
 
