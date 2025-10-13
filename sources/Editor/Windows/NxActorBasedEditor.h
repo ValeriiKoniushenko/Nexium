@@ -25,16 +25,11 @@
 #pragma once
 
 #include "AssetsManager/Mesh3DAsset.h"
-#include "BaseWindow.h"
-#include "Editor/GuiComponents/Array.h"
-#include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/CheckBox.h"
-#include "Editor/GuiComponents/Combo.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/LabelRow.h"
 #include "Editor/GuiComponents/Misc.h"
-#include "Editor/GuiComponents/Separator.h"
 #include "Editor/GuiComponents/VecInput.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "GameplaySystem/Framework/GameInstance.h"
