@@ -33,6 +33,7 @@
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/LabelRow.h"
+#include "Editor/GuiComponents/Separator.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "NxEditorBaseEditor.h"
@@ -57,7 +58,16 @@ namespace Core
             using namespace Gui;
 
             {
-                _actorLayout.addChildComponent<LabelRow<CheckBox>>("Post draw");
+                _logicalPath = _actorLayout.addChildComponent<LabelRow<TextInput>>(
+                    "Logical path", defaultLabelWidth);
+                _logicalPath->input->setFlex(Flex::FlexWidth);
+                _logicalPath->input->setReadOnly(true);
+            }
+
+            _actorLayout.addChildComponent<Separator>();
+
+            {
+                _actorLayout.addChildComponent<LabelRow<CheckBox>>("Post draw", defaultLabelWidth);
             }
         }
 
@@ -72,8 +82,20 @@ namespace Core
 
         void onSave() override {}
 
+        virtual void updateGuiBasedOnAsset()
+        {
+            if (!_targetActor)
+            {
+                return;
+            }
+
+            _logicalPath->input->setInputtedData(_targetActor->getLogicPath().toStdString());
+        }
+
     protected:
         Gui::VerticalLayout _actorLayout;
+
+        Gui::LabelRow<Gui::TextInput>* _logicalPath = nullptr;
 
         BaseActorAsset<T>* _targetActor = nullptr;
     };

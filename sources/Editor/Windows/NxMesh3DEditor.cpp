@@ -70,16 +70,6 @@ namespace Core
 
         {
             auto* h = _layout.addChildComponent<HorizontalLayout>();
-            h->addChildComponent<Label>("Logical path")->setWidth(defaultLabelWidth);
-            _logicalPathInput = h->addChildComponent<TextInput>();
-            _logicalPathInput->setFlex(Flex::FlexWidth);
-            _logicalPathInput->setReadOnly(true);
-        }
-
-        _layout.addChildComponent<Separator>();
-
-        {
-            auto* h = _layout.addChildComponent<HorizontalLayout>();
             h->addChildComponent<Label>("Model path")->setWidth(defaultLabelWidth);
             _modelInput = h->addChildComponent<TextInput>();
             _modelInput->setFlex(Flex::FlexWidth);
@@ -157,7 +147,7 @@ namespace Core
                 });
         }
 
-        fetchFromAssetsManager();
+        updateGuiBasedOnAsset();
     }
 
     void NxMesh3DEditorEWC::onDraw()
@@ -167,14 +157,15 @@ namespace Core
         _layout.tick(GetWorld().timeDelta);
     }
 
-    void NxMesh3DEditorEWC::fetchFromAssetsManager()
+    void NxMesh3DEditorEWC::updateGuiBasedOnAsset()
     {
         if (!_targetAsset.isValid())
         {
             return;
         }
 
-        _logicalPathInput->setInputtedData(_targetAsset->getLogicPath().toStdString());
+        NxActorBasedEditorEWC::updateGuiBasedOnAsset();
+
         _modelInput->setInputtedData(_targetAsset->getPathToMode().generic_string());
         _mainShaderCombo->setCurrentIndex(convertShaderNameToIndex(_targetAsset->getMainShader()));
         _outlineShaderCombo->setCurrentIndex(
@@ -216,7 +207,7 @@ namespace Core
 
         _targetAsset = GetAssetsManager().getMesh3D(StringAtom::Intern(_filePath.generic_string()));
         // _targetActor = _targetAsset->;
-        fetchFromAssetsManager();
+        updateGuiBasedOnAsset();
     }
 
     void NxMesh3DEditorEWC::onSave()
@@ -236,7 +227,7 @@ namespace Core
     {
         _targetAsset = GetAssetsManager().getMesh3D(StringAtom::Intern(path.generic_string()));
         _targetActor = _targetAsset.get();
-        fetchFromAssetsManager();
+        updateGuiBasedOnAsset();
     }
 
 } // namespace Core

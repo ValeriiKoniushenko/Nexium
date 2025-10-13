@@ -87,7 +87,7 @@ namespace Core
         [[nodiscard]] const char* getIcon() override { return ICON_FA_COG; }
 
     protected:
-        void fetchFromAssetsManager();
+        void updateGuiBasedOnAsset() override;
         void onInitialize() override;
         void onDraw() override;
         [[nodiscard]] std::size_t convertShaderNameToIndex(const StringAtom& shaderName) const;
@@ -101,7 +101,6 @@ namespace Core
         Gui::VerticalLayout _layout;
         std::filesystem::path _filePath;
 
-        Gui::TextInput* _logicalPathInput = nullptr;
         Gui::TextInput* _modelInput = nullptr;
         Gui::ComboModelBased* _mainShaderCombo = nullptr;
         Gui::ComboModelBased* _outlineShaderCombo = nullptr;
