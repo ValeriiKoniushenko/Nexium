@@ -25,6 +25,7 @@
 #include "StaticMeshBundle.h"
 
 #include "../../Misc/Configs.h"
+#include "Editor/Gizmo.h"
 #include "Graphics/Image.h"
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
@@ -335,15 +336,7 @@ namespace Core
 
         for (auto&& comp : _children)
         {
-            if (auto* bundle = dynamic_cast<StaticMeshBundle*>(comp.get()))
-            {
-                bundle->recalculateMatrices(_cachedModelMatrix);
-            }
-            else if (auto* mesh = dynamic_cast<StaticMesh*>(comp.get()))
-            {
-                mesh->recalculateMatrices(_cachedModelMatrix);
-            }
-            else if (auto* trans = dynamic_cast<Transformable*>(comp.get()))
+            if (auto* trans = dynamic_cast<Transformable*>(comp.get()))
             {
                 trans->recalculateMatrices(_cachedModelMatrix);
             }

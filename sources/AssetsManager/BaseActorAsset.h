@@ -87,14 +87,14 @@ namespace Core
     protected:
         T _data;
 
-        // Actor's properties
-        bool _isPostDraw = false;
-
         // Transformable's properties
         glm::vec3 _scale{};
         glm::vec3 _origin{};
         GPos3 _position{};
         glm::vec3 _rotation{};
+
+        // Actor's properties
+        bool _isPostDraw = false;
     };
 
 } // namespace Core

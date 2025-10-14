@@ -54,12 +54,10 @@ namespace Core
 
             using namespace Gui;
 
-            {
-                _logicalPath = _mainActorLayout.addChildComponent<LabelRow<TextInput>>(
-                    "Logical path", labelWidth);
-                _logicalPath->input->setFlex(Flex::FlexWidth);
-                _logicalPath->input->setReadOnly(true);
-            }
+            _logicalPath = _mainActorLayout.addChildComponent<LabelRow<TextInput>>("Logical path",
+                                                                                   labelWidth);
+            _logicalPath->input->setFlex(Flex::FlexWidth);
+            _logicalPath->input->setReadOnly(true);
 
             _actorPostDraw
                 = _subActorLayout.addChildComponent<LabelRow<CheckBox>>("Post draw", labelWidth);
@@ -100,7 +98,19 @@ namespace Core
 
         void onDiscardChanges() override {}
 
-        void onSave() override {}
+        void onSave() override
+        {
+            if (!_targetActor)
+            {
+                return;
+            }
+
+            _targetActor->setIsPostDraw(_actorPostDraw->input->getValue());
+            _targetActor->setPosition(GPos3(_actorPosition->input->getInputtedData()));
+            _targetActor->setRotation(_actorRotation->input->getInputtedData());
+            _targetActor->setScale(_actorScale->input->getInputtedData());
+            _targetActor->setOrigin(_actorOrigin->input->getInputtedData());
+        }
 
         virtual void updateGuiBasedOnAsset()
         {
@@ -110,6 +120,11 @@ namespace Core
             }
 
             _logicalPath->input->setInputtedData(_targetActor->getLogicPath().toStdString());
+            _actorPostDraw->input->setValue(_targetActor->isPostDraw());
+            _actorPosition->input->setInputtedData(_targetActor->getPosition());
+            _actorRotation->input->setInputtedData(_targetActor->getRotation());
+            _actorScale->input->setInputtedData(_targetActor->getScale());
+            _actorOrigin->input->setInputtedData(_targetActor->getOrigin());
         }
 
     protected:

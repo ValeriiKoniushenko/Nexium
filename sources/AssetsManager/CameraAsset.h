@@ -42,15 +42,13 @@ namespace Core
 
         ~CameraAsset() override = default;
 
-        void onLoadRequest() override;
-
-        void onUnloadRequest() override;
-
         [[nodiscard]] const char* getPrefix() const override { return "Camera"; }
 
         [[nodiscard]] BaseCamera& getData() noexcept { return _data; }
 
     protected:
+        void onLoadRequest() override;
+        void onUnloadRequest() override;
         void ioFieldsUpdate(DataStream& stream) override;
 
     protected:

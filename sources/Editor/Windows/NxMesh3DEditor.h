@@ -99,7 +99,6 @@ namespace Core
 
     protected:
         Gui::VerticalLayout _layout;
-        std::filesystem::path _filePath;
 
         Gui::TextInput* _modelInput = nullptr;
         Gui::ComboModelBased* _mainShaderCombo = nullptr;
@@ -107,8 +106,6 @@ namespace Core
         Gui::FloatInput* _onLoadScale = nullptr;
         AssimpPostProcessArray* _postProcessArray = nullptr;
         int _postProcessFlags = 0;
-
-        bool _isModified = false;
 
         NXMesh3D _targetAsset;
     };

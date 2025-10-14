@@ -55,13 +55,11 @@ namespace Core
 
         ~SkyboxAsset() override = default;
 
-        void onLoadRequest() override;
-
-        void onUnloadRequest() override;
-
         [[nodiscard]] const char* getPrefix() const override { return "Skybox"; }
 
     protected:
+        void onLoadRequest() override;
+        void onUnloadRequest() override;
         void ioFieldsUpdate(DataStream& stream) override;
 
     protected:

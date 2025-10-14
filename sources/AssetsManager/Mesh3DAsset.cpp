@@ -180,6 +180,12 @@ namespace Core
         _data.clear();
     }
 
+    bool Mesh3DAsset::onHotReload()
+    {
+        applyAssetSettingsToObject();
+        return true;
+    }
+
     const std::filesystem::path& Mesh3DAsset::getPathToMode() const noexcept
     {
         return _pathToModel;

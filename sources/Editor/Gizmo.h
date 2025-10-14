@@ -73,6 +73,8 @@ namespace Core
 
         void handleDrag();
 
+        void recalculateMatrices(const glm::mat4& mat) override;
+
     private:
         std::optional<glm::vec3> _lastRay;
     };

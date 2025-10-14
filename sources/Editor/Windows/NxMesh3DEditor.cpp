@@ -47,6 +47,8 @@ namespace Core
     {
         NxActorBasedEditorEWC::onInitialize();
 
+        _fileFilters.emplace("*.nxmesh3d");
+
         constexpr float defaultLabelWidth = 140.0f;
         constexpr float defaultModifierWidth = 340.0f;
 
@@ -76,7 +78,7 @@ namespace Core
             _modelInput->onInput.subscribe(
                 [this](auto)
                 {
-                    _isModified = true;
+                    makeDirty();
                 });
         }
 
@@ -91,7 +93,7 @@ namespace Core
             _mainShaderCombo->onSelect.subscribe(
                 [this](auto)
                 {
-                    _isModified = true;
+                    makeDirty();
                 });
         }
         {
@@ -105,7 +107,7 @@ namespace Core
             _outlineShaderCombo->onSelect.subscribe(
                 [this](auto)
                 {
-                    _isModified = true;
+                    makeDirty();
                 });
         }
         {
@@ -119,7 +121,7 @@ namespace Core
             _onLoadScale->onInput.subscribe(
                 [this](auto)
                 {
-                    _isModified = true;
+                    makeDirty();
                 });
         }
 
@@ -134,7 +136,7 @@ namespace Core
             _postProcessArray->onChange.subscribe(
                 [this]()
                 {
-                    _isModified = true;
+                    makeDirty();
                 });
             _postProcessArray->onSave.subscribe(
                 [this](const std::vector<aiPostProcessSteps>& data)
@@ -162,12 +164,12 @@ namespace Core
 
     void NxMesh3DEditorEWC::updateGuiBasedOnAsset()
     {
+        NxActorBasedEditorEWC::updateGuiBasedOnAsset();
+
         if (!_targetAsset.isValid())
         {
             return;
         }
-
-        NxActorBasedEditorEWC::updateGuiBasedOnAsset();
 
         _modelInput->setInputtedData(_targetAsset->getPathToMode().generic_string());
         _mainShaderCombo->setCurrentIndex(convertShaderNameToIndex(_targetAsset->getMainShader()));
@@ -186,8 +188,6 @@ namespace Core
                 _postProcessArray->add(flag);
             }
         }
-
-        _isModified = false;
     }
 
     std::size_t NxMesh3DEditorEWC::convertShaderNameToIndex(const StringAtom& shaderName) const
@@ -208,14 +208,20 @@ namespace Core
     {
         NxActorBasedEditorEWC::onDiscardChanges();
 
-        _targetAsset = GetAssetsManager().getMesh3D(StringAtom::Intern(_filePath.generic_string()));
-        // _targetActor = _targetAsset->;
+        _targetAsset
+            = GetAssetsManager().getMesh3D(StringAtom::Intern(_assetFilePath.generic_string()));
+        _targetActor = _targetAsset.get();
         updateGuiBasedOnAsset();
     }
 
     void NxMesh3DEditorEWC::onSave()
     {
         NxActorBasedEditorEWC::onSave();
+
+        if (!_targetAsset.isValid())
+        {
+            return;
+        }
 
         _targetAsset->setPathToModel(_modelInput->getInputtedData().c_str());
         _targetAsset->setMainShader(convertIndexToShaderName(_mainShaderCombo->getCurrentIndex()));
@@ -224,6 +230,8 @@ namespace Core
         _targetAsset->setOnLoadScale(_onLoadScale->getInputtedData());
         _targetAsset->setAssimpPostProcessFlags(_postProcessFlags);
         _targetAsset->writeToFile();
+
+        _targetAsset->makeHotReload();
     }
 
     void NxMesh3DEditorEWC::onOpenFromPath(const std::filesystem::path& path)

@@ -48,8 +48,9 @@ namespace Core
 
         [[nodiscard]] const StringAtom& getLogicPath() const { return _logicPath; }
 
-        virtual void onLoadRequest() = 0;
-        virtual void onUnloadRequest() = 0;
+        void loadRequest();
+        void unloadRequest();
+        void makeHotReload();
 
         void attachAndReadFromFile(const std::filesystem::path& path);
         void writeToFile();
@@ -60,6 +61,13 @@ namespace Core
         }
 
     protected:
+        virtual void onLoadRequest() = 0;
+        virtual void onUnloadRequest() = 0;
+
+        /**
+         * @return true if you support hot reload. By default - false
+         */
+        virtual bool onHotReload() { return false; }
         virtual void ioFieldsUpdate(DataStream& stream) = 0;
 
     protected:
@@ -154,7 +162,7 @@ namespace Core
             // load it.
             if (_asset && ++_asset->_refCount == 2)
             {
-                _asset->onLoadRequest();
+                _asset->loadRequest();
             }
         }
 
@@ -171,7 +179,7 @@ namespace Core
                 // but with reverse logic.
                 if (_asset->_refCount == 1)
                 {
-                    _asset->onUnloadRequest();
+                    _asset->unloadRequest();
                 }
 
                 if (_asset->_refCount == 0)

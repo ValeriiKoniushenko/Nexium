@@ -57,10 +57,6 @@ namespace Core
 
         ~Mesh3DAsset() override = default;
 
-        void onLoadRequest() override;
-
-        void onUnloadRequest() override;
-
         [[nodiscard]] const char* getPrefix() const override { return "Mesh3D"; }
 
         [[nodiscard]] const std::filesystem::path& getPathToMode() const noexcept;
@@ -77,6 +73,9 @@ namespace Core
 
     protected:
         void ioFieldsUpdate(DataStream& stream) override;
+        void onLoadRequest() override;
+        void onUnloadRequest() override;
+        bool onHotReload() override;
 
     private:
         [[nodiscard]] int readAssimpPostProcessFromCache(nlohmann::json& cache);

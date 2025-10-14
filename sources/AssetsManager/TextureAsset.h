@@ -42,16 +42,14 @@ namespace Core
 
         ~TextureAsset() override = default;
 
-        void onLoadRequest() override;
-
-        void onUnloadRequest() override;
-
         [[nodiscard]] const Texture& getData() const noexcept { return _data; }
         [[nodiscard]] Texture& getData() noexcept { return _data; }
 
         [[nodiscard]] const char* getPrefix() const override { return "Texture"; }
 
     protected:
+        void onLoadRequest() override;
+        void onUnloadRequest() override;
         void ioFieldsUpdate(DataStream& stream) override;
 
     protected:

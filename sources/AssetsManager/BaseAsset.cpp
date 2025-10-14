@@ -32,6 +32,31 @@
 namespace Core
 {
 
+    void BaseAsset::loadRequest()
+    {
+        traceLog("Loading of: {}"_f << _assetPath.string());
+        onLoadRequest();
+    }
+
+    void BaseAsset::unloadRequest()
+    {
+        traceLog("Unloading of: {}"_f << _assetPath.string());
+        onUnloadRequest();
+    }
+
+    void BaseAsset::makeHotReload()
+    {
+        traceLog("Hot reload for: {}"_f << _assetPath.string());
+        if (onHotReload())
+        {
+            infoLog("Successfull hot reload for: {}"_f << _assetPath.string());
+        }
+        else
+        {
+            warnLog("This asset doesn't support hot-reload: {}"_f << _assetPath.string());
+        }
+    }
+
     void BaseAsset::attachAndReadFromFile(const std::filesystem::path& path)
     {
         _assetPath = path;
