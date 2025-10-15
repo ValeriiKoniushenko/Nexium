@@ -26,7 +26,6 @@
 
 #include "BaseActorAsset.h"
 #include "BaseAsset.h"
-#include "Graphics/GraphicsComponents.h"
 #include "Graphics/Primitives/StaticMeshBundle.h"
 #include "Graphics/Texture.h"
 #include "assimp/postprocess.h"

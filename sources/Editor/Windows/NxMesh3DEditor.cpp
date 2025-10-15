@@ -47,7 +47,7 @@ namespace Core
     {
         NxActorBasedEditorEWC::onInitialize();
 
-        _fileFilters.emplace("*.nxmesh3d");
+        _fileFilters.emplace(std::string("*") + NXMesh3D::AssetT::fileExtension);
 
         constexpr float defaultLabelWidth = 140.0f;
         constexpr float defaultModifierWidth = 340.0f;

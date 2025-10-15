@@ -24,31 +24,31 @@
 
 #pragma once
 
-#include "GameplaySystem/Framework/Actor.h"
-#include "InputDevices/InputManager.h"
+#include "Editor/GuiComponents/Input.h"
+#include "Editor/GuiComponents/LabelRow.h"
+#include "Graphics/Texture.h"
+#include "NxActorBasedEditor.h"
 
 namespace Core
 {
-    class Spectator : public Actor
+
+    class NxTextureEditorEWC : public NxEditorBaseEditorEWC
     {
-        ECS_COMPONENT_DECL(Spectator, Actor);
+        ECS_COMPONENT_DECL(NxTextureEditorEWC, NxEditorBaseEditorEWC);
 
     public:
-        // TODO: Move it to Controller
-        float speed = 600.f;
-        float mouseSensitivity = 0.5f;
-
-        KeyboardInputManger keyboardInput;
-        MouseInputManger mouseInput;
-
-    public:
-        void ioFieldsUpdate(DataStream& stream) override;
+        [[nodiscard]] const char* getIcon() override { return ICON_FA_COG; }
 
     protected:
-        [[nodiscard]] StringAtom getCacheHash() const override;
-
-        void onTick(float delta) override;
-
         void onInitialize() override;
+        void onDraw() override;
+        void onDiscardChanges() override;
+        void onSave() override;
+        void onOpenFromPath(const std::filesystem::path& path) override;
+
+    protected:
+        Gui::VerticalLayout _layout;
+
+        NXTexture _targetAsset;
     };
 } // namespace Core
