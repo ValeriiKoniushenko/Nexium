@@ -42,7 +42,7 @@ namespace Core
     protected:
         void updateGuiBasedOnAsset() override;
         void onInitialize() override;
-        void onDraw() override;
+        void onDrawProperties() override;
         void onDiscardChanges() override;
         void onSave() override;
         void onOpenFromPath(const std::filesystem::path& path) override;

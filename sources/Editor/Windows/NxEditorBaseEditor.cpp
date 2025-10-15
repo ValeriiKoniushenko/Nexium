@@ -109,6 +109,13 @@ namespace Core
     {
         drawMenuBar();
 
+        if (ImGui::BeginChild("Properties",
+                              glm::vec2(_enablePreview ? _defaultPropertiesWidth : 0, 0), 0))
+        {
+            onDrawProperties();
+        }
+        ImGui::EndChild();
+
         if (ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows))
         {
             bool const ctrl = ImGui::GetIO().KeyCtrl;

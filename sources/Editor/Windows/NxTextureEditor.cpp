@@ -72,10 +72,8 @@ namespace Core
         updateGuiBasedOnAsset();
     }
 
-    void NxTextureEditorEWC::onDraw()
+    void NxTextureEditorEWC::onDrawProperties()
     {
-        NxEditorBaseEditorEWC::onDraw();
-
         if (Gui::CollapsingHeader("General", ImGuiTreeNodeFlags_DefaultOpen))
         {
             _layout.tick(GetWorld().timeDelta);

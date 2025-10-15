@@ -60,7 +60,9 @@ namespace Core
         virtual void onFinishOpenFromPath(const std::filesystem::path& path) {}
 
         void onInitialize() override;
-        void onDraw() override;
+        void onDraw() final;
+        virtual void onDrawProperties() {}
+        virtual void onDrawPreview() {}
         void drawMenuBar();
         virtual void onDrawBarExtraFileMenu() {}
         void makeDirty();
@@ -68,9 +70,11 @@ namespace Core
     protected:
         std::filesystem::path _assetFilePath;
         std::set<std::string> _fileFilters;
+        float _defaultPropertiesWidth = 340.0f;
 
     private:
         bool _isDirty = false;
+        bool _enablePreview = false;
     };
 
 } // namespace Core

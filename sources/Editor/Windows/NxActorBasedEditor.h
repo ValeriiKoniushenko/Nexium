@@ -83,10 +83,8 @@ namespace Core
             _actorOrigin->input->setFlex(Flex::Fixed);
         }
 
-        void onDraw() override
+        void onDrawProperties() override
         {
-            NxEditorBaseEditorEWC::onDraw();
-
             const auto dt = GetWorld().timeDelta;
             _mainActorLayout.tick(dt);
 

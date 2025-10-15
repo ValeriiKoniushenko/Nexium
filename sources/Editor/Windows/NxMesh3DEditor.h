@@ -89,7 +89,7 @@ namespace Core
     protected:
         void updateGuiBasedOnAsset() override;
         void onInitialize() override;
-        void onDraw() override;
+        void onDrawProperties() override;
         [[nodiscard]] std::size_t convertShaderNameToIndex(const StringAtom& shaderName) const;
         [[nodiscard]] StringAtom convertIndexToShaderName(std::size_t index) const;
 

@@ -152,9 +152,9 @@ namespace Core
         updateGuiBasedOnAsset();
     }
 
-    void NxMesh3DEditorEWC::onDraw()
+    void NxMesh3DEditorEWC::onDrawProperties()
     {
-        NxActorBasedEditorEWC::onDraw();
+        NxActorBasedEditorEWC::onDrawProperties();
 
         if (Gui::CollapsingHeader("Mesh3D properties", ImGuiTreeNodeFlags_DefaultOpen))
         {
