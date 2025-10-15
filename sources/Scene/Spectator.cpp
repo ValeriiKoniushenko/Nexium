@@ -62,8 +62,8 @@ namespace Core
 
         static auto getRealSpeed = [this](KeyboardIA::SpecKeysState state)
         {
-            const float mlt = state.leftShift.cast() == Keyboard::KeyState::Pressed ? 10.f : 1.f;
-            return speed * mlt;
+            const float div = state.leftShift.cast() == Keyboard::KeyState::Pressed ? 8.f : 1.f;
+            return speed / div;
         };
 
         // clang-format off

@@ -65,7 +65,7 @@ namespace Core
 
     void ImageViewerEWC::onDraw()
     {
-        if (_image && !_image->isValid())
+        if (!_image || (_image && !_image->isValid()))
         {
             return;
         }
