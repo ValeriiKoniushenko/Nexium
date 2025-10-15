@@ -27,6 +27,7 @@
 #include "../Misc/Configs.h"
 #include "Editor/Windows/ImageViewer.h"
 #include "Editor/Windows/NxMesh3DEditor.h"
+#include "Editor/Windows/NxTextureEditor.h"
 #include "Editor/Windows/TextEditor.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Mesh3DAsset.h"
@@ -337,11 +338,16 @@ namespace Core
         }
 
         const auto path = entry.path();
-        auto ext = path.extension().generic_string();
+        const auto ext = path.extension().generic_string();
         if (ext == NXMesh3D::AssetT::fileExtension)
         {
             gGameInstance->gameEditor.showWindow<NxMesh3DEditorEWC>(".*",
                                                                     path.generic_string().data());
+        }
+        else if (ext == NXTexture::AssetT::fileExtension)
+        {
+            gGameInstance->gameEditor.showWindow<NxTextureEditorEWC>(".*",
+                                                                     path.generic_string().data());
         }
     }
 

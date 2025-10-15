@@ -57,6 +57,8 @@ namespace Core
         _assetFilePath = path;
         onOpenFromPath(path);
 
+        updateGuiBasedOnAsset();
+
         onFinishOpenFromPath(path);
     }
 
@@ -66,6 +68,7 @@ namespace Core
         {
             onDiscardChanges();
             _isDirty = false;
+            updateGuiBasedOnAsset();
         }
     }
 

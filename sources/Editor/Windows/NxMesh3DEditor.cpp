@@ -211,7 +211,6 @@ namespace Core
         _targetAsset
             = GetAssetsManager().getMesh3D(StringAtom::Intern(_assetFilePath.generic_string()));
         _targetActor = _targetAsset.get();
-        updateGuiBasedOnAsset();
     }
 
     void NxMesh3DEditorEWC::onSave()
@@ -238,7 +237,6 @@ namespace Core
     {
         _targetAsset = GetAssetsManager().getMesh3D(StringAtom::Intern(path.generic_string()));
         _targetActor = _targetAsset.get();
-        updateGuiBasedOnAsset();
     }
 
 } // namespace Core

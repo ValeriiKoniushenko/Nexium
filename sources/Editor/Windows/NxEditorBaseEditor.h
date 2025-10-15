@@ -53,6 +53,7 @@ namespace Core
         [[nodiscard]] const std::set<std::string>& getFileFilters() const noexcept;
 
     protected:
+        virtual void updateGuiBasedOnAsset() = 0;
         virtual void onSave() = 0;
         virtual void onDiscardChanges() = 0;
         virtual void onOpenFromPath(const std::filesystem::path& path) = 0;

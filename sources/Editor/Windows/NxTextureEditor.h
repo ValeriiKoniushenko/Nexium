@@ -40,6 +40,7 @@ namespace Core
         [[nodiscard]] const char* getIcon() override { return ICON_FA_COG; }
 
     protected:
+        void updateGuiBasedOnAsset() override;
         void onInitialize() override;
         void onDraw() override;
         void onDiscardChanges() override;
@@ -48,6 +49,9 @@ namespace Core
 
     protected:
         Gui::VerticalLayout _layout;
+
+        Gui::LabelRow<Gui::TextInput>* _pathToImage = nullptr;
+        Gui::LabelRow<Gui::CheckBox>* _isFlipVertical = nullptr;
 
         NXTexture _targetAsset;
     };

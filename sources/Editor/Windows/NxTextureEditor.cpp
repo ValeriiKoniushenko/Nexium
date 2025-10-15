@@ -24,20 +24,24 @@
 
 #include "NxTextureEditor.h"
 
-#include "Editor/GuiComponents/Combo.h"
-#include "Editor/GuiComponents/HorizontalLayout.h"
-#include "Editor/GuiComponents/Input.h"
-#include "Editor/GuiComponents/Label.h"
-#include "Editor/GuiComponents/List.h"
 #include "GameplaySystem/Framework/GameInstance.h"
-
-#include <iterator>
 
 using namespace Core::Gui;
 
 namespace Core
 {
     ECS_COMPONENT_IMPL(NxTextureEditorEWC)
+
+    void NxTextureEditorEWC::updateGuiBasedOnAsset()
+    {
+        if (!_targetAsset)
+        {
+            return;
+        }
+
+        _pathToImage->input->setInputtedData(_targetAsset->getFilePath());
+        _isFlipVertical->input->setValue(_targetAsset->isFlipVertically());
+    }
 
     void NxTextureEditorEWC::onInitialize()
     {
@@ -47,6 +51,25 @@ namespace Core
 
         constexpr float defaultLabelWidth = 140.0f;
         constexpr float defaultModifierWidth = 340.0f;
+
+        _pathToImage = _layout.addChildComponent<LabelRow<Gui::TextInput>>("Path to image",
+                                                                           defaultLabelWidth);
+        _pathToImage->input->setFlex(Flex::FlexWidth);
+        _pathToImage->input->onInput.subscribe(
+            [this](auto)
+            {
+                makeDirty();
+            });
+
+        _isFlipVertical = _layout.addChildComponent<LabelRow<Gui::CheckBox>>("Flip vertical",
+                                                                             defaultLabelWidth);
+        _isFlipVertical->input->onChange.subscribe(
+            [this](auto)
+            {
+                makeDirty();
+            });
+
+        updateGuiBasedOnAsset();
     }
 
     void NxTextureEditorEWC::onDraw()
@@ -61,24 +84,20 @@ namespace Core
 
     void NxTextureEditorEWC::onDiscardChanges()
     {
-        NxEditorBaseEditorEWC::onDiscardChanges();
-
         _targetAsset
             = GetAssetsManager().getTexture(StringAtom::Intern(_assetFilePath.generic_string()));
     }
 
     void NxTextureEditorEWC::onSave()
     {
-        NxEditorBaseEditorEWC::onSave();
-
-        if (!_targetAsset.isValid())
+        if (!_targetAsset)
         {
             return;
         }
 
+        _targetAsset->setFilePath(_pathToImage->input->getInputtedData());
+        _targetAsset->setFlipVertically(_isFlipVertical->input->getValue());
         _targetAsset->writeToFile();
-
-        _targetAsset->makeHotReload();
     }
 
     void NxTextureEditorEWC::onOpenFromPath(const std::filesystem::path& path)

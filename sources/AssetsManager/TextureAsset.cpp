@@ -28,6 +28,12 @@
 
 namespace Core
 {
+    void TextureAsset::setFilePath(const std::filesystem::path& value)
+    {
+        DEBUG_ASSERT(value.is_relative(), "Path should be relative");
+        _path = value;
+    }
+
     void TextureAsset::onLoadRequest()
     {
         _data.release();

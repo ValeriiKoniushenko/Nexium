@@ -41,6 +41,7 @@
 #include "Windows/ImageViewer.h"
 #include "Windows/ModalPopUp.h"
 #include "Windows/NxMesh3DEditor.h"
+#include "Windows/NxTextureEditor.h"
 #include "Windows/WorldLightning.h"
 
 using namespace Core;
@@ -66,6 +67,7 @@ namespace
 
 namespace Core
 {
+    class NxTextureEditorEWC;
 
     GameEditor::~GameEditor()
     {
@@ -93,7 +95,8 @@ namespace Core
         registerNewWindow<ShaderManagerEWC>("Shader manager"_atom);
         registerNewWindow<ModalPopUp>("PopUp"_atom);
         registerNewWindow<WorldLightningEWC>("World Lightning"_atom, false);
-        registerNewWindow<NxMesh3DEditorEWC>("NX Mesh3D Editor"_atom, true);
+        registerNewWindow<NxMesh3DEditorEWC>("NX Mesh3D Editor"_atom, false);
+        registerNewWindow<NxTextureEditorEWC>("NX Texture Editor"_atom, false);
 
         registerNewWindow<GameViewportEWC>("Viewport"_atom)
             ->onSizeChanged.subscribe(

@@ -47,6 +47,12 @@ namespace Core
 
         [[nodiscard]] const char* getPrefix() const override { return "Texture"; }
 
+        void setFilePath(const std::filesystem::path& value);
+        [[nodiscard]] const std::filesystem::path& getFilePath() const noexcept { return _path; }
+
+        void setFlipVertically(bool value) noexcept { _isFlipVertically = value; }
+        [[nodiscard]] bool isFlipVertically() const noexcept { return _isFlipVertically; }
+
     protected:
         void onLoadRequest() override;
         void onUnloadRequest() override;

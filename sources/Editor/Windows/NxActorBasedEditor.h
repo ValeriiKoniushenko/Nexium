@@ -112,7 +112,7 @@ namespace Core
             _targetActor->setOrigin(_actorOrigin->input->getInputtedData());
         }
 
-        virtual void updateGuiBasedOnAsset()
+        void updateGuiBasedOnAsset() override
         {
             if (!_targetActor)
             {
