@@ -39,7 +39,7 @@ namespace Core
             return;
         }
 
-        _pathToImage->input->setInputtedData(_targetAsset->getFilePath());
+        _pathToImage->input->setInputtedData(_targetAsset->getFilePath().generic_string());
         _isFlipVertical->input->setValue(_targetAsset->isFlipVertically());
     }
 

@@ -75,7 +75,7 @@ namespace Core
     StringAtom BaseEWC::getCacheHash() const
     {
         StringAtom normName;
-        for (char c : getComponentName())
+        for (unsigned char c : getComponentName())
         {
             if (c == '_' || std::isalnum(c))
             {

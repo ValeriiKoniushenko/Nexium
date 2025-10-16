@@ -5,7 +5,7 @@
     "logLimit": 500,
     "name": " Logs",
     "noTick": false,
-    "regexMode": true,
+    "regexMode": false,
     "severityFilters": {
         "critical": true,
         "debug": true,

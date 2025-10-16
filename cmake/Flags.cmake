@@ -3,7 +3,6 @@ include_guard()
 function(CoreAddCompileOptionsTo Target)
     if (MSVC)
         target_compile_options(${Target} PRIVATE
-            "/W4"
             "/wd4005"            # disable: macro redefinition (closest to -Wno-comment, MSVC warns differently)
             "/wd4101"            # disable: unused variable (-Wno-unused-variable)
             "/wd4100"            # disable: unused parameter (-Wno-unused-parameter)

@@ -73,12 +73,12 @@ public:
 // ---------------------------------------------------------
 
 #define _ECS_COMPONENT_IMPL(TypeName, Template, TypeNameAsStr)                                     \
-    Template const StringAtom TypeName::componentType = []                                         \
+    Template const StringAtom TypeName::componentType = []()                                       \
     {                                                                                              \
         auto newType = StringAtom::Intern(TypeNameAsStr);                                          \
         GetGlobalComponentFactory().registerNewType(                                               \
             newType,                                                                               \
-            [] -> BaseComponent*                                                                   \
+            [] ()-> BaseComponent*                                                                 \
             {                                                                                      \
                 return new std::conditional_t<std::is_abstract_v<TypeName>, InvalidComponent,      \
                                               TypeName>;                                           \
