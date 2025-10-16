@@ -37,7 +37,17 @@ namespace Core
     void TextureAsset::onLoadRequest()
     {
         _data.release();
-        _data.loadFromFile(Config::Path::projectAbsPath / _path, _isFlipVertically);
+
+        Image img;
+        if (!img.loadFromFile(Config::Path::projectAbsPath / _path, _isFlipVertically))
+        {
+            return;
+        }
+
+        _size = img.getSize();
+        _channels = img.getChannel().cast();
+
+        _data.loadFromImage(img);
     }
 
     void TextureAsset::onUnloadRequest()

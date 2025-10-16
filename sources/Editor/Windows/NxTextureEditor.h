@@ -51,6 +51,8 @@ namespace Core
     protected:
         Gui::VerticalLayout _layout;
 
+        Gui::LabelRow<Gui::Int2Input>* _imageSize = nullptr;
+        Gui::LabelRow<Gui::TextInput>* _imageChannelType = nullptr;
         Gui::LabelRow<Gui::TextInput>* _pathToImage = nullptr;
         Gui::LabelRow<Gui::CheckBox>* _isFlipVertical = nullptr;
         float _zoom = 1.f;

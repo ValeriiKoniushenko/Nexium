@@ -47,6 +47,7 @@ namespace Core
         virtual ~Texture();
 
         bool loadFromFile(const std::filesystem::path& path, bool isFlipVertically = true);
+        void loadFromImage(const Image& data);
 
         [[nodiscard]] GLuint getTextureId() noexcept { return _textureId; }
 

@@ -71,6 +71,20 @@ namespace Core
         return true;
     }
 
+    void Texture::loadFromImage(const Image& data)
+    {
+        _size = data.getSize();
+
+        glGenTextures(1, &_textureId);
+        glBindTexture(GL_TEXTURE_2D, _textureId);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, data.getSize().width, data.getSize().height, 0,
+                     data.getChannelAsOpenGLType(), GL_UNSIGNED_BYTE, data.data());
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    }
+
     void Texture::release()
     {
         glDeleteTextures(1, &_textureId);

@@ -53,6 +53,9 @@ namespace Core
         void setFlipVertically(bool value) noexcept { _isFlipVertically = value; }
         [[nodiscard]] bool isFlipVertically() const noexcept { return _isFlipVertically; }
 
+        [[nodiscard]] Image::Channel getChannels() const noexcept { return _channels; }
+        [[nodiscard]] ISize2 getSize() const noexcept { return _size; }
+
     protected:
         void onLoadRequest() override;
         void onUnloadRequest() override;
@@ -61,9 +64,10 @@ namespace Core
     protected:
         Texture _data;
 
-        std::filesystem::path _path;
-
         // properties
+        std::filesystem::path _path;
+        Image::Channel _channels = Image::Channel::None;
+        ISize2 _size = {};
         bool _isFlipVertically = false;
     };
 

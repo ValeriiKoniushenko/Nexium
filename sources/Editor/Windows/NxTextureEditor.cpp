@@ -39,6 +39,8 @@ namespace Core
             return;
         }
 
+        _imageSize->input->setInputtedData(_targetAsset->getSize().toGlm());
+        _imageChannelType->input->setInputtedData(_targetAsset->getChannels().toStr());
         _pathToImage->input->setInputtedData(_targetAsset->getFilePath().generic_string());
         _isFlipVertical->input->setValue(_targetAsset->isFlipVertically());
     }
@@ -51,10 +53,35 @@ namespace Core
         _fileFilters.emplace(std::string("*") + NXTexture::AssetT::fileExtension);
 
         constexpr float defaultLabelWidth = 140.0f;
+        constexpr float defaultInputWidth = 200.0f;
+
         const auto gap = ImGui::GetStyle().WindowPadding.x;
 
         _layout.setPaddings(glm::vec4(gap));
 
+        ///////////////////////
+        _imageSize
+            = _layout.addChildComponent<LabelRow<Gui::Int2Input>>("Image size", defaultLabelWidth);
+        _imageSize->input->setWidth(defaultInputWidth);
+        _imageSize->input->setReadOnly(true);
+        _imageSize->input->onInput.subscribe(
+            [this](auto)
+            {
+                makeDirty();
+            });
+
+        ///////////////////////
+        _imageChannelType
+            = _layout.addChildComponent<LabelRow<Gui::TextInput>>("Channels", defaultLabelWidth);
+        _imageChannelType->input->setWidth(defaultInputWidth);
+        _imageChannelType->input->setReadOnly(true);
+        _imageChannelType->input->onInput.subscribe(
+            [this](auto)
+            {
+                makeDirty();
+            });
+
+        ///////////////////////
         _pathToImage = _layout.addChildComponent<LabelRow<Gui::TextInput>>("Path to image",
                                                                            defaultLabelWidth);
         _pathToImage->input->setFlex(Flex::FlexWidth);
@@ -64,6 +91,7 @@ namespace Core
                 makeDirty();
             });
 
+        ///////////////////////
         _isFlipVertical = _layout.addChildComponent<LabelRow<Gui::CheckBox>>("Flip vertical",
                                                                              defaultLabelWidth);
         _isFlipVertical->input->onChange.subscribe(
