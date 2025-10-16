@@ -141,7 +141,9 @@ namespace Core
             = glm::vec2(image.getSize().width * _zoom, image.getSize().height * _zoom);
         ImGui::SetCursorPos(ImGui::GetCursorPos() + _offset);
 
-        ImGui::Image(image.getTextureId(), displaySize);
+        const float xy1 = _isFlipVertical->input->getValue();
+        const float xy2 = !_isFlipVertical->input->getValue();
+        ImGui::Image(image.getTextureId(), displaySize, glm::vec2(xy1), glm::vec2(xy2));
     }
 
     void NxTextureEditorEWC::onDiscardChanges()
