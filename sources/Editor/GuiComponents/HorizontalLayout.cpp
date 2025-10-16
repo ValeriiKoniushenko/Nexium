@@ -213,7 +213,7 @@ namespace Core::Gui
         }
         else
         {
-            _spacing = 0;
+            _spacing = style().ItemSpacing.x;
         }
     }
 

@@ -59,7 +59,7 @@ namespace Core
 
         _layout.setPaddings(glm::vec4(gap));
 
-        ///////////////////////
+        /////////////////////
         _imageSize
             = _layout.addChildComponent<LabelRow<Gui::Int2Input>>("Image size", defaultLabelWidth);
         _imageSize->input->setWidth(defaultInputWidth);
