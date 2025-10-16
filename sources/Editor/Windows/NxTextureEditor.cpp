@@ -53,7 +53,6 @@ namespace Core
         _fileFilters.emplace(std::string("*") + NXTexture::AssetT::fileExtension);
 
         constexpr float defaultLabelWidth = 140.0f;
-        constexpr float defaultInputWidth = 200.0f;
 
         const auto gap = ImGui::GetStyle().WindowPadding.x;
 
@@ -62,7 +61,6 @@ namespace Core
         /////////////////////
         _imageSize
             = _layout.addChildComponent<LabelRow<Gui::Int2Input>>("Image size", defaultLabelWidth);
-        _imageSize->input->setWidth(defaultInputWidth);
         _imageSize->input->setReadOnly(true);
         _imageSize->input->onInput.subscribe(
             [this](auto)
@@ -73,8 +71,8 @@ namespace Core
         ///////////////////////
         _imageChannelType
             = _layout.addChildComponent<LabelRow<Gui::TextInput>>("Channels", defaultLabelWidth);
-        _imageChannelType->input->setWidth(defaultInputWidth);
         _imageChannelType->input->setReadOnly(true);
+        _imageChannelType->input->setFlex(Flex::FlexWidth);
         _imageChannelType->input->onInput.subscribe(
             [this](auto)
             {

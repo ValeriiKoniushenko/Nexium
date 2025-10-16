@@ -40,11 +40,7 @@ namespace Core::Gui
         static_assert(Size >= 1 && Size <= 4, "Size must >= 0 && <= 4");
 
     public:
-        std::array<NumInput<Type>*
-
-                   ,
-                   Size>
-            inputs;
+        std::array<NumInput<Type>*, Size> inputs;
         std::array<Label*, Size> labels;
 
         void setLabelText(std::array<char, Size> newText)
@@ -143,7 +139,7 @@ namespace Core::Gui
             _children.clear();
 
             setFlex(Flex::FlexWidth);
-            setHorizontalAlign(Align::Left);
+            setHorizontalAlign(Align::SpaceBetween);
             for (std::size_t i = 0; i < Size; ++i)
             {
                 auto* hLayout = addChildComponent<HorizontalLayout>();
@@ -152,6 +148,7 @@ namespace Core::Gui
                 labels[i]->setText(defaults[i].second);
                 labels[i]->setTruncateLongText(false);
                 labels[i]->setWidth(10.f);
+                hLayout->setHorizontalAlign(Align::SpaceBetween);
 
                 inputs[i] = hLayout->template addChildComponent<NumInput<Type>>();
                 inputs[i]->setFlex(Flex::FlexWidth);
