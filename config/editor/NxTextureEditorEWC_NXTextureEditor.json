@@ -1,6 +1,6 @@
 {
     "children": [],
-    "isEnabled": false,
+    "isEnabled": true,
     "name": " NX Texture Editor",
     "noTick": false,
     "type": "NxTextureEditorEWC"

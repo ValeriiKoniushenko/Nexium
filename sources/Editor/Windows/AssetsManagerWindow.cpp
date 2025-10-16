@@ -104,7 +104,7 @@ namespace Core
     {
         BaseFloatEWC::ioFieldsUpdate(stream);
         stream.field("openedPath", _openedPath);
-        if (stream.getMode() == DataStream::Mode::Input && ~std::filesystem::exists(_openedPath))
+        if (stream.getMode() == DataStream::Mode::Input && !std::filesystem::exists(_openedPath))
         {
             _openedPath = Config::Path::projectAbsPath;
         }

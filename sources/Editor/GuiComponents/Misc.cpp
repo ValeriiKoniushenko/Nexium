@@ -24,12 +24,22 @@
 
 #include "Misc.h"
 
+#include "ImGui/imgui_internal.h"
+
 namespace Core::Gui
 {
-    bool CollapsingHeader(const char* label, ImGuiTreeNodeFlags flags)
+    bool CollapsingHeader(const char* label, ImGuiTreeNodeFlags flags, float paddings)
     {
         ImGui::Dummy({ 0, ImGui::GetStyle().ItemSpacing.y });
-        auto out = ImGui::CollapsingHeader(label, flags);
-        return out;
+        using namespace ImGui;
+
+        ImGuiWindow* window = GetCurrentWindow();
+        if (window->SkipItems)
+        {
+            return false;
+        }
+
+        ImGuiID id = window->GetID(label);
+        return TreeNodeBehavior(id, flags | ImGuiTreeNodeFlags_CollapsingHeader, label);
     }
 } // namespace Core::Gui

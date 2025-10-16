@@ -47,10 +47,13 @@ namespace Core
     {
         NxEditorBaseEditorEWC::onInitialize();
 
+        setEnablePreview(true);
         _fileFilters.emplace(std::string("*") + NXTexture::AssetT::fileExtension);
 
         constexpr float defaultLabelWidth = 140.0f;
-        constexpr float defaultModifierWidth = 340.0f;
+        const auto gap = ImGui::GetStyle().WindowPadding.x;
+
+        _layout.setPaddings(glm::vec4(gap));
 
         _pathToImage = _layout.addChildComponent<LabelRow<Gui::TextInput>>("Path to image",
                                                                            defaultLabelWidth);
@@ -74,10 +77,45 @@ namespace Core
 
     void NxTextureEditorEWC::onDrawProperties()
     {
-        if (Gui::CollapsingHeader("General", ImGuiTreeNodeFlags_DefaultOpen))
+        const auto gap = ImGui::GetStyle().WindowPadding.x;
+
+        if (Gui::CollapsingHeader("General", ImGuiTreeNodeFlags_DefaultOpen, gap))
         {
             _layout.tick(GetWorld().timeDelta);
         }
+    }
+
+    void NxTextureEditorEWC::onDrawPreview()
+    {
+        NxEditorBaseEditorEWC::onDrawPreview();
+
+        _lastPreviewRegionSize = ImGui::GetContentRegionAvail();
+
+        if (!_targetAsset)
+        {
+            return;
+        }
+
+        if (ImGui::IsWindowHovered() && ImGui::GetIO().MouseWheel != 0.0f)
+        {
+            _zoom = std::max(0.1f, _zoom + ImGui::GetIO().MouseWheel * 0.1f);
+        }
+
+        if (ImGui::IsWindowHovered() && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+        {
+            const auto drag = ImGui::GetMouseDragDelta(ImGuiMouseButton_Left);
+            ImGui::ResetMouseDragDelta(ImGuiMouseButton_Left);
+            _offset.x += drag.x;
+            _offset.y += drag.y;
+        }
+
+        auto& image = _targetAsset->getData();
+
+        const auto displaySize
+            = glm::vec2(image.getSize().width * _zoom, image.getSize().height * _zoom);
+        ImGui::SetCursorPos(ImGui::GetCursorPos() + _offset);
+
+        ImGui::Image(image.getTextureId(), displaySize);
     }
 
     void NxTextureEditorEWC::onDiscardChanges()
@@ -101,6 +139,12 @@ namespace Core
     void NxTextureEditorEWC::onOpenFromPath(const std::filesystem::path& path)
     {
         _targetAsset = GetAssetsManager().getTexture(StringAtom::Intern(path.generic_string()));
+        if (_targetAsset)
+        {
+            _offset = _lastPreviewRegionSize
+                      - static_cast<glm::vec2>(_targetAsset->getData().getSize().toGlm());
+            _offset /= 2.0f;
+        }
     }
 
 } // namespace Core

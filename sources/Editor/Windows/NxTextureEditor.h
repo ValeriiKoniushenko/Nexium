@@ -43,6 +43,7 @@ namespace Core
         void updateGuiBasedOnAsset() override;
         void onInitialize() override;
         void onDrawProperties() override;
+        void onDrawPreview() override;
         void onDiscardChanges() override;
         void onSave() override;
         void onOpenFromPath(const std::filesystem::path& path) override;
@@ -52,6 +53,10 @@ namespace Core
 
         Gui::LabelRow<Gui::TextInput>* _pathToImage = nullptr;
         Gui::LabelRow<Gui::CheckBox>* _isFlipVertical = nullptr;
+        float _zoom = 1.f;
+        glm::vec2 _offset = {};
+
+        glm::vec2 _lastPreviewRegionSize = {};
 
         NXTexture _targetAsset;
     };

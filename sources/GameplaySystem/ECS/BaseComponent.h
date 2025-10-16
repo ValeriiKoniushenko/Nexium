@@ -78,7 +78,7 @@ public:
         auto newType = StringAtom::Intern(TypeNameAsStr);                                          \
         GetGlobalComponentFactory().registerNewType(                                               \
             newType,                                                                               \
-            [] ()-> BaseComponent*                                                                 \
+            []() -> BaseComponent*                                                                 \
             {                                                                                      \
                 return new std::conditional_t<std::is_abstract_v<TypeName>, InvalidComponent,      \
                                               TypeName>;                                           \

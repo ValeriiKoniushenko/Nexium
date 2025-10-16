@@ -66,6 +66,8 @@ namespace Core
         void drawMenuBar();
         virtual void onDrawBarExtraFileMenu() {}
         void makeDirty();
+        void setEnablePreview(bool enable);
+        bool isEnablePreview() const noexcept { return _enablePreview; }
 
     protected:
         std::filesystem::path _assetFilePath;

@@ -110,11 +110,23 @@ namespace Core
         drawMenuBar();
 
         if (ImGui::BeginChild("Properties",
-                              glm::vec2(_enablePreview ? _defaultPropertiesWidth : 0, 0), 0))
+                              glm::vec2(_enablePreview ? _defaultPropertiesWidth : 0, 0),
+                              _enablePreview ? ImGuiChildFlags_ResizeX : 0))
         {
             onDrawProperties();
         }
         ImGui::EndChild();
+
+        if (_enablePreview)
+        {
+            ImGui::SameLine();
+
+            if (ImGui::BeginChild("Preview"))
+            {
+                onDrawPreview();
+            }
+            ImGui::EndChild();
+        }
 
         if (ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows))
         {
@@ -172,6 +184,11 @@ namespace Core
     void NxEditorBaseEditorEWC::makeDirty()
     {
         _isDirty = true;
+    }
+
+    void NxEditorBaseEditorEWC::setEnablePreview(bool enable)
+    {
+        _enablePreview = enable;
     }
 
 } // namespace Core

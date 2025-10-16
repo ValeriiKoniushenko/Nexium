@@ -75,10 +75,10 @@ namespace Core
             _zoom = std::max(0.1f, _zoom + ImGui::GetIO().MouseWheel * 0.1f);
         }
 
-        if (ImGui::IsWindowHovered() && ImGui::IsMouseDragging(ImGuiMouseButton_Right))
+        if (ImGui::IsWindowHovered() && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
         {
-            const auto drag = ImGui::GetMouseDragDelta(ImGuiMouseButton_Middle);
-            ImGui::ResetMouseDragDelta(ImGuiMouseButton_Middle);
+            const auto drag = ImGui::GetMouseDragDelta(ImGuiMouseButton_Left);
+            ImGui::ResetMouseDragDelta(ImGuiMouseButton_Left);
             _offset.x += drag.x;
             _offset.y += drag.y;
         }

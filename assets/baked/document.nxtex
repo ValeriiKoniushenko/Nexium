@@ -1,4 +1,4 @@
 {
-  "path": "assets/images/document.png",
-  "isFlipVertically": false
+    "isFlipVertically": false,
+    "path": "assets/images/document.png"
 }
