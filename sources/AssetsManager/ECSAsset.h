@@ -41,9 +41,10 @@ namespace Core
 
         // clang-format off
         CreateEnum(Status, int,
-            NotLoaded,
-            Loaded,
-            LoadingError
+            NotLoaded,      // Absolutely not loaded. Asset's type is undefined
+            PreLoaded,      // Loaded only the main information: type & ID & name
+            Loaded,         // Full asset's data is loaded (corresponding to asset's type)
+            PreLoadingError // Error while preloading data
         );
         // clang-format on
 
@@ -61,8 +62,6 @@ namespace Core
             return ::AssetsManager::getLogger();
         }
 
-        [[nodiscard]] bool isLoaded() const noexcept;
-        [[nodiscard]] bool hasLoadingError() const noexcept;
         [[nodiscard]] Status getLoadingStatus() const noexcept { return _status; }
 
         [[nodiscard]] const std::filesystem::path& getSourceFile() const noexcept
@@ -72,6 +71,10 @@ namespace Core
         [[nodiscard]] const StringAtom& getName() const noexcept { return _name; }
         [[nodiscard]] const StringAtom& getType() const noexcept { return _type; }
         [[nodiscard]] const StringAtom& getLogicPath() const noexcept { return _logicPath; }
+
+    protected:
+        void onIncrementRef(uint32_t count) override;
+        void onDecrementRef(uint32_t count) override;
 
     private:
         void extrudeAndValidateMainDataFromFile();
