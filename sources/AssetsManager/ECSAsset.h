@@ -25,42 +25,25 @@
 #pragma once
 
 #include "BaseAsset.h"
-#include "Camera/Camera.h"
 
 namespace Core
 {
-    class CameraAsset : public BaseAsset
+
+    class ECSAsset : public BaseAsset
     {
     public:
-        inline static const char* fileExtension = ".nxcamera";
-
-    public:
-        explicit CameraAsset(const StringAtom& logicPath)
+        explicit ECSAsset(const StringAtom& logicPath)
             : BaseAsset(logicPath)
         {
         }
 
-        ~CameraAsset() override = default;
-
-        [[nodiscard]] const char* getPrefix() const override { return "Camera"; }
-
-        [[nodiscard]] BaseCamera& getData() noexcept { return _data; }
-
     protected:
         void onLoadRequest() override;
         void onUnloadRequest() override;
+        bool onHotReload() override;
         void ioFieldsUpdate(DataStream& stream) override;
-
-    protected:
-        BaseCamera _data;
-
-        // properties
-        float _fov = 75.f;
-        float _far = 10'000.f;
-        float _near = 0.1f;
-        FSize2 _frameSize = FSize2{ 600, 600 };
-        bool _isPostDraw = false;
     };
 
-    using NXCamera = AssetRef<CameraAsset>;
+    using NXAsset = AssetRef<ECSAsset>;
+
 } // namespace Core

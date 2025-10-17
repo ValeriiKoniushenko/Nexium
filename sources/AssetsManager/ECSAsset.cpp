@@ -22,21 +22,12 @@
  * SOFTWARE.
  */
 
-#include "CameraAsset.h"
-
-#include "GameplaySystem/Framework/GameInstance.h"
+#include "ECSAsset.h"
 
 namespace Core
 {
-    void CameraAsset::onLoadRequest()
-    {
-    }
 
-    void CameraAsset::onUnloadRequest()
-    {
-    }
-
-    void CameraAsset::ioFieldsUpdate(DataStream& stream)
+    void ECSAsset::onLoadRequest()
     {
     }
 
