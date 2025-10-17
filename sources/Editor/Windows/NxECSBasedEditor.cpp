@@ -24,6 +24,8 @@
 
 #include "NxECSBasedEditor.h"
 
+using namespace Core::Gui;
+
 namespace Core
 {
 
@@ -33,12 +35,11 @@ namespace Core
     {
         NxEditorBaseEditorEWC::onInitialize();
 
-        constexpr float labelWidth = 60.0f;
-
-        using namespace Gui;
+        setEnablePreview(true);
 
         _headerLayout.setPaddings(glm::vec4{ ImGui::GetStyle().ItemSpacing.x });
 
+        constexpr float labelWidth = 60.0f;
         _logicalPath = _headerLayout.addChildComponent<LabelRow<TextInput>>("ID", labelWidth);
         _logicalPath->input->setFlex(Flex::FlexWidth);
         _logicalPath->input->setReadOnly(true);
@@ -52,6 +53,11 @@ namespace Core
     {
         const auto dt = GetWorld().timeDelta;
         _headerLayout.tick(dt);
+    }
+
+    void NxECSBasedEditorEWC::onDrawPreview()
+    {
+        NxEditorBaseEditorEWC::onDrawPreview();
     }
 
     void NxECSBasedEditorEWC::onDiscardChanges()
@@ -84,12 +90,6 @@ namespace Core
         {
             errorLog("Requested asset not found: " + path.generic_string());
         }
-    }
-
-    void NxECSBasedEditorEWC::onFinishOpenFromPath(const std::filesystem::path& path)
-    {
-        NxEditorBaseEditorEWC::onFinishOpenFromPath(path);
-        updateGuiBasedOnAsset();
     }
 
 } // namespace Core

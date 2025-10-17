@@ -46,17 +46,12 @@ namespace Core
     public:
     protected:
         void onInitialize() override;
-
         void onDrawProperties() override;
-
+        void onDrawPreview() override;
         void onDiscardChanges() override;
-
         void onSave() override;
-
         void updateGuiBasedOnAsset() override;
-
         void onOpenFromPath(const std::filesystem::path& path) override;
-        void onFinishOpenFromPath(const std::filesystem::path& path) override;
 
     protected:
         Gui::VerticalLayout _headerLayout;
