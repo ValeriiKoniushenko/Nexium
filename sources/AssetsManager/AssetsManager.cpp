@@ -26,6 +26,7 @@
 
 #include "../Misc/Configs.h"
 #include "Editor/Windows/ImageViewer.h"
+#include "Editor/Windows/NxECSBasedEditor.h"
 #include "Editor/Windows/NxMesh3DEditor.h"
 #include "Editor/Windows/NxTextureEditor.h"
 #include "Editor/Windows/TextEditor.h"
@@ -134,6 +135,11 @@ namespace Core
                     auto relPath = std::filesystem::relative(absPath, Config::Path::projectAbsPath);
 
                     auto id = StringAtom::Intern(relPath.generic_string());
+                    if (ext == ".nx")
+                    {
+                        _assets.emplace(id, new ECSAsset(id))
+                            .first->second->connectSourceFile(absPath);
+                    }
                     if (ext == NXTexture::AssetT::fileExtension)
                     {
                         _textures.emplace(id, new TextureAsset(id))
@@ -185,6 +191,53 @@ namespace Core
     {
         infoLog("Registered new asset path: " + path.generic_string());
         _registeredPaths.emplace(std::move(path));
+    }
+
+    NXAsset AssetsManager::getAsset(const StringAtom& logicPath)
+    {
+        return _assets.at(logicPath);
+    }
+
+    NXAsset AssetsManager::getAssetByPath(const std::filesystem::path& path)
+    {
+        if (path.extension().generic_string() != NXAsset::ValueT::fileExtension)
+        {
+            return {};
+        }
+
+        for (auto&& registered : GetAssetsManager().getRegisteredPaths())
+        {
+            try
+            {
+                std::filesystem::path normalized;
+                if (registered.is_relative())
+                {
+                    normalized = Config::Path::projectAbsPath;
+                }
+                normalized /= registered;
+
+                const auto realRegistered = std::filesystem::absolute(normalized).parent_path();
+                const auto relative = std::filesystem::relative(path, realRegistered);
+                const auto id = StringAtom(relative.generic_string());
+                if (_assets.contains(id))
+                {
+                    return _assets.at(id);
+                }
+            }
+            catch (const std::filesystem::filesystem_error& e)
+            {
+                GetAssetsManager().errorLog(
+                    "Can't resolve a path due to internal error, of was met junction symlink: {}"_f
+                    << e.what());
+            }
+            catch (...)
+            {
+                GetAssetsManager().errorLog(
+                    "Can't resolve a path due to internal error, of was met junction symlink");
+            }
+        }
+
+        return {};
     }
 
     void AssetsManager::spawnMesh3DOnScene(const StringAtom& logicPath)
@@ -339,7 +392,12 @@ namespace Core
 
         const auto path = entry.path();
         const auto ext = path.extension().generic_string();
-        if (ext == NXMesh3D::AssetT::fileExtension)
+        if (ext == NXAsset::ValueT::fileExtension)
+        {
+            gGameInstance->gameEditor.showWindow<NxECSBasedEditorEWC>(".*",
+                                                                      path.generic_string().data());
+        }
+        else if (ext == NXMesh3D::AssetT::fileExtension)
         {
             gGameInstance->gameEditor.showWindow<NxMesh3DEditorEWC>(".*",
                                                                     path.generic_string().data());

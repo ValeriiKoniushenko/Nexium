@@ -59,14 +59,7 @@ namespace Core
 
     void BaseAsset::attachAndReadFromFile(const std::filesystem::path& path)
     {
-        _assetPath = path;
-
-        if (_assetPath.empty())
-        {
-            criticalLog("Invalid path to asset: {}"_f << _assetPath);
-            DEBUG_ASSERT(false);
-            return;
-        }
+        attachSourceFile(path);
 
         DataStream stream;
         stream.setMode(DataStream::Mode::Input);
@@ -75,12 +68,25 @@ namespace Core
         ioFieldsUpdate(stream);
     }
 
+    void BaseAsset::attachSourceFile(const std::filesystem::path& path)
+    {
+        _assetPath = path;
+
+        if (_assetPath.empty())
+        {
+            criticalLog("Invalid path to asset: {}"_f << _assetPath);
+        }
+        else if (!std::filesystem::exists(_assetPath))
+        {
+            criticalLog("Asset doesn't exist: {}"_f << _assetPath);
+        }
+    }
+
     void BaseAsset::writeToFile()
     {
         if (_assetPath.empty())
         {
             criticalLog("Invalid path to asset: {}"_f << _assetPath);
-            DEBUG_ASSERT(false);
             return;
         }
 

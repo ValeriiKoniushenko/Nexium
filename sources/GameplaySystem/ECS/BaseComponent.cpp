@@ -198,6 +198,7 @@ namespace Core
     void BaseComponent::ioFieldsUpdate(DataStream& stream)
     {
         AbstractComponent::ioFieldsUpdate(stream);
+
         stream.field("name", _name, _type);
         stream.field("type", _type);
         stream.array("children",

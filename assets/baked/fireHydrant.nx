@@ -1,0 +1,11 @@
+{
+  "type": "StaticMeshBundle",
+  "uniqueId": "fireHydrant",
+  "data": {
+    "children": [],
+    "isEnabled": true,
+    "name": "FireHydrant",
+    "noTick": false,
+    "type": "StaticMeshBundle"
+  }
+}

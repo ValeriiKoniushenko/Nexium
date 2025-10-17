@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "ECSAsset.h"
 #include "Mesh3DAsset.h"
 #include "SkyboxAsset.h"
 #include "TextureAsset.h"
@@ -100,22 +101,16 @@ namespace Core
 
     public:
         AssetsManager();
-
         AssetsManager(const AssetsManager&) = delete;
-
         AssetsManager(AssetsManager&&) = delete;
-
         AssetsManager& operator=(const AssetsManager&) = delete;
-
         AssetsManager& operator=(AssetsManager&&) = delete;
 
         // Will reindex everything inside the folder Config::Path::assets
         void rescanFileSystem();
 
         [[nodiscard]] NXTexture getTexture(const StringAtom& logicPath);
-
         [[nodiscard]] NXSkybox getSkybox(const StringAtom& logicPath);
-
         [[nodiscard]] NXMesh3D getMesh3D(const StringAtom& logicPath);
 
         [[nodiscard]] spdlog::logger* getLogger() const override
@@ -124,8 +119,9 @@ namespace Core
         }
 
         void unloadAllResources();
-
         void registerNewAssetPath(std::filesystem::path path);
+        [[nodiscard]] NXAsset getAsset(const StringAtom& logicPath);
+        [[nodiscard]] NXAsset getAssetByPath(const std::filesystem::path& path);
 
         void spawnMesh3DOnScene(const StringAtom& logicPath);
 
@@ -143,6 +139,7 @@ namespace Core
 
     protected:
         std::set<std::filesystem::path> _registeredPaths;
+        std::unordered_map<StringAtom, NXAsset> _assets;
         std::unordered_map<StringAtom, AssetRef<BaseAsset>> _textures;
         std::unordered_map<StringAtom, AssetRef<BaseAsset>> _skyboxes;
         std::unordered_map<StringAtom, AssetRef<BaseAsset>> _mesh3ds;

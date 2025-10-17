@@ -40,6 +40,7 @@
 #include "Misc/IconsFontAwesome.h"
 #include "Windows/ImageViewer.h"
 #include "Windows/ModalPopUp.h"
+#include "Windows/NxECSBasedEditor.h"
 #include "Windows/NxMesh3DEditor.h"
 #include "Windows/NxTextureEditor.h"
 #include "Windows/WorldLightning.h"
@@ -97,6 +98,7 @@ namespace Core
         registerNewWindow<WorldLightningEWC>("World Lightning"_atom, false);
         registerNewWindow<NxMesh3DEditorEWC>("NX Mesh3D Editor"_atom, false);
         registerNewWindow<NxTextureEditorEWC>("NX Texture Editor"_atom, false);
+        registerNewWindow<NxECSBasedEditorEWC>("Assets editor"_atom, true);
 
         registerNewWindow<GameViewportEWC>("Viewport"_atom)
             ->onSizeChanged.subscribe(

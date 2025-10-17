@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "AssetsManager/ECSAsset.h"
 #include "BaseWindow.h"
 
 #include <set>
@@ -72,7 +73,7 @@ namespace Core
     protected:
         std::filesystem::path _assetFilePath;
         std::set<std::string> _fileFilters;
-        float _defaultPropertiesWidth = 340.0f;
+        constexpr static float _defaultPropertiesWidth = 340.0f;
 
     private:
         bool _isDirty = false;

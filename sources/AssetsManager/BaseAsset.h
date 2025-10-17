@@ -32,6 +32,7 @@
 
 namespace Core
 {
+
     class BaseAsset : public BaseLog
     {
     public:
@@ -53,6 +54,7 @@ namespace Core
         void makeHotReload();
 
         void attachAndReadFromFile(const std::filesystem::path& path);
+        void attachSourceFile(const std::filesystem::path& path);
         void writeToFile();
 
         [[nodiscard]] spdlog::logger* getLogger() const override

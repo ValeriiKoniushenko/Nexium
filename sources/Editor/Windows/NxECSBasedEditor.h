@@ -55,16 +55,14 @@ namespace Core
 
         void updateGuiBasedOnAsset() override;
 
+        void onOpenFromPath(const std::filesystem::path& path) override;
+        void onFinishOpenFromPath(const std::filesystem::path& path) override;
+
     protected:
-        Gui::VerticalLayout _mainActorLayout;
-        Gui::VerticalLayout _subActorLayout;
+        Gui::VerticalLayout _headerLayout;
 
         Gui::LabelRow<Gui::TextInput>* _logicalPath = nullptr;
-        Gui::LabelRow<Gui::CheckBox>* _actorPostDraw = nullptr;
-        Gui::LabelRow<Gui::Float3Input>* _actorPosition = nullptr;
-        Gui::LabelRow<Gui::Float3Input>* _actorRotation = nullptr;
-        Gui::LabelRow<Gui::Float3Input>* _actorScale = nullptr;
-        Gui::LabelRow<Gui::Float3Input>* _actorOrigin = nullptr;
+        Gui::LabelRow<Gui::TextInput>* _assetType = nullptr;
 
         NXAsset _targetAsset;
     };

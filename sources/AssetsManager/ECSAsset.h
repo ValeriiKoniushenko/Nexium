@@ -24,26 +24,69 @@
 
 #pragma once
 
-#include "BaseAsset.h"
+#include "Core/IntrusivePtr.h"
+#include "Core/String.h"
+#include "Misc/BaseLog.h"
+#include "ModuleInfo.h"
+
+#include <filesystem>
 
 namespace Core
 {
 
-    class ECSAsset : public BaseAsset
+    class ECSAsset : public BaseLog, public IntrusiveRefCounter<ECSAsset>
     {
     public:
+        inline static const char* fileExtension = ".nx";
+
+        // clang-format off
+        CreateEnum(Status, int,
+            NotLoaded,
+            Loaded,
+            LoadingError
+        );
+        // clang-format on
+
+    public:
         explicit ECSAsset(const StringAtom& logicPath)
-            : BaseAsset(logicPath)
+            : _logicPath(logicPath)
         {
+            DEBUG_ASSERT(_logicPath.isStatic());
         }
 
+        ~ECSAsset() override = default;
+        void connectSourceFile(const std::filesystem::path& src);
+        [[nodiscard]] spdlog::logger* getLogger() const override
+        {
+            return ::AssetsManager::getLogger();
+        }
+
+        [[nodiscard]] bool isLoaded() const noexcept;
+        [[nodiscard]] bool hasLoadingError() const noexcept;
+        [[nodiscard]] Status getLoadingStatus() const noexcept { return _status; }
+
+        [[nodiscard]] const std::filesystem::path& getSourceFile() const noexcept
+        {
+            return _pathToSource;
+        }
+        [[nodiscard]] const StringAtom& getName() const noexcept { return _name; }
+        [[nodiscard]] const StringAtom& getType() const noexcept { return _type; }
+        [[nodiscard]] const StringAtom& getLogicPath() const noexcept { return _logicPath; }
+
+    private:
+        void extrudeAndValidateMainDataFromFile();
+
     protected:
-        void onLoadRequest() override;
-        void onUnloadRequest() override;
-        bool onHotReload() override;
-        void ioFieldsUpdate(DataStream& stream) override;
+        std::filesystem::path _pathToSource;
+        StringAtom _logicPath;
+
+        StringAtom _name;
+        StringAtom _type;
+
+    private:
+        Status _status = Status::NotLoaded;
     };
 
-    using NXAsset = AssetRef<ECSAsset>;
+    using NXAsset = IntrusivePtr<ECSAsset>;
 
 } // namespace Core

@@ -33,20 +33,25 @@ namespace Core
     {
         NxEditorBaseEditorEWC::onInitialize();
 
-        constexpr float labelWidth = 140.0f;
+        constexpr float labelWidth = 60.0f;
 
         using namespace Gui;
 
-        _logicalPath
-            = _mainActorLayout.addChildComponent<LabelRow<TextInput>>("Logical path", labelWidth);
+        _headerLayout.setPaddings(glm::vec4{ ImGui::GetStyle().ItemSpacing.x });
+
+        _logicalPath = _headerLayout.addChildComponent<LabelRow<TextInput>>("ID", labelWidth);
         _logicalPath->input->setFlex(Flex::FlexWidth);
         _logicalPath->input->setReadOnly(true);
+
+        _assetType = _headerLayout.addChildComponent<LabelRow<TextInput>>("Type", labelWidth);
+        _assetType->input->setFlex(Flex::FlexWidth);
+        _assetType->input->setReadOnly(true);
     }
 
     void NxECSBasedEditorEWC::onDrawProperties()
     {
         const auto dt = GetWorld().timeDelta;
-        _mainActorLayout.tick(dt);
+        _headerLayout.tick(dt);
     }
 
     void NxECSBasedEditorEWC::onDiscardChanges()
@@ -69,6 +74,22 @@ namespace Core
         }
 
         _logicalPath->input->setInputtedData(_targetAsset->getLogicPath().toStdString());
+        _assetType->input->setInputtedData(_targetAsset->getType().toStdString());
+    }
+
+    void NxECSBasedEditorEWC::onOpenFromPath(const std::filesystem::path& path)
+    {
+        _targetAsset = GetAssetsManager().getAssetByPath(path);
+        if (!_targetAsset)
+        {
+            errorLog("Requested asset not found: " + path.generic_string());
+        }
+    }
+
+    void NxECSBasedEditorEWC::onFinishOpenFromPath(const std::filesystem::path& path)
+    {
+        NxEditorBaseEditorEWC::onFinishOpenFromPath(path);
+        updateGuiBasedOnAsset();
     }
 
 } // namespace Core
