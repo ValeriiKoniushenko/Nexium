@@ -50,6 +50,14 @@ namespace Core
         extrudeAndValidateMainDataFromFile();
     }
 
+    void ECSAsset::load()
+    {
+    }
+
+    void ECSAsset::unload()
+    {
+    }
+
     void ECSAsset::onIncrementRef(uint32_t count)
     {
         IntrusiveRefCounter<ECSAsset>::onIncrementRef(count);

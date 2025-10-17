@@ -44,7 +44,8 @@ namespace Core
             NotLoaded,      // Absolutely not loaded. Asset's type is undefined
             PreLoaded,      // Loaded only the main information: type & ID & name
             Loaded,         // Full asset's data is loaded (corresponding to asset's type)
-            PreLoadingError // Error while preloading data
+            PreLoadingError,// Error while preloading data
+            LoadingError    // Error while loading of the main data
         );
         // clang-format on
 
@@ -54,13 +55,13 @@ namespace Core
         {
             DEBUG_ASSERT(_logicPath.isStatic());
         }
-
         ~ECSAsset() override = default;
-        void connectSourceFile(const std::filesystem::path& src);
         [[nodiscard]] spdlog::logger* getLogger() const override
         {
             return ::AssetsManager::getLogger();
         }
+
+        void connectSourceFile(const std::filesystem::path& src);
 
         [[nodiscard]] Status getLoadingStatus() const noexcept { return _status; }
 
@@ -73,6 +74,9 @@ namespace Core
         [[nodiscard]] const StringAtom& getLogicPath() const noexcept { return _logicPath; }
 
     protected:
+        void load();
+        void unload();
+
         void onIncrementRef(uint32_t count) override;
         void onDecrementRef(uint32_t count) override;
 
