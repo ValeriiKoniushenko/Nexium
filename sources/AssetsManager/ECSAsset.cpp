@@ -72,7 +72,8 @@ namespace Core
             if (!_data)
             {
                 throw std::runtime_error(
-                    "Can't parse & recreate RTTI type. Maybe, the ECS type was not registered, or type is template(it can cause problems).");
+                    "Can't parse & recreate RTTI type. Maybe, the ECS type was not registered, or "
+                    "type is template(it can cause problems).");
             }
 
             DataStream stream;

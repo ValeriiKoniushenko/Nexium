@@ -53,7 +53,8 @@ namespace Core
         DEBUG_ASSERT(
             false,
             ("Can't reflect the type '{}'. Maybe you forgot to register your class with needed "
-             "macros. Look at the documentation, or check commen above the class Core::BaseComponent "
+             "macros. Look at the documentation, or check commen above the class "
+             "Core::BaseComponent "
              "to get more details."_f
              << type)
                 .data());

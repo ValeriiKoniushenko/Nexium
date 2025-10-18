@@ -39,11 +39,35 @@
 namespace Core
 {
 
+    class ECSEditorMimeAdapter : public IntrusiveRefCounter<ECSEditorMimeAdapter>
+    {
+    public:
+    protected:
+    };
+
     class NxECSBasedEditorEWC : public NxEditorBaseEditorEWC
     {
         ECS_COMPONENT_DECL(NxECSBasedEditorEWC, NxEditorBaseEditorEWC);
 
     public:
+        template<typename T>
+        void registerMimeTypeAdapter(const StringAtom& mimeType)
+        {
+            if (hasMimeTypeAdapter(mimeType))
+            {
+                warnLog(
+                    "You're trying to register the adapter for the MIME type '{}' twice. Previous adapter will be owerwritten by new one."_f
+                    << mimeType);
+            }
+
+            _mimeTypeAdapters[mimeType] = []()
+            {
+                return new T;
+            };
+        }
+
+        [[nodiscard]] bool hasMimeTypeAdapter(const StringAtom& mimeType) const;
+
     protected:
         void onInitialize() override;
         void onDrawProperties() override;
@@ -63,6 +87,8 @@ namespace Core
         Gui::LabelRow<Gui::TextInput>* _logicalPath = nullptr;
         Gui::LabelRow<Gui::TextInput>* _assetType = nullptr;
 
+        std::unordered_map<StringAtom, std::function<IntrusivePtr<ECSEditorMimeAdapter>()>>
+            _mimeTypeAdapters;
         NXAsset _targetAsset;
     };
 

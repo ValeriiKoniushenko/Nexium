@@ -31,6 +31,11 @@ namespace Core
 
     ECS_COMPONENT_IMPL(NxECSBasedEditorEWC);
 
+    bool NxECSBasedEditorEWC::hasMimeTypeAdapter(const StringAtom& mimeType) const
+    {
+        return _mimeTypeAdapters.contains(mimeType);
+    }
+
     void NxECSBasedEditorEWC::onInitialize()
     {
         NxEditorBaseEditorEWC::onInitialize();

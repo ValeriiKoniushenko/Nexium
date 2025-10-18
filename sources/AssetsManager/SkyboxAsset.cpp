@@ -112,7 +112,8 @@ namespace Core
                 if (size != img.getSize().height || size != img.getSize().width)
                 {
                     criticalLog(
-                        "Incorrect the cube-map's texture size. Size of different sections are different.");
+                        "Incorrect the cube-map's texture size. Size of different sections are "
+                        "different.");
                 }
 
                 glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, img.getChannelAsOpenGLType(),

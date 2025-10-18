@@ -19,7 +19,7 @@ BinPackParameters: true
 BreakBeforeBraces: Allman
 BreakBeforeTernaryOperators: true
 BreakInheritanceList: AfterColon
-BreakStringLiterals: false
+BreakStringLiterals: true
 PackConstructorInitializers: 'Never'
 ColumnLimit: 100
 Cpp11BracedListStyle: false
