@@ -26,6 +26,7 @@
 
 #include "Core/IntrusivePtr.h"
 #include "Core/String.h"
+#include "GameplaySystem/ECS/BaseComponent.h"
 #include "Misc/BaseLog.h"
 #include "ModuleInfo.h"
 
@@ -79,6 +80,8 @@ namespace Core
         [[nodiscard]] const StringAtom& getType() const noexcept { return _type; }
         [[nodiscard]] const StringAtom& getLogicPath() const noexcept { return _logicPath; }
 
+        [[nodiscard]] BaseComponent::Ptr getData() const noexcept { return _data; }
+
     protected:
         void load();
         void unload();
@@ -96,6 +99,8 @@ namespace Core
 
         StringAtom _name;
         StringAtom _type;
+
+        BaseComponent::Ptr _data;
 
     private:
         Status _status = Status::NotLoaded;

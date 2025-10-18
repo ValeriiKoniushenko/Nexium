@@ -61,11 +61,22 @@ namespace Core
     {
         attachSourceFile(path);
 
-        DataStream stream;
-        stream.setMode(DataStream::Mode::Input);
-        stream.getRaw()
-            = nlohmann::json::parse(Utils::GetTextFileContentAs<std::string>(_assetPath));
-        ioFieldsUpdate(stream);
+        try
+        {
+            DataStream stream;
+            stream.setMode(DataStream::Mode::Input);
+            stream.getRaw()
+                = nlohmann::json::parse(Utils::GetTextFileContentAs<std::string>(_assetPath));
+            ioFieldsUpdate(stream);
+        }
+        catch (std::exception e)
+        {
+            criticalLog("Can't read file: {}. Reason: {}"_f << _assetPath << e.what());
+        }
+        catch (...)
+        {
+            criticalLog("Can't read file: {}. Reason is undefined."_f << _assetPath);
+        }
     }
 
     void BaseAsset::attachSourceFile(const std::filesystem::path& path)

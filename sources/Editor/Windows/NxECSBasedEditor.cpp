@@ -90,12 +90,44 @@ namespace Core
         {
             errorLog("Requested asset not found: " + path.generic_string());
         }
+        setup();
     }
 
     void NxECSBasedEditorEWC::onClose()
     {
         NxEditorBaseEditorEWC::onClose();
+        reset();
+    }
+
+    void NxECSBasedEditorEWC::reset()
+    {
         _targetAsset.reset();
+    }
+
+    void NxECSBasedEditorEWC::setup()
+    {
+        if (!_targetAsset)
+        {
+            return;
+        }
+
+        if (_targetAsset->getLoadingStatus().cast() != ECSAsset::Status::Loaded)
+        {
+            DEBUG_ASSERT(false);
+            errorLog("Can't setup editor's tree. Asset '{}' is not loaded properly."_f
+                     << _targetAsset->getLogicPath());
+            return;
+        }
+
+        auto data = _targetAsset->getData();
+        if (!data)
+        {
+            errorLog("Can't setup editor's tree. Asset '{}' is null, but expected NOT null."_f
+                     << _targetAsset->getLogicPath());
+            return;
+        }
+
+        int i = 1;
     }
 
 } // namespace Core

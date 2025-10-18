@@ -54,6 +54,9 @@ namespace Core
         void onOpenFromPath(const std::filesystem::path& path) override;
         void onClose() override;
 
+        void reset();
+        void setup();
+
     protected:
         Gui::VerticalLayout _headerLayout;
 

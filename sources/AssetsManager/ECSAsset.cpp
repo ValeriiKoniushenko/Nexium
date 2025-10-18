@@ -57,12 +57,49 @@ namespace Core
 
     void ECSAsset::load()
     {
-        _status = Status::Loaded;
+        if (_status.cast() != Status::PreLoaded)
+        {
+            warnLog("Can't load asset: {}. Status is not 'PreLoaded'."_f << _logicPath);
+            return;
+        }
+
+        try
+        {
+            traceLog("Loading status: {} is loading"_f << _logicPath);
+
+            _data.reset();
+            _data = GetGlobalComponentFactory().create(_type);
+            if (!_data)
+            {
+                throw std::runtime_error(
+                    "Can't parse & recreate RTTI type. Maybe, the ECS type was not registered, or type is template(it can cause problems).");
+            }
+
+            DataStream stream;
+            stream.setMode(DataStream::Mode::Input);
+            stream.getRaw() = nlohmann::json::parse(
+                Utils::GetTextFileContentAs<std::string>(_pathToSource))["data"];
+            _data->ioFieldsUpdate(stream);
+
+            _status = Status::Loaded;
+            traceLog("Loading status: {} has loaded!"_f << _logicPath);
+        }
+        catch (std::exception e)
+        {
+            criticalLog("Can't load an asset: {}. The reason: {}"_f << _logicPath << e.what());
+            _status = Status::LoadingError;
+        }
+        catch (...)
+        {
+            criticalLog("Can't load an asset: {}. The reason is undefined."_f << _logicPath);
+            _status = Status::LoadingError;
+        }
     }
 
     void ECSAsset::unload()
     {
         _status = Status::NotLoaded;
+        _data.reset();
     }
 
     void ECSAsset::onIncrementRef(uint32_t count)
