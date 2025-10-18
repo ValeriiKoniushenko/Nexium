@@ -155,11 +155,20 @@ namespace Core
             ImGui::PushStyleVar(style, val);
         }
 
+        bool prevEnabledState = _isEnabled;
         const auto res = ImGui::Begin(getComponentName().c_str(), &_isEnabled, _windowFlags);
         if (_wasFocusRequested)
         {
             ImGui::SetWindowFocus(getComponentName().c_str());
             _wasFocusRequested = false;
+        }
+        if (prevEnabledState != _isEnabled)
+        {
+            if (!_isEnabled)
+            {
+                // emulate closing logic
+                closeWindow();
+            }
         }
 
         ImGui::PopStyleVar(static_cast<int>(_styles.size()));

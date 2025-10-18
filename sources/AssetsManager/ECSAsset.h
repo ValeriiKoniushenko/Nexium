@@ -55,7 +55,13 @@ namespace Core
         {
             DEBUG_ASSERT(_logicPath.isStatic());
         }
-        ~ECSAsset() override = default;
+        ~ECSAsset() override;
+
+        ECSAsset(const ECSAsset&) = delete;
+        ECSAsset& operator=(const ECSAsset&) = delete;
+        ECSAsset(ECSAsset&&) = delete;
+        ECSAsset& operator=(ECSAsset&&) = delete;
+
         [[nodiscard]] spdlog::logger* getLogger() const override
         {
             return ::AssetsManager::getLogger();
@@ -82,6 +88,7 @@ namespace Core
 
     private:
         void extrudeAndValidateMainDataFromFile();
+        void localClear();
 
     protected:
         std::filesystem::path _pathToSource;

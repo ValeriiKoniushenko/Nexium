@@ -52,6 +52,7 @@ namespace Core
         void onSave() override;
         void updateGuiBasedOnAsset() override;
         void onOpenFromPath(const std::filesystem::path& path) override;
+        void onClose() override;
 
     protected:
         Gui::VerticalLayout _headerLayout;

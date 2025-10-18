@@ -30,6 +30,11 @@
 namespace Core
 {
 
+    ECSAsset::~ECSAsset()
+    {
+        localClear();
+    }
+
     void ECSAsset::connectSourceFile(const std::filesystem::path& src)
     {
         _pathToSource = src;
@@ -52,15 +57,26 @@ namespace Core
 
     void ECSAsset::load()
     {
+        _status = Status::Loaded;
     }
 
     void ECSAsset::unload()
     {
+        _status = Status::NotLoaded;
     }
 
     void ECSAsset::onIncrementRef(uint32_t count)
     {
         IntrusiveRefCounter<ECSAsset>::onIncrementRef(count);
+
+        // why 2? The first ref is placing at AssetManager like some fake asset
+        // we just know that it was indexed by the system.
+        // With the second ref - the final code wants to use it. So, we must
+        // load it.
+        if (count == 2)
+        {
+            load();
+        }
     }
 
     void ECSAsset::onDecrementRef(uint32_t count)
@@ -69,7 +85,7 @@ namespace Core
 
         if (count == 1)
         {
-            _status = Status::NotLoaded;
+            unload();
         }
     }
 
@@ -120,6 +136,11 @@ namespace Core
             _status = Status::PreLoadingError;
             _pathToSource.clear();
         }
+    }
+
+    void ECSAsset::localClear()
+    {
+        unload();
     }
 
 } // namespace Core

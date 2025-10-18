@@ -92,4 +92,10 @@ namespace Core
         }
     }
 
+    void NxECSBasedEditorEWC::onClose()
+    {
+        NxEditorBaseEditorEWC::onClose();
+        _targetAsset.reset();
+    }
+
 } // namespace Core
