@@ -24,42 +24,32 @@
 
 #pragma once
 
+#include "Editor/GuiComponents/CheckBox.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/LabelRow.h"
-#include "EditorActorAdapter.h"
-#include "Graphics/Texture.h"
+#include "Editor/GuiComponents/VerticalLayout.h"
+#include "NxECSBasedEditor.h"
 
 namespace Core
 {
 
-    class NxTextureEditorEWC : public NxEditorBaseEditorEWC
+    class ECSEditorActorAdapter : public ECSEditorMimeAdapter
     {
-        ECS_COMPONENT_DECL(NxTextureEditorEWC, NxEditorBaseEditorEWC);
-
-    public:
-        [[nodiscard]] const char* getIcon() override { return ICON_FA_COG; }
+        ECS_COMPONENT_DECL(ECSEditorActorAdapter, ECSEditorMimeAdapter);
 
     protected:
-        void updateGuiBasedOnAsset() override;
+        void onApplyAssetData(const nlohmann::json& json) override;
         void onInitialize() override;
-        void onDrawProperties() override;
-        void onDrawPreview() override;
-        void onDiscardChanges() override;
-        void onSave() override;
-        void onOpenFromPath(const std::filesystem::path& path) override;
+        void onDraw(float dt) override;
 
     protected:
-        Gui::VerticalLayout _layout;
+        Gui::VerticalLayout _actorLayout;
 
-        Gui::LabelRow<Gui::Int2Input>* _imageSize = nullptr;
-        Gui::LabelRow<Gui::TextInput>* _imageChannelType = nullptr;
-        Gui::LabelRow<Gui::TextInput>* _pathToImage = nullptr;
-        Gui::LabelRow<Gui::CheckBox>* _isFlipVertical = nullptr;
-        float _zoom = 1.f;
-        glm::vec2 _offset = {};
-
-        glm::vec2 _lastPreviewRegionSize = {};
-
-        NXTexture _targetAsset;
+        Gui::LabelRow<Gui::CheckBox>* _actorPostDraw = nullptr;
+        Gui::LabelRow<Gui::Float3Input>* _actorPosition = nullptr;
+        Gui::LabelRow<Gui::Float3Input>* _actorRotation = nullptr;
+        Gui::LabelRow<Gui::Float3Input>* _actorScale = nullptr;
+        Gui::LabelRow<Gui::Float3Input>* _actorOrigin = nullptr;
     };
+
 } // namespace Core

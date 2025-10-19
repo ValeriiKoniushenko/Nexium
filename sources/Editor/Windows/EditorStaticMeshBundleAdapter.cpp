@@ -1,0 +1,183 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2018-2025 Valerii Koniushenko
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+#include "EditorStaticMeshBundleAdapter.h"
+
+using namespace Core::Gui;
+
+namespace Core
+{
+    ECS_COMPONENT_IMPL(ECSEditorStaticMeshBundleAdapter)
+
+    void ECSEditorStaticMeshBundleAdapter::onInitialize()
+    {
+        ECSEditorActorAdapter::onInitialize();
+
+        constexpr float defaultLabelWidth = 120.0f;
+        constexpr float defaultModifierWidth = 250.0f;
+
+        auto shaderDataProvider = [](std::size_t inputIndex, StringAtom& out) -> const void*
+        {
+            auto it = GetShaderManager().getShaderMetas().begin();
+            std::advance(it, inputIndex);
+            if (it == GetShaderManager().getShaderMetas().end())
+            {
+                DEBUG_ASSERT(false, "Internal error, can't get specified shader");
+                return nullptr;
+            }
+
+            out = it->first;
+            return nullptr;
+        };
+        auto shaderSizeProvider = []
+        {
+            return GetShaderManager().getShaderMetas().size();
+        };
+
+        _layout.setPaddings(glm::vec4{ ImGui::GetStyle().ItemSpacing.x });
+
+        _modelInput
+            = _layout.addChildComponent<LabelRow<TextInput>>("Model path", defaultLabelWidth);
+        _modelInput->input->setFlex(Flex::FlexWidth);
+        _modelInput->input->onInput.subscribe(
+            [this](auto)
+            {
+                makeParentDirty();
+            });
+
+        _mainShaderCombo = _layout.addChildComponent<LabelRow<ComboModelBased>>("Main shader",
+                                                                                defaultLabelWidth);
+        _mainShaderCombo->input->setWidth(defaultModifierWidth);
+        _mainShaderCombo->input->setDataProvider(shaderDataProvider);
+        _mainShaderCombo->input->setSizeProvider(shaderSizeProvider);
+        _mainShaderCombo->input->onSelect.subscribe(
+            [this](auto)
+            {
+                makeParentDirty();
+            });
+
+        _outlineShaderCombo = _layout.addChildComponent<LabelRow<ComboModelBased>>(
+            "Outline shader", defaultLabelWidth);
+        _outlineShaderCombo->input->setWidth(defaultModifierWidth);
+        _outlineShaderCombo->input->setDataProvider(shaderDataProvider);
+        _outlineShaderCombo->input->setSizeProvider(shaderSizeProvider);
+        _outlineShaderCombo->input->onSelect.subscribe(
+            [this](auto)
+            {
+                makeParentDirty();
+            });
+
+        _onLoadScale
+            = _layout.addChildComponent<LabelRow<FloatInput>>("On load scale", defaultLabelWidth);
+        _onLoadScale->input->setWidth(defaultModifierWidth);
+        _onLoadScale->input->setMin(0.0f);
+        _onLoadScale->input->setStep(0.1f);
+        _onLoadScale->input->onInput.subscribe(
+            [this](auto)
+            {
+                makeParentDirty();
+            });
+
+        _postProcessArray = _layout.addChildComponent<LabelRow<AssimpPostProcessArray>>(
+            "P.Loading flags", defaultLabelWidth);
+        _postProcessArray->setVerticalAlign(Align::Top);
+        _postProcessArray->input->setWidth(defaultModifierWidth);
+        _postProcessArray->input->setFlex(Flex::Fixed);
+        _postProcessArray->input->onChange.subscribe(
+            [this]()
+            {
+                makeParentDirty();
+            });
+        _postProcessArray->input->onSave.subscribe(
+            [this](const std::vector<aiPostProcessSteps>& data)
+            {
+                _postProcessFlags = 0;
+                for (auto el : data)
+                {
+                    _postProcessFlags |= el;
+                }
+            });
+    }
+
+    void ECSEditorStaticMeshBundleAdapter::onApplyAssetData(const nlohmann::json& json)
+    {
+        ECSEditorActorAdapter::onApplyAssetData(json);
+
+        if (_modelInput && json.contains("path"))
+        {
+            _modelInput->input->setInputtedData(json["path"].get<StringAtom>().toStdString());
+        }
+        if (_mainShaderCombo && json.contains("mainShader"))
+        {
+            auto str = json["mainShader"].get<StringAtom>();
+            _mainShaderCombo->input->setCurrentIndex(convertShaderNameToIndex(str));
+        }
+        if (_outlineShaderCombo && json.contains("outlineShader"))
+        {
+            auto str = json["outlineShader"].get<StringAtom>();
+            _outlineShaderCombo->input->setCurrentIndex(convertShaderNameToIndex(str));
+        }
+        if (_onLoadScale && json.contains("onLoadScale"))
+        {
+            _onLoadScale->input->setInputtedData(json["onLoadScale"].get<float>());
+        }
+        if (_postProcessArray && json.contains("assimpPostProcess"))
+        {
+            _postProcessArray->input->clearData();
+            for (auto el : json["assimpPostProcess"])
+            {
+                auto flag = Assimp::aiPostProcessStepsFromString(el.get<StringAtom>());
+                if (flag)
+                {
+                    _postProcessArray->input->add(*flag);
+                }
+            }
+        }
+    }
+
+    void ECSEditorStaticMeshBundleAdapter::onDraw(float dt)
+    {
+        ECSEditorActorAdapter::onDraw(dt);
+
+        if (Gui::CollapsingHeader("Static mesh bundle", ImGuiTreeNodeFlags_DefaultOpen))
+        {
+            _layout.tick(dt);
+        }
+    }
+
+    std::size_t ECSEditorStaticMeshBundleAdapter::convertShaderNameToIndex(
+        const StringAtom& shaderName) const
+    {
+        const auto it = GetShaderManager().getShaderMetas().find(shaderName);
+        return std::distance(GetShaderManager().getShaderMetas().begin(), it);
+    }
+
+    StringAtom ECSEditorStaticMeshBundleAdapter::convertIndexToShaderName(std::size_t index) const
+    {
+        auto it = GetShaderManager().getShaderMetas().begin();
+        std::advance(it, index);
+        DEBUG_ASSERT(it != GetShaderManager().getShaderMetas().end());
+        return it->first;
+    }
+} // namespace Core

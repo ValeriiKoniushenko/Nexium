@@ -24,15 +24,12 @@
 
 #pragma once
 
-#include "AssetsManager/Mesh3DAsset.h"
-#include "BaseWindow.h"
 #include "Editor/GuiComponents/Array.h"
 #include "Editor/GuiComponents/Combo.h"
-#include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
+#include "Editor/GuiComponents/LabelRow.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
-#include "Graphics/Texture.h"
-#include "NxActorBasedEditor.h"
+#include "EditorActorAdapter.h"
 
 namespace Core
 {
@@ -74,34 +71,29 @@ namespace Core
             })
     >;
 
-    class NxMesh3DEditorEWC : public NxActorBasedEditorEWC<NXMesh3D::AssetT::ValueT>
+    class ECSEditorStaticMeshBundleAdapter : public ECSEditorActorAdapter
     {
-        ECS_COMPONENT_DECL(NxMesh3DEditorEWC, NxActorBasedEditorEWC<NXMesh3D::AssetT::ValueT>);
-
-    public:
-        [[nodiscard]] const char* getIcon() override { return ICON_FA_COG; }
+        ECS_COMPONENT_DECL(ECSEditorStaticMeshBundleAdapter, ECSEditorActorAdapter);
 
     protected:
-        void updateGuiBasedOnAsset() override;
-        void onInitialize() override;
-        void onDrawProperties() override;
         [[nodiscard]] std::size_t convertShaderNameToIndex(const StringAtom& shaderName) const;
         [[nodiscard]] StringAtom convertIndexToShaderName(std::size_t index) const;
 
-        void onDiscardChanges() override;
-        void onSave() override;
-        void onOpenFromPath(const std::filesystem::path& path) override;
+        void onInitialize() override;
+        void onApplyAssetData(const nlohmann::json& json) override;
+        void onDraw(float dt) override;
 
     protected:
         Gui::VerticalLayout _layout;
 
-        Gui::TextInput* _modelInput = nullptr;
-        Gui::ComboModelBased* _mainShaderCombo = nullptr;
-        Gui::ComboModelBased* _outlineShaderCombo = nullptr;
-        Gui::FloatInput* _onLoadScale = nullptr;
-        AssimpPostProcessArray* _postProcessArray = nullptr;
-        int _postProcessFlags = 0;
+        Gui::LabelRow<Gui::TextInput>* _logicalPath = nullptr;
 
-        NXMesh3D _targetAsset;
+        Gui::LabelRow<Gui::TextInput>* _modelInput = nullptr;
+        Gui::LabelRow<Gui::ComboModelBased>* _mainShaderCombo = nullptr;
+        Gui::LabelRow<Gui::ComboModelBased>* _outlineShaderCombo = nullptr;
+        Gui::LabelRow<Gui::FloatInput>* _onLoadScale = nullptr;
+        Gui::LabelRow<AssimpPostProcessArray>* _postProcessArray = nullptr;
+        int _postProcessFlags = 0;
     };
+
 } // namespace Core

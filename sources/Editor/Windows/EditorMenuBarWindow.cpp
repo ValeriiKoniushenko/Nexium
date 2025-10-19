@@ -30,10 +30,10 @@
 #include "Editor/Windows/LogsWindow.h"
 #include "Editor/Windows/ObjectPropertiesWindow.h"
 #include "Editor/Windows/SceneTreeWindow.h"
+#include "EditorStaticMeshBundleAdapter.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "ImageViewer.h"
 #include "Misc/IconsFontAwesome.h"
-#include "NxMesh3DEditor.h"
 #include "ShaderManager.h"
 #include "TextEditor.h"
 #include "WorldLightning.h"
@@ -105,7 +105,7 @@ namespace Core
             WindowMenuItem<ShaderManagerEWC>();
             ImGui::Separator();
             WindowMenuItem<TextEditorEWC>();
-            WindowMenuItem<NxMesh3DEditorEWC>();
+            WindowMenuItem<NxECSBasedEditorEWC>();
             WindowMenuItem<ImageViewerEWC>();
 
             ImGui::EndMenu();

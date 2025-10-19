@@ -38,10 +38,10 @@
 #include "ImGui/backends/imgui_impl_glfw.h"
 #include "ImGui/backends/imgui_impl_opengl3.h"
 #include "Misc/IconsFontAwesome.h"
+#include "Windows/EditorStaticMeshBundleAdapter.h"
 #include "Windows/ImageViewer.h"
 #include "Windows/ModalPopUp.h"
 #include "Windows/NxECSBasedEditor.h"
-#include "Windows/NxMesh3DEditor.h"
 #include "Windows/NxTextureEditor.h"
 #include "Windows/WorldLightning.h"
 
@@ -96,9 +96,12 @@ namespace Core
         registerNewWindow<ShaderManagerEWC>("Shader manager"_atom);
         registerNewWindow<ModalPopUp>("PopUp"_atom);
         registerNewWindow<WorldLightningEWC>("World Lightning"_atom, false);
-        registerNewWindow<NxMesh3DEditorEWC>("NX Mesh3D Editor"_atom, false);
         registerNewWindow<NxTextureEditorEWC>("NX Texture Editor"_atom, false);
-        registerNewWindow<NxECSBasedEditorEWC>("Assets editor"_atom, true);
+
+        auto assetsEditor = registerNewWindow<NxECSBasedEditorEWC>("Assets editor"_atom, true);
+        assetsEditor->registerMimeTypeAdapter<ECSEditorActorAdapter>(Actor::componentType);
+        assetsEditor->registerMimeTypeAdapter<ECSEditorStaticMeshBundleAdapter>(
+            StaticMeshBundle::componentType);
 
         registerNewWindow<GameViewportEWC>("Viewport"_atom)
             ->onSizeChanged.subscribe(

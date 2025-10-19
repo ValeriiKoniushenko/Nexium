@@ -25,9 +25,9 @@
 #include "AssetsManager.h"
 
 #include "../Misc/Configs.h"
+#include "Editor/Windows/EditorStaticMeshBundleAdapter.h"
 #include "Editor/Windows/ImageViewer.h"
 #include "Editor/Windows/NxECSBasedEditor.h"
-#include "Editor/Windows/NxMesh3DEditor.h"
 #include "Editor/Windows/NxTextureEditor.h"
 #include "Editor/Windows/TextEditor.h"
 #include "GameplaySystem/Framework/GameInstance.h"
@@ -396,11 +396,6 @@ namespace Core
         {
             gGameInstance->gameEditor.showWindow<NxECSBasedEditorEWC>(".*",
                                                                       path.generic_string().data());
-        }
-        else if (ext == NXMesh3D::AssetT::fileExtension)
-        {
-            gGameInstance->gameEditor.showWindow<NxMesh3DEditorEWC>(".*",
-                                                                    path.generic_string().data());
         }
         else if (ext == NXTexture::AssetT::fileExtension)
         {
