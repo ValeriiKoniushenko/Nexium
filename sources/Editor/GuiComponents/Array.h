@@ -105,7 +105,8 @@ namespace Core::Gui
     public:
         void eraseAt(std::size_t i)
         {
-            if (DEBUG_ASSERT_VAL(i < _data.size()))
+            DEBUG_ASSERT(i < _data.size());
+            if (i < _data.size())
             {
                 _data.erase(_data.begin() + i);
                 onEraseAt.trigger(i);

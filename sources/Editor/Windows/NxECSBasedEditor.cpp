@@ -73,58 +73,89 @@ BaseArray<aiPostProcessSteps,
     ECS_COMPONENT_IMPL(NxECSBasedEditorEWC);
     ECS_COMPONENT_IMPL(ECSEditorMimeAdapter);
 
-    class ActorAdapter : public ECSEditorMimeAdapter
+    class ECSEditorActorAdapter : public ECSEditorMimeAdapter
     {
-        ECS_COMPONENT_DECL(ActorAdapter, ECSEditorMimeAdapter);
+        ECS_COMPONENT_DECL(ECSEditorActorAdapter, ECSEditorMimeAdapter);
 
     protected:
         void onApplyAssetData(const nlohmann::json& json) override
         {
-            /*if (json.contains("path"))
+            if (json.contains("isPostDraw"))
             {
-                _modelInput->setInputtedData(json["path"].get<StringAtom>().toStdString());
+                _actorPostDraw->input->setValue(json["isPostDraw"].get<bool>());
             }
-            if (json.contains("mainShader"))
+            if (json.contains("position"))
             {
-                auto str = json["mainShader"].get<StringAtom>();
-                _outlineShaderCombo->setCurrentIndex(convertShaderNameToIndex(str));
+                _actorPosition->input->setInputtedData(json["position"].get<glm::vec3>());
             }
-            if (json.contains("outlineShader"))
+            if (json.contains("rotation"))
             {
-                auto str = json["outlineShader"].get<StringAtom>();
-                _outlineShaderCombo->setCurrentIndex(convertShaderNameToIndex(str));
-            }*/
+                _actorRotation->input->setInputtedData(json["rotation"].get<glm::vec3>());
+            }
+            if (json.contains("scale"))
+            {
+                _actorScale->input->setInputtedData(json["scale"].get<glm::vec3>());
+            }
+            if (json.contains("origin"))
+            {
+                _actorOrigin->input->setInputtedData(json["origin"].get<glm::vec3>());
+            }
         }
 
         void onInitialize() override
         {
-            constexpr float labelWidth = 140.0f;
-            constexpr float inputWidth = 340.0f;
+            constexpr float labelWidth = 120.0f;
+            constexpr float inputWidth = 250.0f;
 
             _actorLayout.setPaddings(glm::vec4{ ImGui::GetStyle().ItemSpacing.x });
 
             _actorPostDraw
                 = _actorLayout.addChildComponent<LabelRow<CheckBox>>("Post draw", labelWidth);
+            _actorPostDraw->input->onChange.subscribe(
+                [this](auto)
+                {
+                    makeParentDirty();
+                });
 
             _actorPosition
                 = _actorLayout.addChildComponent<LabelRow<Float3Input>>("Position", labelWidth);
             _actorPosition->input->setWidth(inputWidth);
             _actorPosition->input->setFlex(Flex::Fixed);
+            _actorPosition->input->onInput.subscribe(
+                [this](auto)
+                {
+                    makeParentDirty();
+                });
 
             _actorRotation
                 = _actorLayout.addChildComponent<LabelRow<Float3Input>>("Rotation", labelWidth);
             _actorRotation->input->setWidth(inputWidth);
             _actorRotation->input->setFlex(Flex::Fixed);
+            _actorRotation->input->onInput.subscribe(
+                [this](auto)
+                {
+                    makeParentDirty();
+                });
 
             _actorScale
                 = _actorLayout.addChildComponent<LabelRow<Float3Input>>("Scale", labelWidth);
             _actorScale->input->setWidth(inputWidth);
             _actorScale->input->setFlex(Flex::Fixed);
+            _actorScale->input->onInput.subscribe(
+                [this](auto)
+                {
+                    makeParentDirty();
+                });
 
             _actorOrigin
                 = _actorLayout.addChildComponent<LabelRow<Float3Input>>("Origin", labelWidth);
             _actorOrigin->input->setWidth(inputWidth);
             _actorOrigin->input->setFlex(Flex::Fixed);
+            _actorOrigin->input->onInput.subscribe(
+                [this](auto)
+                {
+                    makeParentDirty();
+                });
         }
 
         void onDraw(float dt) override
@@ -138,26 +169,25 @@ BaseArray<aiPostProcessSteps,
     protected:
         Gui::VerticalLayout _actorLayout;
 
-        Gui::LabelRow<Gui::TextInput>* _logicalPath = nullptr;
         Gui::LabelRow<Gui::CheckBox>* _actorPostDraw = nullptr;
         Gui::LabelRow<Gui::Float3Input>* _actorPosition = nullptr;
         Gui::LabelRow<Gui::Float3Input>* _actorRotation = nullptr;
         Gui::LabelRow<Gui::Float3Input>* _actorScale = nullptr;
         Gui::LabelRow<Gui::Float3Input>* _actorOrigin = nullptr;
     };
-    ECS_COMPONENT_IMPL(ActorAdapter);
+    ECS_COMPONENT_IMPL(ECSEditorActorAdapter);
 
-    class StaticMeshBundleAdapter : public ActorAdapter
+    class ECSEditorStaticMeshBundleAdapter : public ECSEditorActorAdapter
     {
-        ECS_COMPONENT_DECL(StaticMeshBundleAdapter, ActorAdapter);
+        ECS_COMPONENT_DECL(ECSEditorStaticMeshBundleAdapter, ECSEditorActorAdapter);
 
     protected:
         void onInitialize() override
         {
-            ActorAdapter::onInitialize();
+            ECSEditorActorAdapter::onInitialize();
 
-            constexpr float defaultLabelWidth = 140.0f;
-            constexpr float defaultModifierWidth = 340.0f;
+            constexpr float defaultLabelWidth = 120.0f;
+            constexpr float defaultModifierWidth = 250.0f;
 
             auto shaderDataProvider = [](std::size_t inputIndex, StringAtom& out) -> const void*
             {
@@ -179,103 +209,102 @@ BaseArray<aiPostProcessSteps,
 
             _layout.setPaddings(glm::vec4{ ImGui::GetStyle().ItemSpacing.x });
 
-            {
-                auto* h = _layout.addChildComponent<HorizontalLayout>();
-                h->addChildComponent<Label>("Model path")->setWidth(defaultLabelWidth);
-                _modelInput = h->addChildComponent<TextInput>();
-                _modelInput->setFlex(Flex::FlexWidth);
-                _modelInput->onInput.subscribe(
-                    [this](auto)
-                    {
-                        // makeDirty();
-                    });
-            }
+            _modelInput
+                = _layout.addChildComponent<LabelRow<TextInput>>("Model path", defaultLabelWidth);
+            _modelInput->input->setFlex(Flex::FlexWidth);
+            _modelInput->input->onInput.subscribe(
+                [this](auto)
+                {
+                    makeParentDirty();
+                });
 
-            {
-                auto* h = _layout.addChildComponent<HorizontalLayout>();
-                h->setHorizontalAlign(Align::SpaceBetween);
-                h->addChildComponent<Label>("Main shader")->setWidth(defaultLabelWidth);
-                _mainShaderCombo = h->addChildComponent<ComboModelBased>();
-                _mainShaderCombo->setWidth(defaultModifierWidth);
-                _mainShaderCombo->setDataProvider(shaderDataProvider);
-                _mainShaderCombo->setSizeProvider(shaderSizeProvider);
-                _mainShaderCombo->onSelect.subscribe(
-                    [this](auto)
-                    {
-                        // makeDirty();
-                    });
-            }
-            {
-                auto* h = _layout.addChildComponent<HorizontalLayout>();
-                h->setHorizontalAlign(Align::SpaceBetween);
-                h->addChildComponent<Label>("Outline shader")->setWidth(defaultLabelWidth);
-                _outlineShaderCombo = h->addChildComponent<ComboModelBased>();
-                _outlineShaderCombo->setWidth(defaultModifierWidth);
-                _outlineShaderCombo->setDataProvider(shaderDataProvider);
-                _outlineShaderCombo->setSizeProvider(shaderSizeProvider);
-                _outlineShaderCombo->onSelect.subscribe(
-                    [this](auto)
-                    {
-                        // makeDirty();
-                    });
-            }
-            {
-                auto* h = _layout.addChildComponent<HorizontalLayout>();
-                h->setHorizontalAlign(Align::SpaceBetween);
-                h->addChildComponent<Label>("On load scale")->setWidth(defaultLabelWidth);
-                _onLoadScale = h->addChildComponent<FloatInput>();
-                _onLoadScale->setWidth(defaultModifierWidth);
-                _onLoadScale->setMin(0.0f);
-                _onLoadScale->setStep(0.1f);
-                _onLoadScale->onInput.subscribe(
-                    [this](auto)
-                    {
-                        // makeDirty();
-                    });
-            }
+            _mainShaderCombo = _layout.addChildComponent<LabelRow<ComboModelBased>>(
+                "Main shader", defaultLabelWidth);
+            _mainShaderCombo->input->setWidth(defaultModifierWidth);
+            _mainShaderCombo->input->setDataProvider(shaderDataProvider);
+            _mainShaderCombo->input->setSizeProvider(shaderSizeProvider);
+            _mainShaderCombo->input->onSelect.subscribe(
+                [this](auto)
+                {
+                    makeParentDirty();
+                });
 
-            {
-                auto* h = _layout.addChildComponent<HorizontalLayout>();
-                h->setHorizontalAlign(Align::SpaceBetween);
-                h->setVerticalAlign(Align::Top);
-                h->addChildComponent<Label>("Post loading flags")->setWidth(defaultLabelWidth);
-                _postProcessArray = h->addChildComponent<AssimpPostProcessArray>();
-                _postProcessArray->setWidth(defaultModifierWidth);
-                _postProcessArray->setFlex(Flex::Fixed);
-                _postProcessArray->onChange.subscribe(
-                    [this]()
+            _outlineShaderCombo = _layout.addChildComponent<LabelRow<ComboModelBased>>(
+                "Outline shader", defaultLabelWidth);
+            _outlineShaderCombo->input->setWidth(defaultModifierWidth);
+            _outlineShaderCombo->input->setDataProvider(shaderDataProvider);
+            _outlineShaderCombo->input->setSizeProvider(shaderSizeProvider);
+            _outlineShaderCombo->input->onSelect.subscribe(
+                [this](auto)
+                {
+                    makeParentDirty();
+                });
+
+            _onLoadScale = _layout.addChildComponent<LabelRow<FloatInput>>("On load scale",
+                                                                           defaultLabelWidth);
+            _onLoadScale->input->setWidth(defaultModifierWidth);
+            _onLoadScale->input->setMin(0.0f);
+            _onLoadScale->input->setStep(0.1f);
+            _onLoadScale->input->onInput.subscribe(
+                [this](auto)
+                {
+                    makeParentDirty();
+                });
+
+            _postProcessArray = _layout.addChildComponent<LabelRow<AssimpPostProcessArray>>(
+                "P.Loading flags", defaultLabelWidth);
+            _postProcessArray->setVerticalAlign(Align::Top);
+            _postProcessArray->input->setWidth(defaultModifierWidth);
+            _postProcessArray->input->setFlex(Flex::Fixed);
+            _postProcessArray->input->onChange.subscribe(
+                [this]()
+                {
+                    makeParentDirty();
+                });
+            _postProcessArray->input->onSave.subscribe(
+                [this](const std::vector<aiPostProcessSteps>& data)
+                {
+                    _postProcessFlags = 0;
+                    for (auto el : data)
                     {
-                        // makeDirty();
-                    });
-                _postProcessArray->onSave.subscribe(
-                    [this](const std::vector<aiPostProcessSteps>& data)
-                    {
-                        _postProcessFlags = 0;
-                        for (auto el : data)
-                        {
-                            _postProcessFlags |= el;
-                        }
-                    });
-            }
+                        _postProcessFlags |= el;
+                    }
+                });
         }
 
         void onApplyAssetData(const nlohmann::json& json) override
         {
-            ActorAdapter::onApplyAssetData(json);
+            ECSEditorActorAdapter::onApplyAssetData(json);
 
             if (_modelInput && json.contains("path"))
             {
-                _modelInput->setInputtedData(json["path"].get<StringAtom>().toStdString());
+                _modelInput->input->setInputtedData(json["path"].get<StringAtom>().toStdString());
             }
-            if (_outlineShaderCombo && json.contains("mainShader"))
+            if (_mainShaderCombo && json.contains("mainShader"))
             {
                 auto str = json["mainShader"].get<StringAtom>();
-                _outlineShaderCombo->setCurrentIndex(convertShaderNameToIndex(str));
+                _mainShaderCombo->input->setCurrentIndex(convertShaderNameToIndex(str));
             }
             if (_outlineShaderCombo && json.contains("outlineShader"))
             {
                 auto str = json["outlineShader"].get<StringAtom>();
-                _outlineShaderCombo->setCurrentIndex(convertShaderNameToIndex(str));
+                _outlineShaderCombo->input->setCurrentIndex(convertShaderNameToIndex(str));
+            }
+            if (_onLoadScale && json.contains("onLoadScale"))
+            {
+                _onLoadScale->input->setInputtedData(json["onLoadScale"].get<float>());
+            }
+            if (_postProcessArray && json.contains("assimpPostProcess"))
+            {
+                _postProcessArray->input->clearData();
+                for (auto el : json["assimpPostProcess"])
+                {
+                    auto flag = Assimp::aiPostProcessStepsFromString(el.get<StringAtom>());
+                    if (flag)
+                    {
+                        _postProcessArray->input->add(*flag);
+                    }
+                }
             }
         }
 
@@ -295,7 +324,7 @@ BaseArray<aiPostProcessSteps,
 
         void onDraw(float dt) override
         {
-            ActorAdapter::onDraw(dt);
+            ECSEditorActorAdapter::onDraw(dt);
 
             if (Gui::CollapsingHeader("Static mesh bundle", ImGuiTreeNodeFlags_DefaultOpen))
             {
@@ -306,14 +335,16 @@ BaseArray<aiPostProcessSteps,
     protected:
         Gui::VerticalLayout _layout;
 
-        Gui::TextInput* _modelInput = nullptr;
-        Gui::ComboModelBased* _mainShaderCombo = nullptr;
-        Gui::ComboModelBased* _outlineShaderCombo = nullptr;
-        Gui::FloatInput* _onLoadScale = nullptr;
-        AssimpPostProcessArray* _postProcessArray = nullptr;
+        Gui::LabelRow<Gui::TextInput>* _logicalPath = nullptr;
+
+        Gui::LabelRow<Gui::TextInput>* _modelInput = nullptr;
+        Gui::LabelRow<Gui::ComboModelBased>* _mainShaderCombo = nullptr;
+        Gui::LabelRow<Gui::ComboModelBased>* _outlineShaderCombo = nullptr;
+        Gui::LabelRow<Gui::FloatInput>* _onLoadScale = nullptr;
+        Gui::LabelRow<AssimpPostProcessArray>* _postProcessArray = nullptr;
         int _postProcessFlags = 0;
     };
-    ECS_COMPONENT_IMPL(StaticMeshBundleAdapter);
+    ECS_COMPONENT_IMPL(ECSEditorStaticMeshBundleAdapter);
 
     void ECSEditorMimeAdapter::applyAssetData(const nlohmann::json& json)
     {
@@ -331,6 +362,14 @@ BaseArray<aiPostProcessSteps,
         onDraw(dt);
     }
 
+    void ECSEditorMimeAdapter::makeParentDirty()
+    {
+        if (auto* parent = getParentAs<NxECSBasedEditorEWC>())
+        {
+            parent->makeDirty();
+        }
+    }
+
     bool NxECSBasedEditorEWC::hasMimeTypeAdapter(const StringAtom& mimeType) const
     {
         return _mimeTypeAdapters.contains(mimeType);
@@ -340,7 +379,7 @@ BaseArray<aiPostProcessSteps,
     {
         NxEditorBaseEditorEWC::onInitialize();
 
-        registerMimeTypeAdapter<StaticMeshBundleAdapter>(StaticMeshBundle::componentType);
+        registerMimeTypeAdapter<ECSEditorStaticMeshBundleAdapter>(StaticMeshBundle::componentType);
 
         setEnablePreview(true);
 

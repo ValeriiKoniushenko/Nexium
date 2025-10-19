@@ -50,6 +50,8 @@ namespace Core
     protected:
         virtual void onDraw(float dt) = 0;
         virtual void onApplyAssetData(const nlohmann::json& json) = 0;
+
+        void makeParentDirty();
     };
 
     class NxECSBasedEditorEWC : public NxEditorBaseEditorEWC

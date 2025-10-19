@@ -53,6 +53,8 @@ namespace Core
         void clearFileFilters();
         [[nodiscard]] const std::set<std::string>& getFileFilters() const noexcept;
 
+        void makeDirty();
+
     protected:
         virtual void updateGuiBasedOnAsset() = 0;
         virtual void onSave() = 0;
@@ -66,7 +68,6 @@ namespace Core
         virtual void onDrawPreview() {}
         void drawMenuBar();
         virtual void onDrawBarExtraFileMenu() {}
-        void makeDirty();
         void setEnablePreview(bool enable);
         bool isEnablePreview() const noexcept { return _enablePreview; }
 
