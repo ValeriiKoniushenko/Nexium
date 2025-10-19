@@ -82,6 +82,8 @@ namespace Core
 
         [[nodiscard]] BaseComponent::Ptr getData() const noexcept { return _data; }
 
+        [[nodiscard]] nlohmann::json getAssetData() const;
+
     protected:
         void load();
         void unload();

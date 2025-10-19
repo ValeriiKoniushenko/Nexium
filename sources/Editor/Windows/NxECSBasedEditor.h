@@ -42,7 +42,12 @@ namespace Core
     class ECSEditorMimeAdapter : public IntrusiveRefCounter<ECSEditorMimeAdapter>
     {
     public:
+        void applyAssetData(const nlohmann::json& json);
+        void draw(float dt);
+
     protected:
+        virtual void onDraw(float dt) = 0;
+        virtual void onApplyAssetData(const nlohmann::json& json) = 0;
     };
 
     class NxECSBasedEditorEWC : public NxEditorBaseEditorEWC
@@ -78,6 +83,9 @@ namespace Core
         void onOpenFromPath(const std::filesystem::path& path) override;
         void onClose() override;
 
+        [[nodiscard]] IntrusivePtr<ECSEditorMimeAdapter> spawnMimeTypeAdapter(
+            const StringAtom& mimeType) const;
+
         void reset();
         void setup();
 
@@ -89,6 +97,9 @@ namespace Core
 
         std::unordered_map<StringAtom, std::function<IntrusivePtr<ECSEditorMimeAdapter>()>>
             _mimeTypeAdapters;
+
+        IntrusivePtr<ECSEditorMimeAdapter> _mimeTypeAdapter;
+
         NXAsset _targetAsset;
     };
 

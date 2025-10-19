@@ -55,6 +55,33 @@ namespace Core
         extrudeAndValidateMainDataFromFile();
     }
 
+    nlohmann::json ECSAsset::getAssetData() const
+    {
+        try
+        {
+            const auto json = nlohmann::json::parse(Utils::GetFileContent(_pathToSource));
+
+            if (!json.contains("assetData"))
+            {
+                return {};
+            }
+
+            return json["assetData"];
+        }
+        catch (std::exception e)
+        {
+            criticalLog("Can't provide asset's data: {}. Reason: {}"_f << _pathToSource
+                                                                       << e.what());
+        }
+        catch (...)
+        {
+            criticalLog("Can't provide asset's data: {}. Due to internal error."_f
+                        << _pathToSource);
+        }
+
+        return {};
+    }
+
     void ECSAsset::load()
     {
         if (_status.cast() != Status::PreLoaded)

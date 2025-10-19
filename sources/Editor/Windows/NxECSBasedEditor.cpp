@@ -24,12 +24,188 @@
 
 #include "NxECSBasedEditor.h"
 
+#include "Editor/GuiComponents/Array.h"
+#include "Editor/GuiComponents/Combo.h"
+
 using namespace Core::Gui;
 
 namespace Core
 {
 
+    using AssimpPostProcessArray =
+BaseArray<aiPostProcessSteps,
+    decltype([](aiPostProcessSteps data)
+    -> Gui::HorizontalLayout::Ptr {
+            auto l = Gui::HorizontalLayout::Create();
+            const auto combo = l->addChildComponent<Gui::ComboModelBased>();
+
+            combo->setDataProvider(
+                [](std::size_t i, StringAtom &out) -> const void * {
+                    out = Assimp::aiPostProcessStepsToString(Assimp::aiPostProcessStepsAsVector[i]);
+                    return nullptr;
+                });
+            combo->setSizeProvider(
+                [] {
+                    return Assimp::aiPostProcessStepsAsVector.size();
+                });
+            combo->setFlex(Gui::Flex::FlexWidth);
+
+            const auto it = std::ranges::find(Assimp::aiPostProcessStepsAsVector, data);
+            if (it != Assimp::aiPostProcessStepsAsVector.end()) {
+                combo->setCurrentIndex(it - Assimp::aiPostProcessStepsAsVector.begin());
+            }
+            return l;
+        }),
+    decltype([](Gui::HorizontalLayout *layout)
+    -> aiPostProcessSteps {
+            if (auto modifier = layout->getFirstChildAs<Gui::ComboModelBased>()) {
+                return Assimp::aiPostProcessStepsAsVector[modifier->getCurrentIndex()];
+            }
+            else
+            {
+                DEBUG_ASSERT(false);
+            }
+
+            return static_cast<aiPostProcessSteps>(0);
+        })
+>;
+
     ECS_COMPONENT_IMPL(NxECSBasedEditorEWC);
+
+    class StaticMeshBundleAdapter : public ECSEditorMimeAdapter
+    {
+    protected:
+        void onApplyAssetData(const nlohmann::json& json) override
+        {
+            constexpr float defaultLabelWidth = 140.0f;
+            constexpr float defaultModifierWidth = 340.0f;
+
+            auto shaderDataProvider = [](std::size_t inputIndex, StringAtom& out) -> const void*
+            {
+                auto it = GetShaderManager().getShaderMetas().begin();
+                std::advance(it, inputIndex);
+                if (it == GetShaderManager().getShaderMetas().end())
+                {
+                    DEBUG_ASSERT(false, "Internal error, can't get specified shader");
+                    return nullptr;
+                }
+
+                out = it->first;
+                return nullptr;
+            };
+            auto shaderSizeProvider = []
+            {
+                return GetShaderManager().getShaderMetas().size();
+            };
+
+            {
+                auto* h = _layout.addChildComponent<HorizontalLayout>();
+                h->addChildComponent<Label>("Model path")->setWidth(defaultLabelWidth);
+                _modelInput = h->addChildComponent<TextInput>();
+                _modelInput->setFlex(Flex::FlexWidth);
+                _modelInput->onInput.subscribe(
+                    [this](auto)
+                    {
+                        // makeDirty();
+                    });
+            }
+
+            {
+                auto* h = _layout.addChildComponent<HorizontalLayout>();
+                h->setHorizontalAlign(Align::SpaceBetween);
+                h->addChildComponent<Label>("Main shader")->setWidth(defaultLabelWidth);
+                _mainShaderCombo = h->addChildComponent<ComboModelBased>();
+                _mainShaderCombo->setWidth(defaultModifierWidth);
+                _mainShaderCombo->setDataProvider(shaderDataProvider);
+                _mainShaderCombo->setSizeProvider(shaderSizeProvider);
+                _mainShaderCombo->onSelect.subscribe(
+                    [this](auto)
+                    {
+                        // makeDirty();
+                    });
+            }
+            {
+                auto* h = _layout.addChildComponent<HorizontalLayout>();
+                h->setHorizontalAlign(Align::SpaceBetween);
+                h->addChildComponent<Label>("Outline shader")->setWidth(defaultLabelWidth);
+                _outlineShaderCombo = h->addChildComponent<ComboModelBased>();
+                _outlineShaderCombo->setWidth(defaultModifierWidth);
+                _outlineShaderCombo->setDataProvider(shaderDataProvider);
+                _outlineShaderCombo->setSizeProvider(shaderSizeProvider);
+                _outlineShaderCombo->onSelect.subscribe(
+                    [this](auto)
+                    {
+                        // makeDirty();
+                    });
+            }
+            {
+                auto* h = _layout.addChildComponent<HorizontalLayout>();
+                h->setHorizontalAlign(Align::SpaceBetween);
+                h->addChildComponent<Label>("On load scale")->setWidth(defaultLabelWidth);
+                _onLoadScale = h->addChildComponent<FloatInput>();
+                _onLoadScale->setWidth(defaultModifierWidth);
+                _onLoadScale->setMin(0.0f);
+                _onLoadScale->setStep(0.1f);
+                _onLoadScale->onInput.subscribe(
+                    [this](auto)
+                    {
+                        // makeDirty();
+                    });
+            }
+
+            {
+                auto* h = _layout.addChildComponent<HorizontalLayout>();
+                h->setHorizontalAlign(Align::SpaceBetween);
+                h->setVerticalAlign(Align::Top);
+                h->addChildComponent<Label>("Post loading flags")->setWidth(defaultLabelWidth);
+                _postProcessArray = h->addChildComponent<AssimpPostProcessArray>();
+                _postProcessArray->setWidth(defaultModifierWidth);
+                _postProcessArray->setFlex(Flex::Fixed);
+                _postProcessArray->onChange.subscribe(
+                    [this]()
+                    {
+                        // makeDirty();
+                    });
+                _postProcessArray->onSave.subscribe(
+                    [this](const std::vector<aiPostProcessSteps>& data)
+                    {
+                        _postProcessFlags = 0;
+                        for (auto el : data)
+                        {
+                            _postProcessFlags |= el;
+                        }
+                    });
+            }
+        }
+
+        void onDraw(float dt) override { _layout.tick(dt); }
+
+    protected:
+        Gui::VerticalLayout _layout;
+
+        Gui::TextInput* _modelInput = nullptr;
+        Gui::ComboModelBased* _mainShaderCombo = nullptr;
+        Gui::ComboModelBased* _outlineShaderCombo = nullptr;
+        Gui::FloatInput* _onLoadScale = nullptr;
+        AssimpPostProcessArray* _postProcessArray = nullptr;
+        int _postProcessFlags = 0;
+    };
+
+    void ECSEditorMimeAdapter::applyAssetData(const nlohmann::json& json)
+    {
+        if (json.empty())
+        {
+            globalLog.warnLog("Can't apply asset data. No data.");
+            return;
+        }
+
+        onApplyAssetData(json);
+    }
+
+    void ECSEditorMimeAdapter::draw(float dt)
+    {
+        onDraw(dt);
+    }
 
     bool NxECSBasedEditorEWC::hasMimeTypeAdapter(const StringAtom& mimeType) const
     {
@@ -39,6 +215,8 @@ namespace Core
     void NxECSBasedEditorEWC::onInitialize()
     {
         NxEditorBaseEditorEWC::onInitialize();
+
+        registerMimeTypeAdapter<StaticMeshBundleAdapter>(StaticMeshBundle::componentType);
 
         setEnablePreview(true);
 
@@ -58,6 +236,10 @@ namespace Core
     {
         const auto dt = GetWorld().timeDelta;
         _headerLayout.tick(dt);
+        if (_mimeTypeAdapter)
+        {
+            _mimeTypeAdapter->draw(dt);
+        }
     }
 
     void NxECSBasedEditorEWC::onDrawPreview()
@@ -104,8 +286,22 @@ namespace Core
         reset();
     }
 
+    IntrusivePtr<ECSEditorMimeAdapter> NxECSBasedEditorEWC::spawnMimeTypeAdapter(
+        const StringAtom& mimeType) const
+    {
+        if (!hasMimeTypeAdapter(mimeType))
+        {
+            errorLog("Can't spawn editor's mime adapter. Mime type '{}' is not registered."_f
+                     << mimeType);
+            return nullptr;
+        }
+
+        return _mimeTypeAdapters.at(mimeType)();
+    }
+
     void NxECSBasedEditorEWC::reset()
     {
+        _mimeTypeAdapter.reset();
         _targetAsset.reset();
     }
 
@@ -122,6 +318,14 @@ namespace Core
             errorLog("Can't setup editor's tree. Asset '{}' is not loaded properly."_f
                      << _targetAsset->getLogicPath());
             return;
+        }
+
+        if (hasMimeTypeAdapter(_targetAsset->getType()))
+        {
+            if ((_mimeTypeAdapter = spawnMimeTypeAdapter(_targetAsset->getType())))
+            {
+                _mimeTypeAdapter->applyAssetData(_targetAsset->getAssetData());
+            }
         }
 
         auto data = _targetAsset->getData();

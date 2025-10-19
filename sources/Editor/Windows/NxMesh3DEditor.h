@@ -36,11 +36,6 @@
 
 namespace Core
 {
-    namespace Gui
-    {
-        class Label;
-    } // namespace Gui
-
     using AssimpPostProcessArray =
     Gui::BaseArray<aiPostProcessSteps,
         decltype([](aiPostProcessSteps data)
