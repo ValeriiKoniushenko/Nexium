@@ -666,7 +666,7 @@ namespace Core
          * attach existing child or just new one. Your child will be cloned
          * to this class/owner
          */
-        void attachChild(const BaseComponent::Ptr& child);
+        BaseComponent* attachChild(const BaseComponent::Ptr& child);
 
         void detachChild(BaseComponent* child);
 
@@ -682,7 +682,7 @@ namespace Core
             removeChildIf(
                 [](auto* child)
                 {
-                    return child->template isTypeOf<ComponentT>();
+                    return child->template tryCastTo<ComponentT>() != nullptr;
                 });
         }
 

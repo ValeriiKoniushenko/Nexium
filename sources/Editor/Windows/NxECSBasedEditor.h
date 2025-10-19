@@ -39,8 +39,10 @@
 namespace Core
 {
 
-    class ECSEditorMimeAdapter : public IntrusiveRefCounter<ECSEditorMimeAdapter>
+    class ECSEditorMimeAdapter : public BaseComponent
     {
+        ECS_COMPONENT_DECL(ECSEditorMimeAdapter, BaseComponent);
+
     public:
         void applyAssetData(const nlohmann::json& json);
         void draw(float dt);
@@ -83,7 +85,7 @@ namespace Core
         void onOpenFromPath(const std::filesystem::path& path) override;
         void onClose() override;
 
-        [[nodiscard]] IntrusivePtr<ECSEditorMimeAdapter> spawnMimeTypeAdapter(
+        [[nodiscard]] ECSEditorMimeAdapter::Ptr spawnMimeTypeAdapter(
             const StringAtom& mimeType) const;
 
         void reset();
@@ -95,10 +97,8 @@ namespace Core
         Gui::LabelRow<Gui::TextInput>* _logicalPath = nullptr;
         Gui::LabelRow<Gui::TextInput>* _assetType = nullptr;
 
-        std::unordered_map<StringAtom, std::function<IntrusivePtr<ECSEditorMimeAdapter>()>>
+        std::unordered_map<StringAtom, std::function<ECSEditorMimeAdapter::Ptr()>>
             _mimeTypeAdapters;
-
-        IntrusivePtr<ECSEditorMimeAdapter> _mimeTypeAdapter;
 
         NXAsset _targetAsset;
     };

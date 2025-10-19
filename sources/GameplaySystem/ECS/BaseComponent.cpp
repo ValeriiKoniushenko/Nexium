@@ -113,9 +113,9 @@ namespace Core
         stream.field("noTick", _noTick);
     }
 
-    void BaseComponent::attachChild(const BaseComponent::Ptr& child)
+    BaseComponent* BaseComponent::attachChild(const BaseComponent::Ptr& child)
     {
-        (void)rawAddChildComponent(child->clone().get());
+        return rawAddChildComponent(child->clone().get());
     }
 
     void BaseComponent::detachChild(BaseComponent* child)
