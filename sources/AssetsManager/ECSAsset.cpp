@@ -126,7 +126,7 @@ namespace Core
 
     void ECSAsset::unload()
     {
-        _status = Status::NotLoaded;
+        _status = Status::PreLoaded;
         _data.reset();
     }
 

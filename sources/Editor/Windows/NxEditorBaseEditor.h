@@ -74,7 +74,7 @@ namespace Core
     protected:
         std::filesystem::path _assetFilePath;
         std::set<std::string> _fileFilters;
-        constexpr static float _defaultPropertiesWidth = 340.0f;
+        constexpr static float _defaultPropertiesWidth = 500.0f;
 
     private:
         bool _isDirty = false;
