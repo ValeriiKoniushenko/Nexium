@@ -24,12 +24,10 @@
 
 #include "AssetsManagerWindow.h"
 
-#include "AssetsManager/Mesh3DAsset.h"
 #include "Editor/GuiComponents/Spacer.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Misc/IconsFontAwesome.h"
 #include "ModalPopUp.h"
-#include "TextEditor.h"
 
 #include <format>
 #include <fstream>
