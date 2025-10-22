@@ -43,7 +43,7 @@ namespace Core
         }
 
         auto* shader = gGameInstance->shaderManager.getShaderProgram("objectIdentifier"_atom);
-        if (!DEBUG_ASSERT_VAL(shader)) [[unlikely]]
+        if (!Verify(shader)) [[unlikely]]
         {
             return;
         }
@@ -128,7 +128,7 @@ namespace Core
                 bundle->forEach(
                     [pickedColor, &found](BaseComponent* component)
                     {
-                        DEBUG_ASSERT(component);
+                        Assert(component);
                         if (component && component->isEnabled()
                             && component->isTypeOf<StaticMesh>())
                         {

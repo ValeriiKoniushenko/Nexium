@@ -47,7 +47,7 @@ namespace Core::Gui
         {
             for (std::size_t i = 0; i < Size; ++i)
             {
-                if (DEBUG_ASSERT_VAL(labels[i])) [[likely]]
+                if (Verify(labels[i])) [[likely]]
                 {
                     StringAtom text;
                     text.resize(2);
@@ -63,7 +63,7 @@ namespace Core::Gui
         {
             for (std::size_t i = 0; i < Size; ++i)
             {
-                if (DEBUG_ASSERT_VAL(labels[i])) [[likely]]
+                if (Verify(labels[i])) [[likely]]
                 {
                     labels[i]->setTextColor(data[i]);
                 }
@@ -74,7 +74,7 @@ namespace Core::Gui
         {
             for (std::size_t i = 0; i < Size; ++i)
             {
-                if (DEBUG_ASSERT_VAL(inputs[i])) [[likely]]
+                if (Verify(inputs[i])) [[likely]]
                 {
                     inputs[i]->disableWidget(val);
                 }
@@ -86,7 +86,7 @@ namespace Core::Gui
             auto* raw = reinterpret_cast<const Type*>(&data);
             for (std::size_t i = 0; i < Size; ++i)
             {
-                if (DEBUG_ASSERT_VAL(inputs[i])) [[likely]]
+                if (Verify(inputs[i])) [[likely]]
                 {
                     inputs[i]->setInputtedData(raw[i]);
                 }
@@ -99,7 +99,7 @@ namespace Core::Gui
             auto* raw = reinterpret_cast<Type*>(&result);
             for (std::size_t i = 0; i < Size; ++i)
             {
-                if (DEBUG_ASSERT_VAL(inputs[i])) [[likely]]
+                if (Verify(inputs[i])) [[likely]]
                 {
                     raw[i] = inputs[i]->getInputtedData();
                 }

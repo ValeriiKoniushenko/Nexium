@@ -241,13 +241,13 @@ namespace Core
         BaseFloatEWC::ioFieldsUpdate(stream);
 
         stream.field("logLimit", _logLimit);
-        if (DEBUG_ASSERT_VAL(_searchInput))
+        if (Verify(_searchInput))
         {
             std::string out = _searchInput->getInputtedData();
             stream.field("filter", out);
             _searchInput->setInputtedData(out);
         }
-        if (DEBUG_ASSERT_VAL(_regexModeButton))
+        if (Verify(_regexModeButton))
         {
             bool out = _regexModeButton->isActive();
             stream.field("regexMode", out);
@@ -259,7 +259,7 @@ namespace Core
                        {
                            for (auto [severity, ptr] : _levelFilter)
                            {
-                               if (DEBUG_ASSERT_VAL(ptr))
+                               if (Verify(ptr))
                                {
                                    bool out = ptr->isActive();
                                    nested.field(spdlog::level::to_string_view(severity).data(),

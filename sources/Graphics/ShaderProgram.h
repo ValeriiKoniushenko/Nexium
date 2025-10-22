@@ -167,9 +167,9 @@ namespace Core
         void setUniformObject(const StringAtom& name, T&& value) const
         {
 #ifdef GRAPHICS_DEBUG
-            DEBUG_ASSERT(name.isStatic(), "Use atomic string. Add _atom to your uniform's str");
-            DEBUG_ASSERT(_ubos.contains(name));
-            DEBUG_ASSERT(_ubos.at(name) != 0);
+            Assert(name.isStatic(), "Use atomic string. Add _atom to your uniform's str");
+            Assert(_ubos.contains(name));
+            Assert(_ubos.at(name) != 0);
 #endif
             glUniformBlockBinding(_shaderProgramId, _ubos.at(name), 0);
             glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(T), &value);

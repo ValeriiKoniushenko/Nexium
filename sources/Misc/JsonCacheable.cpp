@@ -38,7 +38,7 @@ namespace Core
     void JsonCacheable::writeToCache() const
     {
         fs::create_directories(getCacheDir());
-        if (!DEBUG_ASSERT_VAL(fs::exists(getCacheDir())))
+        if (!Verify(fs::exists(getCacheDir())))
         {
             globalLog.errorLog("Can't create a dirs for cache. Provided path: "
                                + getCacheDir().generic_string());

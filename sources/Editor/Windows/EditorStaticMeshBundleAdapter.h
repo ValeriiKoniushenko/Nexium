@@ -64,7 +64,7 @@ namespace Core
                 }
                 else
                 {
-                    DEBUG_ASSERT(false);
+                    Assert(false);
                 }
 
                 return static_cast<aiPostProcessSteps>(0);

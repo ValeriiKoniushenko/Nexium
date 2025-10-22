@@ -161,7 +161,7 @@ namespace Core
             fs::create_directories(dir, ec);
             if (!fs::exists(dir) || ec)
             {
-                DEBUG_ASSERT(false);
+                Assert(false);
                 globalLog.errorLog(
                     "[Cache system] Can't create a dirs for cache for this object {}. Provided path: {}.{}"_f
                     << getCacheHash() << dir.generic_string()

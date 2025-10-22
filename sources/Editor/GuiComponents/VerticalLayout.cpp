@@ -152,7 +152,7 @@ namespace Core::Gui
         }
         else
         {
-            DEBUG_ASSERT(false);
+            Assert(false);
             prepareAlignTop();
         }
 
@@ -304,6 +304,6 @@ namespace Core::Gui
             ++i;
         }
 
-        DEBUG_ASSERT(_xOffsets.size() == _children.size());
+        Assert(_xOffsets.size() == _children.size());
     }
 } // namespace Core::Gui

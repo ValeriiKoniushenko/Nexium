@@ -47,9 +47,9 @@ namespace Core
 
     bool EditorSettingsEWC::BaseListItem::containsString(const StringAtom& str)
     {
-        if (DEBUG_ASSERT_VAL(_label))
+        if (Verify(_label))
         {
-            DEBUG_ASSERT(!_label->getComponentName().isEmpty());
+            Assert(!_label->getComponentName().isEmpty());
 
             if (_label->getComponentName().findIgnoreCase(str) != nullptr)
             {
@@ -62,7 +62,7 @@ namespace Core
 
     void EditorSettingsEWC::BaseListItem::setLabel(const StringAtom& label)
     {
-        if (DEBUG_ASSERT_VAL(_label))
+        if (Verify(_label))
         {
             _label->setText(label);
         }
@@ -80,7 +80,7 @@ namespace Core
 
     void EditorSettingsEWC::KeymapItem::setReadOnly(bool value)
     {
-        if (DEBUG_ASSERT_VAL(_button))
+        if (Verify(_button))
         {
             _button->disableWidget(value);
             _resetButton->disableWidget(value);
@@ -94,7 +94,7 @@ namespace Core
             return true;
         }
 
-        if (DEBUG_ASSERT_VAL(_button))
+        if (Verify(_button))
         {
             if (_button->getComponentName().findIgnoreCase(str) != nullptr)
             {
@@ -107,7 +107,7 @@ namespace Core
 
     void EditorSettingsEWC::KeymapItem::setButtonName(const StringAtom& label)
     {
-        if (DEBUG_ASSERT_VAL(_button))
+        if (Verify(_button))
         {
             _button->setText(label);
         }
@@ -127,7 +127,7 @@ namespace Core
 
     void EditorSettingsEWC::ColorItem::setReadOnly(bool value)
     {
-        if (DEBUG_ASSERT_VAL(_colorInput))
+        if (Verify(_colorInput))
         {
             _colorInput->setReadOnly(value);
         }
@@ -135,7 +135,7 @@ namespace Core
 
     void EditorSettingsEWC::ColorItem::setInputData(const StringAtom& data)
     {
-        if (DEBUG_ASSERT_VAL(_colorInput))
+        if (Verify(_colorInput))
         {
             _colorInput->setInputtedData(data.data());
         }
@@ -238,7 +238,7 @@ namespace Core
         }
 
         if (auto spectator = gGameInstance->gameScene.getFirstActorOf<Spectator>();
-            DEBUG_ASSERT_VAL(spectator))
+            Verify(spectator))
         {
             layout.addChildComponent<Spacer>();
             layout.addChildComponent<Label>()->setText("Spectator");
@@ -265,14 +265,14 @@ namespace Core
         layout.addChildComponent<Separator>();
 
         ImGuiStyle* style = &ImGui::GetStyle();
-        if (!DEBUG_ASSERT_VAL(style))
+        if (!Verify(style))
         {
             errorLog("Can't setup ImGUI styles. ImGui::GetStyle() return nullptr");
             return;
         }
 
         glm::vec4* colors = style->Colors;
-        if (!DEBUG_ASSERT_VAL(colors))
+        if (!Verify(colors))
         {
             errorLog("Can't setup ImGUI colors. ImGui::GetStyle()->Colors return nullptr");
             return;

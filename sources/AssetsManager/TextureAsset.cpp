@@ -30,7 +30,7 @@ namespace Core
 {
     void TextureAsset::setFilePath(const std::filesystem::path& value)
     {
-        DEBUG_ASSERT(value.is_relative(), "Path should be relative");
+        Assert(value.is_relative(), "Path should be relative");
         _path = value;
     }
 

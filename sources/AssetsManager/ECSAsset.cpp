@@ -170,7 +170,7 @@ namespace Core
             }
 
             _type = StringAtom::Intern(json["type"].get<StringAtom>());
-            DEBUG_ASSERT(_type.isStatic());
+            Assert(_type.isStatic());
             if (_type.isEmpty())
             {
                 throw std::runtime_error("Asset's source file contains empty 'type' field.");

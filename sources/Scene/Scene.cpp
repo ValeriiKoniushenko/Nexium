@@ -65,7 +65,7 @@ namespace Core
 
     void Scene::setSceneName(StringAtom name)
     {
-        if (DEBUG_ASSERT_VAL(!name.isEmpty()))
+        if (Verify(!name.isEmpty()))
         {
             _sceneName = std::move(name);
         }

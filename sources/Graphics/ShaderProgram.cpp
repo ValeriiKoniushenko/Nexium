@@ -135,7 +135,7 @@ namespace Core
     {
         if (!_setupVertexAttribute) [[unlikely]]
         {
-            DEBUG_ASSERT(false);
+            Assert(false);
             errorLog("Impossible to setup setupVertexAttribute. Setup function wasn't found.");
             return;
         }
@@ -160,9 +160,9 @@ namespace Core
     void ShaderProgram::debugUniform(const StringAtom& name) const
     {
 #ifdef GRAPHICS_DEBUG
-        DEBUG_ASSERT(name.isStatic(), "Use atomic string. Add _atom to your uniform's str");
-        DEBUG_ASSERT(_uniforms.contains(name));
-        DEBUG_ASSERT(_uniforms.at(name) != -1);
+        Assert(name.isStatic(), "Use atomic string. Add _atom to your uniform's str");
+        Assert(_uniforms.contains(name));
+        Assert(_uniforms.at(name) != -1);
 #endif
     }
 } // namespace Core

@@ -113,12 +113,12 @@ namespace Core
                                       const std::filesystem::path& modelPath,
                                       float scale /* = 1.f*/)
     {
-        if (!DEBUG_ASSERT_VAL(node))
+        if (!Verify(node))
         {
             errorLog("Can't import model[s] for static mesh bundle, so node is nullptr");
             return;
         }
-        if (!DEBUG_ASSERT_VAL(scene))
+        if (!Verify(scene))
         {
             errorLog("Can't import model[s] for static mesh bundle, so scene is nullptr");
             return;
@@ -139,14 +139,14 @@ namespace Core
 
     void StaticMeshBundle::setShader(ShaderProgram* sp, bool ignoreVertexAttribSetup /* = false*/)
     {
-        if (!DEBUG_ASSERT_VAL(sp))
+        if (!Verify(sp))
         {
             return;
         }
 
         for (auto* mesh : _meshes)
         {
-            if (DEBUG_ASSERT_VAL(mesh)) [[likely]]
+            if (Verify(mesh)) [[likely]]
             {
                 mesh->setShader(sp, ignoreVertexAttribSetup);
             }
@@ -281,7 +281,7 @@ namespace Core
     {
         for (auto* mesh : _meshes)
         {
-            if (DEBUG_ASSERT_VAL(mesh)) [[likely]]
+            if (Verify(mesh)) [[likely]]
             {
                 mesh->setOutlineShader(sp, ignoreVertexAttribSetup);
             }

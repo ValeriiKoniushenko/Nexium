@@ -326,7 +326,7 @@ namespace Core
 
     void AssetsManager::spawnMesh3DOnScene(const StringAtom& logicPath)
     {
-        DEBUG_ASSERT(false, "Not implemented");
+        Assert(false, "Not implemented");
         // if (auto&& mesh = getMesh3D(logicPath))
         //{
         //     gGameInstance->gameScene.addActor(mesh);
@@ -417,24 +417,24 @@ namespace Core
     {
         if (logicPath.isEmpty() || !requiredExt)
         {
-            DEBUG_ASSERT(false);
+            Assert(false);
             traceLog("Path is empty");
             return false;
         }
 
-        DEBUG_ASSERT(logicPath.isStatic(), "You must use only _atom strings!");
+        Assert(logicPath.isStatic(), "You must use only _atom strings!");
 
         auto* found = logicPath.reverseFind(".nx");
         if (!found)
         {
-            DEBUG_ASSERT(false);
+            Assert(false);
             traceLog("Invalid file extension was passed");
             return false;
         }
 
         if (strcmp(found, requiredExt) != 0)
         {
-            DEBUG_ASSERT(false);
+            Assert(false);
             traceLog("Path is invalid. Expected extension is {} but passed {}"_f << requiredExt
                                                                                  << found);
             return false;

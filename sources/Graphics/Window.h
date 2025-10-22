@@ -78,8 +78,8 @@ namespace Core
                 return false;
             }
 
-            DEBUG_ASSERT(T::dragType.isStatic());
-            DEBUG_ASSERT(payload.type.isStatic());
+            Assert(T::dragType.isStatic());
+            Assert(payload.type.isStatic());
             return payload.type == T::dragType;
         }
 

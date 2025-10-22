@@ -225,7 +225,7 @@ namespace Core
     void GameInstance::initializeShaders()
     {
         auto* defaultShader = shaderManager.getShaderProgram("defaultTextured"_atom);
-        if (DEBUG_ASSERT_VAL(defaultShader))
+        if (Verify(defaultShader))
         {
             defaultShader->setVertexAttributeCallback(
                 []
@@ -244,7 +244,7 @@ namespace Core
         }
 
         auto* outlineShader = shaderManager.getShaderProgram("outline"_atom);
-        if (DEBUG_ASSERT_VAL(outlineShader))
+        if (Verify(outlineShader))
         {
             outlineShader->setVertexAttributeCallback(
                 []
@@ -259,7 +259,7 @@ namespace Core
         }
 
         auto* objectIdentifierShader = shaderManager.getShaderProgram("objectIdentifier"_atom);
-        if (DEBUG_ASSERT_VAL(objectIdentifierShader))
+        if (Verify(objectIdentifierShader))
         {
             objectIdentifierShader->setVertexAttributeCallback(
                 []
@@ -270,7 +270,7 @@ namespace Core
         }
 
         auto* simpleColorShader = shaderManager.getShaderProgram("pickUpColorFiller"_atom);
-        if (DEBUG_ASSERT_VAL(simpleColorShader))
+        if (Verify(simpleColorShader))
         {
             simpleColorShader->setVertexAttributeCallback(
                 []
@@ -285,7 +285,7 @@ namespace Core
         }
 
         auto* skyboxShader = shaderManager.getShaderProgram("skybox"_atom);
-        if (DEBUG_ASSERT_VAL(skyboxShader))
+        if (Verify(skyboxShader))
         {
             skyboxShader->setVertexAttributeCallback(
                 []

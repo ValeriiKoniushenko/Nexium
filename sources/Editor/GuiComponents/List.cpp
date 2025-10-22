@@ -97,7 +97,7 @@ namespace Core::Gui
 
     void ListModelBased::setCurrentIndex(std::size_t i) noexcept
     {
-        if (DEBUG_ASSERT_VAL(_sizeProvider && _dataProvider))
+        if (Verify(_sizeProvider && _dataProvider))
         {
             _currentIndex = std::min(i, _sizeProvider() - 1);
             StringAtom item;

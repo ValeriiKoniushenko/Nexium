@@ -139,27 +139,27 @@ namespace Core
     {
         BaseFloatEWC::onOpen();
 
-        if (DEBUG_ASSERT_VAL(_color3Input))
+        if (Verify(_color3Input))
         {
             _color3Input->setInputtedData(GetWorld().lightning.color);
         }
-        if (DEBUG_ASSERT_VAL(_ambientStrength))
+        if (Verify(_ambientStrength))
         {
             _ambientStrength->setInputtedData(GetWorld().lightning.ambientStrength);
         }
-        if (DEBUG_ASSERT_VAL(_minLightStrength))
+        if (Verify(_minLightStrength))
         {
             _minLightStrength->setInputtedData(GetWorld().lightning.minLightStrength);
         }
-        if (DEBUG_ASSERT_VAL(_specularStrength))
+        if (Verify(_specularStrength))
         {
             _specularStrength->setInputtedData(GetWorld().lightning.specularStrength);
         }
-        if (DEBUG_ASSERT_VAL(_specularPow))
+        if (Verify(_specularPow))
         {
             _specularPow->setInputtedData(GetWorld().lightning.specularPow);
         }
-        if (DEBUG_ASSERT_VAL(_sunDirection))
+        if (Verify(_sunDirection))
         {
             _sunDirection->setInputtedData(GetWorld().lightning.sunDirection);
         }

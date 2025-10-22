@@ -123,11 +123,11 @@ namespace Core
 
     ShaderProgram* ShaderManager::getShaderProgram(const StringAtom& shaderName)
     {
-        DEBUG_ASSERT(shaderName.isStatic());
+        Assert(shaderName.isStatic());
 
         if (const auto it = _shaderMetas.find(shaderName); it != _shaderMetas.cend())
         {
-            DEBUG_ASSERT(it->second.getShaderName().isStatic());
+            Assert(it->second.getShaderName().isStatic());
             return &it->second.getShaderProgram();
         }
 

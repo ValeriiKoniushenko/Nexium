@@ -367,7 +367,7 @@ namespace Core
         }
 
         auto&& metas = GetShaderManager().getShaderMetas();
-        if (DEBUG_ASSERT_VAL(metas.contains(name)))
+        if (Verify(metas.contains(name)))
         {
             bool result = metas[name].safeRecreateFromSources();
 
@@ -390,7 +390,7 @@ namespace Core
     void ShaderManagerEWC::selectShader(const StringAtom& name)
     {
         auto&& metas = GetShaderManager().getShaderMetas();
-        if (!DEBUG_ASSERT_VAL(metas.contains(name)))
+        if (!Verify(metas.contains(name)))
         {
             errorLog("Selected shader: {} - not found."_f << name);
             return;

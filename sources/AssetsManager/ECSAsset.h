@@ -54,7 +54,7 @@ namespace Core
         explicit ECSAsset(const StringAtom& logicPath)
             : _logicPath(logicPath)
         {
-            DEBUG_ASSERT(_logicPath.isStatic());
+            Assert(_logicPath.isStatic());
         }
         ~ECSAsset() override;
 

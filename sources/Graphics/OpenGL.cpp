@@ -116,7 +116,7 @@ namespace Core
                 { GL_UNSIGNED_INT_SAMPLER_CUBE, "usamplerCube" },
                 { GL_UNSIGNED_INT_SAMPLER_BUFFER, "usamplerBuffer" } };
 
-        DEBUG_ASSERT(types.find(value) != types.end(), "Was passed invalid GL type.");
+        Assert(types.find(value) != types.end(), "Was passed invalid GL type.");
 
         return types[value];
     }

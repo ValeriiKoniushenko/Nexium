@@ -43,7 +43,7 @@ namespace Core
             std::advance(it, inputIndex);
             if (it == GetShaderManager().getShaderMetas().end())
             {
-                DEBUG_ASSERT(false, "Internal error, can't get specified shader");
+                Assert(false, "Internal error, can't get specified shader");
                 return nullptr;
             }
 
@@ -177,7 +177,7 @@ namespace Core
     {
         auto it = GetShaderManager().getShaderMetas().begin();
         std::advance(it, index);
-        DEBUG_ASSERT(it != GetShaderManager().getShaderMetas().end());
+        Assert(it != GetShaderManager().getShaderMetas().end());
         return it->first;
     }
 } // namespace Core

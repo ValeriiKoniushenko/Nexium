@@ -38,13 +38,13 @@ namespace Core::Gui
 
     void CheckBox::setWidth(float newWidth)
     {
-        DEBUG_ASSERT(false, "CheckBox doesn't support any resizing");
+        Assert(false, "CheckBox doesn't support any resizing");
         _size.x = newWidth;
     }
 
     void CheckBox::setHeight(float newHeight)
     {
-        DEBUG_ASSERT(false, "CheckBox doesn't support any resizing");
+        Assert(false, "CheckBox doesn't support any resizing");
         _size.y = newHeight;
     }
 

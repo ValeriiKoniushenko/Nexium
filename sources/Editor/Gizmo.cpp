@@ -80,7 +80,7 @@ namespace Core
         static const aiScene* scene
             = importer.ReadFile(defaultModelPath.string().c_str(),
                                 aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
-        if (DEBUG_ASSERT_VAL(scene) && DEBUG_ASSERT_VAL(scene->mRootNode))
+        if (Verify(scene) && Verify(scene->mRootNode))
         {
             importFrom(scene->mRootNode, scene, defaultModelPath);
             setShader(gGameInstance->shaderManager.getShaderProgram("pickUpColorFiller"_atom));
@@ -121,7 +121,7 @@ namespace Core
         }
 
         const auto* data = dynamic_cast<DragData*>(gDragDrop.payload.data.get());
-        if (!DEBUG_ASSERT_VAL(data))
+        if (!Verify(data))
         {
             return;
         }

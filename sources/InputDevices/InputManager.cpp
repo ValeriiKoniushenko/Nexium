@@ -29,7 +29,7 @@ namespace Core
 
     void KeyboardInputManger::ioFieldsUpdate(DataStream& stream)
     {
-        DEBUG_ASSERT(false, "Not implemented");
+        Assert(false, "Not implemented");
         /*
         json["mapping"] = nlohmann::json::array();
         for (const auto& [name, key] : _mapping)

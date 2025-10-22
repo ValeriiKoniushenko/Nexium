@@ -67,7 +67,7 @@ namespace Assimp
         if (val == aiProcess_Triangulate) return "Triangulate"_atom;
         if (val == aiProcess_ValidateDataStructure) return "ValidateDataStructure"_atom;
         // clang-format on
-        DEBUG_ASSERT(false);
+        Assert(false);
         return Core::StringAtom(""_atom);
     }
 
@@ -108,7 +108,7 @@ namespace Assimp
         if (val == "ValidateDataStructure"_atom) return aiProcess_ValidateDataStructure;
         // clang-format on
 
-        DEBUG_ASSERT(false);
+        Assert(false);
         return std::nullopt;
     }
 
@@ -158,7 +158,7 @@ namespace Core
         const aiScene* scene = importer.ReadFile(
             (Config::Path::projectAbsPath / _pathToModel).string().c_str(), _assimpPostProcess);
 
-        if (DEBUG_ASSERT_VAL(scene) && DEBUG_ASSERT_VAL(scene->mRootNode))
+        if (Verify(scene) && Verify(scene->mRootNode))
         {
             _data.importFrom(scene->mRootNode, scene, Config::Path::projectAbsPath / _pathToModel,
                              _onLoadScale);
@@ -277,7 +277,7 @@ namespace Core
             else
             {
                 errorLog("Invalid value '{}' for property 'assimpPostProcess'"_f << asString);
-                DEBUG_ASSERT(false);
+                Assert(false);
             }
         }
 

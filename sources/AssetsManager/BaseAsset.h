@@ -39,8 +39,8 @@ namespace Core
         explicit BaseAsset(const StringAtom& logicPath)
             : _logicPath(logicPath)
         {
-            DEBUG_ASSERT(std::filesystem::path(_logicPath.c_str()).is_relative(),
-                         "Logic path must be relative. It's ID, it's not a real path.");
+            Assert(std::filesystem::path(_logicPath.c_str()).is_relative(),
+                   "Logic path must be relative. It's ID, it's not a real path.");
         }
 
         ~BaseAsset() override = default;
@@ -172,8 +172,8 @@ namespace Core
         {
             if (_asset)
             {
-                DEBUG_ASSERT(_asset->_refCount != 0,
-                             "Invalid ref count, it will be less than zero - impossible.");
+                Assert(_asset->_refCount != 0,
+                       "Invalid ref count, it will be less than zero - impossible.");
 
                 --_asset->_refCount;
 

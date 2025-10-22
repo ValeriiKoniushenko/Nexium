@@ -94,7 +94,7 @@ namespace Core
                 }
                 else
                 {
-                    DEBUG_ASSERT(false);
+                    Assert(false);
                 }
 
                 if (auto value = layout->getLastChildAs<Gui::ComboModelBased>(); value)
@@ -104,7 +104,7 @@ namespace Core
                 }
                 else
                 {
-                    DEBUG_ASSERT(false);
+                    Assert(false);
                 }
 
                 return out;
