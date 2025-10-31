@@ -117,6 +117,19 @@ namespace Core
         return rawAddChildComponent(child->clone().get());
     }
 
+    BaseComponent* BaseComponent::attachUniqueChild(const BaseComponent::Ptr& child)
+    {
+        for (auto&& c : _children)
+        {
+            if (c.get() == child.get())
+            {
+                return c.get();
+            }
+        }
+
+        return attachChild(child);
+    }
+
     void BaseComponent::detachChild(BaseComponent* child)
     {
         if (const auto it = std::ranges::find(_children, child); it != _children.end())

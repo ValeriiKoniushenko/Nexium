@@ -89,9 +89,9 @@ namespace Core
                     << mimeType);
             }
 
-            _mimeTypeAdapters[mimeType] = []()
+            _mimeTypeAdapters[mimeType] = [mimeType]()
             {
-                return new T;
+                return new T(mimeType);
             };
         }
 
@@ -107,7 +107,7 @@ namespace Core
         void onOpenFromPath(const std::filesystem::path& path) override;
         void onClose() override;
 
-        [[nodiscard]] ECSEditorMimeAdapter::Ptr spawnMimeTypeAdapter(
+        [[nodiscard]] ECSEditorMimeAdapter::Ptr trySpawnMimeTypeAdapter(
             const StringAtom& mimeType) const;
 
         void reset();

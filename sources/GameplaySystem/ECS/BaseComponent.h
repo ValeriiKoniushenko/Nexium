@@ -667,6 +667,7 @@ namespace Core
          * to this class/owner
          */
         BaseComponent* attachChild(const BaseComponent::Ptr& child);
+        BaseComponent* attachUniqueChild(const BaseComponent::Ptr& child);
 
         void detachChild(BaseComponent* child);
 

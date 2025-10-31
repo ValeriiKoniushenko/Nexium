@@ -121,6 +121,17 @@ namespace Core
 
         _logicalPath->input->setInputtedData(_targetAsset->getLogicPath().toStdString());
         _assetType->input->setInputtedData(_targetAsset->getType().toStdString());
+
+        if (hasMimeTypeAdapter(_targetAsset->getType()))
+        {
+            if (auto adapter = trySpawnMimeTypeAdapter(_targetAsset->getType()))
+            {
+                if (auto* p = attachUniqueChild(adapter)->castTo<ECSEditorMimeAdapter>())
+                {
+                    p->applyAssetData(_targetAsset->getAssetData());
+                }
+            }
+        }
     }
 
     void NxECSBasedEditorEWC::onOpenFromPath(const std::filesystem::path& path)
@@ -139,7 +150,7 @@ namespace Core
         reset();
     }
 
-    ECSEditorMimeAdapter::Ptr NxECSBasedEditorEWC::spawnMimeTypeAdapter(
+    ECSEditorMimeAdapter::Ptr NxECSBasedEditorEWC::trySpawnMimeTypeAdapter(
         const StringAtom& mimeType) const
     {
         if (!hasMimeTypeAdapter(mimeType))
@@ -147,6 +158,14 @@ namespace Core
             errorLog("Can't spawn editor's mime adapter. Mime type '{}' is not registered."_f
                      << mimeType);
             return nullptr;
+        }
+
+        for (auto&& child : _children)
+        {
+            if (child->getComponentName() == mimeType)
+            {
+                return child->castTo<ECSEditorMimeAdapter>();
+            }
         }
 
         return _mimeTypeAdapters.at(mimeType)();
@@ -174,26 +193,7 @@ namespace Core
             return;
         }
 
-        if (hasMimeTypeAdapter(_targetAsset->getType()))
-        {
-            if (auto adapter = spawnMimeTypeAdapter(_targetAsset->getType()))
-            {
-                if (auto* p = attachChild(adapter)->castTo<ECSEditorMimeAdapter>())
-                {
-                    p->applyAssetData(_targetAsset->getAssetData());
-                }
-            }
-        }
-
-        auto data = _targetAsset->getData();
-        if (!data)
-        {
-            errorLog("Can't setup editor's tree. Asset '{}' is null, but expected NOT null."_f
-                     << _targetAsset->getLogicPath());
-            return;
-        }
-
-        int i = 1;
+        updateGuiBasedOnAsset();
     }
 
 } // namespace Core
