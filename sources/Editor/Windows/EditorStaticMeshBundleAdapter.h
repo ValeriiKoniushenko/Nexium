@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "AssetsManager/Mesh3DAsset.h"
 #include "Editor/GuiComponents/Array.h"
 #include "Editor/GuiComponents/Combo.h"
 #include "Editor/GuiComponents/Input.h"

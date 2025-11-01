@@ -8,7 +8,15 @@ add_executable(EngineTests ${CPP_SOURCES} ${HEADERS})
 
 target_link_libraries(EngineTests PUBLIC
     gtest
-    __Core_GameplaySystem
+    Core::AssetsManager
+    Core::Camera
+    Core::Editor
+    Core::GameplaySystem
+    Core::Misc
+    Core::InputDevices
+    Core::Graphics
+    Core::Scene
+    assimp::assimp
 )
 
 CoreAddCompileOptionsTo(EngineTests)
