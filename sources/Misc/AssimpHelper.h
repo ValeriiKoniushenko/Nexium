@@ -29,10 +29,12 @@
 
 namespace Assimp
 {
+
     [[nodiscard]] Core::StringAtom aiPostProcessStepsToString(aiPostProcessSteps);
 
     [[nodiscard]] std::optional<aiPostProcessSteps> aiPostProcessStepsFromString(
         const Core::StringAtom& val);
 
     extern const std::vector<aiPostProcessSteps> aiPostProcessStepsAsVector;
+
 } // namespace Assimp

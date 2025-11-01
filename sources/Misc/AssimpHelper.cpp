@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-#include "Assimp.h"
+#include "AssimpHelper.h"
 
 namespace Assimp
 {

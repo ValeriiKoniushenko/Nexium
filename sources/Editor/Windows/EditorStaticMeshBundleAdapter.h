@@ -30,7 +30,7 @@
 #include "Editor/GuiComponents/LabelRow.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "EditorActorAdapter.h"
-#include "Misc/Assimp.h"
+#include "Misc/AssimpHelper.h"
 
 namespace Core
 {
