@@ -101,10 +101,11 @@ namespace Core
         void onInitialize() override;
         void onDrawProperties() override;
         void onDrawPreview() override;
+        void onDrawTree() override;
         void onDiscardChanges() override;
         void onSave() override;
         void updateGuiBasedOnAsset() override;
-        void onOpenFromPath(const std::filesystem::path& path) override;
+        bool onOpenFromPath(const std::filesystem::path& path) override;
         void onClose() override;
 
         [[nodiscard]] ECSEditorMimeAdapter::Ptr trySpawnMimeTypeAdapter(

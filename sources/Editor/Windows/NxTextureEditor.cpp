@@ -164,7 +164,7 @@ namespace Core
         _targetAsset->writeToFile();
     }
 
-    void NxTextureEditorEWC::onOpenFromPath(const std::filesystem::path& path)
+    bool NxTextureEditorEWC::onOpenFromPath(const std::filesystem::path& path)
     {
         _targetAsset = GetAssetsManager().getTexture(StringAtom::Intern(path.generic_string()));
         if (_targetAsset)
@@ -173,6 +173,8 @@ namespace Core
                       - static_cast<glm::vec2>(_targetAsset->getData().getSize().toGlm());
             _offset /= 2.0f;
         }
+
+        return true;
     }
 
 } // namespace Core

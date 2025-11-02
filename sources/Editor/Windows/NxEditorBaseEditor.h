@@ -59,17 +59,20 @@ namespace Core
         virtual void updateGuiBasedOnAsset() = 0;
         virtual void onSave() = 0;
         virtual void onDiscardChanges() = 0;
-        virtual void onOpenFromPath(const std::filesystem::path& path) = 0;
+        virtual bool onOpenFromPath(const std::filesystem::path& path) = 0;
         virtual void onFinishOpenFromPath(const std::filesystem::path& path) {}
 
         void onInitialize() override;
         void onDraw() final;
+        virtual void onDrawTree() {}
         virtual void onDrawProperties() {}
         virtual void onDrawPreview() {}
         void drawMenuBar();
         virtual void onDrawBarExtraFileMenu() {}
         void setEnablePreview(bool enable);
         bool isEnablePreview() const noexcept { return _enablePreview; }
+        void setEnableTree(bool enable);
+        bool isEnableTree() const noexcept { return _enableTree; }
 
     protected:
         std::filesystem::path _assetFilePath;
@@ -79,6 +82,7 @@ namespace Core
     private:
         bool _isDirty = false;
         bool _enablePreview = false;
+        bool _enableTree = false;
     };
 
 } // namespace Core

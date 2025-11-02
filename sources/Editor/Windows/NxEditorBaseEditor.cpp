@@ -55,7 +55,14 @@ namespace Core
         }
 
         _assetFilePath = path;
-        onOpenFromPath(path);
+        if (!onOpenFromPath(path))
+        {
+            traceLog(
+                "Can't continue to process asset's opening due to some errors. Check logs for "
+                "details.");
+            _assetFilePath.clear();
+            return;
+        }
 
         updateGuiBasedOnAsset();
 
@@ -109,11 +116,24 @@ namespace Core
     {
         drawMenuBar();
 
-        if (ImGui::BeginChild("Properties",
+        if (ImGui::BeginChild("Properties_and_Tree",
                               glm::vec2(_enablePreview ? _defaultPropertiesWidth : 0, 0),
                               _enablePreview ? ImGuiChildFlags_ResizeX : 0))
         {
-            onDrawProperties();
+            if (_enableTree)
+            {
+                if (ImGui::BeginChild("Tree", glm::vec2(0, 100.f), ImGuiChildFlags_ResizeY))
+                {
+                    onDrawTree();
+                }
+                ImGui::EndChild();
+            }
+
+            if (ImGui::BeginChild("Properties"))
+            {
+                onDrawProperties();
+            }
+            ImGui::EndChild();
         }
         ImGui::EndChild();
 
@@ -189,6 +209,11 @@ namespace Core
     void NxEditorBaseEditorEWC::setEnablePreview(bool enable)
     {
         _enablePreview = enable;
+    }
+
+    void NxEditorBaseEditorEWC::setEnableTree(bool enable)
+    {
+        _enableTree = enable;
     }
 
 } // namespace Core

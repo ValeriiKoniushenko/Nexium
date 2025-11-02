@@ -46,7 +46,7 @@ namespace Core
         void onDrawPreview() override;
         void onDiscardChanges() override;
         void onSave() override;
-        void onOpenFromPath(const std::filesystem::path& path) override;
+        bool onOpenFromPath(const std::filesystem::path& path) override;
 
     protected:
         Gui::VerticalLayout _layout;

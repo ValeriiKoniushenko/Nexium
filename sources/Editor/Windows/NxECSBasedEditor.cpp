@@ -69,6 +69,7 @@ namespace Core
         NxEditorBaseEditorEWC::onInitialize();
 
         setEnablePreview(true);
+        setEnableTree(true);
 
         _headerLayout.setPaddings(glm::vec4{ ImGui::GetStyle().ItemSpacing.x });
 
@@ -98,6 +99,61 @@ namespace Core
     void NxECSBasedEditorEWC::onDrawPreview()
     {
         NxEditorBaseEditorEWC::onDrawPreview();
+    }
+
+    void NxECSBasedEditorEWC::onDrawTree()
+    {
+        NxEditorBaseEditorEWC::onDrawTree();
+
+        if (!_targetAsset)
+        {
+            return;
+        }
+
+        int lastChildIndex = -1;
+        int id = 0;
+        constexpr int baseFlags = ImGuiTreeNodeFlags_OpenOnDoubleClick
+                                  | ImGuiTreeNodeFlags_SpanAvailWidth
+                                  | ImGuiTreeNodeFlags_OpenOnArrow;
+
+        std::stack<BaseComponent*> stack;
+        auto* asset = _targetAsset->getData().get();
+        stack.push(asset);
+
+        while (!stack.empty() && asset != nullptr)
+        {
+            ImGui::PushID(id++);
+
+            int flags = baseFlags;
+            if (!asset->hasChildren())
+            {
+                flags |= ImGuiTreeNodeFlags_Leaf;
+            }
+
+            const bool isOpened = ImGui::TreeNodeEx(asset->getComponentName().c_str(), flags);
+            if (ImGui::IsItemClicked() || (ImGui::IsItemFocused() && isHovered()))
+            {
+            }
+
+            if (isOpened)
+            {
+                ImGui::TreePop();
+            }
+
+            ImGui::PopID();
+
+            if (asset->hasChildren()
+                && lastChildIndex < static_cast<int>(asset->getChildrenCount()))
+            {
+                asset = asset->getChildAt(++lastChildIndex).get();
+            }
+            else
+            {
+                stack.pop();
+                asset = stack.empty() ? nullptr : stack.top();
+                lastChildIndex = -1;
+            }
+        }
     }
 
     void NxECSBasedEditorEWC::onDiscardChanges()
@@ -134,14 +190,17 @@ namespace Core
         }
     }
 
-    void NxECSBasedEditorEWC::onOpenFromPath(const std::filesystem::path& path)
+    bool NxECSBasedEditorEWC::onOpenFromPath(const std::filesystem::path& path)
     {
         _targetAsset = GetAssetsManager().getAssetByPath(path);
         if (!_targetAsset)
         {
             errorLog("Requested asset not found: " + path.generic_string());
+            return false;
         }
+
         setup();
+        return true;
     }
 
     void NxECSBasedEditorEWC::onClose()
