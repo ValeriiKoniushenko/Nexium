@@ -324,19 +324,28 @@ namespace Core
 
     void GraphicsComponentData::ioFieldsUpdate(DataStream& stream)
     {
-        Assert(false, "Not implemented");
-
-        /*stream.array("modifiers",
+        stream.array("modifiers",
                      [this](DataStream& out)
                      {
-                         for (auto [val, mod] : _drawModifiers)
+                         if (out.getMode() == DataStream::Mode::Output)
                          {
-                             nlohmann::json modifier;
-                             modifier["value"] = ToString(val);
-                             modifier["modifier"] = mod.toStr();
-                             json["modifiers"].push_back(std::move(modifier));
+                             for (auto [val, mod] : _drawModifiers)
+                             {
+                                 nlohmann::json modifier;
+                                 modifier["value"] = ToString(val);
+                                 modifier["modifier"] = mod.toStr();
+                                 out.getRaw().push_back(std::move(modifier));
+                             }
                          }
-                     });*/
+                         else
+                         {
+                             for (auto& modifier : out.getRaw())
+                             {
+                                 _drawModifiers.emplace_back(FromString(modifier["value"]),
+                                                             FromString(modifier["modifier"]));
+                             }
+                         }
+                     });
     }
 
     StringAtom GraphicsComponentData::getCacheHash() const

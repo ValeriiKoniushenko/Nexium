@@ -34,10 +34,174 @@
     ]
   },
   "data": {
-    "children": [],
+    "children": [
+      {
+        "center": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "children": [],
+        "isEnabled": true,
+        "modifiers": [
+          {
+            "modifier": "Disable",
+            "value": "CullFace"
+          },
+          {
+            "modifier": "Disable",
+            "value": "Blend"
+          }
+        ],
+        "name": "LOD0",
+        "noTick": false,
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          45.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "size": {
+          "deep": 0.0,
+          "height": 0.0,
+          "width": 0.0
+        },
+        "type": "StaticMesh"
+      },
+      {
+        "center": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "children": [],
+        "isEnabled": true,
+        "modifiers": [
+          {
+            "modifier": "Disable",
+            "value": "CullFace"
+          },
+          {
+            "modifier": "Disable",
+            "value": "Blend"
+          }
+        ],
+        "name": "LOD1",
+        "noTick": false,
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          45.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "size": {
+          "deep": 0.0,
+          "height": 0.0,
+          "width": 0.0
+        },
+        "type": "StaticMesh"
+      },
+      {
+        "center": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "children": [],
+        "isEnabled": true,
+        "modifiers": [
+          {
+            "modifier": "Disable",
+            "value": "CullFace"
+          },
+          {
+            "modifier": "Disable",
+            "value": "Blend"
+          }
+        ],
+        "name": "LOD2",
+        "noTick": false,
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          45.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "size": {
+          "deep": 0.0,
+          "height": 0.0,
+          "width": 0.0
+        },
+        "type": "StaticMesh"
+      }
+    ],
     "isEnabled": true,
     "name": "FireHydrant",
     "noTick": false,
+    "ignoreSelect": false,
+    "isPostDraw": false,
+    "origin": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "position": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "scale": [
+      1.0,
+      1.0,
+      1.0
+    ],
     "type": "StaticMeshBundle"
   }
 }
