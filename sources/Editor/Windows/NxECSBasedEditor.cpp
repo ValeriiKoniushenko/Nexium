@@ -142,15 +142,20 @@ namespace Core
             return;
         }
 
-        int lastChildIndex = -1;
         int id = 0;
         constexpr int baseFlags = ImGuiTreeNodeFlags_OpenOnDoubleClick
                                   | ImGuiTreeNodeFlags_SpanAvailWidth
                                   | ImGuiTreeNodeFlags_OpenOnArrow;
 
-        std::stack<BaseComponent*> stack;
+        struct Frame
+        {
+            BaseComponent* p = nullptr;
+            std::size_t index = 0;
+        };
+
+        std::stack<Frame> stack;
         auto* asset = _targetAsset->getData().get();
-        stack.push(asset);
+        stack.push({ asset, 0 });
 
         while (!stack.empty() && asset != nullptr)
         {
@@ -167,23 +172,31 @@ namespace Core
             {
             }
 
-            if (isOpened)
-            {
-                ImGui::TreePop();
-            }
-
             ImGui::PopID();
 
-            if (asset->hasChildren()
-                && lastChildIndex < static_cast<int>(asset->getChildrenCount()))
+            if (asset->hasChildren() && stack.top().index < asset->getChildrenCount())
             {
-                asset = asset->getChildAt(++lastChildIndex).get();
+                asset = asset->getChildAt(stack.top().index++).get();
+                stack.push({ asset, 0 });
             }
             else
             {
                 stack.pop();
-                asset = stack.empty() ? nullptr : stack.top();
-                lastChildIndex = -1;
+                asset = stack.empty() ? nullptr : stack.top().p;
+                if (isOpened)
+                {
+                    ImGui::TreePop();
+                }
+
+                if (!stack.empty() && asset != nullptr && asset->hasChildren())
+                {
+                    stack.top().index++;
+                    if (stack.top().index < asset->getChildrenCount())
+                    {
+                        asset = asset->getChildAt(stack.top().index).get();
+                        stack.push({ asset, 0 });
+                    }
+                }
             }
         }
     }

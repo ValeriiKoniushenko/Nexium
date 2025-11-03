@@ -215,11 +215,37 @@ namespace Core
         stream.field("name", _name, _type);
         stream.field("type", _type);
         stream.array("children",
-                     [this](DataStream& out)
+                     [this](DataStream& out, std::size_t size)
                      {
-                         for (auto& child : _children)
+                         if (out.getMode() == DataStream::Mode::Output)
                          {
-                             out.field(*child);
+                             for (auto& child : _children)
+                             {
+                                 out.field(*child);
+                             }
+                         }
+                         else
+                         {
+                             std::size_t i = 0;
+                             for (auto&& child : out.getRaw().items())
+                             {
+                                 // std::cout << child.value().dump(4) << std::endl;
+                                 auto&& in = child.value();
+                                 if (!in.contains("type"))
+                                 {
+                                     warnLog("No type specified for child component");
+                                     Assert(false);
+                                     continue;
+                                 }
+
+                                 auto&& last
+                                     = _children.emplace_back(GetGlobalComponentFactory().create(
+                                         in["type"].get<StringAtom>()));
+                                 DataStream childStream;
+                                 childStream.setMode(DataStream::Mode::Input);
+                                 childStream.getRaw() = in;
+                                 last->ioFieldsUpdate(childStream);
+                             }
                          }
                      });
     }

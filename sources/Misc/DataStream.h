@@ -175,7 +175,8 @@ namespace Core
         }
 
         Result nesting(const char* key, const std::function<void(DataStream&)>& callback);
-        Result array(const char* key, const std::function<void(DataStream&)>& callback);
+        Result array(const char* key,
+                     const std::function<void(DataStream&, std::size_t)>& callback);
 
         template<class T>
         [[nodiscard]] T get(const char* key)

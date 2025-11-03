@@ -325,7 +325,7 @@ namespace Core
     void GraphicsComponentData::ioFieldsUpdate(DataStream& stream)
     {
         stream.array("modifiers",
-                     [this](DataStream& out)
+                     [this](DataStream& out, std::size_t size)
                      {
                          if (out.getMode() == DataStream::Mode::Output)
                          {

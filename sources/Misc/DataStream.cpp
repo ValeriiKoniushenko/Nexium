@@ -95,8 +95,8 @@ namespace Core
         return Result::Success;
     }
 
-    DataStream::Result DataStream::array(const char* key,
-                                         const std::function<void(DataStream&)>& callback)
+    DataStream::Result DataStream::array(
+        const char* key, const std::function<void(DataStream&, std::size_t)>& callback)
     {
         if (!key)
         {
@@ -118,12 +118,12 @@ namespace Core
                 }
 
                 nestedStream.getRaw() = _json[key];
-                callback(nestedStream);
+                callback(nestedStream, _json[key].size());
             }
             else
             {
                 nestedStream.getRaw() = nlohmann::json::array();
-                callback(nestedStream);
+                callback(nestedStream, 0);
                 _json[key] = nestedStream.getRaw();
             }
         }
