@@ -71,9 +71,10 @@ namespace Core
         setEnablePreview(true);
         setEnableTree(true);
 
+        constexpr float labelWidth = 80.0f;
+        // -+- -+- -+- -+- -+- -+- -+- -+- -+- -+- -+-
         _headerLayout.setPaddings(glm::vec4{ ImGui::GetStyle().ItemSpacing.x });
 
-        constexpr float labelWidth = 60.0f;
         _logicalPath = _headerLayout.addChildComponent<LabelRow<TextInput>>("ID", labelWidth);
         _logicalPath->input->setFlex(Flex::FlexWidth);
         _logicalPath->input->setReadOnly(true);
@@ -81,12 +82,43 @@ namespace Core
         _assetType = _headerLayout.addChildComponent<LabelRow<TextInput>>("Type", labelWidth);
         _assetType->input->setFlex(Flex::FlexWidth);
         _assetType->input->setReadOnly(true);
+
+        // -+- -+- -+- -+- -+- -+- -+- -+- -+- -+- -+-
+        _baseEcsLayout.setPaddings(glm::vec4{ ImGui::GetStyle().ItemSpacing.x });
+
+        _ecsName = _baseEcsLayout.addChildComponent<LabelRow<TextInput>>("Name", labelWidth);
+        _ecsName->input->setFlex(Flex::FlexWidth);
+
+        _ecsType = _baseEcsLayout.addChildComponent<LabelRow<TextInput>>("Type", labelWidth);
+        _ecsType->input->setFlex(Flex::FlexWidth);
+        _ecsType->input->setReadOnly(true);
+
+        _ecsParent = _baseEcsLayout.addChildComponent<LabelRow<TextInput>>("Parent", labelWidth);
+        _ecsParent->input->setFlex(Flex::FlexWidth);
+        _ecsParent->input->setReadOnly(true);
+
+        _ecsDisableTicks
+            = _baseEcsLayout.addChildComponent<LabelRow<CheckBox>>("No ticks", labelWidth);
+
+        _ecsChildren
+            = _baseEcsLayout.addChildComponent<LabelRow<StringArray>>("Children", labelWidth);
+        _ecsChildren->input->setReadOnly(true);
     }
 
     void NxECSBasedEditorEWC::onDrawProperties()
     {
         const auto dt = GetWorld().timeDelta;
-        _headerLayout.tick(dt);
+
+        if (CollapsingHeader("Asset data", ImGuiTreeNodeFlags_DefaultOpen))
+        {
+            _headerLayout.tick(dt);
+        }
+
+        if (CollapsingHeader("Base ECS properties", ImGuiTreeNodeFlags_DefaultOpen))
+        {
+            _baseEcsLayout.tick(dt);
+        }
+
         for (auto&& child : _children)
         {
             if (auto* typeAdapter = dynamic_cast<ECSEditorMimeAdapter*>(child.get()))
@@ -177,6 +209,20 @@ namespace Core
 
         _logicalPath->input->setInputtedData(_targetAsset->getLogicPath().toStdString());
         _assetType->input->setInputtedData(_targetAsset->getType().toStdString());
+
+        auto data = _targetAsset->getData();
+        _ecsName->input->setInputtedData(data->getComponentName().toStdString());
+        _ecsType->input->setInputtedData(data->getComponentType().toStdString());
+        if (data->hasParent())
+        {
+            _ecsParent->input->setInputtedData(data->getParent()->getComponentName().toStdString());
+        }
+        _ecsDisableTicks->input->setValue(data->getNoTick());
+        for (auto&& child : data->getChildren())
+        {
+            _ecsChildren->input->add("{} [{}]"_f << child->getComponentName()
+                                                 << child->getComponentType());
+        }
 
         if (hasMimeTypeAdapter(_targetAsset->getType()))
         {
