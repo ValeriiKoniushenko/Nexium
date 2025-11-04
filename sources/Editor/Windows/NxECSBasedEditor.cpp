@@ -71,7 +71,7 @@ namespace Core
         setEnablePreview(true);
         setEnableTree(true);
 
-        constexpr float labelWidth = 80.0f;
+        constexpr float labelWidth = 120.f;
         // -+- -+- -+- -+- -+- -+- -+- -+- -+- -+- -+-
         _headerLayout.setPaddings(glm::vec4{ ImGui::GetStyle().ItemSpacing.x });
 
@@ -86,8 +86,21 @@ namespace Core
         // -+- -+- -+- -+- -+- -+- -+- -+- -+- -+- -+-
         _baseEcsLayout.setPaddings(glm::vec4{ ImGui::GetStyle().ItemSpacing.x });
 
+        _ecsEnabledComponent
+            = _baseEcsLayout.addChildComponent<LabelRow<CheckBox>>("Enabled", labelWidth);
+        _ecsEnabledComponent->input->onChange.subscribe(
+            [this](auto)
+            {
+                makeDirty();
+            });
+
         _ecsName = _baseEcsLayout.addChildComponent<LabelRow<TextInput>>("Name", labelWidth);
         _ecsName->input->setFlex(Flex::FlexWidth);
+        _ecsName->input->onInput.subscribe(
+            [this](auto)
+            {
+                makeDirty();
+            });
 
         _ecsType = _baseEcsLayout.addChildComponent<LabelRow<TextInput>>("Type", labelWidth);
         _ecsType->input->setFlex(Flex::FlexWidth);
@@ -99,6 +112,11 @@ namespace Core
 
         _ecsDisableTicks
             = _baseEcsLayout.addChildComponent<LabelRow<CheckBox>>("No ticks", labelWidth);
+        _ecsDisableTicks->input->onChange.subscribe(
+            [this](auto)
+            {
+                makeDirty();
+            });
 
         _ecsChildren
             = _baseEcsLayout.addChildComponent<LabelRow<StringArray>>("Children", labelWidth);
@@ -174,7 +192,12 @@ namespace Core
         {
             _ecsParent->input->setInputtedData(data->getParent()->getComponentName().toStdString());
         }
+
         _ecsDisableTicks->input->setValue(data->getNoTick());
+
+        _ecsEnabledComponent->input->setValue(data->isEnabled());
+
+        _ecsChildren->input->clearData();
         for (auto&& child : data->getChildren())
         {
             _ecsChildren->input->add("{} [{}]"_f << child->getComponentName()

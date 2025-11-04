@@ -127,6 +127,7 @@ namespace Core
         Gui::LabelRow<Gui::TextInput>* _ecsName = nullptr;
         Gui::LabelRow<Gui::TextInput>* _ecsType = nullptr;
         Gui::LabelRow<Gui::CheckBox>* _ecsDisableTicks = nullptr;
+        Gui::LabelRow<Gui::CheckBox>* _ecsEnabledComponent = nullptr;
         Gui::LabelRow<Gui::TextInput>* _ecsParent = nullptr;
         Gui::LabelRow<Gui::StringArray>* _ecsChildren = nullptr;
 

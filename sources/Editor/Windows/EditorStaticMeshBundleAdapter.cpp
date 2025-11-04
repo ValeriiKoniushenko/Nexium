@@ -68,7 +68,7 @@ namespace Core
 
         _mainShaderCombo = _layout.addChildComponent<LabelRow<ComboModelBased>>("Main shader",
                                                                                 defaultLabelWidth);
-        _mainShaderCombo->input->setWidth(defaultModifierWidth);
+        _mainShaderCombo->input->setFlex(Flex::FlexWidth);
         _mainShaderCombo->input->setDataProvider(shaderDataProvider);
         _mainShaderCombo->input->setSizeProvider(shaderSizeProvider);
         _mainShaderCombo->input->onSelect.subscribe(
@@ -79,7 +79,7 @@ namespace Core
 
         _outlineShaderCombo = _layout.addChildComponent<LabelRow<ComboModelBased>>(
             "Outline shader", defaultLabelWidth);
-        _outlineShaderCombo->input->setWidth(defaultModifierWidth);
+        _outlineShaderCombo->input->setFlex(Flex::FlexWidth);
         _outlineShaderCombo->input->setDataProvider(shaderDataProvider);
         _outlineShaderCombo->input->setSizeProvider(shaderSizeProvider);
         _outlineShaderCombo->input->onSelect.subscribe(
@@ -90,7 +90,7 @@ namespace Core
 
         _onLoadScale
             = _layout.addChildComponent<LabelRow<FloatInput>>("On load scale", defaultLabelWidth);
-        _onLoadScale->input->setWidth(defaultModifierWidth);
+        _onLoadScale->input->setFlex(Flex::FlexWidth);
         _onLoadScale->input->setMin(0.0f);
         _onLoadScale->input->setStep(0.1f);
         _onLoadScale->input->onInput.subscribe(
@@ -102,8 +102,7 @@ namespace Core
         _postProcessArray = _layout.addChildComponent<LabelRow<AssimpPostProcessArray>>(
             "P.Loading flags", defaultLabelWidth);
         _postProcessArray->setVerticalAlign(Align::Top);
-        _postProcessArray->input->setWidth(defaultModifierWidth);
-        _postProcessArray->input->setFlex(Flex::Fixed);
+        _postProcessArray->input->setFlex(Flex::FlexWidth);
         _postProcessArray->input->onChange.subscribe(
             [this]()
             {

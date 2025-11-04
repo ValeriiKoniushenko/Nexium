@@ -64,8 +64,6 @@ namespace Core
             return;
         }
 
-        updateGuiBasedOnAsset();
-
         onFinishOpenFromPath(path);
     }
 
