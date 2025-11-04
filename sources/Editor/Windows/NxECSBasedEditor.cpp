@@ -142,63 +142,7 @@ namespace Core
             return;
         }
 
-        int id = 0;
-        constexpr int baseFlags = ImGuiTreeNodeFlags_OpenOnDoubleClick
-                                  | ImGuiTreeNodeFlags_SpanAvailWidth
-                                  | ImGuiTreeNodeFlags_OpenOnArrow;
-
-        struct Frame
-        {
-            BaseComponent* p = nullptr;
-            std::size_t index = 0;
-        };
-
-        std::stack<Frame> stack;
-        auto* asset = _targetAsset->getData().get();
-        stack.push({ asset, 0 });
-
-        while (!stack.empty() && asset != nullptr)
-        {
-            ImGui::PushID(id++);
-
-            int flags = baseFlags;
-            if (!asset->hasChildren())
-            {
-                flags |= ImGuiTreeNodeFlags_Leaf;
-            }
-
-            const bool isOpened = ImGui::TreeNodeEx(asset->getComponentName().c_str(), flags);
-            if (ImGui::IsItemClicked() || (ImGui::IsItemFocused() && isHovered()))
-            {
-            }
-
-            ImGui::PopID();
-
-            if (asset->hasChildren() && stack.top().index < asset->getChildrenCount())
-            {
-                asset = asset->getChildAt(stack.top().index++).get();
-                stack.push({ asset, 0 });
-            }
-            else
-            {
-                stack.pop();
-                asset = stack.empty() ? nullptr : stack.top().p;
-                if (isOpened)
-                {
-                    ImGui::TreePop();
-                }
-
-                if (!stack.empty() && asset != nullptr && asset->hasChildren())
-                {
-                    stack.top().index++;
-                    if (stack.top().index < asset->getChildrenCount())
-                    {
-                        asset = asset->getChildAt(stack.top().index).get();
-                        stack.push({ asset, 0 });
-                    }
-                }
-            }
-        }
+        drawTreeNode(_targetAsset->getData().get(), 0);
     }
 
     void NxECSBasedEditorEWC::onDiscardChanges()
@@ -266,6 +210,46 @@ namespace Core
     {
         NxEditorBaseEditorEWC::onClose();
         reset();
+    }
+
+    void NxECSBasedEditorEWC::drawTreeNode(BaseComponent* comp, int id)
+    {
+        if (!comp)
+        {
+            return;
+        }
+
+        int flags = ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth
+                    | ImGuiTreeNodeFlags_OpenOnArrow;
+
+        if (!comp->hasParent())
+        {
+            flags |= ImGuiTreeNodeFlags_DefaultOpen;
+        }
+
+        if (!comp->hasChildren())
+        {
+            flags |= ImGuiTreeNodeFlags_Leaf;
+        }
+
+        ImGui::PushID(id);
+        const bool isOpened = ImGui::TreeNodeEx(comp->getComponentName().c_str(), flags);
+
+        if (ImGui::IsItemClicked() || (ImGui::IsItemFocused() && isHovered()))
+        {
+        }
+
+        if (isOpened)
+        {
+            for (auto&& child : comp->getChildren())
+            {
+                drawTreeNode(child.get(), id + 1);
+            }
+
+            ImGui::TreePop();
+        }
+
+        ImGui::PopID();
     }
 
     ECSEditorMimeAdapter::Ptr NxECSBasedEditorEWC::trySpawnMimeTypeAdapter(

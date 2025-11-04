@@ -110,6 +110,8 @@ namespace Core
         bool onOpenFromPath(const std::filesystem::path& path) override;
         void onClose() override;
 
+        void drawTreeNode(BaseComponent* comp, int id);
+
         [[nodiscard]] ECSEditorMimeAdapter::Ptr trySpawnMimeTypeAdapter(
             const StringAtom& mimeType) const;
 
