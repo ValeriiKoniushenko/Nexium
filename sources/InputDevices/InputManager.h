@@ -417,10 +417,7 @@ namespace Core
         bool remove(InputT::KeyT key)
         {
             auto found = std::ranges::find(_mapping,
-                                           [key](const auto& pair)
-                                           {
-                                               return pair.second == key;
-                                           });
+                                           [key](const auto& pair) { return pair.second == key; });
 
             if (found == _mapping.cend())
             {
@@ -443,10 +440,7 @@ namespace Core
             impl_get(AdaptiveRawPtr<isConst> self, InputT::KeyT key)
         {
             auto it = std::ranges::find_if(self->_mapping,
-                                           [key](const auto& pair)
-                                           {
-                                               return key == pair.second;
-                                           });
+                                           [key](const auto& pair) { return key == pair.second; });
 
             if (it == self->_mapping.cend())
             {

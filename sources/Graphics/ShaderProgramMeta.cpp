@@ -266,11 +266,8 @@ namespace Core
                 outData.vars.at(varIndex++) = std::move(var);
             }
 
-            std::ranges::sort(outData.vars,
-                              [](const ShaderVariable& a, const ShaderVariable& b)
-                              {
-                                  return a.offset < b.offset;
-                              });
+            std::ranges::sort(outData.vars, [](const ShaderVariable& a, const ShaderVariable& b)
+                              { return a.offset < b.offset; });
 
             _uniformBufferObjects.insert(std::move(outData));
         }

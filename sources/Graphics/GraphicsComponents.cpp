@@ -309,10 +309,7 @@ namespace Core
     GraphicsComponentData::Modifier GraphicsComponentData::getDrawModifier(ModifiedValue value)
     {
         const auto it = std::ranges::find_if(_drawModifiers,
-                                             [value](auto pair)
-                                             {
-                                                 return pair.value == value;
-                                             });
+                                             [value](auto pair) { return pair.value == value; });
 
         if (it != _drawModifiers.end())
         {

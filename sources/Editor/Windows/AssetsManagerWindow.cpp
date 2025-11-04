@@ -147,21 +147,9 @@ namespace Core
         _filterInput->setPlaceholder("Filter...");
 
         // Events
-        _backButton->onClick.subscribe(
-            [this]()
-            {
-                tryOpenParentDir();
-            });
-        _refreshButton->onClick.subscribe(
-            [this]()
-            {
-                refresh();
-            });
-        _homeButton->onClick.subscribe(
-            [this]()
-            {
-                openPath(Config::Path::assets);
-            });
+        _backButton->onClick.subscribe([this]() { tryOpenParentDir(); });
+        _refreshButton->onClick.subscribe([this]() { refresh(); });
+        _homeButton->onClick.subscribe([this]() { openPath(Config::Path::assets); });
         _pathInput->onInput.subscribe(
             [this](const char* path)
             {
@@ -497,11 +485,8 @@ namespace Core
 
             filename = ICON_FA_FOLDER + (" " + filename);
 
-            auto atLeastOneFolder = std::ranges::any_of(node.children,
-                                                        [](const CacheNode& n)
-                                                        {
-                                                            return n.type == NodeType::Folder;
-                                                        });
+            auto atLeastOneFolder = std::ranges::any_of(node.children, [](const CacheNode& n)
+                                                        { return n.type == NodeType::Folder; });
 
             if (!atLeastOneFolder)
             {

@@ -43,11 +43,8 @@ namespace Core
             h->addChildComponent<Gui::Label>("Light color");
             _color3Input = h->addChildComponent<Gui::Color3Input>();
             _color3Input->setInputtedData(GetWorld().lightning.color);
-            _color3Input->onInput.subscribe(
-                [](Color3 color)
-                {
-                    GetWorld().lightning.color = color.toNorm();
-                });
+            _color3Input->onInput.subscribe([](Color3 color)
+                                            { GetWorld().lightning.color = color.toNorm(); });
         }
         {
             auto* h = _layout.addChildComponent<Gui::HorizontalLayout>();
@@ -59,11 +56,8 @@ namespace Core
             _ambientStrength->setMax(10.f);
             _ambientStrength->setStep(0.05f);
 
-            _ambientStrength->onInput.subscribe(
-                [](float value)
-                {
-                    GetWorld().lightning.ambientStrength = value;
-                });
+            _ambientStrength->onInput.subscribe([](float value)
+                                                { GetWorld().lightning.ambientStrength = value; });
         }
         {
             auto* h = _layout.addChildComponent<Gui::HorizontalLayout>();
@@ -75,10 +69,7 @@ namespace Core
             _minLightStrength->setMax(10.f);
             _minLightStrength->setStep(0.05f);
             _minLightStrength->onInput.subscribe(
-                [](float value)
-                {
-                    GetWorld().lightning.minLightStrength = value;
-                });
+                [](float value) { GetWorld().lightning.minLightStrength = value; });
         }
         {
             auto* h = _layout.addChildComponent<Gui::HorizontalLayout>();
@@ -91,10 +82,7 @@ namespace Core
 
             _specularStrength->setInputtedData(GetWorld().lightning.specularStrength);
             _specularStrength->onInput.subscribe(
-                [](float value)
-                {
-                    GetWorld().lightning.specularStrength = value;
-                });
+                [](float value) { GetWorld().lightning.specularStrength = value; });
         }
         {
             auto* h = _layout.addChildComponent<Gui::HorizontalLayout>();
@@ -106,11 +94,8 @@ namespace Core
             _specularPow->setStep(2.f);
 
             _specularPow->setInputtedData(GetWorld().lightning.specularPow);
-            _specularPow->onInput.subscribe(
-                [](float value)
-                {
-                    GetWorld().lightning.specularPow = value;
-                });
+            _specularPow->onInput.subscribe([](float value)
+                                            { GetWorld().lightning.specularPow = value; });
         }
         {
             auto* h = _layout.addChildComponent<Gui::HorizontalLayout>();
@@ -128,11 +113,8 @@ namespace Core
             }
 
             _sunDirection->setInputtedData(GetWorld().lightning.sunDirection);
-            _sunDirection->onInput.subscribe(
-                [](glm::vec3 value)
-                {
-                    GetWorld().lightning.sunDirection = value;
-                });
+            _sunDirection->onInput.subscribe([](glm::vec3 value)
+                                             { GetWorld().lightning.sunDirection = value; });
         }
     }
     void WorldLightningEWC::onOpen()

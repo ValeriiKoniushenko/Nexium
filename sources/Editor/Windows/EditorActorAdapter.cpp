@@ -66,49 +66,29 @@ namespace Core
 
         _actorPostDraw
             = _actorLayout.addChildComponent<LabelRow<CheckBox>>("Post draw", labelWidth);
-        _actorPostDraw->input->onChange.subscribe(
-            [this](auto)
-            {
-                makeParentDirty();
-            });
+        _actorPostDraw->input->onChange.subscribe([this](auto) { makeParentDirty(); });
 
         _actorPosition
             = _actorLayout.addChildComponent<LabelRow<Float3Input>>("Position", labelWidth);
         _actorPosition->input->setWidth(inputWidth);
         _actorPosition->input->setFlex(Flex::Fixed);
-        _actorPosition->input->onInput.subscribe(
-            [this](auto)
-            {
-                makeParentDirty();
-            });
+        _actorPosition->input->onInput.subscribe([this](auto) { makeParentDirty(); });
 
         _actorRotation
             = _actorLayout.addChildComponent<LabelRow<Float3Input>>("Rotation", labelWidth);
         _actorRotation->input->setWidth(inputWidth);
         _actorRotation->input->setFlex(Flex::Fixed);
-        _actorRotation->input->onInput.subscribe(
-            [this](auto)
-            {
-                makeParentDirty();
-            });
+        _actorRotation->input->onInput.subscribe([this](auto) { makeParentDirty(); });
 
         _actorScale = _actorLayout.addChildComponent<LabelRow<Float3Input>>("Scale", labelWidth);
         _actorScale->input->setWidth(inputWidth);
         _actorScale->input->setFlex(Flex::Fixed);
-        _actorScale->input->onInput.subscribe(
-            [this](auto)
-            {
-                makeParentDirty();
-            });
+        _actorScale->input->onInput.subscribe([this](auto) { makeParentDirty(); });
 
         _actorOrigin = _actorLayout.addChildComponent<LabelRow<Float3Input>>("Origin", labelWidth);
         _actorOrigin->input->setWidth(inputWidth);
         _actorOrigin->input->setFlex(Flex::Fixed);
-        _actorOrigin->input->onInput.subscribe(
-            [this](auto)
-            {
-                makeParentDirty();
-            });
+        _actorOrigin->input->onInput.subscribe([this](auto) { makeParentDirty(); });
     }
 
     void ECSEditorActorAdapter::onDraw(float dt)

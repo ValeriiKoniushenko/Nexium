@@ -54,15 +54,9 @@ namespace Core
             shader->setUniform("uPickingColor"_atom, NormColor3::From(mesh->toUniqueColor()));
         };
 
-        static auto preRenderCond = [](const Actor* actor)
-        {
-            return !actor->isPostDraw();
-        };
+        static auto preRenderCond = [](const Actor* actor) { return !actor->isPostDraw(); };
 
-        static auto postRenderCond = [](const Actor* actor)
-        {
-            return actor->isPostDraw();
-        };
+        static auto postRenderCond = [](const Actor* actor) { return actor->isPostDraw(); };
 
         shader->use();
         shader->setUniform("uProjAndView"_atom, camera->getMatrix());

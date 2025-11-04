@@ -139,14 +139,8 @@ namespace Core
         stream.field("onLoadScale", _onLoadScale);
         stream.field(
             "assimpPostProcess", _assimpPostProcess,
-            [this](int& out, nlohmann::json& s)
-            {
-                out = readAssimpPostProcessFromCache(s);
-            },
-            [this](int assimpFlags)
-            {
-                return assimpPostProcessToCache(assimpFlags);
-            });
+            [this](int& out, nlohmann::json& s) { out = readAssimpPostProcessFromCache(s); },
+            [this](int assimpFlags) { return assimpPostProcessToCache(assimpFlags); });
     }
 
     int Mesh3DAsset::readAssimpPostProcessFromCache(nlohmann::json& s)

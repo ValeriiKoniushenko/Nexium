@@ -422,6 +422,8 @@ namespace Core
         [[nodiscard]] bool isInitialized() const noexcept { return _isInitialized; }
         [[nodiscard]] bool isEnabled() const noexcept { return _isEnabled; }
         void setEnabled(bool v) noexcept { _isEnabled = v; }
+        void enable() noexcept { _isEnabled = true; }
+        void disable() noexcept { _isEnabled = false; }
 
         void setNoTick(bool v) { _noTick = v; }
         [[nodiscard]] bool getNoTick() const noexcept { return _noTick; }
@@ -680,11 +682,8 @@ namespace Core
         template<IsComponent ComponentT>
         void removeChildOf(const StringAtom& name = ""_atom)
         {
-            removeChildIf(
-                [](auto* child)
-                {
-                    return child->template tryCastTo<ComponentT>() != nullptr;
-                });
+            removeChildIf([](auto* child)
+                          { return child->template tryCastTo<ComponentT>() != nullptr; });
         }
 
         // ========================== FOR EACHes ==========================

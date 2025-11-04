@@ -152,11 +152,7 @@ namespace Core::Gui
 
                 inputs[i] = hLayout->template addChildComponent<NumInput<Type>>();
                 inputs[i]->setFlex(Flex::FlexWidth);
-                inputs[i]->onInput.subscribe(
-                    [this](auto)
-                    {
-                        onInput.trigger(getInputtedData());
-                    });
+                inputs[i]->onInput.subscribe([this](auto) { onInput.trigger(getInputtedData()); });
             }
         }
     };

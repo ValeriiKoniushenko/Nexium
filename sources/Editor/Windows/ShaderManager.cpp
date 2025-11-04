@@ -102,11 +102,7 @@ namespace Core
 
             _comboView = shaderSelect->addChildComponent<ComboView>();
             _comboView->setFlex(Flex::FlexWidth);
-            _comboView->onSelect.subscribe(
-                [this](StringAtom key)
-                {
-                    selectShader(key);
-                });
+            _comboView->onSelect.subscribe([this](StringAtom key) { selectShader(key); });
         }
 
         // ================ SELECTED SHADER ======================
@@ -162,11 +158,7 @@ namespace Core
         {
             auto* recompile = _selectedShaderLayout.addChildComponent<Button>("Recompile");
             recompile->setFlex(Flex::FlexWidth);
-            recompile->onClick.subscribe(
-                [this]()
-                {
-                    recompileSelectedShader();
-                });
+            recompile->onClick.subscribe([this]() { recompileSelectedShader(); });
 
             _recompileResult = _selectedShaderLayout.addChildComponent<Label>();
             _recompileResult->setFlex(Flex::FlexWidth);

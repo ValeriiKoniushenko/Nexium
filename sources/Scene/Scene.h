@@ -101,11 +101,8 @@ namespace Core
         template<IsActorBased T>
         [[nodiscard]] T* getFirstActorOf()
         {
-            auto it = std::ranges::find_if(_actors,
-                                           [](const Actor::Ptr& actor)
-                                           {
-                                               return actor->isTypeOf<T>();
-                                           });
+            auto it = std::ranges::find_if(_actors, [](const Actor::Ptr& actor)
+                                           { return actor->isTypeOf<T>(); });
 
             return it == _actors.end() ? nullptr : reinterpret_cast<T*>(it->get());
         }

@@ -88,19 +88,11 @@ namespace Core
 
         _ecsEnabledComponent
             = _baseEcsLayout.addChildComponent<LabelRow<CheckBox>>("Enabled", labelWidth);
-        _ecsEnabledComponent->input->onChange.subscribe(
-            [this](auto)
-            {
-                makeDirty();
-            });
+        _ecsEnabledComponent->input->onChange.subscribe([this](auto) { makeDirty(); });
 
         _ecsName = _baseEcsLayout.addChildComponent<LabelRow<TextInput>>("Name", labelWidth);
         _ecsName->input->setFlex(Flex::FlexWidth);
-        _ecsName->input->onInput.subscribe(
-            [this](auto)
-            {
-                makeDirty();
-            });
+        _ecsName->input->onInput.subscribe([this](auto) { makeDirty(); });
 
         _ecsType = _baseEcsLayout.addChildComponent<LabelRow<TextInput>>("Type", labelWidth);
         _ecsType->input->setFlex(Flex::FlexWidth);
@@ -112,11 +104,7 @@ namespace Core
 
         _ecsDisableTicks
             = _baseEcsLayout.addChildComponent<LabelRow<CheckBox>>("No ticks", labelWidth);
-        _ecsDisableTicks->input->onChange.subscribe(
-            [this](auto)
-            {
-                makeDirty();
-            });
+        _ecsDisableTicks->input->onChange.subscribe([this](auto) { makeDirty(); });
 
         _ecsChildren
             = _baseEcsLayout.addChildComponent<LabelRow<StringArray>>("Children", labelWidth);
@@ -125,11 +113,19 @@ namespace Core
 
     void NxECSBasedEditorEWC::onDrawProperties()
     {
+        if (!_targetAsset || !_targetComponent)
+        {
+            return;
+        }
+
         const auto dt = GetWorld().timeDelta;
 
-        if (CollapsingHeader("Asset data", ImGuiTreeNodeFlags_DefaultOpen))
+        if (_targetComponent == _targetAsset->getData().get())
         {
-            _headerLayout.tick(dt);
+            if (CollapsingHeader("Asset data", ImGuiTreeNodeFlags_DefaultOpen))
+            {
+                _headerLayout.tick(dt);
+            }
         }
 
         if (CollapsingHeader("Base ECS properties", ImGuiTreeNodeFlags_DefaultOpen))
@@ -139,9 +135,12 @@ namespace Core
 
         for (auto&& child : _children)
         {
-            if (auto* typeAdapter = dynamic_cast<ECSEditorMimeAdapter*>(child.get()))
+            if (child->isEnabled())
             {
-                typeAdapter->draw(dt);
+                if (auto* typeAdapter = dynamic_cast<ECSEditorMimeAdapter*>(child.get()))
+                {
+                    typeAdapter->draw(dt);
+                }
             }
         }
     }
@@ -177,7 +176,7 @@ namespace Core
 
     void NxECSBasedEditorEWC::updateGuiBasedOnAsset()
     {
-        if (!_targetAsset)
+        if (!_targetAsset || !_targetComponent)
         {
             return;
         }
@@ -185,7 +184,7 @@ namespace Core
         _logicalPath->input->setInputtedData(_targetAsset->getLogicPath().toStdString());
         _assetType->input->setInputtedData(_targetAsset->getType().toStdString());
 
-        auto data = _targetAsset->getData();
+        auto* data = _targetComponent;
         _ecsName->input->setInputtedData(data->getComponentName().toStdString());
         _ecsType->input->setInputtedData(data->getComponentType().toStdString());
         if (data->hasParent())
@@ -204,10 +203,12 @@ namespace Core
                                                  << child->getComponentType());
         }
 
-        if (hasMimeTypeAdapter(_targetAsset->getType()))
+        disableAllAdapters();
+        if (hasMimeTypeAdapter(data->getComponentType()))
         {
-            if (auto adapter = trySpawnMimeTypeAdapter(_targetAsset->getType()))
+            if (auto adapter = trySpawnMimeTypeAdapter(data->getComponentType()))
             {
+                adapter->enable();
                 if (auto* p = attachUniqueChild(adapter)->castTo<ECSEditorMimeAdapter>())
                 {
                     p->applyAssetData(_targetAsset->getAssetData());
@@ -224,6 +225,8 @@ namespace Core
             errorLog("Requested asset not found: " + path.generic_string());
             return false;
         }
+
+        _targetComponent = _targetAsset->getData().get();
 
         setup();
         return true;
@@ -260,6 +263,8 @@ namespace Core
 
         if (ImGui::IsItemClicked() || (ImGui::IsItemFocused() && isHovered()))
         {
+            _targetComponent = comp;
+            updateGuiBasedOnAsset();
         }
 
         if (isOpened)
@@ -273,6 +278,17 @@ namespace Core
         }
 
         ImGui::PopID();
+    }
+
+    void NxECSBasedEditorEWC::disableAllAdapters()
+    {
+        for (auto&& child : _children)
+        {
+            if (child->tryCastTo<ECSEditorMimeAdapter>())
+            {
+                child->disable();
+            }
+        }
     }
 
     ECSEditorMimeAdapter::Ptr NxECSBasedEditorEWC::trySpawnMimeTypeAdapter(

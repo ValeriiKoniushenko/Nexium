@@ -91,10 +91,7 @@ namespace Core
                     << mimeType);
             }
 
-            _mimeTypeAdapters[mimeType] = [mimeType]()
-            {
-                return new T(mimeType);
-            };
+            _mimeTypeAdapters[mimeType] = [mimeType]() { return new T(mimeType); };
         }
 
         [[nodiscard]] bool hasMimeTypeAdapter(const StringAtom& mimeType) const;
@@ -111,6 +108,7 @@ namespace Core
         void onClose() override;
 
         void drawTreeNode(BaseComponent* comp, int id);
+        void disableAllAdapters();
 
         [[nodiscard]] ECSEditorMimeAdapter::Ptr trySpawnMimeTypeAdapter(
             const StringAtom& mimeType) const;
@@ -135,6 +133,7 @@ namespace Core
             _mimeTypeAdapters;
 
         NXAsset _targetAsset;
+        BaseComponent* _targetComponent = nullptr;
     };
 
 } // namespace Core

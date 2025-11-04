@@ -223,11 +223,7 @@ namespace Core::Gui
                 }
                 else
                 {
-                    cell->deleteButton->onClick.subscribe(
-                        [this, i]()
-                        {
-                            eraseAt(i);
-                        });
+                    cell->deleteButton->onClick.subscribe([this, i]() { eraseAt(i); });
                 }
             }
 
@@ -259,11 +255,7 @@ namespace Core::Gui
             }
             else
             {
-                addButton->onClick.subscribe(
-                    [this]()
-                    {
-                        addEmpty();
-                    });
+                addButton->onClick.subscribe([this]() { addEmpty(); });
             }
 
             auto* resetButton = buttonsHolder->template addChildComponent<Button>("Reset");

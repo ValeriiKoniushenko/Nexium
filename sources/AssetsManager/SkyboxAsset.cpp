@@ -138,9 +138,7 @@ namespace Core
     void SkyboxAsset::ioFieldsUpdate(DataStream& stream)
     {
         auto componentPath = [this, &stream](const char* prop, Direction dir)
-        {
-            stream.field(prop, _paths.at(static_cast<std::size_t>(dir)));
-        };
+        { stream.field(prop, _paths.at(static_cast<std::size_t>(dir))); };
 
         componentPath("pathToTop", Direction::Top);
         componentPath("pathToBottom", Direction::Bottom);

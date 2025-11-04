@@ -119,9 +119,7 @@ namespace Core::Gui
         }
 
         auto cmp = [](const BaseComponent::Ptr& a, const BaseComponent::Ptr& b)
-        {
-            return a->unsafeCastTo<Widget>()->getHeight() < b->unsafeCastTo<Widget>()->getHeight();
-        };
+        { return a->unsafeCastTo<Widget>()->getHeight() < b->unsafeCastTo<Widget>()->getHeight(); };
         const auto maxHeightEl = std::ranges::max_element(_children, cmp);
         if (maxHeightEl == _children.end())
         {

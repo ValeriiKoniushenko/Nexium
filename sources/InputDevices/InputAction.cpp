@@ -104,10 +104,7 @@ namespace Core
 
     void MouseInputAction::init()
     {
-        _onActionPrivate.subscribe(
-            [this](SpecKeysState states)
-            {
-                onMouseClick.trigger(Mouse::GetPosition(), states);
-            });
+        _onActionPrivate.subscribe([this](SpecKeysState states)
+                                   { onMouseClick.trigger(Mouse::GetPosition(), states); });
     }
 } // namespace Core

@@ -201,11 +201,7 @@ namespace Core
 
     void Window::registerEvents()
     {
-        onResize.subscribe(
-            [this](ISize2 size)
-            {
-                _size = size;
-            });
+        onResize.subscribe([this](ISize2 size) { _size = size; });
 
         onMouseMove.subscribe(
             [](glm::vec2 pos)
