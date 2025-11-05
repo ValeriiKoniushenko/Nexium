@@ -258,8 +258,26 @@ namespace Core
             flags |= ImGuiTreeNodeFlags_Leaf;
         }
 
+        if (comp == _targetComponent)
+        {
+            flags |= ImGuiTreeNodeFlags_Selected;
+        }
+
+        const bool isDisabled = !comp->isEnabled();
+        if (isDisabled)
+        {
+            ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled));
+            ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.6f);
+        }
+
         ImGui::PushID(id);
         const bool isOpened = ImGui::TreeNodeEx(comp->getComponentName().c_str(), flags);
+
+        if (isDisabled)
+        {
+            ImGui::PopStyleVar();
+            ImGui::PopStyleColor();
+        }
 
         if (ImGui::IsItemClicked() || (ImGui::IsItemFocused() && isHovered()))
         {
