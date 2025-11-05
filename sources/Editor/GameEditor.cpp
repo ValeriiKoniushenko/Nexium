@@ -98,13 +98,7 @@ namespace Core
         registerNewWindow<ModalPopUp>("PopUp"_atom);
         registerNewWindow<WorldLightningEWC>("World Lightning"_atom, false);
         registerNewWindow<NxTextureEditorEWC>("NX Texture Editor"_atom, false);
-
-        auto assetsEditor = registerNewWindow<NxECSBasedEditorEWC>("Assets editor"_atom, true);
-        assetsEditor->registerMimeTypeAdapter<ECSEditorActorAdapter>(Actor::componentType);
-        assetsEditor->registerMimeTypeAdapter<ECSBaseComponentAdapter>(
-            BaseComponent::componentType);
-        assetsEditor->registerMimeTypeAdapter<ECSEditorStaticMeshBundleAdapter>(
-            StaticMeshBundle::componentType);
+        registerNewWindow<NxECSBasedEditorEWC>("Assets editor"_atom, true);
 
         registerNewWindow<GameViewportEWC>("Viewport"_atom)
             ->onSizeChanged.subscribe(

@@ -68,6 +68,7 @@ namespace Core
     public:
         void applyAssetRawData(const nlohmann::json& json);
         void draw(float dt);
+        [[nodiscard]] virtual bool canWorkWith(BaseComponent* component) const = 0;
 
     protected:
         virtual void onDraw(float dt) = 0;
@@ -83,23 +84,6 @@ namespace Core
         ECS_COMPONENT_DECL(NxECSBasedEditorEWC, NxEditorBaseEditorEWC);
 
     public:
-        template<typename T>
-        void registerMimeTypeAdapter(const StringAtom& mimeType)
-        {
-            if (hasMimeTypeAdapter(mimeType))
-            {
-                warnLog(
-                    "You're trying to register the adapter for the MIME type '{}' twice. Previous adapter will be owerwritten by new one."_f
-                    << mimeType);
-            }
-
-            traceLog("Registered new Mime type adapter: " + mimeType);
-
-            _mimeTypeAdapters[mimeType] = [mimeType]() { return new T(mimeType); };
-        }
-
-        [[nodiscard]] bool hasMimeTypeAdapter(const StringAtom& mimeType) const;
-
         [[nodiscard]] BaseComponent* getTargetComponent() noexcept;
         [[nodiscard]] const BaseComponent* getTargetComponent() const noexcept;
 
@@ -119,9 +103,6 @@ namespace Core
         void drawTreeNode(BaseComponent* comp, int id);
         void disableAllAdapters();
 
-        [[nodiscard]] ECSEditorMimeAdapter::Ptr trySpawnMimeTypeAdapter(
-            const StringAtom& mimeType) const;
-
         void reset();
         void setup();
 
@@ -131,9 +112,6 @@ namespace Core
         Gui::VerticalLayout _headerLayout;
         Gui::LabelRow<Gui::TextInput>* _logicalPath = nullptr;
         Gui::LabelRow<Gui::TextInput>* _assetType = nullptr;
-
-        std::unordered_map<StringAtom, std::function<ECSEditorMimeAdapter::Ptr()>>
-            _mimeTypeAdapters;
 
         NXAsset _targetAsset;
         BaseComponent* _targetComponent = nullptr;

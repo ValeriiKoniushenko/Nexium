@@ -72,9 +72,12 @@ namespace Core
             })
     >;
 
-    class ECSEditorStaticMeshBundleAdapter : public ECSEditorActorAdapter
+    class ECSEditorStaticMeshBundleAdapter : public ECSEditorMimeAdapter
     {
-        ECS_COMPONENT_DECL(ECSEditorStaticMeshBundleAdapter, ECSEditorActorAdapter);
+        ECS_COMPONENT_DECL(ECSEditorStaticMeshBundleAdapter, ECSEditorMimeAdapter);
+
+    public:
+        [[nodiscard]] bool canWorkWith(BaseComponent* component) const override;
 
     protected:
         [[nodiscard]] std::size_t convertShaderNameToIndex(const StringAtom& shaderName) const;

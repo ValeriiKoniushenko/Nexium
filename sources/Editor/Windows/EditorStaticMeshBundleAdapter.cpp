@@ -32,7 +32,7 @@ namespace Core
 
     void ECSEditorStaticMeshBundleAdapter::onInitialize()
     {
-        ECSEditorActorAdapter::onInitialize();
+        ECSEditorMimeAdapter::onInitialize();
 
         constexpr float defaultLabelWidth = 120.0f;
 
@@ -97,8 +97,6 @@ namespace Core
 
     void ECSEditorStaticMeshBundleAdapter::onApplyAssetData(const nlohmann::json& json)
     {
-        ECSEditorActorAdapter::onApplyAssetData(json);
-
         if (_modelInput && json.contains("path"))
         {
             _modelInput->input->setInputtedData(json["path"].get<StringAtom>().toStdString());
@@ -133,12 +131,15 @@ namespace Core
 
     void ECSEditorStaticMeshBundleAdapter::onDraw(float dt)
     {
-        ECSEditorActorAdapter::onDraw(dt);
-
         if (Gui::CollapsingHeader("Static mesh bundle", ImGuiTreeNodeFlags_DefaultOpen))
         {
             _layout.tick(dt);
         }
+    }
+
+    bool ECSEditorStaticMeshBundleAdapter::canWorkWith(BaseComponent* component) const
+    {
+        return dynamic_cast<StaticMeshBundle*>(component) != nullptr;
     }
 
     std::size_t ECSEditorStaticMeshBundleAdapter::convertShaderNameToIndex(

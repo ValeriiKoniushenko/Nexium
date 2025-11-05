@@ -24,8 +24,11 @@
 
 #include "NxECSBasedEditor.h"
 
+#include "BaseComponentAdapter.h"
 #include "Editor/GuiComponents/Array.h"
 #include "Editor/GuiComponents/Combo.h"
+#include "EditorActorAdapter.h"
+#include "EditorStaticMeshBundleAdapter.h"
 
 using namespace Core::Gui;
 
@@ -79,11 +82,6 @@ namespace Core
         return nullptr;
     }
 
-    bool NxECSBasedEditorEWC::hasMimeTypeAdapter(const StringAtom& mimeType) const
-    {
-        return _mimeTypeAdapters.contains(mimeType);
-    }
-
     BaseComponent* NxECSBasedEditorEWC::getTargetComponent() noexcept
     {
         return _targetComponent;
@@ -97,6 +95,10 @@ namespace Core
     void NxECSBasedEditorEWC::onInitialize()
     {
         NxEditorBaseEditorEWC::onInitialize();
+
+        addUniqueTypeChildComponent<ECSBaseComponentAdapter>();
+        addUniqueTypeChildComponent<ECSEditorActorAdapter>();
+        addUniqueTypeChildComponent<ECSEditorStaticMeshBundleAdapter>();
 
         setEnablePreview(true);
         setEnableTree(true);
@@ -183,14 +185,15 @@ namespace Core
         _assetType->input->setInputtedData(_targetAsset->getType().toStdString());
 
         disableAllAdapters();
-        if (hasMimeTypeAdapter(_targetComponent->getComponentType()))
+
+        for (auto& child : _children)
         {
-            if (auto adapter = trySpawnMimeTypeAdapter(_targetComponent->getComponentType()))
+            if (auto* adapter = child->tryCastTo<ECSEditorMimeAdapter>())
             {
-                adapter->enable();
-                if (auto* p = attachUniqueChild(adapter)->castTo<ECSEditorMimeAdapter>())
+                if (adapter->canWorkWith(_targetComponent))
                 {
-                    p->applyAssetRawData(_targetAsset->getAssetData());
+                    adapter->enable();
+                    adapter->applyAssetRawData(_targetAsset->getAssetData());
                 }
             }
         }
@@ -286,27 +289,6 @@ namespace Core
                 child->disable();
             }
         }
-    }
-
-    ECSEditorMimeAdapter::Ptr NxECSBasedEditorEWC::trySpawnMimeTypeAdapter(
-        const StringAtom& mimeType) const
-    {
-        if (!hasMimeTypeAdapter(mimeType))
-        {
-            errorLog("Can't spawn editor's mime adapter. Mime type '{}' is not registered."_f
-                     << mimeType);
-            return nullptr;
-        }
-
-        for (auto&& child : _children)
-        {
-            if (child->getComponentName() == mimeType)
-            {
-                return child->castTo<ECSEditorMimeAdapter>();
-            }
-        }
-
-        return _mimeTypeAdapters.at(mimeType)();
     }
 
     void NxECSBasedEditorEWC::reset()

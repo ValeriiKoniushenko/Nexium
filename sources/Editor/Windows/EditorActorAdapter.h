@@ -38,6 +38,9 @@ namespace Core
     {
         ECS_COMPONENT_DECL(ECSEditorActorAdapter, ECSEditorMimeAdapter);
 
+    public:
+        [[nodiscard]] bool canWorkWith(BaseComponent* component) const override;
+
     protected:
         void onApplyAssetData(const nlohmann::json& json) override;
         void onInitialize() override;

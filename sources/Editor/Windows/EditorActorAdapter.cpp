@@ -31,6 +31,11 @@ namespace Core
 
     ECS_COMPONENT_IMPL(ECSEditorActorAdapter);
 
+    bool ECSEditorActorAdapter::canWorkWith(BaseComponent* component) const
+    {
+        return dynamic_cast<Actor*>(component) != nullptr;
+    }
+
     void ECSEditorActorAdapter::onApplyAssetData(const nlohmann::json& json)
     {
         if (json.contains("isPostDraw"))

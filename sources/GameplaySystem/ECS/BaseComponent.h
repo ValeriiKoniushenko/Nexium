@@ -666,6 +666,21 @@ namespace Core
             return static_cast<ComponentT*>(rawAddChildComponent(newOne.get()));
         }
 
+        template<IsComponent ComponentT, class... Args>
+        ComponentT* addUniqueTypeChildComponent(Args&&... args)
+        {
+            for (auto& child : _children)
+            {
+                if (auto* casted = child->tryCastTo<ComponentT>())
+                {
+                    return casted;
+                }
+            }
+
+            typename ComponentT::Ptr newOne = new ComponentT(std::forward<Args>(args)...);
+            return static_cast<ComponentT*>(rawAddChildComponent(newOne.get()));
+        }
+
         /**
          * attach existing child or just new one. Your child will be cloned
          * to this class/owner
