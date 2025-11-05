@@ -38,6 +38,7 @@
 #include "ImGui/backends/imgui_impl_glfw.h"
 #include "ImGui/backends/imgui_impl_opengl3.h"
 #include "Misc/IconsFontAwesome.h"
+#include "Windows/BaseComponentAdapter.h"
 #include "Windows/EditorStaticMeshBundleAdapter.h"
 #include "Windows/ImageViewer.h"
 #include "Windows/ModalPopUp.h"
@@ -100,6 +101,8 @@ namespace Core
 
         auto assetsEditor = registerNewWindow<NxECSBasedEditorEWC>("Assets editor"_atom, true);
         assetsEditor->registerMimeTypeAdapter<ECSEditorActorAdapter>(Actor::componentType);
+        assetsEditor->registerMimeTypeAdapter<ECSBaseComponentAdapter>(
+            BaseComponent::componentType);
         assetsEditor->registerMimeTypeAdapter<ECSEditorStaticMeshBundleAdapter>(
             StaticMeshBundle::componentType);
 

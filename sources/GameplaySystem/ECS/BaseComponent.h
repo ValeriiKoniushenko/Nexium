@@ -530,6 +530,8 @@ namespace Core
         using ChildT = boost::intrusive_ptr<BaseComponent>;
         using ChildrenT = std::vector<boost::intrusive_ptr<BaseComponent>>;
 
+        static const StringAtom componentType;
+
     public:
         ~BaseComponent() override = default;
 

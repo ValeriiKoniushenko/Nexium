@@ -34,9 +34,9 @@
 namespace Core
 {
 
-    class BaseComponentAdapter : public ECSEditorMimeAdapter
+    class ECSBaseComponentAdapter : public ECSEditorMimeAdapter
     {
-        ECS_COMPONENT_DECL(BaseComponentAdapter, ECSEditorMimeAdapter);
+        ECS_COMPONENT_DECL(ECSBaseComponentAdapter, ECSEditorMimeAdapter);
 
     protected:
         void onApplyAssetData(const nlohmann::json& json) override;

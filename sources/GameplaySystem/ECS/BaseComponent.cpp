@@ -40,6 +40,8 @@ namespace Core
 {
     ECS_COMPONENT_IMPL(InvalidComponent);
 
+    const StringAtom BaseComponent::componentType = "BaseComponent"_atom;
+
     BaseComponent* GlobalComponentFactory::create(const StringAtom& type)
     {
         if (const auto found = _map.find(type); found != _map.end()) [[likely]]

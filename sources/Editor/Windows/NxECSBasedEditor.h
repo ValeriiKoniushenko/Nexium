@@ -103,6 +103,8 @@ namespace Core
         [[nodiscard]] BaseComponent* getTargetComponent() noexcept;
         [[nodiscard]] const BaseComponent* getTargetComponent() const noexcept;
 
+        [[nodiscard]] bool hasTarget() const noexcept { return _targetComponent && _targetAsset; }
+
     protected:
         void onInitialize() override;
         void onDrawProperties() override;

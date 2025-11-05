@@ -29,9 +29,9 @@ using namespace Core::Gui;
 namespace Core
 {
 
-    ECS_COMPONENT_IMPL(BaseComponentAdapter);
+    ECS_COMPONENT_IMPL(ECSBaseComponentAdapter);
 
-    void BaseComponentAdapter::onApplyAssetData(const nlohmann::json& json)
+    void ECSBaseComponentAdapter::onApplyAssetData(const nlohmann::json& json)
     {
         auto* data = getTargetComponent();
         _ecsName->input->setInputtedData(data->getComponentName().toStdString());
@@ -53,7 +53,7 @@ namespace Core
         }
     }
 
-    void BaseComponentAdapter::onInitialize()
+    void ECSBaseComponentAdapter::onInitialize()
     {
         ECSEditorMimeAdapter::onInitialize();
 
@@ -86,7 +86,7 @@ namespace Core
         _ecsChildren->input->setReadOnly(true);
     }
 
-    void BaseComponentAdapter::onDraw(float dt)
+    void ECSBaseComponentAdapter::onDraw(float dt)
     {
         if (Gui::CollapsingHeader("Base ECS properties", ImGuiTreeNodeFlags_DefaultOpen))
         {

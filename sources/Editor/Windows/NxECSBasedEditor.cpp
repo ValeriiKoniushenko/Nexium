@@ -116,7 +116,7 @@ namespace Core
 
     void NxECSBasedEditorEWC::onDrawProperties()
     {
-        if (!_targetAsset || !_targetComponent)
+        if (!hasTarget())
         {
             return;
         }
@@ -131,16 +131,11 @@ namespace Core
             }
         }
 
-        if (CollapsingHeader("Base ECS properties", ImGuiTreeNodeFlags_DefaultOpen))
-        {
-            _baseEcsLayout.tick(dt);
-        }
-
         for (auto&& child : _children)
         {
             if (child->isEnabled())
             {
-                if (auto* typeAdapter = dynamic_cast<ECSEditorMimeAdapter*>(child.get()))
+                if (auto* typeAdapter = child->tryCastTo<ECSEditorMimeAdapter>())
                 {
                     typeAdapter->draw(dt);
                 }
@@ -157,7 +152,7 @@ namespace Core
     {
         NxEditorBaseEditorEWC::onDrawTree();
 
-        if (!_targetAsset)
+        if (!hasTarget())
         {
             return;
         }
@@ -171,7 +166,7 @@ namespace Core
 
     void NxECSBasedEditorEWC::onSave()
     {
-        if (!_targetAsset)
+        if (!hasTarget())
         {
             return;
         }
@@ -179,7 +174,7 @@ namespace Core
 
     void NxECSBasedEditorEWC::updateGuiBasedOnAsset()
     {
-        if (!_targetAsset || !_targetComponent)
+        if (!hasTarget())
         {
             return;
         }
