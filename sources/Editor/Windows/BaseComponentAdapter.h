@@ -34,9 +34,9 @@
 namespace Core
 {
 
-    class ECSEditorActorAdapter : public ECSEditorMimeAdapter
+    class BaseComponentAdapter : public ECSEditorMimeAdapter
     {
-        ECS_COMPONENT_DECL(ECSEditorActorAdapter, ECSEditorMimeAdapter);
+        ECS_COMPONENT_DECL(BaseComponentAdapter, ECSEditorMimeAdapter);
 
     protected:
         void onApplyAssetData(const nlohmann::json& json) override;
@@ -44,13 +44,13 @@ namespace Core
         void onDraw(float dt) override;
 
     protected:
-        Gui::VerticalLayout _actorLayout;
-
-        Gui::LabelRow<Gui::CheckBox>* _actorPostDraw = nullptr;
-        Gui::LabelRow<Gui::Float3Input>* _actorPosition = nullptr;
-        Gui::LabelRow<Gui::Float3Input>* _actorRotation = nullptr;
-        Gui::LabelRow<Gui::Float3Input>* _actorScale = nullptr;
-        Gui::LabelRow<Gui::Float3Input>* _actorOrigin = nullptr;
+        Gui::VerticalLayout _baseEcsLayout;
+        Gui::LabelRow<Gui::TextInput>* _ecsName = nullptr;
+        Gui::LabelRow<Gui::TextInput>* _ecsType = nullptr;
+        Gui::LabelRow<Gui::CheckBox>* _ecsDisableTicks = nullptr;
+        Gui::LabelRow<Gui::CheckBox>* _ecsEnabledComponent = nullptr;
+        Gui::LabelRow<Gui::TextInput>* _ecsParent = nullptr;
+        Gui::LabelRow<Gui::StringArray>* _ecsChildren = nullptr;
     };
 
 } // namespace Core

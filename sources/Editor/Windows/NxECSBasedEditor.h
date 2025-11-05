@@ -66,7 +66,7 @@ namespace Core
         ECS_COMPONENT_DECL(ECSEditorMimeAdapter, BaseComponent);
 
     public:
-        void applyAssetData(const nlohmann::json& json);
+        void applyAssetRawData(const nlohmann::json& json);
         void draw(float dt);
 
     protected:
@@ -74,6 +74,8 @@ namespace Core
         virtual void onApplyAssetData(const nlohmann::json& json) = 0;
 
         void makeParentDirty();
+        [[nodiscard]] BaseComponent* getTargetComponent();
+        [[nodiscard]] const BaseComponent* getTargetComponent() const;
     };
 
     class NxECSBasedEditorEWC : public NxEditorBaseEditorEWC
@@ -91,10 +93,15 @@ namespace Core
                     << mimeType);
             }
 
+            traceLog("Registered new Mime type adapter: " + mimeType);
+
             _mimeTypeAdapters[mimeType] = [mimeType]() { return new T(mimeType); };
         }
 
         [[nodiscard]] bool hasMimeTypeAdapter(const StringAtom& mimeType) const;
+
+        [[nodiscard]] BaseComponent* getTargetComponent() noexcept;
+        [[nodiscard]] const BaseComponent* getTargetComponent() const noexcept;
 
     protected:
         void onInitialize() override;
@@ -116,18 +123,12 @@ namespace Core
         void reset();
         void setup();
 
+        [[nodiscard]] const char* getPrefix() const override { return "NxECSBasedEditorEWC"; }
+
     protected:
         Gui::VerticalLayout _headerLayout;
         Gui::LabelRow<Gui::TextInput>* _logicalPath = nullptr;
         Gui::LabelRow<Gui::TextInput>* _assetType = nullptr;
-
-        Gui::VerticalLayout _baseEcsLayout;
-        Gui::LabelRow<Gui::TextInput>* _ecsName = nullptr;
-        Gui::LabelRow<Gui::TextInput>* _ecsType = nullptr;
-        Gui::LabelRow<Gui::CheckBox>* _ecsDisableTicks = nullptr;
-        Gui::LabelRow<Gui::CheckBox>* _ecsEnabledComponent = nullptr;
-        Gui::LabelRow<Gui::TextInput>* _ecsParent = nullptr;
-        Gui::LabelRow<Gui::StringArray>* _ecsChildren = nullptr;
 
         std::unordered_map<StringAtom, std::function<ECSEditorMimeAdapter::Ptr()>>
             _mimeTypeAdapters;

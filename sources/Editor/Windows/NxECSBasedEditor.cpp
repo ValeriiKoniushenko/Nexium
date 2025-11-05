@@ -35,7 +35,7 @@ namespace Core
     ECS_COMPONENT_IMPL(NxECSBasedEditorEWC);
     ECS_COMPONENT_IMPL(ECSEditorMimeAdapter);
 
-    void ECSEditorMimeAdapter::applyAssetData(const nlohmann::json& json)
+    void ECSEditorMimeAdapter::applyAssetRawData(const nlohmann::json& json)
     {
         if (json.empty())
         {
@@ -59,9 +59,39 @@ namespace Core
         }
     }
 
+    BaseComponent* ECSEditorMimeAdapter::getTargetComponent()
+    {
+        if (auto* parent = getParentAs<NxECSBasedEditorEWC>())
+        {
+            return parent->getTargetComponent();
+        }
+        Assert(false);
+        return nullptr;
+    }
+
+    const BaseComponent* ECSEditorMimeAdapter::getTargetComponent() const
+    {
+        if (auto* parent = getParentAs<NxECSBasedEditorEWC>())
+        {
+            return parent->getTargetComponent();
+        }
+        Assert(false);
+        return nullptr;
+    }
+
     bool NxECSBasedEditorEWC::hasMimeTypeAdapter(const StringAtom& mimeType) const
     {
         return _mimeTypeAdapters.contains(mimeType);
+    }
+
+    BaseComponent* NxECSBasedEditorEWC::getTargetComponent() noexcept
+    {
+        return _targetComponent;
+    }
+
+    const BaseComponent* NxECSBasedEditorEWC::getTargetComponent() const noexcept
+    {
+        return _targetComponent;
     }
 
     void NxECSBasedEditorEWC::onInitialize()
@@ -82,33 +112,6 @@ namespace Core
         _assetType = _headerLayout.addChildComponent<LabelRow<TextInput>>("Type", labelWidth);
         _assetType->input->setFlex(Flex::FlexWidth);
         _assetType->input->setReadOnly(true);
-
-        // -+- -+- -+- -+- -+- -+- -+- -+- -+- -+- -+-
-        _baseEcsLayout.setPaddings(glm::vec4{ ImGui::GetStyle().ItemSpacing.x });
-
-        _ecsEnabledComponent
-            = _baseEcsLayout.addChildComponent<LabelRow<CheckBox>>("Enabled", labelWidth);
-        _ecsEnabledComponent->input->onChange.subscribe([this](auto) { makeDirty(); });
-
-        _ecsName = _baseEcsLayout.addChildComponent<LabelRow<TextInput>>("Name", labelWidth);
-        _ecsName->input->setFlex(Flex::FlexWidth);
-        _ecsName->input->onInput.subscribe([this](auto) { makeDirty(); });
-
-        _ecsType = _baseEcsLayout.addChildComponent<LabelRow<TextInput>>("Type", labelWidth);
-        _ecsType->input->setFlex(Flex::FlexWidth);
-        _ecsType->input->setReadOnly(true);
-
-        _ecsParent = _baseEcsLayout.addChildComponent<LabelRow<TextInput>>("Parent", labelWidth);
-        _ecsParent->input->setFlex(Flex::FlexWidth);
-        _ecsParent->input->setReadOnly(true);
-
-        _ecsDisableTicks
-            = _baseEcsLayout.addChildComponent<LabelRow<CheckBox>>("No ticks", labelWidth);
-        _ecsDisableTicks->input->onChange.subscribe([this](auto) { makeDirty(); });
-
-        _ecsChildren
-            = _baseEcsLayout.addChildComponent<LabelRow<StringArray>>("Children", labelWidth);
-        _ecsChildren->input->setReadOnly(true);
     }
 
     void NxECSBasedEditorEWC::onDrawProperties()
@@ -184,34 +187,15 @@ namespace Core
         _logicalPath->input->setInputtedData(_targetAsset->getLogicPath().toStdString());
         _assetType->input->setInputtedData(_targetAsset->getType().toStdString());
 
-        auto* data = _targetComponent;
-        _ecsName->input->setInputtedData(data->getComponentName().toStdString());
-        _ecsType->input->setInputtedData(data->getComponentType().toStdString());
-        if (data->hasParent())
-        {
-            _ecsParent->input->setInputtedData(data->getParent()->getComponentName().toStdString());
-        }
-
-        _ecsDisableTicks->input->setValue(data->getNoTick());
-
-        _ecsEnabledComponent->input->setValue(data->isEnabled());
-
-        _ecsChildren->input->clearData();
-        for (auto&& child : data->getChildren())
-        {
-            _ecsChildren->input->add("{} [{}]"_f << child->getComponentName()
-                                                 << child->getComponentType());
-        }
-
         disableAllAdapters();
-        if (hasMimeTypeAdapter(data->getComponentType()))
+        if (hasMimeTypeAdapter(_targetComponent->getComponentType()))
         {
-            if (auto adapter = trySpawnMimeTypeAdapter(data->getComponentType()))
+            if (auto adapter = trySpawnMimeTypeAdapter(_targetComponent->getComponentType()))
             {
                 adapter->enable();
                 if (auto* p = attachUniqueChild(adapter)->castTo<ECSEditorMimeAdapter>())
                 {
-                    p->applyAssetData(_targetAsset->getAssetData());
+                    p->applyAssetRawData(_targetAsset->getAssetData());
                 }
             }
         }
