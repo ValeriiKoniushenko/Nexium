@@ -7,31 +7,10 @@
       "Triangulate",
       "SortByPType"
     ],
-    "isPostDraw": false,
     "mainShader": "defaultTextured",
     "onLoadScale": 1.0,
-    "origin": [
-      0.0,
-      0.0,
-      0.0
-    ],
     "outlineShader": "outline",
-    "path": "assets/objects-3d/Models/FBX/FireHydrant.fbx",
-    "position": [
-      0.0,
-      0.0,
-      0.0
-    ],
-    "rotation": [
-      0.0,
-      0.0,
-      0.0
-    ],
-    "scale": [
-      1.0,
-      1.0,
-      1.0
-    ]
+    "path": "assets/objects-3d/Models/FBX/FireHydrant.fbx"
   },
   "data": {
     "children": [

@@ -87,6 +87,7 @@ namespace Core
 
         _ecsChildren
             = _baseEcsLayout.addChildComponent<LabelRow<StringArray>>("Children", labelWidth);
+        _ecsChildren->setVerticalAlign(Align::Top);
         _ecsChildren->input->setReadOnly(true);
     }
 

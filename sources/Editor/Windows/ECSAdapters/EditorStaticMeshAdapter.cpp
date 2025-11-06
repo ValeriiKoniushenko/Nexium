@@ -22,43 +22,42 @@
  * SOFTWARE.
  */
 
-#pragma once
+#include "EditorStaticMeshAdapter.h"
 
-#include "ECSAdapters/EditorActorAdapter.h"
-#include "Editor/GuiComponents/Input.h"
-#include "Editor/GuiComponents/LabelRow.h"
+using namespace Core::Gui;
 
 namespace Core
 {
 
-    class NxTextureEditorEWC : public NxEditorBaseEditorEWC
+    ECS_COMPONENT_IMPL(ECSEditorStaticMeshAdapter);
+
+    bool ECSEditorStaticMeshAdapter::canWorkWith(BaseComponent* component) const
     {
-        ECS_COMPONENT_DECL(NxTextureEditorEWC, NxEditorBaseEditorEWC);
+        return dynamic_cast<StaticMesh*>(component) != nullptr;
+    }
 
-    public:
-        [[nodiscard]] const char* getIcon() override { return ICON_FA_COG; }
+    void ECSEditorStaticMeshAdapter::onApplyAssetData(const nlohmann::json&)
+    {
+        auto* comp = getTargetComponent()->tryCastTo<StaticMesh>();
+        if (!Verify(comp)) [[unlikely]]
+        {
+            warnLog("Can't cast component to Actor, but it must be cast!");
+            return;
+        }
+    }
 
-    protected:
-        void updateGuiBasedOnAsset() override;
-        void onInitialize() override;
-        void onDrawProperties() override;
-        void onDrawPreview() override;
-        void onDiscardChanges() override;
-        void onSave() override;
-        bool onOpenFromPath(const std::filesystem::path& path) override;
+    void ECSEditorStaticMeshAdapter::onInitialize()
+    {
+        ECSEditorMimeAdapter::onInitialize();
 
-    protected:
-        Gui::VerticalLayout _layout;
+        constexpr float labelWidth = 120.0f;
+    }
 
-        Gui::LabelRow<Gui::Int2Input>* _imageSize = nullptr;
-        Gui::LabelRow<Gui::TextInput>* _imageChannelType = nullptr;
-        Gui::LabelRow<Gui::TextInput>* _pathToImage = nullptr;
-        Gui::LabelRow<Gui::CheckBox>* _isFlipVertical = nullptr;
-        float _zoom = 1.f;
-        glm::vec2 _offset = {};
-
-        glm::vec2 _lastPreviewRegionSize = {};
-
-        NXTexture _targetAsset;
-    };
+    void ECSEditorStaticMeshAdapter::onDraw(float dt)
+    {
+        if (Gui::CollapsingHeader("StaticMesh properties", ImGuiTreeNodeFlags_DefaultOpen))
+        {
+            _actorLayout.tick(dt);
+        }
+    }
 } // namespace Core
