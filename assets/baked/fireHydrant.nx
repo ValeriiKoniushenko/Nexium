@@ -35,18 +35,7 @@
           "GraphicsComponentData": {
             "modifiers": []
           },
-          "StaticMesh": {
-            "center": [
-              2.920994758605957,
-              51.68924331665039,
-              4.76837158203125e-06
-            ],
-            "size": {
-              "deep": 50.24378967285156,
-              "height": 104.3454360961914,
-              "width": 49.32194519042969
-            }
-          },
+          "StaticMesh": {},
           "Transformable": {
             "origin": [
               0.0,

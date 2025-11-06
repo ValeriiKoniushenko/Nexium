@@ -22,42 +22,32 @@
  * SOFTWARE.
  */
 
-#include "EditorStaticMeshAdapter.h"
+#pragma once
 
-using namespace Core::Gui;
+#include "../NxECSBasedEditor.h"
+#include "Editor/GuiComponents/CheckBox.h"
+#include "Editor/GuiComponents/Input.h"
+#include "Editor/GuiComponents/LabelRow.h"
+#include "Editor/GuiComponents/VecInput.h"
+#include "Editor/GuiComponents/VerticalLayout.h"
 
 namespace Core
 {
 
-    ECS_COMPONENT_IMPL(ECSEditorStaticMeshAdapter);
-
-    bool ECSEditorStaticMeshAdapter::canWorkWith(BaseComponent* component) const
+    class ECSEditorTransformableAdapter : public ECSEditorMimeAdapter
     {
-        return dynamic_cast<StaticMesh*>(component) != nullptr;
-    }
+        ECS_COMPONENT_DECL(ECSEditorTransformableAdapter, ECSEditorMimeAdapter);
 
-    void ECSEditorStaticMeshAdapter::onApplyAssetData(const nlohmann::json&)
-    {
-        auto* comp = getTargetComponent()->tryCastTo<StaticMesh>();
-        if (!Verify(comp)) [[unlikely]]
-        {
-            warnLog("Can't cast component to Actor, but it must be cast!");
-            return;
-        }
-    }
+    public:
+        [[nodiscard]] bool canWorkWith(BaseComponent* component) const override;
 
-    void ECSEditorStaticMeshAdapter::onInitialize()
-    {
-        ECSEditorMimeAdapter::onInitialize();
+    protected:
+        void onApplyAssetData(const nlohmann::json& json) override;
+        void onInitialize() override;
+        void onDraw(float dt) override;
 
-        constexpr float labelWidth = 120.0f;
-    }
+    protected:
+        Gui::VerticalLayout _layout;
+    };
 
-    void ECSEditorStaticMeshAdapter::onDraw(float dt)
-    {
-        // if (Gui::CollapsingHeader("StaticMesh properties", ImGuiTreeNodeFlags_DefaultOpen))
-        // {
-        //     _layout.tick(dt);
-        // }
-    }
 } // namespace Core

@@ -47,7 +47,7 @@ namespace Core
         void onDraw(float dt) override;
 
     protected:
-        Gui::VerticalLayout _actorLayout;
+        Gui::VerticalLayout _layout;
     };
 
 } // namespace Core

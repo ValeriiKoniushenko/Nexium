@@ -22,23 +22,24 @@
  * SOFTWARE.
  */
 
-#include "EditorStaticMeshAdapter.h"
+#include "EditorGraphicsComponentDataAdapter.h"
+#include "Graphics/GraphicsComponents.h"
 
 using namespace Core::Gui;
 
 namespace Core
 {
 
-    ECS_COMPONENT_IMPL(ECSEditorStaticMeshAdapter);
+    ECS_COMPONENT_IMPL(ECSEditorGraphicsComponentDataAdapter);
 
-    bool ECSEditorStaticMeshAdapter::canWorkWith(BaseComponent* component) const
+    bool ECSEditorGraphicsComponentDataAdapter::canWorkWith(BaseComponent* component) const
     {
-        return dynamic_cast<StaticMesh*>(component) != nullptr;
+        return dynamic_cast<GraphicsComponentData*>(component) != nullptr;
     }
 
-    void ECSEditorStaticMeshAdapter::onApplyAssetData(const nlohmann::json&)
+    void ECSEditorGraphicsComponentDataAdapter::onApplyAssetData(const nlohmann::json&)
     {
-        auto* comp = getTargetComponent()->tryCastTo<StaticMesh>();
+        auto* comp = dynamic_cast<GraphicsComponentData*>(getTargetComponent());
         if (!Verify(comp)) [[unlikely]]
         {
             warnLog("Can't cast component to Actor, but it must be cast!");
@@ -46,18 +47,19 @@ namespace Core
         }
     }
 
-    void ECSEditorStaticMeshAdapter::onInitialize()
+    void ECSEditorGraphicsComponentDataAdapter::onInitialize()
     {
         ECSEditorMimeAdapter::onInitialize();
 
         constexpr float labelWidth = 120.0f;
     }
 
-    void ECSEditorStaticMeshAdapter::onDraw(float dt)
+    void ECSEditorGraphicsComponentDataAdapter::onDraw(float dt)
     {
-        // if (Gui::CollapsingHeader("StaticMesh properties", ImGuiTreeNodeFlags_DefaultOpen))
-        // {
-        //     _layout.tick(dt);
-        // }
+        if (Gui::CollapsingHeader("GraphicsComponentData properties",
+                                  ImGuiTreeNodeFlags_DefaultOpen))
+        {
+            _layout.tick(dt);
+        }
     }
 } // namespace Core

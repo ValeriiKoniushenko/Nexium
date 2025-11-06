@@ -22,23 +22,23 @@
  * SOFTWARE.
  */
 
-#include "EditorStaticMeshAdapter.h"
+#include "EditorTransformableAdapter.h"
 
 using namespace Core::Gui;
 
 namespace Core
 {
 
-    ECS_COMPONENT_IMPL(ECSEditorStaticMeshAdapter);
+    ECS_COMPONENT_IMPL(ECSEditorTransformableAdapter);
 
-    bool ECSEditorStaticMeshAdapter::canWorkWith(BaseComponent* component) const
+    bool ECSEditorTransformableAdapter::canWorkWith(BaseComponent* component) const
     {
-        return dynamic_cast<StaticMesh*>(component) != nullptr;
+        return dynamic_cast<Transformable*>(component) != nullptr;
     }
 
-    void ECSEditorStaticMeshAdapter::onApplyAssetData(const nlohmann::json&)
+    void ECSEditorTransformableAdapter::onApplyAssetData(const nlohmann::json&)
     {
-        auto* comp = getTargetComponent()->tryCastTo<StaticMesh>();
+        auto* comp = dynamic_cast<Transformable*>(getTargetComponent());
         if (!Verify(comp)) [[unlikely]]
         {
             warnLog("Can't cast component to Actor, but it must be cast!");
@@ -46,18 +46,18 @@ namespace Core
         }
     }
 
-    void ECSEditorStaticMeshAdapter::onInitialize()
+    void ECSEditorTransformableAdapter::onInitialize()
     {
         ECSEditorMimeAdapter::onInitialize();
 
         constexpr float labelWidth = 120.0f;
     }
 
-    void ECSEditorStaticMeshAdapter::onDraw(float dt)
+    void ECSEditorTransformableAdapter::onDraw(float dt)
     {
-        // if (Gui::CollapsingHeader("StaticMesh properties", ImGuiTreeNodeFlags_DefaultOpen))
-        // {
-        //     _layout.tick(dt);
-        // }
+        if (Gui::CollapsingHeader("Transformable properties", ImGuiTreeNodeFlags_DefaultOpen))
+        {
+            _layout.tick(dt);
+        }
     }
 } // namespace Core
