@@ -50,7 +50,7 @@ namespace Core
 
         void setSceneName(StringAtom name);
 
-        void ioFieldsUpdate(DataStream& stream) override;
+        void ioFieldsUpdate(DataStream& out) override;
 
         [[nodiscard]] const StringAtom& getSceneName() const noexcept;
 

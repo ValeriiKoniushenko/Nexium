@@ -60,8 +60,10 @@ namespace Core
         void setRotation(const glm::vec3& value) noexcept { _rotation = value; }
 
     protected:
-        void ioFieldsUpdate(DataStream& stream) override
+        void ioFieldsUpdate(DataStream& out) override
         {
+            auto stream = out.dedicatedNesting("BaseActorAsset");
+
             // Actor's properties
             stream.field("isPostDraw", _isPostDraw);
 

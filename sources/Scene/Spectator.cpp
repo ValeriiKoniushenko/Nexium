@@ -30,9 +30,12 @@ namespace Core
 {
     ECS_COMPONENT_IMPL(Spectator)
 
-    void Spectator::ioFieldsUpdate(DataStream& stream)
+    void Spectator::ioFieldsUpdate(DataStream& out)
     {
-        Actor::ioFieldsUpdate(stream);
+        Actor::ioFieldsUpdate(out);
+
+        auto stream = out.dedicatedNesting("Spectator");
+
         stream.field("speed", speed);
         stream.field("mouseSensitivity", mouseSensitivity);
         stream.field(keyboardInput);

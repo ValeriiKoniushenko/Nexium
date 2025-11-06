@@ -1,7 +1,11 @@
 {
-    "children": [],
-    "isEnabled": true,
-    "name": " Shader manager",
-    "noTick": false,
-    "type": "ShaderManagerEWC"
+    "AbstractComponent": {
+        "isEnabled": true,
+        "noTick": false
+    },
+    "BaseComponent": {
+        "children": [],
+        "name": " Shader manager",
+        "type": "ShaderManagerEWC"
+    }
 }

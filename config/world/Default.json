@@ -1,3 +1,5 @@
 {
-    "worldName": "Default"
+    "World": {
+        "worldName": "Default"
+    }
 }

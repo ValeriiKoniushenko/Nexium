@@ -37,8 +37,10 @@ namespace Core
         return "LightningProps";
     }
 
-    void LightningProps::ioFieldsUpdate(DataStream& stream)
+    void LightningProps::ioFieldsUpdate(DataStream& out)
     {
+        auto stream = out.dedicatedNesting("LightningProps");
+
         stream.field("color", color);
         stream.field("minLightStrength", minLightStrength);
         stream.field("ambientStrength", ambientStrength);
@@ -57,8 +59,10 @@ namespace Core
         return worldName;
     }
 
-    void World::ioFieldsUpdate(DataStream& stream)
+    void World::ioFieldsUpdate(DataStream& out)
     {
+        auto stream = out.dedicatedNesting("World");
+
         stream.field("worldName", worldName, "Default"_dyn);
     }
 

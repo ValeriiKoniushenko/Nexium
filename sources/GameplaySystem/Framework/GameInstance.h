@@ -59,7 +59,7 @@ namespace Core
 
         void saveAll();
 
-        void ioFieldsUpdate(DataStream& stream) override;
+        void ioFieldsUpdate(DataStream& out) override;
 
     public:
         Scene gameScene;

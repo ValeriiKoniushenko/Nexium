@@ -169,7 +169,7 @@ namespace Core
     class KeyboardInputManger : public InputManger<KeyboardInputAction>
     {
     public:
-        void ioFieldsUpdate(DataStream& stream) override;
+        void ioFieldsUpdate(DataStream& out) override;
 
     protected:
         [[nodiscard]] StringAtom getCacheHash() const override
@@ -181,7 +181,7 @@ namespace Core
     class MouseInputManger : public InputManger<MouseInputAction>
     {
     public:
-        void ioFieldsUpdate(DataStream& stream) override;
+        void ioFieldsUpdate(DataStream& out) override;
 
     protected:
         [[nodiscard]] StringAtom getCacheHash() const override { return "MouseInputManger"_atom; }

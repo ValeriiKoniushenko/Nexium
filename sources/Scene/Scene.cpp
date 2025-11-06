@@ -71,8 +71,10 @@ namespace Core
         }
     }
 
-    void Scene::ioFieldsUpdate(DataStream& stream)
+    void Scene::ioFieldsUpdate(DataStream& out)
     {
+        auto stream = out.dedicatedNesting("Scene");
+
         stream.field("sceneName", _sceneName, "Default"_dyn);
     }
 

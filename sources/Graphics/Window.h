@@ -184,7 +184,7 @@ namespace Core
         [[nodiscard]] spdlog::logger* getLogger() const override { return Graphics::getLogger(); }
         [[nodiscard]] const char* getPrefix() const override { return "Window"; }
 
-        void ioFieldsUpdate(DataStream& stream) override;
+        void ioFieldsUpdate(DataStream& out) override;
 
     protected:
         StringAtom getCacheHash() const override;

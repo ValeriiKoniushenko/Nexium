@@ -366,7 +366,7 @@ namespace Core
          */
         void tick(float delta);
 
-        void ioFieldsUpdate(DataStream& stream) override;
+        void ioFieldsUpdate(DataStream& out) override;
 
         [[nodiscard]] spdlog::logger* getLogger() const final { return Ecs::getLogger(); }
 
@@ -597,7 +597,7 @@ namespace Core
          */
         void onTick(float delta) override;
 
-        void ioFieldsUpdate(DataStream& stream) override;
+        void ioFieldsUpdate(DataStream& out) override;
 
         // ========================== WORKING WITH CHILDREN ==========================
         [[nodiscard]] ChildT getFirstChild() { return _children.front(); }

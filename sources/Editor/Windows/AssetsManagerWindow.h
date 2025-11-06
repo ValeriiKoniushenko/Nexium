@@ -43,7 +43,7 @@ namespace Core
         void tryOpenPath(const std::filesystem::path& p);
 
         [[nodiscard]] const char* getIcon() override { return ICON_FA_FOLDER; }
-        void ioFieldsUpdate(DataStream& stream) override;
+        void ioFieldsUpdate(DataStream& out) override;
 
     protected:
         void onInitialize() override;

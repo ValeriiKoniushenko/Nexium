@@ -1,3 +1,5 @@
 {
-    "renderMode": 1
+    "GameInstance": {
+        "renderMode": 1
+    }
 }

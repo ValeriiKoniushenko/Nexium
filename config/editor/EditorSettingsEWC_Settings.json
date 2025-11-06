@@ -1,7 +1,11 @@
 {
-    "children": [],
-    "isEnabled": false,
-    "name": " Settings",
-    "noTick": false,
-    "type": "EditorSettingsEWC"
+    "AbstractComponent": {
+        "isEnabled": false,
+        "noTick": false
+    },
+    "BaseComponent": {
+        "children": [],
+        "name": " Settings",
+        "type": "EditorSettingsEWC"
+    }
 }

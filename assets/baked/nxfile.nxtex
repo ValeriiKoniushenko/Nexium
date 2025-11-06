@@ -1,4 +1,6 @@
 {
-  "path": "assets/images/nxfile.png",
-  "isFlipVertically": false
+  "TextureAsset": {
+    "path": "assets/images/nxfile.png",
+    "isFlipVertically": false
+  }
 }

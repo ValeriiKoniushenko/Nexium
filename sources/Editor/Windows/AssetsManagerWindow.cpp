@@ -98,9 +98,12 @@ namespace Core
         }
     }
 
-    void AssetsManagerWindowEWC::ioFieldsUpdate(DataStream& stream)
+    void AssetsManagerWindowEWC::ioFieldsUpdate(DataStream& out)
     {
-        BaseFloatEWC::ioFieldsUpdate(stream);
+        BaseFloatEWC::ioFieldsUpdate(out);
+
+        auto stream = out.dedicatedNesting("AssetsManagerWindowEWC");
+
         stream.field("openedPath", _openedPath);
         if (stream.getMode() == DataStream::Mode::Input && !std::filesystem::exists(_openedPath))
         {

@@ -1,7 +1,11 @@
 {
-    "children": [],
-    "isEnabled": true,
-    "name": "PopUp",
-    "noTick": false,
-    "type": "ModalPopUp"
+    "AbstractComponent": {
+        "isEnabled": true,
+        "noTick": false
+    },
+    "BaseComponent": {
+        "children": [],
+        "name": "PopUp",
+        "type": "ModalPopUp"
+    }
 }

@@ -42,7 +42,7 @@ namespace Core
         MouseInputManger mouseInput;
 
     public:
-        void ioFieldsUpdate(DataStream& stream) override;
+        void ioFieldsUpdate(DataStream& out) override;
 
     protected:
         [[nodiscard]] StringAtom getCacheHash() const override;

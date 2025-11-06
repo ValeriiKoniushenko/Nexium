@@ -1,7 +1,11 @@
 {
-    "children": [],
-    "isEnabled": false,
-    "name": " NX Texture Editor",
-    "noTick": false,
-    "type": "NxTextureEditorEWC"
+    "AbstractComponent": {
+        "isEnabled": false,
+        "noTick": false
+    },
+    "BaseComponent": {
+        "children": [],
+        "name": " NX Texture Editor",
+        "type": "NxTextureEditorEWC"
+    }
 }

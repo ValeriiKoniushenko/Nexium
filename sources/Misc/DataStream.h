@@ -28,6 +28,7 @@
 #include "Core/String.h"
 #include "Misc/JsonAdapter.h"
 
+#include <Core/IntrusivePtr.h>
 #include <functional>
 
 namespace Core
@@ -38,7 +39,7 @@ namespace Core
     {
         virtual ~IDataUpdateBridge() = default;
 
-        virtual void ioFieldsUpdate(DataStream& stream) = 0;
+        virtual void ioFieldsUpdate(DataStream& out) = 0;
         [[nodiscard]] virtual StringAtom getCacheHash() const = 0;
     };
 
@@ -80,11 +81,11 @@ namespace Core
         using Json = nlohmann::json;
 
     public:
-        DataStream() = default;
+        DataStream();
         virtual ~DataStream() = default;
 
-        void setMode(Mode mode) noexcept { _mode = mode; }
-        [[nodiscard]] Mode getMode() const noexcept { return _mode; }
+        void setMode(Mode mode) noexcept { _data->mode = mode; }
+        [[nodiscard]] Mode getMode() const noexcept { return _data->mode; }
 
         /**
          * @tparam T data type. Can be any data that is convenient for you.
@@ -98,16 +99,16 @@ namespace Core
         {
             if (!key)
             {
-                _errors.emplace_back(Result::InvalidPassedData, "nullptr");
+                _data->errors.emplace_back(Result::InvalidPassedData, "nullptr");
                 return Result::InvalidPassedData;
             }
 
-            if (_mode == Mode::Input)
+            if (_data->mode == Mode::Input)
             {
                 if (!contains(key))
                 {
                     field = defaultValue;
-                    _errors.emplace_back(Result::ReadFailed, key);
+                    _data->errors.emplace_back(Result::ReadFailed, key);
                     return Result::ReadFailed;
                 }
 
@@ -115,7 +116,7 @@ namespace Core
             }
             else
             {
-                _json[key] = field;
+                finalJson()[key] = field;
             }
 
             return Result::Success;
@@ -139,35 +140,36 @@ namespace Core
         {
             if (!key)
             {
-                _errors.emplace_back(Result::InvalidPassedData, "nullptr");
+                _data->errors.emplace_back(Result::InvalidPassedData, "nullptr");
                 return Result::InvalidPassedData;
             }
 
             try
             {
-                if (_mode == Mode::Input)
+                if (_data->mode == Mode::Input)
                 {
                     if (!contains(key))
                     {
-                        _errors.emplace_back(Result::ReadFailed, key);
+                        _data->errors.emplace_back(Result::ReadFailed, key);
                         return Result::ReadFailed;
                     }
 
-                    reader(field, _json[key]);
+                    reader(field, finalJson()[key]);
                 }
                 else
                 {
-                    _json[key] = writer(field);
+                    finalJson()[key] = writer(field);
                 }
             }
             catch (const std::exception& er)
             {
-                _errors.emplace_back(Result::CustomProcessingError, er.what());
+                _data->errors.emplace_back(Result::CustomProcessingError, er.what());
                 return Result::CustomProcessingError;
             }
             catch (...)
             {
-                _errors.emplace_back(Result::CustomProcessingError, "Undefined internal error");
+                _data->errors.emplace_back(Result::CustomProcessingError,
+                                           "Undefined internal error");
                 return Result::CustomProcessingError;
             }
 
@@ -181,24 +183,42 @@ namespace Core
         template<class T>
         [[nodiscard]] T get(const char* key)
         {
-            return _json[key].get<T>();
+            return finalJson()[key].get<T>();
         }
 
         [[nodiscard]] bool contains(const char* key) const;
 
-        [[nodiscard]] bool hasErrors() const noexcept { return !_errors.empty(); }
+        [[nodiscard]] bool hasErrors() const noexcept { return !_data->errors.empty(); }
         [[nodiscard]] const std::vector<std::pair<Result, std::string>>& getErrors() const noexcept
         {
-            return _errors;
+            return _data->errors;
         }
 
-        [[nodiscard]] Json& getRaw() noexcept { return _json; }
-        [[nodiscard]] const Json& getRaw() const noexcept { return _json; }
+        [[nodiscard]] Json& getRaw() noexcept { return finalJson(); }
+        [[nodiscard]] const Json& getRaw() const noexcept { return finalJson(); }
+
+        [[nodiscard]] DataStream dedicatedNesting(const char* key);
+
+        void tryPushBackEmptyArrayElement();
 
     protected:
-        std::vector<std::pair<Result, std::string>> _errors;
-        Json _json;
-        Mode _mode = Mode::Input;
+        struct DataProvider : public Core::IntrusiveRefCounter<DataProvider>
+        {
+            std::vector<std::pair<Result, std::string>> errors;
+            Json json;
+            Mode mode = Mode::Input;
+        };
+
+        DataStream(const IntrusivePtr<DataProvider>& viewing, const StringAtom& nesting);
+
+        Json& finalJson();
+        const Json& finalJson() const { return const_cast<DataStream*>(this)->finalJson(); }
+
+    protected:
+        IntrusivePtr<DataProvider> _data;
+
+        std::string _extraNestingKey;
+        bool _isViewer = false;
     };
 
 } // namespace Core

@@ -135,8 +135,10 @@ namespace Core
         _gcd.clear();
     }
 
-    void SkyboxAsset::ioFieldsUpdate(DataStream& stream)
+    void SkyboxAsset::ioFieldsUpdate(DataStream& out)
     {
+        auto stream = out.dedicatedNesting("SkyboxAsset");
+
         auto componentPath = [this, &stream](const char* prop, Direction dir)
         { stream.field(prop, _paths.at(static_cast<std::size_t>(dir))); };
 

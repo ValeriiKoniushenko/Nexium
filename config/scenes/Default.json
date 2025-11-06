@@ -1,3 +1,5 @@
 {
-    "sceneName": "Default"
+    "Scene": {
+        "sceneName": "Default"
+    }
 }

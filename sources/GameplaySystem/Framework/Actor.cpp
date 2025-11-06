@@ -28,10 +28,12 @@ namespace Core
 {
     ECS_COMPONENT_IMPL(Actor);
 
-    void Actor::ioFieldsUpdate(DataStream& stream)
+    void Actor::ioFieldsUpdate(DataStream& out)
     {
-        BaseComponent::ioFieldsUpdate(stream);
-        Transformable::ioFieldsUpdate(stream);
+        BaseComponent::ioFieldsUpdate(out);
+        Transformable::ioFieldsUpdate(out);
+
+        auto stream = out.dedicatedNesting("Actor");
         stream.field("isPostDraw", _isPostDraw);
     }
 

@@ -175,9 +175,11 @@ namespace Core
         }
     }
 
-    void StaticMeshBundle::ioFieldsUpdate(DataStream& stream)
+    void StaticMeshBundle::ioFieldsUpdate(DataStream& out)
     {
-        Actor::ioFieldsUpdate(stream);
+        Actor::ioFieldsUpdate(out);
+
+        auto stream = out.dedicatedNesting("StaticMeshBundle");
         stream.field("ignoreSelect", _ignoreSelect);
     }
 

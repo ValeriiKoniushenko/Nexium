@@ -308,11 +308,13 @@ namespace Core
         }
     }
 
-    void StaticMesh::ioFieldsUpdate(DataStream& stream)
+    void StaticMesh::ioFieldsUpdate(DataStream& out)
     {
-        BaseComponent::ioFieldsUpdate(stream);
-        Transformable::ioFieldsUpdate(stream);
-        GraphicsComponentData::ioFieldsUpdate(stream);
+        BaseComponent::ioFieldsUpdate(out);
+        Transformable::ioFieldsUpdate(out);
+        GraphicsComponentData::ioFieldsUpdate(out);
+
+        auto stream = out.dedicatedNesting("StaticMesh");
 
         stream.field("size", _size);
         stream.field("center", _center);

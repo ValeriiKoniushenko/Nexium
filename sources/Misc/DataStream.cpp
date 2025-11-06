@@ -36,11 +36,11 @@ namespace Core
 
     DataStream::Result DataStream::field(IDataUpdateBridge& bridge)
     {
-        if (_mode == Mode::Input)
+        if (_data->mode == Mode::Input)
         {
             if (!contains(bridge.getCacheHash().c_str()))
             {
-                _errors.emplace_back(Result::ReadFailed, bridge.getCacheHash().c_str());
+                _data->errors.emplace_back(Result::ReadFailed, bridge.getCacheHash().c_str());
                 return Result::ReadFailed;
             }
         }
@@ -55,40 +55,40 @@ namespace Core
     {
         if (!key)
         {
-            _errors.emplace_back(Result::InvalidPassedData, "nullptr");
+            _data->errors.emplace_back(Result::InvalidPassedData, "nullptr");
             return Result::InvalidPassedData;
         }
 
         try
         {
             DataStream nestedStream;
-            nestedStream.setMode(_mode);
+            nestedStream.setMode(_data->mode);
 
-            if (_mode == Mode::Input)
+            if (_data->mode == Mode::Input)
             {
                 if (!contains(key))
                 {
-                    _errors.emplace_back(Result::ReadFailed, key);
+                    _data->errors.emplace_back(Result::ReadFailed, key);
                     return Result::ReadFailed;
                 }
 
-                nestedStream.getRaw() = _json[key];
+                nestedStream.getRaw() = finalJson()[key];
                 callback(nestedStream);
             }
             else
             {
                 callback(nestedStream);
-                _json[key] = nestedStream.getRaw();
+                finalJson()[key] = nestedStream.getRaw();
             }
         }
         catch (const std::exception& er)
         {
-            _errors.emplace_back(Result::CustomProcessingError, er.what());
+            _data->errors.emplace_back(Result::CustomProcessingError, er.what());
             return Result::CustomProcessingError;
         }
         catch (...)
         {
-            _errors.emplace_back(Result::CustomProcessingError, "Undefined internal error");
+            _data->errors.emplace_back(Result::CustomProcessingError, "Undefined internal error");
             return Result::CustomProcessingError;
         }
 
@@ -100,41 +100,41 @@ namespace Core
     {
         if (!key)
         {
-            _errors.emplace_back(Result::InvalidPassedData, "nullptr");
+            _data->errors.emplace_back(Result::InvalidPassedData, "nullptr");
             return Result::InvalidPassedData;
         }
 
         try
         {
             DataStream nestedStream;
-            nestedStream.setMode(_mode);
+            nestedStream.setMode(_data->mode);
 
-            if (_mode == Mode::Input)
+            if (_data->mode == Mode::Input)
             {
                 if (!contains(key))
                 {
-                    _errors.emplace_back(Result::ReadFailed, key);
+                    _data->errors.emplace_back(Result::ReadFailed, key);
                     return Result::ReadFailed;
                 }
 
-                nestedStream.getRaw() = _json[key];
-                callback(nestedStream, _json[key].size());
+                nestedStream.getRaw() = finalJson()[key];
+                callback(nestedStream, finalJson()[key].size());
             }
             else
             {
                 nestedStream.getRaw() = nlohmann::json::array();
                 callback(nestedStream, 0);
-                _json[key] = nestedStream.getRaw();
+                finalJson()[key] = nestedStream.getRaw();
             }
         }
         catch (const std::exception& er)
         {
-            _errors.emplace_back(Result::CustomProcessingError, er.what());
+            _data->errors.emplace_back(Result::CustomProcessingError, er.what());
             return Result::CustomProcessingError;
         }
         catch (...)
         {
-            _errors.emplace_back(Result::CustomProcessingError, "Undefined internal error");
+            _data->errors.emplace_back(Result::CustomProcessingError, "Undefined internal error");
             return Result::CustomProcessingError;
         }
 
@@ -143,7 +143,52 @@ namespace Core
 
     bool DataStream::contains(const char* key) const
     {
-        return _json.contains(key);
+        return finalJson().contains(key);
+    }
+
+    DataStream DataStream::dedicatedNesting(const char* key)
+    {
+        return DataStream(_data, key);
+    }
+
+    void DataStream::tryPushBackEmptyArrayElement()
+    {
+        if (_data->mode == Mode::Output)
+        {
+            auto& json = finalJson();
+            if (json.is_array())
+            {
+                json.push_back(Json());
+            }
+        }
+    }
+
+    DataStream::DataStream(const IntrusivePtr<DataProvider>& viewing, const StringAtom& nesting)
+    {
+        _data = viewing;
+        _extraNestingKey = nesting;
+        _isViewer = true;
+    }
+
+    DataStream::Json& DataStream::finalJson()
+    {
+        if (_extraNestingKey.empty())
+        {
+            return _data->json;
+        }
+
+        Json* json = &_data->json;
+        if (json->is_array())
+        {
+            json = &json->back();
+        }
+
+        if (!json->contains(_extraNestingKey))
+        {
+            (*json)[_extraNestingKey] = Json();
+        }
+
+        return (*json)[_extraNestingKey];
     }
 
     bool IDataStreamBridge::hasCache() const
@@ -253,6 +298,11 @@ namespace Core
     std::filesystem::path IDataStreamBridge::getTargetCacheDirPath() const
     {
         return Config::Path::projectAbsPath / Config::Path::configDir / getCacheDir();
+    }
+
+    DataStream::DataStream()
+    {
+        _data = new DataProvider();
     }
 
 } // namespace Core

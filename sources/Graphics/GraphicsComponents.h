@@ -181,7 +181,7 @@ namespace Core
 
         [[nodiscard]] Modifier getDrawModifier(ModifiedValue value);
 
-        void ioFieldsUpdate(DataStream& stream) override;
+        void ioFieldsUpdate(DataStream& out) override;
 
         [[nodiscard]] uint32_t getTriangleCount() const noexcept { return _triangleCount; }
 

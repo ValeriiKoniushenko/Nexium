@@ -69,7 +69,7 @@ namespace Core
 
         void yawAndPitch(glm::vec2 xy);
 
-        void ioFieldsUpdate(DataStream& stream) override;
+        void ioFieldsUpdate(DataStream& out) override;
         [[nodiscard]] StringAtom getCacheHash() const override;
 
         [[nodiscard]] FSize2 getOutputFrameSize();

@@ -1,7 +1,11 @@
 {
-    "children": [],
-    "isEnabled": true,
-    "name": " Scene",
-    "noTick": false,
-    "type": "SceneTreeWindowEWC"
+    "AbstractComponent": {
+        "isEnabled": true,
+        "noTick": false
+    },
+    "BaseComponent": {
+        "children": [],
+        "name": " Scene",
+        "type": "SceneTreeWindowEWC"
+    }
 }

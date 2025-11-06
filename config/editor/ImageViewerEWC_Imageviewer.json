@@ -1,7 +1,11 @@
 {
-    "children": [],
-    "isEnabled": false,
-    "name": " Image viewer",
-    "noTick": false,
-    "type": "ImageViewerEWC"
+    "AbstractComponent": {
+        "isEnabled": false,
+        "noTick": false
+    },
+    "BaseComponent": {
+        "children": [],
+        "name": " Image viewer",
+        "type": "ImageViewerEWC"
+    }
 }

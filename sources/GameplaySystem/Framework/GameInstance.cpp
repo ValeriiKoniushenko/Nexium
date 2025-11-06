@@ -98,6 +98,30 @@ namespace Core
         gameEditor.initialize();
         gameScene.initialize();
 
+        /*Assimp::Importer importer;
+        const aiScene* scene = importer.ReadFile(
+            "/home/valerii/workspace/Nexium/assets/objects-3d/Models/FBX/FireHydrant.fbx",
+            aiProcess_Triangulate | aiProcess_SortByPType | aiProcess_JoinIdenticalVertices);
+
+        StaticMeshBundle b;
+        b.setScale({ 2, 2, 2 });
+        b.setOrigin({ 0, 0, 100 });
+        b.setPosition({ 200, 0, 0 });
+        b.setComponentName("MyMesh");
+        b.setIsPostDraw(true);
+
+        if (Verify(scene) && Verify(scene->mRootNode))
+        {
+            b.importFrom(
+                scene->mRootNode, scene,
+                "/home/valerii/workspace/Nexium/assets/objects-3d/Models/FBX/FireHydrant.fbx", 1);
+        }
+
+        DataStream stream;
+        stream.setMode(DataStream::Mode::Output);
+        b.ioFieldsUpdate(stream);
+        std::cout << stream.getRaw().dump(4) << std::endl;*/
+
         startUpReadCache();
         loadCoreResources();
 
@@ -126,8 +150,10 @@ namespace Core
         onSaveAll();
     }
 
-    void GameInstance::ioFieldsUpdate(DataStream& stream)
+    void GameInstance::ioFieldsUpdate(DataStream& out)
     {
+        auto stream = out.dedicatedNesting("GameInstance");
+
         int iRenderMode = static_cast<int>(renderMode);
         stream.field("renderMode", iRenderMode);
         renderMode = static_cast<RenderMode>(iRenderMode);

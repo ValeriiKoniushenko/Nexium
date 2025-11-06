@@ -64,7 +64,7 @@ namespace Core
         void setIsPostDraw(bool value) noexcept { _isPostDraw = value; }
         [[nodiscard]] bool isPostDraw() const noexcept { return _isPostDraw; }
 
-        void ioFieldsUpdate(DataStream& stream) override;
+        void ioFieldsUpdate(DataStream& out) override;
 
     protected:
         void onInitialize() override;

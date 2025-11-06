@@ -108,8 +108,10 @@ namespace Core
         }
     }
 
-    void AbstractComponent::ioFieldsUpdate(DataStream& stream)
+    void AbstractComponent::ioFieldsUpdate(DataStream& out)
     {
+        auto stream = out.dedicatedNesting("AbstractComponent");
+
         stream.field("isEnabled", _isEnabled);
         stream.field("noTick", _noTick);
     }
@@ -210,9 +212,11 @@ namespace Core
         }
     }
 
-    void BaseComponent::ioFieldsUpdate(DataStream& stream)
+    void BaseComponent::ioFieldsUpdate(DataStream& out)
     {
-        AbstractComponent::ioFieldsUpdate(stream);
+        AbstractComponent::ioFieldsUpdate(out);
+
+        auto stream = out.dedicatedNesting("BaseComponent");
 
         stream.field("name", _name, _type);
         stream.field("type", _type);
@@ -223,17 +227,27 @@ namespace Core
                          {
                              for (auto& child : _children)
                              {
+                                 out.tryPushBackEmptyArrayElement();
                                  out.field(*child);
                              }
                          }
                          else
                          {
-                             std::size_t i = 0;
                              for (auto&& child : out.getRaw().items())
                              {
                                  // std::cout << child.value().dump(4) << std::endl;
                                  auto&& in = child.value();
-                                 if (!in.contains("type"))
+
+                                 if (!in.contains("BaseComponent"))
+                                 {
+                                     warnLog(
+                                         "No root key 'BaseComponent' for child component. "
+                                         "Impossible to fetch type data.");
+                                     Assert(false);
+                                     continue;
+                                 }
+
+                                 if (!in["BaseComponent"].contains("type"))
                                  {
                                      warnLog("No type specified for child component");
                                      Assert(false);
@@ -242,7 +256,7 @@ namespace Core
 
                                  auto&& last
                                      = _children.emplace_back(GetGlobalComponentFactory().create(
-                                         in["type"].get<StringAtom>()));
+                                         in["BaseComponent"]["type"].get<StringAtom>()));
                                  DataStream childStream;
                                  childStream.setMode(DataStream::Mode::Input);
                                  childStream.getRaw() = in;

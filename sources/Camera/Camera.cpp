@@ -173,9 +173,11 @@ namespace Core
         }
     }
 
-    void BaseCamera::ioFieldsUpdate(DataStream& stream)
+    void BaseCamera::ioFieldsUpdate(DataStream& out)
     {
-        Actor::ioFieldsUpdate(stream);
+        Actor::ioFieldsUpdate(out);
+
+        auto stream = out.dedicatedNesting("BaseCamera");
 
         stream.field("frameSize", _frameSize);
         stream.field("fov", _fov);

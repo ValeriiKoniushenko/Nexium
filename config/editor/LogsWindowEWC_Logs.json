@@ -1,18 +1,24 @@
 {
-    "children": [],
-    "filter": "",
-    "isEnabled": true,
-    "logLimit": 500,
-    "name": " Logs",
-    "noTick": false,
-    "regexMode": false,
-    "severityFilters": {
-        "critical": true,
-        "debug": true,
-        "error": true,
-        "info": true,
-        "trace": true,
-        "warning": true
+    "AbstractComponent": {
+        "isEnabled": true,
+        "noTick": false
     },
-    "type": "LogsWindowEWC"
+    "BaseComponent": {
+        "children": [],
+        "name": " Logs",
+        "type": "LogsWindowEWC"
+    },
+    "LogsWindowEWC": {
+        "filter": "",
+        "logLimit": 500,
+        "regexMode": true,
+        "severityFilters": {
+            "critical": true,
+            "debug": true,
+            "error": true,
+            "info": true,
+            "trace": true,
+            "warning": true
+        }
+    }
 }

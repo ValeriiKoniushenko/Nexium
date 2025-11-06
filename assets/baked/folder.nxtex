@@ -1,4 +1,6 @@
 {
-  "path": "assets/images/folder.png",
-  "isFlipVertically": false
+  "TextureAsset": {
+    "path": "assets/images/folder.png",
+    "isFlipVertically": false
+  }
 }

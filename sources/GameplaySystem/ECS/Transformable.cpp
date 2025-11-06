@@ -199,8 +199,10 @@ namespace Core
         return glm::normalize(glm::cross(getForwardVector(), getUpVector()));
     }
 
-    void Transformable::ioFieldsUpdate(DataStream& stream)
+    void Transformable::ioFieldsUpdate(DataStream& out)
     {
+        auto stream = out.dedicatedNesting("Transformable");
+
         stream.field("position", _position);
         stream.field("origin", _origin);
         stream.field("rotation", _rotation);

@@ -1,7 +1,11 @@
 {
-    "children": [],
-    "isEnabled": false,
-    "name": " Text editor",
-    "noTick": false,
-    "type": "TextEditorEWC"
+    "AbstractComponent": {
+        "isEnabled": false,
+        "noTick": false
+    },
+    "BaseComponent": {
+        "children": [],
+        "name": " Text editor",
+        "type": "TextEditorEWC"
+    }
 }

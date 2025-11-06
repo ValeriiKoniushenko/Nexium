@@ -121,9 +121,11 @@ namespace Core
         _assimpPostProcess = value;
     }
 
-    void Mesh3DAsset::ioFieldsUpdate(DataStream& stream)
+    void Mesh3DAsset::ioFieldsUpdate(DataStream& out)
     {
-        BaseActorAsset::ioFieldsUpdate(stream);
+        BaseActorAsset::ioFieldsUpdate(out);
+
+        auto stream = out.dedicatedNesting("Mesh3DAsset");
 
         stream.field("path", _pathToModel);
         stream.field("mainShader", _mainShader);

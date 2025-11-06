@@ -40,8 +40,10 @@ namespace
     class SomeData : public IDataStreamBridge
     {
     public:
-        void ioFieldsUpdate(DataStream& stream) override
+        void ioFieldsUpdate(DataStream& out) override
         {
+            auto stream = out.dedicatedNesting("SomeData");
+
             stream.field("age", age);
             stream.field("name", name);
             stream.field("vec", vec);

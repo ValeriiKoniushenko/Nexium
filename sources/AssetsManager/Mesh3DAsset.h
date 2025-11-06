@@ -61,7 +61,7 @@ namespace Core
         void setOnLoadScale(float value);
 
     protected:
-        void ioFieldsUpdate(DataStream& stream) override;
+        void ioFieldsUpdate(DataStream& out) override;
         void onLoadRequest() override;
         void onUnloadRequest() override;
         bool onHotReload() override;

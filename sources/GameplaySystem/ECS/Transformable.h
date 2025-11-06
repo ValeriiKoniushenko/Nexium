@@ -113,7 +113,7 @@ namespace Core
         void setDirtyMatrices(bool v = true) noexcept { _isDirtyModelMatrix = v; }
 
         // IDataUpdateBridge
-        void ioFieldsUpdate(DataStream& stream) override;
+        void ioFieldsUpdate(DataStream& out) override;
         [[nodiscard]] StringAtom getCacheHash() const override;
 
     protected:

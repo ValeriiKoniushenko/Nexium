@@ -1,7 +1,11 @@
 {
-    "children": [],
-    "isEnabled": true,
-    "name": "Root dock space",
-    "noTick": false,
-    "type": "RootDockWindowEWC"
+    "AbstractComponent": {
+        "isEnabled": true,
+        "noTick": false
+    },
+    "BaseComponent": {
+        "children": [],
+        "name": "Root dock space",
+        "type": "RootDockWindowEWC"
+    }
 }

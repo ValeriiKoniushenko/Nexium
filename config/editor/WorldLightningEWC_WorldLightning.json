@@ -1,7 +1,11 @@
 {
-    "children": [],
-    "isEnabled": false,
-    "name": " World Lightning",
-    "noTick": false,
-    "type": "WorldLightningEWC"
+    "AbstractComponent": {
+        "isEnabled": false,
+        "noTick": false
+    },
+    "BaseComponent": {
+        "children": [],
+        "name": " World Lightning",
+        "type": "WorldLightningEWC"
+    }
 }

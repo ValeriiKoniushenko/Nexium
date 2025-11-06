@@ -232,9 +232,11 @@ namespace Core
     {
     }
 
-    void LogsWindowEWC::ioFieldsUpdate(DataStream& stream)
+    void LogsWindowEWC::ioFieldsUpdate(DataStream& out)
     {
-        BaseFloatEWC::ioFieldsUpdate(stream);
+        BaseFloatEWC::ioFieldsUpdate(out);
+
+        auto stream = out.dedicatedNesting("LogsWindowEWC");
 
         stream.field("logLimit", _logLimit);
         if (Verify(_searchInput))

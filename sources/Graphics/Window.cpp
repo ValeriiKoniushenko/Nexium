@@ -95,6 +95,12 @@ namespace Core
             _title = title;
         }
 
+        constexpr int minSize = 10;
+        if (_size.width < minSize || _size.height < minSize)
+        {
+            _size = ISize2{ 300, 300 };
+        }
+
         if (!((_window
                = glfwCreateWindow(_size.width, _size.height, title.c_str(), nullptr, nullptr))))
         {
@@ -247,8 +253,10 @@ namespace Core
             });
     }
 
-    void Window::ioFieldsUpdate(DataStream& stream)
+    void Window::ioFieldsUpdate(DataStream& out)
     {
+        auto stream = out.dedicatedNesting("Window");
+
         stream.field("size", _size);
         stream.field("title", _title);
 

@@ -1,7 +1,11 @@
 {
-    "children": [],
-    "isEnabled": true,
-    "name": " Object Properties",
-    "noTick": false,
-    "type": "ObjectPropertiesWindowEWC"
+    "AbstractComponent": {
+        "isEnabled": true,
+        "noTick": false
+    },
+    "BaseComponent": {
+        "children": [],
+        "name": " Object Properties",
+        "type": "ObjectPropertiesWindowEWC"
+    }
 }

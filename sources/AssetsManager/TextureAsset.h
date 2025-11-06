@@ -59,7 +59,7 @@ namespace Core
     protected:
         void onLoadRequest() override;
         void onUnloadRequest() override;
-        void ioFieldsUpdate(DataStream& stream) override;
+        void ioFieldsUpdate(DataStream& out) override;
 
     protected:
         Texture _data;

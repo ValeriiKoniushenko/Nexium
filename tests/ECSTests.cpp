@@ -36,9 +36,12 @@ namespace
         int a = 123;
         std::string name = "Lola";
 
-        void ioFieldsUpdate(DataStream& stream) override
+        void ioFieldsUpdate(DataStream& out) override
         {
-            BaseComponent::ioFieldsUpdate(stream);
+            BaseComponent::ioFieldsUpdate(out);
+
+            auto stream = out.dedicatedNesting("DummyComponent");
+
             stream.field("a", a);
             stream.field("name", name);
         }

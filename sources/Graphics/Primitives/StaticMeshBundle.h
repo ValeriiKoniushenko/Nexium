@@ -69,7 +69,7 @@ namespace Core
         void clear() override;
 
         void clearMeshes();
-        void ioFieldsUpdate(DataStream& stream) override;
+        void ioFieldsUpdate(DataStream& out) override;
 
         [[nodiscard]] std::size_t getRenderMeshesCount() const noexcept { return _meshes.size(); }
         [[nodiscard]] std::vector<StaticMesh*>& getRenderMeshes() noexcept { return _meshes; }

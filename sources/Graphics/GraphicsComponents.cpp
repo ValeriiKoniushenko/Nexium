@@ -319,8 +319,10 @@ namespace Core
         return Modifier::None;
     }
 
-    void GraphicsComponentData::ioFieldsUpdate(DataStream& stream)
+    void GraphicsComponentData::ioFieldsUpdate(DataStream& out)
     {
+        auto stream = out.dedicatedNesting("GraphicsComponentData");
+
         stream.array("modifiers",
                      [this](DataStream& out, std::size_t size)
                      {
