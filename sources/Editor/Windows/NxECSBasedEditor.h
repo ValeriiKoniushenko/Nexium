@@ -71,6 +71,7 @@ namespace Core
         [[nodiscard]] virtual bool canWorkWith(BaseComponent* component) const = 0;
 
     protected:
+        [[nodiscard]] const char* getPrefix() const override { return "ECSEditorMimeAdapter"; }
         virtual void onDraw(float dt) = 0;
         virtual void onApplyAssetData(const nlohmann::json& json) = 0;
 

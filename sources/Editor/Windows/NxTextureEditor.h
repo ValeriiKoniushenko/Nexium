@@ -24,9 +24,9 @@
 
 #pragma once
 
+#include "ECSAdapters/EditorActorAdapter.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/LabelRow.h"
-#include "EditorActorAdapter.h"
 #include "Graphics/Texture.h"
 
 namespace Core

@@ -24,8 +24,8 @@
 
 #include "AssetsManager.h"
 
+#include "../Editor/Windows/ECSAdapters/EditorStaticMeshBundleAdapter.h"
 #include "../Misc/Configs.h"
-#include "Editor/Windows/EditorStaticMeshBundleAdapter.h"
 #include "Editor/Windows/ImageViewer.h"
 #include "Editor/Windows/NxECSBasedEditor.h"
 #include "Editor/Windows/NxTextureEditor.h"

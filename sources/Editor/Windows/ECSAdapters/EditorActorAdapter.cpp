@@ -36,28 +36,20 @@ namespace Core
         return dynamic_cast<Actor*>(component) != nullptr;
     }
 
-    void ECSEditorActorAdapter::onApplyAssetData(const nlohmann::json& json)
+    void ECSEditorActorAdapter::onApplyAssetData(const nlohmann::json&)
     {
-        if (json.contains("isPostDraw"))
+        auto* comp = getTargetComponent()->tryCastTo<Actor>();
+        if (!Verify(comp)) [[unlikely]]
         {
-            _actorPostDraw->input->setValue(json["isPostDraw"].get<bool>());
+            warnLog("Can't cast component to Actor, but it must be cast!");
+            return;
         }
-        if (json.contains("position"))
-        {
-            _actorPosition->input->setInputtedData(json["position"].get<glm::vec3>());
-        }
-        if (json.contains("rotation"))
-        {
-            _actorRotation->input->setInputtedData(json["rotation"].get<glm::vec3>());
-        }
-        if (json.contains("scale"))
-        {
-            _actorScale->input->setInputtedData(json["scale"].get<glm::vec3>());
-        }
-        if (json.contains("origin"))
-        {
-            _actorOrigin->input->setInputtedData(json["origin"].get<glm::vec3>());
-        }
+
+        _actorPostDraw->input->setValue(comp->isPostDraw());
+        _actorPosition->input->setInputtedData(comp->getPosition());
+        _actorRotation->input->setInputtedData(comp->getRotation());
+        _actorScale->input->setInputtedData(comp->getScale());
+        _actorOrigin->input->setInputtedData(comp->getOrigin());
     }
 
     void ECSEditorActorAdapter::onInitialize()

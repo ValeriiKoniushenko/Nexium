@@ -33,20 +33,24 @@ namespace Core
 
     void ECSBaseComponentAdapter::onApplyAssetData(const nlohmann::json& json)
     {
-        auto* data = getTargetComponent();
-        _ecsName->input->setInputtedData(data->getComponentName().toStdString());
-        _ecsType->input->setInputtedData(data->getComponentType().toStdString());
-        if (data->hasParent())
+        auto* comp = getTargetComponent();
+        _ecsName->input->setInputtedData(comp->getComponentName().toStdString());
+        _ecsType->input->setInputtedData(comp->getComponentType().toStdString());
+        if (comp->hasParent())
         {
-            _ecsParent->input->setInputtedData(data->getParent()->getComponentName().toStdString());
+            _ecsParent->input->setInputtedData(comp->getParent()->getComponentName().toStdString());
+        }
+        else
+        {
+            _ecsParent->input->setInputtedData("");
         }
 
-        _ecsDisableTicks->input->setValue(data->getNoTick());
+        _ecsDisableTicks->input->setValue(comp->getNoTick());
 
-        _ecsEnabledComponent->input->setValue(data->isEnabled());
+        _ecsEnabledComponent->input->setValue(comp->isEnabled());
 
         _ecsChildren->input->clearData();
-        for (auto&& child : data->getChildren())
+        for (auto&& child : comp->getChildren())
         {
             _ecsChildren->input->add("{} [{}]"_f << child->getComponentName()
                                                  << child->getComponentType());

@@ -24,13 +24,13 @@
 
 #include "EditorMenuBarWindow.h"
 
+#include "ECSAdapters/EditorStaticMeshBundleAdapter.h"
 #include "Editor/Windows/AssetsManagerWindow.h"
 #include "Editor/Windows/EditorSettings.h"
 #include "Editor/Windows/GameViewport.h"
 #include "Editor/Windows/LogsWindow.h"
 #include "Editor/Windows/ObjectPropertiesWindow.h"
 #include "Editor/Windows/SceneTreeWindow.h"
-#include "EditorStaticMeshBundleAdapter.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "ImageViewer.h"
 #include "Misc/IconsFontAwesome.h"

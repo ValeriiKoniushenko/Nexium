@@ -24,11 +24,9 @@
 
 #include "NxECSBasedEditor.h"
 
-#include "BaseComponentAdapter.h"
-#include "Editor/GuiComponents/Array.h"
-#include "Editor/GuiComponents/Combo.h"
-#include "EditorActorAdapter.h"
-#include "EditorStaticMeshBundleAdapter.h"
+#include "ECSAdapters/BaseComponentAdapter.h"
+#include "ECSAdapters/EditorActorAdapter.h"
+#include "ECSAdapters/EditorStaticMeshBundleAdapter.h"
 
 using namespace Core::Gui;
 
