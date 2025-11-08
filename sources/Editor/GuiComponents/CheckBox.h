@@ -47,7 +47,7 @@ namespace Core::Gui
         [[nodiscard]] bool getValue() const noexcept { return _currentValue; }
 
     public: // Delegates
-        Delegate<void(bool)> onChange;
+        Delegate<void(bool)>::Ptr onChange = Delegate<void(bool)>::Create();
 
     protected:
         void onDraw() override;

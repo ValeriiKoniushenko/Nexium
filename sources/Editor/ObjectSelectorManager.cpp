@@ -43,7 +43,7 @@ namespace Core
                 outliner->setIsDrawOutline(false);
             }
 
-            onChange.trigger(obj.get(), false);
+            onChange->trigger(obj.get(), false);
         }
 
         tryToDeselectGeneralComponent();
@@ -59,7 +59,7 @@ namespace Core
             outliner->setIsDrawOutline(true);
         }
 
-        onChange.trigger(comp, true);
+        onChange->trigger(comp, true);
         _selectedObjects.emplace(comp, comp);
     }
 

@@ -72,7 +72,7 @@ namespace Core::Gui
         }
 
     public: // Delegates
-        Delegate<void(StringAtom)> onSelect;
+        Delegate<void(StringAtom)>::Ptr onSelect = Delegate<void(StringAtom)>::Create();
 
     protected:
         void onDraw() override;
@@ -113,7 +113,7 @@ namespace Core::Gui
         [[nodiscard]] const void* getCurrentData() const noexcept { return _currentData; }
 
     public: // Delegates
-        Delegate<void(const void*)> onSelect;
+        Delegate<void(const void*)>::Ptr onSelect = Delegate<void(const void*)>::Create();
 
     protected:
         void onDraw() override;

@@ -110,7 +110,8 @@ namespace Core
          * @param FSize2 new outer(full) size
          * @param FSize2 new inner size
          */
-        Delegate<void(FSize2, FSize2)> onSizeChanged;
+        Delegate<void(FSize2, FSize2)>::Ptr onSizeChanged
+            = Delegate<void(FSize2, FSize2)>::Create();
 
     protected:
         void onInitialize() override;

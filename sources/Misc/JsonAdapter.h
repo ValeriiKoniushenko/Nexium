@@ -28,6 +28,7 @@
 #include "nlohmann/json.hpp"
 
 #include <Core/Size.h>
+#include <format>
 
 namespace Core
 {

@@ -122,7 +122,8 @@ namespace Core::Gui
         }
 
     public: // Delegates
-        Delegate<void(glm::vec<Size, Type>)> onInput;
+        Delegate<void(glm::vec<Size, Type>)>::Ptr onInput
+            = Delegate<void(glm::vec<Size, Type>)>::Create();
 
     protected:
         void onInitialize() override
@@ -152,7 +153,8 @@ namespace Core::Gui
 
                 inputs[i] = hLayout->template addChildComponent<NumInput<Type>>();
                 inputs[i]->setFlex(Flex::FlexWidth);
-                inputs[i]->onInput.subscribe([this](auto) { onInput.trigger(getInputtedData()); });
+                inputs[i]->onInput->subscribe([this](auto)
+                                              { onInput->trigger(getInputtedData()); });
             }
         }
     };

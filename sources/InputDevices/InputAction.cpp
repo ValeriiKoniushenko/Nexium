@@ -91,20 +91,20 @@ namespace Core
             auto k = _key.value();
             if (_key == Mouse::Key_None || (_key != Mouse::Key_None && isKeyPressed()))
             {
-                onDrag.trigger(pos - *_lastMousePosition, SpecKeysState::fillAndGet());
+                onDrag->trigger(pos - *_lastMousePosition, SpecKeysState::fillAndGet());
             }
         }
 
         if (pos != *_lastMousePosition)
         {
-            onMove.trigger(pos - *_lastMousePosition, SpecKeysState::fillAndGet());
+            onMove->trigger(pos - *_lastMousePosition, SpecKeysState::fillAndGet());
             _lastMousePosition = pos;
         }
     }
 
     void MouseInputAction::init()
     {
-        _onActionPrivate.subscribe([this](SpecKeysState states)
-                                   { onMouseClick.trigger(Mouse::GetPosition(), states); });
+        _onActionPrivate->subscribe([this](SpecKeysState states)
+                                    { onMouseClick->trigger(Mouse::GetPosition(), states); });
     }
 } // namespace Core

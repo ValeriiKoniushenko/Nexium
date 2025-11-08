@@ -248,7 +248,7 @@ namespace Core
             {
                 const auto item = layout.addChildComponent<KeymapItem>();
                 item->setReadOnly(true);
-                item->setLabel(fst + (snd->onPress.isEmpty() ? "(disabled)" : ""));
+                item->setLabel(fst + (snd->onPress->isEmpty() ? "(disabled)" : ""));
                 item->setButtonName(
                     Keyboard::KeyToString(snd->getKey().value_or(Keyboard::Key_None)));
             }

@@ -135,7 +135,7 @@ namespace Core
             const auto regionMax = ImGui::GetContentRegionMax();
             const auto regionMin = ImGui::GetWindowContentRegionMin();
             _innerSize = FSize2(regionMax.x - regionMin.x, regionMax.y - regionMin.y);
-            onSizeChanged.trigger(_size, _innerSize);
+            onSizeChanged->trigger(_size, _innerSize);
             _oldSize = _size;
         }
     }

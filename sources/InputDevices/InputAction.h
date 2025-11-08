@@ -126,8 +126,8 @@ namespace Core
                         {
                             SpecKeysState specs = SpecKeysState::fillAndGet();
 
-                            onPress.trigger(specs);
-                            _onActionPrivate.trigger(specs);
+                            onPress->trigger(specs);
+                            _onActionPrivate->trigger(specs);
 
                             _lastUpdate = std::chrono::system_clock::now();
                             _lastState = State::Pressed;
@@ -153,7 +153,7 @@ namespace Core
          * Delegate triggered while pressing the assigned key.
          * @param SpecKeysState Current states of special modifier keys.
          */
-        Delegate<void(SpecKeysState)> onPress;
+        Delegate<void(SpecKeysState)>::Ptr onPress = Delegate<void(SpecKeysState)>::Create();
 
     protected:
         /**
@@ -166,7 +166,8 @@ namespace Core
          * will be called while pressing on the necessary button.
          * @param SpecKeysState states of special keys
          */
-        Delegate<void(SpecKeysState)> _onActionPrivate;
+        Delegate<void(SpecKeysState)>::Ptr _onActionPrivate
+            = Delegate<void(SpecKeysState)>::Create();
 
     protected:
         StringAtom _name;
@@ -223,9 +224,12 @@ namespace Core
 
         explicit MouseInputAction(const StringAtom& name);
 
-        Delegate<void(glm::vec2, SpecKeysState)> onDrag;
-        Delegate<void(glm::vec2, SpecKeysState)> onMove;
-        Delegate<void(glm::vec2, SpecKeysState)> onMouseClick;
+        Delegate<void(glm::vec2, SpecKeysState)>::Ptr onDrag
+            = Delegate<void(glm::vec2, SpecKeysState)>::Create();
+        Delegate<void(glm::vec2, SpecKeysState)>::Ptr onMove
+            = Delegate<void(glm::vec2, SpecKeysState)>::Create();
+        Delegate<void(glm::vec2, SpecKeysState)>::Ptr onMouseClick
+            = Delegate<void(glm::vec2, SpecKeysState)>::Create();
 
         void update() override;
 

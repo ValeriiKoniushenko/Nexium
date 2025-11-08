@@ -56,7 +56,7 @@ namespace Core::Gui
         ImGui::Checkbox("", &_currentValue);
         if (origValue != _currentValue)
         {
-            onChange.trigger(_currentValue);
+            onChange->trigger(_currentValue);
         }
 
         ImGui::PopItemWidth();

@@ -61,7 +61,7 @@ namespace Core
             auto* added = _actors.back().get();
 
             added->initialize();
-            onActorAdded.trigger(added);
+            onActorAdded->trigger(added);
             if (readFromCache)
             {
                 added->tryReadFromCache();
@@ -75,7 +75,7 @@ namespace Core
             auto* added = _actors.back().get();
 
             added->initialize();
-            onActorAdded.trigger(added);
+            onActorAdded->trigger(added);
             if (readFromCache)
             {
                 added->tryReadFromCache();
@@ -91,7 +91,7 @@ namespace Core
             auto* added = _actors.back().get();
 
             added->initialize();
-            onActorAdded.trigger(added);
+            onActorAdded->trigger(added);
             return reinterpret_cast<T*>(added);
         }
 
@@ -107,7 +107,7 @@ namespace Core
             return it == _actors.end() ? nullptr : reinterpret_cast<T*>(it->get());
         }
 
-        Delegate<void(Actor*)> onActorAdded;
+        Delegate<void(Actor*)>::Ptr onActorAdded = Delegate<void(Actor*)>::Create();
 
     public:
         Grid grid;

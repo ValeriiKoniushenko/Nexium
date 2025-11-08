@@ -32,41 +32,41 @@ namespace
 {
     void MouseMoveHandler(GLFWwindow*, double x, double y)
     {
-        GetWindow().onMouseMove.trigger(glm::vec2(static_cast<float>(x), static_cast<float>(y)));
+        GetWindow().onMouseMove->trigger(glm::vec2(static_cast<float>(x), static_cast<float>(y)));
     }
 
     void MouseKeyPressHandler(GLFWwindow*, int button, int action, int mods)
     {
-        GetWindow().onMouseKeyPressed.trigger(static_cast<Mouse::Key>(button),
-                                              static_cast<Mouse::State>(action),
-                                              static_cast<Mouse::Mod>(mods));
+        GetWindow().onMouseKeyPressed->trigger(static_cast<Mouse::Key>(button),
+                                               static_cast<Mouse::State>(action),
+                                               static_cast<Mouse::Mod>(mods));
     }
 
     void KeyPressHandler(auto*, int key, int scancode, int action, int mods)
     {
-        GetWindow().onKeyPressed.trigger(static_cast<Keyboard::Key>(key), scancode,
-                                         static_cast<Keyboard::KeyState::UnderlyingType>(action),
-                                         mods);
+        GetWindow().onKeyPressed->trigger(static_cast<Keyboard::Key>(key), scancode,
+                                          static_cast<Keyboard::KeyState::UnderlyingType>(action),
+                                          mods);
     }
 
     void TextInputHandler(auto*, unsigned int scancode)
     {
-        GetWindow().onTextInput.trigger(scancode);
+        GetWindow().onTextInput->trigger(scancode);
     }
 
     void CursorEnterHandler(auto*, int entered)
     {
-        GetWindow().onCursorEntered.trigger(entered == GLFW_TRUE);
+        GetWindow().onCursorEntered->trigger(entered == GLFW_TRUE);
     }
 
     void MouseScrollHandler(auto*, double x, double y)
     {
-        GetWindow().onMouseWheel.trigger(glm::vec2(static_cast<float>(x), static_cast<float>(y)));
+        GetWindow().onMouseWheel->trigger(glm::vec2(static_cast<float>(x), static_cast<float>(y)));
     }
 
     void WindowSizeCallback(auto*, int width, int height)
     {
-        GetWindow().onResize.trigger(ISize2(width, height));
+        GetWindow().onResize->trigger(ISize2(width, height));
     }
 } // namespace
 
@@ -207,9 +207,9 @@ namespace Core
 
     void Window::registerEvents()
     {
-        onResize.subscribe([this](ISize2 size) { _size = size; });
+        onResize->subscribe([this](ISize2 size) { _size = size; });
 
-        onMouseMove.subscribe(
+        onMouseMove->subscribe(
             [](glm::vec2 pos)
             {
                 static glm::vec2 lastPos = pos;
@@ -229,7 +229,7 @@ namespace Core
                 }
             });
 
-        onMouseKeyPressed.subscribe(
+        onMouseKeyPressed->subscribe(
             [](Mouse::Key key, Mouse::State state, Mouse::Mod mod)
             {
                 if (state == Mouse::State::Release)

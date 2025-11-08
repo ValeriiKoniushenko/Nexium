@@ -101,7 +101,7 @@ namespace Core
         registerNewWindow<NxECSBasedEditorEWC>("Assets editor"_atom, true);
 
         registerNewWindow<GameViewportEWC>("Viewport"_atom)
-            ->onSizeChanged.subscribe(
+            ->onSizeChanged->subscribe(
                 [](auto outer, auto inner)
                 {
                     if (gGameInstance->renderMode == GameInstance::RenderMode::Editor)
@@ -312,10 +312,10 @@ namespace Core
     void GameEditor::setupShortcuts()
     {
         keyboardInput.getOrCreate("Close editor", Keyboard::Key::Key_F12)
-            ->onPress.subscribe([&](auto) { GetWindow().close(); });
+            ->onPress->subscribe([&](auto) { GetWindow().close(); });
         auto saveKey = keyboardInput.getOrCreate("Save [Ctrl]", Keyboard::Key::Key_S);
         saveKey->setIsRepeatable(false);
-        saveKey->onPress.subscribe(
+        saveKey->onPress->subscribe(
             [&](const KeyboardIA::SpecKeysState& spec)
             {
                 if (spec.leftCtrl.cast() == Keyboard::KeyState::Pressed)
@@ -327,20 +327,20 @@ namespace Core
         auto toggleRenderMode
             = keyboardInput.getOrCreate("Toggle render mode", Keyboard::Key::Key_F1);
         toggleRenderMode->setIsRepeatable(false);
-        toggleRenderMode->onPress.subscribe([](auto) { gGameInstance->toggleRenderMode(); });
+        toggleRenderMode->onPress->subscribe([](auto) { gGameInstance->toggleRenderMode(); });
 
         keyboardInput.getOrCreate("Cancel action", Keyboard::Key::Key_Escape)
-            ->onPress.subscribe([&](auto)
-                                { gGameInstance->objectSelectorManager.deselectAllAndClear(); });
+            ->onPress->subscribe([&](auto)
+                                 { gGameInstance->objectSelectorManager.deselectAllAndClear(); });
 
         auto mouseMove = mouseInput.getOrCreate("mouseMove", Mouse::Key_Right);
-        mouseMove->onDrag.subscribe([this](auto delta, auto spec)
-                                    { handleMouseDrag(delta, spec); });
+        mouseMove->onDrag->subscribe([this](auto delta, auto spec)
+                                     { handleMouseDrag(delta, spec); });
 
         auto selectObject = mouseInput.getOrCreate("selectObject", Mouse::Key_Left);
         selectObject->setIsRepeatable(false);
-        selectObject->onMouseClick.subscribe([this](auto pos, auto spec)
-                                             { handleMouseClick(pos, spec); });
+        selectObject->onMouseClick->subscribe([this](auto pos, auto spec)
+                                              { handleMouseClick(pos, spec); });
     }
 
     void GameEditor::handleMouseClick(glm::vec2 pos, MouseInputAction::SpecKeysState state)

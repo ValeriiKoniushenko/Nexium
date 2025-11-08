@@ -59,7 +59,8 @@ namespace Core
          * @param BaseComponent* affected component
          * @param bool selected is true; deselected is false
          */
-        Delegate<void(BaseComponent*, bool)> onChange;
+        Delegate<void(BaseComponent*, bool)>::Ptr onChange
+            = Delegate<void(BaseComponent*, bool)>::Create();
 
     private:
         void tryToSelectGeneralComponent(BaseComponent* comp);

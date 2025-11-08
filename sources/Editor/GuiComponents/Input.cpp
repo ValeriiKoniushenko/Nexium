@@ -121,7 +121,7 @@ namespace Core::Gui
         ImGui::InputTextEx("", _placeholder.c_str(), _buffer.data(),
                            static_cast<int>(_buffer.capacity() + 1), _size, flags,
                            InputTextCallback, &cb_user_data,
-                           [this](const char* newText) { onInput.trigger(newText); });
+                           [this](const char* newText) { onInput->trigger(newText); });
 
         if (isRO)
         {
@@ -162,7 +162,7 @@ namespace Core::Gui
             if (input != _buffer)
             {
                 setInputtedData(NormColor3(input));
-                onInput.trigger(_buffer.toColor());
+                onInput->trigger(_buffer.toColor());
             }
 
             ImGui::EndPopup();

@@ -96,11 +96,12 @@ namespace Core::Gui
     public:
         constexpr static bool isConst = std::is_const_v<T>;
 
-        Delegate<void()> onChange;
-        Delegate<void(std::size_t, T&)> onAdd;
-        Delegate<void(std::size_t)> onEraseAt;
-        Delegate<void(const std::vector<T>&)> onSave;
-        Delegate<void(std::vector<T>&)> onReset;
+        Delegate<void()>::Ptr onChange = Delegate<void()>::Create();
+        Delegate<void(std::size_t, T&)>::Ptr onAdd = Delegate<void(std::size_t, T&)>::Create();
+        Delegate<void(std::size_t)>::Ptr onEraseAt = Delegate<void(std::size_t)>::Create();
+        Delegate<void(const std::vector<T>&)>::Ptr onSave
+            = Delegate<void(const std::vector<T>&)>::Create();
+        Delegate<void(std::vector<T>&)>::Ptr onReset = Delegate<void(std::vector<T>&)>::Create();
 
     public:
         void eraseAt(std::size_t i)
@@ -109,8 +110,8 @@ namespace Core::Gui
             if (i < _data.size())
             {
                 _data.erase(_data.begin() + i);
-                onEraseAt.trigger(i);
-                onChange.trigger();
+                onEraseAt->trigger(i);
+                onChange->trigger();
                 makeDirty();
             }
         }
@@ -119,16 +120,16 @@ namespace Core::Gui
         {
             makeDirty();
             _data.emplace_back();
-            onAdd.trigger(_data.size() - 1, _data.back());
-            onChange.trigger();
+            onAdd->trigger(_data.size() - 1, _data.back());
+            onChange->trigger();
         }
 
         void add(const T& data)
         {
             _data.emplace_back(data);
             makeDirty();
-            onAdd.trigger(_data.size() - 1, _data.back());
-            onChange.trigger();
+            onAdd->trigger(_data.size() - 1, _data.back());
+            onChange->trigger();
         }
 
         [[nodiscard]] virtual std::size_t size() const { return _data.size(); }
@@ -141,21 +142,21 @@ namespace Core::Gui
         void setData(const std::vector<T>& data)
         {
             _data = data;
-            onChange.trigger();
+            onChange->trigger();
             makeDirty();
         }
 
         void setData(std::vector<T>&& data)
         {
             _data = std::move(data);
-            onChange.trigger();
+            onChange->trigger();
             makeDirty();
         }
 
         void clearData()
         {
             _data.clear();
-            onChange.trigger();
+            onChange->trigger();
             makeDirty();
         }
 
@@ -223,7 +224,7 @@ namespace Core::Gui
                 }
                 else
                 {
-                    cell->deleteButton->onClick.subscribe([this, i]() { eraseAt(i); });
+                    cell->deleteButton->onClick->subscribe([this, i]() { eraseAt(i); });
                 }
             }
 
@@ -238,12 +239,12 @@ namespace Core::Gui
             }
             else
             {
-                saveButton->onClick.subscribe(
+                saveButton->onClick->subscribe(
                     [this]()
                     {
                         updateLocalDataWithView();
-                        onSave.trigger(_data);
-                        onChange.trigger();
+                        onSave->trigger(_data);
+                        onChange->trigger();
                     });
             }
 
@@ -255,7 +256,7 @@ namespace Core::Gui
             }
             else
             {
-                addButton->onClick.subscribe([this]() { addEmpty(); });
+                addButton->onClick->subscribe([this]() { addEmpty(); });
             }
 
             auto* resetButton = buttonsHolder->template addChildComponent<Button>("Reset");
@@ -266,11 +267,11 @@ namespace Core::Gui
             }
             else
             {
-                resetButton->onClick.subscribe(
+                resetButton->onClick->subscribe(
                     [this]()
                     {
-                        onReset.trigger(_data);
-                        onChange.trigger();
+                        onReset->trigger(_data);
+                        onChange->trigger();
                         makeDirty();
                     });
             }
@@ -278,7 +279,7 @@ namespace Core::Gui
 
         void makeDirty()
         {
-            onChange.trigger();
+            onChange->trigger();
             _isDirty = true;
         }
 

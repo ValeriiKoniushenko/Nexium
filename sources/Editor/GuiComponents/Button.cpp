@@ -230,7 +230,7 @@ namespace Core::Gui
     {
         if (ImGui::ButtonEx(_name.c_str(), _size, ImGuiButtonFlags_None, &_textSize))
         {
-            onClick.trigger();
+            onClick->trigger();
             onClickEvent();
         }
     }
@@ -283,7 +283,7 @@ namespace Core::Gui
     void ToggleButton::onClickEvent()
     {
         _isActive = !_isActive;
-        onToggle.trigger(_isActive);
+        onToggle->trigger(_isActive);
     }
 
     void ImageButton::preDraw()
@@ -316,7 +316,7 @@ namespace Core::Gui
         bool hovered, held;
         if (ButtonBehavior(bb, _id, &hovered, &held, 0))
         {
-            onClick.trigger();
+            onClick->trigger();
             onClickEvent();
         }
 

@@ -108,7 +108,7 @@ namespace Core::Gui
         [[nodiscard]] std::optional<float> getBorderRound() const;
 
     public: // delegates
-        Delegate<void()> onClick;
+        Delegate<void()>::Ptr onClick = Delegate<void()>::Create();
 
     protected:
         void onDraw() final;
@@ -142,7 +142,7 @@ namespace Core::Gui
          * will be called when toggled
          * @prarm bool true - if it becomes active; false - in another case
          */
-        Delegate<void(bool)> onToggle;
+        Delegate<void(bool)>::Ptr onToggle = Delegate<void(bool)>::Create();
 
         void setActive(bool value) noexcept { _isActive = value; }
         [[nodiscard]] bool isActive() const noexcept { return _isActive; }

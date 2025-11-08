@@ -150,10 +150,10 @@ namespace Core
         _filterInput->setPlaceholder("Filter...");
 
         // Events
-        _backButton->onClick.subscribe([this]() { tryOpenParentDir(); });
-        _refreshButton->onClick.subscribe([this]() { refresh(); });
-        _homeButton->onClick.subscribe([this]() { openPath(Config::Path::assets); });
-        _pathInput->onInput.subscribe(
+        _backButton->onClick->subscribe([this]() { tryOpenParentDir(); });
+        _refreshButton->onClick->subscribe([this]() { refresh(); });
+        _homeButton->onClick->subscribe([this]() { openPath(Config::Path::assets); });
+        _pathInput->onInput->subscribe(
             [this](const char* path)
             {
                 if (path)

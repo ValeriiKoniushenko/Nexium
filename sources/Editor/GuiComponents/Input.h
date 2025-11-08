@@ -77,7 +77,7 @@ namespace Core::Gui
         [[nodiscard]] bool isReadOnly() const noexcept;
 
     public: // Delegates
-        Delegate<void(const char*)> onInput;
+        Delegate<void(const char*)>::Ptr onInput = Delegate<void(const char*)>::Create();
 
     protected:
         struct InputTextCallback_UserData
@@ -118,7 +118,7 @@ namespace Core::Gui
         [[nodiscard]] int getPrecision() const noexcept { return _precisionStr[2] - '0'; }
 
     public: // Delegates
-        Delegate<void(Type)> onInput;
+        Delegate<void(Type)>::Ptr onInput = Delegate<void(Type)>::Create();
 
     protected:
         void onDraw() override
@@ -138,7 +138,7 @@ namespace Core::Gui
 
             if (old != _buffer)
             {
-                onInput.trigger(_buffer);
+                onInput->trigger(_buffer);
             }
 
             ImGui::PopItemWidth();
@@ -164,7 +164,7 @@ namespace Core::Gui
         [[nodiscard]] Color3 getInputtedData() const noexcept { return _buffer.toColor(); }
 
     public: // Delegates
-        Delegate<void(const Color3&)> onInput;
+        Delegate<void(const Color3&)>::Ptr onInput = Delegate<void(const Color3&)>::Create();
 
     protected:
         void onDraw() override;

@@ -156,7 +156,7 @@ namespace Core
         createGui();
         registerGuiEvents();
 
-        gGameInstance->objectSelectorManager.onChange.subscribe(
+        gGameInstance->objectSelectorManager.onChange->subscribe(
             [this](BaseComponent* comp, bool newValue)
             {
                 if (newValue)
@@ -338,7 +338,7 @@ namespace Core
     {
         if (_objectIsEnabled)
         {
-            _objectIsEnabled->onChange.subscribe(
+            _objectIsEnabled->onChange->subscribe(
                 [this](bool newStatus)
                 {
                     if (_target)
@@ -350,7 +350,7 @@ namespace Core
 
         if (_disabledTicks)
         {
-            _disabledTicks->onChange.subscribe(
+            _disabledTicks->onChange->subscribe(
                 [this](bool newStatus)
                 {
                     if (_target)
@@ -362,7 +362,7 @@ namespace Core
 
         if (_cameraFov)
         {
-            _cameraFov->onInput.subscribe(
+            _cameraFov->onInput->subscribe(
                 [this](float newValue)
                 {
                     if (auto* camera = _target->tryCastTo<BaseCamera>())
@@ -374,7 +374,7 @@ namespace Core
 
         if (_cameraFar)
         {
-            _cameraFar->onInput.subscribe(
+            _cameraFar->onInput->subscribe(
                 [this](float newValue)
                 {
                     if (auto* camera = _target->tryCastTo<BaseCamera>())
@@ -386,7 +386,7 @@ namespace Core
 
         if (_cameraNear)
         {
-            _cameraNear->onInput.subscribe(
+            _cameraNear->onInput->subscribe(
                 [this](float newValue)
                 {
                     if (auto* camera = _target->tryCastTo<BaseCamera>())
@@ -397,7 +397,7 @@ namespace Core
         }
         if (_cameraFrame)
         {
-            _cameraFrame->onInput.subscribe(
+            _cameraFrame->onInput->subscribe(
                 [this](glm::vec2 newValue)
                 {
                     if (auto* camera = _target->tryCastTo<BaseCamera>())
@@ -408,7 +408,7 @@ namespace Core
         }
         if (_transformPosition)
         {
-            _transformPosition->onInput.subscribe(
+            _transformPosition->onInput->subscribe(
                 [this](auto newValue)
                 {
                     if (_target)
@@ -422,7 +422,7 @@ namespace Core
         }
         if (_transformRotation)
         {
-            _transformRotation->onInput.subscribe(
+            _transformRotation->onInput->subscribe(
                 [this](auto newValue)
                 {
                     if (_target)
@@ -436,7 +436,7 @@ namespace Core
         }
         if (_transformScale)
         {
-            _transformScale->onInput.subscribe(
+            _transformScale->onInput->subscribe(
                 [this](auto newValue)
                 {
                     if (_target)
@@ -450,7 +450,7 @@ namespace Core
         }
         if (_transformOrigin)
         {
-            _transformOrigin->onInput.subscribe(
+            _transformOrigin->onInput->subscribe(
                 [this](auto newValue)
                 {
                     if (_target)
@@ -464,7 +464,7 @@ namespace Core
         }
         if (_graphicsModifiers)
         {
-            _graphicsModifiers->onSave.subscribe(
+            _graphicsModifiers->onSave->subscribe(
                 [this](const auto& data)
                 {
                     if (!_target)
@@ -476,7 +476,7 @@ namespace Core
                         graph->setDrawModifiers(data);
                     }
                 });
-            _graphicsModifiers->onReset.subscribe(
+            _graphicsModifiers->onReset->subscribe(
                 [this](auto& out)
                 {
                     if (!_target)

@@ -72,7 +72,7 @@ namespace Core::Gui
                 if (ImGui::Selectable(_items.at(i).c_str(), isSelected))
                 {
                     _currentItem = i;
-                    onSelect.trigger(_items.at(i));
+                    onSelect->trigger(_items.at(i));
                 }
                 if (isSelected)
                 {
@@ -137,7 +137,7 @@ namespace Core::Gui
                 {
                     _currentIndex = i;
                     _currentData = _cache.at(i).first;
-                    onSelect.trigger(_cache.at(i).first);
+                    onSelect->trigger(_cache.at(i).first);
                 }
                 if (isSelected)
                 {

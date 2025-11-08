@@ -71,7 +71,7 @@ namespace Core
         //-------------------- WINDOW ---------------------
         window = &GetWindow();
         window->create(Config::defaultWindowName, Config::defaultWindowSize);
-        window->onResize.subscribe([this](ISize2 newSize) { updateViewport(); });
+        window->onResize->subscribe([this](ISize2 newSize) { updateViewport(); });
 
         //-------------------- ASSETS MANAGER ---------------------
         GetAssetsManager().rescanFileSystem();
