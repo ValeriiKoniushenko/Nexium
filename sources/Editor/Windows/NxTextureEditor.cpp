@@ -62,25 +62,29 @@ namespace Core
         _imageSize
             = _layout.addChildComponent<LabelRow<Gui::Int2Input>>("Image size", defaultLabelWidth);
         _imageSize->input->setReadOnly(true);
-        _imageSize->input->onInput->subscribe([this](auto) { makeDirty(); });
+        _subscriptionPool << _imageSize->input->onInput->subscribeAndGetID([this](auto)
+                                                                           { makeDirty(); });
 
         ///////////////////////
         _imageChannelType
             = _layout.addChildComponent<LabelRow<Gui::TextInput>>("Channels", defaultLabelWidth);
         _imageChannelType->input->setReadOnly(true);
         _imageChannelType->input->setFlex(Flex::FlexWidth);
-        _imageChannelType->input->onInput->subscribe([this](auto) { makeDirty(); });
+        _subscriptionPool << _imageChannelType->input->onInput->subscribeAndGetID([this](auto)
+                                                                                  { makeDirty(); });
 
         ///////////////////////
         _pathToImage = _layout.addChildComponent<LabelRow<Gui::TextInput>>("Path to image",
                                                                            defaultLabelWidth);
         _pathToImage->input->setFlex(Flex::FlexWidth);
-        _pathToImage->input->onInput->subscribe([this](auto) { makeDirty(); });
+        _subscriptionPool << _pathToImage->input->onInput->subscribeAndGetID([this](auto)
+                                                                             { makeDirty(); });
 
         ///////////////////////
         _isFlipVertical = _layout.addChildComponent<LabelRow<Gui::CheckBox>>("Flip vertical",
                                                                              defaultLabelWidth);
-        _isFlipVertical->input->onChange->subscribe([this](auto) { makeDirty(); });
+        _subscriptionPool << _isFlipVertical->input->onChange->subscribeAndGetID([this](auto)
+                                                                                 { makeDirty(); });
 
         updateGuiBasedOnAsset();
     }

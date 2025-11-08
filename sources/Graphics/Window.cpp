@@ -207,9 +207,9 @@ namespace Core
 
     void Window::registerEvents()
     {
-        onResize->subscribe([this](ISize2 size) { _size = size; });
+        _subscriptionPool << onResize->subscribeAndGetID([this](ISize2 size) { _size = size; });
 
-        onMouseMove->subscribe(
+        _subscriptionPool << onMouseMove->subscribeAndGetID(
             [](glm::vec2 pos)
             {
                 static glm::vec2 lastPos = pos;
@@ -229,7 +229,7 @@ namespace Core
                 }
             });
 
-        onMouseKeyPressed->subscribe(
+        _subscriptionPool << onMouseKeyPressed->subscribeAndGetID(
             [](Mouse::Key key, Mouse::State state, Mouse::Mod mod)
             {
                 if (state == Mouse::State::Release)

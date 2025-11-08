@@ -47,6 +47,8 @@ namespace Core
         void onDraw(float dt) override;
 
     protected:
+        DelegateSubscriberPoolGuard _subscriptionPool;
+
         Gui::VerticalLayout _baseEcsLayout;
         Gui::LabelRow<Gui::TextInput>* _ecsName = nullptr;
         Gui::LabelRow<Gui::TextInput>* _ecsType = nullptr;

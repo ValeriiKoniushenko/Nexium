@@ -74,6 +74,8 @@ namespace Core
         [[nodiscard]] bool canBeFiltered(const StringAtom& msg);
 
     private:
+        DelegateSubscriberPoolGuard _subscriptionPool;
+
         // ========= Toolbar ==========
         Gui::HorizontalLayout _toolbar;
         Gui::TextInput* _searchInput = nullptr;

@@ -48,6 +48,8 @@ namespace Core
         bool onOpenFromPath(const std::filesystem::path& path) override;
 
     protected:
+        DelegateSubscriberPoolGuard _subscriptionPool;
+
         Gui::VerticalLayout _layout;
 
         Gui::LabelRow<Gui::Int2Input>* _imageSize = nullptr;

@@ -152,6 +152,8 @@ namespace Core
         void tryDrawBaseCamera(BaseCamera* comp);
 
     private:
+        DelegateSubscriberPoolGuard _subscriptionPool;
+
         // ============= GUI =============
         // General section:
         Gui::VerticalLayout _generalInfoLayout;

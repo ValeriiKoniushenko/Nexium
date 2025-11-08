@@ -49,7 +49,7 @@ namespace Core
 
         setScene(&gGameInstance->gameScene);
 
-        gGameInstance->objectSelectorManager.onChange->subscribe(
+        _subscriptionPool << gGameInstance->objectSelectorManager.onChange->subscribeAndGetID(
             [this](BaseComponent* comp, bool newValue)
             {
                 if (newValue)

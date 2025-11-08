@@ -54,7 +54,7 @@ namespace Core
 
         _layout.setHorizontalAlign(Gui::Align::Center);
 
-        _okButton->onClick->subscribe(
+        _subscriptionPool << _okButton->onClick->subscribeAndGetID(
             [this]()
             {
                 if (Verify(!!_okOrCancelCallback))
@@ -63,7 +63,7 @@ namespace Core
                 }
                 ImGui::CloseCurrentPopup();
             });
-        _cancelButton->onClick->subscribe(
+        _subscriptionPool << _cancelButton->onClick->subscribeAndGetID(
             [this]()
             {
                 if (Verify(!!_okOrCancelCallback))

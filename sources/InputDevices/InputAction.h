@@ -239,6 +239,7 @@ namespace Core
     private:
         void init();
 
+        DelegateSubscriber _subscription;
         std::optional<glm::vec2> _lastMousePosition = {};
     };
 

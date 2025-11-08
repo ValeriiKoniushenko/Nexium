@@ -73,6 +73,8 @@ namespace Core
         };
 
     protected:
+        DelegateSubscriberPoolGuard _subscriptionPool;
+
         std::unordered_map<AssetsManager::NodeType, NXTexture> _nodeTypesData;
 
         Gui::HorizontalLayout _toolbarLayout;

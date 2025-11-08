@@ -47,6 +47,8 @@ namespace Core
         void onDraw(float dt) override;
 
     protected:
+        DelegateSubscriberPoolGuard _subscriptionPool;
+
         Gui::VerticalLayout _actorLayout;
 
         Gui::LabelRow<Gui::CheckBox>* _actorPostDraw = nullptr;

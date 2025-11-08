@@ -100,16 +100,18 @@ namespace Core
         registerNewWindow<NxTextureEditorEWC>("NX Texture Editor"_atom, false);
         registerNewWindow<NxECSBasedEditorEWC>("Assets editor"_atom, true);
 
-        registerNewWindow<GameViewportEWC>("Viewport"_atom)
-            ->onSizeChanged->subscribe(
-                [](auto outer, auto inner)
-                {
-                    if (gGameInstance->renderMode == GameInstance::RenderMode::Editor)
-                    {
-                        gGameInstance->gameViewport.setRenderSize(static_cast<ISize2>(inner));
-                        gGameInstance->updateViewport();
-                    }
-                });
+        _subscriptionPool << registerNewWindow<GameViewportEWC>("Viewport"_atom)
+                                 ->onSizeChanged->subscribeAndGetID(
+                                     [](auto outer, auto inner)
+                                     {
+                                         if (gGameInstance->renderMode
+                                             == GameInstance::RenderMode::Editor)
+                                         {
+                                             gGameInstance->gameViewport.setRenderSize(
+                                                 static_cast<ISize2>(inner));
+                                             gGameInstance->updateViewport();
+                                         }
+                                     });
     }
 
     void GameEditor::tick(float delta)
@@ -311,11 +313,11 @@ namespace Core
 
     void GameEditor::setupShortcuts()
     {
-        keyboardInput.getOrCreate("Close editor", Keyboard::Key::Key_F12)
-            ->onPress->subscribe([&](auto) { GetWindow().close(); });
+        _subscriptionPool << keyboardInput.getOrCreate("Close editor", Keyboard::Key::Key_F12)
+                                 ->onPress->subscribeAndGetID([&](auto) { GetWindow().close(); });
         auto saveKey = keyboardInput.getOrCreate("Save [Ctrl]", Keyboard::Key::Key_S);
         saveKey->setIsRepeatable(false);
-        saveKey->onPress->subscribe(
+        _subscriptionPool << saveKey->onPress->subscribeAndGetID(
             [&](const KeyboardIA::SpecKeysState& spec)
             {
                 if (spec.leftCtrl.cast() == Keyboard::KeyState::Pressed)
@@ -327,20 +329,24 @@ namespace Core
         auto toggleRenderMode
             = keyboardInput.getOrCreate("Toggle render mode", Keyboard::Key::Key_F1);
         toggleRenderMode->setIsRepeatable(false);
-        toggleRenderMode->onPress->subscribe([](auto) { gGameInstance->toggleRenderMode(); });
+        _subscriptionPool << toggleRenderMode->onPress->subscribeAndGetID(
+            [](auto) { gGameInstance->toggleRenderMode(); });
 
-        keyboardInput.getOrCreate("Cancel action", Keyboard::Key::Key_Escape)
-            ->onPress->subscribe([&](auto)
-                                 { gGameInstance->objectSelectorManager.deselectAllAndClear(); });
+        _subscriptionPool << keyboardInput.getOrCreate("Cancel action", Keyboard::Key::Key_Escape)
+                                 ->onPress->subscribeAndGetID(
+                                     [&](auto)
+                                     {
+                                         gGameInstance->objectSelectorManager.deselectAllAndClear();
+                                     });
 
         auto mouseMove = mouseInput.getOrCreate("mouseMove", Mouse::Key_Right);
-        mouseMove->onDrag->subscribe([this](auto delta, auto spec)
-                                     { handleMouseDrag(delta, spec); });
+        _subscriptionPool << mouseMove->onDrag->subscribeAndGetID(
+            [this](auto delta, auto spec) { handleMouseDrag(delta, spec); });
 
         auto selectObject = mouseInput.getOrCreate("selectObject", Mouse::Key_Left);
         selectObject->setIsRepeatable(false);
-        selectObject->onMouseClick->subscribe([this](auto pos, auto spec)
-                                              { handleMouseClick(pos, spec); });
+        _subscriptionPool << selectObject->onMouseClick->subscribeAndGetID(
+            [this](auto pos, auto spec) { handleMouseClick(pos, spec); });
     }
 
     void GameEditor::handleMouseClick(glm::vec2 pos, MouseInputAction::SpecKeysState state)

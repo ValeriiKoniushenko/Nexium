@@ -88,6 +88,7 @@ namespace Core
         void onDraw(float dt) override;
 
     protected:
+        DelegateSubscriberPoolGuard _subscriptionPool;
         Gui::VerticalLayout _layout;
 
         Gui::LabelRow<Gui::TextInput>* _logicalPath = nullptr;

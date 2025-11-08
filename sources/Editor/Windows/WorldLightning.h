@@ -47,6 +47,7 @@ namespace Core
         void onDraw() override;
 
     protected:
+        DelegateSubscriberPoolGuard _subscriptionPool;
         Gui::VerticalLayout _layout;
 
         Gui::Color3Input* _color3Input = nullptr;

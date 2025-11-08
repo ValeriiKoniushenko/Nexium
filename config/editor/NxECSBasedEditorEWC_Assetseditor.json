@@ -18,6 +18,39 @@
             },
             {
                 "AbstractComponent": {
+                    "isEnabled": true,
+                    "noTick": false
+                },
+                "BaseComponent": {
+                    "children": [],
+                    "name": "",
+                    "type": "ECSEditorActorAdapter"
+                }
+            },
+            {
+                "AbstractComponent": {
+                    "isEnabled": true,
+                    "noTick": false
+                },
+                "BaseComponent": {
+                    "children": [],
+                    "name": "",
+                    "type": "ECSEditorStaticMeshBundleAdapter"
+                }
+            },
+            {
+                "AbstractComponent": {
+                    "isEnabled": true,
+                    "noTick": false
+                },
+                "BaseComponent": {
+                    "children": [],
+                    "name": "",
+                    "type": "ECSBaseComponentAdapter"
+                }
+            },
+            {
+                "AbstractComponent": {
                     "isEnabled": false,
                     "noTick": false
                 },

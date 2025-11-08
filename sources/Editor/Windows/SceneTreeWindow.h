@@ -52,6 +52,8 @@ namespace Core
         void onUpdate() override;
 
     protected:
+        DelegateSubscriberPoolGuard _subscriptionPool;
+
         Scene* _scene = nullptr;
         int _commonTreeFlags
             = ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;

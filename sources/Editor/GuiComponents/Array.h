@@ -224,7 +224,8 @@ namespace Core::Gui
                 }
                 else
                 {
-                    cell->deleteButton->onClick->subscribe([this, i]() { eraseAt(i); });
+                    _subscriptionPool << cell->deleteButton->onClick->subscribeAndGetID(
+                        [this, i]() { eraseAt(i); });
                 }
             }
 
@@ -239,7 +240,7 @@ namespace Core::Gui
             }
             else
             {
-                saveButton->onClick->subscribe(
+                _subscriptionPool << saveButton->onClick->subscribeAndGetID(
                     [this]()
                     {
                         updateLocalDataWithView();
@@ -256,7 +257,8 @@ namespace Core::Gui
             }
             else
             {
-                addButton->onClick->subscribe([this]() { addEmpty(); });
+                _subscriptionPool << addButton->onClick->subscribeAndGetID([this]()
+                                                                           { addEmpty(); });
             }
 
             auto* resetButton = buttonsHolder->template addChildComponent<Button>("Reset");
@@ -267,7 +269,7 @@ namespace Core::Gui
             }
             else
             {
-                resetButton->onClick->subscribe(
+                _subscriptionPool << resetButton->onClick->subscribeAndGetID(
                     [this]()
                     {
                         onReset->trigger(_data);
@@ -285,6 +287,7 @@ namespace Core::Gui
 
     protected:
         std::vector<T> _data;
+        DelegateSubscriberPoolGuard _subscriptionPool;
 
     private:
         bool _isDirty = true;

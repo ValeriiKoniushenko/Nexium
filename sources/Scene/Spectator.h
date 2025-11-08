@@ -45,6 +45,8 @@ namespace Core
         void ioFieldsUpdate(DataStream& out) override;
 
     protected:
+        DelegateSubscriberPoolGuard _subscriptionPool;
+
         [[nodiscard]] StringAtom getCacheHash() const override;
 
         void onTick(float delta) override;

@@ -85,8 +85,8 @@ namespace Core
         _toolbar.setFlex(Gui::Flex::FlexWidth);
 
         // Events
-        _clearButton->onClick->subscribe([this]() { clearLogs(); });
-        _autoScrollButton->onToggle->subscribe(
+        _subscriptionPool << _clearButton->onClick->subscribeAndGetID([this]() { clearLogs(); });
+        _subscriptionPool << _autoScrollButton->onToggle->subscribeAndGetID(
             [this](bool newState)
             {
                 if (newState)

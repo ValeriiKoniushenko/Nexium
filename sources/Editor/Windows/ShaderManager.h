@@ -73,6 +73,8 @@ namespace Core
         void selectShader(const StringAtom& name);
 
     protected:
+        DelegateSubscriberPoolGuard _subscriptionPool;
+
         Gui::VerticalLayout _headLayout;
         Gui::VerticalLayout _selectedShaderLayout;
 

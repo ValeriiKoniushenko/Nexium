@@ -192,6 +192,7 @@ namespace Core
         StringAtom getCacheHash() const override;
 
     protected:
+        DelegateSubscriberPoolGuard _subscriptionPool;
         GLFWwindow* _window{};
         ISize2 _size{};
         StringAtom _title;

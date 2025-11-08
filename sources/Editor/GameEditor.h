@@ -164,6 +164,7 @@ namespace Core
         void responseOnPick(StaticMesh* mesh);
 
     protected:
+        DelegateSubscriberPoolGuard _subscriptionPool;
         std::vector<BaseEWC::Ptr> _windows;
         bool _isInitImGui = false;
         bool _isEnabled = true;

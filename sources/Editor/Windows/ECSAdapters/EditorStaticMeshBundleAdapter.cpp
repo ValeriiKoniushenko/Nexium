@@ -56,35 +56,40 @@ namespace Core
         _modelInput
             = _layout.addChildComponent<LabelRow<TextInput>>("Model path", defaultLabelWidth);
         _modelInput->input->setFlex(Flex::FlexWidth);
-        _modelInput->input->onInput->subscribe([this](auto) { makeParentDirty(); });
+        _subscriptionPool << _modelInput->input->onInput->subscribeAndGetID([this](auto)
+                                                                            { makeParentDirty(); });
 
         _mainShaderCombo = _layout.addChildComponent<LabelRow<ComboModelBased>>("Main shader",
                                                                                 defaultLabelWidth);
         _mainShaderCombo->input->setFlex(Flex::FlexWidth);
         _mainShaderCombo->input->setDataProvider(shaderDataProvider);
         _mainShaderCombo->input->setSizeProvider(shaderSizeProvider);
-        _mainShaderCombo->input->onSelect->subscribe([this](auto) { makeParentDirty(); });
+        _subscriptionPool << _mainShaderCombo->input->onSelect->subscribeAndGetID(
+            [this](auto) { makeParentDirty(); });
 
         _outlineShaderCombo = _layout.addChildComponent<LabelRow<ComboModelBased>>(
             "Outline shader", defaultLabelWidth);
         _outlineShaderCombo->input->setFlex(Flex::FlexWidth);
         _outlineShaderCombo->input->setDataProvider(shaderDataProvider);
         _outlineShaderCombo->input->setSizeProvider(shaderSizeProvider);
-        _outlineShaderCombo->input->onSelect->subscribe([this](auto) { makeParentDirty(); });
+        _subscriptionPool << _outlineShaderCombo->input->onSelect->subscribeAndGetID(
+            [this](auto) { makeParentDirty(); });
 
         _onLoadScale
             = _layout.addChildComponent<LabelRow<FloatInput>>("On load scale", defaultLabelWidth);
         _onLoadScale->input->setFlex(Flex::FlexWidth);
         _onLoadScale->input->setMin(0.0f);
         _onLoadScale->input->setStep(0.1f);
-        _onLoadScale->input->onInput->subscribe([this](auto) { makeParentDirty(); });
+        _subscriptionPool << _onLoadScale->input->onInput->subscribeAndGetID(
+            [this](auto) { makeParentDirty(); });
 
         _postProcessArray = _layout.addChildComponent<LabelRow<AssimpPostProcessArray>>(
             "P.Loading flags", defaultLabelWidth);
         _postProcessArray->setVerticalAlign(Align::Top);
         _postProcessArray->input->setFlex(Flex::FlexWidth);
-        _postProcessArray->input->onChange->subscribe([this]() { makeParentDirty(); });
-        _postProcessArray->input->onSave->subscribe(
+        _subscriptionPool << _postProcessArray->input->onChange->subscribeAndGetID(
+            [this]() { makeParentDirty(); });
+        _subscriptionPool << _postProcessArray->input->onSave->subscribeAndGetID(
             [this](const std::vector<aiPostProcessSteps>& data)
             {
                 _postProcessFlags = 0;

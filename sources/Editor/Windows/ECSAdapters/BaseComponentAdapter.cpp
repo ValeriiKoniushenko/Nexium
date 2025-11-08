@@ -67,11 +67,13 @@ namespace Core
 
         _ecsEnabledComponent
             = _baseEcsLayout.addChildComponent<LabelRow<CheckBox>>("Enabled", labelWidth);
-        _ecsEnabledComponent->input->onChange->subscribe([this](auto) { makeParentDirty(); });
+        _subscriptionPool << _ecsEnabledComponent->input->onChange->subscribeAndGetID(
+            [this](auto) { makeParentDirty(); });
 
         _ecsName = _baseEcsLayout.addChildComponent<LabelRow<TextInput>>("Name", labelWidth);
         _ecsName->input->setFlex(Flex::FlexWidth);
-        _ecsName->input->onInput->subscribe([this](auto) { makeParentDirty(); });
+        _subscriptionPool << _ecsName->input->onInput->subscribeAndGetID([this](auto)
+                                                                         { makeParentDirty(); });
 
         _ecsType = _baseEcsLayout.addChildComponent<LabelRow<TextInput>>("Type", labelWidth);
         _ecsType->input->setFlex(Flex::FlexWidth);
@@ -83,7 +85,8 @@ namespace Core
 
         _ecsDisableTicks
             = _baseEcsLayout.addChildComponent<LabelRow<CheckBox>>("No ticks", labelWidth);
-        _ecsDisableTicks->input->onChange->subscribe([this](auto) { makeParentDirty(); });
+        _subscriptionPool << _ecsDisableTicks->input->onChange->subscribeAndGetID(
+            [this](auto) { makeParentDirty(); });
 
         _ecsChildren
             = _baseEcsLayout.addChildComponent<LabelRow<StringArray>>("Children", labelWidth);

@@ -153,10 +153,13 @@ namespace Core::Gui
 
                 inputs[i] = hLayout->template addChildComponent<NumInput<Type>>();
                 inputs[i]->setFlex(Flex::FlexWidth);
-                inputs[i]->onInput->subscribe([this](auto)
-                                              { onInput->trigger(getInputtedData()); });
+                _subscriptionPool << inputs[i]->onInput->subscribeAndGetID(
+                    [this](auto) { onInput->trigger(getInputtedData()); });
             }
         }
+
+    protected:
+        DelegateSubscriberPoolGuard _subscriptionPool;
     };
 
     ECS_TEMPLATE_COMPONENT_IMPL(BRACKETS(VecNumInput<Size, Type>),

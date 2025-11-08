@@ -102,7 +102,8 @@ namespace Core
 
             _comboView = shaderSelect->addChildComponent<ComboView>();
             _comboView->setFlex(Flex::FlexWidth);
-            _comboView->onSelect->subscribe([this](StringAtom key) { selectShader(key); });
+            _subscriptionPool << _comboView->onSelect->subscribeAndGetID([this](StringAtom key)
+                                                                         { selectShader(key); });
         }
 
         // ================ SELECTED SHADER ======================
@@ -125,7 +126,7 @@ namespace Core
             _vertPath->setFlex(Flex::FlexWidth);
 
             auto* edit = path->addChildComponent<Button>("Edit");
-            edit->onClick->subscribe(
+            _subscriptionPool << edit->onClick->subscribeAndGetID(
                 [this]()
                 {
                     if (_vertPath)
@@ -144,7 +145,7 @@ namespace Core
             _fragPath->setFlex(Flex::FlexWidth);
 
             auto* edit = path->addChildComponent<Button>("Edit");
-            edit->onClick->subscribe(
+            _subscriptionPool << edit->onClick->subscribeAndGetID(
                 [this]()
                 {
                     if (_fragPath)
@@ -158,7 +159,8 @@ namespace Core
         {
             auto* recompile = _selectedShaderLayout.addChildComponent<Button>("Recompile");
             recompile->setFlex(Flex::FlexWidth);
-            recompile->onClick->subscribe([this]() { recompileSelectedShader(); });
+            _subscriptionPool << recompile->onClick->subscribeAndGetID(
+                [this]() { recompileSelectedShader(); });
 
             _recompileResult = _selectedShaderLayout.addChildComponent<Label>();
             _recompileResult->setFlex(Flex::FlexWidth);

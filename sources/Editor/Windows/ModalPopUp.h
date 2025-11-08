@@ -51,6 +51,8 @@ namespace Core
         void endWindowDraw() override;
 
     protected:
+        DelegateSubscriberPoolGuard _subscriptionPool;
+
         Gui::HorizontalLayout _layout;
         Gui::Button* _okButton;
         Gui::Button* _cancelButton;

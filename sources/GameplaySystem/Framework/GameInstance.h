@@ -84,6 +84,9 @@ namespace Core
 
         [[nodiscard]] StringAtom getCacheHash() const override;
 
+    protected:
+        DelegateSubscriberPoolGuard _subscriptionPool;
+
     private:
         void loadCoreResources();
         void startUpReadCache();
