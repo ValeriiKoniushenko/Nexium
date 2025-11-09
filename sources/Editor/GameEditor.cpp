@@ -85,33 +85,31 @@ namespace Core
         ImGui_ImplOpenGL3_Init(GetGlslVersionShaderLike().c_str());
         _isInitImGui = true;
 
-        registerNewWindow<EditorMenuBarWindowEWC>("Menu Bar"_atom);
-        registerNewWindow<RootDockWindowEWC>("Root dock space"_atom);
-        registerNewWindow<LogsWindowEWC>("Logs"_atom);
-        registerNewWindow<ObjectPropertiesWindowEWC>("Object Properties"_atom);
-        registerNewWindow<SceneTreeWindowEWC>("Scene"_atom);
-        registerNewWindow<AssetsManagerWindowEWC>("Assets"_atom);
-        registerNewWindow<EditorSettingsEWC>("Settings"_atom, false);
-        registerNewWindow<TextEditorEWC>("Text editor"_atom, false);
-        registerNewWindow<ImageViewerEWC>("Image viewer"_atom, false);
+        registerNewWindow<EditorMenuBarWindowEWC>("Menu Bar"_atom, true);
+        registerNewWindow<RootDockWindowEWC>("Root dock space"_atom, true);
+        registerNewWindow<LogsWindowEWC>("Logs"_atom, true);
+        registerNewWindow<ObjectPropertiesWindowEWC>("Object Properties"_atom, true);
+        registerNewWindow<SceneTreeWindowEWC>("Scene"_atom, true);
+        registerNewWindow<AssetsManagerWindowEWC>("Assets"_atom, true);
+        registerNewWindow<EditorSettingsEWC>("Settings"_atom);
+        registerNewWindow<TextEditorEWC>("Text editor"_atom);
+        registerNewWindow<ImageViewerEWC>("Image viewer"_atom);
         registerNewWindow<ShaderManagerEWC>("Shader manager"_atom);
-        registerNewWindow<ModalPopUp>("PopUp"_atom);
-        registerNewWindow<WorldLightningEWC>("World Lightning"_atom, false);
-        registerNewWindow<NxTextureEditorEWC>("NX Texture Editor"_atom, false);
-        registerNewWindow<NxECSBasedEditorEWC>("Assets editor"_atom, true);
+        registerNewWindow<ModalPopUp>("PopUp"_atom, true);
+        registerNewWindow<WorldLightningEWC>("World Lightning"_atom);
+        registerNewWindow<NxTextureEditorEWC>("NX Texture Editor"_atom);
+        registerNewWindow<NxECSBasedEditorEWC>("Assets editor"_atom);
 
-        _subscriptionPool << registerNewWindow<GameViewportEWC>("Viewport"_atom)
-                                 ->onSizeChanged->subscribeAndGetID(
-                                     [](auto outer, auto inner)
-                                     {
-                                         if (gGameInstance->renderMode
-                                             == GameInstance::RenderMode::Editor)
-                                         {
-                                             gGameInstance->gameViewport.setRenderSize(
-                                                 static_cast<ISize2>(inner));
-                                             gGameInstance->updateViewport();
-                                         }
-                                     });
+        auto viewport = registerNewWindow<GameViewportEWC>("Viewport"_atom, true);
+        _subscriptionPool << viewport->onSizeChanged->subscribeAndGetID(
+            [](auto outer, auto inner)
+            {
+                if (gGameInstance->renderMode == GameInstance::RenderMode::Editor)
+                {
+                    gGameInstance->gameViewport.setRenderSize(static_cast<ISize2>(inner));
+                    gGameInstance->updateViewport();
+                }
+            });
     }
 
     void GameEditor::tick(float delta)
@@ -154,10 +152,10 @@ namespace Core
 
     void GameEditor::readFromCache()
     {
-        for (auto& wnd : _windows)
+        /*for (auto& wnd : _windows)
         {
             wnd->tryReadFromCache();
-        }
+        }*/
     }
 
     void GameEditor::setupImGuiStyles()

@@ -27,6 +27,7 @@
 #include "Camera/Camera.h"
 #include "Core/Timer.h"
 #include "Editor/Windows/GameViewport.h"
+#include "Editor/Windows/NxECSBasedEditor.h"
 #include "Graphics/Image.h"
 #include "Graphics/ShaderManager.h"
 #include "Graphics/Window.h"
@@ -122,7 +123,6 @@ namespace Core
         stream.setMode(DataStream::Mode::Output);
         b.ioFieldsUpdate(stream);
         std::cout << stream.getRaw().dump(4) << std::endl;*/
-
         startUpReadCache();
         loadCoreResources();
 

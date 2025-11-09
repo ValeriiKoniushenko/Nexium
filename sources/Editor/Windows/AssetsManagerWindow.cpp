@@ -110,13 +110,9 @@ namespace Core
             _openedPath = Config::Path::projectAbsPath;
         }
     }
-
-    void AssetsManagerWindowEWC::onInitialize()
+    void AssetsManagerWindowEWC::onPreInitialize()
     {
-        BaseFloatEWC::onInitialize();
-
-        tryReadFromCache();
-
+        BaseFloatEWC::onPreInitialize();
         _nodeTypesData = {
             { NodeType::Default,
               GetAssetsManager().getTexture("assets/baked/document.nxtex"_atom) },
@@ -172,6 +168,11 @@ namespace Core
         {
             openPath(_openedPath);
         }
+    }
+
+    void AssetsManagerWindowEWC::onInitialize()
+    {
+        BaseFloatEWC::onInitialize();
 
         refresh();
     }

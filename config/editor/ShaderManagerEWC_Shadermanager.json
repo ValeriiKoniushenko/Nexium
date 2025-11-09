@@ -1,6 +1,6 @@
 {
     "AbstractComponent": {
-        "isEnabled": true,
+        "isEnabled": false,
         "noTick": false
     },
     "BaseComponent": {

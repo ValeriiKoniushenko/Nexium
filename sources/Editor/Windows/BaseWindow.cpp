@@ -41,6 +41,8 @@ namespace Core
 
     void BaseEWC::openWindow(const StringAtom& args)
     {
+        initialize();
+
         setEnabled(true);
         onOpen();
         requestFocus();
@@ -181,9 +183,16 @@ namespace Core
         ImGui::End();
     }
 
+    void BaseFloatEWC::onPreInitialize()
+    {
+        BaseEWC::onPreInitialize();
+    }
+
     void BaseFloatEWC::onInitialize()
     {
-        AbstractComponent::onInitialize();
+        BaseComponent::onInitialize();
+
+        tryReadFromCache();
     }
 
     //

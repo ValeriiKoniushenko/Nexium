@@ -25,6 +25,7 @@
 #include "BaseComponent.h"
 
 #include "Editor/Gizmo.h"
+#include "Editor/Windows/NxECSBasedEditor.h"
 
 namespace
 {
@@ -89,11 +90,9 @@ namespace Core
         if (this != &other)
         {
             _isEnabled = other._isEnabled;
-            _isInitialized = other._isInitialized;
             _noTick = other._noTick;
 
             other._isEnabled = {};
-            other._isInitialized = {};
             other._noTick = {};
         }
 
@@ -102,7 +101,7 @@ namespace Core
 
     void AbstractComponent::tick(float delta)
     {
-        if (_isEnabled && _isInitialized && !_noTick)
+        if (_isEnabled && !_noTick)
         {
             onTick(delta);
         }
@@ -199,6 +198,7 @@ namespace Core
     void BaseComponent::clear()
     {
         AbstractComponent::clear();
+
         _name.clear();
         _parent = nullptr;
         _children.clear();
@@ -257,6 +257,8 @@ namespace Core
                                  auto&& last
                                      = _children.emplace_back(GetGlobalComponentFactory().create(
                                          in["BaseComponent"]["type"].get<StringAtom>()));
+                                 last->_parent = this;
+
                                  DataStream childStream;
                                  childStream.setMode(DataStream::Mode::Input);
                                  childStream.getRaw() = in;
@@ -264,6 +266,21 @@ namespace Core
                              }
                          }
                      });
+    }
+
+    void BaseComponent::initialize()
+    {
+        if (!_isInitialized)
+        {
+            onPreInitialize();
+            _isInitialized = true;
+            onInitialize();
+
+            for (auto&& child : _children)
+            {
+                child->initialize();
+            }
+        }
     }
 
     BaseComponent::BaseComponent(BaseComponent&& other) noexcept
@@ -280,8 +297,10 @@ namespace Core
             _children = std::move(other._children);
             _type = std::move(other._type);
             _parent = other._parent;
+            _isInitialized = other._isInitialized;
 
             other._parent = nullptr;
+            other._isInitialized = false;
 
             // resetting to new parent because old one will be invalid
             for (const auto& child : _children)

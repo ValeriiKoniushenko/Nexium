@@ -155,6 +155,7 @@ namespace Core
 
     void StaticMeshBundle::clear()
     {
+        Actor::clear();
         privateClear();
     }
 
@@ -274,8 +275,6 @@ namespace Core
 
     void StaticMeshBundle::privateClear()
     {
-        BaseComponent::clear();
-
         clearMeshes();
     }
 

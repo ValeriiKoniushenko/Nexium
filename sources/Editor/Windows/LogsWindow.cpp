@@ -57,9 +57,9 @@ namespace Core
         _logs.clear();
     }
 
-    void LogsWindowEWC::onInitialize()
+    void LogsWindowEWC::onPreInitialize()
     {
-        BaseFloatEWC::onInitialize();
+        BaseFloatEWC::onPreInitialize();
 
         // Structure & ordering
         _searchInput = _toolbar.addChildComponent<Gui::TextInput>();
@@ -94,8 +94,6 @@ namespace Core
                     _needScroll = true;
                 }
             });
-
-        tryReadFromCache();
     }
 
     void LogsWindowEWC::onDraw()
@@ -267,4 +265,5 @@ namespace Core
                            }
                        });
     }
+
 } // namespace Core

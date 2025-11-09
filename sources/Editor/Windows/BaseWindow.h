@@ -114,6 +114,7 @@ namespace Core
             = Delegate<void(FSize2, FSize2)>::Create();
 
     protected:
+        void onPreInitialize() override;
         void onInitialize() override;
 
         void onUpdate() override;

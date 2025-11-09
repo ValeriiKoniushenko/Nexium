@@ -360,7 +360,7 @@ namespace Core
 
         /**
          * Call it in your main loop. After that if several conditions
-         * will be matched(is initialized, is enabled, etc.) will be called
+         * will be matched (is initialized, is enabled, etc.) will be called
          * onTick. Inherit from onTick - and implement your own logic for
          * update and/or draw.
          */
@@ -370,8 +370,8 @@ namespace Core
 
         [[nodiscard]] spdlog::logger* getLogger() const final { return Ecs::getLogger(); }
 
-        /** Reset the component to uninitialized state. */
-        virtual void clear() { _isInitialized = false; }
+        /** Reset the component to an uninitialized state. */
+        virtual void clear() {}
 
         /** Safe cast to a derived component type. Asserts if cast fails. */
         template<IsComponent T>
@@ -419,7 +419,6 @@ namespace Core
             return dynamic_cast<const std::remove_reference_t<T>*>(this);
         }
 
-        [[nodiscard]] bool isInitialized() const noexcept { return _isInitialized; }
         [[nodiscard]] bool isEnabled() const noexcept { return _isEnabled; }
         void setEnabled(bool v) noexcept { _isEnabled = v; }
         void enable() noexcept { _isEnabled = true; }
@@ -428,32 +427,8 @@ namespace Core
         void setNoTick(bool v) { _noTick = v; }
         [[nodiscard]] bool getNoTick() const noexcept { return _noTick; }
 
-        /**
-         * Call this function directly only if you sure in it.
-         * It should be called only once per one component.
-         */
-        virtual void initialize()
-        {
-            if (!_isInitialized)
-            {
-                _isInitialized = true;
-                onInitialize();
-            }
-        }
-
-        /**
-         * Call this function if you want to this object was
-         * reinited later.
-         */
-        void invalidate() { _isInitialized = false; }
-
     protected:
         AbstractComponent() = default;
-
-        /**
-         * This method will be called automatically. Don't call it directly.
-         */
-        virtual void onInitialize() {}
 
         /**
          * This method will be called automatically. Don't call it directly.
@@ -464,9 +439,6 @@ namespace Core
 
         // if put 'true' means that the function 'tick' will not be called.
         bool _noTick = false;
-
-    private:
-        bool _isInitialized = false;
     };
 
     //
@@ -598,6 +570,19 @@ namespace Core
         void onTick(float delta) override;
 
         void ioFieldsUpdate(DataStream& out) override;
+
+        /**
+         * Call this function directly only if you sure in it.
+         * It should be called only once per one component.
+         */
+        virtual void initialize();
+
+        [[nodiscard]] bool isInitialized() const noexcept { return _isInitialized; }
+
+        /**
+         * Call this function if you want to this object was re-inited later.
+         */
+        void invalidate() { _isInitialized = false; }
 
         // ========================== WORKING WITH CHILDREN ==========================
         [[nodiscard]] ChildT getFirstChild() { return _children.front(); }
@@ -781,6 +766,16 @@ namespace Core
 
         [[nodiscard]] StringAtom getCacheHash() const override;
 
+        /**
+         * This method will be called automatically. Don't call it directly.
+         */
+        virtual void onInitialize() {}
+
+        /**
+         * This method will be called automatically. Don't call it directly.
+         */
+        virtual void onPreInitialize() {}
+
     protected:
         ChildrenT _children;
         StringAtom _name;
@@ -800,6 +795,9 @@ namespace Core
         template<IsComponent TargetT, bool isConst>
         [[nodiscard]] static TargetT::template AdaptiveRawPtr<isConst> Impl_findFirstChildOf(
             AdaptiveRawPtr<isConst> me, const StringAtom& name);
+
+    private:
+        bool _isInitialized = false;
     };
 
     struct InvalidComponent : public BaseComponent

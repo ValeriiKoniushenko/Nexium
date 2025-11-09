@@ -63,7 +63,7 @@ namespace Core
          * @return Shared a pointer to the newly registered window.
          */
         template<IsEditorWindowComponent T>
-        T::Ptr registerNewWindow(StringAtom name, bool isEnabled = true)
+        T::Ptr registerNewWindow(StringAtom name, bool isEnabled = false)
         {
             if (!Verify(!!name))
             {
@@ -71,12 +71,12 @@ namespace Core
             }
 
             auto& a = _windows.emplace_back(new T);
-            a->initialize();
             if (a->getIcon())
             {
                 name = a->getIcon() + (" " + name);
             }
             a->setComponentName(std::move(name));
+
             if (isEnabled)
             {
                 a->openWindow();

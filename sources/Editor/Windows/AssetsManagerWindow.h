@@ -46,6 +46,7 @@ namespace Core
         void ioFieldsUpdate(DataStream& out) override;
 
     protected:
+        void onPreInitialize() override;
         void onInitialize() override;
 
         void onDraw() override;
