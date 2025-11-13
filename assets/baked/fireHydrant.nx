@@ -33,7 +33,12 @@
             "type": "StaticMesh"
           },
           "GraphicsComponentData": {
-            "modifiers": []
+            "modifiers": [
+              {
+                "value": "CullFace",
+                "modifier": "Disable"
+              }
+            ]
           },
           "StaticMesh": {},
           "Transformable": {

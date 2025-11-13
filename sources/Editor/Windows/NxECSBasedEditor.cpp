@@ -26,6 +26,7 @@
 
 #include "ECSAdapters/BaseComponentAdapter.h"
 #include "ECSAdapters/EditorActorAdapter.h"
+#include "ECSAdapters/EditorGraphicsComponentDataAdapter.h"
 #include "ECSAdapters/EditorStaticMeshBundleAdapter.h"
 
 using namespace Core::Gui;
@@ -97,6 +98,7 @@ namespace Core
         addUniqueTypeChildComponent<ECSBaseComponentAdapter>();
         addUniqueTypeChildComponent<ECSEditorActorAdapter>();
         addUniqueTypeChildComponent<ECSEditorStaticMeshBundleAdapter>();
+        addUniqueTypeChildComponent<ECSEditorGraphicsComponentDataAdapter>();
 
         setEnablePreview(true);
         setEnableTree(true);
@@ -261,8 +263,13 @@ namespace Core
 
         if (ImGui::IsItemClicked() || (ImGui::IsItemFocused() && isHovered()))
         {
+            const auto* old = _targetComponent;
             _targetComponent = comp;
-            updateGuiBasedOnAsset();
+
+            if (old != comp)
+            {
+                updateGuiBasedOnAsset();
+            }
         }
 
         if (isOpened)

@@ -129,13 +129,13 @@ namespace Core
         }
         if (_postProcessArray && json.contains("assimpPostProcess"))
         {
-            _postProcessArray->input->clearData();
+            _postProcessArray->input->clearData(true);
             for (auto el : json["assimpPostProcess"])
             {
                 auto flag = Assimp::aiPostProcessStepsFromString(el.get<StringAtom>());
                 if (flag)
                 {
-                    _postProcessArray->input->add(*flag);
+                    _postProcessArray->input->add(*flag, true);
                 }
             }
         }

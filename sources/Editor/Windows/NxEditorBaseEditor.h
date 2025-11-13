@@ -54,6 +54,7 @@ namespace Core
         [[nodiscard]] const std::set<std::string>& getFileFilters() const noexcept;
 
         void makeDirty();
+        [[nodiscard]] bool isDirty() const noexcept { return _isDirty; }
 
     protected:
         virtual void updateGuiBasedOnAsset() = 0;

@@ -104,7 +104,7 @@ namespace Core::Gui
         Delegate<void(std::vector<T>&)>::Ptr onReset = Delegate<void(std::vector<T>&)>::Create();
 
     public:
-        void eraseAt(std::size_t i)
+        void eraseAt(std::size_t i, bool ignoreChangeEvent = false)
         {
             Assert(i < _data.size());
             if (i < _data.size())
@@ -112,24 +112,23 @@ namespace Core::Gui
                 _data.erase(_data.begin() + i);
                 onEraseAt->trigger(i);
                 onChange->trigger();
-                makeDirty();
+                makeDirty(ignoreChangeEvent);
             }
         }
 
-        void addEmpty()
+        void addEmpty(bool ignoreChangeEvent = false)
         {
-            makeDirty();
+            makeDirty(ignoreChangeEvent);
             _data.emplace_back();
             onAdd->trigger(_data.size() - 1, _data.back());
             onChange->trigger();
         }
 
-        void add(const T& data)
+        void add(const T& data, bool ignoreChangeEvent = false)
         {
             _data.emplace_back(data);
-            makeDirty();
+            makeDirty(ignoreChangeEvent);
             onAdd->trigger(_data.size() - 1, _data.back());
-            onChange->trigger();
         }
 
         [[nodiscard]] virtual std::size_t size() const { return _data.size(); }
@@ -139,31 +138,28 @@ namespace Core::Gui
 
         [[nodiscard]] const std::vector<T>& getData() const { return _data; }
 
-        void setData(const std::vector<T>& data)
+        void setData(const std::vector<T>& data, bool ignoreChangeEvent = false)
         {
             _data = data;
-            onChange->trigger();
-            makeDirty();
+            makeDirty(ignoreChangeEvent);
         }
 
-        void setData(std::vector<T>&& data)
+        void setData(std::vector<T>&& data, bool ignoreChangeEvent = false)
         {
             _data = std::move(data);
-            onChange->trigger();
-            makeDirty();
+            makeDirty(ignoreChangeEvent);
         }
 
-        void clearData()
+        void clearData(bool ignoreChangeEvent = false)
         {
             _data.clear();
-            onChange->trigger();
-            makeDirty();
+            makeDirty(ignoreChangeEvent);
         }
 
-        void setReadOnly(bool value)
+        void setReadOnly(bool value, bool ignoreChangeEvent = false)
         {
             _isReadOnly = value;
-            makeDirty();
+            makeDirty(ignoreChangeEvent);
         }
 
         [[nodiscard]] bool isReadOnly() const { return _isReadOnly; }
@@ -279,9 +275,13 @@ namespace Core::Gui
             }
         }
 
-        void makeDirty()
+        void makeDirty(bool ignoreChangeEvent = false)
         {
-            onChange->trigger();
+            if (!ignoreChangeEvent)
+            {
+                onChange->trigger();
+            }
+
             _isDirty = true;
         }
 

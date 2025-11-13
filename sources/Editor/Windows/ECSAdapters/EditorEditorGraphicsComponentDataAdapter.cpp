@@ -37,13 +37,19 @@ namespace Core
         return dynamic_cast<GraphicsComponentData*>(component) != nullptr;
     }
 
-    void ECSEditorGraphicsComponentDataAdapter::onApplyAssetData(const nlohmann::json&)
+    void ECSEditorGraphicsComponentDataAdapter::onApplyAssetData(const nlohmann::json& json)
     {
         auto* comp = dynamic_cast<GraphicsComponentData*>(getTargetComponent());
         if (!Verify(comp)) [[unlikely]]
         {
-            warnLog("Can't cast component to Actor, but it must be cast!");
+            warnLog("Can't cast component to GraphicsComponentData, but it must be cast!");
             return;
+        }
+
+        _modifiers->input->clearData(true);
+        for (auto&& modifier : comp->getDrawModifiers())
+        {
+            _modifiers->input->add(modifier, true);
         }
     }
 
@@ -52,6 +58,25 @@ namespace Core
         ECSEditorMimeAdapter::onInitialize();
 
         constexpr float labelWidth = 120.0f;
+
+        _layout.setPaddings(glm::vec4{ ImGui::GetStyle().ItemSpacing.x });
+
+        _modifiers
+            = _layout.addChildComponent<LabelRow<GraphicsModifiersArray>>("Modifiers", labelWidth);
+        _modifiers->setVerticalAlign(Align::Top);
+        _subscriptionPool << _modifiers->input->onChange->subscribeAndGetID([this]()
+                                                                            { makeParentDirty(); });
+        _subscriptionPool << _modifiers->input->onSave->subscribeAndGetID(
+            [this](auto&& params)
+            {
+                auto* comp = dynamic_cast<GraphicsComponentData*>(getTargetComponent());
+                if (!Verify(comp)) [[unlikely]]
+                {
+                    warnLog("Can't cast component to GraphicsComponentData, but it must be cast!");
+                    return;
+                }
+                comp->setDrawModifiers(params);
+            });
     }
 
     void ECSEditorGraphicsComponentDataAdapter::onDraw(float dt)

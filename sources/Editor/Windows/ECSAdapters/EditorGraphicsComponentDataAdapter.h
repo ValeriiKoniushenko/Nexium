@@ -25,11 +25,8 @@
 #pragma once
 
 #include "../NxECSBasedEditor.h"
-#include "Editor/GuiComponents/CheckBox.h"
-#include "Editor/GuiComponents/Input.h"
-#include "Editor/GuiComponents/LabelRow.h"
-#include "Editor/GuiComponents/VecInput.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
+#include "Editor/Windows/ObjectPropertiesWindow.h"
 
 namespace Core
 {
@@ -48,6 +45,10 @@ namespace Core
 
     protected:
         Gui::VerticalLayout _layout;
+
+        Gui::LabelRow<GraphicsModifiersArray>* _modifiers = nullptr;
+
+        DelegateSubscriberPoolGuard _subscriptionPool;
     };
 
 } // namespace Core

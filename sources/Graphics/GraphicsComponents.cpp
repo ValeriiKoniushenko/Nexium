@@ -340,8 +340,14 @@ namespace Core
                          {
                              for (auto& modifier : out.getRaw())
                              {
-                                 _drawModifiers.emplace_back(FromString(modifier["value"]),
-                                                             FromString(modifier["modifier"]));
+                                 if (!modifier.contains("value") || !modifier.contains("modifier"))
+                                 {
+                                     continue;
+                                 }
+
+                                 _drawModifiers.emplace_back(
+                                     FromString(modifier["value"]),
+                                     Modifier::fromStr(modifier["modifier"]).value_or(0));
                              }
                          }
                      });
