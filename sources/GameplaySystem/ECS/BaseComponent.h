@@ -27,8 +27,6 @@
 #include "Misc/BaseLog.h"
 #include "Misc/DataStream.h"
 #include "ModuleInfo.h"
-#include "boost/intrusive_ptr.hpp"
-#include "boost/smart_ptr/intrusive_ref_counter.hpp"
 
 #include <queue>
 #include <stack>
@@ -40,11 +38,10 @@
 // ===============================================================
 #define _ECS_COMPONENT_DECL(ClassName, TypeName, BaseComponentClass)                               \
 public:                                                                                            \
-    using Ptr = boost::intrusive_ptr<TypeName>;                                                    \
-    using CPtr = boost::intrusive_ptr<const TypeName>;                                             \
+    using Ptr = Core::IntrusivePtr<TypeName>;                                                      \
+    using CPtr = Core::IntrusivePtr<const TypeName>;                                               \
     template<bool isConst>                                                                         \
-    using AdaptivePtr                                                                              \
-        = boost::intrusive_ptr<std::conditional_t<isConst, const TypeName, TypeName>>;             \
+    using AdaptivePtr = Core::IntrusivePtr<std::conditional_t<isConst, const TypeName, TypeName>>; \
     template<bool isConst>                                                                         \
     using AdaptiveRawPtr = std::conditional_t<isConst, const TypeName, TypeName>*;                 \
                                                                                                    \
@@ -344,7 +341,7 @@ namespace Core
      */
     class AbstractComponent :
         public BaseLog,
-        public boost::intrusive_ref_counter<BaseComponent>,
+        public IntrusiveRefCounter<BaseComponent>,
         public IDataStreamBridge
     {
     public:
@@ -493,14 +490,14 @@ namespace Core
     public:
         using Self = BaseComponent;
         template<bool isConst>
-        using AdaptivePtr = boost::intrusive_ptr<std::conditional_t<isConst, const Self, Self>>;
+        using AdaptivePtr = Core::IntrusivePtr<std::conditional_t<isConst, const Self, Self>>;
         template<bool isConst>
         using AdaptiveRawPtr = std::conditional_t<isConst, const Self, Self>*;
-        using Ptr = boost::intrusive_ptr<Self>;
-        using CPtr = boost::intrusive_ptr<const Self>;
-        using CChildT = boost::intrusive_ptr<const BaseComponent>;
-        using ChildT = boost::intrusive_ptr<BaseComponent>;
-        using ChildrenT = std::vector<boost::intrusive_ptr<BaseComponent>>;
+        using Ptr = Core::IntrusivePtr<Self>;
+        using CPtr = Core::IntrusivePtr<const Self>;
+        using CChildT = Core::IntrusivePtr<const BaseComponent>;
+        using ChildT = Core::IntrusivePtr<BaseComponent>;
+        using ChildrenT = std::vector<Core::IntrusivePtr<BaseComponent>>;
 
         static const StringAtom componentType;
 

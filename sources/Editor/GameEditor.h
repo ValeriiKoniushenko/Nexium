@@ -86,7 +86,7 @@ namespace Core
                 a->closeWindow();
             }
 
-            return boost::static_pointer_cast<T>(a);
+            return IntrusivePtr<T>(static_cast<T*>(a.get()));
         }
 
         /**

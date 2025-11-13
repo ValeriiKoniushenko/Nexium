@@ -17,7 +17,6 @@ target_link_libraries(${TARGET_NAME} PUBLIC
 
     spdlog::spdlog
     nlohmann_json
-    Boost::smart_ptr
 
     Core::ImGui
     Core::InputDevices

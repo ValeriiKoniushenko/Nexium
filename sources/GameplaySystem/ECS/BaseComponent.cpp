@@ -135,7 +135,8 @@ namespace Core
 
     void BaseComponent::detachChild(BaseComponent* child)
     {
-        if (const auto it = std::ranges::find(_children, child); it != _children.end())
+        if (const auto it = std::ranges::find(_children, IntrusivePtr(child));
+            it != _children.end())
         {
             _children.erase(it);
         }
@@ -144,7 +145,7 @@ namespace Core
     void BaseComponent::removeChild(const BaseComponent* child)
     {
         const auto [first, last] = std::ranges::remove_if(_children,
-                                                          [&child, this](const Ptr& c)
+                                                          [&child, this](Ptr& c)
                                                           {
                                                               if (*c == *child)
                                                               {
@@ -303,7 +304,7 @@ namespace Core
             other._isInitialized = false;
 
             // resetting to new parent because old one will be invalid
-            for (const auto& child : _children)
+            for (auto& child : _children)
             {
                 child->_parent = this;
             }

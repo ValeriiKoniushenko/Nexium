@@ -39,7 +39,7 @@ namespace Core
          * Generate in your own way a possible unique string.
          * After that, you can find your logs with such stem(name).
          */
-        void writeToCache() const;
+        void writeToCache();
 
         [[nodiscard]] bool hasCache() const;
 

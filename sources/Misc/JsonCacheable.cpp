@@ -35,7 +35,7 @@ namespace fs = std::filesystem;
 
 namespace Core
 {
-    void JsonCacheable::writeToCache() const
+    void JsonCacheable::writeToCache()
     {
         fs::create_directories(getCacheDir());
         if (!Verify(fs::exists(getCacheDir())))

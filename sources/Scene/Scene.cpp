@@ -89,7 +89,7 @@ namespace Core
         _assetsMesh3D.emplace_back(mesh);
     }
 
-    void Scene::writeToCacheSeparateData() const
+    void Scene::writeToCacheSeparateData()
     {
         for (auto&& actor : _actors)
         {

@@ -171,7 +171,7 @@ TEST(ECSBaseTests, AddingNewChild)
     EXPECT_TRUE(top->hasParent());
     EXPECT_FALSE(top->hasChildren());
     EXPECT_EQ(&root, top->getParent());
-    EXPECT_EQ(root.getChildren().front(), top);
+    EXPECT_EQ(root.getChildren().front().get(), top);
     EXPECT_NE(root, *top);
 }
 

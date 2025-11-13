@@ -291,8 +291,6 @@ namespace Core
 
     void NxECSBasedEditorEWC::reset()
     {
-        removeChildOf<ECSEditorMimeAdapter>();
-
         _targetAsset.reset();
     }
 

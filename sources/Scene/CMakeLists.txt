@@ -13,7 +13,6 @@ add_library(Core::${MAIN_NAME} ALIAS ${TARGET_NAME})
 target_link_libraries(${TARGET_NAME} PUBLIC
     Core::Graphics
     Core::GameplaySystem
-    Boost::smart_ptr
 )
 
 target_include_directories(${TARGET_NAME} PUBLIC ../)

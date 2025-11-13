@@ -86,7 +86,7 @@ namespace Core
     {
         if (_status.cast() != Status::PreLoaded)
         {
-            warnLog("Can't load asset: {}. Status is not 'PreLoaded'."_f << _logicPath);
+            warnLog("Can't load asset: '{}'. Status is not 'PreLoaded'."_f << _logicPath);
             return;
         }
 
@@ -110,16 +110,19 @@ namespace Core
             _data->ioFieldsUpdate(stream);
 
             _status = Status::Loaded;
-            traceLog("Loading status: {} has loaded!"_f << _logicPath);
+            traceLog("Loading status for: '{}'  is: 'Loaded'"_f << _logicPath);
         }
         catch (std::exception e)
         {
-            criticalLog("Can't load an asset: {}. The reason: {}"_f << _logicPath << e.what());
+            criticalLog("Can't load an asset: '{}'. The reason: {}. New status is: 'LoadingError'"_f
+                        << _logicPath << e.what());
             _status = Status::LoadingError;
         }
         catch (...)
         {
-            criticalLog("Can't load an asset: {}. The reason is undefined."_f << _logicPath);
+            criticalLog(
+                "Can't load an asset: '{}'. The reason is undefined. New status is: 'LoadingError'"_f
+                << _logicPath);
             _status = Status::LoadingError;
         }
     }
@@ -127,6 +130,9 @@ namespace Core
     void ECSAsset::unload()
     {
         _status = Status::PreLoaded;
+        traceLog("The asset '{}' is unloaded its main data. New status is: 'PreLoaded'"_f
+                 << _logicPath);
+
         _data.reset();
     }
 
@@ -188,16 +194,22 @@ namespace Core
             _name.shrinkToFit();
 
             _status = Status::PreLoaded;
+            traceLog("Successfully preloaded. New status is: 'PreLoaded'. Asset: {}"_f
+                     << _logicPath);
         }
         catch (std::exception e)
         {
-            criticalLog("Can't parse asset's file: {}. Reason: {}"_f << _pathToSource << e.what());
+            criticalLog(
+                "Can't parse asset's file: {}. Reason: {}. New status is: 'PreLoadingError'"_f
+                << _pathToSource << e.what());
             _status = Status::PreLoadingError;
             _pathToSource.clear();
         }
         catch (...)
         {
-            criticalLog("Can't parse asset's file: {}. Due to internal error."_f << _pathToSource);
+            criticalLog(
+                "Can't parse asset's file: {}. Due to internal error. New status is: 'PreLoadingError'"_f
+                << _pathToSource);
             _status = Status::PreLoadingError;
             _pathToSource.clear();
         }

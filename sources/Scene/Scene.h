@@ -71,7 +71,7 @@ namespace Core
         template<IsActorBased T>
         void addActor(const T& actor, bool readFromCache = false)
         {
-            _actors.emplace_back(boost::static_pointer_cast<Actor>(actor.clone()));
+            _actors.emplace_back(StaticCast<Actor>(actor.clone()));
             auto* added = _actors.back().get();
 
             added->initialize();
@@ -118,7 +118,7 @@ namespace Core
 
         [[nodiscard]] StringAtom getCacheHash() const override;
 
-        void writeToCacheSeparateData() const;
+        void writeToCacheSeparateData();
 
     protected:
         // TODO: change to another data structure!!! It's awful
