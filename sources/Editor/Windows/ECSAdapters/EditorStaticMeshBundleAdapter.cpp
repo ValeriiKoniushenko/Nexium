@@ -102,13 +102,6 @@ namespace Core
 
     void ECSEditorStaticMeshBundleAdapter::onApplyAssetData(const nlohmann::json& json)
     {
-        /*auto* comp = getTargetComponent()->tryCastTo<StaticMeshBundle>();
-        if (!Verify(comp)) [[unlikely]]
-        {
-            warnLog("Can't cast component to StaticMeshBundle, but it must be cast!");
-            return;
-        }*/
-
         if (_modelInput && json.contains("path"))
         {
             _modelInput->input->setInputtedData(json["path"].get<StringAtom>().toStdString());

@@ -40,6 +40,7 @@ namespace Core
 
     protected:
         void updateGuiBasedOnAsset() override;
+        void updateAssetBasedOnGui() override {}
         void onInitialize() override;
         void onDrawProperties() override;
         void onDrawPreview() override;

@@ -84,6 +84,8 @@ namespace Core
 
         [[nodiscard]] nlohmann::json getAssetData() const;
 
+        void syncAssetWithMemory();
+
     protected:
         void load();
         void unload();

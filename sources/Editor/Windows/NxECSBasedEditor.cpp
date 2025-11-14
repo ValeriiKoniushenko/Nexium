@@ -172,6 +172,8 @@ namespace Core
         {
             return;
         }
+
+        _targetAsset->syncAssetWithMemory();
     }
 
     void NxECSBasedEditorEWC::updateGuiBasedOnAsset()
@@ -185,6 +187,26 @@ namespace Core
         _assetType->input->setInputtedData(_targetAsset->getType().toStdString());
 
         disableAllAdapters();
+
+        for (auto& child : _children)
+        {
+            if (auto* adapter = child->tryCastTo<ECSEditorMimeAdapter>())
+            {
+                if (adapter->canWorkWith(_targetComponent))
+                {
+                    adapter->enable();
+                    adapter->applyAssetRawData(_targetAsset->getAssetData());
+                }
+            }
+        }
+    }
+
+    void NxECSBasedEditorEWC::updateAssetBasedOnGui()
+    {
+        if (!hasTarget())
+        {
+            return;
+        }
 
         for (auto& child : _children)
         {

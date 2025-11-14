@@ -98,6 +98,8 @@ namespace Core
         void onDiscardChanges() override;
         void onSave() override;
         void updateGuiBasedOnAsset() override;
+        void updateAssetBasedOnGui() override;
+
         bool onOpenFromPath(const std::filesystem::path& path) override;
         void onClose() override;
 

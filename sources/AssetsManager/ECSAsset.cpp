@@ -82,6 +82,33 @@ namespace Core
         return {};
     }
 
+    void ECSAsset::syncAssetWithMemory()
+    {
+        if (!Verify(_data))
+        {
+            criticalLog("Can't sync asset with memory. Asset is not loaded properly: data is null");
+            return;
+        }
+
+        if (_status.cast() != Status::Loaded && _status.cast() != Status::PreLoaded)
+        {
+            warnLog("Can't sync asset with memory. Asset is not loaded properly.");
+            return;
+        }
+
+        nlohmann::json json;
+        json["type"] = _type;
+        json["name"] = _name;
+        json["data"] = nlohmann::json::object();
+
+        if (_status.cast() == Status::Loaded)
+        {
+            DataStream stream;
+            stream.setMode(DataStream::Mode::Input);
+            _data->ioFieldsUpdate(stream);
+        }
+    }
+
     void ECSAsset::load()
     {
         if (_status.cast() != Status::PreLoaded)
