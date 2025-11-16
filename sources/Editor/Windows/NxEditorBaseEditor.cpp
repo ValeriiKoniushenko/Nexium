@@ -120,7 +120,8 @@ namespace Core
         {
             if (_enableTree)
             {
-                if (ImGui::BeginChild("Tree", glm::vec2(0, 100.f), ImGuiChildFlags_ResizeY))
+                if (ImGui::BeginChild("Tree", glm::vec2(0, 100.f),
+                                      ImGuiChildFlags_Border | ImGuiChildFlags_ResizeY))
                 {
                     onDrawTree();
                 }

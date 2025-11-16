@@ -61,12 +61,12 @@ namespace Core
         {
             const auto json = nlohmann::json::parse(Utils::GetFileContent(_pathToSource));
 
-            if (!json.contains("assetData"))
+            if (!json.contains(AssetData::assetData))
             {
                 return {};
             }
 
-            return json["assetData"];
+            return json[AssetData::assetData];
         }
         catch (std::exception e)
         {
@@ -149,7 +149,7 @@ namespace Core
             DataStream stream;
             stream.setMode(DataStream::Mode::Input);
             stream.getRaw() = nlohmann::json::parse(
-                Utils::GetTextFileContentAs<std::string>(_pathToSource))["data"];
+                Utils::GetTextFileContentAs<std::string>(_pathToSource))[AssetData::data];
             _data->ioFieldsUpdate(stream);
 
             _status = Status::Loaded;
