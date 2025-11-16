@@ -221,6 +221,11 @@ namespace Core
 
         stream.field("name", _name, _type);
         stream.field("type", _type);
+        if (stream.getMode() == DataStream::Mode::Input)
+        {
+            _type = StringAtom::Intern(_type);
+        }
+
         stream.array("children",
                      [this](DataStream& out, std::size_t size)
                      {
@@ -296,7 +301,11 @@ namespace Core
             AbstractComponent::operator=(std::move(other));
             _name = std::move(other._name);
             _children = std::move(other._children);
+
             _type = std::move(other._type);
+            Assert(_type.isStatic());
+            Assert(other._type.isStatic());
+
             _parent = other._parent;
             _isInitialized = other._isInitialized;
 
@@ -396,6 +405,8 @@ namespace Core
             AbstractComponent::operator=(other);
             _name = other._name;
             _type = other._type;
+            Assert(_type.isStatic());
+            Assert(other._type.isStatic());
 
             _children.clear();
             for (const auto& child : other._children)

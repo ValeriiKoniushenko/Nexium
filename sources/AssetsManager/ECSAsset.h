@@ -50,6 +50,16 @@ namespace Core
         );
         // clang-format on
 
+        struct AssetData
+        {
+            AssetData() = delete;
+
+            static constexpr const char* type = "type";
+            static constexpr const char* name = "name";
+            static constexpr const char* data = "data";
+            static constexpr const char* assetData = "assetData";
+        };
+
     public:
         explicit ECSAsset(const StringAtom& logicPath)
             : _logicPath(logicPath)
@@ -84,7 +94,7 @@ namespace Core
 
         [[nodiscard]] nlohmann::json getAssetData() const;
 
-        void syncAssetWithMemory();
+        void syncAssetWithMemory(const nlohmann::json& assetData);
 
     protected:
         void load();

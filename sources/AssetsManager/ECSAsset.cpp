@@ -82,7 +82,7 @@ namespace Core
         return {};
     }
 
-    void ECSAsset::syncAssetWithMemory()
+    void ECSAsset::syncAssetWithMemory(const nlohmann::json& assetData)
     {
         if (!Verify(_data))
         {
@@ -97,15 +97,31 @@ namespace Core
         }
 
         nlohmann::json json;
-        json["type"] = _type;
-        json["name"] = _name;
-        json["data"] = nlohmann::json::object();
+        json[AssetData::type] = _type;
+        json[AssetData::name] = _name;
+        json[AssetData::data] = nlohmann::json::object();
+
+        json[AssetData::assetData] = assetData;
 
         if (_status.cast() == Status::Loaded)
         {
             DataStream stream;
-            stream.setMode(DataStream::Mode::Input);
+            stream.setMode(DataStream::Mode::Output);
             _data->ioFieldsUpdate(stream);
+
+            json[AssetData::data] = std::move(stream.getRaw());
+        }
+
+        std::fstream out(_pathToSource, std::ios::out);
+        if (out.is_open())
+        {
+            out << json.dump(4);
+            traceLog("Asset: {} was updated successfully"_f << _logicPath);
+        }
+        else
+        {
+            criticalLog("Can't open file for write: {} - to update the asset: {}"_f << _pathToSource
+                                                                                    << _logicPath);
         }
     }
 
@@ -193,25 +209,25 @@ namespace Core
         {
             const auto json = nlohmann::json::parse(Utils::GetFileContent(_pathToSource));
 
-            if (!json.contains("type"))
+            if (!json.contains(AssetData::type))
             {
                 throw std::runtime_error("Asset's source file doesn't contain a field: 'type'.");
             }
-            if (!json.contains("data"))
+            if (!json.contains(AssetData::data))
             {
                 throw std::runtime_error("Asset's source file doesn't contain a field: 'data'.");
             }
 
-            _type = StringAtom::Intern(json["type"].get<StringAtom>());
+            _type = StringAtom::Intern(json[AssetData::type].get<StringAtom>());
             Assert(_type.isStatic());
             if (_type.isEmpty())
             {
                 throw std::runtime_error("Asset's source file contains empty 'type' field.");
             }
 
-            if (json.contains("name"))
+            if (json.contains(AssetData::name))
             {
-                _name = json["name"].get<StringAtom>();
+                _name = json[AssetData::name].get<StringAtom>();
             }
 
             if (_name.isEmpty())

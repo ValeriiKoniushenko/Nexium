@@ -77,7 +77,25 @@ namespace Core
         ECS_COMPONENT_DECL(ECSEditorStaticMeshBundleAdapter, ECSEditorMimeAdapter);
 
     public:
+        struct AssetData
+        {
+            AssetData() = delete;
+
+            static constexpr const char* path = "path";
+            static constexpr const char* mainShader = "mainShader";
+            static constexpr const char* outlineShader = "outlineShader";
+            static constexpr const char* onLoadScale = "onLoadScale";
+            static constexpr const char* assimpPostProcess = "assimpPostProcess";
+        };
+
+    public:
         [[nodiscard]] bool canWorkWith(BaseComponent* component) const override;
+        [[nodiscard]] StringAtom getProcessedAssetType() const override
+        {
+            return StaticMeshBundle::componentType;
+        }
+
+        [[nodiscard]] nlohmann::json packAssetDataFromObject() const override;
 
     protected:
         [[nodiscard]] std::size_t convertShaderNameToIndex(const StringAtom& shaderName) const;

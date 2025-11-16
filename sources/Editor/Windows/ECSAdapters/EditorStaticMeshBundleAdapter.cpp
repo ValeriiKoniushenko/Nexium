@@ -102,28 +102,29 @@ namespace Core
 
     void ECSEditorStaticMeshBundleAdapter::onApplyAssetData(const nlohmann::json& json)
     {
-        if (_modelInput && json.contains("path"))
+        if (_modelInput && json.contains(AssetData::path))
         {
-            _modelInput->input->setInputtedData(json["path"].get<StringAtom>().toStdString());
+            _modelInput->input->setInputtedData(
+                json[AssetData::path].get<StringAtom>().toStdString());
         }
-        if (_mainShaderCombo && json.contains("mainShader"))
+        if (_mainShaderCombo && json.contains(AssetData::mainShader))
         {
-            auto str = json["mainShader"].get<StringAtom>();
+            auto str = json[AssetData::mainShader].get<StringAtom>();
             _mainShaderCombo->input->setCurrentIndex(convertShaderNameToIndex(str));
         }
-        if (_outlineShaderCombo && json.contains("outlineShader"))
+        if (_outlineShaderCombo && json.contains(AssetData::outlineShader))
         {
-            auto str = json["outlineShader"].get<StringAtom>();
+            auto str = json[AssetData::outlineShader].get<StringAtom>();
             _outlineShaderCombo->input->setCurrentIndex(convertShaderNameToIndex(str));
         }
-        if (_onLoadScale && json.contains("onLoadScale"))
+        if (_onLoadScale && json.contains(AssetData::onLoadScale))
         {
-            _onLoadScale->input->setInputtedData(json["onLoadScale"].get<float>());
+            _onLoadScale->input->setInputtedData(json[AssetData::onLoadScale].get<float>());
         }
-        if (_postProcessArray && json.contains("assimpPostProcess"))
+        if (_postProcessArray && json.contains(AssetData::assimpPostProcess))
         {
             _postProcessArray->input->clearData(true);
-            for (auto el : json["assimpPostProcess"])
+            for (auto el : json[AssetData::assimpPostProcess])
             {
                 auto flag = Assimp::aiPostProcessStepsFromString(el.get<StringAtom>());
                 if (flag)
@@ -145,6 +146,26 @@ namespace Core
     bool ECSEditorStaticMeshBundleAdapter::canWorkWith(BaseComponent* component) const
     {
         return dynamic_cast<StaticMeshBundle*>(component) != nullptr;
+    }
+
+    nlohmann::json ECSEditorStaticMeshBundleAdapter::packAssetDataFromObject() const
+    {
+        nlohmann::json json;
+
+        json[AssetData::path] = _modelInput->input->getInputtedData();
+        json[AssetData::mainShader]
+            = convertIndexToShaderName(_mainShaderCombo->input->getCurrentIndex());
+        json[AssetData::outlineShader]
+            = convertIndexToShaderName(_outlineShaderCombo->input->getCurrentIndex());
+        json[AssetData::onLoadScale] = _onLoadScale->input->getInputtedData();
+
+        json[AssetData::assimpPostProcess] = nlohmann::json::array();
+        for (auto&& el : _postProcessArray->input->getData())
+        {
+            json[AssetData::assimpPostProcess].push_back(Assimp::aiPostProcessStepsToString(el));
+        }
+
+        return json;
     }
 
     std::size_t ECSEditorStaticMeshBundleAdapter::convertShaderNameToIndex(

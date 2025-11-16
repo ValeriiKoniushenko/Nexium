@@ -53,6 +53,18 @@ namespace Core
         onDraw(dt);
     }
 
+    bool ECSEditorMimeAdapter::isDirectWorkingMatchWith(const BaseComponent* component) const
+    {
+        if (component) [[likely]]
+        {
+            Assert(component->getComponentType().isStatic());
+            Assert(getProcessedAssetType().isStatic());
+            return component->getComponentType() == getProcessedAssetType();
+        }
+
+        return false;
+    }
+
     void ECSEditorMimeAdapter::makeParentDirty()
     {
         if (auto* parent = getParentAs<NxECSBasedEditorEWC>())
@@ -173,7 +185,53 @@ namespace Core
             return;
         }
 
-        _targetAsset->syncAssetWithMemory();
+        nlohmann::json assetData;
+
+#if defined(DEBUG)
+        int counter = 0;
+        const ECSEditorMimeAdapter* firstAdapter = nullptr;
+        for (auto&& child : _children)
+        {
+            if (const auto* adapter = child->tryCastTo<ECSEditorMimeAdapter>())
+            {
+                if (adapter->isEnabled()
+                    && adapter->isDirectWorkingMatchWith(_targetAsset->getData().get()))
+                {
+                    if (!firstAdapter)
+                    {
+                        firstAdapter = adapter;
+                    }
+                    if (++counter > 1)
+                    {
+                        if (counter == 2)
+                        {
+                            errorLog("First asset's adapter (main): '{}'"_f
+                                     << firstAdapter->getComponentType());
+                        }
+
+                        errorLog(
+                            "More than one adapter is enabled as main one for asset '{}'. Second adapter is: '{}'"_f
+                            << _targetAsset->getLogicPath() << adapter->getComponentType());
+                        Assert(false);
+                    }
+                }
+            }
+        }
+#endif
+
+        for (auto&& child : _children)
+        {
+            if (auto* adapter = child->tryCastTo<ECSEditorMimeAdapter>())
+            {
+                if (adapter->isDirectWorkingMatchWith(_targetAsset->getData().get()))
+                {
+                    assetData = adapter->packAssetDataFromObject();
+                    break;
+                }
+            }
+        }
+
+        _targetAsset->syncAssetWithMemory(assetData);
     }
 
     void NxECSBasedEditorEWC::updateGuiBasedOnAsset()

@@ -69,6 +69,11 @@ namespace Core
         void applyAssetRawData(const nlohmann::json& json);
         void draw(float dt);
         [[nodiscard]] virtual bool canWorkWith(BaseComponent* component) const = 0;
+        [[nodiscard]] bool isDirectWorkingMatchWith(const BaseComponent* component) const;
+
+        [[nodiscard]] virtual StringAtom getProcessedAssetType() const = 0;
+
+        [[nodiscard]] virtual nlohmann::json packAssetDataFromObject() const { return {}; }
 
     protected:
         [[nodiscard]] const char* getPrefix() const override { return "ECSEditorMimeAdapter"; }

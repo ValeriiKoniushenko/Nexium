@@ -40,6 +40,10 @@ namespace Core
 
     public:
         [[nodiscard]] bool canWorkWith(BaseComponent* component) const override;
+        [[nodiscard]] StringAtom getProcessedAssetType() const override
+        {
+            return Actor::componentType;
+        }
 
     protected:
         void onApplyAssetData(const nlohmann::json& json) override;
