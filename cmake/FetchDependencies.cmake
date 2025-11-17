@@ -42,6 +42,10 @@ FetchContent_Declare(Assimp
     GIT_SHALLOW TRUE
     GIT_PROGRESS TRUE
 )
+set(ASSIMP_BUILD_ZLIB OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(Assimp)
 
 
@@ -51,4 +55,5 @@ FetchContent_Declare(Utils
     GIT_SHALLOW TRUE
     GIT_PROGRESS TRUE
 )
+
 FetchContent_MakeAvailable(Utils)
