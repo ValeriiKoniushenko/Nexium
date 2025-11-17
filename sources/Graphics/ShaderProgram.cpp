@@ -24,6 +24,7 @@
 
 #include "ShaderProgram.h"
 
+#include "ModuleInfo.h"
 #include "ShaderProgramMeta.h"
 
 namespace Core
@@ -116,6 +117,11 @@ namespace Core
         _name.clear();
         _vertexShaderId = 0;
         _fragmentShaderId = 0;
+    }
+
+    spdlog::logger* ShaderProgram::getLogger() const
+    {
+        return Graphics::getLogger();
     }
 
     void ShaderProgram::setDataFromMeta(const ShaderProgramMeta& meta)

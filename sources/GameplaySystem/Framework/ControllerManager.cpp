@@ -24,6 +24,13 @@
 
 #include "ControllerManager.h"
 
+#include "ModuleInfo.h"
+
 namespace Core
 {
+    spdlog::logger* ControllerManager::getLogger() const
+    {
+        return Framework::getLogger();
+    }
+
 } // namespace Core

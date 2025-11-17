@@ -27,7 +27,6 @@
 #include "Core/String.h"
 #include "Misc/BaseLog.h"
 #include "Misc/DataStream.h"
-#include "ModuleInfo.h"
 #include "nlohmann/json.hpp"
 
 namespace Core
@@ -57,10 +56,7 @@ namespace Core
         void attachSourceFile(const std::filesystem::path& path);
         void writeToFile();
 
-        [[nodiscard]] spdlog::logger* getLogger() const override
-        {
-            return AssetsManager::getLogger();
-        }
+        [[nodiscard]] spdlog::logger* getLogger() const override;
 
     protected:
         virtual void onLoadRequest() = 0;

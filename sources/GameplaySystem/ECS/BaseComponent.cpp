@@ -26,6 +26,7 @@
 
 #include "Editor/Gizmo.h"
 #include "Editor/Windows/NxECSBasedEditor.h"
+#include "ModuleInfo.h"
 
 namespace
 {
@@ -80,6 +81,11 @@ namespace Core
         return true;
     }
 
+    spdlog::logger* GlobalComponentFactory::getLogger() const
+    {
+        return Ecs::getLogger();
+    }
+
     AbstractComponent::AbstractComponent(AbstractComponent&& other) noexcept
     {
         *this = std::move(other);
@@ -113,6 +119,11 @@ namespace Core
 
         stream.field("isEnabled", _isEnabled);
         stream.field("noTick", _noTick);
+    }
+
+    spdlog::logger* AbstractComponent::getLogger() const
+    {
+        return Ecs::getLogger();
     }
 
     BaseComponent* BaseComponent::attachChild(const BaseComponent::Ptr& child)

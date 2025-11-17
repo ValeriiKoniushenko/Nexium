@@ -24,13 +24,15 @@
 
 #pragma once
 
-#include "Core/Enum.h"
 #include "Core/String.h"
-#include "spdlog/sinks/stdout_color_sinks.h"
-#include "spdlog/spdlog.h"
+#include "spdlog/common.h"
 
 #include <queue>
-#include <shared_mutex>
+
+namespace spdlog
+{
+    class logger;
+}
 
 namespace Core
 {
@@ -140,12 +142,9 @@ namespace Core
     class GlobalLog : public BaseLog
     {
     public:
-        [[nodiscard]] spdlog::logger* getLogger() const final
-        {
-            static std::shared_ptr<spdlog::logger> logger = spdlog::stdout_color_mt("Global");
-            return logger.get();
-        }
+        [[nodiscard]] spdlog::logger* getLogger() const final;
     };
 
     extern GlobalLog globalLog;
+
 } // namespace Core

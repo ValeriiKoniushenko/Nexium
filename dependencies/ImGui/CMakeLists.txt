@@ -22,5 +22,3 @@ target_link_libraries(${TARGET_NAME} PUBLIC
 target_compile_definitions(${TARGET_NAME} PUBLIC IMGUI_DEBUG_PARANOID)
 
 target_include_directories(${TARGET_NAME} PUBLIC ../)
-
-CoreAddCompileOptionsTo(${TARGET_NAME})

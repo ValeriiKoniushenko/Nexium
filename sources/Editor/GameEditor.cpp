@@ -38,6 +38,7 @@
 #include "ImGui/backends/imgui_impl_glfw.h"
 #include "ImGui/backends/imgui_impl_opengl3.h"
 #include "Misc/IconsFontAwesome.h"
+#include "ModuleInfo.h"
 #include "Windows/ECSAdapters/BaseComponentAdapter.h"
 #include "Windows/ECSAdapters/EditorStaticMeshBundleAdapter.h"
 #include "Windows/ImageViewer.h"
@@ -140,6 +141,11 @@ namespace Core
             ImGui_ImplOpenGL3_Shutdown();
             ImGui_ImplGlfw_Shutdown();
         }
+    }
+
+    spdlog::logger* GameEditor::getLogger() const
+    {
+        return Editor::getLogger();
     }
 
     void GameEditor::writeToCache()

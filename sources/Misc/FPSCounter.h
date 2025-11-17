@@ -24,7 +24,8 @@
 
 #pragma once
 
-#include <chrono>
+#include <bits/chrono.h>
+#include <stdint.h>
 
 namespace Core
 {

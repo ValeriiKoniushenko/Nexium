@@ -24,6 +24,12 @@
 
 #include "WorldObjectManager.h"
 
+#include "ModuleInfo.h"
+
 namespace Core
 {
+    spdlog::logger* WorldObjectManager::getLogger() const
+    {
+        return Framework::getLogger();
+    }
 } // namespace Core

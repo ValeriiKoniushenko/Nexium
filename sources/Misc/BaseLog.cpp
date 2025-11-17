@@ -24,6 +24,11 @@
 
 #include "BaseLog.h"
 
+#include "spdlog/sinks/stdout_color_sinks.h"
+#include "spdlog/spdlog.h"
+
+#include <shared_mutex>
+
 namespace Core
 {
     GlobalLog globalLog = {};
@@ -42,6 +47,12 @@ namespace Core
 
         LogQueue::instance().addLog(std::move(logLine));
         Assert(l != level::critical, str);
+    }
+
+    spdlog::logger* GlobalLog::getLogger() const
+    {
+        static std::shared_ptr<spdlog::logger> logger = spdlog::stdout_color_mt("Global");
+        return logger.get();
     }
 
     StringAtom LogQueue::LogLine::toString() const

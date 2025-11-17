@@ -24,6 +24,12 @@
 
 #include "PlayerState.h"
 
+#include "ModuleInfo.h"
+
 namespace Core
 {
+    spdlog::logger* PlayerState::getLogger() const
+    {
+        return Framework::getLogger();
+    }
 } // namespace Core

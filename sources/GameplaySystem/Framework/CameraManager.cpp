@@ -24,6 +24,14 @@
 
 #include "CameraManager.h"
 
+#include "ModuleInfo.h"
+
 namespace Core
 {
+
+    spdlog::logger* CameraManager::getLogger() const
+    {
+        return Framework::getLogger();
+    }
+
 } // namespace Core

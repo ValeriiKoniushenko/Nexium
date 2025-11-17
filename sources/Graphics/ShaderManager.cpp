@@ -24,6 +24,8 @@
 
 #include "ShaderManager.h"
 
+#include "ModuleInfo.h"
+
 namespace Core
 {
     void ShaderManager::loadShaders(const std::filesystem::path& inputPath)
@@ -138,6 +140,11 @@ namespace Core
     {
         const std::size_t count = _shaderMetas.size() - _failedShaders.size();
         return std::max<std::size_t>(0, count);
+    }
+
+    spdlog::logger* ShaderManager::getLogger() const
+    {
+        return Graphics::getLogger();
     }
 
     std::filesystem::path ShaderManager::getPathToShaderBasedOn(

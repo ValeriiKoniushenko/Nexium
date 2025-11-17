@@ -31,6 +31,7 @@
 #include "Editor/Windows/NxTextureEditor.h"
 #include "Editor/Windows/TextEditor.h"
 #include "GameplaySystem/Framework/GameInstance.h"
+#include "ModuleInfo.h"
 
 #include <array>
 #include <memory>
@@ -167,6 +168,11 @@ namespace Core
     NXSkybox AssetsManager::getSkybox(const StringAtom& logicPath)
     {
         return getAssetOf<NXSkybox>(logicPath, _skyboxes);
+    }
+
+    spdlog::logger* AssetsManager::getLogger() const
+    {
+        return ::AssetsManager::getLogger();
     }
 
     void AssetsManager::unloadAllResources()

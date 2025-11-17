@@ -25,6 +25,7 @@
 #include "Window.h"
 
 #include "ImGui/imgui.h"
+#include "ModuleInfo.h"
 
 using namespace Core;
 
@@ -251,6 +252,11 @@ namespace Core
                     gDragDrop._startPos = Mouse::GetPosition();
                 }
             });
+    }
+
+    spdlog::logger* Window::getLogger() const
+    {
+        return Graphics::getLogger();
     }
 
     void Window::ioFieldsUpdate(DataStream& out)

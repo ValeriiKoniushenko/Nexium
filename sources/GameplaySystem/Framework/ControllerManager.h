@@ -25,14 +25,18 @@
 #pragma once
 
 #include "Misc/BaseLog.h"
-#include "ModuleInfo.h"
 
 namespace Core
 {
-    class ControllerManager : public BaseLog, public Utils::NotCopyableAndNotMoveable
+    class ControllerManager : public BaseLog
     {
     public:
-        [[nodiscard]] spdlog::logger* getLogger() const override { return Framework::getLogger(); }
+        ControllerManager() = default;
+        ~ControllerManager() override = default;
+        ControllerManager(const ControllerManager&) = delete;
+        ControllerManager(ControllerManager&&) noexcept = delete;
+
+        [[nodiscard]] spdlog::logger* getLogger() const override;
         [[nodiscard]] const char* getPrefix() const override { return "ControllerManager"; }
     };
 } // namespace Core

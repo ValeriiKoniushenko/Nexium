@@ -24,6 +24,8 @@
 
 #include "World.h"
 
+#include "ModuleInfo.h"
+
 namespace Core
 {
 
@@ -47,6 +49,11 @@ namespace Core
         stream.field("specularStrength", specularStrength);
         stream.field("specularPow", specularPow);
         stream.field("sunDirection", sunDirection);
+    }
+
+    spdlog::logger* World::getLogger() const
+    {
+        return Framework::getLogger();
     }
 
     std::filesystem::path World::getCacheDir() const

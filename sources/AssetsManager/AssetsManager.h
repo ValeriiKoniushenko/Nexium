@@ -110,10 +110,7 @@ namespace Core
         [[nodiscard]] NXTexture getTexture(const StringAtom& logicPath);
         [[nodiscard]] NXSkybox getSkybox(const StringAtom& logicPath);
 
-        [[nodiscard]] spdlog::logger* getLogger() const override
-        {
-            return ::AssetsManager::getLogger();
-        }
+        [[nodiscard]] spdlog::logger* getLogger() const override;
 
         void unloadAllResources();
         void registerNewAssetPath(std::filesystem::path path);

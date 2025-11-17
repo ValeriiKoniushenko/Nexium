@@ -32,8 +32,10 @@
 #include "Graphics/ShaderManager.h"
 #include "Graphics/Window.h"
 #include "Misc/FPSCounter.h"
+#include "ModuleInfo.h"
 #include "Scene/Spectator.h"
 #include "assimp/Importer.hpp"
+#include "spdlog/spdlog.h"
 
 std::unique_ptr<Core::GameInstance> gGameInstance = nullptr;
 
@@ -57,6 +59,11 @@ namespace Core
     AssetsManager& GetAssetsManager()
     {
         return gGameInstance->assets;
+    }
+
+    spdlog::logger* GameInstance::getLogger() const
+    {
+        return Framework::getLogger();
     }
 
     void GameInstance::initialize()

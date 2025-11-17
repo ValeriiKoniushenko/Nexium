@@ -24,6 +24,12 @@
 
 #include "UserInterface.h"
 
+#include "ModuleInfo.h"
+
 namespace Core
 {
+    spdlog::logger* UserInterface::getLogger() const
+    {
+        return Framework::getLogger();
+    }
 } // namespace Core

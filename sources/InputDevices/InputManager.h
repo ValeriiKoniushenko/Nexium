@@ -25,6 +25,7 @@
 #pragma once
 
 #include "InputAction.h"
+#include "Misc/BaseLog.h"
 #include "Misc/DataStream.h"
 #include "ModuleInfo.h"
 

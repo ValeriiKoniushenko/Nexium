@@ -29,7 +29,6 @@
 #include "LevelData.h"
 #include "Misc/BaseLog.h"
 #include "Misc/DataStream.h"
-#include "ModuleInfo.h"
 #include "PlayerState.h"
 
 namespace Core
@@ -51,7 +50,7 @@ namespace Core
     class World : public BaseLog, public IDataStreamBridge
     {
     public:
-        [[nodiscard]] spdlog::logger* getLogger() const override { return Framework::getLogger(); }
+        [[nodiscard]] spdlog::logger* getLogger() const override;
         [[nodiscard]] const char* getPrefix() const override { return "world"; }
 
     public:

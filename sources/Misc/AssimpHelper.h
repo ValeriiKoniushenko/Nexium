@@ -27,6 +27,9 @@
 #include "Core/String.h"
 #include "assimp/postprocess.h"
 
+#include <optional>
+#include <vector>
+
 namespace Assimp
 {
 

@@ -25,7 +25,10 @@
 #pragma once
 
 #include "Core/String.h"
+#include "Misc/BaseLog.h"
 #include "ShaderProgram.h"
+
+#include <unordered_set>
 
 namespace Core
 {
@@ -91,7 +94,7 @@ namespace Core
 
         [[nodiscard]] const StringAtom& getShaderName() const { return _shaderName; }
 
-        [[nodiscard]] spdlog::logger* getLogger() const override { return Graphics::getLogger(); }
+        [[nodiscard]] spdlog::logger* getLogger() const override;
 
         [[nodiscard]] const char* getPrefix() const override { return "ShaderProgramMeta"; }
 

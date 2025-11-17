@@ -27,7 +27,6 @@
 #include "Gizmo.h"
 #include "InputDevices/InputManager.h"
 #include "Misc/BaseLog.h"
-#include "ModuleInfo.h"
 #include "SlowObjectPicker.h"
 #include "Utils/CopyableAndMoveableBehaviour.h"
 #include "Windows/BaseWindow.h"
@@ -143,7 +142,7 @@ namespace Core
         void setIsRunSimulation(bool value) noexcept { _isRunSimulation = value; }
         void toggleSimulation() noexcept { _isRunSimulation = !_isRunSimulation; }
 
-        [[nodiscard]] spdlog::logger* getLogger() const override { return Editor::getLogger(); }
+        [[nodiscard]] spdlog::logger* getLogger() const override;
 
         void writeToCache();
         void readFromCache();

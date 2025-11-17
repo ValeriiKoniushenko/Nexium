@@ -25,8 +25,9 @@
 #include "BaseAsset.h"
 
 #include "../Misc/Configs.h"
+#include "ModuleInfo.h"
+#include "Utils/Functions.h"
 
-#include <Utils/Functions.h>
 #include <fstream>
 
 namespace Core
@@ -115,6 +116,11 @@ namespace Core
             return;
         }
         out.write(data.c_str(), static_cast<std::streamsize>(data.length()));
+    }
+
+    spdlog::logger* BaseAsset::getLogger() const
+    {
+        return AssetsManager::getLogger();
     }
 
 } // namespace Core

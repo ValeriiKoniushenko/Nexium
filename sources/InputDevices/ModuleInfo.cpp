@@ -22,14 +22,18 @@
  * SOFTWARE.
  */
 
-#include "LevelData.h"
-
 #include "ModuleInfo.h"
 
-namespace Core
+#include "Misc/BaseLog.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
+
+namespace InputDevices
 {
-    spdlog::logger* LevelData::getLogger() const
+
+    spdlog::logger* getLogger()
     {
-        return Framework::getLogger();
+        static auto logger = spdlog::stdout_color_mt("InputDevices");
+        return logger.get();
     }
-} // namespace Core
+
+} // namespace InputDevices

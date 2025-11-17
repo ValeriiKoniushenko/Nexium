@@ -24,13 +24,14 @@
 
 #pragma once
 
-#include "Misc/BaseLog.h"
+namespace spdlog
+{
+    class logger;
+}
 
 namespace Editor
 {
-    [[nodiscard]] inline spdlog::logger* getLogger()
-    {
-        static std::shared_ptr<spdlog::logger> logger = spdlog::stdout_color_mt("Editor");
-        return logger.get();
-    }
+
+    [[nodiscard]] spdlog::logger* getLogger();
+
 } // namespace Editor

@@ -25,10 +25,7 @@
 #pragma once
 
 #include "Core/IntrusivePtr.h"
-#include "Core/String.h"
 #include "GameplaySystem/ECS/BaseComponent.h"
-#include "Misc/BaseLog.h"
-#include "ModuleInfo.h"
 
 #include <filesystem>
 
@@ -73,10 +70,7 @@ namespace Core
         ECSAsset(ECSAsset&&) = delete;
         ECSAsset& operator=(ECSAsset&&) = delete;
 
-        [[nodiscard]] spdlog::logger* getLogger() const override
-        {
-            return ::AssetsManager::getLogger();
-        }
+        [[nodiscard]] spdlog::logger* getLogger() const override;
 
         void connectSourceFile(const std::filesystem::path& src);
 

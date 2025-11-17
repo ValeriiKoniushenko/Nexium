@@ -27,17 +27,14 @@
 #include "Core/Enum.h"
 #include "Core/Size.h"
 #include "Misc/BaseLog.h"
-#include "ModuleInfo.h"
 #include "OpenGL.h"
-#include "Utils/CopyableAndMoveableBehaviour.h"
-#include "glm/glm.hpp"
 
 #include <filesystem>
 #include <string>
 
 namespace Core
 {
-    class Image : public Utils::NotCopyableButMoveable, public BaseLog
+    class Image : public BaseLog
     {
     public:
         // The next values were taken from the stb_image.h documentation.
@@ -53,12 +50,13 @@ namespace Core
 
     public:
         explicit Image(const std::filesystem::path& path = "");
+        ~Image() override;
 
         Image(Image&& obj) noexcept;
-
         Image& operator=(Image&& obj) noexcept;
 
-        ~Image() override;
+        Image(const Image& obj) = delete;
+        Image& operator=(const Image& obj) = delete;
 
         [[nodiscard]] ISize2 getSize() const noexcept { return _size; }
         [[nodiscard]] Channel getChannel() const noexcept { return _channel; }
@@ -76,7 +74,7 @@ namespace Core
         [[nodiscard]] bool isEmpty() const noexcept { return _data == nullptr; }
         [[nodiscard]] StringAtom getName() const noexcept { return _name; }
 
-        [[nodiscard]] spdlog::logger* getLogger() const override { return Graphics::getLogger(); }
+        [[nodiscard]] spdlog::logger* getLogger() const override;
         [[nodiscard]] const char* getPrefix() const override { return "Image"; }
 
     private:

@@ -30,8 +30,8 @@
 #include "Core/Size.h"
 #include "InputDevices/Keyboard.h"
 #include "InputDevices/Mouse.h"
+#include "Misc/BaseLog.h"
 #include "Misc/DataStream.h"
-#include "ModuleInfo.h"
 #include "OpenGL.h"
 
 #include <filesystem>
@@ -183,7 +183,7 @@ namespace Core
          */
         Delegate<void(ISize2)>::Ptr onResize = Delegate<void(ISize2)>::Create();
 
-        [[nodiscard]] spdlog::logger* getLogger() const override { return Graphics::getLogger(); }
+        [[nodiscard]] spdlog::logger* getLogger() const override;
         [[nodiscard]] const char* getPrefix() const override { return "Window"; }
 
         void ioFieldsUpdate(DataStream& out) override;

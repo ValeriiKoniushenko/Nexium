@@ -31,7 +31,6 @@
 #include "Graphics/RenderTargetToTexture.h"
 #include "Graphics/ShaderManager.h"
 #include "Graphics/Window.h"
-#include "ModuleInfo.h"
 #include "Scene/Scene.h"
 #include "UserInterface.h"
 #include "World.h"
@@ -48,7 +47,7 @@ namespace Core
         };
 
     public:
-        [[nodiscard]] spdlog::logger* getLogger() const override { return Framework::getLogger(); }
+        [[nodiscard]] spdlog::logger* getLogger() const override;
         [[nodiscard]] const char* getPrefix() const override { return "GameInstance"; }
 
         void initialize();

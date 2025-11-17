@@ -25,13 +25,11 @@
 #pragma once
 
 #include "Core/Color.h"
-#include "ModuleInfo.h"
+#include "Misc/BaseLog.h"
 #include "OpenGL.h"
 
 #include <glm/fwd.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <unordered_set>
-
 namespace Core
 {
     class ShaderProgramMeta;
@@ -116,7 +114,7 @@ namespace Core
         void use() const noexcept { glUseProgram(_shaderProgramId); }
 #endif
 
-        [[nodiscard]] spdlog::logger* getLogger() const override { return Graphics::getLogger(); }
+        [[nodiscard]] spdlog::logger* getLogger() const override;
 
         [[nodiscard]] const char* getPrefix() const override { return "ShaderProgram"; }
 

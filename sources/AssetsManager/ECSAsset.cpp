@@ -24,6 +24,8 @@
 
 #include "ECSAsset.h"
 
+#include "ModuleInfo.h"
+
 #include <Utils/Functions.h>
 #include <nlohmann/json.hpp>
 
@@ -33,6 +35,11 @@ namespace Core
     ECSAsset::~ECSAsset()
     {
         localClear();
+    }
+
+    spdlog::logger* ECSAsset::getLogger() const
+    {
+        return ::AssetsManager::getLogger();
     }
 
     void ECSAsset::connectSourceFile(const std::filesystem::path& src)

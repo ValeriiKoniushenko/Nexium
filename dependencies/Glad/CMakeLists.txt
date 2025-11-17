@@ -9,5 +9,3 @@ add_library(${TARGET_NAME} STATIC ${SOURCES})
 add_library(Core::${MAIN_NAME} ALIAS ${TARGET_NAME})
 
 target_include_directories(${TARGET_NAME} PUBLIC include)
-
-CoreAddCompileOptionsTo(${TARGET_NAME})

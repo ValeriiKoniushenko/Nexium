@@ -26,7 +26,6 @@
 
 #include "Misc/BaseLog.h"
 #include "Misc/DataStream.h"
-#include "ModuleInfo.h"
 
 #include <queue>
 #include <stack>
@@ -316,7 +315,7 @@ namespace Core
          */
         bool registerNewType(const StringAtom& type, std::function<BaseComponent*()> callback);
 
-        [[nodiscard]] spdlog::logger* getLogger() const final { return Ecs::getLogger(); }
+        [[nodiscard]] spdlog::logger* getLogger() const final;
 
     private:
         std::unordered_map<StringAtom, std::function<BaseComponent*()>> _map;
@@ -365,7 +364,7 @@ namespace Core
 
         void ioFieldsUpdate(DataStream& out) override;
 
-        [[nodiscard]] spdlog::logger* getLogger() const final { return Ecs::getLogger(); }
+        [[nodiscard]] spdlog::logger* getLogger() const final;
 
         /** Reset the component to an uninitialized state. */
         virtual void clear() {}

@@ -24,7 +24,6 @@
 
 #pragma once
 
-#include "ModuleInfo.h"
 #include "ShaderProgramMeta.h"
 
 #include <unordered_set>
@@ -80,7 +79,7 @@ namespace Core
             return _inputPath;
         }
 
-        [[nodiscard]] spdlog::logger* getLogger() const override { return Graphics::getLogger(); }
+        [[nodiscard]] spdlog::logger* getLogger() const override;
         [[nodiscard]] const char* getPrefix() const override { return "ShaderManager"; }
 
     private:

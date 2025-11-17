@@ -25,14 +25,18 @@
 #pragma once
 
 #include "Misc/BaseLog.h"
-#include "ModuleInfo.h"
 
 namespace Core
 {
-    class GameInstanceSubsystem : public BaseLog, public Utils::NotCopyableAndNotMoveable
+    class GameInstanceSubsystem : public BaseLog
     {
     public:
-        [[nodiscard]] spdlog::logger* getLogger() const override { return Framework::getLogger(); }
+        GameInstanceSubsystem() = default;
+        ~GameInstanceSubsystem() override = default;
+        GameInstanceSubsystem(const GameInstanceSubsystem&) = delete;
+        GameInstanceSubsystem(GameInstanceSubsystem&&) noexcept = delete;
+
+        [[nodiscard]] spdlog::logger* getLogger() const override;
         [[nodiscard]] const char* getPrefix() const override { return "GameInstanceSubsystem"; }
     };
 } // namespace Core

@@ -24,13 +24,14 @@
 
 #pragma once
 
-#include "Misc/BaseLog.h"
+namespace spdlog
+{
+    class logger;
+}
 
 namespace AssetsManager
 {
-    [[nodiscard]] inline spdlog::logger* getLogger()
-    {
-        static std::shared_ptr<spdlog::logger> logger = spdlog::stdout_color_mt("AssetsManager");
-        return logger.get();
-    }
+
+    [[nodiscard]] spdlog::logger* getLogger();
+
 } // namespace AssetsManager

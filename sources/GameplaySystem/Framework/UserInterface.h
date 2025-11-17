@@ -25,14 +25,13 @@
 #pragma once
 
 #include "Misc/BaseLog.h"
-#include "ModuleInfo.h"
 
 namespace Core
 {
-    class UserInterface : public BaseLog, public Utils::NotCopyableAndNotMoveable
+    class UserInterface : public BaseLog
     {
     public:
-        [[nodiscard]] spdlog::logger* getLogger() const override { return Framework::getLogger(); }
+        [[nodiscard]] spdlog::logger* getLogger() const override;
         [[nodiscard]] const char* getPrefix() const override { return "UserInterface"; }
     };
 } // namespace Core

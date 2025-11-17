@@ -28,15 +28,14 @@
 #include "CameraManager.h"
 #include "ControllerManager.h"
 #include "Misc/BaseLog.h"
-#include "ModuleInfo.h"
 #include "WorldObjectManager.h"
 
 namespace Core
 {
-    class LevelData : public BaseLog, public Utils::NotCopyableAndNotMoveable
+    class LevelData : public BaseLog
     {
     public:
-        [[nodiscard]] spdlog::logger* getLogger() const override { return Framework::getLogger(); }
+        [[nodiscard]] spdlog::logger* getLogger() const override;
         [[nodiscard]] const char* getPrefix() const override { return "LevelData"; }
 
     public:

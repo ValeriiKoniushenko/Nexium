@@ -24,6 +24,12 @@
 
 #include "ActorManager.h"
 
+#include "ModuleInfo.h"
+
 namespace Core
 {
+    spdlog::logger* ActorManager::getLogger() const
+    {
+        return Framework::getLogger();
+    }
 } // namespace Core

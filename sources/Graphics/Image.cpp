@@ -60,6 +60,11 @@ namespace Core
         return *this;
     }
 
+    spdlog::logger* Image::getLogger() const
+    {
+        return Graphics::getLogger();
+    }
+
     void Image::init()
     {
         _data = nullptr;

@@ -25,14 +25,18 @@
 #pragma once
 
 #include "Misc/BaseLog.h"
-#include "ModuleInfo.h"
 
 namespace Core
 {
-    class GameState : public BaseLog, public Utils::NotCopyableAndNotMoveable
+    class GameState : public BaseLog
     {
     public:
-        [[nodiscard]] spdlog::logger* getLogger() const override { return Framework::getLogger(); }
+        GameState() = default;
+        ~GameState() override = default;
+        GameState(const GameState&) = delete;
+        GameState(GameState&&) noexcept = delete;
+
+        [[nodiscard]] spdlog::logger* getLogger() const override;
         [[nodiscard]] const char* getPrefix() const override { return "GameState"; }
     };
 } // namespace Core

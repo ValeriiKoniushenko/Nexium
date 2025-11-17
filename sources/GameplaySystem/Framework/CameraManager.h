@@ -25,14 +25,18 @@
 #pragma once
 
 #include "Misc/BaseLog.h"
-#include "ModuleInfo.h"
 
 namespace Core
 {
-    class CameraManager : public BaseLog, public Utils::NotCopyableAndNotMoveable
+    class CameraManager : public BaseLog
     {
     public:
-        [[nodiscard]] spdlog::logger* getLogger() const override { return Framework::getLogger(); }
+        CameraManager() = default;
+        ~CameraManager() override = default;
+        CameraManager(const CameraManager&) = delete;
+        CameraManager(CameraManager&&) noexcept = delete;
+
+        [[nodiscard]] spdlog::logger* getLogger() const override;
         [[nodiscard]] const char* getPrefix() const override { return "CameraManager"; }
     };
 } // namespace Core
