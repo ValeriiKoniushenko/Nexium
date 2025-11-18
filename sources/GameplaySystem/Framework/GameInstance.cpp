@@ -27,6 +27,7 @@
 #include "Camera/Camera.h"
 #include "Core/Timer.h"
 #include "Editor/Windows/GameViewport.h"
+#include "Editor/Windows/ModalECSSearchPopUp.h"
 #include "Editor/Windows/NxECSBasedEditor.h"
 #include "Graphics/Image.h"
 #include "Graphics/ShaderManager.h"

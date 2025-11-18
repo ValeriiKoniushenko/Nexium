@@ -191,6 +191,18 @@ namespace Core
         return (*json)[_extraNestingKey];
     }
 
+    bool IDataUpdateBridge::Rules::checkField(const StringAtom& fieldName,
+                                              uint32_t flag) const noexcept
+    {
+        const auto it = field.find(fieldName);
+        if (it == field.end())
+        {
+            return false;
+        }
+
+        return (it->second & flag) != 0u;
+    }
+
     bool IDataStreamBridge::hasCache() const
     {
         return fs::exists(getTargetCachePath());

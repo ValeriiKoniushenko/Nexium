@@ -123,6 +123,7 @@ namespace Core
                 if (ImGui::BeginChild("Tree", glm::vec2(0, 100.f),
                                       ImGuiChildFlags_Border | ImGuiChildFlags_ResizeY))
                 {
+                    treeContextMenuBehavior();
                     onDrawTree();
                 }
                 ImGui::EndChild();
@@ -154,6 +155,17 @@ namespace Core
             {
                 save();
             }
+        }
+    }
+
+    void NxEditorBaseEditorEWC::treeContextMenuBehavior()
+    {
+        if (ImGui::BeginPopupContextWindow("ExplorerContextMenu",
+                                           ImGuiPopupFlags_MouseButtonRight
+                                               | ImGuiPopupFlags_NoOpenOverItems))
+        {
+            onTreeContextMenuBehavior();
+            ImGui::EndPopup();
         }
     }
 

@@ -69,6 +69,7 @@ namespace Core::Gui
         }
 
         [[nodiscard]] std::size_t getCurrentIndex() const noexcept { return _currentItem; }
+        [[nodiscard]] StringAtom getCurrentData() const { return _items.at(_currentItem); }
 
     public: // Delegates
         Delegate<void(StringAtom)>::Ptr onSelect = Delegate<void(StringAtom)>::Create();
@@ -77,7 +78,7 @@ namespace Core::Gui
         void onDraw() override;
 
     protected:
-        std::vector<StringAtom> _items = { "Hello", "World", "How are you my man?????", "Hahha" };
+        std::vector<StringAtom> _items;
         std::size_t _currentItem = 0;
     };
 

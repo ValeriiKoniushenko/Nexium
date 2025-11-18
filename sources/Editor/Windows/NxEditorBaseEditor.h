@@ -67,6 +67,8 @@ namespace Core
         void onInitialize() override;
         void onDraw() final;
         virtual void onDrawTree() {}
+        void treeContextMenuBehavior();
+        virtual void onTreeContextMenuBehavior() {}
         virtual void onDrawProperties() {}
         virtual void onDrawPreview() {}
         void drawMenuBar();

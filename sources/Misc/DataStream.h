@@ -37,10 +37,36 @@ namespace Core
 
     struct IDataUpdateBridge
     {
+        enum Rule : uint32_t
+        {
+            None = 0,
+            NoRead = 1 << 1,
+            NoWrite = 1 << 2,
+            NoReadAndWrite = NoRead | NoWrite,
+            // WarningIfCantRead = 1 << 3,
+            // ErrorIfCantRead = 1 << 4,
+            // CriticalErrorIfCantRead = 1 << 5
+        };
+
+        /**
+         * Rules for streaming of an object. For the whole object and for
+         * every field (if it's necessary).
+         */
+        struct Rules final
+        {
+            uint32_t main = Rule::None;
+            std::unordered_map<StringAtom, uint32_t> field;
+
+            [[nodiscard]] bool checkField(const StringAtom& fieldName,
+                                          uint32_t flag) const noexcept;
+        };
+
         virtual ~IDataUpdateBridge() = default;
 
         virtual void ioFieldsUpdate(DataStream& out) = 0;
         [[nodiscard]] virtual StringAtom getCacheHash() const = 0;
+
+        [[nodiscard]] virtual Rules* getRules() const noexcept { return nullptr; }
     };
 
     struct IDataStreamBridge : public IDataUpdateBridge

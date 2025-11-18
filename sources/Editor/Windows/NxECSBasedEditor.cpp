@@ -28,6 +28,7 @@
 #include "ECSAdapters/EditorActorAdapter.h"
 #include "ECSAdapters/EditorGraphicsComponentDataAdapter.h"
 #include "ECSAdapters/EditorStaticMeshBundleAdapter.h"
+#include "ModalECSSearchPopUp.h"
 
 using namespace Core::Gui;
 
@@ -176,6 +177,21 @@ namespace Core
 
     void NxECSBasedEditorEWC::onDiscardChanges()
     {
+    }
+
+    void NxECSBasedEditorEWC::onTreeContextMenuBehavior()
+    {
+        NxEditorBaseEditorEWC::onTreeContextMenuBehavior();
+
+        if (ImGui::MenuItem(ICON_FA_PLUS " Add new component"))
+        {
+            ModalECSSearchPopUpEWC::Open("Choose new component",
+                                         [this](BaseComponent::Ptr newComp)
+                                         {
+                                             _targetAsset->getData()->attachChild(newComp);
+                                             updateGuiBasedOnAsset();
+                                         });
+        }
     }
 
     void NxECSBasedEditorEWC::onSave()

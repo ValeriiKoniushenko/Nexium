@@ -39,8 +39,10 @@ namespace Core::Gui
 
     public:
         void setTextColor(const Color4& value);
-
         void resetTextColor();
+
+        void setBorderColor(const Color4& value);
+        void resetBorderColor();
 
         [[nodiscard]] std::optional<Color4> getTextColor() const;
 
@@ -58,6 +60,7 @@ namespace Core::Gui
 
     protected:
         std::optional<Color4> _textColor;
+        std::optional<Color4> _borderColor;
         glm::vec2 _size = {};
     };
 

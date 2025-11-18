@@ -86,6 +86,17 @@ namespace Core
         return Ecs::getLogger();
     }
 
+    std::vector<StringAtom> GlobalComponentFactory::getRegisteredTypesAsVector() const
+    {
+        std::vector<StringAtom> out;
+        out.reserve(_map.size());
+        for (const auto& [type, _] : _map)
+        {
+            out.emplace_back(type);
+        }
+        return out;
+    }
+
     AbstractComponent::AbstractComponent(AbstractComponent&& other) noexcept
     {
         *this = std::move(other);

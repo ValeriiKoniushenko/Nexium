@@ -40,6 +40,16 @@ namespace Core::Gui
         _textColor.reset();
     }
 
+    void BaseInput::setBorderColor(const Color4& value)
+    {
+        _borderColor = value;
+    }
+
+    void BaseInput::resetBorderColor()
+    {
+        _borderColor.reset();
+    }
+
     std::optional<Color4> BaseInput::getTextColor() const
     {
         return _textColor;
@@ -108,6 +118,7 @@ namespace Core::Gui
         int pushedStyles = 0;
 
         pushedStyles += ImGui::OptPushStyleColor(ImGuiCol_Text, _textColor);
+        pushedStyles += ImGui::OptPushStyleColor(ImGuiCol_Border, _borderColor);
 
         const int flags = ImGuiInputTextFlags_CallbackResize | _flags;
         const bool isRO = isReadOnly();

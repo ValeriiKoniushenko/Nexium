@@ -317,6 +317,8 @@ namespace Core
 
         [[nodiscard]] spdlog::logger* getLogger() const final;
 
+        [[nodiscard]] std::vector<StringAtom> getRegisteredTypesAsVector() const;
+
     private:
         std::unordered_map<StringAtom, std::function<BaseComponent*()>> _map;
     };
