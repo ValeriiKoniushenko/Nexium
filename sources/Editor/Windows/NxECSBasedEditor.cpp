@@ -116,8 +116,8 @@ namespace Core
         setEnablePreview(true);
         setEnableTree(true);
 
-        constexpr float labelWidth = 120.f;
         // -+- -+- -+- -+- -+- -+- -+- -+- -+- -+- -+-
+        constexpr float labelWidth = 120.f;
         _headerLayout.setPaddings(glm::vec4{ ImGui::GetStyle().ItemSpacing.x });
 
         _logicalPath = _headerLayout.addChildComponent<LabelRow<TextInput>>("ID", labelWidth);
@@ -127,6 +127,13 @@ namespace Core
         _assetType = _headerLayout.addChildComponent<LabelRow<TextInput>>("Type", labelWidth);
         _assetType->input->setFlex(Flex::FlexWidth);
         _assetType->input->setReadOnly(true);
+
+        // -+- -+- -+- -+- -+- -+- -+- -+- -+- -+- -+-
+        auto deleteKey
+            = _keyboardManager.getOrCreate("Delete selected component", Keyboard::Key_Delete);
+        deleteKey->setIsRepeatable(false);
+        _subscriptionPool << deleteKey->onPress->subscribeAndGetID(
+            [&](auto) { removeCurrentComponent(_targetComponent); });
     }
 
     void NxECSBasedEditorEWC::onDrawProperties()
@@ -294,6 +301,12 @@ namespace Core
             }
         }
     }
+    void NxECSBasedEditorEWC::onUpdate()
+    {
+        NxEditorBaseEditorEWC::onUpdate();
+
+        _keyboardManager.update();
+    }
 
     bool NxECSBasedEditorEWC::onOpenFromPath(const std::filesystem::path& path)
     {
@@ -368,11 +381,45 @@ namespace Core
             }
         }
 
+        // Controlling over the chosen node
+        bool shouldInvalidate = false;
+        if (!shouldInvalidate && comp->hasParent() && ImGui::IsItemClicked(ImGuiMouseButton_Right))
+        {
+            ImGui::OpenPopup("ECSBasedEditorTreeContextMenu");
+        }
+
+        if (ImGui::BeginPopup("ECSBasedEditorTreeContextMenu"))
+        {
+            if (ImGui::MenuItem(ICON_FA_PLUS " Add new component"))
+            {
+                ModalECSSearchPopUpEWC::Open("Choose new component",
+                                             [this](BaseComponent::Ptr newComp)
+                                             {
+                                                 _targetComponent->attachChild(newComp);
+                                                 updateGuiBasedOnAsset();
+                                             });
+            }
+
+            if (comp->hasParent() && ImGui::MenuItem(ICON_FA_TRASH " Delete"))
+            {
+                removeCurrentComponent(comp);
+                comp = nullptr;
+
+                updateGuiBasedOnAsset();
+                shouldInvalidate = true;
+            }
+
+            ImGui::EndPopup();
+        }
+
         if (isOpened)
         {
-            for (auto&& child : comp->getChildren())
+            if (!shouldInvalidate)
             {
-                drawTreeNode(child.get(), id + 1);
+                for (auto&& child : comp->getChildren())
+                {
+                    drawTreeNode(child.get(), id + 1);
+                }
             }
 
             ImGui::TreePop();
@@ -413,6 +460,27 @@ namespace Core
         }
 
         updateGuiBasedOnAsset();
+    }
+
+    void NxECSBasedEditorEWC::removeCurrentComponent(BaseComponent* comp)
+    {
+        if (!comp || !comp->hasParent())
+        {
+            return;
+        }
+
+        bool resetToParent = false;
+        if (_targetComponent == comp)
+        {
+            resetToParent = true;
+        }
+
+        comp->getParent()->removeChild(comp);
+
+        if (resetToParent)
+        {
+            _targetComponent = _targetAsset->getData().get();
+        }
     }
 
 } // namespace Core

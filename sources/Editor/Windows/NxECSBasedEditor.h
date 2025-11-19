@@ -81,6 +81,7 @@ namespace Core
         void onSave() override;
         void updateGuiBasedOnAsset() override;
         void updateAssetBasedOnGui() override;
+        void onUpdate() override;
 
         bool onOpenFromPath(const std::filesystem::path& path) override;
         void onClose() override;
@@ -93,7 +94,12 @@ namespace Core
 
         [[nodiscard]] const char* getPrefix() const override { return "NxECSBasedEditorEWC"; }
 
+        void removeCurrentComponent(BaseComponent* component);
+
     protected:
+        KeyboardInputManger _keyboardManager;
+        DelegateSubscriberPoolGuard _subscriptionPool;
+
         Gui::VerticalLayout _headerLayout;
         Gui::LabelRow<Gui::TextInput>* _logicalPath = nullptr;
         Gui::LabelRow<Gui::TextInput>* _assetType = nullptr;

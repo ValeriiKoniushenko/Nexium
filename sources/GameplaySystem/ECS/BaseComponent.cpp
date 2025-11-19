@@ -166,17 +166,15 @@ namespace Core
 
     void BaseComponent::removeChild(const BaseComponent* child)
     {
-        const auto [first, last] = std::ranges::remove_if(_children,
-                                                          [&child, this](Ptr& c)
-                                                          {
-                                                              if (*c == *child)
-                                                              {
-                                                                  onRemoveChild(c.get());
-                                                                  return true;
-                                                              }
-                                                              return false;
-                                                          });
-        _children.erase(first, last);
+        for (auto i = _children.begin(); i != _children.end(); ++i)
+        {
+            if (i->get() == child)
+            {
+                onRemoveChild(i->get());
+                _children.erase(i);
+                return;
+            }
+        }
     }
 
     void BaseComponent::removeChildIf(const std::function<bool(const BaseComponent*)>& pred)
