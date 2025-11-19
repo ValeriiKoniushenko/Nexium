@@ -71,6 +71,10 @@ namespace Core::Gui
 
         void calcXOffsets();
 
+    private:
+        void recalcFlexWidthChildren();
+        void recalcFlexHeightChildren();
+
     protected:
         std::vector<float> _xOffsets;
         std::optional<float> _spacing;

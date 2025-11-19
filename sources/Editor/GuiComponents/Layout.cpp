@@ -34,7 +34,7 @@ namespace Core::Gui
         {
             if (child->isEnabled())
             {
-                if (child->unsafeCastTo<Widget>()->getFlex() == f)
+                if ((child->unsafeCastTo<Widget>()->getFlex() & f) != 0)
                 {
                     return true;
                 }

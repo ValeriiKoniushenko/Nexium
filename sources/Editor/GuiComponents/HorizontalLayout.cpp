@@ -77,7 +77,6 @@ namespace Core::Gui
         }
 
         float width = 0.f;
-        // std::size_t fixedCount = 0;
         std::size_t flexWidthCount = 0;
         std::size_t total = 0;
         for (auto&& child : _children)
@@ -87,11 +86,7 @@ namespace Core::Gui
                 auto* w = child->unsafeCastTo<Widget>();
                 width += w->getWidth();
                 ++total;
-                if (w->getFlex().cast() == Flex::Fixed)
-                {
-                    // ++fixedCount;
-                }
-                else
+                if ((w->getFlex() & Flex::FlexWidth) != 0)
                 {
                     ++flexWidthCount;
                 }
@@ -332,57 +327,59 @@ namespace Core::Gui
 
     void HorizontalLayout::recalcFlexChildren()
     {
-        if (atLeastOne(Flex::FlexWidth))
+        if (!atLeastOne(Flex::FlexWidth))
         {
-            const float defaultSpacing = style().ItemSpacing.x;
-            float width = getWidth() - (_paddings.x + _paddings.y);
+            return;
+        }
 
-            int fixedCount = 0;
-            int flexWidthCount = 0;
-            for (auto&& child : _children)
-            {
-                if (!child->isEnabled())
-                {
-                    continue;
-                }
-                const auto w = child->unsafeCastTo<Widget>();
-                const auto type = w->getFlex().cast();
-                if (type == Flex::Fixed)
-                {
-                    width -= w->getWidth();
-                    width -= defaultSpacing;
-                    ++fixedCount;
-                }
-                else if (type == Flex::FlexWidth)
-                {
-                    ++flexWidthCount;
-                }
-            }
-            if (fixedCount != 0)
-            {
-                width += defaultSpacing;
-            }
+        const float defaultSpacing = style().ItemSpacing.x;
+        float width = getWidth() - (_paddings.x + _paddings.y);
 
-            int deCounter = flexWidthCount;
-            for (auto& child : _children)
+        int fixedCount = 0;
+        int flexWidthCount = 0;
+        for (auto&& child : _children)
+        {
+            if (!child->isEnabled())
             {
-                if (!child->isEnabled())
-                {
-                    continue;
-                }
-                auto w = child->unsafeCastTo<Widget>();
-                if (w->getFlex().cast() == Flex::FlexWidth)
-                {
-                    const float gap = deCounter != 0 ? defaultSpacing : 0;
-                    const float finalWidth
-                        = std::max(0.f, width / static_cast<float>(flexWidthCount) - gap);
-                    w->setWidth(finalWidth);
-                    --deCounter;
-                }
-                if (deCounter == 0)
-                {
-                    break;
-                }
+                continue;
+            }
+            const auto w = child->unsafeCastTo<Widget>();
+            const auto type = w->getFlex();
+            if ((type & Flex::Fixed) != 0)
+            {
+                width -= w->getWidth();
+                width -= defaultSpacing;
+                ++fixedCount;
+            }
+            else if ((type & Flex::FlexWidth) != 0)
+            {
+                ++flexWidthCount;
+            }
+        }
+        if (fixedCount != 0)
+        {
+            width += defaultSpacing;
+        }
+
+        int deCounter = flexWidthCount;
+        for (auto& child : _children)
+        {
+            if (!child->isEnabled())
+            {
+                continue;
+            }
+            auto w = child->unsafeCastTo<Widget>();
+            if ((w->getFlex() & Flex::FlexWidth) != 0)
+            {
+                const float gap = deCounter != 0 ? defaultSpacing : 0;
+                const float finalWidth
+                    = std::max(0.f, width / static_cast<float>(flexWidthCount) - gap);
+                w->setWidth(finalWidth);
+                --deCounter;
+            }
+            if (deCounter == 0)
+            {
+                break;
             }
         }
     }

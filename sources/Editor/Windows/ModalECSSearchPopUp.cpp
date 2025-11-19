@@ -63,7 +63,7 @@ namespace Core
         BaseEWC::onInitialize();
 
         _layout.setHorizontalAlign(Gui::Align::Center);
-        _layout.setFlex(Gui::Flex::FlexWidth);
+        _layout.setFlex(Gui::Flex::FlexWidthAndHeight);
 
         {
             auto* h = _layout.addChildComponent<Gui::HorizontalLayout>();
@@ -82,8 +82,7 @@ namespace Core
 
         {
             _listView = _layout.addChildComponent<Gui::ListView>();
-            _listView->setFlex(Gui::Flex::FlexWidth);
-            _listView->setHeight(400.f);
+            _listView->setFlex(Gui::Flex::FlexWidthAndHeight);
             auto data = GlobalComponentFactory::instance().getRegisteredTypesAsVector();
             std::ranges::sort(data);
             _listView->setData(data);

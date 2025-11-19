@@ -42,11 +42,13 @@ namespace Core::Gui
         Bottom          // For vertical align
     );
 
-    CreateEnum(Flex, int,
-        Fixed,
-        FlexWidth
-    );
-    // clang-format on
+    enum Flex
+    {
+        Fixed = 0,
+        FlexWidth = 1 << 0,
+        FlexHeight = 1 << 1,                        // Alpha version, poor supporting
+        FlexWidthAndHeight = FlexWidth | FlexHeight // Alpha version, poor supporting
+    };
 
     class Widget : public BaseComponent
     {

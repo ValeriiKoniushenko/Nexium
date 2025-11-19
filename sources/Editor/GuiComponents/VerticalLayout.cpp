@@ -61,6 +61,11 @@ namespace Core::Gui
             return *_height + (_paddings.z + _paddings.w);
         }
 
+        if (!hasParent() && (_flex & Flex::FlexHeight) != 0)
+        {
+            return ImGui::GetContentRegionAvail().y;
+        }
+
         const float defaultGap = style().ItemSpacing.y;
 
         float height = 0;
@@ -106,19 +111,8 @@ namespace Core::Gui
 
     void VerticalLayout::recalcFlexChildren()
     {
-        const auto ownWidth = getWidth() - (_paddings.x + _paddings.y);
-        for (auto&& child : _children)
-        {
-            if (!child->isEnabled())
-            {
-                continue;
-            }
-            const auto w = child->unsafeCastTo<Widget>();
-            if (w->getFlex().cast() == Flex::FlexWidth)
-            {
-                w->setWidth(ownWidth);
-            }
-        }
+        recalcFlexWidthChildren();
+        recalcFlexHeightChildren();
     }
 
     void VerticalLayout::onTick(float delta)
@@ -305,5 +299,81 @@ namespace Core::Gui
         }
 
         Assert(_xOffsets.size() == _children.size());
+    }
+
+    void VerticalLayout::recalcFlexWidthChildren()
+    {
+        const auto ownWidth = getWidth() - (_paddings.x + _paddings.y);
+        for (auto&& child : _children)
+        {
+            if (!child->isEnabled())
+            {
+                continue;
+            }
+            const auto w = child->unsafeCastTo<Widget>();
+            if ((w->getFlex() & Flex::FlexWidth) != 0)
+            {
+                w->setWidth(ownWidth);
+            }
+        }
+    }
+
+    void VerticalLayout::recalcFlexHeightChildren()
+    {
+        if (!atLeastOne(Flex::FlexHeight))
+        {
+            return;
+        }
+
+        const float defaultSpacing = style().ItemSpacing.y;
+        float height = getHeight() - (_paddings.y + _paddings.y);
+
+        int fixedCount = 0;
+        int flexCount = 0;
+        for (auto&& child : _children)
+        {
+            if (!child->isEnabled())
+            {
+                continue;
+            }
+            const auto w = child->unsafeCastTo<Widget>();
+            const auto type = w->getFlex();
+            if ((type & Flex::FlexHeight) != 0)
+            {
+                ++flexCount;
+            }
+            else
+            {
+                height -= w->getHeight();
+                height -= defaultSpacing;
+                ++fixedCount;
+            }
+        }
+        if (fixedCount != 0)
+        {
+            height += defaultSpacing;
+        }
+
+        int deCounter = flexCount;
+        for (auto& child : _children)
+        {
+            if (!child->isEnabled())
+            {
+                continue;
+            }
+            auto w = child->unsafeCastTo<Widget>();
+            if ((w->getFlex() & Flex::FlexHeight) != 0)
+            {
+                const float gap = deCounter != 0 ? defaultSpacing : 0;
+                const float finalHeight
+                    = std::max(0.f, height / static_cast<float>(flexCount) - gap);
+                w->setHeight(finalHeight);
+                --deCounter;
+            }
+            if (deCounter == 0)
+            {
+                break;
+            }
+        }
     }
 } // namespace Core::Gui
