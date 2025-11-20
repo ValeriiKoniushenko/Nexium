@@ -6,6 +6,6 @@
             "width": 1920
         },
         "title": "Nexium Engine",
-        "vSync": false
+        "vSync": true
     }
 }

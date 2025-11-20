@@ -44,9 +44,10 @@ namespace Core::Gui
 
     enum Flex
     {
-        Fixed = 0,
-        FlexWidth = 1 << 0,
-        FlexHeight = 1 << 1,                        // Alpha version, poor supporting
+        None = 0,
+        Fixed = 1,
+        FlexWidth = 1 << 1,
+        FlexHeight = 1 << 2,                        // Alpha version, poor supporting
         FlexWidthAndHeight = FlexWidth | FlexHeight // Alpha version, poor supporting
     };
 

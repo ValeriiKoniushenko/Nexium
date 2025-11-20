@@ -197,6 +197,7 @@ namespace Core
                                          {
                                              _targetAsset->getData()->attachChild(newComp);
                                              updateGuiBasedOnAsset();
+                                             makeDirty();
                                          });
         }
     }
@@ -383,7 +384,7 @@ namespace Core
 
         // Controlling over the chosen node
         bool shouldInvalidate = false;
-        if (!shouldInvalidate && comp->hasParent() && ImGui::IsItemClicked(ImGuiMouseButton_Right))
+        if (comp->hasParent() && ImGui::IsItemClicked(ImGuiMouseButton_Right))
         {
             ImGui::OpenPopup("ECSBasedEditorTreeContextMenu");
         }
@@ -397,6 +398,7 @@ namespace Core
                                              {
                                                  _targetComponent->attachChild(newComp);
                                                  updateGuiBasedOnAsset();
+                                                 makeDirty();
                                              });
             }
 
@@ -404,8 +406,6 @@ namespace Core
             {
                 removeCurrentComponent(comp);
                 comp = nullptr;
-
-                updateGuiBasedOnAsset();
                 shouldInvalidate = true;
             }
 
@@ -481,6 +481,9 @@ namespace Core
         {
             _targetComponent = _targetAsset->getData().get();
         }
+
+        updateGuiBasedOnAsset();
+        makeDirty();
     }
 
 } // namespace Core
