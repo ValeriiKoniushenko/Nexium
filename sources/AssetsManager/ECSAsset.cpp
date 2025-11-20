@@ -116,6 +116,7 @@ namespace Core
             stream.setMode(DataStream::Mode::Output);
             _data->ioFieldsUpdate(stream);
 
+            json[AssetData::name] = _data->getComponentName();
             json[AssetData::data] = std::move(stream.getRaw());
         }
 

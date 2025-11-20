@@ -58,7 +58,6 @@ namespace Core
 
     protected:
         virtual void updateGuiBasedOnAsset() = 0;
-        virtual void updateAssetBasedOnGui() = 0;
         virtual void onSave() = 0;
         virtual void onDiscardChanges() = 0;
         virtual bool onOpenFromPath(const std::filesystem::path& path) = 0;

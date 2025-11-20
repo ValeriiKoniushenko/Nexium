@@ -80,13 +80,12 @@ namespace Core
         void onTreeContextMenuBehavior() override;
         void onSave() override;
         void updateGuiBasedOnAsset() override;
-        void updateAssetBasedOnGui() override;
         void onUpdate() override;
 
         bool onOpenFromPath(const std::filesystem::path& path) override;
         void onClose() override;
 
-        void drawTreeNode(BaseComponent* comp, int id);
+        void drawTreeNode(BaseComponent* comp, int& id);
         void disableAllAdapters();
 
         void reset();

@@ -194,6 +194,6 @@
             ]
         }
     },
-    "name": "Asset_StaticMeshBundle",
+    "name": "FireHydrant",
     "type": "StaticMeshBundle"
 }

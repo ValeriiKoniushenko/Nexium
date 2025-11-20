@@ -68,12 +68,26 @@ namespace Core
         _ecsEnabledComponent
             = _baseEcsLayout.addChildComponent<LabelRow<CheckBox>>("Enabled", labelWidth);
         _subscriptionPool << _ecsEnabledComponent->input->onChange->subscribeAndGetID(
-            [this](auto) { makeParentDirty(); });
+            [this](bool value)
+            {
+                makeParentDirty();
+                if (auto* comp = getTargetComponent())
+                {
+                    comp->setEnabled(value);
+                }
+            });
 
         _ecsName = _baseEcsLayout.addChildComponent<LabelRow<TextInput>>("Name", labelWidth);
         _ecsName->input->setFlex(Flex::FlexWidth);
-        _subscriptionPool << _ecsName->input->onInput->subscribeAndGetID([this](auto)
-                                                                         { makeParentDirty(); });
+        _subscriptionPool << _ecsName->input->onInput->subscribeAndGetID(
+            [this](const char* value)
+            {
+                makeParentDirty();
+                if (auto* comp = getTargetComponent())
+                {
+                    comp->setComponentName(value);
+                }
+            });
 
         _ecsType = _baseEcsLayout.addChildComponent<LabelRow<TextInput>>("Type", labelWidth);
         _ecsType->input->setFlex(Flex::FlexWidth);
@@ -86,7 +100,14 @@ namespace Core
         _ecsDisableTicks
             = _baseEcsLayout.addChildComponent<LabelRow<CheckBox>>("No ticks", labelWidth);
         _subscriptionPool << _ecsDisableTicks->input->onChange->subscribeAndGetID(
-            [this](auto) { makeParentDirty(); });
+            [this](bool value)
+            {
+                makeParentDirty();
+                if (auto* comp = getTargetComponent())
+                {
+                    comp->setNoTick(value);
+                }
+            });
 
         _ecsChildren
             = _baseEcsLayout.addChildComponent<LabelRow<StringArray>>("Children", labelWidth);

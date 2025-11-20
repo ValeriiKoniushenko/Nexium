@@ -179,7 +179,8 @@ namespace Core
             return;
         }
 
-        drawTreeNode(_targetAsset->getData().get(), 0);
+        int id = 0;
+        drawTreeNode(_targetAsset->getData().get(), id);
     }
 
     void NxECSBasedEditorEWC::onDiscardChanges()
@@ -265,6 +266,8 @@ namespace Core
             return;
         }
 
+        ImGui::ClearActiveID();
+
         _logicalPath->input->setInputtedData(_targetAsset->getLogicPath().toStdString());
         _assetType->input->setInputtedData(_targetAsset->getType().toStdString());
 
@@ -283,25 +286,6 @@ namespace Core
         }
     }
 
-    void NxECSBasedEditorEWC::updateAssetBasedOnGui()
-    {
-        if (!hasTarget())
-        {
-            return;
-        }
-
-        for (auto& child : _children)
-        {
-            if (auto* adapter = child->tryCastTo<ECSEditorMimeAdapter>())
-            {
-                if (adapter->canWorkWith(_targetComponent))
-                {
-                    adapter->enable();
-                    adapter->applyAssetRawData(_targetAsset->getAssetData());
-                }
-            }
-        }
-    }
     void NxECSBasedEditorEWC::onUpdate()
     {
         NxEditorBaseEditorEWC::onUpdate();
@@ -330,7 +314,7 @@ namespace Core
         reset();
     }
 
-    void NxECSBasedEditorEWC::drawTreeNode(BaseComponent* comp, int id)
+    void NxECSBasedEditorEWC::drawTreeNode(BaseComponent* comp, int& id)
     {
         if (!comp)
         {
@@ -362,7 +346,7 @@ namespace Core
             ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.6f);
         }
 
-        ImGui::PushID(id);
+        ImGui::PushID(++id);
         const bool isOpened = ImGui::TreeNodeEx(comp->getComponentName().c_str(), flags);
 
         if (isDisabled)
@@ -384,7 +368,7 @@ namespace Core
 
         // Controlling over the chosen node
         bool shouldInvalidate = false;
-        if (comp->hasParent() && ImGui::IsItemClicked(ImGuiMouseButton_Right))
+        if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
         {
             ImGui::OpenPopup("ECSBasedEditorTreeContextMenu");
         }
@@ -418,7 +402,7 @@ namespace Core
             {
                 for (auto&& child : comp->getChildren())
                 {
-                    drawTreeNode(child.get(), id + 1);
+                    drawTreeNode(child.get(), id);
                 }
             }
 

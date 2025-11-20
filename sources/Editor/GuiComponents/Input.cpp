@@ -129,10 +129,12 @@ namespace Core::Gui
 
         InputTextCallback_UserData cb_user_data;
         cb_user_data.Str = &_buffer;
-        ImGui::InputTextEx("", _placeholder.c_str(), _buffer.data(),
-                           static_cast<int>(_buffer.capacity() + 1), _size, flags,
-                           InputTextCallback, &cb_user_data,
-                           [this](const char* newText) { onInput->trigger(newText); });
+        if (ImGui::InputTextEx("", _placeholder.c_str(), _buffer.data(),
+                               static_cast<int>(_buffer.capacity() + 1), _size, flags,
+                               InputTextCallback, &cb_user_data))
+        {
+            onInput->trigger(_buffer.c_str() ? _buffer.c_str() : "");
+        }
 
         if (isRO)
         {

@@ -14,10 +14,10 @@
         "regexMode": true,
         "severityFilters": {
             "critical": true,
-            "debug": true,
+            "debug": false,
             "error": true,
-            "info": true,
-            "trace": true,
+            "info": false,
+            "trace": false,
             "warning": true
         }
     }

@@ -1,0 +1,11 @@
+{
+    "AbstractComponent": {
+        "isEnabled": false,
+        "noTick": false
+    },
+    "BaseComponent": {
+        "children": [],
+        "name": "ModalECSSearchPopUp",
+        "type": "ModalECSSearchPopUpEWC"
+    }
+}
