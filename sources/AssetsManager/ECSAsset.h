@@ -31,6 +31,19 @@
 
 namespace Core
 {
+    class ECSAsset;
+
+    class ECSAssetImpl
+    {
+    public:
+        virtual ~ECSAssetImpl() = default;
+
+        virtual void load(const ECSAsset& asset) = 0;
+        virtual void unload(const ECSAsset& asset) = 0;
+
+    protected:
+        ECSAssetImpl() = default;
+    };
 
     class ECSAsset : public BaseLog, public IntrusiveRefCounter<ECSAsset>
     {
@@ -88,6 +101,8 @@ namespace Core
 
         void syncAssetWithMemory(const nlohmann::json& assetData);
 
+        [[nodiscard]] int getAdapterIndex() const noexcept { return _adapterIndex; }
+
     protected:
         void load();
         void unload();
@@ -107,6 +122,7 @@ namespace Core
         StringAtom _type;
 
         BaseComponent::Ptr _data;
+        int _adapterIndex = -1;
 
     private:
         Status _status = Status::NotLoaded;

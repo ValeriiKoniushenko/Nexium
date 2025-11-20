@@ -92,7 +92,7 @@ namespace
                 }
             }
 
-            GetAssetsManager().criticalLog("The asset is not found by the next path: {}"_f
+            GetAssetsManager().criticalLog("Asset is not found by the next path: {}"_f
                                            << logicPath);
             return T();
         }

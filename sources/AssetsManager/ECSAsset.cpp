@@ -132,8 +132,8 @@ namespace Core
         }
         else
         {
-            criticalLog("Can't open file for write: {} - to update the asset: {}"_f << _pathToSource
-                                                                                    << _logicPath);
+            criticalLog("Can't open file for write: {} - to update Asset:: {}"_f << _pathToSource
+                                                                                 << _logicPath);
         }
     }
 
@@ -147,7 +147,7 @@ namespace Core
 
         try
         {
-            traceLog("Loading status: {} is loading"_f << _logicPath);
+            traceLog("Loading of asset: {}"_f << _logicPath);
 
             _data.reset();
             _data = GetGlobalComponentFactory().create(_type);
@@ -165,18 +165,18 @@ namespace Core
             _data->ioFieldsUpdate(stream);
 
             _status = Status::Loaded;
-            traceLog("Loading status for: '{}'  is: 'Loaded'"_f << _logicPath);
+            traceLog("Asset:: '{}' is: loaded! New status is: 'Loaded'"_f << _logicPath);
         }
         catch (std::exception e)
         {
-            criticalLog("Can't load an asset: '{}'. The reason: {}. New status is: 'LoadingError'"_f
+            criticalLog("Can't load Asset:: '{}'. The reason: {}. New status is: 'LoadingError'"_f
                         << _logicPath << e.what());
             _status = Status::LoadingError;
         }
         catch (...)
         {
             criticalLog(
-                "Can't load an asset: '{}'. The reason is undefined. New status is: 'LoadingError'"_f
+                "Can't load Asset:: '{}'. The reason is undefined. New status is: 'LoadingError'"_f
                 << _logicPath);
             _status = Status::LoadingError;
         }
@@ -185,7 +185,7 @@ namespace Core
     void ECSAsset::unload()
     {
         _status = Status::PreLoaded;
-        traceLog("The asset '{}' is unloaded its main data. New status is: 'PreLoaded'"_f
+        traceLog("Asset: '{}' is unloaded its main data. New status is: 'PreLoaded'"_f
                  << _logicPath);
 
         _data.reset();

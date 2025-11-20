@@ -9,15 +9,15 @@
         "type": "LogsWindowEWC"
     },
     "LogsWindowEWC": {
-        "filter": "",
+        "filter": "Asset",
         "logLimit": 500,
         "regexMode": true,
         "severityFilters": {
             "critical": true,
-            "debug": false,
+            "debug": true,
             "error": true,
-            "info": false,
-            "trace": false,
+            "info": true,
+            "trace": true,
             "warning": true
         }
     }

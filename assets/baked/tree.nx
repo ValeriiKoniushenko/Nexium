@@ -1,0 +1,54 @@
+{
+    "assetData": {
+        "assimpPostProcess": [
+            "JoinIdenticalVertices",
+            "Triangulate",
+            "SortByPType"
+        ],
+        "mainShader": "defaultTextured",
+        "onLoadScale": 1.0,
+        "outlineShader": "outline",
+        "path": "assets/objects-3d/Models/FBX/Tree.fbx"
+    },
+    "data": {
+        "AbstractComponent": {
+            "isEnabled": true,
+            "noTick": false
+        },
+        "Actor": {
+            "isPostDraw": false
+        },
+        "BaseComponent": {
+            "children": [],
+            "name": "Tree",
+            "type": "StaticMeshBundle"
+        },
+        "StaticMeshBundle": {
+            "ignoreSelect": false
+        },
+        "Transformable": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        }
+    },
+    "name": "Tree",
+    "type": "StaticMeshBundle"
+}

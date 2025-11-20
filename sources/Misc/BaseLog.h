@@ -36,8 +36,9 @@ namespace spdlog
 
 namespace Core
 {
-    class LogQueue : public StrictSingleton<LogQueue>
+    class LogQueue final : public StrictSingleton<LogQueue>
     {
+        SINGLETONS_FRIEND(LogQueue)
     public:
         struct LogLine
         {

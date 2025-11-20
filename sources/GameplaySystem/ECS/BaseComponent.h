@@ -295,7 +295,9 @@ namespace Core
      * Try to don't use by your own hands, it will register new component
      * automatically. How? See first comment above class BaseComponent
      */
-    class GlobalComponentFactory : public StrictSingleton<GlobalComponentFactory>, public BaseLog
+    class GlobalComponentFactory final :
+        public StrictSingleton<GlobalComponentFactory>,
+        public BaseLog
     {
         SINGLETONS_FRIEND(GlobalComponentFactory);
 
