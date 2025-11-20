@@ -18,7 +18,7 @@
             },
             {
                 "AbstractComponent": {
-                    "isEnabled": true,
+                    "isEnabled": false,
                     "noTick": false
                 },
                 "BaseComponent": {
@@ -29,7 +29,7 @@
             },
             {
                 "AbstractComponent": {
-                    "isEnabled": true,
+                    "isEnabled": false,
                     "noTick": false
                 },
                 "BaseComponent": {
@@ -40,7 +40,7 @@
             },
             {
                 "AbstractComponent": {
-                    "isEnabled": false,
+                    "isEnabled": true,
                     "noTick": false
                 },
                 "BaseComponent": {

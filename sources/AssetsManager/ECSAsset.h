@@ -76,10 +76,8 @@ namespace Core
 
         [[nodiscard]] Status getLoadingStatus() const noexcept { return _status; }
 
-        [[nodiscard]] const std::filesystem::path& getSourceFile() const noexcept
-        {
-            return _pathToSource;
-        }
+        [[nodiscard]] const std::filesystem::path& getSourceFile() const noexcept;
+
         [[nodiscard]] const StringAtom& getName() const noexcept { return _name; }
         [[nodiscard]] const StringAtom& getType() const noexcept { return _type; }
         [[nodiscard]] const StringAtom& getLogicPath() const noexcept { return _logicPath; }

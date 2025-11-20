@@ -94,6 +94,16 @@ namespace Core
         return nullptr;
     }
 
+    NXAsset ECSEditorMimeAdapter::getTargetAsset()
+    {
+        if (auto* parent = getParentAs<NxECSBasedEditorEWC>())
+        {
+            return parent->getTargetAsset();
+        }
+        Assert(false);
+        return nullptr;
+    }
+
     BaseComponent* NxECSBasedEditorEWC::getTargetComponent() noexcept
     {
         return _targetComponent;
@@ -102,6 +112,16 @@ namespace Core
     const BaseComponent* NxECSBasedEditorEWC::getTargetComponent() const noexcept
     {
         return _targetComponent;
+    }
+
+    NXAsset NxECSBasedEditorEWC::getTargetAsset()
+    {
+        return _targetAsset;
+    }
+
+    const NXAsset NxECSBasedEditorEWC::getTargetAsset() const
+    {
+        return _targetAsset;
     }
 
     void NxECSBasedEditorEWC::onInitialize()

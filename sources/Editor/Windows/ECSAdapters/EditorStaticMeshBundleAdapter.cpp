@@ -56,7 +56,7 @@ namespace Core
         _modelInput
             = _layout.addChildComponent<LabelRow<TextInput>>("Model path", defaultLabelWidth);
         _modelInput->input->setFlex(Flex::FlexWidth);
-        _subscriptionPool << _modelInput->input->onInput->subscribeAndGetID([this](auto)
+        _subscriptionPool << _modelInput->input->onInput->subscribeAndGetID([this](const char* path)
                                                                             { makeParentDirty(); });
 
         _mainShaderCombo = _layout.addChildComponent<LabelRow<ComboModelBased>>("Main shader",
@@ -162,7 +162,10 @@ namespace Core
         json[AssetData::assimpPostProcess] = nlohmann::json::array();
         for (auto&& el : _postProcessArray->input->getData())
         {
-            json[AssetData::assimpPostProcess].push_back(Assimp::aiPostProcessStepsToString(el));
+            if (auto str = Assimp::aiPostProcessStepsToString(el); !str.isEmpty())
+            {
+                json[AssetData::assimpPostProcess].push_back(str);
+            }
         }
 
         return json;

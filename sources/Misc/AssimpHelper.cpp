@@ -24,6 +24,8 @@
 
 #include "AssimpHelper.h"
 
+#include "BaseLog.h"
+
 namespace Assimp
 {
     Core::StringAtom aiPostProcessStepsToString(aiPostProcessSteps val)
@@ -62,8 +64,9 @@ namespace Assimp
         if (val == aiProcess_Triangulate) return "Triangulate"_atom;
         if (val == aiProcess_ValidateDataStructure) return "ValidateDataStructure"_atom;
         // clang-format on
-        Assert(false);
-        return Core::StringAtom(""_atom);
+
+        Core::globalLog.warnLog("Passed invalid aiPostProcessStep value");
+        return ""_atom;
     }
 
     std::optional<aiPostProcessSteps> aiPostProcessStepsFromString(const Core::StringAtom& val)
@@ -103,7 +106,7 @@ namespace Assimp
         if (val == "ValidateDataStructure"_atom) return aiProcess_ValidateDataStructure;
         // clang-format on
 
-        Assert(false);
+        Core::globalLog.warnLog("Passed invalid aiPostProcessStep string-value");
         return std::nullopt;
     }
 

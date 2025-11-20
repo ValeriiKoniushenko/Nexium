@@ -16,7 +16,7 @@
             "noTick": false
         },
         "Actor": {
-            "isPostDraw": true
+            "isPostDraw": false
         },
         "BaseComponent": {
             "children": [
@@ -175,10 +175,10 @@
             "origin": [
                 0.0,
                 0.0,
-                100.0
+                0.0
             ],
             "position": [
-                200.0,
+                0.0,
                 0.0,
                 0.0
             ],
@@ -188,9 +188,9 @@
                 0.0
             ],
             "scale": [
-                2.0,
-                2.0,
-                2.0
+                1.0,
+                1.0,
+                1.0
             ]
         }
     },

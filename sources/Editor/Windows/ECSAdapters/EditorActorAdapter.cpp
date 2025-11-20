@@ -64,33 +64,68 @@ namespace Core
         _actorPostDraw
             = _actorLayout.addChildComponent<LabelRow<CheckBox>>("Post draw", labelWidth);
         _subscriptionPool << _actorPostDraw->input->onChange->subscribeAndGetID(
-            [this](auto) { makeParentDirty(); });
+            [this](bool value)
+            {
+                makeParentDirty();
+                if (auto* comp = dynamic_cast<Actor*>(getTargetComponent()))
+                {
+                    comp->setIsPostDraw(value);
+                }
+            });
 
         _actorPosition
             = _actorLayout.addChildComponent<LabelRow<Float3Input>>("Position", labelWidth);
         _actorPosition->input->setWidth(inputWidth);
         _actorPosition->input->setFlex(Flex::Fixed);
         _subscriptionPool << _actorPosition->input->onInput->subscribeAndGetID(
-            [this](auto) { makeParentDirty(); });
+            [this](const glm::vec3& value)
+            {
+                makeParentDirty();
+                if (auto* comp = dynamic_cast<Actor*>(getTargetComponent()))
+                {
+                    comp->setPosition(GPos3(value));
+                }
+            });
 
         _actorRotation
             = _actorLayout.addChildComponent<LabelRow<Float3Input>>("Rotation", labelWidth);
         _actorRotation->input->setWidth(inputWidth);
         _actorRotation->input->setFlex(Flex::Fixed);
         _subscriptionPool << _actorRotation->input->onInput->subscribeAndGetID(
-            [this](auto) { makeParentDirty(); });
+            [this](const glm::vec3& value)
+            {
+                makeParentDirty();
+                if (auto* comp = dynamic_cast<Actor*>(getTargetComponent()))
+                {
+                    comp->setRotation(value);
+                }
+            });
 
         _actorScale = _actorLayout.addChildComponent<LabelRow<Float3Input>>("Scale", labelWidth);
         _actorScale->input->setWidth(inputWidth);
         _actorScale->input->setFlex(Flex::Fixed);
-        _subscriptionPool << _actorScale->input->onInput->subscribeAndGetID([this](auto)
-                                                                            { makeParentDirty(); });
+        _subscriptionPool << _actorScale->input->onInput->subscribeAndGetID(
+            [this](const glm::vec3& value)
+            {
+                makeParentDirty();
+                if (auto* comp = dynamic_cast<Actor*>(getTargetComponent()))
+                {
+                    comp->setScale(value);
+                }
+            });
 
         _actorOrigin = _actorLayout.addChildComponent<LabelRow<Float3Input>>("Origin", labelWidth);
         _actorOrigin->input->setWidth(inputWidth);
         _actorOrigin->input->setFlex(Flex::Fixed);
         _subscriptionPool << _actorOrigin->input->onInput->subscribeAndGetID(
-            [this](auto) { makeParentDirty(); });
+            [this](const glm::vec3& value)
+            {
+                makeParentDirty();
+                if (auto* comp = dynamic_cast<Actor*>(getTargetComponent()))
+                {
+                    comp->setOrigin(value);
+                }
+            });
     }
 
     void ECSEditorActorAdapter::onDraw(float dt)

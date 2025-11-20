@@ -61,6 +61,10 @@ namespace Core
 
         extrudeAndValidateMainDataFromFile();
     }
+    const std::filesystem::path& ECSAsset::getSourceFile() const noexcept
+    {
+        return _pathToSource;
+    }
 
     nlohmann::json ECSAsset::getAssetData() const
     {

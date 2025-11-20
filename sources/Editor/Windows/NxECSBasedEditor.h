@@ -59,6 +59,7 @@ namespace Core
         void makeParentDirty();
         [[nodiscard]] BaseComponent* getTargetComponent();
         [[nodiscard]] const BaseComponent* getTargetComponent() const;
+        [[nodiscard]] NXAsset getTargetAsset();
     };
 
     class NxECSBasedEditorEWC : public NxEditorBaseEditorEWC
@@ -68,6 +69,9 @@ namespace Core
     public:
         [[nodiscard]] BaseComponent* getTargetComponent() noexcept;
         [[nodiscard]] const BaseComponent* getTargetComponent() const noexcept;
+
+        [[nodiscard]] NXAsset getTargetAsset();
+        [[nodiscard]] const NXAsset getTargetAsset() const;
 
         [[nodiscard]] bool hasTarget() const noexcept { return _targetComponent && _targetAsset; }
 
