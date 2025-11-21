@@ -30,9 +30,11 @@
 namespace Core::AssetImpl
 {
 
-    class StaticMeshBundle : public ECSBaseAssetImpl<Core::StaticMeshBundle>
+    class StaticMeshBundle : public ECSAssetImpl
     {
     public:
+        using implementedAssetType = Core::StaticMeshBundle;
+
         struct AssetData
         {
             AssetData() = default;
@@ -48,14 +50,12 @@ namespace Core::AssetImpl
         };
 
     public:
-        void load(const ECSAsset& asset, const nlohmann::json& assetData) override;
-        void unload(const ECSAsset& asset) override;
+        void load(const ECSAsset& asset, BaseComponent* dataOwner,
+                  const nlohmann::json& assetData) override;
+        void unload(const ECSAsset& asset, BaseComponent* dataOwner) override;
 
     private:
         [[nodiscard]] AssetData extractAssetData(const nlohmann::json& assetData) const;
-
-    private:
-        Core::StaticMeshBundle _data;
     };
 
 } // namespace Core::AssetImpl

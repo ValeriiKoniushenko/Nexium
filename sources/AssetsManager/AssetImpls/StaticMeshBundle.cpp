@@ -30,8 +30,14 @@
 namespace Core::AssetImpl
 {
 
-    void StaticMeshBundle::load(const ECSAsset& asset, const nlohmann::json& assetData)
+    void StaticMeshBundle::load(const ECSAsset& asset, BaseComponent* dataOwner,
+                                const nlohmann::json& assetData)
     {
+        if (!dataOwner)
+        {
+            return;
+        }
+
         const auto extractedData = extractAssetData(assetData);
         if (extractedData.meshPath.empty())
         {
@@ -43,24 +49,26 @@ namespace Core::AssetImpl
             Config::Path::projectAbsPath / extractedData.meshPath, extractedData.assimpPostProcess);
         if (Verify(scene) && Verify(scene->mRootNode))
         {
-            static auto& sm = GetShaderManager();
-            _data.importFrom(scene->mRootNode, scene,
-                             Config::Path::projectAbsPath / extractedData.meshPath,
-                             extractedData.onLoadScale);
-            if (!extractedData.mainShader.isEmpty())
+            if (const auto owner = dynamic_cast<Core::StaticMeshBundle*>(dataOwner); Verify(owner))
             {
-                _data.setShader(sm.getShaderProgram(extractedData.mainShader));
-            }
-            if (extractedData.outlineShader.isEmpty())
-            {
-                _data.setOutlineShader(sm.getShaderProgram(extractedData.outlineShader));
+                static auto& sm = GetShaderManager();
+                owner->importFrom(scene->mRootNode, scene,
+                                  Config::Path::projectAbsPath / extractedData.meshPath,
+                                  extractedData.onLoadScale);
+                if (!extractedData.mainShader.isEmpty())
+                {
+                    owner->setShader(sm.getShaderProgram(extractedData.mainShader));
+                }
+                if (extractedData.outlineShader.isEmpty())
+                {
+                    owner->setOutlineShader(sm.getShaderProgram(extractedData.outlineShader));
+                }
             }
         }
     }
 
-    void StaticMeshBundle::unload(const ECSAsset& asset)
+    void StaticMeshBundle::unload(const ECSAsset& asset, BaseComponent* dataOwner)
     {
-        _data.clear();
     }
 
     StaticMeshBundle::AssetData StaticMeshBundle::extractAssetData(

@@ -38,25 +38,13 @@ namespace Core
     public:
         virtual ~ECSAssetImpl() = default;
 
-        virtual void load(const ECSAsset& asset, const nlohmann::json& assetData) = 0;
-        virtual void unload(const ECSAsset& asset) = 0;
+        virtual void load(const ECSAsset& asset, BaseComponent* dataOwner,
+                          const nlohmann::json& assetData)
+            = 0;
+        virtual void unload(const ECSAsset& asset, BaseComponent* dataOwner) = 0;
 
     protected:
         ECSAssetImpl() = default;
-    };
-
-    template<class T>
-    class ECSBaseAssetImpl : public ECSAssetImpl
-    {
-    public:
-        using implementedAssetType = T;
-
-    public:
-        const T& getRawData() const noexcept { return _data; }
-        T& getRawData() noexcept { return _data; }
-
-    protected:
-        T _data;
     };
 
     template<typename T>

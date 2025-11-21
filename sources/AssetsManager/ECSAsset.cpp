@@ -172,7 +172,7 @@ namespace Core
             // [opt] making loading of essential data (texture loading, 3D model loading, etc)
             if (_impl)
             {
-                _impl->load(*this, json[AssetData::assetData]);
+                _impl->load(*this, _data.get(), json[AssetData::assetData]);
             }
 
             _status = Status::Loaded;
@@ -199,7 +199,7 @@ namespace Core
 
         if (_impl)
         {
-            _impl->unload(*this);
+            _impl->unload(*this, _data.get());
         }
         _data.reset();
 
