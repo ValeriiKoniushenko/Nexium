@@ -64,23 +64,6 @@ namespace Core
         return nullptr;
     }
 
-    bool GlobalComponentFactory::registerNewType(const StringAtom& type,
-                                                 std::function<BaseComponent*()> callback)
-    {
-        Assert(type.isStatic());
-
-#if defined(DEBUG)
-        if (_map.contains(type))
-        {
-            criticalLog("You're trying to register the type '{}' second(or more) time."_f << type);
-        }
-#endif
-        _map.emplace(type, std::move(callback));
-        traceLog("Type '{}' has been registered."_f << type);
-
-        return true;
-    }
-
     spdlog::logger* GlobalComponentFactory::getLogger() const
     {
         return Ecs::getLogger();
@@ -95,6 +78,20 @@ namespace Core
             out.emplace_back(type);
         }
         return out;
+    }
+
+    std::optional<std::type_index> GlobalComponentFactory::getTypeIdByTypeName(
+        const StringAtom& type)
+    {
+        Assert(type.isStatic());
+
+        if (const auto it = _typeToNameMap.find(type); it != _typeToNameMap.end())
+        {
+            return it->second;
+        }
+
+        criticalLog("Can't find typeid by typename '{}' inside type-map"_f << type);
+        return std::nullopt;
     }
 
     AbstractComponent::AbstractComponent(AbstractComponent&& other) noexcept

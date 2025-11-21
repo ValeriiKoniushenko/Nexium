@@ -24,6 +24,7 @@
 
 #include "ECSAsset.h"
 
+#include "AssetImpls/Factory.h"
 #include "ModuleInfo.h"
 
 #include <Utils/Functions.h>
@@ -158,11 +159,21 @@ namespace Core
                     "type is template(it can cause problems).");
             }
 
+            // Fetching main asset's data
+            const auto json
+                = nlohmann::json::parse(Utils::GetTextFileContentAs<std::string>(_pathToSource));
+
+            // updating object's fields
             DataStream stream;
             stream.setMode(DataStream::Mode::Input);
-            stream.getRaw() = nlohmann::json::parse(
-                Utils::GetTextFileContentAs<std::string>(_pathToSource))[AssetData::data];
+            stream.getRaw() = json[AssetData::data];
             _data->ioFieldsUpdate(stream);
+
+            // [opt] making loading of essential data (texture loading, 3D model loading, etc)
+            if (_impl)
+            {
+                _impl->load(*this, json[AssetData::assetData]);
+            }
 
             _status = Status::Loaded;
             traceLog("Asset:: '{}' is: loaded! New status is: 'Loaded'"_f << _logicPath);
@@ -185,10 +196,15 @@ namespace Core
     void ECSAsset::unload()
     {
         _status = Status::PreLoaded;
+
+        if (_impl)
+        {
+            _impl->unload(*this);
+        }
+        _data.reset();
+
         traceLog("Asset: '{}' is unloaded its main data. New status is: 'PreLoaded'"_f
                  << _logicPath);
-
-        _data.reset();
     }
 
     void ECSAsset::onIncrementRef(uint32_t count)
@@ -247,6 +263,14 @@ namespace Core
                 _name = "Asset_" + _type;
             }
             _name.shrinkToFit();
+
+            auto& gcf = GetGlobalComponentFactory();
+            auto& aif = AssetImpl::GetFactory();
+
+            if (const auto id = gcf.getTypeIdByTypeName(_type))
+            {
+                _impl = aif.trySpawnImpl(id.value());
+            }
 
             _status = Status::PreLoaded;
             traceLog("Successfully preloaded. New status is: 'PreLoaded'. Asset: {}"_f

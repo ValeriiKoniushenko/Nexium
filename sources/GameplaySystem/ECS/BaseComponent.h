@@ -72,13 +72,7 @@ public:
     Template const StringAtom TypeName::componentType = []()                                       \
     {                                                                                              \
         auto newType = StringAtom::Intern(TypeNameAsStr);                                          \
-        GetGlobalComponentFactory().registerNewType(                                               \
-            newType,                                                                               \
-            []() -> BaseComponent*                                                                 \
-            {                                                                                      \
-                return new std::conditional_t<std::is_abstract_v<TypeName>, InvalidComponent,      \
-                                              TypeName>;                                           \
-            });                                                                                    \
+        GetGlobalComponentFactory().registerNewType<TypeName>(newType);                            \
         return newType;                                                                            \
     }();
 
@@ -104,13 +98,13 @@ public:
 //
 //
 /**
- * Use this macro inside your class body to declare new component.
+ * Use this macro inside your class body to declare a new component.
  * @param ClassName only name of your class
- * @param BaseComponentClass put type of your parent here
+ * @param BaseComponentClass put the type of your parent here
  * @details It will register a component, and will be added new static field to your class
- * with name 'componentType'. You can refer to this static field to get type of you component.
- * Also, this macro will create default constructor which can optionally take one argument -
- * new component's name. Example:
+ * with the name 'componentType'. You can refer to this static field to get a type of your
+ * component. Also, this macro will create a default constructor which can optionally take one
+ * argument - the new component's name. Example:
  * @code{cpp}
  * // Foo.h
  * class Foo : public BaseComponent
@@ -141,7 +135,7 @@ public:
  * @endcode
  * If you want to know why we need it:
  * It will register your component inside Entity Component System abstraction. I.g. using
- * GlobalComponentFactory you can create needed type known only name of your type.
+ * GlobalComponentFactory, you can create necessary type known only name of your type.
  */
 #define ECS_COMPONENT_DECL(ClassName, BaseComponentClass)                                          \
     _ECS_COMPONENT_DECL(ClassName, ClassName, BaseComponentClass)                                  \
@@ -160,15 +154,15 @@ public:
 //
 //
 /**
- * WARNING!!! Template ECS doesn't support any reflection due to type mangling by compiler!
- * Use this macro inside your class body to declare new component.
+ * WARNING!!! Template ECS doesn't support any reflection due to type mangling by the compiler!
+ * Use this macro inside your class body to declare a new component.
  * @param ClassName only name of your class
- * @param BaseComponentClass put type of your parent here
+ * @param BaseComponentClass put the type of your parent here
  * @param ... all you template identifiers, separated with comma
  * @details It will register a component, and will be added new static field to your class
- * with name 'componentType'. You can refer to this static field to get type of you component.
- * Also, this macro will create default constructor which can optionally take one argument -
- * new component's name. Example:
+ * with the name 'componentType'. You can refer to this static field to get type of you component.
+ * Also, this macro will create a default constructor which can optionally take one argument -
+ * the new component's name. Example:
  * @code
  * template<class T>
  * class Foo : public BaseComponent
@@ -176,7 +170,7 @@ public:
  *      ECS_TEMPLATE_COMPONENT_DECL(Foo, BaseComponent, T);
  * };
  * @endcode
- * That's only component declaration! To implement it just continue reading...
+ * That's only component declaration! To implement it, just continue reading...
  * More complex example:
  * @code{cpp}
  * template<std::size_t Size, class T>
@@ -198,9 +192,9 @@ public:
  * };
  * @endcode
  * Let's implement your new type. For that just under your class put a macro
- * ECS_TEMPLATE_COMPONENT_IMPL and pass full class name with all template params,
- * and all parameters of your template (above your class). But, due to compiler
- * specific behavior you MUST wrap first and second argument with macro BRACKETS.
+ * ECS_TEMPLATE_COMPONENT_IMPL and pass the full class name with all template params,
+ * and all parameters of your template (above your class). But, due to compiler-
+ * specific behavior, you MUST wrap the first and second argument with macro BRACKETS.
  * @code{cpp}
  * // declaration of you classed above! Now only implementations:
  * ECS_TEMPLATE_COMPONENT_IMPL(
@@ -215,7 +209,7 @@ public:
  * @endcode
  * If you want to know why we need it:
  * It will register your component inside Entity Component System abstraction. I.g. using
- * GlobalComponentFactory you can create needed type known only name of your type.
+ * GlobalComponentFactory, you can create necessary type known only name of your type.
  */
 #define ECS_TEMPLATE_COMPONENT_DECL(ClassName, BaseComponentClass, ...)                            \
     _ECS_COMPONENT_DECL(ClassName, BRACKETS(ClassName<__VA_ARGS__>), BaseComponentClass)           \
@@ -292,8 +286,8 @@ namespace Core
      * Global factory for creating and registering components by type.
      * Manages mapping between component type names and factory functions.
      * Provides logging and debug tracking of component types in DEBUG mode.
-     * Try to don't use by your own hands, it will register new component
-     * automatically. How? See first comment above class BaseComponent
+     * Try to don't use it by your own hands, it will register a new component
+     * automatically. How? See the first comment above class BaseComponent
      */
     class GlobalComponentFactory final :
         public StrictSingleton<GlobalComponentFactory>,
@@ -313,16 +307,20 @@ namespace Core
          * Register a new component type in the factory.
          * @param type The type identifier (StringAtom).
          * @param callback Function that creates instances of this type.
-         * @return True if registration succeeds, false if type already exists.
+         * @return True if registration succeeds, false if the type already exists.
          */
-        bool registerNewType(const StringAtom& type, std::function<BaseComponent*()> callback);
+        template<class T>
+        bool registerNewType(const StringAtom& type);
 
         [[nodiscard]] spdlog::logger* getLogger() const final;
 
         [[nodiscard]] std::vector<StringAtom> getRegisteredTypesAsVector() const;
 
+        [[nodiscard]] std::optional<std::type_index> getTypeIdByTypeName(const StringAtom& type);
+
     private:
-        std::unordered_map<StringAtom, std::function<BaseComponent*()>> _map;
+        std::unordered_map<StringAtom, BaseComponent* (*)()> _map;
+        std::unordered_map<StringAtom, std::type_index> _typeToNameMap;
     };
 
     /** Shortcut to access the global component factory singleton. */
@@ -804,6 +802,28 @@ namespace Core
     {
         ECS_COMPONENT_DECL(InvalidComponent, BaseComponent);
     };
+
+    template<class T>
+    bool GlobalComponentFactory::registerNewType(const StringAtom& type)
+    {
+        Assert(type.isStatic());
+
+#if defined(DEBUG)
+        if (_map.contains(type))
+        {
+            criticalLog("You're trying to register the type '{}' second(or more) time."_f << type);
+        }
+#endif
+
+        _map.emplace(
+            type, []() -> BaseComponent*
+            { return new std::conditional_t<std::is_abstract_v<T>, InvalidComponent, T>; });
+
+        _typeToNameMap.emplace(type, typeid(T));
+
+        traceLog("Type '{}' has been registered."_f << type);
+        return true;
+    }
 
     template<IsComponentOrBase TargetT, bool isConst, class FuncT>
     void BaseComponent::Impl_forEach_BFS(AdaptiveRawPtr<isConst> me, FuncT&& callback)

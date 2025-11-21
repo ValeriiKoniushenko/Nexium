@@ -38,12 +38,15 @@ namespace Core
     public:
         virtual ~ECSAssetImpl() = default;
 
-        virtual void load(const ECSAsset& asset) = 0;
+        virtual void load(const ECSAsset& asset, const nlohmann::json& assetData) = 0;
         virtual void unload(const ECSAsset& asset) = 0;
 
     protected:
         ECSAssetImpl() = default;
     };
+
+    template<typename T>
+    concept IsAssetImpl = std::derived_from<T, ECSAssetImpl>;
 
     class ECSAsset : public BaseLog, public IntrusiveRefCounter<ECSAsset>
     {
@@ -122,6 +125,8 @@ namespace Core
         StringAtom _type;
 
         BaseComponent::Ptr _data;
+        std::unique_ptr<ECSAssetImpl> _impl;
+
         int _adapterIndex = -1;
 
     private:

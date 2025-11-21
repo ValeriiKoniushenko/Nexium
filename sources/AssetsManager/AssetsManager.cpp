@@ -111,6 +111,8 @@ namespace Core
     void AssetsManager::rescanFileSystem()
     {
         _textures.clear();
+        _skyboxes.clear();
+        _assets.clear();
 
         for (auto&& path : _registeredPaths)
         {
