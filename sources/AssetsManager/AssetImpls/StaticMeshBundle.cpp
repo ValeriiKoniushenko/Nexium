@@ -24,15 +24,105 @@
 
 #include "StaticMeshBundle.h"
 
+#include "Editor/Windows/ECSAdapters/EditorStaticMeshBundleAdapter.h"
+#include "assimp/Importer.hpp"
+
 namespace Core::AssetImpl
 {
 
     void StaticMeshBundle::load(const ECSAsset& asset, const nlohmann::json& assetData)
     {
+        const auto extractedData = extractAssetData(assetData);
+        if (extractedData.meshPath.empty())
+        {
+            return;
+        }
+
+        Assimp::Importer importer;
+        const aiScene* scene = importer.ReadFile(
+            Config::Path::projectAbsPath / extractedData.meshPath, extractedData.assimpPostProcess);
+        if (Verify(scene) && Verify(scene->mRootNode))
+        {
+            static auto& sm = GetShaderManager();
+            _data.importFrom(scene->mRootNode, scene,
+                             Config::Path::projectAbsPath / extractedData.meshPath,
+                             extractedData.onLoadScale);
+            if (!extractedData.mainShader.isEmpty())
+            {
+                _data.setShader(sm.getShaderProgram(extractedData.mainShader));
+            }
+            if (extractedData.outlineShader.isEmpty())
+            {
+                _data.setOutlineShader(sm.getShaderProgram(extractedData.outlineShader));
+            }
+        }
     }
 
     void StaticMeshBundle::unload(const ECSAsset& asset)
     {
+        _data.clear();
+    }
+
+    StaticMeshBundle::AssetData StaticMeshBundle::extractAssetData(
+        const nlohmann::json& assetData) const
+    {
+        using Naming = ECSEditorStaticMeshBundleAdapter::AssetData;
+
+        AssetData data;
+
+        if (assetData.contains(Naming::mainShader))
+        {
+            data.mainShader = StringAtom::Intern(assetData[Naming::mainShader].get<StringAtom>());
+        }
+        else
+        {
+            globalLog.errorLog("'mainShader' didn't find while parsing the asset.");
+        }
+
+        if (assetData.contains(Naming::outlineShader))
+        {
+            data.outlineShader
+                = StringAtom::Intern(assetData[Naming::outlineShader].get<StringAtom>());
+        }
+        else
+        {
+            globalLog.errorLog("'outlineShader' didn't find while parsing the asset.");
+        }
+
+        if (assetData.contains(Naming::onLoadScale))
+        {
+            data.onLoadScale = assetData[Naming::onLoadScale].get<float>();
+        }
+        else
+        {
+            globalLog.errorLog("'onLoadScale' didn't find while parsing the asset.");
+        }
+
+        if (assetData.contains(Naming::path))
+        {
+            data.meshPath = assetData[Naming::path].get<std::filesystem::path>();
+        }
+        else
+        {
+            globalLog.errorLog("'path' didn't find while parsing the asset.");
+        }
+
+        if (assetData.contains(Naming::assimpPostProcess))
+        {
+            for (auto&& asString : assetData[Naming::assimpPostProcess].items())
+            {
+                if (auto flag = Assimp::aiPostProcessStepsFromString(asString.value()))
+                {
+                    data.assimpPostProcess |= flag.value();
+                }
+            }
+        }
+        else
+        {
+            globalLog.errorLog("'assimpPostProcess' didn't find while parsing the asset.");
+        }
+
+        return data;
     }
 
 } // namespace Core::AssetImpl

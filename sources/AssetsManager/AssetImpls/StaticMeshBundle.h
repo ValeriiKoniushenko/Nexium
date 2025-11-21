@@ -30,14 +30,32 @@
 namespace Core::AssetImpl
 {
 
-    class StaticMeshBundle : public ECSAssetImpl
+    class StaticMeshBundle : public ECSBaseAssetImpl<Core::StaticMeshBundle>
     {
     public:
-        using implementedAssetType = Core::StaticMeshBundle;
+        struct AssetData
+        {
+            AssetData() = default;
+            ~AssetData() = default;
+            AssetData(const AssetData&) = default;
+            AssetData(AssetData&&) noexcept = default;
+
+            std::filesystem::path meshPath;
+            StringAtom mainShader;
+            StringAtom outlineShader;
+            float onLoadScale = 1.0f;
+            int assimpPostProcess = 0;
+        };
 
     public:
         void load(const ECSAsset& asset, const nlohmann::json& assetData) override;
         void unload(const ECSAsset& asset) override;
+
+    private:
+        [[nodiscard]] AssetData extractAssetData(const nlohmann::json& assetData) const;
+
+    private:
+        Core::StaticMeshBundle _data;
     };
 
 } // namespace Core::AssetImpl
