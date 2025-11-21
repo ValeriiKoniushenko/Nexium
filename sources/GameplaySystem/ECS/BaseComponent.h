@@ -68,11 +68,11 @@ public:
 
 // ---------------------------------------------------------
 
-#define _ECS_COMPONENT_IMPL(TypeName, Template, TypeNameAsStr)                                     \
+#define _ECS_COMPONENT_IMPL(TypeName, Template, TypeNameAsStr, isTemplate)                         \
     Template const StringAtom TypeName::componentType = []()                                       \
     {                                                                                              \
         auto newType = StringAtom::Intern(TypeNameAsStr);                                          \
-        GetGlobalComponentFactory().registerNewType<TypeName>(newType);                            \
+        GetGlobalComponentFactory().registerNewType<TypeName>(newType, isTemplate);                \
         return newType;                                                                            \
     }();
 
@@ -144,7 +144,7 @@ public:
 #define ECS_COMPONENT_DECL_NO_CNSTR(ClassName, BaseComponentClass)                                 \
     _ECS_COMPONENT_DECL(ClassName, ClassName, BaseComponentClass)
 
-#define ECS_COMPONENT_IMPL(ClassName) _ECS_COMPONENT_IMPL(ClassName, ;, #ClassName)
+#define ECS_COMPONENT_IMPL(ClassName) _ECS_COMPONENT_IMPL(ClassName, ;, #ClassName, false)
 
 //
 //
@@ -219,7 +219,7 @@ public:
     _ECS_COMPONENT_DECL(ClassName, BRACKETS(ClassName<__VA_ARGS__>), BaseComponentClass)
 
 #define ECS_TEMPLATE_COMPONENT_IMPL(TypeName, Template)                                            \
-    _ECS_COMPONENT_IMPL(BRACKETS(TypeName), BRACKETS(template<Template>), typeid(TypeName).name())
+    _ECS_COMPONENT_IMPL(BRACKETS(TypeName), BRACKETS(template<Template>), typeid(TypeName).name(), true)
 
 namespace Core
 {
@@ -255,7 +255,8 @@ namespace Core
      *   - a static member componentType
      */
     template<class T>
-    concept IsComponent = std::derived_from<T, BaseComponent> && requires(T t) {
+    concept IsComponent = std::derived_from<T, BaseComponent> && requires(T t)
+    {
         { t.getComponentType() };
         { T::componentType };
     };
@@ -310,7 +311,7 @@ namespace Core
          * @return True if registration succeeds, false if the type already exists.
          */
         template<class T>
-        bool registerNewType(const StringAtom& type);
+        bool registerNewType(const StringAtom& type, bool isTemplateType = false);
 
         [[nodiscard]] spdlog::logger* getLogger() const final;
 
@@ -369,7 +370,9 @@ namespace Core
         [[nodiscard]] spdlog::logger* getLogger() const final;
 
         /** Reset the component to an uninitialized state. */
-        virtual void clear() {}
+        virtual void clear()
+        {
+        }
 
         /** Safe cast to a derived component type. Asserts if cast fails. */
         template<IsComponent T>
@@ -431,7 +434,9 @@ namespace Core
         /**
          * This method will be called automatically. Don't call it directly.
          */
-        virtual void onTick(float delta) {}
+        virtual void onTick(float delta)
+        {
+        }
 
         bool _isEnabled = true;
 
@@ -491,14 +496,14 @@ namespace Core
     public:
         using Self = BaseComponent;
         template<bool isConst>
-        using AdaptivePtr = Core::IntrusivePtr<std::conditional_t<isConst, const Self, Self>>;
+        using AdaptivePtr = Core::IntrusivePtr<std::conditional_t<isConst, const Self, Self> >;
         template<bool isConst>
         using AdaptiveRawPtr = std::conditional_t<isConst, const Self, Self>*;
         using Ptr = Core::IntrusivePtr<Self>;
         using CPtr = Core::IntrusivePtr<const Self>;
         using CChildT = Core::IntrusivePtr<const BaseComponent>;
         using ChildT = Core::IntrusivePtr<BaseComponent>;
-        using ChildrenT = std::vector<Core::IntrusivePtr<BaseComponent>>;
+        using ChildrenT = std::vector<Core::IntrusivePtr<BaseComponent> >;
 
         static const StringAtom componentType;
 
@@ -669,6 +674,7 @@ namespace Core
          * to this class/owner
          */
         BaseComponent* attachChild(const BaseComponent::Ptr& child);
+
         BaseComponent* attachUniqueChild(const BaseComponent::Ptr& child);
 
         void detachChild(BaseComponent* child);
@@ -683,7 +689,9 @@ namespace Core
         void removeChildOf(const StringAtom& name = ""_atom)
         {
             removeChildIf([](auto* child)
-                          { return child->template tryCastTo<ComponentT>() != nullptr; });
+            {
+                return child->template tryCastTo<ComponentT>() != nullptr;
+            });
         }
 
         // ========================== FOR EACHes ==========================
@@ -749,17 +757,21 @@ namespace Core
     protected:
         virtual bool addChildValidator(BaseComponent* newChild) { return true; }
 
-        virtual void onAddChild(BaseComponent* newChild) {}
+        virtual void onAddChild(BaseComponent* newChild)
+        {
+        }
 
-        virtual void onRemoveChild(BaseComponent* child) {}
+        virtual void onRemoveChild(BaseComponent* child)
+        {
+        }
 
         explicit BaseComponent(StringAtom type, StringAtom name)
             : _name{ std::move(name) },
               _type{ std::move(type) }
         {
-#ifdef DEBUG
+            #ifdef DEBUG
             Assert(_type.isStatic());
-#endif
+            #endif
         }
 
         [[nodiscard]] StringAtom getCacheHash() const override;
@@ -767,12 +779,16 @@ namespace Core
         /**
          * This method will be called automatically. Don't call it directly.
          */
-        virtual void onInitialize() {}
+        virtual void onInitialize()
+        {
+        }
 
         /**
          * This method will be called automatically. Don't call it directly.
          */
-        virtual void onPreInitialize() {}
+        virtual void onPreInitialize()
+        {
+        }
 
     protected:
         ChildrenT _children;
@@ -804,20 +820,29 @@ namespace Core
     };
 
     template<class T>
-    bool GlobalComponentFactory::registerNewType(const StringAtom& type)
+    bool GlobalComponentFactory::registerNewType(const StringAtom& type, bool isTemplateType)
     {
         Assert(type.isStatic());
 
-#if defined(DEBUG)
+        // Due to linkage logic, template types can attempt to register a few times. So, let's
+        // skip such moments
+        if (isTemplateType && _map.contains(type))
+        {
+            return true;
+        }
+
+        #if defined(DEBUG)
         if (_map.contains(type))
         {
             criticalLog("You're trying to register the type '{}' second(or more) time."_f << type);
         }
-#endif
+        #endif
 
         _map.emplace(
             type, []() -> BaseComponent*
-            { return new std::conditional_t<std::is_abstract_v<T>, InvalidComponent, T>; });
+            {
+                return new std::conditional_t<std::is_abstract_v<T>, InvalidComponent, T>;
+            });
 
         _typeToNameMap.emplace(type, typeid(T));
 
@@ -950,11 +975,11 @@ namespace Core
 
                 if (comp->_type == TargetT::componentType)
                 {
-#if defined(DEBUG)
+                    #if defined(DEBUG)
                     found = dynamic_cast<TargetT*>(comp);
-#else
+                    #else
                     found = static_cast<TargetT*>(comp);
-#endif
+                    #endif
                     if (!name.isEmpty() && found)
                     {
                         if (found->_name == name)
