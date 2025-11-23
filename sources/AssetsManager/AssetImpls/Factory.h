@@ -35,7 +35,7 @@
 namespace Core::AssetImpl
 {
 
-    class Factory final : public StrictSingleton<Factory>
+    class Factory final : public Singleton<Factory>
     {
         SINGLETONS_FRIEND(Factory)
     public:

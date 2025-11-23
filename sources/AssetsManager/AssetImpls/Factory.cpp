@@ -33,7 +33,7 @@ namespace Core::AssetImpl
 
     bool Factory::_BuiltinAssetTypesRegistration = []()
     {
-        auto& f = Factory::instance();
+        auto& f = Factory::Instance();
 
         f.registerAssetType<AssetImpl::StaticMeshBundle>();
 
@@ -42,6 +42,6 @@ namespace Core::AssetImpl
 
     Factory& GetFactory()
     {
-        return Factory::instance();
+        return Factory::Instance();
     }
 } // namespace Core::AssetImpl

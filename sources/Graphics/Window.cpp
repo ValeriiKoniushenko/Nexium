@@ -281,6 +281,6 @@ namespace Core
 
     Window& GetWindow()
     {
-        return Window::instance();
+        return Window::Instance();
     }
 } // namespace Core

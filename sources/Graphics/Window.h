@@ -95,7 +95,7 @@ namespace Core
 
     extern DragAndDrop gDragDrop;
 
-    class Window : public BaseLog, public IDataStreamBridge, public StrictSingleton<Window>
+    class Window : public BaseLog, public IDataStreamBridge, public Singleton<Window>
     {
     public:
         // clang-format off

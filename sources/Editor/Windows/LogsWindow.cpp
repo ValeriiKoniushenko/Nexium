@@ -113,7 +113,7 @@ namespace Core
 
     void LogsWindowEWC::fetchLogs()
     {
-        auto& q = LogQueue::instance();
+        auto& q = LogQueue::Instance();
 
         if (!q.isEmpty() && (_autoScrollButton && _autoScrollButton->isActive()))
         {

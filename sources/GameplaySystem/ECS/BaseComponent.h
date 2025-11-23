@@ -291,7 +291,7 @@ namespace Core
      * automatically. How? See the first comment above class BaseComponent
      */
     class GlobalComponentFactory final :
-        public StrictSingleton<GlobalComponentFactory>,
+        public Singleton<GlobalComponentFactory>,
         public BaseLog
     {
         SINGLETONS_FRIEND(GlobalComponentFactory);
@@ -327,7 +327,7 @@ namespace Core
     /** Shortcut to access the global component factory singleton. */
     inline GlobalComponentFactory& GetGlobalComponentFactory()
     {
-        return GlobalComponentFactory::instance();
+        return GlobalComponentFactory::Instance();
     }
 
     //

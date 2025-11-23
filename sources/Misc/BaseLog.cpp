@@ -45,7 +45,7 @@ namespace Core
         logLine.message = std::move(log);
         logLine.time = std::time(nullptr);
 
-        LogQueue::instance().addLog(std::move(logLine));
+        LogQueue::Instance().addLog(std::move(logLine));
         Assert(l != level::critical, str);
     }
 

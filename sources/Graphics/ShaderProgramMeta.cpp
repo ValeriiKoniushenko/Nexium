@@ -27,6 +27,7 @@
 #include "ModuleInfo.h"
 #include "Utils/Functions.h"
 
+#include <algorithm>
 #include <spdlog/async_logger.h>
 
 namespace Core

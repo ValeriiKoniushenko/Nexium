@@ -83,7 +83,7 @@ namespace Core
         {
             _listView = _layout.addChildComponent<Gui::ListView>();
             _listView->setFlex(Gui::Flex::FlexWidthAndHeight);
-            auto data = GlobalComponentFactory::instance().getRegisteredTypesAsVector();
+            auto data = GlobalComponentFactory::Instance().getRegisteredTypesAsVector();
             std::ranges::sort(data);
             _listView->setData(data);
         }
@@ -118,7 +118,7 @@ namespace Core
                     }
 
                     auto comp
-                        = GlobalComponentFactory::instance().create(_listView->getCurrentData());
+                        = GlobalComponentFactory::Instance().create(_listView->getCurrentData());
                     if (!Verify(comp))
                     {
                         criticalLog("Can't create component: {}"_f << _listView->getCurrentData());

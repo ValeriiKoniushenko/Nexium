@@ -28,7 +28,6 @@
 #include "InputDevices/InputManager.h"
 #include "Misc/BaseLog.h"
 #include "SlowObjectPicker.h"
-#include "Utils/CopyableAndMoveableBehaviour.h"
 #include "Windows/BaseWindow.h"
 
 namespace Core
@@ -39,11 +38,12 @@ namespace Core
      * Provides initialization, ticking, and management of editor windows.
      * Also handles font configuration and ImGui setup.
      */
-    class GameEditor : public Utils::NotCopyableAndNotMoveable, public BaseLog
+    class GameEditor : public BaseLog
     {
     public:
         GameEditor() = default;
-
+        GameEditor(const GameEditor&) = delete;
+        GameEditor(GameEditor&&) = delete;
         ~GameEditor() override;
 
         void initialize();
