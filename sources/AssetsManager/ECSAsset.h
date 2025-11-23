@@ -50,7 +50,7 @@ namespace Core
     template<typename T>
     concept IsAssetImpl = std::derived_from<T, ECSAssetImpl>;
 
-    class ECSAsset : public BaseLog, public IntrusiveRefCounter<ECSAsset>
+    class ECSAsset : public IntrusiveRefCounter<ECSAsset>, public BaseLog
     {
     public:
         inline static const char* fileExtension = ".nx";

@@ -95,7 +95,7 @@ namespace Core::Gui
 
         [[nodiscard]] glm::vec<Size, Type> getInputtedData() const
         {
-            glm::vec<Size, Type> result;
+            glm::vec<Size, Type> result = {};
             auto* raw = reinterpret_cast<Type*>(&result);
             for (std::size_t i = 0; i < Size; ++i)
             {

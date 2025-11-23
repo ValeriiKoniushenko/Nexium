@@ -34,43 +34,19 @@
 
 namespace Core
 {
-    using AssimpPostProcessArray =
-    Gui::BaseArray<aiPostProcessSteps,
-        decltype([](aiPostProcessSteps data)
-        -> Gui::HorizontalLayout::Ptr {
-                auto l = Gui::HorizontalLayout::Create();
-                const auto combo = l->addChildComponent<Gui::ComboModelBased>();
+    struct _AssimpPostProcessArray_ArrayCellViewerFunc
+    {
+        Gui::HorizontalLayout::Ptr operator()(aiPostProcessSteps data) const;
+    };
 
-                combo->setDataProvider(
-                    [](std::size_t i, StringAtom &out) -> const void * {
-                        out = Assimp::aiPostProcessStepsToString(Assimp::aiPostProcessStepsAsVector[i]);
-                        return nullptr;
-                    });
-                combo->setSizeProvider(
-                    [] {
-                        return Assimp::aiPostProcessStepsAsVector.size();
-                    });
-                combo->setFlex(Gui::Flex::FlexWidth);
+    struct _AssimpPostProcessArray_ViewFetchFunc
+    {
+        aiPostProcessSteps operator()(Gui::HorizontalLayout* layout) const;
+    };
 
-                const auto it = std::ranges::find(Assimp::aiPostProcessStepsAsVector, data);
-                if (it != Assimp::aiPostProcessStepsAsVector.end()) {
-                    combo->setCurrentIndex(it - Assimp::aiPostProcessStepsAsVector.begin());
-                }
-                return l;
-            }),
-        decltype([](Gui::HorizontalLayout *layout)
-        -> aiPostProcessSteps {
-                if (auto modifier = layout->getFirstChildAs<Gui::ComboModelBased>()) {
-                    return Assimp::aiPostProcessStepsAsVector[modifier->getCurrentIndex()];
-                }
-                else
-                {
-                    Assert(false);
-                }
-
-                return static_cast<aiPostProcessSteps>(0);
-            })
-    >;
+    using AssimpPostProcessArray
+        = Gui::BaseArray<aiPostProcessSteps, _AssimpPostProcessArray_ArrayCellViewerFunc,
+                         _AssimpPostProcessArray_ViewFetchFunc>;
 
     class ECSEditorStaticMeshBundleAdapter : public ECSEditorMimeAdapter
     {

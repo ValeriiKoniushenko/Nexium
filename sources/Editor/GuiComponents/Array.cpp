@@ -27,4 +27,18 @@
 namespace Core::Gui
 {
     ECS_COMPONENT_IMPL(ArrayCell)
+
+    HorizontalLayout::Ptr _StringArray_ArrayCellViewerFunc::operator()(const StringAtom& str) const
+    {
+        auto l = HorizontalLayout::Create();
+        const auto label = l->addChildComponent<Label>();
+        label->setFlex(Flex::FlexWidth);
+        label->setText(str);
+        return l;
+    }
+
+    StringAtom _StringArray_ViewFetchFunc::operator()(HorizontalLayout* layout) const
+    {
+        return layout->getFirstChildAs<Label>()->getText();
+    }
 } // namespace Core::Gui

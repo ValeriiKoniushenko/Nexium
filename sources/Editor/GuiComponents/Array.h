@@ -299,13 +299,16 @@ namespace Core::Gui
 
     )
 
-    using StringArray = BaseArray<StringAtom, decltype([](const StringAtom &str) -> HorizontalLayout::Ptr {
-        auto l = HorizontalLayout::Create();
-        auto label = l->addChildComponent<Label>();
-        label->setFlex(Flex::FlexWidth);
-        label->setText(str);
-        return l;
-    }), decltype([](HorizontalLayout *layout) -> StringAtom {
-        return layout->getFirstChildAs<Label>()->getText();
-    })>;
+    struct _StringArray_ArrayCellViewerFunc
+    {
+        HorizontalLayout::Ptr operator()(const StringAtom& str) const;
+    };
+
+    struct _StringArray_ViewFetchFunc
+    {
+        StringAtom operator()(HorizontalLayout* layout) const;
+    };
+
+    using StringArray
+        = BaseArray<StringAtom, _StringArray_ArrayCellViewerFunc, _StringArray_ViewFetchFunc>;
 } // namespace Core::Gui

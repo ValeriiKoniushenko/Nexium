@@ -127,6 +127,72 @@ namespace Core
 {
     ECS_COMPONENT_IMPL(ObjectPropertiesWindowEWC)
 
+    Gui::HorizontalLayout::Ptr _GraphicsModifiersArray_ArrayCellViewerFunc::operator()(
+        GraphicsComponentData::ModifierParam& data) const
+    {
+        auto l = Gui::HorizontalLayout::Create();
+        const auto comboModifier = l->addChildComponent<Gui::ComboModelBased>();
+        comboModifier->setDataProvider(
+            [](std::size_t i, StringAtom& out) -> const void*
+            {
+                out = GraphicsComponentData::ModifierAsStringVector().at(i);
+                return &GraphicsComponentData::ModifierAsStringVector().at(i);
+            });
+        comboModifier->setSizeProvider(
+            [] { return GraphicsComponentData::ModifierAsStringVector().size(); });
+        comboModifier->setFlex(Gui::Flex::FlexWidth);
+        comboModifier->setCurrentIndex(data.modifier.cast() - 1);
+
+        const auto comboValues = l->addChildComponent<Gui::ComboModelBased>();
+        comboValues->setDataProvider(
+            [](std::size_t i, StringAtom& out) -> const void*
+            {
+                out = GraphicsComponentData::ModifiedValueAsStringVector().at(i);
+                return &GraphicsComponentData::ModifiedValueAsStringVector().at(i);
+            });
+        comboValues->setSizeProvider(
+            [] { return GraphicsComponentData::ModifiedValueAsStringVector().size(); });
+        comboValues->setFlex(Gui::Flex::FlexWidth);
+
+        auto it = std::ranges::find(GraphicsComponentData::ModifiedValueAsStringVector(),
+                                    GraphicsComponentData::ToString(data.value));
+        if (it != GraphicsComponentData::ModifiedValueAsStringVector().end())
+        {
+            comboValues->setCurrentIndex(
+                std::distance(GraphicsComponentData::ModifiedValueAsStringVector().begin(), it));
+        }
+        return l;
+    }
+
+    GraphicsComponentData::ModifierParam _GraphicsModifiersArray_ViewFetchFunc::operator()(
+        Gui::HorizontalLayout* layout) const
+    {
+        GraphicsComponentData::ModifierParam out;
+
+        if (auto modifier = layout->getFirstChildAs<Gui::ComboModelBased>(); modifier)
+        {
+            auto str = GraphicsComponentData::ModifierAsStringVector()[modifier->getCurrentIndex()];
+            out.modifier = GraphicsComponentData::Modifier::fromStr(str.c_str()).value();
+        }
+        else
+        {
+            Assert(false);
+        }
+
+        if (auto value = layout->getLastChildAs<Gui::ComboModelBased>(); value)
+        {
+            auto str
+                = GraphicsComponentData::ModifiedValueAsStringVector()[value->getCurrentIndex()];
+            out.value = GraphicsComponentData::FromString(str);
+        }
+        else
+        {
+            Assert(false);
+        }
+
+        return out;
+    }
+
     //
     //     _____  _        _              _   ______
     //    |  _  || |      (_)            | |  | ___ \

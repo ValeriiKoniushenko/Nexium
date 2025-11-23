@@ -143,6 +143,44 @@ namespace Core
         }
     }
 
+    Gui::HorizontalLayout::Ptr _AssimpPostProcessArray_ArrayCellViewerFunc::operator()(
+        aiPostProcessSteps data) const
+    {
+        auto l = Gui::HorizontalLayout::Create();
+        const auto combo = l->addChildComponent<Gui::ComboModelBased>();
+
+        combo->setDataProvider(
+            [](std::size_t i, StringAtom& out) -> const void*
+            {
+                out = Assimp::aiPostProcessStepsToString(Assimp::aiPostProcessStepsAsVector[i]);
+                return nullptr;
+            });
+        combo->setSizeProvider([] { return Assimp::aiPostProcessStepsAsVector.size(); });
+        combo->setFlex(Gui::Flex::FlexWidth);
+
+        const auto it = std::ranges::find(Assimp::aiPostProcessStepsAsVector, data);
+        if (it != Assimp::aiPostProcessStepsAsVector.end())
+        {
+            combo->setCurrentIndex(it - Assimp::aiPostProcessStepsAsVector.begin());
+        }
+        return l;
+    }
+
+    aiPostProcessSteps _AssimpPostProcessArray_ViewFetchFunc::operator()(
+        Gui::HorizontalLayout* layout) const
+    {
+        if (auto modifier = layout->getFirstChildAs<Gui::ComboModelBased>())
+        {
+            return Assimp::aiPostProcessStepsAsVector[modifier->getCurrentIndex()];
+        }
+        else
+        {
+            Assert(false);
+        }
+
+        return static_cast<aiPostProcessSteps>(0);
+    }
+
     bool ECSEditorStaticMeshBundleAdapter::canWorkWith(BaseComponent* component) const
     {
         return dynamic_cast<StaticMeshBundle*>(component) != nullptr;

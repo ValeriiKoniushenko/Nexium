@@ -342,8 +342,8 @@ namespace Core
      * Provides lifecycle hooks, ticking mechanism, and JSON serialization.
      */
     class AbstractComponent :
-        public BaseLog,
         public IntrusiveRefCounter<BaseComponent>,
+        public BaseLog,
         public IDataStreamBridge
     {
     public:
