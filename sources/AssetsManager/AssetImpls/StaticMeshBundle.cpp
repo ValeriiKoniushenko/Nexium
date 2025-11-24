@@ -47,7 +47,8 @@ namespace Core::AssetImpl
 
         Assimp::Importer importer;
         const aiScene* scene = importer.ReadFile(
-            (Config::Path::projectAbsPath / extractedData.meshPath).generic_string(), extractedData.assimpPostProcess);
+            (Config::Path::projectAbsPath / extractedData.meshPath).generic_string(),
+            extractedData.assimpPostProcess);
         if (Verify(scene) && Verify(scene->mRootNode))
         {
             if (const auto owner = dynamic_cast<Core::StaticMeshBundle*>(dataOwner); Verify(owner))

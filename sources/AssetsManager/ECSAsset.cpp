@@ -80,7 +80,7 @@ namespace Core
 
             return json[AssetData::assetData];
         }
-        catch (std::exception e)
+        catch (const std::exception& e)
         {
             criticalLog("Can't provide asset's data: {}. Reason: {}"_f << _pathToSource
                                                                        << e.what());
@@ -178,7 +178,7 @@ namespace Core
             _status = Status::Loaded;
             traceLog("Asset:: '{}' is: loaded! New status is: 'Loaded'"_f << _logicPath);
         }
-        catch (std::exception e)
+        catch (const std::exception& e)
         {
             criticalLog("Can't load Asset:: '{}'. The reason: {}. New status is: 'LoadingError'"_f
                         << _logicPath << e.what());
@@ -276,7 +276,7 @@ namespace Core
             traceLog("Successfully preloaded. New status is: 'PreLoaded'. Asset: {}"_f
                      << _logicPath);
         }
-        catch (std::exception e)
+        catch (const std::exception& e)
         {
             criticalLog(
                 "Can't parse asset's file: {}. Reason: {}. New status is: 'PreLoadingError'"_f

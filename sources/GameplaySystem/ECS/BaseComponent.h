@@ -219,7 +219,8 @@ public:
     _ECS_COMPONENT_DECL(ClassName, BRACKETS(ClassName<__VA_ARGS__>), BaseComponentClass)
 
 #define ECS_TEMPLATE_COMPONENT_IMPL(TypeName, Template)                                            \
-    _ECS_COMPONENT_IMPL(BRACKETS(TypeName), BRACKETS(template<Template>), typeid(TypeName).name(), true)
+    _ECS_COMPONENT_IMPL(BRACKETS(TypeName), BRACKETS(template<Template>), typeid(TypeName).name(), \
+                        true)
 
 namespace Core
 {
@@ -255,8 +256,7 @@ namespace Core
      *   - a static member componentType
      */
     template<class T>
-    concept IsComponent = std::derived_from<T, BaseComponent> && requires(T t)
-    {
+    concept IsComponent = std::derived_from<T, BaseComponent> && requires(T t) {
         { t.getComponentType() };
         { T::componentType };
     };
@@ -290,9 +290,7 @@ namespace Core
      * Try to don't use it by your own hands, it will register a new component
      * automatically. How? See the first comment above class BaseComponent
      */
-    class GlobalComponentFactory final :
-        public Singleton<GlobalComponentFactory>,
-        public BaseLog
+    class GlobalComponentFactory final : public Singleton<GlobalComponentFactory>, public BaseLog
     {
         SINGLETONS_FRIEND(GlobalComponentFactory);
 
@@ -370,9 +368,7 @@ namespace Core
         [[nodiscard]] spdlog::logger* getLogger() const final;
 
         /** Reset the component to an uninitialized state. */
-        virtual void clear()
-        {
-        }
+        virtual void clear() {}
 
         /** Safe cast to a derived component type. Asserts if cast fails. */
         template<IsComponent T>
@@ -434,9 +430,7 @@ namespace Core
         /**
          * This method will be called automatically. Don't call it directly.
          */
-        virtual void onTick(float delta)
-        {
-        }
+        virtual void onTick(float delta) {}
 
         bool _isEnabled = true;
 
@@ -496,14 +490,14 @@ namespace Core
     public:
         using Self = BaseComponent;
         template<bool isConst>
-        using AdaptivePtr = Core::IntrusivePtr<std::conditional_t<isConst, const Self, Self> >;
+        using AdaptivePtr = Core::IntrusivePtr<std::conditional_t<isConst, const Self, Self>>;
         template<bool isConst>
         using AdaptiveRawPtr = std::conditional_t<isConst, const Self, Self>*;
         using Ptr = Core::IntrusivePtr<Self>;
         using CPtr = Core::IntrusivePtr<const Self>;
         using CChildT = Core::IntrusivePtr<const BaseComponent>;
         using ChildT = Core::IntrusivePtr<BaseComponent>;
-        using ChildrenT = std::vector<Core::IntrusivePtr<BaseComponent> >;
+        using ChildrenT = std::vector<Core::IntrusivePtr<BaseComponent>>;
 
         static const StringAtom componentType;
 
@@ -689,9 +683,7 @@ namespace Core
         void removeChildOf(const StringAtom& name = ""_atom)
         {
             removeChildIf([](auto* child)
-            {
-                return child->template tryCastTo<ComponentT>() != nullptr;
-            });
+                          { return child->template tryCastTo<ComponentT>() != nullptr; });
         }
 
         // ========================== FOR EACHes ==========================
@@ -757,21 +749,17 @@ namespace Core
     protected:
         virtual bool addChildValidator(BaseComponent* newChild) { return true; }
 
-        virtual void onAddChild(BaseComponent* newChild)
-        {
-        }
+        virtual void onAddChild(BaseComponent* newChild) {}
 
-        virtual void onRemoveChild(BaseComponent* child)
-        {
-        }
+        virtual void onRemoveChild(BaseComponent* child) {}
 
         explicit BaseComponent(StringAtom type, StringAtom name)
             : _name{ std::move(name) },
               _type{ std::move(type) }
         {
-            #ifdef DEBUG
+#ifdef DEBUG
             Assert(_type.isStatic());
-            #endif
+#endif
         }
 
         [[nodiscard]] StringAtom getCacheHash() const override;
@@ -779,16 +767,12 @@ namespace Core
         /**
          * This method will be called automatically. Don't call it directly.
          */
-        virtual void onInitialize()
-        {
-        }
+        virtual void onInitialize() {}
 
         /**
          * This method will be called automatically. Don't call it directly.
          */
-        virtual void onPreInitialize()
-        {
-        }
+        virtual void onPreInitialize() {}
 
     protected:
         ChildrenT _children;
@@ -831,18 +815,16 @@ namespace Core
             return true;
         }
 
-        #if defined(DEBUG)
+#if defined(DEBUG)
         if (_map.contains(type))
         {
             criticalLog("You're trying to register the type '{}' second(or more) time."_f << type);
         }
-        #endif
+#endif
 
         _map.emplace(
             type, []() -> BaseComponent*
-            {
-                return new std::conditional_t<std::is_abstract_v<T>, InvalidComponent, T>;
-            });
+            { return new std::conditional_t<std::is_abstract_v<T>, InvalidComponent, T>; });
 
         _typeToNameMap.emplace(type, typeid(T));
 
@@ -975,11 +957,11 @@ namespace Core
 
                 if (comp->_type == TargetT::componentType)
                 {
-                    #if defined(DEBUG)
+#if defined(DEBUG)
                     found = dynamic_cast<TargetT*>(comp);
-                    #else
+#else
                     found = static_cast<TargetT*>(comp);
-                    #endif
+#endif
                     if (!name.isEmpty() && found)
                     {
                         if (found->_name == name)

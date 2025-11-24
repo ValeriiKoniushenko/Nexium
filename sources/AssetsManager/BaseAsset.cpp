@@ -70,7 +70,7 @@ namespace Core
                 = nlohmann::json::parse(Utils::GetTextFileContentAs<std::string>(_assetPath));
             ioFieldsUpdate(stream);
         }
-        catch (std::exception e)
+        catch (const std::exception& e)
         {
             criticalLog("Can't read file: {}. Reason: {}"_f << _assetPath << e.what());
         }

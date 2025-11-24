@@ -298,7 +298,14 @@ namespace Core
             cmd += "\"";
         }
 
-        const std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd.c_str(), "r"), pclose);
+        const auto pipe = std::unique_ptr<FILE, std::function<void(FILE*)>>(popen(cmd.c_str(), "r"),
+                                                                            [](FILE* f)
+                                                                            {
+                                                                                if (f)
+                                                                                {
+                                                                                    pclose(f);
+                                                                                }
+                                                                            });
         if (!pipe)
         {
             Core::globalLog.criticalLog("Can't open CMD for file selection dialog");
