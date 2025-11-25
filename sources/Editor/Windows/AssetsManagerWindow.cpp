@@ -159,6 +159,11 @@ namespace Core
                     tryOpenPath(std::filesystem::path(path));
                 }
             });
+    }
+
+    void AssetsManagerWindowEWC::onInitialize()
+    {
+        BaseFloatEWC::onInitialize();
 
         if (_openedPath.empty())
         {
@@ -168,11 +173,6 @@ namespace Core
         {
             openPath(_openedPath);
         }
-    }
-
-    void AssetsManagerWindowEWC::onInitialize()
-    {
-        BaseFloatEWC::onInitialize();
 
         refresh();
     }
