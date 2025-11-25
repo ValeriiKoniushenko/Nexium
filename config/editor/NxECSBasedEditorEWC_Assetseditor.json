@@ -1,55 +1,10 @@
 {
     "AbstractComponent": {
-        "isEnabled": true,
+        "isEnabled": false,
         "noTick": false
     },
     "BaseComponent": {
-        "children": [
-            {
-                "AbstractComponent": {
-                    "isEnabled": true,
-                    "noTick": false
-                },
-                "BaseComponent": {
-                    "children": [],
-                    "name": "",
-                    "type": "ECSBaseComponentAdapter"
-                }
-            },
-            {
-                "AbstractComponent": {
-                    "isEnabled": false,
-                    "noTick": false
-                },
-                "BaseComponent": {
-                    "children": [],
-                    "name": "",
-                    "type": "ECSEditorActorAdapter"
-                }
-            },
-            {
-                "AbstractComponent": {
-                    "isEnabled": false,
-                    "noTick": false
-                },
-                "BaseComponent": {
-                    "children": [],
-                    "name": "",
-                    "type": "ECSEditorStaticMeshBundleAdapter"
-                }
-            },
-            {
-                "AbstractComponent": {
-                    "isEnabled": true,
-                    "noTick": false
-                },
-                "BaseComponent": {
-                    "children": [],
-                    "name": "",
-                    "type": "ECSEditorGraphicsComponentDataAdapter"
-                }
-            }
-        ],
+        "children": [],
         "name": " Assets editor",
         "type": "NxECSBasedEditorEWC"
     }

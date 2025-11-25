@@ -88,7 +88,7 @@ namespace Core
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-        glfwWindowHint(GLFW_MAXIMIZED, _isMaximized);
+        glfwWindowHint(GLFW_MAXIMIZED, _isMaximized ? GLFW_TRUE : GLFW_FALSE);
 
         if (!hasCache())
         {
@@ -112,6 +112,11 @@ namespace Core
         debugLog("The window was created");
 
         glfwMakeContextCurrent(_window);
+        if (_isMaximized)
+        {
+            glfwMaximizeWindow(_window);
+        }
+
         glfwSetMouseButtonCallback(_window, MouseKeyPressHandler);
         glfwSetCursorPosCallback(_window, MouseMoveHandler);
         glfwSetKeyCallback(_window, KeyPressHandler);
