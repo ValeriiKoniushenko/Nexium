@@ -100,7 +100,6 @@ namespace Core::AssetImpl
 
     void StaticMeshBundle::spawn()
     {
-
     }
 
     StaticMeshBundle::AssetData StaticMeshBundle::extractAssetData(

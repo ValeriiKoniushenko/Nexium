@@ -133,7 +133,8 @@ namespace Core
         static void openPathFromOSExplorer(const std::filesystem::path& path);
 
     protected:
-        [[nodiscard]] std::unordered_map<StringAtom, NXAsset>::iterator findAssetByPath(const std::filesystem::path& path);
+        [[nodiscard]] std::unordered_map<StringAtom, NXAsset>::iterator findAssetByPath(
+            const std::filesystem::path& path);
 
     protected:
         std::set<std::filesystem::path> _registeredPaths;
