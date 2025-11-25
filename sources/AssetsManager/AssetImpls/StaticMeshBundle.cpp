@@ -73,6 +73,36 @@ namespace Core::AssetImpl
     {
     }
 
+    bool StaticMeshBundle::processAction(AssetAction action)
+    {
+        if (ECSAssetImpl::processAction(action))
+        {
+            return true;
+        }
+
+        if (action & AssetAction::Spawn)
+        {
+            spawn();
+            return true;
+        }
+
+        return false;
+    }
+    bool StaticMeshBundle::canProcessAction(AssetAction action) const
+    {
+        if (action & AssetAction::Spawn)
+        {
+            return true;
+        }
+
+        return ECSAssetImpl::canProcessAction(action);
+    }
+
+    void StaticMeshBundle::spawn()
+    {
+
+    }
+
     StaticMeshBundle::AssetData StaticMeshBundle::extractAssetData(
         const nlohmann::json& assetData) const
     {

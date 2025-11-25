@@ -33,6 +33,11 @@ namespace Core
 {
     class ECSAsset;
 
+    enum AssetAction : uint16_t
+    {
+        Spawn = 1 << 0
+    };
+
     class ECSAssetImpl
     {
     public:
@@ -42,6 +47,9 @@ namespace Core
                           const nlohmann::json& assetData)
             = 0;
         virtual void unload(const ECSAsset& asset, BaseComponent* dataOwner) = 0;
+
+        [[nodiscard]] virtual bool canProcessAction(AssetAction action) const { return false; }
+        virtual bool processAction(AssetAction action) { return false; }
 
     protected:
         ECSAssetImpl() = default;
@@ -108,6 +116,9 @@ namespace Core
 
         [[nodiscard]] int getAdapterIndex() const noexcept { return _adapterIndex; }
 
+        [[nodiscard]] bool canProcessAction(AssetAction action) const;
+        void processAction(AssetAction action);
+
     protected:
         void load();
         void unload();
@@ -136,5 +147,6 @@ namespace Core
     };
 
     using NXAsset = IntrusivePtr<ECSAsset>;
+    using WeakNXAsset = WeakPtr<ECSAsset>;
 
 } // namespace Core

@@ -116,6 +116,7 @@ namespace Core
         void registerNewAssetPath(std::filesystem::path path);
         [[nodiscard]] NXAsset getAsset(const StringAtom& logicPath);
         [[nodiscard]] NXAsset getAssetByPath(const std::filesystem::path& path);
+        [[nodiscard]] WeakNXAsset getWeakAssetByPath(const std::filesystem::path& path);
 
         void spawnMesh3DOnScene(const StringAtom& logicPath);
 
@@ -130,6 +131,9 @@ namespace Core
         static void tryToOpenNxFile(const std::filesystem::directory_entry& path);
         [[nodiscard]] static NodeType getNodeType(const std::filesystem::directory_entry& entry);
         static void openPathFromOSExplorer(const std::filesystem::path& path);
+
+    protected:
+        [[nodiscard]] std::unordered_map<StringAtom, NXAsset>::iterator findAssetByPath(const std::filesystem::path& path);
 
     protected:
         std::set<std::filesystem::path> _registeredPaths;

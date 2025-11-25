@@ -600,12 +600,13 @@ namespace Core
             {
                 AssetsManager::openPathFromOSExplorer(entry.is_directory() ? path : _openedPath);
             }
-            if (path.extension().generic_string() == NXMesh3D::AssetT::fileExtension)
+
+            const auto weakAsset = GetAssetsManager().getWeakAssetByPath(path.generic_string());
+            if (auto asset = weakAsset.tryLoad(); asset && asset->canProcessAction(AssetAction::Spawn))
             {
                 if (ImGui::MenuItem("Spawn on scene"))
                 {
-                    GetAssetsManager().spawnMesh3DOnScene(
-                        StringAtom::Intern(path.generic_string()));
+                    asset->processAction(AssetAction::Spawn);
                 }
             }
 
@@ -643,7 +644,7 @@ namespace Core
             ImGui::BeginTooltip();
 
             std::error_code ec;
-            const auto lastWrite = std::filesystem::last_write_time(path, ec);
+            const auto lastWrite = std::chrono::clock_cast<std::chrono::system_clock>(std::filesystem::last_write_time(path, ec));
             if (ec)
             {
                 errorLog("Some error of std::filesystem::last_write_time: {}"_f << ec.message());

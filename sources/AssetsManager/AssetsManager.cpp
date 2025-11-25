@@ -196,44 +196,22 @@ namespace Core
 
     NXAsset AssetsManager::getAssetByPath(const std::filesystem::path& path)
     {
-        if (path.extension().generic_string() != NXAsset::ValueT::fileExtension)
+        const auto it = findAssetByPath(path);
+        if (it == _assets.end()) [[unlikely]]
         {
             return {};
         }
+        return it->second;
+    }
 
-        for (auto&& registered : GetAssetsManager().getRegisteredPaths())
+    WeakNXAsset AssetsManager::getWeakAssetByPath(const std::filesystem::path& path)
+    {
+        const auto it = findAssetByPath(path);
+        if (it == _assets.end()) [[unlikely]]
         {
-            try
-            {
-                std::filesystem::path normalized;
-                if (registered.is_relative())
-                {
-                    normalized = Config::Path::projectAbsPath;
-                }
-                normalized /= registered;
-
-                const auto realRegistered = std::filesystem::absolute(normalized).parent_path();
-                const auto relative = std::filesystem::relative(path, realRegistered);
-                const auto id = StringAtom(relative.generic_string());
-                if (_assets.contains(id))
-                {
-                    return _assets.at(id);
-                }
-            }
-            catch (const std::filesystem::filesystem_error& e)
-            {
-                GetAssetsManager().errorLog(
-                    "Can't resolve a path due to internal error, of was met junction symlink: {}"_f
-                    << e.what());
-            }
-            catch (...)
-            {
-                GetAssetsManager().errorLog(
-                    "Can't resolve a path due to internal error, of was met junction symlink");
-            }
+            return {};
         }
-
-        return {};
+        return it->second;
     }
 
     void AssetsManager::spawnMesh3DOnScene(const StringAtom& logicPath)
@@ -499,5 +477,46 @@ namespace Core
         const std::string command = "xdg-open \"" + path.generic_string() + "\"";
 #endif
         std::system(command.c_str());
+    }
+
+    std::unordered_map<StringAtom, NXAsset>::iterator AssetsManager::findAssetByPath(
+        const std::filesystem::path& path)
+    {
+        if (path.extension().generic_string() != NXAsset::ValueT::fileExtension)
+        {
+            return {};
+        }
+
+        for (auto&& registered : GetAssetsManager().getRegisteredPaths())
+        {
+            try
+            {
+                std::filesystem::path normalized;
+                if (registered.is_relative())
+                {
+                    normalized = Config::Path::projectAbsPath;
+                }
+                normalized /= registered;
+
+                const auto realRegistered = std::filesystem::absolute(normalized).parent_path();
+                const auto relative = std::filesystem::relative(path, realRegistered);
+                const auto id = StringAtom(relative.generic_string());
+
+                return _assets.find(id);
+            }
+            catch (const std::filesystem::filesystem_error& e)
+            {
+                GetAssetsManager().errorLog(
+                    "Can't resolve a path due to internal error, of was met junction symlink: {}"_f
+                    << e.what());
+            }
+            catch (...)
+            {
+                GetAssetsManager().errorLog(
+                    "Can't resolve a path due to internal error, of was met junction symlink");
+            }
+        }
+
+        return {};
     }
 } // namespace Core

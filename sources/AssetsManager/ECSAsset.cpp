@@ -138,6 +138,26 @@ namespace Core
         }
     }
 
+    bool ECSAsset::canProcessAction(AssetAction action) const
+    {
+        if (!_impl)
+        {
+            return false;
+        }
+
+        return _impl->canProcessAction(action);
+    }
+
+    void ECSAsset::processAction(AssetAction action)
+    {
+        if (!_impl || !canProcessAction(action))
+        {
+            return;
+        }
+
+        _impl->processAction(action);
+    }
+
     void ECSAsset::load()
     {
         if (_status.cast() != Status::PreLoaded)
