@@ -603,11 +603,11 @@ namespace Core
 
             const auto weakAsset = GetAssetsManager().getWeakAssetByPath(path.generic_string());
             if (auto asset = weakAsset.tryLoad();
-                asset && asset->canProcessAction(AssetAction::Spawn))
+                asset && asset->canProcessAction(AssetAction::AA_Spawn))
             {
                 if (ImGui::MenuItem("Spawn on scene"))
                 {
-                    asset->processAction(AssetAction::Spawn);
+                    asset->processAction(AssetAction::AA_Spawn);
                 }
             }
 

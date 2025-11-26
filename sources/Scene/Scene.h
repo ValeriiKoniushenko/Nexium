@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "AssetsManager/ECSAsset.h"
 #include "AssetsManager/Mesh3DAsset.h"
 #include "AssetsManager/SkyboxAsset.h"
 #include "Core/Delegate.h"
@@ -84,6 +85,8 @@ namespace Core
 
         void addActor(NXMesh3D& mesh, bool readFromCache = false);
 
+        void addAsset(const NXAsset& mesh, bool readFromCache = false);
+
         template<IsActorBased T, class... Args>
         T* createAndGetActor(Args... args)
         {
@@ -126,6 +129,8 @@ namespace Core
         std::vector<Actor::Ptr> _actors;
         // non-owner
         std::vector<NXMesh3D> _assetsMesh3D;
+
+        std::vector<NXAsset> _assets;
 
         StringAtom _sceneName = "Default";
 

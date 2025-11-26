@@ -155,7 +155,7 @@ namespace Core
             return;
         }
 
-        _impl->processAction(action);
+        _impl->processAction(action, *this);
     }
 
     void ECSAsset::load()

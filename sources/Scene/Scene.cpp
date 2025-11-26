@@ -89,6 +89,11 @@ namespace Core
         _assetsMesh3D.emplace_back(mesh);
     }
 
+    void Scene::addAsset(const NXAsset& mesh, bool readFromCache)
+    {
+        _assets.push_back(mesh);
+    }
+
     void Scene::writeToCacheSeparateData()
     {
         for (auto&& actor : _actors)

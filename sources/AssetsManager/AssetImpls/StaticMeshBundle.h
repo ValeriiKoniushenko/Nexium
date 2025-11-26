@@ -54,11 +54,11 @@ namespace Core::AssetImpl
                   const nlohmann::json& assetData) override;
         void unload(const ECSAsset& asset, BaseComponent* dataOwner) override;
 
-        bool processAction(AssetAction action) override;
+        bool processAction(AssetAction action, ECSAsset& asset) override;
         [[nodiscard]] bool canProcessAction(AssetAction action) const override;
 
     private:
-        void spawn();
+        void spawn(ECSAsset& asset);
 
     private:
         [[nodiscard]] AssetData extractAssetData(const nlohmann::json& assetData) const;

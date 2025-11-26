@@ -35,7 +35,7 @@ namespace Core
 
     enum AssetAction : uint16_t
     {
-        Spawn = 1 << 0
+        AA_Spawn = 1 << 0
     };
 
     class ECSAssetImpl
@@ -49,7 +49,7 @@ namespace Core
         virtual void unload(const ECSAsset& asset, BaseComponent* dataOwner) = 0;
 
         [[nodiscard]] virtual bool canProcessAction(AssetAction action) const { return false; }
-        virtual bool processAction(AssetAction action) { return false; }
+        virtual bool processAction(AssetAction action, ECSAsset& asset) { return false; }
 
     protected:
         ECSAssetImpl() = default;
