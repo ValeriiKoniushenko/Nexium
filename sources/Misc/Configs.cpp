@@ -28,16 +28,21 @@ namespace Core::Config
 {
     namespace Path
     {
+        const std::filesystem::path projectAbsPath = NEXIUM_PROJECT_DIR;
+
         const std::filesystem::path gameConfigModel3DsDir = "model3ds";
         const std::filesystem::path configDir = "config";
         const std::filesystem::path editorConfigDir = "editor";
-        const std::filesystem::path projectAbsPath = NEXIUM_PROJECT_DIR;
-        const std::filesystem::path assets = projectAbsPath / "assets";
+
+        const std::filesystem::path data = projectAbsPath / "data";
+        const std::filesystem::path assets = data / "assets";
         const std::filesystem::path fonts = assets / "fonts";
         const std::filesystem::path shaders = assets / "shaders";
         const std::filesystem::path images = assets / "images";
         const std::filesystem::path objects3d = assets / "objects-3d";
-        const std::filesystem::path imGuiWindowsIni = projectAbsPath / configDir / "windows.ini";
+
+        const std::filesystem::path config = data / configDir;
+        const std::filesystem::path imGuiWindowsIni = config / "windows.ini";
         const std::filesystem::path editorFont = fonts / "JetBrainsMono-Regular.ttf";
         const std::filesystem::path fontAwesome = fonts / "fontawesome-webfont.ttf";
     } // namespace Path

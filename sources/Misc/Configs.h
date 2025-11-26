@@ -46,15 +46,20 @@ namespace Core::Config
 
     namespace Path
     {
+        extern const std::filesystem::path projectAbsPath;
+
         extern const std::filesystem::path gameConfigModel3DsDir;
         extern const std::filesystem::path configDir;
         extern const std::filesystem::path editorConfigDir;
-        extern const std::filesystem::path projectAbsPath;
+
+        extern const std::filesystem::path data;
         extern const std::filesystem::path assets;
         extern const std::filesystem::path fonts;
         extern const std::filesystem::path shaders;
         extern const std::filesystem::path images;
         extern const std::filesystem::path objects3d;
+
+        extern const std::filesystem::path config;
         extern const std::filesystem::path imGuiWindowsIni;
         extern const std::filesystem::path editorFont;
         extern const std::filesystem::path fontAwesome;

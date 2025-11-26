@@ -9,7 +9,7 @@
         "type": "LogsWindowEWC"
     },
     "LogsWindowEWC": {
-        "filter": "Asset",
+        "filter": "",
         "logLimit": 500,
         "regexMode": true,
         "severityFilters": {

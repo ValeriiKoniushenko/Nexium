@@ -114,7 +114,7 @@ namespace Core
 
     void Scene::initialize()
     {
-        skybox = GetAssetsManager().getSkybox("assets/baked/skybox/default.nxsky"_atom);
+        skybox = GetAssetsManager().getSkybox("data/assets/baked/skybox/default.nxsky"_atom);
     }
 
     void Scene::tick(float timeDelta)
