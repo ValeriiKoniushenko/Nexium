@@ -110,8 +110,7 @@ namespace Core
 
     std::filesystem::path JsonCacheable::getTargetPath() const
     {
-        return Config::Path::projectAbsPath / Config::Path::configDir / getCacheDir()
-               / (getCacheHash().toStdString() + ".json");
+        return Config::Path::config / getCacheDir() / (getCacheHash().toStdString() + ".json");
     }
 
     void JsonCacheable::clearCache()

@@ -1,0 +1,24 @@
+{
+    "AbstractComponent": {
+        "isEnabled": true,
+        "noTick": false
+    },
+    "BaseComponent": {
+        "children": [],
+        "name": " Logs",
+        "type": "LogsWindowEWC"
+    },
+    "LogsWindowEWC": {
+        "filter": "Asset",
+        "logLimit": 500,
+        "regexMode": true,
+        "severityFilters": {
+            "critical": true,
+            "debug": true,
+            "error": true,
+            "info": true,
+            "trace": true,
+            "warning": true
+        }
+    }
+}

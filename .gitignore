@@ -1,6 +1,7 @@
 .vs
 .vscode
 .idea
+.continue
 cmake-build-*/
 build
 out

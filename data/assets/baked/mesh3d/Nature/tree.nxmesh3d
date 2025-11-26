@@ -1,0 +1,10 @@
+{
+  "path": "data/assets/objects-3d/Models/FBX/Tree.fbx",
+  "mainShader": "defaultTextured",
+  "outlineShader": "outline",
+  "assimpPostProcess": [
+    "Triangulate",
+    "JoinIdenticalVertices",
+    "SortByPType"
+  ]
+}

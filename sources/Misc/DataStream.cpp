@@ -309,7 +309,7 @@ namespace Core
 
     std::filesystem::path IDataStreamBridge::getTargetCacheDirPath() const
     {
-        return Config::Path::projectAbsPath / Config::Path::configDir / getCacheDir();
+        return Config::Path::config / getCacheDir();
     }
 
     DataStream::DataStream()
