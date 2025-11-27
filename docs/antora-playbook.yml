@@ -1,0 +1,22 @@
+site:
+  title: Nexium Engine
+  start_page: nexium:ROOT:index.adoc
+
+content:
+  sources:
+    - url: ../
+      branches: HEAD
+      start_path: docs/nexium
+
+ui:
+  bundle:
+    url: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/HEAD/raw/build/ui-bundle.zip?job=bundle-stable
+    snapshot: true
+
+asciidoc:
+  attributes:
+    page-pagination: true
+    experimental: true
+
+output:
+  dir: ./build

@@ -1,0 +1,128 @@
+= Nexium Engine
+:page-role: landing
+:imagesdir: ../images
+:toc: macro
+:toclevels: 3
+
+A lightweight, cross-platform 3D game engine designed for modern C++ development.
+Nexium Engine is currently in active development and aims to provide a flexible, high-performance foundation for building real-time 3D applications without the overhead of traditional heavyweight engines.
+
+---
+
+toc::[]
+
+== What is Nexium Engine?
+
+Nexium Engine is a feature-rich, cross-platform 3D engine with a unified workflow.
+The goal is simple: provide strong, modern tools so developers can focus on creating games rather than reinventing rendering systems, asset pipelines, windowing layers, or platform backends.
+
+Once stable, Nexium will support exporting projects to major desktop and mobile platforms:
+
+* Linux
+* Windows
+* Android
+
+Nexium emphasizes:
+
+* **modern C\++ architecture** (C++23, clean memory model, shared/static runtime separation)
+* **high-performance rendering** (OpenGL for now, planned Vulkan backend)
+* **clean module separation** (Core, Math, Rendering, Windowing, ECS, Resources)
+* **strict cross-platform behavior**
+* **simple, unified build system** (CMake)
+
+image::main-preview.png[Engine Preview,width=100%]
+
+== Open Source
+
+Nexium Engine is **100% free and open-source** under the **MIT** license.
+
+* No royalties.
+* No locked features.
+* Your game belongs entirely to you.
+
+Nearly the entire engine (~99.9%) is developed by *Valerii Koniushenko*.
+
+== Getting the Engine
+
+Because Nexium is under rapid development, binary releases are not yet provided.
+However, the engine builds easily from source using standard toolchains.
+I tried to make the process the building as easy as it is possible.
+So, just choose your platform & let's go!
+
+=== Windows
+
+==== Requirements
+
+. `CMake 3.6`+
+. `MSVC 14`+ (Visual Studio 2022 recommended)
+
+==== Build Steps
+
+```bat
+git clone https://github.com/ValeriiKoniushenko/Nexium.git
+cd Nexium
+cmake -S . -B build -G "Visual Studio 17 2022" -A x64
+cmake --build build
+```
+
+To run, just open this file:
+
+```sh
+build/Debug/bin/TemplateGame
+```
+
+=== Linux
+
+==== Requirements
+
+. `CMake 3.6`+
+. `Clang 19`+ | `GCC 14`+
+. Install required system libraries (Ubuntu example):
+
+```sh
+sudo apt install libwayland-dev libx11-dev libxi-dev libxrandr-dev libxinerama-dev libxkbcommon-dev libxcursor-dev libgl1-mesa-dev
+```
+
+==== Build Steps
+
+```sh
+git clone https://github.com/ValeriiKoniushenko/Nexium.git
+cd Nexium
+cmake -S . -B build
+cmake --build build
+```
+
+To run, just open this file:
+
+```sh
+build/bin/TemplateGame
+```
+
+== Documentation & Examples
+
+Nexium Engine is evolving rapidly.
+Currently, the engine and example game share the same project tree.
+This will be reorganized into a standalone Engine + Game separation in an upcoming beta release.
+
+== Continuous Integration Status
+
+[%autowidth,cols="1,1"]
+|===
+| Windows Builds | Linux Builds
+
+a|
+
+image:https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fjenkins.vakon.space%2Fjob%2FNexium%2Fjob%2FWinBuild_MSVC_Debug%2F&label=MSVC%20Debug[]
+
+image:https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fjenkins.vakon.space%2Fjob%2FNexium%2Fjob%2FWinBuild_MSVC_Release%2F&label=MSVC%20Release[]
+
+a|
+
+image:https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fjenkins.vakon.space%2Fjob%2FNexium%2Fjob%2FLinuxBuild_GCC_Debug%2F&label=GCC%20Debug[]
+
+image:https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fjenkins.vakon.space%2Fjob%2FNexium%2Fjob%2FLinuxBuild_GCC_Release%2F&label=GCC%20Release[]
+
+image:https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fjenkins.vakon.space%2Fjob%2FNexium%2Fjob%2FLinuxBuild_Clang_Debug%2F&label=Clang%20Debug[]
+
+image:https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fjenkins.vakon.space%2Fjob%2FNexium%2Fjob%2FLinuxBuild_Clang_Release%2F&label=Clang%20Release[]
+|===

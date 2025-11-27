@@ -1,0 +1,5 @@
+name: nexium
+title: Nexium Engine Documentation
+version: latest
+nav:
+  - modules/ROOT/nav.adoc
