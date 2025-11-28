@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Nexium Engine :: Nexium Engine</title>
+    <link rel="next" href="getting-started.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../_/css/site.css">
+  </head>
+  <body class="article landing">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="../..">Nexium Engine</a>
+      <button class="navbar-burger" aria-controls="topbar-nav" aria-expanded="false" aria-label="Toggle main menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Products</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Product A</a>
+            <a class="navbar-item" href="#">Product B</a>
+            <a class="navbar-item" href="#">Product C</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Services</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Service A</a>
+            <a class="navbar-item" href="#">Service B</a>
+            <a class="navbar-item" href="#">Service C</a>
+          </div>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="button is-primary" href="#">Download</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="nexium" data-version="latest">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="index.html">Nexium Engine Documentation</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">Overview</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="getting-started.html">Getting Started</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="installation.html">Installation</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Engine Architecture</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="engine_architecture/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="engine_architecture/module-graph.html">Module Graph</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="engine_architecture/lifecycle.html">Application Lifecycle</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="engine_architecture/threading.html">Threading Model</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="engine_architecture/memory.html">Memory Model</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="engine_architecture/resource-system.html">Resource System</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="engine_architecture/file-io.html">File I/O</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="engine_architecture/ecs-overview.html">ECS Overview</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Rendering</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="rendering/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="rendering/pipeline.html">Rendering Pipeline</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="rendering/renderer-architecture.html">Renderer Architecture</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Materials</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rendering/materials/overview.html">Material System</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rendering/materials/shader-system.html">Shader System</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rendering/materials/material-instances.html">Material Instances</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Meshes</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rendering/meshes/mesh-format.html">Mesh Format</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rendering/meshes/mesh-loader.html">Mesh Loader</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Textures</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rendering/textures/texture-loader.html">Texture Loader</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rendering/textures/compression.html">Texture Compression</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Gameplay</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="gameplay/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="gameplay/scenes.html">Scenes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="gameplay/components.html">Components</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="gameplay/scripting.html">Scripting</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="gameplay/prefabs.html">Prefabs</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Build &amp; Toolchain</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="build/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="build/linux-build.html">Linux Build</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="build/windows-build.html">Windows Build</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="build/cmake-structure.html">CMake Structure</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="build/toolchain.html">Toolchain Setup</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="build/ci-cd.html">CI/CD</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Tutorials</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="tutorials/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="tutorials/create-first-scene.html">Create Your First Scene</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="tutorials/loading-models.html">Loading Models</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="tutorials/adding-materials.html">Adding Materials</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="tutorials/building-for-release.html">Building for Release</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="tutorials/debugging.html">Debugging</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Reference</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="reference/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="reference/cli.html">Command-Line Tools</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="reference/configuration.html">Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Public API</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="reference/public-api/core-api.html">Core API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="reference/public-api/math-api.html">Math API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="reference/public-api/render-api.html">Render API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="reference/public-api/ecs-api.html">ECS API</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">About</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="about/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="about/roadmap.html">Roadmap</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="about/contributing.html">Contributing</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="about/license.html">License</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="about/history.html">History</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Nexium Engine Documentation</span>
+    <span class="version">latest</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="index.html">Nexium Engine Documentation</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="index.html">latest</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="index.html" class="home-link is-current"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="index.html">Nexium Engine Documentation</a></li>
+    <li><a href="index.html">Overview</a></li>
+  </ul>
+</nav>
+<div class="edit-this-page"><a href="file:///home/valerii/workspace/Nexium//docs/nexium/modules/ROOT/pages/index.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Nexium Engine</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>A lightweight, cross-platform 3D game engine designed for modern C++ development.
+Nexium Engine is currently in active development and aims to provide a flexible, high-performance foundation for building real-time 3D applications without the overhead of traditional heavyweight engines.</p>
+</div>
+<hr>
+<div id="toc" class="toc">
+<div id="toctitle" class="title">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_what_is_nexium_engine">What is Nexium Engine?</a></li>
+<li><a href="#_open_source">Open Source</a></li>
+<li><a href="#_getting_the_engine">Getting the Engine</a>
+<ul class="sectlevel2">
+<li><a href="#_windows">Windows</a>
+<ul class="sectlevel3">
+<li><a href="#_requirements">Requirements</a></li>
+<li><a href="#_build_steps">Build Steps</a></li>
+</ul>
+</li>
+<li><a href="#_linux">Linux</a>
+<ul class="sectlevel3">
+<li><a href="#_requirements_2">Requirements</a></li>
+<li><a href="#_build_steps_2">Build Steps</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_documentation_examples">Documentation &amp; Examples</a></li>
+<li><a href="#_continuous_integration_status">Continuous Integration Status</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_what_is_nexium_engine"><a class="anchor" href="#_what_is_nexium_engine"></a>What is Nexium Engine?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Nexium Engine is a feature-rich, cross-platform 3D engine with a unified workflow.
+The goal is simple: provide strong, modern tools so developers can focus on creating games rather than reinventing rendering systems, asset pipelines, windowing layers, or platform backends.</p>
+</div>
+<div class="paragraph">
+<p>Once stable, Nexium will support exporting projects to major desktop and mobile platforms:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Linux</p>
+</li>
+<li>
+<p>Windows</p>
+</li>
+<li>
+<p>Android</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Nexium emphasizes:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>modern C++ architecture</strong> (C++23, clean memory model, shared/static runtime separation)</p>
+</li>
+<li>
+<p><strong>high-performance rendering</strong> (OpenGL for now, planned Vulkan backend)</p>
+</li>
+<li>
+<p><strong>clean module separation</strong> (Core, Math, Rendering, Windowing, ECS, Resources)</p>
+</li>
+<li>
+<p><strong>strict cross-platform behavior</strong></p>
+</li>
+<li>
+<p><strong>simple, unified build system</strong> (CMake)</p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/main-preview.png" alt="Engine Preview" width="100%">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_open_source"><a class="anchor" href="#_open_source"></a>Open Source</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Nexium Engine is <strong>100% free and open-source</strong> under the <strong>MIT</strong> license.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>No royalties.</p>
+</li>
+<li>
+<p>No locked features.</p>
+</li>
+<li>
+<p>Your game belongs entirely to you.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Nearly the entire engine (~99.9%) is developed by <strong>Valerii Koniushenko</strong>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_getting_the_engine"><a class="anchor" href="#_getting_the_engine"></a>Getting the Engine</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Because Nexium is under rapid development, binary releases are not yet provided.
+However, the engine builds easily from source using standard toolchains.
+I tried to make the process the building as easy as it is possible.
+So, just choose your platform &amp; let&#8217;s go!</p>
+</div>
+<div class="sect2">
+<h3 id="_windows"><a class="anchor" href="#_windows"></a>Windows</h3>
+<div class="sect3">
+<h4 id="_requirements"><a class="anchor" href="#_requirements"></a>Requirements</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><code>CMake 3.6</code>+</p>
+</li>
+<li>
+<p><code>MSVC 14</code>+ (Visual Studio 2022 recommended)</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_build_steps"><a class="anchor" href="#_build_steps"></a>Build Steps</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bat hljs" data-lang="bat">git clone https://github.com/ValeriiKoniushenko/Nexium.git
+cd Nexium
+cmake -S . -B build -G "Visual Studio 17 2022" -A x64
+cmake --build build</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To run, just open this file:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">build/Debug/bin/TemplateGame</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_linux"><a class="anchor" href="#_linux"></a>Linux</h3>
+<div class="sect3">
+<h4 id="_requirements_2"><a class="anchor" href="#_requirements_2"></a>Requirements</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><code>CMake 3.6</code>+</p>
+</li>
+<li>
+<p><code>Clang 19</code>+ | <code>GCC 14</code>+</p>
+</li>
+<li>
+<p>Install required system libraries (Ubuntu example):</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">sudo apt install libwayland-dev libx11-dev libxi-dev libxrandr-dev libxinerama-dev libxkbcommon-dev libxcursor-dev libgl1-mesa-dev</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_build_steps_2"><a class="anchor" href="#_build_steps_2"></a>Build Steps</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">git clone https://github.com/ValeriiKoniushenko/Nexium.git
+cd Nexium
+cmake -S . -B build
+cmake --build build</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To run, just open this file:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">build/bin/TemplateGame</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_documentation_examples"><a class="anchor" href="#_documentation_examples"></a>Documentation &amp; Examples</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Nexium Engine is evolving rapidly.
+Currently, the engine and example game share the same project tree.
+This will be reorganized into a standalone Engine + Game separation in an upcoming beta release.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_continuous_integration_status"><a class="anchor" href="#_continuous_integration_status"></a>Continuous Integration Status</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all fit-content">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Windows Builds</th>
+<th class="tableblock halign-left valign-top">Linux Builds</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><span class="image"><img src="https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fjenkins.vakon.space%2Fjob%2FNexium%2Fjob%2FWinBuild_MSVC_Debug%2F&amp;label=MSVC%20Debug" alt="build?jobUrl=https%3A%2F%2Fjenkins.vakon"></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fjenkins.vakon.space%2Fjob%2FNexium%2Fjob%2FWinBuild_MSVC_Release%2F&amp;label=MSVC%20Release" alt="build?jobUrl=https%3A%2F%2Fjenkins.vakon"></span></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><span class="image"><img src="https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fjenkins.vakon.space%2Fjob%2FNexium%2Fjob%2FLinuxBuild_GCC_Debug%2F&amp;label=GCC%20Debug" alt="build?jobUrl=https%3A%2F%2Fjenkins.vakon"></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fjenkins.vakon.space%2Fjob%2FNexium%2Fjob%2FLinuxBuild_GCC_Release%2F&amp;label=GCC%20Release" alt="build?jobUrl=https%3A%2F%2Fjenkins.vakon"></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fjenkins.vakon.space%2Fjob%2FNexium%2Fjob%2FLinuxBuild_Clang_Debug%2F&amp;label=Clang%20Debug" alt="build?jobUrl=https%3A%2F%2Fjenkins.vakon"></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fjenkins.vakon.space%2Fjob%2FNexium%2Fjob%2FLinuxBuild_Clang_Release%2F&amp;label=Clang%20Release" alt="build?jobUrl=https%3A%2F%2Fjenkins.vakon"></span></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<nav class="pagination">
+  <span class="next"><a href="getting-started.html">Getting Started</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

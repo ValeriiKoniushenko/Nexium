@@ -1,0 +1,3 @@
+= Threading
+
+For now, it has only one main thread due to active development of the engine foundation. In the future it will (of course) contain the flexible threading system.

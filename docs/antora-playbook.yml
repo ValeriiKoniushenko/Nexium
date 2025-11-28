@@ -19,4 +19,4 @@ asciidoc:
     experimental: true
 
 output:
-  dir: ./build
+  dir: ./html

@@ -2,24 +2,15 @@
 ** xref:ROOT:getting-started.adoc[Getting Started]
 ** xref:ROOT:installation.adoc[Installation]
 
-* Engine
-** xref:engine:index.adoc[Overview]
-** Architecture
-*** xref:engine:architecture/overview.adoc[Architecture Overview]
-*** xref:engine:architecture/module-graph.adoc[Module Graph]
-*** xref:engine:architecture/lifecycle.adoc[Application Lifecycle]
-*** xref:engine:architecture/threading.adoc[Threading Model]
-*** xref:engine:architecture/memory.adoc[Memory Model]
-*** xref:engine:architecture/resource-system.adoc[Resource System]
-*** xref:engine:architecture/file-io.adoc[File I/O]
-*** xref:engine:architecture/math-library.adoc[Math Library]
-*** xref:engine:architecture/ecs-overview.adoc[ECS Overview]
-
-** Platform Layer
-*** xref:engine:platform/linux.adoc[Linux]
-*** xref:engine:platform/windows.adoc[Windows]
-*** xref:engine:platform/macos.adoc[macOS]
-*** xref:engine:platform/input-system.adoc[Input System]
+* Engine Architecture
+** xref:engine_architecture:index.adoc[Overview]
+** xref:engine_architecture:module-graph.adoc[Module Graph]
+** xref:engine_architecture:lifecycle.adoc[Application Lifecycle]
+** xref:engine_architecture:threading.adoc[Threading Model]
+** xref:engine_architecture:memory.adoc[Memory Model]
+** xref:engine_architecture:resource-system.adoc[Resource System]
+** xref:engine_architecture:file-io.adoc[File I/O]
+** xref:engine_architecture:ecs-overview.adoc[ECS Overview]
 
 * Rendering
 ** xref:rendering:index.adoc[Overview]
