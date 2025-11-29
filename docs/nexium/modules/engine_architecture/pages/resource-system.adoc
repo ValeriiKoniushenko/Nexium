@@ -90,9 +90,8 @@ Let's see at the main pipeline behind all extra information.
 
 [source, cpp]
 ----
-// First scan at the engine's initialization
+// First scan at the engine's initialization. You shouldn't do that directly!
 gGameInstance->assets.rescanFileSystem();
-
 // or
 // GetAssetsManager().rescanFileSystem()
 
