@@ -1,2 +1,119 @@
 = Resource system
 
+The resource system here is straightforward.
+It has the main controlling class `AssetsManager` which you can find inside the god-object `gGameInstance`.
+
+`AssetsManager` implement the logic of the main storage\provider for any assets.
+If you want to get some texture, 3D model, image, you must ask about that the `AssetsManager`.
+To get the object of this class, you can use such approaches:
+
+[sources,cpp]
+----
+#include "GameplaySystem/Framework/GameInstance.h"
+
+Core::AssetsManager& am1 = gGameInstance->assets;
+Core::AssetsManager& am2 = GetAssetsManager();
+----
+
+== Main pipeline
+
+The main pipeline 'how it works' I will try to explain below.
+In general, it's easy and it has main steps as:
+
+=== Initial reading
+
+At the engine xref:module-graph.adoc[init phase] it scans the filesystem with pre-registered paths to find all files with matchable extension(i.e. *.nx).
+What is 'a pre-registered' path - it's a built-in path that was registered at the engine's init stage.
+For example, the main 'pre-registered' path is: `<engine_root>/data/assets`.
+This object will call a function `AssetsManager::rescanFileSystem()` to find all new assets.
+
+How to understand what asset will be scanned?
+At the moment of writing this doc, it's a little bit floating question.
+Because it's under active development.
+But, anyway, the main asset's extension is `*.nx` - and this logic will try to make all efforts to scan & register it inside the internal buffer.
+
+=== Internal storing [preloading]
+
+When it finds some file (i.g. `MyCube.nx`) it will register this asset inside internal storage with the mapped 'logical path'.
+If to add more details, so it will read an asset file, write the *minimum amount of information* about scanned asset(type, name) and will put this info under the mapped name - logical path.
+Also, it will mark an asset with a status `PreLoaded` (to get this status you can call a function `ECSAsset::getLoadingStatus()`)
+
+==== RAM\Disk storing & loading
+
+You should keep in your mind that it has different stages of loading of your assets' main information.
+It can't just totally load all assets and store it inside the RAM.
+It's impossible due to the huge number of data( models, textures, etc).
+So, it will load only assets that you really need & want to use NOW (In the nearest future I'll add a new system\logic to put some priority or time-gap when to unload an asset).
+But you should know only one rule: _you are using the asset `X` \-> it stores its data in RAM.
+If you don't use (i.e. delete from a scene) \-> it will be immediately unloading from the RAM.
+And after a future\new request to this asset `X` it will be read again *main data* from the disk_
+
+Now, main 'stages' of your assets you can read at the enum class `ECSAsset::Status`.
+Briefly, it has the main point:
+
+. *NotLoaded* - Absolutely not loaded.
+Asset's type is undefined
+. *PreLoaded* - Loaded only the main information: type & ID & name
+. *Loaded* - Full asset's data is loaded (corresponding to asset's type)
+. *PreLoadingError* - Error while preloading data
+. *LoadingError* - Error while loading of the main data
+
+==== Regarding 'logical path'
+
+To be honest with you, the logical path is just a string, but it represents the path to this asset and it should be unique.
+To don't worry about the uniqueness of the assets through the engine, we can delegate this work to the OS filesystem.
+
+==== Example
+
+Let's check a small example.
+We have the default configuration of the engine.
+Only one path(default one) has registered inside the `AssetsManager` is `<engine_root>/data/assets`.
+Also, we have only one asset `MyCube.nx`
+
+. At the engine's init stage it will call a function `AssetsManager::rescanFileSystem()`
+. After that, it will scan the folder recursively and will find our asset `MyCube.nx` inside the folder: `<engine_root>/data/assets/3d-models/MyCube.nx`
+. The `AssetsManager` will register this asset under the logical path `3d-models/MyCube` - *it will the unique identifier of your asset*.
+
+== Extra path registration
+
+As far as you know, it has only one pre-registered path: `<engine_root>/data/assets`
+But, if you need you can add\register more paths if you need it using `AssetsManager::registerNewAssetPath(your_path)`.
+
+== Getting loaded assets
+
+At the moment of writing this doc, to retrieve some assets, you need to get the object of the described class and call a function `Core::AssetsManager::getAsset(logical_path)`.
+It's the best way to get what you need.
+
+== Real code example
+
+Let's see at the main pipeline behind all extra information.
+
+[source, cpp]
+----
+// First scan at the engine's initialization
+gGameInstance->assets.rescanFileSystem();
+
+// or
+// GetAssetsManager().rescanFileSystem()
+
+// For example we have only one asset: data/assets/3d-models/MyCube.nx
+// The rescanFileSystem() found this asset and put into internal storage.
+// It wrote the meta data of this asset:
+//    type: StaticMeshBundle
+//    name: MyFirstCube
+//    logicPath: 3d-models/MyCube.nx
+//    pathToSource: <engine_root>/data/assets/3d-models/MyCube.nx
+//    status: PreLoaded
+
+// Let's try to get this asset & make a full load
+NXAsset cube = GetAssetsManager().getAsset("3d-models/MyCube.nx"_atom);
+// At the moment of getting this assets, the subsystem sees that you want to get all data.
+// So, it reads all really main data about it from the corresponsing file, and loads it
+// just at this line. So, at the next line you can use it as you want!
+
+if (cube)
+{
+    cout << cube.getLoadingStatus() == ECSAsset::StatusLoaded; // true
+}
+----
+

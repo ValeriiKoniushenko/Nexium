@@ -321,7 +321,179 @@
 </aside>
 <article class="doc">
 <h1 class="page">Resource system</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>The resource system here is straightforward.
+It has the main controlling class <code>AssetsManager</code> which you can find inside the god-object <code>gGameInstance</code>.</p>
+</div>
+<div class="paragraph">
+<p><code>AssetsManager</code> implement the logic of the main storage\provider for any assets.
+If you want to get some texture, 3D model, image, you must ask about that the <code>AssetsManager</code>.
+To get the object of this class, you can use such approaches:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>#include "GameplaySystem/Framework/GameInstance.h"
 
+Core::AssetsManager&amp; am1 = gGameInstance-&gt;assets;
+Core::AssetsManager&amp; am2 = GetAssetsManager();</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_main_pipeline"><a class="anchor" href="#_main_pipeline"></a>Main pipeline</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The main pipeline 'how it works' I will try to explain below.
+In general, it&#8217;s easy and it has main steps as:</p>
+</div>
+<div class="sect2">
+<h3 id="_initial_reading"><a class="anchor" href="#_initial_reading"></a>Initial reading</h3>
+<div class="paragraph">
+<p>At the engine <a href="module-graph.html" class="xref page">init phase</a> it scans the filesystem with pre-registered paths to find all files with matchable extension(i.e. *.nx).
+What is 'a pre-registered' path - it&#8217;s a built-in path that was registered at the engine&#8217;s init stage.
+For example, the main 'pre-registered' path is: <code>&lt;engine_root&gt;/data/assets</code>.
+This object will call a function <code>AssetsManager::rescanFileSystem()</code> to find all new assets.</p>
+</div>
+<div class="paragraph">
+<p>How to understand what asset will be scanned?
+At the moment of writing this doc, it&#8217;s a little bit floating question.
+Because it&#8217;s under active development.
+But, anyway, the main asset&#8217;s extension is <code>*.nx</code> - and this logic will try to make all efforts to scan &amp; register it inside the internal buffer.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_internal_storing_preloading"><a class="anchor" href="#_internal_storing_preloading"></a>Internal storing [preloading]</h3>
+<div class="paragraph">
+<p>When it finds some file (i.g. <code>MyCube.nx</code>) it will register this asset inside internal storage with the mapped 'logical path'.
+If to add more details, so it will read an asset file, write the <strong>minimum amount of information</strong> about scanned asset(type, name) and will put this info under the mapped name - logical path.
+Also, it will mark an asset with a status <code>PreLoaded</code> (to get this status you can call a function <code>ECSAsset::getLoadingStatus()</code>)</p>
+</div>
+<div class="sect3">
+<h4 id="_ramdisk_storing_loading"><a class="anchor" href="#_ramdisk_storing_loading"></a>RAM\Disk storing &amp; loading</h4>
+<div class="paragraph">
+<p>You should keep in your mind that it has different stages of loading of your assets' main information.
+It can&#8217;t just totally load all assets and store it inside the RAM.
+It&#8217;s impossible due to the huge number of data( models, textures, etc).
+So, it will load only assets that you really need &amp; want to use NOW (In the nearest future I&#8217;ll add a new system\logic to put some priority or time-gap when to unload an asset).
+But you should know only one rule: <em>you are using the asset <code>X</code> -&gt; it stores its data in RAM.
+If you don&#8217;t use (i.e. delete from a scene) -&gt; it will be immediately unloading from the RAM.
+And after a future\new request to this asset <code>X</code> it will be read again <strong>main data</strong> from the disk</em></p>
+</div>
+<div class="paragraph">
+<p>Now, main 'stages' of your assets you can read at the enum class <code>ECSAsset::Status</code>.
+Briefly, it has the main point:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>NotLoaded</strong> - Absolutely not loaded.
+Asset&#8217;s type is undefined</p>
+</li>
+<li>
+<p><strong>PreLoaded</strong> - Loaded only the main information: type &amp; ID &amp; name</p>
+</li>
+<li>
+<p><strong>Loaded</strong> - Full asset&#8217;s data is loaded (corresponding to asset&#8217;s type)</p>
+</li>
+<li>
+<p><strong>PreLoadingError</strong> - Error while preloading data</p>
+</li>
+<li>
+<p><strong>LoadingError</strong> - Error while loading of the main data</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_regarding_logical_path"><a class="anchor" href="#_regarding_logical_path"></a>Regarding 'logical path'</h4>
+<div class="paragraph">
+<p>To be honest with you, the logical path is just a string, but it represents the path to this asset and it should be unique.
+To don&#8217;t worry about the uniqueness of the assets through the engine, we can delegate this work to the OS filesystem.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_example"><a class="anchor" href="#_example"></a>Example</h4>
+<div class="paragraph">
+<p>Let&#8217;s check a small example.
+We have the default configuration of the engine.
+Only one path(default one) has registered inside the <code>AssetsManager</code> is <code>&lt;engine_root&gt;/data/assets</code>.
+Also, we have only one asset <code>MyCube.nx</code></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>At the engine&#8217;s init stage it will call a function <code>AssetsManager::rescanFileSystem()</code></p>
+</li>
+<li>
+<p>After that, it will scan the folder recursively and will find our asset <code>MyCube.nx</code> inside the folder: <code>&lt;engine_root&gt;/data/assets/3d-models/MyCube.nx</code></p>
+</li>
+<li>
+<p>The <code>AssetsManager</code> will register this asset under the logical path <code>3d-models/MyCube</code> - <strong>it will the unique identifier of your asset</strong>.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_extra_path_registration"><a class="anchor" href="#_extra_path_registration"></a>Extra path registration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>As far as you know, it has only one pre-registered path: <code>&lt;engine_root&gt;/data/assets</code>
+But, if you need you can add\register more paths if you need it using <code>AssetsManager::registerNewAssetPath(your_path)</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_getting_loaded_assets"><a class="anchor" href="#_getting_loaded_assets"></a>Getting loaded assets</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>At the moment of writing this doc, to retrieve some assets, you need to get the object of the described class and call a function <code>Core::AssetsManager::getAsset(logical_path)</code>.
+It&#8217;s the best way to get what you need.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_real_code_example"><a class="anchor" href="#_real_code_example"></a>Real code example</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Let&#8217;s see at the main pipeline behind all extra information.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">// First scan at the engine's initialization
+gGameInstance-&gt;assets.rescanFileSystem();
+
+// or
+// GetAssetsManager().rescanFileSystem()
+
+// For example we have only one asset: data/assets/3d-models/MyCube.nx
+// The rescanFileSystem() found this asset and put into internal storage.
+// It wrote the meta data of this asset:
+//    type: StaticMeshBundle
+//    name: MyFirstCube
+//    logicPath: 3d-models/MyCube.nx
+//    pathToSource: &lt;engine_root&gt;/data/assets/3d-models/MyCube.nx
+//    status: PreLoaded
+
+// Let's try to get this asset &amp; make a full load
+NXAsset cube = GetAssetsManager().getAsset("3d-models/MyCube.nx"_atom);
+// At the moment of getting this assets, the subsystem sees that you want to get all data.
+// So, it reads all really main data about it from the corresponsing file, and loads it
+// just at this line. So, at the next line you can use it as you want!
+
+if (cube)
+{
+    cout &lt;&lt; cube.getLoadingStatus() == ECSAsset::StatusLoaded; // true
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
 <nav class="pagination">
   <span class="prev"><a href="memory.html">Memory Model</a></span>
   <span class="next"><a href="file-io.html">File I/O</a></span>

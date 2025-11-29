@@ -1,0 +1,43 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64; rv:145.0) Gecko/20100101 Firefox/145.0" version="29.2.1">
+  <diagram name="Page-1" id="UFzRZYI2iM-DnUdpaGuG">
+    <mxGraphModel dx="978" dy="720" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" background="none" math="0" shadow="1">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="BZguE4RuvR_mn_H41PQS-3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontStyle=1" value="&lt;div&gt;GameInstance&lt;/div&gt;&lt;div&gt;[extern object]&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="430" width="349" x="161" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="BZguE4RuvR_mn_H41PQS-5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1" value="AssetsManager" vertex="1">
+          <mxGeometry height="50" width="140" x="190" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="BZguE4RuvR_mn_H41PQS-6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1" value="currentScene" vertex="1">
+          <mxGeometry height="50" width="120" x="360" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="BZguE4RuvR_mn_H41PQS-7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1" value="ShaderManager" vertex="1">
+          <mxGeometry height="50" width="140" x="190" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="BZguE4RuvR_mn_H41PQS-8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1" value="currentWorld" vertex="1">
+          <mxGeometry height="50" width="120" x="360" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="BZguE4RuvR_mn_H41PQS-9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1" value="currentCamera" vertex="1">
+          <mxGeometry height="50" width="120" x="360" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="BZguE4RuvR_mn_H41PQS-10" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1" value="ObjectSelectorManager" vertex="1">
+          <mxGeometry height="50" width="140" x="190" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="BZguE4RuvR_mn_H41PQS-11" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1" value="&lt;div&gt;GameEditor&lt;/div&gt;" vertex="1">
+          <mxGeometry height="50" width="140" x="190" y="430" as="geometry" />
+        </mxCell>
+        <mxCell id="BZguE4RuvR_mn_H41PQS-12" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eeeeee;strokeColor=#36393d;fontStyle=0;" value="&lt;div&gt;&lt;b&gt;WorldManger&lt;/b&gt;&amp;nbsp;&lt;i&gt;[not implemented]&lt;/i&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="120" width="290" x="190" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="BZguE4RuvR_mn_H41PQS-14" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=0;" value="SceneManger" vertex="1">
+          <mxGeometry height="50" width="120" x="270" y="540" as="geometry" />
+        </mxCell>
+        <mxCell id="BZguE4RuvR_mn_H41PQS-15" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontStyle=1" value="&lt;div&gt;GlobalComponentFactory&lt;/div&gt;[Singleton]" vertex="1">
+          <mxGeometry height="60" width="180" x="550" y="385" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

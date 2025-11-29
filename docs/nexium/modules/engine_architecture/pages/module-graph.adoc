@@ -1,2 +1,17 @@
 = Module graph
+:imagesdir:../
 
+The main modules you can observe in the image below. For now, it's quite easy. Due to a lot of work over the editor, not the core system.
+
+image::top-level-modules.drawio.png[Main modules,width=100%]
+
+The biggest part of the main classes & logic stores at the main god-object `gGameInstance` of the `class GameInstance`. The `extern` pointer `gGameInstance` you can find by the next path: `GameplaySystem/Framework/GameInstance.h`
+
+In general, the main concept of this class(GameInstance) is to store controlling nodes(different managers) and the most common things as: `currentScene`, `currentWorld`, `currentCamera`.
+
+Regarding other modules, you can read the next topics:
+
+* xref:ecs-overview.adoc[Entity Component System (ECS)]
+* xref:resource-system.adoc[Resource system]
+* xref:rendering:index.adoc[Rendering]
+* xref:lifecycle.adoc[Lifecycle]

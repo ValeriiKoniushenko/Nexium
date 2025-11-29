@@ -321,7 +321,39 @@
 </aside>
 <article class="doc">
 <h1 class="page">Module graph</h1>
-
+<div class="paragraph">
+<p>The main modules you can observe in the image below. For now, it&#8217;s quite easy. Due to a lot of work over the editor, not the core system.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/top-level-modules.drawio.png" alt="Main modules" width="100%">
+</div>
+</div>
+<div class="paragraph">
+<p>The biggest part of the main classes &amp; logic stores at the main god-object <code>gGameInstance</code> of the <code>class GameInstance</code>. The <code>extern</code> pointer <code>gGameInstance</code> you can find by the next path: <code>GameplaySystem/Framework/GameInstance.h</code></p>
+</div>
+<div class="paragraph">
+<p>In general, the main concept of this class(GameInstance) is to store controlling nodes(different managers) and the most common things as: <code>currentScene</code>, <code>currentWorld</code>, <code>currentCamera</code>.</p>
+</div>
+<div class="paragraph">
+<p>Regarding other modules, you can read the next topics:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="ecs-overview.html" class="xref page">Entity Component System (ECS)</a></p>
+</li>
+<li>
+<p><a href="resource-system.html" class="xref page">Resource system</a></p>
+</li>
+<li>
+<p><a href="../rendering/index.html" class="xref page">Rendering</a></p>
+</li>
+<li>
+<p><a href="lifecycle.html" class="xref page">Lifecycle</a></p>
+</li>
+</ul>
+</div>
 <nav class="pagination">
   <span class="prev"><a href="index.html">Overview</a></span>
   <span class="next"><a href="lifecycle.html">Application Lifecycle</a></span>

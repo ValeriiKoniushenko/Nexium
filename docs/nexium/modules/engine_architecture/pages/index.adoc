@@ -70,7 +70,12 @@ int main()
     gGameInstance = std::make_unique<TemplateGameInstance>();
 
     gGameInstance->initialize();
-    gGameInstance.reset();
+    gGameInstance.reset(); // Optionally
 }
 ----
 
+=== First engine-initialization
+
+The most common initialization will be inside `GameInstance::initialize`. At the start of this function will be inited the main subsystem and will be read all necessary data from a cache(e.g. settings, configs, etc).
+
+At the end of the initialization phase will be started xref:lifecycle.adoc[game-loop]. At the moment of the game-loop all resources must be inited and can be used by your game.
