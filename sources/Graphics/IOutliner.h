@@ -29,6 +29,10 @@ namespace Core
     class IOutliner
     {
     public:
+        IOutliner(const IOutliner&) = default;
+        IOutliner& operator=(const IOutliner&) = default;
+        IOutliner(IOutliner&&) noexcept = default;
+        IOutliner& operator=(IOutliner&&) noexcept = default;
         virtual ~IOutliner() = default;
 
         void setIsDrawOutline(bool value) noexcept
@@ -40,6 +44,8 @@ namespace Core
         [[nodiscard]] bool getIsDrawOutline() const noexcept { return _isDrawOutline; }
 
     protected:
+        IOutliner() = default;
+
         virtual void onOutlineStatusChange(bool newStatus) = 0;
 
     private:

@@ -31,10 +31,8 @@ namespace Core
     void Actor::ioFieldsUpdate(DataStream& out)
     {
         WorldObject::ioFieldsUpdate(out);
+        IDrawable::ioFieldsUpdate(out);
         Transformable::ioFieldsUpdate(out);
-
-        auto stream = out.dedicatedNesting("Actor");
-        stream.field("isPostDraw", _isPostDraw);
     }
 
     void Actor::onInitialize()

@@ -25,6 +25,7 @@
  */
 
 #pragma once
+
 #include "GameplaySystem/ECS/BaseComponent.h"
 
 namespace Core

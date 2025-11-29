@@ -86,12 +86,10 @@ namespace Core
     void Scene::addActor(NXMesh3D& mesh, bool readFromCache)
     {
         addActor<StaticMeshBundle>(mesh->getData());
-        _assetsMesh3D.emplace_back(mesh);
     }
 
     void Scene::addAsset(const NXAsset& mesh, bool readFromCache)
     {
-        _assets.push_back(mesh);
     }
 
     void Scene::writeToCacheSeparateData()

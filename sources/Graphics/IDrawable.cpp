@@ -22,38 +22,15 @@
  * SOFTWARE.
  */
 
-#pragma once
-
-#include "GameplaySystem/ECS/Transformable.h"
-#include "Graphics/IDrawable.h"
-#include "Graphics/Primitives/StaticMesh.h"
-#include "Misc/DataStream.h"
-#include "WorldObject.h"
+#include "IDrawable.h"
 
 namespace Core
 {
-    class Actor : public Transformable, public IDrawable, public WorldObject
+
+    void IDrawable::ioFieldsUpdate(DataStream& out)
     {
-        ECS_COMPONENT_DECL(Actor, WorldObject);
+        auto stream = out.dedicatedNesting("IDrawable");
+        stream.field("isPostDraw", _isPostDraw);
+    }
 
-    public:
-        Actor(Actor&&) = default;
-        Actor(const Actor& other)
-            : WorldObject(other._type, other._name)
-        {
-            *this = other;
-        }
-        Actor& operator=(Actor&&) = default;
-        Actor& operator=(const Actor&) = default;
-        ~Actor() override = default;
-
-        void ioFieldsUpdate(DataStream& out) override;
-
-    protected:
-        void onInitialize() override;
-        [[nodiscard]] StringAtom getCacheHash() const override;
-    };
-
-    template<class T>
-    concept IsActorBased = std::is_base_of_v<Actor, T>;
 } // namespace Core

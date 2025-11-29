@@ -40,8 +40,9 @@ namespace Core
     {
     public:
         Scene();
-
         ~Scene() override = default;
+        Scene(const Scene&) = delete;
+        Scene(Scene&&) = delete;
 
         void initialize();
 
@@ -127,10 +128,6 @@ namespace Core
         // TODO: change to another data structure!!! It's awful
         // data owner
         std::vector<Actor::Ptr> _actors;
-        // non-owner
-        std::vector<NXMesh3D> _assetsMesh3D;
-
-        std::vector<NXAsset> _assets;
 
         StringAtom _sceneName = "Default";
 
