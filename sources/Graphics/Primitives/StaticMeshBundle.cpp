@@ -59,6 +59,8 @@ namespace Core
 {
     ECS_COMPONENT_IMPL(StaticMeshBundle)
 
+    uint32_t StaticMeshBundle::_idGenerator = 0;
+
     StaticMeshBundle::~StaticMeshBundle()
     {
         privateClear();

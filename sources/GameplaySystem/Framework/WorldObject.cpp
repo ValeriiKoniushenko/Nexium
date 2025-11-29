@@ -1,3 +1,5 @@
+
+
 /*
  * MIT License
  *
@@ -22,33 +24,16 @@
  * SOFTWARE.
  */
 
-#include "Actor.h"
+#include "WorldObject.h"
 
 namespace Core
 {
-    ECS_COMPONENT_IMPL(Actor);
 
-    void Actor::ioFieldsUpdate(DataStream& out)
+    ECS_COMPONENT_IMPL(WorldObject);
+
+    void WorldObject::ioFieldsUpdate(DataStream& out)
     {
-        WorldObject::ioFieldsUpdate(out);
-        Transformable::ioFieldsUpdate(out);
-
-        auto stream = out.dedicatedNesting("Actor");
-        stream.field("isPostDraw", _isPostDraw);
+        BaseComponent::ioFieldsUpdate(out);
     }
 
-    void Actor::onInitialize()
-    {
-        WorldObject::onInitialize();
-
-        if (_name.isEmpty())
-        {
-            _name = _type;
-        }
-    }
-
-    StringAtom Actor::getCacheHash() const
-    {
-        return _name;
-    }
 } // namespace Core

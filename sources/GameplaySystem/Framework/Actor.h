@@ -24,21 +24,21 @@
 
 #pragma once
 
-#include "GameplaySystem/ECS/BaseComponent.h"
 #include "GameplaySystem/ECS/Transformable.h"
 #include "Graphics/Primitives/StaticMesh.h"
 #include "Misc/DataStream.h"
+#include "WorldObject.h"
 
 namespace Core
 {
-    class Actor : public Transformable, public BaseComponent
+    class Actor : public Transformable, public WorldObject
     {
-        ECS_COMPONENT_DECL(Actor, BaseComponent);
+        ECS_COMPONENT_DECL(Actor, WorldObject);
 
     public:
         Actor(Actor&&) = default;
         Actor(const Actor& other)
-            : BaseComponent(other._type, other._name)
+            : WorldObject(other._type, other._name)
         {
             *this = other;
         }

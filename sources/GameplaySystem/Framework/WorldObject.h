@@ -1,3 +1,5 @@
+
+
 /*
  * MIT License
  *
@@ -22,33 +24,28 @@
  * SOFTWARE.
  */
 
-#include "Actor.h"
+#pragma once
+#include "GameplaySystem/ECS/BaseComponent.h"
 
 namespace Core
 {
-    ECS_COMPONENT_IMPL(Actor);
 
-    void Actor::ioFieldsUpdate(DataStream& out)
+    class WorldObject : public BaseComponent
     {
-        WorldObject::ioFieldsUpdate(out);
-        Transformable::ioFieldsUpdate(out);
+        ECS_COMPONENT_DECL(WorldObject, BaseComponent);
 
-        auto stream = out.dedicatedNesting("Actor");
-        stream.field("isPostDraw", _isPostDraw);
-    }
-
-    void Actor::onInitialize()
-    {
-        WorldObject::onInitialize();
-
-        if (_name.isEmpty())
+    public:
+        WorldObject(WorldObject&&) = default;
+        WorldObject(const WorldObject& other)
+            : BaseComponent(other._type, other._name)
         {
-            _name = _type;
+            *this = other;
         }
-    }
+        WorldObject& operator=(WorldObject&&) = default;
+        WorldObject& operator=(const WorldObject&) = default;
+        ~WorldObject() override = default;
 
-    StringAtom Actor::getCacheHash() const
-    {
-        return _name;
-    }
+        void ioFieldsUpdate(DataStream& out) override;
+    };
+
 } // namespace Core

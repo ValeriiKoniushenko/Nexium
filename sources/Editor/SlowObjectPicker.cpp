@@ -48,7 +48,7 @@ namespace Core
             return;
         }
 
-        static auto onUniformSet = [&shader](StaticMesh* mesh)
+        auto onUniformSet = [&shader](StaticMesh* mesh)
         {
             shader->setUniform("uModel"_atom, mesh->getModelMatrix());
             shader->setUniform("uPickingColor"_atom, NormColor3::From(mesh->toUniqueColor()));

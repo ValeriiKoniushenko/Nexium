@@ -128,7 +128,7 @@ namespace Core
         void invalidateFastAccessContainers();
 
     protected:
-        inline static uint32_t _idGenerator = 0;
+        static uint32_t _idGenerator;
 
         std::vector<StaticMesh*> _meshes;
         std::vector<StaticMeshBundle*> _bundles;
