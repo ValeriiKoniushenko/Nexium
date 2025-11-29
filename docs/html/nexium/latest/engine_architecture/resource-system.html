@@ -353,7 +353,7 @@ In general, it&#8217;s easy and it has main steps as:</p>
 <h3 id="_initial_reading"><a class="anchor" href="#_initial_reading"></a>Initial reading</h3>
 <div class="paragraph">
 <p>At the engine <a href="module-graph.html" class="xref page">init phase</a> it scans the filesystem with pre-registered paths to find all files with matchable extension(i.e. *.nx).
-What is 'a pre-registered' path - it&#8217;s a built-in path that was registered at the engine&#8217;s init stage.
+What is 'a pre-registered' path&#8201;&#8212;&#8201;it&#8217;s a built-in path that was registered at the engine&#8217;s init stage.
 For example, the main 'pre-registered' path is: <code>&lt;engine_root&gt;/data/assets</code>.
 This object will call a function <code>AssetsManager::rescanFileSystem()</code> to find all new assets.</p>
 </div>
@@ -361,14 +361,14 @@ This object will call a function <code>AssetsManager::rescanFileSystem()</code> 
 <p>How to understand what asset will be scanned?
 At the moment of writing this doc, it&#8217;s a little bit floating question.
 Because it&#8217;s under active development.
-But, anyway, the main asset&#8217;s extension is <code>*.nx</code> - and this logic will try to make all efforts to scan &amp; register it inside the internal buffer.</p>
+But, anyway, the main asset&#8217;s extension is <code>*.nx</code>&#8201;&#8212;&#8201;and this logic will try to make all efforts to scan &amp; register it inside the internal buffer.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_internal_storing_preloading"><a class="anchor" href="#_internal_storing_preloading"></a>Internal storing [preloading]</h3>
 <div class="paragraph">
 <p>When it finds some file (i.g. <code>MyCube.nx</code>) it will register this asset inside internal storage with the mapped 'logical path'.
-If to add more details, so it will read an asset file, write the <strong>minimum amount of information</strong> about scanned asset(type, name) and will put this info under the mapped name - logical path.
+If to add more details, so it will read an asset file, write the <strong>minimum amount of information</strong> about scanned asset(type, name) and will put this info under the mapped name&#8201;&#8212;&#8201;logical path.
 Also, it will mark an asset with a status <code>PreLoaded</code> (to get this status you can call a function <code>ECSAsset::getLoadingStatus()</code>)</p>
 </div>
 <div class="sect3">
@@ -389,20 +389,20 @@ Briefly, it has the main point:</p>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p><strong>NotLoaded</strong> - Absolutely not loaded.
+<p><strong>NotLoaded</strong>&#8201;&#8212;&#8201;Absolutely not loaded.
 Asset&#8217;s type is undefined</p>
 </li>
 <li>
-<p><strong>PreLoaded</strong> - Loaded only the main information: type &amp; ID &amp; name</p>
+<p><strong>PreLoaded</strong>&#8201;&#8212;&#8201;Loaded only the main information: type &amp; ID &amp; name</p>
 </li>
 <li>
-<p><strong>Loaded</strong> - Full asset&#8217;s data is loaded (corresponding to asset&#8217;s type)</p>
+<p><strong>Loaded</strong>&#8201;&#8212;&#8201;Full asset&#8217;s data is loaded (corresponding to asset&#8217;s type)</p>
 </li>
 <li>
-<p><strong>PreLoadingError</strong> - Error while preloading data</p>
+<p><strong>PreLoadingError</strong>&#8201;&#8212;&#8201;Error while preloading data</p>
 </li>
 <li>
-<p><strong>LoadingError</strong> - Error while loading of the main data</p>
+<p><strong>LoadingError</strong>&#8201;&#8212;&#8201;Error while loading of the main data</p>
 </li>
 </ol>
 </div>
@@ -431,7 +431,7 @@ Also, we have only one asset <code>MyCube.nx</code></p>
 <p>After that, it will scan the folder recursively and will find our asset <code>MyCube.nx</code> inside the folder: <code>&lt;engine_root&gt;/data/assets/3d-models/MyCube.nx</code></p>
 </li>
 <li>
-<p>The <code>AssetsManager</code> will register this asset under the logical path <code>3d-models/MyCube</code> - <strong>it will the unique identifier of your asset</strong>.</p>
+<p>The <code>AssetsManager</code> will register this asset under the logical path <code>3d-models/MyCube</code>&#8201;&#8212;&#8201;<strong>it will the unique identifier of your asset</strong>.</p>
 </li>
 </ol>
 </div>

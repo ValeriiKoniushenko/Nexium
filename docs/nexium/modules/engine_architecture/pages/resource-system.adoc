@@ -23,19 +23,19 @@ In general, it's easy and it has main steps as:
 === Initial reading
 
 At the engine xref:module-graph.adoc[init phase] it scans the filesystem with pre-registered paths to find all files with matchable extension(i.e. *.nx).
-What is 'a pre-registered' path - it's a built-in path that was registered at the engine's init stage.
+What is 'a pre-registered' path -- it's a built-in path that was registered at the engine's init stage.
 For example, the main 'pre-registered' path is: `<engine_root>/data/assets`.
 This object will call a function `AssetsManager::rescanFileSystem()` to find all new assets.
 
 How to understand what asset will be scanned?
 At the moment of writing this doc, it's a little bit floating question.
 Because it's under active development.
-But, anyway, the main asset's extension is `*.nx` - and this logic will try to make all efforts to scan & register it inside the internal buffer.
+But, anyway, the main asset's extension is `*.nx` -- and this logic will try to make all efforts to scan & register it inside the internal buffer.
 
 === Internal storing [preloading]
 
 When it finds some file (i.g. `MyCube.nx`) it will register this asset inside internal storage with the mapped 'logical path'.
-If to add more details, so it will read an asset file, write the *minimum amount of information* about scanned asset(type, name) and will put this info under the mapped name - logical path.
+If to add more details, so it will read an asset file, write the *minimum amount of information* about scanned asset(type, name) and will put this info under the mapped name -- logical path.
 Also, it will mark an asset with a status `PreLoaded` (to get this status you can call a function `ECSAsset::getLoadingStatus()`)
 
 ==== RAM\Disk storing & loading
@@ -51,12 +51,12 @@ And after a future\new request to this asset `X` it will be read again *main dat
 Now, main 'stages' of your assets you can read at the enum class `ECSAsset::Status`.
 Briefly, it has the main point:
 
-. *NotLoaded* - Absolutely not loaded.
+. *NotLoaded* -- Absolutely not loaded.
 Asset's type is undefined
-. *PreLoaded* - Loaded only the main information: type & ID & name
-. *Loaded* - Full asset's data is loaded (corresponding to asset's type)
-. *PreLoadingError* - Error while preloading data
-. *LoadingError* - Error while loading of the main data
+. *PreLoaded* -- Loaded only the main information: type & ID & name
+. *Loaded* -- Full asset's data is loaded (corresponding to asset's type)
+. *PreLoadingError* -- Error while preloading data
+. *LoadingError* -- Error while loading of the main data
 
 ==== Regarding 'logical path'
 
@@ -72,7 +72,7 @@ Also, we have only one asset `MyCube.nx`
 
 . At the engine's init stage it will call a function `AssetsManager::rescanFileSystem()`
 . After that, it will scan the folder recursively and will find our asset `MyCube.nx` inside the folder: `<engine_root>/data/assets/3d-models/MyCube.nx`
-. The `AssetsManager` will register this asset under the logical path `3d-models/MyCube` - *it will the unique identifier of your asset*.
+. The `AssetsManager` will register this asset under the logical path `3d-models/MyCube` -- *it will the unique identifier of your asset*.
 
 == Extra path registration
 

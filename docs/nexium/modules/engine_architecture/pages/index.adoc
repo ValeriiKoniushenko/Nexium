@@ -12,14 +12,14 @@ But anyway, while developing it follows a few main concepts below
 
 It follows a few main flows:
 
-. *YAGNI* - "You aren't gonna need it" - if it doesn't exist - we don't need it.
+. *YAGNI* -- "You aren't gonna need it" -- if it doesn't exist -- we don't need it.
 Due to the count of the engine developers, (only one :) ) I can't cover all possible functionality as I really want.
 So, I try to keep a balance between the final goal & time for implementation of it.
 . The final UI interface & Code representation must be implemented well, or not implemented at all.
 So, if it was implemented, it was implemented really well.
 I try to avoid any core crutches.
 . "Can't compile time?
-Let's do static-run-time!" - if we can recalculate something event-based - we do that.
+Let's do static-run-time!" -- if we can recalculate something event-based -- we do that.
 Without active recalculation or massive update at the update loop.
 Strictly NO!
 
@@ -38,7 +38,7 @@ Because future overwriting will be cheaper than the initial "well-done".
 
 The core of the engine is the xref:ecs-overview.adoc[Entity Component System (ECS)].
 Quite a big count of classes is trying to be inherited from it.
-Sometimes, when you see on a class and think "Why it wasn't?" - the most common answer is: due to low-level optimization (for example `class GraphicsComponentData`).
+Sometimes, when you see on a class and think "Why it wasn't?" -- the most common answer is: due to low-level optimization (for example `class GraphicsComponentData`).
 
 Also, it tends to be with a minimum count of global/god objects.
 It has only 3 god-objects:
@@ -55,7 +55,7 @@ So, you can find `gGameInstance` global variable inside the file in sources by t
 
 ==== What is it? And what purposes?
 
-This class, object of this class, it's a main holder of all engine internal stuff: shared manager, your world, assets manager, editor - everything you can find here.
+This class, object of this class, it's a main holder of all engine internal stuff: shared manager, your world, assets manager, editor -- everything you can find here.
 
 === Initial behavior
 

@@ -186,14 +186,10 @@ namespace Core
             clock.start();
             window->pollEvent();
 
-            if (const auto* wnd = gameEditor.getWindow<GameViewportEWC>();
-                (wnd && wnd->isFocused()) || renderMode == RenderMode::GameOnly)
-            {
-                gameScene.tick(world.timeDelta);
-            }
-
             if (renderMode == RenderMode::GameOnly)
             {
+                gameScene.tick(world.timeDelta);
+
                 glClear(clearBits);
 
                 gameEditor.keyboardInput.update(); // force update
@@ -206,6 +202,12 @@ namespace Core
             }
             else
             {
+                if (const auto* wnd = gameEditor.getWindow<GameViewportEWC>();
+                    wnd && wnd->isFocused())
+                {
+                    gameScene.tick(world.timeDelta);
+                }
+
                 glClear(clearBits);
                 gameEditor.tick(world.timeDelta);
                 if (currentCamera)

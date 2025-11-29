@@ -321,7 +321,103 @@
 </aside>
 <article class="doc">
 <h1 class="page">Lifecycle</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Here you will find maybe the most important (from the top of the view) information about how Nexium processes every frame under the hood.
+Also, here will be a lot of references to the code base &amp; to other documentation&#8217;s topics.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_main_loop"><a class="anchor" href="#_main_loop"></a>Main loop</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The real main loop of the engine you can find here <code>GameplaySystem/Framework/GameInstance.cpp</code>.
+But in general it&#8217;s not hard to understand.
+I&#8217;ll try to show you it without any details, just from the concept point of view; so, it looks like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>while (!window-&gt;shouldClose())
+{
+    window-&gt;pollEvent();
 
+    gameScene.tick(world.timeDelta);
+    gameEditor.tick(world.timeDelta);
+    gameScene.directDraw();
+    onTick(world.timeDelta);
+
+    window-&gt;swapBuffers();
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>So, nothing hard, yes?
+I think in general the same.
+But, a lot of logic processes under the functionality of two core parts: editor (<code>gameEditor</code>) &amp; game instance(<code>onTick(..)</code>).</p>
+</div>
+<div class="paragraph">
+<p>Regarding game editor, I think I will not make documentation in the nearest future.
+But about <code>onTick</code> we should talk.
+So, the main goal 'onTick' virtual method is to provide more functionality for your own game main loop.
+Small reminder; I hope you remember that you need to inherit from the <code>class GameInstance</code> and implement your own game logic?
+If no, look at the code below:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>// MyGameInstance.h
+class MyGameInstance : public Core::GameInstance
+{
+protected:
+    // optionally you can add new logic for tick
+    void onTick(float delta) override;
+};</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>So, optionally, you can extend the main logic overriding the necessary methods.
+Now, I don&#8217;t even want to write here some methods that you can override, because Nexium is under active development.
+So, check please all virtual methods inside <code>Core::GameInstance</code> and override them manually.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_scene_objects_updating"><a class="anchor" href="#_scene_objects_updating"></a>Scene objects updating</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The scene consists of different ECS objects.
+And absolutely every tick of the window it reloads all objects on the scene.
+Also, I want to highlight one moment; every scene&#8217;s object is an <a href="ecs-overview.html" class="xref page">ECS</a> object, it means that you can disable any ticks for a specific object to optimize the game and remove extra updating.</p>
+</div>
+<div class="paragraph">
+<p>In general, of course, this part is under active development, and I&#8217;m planning to extend the current 'tick system': add threads, add 'slow tick', and mix it all with an event-based system(to update not only every frame, but when it gets some event);</p>
+</div>
+<div class="sect2">
+<h3 id="_scene_render_objectrelations_architecture"><a class="anchor" href="#_scene_render_objectrelations_architecture"></a>Scene &lt;-&gt; Render &lt;-&gt; Object&#8201;&#8212;&#8201;relations &amp; architecture</h3>
+<div class="paragraph">
+<p>I want to provide the understanding of how the scene renders and communicates with objects under the hood.
+I will simplify a lot of things and provide some easy-to-understand data structures, (for example), some approaches, so try to see on the top of the final logic, not on the direct details.</p>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s see how Nexium renders the final object on the scene, for example, it will be just a cube under the name 'MyCube'.</p>
+</div>
+<div class="paragraph">
+<p>But before we can start, let&#8217;s talk a little bit about how 'MyCube' is presented inside the code.
+'MyCube' corresponding to its name is the 3D object of a cube. So, at the scene it can be moved, rotated, rendered, and can be extended with extra logic using <a href="ecs-overview.html" class="xref page">ECS components</a>.</p>
+</div>
+<div class="paragraph">
+<p>What class stores the 3D mesh? This is <code>class Core::StaticMeshBundle : public Actor</code> - it&#8217;s just a class that can work with any type of 3D. Basically, it&#8217;s just an <code>Actor</code>.</p>
+</div>
+<div class="paragraph">
+<p>What is it <code>Actor</code>? This is the class that is responsible for the minimum part of the scene: a tree, a car, an interaction box&#8201;&#8212;&#8201;anything visible on the scene. Its class looks like it: <code>class Actor : public Transformable, public WorldObject</code></p>
+</div>
+<div class="paragraph">
+<p>What is <code>WorldObject</code>? If the actor&#8217;s instance you can contemplate on the final scene, but the <code>WorldObject</code>&#8201;&#8212;&#8201;no. Generally, it&#8217;s logical-only part of the world: weather script, son rotation script, etc.</p>
+</div>
+</div>
+</div>
+</div>
 <nav class="pagination">
   <span class="prev"><a href="module-graph.html">Module Graph</a></span>
   <span class="next"><a href="threading.html">Threading Model</a></span>

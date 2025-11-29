@@ -1,2 +1,74 @@
 = Lifecycle
 
+Here you will find maybe the most important (from the top of the view) information about how Nexium processes every frame under the hood.
+Also, here will be a lot of references to the code base & to other documentation's topics.
+
+== Main loop
+
+The real main loop of the engine you can find here `GameplaySystem/Framework/GameInstance.cpp`.
+But in general it's not hard to understand.
+I'll try to show you it without any details, just from the concept point of view; so, it looks like:
+
+[sources,cpp]
+----
+while (!window->shouldClose())
+{
+    window->pollEvent();
+
+    gameScene.tick(world.timeDelta);
+    gameEditor.tick(world.timeDelta);
+    gameScene.directDraw();
+    onTick(world.timeDelta);
+
+    window->swapBuffers();
+}
+----
+
+So, nothing hard, yes?
+I think in general the same.
+But, a lot of logic processes under the functionality of two core parts: editor (`gameEditor`) & game instance(`onTick(..)`).
+
+Regarding game editor, I think I will not make documentation in the nearest future.
+But about `onTick` we should talk.
+So, the main goal 'onTick' virtual method is to provide more functionality for your own game main loop.
+Small reminder; I hope you remember that you need to inherit from the `class GameInstance` and implement your own game logic?
+If no, look at the code below:
+
+[sources,cpp]
+----
+// MyGameInstance.h
+class MyGameInstance : public Core::GameInstance
+{
+protected:
+    // optionally you can add new logic for tick
+    void onTick(float delta) override;
+};
+----
+
+So, optionally, you can extend the main logic overriding the necessary methods.
+Now, I don't even want to write here some methods that you can override, because Nexium is under active development.
+So, check please all virtual methods inside `Core::GameInstance` and override them manually.
+
+== Scene objects updating
+
+The scene consists of different ECS objects.
+And absolutely every tick of the window it reloads all objects on the scene.
+Also, I want to highlight one moment; every scene's object is an xref:ecs-overview.adoc[ECS] object, it means that you can disable any ticks for a specific object to optimize the game and remove extra updating.
+
+In general, of course, this part is under active development, and I'm planning to extend the current 'tick system': add threads, add 'slow tick', and mix it all with an event-based system(to update not only every frame, but when it gets some event);
+
+=== Scene \<\-> Render \<\-> Object -- relations & architecture
+
+I want to provide the understanding of how the scene renders and communicates with objects under the hood.
+I will simplify a lot of things and provide some easy-to-understand data structures, (for example), some approaches, so try to see on the top of the final logic, not on the direct details.
+
+Let's see how Nexium renders the final object on the scene, for example, it will be just a cube under the name 'MyCube'.
+
+But before we can start, let's talk a little bit about how 'MyCube' is presented inside the code.
+'MyCube' corresponding to its name is the 3D object of a cube. So, at the scene it can be moved, rotated, rendered, and can be extended with extra logic using xref:ecs-overview.adoc[ECS components].
+
+What class stores the 3D mesh? This is `class Core::StaticMeshBundle : public Actor` - it's just a class that can work with any type of 3D. Basically, it's just an `Actor`.
+
+What is it `Actor`? This is the class that is responsible for the minimum part of the scene: a tree, a car, an interaction box -- anything visible on the scene. Its class looks like it: `class Actor : public Transformable, public WorldObject`
+
+What is `WorldObject`? If the actor's instance you can contemplate on the final scene, but the `WorldObject` -- no. Generally, it's logical-only part of the world: weather script, son rotation script, etc.
