@@ -56,62 +56,47 @@ namespace Core
 
         [[nodiscard]] const StringAtom& getSceneName() const noexcept;
 
-        template<IsActorBased T>
-        void addActor(T&& actor, bool readFromCache = false)
+        template<IsWorldObjectBased T>
+        void addToScene(T&& object, bool readFromCache = false)
         {
-            _actors.emplace_back(new T(std::forward<decltype(actor)>(actor)));
-            auto* added = _actors.back().get();
+            _objects.emplace_back(new T(std::forward<decltype(object)>(object)));
+            auto* added = _objects.back().get();
 
             added->initialize();
-            onActorAdded->trigger(added);
+            onObjectAdded->trigger(added);
             if (readFromCache)
             {
                 added->tryReadFromCache();
             }
         }
 
-        template<IsActorBased T>
-        void addActor(const T& actor, bool readFromCache = false)
+        template<IsWorldObjectBased T, class... Args>
+        T* createAndGet(Args... args)
         {
-            _actors.emplace_back(StaticCast<Actor>(actor.clone()));
-            auto* added = _actors.back().get();
+            _objects.emplace_back(new T(std::forward<Args>(args)...));
+            auto* added = _objects.back().get();
 
             added->initialize();
-            onActorAdded->trigger(added);
-            if (readFromCache)
-            {
-                added->tryReadFromCache();
-            }
-        }
-
-        void addActor(NXMesh3D& mesh, bool readFromCache = false);
-
-        void addAsset(const NXAsset& mesh, bool readFromCache = false);
-
-        template<IsActorBased T, class... Args>
-        T* createAndGetActor(Args... args)
-        {
-            _actors.emplace_back(new T(std::forward<Args>(args)...));
-            auto* added = _actors.back().get();
-
-            added->initialize();
-            onActorAdded->trigger(added);
+            onObjectAdded->trigger(added);
             return reinterpret_cast<T*>(added);
         }
 
-        [[nodiscard]] const std::vector<Actor::Ptr>& getActors() const noexcept { return _actors; }
-        [[nodiscard]] std::vector<Actor::Ptr>& getActors() noexcept { return _actors; }
-
-        template<IsActorBased T>
-        [[nodiscard]] T* getFirstActorOf()
+        [[nodiscard]] const std::vector<WorldObject::Ptr>& getObjects() const noexcept
         {
-            auto it = std::ranges::find_if(_actors, [](const Actor::Ptr& actor)
+            return _objects;
+        }
+        [[nodiscard]] std::vector<WorldObject::Ptr>& getObjects() noexcept { return _objects; }
+
+        template<IsWorldObjectBased T>
+        [[nodiscard]] T* gerFirstOf()
+        {
+            auto it = std::ranges::find_if(_objects, [](const WorldObject::Ptr& actor)
                                            { return actor->isTypeOf<T>(); });
 
-            return it == _actors.end() ? nullptr : reinterpret_cast<T*>(it->get());
+            return it == _objects.end() ? nullptr : reinterpret_cast<T*>(it->get());
         }
 
-        Delegate<void(Actor*)>::Ptr onActorAdded = Delegate<void(Actor*)>::Create();
+        Delegate<void(WorldObject*)>::Ptr onObjectAdded = Delegate<void(WorldObject*)>::Create();
 
     public:
         Grid grid;
@@ -126,8 +111,7 @@ namespace Core
 
     protected:
         // TODO: change to another data structure!!! It's awful
-        // data owner
-        std::vector<Actor::Ptr> _actors;
+        std::vector<WorldObject::Ptr> _objects;
 
         StringAtom _sceneName = "Default";
 

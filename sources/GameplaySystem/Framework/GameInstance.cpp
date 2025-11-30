@@ -92,7 +92,7 @@ namespace Core
         for (const auto& notLoadedShader : shaderManager.getFailedShaders())
         {
             shaderManager.criticalLog(
-                "Shader '{}' found but not loaded. It contains some error[s]. See above in the lo"_f
+                "Shader '{}' found but not loaded. It contains some error[s]. See above in the log"_f
                 << notLoadedShader);
         }
         initializeShaders();
