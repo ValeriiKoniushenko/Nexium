@@ -237,8 +237,7 @@ namespace Core
             item->setButtonName(Keyboard::KeyToString(Config::Input::editorImGuiShowRect));
         }
 
-        if (auto spectator = gGameInstance->gameScene.getFirstActorOf<Spectator>();
-            Verify(spectator))
+        if (auto spectator = gGameInstance->gameScene.gerFirstOf<Spectator>(); Verify(spectator))
         {
             layout.addChildComponent<Spacer>();
             layout.addChildComponent<Label>()->setText("Spectator");

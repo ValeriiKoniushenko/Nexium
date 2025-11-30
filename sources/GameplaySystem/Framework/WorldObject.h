@@ -1,5 +1,3 @@
-
-
 /*
  * MIT License
  *
@@ -48,5 +46,8 @@ namespace Core
 
         void ioFieldsUpdate(DataStream& out) override;
     };
+
+    template<class T>
+    concept IsWorldObjectBased = std::is_base_of_v<WorldObject, T>;
 
 } // namespace Core

@@ -100,7 +100,7 @@ namespace Core::AssetImpl
 
     void StaticMeshBundle::spawn(ECSAsset& asset)
     {
-        gGameInstance->gameScene.addAsset(&asset);
+        // gGameInstance->gameScene.addAsset(&asset);
     }
 
     StaticMeshBundle::AssetData StaticMeshBundle::extractAssetData(

@@ -84,7 +84,7 @@ namespace Core
             return;
         }
 
-        auto& actors = _scene->getActors();
+        auto& actors = _scene->getObjects();
         if (ImGui::TreeNodeEx("Root", ImGuiTreeNodeFlags_DefaultOpen | _commonTreeFlags))
         {
             int32_t internalId = 0;

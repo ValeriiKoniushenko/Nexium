@@ -60,7 +60,7 @@ namespace Core
 
         shader->use();
         shader->setUniform("uProjAndView"_atom, camera->getMatrix());
-        for (auto&& actor : scene.getActors())
+        for (auto&& actor : scene.getObjects())
         {
             if (!actor->isEnabled())
             {
@@ -73,7 +73,7 @@ namespace Core
             }
         }
 
-        for (auto&& actor : scene.getActors())
+        for (auto&& actor : scene.getObjects())
         {
             if (!actor->isEnabled())
             {
@@ -106,7 +106,7 @@ namespace Core
             Color3 pickedColor{ pickedData[0], pickedData[1], pickedData[2] };
 
             StaticMesh* found = nullptr;
-            for (auto&& actor : scene.getActors())
+            for (auto&& actor : scene.getObjects())
             {
                 if (!actor->isEnabled())
                 {

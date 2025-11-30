@@ -40,19 +40,19 @@ namespace Core
         _postDrawBuffer.resize(0);
         grid.draw();
 
-        for (auto&& mesh : _actors)
+        for (auto&& mesh : _objects)
         {
-            if (mesh->isEnabled())
-            {
-                if (!mesh->isPostDraw())
-                {
-                    mesh->draw();
-                }
-                else
-                {
-                    _postDrawBuffer.push_back(mesh.get());
-                }
-            }
+            // if (mesh->isEnabled())
+            // {
+            //     if (!mesh->isPostDraw())
+            //     {
+            //         mesh->draw();
+            //     }
+            //     else
+            //     {
+            //         _postDrawBuffer.push_back(mesh.get());
+            //     }
+            // }
         }
 
         for (auto&& mesh : _postDrawBuffer)
@@ -83,18 +83,9 @@ namespace Core
         return _sceneName;
     }
 
-    void Scene::addActor(NXMesh3D& mesh, bool readFromCache)
-    {
-        addActor<StaticMeshBundle>(mesh->getData());
-    }
-
-    void Scene::addAsset(const NXAsset& mesh, bool readFromCache)
-    {
-    }
-
     void Scene::writeToCacheSeparateData()
     {
-        for (auto&& actor : _actors)
+        for (auto&& actor : _objects)
         {
             actor->writeToCache();
         }
@@ -117,7 +108,7 @@ namespace Core
 
     void Scene::tick(float timeDelta)
     {
-        for (auto&& obj : _actors)
+        for (auto&& obj : _objects)
         {
             obj->tick(timeDelta);
         }
