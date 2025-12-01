@@ -59,7 +59,9 @@ namespace Core
         template<IsWorldObjectBased T>
         void addToScene(const T& object, bool readFromCache = false)
         {
-            _objects.emplace_back(Core::ReinterpretCast<T>(object.clone()));
+            auto cloned = object.clone();
+            auto casted = StaticCast<T>(cloned);
+            _objects.emplace_back(casted);
             auto* added = _objects.back().get();
 
             added->initialize();
