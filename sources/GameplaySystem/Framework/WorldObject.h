@@ -48,6 +48,6 @@ namespace Core
     };
 
     template<class T>
-    concept IsWorldObjectBased = std::is_base_of_v<WorldObject, T>;
+    concept IsWorldObjectBased = std::derived_from<std::remove_reference_t<T>, WorldObject>;
 
 } // namespace Core

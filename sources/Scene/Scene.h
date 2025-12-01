@@ -57,9 +57,9 @@ namespace Core
         [[nodiscard]] const StringAtom& getSceneName() const noexcept;
 
         template<IsWorldObjectBased T>
-        void addToScene(T&& object, bool readFromCache = false)
+        void addToScene(const T& object, bool readFromCache = false)
         {
-            _objects.emplace_back(new T(std::forward<decltype(object)>(object)));
+            _objects.emplace_back(Core::ReinterpretCast<T>(object.clone()));
             auto* added = _objects.back().get();
 
             added->initialize();
@@ -90,10 +90,15 @@ namespace Core
         template<IsWorldObjectBased T>
         [[nodiscard]] T::Ptr gerFirstOf()
         {
-            auto it = std::ranges::find_if(_objects, [](const WorldObject::Ptr& actor)
-                                           { return actor->isTypeOf<T>(); });
+            for (auto&& obj : _objects)
+            {
+                if (auto* t = dynamic_cast<T*>(obj.get()))
+                {
+                    return StaticCast<T>(obj);
+                }
+            }
 
-            return it == _objects.end() ? nullptr : StaticCast<T>(*it);
+            return nullptr;
         }
 
         Delegate<void(WorldObject*)>::Ptr onObjectAdded = Delegate<void(WorldObject*)>::Create();

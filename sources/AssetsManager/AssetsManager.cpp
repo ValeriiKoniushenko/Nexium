@@ -105,7 +105,7 @@ namespace Core
 {
     AssetsManager::AssetsManager()
     {
-        registerNewAssetPath(Config::Path::assets);
+        registerNewAssetPath(Config::Path::data);
     }
 
     void AssetsManager::rescanFileSystem()
@@ -502,7 +502,10 @@ namespace Core
                 const auto relative = std::filesystem::relative(path, realRegistered);
                 const auto id = StringAtom(relative.generic_string());
 
-                return _assets.find(id);
+                if (auto&& it = _assets.find(id); it != _assets.end())
+                {
+                    return it;
+                }
             }
             catch (const std::filesystem::filesystem_error& e)
             {

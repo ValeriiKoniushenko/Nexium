@@ -51,7 +51,7 @@ namespace Core::AssetImpl
             extractedData.assimpPostProcess);
         if (Verify(scene) && Verify(scene->mRootNode))
         {
-            if (const auto owner = dynamic_cast<Core::StaticMeshBundle*>(dataOwner); Verify(owner))
+            if (const auto owner = dataOwner->castTo<Core::StaticMeshBundle>())
             {
                 static auto& sm = GetShaderManager();
                 owner->importFrom(scene->mRootNode, scene,
@@ -100,7 +100,13 @@ namespace Core::AssetImpl
 
     void StaticMeshBundle::spawn(ECSAsset& asset)
     {
-        // gGameInstance->gameScene.addAsset(&asset);
+        if (auto&& rawData = asset.getData())
+        {
+            if (const auto* obj = rawData->tryCastTo<Core::StaticMeshBundle>())
+            {
+                gGameInstance->gameScene.addToScene(*obj);
+            }
+        }
     }
 
     StaticMeshBundle::AssetData StaticMeshBundle::extractAssetData(
