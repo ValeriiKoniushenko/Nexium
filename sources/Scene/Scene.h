@@ -71,14 +71,14 @@ namespace Core
         }
 
         template<IsWorldObjectBased T, class... Args>
-        T* createAndGet(Args... args)
+        T::Ptr createAndGet(Args... args)
         {
             _objects.emplace_back(new T(std::forward<Args>(args)...));
-            auto* added = _objects.back().get();
+            auto added = _objects.back();
 
             added->initialize();
-            onObjectAdded->trigger(added);
-            return reinterpret_cast<T*>(added);
+            onObjectAdded->trigger(added.get());
+            return StaticCast<T>(added);
         }
 
         [[nodiscard]] const std::vector<WorldObject::Ptr>& getObjects() const noexcept
@@ -88,12 +88,12 @@ namespace Core
         [[nodiscard]] std::vector<WorldObject::Ptr>& getObjects() noexcept { return _objects; }
 
         template<IsWorldObjectBased T>
-        [[nodiscard]] T* gerFirstOf()
+        [[nodiscard]] T::Ptr gerFirstOf()
         {
             auto it = std::ranges::find_if(_objects, [](const WorldObject::Ptr& actor)
                                            { return actor->isTypeOf<T>(); });
 
-            return it == _objects.end() ? nullptr : reinterpret_cast<T*>(it->get());
+            return it == _objects.end() ? nullptr : StaticCast<T>(*it);
         }
 
         Delegate<void(WorldObject*)>::Ptr onObjectAdded = Delegate<void(WorldObject*)>::Create();

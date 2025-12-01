@@ -100,7 +100,7 @@ namespace Core
         //-------------------- MISC ---------------------
         gameViewport.generate();
 
-        if (auto* spectator = gameScene.createAndGet<Spectator>())
+        if (auto spectator = gameScene.createAndGet<Spectator>())
         {
             currentCamera = spectator->findFirstChildOf<BaseCamera>();
         }
