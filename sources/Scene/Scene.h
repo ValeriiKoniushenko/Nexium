@@ -57,31 +57,10 @@ namespace Core
         [[nodiscard]] const StringAtom& getSceneName() const noexcept;
 
         template<IsWorldObjectBased T>
-        void addToScene(const T& object, bool readFromCache = false)
-        {
-            auto cloned = object.clone();
-            auto casted = StaticCast<T>(cloned);
-            _objects.emplace_back(casted);
-            auto* added = _objects.back().get();
-
-            added->initialize();
-            onObjectAdded->trigger(added);
-            if (readFromCache)
-            {
-                added->tryReadFromCache();
-            }
-        }
+        void addToScene(const T& object, bool readFromCache = false);
 
         template<IsWorldObjectBased T, class... Args>
-        T::Ptr createAndGet(Args... args)
-        {
-            _objects.emplace_back(new T(std::forward<Args>(args)...));
-            auto added = _objects.back();
-
-            added->initialize();
-            onObjectAdded->trigger(added.get());
-            return StaticCast<T>(added);
-        }
+        T::Ptr createAndGet(Args... args);
 
         [[nodiscard]] const std::vector<WorldObject::Ptr>& getObjects() const noexcept
         {
@@ -90,18 +69,7 @@ namespace Core
         [[nodiscard]] std::vector<WorldObject::Ptr>& getObjects() noexcept { return _objects; }
 
         template<IsWorldObjectBased T>
-        [[nodiscard]] T::Ptr gerFirstOf()
-        {
-            for (auto&& obj : _objects)
-            {
-                if (auto* t = dynamic_cast<T*>(obj.get()))
-                {
-                    return StaticCast<T>(obj);
-                }
-            }
-
-            return nullptr;
-        }
+        [[nodiscard]] T::Ptr gerFirstOf();
 
         Delegate<void(WorldObject*)>::Ptr onObjectAdded = Delegate<void(WorldObject*)>::Create();
 
@@ -111,7 +79,6 @@ namespace Core
 
     protected:
         [[nodiscard]] std::filesystem::path getCacheDir() const override;
-
         [[nodiscard]] StringAtom getCacheHash() const override;
 
         void writeToCacheSeparateData();
@@ -125,4 +92,45 @@ namespace Core
     private:
         std::vector<Actor*> _postDrawBuffer;
     };
+
+    template<IsWorldObjectBased T>
+    void Scene::addToScene(const T& object, bool readFromCache)
+    {
+        _objects.emplace_back(StaticCast<T>(object.clone()));
+        auto* added = _objects.back().get();
+
+        added->initialize();
+        if (readFromCache)
+        {
+            added->tryReadFromCache();
+        }
+
+        onObjectAdded->trigger(added);
+    }
+
+    template<IsWorldObjectBased T, class... Args>
+    typename T::Ptr Scene::createAndGet(Args... args)
+    {
+        _objects.emplace_back(new T(std::forward<Args>(args)...));
+        auto added = _objects.back();
+
+        added->initialize();
+        onObjectAdded->trigger(added.get());
+        return StaticCast<T>(added);
+    }
+
+    template<IsWorldObjectBased T>
+    typename T::Ptr Scene::gerFirstOf()
+    {
+        for (auto&& obj : _objects)
+        {
+            if (auto* t = dynamic_cast<T*>(obj.get()))
+            {
+                return StaticCast<T>(obj);
+            }
+        }
+
+        return nullptr;
+    }
+
 } // namespace Core

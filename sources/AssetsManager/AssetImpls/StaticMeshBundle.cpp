@@ -61,7 +61,7 @@ namespace Core::AssetImpl
                 {
                     owner->setShader(sm.getShaderProgram(extractedData.mainShader));
                 }
-                if (extractedData.outlineShader.isEmpty())
+                if (!extractedData.outlineShader.isEmpty())
                 {
                     owner->setOutlineShader(sm.getShaderProgram(extractedData.outlineShader));
                 }

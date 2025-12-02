@@ -56,7 +56,7 @@ namespace Core
     };
 
     template<typename T>
-    concept IsAssetImpl = std::derived_from<T, ECSAssetImpl>;
+    concept IsAssetImpl = std::derived_from<std::remove_reference_t<T>, ECSAssetImpl>;
 
     class ECSAsset : public IntrusiveRefCounter<ECSAsset>, public BaseLog
     {

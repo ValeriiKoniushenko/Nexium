@@ -187,13 +187,14 @@ namespace Core
             DataStream stream;
             stream.setMode(DataStream::Mode::Input);
             stream.getRaw() = json[AssetData::data];
-            _data->ioFieldsUpdate(stream);
 
             // [opt] making loading of essential data (texture loading, 3D model loading, etc)
             if (_impl)
             {
                 _impl->load(*this, _data.get(), json[AssetData::assetData]);
             }
+
+            _data->ioFieldsUpdate(stream);
 
             _status = Status::Loaded;
             traceLog("Asset:: '{}' is: loaded! New status is: 'Loaded'"_f << _logicPath);

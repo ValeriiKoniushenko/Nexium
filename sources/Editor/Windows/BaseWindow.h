@@ -79,7 +79,8 @@ namespace Core
     };
 
     template<class T>
-    concept IsEditorWindowComponent = std::derived_from<T, BaseEWC> && IsComponent<T>;
+    concept IsEditorWindowComponent
+        = std::derived_from<std::remove_reference_t<T>, BaseEWC> && IsComponent<T>;
 
     template<class T>
     concept IsEditorWindowComponentOrVoid = IsEditorWindowComponent<T> || std::is_void_v<T>;

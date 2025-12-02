@@ -70,7 +70,8 @@ namespace Core
         [[nodiscard]] Mouse::Key getKey() const noexcept { return _key; }
 
         template<class T>
-            requires std::derived_from<T, Data> && requires() { T::dragType; }
+            requires std::derived_from<std::remove_reference_t<T>, Data>
+                     && requires() { T::dragType; }
         bool isTypeOf()
         {
             if (payload.type.isEmpty())

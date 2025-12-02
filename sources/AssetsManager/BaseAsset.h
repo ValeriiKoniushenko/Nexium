@@ -80,7 +80,7 @@ namespace Core
     template<class T>
     concept IsAsset = requires(T) {
         { T::fileExtension };
-        requires std::derived_from<T, BaseAsset>;
+        requires std::derived_from<std::remove_reference_t<T>, BaseAsset>;
     };
 
     template<class T>

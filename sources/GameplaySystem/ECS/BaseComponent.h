@@ -256,10 +256,11 @@ namespace Core
      *   - a static member componentType
      */
     template<class T>
-    concept IsComponent = std::derived_from<T, BaseComponent> && requires(T t) {
-        { t.getComponentType() };
-        { T::componentType };
-    };
+    concept IsComponent
+        = std::derived_from<std::remove_reference_t<T>, BaseComponent> && requires(T t) {
+              { t.getComponentType() };
+              { T::componentType };
+          };
 
     /**
      * Concept for either a BaseComponent-derived type or BaseComponent itself.
@@ -782,6 +783,7 @@ namespace Core
 
     private:
         [[nodiscard]] BaseComponent* rawAddChildComponent(BaseComponent* newOne);
+        void ioReadChildInputFromCache(DataStream& out);
 
         // ===================== PIMPLs =============================
         template<IsComponentOrBase TargetT, bool isConst, class FuncT>

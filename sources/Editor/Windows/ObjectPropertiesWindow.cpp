@@ -64,7 +64,7 @@ namespace
     }
 
     template<class T>
-        requires std::derived_from<T, BaseInput>
+        requires std::derived_from<std::remove_reference_t<T>, BaseInput>
     HLayout::Ptr Create(const char* label, bool isReadOnly,
                         float size = ObjectPropertiesWindowEWC::defaultLabelWidthBig)
     {

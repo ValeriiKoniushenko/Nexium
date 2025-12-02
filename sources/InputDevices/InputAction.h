@@ -258,6 +258,6 @@ namespace Core
         typename T::Ptr;
         typename T::CPtr;
         typename T::Parent;
-        requires std::derived_from<T, InputAction<typename T::KeyT>>;
+        requires std::derived_from<std::remove_reference_t<T>, InputAction<typename T::KeyT>>;
     };
 } // namespace Core

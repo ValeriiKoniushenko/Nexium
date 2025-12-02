@@ -154,7 +154,7 @@ namespace Core::Gui
     };
 
     template<class T>
-    concept IsWidget = std::derived_from<T, Widget>;
+    concept IsWidget = std::derived_from<std::remove_reference_t<T>, Widget>;
 
 } // namespace Core::Gui
 

@@ -256,37 +256,7 @@ namespace Core
                          }
                          else
                          {
-                             for (auto&& child : out.getRaw().items())
-                             {
-                                 // std::cout << child.value().dump(4) << std::endl;
-                                 auto&& in = child.value();
-
-                                 if (!in.contains("BaseComponent"))
-                                 {
-                                     warnLog(
-                                         "No root key 'BaseComponent' for child component. "
-                                         "Impossible to fetch type data.");
-                                     Assert(false);
-                                     continue;
-                                 }
-
-                                 if (!in["BaseComponent"].contains("type"))
-                                 {
-                                     warnLog("No type specified for child component");
-                                     Assert(false);
-                                     continue;
-                                 }
-
-                                 auto&& last
-                                     = _children.emplace_back(GetGlobalComponentFactory().create(
-                                         in["BaseComponent"]["type"].get<StringAtom>()));
-                                 last->_parent = this;
-
-                                 DataStream childStream;
-                                 childStream.setMode(DataStream::Mode::Input);
-                                 childStream.getRaw() = in;
-                                 last->ioFieldsUpdate(childStream);
-                             }
+                             ioReadChildInputFromCache(out);
                          }
                      });
     }
@@ -407,6 +377,68 @@ namespace Core
         onAddChild(added);
 
         return added;
+    }
+
+    void BaseComponent::ioReadChildInputFromCache(DataStream& out)
+    {
+        std::unordered_set<BaseComponent*> viewed;
+        viewed.reserve(std::max(_children.size(), out.getRaw().size()));
+
+        for (auto&& child : out.getRaw().items())
+        {
+            // std::cout << child.value().dump(4) << std::endl;
+            auto&& in = child.value();
+
+            if (!in.contains("BaseComponent"))
+            {
+                warnLog(
+                    "No root key 'BaseComponent' for child component. "
+                    "Impossible to fetch type data.");
+                Assert(false);
+                continue;
+            }
+
+            if (!in["BaseComponent"].contains("type"))
+            {
+                warnLog("No type specified for child component");
+                Assert(false);
+                continue;
+            }
+
+            const auto finalType = in["BaseComponent"]["type"].get<StringAtom>();
+
+            StringAtom name;
+            if (in["BaseComponent"].contains("name"))
+            {
+                name = in["BaseComponent"]["name"].get<StringAtom>();
+            }
+
+            BaseComponent* last = nullptr;
+
+            // awful approach, optimize it!
+            for (auto&& c : _children)
+            {
+                if (c->getComponentType() == finalType && c->getComponentName() == name
+                    && !viewed.contains(c.get()))
+                {
+                    last = c.get();
+                    break;
+                }
+            }
+
+            if (!last)
+            {
+                last = _children.emplace_back(GetGlobalComponentFactory().create(finalType)).get();
+                last->_parent = this;
+            }
+
+            viewed.insert(last);
+
+            DataStream childStream;
+            childStream.setMode(DataStream::Mode::Input);
+            childStream.getRaw() = in;
+            last->ioFieldsUpdate(childStream);
+        }
     }
 
     BaseComponent::BaseComponent(const BaseComponent& other)

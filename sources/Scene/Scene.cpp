@@ -40,19 +40,24 @@ namespace Core
         _postDrawBuffer.resize(0);
         grid.draw();
 
-        for (auto&& mesh : _objects)
+        for (auto&& object : _objects)
         {
-            // if (mesh->isEnabled())
-            // {
-            //     if (!mesh->isPostDraw())
-            //     {
-            //         mesh->draw();
-            //     }
-            //     else
-            //     {
-            //         _postDrawBuffer.push_back(mesh.get());
-            //     }
-            // }
+            if (!object->isEnabled())
+            {
+                continue;
+            }
+
+            if (auto* mesh = object->tryCastTo<StaticMeshBundle>())
+            {
+                if (!mesh->isPostDraw())
+                {
+                    mesh->draw();
+                }
+                else
+                {
+                    _postDrawBuffer.push_back(mesh);
+                }
+            }
         }
 
         for (auto&& mesh : _postDrawBuffer)
