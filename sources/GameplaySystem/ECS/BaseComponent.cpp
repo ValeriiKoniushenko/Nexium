@@ -234,10 +234,10 @@ namespace Core
     {
         AbstractComponent::ioFieldsUpdate(out);
 
-        auto stream = out.dedicatedNesting("BaseComponent");
+        auto stream = out.dedicatedNesting(StreamData::className);
 
-        stream.field("name", _name, _type);
-        stream.field("type", _type);
+        stream.field(StreamData::name, _name, _type);
+        stream.field(StreamData::type, _type);
         if (stream.getMode() == DataStream::Mode::Input)
         {
             _type = StringAtom::Intern(_type);
@@ -248,11 +248,7 @@ namespace Core
                      {
                          if (out.getMode() == DataStream::Mode::Output)
                          {
-                             for (auto& child : _children)
-                             {
-                                 out.tryPushBackEmptyArrayElement();
-                                 out.field(*child);
-                             }
+                             ioWriteChildInputFromCache(out);
                          }
                          else
                          {
@@ -379,7 +375,7 @@ namespace Core
         return added;
     }
 
-    void BaseComponent::ioReadChildInputFromCache(DataStream& out)
+    void BaseComponent::ioReadChildInputFromCache(const DataStream& out)
     {
         std::unordered_set<BaseComponent*> viewed;
         viewed.reserve(std::max(_children.size(), out.getRaw().size()));
@@ -389,7 +385,7 @@ namespace Core
             // std::cout << child.value().dump(4) << std::endl;
             auto&& in = child.value();
 
-            if (!in.contains("BaseComponent"))
+            if (!in.contains(StreamData::className))
             {
                 warnLog(
                     "No root key 'BaseComponent' for child component. "
@@ -398,19 +394,20 @@ namespace Core
                 continue;
             }
 
-            if (!in["BaseComponent"].contains("type"))
+            if (!in[StreamData::className].contains("type"))
             {
                 warnLog("No type specified for child component");
                 Assert(false);
                 continue;
             }
 
-            const auto finalType = in["BaseComponent"]["type"].get<StringAtom>();
+            const auto& object = in[StreamData::className];
+            const auto finalType = object[StreamData::type].get<StringAtom>();
 
             StringAtom name;
-            if (in["BaseComponent"].contains("name"))
+            if (object.contains(StreamData::name))
             {
-                name = in["BaseComponent"]["name"].get<StringAtom>();
+                name = object[StreamData::name].get<StringAtom>();
             }
 
             BaseComponent* last = nullptr;
@@ -438,6 +435,15 @@ namespace Core
             childStream.setMode(DataStream::Mode::Input);
             childStream.getRaw() = in;
             last->ioFieldsUpdate(childStream);
+        }
+    }
+
+    void BaseComponent::ioWriteChildInputFromCache(DataStream& out)
+    {
+        for (auto& child : _children)
+        {
+            out.tryPushBackEmptyArrayElement();
+            out.field(*child);
         }
     }
 

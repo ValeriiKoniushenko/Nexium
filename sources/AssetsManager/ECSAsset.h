@@ -73,9 +73,9 @@ namespace Core
         );
         // clang-format on
 
-        struct AssetData
+        struct StreamData
         {
-            AssetData() = delete;
+            StreamData() = delete;
 
             static constexpr const char* type = "type";
             static constexpr const char* name = "name";

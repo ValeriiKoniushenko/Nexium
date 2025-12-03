@@ -102,29 +102,29 @@ namespace Core
 
     void ECSEditorStaticMeshBundleAdapter::onApplyAssetData(const nlohmann::json& json)
     {
-        if (_modelInput && json.contains(AssetData::path))
+        if (_modelInput && json.contains(StreamData::path))
         {
             _modelInput->input->setInputtedData(
-                json[AssetData::path].get<StringAtom>().toStdString());
+                json[StreamData::path].get<StringAtom>().toStdString());
         }
-        if (_mainShaderCombo && json.contains(AssetData::mainShader))
+        if (_mainShaderCombo && json.contains(StreamData::mainShader))
         {
-            auto str = json[AssetData::mainShader].get<StringAtom>();
+            const auto str = json[StreamData::mainShader].get<StringAtom>();
             _mainShaderCombo->input->setCurrentIndex(convertShaderNameToIndex(str));
         }
-        if (_outlineShaderCombo && json.contains(AssetData::outlineShader))
+        if (_outlineShaderCombo && json.contains(StreamData::outlineShader))
         {
-            auto str = json[AssetData::outlineShader].get<StringAtom>();
+            const auto str = json[StreamData::outlineShader].get<StringAtom>();
             _outlineShaderCombo->input->setCurrentIndex(convertShaderNameToIndex(str));
         }
-        if (_onLoadScale && json.contains(AssetData::onLoadScale))
+        if (_onLoadScale && json.contains(StreamData::onLoadScale))
         {
-            _onLoadScale->input->setInputtedData(json[AssetData::onLoadScale].get<float>());
+            _onLoadScale->input->setInputtedData(json[StreamData::onLoadScale].get<float>());
         }
-        if (_postProcessArray && json.contains(AssetData::assimpPostProcess))
+        if (_postProcessArray && json.contains(StreamData::assimpPostProcess))
         {
             _postProcessArray->input->clearData(true);
-            for (auto el : json[AssetData::assimpPostProcess])
+            for (auto el : json[StreamData::assimpPostProcess])
             {
                 auto flag = Assimp::aiPostProcessStepsFromString(el.get<StringAtom>());
                 if (flag)
@@ -190,19 +190,19 @@ namespace Core
     {
         nlohmann::json json;
 
-        json[AssetData::path] = _modelInput->input->getInputtedData();
-        json[AssetData::mainShader]
+        json[StreamData::path] = _modelInput->input->getInputtedData();
+        json[StreamData::mainShader]
             = convertIndexToShaderName(_mainShaderCombo->input->getCurrentIndex());
-        json[AssetData::outlineShader]
+        json[StreamData::outlineShader]
             = convertIndexToShaderName(_outlineShaderCombo->input->getCurrentIndex());
-        json[AssetData::onLoadScale] = _onLoadScale->input->getInputtedData();
+        json[StreamData::onLoadScale] = _onLoadScale->input->getInputtedData();
 
-        json[AssetData::assimpPostProcess] = nlohmann::json::array();
+        json[StreamData::assimpPostProcess] = nlohmann::json::array();
         for (auto&& el : _postProcessArray->input->getData())
         {
             if (auto str = Assimp::aiPostProcessStepsToString(el); !str.isEmpty())
             {
-                json[AssetData::assimpPostProcess].push_back(str);
+                json[StreamData::assimpPostProcess].push_back(str);
             }
         }
 

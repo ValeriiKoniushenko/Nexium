@@ -73,12 +73,12 @@ namespace Core
         {
             const auto json = nlohmann::json::parse(Utils::GetFileContent(_pathToSource));
 
-            if (!json.contains(AssetData::assetData))
+            if (!json.contains(StreamData::assetData))
             {
                 return {};
             }
 
-            return json[AssetData::assetData];
+            return json[StreamData::assetData];
         }
         catch (const std::exception& e)
         {
@@ -109,11 +109,11 @@ namespace Core
         }
 
         nlohmann::json json;
-        json[AssetData::type] = _type;
-        json[AssetData::name] = _name;
-        json[AssetData::data] = nlohmann::json::object();
+        json[StreamData::type] = _type;
+        json[StreamData::name] = _name;
+        json[StreamData::data] = nlohmann::json::object();
 
-        json[AssetData::assetData] = assetData;
+        json[StreamData::assetData] = assetData;
 
         if (_status.cast() == Status::Loaded)
         {
@@ -121,8 +121,8 @@ namespace Core
             stream.setMode(DataStream::Mode::Output);
             _data->ioFieldsUpdate(stream);
 
-            json[AssetData::name] = _data->getComponentName();
-            json[AssetData::data] = std::move(stream.getRaw());
+            json[StreamData::name] = _data->getComponentName();
+            json[StreamData::data] = std::move(stream.getRaw());
         }
 
         std::fstream out(_pathToSource, std::ios::out);
@@ -186,12 +186,12 @@ namespace Core
             // updating object's fields
             DataStream stream;
             stream.setMode(DataStream::Mode::Input);
-            stream.getRaw() = json[AssetData::data];
+            stream.getRaw() = json[StreamData::data];
 
             // [opt] making loading of essential data (texture loading, 3D model loading, etc)
             if (_impl)
             {
-                _impl->load(*this, _data.get(), json[AssetData::assetData]);
+                _impl->load(*this, _data.get(), json[StreamData::assetData]);
             }
 
             _data->ioFieldsUpdate(stream);
@@ -258,25 +258,25 @@ namespace Core
         {
             const auto json = nlohmann::json::parse(Utils::GetFileContent(_pathToSource));
 
-            if (!json.contains(AssetData::type))
+            if (!json.contains(StreamData::type))
             {
                 throw std::runtime_error("Asset's source file doesn't contain a field: 'type'.");
             }
-            if (!json.contains(AssetData::data))
+            if (!json.contains(StreamData::data))
             {
                 throw std::runtime_error("Asset's source file doesn't contain a field: 'data'.");
             }
 
-            _type = StringAtom::Intern(json[AssetData::type].get<StringAtom>());
+            _type = StringAtom::Intern(json[StreamData::type].get<StringAtom>());
             Assert(_type.isStatic());
             if (_type.isEmpty())
             {
                 throw std::runtime_error("Asset's source file contains empty 'type' field.");
             }
 
-            if (json.contains(AssetData::name))
+            if (json.contains(StreamData::name))
             {
-                _name = json[AssetData::name].get<StringAtom>();
+                _name = json[StreamData::name].get<StringAtom>();
             }
 
             if (_name.isEmpty())

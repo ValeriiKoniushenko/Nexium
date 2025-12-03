@@ -502,17 +502,21 @@ namespace Core
 
         static const StringAtom componentType;
 
+        struct StreamData
+        {
+            StreamData() = delete;
+
+            static constexpr const char* className = "BaseComponent";
+            static constexpr const char* type = "type";
+            static constexpr const char* name = "name";
+        };
+
     public:
         ~BaseComponent() override = default;
-
         BaseComponent(BaseComponent&& other) noexcept;
-
         BaseComponent& operator=(BaseComponent&& other) noexcept;
-
         BaseComponent(const BaseComponent& other);
-
         BaseComponent& operator=(const BaseComponent& other);
-
         [[nodiscard]] virtual bool operator==(const Self& other) const;
 
         // ========================== WORKING WITH NAME ==========================
@@ -783,7 +787,8 @@ namespace Core
 
     private:
         [[nodiscard]] BaseComponent* rawAddChildComponent(BaseComponent* newOne);
-        void ioReadChildInputFromCache(DataStream& out);
+        void ioReadChildInputFromCache(const DataStream& out);
+        void ioWriteChildInputFromCache(DataStream& out);
 
         // ===================== PIMPLs =============================
         template<IsComponentOrBase TargetT, bool isConst, class FuncT>

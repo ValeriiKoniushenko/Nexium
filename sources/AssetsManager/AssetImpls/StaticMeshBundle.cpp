@@ -112,7 +112,7 @@ namespace Core::AssetImpl
     StaticMeshBundle::AssetData StaticMeshBundle::extractAssetData(
         const nlohmann::json& assetData) const
     {
-        using Naming = ECSEditorStaticMeshBundleAdapter::AssetData;
+        using Naming = ECSEditorStaticMeshBundleAdapter::StreamData;
 
         AssetData data;
 

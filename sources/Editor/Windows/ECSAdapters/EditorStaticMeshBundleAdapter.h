@@ -53,9 +53,9 @@ namespace Core
         ECS_COMPONENT_DECL(ECSEditorStaticMeshBundleAdapter, ECSEditorMimeAdapter);
 
     public:
-        struct AssetData
+        struct StreamData
         {
-            AssetData() = delete;
+            StreamData() = delete;
 
             static constexpr const char* path = "path";
             static constexpr const char* mainShader = "mainShader";
