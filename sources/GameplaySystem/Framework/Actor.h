@@ -32,14 +32,14 @@
 
 namespace Core
 {
-    class Actor : public Transformable, public IDrawable, public WorldObject
+    class Actor : public Transformable, public IDrawable, public BaseComponent
     {
-        ECS_COMPONENT_DECL(Actor, WorldObject);
+        ECS_COMPONENT_DECL(Actor, BaseComponent);
 
     public:
         Actor(Actor&&) = default;
         Actor(const Actor& other)
-            : WorldObject(other._type, other._name)
+            : BaseComponent(other._type, other._name)
         {
             *this = other;
         }

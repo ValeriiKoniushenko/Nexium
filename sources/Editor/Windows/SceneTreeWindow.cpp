@@ -90,7 +90,10 @@ namespace Core
             int32_t internalId = 0;
             for (auto&& node : actors)
             {
-                drawTreeNode(node.get(), internalId++);
+                if (auto* object = node->getData()) [[likely]]
+                {
+                    drawTreeNode(object, internalId++);
+                }
             }
             _lastSelectedObject = selectedObject;
             ImGui::TreePop();

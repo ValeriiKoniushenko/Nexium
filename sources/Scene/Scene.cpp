@@ -40,8 +40,10 @@ namespace Core
         _postDrawBuffer.resize(0);
         grid.draw();
 
-        for (auto&& object : _objects)
+        for (auto&& asset : _objects)
         {
+            auto* object = asset->getData();
+
             if (!object->isEnabled())
             {
                 continue;
@@ -88,11 +90,59 @@ namespace Core
         return _sceneName;
     }
 
+    void Scene::addToScene(const BaseComponent* object, bool readFromCache)
+    {
+        if (!Verify(object)) [[unlikely]]
+        {
+            return;
+        }
+
+        _objects.emplace_back(new WorldObject);
+        auto* sceneAsset = _objects.back().get();
+
+        if (!sceneAsset->setData(object))
+        {
+            return;
+        }
+
+        auto* added = sceneAsset->getData();
+
+        added->initialize();
+        if (readFromCache)
+        {
+            added->tryReadFromCache();
+        }
+
+        onObjectAdded->trigger(sceneAsset);
+    }
+
+    void Scene::addToScene(ECSAsset& asset, bool readFromCache)
+    {
+        _objects.emplace_back(new WorldObject);
+        auto* sceneAsset = _objects.back().get();
+        sceneAsset->setAsset(asset);
+
+        if (auto* added = sceneAsset->getData(); Verify(added)) [[likely]]
+        {
+            added->initialize();
+
+            if (readFromCache)
+            {
+                added->tryReadFromCache();
+            }
+
+            onObjectAdded->trigger(sceneAsset);
+        }
+    }
+
     void Scene::writeToCacheSeparateData()
     {
-        for (auto&& actor : _objects)
+        for (auto&& asset : _objects)
         {
-            actor->writeToCache();
+            if (auto* object = asset->getData())
+            {
+                object->writeToCache();
+            }
         }
     }
 
@@ -113,9 +163,12 @@ namespace Core
 
     void Scene::tick(float timeDelta)
     {
-        for (auto&& obj : _objects)
+        for (auto&& asset : _objects)
         {
-            obj->tick(timeDelta);
+            if (auto* object = asset->getData()) [[likely]]
+            {
+                object->tick(timeDelta);
+            }
         }
     }
 } // namespace Core

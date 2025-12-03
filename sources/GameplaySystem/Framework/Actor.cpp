@@ -30,14 +30,14 @@ namespace Core
 
     void Actor::ioFieldsUpdate(DataStream& out)
     {
-        WorldObject::ioFieldsUpdate(out);
+        BaseComponent::ioFieldsUpdate(out);
         IDrawable::ioFieldsUpdate(out);
         Transformable::ioFieldsUpdate(out);
     }
 
     void Actor::onInitialize()
     {
-        WorldObject::onInitialize();
+        BaseComponent::onInitialize();
 
         if (_name.isEmpty())
         {

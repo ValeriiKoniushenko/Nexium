@@ -39,6 +39,10 @@ namespace Core
     class Scene : public IDataStreamBridge
     {
     public:
+        // TODO: change to another data structure!!! It's awful
+        using ObjectContainerT = std::vector<WorldObject::Ptr>;
+
+    public:
         Scene();
         ~Scene() override = default;
         Scene(const Scene&) = delete;
@@ -56,19 +60,16 @@ namespace Core
 
         [[nodiscard]] const StringAtom& getSceneName() const noexcept;
 
-        template<IsWorldObjectBased T>
-        void addToScene(const T& object, bool readFromCache = false);
+        void addToScene(const BaseComponent* object, bool readFromCache = false);
+        void addToScene(ECSAsset& asset, bool readFromCache = false);
 
-        template<IsWorldObjectBased T, class... Args>
-        T::Ptr createAndGet(Args... args);
+        template<IsComponent T, class... Args>
+        [[nodiscard]] typename T::Ptr createAndGet(Args... args);
 
-        [[nodiscard]] const std::vector<WorldObject::Ptr>& getObjects() const noexcept
-        {
-            return _objects;
-        }
-        [[nodiscard]] std::vector<WorldObject::Ptr>& getObjects() noexcept { return _objects; }
+        [[nodiscard]] const ObjectContainerT& getObjects() const noexcept { return _objects; }
+        [[nodiscard]] ObjectContainerT& getObjects() noexcept { return _objects; }
 
-        template<IsWorldObjectBased T>
+        template<IsComponent T>
         [[nodiscard]] T::Ptr gerFirstOf();
 
         Delegate<void(WorldObject*)>::Ptr onObjectAdded = Delegate<void(WorldObject*)>::Create();
@@ -84,8 +85,7 @@ namespace Core
         void writeToCacheSeparateData();
 
     protected:
-        // TODO: change to another data structure!!! It's awful
-        std::vector<WorldObject::Ptr> _objects;
+        ObjectContainerT _objects;
 
         StringAtom _sceneName = "Default";
 
@@ -93,40 +93,35 @@ namespace Core
         std::vector<Actor*> _postDrawBuffer;
     };
 
-    template<IsWorldObjectBased T>
-    void Scene::addToScene(const T& object, bool readFromCache)
-    {
-        _objects.emplace_back(StaticCast<T>(object.clone()));
-        auto* added = _objects.back().get();
-
-        added->initialize();
-        if (readFromCache)
-        {
-            added->tryReadFromCache();
-        }
-
-        onObjectAdded->trigger(added);
-    }
-
-    template<IsWorldObjectBased T, class... Args>
+    template<IsComponent T, class... Args>
     typename T::Ptr Scene::createAndGet(Args... args)
     {
-        _objects.emplace_back(new T(std::forward<Args>(args)...));
-        auto added = _objects.back();
+        _objects.emplace_back(new WorldObject);
+        auto* sceneAsset = _objects.back().get();
+
+        if (!sceneAsset->spawnData<T>(std::forward<Args>(args)...))
+        {
+            return nullptr;
+        }
+
+        auto* added = sceneAsset->getData();
 
         added->initialize();
-        onObjectAdded->trigger(added.get());
-        return StaticCast<T>(added);
+        onObjectAdded->trigger(sceneAsset);
+        return static_cast<T*>(added);
     }
 
-    template<IsWorldObjectBased T>
+    template<IsComponent T>
     typename T::Ptr Scene::gerFirstOf()
     {
-        for (auto&& obj : _objects)
+        for (auto&& asset : _objects)
         {
-            if (auto* t = dynamic_cast<T*>(obj.get()))
+            if (auto* obj = asset->getData())
             {
-                return StaticCast<T>(obj);
+                if (auto* t = dynamic_cast<T*>(obj))
+                {
+                    return typename T::Ptr(static_cast<T*>(obj));
+                }
             }
         }
 

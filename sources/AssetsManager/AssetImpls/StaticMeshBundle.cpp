@@ -100,13 +100,7 @@ namespace Core::AssetImpl
 
     void StaticMeshBundle::spawn(ECSAsset& asset)
     {
-        if (auto&& rawData = asset.getData())
-        {
-            if (const auto* obj = rawData->tryCastTo<Core::StaticMeshBundle>())
-            {
-                gGameInstance->gameScene.addToScene(*obj);
-            }
-        }
+        gGameInstance->gameScene.addToScene(asset);
     }
 
     StaticMeshBundle::AssetData StaticMeshBundle::extractAssetData(

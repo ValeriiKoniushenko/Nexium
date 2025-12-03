@@ -149,4 +149,44 @@ namespace Core
     using NXAsset = IntrusivePtr<ECSAsset>;
     using WeakNXAsset = WeakPtr<ECSAsset>;
 
+    class NXSceneAsset : public IntrusiveRefCounter<NXSceneAsset>
+    {
+        INTRUSIVE_PTR_ADAPTERS(NXSceneAsset)
+    public:
+        NXSceneAsset() = default;
+        NXSceneAsset(NXSceneAsset&&) = delete;
+        NXSceneAsset& operator=(NXSceneAsset&&) = delete;
+        NXSceneAsset(const NXSceneAsset& other);
+        NXSceneAsset& operator=(const NXSceneAsset& other);
+        ~NXSceneAsset() override = default;
+
+        void setAsset(ECSAsset& asset);
+        void setAsset(NXAsset asset);
+        bool setData(const BaseComponent* comp);
+
+        template<IsComponent T, class... Args>
+        bool spawnData(Args... args)
+        {
+            _data = new T(std::forward<Args>(args)...);
+            if (!validateInputSetData(_data.get()))
+            {
+                _data.reset();
+                return false;
+            }
+
+            return true;
+        }
+
+        [[nodiscard]] const NXAsset& getAsset() const noexcept { return _asset; }
+        [[nodiscard]] const BaseComponent* getData() const noexcept { return _data.get(); }
+        [[nodiscard]] BaseComponent* getData() noexcept { return _data.get(); }
+
+    private:
+        [[nodiscard]] bool validateInputSetData(const BaseComponent* comp);
+
+    protected:
+        NXAsset _asset;
+        BaseComponent::Ptr _data;
+    };
+
 } // namespace Core

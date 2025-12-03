@@ -24,27 +24,16 @@
 
 #pragma once
 
-#include "GameplaySystem/ECS/BaseComponent.h"
+#include "AssetsManager/ECSAsset.h"
 
 namespace Core
 {
 
-    class WorldObject : public BaseComponent
+    class WorldObject : public NXSceneAsset
     {
-        ECS_COMPONENT_DECL(WorldObject, BaseComponent);
-
+        INTRUSIVE_PTR_ADAPTERS(WorldObject)
     public:
-        WorldObject(WorldObject&&) = default;
-        WorldObject(const WorldObject& other)
-            : BaseComponent(other._type, other._name)
-        {
-            *this = other;
-        }
-        WorldObject& operator=(WorldObject&&) = default;
-        WorldObject& operator=(const WorldObject&) = default;
-        ~WorldObject() override = default;
-
-        void ioFieldsUpdate(DataStream& out) override;
+    protected:
     };
 
     template<class T>

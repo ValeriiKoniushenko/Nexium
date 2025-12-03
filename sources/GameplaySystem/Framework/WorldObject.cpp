@@ -29,11 +29,4 @@
 namespace Core
 {
 
-    ECS_COMPONENT_IMPL(WorldObject);
-
-    void WorldObject::ioFieldsUpdate(DataStream& out)
-    {
-        BaseComponent::ioFieldsUpdate(out);
-    }
-
 } // namespace Core

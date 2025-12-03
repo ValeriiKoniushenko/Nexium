@@ -320,4 +320,75 @@ namespace Core
         unload();
     }
 
+    NXSceneAsset::NXSceneAsset(const NXSceneAsset& other)
+        : IntrusiveRefCounter()
+    {
+        *this = other;
+    }
+
+    NXSceneAsset& NXSceneAsset::operator=(const NXSceneAsset& other)
+    {
+        if (&other != this) [[likely]]
+        {
+            _asset = other._asset;
+            _data = other._data->clone();
+        }
+        return *this;
+    }
+
+    void NXSceneAsset::setAsset(ECSAsset& asset)
+    {
+        _data.reset();
+
+        _asset = &asset;
+        if (_asset && _asset->getData())
+        {
+            _data = _asset->getData()->clone();
+        }
+    }
+
+    void NXSceneAsset::setAsset(NXAsset asset)
+    {
+        if (Verify(asset)) [[likely]]
+        {
+            setAsset(*asset);
+        }
+    }
+
+    bool NXSceneAsset::setData(const BaseComponent* comp)
+    {
+        if (!validateInputSetData(comp))
+        {
+            return false;
+        }
+
+        _data = comp->clone();
+        return true;
+    }
+
+    bool NXSceneAsset::validateInputSetData(const BaseComponent* comp)
+    {
+        if (!Verify(comp)) [[unlikely]]
+        {
+            return false;
+        }
+
+        if (_asset && _asset->getData())
+        {
+            if (_asset->getData()->getComponentType() != comp->getComponentType())
+            {
+                Assert(_asset->getData()->getComponentType().isStatic());
+                Assert(comp->getComponentType().isStatic());
+
+                globalLog.errorLog(
+                    "Attempt to assign data of type '{}' to different type of the asset '{}'"_f
+                    << comp->getComponentType() << _asset->getData()->getComponentType());
+
+                return false;
+            }
+        }
+
+        return true;
+    }
+
 } // namespace Core

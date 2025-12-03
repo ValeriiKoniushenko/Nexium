@@ -69,6 +69,6 @@ But before we can start, let's talk a little bit about how 'MyCube' is presented
 
 What class stores the 3D mesh? This is `class Core::StaticMeshBundle : public Actor` - it's just a class that can work with any type of 3D. Basically, it's just an `Actor`.
 
-What is it `Actor`? This is the class that is responsible for the minimum part of the scene: a tree, a car, an interaction box -- anything visible on the scene. Its class looks like it: `class Actor : public Transformable, public WorldObject`
+What is it `Actor`? This is the class that is responsible for the minimum part of the scene: a tree, a car, an interaction box -- anything visible on the scene. Its class looks like it: `class Actor : public Transformable, public BaseComponent`
 
 What is `WorldObject`? If the actor's instance you can contemplate on the final scene, but the `WorldObject` -- no. Generally, it's logical-only part of the world: weather script, son rotation script, etc.

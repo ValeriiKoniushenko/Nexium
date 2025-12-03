@@ -60,27 +60,31 @@ namespace Core
 
         shader->use();
         shader->setUniform("uProjAndView"_atom, camera->getMatrix());
-        for (auto&& actor : scene.getObjects())
+        for (auto&& asset : scene.getObjects())
         {
-            if (!actor->isEnabled())
+            auto* object = asset->getData();
+
+            if (!object->isEnabled())
             {
                 continue;
             }
 
-            if (auto* bundle = actor->tryCastTo<StaticMeshBundle>())
+            if (auto* bundle = object->tryCastTo<StaticMeshBundle>())
             {
                 bundle->pureDraw(onUniformSet, preRenderCond);
             }
         }
 
-        for (auto&& actor : scene.getObjects())
+        for (auto&& asset : scene.getObjects())
         {
-            if (!actor->isEnabled())
+            auto* object = asset->getData();
+
+            if (!object->isEnabled())
             {
                 continue;
             }
 
-            if (auto* bundle = actor->tryCastTo<StaticMeshBundle>())
+            if (auto* bundle = object->tryCastTo<StaticMeshBundle>())
             {
                 bundle->pureDraw(onUniformSet, postRenderCond);
             }
@@ -106,14 +110,16 @@ namespace Core
             Color3 pickedColor{ pickedData[0], pickedData[1], pickedData[2] };
 
             StaticMesh* found = nullptr;
-            for (auto&& actor : scene.getObjects())
+            for (auto&& asset : scene.getObjects())
             {
-                if (!actor->isEnabled())
+                auto* object = asset->getData();
+
+                if (!object->isEnabled())
                 {
                     continue;
                 }
 
-                auto* bundle = actor->tryCastTo<StaticMeshBundle>();
+                auto* bundle = object->tryCastTo<StaticMeshBundle>();
                 if (!bundle)
                 {
                     continue;
