@@ -73,6 +73,13 @@ namespace Core
             extraFlag = 0;
         }
 
+        if (ImGui::Button(ICON_FA_PLUS, { ImGui::GetFrameHeight(), ImGui::GetFrameHeight() }))
+        {
+        }
+
+        ImGui::SameLine();
+        ImGui::Dummy({});
+        ImGui::SameLine();
         ImGui::TextUnformatted("Name: ");
         ImGui::SameLine();
         ImGui::PushItemWidth(-FLT_MIN); // Makes the next widget take full width
@@ -84,20 +91,15 @@ namespace Core
             return;
         }
 
-        auto& actors = _scene->getObjects();
-        if (ImGui::TreeNodeEx("Root", ImGuiTreeNodeFlags_DefaultOpen | _commonTreeFlags))
+        int32_t internalId = 0;
+        for (auto&& node : _scene->getObjects())
         {
-            int32_t internalId = 0;
-            for (auto&& node : actors)
+            if (auto* object = node->getData()) [[likely]]
             {
-                if (auto* object = node->getData()) [[likely]]
-                {
-                    drawTreeNode(object, internalId++);
-                }
+                drawTreeNode(object, internalId++);
             }
-            _lastSelectedObject = selectedObject;
-            ImGui::TreePop();
         }
+        _lastSelectedObject = selectedObject;
 
         if (sceneName != _scene->getSceneName())
         {
@@ -180,7 +182,11 @@ namespace Core
             ImGui::PopStyleColor(1);
         }
 
-        if (ImGui::IsItemClicked() || (ImGui::IsItemFocused() && isHovered()))
+        if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
+        {
+            ImGui::OpenPopup("ContextSceneItemMenu");
+        }
+        else if (ImGui::IsItemClicked() || (ImGui::IsItemFocused() && isHovered()))
         {
             selectedObject = n;
 
@@ -196,15 +202,29 @@ namespace Core
             }
         }
 
+        bool invalidate = false;
+        if (ImGui::BeginPopup("ContextSceneItemMenu"))
+        {
+            if (ImGui::MenuItem(ICON_FA_TRASH " Delete"))
+            {
+                invalidate = true;
+            }
+
+            ImGui::EndPopup();
+        }
+
         if (isOpened)
         {
-            for (auto& child : n->getChildren())
+            if (!invalidate)
             {
-                if (!drawTreeNode(child.get(), ++id))
+                for (auto& child : n->getChildren())
                 {
-                    ImGui::PopID();
-                    ImGui::TreePop();
-                    return false;
+                    if (!drawTreeNode(child.get(), ++id))
+                    {
+                        ImGui::PopID();
+                        ImGui::TreePop();
+                        return false;
+                    }
                 }
             }
 
