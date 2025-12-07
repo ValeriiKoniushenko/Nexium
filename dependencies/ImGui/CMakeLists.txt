@@ -20,6 +20,13 @@ target_link_libraries(${TARGET_NAME} PUBLIC
     glfw glm freetype
 )
 
+target_compile_definitions(${TARGET_NAME} PRIVATE FT_FREETYPE_H=<freetype/freetype.h>)
+target_compile_definitions(${TARGET_NAME} PRIVATE FT_GLYPH_H=<freetype/ftglyph.h>)
+target_compile_definitions(${TARGET_NAME} PRIVATE FT_MODULE_H=<freetype/ftmodapi.h>)
+target_compile_definitions(${TARGET_NAME} PRIVATE FT_SIZES_H=<freetype/ftsizes.h>)
+target_compile_definitions(${TARGET_NAME} PRIVATE FT_SYNTHESIS_H=<freetype/ftsynth.h>)
+
+
 target_compile_definitions(${TARGET_NAME} PUBLIC IMGUI_DEBUG_PARANOID)
 
 target_include_directories(${TARGET_NAME} PUBLIC ../)

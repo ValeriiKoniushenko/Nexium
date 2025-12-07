@@ -35,6 +35,7 @@ namespace Core
 
     enum AssetAction : uint16_t
     {
+        AA_None = 0,
         AA_Spawn = 1 << 0
     };
 

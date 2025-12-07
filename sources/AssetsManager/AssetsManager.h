@@ -115,8 +115,11 @@ namespace Core
         void unloadAllResources();
         void registerNewAssetPath(std::filesystem::path path);
         [[nodiscard]] NXAsset getAsset(const StringAtom& logicPath);
+        [[nodiscard]] NXAsset getAssetAt(std::size_t index, AssetAction filter = AA_None);
         [[nodiscard]] NXAsset getAssetByPath(const std::filesystem::path& path);
         [[nodiscard]] WeakNXAsset getWeakAssetByPath(const std::filesystem::path& path);
+
+        [[nodiscard]] std::size_t getAssetCount(AssetAction filter = AA_None) const;
 
         void spawnMesh3DOnScene(const StringAtom& logicPath);
 

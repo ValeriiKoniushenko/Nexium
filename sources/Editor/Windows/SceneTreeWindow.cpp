@@ -28,6 +28,7 @@
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "ImGui/misc/cpp/imgui_stdlib.h"
 #include "Misc/IconsFontAwesome.h"
+#include "ModalAssetsSearchPopUp.h"
 #include "ObjectPropertiesWindow.h"
 #include "Scene/Scene.h"
 
@@ -65,7 +66,6 @@ namespace Core
 
     void SceneTreeWindowEWC::onDraw()
     {
-        return;
         std::string sceneName;
         int extraFlag = ImGuiInputTextFlags_ReadOnly;
         if (_scene)
@@ -74,9 +74,7 @@ namespace Core
             extraFlag = 0;
         }
 
-        if (ImGui::Button(ICON_FA_PLUS, { ImGui::GetFrameHeight(), ImGui::GetFrameHeight() }))
-        {
-        }
+        processAddNewComponentButton();
 
         ImGui::SameLine();
         ImGui::Dummy({});
@@ -235,5 +233,16 @@ namespace Core
         ImGui::PopID();
 
         return true;
+    }
+
+    void SceneTreeWindowEWC::processAddNewComponentButton()
+    {
+        if (ImGui::Button(ICON_FA_PLUS, { ImGui::GetFrameHeight(), ImGui::GetFrameHeight() }))
+        {
+            ModalAssetsSearchPopUpEWC::Open("sss",[](auto)
+            {
+
+            });
+        }
     }
 } // namespace Core

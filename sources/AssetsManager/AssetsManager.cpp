@@ -194,6 +194,30 @@ namespace Core
         return _assets.at(logicPath);
     }
 
+    NXAsset AssetsManager::getAssetAt(std::size_t index, AssetAction filter)
+    {
+        if (index >= _assets.size()) [[unlikely]]
+        {
+            errorLog("Can't get asset at index {} because it is out of range"_f << index);
+            return {};
+        }
+
+        std::size_t i = 0;
+        for (auto&& [key, asset] : _assets)
+        {
+            if (filter == AA_None || asset->canProcessAction(filter))
+            {
+                if (i == index)
+                {
+                    return asset;
+                }
+                ++i;
+            }
+        }
+
+        return {};
+    }
+
     NXAsset AssetsManager::getAssetByPath(const std::filesystem::path& path)
     {
         const auto it = findAssetByPath(path);
@@ -212,6 +236,19 @@ namespace Core
             return {};
         }
         return it->second;
+    }
+
+    std::size_t AssetsManager::getAssetCount(AssetAction filter) const
+    {
+        std::size_t count = 0;
+        for (auto&& [key, asset] : _assets)
+        {
+            if (filter == AA_None || asset->canProcessAction(filter))
+            {
+                ++count;
+            }
+        }
+        return count;
     }
 
     void AssetsManager::spawnMesh3DOnScene(const StringAtom& logicPath)

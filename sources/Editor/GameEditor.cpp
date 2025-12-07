@@ -42,6 +42,7 @@
 #include "Windows/ECSAdapters/BaseComponentAdapter.h"
 #include "Windows/ECSAdapters/EditorStaticMeshBundleAdapter.h"
 #include "Windows/ImageViewer.h"
+#include "Windows/ModalAssetsSearchPopUp.h"
 #include "Windows/ModalECSSearchPopUp.h"
 #include "Windows/ModalPopUp.h"
 #include "Windows/NxECSBasedEditor.h"
@@ -99,6 +100,7 @@ namespace Core
         registerNewWindow<ShaderManagerEWC>("Shader manager"_atom);
         registerNewWindow<ModalPopUp>("PopUp"_atom, true);
         registerNewWindow<ModalECSSearchPopUpEWC>("ModalECSSearchPopUp"_atom);
+        registerNewWindow<ModalAssetsSearchPopUpEWC>("ModalAssetsSearchPopUpEWC"_atom);
         registerNewWindow<WorldLightningEWC>("World Lightning"_atom);
         registerNewWindow<NxTextureEditorEWC>("NX Texture Editor"_atom);
         registerNewWindow<NxECSBasedEditorEWC>("Assets editor"_atom);

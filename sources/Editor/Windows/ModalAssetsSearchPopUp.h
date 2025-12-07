@@ -24,42 +24,48 @@
 
 #pragma once
 
+#include "AssetsManager/ECSAsset.h"
 #include "BaseWindow.h"
+#include "Editor/GuiComponents/VerticalLayout.h"
 
 namespace Core
 {
-    class Scene;
-    class Actor;
 
-    class SceneTreeWindowEWC : public BaseFloatEWC
+    namespace Gui
     {
-        ECS_COMPONENT_DECL(SceneTreeWindowEWC, BaseFloatEWC);
+        class ListModelBased;
+        class Button;
+    } // namespace Gui
+
+    class ModalAssetsSearchPopUpEWC : public BaseEWC
+    {
+        ECS_COMPONENT_DECL(ModalAssetsSearchPopUpEWC, BaseEWC);
 
     public:
-        void setScene(Scene* scene) { _scene = scene; }
-        [[nodiscard]] Scene* getScene() const noexcept { return _scene; }
-
-        [[nodiscard]] const char* getIcon() override { return ICON_FA_GLOBE; }
-
-    public:
-        BaseComponent* selectedObject = nullptr;
+        void open(StringAtom text, const std::function<void(NXAsset)>& callback);
+        static void Open(StringAtom text, const std::function<void(NXAsset)>& callback);
 
     protected:
         void onInitialize() override;
-        void onDraw() override;
-        void onUpdate() override;
 
-    private:
-        bool drawTreeNode(BaseComponent* n, int32_t id, bool isInSelectedSubtree = false);
-        void processAddNewComponentButton();
+        void onDraw() override;
+
+        void preOpenedEndWindowDraw() override;
+
+        [[nodiscard]] bool beginWindowDraw() override;
+
+        void endWindowDraw() override;
 
     protected:
         DelegateSubscriberPoolGuard _subscriptionPool;
+        std::function<void(NXAsset)> _callback;
 
-        Scene* _scene = nullptr;
-        int _commonTreeFlags
-            = ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
-        BaseComponent* _lastSelectedObject = nullptr;
+        StringAtom _caption = "ModalAssetsSearchPopUpEWC";
+        Gui::VerticalLayout _layout;
+        Gui::ListModelBased* _list = nullptr;
+        Gui::Button* _okButton = nullptr;
+        Gui::Button* _cancelButton = nullptr;
+
+        bool _hasOpenRequest = false;
     };
-
 } // namespace Core
