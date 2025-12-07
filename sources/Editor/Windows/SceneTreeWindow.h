@@ -46,9 +46,7 @@ namespace Core
 
     protected:
         void onInitialize() override;
-
         void onDraw() override;
-
         void onUpdate() override;
 
     protected:
@@ -62,4 +60,5 @@ namespace Core
     private:
         bool drawTreeNode(BaseComponent* n, int32_t id, bool isInSelectedSubtree = false);
     };
+
 } // namespace Core

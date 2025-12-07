@@ -65,6 +65,7 @@ namespace Core
 
     void SceneTreeWindowEWC::onDraw()
     {
+        return;
         std::string sceneName;
         int extraFlag = ImGuiInputTextFlags_ReadOnly;
         if (_scene)
@@ -141,7 +142,7 @@ namespace Core
             flags |= ImGuiTreeNodeFlags_Selected | ImGuiTreeNodeFlags_SpanAvailWidth;
         }
 
-        if (n->getChildrenCount() == 0)
+        if (!n->hasChildren())
         {
             flags |= ImGuiTreeNodeFlags_Leaf;
         }
