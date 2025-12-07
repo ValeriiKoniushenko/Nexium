@@ -80,6 +80,12 @@ namespace Core
         {
             fromCacheData(json);
         }
+        catch (JsonAdapter::Exception& e)
+        {
+            globalLog.traceLog("Can't read cache due to: '{}'. Cache will be cleared."_f
+                               << e.message);
+            clearCache();
+        }
         catch (std::exception& e)
         {
             globalLog.errorLog("Exception while reading of the cache file: '{}'. The reason: {}"_f
