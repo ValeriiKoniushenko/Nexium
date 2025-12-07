@@ -33,9 +33,7 @@ namespace Core
     {
     public:
         void reset();
-
         void start();
-
         void newFrameUpdate();
 
         [[nodiscard]] double getFPS() const;
