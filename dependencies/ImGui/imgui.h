@@ -1,3 +1,27 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2018-2025 Valerii Koniushenko
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 // dear imgui, v1.92.2 WIP
 // (headers)
 
@@ -33,8 +57,10 @@
 // (Integer encoded as XYYZZ for use in #if preprocessor conditionals, e.g. '#if IMGUI_VERSION_NUM
 // >= 12345')
 
-#define IMGUI_VERSION      "1.92.2 WIP"
-#define IMGUI_VERSION_NUM  19213
+#define IMGUI_ENABLE_FREETYPE
+
+#define IMGUI_VERSION     "1.92.2 WIP"
+#define IMGUI_VERSION_NUM 19213
 #define IMGUI_HAS_TABLE
 #define IMGUI_HAS_TEXTURES
 #define IMGUI_HAS_VIEWPORT
@@ -230,14 +256,14 @@ struct ImGuiSelectionBasicStorage;    // Optional helper to store multi-selectio
                                       // multi-selection requests.
 struct ImGuiSelectionExternalStorage; // Optional helper to apply multi-selection requests to
                                       // existing randomly accessible storage.
-struct ImGuiSelectionRequest; // A selection request (stored in ImGuiMultiSelectIO)
-struct ImGuiSizeCallbackData; // Callback data when using SetNextWindowSizeConstraints()
-                              // (rare/advanced use)
-struct ImGuiStorage;          // Helper for key->value storage (container sorted by key)
-struct ImGuiStoragePair;      // Helper for key->value storage (pair)
-struct ImGuiStyle;            // Runtime data for styling/colors
-struct ImGuiTableSortSpecs;   // Sorting specifications for a table (often handling sort specs for a
-                              // single column, occasionally more)
+struct ImGuiSelectionRequest;         // A selection request (stored in ImGuiMultiSelectIO)
+struct ImGuiSizeCallbackData;         // Callback data when using SetNextWindowSizeConstraints()
+                                      // (rare/advanced use)
+struct ImGuiStorage;                  // Helper for key->value storage (container sorted by key)
+struct ImGuiStoragePair;              // Helper for key->value storage (pair)
+struct ImGuiStyle;                    // Runtime data for styling/colors
+struct ImGuiTableSortSpecs; // Sorting specifications for a table (often handling sort specs for a
+                            // single column, occasionally more)
 struct ImGuiTableColumnSortSpecs; // Sorting specification for one column of a table
 struct ImGuiTextBuffer;           // Helper to hold and append into a text buffer (~string builder)
 struct ImGuiTextFilter; // Helper to parse and apply text filters (e.g. "aaaaa[,bbbbb][,ccccc]")
@@ -2973,7 +2999,8 @@ enum ImGuiKey : int
     ImGuiKey_ModShift = ImGuiMod_Shift,
     ImGuiKey_ModAlt = ImGuiMod_Alt,
     ImGuiKey_ModSuper = ImGuiMod_Super, // Renamed in 1.89
-        // ImGuiKey_KeyPadEnter = ImGuiKey_KeypadEnter,              // Renamed in 1.87
+                                        // ImGuiKey_KeyPadEnter = ImGuiKey_KeypadEnter, // Renamed
+                                        // in 1.87
     #endif
 };
 
@@ -3148,7 +3175,7 @@ enum ImGuiCol_
     ImGuiCol_TabDimmed,           // Tab background, when tab-bar is unfocused & tab is unselected
     ImGuiCol_TabDimmedSelected,   // Tab background, when tab-bar is unfocused & tab is selected
     ImGuiCol_TabDimmedSelectedOverline, //..horizontal overline, when tab-bar is unfocused & tab is
-                                        //selected
+                                        // selected
     ImGuiCol_DockingPreview,            // Preview overlay color when about to docking something
     ImGuiCol_DockingEmptyBg, // Background color for empty node (e.g. CentralNode with no window
                              // docked into it)
@@ -4167,7 +4194,7 @@ struct ImGuiStyle
     float DisabledAlpha; // Additional alpha multiplier applied by BeginDisabled(). Multiply over
                          // current value of Alpha.
     glm::vec2 WindowPadding = glm::vec2(0); // Padding within a window.
-    float WindowRounding;    // Radius of window corners rounding. Set to 0.0f to have rectangular
+    float WindowRounding; // Radius of window corners rounding. Set to 0.0f to have rectangular
                           // windows. Large values tend to lead to variety of artifacts and are not
                           // recommended.
     float WindowBorderSize; // Thickness of border around windows. Generally set to 0.0f or 1.0f.
@@ -4176,10 +4203,11 @@ struct ImGuiStyle
         WindowBorderHoverPadding; // Hit-testing extent outside/inside resizing border. Also extend
                                   // determination of hovered window. Generally meaningfully larger
                                   // than WindowBorderSize to make it easy to reach borders.
-    glm::vec2 WindowMinSize = glm::vec2(0);      // Minimum window size. This is a global setting. If you want to
-                             // constrain individual windows, use SetNextWindowSizeConstraints().
-    glm::vec2 WindowTitleAlign = glm::vec2(0);        // Alignment for title bar text. Defaults to (0.0f,0.5f) for
-                                       // left-aligned,vertically centered.
+    glm::vec2 WindowMinSize
+        = glm::vec2(0); // Minimum window size. This is a global setting. If you want to
+                        // constrain individual windows, use SetNextWindowSizeConstraints().
+    glm::vec2 WindowTitleAlign = glm::vec2(0); // Alignment for title bar text. Defaults to
+                                               // (0.0f,0.5f) for left-aligned,vertically centered.
     ImGuiDir WindowMenuButtonPosition; // Side of the collapsing/docking button in the title bar
                                        // (None/Left/Right). Defaults to ImGuiDir_Left.
     float ChildRounding; // Radius of child window corners rounding. Set to 0.0f to have rectangular
@@ -4191,20 +4219,24 @@ struct ImGuiStyle
     float
         PopupBorderSize; // Thickness of border around popup/tooltip windows. Generally set to 0.0f
                          // or 1.0f. (Other values are not well tested and more CPU/GPU costly).
-    glm::vec2 FramePadding = glm::vec2(0); // Padding within a framed rectangle (used by most widgets).
+    glm::vec2 FramePadding
+        = glm::vec2(0);  // Padding within a framed rectangle (used by most widgets).
     float FrameRounding; // Radius of frame corners rounding. Set to 0.0f to have rectangular frame
                          // (used by most widgets).
-    float FrameBorderSize;      // Thickness of border around frames. Generally set to 0.0f or 1.0f.
-                                // (Other values are not well tested and more CPU/GPU costly).
-    glm::vec2 ItemSpacing = glm::vec2(0);      // Horizontal and vertical spacing between widgets/lines.
-    glm::vec2 ItemInnerSpacing = glm::vec2(0); // Horizontal and vertical spacing between within elements of a
-                                // composed widget (e.g. a slider and its label).
-    glm::vec2 CellPadding = glm::vec2(0); // Padding within a table cell. Cellpadding.x is locked for entire table.
-                           // CellPadding.y may be altered between different rows.
-    glm::vec2 TouchExtraPadding = glm::vec2(0); // Expand reactive bounding box for touch-based system where touch
-                                 // position is not accurate enough. Unfortunately we don't sort
-                                 // widgets so priority on overlap will always be given to the first
-                                 // widget. So don't grow this too much!
+    float FrameBorderSize; // Thickness of border around frames. Generally set to 0.0f or 1.0f.
+                           // (Other values are not well tested and more CPU/GPU costly).
+    glm::vec2 ItemSpacing = glm::vec2(0); // Horizontal and vertical spacing between widgets/lines.
+    glm::vec2 ItemInnerSpacing
+        = glm::vec2(0); // Horizontal and vertical spacing between within elements of a
+                        // composed widget (e.g. a slider and its label).
+    glm::vec2 CellPadding
+        = glm::vec2(0); // Padding within a table cell. Cellpadding.x is locked for entire table.
+                        // CellPadding.y may be altered between different rows.
+    glm::vec2 TouchExtraPadding
+        = glm::vec2(0);      // Expand reactive bounding box for touch-based system where touch
+                             // position is not accurate enough. Unfortunately we don't sort
+                             // widgets so priority on overlap will always be given to the first
+                             // widget. So don't grow this too much!
     float IndentSpacing;     // Horizontal indentation when e.g. entering a tree node. Generally ==
                              // (FontSize + FramePadding.x*2).
     float ColumnsMinSpacing; // Minimum horizontal spacing between two columns. Preferably >
@@ -4234,7 +4266,8 @@ struct ImGuiStyle
         TabBarOverlineSize; // Thickness of tab-bar overline, which highlights the selected tab-bar.
     float TableAngledHeadersAngle; // Angle of angled headers (supported values range from -50.0f
                                    // degrees to +50.0f degrees).
-    glm::vec2 TableAngledHeadersTextAlign = glm::vec2(0); // Alignment of angled headers within the cell
+    glm::vec2 TableAngledHeadersTextAlign
+        = glm::vec2(0); // Alignment of angled headers within the cell
     ImGuiTreeNodeFlags
         TreeLinesFlags;  // Default way to draw lines connecting TreeNode hierarchy.
                          // ImGuiTreeNodeFlags_DrawLinesNone or ImGuiTreeNodeFlags_DrawLinesFull or
@@ -4243,21 +4276,24 @@ struct ImGuiStyle
     float TreeLinesRounding;      // Radius of lines connecting child nodes to the vertical line.
     ImGuiDir ColorButtonPosition; // Side of the color button in the ColorEdit4 widget (left/right).
                                   // Defaults to ImGuiDir_Right.
-    glm::vec2 ButtonTextAlign = glm::vec2(0); // Alignment of button text when button is larger than text. Defaults
-                               // to (0.5f, 0.5f) (centered).
-    glm::vec2 SelectableTextAlign = glm::vec2(0); // Alignment of selectable text. Defaults to (0.0f, 0.0f)
+    glm::vec2 ButtonTextAlign = glm::vec2(0); // Alignment of button text when button is larger than
+                                              // text. Defaults to (0.5f, 0.5f) (centered).
+    glm::vec2 SelectableTextAlign
+        = glm::vec2(0);            // Alignment of selectable text. Defaults to (0.0f, 0.0f)
                                    // (top-left aligned). It's generally important to keep this
                                    // left-aligned if you want to lay multiple items on a same line.
     float SeparatorTextBorderSize; // Thickness of border in SeparatorText()
-    glm::vec2 SeparatorTextAlign = glm::vec2(0);  // Alignment of text within the separator. Defaults to (0.0f,
-                                   // 0.5f) (left aligned, center).
-    glm::vec2 SeparatorTextPadding = glm::vec2(0); // Horizontal offset of text from each edge of the separator +
-                                    // spacing on other axis. Generally small values. .y is
-                                    // recommended to be == FramePadding.y.
-    glm::vec2 DisplayWindowPadding = glm::vec2(0); // Apply to regular windows: amount which we enforce to keep
-                                    // visible when moving near edges of your screen.
-    glm::vec2
-        DisplaySafeAreaPadding = glm::vec2(0); // Apply to every windows, menus, popups, tooltips: amount where we
+    glm::vec2 SeparatorTextAlign = glm::vec2(0); // Alignment of text within the separator. Defaults
+                                                 // to (0.0f, 0.5f) (left aligned, center).
+    glm::vec2 SeparatorTextPadding
+        = glm::vec2(0); // Horizontal offset of text from each edge of the separator +
+                        // spacing on other axis. Generally small values. .y is
+                        // recommended to be == FramePadding.y.
+    glm::vec2 DisplayWindowPadding
+        = glm::vec2(0); // Apply to regular windows: amount which we enforce to keep
+                        // visible when moving near edges of your screen.
+    glm::vec2 DisplaySafeAreaPadding
+        = glm::vec2(0);         // Apply to every windows, menus, popups, tooltips: amount where we
                                 // avoid displaying contents. Adjust if you cannot see the edges of
                                 // your screen (e.g. on a TV where scaling has not been configured).
     float DockingSeparatorSize; // Thickness of resizing border between docked windows
@@ -4353,14 +4389,15 @@ struct ImGuiIO
     ImGuiBackendFlags BackendFlags; // = 0              // See ImGuiBackendFlags_ enum. Set by
                                     // backend (imgui_impl_xxx files or custom backend) to
                                     // communicate features supported by the backend.
-    glm::vec2 DisplaySize = glm::vec2(0);          // <unset>          // Main display size, in pixels (==
-                                    // GetMainViewport()->Size). May change every frame.
-    glm::vec2 DisplayFramebufferScale = glm::vec2(0); // = (1, 1)         // Main display density. For retina
-                                       // display where window coordinates are different from
-                                       // framebuffer coordinates. This will affect font density +
-                                       // will end up in ImDrawData::FramebufferScale.
-    float DeltaTime; // = 1.0f/60.0f     // Time elapsed since last frame, in seconds. May change
-                     // every frame.
+    glm::vec2 DisplaySize = glm::vec2(0); // <unset>          // Main display size, in pixels (==
+                                          // GetMainViewport()->Size). May change every frame.
+    glm::vec2 DisplayFramebufferScale
+        = glm::vec2(0); // = (1, 1)         // Main display density. For retina
+                        // display where window coordinates are different from
+                        // framebuffer coordinates. This will affect font density +
+                        // will end up in ImDrawData::FramebufferScale.
+    float DeltaTime;    // = 1.0f/60.0f     // Time elapsed since last frame, in seconds. May change
+                        // every frame.
     float IniSavingRate; // = 5.0f           // Minimum time between saving positions/sizes to .ini
                          // file, in seconds.
     const char* IniFilename; // = "imgui.ini"    // Path to .ini file (important: default
@@ -4424,9 +4461,9 @@ struct ImGuiIO
                                        // set on it.
     bool ConfigViewportsNoDecoration;  // = true           // Disable default OS window decoration
                                        // flag for secondary viewports. When a viewport doesn't want
-                                      // window decorations, ImGuiViewportFlags_NoDecoration will be
-                                      // set on it. Enabling decoration can create subsequent issues
-                                      // at OS levels (e.g. minimum window size).
+    // window decorations, ImGuiViewportFlags_NoDecoration will be
+    // set on it. Enabling decoration can create subsequent issues
+    // at OS levels (e.g. minimum window size).
     bool ConfigViewportsNoDefaultParent; // = false          // Disable default OS parenting to main
                                          // viewport for secondary viewports. By default, viewports
                                          // are marked with ParentViewportId = <main_viewport>,
@@ -4559,7 +4596,7 @@ struct ImGuiIO
     bool ConfigDebugHighlightIdConflicts; // = true           // Highlight and show an error message
                                           // popup when multiple items have conflicting identifiers.
     bool ConfigDebugHighlightIdConflictsShowItemPicker; //=true // Show "Item Picker" button in
-                                                        //aforementioned popup.
+                                                        // aforementioned popup.
 
     // Tools to test correct Begin/End and BeginChild/EndChild behaviors.
     // - Presently Begin()/End() and BeginChild()/EndChild() needs to ALWAYS be called in tandem,
@@ -4702,9 +4739,9 @@ struct ImGuiIO
                               // 3
     int MetricsRenderWindows; // Number of visible windows
     int MetricsActiveWindows; // Number of active windows
-    glm::vec2 MouseDelta = glm::vec2(0);     // Mouse delta. Note that this is zero if either current or previous
-                          // position are invalid (-FLT_MAX,-FLT_MAX), so a disappearing/reappearing
-                          // mouse won't have a huge delta.
+    glm::vec2 MouseDelta = glm::vec2(0); // Mouse delta. Note that this is zero if either current or
+                                         // previous position are invalid (-FLT_MAX,-FLT_MAX), so a
+                                         // disappearing/reappearing mouse won't have a huge delta.
 
     //------------------------------------------------------------------
     // [Internal] Dear ImGui will maintain those fields. Forward compatibility not guaranteed!
@@ -4716,7 +4753,8 @@ struct ImGuiIO
     // (this block used to be written by backend, since 1.87 it is best to NOT write to those
     // directly, call the AddXXX functions above instead) (reading from those variables is fair
     // game, as they are extremely unlikely to be moving anywhere)
-    glm::vec2 MousePos = glm::vec2(0); // Mouse position, in pixels. Set to glm::vec2(-FLT_MAX, -FLT_MAX) if mouse
+    glm::vec2 MousePos
+        = glm::vec2(0); // Mouse position, in pixels. Set to glm::vec2(-FLT_MAX, -FLT_MAX) if mouse
                         // is unavailable (on another screen, etc.)
     bool MouseDown[5];  // Mouse buttons: 0=left, 1=right, 2=middle + extras (ImGuiMouseButton_COUNT
                         // == 5). Dear ImGui mostly uses left and right buttons. Other buttons allow
@@ -4752,8 +4790,9 @@ struct ImGuiIO
     bool WantCaptureMouseUnlessPopupClose; // Alternative to WantCaptureMouse: (WantCaptureMouse ==
                                            // true && WantCaptureMouseUnlessPopupClose == false)
                                            // when a click over void is expected to close a popup.
-    glm::vec2 MousePosPrev = glm::vec2(0); // Previous mouse position (note that MouseDelta is not necessary ==
-                            // MousePos-MousePosPrev, in case either position is invalid)
+    glm::vec2 MousePosPrev
+        = glm::vec2(0); // Previous mouse position (note that MouseDelta is not necessary ==
+                        // MousePos-MousePosPrev, in case either position is invalid)
     glm::vec2 MouseClickedPos[5]; // Position at time of clicking
     double MouseClickedTime[5];   // Time of last click (used to figure out double-click)
     bool
@@ -4909,10 +4948,10 @@ struct ImGuiSizeCallbackData
 {
     void* UserData; // Read-only.   What user passed to SetNextWindowSizeConstraints(). Generally
                     // store an integer or float in here (need reinterpret_cast<>).
-    glm::vec2 Pos = glm::vec2(0);  // Read-only.   Window position, for reference.
+    glm::vec2 Pos = glm::vec2(0);         // Read-only.   Window position, for reference.
     glm::vec2 CurrentSize = glm::vec2(0); // Read-only.   Current window size.
-    glm::vec2 DesiredSize = glm::vec2(0); // Read-write.  Desired size, based on user's mouse position. Write to
-                           // this field to restrain resizing.
+    glm::vec2 DesiredSize = glm::vec2(0); // Read-write.  Desired size, based on user's mouse
+                                          // position. Write to this field to restrain resizing.
 };
 
 // [ALPHA] Rarely used / very advanced uses only. Use with SetNextWindowClass() and DockSpace()
@@ -5259,10 +5298,10 @@ struct ImGuiListClipper
     {
         IncludeItemsByIndex(item_begin, item_end);
     } // [renamed in 1.89.9]
-        // inline void ForceDisplayRangeByIndices(int item_begin, int item_end) {
-        // IncludeItemsByIndex(item_begin, item_end); } // [renamed in 1.89.6] inline
-        // ImGuiListClipper(int items_count, float items_height = -1.0f) { memset(this, 0,
-        // sizeof(*this)); ItemsCount = -1; Begin(items_count, items_height); } // [removed in 1.79]
+      // inline void ForceDisplayRangeByIndices(int item_begin, int item_end) {
+      // IncludeItemsByIndex(item_begin, item_end); } // [renamed in 1.89.6] inline
+      // ImGuiListClipper(int items_count, float items_height = -1.0f) { memset(this, 0,
+      // sizeof(*this)); ItemsCount = -1; Begin(items_count, items_height); } // [removed in 1.79]
     #endif
 };
 
@@ -6251,12 +6290,15 @@ struct ImDrawData
     int TotalVtxCount; // For convenience, sum of all ImDrawList's VtxBuffer.Size
     ImVector<ImDrawList*> CmdLists; // Array of ImDrawList* to render. The ImDrawLists are owned by
                                     // ImGuiContext and only pointed to from here.
-    glm::vec2 DisplayPos = glm::vec2(0); // Top-left position of the viewport to render (== top-left of the
-                          // orthogonal projection matrix to use) (== GetMainViewport()->Pos for the
-                          // main viewport, == (0.0) in most single-viewport applications)
-    glm::vec2 DisplaySize = glm::vec2(0); // Size of the viewport to render (== GetMainViewport()->Size for the
-                           // main viewport, == io.DisplaySize in most single-viewport applications)
-    glm::vec2 FramebufferScale = glm::vec2(0);   // Amount of pixels for each unit of DisplaySize. Copied from
+    glm::vec2 DisplayPos
+        = glm::vec2(0); // Top-left position of the viewport to render (== top-left of the
+                        // orthogonal projection matrix to use) (== GetMainViewport()->Pos for the
+                        // main viewport, == (0.0) in most single-viewport applications)
+    glm::vec2 DisplaySize
+        = glm::vec2(0); // Size of the viewport to render (== GetMainViewport()->Size for the
+                        // main viewport, == io.DisplaySize in most single-viewport applications)
+    glm::vec2 FramebufferScale
+        = glm::vec2(0);           // Amount of pixels for each unit of DisplaySize. Copied from
                                   // viewport->FramebufferScale (== io.DisplayFramebufferScale for
                                   // main viewport). Generally (1,1) on normal display, (2,2) on OSX
                                   // with Retina display.
@@ -6462,7 +6504,8 @@ struct ImFontConfig
     // glm::vec2        GlyphExtraSpacing;      // 0, 0     // (REMOVED AT IT SEEMS LARGELY
     // OBSOLETE. PLEASE REPORT IF YOU WERE USING THIS). Extra spacing (in pixels) between glyphs
     // when rendered: essentially add to glyph->AdvanceX. Only X axis is supported for now.
-    glm::vec2 GlyphOffset = glm::vec2(0);  // 0, 0     // Offset (in pixels) all glyphs from this font input.
+    glm::vec2 GlyphOffset
+        = glm::vec2(0);     // 0, 0     // Offset (in pixels) all glyphs from this font input.
                             // Absolute value for default size, other sizes will scale this value.
     float GlyphMinAdvanceX; // 0        // Minimum AdvanceX for glyphs, set Min to align font icons,
                             // set both Min/Max to enforce mono-space font. Absolute value for
@@ -6549,14 +6592,15 @@ struct ImFontGlyphRangesBuilder
         int off = (int)(n >> 5);
         ImU32 mask = 1u << (n & 31);
         UsedChars[off] |= mask;
-    }                                             // Set bit n in the array
+    } // Set bit n in the array
     inline void AddChar(ImWchar c) { SetBit(c); } // Add character
     IMGUI_API void AddText(const char* text,
                            const char* text_end
                            = NULL); // Add string (each character of the UTF-8 string are added)
-    IMGUI_API void AddRanges(const ImWchar* ranges); // Add ranges, e.g.
-                                                     // builder.AddRanges(ImFontAtlas::GetGlyphRangesDefault())
-                                                     // to force add all of ASCII/Latin+Ext
+    IMGUI_API void AddRanges(
+        const ImWchar* ranges); // Add ranges, e.g.
+                                // builder.AddRanges(ImFontAtlas::GetGlyphRangesDefault())
+                                // to force add all of ASCII/Latin+Ext
     IMGUI_API void BuildRanges(ImVector<ImWchar>* out_ranges); // Output new ranges
 };
 
@@ -6817,10 +6861,10 @@ struct ImFontAtlas
     bool TexPixelsUseColors; // Tell whether our texture data is known to use colors (rather than
                              // just alpha channel), in order to help backend select a format or
                              // conversion process.
-    glm::vec2 TexUvScale = glm::vec2(0); // = (1.0f/TexData->TexWidth, 1.0f/TexData->TexHeight). May change as new
-                          // texture gets created.
-    glm::vec2 TexUvWhitePixel = glm::vec2(0); // Texture coordinates to a white pixel. May change as new texture
-                               // gets created.
+    glm::vec2 TexUvScale = glm::vec2(0); // = (1.0f/TexData->TexWidth, 1.0f/TexData->TexHeight). May
+                                         // change as new texture gets created.
+    glm::vec2 TexUvWhitePixel = glm::vec2(0); // Texture coordinates to a white pixel. May change as
+                                              // new texture gets created.
     ImVector<ImFont*>
         Fonts; // Hold all the fonts returned by AddFont*. Fonts[0] is the default font upon calling
                // ImGui::NewFrame(), use ImGui::PushFont()/PopFont() to change the current font.
@@ -7117,19 +7161,20 @@ enum ImGuiViewportFlags_
 //   - Windows are generally trying to stay within the Work Area of their host viewport.
 struct ImGuiViewport
 {
-    ImGuiID ID;               // Unique identifier for the viewport
-    ImGuiViewportFlags Flags; // See ImGuiViewportFlags_
-    glm::vec2 Pos = glm::vec2(0); // Main Area: Position of the viewport (Dear ImGui coordinates are the same as OS
-                   // desktop/native coordinates)
+    ImGuiID ID;                   // Unique identifier for the viewport
+    ImGuiViewportFlags Flags;     // See ImGuiViewportFlags_
+    glm::vec2 Pos = glm::vec2(0); // Main Area: Position of the viewport (Dear ImGui coordinates are
+                                  // the same as OS desktop/native coordinates)
     glm::vec2 Size = glm::vec2(0); // Main Area: Size of the viewport.
-    glm::vec2
-        FramebufferScale = glm::vec2(0); // Density of the viewport for Retina display (always 1,1 on Windows, may
-                          // be 2,2 etc on macOS/iOS). This will affect font rasterizer density.
-    glm::vec2 WorkPos = glm::vec2(0);    // Work Area: Position of the viewport minus task bars, menus bars, status
-                          // bars (>= Pos)
-    glm::vec2 WorkSize = glm::vec2(0);   // Work Area: Size of the viewport minus task bars, menu bars, status bars
-                          // (<= Size)
-    float DpiScale;       // 1.0f = 96 DPI = No extra scale.
+    glm::vec2 FramebufferScale
+        = glm::vec2(0); // Density of the viewport for Retina display (always 1,1 on Windows, may
+                        // be 2,2 etc on macOS/iOS). This will affect font rasterizer density.
+    glm::vec2 WorkPos = glm::vec2(0); // Work Area: Position of the viewport minus task bars, menus
+                                      // bars, status bars (>= Pos)
+    glm::vec2 WorkSize
+        = glm::vec2(0); // Work Area: Size of the viewport minus task bars, menu bars, status bars
+                        // (<= Size)
+    float DpiScale;     // 1.0f = 96 DPI = No extra scale.
     ImGuiID ParentViewportId; // (Advanced) 0: no parent. Instruct the platform backend to setup a
                               // parent/child relationship between platform windows.
     ImDrawData* DrawData; // The ImDrawData corresponding to this viewport. Valid after Render() and
@@ -7451,12 +7496,12 @@ struct ImGuiPlatformMonitor
 // function. Handler is called during EndFrame().
 struct ImGuiPlatformImeData
 {
-    bool WantVisible;      // A widget wants the IME to be visible.
-    bool WantTextInput;    // A widget wants text input, not necessarily IME to be visible. This is
-                           // automatically set to the upcoming value of io.WantTextInput.
-    glm::vec2 InputPos = glm::vec2(0);    // Position of input cursor (for IME).
-    float InputLineHeight; // Line height (for IME).
-    ImGuiID ViewportId;    // ID of platform window/viewport.
+    bool WantVisible;   // A widget wants the IME to be visible.
+    bool WantTextInput; // A widget wants text input, not necessarily IME to be visible. This is
+                        // automatically set to the upcoming value of io.WantTextInput.
+    glm::vec2 InputPos = glm::vec2(0); // Position of input cursor (for IME).
+    float InputLineHeight;             // Line height (for IME).
+    ImGuiID ViewportId;                // ID of platform window/viewport.
 
     ImGuiPlatformImeData() { memset(this, 0, sizeof(*this)); }
 };
@@ -7597,7 +7642,7 @@ namespace ImGui
     // in BeginPopup() instead. Renamed in 1.77, renamed back in 1.79. Sorry!
     //-- OBSOLETED in 1.78 (from June 2020): Old drag/sliders functions that took a 'float power
     //> 1.0f' argument instead of ImGuiSliderFlags_Logarithmic. See
-    //github.com/ocornut/imgui/issues/3361 for details. IMGUI_API bool      DragScalar(const char*
+    // github.com/ocornut/imgui/issues/3361 for details. IMGUI_API bool      DragScalar(const char*
     // label, ImGuiDataType data_type, void* p_data, float v_speed, const void* p_min, const void*
     // p_max, const char* format, float power = 1.0f) // OBSOLETED in 1.78 (from June 2020)
     // IMGUI_API bool      DragScalarN(const char* label, ImGuiDataType data_type, void* p_data, int
@@ -7717,7 +7762,7 @@ typedef ImFontAtlasRect ImFontAtlasCustomRect;
     };*/
 
     //-- OBSOLETED in 1.82 (from Mars 2021): flags for AddRect(), AddRectFilled(),
-    //AddImageRounded(), PathRect() typedef ImDrawFlags ImDrawCornerFlags; enum ImDrawCornerFlags_
+    // AddImageRounded(), PathRect() typedef ImDrawFlags ImDrawCornerFlags; enum ImDrawCornerFlags_
     //{
     //    ImDrawCornerFlags_None      = ImDrawFlags_RoundCornersNone,         // Was == 0 prior
     //    to 1.82, this is now == ImDrawFlags_RoundCornersNone which is != 0 and not implicit
