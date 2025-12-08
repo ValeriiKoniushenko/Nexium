@@ -105,35 +105,91 @@ namespace Core
         AssetsManager& operator=(const AssetsManager&) = delete;
         AssetsManager& operator=(AssetsManager&&) = delete;
 
-        void rescanFileSystem();
-
-        [[nodiscard]] NXTexture getTexture(const StringAtom& logicPath);
-        [[nodiscard]] NXSkybox getSkybox(const StringAtom& logicPath);
-
-        [[nodiscard]] spdlog::logger* getLogger() const override;
-
-        void unloadAllResources();
-        void registerNewAssetPath(std::filesystem::path path);
-        [[nodiscard]] NXAsset getAsset(const StringAtom& logicPath);
-        [[nodiscard]] NXAsset getAssetAt(std::size_t index, AssetAction filter = AA_None);
-        [[nodiscard]] NXAsset getAssetByPath(const std::filesystem::path& path);
-        [[nodiscard]] WeakNXAsset getWeakAssetByPath(const std::filesystem::path& path);
-
-        [[nodiscard]] std::size_t getAssetCount(AssetAction filter = AA_None) const;
-
-        void spawnMesh3DOnScene(const StringAtom& logicPath);
-
-        [[nodiscard]] const std::set<std::filesystem::path>& getRegisteredPaths() const noexcept;
-
+        // ================= STATIC ======================
         [[nodiscard]] static StringAtom OpenFileSelectionDialog(
             const std::vector<std::string>& filter);
 
+        [[nodiscard]] static NodeType GetNodeType(const std::filesystem::directory_entry& entry);
+        static void TryToOpenFile(const std::filesystem::directory_entry& path);
+        static void TryToOpenNxFile(const std::filesystem::directory_entry& path);
+        static void OpenPathFromOSExplorer(const std::filesystem::path& path);
+
+        // ================= MAIN ======================
+        void rescanFileSystem();
+        void unloadAllResources();
+
+        [[nodiscard]] const std::set<std::filesystem::path>& getRegisteredPaths() const noexcept;
+        void registerNewAssetPath(std::filesystem::path path);
+
         [[nodiscard]] bool validatePath(const StringAtom& logicPath, const char* requiredExt);
 
-        static void tryToOpenFile(const std::filesystem::directory_entry& path);
-        static void tryToOpenNxFile(const std::filesystem::directory_entry& path);
-        [[nodiscard]] static NodeType getNodeType(const std::filesystem::directory_entry& entry);
-        static void openPathFromOSExplorer(const std::filesystem::path& path);
+        // TODO: remove it, merge to main NXAsset
+        [[nodiscard]] NXTexture getTexture(const StringAtom& logicPath);
+
+        // TODO: remove it, merge to main NXAsset
+        [[nodiscard]] NXSkybox getSkybox(const StringAtom& logicPath);
+
+        // ============== WORKING WITH ASSETS ==========
+
+        /**
+         * @brief Get asset by its logical path. Will load the asset if it wasn't loaded previously.
+         * @param logicPath Logical path to the asset
+         * @return Strong reference to the asset
+         */
+        [[nodiscard]] NXAsset getAsset(const StringAtom& logicPath);
+
+        /**
+         * @brief Get asset by its logical path without loading it. Returns nullptr if asset wasn't
+         * loaded previously.
+         * @param logicPath Logical path to the asset
+         * @return Weak reference to the asset if it's loaded, nullptr otherwise
+         */
+        [[nodiscard]] WeakNXAsset getWeakAsset(const StringAtom& logicPath);
+
+        /**
+         * @brief Get asset by its index in assets collection. Will load the asset if it wasn't
+         * loaded previously.
+         * @param index Index of the asset in collection
+         * @param filter Filter to apply when searching assets
+         * @return Strong reference to the asset
+         */
+        [[nodiscard]] NXAsset getAssetAt(std::size_t index, AssetAction filter = AA_None);
+
+        /**
+         * @brief Get asset by its index without loading it. Returns nullptr if asset wasn't loaded
+         * previously.
+         * @param index Index of the asset in collection
+         * @param filter Filter to apply when searching assets
+         * @return Weak reference to the asset if it's loaded, nullptr otherwise
+         */
+        [[nodiscard]] WeakNXAsset getWeakAssetAt(std::size_t index, AssetAction filter = AA_None);
+
+        /**
+         * @brief Get asset by filesystem path. Will load the asset if it wasn't loaded previously.
+         * @param path Filesystem path to the asset
+         * @return Strong reference to the asset
+         */
+        [[nodiscard]] NXAsset getAssetByPath(const std::filesystem::path& path);
+
+        /**
+         * @brief Get asset by filesystem path without loading it. Returns nullptr if asset wasn't
+         * loaded previously.
+         * @param path Filesystem path to the asset
+         * @return Weak reference to the asset if it's loaded, nullptr otherwise
+         */
+        [[nodiscard]] WeakNXAsset getWeakAssetByPath(const std::filesystem::path& path);
+
+        /**
+         * @brief Get total count of assets matching the filter
+         * @param filter Filter to apply when counting assets
+         * @return Number of assets matching the filter
+         */
+        [[nodiscard]] std::size_t getAssetCount(AssetAction filter = AA_None) const;
+
+        // ================ OVERRIDEs ==================
+
+        // override BaseLog
+        [[nodiscard]] spdlog::logger* getLogger() const override;
 
     protected:
         [[nodiscard]] std::unordered_map<StringAtom, NXAsset>::iterator findAssetByPath(

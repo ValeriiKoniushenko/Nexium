@@ -86,7 +86,7 @@ namespace Core
             _list->setDataProvider(
                 [](std::size_t index, StringAtom& out) -> void*
                 {
-                    if (auto asset = GetAssetsManager().getAssetAt(index, AA_Spawn))
+                    if (auto asset = GetAssetsManager().getWeakAssetAt(index, AA_Spawn).tryLoad())
                     {
                         out = asset->getName();
                         return asset.get();

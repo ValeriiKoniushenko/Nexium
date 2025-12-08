@@ -45,18 +45,18 @@ namespace Core
 
     void ECSAsset::connectSourceFile(const std::filesystem::path& src)
     {
-        _pathToSource = src;
+        _meta.pathToSource = src;
 
-        if (_pathToSource.empty())
+        if (_meta.pathToSource.empty())
         {
             criticalLog("Empty path was passed to asset's sources");
             return;
         }
 
-        if (!std::filesystem::exists(_pathToSource))
+        if (!std::filesystem::exists(_meta.pathToSource))
         {
-            criticalLog("Asset's source file doesn't exist: {}"_f << _pathToSource);
-            _pathToSource.clear();
+            criticalLog("Asset's source file doesn't exist: {}"_f << _meta.pathToSource);
+            _meta.pathToSource.clear();
             return;
         }
 
@@ -64,14 +64,14 @@ namespace Core
     }
     const std::filesystem::path& ECSAsset::getSourceFile() const noexcept
     {
-        return _pathToSource;
+        return _meta.pathToSource;
     }
 
     nlohmann::json ECSAsset::getAssetData() const
     {
         try
         {
-            const auto json = nlohmann::json::parse(Utils::GetFileContent(_pathToSource));
+            const auto json = nlohmann::json::parse(Utils::GetFileContent(_meta.pathToSource));
 
             if (!json.contains(StreamData::assetData))
             {
@@ -82,13 +82,13 @@ namespace Core
         }
         catch (const std::exception& e)
         {
-            criticalLog("Can't provide asset's data: {}. Reason: {}"_f << _pathToSource
+            criticalLog("Can't provide asset's data: {}. Reason: {}"_f << _meta.pathToSource
                                                                        << e.what());
         }
         catch (...)
         {
             criticalLog("Can't provide asset's data: {}. Due to internal error."_f
-                        << _pathToSource);
+                        << _meta.pathToSource);
         }
 
         return {};
@@ -109,8 +109,8 @@ namespace Core
         }
 
         nlohmann::json json;
-        json[StreamData::type] = _type;
-        json[StreamData::name] = _name;
+        json[StreamData::type] = _meta.type;
+        json[StreamData::name] = _meta.name;
         json[StreamData::data] = nlohmann::json::object();
 
         json[StreamData::assetData] = assetData;
@@ -125,16 +125,16 @@ namespace Core
             json[StreamData::data] = std::move(stream.getRaw());
         }
 
-        std::fstream out(_pathToSource, std::ios::out);
+        std::fstream out(_meta.pathToSource, std::ios::out);
         if (out.is_open())
         {
             out << json.dump(4);
-            traceLog("Asset: {} was updated successfully"_f << _logicPath);
+            traceLog("Asset: {} was updated successfully"_f << _meta.logicPath);
         }
         else
         {
-            criticalLog("Can't open file for write: {} - to update Asset:: {}"_f << _pathToSource
-                                                                                 << _logicPath);
+            criticalLog("Can't open file for write: {} - to update Asset:: {}"_f
+                        << _meta.pathToSource << _meta.logicPath);
         }
     }
 
@@ -158,20 +158,34 @@ namespace Core
         _impl->processAction(action, *this);
     }
 
+    bool ECSAsset::operator==(const ECSAsset& other) const
+    {
+        return other._meta.logicPath == _meta.logicPath;
+    }
+
+    bool ECSAsset::operator==(const IntrusivePtr<ECSAsset>& other) const
+    {
+        if (Verify(other)) [[likely]]
+        {
+            return operator==(*other);
+        }
+        return false;
+    }
+
     void ECSAsset::load()
     {
         if (_status.cast() != Status::PreLoaded)
         {
-            warnLog("Can't load asset: '{}'. Status is not 'PreLoaded'."_f << _logicPath);
+            warnLog("Can't load asset: '{}'. Status is not 'PreLoaded'."_f << _meta.logicPath);
             return;
         }
 
         try
         {
-            traceLog("Loading of asset: {}"_f << _logicPath);
+            traceLog("Loading of asset: {}"_f << _meta.logicPath);
 
             _data.reset();
-            _data = GetGlobalComponentFactory().create(_type);
+            _data = GetGlobalComponentFactory().create(_meta.type);
             if (!_data)
             {
                 throw std::runtime_error(
@@ -180,8 +194,8 @@ namespace Core
             }
 
             // Fetching main asset's data
-            const auto json
-                = nlohmann::json::parse(Utils::GetTextFileContentAs<std::string>(_pathToSource));
+            const auto json = nlohmann::json::parse(
+                Utils::GetTextFileContentAs<std::string>(_meta.pathToSource));
 
             // updating object's fields
             DataStream stream;
@@ -197,19 +211,19 @@ namespace Core
             _data->ioFieldsUpdate(stream);
 
             _status = Status::Loaded;
-            traceLog("Asset:: '{}' is: loaded! New status is: 'Loaded'"_f << _logicPath);
+            traceLog("Asset:: '{}' is: loaded! New status is: 'Loaded'"_f << _meta.logicPath);
         }
         catch (const std::exception& e)
         {
             criticalLog("Can't load Asset:: '{}'. The reason: {}. New status is: 'LoadingError'"_f
-                        << _logicPath << e.what());
+                        << _meta.logicPath << e.what());
             _status = Status::LoadingError;
         }
         catch (...)
         {
             criticalLog(
                 "Can't load Asset:: '{}'. The reason is undefined. New status is: 'LoadingError'"_f
-                << _logicPath);
+                << _meta.logicPath);
             _status = Status::LoadingError;
         }
     }
@@ -225,7 +239,7 @@ namespace Core
         _data.reset();
 
         traceLog("Asset: '{}' is unloaded its main data. New status is: 'PreLoaded'"_f
-                 << _logicPath);
+                 << _meta.logicPath);
     }
 
     void ECSAsset::onIncrementRef(uint32_t count)
@@ -256,7 +270,7 @@ namespace Core
     {
         try
         {
-            const auto json = nlohmann::json::parse(Utils::GetFileContent(_pathToSource));
+            const auto json = nlohmann::json::parse(Utils::GetFileContent(_meta.pathToSource));
 
             if (!json.contains(StreamData::type))
             {
@@ -267,51 +281,51 @@ namespace Core
                 throw std::runtime_error("Asset's source file doesn't contain a field: 'data'.");
             }
 
-            _type = StringAtom::Intern(json[StreamData::type].get<StringAtom>());
-            Assert(_type.isStatic());
-            if (_type.isEmpty())
+            _meta.type = StringAtom::Intern(json[StreamData::type].get<StringAtom>());
+            Assert(_meta.type.isStatic());
+            if (_meta.type.isEmpty())
             {
                 throw std::runtime_error("Asset's source file contains empty 'type' field.");
             }
 
             if (json.contains(StreamData::name))
             {
-                _name = json[StreamData::name].get<StringAtom>();
+                _meta.name = json[StreamData::name].get<StringAtom>();
             }
 
-            if (_name.isEmpty())
+            if (_meta.name.isEmpty())
             {
-                _name = "Asset_" + _type;
+                _meta.name = "Asset_" + _meta.type;
             }
-            _name.shrinkToFit();
+            _meta.name.shrinkToFit();
 
             auto& gcf = GetGlobalComponentFactory();
             auto& aif = AssetImpl::GetFactory();
 
-            if (const auto id = gcf.getTypeIdByTypeName(_type))
+            if (const auto id = gcf.getTypeIdByTypeName(_meta.type))
             {
                 _impl = aif.trySpawnImpl(id.value());
             }
 
             _status = Status::PreLoaded;
             traceLog("Successfully preloaded. New status is: 'PreLoaded'. Asset: {}"_f
-                     << _logicPath);
+                     << _meta.logicPath);
         }
         catch (const std::exception& e)
         {
             criticalLog(
                 "Can't parse asset's file: {}. Reason: {}. New status is: 'PreLoadingError'"_f
-                << _pathToSource << e.what());
+                << _meta.pathToSource << e.what());
             _status = Status::PreLoadingError;
-            _pathToSource.clear();
+            _meta.pathToSource.clear();
         }
         catch (...)
         {
             criticalLog(
                 "Can't parse asset's file: {}. Due to internal error. New status is: 'PreLoadingError'"_f
-                << _pathToSource);
+                << _meta.pathToSource);
             _status = Status::PreLoadingError;
-            _pathToSource.clear();
+            _meta.pathToSource.clear();
         }
     }
 

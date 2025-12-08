@@ -194,7 +194,36 @@ namespace Core
         return _assets.at(logicPath);
     }
 
+    WeakNXAsset AssetsManager::getWeakAsset(const StringAtom& logicPath)
+    {
+        return _assets.at(logicPath);
+    }
+
     NXAsset AssetsManager::getAssetAt(std::size_t index, AssetAction filter)
+    {
+        if (index >= _assets.size()) [[unlikely]]
+        {
+            errorLog("Can't get asset at index {} because it is out of range"_f << index);
+            return {};
+        }
+
+        std::size_t i = 0;
+        for (auto&& [key, asset] : _assets)
+        {
+            if (filter == AA_None || asset->canProcessAction(filter))
+            {
+                if (i == index)
+                {
+                    return asset;
+                }
+                ++i;
+            }
+        }
+
+        return {};
+    }
+
+    WeakNXAsset AssetsManager::getWeakAssetAt(std::size_t index, AssetAction filter)
     {
         if (index >= _assets.size()) [[unlikely]]
         {
@@ -240,24 +269,20 @@ namespace Core
 
     std::size_t AssetsManager::getAssetCount(AssetAction filter) const
     {
+        if (filter == AA_None)
+        {
+            return _assets.size();
+        }
+
         std::size_t count = 0;
         for (auto&& [key, asset] : _assets)
         {
-            if (filter == AA_None || asset->canProcessAction(filter))
+            if (asset->canProcessAction(filter))
             {
                 ++count;
             }
         }
         return count;
-    }
-
-    void AssetsManager::spawnMesh3DOnScene(const StringAtom& logicPath)
-    {
-        Assert(false, "Not implemented");
-        // if (auto&& mesh = getMesh3D(logicPath))
-        //{
-        //     gGameInstance->gameScene.addActor(mesh);
-        // }
     }
 
     const std::set<std::filesystem::path>& AssetsManager::getRegisteredPaths() const noexcept
@@ -377,14 +402,14 @@ namespace Core
         return true;
     }
 
-    void AssetsManager::tryToOpenFile(const std::filesystem::directory_entry& entry)
+    void AssetsManager::TryToOpenFile(const std::filesystem::directory_entry& entry)
     {
         if (!entry.is_regular_file())
         {
             return;
         }
 
-        auto type = getNodeType(entry);
+        auto type = GetNodeType(entry);
 
         if (type == NodeType::Code)
         {
@@ -398,13 +423,13 @@ namespace Core
         }
         else if (type == NodeType::NxFile)
         {
-            tryToOpenNxFile(entry);
+            TryToOpenNxFile(entry);
         }
     }
 
-    void AssetsManager::tryToOpenNxFile(const std::filesystem::directory_entry& entry)
+    void AssetsManager::TryToOpenNxFile(const std::filesystem::directory_entry& entry)
     {
-        if (getNodeType(entry) != NodeType::NxFile)
+        if (GetNodeType(entry) != NodeType::NxFile)
         {
             return;
         }
@@ -423,7 +448,7 @@ namespace Core
         }
     }
 
-    AssetsManager::NodeType AssetsManager::getNodeType(
+    AssetsManager::NodeType AssetsManager::GetNodeType(
         const std::filesystem::directory_entry& entry)
     {
         if (entry.is_directory())
@@ -504,7 +529,7 @@ namespace Core
         return NodeType::Default;
     }
 
-    void AssetsManager::openPathFromOSExplorer(const std::filesystem::path& path)
+    void AssetsManager::OpenPathFromOSExplorer(const std::filesystem::path& path)
     {
 #ifdef _WIN32
         const std::string command = "explorer \"" + path.generic_string() + "\"";

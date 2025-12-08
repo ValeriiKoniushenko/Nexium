@@ -420,7 +420,7 @@ namespace Core
 
                 if (ImGui::MenuItem("Open in explorer"))
                 {
-                    AssetsManager::openPathFromOSExplorer(_openedPath);
+                    AssetsManager::OpenPathFromOSExplorer(_openedPath);
                 }
 
                 ImGui::EndPopup();
@@ -435,7 +435,7 @@ namespace Core
                 for (auto&& entry : std::filesystem::directory_iterator(_openedPath))
                 {
                     const auto& path = entry.path();
-                    const auto fileFormat = AssetsManager::getNodeType(entry);
+                    const auto fileFormat = AssetsManager::GetNodeType(entry);
 
                     if (isFiltered(path))
                     {
@@ -600,7 +600,7 @@ namespace Core
 
             if (ImGui::MenuItem("Open in explorer"))
             {
-                AssetsManager::openPathFromOSExplorer(entry.is_directory() ? path : _openedPath);
+                AssetsManager::OpenPathFromOSExplorer(entry.is_directory() ? path : _openedPath);
             }
 
             const auto weakAsset = GetAssetsManager().getWeakAssetByPath(path.generic_string());
@@ -674,7 +674,7 @@ namespace Core
             }
             else if (entry.is_regular_file())
             {
-                AssetsManager::tryToOpenFile(entry);
+                AssetsManager::TryToOpenFile(entry);
             }
         }
 
@@ -697,7 +697,7 @@ namespace Core
                     continue;
                 }
 
-                const auto nodeType = AssetsManager::getNodeType(entry);
+                const auto nodeType = AssetsManager::GetNodeType(entry);
 
                 CacheNode tmp;
                 tmp.path = entry.path();

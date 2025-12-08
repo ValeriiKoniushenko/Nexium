@@ -64,6 +64,23 @@ namespace Core
     public:
         inline static const char* fileExtension = ".nx";
 
+        struct Hash
+        {
+            size_t operator()(const ECSAsset& a) const noexcept
+            {
+                return a._meta.logicPath.makeHash();
+            }
+
+            size_t operator()(const IntrusivePtr<ECSAsset>& a) const noexcept
+            {
+                if (Verify(a)) [[likely]]
+                {
+                    return a->_meta.logicPath.makeHash();
+                }
+                return 0;
+            }
+        };
+
         // clang-format off
         CreateEnum(Status, int,
             NotLoaded,      // Absolutely not loaded. Asset's type is undefined
@@ -84,11 +101,20 @@ namespace Core
             static constexpr const char* assetData = "assetData";
         };
 
+        struct Meta
+        {
+            std::filesystem::path pathToSource;
+            StringAtom logicPath;
+
+            StringAtom name;
+            StringAtom type;
+        };
+
     public:
         explicit ECSAsset(const StringAtom& logicPath)
-            : _logicPath(logicPath)
         {
-            Assert(_logicPath.isStatic());
+            _meta.logicPath = logicPath;
+            Assert(_meta.logicPath.isStatic());
         }
         ~ECSAsset() override;
 
@@ -105,9 +131,9 @@ namespace Core
 
         [[nodiscard]] const std::filesystem::path& getSourceFile() const noexcept;
 
-        [[nodiscard]] const StringAtom& getName() const noexcept { return _name; }
-        [[nodiscard]] const StringAtom& getType() const noexcept { return _type; }
-        [[nodiscard]] const StringAtom& getLogicPath() const noexcept { return _logicPath; }
+        [[nodiscard]] const StringAtom& getName() const noexcept { return _meta.name; }
+        [[nodiscard]] const StringAtom& getType() const noexcept { return _meta.type; }
+        [[nodiscard]] const StringAtom& getLogicPath() const noexcept { return _meta.logicPath; }
 
         [[nodiscard]] BaseComponent::Ptr getData() const noexcept { return _data; }
 
@@ -119,6 +145,9 @@ namespace Core
 
         [[nodiscard]] bool canProcessAction(AssetAction action) const;
         void processAction(AssetAction action);
+
+        [[nodiscard]] bool operator==(const ECSAsset& other) const;
+        [[nodiscard]] bool operator==(const IntrusivePtr<ECSAsset>& other) const;
 
     protected:
         void load();
@@ -132,11 +161,7 @@ namespace Core
         void localClear();
 
     protected:
-        std::filesystem::path _pathToSource;
-        StringAtom _logicPath;
-
-        StringAtom _name;
-        StringAtom _type;
+        Meta _meta;
 
         BaseComponent::Ptr _data;
         std::unique_ptr<ECSAssetImpl> _impl;
