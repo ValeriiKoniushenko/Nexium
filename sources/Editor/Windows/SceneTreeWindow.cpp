@@ -206,6 +206,7 @@ namespace Core
         {
             if (ImGui::MenuItem(ICON_FA_TRASH " Delete"))
             {
+                _scene->removeFromScene(n);
                 invalidate = true;
             }
 

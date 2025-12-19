@@ -63,6 +63,8 @@ namespace Core
         void addToScene(const BaseComponent* object, bool readFromCache = false);
         void addToScene(ECSAsset& asset, bool readFromCache = false);
 
+        void removeFromScene(const BaseComponent* object);
+
         template<IsComponent T, class... Args>
         [[nodiscard]] typename T::Ptr createAndGet(Args... args);
 

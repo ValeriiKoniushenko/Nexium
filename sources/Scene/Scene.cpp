@@ -135,6 +135,21 @@ namespace Core
         }
     }
 
+    void Scene::removeFromScene(const BaseComponent* object)
+    {
+        if (!Verify(object)) [[unlikely]]
+        {
+            return;
+        }
+
+        const auto it = std::ranges::find_if(_objects, [&object](const auto& obj)
+                                             { return obj->getData() == object; });
+        if (it != _objects.end())
+        {
+            _objects.erase(it);
+        }
+    }
+
     void Scene::writeToCacheSeparateData()
     {
         for (auto&& asset : _objects)
