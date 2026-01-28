@@ -239,7 +239,7 @@ namespace Core
     {
         if (ImGui::Button(ICON_FA_PLUS, { ImGui::GetFrameHeight(), ImGui::GetFrameHeight() }))
         {
-            ModalAssetsSearchPopUpEWC::Open("sss",[](auto)
+            ModalAssetsSearchPopUpEWC::Open("Choose a scene asset",[](auto)
             {
 
             });

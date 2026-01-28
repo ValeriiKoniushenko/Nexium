@@ -1,0 +1,13 @@
+excludedPaths:
+  - build
+  - .vscode
+  - .cache
+  - .git
+  - .idea
+  - .jrm
+parsableFileExtensions:
+  - .h
+  - .hpp
+  - .hxx
+  - .hh
+  - .h++

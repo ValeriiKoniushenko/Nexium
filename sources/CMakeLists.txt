@@ -15,8 +15,14 @@ target_link_libraries(Nexium_Core PUBLIC
     spdlog::spdlog
     assimp::assimp
     nlohmann_json
+    JustReflectMe::Adapter
 )
 
 target_include_directories(Nexium_Core PUBLIC .)
+add_custom_command(
+    TARGET Nexium_Core
+    PRE_BUILD
+    COMMAND jrm ${CMAKE_SOURCE_DIR}
+)
 
 CoreAddCompileOptionsTo(Nexium_Core)
