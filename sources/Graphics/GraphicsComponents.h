@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018-2025 Valerii Koniushenko
+ * Copyright (c) 2018-2026 Valerii Koniushenko
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,6 @@
 
 #pragma once
 
-#include "Core/Enum.h"
 #include "Misc/DataStream.h"
 #include "ShaderProgram.h"
 #include "assimp/mesh.h"
@@ -34,13 +33,13 @@ namespace Core
     class GraphicsComponentData : public IDataUpdateBridge
     {
     public:
-        // clang-format off
-        CreateEnum(Modifier, int,
+        ENUM_CLASS;
+        enum class Modifier
+        {
             None,
             Enable,
             Disable,
-        );
-        // clang-format on
+        };
 
         enum ModifiedValue : GLenum
         {
@@ -232,3 +231,4 @@ namespace Core
         void privateClear();
     };
 } // namespace Core
+#include "GraphicsComponents.generated.h" // added by the code generator. Better don't move it.

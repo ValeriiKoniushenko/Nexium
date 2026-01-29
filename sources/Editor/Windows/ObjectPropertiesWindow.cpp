@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018-2025 Valerii Koniushenko
+ * Copyright (c) 2018-2026 Valerii Koniushenko
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -141,7 +141,7 @@ namespace Core
         comboModifier->setSizeProvider(
             [] { return GraphicsComponentData::ModifierAsStringVector().size(); });
         comboModifier->setFlex(Gui::Flex::FlexWidth);
-        comboModifier->setCurrentIndex(data.modifier.cast() - 1);
+        comboModifier->setCurrentIndex(static_cast<int>(data.modifier) - 1);
 
         const auto comboValues = l->addChildComponent<Gui::ComboModelBased>();
         comboValues->setDataProvider(
@@ -172,7 +172,8 @@ namespace Core
         if (auto modifier = layout->getFirstChildAs<Gui::ComboModelBased>(); modifier)
         {
             auto str = GraphicsComponentData::ModifierAsStringVector()[modifier->getCurrentIndex()];
-            out.modifier = GraphicsComponentData::Modifier::fromStr(str.c_str()).value();
+            out.modifier
+                = Reflect::Core::GraphicsComponentData::Modifier::FromString(str.c_str()).value();
         }
         else
         {

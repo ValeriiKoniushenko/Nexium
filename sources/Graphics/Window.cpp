@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018-2025 Valerii Koniushenko
+ * Copyright (c) 2018-2026 Valerii Koniushenko
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,6 +31,11 @@ using namespace Core;
 
 namespace
 {
+    void glfwErrorCallback(int error, const char* description)
+    {
+        globalLog.errorLog("GLFW Error [{}]: {}"_f << error << description);
+    }
+
     void MouseMoveHandler(GLFWwindow*, double x, double y)
     {
         GetWindow().onMouseMove->trigger(glm::vec2(static_cast<float>(x), static_cast<float>(y)));
@@ -84,7 +89,11 @@ namespace Core
     {
         tryReadFromCache();
 
-        glfwInit();
+        glfwSetErrorCallback(glfwErrorCallback);
+        if (!glfwInit())
+        {
+            criticalThrowingLog("Failed to initialize GLFW!");
+        }
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);

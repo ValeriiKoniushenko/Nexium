@@ -5,6 +5,7 @@ excludedPaths:
   - .git
   - .idea
   - .jrm
+  - dependencies
 parsableFileExtensions:
   - .h
   - .hpp

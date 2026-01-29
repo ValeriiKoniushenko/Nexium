@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018-2025 Valerii Koniushenko
+ * Copyright (c) 2018-2026 Valerii Koniushenko
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,6 +24,7 @@
 
 #include "GraphicsComponents.h"
 
+#include "GraphicsComponents.generated.cpp.inl" // this line added by the code generator.
 #include "assimp/scene.h"
 
 namespace Core
@@ -232,11 +233,11 @@ namespace Core
 
         for (auto [val, mod] : _drawModifiers)
         {
-            if (mod.cast() == Modifier::Enable)
+            if (mod == Modifier::Enable)
             {
                 glEnable(static_cast<GLenum>(val));
             }
-            else if (mod.cast() == Modifier::Disable)
+            else if (mod == Modifier::Disable)
             {
                 glDisable(static_cast<GLenum>(val));
             }
@@ -255,11 +256,11 @@ namespace Core
 
         for (auto [val, mod] : _drawModifiers)
         {
-            if (mod.cast() == Modifier::Disable)
+            if (mod == Modifier::Disable)
             {
                 glEnable(static_cast<GLenum>(val));
             }
-            else if (mod.cast() == Modifier::Enable)
+            else if (mod == Modifier::Enable)
             {
                 glDisable(static_cast<GLenum>(val));
             }
@@ -298,7 +299,7 @@ namespace Core
 
     void GraphicsComponentData::addDrawModifiers(ModifiedValue value, Modifier mod)
     {
-        if (getDrawModifier(value).cast() != Modifier::None)
+        if (getDrawModifier(value) != Modifier::None)
         {
             return;
         }
@@ -332,7 +333,9 @@ namespace Core
                              {
                                  nlohmann::json modifier;
                                  modifier["value"] = ToString(val);
-                                 modifier["modifier"] = mod.toStr();
+                                 modifier["modifier"]
+                                     = Reflect::Core::GraphicsComponentData::Modifier::ToString(
+                                         mod);
                                  out.getRaw().push_back(std::move(modifier));
                              }
                          }
@@ -347,7 +350,9 @@ namespace Core
 
                                  _drawModifiers.emplace_back(
                                      FromString(modifier["value"]),
-                                     Modifier::fromStr(modifier["modifier"]).value_or(0));
+                                     Reflect::Core::GraphicsComponentData::Modifier::FromString(
+                                         modifier["modifier"])
+                                         .value_or(GraphicsComponentData::Modifier::None));
                              }
                          }
                      });

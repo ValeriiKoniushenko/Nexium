@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018-2025 Valerii Koniushenko
+ * Copyright (c) 2018-2026 Valerii Koniushenko
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -134,7 +134,7 @@ namespace Core
 
         for (auto [val, mod] : _drawModifiers)
         {
-            if (mod.cast() == Modifier::Enable)
+            if (mod == Modifier::Enable)
             {
                 glEnable(val);
             }
@@ -184,7 +184,7 @@ namespace Core
 
         for (auto [val, mod] : _drawModifiers)
         {
-            if (mod.cast() == Modifier::Disable)
+            if (mod == Modifier::Disable)
             {
                 glEnable(val);
             }
@@ -324,7 +324,7 @@ namespace Core
     {
         for (auto [val, mod] : _drawModifiers)
         {
-            if (mod.cast() == Modifier::Enable)
+            if (mod == Modifier::Enable)
             {
                 glEnable(val);
             }
@@ -347,7 +347,7 @@ namespace Core
 
         for (auto [val, mod] : _drawModifiers)
         {
-            if (mod.cast() == Modifier::Disable)
+            if (mod == Modifier::Disable)
             {
                 glEnable(val);
             }

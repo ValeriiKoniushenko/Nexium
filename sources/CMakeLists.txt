@@ -19,10 +19,10 @@ target_link_libraries(Nexium_Core PUBLIC
 )
 
 target_include_directories(Nexium_Core PUBLIC .)
-add_custom_command(
-    TARGET Nexium_Core
-    PRE_BUILD
+
+add_custom_target(CodeGenerator ALL
     COMMAND jrm ${CMAKE_SOURCE_DIR}
 )
+add_dependencies(Nexium_Core CodeGenerator)
 
 CoreAddCompileOptionsTo(Nexium_Core)
