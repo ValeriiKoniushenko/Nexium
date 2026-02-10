@@ -99,13 +99,13 @@ namespace Core
     class Window : public BaseLog, public IDataStreamBridge, public Singleton<Window>
     {
     public:
-        // clang-format off
-        CreateEnum(CursorMode, int,
+        ENUM_CLASS;
+        enum class CursorMode
+        {
             Normal = GLFW_CURSOR_NORMAL,
             Disabled = GLFW_CURSOR_DISABLED,
             Hidden = GLFW_CURSOR_HIDDEN
-        );
-        // clang-format on
+        };
 
     public:
         Window() = default;
@@ -206,3 +206,4 @@ namespace Core
 
     Window& GetWindow();
 } // namespace Core
+#include "Window.generated.h" // added by the code generator. Better don't move it.

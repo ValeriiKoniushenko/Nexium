@@ -27,6 +27,9 @@
 #include "ImGui/imgui.h"
 #include "ModuleInfo.h"
 
+
+#include "Window.generated.cpp.inl" // this line added by the code generator.
+
 using namespace Core;
 
 namespace
@@ -206,17 +209,17 @@ namespace Core
 
     void Window::setCursorMode(CursorMode mode)
     {
-        glfwSetInputMode(GetWindow().getRawWindow(), GLFW_CURSOR, mode.cast());
+        glfwSetInputMode(GetWindow().getRawWindow(), GLFW_CURSOR, static_cast<int>(mode));
     }
 
     Window::CursorMode Window::getCursorMode()
     {
-        return glfwGetInputMode(GetWindow().getRawWindow(), GLFW_CURSOR);
+        return static_cast<Window::CursorMode>(glfwGetInputMode(GetWindow().getRawWindow(), GLFW_CURSOR));
     }
 
     void Window::toggleCursorMode()
     {
-        setCursorMode(getCursorMode().cast() == CursorMode::Normal ? CursorMode::Disabled
+        setCursorMode(getCursorMode() == CursorMode::Normal ? CursorMode::Disabled
                                                                    : CursorMode::Normal);
     }
 
