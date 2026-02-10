@@ -6,9 +6,11 @@ excludedPaths:
   - .idea
   - .jrm
   - dependencies
+  - docs
 parsableFileExtensions:
   - .h
   - .hpp
   - .hxx
   - .hh
   - .h++
+namespace: R

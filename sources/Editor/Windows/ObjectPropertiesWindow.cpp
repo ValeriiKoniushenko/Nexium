@@ -173,7 +173,7 @@ namespace Core
         {
             auto str = GraphicsComponentData::ModifierAsStringVector()[modifier->getCurrentIndex()];
             out.modifier
-                = Reflect::Core::GraphicsComponentData::Modifier::FromString(str.c_str()).value();
+                = R::Core::GraphicsComponentData::Modifier::FromString(str.c_str()).value();
         }
         else
         {

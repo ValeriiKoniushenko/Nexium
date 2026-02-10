@@ -334,7 +334,7 @@ namespace Core
                                  nlohmann::json modifier;
                                  modifier["value"] = ToString(val);
                                  modifier["modifier"]
-                                     = Reflect::Core::GraphicsComponentData::Modifier::ToString(
+                                     = R::Core::GraphicsComponentData::Modifier::ToString(
                                          mod);
                                  out.getRaw().push_back(std::move(modifier));
                              }
@@ -350,7 +350,7 @@ namespace Core
 
                                  _drawModifiers.emplace_back(
                                      FromString(modifier["value"]),
-                                     Reflect::Core::GraphicsComponentData::Modifier::FromString(
+                                     R::Core::GraphicsComponentData::Modifier::FromString(
                                          modifier["modifier"])
                                          .value_or(GraphicsComponentData::Modifier::None));
                              }

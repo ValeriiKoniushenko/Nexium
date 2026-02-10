@@ -62,6 +62,11 @@ namespace
             version.subStr(0, i);
             version.replaceAll(".", "");
             version.trim(' ');
+            if (version.size() < 3)
+            {
+                version.pushBack('0');
+            }
+
             version.pushFront("#version ");
             return version;
         }
