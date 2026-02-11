@@ -40,6 +40,9 @@
 // clang-format off
     #include <Windows.h>
     #include <Commdlg.h>
+
+
+#include "AssetsManager.generated.cpp.inl" // this line added by the code generator.
 // clang-format on
 #endif
 

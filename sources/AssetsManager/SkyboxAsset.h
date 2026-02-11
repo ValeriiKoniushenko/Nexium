@@ -35,6 +35,7 @@ namespace Core
     public:
         inline static const char* fileExtension = ".nxsky";
 
+        ENUM_CLASS;
         enum class Direction
         {
             Right,
@@ -71,3 +72,4 @@ namespace Core
 
     using NXSkybox = AssetRef<SkyboxAsset>;
 } // namespace Core
+#include "SkyboxAsset.generated.h" // added by the code generator. Better don't move it.

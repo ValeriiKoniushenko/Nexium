@@ -81,6 +81,7 @@ namespace Core
             }
         };
 
+        ENUM_CLASS;
         enum class Status
         {
             NotLoaded,       // Absolutely not loaded. Asset's type is undefined
@@ -215,3 +216,4 @@ namespace Core
     };
 
 } // namespace Core
+#include "ECSAsset.generated.h" // added by the code generator. Better don't move it.

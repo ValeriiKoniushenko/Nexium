@@ -25,8 +25,6 @@
 #pragma once
 
 #include "GameplaySystem/Framework/GameInstance.h"
-#include "Graphics/Primitives/StaticMeshBundle.h"
-#include "Scene/Scene.h"
 
 class TemplateGameInstance : public Core::GameInstance
 {

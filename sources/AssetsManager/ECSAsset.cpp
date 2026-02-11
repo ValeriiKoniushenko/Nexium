@@ -30,6 +30,9 @@
 #include <Utils/Functions.h>
 #include <nlohmann/json.hpp>
 
+
+#include "ECSAsset.generated.cpp.inl" // this line added by the code generator.
+
 namespace Core
 {
 

@@ -40,6 +40,7 @@ namespace Core
         ECS_COMPONENT_DECL(Gizmo, StaticMeshBundle);
 
     public:
+        ENUM_CLASS;
         enum class Direction
         {
             X,
@@ -79,3 +80,4 @@ namespace Core
         std::optional<glm::vec3> _lastRay;
     };
 } // namespace Core
+#include "Gizmo.generated.h" // added by the code generator. Better don't move it.

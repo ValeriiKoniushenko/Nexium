@@ -31,7 +31,7 @@
 
 namespace Core::Gui
 {
-
+    ENUM_CLASS;
     enum class Align
     {
         None,
@@ -165,3 +165,4 @@ namespace ImGui
 
     bool OptPushStyleVar(ImGuiStyleVar idx, const std::optional<float>& col);
 } // namespace ImGui
+#include "Widget.generated.h" // added by the code generator. Better don't move it.

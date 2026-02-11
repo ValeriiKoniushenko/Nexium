@@ -89,6 +89,7 @@ namespace Core
     class AssetsManager : public BaseLog
     {
     public:
+        ENUM_CLASS;
         enum class NodeType
         {
             Default,
@@ -203,3 +204,4 @@ namespace Core
     };
 
 } // namespace Core
+#include "AssetsManager.generated.h" // added by the code generator. Better don't move it.

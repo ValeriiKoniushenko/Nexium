@@ -36,6 +36,7 @@
 namespace Core
 {
 
+    ENUM_CLASS;
     enum class ViewportMode
     {
         Default,
@@ -46,3 +47,4 @@ namespace Core
 
     [[nodiscard]] const char* glTypeToString(GLenum value);
 } // namespace Core
+#include "OpenGL.generated.h" // added by the code generator. Better don't move it.

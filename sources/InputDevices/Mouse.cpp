@@ -28,6 +28,9 @@
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Graphics/Window.h"
 
+
+#include "Mouse.generated.cpp.inl" // this line added by the code generator.
+
 namespace Core
 {
     StringAtom Mouse::KeyToString(Key key)

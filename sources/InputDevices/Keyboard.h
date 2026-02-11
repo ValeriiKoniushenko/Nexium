@@ -24,7 +24,6 @@
 
 #pragma once
 
-#include "Core/Enum.h"
 #include "Graphics/OpenGL.h"
 
 #include <Core/String.h>

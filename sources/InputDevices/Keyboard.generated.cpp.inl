@@ -13,10 +13,10 @@ namespace R
     {
 
         // =================== IMPLEMENTATIONS =====================
-         const std::string& Name() { static const std::string name = "KeyState"; return name; }
-         const std::string& ParentScope() { static const std::string name = "Core::Keyboard"; return name; }
+        const std::string& Name() { static const std::string name = "KeyState"; return name; }
+        const std::string& ParentScope() { static const std::string name = "Core::Keyboard"; return name; }
 
-         const std::string& ToString(::Core::Keyboard::KeyState value)
+        const std::string& ToString(::Core::Keyboard::KeyState value)
         {
             const auto& data = R::Core::Keyboard::KeyState::ToMapCN();
             const auto it = data.find(value);
@@ -28,7 +28,7 @@ namespace R
             return empty;
         }
 
-         std::optional<::Core::Keyboard::KeyState> FromString(const std::string& value)
+        std::optional<::Core::Keyboard::KeyState> FromString(const std::string& value)
         {
             const auto& data = R::Core::Keyboard::KeyState::ToMapNC();
             const auto it = data.find(value);
@@ -39,9 +39,9 @@ namespace R
             return std::nullopt;
         }
 
-         const std::array<::Core::Keyboard::KeyState, 4>& ToArrayC()
+        const std::array<::Core::Keyboard::KeyState, 4>& ToArrayC()
         {
-            static constexpr std::array<::Core::Keyboard::KeyState, 4> constants = {
+            static const std::array<::Core::Keyboard::KeyState, 4> constants = {
 				::Core::Keyboard::KeyState::None,
 				::Core::Keyboard::KeyState::Pressed,
 				::Core::Keyboard::KeyState::Released,
@@ -51,9 +51,9 @@ namespace R
             return constants;
         }
 
-         const std::array<std::string, 4>& ToArrayN()
+        const std::array<std::string, 4>& ToArrayN()
         {
-            static constexpr std::array<std::string, 4> names = {
+            static const std::array<std::string, 4> names = {
 				std::string("None"),
 				std::string("Pressed"),
 				std::string("Released"),
@@ -63,7 +63,7 @@ namespace R
             return names;
         }
 
-         const std::unordered_map<::Core::Keyboard::KeyState, std::string>& ToMapCN()
+        const std::unordered_map<::Core::Keyboard::KeyState, std::string>& ToMapCN()
         {
             static const std::unordered_map<::Core::Keyboard::KeyState, std::string> map = {
 				{ ::Core::Keyboard::KeyState::None, "None" },
@@ -75,7 +75,7 @@ namespace R
             return map;
         }
 
-         const std::unordered_map<std::string, ::Core::Keyboard::KeyState>& ToMapNC()
+        const std::unordered_map<std::string, ::Core::Keyboard::KeyState>& ToMapNC()
         {
             static const std::unordered_map<std::string, ::Core::Keyboard::KeyState> map = {
 				{ "None", ::Core::Keyboard::KeyState::None },

@@ -32,7 +32,7 @@
 
 namespace Core
 {
-    // clang-format off
+    ENUM_CLASS;
     enum class ShaderType : GLenum
     {
         None = 0,
@@ -40,7 +40,6 @@ namespace Core
         Vertex = GL_VERTEX_SHADER,
         Geometry = GL_GEOMETRY_SHADER
     };
-    // clang-format on
 
     class ShaderProgramMeta final : public BaseLog
     {
@@ -140,3 +139,4 @@ namespace Core
         std::filesystem::path _fragmentShaderPath;
     };
 } // namespace Core
+#include "ShaderProgramMeta.generated.h" // added by the code generator. Better don't move it.

@@ -28,6 +28,9 @@
 #include "InputDevices/Keyboard.h"
 #include "InputDevices/Mouse.h"
 
+
+#include "Widget.generated.cpp.inl" // this line added by the code generator.
+
 namespace Core::Gui
 {
     ECS_COMPONENT_IMPL(Widget)

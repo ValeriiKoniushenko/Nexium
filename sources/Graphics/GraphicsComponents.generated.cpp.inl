@@ -13,10 +13,10 @@ namespace R
     {
 
         // =================== IMPLEMENTATIONS =====================
-         const std::string& Name() { static const std::string name = "Modifier"; return name; }
-         const std::string& ParentScope() { static const std::string name = "Core::GraphicsComponentData"; return name; }
+        const std::string& Name() { static const std::string name = "Modifier"; return name; }
+        const std::string& ParentScope() { static const std::string name = "Core::GraphicsComponentData"; return name; }
 
-         const std::string& ToString(::Core::GraphicsComponentData::Modifier value)
+        const std::string& ToString(::Core::GraphicsComponentData::Modifier value)
         {
             const auto& data = R::Core::GraphicsComponentData::Modifier::ToMapCN();
             const auto it = data.find(value);
@@ -28,7 +28,7 @@ namespace R
             return empty;
         }
 
-         std::optional<::Core::GraphicsComponentData::Modifier> FromString(const std::string& value)
+        std::optional<::Core::GraphicsComponentData::Modifier> FromString(const std::string& value)
         {
             const auto& data = R::Core::GraphicsComponentData::Modifier::ToMapNC();
             const auto it = data.find(value);
@@ -39,9 +39,9 @@ namespace R
             return std::nullopt;
         }
 
-         const std::array<::Core::GraphicsComponentData::Modifier, 3>& ToArrayC()
+        const std::array<::Core::GraphicsComponentData::Modifier, 3>& ToArrayC()
         {
-            static constexpr std::array<::Core::GraphicsComponentData::Modifier, 3> constants = {
+            static const std::array<::Core::GraphicsComponentData::Modifier, 3> constants = {
 				::Core::GraphicsComponentData::Modifier::None,
 				::Core::GraphicsComponentData::Modifier::Enable,
 				::Core::GraphicsComponentData::Modifier::Disable
@@ -50,9 +50,9 @@ namespace R
             return constants;
         }
 
-         const std::array<std::string, 3>& ToArrayN()
+        const std::array<std::string, 3>& ToArrayN()
         {
-            static constexpr std::array<std::string, 3> names = {
+            static const std::array<std::string, 3> names = {
 				std::string("None"),
 				std::string("Enable"),
 				std::string("Disable")
@@ -61,7 +61,7 @@ namespace R
             return names;
         }
 
-         const std::unordered_map<::Core::GraphicsComponentData::Modifier, std::string>& ToMapCN()
+        const std::unordered_map<::Core::GraphicsComponentData::Modifier, std::string>& ToMapCN()
         {
             static const std::unordered_map<::Core::GraphicsComponentData::Modifier, std::string> map = {
 				{ ::Core::GraphicsComponentData::Modifier::None, "None" },
@@ -72,7 +72,7 @@ namespace R
             return map;
         }
 
-         const std::unordered_map<std::string, ::Core::GraphicsComponentData::Modifier>& ToMapNC()
+        const std::unordered_map<std::string, ::Core::GraphicsComponentData::Modifier>& ToMapNC()
         {
             static const std::unordered_map<std::string, ::Core::GraphicsComponentData::Modifier> map = {
 				{ "None", ::Core::GraphicsComponentData::Modifier::None },

@@ -51,6 +51,7 @@ namespace Core
             StringAtom type;
         };
 
+        ENUM_CLASS;
         enum class State
         {
             Idle,

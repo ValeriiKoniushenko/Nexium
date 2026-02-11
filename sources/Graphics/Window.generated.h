@@ -33,4 +33,22 @@ namespace R
 
     } // namespace Core::Window::CursorMode
 
+    namespace Core::DragAndDrop::State
+    {
+
+        // =================== DECLARATIONS =====================
+        [[nodiscard]] const std::string& Name();
+        [[nodiscard]] const std::string& ParentScope();
+        [[nodiscard]] constexpr std::size_t Size() noexcept { return 3; }
+
+        [[nodiscard]] const std::string& ToString(::Core::DragAndDrop::State value);
+        [[nodiscard]] std::optional<::Core::DragAndDrop::State> FromString(const std::string& value);
+
+        [[nodiscard]] const std::array<::Core::DragAndDrop::State, 3>& ToArrayC();
+        [[nodiscard]] const std::array<std::string, 3>& ToArrayN();
+        [[nodiscard]] const std::unordered_map<::Core::DragAndDrop::State, std::string>& ToMapCN();
+        [[nodiscard]] const std::unordered_map<std::string, ::Core::DragAndDrop::State>& ToMapNC();
+
+    } // namespace Core::DragAndDrop::State
+
 } // namespace

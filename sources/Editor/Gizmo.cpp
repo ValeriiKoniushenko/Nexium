@@ -29,6 +29,9 @@
 #include "assimp/postprocess.h"
 #include "assimp/scene.h"
 
+
+#include "Gizmo.generated.cpp.inl" // this line added by the code generator.
+
 namespace Core
 {
     ECS_COMPONENT_IMPL(Gizmo)

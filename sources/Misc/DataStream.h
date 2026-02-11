@@ -89,12 +89,14 @@ namespace Core
     class DataStream
     {
     public:
+        ENUM_CLASS;
         enum class Mode
         {
             Input,
             Output
         };
 
+        ENUM_CLASS;
         enum class Result
         {
             Success,
@@ -248,3 +250,4 @@ namespace Core
     };
 
 } // namespace Core
+#include "DataStream.generated.h" // added by the code generator. Better don't move it.
