@@ -81,15 +81,14 @@ namespace Core
             }
         };
 
-        // clang-format off
-        CreateEnum(Status, int,
-            NotLoaded,      // Absolutely not loaded. Asset's type is undefined
-            PreLoaded,      // Loaded only the main information: type & ID & name
-            Loaded,         // Full asset's data is loaded (corresponding to asset's type)
-            PreLoadingError,// Error while preloading data
-            LoadingError    // Error while loading of the main data
-        );
-        // clang-format on
+        enum class Status
+        {
+            NotLoaded,       // Absolutely not loaded. Asset's type is undefined
+            PreLoaded,       // Loaded only the main information: type & ID & name
+            Loaded,          // Full asset's data is loaded (corresponding to asset's type)
+            PreLoadingError, // Error while preloading data
+            LoadingError     // Error while loading of the main data
+        };
 
         struct StreamData
         {

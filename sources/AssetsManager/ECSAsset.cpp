@@ -102,7 +102,7 @@ namespace Core
             return;
         }
 
-        if (_status.cast() != Status::Loaded && _status.cast() != Status::PreLoaded)
+        if (_status != Status::Loaded && _status != Status::PreLoaded)
         {
             warnLog("Can't sync asset with memory. Asset is not loaded properly.");
             return;
@@ -115,7 +115,7 @@ namespace Core
 
         json[StreamData::assetData] = assetData;
 
-        if (_status.cast() == Status::Loaded)
+        if (_status == Status::Loaded)
         {
             DataStream stream;
             stream.setMode(DataStream::Mode::Output);
@@ -174,7 +174,7 @@ namespace Core
 
     void ECSAsset::load()
     {
-        if (_status.cast() != Status::PreLoaded)
+        if (_status != Status::PreLoaded)
         {
             warnLog("Can't load asset: '{}'. Status is not 'PreLoaded'."_f << _meta.logicPath);
             return;

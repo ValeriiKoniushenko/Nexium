@@ -28,6 +28,9 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "Stb/Image.h"
 
+
+#include "Image.generated.cpp.inl" // this line added by the code generator.
+
 namespace Core
 {
     Image::Image(const std::filesystem::path& path)
@@ -74,7 +77,7 @@ namespace Core
 
     GLenum Image::getChannelAsOpenGLType() const noexcept
     {
-        return _channel.cast() == 3 ? GL_RGB : _channel.cast() == 4 ? GL_RGBA : GL_RED;
+        return static_cast<int>(_channel) == 3 ? GL_RGB : static_cast<int>(_channel) == 4 ? GL_RGBA : GL_RED;
     }
 
     bool Image::loadFromFile(const std::filesystem::path& path, bool isFlipVertically)
@@ -97,7 +100,7 @@ namespace Core
                         << path.lexically_normal().generic_string());
         }
 
-        _channel = channel;
+        _channel = static_cast<Channel>(channel);
         _name = path.lexically_normal().generic_string();
 
         return true;
@@ -121,7 +124,7 @@ namespace Core
             criticalLog("stbi lib can't load the image from memory by unknown reasons");
         }
 
-        _channel = channel;
+        _channel = static_cast<Channel>(channel);
         _name = "None"_atom;
 
         return true;

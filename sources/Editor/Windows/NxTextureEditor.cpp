@@ -40,7 +40,7 @@ namespace Core
         }
 
         _imageSize->input->setInputtedData(_targetAsset->getSize().toGlm());
-        _imageChannelType->input->setInputtedData(_targetAsset->getChannels().toStr());
+        _imageChannelType->input->setInputtedData(R::Core::Image::Channel::ToString(_targetAsset->getChannels()));
         _pathToImage->input->setInputtedData(_targetAsset->getFilePath().generic_string());
         _isFlipVertical->input->setValue(_targetAsset->isFlipVertically());
     }

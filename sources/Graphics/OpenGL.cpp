@@ -31,7 +31,7 @@ namespace Core
         FSize2 view = originalSize;
         glm::vec2 pos = {};
 
-        if (mode.cast() == ViewportMode::Default)
+        if (mode == ViewportMode::Default)
         {
             view.height = view.width / aspectRatio;
 

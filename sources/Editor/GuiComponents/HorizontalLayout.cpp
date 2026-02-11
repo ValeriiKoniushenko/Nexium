@@ -144,19 +144,19 @@ namespace Core::Gui
 
         calcYOffsets();
 
-        if (_align.cast() == Align::Left)
+        if (_align == Align::Left)
         {
             prepareAlignLeft();
         }
-        else if (_align.cast() == Align::Right)
+        else if (_align == Align::Right)
         {
             prepareAlignRight();
         }
-        else if (_align.cast() == Align::SpaceBetween)
+        else if (_align == Align::SpaceBetween)
         {
             prepareAlignSpaceBetween();
         }
-        else if (_align.cast() == Align::Center)
+        else if (_align == Align::Center)
         {
             prepareAlignCenter();
         }
@@ -269,15 +269,15 @@ namespace Core::Gui
                 continue;
             }
             const auto w = child->unsafeCastTo<Widget>();
-            if (_secondAlign.cast() == Align::Top)
+            if (_secondAlign == Align::Top)
             {
                 _yOffsets.at(i) = 0;
             }
-            else if (_secondAlign.cast() == Align::Bottom)
+            else if (_secondAlign == Align::Bottom)
             {
                 _yOffsets.at(i) = ownHeight - w->getHeight();
             }
-            else if (_secondAlign.cast() == Align::Center)
+            else if (_secondAlign == Align::Center)
             {
                 _yOffsets.at(i) = (ownHeight - w->getHeight()) / 2.f;
             }
@@ -310,7 +310,7 @@ namespace Core::Gui
 
             if (i != _children.size() - 1)
             {
-                if (_align.cast() == Align::SpaceBetween)
+                if (_align == Align::SpaceBetween)
                 {
                     finalOffset += _spacing;
                 }

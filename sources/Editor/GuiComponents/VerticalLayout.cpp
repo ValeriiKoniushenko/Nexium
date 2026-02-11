@@ -128,19 +128,19 @@ namespace Core::Gui
 
         calcXOffsets();
 
-        if (_secondAlign.cast() == Align::Top)
+        if (_secondAlign == Align::Top)
         {
             prepareAlignTop();
         }
-        else if (_secondAlign.cast() == Align::Bottom)
+        else if (_secondAlign == Align::Bottom)
         {
             prepareAlignBottom();
         }
-        else if (_secondAlign.cast() == Align::SpaceBetween)
+        else if (_secondAlign == Align::SpaceBetween)
         {
             prepareAlignSpaceBetween();
         }
-        else if (_secondAlign.cast() == Align::Center)
+        else if (_secondAlign == Align::Center)
         {
             prepareAlignCenter();
         }
@@ -225,7 +225,7 @@ namespace Core::Gui
         const auto originalXCursor = ImGui::GetCursorPosX();
 
         float space = _spacing.value_or(0.f);
-        if (_secondAlign.cast() == Align::SpaceBetween && hasChildren())
+        if (_secondAlign == Align::SpaceBetween && hasChildren())
         {
             space = getHeight();
             for (auto&& child : _children)
@@ -286,11 +286,11 @@ namespace Core::Gui
             const auto w = child->unsafeCastTo<Widget>()->getWidth();
             if (w != -1.f)
             {
-                if (_align.cast() == Align::Right)
+                if (_align == Align::Right)
                 {
                     _xOffsets.at(i) = ownWidth - w;
                 }
-                else if (_align.cast() == Align::Center)
+                else if (_align == Align::Center)
                 {
                     _xOffsets.at(i) = (ownWidth - w) / 2.f;
                 }

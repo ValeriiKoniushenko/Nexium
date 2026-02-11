@@ -160,14 +160,14 @@ namespace Core
             Key_Last = GLFW_KEY_LAST,
         };
 
-        // clang-format off
-        CreateEnum(KeyState, int,
+        ENUM_CLASS;
+        enum class KeyState
+        {
             None,
             Pressed = GLFW_PRESS,
             Released = GLFW_RELEASE,
             Repeated = GLFW_REPEAT
-        );
-        // clang-format on
+        };
 
         Keyboard() = delete;
 
@@ -184,3 +184,4 @@ namespace Core
         [[nodiscard]] static bool IsKeyReleased(Key key);
     };
 } // namespace Core
+#include "Keyboard.generated.h" // added by the code generator. Better don't move it.

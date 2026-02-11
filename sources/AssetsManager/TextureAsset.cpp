@@ -45,7 +45,7 @@ namespace Core
         }
 
         _size = img.getSize();
-        _channels = img.getChannel().cast();
+        _channels = img.getChannel();
 
         _data.loadFromImage(img);
     }

@@ -94,15 +94,15 @@ namespace Core::Gui
         if (_width != -1.0f)
         {
             float offset = 0;
-            if (_align.cast() == Align::Left)
+            if (_align == Align::Left)
             {
                 // do nothing
             }
-            else if (_align.cast() == Align::Center)
+            else if (_align == Align::Center)
             {
                 offset = (_width - _textSize.x) / 2.f;
             }
-            else if (_align.cast() == Align::Right)
+            else if (_align == Align::Right)
             {
                 offset = _width - _textSize.x;
             }

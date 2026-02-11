@@ -24,7 +24,6 @@
 
 #pragma once
 
-#include "Core/Enum.h"
 #include "Core/Size.h"
 #include "Misc/BaseLog.h"
 #include "OpenGL.h"
@@ -38,15 +37,15 @@ namespace Core
     {
     public:
         // The next values were taken from the stb_image.h documentation.
-        // clang-format off
-	    CreateEnum(Channel, int,
-		    None = 0,
-		    Grey = 1,
-		    GreyA = 2,
-		    RGB = 3,
-		    RGBA = 4
-	    );
-        // clang-format on
+        ENUM_CLASS;
+        enum class Channel
+        {
+            None = 0,
+            Grey = 1,
+            GreyA = 2,
+            RGB = 3,
+            RGBA = 4
+        };
 
     public:
         explicit Image(const std::filesystem::path& path = "");
@@ -60,7 +59,7 @@ namespace Core
 
         [[nodiscard]] ISize2 getSize() const noexcept { return _size; }
         [[nodiscard]] Channel getChannel() const noexcept { return _channel; }
-        [[nodiscard]] int getChannelsCount() const noexcept { return _channel.cast(); }
+        [[nodiscard]] int getChannelsCount() const noexcept { return static_cast<int>(_channel); }
 
         [[nodiscard]] GLenum getChannelAsOpenGLType() const noexcept;
 
@@ -87,3 +86,4 @@ namespace Core
         StringAtom _name;
     };
 } // namespace Core
+#include "Image.generated.h" // added by the code generator. Better don't move it.

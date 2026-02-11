@@ -31,16 +31,17 @@
 
 namespace Core::Gui
 {
-    // clang-format off
-    CreateEnum(Align, int,
+
+    enum class Align
+    {
         None,
-        Left,           // For horizontal align
-        Right,          // For horizontal align
-        SpaceBetween,   // For horizontal align
-        Center,         // For horizontal & vertical align
-        Top,            // For vertical align
-        Bottom          // For vertical align
-    );
+        Left,         // For horizontal align
+        Right,        // For horizontal align
+        SpaceBetween, // For horizontal align
+        Center,       // For horizontal & vertical align
+        Top,          // For vertical align
+        Bottom        // For vertical align
+    };
 
     enum Flex
     {

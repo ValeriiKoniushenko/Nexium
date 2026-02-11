@@ -26,6 +26,9 @@
 
 #include "Graphics/Window.h"
 
+
+#include "Keyboard.generated.cpp.inl" // this line added by the code generator.
+
 namespace Core
 {
     StringAtom Keyboard::KeyToString(Key key)
@@ -290,7 +293,7 @@ namespace Core
 
     Keyboard::KeyState Keyboard::getKeyState(Key key)
     {
-        return glfwGetKey(GetWindow().getRawWindow(), key);
+        return static_cast<KeyState>(glfwGetKey(GetWindow().getRawWindow(), key));
     }
 
     bool Keyboard::IsKeyPressed(Key key)

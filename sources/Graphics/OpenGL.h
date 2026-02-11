@@ -35,12 +35,12 @@
 
 namespace Core
 {
-    // clang-format off
-    CreateEnum(ViewportMode, int,
+
+    enum class ViewportMode
+    {
         Default,
         ZoomIn
-    );
-    // clang-format on
+    };
 
     void UpdateGlViewport(FSize2 originalSize, float aspectRatio, ViewportMode mode);
 

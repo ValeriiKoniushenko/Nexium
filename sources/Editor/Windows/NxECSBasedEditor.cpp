@@ -455,7 +455,7 @@ namespace Core
             return;
         }
 
-        if (_targetAsset->getLoadingStatus().cast() != ECSAsset::Status::Loaded)
+        if (_targetAsset->getLoadingStatus() != ECSAsset::Status::Loaded)
         {
             Assert(false);
             errorLog("Can't setup editor's tree. Asset '{}' is not loaded properly."_f

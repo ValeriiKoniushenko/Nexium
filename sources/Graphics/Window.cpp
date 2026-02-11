@@ -54,7 +54,7 @@ namespace
     void KeyPressHandler(auto*, int key, int scancode, int action, int mods)
     {
         GetWindow().onKeyPressed->trigger(static_cast<Keyboard::Key>(key), scancode,
-                                          static_cast<Keyboard::KeyState::UnderlyingType>(action),
+                                          static_cast<Keyboard::KeyState>(action),
                                           mods);
     }
 
