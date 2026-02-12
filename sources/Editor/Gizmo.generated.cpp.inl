@@ -85,5 +85,10 @@ namespace R
 
     } // namespace Core::Gizmo::Direction
 
+    const std::string& ToString(::Core::Gizmo::Direction value)
+    {
+        return Core::Gizmo::Direction::ToString(value);
+    }
+
 
 } // namespace

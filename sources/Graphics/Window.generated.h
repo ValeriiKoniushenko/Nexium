@@ -23,8 +23,8 @@ namespace R
         [[nodiscard]] const std::string& ParentScope();
         [[nodiscard]] constexpr std::size_t Size() noexcept { return 3; }
 
-        [[nodiscard]] const std::string& ToString(::Core::Window::CursorMode value);
         [[nodiscard]] std::optional<::Core::Window::CursorMode> FromString(const std::string& value);
+        [[nodiscard]] const std::string& ToString(::Core::Window::CursorMode value);
 
         [[nodiscard]] const std::array<::Core::Window::CursorMode, 3>& ToArrayC();
         [[nodiscard]] const std::array<std::string, 3>& ToArrayN();
@@ -32,6 +32,8 @@ namespace R
         [[nodiscard]] const std::unordered_map<std::string, ::Core::Window::CursorMode>& ToMapNC();
 
     } // namespace Core::Window::CursorMode
+
+    [[nodiscard]] const std::string& ToString(::Core::Window::CursorMode value);
 
     namespace Core::DragAndDrop::State
     {
@@ -41,8 +43,8 @@ namespace R
         [[nodiscard]] const std::string& ParentScope();
         [[nodiscard]] constexpr std::size_t Size() noexcept { return 3; }
 
-        [[nodiscard]] const std::string& ToString(::Core::DragAndDrop::State value);
         [[nodiscard]] std::optional<::Core::DragAndDrop::State> FromString(const std::string& value);
+        [[nodiscard]] const std::string& ToString(::Core::DragAndDrop::State value);
 
         [[nodiscard]] const std::array<::Core::DragAndDrop::State, 3>& ToArrayC();
         [[nodiscard]] const std::array<std::string, 3>& ToArrayN();
@@ -50,5 +52,7 @@ namespace R
         [[nodiscard]] const std::unordered_map<std::string, ::Core::DragAndDrop::State>& ToMapNC();
 
     } // namespace Core::DragAndDrop::State
+
+    [[nodiscard]] const std::string& ToString(::Core::DragAndDrop::State value);
 
 } // namespace

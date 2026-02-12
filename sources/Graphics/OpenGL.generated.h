@@ -23,8 +23,8 @@ namespace R
         [[nodiscard]] const std::string& ParentScope();
         [[nodiscard]] constexpr std::size_t Size() noexcept { return 2; }
 
-        [[nodiscard]] const std::string& ToString(::Core::ViewportMode value);
         [[nodiscard]] std::optional<::Core::ViewportMode> FromString(const std::string& value);
+        [[nodiscard]] const std::string& ToString(::Core::ViewportMode value);
 
         [[nodiscard]] const std::array<::Core::ViewportMode, 2>& ToArrayC();
         [[nodiscard]] const std::array<std::string, 2>& ToArrayN();
@@ -32,5 +32,7 @@ namespace R
         [[nodiscard]] const std::unordered_map<std::string, ::Core::ViewportMode>& ToMapNC();
 
     } // namespace Core::ViewportMode
+
+    [[nodiscard]] const std::string& ToString(::Core::ViewportMode value);
 
 } // namespace

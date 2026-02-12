@@ -81,5 +81,10 @@ namespace R
 
     } // namespace Core::ViewportMode
 
+    const std::string& ToString(::Core::ViewportMode value)
+    {
+        return Core::ViewportMode::ToString(value);
+    }
+
 
 } // namespace

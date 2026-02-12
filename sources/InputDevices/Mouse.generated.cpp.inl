@@ -85,5 +85,10 @@ namespace R
 
     } // namespace Core::Mouse::State
 
+    const std::string& ToString(::Core::Mouse::State value)
+    {
+        return Core::Mouse::State::ToString(value);
+    }
+
 
 } // namespace

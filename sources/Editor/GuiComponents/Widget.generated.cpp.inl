@@ -101,5 +101,10 @@ namespace R
 
     } // namespace Core::Gui::Align
 
+    const std::string& ToString(::Core::Gui::Align value)
+    {
+        return Core::Gui::Align::ToString(value);
+    }
+
 
 } // namespace

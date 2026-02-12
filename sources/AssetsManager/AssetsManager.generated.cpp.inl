@@ -93,5 +93,10 @@ namespace R
 
     } // namespace Core::AssetsManager::NodeType
 
+    const std::string& ToString(::Core::AssetsManager::NodeType value)
+    {
+        return Core::AssetsManager::NodeType::ToString(value);
+    }
+
 
 } // namespace

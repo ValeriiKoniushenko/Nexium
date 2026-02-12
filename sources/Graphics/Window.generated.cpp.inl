@@ -85,6 +85,11 @@ namespace R
 
     } // namespace Core::Window::CursorMode
 
+    const std::string& ToString(::Core::Window::CursorMode value)
+    {
+        return Core::Window::CursorMode::ToString(value);
+    }
+
     namespace Core::DragAndDrop::State
     {
 
@@ -160,6 +165,11 @@ namespace R
         }
 
     } // namespace Core::DragAndDrop::State
+
+    const std::string& ToString(::Core::DragAndDrop::State value)
+    {
+        return Core::DragAndDrop::State::ToString(value);
+    }
 
 
 } // namespace

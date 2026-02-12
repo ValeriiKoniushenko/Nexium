@@ -93,6 +93,11 @@ namespace R
 
     } // namespace Core::DataStream::Result
 
+    const std::string& ToString(::Core::DataStream::Result value)
+    {
+        return Core::DataStream::Result::ToString(value);
+    }
+
     namespace Core::DataStream::Mode
     {
 
@@ -164,6 +169,11 @@ namespace R
         }
 
     } // namespace Core::DataStream::Mode
+
+    const std::string& ToString(::Core::DataStream::Mode value)
+    {
+        return Core::DataStream::Mode::ToString(value);
+    }
 
 
 } // namespace

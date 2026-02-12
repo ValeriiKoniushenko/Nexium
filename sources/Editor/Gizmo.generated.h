@@ -23,8 +23,8 @@ namespace R
         [[nodiscard]] const std::string& ParentScope();
         [[nodiscard]] constexpr std::size_t Size() noexcept { return 3; }
 
-        [[nodiscard]] const std::string& ToString(::Core::Gizmo::Direction value);
         [[nodiscard]] std::optional<::Core::Gizmo::Direction> FromString(const std::string& value);
+        [[nodiscard]] const std::string& ToString(::Core::Gizmo::Direction value);
 
         [[nodiscard]] const std::array<::Core::Gizmo::Direction, 3>& ToArrayC();
         [[nodiscard]] const std::array<std::string, 3>& ToArrayN();
@@ -32,5 +32,7 @@ namespace R
         [[nodiscard]] const std::unordered_map<std::string, ::Core::Gizmo::Direction>& ToMapNC();
 
     } // namespace Core::Gizmo::Direction
+
+    [[nodiscard]] const std::string& ToString(::Core::Gizmo::Direction value);
 
 } // namespace

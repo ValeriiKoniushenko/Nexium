@@ -23,8 +23,8 @@ namespace R
         [[nodiscard]] const std::string& ParentScope();
         [[nodiscard]] constexpr std::size_t Size() noexcept { return 4; }
 
-        [[nodiscard]] const std::string& ToString(::Core::ShaderType value);
         [[nodiscard]] std::optional<::Core::ShaderType> FromString(const std::string& value);
+        [[nodiscard]] const std::string& ToString(::Core::ShaderType value);
 
         [[nodiscard]] const std::array<::Core::ShaderType, 4>& ToArrayC();
         [[nodiscard]] const std::array<std::string, 4>& ToArrayN();
@@ -32,5 +32,7 @@ namespace R
         [[nodiscard]] const std::unordered_map<std::string, ::Core::ShaderType>& ToMapNC();
 
     } // namespace Core::ShaderType
+
+    [[nodiscard]] const std::string& ToString(::Core::ShaderType value);
 
 } // namespace

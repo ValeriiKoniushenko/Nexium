@@ -93,5 +93,10 @@ namespace R
 
     } // namespace Core::ECSAsset::Status
 
+    const std::string& ToString(::Core::ECSAsset::Status value)
+    {
+        return Core::ECSAsset::Status::ToString(value);
+    }
+
 
 } // namespace

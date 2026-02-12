@@ -85,5 +85,10 @@ namespace R
 
     } // namespace Core::GraphicsComponentData::Modifier
 
+    const std::string& ToString(::Core::GraphicsComponentData::Modifier value)
+    {
+        return Core::GraphicsComponentData::Modifier::ToString(value);
+    }
+
 
 } // namespace

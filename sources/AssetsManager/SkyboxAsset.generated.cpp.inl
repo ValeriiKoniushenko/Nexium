@@ -97,5 +97,10 @@ namespace R
 
     } // namespace Core::SkyboxAsset::Direction
 
+    const std::string& ToString(::Core::SkyboxAsset::Direction value)
+    {
+        return Core::SkyboxAsset::Direction::ToString(value);
+    }
+
 
 } // namespace

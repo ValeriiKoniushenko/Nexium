@@ -23,8 +23,8 @@ namespace R
         [[nodiscard]] const std::string& ParentScope();
         [[nodiscard]] constexpr std::size_t Size() noexcept { return 5; }
 
-        [[nodiscard]] const std::string& ToString(::Core::AssetsManager::NodeType value);
         [[nodiscard]] std::optional<::Core::AssetsManager::NodeType> FromString(const std::string& value);
+        [[nodiscard]] const std::string& ToString(::Core::AssetsManager::NodeType value);
 
         [[nodiscard]] const std::array<::Core::AssetsManager::NodeType, 5>& ToArrayC();
         [[nodiscard]] const std::array<std::string, 5>& ToArrayN();
@@ -32,5 +32,7 @@ namespace R
         [[nodiscard]] const std::unordered_map<std::string, ::Core::AssetsManager::NodeType>& ToMapNC();
 
     } // namespace Core::AssetsManager::NodeType
+
+    [[nodiscard]] const std::string& ToString(::Core::AssetsManager::NodeType value);
 
 } // namespace

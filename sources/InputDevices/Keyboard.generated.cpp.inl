@@ -89,5 +89,10 @@ namespace R
 
     } // namespace Core::Keyboard::KeyState
 
+    const std::string& ToString(::Core::Keyboard::KeyState value)
+    {
+        return Core::Keyboard::KeyState::ToString(value);
+    }
+
 
 } // namespace

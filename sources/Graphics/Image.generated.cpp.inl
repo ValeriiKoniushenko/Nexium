@@ -93,5 +93,10 @@ namespace R
 
     } // namespace Core::Image::Channel
 
+    const std::string& ToString(::Core::Image::Channel value)
+    {
+        return Core::Image::Channel::ToString(value);
+    }
+
 
 } // namespace

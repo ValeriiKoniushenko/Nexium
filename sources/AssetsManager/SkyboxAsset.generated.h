@@ -23,8 +23,8 @@ namespace R
         [[nodiscard]] const std::string& ParentScope();
         [[nodiscard]] constexpr std::size_t Size() noexcept { return 6; }
 
-        [[nodiscard]] const std::string& ToString(::Core::SkyboxAsset::Direction value);
         [[nodiscard]] std::optional<::Core::SkyboxAsset::Direction> FromString(const std::string& value);
+        [[nodiscard]] const std::string& ToString(::Core::SkyboxAsset::Direction value);
 
         [[nodiscard]] const std::array<::Core::SkyboxAsset::Direction, 6>& ToArrayC();
         [[nodiscard]] const std::array<std::string, 6>& ToArrayN();
@@ -32,5 +32,7 @@ namespace R
         [[nodiscard]] const std::unordered_map<std::string, ::Core::SkyboxAsset::Direction>& ToMapNC();
 
     } // namespace Core::SkyboxAsset::Direction
+
+    [[nodiscard]] const std::string& ToString(::Core::SkyboxAsset::Direction value);
 
 } // namespace

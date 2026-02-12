@@ -23,8 +23,8 @@ namespace R
         [[nodiscard]] const std::string& ParentScope();
         [[nodiscard]] constexpr std::size_t Size() noexcept { return 7; }
 
-        [[nodiscard]] const std::string& ToString(::Core::Gui::Align value);
         [[nodiscard]] std::optional<::Core::Gui::Align> FromString(const std::string& value);
+        [[nodiscard]] const std::string& ToString(::Core::Gui::Align value);
 
         [[nodiscard]] const std::array<::Core::Gui::Align, 7>& ToArrayC();
         [[nodiscard]] const std::array<std::string, 7>& ToArrayN();
@@ -32,5 +32,7 @@ namespace R
         [[nodiscard]] const std::unordered_map<std::string, ::Core::Gui::Align>& ToMapNC();
 
     } // namespace Core::Gui::Align
+
+    [[nodiscard]] const std::string& ToString(::Core::Gui::Align value);
 
 } // namespace

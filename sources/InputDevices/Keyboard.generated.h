@@ -23,8 +23,8 @@ namespace R
         [[nodiscard]] const std::string& ParentScope();
         [[nodiscard]] constexpr std::size_t Size() noexcept { return 4; }
 
-        [[nodiscard]] const std::string& ToString(::Core::Keyboard::KeyState value);
         [[nodiscard]] std::optional<::Core::Keyboard::KeyState> FromString(const std::string& value);
+        [[nodiscard]] const std::string& ToString(::Core::Keyboard::KeyState value);
 
         [[nodiscard]] const std::array<::Core::Keyboard::KeyState, 4>& ToArrayC();
         [[nodiscard]] const std::array<std::string, 4>& ToArrayN();
@@ -32,5 +32,7 @@ namespace R
         [[nodiscard]] const std::unordered_map<std::string, ::Core::Keyboard::KeyState>& ToMapNC();
 
     } // namespace Core::Keyboard::KeyState
+
+    [[nodiscard]] const std::string& ToString(::Core::Keyboard::KeyState value);
 
 } // namespace

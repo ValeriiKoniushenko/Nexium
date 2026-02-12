@@ -23,8 +23,8 @@ namespace R
         [[nodiscard]] const std::string& ParentScope();
         [[nodiscard]] constexpr std::size_t Size() noexcept { return 3; }
 
-        [[nodiscard]] const std::string& ToString(::Core::GraphicsComponentData::Modifier value);
         [[nodiscard]] std::optional<::Core::GraphicsComponentData::Modifier> FromString(const std::string& value);
+        [[nodiscard]] const std::string& ToString(::Core::GraphicsComponentData::Modifier value);
 
         [[nodiscard]] const std::array<::Core::GraphicsComponentData::Modifier, 3>& ToArrayC();
         [[nodiscard]] const std::array<std::string, 3>& ToArrayN();
@@ -32,5 +32,7 @@ namespace R
         [[nodiscard]] const std::unordered_map<std::string, ::Core::GraphicsComponentData::Modifier>& ToMapNC();
 
     } // namespace Core::GraphicsComponentData::Modifier
+
+    [[nodiscard]] const std::string& ToString(::Core::GraphicsComponentData::Modifier value);
 
 } // namespace

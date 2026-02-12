@@ -89,5 +89,10 @@ namespace R
 
     } // namespace Core::ShaderType
 
+    const std::string& ToString(::Core::ShaderType value)
+    {
+        return Core::ShaderType::ToString(value);
+    }
+
 
 } // namespace
