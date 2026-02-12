@@ -35,4 +35,44 @@ namespace R
 
     [[nodiscard]] const std::string& ToString(::Core::Mouse::State value);
 
+    namespace Core::Mouse::Key
+    {
+
+        // =================== DECLARATIONS =====================
+        [[nodiscard]] const std::string& Name();
+        [[nodiscard]] const std::string& ParentScope();
+        [[nodiscard]] constexpr std::size_t Size() noexcept { return 13; }
+
+        [[nodiscard]] std::optional<::Core::Mouse::Key> FromString(const std::string& value);
+        [[nodiscard]] const std::string& ToString(::Core::Mouse::Key value);
+
+        [[nodiscard]] const std::array<::Core::Mouse::Key, 13>& ToArrayC();
+        [[nodiscard]] const std::array<std::string, 13>& ToArrayN();
+        [[nodiscard]] const std::unordered_map<::Core::Mouse::Key, std::string>& ToMapCN();
+        [[nodiscard]] const std::unordered_map<std::string, ::Core::Mouse::Key>& ToMapNC();
+
+    } // namespace Core::Mouse::Key
+
+    [[nodiscard]] const std::string& ToString(::Core::Mouse::Key value);
+
+    namespace Core::Mouse::Mod
+    {
+
+        // =================== DECLARATIONS =====================
+        [[nodiscard]] const std::string& Name();
+        [[nodiscard]] const std::string& ParentScope();
+        [[nodiscard]] constexpr std::size_t Size() noexcept { return 7; }
+
+        [[nodiscard]] std::optional<::Core::Mouse::Mod> FromString(const std::string& value);
+        [[nodiscard]] const std::string& ToString(::Core::Mouse::Mod value);
+
+        [[nodiscard]] const std::array<::Core::Mouse::Mod, 7>& ToArrayC();
+        [[nodiscard]] const std::array<std::string, 7>& ToArrayN();
+        [[nodiscard]] const std::unordered_map<::Core::Mouse::Mod, std::string>& ToMapCN();
+        [[nodiscard]] const std::unordered_map<std::string, ::Core::Mouse::Mod>& ToMapNC();
+
+    } // namespace Core::Mouse::Mod
+
+    [[nodiscard]] const std::string& ToString(::Core::Mouse::Mod value);
+
 } // namespace

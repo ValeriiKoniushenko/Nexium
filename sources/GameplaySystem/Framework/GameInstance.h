@@ -40,6 +40,7 @@ namespace Core
     class GameInstance : public BaseLog, public IDataStreamBridge
     {
     public:
+        ENUM_CLASS;
         enum class RenderMode
         {
             GameOnly,

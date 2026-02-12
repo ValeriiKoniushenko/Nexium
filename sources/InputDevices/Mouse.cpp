@@ -33,45 +33,6 @@
 
 namespace Core
 {
-    StringAtom Mouse::KeyToString(Key key)
-    {
-        // clang-format off
-        if (key == Key_Last) return "Last"_atom;
-        if (key == Key_Left) return "Left"_atom;
-        if (key == Key_Right) return "Right"_atom;
-        if (key == Key_Middle) return "Middle"_atom;
-        if (key == Key_1) return "1"_atom;
-        if (key == Key_2) return "2"_atom;
-        if (key == Key_3) return "3"_atom;
-        if (key == Key_4) return "4"_atom;
-        if (key == Key_5) return "5"_atom;
-        if (key == Key_6) return "6"_atom;
-        if (key == Key_7) return "7"_atom;
-        if (key == Key_8) return "8"_atom;
-        // clang-format on
-
-        return "None"_atom;
-    }
-
-    Mouse::Key Mouse::FromStringToKey(const StringAtom& str)
-    {
-        // clang-format off
-        if (str == "Last"_atom) return Key_Last;
-        if (str == "Left"_atom) return Key_Left;
-        if (str == "Right"_atom) return Key_Right;
-        if (str == "Middle"_atom) return Key_Middle;
-        if (str == "1"_atom) return Key_1;
-        if (str == "2"_atom) return Key_2;
-        if (str == "3"_atom) return Key_3;
-        if (str == "4"_atom) return Key_4;
-        if (str == "5"_atom) return Key_5;
-        if (str == "6"_atom) return Key_6;
-        if (str == "7"_atom) return Key_7;
-        if (str == "8"_atom) return Key_8;
-        // clang-format on
-
-        return Key_None;
-    }
 
     glm::vec2 Mouse::GetPosition()
     {
@@ -102,16 +63,16 @@ namespace Core
 
     bool Mouse::IsKeyPressed(Key key)
     {
-        return glfwGetMouseButton(GetWindow().getRawWindow(), key) == GLFW_PRESS;
+        return glfwGetMouseButton(GetWindow().getRawWindow(), static_cast<int>(key)) == GLFW_PRESS;
     }
 
     bool Mouse::IsKeyReleased(Key key)
     {
-        return glfwGetMouseButton(GetWindow().getRawWindow(), key) == GLFW_RELEASE;
+        return glfwGetMouseButton(GetWindow().getRawWindow(), static_cast<int>(key)) == GLFW_RELEASE;
     }
 
     bool Mouse::isKeyRepeated(Key key)
     {
-        return glfwGetMouseButton(GetWindow().getRawWindow(), key) == GLFW_REPEAT;
+        return glfwGetMouseButton(GetWindow().getRawWindow(), static_cast<int>(key)) == GLFW_REPEAT;
     }
 } // namespace Core

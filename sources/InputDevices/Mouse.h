@@ -34,6 +34,7 @@ namespace Core
     class Mouse
     {
     public:
+        ENUM_CLASS;
         enum class Mod
         {
             None,
@@ -45,21 +46,22 @@ namespace Core
             NumLock = GLFW_MOD_NUM_LOCK
         };
 
-        enum Key
+        ENUM_CLASS;
+        enum class Key
         {
-            Key_1 = GLFW_MOUSE_BUTTON_1,
-            Key_2 = GLFW_MOUSE_BUTTON_2,
-            Key_3 = GLFW_MOUSE_BUTTON_3,
-            Key_4 = GLFW_MOUSE_BUTTON_4,
-            Key_5 = GLFW_MOUSE_BUTTON_5,
-            Key_6 = GLFW_MOUSE_BUTTON_6,
-            Key_7 = GLFW_MOUSE_BUTTON_7,
-            Key_8 = GLFW_MOUSE_BUTTON_8,
-            Key_Last = GLFW_MOUSE_BUTTON_LAST,
-            Key_Left = GLFW_MOUSE_BUTTON_LEFT,
-            Key_Right = GLFW_MOUSE_BUTTON_RIGHT,
-            Key_Middle = GLFW_MOUSE_BUTTON_MIDDLE,
-            Key_None = ~0
+            _1 = GLFW_MOUSE_BUTTON_1,
+            _2 = GLFW_MOUSE_BUTTON_2,
+            _3 = GLFW_MOUSE_BUTTON_3,
+            _4 = GLFW_MOUSE_BUTTON_4,
+            _5 = GLFW_MOUSE_BUTTON_5,
+            _6 = GLFW_MOUSE_BUTTON_6,
+            _7 = GLFW_MOUSE_BUTTON_7,
+            _8 = GLFW_MOUSE_BUTTON_8,
+            Last = GLFW_MOUSE_BUTTON_LAST,
+            Left = GLFW_MOUSE_BUTTON_LEFT,
+            Right = GLFW_MOUSE_BUTTON_RIGHT,
+            Middle = GLFW_MOUSE_BUTTON_MIDDLE,
+            None = ~0
         };
 
         ENUM_CLASS;
@@ -71,10 +73,6 @@ namespace Core
         };
 
         Mouse() = delete;
-
-        [[nodiscard]] static StringAtom KeyToString(Key key);
-
-        [[nodiscard]] static Key FromStringToKey(const StringAtom& str);
 
         [[nodiscard]] static glm::vec2 GetPosition();
 

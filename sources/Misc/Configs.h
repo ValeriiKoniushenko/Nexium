@@ -67,7 +67,7 @@ namespace Core::Config
 
     namespace Input
     {
-        constexpr Keyboard::Key editorImGuiShowRect = Keyboard::Key::Key_F2;
+        constexpr Keyboard::Key editorImGuiShowRect = Keyboard::Key::F2;
     }
 
     static constexpr float windowAspectRatio = 16.f / 9.f;

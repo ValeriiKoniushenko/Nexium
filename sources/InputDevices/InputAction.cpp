@@ -36,10 +36,7 @@ namespace Core
 
     bool KeyboardInputAction::isKeyPressed() const
     {
-        if (_key
-            && _key
-
-                   != Keyboard::Key_None)
+        if (_key && _key != Keyboard::Key::None)
         {
             return Keyboard::IsKeyPressed(_key.value());
         }
@@ -68,7 +65,7 @@ namespace Core
         if (_key
             && _key
 
-                   != Mouse::Key_None)
+                   != Mouse::Key::None)
         {
             return Mouse::IsKeyPressed(_key.value());
         }
@@ -89,7 +86,7 @@ namespace Core
         if (gDragDrop.getState() == DragAndDrop::State::Dragging)
         {
             auto k = _key.value();
-            if (_key == Mouse::Key_None || (_key != Mouse::Key_None && isKeyPressed()))
+            if (_key == Mouse::Key::None || (_key != Mouse::Key::None && isKeyPressed()))
             {
                 onDrag->trigger(pos - *_lastMousePosition, SpecKeysState::fillAndGet());
             }

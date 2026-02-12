@@ -326,9 +326,9 @@ namespace Core
 
     void GameEditor::setupShortcuts()
     {
-        _subscriptionPool << keyboardInput.getOrCreate("Close editor", Keyboard::Key::Key_F12)
+        _subscriptionPool << keyboardInput.getOrCreate("Close editor", Keyboard::Key::F12)
                                  ->onPress->subscribeAndGetID([&](auto) { GetWindow().close(); });
-        auto saveKey = keyboardInput.getOrCreate("Save [Ctrl]", Keyboard::Key::Key_S);
+        auto saveKey = keyboardInput.getOrCreate("Save [Ctrl]", Keyboard::Key::S);
         saveKey->setIsRepeatable(false);
         _subscriptionPool << saveKey->onPress->subscribeAndGetID(
             [&](const KeyboardIA::SpecKeysState& spec)
@@ -340,23 +340,23 @@ namespace Core
             });
 
         auto toggleRenderMode
-            = keyboardInput.getOrCreate("Toggle render mode", Keyboard::Key::Key_F1);
+            = keyboardInput.getOrCreate("Toggle render mode", Keyboard::Key::F1);
         toggleRenderMode->setIsRepeatable(false);
         _subscriptionPool << toggleRenderMode->onPress->subscribeAndGetID(
             [](auto) { gGameInstance->toggleRenderMode(); });
 
-        _subscriptionPool << keyboardInput.getOrCreate("Cancel action", Keyboard::Key::Key_Escape)
+        _subscriptionPool << keyboardInput.getOrCreate("Cancel action", Keyboard::Key::Escape)
                                  ->onPress->subscribeAndGetID(
                                      [&](auto)
                                      {
                                          gGameInstance->objectSelectorManager.deselectAllAndClear();
                                      });
 
-        auto mouseMove = mouseInput.getOrCreate("mouseMove", Mouse::Key_Right);
+        auto mouseMove = mouseInput.getOrCreate("mouseMove", Mouse::Key::Right);
         _subscriptionPool << mouseMove->onDrag->subscribeAndGetID(
             [this](auto delta, auto spec) { handleMouseDrag(delta, spec); });
 
-        auto selectObject = mouseInput.getOrCreate("selectObject", Mouse::Key_Left);
+        auto selectObject = mouseInput.getOrCreate("selectObject", Mouse::Key::Left);
         selectObject->setIsRepeatable(false);
         _subscriptionPool << selectObject->onMouseClick->subscribeAndGetID(
             [this](auto pos, auto spec) { handleMouseClick(pos, spec); });

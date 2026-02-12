@@ -226,7 +226,7 @@ namespace Core
             const auto item = layout.addChildComponent<KeymapItem>();
             item->setReadOnly(true);
             item->setLabel(fst);
-            item->setButtonName(Keyboard::KeyToString(snd->getKey().value_or(Keyboard::Key_None)));
+            item->setButtonName(R::Core::Keyboard::Key::ToString(snd->getKey().value_or(Keyboard::Key::None)).c_str());
         }
 
         // static keys
@@ -234,7 +234,7 @@ namespace Core
             const auto item = layout.addChildComponent<KeymapItem>();
             item->setReadOnly(true);
             item->setLabel("Show ImGui debug rects");
-            item->setButtonName(Keyboard::KeyToString(Config::Input::editorImGuiShowRect));
+            item->setButtonName(R::Core::Keyboard::Key::ToString(Config::Input::editorImGuiShowRect).c_str());
         }
 
         if (auto spectator = gGameInstance->gameScene.gerFirstOf<Spectator>(); Verify(spectator))
@@ -249,7 +249,7 @@ namespace Core
                 item->setReadOnly(true);
                 item->setLabel(fst + (snd->onPress->isEmpty() ? "(disabled)" : ""));
                 item->setButtonName(
-                    Keyboard::KeyToString(snd->getKey().value_or(Keyboard::Key_None)));
+                    R::Core::Keyboard::Key::ToString(snd->getKey().value_or(Keyboard::Key::None)).c_str());
             }
         }
     }

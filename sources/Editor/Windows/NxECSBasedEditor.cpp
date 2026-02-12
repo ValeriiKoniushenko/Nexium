@@ -150,7 +150,7 @@ namespace Core
 
         // -+- -+- -+- -+- -+- -+- -+- -+- -+- -+- -+-
         auto deleteKey
-            = _keyboardManager.getOrCreate("Delete selected component", Keyboard::Key_Delete);
+            = _keyboardManager.getOrCreate("Delete selected component", Keyboard::Key::Delete);
         deleteKey->setIsRepeatable(false);
         _subscriptionPool << deleteKey->onPress->subscribeAndGetID(
             [&](auto) { removeCurrentComponent(_targetComponent); });

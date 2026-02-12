@@ -259,7 +259,7 @@ namespace Core
                     }
                     gDragDrop._state = DragAndDrop::State::Idle;
                     gDragDrop.payload = {};
-                    gDragDrop._key = Mouse::Key_None;
+                    gDragDrop._key = Mouse::Key::None;
                 }
                 else if (state == Mouse::State::Press)
                 {

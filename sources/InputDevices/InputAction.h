@@ -76,9 +76,9 @@ namespace Core
              */
             static SpecKeysState fillAndGet()
             {
-                return { .leftShift = Keyboard::getKeyState(Keyboard::Key::Key_Left_Shift),
-                         .leftAlt = Keyboard::getKeyState(Keyboard::Key::Key_Left_Alt),
-                         .leftCtrl = Keyboard::getKeyState(Keyboard::Key::Key_Left_Control) };
+                return { .leftShift = Keyboard::getKeyState(Keyboard::Key::Left_Shift),
+                         .leftAlt = Keyboard::getKeyState(Keyboard::Key::Left_Alt),
+                         .leftCtrl = Keyboard::getKeyState(Keyboard::Key::Left_Control) };
             }
         };
 
@@ -220,7 +220,7 @@ namespace Core
 
         MouseInputAction();
 
-        explicit MouseInputAction(const StringAtom& name, KeyT key = Mouse::Key_None);
+        explicit MouseInputAction(const StringAtom& name, KeyT key = Mouse::Key::None);
 
         explicit MouseInputAction(const StringAtom& name);
 
