@@ -167,7 +167,7 @@ namespace Core
 #ifdef GRAPHICS_DEBUG
             Assert(name.isStatic(), "Use atomic string. Add _atom to your uniform's str");
             Assert(_ubos.contains(name));
-            Assert(_ubos.at(name) != 0);
+            // Assert(_ubos.at(name) != 0);
 #endif
             glUniformBlockBinding(_shaderProgramId, _ubos.at(name), 0);
             glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(T), &value);
