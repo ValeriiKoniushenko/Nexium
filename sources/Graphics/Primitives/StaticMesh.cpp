@@ -132,15 +132,15 @@ namespace Core
             return;
         }
 
-        for (auto [val, mod] : _drawModifiers)
+        for (auto [value, mod] : _drawModifiers)
         {
             if (mod == Modifier::Enable)
             {
-                glEnable(val);
+                glEnable(static_cast<GLenum>(value));
             }
             else
             {
-                glDisable(val);
+                glDisable(static_cast<GLenum>(value));
             }
         }
 
@@ -182,15 +182,15 @@ namespace Core
                            nullptr);
         }
 
-        for (auto [val, mod] : _drawModifiers)
+        for (auto [value, mod] : _drawModifiers)
         {
             if (mod == Modifier::Disable)
             {
-                glEnable(val);
+                glEnable(static_cast<GLenum>(value));
             }
             else
             {
-                glDisable(val);
+                glDisable(static_cast<GLenum>(value));
             }
         }
 
@@ -322,15 +322,15 @@ namespace Core
 
     void StaticMesh::pureDraw(const std::function<void(StaticMesh*)>& onUniformSet)
     {
-        for (auto [val, mod] : _drawModifiers)
+        for (auto [value, mod] : _drawModifiers)
         {
             if (mod == Modifier::Enable)
             {
-                glEnable(val);
+                glEnable(static_cast<GLenum>(value));
             }
             else
             {
-                glDisable(val);
+                glDisable(static_cast<GLenum>(value));
             }
         }
 
@@ -345,15 +345,15 @@ namespace Core
         glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(_triangleCount), GL_UNSIGNED_INT,
                        nullptr);
 
-        for (auto [val, mod] : _drawModifiers)
+        for (auto [value, mod] : _drawModifiers)
         {
             if (mod == Modifier::Disable)
             {
-                glEnable(val);
+                glEnable(static_cast<GLenum>(value));
             }
             else
             {
-                glDisable(val);
+                glDisable(static_cast<GLenum>(value));
             }
         }
     }
@@ -410,7 +410,7 @@ namespace Core
         StaticMesh out{ name };
 
         out.setDrawModifiers({
-            { GraphicsComponentData::MV_CullFace, GraphicsComponentData::Modifier::Disable },
+            { GraphicsComponentData::ModifiedValue::CullFace, GraphicsComponentData::Modifier::Disable },
         });
 
         return out;
@@ -421,8 +421,8 @@ namespace Core
         StaticMesh out{ name };
 
         out.setDrawModifiers({
-            { GraphicsComponentData::MV_CullFace, GraphicsComponentData::Modifier::Disable },
-            { GraphicsComponentData::MV_Blend, GraphicsComponentData::Modifier::Enable },
+            { GraphicsComponentData::ModifiedValue::CullFace, GraphicsComponentData::Modifier::Disable },
+            { GraphicsComponentData::ModifiedValue::Blend, GraphicsComponentData::Modifier::Enable },
         });
 
         return out;

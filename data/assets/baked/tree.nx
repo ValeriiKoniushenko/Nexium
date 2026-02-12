@@ -15,9 +15,6 @@
             "isEnabled": true,
             "noTick": false
         },
-        "Actor": {
-            "isPostDraw": false
-        },
         "BaseComponent": {
             "children": [
                 {
@@ -311,6 +308,9 @@
             ],
             "name": "Tree",
             "type": "StaticMeshBundle"
+        },
+        "IDrawable": {
+            "isPostDraw": false
         },
         "StaticMeshBundle": {
             "ignoreSelect": false

@@ -274,8 +274,8 @@ namespace Core
 
         for (auto& [value, modifier] : values)
         {
-            map[value]++;
-            Assert(map[value] == 1, "The same modifier was added twice.");
+            map[static_cast<GLenum>(value)]++;
+            Assert(map[static_cast<GLenum>(value)] == 1, "The same modifier was added twice.");
         }
 #endif
 
@@ -289,8 +289,8 @@ namespace Core
 
         for (const auto& [value, modifier] : values)
         {
-            map[value]++;
-            Assert(map[value] == 1, "The same modifier was added twice.");
+            map[static_cast<GLenum>(value)]++;
+            Assert(map[static_cast<GLenum>(value)] == 1, "The same modifier was added twice.");
         }
 #endif
 
@@ -324,38 +324,46 @@ namespace Core
     {
         auto stream = out.dedicatedNesting("GraphicsComponentData");
 
-        stream.array("modifiers",
-                     [this](DataStream& out, std::size_t size)
-                     {
-                         if (out.getMode() == DataStream::Mode::Output)
-                         {
-                             for (auto [val, mod] : _drawModifiers)
-                             {
-                                 nlohmann::json modifier;
-                                 modifier["value"] = ToString(val);
-                                 modifier["modifier"]
-                                     = R::ToString(
-                                         mod);
-                                 out.getRaw().push_back(std::move(modifier));
-                             }
-                         }
-                         else
-                         {
-                             for (auto& modifier : out.getRaw())
-                             {
-                                 if (!modifier.contains("value") || !modifier.contains("modifier"))
-                                 {
-                                     continue;
-                                 }
+        stream.array(
+            "modifiers",
+            [this](DataStream& out, std::size_t size)
+            {
+                if (out.getMode() == DataStream::Mode::Output)
+                {
+                    for (auto [val, mod] : _drawModifiers)
+                    {
+                        nlohmann::json modifier;
+                        modifier["value"] = R::ToString(val);
+                        modifier["modifier"] = R::ToString(mod);
+                        out.getRaw().push_back(std::move(modifier));
+                    }
+                }
+                else
+                {
+                    for (auto& modifier : out.getRaw())
+                    {
+                        if (!modifier.contains("value") || !modifier.contains("modifier"))
+                        {
+                            continue;
+                        }
 
-                                 _drawModifiers.emplace_back(
-                                     FromString(modifier["value"]),
-                                     R::Core::GraphicsComponentData::Modifier::FromString(
-                                         modifier["modifier"])
-                                         .value_or(GraphicsComponentData::Modifier::None));
-                             }
-                         }
-                     });
+                        auto value = R::Core::GraphicsComponentData::ModifiedValue::FromString(
+                            modifier["value"]);
+                        auto param = R::Core::GraphicsComponentData::Modifier::FromString(
+                            modifier["modifier"]);
+
+                        if (!value || !param)
+                        {
+                            globalLog.errorLog(
+                                "Was got invalid GraphicsComponentData ModifiedValue: '{}' or Modifier: '{}'"_f
+                                << modifier["value"].get<std::string>()
+                                << modifier["modifier"].get<std::string>());
+                            continue;
+                        }
+                        _drawModifiers.emplace_back(value.value(), param.value());
+                    }
+                }
+            });
     }
 
     StringAtom GraphicsComponentData::getCacheHash() const
@@ -373,92 +381,4 @@ namespace Core
         _triangleCount = 0;
     }
 
-    StringAtom GraphicsComponentData::ToString(ModifiedValue v)
-    {
-        // clang-format off
-        if (MV_Blend == v) return "Blend"_atom;
-        if (MV_CullFace == v) return "CullFace"_atom;
-        if (MV_DepthTest == v) return "DepthTest"_atom;
-        if (MV_Dither == v) return "Dither"_atom;
-        if (MV_PolygonOffsetFill == v) return "PolygonOffsetFill"_atom;
-        if (MV_PolygonOffsetLine == v) return "PolygonOffsetLine"_atom;
-        if (MV_PolygonOffsetPoint == v) return "PolygonOffsetPoint"_atom;
-        if (MV_PrimitiveRestart == v) return "PrimitiveRestart"_atom;
-        if (MV_PrimitiveRestartFixedIndex == v) return "PrimitiveRestartFixedIndex"_atom;
-        if (MV_RasterizerDiscard == v) return "RasterizerDiscard"_atom;
-        if (MV_SampleAlphaToCoverage == v) return "SampleAlphaToCoverage"_atom;
-        if (MV_SampleAlphaToOne == v) return "SampleAlphaToOne"_atom;
-        if (MV_SampleCoverage == v) return "SampleCoverage"_atom;
-        if (MV_SampleMask == v) return "SampleMask"_atom;
-        if (MV_ScissorTest == v) return "ScissorTest"_atom;
-        if (MV_StencilTest == v) return "StencilTest"_atom;
-        if (MV_Multisample == v) return "Multisample"_atom;
-        if (MV_FramebufferSrgb == v) return "FramebufferSrgb"_atom;
-        if (MV_ProgramPointSize == v) return "ProgramPointSize"_atom;
-        // clang-format on
-
-        return { "" };
-    }
-
-    GraphicsComponentData::ModifiedValue GraphicsComponentData::FromString(const StringAtom& str)
-    {
-        // clang-format off
-        if (str == "Blend"_atom) return MV_Blend;
-        if (str == "CullFace"_atom) return MV_CullFace;
-        if (str == "DepthTest"_atom) return MV_DepthTest;
-        if (str == "Dither"_atom) return MV_Dither;
-        if (str == "PolygonOffsetFill"_atom) return MV_PolygonOffsetFill;
-        if (str == "PolygonOffsetLine"_atom) return MV_PolygonOffsetLine;
-        if (str == "PolygonOffsetPoint"_atom) return MV_PolygonOffsetPoint;
-        if (str == "PrimitiveRestart"_atom) return MV_PrimitiveRestart;
-        if (str == "PrimitiveRestartFixedIndex"_atom) return MV_PrimitiveRestartFixedIndex;
-        if (str == "RasterizerDiscard"_atom) return MV_RasterizerDiscard;
-        if (str == "SampleAlphaToCoverage"_atom) return MV_SampleAlphaToCoverage;
-        if (str == "SampleAlphaToOne"_atom) return MV_SampleAlphaToOne;
-        if (str == "SampleCoverage"_atom) return MV_SampleCoverage;
-        if (str == "SampleMask"_atom) return MV_SampleMask;
-        if (str == "ScissorTest"_atom) return MV_ScissorTest;
-        if (str == "StencilTest"_atom) return MV_StencilTest;
-        if (str == "Multisample"_atom) return MV_Multisample;
-        if (str == "FramebufferSrgb"_atom) return MV_FramebufferSrgb;
-        if (str == "ProgramPointSize"_atom) return MV_ProgramPointSize;
-        // clang-format on
-
-        return MV_None;
-    }
-
-    const std::vector<StringAtom>& GraphicsComponentData::ModifiedValueAsStringVector()
-    {
-        static const std::vector out = {
-            "Blend"_atom,
-            "CullFace"_atom,
-            "DepthTest"_atom,
-            "Dither"_atom,
-            "PolygonOffsetFill"_atom,
-            "PolygonOffsetLine"_atom,
-            "PolygonOffsetPoint"_atom,
-            "PrimitiveRestart"_atom,
-            "PrimitiveRestartFixedIndex"_atom,
-            "RasterizerDiscard"_atom,
-            "SampleAlphaToCoverage"_atom,
-            "SampleAlphaToOne"_atom,
-            "SampleCoverage"_atom,
-            "SampleMask"_atom,
-            "ScissorTest"_atom,
-            "StencilTest"_atom,
-            "Multisample"_atom,
-            "FramebufferSrgb"_atom,
-            "ProgramPointSize"_atom,
-        };
-        return out;
-    }
-
-    const std::vector<StringAtom>& GraphicsComponentData::ModifierAsStringVector()
-    {
-        static const std::vector<StringAtom> out = {
-            "Enable",
-            "Disable",
-        };
-        return out;
-    }
 } // namespace Core

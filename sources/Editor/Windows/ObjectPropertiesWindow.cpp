@@ -131,36 +131,60 @@ namespace Core
         GraphicsComponentData::ModifierParam& data) const
     {
         auto l = Gui::HorizontalLayout::Create();
-        const auto comboModifier = l->addChildComponent<Gui::ComboModelBased>();
-        comboModifier->setDataProvider(
-            [](std::size_t i, StringAtom& out) -> const void*
-            {
-                out = GraphicsComponentData::ModifierAsStringVector().at(i);
-                return &GraphicsComponentData::ModifierAsStringVector().at(i);
-            });
-        comboModifier->setSizeProvider(
-            [] { return GraphicsComponentData::ModifierAsStringVector().size(); });
-        comboModifier->setFlex(Gui::Flex::FlexWidth);
-        comboModifier->setCurrentIndex(static_cast<int>(data.modifier) - 1);
 
-        const auto comboValues = l->addChildComponent<Gui::ComboModelBased>();
-        comboValues->setDataProvider(
-            [](std::size_t i, StringAtom& out) -> const void*
-            {
-                out = GraphicsComponentData::ModifiedValueAsStringVector().at(i);
-                return &GraphicsComponentData::ModifiedValueAsStringVector().at(i);
-            });
-        comboValues->setSizeProvider(
-            [] { return GraphicsComponentData::ModifiedValueAsStringVector().size(); });
-        comboValues->setFlex(Gui::Flex::FlexWidth);
-
-        auto it = std::ranges::find(GraphicsComponentData::ModifiedValueAsStringVector(),
-                                    GraphicsComponentData::ToString(data.value));
-        if (it != GraphicsComponentData::ModifiedValueAsStringVector().end())
         {
-            comboValues->setCurrentIndex(
-                std::distance(GraphicsComponentData::ModifiedValueAsStringVector().begin(), it));
+            static const auto& modifiers = []()
+            {
+                const auto& m = R::Core::GraphicsComponentData::Modifier::ToArrayN();
+
+                std::vector<std::string> out(m.begin(), m.end());
+                std::ranges::sort(out);
+                auto r = std::ranges::remove(out, "None");
+                out.erase(r.begin(), r.end());
+                return out;
+            }();
+
+            const auto comboModifier = l->addChildComponent<Gui::ComboModelBased>();
+            comboModifier->setDataProvider(
+                [](std::size_t i, StringAtom& out) -> const void*
+                {
+                    out = modifiers.at(i);
+                    return &modifiers.at(i);
+                });
+            comboModifier->setSizeProvider([] { return modifiers.size(); });
+            comboModifier->setFlex(Gui::Flex::FlexWidth);
+            comboModifier->setCurrentIndex(static_cast<int>(data.modifier) - 1);
         }
+
+        {
+            static const auto& values = []()
+            {
+                const auto& m = R::Core::GraphicsComponentData::ModifiedValue::ToArrayN();
+
+                std::vector<std::string> out(m.begin(), m.end());
+                std::ranges::sort(out);
+                auto r = std::ranges::remove(out, "None");
+                out.erase(r.begin(), r.end());
+                return out;
+            }();
+
+            const auto comboValues = l->addChildComponent<Gui::ComboModelBased>();
+            comboValues->setDataProvider(
+                [](std::size_t i, StringAtom& out) -> const void*
+                {
+                    out = values.at(i);
+                    return &values.at(i);
+                });
+            comboValues->setSizeProvider([] { return values.size(); });
+            comboValues->setFlex(Gui::Flex::FlexWidth);
+
+            auto it = std::ranges::find(values, R::ToString(data.value));
+            if (it != values.end())
+            {
+                comboValues->setCurrentIndex(std::distance(values.begin(), it));
+            }
+        }
+
         return l;
     }
 
@@ -169,26 +193,52 @@ namespace Core
     {
         GraphicsComponentData::ModifierParam out;
 
-        if (auto modifier = layout->getFirstChildAs<Gui::ComboModelBased>(); modifier)
         {
-            auto str = GraphicsComponentData::ModifierAsStringVector()[modifier->getCurrentIndex()];
-            out.modifier
-                = R::Core::GraphicsComponentData::Modifier::FromString(str.c_str()).value();
-        }
-        else
-        {
-            Assert(false);
+            static const auto& modifiers = []()
+            {
+                const auto& m = R::Core::GraphicsComponentData::Modifier::ToArrayN();
+
+                std::vector<std::string> out(m.begin(), m.end());
+                std::ranges::sort(out);
+                auto r = std::ranges::remove(out, "None");
+                out.erase(r.begin(), r.end());
+                return out;
+            }();
+
+            if (auto modifier = layout->getFirstChildAs<Gui::ComboModelBased>(); modifier)
+            {
+                const auto str = modifiers[modifier->getCurrentIndex()];
+                out.modifier
+                    = R::Core::GraphicsComponentData::Modifier::FromString(str.c_str()).value();
+            }
+            else
+            {
+                Assert(false);
+            }
         }
 
-        if (auto value = layout->getLastChildAs<Gui::ComboModelBased>(); value)
         {
-            auto str
-                = GraphicsComponentData::ModifiedValueAsStringVector()[value->getCurrentIndex()];
-            out.value = GraphicsComponentData::FromString(str);
-        }
-        else
-        {
-            Assert(false);
+            static const auto& values = []()
+            {
+                const auto& m = R::Core::GraphicsComponentData::ModifiedValue::ToArrayN();
+
+                std::vector<std::string> out(m.begin(), m.end());
+                std::ranges::sort(out);
+                auto r = std::ranges::remove(out, "None");
+                out.erase(r.begin(), r.end());
+                return out;
+            }();
+
+            if (auto value = layout->getLastChildAs<Gui::ComboModelBased>(); value)
+            {
+                const auto str = values[value->getCurrentIndex()];
+                out.value = R::Core::GraphicsComponentData::ModifiedValue::FromString(str).value_or(
+                    GraphicsComponentData::ModifiedValue::None);
+            }
+            else
+            {
+                Assert(false);
+            }
         }
 
         return out;

@@ -15,6 +15,26 @@
 namespace R
 {
 
+    namespace Core::GraphicsComponentData::ModifiedValue
+    {
+
+        // =================== DECLARATIONS =====================
+        [[nodiscard]] const std::string& Name();
+        [[nodiscard]] const std::string& ParentScope();
+        [[nodiscard]] constexpr std::size_t Size() noexcept { return 20; }
+
+        [[nodiscard]] std::optional<::Core::GraphicsComponentData::ModifiedValue> FromString(const std::string& value);
+        [[nodiscard]] const std::string& ToString(::Core::GraphicsComponentData::ModifiedValue value);
+
+        [[nodiscard]] const std::array<::Core::GraphicsComponentData::ModifiedValue, 20>& ToArrayC();
+        [[nodiscard]] const std::array<std::string, 20>& ToArrayN();
+        [[nodiscard]] const std::unordered_map<::Core::GraphicsComponentData::ModifiedValue, std::string>& ToMapCN();
+        [[nodiscard]] const std::unordered_map<std::string, ::Core::GraphicsComponentData::ModifiedValue>& ToMapNC();
+
+    } // namespace Core::GraphicsComponentData::ModifiedValue
+
+    [[nodiscard]] const std::string& ToString(::Core::GraphicsComponentData::ModifiedValue value);
+
     namespace Core::GraphicsComponentData::Modifier
     {
 

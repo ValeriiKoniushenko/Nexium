@@ -285,9 +285,9 @@ namespace Core
             _name = std::move(other._name);
             _children = std::move(other._children);
 
+            Assert(other._type.isStatic());
             _type = std::move(other._type);
             Assert(_type.isStatic());
-            Assert(other._type.isStatic());
 
             _parent = other._parent;
             _isInitialized = other._isInitialized;

@@ -41,43 +41,37 @@ namespace Core
             Disable,
         };
 
-        enum ModifiedValue : GLenum
+
+        ENUM_CLASS;
+        enum class ModifiedValue : GLenum
         {
-            MV_Blend = GL_BLEND,
-            MV_CullFace = GL_CULL_FACE,
-            MV_DepthTest = GL_DEPTH_TEST,
-            MV_Dither = GL_DITHER,
-            MV_PolygonOffsetFill = GL_POLYGON_OFFSET_FILL,
-            MV_PolygonOffsetLine = GL_POLYGON_OFFSET_LINE,
-            MV_PolygonOffsetPoint = GL_POLYGON_OFFSET_POINT,
-            MV_PrimitiveRestart = GL_PRIMITIVE_RESTART,
-            MV_PrimitiveRestartFixedIndex = GL_PRIMITIVE_RESTART_FIXED_INDEX,
-            MV_RasterizerDiscard = GL_RASTERIZER_DISCARD,
-            MV_SampleAlphaToCoverage = GL_SAMPLE_ALPHA_TO_COVERAGE,
-            MV_SampleAlphaToOne = GL_SAMPLE_ALPHA_TO_ONE,
-            MV_SampleCoverage = GL_SAMPLE_COVERAGE,
-            MV_SampleMask = GL_SAMPLE_MASK,
-            MV_ScissorTest = GL_SCISSOR_TEST,
-            MV_StencilTest = GL_STENCIL_TEST,
-            MV_Multisample = GL_MULTISAMPLE,
-            MV_FramebufferSrgb = GL_FRAMEBUFFER_SRGB,
-            MV_ProgramPointSize = GL_PROGRAM_POINT_SIZE,
-            MV_None
+            Blend = GL_BLEND,
+            CullFace = GL_CULL_FACE,
+            DepthTest = GL_DEPTH_TEST,
+            Dither = GL_DITHER,
+            PolygonOffsetFill = GL_POLYGON_OFFSET_FILL,
+            PolygonOffsetLine = GL_POLYGON_OFFSET_LINE,
+            PolygonOffsetPoint = GL_POLYGON_OFFSET_POINT,
+            PrimitiveRestart = GL_PRIMITIVE_RESTART,
+            PrimitiveRestartFixedIndex = GL_PRIMITIVE_RESTART_FIXED_INDEX,
+            RasterizerDiscard = GL_RASTERIZER_DISCARD,
+            SampleAlphaToCoverage = GL_SAMPLE_ALPHA_TO_COVERAGE,
+            SampleAlphaToOne = GL_SAMPLE_ALPHA_TO_ONE,
+            SampleCoverage = GL_SAMPLE_COVERAGE,
+            SampleMask = GL_SAMPLE_MASK,
+            ScissorTest = GL_SCISSOR_TEST,
+            StencilTest = GL_STENCIL_TEST,
+            Multisample = GL_MULTISAMPLE,
+            FramebufferSrgb = GL_FRAMEBUFFER_SRGB,
+            ProgramPointSize = GL_PROGRAM_POINT_SIZE,
+            None
         };
 
         struct ModifierParam
         {
-            ModifiedValue value = MV_None;
+            ModifiedValue value = ModifiedValue::None;
             Modifier modifier = Modifier::None;
         };
-
-        [[nodiscard]] static StringAtom ToString(ModifiedValue v);
-
-        [[nodiscard]] static ModifiedValue FromString(const StringAtom& str);
-
-        [[nodiscard]] static const std::vector<StringAtom>& ModifiedValueAsStringVector();
-
-        [[nodiscard]] static const std::vector<StringAtom>& ModifierAsStringVector();
 
     public:
         GraphicsComponentData() = default;
