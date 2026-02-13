@@ -61,7 +61,7 @@ namespace Core::Gui
             return *_height + (_paddings.z + _paddings.w);
         }
 
-        if (!hasParent() && (_flex & Flex::FlexHeight) != 0)
+        if (!hasParent() && (static_cast<int>(_flex) & static_cast<int>(Flex::FlexHeight)) != 0)
         {
             return ImGui::GetContentRegionAvail().y;
         }
@@ -311,7 +311,7 @@ namespace Core::Gui
                 continue;
             }
             const auto w = child->unsafeCastTo<Widget>();
-            if ((w->getFlex() & Flex::FlexWidth) != 0)
+            if ((static_cast<int>(w->getFlex()) & static_cast<int>(Flex::FlexWidth)) != 0)
             {
                 w->setWidth(ownWidth);
             }
@@ -337,8 +337,8 @@ namespace Core::Gui
                 continue;
             }
             const auto w = child->unsafeCastTo<Widget>();
-            const auto type = w->getFlex();
-            if ((type & Flex::FlexHeight) != 0)
+            const auto type = static_cast<int>(w->getFlex());
+            if ((type & static_cast<int>(Flex::FlexHeight)) != 0)
             {
                 ++flexCount;
             }
@@ -362,7 +362,7 @@ namespace Core::Gui
                 continue;
             }
             auto w = child->unsafeCastTo<Widget>();
-            if ((w->getFlex() & Flex::FlexHeight) != 0)
+            if ((static_cast<int>(w->getFlex()) & static_cast<int>(Flex::FlexHeight)) != 0)
             {
                 const float gap = deCounter != 0 ? defaultSpacing : 0;
                 const float finalHeight

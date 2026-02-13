@@ -43,7 +43,8 @@ namespace Core::Gui
         Bottom        // For vertical align
     };
 
-    enum Flex
+    ENUM_CLASS;
+    enum class Flex
     {
         None = 0,
         Fixed = 1,

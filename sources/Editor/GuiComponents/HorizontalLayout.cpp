@@ -86,7 +86,7 @@ namespace Core::Gui
                 auto* w = child->unsafeCastTo<Widget>();
                 width += w->getWidth();
                 ++total;
-                if ((w->getFlex() & Flex::FlexWidth) != 0)
+                if ((static_cast<int>(w->getFlex()) & static_cast<int>(Flex::FlexWidth)) != 0)
                 {
                     ++flexWidthCount;
                 }
@@ -344,14 +344,14 @@ namespace Core::Gui
                 continue;
             }
             const auto w = child->unsafeCastTo<Widget>();
-            const auto type = w->getFlex();
-            if ((type & Flex::Fixed) != 0)
+            const auto type = static_cast<int>(w->getFlex());
+            if ((type & static_cast<int>(Flex::Fixed)) != 0)
             {
                 width -= w->getWidth();
                 width -= defaultSpacing;
                 ++fixedCount;
             }
-            else if ((type & Flex::FlexWidth) != 0)
+            else if ((type & static_cast<int>(Flex::FlexWidth)) != 0)
             {
                 ++flexWidthCount;
             }
@@ -369,7 +369,7 @@ namespace Core::Gui
                 continue;
             }
             auto w = child->unsafeCastTo<Widget>();
-            if ((w->getFlex() & Flex::FlexWidth) != 0)
+            if ((static_cast<int>(w->getFlex()) & static_cast<int>(Flex::FlexWidth)) != 0)
             {
                 const float gap = deCounter != 0 ? defaultSpacing : 0;
                 const float finalWidth
