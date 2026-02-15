@@ -32,7 +32,7 @@
 
 namespace Core
 {
-    ENUM_CLASS;
+    ENUM_CLASS();
     enum class ShaderType : GLenum
     {
         None = 0,

@@ -31,7 +31,7 @@
 
 namespace Core::Gui
 {
-    ENUM_CLASS;
+    ENUM_CLASS();
     enum class Align
     {
         None,
@@ -43,7 +43,7 @@ namespace Core::Gui
         Bottom        // For vertical align
     };
 
-    ENUM_CLASS;
+    ENUM_CLASS();
     enum class Flex
     {
         None = 0,

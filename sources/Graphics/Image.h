@@ -37,7 +37,7 @@ namespace Core
     {
     public:
         // The next values were taken from the stb_image.h documentation.
-        ENUM_CLASS;
+        ENUM_CLASS();
         enum class Channel
         {
             None = 0,

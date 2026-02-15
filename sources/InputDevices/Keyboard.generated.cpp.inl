@@ -24,7 +24,7 @@ namespace R
             {
                 return it->second;
             }
-            static constexpr std::string empty{};
+            static const std::string empty{};
             return empty;
         }
 
@@ -109,7 +109,7 @@ namespace R
             {
                 return it->second;
             }
-            static constexpr std::string empty{};
+            static const std::string empty{};
             return empty;
         }
 

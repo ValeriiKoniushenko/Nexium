@@ -35,7 +35,7 @@ namespace Core
     public:
         inline static const char* fileExtension = ".nxsky";
 
-        ENUM_CLASS;
+        ENUM_CLASS();
         enum class Direction
         {
             Right,

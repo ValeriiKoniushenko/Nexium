@@ -40,7 +40,7 @@ namespace Core
         ECS_COMPONENT_DECL(Gizmo, StaticMeshBundle);
 
     public:
-        ENUM_CLASS;
+        ENUM_CLASS();
         enum class Direction
         {
             X,

@@ -31,12 +31,13 @@
 // clang-format off
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
+#include "JustReflectMe/Adapter.h"
 // clang-format on
 
 namespace Core
 {
 
-    ENUM_CLASS;
+    ENUM_CLASS();
     enum class ViewportMode
     {
         Default,

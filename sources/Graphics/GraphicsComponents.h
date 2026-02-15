@@ -33,7 +33,7 @@ namespace Core
     class GraphicsComponentData : public IDataUpdateBridge
     {
     public:
-        ENUM_CLASS;
+        ENUM_CLASS();
         enum class Modifier
         {
             None,
@@ -42,7 +42,7 @@ namespace Core
         };
 
 
-        ENUM_CLASS;
+        ENUM_CLASS();
         enum class ModifiedValue : GLenum
         {
             Blend = GL_BLEND,

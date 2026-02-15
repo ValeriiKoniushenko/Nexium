@@ -51,7 +51,7 @@ namespace Core
             StringAtom type;
         };
 
-        ENUM_CLASS;
+        ENUM_CLASS();
         enum class State
         {
             Idle,
@@ -100,7 +100,7 @@ namespace Core
     class Window : public BaseLog, public IDataStreamBridge, public Singleton<Window>
     {
     public:
-        ENUM_CLASS;
+        ENUM_CLASS();
         enum class CursorMode
         {
             Normal = GLFW_CURSOR_NORMAL,

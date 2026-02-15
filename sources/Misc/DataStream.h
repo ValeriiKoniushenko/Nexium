@@ -89,14 +89,14 @@ namespace Core
     class DataStream
     {
     public:
-        ENUM_CLASS;
+        ENUM_CLASS();
         enum class Mode
         {
             Input,
             Output
         };
 
-        ENUM_CLASS;
+        ENUM_CLASS();
         enum class Result
         {
             Success,

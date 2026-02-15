@@ -89,7 +89,7 @@ namespace Core
     class AssetsManager : public BaseLog
     {
     public:
-        ENUM_CLASS;
+        ENUM_CLASS();
         enum class NodeType
         {
             Default,

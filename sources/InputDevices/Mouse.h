@@ -34,7 +34,7 @@ namespace Core
     class Mouse
     {
     public:
-        ENUM_CLASS;
+        ENUM_CLASS();
         enum class Mod
         {
             None,
@@ -46,7 +46,7 @@ namespace Core
             NumLock = GLFW_MOD_NUM_LOCK
         };
 
-        ENUM_CLASS;
+        ENUM_CLASS();
         enum class Key
         {
             _1 = GLFW_MOUSE_BUTTON_1,
@@ -64,7 +64,7 @@ namespace Core
             None = ~0
         };
 
-        ENUM_CLASS;
+        ENUM_CLASS();
         enum class State
         {
             None,

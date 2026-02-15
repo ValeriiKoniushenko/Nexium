@@ -33,7 +33,7 @@ namespace Core
     class Keyboard final
     {
     public:
-        ENUM_CLASS;
+        ENUM_CLASS();
         enum class Key
         {
             None,
@@ -160,7 +160,7 @@ namespace Core
             Last = GLFW_KEY_LAST,
         };
 
-        ENUM_CLASS;
+        ENUM_CLASS();
         enum class KeyState
         {
             None,

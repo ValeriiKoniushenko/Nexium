@@ -81,7 +81,7 @@ namespace Core
             }
         };
 
-        ENUM_CLASS;
+        ENUM_CLASS();
         enum class Status
         {
             NotLoaded,       // Absolutely not loaded. Asset's type is undefined
