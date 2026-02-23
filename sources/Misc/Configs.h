@@ -81,3 +81,4 @@ namespace Core::Config
     inline static const char* defaultWindowName = "Nexium Engine";
     static constexpr ISize2 defaultWindowSize = ISize2{ 1200, 800 };
 } // namespace Core::Config
+#include "Configs.generated.h" // added by the code generator. Better don't move it.

@@ -711,3 +711,4 @@
 #define ICON_FA_SUPERPOWERS                         "\xef\x8b\x9d" // U+f2dd
 #define ICON_FA_WPEXPLORER                          "\xef\x8b\x9e" // U+f2de
 #define ICON_FA_MEETUP                              "\xef\x8b\xa0" // U+f2e0
+#include "IconsFontAwesome.generated.inl" // added by the code generator. Better don't move it.

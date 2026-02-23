@@ -35,3 +35,4 @@ namespace InputDevices
     [[nodiscard]] spdlog::logger* getLogger();
 
 } // namespace InputDevices
+#include "ModuleInfo.generated.h" // added by the code generator. Better don't move it.

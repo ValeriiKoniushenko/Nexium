@@ -24,6 +24,9 @@
 
 #include "IDrawable.h"
 
+
+#include "IDrawable.generated.cpp.inl" // this line added by the code generator.
+
 namespace Core
 {
 

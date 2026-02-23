@@ -31,3 +31,4 @@ namespace Core::Gui
     [[nodiscard]] bool CollapsingHeader(const char* label, ImGuiTreeNodeFlags flags,
                                         float paddings = 0.f);
 } // namespace Core::Gui
+#include "Misc.generated.h" // added by the code generator. Better don't move it.

@@ -128,3 +128,4 @@ namespace Core
         bool _isDirtyModelMatrix = true;
     };
 } // namespace Core
+#include "Transformable.generated.h" // added by the code generator. Better don't move it.

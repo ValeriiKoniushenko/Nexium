@@ -24,6 +24,9 @@
 
 #include "BaseComponentAdapter.h"
 
+
+#include "BaseComponentAdapter.generated.cpp.inl" // this line added by the code generator.
+
 using namespace Core::Gui;
 
 namespace Core

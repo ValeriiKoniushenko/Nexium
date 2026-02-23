@@ -65,3 +65,4 @@ namespace Core::AssetImpl
     };
 
 } // namespace Core::AssetImpl
+#include "StaticMeshBundle.generated.h" // added by the code generator. Better don't move it.

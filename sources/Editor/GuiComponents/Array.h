@@ -311,3 +311,4 @@ namespace Core::Gui
     using StringArray
         = BaseArray<StringAtom, _StringArray_ArrayCellViewerFunc, _StringArray_ViewFetchFunc>;
 } // namespace Core::Gui
+#include "Array.generated.h" // added by the code generator. Better don't move it.

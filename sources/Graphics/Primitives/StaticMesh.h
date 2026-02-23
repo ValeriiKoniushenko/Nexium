@@ -133,3 +133,4 @@ namespace Core
         [[nodiscard]] static StaticMesh CreateBiBlendSide(const StringAtom& name = ""_atom);
     };
 } // namespace Core
+#include "StaticMesh.generated.h" // added by the code generator. Better don't move it.

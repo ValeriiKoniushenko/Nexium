@@ -182,3 +182,4 @@ namespace Core::Gui
     using FloatInput = NumInput<float>;
     using IntInput = NumInput<int>;
 } // namespace Core::Gui
+#include "Input.generated.h" // added by the code generator. Better don't move it.

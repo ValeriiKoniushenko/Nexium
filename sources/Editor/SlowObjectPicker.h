@@ -49,3 +49,4 @@ namespace Core
         bool _requested = false;
     };
 } // namespace Core
+#include "SlowObjectPicker.generated.h" // added by the code generator. Better don't move it.

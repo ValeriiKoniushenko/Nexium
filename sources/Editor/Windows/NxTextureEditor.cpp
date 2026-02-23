@@ -25,6 +25,7 @@
 #include "NxTextureEditor.h"
 
 #include "GameplaySystem/Framework/GameInstance.h"
+#include "NxTextureEditor.generated.cpp.inl" // this line added by the code generator.
 
 using namespace Core::Gui;
 
@@ -40,7 +41,8 @@ namespace Core
         }
 
         _imageSize->input->setInputtedData(_targetAsset->getSize().toGlm());
-        _imageChannelType->input->setInputtedData(R::ToString(_targetAsset->getChannels()));
+        _imageChannelType->input->setInputtedData(
+            R<Image::Channel>::ToString(_targetAsset->getChannels()).data());
         _pathToImage->input->setInputtedData(_targetAsset->getFilePath().generic_string());
         _isFlipVertical->input->setValue(_targetAsset->isFlipVertically());
     }

@@ -28,6 +28,9 @@
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
 
+
+#include "StaticMeshBundle.generated.cpp.inl" // this line added by the code generator.
+
 namespace Core::AssetImpl
 {
 

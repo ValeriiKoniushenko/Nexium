@@ -35,3 +35,4 @@ namespace AssetsManager
     [[nodiscard]] spdlog::logger* getLogger();
 
 } // namespace AssetsManager
+#include "ModuleInfo.generated.h" // added by the code generator. Better don't move it.

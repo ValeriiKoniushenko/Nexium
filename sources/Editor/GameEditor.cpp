@@ -49,6 +49,9 @@
 #include "Windows/NxTextureEditor.h"
 #include "Windows/WorldLightning.h"
 
+
+#include "GameEditor.generated.cpp.inl" // this line added by the code generator.
+
 using namespace Core;
 
 namespace

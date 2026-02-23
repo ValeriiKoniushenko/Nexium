@@ -6,33 +6,91 @@
  * Your changes will be replaced next time
  */
 
-#pragma once
+#include <array>
 #include <optional>
 #include <string>
-#include <array>
 #include <unordered_map>
 
-namespace R
+template<>
+struct R<Core::ECSAsset::Status>
 {
+    static constexpr std::string_view Name() { return "Status"; }
+    static constexpr std::size_t Size() { return 5; }
+    static constexpr std::string_view ParentScope() { return "Core::ECSAsset"; }
 
-    namespace Core::ECSAsset::Status
+    static std::string_view ToString(::Core::ECSAsset::Status value)
     {
+        const auto& data = R<Core::ECSAsset::Status>::ToMapCN();
+        const auto it = data.find(value);
+        if (it != data.end()) [[likely]]
+        {
+            return it->second;
+        }
+        static const std::string_view empty{};
+        return empty;
+    }
 
-        // =================== DECLARATIONS =====================
-        [[nodiscard]] const std::string& Name();
-        [[nodiscard]] const std::string& ParentScope();
-        [[nodiscard]] constexpr std::size_t Size() noexcept { return 5; }
+    static std::optional<::Core::ECSAsset::Status> FromString(std::string_view value)
+    {
+        const auto& data = R<Core::ECSAsset::Status>::ToMapNC();
+        const auto it = data.find(value);
+        if (it != data.end()) [[likely]]
+        {
+            return it->second;
+        }
+        return std::nullopt;
+    }
 
-        [[nodiscard]] std::optional<::Core::ECSAsset::Status> FromString(const std::string& value);
-        [[nodiscard]] const std::string& ToString(::Core::ECSAsset::Status value);
+    static consteval const std::array<::Core::ECSAsset::Status, 5>& ToArrayC()
+    {
+        static constexpr std::array<::Core::ECSAsset::Status, 5> constants = {
+				::Core::ECSAsset::Status::NotLoaded,
+				::Core::ECSAsset::Status::PreLoaded,
+				::Core::ECSAsset::Status::Loaded,
+				::Core::ECSAsset::Status::PreLoadingError,
+				::Core::ECSAsset::Status::LoadingError
+        };
 
-        [[nodiscard]] const std::array<::Core::ECSAsset::Status, 5>& ToArrayC();
-        [[nodiscard]] const std::array<std::string, 5>& ToArrayN();
-        [[nodiscard]] const std::unordered_map<::Core::ECSAsset::Status, std::string>& ToMapCN();
-        [[nodiscard]] const std::unordered_map<std::string, ::Core::ECSAsset::Status>& ToMapNC();
+        return constants;
+    }
 
-    } // namespace Core::ECSAsset::Status
+    static consteval const std::array<std::string_view, 5>& ToArrayN()
+    {
+        static constexpr std::array<std::string_view, 5> names = {
+				std::string_view("NotLoaded"),
+				std::string_view("PreLoaded"),
+				std::string_view("Loaded"),
+				std::string_view("PreLoadingError"),
+				std::string_view("LoadingError")
+        };
 
-    [[nodiscard]] const std::string& ToString(::Core::ECSAsset::Status value);
+        return names;
+    }
 
-} // namespace
+    static const std::unordered_map<::Core::ECSAsset::Status, std::string_view>& ToMapCN()
+    {
+        static const std::unordered_map<::Core::ECSAsset::Status, std::string_view> map = {
+				{ ::Core::ECSAsset::Status::NotLoaded, "NotLoaded" },
+				{ ::Core::ECSAsset::Status::PreLoaded, "PreLoaded" },
+				{ ::Core::ECSAsset::Status::Loaded, "Loaded" },
+				{ ::Core::ECSAsset::Status::PreLoadingError, "PreLoadingError" },
+				{ ::Core::ECSAsset::Status::LoadingError, "LoadingError" }
+        };
+
+        return map;
+    }
+
+    static const std::unordered_map<std::string_view, ::Core::ECSAsset::Status>& ToMapNC()
+    {
+        static const std::unordered_map<std::string_view, ::Core::ECSAsset::Status> map = {
+				{ "NotLoaded", ::Core::ECSAsset::Status::NotLoaded },
+				{ "PreLoaded", ::Core::ECSAsset::Status::PreLoaded },
+				{ "Loaded", ::Core::ECSAsset::Status::Loaded },
+				{ "PreLoadingError", ::Core::ECSAsset::Status::PreLoadingError },
+				{ "LoadingError", ::Core::ECSAsset::Status::LoadingError }
+        };
+
+        return map;
+    }
+}; // struct R<Core::ECSAsset::Status>
+

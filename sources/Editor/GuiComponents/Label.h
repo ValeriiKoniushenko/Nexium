@@ -83,3 +83,4 @@ namespace Core::Gui
         bool _isTruncateLongText = true;
     };
 } // namespace Core::Gui
+#include "Label.generated.h" // added by the code generator. Better don't move it.

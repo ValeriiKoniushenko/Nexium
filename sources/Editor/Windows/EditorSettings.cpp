@@ -33,6 +33,7 @@
 #include "Editor/GuiComponents/List.h"
 #include "Editor/GuiComponents/Separator.h"
 #include "Editor/GuiComponents/Spacer.h"
+#include "EditorSettings.generated.cpp.inl" // this line added by the code generator.
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Scene/Spectator.h"
 
@@ -226,7 +227,8 @@ namespace Core
             const auto item = layout.addChildComponent<KeymapItem>();
             item->setReadOnly(true);
             item->setLabel(fst);
-            item->setButtonName(R::Core::Keyboard::Key::ToString(snd->getKey().value_or(Keyboard::Key::None)).c_str());
+            item->setButtonName(
+                R<Keyboard::Key>::ToString(snd->getKey().value_or(Keyboard::Key::None)).data());
         }
 
         // static keys
@@ -234,7 +236,8 @@ namespace Core
             const auto item = layout.addChildComponent<KeymapItem>();
             item->setReadOnly(true);
             item->setLabel("Show ImGui debug rects");
-            item->setButtonName(R::Core::Keyboard::Key::ToString(Config::Input::editorImGuiShowRect).c_str());
+            item->setButtonName(
+                R<Keyboard::Key>::ToString(Config::Input::editorImGuiShowRect).data());
         }
 
         if (auto spectator = gGameInstance->gameScene.gerFirstOf<Spectator>(); Verify(spectator))
@@ -249,7 +252,7 @@ namespace Core
                 item->setReadOnly(true);
                 item->setLabel(fst + (snd->onPress->isEmpty() ? "(disabled)" : ""));
                 item->setButtonName(
-                    R::Core::Keyboard::Key::ToString(snd->getKey().value_or(Keyboard::Key::None)).c_str());
+                    R<Keyboard::Key>::ToString(snd->getKey().value_or(Keyboard::Key::None)).data());
             }
         }
     }

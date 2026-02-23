@@ -38,6 +38,9 @@
 #include "TextEditor.h"
 #include "WorldLightning.h"
 
+
+#include "EditorMenuBarWindow.generated.cpp.inl" // this line added by the code generator.
+
 namespace
 {
     template<Core::IsEditorWindowComponent T>

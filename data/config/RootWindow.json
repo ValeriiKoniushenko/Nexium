@@ -1,9 +1,9 @@
 {
     "Window": {
-        "isMaximized": false,
+        "isMaximized": true,
         "size": {
-            "height": 940,
-            "width": 1796
+            "height": 1010,
+            "width": 1920
         },
         "title": "Nexium Engine",
         "vSync": false

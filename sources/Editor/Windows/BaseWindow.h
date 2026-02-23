@@ -150,3 +150,4 @@ namespace Core
         void endWindowDraw() override;
     };
 } // namespace Core
+#include "BaseWindow.generated.h" // added by the code generator. Better don't move it.

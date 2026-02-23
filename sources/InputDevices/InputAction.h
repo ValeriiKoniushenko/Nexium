@@ -261,3 +261,5 @@ namespace Core
         requires std::derived_from<std::remove_reference_t<T>, InputAction<typename T::KeyT>>;
     };
 } // namespace Core
+
+#include "InputAction.generated.h" // added by the code generator. Better don't move it.

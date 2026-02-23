@@ -80,3 +80,4 @@ namespace Core::Gui
         std::optional<float> _spacing;
     };
 } // namespace Core::Gui
+#include "VerticalLayout.generated.h" // added by the code generator. Better don't move it.

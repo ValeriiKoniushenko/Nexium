@@ -28,6 +28,9 @@
 #include "Editor/Windows/NxECSBasedEditor.h"
 #include "ModuleInfo.h"
 
+
+#include "BaseComponent.generated.cpp.inl" // this line added by the code generator.
+
 namespace
 {
     template<typename T, typename... Rest>

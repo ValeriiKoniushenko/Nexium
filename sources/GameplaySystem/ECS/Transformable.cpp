@@ -30,6 +30,9 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include "glm/gtx/string_cast.hpp"
 
+
+#include "Transformable.generated.cpp.inl" // this line added by the code generator.
+
 namespace Core
 {
     void Transformable::setPosition(const GPos3& position) noexcept

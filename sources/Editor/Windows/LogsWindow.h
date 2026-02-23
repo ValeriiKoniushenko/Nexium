@@ -112,3 +112,4 @@ namespace Core
         std::vector<LogLine> _logs;
     };
 } // namespace Core
+#include "LogsWindow.generated.h" // added by the code generator. Better don't move it.

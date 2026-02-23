@@ -35,3 +35,4 @@ namespace Camera
     [[nodiscard]] spdlog::logger* getLogger();
 
 } // namespace Camera
+#include "ModuleInfo.generated.h" // added by the code generator. Better don't move it.

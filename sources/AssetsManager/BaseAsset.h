@@ -192,3 +192,4 @@ namespace Core
         T* _asset = nullptr;
     };
 } // namespace Core
+#include "BaseAsset.generated.h" // added by the code generator. Better don't move it.

@@ -6,33 +6,95 @@
  * Your changes will be replaced next time
  */
 
-#pragma once
+#include <array>
 #include <optional>
 #include <string>
-#include <array>
 #include <unordered_map>
 
-namespace R
+template<>
+struct R<Core::SkyboxAsset::Direction>
 {
+    static constexpr std::string_view Name() { return "Direction"; }
+    static constexpr std::size_t Size() { return 6; }
+    static constexpr std::string_view ParentScope() { return "Core::SkyboxAsset"; }
 
-    namespace Core::SkyboxAsset::Direction
+    static std::string_view ToString(::Core::SkyboxAsset::Direction value)
     {
+        const auto& data = R<Core::SkyboxAsset::Direction>::ToMapCN();
+        const auto it = data.find(value);
+        if (it != data.end()) [[likely]]
+        {
+            return it->second;
+        }
+        static const std::string_view empty{};
+        return empty;
+    }
 
-        // =================== DECLARATIONS =====================
-        [[nodiscard]] const std::string& Name();
-        [[nodiscard]] const std::string& ParentScope();
-        [[nodiscard]] constexpr std::size_t Size() noexcept { return 6; }
+    static std::optional<::Core::SkyboxAsset::Direction> FromString(std::string_view value)
+    {
+        const auto& data = R<Core::SkyboxAsset::Direction>::ToMapNC();
+        const auto it = data.find(value);
+        if (it != data.end()) [[likely]]
+        {
+            return it->second;
+        }
+        return std::nullopt;
+    }
 
-        [[nodiscard]] std::optional<::Core::SkyboxAsset::Direction> FromString(const std::string& value);
-        [[nodiscard]] const std::string& ToString(::Core::SkyboxAsset::Direction value);
+    static consteval const std::array<::Core::SkyboxAsset::Direction, 6>& ToArrayC()
+    {
+        static constexpr std::array<::Core::SkyboxAsset::Direction, 6> constants = {
+				::Core::SkyboxAsset::Direction::Right,
+				::Core::SkyboxAsset::Direction::Left,
+				::Core::SkyboxAsset::Direction::Top,
+				::Core::SkyboxAsset::Direction::Bottom,
+				::Core::SkyboxAsset::Direction::Front,
+				::Core::SkyboxAsset::Direction::Back
+        };
 
-        [[nodiscard]] const std::array<::Core::SkyboxAsset::Direction, 6>& ToArrayC();
-        [[nodiscard]] const std::array<std::string, 6>& ToArrayN();
-        [[nodiscard]] const std::unordered_map<::Core::SkyboxAsset::Direction, std::string>& ToMapCN();
-        [[nodiscard]] const std::unordered_map<std::string, ::Core::SkyboxAsset::Direction>& ToMapNC();
+        return constants;
+    }
 
-    } // namespace Core::SkyboxAsset::Direction
+    static consteval const std::array<std::string_view, 6>& ToArrayN()
+    {
+        static constexpr std::array<std::string_view, 6> names = {
+				std::string_view("Right"),
+				std::string_view("Left"),
+				std::string_view("Top"),
+				std::string_view("Bottom"),
+				std::string_view("Front"),
+				std::string_view("Back")
+        };
 
-    [[nodiscard]] const std::string& ToString(::Core::SkyboxAsset::Direction value);
+        return names;
+    }
 
-} // namespace
+    static const std::unordered_map<::Core::SkyboxAsset::Direction, std::string_view>& ToMapCN()
+    {
+        static const std::unordered_map<::Core::SkyboxAsset::Direction, std::string_view> map = {
+				{ ::Core::SkyboxAsset::Direction::Right, "Right" },
+				{ ::Core::SkyboxAsset::Direction::Left, "Left" },
+				{ ::Core::SkyboxAsset::Direction::Top, "Top" },
+				{ ::Core::SkyboxAsset::Direction::Bottom, "Bottom" },
+				{ ::Core::SkyboxAsset::Direction::Front, "Front" },
+				{ ::Core::SkyboxAsset::Direction::Back, "Back" }
+        };
+
+        return map;
+    }
+
+    static const std::unordered_map<std::string_view, ::Core::SkyboxAsset::Direction>& ToMapNC()
+    {
+        static const std::unordered_map<std::string_view, ::Core::SkyboxAsset::Direction> map = {
+				{ "Right", ::Core::SkyboxAsset::Direction::Right },
+				{ "Left", ::Core::SkyboxAsset::Direction::Left },
+				{ "Top", ::Core::SkyboxAsset::Direction::Top },
+				{ "Bottom", ::Core::SkyboxAsset::Direction::Bottom },
+				{ "Front", ::Core::SkyboxAsset::Direction::Front },
+				{ "Back", ::Core::SkyboxAsset::Direction::Back }
+        };
+
+        return map;
+    }
+}; // struct R<Core::SkyboxAsset::Direction>
+

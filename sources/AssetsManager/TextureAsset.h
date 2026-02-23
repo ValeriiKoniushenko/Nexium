@@ -73,3 +73,4 @@ namespace Core
 
     using NXTexture = AssetRef<TextureAsset>;
 } // namespace Core
+#include "TextureAsset.generated.h" // added by the code generator. Better don't move it.

@@ -35,3 +35,4 @@ namespace Ecs
     [[nodiscard]] spdlog::logger* getLogger();
 
 } // namespace Ecs
+#include "ModuleInfo.generated.h" // added by the code generator. Better don't move it.

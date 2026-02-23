@@ -26,6 +26,9 @@
 
 #include "ImGui/imgui_internal.h"
 
+
+#include "RootDockWindow.generated.cpp.inl" // this line added by the code generator.
+
 namespace Core
 {
     ECS_COMPONENT_IMPL(RootDockWindowEWC)

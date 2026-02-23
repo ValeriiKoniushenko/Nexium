@@ -149,3 +149,4 @@ namespace Core
     extern GlobalLog globalLog;
 
 } // namespace Core
+#include "BaseLog.generated.h" // added by the code generator. Better don't move it.

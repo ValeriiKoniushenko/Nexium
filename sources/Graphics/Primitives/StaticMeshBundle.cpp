@@ -32,6 +32,9 @@
 
 #include <Core/Timer.h>
 
+
+#include "StaticMeshBundle.generated.cpp.inl" // this line added by the code generator.
+
 using namespace Core;
 
 namespace

@@ -181,3 +181,4 @@ namespace Core::Gui
         NXTexture _texture;
     };
 } // namespace Core::Gui
+#include "Button.generated.h" // added by the code generator. Better don't move it.

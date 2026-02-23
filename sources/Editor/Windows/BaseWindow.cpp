@@ -24,6 +24,9 @@
 
 #include "BaseWindow.h"
 
+
+#include "BaseWindow.generated.cpp.inl" // this line added by the code generator.
+
 namespace Core
 {
     ECS_COMPONENT_IMPL(BaseEWC)

@@ -97,3 +97,4 @@ namespace Core
         std::filesystem::path _inputPath;
     };
 } // namespace Core
+#include "ShaderManager.generated.h" // added by the code generator. Better don't move it.

@@ -77,3 +77,5 @@ namespace Core::AssetImpl
     [[nodiscard]] Factory& GetFactory();
 
 } // namespace Core::AssetImpl
+
+#include "Factory.generated.h" // added by the code generator. Better don't move it.

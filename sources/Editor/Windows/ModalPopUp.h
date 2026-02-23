@@ -64,3 +64,4 @@ namespace Core
         bool _hasOpenRequest = false;
     };
 } // namespace Core
+#include "ModalPopUp.generated.h" // added by the code generator. Better don't move it.

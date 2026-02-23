@@ -113,3 +113,4 @@ namespace Core
         bool _isCopy = true;
     };
 } // namespace Core
+#include "AssetsManagerWindow.generated.h" // added by the code generator. Better don't move it.

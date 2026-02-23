@@ -91,3 +91,4 @@ namespace Core
         bool _isDirtyProjMatrix = true;
     };
 } // namespace Core
+#include "Camera.generated.h" // added by the code generator. Better don't move it.

@@ -31,6 +31,9 @@
 
 #include <cmath>
 
+
+#include "Camera.generated.cpp.inl" // this line added by the code generator.
+
 namespace Core
 {
     ECS_COMPONENT_IMPL(BaseCamera)

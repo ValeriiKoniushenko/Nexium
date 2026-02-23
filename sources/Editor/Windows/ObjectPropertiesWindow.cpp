@@ -36,6 +36,7 @@
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Graphics/Primitives/StaticMeshBundle.h"
 #include "ImGui/imgui_internal.h"
+#include "ObjectPropertiesWindow.generated.cpp.inl" // this line added by the code generator.
 
 using namespace Core;
 using namespace Core::Gui;
@@ -135,7 +136,7 @@ namespace Core
         {
             static const auto& modifiers = []()
             {
-                const auto& m = R::Core::GraphicsComponentData::Modifier::ToArrayN();
+                const auto& m = R<GraphicsComponentData::Modifier>::ToArrayN();
 
                 std::vector<std::string> out(m.begin(), m.end());
                 std::ranges::sort(out);
@@ -159,7 +160,7 @@ namespace Core
         {
             static const auto& values = []()
             {
-                const auto& m = R::Core::GraphicsComponentData::ModifiedValue::ToArrayN();
+                const auto& m = R<GraphicsComponentData::ModifiedValue>::ToArrayN();
 
                 std::vector<std::string> out(m.begin(), m.end());
                 std::ranges::sort(out);
@@ -178,7 +179,7 @@ namespace Core
             comboValues->setSizeProvider([] { return values.size(); });
             comboValues->setFlex(Gui::Flex::FlexWidth);
 
-            auto it = std::ranges::find(values, R::ToString(data.value));
+            auto it = std::ranges::find(values, R<decltype(data.value)>::ToString(data.value));
             if (it != values.end())
             {
                 comboValues->setCurrentIndex(std::distance(values.begin(), it));
@@ -196,7 +197,7 @@ namespace Core
         {
             static const auto& modifiers = []()
             {
-                const auto& m = R::Core::GraphicsComponentData::Modifier::ToArrayN();
+                const auto& m = R<GraphicsComponentData::Modifier>::ToArrayN();
 
                 std::vector<std::string> out(m.begin(), m.end());
                 std::ranges::sort(out);
@@ -208,8 +209,7 @@ namespace Core
             if (auto modifier = layout->getFirstChildAs<Gui::ComboModelBased>(); modifier)
             {
                 const auto str = modifiers[modifier->getCurrentIndex()];
-                out.modifier
-                    = R::Core::GraphicsComponentData::Modifier::FromString(str.c_str()).value();
+                out.modifier = R<GraphicsComponentData::Modifier>::FromString(str.c_str()).value();
             }
             else
             {
@@ -220,7 +220,7 @@ namespace Core
         {
             static const auto& values = []()
             {
-                const auto& m = R::Core::GraphicsComponentData::ModifiedValue::ToArrayN();
+                const auto& m = R<GraphicsComponentData::ModifiedValue>::ToArrayN();
 
                 std::vector<std::string> out(m.begin(), m.end());
                 std::ranges::sort(out);
@@ -232,7 +232,7 @@ namespace Core
             if (auto value = layout->getLastChildAs<Gui::ComboModelBased>(); value)
             {
                 const auto str = values[value->getCurrentIndex()];
-                out.value = R::Core::GraphicsComponentData::ModifiedValue::FromString(str).value_or(
+                out.value = R<GraphicsComponentData::ModifiedValue>::FromString(str).value_or(
                     GraphicsComponentData::ModifiedValue::None);
             }
             else

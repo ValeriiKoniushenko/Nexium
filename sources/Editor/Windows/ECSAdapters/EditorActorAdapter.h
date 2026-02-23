@@ -63,3 +63,4 @@ namespace Core
     };
 
 } // namespace Core
+#include "EditorActorAdapter.generated.h" // added by the code generator. Better don't move it.

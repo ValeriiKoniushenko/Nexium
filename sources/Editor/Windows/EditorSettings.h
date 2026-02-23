@@ -126,3 +126,4 @@ namespace Core
         int _defaultTreeNodeFlags = ImGuiTreeNodeFlags_SpanAvailWidth;
     };
 } // namespace Core
+#include "EditorSettings.generated.h" // added by the code generator. Better don't move it.

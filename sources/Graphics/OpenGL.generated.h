@@ -6,33 +6,79 @@
  * Your changes will be replaced next time
  */
 
-#pragma once
+#include <array>
 #include <optional>
 #include <string>
-#include <array>
 #include <unordered_map>
 
-namespace R
+template<>
+struct R<Core::ViewportMode>
 {
+    static constexpr std::string_view Name() { return "ViewportMode"; }
+    static constexpr std::size_t Size() { return 2; }
+    static constexpr std::string_view ParentScope() { return "Core"; }
 
-    namespace Core::ViewportMode
+    static std::string_view ToString(::Core::ViewportMode value)
     {
+        const auto& data = R<Core::ViewportMode>::ToMapCN();
+        const auto it = data.find(value);
+        if (it != data.end()) [[likely]]
+        {
+            return it->second;
+        }
+        static const std::string_view empty{};
+        return empty;
+    }
 
-        // =================== DECLARATIONS =====================
-        [[nodiscard]] const std::string& Name();
-        [[nodiscard]] const std::string& ParentScope();
-        [[nodiscard]] constexpr std::size_t Size() noexcept { return 2; }
+    static std::optional<::Core::ViewportMode> FromString(std::string_view value)
+    {
+        const auto& data = R<Core::ViewportMode>::ToMapNC();
+        const auto it = data.find(value);
+        if (it != data.end()) [[likely]]
+        {
+            return it->second;
+        }
+        return std::nullopt;
+    }
 
-        [[nodiscard]] std::optional<::Core::ViewportMode> FromString(const std::string& value);
-        [[nodiscard]] const std::string& ToString(::Core::ViewportMode value);
+    static consteval const std::array<::Core::ViewportMode, 2>& ToArrayC()
+    {
+        static constexpr std::array<::Core::ViewportMode, 2> constants = {
+				::Core::ViewportMode::Default,
+				::Core::ViewportMode::ZoomIn
+        };
 
-        [[nodiscard]] const std::array<::Core::ViewportMode, 2>& ToArrayC();
-        [[nodiscard]] const std::array<std::string, 2>& ToArrayN();
-        [[nodiscard]] const std::unordered_map<::Core::ViewportMode, std::string>& ToMapCN();
-        [[nodiscard]] const std::unordered_map<std::string, ::Core::ViewportMode>& ToMapNC();
+        return constants;
+    }
 
-    } // namespace Core::ViewportMode
+    static consteval const std::array<std::string_view, 2>& ToArrayN()
+    {
+        static constexpr std::array<std::string_view, 2> names = {
+				std::string_view("Default"),
+				std::string_view("ZoomIn")
+        };
 
-    [[nodiscard]] const std::string& ToString(::Core::ViewportMode value);
+        return names;
+    }
 
-} // namespace
+    static const std::unordered_map<::Core::ViewportMode, std::string_view>& ToMapCN()
+    {
+        static const std::unordered_map<::Core::ViewportMode, std::string_view> map = {
+				{ ::Core::ViewportMode::Default, "Default" },
+				{ ::Core::ViewportMode::ZoomIn, "ZoomIn" }
+        };
+
+        return map;
+    }
+
+    static const std::unordered_map<std::string_view, ::Core::ViewportMode>& ToMapNC()
+    {
+        static const std::unordered_map<std::string_view, ::Core::ViewportMode> map = {
+				{ "Default", ::Core::ViewportMode::Default },
+				{ "ZoomIn", ::Core::ViewportMode::ZoomIn }
+        };
+
+        return map;
+    }
+}; // struct R<Core::ViewportMode>
+

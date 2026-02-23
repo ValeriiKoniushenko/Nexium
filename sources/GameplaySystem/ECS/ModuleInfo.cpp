@@ -27,6 +27,9 @@
 #include "Misc/BaseLog.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 
+
+#include "ModuleInfo.generated.cpp.inl" // this line added by the code generator.
+
 namespace Ecs
 {
 

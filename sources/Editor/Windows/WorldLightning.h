@@ -58,3 +58,4 @@ namespace Core
         Gui::Float3Input* _sunDirection = nullptr;
     };
 } // namespace Core
+#include "WorldLightning.generated.h" // added by the code generator. Better don't move it.

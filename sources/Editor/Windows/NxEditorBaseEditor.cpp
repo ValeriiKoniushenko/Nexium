@@ -26,6 +26,9 @@
 
 #include "AssetsManager/AssetsManager.h"
 
+
+#include "NxEditorBaseEditor.generated.cpp.inl" // this line added by the code generator.
+
 namespace Core
 {
     ECS_COMPONENT_IMPL(NxEditorBaseEditorEWC)

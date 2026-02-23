@@ -74,3 +74,4 @@ namespace Core
         bool _isPostDraw = false;
     };
 } // namespace Core
+#include "IDrawable.generated.h" // added by the code generator. Better don't move it.

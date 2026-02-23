@@ -66,3 +66,4 @@ namespace Core
         [[nodiscard]] std::filesystem::path getTargetPath() const;
     };
 } // namespace Core
+#include "JsonCacheable.generated.h" // added by the code generator. Better don't move it.

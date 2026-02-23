@@ -31,3 +31,4 @@ class TemplateGameInstance : public Core::GameInstance
 protected:
     void onLoadCoreResources() override;
 };
+#include "TemplateGameInstance.generated.h" // added by the code generator. Better don't move it.

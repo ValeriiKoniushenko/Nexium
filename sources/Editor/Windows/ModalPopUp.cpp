@@ -26,6 +26,9 @@
 
 #include "GameplaySystem/Framework/GameInstance.h"
 
+
+#include "ModalPopUp.generated.cpp.inl" // this line added by the code generator.
+
 namespace Core
 {
     ECS_COMPONENT_IMPL(ModalPopUp);

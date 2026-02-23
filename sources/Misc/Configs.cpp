@@ -24,6 +24,9 @@
 
 #include "Configs.h"
 
+
+#include "Configs.generated.cpp.inl" // this line added by the code generator.
+
 namespace Core::Config
 {
     namespace Path

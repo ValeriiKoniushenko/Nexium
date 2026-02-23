@@ -52,3 +52,4 @@ namespace Core
         bool _isGenerated = false;
     };
 } // namespace Core
+#include "RenderTargetToTexture.generated.h" // added by the code generator. Better don't move it.

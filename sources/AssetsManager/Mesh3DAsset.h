@@ -80,3 +80,4 @@ namespace Core
 
     using NXMesh3D = AssetRef<Mesh3DAsset>;
 } // namespace Core
+#include "Mesh3DAsset.generated.h" // added by the code generator. Better don't move it.

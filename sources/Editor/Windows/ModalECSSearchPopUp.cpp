@@ -31,6 +31,9 @@
 #include "Editor/GuiComponents/Separator.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 
+
+#include "ModalECSSearchPopUp.generated.cpp.inl" // this line added by the code generator.
+
 namespace Core
 {
     ECS_COMPONENT_IMPL(ModalECSSearchPopUpEWC);

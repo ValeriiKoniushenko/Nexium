@@ -333,8 +333,8 @@ namespace Core
                     for (auto [val, mod] : _drawModifiers)
                     {
                         nlohmann::json modifier;
-                        modifier["value"] = R::ToString(val);
-                        modifier["modifier"] = R::ToString(mod);
+                        modifier["value"] = R<decltype(val)>::ToString(val);
+                        modifier["modifier"] = R<decltype(mod)>::ToString(mod);
                         out.getRaw().push_back(std::move(modifier));
                     }
                 }
@@ -347,10 +347,10 @@ namespace Core
                             continue;
                         }
 
-                        auto value = R::Core::GraphicsComponentData::ModifiedValue::FromString(
-                            modifier["value"]);
-                        auto param = R::Core::GraphicsComponentData::Modifier::FromString(
-                            modifier["modifier"]);
+                        auto value = R<GraphicsComponentData::ModifiedValue>::FromString(
+                            modifier["value"].get<std::string_view>());
+                        auto param = R<GraphicsComponentData::Modifier>::FromString(
+                            modifier["modifier"].get<std::string_view>());
 
                         if (!value || !param)
                         {

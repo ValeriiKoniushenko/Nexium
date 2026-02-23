@@ -35,3 +35,4 @@ namespace Graphics
     [[nodiscard]] spdlog::logger* getLogger();
 
 } // namespace Graphics
+#include "ModuleInfo.generated.h" // added by the code generator. Better don't move it.

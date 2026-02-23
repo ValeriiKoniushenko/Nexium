@@ -29,6 +29,9 @@
 
 #include <shared_mutex>
 
+
+#include "BaseLog.generated.cpp.inl" // this line added by the code generator.
+
 namespace Core
 {
     GlobalLog globalLog = {};

@@ -197,3 +197,4 @@ namespace Core
         [[maybe_unused]] void debugUniform(const StringAtom& name) const;
     };
 } // namespace Core
+#include "ShaderProgram.generated.h" // added by the code generator. Better don't move it.

@@ -61,3 +61,4 @@ namespace Core
         ISize2 _size;
     };
 } // namespace Core
+#include "Texture.generated.h" // added by the code generator. Better don't move it.

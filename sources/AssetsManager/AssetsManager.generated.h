@@ -6,33 +6,91 @@
  * Your changes will be replaced next time
  */
 
-#pragma once
+#include <array>
 #include <optional>
 #include <string>
-#include <array>
 #include <unordered_map>
 
-namespace R
+template<>
+struct R<Core::AssetsManager::NodeType>
 {
+    static constexpr std::string_view Name() { return "NodeType"; }
+    static constexpr std::size_t Size() { return 5; }
+    static constexpr std::string_view ParentScope() { return "Core::AssetsManager"; }
 
-    namespace Core::AssetsManager::NodeType
+    static std::string_view ToString(::Core::AssetsManager::NodeType value)
     {
+        const auto& data = R<Core::AssetsManager::NodeType>::ToMapCN();
+        const auto it = data.find(value);
+        if (it != data.end()) [[likely]]
+        {
+            return it->second;
+        }
+        static const std::string_view empty{};
+        return empty;
+    }
 
-        // =================== DECLARATIONS =====================
-        [[nodiscard]] const std::string& Name();
-        [[nodiscard]] const std::string& ParentScope();
-        [[nodiscard]] constexpr std::size_t Size() noexcept { return 5; }
+    static std::optional<::Core::AssetsManager::NodeType> FromString(std::string_view value)
+    {
+        const auto& data = R<Core::AssetsManager::NodeType>::ToMapNC();
+        const auto it = data.find(value);
+        if (it != data.end()) [[likely]]
+        {
+            return it->second;
+        }
+        return std::nullopt;
+    }
 
-        [[nodiscard]] std::optional<::Core::AssetsManager::NodeType> FromString(const std::string& value);
-        [[nodiscard]] const std::string& ToString(::Core::AssetsManager::NodeType value);
+    static consteval const std::array<::Core::AssetsManager::NodeType, 5>& ToArrayC()
+    {
+        static constexpr std::array<::Core::AssetsManager::NodeType, 5> constants = {
+				::Core::AssetsManager::NodeType::Default,
+				::Core::AssetsManager::NodeType::Code,
+				::Core::AssetsManager::NodeType::Image,
+				::Core::AssetsManager::NodeType::Folder,
+				::Core::AssetsManager::NodeType::NxFile
+        };
 
-        [[nodiscard]] const std::array<::Core::AssetsManager::NodeType, 5>& ToArrayC();
-        [[nodiscard]] const std::array<std::string, 5>& ToArrayN();
-        [[nodiscard]] const std::unordered_map<::Core::AssetsManager::NodeType, std::string>& ToMapCN();
-        [[nodiscard]] const std::unordered_map<std::string, ::Core::AssetsManager::NodeType>& ToMapNC();
+        return constants;
+    }
 
-    } // namespace Core::AssetsManager::NodeType
+    static consteval const std::array<std::string_view, 5>& ToArrayN()
+    {
+        static constexpr std::array<std::string_view, 5> names = {
+				std::string_view("Default"),
+				std::string_view("Code"),
+				std::string_view("Image"),
+				std::string_view("Folder"),
+				std::string_view("NxFile")
+        };
 
-    [[nodiscard]] const std::string& ToString(::Core::AssetsManager::NodeType value);
+        return names;
+    }
 
-} // namespace
+    static const std::unordered_map<::Core::AssetsManager::NodeType, std::string_view>& ToMapCN()
+    {
+        static const std::unordered_map<::Core::AssetsManager::NodeType, std::string_view> map = {
+				{ ::Core::AssetsManager::NodeType::Default, "Default" },
+				{ ::Core::AssetsManager::NodeType::Code, "Code" },
+				{ ::Core::AssetsManager::NodeType::Image, "Image" },
+				{ ::Core::AssetsManager::NodeType::Folder, "Folder" },
+				{ ::Core::AssetsManager::NodeType::NxFile, "NxFile" }
+        };
+
+        return map;
+    }
+
+    static const std::unordered_map<std::string_view, ::Core::AssetsManager::NodeType>& ToMapNC()
+    {
+        static const std::unordered_map<std::string_view, ::Core::AssetsManager::NodeType> map = {
+				{ "Default", ::Core::AssetsManager::NodeType::Default },
+				{ "Code", ::Core::AssetsManager::NodeType::Code },
+				{ "Image", ::Core::AssetsManager::NodeType::Image },
+				{ "Folder", ::Core::AssetsManager::NodeType::Folder },
+				{ "NxFile", ::Core::AssetsManager::NodeType::NxFile }
+        };
+
+        return map;
+    }
+}; // struct R<Core::AssetsManager::NodeType>
+

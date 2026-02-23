@@ -24,6 +24,9 @@
 
 #include "JsonAdapter.h"
 
+
+#include "JsonAdapter.generated.cpp.inl" // this line added by the code generator.
+
 namespace glm
 {
     void to_json(nlohmann::json& j, const vec4& v)

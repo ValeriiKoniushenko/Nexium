@@ -188,3 +188,4 @@ namespace Core
         [[nodiscard]] StringAtom getCacheHash() const override { return "MouseInputManger"_atom; }
     };
 } // namespace Core
+#include "InputManager.generated.h" // added by the code generator. Better don't move it.
