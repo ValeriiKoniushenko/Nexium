@@ -29,9 +29,6 @@
 #include "assimp/postprocess.h"
 #include "assimp/scene.h"
 
-
-#include "Mesh3DAsset.generated.cpp.inl" // this line added by the code generator.
-
 namespace Assimp
 {
 

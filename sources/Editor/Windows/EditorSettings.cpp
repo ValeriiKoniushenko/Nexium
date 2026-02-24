@@ -33,7 +33,6 @@
 #include "Editor/GuiComponents/List.h"
 #include "Editor/GuiComponents/Separator.h"
 #include "Editor/GuiComponents/Spacer.h"
-#include "EditorSettings.generated.cpp.inl" // this line added by the code generator.
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Scene/Spectator.h"
 

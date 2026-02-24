@@ -26,9 +26,6 @@
 
 #include "BaseLog.h"
 
-
-#include "AssimpHelper.generated.cpp.inl" // this line added by the code generator.
-
 namespace Assimp
 {
     Core::StringAtom aiPostProcessStepsToString(aiPostProcessSteps val)

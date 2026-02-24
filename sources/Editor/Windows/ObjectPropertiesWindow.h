@@ -162,4 +162,3 @@ namespace Core
         AbstractComponent* _target = nullptr;
     };
 } // namespace Core
-#include "ObjectPropertiesWindow.generated.h" // added by the code generator. Better don't move it.

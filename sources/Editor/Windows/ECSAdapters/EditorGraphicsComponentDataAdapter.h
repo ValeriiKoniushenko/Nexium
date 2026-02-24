@@ -56,4 +56,3 @@ namespace Core
     };
 
 } // namespace Core
-#include "EditorGraphicsComponentDataAdapter.generated.inl" // added by the code generator. Better don't move it.

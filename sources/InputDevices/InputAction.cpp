@@ -27,9 +27,6 @@
 #include "Graphics/Window.h"
 #include "Keyboard.h"
 
-
-#include "InputAction.generated.cpp.inl" // this line added by the code generator.
-
 namespace Core
 {
     KeyboardInputAction::KeyboardInputAction(const StringAtom& name, KeyT key)

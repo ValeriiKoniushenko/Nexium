@@ -27,9 +27,6 @@
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "ImGui/imgui_internal.h"
 
-
-#include "GameViewport.generated.cpp.inl" // this line added by the code generator.
-
 namespace Core
 {
     ECS_COMPONENT_IMPL(GameViewportEWC)

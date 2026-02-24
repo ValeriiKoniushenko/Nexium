@@ -24,8 +24,10 @@
 
 #include "GraphicsComponents.h"
 
-#include "GraphicsComponents.generated.cpp.inl" // this line added by the code generator.
 #include "assimp/scene.h"
+
+
+#include "GraphicsComponents.generated.cpp.inl" // this line added by the code generator.
 
 namespace Core
 {

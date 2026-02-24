@@ -35,4 +35,3 @@ namespace Editor
     [[nodiscard]] spdlog::logger* getLogger();
 
 } // namespace Editor
-#include "ModuleInfo.generated.h" // added by the code generator. Better don't move it.

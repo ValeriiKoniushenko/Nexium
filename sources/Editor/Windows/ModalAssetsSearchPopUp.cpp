@@ -31,9 +31,6 @@
 #include "Editor/GuiComponents/Separator.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 
-
-#include "ModalAssetsSearchPopUp.generated.cpp.inl" // this line added by the code generator.
-
 namespace Core
 {
     ECS_COMPONENT_IMPL(ModalAssetsSearchPopUpEWC);

@@ -139,4 +139,5 @@ namespace Core
         std::filesystem::path _fragmentShaderPath;
     };
 } // namespace Core
+
 #include "ShaderProgramMeta.generated.h" // added by the code generator. Better don't move it.

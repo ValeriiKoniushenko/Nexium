@@ -26,9 +26,6 @@
 
 #include "ImGui/imgui_internal.h"
 
-
-#include "HorizontalLayout.generated.cpp.inl" // this line added by the code generator.
-
 namespace Core::Gui
 {
     ECS_COMPONENT_IMPL(HorizontalLayout)

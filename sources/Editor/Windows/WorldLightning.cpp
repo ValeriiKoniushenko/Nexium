@@ -29,9 +29,6 @@
 #include "Editor/GuiComponents/VecInput.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 
-
-#include "WorldLightning.generated.cpp.inl" // this line added by the code generator.
-
 namespace Core
 {
     ECS_COMPONENT_IMPL(WorldLightningEWC)

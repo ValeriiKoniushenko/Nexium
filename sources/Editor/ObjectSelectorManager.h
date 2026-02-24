@@ -72,4 +72,3 @@ namespace Core
         BaseComponent* _generalSelectedComponent = nullptr;
     };
 } // namespace Core
-#include "ObjectSelectorManager.generated.h" // added by the code generator. Better don't move it.

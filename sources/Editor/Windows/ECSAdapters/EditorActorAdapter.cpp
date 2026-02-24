@@ -24,9 +24,6 @@
 
 #include "EditorActorAdapter.h"
 
-
-#include "EditorActorAdapter.generated.cpp.inl" // this line added by the code generator.
-
 using namespace Core::Gui;
 
 namespace Core

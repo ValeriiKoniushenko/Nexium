@@ -89,4 +89,3 @@ namespace Core
     };
 
 } // namespace Core
-#include "NxEditorBaseEditor.generated.h" // added by the code generator. Better don't move it.

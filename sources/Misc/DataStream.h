@@ -250,4 +250,5 @@ namespace Core
     };
 
 } // namespace Core
+
 #include "DataStream.generated.h" // added by the code generator. Better don't move it.

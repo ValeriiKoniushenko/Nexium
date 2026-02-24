@@ -59,4 +59,3 @@ namespace Core::Gui
         bool _currentValue = false;
     };
 } // namespace Core::Gui
-#include "CheckBox.generated.h" // added by the code generator. Better don't move it.

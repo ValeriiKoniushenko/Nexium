@@ -27,9 +27,6 @@
 #include "Editor/Windows/GameViewport.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 
-
-#include "SlowObjectPicker.generated.cpp.inl" // this line added by the code generator.
-
 namespace Core
 {
     void SlowObjectPicker::update(Scene& scene)

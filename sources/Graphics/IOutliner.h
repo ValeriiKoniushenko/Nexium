@@ -52,4 +52,3 @@ namespace Core
         bool _isDrawOutline = false;
     };
 } // namespace Core
-#include "IOutliner.generated.inl" // added by the code generator. Better don't move it.

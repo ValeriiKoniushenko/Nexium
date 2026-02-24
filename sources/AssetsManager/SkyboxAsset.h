@@ -72,4 +72,5 @@ namespace Core
 
     using NXSkybox = AssetRef<SkyboxAsset>;
 } // namespace Core
+
 #include "SkyboxAsset.generated.h" // added by the code generator. Better don't move it.

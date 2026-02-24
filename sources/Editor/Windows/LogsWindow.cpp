@@ -30,9 +30,6 @@
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Misc/IconsFontAwesome.h"
 
-
-#include "LogsWindow.generated.cpp.inl" // this line added by the code generator.
-
 namespace Core
 {
     ECS_COMPONENT_IMPL(LogsWindowEWC)

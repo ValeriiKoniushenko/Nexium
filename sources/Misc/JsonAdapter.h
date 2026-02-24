@@ -131,4 +131,3 @@ namespace Core
 
     void from_json(const nlohmann::json& j, ISize3& value);
 } // namespace Core
-#include "JsonAdapter.generated.h" // added by the code generator. Better don't move it.

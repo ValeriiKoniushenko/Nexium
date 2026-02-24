@@ -26,9 +26,6 @@
 
 #include "GameplaySystem/Framework/GameInstance.h"
 
-
-#include "ObjectSelectorManager.generated.cpp.inl" // this line added by the code generator.
-
 namespace Core
 {
     void ObjectSelectorManager::selectObject(BaseComponent* comp)

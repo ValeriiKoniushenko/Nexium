@@ -225,4 +225,5 @@ namespace Core
         void privateClear();
     };
 } // namespace Core
+
 #include "GraphicsComponents.generated.h" // added by the code generator. Better don't move it.

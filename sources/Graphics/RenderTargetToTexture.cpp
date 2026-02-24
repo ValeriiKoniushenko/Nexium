@@ -26,9 +26,6 @@
 
 #include "Misc/BaseLog.h"
 
-
-#include "RenderTargetToTexture.generated.cpp.inl" // this line added by the code generator.
-
 namespace Core
 {
     void RenderTargetToTexture::generate()

@@ -24,9 +24,6 @@
 
 #include "Layout.h"
 
-
-#include "Layout.generated.cpp.inl" // this line added by the code generator.
-
 namespace Core::Gui
 {
     ECS_COMPONENT_IMPL(Layout)

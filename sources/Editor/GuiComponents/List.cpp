@@ -27,9 +27,6 @@
 #include "ImGui/imgui_internal.h"
 #include "ImGui/misc/cpp/imgui_stdlib.h"
 
-
-#include "List.generated.cpp.inl" // this line added by the code generator.
-
 namespace Core::Gui
 {
     ECS_COMPONENT_IMPL(BaseList);

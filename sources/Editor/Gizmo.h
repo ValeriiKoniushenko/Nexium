@@ -80,4 +80,5 @@ namespace Core
         std::optional<glm::vec3> _lastRay;
     };
 } // namespace Core
+
 #include "Gizmo.generated.h" // added by the code generator. Better don't move it.

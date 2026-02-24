@@ -26,9 +26,6 @@
 
 #include "Misc/Configs.h"
 
-
-#include "TextureAsset.generated.cpp.inl" // this line added by the code generator.
-
 namespace Core
 {
     void TextureAsset::setFilePath(const std::filesystem::path& value)

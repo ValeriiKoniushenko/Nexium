@@ -42,4 +42,3 @@ namespace Core::Gui
         void onDraw() override;
     };
 } // namespace Core::Gui
-#include "Separator.generated.h" // added by the code generator. Better don't move it.

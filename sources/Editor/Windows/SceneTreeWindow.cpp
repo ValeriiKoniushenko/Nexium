@@ -32,9 +32,6 @@
 #include "ObjectPropertiesWindow.h"
 #include "Scene/Scene.h"
 
-
-#include "SceneTreeWindow.generated.cpp.inl" // this line added by the code generator.
-
 namespace Core
 {
     ECS_COMPONENT_IMPL(SceneTreeWindowEWC)

@@ -28,9 +28,6 @@
 #include "Misc/IconsFontAwesome.h"
 #include "Utils/Functions.h"
 
-
-#include "TextEditor.generated.cpp.inl" // this line added by the code generator.
-
 namespace Core
 {
     ECS_COMPONENT_IMPL(TextEditorEWC)

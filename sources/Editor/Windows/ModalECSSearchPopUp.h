@@ -70,4 +70,3 @@ namespace Core
         bool _hasOpenRequest = false;
     };
 } // namespace Core
-#include "ModalECSSearchPopUp.generated.h" // added by the code generator. Better don't move it.

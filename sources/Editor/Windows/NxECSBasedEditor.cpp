@@ -30,9 +30,6 @@
 #include "ECSAdapters/EditorStaticMeshBundleAdapter.h"
 #include "ModalECSSearchPopUp.h"
 
-
-#include "NxECSBasedEditor.generated.cpp.inl" // this line added by the code generator.
-
 using namespace Core::Gui;
 
 namespace Core

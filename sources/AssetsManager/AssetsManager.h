@@ -204,4 +204,5 @@ namespace Core
     };
 
 } // namespace Core
+
 #include "AssetsManager.generated.h" // added by the code generator. Better don't move it.

@@ -54,4 +54,3 @@ namespace Core
         float _zoom = 1.0f;
     };
 } // namespace Core
-#include "ImageViewer.generated.h" // added by the code generator. Better don't move it.

@@ -179,4 +179,3 @@ namespace Core::Gui
     using Float2Input = VecNumInput<2, float>;
     using Double2Input = VecNumInput<2, double>;
 } // namespace Core::Gui
-#include "VecInput.generated.inl" // added by the code generator. Better don't move it.

@@ -58,4 +58,3 @@ namespace Core::Gui
         glm::vec2 _size = {};
     };
 } // namespace Core::Gui
-#include "Spacer.generated.h" // added by the code generator. Better don't move it.

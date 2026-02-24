@@ -36,7 +36,6 @@
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Graphics/Primitives/StaticMeshBundle.h"
 #include "ImGui/imgui_internal.h"
-#include "ObjectPropertiesWindow.generated.cpp.inl" // this line added by the code generator.
 
 using namespace Core;
 using namespace Core::Gui;
@@ -47,7 +46,7 @@ namespace
 
     // =========================================================
     //                 GUI STANDARD TEMPLATES
-    // =========================================================
+    // ====================================================s=====
 
     HLayout::Ptr CreateHLayoutAndLabel(const char* label, bool isReadOnly,
                                        float size = ObjectPropertiesWindowEWC::defaultLabelWidthBig)

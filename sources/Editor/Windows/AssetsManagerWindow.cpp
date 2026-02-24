@@ -32,9 +32,6 @@
 #include <format>
 #include <fstream>
 
-
-#include "AssetsManagerWindow.generated.cpp.inl" // this line added by the code generator.
-
 using NodeType = Core::AssetsManager::NodeType;
 
 namespace

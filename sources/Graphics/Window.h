@@ -207,4 +207,5 @@ namespace Core
 
     Window& GetWindow();
 } // namespace Core
+
 #include "Window.generated.h" // added by the code generator. Better don't move it.

@@ -55,4 +55,3 @@ namespace Core
         float _statusMarginRight = 10.f;
     };
 } // namespace Core
-#include "TextEditor.generated.h" // added by the code generator. Better don't move it.

@@ -85,4 +85,5 @@ namespace Core
         [[nodiscard]] static bool isKeyRepeated(Key key);
     };
 } // namespace Core
+
 #include "Mouse.generated.h" // added by the code generator. Better don't move it.

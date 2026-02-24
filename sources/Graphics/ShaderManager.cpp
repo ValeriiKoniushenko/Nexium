@@ -26,9 +26,6 @@
 
 #include "ModuleInfo.h"
 
-
-#include "ShaderManager.generated.cpp.inl" // this line added by the code generator.
-
 namespace Core
 {
     void ShaderManager::loadShaders(const std::filesystem::path& inputPath)

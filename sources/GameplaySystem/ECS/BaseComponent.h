@@ -1010,4 +1010,3 @@ struct std::hash<Core::BaseComponent::Ptr>
         return x->makeHash();
     }
 };
-#include "BaseComponent.generated.h" // added by the code generator. Better don't move it.

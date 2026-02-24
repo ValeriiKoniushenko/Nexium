@@ -24,9 +24,6 @@
 
 #include "FPSCounter.h"
 
-
-#include "FPSCounter.generated.cpp.inl" // this line added by the code generator.
-
 namespace Core
 {
     void FPSCounter::reset()

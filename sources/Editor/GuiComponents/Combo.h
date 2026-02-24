@@ -126,4 +126,3 @@ namespace Core::Gui
         std::size_t _currentIndex = 0;
     };
 } // namespace Core::Gui
-#include "Combo.generated.h" // added by the code generator. Better don't move it.

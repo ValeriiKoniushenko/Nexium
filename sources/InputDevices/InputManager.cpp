@@ -24,9 +24,6 @@
 
 #include "InputManager.h"
 
-
-#include "InputManager.generated.cpp.inl" // this line added by the code generator.
-
 namespace Core
 {
 

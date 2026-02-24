@@ -170,4 +170,3 @@ namespace Core
         bool _isRunSimulation = false;
     };
 } // namespace Core
-#include "GameEditor.generated.h" // added by the code generator. Better don't move it.

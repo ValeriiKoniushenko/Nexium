@@ -26,9 +26,6 @@
 
 #include "ImGui/imgui_internal.h"
 
-
-#include "Label.generated.cpp.inl" // this line added by the code generator.
-
 namespace Core::Gui
 {
     ECS_COMPONENT_IMPL(Label);

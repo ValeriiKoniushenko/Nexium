@@ -31,9 +31,6 @@
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
 
-
-#include "StaticMesh.generated.cpp.inl" // this line added by the code generator.
-
 namespace
 {
     // TODO: MOVE & REFACTOR IT!!!

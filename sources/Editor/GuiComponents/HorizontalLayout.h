@@ -79,4 +79,3 @@ namespace Core::Gui
         bool _fitContent = false;
     };
 } // namespace Core::Gui
-#include "HorizontalLayout.generated.h" // added by the code generator. Better don't move it.

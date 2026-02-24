@@ -28,9 +28,6 @@
 
 #include "StaticMeshBundle.h"
 
-
-#include "Factory.generated.cpp.inl" // this line added by the code generator.
-
 namespace Core::AssetImpl
 {
 

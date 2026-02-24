@@ -216,4 +216,5 @@ namespace Core
     };
 
 } // namespace Core
+
 #include "ECSAsset.generated.h" // added by the code generator. Better don't move it.

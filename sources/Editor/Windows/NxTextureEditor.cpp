@@ -25,7 +25,6 @@
 #include "NxTextureEditor.h"
 
 #include "GameplaySystem/Framework/GameInstance.h"
-#include "NxTextureEditor.generated.cpp.inl" // this line added by the code generator.
 
 using namespace Core::Gui;
 

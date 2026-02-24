@@ -41,5 +41,3 @@ namespace Assimp
     extern const std::vector<aiPostProcessSteps> aiPostProcessStepsAsVector;
 
 } // namespace Assimp
-
-#include "AssimpHelper.generated.h" // added by the code generator. Better don't move it.

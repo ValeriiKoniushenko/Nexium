@@ -26,9 +26,6 @@
 
 #include "ImGui/imgui_internal.h"
 
-
-#include "Misc.generated.cpp.inl" // this line added by the code generator.
-
 namespace Core::Gui
 {
     bool CollapsingHeader(const char* label, ImGuiTreeNodeFlags flags, float paddings)

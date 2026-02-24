@@ -24,9 +24,6 @@
 
 #include "Texture.h"
 
-
-#include "Texture.generated.cpp.inl" // this line added by the code generator.
-
 namespace Core
 {
     Texture::Texture(Texture&& other) noexcept

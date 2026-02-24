@@ -45,4 +45,3 @@ namespace Core
         uint64_t _frames = 0;
     };
 } // namespace Core
-#include "FPSCounter.generated.h" // added by the code generator. Better don't move it.

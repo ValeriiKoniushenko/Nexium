@@ -100,4 +100,3 @@ namespace Core
     };
 
 } // namespace Core
-#include "BaseActorAsset.generated.inl" // added by the code generator. Better don't move it.

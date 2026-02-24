@@ -30,9 +30,6 @@
 
 #include <fstream>
 
-
-#include "BaseAsset.generated.cpp.inl" // this line added by the code generator.
-
 namespace Core
 {
 

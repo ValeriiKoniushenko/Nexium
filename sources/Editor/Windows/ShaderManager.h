@@ -97,4 +97,3 @@ namespace Core
         float _drawDetailsLabelWidth = 140.f;
     };
 } // namespace Core
-#include "ShaderManager.generated.h" // added by the code generator. Better don't move it.

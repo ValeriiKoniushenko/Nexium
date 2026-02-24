@@ -64,4 +64,3 @@ namespace Core
         NXTexture _targetAsset;
     };
 } // namespace Core
-#include "NxTextureEditor.generated.h" // added by the code generator. Better don't move it.

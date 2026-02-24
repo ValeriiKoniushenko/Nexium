@@ -24,9 +24,6 @@
 
 #include "TemplateGameInstance.h"
 
-
-#include "TemplateGameInstance.generated.cpp.inl" // this line added by the code generator.
-
 using namespace Core;
 
 void TemplateGameInstance::onLoadCoreResources()

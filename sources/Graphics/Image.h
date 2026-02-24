@@ -86,4 +86,5 @@ namespace Core
         StringAtom _name;
     };
 } // namespace Core
+
 #include "Image.generated.h" // added by the code generator. Better don't move it.

@@ -96,4 +96,3 @@ namespace Core
     };
 
 } // namespace Core
-#include "EditorStaticMeshBundleAdapter.generated.h" // added by the code generator. Better don't move it.

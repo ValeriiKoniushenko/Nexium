@@ -180,4 +180,5 @@ namespace Core
         [[nodiscard]] static bool IsKeyReleased(Key key);
     };
 } // namespace Core
+
 #include "Keyboard.generated.h" // added by the code generator. Better don't move it.

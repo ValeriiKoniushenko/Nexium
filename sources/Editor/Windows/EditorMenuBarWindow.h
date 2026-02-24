@@ -53,4 +53,3 @@ namespace Core
         float _simulationButton = 50.f;
     };
 } // namespace Core
-#include "EditorMenuBarWindow.generated.h" // added by the code generator. Better don't move it.

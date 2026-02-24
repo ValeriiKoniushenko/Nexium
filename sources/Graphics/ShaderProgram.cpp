@@ -27,9 +27,6 @@
 #include "ModuleInfo.h"
 #include "ShaderProgramMeta.h"
 
-
-#include "ShaderProgram.generated.cpp.inl" // this line added by the code generator.
-
 namespace Core
 {
     ShaderProgram& ShaderProgram::operator=(ShaderProgram&& other) noexcept

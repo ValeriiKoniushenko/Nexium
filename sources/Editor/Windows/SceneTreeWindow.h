@@ -63,4 +63,3 @@ namespace Core
     };
 
 } // namespace Core
-#include "SceneTreeWindow.generated.h" // added by the code generator. Better don't move it.

@@ -24,9 +24,6 @@
 
 #include "Separator.h"
 
-
-#include "Separator.generated.cpp.inl" // this line added by the code generator.
-
 namespace Core::Gui
 {
     ECS_COMPONENT_IMPL(Separator);

@@ -27,9 +27,6 @@
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_internal.h"
 
-
-#include "Button.generated.cpp.inl" // this line added by the code generator.
-
 namespace Core::Gui
 {
     ECS_COMPONENT_IMPL(Button)
