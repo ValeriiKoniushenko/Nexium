@@ -14,9 +14,9 @@
 template<>
 struct R<Core::ViewportMode>
 {
-    static constexpr std::string_view Name() { return "ViewportMode"; }
-    static constexpr std::size_t Size() { return 2; }
-    static constexpr std::string_view ParentScope() { return "Core"; }
+    static consteval std::string_view Name() { return "ViewportMode"; }
+    static consteval std::size_t Size() { return 2; }
+    static consteval std::string_view ParentScope() { return "Core"; }
 
     static std::string_view ToString(::Core::ViewportMode value)
     {

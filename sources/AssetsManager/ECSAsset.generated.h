@@ -14,9 +14,9 @@
 template<>
 struct R<Core::ECSAsset::Status>
 {
-    static constexpr std::string_view Name() { return "Status"; }
-    static constexpr std::size_t Size() { return 5; }
-    static constexpr std::string_view ParentScope() { return "Core::ECSAsset"; }
+    static consteval std::string_view Name() { return "Status"; }
+    static consteval std::size_t Size() { return 5; }
+    static consteval std::string_view ParentScope() { return "Core::ECSAsset"; }
 
     static std::string_view ToString(::Core::ECSAsset::Status value)
     {

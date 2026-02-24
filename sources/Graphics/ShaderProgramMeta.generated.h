@@ -14,9 +14,9 @@
 template<>
 struct R<Core::ShaderType>
 {
-    static constexpr std::string_view Name() { return "ShaderType"; }
-    static constexpr std::size_t Size() { return 4; }
-    static constexpr std::string_view ParentScope() { return "Core"; }
+    static consteval std::string_view Name() { return "ShaderType"; }
+    static consteval std::size_t Size() { return 4; }
+    static consteval std::string_view ParentScope() { return "Core"; }
 
     static std::string_view ToString(::Core::ShaderType value)
     {

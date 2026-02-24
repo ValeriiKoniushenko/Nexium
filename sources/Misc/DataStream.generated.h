@@ -14,9 +14,9 @@
 template<>
 struct R<Core::DataStream::Result>
 {
-    static constexpr std::string_view Name() { return "Result"; }
-    static constexpr std::size_t Size() { return 5; }
-    static constexpr std::string_view ParentScope() { return "Core::DataStream"; }
+    static consteval std::string_view Name() { return "Result"; }
+    static consteval std::size_t Size() { return 5; }
+    static consteval std::string_view ParentScope() { return "Core::DataStream"; }
 
     static std::string_view ToString(::Core::DataStream::Result value)
     {
@@ -97,9 +97,9 @@ struct R<Core::DataStream::Result>
 template<>
 struct R<Core::DataStream::Mode>
 {
-    static constexpr std::string_view Name() { return "Mode"; }
-    static constexpr std::size_t Size() { return 2; }
-    static constexpr std::string_view ParentScope() { return "Core::DataStream"; }
+    static consteval std::string_view Name() { return "Mode"; }
+    static consteval std::size_t Size() { return 2; }
+    static consteval std::string_view ParentScope() { return "Core::DataStream"; }
 
     static std::string_view ToString(::Core::DataStream::Mode value)
     {

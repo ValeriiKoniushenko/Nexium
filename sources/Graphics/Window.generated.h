@@ -14,9 +14,9 @@
 template<>
 struct R<Core::Window::CursorMode>
 {
-    static constexpr std::string_view Name() { return "CursorMode"; }
-    static constexpr std::size_t Size() { return 3; }
-    static constexpr std::string_view ParentScope() { return "Core::Window"; }
+    static consteval std::string_view Name() { return "CursorMode"; }
+    static consteval std::size_t Size() { return 3; }
+    static consteval std::string_view ParentScope() { return "Core::Window"; }
 
     static std::string_view ToString(::Core::Window::CursorMode value)
     {
@@ -89,9 +89,9 @@ struct R<Core::Window::CursorMode>
 template<>
 struct R<Core::DragAndDrop::State>
 {
-    static constexpr std::string_view Name() { return "State"; }
-    static constexpr std::size_t Size() { return 3; }
-    static constexpr std::string_view ParentScope() { return "Core::DragAndDrop"; }
+    static consteval std::string_view Name() { return "State"; }
+    static consteval std::size_t Size() { return 3; }
+    static consteval std::string_view ParentScope() { return "Core::DragAndDrop"; }
 
     static std::string_view ToString(::Core::DragAndDrop::State value)
     {

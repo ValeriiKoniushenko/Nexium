@@ -14,9 +14,9 @@
 template<>
 struct R<Core::AssetsManager::NodeType>
 {
-    static constexpr std::string_view Name() { return "NodeType"; }
-    static constexpr std::size_t Size() { return 5; }
-    static constexpr std::string_view ParentScope() { return "Core::AssetsManager"; }
+    static consteval std::string_view Name() { return "NodeType"; }
+    static consteval std::size_t Size() { return 5; }
+    static consteval std::string_view ParentScope() { return "Core::AssetsManager"; }
 
     static std::string_view ToString(::Core::AssetsManager::NodeType value)
     {

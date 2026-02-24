@@ -14,9 +14,9 @@
 template<>
 struct R<Core::SkyboxAsset::Direction>
 {
-    static constexpr std::string_view Name() { return "Direction"; }
-    static constexpr std::size_t Size() { return 6; }
-    static constexpr std::string_view ParentScope() { return "Core::SkyboxAsset"; }
+    static consteval std::string_view Name() { return "Direction"; }
+    static consteval std::size_t Size() { return 6; }
+    static consteval std::string_view ParentScope() { return "Core::SkyboxAsset"; }
 
     static std::string_view ToString(::Core::SkyboxAsset::Direction value)
     {

@@ -14,9 +14,9 @@
 template<>
 struct R<Core::Keyboard::KeyState>
 {
-    static constexpr std::string_view Name() { return "KeyState"; }
-    static constexpr std::size_t Size() { return 4; }
-    static constexpr std::string_view ParentScope() { return "Core::Keyboard"; }
+    static consteval std::string_view Name() { return "KeyState"; }
+    static consteval std::size_t Size() { return 4; }
+    static consteval std::string_view ParentScope() { return "Core::Keyboard"; }
 
     static std::string_view ToString(::Core::Keyboard::KeyState value)
     {
@@ -93,9 +93,9 @@ struct R<Core::Keyboard::KeyState>
 template<>
 struct R<Core::Keyboard::Key>
 {
-    static constexpr std::string_view Name() { return "Key"; }
-    static constexpr std::size_t Size() { return 122; }
-    static constexpr std::string_view ParentScope() { return "Core::Keyboard"; }
+    static consteval std::string_view Name() { return "Key"; }
+    static consteval std::size_t Size() { return 122; }
+    static consteval std::string_view ParentScope() { return "Core::Keyboard"; }
 
     static std::string_view ToString(::Core::Keyboard::Key value)
     {

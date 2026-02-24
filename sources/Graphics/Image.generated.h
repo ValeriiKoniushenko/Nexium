@@ -14,9 +14,9 @@
 template<>
 struct R<Core::Image::Channel>
 {
-    static constexpr std::string_view Name() { return "Channel"; }
-    static constexpr std::size_t Size() { return 5; }
-    static constexpr std::string_view ParentScope() { return "Core::Image"; }
+    static consteval std::string_view Name() { return "Channel"; }
+    static consteval std::size_t Size() { return 5; }
+    static consteval std::string_view ParentScope() { return "Core::Image"; }
 
     static std::string_view ToString(::Core::Image::Channel value)
     {

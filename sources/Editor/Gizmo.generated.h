@@ -14,9 +14,9 @@
 template<>
 struct R<Core::Gizmo::Direction>
 {
-    static constexpr std::string_view Name() { return "Direction"; }
-    static constexpr std::size_t Size() { return 3; }
-    static constexpr std::string_view ParentScope() { return "Core::Gizmo"; }
+    static consteval std::string_view Name() { return "Direction"; }
+    static consteval std::size_t Size() { return 3; }
+    static consteval std::string_view ParentScope() { return "Core::Gizmo"; }
 
     static std::string_view ToString(::Core::Gizmo::Direction value)
     {

@@ -14,9 +14,9 @@
 template<>
 struct R<Core::GraphicsComponentData::ModifiedValue>
 {
-    static constexpr std::string_view Name() { return "ModifiedValue"; }
-    static constexpr std::size_t Size() { return 20; }
-    static constexpr std::string_view ParentScope() { return "Core::GraphicsComponentData"; }
+    static consteval std::string_view Name() { return "ModifiedValue"; }
+    static consteval std::size_t Size() { return 20; }
+    static consteval std::string_view ParentScope() { return "Core::GraphicsComponentData"; }
 
     static std::string_view ToString(::Core::GraphicsComponentData::ModifiedValue value)
     {
@@ -157,9 +157,9 @@ struct R<Core::GraphicsComponentData::ModifiedValue>
 template<>
 struct R<Core::GraphicsComponentData::Modifier>
 {
-    static constexpr std::string_view Name() { return "Modifier"; }
-    static constexpr std::size_t Size() { return 3; }
-    static constexpr std::string_view ParentScope() { return "Core::GraphicsComponentData"; }
+    static consteval std::string_view Name() { return "Modifier"; }
+    static consteval std::size_t Size() { return 3; }
+    static consteval std::string_view ParentScope() { return "Core::GraphicsComponentData"; }
 
     static std::string_view ToString(::Core::GraphicsComponentData::Modifier value)
     {

@@ -14,9 +14,9 @@
 template<>
 struct R<Core::Gui::Flex>
 {
-    static constexpr std::string_view Name() { return "Flex"; }
-    static constexpr std::size_t Size() { return 5; }
-    static constexpr std::string_view ParentScope() { return "Core::Gui"; }
+    static consteval std::string_view Name() { return "Flex"; }
+    static consteval std::size_t Size() { return 5; }
+    static consteval std::string_view ParentScope() { return "Core::Gui"; }
 
     static std::string_view ToString(::Core::Gui::Flex value)
     {
@@ -97,9 +97,9 @@ struct R<Core::Gui::Flex>
 template<>
 struct R<Core::Gui::Align>
 {
-    static constexpr std::string_view Name() { return "Align"; }
-    static constexpr std::size_t Size() { return 7; }
-    static constexpr std::string_view ParentScope() { return "Core::Gui"; }
+    static consteval std::string_view Name() { return "Align"; }
+    static consteval std::size_t Size() { return 7; }
+    static consteval std::string_view ParentScope() { return "Core::Gui"; }
 
     static std::string_view ToString(::Core::Gui::Align value)
     {
