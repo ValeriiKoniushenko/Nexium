@@ -32,6 +32,7 @@ namespace Core
     class StaticMesh;
     class Actor;
 
+    CLASS();
     class IDrawable : public IDataUpdateBridge
     {
     public:
@@ -71,7 +72,9 @@ namespace Core
         IDrawable() = default;
 
     private:
+        FIELD();
         bool _isPostDraw = false;
     };
 } // namespace Core
+
 #include "IDrawable.generated.h" // added by the code generator. Better don't move it.
