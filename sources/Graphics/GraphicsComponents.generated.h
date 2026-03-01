@@ -14,9 +14,9 @@
 template<>
 struct R<Core::GraphicsComponentData::ModifiedValue>
 {
-    static consteval std::string_view Name() { return "ModifiedValue"; }
-    static consteval std::size_t Size() { return 20; }
-    static consteval std::string_view ParentScope() { return "Core::GraphicsComponentData"; }
+    static constexpr std::string_view Name() { return "ModifiedValue"; }
+    static constexpr std::size_t Size() { return 20; }
+    static constexpr std::string_view ParentScope() { return "Core::GraphicsComponentData"; }
 
     static std::string_view ToString(::Core::GraphicsComponentData::ModifiedValue value)
     {
@@ -41,7 +41,7 @@ struct R<Core::GraphicsComponentData::ModifiedValue>
         return std::nullopt;
     }
 
-    static consteval const std::array<::Core::GraphicsComponentData::ModifiedValue, 20>& ToArrayC()
+    static constexpr const std::array<::Core::GraphicsComponentData::ModifiedValue, 20>& ToArrayC()
     {
         static constexpr std::array<::Core::GraphicsComponentData::ModifiedValue, 20> constants = {
 				::Core::GraphicsComponentData::ModifiedValue::Blend,
@@ -69,7 +69,7 @@ struct R<Core::GraphicsComponentData::ModifiedValue>
         return constants;
     }
 
-    static consteval const std::array<std::string_view, 20>& ToArrayN()
+    static constexpr const std::array<std::string_view, 20>& ToArrayN()
     {
         static constexpr std::array<std::string_view, 20> names = {
 				std::string_view("Blend"),
@@ -157,9 +157,9 @@ struct R<Core::GraphicsComponentData::ModifiedValue>
 template<>
 struct R<Core::GraphicsComponentData::Modifier>
 {
-    static consteval std::string_view Name() { return "Modifier"; }
-    static consteval std::size_t Size() { return 3; }
-    static consteval std::string_view ParentScope() { return "Core::GraphicsComponentData"; }
+    static constexpr std::string_view Name() { return "Modifier"; }
+    static constexpr std::size_t Size() { return 3; }
+    static constexpr std::string_view ParentScope() { return "Core::GraphicsComponentData"; }
 
     static std::string_view ToString(::Core::GraphicsComponentData::Modifier value)
     {
@@ -184,7 +184,7 @@ struct R<Core::GraphicsComponentData::Modifier>
         return std::nullopt;
     }
 
-    static consteval const std::array<::Core::GraphicsComponentData::Modifier, 3>& ToArrayC()
+    static constexpr const std::array<::Core::GraphicsComponentData::Modifier, 3>& ToArrayC()
     {
         static constexpr std::array<::Core::GraphicsComponentData::Modifier, 3> constants = {
 				::Core::GraphicsComponentData::Modifier::None,
@@ -195,7 +195,7 @@ struct R<Core::GraphicsComponentData::Modifier>
         return constants;
     }
 
-    static consteval const std::array<std::string_view, 3>& ToArrayN()
+    static constexpr const std::array<std::string_view, 3>& ToArrayN()
     {
         static constexpr std::array<std::string_view, 3> names = {
 				std::string_view("None"),

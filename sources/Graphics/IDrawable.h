@@ -35,6 +35,8 @@ namespace Core
     CLASS();
     class IDrawable : public IDataUpdateBridge
     {
+        R_FRIEND(IDrawable);
+
     public:
         IDrawable(const IDrawable&) = default;
         IDrawable& operator=(const IDrawable&) = default;

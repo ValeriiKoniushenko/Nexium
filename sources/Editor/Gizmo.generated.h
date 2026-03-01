@@ -14,9 +14,9 @@
 template<>
 struct R<Core::Gizmo::Direction>
 {
-    static consteval std::string_view Name() { return "Direction"; }
-    static consteval std::size_t Size() { return 3; }
-    static consteval std::string_view ParentScope() { return "Core::Gizmo"; }
+    static constexpr std::string_view Name() { return "Direction"; }
+    static constexpr std::size_t Size() { return 3; }
+    static constexpr std::string_view ParentScope() { return "Core::Gizmo"; }
 
     static std::string_view ToString(::Core::Gizmo::Direction value)
     {
@@ -41,7 +41,7 @@ struct R<Core::Gizmo::Direction>
         return std::nullopt;
     }
 
-    static consteval const std::array<::Core::Gizmo::Direction, 3>& ToArrayC()
+    static constexpr const std::array<::Core::Gizmo::Direction, 3>& ToArrayC()
     {
         static constexpr std::array<::Core::Gizmo::Direction, 3> constants = {
 				::Core::Gizmo::Direction::X,
@@ -52,7 +52,7 @@ struct R<Core::Gizmo::Direction>
         return constants;
     }
 
-    static consteval const std::array<std::string_view, 3>& ToArrayN()
+    static constexpr const std::array<std::string_view, 3>& ToArrayN()
     {
         static constexpr std::array<std::string_view, 3> names = {
 				std::string_view("X"),

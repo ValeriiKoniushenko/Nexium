@@ -14,9 +14,9 @@
 template<>
 struct R<Core::SkyboxAsset::Direction>
 {
-    static consteval std::string_view Name() { return "Direction"; }
-    static consteval std::size_t Size() { return 6; }
-    static consteval std::string_view ParentScope() { return "Core::SkyboxAsset"; }
+    static constexpr std::string_view Name() { return "Direction"; }
+    static constexpr std::size_t Size() { return 6; }
+    static constexpr std::string_view ParentScope() { return "Core::SkyboxAsset"; }
 
     static std::string_view ToString(::Core::SkyboxAsset::Direction value)
     {
@@ -41,7 +41,7 @@ struct R<Core::SkyboxAsset::Direction>
         return std::nullopt;
     }
 
-    static consteval const std::array<::Core::SkyboxAsset::Direction, 6>& ToArrayC()
+    static constexpr const std::array<::Core::SkyboxAsset::Direction, 6>& ToArrayC()
     {
         static constexpr std::array<::Core::SkyboxAsset::Direction, 6> constants = {
 				::Core::SkyboxAsset::Direction::Right,
@@ -55,7 +55,7 @@ struct R<Core::SkyboxAsset::Direction>
         return constants;
     }
 
-    static consteval const std::array<std::string_view, 6>& ToArrayN()
+    static constexpr const std::array<std::string_view, 6>& ToArrayN()
     {
         static constexpr std::array<std::string_view, 6> names = {
 				std::string_view("Right"),

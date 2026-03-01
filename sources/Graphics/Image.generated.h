@@ -14,9 +14,9 @@
 template<>
 struct R<Core::Image::Channel>
 {
-    static consteval std::string_view Name() { return "Channel"; }
-    static consteval std::size_t Size() { return 5; }
-    static consteval std::string_view ParentScope() { return "Core::Image"; }
+    static constexpr std::string_view Name() { return "Channel"; }
+    static constexpr std::size_t Size() { return 5; }
+    static constexpr std::string_view ParentScope() { return "Core::Image"; }
 
     static std::string_view ToString(::Core::Image::Channel value)
     {
@@ -41,7 +41,7 @@ struct R<Core::Image::Channel>
         return std::nullopt;
     }
 
-    static consteval const std::array<::Core::Image::Channel, 5>& ToArrayC()
+    static constexpr const std::array<::Core::Image::Channel, 5>& ToArrayC()
     {
         static constexpr std::array<::Core::Image::Channel, 5> constants = {
 				::Core::Image::Channel::None,
@@ -54,7 +54,7 @@ struct R<Core::Image::Channel>
         return constants;
     }
 
-    static consteval const std::array<std::string_view, 5>& ToArrayN()
+    static constexpr const std::array<std::string_view, 5>& ToArrayN()
     {
         static constexpr std::array<std::string_view, 5> names = {
 				std::string_view("None"),

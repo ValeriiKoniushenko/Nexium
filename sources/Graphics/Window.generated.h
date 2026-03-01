@@ -14,9 +14,9 @@
 template<>
 struct R<Core::Window::CursorMode>
 {
-    static consteval std::string_view Name() { return "CursorMode"; }
-    static consteval std::size_t Size() { return 3; }
-    static consteval std::string_view ParentScope() { return "Core::Window"; }
+    static constexpr std::string_view Name() { return "CursorMode"; }
+    static constexpr std::size_t Size() { return 3; }
+    static constexpr std::string_view ParentScope() { return "Core::Window"; }
 
     static std::string_view ToString(::Core::Window::CursorMode value)
     {
@@ -41,7 +41,7 @@ struct R<Core::Window::CursorMode>
         return std::nullopt;
     }
 
-    static consteval const std::array<::Core::Window::CursorMode, 3>& ToArrayC()
+    static constexpr const std::array<::Core::Window::CursorMode, 3>& ToArrayC()
     {
         static constexpr std::array<::Core::Window::CursorMode, 3> constants = {
 				::Core::Window::CursorMode::Normal,
@@ -52,7 +52,7 @@ struct R<Core::Window::CursorMode>
         return constants;
     }
 
-    static consteval const std::array<std::string_view, 3>& ToArrayN()
+    static constexpr const std::array<std::string_view, 3>& ToArrayN()
     {
         static constexpr std::array<std::string_view, 3> names = {
 				std::string_view("Normal"),
@@ -89,9 +89,9 @@ struct R<Core::Window::CursorMode>
 template<>
 struct R<Core::DragAndDrop::State>
 {
-    static consteval std::string_view Name() { return "State"; }
-    static consteval std::size_t Size() { return 3; }
-    static consteval std::string_view ParentScope() { return "Core::DragAndDrop"; }
+    static constexpr std::string_view Name() { return "State"; }
+    static constexpr std::size_t Size() { return 3; }
+    static constexpr std::string_view ParentScope() { return "Core::DragAndDrop"; }
 
     static std::string_view ToString(::Core::DragAndDrop::State value)
     {
@@ -116,7 +116,7 @@ struct R<Core::DragAndDrop::State>
         return std::nullopt;
     }
 
-    static consteval const std::array<::Core::DragAndDrop::State, 3>& ToArrayC()
+    static constexpr const std::array<::Core::DragAndDrop::State, 3>& ToArrayC()
     {
         static constexpr std::array<::Core::DragAndDrop::State, 3> constants = {
 				::Core::DragAndDrop::State::Idle,
@@ -127,7 +127,7 @@ struct R<Core::DragAndDrop::State>
         return constants;
     }
 
-    static consteval const std::array<std::string_view, 3>& ToArrayN()
+    static constexpr const std::array<std::string_view, 3>& ToArrayN()
     {
         static constexpr std::array<std::string_view, 3> names = {
 				std::string_view("Idle"),

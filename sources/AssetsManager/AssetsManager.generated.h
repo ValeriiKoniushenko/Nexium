@@ -14,9 +14,9 @@
 template<>
 struct R<Core::AssetsManager::NodeType>
 {
-    static consteval std::string_view Name() { return "NodeType"; }
-    static consteval std::size_t Size() { return 5; }
-    static consteval std::string_view ParentScope() { return "Core::AssetsManager"; }
+    static constexpr std::string_view Name() { return "NodeType"; }
+    static constexpr std::size_t Size() { return 5; }
+    static constexpr std::string_view ParentScope() { return "Core::AssetsManager"; }
 
     static std::string_view ToString(::Core::AssetsManager::NodeType value)
     {
@@ -41,7 +41,7 @@ struct R<Core::AssetsManager::NodeType>
         return std::nullopt;
     }
 
-    static consteval const std::array<::Core::AssetsManager::NodeType, 5>& ToArrayC()
+    static constexpr const std::array<::Core::AssetsManager::NodeType, 5>& ToArrayC()
     {
         static constexpr std::array<::Core::AssetsManager::NodeType, 5> constants = {
 				::Core::AssetsManager::NodeType::Default,
@@ -54,7 +54,7 @@ struct R<Core::AssetsManager::NodeType>
         return constants;
     }
 
-    static consteval const std::array<std::string_view, 5>& ToArrayN()
+    static constexpr const std::array<std::string_view, 5>& ToArrayN()
     {
         static constexpr std::array<std::string_view, 5> names = {
 				std::string_view("Default"),

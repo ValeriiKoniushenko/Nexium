@@ -14,9 +14,9 @@
 template<>
 struct R<Core::Keyboard::KeyState>
 {
-    static consteval std::string_view Name() { return "KeyState"; }
-    static consteval std::size_t Size() { return 4; }
-    static consteval std::string_view ParentScope() { return "Core::Keyboard"; }
+    static constexpr std::string_view Name() { return "KeyState"; }
+    static constexpr std::size_t Size() { return 4; }
+    static constexpr std::string_view ParentScope() { return "Core::Keyboard"; }
 
     static std::string_view ToString(::Core::Keyboard::KeyState value)
     {
@@ -41,7 +41,7 @@ struct R<Core::Keyboard::KeyState>
         return std::nullopt;
     }
 
-    static consteval const std::array<::Core::Keyboard::KeyState, 4>& ToArrayC()
+    static constexpr const std::array<::Core::Keyboard::KeyState, 4>& ToArrayC()
     {
         static constexpr std::array<::Core::Keyboard::KeyState, 4> constants = {
 				::Core::Keyboard::KeyState::None,
@@ -53,7 +53,7 @@ struct R<Core::Keyboard::KeyState>
         return constants;
     }
 
-    static consteval const std::array<std::string_view, 4>& ToArrayN()
+    static constexpr const std::array<std::string_view, 4>& ToArrayN()
     {
         static constexpr std::array<std::string_view, 4> names = {
 				std::string_view("None"),
@@ -93,9 +93,9 @@ struct R<Core::Keyboard::KeyState>
 template<>
 struct R<Core::Keyboard::Key>
 {
-    static consteval std::string_view Name() { return "Key"; }
-    static consteval std::size_t Size() { return 122; }
-    static consteval std::string_view ParentScope() { return "Core::Keyboard"; }
+    static constexpr std::string_view Name() { return "Key"; }
+    static constexpr std::size_t Size() { return 122; }
+    static constexpr std::string_view ParentScope() { return "Core::Keyboard"; }
 
     static std::string_view ToString(::Core::Keyboard::Key value)
     {
@@ -120,7 +120,7 @@ struct R<Core::Keyboard::Key>
         return std::nullopt;
     }
 
-    static consteval const std::array<::Core::Keyboard::Key, 122>& ToArrayC()
+    static constexpr const std::array<::Core::Keyboard::Key, 122>& ToArrayC()
     {
         static constexpr std::array<::Core::Keyboard::Key, 122> constants = {
 				::Core::Keyboard::Key::None,
@@ -250,7 +250,7 @@ struct R<Core::Keyboard::Key>
         return constants;
     }
 
-    static consteval const std::array<std::string_view, 122>& ToArrayN()
+    static constexpr const std::array<std::string_view, 122>& ToArrayN()
     {
         static constexpr std::array<std::string_view, 122> names = {
 				std::string_view("None"),

@@ -14,9 +14,9 @@
 template<>
 struct R<Core::Mouse::State>
 {
-    static consteval std::string_view Name() { return "State"; }
-    static consteval std::size_t Size() { return 3; }
-    static consteval std::string_view ParentScope() { return "Core::Mouse"; }
+    static constexpr std::string_view Name() { return "State"; }
+    static constexpr std::size_t Size() { return 3; }
+    static constexpr std::string_view ParentScope() { return "Core::Mouse"; }
 
     static std::string_view ToString(::Core::Mouse::State value)
     {
@@ -41,7 +41,7 @@ struct R<Core::Mouse::State>
         return std::nullopt;
     }
 
-    static consteval const std::array<::Core::Mouse::State, 3>& ToArrayC()
+    static constexpr const std::array<::Core::Mouse::State, 3>& ToArrayC()
     {
         static constexpr std::array<::Core::Mouse::State, 3> constants = {
 				::Core::Mouse::State::None,
@@ -52,7 +52,7 @@ struct R<Core::Mouse::State>
         return constants;
     }
 
-    static consteval const std::array<std::string_view, 3>& ToArrayN()
+    static constexpr const std::array<std::string_view, 3>& ToArrayN()
     {
         static constexpr std::array<std::string_view, 3> names = {
 				std::string_view("None"),
@@ -89,9 +89,9 @@ struct R<Core::Mouse::State>
 template<>
 struct R<Core::Mouse::Key>
 {
-    static consteval std::string_view Name() { return "Key"; }
-    static consteval std::size_t Size() { return 13; }
-    static consteval std::string_view ParentScope() { return "Core::Mouse"; }
+    static constexpr std::string_view Name() { return "Key"; }
+    static constexpr std::size_t Size() { return 13; }
+    static constexpr std::string_view ParentScope() { return "Core::Mouse"; }
 
     static std::string_view ToString(::Core::Mouse::Key value)
     {
@@ -116,7 +116,7 @@ struct R<Core::Mouse::Key>
         return std::nullopt;
     }
 
-    static consteval const std::array<::Core::Mouse::Key, 13>& ToArrayC()
+    static constexpr const std::array<::Core::Mouse::Key, 13>& ToArrayC()
     {
         static constexpr std::array<::Core::Mouse::Key, 13> constants = {
 				::Core::Mouse::Key::_1,
@@ -137,7 +137,7 @@ struct R<Core::Mouse::Key>
         return constants;
     }
 
-    static consteval const std::array<std::string_view, 13>& ToArrayN()
+    static constexpr const std::array<std::string_view, 13>& ToArrayN()
     {
         static constexpr std::array<std::string_view, 13> names = {
 				std::string_view("_1"),
@@ -204,9 +204,9 @@ struct R<Core::Mouse::Key>
 template<>
 struct R<Core::Mouse::Mod>
 {
-    static consteval std::string_view Name() { return "Mod"; }
-    static consteval std::size_t Size() { return 7; }
-    static consteval std::string_view ParentScope() { return "Core::Mouse"; }
+    static constexpr std::string_view Name() { return "Mod"; }
+    static constexpr std::size_t Size() { return 7; }
+    static constexpr std::string_view ParentScope() { return "Core::Mouse"; }
 
     static std::string_view ToString(::Core::Mouse::Mod value)
     {
@@ -231,7 +231,7 @@ struct R<Core::Mouse::Mod>
         return std::nullopt;
     }
 
-    static consteval const std::array<::Core::Mouse::Mod, 7>& ToArrayC()
+    static constexpr const std::array<::Core::Mouse::Mod, 7>& ToArrayC()
     {
         static constexpr std::array<::Core::Mouse::Mod, 7> constants = {
 				::Core::Mouse::Mod::None,
@@ -246,7 +246,7 @@ struct R<Core::Mouse::Mod>
         return constants;
     }
 
-    static consteval const std::array<std::string_view, 7>& ToArrayN()
+    static constexpr const std::array<std::string_view, 7>& ToArrayN()
     {
         static constexpr std::array<std::string_view, 7> names = {
 				std::string_view("None"),

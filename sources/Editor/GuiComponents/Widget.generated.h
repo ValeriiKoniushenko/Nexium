@@ -14,9 +14,9 @@
 template<>
 struct R<Core::Gui::Flex>
 {
-    static consteval std::string_view Name() { return "Flex"; }
-    static consteval std::size_t Size() { return 5; }
-    static consteval std::string_view ParentScope() { return "Core::Gui"; }
+    static constexpr std::string_view Name() { return "Flex"; }
+    static constexpr std::size_t Size() { return 5; }
+    static constexpr std::string_view ParentScope() { return "Core::Gui"; }
 
     static std::string_view ToString(::Core::Gui::Flex value)
     {
@@ -41,7 +41,7 @@ struct R<Core::Gui::Flex>
         return std::nullopt;
     }
 
-    static consteval const std::array<::Core::Gui::Flex, 5>& ToArrayC()
+    static constexpr const std::array<::Core::Gui::Flex, 5>& ToArrayC()
     {
         static constexpr std::array<::Core::Gui::Flex, 5> constants = {
 				::Core::Gui::Flex::None,
@@ -54,7 +54,7 @@ struct R<Core::Gui::Flex>
         return constants;
     }
 
-    static consteval const std::array<std::string_view, 5>& ToArrayN()
+    static constexpr const std::array<std::string_view, 5>& ToArrayN()
     {
         static constexpr std::array<std::string_view, 5> names = {
 				std::string_view("None"),
@@ -97,9 +97,9 @@ struct R<Core::Gui::Flex>
 template<>
 struct R<Core::Gui::Align>
 {
-    static consteval std::string_view Name() { return "Align"; }
-    static consteval std::size_t Size() { return 7; }
-    static consteval std::string_view ParentScope() { return "Core::Gui"; }
+    static constexpr std::string_view Name() { return "Align"; }
+    static constexpr std::size_t Size() { return 7; }
+    static constexpr std::string_view ParentScope() { return "Core::Gui"; }
 
     static std::string_view ToString(::Core::Gui::Align value)
     {
@@ -124,7 +124,7 @@ struct R<Core::Gui::Align>
         return std::nullopt;
     }
 
-    static consteval const std::array<::Core::Gui::Align, 7>& ToArrayC()
+    static constexpr const std::array<::Core::Gui::Align, 7>& ToArrayC()
     {
         static constexpr std::array<::Core::Gui::Align, 7> constants = {
 				::Core::Gui::Align::None,
@@ -139,7 +139,7 @@ struct R<Core::Gui::Align>
         return constants;
     }
 
-    static consteval const std::array<std::string_view, 7>& ToArrayN()
+    static constexpr const std::array<std::string_view, 7>& ToArrayN()
     {
         static constexpr std::array<std::string_view, 7> names = {
 				std::string_view("None"),

@@ -14,9 +14,9 @@
 template<>
 struct R<Core::ShaderType>
 {
-    static consteval std::string_view Name() { return "ShaderType"; }
-    static consteval std::size_t Size() { return 4; }
-    static consteval std::string_view ParentScope() { return "Core"; }
+    static constexpr std::string_view Name() { return "ShaderType"; }
+    static constexpr std::size_t Size() { return 4; }
+    static constexpr std::string_view ParentScope() { return "Core"; }
 
     static std::string_view ToString(::Core::ShaderType value)
     {
@@ -41,7 +41,7 @@ struct R<Core::ShaderType>
         return std::nullopt;
     }
 
-    static consteval const std::array<::Core::ShaderType, 4>& ToArrayC()
+    static constexpr const std::array<::Core::ShaderType, 4>& ToArrayC()
     {
         static constexpr std::array<::Core::ShaderType, 4> constants = {
 				::Core::ShaderType::None,
@@ -53,7 +53,7 @@ struct R<Core::ShaderType>
         return constants;
     }
 
-    static consteval const std::array<std::string_view, 4>& ToArrayN()
+    static constexpr const std::array<std::string_view, 4>& ToArrayN()
     {
         static constexpr std::array<std::string_view, 4> names = {
 				std::string_view("None"),

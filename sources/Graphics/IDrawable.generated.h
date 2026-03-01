@@ -6,15 +6,33 @@
  * Your changes will be replaced next time
  */
 
-#include <array>
-#include <optional>
 #include <string>
-#include <unordered_map>
+#include <string_view>
+#include <vector>
 
 template<>
 struct R<Core::IDrawable>
 {
-    static consteval std::string_view Name() { return "IDrawable"; }
-    static consteval std::string_view ParentScope() { return "Core"; }
-        
+    static constexpr std::string_view Name() { return "IDrawable"; }
+    static constexpr std::string_view ParentScope() { return "Core"; }
+    static constexpr std::size_t GetFieldNumbers() { return 1; }
+    static constexpr std::vector<RClassField> GetFields() {
+        return {
+			{ "bool", "_isPostDraw" },
+		};
+    }
+
+    template<IsResourceStreamImpl RImpl>
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Core::IDrawable& obj)
+    {
+        RResourceStream<RImpl> s;
+		s.write("_isPostDraw", obj._isPostDraw);
+        return s;
+    }
+
+    template<IsResourceStreamImpl RImpl>
+    static void Deserialize(const RResourceStream<RImpl>& s, Core::IDrawable& obj)
+    {
+		s.read("_isPostDraw", obj._isPostDraw);
+    }
 }; // struct R<Core::IDrawable>

@@ -14,9 +14,9 @@
 template<>
 struct R<Core::ViewportMode>
 {
-    static consteval std::string_view Name() { return "ViewportMode"; }
-    static consteval std::size_t Size() { return 2; }
-    static consteval std::string_view ParentScope() { return "Core"; }
+    static constexpr std::string_view Name() { return "ViewportMode"; }
+    static constexpr std::size_t Size() { return 2; }
+    static constexpr std::string_view ParentScope() { return "Core"; }
 
     static std::string_view ToString(::Core::ViewportMode value)
     {
@@ -41,7 +41,7 @@ struct R<Core::ViewportMode>
         return std::nullopt;
     }
 
-    static consteval const std::array<::Core::ViewportMode, 2>& ToArrayC()
+    static constexpr const std::array<::Core::ViewportMode, 2>& ToArrayC()
     {
         static constexpr std::array<::Core::ViewportMode, 2> constants = {
 				::Core::ViewportMode::Default,
@@ -51,7 +51,7 @@ struct R<Core::ViewportMode>
         return constants;
     }
 
-    static consteval const std::array<std::string_view, 2>& ToArrayN()
+    static constexpr const std::array<std::string_view, 2>& ToArrayN()
     {
         static constexpr std::array<std::string_view, 2> names = {
 				std::string_view("Default"),

@@ -14,9 +14,9 @@
 template<>
 struct R<Core::ECSAsset::Status>
 {
-    static consteval std::string_view Name() { return "Status"; }
-    static consteval std::size_t Size() { return 5; }
-    static consteval std::string_view ParentScope() { return "Core::ECSAsset"; }
+    static constexpr std::string_view Name() { return "Status"; }
+    static constexpr std::size_t Size() { return 5; }
+    static constexpr std::string_view ParentScope() { return "Core::ECSAsset"; }
 
     static std::string_view ToString(::Core::ECSAsset::Status value)
     {
@@ -41,7 +41,7 @@ struct R<Core::ECSAsset::Status>
         return std::nullopt;
     }
 
-    static consteval const std::array<::Core::ECSAsset::Status, 5>& ToArrayC()
+    static constexpr const std::array<::Core::ECSAsset::Status, 5>& ToArrayC()
     {
         static constexpr std::array<::Core::ECSAsset::Status, 5> constants = {
 				::Core::ECSAsset::Status::NotLoaded,
@@ -54,7 +54,7 @@ struct R<Core::ECSAsset::Status>
         return constants;
     }
 
-    static consteval const std::array<std::string_view, 5>& ToArrayN()
+    static constexpr const std::array<std::string_view, 5>& ToArrayN()
     {
         static constexpr std::array<std::string_view, 5> names = {
 				std::string_view("NotLoaded"),
