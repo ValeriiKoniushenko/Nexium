@@ -502,3 +502,13 @@ TEST_F(ECSTreeTests, DeepTreeCopyFromSpecificMidNode)
         }
     }
 }
+
+void FooBar(BaseComponent base)
+{
+}
+
+TEST_F(ECSTreeTests, SlicingTest)
+{
+    DummyComponent root("Root");
+    FooBar(root);
+}

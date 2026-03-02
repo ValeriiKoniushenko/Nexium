@@ -24,4 +24,3 @@ showSkippedFiles: false
 
 # If true, it will always regenerate the files, regardless of whether they were modified.
 alwaysDirtyCache: false
-
