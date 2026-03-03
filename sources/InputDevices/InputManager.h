@@ -38,8 +38,6 @@ namespace Core
     {
     public:
         using Self = InputManger;
-        template<bool isConst>
-        using AdaptiveRawPtr = std::conditional_t<isConst, const InputManger, InputManger>*;
         using InputT = InputTParam;
         using MappingT = std::unordered_map<StringAtom, IntrusivePtr<InputT>>;
 
@@ -147,10 +145,10 @@ namespace Core
 
     private:
         // ==================== PIMPLs =======================
-        template<bool isConst>
+        template<bool isConst, class ThisT>
         [[nodiscard]] static std::conditional_t<isConst, typename InputT::CPtr,
                                                 typename InputT::Ptr>
-            impl_get(AdaptiveRawPtr<isConst> self, InputT::KeyT key)
+            impl_get(ThisT* self, InputT::KeyT key)
         {
             auto it = std::ranges::find_if(self->_mapping,
                                            [key](const auto& pair) { return key == pair.second; });

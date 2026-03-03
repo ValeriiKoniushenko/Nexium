@@ -41,8 +41,6 @@ public:                                                                         
     using CPtr = Core::IntrusivePtr<const TypeName>;                                               \
     template<bool isConst>                                                                         \
     using AdaptivePtr = Core::IntrusivePtr<std::conditional_t<isConst, const TypeName, TypeName>>; \
-    template<bool isConst>                                                                         \
-    using AdaptiveRawPtr = std::conditional_t<isConst, const TypeName, TypeName>*;                 \
                                                                                                    \
     static const StringAtom componentType;                                                         \
                                                                                                    \
@@ -492,8 +490,6 @@ namespace Core
         using Self = BaseComponent;
         template<bool isConst>
         using AdaptivePtr = Core::IntrusivePtr<std::conditional_t<isConst, const Self, Self>>;
-        template<bool isConst>
-        using AdaptiveRawPtr = std::conditional_t<isConst, const Self, Self>*;
         using Ptr = Core::IntrusivePtr<Self>;
         using CPtr = Core::IntrusivePtr<const Self>;
         using CChildT = Core::IntrusivePtr<const BaseComponent>;

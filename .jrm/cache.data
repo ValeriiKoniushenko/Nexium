@@ -73,7 +73,7 @@
 1771957942802024873 sources/Editor/Windows/ShaderManager.h
 1771957942822024562 sources/Editor/Windows/TextEditor.h
 1771958020642817863 sources/Editor/Windows/WorldLightning.h
-1772554971513931368 sources/GameplaySystem/ECS/BaseComponent.h
+1772563959172729280 sources/GameplaySystem/ECS/BaseComponent.h
 1771957954487843037 sources/GameplaySystem/ECS/ModuleInfo.h
 1771957144504456764 sources/GameplaySystem/ECS/Transformable.h
 1771958192728179889 sources/Graphics/GraphicsComponents.h
@@ -91,7 +91,7 @@
 1771957223406988588 sources/Graphics/Texture.h
 1771958192732179829 sources/Graphics/Window.h
 1771957414388606030 sources/InputDevices/InputAction.h
-1771957480046488071 sources/InputDevices/InputManager.h
+1772564004746311205 sources/InputDevices/InputManager.h
 1771958192734179798 sources/InputDevices/Keyboard.h
 1771957444655088221 sources/InputDevices/ModuleInfo.h
 1771958192734179798 sources/InputDevices/Mouse.h
