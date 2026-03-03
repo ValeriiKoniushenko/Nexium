@@ -128,11 +128,15 @@ TEST(DataStreamTests, CustomClass)
     data.ioFieldsUpdate(stream);
 
     ASSERT_FALSE(stream.hasErrors());
-    ASSERT_TRUE(stream.contains("name"));
-    ASSERT_EQ("Andriy", stream.get<std::string>("name"));
-    ASSERT_TRUE(stream.contains("age"));
-    ASSERT_EQ(19, stream.get<int>("age"));
-    ASSERT_TRUE(stream.contains("vec"));
+    ASSERT_TRUE(stream.contains("SomeData"));
+
+    auto d = stream.getRaw()["SomeData"];
+
+    ASSERT_TRUE(d.contains("name"));
+    ASSERT_EQ("Andriy", d["name"].get<std::string>());
+    ASSERT_TRUE(d.contains("age"));
+    ASSERT_EQ(19, d["age"].get<int>());
+    ASSERT_TRUE(d.contains("vec"));
 
     stream.setMode(DataStream::Mode::Input);
     data.ioFieldsUpdate(stream);
