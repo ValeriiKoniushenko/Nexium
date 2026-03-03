@@ -529,7 +529,6 @@ TEST(ECSBaseTests, DetachChildRemovesFromChildrenList)
     EXPECT_FALSE(root.hasChildren());
 }
 
-/*
 TEST(ECSBaseTests, RemoveChildOfRemovesAllMatchingTypes)
 {
     DummyComponent root("Root");
@@ -598,4 +597,4 @@ TEST(ECSBaseTests, InitializeIsCalledAndPropagatesToChildren)
 
     EXPECT_EQ(1, child->preInitCalls);
     EXPECT_EQ(1, child->initCalls);
-}*/
+}
