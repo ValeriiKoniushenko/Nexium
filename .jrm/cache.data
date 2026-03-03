@@ -73,7 +73,7 @@
 1771957942802024873 sources/Editor/Windows/ShaderManager.h
 1771957942822024562 sources/Editor/Windows/TextEditor.h
 1771958020642817863 sources/Editor/Windows/WorldLightning.h
-1772563959172729280 sources/GameplaySystem/ECS/BaseComponent.h
+1772564423602931719 sources/GameplaySystem/ECS/BaseComponent.h
 1771957954487843037 sources/GameplaySystem/ECS/ModuleInfo.h
 1771957144504456764 sources/GameplaySystem/ECS/Transformable.h
 1771958192728179889 sources/Graphics/GraphicsComponents.h

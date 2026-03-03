@@ -345,11 +345,9 @@ namespace Core
     {
     public:
         AbstractComponent(const AbstractComponent&) = default;
-
-        AbstractComponent(AbstractComponent&& other) noexcept;
-
         AbstractComponent& operator=(const AbstractComponent&) = default;
 
+        AbstractComponent(AbstractComponent&& other) noexcept;
         AbstractComponent& operator=(AbstractComponent&& other) noexcept;
 
         ~AbstractComponent() override = default;
@@ -489,12 +487,9 @@ namespace Core
     public:
         using Self = BaseComponent;
         template<bool isConst>
-        using AdaptivePtr = Core::IntrusivePtr<std::conditional_t<isConst, const Self, Self>>;
-        using Ptr = Core::IntrusivePtr<Self>;
-        using CPtr = Core::IntrusivePtr<const Self>;
-        using CChildT = Core::IntrusivePtr<const BaseComponent>;
-        using ChildT = Core::IntrusivePtr<BaseComponent>;
-        using ChildrenT = std::vector<Core::IntrusivePtr<BaseComponent>>;
+        using AdaptivePtr = IntrusivePtr<std::conditional_t<isConst, const Self, Self>>;
+        using Ptr = IntrusivePtr<Self>;
+        using CPtr = IntrusivePtr<const Self>;
 
         static const StringAtom componentType;
 
@@ -513,6 +508,7 @@ namespace Core
         BaseComponent& operator=(BaseComponent&& other) noexcept;
         BaseComponent(const BaseComponent& other);
         BaseComponent& operator=(const BaseComponent& other);
+
         [[nodiscard]] virtual bool operator==(const Self& other) const;
 
         // ========================== WORKING WITH NAME ==========================
@@ -582,8 +578,8 @@ namespace Core
         void invalidate() { _isInitialized = false; }
 
         // ========================== WORKING WITH CHILDREN ==========================
-        [[nodiscard]] ChildT getFirstChild() { return _children.front(); }
-        [[nodiscard]] ChildT getLastChild() { return _children.back(); }
+        [[nodiscard]] IntrusivePtr<BaseComponent> getFirstChild() { return _children.front(); }
+        [[nodiscard]] IntrusivePtr<BaseComponent> getLastChild() { return _children.back(); }
 
         template<IsComponent T>
         [[nodiscard]] T::Ptr getFirstChildAs()
@@ -605,10 +601,22 @@ namespace Core
             return nullptr;
         }
 
-        [[nodiscard]] ChildT getChildAt(std::size_t i) { return _children.at(i); }
-        [[nodiscard]] CChildT getChildAt(std::size_t i) const { return _children.at(i); }
-        [[nodiscard]] const ChildrenT& getChildren() const noexcept { return _children; }
-        [[nodiscard]] ChildrenT& getChildren() noexcept { return _children; }
+        [[nodiscard]] IntrusivePtr<BaseComponent> getChildAt(std::size_t i)
+        {
+            return _children.at(i);
+        }
+        [[nodiscard]] IntrusivePtr<const BaseComponent> getChildAt(std::size_t i) const
+        {
+            return _children.at(i);
+        }
+        [[nodiscard]] const std::vector<IntrusivePtr<BaseComponent>>& getChildren() const noexcept
+        {
+            return _children;
+        }
+        [[nodiscard]] std::vector<IntrusivePtr<BaseComponent>>& getChildren() noexcept
+        {
+            return _children;
+        }
         [[nodiscard]] std::size_t getChildrenCount() const noexcept { return _children.size(); }
         [[nodiscard]] bool hasChildren() const noexcept { return !_children.empty(); }
 
@@ -675,7 +683,10 @@ namespace Core
 
         void removeChild(const BaseComponent* child);
 
-        void removeChild(const CChildT& child) { removeChild(child.get()); }
+        void removeChild(const IntrusivePtr<const BaseComponent>& child)
+        {
+            removeChild(child.get());
+        }
 
         void removeChildIf(const std::function<bool(const BaseComponent*)>& pred);
 
@@ -703,8 +714,8 @@ namespace Core
         }
 
         /**
-         * Iterate over every child and root recursively(BFS).
-         * Can take a functions of next types:
+         * Iterate over every child and root recursively (BFS).
+         * Can take a function of next types:
          * 1. bool(const BaseComponent*) - this function will work until it gets 'false'
          * in return
          * 2. void(const BaseComponent*) - will iterate without stopping through all a
@@ -773,7 +784,7 @@ namespace Core
         virtual void onPreInitialize() {}
 
     protected:
-        ChildrenT _children;
+        std::vector<IntrusivePtr<BaseComponent>> _children;
         StringAtom _name;
         StringAtom _type;
         BaseComponent* _parent = nullptr;

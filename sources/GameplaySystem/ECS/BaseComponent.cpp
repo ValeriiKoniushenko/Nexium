@@ -279,7 +279,7 @@ namespace Core
 
     BaseComponent& BaseComponent::operator=(BaseComponent&& other) noexcept
     {
-        if (this != &other)
+        if (this != &other) [[likely]]
         {
             AbstractComponent::operator=(std::move(other));
             _name = std::move(other._name);
