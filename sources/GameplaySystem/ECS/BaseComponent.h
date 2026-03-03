@@ -521,7 +521,6 @@ namespace Core
 
         // ========================== WORKING WITH NAME ==========================
         void setComponentName(const StringAtom& name);
-
         void setComponentName(StringAtom&& name);
 
         [[nodiscard]] const StringAtom& getComponentName() const noexcept { return _name; }
@@ -669,7 +668,7 @@ namespace Core
         }
 
         /**
-         * attach existing child or just new one. Your child will be cloned
+         * attach an existing child or just a new one. Your child will be cloned
          * to this class/owner
          */
         BaseComponent* attachChild(const BaseComponent::Ptr& child);

@@ -294,19 +294,11 @@ TEST(ECSBaseTests, RemovingChildIf)
 
     ASSERT_EQ(names.size(), root.getChildrenCount());
 
-    root.removeChildIf(
-        [](const BaseComponent* c)
-        {
-            return c->getComponentName() == "How";
-        });
+    root.removeChildIf([](const BaseComponent* c) { return c->getComponentName() == "How"; });
 
     ASSERT_EQ(names.size() - 1, root.getChildrenCount());
 
-    root.removeChildIf(
-        [](const BaseComponent* c)
-        {
-            return c->getComponentName().front() == 'A';
-        });
+    root.removeChildIf([](const BaseComponent* c) { return c->getComponentName().front() == 'A'; });
 
     ASSERT_EQ(names.size() - 1 - 2, root.getChildrenCount());
 }
@@ -338,17 +330,9 @@ TEST_F(ECSTreeTests, BFSIteratorTest)
 {
     StringAtom trunk;
 
-    root.forEach(
-        [&](BaseComponent* c)
-        {
-            trunk.pushBack(c->getComponentName());
-        });
+    root.forEach([&](BaseComponent* c) { trunk.pushBack(c->getComponentName()); });
 
-    root.forEach(
-        [&](const BaseComponent* c)
-        {
-            trunk.pushBack(c->getComponentName());
-        });
+    root.forEach([&](const BaseComponent* c) { trunk.pushBack(c->getComponentName()); });
 
     root.forEach(
         [&](const BaseComponent* c)
@@ -359,11 +343,7 @@ TEST_F(ECSTreeTests, BFSIteratorTest)
 
     const auto& croot = static_cast<const decltype(root)&>(root);
 
-    croot.forEach(
-        [&](const BaseComponent* c)
-        {
-            trunk.pushBack(c->getComponentName());
-        });
+    croot.forEach([&](const BaseComponent* c) { trunk.pushBack(c->getComponentName()); });
 
     croot.forEach(
         [&](const BaseComponent* c)
@@ -377,17 +357,9 @@ TEST_F(ECSTreeTests, DFSIteratorTest)
 {
     StringAtom trunk;
 
-    root.forEachDFS(
-        [&](BaseComponent* c)
-        {
-            trunk.pushBack(c->getComponentName());
-        });
+    root.forEachDFS([&](BaseComponent* c) { trunk.pushBack(c->getComponentName()); });
 
-    root.forEachDFS(
-        [&](const BaseComponent* c)
-        {
-            trunk.pushBack(c->getComponentName());
-        });
+    root.forEachDFS([&](const BaseComponent* c) { trunk.pushBack(c->getComponentName()); });
 
     root.forEachDFS(
         [&](const BaseComponent* c)
@@ -398,11 +370,7 @@ TEST_F(ECSTreeTests, DFSIteratorTest)
 
     const auto& croot = static_cast<const decltype(root)&>(root);
 
-    croot.forEachDFS(
-        [&](const BaseComponent* c)
-        {
-            trunk.pushBack(c->getComponentName());
-        });
+    croot.forEachDFS([&](const BaseComponent* c) { trunk.pushBack(c->getComponentName()); });
 
     croot.forEachDFS(
         [&](const BaseComponent* c)
@@ -417,19 +385,11 @@ TEST_F(ECSTreeTests, DeepTreeCopy)
     std::vector<BaseComponent*> rootSet;
     std::vector<BaseComponent*> newRootSet;
 
-    root.forEach(
-        [&](auto* c)
-        {
-            rootSet.push_back(c);
-        });
+    root.forEach([&](auto* c) { rootSet.push_back(c); });
 
     DummyComponent newRoot = root;
 
-    newRoot.forEach(
-        [&](auto* c)
-        {
-            newRootSet.push_back(c);
-        });
+    newRoot.forEach([&](auto* c) { newRootSet.push_back(c); });
 
     ASSERT_FALSE(rootSet.empty());
     ASSERT_EQ(rootSet.size(), newRootSet.size());
@@ -463,19 +423,11 @@ TEST_F(ECSTreeTests, DeepTreeCopyFromSpecificMidNode)
     auto node = root.findFirstChildOf<DummyComponent>("Top2");
     ASSERT_NE(nullptr, node);
 
-    node->forEach(
-        [&](auto* c)
-        {
-            rootSet.push_back(c);
-        });
+    node->forEach([&](auto* c) { rootSet.push_back(c); });
 
     DummyComponent newNode = *node;
 
-    newNode.forEach(
-        [&](auto* c)
-        {
-            newRootSet.push_back(c);
-        });
+    newNode.forEach([&](auto* c) { newRootSet.push_back(c); });
 
     ASSERT_EQ(nullptr, newNode.getParent());
 
@@ -507,8 +459,47 @@ void FooBar(BaseComponent base)
 {
 }
 
+#include <memory>
+
+class Foo
+{
+public:
+    Foo() = default;
+    virtual ~Foo() = default;
+
+    Foo(const Foo&) = default;
+    Foo& operator=(const Foo&) = default;
+
+    Foo(Foo&&) noexcept = default;
+    Foo& operator=(Foo&&) noexcept = default;
+
+    [[nodiscard]] virtual std::unique_ptr<Foo> clone() const
+    {
+        return std::make_unique<Foo>(*this);
+    }
+};
+
+class Bar : public Foo
+{
+public:
+    std::string bar_local = "Hello bar";
+
+    std::unique_ptr<Foo> clone() const override { return std::make_unique<Bar>(*this); }
+};
+
+class Baz : public Bar
+{
+public:
+    std::string baz_local = "Hello baz";
+
+    std::unique_ptr<Foo> clone() const override { return std::make_unique<Baz>(*this); }
+};
+
 TEST_F(ECSTreeTests, SlicingTest)
 {
-    DummyComponent root("Root");
-    FooBar(root);
+    Baz b;
+    Bar f(b);
+
+    // DummyComponent root("Root");
+    // FooBar(root);
 }
