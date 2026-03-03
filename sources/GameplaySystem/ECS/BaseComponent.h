@@ -625,7 +625,7 @@ namespace Core
         template<IsComponent ComponentT>
         [[nodiscard]] ComponentT* findFirstChildOf(const StringAtom& name = ""_atom)
         {
-            return const_cast<ComponentT*>(Impl_findFirstChildOf<ComponentT>(this, name));
+            return const_cast<ComponentT*>(Impl_findFirstChildOf<const ComponentT>(this, name));
         }
 
         template<IsComponent ComponentT>
@@ -703,8 +703,7 @@ namespace Core
         template<class FuncT>
         void forEach(FuncT&& callback)
         {
-            Impl_forEach_BFS<BaseComponent, false>(this,
-                                                   std::forward<decltype(callback)>(callback));
+            Impl_forEach_BFS<BaseComponent>(this, std::forward<decltype(callback)>(callback));
         }
 
         /**
@@ -718,7 +717,7 @@ namespace Core
         template<class FuncT>
         void forEach(FuncT&& callback) const
         {
-            Impl_forEach_BFS<BaseComponent, true>(this, std::forward<decltype(callback)>(callback));
+            Impl_forEach_BFS<const BaseComponent>(this, std::forward<decltype(callback)>(callback));
         }
 
         /**
@@ -732,8 +731,7 @@ namespace Core
         template<class FuncT>
         void forEachDFS(FuncT&& callback)
         {
-            Impl_forEach_DFS<BaseComponent, false>(this,
-                                                   std::forward<decltype(callback)>(callback));
+            Impl_forEach_DFS<BaseComponent>(this, std::forward<decltype(callback)>(callback));
         }
 
         /**
@@ -747,7 +745,7 @@ namespace Core
         template<class FuncT>
         void forEachDFS(FuncT&& callback) const
         {
-            Impl_forEach_DFS<BaseComponent, true>(this, std::forward<decltype(callback)>(callback));
+            Impl_forEach_DFS<const BaseComponent>(this, std::forward<decltype(callback)>(callback));
         }
 
     protected:
@@ -790,11 +788,11 @@ namespace Core
         void ioWriteChildInputFromCache(DataStream& out);
 
         // ===================== PIMPLs =============================
-        template<IsComponentOrBase TargetT, bool isConst, class FuncT>
-        static void Impl_forEach_BFS(AdaptiveRawPtr<isConst> me, FuncT&& callback);
+        template<IsComponentOrBase TargetT, class ThisT, class FuncT>
+        static void Impl_forEach_BFS(ThisT* me, FuncT&& callback);
 
-        template<IsComponentOrBase TargetT, bool isConst, class FuncT>
-        static void Impl_forEach_DFS(AdaptiveRawPtr<isConst> me, FuncT&& callback);
+        template<IsComponentOrBase TargetT, class ThisT, class FuncT>
+        static void Impl_forEach_DFS(ThisT* me, FuncT&& callback);
 
         template<IsComponent TargetT>
         [[nodiscard]] static const TargetT* Impl_findFirstChildOf(const BaseComponent* me,
@@ -838,25 +836,23 @@ namespace Core
         return true;
     }
 
-    template<IsComponentOrBase TargetT, bool isConst, class FuncT>
-    void BaseComponent::Impl_forEach_BFS(AdaptiveRawPtr<isConst> me, FuncT&& callback)
+    template<IsComponentOrBase TargetT, class ThisT, class FuncT>
+    void BaseComponent::Impl_forEach_BFS(ThisT* me, FuncT&& callback)
     {
         if (!Verify(me)) [[unlikely]]
         {
             return;
         }
 
-        using HolderPtr = AdaptiveRawPtr<isConst>;
-        using TargetPtr = TargetT::template AdaptiveRawPtr<isConst>;
-        std::unordered_set<HolderPtr> visited;
-        std::queue<HolderPtr> q;
+        std::unordered_set<ThisT*> visited;
+        std::queue<ThisT*> q;
 
         visited.emplace(me);
         q.push(me);
 
         while (!q.empty())
         {
-            HolderPtr root = q.front();
+            ThisT* root = q.front();
             q.pop();
 
             if (!Verify(root)) [[unlikely]]
@@ -865,17 +861,20 @@ namespace Core
                 return;
             }
 
-            if (auto target = dynamic_cast<TargetPtr>(root))
+            if (root != me)
             {
-                if constexpr (std::is_void_v<decltype(callback(target))>)
+                if (auto target = dynamic_cast<TargetT*>(root))
                 {
-                    std::invoke(std::forward<decltype(callback)>(callback), target);
-                }
-                else
-                {
-                    if (!std::invoke(std::forward<decltype(callback)>(callback), target))
+                    if constexpr (std::is_void_v<decltype(callback(target))>)
                     {
-                        return;
+                        std::invoke(std::forward<decltype(callback)>(callback), target);
+                    }
+                    else
+                    {
+                        if (!std::invoke(std::forward<decltype(callback)>(callback), target))
+                        {
+                            return;
+                        }
                     }
                 }
             }
@@ -891,24 +890,22 @@ namespace Core
         }
     }
 
-    template<IsComponentOrBase TargetT, bool isConst, class FuncT>
-    void BaseComponent::Impl_forEach_DFS(AdaptiveRawPtr<isConst> me, FuncT&& callback)
+    template<IsComponentOrBase TargetT, class ThisT, class FuncT>
+    void BaseComponent::Impl_forEach_DFS(ThisT* me, FuncT&& callback)
     {
         if (!Verify(me)) [[unlikely]]
         {
             return;
         }
 
-        using HolderPtr = AdaptiveRawPtr<isConst>;
-        using TargetPtr = TargetT::template AdaptiveRawPtr<isConst>;
-        std::unordered_set<HolderPtr> visited;
-        std::stack<HolderPtr> s;
+        std::unordered_set<ThisT*> visited;
+        std::stack<ThisT*> s;
 
         s.push(me);
 
         while (!s.empty())
         {
-            HolderPtr root = s.top();
+            ThisT* root = s.top();
             s.pop();
 
             if (!Verify(root)) [[unlikely]]
@@ -924,17 +921,20 @@ namespace Core
 
             visited.emplace(root);
 
-            if (auto target = dynamic_cast<TargetPtr>(root))
+            if (root != me)
             {
-                if constexpr (std::is_void_v<decltype(callback(target))>)
+                if (auto target = dynamic_cast<TargetT*>(root))
                 {
-                    std::invoke(std::forward<decltype(callback)>(callback), target);
-                }
-                else
-                {
-                    if (!std::invoke(std::forward<decltype(callback)>(callback), target))
+                    if constexpr (std::is_void_v<decltype(callback(target))>)
                     {
-                        return;
+                        std::invoke(std::forward<decltype(callback)>(callback), target);
+                    }
+                    else
+                    {
+                        if (!std::invoke(std::forward<decltype(callback)>(callback), target))
+                        {
+                            return;
+                        }
                     }
                 }
             }
@@ -961,17 +961,19 @@ namespace Core
                 Assert(comp->_type.isStatic());
                 Assert(TargetT::componentType.isStatic());
 
-                if ((found = dynamic_cast<const TargetT*>(comp)))
+                if (auto* res = dynamic_cast<const TargetT*>(comp))
                 {
-                    if (found && !name.isEmpty())
+                    if (!name.isEmpty())
                     {
-                        if (found->_name == name)
+                        if (res->_name == name)
                         {
+                            found = res;
                             return false;
                         }
                         return true;
                     }
 
+                    found = res;
                     return false;
                 }
                 return true;
