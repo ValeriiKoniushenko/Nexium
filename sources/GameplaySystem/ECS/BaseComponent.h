@@ -625,13 +625,13 @@ namespace Core
         template<IsComponent ComponentT>
         [[nodiscard]] ComponentT* findFirstChildOf(const StringAtom& name = ""_atom)
         {
-            return Impl_findFirstChildOf<ComponentT, false>(this, name);
+            return const_cast<ComponentT*>(Impl_findFirstChildOf<ComponentT>(this, name));
         }
 
         template<IsComponent ComponentT>
         [[nodiscard]] const ComponentT* findFirstChildOf(const StringAtom& name = ""_atom) const
         {
-            return Impl_findFirstChildOf<ComponentT, true>(this, name);
+            return Impl_findFirstChildOf<ComponentT>(this, name);
         }
 
         template<IsComponent ComponentT, class... Args>
@@ -796,9 +796,9 @@ namespace Core
         template<IsComponentOrBase TargetT, bool isConst, class FuncT>
         static void Impl_forEach_DFS(AdaptiveRawPtr<isConst> me, FuncT&& callback);
 
-        template<IsComponent TargetT, bool isConst>
-        [[nodiscard]] static TargetT::template AdaptiveRawPtr<isConst> Impl_findFirstChildOf(
-            AdaptiveRawPtr<isConst> me, const StringAtom& name);
+        template<IsComponent TargetT>
+        [[nodiscard]] static const TargetT* Impl_findFirstChildOf(const BaseComponent* me,
+                                                                  const StringAtom& name);
 
     private:
         bool _isInitialized = false;
@@ -949,26 +949,21 @@ namespace Core
         }
     }
 
-    template<IsComponent TargetT, bool isConst>
-    TargetT::template AdaptiveRawPtr<isConst> BaseComponent::Impl_findFirstChildOf(
-        AdaptiveRawPtr<isConst> me, const StringAtom& name)
+    template<IsComponent TargetT>
+    const TargetT* BaseComponent::Impl_findFirstChildOf(const BaseComponent* me,
+                                                        const StringAtom& name)
     {
-        typename TargetT::template AdaptiveRawPtr<isConst> found = nullptr;
+        const TargetT* found = nullptr;
 
         me->forEach(
-            [&found, &name](BaseComponent* comp)
+            [&found, &name](const BaseComponent* comp)
             {
                 Assert(comp->_type.isStatic());
                 Assert(TargetT::componentType.isStatic());
 
-                if (comp->_type == TargetT::componentType)
+                if ((found = dynamic_cast<const TargetT*>(comp)))
                 {
-#if defined(DEBUG)
-                    found = dynamic_cast<TargetT*>(comp);
-#else
-                    found = static_cast<TargetT*>(comp);
-#endif
-                    if (!name.isEmpty() && found)
+                    if (found && !name.isEmpty())
                     {
                         if (found->_name == name)
                         {

@@ -1,27 +1,3 @@
-/*
- * MIT License
- *
- * Copyright (c) 2018-2025 Valerii Koniushenko
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-
 #include "GameplaySystem/ECS/BaseComponent.h"
 
 #include "gtest/gtest.h"
@@ -87,6 +63,21 @@ namespace
 
         DummyComponent root;
     };
+
+    class InitSpyComponent : public BaseComponent
+    {
+        ECS_COMPONENT_DECL(InitSpyComponent, BaseComponent);
+
+    public:
+        int preInitCalls = 0;
+        int initCalls = 0;
+
+    protected:
+        void onPreInitialize() override { ++preInitCalls; }
+        void onInitialize() override { ++initCalls; }
+    };
+
+    ECS_COMPONENT_IMPL(InitSpyComponent);
 } // namespace
 
 TEST(ECSBaseTests, SimpleCreation)
@@ -454,3 +445,157 @@ TEST_F(ECSTreeTests, DeepTreeCopyFromSpecificMidNode)
         }
     }
 }
+
+TEST(ECSBaseTests, GlobalFactoryCanCreateRegisteredComponent)
+{
+    auto* created = GetGlobalComponentFactory().create(DummyComponent::componentType);
+    ASSERT_NE(nullptr, created);
+    EXPECT_EQ(created->getComponentType(), DummyComponent::componentType);
+
+    delete created;
+}
+
+TEST(ECSBaseTests, FindFirstChildOfByTypeAndName)
+{
+    DummyComponent root("Root");
+
+    (void)root.addChildComponent<DummyComponent>("A");
+    (void)root.addChildComponent<DummyComponent>("B");
+
+    auto* foundA = root.findFirstChildOf<DummyComponent>("A");
+    ASSERT_NE(nullptr, foundA);
+    EXPECT_EQ(foundA->getComponentName(), "A");
+
+    auto* foundB = root.findFirstChildOf<DummyComponent>("B");
+    ASSERT_NE(nullptr, foundB);
+    EXPECT_EQ(foundB->getComponentName(), "B");
+
+    EXPECT_EQ(nullptr, root.findFirstChildOf<DummyComponent>("DoesNotExist"));
+}
+
+TEST(ECSBaseTests, AddUniqueTypeChildComponentReturnsSameInstance)
+{
+    DummyComponent root("Root");
+
+    auto* first = root.addUniqueTypeChildComponent<DummyComponent>("A");
+    auto* second = root.addUniqueTypeChildComponent<DummyComponent>("B"); // should not add another
+
+    ASSERT_NE(nullptr, first);
+    ASSERT_NE(nullptr, second);
+    EXPECT_EQ(first, second);
+    EXPECT_EQ(1, root.getChildrenCount());
+}
+
+TEST(ECSBaseTests, GetOrAddChildComponentReturnsExisting)
+{
+    DummyComponent root("Root");
+
+    auto* first = root.getOrAddChildComponent<DummyComponent>("A");
+    auto* second = root.getOrAddChildComponent<DummyComponent>("B");
+
+    ASSERT_NE(nullptr, first);
+    ASSERT_NE(nullptr, second);
+    EXPECT_EQ(first, second);
+    EXPECT_EQ(1, root.getChildrenCount());
+}
+
+TEST(ECSBaseTests, AttachChildClonesAndSetsParent)
+{
+    DummyComponent root("Root");
+
+    DummyComponent::Ptr externalChild = new DummyComponent("Child");
+    ASSERT_FALSE(externalChild->hasParent());
+
+    BaseComponent* attached = root.attachChild(externalChild);
+    ASSERT_NE(nullptr, attached);
+
+    EXPECT_NE(attached, externalChild.get()); // must be a clone
+    EXPECT_EQ(attached->getComponentType(), externalChild->getComponentType());
+    EXPECT_EQ(attached->getComponentName(), externalChild->getComponentName());
+    EXPECT_EQ(attached->getParent(), &root);
+    EXPECT_EQ(1, root.getChildrenCount());
+}
+
+TEST(ECSBaseTests, DetachChildRemovesFromChildrenList)
+{
+    DummyComponent root("Root");
+
+    auto* child = root.addChildComponent<DummyComponent>("Child");
+    ASSERT_NE(nullptr, child);
+    ASSERT_EQ(1, root.getChildrenCount());
+
+    root.detachChild(child);
+    EXPECT_EQ(0, root.getChildrenCount());
+    EXPECT_FALSE(root.hasChildren());
+}
+
+/*
+TEST(ECSBaseTests, RemoveChildOfRemovesAllMatchingTypes)
+{
+    DummyComponent root("Root");
+
+    (void)root.addChildComponent<DummyComponent>("A");
+    (void)root.addChildComponent<DummyComponent>("B");
+    ASSERT_TRUE(root.hasChildrenAs<DummyComponent>());
+
+    root.removeChildOf<DummyComponent>();
+
+    EXPECT_EQ(0, root.getChildrenCount());
+    EXPECT_FALSE(root.hasChildrenAs<DummyComponent>());
+}
+
+TEST(ECSBaseTests, GetOwnerReturnsTopmostParent)
+{
+    DummyComponent root("Root");
+    auto* child = root.addChildComponent<DummyComponent>("Child");
+    auto* grandChild = child->addChildComponent<DummyComponent>("GrandChild");
+
+    ASSERT_NE(nullptr, grandChild);
+
+    EXPECT_EQ(grandChild->getOwner(), &root);
+    EXPECT_EQ(child->getOwner(), &root);
+    EXPECT_EQ(root.getOwner(), &root);
+}
+
+TEST(ECSBaseTests, MakeHashDependsOnParentChain)
+{
+    DummyComponent rootA("RootA");
+    DummyComponent rootB("RootB");
+
+    auto* childA = rootA.addChildComponent<DummyComponent>("Child");
+    auto* childB = rootB.addChildComponent<DummyComponent>("Child");
+
+    ASSERT_NE(nullptr, childA);
+    ASSERT_NE(nullptr, childB);
+
+    EXPECT_NE(childA->makeHash(), childB->makeHash());
+}
+
+TEST(ECSBaseTests, InitializeIsCalledAndPropagatesToChildren)
+{
+    InitSpyComponent root("Root");
+    EXPECT_FALSE(root.isInitialized());
+
+    auto* child = root.addChildComponent<InitSpyComponent>("Child");
+    ASSERT_NE(nullptr, child);
+
+    EXPECT_TRUE(root.isInitialized());
+    EXPECT_TRUE(child->isInitialized());
+
+    EXPECT_EQ(1, root.preInitCalls);
+    EXPECT_EQ(1, root.initCalls);
+    EXPECT_EQ(1, child->preInitCalls);
+    EXPECT_EQ(1, child->initCalls);
+
+    root.invalidate();
+    EXPECT_FALSE(root.isInitialized());
+
+    root.initialize();
+    EXPECT_TRUE(root.isInitialized());
+
+    EXPECT_EQ(2, root.preInitCalls);
+    EXPECT_EQ(2, root.initCalls);
+
+    EXPECT_EQ(1, child->preInitCalls);
+    EXPECT_EQ(1, child->initCalls);
+}*/
