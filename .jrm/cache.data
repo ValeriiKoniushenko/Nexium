@@ -76,7 +76,7 @@
 1772656817766336778 sources/GameplaySystem/ECS/BaseComponent.h
 1771957954487843037 sources/GameplaySystem/ECS/ModuleInfo.h
 1772657434075383226 sources/GameplaySystem/ECS/Transformable.h
-1771958192728179889 sources/Graphics/GraphicsComponents.h
+1772658575734797699 sources/Graphics/GraphicsComponents.h
 1772387710149826694 sources/Graphics/IDrawable.h
 1771957154420269576 sources/Graphics/IOutliner.h
 1771958192730179859 sources/Graphics/Image.h

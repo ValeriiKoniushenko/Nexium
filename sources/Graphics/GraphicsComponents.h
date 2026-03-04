@@ -41,7 +41,6 @@ namespace Core
             Disable,
         };
 
-
         ENUM_CLASS();
         enum class ModifiedValue : GLenum
         {
@@ -78,13 +77,24 @@ namespace Core
 
         ~GraphicsComponentData() override;
 
-        GraphicsComponentData(const GraphicsComponentData& other);
+        GraphicsComponentData(const GraphicsComponentData& other) = default;
 
         GraphicsComponentData(GraphicsComponentData&& other) noexcept;
 
-        GraphicsComponentData& operator=(const GraphicsComponentData& other);
+        GraphicsComponentData& operator=(const GraphicsComponentData& other) = default;
 
         GraphicsComponentData& operator=(GraphicsComponentData&& other) noexcept;
+
+        friend void swap(GraphicsComponentData& a, GraphicsComponentData& b) noexcept
+        {
+            std::swap(a._drawModifiers, b._drawModifiers);
+            std::swap(a._shader, b._shader);
+            std::swap(a._triangleCount, b._triangleCount);
+            std::swap(a._vbo, b._vbo);
+            std::swap(a._ebo, b._ebo);
+            std::swap(a._vao, b._vao);
+            std::swap(a._texture, b._texture);
+        }
 
         virtual void generate();
 

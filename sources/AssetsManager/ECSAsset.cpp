@@ -25,13 +25,11 @@
 #include "ECSAsset.h"
 
 #include "AssetImpls/Factory.h"
+#include "ECSAsset.generated.cpp.inl" // this line added by the code generator.
 #include "ModuleInfo.h"
 
 #include <Utils/Functions.h>
 #include <nlohmann/json.hpp>
-
-
-#include "ECSAsset.generated.cpp.inl" // this line added by the code generator.
 
 namespace Core
 {
@@ -338,18 +336,22 @@ namespace Core
     }
 
     NXSceneAsset::NXSceneAsset(const NXSceneAsset& other)
-        : IntrusiveRefCounter()
+        : IntrusiveRefCounter(),
+          _asset(other._asset),
+          _data(other._data->clone())
     {
-        *this = other;
     }
 
     NXSceneAsset& NXSceneAsset::operator=(const NXSceneAsset& other)
     {
-        if (&other != this) [[likely]]
+        if (&other == this) [[unlikely]]
         {
-            _asset = other._asset;
-            _data = other._data->clone();
+            return *this;
         }
+
+        _asset = other._asset;
+        _data = other._data->clone();
+
         return *this;
     }
 

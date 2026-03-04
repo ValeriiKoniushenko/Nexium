@@ -24,10 +24,9 @@
 
 #include "GraphicsComponents.h"
 
-#include "assimp/scene.h"
-
-
+#include "GameplaySystem/ECS/BaseComponent.h"
 #include "GraphicsComponents.generated.cpp.inl" // this line added by the code generator.
+#include "assimp/scene.h"
 
 namespace Core
 {
@@ -36,50 +35,31 @@ namespace Core
         privateClear();
     }
 
-    GraphicsComponentData::GraphicsComponentData(const GraphicsComponentData& other)
-    {
-        *this = other;
-    }
-
     GraphicsComponentData::GraphicsComponentData(GraphicsComponentData&& other) noexcept
+        : _shader(other._shader),
+          _triangleCount(other._triangleCount),
+          _vbo(other._vbo),
+          _ebo(other._ebo),
+          _vao(other._vao),
+          _texture(other._texture)
     {
-        *this = std::move(other);
-    }
-
-    GraphicsComponentData& GraphicsComponentData::operator=(const GraphicsComponentData& other)
-    {
-        if (this != &other) [[likely]]
-        {
-            _shader = other._shader;
-            _triangleCount = other._triangleCount;
-            _vbo = other._vbo;
-            _ebo = other._ebo;
-            _vao = other._vao;
-            _texture = other._texture;
-        }
-
-        return *this;
+        other._shader = nullptr;
+        other._triangleCount = 0;
+        other._vbo = 0;
+        other._ebo = 0;
+        other._vao = 0;
+        other._texture = 0;
     }
 
     GraphicsComponentData& GraphicsComponentData::operator=(GraphicsComponentData&& other) noexcept
     {
-        if (this != &other) [[likely]]
+        if (this == &other) [[unlikely]]
         {
-            _shader = other._shader;
-            _triangleCount = other._triangleCount;
-            _vbo = other._vbo;
-            _ebo = other._ebo;
-            _vao = other._vao;
-            _texture = other._texture;
-
-            other._shader = nullptr;
-            other._triangleCount = 0;
-            other._vbo = 0;
-            other._ebo = 0;
-            other._vao = 0;
-            other._texture = 0;
+            return *this;
         }
 
+        GraphicsComponentData tmp(std::move(other));
+        swap(*this, tmp);
         return *this;
     }
 
