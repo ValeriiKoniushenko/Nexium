@@ -352,6 +352,12 @@ namespace Core
 
         ~AbstractComponent() override = default;
 
+        friend void swap(AbstractComponent& a, AbstractComponent& b) noexcept
+        {
+            std::swap(a._isEnabled, b._isEnabled);
+            std::swap(a._noTick, b._noTick);
+        }
+
         /**
          * Call it in your main loop. After that if several conditions
          * will be matched (is initialized, is enabled, etc.) will be called
@@ -510,6 +516,24 @@ namespace Core
         BaseComponent& operator=(const BaseComponent& other);
 
         [[nodiscard]] virtual bool operator==(const Self& other) const;
+
+        friend void swap(BaseComponent& a, BaseComponent& b) noexcept
+        {
+            // std::swap(static_cast<AbstractComponent&>(a), static_cast<AbstractComponent&>(b));
+
+            std::swap(a._name, b._name);
+            std::swap(a._type, b._type);
+            swap(a._children, b._children);
+
+            for (auto& child : a._children)
+            {
+                child->_parent = &a;
+            }
+            for (auto& child : b._children)
+            {
+                child->_parent = &b;
+            }
+        }
 
         // ========================== WORKING WITH NAME ==========================
         void setComponentName(const StringAtom& name);

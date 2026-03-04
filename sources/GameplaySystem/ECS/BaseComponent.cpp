@@ -448,29 +448,31 @@ namespace Core
     }
 
     BaseComponent::BaseComponent(const BaseComponent& other)
-        : AbstractComponent(other)
+        : AbstractComponent(other),
+          _name(other._name),
+          _type(other._type)
     {
-        *this = other;
+        Assert(_type.isStatic());
+        Assert(other._type.isStatic());
+
+        _children.reserve(other._children.size());
+
+        for (const auto& child : other._children)
+        {
+            _children.emplace_back(child->clone())->_parent = this;
+        }
     }
 
     BaseComponent& BaseComponent::operator=(const BaseComponent& other)
     {
-        if (&other != this)
+        if (this == &other)
         {
-            AbstractComponent::operator=(other);
-            _name = other._name;
-            _type = other._type;
-            Assert(_type.isStatic());
-            Assert(other._type.isStatic());
-
-            _children.clear();
-            for (const auto& child : other._children)
-            {
-                _children.emplace_back(child->clone());
-                _children.back()->_parent = this;
-            }
+            return *this;
         }
 
+        BaseComponent tmp(other);
+        swap(*this, tmp);
         return *this;
     }
+
 } // namespace Core
