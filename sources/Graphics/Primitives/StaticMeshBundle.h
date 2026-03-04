@@ -114,6 +114,16 @@ namespace Core
          */
         virtual void onMousePicked(StaticMesh* clickedPart) {}
 
+        friend void swap(StaticMeshBundle& a, StaticMeshBundle& b) noexcept
+        {
+            std::swap(static_cast<Actor&>(a), static_cast<Actor&>(b));
+
+            std::swap(a._meshes, b._meshes);
+            std::swap(a._bundles, b._bundles);
+            std::swap(a._id, b._id);
+            std::swap(a._ignoreSelect, b._ignoreSelect);
+        }
+
     protected:
         void onOutlineStatusChange(bool newStatus) override;
 

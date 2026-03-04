@@ -38,16 +38,18 @@ namespace Core
 
     public:
         Actor(Actor&&) = default;
-        Actor(const Actor& other)
-            : BaseComponent(other._type, other._name)
-        {
-            *this = other;
-        }
+        Actor(const Actor& other) = default;
         Actor& operator=(Actor&&) = default;
         Actor& operator=(const Actor&) = default;
         ~Actor() override = default;
 
         void ioFieldsUpdate(DataStream& out) override;
+
+        friend void swap(Actor& a, Actor& b) noexcept
+        {
+            std::swap(static_cast<BaseComponent&>(a), static_cast<BaseComponent&>(b));
+            std::swap(static_cast<Transformable&>(a), static_cast<Transformable&>(b));
+        }
 
     protected:
         void onInitialize() override;

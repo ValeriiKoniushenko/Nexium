@@ -67,21 +67,22 @@ namespace Core
     }
 
     StaticMeshBundle::StaticMeshBundle(const StaticMeshBundle& other)
-        : Actor(componentType, other._name)
+        : Actor(other),
+          _ignoreSelect(other._ignoreSelect)
     {
-        *this = other;
+        invalidateFastAccessContainers();
     }
 
     StaticMeshBundle& StaticMeshBundle::operator=(const StaticMeshBundle& other)
     {
-        if (this != &other)
+        if (this == &other)
         {
-            Actor::operator=(other);
-            _ignoreSelect = other._ignoreSelect;
-
-            invalidateFastAccessContainers();
+            return *this;
         }
 
+        StaticMeshBundle tmp(other);
+        swap(*this, tmp);
+        invalidateFastAccessContainers();
         return *this;
     }
 

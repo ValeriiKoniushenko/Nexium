@@ -116,6 +116,16 @@ namespace Core
         void ioFieldsUpdate(DataStream& out) override;
         [[nodiscard]] StringAtom getCacheHash() const override;
 
+        friend void swap(Transformable& a, Transformable& b) noexcept
+        {
+            std::swap(a._cachedModelMatrix, b._cachedModelMatrix);
+            std::swap(a._scale, b._scale);
+            std::swap(a._origin, b._origin);
+            std::swap(a._position, b._position);
+            std::swap(a._rotation, b._rotation);
+            std::swap(a._isDirtyModelMatrix, b._isDirtyModelMatrix);
+        }
+
     protected:
         virtual void onDirtyMatrix() {}
 

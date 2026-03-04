@@ -75,7 +75,7 @@
 1771958020642817863 sources/Editor/Windows/WorldLightning.h
 1772656817766336778 sources/GameplaySystem/ECS/BaseComponent.h
 1771957954487843037 sources/GameplaySystem/ECS/ModuleInfo.h
-1771957144504456764 sources/GameplaySystem/ECS/Transformable.h
+1772657434075383226 sources/GameplaySystem/ECS/Transformable.h
 1771958192728179889 sources/Graphics/GraphicsComponents.h
 1772387710149826694 sources/Graphics/IDrawable.h
 1771957154420269576 sources/Graphics/IOutliner.h
@@ -83,7 +83,7 @@
 1771957970812589401 sources/Graphics/ModuleInfo.h
 1771958192730179859 sources/Graphics/OpenGL.h
 1771957159984164893 sources/Graphics/Primitives/StaticMesh.h
-1771957164503080056 sources/Graphics/Primitives/StaticMeshBundle.h
+1772657572585633940 sources/Graphics/Primitives/StaticMeshBundle.h
 1771957486008387511 sources/Graphics/RenderTargetToTexture.h
 1771957520715805050 sources/Graphics/ShaderManager.h
 1771957149102369865 sources/Graphics/ShaderProgram.h
