@@ -25,7 +25,6 @@
 #include "ECSAsset.h"
 
 #include "AssetImpls/Factory.h"
-#include "ECSAsset.generated.cpp.inl" // this line added by the code generator.
 #include "ModuleInfo.h"
 
 #include <Utils/Functions.h>

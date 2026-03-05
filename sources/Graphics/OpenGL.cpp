@@ -24,9 +24,6 @@
 
 #include "OpenGL.h"
 
-
-#include "OpenGL.generated.cpp.inl" // this line added by the code generator.
-
 namespace Core
 {
     void UpdateGlViewport(FSize2 originalSize, float aspectRatio, ViewportMode mode)

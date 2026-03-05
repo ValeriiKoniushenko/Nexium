@@ -273,35 +273,34 @@ namespace Core
     }
 
     BaseComponent::BaseComponent(BaseComponent&& other) noexcept
+        : AbstractComponent(std::move(other)),
+          _children(std::move(other._children)),
+          _name(std::move(other._name)),
+          _type(std::move(other._type)),
+          _parent(other._parent),
+          _isInitialized(other._isInitialized)
     {
-        *this = std::move(other);
+        Assert(_type.isStatic());
+        Assert(other._type.isStatic());
+
+        other._parent = nullptr;
+        other._isInitialized = false;
+
+        for (auto& child : _children)
+        {
+            child->_parent = this;
+        }
     }
 
     BaseComponent& BaseComponent::operator=(BaseComponent&& other) noexcept
     {
-        if (this != &other) [[likely]]
+        if (this == &other) [[unlikely]]
         {
-            AbstractComponent::operator=(std::move(other));
-            _name = std::move(other._name);
-            _children = std::move(other._children);
-
-            Assert(other._type.isStatic());
-            _type = std::move(other._type);
-            Assert(_type.isStatic());
-
-            _parent = other._parent;
-            _isInitialized = other._isInitialized;
-
-            other._parent = nullptr;
-            other._isInitialized = false;
-
-            // resetting to new parent because old one will be invalid
-            for (auto& child : _children)
-            {
-                child->_parent = this;
-            }
+            return *this;
         }
 
+        BaseComponent tmp(std::move(other));
+        swap(*this, tmp);
         return *this;
     }
 

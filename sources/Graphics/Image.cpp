@@ -28,9 +28,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "Stb/Image.h"
 
-
-#include "Image.generated.cpp.inl" // this line added by the code generator.
-
 namespace Core
 {
     Image::Image(const std::filesystem::path& path)

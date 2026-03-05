@@ -30,9 +30,6 @@
 #include <algorithm>
 #include <spdlog/async_logger.h>
 
-
-#include "ShaderProgramMeta.generated.cpp.inl" // this line added by the code generator.
-
 namespace Core
 {
     std::size_t ShaderProgramMeta::Hasher::operator()(const ShaderProgramMeta& self) const

@@ -27,9 +27,6 @@
 #include "ImGui/imgui.h"
 #include "ModuleInfo.h"
 
-
-#include "Window.generated.cpp.inl" // this line added by the code generator.
-
 using namespace Core;
 
 namespace

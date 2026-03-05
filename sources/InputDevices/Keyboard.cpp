@@ -26,9 +26,6 @@
 
 #include "Graphics/Window.h"
 
-
-#include "Keyboard.generated.cpp.inl" // this line added by the code generator.
-
 namespace Core
 {
     Keyboard::KeyState Keyboard::getKeyState(Key key)

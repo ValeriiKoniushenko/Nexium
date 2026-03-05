@@ -29,9 +29,6 @@
 #include <filesystem>
 #include <fstream>
 
-
-#include "DataStream.generated.cpp.inl" // this line added by the code generator.
-
 namespace fs = std::filesystem;
 
 namespace Core

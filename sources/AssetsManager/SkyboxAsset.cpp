@@ -26,9 +26,6 @@
 
 #include "GameplaySystem/Framework/GameInstance.h"
 
-
-#include "SkyboxAsset.generated.cpp.inl" // this line added by the code generator.
-
 namespace Core
 {
     void SkyboxAsset::draw()

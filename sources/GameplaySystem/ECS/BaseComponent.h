@@ -520,7 +520,7 @@ namespace Core
 
         friend void swap(BaseComponent& a, BaseComponent& b) noexcept
         {
-            // std::swap(static_cast<AbstractComponent&>(a), static_cast<AbstractComponent&>(b));
+            swap(static_cast<AbstractComponent&>(a), static_cast<AbstractComponent&>(b));
 
             std::swap(a._name, b._name);
             std::swap(a._type, b._type);

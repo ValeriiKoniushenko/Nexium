@@ -25,7 +25,6 @@
 #include "GraphicsComponents.h"
 
 #include "GameplaySystem/ECS/BaseComponent.h"
-#include "GraphicsComponents.generated.cpp.inl" // this line added by the code generator.
 #include "assimp/scene.h"
 
 namespace Core
