@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "Core/IntrusivePtr.h"
 #include "Misc/BaseLog.h"
 #include "Misc/DataStream.h"
 
