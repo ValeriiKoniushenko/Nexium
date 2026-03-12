@@ -95,13 +95,15 @@ namespace Core
     }
 
     AbstractComponent::AbstractComponent(AbstractComponent&& other) noexcept
+        : _isEnabled(other._isEnabled),
+          _noTick(other._noTick)
     {
-        *this = std::move(other);
+        other._isEnabled = other._noTick = {};
     }
 
     AbstractComponent& AbstractComponent::operator=(AbstractComponent&& other) noexcept
     {
-        if (this != &other)
+        if (this != &other) [[likely]]
         {
             _isEnabled = other._isEnabled;
             _noTick = other._noTick;

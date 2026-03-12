@@ -337,13 +337,16 @@ namespace Core
     //   \_| |_/|_.__/ |___/ \__||_|    \__,_| \___| \__|  \____/(_)
     /**
      * Abstract base class for all components.
-     * Provides lifecycle hooks, ticking mechanism, and JSON serialization.
+     * Provides lifecycle hooks, ticking mechanism, and JSON/XML/etc serialization.
      */
+    CLASS();
     class AbstractComponent :
         public IntrusiveRefCounter<BaseComponent>,
         public BaseLog,
         public IDataStreamBridge
     {
+        R_FRIEND(AbstractComponent);
+
     public:
         AbstractComponent(const AbstractComponent&) = default;
         AbstractComponent& operator=(const AbstractComponent&) = default;
@@ -1038,3 +1041,5 @@ struct std::hash<Core::BaseComponent::Ptr>
         return x->makeHash();
     }
 };
+
+#include "BaseComponent.generated.h" // added by the code generator. Better don't move it.
