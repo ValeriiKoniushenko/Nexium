@@ -439,9 +439,11 @@ namespace Core
          */
         virtual void onTick(float delta) {}
 
+        FIELD();
         bool _isEnabled = true;
 
         // if put 'true' means that the function 'tick' will not be called.
+        FIELD();
         bool _noTick = false;
     };
 

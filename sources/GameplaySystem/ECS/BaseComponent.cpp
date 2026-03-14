@@ -283,7 +283,6 @@ namespace Core
           _isInitialized(other._isInitialized)
     {
         Assert(_type.isStatic());
-        Assert(other._type.isStatic());
 
         other._parent = nullptr;
         other._isInitialized = false;

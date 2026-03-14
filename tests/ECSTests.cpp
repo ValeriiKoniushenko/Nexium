@@ -80,6 +80,86 @@ namespace
     ECS_COMPONENT_IMPL(InitSpyComponent);
 } // namespace
 
+TEST(ECSBaseTests, SerializationOfAbstractClass)
+{
+    DummyComponent obj;
+    obj.disable();
+    obj.setNoTick(true);
+
+    const auto out = R<Core::AbstractComponent>::Serialize<RJsonResourceStream>(obj);
+
+    DummyComponent restored;
+    restored.enable();
+    restored.setNoTick(false);
+
+    R<Core::AbstractComponent>::Deserialize(out, restored);
+
+    EXPECT_FALSE(restored.isEnabled());
+    EXPECT_TRUE(restored.getNoTick());
+}
+
+TEST(ECSBaseTests, SerializationRoundTripForAbstractComponent)
+{
+    DummyComponent source;
+    source.disable();
+    source.setNoTick(true);
+
+    const auto out = R<Core::AbstractComponent>::Serialize<RJsonResourceStream>(source);
+
+    DummyComponent restored;
+    restored.enable();
+    restored.setNoTick(false);
+
+    R<Core::AbstractComponent>::Deserialize(out, restored);
+
+    EXPECT_FALSE(restored.isEnabled());
+    EXPECT_TRUE(restored.getNoTick());
+}
+
+TEST(ECSBaseTests, SerializationRoundTripForBaseComponentPart)
+{
+    DummyComponent source("SourceName");
+    source.disable();
+    source.setNoTick(true);
+
+    const auto out = R<Core::AbstractComponent>::Serialize<RJsonResourceStream>(
+        static_cast<const Core::AbstractComponent&>(source));
+
+    DummyComponent restored("RestoredName");
+    restored.enable();
+    restored.setNoTick(false);
+
+    R<Core::AbstractComponent>::Deserialize(out, static_cast<Core::AbstractComponent&>(restored));
+
+    EXPECT_FALSE(restored.isEnabled());
+    EXPECT_TRUE(restored.getNoTick());
+
+    EXPECT_EQ("RestoredName", restored.getComponentName());
+    EXPECT_EQ("DummyComponent", restored.getComponentType());
+}
+
+TEST(ECSBaseTests, SerializationDoesNotTouchNonReflectedDummyComponentState)
+{
+    DummyComponent source("SourceName");
+    source.disable();
+    source.setNoTick(true);
+
+    const auto out = R<Core::AbstractComponent>::Serialize<RJsonResourceStream>(source);
+
+    DummyComponent restored("KeepMyOwnState");
+    restored.enable();
+    restored.setNoTick(false);
+
+    R<Core::AbstractComponent>::Deserialize(out, restored);
+
+    EXPECT_FALSE(restored.isEnabled());
+    EXPECT_TRUE(restored.getNoTick());
+
+    EXPECT_EQ("KeepMyOwnState", restored.getComponentName());
+    EXPECT_EQ("DummyComponent", restored.getComponentType());
+    EXPECT_TRUE(restored.isTypeOf<DummyComponent>());
+}
+
 TEST(ECSBaseTests, SimpleCreation)
 {
     {
