@@ -1,0 +1,25 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "cmake",
+			"label": "CMake: build All",
+			"command": "build",
+			"targets": [
+				"all"
+			],
+			"group": "build",
+			"problemMatcher": [],
+		},
+		{
+			"type": "cmake",
+			"label": "CMake: build TemplateGame",
+			"command": "build",
+			"targets": [
+				"TemplateGame"
+			],
+			"group": "build",
+			"problemMatcher": [],
+		}
+	]
+}
