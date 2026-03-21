@@ -18,6 +18,5 @@ target_link_libraries(${TARGET_NAME} PUBLIC
     assimp::assimp
     JustReflectMe::Adapter
 )
-#target_compile_definitions(${TARGET_NAME} PRIVATE _POSIX_C_SOURCE=200809L)
 
 CoreAddCompileOptionsTo(${TARGET_NAME})
