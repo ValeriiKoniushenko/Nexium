@@ -10,8 +10,12 @@ file(GLOB_RECURSE HEADERS "*.h")
 add_library(${TARGET_NAME} STATIC ${CPP_SOURCES} ${HEADERS})
 add_library(Nexium::${CLEAR_TARGET_NAME} ALIAS ${TARGET_NAME})
 
+target_include_directories(${TARGET_NAME} PUBLIC ..)
+
 target_link_libraries(${TARGET_NAME} PUBLIC
     Utils::Core
+    glfw
+    Nexium::Misc
 )
 
 CoreAddCompileOptionsTo(${TARGET_NAME})

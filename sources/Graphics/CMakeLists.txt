@@ -14,11 +14,8 @@ target_include_directories(${TARGET_NAME} PUBLIC ..)
 
 target_link_libraries(${TARGET_NAME} PUBLIC
     Utils::Core
-    Core::ImGui
-    spdlog::spdlog
-    nlohmann_json
-    assimp::assimp
-    JustReflectMe::Adapter
+    Nexium::Misc
+    Core::Glad
 )
 
 CoreAddCompileOptionsTo(${TARGET_NAME})

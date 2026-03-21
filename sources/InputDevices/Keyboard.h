@@ -24,9 +24,9 @@
 
 #pragma once
 
-#include "Graphics/OpenGL.h"
-
-#include <Core/String.h>
+#include "Core/String.h"
+#include "GLFW/glfw3.h"
+#include "JustReflectMe/Adapter.h"
 
 namespace Core
 {

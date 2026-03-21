@@ -30,5 +30,6 @@
 # Standalone ECS build target (independent from `Nexium::Core`).
 
 add_subdirectory(GameplaySystem)
+add_subdirectory(Graphics)
 add_subdirectory(InputDevices)
 add_subdirectory(Misc)
