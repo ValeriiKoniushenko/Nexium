@@ -26,6 +26,12 @@
 
 #include "Core/IntrusivePtr.h"
 #include "Misc/BaseLog.h"
+
+// clang-format off
+#include "JustReflectMe/Adapter.h"
+#include "Misc/JsonAdapter.h"
+// clang-format on
+
 #include "Misc/DataStream.h"
 
 #include <queue>
@@ -494,8 +500,11 @@ namespace Core
      * But, if you still want to create a class, but not usual but template - see
      * declaration (and comment above) of macro ECS_TEMPLATE_COMPONENT_DECL
      */
+    CLASS();
     class BaseComponent : public AbstractComponent
     {
+        R_FRIEND(BaseComponent);
+
     public:
         using Self = BaseComponent;
         template<bool isConst>
@@ -814,9 +823,15 @@ namespace Core
         virtual void onPreInitialize() {}
 
     protected:
+        FIELD();
         std::vector<IntrusivePtr<BaseComponent>> _children;
+
+        FIELD();
         StringAtom _name;
+
+        FIELD();
         StringAtom _type;
+
         BaseComponent* _parent = nullptr;
 
     private:

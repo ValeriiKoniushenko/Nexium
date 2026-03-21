@@ -24,10 +24,11 @@
 
 #pragma once
 
+#include "Core/IntrusivePtr.h"
+#include "Core/Size.h"
 #include "glm/glm.hpp"
 #include "nlohmann/json.hpp"
 
-#include <Core/Size.h>
 #include <format>
 
 namespace Core
@@ -115,6 +116,7 @@ namespace glm
 
 namespace Core
 {
+
     void to_json(nlohmann::json& j, FSize2);
 
     void to_json(nlohmann::json& j, const FSize3&);
@@ -122,6 +124,63 @@ namespace Core
     void to_json(nlohmann::json& j, ISize2);
 
     void to_json(nlohmann::json& j, const ISize3&);
+
+    /*template<IsComponentOrBase CompT>
+    void to_json(nlohmann::json& j, const CompT& comp)
+    {
+        j = R<BaseComponent>::Serialize<RJsonResourceStream>(comp).getData();
+    }
+
+    template<IsComponentOrBase CompT>
+    void to_json(nlohmann::json& j, const IntrusivePtr<std::remove_cv_t<CompT>>& comp)
+    {
+        if (comp) [[likely]]
+        {
+            j = R<BaseComponent>::Serialize<RJsonResourceStream>(comp).getData();
+        }
+    }
+
+    template<std::ranges::range RangeT>
+    void to_json(nlohmann::json& j, const RangeT& range)
+    {
+        for (const auto& v : range)
+        {
+            nlohmann::json obj;
+            to_json(obj, v);
+            j.push_back(std::move(obj));
+        }
+    }*/
+
+    /*template<IsComponentOrBase CompT>
+    void from_json(const nlohmann::json& j, CompT& comp)
+    {
+        R<BaseComponent>::Deserialize<RJsonResourceStream>(j, comp);
+    }
+
+    template<IsComponentOrBase CompT>
+    void from_json(const nlohmann::json& j, const IntrusivePtr<CompT>& comp)
+    {
+        if (!comp)
+        {
+            comp = new std::remove_cv_t<CompT>();
+        }
+
+        from_json(j, *comp);
+    }
+
+    template<std::ranges::range RangeT>
+    void from_json(const nlohmann::json& j, RangeT& range)
+    {
+        range.clear();
+
+        for (const auto& json : j)
+        {
+            using ValueT = std::remove_cvref_t<decltype(*range.begin())>;
+            ValueT obj;
+            from_json(json, obj);
+            range.push_back(std::move(obj));
+        }
+    }*/
 
     void from_json(const nlohmann::json& j, FSize2& value);
 

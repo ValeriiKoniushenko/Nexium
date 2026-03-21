@@ -23,9 +23,6 @@
  */
 
 #include "BaseComponent.h"
-
-#include "Editor/Gizmo.h"
-#include "Editor/Windows/NxECSBasedEditor.h"
 #include "ModuleInfo.h"
 
 namespace

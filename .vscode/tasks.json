@@ -2,6 +2,24 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
+			"label": "Cmake configure (clang + ninja)",
+			"type": "shell",
+			"command": "cmake",
+			"args": [
+				"-S",
+				".",
+				"-B",
+				"build",
+				"-G",
+				"Ninja",
+				"-DCMAKE_C_COMPILER=clang",
+				"-DCMAKE_CXX_COMPILER=clang++",
+				"-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
+			],
+			"group": "build",
+			"problemMatcher": []
+		},
+		{
 			"type": "cmake",
 			"label": "CMake: build All",
 			"command": "build",
@@ -17,6 +35,16 @@
 			"command": "build",
 			"targets": [
 				"TemplateGame"
+			],
+			"group": "build",
+			"problemMatcher": [],
+		},
+		{
+			"type": "cmake",
+			"label": "CMake: build GameplaySystem",
+			"command": "build",
+			"targets": [
+				"__GameplaySystem"
 			],
 			"group": "build",
 			"problemMatcher": [],

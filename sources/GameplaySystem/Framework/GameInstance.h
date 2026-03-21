@@ -104,3 +104,4 @@ namespace Core
 } // namespace Core
 
 extern std::unique_ptr<Core::GameInstance> gGameInstance;
+#include "GameInstance.generated.h" // added by the code generator. Better don't move it.

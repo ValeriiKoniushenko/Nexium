@@ -182,4 +182,5 @@ namespace Core
             value.deep = j["deep"].get<int>();
         }
     }
+
 } // namespace Core

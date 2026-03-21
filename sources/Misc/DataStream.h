@@ -25,10 +25,11 @@
 #pragma once
 
 #include "Configs.h"
+#include "Core/IntrusivePtr.h"
 #include "Core/String.h"
-#include "Misc/JsonAdapter.h"
+#include "JustReflectMe/Adapter.h"
+#include "nlohmann/json.hpp"
 
-#include <Core/IntrusivePtr.h>
 #include <functional>
 
 namespace Core
@@ -37,7 +38,7 @@ namespace Core
 
     struct IDataUpdateBridge
     {
-        enum Rule : uint32_t
+        enum Rule : uint8_t
         {
             None = 0,
             NoRead = 1 << 1,

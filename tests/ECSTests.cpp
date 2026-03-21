@@ -138,6 +138,20 @@ TEST(ECSBaseTests, SerializationRoundTripForBaseComponentPart)
     EXPECT_EQ("DummyComponent", restored.getComponentType());
 }
 
+TEST(ECSBaseTests, SerializationRoundTripForBaseComponentPart2)
+{
+    DummyComponent source("SomeName");
+    source.disable();
+    source.setNoTick(true);
+
+    source.addChildComponent<DummyComponent>("Child1");
+    source.addChildComponent<HardConstructorComponent>(123, "Child2", "text");
+
+    const auto out = R<Core::BaseComponent>::Serialize<RJsonResourceStream>(source);
+    
+    
+}
+
 TEST(ECSBaseTests, SerializationDoesNotTouchNonReflectedDummyComponentState)
 {
     DummyComponent source("SourceName");
@@ -145,7 +159,7 @@ TEST(ECSBaseTests, SerializationDoesNotTouchNonReflectedDummyComponentState)
     source.setNoTick(true);
 
     const auto out = R<Core::AbstractComponent>::Serialize<RJsonResourceStream>(source);
-
+    
     DummyComponent restored("KeepMyOwnState");
     restored.enable();
     restored.setNoTick(false);

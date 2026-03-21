@@ -27,7 +27,6 @@
 #include "Core/Color.h"
 #include "Core/Size.h"
 #include "ImGui/imgui.h"
-#include "InputDevices/Keyboard.h"
 
 #include <filesystem>
 
@@ -65,10 +64,10 @@ namespace Core::Config
         extern const std::filesystem::path fontAwesome;
     } // namespace Path
 
-    namespace Input
-    {
-        constexpr Keyboard::Key editorImGuiShowRect = Keyboard::Key::F2;
-    }
+    // namespace Input
+    // {
+    //     constexpr Keyboard::Key editorImGuiShowRect = Keyboard::Key::F2;
+    // }
 
     static constexpr float windowAspectRatio = 16.f / 9.f;
     static constexpr float defaultEditorFontSize = 16.f;

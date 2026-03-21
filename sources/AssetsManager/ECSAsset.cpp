@@ -26,9 +26,9 @@
 
 #include "AssetImpls/Factory.h"
 #include "ModuleInfo.h"
+#include "nlohmann/json.hpp"
 
 #include <Utils/Functions.h>
-#include <nlohmann/json.hpp>
 
 namespace Core
 {
