@@ -35,7 +35,8 @@ namespace Core
     }
 
     GraphicsComponentData::GraphicsComponentData(GraphicsComponentData&& other) noexcept
-        : _shader(other._shader),
+        : _drawModifiers({}),
+          _shader(other._shader),
           _triangleCount(other._triangleCount),
           _vbo(other._vbo),
           _ebo(other._ebo),

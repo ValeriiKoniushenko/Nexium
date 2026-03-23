@@ -1,6 +1,7 @@
 ---
 # Checkers
-Checks: "clang-analyzer-*,
+Checks: >
+  clang-analyzer-*,
   cppcoreguidelines-*,
   modernize-*,
   performance-*,
@@ -39,11 +40,12 @@ Checks: "clang-analyzer-*,
   -readability-const-return-type,
   -bugprone-crtp-constructor-accessibility,
   -cppcoreguidelines-special-member-functions,
-  -bugprone-reserved-identifier
-"
+  -bugprone-reserved-identifier,
+  -performance-enum-size
+
 # Warnings as errors
 WarningsAsErrors: ""
-HeaderFilterRegex: '.*/sources/.*'
+HeaderFilterRegex: '.*Nexium/sources/.*'
 
 # Formatting and style (optional)
 FormatStyle: file   # uses .clang-format if present

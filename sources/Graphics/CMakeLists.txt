@@ -5,9 +5,22 @@ set(CLEAR_TARGET_NAME "${CURRENT_DIR_NAME}")
 file(GLOB_RECURSE CPP_SOURCES "*.cpp")
 set_source_files_properties(${CPP_SOURCES} PROPERTIES LANGUAGE CXX)
 
-file(GLOB_RECURSE HEADERS "*.h")
+file(GLOB_RECURSE CPP_HEADERS "*.h")
+exclude_generated_files(FILTERED_HEADERS CPP_HEADERS)
 
-add_library(${TARGET_NAME} STATIC ${CPP_SOURCES} ${HEADERS})
+add_library(${TARGET_NAME} STATIC)
+target_sources(${TARGET_NAME} 
+    PRIVATE
+        ${CPP_SOURCES}
+    PUBLIC
+        ${FILTERED_HEADERS}
+)
+
+add_custom_target(CodeGenerator ALL
+    COMMAND jrm ${CMAKE_SOURCE_DIR}
+)
+add_dependencies(${TARGET_NAME} CodeGenerator)
+
 add_library(Nexium::${CLEAR_TARGET_NAME} ALIAS ${TARGET_NAME})
 
 target_include_directories(${TARGET_NAME} PUBLIC ..)

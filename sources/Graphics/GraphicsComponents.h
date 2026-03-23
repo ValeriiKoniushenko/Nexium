@@ -28,13 +28,15 @@
 #include "ShaderProgram.h"
 #include "assimp/mesh.h"
 
+#include <cstdint>
+
 namespace Core
 {
     class GraphicsComponentData : public IDataUpdateBridge
     {
     public:
         ENUM_CLASS();
-        enum class Modifier
+        enum class Modifier : std::uint8_t
         {
             None,
             Enable,
@@ -44,6 +46,7 @@ namespace Core
         ENUM_CLASS();
         enum class ModifiedValue : GLenum
         {
+            None = 0,
             Blend = GL_BLEND,
             CullFace = GL_CULL_FACE,
             DepthTest = GL_DEPTH_TEST,
@@ -63,7 +66,6 @@ namespace Core
             Multisample = GL_MULTISAMPLE,
             FramebufferSrgb = GL_FRAMEBUFFER_SRGB,
             ProgramPointSize = GL_PROGRAM_POINT_SIZE,
-            None
         };
 
         struct ModifierParam

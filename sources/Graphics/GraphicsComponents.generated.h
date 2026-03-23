@@ -44,6 +44,7 @@ struct R<Core::GraphicsComponentData::ModifiedValue>
     static constexpr const std::array<::Core::GraphicsComponentData::ModifiedValue, 20>& ToArrayC()
     {
         static constexpr std::array<::Core::GraphicsComponentData::ModifiedValue, 20> constants = {
+				::Core::GraphicsComponentData::ModifiedValue::None,
 				::Core::GraphicsComponentData::ModifiedValue::Blend,
 				::Core::GraphicsComponentData::ModifiedValue::CullFace,
 				::Core::GraphicsComponentData::ModifiedValue::DepthTest,
@@ -62,8 +63,7 @@ struct R<Core::GraphicsComponentData::ModifiedValue>
 				::Core::GraphicsComponentData::ModifiedValue::StencilTest,
 				::Core::GraphicsComponentData::ModifiedValue::Multisample,
 				::Core::GraphicsComponentData::ModifiedValue::FramebufferSrgb,
-				::Core::GraphicsComponentData::ModifiedValue::ProgramPointSize,
-				::Core::GraphicsComponentData::ModifiedValue::None
+				::Core::GraphicsComponentData::ModifiedValue::ProgramPointSize
         };
 
         return constants;
@@ -72,6 +72,7 @@ struct R<Core::GraphicsComponentData::ModifiedValue>
     static constexpr const std::array<std::string_view, 20>& ToArrayN()
     {
         static constexpr std::array<std::string_view, 20> names = {
+				std::string_view("None"),
 				std::string_view("Blend"),
 				std::string_view("CullFace"),
 				std::string_view("DepthTest"),
@@ -90,8 +91,7 @@ struct R<Core::GraphicsComponentData::ModifiedValue>
 				std::string_view("StencilTest"),
 				std::string_view("Multisample"),
 				std::string_view("FramebufferSrgb"),
-				std::string_view("ProgramPointSize"),
-				std::string_view("None")
+				std::string_view("ProgramPointSize")
         };
 
         return names;
@@ -100,6 +100,7 @@ struct R<Core::GraphicsComponentData::ModifiedValue>
     static const std::unordered_map<::Core::GraphicsComponentData::ModifiedValue, std::string_view>& ToMapCN()
     {
         static const std::unordered_map<::Core::GraphicsComponentData::ModifiedValue, std::string_view> map = {
+				{ ::Core::GraphicsComponentData::ModifiedValue::None, "None" },
 				{ ::Core::GraphicsComponentData::ModifiedValue::Blend, "Blend" },
 				{ ::Core::GraphicsComponentData::ModifiedValue::CullFace, "CullFace" },
 				{ ::Core::GraphicsComponentData::ModifiedValue::DepthTest, "DepthTest" },
@@ -118,8 +119,7 @@ struct R<Core::GraphicsComponentData::ModifiedValue>
 				{ ::Core::GraphicsComponentData::ModifiedValue::StencilTest, "StencilTest" },
 				{ ::Core::GraphicsComponentData::ModifiedValue::Multisample, "Multisample" },
 				{ ::Core::GraphicsComponentData::ModifiedValue::FramebufferSrgb, "FramebufferSrgb" },
-				{ ::Core::GraphicsComponentData::ModifiedValue::ProgramPointSize, "ProgramPointSize" },
-				{ ::Core::GraphicsComponentData::ModifiedValue::None, "None" }
+				{ ::Core::GraphicsComponentData::ModifiedValue::ProgramPointSize, "ProgramPointSize" }
         };
 
         return map;
@@ -128,6 +128,7 @@ struct R<Core::GraphicsComponentData::ModifiedValue>
     static const std::unordered_map<std::string_view, ::Core::GraphicsComponentData::ModifiedValue>& ToMapNC()
     {
         static const std::unordered_map<std::string_view, ::Core::GraphicsComponentData::ModifiedValue> map = {
+				{ "None", ::Core::GraphicsComponentData::ModifiedValue::None },
 				{ "Blend", ::Core::GraphicsComponentData::ModifiedValue::Blend },
 				{ "CullFace", ::Core::GraphicsComponentData::ModifiedValue::CullFace },
 				{ "DepthTest", ::Core::GraphicsComponentData::ModifiedValue::DepthTest },
@@ -146,8 +147,7 @@ struct R<Core::GraphicsComponentData::ModifiedValue>
 				{ "StencilTest", ::Core::GraphicsComponentData::ModifiedValue::StencilTest },
 				{ "Multisample", ::Core::GraphicsComponentData::ModifiedValue::Multisample },
 				{ "FramebufferSrgb", ::Core::GraphicsComponentData::ModifiedValue::FramebufferSrgb },
-				{ "ProgramPointSize", ::Core::GraphicsComponentData::ModifiedValue::ProgramPointSize },
-				{ "None", ::Core::GraphicsComponentData::ModifiedValue::None }
+				{ "ProgramPointSize", ::Core::GraphicsComponentData::ModifiedValue::ProgramPointSize }
         };
 
         return map;

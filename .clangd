@@ -1,0 +1,4 @@
+If:
+  PathMatch: .*\.generated\.h
+Diagnostics:
+  Suppress: ["*"]
