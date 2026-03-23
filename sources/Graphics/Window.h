@@ -25,7 +25,6 @@
 #pragma once
 
 #include "Core/Delegate.h"
-#include "Core/Enum.h"
 #include "Core/Singleton.h"
 #include "Core/Size.h"
 #include "InputDevices/Keyboard.h"
@@ -33,8 +32,6 @@
 #include "Misc/BaseLog.h"
 #include "Misc/DataStream.h"
 #include "OpenGL.h"
-
-#include <filesystem>
 
 namespace Core
 {
@@ -52,7 +49,7 @@ namespace Core
         };
 
         ENUM_CLASS();
-        enum class State
+        enum class State : std::uint8_t
         {
             Idle,
             Started,
@@ -191,7 +188,7 @@ namespace Core
         void ioFieldsUpdate(DataStream& out) override;
 
     protected:
-        StringAtom getCacheHash() const override;
+        [[nodiscard]] StringAtom getCacheHash() const override;
 
     protected:
         DelegateSubscriberPoolGuard _subscriptionPool;

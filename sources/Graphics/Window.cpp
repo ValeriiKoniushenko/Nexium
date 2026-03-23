@@ -25,6 +25,7 @@
 #include "Window.h"
 
 #include "ImGui/imgui.h"
+#include "Misc/JsonAdapter.h"
 #include "ModuleInfo.h"
 
 using namespace Core;

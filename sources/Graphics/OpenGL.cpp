@@ -24,6 +24,8 @@
 
 #include "OpenGL.h"
 
+#include "Core/Assert.h"
+
 namespace Core
 {
     void UpdateGlViewport(FSize2 originalSize, float aspectRatio, ViewportMode mode)

@@ -24,8 +24,11 @@
 
 #pragma once
 
-#include "Core/String.h"
+// clang-format off
+#include "glad/glad.h"
 #include "GLFW/glfw3.h"
+// clang-format on
+
 #include "JustReflectMe/Adapter.h"
 
 namespace Core
@@ -34,9 +37,9 @@ namespace Core
     {
     public:
         ENUM_CLASS();
-        enum class Key
+        enum class Key : std::uint16_t
         {
-            None,
+            None = 0,
             Space = GLFW_KEY_SPACE,
             Apostrophe = GLFW_KEY_APOSTROPHE,
             Comma = GLFW_KEY_COMMA,
@@ -161,9 +164,9 @@ namespace Core
         };
 
         ENUM_CLASS();
-        enum class KeyState
+        enum class KeyState : std::uint8_t
         {
-            None,
+            None = 0,
             Pressed = GLFW_PRESS,
             Released = GLFW_RELEASE,
             Repeated = GLFW_REPEAT

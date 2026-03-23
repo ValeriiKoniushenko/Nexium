@@ -25,7 +25,6 @@
 #pragma once
 
 #include "Core/String.h"
-#include "GLFW/glfw3.h"
 #include "JustReflectMe/Adapter.h"
 #include "glm/glm.hpp"
 

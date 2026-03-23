@@ -24,16 +24,13 @@
 
 #pragma once
 
-#include "Core/Enum.h"
 #include "Core/Size.h"
-#include "Core/String.h"
 
 // clang-format off
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 
 #include "JustReflectMe/Adapter.h"
-#include "Misc/JsonAdapter.h"
 // clang-format on
 
 
@@ -41,7 +38,7 @@ namespace Core
 {
 
     ENUM_CLASS();
-    enum class ViewportMode
+    enum class ViewportMode : std::uint8_t
     {
         Default,
         ZoomIn
