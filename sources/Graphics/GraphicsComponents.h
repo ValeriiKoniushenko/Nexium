@@ -28,8 +28,6 @@
 #include "ShaderProgram.h"
 #include "assimp/mesh.h"
 
-#include <cstdint>
-
 namespace Core
 {
     class GraphicsComponentData : public IDataUpdateBridge
