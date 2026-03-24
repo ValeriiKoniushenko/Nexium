@@ -43,50 +43,41 @@ struct R<Core::ShaderType>
 
     static constexpr const std::array<::Core::ShaderType, 4>& ToArrayC()
     {
-        static constexpr std::array<::Core::ShaderType, 4> constants = {
-				::Core::ShaderType::None,
-				::Core::ShaderType::Fragment,
-				::Core::ShaderType::Vertex,
-				::Core::ShaderType::Geometry
-        };
+        static constexpr std::array<::Core::ShaderType, 4> constants
+            = { ::Core::ShaderType::None, ::Core::ShaderType::Fragment, ::Core::ShaderType::Vertex,
+                ::Core::ShaderType::Geometry };
 
         return constants;
     }
 
     static constexpr const std::array<std::string_view, 4>& ToArrayN()
     {
-        static constexpr std::array<std::string_view, 4> names = {
-				std::string_view("None"),
-				std::string_view("Fragment"),
-				std::string_view("Vertex"),
-				std::string_view("Geometry")
-        };
+        static constexpr std::array<std::string_view, 4> names
+            = { std::string_view("None"), std::string_view("Fragment"), std::string_view("Vertex"),
+                std::string_view("Geometry") };
 
         return names;
     }
 
     static const std::unordered_map<::Core::ShaderType, std::string_view>& ToMapCN()
     {
-        static const std::unordered_map<::Core::ShaderType, std::string_view> map = {
-				{ ::Core::ShaderType::None, "None" },
-				{ ::Core::ShaderType::Fragment, "Fragment" },
-				{ ::Core::ShaderType::Vertex, "Vertex" },
-				{ ::Core::ShaderType::Geometry, "Geometry" }
-        };
+        static const std::unordered_map<::Core::ShaderType, std::string_view> map
+            = { { ::Core::ShaderType::None, "None" },
+                { ::Core::ShaderType::Fragment, "Fragment" },
+                { ::Core::ShaderType::Vertex, "Vertex" },
+                { ::Core::ShaderType::Geometry, "Geometry" } };
 
         return map;
     }
 
     static const std::unordered_map<std::string_view, ::Core::ShaderType>& ToMapNC()
     {
-        static const std::unordered_map<std::string_view, ::Core::ShaderType> map = {
-				{ "None", ::Core::ShaderType::None },
-				{ "Fragment", ::Core::ShaderType::Fragment },
-				{ "Vertex", ::Core::ShaderType::Vertex },
-				{ "Geometry", ::Core::ShaderType::Geometry }
-        };
+        static const std::unordered_map<std::string_view, ::Core::ShaderType> map
+            = { { "None", ::Core::ShaderType::None },
+                { "Fragment", ::Core::ShaderType::Fragment },
+                { "Vertex", ::Core::ShaderType::Vertex },
+                { "Geometry", ::Core::ShaderType::Geometry } };
 
         return map;
     }
 }; // struct R<Core::ShaderType>
-

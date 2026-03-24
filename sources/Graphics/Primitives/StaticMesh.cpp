@@ -410,7 +410,8 @@ namespace Core
         StaticMesh out{ name };
 
         out.setDrawModifiers({
-            { GraphicsComponentData::ModifiedValue::CullFace, GraphicsComponentData::Modifier::Disable },
+            { GraphicsComponentData::ModifiedValue::CullFace,
+              GraphicsComponentData::Modifier::Disable },
         });
 
         return out;
@@ -421,8 +422,10 @@ namespace Core
         StaticMesh out{ name };
 
         out.setDrawModifiers({
-            { GraphicsComponentData::ModifiedValue::CullFace, GraphicsComponentData::Modifier::Disable },
-            { GraphicsComponentData::ModifiedValue::Blend, GraphicsComponentData::Modifier::Enable },
+            { GraphicsComponentData::ModifiedValue::CullFace,
+              GraphicsComponentData::Modifier::Disable },
+            { GraphicsComponentData::ModifiedValue::Blend,
+              GraphicsComponentData::Modifier::Enable },
         });
 
         return out;

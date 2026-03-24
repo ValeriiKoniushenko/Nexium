@@ -33,7 +33,6 @@
 #include "JustReflectMe/Adapter.h"
 // clang-format on
 
-
 namespace Core
 {
 

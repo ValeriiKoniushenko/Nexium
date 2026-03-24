@@ -25,12 +25,11 @@
 #include "StaticMeshBundle.h"
 
 #include "../../Misc/Configs.h"
+#include "Core/Timer.h"
 #include "Editor/Gizmo.h"
 #include "Graphics/Image.h"
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
-
-#include <Core/Timer.h>
 
 using namespace Core;
 

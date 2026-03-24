@@ -24,9 +24,8 @@
 
 #pragma once
 
+#include "Core/Size.h"
 #include "OpenGL.h"
-
-#include <Core/Size.h>
 
 namespace Core
 {

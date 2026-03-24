@@ -25,8 +25,7 @@
 #pragma once
 
 #include "BaseWindow.h"
-
-#include <Core/Timer.h>
+#include "Core/Timer.h"
 
 namespace Core
 {

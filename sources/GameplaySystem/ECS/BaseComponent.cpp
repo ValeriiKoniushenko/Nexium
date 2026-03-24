@@ -23,6 +23,7 @@
  */
 
 #include "BaseComponent.h"
+
 #include "ModuleInfo.h"
 
 namespace

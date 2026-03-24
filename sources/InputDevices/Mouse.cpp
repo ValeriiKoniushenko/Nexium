@@ -65,7 +65,8 @@ namespace Core
 
     bool Mouse::IsKeyReleased(Key key)
     {
-        return glfwGetMouseButton(GetWindow().getRawWindow(), static_cast<int>(key)) == GLFW_RELEASE;
+        return glfwGetMouseButton(GetWindow().getRawWindow(), static_cast<int>(key))
+               == GLFW_RELEASE;
     }
 
     bool Mouse::isKeyRepeated(Key key)

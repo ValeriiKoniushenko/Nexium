@@ -339,8 +339,7 @@ namespace Core
                 }
             });
 
-        auto toggleRenderMode
-            = keyboardInput.getOrCreate("Toggle render mode", Keyboard::Key::F1);
+        auto toggleRenderMode = keyboardInput.getOrCreate("Toggle render mode", Keyboard::Key::F1);
         toggleRenderMode->setIsRepeatable(false);
         _subscriptionPool << toggleRenderMode->onPress->subscribeAndGetID(
             [](auto) { gGameInstance->toggleRenderMode(); });

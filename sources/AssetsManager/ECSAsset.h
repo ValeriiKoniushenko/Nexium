@@ -45,8 +45,7 @@ namespace Core
         virtual ~ECSAssetImpl() = default;
 
         virtual void load(const ECSAsset& asset, BaseComponent* dataOwner,
-                          const nlohmann::json& assetData)
-            = 0;
+                          const nlohmann::json& assetData) = 0;
         virtual void unload(const ECSAsset& asset, BaseComponent* dataOwner) = 0;
 
         [[nodiscard]] virtual bool canProcessAction(AssetAction action) const { return false; }

@@ -52,8 +52,7 @@ namespace
     void KeyPressHandler(auto*, int key, int scancode, int action, int mods)
     {
         GetWindow().onKeyPressed->trigger(static_cast<Keyboard::Key>(key), scancode,
-                                          static_cast<Keyboard::KeyState>(action),
-                                          mods);
+                                          static_cast<Keyboard::KeyState>(action), mods);
     }
 
     void TextInputHandler(auto*, unsigned int scancode)
@@ -212,13 +211,14 @@ namespace Core
 
     Window::CursorMode Window::getCursorMode()
     {
-        return static_cast<Window::CursorMode>(glfwGetInputMode(GetWindow().getRawWindow(), GLFW_CURSOR));
+        return static_cast<Window::CursorMode>(
+            glfwGetInputMode(GetWindow().getRawWindow(), GLFW_CURSOR));
     }
 
     void Window::toggleCursorMode()
     {
         setCursorMode(getCursorMode() == CursorMode::Normal ? CursorMode::Disabled
-                                                                   : CursorMode::Normal);
+                                                            : CursorMode::Normal);
     }
 
     void Window::registerEvents()

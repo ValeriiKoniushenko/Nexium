@@ -22,10 +22,9 @@
 
 #pragma once
 
+#include "Core/Position.h"
 #include "Misc/DataStream.h"
 #include "glm/glm.hpp"
-
-#include <Core/Position.h>
 
 namespace Core
 {

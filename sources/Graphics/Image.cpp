@@ -74,7 +74,9 @@ namespace Core
 
     GLenum Image::getChannelAsOpenGLType() const noexcept
     {
-        return static_cast<int>(_channel) == 3 ? GL_RGB : static_cast<int>(_channel) == 4 ? GL_RGBA : GL_RED;
+        return static_cast<int>(_channel) == 3   ? GL_RGB
+               : static_cast<int>(_channel) == 4 ? GL_RGBA
+                                                 : GL_RED;
     }
 
     bool Image::loadFromFile(const std::filesystem::path& path, bool isFlipVertically)
