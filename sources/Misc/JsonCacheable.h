@@ -25,8 +25,7 @@
 #pragma once
 #include "Configs.h"
 #include "Core/String.h"
-
-#include <nlohmann/json_fwd.hpp>
+#include "nlohmann/json_fwd.hpp"
 
 namespace Core
 {

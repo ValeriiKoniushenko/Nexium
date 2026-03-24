@@ -27,9 +27,8 @@
 #include "Core/Color.h"
 #include "Misc/BaseLog.h"
 #include "OpenGL.h"
-
-#include <glm/fwd.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include "glm/fwd.hpp"
+#include "glm/gtc/type_ptr.hpp"
 namespace Core
 {
     class ShaderProgramMeta;
