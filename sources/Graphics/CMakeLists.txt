@@ -9,11 +9,11 @@ file(GLOB_RECURSE CPP_HEADERS "*.h")
 exclude_generated_files(FILTERED_HEADERS CPP_HEADERS)
 
 add_library(${TARGET_NAME} STATIC)
-target_sources(${TARGET_NAME} 
+target_sources(${TARGET_NAME}
     PRIVATE
-        ${CPP_SOURCES}
+    ${CPP_SOURCES}
     PUBLIC
-        ${FILTERED_HEADERS}
+    ${FILTERED_HEADERS}
 )
 
 add_dependencies(${TARGET_NAME} CodeGenerator)
