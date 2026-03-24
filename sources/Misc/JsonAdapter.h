@@ -43,7 +43,7 @@ namespace Core
             {
             }
 
-            std::string message = "";
+            std::string message;
         };
 
     public:

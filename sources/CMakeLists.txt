@@ -29,6 +29,10 @@
 
 # Standalone ECS build target (independent from `Nexium::Core`).
 
+add_custom_target(CodeGenerator ALL
+    COMMAND jrm ${CMAKE_SOURCE_DIR}
+)
+
 add_subdirectory(GameplaySystem)
 add_subdirectory(Graphics)
 add_subdirectory(InputDevices)

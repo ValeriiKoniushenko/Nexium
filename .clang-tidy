@@ -8,44 +8,51 @@ Checks: >
   readability-*,
   bugprone-*,
   misc-*,
+
   -cppcoreguidelines-pro-type-vararg,
-  -modernize-use-trailing-return-type,
   -cppcoreguidelines-pro-type-union-access,
-  -misc-include-cleaner,
+  -cppcoreguidelines-owning-memory,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+  -cppcoreguidelines-avoid-do-while,
+  -cppcoreguidelines-explicit-conversions,
+  -cppcoreguidelines-non-private-member-variables-in-classes,
+  -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
+  -cppcoreguidelines-macro-usage,
+  -cppcoreguidelines-avoid-non-const-global-variables,
+  -cppcoreguidelines-pro-type-const-cast,
+  
+  -modernize-use-trailing-return-type,
+  -modernize-concat-nested-namespaces,
+
   -readability-braces-around-statements,
   -readability-function-cognitive-complexity,
   -readability-named-parameter,
   -readability-identifier-length,
-  -cppcoreguidelines-owning-memory,
   -readability-implicit-bool-conversion,
   -readability-uppercase-literal-suffix,
-  -misc-unused-parameters,
   -readability-magic-numbers,
-  -cppcoreguidelines-avoid-magic-numbers,
   -readability-convert-member-functions-to-static,
   -readability-make-member-function-const,
-  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
-  -cppcoreguidelines-avoid-do-while,
-  -cppcoreguidelines-pro-type-reinterpret-cast,
   -readability-use-concise-preprocessor-directives,
-  -bugprone-easily-swappable-parameters,
   -readability-redundant-access-specifiers,
-  -cppcoreguidelines-explicit-conversions,
   -readability-identifier-naming,
-  -cppcoreguidelines-non-private-member-variables-in-classes,
-  -misc-non-private-member-variables-in-classes,
-  -bugprone-assignment-in-if-condition,
-  -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
-  -cppcoreguidelines-macro-usage,
   -readability-const-return-type,
+
+  -bugprone-easily-swappable-parameters,
   -bugprone-crtp-constructor-accessibility,
-  -cppcoreguidelines-special-member-functions,
   -bugprone-reserved-identifier,
+  -bugprone-throwing-static-initialization,
+
+  -misc-include-cleaner,
+  -misc-non-private-member-variables-in-classes,
+  -misc-unused-parameters,
+
   -performance-enum-size
 
-# Warnings as errors
-WarningsAsErrors: ""
+# Treat all enabled warnings as errors
+WarningsAsErrors: "*"
+
 HeaderFilterRegex: '.*Nexium/sources/.*'
 
-# Formatting and style (optional)
-FormatStyle: file   # uses .clang-format if present
+FormatStyle: file

@@ -148,8 +148,6 @@ TEST(ECSBaseTests, SerializationRoundTripForBaseComponentPart2)
     source.addChildComponent<HardConstructorComponent>(123, "Child2", "text");
 
     const auto out = R<Core::BaseComponent>::Serialize<RJsonResourceStream>(source);
-    
-    
 }
 
 TEST(ECSBaseTests, SerializationDoesNotTouchNonReflectedDummyComponentState)

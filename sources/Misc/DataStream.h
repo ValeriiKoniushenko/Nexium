@@ -241,7 +241,10 @@ namespace Core
         DataStream(const IntrusivePtr<DataProvider>& viewing, const StringAtom& nesting);
 
         Json& finalJson();
-        const Json& finalJson() const { return const_cast<DataStream*>(this)->finalJson(); }
+        [[nodiscard]] const Json& finalJson() const
+        {
+            return const_cast<DataStream*>(this)->finalJson();
+        }
 
     protected:
         IntrusivePtr<DataProvider> _data;

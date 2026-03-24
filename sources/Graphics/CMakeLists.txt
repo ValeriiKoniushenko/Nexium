@@ -16,9 +16,6 @@ target_sources(${TARGET_NAME}
         ${FILTERED_HEADERS}
 )
 
-add_custom_target(CodeGenerator ALL
-    COMMAND jrm ${CMAKE_SOURCE_DIR}
-)
 add_dependencies(${TARGET_NAME} CodeGenerator)
 
 add_library(Nexium::${CLEAR_TARGET_NAME} ALIAS ${TARGET_NAME})
@@ -29,6 +26,7 @@ target_link_libraries(${TARGET_NAME} PUBLIC
     Utils::Core
     Nexium::Misc
     Core::Glad
+    glfw
 )
 
 CoreAddCompileOptionsTo(${TARGET_NAME})

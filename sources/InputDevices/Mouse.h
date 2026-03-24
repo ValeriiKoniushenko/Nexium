@@ -28,6 +28,11 @@
 #include "JustReflectMe/Adapter.h"
 #include "glm/glm.hpp"
 
+// clang-format off
+#include "glad/glad.h"
+#include "GLFW/glfw3.h"
+// clang-format on
+
 namespace Core
 {
     class Mouse
@@ -64,9 +69,9 @@ namespace Core
         };
 
         ENUM_CLASS();
-        enum class State
+        enum class State : GLenum
         {
-            None,
+            None = 0,
             Press = GLFW_PRESS,
             Release = GLFW_RELEASE,
         };

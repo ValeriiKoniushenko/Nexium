@@ -36,6 +36,7 @@ namespace spdlog
 
 namespace Core
 {
+
     class LogQueue final : public Singleton<LogQueue>
     {
         SINGLETONS_FRIEND(LogQueue)
