@@ -42,7 +42,7 @@ namespace Core::Gui
         _pos = ImGui::GetCursorPos();
 
 #if defined(DEBUG)
-        if (Keyboard::IsKeyPressed(Config::Input::editorImGuiShowRect)
+        if (Keyboard::IsKeyPressed(Widget::Input::editorImGuiShowRect)
             && getGlobalBounds().isIntersects(Mouse::GetPosition()))
         {
             drawOutline();

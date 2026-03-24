@@ -28,6 +28,7 @@
 #include "GameplaySystem/ECS/BaseComponent.h"
 #include "GameplaySystem/ECS/Transformable.h"
 #include "ImGui/imgui.h"
+#include "InputDevices/Keyboard.h"
 
 namespace Core::Gui
 {
@@ -58,6 +59,11 @@ namespace Core::Gui
         ECS_COMPONENT_DECL(Widget, BaseComponent);
 
     public:
+        struct Input
+        {
+            constexpr static Keyboard::Key editorImGuiShowRect = Keyboard::Key::F2;
+        };
+
         struct Bounds
         {
             glm::vec2 topLeft = {};

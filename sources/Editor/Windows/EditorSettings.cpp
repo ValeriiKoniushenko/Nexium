@@ -236,7 +236,7 @@ namespace Core
             item->setReadOnly(true);
             item->setLabel("Show ImGui debug rects");
             item->setButtonName(
-                R<Keyboard::Key>::ToString(Config::Input::editorImGuiShowRect).data());
+                R<Keyboard::Key>::ToString(Widget::Input::editorImGuiShowRect).data());
         }
 
         if (auto spectator = gGameInstance->gameScene.gerFirstOf<Spectator>(); Verify(spectator))

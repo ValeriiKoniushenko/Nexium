@@ -146,7 +146,7 @@ namespace Core
             }
             else
             {
-                // finalJson()[key] = field;
+                finalJson()[key] = field;
             }
 
             return Result::Success;
