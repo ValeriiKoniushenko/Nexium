@@ -6,7 +6,7 @@
  * Your changes will be replaced next time
  */
 
-#include <array>
+// clang-format off#include <array>
 #include <optional>
 #include <string>
 #include <unordered_map>
@@ -43,38 +43,44 @@ struct R<Core::Window::CursorMode>
 
     static constexpr const std::array<::Core::Window::CursorMode, 3>& ToArrayC()
     {
-        static constexpr std::array<::Core::Window::CursorMode, 3> constants
-            = { ::Core::Window::CursorMode::Normal, ::Core::Window::CursorMode::Disabled,
-                ::Core::Window::CursorMode::Hidden };
+        static constexpr std::array<::Core::Window::CursorMode, 3> constants = {
+				::Core::Window::CursorMode::Normal,
+				::Core::Window::CursorMode::Disabled,
+				::Core::Window::CursorMode::Hidden
+        };
 
         return constants;
     }
 
     static constexpr const std::array<std::string_view, 3>& ToArrayN()
     {
-        static constexpr std::array<std::string_view, 3> names
-            = { std::string_view("Normal"), std::string_view("Disabled"),
-                std::string_view("Hidden") };
+        static constexpr std::array<std::string_view, 3> names = {
+				std::string_view("Normal"),
+				std::string_view("Disabled"),
+				std::string_view("Hidden")
+        };
 
         return names;
     }
 
     static const std::unordered_map<::Core::Window::CursorMode, std::string_view>& ToMapCN()
     {
-        static const std::unordered_map<::Core::Window::CursorMode, std::string_view> map
-            = { { ::Core::Window::CursorMode::Normal, "Normal" },
-                { ::Core::Window::CursorMode::Disabled, "Disabled" },
-                { ::Core::Window::CursorMode::Hidden, "Hidden" } };
+        static const std::unordered_map<::Core::Window::CursorMode, std::string_view> map = {
+				{ ::Core::Window::CursorMode::Normal, "Normal" },
+				{ ::Core::Window::CursorMode::Disabled, "Disabled" },
+				{ ::Core::Window::CursorMode::Hidden, "Hidden" }
+        };
 
         return map;
     }
 
     static const std::unordered_map<std::string_view, ::Core::Window::CursorMode>& ToMapNC()
     {
-        static const std::unordered_map<std::string_view, ::Core::Window::CursorMode> map
-            = { { "Normal", ::Core::Window::CursorMode::Normal },
-                { "Disabled", ::Core::Window::CursorMode::Disabled },
-                { "Hidden", ::Core::Window::CursorMode::Hidden } };
+        static const std::unordered_map<std::string_view, ::Core::Window::CursorMode> map = {
+				{ "Normal", ::Core::Window::CursorMode::Normal },
+				{ "Disabled", ::Core::Window::CursorMode::Disabled },
+				{ "Hidden", ::Core::Window::CursorMode::Hidden }
+        };
 
         return map;
     }
@@ -112,39 +118,47 @@ struct R<Core::DragAndDrop::State>
 
     static constexpr const std::array<::Core::DragAndDrop::State, 3>& ToArrayC()
     {
-        static constexpr std::array<::Core::DragAndDrop::State, 3> constants
-            = { ::Core::DragAndDrop::State::Idle, ::Core::DragAndDrop::State::Started,
-                ::Core::DragAndDrop::State::Dragging };
+        static constexpr std::array<::Core::DragAndDrop::State, 3> constants = {
+				::Core::DragAndDrop::State::Idle,
+				::Core::DragAndDrop::State::Started,
+				::Core::DragAndDrop::State::Dragging
+        };
 
         return constants;
     }
 
     static constexpr const std::array<std::string_view, 3>& ToArrayN()
     {
-        static constexpr std::array<std::string_view, 3> names
-            = { std::string_view("Idle"), std::string_view("Started"),
-                std::string_view("Dragging") };
+        static constexpr std::array<std::string_view, 3> names = {
+				std::string_view("Idle"),
+				std::string_view("Started"),
+				std::string_view("Dragging")
+        };
 
         return names;
     }
 
     static const std::unordered_map<::Core::DragAndDrop::State, std::string_view>& ToMapCN()
     {
-        static const std::unordered_map<::Core::DragAndDrop::State, std::string_view> map
-            = { { ::Core::DragAndDrop::State::Idle, "Idle" },
-                { ::Core::DragAndDrop::State::Started, "Started" },
-                { ::Core::DragAndDrop::State::Dragging, "Dragging" } };
+        static const std::unordered_map<::Core::DragAndDrop::State, std::string_view> map = {
+				{ ::Core::DragAndDrop::State::Idle, "Idle" },
+				{ ::Core::DragAndDrop::State::Started, "Started" },
+				{ ::Core::DragAndDrop::State::Dragging, "Dragging" }
+        };
 
         return map;
     }
 
     static const std::unordered_map<std::string_view, ::Core::DragAndDrop::State>& ToMapNC()
     {
-        static const std::unordered_map<std::string_view, ::Core::DragAndDrop::State> map
-            = { { "Idle", ::Core::DragAndDrop::State::Idle },
-                { "Started", ::Core::DragAndDrop::State::Started },
-                { "Dragging", ::Core::DragAndDrop::State::Dragging } };
+        static const std::unordered_map<std::string_view, ::Core::DragAndDrop::State> map = {
+				{ "Idle", ::Core::DragAndDrop::State::Idle },
+				{ "Started", ::Core::DragAndDrop::State::Started },
+				{ "Dragging", ::Core::DragAndDrop::State::Dragging }
+        };
 
         return map;
     }
 }; // struct R<Core::DragAndDrop::State>
+
+// clang-format on

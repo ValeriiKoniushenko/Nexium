@@ -34,4 +34,4 @@ add_subdirectory(sources)
 #add_subdirectory(tests)
 
 # TODO: in the future it must be removed
-#add_subdirectory(game-example)
+add_subdirectory(game-example)

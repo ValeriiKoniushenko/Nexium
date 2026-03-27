@@ -6,7 +6,7 @@
  * Your changes will be replaced next time
  */
 
-#include <string>
+// clang-format off#include <string>
 #include <string_view>
 #include <vector>
 
@@ -16,24 +16,24 @@ struct R<Core::IDrawable>
     static constexpr std::string_view Name() { return "IDrawable"; }
     static constexpr std::string_view ParentScope() { return "Core"; }
     static constexpr std::size_t GetFieldNumbers() { return 1; }
-    static constexpr std::vector<RClassField> GetFields()
-    {
+    static constexpr std::vector<RClassField> GetFields() {
         return {
-            { "bool", "_isPostDraw" },
-        };
+			{ "bool", "_isPostDraw" },
+		};
     }
 
     template<IsResourceStreamImpl RImpl>
     [[nodiscard]] static RResourceStream<RImpl> Serialize(const Core::IDrawable& obj)
     {
         RResourceStream<RImpl> s;
-        s.write("_isPostDraw", obj._isPostDraw);
+		s.write("_isPostDraw", obj._isPostDraw);
         return s;
     }
 
     template<IsResourceStreamImpl RImpl>
     static void Deserialize(const RResourceStream<RImpl>& s, Core::IDrawable& obj)
     {
-        s.read("_isPostDraw", obj._isPostDraw);
+		s.read("_isPostDraw", obj._isPostDraw);
     }
 }; // struct R<Core::IDrawable>
+// clang-format on

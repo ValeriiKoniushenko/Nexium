@@ -58,6 +58,7 @@ FetchContent_Declare(Utils
     GIT_PROGRESS TRUE
 )
 FetchContent_MakeAvailable(Utils)
+target_compile_options(benchmark_main PRIVATE -Wno-c2y-extensions)
 
 
 FetchContent_Declare(JustReflectMe
@@ -73,7 +74,6 @@ FetchContent_MakeAvailable(JustReflectMe)
 set(SKIP_INSTALL_ALL ON CACHE BOOL "" FORCE)
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 
-# No tests, no tools, no demos
 set(FT_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(FT_BUILD_PROGRAMS OFF CACHE BOOL "" FORCE)
 set(FT_BUILD_UTILS OFF CACHE BOOL "" FORCE)
