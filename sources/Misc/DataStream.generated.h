@@ -43,52 +43,45 @@ struct R<Core::DataStream::Result>
 
     static constexpr const std::array<::Core::DataStream::Result, 5>& ToArrayC()
     {
-        static constexpr std::array<::Core::DataStream::Result, 5> constants = {
-				::Core::DataStream::Result::Success,
-				::Core::DataStream::Result::ReadFailed,
-				::Core::DataStream::Result::WriteFailed,
-				::Core::DataStream::Result::InvalidPassedData,
-				::Core::DataStream::Result::CustomProcessingError
-        };
+        static constexpr std::array<::Core::DataStream::Result, 5> constants
+            = { ::Core::DataStream::Result::Success, ::Core::DataStream::Result::ReadFailed,
+                ::Core::DataStream::Result::WriteFailed,
+                ::Core::DataStream::Result::InvalidPassedData,
+                ::Core::DataStream::Result::CustomProcessingError };
 
         return constants;
     }
 
     static constexpr const std::array<std::string_view, 5>& ToArrayN()
     {
-        static constexpr std::array<std::string_view, 5> names = {
-				std::string_view("Success"),
-				std::string_view("ReadFailed"),
-				std::string_view("WriteFailed"),
-				std::string_view("InvalidPassedData"),
-				std::string_view("CustomProcessingError")
-        };
+        static constexpr std::array<std::string_view, 5> names
+            = { std::string_view("Success"), std::string_view("ReadFailed"),
+                std::string_view("WriteFailed"), std::string_view("InvalidPassedData"),
+                std::string_view("CustomProcessingError") };
 
         return names;
     }
 
     static const std::unordered_map<::Core::DataStream::Result, std::string_view>& ToMapCN()
     {
-        static const std::unordered_map<::Core::DataStream::Result, std::string_view> map = {
-				{ ::Core::DataStream::Result::Success, "Success" },
-				{ ::Core::DataStream::Result::ReadFailed, "ReadFailed" },
-				{ ::Core::DataStream::Result::WriteFailed, "WriteFailed" },
-				{ ::Core::DataStream::Result::InvalidPassedData, "InvalidPassedData" },
-				{ ::Core::DataStream::Result::CustomProcessingError, "CustomProcessingError" }
-        };
+        static const std::unordered_map<::Core::DataStream::Result, std::string_view> map
+            = { { ::Core::DataStream::Result::Success, "Success" },
+                { ::Core::DataStream::Result::ReadFailed, "ReadFailed" },
+                { ::Core::DataStream::Result::WriteFailed, "WriteFailed" },
+                { ::Core::DataStream::Result::InvalidPassedData, "InvalidPassedData" },
+                { ::Core::DataStream::Result::CustomProcessingError, "CustomProcessingError" } };
 
         return map;
     }
 
     static const std::unordered_map<std::string_view, ::Core::DataStream::Result>& ToMapNC()
     {
-        static const std::unordered_map<std::string_view, ::Core::DataStream::Result> map = {
-				{ "Success", ::Core::DataStream::Result::Success },
-				{ "ReadFailed", ::Core::DataStream::Result::ReadFailed },
-				{ "WriteFailed", ::Core::DataStream::Result::WriteFailed },
-				{ "InvalidPassedData", ::Core::DataStream::Result::InvalidPassedData },
-				{ "CustomProcessingError", ::Core::DataStream::Result::CustomProcessingError }
-        };
+        static const std::unordered_map<std::string_view, ::Core::DataStream::Result> map
+            = { { "Success", ::Core::DataStream::Result::Success },
+                { "ReadFailed", ::Core::DataStream::Result::ReadFailed },
+                { "WriteFailed", ::Core::DataStream::Result::WriteFailed },
+                { "InvalidPassedData", ::Core::DataStream::Result::InvalidPassedData },
+                { "CustomProcessingError", ::Core::DataStream::Result::CustomProcessingError } };
 
         return map;
     }
@@ -126,40 +119,34 @@ struct R<Core::DataStream::Mode>
 
     static constexpr const std::array<::Core::DataStream::Mode, 2>& ToArrayC()
     {
-        static constexpr std::array<::Core::DataStream::Mode, 2> constants = {
-				::Core::DataStream::Mode::Input,
-				::Core::DataStream::Mode::Output
-        };
+        static constexpr std::array<::Core::DataStream::Mode, 2> constants
+            = { ::Core::DataStream::Mode::Input, ::Core::DataStream::Mode::Output };
 
         return constants;
     }
 
     static constexpr const std::array<std::string_view, 2>& ToArrayN()
     {
-        static constexpr std::array<std::string_view, 2> names = {
-				std::string_view("Input"),
-				std::string_view("Output")
-        };
+        static constexpr std::array<std::string_view, 2> names
+            = { std::string_view("Input"), std::string_view("Output") };
 
         return names;
     }
 
     static const std::unordered_map<::Core::DataStream::Mode, std::string_view>& ToMapCN()
     {
-        static const std::unordered_map<::Core::DataStream::Mode, std::string_view> map = {
-				{ ::Core::DataStream::Mode::Input, "Input" },
-				{ ::Core::DataStream::Mode::Output, "Output" }
-        };
+        static const std::unordered_map<::Core::DataStream::Mode, std::string_view> map
+            = { { ::Core::DataStream::Mode::Input, "Input" },
+                { ::Core::DataStream::Mode::Output, "Output" } };
 
         return map;
     }
 
     static const std::unordered_map<std::string_view, ::Core::DataStream::Mode>& ToMapNC()
     {
-        static const std::unordered_map<std::string_view, ::Core::DataStream::Mode> map = {
-				{ "Input", ::Core::DataStream::Mode::Input },
-				{ "Output", ::Core::DataStream::Mode::Output }
-        };
+        static const std::unordered_map<std::string_view, ::Core::DataStream::Mode> map
+            = { { "Input", ::Core::DataStream::Mode::Input },
+                { "Output", ::Core::DataStream::Mode::Output } };
 
         return map;
     }
