@@ -6,7 +6,7 @@
  * Your changes will be replaced next time
  */
 
-// clang-format off#include <array>
+#include <array>
 #include <optional>
 #include <string>
 #include <unordered_map>
@@ -148,5 +148,3 @@ struct R<Core::DragAndDrop::State>
         return map;
     }
 }; // struct R<Core::DragAndDrop::State>
-
-// clang-format on

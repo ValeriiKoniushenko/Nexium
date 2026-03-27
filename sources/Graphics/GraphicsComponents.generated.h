@@ -6,7 +6,7 @@
  * Your changes will be replaced next time
  */
 
-// clang-format off#include <array>
+#include <array>
 #include <optional>
 #include <string>
 #include <unordered_map>
@@ -247,5 +247,3 @@ struct R<Core::GraphicsComponentData::Modifier>
         return map;
     }
 }; // struct R<Core::GraphicsComponentData::Modifier>
-
-// clang-format on
