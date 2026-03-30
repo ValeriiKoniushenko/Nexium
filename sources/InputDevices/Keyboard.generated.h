@@ -6,7 +6,7 @@
  * Your changes will be replaced next time
  */
 
-#include <array>
+// clang-format off#include <array>
 #include <optional>
 #include <string>
 #include <unordered_map>
@@ -628,3 +628,5 @@ struct R<Core::Keyboard::Key>
         return map;
     }
 }; // struct R<Core::Keyboard::Key>
+
+// clang-format on

@@ -6,7 +6,7 @@
  * Your changes will be replaced next time
  */
 
-#include <string>
+// clang-format off#include <string>
 #include <string_view>
 #include <vector>
 
@@ -37,3 +37,4 @@ struct R<Core::IDrawable>
         s.read("_isPostDraw", obj._isPostDraw);
     }
 }; // struct R<Core::IDrawable>
+// clang-format on

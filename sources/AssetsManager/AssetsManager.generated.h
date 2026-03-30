@@ -6,7 +6,7 @@
  * Your changes will be replaced next time
  */
 
-#include <array>
+// clang-format off#include <array>
 #include <optional>
 #include <string>
 #include <unordered_map>
@@ -84,3 +84,5 @@ struct R<Core::AssetsManager::NodeType>
         return map;
     }
 }; // struct R<Core::AssetsManager::NodeType>
+
+// clang-format on
