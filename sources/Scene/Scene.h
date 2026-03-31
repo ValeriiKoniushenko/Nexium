@@ -24,13 +24,13 @@
 
 #pragma once
 
+#include "../RawDataManagement/DataStream.h"
 #include "AssetsManager/ECSAsset.h"
 #include "AssetsManager/Mesh3DAsset.h"
 #include "AssetsManager/SkyboxAsset.h"
 #include "Core/Delegate.h"
 #include "Graphics/Primitives/StaticMeshBundle.h"
 #include "Grid.h"
-#include "Misc/DataStream.h"
 
 #include <vector>
 

@@ -41,6 +41,10 @@ namespace Core
     class GameEditor : public BaseLog
     {
     public:
+        static constexpr int defaultEditorImGuiFlags
+            = ImGuiConfigFlags_NavEnableKeyboard | ImGuiConfigFlags_DockingEnable;
+
+    public:
         GameEditor() = default;
         GameEditor(const GameEditor&) = delete;
         GameEditor(GameEditor&&) = delete;

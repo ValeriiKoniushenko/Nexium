@@ -6,7 +6,8 @@
  * Your changes will be replaced next time
  */
 
-// clang-format off#include <array>
+// clang-format off
+#include <array>
 #include <optional>
 #include <string>
 #include <unordered_map>
@@ -43,43 +44,52 @@ struct R<Core::Image::Channel>
 
     static constexpr const std::array<::Core::Image::Channel, 5>& ToArrayC()
     {
-        static constexpr std::array<::Core::Image::Channel, 5> constants
-            = { ::Core::Image::Channel::None, ::Core::Image::Channel::Grey,
-                ::Core::Image::Channel::GreyA, ::Core::Image::Channel::RGB,
-                ::Core::Image::Channel::RGBA };
+        static constexpr std::array<::Core::Image::Channel, 5> constants = {
+				::Core::Image::Channel::None,
+				::Core::Image::Channel::Grey,
+				::Core::Image::Channel::GreyA,
+				::Core::Image::Channel::RGB,
+				::Core::Image::Channel::RGBA
+        };
 
         return constants;
     }
 
     static constexpr const std::array<std::string_view, 5>& ToArrayN()
     {
-        static constexpr std::array<std::string_view, 5> names
-            = { std::string_view("None"), std::string_view("Grey"), std::string_view("GreyA"),
-                std::string_view("RGB"), std::string_view("RGBA") };
+        static constexpr std::array<std::string_view, 5> names = {
+				std::string_view("None"),
+				std::string_view("Grey"),
+				std::string_view("GreyA"),
+				std::string_view("RGB"),
+				std::string_view("RGBA")
+        };
 
         return names;
     }
 
     static const std::unordered_map<::Core::Image::Channel, std::string_view>& ToMapCN()
     {
-        static const std::unordered_map<::Core::Image::Channel, std::string_view> map
-            = { { ::Core::Image::Channel::None, "None" },
-                { ::Core::Image::Channel::Grey, "Grey" },
-                { ::Core::Image::Channel::GreyA, "GreyA" },
-                { ::Core::Image::Channel::RGB, "RGB" },
-                { ::Core::Image::Channel::RGBA, "RGBA" } };
+        static const std::unordered_map<::Core::Image::Channel, std::string_view> map = {
+				{ ::Core::Image::Channel::None, "None" },
+				{ ::Core::Image::Channel::Grey, "Grey" },
+				{ ::Core::Image::Channel::GreyA, "GreyA" },
+				{ ::Core::Image::Channel::RGB, "RGB" },
+				{ ::Core::Image::Channel::RGBA, "RGBA" }
+        };
 
         return map;
     }
 
     static const std::unordered_map<std::string_view, ::Core::Image::Channel>& ToMapNC()
     {
-        static const std::unordered_map<std::string_view, ::Core::Image::Channel> map
-            = { { "None", ::Core::Image::Channel::None },
-                { "Grey", ::Core::Image::Channel::Grey },
-                { "GreyA", ::Core::Image::Channel::GreyA },
-                { "RGB", ::Core::Image::Channel::RGB },
-                { "RGBA", ::Core::Image::Channel::RGBA } };
+        static const std::unordered_map<std::string_view, ::Core::Image::Channel> map = {
+				{ "None", ::Core::Image::Channel::None },
+				{ "Grey", ::Core::Image::Channel::Grey },
+				{ "GreyA", ::Core::Image::Channel::GreyA },
+				{ "RGB", ::Core::Image::Channel::RGB },
+				{ "RGBA", ::Core::Image::Channel::RGBA }
+        };
 
         return map;
     }

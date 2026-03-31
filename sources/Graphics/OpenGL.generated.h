@@ -6,7 +6,8 @@
  * Your changes will be replaced next time
  */
 
-// clang-format off#include <array>
+// clang-format off
+#include <array>
 #include <optional>
 #include <string>
 #include <unordered_map>
@@ -43,34 +44,40 @@ struct R<Core::ViewportMode>
 
     static constexpr const std::array<::Core::ViewportMode, 2>& ToArrayC()
     {
-        static constexpr std::array<::Core::ViewportMode, 2> constants
-            = { ::Core::ViewportMode::Default, ::Core::ViewportMode::ZoomIn };
+        static constexpr std::array<::Core::ViewportMode, 2> constants = {
+				::Core::ViewportMode::Default,
+				::Core::ViewportMode::ZoomIn
+        };
 
         return constants;
     }
 
     static constexpr const std::array<std::string_view, 2>& ToArrayN()
     {
-        static constexpr std::array<std::string_view, 2> names
-            = { std::string_view("Default"), std::string_view("ZoomIn") };
+        static constexpr std::array<std::string_view, 2> names = {
+				std::string_view("Default"),
+				std::string_view("ZoomIn")
+        };
 
         return names;
     }
 
     static const std::unordered_map<::Core::ViewportMode, std::string_view>& ToMapCN()
     {
-        static const std::unordered_map<::Core::ViewportMode, std::string_view> map
-            = { { ::Core::ViewportMode::Default, "Default" },
-                { ::Core::ViewportMode::ZoomIn, "ZoomIn" } };
+        static const std::unordered_map<::Core::ViewportMode, std::string_view> map = {
+				{ ::Core::ViewportMode::Default, "Default" },
+				{ ::Core::ViewportMode::ZoomIn, "ZoomIn" }
+        };
 
         return map;
     }
 
     static const std::unordered_map<std::string_view, ::Core::ViewportMode>& ToMapNC()
     {
-        static const std::unordered_map<std::string_view, ::Core::ViewportMode> map
-            = { { "Default", ::Core::ViewportMode::Default },
-                { "ZoomIn", ::Core::ViewportMode::ZoomIn } };
+        static const std::unordered_map<std::string_view, ::Core::ViewportMode> map = {
+				{ "Default", ::Core::ViewportMode::Default },
+				{ "ZoomIn", ::Core::ViewportMode::ZoomIn }
+        };
 
         return map;
     }

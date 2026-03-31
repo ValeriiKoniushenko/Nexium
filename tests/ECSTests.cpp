@@ -1,4 +1,4 @@
-#include "GameplaySystem/ECS/BaseComponent.h"
+#include "ECS/BaseComponent.h"
 
 #include "gtest/gtest.h"
 
@@ -157,7 +157,7 @@ TEST(ECSBaseTests, SerializationDoesNotTouchNonReflectedDummyComponentState)
     source.setNoTick(true);
 
     const auto out = R<Core::AbstractComponent>::Serialize<RJsonResourceStream>(source);
-    
+
     DummyComponent restored("KeepMyOwnState");
     restored.enable();
     restored.setNoTick(false);

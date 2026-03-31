@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-#include "Misc/DataStream.h"
+#include "../sources/RawDataManagement/DataStream.h"
 
 #include "gtest/gtest.h"
 

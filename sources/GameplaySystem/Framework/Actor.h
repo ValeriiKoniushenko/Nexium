@@ -24,10 +24,10 @@
 
 #pragma once
 
+#include "../../RawDataManagement/DataStream.h"
 #include "GameplaySystem/ECS/Transformable.h"
 #include "Graphics/IDrawable.h"
 #include "Graphics/Primitives/StaticMesh.h"
-#include "Misc/DataStream.h"
 #include "WorldObject.h"
 
 namespace Core

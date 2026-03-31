@@ -22,8 +22,8 @@
 
 #pragma once
 
+#include "../RawDataManagement/DataStream.h"
 #include "Core/Position.h"
-#include "Misc/DataStream.h"
 #include "glm/glm.hpp"
 
 namespace Core

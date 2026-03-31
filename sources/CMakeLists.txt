@@ -35,9 +35,11 @@ add_custom_target(CodeGenerator ALL
 
 add_subdirectory(AssetsManager)
 add_subdirectory(Editor)
+add_subdirectory(ECS)
 add_subdirectory(Camera)
 add_subdirectory(GameplaySystem)
 add_subdirectory(Graphics)
 add_subdirectory(InputDevices)
 add_subdirectory(Misc)
+add_subdirectory(RawDataManagement)
 add_subdirectory(Scene)

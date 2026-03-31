@@ -24,11 +24,11 @@
 
 #pragma once
 
+#include "../../RawDataManagement/DataStream.h"
 #include "Core/Color.h"
 #include "GameState.h"
 #include "LevelData.h"
 #include "Misc/BaseLog.h"
-#include "Misc/DataStream.h"
 #include "PlayerState.h"
 
 namespace Core

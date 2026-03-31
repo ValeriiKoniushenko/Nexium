@@ -6,7 +6,8 @@
  * Your changes will be replaced next time
  */
 
-// clang-format off#include <array>
+// clang-format off
+#include <array>
 #include <optional>
 #include <string>
 #include <unordered_map>
@@ -43,45 +44,56 @@ struct R<Core::SkyboxAsset::Direction>
 
     static constexpr const std::array<::Core::SkyboxAsset::Direction, 6>& ToArrayC()
     {
-        static constexpr std::array<::Core::SkyboxAsset::Direction, 6> constants
-            = { ::Core::SkyboxAsset::Direction::Right, ::Core::SkyboxAsset::Direction::Left,
-                ::Core::SkyboxAsset::Direction::Top,   ::Core::SkyboxAsset::Direction::Bottom,
-                ::Core::SkyboxAsset::Direction::Front, ::Core::SkyboxAsset::Direction::Back };
+        static constexpr std::array<::Core::SkyboxAsset::Direction, 6> constants = {
+				::Core::SkyboxAsset::Direction::Right,
+				::Core::SkyboxAsset::Direction::Left,
+				::Core::SkyboxAsset::Direction::Top,
+				::Core::SkyboxAsset::Direction::Bottom,
+				::Core::SkyboxAsset::Direction::Front,
+				::Core::SkyboxAsset::Direction::Back
+        };
 
         return constants;
     }
 
     static constexpr const std::array<std::string_view, 6>& ToArrayN()
     {
-        static constexpr std::array<std::string_view, 6> names
-            = { std::string_view("Right"),  std::string_view("Left"),  std::string_view("Top"),
-                std::string_view("Bottom"), std::string_view("Front"), std::string_view("Back") };
+        static constexpr std::array<std::string_view, 6> names = {
+				std::string_view("Right"),
+				std::string_view("Left"),
+				std::string_view("Top"),
+				std::string_view("Bottom"),
+				std::string_view("Front"),
+				std::string_view("Back")
+        };
 
         return names;
     }
 
     static const std::unordered_map<::Core::SkyboxAsset::Direction, std::string_view>& ToMapCN()
     {
-        static const std::unordered_map<::Core::SkyboxAsset::Direction, std::string_view> map
-            = { { ::Core::SkyboxAsset::Direction::Right, "Right" },
-                { ::Core::SkyboxAsset::Direction::Left, "Left" },
-                { ::Core::SkyboxAsset::Direction::Top, "Top" },
-                { ::Core::SkyboxAsset::Direction::Bottom, "Bottom" },
-                { ::Core::SkyboxAsset::Direction::Front, "Front" },
-                { ::Core::SkyboxAsset::Direction::Back, "Back" } };
+        static const std::unordered_map<::Core::SkyboxAsset::Direction, std::string_view> map = {
+				{ ::Core::SkyboxAsset::Direction::Right, "Right" },
+				{ ::Core::SkyboxAsset::Direction::Left, "Left" },
+				{ ::Core::SkyboxAsset::Direction::Top, "Top" },
+				{ ::Core::SkyboxAsset::Direction::Bottom, "Bottom" },
+				{ ::Core::SkyboxAsset::Direction::Front, "Front" },
+				{ ::Core::SkyboxAsset::Direction::Back, "Back" }
+        };
 
         return map;
     }
 
     static const std::unordered_map<std::string_view, ::Core::SkyboxAsset::Direction>& ToMapNC()
     {
-        static const std::unordered_map<std::string_view, ::Core::SkyboxAsset::Direction> map
-            = { { "Right", ::Core::SkyboxAsset::Direction::Right },
-                { "Left", ::Core::SkyboxAsset::Direction::Left },
-                { "Top", ::Core::SkyboxAsset::Direction::Top },
-                { "Bottom", ::Core::SkyboxAsset::Direction::Bottom },
-                { "Front", ::Core::SkyboxAsset::Direction::Front },
-                { "Back", ::Core::SkyboxAsset::Direction::Back } };
+        static const std::unordered_map<std::string_view, ::Core::SkyboxAsset::Direction> map = {
+				{ "Right", ::Core::SkyboxAsset::Direction::Right },
+				{ "Left", ::Core::SkyboxAsset::Direction::Left },
+				{ "Top", ::Core::SkyboxAsset::Direction::Top },
+				{ "Bottom", ::Core::SkyboxAsset::Direction::Bottom },
+				{ "Front", ::Core::SkyboxAsset::Direction::Front },
+				{ "Back", ::Core::SkyboxAsset::Direction::Back }
+        };
 
         return map;
     }

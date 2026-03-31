@@ -29,10 +29,10 @@
 
 // clang-format off
 #include "JustReflectMe/Adapter.h"
-#include "Misc/JsonAdapter.h"
+#include "../RawDataManagement/JsonAdapter.h"
 // clang-format on
 
-#include "Misc/DataStream.h"
+#include "../RawDataManagement/DataStream.h"
 
 #include <queue>
 #include <stack>

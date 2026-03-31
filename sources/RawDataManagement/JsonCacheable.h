@@ -23,7 +23,7 @@
  */
 
 #pragma once
-#include "Configs.h"
+#include "../Misc/Configs.h"
 #include "Core/String.h"
 #include "nlohmann/json_fwd.hpp"
 

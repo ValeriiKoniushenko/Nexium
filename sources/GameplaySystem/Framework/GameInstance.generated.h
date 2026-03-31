@@ -6,7 +6,8 @@
  * Your changes will be replaced next time
  */
 
-// clang-format off#include <array>
+// clang-format off
+#include <array>
 #include <optional>
 #include <string>
 #include <unordered_map>
@@ -43,35 +44,40 @@ struct R<Core::GameInstance::RenderMode>
 
     static constexpr const std::array<::Core::GameInstance::RenderMode, 2>& ToArrayC()
     {
-        static constexpr std::array<::Core::GameInstance::RenderMode, 2> constants
-            = { ::Core::GameInstance::RenderMode::GameOnly,
-                ::Core::GameInstance::RenderMode::Editor };
+        static constexpr std::array<::Core::GameInstance::RenderMode, 2> constants = {
+				::Core::GameInstance::RenderMode::GameOnly,
+				::Core::GameInstance::RenderMode::Editor
+        };
 
         return constants;
     }
 
     static constexpr const std::array<std::string_view, 2>& ToArrayN()
     {
-        static constexpr std::array<std::string_view, 2> names
-            = { std::string_view("GameOnly"), std::string_view("Editor") };
+        static constexpr std::array<std::string_view, 2> names = {
+				std::string_view("GameOnly"),
+				std::string_view("Editor")
+        };
 
         return names;
     }
 
     static const std::unordered_map<::Core::GameInstance::RenderMode, std::string_view>& ToMapCN()
     {
-        static const std::unordered_map<::Core::GameInstance::RenderMode, std::string_view> map
-            = { { ::Core::GameInstance::RenderMode::GameOnly, "GameOnly" },
-                { ::Core::GameInstance::RenderMode::Editor, "Editor" } };
+        static const std::unordered_map<::Core::GameInstance::RenderMode, std::string_view> map = {
+				{ ::Core::GameInstance::RenderMode::GameOnly, "GameOnly" },
+				{ ::Core::GameInstance::RenderMode::Editor, "Editor" }
+        };
 
         return map;
     }
 
     static const std::unordered_map<std::string_view, ::Core::GameInstance::RenderMode>& ToMapNC()
     {
-        static const std::unordered_map<std::string_view, ::Core::GameInstance::RenderMode> map
-            = { { "GameOnly", ::Core::GameInstance::RenderMode::GameOnly },
-                { "Editor", ::Core::GameInstance::RenderMode::Editor } };
+        static const std::unordered_map<std::string_view, ::Core::GameInstance::RenderMode> map = {
+				{ "GameOnly", ::Core::GameInstance::RenderMode::GameOnly },
+				{ "Editor", ::Core::GameInstance::RenderMode::Editor }
+        };
 
         return map;
     }

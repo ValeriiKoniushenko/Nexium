@@ -176,7 +176,7 @@ namespace Core
     void GameEditor::setupImGuiStyles()
     {
         ImGuiIO& io = ImGui::GetIO();
-        io.ConfigFlags |= Config::defaultEditorImGuiFlags;
+        io.ConfigFlags |= GameEditor::defaultEditorImGuiFlags;
 
         if (std::filesystem::exists(Config::Path::editorFont))
         {

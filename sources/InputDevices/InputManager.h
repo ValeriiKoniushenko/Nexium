@@ -24,9 +24,9 @@
 
 #pragma once
 
+#include "../RawDataManagement/DataStream.h"
 #include "InputAction.h"
 #include "Misc/BaseLog.h"
-#include "Misc/DataStream.h"
 #include "ModuleInfo.h"
 
 #include <unordered_map>

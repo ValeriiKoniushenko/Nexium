@@ -24,13 +24,13 @@
 
 #pragma once
 
+#include "../../RawDataManagement/DataStream.h"
 #include "AssetsManager/AssetsManager.h"
 #include "AssetsManager/TextureAsset.h"
 #include "BaseWindow.h"
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
-#include "Misc/DataStream.h"
 
 namespace Core
 {

@@ -31,7 +31,7 @@ add_subdirectory(dependencies)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FetchDependencies.cmake)
 
 add_subdirectory(sources)
-# add_subdirectory(tests)
+add_subdirectory(tests)
 
 # TODO: in the future it must be removed
 #add_subdirectory(game-example)

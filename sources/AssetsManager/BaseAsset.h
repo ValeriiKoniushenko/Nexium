@@ -24,9 +24,9 @@
 
 #pragma once
 
+#include "../RawDataManagement/DataStream.h"
 #include "Core/String.h"
 #include "Misc/BaseLog.h"
-#include "Misc/DataStream.h"
 #include "nlohmann/json.hpp"
 
 namespace Core

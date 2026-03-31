@@ -26,7 +26,6 @@
 
 #include "Core/Color.h"
 #include "Core/Size.h"
-#include "ImGui/imgui.h"
 
 #include <filesystem>
 
@@ -67,9 +66,6 @@ namespace Core::Config
     static constexpr float windowAspectRatio = 16.f / 9.f;
     static constexpr float defaultEditorFontSize = 16.f;
     static constexpr float defaultEmojiScale = 0.8f;
-
-    static constexpr int defaultEditorImGuiFlags
-        = ImGuiConfigFlags_NavEnableKeyboard | ImGuiConfigFlags_DockingEnable;
 
     inline static const char* spdlogPattern = "%D [%L] [%n] %v";
     inline static const char* defaultWindowName = "Nexium Engine";
