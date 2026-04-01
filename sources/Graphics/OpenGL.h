@@ -30,8 +30,8 @@
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 
-#include "JustReflectMe/Adapter.h"
 // clang-format on
+#include "JustReflectMe/Adapter.h"
 
 namespace Core
 {

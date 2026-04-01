@@ -51,7 +51,6 @@
 #include "../Misc/Configs.h"
 #include "Core/IntrusivePtr.h"
 #include "Core/String.h"
-#include "JsonAdapter.h"
 #include "JustReflectMe/Adapter.h"
 #include "nlohmann/json.hpp"
 
