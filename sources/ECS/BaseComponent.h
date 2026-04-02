@@ -44,22 +44,22 @@ public:                                                                         
     template<bool isConst>                                                                         \
     using AdaptivePtr = Core::IntrusivePtr<std::conditional_t<isConst, const TypeName, TypeName>>; \
                                                                                                    \
-    static const StringAtom componentType;                                                         \
+    static const Core::StringAtom componentType;                                                   \
                                                                                                    \
 public:                                                                                            \
     [[nodiscard]] BaseComponent::Ptr clone() const override                                        \
     {                                                                                              \
-        auto out = static_cast<TypeName*>(_tryAllocateECSObject<TypeName>(this));                  \
+        auto out = static_cast<TypeName*>(::_tryAllocateECSObject<TypeName>(this));                \
         out->invalidate();                                                                         \
         return out;                                                                                \
     }                                                                                              \
     [[nodiscard]] static Ptr Create()                                                              \
     {                                                                                              \
-        return static_cast<TypeName*>(_tryAllocateECSObject<TypeName>(nullptr));                   \
+        return static_cast<TypeName*>(::_tryAllocateECSObject<TypeName>(nullptr));                 \
     }                                                                                              \
                                                                                                    \
 protected:                                                                                         \
-    explicit ClassName(const StringAtom& type, const StringAtom& name)                             \
+    explicit ClassName(const Core::StringAtom& type, const Core::StringAtom& name)                 \
         : BaseComponentClass(type, name)                                                           \
     {                                                                                              \
     }                                                                                              \
@@ -69,17 +69,17 @@ public:
 // ---------------------------------------------------------
 
 #define _ECS_COMPONENT_IMPL(TypeName, Template, TypeNameAsStr, isTemplate)                         \
-    Template const StringAtom TypeName::componentType = []()                                       \
+    Template const Core::StringAtom TypeName::componentType = []()                                 \
     {                                                                                              \
-        auto newType = StringAtom::Intern(TypeNameAsStr);                                          \
-        GetGlobalComponentFactory().registerNewType<TypeName>(newType, isTemplate);                \
+        auto newType = Core::StringAtom::Intern(TypeNameAsStr);                                    \
+        Core::GetGlobalComponentFactory().registerNewType<TypeName>(newType, isTemplate);          \
         return newType;                                                                            \
     }();
 
 // ---------------------------------------------------------
 
 #define _ECS_DEFAULT_PUBLIC_CONSTRUCTOR(ClassName, BaseComponentClass)                             \
-    explicit ClassName(const StringAtom& name = ""_atom)                                           \
+    explicit ClassName(const Core::StringAtom& name = ""_atom)                                     \
         : BaseComponentClass(componentType, name)                                                  \
     {                                                                                              \
     }
@@ -222,31 +222,31 @@ public:
     _ECS_COMPONENT_IMPL(BRACKETS(TypeName), BRACKETS(template<Template>), typeid(TypeName).name(), \
                         true)
 
+template<class T>
+void* _tryAllocateECSObject(const T* data)
+{
+    if constexpr (std::is_abstract_v<T>)
+    {
+        Assert(false, "You are trying to create somewhere an abstract object");
+        return nullptr;
+    }
+    else if constexpr (std::is_copy_constructible_v<T>)
+    {
+        if (data)
+        {
+            return new T(*data);
+        }
+        return new T;
+    }
+    else
+    {
+        return new T;
+    }
+}
+
 namespace Core
 {
     class BaseComponent;
-
-    template<class T>
-    void* _tryAllocateECSObject(const T* data)
-    {
-        if constexpr (std::is_abstract_v<T>)
-        {
-            Assert(false, "You are trying to create somewhere an abstract object");
-            return nullptr;
-        }
-        else if constexpr (std::is_copy_constructible_v<T>)
-        {
-            if (data)
-            {
-                return new T(*data);
-            }
-            return new T;
-        }
-        else
-        {
-            return new T;
-        }
-    }
 
     // ========================= CONCEPTS =========================
     /**
@@ -274,6 +274,18 @@ namespace Core
      */
     template<class T>
     concept IsComponentOrVoid = IsComponent<T> || std::is_void_v<T>;
+
+    template<class T>
+    concept IsIntrusiveComponent
+        = requires { typename T::ValueT; } && std::derived_from<typename T::ValueT, BaseComponent>;
+
+    template<typename T>
+    concept IsComponentRange =                                              //
+        std::ranges::range<T> &&                                            //
+        (                                                                   //
+            std::derived_from<std::ranges::range_value_t<T>, BaseComponent> //
+            || IsIntrusiveComponent<std::ranges::range_value_t<T>>          //
+        );
 
     //
     //  _____                             ______               _
@@ -1033,19 +1045,19 @@ namespace Core
     template<IsComponentOrBase CompT>
     void to_json(nlohmann::json& j, const CompT& comp)
     {
-        j = R<BaseComponent>::Serialize<RJsonResourceStream>(comp).getData();
+        j = R<CompT>::template Serialize<RJsonResourceStream>(comp).getData();
     }
 
-    template<IsComponentOrBase CompT>
-    void to_json(nlohmann::json& j, const IntrusivePtr<std::remove_cv_t<CompT>>& comp)
+    template<IsIntrusiveComponent CompT>
+    void to_json(nlohmann::json& j, const CompT& comp)
     {
         if (comp) [[likely]]
         {
-            j = R<BaseComponent>::Serialize<RJsonResourceStream>(comp).getData();
+            j = R<typename CompT::ValueT>::template Serialize<RJsonResourceStream>(*comp).getData();
         }
     }
 
-    template<std::ranges::range RangeT>
+    template<IsComponentRange RangeT>
     void to_json(nlohmann::json& j, const RangeT& range)
     {
         for (const auto& v : range)
@@ -1059,21 +1071,21 @@ namespace Core
     template<IsComponentOrBase CompT>
     void from_json(const nlohmann::json& j, CompT& comp)
     {
-        R<BaseComponent>::Deserialize<RJsonResourceStream>(j, comp);
+        R<CompT>::template Deserialize<RJsonResourceStream>(j, comp);
     }
 
-    template<IsComponentOrBase CompT>
-    void from_json(const nlohmann::json& j, const IntrusivePtr<CompT>& comp)
+    template<IsIntrusiveComponent CompT>
+    void from_json(const nlohmann::json& j, CompT& comp)
     {
         if (!comp)
         {
-            comp = new std::remove_cv_t<CompT>();
+            comp = new std::remove_cv_t<typename CompT::ValueT>();
         }
 
         from_json(j, *comp);
     }
 
-    template<std::ranges::range RangeT>
+    template<IsComponentRange RangeT>
     void from_json(const nlohmann::json& j, RangeT& range)
     {
         range.clear();

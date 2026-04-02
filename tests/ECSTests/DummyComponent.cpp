@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018-2025 Valerii Koniushenko
+ * Copyright (c) 2018-2026 Valerii Koniushenko
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,46 +22,8 @@
  * SOFTWARE.
  */
 
-#pragma once
-#include "../Misc/Configs.h"
-#include "Core/String.h"
-#include "nlohmann/json_fwd.hpp"
+#include "DummyComponent.h"
 
-namespace Core
-{
-    class JsonCacheable
-    {
-    public:
-        virtual ~JsonCacheable() = default;
-
-        /**
-         * Generate in your own way a possible unique string.
-         * After that, you can find your logs with such stem(name).
-         */
-        void writeToCache();
-
-        [[nodiscard]] bool hasCache() const;
-
-        void readFromCache();
-
-        void tryReadFromCache();
-
-        void clearCache();
-
-    protected:
-        JsonCacheable() = default;
-
-        [[nodiscard]] virtual std::filesystem::path getCacheDir() const
-        {
-            return Core::Config::Path::configDir;
-        }
-
-        [[nodiscard]] virtual StringAtom getCacheHash() const = 0;
-
-        [[nodiscard]] virtual nlohmann::json toCacheData() const = 0;
-
-        virtual void fromCacheData(const nlohmann::json& json) = 0;
-
-        [[nodiscard]] std::filesystem::path getTargetPath() const;
-    };
-} // namespace Core
+ECS_COMPONENT_IMPL(DummyComponent);
+ECS_COMPONENT_IMPL(HardConstructorComponent);
+ECS_COMPONENT_IMPL(InitSpyComponent);

@@ -199,7 +199,7 @@ namespace Core
         return glm::normalize(glm::cross(getForwardVector(), getUpVector()));
     }
 
-    void Transformable::ioFieldsUpdate(DataStream& out)
+    /*void Transformable::ioFieldsUpdate(DataStream& out)
     {
         auto stream = out.dedicatedNesting("Transformable");
 
@@ -213,7 +213,7 @@ namespace Core
             _isDirtyModelMatrix = true;
             onDirtyMatrix();
         }
-    }
+    }*/
 
     void Transformable::recalculateMatrices(const glm::mat4& mat)
     {
@@ -263,8 +263,4 @@ namespace Core
         return _origin;
     }
 
-    StringAtom Transformable::getCacheHash() const
-    {
-        return "Transformable"_atom;
-    }
 } // namespace Core

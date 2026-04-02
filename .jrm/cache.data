@@ -11,9 +11,9 @@
 1771957234492786007 sources/AssetsManager/TextureAsset.h
 1771957435206249410 sources/Camera/Camera.h
 1771957243490622214 sources/Camera/ModuleInfo.h
-1775075531969466040 sources/ECS/BaseComponent.h
+1775144548996868379 sources/ECS/BaseComponent.h
 1771957954487843037 sources/ECS/ModuleInfo.h
-1774990082571154337 sources/ECS/Transformable.h
+1775144052910672263 sources/ECS/Transformable.h
 1774989912253254432 sources/Editor/GameEditor.h
 1771958192725179935 sources/Editor/Gizmo.h
 1771957573565927198 sources/Editor/GuiComponents/Array.h

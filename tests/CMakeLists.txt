@@ -13,6 +13,4 @@
 #
 # CoreAddCompileOptionsTo(EngineTests)
 
-add_executable(ECSTests ECSTests.cpp)
-target_link_libraries(ECSTests PUBLIC Nexium::ECS)
-CoreAddCompileOptionsTo(ECSTests)
+add_subdirectory(ECSTests)

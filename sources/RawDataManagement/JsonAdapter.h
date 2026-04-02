@@ -28,64 +28,6 @@
 #include "glm/glm.hpp"
 #include "nlohmann/json.hpp"
 
-#include <format>
-
-namespace Core
-{
-    class JsonAdapter
-    {
-    public:
-        struct Exception
-        {
-            explicit Exception(std::string msg)
-                : message{ std::move(msg) }
-            {
-            }
-
-            std::string message;
-        };
-
-    public:
-        virtual ~JsonAdapter() = default;
-
-        [[nodiscard]] virtual nlohmann::json toJson() const = 0;
-
-        virtual void fromJson(const nlohmann::json& json, bool isIgnoreChildren) = 0;
-
-        template<class T>
-        [[nodiscard]] T requireAs(const char* key, const nlohmann::json& json)
-        {
-            if (!json.contains(key))
-            {
-                throw Exception(std::format("Can't read key: '{}'", key));
-            }
-
-            return json[key].get<T>();
-        }
-
-        template<class T>
-        [[nodiscard]] T tryReadJsonAs(const char* key, const nlohmann::json& json)
-        {
-            if (json.contains(key))
-            {
-                return json[key].get<T>();
-            }
-
-            return {};
-        }
-
-        template<class T>
-            requires(!std::derived_from<T, JsonAdapter>)
-        void tryReadJsonTo(T& out, const char* key, const nlohmann::json& json)
-        {
-            if (json.contains(key))
-            {
-                out = json[key].get<T>();
-            }
-        }
-    };
-} // namespace Core
-
 namespace glm
 {
     void to_json(nlohmann::json& j, const vec4& v);
@@ -131,4 +73,5 @@ namespace Core
     void from_json(const nlohmann::json& j, ISize2& value);
 
     void from_json(const nlohmann::json& j, ISize3& value);
+
 } // namespace Core

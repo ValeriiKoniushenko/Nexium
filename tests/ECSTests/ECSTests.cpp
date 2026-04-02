@@ -1,4 +1,28 @@
-#include "ECS/BaseComponent.h"
+/*
+ * MIT License
+ *
+ * Copyright (c) 2018-2026 Valerii Koniushenko
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+#include "DummyComponent.h"
 
 #include "gtest/gtest.h"
 
@@ -6,39 +30,6 @@ using namespace Core;
 
 namespace
 {
-    class DummyComponent : public BaseComponent
-    {
-        ECS_COMPONENT_DECL(DummyComponent, BaseComponent);
-        int a = 123;
-        std::string name = "Lola";
-
-        void ioFieldsUpdate(DataStream& out) override
-        {
-            BaseComponent::ioFieldsUpdate(out);
-
-            auto stream = out.dedicatedNesting("DummyComponent");
-
-            stream.field("a", a);
-            stream.field("name", name);
-        }
-    };
-
-    ECS_COMPONENT_IMPL(DummyComponent);
-
-    class HardConstructorComponent : public BaseComponent
-    {
-        ECS_COMPONENT_DECL(HardConstructorComponent, BaseComponent);
-
-        HardConstructorComponent(int a, const StringAtom& name, std::string b)
-            : BaseComponent(componentType, name),
-              _a(a),
-              _b(std::move(b)) {};
-
-        int _a = 0;
-        std::string _b;
-    };
-
-    ECS_COMPONENT_IMPL(HardConstructorComponent);
 
     class ECSTreeTests : public ::testing::Test
     {
@@ -64,20 +55,6 @@ namespace
         DummyComponent root;
     };
 
-    class InitSpyComponent : public BaseComponent
-    {
-        ECS_COMPONENT_DECL(InitSpyComponent, BaseComponent);
-
-    public:
-        int preInitCalls = 0;
-        int initCalls = 0;
-
-    protected:
-        void onPreInitialize() override { ++preInitCalls; }
-        void onInitialize() override { ++initCalls; }
-    };
-
-    ECS_COMPONENT_IMPL(InitSpyComponent);
 } // namespace
 
 TEST(ECSBaseTests, SerializationOfAbstractClass)
@@ -87,15 +64,17 @@ TEST(ECSBaseTests, SerializationOfAbstractClass)
     obj.setNoTick(true);
 
     const auto out = R<Core::AbstractComponent>::Serialize<RJsonResourceStream>(obj);
+    const auto json = out.getData();
+    ASSERT_FALSE(json["_isEnabled"].get<bool>());
+    ASSERT_TRUE(json["_noTick"].get<bool>());
 
     DummyComponent restored;
     restored.enable();
     restored.setNoTick(false);
 
     R<Core::AbstractComponent>::Deserialize(out, restored);
-
-    EXPECT_FALSE(restored.isEnabled());
-    EXPECT_TRUE(restored.getNoTick());
+    ASSERT_FALSE(restored.isEnabled());
+    ASSERT_TRUE(restored.getNoTick());
 }
 
 TEST(ECSBaseTests, SerializationRoundTripForAbstractComponent)
@@ -112,8 +91,8 @@ TEST(ECSBaseTests, SerializationRoundTripForAbstractComponent)
 
     R<Core::AbstractComponent>::Deserialize(out, restored);
 
-    EXPECT_FALSE(restored.isEnabled());
-    EXPECT_TRUE(restored.getNoTick());
+    ASSERT_FALSE(restored.isEnabled());
+    ASSERT_TRUE(restored.getNoTick());
 }
 
 TEST(ECSBaseTests, SerializationRoundTripForBaseComponentPart)
@@ -131,11 +110,11 @@ TEST(ECSBaseTests, SerializationRoundTripForBaseComponentPart)
 
     R<Core::AbstractComponent>::Deserialize(out, static_cast<Core::AbstractComponent&>(restored));
 
-    EXPECT_FALSE(restored.isEnabled());
-    EXPECT_TRUE(restored.getNoTick());
+    ASSERT_FALSE(restored.isEnabled());
+    ASSERT_TRUE(restored.getNoTick());
 
-    EXPECT_EQ("RestoredName", restored.getComponentName());
-    EXPECT_EQ("DummyComponent", restored.getComponentType());
+    ASSERT_EQ("RestoredName", restored.getComponentName());
+    ASSERT_EQ("DummyComponent", restored.getComponentType());
 }
 
 TEST(ECSBaseTests, SerializationRoundTripForBaseComponentPart2)
@@ -164,12 +143,12 @@ TEST(ECSBaseTests, SerializationDoesNotTouchNonReflectedDummyComponentState)
 
     R<Core::AbstractComponent>::Deserialize(out, restored);
 
-    EXPECT_FALSE(restored.isEnabled());
-    EXPECT_TRUE(restored.getNoTick());
+    ASSERT_FALSE(restored.isEnabled());
+    ASSERT_TRUE(restored.getNoTick());
 
-    EXPECT_EQ("KeepMyOwnState", restored.getComponentName());
-    EXPECT_EQ("DummyComponent", restored.getComponentType());
-    EXPECT_TRUE(restored.isTypeOf<DummyComponent>());
+    ASSERT_EQ("KeepMyOwnState", restored.getComponentName());
+    ASSERT_EQ("DummyComponent", restored.getComponentType());
+    ASSERT_TRUE(restored.isTypeOf<DummyComponent>());
 }
 
 TEST(ECSBaseTests, SimpleCreation)
@@ -177,16 +156,16 @@ TEST(ECSBaseTests, SimpleCreation)
     {
         DummyComponent c;
         c.setComponentName("SomeName");
-        EXPECT_EQ("SomeName", c.getComponentName());
-        EXPECT_EQ("DummyComponent", c.getComponentType());
-        EXPECT_TRUE(c.getComponentType().isStatic());
+        ASSERT_EQ("SomeName", c.getComponentName());
+        ASSERT_EQ("DummyComponent", c.getComponentType());
+        ASSERT_TRUE(c.getComponentType().isStatic());
     }
 
     {
         DummyComponent c("SomeName");
-        EXPECT_EQ("SomeName", c.getComponentName());
-        EXPECT_EQ("DummyComponent", c.getComponentType());
-        EXPECT_TRUE(c.getComponentType().isStatic());
+        ASSERT_EQ("SomeName", c.getComponentName());
+        ASSERT_EQ("DummyComponent", c.getComponentType());
+        ASSERT_TRUE(c.getComponentType().isStatic());
     }
 }
 
@@ -194,81 +173,81 @@ TEST(ECSBaseTests, SimpleCopy)
 {
     DummyComponent c;
     c.setComponentName("SomeName");
-    EXPECT_EQ("SomeName", c.getComponentName());
-    EXPECT_EQ("DummyComponent", c.getComponentType());
-    EXPECT_TRUE(c.getComponentType().isStatic());
+    ASSERT_EQ("SomeName", c.getComponentName());
+    ASSERT_EQ("DummyComponent", c.getComponentType());
+    ASSERT_TRUE(c.getComponentType().isStatic());
 
     DummyComponent copy = c;
-    EXPECT_EQ("SomeName", c.getComponentName());
-    EXPECT_EQ("DummyComponent", c.getComponentType());
-    EXPECT_TRUE(c.getComponentType().isStatic());
+    ASSERT_EQ("SomeName", c.getComponentName());
+    ASSERT_EQ("DummyComponent", c.getComponentType());
+    ASSERT_TRUE(c.getComponentType().isStatic());
 
-    EXPECT_EQ("SomeName", copy.getComponentName());
-    EXPECT_EQ("DummyComponent", copy.getComponentType());
-    EXPECT_TRUE(copy.getComponentType().isStatic());
+    ASSERT_EQ("SomeName", copy.getComponentName());
+    ASSERT_EQ("DummyComponent", copy.getComponentType());
+    ASSERT_TRUE(copy.getComponentType().isStatic());
 }
 
 TEST(ECSBaseTests, SimpleMove)
 {
     DummyComponent c;
     c.setComponentName("SomeName");
-    EXPECT_EQ("SomeName", c.getComponentName());
-    EXPECT_EQ("DummyComponent", c.getComponentType());
-    EXPECT_TRUE(c.getComponentType().isStatic());
+    ASSERT_EQ("SomeName", c.getComponentName());
+    ASSERT_EQ("DummyComponent", c.getComponentType());
+    ASSERT_TRUE(c.getComponentType().isStatic());
 
     DummyComponent copy = std::move(c);
-    EXPECT_TRUE(c.getComponentName().isEmpty());
-    EXPECT_TRUE(c.getComponentType().isEmpty());
+    ASSERT_TRUE(c.getComponentName().isEmpty());
+    ASSERT_TRUE(c.getComponentType().isEmpty());
 
-    EXPECT_EQ("SomeName", copy.getComponentName());
-    EXPECT_EQ("DummyComponent", copy.getComponentType());
-    EXPECT_TRUE(copy.getComponentType().isStatic());
+    ASSERT_EQ("SomeName", copy.getComponentName());
+    ASSERT_EQ("DummyComponent", copy.getComponentType());
+    ASSERT_TRUE(copy.getComponentType().isStatic());
 }
 
 TEST(ECSBaseTests, Misc)
 {
     DummyComponent c("SomeName");
-    EXPECT_TRUE(c.isTypeOf<DummyComponent>());
-    EXPECT_TRUE(c.isValid());
+    ASSERT_TRUE(c.isTypeOf<DummyComponent>());
+    ASSERT_TRUE(c.isValid());
 
-    EXPECT_NE(nullptr, c.castTo<DummyComponent>());
-    EXPECT_NE(0, c.makeHash());
+    ASSERT_NE(nullptr, c.castTo<DummyComponent>());
+    ASSERT_NE(0, c.makeHash());
 }
 
 TEST(ECSBaseTests, AddingNewChild)
 {
     DummyComponent root("Root");
-    EXPECT_EQ("Root", root.getComponentName());
-    EXPECT_EQ("DummyComponent", root.getComponentType());
+    ASSERT_EQ("Root", root.getComponentName());
+    ASSERT_EQ("DummyComponent", root.getComponentType());
 
     auto top = root.addChildComponent<DummyComponent>();
     top->setComponentName("Top");
-    EXPECT_EQ("Top", top->getComponentName());
-    EXPECT_EQ("DummyComponent", top->getComponentType());
+    ASSERT_EQ("Top", top->getComponentName());
+    ASSERT_EQ("DummyComponent", top->getComponentType());
 
-    EXPECT_FALSE(root.hasParent());
-    EXPECT_TRUE(root.hasChildren());
-    EXPECT_EQ(1, root.getChildrenCount());
-    EXPECT_EQ(1, root.getChildren().size());
+    ASSERT_FALSE(root.hasParent());
+    ASSERT_TRUE(root.hasChildren());
+    ASSERT_EQ(1, root.getChildrenCount());
+    ASSERT_EQ(1, root.getChildren().size());
 
-    EXPECT_TRUE(top->hasParent());
-    EXPECT_FALSE(top->hasChildren());
-    EXPECT_EQ(&root, top->getParent());
-    EXPECT_EQ(root.getChildren().front().get(), top);
-    EXPECT_NE(root, *top);
+    ASSERT_TRUE(top->hasParent());
+    ASSERT_FALSE(top->hasChildren());
+    ASSERT_EQ(&root, top->getParent());
+    ASSERT_EQ(root.getChildren().front().get(), top);
+    ASSERT_NE(root, *top);
 }
 
 TEST(ECSBaseTests, AddingNewChildAndCopy)
 {
     DummyComponent root("Root");
-    EXPECT_EQ("Root", root.getComponentName());
-    EXPECT_EQ("DummyComponent", root.getComponentType());
+    ASSERT_EQ("Root", root.getComponentName());
+    ASSERT_EQ("DummyComponent", root.getComponentType());
 
     {
         auto top = root.addChildComponent<DummyComponent>();
         top->setComponentName("Top");
-        EXPECT_EQ("Top", top->getComponentName());
-        EXPECT_EQ("DummyComponent", top->getComponentType());
+        ASSERT_EQ("Top", top->getComponentName());
+        ASSERT_EQ("DummyComponent", top->getComponentType());
 
         ASSERT_FALSE(root.hasParent());
         ASSERT_TRUE(root.hasChildren());
@@ -286,9 +265,9 @@ TEST(ECSBaseTests, AddingNewChildAndCopy)
         DummyComponent copy = root;
 
         auto top = copy.getChildAt(0);
-        EXPECT_NE(top.get(), root.getChildAt(0).get());
-        EXPECT_EQ("Top", top->getComponentName());
-        EXPECT_EQ("DummyComponent", top->getComponentType());
+        ASSERT_NE(top.get(), root.getChildAt(0).get());
+        ASSERT_EQ("Top", top->getComponentName());
+        ASSERT_EQ("DummyComponent", top->getComponentType());
 
         ASSERT_FALSE(copy.hasParent());
         ASSERT_TRUE(copy.hasChildren());
@@ -308,52 +287,52 @@ TEST(ECSBaseTests, AdvancedAddingNewChild)
     DummyComponent root("Root");
     {
         auto comp = root.addChildComponent<HardConstructorComponent>();
-        EXPECT_EQ("", comp->getComponentName());
-        EXPECT_FALSE(comp->isValid());
-        EXPECT_TRUE(comp->isTypeOf<HardConstructorComponent>());
-        EXPECT_EQ("HardConstructorComponent", comp->getComponentType());
+        ASSERT_EQ("", comp->getComponentName());
+        ASSERT_FALSE(comp->isValid());
+        ASSERT_TRUE(comp->isTypeOf<HardConstructorComponent>());
+        ASSERT_EQ("HardConstructorComponent", comp->getComponentType());
         comp->setComponentName("Wow");
-        EXPECT_TRUE(comp->isValid());
-        EXPECT_EQ(0, comp->_a);
-        EXPECT_EQ("", comp->_b);
+        ASSERT_TRUE(comp->isValid());
+        ASSERT_EQ(0, comp->_a);
+        ASSERT_EQ("", comp->_b);
     }
 
     {
         auto comp
             = root.addChildComponent<HardConstructorComponent>(123, "SomeName", "DummyString");
-        EXPECT_EQ("SomeName", comp->getComponentName());
-        EXPECT_TRUE(comp->isValid());
-        EXPECT_TRUE(comp->isTypeOf<HardConstructorComponent>());
-        EXPECT_EQ("HardConstructorComponent", comp->getComponentType());
+        ASSERT_EQ("SomeName", comp->getComponentName());
+        ASSERT_TRUE(comp->isValid());
+        ASSERT_TRUE(comp->isTypeOf<HardConstructorComponent>());
+        ASSERT_EQ("HardConstructorComponent", comp->getComponentType());
         comp->setComponentName("Wow");
-        EXPECT_TRUE(comp->isValid());
-        EXPECT_EQ(123, comp->_a);
-        EXPECT_EQ("DummyString", comp->_b);
+        ASSERT_TRUE(comp->isValid());
+        ASSERT_EQ(123, comp->_a);
+        ASSERT_EQ("DummyString", comp->_b);
     }
 }
 
 TEST(ECSBaseTests, RemovingChild)
 {
     DummyComponent root("Root");
-    EXPECT_EQ("Root", root.getComponentName());
-    EXPECT_EQ("DummyComponent", root.getComponentType());
+    ASSERT_EQ("Root", root.getComponentName());
+    ASSERT_EQ("DummyComponent", root.getComponentType());
 
     {
         auto top = root.addChildComponent<DummyComponent>();
         top->setComponentName("Top");
-        EXPECT_EQ("Top", top->getComponentName());
-        EXPECT_EQ("DummyComponent", top->getComponentType());
+        ASSERT_EQ("Top", top->getComponentName());
+        ASSERT_EQ("DummyComponent", top->getComponentType());
 
-        EXPECT_FALSE(root.hasParent());
-        EXPECT_TRUE(root.hasChildren());
-        EXPECT_EQ(1, root.getChildrenCount());
-        EXPECT_EQ(1, root.getChildren().size());
+        ASSERT_FALSE(root.hasParent());
+        ASSERT_TRUE(root.hasChildren());
+        ASSERT_EQ(1, root.getChildrenCount());
+        ASSERT_EQ(1, root.getChildren().size());
 
-        EXPECT_TRUE(top->hasParent());
-        EXPECT_FALSE(top->hasChildren());
-        EXPECT_EQ(&root, top->getParent());
-        EXPECT_EQ(root.getChildren().front(), top);
-        EXPECT_NE(root, *top);
+        ASSERT_TRUE(top->hasParent());
+        ASSERT_FALSE(top->hasChildren());
+        ASSERT_EQ(&root, top->getParent());
+        ASSERT_EQ(root.getChildren().front(), top);
+        ASSERT_NE(root, *top);
 
         root.removeChild(top);
     }
@@ -365,8 +344,8 @@ TEST(ECSBaseTests, RemovingChild)
 TEST(ECSBaseTests, RemovingChildIf)
 {
     DummyComponent root("Root");
-    EXPECT_EQ("Root", root.getComponentName());
-    EXPECT_EQ("DummyComponent", root.getComponentType());
+    ASSERT_EQ("Root", root.getComponentName());
+    ASSERT_EQ("DummyComponent", root.getComponentType());
 
     std::vector<StringAtom> names = { "Hello", "World", "How", "Are", "AYou", "Idk" };
 
@@ -542,7 +521,7 @@ TEST(ECSBaseTests, GlobalFactoryCanCreateRegisteredComponent)
 {
     auto* created = GetGlobalComponentFactory().create(DummyComponent::componentType);
     ASSERT_NE(nullptr, created);
-    EXPECT_EQ(created->getComponentType(), DummyComponent::componentType);
+    ASSERT_EQ(created->getComponentType(), DummyComponent::componentType);
 
     delete created;
 }
@@ -556,13 +535,13 @@ TEST(ECSBaseTests, FindFirstChildOfByTypeAndName)
 
     auto* foundA = root.findFirstChildOf<DummyComponent>("A");
     ASSERT_NE(nullptr, foundA);
-    EXPECT_EQ(foundA->getComponentName(), "A");
+    ASSERT_EQ(foundA->getComponentName(), "A");
 
     auto* foundB = root.findFirstChildOf<DummyComponent>("B");
     ASSERT_NE(nullptr, foundB);
-    EXPECT_EQ(foundB->getComponentName(), "B");
+    ASSERT_EQ(foundB->getComponentName(), "B");
 
-    EXPECT_EQ(nullptr, root.findFirstChildOf<DummyComponent>("DoesNotExist"));
+    ASSERT_EQ(nullptr, root.findFirstChildOf<DummyComponent>("DoesNotExist"));
 }
 
 TEST(ECSBaseTests, AddUniqueTypeChildComponentReturnsSameInstance)
@@ -574,8 +553,8 @@ TEST(ECSBaseTests, AddUniqueTypeChildComponentReturnsSameInstance)
 
     ASSERT_NE(nullptr, first);
     ASSERT_NE(nullptr, second);
-    EXPECT_EQ(first, second);
-    EXPECT_EQ(1, root.getChildrenCount());
+    ASSERT_EQ(first, second);
+    ASSERT_EQ(1, root.getChildrenCount());
 }
 
 TEST(ECSBaseTests, GetOrAddChildComponentReturnsExisting)
@@ -587,8 +566,8 @@ TEST(ECSBaseTests, GetOrAddChildComponentReturnsExisting)
 
     ASSERT_NE(nullptr, first);
     ASSERT_NE(nullptr, second);
-    EXPECT_EQ(first, second);
-    EXPECT_EQ(1, root.getChildrenCount());
+    ASSERT_EQ(first, second);
+    ASSERT_EQ(1, root.getChildrenCount());
 }
 
 TEST(ECSBaseTests, AttachChildClonesAndSetsParent)
@@ -601,11 +580,11 @@ TEST(ECSBaseTests, AttachChildClonesAndSetsParent)
     BaseComponent* attached = root.attachChild(externalChild);
     ASSERT_NE(nullptr, attached);
 
-    EXPECT_NE(attached, externalChild.get()); // must be a clone
-    EXPECT_EQ(attached->getComponentType(), externalChild->getComponentType());
-    EXPECT_EQ(attached->getComponentName(), externalChild->getComponentName());
-    EXPECT_EQ(attached->getParent(), &root);
-    EXPECT_EQ(1, root.getChildrenCount());
+    ASSERT_NE(attached, externalChild.get()); // must be a clone
+    ASSERT_EQ(attached->getComponentType(), externalChild->getComponentType());
+    ASSERT_EQ(attached->getComponentName(), externalChild->getComponentName());
+    ASSERT_EQ(attached->getParent(), &root);
+    ASSERT_EQ(1, root.getChildrenCount());
 }
 
 TEST(ECSBaseTests, DetachChildRemovesFromChildrenList)
@@ -617,8 +596,8 @@ TEST(ECSBaseTests, DetachChildRemovesFromChildrenList)
     ASSERT_EQ(1, root.getChildrenCount());
 
     root.detachChild(child);
-    EXPECT_EQ(0, root.getChildrenCount());
-    EXPECT_FALSE(root.hasChildren());
+    ASSERT_EQ(0, root.getChildrenCount());
+    ASSERT_FALSE(root.hasChildren());
 }
 
 TEST(ECSBaseTests, RemoveChildOfRemovesAllMatchingTypes)
@@ -631,8 +610,8 @@ TEST(ECSBaseTests, RemoveChildOfRemovesAllMatchingTypes)
 
     root.removeChildOf<DummyComponent>();
 
-    EXPECT_EQ(0, root.getChildrenCount());
-    EXPECT_FALSE(root.hasChildrenAs<DummyComponent>());
+    ASSERT_EQ(0, root.getChildrenCount());
+    ASSERT_FALSE(root.hasChildrenAs<DummyComponent>());
 }
 
 TEST(ECSBaseTests, GetOwnerReturnsTopmostParent)
@@ -643,9 +622,9 @@ TEST(ECSBaseTests, GetOwnerReturnsTopmostParent)
 
     ASSERT_NE(nullptr, grandChild);
 
-    EXPECT_EQ(grandChild->getOwner(), &root);
-    EXPECT_EQ(child->getOwner(), &root);
-    EXPECT_EQ(root.getOwner(), &root);
+    ASSERT_EQ(grandChild->getOwner(), &root);
+    ASSERT_EQ(child->getOwner(), &root);
+    ASSERT_EQ(root.getOwner(), &root);
 }
 
 TEST(ECSBaseTests, MakeHashDependsOnParentChain)
@@ -659,34 +638,34 @@ TEST(ECSBaseTests, MakeHashDependsOnParentChain)
     ASSERT_NE(nullptr, childA);
     ASSERT_NE(nullptr, childB);
 
-    EXPECT_NE(childA->makeHash(), childB->makeHash());
+    ASSERT_NE(childA->makeHash(), childB->makeHash());
 }
 
 TEST(ECSBaseTests, InitializeIsCalledAndPropagatesToChildren)
 {
     InitSpyComponent root("Root");
-    EXPECT_FALSE(root.isInitialized());
+    ASSERT_FALSE(root.isInitialized());
 
     auto* child = root.addChildComponent<InitSpyComponent>("Child");
     ASSERT_NE(nullptr, child);
 
-    EXPECT_TRUE(root.isInitialized());
-    EXPECT_TRUE(child->isInitialized());
+    ASSERT_TRUE(root.isInitialized());
+    ASSERT_TRUE(child->isInitialized());
 
-    EXPECT_EQ(1, root.preInitCalls);
-    EXPECT_EQ(1, root.initCalls);
-    EXPECT_EQ(1, child->preInitCalls);
-    EXPECT_EQ(1, child->initCalls);
+    ASSERT_EQ(1, root.preInitCalls);
+    ASSERT_EQ(1, root.initCalls);
+    ASSERT_EQ(1, child->preInitCalls);
+    ASSERT_EQ(1, child->initCalls);
 
     root.invalidate();
-    EXPECT_FALSE(root.isInitialized());
+    ASSERT_FALSE(root.isInitialized());
 
     root.initialize();
-    EXPECT_TRUE(root.isInitialized());
+    ASSERT_TRUE(root.isInitialized());
 
-    EXPECT_EQ(2, root.preInitCalls);
-    EXPECT_EQ(2, root.initCalls);
+    ASSERT_EQ(2, root.preInitCalls);
+    ASSERT_EQ(2, root.initCalls);
 
-    EXPECT_EQ(1, child->preInitCalls);
-    EXPECT_EQ(1, child->initCalls);
+    ASSERT_EQ(1, child->preInitCalls);
+    ASSERT_EQ(1, child->initCalls);
 }
