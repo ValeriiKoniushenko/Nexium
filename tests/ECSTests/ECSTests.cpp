@@ -57,42 +57,45 @@ namespace
 
 } // namespace
 
-TEST(ECSBaseTests, SerializationOfAbstractClass)
+TEST(ECSBaseTests, SerializationOfAbstractComponentClass)
 {
     DummyComponent obj;
     obj.disable();
     obj.setNoTick(true);
 
-    const auto out = R<Core::AbstractComponent>::Serialize<RJsonResourceStream>(obj);
+    const auto out = R<AbstractComponent>::Serialize<RJsonResourceStream>(obj);
     const auto json = out.getData();
     ASSERT_FALSE(json["_isEnabled"].get<bool>());
     ASSERT_TRUE(json["_noTick"].get<bool>());
+}
+
+TEST(ECSBaseTests, DeserializationOfAbstractComponentClass)
+{
+    DummyComponent obj;
+    obj.disable();
+    obj.setNoTick(true);
+    const auto out = R<AbstractComponent>::Serialize<RJsonResourceStream>(obj);
 
     DummyComponent restored;
     restored.enable();
     restored.setNoTick(false);
 
-    R<Core::AbstractComponent>::Deserialize(out, restored);
+    R<AbstractComponent>::Deserialize(out, restored);
     ASSERT_FALSE(restored.isEnabled());
     ASSERT_TRUE(restored.getNoTick());
 }
 
-TEST(ECSBaseTests, SerializationRoundTripForAbstractComponent)
+TEST(ECSBaseTests, SerializationOfBaseComponentClass)
 {
-    DummyComponent source;
-    source.disable();
-    source.setNoTick(true);
+    DummyComponent obj("SomeName");
+    obj.disable();
+    obj.setNoTick(true);
 
-    const auto out = R<Core::AbstractComponent>::Serialize<RJsonResourceStream>(source);
-
-    DummyComponent restored;
-    restored.enable();
-    restored.setNoTick(false);
-
-    R<Core::AbstractComponent>::Deserialize(out, restored);
-
-    ASSERT_FALSE(restored.isEnabled());
-    ASSERT_TRUE(restored.getNoTick());
+    const auto json = R<BaseComponent>::Serialize(obj).getData();
+    ASSERT_FALSE(json["_isEnabled"].get<bool>());
+    ASSERT_TRUE(json["_noTick"].get<bool>());
+    ASSERT_EQ("DummyComponent", json["_type"].get<StringAtom>());
+    ASSERT_EQ("SomeName", json["_name"].get<StringAtom>());
 }
 
 TEST(ECSBaseTests, SerializationRoundTripForBaseComponentPart)
@@ -101,14 +104,14 @@ TEST(ECSBaseTests, SerializationRoundTripForBaseComponentPart)
     source.disable();
     source.setNoTick(true);
 
-    const auto out = R<Core::AbstractComponent>::Serialize<RJsonResourceStream>(
-        static_cast<const Core::AbstractComponent&>(source));
+    const auto out = R<AbstractComponent>::Serialize<RJsonResourceStream>(
+        static_cast<const AbstractComponent&>(source));
 
     DummyComponent restored("RestoredName");
     restored.enable();
     restored.setNoTick(false);
 
-    R<Core::AbstractComponent>::Deserialize(out, static_cast<Core::AbstractComponent&>(restored));
+    R<AbstractComponent>::Deserialize(out, static_cast<AbstractComponent&>(restored));
 
     ASSERT_FALSE(restored.isEnabled());
     ASSERT_TRUE(restored.getNoTick());
@@ -126,7 +129,7 @@ TEST(ECSBaseTests, SerializationRoundTripForBaseComponentPart2)
     source.addChildComponent<DummyComponent>("Child1");
     source.addChildComponent<HardConstructorComponent>(123, "Child2", "text");
 
-    const auto out = R<Core::BaseComponent>::Serialize<RJsonResourceStream>(source);
+    const auto out = R<BaseComponent>::Serialize<RJsonResourceStream>(source);
 }
 
 TEST(ECSBaseTests, SerializationDoesNotTouchNonReflectedDummyComponentState)
@@ -135,13 +138,13 @@ TEST(ECSBaseTests, SerializationDoesNotTouchNonReflectedDummyComponentState)
     source.disable();
     source.setNoTick(true);
 
-    const auto out = R<Core::AbstractComponent>::Serialize<RJsonResourceStream>(source);
+    const auto out = R<AbstractComponent>::Serialize<RJsonResourceStream>(source);
 
     DummyComponent restored("KeepMyOwnState");
     restored.enable();
     restored.setNoTick(false);
 
-    R<Core::AbstractComponent>::Deserialize(out, restored);
+    R<AbstractComponent>::Deserialize(out, restored);
 
     ASSERT_FALSE(restored.isEnabled());
     ASSERT_TRUE(restored.getNoTick());

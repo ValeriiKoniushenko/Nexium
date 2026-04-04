@@ -26,7 +26,7 @@ struct R<Core::Transformable>
 		};
     }
 
-    template<IsResourceStreamImpl RImpl>
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     [[nodiscard]] static RResourceStream<RImpl> Serialize(const Core::Transformable& obj)
     {
         RResourceStream<RImpl> s;
@@ -37,7 +37,7 @@ struct R<Core::Transformable>
         return s;
     }
 
-    template<IsResourceStreamImpl RImpl>
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, Core::Transformable& obj)
     {
 		s.read("_scale", obj._scale);

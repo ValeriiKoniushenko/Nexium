@@ -23,7 +23,7 @@ struct R<Core::IDrawable>
 		};
     }
 
-    template<IsResourceStreamImpl RImpl>
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     [[nodiscard]] static RResourceStream<RImpl> Serialize(const Core::IDrawable& obj)
     {
         RResourceStream<RImpl> s;
@@ -31,7 +31,7 @@ struct R<Core::IDrawable>
         return s;
     }
 
-    template<IsResourceStreamImpl RImpl>
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, Core::IDrawable& obj)
     {
 		s.read("_isPostDraw", obj._isPostDraw);

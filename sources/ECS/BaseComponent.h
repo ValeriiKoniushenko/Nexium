@@ -510,7 +510,7 @@ namespace Core
     CLASS();
     class BaseComponent : public AbstractComponent
     {
-        R_FRIEND(BaseComponent);
+        R_FRIEND(BaseComponent, Core::AbstractComponent);
 
     public:
         using Self = BaseComponent;
