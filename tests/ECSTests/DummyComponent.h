@@ -28,16 +28,23 @@
 
 #include "ECS/BaseComponent.h"
 
+CLASS();
 class DummyComponent : public Core::BaseComponent
 {
+    R_FRIEND(DummyComponent, Core::BaseComponent);
     ECS_COMPONENT_DECL(DummyComponent, Core::BaseComponent);
 
+    FIELD();
     int a = 123;
+
+    FIELD();
     std::string name = "Lola";
 };
 
+CLASS();
 class HardConstructorComponent : public Core::BaseComponent
 {
+    R_FRIEND(HardConstructorComponent, Core::BaseComponent);
     ECS_COMPONENT_DECL(HardConstructorComponent, BaseComponent);
 
     HardConstructorComponent(int a, const Core::StringAtom& name, std::string b)
@@ -49,8 +56,10 @@ class HardConstructorComponent : public Core::BaseComponent
     std::string _b;
 };
 
+CLASS();
 class InitSpyComponent : public Core::BaseComponent
 {
+    R_FRIEND(InitSpyComponent, Core::BaseComponent);
     ECS_COMPONENT_DECL(InitSpyComponent, BaseComponent);
 
 public:

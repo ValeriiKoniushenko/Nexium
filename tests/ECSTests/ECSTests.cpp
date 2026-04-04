@@ -98,6 +98,37 @@ TEST(ECSBaseTests, SerializationOfBaseComponentClass)
     ASSERT_EQ("SomeName", json["_name"].get<StringAtom>());
 }
 
+TEST(ECSBaseTests, SerializationOfComponentTree)
+{
+    DummyComponent obj("DummyName");
+    obj.disable();
+    obj.setNoTick(true);
+
+    obj.addChildComponent<DummyComponent>("SubChild1");
+    obj.addChildComponent<HardConstructorComponent>(123, "SubChild2", "text");
+
+    const auto json = R<BaseComponent>::Serialize(obj).getData();
+    // std::cout << json.dump(4) << std::endl;
+
+    ASSERT_FALSE(json["_isEnabled"].get<bool>());
+    ASSERT_TRUE(json["_noTick"].get<bool>());
+    ASSERT_EQ("DummyComponent", json["_type"].get<StringAtom>());
+    ASSERT_EQ("DummyName", json["_name"].get<StringAtom>());
+
+    auto children = json["_children"];
+    ASSERT_EQ(2, std::distance(children.items().begin(), children.items().end()));
+
+    ASSERT_TRUE(children[0]["_isEnabled"].get<bool>());
+    ASSERT_FALSE(children[0]["_noTick"].get<bool>());
+    ASSERT_EQ("DummyComponent", children[0]["_type"].get<StringAtom>());
+    ASSERT_EQ("SubChild1", children[0]["_name"].get<StringAtom>());
+
+    ASSERT_TRUE(children[1]["_isEnabled"].get<bool>());
+    ASSERT_FALSE(children[1]["_noTick"].get<bool>());
+    ASSERT_EQ("HardConstructorComponent", children[1]["_type"].get<StringAtom>());
+    ASSERT_EQ("SubChild2", children[1]["_name"].get<StringAtom>());
+}
+
 TEST(ECSBaseTests, SerializationRoundTripForBaseComponentPart)
 {
     DummyComponent source("SourceName");
