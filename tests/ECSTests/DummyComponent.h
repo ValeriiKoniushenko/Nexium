@@ -50,7 +50,9 @@ class HardConstructorComponent : public Core::BaseComponent
     HardConstructorComponent(int a, const Core::StringAtom& name, std::string b)
         : BaseComponent(componentType, name),
           _a(a),
-          _b(std::move(b)) {};
+          _b(std::move(b))
+    {
+    }
 
     int _a = 0;
     std::string _b;

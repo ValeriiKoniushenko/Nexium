@@ -131,7 +131,7 @@ TEST(ECSBaseTests, SerializationOfComponentTree)
 
 TEST(ECSBaseTests, DerializationOfComponentTree)
 {
-    RResourceStream<RJsonResourceStream> stream;
+    nlohmann::json stream;
 
     {
         DummyComponent obj("DummyName");
@@ -140,13 +140,15 @@ TEST(ECSBaseTests, DerializationOfComponentTree)
 
         obj.addChildComponent<DummyComponent>("SubChild1");
         obj.addChildComponent<HardConstructorComponent>(123, "SubChild2", "text");
-        stream = R<DummyComponent>::Serialize(obj);
+        stream = obj.serialize();
     }
+
+    std::cout << stream.dump(4) << std::endl;
 
     DummyComponent restored;
     restored.addChildComponent<DummyComponent>("OriginalSubChild1");
 
-    R<DummyComponent>::Deserialize(stream, restored);
+    restored.deserialize(stream);
 }
 
 TEST(ECSBaseTests, SerializationRoundTripForBaseComponentPart)

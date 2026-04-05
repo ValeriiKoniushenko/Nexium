@@ -150,11 +150,11 @@ public:
     R_FRIEND(ClassName, __VA_ARGS__);                                                              \
                                                                                                    \
 public:                                                                                            \
-    [[nodiscard]] nlohmann::json serialize() override;                                             \
+    [[nodiscard]] nlohmann::json serialize() const override;                                       \
     void deserialize(const nlohmann::json& json) override;
 
 #define ECS_R_FRIEND_IMPL(ClassName)                                                               \
-    nlohmann::json ClassName::serialize()                                                          \
+    nlohmann::json ClassName::serialize() const                                                    \
     {                                                                                              \
         return R<ClassName>::Serialize<RJsonResourceStream>(*this).getData();                      \
     }                                                                                              \
@@ -468,7 +468,7 @@ namespace Core
         void setNoTick(bool v) { _noTick = v; }
         [[nodiscard]] bool getNoTick() const noexcept { return _noTick; }
 
-        [[nodiscard]] virtual nlohmann::json serialize();
+        [[nodiscard]] virtual nlohmann::json serialize() const;
         virtual void deserialize(const nlohmann::json& json);
 
     protected:
@@ -637,7 +637,7 @@ namespace Core
 
         void ioFieldsUpdate(DataStream& out) override;
 
-        [[nodiscard]] nlohmann::json serialize() override;
+        [[nodiscard]] nlohmann::json serialize() const override;
         void deserialize(const nlohmann::json& json) override;
 
         /**
@@ -1075,7 +1075,7 @@ namespace Core
     template<IsComponentOrBase CompT>
     void to_json(nlohmann::json& j, const CompT& comp)
     {
-        j = R<CompT>::template Serialize<RJsonResourceStream>(comp).getData();
+        j = comp.serialize();
     }
 
     template<IsIntrusiveComponent CompT>
@@ -1083,7 +1083,7 @@ namespace Core
     {
         if (comp) [[likely]]
         {
-            j = R<typename CompT::ValueT>::template Serialize<RJsonResourceStream>(*comp).getData();
+            j = comp->serialize();
         }
     }
 
@@ -1101,7 +1101,7 @@ namespace Core
     template<IsComponentOrBase CompT>
     void from_json(const nlohmann::json& j, CompT& comp)
     {
-        R<CompT>::template Deserialize<RJsonResourceStream>(j, comp);
+        comp.deserialize(j);
     }
 
     template<IsIntrusiveComponent CompT>
@@ -1115,7 +1115,7 @@ namespace Core
             }
         }
 
-        from_json(j, *comp);
+        comp->deserialize(j);
     }
 
     template<IsComponentRange RangeT>

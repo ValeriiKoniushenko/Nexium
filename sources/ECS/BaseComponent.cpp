@@ -40,7 +40,7 @@ namespace Core
 {
     ECS_COMPONENT_IMPL(InvalidComponent);
 
-    nlohmann::json AbstractComponent::serialize()
+    nlohmann::json AbstractComponent::serialize() const
     {
         return R<AbstractComponent>::Serialize<RJsonResourceStream>(*this).getData();
     }
@@ -269,7 +269,7 @@ namespace Core
                      });
     }
 
-    nlohmann::json BaseComponent::serialize()
+    nlohmann::json BaseComponent::serialize() const
     {
         return R<BaseComponent>::Serialize<RJsonResourceStream>(*this).getData();
     }

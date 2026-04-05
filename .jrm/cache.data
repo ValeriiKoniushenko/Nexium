@@ -11,7 +11,7 @@
 1771957234492786007 sources/AssetsManager/TextureAsset.h
 1771957435206249410 sources/Camera/Camera.h
 1771957243490622214 sources/Camera/ModuleInfo.h
-1775349675357200089 sources/ECS/BaseComponent.h
+1775388963361520695 sources/ECS/BaseComponent.h
 1771957954487843037 sources/ECS/ModuleInfo.h
 1775144052910672263 sources/ECS/Transformable.h
 1774989912253254432 sources/Editor/GameEditor.h
@@ -104,4 +104,4 @@
 1770677206105945396 sources/Scene/ModuleInfo.h
 1774990043229611585 sources/Scene/Scene.h
 1770677206105945396 sources/Scene/Spectator.h
-1775288594516199092 tests/ECSTests/DummyComponent.h
+1775349752925175307 tests/ECSTests/DummyComponent.h
