@@ -31,7 +31,7 @@
 CLASS();
 class DummyComponent : public Core::BaseComponent
 {
-    R_FRIEND(DummyComponent, Core::BaseComponent);
+    ECS_R_FRIEND_DECL(DummyComponent, Core::BaseComponent);
     ECS_COMPONENT_DECL(DummyComponent, Core::BaseComponent);
 
     FIELD();
@@ -44,7 +44,7 @@ class DummyComponent : public Core::BaseComponent
 CLASS();
 class HardConstructorComponent : public Core::BaseComponent
 {
-    R_FRIEND(HardConstructorComponent, Core::BaseComponent);
+    ECS_R_FRIEND_DECL(HardConstructorComponent, Core::BaseComponent);
     ECS_COMPONENT_DECL(HardConstructorComponent, BaseComponent);
 
     HardConstructorComponent(int a, const Core::StringAtom& name, std::string b)
@@ -59,7 +59,7 @@ class HardConstructorComponent : public Core::BaseComponent
 CLASS();
 class InitSpyComponent : public Core::BaseComponent
 {
-    R_FRIEND(InitSpyComponent, Core::BaseComponent);
+    ECS_R_FRIEND_DECL(InitSpyComponent, Core::BaseComponent);
     ECS_COMPONENT_DECL(InitSpyComponent, BaseComponent);
 
 public:
@@ -70,3 +70,5 @@ protected:
     void onPreInitialize() override { ++preInitCalls; }
     void onInitialize() override { ++initCalls; }
 };
+
+#include "DummyComponent.generated.h" // added by the code generator. Better don't move it.

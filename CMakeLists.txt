@@ -26,6 +26,10 @@ InstallBenchmarkDependenciesTesting()
 # Installing of debug rules
 InstallDebugLevel()
 
+add_custom_target(CodeGenerator ALL
+    COMMAND jrm ${CMAKE_SOURCE_DIR}
+)
+
 # ========= Main deps pipeline =========
 add_subdirectory(dependencies)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FetchDependencies.cmake)

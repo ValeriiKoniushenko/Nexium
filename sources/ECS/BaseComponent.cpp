@@ -40,6 +40,18 @@ namespace Core
 {
     ECS_COMPONENT_IMPL(InvalidComponent);
 
+    nlohmann::json AbstractComponent::serialize()
+    {
+        return R<AbstractComponent>::Serialize<RJsonResourceStream>(*this).getData();
+    }
+
+    void AbstractComponent::deserialize(const nlohmann::json& json)
+    {
+        RResourceStream<RJsonResourceStream> data;
+        data.getData() = json;
+        R<AbstractComponent>::Deserialize(data, *this);
+    }
+
     const StringAtom BaseComponent::componentType = "BaseComponent"_atom;
 
     BaseComponent* GlobalComponentFactory::create(const StringAtom& type)
@@ -255,6 +267,18 @@ namespace Core
                              ioReadChildInputFromCache(out);
                          }
                      });
+    }
+
+    nlohmann::json BaseComponent::serialize()
+    {
+        return R<BaseComponent>::Serialize<RJsonResourceStream>(*this).getData();
+    }
+
+    void BaseComponent::deserialize(const nlohmann::json& json)
+    {
+        RResourceStream<RJsonResourceStream> data;
+        data.getData() = json;
+        R<BaseComponent>::Deserialize(data, *this);
     }
 
     void BaseComponent::initialize()

@@ -146,6 +146,26 @@ public:
 
 #define ECS_COMPONENT_IMPL(ClassName) _ECS_COMPONENT_IMPL(ClassName, ;, #ClassName, false)
 
+#define ECS_R_FRIEND_DECL(ClassName, ...)                                                          \
+    R_FRIEND(ClassName, __VA_ARGS__);                                                              \
+                                                                                                   \
+public:                                                                                            \
+    [[nodiscard]] nlohmann::json serialize() override;                                             \
+    void deserialize(const nlohmann::json& json) override;
+
+#define ECS_R_FRIEND_IMPL(ClassName)                                                               \
+    nlohmann::json ClassName::serialize()                                                          \
+    {                                                                                              \
+        return R<ClassName>::Serialize<RJsonResourceStream>(*this).getData();                      \
+    }                                                                                              \
+                                                                                                   \
+    void ClassName::deserialize(const nlohmann::json& json)                                        \
+    {                                                                                              \
+        RResourceStream<RJsonResourceStream> data;                                                 \
+        data.getData() = json;                                                                     \
+        R<ClassName>::Deserialize(data, *this);                                                    \
+    }
+
 //
 //
 // ===============================================================
@@ -257,16 +277,19 @@ namespace Core
      */
     template<class T>
     concept IsComponent
-        = std::derived_from<std::remove_reference_t<T>, BaseComponent> && requires(T t) {
-              { t.getComponentType() };
-              { T::componentType };
-          };
+        = std::derived_from<std::remove_reference_t<std::remove_cv_t<T>>, BaseComponent>
+          && requires(T t) {
+                 { t.getComponentType() };
+                 { T::componentType };
+             };
 
     /**
      * Concept for either a BaseComponent-derived type or BaseComponent itself.
      */
     template<class T>
-    concept IsComponentOrBase = IsComponent<T> || std::is_same_v<BaseComponent, T>;
+    concept IsComponentOrBase
+        = IsComponent<T>
+          || std::is_same_v<BaseComponent, std::remove_reference_t<std::remove_cv_t<T>>>;
 
     /**
      * Concept for either a BaseComponent-derived type or void.
@@ -277,7 +300,8 @@ namespace Core
 
     template<class T>
     concept IsIntrusiveComponent
-        = requires { typename T::ValueT; } && std::derived_from<typename T::ValueT, BaseComponent>;
+        = IsIntrusivePtrHelper<T>::value
+          && std::derived_from<std::remove_cv_t<typename T::ValueT>, BaseComponent>;
 
     template<typename T>
     concept IsComponentRange =                                              //
@@ -444,6 +468,9 @@ namespace Core
         void setNoTick(bool v) { _noTick = v; }
         [[nodiscard]] bool getNoTick() const noexcept { return _noTick; }
 
+        [[nodiscard]] virtual nlohmann::json serialize();
+        virtual void deserialize(const nlohmann::json& json);
+
     protected:
         AbstractComponent() = default;
 
@@ -609,6 +636,9 @@ namespace Core
         void onTick(float delta) override;
 
         void ioFieldsUpdate(DataStream& out) override;
+
+        [[nodiscard]] nlohmann::json serialize() override;
+        void deserialize(const nlohmann::json& json) override;
 
         /**
          * Call this function directly only if you sure in it.
@@ -1077,9 +1107,12 @@ namespace Core
     template<IsIntrusiveComponent CompT>
     void from_json(const nlohmann::json& j, CompT& comp)
     {
-        if (!comp)
+        if constexpr (std::is_constructible_v<typename CompT::ValueT>)
         {
-            comp = new std::remove_cv_t<typename CompT::ValueT>();
+            if (!comp)
+            {
+                comp = new std::remove_cv_t<typename CompT::ValueT>();
+            }
         }
 
         from_json(j, *comp);
@@ -1092,10 +1125,27 @@ namespace Core
 
         for (const auto& json : j)
         {
-            using ValueT = std::remove_cvref_t<decltype(*range.begin())>;
-            ValueT obj;
-            from_json(json, obj);
-            range.push_back(std::move(obj));
+            if (!Verify(json.contains("_type")))
+            {
+                continue;
+            }
+
+            const auto type = StringAtom::Intern(json["_type"].get<StringAtom>());
+            Assert(type.isStatic());
+
+            if (!Verify(!type.isEmpty())) [[unlikely]]
+            {
+                continue;
+            }
+
+            auto obj = GetGlobalComponentFactory().create(type);
+            if (!Verify(obj))
+            {
+                continue;
+            }
+
+            obj->deserialize(json);
+            range.push_back(obj);
         }
     }
 } // namespace Core

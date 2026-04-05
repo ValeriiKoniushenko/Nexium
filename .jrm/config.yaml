@@ -7,6 +7,9 @@ excludedPaths:
   - .vscode
   - build
   - dependencies
+  - .jenkins
+  - data
+  - docs
 
 # Array of the file extensions that will be scanned through the filesystem.
 parsableFileExtensions:

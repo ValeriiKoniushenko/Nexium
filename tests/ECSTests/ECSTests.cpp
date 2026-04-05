@@ -107,7 +107,7 @@ TEST(ECSBaseTests, SerializationOfComponentTree)
     obj.addChildComponent<DummyComponent>("SubChild1");
     obj.addChildComponent<HardConstructorComponent>(123, "SubChild2", "text");
 
-    const auto json = R<BaseComponent>::Serialize(obj).getData();
+    const auto json = R<DummyComponent>::Serialize(obj).getData();
     // std::cout << json.dump(4) << std::endl;
 
     ASSERT_FALSE(json["_isEnabled"].get<bool>());
@@ -127,6 +127,26 @@ TEST(ECSBaseTests, SerializationOfComponentTree)
     ASSERT_FALSE(children[1]["_noTick"].get<bool>());
     ASSERT_EQ("HardConstructorComponent", children[1]["_type"].get<StringAtom>());
     ASSERT_EQ("SubChild2", children[1]["_name"].get<StringAtom>());
+}
+
+TEST(ECSBaseTests, DerializationOfComponentTree)
+{
+    RResourceStream<RJsonResourceStream> stream;
+
+    {
+        DummyComponent obj("DummyName");
+        obj.disable();
+        obj.setNoTick(true);
+
+        obj.addChildComponent<DummyComponent>("SubChild1");
+        obj.addChildComponent<HardConstructorComponent>(123, "SubChild2", "text");
+        stream = R<DummyComponent>::Serialize(obj);
+    }
+
+    DummyComponent restored;
+    restored.addChildComponent<DummyComponent>("OriginalSubChild1");
+
+    R<DummyComponent>::Deserialize(stream, restored);
 }
 
 TEST(ECSBaseTests, SerializationRoundTripForBaseComponentPart)

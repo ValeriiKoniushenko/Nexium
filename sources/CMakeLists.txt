@@ -29,10 +29,6 @@
 
 # Standalone ECS build target (independent from `Nexium::Core`).
 
-add_custom_target(CodeGenerator ALL
-    COMMAND jrm ${CMAKE_SOURCE_DIR}
-)
-
 add_subdirectory(AssetsManager)
 add_subdirectory(Editor)
 add_subdirectory(ECS)

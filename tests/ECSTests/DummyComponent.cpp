@@ -25,5 +25,10 @@
 #include "DummyComponent.h"
 
 ECS_COMPONENT_IMPL(DummyComponent);
+ECS_R_FRIEND_IMPL(DummyComponent);
+
 ECS_COMPONENT_IMPL(HardConstructorComponent);
+ECS_R_FRIEND_IMPL(HardConstructorComponent);
+
 ECS_COMPONENT_IMPL(InitSpyComponent);
+ECS_R_FRIEND_IMPL(InitSpyComponent);
