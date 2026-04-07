@@ -24,7 +24,7 @@
 
 #include "SceneTreeWindow.h"
 
-#include "GameplaySystem/Framework/Actor.h"
+#include "../../GameplaySystem/Entities/Actor.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "ImGui/misc/cpp/imgui_stdlib.h"
 #include "Misc/IconsFontAwesome.h"

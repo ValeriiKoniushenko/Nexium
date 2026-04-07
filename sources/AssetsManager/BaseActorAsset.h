@@ -24,8 +24,8 @@
 
 #pragma once
 
+#include "../GameplaySystem/Entities/Actor.h"
 #include "BaseAsset.h"
-#include "GameplaySystem/Framework/Actor.h"
 
 namespace Core
 {

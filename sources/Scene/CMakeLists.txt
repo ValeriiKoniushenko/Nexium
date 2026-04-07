@@ -23,7 +23,6 @@ add_library(Nexium::${CLEAR_TARGET_NAME} ALIAS ${TARGET_NAME})
 target_include_directories(${TARGET_NAME} PUBLIC ..)
 
 target_link_libraries(${TARGET_NAME} PUBLIC
-    Nexium::GameplaySystem
 )
 
 CoreAddCompileOptionsTo(${TARGET_NAME})

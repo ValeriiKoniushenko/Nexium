@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "GameplaySystem/Framework/Actor.h"
+#include "../GameplaySystem/Entities/Actor.h"
 #include "InputDevices/InputManager.h"
 
 namespace Core

@@ -24,9 +24,9 @@
 
 #pragma once
 
+#include "../GameplaySystem/Entities/Actor.h"
 #include "../Misc/Configs.h"
 #include "Core/Delegate.h"
-#include "GameplaySystem/Framework/Actor.h"
 #include "Graphics/Primitives/StaticMeshBundle.h"
 #include "Graphics/Window.h"
 #include "InputDevices/InputAction.h"

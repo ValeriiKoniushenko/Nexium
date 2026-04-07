@@ -24,9 +24,9 @@
 
 #pragma once
 
+#include "../GameplaySystem/Entities/Actor.h"
 #include "Core/Size.h"
 #include "GameplaySystem/ECS/Transformable.h"
-#include "GameplaySystem/Framework/Actor.h"
 
 namespace Core
 {

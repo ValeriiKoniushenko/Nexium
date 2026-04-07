@@ -2,20 +2,20 @@
 1771957139897544007 sources/AssetsManager/AssetImpls/Factory.h
 1771957182112750989 sources/AssetsManager/AssetImpls/StaticMeshBundle.h
 1771958192722179981 sources/AssetsManager/AssetsManager.h
-1771957458639850407 sources/AssetsManager/BaseActorAsset.h
+1775592203930163974 sources/AssetsManager/BaseActorAsset.h
 1774990043201612657 sources/AssetsManager/BaseAsset.h
 1774375871938067487 sources/AssetsManager/ECSAsset.h
 1771957476336550724 sources/AssetsManager/Mesh3DAsset.h
 1771957229428878437 sources/AssetsManager/ModuleInfo.h
 1771958192724179951 sources/AssetsManager/SkyboxAsset.h
 1771957234492786007 sources/AssetsManager/TextureAsset.h
-1771957435206249410 sources/Camera/Camera.h
+1775592203918163937 sources/Camera/Camera.h
 1771957243490622214 sources/Camera/ModuleInfo.h
 1775591654437467753 sources/ECS/BaseComponent.h
 1771957954487843037 sources/ECS/ModuleInfo.h
 1775144052910672263 sources/ECS/Transformable.h
 1774989912253254432 sources/Editor/GameEditor.h
-1771958192725179935 sources/Editor/Gizmo.h
+1775592203926163962 sources/Editor/Gizmo.h
 1771957573565927198 sources/Editor/GuiComponents/Array.h
 1771957239148701183 sources/Editor/GuiComponents/Button.h
 1771957472152621452 sources/Editor/GuiComponents/CheckBox.h
@@ -60,6 +60,7 @@
 1771957942802024873 sources/Editor/Windows/ShaderManager.h
 1771957942822024562 sources/Editor/Windows/TextEditor.h
 1771958020642817863 sources/Editor/Windows/WorldLightning.h
+1775592366494665108 sources/GameplaySystem/Entities/Actor.h
 1774990043240611163 sources/GameplaySystem/Framework/Actor.h
 1770677206103945514 sources/GameplaySystem/Framework/ActorManager.h
 1770677206103945514 sources/GameplaySystem/Framework/CameraManager.h
@@ -81,7 +82,7 @@
 1771957970812589401 sources/Graphics/ModuleInfo.h
 1775075538135367380 sources/Graphics/OpenGL.h
 1771957159984164893 sources/Graphics/Primitives/StaticMesh.h
-1772692402979901251 sources/Graphics/Primitives/StaticMeshBundle.h
+1775592203905163897 sources/Graphics/Primitives/StaticMeshBundle.h
 1774375872208064419 sources/Graphics/RenderTargetToTexture.h
 1771957520715805050 sources/Graphics/ShaderManager.h
 1774375956091042853 sources/Graphics/ShaderProgram.h
@@ -103,5 +104,5 @@
 1770677206105945396 sources/Scene/Grid.h
 1770677206105945396 sources/Scene/ModuleInfo.h
 1774990043229611585 sources/Scene/Scene.h
-1770677206105945396 sources/Scene/Spectator.h
+1775592203922163949 sources/Scene/Spectator.h
 1775588836228364064 tests/ECSTests/DummyComponent.h
