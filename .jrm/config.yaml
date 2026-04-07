@@ -10,6 +10,7 @@ excludedPaths:
   - .jenkins
   - data
   - docs
+  - cmake
 
 # Array of the file extensions that will be scanned through the filesystem.
 parsableFileExtensions:
