@@ -119,6 +119,9 @@ namespace Core
             std::swap(a._isDirtyModelMatrix, b._isDirtyModelMatrix);
         }
 
+        [[nodiscard]] nlohmann::json serialize() const;
+        void deserialize(const nlohmann::json& json);
+
     protected:
         virtual void onDirtyMatrix() {}
 
@@ -126,16 +129,16 @@ namespace Core
         glm::mat4 _cachedModelMatrix = glm::mat4(1.f);
 
         FIELD();
-        glm::vec3 _scale = glm::vec3(1.f, 1.f, 1.f);
+        glm::vec3 _scale = glm::vec3(1.f);
 
         FIELD();
-        glm::vec3 _origin{};
+        glm::vec3 _origin = glm::vec3(1.f);
 
         FIELD();
-        GPos3 _position{};
+        GPos3 _position = Core::GPos3(1.f);
 
         FIELD();
-        glm::vec3 _rotation{};
+        glm::vec3 _rotation = glm::vec3(1.f);
 
         bool _isDirtyModelMatrix = true;
     };

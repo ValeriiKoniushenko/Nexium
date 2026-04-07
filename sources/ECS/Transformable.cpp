@@ -24,6 +24,7 @@
 
 #include "Transformable.h"
 
+#include "RawDataManagement/JsonAdapter.h"
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/matrix_transform.hpp"
 
@@ -242,6 +243,18 @@ namespace Core
         {
             recalculateMatrices(mat);
         }
+    }
+
+    nlohmann::json Transformable::serialize() const
+    {
+        return R<Transformable>::Serialize(*this).getData();
+    }
+
+    void Transformable::deserialize(const nlohmann::json& json)
+    {
+        RResourceStream<RJsonResourceStream> out;
+        out.getData() = json;
+        R<Transformable>::Deserialize(out, *this);
     }
 
     void Transformable::setOrigin(const glm::vec3& origin) noexcept
