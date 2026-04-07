@@ -24,8 +24,8 @@
 
 #pragma once
 
-#include "GameplaySystem/ECS/BaseComponent.h"
-#include "GameplaySystem/ECS/Transformable.h"
+#include "ECS/BaseComponent.h"
+#include "ECS/Transformable.h"
 #include "Graphics/GraphicsComponents.h"
 #include "Graphics/IOutliner.h"
 #include "assimp/matrix4x4.h"

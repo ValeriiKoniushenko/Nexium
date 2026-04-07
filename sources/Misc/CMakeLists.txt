@@ -2,12 +2,7 @@ get_filename_component(CURRENT_DIR_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
 set(TARGET_NAME "__${CURRENT_DIR_NAME}")
 set(CLEAR_TARGET_NAME "${CURRENT_DIR_NAME}")
 
-# file(GLOB_RECURSE CPP_SOURCES "*.cpp")
-set(CPP_SOURCES
-    BaseLog.cpp
-    Configs.cpp
-    FPSCounter.cpp
-)
+file(GLOB_RECURSE CPP_SOURCES "*.cpp")
 set_source_files_properties(${CPP_SOURCES} PROPERTIES LANGUAGE CXX)
 
 file(GLOB_RECURSE CPP_HEADERS "*.h")

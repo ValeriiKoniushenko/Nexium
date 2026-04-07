@@ -9,6 +9,7 @@
 1771957229428878437 sources/AssetsManager/ModuleInfo.h
 1771958192724179951 sources/AssetsManager/SkyboxAsset.h
 1771957234492786007 sources/AssetsManager/TextureAsset.h
+1771957726719436386 sources/AssimpMisc/AssimpHelper.h
 1775592203918163937 sources/Camera/Camera.h
 1771957243490622214 sources/Camera/ModuleInfo.h
 1775591654437467753 sources/ECS/BaseComponent.h
@@ -41,7 +42,7 @@
 1771957717834578989 sources/Editor/Windows/ECSAdapters/EditorActorAdapter.h
 1771957690623017081 sources/Editor/Windows/ECSAdapters/EditorGraphicsComponentDataAdapter.h
 1771957942767025418 sources/Editor/Windows/ECSAdapters/EditorStaticMeshAdapter.h
-1771957735520295337 sources/Editor/Windows/ECSAdapters/EditorStaticMeshBundleAdapter.h
+1775592594624368223 sources/Editor/Windows/ECSAdapters/EditorStaticMeshBundleAdapter.h
 1771957942796024966 sources/Editor/Windows/ECSAdapters/EditorTransformableAdapter.h
 1774375872069065986 sources/Editor/Windows/EditorMenuBarWindow.h
 1771957649220687722 sources/Editor/Windows/EditorSettings.h
@@ -81,7 +82,7 @@
 1771958192730179859 sources/Graphics/Image.h
 1771957970812589401 sources/Graphics/ModuleInfo.h
 1775075538135367380 sources/Graphics/OpenGL.h
-1771957159984164893 sources/Graphics/Primitives/StaticMesh.h
+1775592423475840719 sources/Graphics/Primitives/StaticMesh.h
 1775592203905163897 sources/Graphics/Primitives/StaticMeshBundle.h
 1774375872208064419 sources/Graphics/RenderTargetToTexture.h
 1771957520715805050 sources/Graphics/ShaderManager.h

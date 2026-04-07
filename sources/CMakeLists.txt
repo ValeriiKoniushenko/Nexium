@@ -30,6 +30,7 @@
 # Standalone ECS build target (independent from `Nexium::Core`).
 
 add_subdirectory(AssetsManager)
+add_subdirectory(AssimpMisc)
 add_subdirectory(Editor)
 add_subdirectory(ECS)
 add_subdirectory(Camera)

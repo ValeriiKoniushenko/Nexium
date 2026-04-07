@@ -22,9 +22,9 @@
  * SOFTWARE.
  */
 
-#include "AssimpHelper.h"
+#include "../Misc/AssimpHelper.h"
 
-#include "BaseLog.h"
+#include "../Misc/BaseLog.h"
 
 namespace Assimp
 {

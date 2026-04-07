@@ -24,10 +24,9 @@ target_include_directories(${TARGET_NAME} PUBLIC ..)
 
 target_link_libraries(${TARGET_NAME} PUBLIC
     Utils::Core
-    Nexium::Misc
-    Nexium::ECS
-    Core::Glad
-    glfw
+    spdlog::spdlog
+    JustReflectMe::Adapter
+    assimp
 )
 
 CoreAddCompileOptionsTo(${TARGET_NAME})
