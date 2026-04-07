@@ -133,14 +133,6 @@ namespace Core
         }
     }
 
-    void AbstractComponent::ioFieldsUpdate(DataStream& out)
-    {
-        auto stream = out.dedicatedNesting("AbstractComponent");
-
-        stream.field("isEnabled", _isEnabled);
-        stream.field("noTick", _noTick);
-    }
-
     spdlog::logger* AbstractComponent::getLogger() const
     {
         return Ecs::getLogger();
@@ -242,33 +234,6 @@ namespace Core
         }
     }
 
-    void BaseComponent::ioFieldsUpdate(DataStream& out)
-    {
-        AbstractComponent::ioFieldsUpdate(out);
-
-        auto stream = out.dedicatedNesting(StreamData::className);
-
-        stream.field(StreamData::name, _name, _type);
-        stream.field(StreamData::type, _type);
-        if (stream.getMode() == DataStream::Mode::Input)
-        {
-            _type = StringAtom::Intern(_type);
-        }
-
-        stream.array("children",
-                     [this](DataStream& out, std::size_t size)
-                     {
-                         if (out.getMode() == DataStream::Mode::Output)
-                         {
-                             ioWriteChildInputFromCache(out);
-                         }
-                         else
-                         {
-                             ioReadChildInputFromCache(out);
-                         }
-                     });
-    }
-
     nlohmann::json BaseComponent::serialize() const
     {
         return R<BaseComponent>::Serialize<RJsonResourceStream>(*this).getData();
@@ -366,11 +331,6 @@ namespace Core
         return seed;
     }
 
-    StringAtom BaseComponent::getCacheHash() const
-    {
-        return _type + _name;
-    }
-
     BaseComponent* BaseComponent::rawAddChildComponent(BaseComponent* newOne)
     {
         if (!newOne)
@@ -395,78 +355,6 @@ namespace Core
         onAddChild(added);
 
         return added;
-    }
-
-    void BaseComponent::ioReadChildInputFromCache(const DataStream& out)
-    {
-        std::unordered_set<BaseComponent*> viewed;
-        viewed.reserve(std::max(_children.size(), out.getRaw().size()));
-
-        for (auto&& child : out.getRaw().items())
-        {
-            // std::cout << child.value().dump(4) << std::endl;
-            auto&& in = child.value();
-
-            if (!in.contains(StreamData::className))
-            {
-                warnLog(
-                    "No root key 'BaseComponent' for child component. "
-                    "Impossible to fetch type data.");
-                Assert(false);
-                continue;
-            }
-
-            if (!in[StreamData::className].contains("type"))
-            {
-                warnLog("No type specified for child component");
-                Assert(false);
-                continue;
-            }
-
-            const auto& object = in[StreamData::className];
-            const auto finalType = object[StreamData::type].get<StringAtom>();
-
-            StringAtom name;
-            if (object.contains(StreamData::name))
-            {
-                name = object[StreamData::name].get<StringAtom>();
-            }
-
-            BaseComponent* last = nullptr;
-
-            // awful approach, optimize it!
-            for (auto&& c : _children)
-            {
-                if (c->getComponentType() == finalType && c->getComponentName() == name
-                    && !viewed.contains(c.get()))
-                {
-                    last = c.get();
-                    break;
-                }
-            }
-
-            if (!last)
-            {
-                last = _children.emplace_back(GetGlobalComponentFactory().create(finalType)).get();
-                last->_parent = this;
-            }
-
-            viewed.insert(last);
-
-            DataStream childStream;
-            childStream.setMode(DataStream::Mode::Input);
-            childStream.getRaw() = in;
-            last->ioFieldsUpdate(childStream);
-        }
-    }
-
-    void BaseComponent::ioWriteChildInputFromCache(DataStream& out)
-    {
-        for (auto& child : _children)
-        {
-            out.tryPushBackEmptyArrayElement();
-            out.field(*child);
-        }
     }
 
     BaseComponent::BaseComponent(const BaseComponent& other)

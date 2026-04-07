@@ -27,7 +27,6 @@
 #include "Core/IntrusivePtr.h"
 #include "JustReflectMe/Adapter.h"
 #include "Misc/BaseLog.h"
-#include "RawDataManagement/DataStream.h"
 
 #include <queue>
 #include <stack>
@@ -377,10 +376,7 @@ namespace Core
      * Provides lifecycle hooks, ticking mechanism, and JSON/XML/etc serialization.
      */
     CLASS();
-    class AbstractComponent :
-        public IntrusiveRefCounter<BaseComponent>,
-        public BaseLog,
-        public IDataStreamBridge
+    class AbstractComponent : public IntrusiveRefCounter<BaseComponent>, public BaseLog
     {
         R_FRIEND(AbstractComponent);
 
@@ -406,8 +402,6 @@ namespace Core
          * update and/or draw.
          */
         void tick(float delta);
-
-        void ioFieldsUpdate(DataStream& out) override;
 
         [[nodiscard]] spdlog::logger* getLogger() const final;
 
@@ -635,8 +629,6 @@ namespace Core
          */
         void onTick(float delta) override;
 
-        void ioFieldsUpdate(DataStream& out) override;
-
         [[nodiscard]] nlohmann::json serialize() const override;
         void deserialize(const nlohmann::json& json) override;
 
@@ -847,8 +839,6 @@ namespace Core
 #endif
         }
 
-        [[nodiscard]] StringAtom getCacheHash() const override;
-
         /**
          * This method will be called automatically. Don't call it directly.
          */
@@ -873,8 +863,6 @@ namespace Core
 
     private:
         [[nodiscard]] BaseComponent* rawAddChildComponent(BaseComponent* newOne);
-        void ioReadChildInputFromCache(const DataStream& out);
-        void ioWriteChildInputFromCache(DataStream& out);
 
         // ===================== PIMPLs =============================
         template<IsComponentOrBase TargetT, class ThisT, class FuncT>
