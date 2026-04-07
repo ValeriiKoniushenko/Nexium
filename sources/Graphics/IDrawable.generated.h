@@ -34,7 +34,7 @@ struct R<Core::IDrawable>
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, Core::IDrawable& obj)
     {
-		s.read("_isPostDraw", obj._isPostDraw);
+		s.read("_isPostDraw", obj._isPostDraw, false);
     }
 }; // struct R<Core::IDrawable>
 // clang-format on

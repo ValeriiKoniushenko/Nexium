@@ -40,10 +40,10 @@ struct R<Core::Transformable>
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, Core::Transformable& obj)
     {
-		s.read("_scale", obj._scale);
-		s.read("_origin", obj._origin);
-		s.read("_position", obj._position);
-		s.read("_rotation", obj._rotation);
+		s.read("_scale", obj._scale, glm::vec3(1.f, 1.f, 1.f));
+		s.read("_origin", obj._origin, {});
+		s.read("_position", obj._position, {});
+		s.read("_rotation", obj._rotation, {});
     }
 }; // struct R<Core::Transformable>
 // clang-format on

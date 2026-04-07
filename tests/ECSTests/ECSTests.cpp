@@ -129,7 +129,7 @@ TEST(ECSBaseTests, SerializationOfComponentTree)
     ASSERT_EQ("SubChild2", children[1]["_name"].get<StringAtom>());
 }
 
-TEST(ECSBaseTests, DerializationOfComponentTree)
+TEST(ECSBaseTests, DeserializationOfComponentTree)
 {
     nlohmann::json stream;
 
@@ -143,68 +143,101 @@ TEST(ECSBaseTests, DerializationOfComponentTree)
         stream = obj.serialize();
     }
 
-    std::cout << stream.dump(4) << std::endl;
+    // std::cout << stream.dump(4) << std::endl;
 
     DummyComponent restored;
     restored.addChildComponent<DummyComponent>("OriginalSubChild1");
 
     restored.deserialize(stream);
+
+    // --- Root assertions ---
+    ASSERT_TRUE(stream.contains("_type"));
+    ASSERT_EQ(stream["_type"].get<std::string>(), "DummyComponent");
+
+    ASSERT_TRUE(stream.contains("_name"));
+    ASSERT_EQ(stream["_name"].get<std::string>(), "DummyName");
+
+    ASSERT_TRUE(stream.contains("_isEnabled"));
+    ASSERT_EQ(stream["_isEnabled"].get<bool>(), false);
+
+    ASSERT_TRUE(stream.contains("_noTick"));
+    ASSERT_EQ(stream["_noTick"].get<bool>(), true);
+
+    ASSERT_TRUE(stream.contains("a"));
+    ASSERT_EQ(stream["a"].get<int>(), 123);
+
+    ASSERT_TRUE(stream.contains("name"));
+    ASSERT_EQ(stream["name"].get<std::string>(), "Lola");
+
+    // --- Children array ---
+    ASSERT_TRUE(stream.contains("_children"));
+    ASSERT_TRUE(stream["_children"].is_array());
+    ASSERT_EQ(stream["_children"].size(), 2u);
+
+    // --- Child 0: DummyComponent "SubChild1" ---
+    const auto& child0 = stream["_children"][0];
+
+    ASSERT_TRUE(child0.contains("_type"));
+    ASSERT_EQ(child0["_type"].get<std::string>(), "DummyComponent");
+
+    ASSERT_TRUE(child0.contains("_name"));
+    ASSERT_EQ(child0["_name"].get<std::string>(), "SubChild1");
+
+    ASSERT_TRUE(child0.contains("_isEnabled"));
+    ASSERT_EQ(child0["_isEnabled"].get<bool>(), true);
+
+    ASSERT_TRUE(child0.contains("_noTick"));
+    ASSERT_EQ(child0["_noTick"].get<bool>(), false);
+
+    ASSERT_TRUE(child0.contains("_children"));
+    ASSERT_TRUE(child0["_children"].is_null());
+
+    ASSERT_TRUE(child0.contains("a"));
+    ASSERT_EQ(child0["a"].get<int>(), 123);
+
+    ASSERT_TRUE(child0.contains("name"));
+    ASSERT_EQ(child0["name"].get<std::string>(), "Lola");
+
+    // --- Child 1: HardConstructorComponent "SubChild2" ---
+    const auto& child1 = stream["_children"][1];
+
+    ASSERT_TRUE(child1.contains("_type"));
+    ASSERT_EQ(child1["_type"].get<std::string>(), "HardConstructorComponent");
+
+    ASSERT_TRUE(child1.contains("_name"));
+    ASSERT_EQ(child1["_name"].get<std::string>(), "SubChild2");
+
+    ASSERT_TRUE(child1.contains("_isEnabled"));
+    ASSERT_EQ(child1["_isEnabled"].get<bool>(), true);
+
+    ASSERT_TRUE(child1.contains("_noTick"));
+    ASSERT_EQ(child1["_noTick"].get<bool>(), false);
+
+    ASSERT_TRUE(child1.contains("_children"));
+    ASSERT_TRUE(child1["_children"].is_null());
 }
 
-TEST(ECSBaseTests, SerializationRoundTripForBaseComponentPart)
+TEST(ECSBaseTests, DeserializationOfComponentTreeWithSkippedFields)
 {
-    DummyComponent source("SourceName");
-    source.disable();
-    source.setNoTick(true);
+    nlohmann::json stream;
 
-    const auto out = R<AbstractComponent>::Serialize<RJsonResourceStream>(
-        static_cast<const AbstractComponent&>(source));
+    {
+        DummyComponent obj("DummyName");
+        obj.disable();
+        obj.setNoTick(true);
+        obj.a = 1000;
+        stream = obj.serialize();
+    }
 
-    DummyComponent restored("RestoredName");
-    restored.enable();
-    restored.setNoTick(false);
+    // std::cout << stream.dump(4) << std::endl;
 
-    R<AbstractComponent>::Deserialize(out, static_cast<AbstractComponent&>(restored));
+    // Removing one field
+    stream.erase("a");
 
-    ASSERT_FALSE(restored.isEnabled());
-    ASSERT_TRUE(restored.getNoTick());
+    DummyComponent restored;
+    restored.deserialize(stream);
 
-    ASSERT_EQ("RestoredName", restored.getComponentName());
-    ASSERT_EQ("DummyComponent", restored.getComponentType());
-}
-
-TEST(ECSBaseTests, SerializationRoundTripForBaseComponentPart2)
-{
-    DummyComponent source("SomeName");
-    source.disable();
-    source.setNoTick(true);
-
-    source.addChildComponent<DummyComponent>("Child1");
-    source.addChildComponent<HardConstructorComponent>(123, "Child2", "text");
-
-    const auto out = R<BaseComponent>::Serialize<RJsonResourceStream>(source);
-}
-
-TEST(ECSBaseTests, SerializationDoesNotTouchNonReflectedDummyComponentState)
-{
-    DummyComponent source("SourceName");
-    source.disable();
-    source.setNoTick(true);
-
-    const auto out = R<AbstractComponent>::Serialize<RJsonResourceStream>(source);
-
-    DummyComponent restored("KeepMyOwnState");
-    restored.enable();
-    restored.setNoTick(false);
-
-    R<AbstractComponent>::Deserialize(out, restored);
-
-    ASSERT_FALSE(restored.isEnabled());
-    ASSERT_TRUE(restored.getNoTick());
-
-    ASSERT_EQ("KeepMyOwnState", restored.getComponentName());
-    ASSERT_EQ("DummyComponent", restored.getComponentType());
-    ASSERT_TRUE(restored.isTypeOf<DummyComponent>());
+    ASSERT_EQ(123, restored.a); // 123 - default value
 }
 
 TEST(ECSBaseTests, SimpleCreation)
@@ -442,6 +475,21 @@ TEST(ECSBaseTests, ParentInvalidating)
     ASSERT_EQ(movedRoot.getChildAt(0)->getComponentName(), "World");
     ASSERT_EQ(world->getParent(), &movedRoot);
     ASSERT_EQ(world->getParent()->getComponentName(), "Root");
+}
+
+TEST_F(ECSTreeTests, ComplexDeSerealization)
+{
+    const auto serialized = root.serialize();
+
+    DummyComponent restored;
+    restored.deserialize(serialized);
+
+    ASSERT_EQ(root.getComponentName(), restored.getComponentName());
+    ASSERT_EQ(root.getComponentType(), restored.getComponentType());
+    ASSERT_EQ(root.getChildrenCount(), restored.getChildrenCount());
+    ASSERT_EQ(root.getChildren().size(), restored.getChildren().size());
+
+    ASSERT_EQ(serialized.dump(4), restored.serialize().dump(4));
 }
 
 TEST_F(ECSTreeTests, BFSIteratorTest)
@@ -724,4 +772,222 @@ TEST(ECSBaseTests, InitializeIsCalledAndPropagatesToChildren)
 
     ASSERT_EQ(1, child->preInitCalls);
     ASSERT_EQ(1, child->initCalls);
+}
+
+///////////////////////////////////////////////////////////
+
+namespace
+{
+
+    class ECSTreeVehicleTests : public ::testing::Test
+    {
+    protected:
+        void SetUp() override
+        {
+            root.setComponentName("Volvo_B5");
+            root.vin = "VIN-12345";
+            root.mileage = 12000;
+            root.running = true;
+            root.horsepower = 250;
+            root.fuelLevel = 0.75f;
+            root.doors = 4;
+            root.hasSunroof = true;
+
+            //
+            // Engine
+            //
+            auto engine = root.addChildComponent<TurboEngine>("Engine_Main");
+            engine->id = 1;
+            engine->manufacturer = "Volvo";
+            engine->cylinders = 4;
+            engine->volume = 2.0f;
+            engine->started = true;
+            engine->boostPressure = 1.5f;
+            engine->turboEnabled = true;
+
+            //
+            // Wheels (4)
+            //
+            for (int i = 0; i < 4; ++i)
+            {
+                auto wheel = root.addChildComponent<Wheel>(("Wheel_" + std::to_string(i)).c_str());
+                wheel->id = 10 + i;
+                wheel->manufacturer = "Michelin";
+                wheel->radius = 18.0f;
+                wheel->pressure = 2.5f;
+            }
+
+            //
+            // Cabin
+            //
+            auto cabin = root.addChildComponent<Interior>("Cabin");
+            cabin->color = "black";
+
+            auto seat1 = cabin->addChildComponent<Seat>("FrontLeft");
+            seat1->heated = true;
+            seat1->position = 5;
+
+            auto seat2 = cabin->addChildComponent<Seat>("FrontRight");
+            seat2->heated = true;
+            seat2->position = 5;
+
+            auto dashboard = cabin->addChildComponent<Dashboard>("Dashboard");
+            dashboard->hasDisplay = true;
+            dashboard->brightness = 80;
+
+            //
+            // Electronics
+            //
+            auto adas = root.addChildComponent<Electronics>("ADAS");
+            adas->firmwareVersion = 42;
+
+            auto cam = adas->addChildComponent<Camera>("FrontCamera");
+            cam->type = "vision";
+            cam->value = 1.0f;
+            cam->resolution = 2160;
+            cam->hdr = true;
+        }
+
+        Sedan root;
+    };
+
+} // namespace
+
+TEST_F(ECSTreeVehicleTests, FullSerializationCheck)
+{
+    const auto serialized = root.serialize();
+
+    // ROOT FIELDS
+    ASSERT_EQ(serialized["vin"], "VIN-12345");
+    ASSERT_EQ(serialized["mileage"], 12000);
+    ASSERT_EQ(serialized["running"], true);
+    ASSERT_EQ(serialized["horsepower"], 250);
+    ASSERT_FLOAT_EQ(serialized["fuelLevel"], 0.75f);
+    ASSERT_EQ(serialized["doors"], 4);
+    ASSERT_EQ(serialized["hasSunroof"], true);
+
+    // CHILDREN COUNT
+    ASSERT_EQ(serialized["_children"].size(), root.getChildrenCount());
+
+    // ENGINE
+    const auto& engine = serialized["_children"][0];
+    ASSERT_EQ(engine["manufacturer"], "Volvo");
+    ASSERT_EQ(engine["cylinders"], 4);
+    ASSERT_FLOAT_EQ(engine["volume"], 2.0f);
+    ASSERT_EQ(engine["started"], true);
+    ASSERT_FLOAT_EQ(engine["boostPressure"], 1.5f);
+    ASSERT_EQ(engine["turboEnabled"], true);
+
+    // WHEELS
+    for (int i = 1; i <= 4; ++i)
+    {
+        const auto& wheel = serialized["_children"][i];
+        ASSERT_EQ(wheel["manufacturer"], "Michelin");
+        ASSERT_FLOAT_EQ(wheel["radius"], 18.0f);
+        ASSERT_FLOAT_EQ(wheel["pressure"], 2.5f);
+    }
+
+    // CABIN
+    const auto& cabin = serialized["_children"][5];
+    ASSERT_EQ(cabin["color"], "black");
+    ASSERT_EQ(cabin["_children"].size(), 3);
+
+    const auto& seat1 = cabin["_children"][0];
+    ASSERT_EQ(seat1["heated"], true);
+    ASSERT_EQ(seat1["position"], 5);
+
+    const auto& seat2 = cabin["_children"][1];
+    ASSERT_EQ(seat2["heated"], true);
+    ASSERT_EQ(seat2["position"], 5);
+
+    const auto& dashboard = cabin["_children"][2];
+    ASSERT_EQ(dashboard["hasDisplay"], true);
+    ASSERT_EQ(dashboard["brightness"], 80);
+
+    // ADAS
+    const auto& adas = serialized["_children"][6];
+    ASSERT_EQ(adas["firmwareVersion"], 42);
+
+    const auto& cam = adas["_children"][0];
+    ASSERT_EQ(cam["type"], "vision");
+    ASSERT_FLOAT_EQ(cam["value"], 1.0f);
+    ASSERT_EQ(cam["resolution"], 2160);
+    ASSERT_EQ(cam["hdr"], true);
+}
+
+TEST_F(ECSTreeVehicleTests, FullDeserializationCheck)
+{
+    const auto serialized = root.serialize();
+
+    Sedan restored;
+    restored.deserialize(serialized);
+
+    // ROOT
+    ASSERT_EQ(restored.vin, root.vin);
+    ASSERT_EQ(restored.mileage, root.mileage);
+    ASSERT_EQ(restored.running, root.running);
+    ASSERT_EQ(restored.horsepower, root.horsepower);
+    ASSERT_FLOAT_EQ(restored.fuelLevel, root.fuelLevel);
+    ASSERT_EQ(restored.doors, root.doors);
+    ASSERT_EQ(restored.hasSunroof, root.hasSunroof);
+
+    ASSERT_EQ(restored.getChildrenCount(), root.getChildrenCount());
+
+    // ENGINE
+    auto* engineR = static_cast<TurboEngine*>(restored.getChildren()[0].get());
+    auto* engineO = static_cast<TurboEngine*>(root.getChildren()[0].get());
+
+    ASSERT_EQ(engineR->manufacturer, engineO->manufacturer);
+    ASSERT_EQ(engineR->cylinders, engineO->cylinders);
+    ASSERT_FLOAT_EQ(engineR->volume, engineO->volume);
+    ASSERT_EQ(engineR->started, engineO->started);
+    ASSERT_FLOAT_EQ(engineR->boostPressure, engineO->boostPressure);
+    ASSERT_EQ(engineR->turboEnabled, engineO->turboEnabled);
+
+    // WHEELS
+    for (int i = 1; i <= 4; ++i)
+    {
+        auto* wR = static_cast<Wheel*>(restored.getChildren()[i].get());
+        auto* wO = static_cast<Wheel*>(root.getChildren()[i].get());
+
+        ASSERT_EQ(wR->manufacturer, wO->manufacturer);
+        ASSERT_FLOAT_EQ(wR->radius, wO->radius);
+        ASSERT_FLOAT_EQ(wR->pressure, wO->pressure);
+    }
+
+    // CABIN
+    auto* cabinR = static_cast<Interior*>(restored.getChildren()[5].get());
+    auto* cabinO = static_cast<Interior*>(root.getChildren()[5].get());
+
+    ASSERT_EQ(cabinR->color, cabinO->color);
+
+    auto* seatR = static_cast<Seat*>(cabinR->getChildren()[0].get());
+    auto* seatO = static_cast<Seat*>(cabinO->getChildren()[0].get());
+
+    ASSERT_EQ(seatR->heated, seatO->heated);
+    ASSERT_EQ(seatR->position, seatO->position);
+
+    // DASHBOARD
+    auto* dashR = static_cast<Dashboard*>(cabinR->getChildren()[2].get());
+    auto* dashO = static_cast<Dashboard*>(cabinO->getChildren()[2].get());
+
+    ASSERT_EQ(dashR->hasDisplay, dashO->hasDisplay);
+    ASSERT_EQ(dashR->brightness, dashO->brightness);
+
+    // ADAS + CAMERA
+    auto* adasR = static_cast<Electronics*>(restored.getChildren()[6].get());
+    auto* adasO = static_cast<Electronics*>(root.getChildren()[6].get());
+
+    ASSERT_EQ(adasR->firmwareVersion, adasO->firmwareVersion);
+
+    auto* camR = static_cast<Camera*>(adasR->getChildren()[0].get());
+    auto* camO = static_cast<Camera*>(adasO->getChildren()[0].get());
+
+    ASSERT_EQ(camR->type, camO->type);
+    ASSERT_FLOAT_EQ(camR->value, camO->value);
+    ASSERT_EQ(camR->resolution, camO->resolution);
+    ASSERT_EQ(camR->hdr, camO->hdr);
+
+    // FINAL STRICT CHECK
+    ASSERT_EQ(serialized.dump(4), restored.serialize().dump(4));
 }

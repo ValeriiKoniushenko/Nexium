@@ -36,8 +36,8 @@ struct R<Core::AbstractComponent>
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, Core::AbstractComponent& obj)
     {
-		s.read("_isEnabled", obj._isEnabled);
-		s.read("_noTick", obj._noTick);
+		s.read("_isEnabled", obj._isEnabled, true);
+		s.read("_noTick", obj._noTick, false);
     }
 }; // struct R<Core::AbstractComponent>
 

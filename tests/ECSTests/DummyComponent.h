@@ -73,4 +73,160 @@ protected:
     void onInitialize() override { ++initCalls; }
 };
 
+CLASS();
+class Vehicle : public Core::BaseComponent
+{
+    ECS_R_FRIEND_DECL(Vehicle, Core::BaseComponent);
+    ECS_COMPONENT_DECL(Vehicle, Core::BaseComponent);
+
+    FIELD();
+    std::string vin = "UNKNOWN";
+    FIELD();
+    int mileage = 0;
+    FIELD();
+    bool running = false;
+};
+
+CLASS();
+class BaseCar : public Vehicle
+{
+    ECS_R_FRIEND_DECL(BaseCar, Vehicle);
+    ECS_COMPONENT_DECL(BaseCar, Vehicle);
+
+    FIELD();
+    int horsepower = 150;
+    FIELD();
+    float fuelLevel = 0.0f;
+};
+
+CLASS();
+class Sedan : public BaseCar
+{
+    ECS_R_FRIEND_DECL(Sedan, BaseCar);
+    ECS_COMPONENT_DECL(Sedan, BaseCar);
+
+    FIELD();
+    int doors = 4;
+    FIELD();
+    bool hasSunroof = false;
+};
+
+CLASS();
+class BasePart : public Core::BaseComponent
+{
+    ECS_R_FRIEND_DECL(BasePart, Core::BaseComponent);
+    ECS_COMPONENT_DECL(BasePart, Core::BaseComponent);
+
+    FIELD();
+    int id = 0;
+    FIELD();
+    std::string manufacturer = "Generic";
+};
+
+CLASS();
+class Engine : public BasePart
+{
+    ECS_R_FRIEND_DECL(Engine, BasePart);
+    ECS_COMPONENT_DECL(Engine, BasePart);
+
+    FIELD();
+    int cylinders = 4;
+    FIELD();
+    float volume = 2.0f;
+    FIELD();
+    bool started = false;
+};
+
+CLASS();
+class TurboEngine : public Engine
+{
+    ECS_R_FRIEND_DECL(TurboEngine, Engine);
+    ECS_COMPONENT_DECL(TurboEngine, Engine);
+
+    FIELD();
+    float boostPressure = 1.0f;
+    FIELD();
+    bool turboEnabled = true;
+};
+
+CLASS();
+class Wheel : public BasePart
+{
+    ECS_R_FRIEND_DECL(Wheel, BasePart);
+    ECS_COMPONENT_DECL(Wheel, BasePart);
+
+    FIELD();
+    float radius = 17.0f;
+    FIELD();
+    float pressure = 2.2f;
+};
+
+CLASS();
+class Interior : public BasePart
+{
+    ECS_R_FRIEND_DECL(Interior, BasePart);
+    ECS_COMPONENT_DECL(Interior, BasePart);
+
+    FIELD();
+    std::string color = "black";
+};
+
+CLASS();
+class Seat : public Interior
+{
+    ECS_R_FRIEND_DECL(Seat, Interior);
+    ECS_COMPONENT_DECL(Seat, Interior);
+
+    FIELD();
+    bool heated = false;
+    FIELD();
+    int position = 0;
+};
+
+CLASS();
+class Dashboard : public Interior
+{
+    ECS_R_FRIEND_DECL(Dashboard, Interior);
+    ECS_COMPONENT_DECL(Dashboard, Interior);
+
+    FIELD();
+    bool hasDisplay = true;
+    FIELD();
+    int brightness = 50;
+};
+
+CLASS();
+class Electronics : public BasePart
+{
+    ECS_R_FRIEND_DECL(Electronics, BasePart);
+    ECS_COMPONENT_DECL(Electronics, BasePart);
+
+    FIELD();
+    int firmwareVersion = 1;
+};
+
+CLASS();
+class Sensor : public Electronics
+{
+    ECS_R_FRIEND_DECL(Sensor, Electronics);
+    ECS_COMPONENT_DECL(Sensor, Electronics);
+
+    FIELD();
+    std::string type = "generic";
+    FIELD();
+    float value = 0.0f;
+};
+
+CLASS();
+class Camera : public Sensor
+{
+    ECS_R_FRIEND_DECL(Camera, Sensor);
+    ECS_COMPONENT_DECL(Camera, Sensor);
+
+    FIELD();
+    int resolution = 1080;
+    FIELD();
+    bool hdr = false;
+};
+
 #include "DummyComponent.generated.h" // added by the code generator. Better don't move it.
