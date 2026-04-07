@@ -110,7 +110,7 @@ namespace Core
             _openedPath = Config::Path::projectAbsPath;
         }
     }*/
-    
+
     void AssetsManagerWindowEWC::onPreInitialize()
     {
         BaseFloatEWC::onPreInitialize();

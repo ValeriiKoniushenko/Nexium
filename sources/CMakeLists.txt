@@ -44,6 +44,9 @@ add_library(Nexium::Core ALIAS ${TARGET_NAME})
 target_include_directories(${TARGET_NAME} PUBLIC .)
 
 target_link_libraries(${TARGET_NAME} PUBLIC
+    Nexium::Misc
+    Nexium::ECS
+    Nexium::RawDataManagement
     Utils::Core
     assimp::assimp
     nlohmann_json

@@ -38,6 +38,12 @@ namespace Core
     {
         _data.release();
 
+        if (_path.empty()) [[unlikely]]
+        {
+            errorLog("Can't load the texture. The path is empty.");
+            return;
+        }
+
         Image img;
         if (!img.loadFromFile(Config::Path::projectAbsPath / _path, _isFlipVertically))
         {

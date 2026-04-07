@@ -99,6 +99,16 @@ namespace Core
         _gcd.bindVAO();
         _gcd.bindTexture(GL_TEXTURE_CUBE_MAP);
 
+        for (const auto& path : _paths)
+        {
+            if (path.empty()) [[unlikely]]
+            {
+                _gcd.unbindVao();
+                errorLog("One of Skybox's path is empty!");
+                return;
+            }
+        }
+
         int size = -1;
         for (std::size_t i = 0; i < _paths.size(); ++i)
         {

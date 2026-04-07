@@ -42,7 +42,6 @@ namespace Core
         MouseInputManger mouseInput;
 
     public:
-
     protected:
         DelegateSubscriberPoolGuard _subscriptionPool;
 
