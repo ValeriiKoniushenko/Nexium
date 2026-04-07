@@ -98,7 +98,7 @@ namespace Core
         }
     }
 
-    void AssetsManagerWindowEWC::ioFieldsUpdate(DataStream& out)
+    /*void AssetsManagerWindowEWC::ioFieldsUpdate(DataStream& out)
     {
         BaseFloatEWC::ioFieldsUpdate(out);
 
@@ -109,7 +109,8 @@ namespace Core
         {
             _openedPath = Config::Path::projectAbsPath;
         }
-    }
+    }*/
+    
     void AssetsManagerWindowEWC::onPreInitialize()
     {
         BaseFloatEWC::onPreInitialize();

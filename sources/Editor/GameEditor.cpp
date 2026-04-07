@@ -161,7 +161,7 @@ namespace Core
     {
         for (auto& wnd : _windows)
         {
-            wnd->writeToCache();
+            // wnd->writeToCache();
         }
     }
 

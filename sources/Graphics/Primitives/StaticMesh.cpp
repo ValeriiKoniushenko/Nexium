@@ -308,7 +308,7 @@ namespace Core
         }
     }
 
-    void StaticMesh::ioFieldsUpdate(DataStream& out)
+    /*void StaticMesh::ioFieldsUpdate(DataStream& out)
     {
         BaseComponent::ioFieldsUpdate(out);
         Transformable::ioFieldsUpdate(out);
@@ -318,7 +318,7 @@ namespace Core
 
         stream.field("size", _size);
         stream.field("center", _center);
-    }
+    }*/
 
     void StaticMesh::pureDraw(const std::function<void(StaticMesh*)>& onUniformSet)
     {

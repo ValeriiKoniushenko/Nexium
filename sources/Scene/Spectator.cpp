@@ -30,6 +30,7 @@ namespace Core
 {
     ECS_COMPONENT_IMPL(Spectator)
 
+    /*
     void Spectator::ioFieldsUpdate(DataStream& out)
     {
         Actor::ioFieldsUpdate(out);
@@ -40,7 +41,7 @@ namespace Core
         stream.field("mouseSensitivity", mouseSensitivity);
         stream.field(keyboardInput);
         // stream.field("mouseInput", mouseInput);
-    }
+    }*/
 
     StringAtom Spectator::getCacheHash() const
     {
@@ -59,7 +60,7 @@ namespace Core
     {
         Actor::onInitialize();
 
-        tryReadFromCache();
+        // tryReadFromCache();
 
         BaseCamera& camera = *getOrAddChildComponent<BaseCamera>();
 

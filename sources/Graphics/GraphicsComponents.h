@@ -30,7 +30,7 @@
 
 namespace Core
 {
-    class GraphicsComponentData : public IDataUpdateBridge
+    class GraphicsComponentData : public IDataIO
     {
     public:
         ENUM_CLASS();
@@ -183,8 +183,6 @@ namespace Core
         void addDrawModifiers(ModifiedValue value, Modifier mod);
 
         [[nodiscard]] Modifier getDrawModifier(ModifiedValue value);
-
-        void ioFieldsUpdate(DataStream& out) override;
 
         [[nodiscard]] uint32_t getTriangleCount() const noexcept { return _triangleCount; }
 

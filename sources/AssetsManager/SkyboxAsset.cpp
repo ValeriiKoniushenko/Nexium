@@ -136,6 +136,7 @@ namespace Core
         _gcd.clear();
     }
 
+    /*
     void SkyboxAsset::ioFieldsUpdate(DataStream& out)
     {
         auto stream = out.dedicatedNesting("SkyboxAsset");
@@ -150,6 +151,6 @@ namespace Core
         componentPath("pathToLeft", Direction::Left);
         componentPath("pathToRight", Direction::Right);
         stream.field("isFlipVertically", _isFlipVertically);
-    }
+    }*/
 
 } // namespace Core

@@ -27,13 +27,13 @@
 namespace Core
 {
 
-    void KeyboardInputManger::ioFieldsUpdate(DataStream& out)
+    /*void KeyboardInputManger::ioFieldsUpdate(DataStream& out)
     {
         Assert(false, "Not implemented");
 
         auto stream = out.dedicatedNesting("KeyboardInputManger");
 
-        /*
+
         json["mapping"] = nlohmann::json::array();
         for (const auto& [name, key] : _mapping)
         {
@@ -43,11 +43,11 @@ namespace Core
 
             json["mapping"].push_back(std::move(map));
         }
-         */
-    }
 
-    void MouseInputManger::ioFieldsUpdate(DataStream& out)
+    }*/
+
+    /*void MouseInputManger::ioFieldsUpdate(DataStream& out)
     {
         auto stream = out.dedicatedNesting("MouseInputManger");
-    }
+    }*/
 } // namespace Core

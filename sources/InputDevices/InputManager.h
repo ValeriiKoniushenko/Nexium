@@ -34,7 +34,7 @@
 namespace Core
 {
     template<IsInputAction InputTParam>
-    class InputManger : public BaseLog, public IDataStreamBridge
+    class InputManger : public BaseLog, public IDataIO
     {
     public:
         using Self = InputManger;
@@ -143,6 +143,8 @@ namespace Core
             return InputDevices::getLogger();
         }
 
+        [[nodiscard]] std::filesystem::path getCacheDir() const override { return "Inputs"; }
+
     private:
         // ==================== PIMPLs =======================
         template<bool isConst, class ThisT>
@@ -167,9 +169,6 @@ namespace Core
 
     class KeyboardInputManger : public InputManger<KeyboardInputAction>
     {
-    public:
-        void ioFieldsUpdate(DataStream& out) override;
-
     protected:
         [[nodiscard]] StringAtom getCacheHash() const override
         {
@@ -179,9 +178,6 @@ namespace Core
 
     class MouseInputManger : public InputManger<MouseInputAction>
     {
-    public:
-        void ioFieldsUpdate(DataStream& out) override;
-
     protected:
         [[nodiscard]] StringAtom getCacheHash() const override { return "MouseInputManger"_atom; }
     };

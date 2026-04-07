@@ -24,9 +24,11 @@
 
 #pragma once
 
-#include "../../GameplaySystem/Entities/Actor.h"
+#include "GameplaySystem/Entities/Actor.h"
 #include "StaticMesh.h"
 
+struct aiScene;
+struct aiNode;
 namespace Core
 {
     class StaticMeshBundle : public Actor, public IOutliner
@@ -69,7 +71,6 @@ namespace Core
         void clear() override;
 
         void clearMeshes();
-        void ioFieldsUpdate(DataStream& out) override;
 
         [[nodiscard]] std::size_t getRenderMeshesCount() const noexcept { return _meshes.size(); }
         [[nodiscard]] std::vector<StaticMesh*>& getRenderMeshes() noexcept { return _meshes; }
@@ -116,7 +117,7 @@ namespace Core
 
         friend void swap(StaticMeshBundle& a, StaticMeshBundle& b) noexcept
         {
-            std::swap(static_cast<Actor&>(a), static_cast<Actor&>(b));
+            // std::swap(static_cast<Actor&>(a), static_cast<Actor&>(b));
 
             std::swap(a._meshes, b._meshes);
             std::swap(a._bundles, b._bundles);
@@ -126,10 +127,6 @@ namespace Core
 
     protected:
         void onOutlineStatusChange(bool newStatus) override;
-
-        [[nodiscard]] StringAtom getCacheHash() const override;
-
-        [[nodiscard]] std::filesystem::path getCacheDir() const override;
 
         void onAddChild(BaseComponent* newChild) override;
 

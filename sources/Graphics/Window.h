@@ -94,7 +94,7 @@ namespace Core
 
     extern DragAndDrop gDragDrop;
 
-    class Window : public BaseLog, public IDataStreamBridge, public Singleton<Window>
+    class Window : public BaseLog, public IDataIO, public Singleton<Window>
     {
     public:
         ENUM_CLASS();
@@ -184,8 +184,6 @@ namespace Core
 
         [[nodiscard]] spdlog::logger* getLogger() const override;
         [[nodiscard]] const char* getPrefix() const override { return "Window"; }
-
-        void ioFieldsUpdate(DataStream& out) override;
 
     protected:
         [[nodiscard]] StringAtom getCacheHash() const override;

@@ -42,7 +42,6 @@ namespace Core
         MouseInputManger mouseInput;
 
     public:
-        void ioFieldsUpdate(DataStream& out) override;
 
     protected:
         DelegateSubscriberPoolGuard _subscriptionPool;

@@ -25,8 +25,8 @@
 #pragma once
 
 #include "Core/Color.h"
-#include "GameplaySystem/ECS/BaseComponent.h"
-#include "GameplaySystem/ECS/Transformable.h"
+#include "ECS/BaseComponent.h"
+#include "ECS/Transformable.h"
 #include "ImGui/imgui.h"
 #include "InputDevices/Keyboard.h"
 

@@ -99,8 +99,6 @@ namespace Core
 
         void recalculateMatrices(const glm::mat4& mat = glm::mat4(1.f)) override;
 
-        void ioFieldsUpdate(DataStream& out) override;
-
     protected:
         [[nodiscard]] StringAtom getCacheHash() const override;
 

@@ -24,18 +24,18 @@
 
 #include "ObjectPropertiesWindow.h"
 
-#include "../../Misc/Configs.h"
-#include "Camera/Camera.h"
+#include "ECS/Transformable.h"
 #include "Editor/GuiComponents/CheckBox.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/Label.h"
 #include "Editor/GuiComponents/Misc.h"
 #include "Editor/GuiComponents/Spacer.h"
-#include "GameplaySystem/ECS/Transformable.h"
+#include "GameplaySystem/Camera.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Graphics/Primitives/StaticMeshBundle.h"
 #include "ImGui/imgui_internal.h"
+#include "Misc/Configs.h"
 
 using namespace Core;
 using namespace Core::Gui;

@@ -178,13 +178,13 @@ namespace Core
         }
     }
 
-    void StaticMeshBundle::ioFieldsUpdate(DataStream& out)
+    /*void StaticMeshBundle::ioFieldsUpdate(DataStream& out)
     {
         Actor::ioFieldsUpdate(out);
 
         auto stream = out.dedicatedNesting("StaticMeshBundle");
         stream.field("ignoreSelect", _ignoreSelect);
-    }
+    }*/
 
     std::size_t StaticMeshBundle::getRenderableTriangles() const
     {
@@ -205,16 +205,6 @@ namespace Core
         }
 
         return out;
-    }
-
-    StringAtom StaticMeshBundle::getCacheHash() const
-    {
-        return getComponentName();
-    }
-
-    std::filesystem::path StaticMeshBundle::getCacheDir() const
-    {
-        return Config::Path::gameConfigModel3DsDir;
     }
 
     void StaticMeshBundle::onAddChild(BaseComponent* newChild)

@@ -87,7 +87,7 @@ namespace Core
 
     void Window::create(const StringAtom& title, ISize2 size /* = { 300, 300 }*/)
     {
-        tryReadFromCache();
+        // tryReadFromCache();
 
         glfwSetErrorCallback(glfwErrorCallback);
         if (!glfwInit())
@@ -99,7 +99,7 @@ namespace Core
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_MAXIMIZED, _isMaximized ? GLFW_TRUE : GLFW_FALSE);
 
-        if (!hasCache())
+        // if (!hasCache())
         {
             _size = size;
             _title = title;
@@ -159,7 +159,7 @@ namespace Core
 
     void Window::destroy()
     {
-        writeToCache();
+        // writeToCache();
         ImGui::DestroyContext();
         glfwTerminate();
     }
@@ -274,7 +274,7 @@ namespace Core
         return Graphics::getLogger();
     }
 
-    void Window::ioFieldsUpdate(DataStream& out)
+    /*void Window::ioFieldsUpdate(DataStream& out)
     {
         auto stream = out.dedicatedNesting("Window");
 
@@ -287,7 +287,7 @@ namespace Core
         _isMaximized = bIsMaximized;
 
         stream.field("vSync", _swapInterval);
-    }
+    }*/
 
     StringAtom Window::getCacheHash() const
     {

@@ -33,7 +33,7 @@
 
 namespace Core
 {
-    struct LightningProps : public IDataStreamBridge
+    struct LightningProps : public IDataIO
     {
         float ambientStrength = 1.f;
         float minLightStrength = 0.2f;
@@ -44,10 +44,9 @@ namespace Core
 
         [[nodiscard]] std::filesystem::path getCacheDir() const override;
         [[nodiscard]] StringAtom getCacheHash() const override;
-        void ioFieldsUpdate(DataStream& out) override;
     };
 
-    class World : public BaseLog, public IDataStreamBridge
+    class World : public BaseLog, public IDataIO
     {
     public:
         [[nodiscard]] spdlog::logger* getLogger() const override;
@@ -65,6 +64,5 @@ namespace Core
     protected:
         [[nodiscard]] std::filesystem::path getCacheDir() const override;
         [[nodiscard]] StringAtom getCacheHash() const override;
-        void ioFieldsUpdate(DataStream& out) override;
     };
 } // namespace Core

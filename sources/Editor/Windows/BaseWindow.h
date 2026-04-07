@@ -25,16 +25,18 @@
 #pragma once
 
 #include "Core/Delegate.h"
-#include "GameplaySystem/ECS/BaseComponent.h"
+#include "Core/Size.h"
+#include "ECS/BaseComponent.h"
 #include "ImGui/imgui.h"
 #include "Misc/IconsFontAwesome.h"
+#include "RawDataManagement/DataStream.h"
 
 namespace Core
 {
     /**
      * BaseEditorWindowComponent or briefly BaseEWC
      */
-    class BaseEWC : public BaseComponent
+    class BaseEWC : public BaseComponent, public IDataIO
     {
         ECS_COMPONENT_DECL(BaseEWC, BaseComponent);
 

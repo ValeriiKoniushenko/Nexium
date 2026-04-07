@@ -24,8 +24,8 @@
 
 #pragma once
 
+#include "../Camera.h"
 #include "AssetsManager/AssetsManager.h"
-#include "Camera/Camera.h"
 #include "Editor/GameEditor.h"
 #include "Editor/ObjectSelectorManager.h"
 #include "Graphics/RenderTargetToTexture.h"
@@ -37,7 +37,7 @@
 
 namespace Core
 {
-    class GameInstance : public BaseLog, public IDataStreamBridge
+    class GameInstance : public BaseLog, public IDataIO
     {
     public:
         ENUM_CLASS();
@@ -58,8 +58,6 @@ namespace Core
         void toggleRenderMode();
 
         void saveAll();
-
-        void ioFieldsUpdate(DataStream& out) override;
 
     public:
         Scene gameScene;

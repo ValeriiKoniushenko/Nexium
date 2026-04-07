@@ -230,7 +230,7 @@ namespace Core
     {
     }
 
-    void LogsWindowEWC::ioFieldsUpdate(DataStream& out)
+    /*void LogsWindowEWC::ioFieldsUpdate(DataStream& out)
     {
         BaseFloatEWC::ioFieldsUpdate(out);
 
@@ -264,6 +264,6 @@ namespace Core
                                }
                            }
                        });
-    }
+    }*/
 
 } // namespace Core

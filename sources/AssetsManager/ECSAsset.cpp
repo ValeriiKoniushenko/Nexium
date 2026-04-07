@@ -116,12 +116,12 @@ namespace Core
 
         if (_status == Status::Loaded)
         {
-            DataStream stream;
-            stream.setMode(DataStream::Mode::Output);
-            _data->ioFieldsUpdate(stream);
-
-            json[StreamData::name] = _data->getComponentName();
-            json[StreamData::data] = std::move(stream.getRaw());
+            // DataStream stream;
+            // stream.setMode(DataStream::Mode::Output);
+            // _data->ioFieldsUpdate(stream);
+            //
+            // json[StreamData::name] = _data->getComponentName();
+            // json[StreamData::data] = std::move(stream.getRaw());
         }
 
         std::fstream out(_meta.pathToSource, std::ios::out);
@@ -197,9 +197,9 @@ namespace Core
                 Utils::GetTextFileContentAs<std::string>(_meta.pathToSource));
 
             // updating object's fields
-            DataStream stream;
-            stream.setMode(DataStream::Mode::Input);
-            stream.getRaw() = json[StreamData::data];
+            // DataStream stream;
+            // stream.setMode(DataStream::Mode::Input);
+            // stream.getRaw() = json[StreamData::data];
 
             // [opt] making loading of essential data (texture loading, 3D model loading, etc)
             if (_impl)
@@ -207,7 +207,7 @@ namespace Core
                 _impl->load(*this, _data.get(), json[StreamData::assetData]);
             }
 
-            _data->ioFieldsUpdate(stream);
+            // _data->ioFieldsUpdate(stream);
 
             _status = Status::Loaded;
             traceLog("Asset:: '{}' is: loaded! New status is: 'Loaded'"_f << _meta.logicPath);

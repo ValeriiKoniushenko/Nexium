@@ -24,7 +24,7 @@
 
 #include "GameInstance.h"
 
-#include "Camera/Camera.h"
+#include "../Camera.h"
 #include "Core/Timer.h"
 #include "Editor/Windows/GameViewport.h"
 #include "Editor/Windows/ModalECSSearchPopUp.h"
@@ -75,7 +75,7 @@ namespace Core
         std::cout << std::fixed << std::setprecision(15);
         spdlog::set_pattern(Config::spdlogPattern);
 
-        tryReadFromCache();
+        // tryReadFromCache();
 
         //-------------------- WINDOW ---------------------
         window = &GetWindow();
@@ -142,8 +142,8 @@ namespace Core
     void GameInstance::startUpReadCache()
     {
         gameEditor.readFromCache();
-        world.tryReadFromCache();
-        gameScene.tryReadFromCache();
+        // world.tryReadFromCache();
+        // gameScene.tryReadFromCache();
         onInitializeReadCache();
         ImGui::LoadIniSettingsFromDisk(Config::Path::imGuiWindowsIni.generic_string().c_str());
     }
@@ -151,22 +151,22 @@ namespace Core
     void GameInstance::saveAll()
     {
         gameEditor.writeToCache();
-        gameScene.writeToCache();
-        world.writeToCache();
+        // gameScene.writeToCache();
+        // world.writeToCache();
         ImGui::SaveIniSettingsToDisk(Config::Path::imGuiWindowsIni.generic_string().c_str());
-        writeToCache();
+        // writeToCache();
 
         onSaveAll();
     }
 
-    void GameInstance::ioFieldsUpdate(DataStream& out)
+    /*void GameInstance::ioFieldsUpdate(DataStream& out)
     {
         auto stream = out.dedicatedNesting("GameInstance");
 
         int iRenderMode = static_cast<int>(renderMode);
         stream.field("renderMode", iRenderMode);
         renderMode = static_cast<RenderMode>(iRenderMode);
-    }
+    }*/
 
     void GameInstance::runMainLoop()
     {

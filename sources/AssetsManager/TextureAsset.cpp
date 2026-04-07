@@ -55,12 +55,13 @@ namespace Core
         _data.release();
     }
 
+    /*
     void TextureAsset::ioFieldsUpdate(DataStream& out)
     {
         auto stream = out.dedicatedNesting("TextureAsset");
 
         stream.field("path", _path);
         stream.field("isFlipVertically", _isFlipVertically);
-    }
+    }*/
 
 } // namespace Core

@@ -61,7 +61,6 @@ namespace Core
     protected:
         void onLoadRequest() override;
         void onUnloadRequest() override;
-        void ioFieldsUpdate(DataStream& out) override;
 
     protected:
         GraphicsComponentData _gcd;

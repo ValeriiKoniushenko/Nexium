@@ -66,7 +66,7 @@ namespace Core
          * @return true if you support hot reload. By default - false
          */
         virtual bool onHotReload() { return false; }
-        virtual void ioFieldsUpdate(DataStream& out) = 0;
+        virtual void ioFieldsUpdate(DataStream& out) {}
 
     protected:
         std::filesystem::path _assetPath;

@@ -25,7 +25,7 @@
 #pragma once
 
 #include "Core/IntrusivePtr.h"
-#include "GameplaySystem/ECS/BaseComponent.h"
+#include "ECS/BaseComponent.h"
 
 #include <filesystem>
 

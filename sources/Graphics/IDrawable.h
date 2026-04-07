@@ -33,7 +33,7 @@ namespace Core
     class Actor;
 
     CLASS();
-    class IDrawable : public IDataUpdateBridge
+    class IDrawable : public IDataIO
     {
         R_FRIEND(IDrawable);
 
@@ -66,8 +66,7 @@ namespace Core
         void setIsPostDraw(bool value) noexcept { _isPostDraw = value; }
         [[nodiscard]] bool isPostDraw() const noexcept { return _isPostDraw; }
 
-        // override -> IDataUpdateBridge
-        void ioFieldsUpdate(DataStream& out) override;
+        // override -> IDataIO
         [[nodiscard]] StringAtom getCacheHash() const override { return "IDrawable"_atom; }
 
     protected:

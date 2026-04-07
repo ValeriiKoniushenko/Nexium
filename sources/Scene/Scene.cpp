@@ -78,12 +78,12 @@ namespace Core
         }
     }
 
-    void Scene::ioFieldsUpdate(DataStream& out)
+    /*void Scene::ioFieldsUpdate(DataStream& out)
     {
         auto stream = out.dedicatedNesting("Scene");
 
         stream.field("sceneName", _sceneName, "Default"_dyn);
-    }
+    }*/
 
     const StringAtom& Scene::getSceneName() const noexcept
     {
@@ -110,7 +110,7 @@ namespace Core
         added->initialize();
         if (readFromCache)
         {
-            added->tryReadFromCache();
+            // added->tryReadFromCache();
         }
 
         onObjectAdded->trigger(sceneAsset);
@@ -128,7 +128,7 @@ namespace Core
 
             if (readFromCache)
             {
-                added->tryReadFromCache();
+                // added->tryReadFromCache();
             }
 
             onObjectAdded->trigger(sceneAsset);
@@ -141,7 +141,7 @@ namespace Core
         {
             if (auto* object = asset->getData())
             {
-                object->writeToCache();
+                // object->writeToCache();
             }
         }
     }

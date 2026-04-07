@@ -53,8 +53,6 @@ namespace Core
 
         [[nodiscard]] const char* getIcon() override { return ICON_FA_ALIGN_LEFT; }
 
-        void ioFieldsUpdate(DataStream& out) override;
-
     protected:
         void onPreInitialize() override;
 

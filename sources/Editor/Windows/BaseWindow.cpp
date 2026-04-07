@@ -24,6 +24,8 @@
 
 #include "BaseWindow.h"
 
+#include "Misc/Configs.h"
+
 namespace Core
 {
     ECS_COMPONENT_IMPL(BaseEWC)
@@ -192,7 +194,7 @@ namespace Core
     {
         BaseComponent::onInitialize();
 
-        tryReadFromCache();
+        // tryReadFromCache();
     }
 
     //

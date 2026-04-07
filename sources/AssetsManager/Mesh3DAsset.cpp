@@ -121,6 +121,7 @@ namespace Core
         _assimpPostProcess = value;
     }
 
+    /*
     void Mesh3DAsset::ioFieldsUpdate(DataStream& out)
     {
         BaseActorAsset::ioFieldsUpdate(out);
@@ -143,7 +144,7 @@ namespace Core
             "assimpPostProcess", _assimpPostProcess,
             [this](int& out, nlohmann::json& s) { out = readAssimpPostProcessFromCache(s); },
             [this](int assimpFlags) { return assimpPostProcessToCache(assimpFlags); });
-    }
+    }*/
 
     int Mesh3DAsset::readAssimpPostProcessFromCache(nlohmann::json& s)
     {

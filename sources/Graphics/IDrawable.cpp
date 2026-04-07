@@ -27,10 +27,10 @@
 namespace Core
 {
 
-    void IDrawable::ioFieldsUpdate(DataStream& out)
+    /*void IDrawable::ioFieldsUpdate(DataStream& out)
     {
         auto stream = out.dedicatedNesting("IDrawable");
         stream.field("isPostDraw", _isPostDraw);
-    }
+    }*/
 
 } // namespace Core

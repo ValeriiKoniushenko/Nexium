@@ -27,6 +27,7 @@
 #include "Core/Delegate.h"
 #include "ImGui/imgui_internal.h"
 #include "ImGui/misc/cpp/imgui_stdlib.h"
+#include "Utils/Concepts.h"
 #include "Widget.h"
 
 #include <limits>

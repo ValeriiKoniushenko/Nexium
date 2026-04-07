@@ -24,7 +24,7 @@
 
 #include "GraphicsComponents.h"
 
-#include "GameplaySystem/ECS/BaseComponent.h"
+#include "ECS/BaseComponent.h"
 #include "assimp/scene.h"
 
 namespace Core
@@ -302,7 +302,7 @@ namespace Core
         return Modifier::None;
     }
 
-    void GraphicsComponentData::ioFieldsUpdate(DataStream& out)
+    /*void GraphicsComponentData::ioFieldsUpdate(DataStream& out)
     {
         auto stream = out.dedicatedNesting("GraphicsComponentData");
 
@@ -337,7 +337,8 @@ namespace Core
                         if (!value || !param)
                         {
                             globalLog.errorLog(
-                                "Was got invalid GraphicsComponentData ModifiedValue: '{}' or Modifier: '{}'"_f
+                                "Was got invalid GraphicsComponentData ModifiedValue: '{}' or
+    Modifier: '{}'"_f
                                 << modifier["value"].get<std::string>()
                                 << modifier["modifier"].get<std::string>());
                             continue;
@@ -346,7 +347,7 @@ namespace Core
                     }
                 }
             });
-    }
+    }*/
 
     StringAtom GraphicsComponentData::getCacheHash() const
     {

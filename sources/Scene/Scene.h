@@ -29,6 +29,7 @@
 #include "AssetsManager/Mesh3DAsset.h"
 #include "AssetsManager/SkyboxAsset.h"
 #include "Core/Delegate.h"
+#include "GameplaySystem/Framework/WorldObject.h"
 #include "Graphics/Primitives/StaticMeshBundle.h"
 #include "Grid.h"
 
@@ -36,7 +37,7 @@
 
 namespace Core
 {
-    class Scene : public IDataStreamBridge
+    class Scene : public IDataIO
     {
     public:
         // TODO: change to another data structure!!! It's awful
@@ -55,8 +56,6 @@ namespace Core
         void directDraw();
 
         void setSceneName(StringAtom name);
-
-        void ioFieldsUpdate(DataStream& out) override;
 
         [[nodiscard]] const StringAtom& getSceneName() const noexcept;
 
