@@ -1,5 +1,5 @@
 {
-  "path": "data/assets/objects-3d/Nature/Rock3.glb",
+  "_path": "data/assets/objects-3d/Nature/Rock3.glb",
   "mainShader": "defaultTextured",
   "outlineShader": "outline",
   "onLoadScale": 100.0,

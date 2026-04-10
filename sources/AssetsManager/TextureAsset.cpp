@@ -61,6 +61,19 @@ namespace Core
         _data.release();
     }
 
+    nlohmann::json TextureAsset::serialize() const
+    {
+        RResourceStream<RJsonResourceStream> out(BaseAsset::serialize());
+        R<TextureAsset>::Serialize(*this, out);
+        return out.getData();
+    }
+
+    void TextureAsset::deserialize(const nlohmann::json& json)
+    {
+        BaseAsset::deserialize(json);
+        R<TextureAsset>::Deserialize({ json }, *this);
+    }
+
     /*
     void TextureAsset::ioFieldsUpdate(DataStream& out)
     {

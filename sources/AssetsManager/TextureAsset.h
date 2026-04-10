@@ -29,8 +29,12 @@
 
 namespace Core
 {
+
+    CLASS();
     class TextureAsset : public BaseAsset
     {
+        R_FRIEND(TextureAsset);
+
     public:
         inline static const char* fileExtension = ".nxtex";
 
@@ -60,15 +64,25 @@ namespace Core
         void onLoadRequest() override;
         void onUnloadRequest() override;
 
+        [[nodiscard]] nlohmann::json serialize() const override;
+        void deserialize(const nlohmann::json& json) override;
+
     protected:
         Texture _data;
 
         // properties
+
+        FIELD();
         std::filesystem::path _path;
+
         Image::Channel _channels = Image::Channel::None;
         ISize2 _size = {};
+
+        FIELD();
         bool _isFlipVertically = false;
     };
 
     using NXTexture = AssetRef<TextureAsset>;
 } // namespace Core
+
+#include "TextureAsset.generated.h" // added by the code generator. Better don't move it.

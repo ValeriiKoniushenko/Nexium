@@ -32,8 +32,11 @@
 namespace Core
 {
 
+    CLASS();
     class BaseAsset : public BaseLog
     {
+        R_FRIEND(BaseAsset);
+
     public:
         explicit BaseAsset(const StringAtom& logicPath)
             : _logicPath(logicPath)
@@ -67,6 +70,9 @@ namespace Core
          */
         virtual bool onHotReload() { return false; }
         virtual void ioFieldsUpdate(DataStream& out) {}
+
+        [[nodiscard]] virtual nlohmann::json serialize() const;
+        virtual void deserialize(const nlohmann::json& json);
 
     protected:
         std::filesystem::path _assetPath;
@@ -192,3 +198,5 @@ namespace Core
         T* _asset = nullptr;
     };
 } // namespace Core
+
+#include "BaseAsset.generated.h" // added by the code generator. Better don't move it.

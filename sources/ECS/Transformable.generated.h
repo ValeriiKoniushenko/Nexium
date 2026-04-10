@@ -38,6 +38,17 @@ struct R<Core::Transformable>
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    static void Serialize(const Core::Transformable& obj, RResourceStream<RImpl>& s)
+    {
+        
+		s.write("_scale", obj._scale);
+		s.write("_origin", obj._origin);
+		s.write("_position", obj._position);
+		s.write("_rotation", obj._rotation);
+    }
+
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, Core::Transformable& obj)
     {
 		s.read("_scale", obj._scale, glm::vec3(1.f));

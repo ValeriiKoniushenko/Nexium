@@ -64,11 +64,18 @@ namespace Core
 
         try
         {
-            DataStream stream;
-            stream.setMode(DataStream::Mode::Input);
-            stream.getRaw()
+            RResourceStream<RJsonResourceStream> stream;
+            stream.getData()
                 = nlohmann::json::parse(Utils::GetTextFileContentAs<std::string>(_assetPath));
-            ioFieldsUpdate(stream);
+
+            auto assetData = stream.getData().find("AssetData");
+            if (assetData == stream.getData().end())
+            {
+                throw std::runtime_error(
+                    "Asset's source file doesn't contain a field: 'AssetData'.");
+            }
+
+            deserialize(*assetData);
         }
         catch (const std::exception& e)
         {
@@ -121,6 +128,18 @@ namespace Core
     spdlog::logger* BaseAsset::getLogger() const
     {
         return AssetsManager::getLogger();
+    }
+
+    nlohmann::json BaseAsset::serialize() const
+    {
+        return R<BaseAsset>::Serialize(*this).getData();
+    }
+
+    void BaseAsset::deserialize(const nlohmann::json& json)
+    {
+        RResourceStream<RJsonResourceStream> data;
+        data.getData() = json;
+        R<BaseAsset>::Deserialize(data, *this);
     }
 
 } // namespace Core

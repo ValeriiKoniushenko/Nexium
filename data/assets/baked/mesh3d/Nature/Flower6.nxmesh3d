@@ -1,5 +1,5 @@
 {
-  "path": "data/assets/objects-3d/Nature/Flower6.glb",
+  "_path": "data/assets/objects-3d/Nature/Flower6.glb",
   "mainShader": "defaultTextured",
   "outlineShader": "outline",
   "onLoadScale": 100.0,

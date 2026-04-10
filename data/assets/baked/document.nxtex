@@ -1,6 +1,6 @@
 {
-  "TextureAsset": {
+  "AssetData": {
     "isFlipVertically": false,
-    "path": "data/assets/images/document.png"
+    "_path": "data/assets/images/document.png"
   }
 }

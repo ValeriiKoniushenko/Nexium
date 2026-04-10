@@ -1,5 +1,5 @@
 {
-  "SkyboxAsset": {
+  "AssetData": {
     "pathToTop": "data/assets/images/skybox/top.png",
     "pathToBottom": "data/assets/images/skybox/bottom.png",
     "pathToBack": "data/assets/images/skybox/back.png",

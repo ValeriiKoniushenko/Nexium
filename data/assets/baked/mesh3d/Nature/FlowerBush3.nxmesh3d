@@ -1,5 +1,5 @@
 {
-  "path": "data/assets/objects-3d/Nature/FlowerBush3.glb",
+  "_path": "data/assets/objects-3d/Nature/FlowerBush3.glb",
   "mainShader": "defaultTextured",
   "outlineShader": "outline",
   "onLoadScale": 100.0,

@@ -1,5 +1,5 @@
 {
-  "path": "data/assets/objects-3d/Models/FBX/Tree.fbx",
+  "_path": "data/assets/objects-3d/Models/FBX/Tree.fbx",
   "mainShader": "defaultTextured",
   "outlineShader": "outline",
   "assimpPostProcess": [

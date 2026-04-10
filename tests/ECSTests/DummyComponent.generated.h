@@ -35,6 +35,16 @@ struct R<DummyComponent>
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    static void Serialize(const DummyComponent& obj, RResourceStream<RImpl>& s)
+    {
+        
+		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
+		s.write("a", obj.a);
+		s.write("name", obj.name);
+    }
+
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, DummyComponent& obj)
     {
 		R<Core::BaseComponent>::Deserialize<RImpl>(s, obj);
@@ -63,6 +73,14 @@ struct R<HardConstructorComponent>
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    static void Serialize(const HardConstructorComponent& obj, RResourceStream<RImpl>& s)
+    {
+        
+		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
+    }
+
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, HardConstructorComponent& obj)
     {
 		R<Core::BaseComponent>::Deserialize<RImpl>(s, obj);
@@ -87,6 +105,14 @@ struct R<InitSpyComponent>
 		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
         return s;
     }
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    static void Serialize(const InitSpyComponent& obj, RResourceStream<RImpl>& s)
+    {
+        
+		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
+    }
+
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, InitSpyComponent& obj)
@@ -119,6 +145,17 @@ struct R<Vehicle>
 		s.write("running", obj.running);
         return s;
     }
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    static void Serialize(const Vehicle& obj, RResourceStream<RImpl>& s)
+    {
+        
+		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
+		s.write("vin", obj.vin);
+		s.write("mileage", obj.mileage);
+		s.write("running", obj.running);
+    }
+
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, Vehicle& obj)
@@ -154,6 +191,16 @@ struct R<BaseCar>
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    static void Serialize(const BaseCar& obj, RResourceStream<RImpl>& s)
+    {
+        
+		s.write(R<Vehicle>::Serialize<RImpl>(obj).getData());
+		s.write("horsepower", obj.horsepower);
+		s.write("fuelLevel", obj.fuelLevel);
+    }
+
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, BaseCar& obj)
     {
 		R<Vehicle>::Deserialize<RImpl>(s, obj);
@@ -186,6 +233,16 @@ struct R<Sedan>
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    static void Serialize(const Sedan& obj, RResourceStream<RImpl>& s)
+    {
+        
+		s.write(R<BaseCar>::Serialize<RImpl>(obj).getData());
+		s.write("doors", obj.doors);
+		s.write("hasSunroof", obj.hasSunroof);
+    }
+
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, Sedan& obj)
     {
 		R<BaseCar>::Deserialize<RImpl>(s, obj);
@@ -216,6 +273,16 @@ struct R<BasePart>
 		s.write("manufacturer", obj.manufacturer);
         return s;
     }
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    static void Serialize(const BasePart& obj, RResourceStream<RImpl>& s)
+    {
+        
+		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
+		s.write("id", obj.id);
+		s.write("manufacturer", obj.manufacturer);
+    }
+
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, BasePart& obj)
@@ -252,6 +319,17 @@ struct R<Engine>
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    static void Serialize(const Engine& obj, RResourceStream<RImpl>& s)
+    {
+        
+		s.write(R<BasePart>::Serialize<RImpl>(obj).getData());
+		s.write("cylinders", obj.cylinders);
+		s.write("volume", obj.volume);
+		s.write("started", obj.started);
+    }
+
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, Engine& obj)
     {
 		R<BasePart>::Deserialize<RImpl>(s, obj);
@@ -283,6 +361,16 @@ struct R<TurboEngine>
 		s.write("turboEnabled", obj.turboEnabled);
         return s;
     }
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    static void Serialize(const TurboEngine& obj, RResourceStream<RImpl>& s)
+    {
+        
+		s.write(R<Engine>::Serialize<RImpl>(obj).getData());
+		s.write("boostPressure", obj.boostPressure);
+		s.write("turboEnabled", obj.turboEnabled);
+    }
+
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, TurboEngine& obj)
@@ -317,6 +405,16 @@ struct R<Wheel>
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    static void Serialize(const Wheel& obj, RResourceStream<RImpl>& s)
+    {
+        
+		s.write(R<BasePart>::Serialize<RImpl>(obj).getData());
+		s.write("radius", obj.radius);
+		s.write("pressure", obj.pressure);
+    }
+
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, Wheel& obj)
     {
 		R<BasePart>::Deserialize<RImpl>(s, obj);
@@ -345,6 +443,15 @@ struct R<Interior>
 		s.write("color", obj.color);
         return s;
     }
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    static void Serialize(const Interior& obj, RResourceStream<RImpl>& s)
+    {
+        
+		s.write(R<BasePart>::Serialize<RImpl>(obj).getData());
+		s.write("color", obj.color);
+    }
+
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, Interior& obj)
@@ -376,6 +483,16 @@ struct R<Seat>
 		s.write("position", obj.position);
         return s;
     }
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    static void Serialize(const Seat& obj, RResourceStream<RImpl>& s)
+    {
+        
+		s.write(R<Interior>::Serialize<RImpl>(obj).getData());
+		s.write("heated", obj.heated);
+		s.write("position", obj.position);
+    }
+
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, Seat& obj)
@@ -410,6 +527,16 @@ struct R<Dashboard>
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    static void Serialize(const Dashboard& obj, RResourceStream<RImpl>& s)
+    {
+        
+		s.write(R<Interior>::Serialize<RImpl>(obj).getData());
+		s.write("hasDisplay", obj.hasDisplay);
+		s.write("brightness", obj.brightness);
+    }
+
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, Dashboard& obj)
     {
 		R<Interior>::Deserialize<RImpl>(s, obj);
@@ -438,6 +565,15 @@ struct R<Electronics>
 		s.write("firmwareVersion", obj.firmwareVersion);
         return s;
     }
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    static void Serialize(const Electronics& obj, RResourceStream<RImpl>& s)
+    {
+        
+		s.write(R<BasePart>::Serialize<RImpl>(obj).getData());
+		s.write("firmwareVersion", obj.firmwareVersion);
+    }
+
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, Electronics& obj)
@@ -471,6 +607,16 @@ struct R<Sensor>
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    static void Serialize(const Sensor& obj, RResourceStream<RImpl>& s)
+    {
+        
+		s.write(R<Electronics>::Serialize<RImpl>(obj).getData());
+		s.write("type", obj.type);
+		s.write("value", obj.value);
+    }
+
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, Sensor& obj)
     {
 		R<Electronics>::Deserialize<RImpl>(s, obj);
@@ -501,6 +647,16 @@ struct R<Camera>
 		s.write("hdr", obj.hdr);
         return s;
     }
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    static void Serialize(const Camera& obj, RResourceStream<RImpl>& s)
+    {
+        
+		s.write(R<Sensor>::Serialize<RImpl>(obj).getData());
+		s.write("resolution", obj.resolution);
+		s.write("hdr", obj.hdr);
+    }
+
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, Camera& obj)
