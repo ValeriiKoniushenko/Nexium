@@ -35,18 +35,37 @@ namespace Core::AssetImpl
     public:
         using implementedAssetType = Core::StaticMeshBundle;
 
-        struct AssetData
+        CLASS();
+        class AssetData
         {
-            AssetData() = default;
-            ~AssetData() = default;
-            AssetData(const AssetData&) = default;
-            AssetData(AssetData&&) noexcept = default;
+        public:
+            R_FRIEND(AssetData);
 
+            FIELD();
             std::filesystem::path meshPath;
+
+            FIELD();
             StringAtom mainShader;
+
+            FIELD();
             StringAtom outlineShader;
+
+            FIELD();
             float onLoadScale = 1.0f;
-            int assimpPostProcess = 0;
+
+            FIELD();
+            std::vector<std::string> assimpPostProcess;
+
+            [[nodiscard]] int getAssimpPostProcessFlagsAsInt() const noexcept
+            {
+                return _assimpPostProcessFlagsAsInt;
+            }
+
+            [[nodiscard]] nlohmann::json serialize() const;
+            void deserialize(const nlohmann::json& json);
+
+        private:
+            int _assimpPostProcessFlagsAsInt = 0;
         };
 
     public:
@@ -59,9 +78,8 @@ namespace Core::AssetImpl
 
     private:
         void spawn(ECSAsset& asset);
-
-    private:
-        [[nodiscard]] AssetData extractAssetData(const nlohmann::json& assetData) const;
     };
 
 } // namespace Core::AssetImpl
+
+#include "StaticMeshBundle.generated.h" // added by the code generator. Better don't move it.

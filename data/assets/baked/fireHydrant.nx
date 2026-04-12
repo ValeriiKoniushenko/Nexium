@@ -8,7 +8,7 @@
         "mainShader": "defaultTextured",
         "onLoadScale": 1.0,
         "outlineShader": "outline",
-        "_path": "data/assets/objects-3d/Models/FBX/FireHydrant.fbx"
+        "meshPath": "data/assets/objects-3d/Models/FBX/FireHydrant.fbx"
     },
     "data": {
         "AbstractComponent": {

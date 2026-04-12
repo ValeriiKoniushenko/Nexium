@@ -31,6 +31,28 @@
 namespace Core::AssetImpl
 {
 
+    nlohmann::json StaticMeshBundle::AssetData::serialize() const
+    {
+        return R<AssetData>::Serialize<RJsonResourceStream>(*this).getData();
+    }
+
+    void StaticMeshBundle::AssetData::deserialize(const nlohmann::json& json)
+    {
+        _assimpPostProcessFlagsAsInt = 0;
+
+        R<AssetData>::Deserialize({ json }, *this);
+        for (auto&& asString : assimpPostProcess)
+        {
+            if (auto flag = Assimp::aiPostProcessStepsFromString(asString.c_str()))
+            {
+                _assimpPostProcessFlagsAsInt |= flag.value();
+            }
+        }
+
+        mainShader = StringAtom::Intern(mainShader);
+        outlineShader = StringAtom::Intern(outlineShader);
+    }
+
     void StaticMeshBundle::load(const ECSAsset& asset, BaseComponent* dataOwner,
                                 const nlohmann::json& assetData)
     {
@@ -39,7 +61,8 @@ namespace Core::AssetImpl
             return;
         }
 
-        const auto extractedData = extractAssetData(assetData);
+        AssetData extractedData;
+        extractedData.deserialize(assetData);
         if (extractedData.meshPath.empty())
         {
             return;
@@ -48,7 +71,7 @@ namespace Core::AssetImpl
         Assimp::Importer importer;
         const aiScene* scene = importer.ReadFile(
             (Config::Path::projectAbsPath / extractedData.meshPath).generic_string(),
-            extractedData.assimpPostProcess);
+            extractedData.getAssimpPostProcessFlagsAsInt());
         if (Verify(scene) && Verify(scene->mRootNode))
         {
             if (const auto owner = dataOwner->castTo<Core::StaticMeshBundle>())
@@ -101,68 +124,6 @@ namespace Core::AssetImpl
     void StaticMeshBundle::spawn(ECSAsset& asset)
     {
         gGameInstance->gameScene.addToScene(asset);
-    }
-
-    StaticMeshBundle::AssetData StaticMeshBundle::extractAssetData(
-        const nlohmann::json& assetData) const
-    {
-        using Naming = ECSEditorStaticMeshBundleAdapter::StreamData;
-
-        AssetData data;
-
-        if (assetData.contains(Naming::mainShader))
-        {
-            data.mainShader = StringAtom::Intern(assetData[Naming::mainShader].get<StringAtom>());
-        }
-        else
-        {
-            globalLog.errorLog("'mainShader' didn't find while parsing the asset.");
-        }
-
-        if (assetData.contains(Naming::outlineShader))
-        {
-            data.outlineShader
-                = StringAtom::Intern(assetData[Naming::outlineShader].get<StringAtom>());
-        }
-        else
-        {
-            globalLog.errorLog("'outlineShader' didn't find while parsing the asset.");
-        }
-
-        if (assetData.contains(Naming::onLoadScale))
-        {
-            data.onLoadScale = assetData[Naming::onLoadScale].get<float>();
-        }
-        else
-        {
-            globalLog.errorLog("'onLoadScale' didn't find while parsing the asset.");
-        }
-
-        if (assetData.contains(Naming::path))
-        {
-            data.meshPath = assetData[Naming::path].get<std::filesystem::path>();
-        }
-        else
-        {
-            globalLog.errorLog("'path' didn't find while parsing the asset.");
-        }
-
-        if (assetData.contains(Naming::assimpPostProcess))
-        {
-            for (auto&& asString : assetData[Naming::assimpPostProcess].items())
-            {
-                if (auto flag = Assimp::aiPostProcessStepsFromString(asString.value()))
-                {
-                    data.assimpPostProcess |= flag.value();
-                }
-            }
-        }
-        else
-        {
-            globalLog.errorLog("'assimpPostProcess' didn't find while parsing the asset.");
-        }
-
-        return data;
     }
 
 } // namespace Core::AssetImpl
