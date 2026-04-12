@@ -146,6 +146,19 @@ namespace Core
         _gcd.clear();
     }
 
+    nlohmann::json SkyboxAsset::serialize() const
+    {
+        RResourceStream<RJsonResourceStream> out(BaseAsset::serialize());
+        R<SkyboxAsset>::Serialize(*this, out);
+        return out.getData();
+    }
+
+    void SkyboxAsset::deserialize(const nlohmann::json& json)
+    {
+        BaseAsset::deserialize(json);
+        R<SkyboxAsset>::Deserialize({ json }, *this);
+    }
+
     /*
     void SkyboxAsset::ioFieldsUpdate(DataStream& out)
     {

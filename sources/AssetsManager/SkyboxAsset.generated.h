@@ -10,7 +10,9 @@
 #include <array>
 #include <optional>
 #include <string>
+#include <string_view>
 #include <unordered_map>
+#include <vector>
 
 template<>
 struct R<Core::SkyboxAsset::Direction>
@@ -99,4 +101,45 @@ struct R<Core::SkyboxAsset::Direction>
     }
 }; // struct R<Core::SkyboxAsset::Direction>
 
+template<>
+struct R<Core::SkyboxAsset>
+{
+    static constexpr std::string_view Name() { return "SkyboxAsset"; }
+    static constexpr std::string_view ParentScope() { return "Core"; }
+    static constexpr std::size_t GetFieldNumbers() { return 2; }
+    static constexpr std::vector<RClassField> GetFields() {
+        return {
+			{ "std::array<std::filesystem::path, 6>", "_paths" },
+			{ "bool", "_isFlipVertically" },
+		};
+    }
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Core::SkyboxAsset& obj)
+    {
+        RResourceStream<RImpl> s;
+		s.write(R<Core::BaseAsset>::Serialize<RImpl>(obj).getData());
+		s.write("_paths", obj._paths);
+		s.write("_isFlipVertically", obj._isFlipVertically);
+        return s;
+    }
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    static void Serialize(const Core::SkyboxAsset& obj, RResourceStream<RImpl>& s)
+    {
+        
+		s.write(R<Core::BaseAsset>::Serialize<RImpl>(obj).getData());
+		s.write("_paths", obj._paths);
+		s.write("_isFlipVertically", obj._isFlipVertically);
+    }
+
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    static void Deserialize(const RResourceStream<RImpl>& s, Core::SkyboxAsset& obj)
+    {
+		R<Core::BaseAsset>::Deserialize<RImpl>(s, obj);
+		s.read("_paths", obj._paths);
+		s.read("_isFlipVertically", obj._isFlipVertically, false);
+    }
+}; // struct R<Core::SkyboxAsset>
 // clang-format on

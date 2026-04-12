@@ -1,11 +1,13 @@
 {
   "AssetData": {
-    "pathToTop": "data/assets/images/skybox/top.png",
-    "pathToBottom": "data/assets/images/skybox/bottom.png",
-    "pathToBack": "data/assets/images/skybox/back.png",
-    "pathToFront": "data/assets/images/skybox/front.png",
-    "pathToLeft": "data/assets/images/skybox/left.png",
-    "pathToRight": "data/assets/images/skybox/right.png",
-    "isFlipVertically": false
+    "_paths": [
+        "data/assets/images/skybox/right.png",
+        "data/assets/images/skybox/left.png",
+        "data/assets/images/skybox/top.png",
+        "data/assets/images/skybox/bottom.png",
+        "data/assets/images/skybox/front.png",
+        "data/assets/images/skybox/back.png"
+    ],
+    "_isFlipVertically": false
   }
 }

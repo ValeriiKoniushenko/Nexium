@@ -30,8 +30,11 @@
 
 namespace Core
 {
+    CLASS();
     class SkyboxAsset : public BaseAsset
     {
+        R_FRIEND(SkyboxAsset, Core::BaseAsset);
+
     public:
         inline static const char* fileExtension = ".nxsky";
 
@@ -58,6 +61,9 @@ namespace Core
 
         [[nodiscard]] const char* getPrefix() const override { return "Skybox"; }
 
+        [[nodiscard]] nlohmann::json serialize() const override;
+        void deserialize(const nlohmann::json& json) override;
+
     protected:
         void onLoadRequest() override;
         void onUnloadRequest() override;
@@ -65,7 +71,11 @@ namespace Core
     protected:
         GraphicsComponentData _gcd;
         // properties
+
+        FIELD();
         std::array<std::filesystem::path, 6> _paths;
+
+        FIELD();
         bool _isFlipVertically = false;
     };
 

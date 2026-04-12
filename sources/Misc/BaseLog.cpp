@@ -46,7 +46,7 @@ namespace Core
         logLine.time = std::time(nullptr);
 
         LogQueue::Instance().addLog(std::move(logLine));
-        Assert(l != level::critical, str);
+        // Assert(l != level::critical, str);
     }
 
     spdlog::logger* GlobalLog::getLogger() const
