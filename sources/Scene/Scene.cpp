@@ -139,7 +139,7 @@ namespace Core
     {
         for (auto&& asset : _objects)
         {
-            if (auto* object = asset->getData())
+            // if (auto* object = asset->getData())
             {
                 // object->writeToCache();
             }
