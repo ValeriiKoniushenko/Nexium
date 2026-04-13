@@ -30,8 +30,10 @@
 
 namespace Core
 {
+    CLASS();
     class Actor : public Transformable, public IDrawable, public BaseComponent
     {
+        ECS_R_FRIEND_DECL(Actor, Core::BaseComponent, Core::Transformable);
         ECS_COMPONENT_DECL(Actor, BaseComponent);
 
     public:
@@ -40,7 +42,7 @@ namespace Core
         Actor& operator=(Actor&&) = default;
         Actor& operator=(const Actor&) = default;
         ~Actor() override = default;
-
+        
         friend void swap(Actor& a, Actor& b) noexcept
         {
             std::swap(static_cast<BaseComponent&>(a), static_cast<BaseComponent&>(b));
@@ -54,3 +56,4 @@ namespace Core
     template<class T>
     concept IsActorBased = std::is_base_of_v<Actor, T>;
 } // namespace Core
+#include "Actor.generated.h" // added by the code generator. Better don't move it.

@@ -24,6 +24,7 @@
 
 #include "Core/Position.h"
 #include "JustReflectMe/Adapter.h"
+#include "RawDataManagement/JsonAdapter.h"
 #include "glm/glm.hpp"
 
 namespace Core

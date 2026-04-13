@@ -196,18 +196,13 @@ namespace Core
             const auto json = nlohmann::json::parse(
                 Utils::GetTextFileContentAs<std::string>(_meta.pathToSource));
 
-            // updating object's fields
-            // DataStream stream;
-            // stream.setMode(DataStream::Mode::Input);
-            // stream.getRaw() = json[StreamData::data];
-
             // [opt] making loading of essential data (texture loading, 3D model loading, etc)
             if (_impl)
             {
                 _impl->load(*this, _data.get(), json[StreamData::assetData]);
             }
 
-            // _data->ioFieldsUpdate(stream);
+            _data->deserialize(json[StreamData::data]);
 
             _status = Status::Loaded;
             traceLog("Asset:: '{}' is: loaded! New status is: 'Loaded'"_f << _meta.logicPath);
@@ -281,7 +276,6 @@ namespace Core
             }
 
             _meta.type = StringAtom::Intern(json[StreamData::type].get<StringAtom>());
-            Assert(_meta.type.isStatic());
             if (_meta.type.isEmpty())
             {
                 throw std::runtime_error("Asset's source file contains empty 'type' field.");
@@ -291,19 +285,15 @@ namespace Core
             {
                 _meta.name = json[StreamData::name].get<StringAtom>();
             }
-
-            if (_meta.name.isEmpty())
+            else
             {
-                _meta.name = "Asset_" + _meta.type;
+                _meta.name = "Asset_" + _meta.pathToSource.stem().generic_string();
             }
             _meta.name.shrinkToFit();
 
-            auto& gcf = GetGlobalComponentFactory();
-            auto& aif = AssetImpl::GetFactory();
-
-            if (const auto id = gcf.getTypeIdByTypeName(_meta.type))
+            if (const auto id = GetGlobalComponentFactory().getTypeIdByTypeName(_meta.type))
             {
-                _impl = aif.trySpawnImpl(id.value());
+                _impl = AssetImpl::GetFactory().trySpawnImpl(id.value());
             }
 
             _status = Status::PreLoaded;
