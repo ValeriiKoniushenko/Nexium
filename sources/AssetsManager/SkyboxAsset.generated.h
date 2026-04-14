@@ -138,7 +138,7 @@ struct R<Core::SkyboxAsset>
     static void Deserialize(const RResourceStream<RImpl>& s, Core::SkyboxAsset& obj)
     {
 		R<Core::BaseAsset>::Deserialize<RImpl>(s, obj);
-		s.read("_paths", obj._paths);
+		s.read("_paths", obj._paths, 4);
 		s.read("_isFlipVertically", obj._isFlipVertically, false);
     }
 }; // struct R<Core::SkyboxAsset>

@@ -33,7 +33,7 @@ namespace Core
     CLASS();
     class Actor : public Transformable, public IDrawable, public BaseComponent
     {
-        ECS_R_FRIEND_DECL(Actor, Core::BaseComponent, Core::Transformable);
+        ECS_R_FRIEND_DECL(Actor, Core::BaseComponent, Core::Transformable, Core::IDrawable);
         ECS_COMPONENT_DECL(Actor, BaseComponent);
 
     public:

@@ -28,6 +28,7 @@ struct R<Core::Actor>
         RResourceStream<RImpl> s;
 		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
 		s.write(R<Core::Transformable>::Serialize<RImpl>(obj).getData());
+		s.write(R<Core::IDrawable>::Serialize<RImpl>(obj).getData());
         return s;
     }
 
@@ -37,6 +38,7 @@ struct R<Core::Actor>
         
 		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
 		s.write(R<Core::Transformable>::Serialize<RImpl>(obj).getData());
+		s.write(R<Core::IDrawable>::Serialize<RImpl>(obj).getData());
     }
 
 
@@ -45,6 +47,7 @@ struct R<Core::Actor>
     {
 		R<Core::BaseComponent>::Deserialize<RImpl>(s, obj);
 		R<Core::Transformable>::Deserialize<RImpl>(s, obj);
+		R<Core::IDrawable>::Deserialize<RImpl>(s, obj);
     }
 }; // struct R<Core::Actor>
 // clang-format on

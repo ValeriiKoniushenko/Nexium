@@ -29,21 +29,21 @@
 
 struct aiScene;
 struct aiNode;
+
 namespace Core
 {
+
+    CLASS();
     class StaticMeshBundle : public Actor, public IOutliner
     {
         ECS_COMPONENT_DECL(StaticMeshBundle, Actor);
+        ECS_R_FRIEND_DECL(StaticMeshBundle, Core::Actor);
 
     public:
         ~StaticMeshBundle() override;
-
         StaticMeshBundle(const StaticMeshBundle& other);
-
         StaticMeshBundle(StaticMeshBundle&& other) = default;
-
         StaticMeshBundle& operator=(const StaticMeshBundle& other);
-
         StaticMeshBundle& operator=(StaticMeshBundle&& other) = default;
 
         /**
@@ -63,7 +63,6 @@ namespace Core
                         const std::filesystem::path& modelPath = "", float scale = 1.f);
 
         void setShader(ShaderProgram* sp, bool ignoreVertexAttribSetup = false);
-
         void setOutlineShader(ShaderProgram* sp, bool ignoreVertexAttribSetup = false);
 
         void onTick(float delta) override;
@@ -117,7 +116,7 @@ namespace Core
 
         friend void swap(StaticMeshBundle& a, StaticMeshBundle& b) noexcept
         {
-            // std::swap(static_cast<Actor&>(a), static_cast<Actor&>(b));
+            std::swap(static_cast<Actor&>(a), static_cast<Actor&>(b));
 
             std::swap(a._meshes, b._meshes);
             std::swap(a._bundles, b._bundles);
@@ -127,11 +126,8 @@ namespace Core
 
     protected:
         void onOutlineStatusChange(bool newStatus) override;
-
         void onAddChild(BaseComponent* newChild) override;
-
         void onRemoveChild(BaseComponent* child) override;
-
         void invalidateFastAccessContainers();
 
     protected:
@@ -140,9 +136,13 @@ namespace Core
         std::vector<StaticMesh*> _meshes;
         std::vector<StaticMeshBundle*> _bundles;
         uint32_t _id = ++_idGenerator;
+
+        FIELD();
         bool _ignoreSelect = false;
 
     private:
         void privateClear();
     };
 } // namespace Core
+
+#include "StaticMeshBundle.generated.h" // added by the code generator. Better don't move it.

@@ -7,24 +7,24 @@
     "isPostDraw": false,
     "mainShader": "defaultTextured",
     "onLoadScale": 1.0,
-    "origin": [
+    "_origin": [
         0.0,
         0.0,
         0.0
     ],
     "outlineShader": "outline",
     "_path": "data/assets/objects-3d/Models/FBX/FireHydrant.fbx",
-    "position": [
+    "_position": [
         0.0,
         0.0,
         0.0
     ],
-    "rotation": [
+    "_rotation": [
         0.0,
         0.0,
         0.0
     ],
-    "scale": [
+    "_scale": [
         1.0,
         1.0,
         1.0

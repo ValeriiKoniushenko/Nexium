@@ -57,6 +57,7 @@ namespace
 namespace Core
 {
     ECS_COMPONENT_IMPL(StaticMeshBundle)
+    ECS_R_FRIEND_IMPL(StaticMeshBundle);
 
     uint32_t StaticMeshBundle::_idGenerator = 0;
 

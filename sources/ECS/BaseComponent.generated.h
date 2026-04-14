@@ -90,9 +90,9 @@ struct R<Core::BaseComponent>
     static void Deserialize(const RResourceStream<RImpl>& s, Core::BaseComponent& obj)
     {
 		R<Core::AbstractComponent>::Deserialize<RImpl>(s, obj);
-		s.read("_children", obj._children);
-		s.read("_name", obj._name);
-		s.read("_type", obj._type);
+		s.read("_children", obj._children, 4);
+		s.read("_name", obj._name, 4);
+		s.read("_type", obj._type, 4);
     }
 }; // struct R<Core::BaseComponent>
 // clang-format on

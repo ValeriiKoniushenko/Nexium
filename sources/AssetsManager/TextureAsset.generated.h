@@ -45,7 +45,7 @@ struct R<Core::TextureAsset>
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, Core::TextureAsset& obj)
     {
-		s.read("_path", obj._path);
+		s.read("_path", obj._path, 4);
 		s.read("_isFlipVertically", obj._isFlipVertically, false);
     }
 }; // struct R<Core::TextureAsset>

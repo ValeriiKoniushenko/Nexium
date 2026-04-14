@@ -54,11 +54,11 @@ struct R<Core::AssetImpl::StaticMeshBundle::AssetData>
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, Core::AssetImpl::StaticMeshBundle::AssetData& obj)
     {
-		s.read("meshPath", obj.meshPath);
-		s.read("mainShader", obj.mainShader);
-		s.read("outlineShader", obj.outlineShader);
+		s.read("meshPath", obj.meshPath, 4);
+		s.read("mainShader", obj.mainShader, 4);
+		s.read("outlineShader", obj.outlineShader, 4);
 		s.read("onLoadScale", obj.onLoadScale, 1.0f);
-		s.read("assimpPostProcess", obj.assimpPostProcess);
+		s.read("assimpPostProcess", obj.assimpPostProcess, 4);
     }
 }; // struct R<Core::AssetImpl::StaticMeshBundle::AssetData>
 // clang-format on
