@@ -38,6 +38,7 @@ namespace Core
 {
     class StaticMeshBundle;
 
+    CLASS();
     class StaticMesh :
         public GraphicsComponentData,
         public Transformable,
@@ -45,6 +46,8 @@ namespace Core
         public IOutliner
     {
         ECS_COMPONENT_DECL(StaticMesh, BaseComponent);
+        ECS_R_FRIEND_DECL(StaticMesh, Core::BaseComponent, Core::Transformable,
+                          Core::GraphicsComponentData);
 
     public:
         constexpr static Color4 outlineColor = Color4{ 252, 186, 3, 255 };
@@ -111,8 +114,12 @@ namespace Core
         void drawOutline();
 
     protected:
+        FIELD();
         FSize3 _size;
+
+        FIELD();
         glm::vec3 _center = glm::vec3(0);
+
         ShaderProgram* _outlineShader = nullptr;
         GLuint _uboLight = 0;
 
@@ -131,3 +138,5 @@ namespace Core
         [[nodiscard]] static StaticMesh CreateBiBlendSide(const StringAtom& name = ""_atom);
     };
 } // namespace Core
+
+#include "StaticMesh.generated.h" // added by the code generator. Better don't move it.

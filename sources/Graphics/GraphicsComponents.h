@@ -30,8 +30,12 @@
 
 namespace Core
 {
+
+    CLASS();
     class GraphicsComponentData : public IDataIO
     {
+        R_FRIEND(GraphicsComponentData);
+
     public:
         ENUM_CLASS();
         enum class Modifier : std::uint8_t
@@ -216,11 +220,12 @@ namespace Core
 
     protected:
         virtual void applyUniforms() {}
-        StringAtom getCacheHash() const override;
+        [[nodiscard]] StringAtom getCacheHash() const override;
 
     protected:
         // To improve cache-line readability, we use vector.
         // But all values ModifiedValue should be unique.
+        FIELD();
         std::vector<ModifierParam> _drawModifiers;
         ShaderProgram* _shader = nullptr;
         uint32_t _triangleCount = 0;
@@ -232,6 +237,10 @@ namespace Core
     private:
         void privateClear();
     };
+
+    void to_json(nlohmann::json& j, const Core::GraphicsComponentData::ModifierParam& v);
+    void from_json(const nlohmann::json& j, Core::GraphicsComponentData::ModifierParam& v);
+
 } // namespace Core
 
 #include "GraphicsComponents.generated.h" // added by the code generator. Better don't move it.

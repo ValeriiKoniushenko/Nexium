@@ -20,7 +20,7 @@
                 "children": [],
                 "_name": "FireHydrant_LOD2",
                 "_type": "StaticMesh",
-                "_modifiers": [],
+                "_drawModifiers": [],
                 "_center": [
                     2.920994758605957,
                     51.68924331665039,
@@ -58,7 +58,7 @@
                 "children": [],
                 "_name": "FireHydrant_LOD1",
                 "_type": "StaticMesh",
-                "_modifiers": [],
+                "_drawModifiers": [],
                 "_center": [
                     2.9461212158203125,
                     51.68924331665039,
@@ -96,7 +96,7 @@
                 "children": [],
                 "_name": "FireHydrant_LOD0",
                 "_type": "StaticMesh",
-                "_modifiers": [],
+                "_drawModifiers": [],
                 "_center": [
                     3.0164947509765625,
                     51.68924331665039,

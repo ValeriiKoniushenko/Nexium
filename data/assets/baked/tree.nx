@@ -28,7 +28,7 @@
                         "_type": "StaticMesh"
                     },
                     "GraphicsComponentData": {
-                        "_modifiers": []
+                        "_drawModifiers": []
                     },
                     "StaticMesh": {
                         "_center": [
@@ -76,7 +76,7 @@
                         "_type": "StaticMesh"
                     },
                     "GraphicsComponentData": {
-                        "_modifiers": []
+                        "_drawModifiers": []
                     },
                     "StaticMesh": {
                         "_center": [
@@ -124,7 +124,7 @@
                         "_type": "StaticMesh"
                     },
                     "GraphicsComponentData": {
-                        "_modifiers": []
+                        "_drawModifiers": []
                     },
                     "StaticMesh": {
                         "_center": [
@@ -172,7 +172,7 @@
                         "_type": "StaticMesh"
                     },
                     "GraphicsComponentData": {
-                        "_modifiers": []
+                        "_drawModifiers": []
                     },
                     "StaticMesh": {
                         "_center": [
@@ -220,7 +220,7 @@
                         "_type": "StaticMesh"
                     },
                     "GraphicsComponentData": {
-                        "_modifiers": []
+                        "_drawModifiers": []
                     },
                     "StaticMesh": {
                         "_center": [
@@ -268,7 +268,7 @@
                         "_type": "StaticMesh"
                     },
                     "GraphicsComponentData": {
-                        "_modifiers": []
+                        "_drawModifiers": []
                     },
                     "StaticMesh": {
                         "_center": [

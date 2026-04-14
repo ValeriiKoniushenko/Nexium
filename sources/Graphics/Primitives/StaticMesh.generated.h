@@ -1,0 +1,61 @@
+/*
+ * This code was generated automatically with
+ * https://github.com/ValeriiKoniushenko/JustReflectMe
+ *
+ * DO NOT EDIT MANUALLY!
+ * Your changes will be replaced next time
+ */
+
+// clang-format off
+#include <string>
+#include <string_view>
+#include <vector>
+
+template<>
+struct R<Core::StaticMesh>
+{
+    static constexpr std::string_view Name() { return "StaticMesh"; }
+    static constexpr std::string_view ParentScope() { return "Core"; }
+    static constexpr std::size_t GetFieldNumbers() { return 2; }
+    static constexpr std::vector<RClassField> GetFields() {
+        return {
+			{ "FSize3", "_size" },
+			{ "glm::vec3", "_center" },
+		};
+    }
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Core::StaticMesh& obj)
+    {
+        RResourceStream<RImpl> s;
+		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
+		s.write(R<Core::Transformable>::Serialize<RImpl>(obj).getData());
+		s.write(R<Core::GraphicsComponentData>::Serialize<RImpl>(obj).getData());
+		s.write("_size", obj._size);
+		s.write("_center", obj._center);
+        return s;
+    }
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    static void Serialize(const Core::StaticMesh& obj, RResourceStream<RImpl>& s)
+    {
+        
+		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
+		s.write(R<Core::Transformable>::Serialize<RImpl>(obj).getData());
+		s.write(R<Core::GraphicsComponentData>::Serialize<RImpl>(obj).getData());
+		s.write("_size", obj._size);
+		s.write("_center", obj._center);
+    }
+
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    static void Deserialize(const RResourceStream<RImpl>& s, Core::StaticMesh& obj)
+    {
+		R<Core::BaseComponent>::Deserialize<RImpl>(s, obj);
+		R<Core::Transformable>::Deserialize<RImpl>(s, obj);
+		R<Core::GraphicsComponentData>::Deserialize<RImpl>(s, obj);
+		s.read("_size", obj._size, 4);
+		s.read("_center", obj._center, glm::vec3(0));
+    }
+}; // struct R<Core::StaticMesh>
+// clang-format on

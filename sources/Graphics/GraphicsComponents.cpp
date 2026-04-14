@@ -364,4 +364,18 @@ namespace Core
         _triangleCount = 0;
     }
 
+    void to_json(nlohmann::json& j, const Core::GraphicsComponentData::ModifierParam& v)
+    {
+        j["modifier"] = R<GraphicsComponentData::Modifier>::ToString(v.modifier);
+        j["value"] = R<GraphicsComponentData::ModifiedValue>::ToString(v.value);
+    }
+
+    void from_json(const nlohmann::json& j, Core::GraphicsComponentData::ModifierParam& v)
+    {
+        v.modifier
+            = R<GraphicsComponentData::Modifier>::FromString(j["modifier"].get<std::string>())
+                  .value_or(GraphicsComponentData::Modifier::None);
+        v.value = R<GraphicsComponentData::ModifiedValue>::FromString(j["value"].get<std::string>())
+                      .value_or(GraphicsComponentData::ModifiedValue::None);
+    }
 } // namespace Core

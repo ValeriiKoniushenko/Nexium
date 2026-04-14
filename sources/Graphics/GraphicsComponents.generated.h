@@ -10,7 +10,9 @@
 #include <array>
 #include <optional>
 #include <string>
+#include <string_view>
 #include <unordered_map>
+#include <vector>
 
 template<>
 struct R<Core::GraphicsComponentData::ModifiedValue>
@@ -230,4 +232,38 @@ struct R<Core::GraphicsComponentData::Modifier>
     }
 }; // struct R<Core::GraphicsComponentData::Modifier>
 
+template<>
+struct R<Core::GraphicsComponentData>
+{
+    static constexpr std::string_view Name() { return "GraphicsComponentData"; }
+    static constexpr std::string_view ParentScope() { return "Core"; }
+    static constexpr std::size_t GetFieldNumbers() { return 1; }
+    static constexpr std::vector<RClassField> GetFields() {
+        return {
+			{ "std::vector<ModifierParam>", "_drawModifiers" },
+		};
+    }
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Core::GraphicsComponentData& obj)
+    {
+        RResourceStream<RImpl> s;
+		s.write("_drawModifiers", obj._drawModifiers);
+        return s;
+    }
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    static void Serialize(const Core::GraphicsComponentData& obj, RResourceStream<RImpl>& s)
+    {
+        
+		s.write("_drawModifiers", obj._drawModifiers);
+    }
+
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    static void Deserialize(const RResourceStream<RImpl>& s, Core::GraphicsComponentData& obj)
+    {
+		s.read("_drawModifiers", obj._drawModifiers, 4);
+    }
+}; // struct R<Core::GraphicsComponentData>
 // clang-format on
