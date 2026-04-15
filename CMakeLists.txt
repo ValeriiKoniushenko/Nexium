@@ -12,6 +12,9 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Flags.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Features.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Predefinitions.cmake)
 
+# ========= Use link to the lib, instead of fetching =========
+# set(USE_LINK_NO_FETCH__JRM "../../JustReflectMe")
+
 # ========= Base setup & Predefinitions =========
 # CXX standard installing
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -35,6 +38,22 @@ add_custom_target(CodeGenerator ALL
 # ========= Main deps pipeline =========
 add_subdirectory(dependencies)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FetchDependencies.cmake)
+
+if (DEFINED USE_LINK_NO_FETCH__JRM)
+    set(SRC_PATH "${USE_LINK_NO_FETCH__JRM}")
+    get_filename_component(LINK_NAME "${SRC_PATH}" NAME)
+    set(LINK_PATH "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/${LINK_NAME}")
+
+    if (NOT EXISTS "${LINK_PATH}")
+        file(CREATE_LINK
+            "${SRC_PATH}"
+            "${LINK_PATH}"
+            SYMBOLIC
+        )
+    endif ()
+
+    add_subdirectory("${LINK_PATH}")
+endif ()
 
 add_subdirectory(sources)
 add_subdirectory(tests)

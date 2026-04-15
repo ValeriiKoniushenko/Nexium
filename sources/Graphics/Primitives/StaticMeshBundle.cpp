@@ -56,8 +56,20 @@ namespace
 
 namespace Core
 {
-    ECS_COMPONENT_IMPL(StaticMeshBundle)
-    ECS_R_FRIEND_IMPL(StaticMeshBundle);
+    ECS_COMPONENT_IMPL(StaticMeshBundle);
+
+    nlohmann::json StaticMeshBundle::serialize() const
+    {
+        return R<StaticMeshBundle>::Serialize<RJsonResourceStream>(*this).getData();
+    }
+
+    void StaticMeshBundle::deserialize(const nlohmann::json& json)
+    {
+        RResourceStream<RJsonResourceStream> data;
+        data.getData() = json;
+        RLogsCollector logs;
+        R<StaticMeshBundle>::Deserialize(data, *this);
+    }
 
     uint32_t StaticMeshBundle::_idGenerator = 0;
 

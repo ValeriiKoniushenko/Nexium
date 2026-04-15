@@ -59,16 +59,16 @@ FetchContent_Declare(Utils
 )
 FetchContent_MakeAvailable(Utils)
 
-
-FetchContent_Declare(JustReflectMe
-    GIT_REPOSITORY https://github.com/ValeriiKoniushenko/JustReflectMe.git
-    GIT_TAG origin/develop
-    GIT_SHALLOW TRUE
-    GIT_PROGRESS TRUE
-)
-set(JRM_DISABLE_TESTS ON)
-FetchContent_MakeAvailable(JustReflectMe)
-
+if (NOT DEFINED USE_LINK_NO_FETCH__JRM)
+    FetchContent_Declare(JustReflectMe
+        GIT_REPOSITORY https://github.com/ValeriiKoniushenko/JustReflectMe.git
+        GIT_TAG origin/develop
+        GIT_SHALLOW TRUE
+        GIT_PROGRESS TRUE
+    )
+    set(JRM_DISABLE_TESTS ON)
+    FetchContent_MakeAvailable(JustReflectMe)
+endif ()
 
 set(SKIP_INSTALL_ALL ON CACHE BOOL "" FORCE)
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
