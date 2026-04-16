@@ -227,6 +227,7 @@ namespace Core
         // But all values ModifiedValue should be unique.
         FIELD();
         std::vector<ModifierParam> _drawModifiers;
+        
         ShaderProgram* _shader = nullptr;
         uint32_t _triangleCount = 0;
         GLuint _vbo = 0;

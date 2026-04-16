@@ -66,11 +66,11 @@ namespace Core::AssetImpl
         extractedData.deserialize(data);
         if (!data.logs().empty())
         {
-            globalLog.warnLog("{} field(s) couldn't be loaded for specific asset: {} "_f
+            globalLog.warnLog("{} field(s) couldn't be loaded for specific asset: {}"_f
                               << data.logs().size() << dataOwner->getComponentName());
             for (auto&& [field, code] : data.logs())
             {
-                globalLog.warnLog("Field '{}' - {} "_f << field << RStatusToString(code));
+                globalLog.warnLog("Field '{}' - {}"_f << field << RStatusToString(code));
             }
         }
 

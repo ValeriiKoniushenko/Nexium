@@ -35,7 +35,6 @@ struct R<Core::StaticMeshBundle>
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Serialize(const Core::StaticMeshBundle& obj, RResourceStream<RImpl>& s)
     {
-        
 		s.write(R<Core::Actor>::Serialize<RImpl>(obj).getData());
 		s.write("_ignoreSelect", obj._ignoreSelect);
     }

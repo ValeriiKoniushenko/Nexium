@@ -65,6 +65,7 @@ namespace Core
 
     void StaticMeshBundle::deserialize(RResourceStream<RJsonResourceStream>& data)
     {
+        BaseComponent::deserialize(data);
         R<StaticMeshBundle>::Deserialize(data, *this);
     }
 
@@ -187,14 +188,6 @@ namespace Core
             }
         }
     }
-
-    /*void StaticMeshBundle::ioFieldsUpdate(DataStream& out)
-    {
-        Actor::ioFieldsUpdate(out);
-
-        auto stream = out.dedicatedNesting("StaticMeshBundle");
-        stream.field("ignoreSelect", _ignoreSelect);
-    }*/
 
     std::size_t StaticMeshBundle::getRenderableTriangles() const
     {
