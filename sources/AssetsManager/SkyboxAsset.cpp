@@ -173,7 +173,7 @@ namespace Core
         componentPath("pathToFront", Direction::Front);
         componentPath("pathToLeft", Direction::Left);
         componentPath("pathToRight", Direction::Right);
-        stream.field("isFlipVertically", _isFlipVertically);
+        stream.field("_isFlipVertically", _isFlipVertically);
     }*/
 
 } // namespace Core

@@ -1,6 +1,6 @@
 {
   "AssetData": {
-    "isFlipVertically": false,
+    "_isFlipVertically": false,
     "_path": "data/assets/images/document.png"
   }
 }
