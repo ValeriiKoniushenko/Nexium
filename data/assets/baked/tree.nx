@@ -8,335 +8,265 @@
         "mainShader": "defaultTextured",
         "onLoadScale": 1.0,
         "outlineShader": "outline",
-        "_path": "data/assets/objects-3d/Models/FBX/Tree.fbx"
+        "meshPath": "data/assets/objects-3d/Models/FBX/Tree.fbx"
     },
     "data": {
-        "AbstractComponent": {
-            "_isEnabled": true,
-            "_noTick": false
-        },
-        "BaseComponent": {
-            "children": [
-                {
-                    "AbstractComponent": {
-                        "_isEnabled": true,
-                        "_noTick": false
-                    },
-                    "BaseComponent": {
-                        "children": [],
-                        "_name": "Tree_LOD1",
-                        "_type": "StaticMesh"
-                    },
-                    "GraphicsComponentData": {
-                        "_drawModifiers": []
-                    },
-                    "StaticMesh": {
-                        "_center": [
-                            -2.5890274047851563,
-                            324.42913818359375,
-                            -17.560165405273438
-                        ],
-                        "_size": {
-                            "deep": 295.2164001464844,
-                            "height": 648.8582763671875,
-                            "width": 342.87701416015625
-                        }
-                    },
-                    "Transformable": {
-                        "_origin": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ],
-                        "_position": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ],
-                        "_rotation": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ],
-                        "_scale": [
-                            1.0,
-                            1.0,
-                            1.0
-                        ]
-                    }
+        "_isEnabled": true,
+        "_noTick": false,
+        "_children": [
+            {
+                "_isEnabled": true,
+                "_noTick": false,
+                "_children": [],
+                "_name": "Tree_LOD1",
+                "_type": "StaticMesh",
+                "_drawModifiers": [],
+                "_center": [
+                    -2.5890274047851563,
+                    324.42913818359375,
+                    -17.560165405273438
+                ],
+                "_size": {
+                    "deep": 295.2164001464844,
+                    "height": 648.8582763671875,
+                    "width": 342.87701416015625
                 },
-                {
-                    "AbstractComponent": {
-                        "_isEnabled": true,
-                        "_noTick": false
-                    },
-                    "BaseComponent": {
-                        "children": [],
-                        "_name": "Tree_LOD1",
-                        "_type": "StaticMesh"
-                    },
-                    "GraphicsComponentData": {
-                        "_drawModifiers": []
-                    },
-                    "StaticMesh": {
-                        "_center": [
-                            -3.5791473388671875,
-                            457.82421875,
-                            -13.110893249511719
-                        ],
-                        "_size": {
-                            "deep": 512.4855346679688,
-                            "height": 540.990478515625,
-                            "width": 560.324951171875
-                        }
-                    },
-                    "Transformable": {
-                        "_origin": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ],
-                        "_position": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ],
-                        "_rotation": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ],
-                        "_scale": [
-                            1.0,
-                            1.0,
-                            1.0
-                        ]
-                    }
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            {
+                "_isEnabled": true,
+                "_noTick": false,
+                "_children": [],
+                "_name": "Tree_LOD1",
+                "_type": "StaticMesh",
+                "_drawModifiers": [],
+                "_center": [
+                    -3.5791473388671875,
+                    457.82421875,
+                    -13.110893249511719
+                ],
+                "_size": {
+                    "deep": 512.4855346679688,
+                    "height": 540.990478515625,
+                    "width": 560.324951171875
                 },
-                {
-                    "AbstractComponent": {
-                        "_isEnabled": true,
-                        "_noTick": false
-                    },
-                    "BaseComponent": {
-                        "children": [],
-                        "_name": "Tree_LOD2",
-                        "_type": "StaticMesh"
-                    },
-                    "GraphicsComponentData": {
-                        "_drawModifiers": []
-                    },
-                    "StaticMesh": {
-                        "_center": [
-                            -2.5890274047851563,
-                            324.42913818359375,
-                            -17.560165405273438
-                        ],
-                        "_size": {
-                            "deep": 295.2164001464844,
-                            "height": 648.8582763671875,
-                            "width": 342.87701416015625
-                        }
-                    },
-                    "Transformable": {
-                        "_origin": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ],
-                        "_position": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ],
-                        "_rotation": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ],
-                        "_scale": [
-                            1.0,
-                            1.0,
-                            1.0
-                        ]
-                    }
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            {
+                "_isEnabled": true,
+                "_noTick": false,
+                "_children": [],
+                "_name": "Tree_LOD2",
+                "_type": "StaticMesh",
+                "_drawModifiers": [],
+                "_center": [
+                    -2.5890274047851563,
+                    324.42913818359375,
+                    -17.560165405273438
+                ],
+                "_size": {
+                    "deep": 295.2164001464844,
+                    "height": 648.8582763671875,
+                    "width": 342.87701416015625
                 },
-                {
-                    "AbstractComponent": {
-                        "_isEnabled": true,
-                        "_noTick": false
-                    },
-                    "BaseComponent": {
-                        "children": [],
-                        "_name": "Tree_LOD2",
-                        "_type": "StaticMesh"
-                    },
-                    "GraphicsComponentData": {
-                        "_drawModifiers": []
-                    },
-                    "StaticMesh": {
-                        "_center": [
-                            -3.5791473388671875,
-                            453.9626770019531,
-                            -13.110893249511719
-                        ],
-                        "_size": {
-                            "deep": 512.4855346679688,
-                            "height": 533.2673950195313,
-                            "width": 560.324951171875
-                        }
-                    },
-                    "Transformable": {
-                        "_origin": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ],
-                        "_position": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ],
-                        "_rotation": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ],
-                        "_scale": [
-                            1.0,
-                            1.0,
-                            1.0
-                        ]
-                    }
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            {
+                "_isEnabled": true,
+                "_noTick": false,
+                "_children": [],
+                "_name": "Tree_LOD2",
+                "_type": "StaticMesh",
+                "_drawModifiers": [],
+                "_center": [
+                    -3.5791473388671875,
+                    453.9626770019531,
+                    -13.110893249511719
+                ],
+                "_size": {
+                    "deep": 512.4855346679688,
+                    "height": 533.2673950195313,
+                    "width": 560.324951171875
                 },
-                {
-                    "AbstractComponent": {
-                        "_isEnabled": true,
-                        "_noTick": false
-                    },
-                    "BaseComponent": {
-                        "children": [],
-                        "_name": "Tree_LOD0",
-                        "_type": "StaticMesh"
-                    },
-                    "GraphicsComponentData": {
-                        "_drawModifiers": []
-                    },
-                    "StaticMesh": {
-                        "_center": [
-                            -2.5890274047851563,
-                            324.42913818359375,
-                            -12.408332824707031
-                        ],
-                        "_size": {
-                            "deep": 316.11724853515625,
-                            "height": 648.8582763671875,
-                            "width": 342.87701416015625
-                        }
-                    },
-                    "Transformable": {
-                        "_origin": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ],
-                        "_position": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ],
-                        "_rotation": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ],
-                        "_scale": [
-                            1.0,
-                            1.0,
-                            1.0
-                        ]
-                    }
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            {
+                "_isEnabled": true,
+                "_noTick": false,
+                "_children": [],
+                "_name": "Tree_LOD0",
+                "_type": "StaticMesh",
+                "_drawModifiers": [],
+                "_center": [
+                    -2.5890274047851563,
+                    324.42913818359375,
+                    -12.408332824707031
+                ],
+                "_size": {
+                    "deep": 316.11724853515625,
+                    "height": 648.8582763671875,
+                    "width": 342.87701416015625
                 },
-                {
-                    "AbstractComponent": {
-                        "_isEnabled": true,
-                        "_noTick": false
-                    },
-                    "BaseComponent": {
-                        "children": [],
-                        "_name": "Tree_LOD0",
-                        "_type": "StaticMesh"
-                    },
-                    "GraphicsComponentData": {
-                        "_drawModifiers": []
-                    },
-                    "StaticMesh": {
-                        "_center": [
-                            -3.5791473388671875,
-                            457.82421875,
-                            -13.416114807128906
-                        ],
-                        "_size": {
-                            "deep": 513.0960083007813,
-                            "height": 540.990478515625,
-                            "width": 560.324951171875
-                        }
-                    },
-                    "Transformable": {
-                        "_origin": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ],
-                        "_position": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ],
-                        "_rotation": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ],
-                        "_scale": [
-                            1.0,
-                            1.0,
-                            1.0
-                        ]
-                    }
-                }
-            ],
-            "_name": "Tree",
-            "_type": "StaticMeshBundle"
-        },
-        "IDrawable": {
-            "_isPostDraw": false
-        },
-        "StaticMeshBundle": {
-            "_ignoreSelect": false
-        },
-        "Transformable": {
-            "_origin": [
-                0.0,
-                0.0,
-                0.0
-            ],
-            "_position": [
-                0.0,
-                0.0,
-                0.0
-            ],
-            "_rotation": [
-                0.0,
-                0.0,
-                0.0
-            ],
-            "_scale": [
-                1.0,
-                1.0,
-                1.0
-            ]
-        }
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            {
+                "_isEnabled": true,
+                "_noTick": false,
+                "_children": [],
+                "_name": "Tree_LOD0",
+                "_type": "StaticMesh",
+                "_drawModifiers": [],
+                "_center": [
+                    -3.5791473388671875,
+                    457.82421875,
+                    -13.416114807128906
+                ],
+                "_size": {
+                    "deep": 513.0960083007813,
+                    "height": 540.990478515625,
+                    "width": 560.324951171875
+                },
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        ],
+        "_name": "Tree",
+        "_type": "StaticMeshBundle",
+        "_isPostDraw": false,
+        "_ignoreSelect": false,
+        "_origin": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "_position": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "_rotation": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "_scale": [
+            1.0,
+            1.0,
+            1.0
+        ]
     },
     "name": "Tree",
     "type": "StaticMeshBundle"
