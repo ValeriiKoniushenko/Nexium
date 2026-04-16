@@ -68,10 +68,10 @@ namespace Core
         return out.getData();
     }
 
-    void TextureAsset::deserialize(const nlohmann::json& json)
+    void TextureAsset::deserialize(RResourceStream<RJsonResourceStream>& data)
     {
-        BaseAsset::deserialize(json);
-        R<TextureAsset>::Deserialize({ json }, *this);
+        BaseAsset::deserialize(data);
+        R<TextureAsset>::Deserialize(data, *this);
     }
 
 } // namespace Core

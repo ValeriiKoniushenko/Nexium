@@ -202,7 +202,18 @@ namespace Core
                 _impl->load(*this, _data.get(), json[StreamData::assetData]);
             }
 
-            _data->deserialize(json[StreamData::data]);
+            RResourceStream<RJsonResourceStream> data(json[StreamData::data]);
+
+            _data->deserialize(data);
+            if (!data.logs().empty())
+            {
+                warnLog("{} field(s) couldn't be deserialized. The asset: {} "_f
+                        << data.logs().size() << _meta.logicPath);
+                for (auto&& [field, code] : data.logs())
+                {
+                    warnLog("Field '{}' - {} "_f << field << RStatusToString(code));
+                }
+            }
 
             _status = Status::Loaded;
             traceLog("Asset:: '{}' is: loaded! New status is: 'Loaded'"_f << _meta.logicPath);

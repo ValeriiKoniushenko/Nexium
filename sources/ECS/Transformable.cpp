@@ -250,11 +250,9 @@ namespace Core
         return R<Transformable>::Serialize(*this).getData();
     }
 
-    void Transformable::deserialize(const nlohmann::json& json)
+    void Transformable::deserialize(RResourceStream<RJsonResourceStream>& data)
     {
-        RResourceStream<RJsonResourceStream> out;
-        out.getData() = json;
-        R<Transformable>::Deserialize(out, *this);
+        R<Transformable>::Deserialize(data, *this);
     }
 
     void Transformable::setOrigin(const glm::vec3& origin) noexcept

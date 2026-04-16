@@ -150,7 +150,7 @@ public:
                                                                                                    \
 public:                                                                                            \
     [[nodiscard]] nlohmann::json serialize() const override;                                       \
-    void deserialize(const nlohmann::json& json) override;
+    void deserialize(RResourceStream<RJsonResourceStream>& data) override;
 
 #define ECS_R_FRIEND_IMPL(ClassName)                                                               \
     nlohmann::json ClassName::serialize() const                                                    \
@@ -158,10 +158,8 @@ public:                                                                         
         return R<ClassName>::Serialize<RJsonResourceStream>(*this).getData();                      \
     }                                                                                              \
                                                                                                    \
-    void ClassName::deserialize(const nlohmann::json& json)                                        \
+    void ClassName::deserialize(RResourceStream<RJsonResourceStream>& data)                        \
     {                                                                                              \
-        RResourceStream<RJsonResourceStream> data;                                                 \
-        data.getData() = json;                                                                     \
         R<ClassName>::Deserialize(data, *this);                                                    \
     }
 
@@ -463,7 +461,7 @@ namespace Core
         [[nodiscard]] bool getNoTick() const noexcept { return _noTick; }
 
         [[nodiscard]] virtual nlohmann::json serialize() const;
-        virtual void deserialize(const nlohmann::json& json);
+        virtual void deserialize(RResourceStream<RJsonResourceStream>& data);
 
     protected:
         AbstractComponent() = default;
@@ -630,7 +628,7 @@ namespace Core
         void onTick(float delta) override;
 
         [[nodiscard]] nlohmann::json serialize() const override;
-        void deserialize(const nlohmann::json& json) override;
+        void deserialize(RResourceStream<RJsonResourceStream>& data) override;
 
         /**
          * Call this function directly only if you sure in it.
@@ -1132,7 +1130,8 @@ namespace Core
                 continue;
             }
 
-            obj->deserialize(json);
+            RResourceStream<RJsonResourceStream> data(json);
+            obj->deserialize(data);
             range.push_back(obj);
         }
     }

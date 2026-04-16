@@ -45,9 +45,9 @@ namespace Core
         return R<AbstractComponent>::Serialize<RJsonResourceStream>(*this).getData();
     }
 
-    void AbstractComponent::deserialize(const nlohmann::json& json)
+    void AbstractComponent::deserialize(RResourceStream<RJsonResourceStream>& data)
     {
-        R<AbstractComponent>::Deserialize({ json }, *this);
+        R<AbstractComponent>::Deserialize(data, *this);
     }
 
     const StringAtom BaseComponent::componentType = "BaseComponent"_atom;
@@ -237,9 +237,9 @@ namespace Core
         return R<BaseComponent>::Serialize<RJsonResourceStream>(*this).getData();
     }
 
-    void BaseComponent::deserialize(const nlohmann::json& json)
+    void BaseComponent::deserialize(RResourceStream<RJsonResourceStream>& data)
     {
-        R<BaseComponent>::Deserialize({ json }, *this);
+        R<BaseComponent>::Deserialize(data, *this);
         if (!_type.isEmpty()) [[likely]]
         {
             _type = StringAtom::Intern(_type);

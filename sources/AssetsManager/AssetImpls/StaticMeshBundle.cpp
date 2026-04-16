@@ -36,11 +36,11 @@ namespace Core::AssetImpl
         return R<AssetData>::Serialize<RJsonResourceStream>(*this).getData();
     }
 
-    void StaticMeshBundle::AssetData::deserialize(const nlohmann::json& json)
+    void StaticMeshBundle::AssetData::deserialize(RResourceStream<RJsonResourceStream>& data)
     {
         _assimpPostProcessFlagsAsInt = 0;
 
-        R<AssetData>::Deserialize({ json }, *this);
+        R<AssetData>::Deserialize(data, *this);
         for (auto&& asString : assimpPostProcess)
         {
             if (auto flag = Assimp::aiPostProcessStepsFromString(asString.c_str()))
@@ -62,7 +62,18 @@ namespace Core::AssetImpl
         }
 
         AssetData extractedData;
-        extractedData.deserialize(assetData);
+        RResourceStream<RJsonResourceStream> data(assetData);
+        extractedData.deserialize(data);
+        if (!data.logs().empty())
+        {
+            globalLog.warnLog("{} field(s) couldn't be loaded for specific asset: {} "_f
+                              << data.logs().size() << dataOwner->getComponentName());
+            for (auto&& [field, code] : data.logs())
+            {
+                globalLog.warnLog("Field '{}' - {} "_f << field << RStatusToString(code));
+            }
+        }
+
         if (extractedData.meshPath.empty())
         {
             return;

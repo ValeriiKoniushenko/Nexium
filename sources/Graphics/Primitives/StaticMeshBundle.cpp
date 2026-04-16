@@ -63,11 +63,8 @@ namespace Core
         return R<StaticMeshBundle>::Serialize<RJsonResourceStream>(*this).getData();
     }
 
-    void StaticMeshBundle::deserialize(const nlohmann::json& json)
+    void StaticMeshBundle::deserialize(RResourceStream<RJsonResourceStream>& data)
     {
-        RResourceStream<RJsonResourceStream> data;
-        data.getData() = json;
-        RLogsCollector logs;
         R<StaticMeshBundle>::Deserialize(data, *this);
     }
 

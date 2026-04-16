@@ -121,7 +121,7 @@ namespace Core
         }
 
         [[nodiscard]] nlohmann::json serialize() const;
-        void deserialize(const nlohmann::json& json);
+        void deserialize(RResourceStream<RJsonResourceStream>& data);
 
     protected:
         virtual void onDirtyMatrix() {}

@@ -65,7 +65,7 @@ namespace Core
         void onUnloadRequest() override;
 
         [[nodiscard]] nlohmann::json serialize() const override;
-        void deserialize(const nlohmann::json& json) override;
+        void deserialize(RResourceStream<RJsonResourceStream>& data) override;
 
     protected:
         Texture _data;

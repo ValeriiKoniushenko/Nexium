@@ -75,7 +75,17 @@ namespace Core
                     "Asset's source file doesn't contain a field: 'AssetData'.");
             }
 
-            deserialize(*assetData);
+            RResourceStream<RJsonResourceStream> data(*assetData);
+            deserialize(data);
+            if (!data.logs().empty())
+            {
+                warnLog("{} field(s) couldn't be deserialized. The asset: {} "_f
+                        << data.logs().size() << getLogicPath());
+                for (auto&& [field, code] : data.logs())
+                {
+                    warnLog("Field '{}' - {} "_f << field << RStatusToString(code));
+                }
+            }
         }
         catch (const std::exception& e)
         {
@@ -135,10 +145,8 @@ namespace Core
         return R<BaseAsset>::Serialize(*this).getData();
     }
 
-    void BaseAsset::deserialize(const nlohmann::json& json)
+    void BaseAsset::deserialize(RResourceStream<RJsonResourceStream>& data)
     {
-        RResourceStream<RJsonResourceStream> data;
-        data.getData() = json;
         R<BaseAsset>::Deserialize(data, *this);
     }
 

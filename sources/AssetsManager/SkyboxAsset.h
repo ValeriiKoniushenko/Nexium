@@ -62,7 +62,7 @@ namespace Core
         [[nodiscard]] const char* getPrefix() const override { return "Skybox"; }
 
         [[nodiscard]] nlohmann::json serialize() const override;
-        void deserialize(const nlohmann::json& json) override;
+        void deserialize(RResourceStream<RJsonResourceStream>& data) override;
 
     protected:
         void onLoadRequest() override;

@@ -72,7 +72,7 @@ namespace Core
         virtual void ioFieldsUpdate(DataStream& out) {}
 
         [[nodiscard]] virtual nlohmann::json serialize() const;
-        virtual void deserialize(const nlohmann::json& json);
+        virtual void deserialize(RResourceStream<RJsonResourceStream>& data);
 
     protected:
         std::filesystem::path _assetPath;

@@ -153,10 +153,10 @@ namespace Core
         return out.getData();
     }
 
-    void SkyboxAsset::deserialize(const nlohmann::json& json)
+    void SkyboxAsset::deserialize(RResourceStream<RJsonResourceStream>& data)
     {
-        BaseAsset::deserialize(json);
-        R<SkyboxAsset>::Deserialize({ json }, *this);
+        BaseAsset::deserialize(data);
+        R<SkyboxAsset>::Deserialize(data, *this);
     }
 
     /*

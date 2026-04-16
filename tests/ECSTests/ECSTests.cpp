@@ -148,7 +148,8 @@ TEST(ECSBaseTests, DeserializationOfComponentTree)
     DummyComponent restored;
     restored.addChildComponent<DummyComponent>("OriginalSubChild1");
 
-    restored.deserialize(stream);
+    RResourceStream<RJsonResourceStream> data(stream);
+    restored.deserialize(data);
 
     // --- Root assertions ---
     ASSERT_TRUE(stream.contains("_type"));
@@ -235,7 +236,8 @@ TEST(ECSBaseTests, DeserializationOfComponentTreeWithSkippedFields)
     stream.erase("a");
 
     DummyComponent restored;
-    restored.deserialize(stream);
+    RResourceStream<RJsonResourceStream> data(stream);
+    restored.deserialize(data);
 
     ASSERT_EQ(123, restored.a); // 123 - default value
 }
@@ -482,7 +484,8 @@ TEST_F(ECSTreeTests, ComplexDeSerealization)
     const auto serialized = root.serialize();
 
     DummyComponent restored;
-    restored.deserialize(serialized);
+    RResourceStream<RJsonResourceStream> data(serialized);
+    restored.deserialize(data);
 
     ASSERT_EQ(root.getComponentName(), restored.getComponentName());
     ASSERT_EQ(root.getComponentType(), restored.getComponentType());
@@ -920,7 +923,9 @@ TEST_F(ECSTreeVehicleTests, FullDeserializationCheck)
     const auto serialized = root.serialize();
 
     Sedan restored;
-    restored.deserialize(serialized);
+    RResourceStream<RJsonResourceStream> data(serialized);
+
+    restored.deserialize(data);
 
     // ROOT
     ASSERT_EQ(restored.vin, root.vin);

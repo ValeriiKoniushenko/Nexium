@@ -62,7 +62,7 @@ namespace Core::AssetImpl
             }
 
             [[nodiscard]] nlohmann::json serialize() const;
-            void deserialize(const nlohmann::json& json);
+            void deserialize(RResourceStream<RJsonResourceStream>& data);
 
         private:
             int _assimpPostProcessFlagsAsInt = 0;
