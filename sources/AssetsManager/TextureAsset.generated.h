@@ -25,28 +25,52 @@ struct R<Core::TextureAsset>
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Core::TextureAsset& obj)
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Core::TextureAsset& obj, bool noSignals = false)
     {
-        RResourceStream<RImpl> s;
+        RResourceStream<RImpl> s;if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write("_path", obj._path);
 		s.write("_isFlipVertically", obj._isFlipVertically);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
         return s;
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Serialize(const Core::TextureAsset& obj, RResourceStream<RImpl>& s)
+    static void Serialize(const Core::TextureAsset& obj, RResourceStream<RImpl>& s, bool noSignals = false)
     {
-        
+        if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write("_path", obj._path);
 		s.write("_isFlipVertically", obj._isFlipVertically);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
     }
 
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Deserialize(const RResourceStream<RImpl>& s, Core::TextureAsset& obj)
-    {
+    static void Deserialize(const RResourceStream<RImpl>& s, Core::TextureAsset& obj, bool noSignals = false)
+    {if (!noSignals)
+        {
+            _RTryCallPreDeserialize(obj);
+        }
+
 		s.read("_path", obj._path, 4);
 		s.read("_isFlipVertically", obj._isFlipVertically, false);
+        if (!noSignals)
+        {
+            _RTryCallPostDeserialize(obj, s.logs());
+        }
     }
 }; // struct R<Core::TextureAsset>
 // clang-format on

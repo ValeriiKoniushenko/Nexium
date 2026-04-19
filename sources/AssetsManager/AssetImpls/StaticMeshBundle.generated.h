@@ -28,37 +28,61 @@ struct R<Core::AssetImpl::StaticMeshBundle::AssetData>
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Core::AssetImpl::StaticMeshBundle::AssetData& obj)
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Core::AssetImpl::StaticMeshBundle::AssetData& obj, bool noSignals = false)
     {
-        RResourceStream<RImpl> s;
+        RResourceStream<RImpl> s;if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write("meshPath", obj.meshPath);
 		s.write("mainShader", obj.mainShader);
 		s.write("outlineShader", obj.outlineShader);
 		s.write("onLoadScale", obj.onLoadScale);
 		s.write("assimpPostProcess", obj.assimpPostProcess);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
         return s;
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Serialize(const Core::AssetImpl::StaticMeshBundle::AssetData& obj, RResourceStream<RImpl>& s)
+    static void Serialize(const Core::AssetImpl::StaticMeshBundle::AssetData& obj, RResourceStream<RImpl>& s, bool noSignals = false)
     {
-        
+        if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write("meshPath", obj.meshPath);
 		s.write("mainShader", obj.mainShader);
 		s.write("outlineShader", obj.outlineShader);
 		s.write("onLoadScale", obj.onLoadScale);
 		s.write("assimpPostProcess", obj.assimpPostProcess);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
     }
 
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Deserialize(const RResourceStream<RImpl>& s, Core::AssetImpl::StaticMeshBundle::AssetData& obj)
-    {
+    static void Deserialize(const RResourceStream<RImpl>& s, Core::AssetImpl::StaticMeshBundle::AssetData& obj, bool noSignals = false)
+    {if (!noSignals)
+        {
+            _RTryCallPreDeserialize(obj);
+        }
+
 		s.read("meshPath", obj.meshPath, 4);
 		s.read("mainShader", obj.mainShader, 4);
 		s.read("outlineShader", obj.outlineShader, 4);
 		s.read("onLoadScale", obj.onLoadScale, 1.0f);
 		s.read("assimpPostProcess", obj.assimpPostProcess, 4);
+        if (!noSignals)
+        {
+            _RTryCallPostDeserialize(obj, s.logs());
+        }
     }
 }; // struct R<Core::AssetImpl::StaticMeshBundle::AssetData>
 // clang-format on

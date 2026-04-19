@@ -27,34 +27,58 @@ struct R<Core::Transformable>
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Core::Transformable& obj)
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Core::Transformable& obj, bool noSignals = false)
     {
-        RResourceStream<RImpl> s;
+        RResourceStream<RImpl> s;if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write("_scale", obj._scale);
 		s.write("_origin", obj._origin);
 		s.write("_position", obj._position);
 		s.write("_rotation", obj._rotation);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
         return s;
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Serialize(const Core::Transformable& obj, RResourceStream<RImpl>& s)
+    static void Serialize(const Core::Transformable& obj, RResourceStream<RImpl>& s, bool noSignals = false)
     {
-        
+        if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write("_scale", obj._scale);
 		s.write("_origin", obj._origin);
 		s.write("_position", obj._position);
 		s.write("_rotation", obj._rotation);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
     }
 
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Deserialize(const RResourceStream<RImpl>& s, Core::Transformable& obj)
-    {
+    static void Deserialize(const RResourceStream<RImpl>& s, Core::Transformable& obj, bool noSignals = false)
+    {if (!noSignals)
+        {
+            _RTryCallPreDeserialize(obj);
+        }
+
 		s.read("_scale", obj._scale, glm::vec3(1.f));
 		s.read("_origin", obj._origin, glm::vec3(1.f));
 		s.read("_position", obj._position, Core::GPos3(1.f));
 		s.read("_rotation", obj._rotation, glm::vec3(1.f));
+        if (!noSignals)
+        {
+            _RTryCallPostDeserialize(obj, s.logs());
+        }
     }
 }; // struct R<Core::Transformable>
 // clang-format on

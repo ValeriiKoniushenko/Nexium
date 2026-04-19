@@ -24,27 +24,52 @@ struct R<Core::StaticMeshBundle>
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Core::StaticMeshBundle& obj)
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Core::StaticMeshBundle& obj, bool noSignals = false)
     {
-        RResourceStream<RImpl> s;
+        RResourceStream<RImpl> s;if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write(R<Core::Actor>::Serialize<RImpl>(obj).getData());
 		s.write("_ignoreSelect", obj._ignoreSelect);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
         return s;
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Serialize(const Core::StaticMeshBundle& obj, RResourceStream<RImpl>& s)
+    static void Serialize(const Core::StaticMeshBundle& obj, RResourceStream<RImpl>& s, bool noSignals = false)
     {
+        if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write(R<Core::Actor>::Serialize<RImpl>(obj).getData());
 		s.write("_ignoreSelect", obj._ignoreSelect);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
     }
 
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Deserialize(const RResourceStream<RImpl>& s, Core::StaticMeshBundle& obj)
-    {
-		R<Core::Actor>::Deserialize<RImpl>(s, obj);
+    static void Deserialize(const RResourceStream<RImpl>& s, Core::StaticMeshBundle& obj, bool noSignals = false)
+    {if (!noSignals)
+        {
+            _RTryCallPreDeserialize(obj);
+        }
+
+		R<Core::Actor>::Deserialize<RImpl>(s, obj, true);
 		s.read("_ignoreSelect", obj._ignoreSelect, false);
+        if (!noSignals)
+        {
+            _RTryCallPostDeserialize(obj, s.logs());
+        }
     }
 }; // struct R<Core::StaticMeshBundle>
 // clang-format on

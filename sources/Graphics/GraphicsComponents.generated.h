@@ -245,25 +245,49 @@ struct R<Core::GraphicsComponentData>
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Core::GraphicsComponentData& obj)
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Core::GraphicsComponentData& obj, bool noSignals = false)
     {
-        RResourceStream<RImpl> s;
+        RResourceStream<RImpl> s;if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write("_drawModifiers", obj._drawModifiers);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
         return s;
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Serialize(const Core::GraphicsComponentData& obj, RResourceStream<RImpl>& s)
+    static void Serialize(const Core::GraphicsComponentData& obj, RResourceStream<RImpl>& s, bool noSignals = false)
     {
-        
+        if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write("_drawModifiers", obj._drawModifiers);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
     }
 
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Deserialize(const RResourceStream<RImpl>& s, Core::GraphicsComponentData& obj)
-    {
+    static void Deserialize(const RResourceStream<RImpl>& s, Core::GraphicsComponentData& obj, bool noSignals = false)
+    {if (!noSignals)
+        {
+            _RTryCallPreDeserialize(obj);
+        }
+
 		s.read("_drawModifiers", obj._drawModifiers, 4);
+        if (!noSignals)
+        {
+            _RTryCallPostDeserialize(obj, s.logs());
+        }
     }
 }; // struct R<Core::GraphicsComponentData>
 // clang-format on

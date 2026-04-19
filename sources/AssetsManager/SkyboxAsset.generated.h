@@ -115,31 +115,55 @@ struct R<Core::SkyboxAsset>
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Core::SkyboxAsset& obj)
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Core::SkyboxAsset& obj, bool noSignals = false)
     {
-        RResourceStream<RImpl> s;
+        RResourceStream<RImpl> s;if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write(R<Core::BaseAsset>::Serialize<RImpl>(obj).getData());
 		s.write("_paths", obj._paths);
 		s.write("_isFlipVertically", obj._isFlipVertically);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
         return s;
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Serialize(const Core::SkyboxAsset& obj, RResourceStream<RImpl>& s)
+    static void Serialize(const Core::SkyboxAsset& obj, RResourceStream<RImpl>& s, bool noSignals = false)
     {
-        
+        if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write(R<Core::BaseAsset>::Serialize<RImpl>(obj).getData());
 		s.write("_paths", obj._paths);
 		s.write("_isFlipVertically", obj._isFlipVertically);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
     }
 
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Deserialize(const RResourceStream<RImpl>& s, Core::SkyboxAsset& obj)
-    {
-		R<Core::BaseAsset>::Deserialize<RImpl>(s, obj);
+    static void Deserialize(const RResourceStream<RImpl>& s, Core::SkyboxAsset& obj, bool noSignals = false)
+    {if (!noSignals)
+        {
+            _RTryCallPreDeserialize(obj);
+        }
+
+		R<Core::BaseAsset>::Deserialize<RImpl>(s, obj, true);
 		s.read("_paths", obj._paths, 4);
 		s.read("_isFlipVertically", obj._isFlipVertically, false);
+        if (!noSignals)
+        {
+            _RTryCallPostDeserialize(obj, s.logs());
+        }
     }
 }; // struct R<Core::SkyboxAsset>
 // clang-format on

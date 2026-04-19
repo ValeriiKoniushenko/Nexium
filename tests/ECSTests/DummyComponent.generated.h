@@ -25,31 +25,55 @@ struct R<DummyComponent>
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    [[nodiscard]] static RResourceStream<RImpl> Serialize(const DummyComponent& obj)
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const DummyComponent& obj, bool noSignals = false)
     {
-        RResourceStream<RImpl> s;
+        RResourceStream<RImpl> s;if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
 		s.write("a", obj.a);
 		s.write("name", obj.name);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
         return s;
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Serialize(const DummyComponent& obj, RResourceStream<RImpl>& s)
+    static void Serialize(const DummyComponent& obj, RResourceStream<RImpl>& s, bool noSignals = false)
     {
-        
+        if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
 		s.write("a", obj.a);
 		s.write("name", obj.name);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
     }
 
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Deserialize(const RResourceStream<RImpl>& s, DummyComponent& obj)
-    {
-		R<Core::BaseComponent>::Deserialize<RImpl>(s, obj);
+    static void Deserialize(const RResourceStream<RImpl>& s, DummyComponent& obj, bool noSignals = false)
+    {if (!noSignals)
+        {
+            _RTryCallPreDeserialize(obj);
+        }
+
+		R<Core::BaseComponent>::Deserialize<RImpl>(s, obj, true);
 		s.read("a", obj.a, 123);
 		s.read("name", obj.name, "Lola");
+        if (!noSignals)
+        {
+            _RTryCallPostDeserialize(obj, s.logs());
+        }
     }
 }; // struct R<DummyComponent>
 
@@ -65,25 +89,49 @@ struct R<HardConstructorComponent>
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    [[nodiscard]] static RResourceStream<RImpl> Serialize(const HardConstructorComponent& obj)
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const HardConstructorComponent& obj, bool noSignals = false)
     {
-        RResourceStream<RImpl> s;
+        RResourceStream<RImpl> s;if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
         return s;
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Serialize(const HardConstructorComponent& obj, RResourceStream<RImpl>& s)
+    static void Serialize(const HardConstructorComponent& obj, RResourceStream<RImpl>& s, bool noSignals = false)
     {
-        
+        if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
     }
 
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Deserialize(const RResourceStream<RImpl>& s, HardConstructorComponent& obj)
-    {
-		R<Core::BaseComponent>::Deserialize<RImpl>(s, obj);
+    static void Deserialize(const RResourceStream<RImpl>& s, HardConstructorComponent& obj, bool noSignals = false)
+    {if (!noSignals)
+        {
+            _RTryCallPreDeserialize(obj);
+        }
+
+		R<Core::BaseComponent>::Deserialize<RImpl>(s, obj, true);
+        if (!noSignals)
+        {
+            _RTryCallPostDeserialize(obj, s.logs());
+        }
     }
 }; // struct R<HardConstructorComponent>
 
@@ -99,25 +147,49 @@ struct R<InitSpyComponent>
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    [[nodiscard]] static RResourceStream<RImpl> Serialize(const InitSpyComponent& obj)
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const InitSpyComponent& obj, bool noSignals = false)
     {
-        RResourceStream<RImpl> s;
+        RResourceStream<RImpl> s;if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
         return s;
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Serialize(const InitSpyComponent& obj, RResourceStream<RImpl>& s)
+    static void Serialize(const InitSpyComponent& obj, RResourceStream<RImpl>& s, bool noSignals = false)
     {
-        
+        if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
     }
 
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Deserialize(const RResourceStream<RImpl>& s, InitSpyComponent& obj)
-    {
-		R<Core::BaseComponent>::Deserialize<RImpl>(s, obj);
+    static void Deserialize(const RResourceStream<RImpl>& s, InitSpyComponent& obj, bool noSignals = false)
+    {if (!noSignals)
+        {
+            _RTryCallPreDeserialize(obj);
+        }
+
+		R<Core::BaseComponent>::Deserialize<RImpl>(s, obj, true);
+        if (!noSignals)
+        {
+            _RTryCallPostDeserialize(obj, s.logs());
+        }
     }
 }; // struct R<InitSpyComponent>
 
@@ -136,34 +208,58 @@ struct R<Vehicle>
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Vehicle& obj)
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Vehicle& obj, bool noSignals = false)
     {
-        RResourceStream<RImpl> s;
+        RResourceStream<RImpl> s;if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
 		s.write("vin", obj.vin);
 		s.write("mileage", obj.mileage);
 		s.write("running", obj.running);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
         return s;
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Serialize(const Vehicle& obj, RResourceStream<RImpl>& s)
+    static void Serialize(const Vehicle& obj, RResourceStream<RImpl>& s, bool noSignals = false)
     {
-        
+        if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
 		s.write("vin", obj.vin);
 		s.write("mileage", obj.mileage);
 		s.write("running", obj.running);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
     }
 
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Deserialize(const RResourceStream<RImpl>& s, Vehicle& obj)
-    {
-		R<Core::BaseComponent>::Deserialize<RImpl>(s, obj);
+    static void Deserialize(const RResourceStream<RImpl>& s, Vehicle& obj, bool noSignals = false)
+    {if (!noSignals)
+        {
+            _RTryCallPreDeserialize(obj);
+        }
+
+		R<Core::BaseComponent>::Deserialize<RImpl>(s, obj, true);
 		s.read("vin", obj.vin, "UNKNOWN");
 		s.read("mileage", obj.mileage, 0);
 		s.read("running", obj.running, false);
+        if (!noSignals)
+        {
+            _RTryCallPostDeserialize(obj, s.logs());
+        }
     }
 }; // struct R<Vehicle>
 
@@ -181,31 +277,55 @@ struct R<BaseCar>
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    [[nodiscard]] static RResourceStream<RImpl> Serialize(const BaseCar& obj)
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const BaseCar& obj, bool noSignals = false)
     {
-        RResourceStream<RImpl> s;
+        RResourceStream<RImpl> s;if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write(R<Vehicle>::Serialize<RImpl>(obj).getData());
 		s.write("horsepower", obj.horsepower);
 		s.write("fuelLevel", obj.fuelLevel);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
         return s;
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Serialize(const BaseCar& obj, RResourceStream<RImpl>& s)
+    static void Serialize(const BaseCar& obj, RResourceStream<RImpl>& s, bool noSignals = false)
     {
-        
+        if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write(R<Vehicle>::Serialize<RImpl>(obj).getData());
 		s.write("horsepower", obj.horsepower);
 		s.write("fuelLevel", obj.fuelLevel);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
     }
 
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Deserialize(const RResourceStream<RImpl>& s, BaseCar& obj)
-    {
-		R<Vehicle>::Deserialize<RImpl>(s, obj);
+    static void Deserialize(const RResourceStream<RImpl>& s, BaseCar& obj, bool noSignals = false)
+    {if (!noSignals)
+        {
+            _RTryCallPreDeserialize(obj);
+        }
+
+		R<Vehicle>::Deserialize<RImpl>(s, obj, true);
 		s.read("horsepower", obj.horsepower, 150);
 		s.read("fuelLevel", obj.fuelLevel, 0.0f);
+        if (!noSignals)
+        {
+            _RTryCallPostDeserialize(obj, s.logs());
+        }
     }
 }; // struct R<BaseCar>
 
@@ -223,31 +343,55 @@ struct R<Sedan>
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Sedan& obj)
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Sedan& obj, bool noSignals = false)
     {
-        RResourceStream<RImpl> s;
+        RResourceStream<RImpl> s;if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write(R<BaseCar>::Serialize<RImpl>(obj).getData());
 		s.write("doors", obj.doors);
 		s.write("hasSunroof", obj.hasSunroof);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
         return s;
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Serialize(const Sedan& obj, RResourceStream<RImpl>& s)
+    static void Serialize(const Sedan& obj, RResourceStream<RImpl>& s, bool noSignals = false)
     {
-        
+        if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write(R<BaseCar>::Serialize<RImpl>(obj).getData());
 		s.write("doors", obj.doors);
 		s.write("hasSunroof", obj.hasSunroof);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
     }
 
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Deserialize(const RResourceStream<RImpl>& s, Sedan& obj)
-    {
-		R<BaseCar>::Deserialize<RImpl>(s, obj);
+    static void Deserialize(const RResourceStream<RImpl>& s, Sedan& obj, bool noSignals = false)
+    {if (!noSignals)
+        {
+            _RTryCallPreDeserialize(obj);
+        }
+
+		R<BaseCar>::Deserialize<RImpl>(s, obj, true);
 		s.read("doors", obj.doors, 4);
 		s.read("hasSunroof", obj.hasSunroof, false);
+        if (!noSignals)
+        {
+            _RTryCallPostDeserialize(obj, s.logs());
+        }
     }
 }; // struct R<Sedan>
 
@@ -265,31 +409,55 @@ struct R<BasePart>
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    [[nodiscard]] static RResourceStream<RImpl> Serialize(const BasePart& obj)
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const BasePart& obj, bool noSignals = false)
     {
-        RResourceStream<RImpl> s;
+        RResourceStream<RImpl> s;if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
 		s.write("id", obj.id);
 		s.write("manufacturer", obj.manufacturer);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
         return s;
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Serialize(const BasePart& obj, RResourceStream<RImpl>& s)
+    static void Serialize(const BasePart& obj, RResourceStream<RImpl>& s, bool noSignals = false)
     {
-        
+        if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
 		s.write("id", obj.id);
 		s.write("manufacturer", obj.manufacturer);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
     }
 
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Deserialize(const RResourceStream<RImpl>& s, BasePart& obj)
-    {
-		R<Core::BaseComponent>::Deserialize<RImpl>(s, obj);
+    static void Deserialize(const RResourceStream<RImpl>& s, BasePart& obj, bool noSignals = false)
+    {if (!noSignals)
+        {
+            _RTryCallPreDeserialize(obj);
+        }
+
+		R<Core::BaseComponent>::Deserialize<RImpl>(s, obj, true);
 		s.read("id", obj.id, 0);
 		s.read("manufacturer", obj.manufacturer, "Generic");
+        if (!noSignals)
+        {
+            _RTryCallPostDeserialize(obj, s.logs());
+        }
     }
 }; // struct R<BasePart>
 
@@ -308,34 +476,58 @@ struct R<Engine>
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Engine& obj)
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Engine& obj, bool noSignals = false)
     {
-        RResourceStream<RImpl> s;
+        RResourceStream<RImpl> s;if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write(R<BasePart>::Serialize<RImpl>(obj).getData());
 		s.write("cylinders", obj.cylinders);
 		s.write("volume", obj.volume);
 		s.write("started", obj.started);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
         return s;
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Serialize(const Engine& obj, RResourceStream<RImpl>& s)
+    static void Serialize(const Engine& obj, RResourceStream<RImpl>& s, bool noSignals = false)
     {
-        
+        if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write(R<BasePart>::Serialize<RImpl>(obj).getData());
 		s.write("cylinders", obj.cylinders);
 		s.write("volume", obj.volume);
 		s.write("started", obj.started);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
     }
 
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Deserialize(const RResourceStream<RImpl>& s, Engine& obj)
-    {
-		R<BasePart>::Deserialize<RImpl>(s, obj);
+    static void Deserialize(const RResourceStream<RImpl>& s, Engine& obj, bool noSignals = false)
+    {if (!noSignals)
+        {
+            _RTryCallPreDeserialize(obj);
+        }
+
+		R<BasePart>::Deserialize<RImpl>(s, obj, true);
 		s.read("cylinders", obj.cylinders, 4);
 		s.read("volume", obj.volume, 2.0f);
 		s.read("started", obj.started, false);
+        if (!noSignals)
+        {
+            _RTryCallPostDeserialize(obj, s.logs());
+        }
     }
 }; // struct R<Engine>
 
@@ -353,31 +545,55 @@ struct R<TurboEngine>
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    [[nodiscard]] static RResourceStream<RImpl> Serialize(const TurboEngine& obj)
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const TurboEngine& obj, bool noSignals = false)
     {
-        RResourceStream<RImpl> s;
+        RResourceStream<RImpl> s;if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write(R<Engine>::Serialize<RImpl>(obj).getData());
 		s.write("boostPressure", obj.boostPressure);
 		s.write("turboEnabled", obj.turboEnabled);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
         return s;
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Serialize(const TurboEngine& obj, RResourceStream<RImpl>& s)
+    static void Serialize(const TurboEngine& obj, RResourceStream<RImpl>& s, bool noSignals = false)
     {
-        
+        if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write(R<Engine>::Serialize<RImpl>(obj).getData());
 		s.write("boostPressure", obj.boostPressure);
 		s.write("turboEnabled", obj.turboEnabled);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
     }
 
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Deserialize(const RResourceStream<RImpl>& s, TurboEngine& obj)
-    {
-		R<Engine>::Deserialize<RImpl>(s, obj);
+    static void Deserialize(const RResourceStream<RImpl>& s, TurboEngine& obj, bool noSignals = false)
+    {if (!noSignals)
+        {
+            _RTryCallPreDeserialize(obj);
+        }
+
+		R<Engine>::Deserialize<RImpl>(s, obj, true);
 		s.read("boostPressure", obj.boostPressure, 1.0f);
 		s.read("turboEnabled", obj.turboEnabled, true);
+        if (!noSignals)
+        {
+            _RTryCallPostDeserialize(obj, s.logs());
+        }
     }
 }; // struct R<TurboEngine>
 
@@ -395,31 +611,55 @@ struct R<Wheel>
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Wheel& obj)
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Wheel& obj, bool noSignals = false)
     {
-        RResourceStream<RImpl> s;
+        RResourceStream<RImpl> s;if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write(R<BasePart>::Serialize<RImpl>(obj).getData());
 		s.write("radius", obj.radius);
 		s.write("pressure", obj.pressure);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
         return s;
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Serialize(const Wheel& obj, RResourceStream<RImpl>& s)
+    static void Serialize(const Wheel& obj, RResourceStream<RImpl>& s, bool noSignals = false)
     {
-        
+        if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write(R<BasePart>::Serialize<RImpl>(obj).getData());
 		s.write("radius", obj.radius);
 		s.write("pressure", obj.pressure);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
     }
 
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Deserialize(const RResourceStream<RImpl>& s, Wheel& obj)
-    {
-		R<BasePart>::Deserialize<RImpl>(s, obj);
+    static void Deserialize(const RResourceStream<RImpl>& s, Wheel& obj, bool noSignals = false)
+    {if (!noSignals)
+        {
+            _RTryCallPreDeserialize(obj);
+        }
+
+		R<BasePart>::Deserialize<RImpl>(s, obj, true);
 		s.read("radius", obj.radius, 17.0f);
 		s.read("pressure", obj.pressure, 2.2f);
+        if (!noSignals)
+        {
+            _RTryCallPostDeserialize(obj, s.logs());
+        }
     }
 }; // struct R<Wheel>
 
@@ -436,28 +676,52 @@ struct R<Interior>
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Interior& obj)
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Interior& obj, bool noSignals = false)
     {
-        RResourceStream<RImpl> s;
+        RResourceStream<RImpl> s;if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write(R<BasePart>::Serialize<RImpl>(obj).getData());
 		s.write("color", obj.color);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
         return s;
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Serialize(const Interior& obj, RResourceStream<RImpl>& s)
+    static void Serialize(const Interior& obj, RResourceStream<RImpl>& s, bool noSignals = false)
     {
-        
+        if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write(R<BasePart>::Serialize<RImpl>(obj).getData());
 		s.write("color", obj.color);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
     }
 
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Deserialize(const RResourceStream<RImpl>& s, Interior& obj)
-    {
-		R<BasePart>::Deserialize<RImpl>(s, obj);
+    static void Deserialize(const RResourceStream<RImpl>& s, Interior& obj, bool noSignals = false)
+    {if (!noSignals)
+        {
+            _RTryCallPreDeserialize(obj);
+        }
+
+		R<BasePart>::Deserialize<RImpl>(s, obj, true);
 		s.read("color", obj.color, "black");
+        if (!noSignals)
+        {
+            _RTryCallPostDeserialize(obj, s.logs());
+        }
     }
 }; // struct R<Interior>
 
@@ -475,31 +739,55 @@ struct R<Seat>
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Seat& obj)
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Seat& obj, bool noSignals = false)
     {
-        RResourceStream<RImpl> s;
+        RResourceStream<RImpl> s;if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write(R<Interior>::Serialize<RImpl>(obj).getData());
 		s.write("heated", obj.heated);
 		s.write("position", obj.position);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
         return s;
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Serialize(const Seat& obj, RResourceStream<RImpl>& s)
+    static void Serialize(const Seat& obj, RResourceStream<RImpl>& s, bool noSignals = false)
     {
-        
+        if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write(R<Interior>::Serialize<RImpl>(obj).getData());
 		s.write("heated", obj.heated);
 		s.write("position", obj.position);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
     }
 
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Deserialize(const RResourceStream<RImpl>& s, Seat& obj)
-    {
-		R<Interior>::Deserialize<RImpl>(s, obj);
+    static void Deserialize(const RResourceStream<RImpl>& s, Seat& obj, bool noSignals = false)
+    {if (!noSignals)
+        {
+            _RTryCallPreDeserialize(obj);
+        }
+
+		R<Interior>::Deserialize<RImpl>(s, obj, true);
 		s.read("heated", obj.heated, false);
 		s.read("position", obj.position, 0);
+        if (!noSignals)
+        {
+            _RTryCallPostDeserialize(obj, s.logs());
+        }
     }
 }; // struct R<Seat>
 
@@ -517,31 +805,55 @@ struct R<Dashboard>
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Dashboard& obj)
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Dashboard& obj, bool noSignals = false)
     {
-        RResourceStream<RImpl> s;
+        RResourceStream<RImpl> s;if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write(R<Interior>::Serialize<RImpl>(obj).getData());
 		s.write("hasDisplay", obj.hasDisplay);
 		s.write("brightness", obj.brightness);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
         return s;
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Serialize(const Dashboard& obj, RResourceStream<RImpl>& s)
+    static void Serialize(const Dashboard& obj, RResourceStream<RImpl>& s, bool noSignals = false)
     {
-        
+        if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write(R<Interior>::Serialize<RImpl>(obj).getData());
 		s.write("hasDisplay", obj.hasDisplay);
 		s.write("brightness", obj.brightness);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
     }
 
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Deserialize(const RResourceStream<RImpl>& s, Dashboard& obj)
-    {
-		R<Interior>::Deserialize<RImpl>(s, obj);
+    static void Deserialize(const RResourceStream<RImpl>& s, Dashboard& obj, bool noSignals = false)
+    {if (!noSignals)
+        {
+            _RTryCallPreDeserialize(obj);
+        }
+
+		R<Interior>::Deserialize<RImpl>(s, obj, true);
 		s.read("hasDisplay", obj.hasDisplay, true);
 		s.read("brightness", obj.brightness, 50);
+        if (!noSignals)
+        {
+            _RTryCallPostDeserialize(obj, s.logs());
+        }
     }
 }; // struct R<Dashboard>
 
@@ -558,28 +870,52 @@ struct R<Electronics>
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Electronics& obj)
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Electronics& obj, bool noSignals = false)
     {
-        RResourceStream<RImpl> s;
+        RResourceStream<RImpl> s;if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write(R<BasePart>::Serialize<RImpl>(obj).getData());
 		s.write("firmwareVersion", obj.firmwareVersion);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
         return s;
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Serialize(const Electronics& obj, RResourceStream<RImpl>& s)
+    static void Serialize(const Electronics& obj, RResourceStream<RImpl>& s, bool noSignals = false)
     {
-        
+        if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write(R<BasePart>::Serialize<RImpl>(obj).getData());
 		s.write("firmwareVersion", obj.firmwareVersion);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
     }
 
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Deserialize(const RResourceStream<RImpl>& s, Electronics& obj)
-    {
-		R<BasePart>::Deserialize<RImpl>(s, obj);
+    static void Deserialize(const RResourceStream<RImpl>& s, Electronics& obj, bool noSignals = false)
+    {if (!noSignals)
+        {
+            _RTryCallPreDeserialize(obj);
+        }
+
+		R<BasePart>::Deserialize<RImpl>(s, obj, true);
 		s.read("firmwareVersion", obj.firmwareVersion, 1);
+        if (!noSignals)
+        {
+            _RTryCallPostDeserialize(obj, s.logs());
+        }
     }
 }; // struct R<Electronics>
 
@@ -597,31 +933,55 @@ struct R<Sensor>
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Sensor& obj)
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Sensor& obj, bool noSignals = false)
     {
-        RResourceStream<RImpl> s;
+        RResourceStream<RImpl> s;if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write(R<Electronics>::Serialize<RImpl>(obj).getData());
 		s.write("type", obj.type);
 		s.write("value", obj.value);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
         return s;
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Serialize(const Sensor& obj, RResourceStream<RImpl>& s)
+    static void Serialize(const Sensor& obj, RResourceStream<RImpl>& s, bool noSignals = false)
     {
-        
+        if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write(R<Electronics>::Serialize<RImpl>(obj).getData());
 		s.write("type", obj.type);
 		s.write("value", obj.value);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
     }
 
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Deserialize(const RResourceStream<RImpl>& s, Sensor& obj)
-    {
-		R<Electronics>::Deserialize<RImpl>(s, obj);
+    static void Deserialize(const RResourceStream<RImpl>& s, Sensor& obj, bool noSignals = false)
+    {if (!noSignals)
+        {
+            _RTryCallPreDeserialize(obj);
+        }
+
+		R<Electronics>::Deserialize<RImpl>(s, obj, true);
 		s.read("type", obj.type, "generic");
 		s.read("value", obj.value, 0.0f);
+        if (!noSignals)
+        {
+            _RTryCallPostDeserialize(obj, s.logs());
+        }
     }
 }; // struct R<Sensor>
 
@@ -639,31 +999,55 @@ struct R<Camera>
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Camera& obj)
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Camera& obj, bool noSignals = false)
     {
-        RResourceStream<RImpl> s;
+        RResourceStream<RImpl> s;if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write(R<Sensor>::Serialize<RImpl>(obj).getData());
 		s.write("resolution", obj.resolution);
 		s.write("hdr", obj.hdr);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
         return s;
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Serialize(const Camera& obj, RResourceStream<RImpl>& s)
+    static void Serialize(const Camera& obj, RResourceStream<RImpl>& s, bool noSignals = false)
     {
-        
+        if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
 		s.write(R<Sensor>::Serialize<RImpl>(obj).getData());
 		s.write("resolution", obj.resolution);
 		s.write("hdr", obj.hdr);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
     }
 
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Deserialize(const RResourceStream<RImpl>& s, Camera& obj)
-    {
-		R<Sensor>::Deserialize<RImpl>(s, obj);
+    static void Deserialize(const RResourceStream<RImpl>& s, Camera& obj, bool noSignals = false)
+    {if (!noSignals)
+        {
+            _RTryCallPreDeserialize(obj);
+        }
+
+		R<Sensor>::Deserialize<RImpl>(s, obj, true);
 		s.read("resolution", obj.resolution, 1080);
 		s.read("hdr", obj.hdr, false);
+        if (!noSignals)
+        {
+            _RTryCallPostDeserialize(obj, s.logs());
+        }
     }
 }; // struct R<Camera>
 // clang-format on
