@@ -26,6 +26,7 @@
 
 #include "BaseAsset.h"
 #include "Graphics/Texture.h"
+#include "RawDataManagement/JsonAdapter.h"
 
 namespace Core
 {
@@ -33,7 +34,7 @@ namespace Core
     CLASS();
     class TextureAsset : public BaseAsset
     {
-        R_FRIEND(TextureAsset);
+        R_FRIEND_DECL(TextureAsset);
 
     public:
         inline static const char* fileExtension = ".nxtex";
@@ -63,9 +64,6 @@ namespace Core
     protected:
         void onLoadRequest() override;
         void onUnloadRequest() override;
-
-        [[nodiscard]] nlohmann::json serialize() const override;
-        void deserialize(RResourceStream<RJsonResourceStream>& data) override;
 
     protected:
         Texture _data;

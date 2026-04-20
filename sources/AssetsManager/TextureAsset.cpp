@@ -28,6 +28,8 @@
 
 namespace Core
 {
+    R_FRIEND_IMPL(TextureAsset);
+    
     void TextureAsset::setFilePath(const std::filesystem::path& value)
     {
         Assert(value.is_relative(), "Path should be relative");
@@ -59,19 +61,6 @@ namespace Core
     void TextureAsset::onUnloadRequest()
     {
         _data.release();
-    }
-
-    nlohmann::json TextureAsset::serialize() const
-    {
-        RResourceStream<RJsonResourceStream> out(BaseAsset::serialize());
-        R<TextureAsset>::Serialize(*this, out);
-        return out.getData();
-    }
-
-    void TextureAsset::deserialize(RResourceStream<RJsonResourceStream>& data)
-    {
-        BaseAsset::deserialize(data);
-        R<TextureAsset>::Deserialize(data, *this);
     }
 
 } // namespace Core

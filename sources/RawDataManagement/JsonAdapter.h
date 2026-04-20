@@ -25,8 +25,26 @@
 #pragma once
 
 #include "Core/Size.h"
+#include "JustReflectMe/Adapter.h"
 #include "glm/glm.hpp"
 #include "nlohmann/json.hpp"
+
+#define R_FRIEND_DECL(Class, ...)                                                                  \
+    R_FRIEND(Class, __VA_ARGS__);                                                                  \
+                                                                                                   \
+public:                                                                                            \
+    [[nodiscard]] nlohmann::json serialize() const override;                                       \
+    void deserialize(RResourceStream<RJsonResourceStream>& stream) override;
+
+#define R_FRIEND_IMPL(TypeName)                                                                    \
+    nlohmann::json TypeName::serialize() const                                                     \
+    {                                                                                              \
+        return R<TypeName>::Serialize<RJsonResourceStream>(*this).getData();                       \
+    }                                                                                              \
+    void TypeName::deserialize(RResourceStream<RJsonResourceStream>& stream)                       \
+    {                                                                                              \
+        R<TypeName>::Deserialize(stream, *this);                                                   \
+    }
 
 namespace glm
 {

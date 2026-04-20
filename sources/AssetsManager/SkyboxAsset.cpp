@@ -28,6 +28,8 @@
 
 namespace Core
 {
+    R_FRIEND_IMPL(SkyboxAsset);
+
     void SkyboxAsset::draw()
     {
         auto* shader = GetShaderManager().getShaderProgram("skybox"_atom);
@@ -145,35 +147,5 @@ namespace Core
     {
         _gcd.clear();
     }
-
-    nlohmann::json SkyboxAsset::serialize() const
-    {
-        RResourceStream<RJsonResourceStream> out(BaseAsset::serialize());
-        R<SkyboxAsset>::Serialize(*this, out);
-        return out.getData();
-    }
-
-    void SkyboxAsset::deserialize(RResourceStream<RJsonResourceStream>& data)
-    {
-        BaseAsset::deserialize(data);
-        R<SkyboxAsset>::Deserialize(data, *this);
-    }
-
-    /*
-    void SkyboxAsset::ioFieldsUpdate(DataStream& out)
-    {
-        auto stream = out.dedicatedNesting("SkyboxAsset");
-
-        auto componentPath = [this, &stream](const char* prop, Direction dir)
-        { stream.field(prop, _paths.at(static_cast<std::size_t>(dir))); };
-
-        componentPath("pathToTop", Direction::Top);
-        componentPath("pathToBottom", Direction::Bottom);
-        componentPath("pathToBack", Direction::Back);
-        componentPath("pathToFront", Direction::Front);
-        componentPath("pathToLeft", Direction::Left);
-        componentPath("pathToRight", Direction::Right);
-        stream.field("_isFlipVertically", _isFlipVertically);
-    }*/
 
 } // namespace Core

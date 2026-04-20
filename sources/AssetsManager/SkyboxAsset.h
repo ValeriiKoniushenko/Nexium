@@ -27,13 +27,14 @@
 #include "BaseAsset.h"
 #include "Graphics/GraphicsComponents.h"
 #include "Graphics/Texture.h"
+#include "RawDataManagement/JsonAdapter.h"
 
 namespace Core
 {
     CLASS();
     class SkyboxAsset : public BaseAsset
     {
-        R_FRIEND(SkyboxAsset, Core::BaseAsset);
+        R_FRIEND_DECL(SkyboxAsset, Core::BaseAsset);
 
     public:
         inline static const char* fileExtension = ".nxsky";
@@ -60,9 +61,6 @@ namespace Core
         ~SkyboxAsset() override = default;
 
         [[nodiscard]] const char* getPrefix() const override { return "Skybox"; }
-
-        [[nodiscard]] nlohmann::json serialize() const override;
-        void deserialize(RResourceStream<RJsonResourceStream>& data) override;
 
     protected:
         void onLoadRequest() override;
