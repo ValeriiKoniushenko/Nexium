@@ -152,7 +152,8 @@ struct R<Core::SkyboxAsset>
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, Core::SkyboxAsset& obj, bool noSignals = false)
-    {if (!noSignals)
+    {
+        if (!noSignals)
         {
             _RTryCallPreDeserialize(obj);
         }

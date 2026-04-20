@@ -66,7 +66,8 @@ struct R<Core::Transformable>
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, Core::Transformable& obj, bool noSignals = false)
-    {if (!noSignals)
+    {
+        if (!noSignals)
         {
             _RTryCallPreDeserialize(obj);
         }

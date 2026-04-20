@@ -31,7 +31,7 @@
 CLASS();
 class DummyComponent : public Core::BaseComponent
 {
-    ECS_R_FRIEND_DECL(DummyComponent, Core::BaseComponent);
+    R_FRIEND_DECL(DummyComponent, Core::BaseComponent);
     ECS_COMPONENT_DECL(DummyComponent, Core::BaseComponent);
 
     FIELD();
@@ -44,7 +44,7 @@ class DummyComponent : public Core::BaseComponent
 CLASS();
 class HardConstructorComponent : public Core::BaseComponent
 {
-    ECS_R_FRIEND_DECL(HardConstructorComponent, Core::BaseComponent);
+    R_FRIEND_DECL(HardConstructorComponent, Core::BaseComponent);
     ECS_COMPONENT_DECL(HardConstructorComponent, BaseComponent);
 
     HardConstructorComponent(int a, const Core::StringAtom& name, std::string b)
@@ -61,7 +61,7 @@ class HardConstructorComponent : public Core::BaseComponent
 CLASS();
 class InitSpyComponent : public Core::BaseComponent
 {
-    ECS_R_FRIEND_DECL(InitSpyComponent, Core::BaseComponent);
+    R_FRIEND_DECL(InitSpyComponent, Core::BaseComponent);
     ECS_COMPONENT_DECL(InitSpyComponent, BaseComponent);
 
 public:
@@ -76,7 +76,7 @@ protected:
 CLASS();
 class Vehicle : public Core::BaseComponent
 {
-    ECS_R_FRIEND_DECL(Vehicle, Core::BaseComponent);
+    R_FRIEND_DECL(Vehicle, Core::BaseComponent);
     ECS_COMPONENT_DECL(Vehicle, Core::BaseComponent);
 
     FIELD();
@@ -90,7 +90,7 @@ class Vehicle : public Core::BaseComponent
 CLASS();
 class BaseCar : public Vehicle
 {
-    ECS_R_FRIEND_DECL(BaseCar, Vehicle);
+    R_FRIEND_DECL(BaseCar, Vehicle);
     ECS_COMPONENT_DECL(BaseCar, Vehicle);
 
     FIELD();
@@ -102,7 +102,7 @@ class BaseCar : public Vehicle
 CLASS();
 class Sedan : public BaseCar
 {
-    ECS_R_FRIEND_DECL(Sedan, BaseCar);
+    R_FRIEND_DECL(Sedan, BaseCar);
     ECS_COMPONENT_DECL(Sedan, BaseCar);
 
     FIELD();
@@ -114,7 +114,7 @@ class Sedan : public BaseCar
 CLASS();
 class BasePart : public Core::BaseComponent
 {
-    ECS_R_FRIEND_DECL(BasePart, Core::BaseComponent);
+    R_FRIEND_DECL(BasePart, Core::BaseComponent);
     ECS_COMPONENT_DECL(BasePart, Core::BaseComponent);
 
     FIELD();
@@ -126,7 +126,7 @@ class BasePart : public Core::BaseComponent
 CLASS();
 class Engine : public BasePart
 {
-    ECS_R_FRIEND_DECL(Engine, BasePart);
+    R_FRIEND_DECL(Engine, BasePart);
     ECS_COMPONENT_DECL(Engine, BasePart);
 
     FIELD();
@@ -140,7 +140,7 @@ class Engine : public BasePart
 CLASS();
 class TurboEngine : public Engine
 {
-    ECS_R_FRIEND_DECL(TurboEngine, Engine);
+    R_FRIEND_DECL(TurboEngine, Engine);
     ECS_COMPONENT_DECL(TurboEngine, Engine);
 
     FIELD();
@@ -152,7 +152,7 @@ class TurboEngine : public Engine
 CLASS();
 class Wheel : public BasePart
 {
-    ECS_R_FRIEND_DECL(Wheel, BasePart);
+    R_FRIEND_DECL(Wheel, BasePart);
     ECS_COMPONENT_DECL(Wheel, BasePart);
 
     FIELD();
@@ -164,7 +164,7 @@ class Wheel : public BasePart
 CLASS();
 class Interior : public BasePart
 {
-    ECS_R_FRIEND_DECL(Interior, BasePart);
+    R_FRIEND_DECL(Interior, BasePart);
     ECS_COMPONENT_DECL(Interior, BasePart);
 
     FIELD();
@@ -174,7 +174,7 @@ class Interior : public BasePart
 CLASS();
 class Seat : public Interior
 {
-    ECS_R_FRIEND_DECL(Seat, Interior);
+    R_FRIEND_DECL(Seat, Interior);
     ECS_COMPONENT_DECL(Seat, Interior);
 
     FIELD();
@@ -186,7 +186,7 @@ class Seat : public Interior
 CLASS();
 class Dashboard : public Interior
 {
-    ECS_R_FRIEND_DECL(Dashboard, Interior);
+    R_FRIEND_DECL(Dashboard, Interior);
     ECS_COMPONENT_DECL(Dashboard, Interior);
 
     FIELD();
@@ -198,7 +198,7 @@ class Dashboard : public Interior
 CLASS();
 class Electronics : public BasePart
 {
-    ECS_R_FRIEND_DECL(Electronics, BasePart);
+    R_FRIEND_DECL(Electronics, BasePart);
     ECS_COMPONENT_DECL(Electronics, BasePart);
 
     FIELD();
@@ -208,7 +208,7 @@ class Electronics : public BasePart
 CLASS();
 class Sensor : public Electronics
 {
-    ECS_R_FRIEND_DECL(Sensor, Electronics);
+    R_FRIEND_DECL(Sensor, Electronics);
     ECS_COMPONENT_DECL(Sensor, Electronics);
 
     FIELD();
@@ -220,7 +220,7 @@ class Sensor : public Electronics
 CLASS();
 class Camera : public Sensor
 {
-    ECS_R_FRIEND_DECL(Camera, Sensor);
+    R_FRIEND_DECL(Camera, Sensor);
     ECS_COMPONENT_DECL(Camera, Sensor);
 
     FIELD();

@@ -69,7 +69,8 @@ struct R<Core::AssetImpl::StaticMeshBundle::AssetData>
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, Core::AssetImpl::StaticMeshBundle::AssetData& obj, bool noSignals = false)
-    {if (!noSignals)
+    {
+        if (!noSignals)
         {
             _RTryCallPreDeserialize(obj);
         }

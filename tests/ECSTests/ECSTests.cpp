@@ -91,7 +91,7 @@ TEST(ECSBaseTests, SerializationOfBaseComponentClass)
     obj.disable();
     obj.setNoTick(true);
 
-    const auto json = R<BaseComponent>::Serialize(obj).getData();
+    const auto json = R<decltype(obj)>::Serialize(obj).getData();
     ASSERT_FALSE(json["_isEnabled"].get<bool>());
     ASSERT_TRUE(json["_noTick"].get<bool>());
     ASSERT_EQ("DummyComponent", json["_type"].get<StringAtom>());
@@ -140,7 +140,7 @@ TEST(ECSBaseTests, DeserializationOfComponentTree)
 
         obj.addChildComponent<DummyComponent>("SubChild1");
         obj.addChildComponent<HardConstructorComponent>(123, "SubChild2", "text");
-        stream = obj.serialize();
+        stream = R<decltype(obj)>::Serialize(obj).getData();
     }
 
     // std::cout << stream.dump(4) << std::endl;
@@ -149,7 +149,7 @@ TEST(ECSBaseTests, DeserializationOfComponentTree)
     restored.addChildComponent<DummyComponent>("OriginalSubChild1");
 
     RResourceStream<RJsonResourceStream> data(stream);
-    restored.deserialize(data);
+    R<decltype(restored)>::Deserialize(data, restored);
 
     // --- Root assertions ---
     ASSERT_TRUE(stream.contains("_type"));
@@ -227,7 +227,7 @@ TEST(ECSBaseTests, DeserializationOfComponentTreeWithSkippedFields)
         obj.disable();
         obj.setNoTick(true);
         obj.a = 1000;
-        stream = obj.serialize();
+        stream = R<decltype(obj)>::Serialize(obj).getData();
     }
 
     // std::cout << stream.dump(4) << std::endl;
@@ -237,7 +237,7 @@ TEST(ECSBaseTests, DeserializationOfComponentTreeWithSkippedFields)
 
     DummyComponent restored;
     RResourceStream<RJsonResourceStream> data(stream);
-    restored.deserialize(data);
+    R<decltype(restored)>::Deserialize(data, restored);
 
     ASSERT_EQ(123, restored.a); // 123 - default value
 }
@@ -481,18 +481,18 @@ TEST(ECSBaseTests, ParentInvalidating)
 
 TEST_F(ECSTreeTests, ComplexDeSerealization)
 {
-    const auto serialized = root.serialize();
+    const auto serialized = R<decltype(root)>::Serialize(root).getData();
 
     DummyComponent restored;
     RResourceStream<RJsonResourceStream> data(serialized);
-    restored.deserialize(data);
+    R<decltype(restored)>::Deserialize(data, restored);
 
     ASSERT_EQ(root.getComponentName(), restored.getComponentName());
     ASSERT_EQ(root.getComponentType(), restored.getComponentType());
     ASSERT_EQ(root.getChildrenCount(), restored.getChildrenCount());
     ASSERT_EQ(root.getChildren().size(), restored.getChildren().size());
 
-    ASSERT_EQ(serialized.dump(4), restored.serialize().dump(4));
+    ASSERT_EQ(serialized.dump(4), R<decltype(restored)>::Serialize(restored).getData().dump(4));
 }
 
 TEST_F(ECSTreeTests, BFSIteratorTest)
@@ -858,7 +858,7 @@ namespace
 
 TEST_F(ECSTreeVehicleTests, FullSerializationCheck)
 {
-    const auto serialized = root.serialize();
+    const auto serialized = R<decltype(root)>::Serialize(root).getData();
 
     // ROOT FIELDS
     ASSERT_EQ(serialized["vin"], "VIN-12345");
@@ -920,12 +920,11 @@ TEST_F(ECSTreeVehicleTests, FullSerializationCheck)
 
 TEST_F(ECSTreeVehicleTests, FullDeserializationCheck)
 {
-    const auto serialized = root.serialize();
+    const auto serialized = R<decltype(root)>::Serialize(root).getData();
 
     Sedan restored;
     RResourceStream<RJsonResourceStream> data(serialized);
-
-    restored.deserialize(data);
+    R<decltype(restored)>::Deserialize(data, restored);
 
     // ROOT
     ASSERT_EQ(restored.vin, root.vin);
@@ -994,5 +993,5 @@ TEST_F(ECSTreeVehicleTests, FullDeserializationCheck)
     ASSERT_EQ(camR->hdr, camO->hdr);
 
     // FINAL STRICT CHECK
-    ASSERT_EQ(serialized.dump(4), restored.serialize().dump(4));
+    ASSERT_EQ(serialized.dump(4), R<decltype(restored)>::Serialize(restored).getData().dump(4));
 }

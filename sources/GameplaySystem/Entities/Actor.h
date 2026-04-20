@@ -33,7 +33,7 @@ namespace Core
     CLASS();
     class Actor : public Transformable, public IDrawable, public BaseComponent
     {
-        ECS_R_FRIEND_DECL(Actor, Core::BaseComponent, Core::Transformable, Core::IDrawable);
+        R_FRIEND_DECL(Actor, Core::BaseComponent, Core::Transformable, Core::IDrawable);
         ECS_COMPONENT_DECL(Actor, BaseComponent);
 
     public:
@@ -51,6 +51,12 @@ namespace Core
 
     protected:
         void onInitialize() override;
+
+        void onPreDeserialize(AbstractComponent* obj) override;
+        void onPostDeserialize(AbstractComponent* obj, const RLogsCollector& logs) override;
+        void onPreSerialize(const AbstractComponent* obj) const override;
+        void onPostSerialize(const AbstractComponent* obj,
+                             const RLogsCollector& logs) const override;
     };
 
     template<class T>

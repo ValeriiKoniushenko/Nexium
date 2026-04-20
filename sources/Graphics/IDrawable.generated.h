@@ -57,7 +57,8 @@ struct R<Core::IDrawable>
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, Core::IDrawable& obj, bool noSignals = false)
-    {if (!noSignals)
+    {
+        if (!noSignals)
         {
             _RTryCallPreDeserialize(obj);
         }

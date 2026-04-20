@@ -42,12 +42,29 @@ namespace Core
 
     nlohmann::json AbstractComponent::serialize() const
     {
-        return R<AbstractComponent>::Serialize<RJsonResourceStream>(*this).getData();
+        return R<AbstractComponent>::Serialize(*this).getData();
     }
 
-    void AbstractComponent::deserialize(RResourceStream<RJsonResourceStream>& data)
+    void AbstractComponent::deserialize(RResourceStream<RJsonResourceStream>& stream)
     {
-        R<AbstractComponent>::Deserialize(data, *this);
+        R<AbstractComponent>::Deserialize(stream, *this);
+    }
+
+    void AbstractComponent::onPreDeserialize(AbstractComponent* obj)
+    {
+    }
+
+    void AbstractComponent::onPostDeserialize(AbstractComponent* obj, const RLogsCollector& logs)
+    {
+    }
+
+    void AbstractComponent::onPreSerialize(const AbstractComponent* obj) const
+    {
+    }
+
+    void AbstractComponent::onPostSerialize(const AbstractComponent* obj,
+                                            const RLogsCollector& logs) const
+    {
     }
 
     const StringAtom BaseComponent::componentType = "BaseComponent"_atom;
@@ -196,6 +213,41 @@ namespace Core
         _children.erase(first, last);
     }
 
+    nlohmann::json BaseComponent::serialize() const
+    {
+        return R<BaseComponent>::Serialize(*this).getData();
+    }
+
+    void BaseComponent::deserialize(RResourceStream<RJsonResourceStream>& stream)
+    {
+        R<BaseComponent>::Deserialize(stream, *this);
+    }
+
+    void BaseComponent::onPreDeserialize(AbstractComponent* obj)
+    {
+        AbstractComponent::onPreDeserialize(obj);
+    }
+
+    void BaseComponent::onPostDeserialize(AbstractComponent* obj, const RLogsCollector& logs)
+    {
+        AbstractComponent::onPostDeserialize(obj, logs);
+        if (!_type.isEmpty()) [[likely]]
+        {
+            _type = StringAtom::Intern(_type);
+        }
+    }
+
+    void BaseComponent::onPreSerialize(const AbstractComponent* obj) const
+    {
+        AbstractComponent::onPreSerialize(obj);
+    }
+
+    void BaseComponent::onPostSerialize(const AbstractComponent* obj,
+                                        const RLogsCollector& logs) const
+    {
+        AbstractComponent::onPostSerialize(obj, logs);
+    }
+
     BaseComponent* BaseComponent::getOwner() noexcept
     {
         BaseComponent* comp = this;
@@ -229,20 +281,6 @@ namespace Core
         for (auto&& child : _children)
         {
             child->tick(delta);
-        }
-    }
-
-    nlohmann::json BaseComponent::serialize() const
-    {
-        return R<BaseComponent>::Serialize<RJsonResourceStream>(*this).getData();
-    }
-
-    void BaseComponent::deserialize(RResourceStream<RJsonResourceStream>& data)
-    {
-        R<BaseComponent>::Deserialize(data, *this);
-        if (!_type.isEmpty()) [[likely]]
-        {
-            _type = StringAtom::Intern(_type);
         }
     }
 

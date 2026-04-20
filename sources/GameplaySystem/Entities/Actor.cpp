@@ -27,7 +27,7 @@
 namespace Core
 {
     ECS_COMPONENT_IMPL(Actor);
-    ECS_R_FRIEND_IMPL(Actor);
+    R_FRIEND_IMPL(Actor);
 
     void Actor::onInitialize()
     {
@@ -37,6 +37,30 @@ namespace Core
         {
             _name = _type;
         }
+    }
+
+    void Actor::onPreDeserialize(AbstractComponent* obj)
+    {
+        BaseComponent::onPreDeserialize(obj);
+        Transformable::onPreDeserialize(this);
+    }
+
+    void Actor::onPostDeserialize(AbstractComponent* obj, const RLogsCollector& logs)
+    {
+        BaseComponent::onPostDeserialize(obj, logs);
+        Transformable::onPostDeserialize(this, logs);
+    }
+
+    void Actor::onPreSerialize(const AbstractComponent* obj) const
+    {
+        BaseComponent::onPreSerialize(obj);
+        Transformable::onPreSerialize(this);
+    }
+
+    void Actor::onPostSerialize(const AbstractComponent* obj, const RLogsCollector& logs) const
+    {
+        BaseComponent::onPostSerialize(obj, logs);
+        Transformable::onPostSerialize(this, logs);
     }
 
 } // namespace Core

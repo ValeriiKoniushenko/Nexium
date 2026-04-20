@@ -25,49 +25,49 @@
 #include "DummyComponent.h"
 
 ECS_COMPONENT_IMPL(DummyComponent);
-ECS_R_FRIEND_IMPL(DummyComponent);
+R_FRIEND_IMPL(DummyComponent);
 
 ECS_COMPONENT_IMPL(HardConstructorComponent);
-ECS_R_FRIEND_IMPL(HardConstructorComponent);
+R_FRIEND_IMPL(HardConstructorComponent);
 
 ECS_COMPONENT_IMPL(InitSpyComponent);
-ECS_R_FRIEND_IMPL(InitSpyComponent);
+R_FRIEND_IMPL(InitSpyComponent);
 
 ECS_COMPONENT_IMPL(Vehicle);
-ECS_R_FRIEND_IMPL(Vehicle);
+R_FRIEND_IMPL(Vehicle);
 
 ECS_COMPONENT_IMPL(BaseCar);
-ECS_R_FRIEND_IMPL(BaseCar);
+R_FRIEND_IMPL(BaseCar);
 
 ECS_COMPONENT_IMPL(Sedan);
-ECS_R_FRIEND_IMPL(Sedan);
+R_FRIEND_IMPL(Sedan);
 
 ECS_COMPONENT_IMPL(BasePart);
-ECS_R_FRIEND_IMPL(BasePart);
+R_FRIEND_IMPL(BasePart);
 
 ECS_COMPONENT_IMPL(Engine);
-ECS_R_FRIEND_IMPL(Engine);
+R_FRIEND_IMPL(Engine);
 
 ECS_COMPONENT_IMPL(TurboEngine);
-ECS_R_FRIEND_IMPL(TurboEngine);
+R_FRIEND_IMPL(TurboEngine);
 
 ECS_COMPONENT_IMPL(Wheel);
-ECS_R_FRIEND_IMPL(Wheel);
+R_FRIEND_IMPL(Wheel);
 
 ECS_COMPONENT_IMPL(Interior);
-ECS_R_FRIEND_IMPL(Interior);
+R_FRIEND_IMPL(Interior);
 
 ECS_COMPONENT_IMPL(Seat);
-ECS_R_FRIEND_IMPL(Seat);
+R_FRIEND_IMPL(Seat);
 
 ECS_COMPONENT_IMPL(Dashboard);
-ECS_R_FRIEND_IMPL(Dashboard);
+R_FRIEND_IMPL(Dashboard);
 
 ECS_COMPONENT_IMPL(Electronics);
-ECS_R_FRIEND_IMPL(Electronics);
+R_FRIEND_IMPL(Electronics);
 
 ECS_COMPONENT_IMPL(Sensor);
-ECS_R_FRIEND_IMPL(Sensor);
+R_FRIEND_IMPL(Sensor);
 
 ECS_COMPONENT_IMPL(Camera);
-ECS_R_FRIEND_IMPL(Camera);
+R_FRIEND_IMPL(Camera);

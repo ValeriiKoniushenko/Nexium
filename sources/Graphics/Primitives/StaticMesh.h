@@ -46,8 +46,8 @@ namespace Core
         public IOutliner
     {
         ECS_COMPONENT_DECL(StaticMesh, BaseComponent);
-        ECS_R_FRIEND_DECL(StaticMesh, Core::BaseComponent, Core::Transformable,
-                          Core::GraphicsComponentData);
+        R_FRIEND_DECL(StaticMesh, Core::BaseComponent, Core::Transformable,
+                      Core::GraphicsComponentData);
 
     public:
         constexpr static Color4 outlineColor = Color4{ 252, 186, 3, 255 };

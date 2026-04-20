@@ -245,16 +245,6 @@ namespace Core
         }
     }
 
-    nlohmann::json Transformable::serialize() const
-    {
-        return R<Transformable>::Serialize(*this).getData();
-    }
-
-    void Transformable::deserialize(RResourceStream<RJsonResourceStream>& data)
-    {
-        R<Transformable>::Deserialize(data, *this);
-    }
-
     void Transformable::setOrigin(const glm::vec3& origin) noexcept
     {
         _origin = origin;

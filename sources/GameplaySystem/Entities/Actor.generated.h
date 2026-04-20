@@ -25,7 +25,8 @@ struct R<Core::Actor>
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     [[nodiscard]] static RResourceStream<RImpl> Serialize(const Core::Actor& obj, bool noSignals = false)
     {
-        RResourceStream<RImpl> s;if (!noSignals)
+        RResourceStream<RImpl> s;
+        if (!noSignals)
         {
             _RTryCallPreSerialize(obj);
         }
@@ -60,7 +61,8 @@ struct R<Core::Actor>
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, Core::Actor& obj, bool noSignals = false)
-    {if (!noSignals)
+    {
+        if (!noSignals)
         {
             _RTryCallPreDeserialize(obj);
         }

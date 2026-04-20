@@ -46,16 +46,8 @@ public:                                                                         
     static const Core::StringAtom componentType;                                                   \
                                                                                                    \
 public:                                                                                            \
-    [[nodiscard]] BaseComponent::Ptr clone() const override                                        \
-    {                                                                                              \
-        auto out = static_cast<TypeName*>(::_tryAllocateECSObject<TypeName>(this));                \
-        out->invalidate();                                                                         \
-        return out;                                                                                \
-    }                                                                                              \
-    [[nodiscard]] static Ptr Create()                                                              \
-    {                                                                                              \
-        return static_cast<TypeName*>(::_tryAllocateECSObject<TypeName>(nullptr));                 \
-    }                                                                                              \
+    [[nodiscard]] BaseComponent::Ptr clone() const override;                                       \
+    [[nodiscard]] static Ptr Create();                                                             \
                                                                                                    \
 protected:                                                                                         \
     explicit ClassName(const Core::StringAtom& type, const Core::StringAtom& name)                 \
@@ -73,7 +65,34 @@ public:
         auto newType = Core::StringAtom::Intern(TypeNameAsStr);                                    \
         Core::GetGlobalComponentFactory().registerNewType<TypeName>(newType, isTemplate);          \
         return newType;                                                                            \
-    }();
+    }();                                                                                           \
+    Template Core::BaseComponent::Ptr TypeName::clone() const                                      \
+    {                                                                                              \
+        auto out = static_cast<TypeName*>(::_tryAllocateECSObject<TypeName>(this));                \
+        out->invalidate();                                                                         \
+        return out;                                                                                \
+    }                                                                                              \
+    Template TypeName::Ptr TypeName::Create()                                                      \
+    {                                                                                              \
+        return static_cast<TypeName*>(::_tryAllocateECSObject<TypeName>(nullptr));                 \
+    }
+
+#define R_FRIEND_DECL(Class, ...)                                                                  \
+    R_FRIEND(Class, __VA_ARGS__);                                                                  \
+                                                                                                   \
+public:                                                                                            \
+    [[nodiscard]] nlohmann::json serialize() const override;                                       \
+    void deserialize(RResourceStream<RJsonResourceStream>& stream) override;
+
+#define R_FRIEND_IMPL(TypeName)                                                                    \
+    nlohmann::json TypeName::serialize() const                                                     \
+    {                                                                                              \
+        return R<TypeName>::Serialize<RJsonResourceStream>(*this).getData();                       \
+    }                                                                                              \
+    void TypeName::deserialize(RResourceStream<RJsonResourceStream>& stream)                       \
+    {                                                                                              \
+        R<TypeName>::Deserialize(stream, *this);                                                   \
+    }
 
 // ---------------------------------------------------------
 
@@ -144,24 +163,6 @@ public:
     _ECS_COMPONENT_DECL(ClassName, ClassName, BaseComponentClass)
 
 #define ECS_COMPONENT_IMPL(ClassName) _ECS_COMPONENT_IMPL(ClassName, ;, #ClassName, false)
-
-#define ECS_R_FRIEND_DECL(ClassName, ...)                                                          \
-    R_FRIEND(ClassName, __VA_ARGS__);                                                              \
-                                                                                                   \
-public:                                                                                            \
-    [[nodiscard]] nlohmann::json serialize() const override;                                       \
-    void deserialize(RResourceStream<RJsonResourceStream>& data) override;
-
-#define ECS_R_FRIEND_IMPL(ClassName)                                                               \
-    nlohmann::json ClassName::serialize() const                                                    \
-    {                                                                                              \
-        return R<ClassName>::Serialize<RJsonResourceStream>(*this).getData();                      \
-    }                                                                                              \
-                                                                                                   \
-    void ClassName::deserialize(RResourceStream<RJsonResourceStream>& data)                        \
-    {                                                                                              \
-        R<ClassName>::Deserialize(data, *this);                                                    \
-    }
 
 //
 //
@@ -461,10 +462,16 @@ namespace Core
         [[nodiscard]] bool getNoTick() const noexcept { return _noTick; }
 
         [[nodiscard]] virtual nlohmann::json serialize() const;
-        virtual void deserialize(RResourceStream<RJsonResourceStream>& data);
+        virtual void deserialize(RResourceStream<RJsonResourceStream>& stream);
 
     protected:
         AbstractComponent() = default;
+
+        virtual void onPreDeserialize(AbstractComponent* obj);
+        virtual void onPostDeserialize(AbstractComponent* obj, const RLogsCollector& logs);
+        virtual void onPreSerialize(const AbstractComponent* obj) const;
+        virtual void onPostSerialize(const AbstractComponent* obj,
+                                     const RLogsCollector& logs) const;
 
         /**
          * This method will be called automatically. Don't call it directly.
@@ -626,9 +633,6 @@ namespace Core
          * This method will be called automatically. Don't call it directly.
          */
         void onTick(float delta) override;
-
-        [[nodiscard]] nlohmann::json serialize() const override;
-        void deserialize(RResourceStream<RJsonResourceStream>& data) override;
 
         /**
          * Call this function directly only if you sure in it.
@@ -821,7 +825,16 @@ namespace Core
             Impl_forEach_DFS<const BaseComponent>(this, std::forward<decltype(callback)>(callback));
         }
 
+        [[nodiscard]] nlohmann::json serialize() const override;
+        void deserialize(RResourceStream<RJsonResourceStream>& stream) override;
+
     protected:
+        void onPreDeserialize(AbstractComponent* obj) override;
+        void onPostDeserialize(AbstractComponent* obj, const RLogsCollector& logs) override;
+        void onPreSerialize(const AbstractComponent* obj) const override;
+        void onPostSerialize(const AbstractComponent* obj,
+                             const RLogsCollector& logs) const override;
+
         virtual bool addChildValidator(BaseComponent* newChild) { return true; }
 
         virtual void onAddChild(BaseComponent* newChild) {}
@@ -1069,7 +1082,7 @@ namespace Core
     {
         if (comp) [[likely]]
         {
-            j = comp->serialize();
+            j = R<typename CompT::ValueT>::Serialize(*comp).getData();
         }
     }
 
@@ -1131,7 +1144,7 @@ namespace Core
             }
 
             RResourceStream<RJsonResourceStream> data(json);
-            obj->deserialize(data);
+            // obj->deserialize(data);
             range.push_back(obj);
         }
     }

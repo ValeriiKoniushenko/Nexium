@@ -120,10 +120,12 @@ namespace Core
             std::swap(a._isDirtyModelMatrix, b._isDirtyModelMatrix);
         }
 
-        [[nodiscard]] nlohmann::json serialize() const;
-        void deserialize(RResourceStream<RJsonResourceStream>& data);
-
     protected:
+        void onPreDeserialize(Transformable* obj) {}
+        void onPostDeserialize(Transformable* obj, const RLogsCollector& logs) {}
+        void onPreSerialize(const Transformable* obj) const {}
+        void onPostSerialize(const Transformable* obj, const RLogsCollector& logs) const {}
+
         virtual void onDirtyMatrix() {}
 
     protected:

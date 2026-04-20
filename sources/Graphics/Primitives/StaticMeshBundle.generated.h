@@ -26,7 +26,8 @@ struct R<Core::StaticMeshBundle>
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     [[nodiscard]] static RResourceStream<RImpl> Serialize(const Core::StaticMeshBundle& obj, bool noSignals = false)
     {
-        RResourceStream<RImpl> s;if (!noSignals)
+        RResourceStream<RImpl> s;
+        if (!noSignals)
         {
             _RTryCallPreSerialize(obj);
         }
@@ -59,7 +60,8 @@ struct R<Core::StaticMeshBundle>
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, Core::StaticMeshBundle& obj, bool noSignals = false)
-    {if (!noSignals)
+    {
+        if (!noSignals)
         {
             _RTryCallPreDeserialize(obj);
         }
