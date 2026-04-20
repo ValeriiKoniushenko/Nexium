@@ -1144,7 +1144,7 @@ namespace Core
             }
 
             RResourceStream<RJsonResourceStream> data(json);
-            // obj->deserialize(data);
+            obj->deserialize(data);
             range.push_back(obj);
         }
     }
