@@ -2,3 +2,16 @@ If:
   PathMatch: .*\.generated\.h
 Diagnostics:
   Suppress: ["*"]
+
+CompileFlags:
+  Add:
+    - "-j=8"
+    - "--background-index"
+  Remove:
+    - "-W*"
+
+Index:
+  Background: Build
+
+Diagnostics:
+  UnusedIncludes: None
