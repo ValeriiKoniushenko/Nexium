@@ -6,8 +6,10 @@
       "type": "shell",
       "command": "cmake",
       "args": [
-        "-S", "${workspaceFolder}",
-        "-B", "${workspaceFolder}/build/debug/gcc",
+        "-S",
+        "${workspaceFolder}",
+        "-B",
+        "${workspaceFolder}/build/debug/gcc",
         "-G Ninja",
         "-DCMAKE_C_COMPILER=gcc",
         "-DCMAKE_CXX_COMPILER=g++",
@@ -15,9 +17,14 @@
         "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
         "-DUSE_LINK_NO_FETCH__JRM=${workspaceFolder}/../../JustReflectMe"
       ],
-      "options": { "cwd": "${workspaceFolder}" },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
       "group": "build",
-      "presentation": { "reveal": "always", "panel": "shared" },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
       "problemMatcher": "$gcc"
     },
     {
@@ -25,8 +32,10 @@
       "type": "shell",
       "command": "cmake",
       "args": [
-        "-S", "${workspaceFolder}",
-        "-B", "${workspaceFolder}/build/release/gcc",
+        "-S",
+        "${workspaceFolder}",
+        "-B",
+        "${workspaceFolder}/build/release/gcc",
         "-G Ninja",
         "-DCMAKE_C_COMPILER=gcc",
         "-DCMAKE_CXX_COMPILER=g++",
@@ -34,9 +43,14 @@
         "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
         "-DUSE_LINK_NO_FETCH__JRM=${workspaceFolder}/../../JustReflectMe"
       ],
-      "options": { "cwd": "${workspaceFolder}" },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
       "group": "build",
-      "presentation": { "reveal": "always", "panel": "shared" },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
       "problemMatcher": "$gcc"
     },
     {
@@ -44,8 +58,10 @@
       "type": "shell",
       "command": "cmake",
       "args": [
-        "-S", "${workspaceFolder}",
-        "-B", "${workspaceFolder}/build/debug/clang",
+        "-S",
+        "${workspaceFolder}",
+        "-B",
+        "${workspaceFolder}/build/debug/clang",
         "-G Ninja",
         "-DCMAKE_C_COMPILER=clang",
         "-DCMAKE_CXX_COMPILER=clang++",
@@ -53,9 +69,14 @@
         "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
         "-DUSE_LINK_NO_FETCH__JRM=${workspaceFolder}/../../JustReflectMe"
       ],
-      "options": { "cwd": "${workspaceFolder}" },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
       "group": "build",
-      "presentation": { "reveal": "always", "panel": "shared" },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
       "problemMatcher": "$gcc"
     },
     {
@@ -63,8 +84,10 @@
       "type": "shell",
       "command": "cmake",
       "args": [
-        "-S", "${workspaceFolder}",
-        "-B", "${workspaceFolder}/build/release/clang",
+        "-S",
+        "${workspaceFolder}",
+        "-B",
+        "${workspaceFolder}/build/release/clang",
         "-G Ninja",
         "-DCMAKE_C_COMPILER=clang",
         "-DCMAKE_CXX_COMPILER=clang++",
@@ -72,9 +95,28 @@
         "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
         "-DUSE_LINK_NO_FETCH__JRM=${workspaceFolder}/../../JustReflectMe"
       ],
-      "options": { "cwd": "${workspaceFolder}" },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
       "group": "build",
-      "presentation": { "reveal": "always", "panel": "shared" },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": "$gcc"
+    },
+    {
+      "label": "CMake Build",
+      "type": "shell",
+      "command": "cmake --build build",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
       "problemMatcher": "$gcc"
     }
   ]

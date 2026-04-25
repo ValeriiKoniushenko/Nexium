@@ -34,6 +34,7 @@
 #include "Graphics/Window.h"
 #include "Misc/FPSCounter.h"
 #include "ModuleInfo.h"
+#include "Rectpack2D/finders_interface.h"
 #include "Scene/Spectator.h"
 #include "assimp/Importer.hpp"
 #include "spdlog/spdlog.h"
@@ -338,6 +339,60 @@ namespace Core
 
     void GameInstance::loadCoreResources()
     {
+        using namespace rectpack2D;
+
+        std::vector<std::filesystem::path> result;
+
+        for (const auto& entry :
+             std::filesystem::recursive_directory_iterator(Config::Path::images / "atlas"))
+        {
+            if (!entry.is_regular_file())
+            {
+                continue;
+            }
+
+            const auto ext = entry.path().extension().string();
+
+            if (ext == ".png" || ext == ".jpg" || ext == ".jpeg")
+            {
+                result.emplace_back(entry.path());
+            }
+        }
+
+        int i = 1;
+        throw 123;
+
+        constexpr bool allow_flip = true;
+        const auto runtime_flipping_mode = flipping_option::ENABLED;
+
+        using spaces_type = empty_spaces<allow_flip, default_empty_spaces>;
+        using rect_type = output_rect_t<spaces_type>;
+
+        auto report_successful = [](rect_type&) { return callback_result::CONTINUE_PACKING; };
+        auto report_unsuccessful = [](rect_type&) { return callback_result::ABORT_PACKING; };
+
+        const auto max_side = 1000;
+
+        const auto discard_step = -4;
+        std::vector<rect_type> rectangles;
+
+        rectangles.emplace_back(rect_xywh(0, 0, 20, 40));
+        rectangles.emplace_back(rect_xywh(0, 0, 120, 40));
+        rectangles.emplace_back(rect_xywh(0, 0, 85, 59));
+        rectangles.emplace_back(rect_xywh(0, 0, 199, 380));
+        rectangles.emplace_back(rect_xywh(0, 0, 85, 875));
+
+        auto report_result = [&rectangles](const rect_wh& result_size)
+        {
+            std::cout << "Resultant bin: " << result_size.w << " " << result_size.h << std::endl;
+
+            for (const auto& rect : rectangles)
+            {
+                const auto& r = rect.get_rect();
+                std::cout << r.x << " " << r.y << " " << r.w << " " << r.h << std::endl;
+            }
+        };
+
         onLoadCoreResources();
     }
 } // namespace Core

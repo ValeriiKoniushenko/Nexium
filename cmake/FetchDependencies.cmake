@@ -84,4 +84,3 @@ FetchContent_Declare(Freetype
     GIT_PROGRESS TRUE
 )
 FetchContent_MakeAvailable(Freetype)
-

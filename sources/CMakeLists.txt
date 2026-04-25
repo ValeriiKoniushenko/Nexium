@@ -44,15 +44,19 @@ add_library(Nexium::Core ALIAS ${TARGET_NAME})
 target_include_directories(${TARGET_NAME} PUBLIC .)
 
 target_link_libraries(${TARGET_NAME} PUBLIC
+    Core::Glad
+    Core::ImGui
+    Core::Rectpack2D
+
+    Utils::Core
+    
     Nexium::Misc
     Nexium::ECS
     Nexium::RawDataManagement
-    Utils::Core
+    
     assimp::assimp
     nlohmann_json
     JustReflectMe::Adapter
-    Core::Glad
-    Core::ImGui
 )
 
 CoreAddCompileOptionsTo(${TARGET_NAME})
