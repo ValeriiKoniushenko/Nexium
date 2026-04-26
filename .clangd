@@ -2,16 +2,27 @@ If:
   PathMatch: .*\.generated\.h
 Diagnostics:
   Suppress: ["*"]
+  UnusedIncludes: None
+
+---
+
+If:
+  PathMatch: .*/build/_deps/.*
+Diagnostics:
+  Suppress: ["*"]
+  UnusedIncludes: None
+
+---
 
 CompileFlags:
-  Add:
-    - "-j=8"
-    - "--background-index"
   Remove:
-    - "-W*"
+    - -W*
+    - -fdeps-format=*
+    - -fdeps-file=*
+    - -fdeps-target=*
+    - -fmodules-ts
+    - -fmodule-mapper=*
+    - -MD
 
 Index:
   Background: Build
-
-Diagnostics:
-  UnusedIncludes: None
