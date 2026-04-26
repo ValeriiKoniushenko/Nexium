@@ -35,15 +35,10 @@ namespace Core
     {
     public:
         Texture() = default;
-
         Texture(const Texture&) = delete;
-
         Texture& operator=(const Texture&) = delete;
-
         Texture(Texture&&) noexcept;
-
         Texture& operator=(Texture&&) noexcept;
-
         virtual ~Texture();
 
         bool loadFromFile(const std::filesystem::path& path, bool isFlipVertically = true);
@@ -55,6 +50,12 @@ namespace Core
         [[nodiscard]] ISize2 getSize() const noexcept { return _size; }
 
         void release();
+
+        friend void swap(Texture& first, Texture& second) noexcept
+        {
+            std::swap(first._textureId, second._textureId);
+            std::swap(first._size, second._size);
+        }
 
     protected:
         GLuint _textureId = 0;

@@ -86,7 +86,7 @@
 1771957520715805050 sources/Graphics/ShaderManager.h
 1774375956091042853 sources/Graphics/ShaderProgram.h
 1771958192731179843 sources/Graphics/ShaderProgramMeta.h
-1771957223406988588 sources/Graphics/Texture.h
+1777193959881095422 sources/Graphics/Texture.h
 1775594823028160650 sources/Graphics/Window.h
 1771957414388606030 sources/InputDevices/InputAction.h
 1775595144136608475 sources/InputDevices/InputManager.h
@@ -94,7 +94,7 @@
 1771957444655088221 sources/InputDevices/ModuleInfo.h
 1774300724946654887 sources/InputDevices/Mouse.h
 1777129628944118009 sources/Misc/BaseLog.h
-1774989905839565804 sources/Misc/Configs.h
+1777192229225735689 sources/Misc/Configs.h
 1774122535599754632 sources/Misc/FPSCounter.h
 1771957495851221823 sources/Misc/IconsFontAwesome.h
 1775595231681544489 sources/RawDataManagement/DataStream.h

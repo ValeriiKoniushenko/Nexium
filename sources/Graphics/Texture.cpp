@@ -27,20 +27,22 @@
 namespace Core
 {
     Texture::Texture(Texture&& other) noexcept
+        : _textureId(other._textureId),
+          _size(other._size)
     {
-        *this = std::move(other);
+        other._textureId = 0;
+        other._size = {};
     }
 
     Texture& Texture::operator=(Texture&& other) noexcept
     {
-        if (&other != this) [[likely]]
+        if (&other == this) [[unlikely]]
         {
-            _textureId = other._textureId;
-            _size = other._size;
-
-            other._textureId = 0;
-            other._size = {};
+            return *this;
         }
+
+        Texture temp(std::move(other));
+        swap(*this, temp);
         return *this;
     }
 

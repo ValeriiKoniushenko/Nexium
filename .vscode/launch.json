@@ -12,6 +12,7 @@
             "args": [],
             "cwd": "${workspaceFolder}",
             "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb",
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing",
@@ -19,7 +20,8 @@
                     "ignoreFailures": true
                 }
             ],
-            "stopOnEntry": false
+            "stopAtEntry": false,
+            "preLaunchTask": "CMake Build"
         }
     ]
 }
