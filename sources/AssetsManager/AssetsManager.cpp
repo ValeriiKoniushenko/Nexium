@@ -24,13 +24,12 @@
 
 #include "AssetsManager.h"
 
-#include "../Editor/Windows/ECSAdapters/EditorStaticMeshBundleAdapter.h"
-#include "../Misc/Configs.h"
 #include "Editor/Windows/ImageViewer.h"
 #include "Editor/Windows/NxECSBasedEditor.h"
 #include "Editor/Windows/NxTextureEditor.h"
 #include "Editor/Windows/TextEditor.h"
 #include "GameplaySystem/Framework/GameInstance.h"
+#include "Misc/Configs.h"
 #include "ModuleInfo.h"
 
 #include <array>
@@ -46,6 +45,7 @@
 
 using namespace Core;
 
+namespace fs = std::filesystem;
 namespace
 {
 
@@ -60,27 +60,27 @@ namespace
 
         if (!lookupContainer.contains(logicPath))
         {
-            const std::filesystem::path path = logicPath.data();
+            const fs::path path = logicPath.data();
             for (auto&& registered : GetAssetsManager().getRegisteredPaths())
             {
                 try
                 {
-                    std::filesystem::path normalized;
+                    fs::path normalized;
                     if (registered.is_relative())
                     {
                         normalized = Config::Path::projectAbsPath;
                     }
                     normalized /= registered;
 
-                    const auto realRegistered = std::filesystem::absolute(normalized).parent_path();
-                    const auto relative = std::filesystem::relative(path, realRegistered);
+                    const auto realRegistered = fs::absolute(normalized).parent_path();
+                    const auto relative = fs::relative(path, realRegistered);
                     if (lookupContainer.contains(StringAtom(relative.generic_string())))
                     {
                         return T(reinterpret_cast<T::AssetT&>(
                             *lookupContainer.at(StringAtom(relative.generic_string()))));
                     }
                 }
-                catch (const std::filesystem::filesystem_error& e)
+                catch (const fs::filesystem_error& e)
                 {
                     GetAssetsManager().errorLog(
                         "Can't resolve a path due to internal error, of was met junction symlink: {}"_f
@@ -119,14 +119,14 @@ namespace Core
         {
             try
             {
-                for (const auto& entry : std::filesystem::recursive_directory_iterator(path))
+                for (const auto& entry : fs::recursive_directory_iterator(path))
                 {
                     if (!entry.is_regular_file())
                     {
                         continue;
                     }
 
-                    const auto absPath = std::filesystem::absolute(entry.path());
+                    const auto absPath = fs::absolute(entry.path());
                     const auto ext = absPath.extension().generic_string();
 
                     // check for non baked
@@ -135,7 +135,7 @@ namespace Core
                         continue;
                     }
 
-                    auto relPath = std::filesystem::relative(absPath, Config::Path::projectAbsPath);
+                    auto relPath = fs::relative(absPath, Config::Path::projectAbsPath);
 
                     auto id = StringAtom::Intern(relPath.generic_string());
                     if (ext == ".nx")
@@ -155,12 +155,17 @@ namespace Core
                     }
                 }
             }
-            catch (std::filesystem::filesystem_error& e)
+            catch (fs::filesystem_error& e)
             {
                 criticalLog("Got a error while scanning a folder '{}' for assets. Details: {}"_f
                             << path.generic_string() << e.what());
             }
         }
+    }
+
+    void AssetsManager::generateTextureAtlas(const fs::path& atlasFolder)
+    {
+        _textureAtlas.generateTextureAtlas(atlasFolder);
     }
 
     NXTexture AssetsManager::getTexture(const StringAtom& logicPath)
@@ -184,7 +189,7 @@ namespace Core
         _skyboxes.clear();
     }
 
-    void AssetsManager::registerNewAssetPath(std::filesystem::path path)
+    void AssetsManager::registerNewAssetPath(fs::path path)
     {
         infoLog("Registered new asset path: " + path.generic_string());
         _registeredPaths.emplace(std::move(path));
@@ -248,7 +253,7 @@ namespace Core
         return {};
     }
 
-    NXAsset AssetsManager::getAssetByPath(const std::filesystem::path& path)
+    NXAsset AssetsManager::getAssetByPath(const fs::path& path)
     {
         const auto it = findAssetByPath(path);
         if (it == _assets.end()) [[unlikely]]
@@ -258,7 +263,7 @@ namespace Core
         return it->second;
     }
 
-    WeakNXAsset AssetsManager::getWeakAssetByPath(const std::filesystem::path& path)
+    WeakNXAsset AssetsManager::getWeakAssetByPath(const fs::path& path)
     {
         const auto it = findAssetByPath(path);
         if (it == _assets.end()) [[unlikely]]
@@ -286,7 +291,7 @@ namespace Core
         return count;
     }
 
-    const std::set<std::filesystem::path>& AssetsManager::getRegisteredPaths() const noexcept
+    const std::set<fs::path>& AssetsManager::getRegisteredPaths() const noexcept
     {
         return _registeredPaths;
     }
@@ -365,7 +370,7 @@ namespace Core
         StringAtom out(buffer.data(), strlen(buffer.data()));
         out.trim('\n');
 
-        if (std::filesystem::is_directory(out.data()))
+        if (fs::is_directory(out.data()))
         {
             return {};
         }
@@ -403,7 +408,7 @@ namespace Core
         return true;
     }
 
-    void AssetsManager::TryToOpenFile(const std::filesystem::directory_entry& entry)
+    void AssetsManager::TryToOpenFile(const fs::directory_entry& entry)
     {
         if (!entry.is_regular_file())
         {
@@ -428,7 +433,7 @@ namespace Core
         }
     }
 
-    void AssetsManager::TryToOpenNxFile(const std::filesystem::directory_entry& entry)
+    void AssetsManager::TryToOpenNxFile(const fs::directory_entry& entry)
     {
         if (GetNodeType(entry) != NodeType::NxFile)
         {
@@ -449,8 +454,7 @@ namespace Core
         }
     }
 
-    AssetsManager::NodeType AssetsManager::GetNodeType(
-        const std::filesystem::directory_entry& entry)
+    AssetsManager::NodeType AssetsManager::GetNodeType(const fs::directory_entry& entry)
     {
         if (entry.is_directory())
         {
@@ -530,7 +534,7 @@ namespace Core
         return NodeType::Default;
     }
 
-    void AssetsManager::OpenPathFromOSExplorer(const std::filesystem::path& path)
+    void AssetsManager::OpenPathFromOSExplorer(const fs::path& path)
     {
 #ifdef _WIN32
         const std::string command = "explorer \"" + path.generic_string() + "\"";
@@ -543,7 +547,7 @@ namespace Core
     }
 
     std::unordered_map<StringAtom, NXAsset>::iterator AssetsManager::findAssetByPath(
-        const std::filesystem::path& path)
+        const fs::path& path)
     {
         if (path.extension().generic_string() != NXAsset::ValueT::fileExtension)
         {
@@ -554,15 +558,15 @@ namespace Core
         {
             try
             {
-                std::filesystem::path normalized;
+                fs::path normalized;
                 if (registered.is_relative())
                 {
                     normalized = Config::Path::projectAbsPath;
                 }
                 normalized /= registered;
 
-                const auto realRegistered = std::filesystem::absolute(normalized).parent_path();
-                const auto relative = std::filesystem::relative(path, realRegistered);
+                const auto realRegistered = fs::absolute(normalized).parent_path();
+                const auto relative = fs::relative(path, realRegistered);
                 const auto id = StringAtom(relative.generic_string());
 
                 if (auto&& it = _assets.find(id); it != _assets.end())
@@ -570,7 +574,7 @@ namespace Core
                     return it;
                 }
             }
-            catch (const std::filesystem::filesystem_error& e)
+            catch (const fs::filesystem_error& e)
             {
                 GetAssetsManager().errorLog(
                     "Can't resolve a path due to internal error, of was met junction symlink: {}"_f

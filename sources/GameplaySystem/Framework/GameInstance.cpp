@@ -34,7 +34,6 @@
 #include "Graphics/Window.h"
 #include "Misc/FPSCounter.h"
 #include "ModuleInfo.h"
-#include "Rectpack2D/finders_interface.h"
 #include "Scene/Spectator.h"
 #include "assimp/Importer.hpp"
 #include "spdlog/spdlog.h"
@@ -339,63 +338,7 @@ namespace Core
 
     void GameInstance::loadCoreResources()
     {
-        using namespace rectpack2D;
-
-        constexpr const bool allow_flip = true;
-        constexpr const int max_side = 1000;
-        constexpr const int discard_step = -4;
-        constexpr const auto runtime_flipping_mode = flipping_option::ENABLED;
-
-        using spaces_type = empty_spaces<allow_flip>;
-        using rect_type = output_rect_t<spaces_type>;
-
-        std::vector<Texture> textures;
-        std::vector<rect_type> rectangles;
-
-        for (const auto& entry :
-             std::filesystem::recursive_directory_iterator(Config::Path::images / "atlas"))
-        {
-            if (!entry.is_regular_file())
-            {
-                continue;
-            }
-
-            const auto ext = entry.path().extension().string();
-
-            if (ext == ".png" || ext == ".jpg" || ext == ".jpeg")
-            {
-                Texture texture;
-                if (texture.loadFromFile(entry.path()))
-                {
-                    rect_type rt;
-                    rt.w = texture.getSize().width;
-                    rt.h = texture.getSize().height;
-                    rectangles.push_back(rt);
-
-                    textures.push_back(std::move(texture));
-                }
-            }
-        }
-
-        auto report_successful = [](rect_type&) { return callback_result::CONTINUE_PACKING; };
-        auto report_unsuccessful = [](rect_type&) { return callback_result::ABORT_PACKING; };
-
-        auto report_result = [&rectangles](const rect_wh& result_size)
-        {
-            std::cout << "Resultant bin: " << result_size.w << " " << result_size.h << "\n";
-
-            for (const auto& rect : rectangles)
-            {
-                const auto& r = rect.get_rect();
-                std::cout << r.x << " " << r.y << " " << r.w << " " << r.h << "\n";
-            }
-        };
-
-        const auto result_size = find_best_packing_dont_sort<spaces_type>(
-            rectangles, make_finder_input(max_side, discard_step, report_successful,
-                                          report_unsuccessful, runtime_flipping_mode));
-
-        report_result(result_size);
+        GetAssetsManager().generateTextureAtlas(Config::Path::images / "atlas");
 
         onLoadCoreResources();
     }

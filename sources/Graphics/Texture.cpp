@@ -61,14 +61,14 @@ namespace Core
 
         _size = img.getSize();
 
-        glGenTextures(1, &_textureId);
-        glBindTexture(GL_TEXTURE_2D, _textureId);
+        generate();
+        bind();
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img.getSize().width, img.getSize().height, 0,
-                     img.getChannelAsOpenGLType(), GL_UNSIGNED_BYTE, img.data());
+        putImage(0, GL_RGBA, img.getSize().width, img.getSize().height, 0,
+                 img.getChannelAsOpenGLType(), GL_UNSIGNED_BYTE, img.data());
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        generateMipmap(GL_LINEAR, GL_LINEAR);
+        unbind();
 
         return true;
     }
@@ -77,14 +77,14 @@ namespace Core
     {
         _size = data.getSize();
 
-        glGenTextures(1, &_textureId);
-        glBindTexture(GL_TEXTURE_2D, _textureId);
+        generate();
+        bind();
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, data.getSize().width, data.getSize().height, 0,
-                     data.getChannelAsOpenGLType(), GL_UNSIGNED_BYTE, data.data());
+        putImage(0, GL_RGBA, data.getSize().width, data.getSize().height, 0,
+                 data.getChannelAsOpenGLType(), GL_UNSIGNED_BYTE, data.data());
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        generateMipmap(GL_LINEAR, GL_LINEAR);
+        unbind();
     }
 
     void Texture::release()
@@ -93,4 +93,58 @@ namespace Core
         _textureId = 0;
         _size = {};
     }
+
+    void Texture::generate()
+    {
+        if (isValid()) [[unlikely]]
+        {
+            release();
+            Assert(
+                false,
+                "Texture is already generated. You should release it before generating a new one.");
+            return;
+        }
+
+        glGenTextures(1, &_textureId);
+    }
+
+    void Texture::bind() const
+    {
+        if (isValid()) [[unlikely]]
+        {
+            Assert(false, "Texture is not generated. You should generate it before binding.");
+            return;
+        }
+
+        glBindTexture(GL_TEXTURE_2D, _textureId);
+    }
+
+    void Texture::unbind() const
+    {
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
+    void Texture::putImage(GLint level, GLint internalformat, GLsizei width, GLsizei height,
+                           GLint border, GLenum format, GLenum type, const void* pixels)
+    {
+        if (isValid()) [[unlikely]]
+        {
+            Assert(false,
+                   "Texture is not generated. You should generate it before putting image data.");
+            return;
+        }
+
+        glTexImage2D(GL_TEXTURE_2D, level, internalformat, width, height, border, format, type,
+                     pixels);
+    }
+
+    void Texture::generateMipmap(GLint min, GLint mag, GLint wrapS, GLint wrapT)
+    {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapS);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapT);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+
 } // namespace Core

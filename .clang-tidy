@@ -21,6 +21,7 @@ Checks: >
   -cppcoreguidelines-macro-usage,
   -cppcoreguidelines-avoid-non-const-global-variables,
   -cppcoreguidelines-pro-type-const-cast,
+  -cppcoreguidelines-pro-type-reinterpret-cast,
   
   -modernize-use-trailing-return-type,
   -modernize-concat-nested-namespaces,

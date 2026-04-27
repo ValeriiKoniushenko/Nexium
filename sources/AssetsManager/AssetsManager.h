@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "AssetsManager/TextureAtlas.h"
 #include "ECSAsset.h"
 #include "SkyboxAsset.h"
 #include "TextureAsset.h"
@@ -105,6 +106,7 @@ namespace Core
         AssetsManager(AssetsManager&&) = delete;
         AssetsManager& operator=(const AssetsManager&) = delete;
         AssetsManager& operator=(AssetsManager&&) = delete;
+        ~AssetsManager() override = default;
 
         // ================= STATIC ======================
         [[nodiscard]] static StringAtom OpenFileSelectionDialog(
@@ -118,6 +120,7 @@ namespace Core
         // ================= MAIN ======================
         void rescanFileSystem();
         void unloadAllResources();
+        void generateTextureAtlas(const std::filesystem::path& atlasFolder);
 
         [[nodiscard]] const std::set<std::filesystem::path>& getRegisteredPaths() const noexcept;
         void registerNewAssetPath(std::filesystem::path path);
@@ -197,6 +200,7 @@ namespace Core
             const std::filesystem::path& path);
 
     protected:
+        TextureAtlas _textureAtlas;
         std::set<std::filesystem::path> _registeredPaths;
         std::unordered_map<StringAtom, NXAsset> _assets;
         std::unordered_map<StringAtom, AssetRef<BaseAsset>> _textures;

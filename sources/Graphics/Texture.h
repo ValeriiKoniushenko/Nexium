@@ -44,6 +44,15 @@ namespace Core
         bool loadFromFile(const std::filesystem::path& path, bool isFlipVertically = true);
         void loadFromImage(const Image& data);
 
+        void generate();
+        void bind() const;
+        void unbind() const;
+        void putImage(GLint level, GLint internalformat, GLsizei width, GLsizei height,
+                      GLint border, GLenum format, GLenum type, const void* pixels);
+
+        void generateMipmap(GLint min = GL_NEAREST, GLint mag = GL_NEAREST,
+                            GLint wrapS = GL_CLAMP_TO_EDGE, GLint wrapT = GL_CLAMP_TO_EDGE);
+
         [[nodiscard]] GLuint getTextureId() noexcept { return _textureId; }
 
         [[nodiscard]] bool isValid() const noexcept { return _textureId != 0; }
