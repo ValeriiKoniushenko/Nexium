@@ -94,8 +94,12 @@ namespace Core
 
     extern DragAndDrop gDragDrop;
 
+    CLASS();
     class Window : public BaseLog, public IDataIO, public Singleton<Window>
     {
+        SINGLETONS_FRIEND(Window);
+        R_FRIEND(Window);
+
     public:
         ENUM_CLASS();
         enum class CursorMode
@@ -106,8 +110,10 @@ namespace Core
         };
 
     public:
-        Window() = default;
-
+        Window(const Window&) = delete;
+        Window(Window&&) = delete;
+        Window& operator=(const Window&) = delete;
+        Window& operator=(Window&&) = delete;
         ~Window() override;
 
         void create(const StringAtom& title, ISize2 size = ISize2{ 300, 300 });
@@ -185,15 +191,22 @@ namespace Core
         [[nodiscard]] spdlog::logger* getLogger() const override;
         [[nodiscard]] const char* getPrefix() const override { return "Window"; }
 
-    protected:
         [[nodiscard]] StringAtom getCacheHash() const override;
 
     protected:
         DelegateSubscriberPoolGuard _subscriptionPool;
         GLFWwindow* _window{};
-        ISize2 _size{};
+
+        FIELD();
+        ISize2 _size;
+
+        FIELD();
         StringAtom _title;
+
+        FIELD();
         bool _isMaximized = false;
+
+        FIELD();
         bool _swapInterval = true;
 
     private:

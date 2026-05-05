@@ -10,7 +10,9 @@
 #include <array>
 #include <optional>
 #include <string>
+#include <string_view>
 #include <unordered_map>
+#include <vector>
 
 template<>
 struct R<Core::Window::CursorMode>
@@ -162,4 +164,75 @@ struct R<Core::DragAndDrop::State>
     }
 }; // struct R<Core::DragAndDrop::State>
 
+template<>
+struct R<Core::Window>
+{
+    static constexpr std::string_view Name() { return "Window"; }
+    static constexpr std::string_view ParentScope() { return "Core"; }
+    static constexpr std::size_t GetFieldNumbers() { return 4; }
+    static constexpr std::vector<RClassField> GetFields() {
+        return {
+			{ "ISize2", "_size" },
+			{ "StringAtom", "_title" },
+			{ "bool", "_isMaximized" },
+			{ "bool", "_swapInterval" },
+		};
+    }
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Core::Window& obj, bool noSignals = false)
+    {
+        RResourceStream<RImpl> s;if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
+		s.write("_size", obj._size);
+		s.write("_title", obj._title);
+		s.write("_isMaximized", obj._isMaximized);
+		s.write("_swapInterval", obj._swapInterval);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
+        return s;
+    }
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    static void Serialize(const Core::Window& obj, RResourceStream<RImpl>& s, bool noSignals = false)
+    {
+        if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
+		s.write("_size", obj._size);
+		s.write("_title", obj._title);
+		s.write("_isMaximized", obj._isMaximized);
+		s.write("_swapInterval", obj._swapInterval);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
+    }
+
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    static void Deserialize(const RResourceStream<RImpl>& s, Core::Window& obj, bool noSignals = false)
+    {
+        if (!noSignals)
+        {
+            _RTryCallPreDeserialize(obj);
+        }
+
+		s.read("_size", obj._size, 4);
+		s.read("_title", obj._title, 4);
+		s.read("_isMaximized", obj._isMaximized, false);
+		s.read("_swapInterval", obj._swapInterval, true);
+        if (!noSignals)
+        {
+            _RTryCallPostDeserialize(obj, s.logs());
+        }
+    }
+}; // struct R<Core::Window>
 // clang-format on

@@ -34,6 +34,7 @@
 #include "Graphics/Window.h"
 #include "Misc/FPSCounter.h"
 #include "ModuleInfo.h"
+#include "RawDataManagement/DataStream.h"
 #include "Scene/Spectator.h"
 #include "assimp/Importer.hpp"
 #include "spdlog/spdlog.h"
@@ -154,7 +155,6 @@ namespace Core
         // gameScene.writeToCache();
         // world.writeToCache();
         ImGui::SaveIniSettingsToDisk(Config::Path::imGuiWindowsIni.generic_string().c_str());
-        // writeToCache();
 
         onSaveAll();
     }

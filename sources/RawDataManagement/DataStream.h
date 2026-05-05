@@ -31,6 +31,7 @@
 #include "Misc/BaseLog.h"
 #include "nlohmann/json.hpp"
 
+#include <fstream>
 #include <functional>
 #include <type_traits>
 
@@ -60,7 +61,19 @@ namespace Core
 
     public:
         template<IsDataIO T>
-        void write(const T& data);
+        void write(const T& data)
+        {
+            auto json = R<T>::template Serialize<RJsonResourceStream>(data).getData().dump(4);
+            std::ofstream ofs(getPath(data));
+            if (!ofs)
+            {
+                errorLog("Can't write cache for this object {}. Details: {}"_f
+                         << data.getCacheHash() << std::strerror(errno));
+                return;
+            }
+
+            ofs.write(json.c_str(), static_cast<std::streamsize>(json.size()));
+        }
 
         template<IsDataIO T>
         void read(T& data)
@@ -85,6 +98,11 @@ namespace Core
     private:
         [[nodiscard]] std::filesystem::path getPath(const IDataIO& data) const;
     };
+
+    [[nodiscard]] inline CacheSystem& GetCacheSystem()
+    {
+        return CacheSystem::Instance();
+    }
 
     struct IDataUpdateBridge
     {

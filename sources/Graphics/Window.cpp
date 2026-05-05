@@ -82,12 +82,13 @@ namespace Core
 
     Window::~Window()
     {
+        GetCacheSystem().write(*this);
         destroy();
     }
 
     void Window::create(const StringAtom& title, ISize2 size /* = { 300, 300 }*/)
     {
-        // tryReadFromCache();
+        GetCacheSystem().tryRead(*this);
 
         glfwSetErrorCallback(glfwErrorCallback);
         if (!glfwInit())
@@ -159,7 +160,6 @@ namespace Core
 
     void Window::destroy()
     {
-        // writeToCache();
         ImGui::DestroyContext();
         glfwTerminate();
     }

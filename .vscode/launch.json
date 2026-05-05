@@ -8,7 +8,7 @@
             "type": "cppdbg",
             "request": "launch",
             "name": "Debug Nexium",
-            "program": "${workspaceFolder}/build/bin/TemplateGame",
+            "program": "${workspaceFolder}/build/debug/gcc/bin/TemplateGame",
             "args": [],
             "cwd": "${workspaceFolder}",
             "MIMode": "gdb",
