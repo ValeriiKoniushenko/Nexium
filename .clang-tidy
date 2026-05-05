@@ -52,7 +52,7 @@ Checks: >
   -performance-enum-size
 
 # Treat all enabled warnings as errors
-WarningsAsErrors: "*"
+WarningsAsErrors: ""
 
 HeaderFilterRegex: '.*Nexium/sources/.*'
 

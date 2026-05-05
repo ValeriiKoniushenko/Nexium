@@ -48,6 +48,7 @@ set(ASSIMP_BUILD_ZLIB ON CACHE BOOL "" FORCE)
 set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "" FORCE)
 set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "" FORCE)
+set(ASSIMP_WARNINGS_AS_ERRORS OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(Assimp)
 
 
@@ -59,7 +60,7 @@ FetchContent_Declare(Utils
 )
 FetchContent_MakeAvailable(Utils)
 
-if (NOT DEFINED USE_LINK_NO_FETCH__JRM)
+if(NOT DEFINED USE_LINK_NO_FETCH__JRM)
     FetchContent_Declare(JustReflectMe
         GIT_REPOSITORY https://github.com/ValeriiKoniushenko/JustReflectMe.git
         GIT_TAG origin/develop
@@ -68,7 +69,7 @@ if (NOT DEFINED USE_LINK_NO_FETCH__JRM)
     )
     set(JRM_DISABLE_TESTS ON)
     FetchContent_MakeAvailable(JustReflectMe)
-endif ()
+endif()
 
 set(SKIP_INSTALL_ALL ON CACHE BOOL "" FORCE)
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)

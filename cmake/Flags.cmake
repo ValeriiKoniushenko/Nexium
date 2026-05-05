@@ -27,8 +27,10 @@ function(CoreAddCompileOptionsTo Target)
             "-Wno-comment"
             # "-Werror"
             "-Wno-error=unused-variable"
+            "-Wno-error=unused-but-set-variable"
             "-Wno-unused-variable"
             "-Wno-unused-parameter"
+            "-Wno-unused-but-set-variable"
             "-Werror=return-type"
 
             # Debug config

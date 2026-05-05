@@ -22,8 +22,6 @@ set(REQUIRED_CXX_STANDARD cxx_std_23)   # Put preferable cxx standard. It will b
 set(CXX_STANDARD)                       # Compiler specific value that was going from REQUIRED_CXX_STANDARD
 InstallCXXStandardVersion()
 
-add_compile_options(-Wno-c2y-extensions)
-
 # Installing gtest benchmark options
 set(BENCHMARK_ENABLE_TESTING)
 InstallBenchmarkDependenciesTesting()

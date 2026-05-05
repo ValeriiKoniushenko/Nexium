@@ -15,7 +15,8 @@
         "-DCMAKE_CXX_COMPILER=g++",
         "-DCMAKE_BUILD_TYPE=Debug",
         "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
-        "-DUSE_LINK_NO_FETCH__JRM=${workspaceFolder}/../../JustReflectMe"
+        "-DUSE_LINK_NO_FETCH__JRM=${workspaceFolder}/../../JustReflectMe",
+        "-DCMAKE_COLOR_DIAGNOSTICS=ON"
       ],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -41,7 +42,8 @@
         "-DCMAKE_CXX_COMPILER=g++",
         "-DCMAKE_BUILD_TYPE=Release",
         "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
-        "-DUSE_LINK_NO_FETCH__JRM=${workspaceFolder}/../../JustReflectMe"
+        "-DUSE_LINK_NO_FETCH__JRM=${workspaceFolder}/../../JustReflectMe",
+        "-DCMAKE_COLOR_DIAGNOSTICS=ON"
       ],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -67,7 +69,8 @@
         "-DCMAKE_CXX_COMPILER=clang++",
         "-DCMAKE_BUILD_TYPE=Debug",
         "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
-        "-DUSE_LINK_NO_FETCH__JRM=${workspaceFolder}/../../JustReflectMe"
+        "-DUSE_LINK_NO_FETCH__JRM=${workspaceFolder}/../../JustReflectMe",
+        "-DCMAKE_COLOR_DIAGNOSTICS=ON"
       ],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -93,7 +96,8 @@
         "-DCMAKE_CXX_COMPILER=clang++",
         "-DCMAKE_BUILD_TYPE=Release",
         "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
-        "-DUSE_LINK_NO_FETCH__JRM=${workspaceFolder}/../../JustReflectMe"
+        "-DUSE_LINK_NO_FETCH__JRM=${workspaceFolder}/../../JustReflectMe",
+        "-DCMAKE_COLOR_DIAGNOSTICS=ON"
       ],
       "options": {
         "cwd": "${workspaceFolder}"

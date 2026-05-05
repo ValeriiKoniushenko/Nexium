@@ -32,6 +32,7 @@
 #include "nlohmann/json.hpp"
 
 #include <functional>
+#include <type_traits>
 
 namespace Core
 {
@@ -50,14 +51,31 @@ namespace Core
         [[nodiscard]] virtual StringAtom getCacheHash() const = 0;
     };
 
+    template<class T>
+    concept IsDataIO = std::derived_from<std::remove_reference_t<T>, IDataIO>;
+
     class CacheSystem : public BaseLog, public Singleton<CacheSystem>
     {
         SINGLETONS_FRIEND(CacheSystem);
 
     public:
-        void write(const IDataIO& data);
-        void read(IDataIO& data);
-        void tryRead(IDataIO& data);
+        template<IsDataIO T>
+        void write(const T& data);
+
+        template<IsDataIO T>
+        void read(T& data)
+        {
+        }
+
+        template<IsDataIO T>
+        void tryRead(T& data)
+        {
+            if (hasCache(data))
+            {
+                read<T>(data);
+            }
+        }
+
         [[nodiscard]] bool hasCache(const IDataIO& data) const;
 
         void clearCache(const IDataIO& data);

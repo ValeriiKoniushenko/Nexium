@@ -36,22 +36,6 @@ namespace fs = std::filesystem;
 namespace Core
 {
 
-    void CacheSystem::write(const IDataIO& data)
-    {
-    }
-
-    void CacheSystem::read(IDataIO& data)
-    {
-    }
-
-    void CacheSystem::tryRead(IDataIO& data)
-    {
-        if (hasCache(data))
-        {
-            read(data);
-        }
-    }
-
     bool CacheSystem::hasCache(const IDataIO& data) const
     {
         return fs::exists(getPath(data));

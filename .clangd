@@ -7,7 +7,7 @@ Diagnostics:
 ---
 
 If:
-  PathMatch: .*/build/_deps/.*
+  PathMatch: .*/build/.*/_deps/.*
 Diagnostics:
   Suppress: ["*"]
   UnusedIncludes: None
@@ -23,6 +23,7 @@ CompileFlags:
     - -fmodules-ts
     - -fmodule-mapper=*
     - -MD
+  CompilationDatabase: build/debug/gcc
 
 Index:
   Background: Build
