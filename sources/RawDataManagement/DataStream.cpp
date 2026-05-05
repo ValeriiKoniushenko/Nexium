@@ -26,6 +26,7 @@
 
 #include "Misc/BaseLog.h"
 #include "Misc/Configs.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
 
 #include <filesystem>
 #include <fstream>
@@ -34,6 +35,52 @@ namespace fs = std::filesystem;
 
 namespace Core
 {
+
+    void CacheSystem::write(const IDataIO& data)
+    {
+    }
+
+    void CacheSystem::read(IDataIO& data)
+    {
+    }
+
+    void CacheSystem::tryRead(IDataIO& data)
+    {
+        if (hasCache(data))
+        {
+            read(data);
+        }
+    }
+
+    bool CacheSystem::hasCache(const IDataIO& data) const
+    {
+        return fs::exists(getPath(data));
+    }
+
+    void CacheSystem::clearCache(const IDataIO& data)
+    {
+        if (hasCache(data))
+        {
+            std::error_code ec;
+            fs::remove(getPath(data), ec);
+            if (ec)
+            {
+                errorLog("Can't clear cache for this object {}. Details: {}"_f
+                         << data.getCacheHash() << ec.message());
+            }
+        }
+    }
+
+    std::filesystem::path CacheSystem::getPath(const IDataIO& data) const
+    {
+        return data.getCacheDir() / (data.getCacheHash().toStdString() + ".json");
+    }
+
+    spdlog::logger* CacheSystem::getLogger() const
+    {
+        static auto logger = spdlog::stdout_color_mt("CacheSystem");
+        return logger.get();
+    }
 
     DataStream::Result DataStream::field(IDataUpdateBridge& bridge)
     {

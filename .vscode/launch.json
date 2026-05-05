@@ -21,7 +21,7 @@
                 }
             ],
             "stopAtEntry": false,
-            "preLaunchTask": "CMake Build"
+            // "preLaunchTask": "CMake Build"
         }
     ]
 }

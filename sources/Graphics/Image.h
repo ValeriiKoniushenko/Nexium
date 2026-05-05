@@ -48,7 +48,8 @@ namespace Core
         };
 
     public:
-        explicit Image(const std::filesystem::path& path = "");
+        Image() = default;
+        explicit Image(const std::filesystem::path& path);
         ~Image() override;
 
         Image(Image&& obj) noexcept;
@@ -71,19 +72,27 @@ namespace Core
         void clear();
 
         [[nodiscard]] bool isEmpty() const noexcept { return _data == nullptr; }
-        [[nodiscard]] StringAtom getName() const noexcept { return _name; }
+        [[nodiscard]] std::filesystem::path getPath() const noexcept { return _path.string(); }
 
         [[nodiscard]] spdlog::logger* getLogger() const override;
         [[nodiscard]] const char* getPrefix() const override { return "Image"; }
+
+        friend void swap(Image& first, Image& second) noexcept
+        {
+            std::swap(first._path, second._path);
+            std::swap(first._data, second._data);
+            std::swap(first._size, second._size);
+            std::swap(first._channel, second._channel);
+        }
 
     private:
         void init();
 
     private:
+        std::filesystem::path _path;
         unsigned char* _data{};
         ISize2 _size;
         Channel _channel = Channel::None;
-        StringAtom _name;
     };
 } // namespace Core
 

@@ -110,7 +110,7 @@ namespace Core
 
     void Texture::bind() const
     {
-        if (isValid()) [[unlikely]]
+        if (!isValid()) [[unlikely]]
         {
             Assert(false, "Texture is not generated. You should generate it before binding.");
             return;
@@ -125,9 +125,9 @@ namespace Core
     }
 
     void Texture::putImage(GLint level, GLint internalformat, GLsizei width, GLsizei height,
-                           GLint border, GLenum format, GLenum type, const void* pixels)
+                           GLint border, GLenum format, GLenum type, const void* pixels) const
     {
-        if (isValid()) [[unlikely]]
+        if (!isValid()) [[unlikely]]
         {
             Assert(false,
                    "Texture is not generated. You should generate it before putting image data.");
@@ -136,6 +136,13 @@ namespace Core
 
         glTexImage2D(GL_TEXTURE_2D, level, internalformat, width, height, border, format, type,
                      pixels);
+    }
+
+    void Texture::putSubImage(GLint level, GLint xoffset, GLint yoffset, GLsizei width,
+                              GLsizei height, GLenum format, GLenum type, const void* pixels) const
+    {
+        glTexSubImage2D(GL_TEXTURE_2D, level, xoffset, yoffset, width, height, format, type,
+                        pixels);
     }
 
     void Texture::generateMipmap(GLint min, GLint mag, GLint wrapS, GLint wrapT)

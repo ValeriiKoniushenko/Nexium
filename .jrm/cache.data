@@ -1,7 +1,7 @@
 1771958203471016375 game-example/TemplateGameInstance.h
 1771957139897544007 sources/AssetsManager/AssetImpls/Factory.h
 1776719757929185590 sources/AssetsManager/AssetImpls/StaticMeshBundle.h
-1777227495790311808 sources/AssetsManager/AssetsManager.h
+1777992021496221567 sources/AssetsManager/AssetsManager.h
 1775594637698815567 sources/AssetsManager/BaseActorAsset.h
 1776719120518190718 sources/AssetsManager/BaseAsset.h
 1775592933269412027 sources/AssetsManager/ECSAsset.h
@@ -9,7 +9,7 @@
 1771957229428878437 sources/AssetsManager/ModuleInfo.h
 1776720804680921662 sources/AssetsManager/SkyboxAsset.h
 1776720507198064587 sources/AssetsManager/TextureAsset.h
-1777309834605556887 sources/AssetsManager/TextureAtlas.h
+1777396288623353719 sources/AssetsManager/TextureAtlas.h
 1771957726719436386 sources/AssimpMisc/AssimpHelper.h
 1776720501260065840 sources/ECS/BaseComponent.h
 1771957954487843037 sources/ECS/ModuleInfo.h
@@ -78,16 +78,16 @@
 1776719181559933318 sources/Graphics/GraphicsComponents.h
 1776719722313057724 sources/Graphics/IDrawable.h
 1771957154420269576 sources/Graphics/IOutliner.h
-1771958192730179859 sources/Graphics/Image.h
+1777454557627056682 sources/Graphics/Image.h
 1771957970812589401 sources/Graphics/ModuleInfo.h
 1775075538135367380 sources/Graphics/OpenGL.h
 1776718589631512488 sources/Graphics/Primitives/StaticMesh.h
 1776718586180528303 sources/Graphics/Primitives/StaticMeshBundle.h
 1774375872208064419 sources/Graphics/RenderTargetToTexture.h
-1771957520715805050 sources/Graphics/ShaderManager.h
+1777992782358498093 sources/Graphics/ShaderManager.h
 1774375956091042853 sources/Graphics/ShaderProgram.h
 1771958192731179843 sources/Graphics/ShaderProgramMeta.h
-1777310599670999566 sources/Graphics/Texture.h
+1777395655419545443 sources/Graphics/Texture.h
 1775594823028160650 sources/Graphics/Window.h
 1771957414388606030 sources/InputDevices/InputAction.h
 1775595144136608475 sources/InputDevices/InputManager.h
@@ -98,7 +98,7 @@
 1777192229225735689 sources/Misc/Configs.h
 1774122535599754632 sources/Misc/FPSCounter.h
 1771957495851221823 sources/Misc/IconsFontAwesome.h
-1775595231681544489 sources/RawDataManagement/DataStream.h
+1777992181667020134 sources/RawDataManagement/DataStream.h
 1776720487806068396 sources/RawDataManagement/JsonAdapter.h
 1770677206105945396 sources/Scene/Grid.h
 1770677206105945396 sources/Scene/ModuleInfo.h

@@ -25,8 +25,10 @@
 #pragma once
 
 #include "Core/IntrusivePtr.h"
+#include "Core/Singleton.h"
 #include "Core/String.h"
 #include "JustReflectMe/Adapter.h"
+#include "Misc/BaseLog.h"
 #include "nlohmann/json.hpp"
 
 #include <functional>
@@ -37,10 +39,33 @@ namespace Core
 
     struct IDataIO
     {
+        IDataIO() = default;
+        IDataIO(const IDataIO&) = default;
+        IDataIO(IDataIO&&) = delete;
+        IDataIO& operator=(const IDataIO&) = default;
+        IDataIO& operator=(IDataIO&&) = delete;
         virtual ~IDataIO() = default;
 
-        [[nodiscard]] virtual std::filesystem::path getCacheDir() const { return "Cache"; };
+        [[nodiscard]] virtual std::filesystem::path getCacheDir() const { return "cache"; };
         [[nodiscard]] virtual StringAtom getCacheHash() const = 0;
+    };
+
+    class CacheSystem : public BaseLog, public Singleton<CacheSystem>
+    {
+        SINGLETONS_FRIEND(CacheSystem);
+
+    public:
+        void write(const IDataIO& data);
+        void read(IDataIO& data);
+        void tryRead(IDataIO& data);
+        [[nodiscard]] bool hasCache(const IDataIO& data) const;
+
+        void clearCache(const IDataIO& data);
+
+        [[nodiscard]] spdlog::logger* getLogger() const override;
+
+    private:
+        [[nodiscard]] std::filesystem::path getPath(const IDataIO& data) const;
     };
 
     struct IDataUpdateBridge

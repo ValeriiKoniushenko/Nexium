@@ -32,11 +32,7 @@ namespace Core
 {
     Image::Image(const std::filesystem::path& path)
     {
-        init();
-        if (!path.empty())
-        {
-            loadFromFile(path);
-        }
+        loadFromFile(path);
     }
 
     Image::~Image()
@@ -45,18 +41,24 @@ namespace Core
     }
 
     Image::Image(Image&& obj) noexcept
+        : _path(std::move(obj._path)),
+          _data(obj._data),
+          _size(obj._size),
+          _channel(obj._channel)
     {
-        init();
-        *this = std::move(obj);
+        obj._data = nullptr;
+        obj._size = {};
+        obj._channel = Channel::None;
     }
 
     Image& Image::operator=(Image&& obj) noexcept
     {
-        clear();
-        this->_data = obj._data;
-        this->_size = obj._size;
-        this->_channel = obj._channel;
-        obj.init();
+        if (this == &obj) [[unlikely]]
+        {
+            return *this;
+        }
+        Image temp(std::move(obj));
+        swap(*this, temp);
         return *this;
     }
 
@@ -65,18 +67,19 @@ namespace Core
         return Graphics::getLogger();
     }
 
-    void Image::init()
-    {
-        _data = nullptr;
-        _size = {};
-        _channel = Channel::None;
-    }
-
     GLenum Image::getChannelAsOpenGLType() const noexcept
     {
-        return static_cast<int>(_channel) == 3   ? GL_RGB
-               : static_cast<int>(_channel) == 4 ? GL_RGBA
-                                                 : GL_RED;
+        if (static_cast<int>(_channel) == 3)
+        {
+            return GL_RGB;
+        }
+
+        if (static_cast<int>(_channel) == 4)
+        {
+            return GL_RGBA;
+        }
+
+        return GL_RED;
     }
 
     bool Image::loadFromFile(const std::filesystem::path& path, bool isFlipVertically)
@@ -100,7 +103,7 @@ namespace Core
         }
 
         _channel = static_cast<Channel>(channel);
-        _name = path.lexically_normal().generic_string();
+        _path = path;
 
         return true;
     }
@@ -116,7 +119,8 @@ namespace Core
         clear();
         stbi_set_flip_vertically_on_load(isFlipVertically);
         int channel = 0;
-        _data = stbi_load_from_memory(data, size, &_size.width, &_size.height, &channel, 0);
+        _data = stbi_load_from_memory(data, static_cast<int>(size), &_size.width, &_size.height,
+                                      &channel, 0);
         if (isEmpty())
         {
             clear();
@@ -124,7 +128,7 @@ namespace Core
         }
 
         _channel = static_cast<Channel>(channel);
-        _name = "None"_atom;
+        _path.clear();
 
         return true;
     }

@@ -25,7 +25,11 @@
 #include "TextureAtlas.h"
 
 #include "AssetsManager/ModuleInfo.h"
+#include "Core/Rect.h"
+#include "Core/String.h"
 #include "Rectpack2D/finders_interface.h"
+
+#include <filesystem>
 
 namespace fs = std::filesystem;
 using namespace rectpack2D;
@@ -105,11 +109,15 @@ namespace Core
 
         for (std::size_t i = 0; i < images.size(); ++i)
         {
-            const auto& img = images[i];
             const auto& rect = rectangles[i]; // x, y, w, h filled in by packer
 
-            glTexSubImage2D(GL_TEXTURE_2D, 0, rect.x, rect.y, rect.w, rect.h, GL_RGBA,
-                            GL_UNSIGNED_BYTE, img.data());
+            auto name = fs::relative(images[i].getPath(), atlasFolder).generic_string();
+            _rects[StringAtom::Intern(name)]
+                = FRect{ static_cast<float>(rect.x), static_cast<float>(rect.y),
+                         static_cast<float>(rect.w), static_cast<float>(rect.h) };
+
+            _texture.putSubImage(0, rect.x, rect.y, rect.w, rect.h, GL_RGBA, GL_UNSIGNED_BYTE,
+                                 images[i].data());
         }
 
         _texture.generateMipmap();

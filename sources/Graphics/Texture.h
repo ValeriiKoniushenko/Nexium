@@ -48,7 +48,10 @@ namespace Core
         void bind() const;
         void unbind() const;
         void putImage(GLint level, GLint internalformat, GLsizei width, GLsizei height,
-                      GLint border, GLenum format, GLenum type, const void* pixels);
+                      GLint border, GLenum format, GLenum type, const void* pixels) const;
+
+        void putSubImage(GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height,
+                         GLenum format, GLenum type, const void* pixels) const;
 
         void generateMipmap(GLint min = GL_NEAREST, GLint mag = GL_NEAREST,
                             GLint wrapS = GL_CLAMP_TO_EDGE, GLint wrapT = GL_CLAMP_TO_EDGE);

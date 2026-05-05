@@ -10,3 +10,4 @@
 /tools/
 .cache
 /dependencies/JustReflectMe
+string_metrics.csv

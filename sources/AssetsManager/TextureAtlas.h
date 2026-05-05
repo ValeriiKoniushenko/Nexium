@@ -24,12 +24,15 @@
 
 #pragma once
 
+#include "Core/Rect.h"
+#include "Core/String.h"
 #include "Graphics/Image.h"
 #include "Graphics/Texture.h"
 #include "Misc/BaseLog.h"
 #include "Rectpack2D/empty_spaces.h"
 
 #include <filesystem>
+#include <unordered_map>
 
 namespace Core
 {
@@ -59,5 +62,6 @@ namespace Core
 
     private:
         Texture _texture;
+        std::unordered_map<StringAtom, FRect> _rects;
     };
 } // namespace Core

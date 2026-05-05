@@ -184,7 +184,7 @@ namespace Core
         while (!window->shouldClose())
         {
             clock.start();
-            window->pollEvent();
+            Window::pollEvent();
 
             if (renderMode == RenderMode::GameOnly)
             {

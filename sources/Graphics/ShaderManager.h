@@ -33,6 +33,13 @@ namespace Core
     class ShaderManager final : public BaseLog
     {
     public:
+        ShaderManager() = default;
+        ~ShaderManager() override = default;
+        ShaderManager(const ShaderManager&) = delete;
+        ShaderManager(ShaderManager&&) = delete;
+        ShaderManager& operator=(const ShaderManager&) = delete;
+        ShaderManager& operator=(ShaderManager&&) = delete;
+
         inline static const char* const defaultVertexFileExtension = ".vert";
         inline static const char* const defaultFragmentFileExtension = ".frag";
 
