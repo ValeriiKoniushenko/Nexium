@@ -29,10 +29,12 @@
 #include "Core/String.h"
 #include "JustReflectMe/Adapter.h"
 #include "Misc/BaseLog.h"
+#include "Utils/Functions.h"
 #include "nlohmann/json.hpp"
 
 #include <fstream>
 #include <functional>
+#include <system_error>
 #include <type_traits>
 
 namespace Core
@@ -64,11 +66,17 @@ namespace Core
         void write(const T& data)
         {
             auto json = R<T>::template Serialize<RJsonResourceStream>(data).getData().dump(4);
+
+            if (!createCacheDirIfNotExist(data))
+            {
+                return;
+            }
+
             std::ofstream ofs(getPath(data));
             if (!ofs)
             {
-                errorLog("Can't write cache for this object {}. Details: {}"_f
-                         << data.getCacheHash() << std::strerror(errno));
+                errorLog("Can't write cache for this object {}. Path: {}. Details: {}"_f
+                         << data.getCacheHash() << getPath(data) << std::strerror(errno));
                 return;
             }
 
@@ -78,6 +86,23 @@ namespace Core
         template<IsDataIO T>
         void read(T& data)
         {
+            RResourceStream<RJsonResourceStream> s;
+            s.getData() = nlohmann::json::parse(
+                [this, &data]() -> std::string
+                {
+                    std::ifstream ifs(getPath(data));
+                    if (!ifs)
+                    {
+                        errorLog("Can't read cache for this object {}. Path: {}. Details: {}"_f
+                                 << data.getCacheHash() << getPath(data) << std::strerror(errno));
+                        return {};
+                    }
+
+                    return { (std::istreambuf_iterator<char>(ifs)),
+                             std::istreambuf_iterator<char>() };
+                }());
+
+            R<T>::template Deserialize<RJsonResourceStream>(s, data);
         }
 
         template<IsDataIO T>
@@ -97,6 +122,8 @@ namespace Core
 
     private:
         [[nodiscard]] std::filesystem::path getPath(const IDataIO& data) const;
+        [[nodiscard]] std::filesystem::path getCachePath(const IDataIO& data) const;
+        [[nodiscard]] bool createCacheDirIfNotExist(const IDataIO& data) const;
     };
 
     [[nodiscard]] inline CacheSystem& GetCacheSystem()

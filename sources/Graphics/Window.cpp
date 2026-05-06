@@ -100,7 +100,7 @@ namespace Core
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_MAXIMIZED, _isMaximized ? GLFW_TRUE : GLFW_FALSE);
 
-        // if (!hasCache())
+        if (!GetCacheSystem().hasCache(*this))
         {
             _size = size;
             _title = title;

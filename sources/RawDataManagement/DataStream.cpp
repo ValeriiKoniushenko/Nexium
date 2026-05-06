@@ -49,15 +49,37 @@ namespace Core
             fs::remove(getPath(data), ec);
             if (ec)
             {
-                errorLog("Can't clear cache for this object {}. Details: {}"_f
-                         << data.getCacheHash() << ec.message());
+                errorLog("Can't clear cache for this object {}. Path: {}. Details: {}"_f
+                         << data.getCacheHash() << getPath(data) << ec.message());
             }
         }
     }
 
     std::filesystem::path CacheSystem::getPath(const IDataIO& data) const
     {
-        return data.getCacheDir() / (data.getCacheHash().toStdString() + ".json");
+        return getCachePath(data) / (data.getCacheHash().toStdString() + ".json");
+    }
+
+    std::filesystem::path CacheSystem::getCachePath(const IDataIO& data) const
+    {
+        return Config::Path::data / data.getCacheDir();
+    }
+
+    bool CacheSystem::createCacheDirIfNotExist(const IDataIO& data) const
+    {
+        auto cachePath = getCachePath(data);
+        if (!std::filesystem::exists(cachePath))
+        {
+            std::error_code ec;
+            std::filesystem::create_directories(cachePath, ec);
+            if (ec)
+            {
+                errorLog("Can't create cache directory for this object {}. Path: {}. Details: {}"_f
+                         << data.getCacheHash() << cachePath.generic_string() << ec.message());
+                return false;
+            }
+        }
+        return true;
     }
 
     spdlog::logger* CacheSystem::getLogger() const
