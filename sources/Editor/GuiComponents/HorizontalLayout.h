@@ -28,6 +28,7 @@
 
 namespace Core::Gui
 {
+    CLASS();
     class HorizontalLayout : public Layout
     {
         ECS_COMPONENT_DECL_NO_CNSTR(HorizontalLayout, Layout);
@@ -79,3 +80,5 @@ namespace Core::Gui
         bool _fitContent = false;
     };
 } // namespace Core::Gui
+
+#include "HorizontalLayout.generated.h" // added by the code generator. Better don't move it.

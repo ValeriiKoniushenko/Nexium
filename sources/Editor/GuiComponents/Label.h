@@ -29,6 +29,7 @@
 
 namespace Core::Gui
 {
+    CLASS();
     class Label : public Widget
     {
         ECS_COMPONENT_DECL(Label, Widget);
@@ -83,3 +84,5 @@ namespace Core::Gui
         bool _isTruncateLongText = true;
     };
 } // namespace Core::Gui
+
+#include "Label.generated.h" // added by the code generator. Better don't move it.

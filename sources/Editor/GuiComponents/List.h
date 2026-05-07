@@ -29,6 +29,7 @@
 
 namespace Core::Gui
 {
+    CLASS();
     class BaseList : public Widget
     {
         ECS_COMPONENT_DECL(BaseList, Widget);
@@ -54,6 +55,7 @@ namespace Core::Gui
         glm::vec2 _size = glm::vec2(100.f, 150.f);
     };
 
+    CLASS();
     class ListView : public BaseList
     {
         ECS_COMPONENT_DECL(ListView, BaseList);
@@ -82,6 +84,7 @@ namespace Core::Gui
         std::size_t _currentItem = 0;
     };
 
+    CLASS();
     class ListModelBased : public BaseList
     {
         ECS_COMPONENT_DECL(ListModelBased, BaseList);
@@ -126,3 +129,5 @@ namespace Core::Gui
         std::size_t _currentIndex = 0;
     };
 } // namespace Core::Gui
+
+#include "List.generated.h" // added by the code generator. Better don't move it.

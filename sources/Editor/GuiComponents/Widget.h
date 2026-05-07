@@ -54,6 +54,7 @@ namespace Core::Gui
         FlexWidthAndHeight = FlexWidth | FlexHeight // Alpha version, poor supporting
     };
 
+    CLASS();
     class Widget : public BaseComponent
     {
         ECS_COMPONENT_DECL(Widget, BaseComponent);

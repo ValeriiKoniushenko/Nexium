@@ -29,6 +29,7 @@
 
 namespace Core::Gui
 {
+    CLASS();
     class Spacer : public Widget
     {
         ECS_COMPONENT_DECL_NO_CNSTR(Spacer, Widget);
@@ -58,3 +59,5 @@ namespace Core::Gui
         glm::vec2 _size = {};
     };
 } // namespace Core::Gui
+
+#include "Spacer.generated.h" // added by the code generator. Better don't move it.

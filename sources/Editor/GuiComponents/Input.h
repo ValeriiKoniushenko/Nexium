@@ -34,6 +34,7 @@
 
 namespace Core::Gui
 {
+    CLASS();
     class BaseInput : public Widget
     {
         ECS_COMPONENT_DECL(BaseInput, Widget);
@@ -65,6 +66,7 @@ namespace Core::Gui
         glm::vec2 _size = {};
     };
 
+    CLASS();
     class TextInput : public BaseInput
     {
         ECS_COMPONENT_DECL(TextInput, BaseInput);
@@ -158,6 +160,7 @@ namespace Core::Gui
 
     ECS_TEMPLATE_COMPONENT_IMPL(BRACKETS(NumInput<Type>), BRACKETS(Utils::IsArithmetic Type))
 
+    CLASS();
     class Color3Input : public BaseInput
     {
         ECS_COMPONENT_DECL(Color3Input, BaseInput);
@@ -183,3 +186,5 @@ namespace Core::Gui
     using FloatInput = NumInput<float>;
     using IntInput = NumInput<int>;
 } // namespace Core::Gui
+
+#include "Input.generated.h" // added by the code generator. Better don't move it.

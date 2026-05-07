@@ -31,6 +31,7 @@
 
 namespace Core::Gui
 {
+    CLASS();
     class Button : public Widget
     {
         ECS_COMPONENT_DECL(Button, Widget);
@@ -133,6 +134,7 @@ namespace Core::Gui
         glm::vec2 _minSize = {};
     };
 
+    CLASS();
     class ToggleButton : public Button
     {
         ECS_COMPONENT_DECL(ToggleButton, Button);
@@ -158,6 +160,7 @@ namespace Core::Gui
         bool _isActive = true;
     };
 
+    CLASS();
     class ImageButton : public Button
     {
         ECS_COMPONENT_DECL(ImageButton, Button);
@@ -181,3 +184,5 @@ namespace Core::Gui
         NXTexture _texture;
     };
 } // namespace Core::Gui
+
+#include "Button.generated.h" // added by the code generator. Better don't move it.

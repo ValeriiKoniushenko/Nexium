@@ -29,6 +29,7 @@
 
 namespace Core::Gui
 {
+    CLASS();
     class CheckBox : public Widget
     {
         ECS_COMPONENT_DECL(CheckBox, Widget);
@@ -59,3 +60,5 @@ namespace Core::Gui
         bool _currentValue = false;
     };
 } // namespace Core::Gui
+
+#include "CheckBox.generated.h" // added by the code generator. Better don't move it.

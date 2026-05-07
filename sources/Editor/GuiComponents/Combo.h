@@ -29,6 +29,7 @@
 
 namespace Core::Gui
 {
+    CLASS();
     class BaseCombo : public Widget
     {
         ECS_COMPONENT_DECL(BaseCombo, Widget);
@@ -50,6 +51,7 @@ namespace Core::Gui
         glm::vec2 _size = glm::vec2(50.f, 0.f);
     };
 
+    CLASS();
     class ComboView : public BaseCombo
     {
         ECS_COMPONENT_DECL(ComboView, BaseCombo);
@@ -82,6 +84,7 @@ namespace Core::Gui
         std::size_t _currentItem = 0;
     };
 
+    CLASS();
     class ComboModelBased : public BaseCombo
     {
         ECS_COMPONENT_DECL(ComboModelBased, BaseCombo);
@@ -126,3 +129,5 @@ namespace Core::Gui
         std::size_t _currentIndex = 0;
     };
 } // namespace Core::Gui
+
+#include "Combo.generated.h" // added by the code generator. Better don't move it.

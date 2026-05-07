@@ -69,3 +69,5 @@ namespace Core::Gui
     ECS_TEMPLATE_COMPONENT_IMPL(LabelRow<T>, IsWidget T);
 
 } // namespace Core::Gui
+
+#include "LabelRow.generated.inl" // added by the code generator. Better don't move it.
