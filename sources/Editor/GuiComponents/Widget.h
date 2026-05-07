@@ -29,6 +29,7 @@
 #include "ECS/Transformable.h"
 #include "ImGui/imgui.h"
 #include "InputDevices/Keyboard.h"
+#include "RawDataManagement/JsonAdapter.h"
 
 namespace Core::Gui
 {
@@ -57,6 +58,7 @@ namespace Core::Gui
     CLASS();
     class Widget : public BaseComponent
     {
+        R_FRIEND_DECL(Core::Gui::Widget, Core::BaseComponent);
         ECS_COMPONENT_DECL(Widget, BaseComponent);
 
     public:
@@ -155,10 +157,15 @@ namespace Core::Gui
         inline static int idGen = 0;
         int _id = 0; // internal id for ImGui
 
-        glm::vec2 _pos = {};
-        Flex _flex = Flex::Fixed;
+        FIELD();
+        glm::vec2 _pos = glm::vec2{ 0.f, 0.f };
+        FIELD();
+        Core::Gui::Flex _flex = Core::Gui::Flex::Fixed;
+        FIELD();
         bool _autoDraw = true;
+        FIELD();
         bool _isDrawOutline = false;
+        FIELD();
         bool _isDisabledWidget = false;
     };
 

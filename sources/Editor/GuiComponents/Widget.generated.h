@@ -188,4 +188,82 @@ struct R<Core::Gui::Align>
     }
 }; // struct R<Core::Gui::Align>
 
+template<>
+struct R<Core::Gui::Widget>
+{
+    static constexpr std::string_view Name() { return "Widget"; }
+    static constexpr std::string_view ParentScope() { return "Core::Gui"; }
+    static constexpr std::size_t GetFieldNumbers() { return 5; }
+    static constexpr std::vector<RClassField> GetFields() {
+        return {
+			{ "glm::vec2", "_pos" },
+			{ "Core::Gui::Flex", "_flex" },
+			{ "bool", "_autoDraw" },
+			{ "bool", "_isDrawOutline" },
+			{ "bool", "_isDisabledWidget" },
+		};
+    }
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Core::Gui::Widget& obj, bool noSignals = false)
+    {
+        RResourceStream<RImpl> s;if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
+		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
+		s.write("_pos", obj._pos);
+		s.write("_flex", obj._flex);
+		s.write("_autoDraw", obj._autoDraw);
+		s.write("_isDrawOutline", obj._isDrawOutline);
+		s.write("_isDisabledWidget", obj._isDisabledWidget);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
+        return s;
+    }
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    static void Serialize(const Core::Gui::Widget& obj, RResourceStream<RImpl>& s, bool noSignals = false)
+    {
+        if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
+		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
+		s.write("_pos", obj._pos);
+		s.write("_flex", obj._flex);
+		s.write("_autoDraw", obj._autoDraw);
+		s.write("_isDrawOutline", obj._isDrawOutline);
+		s.write("_isDisabledWidget", obj._isDisabledWidget);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
+    }
+
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    static void Deserialize(const RResourceStream<RImpl>& s, Core::Gui::Widget& obj, bool noSignals = false)
+    {
+        if (!noSignals)
+        {
+            _RTryCallPreDeserialize(obj);
+        }
+
+		R<Core::BaseComponent>::Deserialize<RImpl>(s, obj, true);
+		s.read("_pos", obj._pos, glm::vec2{ 0.f, 0.f });
+		s.read("_flex", obj._flex, Core::Gui::Flex::Fixed);
+		s.read("_autoDraw", obj._autoDraw, true);
+		s.read("_isDrawOutline", obj._isDrawOutline, false);
+		s.read("_isDisabledWidget", obj._isDisabledWidget, false);
+        if (!noSignals)
+        {
+            _RTryCallPostDeserialize(obj, s.logs());
+        }
+    }
+}; // struct R<Core::Gui::Widget>
 // clang-format on

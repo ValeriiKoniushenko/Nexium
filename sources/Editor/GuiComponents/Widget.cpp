@@ -24,13 +24,15 @@
 
 #include "Widget.h"
 
-#include "../../Misc/Configs.h"
 #include "InputDevices/Keyboard.h"
 #include "InputDevices/Mouse.h"
+#include "Misc/Configs.h"
+#include "RawDataManagement/JsonAdapter.h"
 
 namespace Core::Gui
 {
-    ECS_COMPONENT_IMPL(Widget)
+    ECS_COMPONENT_IMPL(Widget);
+    R_FRIEND_IMPL(Core::Gui::Widget);
 
     void Widget::unhandledDraw()
     {
