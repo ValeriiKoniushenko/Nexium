@@ -31,6 +31,7 @@ namespace Core::Gui
     CLASS();
     class Layout : public Widget
     {
+        R_FRIEND_DECL(Core::Gui::Layout, Core::Gui::Widget);
         ECS_COMPONENT_DECL(Layout, Widget);
 
     public:
@@ -59,13 +60,21 @@ namespace Core::Gui
         void onInitialize() override;
 
     protected:
+        FIELD();
         std::optional<float> _height;
-        std::optional<float> _width;
-        // Left Right Top Bottom
-        glm::vec4 _paddings = {};
 
-        Align _align = Align::None;
-        Align _secondAlign = Align::None;
+        FIELD();
+        std::optional<float> _width;
+
+        // Left Right Top Bottom
+        FIELD();
+        glm::vec4 _paddings = glm::vec4{};
+
+        FIELD();
+        Core::Gui::Align _align = Core::Gui::Align::None;
+
+        FIELD();
+        Core::Gui::Align _secondAlign = Core::Gui::Align::None;
     };
 } // namespace Core::Gui
 

@@ -29,6 +29,8 @@
 #include "glm/glm.hpp"
 #include "nlohmann/json.hpp"
 
+#include <optional>
+
 #define R_FRIEND_DECL(Class, ...)                                                                  \
     R_FRIEND(Class, __VA_ARGS__);                                                                  \
                                                                                                    \
@@ -93,3 +95,29 @@ namespace Core
     void from_json(const nlohmann::json& j, ISize3& value);
 
 } // namespace Core
+
+template<class T>
+void to_json(nlohmann::json& j, const std::optional<T>& opt)
+{
+    if (opt.has_value())
+    {
+        j = opt.value();
+    }
+    else
+    {
+        j = nullptr;
+    }
+}
+
+template<class T>
+void from_json(const nlohmann::json& j, std::optional<T>& opt)
+{
+    if (j.is_null())
+    {
+        opt = std::nullopt;
+    }
+    else
+    {
+        opt = j.get<T>();
+    }
+}
