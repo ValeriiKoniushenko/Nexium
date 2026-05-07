@@ -31,6 +31,7 @@ namespace Core::Gui
     CLASS();
     class HorizontalLayout : public Layout
     {
+        R_FRIEND_DECL(Core::Gui::HorizontalLayout, Core::Gui::Layout);
         ECS_COMPONENT_DECL_NO_CNSTR(HorizontalLayout, Layout);
 
     public:
@@ -75,8 +76,10 @@ namespace Core::Gui
         std::vector<float> _yOffsets;
 
         // for space between
+        FIELD();
         float _spacing = 0.f;
 
+        FIELD();
         bool _fitContent = false;
     };
 } // namespace Core::Gui
