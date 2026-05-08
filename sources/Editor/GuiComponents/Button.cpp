@@ -29,9 +29,14 @@
 
 namespace Core::Gui
 {
-    ECS_COMPONENT_IMPL(Button)
-    ECS_COMPONENT_IMPL(ToggleButton)
-    ECS_COMPONENT_IMPL(ImageButton)
+    R_FRIEND_IMPL(Core::Gui::Button);
+    ECS_COMPONENT_IMPL(Button);
+
+    R_FRIEND_IMPL(Core::Gui::ToggleButton);
+    ECS_COMPONENT_IMPL(ToggleButton);
+
+    R_FRIEND_IMPL(Core::Gui::ImageButton);
+    ECS_COMPONENT_IMPL(ImageButton);
 
     void Button::setButtonColor(const Color4& value)
     {

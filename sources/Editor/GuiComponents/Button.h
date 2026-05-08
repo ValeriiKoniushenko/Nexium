@@ -26,7 +26,6 @@
 
 #include "AssetsManager/TextureAsset.h"
 #include "Core/Delegate.h"
-#include "Graphics/Texture.h"
 #include "Widget.h"
 
 namespace Core::Gui
@@ -34,6 +33,7 @@ namespace Core::Gui
     CLASS();
     class Button : public Widget
     {
+        R_FRIEND_DECL(Core::Gui::Button, Core::Gui::Widget);
         ECS_COMPONENT_DECL(Button, Widget);
 
     public:
@@ -121,22 +121,33 @@ namespace Core::Gui
         virtual void onClickEvent() {}
 
     protected:
+        FIELD();
         std::optional<Color4> _buttonColor;
+        FIELD();
         std::optional<Color4> _buttonHoverColor;
+        FIELD();
         std::optional<Color4> _buttonActiveColor;
+        FIELD();
         std::optional<Color4> _textColor;
+        FIELD();
         std::optional<Color4> _borderColor;
+        FIELD();
         std::optional<float> _borderRound;
+        FIELD();
         std::optional<float> _borderWidth;
 
-        glm::vec2 _textSize = {};
-        glm::vec2 _size = {};
-        glm::vec2 _minSize = {};
+        FIELD();
+        glm::vec2 _textSize = glm::vec2{};
+        FIELD();
+        glm::vec2 _size = glm::vec2{};
+        FIELD();
+        glm::vec2 _minSize = glm::vec2{};
     };
 
     CLASS();
     class ToggleButton : public Button
     {
+        R_FRIEND_DECL(Core::Gui::ToggleButton, Core::Gui::Button);
         ECS_COMPONENT_DECL(ToggleButton, Button);
 
     public: // Delegates
@@ -157,12 +168,14 @@ namespace Core::Gui
         void onClickEvent() override;
 
     protected:
+        FIELD();
         bool _isActive = true;
     };
 
     CLASS();
     class ImageButton : public Button
     {
+        R_FRIEND_DECL(Core::Gui::ImageButton, Core::Gui::Button);
         ECS_COMPONENT_DECL(ImageButton, Button);
 
     public:
@@ -180,6 +193,7 @@ namespace Core::Gui
         void postDraw() override;
 
     protected:
+        FIELD();
         std::optional<glm::vec2> _paddingSize;
         NXTexture _texture;
     };

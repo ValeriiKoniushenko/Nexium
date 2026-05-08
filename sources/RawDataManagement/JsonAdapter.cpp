@@ -24,6 +24,8 @@
 
 #include "JsonAdapter.h"
 
+#include <cstdint>
+
 namespace glm
 {
     void to_json(nlohmann::json& j, const vec4& v)
@@ -181,6 +183,56 @@ namespace Core
         {
             value.deep = j["deep"].get<int>();
         }
+    }
+
+    void to_json(nlohmann::json& j, const Color3& color)
+    {
+        j = { color.r, color.g, color.b };
+    }
+
+    void to_json(nlohmann::json& j, const Color4& color)
+    {
+        j = { color.r, color.g, color.b, color.a };
+    }
+
+    void to_json(nlohmann::json& j, const NormColor3& color)
+    {
+        j = { color.r, color.g, color.b };
+    }
+
+    void to_json(nlohmann::json& j, const NormColor4& color)
+    {
+        j = { color.r, color.g, color.b, color.a };
+    }
+
+    void from_json(const nlohmann::json& j, Color3& color)
+    {
+        color.r = j.at(0).get<uint8_t>();
+        color.g = j.at(1).get<uint8_t>();
+        color.b = j.at(2).get<uint8_t>();
+    }
+
+    void from_json(const nlohmann::json& j, Color4& color)
+    {
+        color.r = j.at(0).get<uint8_t>();
+        color.g = j.at(1).get<uint8_t>();
+        color.b = j.at(2).get<uint8_t>();
+        color.a = j.at(3).get<uint8_t>();
+    }
+
+    void from_json(const nlohmann::json& j, NormColor3& color)
+    {
+        color.r = j.at(0).get<float>();
+        color.g = j.at(1).get<float>();
+        color.b = j.at(2).get<float>();
+    }
+
+    void from_json(const nlohmann::json& j, NormColor4& color)
+    {
+        color.r = j.at(0).get<float>();
+        color.g = j.at(1).get<float>();
+        color.b = j.at(2).get<float>();
+        color.a = j.at(3).get<float>();
     }
 
 } // namespace Core

@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "Core/Color.h"
 #include "Core/Size.h"
 #include "JustReflectMe/Adapter.h"
 #include "glm/glm.hpp"
@@ -93,6 +94,22 @@ namespace Core
     void from_json(const nlohmann::json& j, ISize2& value);
 
     void from_json(const nlohmann::json& j, ISize3& value);
+
+    void to_json(nlohmann::json& j, const Color3& color);
+
+    void to_json(nlohmann::json& j, const Color4& color);
+
+    void to_json(nlohmann::json& j, const NormColor3& color);
+
+    void to_json(nlohmann::json& j, const NormColor4& color);
+
+    void from_json(const nlohmann::json& j, Color3& color);
+
+    void from_json(const nlohmann::json& j, Color4& color);
+
+    void from_json(const nlohmann::json& j, NormColor3& color);
+
+    void from_json(const nlohmann::json& j, NormColor4& color);
 
 } // namespace Core
 
