@@ -134,8 +134,8 @@ namespace Core::Gui
     {
         setComponentName(string);
         _textSize = ImGui::CalcTextSize(string.c_str());
-        setSize(ImGui::CalcItemSize({}, _textSize.x + style().FramePadding.x * 2.0f,
-                                    _textSize.y + style().FramePadding.y * 2.0f));
+        setSize(ImGui::CalcItemSize({}, _textSize.x + (style().FramePadding.x * 2.0f),
+                                    _textSize.y + (style().FramePadding.y * 2.0f)));
     }
 
     const StringAtom& Button::getText() const noexcept
@@ -314,7 +314,8 @@ namespace Core::Gui
         }
 
         constexpr auto bg_col = glm::vec4(0, 0, 0, 0);
-        bool hovered, held;
+        bool hovered = false;
+        bool held = false;
         if (ButtonBehavior(bb, _id, &hovered, &held, 0))
         {
             onClick->trigger();
