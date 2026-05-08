@@ -28,6 +28,7 @@
 
 namespace Core::Gui
 {
+    R_FRIEND_IMPL(Core::Gui::Label);
     ECS_COMPONENT_IMPL(Label);
 
     void Label::setWidth(float newWidth)
@@ -123,10 +124,10 @@ namespace Core::Gui
     void Label::onInitialize()
     {
         Widget::onInitialize();
-        if (_name.isEmpty())
-        {
-            // setText("Label"_atom);
-        }
+        // if (_name.isEmpty())
+        // {
+        //     setText("Label"_atom);
+        // }
 
         if (_textSize.x == 0.f && _textSize.y == 0.f)
         {

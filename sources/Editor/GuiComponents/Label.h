@@ -24,7 +24,6 @@
 
 #pragma once
 
-#include "Core/Delegate.h"
 #include "Widget.h"
 
 namespace Core::Gui
@@ -32,6 +31,7 @@ namespace Core::Gui
     CLASS();
     class Label : public Widget
     {
+        R_FRIEND_DECL(Core::Gui::Label, Core::Gui::Widget);
         ECS_COMPONENT_DECL(Label, Widget);
 
     public:
@@ -73,14 +73,24 @@ namespace Core::Gui
         void invalidateTextCache();
 
     protected:
-        std::optional<Color4> _textColor;
-        StringAtom _cachedText;
-        Align _align = Align::Left;
+        FIELD();
+        std::optional<Core::Color4> _textColor;
 
-        glm::vec2 _textSize = {};
+        StringAtom _cachedText;
+
+        FIELD();
+        Core::Gui::Align _align = Core::Gui::Align::Left;
+
+        FIELD();
+        glm::vec2 _textSize = glm::vec2{};
+
+        FIELD();
         float _width = -1.0f;
+
+        FIELD();
         float _height = -1.0f;
 
+        FIELD();
         bool _isTruncateLongText = true;
     };
 } // namespace Core::Gui
