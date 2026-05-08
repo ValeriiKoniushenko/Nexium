@@ -32,7 +32,8 @@
 
 namespace Core
 {
-    ECS_COMPONENT_IMPL(WorldLightningEWC)
+    ECS_COMPONENT_IMPL(WorldLightningEWC);
+    R_FRIEND_IMPL(WorldLightningEWC);
 
     const char* WorldLightningEWC::getIcon()
     {

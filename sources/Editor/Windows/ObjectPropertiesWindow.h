@@ -58,8 +58,10 @@ namespace Core
                                                   _GraphicsModifiersArray_ArrayCellViewerFunc,
                                                   _GraphicsModifiersArray_ViewFetchFunc>;
 
+    CLASS();
     class ObjectPropertiesWindowEWC : public BaseFloatEWC
     {
+        R_FRIEND_DECL(Core::ObjectPropertiesWindowEWC, Core::BaseFloatEWC);
         ECS_COMPONENT_DECL(ObjectPropertiesWindowEWC, BaseFloatEWC);
 
     public:
@@ -160,3 +162,5 @@ namespace Core
         AbstractComponent* _target = nullptr;
     };
 } // namespace Core
+
+#include "ObjectPropertiesWindow.generated.h" // added by the code generator. Better don't move it.

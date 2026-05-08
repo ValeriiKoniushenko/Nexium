@@ -30,7 +30,8 @@
 
 namespace Core
 {
-    ECS_COMPONENT_IMPL(TextEditorEWC)
+    ECS_COMPONENT_IMPL(TextEditorEWC);
+    R_FRIEND_IMPL(TextEditorEWC);
 
     const char* TextEditorEWC::getIcon()
     {

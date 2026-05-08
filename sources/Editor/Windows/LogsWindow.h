@@ -32,8 +32,10 @@
 
 namespace Core
 {
+    CLASS();
     class LogsWindowEWC : public BaseFloatEWC
     {
+        R_FRIEND_DECL(Core::LogsWindowEWC, Core::BaseFloatEWC);
         ECS_COMPONENT_DECL(LogsWindowEWC, BaseFloatEWC);
 
     public:
@@ -107,3 +109,5 @@ namespace Core
         std::vector<LogLine> _logs;
     };
 } // namespace Core
+
+#include "LogsWindow.generated.h" // added by the code generator. Better don't move it.

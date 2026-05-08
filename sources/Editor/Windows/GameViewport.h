@@ -28,8 +28,10 @@
 
 namespace Core
 {
+    CLASS();
     class GameViewportEWC : public BaseFloatEWC
     {
+        R_FRIEND_DECL(Core::GameViewportEWC, Core::BaseFloatEWC);
         ECS_COMPONENT_DECL(GameViewportEWC, BaseFloatEWC);
 
     public:
@@ -43,3 +45,5 @@ namespace Core
         void onDraw() override;
     };
 } // namespace Core
+
+#include "GameViewport.generated.h" // added by the code generator. Better don't move it.

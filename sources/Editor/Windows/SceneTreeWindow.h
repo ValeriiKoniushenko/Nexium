@@ -31,8 +31,10 @@ namespace Core
     class Scene;
     class Actor;
 
+    CLASS();
     class SceneTreeWindowEWC : public BaseFloatEWC
     {
+        R_FRIEND_DECL(Core::SceneTreeWindowEWC, Core::BaseFloatEWC);
         ECS_COMPONENT_DECL(SceneTreeWindowEWC, BaseFloatEWC);
 
     public:
@@ -63,3 +65,5 @@ namespace Core
     };
 
 } // namespace Core
+
+#include "SceneTreeWindow.generated.h" // added by the code generator. Better don't move it.

@@ -28,8 +28,10 @@
 
 namespace Core
 {
+    CLASS();
     class TextEditorEWC : public BaseFloatEWC
     {
+        R_FRIEND_DECL(Core::TextEditorEWC, Core::BaseFloatEWC);
         ECS_COMPONENT_DECL(TextEditorEWC, BaseFloatEWC);
 
     public:
@@ -55,3 +57,5 @@ namespace Core
         float _statusMarginRight = 10.f;
     };
 } // namespace Core
+
+#include "TextEditor.generated.h" // added by the code generator. Better don't move it.

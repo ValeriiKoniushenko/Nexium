@@ -31,8 +31,10 @@
 namespace Core
 {
 
+    CLASS();
     class NxEditorBaseEditorEWC : public BaseFloatEWC
     {
+        R_FRIEND_DECL(Core::NxEditorBaseEditorEWC, Core::BaseFloatEWC);
         ECS_COMPONENT_DECL(NxEditorBaseEditorEWC, BaseFloatEWC);
 
     public:
@@ -88,3 +90,5 @@ namespace Core
     };
 
 } // namespace Core
+
+#include "NxEditorBaseEditor.generated.h" // added by the code generator. Better don't move it.

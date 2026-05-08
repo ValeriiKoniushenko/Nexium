@@ -43,8 +43,10 @@ namespace Core
         class Label;
     } // namespace Gui
 
+    CLASS();
     class ShaderManagerEWC : public BaseFloatEWC
     {
+        R_FRIEND_DECL(Core::ShaderManagerEWC, Core::BaseFloatEWC);
         ECS_COMPONENT_DECL(ShaderManagerEWC, BaseFloatEWC);
 
     public:
@@ -97,3 +99,5 @@ namespace Core
         float _drawDetailsLabelWidth = 140.f;
     };
 } // namespace Core
+
+#include "ShaderManager.generated.h" // added by the code generator. Better don't move it.

@@ -80,6 +80,7 @@ namespace
 
 namespace Core
 {
+    R_FRIEND_IMPL(AssetsManagerWindowEWC);
     ECS_COMPONENT_IMPL(AssetsManagerWindowEWC)
 
     const char* AssetsManagerWindowEWC::getIcon()

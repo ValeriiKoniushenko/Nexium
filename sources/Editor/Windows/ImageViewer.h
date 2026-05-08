@@ -29,8 +29,10 @@
 
 namespace Core
 {
+    CLASS();
     class ImageViewerEWC : public BaseFloatEWC
     {
+        R_FRIEND_DECL(Core::ImageViewerEWC, Core::BaseFloatEWC);
         ECS_COMPONENT_DECL(ImageViewerEWC, BaseFloatEWC);
 
     public:
@@ -54,3 +56,5 @@ namespace Core
         float _zoom = 1.0f;
     };
 } // namespace Core
+
+#include "ImageViewer.generated.h" // added by the code generator. Better don't move it.

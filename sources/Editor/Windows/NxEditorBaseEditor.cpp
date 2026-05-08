@@ -30,6 +30,7 @@
 namespace Core
 {
     ECS_COMPONENT_IMPL(NxEditorBaseEditorEWC);
+    R_FRIEND_IMPL(NxEditorBaseEditorEWC);
 
     const char* NxEditorBaseEditorEWC::getIcon()
     {

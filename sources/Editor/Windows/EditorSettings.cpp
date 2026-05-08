@@ -41,6 +41,7 @@ using namespace Core::Gui;
 
 namespace Core
 {
+    R_FRIEND_IMPL(EditorSettingsEWC);
     ECS_COMPONENT_IMPL(EditorSettingsEWC)
     ECS_COMPONENT_IMPL(EditorSettingsEWC::BaseListItem)
     ECS_COMPONENT_IMPL(EditorSettingsEWC::KeymapItem)

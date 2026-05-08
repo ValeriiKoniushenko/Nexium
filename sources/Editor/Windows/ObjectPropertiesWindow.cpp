@@ -31,12 +31,9 @@
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/Label.h"
 #include "Editor/GuiComponents/Misc.h"
-#include "Editor/GuiComponents/Spacer.h"
 #include "GameplaySystem/Camera.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Graphics/Primitives/StaticMeshBundle.h"
-#include "ImGui/imgui_internal.h"
-#include "Misc/Configs.h"
 
 using namespace Core;
 using namespace Core::Gui;
@@ -127,6 +124,7 @@ namespace
 namespace Core
 {
     ECS_COMPONENT_IMPL(ObjectPropertiesWindowEWC)
+    R_FRIEND_IMPL(ObjectPropertiesWindowEWC);
 
     Gui::HorizontalLayout::Ptr _GraphicsModifiersArray_ArrayCellViewerFunc::operator()(
         GraphicsComponentData::ModifierParam& data) const

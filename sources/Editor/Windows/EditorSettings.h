@@ -37,8 +37,10 @@ namespace Core
         class Label;
     }
 
+    CLASS();
     class EditorSettingsEWC : public BaseFloatEWC
     {
+        R_FRIEND_DECL(Core::EditorSettingsEWC, Core::BaseFloatEWC);
         ECS_COMPONENT_DECL(EditorSettingsEWC, BaseFloatEWC);
 
     public:
@@ -125,3 +127,5 @@ namespace Core
         int _defaultTreeNodeFlags = ImGuiTreeNodeFlags_SpanAvailWidth;
     };
 } // namespace Core
+
+#include "EditorSettings.generated.h" // added by the code generator. Better don't move it.
