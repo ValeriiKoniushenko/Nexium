@@ -107,12 +107,14 @@ namespace Core
         }
 
         template<IsDataIO T>
-        void tryRead(T& data)
+        bool tryRead(T& data)
         {
             if (hasCache(data))
             {
                 read<T>(data);
+                return true;
             }
+            return false;
         }
 
         [[nodiscard]] bool hasCache(const IDataIO& data) const;
