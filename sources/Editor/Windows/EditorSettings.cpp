@@ -25,12 +25,9 @@
 #include "EditorSettings.h"
 
 #include "Editor/GuiComponents/Button.h"
-#include "Editor/GuiComponents/CheckBox.h"
-#include "Editor/GuiComponents/Combo.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/Label.h"
-#include "Editor/GuiComponents/List.h"
 #include "Editor/GuiComponents/Separator.h"
 #include "Editor/GuiComponents/Spacer.h"
 #include "GameplaySystem/Framework/GameInstance.h"
@@ -212,7 +209,7 @@ namespace Core
 
     void EditorSettingsEWC::setupCommonLayoutSettings()
     {
-        const auto gap = ImGui::GetStyle().WindowPadding.x;
+        auto gap = ImGui::GetStyle().WindowPadding.x;
         for (auto& layout : _layouts)
         {
             layout.setPaddings(gap, gap, 0, 0);
@@ -230,7 +227,7 @@ namespace Core
 
         for (const auto& [fst, snd] : GetEditor().keyboardInput.getMapping())
         {
-            const auto item = layout.addChildComponent<KeymapItem>();
+            auto* item = layout.addChildComponent<KeymapItem>();
             item->setReadOnly(true);
             item->setLabel(fst);
             item->setButtonName(
@@ -239,7 +236,7 @@ namespace Core
 
         // static keys
         {
-            const auto item = layout.addChildComponent<KeymapItem>();
+            auto* item = layout.addChildComponent<KeymapItem>();
             item->setReadOnly(true);
             item->setLabel("Show ImGui debug rects");
             item->setButtonName(
@@ -254,7 +251,7 @@ namespace Core
 
             for (const auto& [fst, snd] : spectator->keyboardInput.getMapping())
             {
-                const auto item = layout.addChildComponent<KeymapItem>();
+                auto* item = layout.addChildComponent<KeymapItem>();
                 item->setReadOnly(true);
                 item->setLabel(fst + (snd->onPress->isEmpty() ? "(disabled)" : ""));
                 item->setButtonName(
@@ -288,7 +285,7 @@ namespace Core
 
         for (int i = 0; i < ImGuiCol_COUNT; ++i)
         {
-            auto color = layout.addChildComponent<ColorItem>();
+            auto* color = layout.addChildComponent<ColorItem>();
             color->setLabel(ImGui::GetStyleColorName(i));
             color->setReadOnly(true);
             auto data = Core::Color4::From(NormColor4(colors[i]));
