@@ -196,9 +196,6 @@ namespace Core::Gui
     using FloatInput = NumInput<float>;
     using IntInput = NumInput<int>;
 
-    void to_json(nlohmann::json& j, const TextInput* comp);
-    void from_json(const nlohmann::json& j, TextInput* comp);
-
 } // namespace Core::Gui
 
 #include "Input.generated.h" // added by the code generator. Better don't move it.

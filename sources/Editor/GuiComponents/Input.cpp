@@ -189,28 +189,4 @@ namespace Core::Gui
         ImGui::PopStyleColor(pushedStyles);
     }
 
-    void to_json(nlohmann::json& j, const TextInput* comp)
-    {
-        if (!comp) [[unlikely]]
-        {
-            Assert(false);
-            globalLog.errorLog("Trying to serialize null TextInput component");
-            return;
-        }
-
-        j = comp->getInputtedData();
-    }
-
-    void from_json(const nlohmann::json& j, TextInput* comp)
-    {
-        if (!comp) [[unlikely]]
-        {
-            Assert(false);
-            globalLog.errorLog("Trying to deserialize null TextInput component");
-            return;
-        }
-
-        comp->setInputtedData(j.get<std::string>());
-    }
-
 } // namespace Core::Gui
