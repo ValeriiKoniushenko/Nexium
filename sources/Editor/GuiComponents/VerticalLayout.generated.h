@@ -11,4 +11,66 @@
 #include <string_view>
 #include <vector>
 
+template<>
+struct R<Core::Gui::VerticalLayout>
+{
+    static constexpr std::string_view Name() { return "VerticalLayout"; }
+    static constexpr std::string_view ParentScope() { return "Core::Gui"; }
+    static constexpr std::size_t GetFieldNumbers() { return 1; }
+    static constexpr std::vector<RClassField> GetFields() {
+        return {
+			{ "std::optional<float>", "_spacing" },
+		};
+    }
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Core::Gui::VerticalLayout& obj, bool noSignals = false)
+    {
+        RResourceStream<RImpl> s;if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
+		s.write(R<Core::Gui::Layout>::Serialize<RImpl>(obj).getData());
+		s.write("_spacing", obj._spacing);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
+        return s;
+    }
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    static void Serialize(const Core::Gui::VerticalLayout& obj, RResourceStream<RImpl>& s, bool noSignals = false)
+    {
+        if (!noSignals)
+        {
+            _RTryCallPreSerialize(obj);
+        }
+
+		s.write(R<Core::Gui::Layout>::Serialize<RImpl>(obj).getData());
+		s.write("_spacing", obj._spacing);
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize(obj, s.logs());
+        }
+    }
+
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    static void Deserialize(const RResourceStream<RImpl>& s, Core::Gui::VerticalLayout& obj, bool noSignals = false)
+    {
+        if (!noSignals)
+        {
+            _RTryCallPreDeserialize(obj);
+        }
+
+		R<Core::Gui::Layout>::Deserialize<RImpl>(s, obj, true);
+		s.read("_spacing", obj._spacing, 4);
+        if (!noSignals)
+        {
+            _RTryCallPostDeserialize(obj, s.logs());
+        }
+    }
+}; // struct R<Core::Gui::VerticalLayout>
 // clang-format on

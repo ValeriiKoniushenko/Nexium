@@ -24,11 +24,9 @@
 
 #include "Spacer.h"
 
-#include "ImGui/imgui_internal.h"
-#include "ImGui/misc/cpp/imgui_stdlib.h"
-
 namespace Core::Gui
 {
+    R_FRIEND_IMPL(Spacer);
     ECS_COMPONENT_IMPL(Spacer);
 
     Spacer::Spacer(const StringAtom& name)

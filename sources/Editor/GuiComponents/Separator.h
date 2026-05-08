@@ -31,6 +31,7 @@ namespace Core::Gui
     CLASS();
     class Separator : public Widget
     {
+        R_FRIEND_DECL(Core::Gui::Separator, Core::Gui::Widget);
         ECS_COMPONENT_DECL(Separator, Widget);
 
     public:

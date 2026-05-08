@@ -24,7 +24,6 @@
 
 #pragma once
 
-#include "Core/Delegate.h"
 #include "Widget.h"
 
 namespace Core::Gui
@@ -32,6 +31,7 @@ namespace Core::Gui
     CLASS();
     class Spacer : public Widget
     {
+        R_FRIEND_DECL(Core::Gui::Spacer, Core::Gui::Widget);
         ECS_COMPONENT_DECL_NO_CNSTR(Spacer, Widget);
 
     public:
@@ -56,7 +56,8 @@ namespace Core::Gui
         void onInitialize() override;
 
     protected:
-        glm::vec2 _size = {};
+        FIELD();
+        glm::vec2 _size = glm::vec2{};
     };
 } // namespace Core::Gui
 

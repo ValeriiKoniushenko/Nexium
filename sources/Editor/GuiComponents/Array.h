@@ -40,6 +40,7 @@ namespace Core::Gui
     CLASS();
     class ArrayCell : public HorizontalLayout
     {
+        R_FRIEND_DECL(Core::Gui::ArrayCell, Core::Gui::HorizontalLayout);
         ECS_COMPONENT_DECL_NO_CNSTR(ArrayCell, HorizontalLayout);
 
     public:
