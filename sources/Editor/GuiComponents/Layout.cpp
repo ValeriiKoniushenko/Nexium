@@ -26,7 +26,7 @@
 
 namespace Core::Gui
 {
-    ECS_COMPONENT_IMPL(Layout)
+    ECS_COMPONENT_IMPL(Layout);
     R_FRIEND_IMPL(Core::Gui::Layout)
 
     bool Layout::atLeastOne(Flex f)

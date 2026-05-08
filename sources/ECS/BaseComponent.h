@@ -140,12 +140,16 @@ public:
  */
 #define ECS_COMPONENT_DECL(ClassName, BaseComponentClass)                                          \
     _ECS_COMPONENT_DECL(ClassName, ClassName, BaseComponentClass)                                  \
-    _ECS_DEFAULT_PUBLIC_CONSTRUCTOR(ClassName, BaseComponentClass)
+    _ECS_DEFAULT_PUBLIC_CONSTRUCTOR(ClassName, BaseComponentClass)                                 \
+    static_assert(true, "")
 
 #define ECS_COMPONENT_DECL_NO_CNSTR(ClassName, BaseComponentClass)                                 \
-    _ECS_COMPONENT_DECL(ClassName, ClassName, BaseComponentClass)
+    _ECS_COMPONENT_DECL(ClassName, ClassName, BaseComponentClass)                                  \
+    static_assert(true, "")
 
-#define ECS_COMPONENT_IMPL(ClassName) _ECS_COMPONENT_IMPL(ClassName, ;, #ClassName, false)
+#define ECS_COMPONENT_IMPL(ClassName)                                                              \
+    _ECS_COMPONENT_IMPL(ClassName, ;, #ClassName, false)                                           \
+    static_assert(true, "")
 
 //
 //

@@ -33,7 +33,7 @@
 
 namespace Core
 {
-    ECS_COMPONENT_IMPL(SceneTreeWindowEWC)
+    ECS_COMPONENT_IMPL(SceneTreeWindowEWC);
     R_FRIEND_IMPL(SceneTreeWindowEWC);
 
     //

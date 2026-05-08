@@ -32,7 +32,7 @@
 
 namespace Core
 {
-    ECS_COMPONENT_IMPL(LogsWindowEWC)
+    ECS_COMPONENT_IMPL(LogsWindowEWC);
     R_FRIEND_IMPL(LogsWindowEWC);
 
     //

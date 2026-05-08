@@ -42,10 +42,10 @@ using namespace Core::Gui;
 namespace Core
 {
     R_FRIEND_IMPL(EditorSettingsEWC);
-    ECS_COMPONENT_IMPL(EditorSettingsEWC)
-    ECS_COMPONENT_IMPL(EditorSettingsEWC::BaseListItem)
-    ECS_COMPONENT_IMPL(EditorSettingsEWC::KeymapItem)
-    ECS_COMPONENT_IMPL(EditorSettingsEWC::ColorItem)
+    ECS_COMPONENT_IMPL(EditorSettingsEWC);
+    ECS_COMPONENT_IMPL(EditorSettingsEWC::BaseListItem);
+    ECS_COMPONENT_IMPL(EditorSettingsEWC::KeymapItem);
+    ECS_COMPONENT_IMPL(EditorSettingsEWC::ColorItem);
 
     const char* EditorSettingsEWC::getIcon()
     {

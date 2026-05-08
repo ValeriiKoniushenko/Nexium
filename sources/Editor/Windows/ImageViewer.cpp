@@ -31,7 +31,7 @@
 
 namespace Core
 {
-    ECS_COMPONENT_IMPL(ImageViewerEWC)
+    ECS_COMPONENT_IMPL(ImageViewerEWC);
     R_FRIEND_IMPL(ImageViewerEWC);
 
     const char* ImageViewerEWC::getIcon()

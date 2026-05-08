@@ -28,8 +28,7 @@
 
 namespace Core
 {
-    ECS_COMPONENT_IMPL(Spectator)
-
+    ECS_COMPONENT_IMPL(Spectator);
     /*
     void Spectator::ioFieldsUpdate(DataStream& out)
     {

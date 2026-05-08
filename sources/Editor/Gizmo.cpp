@@ -31,8 +31,7 @@
 
 namespace Core
 {
-    ECS_COMPONENT_IMPL(Gizmo)
-
+    ECS_COMPONENT_IMPL(Gizmo);
     void Gizmo::draw()
     {
         glDepthFunc(GL_ALWAYS);

@@ -33,8 +33,7 @@ using namespace Core::Gui;
 
 namespace Core
 {
-    ECS_COMPONENT_IMPL(ECSEditorStaticMeshBundleAdapter)
-
+    ECS_COMPONENT_IMPL(ECSEditorStaticMeshBundleAdapter);
     StringAtom ECSEditorStaticMeshBundleAdapter::getProcessedAssetType() const
     {
         return StaticMeshBundle::componentType;

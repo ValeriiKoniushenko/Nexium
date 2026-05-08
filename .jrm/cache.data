@@ -3,7 +3,7 @@
 1776719757929185590 sources/AssetsManager/AssetImpls/StaticMeshBundle.h
 1777992021496221567 sources/AssetsManager/AssetsManager.h
 1775594637698815567 sources/AssetsManager/BaseActorAsset.h
-1776719120518190718 sources/AssetsManager/BaseAsset.h
+1778204992429607636 sources/AssetsManager/BaseAsset.h
 1775592933269412027 sources/AssetsManager/ECSAsset.h
 1775594643823788569 sources/AssetsManager/Mesh3DAsset.h
 1771957229428878437 sources/AssetsManager/ModuleInfo.h
@@ -11,7 +11,7 @@
 1776720507198064587 sources/AssetsManager/TextureAsset.h
 1777396288623353719 sources/AssetsManager/TextureAtlas.h
 1771957726719436386 sources/AssimpMisc/AssimpHelper.h
-1776720501260065840 sources/ECS/BaseComponent.h
+1778205024435252771 sources/ECS/BaseComponent.h
 1771957954487843037 sources/ECS/ModuleInfo.h
 1776719144374089983 sources/ECS/Transformable.h
 1778172587023330110 sources/Editor/GameEditor.h
@@ -43,7 +43,7 @@
 1778203070964123066 sources/Editor/Windows/ECSAdapters/EditorStaticMeshAdapter.h
 1778203762426210959 sources/Editor/Windows/ECSAdapters/EditorStaticMeshBundleAdapter.h
 1778202558583819748 sources/Editor/Windows/ECSAdapters/EditorTransformableAdapter.h
-1778172587025330098 sources/Editor/Windows/EditorMenuBarWindow.h
+1778205068026777085 sources/Editor/Windows/EditorMenuBarWindow.h
 1778204632267043654 sources/Editor/Windows/EditorSettings.h
 1778204632267043654 sources/Editor/Windows/GameViewport.h
 1778204632267043654 sources/Editor/Windows/ImageViewer.h

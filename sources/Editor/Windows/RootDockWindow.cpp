@@ -28,8 +28,7 @@
 
 namespace Core
 {
-    ECS_COMPONENT_IMPL(RootDockWindowEWC)
-
+    ECS_COMPONENT_IMPL(RootDockWindowEWC);
     //
     //    ______                _   ______               _
     //    | ___ \              | |  |  _  \             | |
