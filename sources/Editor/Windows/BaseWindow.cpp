@@ -28,9 +28,14 @@
 
 namespace Core
 {
-    ECS_COMPONENT_IMPL(BaseEWC)
-    ECS_COMPONENT_IMPL(BaseFloatEWC)
-    ECS_COMPONENT_IMPL(BaseMenuBarEWC)
+    R_FRIEND_IMPL(BaseEWC);
+    ECS_COMPONENT_IMPL(BaseEWC);
+
+    R_FRIEND_IMPL(BaseFloatEWC);
+    ECS_COMPONENT_IMPL(BaseFloatEWC);
+
+    R_FRIEND_IMPL(BaseMenuBarEWC);
+    ECS_COMPONENT_IMPL(BaseMenuBarEWC);
 
     //
     //    ______

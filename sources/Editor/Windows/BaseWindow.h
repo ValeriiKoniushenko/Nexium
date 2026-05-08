@@ -35,8 +35,10 @@ namespace Core
     /**
      * BaseEditorWindowComponent or briefly BaseEWC
      */
+    CLASS();
     class BaseEWC : public BaseComponent, public IDataIO
     {
+        R_FRIEND_DECL(Core::BaseEWC, Core::BaseComponent);
         ECS_COMPONENT_DECL(BaseEWC, BaseComponent);
 
     public:
@@ -89,8 +91,10 @@ namespace Core
     template<class T>
     concept IsEditorWindowComponentOrBase = IsEditorWindowComponent<T> || std::same_as<T, BaseEWC>;
 
+    CLASS();
     class BaseFloatEWC : public BaseEWC
     {
+        R_FRIEND_DECL(Core::BaseFloatEWC, Core::BaseEWC);
         ECS_COMPONENT_DECL(BaseFloatEWC, BaseEWC);
 
     public:
@@ -126,20 +130,30 @@ namespace Core
         void endWindowDraw() override;
 
     protected:
-        FSize2 _minWindowSize = FSize2(200.f, 200.f);
-        FSize2 _size;
-        FSize2 _innerSize;
-        FSize2 _oldSize = FSize2{ -1, -1 };
-        glm::vec2 _position = {};
-        glm::vec2 _innerPosition = {};
+        FIELD();
+        Core::FSize2 _minWindowSize = Core::FSize2(200.f, 200.f);
+        FIELD();
+        Core::FSize2 _size;
+        FIELD();
+        Core::FSize2 _innerSize;
+        FIELD();
+        Core::FSize2 _oldSize = Core::FSize2{ -1, -1 };
+        FIELD();
+        glm::vec2 _position = glm::vec2{};
+        FIELD();
+        glm::vec2 _innerPosition = glm::vec2{};
+        FIELD();
         bool _isFitContent = false;
+
         bool _isFocused = false;
         bool _isHovered = false;
         std::unordered_map<ImGuiStyleVar_, float> _styles;
     };
 
+    CLASS();
     class BaseMenuBarEWC : public BaseEWC
     {
+        R_FRIEND_DECL(Core::BaseMenuBarEWC, Core::BaseEWC);
         ECS_COMPONENT_DECL(BaseMenuBarEWC, BaseEWC);
 
     public:
@@ -151,3 +165,5 @@ namespace Core
         void endWindowDraw() override;
     };
 } // namespace Core
+
+#include "BaseWindow.generated.h" // added by the code generator. Better don't move it.
