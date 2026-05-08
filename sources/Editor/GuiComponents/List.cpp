@@ -24,13 +24,15 @@
 
 #include "List.h"
 
-#include "ImGui/imgui_internal.h"
-#include "ImGui/misc/cpp/imgui_stdlib.h"
-
 namespace Core::Gui
 {
+    R_FRIEND_IMPL(BaseList);
     ECS_COMPONENT_IMPL(BaseList);
+
+    R_FRIEND_IMPL(ListView);
     ECS_COMPONENT_IMPL(ListView);
+
+    R_FRIEND_IMPL(ListModelBased);
     ECS_COMPONENT_IMPL(ListModelBased);
 
     glm::vec2 BaseList::getRealSize() const

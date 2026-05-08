@@ -27,7 +27,6 @@
 #include "Core/Color.h"
 #include "Core/Size.h"
 #include "JustReflectMe/Adapter.h"
-#include "glm/glm.hpp"
 #include "nlohmann/json.hpp"
 
 #include <optional>
