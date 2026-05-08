@@ -74,7 +74,7 @@ namespace Core
             data.setIndexBuffer(ind);
 
             auto& sm = GetShaderManager();
-            // data.setShader(sm.getShaderProgram("2d_main"_atom));
+            data.setShader(sm.getShaderProgram("2d_main"_atom));
 
             return data;
         }();

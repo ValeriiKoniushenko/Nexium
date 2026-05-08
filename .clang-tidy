@@ -22,6 +22,7 @@ Checks: >
   -cppcoreguidelines-avoid-non-const-global-variables,
   -cppcoreguidelines-pro-type-const-cast,
   -cppcoreguidelines-pro-type-reinterpret-cast,
+  -performance-no-int-to-ptr,
   
   -modernize-use-trailing-return-type,
   -modernize-concat-nested-namespaces,
