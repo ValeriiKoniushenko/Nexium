@@ -24,6 +24,7 @@
 
 #include "EditorStaticMeshBundleAdapter.h"
 
+#include "AssimpMisc/AssimpHelper.h"
 #include "Editor/GuiComponents/Misc.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Graphics/Primitives/StaticMeshBundle.h"
@@ -156,7 +157,7 @@ namespace Core
         aiPostProcessSteps data) const
     {
         auto l = Gui::HorizontalLayout::Create();
-        const auto combo = l->addChildComponent<Gui::ComboModelBased>();
+        auto* combo = l->addChildComponent<Gui::ComboModelBased>();
 
         combo->setDataProvider(
             [](std::size_t i, StringAtom& out) -> const void*
@@ -182,10 +183,7 @@ namespace Core
         {
             return Assimp::aiPostProcessStepsAsVector[modifier->getCurrentIndex()];
         }
-        else
-        {
-            Assert(false);
-        }
+        Assert(false);
 
         return static_cast<aiPostProcessSteps>(0);
     }

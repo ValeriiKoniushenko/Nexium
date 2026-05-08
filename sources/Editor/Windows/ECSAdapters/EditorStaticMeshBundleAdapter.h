@@ -24,13 +24,13 @@
 
 #pragma once
 
-#include "../../../AssimpMisc/AssimpHelper.h"
 #include "Editor/GuiComponents/Array.h"
 #include "Editor/GuiComponents/Combo.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/LabelRow.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
-#include "EditorActorAdapter.h"
+#include "Editor/Windows/NxECSBasedEditor.h"
+#include "assimp/postprocess.h"
 
 namespace Core
 {
