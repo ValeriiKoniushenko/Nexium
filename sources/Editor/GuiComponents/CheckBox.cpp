@@ -24,11 +24,9 @@
 
 #include "CheckBox.h"
 
-#include "ImGui/imgui_internal.h"
-#include "ImGui/misc/cpp/imgui_stdlib.h"
-
 namespace Core::Gui
 {
+    R_FRIEND_IMPL(Core::Gui::CheckBox);
     ECS_COMPONENT_IMPL(CheckBox);
 
     glm::vec2 CheckBox::getRealSize() const

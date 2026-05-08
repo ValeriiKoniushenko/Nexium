@@ -32,6 +32,7 @@ namespace Core::Gui
     CLASS();
     class CheckBox : public Widget
     {
+        R_FRIEND_DECL(Core::Gui::CheckBox, Core::Gui::Widget);
         ECS_COMPONENT_DECL(CheckBox, Widget);
 
     public:
@@ -56,7 +57,9 @@ namespace Core::Gui
         void onInitialize() override;
 
     protected:
+        FIELD();
         glm::vec2 _size = glm::vec2(50.f, 0.f);
+        FIELD();
         bool _currentValue = false;
     };
 } // namespace Core::Gui

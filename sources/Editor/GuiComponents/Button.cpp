@@ -27,6 +27,8 @@
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_internal.h"
 
+#include <algorithm>
+
 namespace Core::Gui
 {
     R_FRIEND_IMPL(Core::Gui::Button);
@@ -144,10 +146,7 @@ namespace Core::Gui
     void Button::setMinWidth(float width) noexcept
     {
         _minSize.x = std::max(0.f, width);
-        if (_size.x < _minSize.x)
-        {
-            _size.x = _minSize.x;
-        }
+        _size.x = std::max(_size.x, _minSize.x);
     }
 
     void Button::setWidth(float width)
@@ -163,10 +162,7 @@ namespace Core::Gui
     void Button::setMinHeight(float height) noexcept
     {
         _minSize.y = std::max(0.f, height);
-        if (_size.y < _minSize.y)
-        {
-            _size.y = _minSize.y;
-        }
+        _size.y = std::max(_size.y, _minSize.y);
     }
 
     void Button::setHeight(float height)
