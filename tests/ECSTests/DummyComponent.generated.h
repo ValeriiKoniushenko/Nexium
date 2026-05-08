@@ -27,8 +27,7 @@ struct R<DummyComponent>
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     [[nodiscard]] static RResourceStream<RImpl> Serialize(const DummyComponent& obj, bool noSignals = false)
     {
-        RResourceStream<RImpl> s;
-        if (!noSignals)
+        RResourceStream<RImpl> s;if (!noSignals)
         {
             _RTryCallPreSerialize(obj);
         }
@@ -93,8 +92,7 @@ struct R<HardConstructorComponent>
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     [[nodiscard]] static RResourceStream<RImpl> Serialize(const HardConstructorComponent& obj, bool noSignals = false)
     {
-        RResourceStream<RImpl> s;
-        if (!noSignals)
+        RResourceStream<RImpl> s;if (!noSignals)
         {
             _RTryCallPreSerialize(obj);
         }
@@ -153,8 +151,7 @@ struct R<InitSpyComponent>
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     [[nodiscard]] static RResourceStream<RImpl> Serialize(const InitSpyComponent& obj, bool noSignals = false)
     {
-        RResourceStream<RImpl> s;
-        if (!noSignals)
+        RResourceStream<RImpl> s;if (!noSignals)
         {
             _RTryCallPreSerialize(obj);
         }
@@ -216,8 +213,7 @@ struct R<Vehicle>
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     [[nodiscard]] static RResourceStream<RImpl> Serialize(const Vehicle& obj, bool noSignals = false)
     {
-        RResourceStream<RImpl> s;
-        if (!noSignals)
+        RResourceStream<RImpl> s;if (!noSignals)
         {
             _RTryCallPreSerialize(obj);
         }
@@ -287,8 +283,7 @@ struct R<BaseCar>
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     [[nodiscard]] static RResourceStream<RImpl> Serialize(const BaseCar& obj, bool noSignals = false)
     {
-        RResourceStream<RImpl> s;
-        if (!noSignals)
+        RResourceStream<RImpl> s;if (!noSignals)
         {
             _RTryCallPreSerialize(obj);
         }
@@ -355,8 +350,7 @@ struct R<Sedan>
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     [[nodiscard]] static RResourceStream<RImpl> Serialize(const Sedan& obj, bool noSignals = false)
     {
-        RResourceStream<RImpl> s;
-        if (!noSignals)
+        RResourceStream<RImpl> s;if (!noSignals)
         {
             _RTryCallPreSerialize(obj);
         }
@@ -423,8 +417,7 @@ struct R<BasePart>
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     [[nodiscard]] static RResourceStream<RImpl> Serialize(const BasePart& obj, bool noSignals = false)
     {
-        RResourceStream<RImpl> s;
-        if (!noSignals)
+        RResourceStream<RImpl> s;if (!noSignals)
         {
             _RTryCallPreSerialize(obj);
         }
@@ -492,8 +485,7 @@ struct R<Engine>
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     [[nodiscard]] static RResourceStream<RImpl> Serialize(const Engine& obj, bool noSignals = false)
     {
-        RResourceStream<RImpl> s;
-        if (!noSignals)
+        RResourceStream<RImpl> s;if (!noSignals)
         {
             _RTryCallPreSerialize(obj);
         }
@@ -563,8 +555,7 @@ struct R<TurboEngine>
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     [[nodiscard]] static RResourceStream<RImpl> Serialize(const TurboEngine& obj, bool noSignals = false)
     {
-        RResourceStream<RImpl> s;
-        if (!noSignals)
+        RResourceStream<RImpl> s;if (!noSignals)
         {
             _RTryCallPreSerialize(obj);
         }
@@ -631,8 +622,7 @@ struct R<Wheel>
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     [[nodiscard]] static RResourceStream<RImpl> Serialize(const Wheel& obj, bool noSignals = false)
     {
-        RResourceStream<RImpl> s;
-        if (!noSignals)
+        RResourceStream<RImpl> s;if (!noSignals)
         {
             _RTryCallPreSerialize(obj);
         }
@@ -698,8 +688,7 @@ struct R<Interior>
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     [[nodiscard]] static RResourceStream<RImpl> Serialize(const Interior& obj, bool noSignals = false)
     {
-        RResourceStream<RImpl> s;
-        if (!noSignals)
+        RResourceStream<RImpl> s;if (!noSignals)
         {
             _RTryCallPreSerialize(obj);
         }
@@ -763,8 +752,7 @@ struct R<Seat>
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     [[nodiscard]] static RResourceStream<RImpl> Serialize(const Seat& obj, bool noSignals = false)
     {
-        RResourceStream<RImpl> s;
-        if (!noSignals)
+        RResourceStream<RImpl> s;if (!noSignals)
         {
             _RTryCallPreSerialize(obj);
         }
@@ -831,8 +819,7 @@ struct R<Dashboard>
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     [[nodiscard]] static RResourceStream<RImpl> Serialize(const Dashboard& obj, bool noSignals = false)
     {
-        RResourceStream<RImpl> s;
-        if (!noSignals)
+        RResourceStream<RImpl> s;if (!noSignals)
         {
             _RTryCallPreSerialize(obj);
         }
@@ -898,8 +885,7 @@ struct R<Electronics>
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     [[nodiscard]] static RResourceStream<RImpl> Serialize(const Electronics& obj, bool noSignals = false)
     {
-        RResourceStream<RImpl> s;
-        if (!noSignals)
+        RResourceStream<RImpl> s;if (!noSignals)
         {
             _RTryCallPreSerialize(obj);
         }
@@ -963,8 +949,7 @@ struct R<Sensor>
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     [[nodiscard]] static RResourceStream<RImpl> Serialize(const Sensor& obj, bool noSignals = false)
     {
-        RResourceStream<RImpl> s;
-        if (!noSignals)
+        RResourceStream<RImpl> s;if (!noSignals)
         {
             _RTryCallPreSerialize(obj);
         }
@@ -1031,8 +1016,7 @@ struct R<Camera>
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     [[nodiscard]] static RResourceStream<RImpl> Serialize(const Camera& obj, bool noSignals = false)
     {
-        RResourceStream<RImpl> s;
-        if (!noSignals)
+        RResourceStream<RImpl> s;if (!noSignals)
         {
             _RTryCallPreSerialize(obj);
         }

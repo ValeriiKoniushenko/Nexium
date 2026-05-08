@@ -38,9 +38,9 @@ namespace Core::Gui
     public:
         explicit LabelRow(StringAtom labelText = ""_atom, float labelWidth = 0.f,
                           Align hAlign = Align::SpaceBetween)
-            : HorizontalLayout(componentType, labelText)
+            : HorizontalLayout(componentType, labelText),
+              label(addChildComponent<Label>())
         {
-            label = addChildComponent<Label>();
             label->setText(labelText);
             if (labelWidth != 0.f)
             {
@@ -69,5 +69,3 @@ namespace Core::Gui
     ECS_TEMPLATE_COMPONENT_IMPL(LabelRow<T>, IsWidget T);
 
 } // namespace Core::Gui
-
-#include "LabelRow.generated.inl" // added by the code generator. Better don't move it.
