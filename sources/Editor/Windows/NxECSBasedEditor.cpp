@@ -28,6 +28,7 @@
 #include "ECSAdapters/EditorActorAdapter.h"
 #include "ECSAdapters/EditorGraphicsComponentDataAdapter.h"
 #include "ECSAdapters/EditorStaticMeshBundleAdapter.h"
+#include "ImGui/imgui_internal.h"
 #include "ModalECSSearchPopUp.h"
 
 using namespace Core::Gui;

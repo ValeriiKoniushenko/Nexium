@@ -71,7 +71,7 @@ namespace
     bool InputText(const Core::StringAtom& label, std::string& value, float size, int flags)
     {
         ImGui::PushItemWidth(size);
-        const auto out = ImGui::InputText(("##" + label).c_str(), &value, flags);
+        const auto out = ImGui::InputText(("##" + label).c_str(), value.data(), flags);
         ImGui::PopItemWidth();
         return out;
     }

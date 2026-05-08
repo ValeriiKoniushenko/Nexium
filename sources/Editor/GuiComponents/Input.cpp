@@ -24,10 +24,15 @@
 
 #include "Input.h"
 
+#include "ImGui/imgui_internal.h"
+
 namespace Core::Gui
 {
+    R_FRIEND_IMPL(Core::Gui::BaseInput);
     ECS_COMPONENT_IMPL(BaseInput);
+    R_FRIEND_IMPL(Core::Gui::TextInput);
     ECS_COMPONENT_IMPL(TextInput);
+    R_FRIEND_IMPL(Core::Gui::Color3Input);
     ECS_COMPONENT_IMPL(Color3Input);
 
     void BaseInput::setTextColor(const Color4& value)

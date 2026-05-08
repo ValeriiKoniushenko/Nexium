@@ -25,8 +25,6 @@
 #pragma once
 
 #include "Core/Delegate.h"
-#include "ImGui/imgui_internal.h"
-#include "ImGui/misc/cpp/imgui_stdlib.h"
 #include "Utils/Concepts.h"
 #include "Widget.h"
 
@@ -37,6 +35,7 @@ namespace Core::Gui
     CLASS();
     class BaseInput : public Widget
     {
+        R_FRIEND_DECL(Core::Gui::BaseInput, Core::Gui::Widget);
         ECS_COMPONENT_DECL(BaseInput, Widget);
 
     public:
@@ -61,14 +60,18 @@ namespace Core::Gui
         void onInitialize() override;
 
     protected:
-        std::optional<Color4> _textColor;
-        std::optional<Color4> _borderColor;
-        glm::vec2 _size = {};
+        FIELD();
+        std::optional<Core::Color4> _textColor;
+        FIELD();
+        std::optional<Core::Color4> _borderColor;
+        FIELD();
+        glm::vec2 _size = glm::vec2{};
     };
 
     CLASS();
     class TextInput : public BaseInput
     {
+        R_FRIEND_DECL(Core::Gui::TextInput, Core::Gui::BaseInput);
         ECS_COMPONENT_DECL(TextInput, BaseInput);
 
     public:
@@ -88,7 +91,7 @@ namespace Core::Gui
     protected:
         struct InputTextCallback_UserData
         {
-            std::string* Str;
+            std::string* Str = nullptr;
             ImGuiInputTextCallback ChainCallback = nullptr;
             void* ChainCallbackUserData = nullptr;
         };
@@ -98,8 +101,11 @@ namespace Core::Gui
         void onDraw() override;
 
     protected:
+        FIELD();
         std::string _buffer;
-        StringAtom _placeholder = ""_atom;
+        FIELD();
+        Core::StringAtom _placeholder;
+        FIELD();
         int _flags = ImGuiInputTextFlags_None;
     };
 
@@ -163,6 +169,7 @@ namespace Core::Gui
     CLASS();
     class Color3Input : public BaseInput
     {
+        R_FRIEND_DECL(Core::Gui::Color3Input, Core::Gui::BaseInput);
         ECS_COMPONENT_DECL(Color3Input, BaseInput);
 
     public:
@@ -177,8 +184,11 @@ namespace Core::Gui
         void onDraw() override;
 
     protected:
-        NormColor3 _buffer{};
-        StringAtom _stringBuffer = "0 0 0";
+        FIELD();
+        Core::NormColor3 _buffer = Core::NormColor3(0.f, 0.f, 0.f);
+
+        FIELD();
+        Core::StringAtom _stringBuffer = "0 0 0";
         int _flags = ImGuiInputTextFlags_None;
     };
 
