@@ -24,14 +24,11 @@
 
 #pragma once
 
-#include "../../RawDataManagement/DataStream.h"
 #include "BaseWindow.h"
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Misc/Configs.h"
-
-#include <list>
 
 namespace Core
 {
@@ -51,7 +48,7 @@ namespace Core
 
         void clearLogs();
 
-        [[nodiscard]] const char* getIcon() override { return ICON_FA_ALIGN_LEFT; }
+        [[nodiscard]] const char* getIcon() override;
 
     protected:
         void onPreInitialize() override;

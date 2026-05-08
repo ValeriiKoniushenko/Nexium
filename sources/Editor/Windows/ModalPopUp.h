@@ -32,9 +32,11 @@ namespace Core
 {
     class ModalPopUp : public BaseEWC
     {
-        ECS_COMPONENT_DECL(ModalPopUp, BaseEWC);
+        ECS_COMPONENT_DECL_NO_CNSTR(ModalPopUp, BaseEWC);
 
     public:
+        explicit ModalPopUp(const Core::StringAtom& name = ""_atom);
+
         void open(StringAtom text, const std::function<void(bool)>& okOrCancelCallback);
 
         static void Open(StringAtom text, const std::function<void(bool)>& okOrCancelCallback);
@@ -54,12 +56,12 @@ namespace Core
         DelegateSubscriberPoolGuard _subscriptionPool;
 
         Gui::HorizontalLayout _layout;
-        Gui::Button* _okButton;
-        Gui::Button* _cancelButton;
+        Gui::Button* _okButton = nullptr;
+        Gui::Button* _cancelButton = nullptr;
 
         std::function<void(bool)> _okOrCancelCallback;
         StringAtom _text;
-        StringAtom _caption = ICON_FA_TIMES " Warning!";
+        StringAtom _caption;
 
         bool _hasOpenRequest = false;
     };

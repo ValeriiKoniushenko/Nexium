@@ -25,10 +25,6 @@
 #pragma once
 
 #include "../NxECSBasedEditor.h"
-#include "Editor/GuiComponents/CheckBox.h"
-#include "Editor/GuiComponents/Input.h"
-#include "Editor/GuiComponents/LabelRow.h"
-#include "Editor/GuiComponents/VecInput.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 
 namespace Core

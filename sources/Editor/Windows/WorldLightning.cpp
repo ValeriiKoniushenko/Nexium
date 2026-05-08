@@ -28,10 +28,16 @@
 #include "Editor/GuiComponents/Label.h"
 #include "Editor/GuiComponents/VecInput.h"
 #include "GameplaySystem/Framework/GameInstance.h"
+#include "Misc/IconsFontAwesome.h"
 
 namespace Core
 {
     ECS_COMPONENT_IMPL(WorldLightningEWC)
+
+    const char* WorldLightningEWC::getIcon()
+    {
+        return ICON_FA_SUN_O;
+    }
 
     void WorldLightningEWC::onInitialize()
     {

@@ -24,9 +24,13 @@
 
 #pragma once
 
-#include "ECSAdapters/EditorActorAdapter.h"
+#include "AssetsManager/TextureAsset.h"
+#include "Editor/GuiComponents/CheckBox.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/LabelRow.h"
+#include "Editor/GuiComponents/VecInput.h"
+#include "Editor/GuiComponents/VerticalLayout.h"
+#include "Editor/Windows/NxEditorBaseEditor.h"
 
 namespace Core
 {
@@ -36,7 +40,7 @@ namespace Core
         ECS_COMPONENT_DECL(NxTextureEditorEWC, NxEditorBaseEditorEWC);
 
     public:
-        [[nodiscard]] const char* getIcon() override { return ICON_FA_COG; }
+        [[nodiscard]] const char* getIcon() override;
 
     protected:
         void updateGuiBasedOnAsset() override;

@@ -29,7 +29,6 @@
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
-#include "Graphics/Texture.h"
 
 namespace Core
 {
@@ -97,7 +96,7 @@ namespace Core
         };
 
     public:
-        [[nodiscard]] const char* getIcon() override { return ICON_FA_COG; }
+        [[nodiscard]] const char* getIcon() override;
 
     protected:
         enum Menu

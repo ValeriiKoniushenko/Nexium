@@ -24,8 +24,7 @@
 
 #include "ImageViewer.h"
 
-#include "GameplaySystem/Framework/GameInstance.h"
-#include "ImGui/imgui_internal.h"
+#include "Misc/IconsFontAwesome.h"
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include "glm/gtx/string_cast.hpp"
@@ -33,6 +32,11 @@
 namespace Core
 {
     ECS_COMPONENT_IMPL(ImageViewerEWC)
+
+    const char* ImageViewerEWC::getIcon()
+    {
+        return ICON_FA_PICTURE_O;
+    }
 
     void ImageViewerEWC::openImageFromFile(const std::filesystem::path& path)
     {

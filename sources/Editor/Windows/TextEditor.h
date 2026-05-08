@@ -35,7 +35,7 @@ namespace Core
     public:
         void putArguments(const StringAtom& args) override;
 
-        [[nodiscard]] const char* getIcon() override { return ICON_FA_FILE_TEXT; }
+        [[nodiscard]] const char* getIcon() override;
 
     protected:
         void onInitialize() override;

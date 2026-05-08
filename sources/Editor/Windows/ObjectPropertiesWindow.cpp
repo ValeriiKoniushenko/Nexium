@@ -26,6 +26,7 @@
 
 #include "ECS/Transformable.h"
 #include "Editor/GuiComponents/CheckBox.h"
+#include "Editor/GuiComponents/Combo.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/Label.h"
@@ -144,7 +145,7 @@ namespace Core
                 return out;
             }();
 
-            const auto comboModifier = l->addChildComponent<Gui::ComboModelBased>();
+            auto* comboModifier = l->addChildComponent<Gui::ComboModelBased>();
             comboModifier->setDataProvider(
                 [](std::size_t i, StringAtom& out) -> const void*
                 {
@@ -168,7 +169,7 @@ namespace Core
                 return out;
             }();
 
-            const auto comboValues = l->addChildComponent<Gui::ComboModelBased>();
+            auto* comboValues = l->addChildComponent<Gui::ComboModelBased>();
             comboValues->setDataProvider(
                 [](std::size_t i, StringAtom& out) -> const void*
                 {

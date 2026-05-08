@@ -32,6 +32,11 @@ namespace Core
 {
     ECS_COMPONENT_IMPL(TextEditorEWC)
 
+    const char* TextEditorEWC::getIcon()
+    {
+        return ICON_FA_FILE_TEXT_O;
+    }
+
     void TextEditorEWC::onInitialize()
     {
         BaseFloatEWC::onInitialize();

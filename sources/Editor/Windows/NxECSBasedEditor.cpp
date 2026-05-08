@@ -28,6 +28,8 @@
 #include "ECSAdapters/EditorActorAdapter.h"
 #include "ECSAdapters/EditorGraphicsComponentDataAdapter.h"
 #include "ECSAdapters/EditorStaticMeshBundleAdapter.h"
+#include "Editor/GuiComponents/Misc.h"
+#include "GameplaySystem/Framework/GameInstance.h"
 #include "ImGui/imgui_internal.h"
 #include "ModalECSSearchPopUp.h"
 

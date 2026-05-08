@@ -24,12 +24,19 @@
 
 #include "EditorStaticMeshAdapter.h"
 
+#include "Graphics/Primitives/StaticMesh.h"
+
 using namespace Core::Gui;
 
 namespace Core
 {
 
     ECS_COMPONENT_IMPL(ECSEditorStaticMeshAdapter);
+
+    StringAtom ECSEditorStaticMeshAdapter::getProcessedAssetType() const
+    {
+        return StaticMesh::componentType;
+    }
 
     bool ECSEditorStaticMeshAdapter::canWorkWith(BaseComponent* component) const
     {

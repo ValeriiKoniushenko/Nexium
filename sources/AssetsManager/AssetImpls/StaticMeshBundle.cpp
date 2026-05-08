@@ -24,7 +24,8 @@
 
 #include "StaticMeshBundle.h"
 
-#include "Editor/Windows/ECSAdapters/EditorStaticMeshBundleAdapter.h"
+#include "AssimpMisc/AssimpHelper.h"
+#include "GameplaySystem/Framework/GameInstance.h"
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
 

@@ -24,7 +24,6 @@
 
 #pragma once
 
-#include "AssetsManager/ECSAsset.h"
 #include "BaseWindow.h"
 
 #include <set>
@@ -37,7 +36,7 @@ namespace Core
         ECS_COMPONENT_DECL(NxEditorBaseEditorEWC, BaseFloatEWC);
 
     public:
-        [[nodiscard]] const char* getIcon() override { return ICON_FA_COG; }
+        [[nodiscard]] const char* getIcon() override;
 
         [[nodiscard]] std::filesystem::path getAssetFilePath() const noexcept;
 

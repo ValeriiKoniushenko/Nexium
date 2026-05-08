@@ -24,6 +24,9 @@
 
 #include "EditorTransformableAdapter.h"
 
+#include "ECS/Transformable.h"
+#include "Editor/GuiComponents/Misc.h"
+
 using namespace Core::Gui;
 
 namespace Core

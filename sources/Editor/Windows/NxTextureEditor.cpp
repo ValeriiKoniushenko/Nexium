@@ -24,13 +24,20 @@
 
 #include "NxTextureEditor.h"
 
+#include "Editor/GuiComponents/Misc.h"
 #include "GameplaySystem/Framework/GameInstance.h"
+#include "Misc/IconsFontAwesome.h"
 
 using namespace Core::Gui;
 
 namespace Core
 {
     ECS_COMPONENT_IMPL(NxTextureEditorEWC)
+
+    const char* NxTextureEditorEWC::getIcon()
+    {
+        return ICON_FA_COG;
+    }
 
     void NxTextureEditorEWC::updateGuiBasedOnAsset()
     {
@@ -113,7 +120,7 @@ namespace Core
 
         if (ImGui::IsWindowHovered() && ImGui::GetIO().MouseWheel != 0.0f)
         {
-            _zoom = std::max(0.1f, _zoom + ImGui::GetIO().MouseWheel * 0.1f);
+            _zoom = std::max(0.1f, _zoom + (ImGui::GetIO().MouseWheel * 0.1f));
         }
 
         if (ImGui::IsWindowHovered() && ImGui::IsMouseDragging(ImGuiMouseButton_Left))

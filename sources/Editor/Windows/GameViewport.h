@@ -33,7 +33,7 @@ namespace Core
         ECS_COMPONENT_DECL(GameViewportEWC, BaseFloatEWC);
 
     public:
-        [[nodiscard]] const char* getIcon() override { return ICON_FA_VIDEO_CAMERA; }
+        [[nodiscard]] const char* getIcon() override;
 
     protected:
         void onInitialize() override;

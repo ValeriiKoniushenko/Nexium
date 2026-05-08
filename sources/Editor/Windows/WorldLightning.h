@@ -28,7 +28,6 @@
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/VecInput.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
-#include "Graphics/Texture.h"
 
 namespace Core
 {
@@ -37,7 +36,7 @@ namespace Core
         ECS_COMPONENT_DECL(WorldLightningEWC, BaseFloatEWC);
 
     public:
-        [[nodiscard]] const char* getIcon() override { return ICON_FA_SUN_O; }
+        [[nodiscard]] const char* getIcon() override;
 
     protected:
         void onInitialize() override;

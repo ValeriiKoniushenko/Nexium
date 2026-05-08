@@ -26,6 +26,7 @@
 
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "ImGui/imgui_internal.h"
+#include "Misc/IconsFontAwesome.h"
 
 namespace Core
 {
@@ -41,6 +42,12 @@ namespace Core
     //                              | |
     //                              |_|
     // ========================================================================
+
+    const char* GameViewportEWC::getIcon()
+    {
+        return ICON_FA_VIDEO_CAMERA;
+    }
+
     void GameViewportEWC::onInitialize()
     {
         BaseFloatEWC::onInitialize();

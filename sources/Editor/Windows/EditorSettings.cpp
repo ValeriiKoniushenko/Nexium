@@ -34,6 +34,7 @@
 #include "Editor/GuiComponents/Separator.h"
 #include "Editor/GuiComponents/Spacer.h"
 #include "GameplaySystem/Framework/GameInstance.h"
+#include "Misc/IconsFontAwesome.h"
 #include "Scene/Spectator.h"
 
 using namespace Core::Gui;
@@ -44,6 +45,11 @@ namespace Core
     ECS_COMPONENT_IMPL(EditorSettingsEWC::BaseListItem)
     ECS_COMPONENT_IMPL(EditorSettingsEWC::KeymapItem)
     ECS_COMPONENT_IMPL(EditorSettingsEWC::ColorItem)
+
+    const char* EditorSettingsEWC::getIcon()
+    {
+        return ICON_FA_COG;
+    }
 
     bool EditorSettingsEWC::BaseListItem::containsString(const StringAtom& str)
     {

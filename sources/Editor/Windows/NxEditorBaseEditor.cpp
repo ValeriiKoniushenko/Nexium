@@ -25,10 +25,16 @@
 #include "NxEditorBaseEditor.h"
 
 #include "AssetsManager/AssetsManager.h"
+#include "Misc/IconsFontAwesome.h"
 
 namespace Core
 {
-    ECS_COMPONENT_IMPL(NxEditorBaseEditorEWC)
+    ECS_COMPONENT_IMPL(NxEditorBaseEditorEWC);
+
+    const char* NxEditorBaseEditorEWC::getIcon()
+    {
+        return ICON_FA_COG;
+    }
 
     std::filesystem::path NxEditorBaseEditorEWC::getAssetFilePath() const noexcept
     {

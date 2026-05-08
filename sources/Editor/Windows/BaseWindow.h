@@ -28,7 +28,6 @@
 #include "Core/Size.h"
 #include "ECS/BaseComponent.h"
 #include "ImGui/imgui.h"
-#include "Misc/IconsFontAwesome.h"
 #include "RawDataManagement/DataStream.h"
 
 namespace Core

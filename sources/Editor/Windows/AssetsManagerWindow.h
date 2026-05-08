@@ -24,7 +24,6 @@
 
 #pragma once
 
-#include "../../RawDataManagement/DataStream.h"
 #include "AssetsManager/AssetsManager.h"
 #include "AssetsManager/TextureAsset.h"
 #include "BaseWindow.h"
@@ -42,7 +41,7 @@ namespace Core
         void tryOpenParentDir();
         void tryOpenPath(const std::filesystem::path& p);
 
-        [[nodiscard]] const char* getIcon() override { return ICON_FA_FOLDER; }
+        [[nodiscard]] const char* getIcon() override;
 
     protected:
         void onPreInitialize() override;

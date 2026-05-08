@@ -32,6 +32,7 @@
 #include "Editor/GuiComponents/Spacer.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Misc/Configs.h"
+#include "Misc/IconsFontAwesome.h"
 #include "TextEditor.h"
 
 using namespace Core::Gui;
@@ -39,6 +40,11 @@ using namespace Core::Gui;
 namespace Core
 {
     ECS_COMPONENT_IMPL(ShaderManagerEWC)
+
+    const char* ShaderManagerEWC::getIcon()
+    {
+        return ICON_FA_COGS;
+    }
 
     void ShaderManagerEWC::createGui()
     {

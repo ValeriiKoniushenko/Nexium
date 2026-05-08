@@ -66,10 +66,7 @@ namespace Core
 
     public:
         [[nodiscard]] bool canWorkWith(BaseComponent* component) const override;
-        [[nodiscard]] StringAtom getProcessedAssetType() const override
-        {
-            return StaticMeshBundle::componentType;
-        }
+        [[nodiscard]] StringAtom getProcessedAssetType() const override;
 
         [[nodiscard]] nlohmann::json packAssetDataFromObject() const override;
 

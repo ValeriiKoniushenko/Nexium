@@ -25,10 +25,17 @@
 #include "ModalPopUp.h"
 
 #include "GameplaySystem/Framework/GameInstance.h"
+#include "Misc/IconsFontAwesome.h"
 
 namespace Core
 {
     ECS_COMPONENT_IMPL(ModalPopUp);
+
+    ModalPopUp::ModalPopUp(const Core::StringAtom& name)
+        : BaseEWC(name),
+          _caption(ICON_FA_TIMES " Warning!")
+    {
+    }
 
     void ModalPopUp::open(StringAtom text, const std::function<void(bool)>& okOrCancelCallback)
     {

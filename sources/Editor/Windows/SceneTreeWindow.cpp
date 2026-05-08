@@ -24,12 +24,11 @@
 
 #include "SceneTreeWindow.h"
 
-#include "../../GameplaySystem/Entities/Actor.h"
+#include "GameplaySystem/Entities/Actor.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "ImGui/misc/cpp/imgui_stdlib.h"
 #include "Misc/IconsFontAwesome.h"
 #include "ModalAssetsSearchPopUp.h"
-#include "ObjectPropertiesWindow.h"
 #include "Scene/Scene.h"
 
 namespace Core
@@ -44,6 +43,12 @@ namespace Core
     //    /\__/ /| (__ |  __/| | | ||  __/  | |  | |   |  __/|  __/
     //    \____/  \___| \___||_| |_| \___|  \_/  |_|    \___| \___|
     // ========================================================================
+
+    const char* SceneTreeWindowEWC::getIcon()
+    {
+        return ICON_FA_GLOBE;
+    }
+
     void SceneTreeWindowEWC::onInitialize()
     {
         BaseFloatEWC::onInitialize();

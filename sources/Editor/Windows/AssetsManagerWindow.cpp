@@ -82,6 +82,11 @@ namespace Core
 {
     ECS_COMPONENT_IMPL(AssetsManagerWindowEWC)
 
+    const char* AssetsManagerWindowEWC::getIcon()
+    {
+        return ICON_FA_FOLDER;
+    }
+
     void AssetsManagerWindowEWC::tryOpenParentDir()
     {
         if (_openedPath.has_parent_path())

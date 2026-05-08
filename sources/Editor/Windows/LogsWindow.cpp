@@ -44,6 +44,12 @@ namespace Core
     //                  __/ |
     //                 |___/
     // ========================================================================
+
+    const char* LogsWindowEWC::getIcon()
+    {
+        return ICON_FA_ALIGN_LEFT;
+    }
+
     void LogsWindowEWC::addLog(StringAtom&& log, spdlog::level::level_enum level)
     {
         LogLine l;

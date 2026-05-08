@@ -24,12 +24,20 @@
 
 #include "EditorActorAdapter.h"
 
+#include "Editor/GuiComponents/Misc.h"
+#include "GameplaySystem/Entities/Actor.h"
+
 using namespace Core::Gui;
 
 namespace Core
 {
 
     ECS_COMPONENT_IMPL(ECSEditorActorAdapter);
+
+    StringAtom ECSEditorActorAdapter::getProcessedAssetType() const
+    {
+        return Actor::componentType;
+    }
 
     bool ECSEditorActorAdapter::canWorkWith(BaseComponent* component) const
     {

@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+#include "Editor/GuiComponents/Misc.h"
 #include "EditorGraphicsComponentDataAdapter.h"
 #include "Graphics/GraphicsComponents.h"
 

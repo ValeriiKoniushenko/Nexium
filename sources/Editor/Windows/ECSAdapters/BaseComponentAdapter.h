@@ -25,6 +25,7 @@
 #pragma once
 
 #include "../NxECSBasedEditor.h"
+#include "Editor/GuiComponents/Array.h"
 #include "Editor/GuiComponents/CheckBox.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/LabelRow.h"
