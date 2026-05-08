@@ -199,7 +199,7 @@ namespace Core
     {
         BaseComponent::onInitialize();
 
-        // tryReadFromCache();
+        GetCacheSystem().tryRead(*this);
     }
 
     //

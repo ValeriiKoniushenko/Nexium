@@ -2,14 +2,15 @@
     "_children": null,
     "_innerPosition": [
         16.0,
-        594.0
+        572.0
     ],
     "_innerSize": {
-        "height": 269.0,
-        "width": 1446.0
+        "height": 291.0,
+        "width": 991.0
     },
     "_isEnabled": true,
     "_isFitContent": false,
+    "_logLimit": 500,
     "_minWindowSize": {
         "height": 200.0,
         "width": 200.0
@@ -17,16 +18,17 @@
     "_name": " Logs",
     "_noTick": false,
     "_oldSize": {
-        "height": 309.0,
-        "width": 1462.0
+        "height": 331.0,
+        "width": 1007.0
     },
     "_position": [
         8.0,
-        562.0
+        540.0
     ],
+    "_searchInput": "Input",
     "_size": {
-        "height": 309.0,
-        "width": 1462.0
+        "height": 331.0,
+        "width": 1007.0
     },
     "_type": "LogsWindowEWC"
 }

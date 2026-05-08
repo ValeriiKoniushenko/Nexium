@@ -75,6 +75,8 @@ namespace Core
 
         // ========= Toolbar ==========
         Gui::HorizontalLayout _toolbar;
+
+        // FIELD(RFieldGen::NoDefaultValue);
         Gui::TextInput* _searchInput = nullptr;
         Gui::ToggleButton* _regexModeButton = nullptr;
         Gui::ToggleButton* _autoScrollButton = nullptr;
@@ -97,7 +99,9 @@ namespace Core
                 { spdlog::level::level_enum::debug, Config::ColorSoftWhite },
                 { spdlog::level::level_enum::trace, Config::ColorGrey } };
 
+        FIELD();
         std::size_t _logLimit = 500;
+
         float _betweenLogsSpace = 0.f;
         float _lastLogAreaHeight = 100.f;
 

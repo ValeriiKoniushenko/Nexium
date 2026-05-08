@@ -239,11 +239,6 @@ namespace Core
 
     /*void LogsWindowEWC::ioFieldsUpdate(DataStream& out)
     {
-        BaseFloatEWC::ioFieldsUpdate(out);
-
-        auto stream = out.dedicatedNesting("LogsWindowEWC");
-
-        stream.field("logLimit", _logLimit);
         if (Verify(_searchInput))
         {
             std::string out = _searchInput->getInputtedData();

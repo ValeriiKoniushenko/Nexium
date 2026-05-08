@@ -16,9 +16,10 @@ struct R<Core::LogsWindowEWC>
 {
     static constexpr std::string_view Name() { return "LogsWindowEWC"; }
     static constexpr std::string_view ParentScope() { return "Core"; }
-    static constexpr std::size_t GetFieldNumbers() { return 0; }
+    static constexpr std::size_t GetFieldNumbers() { return 1; }
     static constexpr std::vector<RClassField> GetFields() {
         return {
+			{ "std::size_t", "_logLimit" },
 		};
     }
 
@@ -31,6 +32,7 @@ struct R<Core::LogsWindowEWC>
         }
 
 		s.write(R<Core::BaseFloatEWC>::Serialize<RImpl>(obj).getData());
+		s.write("_logLimit", obj._logLimit);
         if (!noSignals)
         {
             _RTryCallPostSerialize(obj, s.logs());
@@ -47,6 +49,7 @@ struct R<Core::LogsWindowEWC>
         }
 
 		s.write(R<Core::BaseFloatEWC>::Serialize<RImpl>(obj).getData());
+		s.write("_logLimit", obj._logLimit);
         if (!noSignals)
         {
             _RTryCallPostSerialize(obj, s.logs());
@@ -63,6 +66,7 @@ struct R<Core::LogsWindowEWC>
         }
 
 		R<Core::BaseFloatEWC>::Deserialize<RImpl>(s, obj, true);
+		s.read("_logLimit", obj._logLimit, 500);
         if (!noSignals)
         {
             _RTryCallPostDeserialize(obj, s.logs());
