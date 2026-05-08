@@ -42,10 +42,10 @@ namespace Core
         MouseInputManger mouseInput;
 
     public:
+        [[nodiscard]] StringAtom getCacheHash() const override;
+
     protected:
         DelegateSubscriberPoolGuard _subscriptionPool;
-
-        [[nodiscard]] StringAtom getCacheHash() const override;
 
         void onTick(float delta) override;
 

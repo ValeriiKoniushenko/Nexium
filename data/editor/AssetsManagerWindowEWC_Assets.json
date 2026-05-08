@@ -1,0 +1,32 @@
+{
+    "_children": null,
+    "_innerPosition": [
+        16.0,
+        594.0
+    ],
+    "_innerSize": {
+        "height": 269.0,
+        "width": 991.0
+    },
+    "_isEnabled": true,
+    "_isFitContent": false,
+    "_minWindowSize": {
+        "height": 200.0,
+        "width": 200.0
+    },
+    "_name": " Assets",
+    "_noTick": false,
+    "_oldSize": {
+        "height": 309.0,
+        "width": 1007.0
+    },
+    "_position": [
+        8.0,
+        562.0
+    ],
+    "_size": {
+        "height": 309.0,
+        "width": 1007.0
+    },
+    "_type": "AssetsManagerWindowEWC"
+}

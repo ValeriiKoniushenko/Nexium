@@ -1,0 +1,32 @@
+{
+    "_children": null,
+    "_innerPosition": [
+        313.0,
+        64.0
+    ],
+    "_innerSize": {
+        "height": 488.0,
+        "width": 694.0
+    },
+    "_isEnabled": true,
+    "_isFitContent": false,
+    "_minWindowSize": {
+        "height": 200.0,
+        "width": 200.0
+    },
+    "_name": " Viewport",
+    "_noTick": false,
+    "_oldSize": {
+        "height": 528.0,
+        "width": 710.0
+    },
+    "_position": [
+        305.0,
+        32.0
+    ],
+    "_size": {
+        "height": 528.0,
+        "width": 710.0
+    },
+    "_type": "GameViewportEWC"
+}

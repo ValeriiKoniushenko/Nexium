@@ -1,7 +1,7 @@
 {
     "_children": null,
     "_isEnabled": true,
-    "_name": "Menu Bar",
+    "_name": "PopUp",
     "_noTick": false,
-    "_type": "EditorMenuBarWindowEWC"
+    "_type": "BaseEWC"
 }

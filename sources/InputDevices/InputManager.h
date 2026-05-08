@@ -169,7 +169,7 @@ namespace Core
 
     class KeyboardInputManger : public InputManger<KeyboardInputAction>
     {
-    protected:
+    public:
         [[nodiscard]] StringAtom getCacheHash() const override
         {
             return "KeyboardInputManger"_atom;

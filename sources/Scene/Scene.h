@@ -73,14 +73,14 @@ namespace Core
 
         Delegate<void(WorldObject*)>::Ptr onObjectAdded = Delegate<void(WorldObject*)>::Create();
 
+        [[nodiscard]] std::filesystem::path getCacheDir() const override;
+        [[nodiscard]] StringAtom getCacheHash() const override;
+
     public:
         Grid grid;
         NXSkybox skybox;
 
     protected:
-        [[nodiscard]] std::filesystem::path getCacheDir() const override;
-        [[nodiscard]] StringAtom getCacheHash() const override;
-
         void writeToCacheSeparateData();
 
     protected:

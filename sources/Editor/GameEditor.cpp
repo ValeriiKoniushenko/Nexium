@@ -159,18 +159,20 @@ namespace Core
 
     void GameEditor::writeToCache()
     {
+        auto& cs = GetCacheSystem();
         for (auto& wnd : _windows)
         {
-            // wnd->writeToCache();
+            cs.write(*wnd);
         }
     }
 
     void GameEditor::readFromCache()
     {
-        /*for (auto& wnd : _windows)
+        auto& cs = GetCacheSystem();
+        for (auto& wnd : _windows)
         {
-            wnd->tryReadFromCache();
-        }*/
+            cs.tryRead(*wnd);
+        }
     }
 
     void GameEditor::setupImGuiStyles()

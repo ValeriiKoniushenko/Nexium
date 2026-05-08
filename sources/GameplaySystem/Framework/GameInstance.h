@@ -73,14 +73,14 @@ namespace Core
         ObjectSelectorManager objectSelectorManager;
         Window* window = nullptr;
 
+        [[nodiscard]] StringAtom getCacheHash() const override;
+
     protected:
         virtual void onSaveAll() {}
         virtual void onTick(float delta) {}
         virtual void onLoadShaders() {}
         virtual void onLoadCoreResources() {}
         virtual void onInitializeReadCache() {}
-
-        [[nodiscard]] StringAtom getCacheHash() const override;
 
     protected:
         DelegateSubscriberPoolGuard _subscriptionPool;

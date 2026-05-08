@@ -65,23 +65,17 @@ namespace Core
         template<IsDataIO T>
         void write(const T& data)
         {
-            auto json = R<T>::template Serialize<RJsonResourceStream>(data).getData().dump(4);
-
-            if (!createCacheDirIfNotExist(data))
+            if constexpr (requires { data.serialize(); })
             {
-                return;
+                write(data, data.serialize());
             }
-
-            std::ofstream ofs(getPath(data));
-            if (!ofs)
+            else
             {
-                errorLog("Can't write cache for this object {}. Path: {}. Details: {}"_f
-                         << data.getCacheHash() << getPath(data) << std::strerror(errno));
-                return;
+                write(data, R<T>::template Serialize<RJsonResourceStream>(data).getData());
             }
-
-            ofs.write(json.c_str(), static_cast<std::streamsize>(json.size()));
         }
+
+        void write(const IDataIO& data, const nlohmann::json& json);
 
         template<IsDataIO T>
         void read(T& data)
@@ -102,7 +96,14 @@ namespace Core
                              std::istreambuf_iterator<char>() };
                 }());
 
-            R<T>::template Deserialize<RJsonResourceStream>(s, data);
+            if constexpr (requires { data.deserialize(s); })
+            {
+                data.deserialize(s);
+            }
+            else
+            {
+                R<T>::template Deserialize<RJsonResourceStream>(s, data);
+            }
         }
 
         template<IsDataIO T>

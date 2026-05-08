@@ -36,6 +36,26 @@ namespace fs = std::filesystem;
 namespace Core
 {
 
+    void CacheSystem::write(const IDataIO& data, const nlohmann::json& json)
+    {
+        if (!createCacheDirIfNotExist(data))
+        {
+            return;
+        }
+
+        const auto str = json.dump(4);
+
+        std::ofstream ofs(getPath(data));
+        if (!ofs)
+        {
+            errorLog("Can't write cache for this object {}. Path: {}. Details: {}"_f
+                     << data.getCacheHash() << getPath(data) << std::strerror(errno));
+            return;
+        }
+
+        ofs.write(str.c_str(), static_cast<std::streamsize>(str.size()));
+    }
+
     bool CacheSystem::hasCache(const IDataIO& data) const
     {
         return fs::exists(getPath(data));

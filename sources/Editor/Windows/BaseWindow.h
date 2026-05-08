@@ -54,6 +54,9 @@ namespace Core
 
         void requestFocus() noexcept;
 
+        [[nodiscard]] StringAtom getCacheHash() const override;
+        [[nodiscard]] std::filesystem::path getCacheDir() const override;
+
     protected:
         virtual void onOpen() {}
 
@@ -72,9 +75,6 @@ namespace Core
         virtual void preOpenedEndWindowDraw() {}
 
         [[nodiscard]] bool canBeShown() const { return _isEnabled; }
-
-        [[nodiscard]] StringAtom getCacheHash() const override;
-        [[nodiscard]] std::filesystem::path getCacheDir() const override;
 
     protected:
         ImGuiWindowFlags _windowFlags = 0;
