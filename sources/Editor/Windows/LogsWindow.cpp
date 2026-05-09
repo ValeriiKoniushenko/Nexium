@@ -24,7 +24,6 @@
 
 #include "LogsWindow.h"
 
-#include "../../Misc/Configs.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/Spacer.h"
 #include "GameplaySystem/Framework/GameInstance.h"
@@ -140,7 +139,7 @@ namespace Core
         const auto defaultSpace = ImGui::GetStyle().ItemSpacing.x;
         const auto finalWidth = ImGui::GetContentRegionAvail().x - defaultSpace;
         const float inputPadding
-            = ImGui::GetStyle().FramePadding.x * 2.0f + 20.0f; // tweak 20.0f as needed
+            = (ImGui::GetStyle().FramePadding.x * 2.0f) + 20.0f; // tweak 20.0f as needed
 
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + defaultSpace);
 
@@ -213,7 +212,7 @@ namespace Core
     float LogsWindowEWC::getFitLogsCountOnScreen() const
     {
         const auto inputHeight = ImGui::GetTextLineHeight()
-                                 + ImGui::GetStyle().FramePadding.y * 2.0f + _betweenLogsSpace;
+                                 + (ImGui::GetStyle().FramePadding.y * 2.0f) + _betweenLogsSpace;
 
         return std::ceil(_lastLogAreaHeight / inputHeight);
     }
@@ -227,7 +226,7 @@ namespace Core
             {
                 return !msg.regexFind(str.c_str(), 0, 0, 0, PCRE2_CASELESS).isMatched();
             }
-            return !msg.find(str.c_str());
+            return !msg.find(str);
         }
 
         return false;

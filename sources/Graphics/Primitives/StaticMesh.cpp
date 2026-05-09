@@ -156,12 +156,15 @@ namespace Core
         glBindBuffer(GL_UNIFORM_BUFFER, _uboLight);
 
         const auto& lightning = GetWorld().lightning;
-        _shader->setUniformObject(
-            ShaderReflector_default::uLight,
-            ShaderReflector_default::Light{ lightning.ambientStrength, lightning.specularStrength,
-                                            lightning.minLightStrength, lightning.specularPow,
-                                            lightning.color.toGlm(), lightning.sunDirection,
-                                            gGameInstance->currentCamera->getPosition() });
+        _shader->setUniformObject(ShaderReflector_default::uLight,
+                                  ShaderReflector_default::Light{
+                                      .ambientStrength = lightning.ambientStrength,
+                                      .specularStrength = lightning.specularStrength,
+                                      .minLightStrength = lightning.minLightStrength,
+                                      .specularPow = lightning.specularPow,
+                                      .color = lightning.color.toGlm(),
+                                      .sunDirection = lightning.sunDirection,
+                                      .viewPos = gGameInstance->currentCamera->getPosition() });
 
         _shader->setUniform(ShaderReflector_default::uTexture, 0);
         _shader->setUniform(ShaderReflector_default::uProjAndView,

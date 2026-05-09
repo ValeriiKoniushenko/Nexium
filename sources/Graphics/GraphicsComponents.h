@@ -230,7 +230,7 @@ namespace Core
         std::vector<ModifierParam> _drawModifiers;
 
         ShaderProgram* _shader = nullptr;
-        uint32_t _triangleCount = 0;
+        GLsizei _triangleCount = 0;
         GLuint _vbo = 0;
         GLuint _ebo = 0;
         GLuint _vao = 0;

@@ -41,48 +41,59 @@ namespace Core
 
         static GraphicsComponentData gcd = []()
         {
+            std::vector<GraphicsComponentData::ModifierParam> modifiers
+                = { { .value = GraphicsComponentData::ModifiedValue::CullFace,
+                      .modifier = GraphicsComponentData::Modifier::Disable } };
+
+            float w = 200.f;
+            float h = 100.f;
+
+            const std::vector<float> vert = {
+                -w, h,  0, // 0  top-left
+                -w, -h, 0, // 1  bottom-left
+                w,  -h, 0, // 2  bottom-right
+                w,  h,  0  // 3  top-right
+            };
+            const std::vector<float> uvs = {
+                0.f, 1.f, // 0  top-left
+                0.f, 0.f, // 1  bottom-left
+                1.f, 0.f, // 2  bottom-right
+                1.f, 1.f  // 3  top-right
+            };
+
+            const std::vector<GLuint> ind = {
+                0, 1, 2, // triangle 1
+                2, 3, 0  // triangle 2
+            };
+
             GraphicsComponentData data;
             data.generate();
+            data.setShader(GetShaderManager().getShaderProgram("2d_main"_atom));
             data.bindVAO();
             data.bindVBO();
 
-            float size = 100.f;
-            const std::vector<float> vert = {
-                -size, size,  -size, // 0
-                -size, -size, -size, // 1
-                size,  -size, -size, // 2
-                size,  size,  -size, // 3
-                -size, size,  size,  // 4
-                -size, -size, size,  // 5
-                size,  -size, size,  // 6
-                size,  size,  size   // 7
-            };
-            const std::vector<GLuint> ind = { // back face
-                                              0, 1, 2, 2, 3, 0,
-                                              // left face
-                                              1, 5, 4, 4, 0, 1,
-                                              // right face
-                                              2, 6, 7, 7, 3, 2,
-                                              // front face
-                                              5, 6, 7, 7, 4, 5,
-                                              // top face
-                                              4, 7, 3, 3, 0, 4,
-                                              // bottom face
-                                              1, 2, 6, 6, 5, 1
-            };
+            data.setDrawModifiers(std::move(modifiers));
             data.setVertexBuffer(vert);
             data.setIndexBuffer(ind);
 
-            auto& sm = GetShaderManager();
-            data.setShader(sm.getShaderProgram("2d_main"_atom));
+            data.unbindVao();
 
             return data;
         }();
 
-        // gcd.directDraw();
+        auto* shader = GetShaderManager().getShaderProgram("2d_main"_atom);
+        shader->use();
+        shader->setUniform("uTexture"_atom, 0);
+        shader->setUniform("uProjAndView"_atom, gGameInstance->currentCamera->getMatrix());
+        shader->setUniform("uModel"_atom, glm::mat4(1.f));
+
+        gcd.directDraw();
+
+        grid.draw();
+
+        return;
 
         _postDrawBuffer.resize(0);
-        grid.draw();
 
         for (auto&& asset : _objects)
         {

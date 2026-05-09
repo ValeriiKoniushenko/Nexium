@@ -75,7 +75,7 @@
 1775594678517643203 sources/GameplaySystem/Framework/World.h
 1770677206104945456 sources/GameplaySystem/Framework/WorldObject.h
 1770677206104945456 sources/GameplaySystem/Framework/WorldObjectManager.h
-1778213764011227241 sources/Graphics/GraphicsComponents.h
+1778311461505935562 sources/Graphics/GraphicsComponents.h
 1776719722313057724 sources/Graphics/IDrawable.h
 1771957154420269576 sources/Graphics/IOutliner.h
 1777454557627056682 sources/Graphics/Image.h

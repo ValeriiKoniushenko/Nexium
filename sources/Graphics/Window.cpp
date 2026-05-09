@@ -100,6 +100,22 @@ namespace Core
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_MAXIMIZED, _isMaximized ? GLFW_TRUE : GLFW_FALSE);
 
+#if defined(_DEBUG)
+        glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+        glEnable(GL_DEBUG_OUTPUT);
+        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS); // fires on the offending call's stack frame
+        glDebugMessageCallback(
+            [](GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei, const GLchar* msg,
+               const void*)
+            {
+                if (severity != GL_DEBUG_SEVERITY_NOTIFICATION)
+                {
+                    globalLog.errorLog("[GL] {}"_f << msg);
+                }
+            },
+            nullptr);
+#endif
+
         if (!GetCacheSystem().hasCache(*this))
         {
             _size = size;
