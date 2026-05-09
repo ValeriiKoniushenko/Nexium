@@ -38,7 +38,7 @@ Because future overwriting will be cheaper than the initial "well-done".
 
 The core of the engine is the xref:ecs-overview.adoc[Entity Component System (ECS)].
 Quite a big count of classes is trying to be inherited from it.
-Sometimes, when you see on a class and think "Why it wasn't?" -- the most common answer is: due to low-level optimization (for example `class GraphicsComponentData`).
+Sometimes, when you see on a class and think "Why it wasn't?" -- the most common answer is: due to low-level optimization (for example `class InterleavedGraphicsData`).
 
 Also, it tends to be with a minimum count of global/god objects.
 It has only 3 god-objects:

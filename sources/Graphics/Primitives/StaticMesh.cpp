@@ -122,7 +122,7 @@ namespace Core
 
     void StaticMesh::draw()
     {
-        if (!GraphicsComponentData::isValid()) [[unlikely]]
+        if (!InterleavedGraphicsData::isValid()) [[unlikely]]
         {
             Assert("Can't draw graphic component. It wasn't configured.");
             return;
@@ -316,7 +316,7 @@ namespace Core
     {
         BaseComponent::ioFieldsUpdate(out);
         Transformable::ioFieldsUpdate(out);
-        GraphicsComponentData::ioFieldsUpdate(out);
+        InterleavedGraphicsData::ioFieldsUpdate(out);
 
         auto stream = out.dedicatedNesting("StaticMesh");
 
@@ -364,7 +364,7 @@ namespace Core
 
     void StaticMesh::generate()
     {
-        GraphicsComponentData::generate();
+        InterleavedGraphicsData::generate();
         glGenBuffers(1, &_uboLight);
         glBindBuffer(GL_UNIFORM_BUFFER, _uboLight);
         glBufferData(GL_UNIFORM_BUFFER, sizeof(ShaderReflector_default::Light), nullptr,
@@ -376,7 +376,7 @@ namespace Core
 
     void StaticMesh::clear()
     {
-        GraphicsComponentData::clear();
+        InterleavedGraphicsData::clear();
         BaseComponent::clear();
 
         glDeleteBuffers(1, &_uboLight);
@@ -414,8 +414,8 @@ namespace Core
         StaticMesh out{ name };
 
         out.setDrawModifiers({
-            { GraphicsComponentData::ModifiedValue::CullFace,
-              GraphicsComponentData::Modifier::Disable },
+            { InterleavedGraphicsData::ModifiedValue::CullFace,
+              InterleavedGraphicsData::Modifier::Disable },
         });
 
         return out;
@@ -426,10 +426,10 @@ namespace Core
         StaticMesh out{ name };
 
         out.setDrawModifiers({
-            { GraphicsComponentData::ModifiedValue::CullFace,
-              GraphicsComponentData::Modifier::Disable },
-            { GraphicsComponentData::ModifiedValue::Blend,
-              GraphicsComponentData::Modifier::Enable },
+            { InterleavedGraphicsData::ModifiedValue::CullFace,
+              InterleavedGraphicsData::Modifier::Disable },
+            { InterleavedGraphicsData::ModifiedValue::Blend,
+              InterleavedGraphicsData::Modifier::Enable },
         });
 
         return out;

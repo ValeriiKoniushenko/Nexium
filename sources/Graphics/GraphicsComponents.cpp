@@ -29,12 +29,12 @@
 
 namespace Core
 {
-    GraphicsComponentData::~GraphicsComponentData()
+    InterleavedGraphicsData::~InterleavedGraphicsData()
     {
         privateClear();
     }
 
-    GraphicsComponentData::GraphicsComponentData(GraphicsComponentData&& other) noexcept
+    InterleavedGraphicsData::InterleavedGraphicsData(InterleavedGraphicsData&& other) noexcept
         : _drawModifiers({}),
           _shader(other._shader),
           _triangleCount(other._triangleCount),
@@ -51,19 +51,20 @@ namespace Core
         other._texture = 0;
     }
 
-    GraphicsComponentData& GraphicsComponentData::operator=(GraphicsComponentData&& other) noexcept
+    InterleavedGraphicsData& InterleavedGraphicsData::operator=(
+        InterleavedGraphicsData&& other) noexcept
     {
         if (this == &other) [[unlikely]]
         {
             return *this;
         }
 
-        GraphicsComponentData tmp(std::move(other));
+        InterleavedGraphicsData tmp(std::move(other));
         swap(*this, tmp);
         return *this;
     }
 
-    void GraphicsComponentData::generate()
+    void InterleavedGraphicsData::generate()
     {
         glGenVertexArrays(1, &_vao);
         glGenBuffers(1, &_vbo);
@@ -71,7 +72,7 @@ namespace Core
         glGenTextures(1, &_texture);
     }
 
-    void GraphicsComponentData::setVertexBuffer(const std::vector<float>& data, GLenum usage)
+    void InterleavedGraphicsData::setVertexBuffer(const std::vector<float>& data, GLenum usage)
     {
         if (Verify(_vbo != 0 && _vao != 0)) [[likely]]
         {
@@ -81,7 +82,7 @@ namespace Core
         }
     }
 
-    void GraphicsComponentData::setIndexBuffer(const std::vector<GLuint>& data, GLenum usage)
+    void InterleavedGraphicsData::setIndexBuffer(const std::vector<GLuint>& data, GLenum usage)
     {
         if (Verify(_ebo != 0 && _vao != 0)) [[likely]]
         {
@@ -93,8 +94,8 @@ namespace Core
         }
     }
 
-    void GraphicsComponentData::setTexture2D(const unsigned char* data, uint32_t width,
-                                             uint32_t height, int channelsCount)
+    void InterleavedGraphicsData::setTexture2D(const unsigned char* data, uint32_t width,
+                                               uint32_t height, int channelsCount)
     {
         if (Verify(data && _ebo != 0 && _vao != 0 && _texture != 0)) [[likely]]
         {
@@ -123,8 +124,8 @@ namespace Core
         }
     }
 
-    void GraphicsComponentData::setShader(ShaderProgram* sp,
-                                          bool ignoreVertexAttribSetup /* = false*/)
+    void InterleavedGraphicsData::setShader(ShaderProgram* sp,
+                                            bool ignoreVertexAttribSetup /* = false*/)
     {
         _shader = sp;
 
@@ -138,8 +139,8 @@ namespace Core
         }
     }
 
-    void GraphicsComponentData::setMesh(const aiMesh* mesh, bool isAppendNormals /* = false*/,
-                                        bool isAppendUV /* = false*/, float scale /* = 1.f*/)
+    void InterleavedGraphicsData::setMesh(const aiMesh* mesh, bool isAppendNormals /* = false*/,
+                                          bool isAppendUV /* = false*/, float scale /* = 1.f*/)
     {
         if (!mesh) [[unlikely]]
         {
@@ -200,12 +201,12 @@ namespace Core
         // }
     }
 
-    void GraphicsComponentData::clear()
+    void InterleavedGraphicsData::clear()
     {
         privateClear();
     }
 
-    void GraphicsComponentData::directDraw(GLenum bindTextureType, GLenum textureIndex) noexcept
+    void InterleavedGraphicsData::directDraw(GLenum bindTextureType, GLenum textureIndex) noexcept
     {
         if (!isValid()) [[unlikely]]
         {
@@ -249,7 +250,7 @@ namespace Core
         }
     }
 
-    void GraphicsComponentData::setDrawModifiers(std::vector<ModifierParam>&& values)
+    void InterleavedGraphicsData::setDrawModifiers(std::vector<ModifierParam>&& values)
     {
 #if defined(DEBUG)
         std::map<GLenum, int> map;
@@ -264,7 +265,7 @@ namespace Core
         _drawModifiers = std::move(values);
     }
 
-    void GraphicsComponentData::setDrawModifiers(const std::vector<ModifierParam>& values)
+    void InterleavedGraphicsData::setDrawModifiers(const std::vector<ModifierParam>& values)
     {
 #if defined(DEBUG)
         std::map<GLenum, int> map;
@@ -279,7 +280,7 @@ namespace Core
         _drawModifiers = values;
     }
 
-    void GraphicsComponentData::addDrawModifiers(ModifiedValue value, Modifier mod)
+    void InterleavedGraphicsData::addDrawModifiers(ModifiedValue value, Modifier mod)
     {
         if (getDrawModifier(value) != Modifier::None)
         {
@@ -289,7 +290,7 @@ namespace Core
         _drawModifiers.emplace_back(value, mod);
     }
 
-    GraphicsComponentData::Modifier GraphicsComponentData::getDrawModifier(ModifiedValue value)
+    InterleavedGraphicsData::Modifier InterleavedGraphicsData::getDrawModifier(ModifiedValue value)
     {
         const auto it = std::ranges::find_if(_drawModifiers,
                                              [value](auto pair) { return pair.value == value; });
@@ -302,9 +303,9 @@ namespace Core
         return Modifier::None;
     }
 
-    /*void GraphicsComponentData::ioFieldsUpdate(DataStream& out)
+    /*void InterleavedGraphicsData::ioFieldsUpdate(DataStream& out)
     {
-        auto stream = out.dedicatedNesting("GraphicsComponentData");
+        auto stream = out.dedicatedNesting("InterleavedGraphicsData");
 
         stream.array(
             "modifiers",
@@ -329,15 +330,15 @@ namespace Core
                             continue;
                         }
 
-                        auto value = R<GraphicsComponentData::ModifiedValue>::FromString(
+                        auto value = R<InterleavedGraphicsData::ModifiedValue>::FromString(
                             modifier["value"].get<std::string_view>());
-                        auto param = R<GraphicsComponentData::Modifier>::FromString(
+                        auto param = R<InterleavedGraphicsData::Modifier>::FromString(
                             modifier["modifier"].get<std::string_view>());
 
                         if (!value || !param)
                         {
                             globalLog.errorLog(
-                                "Was got invalid GraphicsComponentData ModifiedValue: '{}' or
+                                "Was got invalid InterleavedGraphicsData ModifiedValue: '{}' or
     Modifier: '{}'"_f
                                 << modifier["value"].get<std::string>()
                                 << modifier["modifier"].get<std::string>());
@@ -349,12 +350,12 @@ namespace Core
             });
     }*/
 
-    StringAtom GraphicsComponentData::getCacheHash() const
+    StringAtom InterleavedGraphicsData::getCacheHash() const
     {
-        return "GraphicsComponentData"_atom;
+        return "InterleavedGraphicsData"_atom;
     }
 
-    void GraphicsComponentData::privateClear()
+    void InterleavedGraphicsData::privateClear()
     {
         glDeleteTextures(1, &_texture);
         glDeleteBuffers(1, &_ebo);
@@ -364,18 +365,19 @@ namespace Core
         _triangleCount = 0;
     }
 
-    void to_json(nlohmann::json& j, const Core::GraphicsComponentData::ModifierParam& v)
+    void to_json(nlohmann::json& j, const Core::InterleavedGraphicsData::ModifierParam& v)
     {
-        j["modifier"] = R<GraphicsComponentData::Modifier>::ToString(v.modifier);
-        j["value"] = R<GraphicsComponentData::ModifiedValue>::ToString(v.value);
+        j["modifier"] = R<InterleavedGraphicsData::Modifier>::ToString(v.modifier);
+        j["value"] = R<InterleavedGraphicsData::ModifiedValue>::ToString(v.value);
     }
 
-    void from_json(const nlohmann::json& j, Core::GraphicsComponentData::ModifierParam& v)
+    void from_json(const nlohmann::json& j, Core::InterleavedGraphicsData::ModifierParam& v)
     {
         v.modifier
-            = R<GraphicsComponentData::Modifier>::FromString(j["modifier"].get<std::string>())
-                  .value_or(GraphicsComponentData::Modifier::None);
-        v.value = R<GraphicsComponentData::ModifiedValue>::FromString(j["value"].get<std::string>())
-                      .value_or(GraphicsComponentData::ModifiedValue::None);
+            = R<InterleavedGraphicsData::Modifier>::FromString(j["modifier"].get<std::string>())
+                  .value_or(InterleavedGraphicsData::Modifier::None);
+        v.value
+            = R<InterleavedGraphicsData::ModifiedValue>::FromString(j["value"].get<std::string>())
+                  .value_or(InterleavedGraphicsData::ModifiedValue::None);
     }
 } // namespace Core

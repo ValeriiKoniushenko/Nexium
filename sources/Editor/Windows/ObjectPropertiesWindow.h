@@ -46,15 +46,15 @@ namespace Core
 
     struct _GraphicsModifiersArray_ArrayCellViewerFunc
     {
-        Gui::HorizontalLayout::Ptr operator()(GraphicsComponentData::ModifierParam& data) const;
+        Gui::HorizontalLayout::Ptr operator()(InterleavedGraphicsData::ModifierParam& data) const;
     };
 
     struct _GraphicsModifiersArray_ViewFetchFunc
     {
-        GraphicsComponentData::ModifierParam operator()(Gui::HorizontalLayout* layout) const;
+        InterleavedGraphicsData::ModifierParam operator()(Gui::HorizontalLayout* layout) const;
     };
 
-    using GraphicsModifiersArray = Gui::BaseArray<GraphicsComponentData::ModifierParam,
+    using GraphicsModifiersArray = Gui::BaseArray<InterleavedGraphicsData::ModifierParam,
                                                   _GraphicsModifiersArray_ArrayCellViewerFunc,
                                                   _GraphicsModifiersArray_ViewFetchFunc>;
 
@@ -96,7 +96,7 @@ namespace Core
 
         void tryDrawStaticMesh(StaticMesh* static_mesh);
 
-        void tryDrawGraphicsComponentData(GraphicsComponentData* comp);
+        void tryDrawInterleavedGraphicsData(InterleavedGraphicsData* comp);
 
         void tryDrawBaseCamera(BaseCamera* comp);
 

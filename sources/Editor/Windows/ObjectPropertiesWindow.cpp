@@ -127,14 +127,14 @@ namespace Core
     R_FRIEND_IMPL(ObjectPropertiesWindowEWC);
 
     Gui::HorizontalLayout::Ptr _GraphicsModifiersArray_ArrayCellViewerFunc::operator()(
-        GraphicsComponentData::ModifierParam& data) const
+        InterleavedGraphicsData::ModifierParam& data) const
     {
         auto l = Gui::HorizontalLayout::Create();
 
         {
             static const auto& modifiers = []()
             {
-                const auto& m = R<GraphicsComponentData::Modifier>::ToArrayN();
+                const auto& m = R<InterleavedGraphicsData::Modifier>::ToArrayN();
 
                 std::vector<std::string> out(m.begin(), m.end());
                 std::ranges::sort(out);
@@ -158,7 +158,7 @@ namespace Core
         {
             static const auto& values = []()
             {
-                const auto& m = R<GraphicsComponentData::ModifiedValue>::ToArrayN();
+                const auto& m = R<InterleavedGraphicsData::ModifiedValue>::ToArrayN();
 
                 std::vector<std::string> out(m.begin(), m.end());
                 std::ranges::sort(out);
@@ -187,15 +187,15 @@ namespace Core
         return l;
     }
 
-    GraphicsComponentData::ModifierParam _GraphicsModifiersArray_ViewFetchFunc::operator()(
+    InterleavedGraphicsData::ModifierParam _GraphicsModifiersArray_ViewFetchFunc::operator()(
         Gui::HorizontalLayout* layout) const
     {
-        GraphicsComponentData::ModifierParam out;
+        InterleavedGraphicsData::ModifierParam out;
 
         {
             static const auto& modifiers = []()
             {
-                const auto& m = R<GraphicsComponentData::Modifier>::ToArrayN();
+                const auto& m = R<InterleavedGraphicsData::Modifier>::ToArrayN();
 
                 std::vector<std::string> out(m.begin(), m.end());
                 std::ranges::sort(out);
@@ -207,7 +207,8 @@ namespace Core
             if (auto modifier = layout->getFirstChildAs<Gui::ComboModelBased>(); modifier)
             {
                 const auto str = modifiers[modifier->getCurrentIndex()];
-                out.modifier = R<GraphicsComponentData::Modifier>::FromString(str.c_str()).value();
+                out.modifier
+                    = R<InterleavedGraphicsData::Modifier>::FromString(str.c_str()).value();
             }
             else
             {
@@ -218,7 +219,7 @@ namespace Core
         {
             static const auto& values = []()
             {
-                const auto& m = R<GraphicsComponentData::ModifiedValue>::ToArrayN();
+                const auto& m = R<InterleavedGraphicsData::ModifiedValue>::ToArrayN();
 
                 std::vector<std::string> out(m.begin(), m.end());
                 std::ranges::sort(out);
@@ -230,8 +231,8 @@ namespace Core
             if (auto value = layout->getLastChildAs<Gui::ComboModelBased>(); value)
             {
                 const auto str = values[value->getCurrentIndex()];
-                out.value = R<GraphicsComponentData::ModifiedValue>::FromString(str).value_or(
-                    GraphicsComponentData::ModifiedValue::None);
+                out.value = R<InterleavedGraphicsData::ModifiedValue>::FromString(str).value_or(
+                    InterleavedGraphicsData::ModifiedValue::None);
             }
             else
             {
@@ -290,7 +291,7 @@ namespace Core
         auto* asBaseComponent = dynamic_cast<BaseComponent*>(_target);
         auto* asTransformable = dynamic_cast<Transformable*>(_target);
         auto* asStaticMeshBundle = dynamic_cast<StaticMeshBundle*>(_target);
-        auto* asGraphicsComponentData = dynamic_cast<GraphicsComponentData*>(_target);
+        auto* asInterleavedGraphicsData = dynamic_cast<InterleavedGraphicsData*>(_target);
         auto* asStaticMesh = dynamic_cast<StaticMesh*>(_target);
         auto* asBaseCamera = dynamic_cast<BaseCamera*>(_target);
 
@@ -298,7 +299,7 @@ namespace Core
         tryDrawTransformable(asTransformable, asBaseComponent);
         tryDrawStaticMeshBundle(asStaticMeshBundle);
         tryDrawStaticMesh(asStaticMesh);
-        tryDrawGraphicsComponentData(asGraphicsComponentData);
+        tryDrawInterleavedGraphicsData(asInterleavedGraphicsData);
         tryDrawBaseCamera(asBaseCamera);
         tryDrawBaseComponentExtra(asBaseComponent);
     }
@@ -586,7 +587,7 @@ namespace Core
                     {
                         return;
                     }
-                    if (auto* graph = dynamic_cast<GraphicsComponentData*>(_target))
+                    if (auto* graph = dynamic_cast<InterleavedGraphicsData*>(_target))
                     {
                         graph->setDrawModifiers(data);
                     }
@@ -598,7 +599,7 @@ namespace Core
                     {
                         return;
                     }
-                    if (auto* graph = dynamic_cast<GraphicsComponentData*>(_target))
+                    if (auto* graph = dynamic_cast<InterleavedGraphicsData*>(_target))
                     {
                         out = graph->getDrawModifiers();
                     }
@@ -661,7 +662,7 @@ namespace Core
         }
     }
 
-    void ObjectPropertiesWindowEWC::tryDrawGraphicsComponentData(GraphicsComponentData* comp)
+    void ObjectPropertiesWindowEWC::tryDrawInterleavedGraphicsData(InterleavedGraphicsData* comp)
     {
         if (comp && Gui::CollapsingHeader("Graphics", ImGuiTreeNodeFlags_DefaultOpen))
         {
@@ -817,7 +818,7 @@ namespace Core
             return;
         }
 
-        if (auto* comp = dynamic_cast<GraphicsComponentData*>(abstComp))
+        if (auto* comp = dynamic_cast<InterleavedGraphicsData*>(abstComp))
         {
             _graphicsModifiers->setData(comp->getDrawModifiers());
         }

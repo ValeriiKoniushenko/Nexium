@@ -39,11 +39,11 @@ namespace Core
             gGameInstance->gameEditor.slowObjectPicker.update(*this);
         }
 
-        static GraphicsComponentData gcd = []()
+        static InterleavedGraphicsData gcd = []()
         {
-            std::vector<GraphicsComponentData::ModifierParam> modifiers
-                = { { .value = GraphicsComponentData::ModifiedValue::CullFace,
-                      .modifier = GraphicsComponentData::Modifier::Disable } };
+            std::vector<InterleavedGraphicsData::ModifierParam> modifiers
+                = { { .value = InterleavedGraphicsData::ModifiedValue::CullFace,
+                      .modifier = InterleavedGraphicsData::Modifier::Disable } };
 
             float w = 200.f;
             float h = 100.f;
@@ -66,7 +66,7 @@ namespace Core
                 2, 3, 0  // triangle 2
             };
 
-            GraphicsComponentData data;
+            InterleavedGraphicsData data;
             data.generate();
             data.setShader(GetShaderManager().getShaderProgram("2d_main"_atom));
             data.bindVAO();

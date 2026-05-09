@@ -26,7 +26,7 @@
 
 #include "ECSAdapters/BaseComponentAdapter.h"
 #include "ECSAdapters/EditorActorAdapter.h"
-#include "ECSAdapters/EditorGraphicsComponentDataAdapter.h"
+#include "ECSAdapters/EditorInterleavedGraphicsDataAdapter.h"
 #include "ECSAdapters/EditorStaticMeshBundleAdapter.h"
 #include "Editor/GuiComponents/Misc.h"
 #include "GameplaySystem/Framework/GameInstance.h"
@@ -134,7 +134,7 @@ namespace Core
         addUniqueTypeChildComponent<ECSBaseComponentAdapter>();
         addUniqueTypeChildComponent<ECSEditorActorAdapter>();
         addUniqueTypeChildComponent<ECSEditorStaticMeshBundleAdapter>();
-        addUniqueTypeChildComponent<ECSEditorGraphicsComponentDataAdapter>();
+        addUniqueTypeChildComponent<ECSEditorInterleavedGraphicsDataAdapter>();
 
         setEnablePreview(true);
         setEnableTree(true);

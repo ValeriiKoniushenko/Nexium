@@ -40,14 +40,14 @@ namespace Core
 
     CLASS();
     class StaticMesh :
-        public GraphicsComponentData,
+        public InterleavedGraphicsData,
         public Transformable,
         public BaseComponent,
         public IOutliner
     {
         ECS_COMPONENT_DECL(StaticMesh, BaseComponent);
         R_FRIEND_DECL(StaticMesh, Core::BaseComponent, Core::Transformable,
-                      Core::GraphicsComponentData);
+                      Core::InterleavedGraphicsData);
 
     public:
         constexpr static Color4 outlineColor = Color4{ 252, 186, 3, 255 };

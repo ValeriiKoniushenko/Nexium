@@ -31,15 +31,15 @@
 namespace Core
 {
 
-    class ECSEditorGraphicsComponentDataAdapter : public ECSEditorMimeAdapter
+    class ECSEditorInterleavedGraphicsDataAdapter : public ECSEditorMimeAdapter
     {
-        ECS_COMPONENT_DECL(ECSEditorGraphicsComponentDataAdapter, ECSEditorMimeAdapter);
+        ECS_COMPONENT_DECL(ECSEditorInterleavedGraphicsDataAdapter, ECSEditorMimeAdapter);
 
     public:
         [[nodiscard]] bool canWorkWith(BaseComponent* component) const override;
         [[nodiscard]] StringAtom getProcessedAssetType() const override
         {
-            return "GraphicsComponentData"_atom;
+            return "InterleavedGraphicsData"_atom;
         }
 
     protected:

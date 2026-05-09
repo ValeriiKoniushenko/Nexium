@@ -32,9 +32,9 @@ namespace Core
 {
 
     CLASS();
-    class GraphicsComponentData : public IDataIO
+    class InterleavedGraphicsData : public IDataIO
     {
-        R_FRIEND(GraphicsComponentData);
+        R_FRIEND(InterleavedGraphicsData);
 
     public:
         ENUM_CLASS();
@@ -77,19 +77,19 @@ namespace Core
         };
 
     public:
-        GraphicsComponentData() = default;
+        InterleavedGraphicsData() = default;
 
-        ~GraphicsComponentData() override;
+        ~InterleavedGraphicsData() override;
 
-        GraphicsComponentData(const GraphicsComponentData& other) = default;
+        InterleavedGraphicsData(const InterleavedGraphicsData& other) = default;
 
-        GraphicsComponentData(GraphicsComponentData&& other) noexcept;
+        InterleavedGraphicsData(InterleavedGraphicsData&& other) noexcept;
 
-        GraphicsComponentData& operator=(const GraphicsComponentData& other) = default;
+        InterleavedGraphicsData& operator=(const InterleavedGraphicsData& other) = default;
 
-        GraphicsComponentData& operator=(GraphicsComponentData&& other) noexcept;
+        InterleavedGraphicsData& operator=(InterleavedGraphicsData&& other) noexcept;
 
-        friend void swap(GraphicsComponentData& a, GraphicsComponentData& b) noexcept
+        friend void swap(InterleavedGraphicsData& a, InterleavedGraphicsData& b) noexcept
         {
             std::swap(a._drawModifiers, b._drawModifiers);
             std::swap(a._shader, b._shader);
@@ -151,7 +151,7 @@ namespace Core
          *      1, 2, 3   // second Triangle
          * };
          *
-         * GraphicsComponentData x;
+         * InterleavedGraphicsData x;
          * x.generate();
          * x.setVertexBuffer(vertices);
          * x.setIndexBuffer(indices);
@@ -240,8 +240,8 @@ namespace Core
         void privateClear();
     };
 
-    void to_json(nlohmann::json& j, const Core::GraphicsComponentData::ModifierParam& v);
-    void from_json(const nlohmann::json& j, Core::GraphicsComponentData::ModifierParam& v);
+    void to_json(nlohmann::json& j, const Core::InterleavedGraphicsData::ModifierParam& v);
+    void from_json(const nlohmann::json& j, Core::InterleavedGraphicsData::ModifierParam& v);
 
 } // namespace Core
 

@@ -15,15 +15,15 @@
 #include <vector>
 
 template<>
-struct R<Core::GraphicsComponentData::ModifiedValue>
+struct R<Core::InterleavedGraphicsData::ModifiedValue>
 {
     static constexpr std::string_view Name() { return "ModifiedValue"; }
     static constexpr std::size_t Size() { return 20; }
-    static constexpr std::string_view ParentScope() { return "Core::GraphicsComponentData"; }
+    static constexpr std::string_view ParentScope() { return "Core::InterleavedGraphicsData"; }
 
-    static std::string_view ToString(::Core::GraphicsComponentData::ModifiedValue value)
+    static std::string_view ToString(::Core::InterleavedGraphicsData::ModifiedValue value)
     {
-        const auto& data = R<Core::GraphicsComponentData::ModifiedValue>::ToMapCN();
+        const auto& data = R<Core::InterleavedGraphicsData::ModifiedValue>::ToMapCN();
         const auto it = data.find(value);
         if (it != data.end()) [[likely]]
         {
@@ -33,9 +33,9 @@ struct R<Core::GraphicsComponentData::ModifiedValue>
         return empty;
     }
 
-    static std::optional<::Core::GraphicsComponentData::ModifiedValue> FromString(std::string_view value)
+    static std::optional<::Core::InterleavedGraphicsData::ModifiedValue> FromString(std::string_view value)
     {
-        const auto& data = R<Core::GraphicsComponentData::ModifiedValue>::ToMapNC();
+        const auto& data = R<Core::InterleavedGraphicsData::ModifiedValue>::ToMapNC();
         const auto it = data.find(value);
         if (it != data.end()) [[likely]]
         {
@@ -44,29 +44,29 @@ struct R<Core::GraphicsComponentData::ModifiedValue>
         return std::nullopt;
     }
 
-    static constexpr const std::array<::Core::GraphicsComponentData::ModifiedValue, 20>& ToArrayC()
+    static constexpr const std::array<::Core::InterleavedGraphicsData::ModifiedValue, 20>& ToArrayC()
     {
-        static constexpr std::array<::Core::GraphicsComponentData::ModifiedValue, 20> constants = {
-				::Core::GraphicsComponentData::ModifiedValue::None,
-				::Core::GraphicsComponentData::ModifiedValue::Blend,
-				::Core::GraphicsComponentData::ModifiedValue::CullFace,
-				::Core::GraphicsComponentData::ModifiedValue::DepthTest,
-				::Core::GraphicsComponentData::ModifiedValue::Dither,
-				::Core::GraphicsComponentData::ModifiedValue::PolygonOffsetFill,
-				::Core::GraphicsComponentData::ModifiedValue::PolygonOffsetLine,
-				::Core::GraphicsComponentData::ModifiedValue::PolygonOffsetPoint,
-				::Core::GraphicsComponentData::ModifiedValue::PrimitiveRestart,
-				::Core::GraphicsComponentData::ModifiedValue::PrimitiveRestartFixedIndex,
-				::Core::GraphicsComponentData::ModifiedValue::RasterizerDiscard,
-				::Core::GraphicsComponentData::ModifiedValue::SampleAlphaToCoverage,
-				::Core::GraphicsComponentData::ModifiedValue::SampleAlphaToOne,
-				::Core::GraphicsComponentData::ModifiedValue::SampleCoverage,
-				::Core::GraphicsComponentData::ModifiedValue::SampleMask,
-				::Core::GraphicsComponentData::ModifiedValue::ScissorTest,
-				::Core::GraphicsComponentData::ModifiedValue::StencilTest,
-				::Core::GraphicsComponentData::ModifiedValue::Multisample,
-				::Core::GraphicsComponentData::ModifiedValue::FramebufferSrgb,
-				::Core::GraphicsComponentData::ModifiedValue::ProgramPointSize
+        static constexpr std::array<::Core::InterleavedGraphicsData::ModifiedValue, 20> constants = {
+				::Core::InterleavedGraphicsData::ModifiedValue::None,
+				::Core::InterleavedGraphicsData::ModifiedValue::Blend,
+				::Core::InterleavedGraphicsData::ModifiedValue::CullFace,
+				::Core::InterleavedGraphicsData::ModifiedValue::DepthTest,
+				::Core::InterleavedGraphicsData::ModifiedValue::Dither,
+				::Core::InterleavedGraphicsData::ModifiedValue::PolygonOffsetFill,
+				::Core::InterleavedGraphicsData::ModifiedValue::PolygonOffsetLine,
+				::Core::InterleavedGraphicsData::ModifiedValue::PolygonOffsetPoint,
+				::Core::InterleavedGraphicsData::ModifiedValue::PrimitiveRestart,
+				::Core::InterleavedGraphicsData::ModifiedValue::PrimitiveRestartFixedIndex,
+				::Core::InterleavedGraphicsData::ModifiedValue::RasterizerDiscard,
+				::Core::InterleavedGraphicsData::ModifiedValue::SampleAlphaToCoverage,
+				::Core::InterleavedGraphicsData::ModifiedValue::SampleAlphaToOne,
+				::Core::InterleavedGraphicsData::ModifiedValue::SampleCoverage,
+				::Core::InterleavedGraphicsData::ModifiedValue::SampleMask,
+				::Core::InterleavedGraphicsData::ModifiedValue::ScissorTest,
+				::Core::InterleavedGraphicsData::ModifiedValue::StencilTest,
+				::Core::InterleavedGraphicsData::ModifiedValue::Multisample,
+				::Core::InterleavedGraphicsData::ModifiedValue::FramebufferSrgb,
+				::Core::InterleavedGraphicsData::ModifiedValue::ProgramPointSize
         };
 
         return constants;
@@ -100,73 +100,73 @@ struct R<Core::GraphicsComponentData::ModifiedValue>
         return names;
     }
 
-    static const std::unordered_map<::Core::GraphicsComponentData::ModifiedValue, std::string_view>& ToMapCN()
+    static const std::unordered_map<::Core::InterleavedGraphicsData::ModifiedValue, std::string_view>& ToMapCN()
     {
-        static const std::unordered_map<::Core::GraphicsComponentData::ModifiedValue, std::string_view> map = {
-				{ ::Core::GraphicsComponentData::ModifiedValue::None, "None" },
-				{ ::Core::GraphicsComponentData::ModifiedValue::Blend, "Blend" },
-				{ ::Core::GraphicsComponentData::ModifiedValue::CullFace, "CullFace" },
-				{ ::Core::GraphicsComponentData::ModifiedValue::DepthTest, "DepthTest" },
-				{ ::Core::GraphicsComponentData::ModifiedValue::Dither, "Dither" },
-				{ ::Core::GraphicsComponentData::ModifiedValue::PolygonOffsetFill, "PolygonOffsetFill" },
-				{ ::Core::GraphicsComponentData::ModifiedValue::PolygonOffsetLine, "PolygonOffsetLine" },
-				{ ::Core::GraphicsComponentData::ModifiedValue::PolygonOffsetPoint, "PolygonOffsetPoint" },
-				{ ::Core::GraphicsComponentData::ModifiedValue::PrimitiveRestart, "PrimitiveRestart" },
-				{ ::Core::GraphicsComponentData::ModifiedValue::PrimitiveRestartFixedIndex, "PrimitiveRestartFixedIndex" },
-				{ ::Core::GraphicsComponentData::ModifiedValue::RasterizerDiscard, "RasterizerDiscard" },
-				{ ::Core::GraphicsComponentData::ModifiedValue::SampleAlphaToCoverage, "SampleAlphaToCoverage" },
-				{ ::Core::GraphicsComponentData::ModifiedValue::SampleAlphaToOne, "SampleAlphaToOne" },
-				{ ::Core::GraphicsComponentData::ModifiedValue::SampleCoverage, "SampleCoverage" },
-				{ ::Core::GraphicsComponentData::ModifiedValue::SampleMask, "SampleMask" },
-				{ ::Core::GraphicsComponentData::ModifiedValue::ScissorTest, "ScissorTest" },
-				{ ::Core::GraphicsComponentData::ModifiedValue::StencilTest, "StencilTest" },
-				{ ::Core::GraphicsComponentData::ModifiedValue::Multisample, "Multisample" },
-				{ ::Core::GraphicsComponentData::ModifiedValue::FramebufferSrgb, "FramebufferSrgb" },
-				{ ::Core::GraphicsComponentData::ModifiedValue::ProgramPointSize, "ProgramPointSize" }
+        static const std::unordered_map<::Core::InterleavedGraphicsData::ModifiedValue, std::string_view> map = {
+				{ ::Core::InterleavedGraphicsData::ModifiedValue::None, "None" },
+				{ ::Core::InterleavedGraphicsData::ModifiedValue::Blend, "Blend" },
+				{ ::Core::InterleavedGraphicsData::ModifiedValue::CullFace, "CullFace" },
+				{ ::Core::InterleavedGraphicsData::ModifiedValue::DepthTest, "DepthTest" },
+				{ ::Core::InterleavedGraphicsData::ModifiedValue::Dither, "Dither" },
+				{ ::Core::InterleavedGraphicsData::ModifiedValue::PolygonOffsetFill, "PolygonOffsetFill" },
+				{ ::Core::InterleavedGraphicsData::ModifiedValue::PolygonOffsetLine, "PolygonOffsetLine" },
+				{ ::Core::InterleavedGraphicsData::ModifiedValue::PolygonOffsetPoint, "PolygonOffsetPoint" },
+				{ ::Core::InterleavedGraphicsData::ModifiedValue::PrimitiveRestart, "PrimitiveRestart" },
+				{ ::Core::InterleavedGraphicsData::ModifiedValue::PrimitiveRestartFixedIndex, "PrimitiveRestartFixedIndex" },
+				{ ::Core::InterleavedGraphicsData::ModifiedValue::RasterizerDiscard, "RasterizerDiscard" },
+				{ ::Core::InterleavedGraphicsData::ModifiedValue::SampleAlphaToCoverage, "SampleAlphaToCoverage" },
+				{ ::Core::InterleavedGraphicsData::ModifiedValue::SampleAlphaToOne, "SampleAlphaToOne" },
+				{ ::Core::InterleavedGraphicsData::ModifiedValue::SampleCoverage, "SampleCoverage" },
+				{ ::Core::InterleavedGraphicsData::ModifiedValue::SampleMask, "SampleMask" },
+				{ ::Core::InterleavedGraphicsData::ModifiedValue::ScissorTest, "ScissorTest" },
+				{ ::Core::InterleavedGraphicsData::ModifiedValue::StencilTest, "StencilTest" },
+				{ ::Core::InterleavedGraphicsData::ModifiedValue::Multisample, "Multisample" },
+				{ ::Core::InterleavedGraphicsData::ModifiedValue::FramebufferSrgb, "FramebufferSrgb" },
+				{ ::Core::InterleavedGraphicsData::ModifiedValue::ProgramPointSize, "ProgramPointSize" }
         };
 
         return map;
     }
 
-    static const std::unordered_map<std::string_view, ::Core::GraphicsComponentData::ModifiedValue>& ToMapNC()
+    static const std::unordered_map<std::string_view, ::Core::InterleavedGraphicsData::ModifiedValue>& ToMapNC()
     {
-        static const std::unordered_map<std::string_view, ::Core::GraphicsComponentData::ModifiedValue> map = {
-				{ "None", ::Core::GraphicsComponentData::ModifiedValue::None },
-				{ "Blend", ::Core::GraphicsComponentData::ModifiedValue::Blend },
-				{ "CullFace", ::Core::GraphicsComponentData::ModifiedValue::CullFace },
-				{ "DepthTest", ::Core::GraphicsComponentData::ModifiedValue::DepthTest },
-				{ "Dither", ::Core::GraphicsComponentData::ModifiedValue::Dither },
-				{ "PolygonOffsetFill", ::Core::GraphicsComponentData::ModifiedValue::PolygonOffsetFill },
-				{ "PolygonOffsetLine", ::Core::GraphicsComponentData::ModifiedValue::PolygonOffsetLine },
-				{ "PolygonOffsetPoint", ::Core::GraphicsComponentData::ModifiedValue::PolygonOffsetPoint },
-				{ "PrimitiveRestart", ::Core::GraphicsComponentData::ModifiedValue::PrimitiveRestart },
-				{ "PrimitiveRestartFixedIndex", ::Core::GraphicsComponentData::ModifiedValue::PrimitiveRestartFixedIndex },
-				{ "RasterizerDiscard", ::Core::GraphicsComponentData::ModifiedValue::RasterizerDiscard },
-				{ "SampleAlphaToCoverage", ::Core::GraphicsComponentData::ModifiedValue::SampleAlphaToCoverage },
-				{ "SampleAlphaToOne", ::Core::GraphicsComponentData::ModifiedValue::SampleAlphaToOne },
-				{ "SampleCoverage", ::Core::GraphicsComponentData::ModifiedValue::SampleCoverage },
-				{ "SampleMask", ::Core::GraphicsComponentData::ModifiedValue::SampleMask },
-				{ "ScissorTest", ::Core::GraphicsComponentData::ModifiedValue::ScissorTest },
-				{ "StencilTest", ::Core::GraphicsComponentData::ModifiedValue::StencilTest },
-				{ "Multisample", ::Core::GraphicsComponentData::ModifiedValue::Multisample },
-				{ "FramebufferSrgb", ::Core::GraphicsComponentData::ModifiedValue::FramebufferSrgb },
-				{ "ProgramPointSize", ::Core::GraphicsComponentData::ModifiedValue::ProgramPointSize }
+        static const std::unordered_map<std::string_view, ::Core::InterleavedGraphicsData::ModifiedValue> map = {
+				{ "None", ::Core::InterleavedGraphicsData::ModifiedValue::None },
+				{ "Blend", ::Core::InterleavedGraphicsData::ModifiedValue::Blend },
+				{ "CullFace", ::Core::InterleavedGraphicsData::ModifiedValue::CullFace },
+				{ "DepthTest", ::Core::InterleavedGraphicsData::ModifiedValue::DepthTest },
+				{ "Dither", ::Core::InterleavedGraphicsData::ModifiedValue::Dither },
+				{ "PolygonOffsetFill", ::Core::InterleavedGraphicsData::ModifiedValue::PolygonOffsetFill },
+				{ "PolygonOffsetLine", ::Core::InterleavedGraphicsData::ModifiedValue::PolygonOffsetLine },
+				{ "PolygonOffsetPoint", ::Core::InterleavedGraphicsData::ModifiedValue::PolygonOffsetPoint },
+				{ "PrimitiveRestart", ::Core::InterleavedGraphicsData::ModifiedValue::PrimitiveRestart },
+				{ "PrimitiveRestartFixedIndex", ::Core::InterleavedGraphicsData::ModifiedValue::PrimitiveRestartFixedIndex },
+				{ "RasterizerDiscard", ::Core::InterleavedGraphicsData::ModifiedValue::RasterizerDiscard },
+				{ "SampleAlphaToCoverage", ::Core::InterleavedGraphicsData::ModifiedValue::SampleAlphaToCoverage },
+				{ "SampleAlphaToOne", ::Core::InterleavedGraphicsData::ModifiedValue::SampleAlphaToOne },
+				{ "SampleCoverage", ::Core::InterleavedGraphicsData::ModifiedValue::SampleCoverage },
+				{ "SampleMask", ::Core::InterleavedGraphicsData::ModifiedValue::SampleMask },
+				{ "ScissorTest", ::Core::InterleavedGraphicsData::ModifiedValue::ScissorTest },
+				{ "StencilTest", ::Core::InterleavedGraphicsData::ModifiedValue::StencilTest },
+				{ "Multisample", ::Core::InterleavedGraphicsData::ModifiedValue::Multisample },
+				{ "FramebufferSrgb", ::Core::InterleavedGraphicsData::ModifiedValue::FramebufferSrgb },
+				{ "ProgramPointSize", ::Core::InterleavedGraphicsData::ModifiedValue::ProgramPointSize }
         };
 
         return map;
     }
-}; // struct R<Core::GraphicsComponentData::ModifiedValue>
+}; // struct R<Core::InterleavedGraphicsData::ModifiedValue>
 
 template<>
-struct R<Core::GraphicsComponentData::Modifier>
+struct R<Core::InterleavedGraphicsData::Modifier>
 {
     static constexpr std::string_view Name() { return "Modifier"; }
     static constexpr std::size_t Size() { return 3; }
-    static constexpr std::string_view ParentScope() { return "Core::GraphicsComponentData"; }
+    static constexpr std::string_view ParentScope() { return "Core::InterleavedGraphicsData"; }
 
-    static std::string_view ToString(::Core::GraphicsComponentData::Modifier value)
+    static std::string_view ToString(::Core::InterleavedGraphicsData::Modifier value)
     {
-        const auto& data = R<Core::GraphicsComponentData::Modifier>::ToMapCN();
+        const auto& data = R<Core::InterleavedGraphicsData::Modifier>::ToMapCN();
         const auto it = data.find(value);
         if (it != data.end()) [[likely]]
         {
@@ -176,9 +176,9 @@ struct R<Core::GraphicsComponentData::Modifier>
         return empty;
     }
 
-    static std::optional<::Core::GraphicsComponentData::Modifier> FromString(std::string_view value)
+    static std::optional<::Core::InterleavedGraphicsData::Modifier> FromString(std::string_view value)
     {
-        const auto& data = R<Core::GraphicsComponentData::Modifier>::ToMapNC();
+        const auto& data = R<Core::InterleavedGraphicsData::Modifier>::ToMapNC();
         const auto it = data.find(value);
         if (it != data.end()) [[likely]]
         {
@@ -187,12 +187,12 @@ struct R<Core::GraphicsComponentData::Modifier>
         return std::nullopt;
     }
 
-    static constexpr const std::array<::Core::GraphicsComponentData::Modifier, 3>& ToArrayC()
+    static constexpr const std::array<::Core::InterleavedGraphicsData::Modifier, 3>& ToArrayC()
     {
-        static constexpr std::array<::Core::GraphicsComponentData::Modifier, 3> constants = {
-				::Core::GraphicsComponentData::Modifier::None,
-				::Core::GraphicsComponentData::Modifier::Enable,
-				::Core::GraphicsComponentData::Modifier::Disable
+        static constexpr std::array<::Core::InterleavedGraphicsData::Modifier, 3> constants = {
+				::Core::InterleavedGraphicsData::Modifier::None,
+				::Core::InterleavedGraphicsData::Modifier::Enable,
+				::Core::InterleavedGraphicsData::Modifier::Disable
         };
 
         return constants;
@@ -209,33 +209,33 @@ struct R<Core::GraphicsComponentData::Modifier>
         return names;
     }
 
-    static const std::unordered_map<::Core::GraphicsComponentData::Modifier, std::string_view>& ToMapCN()
+    static const std::unordered_map<::Core::InterleavedGraphicsData::Modifier, std::string_view>& ToMapCN()
     {
-        static const std::unordered_map<::Core::GraphicsComponentData::Modifier, std::string_view> map = {
-				{ ::Core::GraphicsComponentData::Modifier::None, "None" },
-				{ ::Core::GraphicsComponentData::Modifier::Enable, "Enable" },
-				{ ::Core::GraphicsComponentData::Modifier::Disable, "Disable" }
+        static const std::unordered_map<::Core::InterleavedGraphicsData::Modifier, std::string_view> map = {
+				{ ::Core::InterleavedGraphicsData::Modifier::None, "None" },
+				{ ::Core::InterleavedGraphicsData::Modifier::Enable, "Enable" },
+				{ ::Core::InterleavedGraphicsData::Modifier::Disable, "Disable" }
         };
 
         return map;
     }
 
-    static const std::unordered_map<std::string_view, ::Core::GraphicsComponentData::Modifier>& ToMapNC()
+    static const std::unordered_map<std::string_view, ::Core::InterleavedGraphicsData::Modifier>& ToMapNC()
     {
-        static const std::unordered_map<std::string_view, ::Core::GraphicsComponentData::Modifier> map = {
-				{ "None", ::Core::GraphicsComponentData::Modifier::None },
-				{ "Enable", ::Core::GraphicsComponentData::Modifier::Enable },
-				{ "Disable", ::Core::GraphicsComponentData::Modifier::Disable }
+        static const std::unordered_map<std::string_view, ::Core::InterleavedGraphicsData::Modifier> map = {
+				{ "None", ::Core::InterleavedGraphicsData::Modifier::None },
+				{ "Enable", ::Core::InterleavedGraphicsData::Modifier::Enable },
+				{ "Disable", ::Core::InterleavedGraphicsData::Modifier::Disable }
         };
 
         return map;
     }
-}; // struct R<Core::GraphicsComponentData::Modifier>
+}; // struct R<Core::InterleavedGraphicsData::Modifier>
 
 template<>
-struct R<Core::GraphicsComponentData>
+struct R<Core::InterleavedGraphicsData>
 {
-    static constexpr std::string_view Name() { return "GraphicsComponentData"; }
+    static constexpr std::string_view Name() { return "InterleavedGraphicsData"; }
     static constexpr std::string_view ParentScope() { return "Core"; }
     static constexpr std::size_t GetFieldNumbers() { return 1; }
     static constexpr std::vector<RClassField> GetFields() {
@@ -245,7 +245,7 @@ struct R<Core::GraphicsComponentData>
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Core::GraphicsComponentData& obj, bool noSignals = false)
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Core::InterleavedGraphicsData& obj, bool noSignals = false)
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
@@ -261,7 +261,7 @@ struct R<Core::GraphicsComponentData>
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Serialize(const Core::GraphicsComponentData& obj, RResourceStream<RImpl>& s, bool noSignals = false)
+    static void Serialize(const Core::InterleavedGraphicsData& obj, RResourceStream<RImpl>& s, bool noSignals = false)
     {
         if (!noSignals)
         {
@@ -277,7 +277,7 @@ struct R<Core::GraphicsComponentData>
 
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    static void Deserialize(const RResourceStream<RImpl>& s, Core::GraphicsComponentData& obj, bool noSignals = false)
+    static void Deserialize(const RResourceStream<RImpl>& s, Core::InterleavedGraphicsData& obj, bool noSignals = false)
     {
         if (!noSignals)
         {
@@ -290,5 +290,5 @@ struct R<Core::GraphicsComponentData>
             _RTryCallPostDeserialize(obj, s.logs());
         }
     }
-}; // struct R<Core::GraphicsComponentData>
+}; // struct R<Core::InterleavedGraphicsData>
 // clang-format on

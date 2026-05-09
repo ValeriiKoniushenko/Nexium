@@ -22,8 +22,9 @@
  * SOFTWARE.
  */
 
+#include "EditorInterleavedGraphicsDataAdapter.h"
+
 #include "Editor/GuiComponents/Misc.h"
-#include "EditorGraphicsComponentDataAdapter.h"
 #include "Graphics/GraphicsComponents.h"
 
 using namespace Core::Gui;
@@ -31,19 +32,19 @@ using namespace Core::Gui;
 namespace Core
 {
 
-    ECS_COMPONENT_IMPL(ECSEditorGraphicsComponentDataAdapter);
+    ECS_COMPONENT_IMPL(ECSEditorInterleavedGraphicsDataAdapter);
 
-    bool ECSEditorGraphicsComponentDataAdapter::canWorkWith(BaseComponent* component) const
+    bool ECSEditorInterleavedGraphicsDataAdapter::canWorkWith(BaseComponent* component) const
     {
-        return dynamic_cast<GraphicsComponentData*>(component) != nullptr;
+        return dynamic_cast<InterleavedGraphicsData*>(component) != nullptr;
     }
 
-    void ECSEditorGraphicsComponentDataAdapter::onApplyAssetData(const nlohmann::json& json)
+    void ECSEditorInterleavedGraphicsDataAdapter::onApplyAssetData(const nlohmann::json& json)
     {
-        auto* comp = dynamic_cast<GraphicsComponentData*>(getTargetComponent());
+        auto* comp = dynamic_cast<InterleavedGraphicsData*>(getTargetComponent());
         if (!Verify(comp)) [[unlikely]]
         {
-            warnLog("Can't cast component to GraphicsComponentData, but it must be cast!");
+            warnLog("Can't cast component to InterleavedGraphicsData, but it must be cast!");
             return;
         }
 
@@ -54,7 +55,7 @@ namespace Core
         }
     }
 
-    void ECSEditorGraphicsComponentDataAdapter::onInitialize()
+    void ECSEditorInterleavedGraphicsDataAdapter::onInitialize()
     {
         ECSEditorMimeAdapter::onInitialize();
 
@@ -70,19 +71,20 @@ namespace Core
         _subscriptionPool << _modifiers->input->onSave->subscribeAndGetID(
             [this](auto&& params)
             {
-                auto* comp = dynamic_cast<GraphicsComponentData*>(getTargetComponent());
+                auto* comp = dynamic_cast<InterleavedGraphicsData*>(getTargetComponent());
                 if (!Verify(comp)) [[unlikely]]
                 {
-                    warnLog("Can't cast component to GraphicsComponentData, but it must be cast!");
+                    warnLog(
+                        "Can't cast component to InterleavedGraphicsData, but it must be cast!");
                     return;
                 }
                 comp->setDrawModifiers(params);
             });
     }
 
-    void ECSEditorGraphicsComponentDataAdapter::onDraw(float dt)
+    void ECSEditorInterleavedGraphicsDataAdapter::onDraw(float dt)
     {
-        if (Gui::CollapsingHeader("GraphicsComponentData properties",
+        if (Gui::CollapsingHeader("InterleavedGraphicsData properties",
                                   ImGuiTreeNodeFlags_DefaultOpen))
         {
             _layout.tick(dt);

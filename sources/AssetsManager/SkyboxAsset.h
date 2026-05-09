@@ -67,7 +67,7 @@ namespace Core
         void onUnloadRequest() override;
 
     protected:
-        GraphicsComponentData _gcd;
+        InterleavedGraphicsData _gcd;
         // properties
 
         FIELD();
