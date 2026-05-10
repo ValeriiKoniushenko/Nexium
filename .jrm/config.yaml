@@ -34,3 +34,6 @@ insertCodeAtTheTop: "// clang-format off"
 
 # A string will be added to the bottom of the generated file
 insertCodeAtTheBottom: "// clang-format on"
+
+# Ignore signals that are used for serialization purposes. If true, only the mehtod on(Pre/Post)[De]Serialize will be called from the top called object. If false, every class will try to use only its own on(Pre/Post)[De]Serialize method.
+ignoreSerializationSignals: true

@@ -27,13 +27,13 @@ struct R<Core::GameViewportEWC>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::GameViewportEWC>(obj);
         }
 
 		s.write(R<Core::BaseFloatEWC>::Serialize<RImpl>(obj).getData());
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::GameViewportEWC>(obj, s.logs());
         }
         return s;
     }
@@ -43,13 +43,13 @@ struct R<Core::GameViewportEWC>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::GameViewportEWC>(obj);
         }
 
 		s.write(R<Core::BaseFloatEWC>::Serialize<RImpl>(obj).getData());
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::GameViewportEWC>(obj, s.logs());
         }
     }
 
@@ -59,13 +59,13 @@ struct R<Core::GameViewportEWC>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Core::GameViewportEWC>(obj);
         }
 
 		R<Core::BaseFloatEWC>::Deserialize<RImpl>(s, obj, true);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Core::GameViewportEWC>(obj, s.logs());
         }
     }
 }; // struct R<Core::GameViewportEWC>

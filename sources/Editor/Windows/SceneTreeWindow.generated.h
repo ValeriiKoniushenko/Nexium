@@ -27,13 +27,13 @@ struct R<Core::SceneTreeWindowEWC>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::SceneTreeWindowEWC>(obj);
         }
 
 		s.write(R<Core::BaseFloatEWC>::Serialize<RImpl>(obj).getData());
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::SceneTreeWindowEWC>(obj, s.logs());
         }
         return s;
     }
@@ -43,13 +43,13 @@ struct R<Core::SceneTreeWindowEWC>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::SceneTreeWindowEWC>(obj);
         }
 
 		s.write(R<Core::BaseFloatEWC>::Serialize<RImpl>(obj).getData());
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::SceneTreeWindowEWC>(obj, s.logs());
         }
     }
 
@@ -59,13 +59,13 @@ struct R<Core::SceneTreeWindowEWC>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Core::SceneTreeWindowEWC>(obj);
         }
 
 		R<Core::BaseFloatEWC>::Deserialize<RImpl>(s, obj, true);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Core::SceneTreeWindowEWC>(obj, s.logs());
         }
     }
 }; // struct R<Core::SceneTreeWindowEWC>

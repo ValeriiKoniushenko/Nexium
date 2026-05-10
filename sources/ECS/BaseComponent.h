@@ -451,15 +451,14 @@ namespace Core
         [[nodiscard]] virtual nlohmann::json serialize() const;
         virtual void deserialize(RResourceStream<RJsonResourceStream>& stream);
 
-    protected:
-        AbstractComponent() = default;
-
         virtual void onPreDeserialize(AbstractComponent* obj);
         virtual void onPostDeserialize(AbstractComponent* obj, const RLogsCollector& logs);
         virtual void onPreSerialize(const AbstractComponent* obj) const;
         virtual void onPostSerialize(const AbstractComponent* obj,
                                      const RLogsCollector& logs) const;
 
+    protected:
+        AbstractComponent() = default;
         /**
          * This method will be called automatically. Don't call it directly.
          */
@@ -815,13 +814,13 @@ namespace Core
         [[nodiscard]] nlohmann::json serialize() const override;
         void deserialize(RResourceStream<RJsonResourceStream>& stream) override;
 
-    protected:
         void onPreDeserialize(AbstractComponent* obj) override;
         void onPostDeserialize(AbstractComponent* obj, const RLogsCollector& logs) override;
         void onPreSerialize(const AbstractComponent* obj) const override;
         void onPostSerialize(const AbstractComponent* obj,
                              const RLogsCollector& logs) const override;
 
+    protected:
         virtual bool addChildValidator(BaseComponent* newChild) { return true; }
 
         virtual void onAddChild(BaseComponent* newChild) {}

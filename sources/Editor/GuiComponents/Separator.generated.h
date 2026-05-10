@@ -27,13 +27,13 @@ struct R<Core::Gui::Separator>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::Separator>(obj);
         }
 
 		s.write(R<Core::Gui::Widget>::Serialize<RImpl>(obj).getData());
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::Separator>(obj, s.logs());
         }
         return s;
     }
@@ -43,13 +43,13 @@ struct R<Core::Gui::Separator>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::Separator>(obj);
         }
 
 		s.write(R<Core::Gui::Widget>::Serialize<RImpl>(obj).getData());
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::Separator>(obj, s.logs());
         }
     }
 
@@ -59,13 +59,13 @@ struct R<Core::Gui::Separator>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Core::Gui::Separator>(obj);
         }
 
 		R<Core::Gui::Widget>::Deserialize<RImpl>(s, obj, true);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Core::Gui::Separator>(obj, s.logs());
         }
     }
 }; // struct R<Core::Gui::Separator>

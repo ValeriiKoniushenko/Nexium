@@ -1,12 +1,4 @@
 If:
-  PathMatch: .*\.generated\.h
-Diagnostics:
-  Suppress: ["*"]
-  UnusedIncludes: None
-
----
-
-If:
   PathMatch: .*/build/.*/_deps/.*
 Diagnostics:
   Suppress: ["*"]

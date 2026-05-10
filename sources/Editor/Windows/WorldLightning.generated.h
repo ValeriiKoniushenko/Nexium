@@ -27,13 +27,13 @@ struct R<Core::WorldLightningEWC>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::WorldLightningEWC>(obj);
         }
 
 		s.write(R<Core::BaseFloatEWC>::Serialize<RImpl>(obj).getData());
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::WorldLightningEWC>(obj, s.logs());
         }
         return s;
     }
@@ -43,13 +43,13 @@ struct R<Core::WorldLightningEWC>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::WorldLightningEWC>(obj);
         }
 
 		s.write(R<Core::BaseFloatEWC>::Serialize<RImpl>(obj).getData());
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::WorldLightningEWC>(obj, s.logs());
         }
     }
 
@@ -59,13 +59,13 @@ struct R<Core::WorldLightningEWC>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Core::WorldLightningEWC>(obj);
         }
 
 		R<Core::BaseFloatEWC>::Deserialize<RImpl>(s, obj, true);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Core::WorldLightningEWC>(obj, s.logs());
         }
     }
 }; // struct R<Core::WorldLightningEWC>

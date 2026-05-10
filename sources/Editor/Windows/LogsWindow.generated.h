@@ -28,14 +28,14 @@ struct R<Core::LogsWindowEWC>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::LogsWindowEWC>(obj);
         }
 
 		s.write(R<Core::BaseFloatEWC>::Serialize<RImpl>(obj).getData());
 		s.write("_logLimit", obj._logLimit);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::LogsWindowEWC>(obj, s.logs());
         }
         return s;
     }
@@ -45,14 +45,14 @@ struct R<Core::LogsWindowEWC>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::LogsWindowEWC>(obj);
         }
 
 		s.write(R<Core::BaseFloatEWC>::Serialize<RImpl>(obj).getData());
 		s.write("_logLimit", obj._logLimit);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::LogsWindowEWC>(obj, s.logs());
         }
     }
 
@@ -62,14 +62,14 @@ struct R<Core::LogsWindowEWC>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Core::LogsWindowEWC>(obj);
         }
 
 		R<Core::BaseFloatEWC>::Deserialize<RImpl>(s, obj, true);
 		s.read("_logLimit", obj._logLimit, 500);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Core::LogsWindowEWC>(obj, s.logs());
         }
     }
 }; // struct R<Core::LogsWindowEWC>

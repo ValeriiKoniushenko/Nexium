@@ -28,14 +28,14 @@ struct R<Core::Gui::VerticalLayout>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::VerticalLayout>(obj);
         }
 
 		s.write(R<Core::Gui::Layout>::Serialize<RImpl>(obj).getData());
 		s.write("_spacing", obj._spacing);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::VerticalLayout>(obj, s.logs());
         }
         return s;
     }
@@ -45,14 +45,14 @@ struct R<Core::Gui::VerticalLayout>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::VerticalLayout>(obj);
         }
 
 		s.write(R<Core::Gui::Layout>::Serialize<RImpl>(obj).getData());
 		s.write("_spacing", obj._spacing);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::VerticalLayout>(obj, s.logs());
         }
     }
 
@@ -62,14 +62,14 @@ struct R<Core::Gui::VerticalLayout>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Core::Gui::VerticalLayout>(obj);
         }
 
 		R<Core::Gui::Layout>::Deserialize<RImpl>(s, obj, true);
 		s.read("_spacing", obj._spacing, 4);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Core::Gui::VerticalLayout>(obj, s.logs());
         }
     }
 }; // struct R<Core::Gui::VerticalLayout>

@@ -91,8 +91,6 @@ namespace Core
 
         grid.draw();
 
-        return;
-
         _postDrawBuffer.resize(0);
 
         for (auto&& asset : _objects)

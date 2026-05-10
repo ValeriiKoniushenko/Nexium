@@ -209,7 +209,7 @@ struct R<Core::Gui::Widget>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::Widget>(obj);
         }
 
 		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
@@ -220,7 +220,7 @@ struct R<Core::Gui::Widget>
 		s.write("_isDisabledWidget", obj._isDisabledWidget);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::Widget>(obj, s.logs());
         }
         return s;
     }
@@ -230,7 +230,7 @@ struct R<Core::Gui::Widget>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::Widget>(obj);
         }
 
 		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
@@ -241,7 +241,7 @@ struct R<Core::Gui::Widget>
 		s.write("_isDisabledWidget", obj._isDisabledWidget);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::Widget>(obj, s.logs());
         }
     }
 
@@ -251,7 +251,7 @@ struct R<Core::Gui::Widget>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Core::Gui::Widget>(obj);
         }
 
 		R<Core::BaseComponent>::Deserialize<RImpl>(s, obj, true);
@@ -262,7 +262,7 @@ struct R<Core::Gui::Widget>
 		s.read("_isDisabledWidget", obj._isDisabledWidget, false);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Core::Gui::Widget>(obj, s.logs());
         }
     }
 }; // struct R<Core::Gui::Widget>

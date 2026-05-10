@@ -27,13 +27,13 @@ struct R<Core::ImageViewerEWC>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::ImageViewerEWC>(obj);
         }
 
 		s.write(R<Core::BaseFloatEWC>::Serialize<RImpl>(obj).getData());
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::ImageViewerEWC>(obj, s.logs());
         }
         return s;
     }
@@ -43,13 +43,13 @@ struct R<Core::ImageViewerEWC>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::ImageViewerEWC>(obj);
         }
 
 		s.write(R<Core::BaseFloatEWC>::Serialize<RImpl>(obj).getData());
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::ImageViewerEWC>(obj, s.logs());
         }
     }
 
@@ -59,13 +59,13 @@ struct R<Core::ImageViewerEWC>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Core::ImageViewerEWC>(obj);
         }
 
 		R<Core::BaseFloatEWC>::Deserialize<RImpl>(s, obj, true);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Core::ImageViewerEWC>(obj, s.logs());
         }
     }
 }; // struct R<Core::ImageViewerEWC>

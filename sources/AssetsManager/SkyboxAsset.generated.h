@@ -119,7 +119,7 @@ struct R<Core::SkyboxAsset>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::SkyboxAsset>(obj);
         }
 
 		s.write(R<Core::BaseAsset>::Serialize<RImpl>(obj).getData());
@@ -127,7 +127,7 @@ struct R<Core::SkyboxAsset>
 		s.write("_isFlipVertically", obj._isFlipVertically);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::SkyboxAsset>(obj, s.logs());
         }
         return s;
     }
@@ -137,7 +137,7 @@ struct R<Core::SkyboxAsset>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::SkyboxAsset>(obj);
         }
 
 		s.write(R<Core::BaseAsset>::Serialize<RImpl>(obj).getData());
@@ -145,7 +145,7 @@ struct R<Core::SkyboxAsset>
 		s.write("_isFlipVertically", obj._isFlipVertically);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::SkyboxAsset>(obj, s.logs());
         }
     }
 
@@ -155,7 +155,7 @@ struct R<Core::SkyboxAsset>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Core::SkyboxAsset>(obj);
         }
 
 		R<Core::BaseAsset>::Deserialize<RImpl>(s, obj, true);
@@ -163,7 +163,7 @@ struct R<Core::SkyboxAsset>
 		s.read("_isFlipVertically", obj._isFlipVertically, false);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Core::SkyboxAsset>(obj, s.logs());
         }
     }
 }; // struct R<Core::SkyboxAsset>

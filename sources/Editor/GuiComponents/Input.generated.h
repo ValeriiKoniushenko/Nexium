@@ -30,7 +30,7 @@ struct R<Core::Gui::BaseInput>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::BaseInput>(obj);
         }
 
 		s.write(R<Core::Gui::Widget>::Serialize<RImpl>(obj).getData());
@@ -39,7 +39,7 @@ struct R<Core::Gui::BaseInput>
 		s.write("_size", obj._size);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::BaseInput>(obj, s.logs());
         }
         return s;
     }
@@ -49,7 +49,7 @@ struct R<Core::Gui::BaseInput>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::BaseInput>(obj);
         }
 
 		s.write(R<Core::Gui::Widget>::Serialize<RImpl>(obj).getData());
@@ -58,7 +58,7 @@ struct R<Core::Gui::BaseInput>
 		s.write("_size", obj._size);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::BaseInput>(obj, s.logs());
         }
     }
 
@@ -68,7 +68,7 @@ struct R<Core::Gui::BaseInput>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Core::Gui::BaseInput>(obj);
         }
 
 		R<Core::Gui::Widget>::Deserialize<RImpl>(s, obj, true);
@@ -77,7 +77,7 @@ struct R<Core::Gui::BaseInput>
 		s.read("_size", obj._size, glm::vec2{});
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Core::Gui::BaseInput>(obj, s.logs());
         }
     }
 }; // struct R<Core::Gui::BaseInput>
@@ -101,7 +101,7 @@ struct R<Core::Gui::TextInput>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::TextInput>(obj);
         }
 
 		s.write(R<Core::Gui::BaseInput>::Serialize<RImpl>(obj).getData());
@@ -110,7 +110,7 @@ struct R<Core::Gui::TextInput>
 		s.write("_flags", obj._flags);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::TextInput>(obj, s.logs());
         }
         return s;
     }
@@ -120,7 +120,7 @@ struct R<Core::Gui::TextInput>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::TextInput>(obj);
         }
 
 		s.write(R<Core::Gui::BaseInput>::Serialize<RImpl>(obj).getData());
@@ -129,7 +129,7 @@ struct R<Core::Gui::TextInput>
 		s.write("_flags", obj._flags);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::TextInput>(obj, s.logs());
         }
     }
 
@@ -139,7 +139,7 @@ struct R<Core::Gui::TextInput>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Core::Gui::TextInput>(obj);
         }
 
 		R<Core::Gui::BaseInput>::Deserialize<RImpl>(s, obj, true);
@@ -148,7 +148,7 @@ struct R<Core::Gui::TextInput>
 		s.read("_flags", obj._flags, ImGuiInputTextFlags_None);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Core::Gui::TextInput>(obj, s.logs());
         }
     }
 }; // struct R<Core::Gui::TextInput>
@@ -171,7 +171,7 @@ struct R<Core::Gui::Color3Input>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::Color3Input>(obj);
         }
 
 		s.write(R<Core::Gui::BaseInput>::Serialize<RImpl>(obj).getData());
@@ -179,7 +179,7 @@ struct R<Core::Gui::Color3Input>
 		s.write("_stringBuffer", obj._stringBuffer);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::Color3Input>(obj, s.logs());
         }
         return s;
     }
@@ -189,7 +189,7 @@ struct R<Core::Gui::Color3Input>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::Color3Input>(obj);
         }
 
 		s.write(R<Core::Gui::BaseInput>::Serialize<RImpl>(obj).getData());
@@ -197,7 +197,7 @@ struct R<Core::Gui::Color3Input>
 		s.write("_stringBuffer", obj._stringBuffer);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::Color3Input>(obj, s.logs());
         }
     }
 
@@ -207,7 +207,7 @@ struct R<Core::Gui::Color3Input>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Core::Gui::Color3Input>(obj);
         }
 
 		R<Core::Gui::BaseInput>::Deserialize<RImpl>(s, obj, true);
@@ -215,7 +215,7 @@ struct R<Core::Gui::Color3Input>
 		s.read("_stringBuffer", obj._stringBuffer, "0 0 0");
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Core::Gui::Color3Input>(obj, s.logs());
         }
     }
 }; // struct R<Core::Gui::Color3Input>

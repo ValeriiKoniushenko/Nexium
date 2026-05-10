@@ -29,14 +29,14 @@ struct R<Core::AbstractComponent>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::AbstractComponent>(obj);
         }
 
 		s.write("_isEnabled", obj._isEnabled);
 		s.write("_noTick", obj._noTick);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::AbstractComponent>(obj, s.logs());
         }
         return s;
     }
@@ -46,14 +46,14 @@ struct R<Core::AbstractComponent>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::AbstractComponent>(obj);
         }
 
 		s.write("_isEnabled", obj._isEnabled);
 		s.write("_noTick", obj._noTick);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::AbstractComponent>(obj, s.logs());
         }
     }
 
@@ -63,14 +63,14 @@ struct R<Core::AbstractComponent>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Core::AbstractComponent>(obj);
         }
 
 		s.read("_isEnabled", obj._isEnabled, true);
 		s.read("_noTick", obj._noTick, false);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Core::AbstractComponent>(obj, s.logs());
         }
     }
 }; // struct R<Core::AbstractComponent>
@@ -94,7 +94,7 @@ struct R<Core::BaseComponent>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::BaseComponent>(obj);
         }
 
 		s.write(R<Core::AbstractComponent>::Serialize<RImpl>(obj).getData());
@@ -103,7 +103,7 @@ struct R<Core::BaseComponent>
 		s.write("_type", obj._type);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::BaseComponent>(obj, s.logs());
         }
         return s;
     }
@@ -113,7 +113,7 @@ struct R<Core::BaseComponent>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::BaseComponent>(obj);
         }
 
 		s.write(R<Core::AbstractComponent>::Serialize<RImpl>(obj).getData());
@@ -122,7 +122,7 @@ struct R<Core::BaseComponent>
 		s.write("_type", obj._type);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::BaseComponent>(obj, s.logs());
         }
     }
 
@@ -132,7 +132,7 @@ struct R<Core::BaseComponent>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Core::BaseComponent>(obj);
         }
 
 		R<Core::AbstractComponent>::Deserialize<RImpl>(s, obj, true);
@@ -141,7 +141,7 @@ struct R<Core::BaseComponent>
 		s.read("_type", obj._type, 4);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Core::BaseComponent>(obj, s.logs());
         }
     }
 }; // struct R<Core::BaseComponent>

@@ -28,14 +28,14 @@ struct R<Core::Gui::Spacer>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::Spacer>(obj);
         }
 
 		s.write(R<Core::Gui::Widget>::Serialize<RImpl>(obj).getData());
 		s.write("_size", obj._size);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::Spacer>(obj, s.logs());
         }
         return s;
     }
@@ -45,14 +45,14 @@ struct R<Core::Gui::Spacer>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::Spacer>(obj);
         }
 
 		s.write(R<Core::Gui::Widget>::Serialize<RImpl>(obj).getData());
 		s.write("_size", obj._size);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::Spacer>(obj, s.logs());
         }
     }
 
@@ -62,14 +62,14 @@ struct R<Core::Gui::Spacer>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Core::Gui::Spacer>(obj);
         }
 
 		R<Core::Gui::Widget>::Deserialize<RImpl>(s, obj, true);
 		s.read("_size", obj._size, glm::vec2{});
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Core::Gui::Spacer>(obj, s.logs());
         }
     }
 }; // struct R<Core::Gui::Spacer>

@@ -29,14 +29,14 @@ struct R<Core::TextureAsset>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::TextureAsset>(obj);
         }
 
 		s.write("_path", obj._path);
 		s.write("_isFlipVertically", obj._isFlipVertically);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::TextureAsset>(obj, s.logs());
         }
         return s;
     }
@@ -46,14 +46,14 @@ struct R<Core::TextureAsset>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::TextureAsset>(obj);
         }
 
 		s.write("_path", obj._path);
 		s.write("_isFlipVertically", obj._isFlipVertically);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::TextureAsset>(obj, s.logs());
         }
     }
 
@@ -63,14 +63,14 @@ struct R<Core::TextureAsset>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Core::TextureAsset>(obj);
         }
 
 		s.read("_path", obj._path, 4);
 		s.read("_isFlipVertically", obj._isFlipVertically, false);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Core::TextureAsset>(obj, s.logs());
         }
     }
 }; // struct R<Core::TextureAsset>

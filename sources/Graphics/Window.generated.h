@@ -184,7 +184,7 @@ struct R<Core::Window>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Window>(obj);
         }
 
 		s.write("_size", obj._size);
@@ -193,7 +193,7 @@ struct R<Core::Window>
 		s.write("_swapInterval", obj._swapInterval);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Window>(obj, s.logs());
         }
         return s;
     }
@@ -203,7 +203,7 @@ struct R<Core::Window>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Window>(obj);
         }
 
 		s.write("_size", obj._size);
@@ -212,7 +212,7 @@ struct R<Core::Window>
 		s.write("_swapInterval", obj._swapInterval);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Window>(obj, s.logs());
         }
     }
 
@@ -222,7 +222,7 @@ struct R<Core::Window>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Core::Window>(obj);
         }
 
 		s.read("_size", obj._size, 4);
@@ -231,7 +231,7 @@ struct R<Core::Window>
 		s.read("_swapInterval", obj._swapInterval, true);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Core::Window>(obj, s.logs());
         }
     }
 }; // struct R<Core::Window>

@@ -37,7 +37,7 @@ struct R<Core::Gui::Button>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::Button>(obj);
         }
 
 		s.write(R<Core::Gui::Widget>::Serialize<RImpl>(obj).getData());
@@ -53,7 +53,7 @@ struct R<Core::Gui::Button>
 		s.write("_minSize", obj._minSize);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::Button>(obj, s.logs());
         }
         return s;
     }
@@ -63,7 +63,7 @@ struct R<Core::Gui::Button>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::Button>(obj);
         }
 
 		s.write(R<Core::Gui::Widget>::Serialize<RImpl>(obj).getData());
@@ -79,7 +79,7 @@ struct R<Core::Gui::Button>
 		s.write("_minSize", obj._minSize);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::Button>(obj, s.logs());
         }
     }
 
@@ -89,7 +89,7 @@ struct R<Core::Gui::Button>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Core::Gui::Button>(obj);
         }
 
 		R<Core::Gui::Widget>::Deserialize<RImpl>(s, obj, true);
@@ -105,7 +105,7 @@ struct R<Core::Gui::Button>
 		s.read("_minSize", obj._minSize, glm::vec2{});
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Core::Gui::Button>(obj, s.logs());
         }
     }
 }; // struct R<Core::Gui::Button>
@@ -127,14 +127,14 @@ struct R<Core::Gui::ToggleButton>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::ToggleButton>(obj);
         }
 
 		s.write(R<Core::Gui::Button>::Serialize<RImpl>(obj).getData());
 		s.write("_isActive", obj._isActive);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::ToggleButton>(obj, s.logs());
         }
         return s;
     }
@@ -144,14 +144,14 @@ struct R<Core::Gui::ToggleButton>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::ToggleButton>(obj);
         }
 
 		s.write(R<Core::Gui::Button>::Serialize<RImpl>(obj).getData());
 		s.write("_isActive", obj._isActive);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::ToggleButton>(obj, s.logs());
         }
     }
 
@@ -161,14 +161,14 @@ struct R<Core::Gui::ToggleButton>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Core::Gui::ToggleButton>(obj);
         }
 
 		R<Core::Gui::Button>::Deserialize<RImpl>(s, obj, true);
 		s.read("_isActive", obj._isActive, true);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Core::Gui::ToggleButton>(obj, s.logs());
         }
     }
 }; // struct R<Core::Gui::ToggleButton>
@@ -190,14 +190,14 @@ struct R<Core::Gui::ImageButton>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::ImageButton>(obj);
         }
 
 		s.write(R<Core::Gui::Button>::Serialize<RImpl>(obj).getData());
 		s.write("_paddingSize", obj._paddingSize);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::ImageButton>(obj, s.logs());
         }
         return s;
     }
@@ -207,14 +207,14 @@ struct R<Core::Gui::ImageButton>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::ImageButton>(obj);
         }
 
 		s.write(R<Core::Gui::Button>::Serialize<RImpl>(obj).getData());
 		s.write("_paddingSize", obj._paddingSize);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::ImageButton>(obj, s.logs());
         }
     }
 
@@ -224,14 +224,14 @@ struct R<Core::Gui::ImageButton>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Core::Gui::ImageButton>(obj);
         }
 
 		R<Core::Gui::Button>::Deserialize<RImpl>(s, obj, true);
 		s.read("_paddingSize", obj._paddingSize, 4);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Core::Gui::ImageButton>(obj, s.logs());
         }
     }
 }; // struct R<Core::Gui::ImageButton>

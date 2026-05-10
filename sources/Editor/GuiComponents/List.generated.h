@@ -29,7 +29,7 @@ struct R<Core::Gui::BaseList>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::BaseList>(obj);
         }
 
 		s.write(R<Core::Gui::Widget>::Serialize<RImpl>(obj).getData());
@@ -37,7 +37,7 @@ struct R<Core::Gui::BaseList>
 		s.write("_size", obj._size);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::BaseList>(obj, s.logs());
         }
         return s;
     }
@@ -47,7 +47,7 @@ struct R<Core::Gui::BaseList>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::BaseList>(obj);
         }
 
 		s.write(R<Core::Gui::Widget>::Serialize<RImpl>(obj).getData());
@@ -55,7 +55,7 @@ struct R<Core::Gui::BaseList>
 		s.write("_size", obj._size);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::BaseList>(obj, s.logs());
         }
     }
 
@@ -65,7 +65,7 @@ struct R<Core::Gui::BaseList>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Core::Gui::BaseList>(obj);
         }
 
 		R<Core::Gui::Widget>::Deserialize<RImpl>(s, obj, true);
@@ -73,7 +73,7 @@ struct R<Core::Gui::BaseList>
 		s.read("_size", obj._size, glm::vec2(100.f, 150.f));
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Core::Gui::BaseList>(obj, s.logs());
         }
     }
 }; // struct R<Core::Gui::BaseList>
@@ -94,13 +94,13 @@ struct R<Core::Gui::ListView>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::ListView>(obj);
         }
 
 		s.write(R<Core::Gui::BaseList>::Serialize<RImpl>(obj).getData());
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::ListView>(obj, s.logs());
         }
         return s;
     }
@@ -110,13 +110,13 @@ struct R<Core::Gui::ListView>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::ListView>(obj);
         }
 
 		s.write(R<Core::Gui::BaseList>::Serialize<RImpl>(obj).getData());
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::ListView>(obj, s.logs());
         }
     }
 
@@ -126,13 +126,13 @@ struct R<Core::Gui::ListView>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Core::Gui::ListView>(obj);
         }
 
 		R<Core::Gui::BaseList>::Deserialize<RImpl>(s, obj, true);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Core::Gui::ListView>(obj, s.logs());
         }
     }
 }; // struct R<Core::Gui::ListView>
@@ -153,13 +153,13 @@ struct R<Core::Gui::ListModelBased>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::ListModelBased>(obj);
         }
 
 		s.write(R<Core::Gui::BaseList>::Serialize<RImpl>(obj).getData());
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::ListModelBased>(obj, s.logs());
         }
         return s;
     }
@@ -169,13 +169,13 @@ struct R<Core::Gui::ListModelBased>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::ListModelBased>(obj);
         }
 
 		s.write(R<Core::Gui::BaseList>::Serialize<RImpl>(obj).getData());
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::ListModelBased>(obj, s.logs());
         }
     }
 
@@ -185,13 +185,13 @@ struct R<Core::Gui::ListModelBased>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Core::Gui::ListModelBased>(obj);
         }
 
 		R<Core::Gui::BaseList>::Deserialize<RImpl>(s, obj, true);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Core::Gui::ListModelBased>(obj, s.logs());
         }
     }
 }; // struct R<Core::Gui::ListModelBased>

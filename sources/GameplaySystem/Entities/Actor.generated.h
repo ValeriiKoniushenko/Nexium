@@ -27,7 +27,7 @@ struct R<Core::Actor>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Actor>(obj);
         }
 
 		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
@@ -35,7 +35,7 @@ struct R<Core::Actor>
 		s.write(R<Core::IDrawable>::Serialize<RImpl>(obj).getData());
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Actor>(obj, s.logs());
         }
         return s;
     }
@@ -45,7 +45,7 @@ struct R<Core::Actor>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Actor>(obj);
         }
 
 		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
@@ -53,7 +53,7 @@ struct R<Core::Actor>
 		s.write(R<Core::IDrawable>::Serialize<RImpl>(obj).getData());
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Actor>(obj, s.logs());
         }
     }
 
@@ -63,7 +63,7 @@ struct R<Core::Actor>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Core::Actor>(obj);
         }
 
 		R<Core::BaseComponent>::Deserialize<RImpl>(s, obj, true);
@@ -71,7 +71,7 @@ struct R<Core::Actor>
 		R<Core::IDrawable>::Deserialize<RImpl>(s, obj, true);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Core::Actor>(obj, s.logs());
         }
     }
 }; // struct R<Core::Actor>

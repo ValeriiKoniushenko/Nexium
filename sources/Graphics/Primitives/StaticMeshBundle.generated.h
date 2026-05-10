@@ -28,14 +28,14 @@ struct R<Core::StaticMeshBundle>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::StaticMeshBundle>(obj);
         }
 
 		s.write(R<Core::Actor>::Serialize<RImpl>(obj).getData());
 		s.write("_ignoreSelect", obj._ignoreSelect);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::StaticMeshBundle>(obj, s.logs());
         }
         return s;
     }
@@ -45,14 +45,14 @@ struct R<Core::StaticMeshBundle>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::StaticMeshBundle>(obj);
         }
 
 		s.write(R<Core::Actor>::Serialize<RImpl>(obj).getData());
 		s.write("_ignoreSelect", obj._ignoreSelect);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::StaticMeshBundle>(obj, s.logs());
         }
     }
 
@@ -62,14 +62,14 @@ struct R<Core::StaticMeshBundle>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Core::StaticMeshBundle>(obj);
         }
 
 		R<Core::Actor>::Deserialize<RImpl>(s, obj, true);
 		s.read("_ignoreSelect", obj._ignoreSelect, false);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Core::StaticMeshBundle>(obj, s.logs());
         }
     }
 }; // struct R<Core::StaticMeshBundle>

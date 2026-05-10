@@ -32,7 +32,7 @@ struct R<Core::Gui::Layout>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::Layout>(obj);
         }
 
 		s.write(R<Core::Gui::Widget>::Serialize<RImpl>(obj).getData());
@@ -43,7 +43,7 @@ struct R<Core::Gui::Layout>
 		s.write("_secondAlign", obj._secondAlign);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::Layout>(obj, s.logs());
         }
         return s;
     }
@@ -53,7 +53,7 @@ struct R<Core::Gui::Layout>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::Layout>(obj);
         }
 
 		s.write(R<Core::Gui::Widget>::Serialize<RImpl>(obj).getData());
@@ -64,7 +64,7 @@ struct R<Core::Gui::Layout>
 		s.write("_secondAlign", obj._secondAlign);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::Layout>(obj, s.logs());
         }
     }
 
@@ -74,7 +74,7 @@ struct R<Core::Gui::Layout>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Core::Gui::Layout>(obj);
         }
 
 		R<Core::Gui::Widget>::Deserialize<RImpl>(s, obj, true);
@@ -85,7 +85,7 @@ struct R<Core::Gui::Layout>
 		s.read("_secondAlign", obj._secondAlign, Core::Gui::Align::None);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Core::Gui::Layout>(obj, s.logs());
         }
     }
 }; // struct R<Core::Gui::Layout>

@@ -6,7 +6,6 @@ file(GLOB_RECURSE CPP_SOURCES "*.cpp")
 set_source_files_properties(${CPP_SOURCES} PROPERTIES LANGUAGE CXX)
 
 file(GLOB_RECURSE CPP_HEADERS "*.h")
-exclude_generated_files(FILTERED_HEADERS CPP_HEADERS)
 
 add_library(${TARGET_NAME} STATIC)
 target_sources(${TARGET_NAME} 

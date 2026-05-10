@@ -27,12 +27,12 @@ struct R<Core::BaseAsset>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::BaseAsset>(obj);
         }
 
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::BaseAsset>(obj, s.logs());
         }
         return s;
     }
@@ -42,12 +42,12 @@ struct R<Core::BaseAsset>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::BaseAsset>(obj);
         }
 
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::BaseAsset>(obj, s.logs());
         }
     }
 
@@ -57,12 +57,12 @@ struct R<Core::BaseAsset>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Core::BaseAsset>(obj);
         }
 
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Core::BaseAsset>(obj, s.logs());
         }
     }
 }; // struct R<Core::BaseAsset>

@@ -33,7 +33,7 @@ struct R<Core::Gui::Label>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::Label>(obj);
         }
 
 		s.write(R<Core::Gui::Widget>::Serialize<RImpl>(obj).getData());
@@ -45,7 +45,7 @@ struct R<Core::Gui::Label>
 		s.write("_isTruncateLongText", obj._isTruncateLongText);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::Label>(obj, s.logs());
         }
         return s;
     }
@@ -55,7 +55,7 @@ struct R<Core::Gui::Label>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::Label>(obj);
         }
 
 		s.write(R<Core::Gui::Widget>::Serialize<RImpl>(obj).getData());
@@ -67,7 +67,7 @@ struct R<Core::Gui::Label>
 		s.write("_isTruncateLongText", obj._isTruncateLongText);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::Label>(obj, s.logs());
         }
     }
 
@@ -77,7 +77,7 @@ struct R<Core::Gui::Label>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Core::Gui::Label>(obj);
         }
 
 		R<Core::Gui::Widget>::Deserialize<RImpl>(s, obj, true);
@@ -89,7 +89,7 @@ struct R<Core::Gui::Label>
 		s.read("_isTruncateLongText", obj._isTruncateLongText, true);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Core::Gui::Label>(obj, s.logs());
         }
     }
 }; // struct R<Core::Gui::Label>

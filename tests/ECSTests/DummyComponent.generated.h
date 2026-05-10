@@ -29,7 +29,7 @@ struct R<DummyComponent>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<DummyComponent>(obj);
         }
 
 		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
@@ -37,7 +37,7 @@ struct R<DummyComponent>
 		s.write("name", obj.name);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<DummyComponent>(obj, s.logs());
         }
         return s;
     }
@@ -47,7 +47,7 @@ struct R<DummyComponent>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<DummyComponent>(obj);
         }
 
 		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
@@ -55,7 +55,7 @@ struct R<DummyComponent>
 		s.write("name", obj.name);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<DummyComponent>(obj, s.logs());
         }
     }
 
@@ -65,7 +65,7 @@ struct R<DummyComponent>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<DummyComponent>(obj);
         }
 
 		R<Core::BaseComponent>::Deserialize<RImpl>(s, obj, true);
@@ -73,7 +73,7 @@ struct R<DummyComponent>
 		s.read("name", obj.name, "Lola");
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<DummyComponent>(obj, s.logs());
         }
     }
 }; // struct R<DummyComponent>
@@ -94,13 +94,13 @@ struct R<HardConstructorComponent>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<HardConstructorComponent>(obj);
         }
 
 		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<HardConstructorComponent>(obj, s.logs());
         }
         return s;
     }
@@ -110,13 +110,13 @@ struct R<HardConstructorComponent>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<HardConstructorComponent>(obj);
         }
 
 		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<HardConstructorComponent>(obj, s.logs());
         }
     }
 
@@ -126,13 +126,13 @@ struct R<HardConstructorComponent>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<HardConstructorComponent>(obj);
         }
 
 		R<Core::BaseComponent>::Deserialize<RImpl>(s, obj, true);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<HardConstructorComponent>(obj, s.logs());
         }
     }
 }; // struct R<HardConstructorComponent>
@@ -153,13 +153,13 @@ struct R<InitSpyComponent>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<InitSpyComponent>(obj);
         }
 
 		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<InitSpyComponent>(obj, s.logs());
         }
         return s;
     }
@@ -169,13 +169,13 @@ struct R<InitSpyComponent>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<InitSpyComponent>(obj);
         }
 
 		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<InitSpyComponent>(obj, s.logs());
         }
     }
 
@@ -185,13 +185,13 @@ struct R<InitSpyComponent>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<InitSpyComponent>(obj);
         }
 
 		R<Core::BaseComponent>::Deserialize<RImpl>(s, obj, true);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<InitSpyComponent>(obj, s.logs());
         }
     }
 }; // struct R<InitSpyComponent>
@@ -215,7 +215,7 @@ struct R<Vehicle>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Vehicle>(obj);
         }
 
 		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
@@ -224,7 +224,7 @@ struct R<Vehicle>
 		s.write("running", obj.running);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Vehicle>(obj, s.logs());
         }
         return s;
     }
@@ -234,7 +234,7 @@ struct R<Vehicle>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Vehicle>(obj);
         }
 
 		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
@@ -243,7 +243,7 @@ struct R<Vehicle>
 		s.write("running", obj.running);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Vehicle>(obj, s.logs());
         }
     }
 
@@ -253,7 +253,7 @@ struct R<Vehicle>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Vehicle>(obj);
         }
 
 		R<Core::BaseComponent>::Deserialize<RImpl>(s, obj, true);
@@ -262,7 +262,7 @@ struct R<Vehicle>
 		s.read("running", obj.running, false);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Vehicle>(obj, s.logs());
         }
     }
 }; // struct R<Vehicle>
@@ -285,7 +285,7 @@ struct R<BaseCar>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<BaseCar>(obj);
         }
 
 		s.write(R<Vehicle>::Serialize<RImpl>(obj).getData());
@@ -293,7 +293,7 @@ struct R<BaseCar>
 		s.write("fuelLevel", obj.fuelLevel);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<BaseCar>(obj, s.logs());
         }
         return s;
     }
@@ -303,7 +303,7 @@ struct R<BaseCar>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<BaseCar>(obj);
         }
 
 		s.write(R<Vehicle>::Serialize<RImpl>(obj).getData());
@@ -311,7 +311,7 @@ struct R<BaseCar>
 		s.write("fuelLevel", obj.fuelLevel);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<BaseCar>(obj, s.logs());
         }
     }
 
@@ -321,7 +321,7 @@ struct R<BaseCar>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<BaseCar>(obj);
         }
 
 		R<Vehicle>::Deserialize<RImpl>(s, obj, true);
@@ -329,7 +329,7 @@ struct R<BaseCar>
 		s.read("fuelLevel", obj.fuelLevel, 0.0f);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<BaseCar>(obj, s.logs());
         }
     }
 }; // struct R<BaseCar>
@@ -352,7 +352,7 @@ struct R<Sedan>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Sedan>(obj);
         }
 
 		s.write(R<BaseCar>::Serialize<RImpl>(obj).getData());
@@ -360,7 +360,7 @@ struct R<Sedan>
 		s.write("hasSunroof", obj.hasSunroof);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Sedan>(obj, s.logs());
         }
         return s;
     }
@@ -370,7 +370,7 @@ struct R<Sedan>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Sedan>(obj);
         }
 
 		s.write(R<BaseCar>::Serialize<RImpl>(obj).getData());
@@ -378,7 +378,7 @@ struct R<Sedan>
 		s.write("hasSunroof", obj.hasSunroof);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Sedan>(obj, s.logs());
         }
     }
 
@@ -388,7 +388,7 @@ struct R<Sedan>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Sedan>(obj);
         }
 
 		R<BaseCar>::Deserialize<RImpl>(s, obj, true);
@@ -396,7 +396,7 @@ struct R<Sedan>
 		s.read("hasSunroof", obj.hasSunroof, false);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Sedan>(obj, s.logs());
         }
     }
 }; // struct R<Sedan>
@@ -419,7 +419,7 @@ struct R<BasePart>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<BasePart>(obj);
         }
 
 		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
@@ -427,7 +427,7 @@ struct R<BasePart>
 		s.write("manufacturer", obj.manufacturer);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<BasePart>(obj, s.logs());
         }
         return s;
     }
@@ -437,7 +437,7 @@ struct R<BasePart>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<BasePart>(obj);
         }
 
 		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
@@ -445,7 +445,7 @@ struct R<BasePart>
 		s.write("manufacturer", obj.manufacturer);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<BasePart>(obj, s.logs());
         }
     }
 
@@ -455,7 +455,7 @@ struct R<BasePart>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<BasePart>(obj);
         }
 
 		R<Core::BaseComponent>::Deserialize<RImpl>(s, obj, true);
@@ -463,7 +463,7 @@ struct R<BasePart>
 		s.read("manufacturer", obj.manufacturer, "Generic");
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<BasePart>(obj, s.logs());
         }
     }
 }; // struct R<BasePart>
@@ -487,7 +487,7 @@ struct R<Engine>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Engine>(obj);
         }
 
 		s.write(R<BasePart>::Serialize<RImpl>(obj).getData());
@@ -496,7 +496,7 @@ struct R<Engine>
 		s.write("started", obj.started);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Engine>(obj, s.logs());
         }
         return s;
     }
@@ -506,7 +506,7 @@ struct R<Engine>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Engine>(obj);
         }
 
 		s.write(R<BasePart>::Serialize<RImpl>(obj).getData());
@@ -515,7 +515,7 @@ struct R<Engine>
 		s.write("started", obj.started);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Engine>(obj, s.logs());
         }
     }
 
@@ -525,7 +525,7 @@ struct R<Engine>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Engine>(obj);
         }
 
 		R<BasePart>::Deserialize<RImpl>(s, obj, true);
@@ -534,7 +534,7 @@ struct R<Engine>
 		s.read("started", obj.started, false);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Engine>(obj, s.logs());
         }
     }
 }; // struct R<Engine>
@@ -557,7 +557,7 @@ struct R<TurboEngine>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<TurboEngine>(obj);
         }
 
 		s.write(R<Engine>::Serialize<RImpl>(obj).getData());
@@ -565,7 +565,7 @@ struct R<TurboEngine>
 		s.write("turboEnabled", obj.turboEnabled);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<TurboEngine>(obj, s.logs());
         }
         return s;
     }
@@ -575,7 +575,7 @@ struct R<TurboEngine>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<TurboEngine>(obj);
         }
 
 		s.write(R<Engine>::Serialize<RImpl>(obj).getData());
@@ -583,7 +583,7 @@ struct R<TurboEngine>
 		s.write("turboEnabled", obj.turboEnabled);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<TurboEngine>(obj, s.logs());
         }
     }
 
@@ -593,7 +593,7 @@ struct R<TurboEngine>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<TurboEngine>(obj);
         }
 
 		R<Engine>::Deserialize<RImpl>(s, obj, true);
@@ -601,7 +601,7 @@ struct R<TurboEngine>
 		s.read("turboEnabled", obj.turboEnabled, true);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<TurboEngine>(obj, s.logs());
         }
     }
 }; // struct R<TurboEngine>
@@ -624,7 +624,7 @@ struct R<Wheel>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Wheel>(obj);
         }
 
 		s.write(R<BasePart>::Serialize<RImpl>(obj).getData());
@@ -632,7 +632,7 @@ struct R<Wheel>
 		s.write("pressure", obj.pressure);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Wheel>(obj, s.logs());
         }
         return s;
     }
@@ -642,7 +642,7 @@ struct R<Wheel>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Wheel>(obj);
         }
 
 		s.write(R<BasePart>::Serialize<RImpl>(obj).getData());
@@ -650,7 +650,7 @@ struct R<Wheel>
 		s.write("pressure", obj.pressure);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Wheel>(obj, s.logs());
         }
     }
 
@@ -660,7 +660,7 @@ struct R<Wheel>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Wheel>(obj);
         }
 
 		R<BasePart>::Deserialize<RImpl>(s, obj, true);
@@ -668,7 +668,7 @@ struct R<Wheel>
 		s.read("pressure", obj.pressure, 2.2f);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Wheel>(obj, s.logs());
         }
     }
 }; // struct R<Wheel>
@@ -690,14 +690,14 @@ struct R<Interior>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Interior>(obj);
         }
 
 		s.write(R<BasePart>::Serialize<RImpl>(obj).getData());
 		s.write("color", obj.color);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Interior>(obj, s.logs());
         }
         return s;
     }
@@ -707,14 +707,14 @@ struct R<Interior>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Interior>(obj);
         }
 
 		s.write(R<BasePart>::Serialize<RImpl>(obj).getData());
 		s.write("color", obj.color);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Interior>(obj, s.logs());
         }
     }
 
@@ -724,14 +724,14 @@ struct R<Interior>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Interior>(obj);
         }
 
 		R<BasePart>::Deserialize<RImpl>(s, obj, true);
 		s.read("color", obj.color, "black");
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Interior>(obj, s.logs());
         }
     }
 }; // struct R<Interior>
@@ -754,7 +754,7 @@ struct R<Seat>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Seat>(obj);
         }
 
 		s.write(R<Interior>::Serialize<RImpl>(obj).getData());
@@ -762,7 +762,7 @@ struct R<Seat>
 		s.write("position", obj.position);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Seat>(obj, s.logs());
         }
         return s;
     }
@@ -772,7 +772,7 @@ struct R<Seat>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Seat>(obj);
         }
 
 		s.write(R<Interior>::Serialize<RImpl>(obj).getData());
@@ -780,7 +780,7 @@ struct R<Seat>
 		s.write("position", obj.position);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Seat>(obj, s.logs());
         }
     }
 
@@ -790,7 +790,7 @@ struct R<Seat>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Seat>(obj);
         }
 
 		R<Interior>::Deserialize<RImpl>(s, obj, true);
@@ -798,7 +798,7 @@ struct R<Seat>
 		s.read("position", obj.position, 0);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Seat>(obj, s.logs());
         }
     }
 }; // struct R<Seat>
@@ -821,7 +821,7 @@ struct R<Dashboard>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Dashboard>(obj);
         }
 
 		s.write(R<Interior>::Serialize<RImpl>(obj).getData());
@@ -829,7 +829,7 @@ struct R<Dashboard>
 		s.write("brightness", obj.brightness);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Dashboard>(obj, s.logs());
         }
         return s;
     }
@@ -839,7 +839,7 @@ struct R<Dashboard>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Dashboard>(obj);
         }
 
 		s.write(R<Interior>::Serialize<RImpl>(obj).getData());
@@ -847,7 +847,7 @@ struct R<Dashboard>
 		s.write("brightness", obj.brightness);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Dashboard>(obj, s.logs());
         }
     }
 
@@ -857,7 +857,7 @@ struct R<Dashboard>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Dashboard>(obj);
         }
 
 		R<Interior>::Deserialize<RImpl>(s, obj, true);
@@ -865,7 +865,7 @@ struct R<Dashboard>
 		s.read("brightness", obj.brightness, 50);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Dashboard>(obj, s.logs());
         }
     }
 }; // struct R<Dashboard>
@@ -887,14 +887,14 @@ struct R<Electronics>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Electronics>(obj);
         }
 
 		s.write(R<BasePart>::Serialize<RImpl>(obj).getData());
 		s.write("firmwareVersion", obj.firmwareVersion);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Electronics>(obj, s.logs());
         }
         return s;
     }
@@ -904,14 +904,14 @@ struct R<Electronics>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Electronics>(obj);
         }
 
 		s.write(R<BasePart>::Serialize<RImpl>(obj).getData());
 		s.write("firmwareVersion", obj.firmwareVersion);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Electronics>(obj, s.logs());
         }
     }
 
@@ -921,14 +921,14 @@ struct R<Electronics>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Electronics>(obj);
         }
 
 		R<BasePart>::Deserialize<RImpl>(s, obj, true);
 		s.read("firmwareVersion", obj.firmwareVersion, 1);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Electronics>(obj, s.logs());
         }
     }
 }; // struct R<Electronics>
@@ -951,7 +951,7 @@ struct R<Sensor>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Sensor>(obj);
         }
 
 		s.write(R<Electronics>::Serialize<RImpl>(obj).getData());
@@ -959,7 +959,7 @@ struct R<Sensor>
 		s.write("value", obj.value);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Sensor>(obj, s.logs());
         }
         return s;
     }
@@ -969,7 +969,7 @@ struct R<Sensor>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Sensor>(obj);
         }
 
 		s.write(R<Electronics>::Serialize<RImpl>(obj).getData());
@@ -977,7 +977,7 @@ struct R<Sensor>
 		s.write("value", obj.value);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Sensor>(obj, s.logs());
         }
     }
 
@@ -987,7 +987,7 @@ struct R<Sensor>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Sensor>(obj);
         }
 
 		R<Electronics>::Deserialize<RImpl>(s, obj, true);
@@ -995,7 +995,7 @@ struct R<Sensor>
 		s.read("value", obj.value, 0.0f);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Sensor>(obj, s.logs());
         }
     }
 }; // struct R<Sensor>
@@ -1018,7 +1018,7 @@ struct R<Camera>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Camera>(obj);
         }
 
 		s.write(R<Sensor>::Serialize<RImpl>(obj).getData());
@@ -1026,7 +1026,7 @@ struct R<Camera>
 		s.write("hdr", obj.hdr);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Camera>(obj, s.logs());
         }
         return s;
     }
@@ -1036,7 +1036,7 @@ struct R<Camera>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Camera>(obj);
         }
 
 		s.write(R<Sensor>::Serialize<RImpl>(obj).getData());
@@ -1044,7 +1044,7 @@ struct R<Camera>
 		s.write("hdr", obj.hdr);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Camera>(obj, s.logs());
         }
     }
 
@@ -1054,7 +1054,7 @@ struct R<Camera>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Camera>(obj);
         }
 
 		R<Sensor>::Deserialize<RImpl>(s, obj, true);
@@ -1062,7 +1062,7 @@ struct R<Camera>
 		s.read("hdr", obj.hdr, false);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Camera>(obj, s.logs());
         }
     }
 }; // struct R<Camera>

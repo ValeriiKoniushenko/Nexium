@@ -28,14 +28,14 @@ struct R<Core::Gui::BaseCombo>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::BaseCombo>(obj);
         }
 
 		s.write(R<Core::Gui::Widget>::Serialize<RImpl>(obj).getData());
 		s.write("_size", obj._size);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::BaseCombo>(obj, s.logs());
         }
         return s;
     }
@@ -45,14 +45,14 @@ struct R<Core::Gui::BaseCombo>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::BaseCombo>(obj);
         }
 
 		s.write(R<Core::Gui::Widget>::Serialize<RImpl>(obj).getData());
 		s.write("_size", obj._size);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::BaseCombo>(obj, s.logs());
         }
     }
 
@@ -62,14 +62,14 @@ struct R<Core::Gui::BaseCombo>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Core::Gui::BaseCombo>(obj);
         }
 
 		R<Core::Gui::Widget>::Deserialize<RImpl>(s, obj, true);
 		s.read("_size", obj._size, glm::vec2(50.f, 0.f));
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Core::Gui::BaseCombo>(obj, s.logs());
         }
     }
 }; // struct R<Core::Gui::BaseCombo>
@@ -90,13 +90,13 @@ struct R<Core::Gui::ComboView>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::ComboView>(obj);
         }
 
 		s.write(R<Core::Gui::BaseCombo>::Serialize<RImpl>(obj).getData());
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::ComboView>(obj, s.logs());
         }
         return s;
     }
@@ -106,13 +106,13 @@ struct R<Core::Gui::ComboView>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::ComboView>(obj);
         }
 
 		s.write(R<Core::Gui::BaseCombo>::Serialize<RImpl>(obj).getData());
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::ComboView>(obj, s.logs());
         }
     }
 
@@ -122,13 +122,13 @@ struct R<Core::Gui::ComboView>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Core::Gui::ComboView>(obj);
         }
 
 		R<Core::Gui::BaseCombo>::Deserialize<RImpl>(s, obj, true);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Core::Gui::ComboView>(obj, s.logs());
         }
     }
 }; // struct R<Core::Gui::ComboView>
@@ -149,13 +149,13 @@ struct R<Core::Gui::ComboModelBased>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::ComboModelBased>(obj);
         }
 
 		s.write(R<Core::Gui::BaseCombo>::Serialize<RImpl>(obj).getData());
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::ComboModelBased>(obj, s.logs());
         }
         return s;
     }
@@ -165,13 +165,13 @@ struct R<Core::Gui::ComboModelBased>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::ComboModelBased>(obj);
         }
 
 		s.write(R<Core::Gui::BaseCombo>::Serialize<RImpl>(obj).getData());
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::ComboModelBased>(obj, s.logs());
         }
     }
 
@@ -181,13 +181,13 @@ struct R<Core::Gui::ComboModelBased>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Core::Gui::ComboModelBased>(obj);
         }
 
 		R<Core::Gui::BaseCombo>::Deserialize<RImpl>(s, obj, true);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Core::Gui::ComboModelBased>(obj, s.logs());
         }
     }
 }; // struct R<Core::Gui::ComboModelBased>

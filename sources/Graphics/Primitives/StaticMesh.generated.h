@@ -29,7 +29,7 @@ struct R<Core::StaticMesh>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::StaticMesh>(obj);
         }
 
 		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
@@ -39,7 +39,7 @@ struct R<Core::StaticMesh>
 		s.write("_center", obj._center);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::StaticMesh>(obj, s.logs());
         }
         return s;
     }
@@ -49,7 +49,7 @@ struct R<Core::StaticMesh>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::StaticMesh>(obj);
         }
 
 		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
@@ -59,7 +59,7 @@ struct R<Core::StaticMesh>
 		s.write("_center", obj._center);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::StaticMesh>(obj, s.logs());
         }
     }
 
@@ -69,7 +69,7 @@ struct R<Core::StaticMesh>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Core::StaticMesh>(obj);
         }
 
 		R<Core::BaseComponent>::Deserialize<RImpl>(s, obj, true);
@@ -79,7 +79,7 @@ struct R<Core::StaticMesh>
 		s.read("_center", obj._center, glm::vec3(0));
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Core::StaticMesh>(obj, s.logs());
         }
     }
 }; // struct R<Core::StaticMesh>

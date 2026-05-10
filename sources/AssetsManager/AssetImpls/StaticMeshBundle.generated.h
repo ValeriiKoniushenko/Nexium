@@ -32,7 +32,7 @@ struct R<Core::AssetImpl::StaticMeshBundle::AssetData>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::AssetImpl::StaticMeshBundle::AssetData>(obj);
         }
 
 		s.write("meshPath", obj.meshPath);
@@ -42,7 +42,7 @@ struct R<Core::AssetImpl::StaticMeshBundle::AssetData>
 		s.write("assimpPostProcess", obj.assimpPostProcess);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::AssetImpl::StaticMeshBundle::AssetData>(obj, s.logs());
         }
         return s;
     }
@@ -52,7 +52,7 @@ struct R<Core::AssetImpl::StaticMeshBundle::AssetData>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::AssetImpl::StaticMeshBundle::AssetData>(obj);
         }
 
 		s.write("meshPath", obj.meshPath);
@@ -62,7 +62,7 @@ struct R<Core::AssetImpl::StaticMeshBundle::AssetData>
 		s.write("assimpPostProcess", obj.assimpPostProcess);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::AssetImpl::StaticMeshBundle::AssetData>(obj, s.logs());
         }
     }
 
@@ -72,7 +72,7 @@ struct R<Core::AssetImpl::StaticMeshBundle::AssetData>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Core::AssetImpl::StaticMeshBundle::AssetData>(obj);
         }
 
 		s.read("meshPath", obj.meshPath, 4);
@@ -82,7 +82,7 @@ struct R<Core::AssetImpl::StaticMeshBundle::AssetData>
 		s.read("assimpPostProcess", obj.assimpPostProcess, 4);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Core::AssetImpl::StaticMeshBundle::AssetData>(obj, s.logs());
         }
     }
 }; // struct R<Core::AssetImpl::StaticMeshBundle::AssetData>

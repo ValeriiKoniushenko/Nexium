@@ -29,7 +29,7 @@ struct R<Core::Gui::CheckBox>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::CheckBox>(obj);
         }
 
 		s.write(R<Core::Gui::Widget>::Serialize<RImpl>(obj).getData());
@@ -37,7 +37,7 @@ struct R<Core::Gui::CheckBox>
 		s.write("_currentValue", obj._currentValue);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::CheckBox>(obj, s.logs());
         }
         return s;
     }
@@ -47,7 +47,7 @@ struct R<Core::Gui::CheckBox>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::CheckBox>(obj);
         }
 
 		s.write(R<Core::Gui::Widget>::Serialize<RImpl>(obj).getData());
@@ -55,7 +55,7 @@ struct R<Core::Gui::CheckBox>
 		s.write("_currentValue", obj._currentValue);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::CheckBox>(obj, s.logs());
         }
     }
 
@@ -65,7 +65,7 @@ struct R<Core::Gui::CheckBox>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Core::Gui::CheckBox>(obj);
         }
 
 		R<Core::Gui::Widget>::Deserialize<RImpl>(s, obj, true);
@@ -73,7 +73,7 @@ struct R<Core::Gui::CheckBox>
 		s.read("_currentValue", obj._currentValue, false);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Core::Gui::CheckBox>(obj, s.logs());
         }
     }
 }; // struct R<Core::Gui::CheckBox>

@@ -42,21 +42,21 @@ namespace Core
         Actor& operator=(Actor&&) = default;
         Actor& operator=(const Actor&) = default;
         ~Actor() override = default;
-        
+
         friend void swap(Actor& a, Actor& b) noexcept
         {
             std::swap(static_cast<BaseComponent&>(a), static_cast<BaseComponent&>(b));
             std::swap(static_cast<Transformable&>(a), static_cast<Transformable&>(b));
         }
 
-    protected:
-        void onInitialize() override;
-
         void onPreDeserialize(AbstractComponent* obj) override;
         void onPostDeserialize(AbstractComponent* obj, const RLogsCollector& logs) override;
         void onPreSerialize(const AbstractComponent* obj) const override;
         void onPostSerialize(const AbstractComponent* obj,
                              const RLogsCollector& logs) const override;
+
+    protected:
+        void onInitialize() override;
     };
 
     template<class T>

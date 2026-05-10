@@ -27,13 +27,13 @@ struct R<Core::Gui::ArrayCell>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::ArrayCell>(obj);
         }
 
 		s.write(R<Core::Gui::HorizontalLayout>::Serialize<RImpl>(obj).getData());
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::ArrayCell>(obj, s.logs());
         }
         return s;
     }
@@ -43,13 +43,13 @@ struct R<Core::Gui::ArrayCell>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::ArrayCell>(obj);
         }
 
 		s.write(R<Core::Gui::HorizontalLayout>::Serialize<RImpl>(obj).getData());
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::ArrayCell>(obj, s.logs());
         }
     }
 
@@ -59,13 +59,13 @@ struct R<Core::Gui::ArrayCell>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Core::Gui::ArrayCell>(obj);
         }
 
 		R<Core::Gui::HorizontalLayout>::Deserialize<RImpl>(s, obj, true);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Core::Gui::ArrayCell>(obj, s.logs());
         }
     }
 }; // struct R<Core::Gui::ArrayCell>

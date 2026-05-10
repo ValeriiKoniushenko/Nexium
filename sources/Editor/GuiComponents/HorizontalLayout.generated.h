@@ -29,7 +29,7 @@ struct R<Core::Gui::HorizontalLayout>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::HorizontalLayout>(obj);
         }
 
 		s.write(R<Core::Gui::Layout>::Serialize<RImpl>(obj).getData());
@@ -37,7 +37,7 @@ struct R<Core::Gui::HorizontalLayout>
 		s.write("_fitContent", obj._fitContent);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::HorizontalLayout>(obj, s.logs());
         }
         return s;
     }
@@ -47,7 +47,7 @@ struct R<Core::Gui::HorizontalLayout>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Gui::HorizontalLayout>(obj);
         }
 
 		s.write(R<Core::Gui::Layout>::Serialize<RImpl>(obj).getData());
@@ -55,7 +55,7 @@ struct R<Core::Gui::HorizontalLayout>
 		s.write("_fitContent", obj._fitContent);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Gui::HorizontalLayout>(obj, s.logs());
         }
     }
 
@@ -65,7 +65,7 @@ struct R<Core::Gui::HorizontalLayout>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Core::Gui::HorizontalLayout>(obj);
         }
 
 		R<Core::Gui::Layout>::Deserialize<RImpl>(s, obj, true);
@@ -73,7 +73,7 @@ struct R<Core::Gui::HorizontalLayout>
 		s.read("_fitContent", obj._fitContent, false);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Core::Gui::HorizontalLayout>(obj, s.logs());
         }
     }
 }; // struct R<Core::Gui::HorizontalLayout>

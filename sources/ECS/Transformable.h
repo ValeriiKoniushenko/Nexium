@@ -121,11 +121,6 @@ namespace Core
         }
 
     protected:
-        void onPreDeserialize(Transformable* obj) {}
-        void onPostDeserialize(Transformable* obj, const RLogsCollector& logs) {}
-        void onPreSerialize(const Transformable* obj) const {}
-        void onPostSerialize(const Transformable* obj, const RLogsCollector& logs) const {}
-
         virtual void onDirtyMatrix() {}
 
     protected:

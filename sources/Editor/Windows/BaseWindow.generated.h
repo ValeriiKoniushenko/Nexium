@@ -27,13 +27,13 @@ struct R<Core::BaseEWC>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::BaseEWC>(obj);
         }
 
 		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::BaseEWC>(obj, s.logs());
         }
         return s;
     }
@@ -43,13 +43,13 @@ struct R<Core::BaseEWC>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::BaseEWC>(obj);
         }
 
 		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::BaseEWC>(obj, s.logs());
         }
     }
 
@@ -59,13 +59,13 @@ struct R<Core::BaseEWC>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Core::BaseEWC>(obj);
         }
 
 		R<Core::BaseComponent>::Deserialize<RImpl>(s, obj, true);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Core::BaseEWC>(obj, s.logs());
         }
     }
 }; // struct R<Core::BaseEWC>
@@ -93,7 +93,7 @@ struct R<Core::BaseFloatEWC>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::BaseFloatEWC>(obj);
         }
 
 		s.write(R<Core::BaseEWC>::Serialize<RImpl>(obj).getData());
@@ -106,7 +106,7 @@ struct R<Core::BaseFloatEWC>
 		s.write("_isFitContent", obj._isFitContent);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::BaseFloatEWC>(obj, s.logs());
         }
         return s;
     }
@@ -116,7 +116,7 @@ struct R<Core::BaseFloatEWC>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::BaseFloatEWC>(obj);
         }
 
 		s.write(R<Core::BaseEWC>::Serialize<RImpl>(obj).getData());
@@ -129,7 +129,7 @@ struct R<Core::BaseFloatEWC>
 		s.write("_isFitContent", obj._isFitContent);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::BaseFloatEWC>(obj, s.logs());
         }
     }
 
@@ -139,7 +139,7 @@ struct R<Core::BaseFloatEWC>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Core::BaseFloatEWC>(obj);
         }
 
 		R<Core::BaseEWC>::Deserialize<RImpl>(s, obj, true);
@@ -152,7 +152,7 @@ struct R<Core::BaseFloatEWC>
 		s.read("_isFitContent", obj._isFitContent, false);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Core::BaseFloatEWC>(obj, s.logs());
         }
     }
 }; // struct R<Core::BaseFloatEWC>
@@ -173,13 +173,13 @@ struct R<Core::BaseMenuBarEWC>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::BaseMenuBarEWC>(obj);
         }
 
 		s.write(R<Core::BaseEWC>::Serialize<RImpl>(obj).getData());
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::BaseMenuBarEWC>(obj, s.logs());
         }
         return s;
     }
@@ -189,13 +189,13 @@ struct R<Core::BaseMenuBarEWC>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::BaseMenuBarEWC>(obj);
         }
 
 		s.write(R<Core::BaseEWC>::Serialize<RImpl>(obj).getData());
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::BaseMenuBarEWC>(obj, s.logs());
         }
     }
 
@@ -205,13 +205,13 @@ struct R<Core::BaseMenuBarEWC>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Core::BaseMenuBarEWC>(obj);
         }
 
 		R<Core::BaseEWC>::Deserialize<RImpl>(s, obj, true);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Core::BaseMenuBarEWC>(obj, s.logs());
         }
     }
 }; // struct R<Core::BaseMenuBarEWC>

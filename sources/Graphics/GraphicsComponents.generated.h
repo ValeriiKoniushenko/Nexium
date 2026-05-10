@@ -249,13 +249,13 @@ struct R<Core::InterleavedGraphicsData>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::InterleavedGraphicsData>(obj);
         }
 
 		s.write("_drawModifiers", obj._drawModifiers);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::InterleavedGraphicsData>(obj, s.logs());
         }
         return s;
     }
@@ -265,13 +265,13 @@ struct R<Core::InterleavedGraphicsData>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::InterleavedGraphicsData>(obj);
         }
 
 		s.write("_drawModifiers", obj._drawModifiers);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::InterleavedGraphicsData>(obj, s.logs());
         }
     }
 
@@ -281,13 +281,13 @@ struct R<Core::InterleavedGraphicsData>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Core::InterleavedGraphicsData>(obj);
         }
 
 		s.read("_drawModifiers", obj._drawModifiers, 4);
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Core::InterleavedGraphicsData>(obj, s.logs());
         }
     }
 }; // struct R<Core::InterleavedGraphicsData>

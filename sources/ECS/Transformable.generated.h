@@ -31,7 +31,7 @@ struct R<Core::Transformable>
     {
         RResourceStream<RImpl> s;if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Transformable>(obj);
         }
 
 		s.write("_scale", obj._scale);
@@ -40,7 +40,7 @@ struct R<Core::Transformable>
 		s.write("_rotation", obj._rotation);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Transformable>(obj, s.logs());
         }
         return s;
     }
@@ -50,7 +50,7 @@ struct R<Core::Transformable>
     {
         if (!noSignals)
         {
-            _RTryCallPreSerialize(obj);
+            _RTryCallPreSerialize<Core::Transformable>(obj);
         }
 
 		s.write("_scale", obj._scale);
@@ -59,7 +59,7 @@ struct R<Core::Transformable>
 		s.write("_rotation", obj._rotation);
         if (!noSignals)
         {
-            _RTryCallPostSerialize(obj, s.logs());
+            _RTryCallPostSerialize<Core::Transformable>(obj, s.logs());
         }
     }
 
@@ -69,7 +69,7 @@ struct R<Core::Transformable>
     {
         if (!noSignals)
         {
-            _RTryCallPreDeserialize(obj);
+            _RTryCallPreDeserialize<Core::Transformable>(obj);
         }
 
 		s.read("_scale", obj._scale, glm::vec3(1.f));
@@ -78,7 +78,7 @@ struct R<Core::Transformable>
 		s.read("_rotation", obj._rotation, glm::vec3(1.f));
         if (!noSignals)
         {
-            _RTryCallPostDeserialize(obj, s.logs());
+            _RTryCallPostDeserialize<Core::Transformable>(obj, s.logs());
         }
     }
 }; // struct R<Core::Transformable>
