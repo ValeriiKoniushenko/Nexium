@@ -23,7 +23,7 @@ CompileFlags:
     - -fmodules-ts
     - -fmodule-mapper=*
     - -MD
-  CompilationDatabase: build/debug/gcc
+  CompilationDatabase: build/debug/clang
 
 Index:
   Background: Build

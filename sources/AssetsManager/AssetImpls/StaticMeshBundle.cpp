@@ -86,7 +86,7 @@ namespace Core::AssetImpl
             extractedData.getAssimpPostProcessFlagsAsInt());
         if (Verify(scene) && Verify(scene->mRootNode))
         {
-            if (const auto owner = dataOwner->castTo<Core::StaticMeshBundle>())
+            if (auto* owner = dataOwner->castTo<Core::StaticMeshBundle>())
             {
                 static auto& sm = GetShaderManager();
                 owner->importFrom(scene->mRootNode, scene,
