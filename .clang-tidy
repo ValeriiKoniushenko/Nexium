@@ -49,6 +49,7 @@ Checks: >
   -misc-include-cleaner,
   -misc-non-private-member-variables-in-classes,
   -misc-unused-parameters,
+  -misc-no-recursion,
 
   -performance-enum-size
 

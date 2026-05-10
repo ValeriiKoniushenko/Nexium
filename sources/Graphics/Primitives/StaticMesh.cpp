@@ -24,6 +24,7 @@
 
 #include "StaticMesh.h"
 
+#include "Core/Assert.h"
 #include "Core/Timer.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Graphics/Image.h"
@@ -124,7 +125,7 @@ namespace Core
     {
         if (!InterleavedGraphicsData::isValid()) [[unlikely]]
         {
-            Assert("Can't draw graphic component. It wasn't configured.");
+            AssertTimed(false, 20, "Can't draw graphic component. It wasn't configured.");
             return;
         }
 
@@ -133,7 +134,7 @@ namespace Core
             return;
         }
 
-        for (auto [value, mod] : _drawModifiers)
+        for (auto [value, mod] : getDrawModifiers())
         {
             if (mod == Modifier::Enable)
             {
@@ -187,7 +188,7 @@ namespace Core
                            nullptr);
         }
 
-        for (auto [value, mod] : _drawModifiers)
+        for (auto [value, mod] : getDrawModifiers())
         {
             if (mod == Modifier::Disable)
             {
@@ -329,11 +330,11 @@ namespace Core
     {
         if (!InterleavedGraphicsData::isValid()) [[unlikely]]
         {
-            Assert("Can't draw graphic component. It wasn't configured.");
+            AssertTimed(false, 20, "Can't draw graphic component. It wasn't configured.");
             return;
         }
 
-        for (auto [value, mod] : _drawModifiers)
+        for (auto [value, mod] : getDrawModifiers())
         {
             if (mod == Modifier::Enable)
             {
@@ -356,7 +357,7 @@ namespace Core
         glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(getTriangleCount()), GL_UNSIGNED_INT,
                        nullptr);
 
-        for (auto [value, mod] : _drawModifiers)
+        for (auto [value, mod] : getDrawModifiers())
         {
             if (mod == Modifier::Disable)
             {

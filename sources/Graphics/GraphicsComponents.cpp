@@ -69,6 +69,7 @@ namespace Core
 
     BaseGraphicsData::BaseGraphicsData(BaseGraphicsData&& other) noexcept
         : _shader(other._shader),
+          _drawModifiers({}),
           _triangleCount(other._triangleCount),
           _vbo(other._vbo),
           _ebo(other._ebo),
@@ -138,6 +139,101 @@ namespace Core
             _shader->setupVertexAttribute();
         }
     }
+    void BaseGraphicsData::directDraw(GLenum bindTextureType, GLenum textureIndex)
+    {
+        if (!isValid()) [[unlikely]]
+        {
+            Assert("Can't draw graphic component. It wasn't configured.");
+            return;
+        }
+
+        for (auto [val, mod] : _drawModifiers)
+        {
+            if (mod == Modifier::Enable)
+            {
+                glEnable(static_cast<GLenum>(val));
+            }
+            else if (mod == Modifier::Disable)
+            {
+                glDisable(static_cast<GLenum>(val));
+            }
+        }
+
+        getShader()->use();
+        bindVAO();
+        bindVBO();
+        bindEBO();
+
+        onBindBuffers(bindTextureType, textureIndex);
+
+        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(getTriangleCount()), GL_UNSIGNED_INT,
+                       nullptr);
+
+        for (auto [val, mod] : _drawModifiers)
+        {
+            if (mod == Modifier::Disable)
+            {
+                glEnable(static_cast<GLenum>(val));
+            }
+            else if (mod == Modifier::Enable)
+            {
+                glDisable(static_cast<GLenum>(val));
+            }
+        }
+    }
+
+    void BaseGraphicsData::setDrawModifiers(std::vector<ModifierParam>&& values)
+    {
+#if defined(DEBUG)
+        std::map<GLenum, int> map;
+
+        for (auto& [value, modifier] : values)
+        {
+            map[static_cast<GLenum>(value)]++;
+            Assert(map[static_cast<GLenum>(value)] == 1, "The same modifier was added twice.");
+        }
+#endif
+
+        _drawModifiers = std::move(values);
+    }
+
+    void BaseGraphicsData::setDrawModifiers(const std::vector<ModifierParam>& values)
+    {
+#if defined(DEBUG)
+        std::map<GLenum, int> map;
+
+        for (const auto& [value, modifier] : values)
+        {
+            map[static_cast<GLenum>(value)]++;
+            Assert(map[static_cast<GLenum>(value)] == 1, "The same modifier was added twice.");
+        }
+#endif
+
+        _drawModifiers = values;
+    }
+
+    void BaseGraphicsData::addDrawModifiers(ModifiedValue value, Modifier mod)
+    {
+        if (getDrawModifier(value) != Modifier::None)
+        {
+            return;
+        }
+
+        _drawModifiers.emplace_back(value, mod);
+    }
+
+    BaseGraphicsData::Modifier BaseGraphicsData::getDrawModifier(ModifiedValue value)
+    {
+        const auto it = std::ranges::find_if(_drawModifiers,
+                                             [value](auto pair) { return pair.value == value; });
+
+        if (it != _drawModifiers.end())
+        {
+            return it->modifier;
+        }
+
+        return Modifier::None;
+    }
 
     //
     //   ╻┏┓╻╺┳╸┏━╸┏━┓╻  ┏━╸┏━┓╻ ╻┏━╸╺┳┓┏━╸┏━┓┏━┓┏━┓╻ ╻╻┏━╸┏━┓╺┳┓┏━┓╺┳╸┏━┓
@@ -151,7 +247,6 @@ namespace Core
 
     InterleavedGraphicsData::InterleavedGraphicsData(InterleavedGraphicsData&& other) noexcept
         : BaseGraphicsData(std::move(other)),
-          _drawModifiers({}),
           _texture(other._texture)
     {
         other._texture = 0;
@@ -274,107 +369,15 @@ namespace Core
         privateClear();
     }
 
-    void InterleavedGraphicsData::directDraw(GLenum bindTextureType, GLenum textureIndex) noexcept
-    {
-        if (!isValid()) [[unlikely]]
-        {
-            Assert("Can't draw graphic component. It wasn't configured.");
-            return;
-        }
-
-        for (auto [val, mod] : _drawModifiers)
-        {
-            if (mod == Modifier::Enable)
-            {
-                glEnable(static_cast<GLenum>(val));
-            }
-            else if (mod == Modifier::Disable)
-            {
-                glDisable(static_cast<GLenum>(val));
-            }
-        }
-
-        getShader()->use();
-        bindVAO();
-        bindVBO();
-        bindEBO();
-        glActiveTexture(GL_TEXTURE0 + textureIndex);
-        glBindTexture(bindTextureType, _texture);
-
-        applyUniforms();
-
-        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(getTriangleCount()), GL_UNSIGNED_INT,
-                       nullptr);
-
-        for (auto [val, mod] : _drawModifiers)
-        {
-            if (mod == Modifier::Disable)
-            {
-                glEnable(static_cast<GLenum>(val));
-            }
-            else if (mod == Modifier::Enable)
-            {
-                glDisable(static_cast<GLenum>(val));
-            }
-        }
-    }
-
-    void InterleavedGraphicsData::setDrawModifiers(std::vector<ModifierParam>&& values)
-    {
-#if defined(DEBUG)
-        std::map<GLenum, int> map;
-
-        for (auto& [value, modifier] : values)
-        {
-            map[static_cast<GLenum>(value)]++;
-            Assert(map[static_cast<GLenum>(value)] == 1, "The same modifier was added twice.");
-        }
-#endif
-
-        _drawModifiers = std::move(values);
-    }
-
-    void InterleavedGraphicsData::setDrawModifiers(const std::vector<ModifierParam>& values)
-    {
-#if defined(DEBUG)
-        std::map<GLenum, int> map;
-
-        for (const auto& [value, modifier] : values)
-        {
-            map[static_cast<GLenum>(value)]++;
-            Assert(map[static_cast<GLenum>(value)] == 1, "The same modifier was added twice.");
-        }
-#endif
-
-        _drawModifiers = values;
-    }
-
-    void InterleavedGraphicsData::addDrawModifiers(ModifiedValue value, Modifier mod)
-    {
-        if (getDrawModifier(value) != Modifier::None)
-        {
-            return;
-        }
-
-        _drawModifiers.emplace_back(value, mod);
-    }
-
-    BaseGraphicsData::Modifier InterleavedGraphicsData::getDrawModifier(ModifiedValue value)
-    {
-        const auto it = std::ranges::find_if(_drawModifiers,
-                                             [value](auto pair) { return pair.value == value; });
-
-        if (it != _drawModifiers.end())
-        {
-            return it->modifier;
-        }
-
-        return Modifier::None;
-    }
-
     StringAtom InterleavedGraphicsData::getCacheHash() const
     {
         return "InterleavedGraphicsData"_atom;
+    }
+
+    void InterleavedGraphicsData::onBindBuffers(GLenum bindTextureType, GLenum textureIndex)
+    {
+        glActiveTexture(GL_TEXTURE0 + textureIndex);
+        glBindTexture(bindTextureType, _texture);
     }
 
     void InterleavedGraphicsData::privateClear()

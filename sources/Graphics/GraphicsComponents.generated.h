@@ -237,9 +237,10 @@ struct R<Core::BaseGraphicsData>
 {
     static constexpr std::string_view Name() { return "BaseGraphicsData"; }
     static constexpr std::string_view ParentScope() { return "Core"; }
-    static constexpr std::size_t GetFieldNumbers() { return 0; }
+    static constexpr std::size_t GetFieldNumbers() { return 1; }
     static constexpr std::vector<RClassField> GetFields() {
         return {
+			{ "std::vector<ModifierParam>", "_drawModifiers" },
 		};
     }
 
@@ -251,6 +252,7 @@ struct R<Core::BaseGraphicsData>
             _RTryCallPreSerialize<Core::BaseGraphicsData>(obj);
         }
 
+		s.write("_drawModifiers", obj._drawModifiers);
         if (!noSignals)
         {
             _RTryCallPostSerialize<Core::BaseGraphicsData>(obj, s.logs());
@@ -266,6 +268,7 @@ struct R<Core::BaseGraphicsData>
             _RTryCallPreSerialize<Core::BaseGraphicsData>(obj);
         }
 
+		s.write("_drawModifiers", obj._drawModifiers);
         if (!noSignals)
         {
             _RTryCallPostSerialize<Core::BaseGraphicsData>(obj, s.logs());
@@ -281,6 +284,7 @@ struct R<Core::BaseGraphicsData>
             _RTryCallPreDeserialize<Core::BaseGraphicsData>(obj);
         }
 
+		s.read("_drawModifiers", obj._drawModifiers, 4);
         if (!noSignals)
         {
             _RTryCallPostDeserialize<Core::BaseGraphicsData>(obj, s.logs());
@@ -293,10 +297,9 @@ struct R<Core::InterleavedGraphicsData>
 {
     static constexpr std::string_view Name() { return "InterleavedGraphicsData"; }
     static constexpr std::string_view ParentScope() { return "Core"; }
-    static constexpr std::size_t GetFieldNumbers() { return 1; }
+    static constexpr std::size_t GetFieldNumbers() { return 0; }
     static constexpr std::vector<RClassField> GetFields() {
         return {
-			{ "std::vector<ModifierParam>", "_drawModifiers" },
 		};
     }
 
@@ -309,7 +312,6 @@ struct R<Core::InterleavedGraphicsData>
         }
 
 		s.write(R<Core::BaseGraphicsData>::Serialize<RImpl>(obj).getData());
-		s.write("_drawModifiers", obj._drawModifiers);
         if (!noSignals)
         {
             _RTryCallPostSerialize<Core::InterleavedGraphicsData>(obj, s.logs());
@@ -326,7 +328,6 @@ struct R<Core::InterleavedGraphicsData>
         }
 
 		s.write(R<Core::BaseGraphicsData>::Serialize<RImpl>(obj).getData());
-		s.write("_drawModifiers", obj._drawModifiers);
         if (!noSignals)
         {
             _RTryCallPostSerialize<Core::InterleavedGraphicsData>(obj, s.logs());
@@ -343,11 +344,69 @@ struct R<Core::InterleavedGraphicsData>
         }
 
 		R<Core::BaseGraphicsData>::Deserialize<RImpl>(s, obj, true);
-		s.read("_drawModifiers", obj._drawModifiers, 4);
         if (!noSignals)
         {
             _RTryCallPostDeserialize<Core::InterleavedGraphicsData>(obj, s.logs());
         }
     }
 }; // struct R<Core::InterleavedGraphicsData>
+
+template<>
+struct R<Core::SeparTextureGraphicsData>
+{
+    static constexpr std::string_view Name() { return "SeparTextureGraphicsData"; }
+    static constexpr std::string_view ParentScope() { return "Core"; }
+    static constexpr std::size_t GetFieldNumbers() { return 0; }
+    static constexpr std::vector<RClassField> GetFields() {
+        return {
+		};
+    }
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Core::SeparTextureGraphicsData& obj, bool noSignals = false)
+    {
+        RResourceStream<RImpl> s;if (!noSignals)
+        {
+            _RTryCallPreSerialize<Core::SeparTextureGraphicsData>(obj);
+        }
+
+		s.write(R<Core::BaseGraphicsData>::Serialize<RImpl>(obj).getData());
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize<Core::SeparTextureGraphicsData>(obj, s.logs());
+        }
+        return s;
+    }
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    static void Serialize(const Core::SeparTextureGraphicsData& obj, RResourceStream<RImpl>& s, bool noSignals = false)
+    {
+        if (!noSignals)
+        {
+            _RTryCallPreSerialize<Core::SeparTextureGraphicsData>(obj);
+        }
+
+		s.write(R<Core::BaseGraphicsData>::Serialize<RImpl>(obj).getData());
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize<Core::SeparTextureGraphicsData>(obj, s.logs());
+        }
+    }
+
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    static void Deserialize(const RResourceStream<RImpl>& s, Core::SeparTextureGraphicsData& obj, bool noSignals = false)
+    {
+        if (!noSignals)
+        {
+            _RTryCallPreDeserialize<Core::SeparTextureGraphicsData>(obj);
+        }
+
+		R<Core::BaseGraphicsData>::Deserialize<RImpl>(s, obj, true);
+        if (!noSignals)
+        {
+            _RTryCallPostDeserialize<Core::SeparTextureGraphicsData>(obj, s.logs());
+        }
+    }
+}; // struct R<Core::SeparTextureGraphicsData>
 // clang-format on

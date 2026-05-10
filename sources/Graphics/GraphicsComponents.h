@@ -32,6 +32,12 @@
 namespace Core
 {
 
+    //
+    //   ┏┓ ┏━┓┏━┓┏━╸┏━╸┏━┓┏━┓┏━┓╻ ╻╻┏━╸┏━┓╺┳┓┏━┓╺┳╸┏━┓
+    //   ┣┻┓┣━┫┗━┓┣╸ ┃╺┓┣┳┛┣━┫┣━┛┣━┫┃┃  ┗━┓ ┃┃┣━┫ ┃ ┣━┫
+    //   ┗━┛╹ ╹┗━┛┗━╸┗━┛╹┗╸╹ ╹╹  ╹ ╹╹┗━╸┗━┛╺┻┛╹ ╹ ╹ ╹ ╹
+    //
+
     CLASS();
     class BaseGraphicsData : public IDataIO
     {
@@ -131,75 +137,6 @@ namespace Core
             return _vbo != 0 && _ebo != 0 && _vao != 0 && _shader != nullptr;
         }
 
-        // ====================== Misc ====================
-        friend void swap(BaseGraphicsData& a, BaseGraphicsData& b) noexcept
-        {
-            std::swap(a._shader, b._shader);
-            std::swap(a._triangleCount, b._triangleCount);
-            std::swap(a._vbo, b._vbo);
-            std::swap(a._ebo, b._ebo);
-            std::swap(a._vao, b._vao);
-        }
-
-        [[nodiscard]] StringAtom getCacheHash() const override;
-
-    private:
-        void privateClear();
-
-    private:
-        ShaderProgram* _shader = nullptr;
-        GLsizei _triangleCount = 0;
-        GLuint _vbo = 0;
-        GLuint _ebo = 0;
-        GLuint _vao = 0;
-    };
-
-    CLASS();
-    class InterleavedGraphicsData : public BaseGraphicsData
-    {
-        R_FRIEND_DECL(Core::InterleavedGraphicsData, Core::BaseGraphicsData);
-
-    public:
-        InterleavedGraphicsData() = default;
-        ~InterleavedGraphicsData() override;
-
-        InterleavedGraphicsData(const InterleavedGraphicsData& other) = default;
-        InterleavedGraphicsData(InterleavedGraphicsData&& other) noexcept;
-        InterleavedGraphicsData& operator=(const InterleavedGraphicsData& other) = default;
-        InterleavedGraphicsData& operator=(InterleavedGraphicsData&& other) noexcept;
-
-        friend void swap(InterleavedGraphicsData& a, InterleavedGraphicsData& b) noexcept
-        {
-            swap(static_cast<BaseGraphicsData&>(a), static_cast<BaseGraphicsData&>(b));
-            std::swap(a._drawModifiers, b._drawModifiers);
-            std::swap(a._texture, b._texture);
-        }
-
-        void generate() override;
-
-        void setTexture2D(const unsigned char* data, uint32_t width, uint32_t height,
-                          int channelsCount);
-
-        /**
-         * loads & constructs from aiMesh GPU data.
-         * @param mesh from Assimp::Importer
-         * @param isAppendNormals if it true - than it will append to every vertex data 'normals'
-         * @param isAppendUV if it true - than it will append to every vertex data 'UV'
-         * @param scale mesh scaler
-         *
-         * Example of one vertex data:
-         * pos.x, pos.y, pos.z,  [normal.x, normal.y, normal.z]  [cv.x, cv.y]
-         */
-        void setMesh(const aiMesh* mesh, bool isAppendNormals = false, bool isAppendUV = false,
-                     float scale = 1.f);
-
-        void clear() override;
-
-        [[nodiscard]] bool isValid() const noexcept override
-        {
-            return BaseGraphicsData::isValid() && _texture != 0;
-        }
-
         /**
          * direct draw if was set up vertex, index and optionally texture buffers.
          * @details this function from the family of 'low-abstract' functionality.
@@ -234,9 +171,9 @@ namespace Core
          * }
          * @endcode
          */
-        void directDraw(GLenum bindTextureType = GL_TEXTURE_2D, GLenum textureIndex = 0) noexcept;
+        virtual void directDraw(GLenum bindTextureType = GL_TEXTURE_2D, GLenum textureIndex = 0);
 
-        [[nodiscard]] GLuint getTextureId() noexcept { return _texture; }
+        // ====================== Draw modifiers ====================
 
         [[nodiscard]] const std::vector<ModifierParam>& getDrawModifiers() const noexcept
         {
@@ -253,6 +190,91 @@ namespace Core
 
         [[nodiscard]] Modifier getDrawModifier(ModifiedValue value);
 
+        // ====================== Misc ====================
+        friend void swap(BaseGraphicsData& a, BaseGraphicsData& b) noexcept
+        {
+            std::swap(a._shader, b._shader);
+            std::swap(a._drawModifiers, b._drawModifiers);
+            std::swap(a._triangleCount, b._triangleCount);
+            std::swap(a._vbo, b._vbo);
+            std::swap(a._ebo, b._ebo);
+            std::swap(a._vao, b._vao);
+        }
+
+        [[nodiscard]] StringAtom getCacheHash() const override;
+
+    protected:
+        virtual void onBindBuffers(GLenum bindTextureType, GLenum textureIndex) {}
+
+    private:
+        void privateClear();
+
+    private:
+        ShaderProgram* _shader = nullptr;
+
+        // To improve cache-line readability, we use vector.
+        // But all values ModifiedValue should be unique.
+        FIELD();
+        std::vector<ModifierParam> _drawModifiers;
+
+        GLsizei _triangleCount = 0;
+        GLuint _vbo = 0;
+        GLuint _ebo = 0;
+        GLuint _vao = 0;
+    };
+
+    //
+    //   ╻┏┓╻╺┳╸┏━╸┏━┓╻  ┏━╸┏━┓╻ ╻┏━╸╺┳┓┏━╸┏━┓┏━┓┏━┓╻ ╻╻┏━╸┏━┓╺┳┓┏━┓╺┳╸┏━┓
+    //   ┃┃┗┫ ┃ ┣╸ ┣┳┛┃  ┣╸ ┣━┫┃┏┛┣╸  ┃┃┃╺┓┣┳┛┣━┫┣━┛┣━┫┃┃  ┗━┓ ┃┃┣━┫ ┃ ┣━┫
+    //   ╹╹ ╹ ╹ ┗━╸╹┗╸┗━╸┗━╸╹ ╹┗┛ ┗━╸╺┻┛┗━┛╹┗╸╹ ╹╹  ╹ ╹╹┗━╸┗━┛╺┻┛╹ ╹ ╹ ╹ ╹
+    //
+    CLASS();
+    class InterleavedGraphicsData : public BaseGraphicsData
+    {
+        R_FRIEND_DECL(Core::InterleavedGraphicsData, Core::BaseGraphicsData);
+
+    public:
+        InterleavedGraphicsData() = default;
+        ~InterleavedGraphicsData() override;
+
+        InterleavedGraphicsData(const InterleavedGraphicsData& other) = default;
+        InterleavedGraphicsData(InterleavedGraphicsData&& other) noexcept;
+        InterleavedGraphicsData& operator=(const InterleavedGraphicsData& other) = default;
+        InterleavedGraphicsData& operator=(InterleavedGraphicsData&& other) noexcept;
+
+        friend void swap(InterleavedGraphicsData& a, InterleavedGraphicsData& b) noexcept
+        {
+            swap(static_cast<BaseGraphicsData&>(a), static_cast<BaseGraphicsData&>(b));
+            std::swap(a._texture, b._texture);
+        }
+
+        void generate() override;
+
+        void setTexture2D(const unsigned char* data, uint32_t width, uint32_t height,
+                          int channelsCount);
+
+        /**
+         * loads & constructs from aiMesh GPU data.
+         * @param mesh from Assimp::Importer
+         * @param isAppendNormals if it true - than it will append to every vertex data 'normals'
+         * @param isAppendUV if it true - than it will append to every vertex data 'UV'
+         * @param scale mesh scaler
+         *
+         * Example of one vertex data:
+         * pos.x, pos.y, pos.z,  [normal.x, normal.y, normal.z]  [cv.x, cv.y]
+         */
+        void setMesh(const aiMesh* mesh, bool isAppendNormals = false, bool isAppendUV = false,
+                     float scale = 1.f);
+
+        void clear() override;
+
+        [[nodiscard]] bool isValid() const noexcept override
+        {
+            return BaseGraphicsData::isValid() && _texture != 0;
+        }
+
+        [[nodiscard]] GLuint getTextureId() noexcept { return _texture; }
+
         [[nodiscard]] StringAtom getCacheHash() const override;
 
         void bindTexture(GLenum type = GL_TEXTURE_2D) const noexcept
@@ -262,20 +284,45 @@ namespace Core
         }
 
     protected:
-        virtual void applyUniforms() {}
+        void onBindBuffers(GLenum bindTextureType, GLenum textureIndex) override;
 
     protected:
-        // To improve cache-line readability, we use vector.
-        // But all values ModifiedValue should be unique.
-        FIELD();
-        std::vector<ModifierParam> _drawModifiers;
-
         GLuint _texture = 0;
 
     private:
         void privateClear();
     };
 
+    CLASS();
+    class SeparTextureGraphicsData : public BaseGraphicsData
+    {
+        R_FRIEND_DECL(Core::SeparTextureGraphicsData, Core::BaseGraphicsData);
+
+    public:
+        SeparTextureGraphicsData() = default;
+        ~SeparTextureGraphicsData() override;
+
+        SeparTextureGraphicsData(const SeparTextureGraphicsData& other) = default;
+        SeparTextureGraphicsData(SeparTextureGraphicsData&& other) noexcept;
+        SeparTextureGraphicsData& operator=(const SeparTextureGraphicsData& other) = default;
+        SeparTextureGraphicsData& operator=(SeparTextureGraphicsData&& other) noexcept;
+
+        friend void swap(SeparTextureGraphicsData& a, SeparTextureGraphicsData& b) noexcept
+        {
+            swap(static_cast<BaseGraphicsData&>(a), static_cast<BaseGraphicsData&>(b));
+        }
+
+        void generate() override;
+
+        void setTexture2D(const unsigned char* data, uint32_t width, uint32_t height,
+                          int channelsCount);
+    };
+
+    //
+    //              ┏━╸╻  ┏━┓┏┓ ┏━┓╻
+    //              ┃╺┓┃  ┃ ┃┣┻┓┣━┫┃
+    //              ┗━┛┗━╸┗━┛┗━┛╹ ╹┗━╸
+    //
     void to_json(nlohmann::json& j, const Core::BaseGraphicsData::ModifierParam& v);
     void from_json(const nlohmann::json& j, Core::BaseGraphicsData::ModifierParam& v);
 
