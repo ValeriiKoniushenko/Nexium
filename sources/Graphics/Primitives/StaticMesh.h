@@ -85,7 +85,8 @@ namespace Core
 
         [[nodiscard]] Color3 toUniqueColor() const noexcept
         {
-            const auto id = _vbo ^ reinterpret_cast<std::uintptr_t>(this);
+            const auto id = const_cast<StaticMesh*>(this)->getVboId()
+                            ^ reinterpret_cast<std::uintptr_t>(this);
 
             Color3 colorId;
             colorId.r = static_cast<uint8_t>((id & 0x0000FF) >> 0);

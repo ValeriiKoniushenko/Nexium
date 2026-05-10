@@ -46,15 +46,15 @@ namespace Core
 
     struct _GraphicsModifiersArray_ArrayCellViewerFunc
     {
-        Gui::HorizontalLayout::Ptr operator()(InterleavedGraphicsData::ModifierParam& data) const;
+        Gui::HorizontalLayout::Ptr operator()(BaseGraphicsData::ModifierParam& data) const;
     };
 
     struct _GraphicsModifiersArray_ViewFetchFunc
     {
-        InterleavedGraphicsData::ModifierParam operator()(Gui::HorizontalLayout* layout) const;
+        BaseGraphicsData::ModifierParam operator()(Gui::HorizontalLayout* layout) const;
     };
 
-    using GraphicsModifiersArray = Gui::BaseArray<InterleavedGraphicsData::ModifierParam,
+    using GraphicsModifiersArray = Gui::BaseArray<BaseGraphicsData::ModifierParam,
                                                   _GraphicsModifiersArray_ArrayCellViewerFunc,
                                                   _GraphicsModifiersArray_ViewFetchFunc>;
 

@@ -41,9 +41,9 @@ namespace Core
 
         static InterleavedGraphicsData gcd = []()
         {
-            std::vector<InterleavedGraphicsData::ModifierParam> modifiers
-                = { { .value = InterleavedGraphicsData::ModifiedValue::CullFace,
-                      .modifier = InterleavedGraphicsData::Modifier::Disable } };
+            std::vector<BaseGraphicsData::ModifierParam> modifiers
+                = { { .value = BaseGraphicsData::ModifiedValue::CullFace,
+                      .modifier = BaseGraphicsData::Modifier::Disable } };
 
             float w = 200.f;
             float h = 100.f;

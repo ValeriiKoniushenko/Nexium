@@ -83,9 +83,9 @@ namespace Core
         };
         // clang-format on
 
-        std::vector<InterleavedGraphicsData::ModifierParam> modifiers
-            = { { .value = InterleavedGraphicsData::ModifiedValue::CullFace,
-                  .modifier = InterleavedGraphicsData::Modifier::Disable } };
+        std::vector<BaseGraphicsData::ModifierParam> modifiers
+            = { { .value = BaseGraphicsData::ModifiedValue::CullFace,
+                  .modifier = BaseGraphicsData::Modifier::Disable } };
 
         auto* shader = GetShaderManager().getShaderProgram("skybox"_atom);
 

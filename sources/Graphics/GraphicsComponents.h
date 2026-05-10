@@ -24,7 +24,8 @@
 
 #pragma once
 
-#include "../RawDataManagement/DataStream.h"
+#include "RawDataManagement/DataStream.h"
+#include "RawDataManagement/JsonAdapter.h"
 #include "ShaderProgram.h"
 #include "assimp/mesh.h"
 
@@ -32,9 +33,9 @@ namespace Core
 {
 
     CLASS();
-    class InterleavedGraphicsData : public IDataIO
+    class BaseGraphicsData : public IDataIO
     {
-        R_FRIEND(InterleavedGraphicsData);
+        R_FRIEND(BaseGraphicsData);
 
     public:
         ENUM_CLASS();
@@ -76,40 +77,108 @@ namespace Core
             Modifier modifier = Modifier::None;
         };
 
+        virtual void generate();
+
     public:
-        InterleavedGraphicsData() = default;
+        BaseGraphicsData() = default;
+        ~BaseGraphicsData() override;
+        BaseGraphicsData(const BaseGraphicsData& other) = default;
+        BaseGraphicsData(BaseGraphicsData&& other) noexcept;
+        BaseGraphicsData& operator=(const BaseGraphicsData& other) = default;
+        BaseGraphicsData& operator=(BaseGraphicsData&& other) noexcept;
 
-        ~InterleavedGraphicsData() override;
+        [[nodiscard]] virtual nlohmann::json serialize() const;
+        virtual void deserialize(RResourceStream<RJsonResourceStream>& stream);
 
-        InterleavedGraphicsData(const InterleavedGraphicsData& other) = default;
+        [[nodiscard]] ShaderProgram* getShader() noexcept { return _shader; }
 
-        InterleavedGraphicsData(InterleavedGraphicsData&& other) noexcept;
+        [[nodiscard]] GLuint getVboId() noexcept { return _vbo; }
+        [[nodiscard]] GLuint getEboId() noexcept { return _ebo; }
+        [[nodiscard]] GLuint getVaoId() noexcept { return _vao; }
 
-        InterleavedGraphicsData& operator=(const InterleavedGraphicsData& other) = default;
-
-        InterleavedGraphicsData& operator=(InterleavedGraphicsData&& other) noexcept;
-
-        friend void swap(InterleavedGraphicsData& a, InterleavedGraphicsData& b) noexcept
+        void bindVAO() const noexcept
         {
-            std::swap(a._drawModifiers, b._drawModifiers);
-            std::swap(a._shader, b._shader);
-            std::swap(a._triangleCount, b._triangleCount);
-            std::swap(a._vbo, b._vbo);
-            std::swap(a._ebo, b._ebo);
-            std::swap(a._vao, b._vao);
-            std::swap(a._texture, b._texture);
+            Assert(_vao != 0);
+            glBindVertexArray(_vao);
         }
 
-        virtual void generate();
+        void unbindVao() const noexcept { glBindVertexArray(0); }
+
+        void bindVBO() const noexcept
+        {
+            Assert(_vbo != 0);
+            glBindBuffer(GL_ARRAY_BUFFER, _vbo);
+        }
+
+        void bindEBO() const noexcept
+        {
+            Assert(_ebo != 0);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
+        }
+
+        virtual void clear();
+
+        [[nodiscard]] uint32_t getTriangleCount() const noexcept { return _triangleCount; }
 
         void setVertexBuffer(const std::vector<float>& data, GLenum usage = GL_STATIC_DRAW);
 
         void setIndexBuffer(const std::vector<GLuint>& data, GLenum usage = GL_STATIC_DRAW);
 
+        void setShader(ShaderProgram* sp, bool ignoreVertexAttribSetup = false);
+
+        [[nodiscard]] virtual bool isValid() const noexcept
+        {
+            return _vbo != 0 && _ebo != 0 && _vao != 0 && _shader != nullptr;
+        }
+
+        // ====================== Misc ====================
+        friend void swap(BaseGraphicsData& a, BaseGraphicsData& b) noexcept
+        {
+            std::swap(a._shader, b._shader);
+            std::swap(a._triangleCount, b._triangleCount);
+            std::swap(a._vbo, b._vbo);
+            std::swap(a._ebo, b._ebo);
+            std::swap(a._vao, b._vao);
+        }
+
+        [[nodiscard]] StringAtom getCacheHash() const override;
+
+    private:
+        void privateClear();
+
+    private:
+        ShaderProgram* _shader = nullptr;
+        GLsizei _triangleCount = 0;
+        GLuint _vbo = 0;
+        GLuint _ebo = 0;
+        GLuint _vao = 0;
+    };
+
+    CLASS();
+    class InterleavedGraphicsData : public BaseGraphicsData
+    {
+        R_FRIEND_DECL(Core::InterleavedGraphicsData, Core::BaseGraphicsData);
+
+    public:
+        InterleavedGraphicsData() = default;
+        ~InterleavedGraphicsData() override;
+
+        InterleavedGraphicsData(const InterleavedGraphicsData& other) = default;
+        InterleavedGraphicsData(InterleavedGraphicsData&& other) noexcept;
+        InterleavedGraphicsData& operator=(const InterleavedGraphicsData& other) = default;
+        InterleavedGraphicsData& operator=(InterleavedGraphicsData&& other) noexcept;
+
+        friend void swap(InterleavedGraphicsData& a, InterleavedGraphicsData& b) noexcept
+        {
+            swap(static_cast<BaseGraphicsData&>(a), static_cast<BaseGraphicsData&>(b));
+            std::swap(a._drawModifiers, b._drawModifiers);
+            std::swap(a._texture, b._texture);
+        }
+
+        void generate() override;
+
         void setTexture2D(const unsigned char* data, uint32_t width, uint32_t height,
                           int channelsCount);
-
-        void setShader(ShaderProgram* sp, bool ignoreVertexAttribSetup = false);
 
         /**
          * loads & constructs from aiMesh GPU data.
@@ -124,11 +193,11 @@ namespace Core
         void setMesh(const aiMesh* mesh, bool isAppendNormals = false, bool isAppendUV = false,
                      float scale = 1.f);
 
-        virtual void clear();
+        void clear() override;
 
-        [[nodiscard]] bool isValid() const noexcept
+        [[nodiscard]] bool isValid() const noexcept override
         {
-            return _vbo != 0 && _ebo != 0 && _vao != 0 && _shader != 0;
+            return BaseGraphicsData::isValid() && _texture != 0;
         }
 
         /**
@@ -167,11 +236,7 @@ namespace Core
          */
         void directDraw(GLenum bindTextureType = GL_TEXTURE_2D, GLenum textureIndex = 0) noexcept;
 
-        [[nodiscard]] GLuint getVboId() noexcept { return _vbo; }
-        [[nodiscard]] GLuint getEboId() noexcept { return _ebo; }
-        [[nodiscard]] GLuint getVaoId() noexcept { return _vao; }
         [[nodiscard]] GLuint getTextureId() noexcept { return _texture; }
-        [[nodiscard]] ShaderProgram* getShader() noexcept { return _shader; }
 
         [[nodiscard]] const std::vector<ModifierParam>& getDrawModifiers() const noexcept
         {
@@ -188,37 +253,13 @@ namespace Core
 
         [[nodiscard]] Modifier getDrawModifier(ModifiedValue value);
 
-        [[nodiscard]] uint32_t getTriangleCount() const noexcept { return _triangleCount; }
-
-        // =========== LOW LEVEL functionality ================
-
-        void bindVAO() const noexcept
-        {
-            Assert(_vao != 0);
-            glBindVertexArray(_vao);
-        }
-
-        void unbindVao() const noexcept { glBindVertexArray(0); }
-
-        void bindVBO() const noexcept
-        {
-            Assert(_vbo != 0);
-            glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-        }
-
-        void bindEBO() const noexcept
-        {
-            Assert(_ebo != 0);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
-        }
+        [[nodiscard]] StringAtom getCacheHash() const override;
 
         void bindTexture(GLenum type = GL_TEXTURE_2D) const noexcept
         {
             Assert(_texture != 0);
             glBindTexture(type, _texture);
         }
-
-        [[nodiscard]] StringAtom getCacheHash() const override;
 
     protected:
         virtual void applyUniforms() {}
@@ -229,19 +270,14 @@ namespace Core
         FIELD();
         std::vector<ModifierParam> _drawModifiers;
 
-        ShaderProgram* _shader = nullptr;
-        GLsizei _triangleCount = 0;
-        GLuint _vbo = 0;
-        GLuint _ebo = 0;
-        GLuint _vao = 0;
         GLuint _texture = 0;
 
     private:
         void privateClear();
     };
 
-    void to_json(nlohmann::json& j, const Core::InterleavedGraphicsData::ModifierParam& v);
-    void from_json(const nlohmann::json& j, Core::InterleavedGraphicsData::ModifierParam& v);
+    void to_json(nlohmann::json& j, const Core::BaseGraphicsData::ModifierParam& v);
+    void from_json(const nlohmann::json& j, Core::BaseGraphicsData::ModifierParam& v);
 
 } // namespace Core
 

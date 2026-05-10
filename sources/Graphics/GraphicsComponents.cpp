@@ -24,30 +24,136 @@
 
 #include "GraphicsComponents.h"
 
-#include "ECS/BaseComponent.h"
-#include "assimp/scene.h"
-
 namespace Core
 {
-    InterleavedGraphicsData::~InterleavedGraphicsData()
+    R_FRIEND_IMPL(InterleavedGraphicsData);
+
+    //
+    //   ┏┓ ┏━┓┏━┓┏━╸┏━╸┏━┓┏━┓┏━┓╻ ╻╻┏━╸┏━┓╺┳┓┏━┓╺┳╸┏━┓
+    //   ┣┻┓┣━┫┗━┓┣╸ ┃╺┓┣┳┛┣━┫┣━┛┣━┫┃┃  ┗━┓ ┃┃┣━┫ ┃ ┣━┫
+    //   ┗━┛╹ ╹┗━┛┗━╸┗━┛╹┗╸╹ ╹╹  ╹ ╹╹┗━╸┗━┛╺┻┛╹ ╹ ╹ ╹ ╹
+    //
+    nlohmann::json BaseGraphicsData::serialize() const
+    {
+        return R<BaseGraphicsData>::Serialize<RJsonResourceStream>(*this).getData();
+    }
+
+    void BaseGraphicsData::deserialize(RResourceStream<RJsonResourceStream>& stream)
+    {
+        R<BaseGraphicsData>::Deserialize(stream, *this);
+    }
+
+    void BaseGraphicsData::clear()
     {
         privateClear();
     }
 
-    InterleavedGraphicsData::InterleavedGraphicsData(InterleavedGraphicsData&& other) noexcept
-        : _drawModifiers({}),
-          _shader(other._shader),
+    void BaseGraphicsData::privateClear()
+    {
+        glDeleteBuffers(1, &_ebo);
+        glDeleteBuffers(1, &_vbo);
+        glDeleteVertexArrays(1, &_vao);
+        _shader = nullptr;
+        _triangleCount = 0;
+    }
+
+    StringAtom BaseGraphicsData::getCacheHash() const
+    {
+        return "BaseGraphicsData"_atom;
+    }
+
+    BaseGraphicsData::~BaseGraphicsData()
+    {
+        privateClear();
+    }
+
+    BaseGraphicsData::BaseGraphicsData(BaseGraphicsData&& other) noexcept
+        : _shader(other._shader),
           _triangleCount(other._triangleCount),
           _vbo(other._vbo),
           _ebo(other._ebo),
-          _vao(other._vao),
-          _texture(other._texture)
+          _vao(other._vao)
+
     {
         other._shader = nullptr;
         other._triangleCount = 0;
         other._vbo = 0;
         other._ebo = 0;
         other._vao = 0;
+    }
+
+    BaseGraphicsData& BaseGraphicsData::operator=(BaseGraphicsData&& other) noexcept
+    {
+        if (this == &other) [[unlikely]]
+        {
+            return *this;
+        }
+
+        BaseGraphicsData tmp(std::move(other));
+        swap(*this, tmp);
+        return *this;
+    }
+
+    void BaseGraphicsData::generate()
+    {
+        glGenVertexArrays(1, &_vao);
+        glGenBuffers(1, &_vbo);
+        glGenBuffers(1, &_ebo);
+    }
+
+    void BaseGraphicsData::setVertexBuffer(const std::vector<float>& data, GLenum usage)
+    {
+        if (Verify(_vbo != 0 && _vao != 0)) [[likely]]
+        {
+            glBindVertexArray(_vao);
+            glBindBuffer(GL_ARRAY_BUFFER, _vbo);
+            glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(sizeof(float) * data.size()),
+                         data.data(), GL_STATIC_DRAW);
+        }
+    }
+
+    void BaseGraphicsData::setIndexBuffer(const std::vector<GLuint>& data, GLenum usage)
+    {
+        if (Verify(_ebo != 0 && _vao != 0)) [[likely]]
+        {
+            glBindVertexArray(_vao);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+                         static_cast<GLsizeiptr>(sizeof(GLuint) * data.size()), data.data(),
+                         GL_STATIC_DRAW);
+            _triangleCount = static_cast<decltype(_triangleCount)>(data.size());
+        }
+    }
+
+    void BaseGraphicsData::setShader(ShaderProgram* sp, bool ignoreVertexAttribSetup /* = false*/)
+    {
+        _shader = sp;
+
+        if (!ignoreVertexAttribSetup)
+        {
+            Assert(_vao != 0);
+            glBindVertexArray(_vao);
+            glBindBuffer(GL_ARRAY_BUFFER, _vbo);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
+            _shader->setupVertexAttribute();
+        }
+    }
+
+    //
+    //   ╻┏┓╻╺┳╸┏━╸┏━┓╻  ┏━╸┏━┓╻ ╻┏━╸╺┳┓┏━╸┏━┓┏━┓┏━┓╻ ╻╻┏━╸┏━┓╺┳┓┏━┓╺┳╸┏━┓
+    //   ┃┃┗┫ ┃ ┣╸ ┣┳┛┃  ┣╸ ┣━┫┃┏┛┣╸  ┃┃┃╺┓┣┳┛┣━┫┣━┛┣━┫┃┃  ┗━┓ ┃┃┣━┫ ┃ ┣━┫
+    //   ╹╹ ╹ ╹ ┗━╸╹┗╸┗━╸┗━╸╹ ╹┗┛ ┗━╸╺┻┛┗━┛╹┗╸╹ ╹╹  ╹ ╹╹┗━╸┗━┛╺┻┛╹ ╹ ╹ ╹ ╹
+    //
+    InterleavedGraphicsData::~InterleavedGraphicsData()
+    {
+        privateClear();
+    }
+
+    InterleavedGraphicsData::InterleavedGraphicsData(InterleavedGraphicsData&& other) noexcept
+        : BaseGraphicsData(std::move(other)),
+          _drawModifiers({}),
+          _texture(other._texture)
+    {
         other._texture = 0;
     }
 
@@ -66,77 +172,8 @@ namespace Core
 
     void InterleavedGraphicsData::generate()
     {
-        glGenVertexArrays(1, &_vao);
-        glGenBuffers(1, &_vbo);
-        glGenBuffers(1, &_ebo);
+        BaseGraphicsData::generate();
         glGenTextures(1, &_texture);
-    }
-
-    void InterleavedGraphicsData::setVertexBuffer(const std::vector<float>& data, GLenum usage)
-    {
-        if (Verify(_vbo != 0 && _vao != 0)) [[likely]]
-        {
-            glBindVertexArray(_vao);
-            glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-            glBufferData(GL_ARRAY_BUFFER, sizeof(float) * data.size(), data.data(), GL_STATIC_DRAW);
-        }
-    }
-
-    void InterleavedGraphicsData::setIndexBuffer(const std::vector<GLuint>& data, GLenum usage)
-    {
-        if (Verify(_ebo != 0 && _vao != 0)) [[likely]]
-        {
-            glBindVertexArray(_vao);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * data.size(), data.data(),
-                         GL_STATIC_DRAW);
-            _triangleCount = static_cast<uint32_t>(data.size());
-        }
-    }
-
-    void InterleavedGraphicsData::setTexture2D(const unsigned char* data, uint32_t width,
-                                               uint32_t height, int channelsCount)
-    {
-        if (Verify(data && _ebo != 0 && _vao != 0 && _texture != 0)) [[likely]]
-        {
-            if (!Verify(channelsCount >= 3 && channelsCount <= 4, "Impossible count of channels"))
-            {
-                return;
-            }
-
-            glBindVertexArray(_vao);
-
-            glBindTexture(GL_TEXTURE_2D, _texture);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-            const GLenum format = (channelsCount == 4) ? GL_RGBA : GL_RGB;
-            const GLenum internalFormat = (channelsCount == 4) ? GL_RGBA8 : GL_RGB8;
-
-            glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format,
-                         GL_UNSIGNED_BYTE, data);
-            glGenerateMipmap(GL_TEXTURE_2D);
-
-            glBindTexture(GL_TEXTURE_2D, 0);
-        }
-    }
-
-    void InterleavedGraphicsData::setShader(ShaderProgram* sp,
-                                            bool ignoreVertexAttribSetup /* = false*/)
-    {
-        _shader = sp;
-
-        if (!ignoreVertexAttribSetup)
-        {
-            Assert(_vao != 0);
-            glBindVertexArray(_vao);
-            glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
-            _shader->setupVertexAttribute();
-        }
     }
 
     void InterleavedGraphicsData::setMesh(const aiMesh* mesh, bool isAppendNormals /* = false*/,
@@ -201,8 +238,39 @@ namespace Core
         // }
     }
 
+    void InterleavedGraphicsData::setTexture2D(const unsigned char* data, uint32_t width,
+                                               uint32_t height, int channelsCount)
+    {
+        if (Verify(data && getEboId() != 0 && getVaoId() != 0 && _texture != 0)) [[likely]]
+        {
+            if (!Verify(channelsCount >= 3 && channelsCount <= 4, "Impossible count of channels"))
+            {
+                return;
+            }
+
+            bindVAO();
+
+            glBindTexture(GL_TEXTURE_2D, _texture);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+            const GLint format = (channelsCount == 4) ? GL_RGBA : GL_RGB;
+            const GLint internalFormat = (channelsCount == 4) ? GL_RGBA8 : GL_RGB8;
+
+            glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, static_cast<GLsizei>(width),
+                         static_cast<GLsizei>(height), 0, format, GL_UNSIGNED_BYTE, data);
+            glGenerateMipmap(GL_TEXTURE_2D);
+
+            glBindTexture(GL_TEXTURE_2D, 0);
+        }
+    }
+
     void InterleavedGraphicsData::clear()
     {
+        BaseGraphicsData::clear();
         privateClear();
     }
 
@@ -226,16 +294,17 @@ namespace Core
             }
         }
 
-        _shader->use();
-        glBindVertexArray(_vao);
-        glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
+        getShader()->use();
+        bindVAO();
+        bindVBO();
+        bindEBO();
         glActiveTexture(GL_TEXTURE0 + textureIndex);
         glBindTexture(bindTextureType, _texture);
 
         applyUniforms();
 
-        glDrawElements(GL_TRIANGLES, _triangleCount, GL_UNSIGNED_INT, nullptr);
+        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(getTriangleCount()), GL_UNSIGNED_INT,
+                       nullptr);
 
         for (auto [val, mod] : _drawModifiers)
         {
@@ -290,7 +359,7 @@ namespace Core
         _drawModifiers.emplace_back(value, mod);
     }
 
-    InterleavedGraphicsData::Modifier InterleavedGraphicsData::getDrawModifier(ModifiedValue value)
+    BaseGraphicsData::Modifier InterleavedGraphicsData::getDrawModifier(ModifiedValue value)
     {
         const auto it = std::ranges::find_if(_drawModifiers,
                                              [value](auto pair) { return pair.value == value; });
@@ -303,53 +372,6 @@ namespace Core
         return Modifier::None;
     }
 
-    /*void InterleavedGraphicsData::ioFieldsUpdate(DataStream& out)
-    {
-        auto stream = out.dedicatedNesting("InterleavedGraphicsData");
-
-        stream.array(
-            "modifiers",
-            [this](DataStream& out, std::size_t size)
-            {
-                if (out.getMode() == DataStream::Mode::Output)
-                {
-                    for (auto [val, mod] : _drawModifiers)
-                    {
-                        nlohmann::json modifier;
-                        modifier["value"] = R<decltype(val)>::ToString(val);
-                        modifier["modifier"] = R<decltype(mod)>::ToString(mod);
-                        out.getRaw().push_back(std::move(modifier));
-                    }
-                }
-                else
-                {
-                    for (auto& modifier : out.getRaw())
-                    {
-                        if (!modifier.contains("value") || !modifier.contains("modifier"))
-                        {
-                            continue;
-                        }
-
-                        auto value = R<InterleavedGraphicsData::ModifiedValue>::FromString(
-                            modifier["value"].get<std::string_view>());
-                        auto param = R<InterleavedGraphicsData::Modifier>::FromString(
-                            modifier["modifier"].get<std::string_view>());
-
-                        if (!value || !param)
-                        {
-                            globalLog.errorLog(
-                                "Was got invalid InterleavedGraphicsData ModifiedValue: '{}' or
-    Modifier: '{}'"_f
-                                << modifier["value"].get<std::string>()
-                                << modifier["modifier"].get<std::string>());
-                            continue;
-                        }
-                        _drawModifiers.emplace_back(value.value(), param.value());
-                    }
-                }
-            });
-    }*/
-
     StringAtom InterleavedGraphicsData::getCacheHash() const
     {
         return "InterleavedGraphicsData"_atom;
@@ -358,26 +380,24 @@ namespace Core
     void InterleavedGraphicsData::privateClear()
     {
         glDeleteTextures(1, &_texture);
-        glDeleteBuffers(1, &_ebo);
-        glDeleteBuffers(1, &_vbo);
-        glDeleteVertexArrays(1, &_vao);
-        _shader = nullptr;
-        _triangleCount = 0;
     }
 
-    void to_json(nlohmann::json& j, const Core::InterleavedGraphicsData::ModifierParam& v)
+    //
+    //              ┏━╸╻  ┏━┓┏┓ ┏━┓╻
+    //              ┃╺┓┃  ┃ ┃┣┻┓┣━┫┃
+    //              ┗━┛┗━╸┗━┛┗━┛╹ ╹┗━╸
+    //
+    void to_json(nlohmann::json& j, const Core::BaseGraphicsData::ModifierParam& v)
     {
-        j["modifier"] = R<InterleavedGraphicsData::Modifier>::ToString(v.modifier);
-        j["value"] = R<InterleavedGraphicsData::ModifiedValue>::ToString(v.value);
+        j["modifier"] = R<BaseGraphicsData::Modifier>::ToString(v.modifier);
+        j["value"] = R<BaseGraphicsData::ModifiedValue>::ToString(v.value);
     }
 
-    void from_json(const nlohmann::json& j, Core::InterleavedGraphicsData::ModifierParam& v)
+    void from_json(const nlohmann::json& j, Core::BaseGraphicsData::ModifierParam& v)
     {
-        v.modifier
-            = R<InterleavedGraphicsData::Modifier>::FromString(j["modifier"].get<std::string>())
-                  .value_or(InterleavedGraphicsData::Modifier::None);
-        v.value
-            = R<InterleavedGraphicsData::ModifiedValue>::FromString(j["value"].get<std::string>())
-                  .value_or(InterleavedGraphicsData::ModifiedValue::None);
+        v.modifier = R<BaseGraphicsData::Modifier>::FromString(j["modifier"].get<std::string>())
+                         .value_or(BaseGraphicsData::Modifier::None);
+        v.value = R<BaseGraphicsData::ModifiedValue>::FromString(j["value"].get<std::string>())
+                      .value_or(BaseGraphicsData::ModifiedValue::None);
     }
 } // namespace Core

@@ -147,42 +147,43 @@ namespace Core
 
         tryToRecalculateMatrices();
 
-        _shader->use();
-        glBindVertexArray(_vao);
-        glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
+        auto* shader = getShader();
+        shader->use();
+        bindVAO();
+        bindVBO();
+        bindEBO();
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, _texture);
         glBindBuffer(GL_UNIFORM_BUFFER, _uboLight);
 
         const auto& lightning = GetWorld().lightning;
-        _shader->setUniformObject(ShaderReflector_default::uLight,
-                                  ShaderReflector_default::Light{
-                                      .ambientStrength = lightning.ambientStrength,
-                                      .specularStrength = lightning.specularStrength,
-                                      .minLightStrength = lightning.minLightStrength,
-                                      .specularPow = lightning.specularPow,
-                                      .color = lightning.color.toGlm(),
-                                      .sunDirection = lightning.sunDirection,
-                                      .viewPos = gGameInstance->currentCamera->getPosition() });
+        shader->setUniformObject(ShaderReflector_default::uLight,
+                                 ShaderReflector_default::Light{
+                                     .ambientStrength = lightning.ambientStrength,
+                                     .specularStrength = lightning.specularStrength,
+                                     .minLightStrength = lightning.minLightStrength,
+                                     .specularPow = lightning.specularPow,
+                                     .color = lightning.color.toGlm(),
+                                     .sunDirection = lightning.sunDirection,
+                                     .viewPos = gGameInstance->currentCamera->getPosition() });
 
-        _shader->setUniform(ShaderReflector_default::uTexture, 0);
-        _shader->setUniform(ShaderReflector_default::uProjAndView,
-                            gGameInstance->currentCamera->getMatrix());
-        _shader->setUniform(ShaderReflector_default::uModel, _cachedModelMatrix);
+        shader->setUniform(ShaderReflector_default::uTexture, 0);
+        shader->setUniform(ShaderReflector_default::uProjAndView,
+                           gGameInstance->currentCamera->getMatrix());
+        shader->setUniform(ShaderReflector_default::uModel, _cachedModelMatrix);
 
         if (getIsDrawOutline())
         {
             glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
             glStencilFunc(GL_ALWAYS, 1, 0xFF);
             glStencilMask(0xFF);
-            glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(_triangleCount), GL_UNSIGNED_INT,
+            glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(getTriangleCount()), GL_UNSIGNED_INT,
                            nullptr);
             drawOutline();
         }
         else
         {
-            glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(_triangleCount), GL_UNSIGNED_INT,
+            glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(getTriangleCount()), GL_UNSIGNED_INT,
                            nullptr);
         }
 
@@ -250,9 +251,9 @@ namespace Core
 
         if (!ignoreVertexAttribSetup)
         {
-            glBindVertexArray(_vao);
-            glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
+            bindVAO();
+            bindVBO();
+            bindEBO();
             _outlineShader->setupVertexAttribute();
         }
     }
@@ -276,14 +277,14 @@ namespace Core
         const float ndcDistance = distance / camera->getFar();
         _outlineShader->setUniform("uCameraObjectNDCDistance"_atom, ndcDistance);
 
-        glBindVertexArray(_vao);
-        glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
+        bindVAO();
+        bindVBO();
+        bindEBO();
 
         glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
         glStencilMask(0x00);
 
-        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(_triangleCount), GL_UNSIGNED_INT,
+        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(getTriangleCount()), GL_UNSIGNED_INT,
                        nullptr);
 
         glStencilFunc(GL_ALWAYS, 1, 0xFF);
@@ -326,6 +327,12 @@ namespace Core
 
     void StaticMesh::pureDraw(const std::function<void(StaticMesh*)>& onUniformSet)
     {
+        if (!InterleavedGraphicsData::isValid()) [[unlikely]]
+        {
+            Assert("Can't draw graphic component. It wasn't configured.");
+            return;
+        }
+
         for (auto [value, mod] : _drawModifiers)
         {
             if (mod == Modifier::Enable)
@@ -338,15 +345,15 @@ namespace Core
             }
         }
 
-        glBindVertexArray(_vao);
-        glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
+        bindVAO();
+        bindVBO();
+        bindEBO();
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, _texture);
 
         onUniformSet(this);
 
-        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(_triangleCount), GL_UNSIGNED_INT,
+        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(getTriangleCount()), GL_UNSIGNED_INT,
                        nullptr);
 
         for (auto [value, mod] : _drawModifiers)
@@ -365,6 +372,7 @@ namespace Core
     void StaticMesh::generate()
     {
         InterleavedGraphicsData::generate();
+
         glGenBuffers(1, &_uboLight);
         glBindBuffer(GL_UNIFORM_BUFFER, _uboLight);
         glBufferData(GL_UNIFORM_BUFFER, sizeof(ShaderReflector_default::Light), nullptr,
@@ -414,8 +422,8 @@ namespace Core
         StaticMesh out{ name };
 
         out.setDrawModifiers({
-            { InterleavedGraphicsData::ModifiedValue::CullFace,
-              InterleavedGraphicsData::Modifier::Disable },
+            { .value = BaseGraphicsData::ModifiedValue::CullFace,
+              .modifier = BaseGraphicsData::Modifier::Disable },
         });
 
         return out;
@@ -426,10 +434,10 @@ namespace Core
         StaticMesh out{ name };
 
         out.setDrawModifiers({
-            { InterleavedGraphicsData::ModifiedValue::CullFace,
-              InterleavedGraphicsData::Modifier::Disable },
-            { InterleavedGraphicsData::ModifiedValue::Blend,
-              InterleavedGraphicsData::Modifier::Enable },
+            { .value = BaseGraphicsData::ModifiedValue::CullFace,
+              .modifier = BaseGraphicsData::Modifier::Disable },
+            { .value = BaseGraphicsData::ModifiedValue::Blend,
+              .modifier = BaseGraphicsData::Modifier::Enable },
         });
 
         return out;

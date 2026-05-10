@@ -127,14 +127,14 @@ namespace Core
     R_FRIEND_IMPL(ObjectPropertiesWindowEWC);
 
     Gui::HorizontalLayout::Ptr _GraphicsModifiersArray_ArrayCellViewerFunc::operator()(
-        InterleavedGraphicsData::ModifierParam& data) const
+        BaseGraphicsData::ModifierParam& data) const
     {
         auto l = Gui::HorizontalLayout::Create();
 
         {
             static const auto& modifiers = []()
             {
-                const auto& m = R<InterleavedGraphicsData::Modifier>::ToArrayN();
+                const auto& m = R<BaseGraphicsData::Modifier>::ToArrayN();
 
                 std::vector<std::string> out(m.begin(), m.end());
                 std::ranges::sort(out);
@@ -158,7 +158,7 @@ namespace Core
         {
             static const auto& values = []()
             {
-                const auto& m = R<InterleavedGraphicsData::ModifiedValue>::ToArrayN();
+                const auto& m = R<BaseGraphicsData::ModifiedValue>::ToArrayN();
 
                 std::vector<std::string> out(m.begin(), m.end());
                 std::ranges::sort(out);
@@ -187,15 +187,15 @@ namespace Core
         return l;
     }
 
-    InterleavedGraphicsData::ModifierParam _GraphicsModifiersArray_ViewFetchFunc::operator()(
+    BaseGraphicsData::ModifierParam _GraphicsModifiersArray_ViewFetchFunc::operator()(
         Gui::HorizontalLayout* layout) const
     {
-        InterleavedGraphicsData::ModifierParam out;
+        BaseGraphicsData::ModifierParam out;
 
         {
             static const auto& modifiers = []()
             {
-                const auto& m = R<InterleavedGraphicsData::Modifier>::ToArrayN();
+                const auto& m = R<BaseGraphicsData::Modifier>::ToArrayN();
 
                 std::vector<std::string> out(m.begin(), m.end());
                 std::ranges::sort(out);
@@ -207,8 +207,7 @@ namespace Core
             if (auto modifier = layout->getFirstChildAs<Gui::ComboModelBased>(); modifier)
             {
                 const auto str = modifiers[modifier->getCurrentIndex()];
-                out.modifier
-                    = R<InterleavedGraphicsData::Modifier>::FromString(str.c_str()).value();
+                out.modifier = R<BaseGraphicsData::Modifier>::FromString(str.c_str()).value();
             }
             else
             {
@@ -219,7 +218,7 @@ namespace Core
         {
             static const auto& values = []()
             {
-                const auto& m = R<InterleavedGraphicsData::ModifiedValue>::ToArrayN();
+                const auto& m = R<BaseGraphicsData::ModifiedValue>::ToArrayN();
 
                 std::vector<std::string> out(m.begin(), m.end());
                 std::ranges::sort(out);
@@ -231,8 +230,8 @@ namespace Core
             if (auto value = layout->getLastChildAs<Gui::ComboModelBased>(); value)
             {
                 const auto str = values[value->getCurrentIndex()];
-                out.value = R<InterleavedGraphicsData::ModifiedValue>::FromString(str).value_or(
-                    InterleavedGraphicsData::ModifiedValue::None);
+                out.value = R<BaseGraphicsData::ModifiedValue>::FromString(str).value_or(
+                    BaseGraphicsData::ModifiedValue::None);
             }
             else
             {

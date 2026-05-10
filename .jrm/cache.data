@@ -54,7 +54,7 @@
 1778205765700928220 sources/Editor/Windows/NxECSBasedEditor.h
 1778205765700928220 sources/Editor/Windows/NxEditorBaseEditor.h
 1778205765700928220 sources/Editor/Windows/NxTextureEditor.h
-1778337950262785172 sources/Editor/Windows/ObjectPropertiesWindow.h
+1778441464236407742 sources/Editor/Windows/ObjectPropertiesWindow.h
 1778172587027330086 sources/Editor/Windows/RootDockWindow.h
 1778205765701928211 sources/Editor/Windows/SceneTreeWindow.h
 1778205765701928211 sources/Editor/Windows/ShaderManager.h
@@ -75,13 +75,13 @@
 1775594678517643203 sources/GameplaySystem/Framework/World.h
 1770677206104945456 sources/GameplaySystem/Framework/WorldObject.h
 1770677206104945456 sources/GameplaySystem/Framework/WorldObjectManager.h
-1778338032541904162 sources/Graphics/GraphicsComponents.h
+1778443329337068175 sources/Graphics/GraphicsComponents.h
 1776719722313057724 sources/Graphics/IDrawable.h
 1771957154420269576 sources/Graphics/IOutliner.h
 1777454557627056682 sources/Graphics/Image.h
 1771957970812589401 sources/Graphics/ModuleInfo.h
 1775075538135367380 sources/Graphics/OpenGL.h
-1778337950050787288 sources/Graphics/Primitives/StaticMesh.h
+1778443239005995404 sources/Graphics/Primitives/StaticMesh.h
 1776718586180528303 sources/Graphics/Primitives/StaticMeshBundle.h
 1774375872208064419 sources/Graphics/RenderTargetToTexture.h
 1777992782358498093 sources/Graphics/ShaderManager.h
