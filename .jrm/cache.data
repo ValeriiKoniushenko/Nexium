@@ -61,7 +61,7 @@
 1778205765701928211 sources/Editor/Windows/TextEditor.h
 1778205765701928211 sources/Editor/Windows/WorldLightning.h
 1775748524055489459 sources/GameplaySystem/Camera.h
-1778435846318697904 sources/GameplaySystem/Entities/Actor.h
+1778436729991194544 sources/GameplaySystem/Entities/Actor.h
 1770677206103945514 sources/GameplaySystem/Framework/ActorManager.h
 1770677206103945514 sources/GameplaySystem/Framework/CameraManager.h
 1770677206103945514 sources/GameplaySystem/Framework/ControllerManager.h

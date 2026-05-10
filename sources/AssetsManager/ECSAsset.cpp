@@ -196,15 +196,15 @@ namespace Core
             const auto json = nlohmann::json::parse(
                 Utils::GetTextFileContentAs<std::string>(_meta.pathToSource));
 
+            RResourceStream<RJsonResourceStream> data(json[StreamData::data]);
+            _data->deserialize(data);
+
             // [opt] making loading of essential data (texture loading, 3D model loading, etc)
             if (_impl)
             {
                 _impl->load(*this, _data.get(), json[StreamData::assetData]);
             }
 
-            RResourceStream<RJsonResourceStream> data(json[StreamData::data]);
-
-            _data->deserialize(data);
             if (!data.logs().empty())
             {
                 warnLog("{} field(s) couldn't be deserialized. The asset: {} "_f

@@ -127,7 +127,9 @@ namespace Core
             return;
         }
 
-        clearMeshes();
+        Assert(false,
+               "It won't work properly. Should investigate the behavior of merging deserialized "
+               "data and loading of assets");
 
         if (node->mNumMeshes == 0 && node->mNumChildren == 0)
         {
