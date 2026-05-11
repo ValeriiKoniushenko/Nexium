@@ -145,7 +145,7 @@ namespace Core
         }
     }
 
-    void BaseGraphicsData::directDraw(GLenum bindTextureType, GLenum textureIndex)
+    void BaseGraphicsData::directDraw(GLenum drawMode, GLenum bindTextureType, GLenum textureIndex)
     {
         if (!isValid()) [[unlikely]]
         {
@@ -172,7 +172,7 @@ namespace Core
 
         onBindBuffers(bindTextureType, textureIndex);
 
-        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(getTriangleCount()), GL_UNSIGNED_INT,
+        glDrawElements(drawMode, static_cast<GLsizei>(getTriangleCount()), GL_UNSIGNED_INT,
                        nullptr);
 
         for (auto [val, mod] : _drawModifiers)

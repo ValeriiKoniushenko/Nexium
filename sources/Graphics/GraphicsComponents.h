@@ -84,8 +84,6 @@ namespace Core
             Modifier modifier = Modifier::None;
         };
 
-        virtual void generate();
-
     public:
         BaseGraphicsData() = default;
         ~BaseGraphicsData() override;
@@ -136,6 +134,8 @@ namespace Core
 
         void setShader(ShaderProgram* sp, bool ignoreVertexAttribSetup = false);
 
+        virtual void generate();
+
         virtual void clear();
         [[nodiscard]] uint32_t getTriangleCount() const noexcept { return _triangleCount; }
         [[nodiscard]] virtual bool isValid() const noexcept
@@ -172,12 +172,13 @@ namespace Core
          * while(...)
          * {
          *     ...
-         *     x.directDraw();
+         *     x.directDraw(GL_TRIANGLES);
          *     ...
          * }
          * @endcode
          */
-        virtual void directDraw(GLenum bindTextureType = GL_TEXTURE_2D, GLenum textureIndex = 0);
+        virtual void directDraw(GLenum drawMode = GL_TRIANGLES,
+                                GLenum bindTextureType = GL_TEXTURE_2D, GLenum textureIndex = 0);
 
         // ====================== Draw modifiers ====================
 

@@ -1,16 +1,26 @@
 #version 460 core
 
 layout(location = 0) in vec3 aPos;
-layout(location = 1) in vec2 aUV;
 
 out vec2 ioUV;
 
 uniform mat4 uProjAndView;
 uniform mat4 uModel;
 
+uniform vec2 uUVOffset;
+uniform vec2 uUVSize;
+
+// clang-format off
+const vec2 corners[4] = vec2[4](
+    vec2(0.0, 0.0),
+    vec2(1.0, 0.0),
+    vec2(1.0, 1.0),
+    vec2(0.0, 1.0)
+);
+// clang-format on
+
 void main()
 {
-    ioUV = vec2(aUV.x, aUV.y);
-
+    ioUV = uUVOffset + corners[gl_VertexID % 4] * uUVSize;
     gl_Position = uProjAndView * uModel * vec4(aPos, 1.0);
 }

@@ -44,7 +44,7 @@ namespace Core
         shader->setUniform("uProj"_atom, camera->getCachedProjectionMatrix());
 
         glDepthFunc(GL_LEQUAL);
-        _gcd.directDraw(GL_TEXTURE_CUBE_MAP, 0);
+        _gcd.directDraw(GL_TRIANGLES, GL_TEXTURE_CUBE_MAP, 0);
         glDepthFunc(GL_LESS);
     }
 
