@@ -26,13 +26,17 @@
 
 namespace Core
 {
+    R_FRIEND_IMPL(BaseTextureGraphicsData);
     R_FRIEND_IMPL(InterleavedGraphicsData);
+    R_FRIEND_IMPL(SeparTextureGraphicsData);
 
-    //
-    //   ┏┓ ┏━┓┏━┓┏━╸┏━╸┏━┓┏━┓┏━┓╻ ╻╻┏━╸┏━┓╺┳┓┏━┓╺┳╸┏━┓
-    //   ┣┻┓┣━┫┗━┓┣╸ ┃╺┓┣┳┛┣━┫┣━┛┣━┫┃┃  ┗━┓ ┃┃┣━┫ ┃ ┣━┫
-    //   ┗━┛╹ ╹┗━┛┗━╸┗━┛╹┗╸╹ ╹╹  ╹ ╹╹┗━╸┗━┛╺┻┛╹ ╹ ╹ ╹ ╹
-    //
+    // ╔════════════════════════════════════════════════════════╗
+    // ║                                                        ║
+    // ║     ╔╗ ┌─┐┌─┐┌─┐╔═╗┬─┐┌─┐┌─┐┬ ┬┬┌─┐┌─┐╔╦╗┌─┐┌┬┐┌─┐     ║
+    // ║     ╠╩╗├─┤└─┐├┤ ║ ╦├┬┘├─┤├─┘├─┤││  └─┐ ║║├─┤ │ ├─┤     ║
+    // ║     ╚═╝┴ ┴└─┘└─┘╚═╝┴└─┴ ┴┴  ┴ ┴┴└─┘└─┘═╩╝┴ ┴ ┴ ┴ ┴     ║
+    // ║                                                        ║
+    // ╚════════════════════════════════════════════════════════╝
     nlohmann::json BaseGraphicsData::serialize() const
     {
         return R<BaseGraphicsData>::Serialize<RJsonResourceStream>(*this).getData();
@@ -235,42 +239,103 @@ namespace Core
         return Modifier::None;
     }
 
-    //
-    //   ╻┏┓╻╺┳╸┏━╸┏━┓╻  ┏━╸┏━┓╻ ╻┏━╸╺┳┓┏━╸┏━┓┏━┓┏━┓╻ ╻╻┏━╸┏━┓╺┳┓┏━┓╺┳╸┏━┓
-    //   ┃┃┗┫ ┃ ┣╸ ┣┳┛┃  ┣╸ ┣━┫┃┏┛┣╸  ┃┃┃╺┓┣┳┛┣━┫┣━┛┣━┫┃┃  ┗━┓ ┃┃┣━┫ ┃ ┣━┫
-    //   ╹╹ ╹ ╹ ┗━╸╹┗╸┗━╸┗━╸╹ ╹┗┛ ┗━╸╺┻┛┗━┛╹┗╸╹ ╹╹  ╹ ╹╹┗━╸┗━┛╺┻┛╹ ╹ ╹ ╹ ╹
-    //
-    InterleavedGraphicsData::~InterleavedGraphicsData()
+    // ╔══════════════════════════════════════════════════════════════════════════════╗
+    // ║                                                                              ║
+    // ║     ╔╗ ┌─┐┌─┐┌─┐╔╦╗┌─┐─┐ ┬┌┬┐┬ ┬┬─┐┌─┐╔═╗┬─┐┌─┐┌─┐┬ ┬┬┌─┐┌─┐╔╦╗┌─┐┌┬┐┌─┐     ║
+    // ║     ╠╩╗├─┤└─┐├┤  ║ ├┤ ┌┴┬┘ │ │ │├┬┘├┤ ║ ╦├┬┘├─┤├─┘├─┤││  └─┐ ║║├─┤ │ ├─┤     ║
+    // ║     ╚═╝┴ ┴└─┘└─┘ ╩ └─┘┴ └─ ┴ └─┘┴└─└─┘╚═╝┴└─┴ ┴┴  ┴ ┴┴└─┘└─┘═╩╝┴ ┴ ┴ ┴ ┴     ║
+    // ║                                                                              ║
+    // ╚══════════════════════════════════════════════════════════════════════════════╝
+
+    BaseTextureGraphicsData::~BaseTextureGraphicsData()
     {
         privateClear();
     }
 
-    InterleavedGraphicsData::InterleavedGraphicsData(InterleavedGraphicsData&& other) noexcept
+    BaseTextureGraphicsData::BaseTextureGraphicsData(BaseTextureGraphicsData&& other) noexcept
         : BaseGraphicsData(std::move(other)),
           _texture(other._texture)
     {
         other._texture = 0;
     }
 
-    InterleavedGraphicsData& InterleavedGraphicsData::operator=(
-        InterleavedGraphicsData&& other) noexcept
+    BaseTextureGraphicsData& BaseTextureGraphicsData::operator=(
+        BaseTextureGraphicsData&& other) noexcept
     {
         if (this == &other) [[unlikely]]
         {
             return *this;
         }
 
-        InterleavedGraphicsData tmp(std::move(other));
+        BaseTextureGraphicsData tmp(std::move(other));
         swap(*this, tmp);
         return *this;
     }
 
-    void InterleavedGraphicsData::generate()
+    void BaseTextureGraphicsData::generate()
     {
         BaseGraphicsData::generate();
         glGenTextures(1, &_texture);
     }
 
+    StringAtom BaseTextureGraphicsData::getCacheHash() const
+    {
+        return "BaseTextureGraphicsData"_atom;
+    }
+
+    void BaseTextureGraphicsData::setTexture2D(const unsigned char* data, uint32_t width,
+                                               uint32_t height, int channelsCount)
+    {
+        if (Verify(data && getEboId() != 0 && getVaoId() != 0 && _texture != 0)) [[likely]]
+        {
+            if (!Verify(channelsCount >= 3 && channelsCount <= 4, "Impossible count of channels"))
+            {
+                return;
+            }
+
+            bindVAO();
+
+            glBindTexture(GL_TEXTURE_2D, _texture);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+            const GLint format = (channelsCount == 4) ? GL_RGBA : GL_RGB;
+            const GLint internalFormat = (channelsCount == 4) ? GL_RGBA8 : GL_RGB8;
+
+            glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, static_cast<GLsizei>(width),
+                         static_cast<GLsizei>(height), 0, format, GL_UNSIGNED_BYTE, data);
+            glGenerateMipmap(GL_TEXTURE_2D);
+
+            glBindTexture(GL_TEXTURE_2D, 0);
+        }
+    }
+
+    void BaseTextureGraphicsData::clear()
+    {
+        BaseGraphicsData::clear();
+        privateClear();
+    }
+    void BaseTextureGraphicsData::onBindBuffers(GLenum bindTextureType, GLenum textureIndex)
+    {
+        glActiveTexture(GL_TEXTURE0 + textureIndex);
+        glBindTexture(bindTextureType, _texture);
+    }
+
+    void BaseTextureGraphicsData::privateClear()
+    {
+        glDeleteTextures(1, &_texture);
+    }
+
+    // ╔════════════════════════════════════════════════════════════════════════════╗
+    // ║                                                                            ║
+    // ║     ╦┌┐┌┌┬┐┌─┐┬─┐┬  ┌─┐┌─┐┬  ┬┌─┐┌┬┐╔═╗┬─┐┌─┐┌─┐┬ ┬┬┌─┐┌─┐╔╦╗┌─┐┌┬┐┌─┐     ║
+    // ║     ║│││ │ ├┤ ├┬┘│  ├┤ ├─┤└┐┌┘├┤  ││║ ╦├┬┘├─┤├─┘├─┤││  └─┐ ║║├─┤ │ ├─┤     ║
+    // ║     ╩┘└┘ ┴ └─┘┴└─┴─┘└─┘┴ ┴ └┘ └─┘─┴┘╚═╝┴└─┴ ┴┴  ┴ ┴┴└─┘└─┘═╩╝┴ ┴ ┴ ┴ ┴     ║
+    // ║                                                                            ║
+    // ╚════════════════════════════════════════════════════════════════════════════╝
     void InterleavedGraphicsData::setMesh(const aiMesh* mesh, bool isAppendNormals /* = false*/,
                                           bool isAppendUV /* = false*/, float scale /* = 1.f*/)
     {
@@ -333,63 +398,31 @@ namespace Core
         // }
     }
 
-    void InterleavedGraphicsData::setTexture2D(const unsigned char* data, uint32_t width,
-                                               uint32_t height, int channelsCount)
-    {
-        if (Verify(data && getEboId() != 0 && getVaoId() != 0 && _texture != 0)) [[likely]]
-        {
-            if (!Verify(channelsCount >= 3 && channelsCount <= 4, "Impossible count of channels"))
-            {
-                return;
-            }
-
-            bindVAO();
-
-            glBindTexture(GL_TEXTURE_2D, _texture);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-            const GLint format = (channelsCount == 4) ? GL_RGBA : GL_RGB;
-            const GLint internalFormat = (channelsCount == 4) ? GL_RGBA8 : GL_RGB8;
-
-            glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, static_cast<GLsizei>(width),
-                         static_cast<GLsizei>(height), 0, format, GL_UNSIGNED_BYTE, data);
-            glGenerateMipmap(GL_TEXTURE_2D);
-
-            glBindTexture(GL_TEXTURE_2D, 0);
-        }
-    }
-
-    void InterleavedGraphicsData::clear()
-    {
-        BaseGraphicsData::clear();
-        privateClear();
-    }
-
     StringAtom InterleavedGraphicsData::getCacheHash() const
     {
         return "InterleavedGraphicsData"_atom;
     }
 
-    void InterleavedGraphicsData::onBindBuffers(GLenum bindTextureType, GLenum textureIndex)
+    // ╔═════════════════════════════════════════════════════════════════════════════════╗
+    // ║                                                                                 ║
+    // ║     ╔═╗┌─┐┌─┐┌─┐┬─┐╔╦╗┌─┐─┐ ┬┌┬┐┬ ┬┬─┐┌─┐╔═╗┬─┐┌─┐┌─┐┬ ┬┬┌─┐┌─┐╔╦╗┌─┐┌┬┐┌─┐     ║
+    // ║     ╚═╗├┤ ├─┘├─┤├┬┘ ║ ├┤ ┌┴┬┘ │ │ │├┬┘├┤ ║ ╦├┬┘├─┤├─┘├─┤││  └─┐ ║║├─┤ │ ├─┤     ║
+    // ║     ╚═╝└─┘┴  ┴ ┴┴└─ ╩ └─┘┴ └─ ┴ └─┘┴└─└─┘╚═╝┴└─┴ ┴┴  ┴ ┴┴└─┘└─┘═╩╝┴ ┴ ┴ ┴ ┴     ║
+    // ║                                                                                 ║
+    // ╚═════════════════════════════════════════════════════════════════════════════════╝
+
+    StringAtom SeparTextureGraphicsData::getCacheHash() const
     {
-        glActiveTexture(GL_TEXTURE0 + textureIndex);
-        glBindTexture(bindTextureType, _texture);
+        return "SeparTextureGraphicsData"_atom;
     }
 
-    void InterleavedGraphicsData::privateClear()
-    {
-        glDeleteTextures(1, &_texture);
-    }
-
-    //
-    //              ┏━╸╻  ┏━┓┏┓ ┏━┓╻
-    //              ┃╺┓┃  ┃ ┃┣┻┓┣━┫┃
-    //              ┗━┛┗━╸┗━┛┗━┛╹ ╹┗━╸
-    //
+    // ╔════════════════════════════╗
+    // ║                            ║
+    // ║     ╔═╗┬  ┌─┐┌┐ ┌─┐┬       ║
+    // ║     ║ ╦│  │ │├┴┐├─┤│       ║
+    // ║     ╚═╝┴─┘└─┘└─┘┴ ┴┴─┘     ║
+    // ║                            ║
+    // ╚════════════════════════════╝
     void to_json(nlohmann::json& j, const Core::BaseGraphicsData::ModifierParam& v)
     {
         j["modifier"] = R<BaseGraphicsData::Modifier>::ToString(v.modifier);
@@ -403,4 +436,5 @@ namespace Core
         v.value = R<BaseGraphicsData::ModifiedValue>::FromString(j["value"].get<std::string>())
                       .value_or(BaseGraphicsData::ModifiedValue::None);
     }
+
 } // namespace Core

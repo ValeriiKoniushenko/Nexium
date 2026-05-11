@@ -125,7 +125,7 @@ namespace Core
     {
         if (!InterleavedGraphicsData::isValid()) [[unlikely]]
         {
-            AssertTimed(false, 20, "Can't draw graphic component. It wasn't configured.");
+            AssertAtCount(false, 2000, "Can't draw graphic component. It wasn't configured.");
             return;
         }
 
@@ -154,7 +154,7 @@ namespace Core
         bindVBO();
         bindEBO();
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, _texture);
+        glBindTexture(GL_TEXTURE_2D, getTextureId());
         glBindBuffer(GL_UNIFORM_BUFFER, _uboLight);
 
         const auto& lightning = GetWorld().lightning;
@@ -330,7 +330,7 @@ namespace Core
     {
         if (!InterleavedGraphicsData::isValid()) [[unlikely]]
         {
-            AssertTimed(false, 20, "Can't draw graphic component. It wasn't configured.");
+            AssertAtCount(false, 2000, "Can't draw graphic component. It wasn't configured.");
             return;
         }
 
@@ -350,7 +350,7 @@ namespace Core
         bindVBO();
         bindEBO();
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, _texture);
+        glBindTexture(GL_TEXTURE_2D, getTextureId());
 
         onUniformSet(this);
 

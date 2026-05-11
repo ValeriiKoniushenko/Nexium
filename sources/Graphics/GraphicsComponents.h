@@ -32,12 +32,13 @@
 namespace Core
 {
 
-    //
-    //   ┏┓ ┏━┓┏━┓┏━╸┏━╸┏━┓┏━┓┏━┓╻ ╻╻┏━╸┏━┓╺┳┓┏━┓╺┳╸┏━┓
-    //   ┣┻┓┣━┫┗━┓┣╸ ┃╺┓┣┳┛┣━┫┣━┛┣━┫┃┃  ┗━┓ ┃┃┣━┫ ┃ ┣━┫
-    //   ┗━┛╹ ╹┗━┛┗━╸┗━┛╹┗╸╹ ╹╹  ╹ ╹╹┗━╸┗━┛╺┻┛╹ ╹ ╹ ╹ ╹
-    //
-
+    // ╔════════════════════════════════════════════════════════╗
+    // ║                                                        ║
+    // ║     ╔╗ ┌─┐┌─┐┌─┐╔═╗┬─┐┌─┐┌─┐┬ ┬┬┌─┐┌─┐╔╦╗┌─┐┌┬┐┌─┐     ║
+    // ║     ╠╩╗├─┤└─┐├┤ ║ ╦├┬┘├─┤├─┘├─┤││  └─┐ ║║├─┤ │ ├─┤     ║
+    // ║     ╚═╝┴ ┴└─┘└─┘╚═╝┴└─┴ ┴┴  ┴ ┴┴└─┘└─┘═╩╝┴ ┴ ┴ ┴ ┴     ║
+    // ║                                                        ║
+    // ╚════════════════════════════════════════════════════════╝
     CLASS();
     class BaseGraphicsData : public IDataIO
     {
@@ -223,26 +224,28 @@ namespace Core
         GLuint _vao = 0;
     };
 
-    //
-    //   ╻┏┓╻╺┳╸┏━╸┏━┓╻  ┏━╸┏━┓╻ ╻┏━╸╺┳┓┏━╸┏━┓┏━┓┏━┓╻ ╻╻┏━╸┏━┓╺┳┓┏━┓╺┳╸┏━┓
-    //   ┃┃┗┫ ┃ ┣╸ ┣┳┛┃  ┣╸ ┣━┫┃┏┛┣╸  ┃┃┃╺┓┣┳┛┣━┫┣━┛┣━┫┃┃  ┗━┓ ┃┃┣━┫ ┃ ┣━┫
-    //   ╹╹ ╹ ╹ ┗━╸╹┗╸┗━╸┗━╸╹ ╹┗┛ ┗━╸╺┻┛┗━┛╹┗╸╹ ╹╹  ╹ ╹╹┗━╸┗━┛╺┻┛╹ ╹ ╹ ╹ ╹
-    //
+    // ╔══════════════════════════════════════════════════════════════════════════════╗
+    // ║                                                                              ║
+    // ║     ╔╗ ┌─┐┌─┐┌─┐╔╦╗┌─┐─┐ ┬┌┬┐┬ ┬┬─┐┌─┐╔═╗┬─┐┌─┐┌─┐┬ ┬┬┌─┐┌─┐╔╦╗┌─┐┌┬┐┌─┐     ║
+    // ║     ╠╩╗├─┤└─┐├┤  ║ ├┤ ┌┴┬┘ │ │ │├┬┘├┤ ║ ╦├┬┘├─┤├─┘├─┤││  └─┐ ║║├─┤ │ ├─┤     ║
+    // ║     ╚═╝┴ ┴└─┘└─┘ ╩ └─┘┴ └─ ┴ └─┘┴└─└─┘╚═╝┴└─┴ ┴┴  ┴ ┴┴└─┘└─┘═╩╝┴ ┴ ┴ ┴ ┴     ║
+    // ║                                                                              ║
+    // ╚══════════════════════════════════════════════════════════════════════════════╝
     CLASS();
-    class InterleavedGraphicsData : public BaseGraphicsData
+    class BaseTextureGraphicsData : public BaseGraphicsData
     {
-        R_FRIEND_DECL(Core::InterleavedGraphicsData, Core::BaseGraphicsData);
+        R_FRIEND_DECL(Core::BaseTextureGraphicsData, Core::BaseGraphicsData);
 
     public:
-        InterleavedGraphicsData() = default;
-        ~InterleavedGraphicsData() override;
+        BaseTextureGraphicsData() = default;
+        ~BaseTextureGraphicsData() override;
 
-        InterleavedGraphicsData(const InterleavedGraphicsData& other) = default;
-        InterleavedGraphicsData(InterleavedGraphicsData&& other) noexcept;
-        InterleavedGraphicsData& operator=(const InterleavedGraphicsData& other) = default;
-        InterleavedGraphicsData& operator=(InterleavedGraphicsData&& other) noexcept;
+        BaseTextureGraphicsData(const BaseTextureGraphicsData& other) = default;
+        BaseTextureGraphicsData(BaseTextureGraphicsData&& other) noexcept;
+        BaseTextureGraphicsData& operator=(const BaseTextureGraphicsData& other) = default;
+        BaseTextureGraphicsData& operator=(BaseTextureGraphicsData&& other) noexcept;
 
-        friend void swap(InterleavedGraphicsData& a, InterleavedGraphicsData& b) noexcept
+        friend void swap(BaseTextureGraphicsData& a, BaseTextureGraphicsData& b) noexcept
         {
             swap(static_cast<BaseGraphicsData&>(a), static_cast<BaseGraphicsData&>(b));
             std::swap(a._texture, b._texture);
@@ -250,8 +253,52 @@ namespace Core
 
         void generate() override;
 
+        void clear() override;
+
+        [[nodiscard]] bool isValid() const noexcept override
+        {
+            return BaseGraphicsData::isValid() && _texture != 0;
+        }
+        [[nodiscard]] GLuint getTextureId() noexcept { return _texture; }
+        [[nodiscard]] StringAtom getCacheHash() const override;
+        void bindTexture(GLenum type = GL_TEXTURE_2D) const noexcept
+        {
+            Assert(_texture != 0);
+            glBindTexture(type, _texture);
+        }
         void setTexture2D(const unsigned char* data, uint32_t width, uint32_t height,
                           int channelsCount);
+
+    protected:
+        void onBindBuffers(GLenum bindTextureType, GLenum textureIndex) override;
+
+    private:
+        void privateClear();
+
+    private:
+        GLuint _texture = 0;
+    };
+
+    // ╔════════════════════════════════════════════════════════════════════════════╗
+    // ║                                                                            ║
+    // ║     ╦┌┐┌┌┬┐┌─┐┬─┐┬  ┌─┐┌─┐┬  ┬┌─┐┌┬┐╔═╗┬─┐┌─┐┌─┐┬ ┬┬┌─┐┌─┐╔╦╗┌─┐┌┬┐┌─┐     ║
+    // ║     ║│││ │ ├┤ ├┬┘│  ├┤ ├─┤└┐┌┘├┤  ││║ ╦├┬┘├─┤├─┘├─┤││  └─┐ ║║├─┤ │ ├─┤     ║
+    // ║     ╩┘└┘ ┴ └─┘┴└─┴─┘└─┘┴ ┴ └┘ └─┘─┴┘╚═╝┴└─┴ ┴┴  ┴ ┴┴└─┘└─┘═╩╝┴ ┴ ┴ ┴ ┴     ║
+    // ║                                                                            ║
+    // ╚════════════════════════════════════════════════════════════════════════════╝
+    CLASS();
+    class InterleavedGraphicsData : public BaseTextureGraphicsData
+    {
+        R_FRIEND_DECL(Core::InterleavedGraphicsData, Core::BaseGraphicsData);
+
+    public:
+        InterleavedGraphicsData() = default;
+        ~InterleavedGraphicsData() override = default;
+
+        InterleavedGraphicsData(const InterleavedGraphicsData& other) = default;
+        InterleavedGraphicsData(InterleavedGraphicsData&& other) noexcept;
+        InterleavedGraphicsData& operator=(const InterleavedGraphicsData& other) = default;
+        InterleavedGraphicsData& operator=(InterleavedGraphicsData&& other) noexcept;
 
         /**
          * loads & constructs from aiMesh GPU data.
@@ -266,41 +313,30 @@ namespace Core
         void setMesh(const aiMesh* mesh, bool isAppendNormals = false, bool isAppendUV = false,
                      float scale = 1.f);
 
-        void clear() override;
-
-        [[nodiscard]] bool isValid() const noexcept override
-        {
-            return BaseGraphicsData::isValid() && _texture != 0;
-        }
-
-        [[nodiscard]] GLuint getTextureId() noexcept { return _texture; }
-
         [[nodiscard]] StringAtom getCacheHash() const override;
 
-        void bindTexture(GLenum type = GL_TEXTURE_2D) const noexcept
+        friend void swap(InterleavedGraphicsData& a, InterleavedGraphicsData& b) noexcept
         {
-            Assert(_texture != 0);
-            glBindTexture(type, _texture);
+            swap(static_cast<BaseTextureGraphicsData&>(a),
+                 static_cast<BaseTextureGraphicsData&>(b));
         }
-
-    protected:
-        void onBindBuffers(GLenum bindTextureType, GLenum textureIndex) override;
-
-    protected:
-        GLuint _texture = 0;
-
-    private:
-        void privateClear();
     };
 
+    // ╔═════════════════════════════════════════════════════════════════════════════════╗
+    // ║                                                                                 ║
+    // ║     ╔═╗┌─┐┌─┐┌─┐┬─┐╔╦╗┌─┐─┐ ┬┌┬┐┬ ┬┬─┐┌─┐╔═╗┬─┐┌─┐┌─┐┬ ┬┬┌─┐┌─┐╔╦╗┌─┐┌┬┐┌─┐     ║
+    // ║     ╚═╗├┤ ├─┘├─┤├┬┘ ║ ├┤ ┌┴┬┘ │ │ │├┬┘├┤ ║ ╦├┬┘├─┤├─┘├─┤││  └─┐ ║║├─┤ │ ├─┤     ║
+    // ║     ╚═╝└─┘┴  ┴ ┴┴└─ ╩ └─┘┴ └─ ┴ └─┘┴└─└─┘╚═╝┴└─┴ ┴┴  ┴ ┴┴└─┘└─┘═╩╝┴ ┴ ┴ ┴ ┴     ║
+    // ║                                                                                 ║
+    // ╚═════════════════════════════════════════════════════════════════════════════════╝
     CLASS();
-    class SeparTextureGraphicsData : public BaseGraphicsData
+    class SeparTextureGraphicsData : public BaseTextureGraphicsData
     {
-        R_FRIEND_DECL(Core::SeparTextureGraphicsData, Core::BaseGraphicsData);
+        R_FRIEND_DECL(Core::SeparTextureGraphicsData, Core::BaseTextureGraphicsData);
 
     public:
         SeparTextureGraphicsData() = default;
-        ~SeparTextureGraphicsData() override;
+        ~SeparTextureGraphicsData() override = default;
 
         SeparTextureGraphicsData(const SeparTextureGraphicsData& other) = default;
         SeparTextureGraphicsData(SeparTextureGraphicsData&& other) noexcept;
@@ -309,20 +345,20 @@ namespace Core
 
         friend void swap(SeparTextureGraphicsData& a, SeparTextureGraphicsData& b) noexcept
         {
-            swap(static_cast<BaseGraphicsData&>(a), static_cast<BaseGraphicsData&>(b));
+            swap(static_cast<BaseTextureGraphicsData&>(a),
+                 static_cast<BaseTextureGraphicsData&>(b));
         }
 
-        void generate() override;
-
-        void setTexture2D(const unsigned char* data, uint32_t width, uint32_t height,
-                          int channelsCount);
+        [[nodiscard]] StringAtom getCacheHash() const override;
     };
 
-    //
-    //              ┏━╸╻  ┏━┓┏┓ ┏━┓╻
-    //              ┃╺┓┃  ┃ ┃┣┻┓┣━┫┃
-    //              ┗━┛┗━╸┗━┛┗━┛╹ ╹┗━╸
-    //
+    // ╔════════════════════════════╗
+    // ║                            ║
+    // ║     ╔═╗┬  ┌─┐┌┐ ┌─┐┬       ║
+    // ║     ║ ╦│  │ │├┴┐├─┤│       ║
+    // ║     ╚═╝┴─┘└─┘└─┘┴ ┴┴─┘     ║
+    // ║                            ║
+    // ╚════════════════════════════╝
     void to_json(nlohmann::json& j, const Core::BaseGraphicsData::ModifierParam& v);
     void from_json(const nlohmann::json& j, Core::BaseGraphicsData::ModifierParam& v);
 

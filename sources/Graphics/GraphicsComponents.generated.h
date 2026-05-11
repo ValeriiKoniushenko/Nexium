@@ -293,6 +293,65 @@ struct R<Core::BaseGraphicsData>
 }; // struct R<Core::BaseGraphicsData>
 
 template<>
+struct R<Core::BaseTextureGraphicsData>
+{
+    static constexpr std::string_view Name() { return "BaseTextureGraphicsData"; }
+    static constexpr std::string_view ParentScope() { return "Core"; }
+    static constexpr std::size_t GetFieldNumbers() { return 0; }
+    static constexpr std::vector<RClassField> GetFields() {
+        return {
+		};
+    }
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Core::BaseTextureGraphicsData& obj, bool noSignals = false)
+    {
+        RResourceStream<RImpl> s;if (!noSignals)
+        {
+            _RTryCallPreSerialize<Core::BaseTextureGraphicsData>(obj);
+        }
+
+		s.write(R<Core::BaseGraphicsData>::Serialize<RImpl>(obj).getData());
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize<Core::BaseTextureGraphicsData>(obj, s.logs());
+        }
+        return s;
+    }
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    static void Serialize(const Core::BaseTextureGraphicsData& obj, RResourceStream<RImpl>& s, bool noSignals = false)
+    {
+        if (!noSignals)
+        {
+            _RTryCallPreSerialize<Core::BaseTextureGraphicsData>(obj);
+        }
+
+		s.write(R<Core::BaseGraphicsData>::Serialize<RImpl>(obj).getData());
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize<Core::BaseTextureGraphicsData>(obj, s.logs());
+        }
+    }
+
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    static void Deserialize(const RResourceStream<RImpl>& s, Core::BaseTextureGraphicsData& obj, bool noSignals = false)
+    {
+        if (!noSignals)
+        {
+            _RTryCallPreDeserialize<Core::BaseTextureGraphicsData>(obj);
+        }
+
+		R<Core::BaseGraphicsData>::Deserialize<RImpl>(s, obj, true);
+        if (!noSignals)
+        {
+            _RTryCallPostDeserialize<Core::BaseTextureGraphicsData>(obj, s.logs());
+        }
+    }
+}; // struct R<Core::BaseTextureGraphicsData>
+
+template<>
 struct R<Core::InterleavedGraphicsData>
 {
     static constexpr std::string_view Name() { return "InterleavedGraphicsData"; }
@@ -370,7 +429,7 @@ struct R<Core::SeparTextureGraphicsData>
             _RTryCallPreSerialize<Core::SeparTextureGraphicsData>(obj);
         }
 
-		s.write(R<Core::BaseGraphicsData>::Serialize<RImpl>(obj).getData());
+		s.write(R<Core::BaseTextureGraphicsData>::Serialize<RImpl>(obj).getData());
         if (!noSignals)
         {
             _RTryCallPostSerialize<Core::SeparTextureGraphicsData>(obj, s.logs());
@@ -386,7 +445,7 @@ struct R<Core::SeparTextureGraphicsData>
             _RTryCallPreSerialize<Core::SeparTextureGraphicsData>(obj);
         }
 
-		s.write(R<Core::BaseGraphicsData>::Serialize<RImpl>(obj).getData());
+		s.write(R<Core::BaseTextureGraphicsData>::Serialize<RImpl>(obj).getData());
         if (!noSignals)
         {
             _RTryCallPostSerialize<Core::SeparTextureGraphicsData>(obj, s.logs());
@@ -402,7 +461,7 @@ struct R<Core::SeparTextureGraphicsData>
             _RTryCallPreDeserialize<Core::SeparTextureGraphicsData>(obj);
         }
 
-		R<Core::BaseGraphicsData>::Deserialize<RImpl>(s, obj, true);
+		R<Core::BaseTextureGraphicsData>::Deserialize<RImpl>(s, obj, true);
         if (!noSignals)
         {
             _RTryCallPostDeserialize<Core::SeparTextureGraphicsData>(obj, s.logs());
