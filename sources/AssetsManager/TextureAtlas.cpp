@@ -64,13 +64,32 @@ namespace Core
 
     void TextureAtlas::generateTextureAtlas(const fs::path& atlasFolder)
     {
-        _texture.loadFromFile(atlasFolder / "red.png");
-
-        return;
         std::vector<Image> images;
         std::vector<rect_type> rectangles;
 
         iterateOverFolderAndFetchImages(atlasFolder, images);
+
+        if (images.empty())
+        {
+            warnLog("No images found in the atlas folder '{}'"_f << atlasFolder.generic_string());
+            return;
+        }
+
+        // validation for data consistency
+        const auto firstChannel = images.front().getChannelAsOpenGLType();
+        for (const auto& img : images)
+        {
+            if (img.getChannelAsOpenGLType() != firstChannel)
+            {
+                errorLog(
+                    "All images in the atlas folder must have the same number of channels. Image '{}' has {} channels, while the first image has {} channels."_f
+                    << img.getPath().generic_string()
+                    << R<Image::Channel>::ToString(img.getChannel())
+                    << R<Image::Channel>::ToString(images.front().getChannel()));
+                return;
+            }
+        }
+
         for (const auto& img : images)
         {
             rect_type rt;
@@ -107,26 +126,19 @@ namespace Core
         _texture.generate();
         _texture.bind();
 
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+        _texture.putImage(0, GL_RGBA, result_size.w, result_size.h, 0, firstChannel,
+                          GL_UNSIGNED_BYTE, nullptr);
 
-        _texture.putImage(0, GL_RGBA, images.front().getSize().width,
-                          images.front().getSize().height, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                          images.front().data());
-        // _texture.putImage(0, GL_RGBA, result_size.w, result_size.h, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-        //                   nullptr);
-
-        // for (std::size_t i = 0; i < images.size(); ++i)
-        // {
-        //     const auto& rect = rectangles[i]; // x, y, w, h filled in by packer
-        //
-        //     auto name = fs::relative(images[i].getPath(), atlasFolder).generic_string();
-        //     _rects[StringAtom::Intern(name)]
-        //         = FRect{ static_cast<float>(rect.x), static_cast<float>(rect.y),
-        //                  static_cast<float>(rect.w), static_cast<float>(rect.h) };
-        //
-        //     _texture.putSubImage(0, rect.x, rect.y, rect.w, rect.h, GL_RGBA, GL_UNSIGNED_BYTE,
-        //                          images[i].data());
-        // }
+        for (std::size_t i = 0; i < images.size(); ++i)
+        {
+            const auto& rect = rectangles[i]; // x, y, w, h filled in by packer
+            const auto name = fs::relative(images[i].getPath(), atlasFolder).generic_string();
+            _rects[StringAtom::Intern(name)]
+                = FRect{ static_cast<float>(rect.x), static_cast<float>(rect.y),
+                         static_cast<float>(rect.w), static_cast<float>(rect.h) };
+            _texture.putSubImage(0, rect.x, rect.y, rect.w, rect.h, firstChannel, GL_UNSIGNED_BYTE,
+                                 images[i].data());
+        }
 
         _texture.generateMipmap();
         _texture.unbind();
