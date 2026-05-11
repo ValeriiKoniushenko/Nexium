@@ -101,17 +101,20 @@ namespace Core
 
     void BaseGraphicsData::generate()
     {
-        glGenVertexArrays(1, &_vao);
-        glGenBuffers(1, &_vbo);
-        glGenBuffers(1, &_ebo);
+        if (Verify(!isValid())) [[likely]]
+        {
+            glGenVertexArrays(1, &_vao);
+            glGenBuffers(1, &_vbo);
+            glGenBuffers(1, &_ebo);
+        }
     }
 
     void BaseGraphicsData::setVertexBuffer(const std::vector<float>& data, GLenum usage)
     {
         if (Verify(_vbo != 0 && _vao != 0)) [[likely]]
         {
-            glBindVertexArray(_vao);
-            glBindBuffer(GL_ARRAY_BUFFER, _vbo);
+            bindVAO();
+            bindVBO();
             glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(sizeof(float) * data.size()),
                          data.data(), GL_STATIC_DRAW);
         }
@@ -121,8 +124,8 @@ namespace Core
     {
         if (Verify(_ebo != 0 && _vao != 0)) [[likely]]
         {
-            glBindVertexArray(_vao);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
+            bindVAO();
+            bindEBO();
             glBufferData(GL_ELEMENT_ARRAY_BUFFER,
                          static_cast<GLsizeiptr>(sizeof(GLuint) * data.size()), data.data(),
                          GL_STATIC_DRAW);
@@ -134,15 +137,14 @@ namespace Core
     {
         _shader = sp;
 
-        if (!ignoreVertexAttribSetup)
+        Assert(_vao != 0);
+        if (!ignoreVertexAttribSetup && _vao != 0)
         {
-            Assert(_vao != 0);
-            glBindVertexArray(_vao);
-            glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
+            bindAllBuffers();
             _shader->setupVertexAttribute();
         }
     }
+
     void BaseGraphicsData::directDraw(GLenum bindTextureType, GLenum textureIndex)
     {
         if (!isValid()) [[unlikely]]
@@ -274,8 +276,11 @@ namespace Core
 
     void BaseTextureGraphicsData::generate()
     {
-        BaseGraphicsData::generate();
-        glGenTextures(1, &_texture);
+        if (Verify(!isValid())) [[likely]]
+        {
+            BaseGraphicsData::generate();
+            glGenTextures(1, &_texture);
+        }
     }
 
     StringAtom BaseTextureGraphicsData::getCacheHash() const
@@ -294,8 +299,8 @@ namespace Core
             }
 
             bindVAO();
+            bindTexture();
 
-            glBindTexture(GL_TEXTURE_2D, _texture);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
@@ -321,7 +326,7 @@ namespace Core
     void BaseTextureGraphicsData::onBindBuffers(GLenum bindTextureType, GLenum textureIndex)
     {
         glActiveTexture(GL_TEXTURE0 + textureIndex);
-        glBindTexture(bindTextureType, _texture);
+        bindTexture();
     }
 
     void BaseTextureGraphicsData::privateClear()
@@ -410,10 +415,72 @@ namespace Core
     // ║     ╚═╝└─┘┴  ┴ ┴┴└─ ╩ └─┘┴ └─ ┴ └─┘┴└─└─┘╚═╝┴└─┴ ┴┴  ┴ ┴┴└─┘└─┘═╩╝┴ ┴ ┴ ┴ ┴     ║
     // ║                                                                                 ║
     // ╚═════════════════════════════════════════════════════════════════════════════════╝
+    SeparTextureGraphicsData::~SeparTextureGraphicsData()
+    {
+        privateClear();
+    }
+
+    SeparTextureGraphicsData::SeparTextureGraphicsData(SeparTextureGraphicsData&& other) noexcept
+        : BaseTextureGraphicsData(std::move(other)),
+          _textureVbo(other._textureVbo)
+    {
+        other._textureVbo = 0;
+    }
+
+    SeparTextureGraphicsData& SeparTextureGraphicsData::operator=(
+        SeparTextureGraphicsData&& other) noexcept
+    {
+        if (this == &other) [[unlikely]]
+        {
+            return *this;
+        }
+
+        SeparTextureGraphicsData tmp(std::move(other));
+        swap(*this, tmp);
+        return *this;
+    }
+
+    void SeparTextureGraphicsData::generate()
+    {
+        if (Verify(!isValid())) [[likely]]
+        {
+            BaseTextureGraphicsData::generate();
+            glGenBuffers(1, &_textureVbo);
+        }
+    }
+
+    void SeparTextureGraphicsData::clear()
+    {
+        BaseTextureGraphicsData::clear();
+        privateClear();
+    }
+
+    bool SeparTextureGraphicsData::isValid() const noexcept
+    {
+        return BaseTextureGraphicsData::isValid() && _textureVbo != 0;
+    }
+
+    void SeparTextureGraphicsData::setTextureVertexBuffer(const std::vector<float>& data,
+                                                          GLenum usage)
+    {
+        if (Verify(_textureVbo != 0 && getVaoId() != 0)) [[likely]]
+        {
+            bindVAO();
+            bindTextureVBO();
+            glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(sizeof(float) * data.size()),
+                         data.data(), GL_STATIC_DRAW);
+        }
+    }
 
     StringAtom SeparTextureGraphicsData::getCacheHash() const
     {
         return "SeparTextureGraphicsData"_atom;
+    }
+
+    void SeparTextureGraphicsData::privateClear()
+    {
+        glDeleteBuffers(1, &_textureVbo);
+        _textureVbo = 0;
     }
 
     // ╔════════════════════════════╗

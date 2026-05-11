@@ -75,12 +75,23 @@ namespace Core
     class ShaderProgram : public BaseLog
     {
     public:
+        enum Event
+        {
+            None = 0,
+            OnSetIndexBuffer = 1 << 0,
+            OnSetVertexBuffer = 1 << 1,
+            OnSetIndexAndVertexBuffer = OnSetIndexBuffer | OnSetVertexBuffer,
+            OnSetTextureVertexBuffer = 1 << 2
+        };
+
+    public:
+        ShaderProgram() = default;
         ~ShaderProgram() override = default;
 
-        ShaderProgram() = default;
+        ShaderProgram(const ShaderProgram&) = delete;
+        ShaderProgram& operator=(const ShaderProgram&) = delete;
 
-        ShaderProgram(ShaderProgram&& other) noexcept { *this = std::move(other); }
-
+        ShaderProgram(ShaderProgram&& other) noexcept;
         ShaderProgram& operator=(ShaderProgram&& other) noexcept;
 
         void setVertexShaderId(GLuint shader) { _vertexShaderId = shader; }
@@ -175,8 +186,23 @@ namespace Core
         void setDataFromMeta(const ShaderProgramMeta& source);
 
         void setupVertexAttribute();
-
         void setVertexAttributeCallback(std::function<void()>&& func);
+
+        void callSetEvent(Event event);
+        void setSetEventCallback(std::function<void(Event)>&& func);
+
+        friend void swap(ShaderProgram& a, ShaderProgram& b) noexcept
+        {
+            using std::swap;
+            swap(a._ubos, b._ubos);
+            swap(a._uniforms, b._uniforms);
+            swap(a._name, b._name);
+            swap(a._vertexShaderId, b._vertexShaderId);
+            swap(a._fragmentShaderId, b._fragmentShaderId);
+            swap(a._shaderProgramId, b._shaderProgramId);
+            swap(a._setupVertexAttribute, b._setupVertexAttribute);
+            swap(a._setEvent, b._setEvent);
+        }
 
     protected:
         void clearOnlyShaderProgram();
@@ -186,6 +212,7 @@ namespace Core
         std::unordered_map<StringAtom, GLuint> _ubos;
 
         std::function<void()> _setupVertexAttribute;
+        std::function<void(Event)> _setEvent;
         StringAtom _name;
 
         GLuint _vertexShaderId = 0;

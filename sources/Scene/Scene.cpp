@@ -39,7 +39,7 @@ namespace Core
             gGameInstance->gameEditor.slowObjectPicker.update(*this);
         }
 
-        static InterleavedGraphicsData gcd = []()
+        static SeparTextureGraphicsData gcd = []()
         {
             std::vector<BaseGraphicsData::ModifierParam> modifiers
                 = { { .value = BaseGraphicsData::ModifiedValue::CullFace,
@@ -66,15 +66,19 @@ namespace Core
                 2, 3, 0  // triangle 2
             };
 
-            InterleavedGraphicsData data;
+            SeparTextureGraphicsData data;
             data.generate();
-            data.setShader(GetShaderManager().getShaderProgram("2d_main"_atom));
-            data.bindVAO();
-            data.bindVBO();
+
+            auto* shader = GetShaderManager().getShaderProgram("2d_main"_atom);
+            data.setShader(shader);
 
             data.setDrawModifiers(std::move(modifiers));
+
             data.setVertexBuffer(vert);
             data.setIndexBuffer(ind);
+            shader->callSetEvent(ShaderProgram::Event::OnSetIndexAndVertexBuffer);
+            data.setTextureVertexBuffer(uvs);
+            shader->callSetEvent(ShaderProgram::Event::OnSetTextureVertexBuffer);
 
             data.unbindVao();
 

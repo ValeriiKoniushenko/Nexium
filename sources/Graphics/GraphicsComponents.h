@@ -123,9 +123,12 @@ namespace Core
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
         }
 
-        virtual void clear();
-
-        [[nodiscard]] uint32_t getTriangleCount() const noexcept { return _triangleCount; }
+        virtual void bindAllBuffers() const noexcept
+        {
+            bindVAO();
+            bindVBO();
+            bindEBO();
+        }
 
         void setVertexBuffer(const std::vector<float>& data, GLenum usage = GL_STATIC_DRAW);
 
@@ -133,6 +136,8 @@ namespace Core
 
         void setShader(ShaderProgram* sp, bool ignoreVertexAttribSetup = false);
 
+        virtual void clear();
+        [[nodiscard]] uint32_t getTriangleCount() const noexcept { return _triangleCount; }
         [[nodiscard]] virtual bool isValid() const noexcept
         {
             return _vbo != 0 && _ebo != 0 && _vao != 0 && _shader != nullptr;
@@ -245,29 +250,30 @@ namespace Core
         BaseTextureGraphicsData& operator=(const BaseTextureGraphicsData& other) = default;
         BaseTextureGraphicsData& operator=(BaseTextureGraphicsData&& other) noexcept;
 
-        friend void swap(BaseTextureGraphicsData& a, BaseTextureGraphicsData& b) noexcept
-        {
-            swap(static_cast<BaseGraphicsData&>(a), static_cast<BaseGraphicsData&>(b));
-            std::swap(a._texture, b._texture);
-        }
-
         void generate() override;
-
         void clear() override;
-
         [[nodiscard]] bool isValid() const noexcept override
         {
             return BaseGraphicsData::isValid() && _texture != 0;
         }
+
         [[nodiscard]] GLuint getTextureId() noexcept { return _texture; }
-        [[nodiscard]] StringAtom getCacheHash() const override;
         void bindTexture(GLenum type = GL_TEXTURE_2D) const noexcept
         {
             Assert(_texture != 0);
             glBindTexture(type, _texture);
         }
+
         void setTexture2D(const unsigned char* data, uint32_t width, uint32_t height,
                           int channelsCount);
+
+        // =================== MISC ===================
+        friend void swap(BaseTextureGraphicsData& a, BaseTextureGraphicsData& b) noexcept
+        {
+            swap(static_cast<BaseGraphicsData&>(a), static_cast<BaseGraphicsData&>(b));
+            std::swap(a._texture, b._texture);
+        }
+        [[nodiscard]] StringAtom getCacheHash() const override;
 
     protected:
         void onBindBuffers(GLenum bindTextureType, GLenum textureIndex) override;
@@ -313,13 +319,13 @@ namespace Core
         void setMesh(const aiMesh* mesh, bool isAppendNormals = false, bool isAppendUV = false,
                      float scale = 1.f);
 
-        [[nodiscard]] StringAtom getCacheHash() const override;
-
+        // =================== MISC ===================
         friend void swap(InterleavedGraphicsData& a, InterleavedGraphicsData& b) noexcept
         {
             swap(static_cast<BaseTextureGraphicsData&>(a),
                  static_cast<BaseTextureGraphicsData&>(b));
         }
+        [[nodiscard]] StringAtom getCacheHash() const override;
     };
 
     // ╔═════════════════════════════════════════════════════════════════════════════════╗
@@ -336,20 +342,48 @@ namespace Core
 
     public:
         SeparTextureGraphicsData() = default;
-        ~SeparTextureGraphicsData() override = default;
+        ~SeparTextureGraphicsData() override;
 
         SeparTextureGraphicsData(const SeparTextureGraphicsData& other) = default;
         SeparTextureGraphicsData(SeparTextureGraphicsData&& other) noexcept;
         SeparTextureGraphicsData& operator=(const SeparTextureGraphicsData& other) = default;
         SeparTextureGraphicsData& operator=(SeparTextureGraphicsData&& other) noexcept;
 
+        void generate() override;
+        void clear() override;
+        [[nodiscard]] bool isValid() const noexcept override;
+
+        void bindTextureVBO() const noexcept
+        {
+            Assert(_textureVbo != 0);
+            glBindBuffer(GL_ARRAY_BUFFER, _textureVbo);
+        }
+        void unbindTextureVBO() const noexcept { glBindBuffer(GL_ARRAY_BUFFER, 0); }
+        [[nodiscard]] GLuint getTextureVboId() noexcept { return _textureVbo; }
+
+        void setTextureVertexBuffer(const std::vector<float>& data, GLenum usage = GL_STATIC_DRAW);
+
+        void bindAllBuffers() const noexcept override
+        {
+            BaseGraphicsData::bindAllBuffers();
+            bindTextureVBO();
+        }
+
+        // =================== MISC ===================
         friend void swap(SeparTextureGraphicsData& a, SeparTextureGraphicsData& b) noexcept
         {
             swap(static_cast<BaseTextureGraphicsData&>(a),
                  static_cast<BaseTextureGraphicsData&>(b));
+            std::swap(a._textureVbo, b._textureVbo);
         }
 
         [[nodiscard]] StringAtom getCacheHash() const override;
+
+    private:
+        void privateClear();
+
+    private:
+        GLuint _textureVbo = 0;
     };
 
     // ╔════════════════════════════╗

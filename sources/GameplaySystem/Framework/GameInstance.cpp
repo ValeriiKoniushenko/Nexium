@@ -331,15 +331,19 @@ namespace Core
         auto* main2dShader = shaderManager.getShaderProgram("2d_main"_atom);
         if (Verify(main2dShader))
         {
-            main2dShader->setVertexAttributeCallback(
-                []
+            main2dShader->setSetEventCallback(
+                [](ShaderProgram::Event event)
                 {
-                    glEnableVertexAttribArray(0);
-                    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), nullptr);
-
-                    glEnableVertexAttribArray(1);
-                    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float),
-                                          reinterpret_cast<void*>(2 * sizeof(float)));
+                    if (event == ShaderProgram::Event::OnSetIndexAndVertexBuffer)
+                    {
+                        glEnableVertexAttribArray(0);
+                        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+                    }
+                    else if (event == ShaderProgram::Event::OnSetTextureVertexBuffer)
+                    {
+                        glEnableVertexAttribArray(1);
+                        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), nullptr);
+                    }
                 });
         }
 

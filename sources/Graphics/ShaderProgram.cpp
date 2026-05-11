@@ -29,21 +29,30 @@
 
 namespace Core
 {
+    ShaderProgram::ShaderProgram(ShaderProgram&& other) noexcept
+        : _uniforms(std::move(other._uniforms)),
+          _ubos(std::move(other._ubos)),
+          _setupVertexAttribute(std::move(other._setupVertexAttribute)),
+          _setEvent(std::move(other._setEvent)),
+          _name(std::move(other._name)),
+          _vertexShaderId(other._vertexShaderId),
+          _fragmentShaderId(other._fragmentShaderId),
+          _shaderProgramId(other._shaderProgramId)
+    {
+        other._vertexShaderId = 0;
+        other._fragmentShaderId = 0;
+        other._shaderProgramId = 0;
+    }
+
     ShaderProgram& ShaderProgram::operator=(ShaderProgram&& other) noexcept
     {
-        if (this != &other) [[likely]]
+        if (this == &other) [[likely]]
         {
-            _ubos = std::move(other._ubos);
-            _uniforms = std::move(other._uniforms);
-            _name = std::move(other._name);
-            _vertexShaderId = other._vertexShaderId;
-            _fragmentShaderId = other._fragmentShaderId;
-            _shaderProgramId = other._shaderProgramId;
-
-            other._vertexShaderId = 0;
-            other._fragmentShaderId = 0;
-            other._shaderProgramId = 0;
+            return *this;
         }
+
+        ShaderProgram temp(std::move(other));
+        swap(*this, temp);
         return *this;
     }
 
@@ -139,10 +148,8 @@ namespace Core
 
     void ShaderProgram::setupVertexAttribute()
     {
-        if (!_setupVertexAttribute) [[unlikely]]
+        if (!_setupVertexAttribute)
         {
-            Assert(false);
-            errorLog("Impossible to setup setupVertexAttribute. Setup function wasn't found.");
             return;
         }
 
@@ -151,7 +158,20 @@ namespace Core
 
     void ShaderProgram::setVertexAttributeCallback(std::function<void()>&& func)
     {
-        _setupVertexAttribute = std::forward<decltype(func)>(func);
+        _setupVertexAttribute = std::move(func);
+    }
+
+    void ShaderProgram::callSetEvent(Event event)
+    {
+        if (_setEvent) [[likely]]
+        {
+            _setEvent(event);
+        }
+    }
+
+    void ShaderProgram::setSetEventCallback(std::function<void(Event)>&& func)
+    {
+        _setEvent = std::move(func);
     }
 
     void ShaderProgram::clearOnlyShaderProgram()
