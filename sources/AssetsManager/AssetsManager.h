@@ -190,8 +190,9 @@ namespace Core
          */
         [[nodiscard]] std::size_t getAssetCount(AssetAction filter = AA_None) const;
 
-        // ================ OVERRIDEs ==================
+        [[nodiscard]] TextureAtlas& getTextureAtlas() noexcept { return _textureAtlas; }
 
+        // ================ OVERRIDEs ==================
         // override BaseLog
         [[nodiscard]] spdlog::logger* getLogger() const override;
 

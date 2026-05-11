@@ -166,9 +166,7 @@ namespace Core
         }
 
         getShader()->use();
-        bindVAO();
-        bindVBO();
-        bindEBO();
+        bindAllBuffers();
 
         onBindBuffers(bindTextureType, textureIndex);
 
@@ -325,8 +323,8 @@ namespace Core
     }
     void BaseTextureGraphicsData::onBindBuffers(GLenum bindTextureType, GLenum textureIndex)
     {
-        glActiveTexture(GL_TEXTURE0 + textureIndex);
-        bindTexture();
+        // glActiveTexture(GL_TEXTURE0 + textureIndex);
+        // bindTexture();
     }
 
     void BaseTextureGraphicsData::privateClear()

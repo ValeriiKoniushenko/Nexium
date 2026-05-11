@@ -94,6 +94,11 @@ namespace Core
         _size = {};
     }
 
+    void Texture::activateTextureUnit(GLuint unit) const
+    {
+        glActiveTexture(GL_TEXTURE0 + unit);
+    }
+
     void Texture::generate()
     {
         if (isValid()) [[unlikely]]
@@ -125,7 +130,7 @@ namespace Core
     }
 
     void Texture::putImage(GLint level, GLint internalformat, GLsizei width, GLsizei height,
-                           GLint border, GLenum format, GLenum type, const void* pixels) const
+                           GLint border, GLenum format, GLenum type, const void* pixels)
     {
         if (!isValid()) [[unlikely]]
         {
@@ -139,7 +144,7 @@ namespace Core
     }
 
     void Texture::putSubImage(GLint level, GLint xoffset, GLint yoffset, GLsizei width,
-                              GLsizei height, GLenum format, GLenum type, const void* pixels) const
+                              GLsizei height, GLenum format, GLenum type, const void* pixels)
     {
         glTexSubImage2D(GL_TEXTURE_2D, level, xoffset, yoffset, width, height, format, type,
                         pixels);

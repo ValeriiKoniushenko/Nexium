@@ -339,6 +339,11 @@ namespace Core
                         glEnableVertexAttribArray(0);
                         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
                     }
+                    else if (event == ShaderProgram::Event::OnSetTextureVertexBuffer)
+                    {
+                        glEnableVertexAttribArray(1);
+                        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), nullptr);
+                    }
                 });
         }
 

@@ -39,7 +39,7 @@ namespace Core
             gGameInstance->gameEditor.slowObjectPicker.update(*this);
         }
 
-        static BaseGraphicsData gcd = []()
+        static SeparTextureGraphicsData gcd = []()
         {
             std::vector<BaseGraphicsData::ModifierParam> modifiers
                 = { { .value = BaseGraphicsData::ModifiedValue::CullFace,
@@ -54,6 +54,12 @@ namespace Core
                 w,  -h, 0, // 2  bottom-right
                 w,  h,  0  // 3  top-right
             };
+
+            const std::vector<GLuint> ind = {
+                0, 1, 2, // triangle 1
+                2, 3, 0  // triangle 2
+            };
+
             const std::vector<float> uvs = {
                 0.f, 1.f, // 0  top-left
                 0.f, 0.f, // 1  bottom-left
@@ -61,12 +67,7 @@ namespace Core
                 1.f, 1.f  // 3  top-right
             };
 
-            const std::vector<GLuint> ind = {
-                0, 1, 2, // triangle 1
-                2, 3, 0  // triangle 2
-            };
-
-            BaseGraphicsData data;
+            SeparTextureGraphicsData data;
             data.generate();
 
             auto* shader = GetShaderManager().getShaderProgram("2d_main"_atom);
@@ -77,23 +78,25 @@ namespace Core
             data.setVertexBuffer(vert);
             data.setIndexBuffer(ind);
             shader->callSetEvent(ShaderProgram::Event::OnSetIndexAndVertexBuffer);
-
-            data.unbindVao();
+            data.setTextureVertexBuffer(uvs);
+            shader->callSetEvent(ShaderProgram::Event::OnSetTextureVertexBuffer);
 
             return data;
         }();
 
+        auto& atlas = GetAssetsManager().getTextureAtlas();
         auto* shader = GetShaderManager().getShaderProgram("2d_main"_atom);
         shader->use();
         shader->setUniform("uTexture"_atom, 0);
         shader->setUniform("uProjAndView"_atom, gGameInstance->currentCamera->getMatrix());
         shader->setUniform("uModel"_atom, glm::mat4(1.f));
 
-        shader->setUniform("uUVOffset"_atom, glm::vec2(0.f));
-        shader->setUniform("uUVSize"_atom, glm::vec2(1.f));
+        // shader->setUniform("uUVOffset"_atom, glm::vec2(0.f));
+        // shader->setUniform("uUVSize"_atom, glm::vec2(1.f));
 
+        atlas.bind();
         gcd.directDraw();
-
+        return;
         grid.draw();
 
         _postDrawBuffer.resize(0);

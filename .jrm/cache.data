@@ -1,7 +1,7 @@
 1771958203471016375 game-example/TemplateGameInstance.h
 1771957139897544007 sources/AssetsManager/AssetImpls/Factory.h
 1776719757929185590 sources/AssetsManager/AssetImpls/StaticMeshBundle.h
-1777992021496221567 sources/AssetsManager/AssetsManager.h
+1778522762762947727 sources/AssetsManager/AssetsManager.h
 1775594637698815567 sources/AssetsManager/BaseActorAsset.h
 1778204992429607636 sources/AssetsManager/BaseAsset.h
 1775592933269412027 sources/AssetsManager/ECSAsset.h
@@ -9,7 +9,7 @@
 1771957229428878437 sources/AssetsManager/ModuleInfo.h
 1778337949949788297 sources/AssetsManager/SkyboxAsset.h
 1776720507198064587 sources/AssetsManager/TextureAsset.h
-1777396288623353719 sources/AssetsManager/TextureAtlas.h
+1778523058592910210 sources/AssetsManager/TextureAtlas.h
 1771957726719436386 sources/AssimpMisc/AssimpHelper.h
 1778436321281559306 sources/ECS/BaseComponent.h
 1771957954487843037 sources/ECS/ModuleInfo.h
@@ -87,7 +87,7 @@
 1777992782358498093 sources/Graphics/ShaderManager.h
 1778517311106555531 sources/Graphics/ShaderProgram.h
 1771958192731179843 sources/Graphics/ShaderProgramMeta.h
-1777395655419545443 sources/Graphics/Texture.h
+1778523030395190662 sources/Graphics/Texture.h
 1778012436242059767 sources/Graphics/Window.h
 1771957414388606030 sources/InputDevices/InputAction.h
 1778213691324780045 sources/InputDevices/InputManager.h

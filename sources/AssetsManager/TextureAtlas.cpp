@@ -64,6 +64,9 @@ namespace Core
 
     void TextureAtlas::generateTextureAtlas(const fs::path& atlasFolder)
     {
+        _texture.loadFromFile(atlasFolder / "red.png");
+
+        return;
         std::vector<Image> images;
         std::vector<rect_type> rectangles;
 
@@ -104,29 +107,61 @@ namespace Core
         _texture.generate();
         _texture.bind();
 
-        _texture.putImage(0, GL_RGBA8, result_size.w, result_size.h, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                          nullptr);
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-        for (std::size_t i = 0; i < images.size(); ++i)
-        {
-            const auto& rect = rectangles[i]; // x, y, w, h filled in by packer
+        _texture.putImage(0, GL_RGBA, images.front().getSize().width,
+                          images.front().getSize().height, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                          images.front().data());
+        // _texture.putImage(0, GL_RGBA, result_size.w, result_size.h, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+        //                   nullptr);
 
-            auto name = fs::relative(images[i].getPath(), atlasFolder).generic_string();
-            _rects[StringAtom::Intern(name)]
-                = FRect{ static_cast<float>(rect.x), static_cast<float>(rect.y),
-                         static_cast<float>(rect.w), static_cast<float>(rect.h) };
-
-            _texture.putSubImage(0, rect.x, rect.y, rect.w, rect.h, GL_RGBA, GL_UNSIGNED_BYTE,
-                                 images[i].data());
-        }
+        // for (std::size_t i = 0; i < images.size(); ++i)
+        // {
+        //     const auto& rect = rectangles[i]; // x, y, w, h filled in by packer
+        //
+        //     auto name = fs::relative(images[i].getPath(), atlasFolder).generic_string();
+        //     _rects[StringAtom::Intern(name)]
+        //         = FRect{ static_cast<float>(rect.x), static_cast<float>(rect.y),
+        //                  static_cast<float>(rect.w), static_cast<float>(rect.h) };
+        //
+        //     _texture.putSubImage(0, rect.x, rect.y, rect.w, rect.h, GL_RGBA, GL_UNSIGNED_BYTE,
+        //                          images[i].data());
+        // }
 
         _texture.generateMipmap();
         _texture.unbind();
     }
 
+    void TextureAtlas::bind() const
+    {
+        Assert(_texture.isValid());
+        _texture.bind();
+    }
+
+    void TextureAtlas::unbind() const
+    {
+        _texture.unbind();
+    }
+
+    void TextureAtlas::activateTextureUnit(GLuint unit) const
+    {
+        _texture.activateTextureUnit(unit);
+    }
+
     spdlog::logger* TextureAtlas::getLogger() const
     {
         return ::AssetsManager::getLogger();
+    }
+
+    const FRect& TextureAtlas::getRect(const StringAtom& name) const
+    {
+        auto it = _rects.find(name);
+        if (it == _rects.end()) [[unlikely]]
+        {
+            throw std::runtime_error("TextureAtlas: No rect with name '" + name.toStdString()
+                                     + "' found");
+        }
+        return it->second;
     }
 
 } // namespace Core

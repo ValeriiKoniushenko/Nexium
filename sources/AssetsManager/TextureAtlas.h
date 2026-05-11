@@ -46,15 +46,28 @@ namespace Core
 
     public:
         TextureAtlas() = default;
+        ~TextureAtlas() override = default;
         TextureAtlas(const TextureAtlas&) = delete;
         TextureAtlas(TextureAtlas&&) = delete;
         TextureAtlas& operator=(const TextureAtlas&) = delete;
         TextureAtlas& operator=(TextureAtlas&&) = delete;
-        ~TextureAtlas() override = default;
 
         void generateTextureAtlas(const std::filesystem::path& atlasFolder);
 
+        void bind() const;
+        void unbind() const;
+        void activateTextureUnit(GLuint unit) const;
+
         [[nodiscard]] spdlog::logger* getLogger() const override;
+
+        [[nodiscard]] const Texture& getTexture() const noexcept { return _texture; }
+
+        [[nodiscard]] const FRect& getRect(const StringAtom& name) const;
+
+        [[nodiscard]] const std::unordered_map<StringAtom, FRect>& getRects() const noexcept
+        {
+            return _rects;
+        }
 
     private:
         void iterateOverFolderAndFetchImages(const std::filesystem::path& atlasFolder,
