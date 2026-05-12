@@ -328,7 +328,7 @@ namespace Core
                 });
         }
 
-        auto* main2dShader = shaderManager.getShaderProgram("2d_main"_atom);
+        auto* main2dShader = shaderManager.getShaderProgram("2d_rect"_atom);
         if (Verify(main2dShader))
         {
             main2dShader->setSetEventCallback(

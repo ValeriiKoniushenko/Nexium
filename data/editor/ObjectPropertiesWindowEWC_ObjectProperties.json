@@ -1,11 +1,11 @@
 {
     "_children": null,
     "_innerPosition": [
-        1025.0,
+        1467.0,
         64.0
     ],
     "_innerSize": {
-        "height": 799.0,
+        "height": 929.0,
         "width": 437.0
     },
     "_isEnabled": true,
@@ -17,15 +17,15 @@
     "_name": " Object Properties",
     "_noTick": false,
     "_oldSize": {
-        "height": 839.0,
+        "height": 969.0,
         "width": 453.0
     },
     "_position": [
-        1017.0,
+        1459.0,
         32.0
     ],
     "_size": {
-        "height": 839.0,
+        "height": 969.0,
         "width": 453.0
     },
     "_type": "ObjectPropertiesWindowEWC"

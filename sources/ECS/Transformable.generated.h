@@ -73,9 +73,9 @@ struct R<Core::Transformable>
         }
 
 		s.read("_scale", obj._scale, glm::vec3(1.f));
-		s.read("_origin", obj._origin, glm::vec3(1.f));
-		s.read("_position", obj._position, Core::GPos3(1.f));
-		s.read("_rotation", obj._rotation, glm::vec3(1.f));
+		s.read("_origin", obj._origin, glm::vec3(0.f));
+		s.read("_position", obj._position, Core::GPos3(0.f));
+		s.read("_rotation", obj._rotation, glm::vec3(0.f));
         if (!noSignals)
         {
             _RTryCallPostDeserialize<Core::Transformable>(obj, s.logs());

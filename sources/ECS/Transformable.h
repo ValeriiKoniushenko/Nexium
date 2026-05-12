@@ -130,13 +130,13 @@ namespace Core
         glm::vec3 _scale = glm::vec3(1.f);
 
         FIELD();
-        glm::vec3 _origin = glm::vec3(1.f);
+        glm::vec3 _origin = glm::vec3(0.f);
 
         FIELD();
-        GPos3 _position = Core::GPos3(1.f);
+        GPos3 _position = Core::GPos3(0.f);
 
         FIELD();
-        glm::vec3 _rotation = glm::vec3(1.f);
+        glm::vec3 _rotation = glm::vec3(0.f);
 
         bool _isDirtyModelMatrix = true;
     };
