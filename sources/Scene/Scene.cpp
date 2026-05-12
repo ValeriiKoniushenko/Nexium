@@ -39,7 +39,7 @@ namespace Core
             gGameInstance->gameEditor.slowObjectPicker.update(*this);
         }
 
-        static SeparTextureGraphicsData gcd = []()
+        static BaseGraphicsData gcd = []()
         {
             std::vector<BaseGraphicsData::ModifierParam> modifiers
                 = { { .value = BaseGraphicsData::ModifiedValue::CullFace,
@@ -60,14 +60,7 @@ namespace Core
                 2, 3, 0  // triangle 2
             };
 
-            const std::vector<float> uvs = {
-                0.f, 1.f, // 0  top-left
-                0.f, 0.f, // 1  bottom-left
-                1.f, 0.f, // 2  bottom-right
-                1.f, 1.f  // 3  top-right
-            };
-
-            SeparTextureGraphicsData data;
+            BaseGraphicsData data;
             data.generate();
 
             auto* shader = GetShaderManager().getShaderProgram("2d_main"_atom);
@@ -78,8 +71,6 @@ namespace Core
             data.setVertexBuffer(vert);
             data.setIndexBuffer(ind);
             shader->callSetEvent(ShaderProgram::Event::OnSetIndexAndVertexBuffer);
-            data.setTextureVertexBuffer(uvs);
-            shader->callSetEvent(ShaderProgram::Event::OnSetTextureVertexBuffer);
 
             return data;
         }();
@@ -91,8 +82,8 @@ namespace Core
         shader->setUniform("uProjAndView"_atom, gGameInstance->currentCamera->getMatrix());
         shader->setUniform("uModel"_atom, glm::mat4(1.f));
 
-        // shader->setUniform("uUVOffset"_atom, glm::vec2(0.f));
-        // shader->setUniform("uUVSize"_atom, glm::vec2(1.f));
+        shader->setUniform("uUVOffset"_atom, glm::vec2(0.f));
+        shader->setUniform("uUVSize"_atom, glm::vec2(1.f));
 
         atlas.bind();
         gcd.directDraw();
