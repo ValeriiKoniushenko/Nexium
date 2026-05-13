@@ -24,8 +24,6 @@
 
 #include "Core/Position.h"
 #include "JustReflectMe/Adapter.h"
-#include "RawDataManagement/JsonAdapter.h"
-#include "glm/glm.hpp"
 
 namespace Core
 {
@@ -122,6 +120,7 @@ namespace Core
 
     protected:
         virtual void onDirtyMatrix() {}
+        void onPostDeserialize(Transformable* obj, const RLogsCollector& logs);
 
     protected:
         glm::mat4 _cachedModelMatrix = glm::mat4(1.f);

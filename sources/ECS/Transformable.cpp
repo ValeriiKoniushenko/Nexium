@@ -24,8 +24,6 @@
 
 #include "Transformable.h"
 
-#include "RawDataManagement/JsonAdapter.h"
-#include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/matrix_transform.hpp"
 
 #define GLM_ENABLE_EXPERIMENTAL
@@ -200,22 +198,6 @@ namespace Core
         return glm::normalize(glm::cross(getForwardVector(), getUpVector()));
     }
 
-    /*void Transformable::ioFieldsUpdate(DataStream& out)
-    {
-        auto stream = out.dedicatedNesting("Transformable");
-
-        stream.field("position", _position);
-        stream.field("origin", _origin);
-        stream.field("rotation", _rotation);
-        stream.field("scale", _scale);
-
-        if (stream.getMode() == DataStream::Mode::Input)
-        {
-            _isDirtyModelMatrix = true;
-            onDirtyMatrix();
-        }
-    }*/
-
     void Transformable::recalculateMatrices(const glm::mat4& mat)
     {
         _cachedModelMatrix = mat;
@@ -243,6 +225,11 @@ namespace Core
         {
             recalculateMatrices(mat);
         }
+    }
+    void Transformable::onPostDeserialize(Transformable* obj, const RLogsCollector& logs)
+    {
+        _isDirtyModelMatrix = true;
+        onDirtyMatrix();
     }
 
     void Transformable::setOrigin(const glm::vec3& origin) noexcept

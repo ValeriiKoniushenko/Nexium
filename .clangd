@@ -15,7 +15,7 @@ CompileFlags:
     - -fmodules-ts
     - -fmodule-mapper=*
     - -MD
-  CompilationDatabase: build/debug/clang
+  CompilationDatabase: build/ref
 
 Index:
   Background: Build
