@@ -24,19 +24,18 @@
 
 #pragma once
 
-#include "../RawDataManagement/DataStream.h"
 #include "AssetsManager/ECSAsset.h"
-#include "AssetsManager/Mesh3DAsset.h"
 #include "AssetsManager/SkyboxAsset.h"
 #include "Core/Delegate.h"
 #include "GameplaySystem/Framework/WorldObject.h"
-#include "Graphics/Primitives/StaticMeshBundle.h"
 #include "Grid.h"
+#include "RawDataManagement/DataStream.h"
 
 #include <vector>
 
 namespace Core
 {
+    class Actor;
     class Scene : public IDataIO
     {
     public:
@@ -44,10 +43,12 @@ namespace Core
         using ObjectContainerT = std::vector<WorldObject::Ptr>;
 
     public:
-        Scene();
+        Scene() = default;
         ~Scene() override = default;
         Scene(const Scene&) = delete;
+        Scene& operator=(const Scene&) = delete;
         Scene(Scene&&) = delete;
+        Scene& operator=(Scene&&) = delete;
 
         void initialize();
 

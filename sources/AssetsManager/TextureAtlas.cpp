@@ -81,7 +81,7 @@ namespace Core
         {
             if (img.getChannelAsOpenGLType() != firstChannel)
             {
-                errorLog(
+                criticalLog(
                     "All images in the atlas folder must have the same number of channels. Image '{}' has {} channels, while the first image has {} channels."_f
                     << img.getPath().generic_string()
                     << R<Image::Channel>::ToString(img.getChannel())
@@ -131,11 +131,20 @@ namespace Core
 
         for (std::size_t i = 0; i < images.size(); ++i)
         {
-            const auto& rect = rectangles[i]; // x, y, w, h filled in by packer
+            const auto& rect = rectangles[i];
             const auto name = fs::relative(images[i].getPath(), atlasFolder).generic_string();
-            _rects[StringAtom::Intern(name)]
-                = FRect{ static_cast<float>(rect.x), static_cast<float>(rect.y),
-                         static_cast<float>(rect.w), static_cast<float>(rect.h) };
+            auto& r = _rects[StringAtom::Intern(name)];
+
+            const int flipped_y = rect.y;
+
+            r.setLeftTop(GlobalPosition2F(
+                static_cast<float>(rect.x) / static_cast<float>(result_size.w),
+                static_cast<float>(flipped_y) / static_cast<float>(result_size.h)));
+
+            r.setRightBottom(GlobalPosition2F(
+                static_cast<float>(rect.x + rect.w) / static_cast<float>(result_size.w),
+                static_cast<float>(flipped_y + rect.h) / static_cast<float>(result_size.h)));
+
             _texture.putSubImage(0, rect.x, rect.y, rect.w, rect.h, firstChannel, GL_UNSIGNED_BYTE,
                                  images[i].data());
         }

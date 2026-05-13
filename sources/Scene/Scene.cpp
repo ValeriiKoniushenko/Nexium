@@ -24,13 +24,13 @@
 
 #include "Scene.h"
 
+#include "GameplaySystem/Entities/Actor.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Graphics/GraphicsComponents.h"
 #include "Graphics/ShaderManager.h"
 
 namespace Core
 {
-    Scene::Scene() = default;
 
     void Scene::directDraw()
     {
@@ -49,10 +49,10 @@ namespace Core
             float h = 50.f;
 
             const std::vector<float> vert = {
-                -w / 2, h / 2,  0, // 0  top-left
-                -w / 2, -h / 2, 0, // 1  bottom-left
-                w / 2,  -h / 2, 0, // 2  bottom-right
-                w / 2,  h / 2,  0  // 3  top-right
+                0, h, 0, // 0  top-left         | (0 , 64) * (0, 1)
+                0, 0, 0, // 1  bottom-left      | (0 , 0 ) * (0, 0)
+                w, 0, 0, // 2  bottom-right     | (64, 0 ) * (1, 0)
+                w, h, 0  // 3  top-right        | (64, 64) * (1, 1)
             };
 
             const std::vector<GLuint> ind = {
@@ -83,23 +83,29 @@ namespace Core
 
         atlas.bind();
 
-        shader->setUniform("uUVOffset"_atom, glm::vec2(0.f));
-        shader->setUniform("uUVSize"_atom, glm::vec2(1.f));
-
         Transformable a;
+
+        auto red = atlas.getRect("red.png"_atom);
+        auto yellow = atlas.getRect("yellow.png"_atom);
 
         a.setPosition(GPos3(1.f, 0.f, 0.f));
         a.recalculateMatrices();
+        shader->setUniform("uUVOffset"_atom, red.getLeftTop());
+        shader->setUniform("uUVSize"_atom, red.getRightBottom() - red.getLeftTop());
         shader->setUniform("uModel"_atom, a.getModelMatrix());
         gcd.directDraw();
 
-        a.setPosition(GPos3(100.f, 0.f, 0.f));
+        a.setPosition(GPos3(200.f, 0.f, 0.f));
         a.recalculateMatrices();
+        shader->setUniform("uUVOffset"_atom, yellow.getLeftTop());
+        shader->setUniform("uUVSize"_atom, yellow.getRightBottom() - yellow.getLeftTop());
         shader->setUniform("uModel"_atom, a.getModelMatrix());
         gcd.directDraw();
 
-        a.setPosition(GPos3(1000.f, 0.f, 0.f));
+        a.setPosition(GPos3(500.f, 0.f, 0.f));
         a.recalculateMatrices();
+        shader->setUniform("uUVOffset"_atom, glm::vec2(0.f));
+        shader->setUniform("uUVSize"_atom, glm::vec2(1.f));
         shader->setUniform("uModel"_atom, a.getModelMatrix());
         gcd.directDraw();
 

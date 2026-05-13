@@ -21,6 +21,8 @@ const vec2 corners[4] = vec2[4](
 
 void main()
 {
-    ioUV = uUVOffset + corners[gl_VertexID % 4] * uUVSize;
+    vec2 uvSize = uUVSize;
+
+    ioUV = uUVOffset + corners[gl_VertexID % 4] * uvSize;
     gl_Position = uProjAndView * uModel * vec4(aPos, 1.0);
 }
