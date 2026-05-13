@@ -60,15 +60,17 @@ namespace Core
         }
 
         _size = img.getSize();
+        if (!isValid())
+        {
+            generate();
+        }
 
-        generate();
         bind();
 
         putImage(0, GL_RGBA, img.getSize().width, img.getSize().height, 0,
                  img.getChannelAsOpenGLType(), GL_UNSIGNED_BYTE, img.data());
 
         generateMipmap(GL_LINEAR, GL_LINEAR);
-        unbind();
 
         return true;
     }
