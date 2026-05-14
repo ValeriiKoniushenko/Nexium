@@ -32,6 +32,13 @@
 namespace Core
 {
 
+    struct SceneState
+    {
+        std::string name;
+        Transformable trans;
+        StringAtom assetType;
+    };
+
     CLASS();
     class SceneObject :
         public BaseComponent,
@@ -51,6 +58,8 @@ namespace Core
         SceneObject& operator=(SceneObject&&) = default;
 
         [[nodiscard]] spdlog::logger* getLogger() const override;
+
+        [[nodiscard]] SceneState getSceneState() const;
 
     protected:
         void onOutlineStatusChange(bool newStatus) override;

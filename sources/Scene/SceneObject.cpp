@@ -28,12 +28,20 @@
 
 namespace Core
 {
+
     ECS_COMPONENT_IMPL(SceneObject);
     R_FRIEND_IMPL(SceneObject);
 
     spdlog::logger* Core::SceneObject::getLogger() const
     {
         return ::Scene::getLogger();
+    }
+
+    SceneState SceneObject::getSceneState() const
+    {
+        return { .name = getComponentName().toStdString(),
+                 .trans = static_cast<const Transformable&>(*this),
+                 .assetType = getComponentType() };
     }
 
     void SceneObject::onOutlineStatusChange(bool newStatus)
