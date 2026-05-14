@@ -22,15 +22,22 @@
  * SOFTWARE.
  */
 
-#pragma once
+#include "SceneObject.h"
 
-#include "Scene/SceneObject.h"
+#include "Scene/ModuleInfo.h"
 
 namespace Core
 {
-    class Rectangle : public SceneObject
+    ECS_COMPONENT_IMPL(SceneObject);
+    R_FRIEND_IMPL(SceneObject);
+
+    spdlog::logger* Core::SceneObject::getLogger() const
     {
-    public:
-    };
+        return ::Scene::getLogger();
+    }
+
+    void SceneObject::onOutlineStatusChange(bool newStatus)
+    {
+    }
 
 } // namespace Core

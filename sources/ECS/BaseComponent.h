@@ -333,7 +333,7 @@ namespace Core
         template<class T>
         bool registerNewType(const StringAtom& type, bool isTemplateType = false);
 
-        [[nodiscard]] spdlog::logger* getLogger() const final;
+        [[nodiscard]] spdlog::logger* getLogger() const override;
 
         [[nodiscard]] std::vector<StringAtom> getRegisteredTypesAsVector() const;
 
@@ -389,7 +389,7 @@ namespace Core
          */
         void tick(float delta);
 
-        [[nodiscard]] spdlog::logger* getLogger() const final;
+        [[nodiscard]] spdlog::logger* getLogger() const override;
 
         /** Reset the component to an uninitialized state. */
         virtual void clear() {}

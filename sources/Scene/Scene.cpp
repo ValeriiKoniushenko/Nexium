@@ -102,13 +102,6 @@ namespace Core
         shader->setUniform("uModel"_atom, a.getModelMatrix());
         gcd.directDraw();
 
-        a.setPosition(GPos3(500.f, 0.f, 0.f));
-        a.recalculateMatrices();
-        shader->setUniform("uUVOffset"_atom, glm::vec2(0.f));
-        shader->setUniform("uUVSize"_atom, glm::vec2(1.f));
-        shader->setUniform("uModel"_atom, a.getModelMatrix());
-        gcd.directDraw();
-
         grid.draw();
 
         _postDrawBuffer.resize(0);

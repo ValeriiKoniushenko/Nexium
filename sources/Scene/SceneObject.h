@@ -24,13 +24,26 @@
 
 #pragma once
 
-#include "Scene/SceneObject.h"
+#include "ECS/BaseComponent.h"
+#include "ECS/Transformable.h"
+#include "Graphics/IOutliner.h"
 
 namespace Core
 {
-    class Rectangle : public SceneObject
+
+    CLASS();
+    class SceneObject : public IOutliner, public Transformable, public BaseComponent
     {
+        ECS_COMPONENT_DECL(SceneObject, BaseComponent);
+        R_FRIEND_DECL(Core::SceneObject, Core::BaseComponent, Core::Transformable);
+
     public:
+        [[nodiscard]] spdlog::logger* getLogger() const override;
+
+    protected:
+        void onOutlineStatusChange(bool newStatus) override;
     };
 
 } // namespace Core
+
+#include "SceneObject.generated.h" // added by the code generator. Better don't move it.

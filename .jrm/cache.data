@@ -11,7 +11,7 @@
 1776720507198064587 sources/AssetsManager/TextureAsset.h
 1778687437059152550 sources/AssetsManager/TextureAtlas.h
 1771957726719436386 sources/AssimpMisc/AssimpHelper.h
-1778436321281559306 sources/ECS/BaseComponent.h
+1778772237079967477 sources/ECS/BaseComponent.h
 1771957954487843037 sources/ECS/ModuleInfo.h
 1778679186121592064 sources/ECS/Transformable.h
 1778172587023330110 sources/Editor/GameEditor.h
@@ -81,7 +81,7 @@
 1777454557627056682 sources/Graphics/Image.h
 1771957970812589401 sources/Graphics/ModuleInfo.h
 1775075538135367380 sources/Graphics/OpenGL.h
-1778681073627370618 sources/Graphics/Primitives/Rectangle.h
+1778772357945602847 sources/Graphics/Primitives/Rectangle.h
 1778443239005995404 sources/Graphics/Primitives/StaticMesh.h
 1776718586180528303 sources/Graphics/Primitives/StaticMeshBundle.h
 1774375872208064419 sources/Graphics/RenderTargetToTexture.h
@@ -104,5 +104,6 @@
 1770677206105945396 sources/Scene/Grid.h
 1770677206105945396 sources/Scene/ModuleInfo.h
 1778681022197031108 sources/Scene/Scene.h
+1778772658661226796 sources/Scene/SceneObject.h
 1778213707621656541 sources/Scene/Spectator.h
 1776718586251527978 tests/ECSTests/DummyComponent.h
