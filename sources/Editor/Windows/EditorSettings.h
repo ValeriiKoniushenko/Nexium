@@ -25,7 +25,6 @@
 #pragma once
 
 #include "BaseWindow.h"
-#include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 
@@ -35,6 +34,7 @@ namespace Core
     {
         class Label;
         class TextInput;
+        class Button;
     } // namespace Gui
 
     CLASS();

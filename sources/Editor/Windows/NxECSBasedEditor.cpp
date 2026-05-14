@@ -33,6 +33,7 @@
 #include "Editor/GuiComponents/Misc.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "ImGui/imgui_internal.h"
+#include "Misc/IconsFontAwesome.h"
 #include "ModalECSSearchPopUp.h"
 
 using namespace Core::Gui;

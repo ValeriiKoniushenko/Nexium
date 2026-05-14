@@ -32,8 +32,10 @@
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/Label.h"
 #include "Editor/GuiComponents/Misc.h"
+#include "Editor/GuiComponents/VecInput.h"
 #include "GameplaySystem/Camera.h"
 #include "GameplaySystem/Framework/GameInstance.h"
+#include "Graphics/Primitives/StaticMesh.h"
 #include "Graphics/Primitives/StaticMeshBundle.h"
 
 using namespace Core;

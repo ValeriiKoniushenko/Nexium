@@ -38,6 +38,7 @@
 #include "Graphics/Primitives/StaticMeshBundle.h"
 #include "ImGui/backends/imgui_impl_glfw.h"
 #include "ImGui/backends/imgui_impl_opengl3.h"
+#include "Misc/Configs.h"
 #include "Misc/IconsFontAwesome.h"
 #include "ModuleInfo.h"
 #include "Windows/ImageViewer.h"

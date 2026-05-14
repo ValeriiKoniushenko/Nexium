@@ -25,13 +25,22 @@
 #pragma once
 
 #include "../NxECSBasedEditor.h"
-#include "Editor/GuiComponents/CheckBox.h"
-#include "Editor/GuiComponents/LabelRow.h"
-#include "Editor/GuiComponents/VecInput.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 
 namespace Core
 {
+    namespace Gui
+    {
+        template<class T>
+        class LabelRow;
+
+        class CheckBox;
+
+        template<std::size_t Size, Utils::IsArithmetic Type>
+        class VecNumInput;
+
+        using Float3Input = VecNumInput<3, float>;
+    } // namespace Gui
 
     class ECSEditorActorAdapter : public ECSEditorMimeAdapter
     {

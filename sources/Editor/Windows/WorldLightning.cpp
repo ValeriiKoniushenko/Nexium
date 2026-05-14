@@ -25,6 +25,7 @@
 #include "WorldLightning.h"
 
 #include "Editor/GuiComponents/HorizontalLayout.h"
+#include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/Label.h"
 #include "Editor/GuiComponents/VecInput.h"
 #include "GameplaySystem/Framework/GameInstance.h"

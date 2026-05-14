@@ -25,10 +25,9 @@
 #pragma once
 
 #include "BaseWindow.h"
-#include "Editor/GuiComponents/VecInput.h"
+#include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "Graphics/GraphicsComponents.h"
-#include "Graphics/Primitives/StaticMesh.h"
 
 namespace Core
 {
@@ -51,10 +50,18 @@ namespace Core
 
         using StringArray
             = BaseArray<StringAtom, _StringArray_ArrayCellViewerFunc, _StringArray_ViewFetchFunc>;
+
+        template<std::size_t Size, Utils::IsArithmetic Type>
+        class VecNumInput;
+
+        using Float3Input = VecNumInput<3, float>;
+        using Float2Input = VecNumInput<2, float>;
+
     } // namespace Gui
 
     class Transformable;
     class StaticMeshBundle;
+    class StaticMesh;
     class BaseCamera;
 
     struct _GraphicsModifiersArray_ArrayCellViewerFunc

@@ -24,6 +24,10 @@
 
 #include "BaseComponentAdapter.h"
 
+#include "Editor/GuiComponents/Array.h"
+#include "Editor/GuiComponents/CheckBox.h"
+#include "Editor/GuiComponents/Input.h"
+#include "Editor/GuiComponents/LabelRow.h"
 #include "Editor/GuiComponents/Misc.h"
 
 using namespace Core::Gui;

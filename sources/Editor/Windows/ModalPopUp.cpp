@@ -24,6 +24,7 @@
 
 #include "ModalPopUp.h"
 
+#include "Editor/GuiComponents/Button.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Misc/IconsFontAwesome.h"
 

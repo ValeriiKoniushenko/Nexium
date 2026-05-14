@@ -25,14 +25,29 @@
 #pragma once
 
 #include "../NxECSBasedEditor.h"
-#include "Editor/GuiComponents/Array.h"
-#include "Editor/GuiComponents/CheckBox.h"
-#include "Editor/GuiComponents/Input.h"
-#include "Editor/GuiComponents/LabelRow.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 
 namespace Core
 {
+    namespace Gui
+    {
+        template<class T>
+        class LabelRow;
+
+        class TextInput;
+
+        class ListView;
+        class CheckBox;
+
+        template<class T, class ArrayCellViewerFunc, class ViewFetchFunc>
+        class BaseArray;
+
+        struct _StringArray_ArrayCellViewerFunc;
+        struct _StringArray_ViewFetchFunc;
+
+        using StringArray
+            = BaseArray<StringAtom, _StringArray_ArrayCellViewerFunc, _StringArray_ViewFetchFunc>;
+    } // namespace Gui
 
     class ECSBaseComponentAdapter : public ECSEditorMimeAdapter
     {

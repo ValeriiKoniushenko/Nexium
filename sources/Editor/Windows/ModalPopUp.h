@@ -25,11 +25,14 @@
 #pragma once
 
 #include "BaseWindow.h"
-#include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 
 namespace Core
 {
+    namespace Gui
+    {
+        class Button;
+    }
     class ModalPopUp : public BaseEWC
     {
         ECS_COMPONENT_DECL_NO_CNSTR(ModalPopUp, BaseEWC);

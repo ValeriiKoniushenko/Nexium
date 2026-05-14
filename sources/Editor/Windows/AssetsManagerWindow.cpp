@@ -24,6 +24,7 @@
 
 #include "AssetsManagerWindow.h"
 
+#include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/Spacer.h"
 #include "GameplaySystem/Framework/GameInstance.h"

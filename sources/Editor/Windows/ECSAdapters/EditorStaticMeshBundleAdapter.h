@@ -24,16 +24,35 @@
 
 #pragma once
 
-#include "Editor/GuiComponents/Array.h"
-#include "Editor/GuiComponents/Combo.h"
-#include "Editor/GuiComponents/Input.h"
-#include "Editor/GuiComponents/LabelRow.h"
+#include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "Editor/Windows/NxECSBasedEditor.h"
 #include "assimp/postprocess.h"
 
 namespace Core
 {
+    namespace Gui
+    {
+        template<class T>
+        class LabelRow;
+
+        class TextInput;
+
+        class ListView;
+        class CheckBox;
+
+        template<class T, class ArrayCellViewerFunc, class ViewFetchFunc>
+        class BaseArray;
+
+        template<Utils::IsArithmetic T>
+        class NumInput;
+
+        using FloatInput = NumInput<float>;
+
+        class ComboModelBased;
+
+    } // namespace Gui
+
     struct _AssimpPostProcessArray_ArrayCellViewerFunc
     {
         Gui::HorizontalLayout::Ptr operator()(aiPostProcessSteps data) const;

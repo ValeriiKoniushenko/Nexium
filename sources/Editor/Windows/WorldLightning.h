@@ -25,12 +25,26 @@
 #pragma once
 
 #include "BaseWindow.h"
-#include "Editor/GuiComponents/Input.h"
-#include "Editor/GuiComponents/VecInput.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 
 namespace Core
 {
+    namespace Gui
+    {
+        template<Utils::IsArithmetic T>
+        class NumInput;
+
+        using IntInput = NumInput<int>;
+        using FloatInput = NumInput<float>;
+
+        class Color3Input;
+
+        template<std::size_t Size, Utils::IsArithmetic Type>
+        class VecNumInput;
+
+        using Float3Input = VecNumInput<3, float>;
+    } // namespace Gui
+
     CLASS();
     class WorldLightningEWC : public BaseFloatEWC
     {

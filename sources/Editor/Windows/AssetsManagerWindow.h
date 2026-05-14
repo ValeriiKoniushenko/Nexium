@@ -27,7 +27,6 @@
 #include "AssetsManager/AssetsManager.h"
 #include "AssetsManager/TextureAsset.h"
 #include "BaseWindow.h"
-#include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 
 namespace Core
@@ -40,6 +39,7 @@ namespace Core
         using IntInput = NumInput<int>;
 
         class TextInput;
+        class Button;
     } // namespace Gui
 
     CLASS();
