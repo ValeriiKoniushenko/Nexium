@@ -134,6 +134,37 @@ namespace Core::Gui
             ImGui::EndDisabled();
         }
     }
+
+    float Widget::Bounds::getWidth() const noexcept
+    {
+        return static_cast<float>(fabs(bottomRight.x - topLeft.x));
+    }
+
+    float Widget::Bounds::getHeight() const noexcept
+    {
+        return static_cast<float>(fabs(bottomRight.y - topLeft.y));
+    }
+
+    bool Widget::Bounds::isIntersects(glm::vec2 pos)
+    {
+        return pos.x >= topLeft.x && pos.x <= bottomRight.x && pos.y >= topLeft.y
+               && pos.y <= bottomRight.y;
+    }
+
+    Widget::Bounds Widget::Bounds::operator+(glm::vec2 offset)
+    {
+        Bounds bounds = *this;
+        bounds.topLeft += offset;
+        bounds.bottomRight += offset;
+        return bounds;
+    }
+    Widget::Bounds& Widget::Bounds::operator+=(glm::vec2 offset)
+    {
+        topLeft += offset;
+        bottomRight += offset;
+        return *this;
+    }
+
 } // namespace Core::Gui
 
 namespace ImGui

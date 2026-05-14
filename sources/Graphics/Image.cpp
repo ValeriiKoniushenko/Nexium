@@ -84,7 +84,7 @@ namespace Core
 
     bool Image::loadFromFile(const std::filesystem::path& path, bool isFlipVertically)
     {
-        if (!std::filesystem::exists(path))
+        if (!std::filesystem::exists(path)) [[unlikely]]
         {
             criticalLog("Provided path is invalid. Can't load image. Path: {}"_f
                         << path.lexically_normal().generic_string());
@@ -110,7 +110,7 @@ namespace Core
 
     bool Image::loadFromMemory(const uint8_t* data, std::size_t size, bool isFlipVertically)
     {
-        if (!data)
+        if (!data) [[unlikely]]
         {
             criticalLog("Provided data is nullptr. Can't load image.");
             return false;

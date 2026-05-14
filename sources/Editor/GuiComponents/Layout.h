@@ -35,21 +35,18 @@ namespace Core::Gui
         ECS_COMPONENT_DECL(Layout, Widget);
 
     public:
-        void setHorizontalAlign(Align align) { _align = align; }
-        [[nodiscard]] Align getHorizontalAlign() const noexcept { return _align; }
+        void setHorizontalAlign(Align align);
+        [[nodiscard]] Align getHorizontalAlign() const noexcept;
 
-        void setVerticalAlign(Align align) { _secondAlign = align; }
-        [[nodiscard]] Align getVerticalAlign() const noexcept { return _secondAlign; }
+        void setVerticalAlign(Align align);
+        [[nodiscard]] Align getVerticalAlign() const noexcept;
 
-        void setHeight(float value) override { _height = value; }
-        void resetHeight() { _height.reset(); }
-        void setWidth(float value) override { _width = value; }
-        void resetWidth() { _width.reset(); }
+        void setHeight(float value) override;
+        void resetHeight();
+        void setWidth(float value) override;
+        void resetWidth();
 
-        void setPaddings(float left, float right, float top = 0, float bottom = 0)
-        {
-            _paddings = glm::vec4(left, right, top, bottom);
-        }
+        void setPaddings(float left, float right, float top = 0, float bottom = 0);
 
         void setPaddings(const glm::vec4& lrtb) { _paddings = lrtb; }
         [[nodiscard]] const glm::vec4& getPaddings() const noexcept { return _paddings; }

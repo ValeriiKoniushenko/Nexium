@@ -71,36 +71,15 @@ namespace Core::Gui
             glm::vec2 topLeft = {};
             glm::vec2 bottomRight = {};
 
-            [[nodiscard]] float getWidth() const noexcept
-            {
-                return fabs(bottomRight.x - topLeft.x);
-            }
+            [[nodiscard]] float getWidth() const noexcept;
 
-            [[nodiscard]] float getHeight() const noexcept
-            {
-                return fabs(bottomRight.y - topLeft.y);
-            }
+            [[nodiscard]] float getHeight() const noexcept;
 
-            [[nodiscard]] bool isIntersects(glm::vec2 pos)
-            {
-                return pos.x >= topLeft.x && pos.x <= bottomRight.x && pos.y >= topLeft.y
-                       && pos.y <= bottomRight.y;
-            }
+            [[nodiscard]] bool isIntersects(glm::vec2 pos);
 
-            [[nodiscard]] Bounds operator+(glm::vec2 offset)
-            {
-                Bounds bounds = *this;
-                bounds.topLeft += offset;
-                bounds.bottomRight += offset;
-                return bounds;
-            }
+            [[nodiscard]] Bounds operator+(glm::vec2 offset);
 
-            [[nodiscard]] Bounds& operator+=(glm::vec2 offset)
-            {
-                topLeft += offset;
-                bottomRight += offset;
-                return *this;
-            }
+            [[nodiscard]] Bounds& operator+=(glm::vec2 offset);
         };
 
     public:
