@@ -27,6 +27,7 @@
 #include "Misc/IconsFontAwesome.h"
 
 #define GLM_ENABLE_EXPERIMENTAL
+#include "ImGui/imgui.h"
 #include "glm/gtx/string_cast.hpp"
 
 namespace Core

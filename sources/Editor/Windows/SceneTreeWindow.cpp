@@ -26,6 +26,7 @@
 
 #include "GameplaySystem/Entities/Actor.h"
 #include "GameplaySystem/Framework/GameInstance.h"
+#include "ImGui/imgui.h"
 #include "ImGui/misc/cpp/imgui_stdlib.h"
 #include "Misc/IconsFontAwesome.h"
 #include "ModalAssetsSearchPopUp.h"
@@ -45,6 +46,11 @@ namespace Core
     //    \____/  \___| \___||_| |_| \___|  \_/  |_|    \___| \___|
     // ========================================================================
 
+    SceneTreeWindowEWC::SceneTreeWindowEWC(const StringAtom& name)
+        : BaseFloatEWC(componentType, name),
+          _commonTreeFlags(ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth)
+    {
+    }
     const char* SceneTreeWindowEWC::getIcon()
     {
         return ICON_FA_GLOBE;

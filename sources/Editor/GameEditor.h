@@ -24,7 +24,6 @@
 
 #pragma once
 
-#include "Gizmo.h"
 #include "InputDevices/InputManager.h"
 #include "Misc/BaseLog.h"
 #include "SlowObjectPicker.h"
@@ -41,11 +40,12 @@ namespace Core
     class GameEditor : public BaseLog
     {
     public:
-        static constexpr int defaultEditorImGuiFlags
-            = ImGuiConfigFlags_NavEnableKeyboard | ImGuiConfigFlags_DockingEnable;
+        static const int defaultEditorImGuiFlags;
 
     public:
         GameEditor() = default;
+        GameEditor& operator=(const GameEditor&) = delete;
+        GameEditor& operator=(GameEditor&&) = delete;
         GameEditor(const GameEditor&) = delete;
         GameEditor(GameEditor&&) = delete;
         ~GameEditor() override;

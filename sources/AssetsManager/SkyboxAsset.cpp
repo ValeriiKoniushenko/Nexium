@@ -25,6 +25,7 @@
 #include "SkyboxAsset.h"
 
 #include "GameplaySystem/Framework/GameInstance.h"
+#include "Misc/Configs.h"
 
 namespace Core
 {

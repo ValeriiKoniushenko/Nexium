@@ -24,6 +24,7 @@
 
 #include "Spectator.h"
 
+#include "Editor/Gizmo.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 
 namespace Core

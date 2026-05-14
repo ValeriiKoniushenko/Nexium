@@ -35,12 +35,11 @@
 #include "Editor/Windows/ShaderManager.h"
 #include "Editor/Windows/TextEditor.h"
 #include "GameplaySystem/Framework/GameInstance.h"
+#include "Graphics/Primitives/StaticMeshBundle.h"
 #include "ImGui/backends/imgui_impl_glfw.h"
 #include "ImGui/backends/imgui_impl_opengl3.h"
 #include "Misc/IconsFontAwesome.h"
 #include "ModuleInfo.h"
-#include "Windows/ECSAdapters/BaseComponentAdapter.h"
-#include "Windows/ECSAdapters/EditorStaticMeshBundleAdapter.h"
 #include "Windows/ImageViewer.h"
 #include "Windows/ModalAssetsSearchPopUp.h"
 #include "Windows/ModalECSSearchPopUp.h"
@@ -77,7 +76,8 @@ namespace
 
 namespace Core
 {
-    class NxTextureEditorEWC;
+    const int GameEditor::defaultEditorImGuiFlags
+        = ImGuiConfigFlags_NavEnableKeyboard | ImGuiConfigFlags_DockingEnable;
 
     GameEditor::~GameEditor()
     {

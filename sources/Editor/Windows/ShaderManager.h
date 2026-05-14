@@ -25,7 +25,6 @@
 #pragma once
 
 #include "BaseWindow.h"
-#include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "Graphics/ShaderProgram.h"
 
@@ -38,6 +37,11 @@ namespace Core
 {
     namespace Gui
     {
+        template<Utils::IsArithmetic T>
+        class NumInput;
+
+        using IntInput = NumInput<int>;
+
         class TextInput;
         class ComboView;
         class Label;

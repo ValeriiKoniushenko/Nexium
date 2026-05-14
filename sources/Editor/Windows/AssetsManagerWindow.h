@@ -29,10 +29,19 @@
 #include "BaseWindow.h"
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
-#include "Editor/GuiComponents/Input.h"
 
 namespace Core
 {
+    namespace Gui
+    {
+        template<Utils::IsArithmetic T>
+        class NumInput;
+
+        using IntInput = NumInput<int>;
+
+        class TextInput;
+    } // namespace Gui
+
     CLASS();
     class AssetsManagerWindowEWC : public BaseFloatEWC
     {

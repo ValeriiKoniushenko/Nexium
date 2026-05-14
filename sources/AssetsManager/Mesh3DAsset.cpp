@@ -25,6 +25,7 @@
 #include "Mesh3DAsset.h"
 
 #include "GameplaySystem/Framework/GameInstance.h"
+#include "Misc/Configs.h"
 #include "assimp/Importer.hpp"
 #include "assimp/postprocess.h"
 #include "assimp/scene.h"

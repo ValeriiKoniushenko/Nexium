@@ -24,6 +24,7 @@
 
 #include "TextEditor.h"
 
+#include "ImGui/imgui.h"
 #include "ImGui/misc/cpp/imgui_stdlib.h"
 #include "Misc/IconsFontAwesome.h"
 #include "Utils/Functions.h"

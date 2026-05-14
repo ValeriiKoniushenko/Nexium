@@ -25,13 +25,17 @@
 #pragma once
 
 #include "BaseWindow.h"
-#include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
-#include "Editor/GuiComponents/Input.h"
-#include "Misc/Configs.h"
 
 namespace Core
 {
+    namespace Gui
+    {
+        class ToggleButton;
+        class Button;
+        class TextInput;
+    } // namespace Gui
+
     CLASS();
     class LogsWindowEWC : public BaseFloatEWC
     {
@@ -91,13 +95,7 @@ namespace Core
             { spdlog::level::level_enum::trace, nullptr },
         };
 
-        inline static const std::unordered_map<spdlog::level::level_enum, Color4> _levelColor
-            = { { spdlog::level::level_enum::critical, Config::ColorRed },
-                { spdlog::level::level_enum::err, Config::ColorYellow },
-                { spdlog::level::level_enum::warn, Config::ColorHalfYellow },
-                { spdlog::level::level_enum::info, Config::ColorWhite },
-                { spdlog::level::level_enum::debug, Config::ColorSoftWhite },
-                { spdlog::level::level_enum::trace, Config::ColorGrey } };
+        static const std::unordered_map<spdlog::level::level_enum, Color4> _levelColor;
 
         FIELD();
         std::size_t _logLimit = 500;

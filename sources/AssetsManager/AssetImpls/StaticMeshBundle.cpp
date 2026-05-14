@@ -26,6 +26,7 @@
 
 #include "AssimpMisc/AssimpHelper.h"
 #include "GameplaySystem/Framework/GameInstance.h"
+#include "Misc/Configs.h"
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
 

@@ -27,7 +27,6 @@
 #include "Core/Delegate.h"
 #include "Core/Size.h"
 #include "ECS/BaseComponent.h"
-#include "ImGui/imgui.h"
 #include "RawDataManagement/DataStream.h"
 
 namespace Core
@@ -77,7 +76,7 @@ namespace Core
         [[nodiscard]] bool canBeShown() const { return _isEnabled; }
 
     protected:
-        ImGuiWindowFlags _windowFlags = 0;
+        int /*ImGuiWindowFlags*/ _windowFlags = 0;
         bool _wasFocusRequested = false;
     };
 
@@ -147,7 +146,7 @@ namespace Core
 
         bool _isFocused = false;
         bool _isHovered = false;
-        std::unordered_map<ImGuiStyleVar_, float> _styles;
+        std::unordered_map<int /*ImGuiStyleVar_*/, float> _styles;
     };
 
     CLASS();

@@ -26,6 +26,7 @@
 
 #include "GameplaySystem/Entities/Actor.h"
 #include "GameplaySystem/Framework/GameInstance.h"
+#include "Graphics/Primitives/StaticMeshBundle.h"
 
 namespace Core
 {

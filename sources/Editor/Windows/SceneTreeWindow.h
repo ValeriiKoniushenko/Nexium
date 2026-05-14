@@ -35,9 +35,11 @@ namespace Core
     class SceneTreeWindowEWC : public BaseFloatEWC
     {
         R_FRIEND_DECL(Core::SceneTreeWindowEWC, Core::BaseFloatEWC);
-        ECS_COMPONENT_DECL(SceneTreeWindowEWC, BaseFloatEWC);
+        ECS_COMPONENT_DECL_NO_CNSTR(SceneTreeWindowEWC, BaseFloatEWC);
 
     public:
+        SceneTreeWindowEWC(const StringAtom& name = ""_atom);
+
         void setScene(Scene* scene) { _scene = scene; }
         [[nodiscard]] Scene* getScene() const noexcept { return _scene; }
 
@@ -59,8 +61,7 @@ namespace Core
         DelegateSubscriberPoolGuard _subscriptionPool;
 
         Scene* _scene = nullptr;
-        int _commonTreeFlags
-            = ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
+        int _commonTreeFlags = 0;
         BaseComponent* _lastSelectedObject = nullptr;
     };
 

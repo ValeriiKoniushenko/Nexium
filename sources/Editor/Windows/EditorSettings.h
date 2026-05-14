@@ -27,7 +27,6 @@
 #include "BaseWindow.h"
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
-#include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 
 namespace Core
@@ -35,7 +34,8 @@ namespace Core
     namespace Gui
     {
         class Label;
-    }
+        class TextInput;
+    } // namespace Gui
 
     CLASS();
     class EditorSettingsEWC : public BaseFloatEWC

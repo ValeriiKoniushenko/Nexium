@@ -24,9 +24,11 @@
 
 #include "LogsWindow.h"
 
+#include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/Spacer.h"
 #include "GameplaySystem/Framework/GameInstance.h"
+#include "Misc/Configs.h"
 #include "Misc/IconsFontAwesome.h"
 
 namespace Core
@@ -44,6 +46,14 @@ namespace Core
     //                  __/ |
     //                 |___/
     // ========================================================================
+
+    const std::unordered_map<spdlog::level::level_enum, Color4> LogsWindowEWC::_levelColor
+        = { { spdlog::level::level_enum::critical, Config::ColorRed },
+            { spdlog::level::level_enum::err, Config::ColorYellow },
+            { spdlog::level::level_enum::warn, Config::ColorHalfYellow },
+            { spdlog::level::level_enum::info, Config::ColorWhite },
+            { spdlog::level::level_enum::debug, Config::ColorSoftWhite },
+            { spdlog::level::level_enum::trace, Config::ColorGrey } };
 
     const char* LogsWindowEWC::getIcon()
     {

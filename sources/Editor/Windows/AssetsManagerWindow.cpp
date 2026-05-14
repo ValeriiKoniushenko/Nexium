@@ -24,8 +24,10 @@
 
 #include "AssetsManagerWindow.h"
 
+#include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/Spacer.h"
 #include "GameplaySystem/Framework/GameInstance.h"
+#include "Misc/Configs.h"
 #include "Misc/IconsFontAwesome.h"
 #include "ModalPopUp.h"
 
