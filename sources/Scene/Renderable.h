@@ -24,38 +24,24 @@
 
 #pragma once
 
-#include "ECS/BaseComponent.h"
-#include "ECS/Transformable.h"
-#include "Graphics/IOutliner.h"
-#include "Renderable.h"
-
 namespace Core
 {
+    class Transformable;
+    class BaseCamera;
 
-    CLASS();
-    class SceneObject :
-        public BaseComponent,
-        public IOutliner,
-        public Transformable,
-        public Renderable
+    class Renderable
     {
-        ECS_COMPONENT_DECL(SceneObject, BaseComponent);
-        R_FRIEND_DECL(Core::SceneObject, Core::BaseComponent, Core::Transformable);
-
     public:
-        SceneObject() = default;
-        ~SceneObject() override = default;
-        SceneObject(const SceneObject&) = default;
-        SceneObject(SceneObject&&) = default;
-        SceneObject& operator=(const SceneObject&) = default;
-        SceneObject& operator=(SceneObject&&) = default;
+        Renderable() = default;
+        virtual ~Renderable() = default;
+        Renderable(const Renderable&) = default;
+        Renderable(Renderable&&) = default;
+        Renderable& operator=(const Renderable&) = default;
+        Renderable& operator=(Renderable&&) = default;
 
-        [[nodiscard]] spdlog::logger* getLogger() const override;
+        virtual void draw(Transformable& trans, BaseCamera& camera) = 0;
 
     protected:
-        void onOutlineStatusChange(bool newStatus) override;
     };
 
 } // namespace Core
-
-#include "SceneObject.generated.h" // added by the code generator. Better don't move it.
