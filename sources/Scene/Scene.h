@@ -30,6 +30,7 @@
 #include "GameplaySystem/Framework/WorldObject.h"
 #include "Grid.h"
 #include "RawDataManagement/DataStream.h"
+#include "SceneObject.h"
 
 #include <vector>
 
@@ -85,11 +86,15 @@ namespace Core
         void writeToCacheSeparateData();
 
     protected:
+        // TODO: get rid of it, deprecated
         ObjectContainerT _objects;
+
+        std::vector<SceneObject::Ptr> _sceneObjects;
 
         StringAtom _sceneName = "Default";
 
     private:
+        // TODO: get rid of it, deprecated
         std::vector<Actor*> _postDrawBuffer;
     };
 
