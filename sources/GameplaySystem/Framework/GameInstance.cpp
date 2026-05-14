@@ -35,6 +35,7 @@
 #include "Misc/FPSCounter.h"
 #include "ModuleInfo.h"
 #include "RawDataManagement/DataStream.h"
+#include "Scene/Rectangle.h"
 #include "Scene/Spectator.h"
 #include "assimp/Importer.hpp"
 #include "spdlog/spdlog.h"
@@ -358,6 +359,8 @@ namespace Core
     void GameInstance::loadCoreResources()
     {
         GetAssetsManager().generateTextureAtlas(Config::Path::images / "atlas");
+
+        gameScene._sceneObjects.emplace_back(SceneObj::Rectangle::Create());
 
         onLoadCoreResources();
     }

@@ -81,6 +81,7 @@ namespace Core
     public:
         Grid grid;
         NXSkybox skybox;
+        std::vector<SceneObject::Ptr> _sceneObjects;
 
     protected:
         void writeToCacheSeparateData();
@@ -88,8 +89,6 @@ namespace Core
     protected:
         // TODO: get rid of it, deprecated
         ObjectContainerT _objects;
-
-        std::vector<SceneObject::Ptr> _sceneObjects;
 
         StringAtom _sceneName = "Default";
 

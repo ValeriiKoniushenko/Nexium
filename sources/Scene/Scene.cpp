@@ -26,13 +26,17 @@
 
 #include "GameplaySystem/Entities/Actor.h"
 #include "GameplaySystem/Framework/GameInstance.h"
-#include "Graphics/ShaderManager.h"
 
 namespace Core
 {
 
     void Scene::directDraw()
     {
+        if (!gGameInstance->currentCamera)
+        {
+            return;
+        }
+
         if (gGameInstance->renderMode == GameInstance::RenderMode::Editor)
         {
             gGameInstance->gameEditor.slowObjectPicker.update(*this);
@@ -62,6 +66,11 @@ namespace Core
                     _postDrawBuffer.push_back(mesh);
                 }
             }
+        }
+
+        for (auto& obj : _sceneObjects)
+        {
+            obj->draw(*gGameInstance->currentCamera);
         }
 
         for (auto&& mesh : _postDrawBuffer)
