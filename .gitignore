@@ -11,3 +11,4 @@
 .cache
 /dependencies/JustReflectMe
 string_metrics.csv
+iwyu.log
