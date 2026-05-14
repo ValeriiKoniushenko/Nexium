@@ -24,23 +24,23 @@
 
 #pragma once
 
-namespace Core
+#include "Scene/SceneObject.h"
+
+namespace Core::SceneObj
 {
-    class BaseCamera;
 
-    class Renderable
+    CLASS();
+    class Rectangle : public SceneObject
     {
-    public:
-        Renderable() = default;
-        virtual ~Renderable() = default;
-        Renderable(const Renderable&) = default;
-        Renderable(Renderable&&) = default;
-        Renderable& operator=(const Renderable&) = default;
-        Renderable& operator=(Renderable&&) = default;
+        R_FRIEND_DECL(Core::SceneObj::Rectangle, Core::SceneObject);
+        ECS_COMPONENT_DECL(Rectangle, SceneObject);
 
-        virtual void draw(BaseCamera& camera) = 0;
+    public:
+        void draw(BaseCamera& camera) override;
 
     protected:
     };
 
-} // namespace Core
+} // namespace Core::SceneObj
+
+#include "Rectangle.generated.h" // added by the code generator. Better don't move it.

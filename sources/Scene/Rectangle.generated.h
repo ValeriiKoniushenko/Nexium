@@ -1,0 +1,72 @@
+/*
+ * This code was generated automatically with
+ * https://github.com/ValeriiKoniushenko/JustReflectMe
+ *
+ * DO NOT EDIT MANUALLY!
+ * Your changes will be replaced next time
+ */
+
+// clang-format off
+#include <string>
+#include <string_view>
+#include <vector>
+
+template<>
+struct R<Core::SceneObj::Rectangle>
+{
+    static constexpr std::string_view Name() { return "Rectangle"; }
+    static constexpr std::string_view ParentScope() { return "Core::SceneObj"; }
+    static constexpr std::size_t GetFieldNumbers() { return 0; }
+    static constexpr std::vector<RClassField> GetFields() {
+        return {
+		};
+    }
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Core::SceneObj::Rectangle& obj, bool noSignals = false)
+    {
+        RResourceStream<RImpl> s;if (!noSignals)
+        {
+            _RTryCallPreSerialize<Core::SceneObj::Rectangle>(obj);
+        }
+
+		s.write(R<Core::SceneObject>::Serialize<RImpl>(obj).getData());
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize<Core::SceneObj::Rectangle>(obj, s.logs());
+        }
+        return s;
+    }
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    static void Serialize(const Core::SceneObj::Rectangle& obj, RResourceStream<RImpl>& s, bool noSignals = false)
+    {
+        if (!noSignals)
+        {
+            _RTryCallPreSerialize<Core::SceneObj::Rectangle>(obj);
+        }
+
+		s.write(R<Core::SceneObject>::Serialize<RImpl>(obj).getData());
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize<Core::SceneObj::Rectangle>(obj, s.logs());
+        }
+    }
+
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    static void Deserialize(const RResourceStream<RImpl>& s, Core::SceneObj::Rectangle& obj, bool noSignals = false)
+    {
+        if (!noSignals)
+        {
+            _RTryCallPreDeserialize<Core::SceneObj::Rectangle>(obj);
+        }
+
+		R<Core::SceneObject>::Deserialize<RImpl>(s, obj, true);
+        if (!noSignals)
+        {
+            _RTryCallPostDeserialize<Core::SceneObj::Rectangle>(obj, s.logs());
+        }
+    }
+}; // struct R<Core::SceneObj::Rectangle>
+// clang-format on
