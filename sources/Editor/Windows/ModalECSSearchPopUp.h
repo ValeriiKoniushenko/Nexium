@@ -25,14 +25,17 @@
 #pragma once
 
 #include "BaseWindow.h"
-#include "Editor/GuiComponents/Input.h"
-#include "Editor/GuiComponents/LabelRow.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 
 namespace Core
 {
     namespace Gui
     {
+        template<class T>
+        class LabelRow;
+
+        class TextInput;
+
         class ListView;
         class Button;
     } // namespace Gui

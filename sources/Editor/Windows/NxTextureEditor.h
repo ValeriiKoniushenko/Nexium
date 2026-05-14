@@ -25,15 +25,25 @@
 #pragma once
 
 #include "AssetsManager/TextureAsset.h"
-#include "Editor/GuiComponents/CheckBox.h"
-#include "Editor/GuiComponents/Input.h"
-#include "Editor/GuiComponents/LabelRow.h"
-#include "Editor/GuiComponents/VecInput.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "Editor/Windows/NxEditorBaseEditor.h"
 
 namespace Core
 {
+    namespace Gui
+    {
+        template<typename T>
+        class LabelRow;
+
+        template<std::size_t Size, Utils::IsArithmetic Type>
+        class VecNumInput;
+
+        class TextInput;
+        class CheckBox;
+
+        using Int2Input = VecNumInput<2, int>;
+
+    } // namespace Gui
 
     class NxTextureEditorEWC : public NxEditorBaseEditorEWC
     {

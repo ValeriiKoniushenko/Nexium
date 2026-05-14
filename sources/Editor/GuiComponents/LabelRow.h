@@ -30,7 +30,7 @@
 namespace Core::Gui
 {
 
-    template<IsWidget T>
+    template<class /*IsWidget*/ T>
     class LabelRow : public HorizontalLayout
     {
         ECS_TEMPLATE_COMPONENT_DECL_NO_CNSTR(LabelRow, HorizontalLayout, T);
@@ -66,6 +66,6 @@ namespace Core::Gui
         Label* label = nullptr;
     };
 
-    ECS_TEMPLATE_COMPONENT_IMPL(LabelRow<T>, IsWidget T);
+    ECS_TEMPLATE_COMPONENT_IMPL(LabelRow<T>, class T);
 
 } // namespace Core::Gui

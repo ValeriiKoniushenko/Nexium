@@ -25,8 +25,6 @@
 #pragma once
 
 #include "AssetsManager/ECSAsset.h"
-#include "Editor/GuiComponents/Input.h"
-#include "Editor/GuiComponents/LabelRow.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "InputDevices/InputManager.h"
 #include "NxEditorBaseEditor.h"
@@ -34,6 +32,14 @@
 namespace Core
 {
 
+    namespace Gui
+    {
+        template<typename T>
+        class LabelRow;
+
+        class TextInput;
+
+    } // namespace Gui
     class ECSEditorMimeAdapter : public BaseComponent
     {
         ECS_COMPONENT_DECL(ECSEditorMimeAdapter, BaseComponent);
