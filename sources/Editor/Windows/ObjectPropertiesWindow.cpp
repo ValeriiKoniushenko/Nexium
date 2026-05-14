@@ -25,6 +25,7 @@
 #include "ObjectPropertiesWindow.h"
 
 #include "ECS/Transformable.h"
+#include "Editor/GuiComponents/Array.h"
 #include "Editor/GuiComponents/CheckBox.h"
 #include "Editor/GuiComponents/Combo.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
@@ -262,6 +263,11 @@ namespace Core
     void ObjectPropertiesWindowEWC::resetTargetObject()
     {
         _target = nullptr;
+    }
+
+    const char* ObjectPropertiesWindowEWC::getIcon()
+    {
+        return ICON_FA_EXCLAMATION_CIRCLE;
     }
 
     void ObjectPropertiesWindowEWC::onInitialize()

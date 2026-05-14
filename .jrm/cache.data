@@ -54,7 +54,7 @@
 1778794080437582845 sources/Editor/Windows/NxECSBasedEditor.h
 1778205765700928220 sources/Editor/Windows/NxEditorBaseEditor.h
 1778794254607217098 sources/Editor/Windows/NxTextureEditor.h
-1778441464236407742 sources/Editor/Windows/ObjectPropertiesWindow.h
+1778794491741962207 sources/Editor/Windows/ObjectPropertiesWindow.h
 1778172587027330086 sources/Editor/Windows/RootDockWindow.h
 1778793204911789532 sources/Editor/Windows/SceneTreeWindow.h
 1778791894791795557 sources/Editor/Windows/ShaderManager.h

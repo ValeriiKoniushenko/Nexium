@@ -25,8 +25,6 @@
 #pragma once
 
 #include "BaseWindow.h"
-#include "Editor/GuiComponents/Array.h"
-#include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/VecInput.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "Graphics/GraphicsComponents.h"
@@ -38,6 +36,21 @@ namespace Core
     {
         class CheckBox;
         class TextInput;
+
+        template<Utils::IsArithmetic T>
+        class NumInput;
+
+        using IntInput = NumInput<int>;
+        using FloatInput = NumInput<float>;
+
+        template<class T, class ArrayCellViewerFunc, class ViewFetchFunc>
+        class BaseArray;
+
+        struct _StringArray_ArrayCellViewerFunc;
+        struct _StringArray_ViewFetchFunc;
+
+        using StringArray
+            = BaseArray<StringAtom, _StringArray_ArrayCellViewerFunc, _StringArray_ViewFetchFunc>;
     } // namespace Gui
 
     class Transformable;
@@ -73,7 +86,7 @@ namespace Core
 
         void resetTargetObject();
 
-        [[nodiscard]] const char* getIcon() override { return ICON_FA_EXCLAMATION_CIRCLE; }
+        [[nodiscard]] const char* getIcon() override;
 
     protected:
         void onInitialize() override;
