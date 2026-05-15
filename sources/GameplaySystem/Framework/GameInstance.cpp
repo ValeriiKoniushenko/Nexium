@@ -141,18 +141,22 @@ namespace Core
     void GameInstance::startUpReadCache()
     {
         gameEditor.readFromCache();
+        GetCacheSystem().tryRead(gameScene);
+
         // world.tryReadFromCache();
         // gameScene.tryReadFromCache();
         onInitializeReadCache();
+
         ImGui::LoadIniSettingsFromDisk(Config::Path::imGuiWindowsIni.generic_string().c_str());
     }
 
     void GameInstance::saveAll()
     {
         gameEditor.writeToCache();
-        // gameScene.writeToCache();
         // world.writeToCache();
         ImGui::SaveIniSettingsToDisk(Config::Path::imGuiWindowsIni.generic_string().c_str());
+
+        GetCacheSystem().write(gameScene);
 
         onSaveAll();
     }
