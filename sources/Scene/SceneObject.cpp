@@ -48,4 +48,18 @@ namespace Core
     {
     }
 
+    void to_json(nlohmann::json& j, const SceneState& v)
+    {
+        j["name"] = v.name;
+        j["trans"] = R<Transformable>::Serialize(v.trans).getData();
+        j["assetType"] = v.assetType;
+    }
+
+    void from_json(const nlohmann::json& j, SceneState& v)
+    {
+        v.name = j.at("name").get<std::string>();
+        R<Transformable>::Deserialize({ j.at("trans") }, v.trans);
+        v.assetType = j.at("assetType").get<StringAtom>();
+    }
+
 } // namespace Core

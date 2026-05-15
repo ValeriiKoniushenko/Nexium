@@ -39,6 +39,9 @@ namespace Core
         StringAtom assetType;
     };
 
+    void to_json(nlohmann::json& j, const SceneState& v);
+    void from_json(const nlohmann::json& j, SceneState& v);
+
     CLASS();
     class SceneObject :
         public BaseComponent,

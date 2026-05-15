@@ -151,6 +151,32 @@ namespace Core
         }
     }
 
+    [[nodiscard]] nlohmann::json Scene::serialize() const
+    {
+        auto json = R<Scene>::Serialize(*this).getData();
+
+        json[StreamData::sceneObjects] = nlohmann::json::array();
+        for (const auto& obj : _sceneObjects)
+        {
+            json[StreamData::sceneObjects].push_back(obj->getSceneState());
+        }
+
+        return json;
+    }
+
+    void Scene::deserialize(RResourceStream<RJsonResourceStream>& data)
+    {
+        R<Scene>::Deserialize(data, *this);
+
+        auto&& arr = data.getData()[StreamData::sceneObjects];
+
+        std::vector<SceneState> states;
+        for (const auto& [_, value] : arr.items())
+        {
+            states.emplace_back(value.get<SceneState>());
+        }
+    }
+
     std::filesystem::path Scene::getCacheDir() const
     {
         return "scenes";

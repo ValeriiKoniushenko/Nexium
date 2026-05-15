@@ -37,11 +37,22 @@
 namespace Core
 {
     class Actor;
+
+    CLASS();
     class Scene : public IDataIO
     {
+        R_FRIEND(Scene);
+
     public:
         // TODO: change to another data structure!!! It's awful
         using ObjectContainerT = std::vector<WorldObject::Ptr>;
+
+        struct StreamData
+        {
+            StreamData() = delete;
+
+            static constexpr const char* sceneObjects = "sceneObjects";
+        };
 
     public:
         Scene() = default;
@@ -75,6 +86,8 @@ namespace Core
 
         Delegate<void(WorldObject*)>::Ptr onObjectAdded = Delegate<void(WorldObject*)>::Create();
 
+        [[nodiscard]] nlohmann::json serialize() const;
+        void deserialize(RResourceStream<RJsonResourceStream>& data);
         [[nodiscard]] std::filesystem::path getCacheDir() const override;
         [[nodiscard]] StringAtom getCacheHash() const override;
 
@@ -90,6 +103,7 @@ namespace Core
         // TODO: get rid of it, deprecated
         ObjectContainerT _objects;
 
+        FIELD();
         StringAtom _sceneName = "Default";
 
     private:
@@ -133,3 +147,4 @@ namespace Core
     }
 
 } // namespace Core
+#include "Scene.generated.h" // added by the code generator. Better don't move it.
