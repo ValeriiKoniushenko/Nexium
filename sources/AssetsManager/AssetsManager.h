@@ -113,8 +113,8 @@ namespace Core
             const std::vector<std::string>& filter);
 
         [[nodiscard]] static NodeType GetNodeType(const std::filesystem::directory_entry& entry);
-        static void TryToOpenFile(const std::filesystem::directory_entry& path);
-        static void TryToOpenNxFile(const std::filesystem::directory_entry& path);
+        static void TryToOpenFile(const std::filesystem::directory_entry& entry);
+        static void TryToOpenNxFile(const std::filesystem::directory_entry& entry);
         static void OpenPathFromOSExplorer(const std::filesystem::path& path);
 
         // ================= MAIN ======================
