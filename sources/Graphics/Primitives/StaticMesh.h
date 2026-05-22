@@ -37,6 +37,7 @@
 namespace Core
 {
     class StaticMeshBundle;
+    class BaseCamera;
 
     CLASS();
     class StaticMesh :
@@ -71,7 +72,7 @@ namespace Core
         /**
          * will draw with the default shader & logic. Single draw object!
          */
-        void draw();
+        void draw(BaseCamera& camera);
 
         /**
          * only draw call with graphics modifiers - nothing more.
@@ -112,7 +113,7 @@ namespace Core
 
         void calculateSizeBaseOnMesh(const aiMesh* rawMesh, const aiMatrix4x4& transform);
 
-        void drawOutline();
+        void drawOutline(BaseCamera& camera);
 
     protected:
         FIELD();

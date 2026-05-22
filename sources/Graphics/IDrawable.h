@@ -23,6 +23,7 @@
  */
 
 #pragma once
+
 #include "../RawDataManagement/DataStream.h"
 
 #include <functional>
@@ -31,6 +32,7 @@ namespace Core
 {
     class StaticMesh;
     class Actor;
+    class BaseCamera;
 
     CLASS();
     class IDrawable : public IDataIO
@@ -49,7 +51,7 @@ namespace Core
          * drawing process. But if you really need it: it will draw an object with the default
          * shader. Single draw bundle!
          */
-        virtual void draw() {}
+        virtual void draw(BaseCamera&) {}
 
         /**
          * In the best world, you shouldn't call this function directly; another class does a

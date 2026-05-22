@@ -34,7 +34,7 @@ namespace Core
 {
 
     CLASS();
-    class StaticMeshBundle : public Actor, public IOutliner
+    class StaticMeshBundle : public Actor
     {
         ECS_COMPONENT_DECL(StaticMeshBundle, Actor);
         R_FRIEND_DECL(StaticMeshBundle, Core::Actor);
@@ -49,7 +49,7 @@ namespace Core
         /**
          * will draw with the default shader & logic. Single draw bundle!
          */
-        void draw() override;
+        void draw(BaseCamera&) override;
 
         /**
          * only draw call with graphics modifiers - nothing more.
@@ -116,12 +116,12 @@ namespace Core
 
         friend void swap(StaticMeshBundle& a, StaticMeshBundle& b) noexcept
         {
-            std::swap(static_cast<Actor&>(a), static_cast<Actor&>(b));
-
-            std::swap(a._meshes, b._meshes);
-            std::swap(a._bundles, b._bundles);
-            std::swap(a._id, b._id);
-            std::swap(a._ignoreSelect, b._ignoreSelect);
+            using std::swap;
+            swap(static_cast<Actor&>(a), static_cast<Actor&>(b));
+            swap(a._meshes, b._meshes);
+            swap(a._bundles, b._bundles);
+            swap(a._id, b._id);
+            swap(a._ignoreSelect, b._ignoreSelect);
         }
 
     protected:

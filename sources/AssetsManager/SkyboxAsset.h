@@ -26,11 +26,12 @@
 
 #include "BaseAsset.h"
 #include "Graphics/GraphicsComponents.h"
-#include "Graphics/Texture.h"
 #include "RawDataManagement/JsonAdapter.h"
 
 namespace Core
 {
+    class BaseCamera;
+
     CLASS();
     class SkyboxAsset : public BaseAsset
     {
@@ -55,10 +56,13 @@ namespace Core
             : BaseAsset(logicPath)
         {
         }
-
-        void draw();
-
+        SkyboxAsset(const SkyboxAsset&) = default;
+        SkyboxAsset(SkyboxAsset&&) = default;
+        SkyboxAsset& operator=(const SkyboxAsset&) = default;
+        SkyboxAsset& operator=(SkyboxAsset&&) = default;
         ~SkyboxAsset() override = default;
+
+        void draw(BaseCamera& camera);
 
         [[nodiscard]] const char* getPrefix() const override { return "Skybox"; }
 

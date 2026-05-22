@@ -26,8 +26,8 @@
 
 #include "ECS/BaseComponent.h"
 #include "ECS/Transformable.h"
+#include "Graphics/IDrawable.h"
 #include "Graphics/IOutliner.h"
-#include "Renderable.h"
 
 namespace Core
 {
@@ -47,13 +47,13 @@ namespace Core
         public BaseComponent,
         public IOutliner,
         public Transformable,
-        public Renderable
+        public IDrawable
     {
         ECS_COMPONENT_DECL(SceneObject, BaseComponent);
-        R_FRIEND_DECL(Core::SceneObject, Core::BaseComponent, Core::Transformable);
+        R_FRIEND_DECL(Core::SceneObject, Core::BaseComponent, Core::Transformable, Core::IOutliner,
+                      Core::IDrawable);
 
     public:
-        SceneObject() = default;
         ~SceneObject() override = default;
         SceneObject(const SceneObject&) = default;
         SceneObject(SceneObject&&) = default;
@@ -63,6 +63,15 @@ namespace Core
         [[nodiscard]] spdlog::logger* getLogger() const override;
 
         [[nodiscard]] SceneState getSceneState() const;
+
+        friend void swap(SceneObject& a, SceneObject& b) noexcept
+        {
+            using std::swap;
+            swap(static_cast<BaseComponent&>(a), static_cast<BaseComponent&>(b));
+            swap(static_cast<IOutliner&>(a), static_cast<IOutliner&>(b));
+            swap(static_cast<Transformable&>(a), static_cast<Transformable&>(b));
+            swap(static_cast<IDrawable&>(a), static_cast<IDrawable&>(b));
+        }
 
     protected:
         void onOutlineStatusChange(bool newStatus) override;

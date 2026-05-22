@@ -121,16 +121,11 @@ namespace Core
         }
     }
 
-    void StaticMesh::draw()
+    void StaticMesh::draw(BaseCamera& camera)
     {
         if (!InterleavedGraphicsData::isValid()) [[unlikely]]
         {
             AssertAtCount(false, 2000, "Can't draw graphic component. It wasn't configured.");
-            return;
-        }
-
-        if (!gGameInstance->currentCamera) [[unlikely]]
-        {
             return;
         }
 
@@ -158,19 +153,18 @@ namespace Core
         glBindBuffer(GL_UNIFORM_BUFFER, _uboLight);
 
         const auto& lightning = GetWorld().lightning;
-        shader->setUniformObject(ShaderReflector_default::uLight,
-                                 ShaderReflector_default::Light{
-                                     .ambientStrength = lightning.ambientStrength,
-                                     .specularStrength = lightning.specularStrength,
-                                     .minLightStrength = lightning.minLightStrength,
-                                     .specularPow = lightning.specularPow,
-                                     .color = lightning.color.toGlm(),
-                                     .sunDirection = lightning.sunDirection,
-                                     .viewPos = gGameInstance->currentCamera->getPosition() });
+        shader->setUniformObject(
+            ShaderReflector_default::uLight,
+            ShaderReflector_default::Light{ .ambientStrength = lightning.ambientStrength,
+                                            .specularStrength = lightning.specularStrength,
+                                            .minLightStrength = lightning.minLightStrength,
+                                            .specularPow = lightning.specularPow,
+                                            .color = lightning.color.toGlm(),
+                                            .sunDirection = lightning.sunDirection,
+                                            .viewPos = camera.getPosition() });
 
         shader->setUniform(ShaderReflector_default::uTexture, 0);
-        shader->setUniform(ShaderReflector_default::uProjAndView,
-                           gGameInstance->currentCamera->getMatrix());
+        shader->setUniform(ShaderReflector_default::uProjAndView, camera.getMatrix());
         shader->setUniform(ShaderReflector_default::uModel, _cachedModelMatrix);
 
         if (getIsDrawOutline())
@@ -180,7 +174,7 @@ namespace Core
             glStencilMask(0xFF);
             glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(getTriangleCount()), GL_UNSIGNED_INT,
                            nullptr);
-            drawOutline();
+            drawOutline(camera);
         }
         else
         {
@@ -207,12 +201,12 @@ namespace Core
                 if (auto* mesh = comp->tryCastTo<StaticMesh>())
                 {
                     mesh->tryToRecalculateMatrices(_cachedModelMatrix);
-                    mesh->draw();
+                    mesh->draw(camera);
                 }
                 if (auto* bundle = comp->tryCastTo<StaticMeshBundle>())
                 {
                     bundle->tryToRecalculateMatrices(_cachedModelMatrix);
-                    bundle->draw();
+                    bundle->draw(camera);
                 }
             }
         }
@@ -259,23 +253,21 @@ namespace Core
         }
     }
 
-    void StaticMesh::drawOutline()
+    void StaticMesh::drawOutline(BaseCamera& camera)
     {
         if (!_outlineShader)
         {
             return;
         }
 
-        auto* camera = gGameInstance->currentCamera;
-
         _outlineShader->use();
         _outlineShader->setUniform("uOutlineColor"_atom, NormColor4::From(outlineColor));
         _outlineShader->setUniform("uOutlineSize"_atom, outlineSize);
         _outlineShader->setUniform("uModel"_atom, _cachedModelMatrix);
-        _outlineShader->setUniform("uProjAndView"_atom, camera->getMatrix());
+        _outlineShader->setUniform("uProjAndView"_atom, camera.getMatrix());
 
-        const float distance = glm::length(camera->getPosition() - glm::vec3(getPosition()));
-        const float ndcDistance = distance / camera->getFar();
+        const float distance = glm::length(camera.getPosition() - glm::vec3(getPosition()));
+        const float ndcDistance = distance / camera.getFar();
         _outlineShader->setUniform("uCameraObjectNDCDistance"_atom, ndcDistance);
 
         bindVAO();

@@ -30,9 +30,7 @@ struct R<Core::Actor>
             _RTryCallPreSerialize<Core::Actor>(obj);
         }
 
-		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
-		s.write(R<Core::Transformable>::Serialize<RImpl>(obj).getData());
-		s.write(R<Core::IDrawable>::Serialize<RImpl>(obj).getData());
+		s.write(R<Core::SceneObject>::Serialize<RImpl>(obj).getData());
         if (!noSignals)
         {
             _RTryCallPostSerialize<Core::Actor>(obj, s.logs());
@@ -48,9 +46,7 @@ struct R<Core::Actor>
             _RTryCallPreSerialize<Core::Actor>(obj);
         }
 
-		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
-		s.write(R<Core::Transformable>::Serialize<RImpl>(obj).getData());
-		s.write(R<Core::IDrawable>::Serialize<RImpl>(obj).getData());
+		s.write(R<Core::SceneObject>::Serialize<RImpl>(obj).getData());
         if (!noSignals)
         {
             _RTryCallPostSerialize<Core::Actor>(obj, s.logs());
@@ -66,9 +62,7 @@ struct R<Core::Actor>
             _RTryCallPreDeserialize<Core::Actor>(obj);
         }
 
-		R<Core::BaseComponent>::Deserialize<RImpl>(s, obj, true);
-		R<Core::Transformable>::Deserialize<RImpl>(s, obj, true);
-		R<Core::IDrawable>::Deserialize<RImpl>(s, obj, true);
+		R<Core::SceneObject>::Deserialize<RImpl>(s, obj, true);
         if (!noSignals)
         {
             _RTryCallPostDeserialize<Core::Actor>(obj, s.logs());

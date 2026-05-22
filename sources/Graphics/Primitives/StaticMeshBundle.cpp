@@ -82,7 +82,7 @@ namespace Core
         return *this;
     }
 
-    void StaticMeshBundle::draw()
+    void StaticMeshBundle::draw(BaseCamera& camera)
     {
         if (!_isEnabled)
         {
@@ -95,7 +95,7 @@ namespace Core
         {
             if (mesh->isEnabled())
             {
-                mesh->draw();
+                mesh->draw(camera);
             }
         }
 
@@ -103,7 +103,7 @@ namespace Core
         {
             if (mesh->isEnabled())
             {
-                mesh->draw();
+                mesh->draw(camera);
             }
         }
     }

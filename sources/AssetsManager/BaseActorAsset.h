@@ -38,7 +38,10 @@ namespace Core
             : BaseAsset(logicPath)
         {
         }
-
+        BaseActorAsset(const BaseActorAsset&) = default;
+        BaseActorAsset(BaseActorAsset&&) = default;
+        BaseActorAsset& operator=(const BaseActorAsset&) = default;
+        BaseActorAsset& operator=(BaseActorAsset&&) = default;
         ~BaseActorAsset() override = default;
 
         [[nodiscard]] const T& getData() const noexcept { return _data; }
@@ -60,21 +63,6 @@ namespace Core
         void setRotation(const glm::vec3& value) noexcept { _rotation = value; }
 
     protected:
-        /*void ioFieldsUpdate(DataStream& out) override
-        {
-            auto stream = out.dedicatedNesting("BaseActorAsset");
-
-            // Actor's properties
-            stream.field("isPostDraw", _isPostDraw);
-
-            // Transformable's properties
-            stream.field("scale", _scale, glm::vec3(1.f, 1.f, 1.f));
-            stream.field("origin", _origin);
-            stream.field("position", _position);
-            stream.field("rotation", _rotation);
-        }
-        */
-
         void applyAssetSettingsToObject()
         {
             // Actor's properties

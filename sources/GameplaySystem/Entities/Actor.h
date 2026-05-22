@@ -25,16 +25,16 @@
 #pragma once
 
 #include "ECS/BaseComponent.h"
-#include "ECS/Transformable.h"
 #include "Graphics/IDrawable.h"
+#include "Scene/SceneObject.h"
 
 namespace Core
 {
     CLASS();
-    class Actor : public Transformable, public IDrawable, public BaseComponent
+    class Actor : public SceneObject
     {
-        R_FRIEND_DECL(Actor, Core::BaseComponent, Core::Transformable, Core::IDrawable);
-        ECS_COMPONENT_DECL(Actor, BaseComponent);
+        R_FRIEND_DECL(Actor, Core::SceneObject);
+        ECS_COMPONENT_DECL(Actor, SceneObject);
 
     public:
         Actor(Actor&&) = default;
@@ -45,8 +45,8 @@ namespace Core
 
         friend void swap(Actor& a, Actor& b) noexcept
         {
-            std::swap(static_cast<BaseComponent&>(a), static_cast<BaseComponent&>(b));
-            std::swap(static_cast<Transformable&>(a), static_cast<Transformable&>(b));
+            using std::swap;
+            swap(static_cast<SceneObject&>(a), static_cast<SceneObject&>(b));
         }
 
         void onPreDeserialize(AbstractComponent* obj) override;
@@ -61,5 +61,7 @@ namespace Core
 
     template<class T>
     concept IsActorBased = std::is_base_of_v<Actor, T>;
+
 } // namespace Core
+
 #include "Actor.generated.h" // added by the code generator. Better don't move it.

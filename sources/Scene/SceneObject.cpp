@@ -39,7 +39,8 @@ namespace Core
 
     SceneState SceneObject::getSceneState() const
     {
-        return { .name = getComponentName().toStdString(),
+        auto&& name = getComponentName().toStdString();
+        return { .name = (name.empty() ? "None" : name),
                  .trans = static_cast<const Transformable&>(*this),
                  .assetType = getComponentType() };
     }

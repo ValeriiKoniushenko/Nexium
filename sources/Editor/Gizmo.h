@@ -56,7 +56,7 @@ namespace Core
             std::vector<Transformable*> attachedObjects;
         };
 
-        void draw() override;
+        void draw(BaseCamera& camera) override;
 
         void pureDraw(const std::function<void(StaticMesh*)>& onUniformSet,
                       const std::function<bool(const Actor*)>& conditional) override;

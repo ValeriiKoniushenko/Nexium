@@ -24,10 +24,18 @@
 
 #pragma once
 
+#include "JustReflectMe/Adapter.h"
+
+#include <utility>
+
 namespace Core
 {
+
+    CLASS();
     class IOutliner
     {
+        R_FRIEND(IOutliner);
+
     public:
         IOutliner(const IOutliner&) = default;
         IOutliner& operator=(const IOutliner&) = default;
@@ -43,12 +51,20 @@ namespace Core
         void toggleIsDrawOutline() noexcept { setIsDrawOutline(!_isDrawOutline); }
         [[nodiscard]] bool getIsDrawOutline() const noexcept { return _isDrawOutline; }
 
+        friend void swap(IOutliner& a, IOutliner& b) noexcept
+        {
+            std::swap(a._isDrawOutline, b._isDrawOutline);
+        }
+
     protected:
         IOutliner() = default;
 
         virtual void onOutlineStatusChange(bool newStatus) = 0;
 
     private:
+        FIELD();
         bool _isDrawOutline = false;
     };
 } // namespace Core
+
+#include "IOutliner.generated.inl" // added by the code generator. Better don't move it.

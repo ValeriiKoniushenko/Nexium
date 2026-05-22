@@ -31,18 +31,17 @@ namespace Core
 {
     R_FRIEND_IMPL(SkyboxAsset);
 
-    void SkyboxAsset::draw()
+    void SkyboxAsset::draw(BaseCamera& camera)
     {
         auto* shader = GetShaderManager().getShaderProgram("skybox"_atom);
-        auto* camera = gGameInstance->currentCamera;
 
         auto view = glm::mat4(1.f);
-        view = glm::rotate(view, glm::radians(camera->getRotationX()), glm::vec3(1.f, 0.f, 0.f));
-        view = glm::rotate(view, glm::radians(camera->getRotationY()), glm::vec3(0.f, 1.f, 0.f));
+        view = glm::rotate(view, glm::radians(camera.getRotationX()), glm::vec3(1.f, 0.f, 0.f));
+        view = glm::rotate(view, glm::radians(camera.getRotationY()), glm::vec3(0.f, 1.f, 0.f));
 
         shader->use();
         shader->setUniform("uView"_atom, view);
-        shader->setUniform("uProj"_atom, camera->getCachedProjectionMatrix());
+        shader->setUniform("uProj"_atom, camera.getCachedProjectionMatrix());
 
         glDepthFunc(GL_LEQUAL);
         _gcd.directDraw(GL_TRIANGLES, GL_TEXTURE_CUBE_MAP, 0);

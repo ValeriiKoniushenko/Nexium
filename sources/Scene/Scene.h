@@ -39,7 +39,7 @@ namespace Core
     class Actor;
 
     CLASS();
-    class Scene : public IDataIO
+    class Scene : public IDataIO, public BaseLog
     {
         R_FRIEND(Scene);
 
@@ -90,6 +90,7 @@ namespace Core
         void deserialize(RResourceStream<RJsonResourceStream>& data);
         [[nodiscard]] std::filesystem::path getCacheDir() const override;
         [[nodiscard]] StringAtom getCacheHash() const override;
+        [[nodiscard]] spdlog::logger* getLogger() const override;
 
     public:
         Grid grid;

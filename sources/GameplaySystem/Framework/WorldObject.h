@@ -29,7 +29,7 @@
 namespace Core
 {
 
-    class WorldObject : public NXSceneAsset
+    class [[deprecated]] WorldObject : public NXSceneAsset
     {
         INTRUSIVE_PTR_ADAPTERS(WorldObject)
     public:

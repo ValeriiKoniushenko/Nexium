@@ -38,6 +38,8 @@ namespace Core
             return;
         }
 
+        auto& camera = *gGameInstance->currentCamera;
+
         if (gGameInstance->renderMode == GameInstance::RenderMode::Editor)
         {
             gGameInstance->gameEditor.slowObjectPicker.update(*this);
@@ -60,7 +62,7 @@ namespace Core
             {
                 if (!mesh->isPostDraw())
                 {
-                    mesh->draw();
+                    mesh->draw(camera);
                 }
                 else
                 {
@@ -71,15 +73,15 @@ namespace Core
 
         for (auto& obj : _sceneObjects)
         {
-            obj->draw(*gGameInstance->currentCamera);
+            obj->draw(camera);
         }
 
         for (auto&& mesh : _postDrawBuffer)
         {
-            mesh->draw();
+            mesh->draw(camera);
         }
 
-        skybox->draw();
+        skybox->draw(camera);
     }
 
     void Scene::setSceneName(StringAtom name)
@@ -170,10 +172,20 @@ namespace Core
 
         auto&& arr = data.getData()[StreamData::sceneObjects];
 
-        std::vector<SceneState> states;
         for (const auto& [_, value] : arr.items())
         {
-            states.emplace_back(value.get<SceneState>());
+            SceneState states = value.get<SceneState>();
+
+            auto* obj = GetGlobalComponentFactory().create(StringAtom::Intern(states.assetType));
+            auto* sceneObj = dynamic_cast<SceneObject*>(obj);
+            if (!sceneObj)
+            {
+                errorLog(
+                    "Scene object isn't SceneObject. Impossible to add it to the scene. Asset type is: {}; name is: {}"_f
+                    << states.assetType << states.name);
+                continue;
+            }
+            _sceneObjects.emplace_back(sceneObj);
         }
     }
 
@@ -185,6 +197,11 @@ namespace Core
     StringAtom Scene::getCacheHash() const
     {
         return _sceneName;
+    }
+
+    spdlog::logger* Scene::getLogger() const
+    {
+        return Scene::getLogger();
     }
 
     void Scene::initialize()
