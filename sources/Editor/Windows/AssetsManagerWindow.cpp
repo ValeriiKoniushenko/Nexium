@@ -380,6 +380,14 @@ namespace Core
         if (ImGui::BeginChild("Explorer tree", glm::vec2(200.0f, 0), ImGuiChildFlags_ResizeX))
         {
             ImGui::Dummy({});
+            ImGui::Dummy({});
+            ImGui::SameLine();
+
+            float w = ImGui::GetContentRegionAvail().x - (ImGui::GetStyle().ItemSpacing.x * 1.f);
+
+            ImGui::Button("Create Blueprint", glm::vec2(w, 0));
+            ImGui::Dummy({});
+
             bool isSelected = false;
             drawOneLevel(_rootCacheNode, isSelected);
             ImGui::Dummy({});
