@@ -22,29 +22,27 @@
  * SOFTWARE.
  */
 
-#include "ModalECSSearchPopUp.h"
+#include "ModalCreateAsset.h"
 
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
-#include "Editor/GuiComponents/LabelRow.h"
 #include "Editor/GuiComponents/List.h"
 #include "Editor/GuiComponents/Separator.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 
 namespace Core
 {
-    ECS_COMPONENT_IMPL(ModalECSSearchPopUpEWC);
+    ECS_COMPONENT_IMPL(ModalCreateAssetEWC);
 
-    void ModalECSSearchPopUpEWC::open(StringAtom text,
-                                      const std::function<void(BaseComponent::Ptr)>& callback)
+    void ModalCreateAssetEWC::open(StringAtom text, const std::function<void(NXAsset)>& callback)
     {
         initialize();
         enable();
         if (_hasOpenRequest)
         {
             warnLog(
-                "Can't open second time ModalECSSearchPopUpEWC. It's already processing the "
+                "Can't open second time ModalCreateAssetEWC. It's already processing the "
                 "request.");
             return;
         }
@@ -53,13 +51,12 @@ namespace Core
         _callback = callback;
     }
 
-    void ModalECSSearchPopUpEWC::Open(StringAtom text,
-                                      const std::function<void(BaseComponent::Ptr)>& callback)
+    void ModalCreateAssetEWC::Open(StringAtom text, const std::function<void(NXAsset)>& callback)
     {
-        GetEditor().getWindow<ModalECSSearchPopUpEWC>()->open(std::move(text), callback);
+        GetEditor().getWindow<ModalCreateAssetEWC>()->open(std::move(text), callback);
     }
 
-    void ModalECSSearchPopUpEWC::onInitialize()
+    void ModalCreateAssetEWC::onInitialize()
     {
         BaseEWC::onInitialize();
 
@@ -74,27 +71,29 @@ namespace Core
             _subscriptionPool << input->onInput->subscribeAndGetID(
                 [this](const char* data)
                 {
-                    if (_listView && data)
+                    if (_list && data)
                     {
-                        _listView->setRegexFilter(StringAtom(data));
+                        _list->setRegexFilter(StringAtom(data));
                     }
                 });
         }
 
         {
-            _listView = _layout.addChildComponent<Gui::ListView>();
-            _listView->setFlex(Gui::Flex::FlexWidthAndHeight);
-            auto data = GlobalComponentFactory::Instance().getRegisteredTypesAsVector();
-            std::ranges::sort(data);
-            _listView->setData(data);
-        }
+            _list = _layout.addChildComponent<Gui::ListModelBased>();
+            _list->setFlex(Gui::Flex::FlexWidthAndHeight);
+            _list->setDataProvider(
+                [](std::size_t index, StringAtom& out) -> void*
+                {
+                    if (auto asset = GetAssetsManager().getWeakAssetAt(index, AA_Spawn).tryLoad())
+                    {
+                        out = asset->getName();
+                        return asset.get();
+                    }
 
-        {
-            _nameInput = _layout.addChildComponent<Gui::LabelRow<Gui::TextInput>>();
-            _nameInput->input->setPlaceholder("Put name here..");
-            _nameInput->input->setFlex(Gui::Flex::FlexWidth);
-            _subscriptionPool << _nameInput->input->onInput->subscribeAndGetID(
-                [this](const char* data) { _nameInput->input->resetBorderColor(); });
+                    Assert(false);
+                    return nullptr;
+                });
+            _list->setSizeProvider([]() { return GetAssetsManager().getAssetCount(AA_Spawn); });
         }
 
         _layout.addChildComponent<Gui::Separator>();
@@ -107,22 +106,16 @@ namespace Core
             _okButton->onClick->subscribe(
                 [this]()
                 {
-                    if (!Verify(_nameInput && _callback))
+                    if (!Verify(!!_callback))
                     {
                         return;
                     }
 
-                    if (_nameInput->input->getInputtedData().empty())
-                    {
-                        _nameInput->input->setBorderColor(Color4_Red);
-                        return;
-                    }
-
-                    auto comp
+                    /*auto comp
                         = GlobalComponentFactory::Instance().create(_listView->getCurrentData());
                     if (!Verify(comp))
                     {
-                        criticalLog("Can't create component: {}"_f << _listView->getCurrentData());
+                        criticalLog("Can't fetch the asset: {}"_f << _listView->getCurrentData());
                         return;
                     }
 
@@ -130,7 +123,7 @@ namespace Core
 
                     closeWindow();
 
-                    _callback(comp);
+                    _callback(comp);*/
                 });
 
             _cancelButton = h->addChildComponent<Gui::Button>("Cancel");
@@ -139,7 +132,7 @@ namespace Core
         }
     }
 
-    void ModalECSSearchPopUpEWC::onDraw()
+    void ModalCreateAssetEWC::onDraw()
     {
         _layout.tick(GetWorld().timeDelta);
 
@@ -151,12 +144,12 @@ namespace Core
         }
     }
 
-    void ModalECSSearchPopUpEWC::preOpenedEndWindowDraw()
+    void ModalCreateAssetEWC::preOpenedEndWindowDraw()
     {
         ImGui::EndPopup();
     }
 
-    bool ModalECSSearchPopUpEWC::beginWindowDraw()
+    bool ModalCreateAssetEWC::beginWindowDraw()
     {
         if (_hasOpenRequest)
         {
@@ -167,7 +160,7 @@ namespace Core
         return ImGui::BeginPopupModal(_caption.c_str(), nullptr, ImGuiWindowFlags_NoCollapse);
     }
 
-    void ModalECSSearchPopUpEWC::endWindowDraw()
+    void ModalCreateAssetEWC::endWindowDraw()
     {
     }
 } // namespace Core

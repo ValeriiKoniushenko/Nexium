@@ -372,7 +372,7 @@ namespace Core
             return false;
         }
 
-        return p.generic_string().find(filter) == std::string::npos;
+        return !p.generic_string().contains(filter);
     }
 
     void AssetsManagerWindowEWC::drawExplorerTree()
@@ -385,7 +385,10 @@ namespace Core
 
             float w = ImGui::GetContentRegionAvail().x - (ImGui::GetStyle().ItemSpacing.x * 1.f);
 
-            ImGui::Button("Create Blueprint", glm::vec2(w, 0));
+            if (ImGui::Button("Create Blueprint", glm::vec2(w, 0)))
+            {
+                std::cout << "1" << std::endl;
+            }
             ImGui::Dummy({});
 
             bool isSelected = false;

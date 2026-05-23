@@ -48,6 +48,7 @@
 1778205765700928220 sources/Editor/Windows/GameViewport.h
 1778205765700928220 sources/Editor/Windows/ImageViewer.h
 1778792358643559306 sources/Editor/Windows/LogsWindow.h
+1779552505088963655 sources/Editor/Windows/ModadCreateAsset.h
 1778172587026330092 sources/Editor/Windows/ModalAssetsSearchPopUp.h
 1778793958659738979 sources/Editor/Windows/ModalECSSearchPopUp.h
 1778795245691493625 sources/Editor/Windows/ModalPopUp.h

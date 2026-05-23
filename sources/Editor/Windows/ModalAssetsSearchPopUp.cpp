@@ -47,7 +47,7 @@ namespace Core
                 "request.");
             return;
         }
-        _caption = text;
+        _caption = std::move(text);
         _hasOpenRequest = true;
         _callback = callback;
     }
