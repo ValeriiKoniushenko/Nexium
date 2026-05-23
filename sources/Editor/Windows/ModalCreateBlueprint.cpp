@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-#include "ModalCreateAsset.h"
+#include "ModalCreateBlueprint.h"
 
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
@@ -33,16 +33,16 @@
 
 namespace Core
 {
-    ECS_COMPONENT_IMPL(ModalCreateAssetEWC);
+    ECS_COMPONENT_IMPL(ModalCreateBlueprintEWC);
 
-    void ModalCreateAssetEWC::open(StringAtom text, const std::function<void(NXAsset)>& callback)
+    void ModalCreateBlueprintEWC::open(StringAtom text, const std::function<void()>& callback)
     {
         initialize();
         enable();
         if (_hasOpenRequest)
         {
             warnLog(
-                "Can't open second time ModalCreateAssetEWC. It's already processing the "
+                "Can't open second time ModalCreateBlueprintEWC. It's already processing the "
                 "request.");
             return;
         }
@@ -51,12 +51,12 @@ namespace Core
         _callback = callback;
     }
 
-    void ModalCreateAssetEWC::Open(StringAtom text, const std::function<void(NXAsset)>& callback)
+    void ModalCreateBlueprintEWC::Open(StringAtom text, const std::function<void()>& callback)
     {
-        GetEditor().getWindow<ModalCreateAssetEWC>()->open(std::move(text), callback);
+        GetEditor().getWindow<ModalCreateBlueprintEWC>()->open(std::move(text), callback);
     }
 
-    void ModalCreateAssetEWC::onInitialize()
+    void ModalCreateBlueprintEWC::onInitialize()
     {
         BaseEWC::onInitialize();
 
@@ -132,7 +132,7 @@ namespace Core
         }
     }
 
-    void ModalCreateAssetEWC::onDraw()
+    void ModalCreateBlueprintEWC::onDraw()
     {
         _layout.tick(GetWorld().timeDelta);
 
@@ -144,12 +144,12 @@ namespace Core
         }
     }
 
-    void ModalCreateAssetEWC::preOpenedEndWindowDraw()
+    void ModalCreateBlueprintEWC::preOpenedEndWindowDraw()
     {
         ImGui::EndPopup();
     }
 
-    bool ModalCreateAssetEWC::beginWindowDraw()
+    bool ModalCreateBlueprintEWC::beginWindowDraw()
     {
         if (_hasOpenRequest)
         {
@@ -160,7 +160,7 @@ namespace Core
         return ImGui::BeginPopupModal(_caption.c_str(), nullptr, ImGuiWindowFlags_NoCollapse);
     }
 
-    void ModalCreateAssetEWC::endWindowDraw()
+    void ModalCreateBlueprintEWC::endWindowDraw()
     {
     }
 } // namespace Core

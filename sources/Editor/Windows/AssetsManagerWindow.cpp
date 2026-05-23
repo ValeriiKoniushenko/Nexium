@@ -30,6 +30,7 @@
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Misc/Configs.h"
 #include "Misc/IconsFontAwesome.h"
+#include "ModalCreateBlueprint.h"
 #include "ModalPopUp.h"
 
 #include <format>
@@ -387,7 +388,9 @@ namespace Core
 
             if (ImGui::Button("Create Blueprint", glm::vec2(w, 0)))
             {
-                std::cout << "1" << std::endl;
+                ModalCreateBlueprintEWC::Open("Create Blueprint", [](){
+
+                });
             }
             ImGui::Dummy({});
 

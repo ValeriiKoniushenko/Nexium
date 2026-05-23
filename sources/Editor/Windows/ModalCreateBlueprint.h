@@ -37,13 +37,13 @@ namespace Core
         class Button;
     } // namespace Gui
 
-    class ModalCreateAssetEWC : public BaseEWC
+    class ModalCreateBlueprintEWC : public BaseEWC
     {
-        ECS_COMPONENT_DECL(ModalCreateAssetEWC, BaseEWC);
+        ECS_COMPONENT_DECL(ModalCreateBlueprintEWC, BaseEWC);
 
     public:
-        void open(StringAtom text, const std::function<void(NXAsset)>& callback);
-        static void Open(StringAtom text, const std::function<void(NXAsset)>& callback);
+        void open(StringAtom text, const std::function<void()>& callback);
+        static void Open(StringAtom text, const std::function<void()>& callback);
 
     protected:
         void onInitialize() override;
@@ -58,9 +58,9 @@ namespace Core
 
     protected:
         DelegateSubscriberPoolGuard _subscriptionPool;
-        std::function<void(NXAsset)> _callback;
+        std::function<void()> _callback;
 
-        StringAtom _caption = "ModalCreateAssetEWC";
+        StringAtom _caption = "ModalCreateBlueprintEWC";
         Gui::VerticalLayout _layout;
         Gui::ListModelBased* _list = nullptr;
         Gui::Button* _okButton = nullptr;
