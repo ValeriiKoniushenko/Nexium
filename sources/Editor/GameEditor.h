@@ -121,6 +121,20 @@ namespace Core
             return nullptr;
         }
 
+        template<IsEditorWindowComponentOrBase WindowT = BaseEWC, class... ArgsT>
+        void tryToOpenWindow(const StringAtom& regexName = ".*", ArgsT&&... args)
+        {
+            auto* wnd = dynamic_cast<WindowT*>(getWindow<WindowT>(regexName));
+            if (!wnd)
+            {
+                criticalLog(
+                    "Can't get a window '{}'. Probably, this window type wasn't registered"_f
+                    << WindowT::componentType);
+                return;
+            }
+            wnd->open(std::forward<ArgsT>(args)...);
+        }
+
         /**
          * Show and enable a window matching the type and regex name.
          * Optionally, pass string arguments to the window.

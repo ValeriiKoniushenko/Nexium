@@ -53,7 +53,7 @@ namespace Core
 
     void ModalCreateBlueprintEWC::Open(StringAtom text, const std::function<void()>& callback)
     {
-        GetEditor().getWindow<ModalCreateBlueprintEWC>()->open(std::move(text), callback);
+        GetEditor().tryToOpenWindow<ModalCreateBlueprintEWC>(".*", std::move(text), callback);
     }
 
     void ModalCreateBlueprintEWC::onInitialize()

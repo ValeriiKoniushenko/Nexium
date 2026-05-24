@@ -29,6 +29,7 @@
 #include "Editor/Windows/EditorSettings.h"
 #include "Editor/Windows/GameViewport.h"
 #include "Editor/Windows/LogsWindow.h"
+#include "Editor/Windows/ModalCreateBlueprint.h"
 #include "Editor/Windows/ObjectPropertiesWindow.h"
 #include "Editor/Windows/RootDockWindow.h"
 #include "Editor/Windows/SceneTreeWindow.h"
@@ -107,6 +108,7 @@ namespace Core
         registerNewWindow<ModalPopUp>("PopUp"_atom, true);
         registerNewWindow<ModalECSSearchPopUpEWC>("ModalECSSearchPopUp"_atom);
         registerNewWindow<ModalAssetsSearchPopUpEWC>("ModalAssetsSearchPopUpEWC"_atom);
+        registerNewWindow<ModalCreateBlueprintEWC>("ModalCreateBlueprint"_atom);
         registerNewWindow<WorldLightningEWC>("World Lightning"_atom);
         registerNewWindow<NxTextureEditorEWC>("NX Texture Editor"_atom);
         registerNewWindow<NxECSBasedEditorEWC>("Assets editor"_atom);

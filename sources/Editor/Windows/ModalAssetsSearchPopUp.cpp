@@ -55,7 +55,7 @@ namespace Core
     void ModalAssetsSearchPopUpEWC::Open(StringAtom text,
                                          const std::function<void(NXAsset)>& callback)
     {
-        GetEditor().getWindow<ModalAssetsSearchPopUpEWC>()->open(std::move(text), callback);
+        GetEditor().tryToOpenWindow<ModalAssetsSearchPopUpEWC>(".*", std::move(text), callback);
     }
 
     void ModalAssetsSearchPopUpEWC::onInitialize()
