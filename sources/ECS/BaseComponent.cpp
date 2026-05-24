@@ -94,7 +94,8 @@ namespace Core
         return Ecs::getLogger();
     }
 
-    std::vector<StringAtom> GlobalComponentFactory::getRegisteredTypesAsVector() const
+    std::vector<StringAtom> GlobalComponentFactory::getRegisteredTypesAsVector(
+        bool sort /*= false*/) const
     {
         std::vector<StringAtom> out;
         out.reserve(_map.size());
@@ -102,6 +103,12 @@ namespace Core
         {
             out.emplace_back(type);
         }
+
+        if (sort)
+        {
+            std::ranges::sort(out);
+        }
+
         return out;
     }
 

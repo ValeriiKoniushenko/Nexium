@@ -129,7 +129,7 @@ namespace Core::Gui
             for (std::size_t i = 0; i < _cache.size(); ++i)
             {
                 const auto& string = _cache.at(i).second;
-                if (!_filter.isEmpty() && !string.regexMatch(_filter))
+                if (!_filter.isEmpty() && !string.regexFind(_filter))
                 {
                     continue;
                 }
@@ -139,7 +139,7 @@ namespace Core::Gui
                 {
                     _currentIndex = i;
                     _currentData = _cache.at(i).first;
-                    onSelect->trigger(_cache.at(i).first);
+                    onSelect->trigger(_cache.at(i).first, string);
                 }
                 if (isSelected)
                 {

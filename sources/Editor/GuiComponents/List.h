@@ -122,7 +122,8 @@ namespace Core::Gui
         [[nodiscard]] void* getCurrentData() const noexcept { return _currentData; }
 
     public: // Delegates
-        Delegate<void(void*)>::Ptr onSelect = Delegate<void(void*)>::Create();
+        Delegate<void(void*, StringAtom)>::Ptr onSelect
+            = Delegate<void(void*, StringAtom)>::Create();
 
     protected:
         void onDraw() override;

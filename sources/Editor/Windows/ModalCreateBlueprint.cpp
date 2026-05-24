@@ -27,6 +27,8 @@
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
+#include "Editor/GuiComponents/Label.h"
+#include "Editor/GuiComponents/LabelRow.h"
 #include "Editor/GuiComponents/List.h"
 #include "Editor/GuiComponents/Separator.h"
 #include "GameplaySystem/Framework/GameInstance.h"
@@ -65,10 +67,25 @@ namespace Core
 
         {
             auto* h = _layout.addChildComponent<Gui::HorizontalLayout>();
-            auto* input = h->addChildComponent<Gui::TextInput>();
-            input->setPlaceholder("Regex filter..");
-            input->setFlex(Gui::Flex::FlexWidth);
-            _subscriptionPool << input->onInput->subscribeAndGetID(
+            _nameField = h->addChildComponent<Gui::LabelRow<Gui::TextInput>>();
+            _nameField->label->setText("Name");
+            _nameField->label->setWidth(80.f);
+            _nameField->input->setFlex(Gui::Flex::FlexWidth);
+            _subscriptionPool << _nameField->input->onInput->subscribeAndGetID(
+                [this](const char* data)
+                {
+                    //
+                });
+        }
+
+        {
+            auto* h = _layout.addChildComponent<Gui::HorizontalLayout>();
+            _typeField = h->addChildComponent<Gui::LabelRow<Gui::TextInput>>();
+            _typeField->label->setText("Base type");
+            _typeField->label->setWidth(80.f);
+            _typeField->input->setPlaceholder("Regex filter..");
+            _typeField->input->setFlex(Gui::Flex::FlexWidth);
+            _subscriptionPool << _typeField->input->onInput->subscribeAndGetID(
                 [this](const char* data)
                 {
                     if (_list && data)
@@ -81,19 +98,19 @@ namespace Core
         {
             _list = _layout.addChildComponent<Gui::ListModelBased>();
             _list->setFlex(Gui::Flex::FlexWidthAndHeight);
+            _list->setHeight(100.f);
             _list->setDataProvider(
                 [](std::size_t index, StringAtom& out) -> void*
                 {
-                    if (auto asset = GetAssetsManager().getWeakAssetAt(index, AA_Spawn).tryLoad())
-                    {
-                        out = asset->getName();
-                        return asset.get();
-                    }
-
-                    Assert(false);
+                    out = GetGlobalComponentFactory().getRegisteredTypesAsVector(true).at(index);
                     return nullptr;
                 });
-            _list->setSizeProvider([]() { return GetAssetsManager().getAssetCount(AA_Spawn); });
+            _list->setSizeProvider(
+                []()
+                { return GetGlobalComponentFactory().getRegisteredTypesAsVector(true).size(); });
+            _subscriptionPool << _list->onSelect->subscribeAndGetID(
+                [this](void* data, StringAtom type)
+                { _typeField->input->setInputtedData(type.toStdString()); });
         }
 
         _layout.addChildComponent<Gui::Separator>();
@@ -101,7 +118,7 @@ namespace Core
         {
             auto* h = _layout.addChildComponent<Gui::HorizontalLayout>();
 
-            _okButton = h->addChildComponent<Gui::Button>("Add");
+            _okButton = h->addChildComponent<Gui::Button>("Create");
             _okButton->setFlex(Gui::Flex::FlexWidth);
             _okButton->onClick->subscribe(
                 [this]()
@@ -111,19 +128,8 @@ namespace Core
                         return;
                     }
 
-                    /*auto comp
-                        = GlobalComponentFactory::Instance().create(_listView->getCurrentData());
-                    if (!Verify(comp))
-                    {
-                        criticalLog("Can't fetch the asset: {}"_f << _listView->getCurrentData());
-                        return;
-                    }
-
-                    comp->setComponentName(_nameInput->input->getInputtedData().c_str());
-
-                    closeWindow();
-
-                    _callback(comp);*/
+                    performBlueprintCreation(_typeField->input->getInputtedData(),
+                                             _nameField->input->getInputtedData());
                 });
 
             _cancelButton = h->addChildComponent<Gui::Button>("Cancel");
@@ -163,4 +169,10 @@ namespace Core
     void ModalCreateBlueprintEWC::endWindowDraw()
     {
     }
+
+    void ModalCreateBlueprintEWC::performBlueprintCreation(const std::string& type,
+                                                           const std::string& name)
+    {
+    }
+
 } // namespace Core

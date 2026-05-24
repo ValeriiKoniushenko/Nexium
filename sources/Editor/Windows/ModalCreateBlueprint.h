@@ -32,8 +32,12 @@ namespace Core
 
     namespace Gui
     {
+        template<class T>
+        class LabelRow;
+
         class ListModelBased;
         class Button;
+        class TextInput;
     } // namespace Gui
 
     class ModalCreateBlueprintEWC : public BaseEWC
@@ -55,6 +59,8 @@ namespace Core
 
         void endWindowDraw() override;
 
+        void performBlueprintCreation(const std::string& type, const std::string& name);
+
     protected:
         DelegateSubscriberPoolGuard _subscriptionPool;
         std::function<void()> _callback;
@@ -62,9 +68,10 @@ namespace Core
         StringAtom _caption = "ModalCreateBlueprintEWC";
         Gui::VerticalLayout _layout;
         Gui::ListModelBased* _list = nullptr;
+        Gui::LabelRow<Gui::TextInput>* _nameField = nullptr;
+        Gui::LabelRow<Gui::TextInput>* _typeField = nullptr;
         Gui::Button* _okButton = nullptr;
         Gui::Button* _cancelButton = nullptr;
-
         bool _hasOpenRequest = false;
     };
 } // namespace Core

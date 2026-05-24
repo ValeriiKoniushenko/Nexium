@@ -335,7 +335,7 @@ namespace Core
 
         [[nodiscard]] spdlog::logger* getLogger() const override;
 
-        [[nodiscard]] std::vector<StringAtom> getRegisteredTypesAsVector() const;
+        [[nodiscard]] std::vector<StringAtom> getRegisteredTypesAsVector(bool sort = false) const;
 
         [[nodiscard]] std::optional<std::type_index> getTypeIdByTypeName(const StringAtom& type);
 
