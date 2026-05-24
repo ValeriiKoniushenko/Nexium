@@ -98,7 +98,7 @@ namespace Core
          * @param regexName Regular expression to match the window title.
          * @return Pointer to the first matching window or nullptr if none found.
          */
-        template<IsEditorWindowComponentOrBase WindowT = BaseEWC>
+        template<IsEditorWindowComponentOrBase WindowT>
         [[nodiscard]] WindowT* getWindow(const StringAtom& regexName = ".*")
         {
             for (auto&& windowIntrusive : _windows)
@@ -121,7 +121,7 @@ namespace Core
             return nullptr;
         }
 
-        template<IsEditorWindowComponentOrBase WindowT = BaseEWC, class... ArgsT>
+        template<IsEditorWindowComponentOrBase WindowT, class... ArgsT>
         void tryToOpenWindow(const StringAtom& regexName = ".*", ArgsT&&... args)
         {
             auto* wnd = dynamic_cast<WindowT*>(getWindow<WindowT>(regexName));

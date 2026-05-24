@@ -24,7 +24,6 @@
 
 #pragma once
 
-#include "AssetsManager/ECSAsset.h"
 #include "BaseWindow.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 

@@ -57,7 +57,7 @@ namespace
         }
 
         int i = 0;
-        double count = static_cast<double>(bytes);
+        auto count = static_cast<double>(bytes);
 
         while (count >= 1024.0 && i < static_cast<int>(suffixes.size()) - 1)
         {
@@ -409,10 +409,10 @@ namespace Core
         if (ImGui::BeginChild("Explorer"))
         {
             _toolbarLayout.tick(GetWorld().timeDelta);
-            const auto availX = ImGui::GetContentRegionAvail().x - padding * 2.f;
+            const auto availX = ImGui::GetContentRegionAvail().x - (padding * 2.f);
 
             const int maxCountPerWidth
-                = static_cast<int>(availX / (_thumbnailSize.x + defaultSpace.x * 2.f));
+                = static_cast<int>(availX / (_thumbnailSize.x + (defaultSpace.x * 2.f)));
 
             if (ImGui::BeginPopupContextWindow("ExplorerContextMenu",
                                                ImGuiPopupFlags_MouseButtonRight

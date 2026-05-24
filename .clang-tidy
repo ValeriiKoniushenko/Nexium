@@ -14,6 +14,7 @@ Checks: >
   -cppcoreguidelines-owning-memory,
   -cppcoreguidelines-avoid-magic-numbers,
   -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+  -cppcoreguidelines-pro-bounds-constant-array-index,
   -cppcoreguidelines-avoid-do-while,
   -cppcoreguidelines-explicit-conversions,
   -cppcoreguidelines-non-private-member-variables-in-classes,
@@ -27,6 +28,7 @@ Checks: >
   -modernize-use-trailing-return-type,
   -modernize-concat-nested-namespaces,
 
+  -readability-avoid-nested-conditional-operator,
   -readability-braces-around-statements,
   -readability-function-cognitive-complexity,
   -readability-named-parameter,

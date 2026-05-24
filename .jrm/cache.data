@@ -14,7 +14,7 @@
 1778791631371679678 sources/ECS/BaseComponent.h
 1771957954487843037 sources/ECS/ModuleInfo.h
 1778679186121592064 sources/ECS/Transformable.h
-1779614281792333656 sources/Editor/GameEditor.h
+1779614554983616228 sources/Editor/GameEditor.h
 1779481603913066060 sources/Editor/Gizmo.h
 1778795285685388972 sources/Editor/GuiComponents/Array.h
 1778797189436430713 sources/Editor/GuiComponents/Button.h
@@ -50,7 +50,7 @@
 1778792358643559306 sources/Editor/Windows/LogsWindow.h
 1779552505088963655 sources/Editor/Windows/ModadCreateAsset.h
 1778172587026330092 sources/Editor/Windows/ModalAssetsSearchPopUp.h
-1779555543762208032 sources/Editor/Windows/ModalCreateBlueprint.h
+1779622910419522366 sources/Editor/Windows/ModalCreateBlueprint.h
 1778793958659738979 sources/Editor/Windows/ModalECSSearchPopUp.h
 1778795245691493625 sources/Editor/Windows/ModalPopUp.h
 1778794080437582845 sources/Editor/Windows/NxECSBasedEditor.h
