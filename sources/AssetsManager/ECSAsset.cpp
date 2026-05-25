@@ -61,6 +61,7 @@ namespace Core
 
         extrudeAndValidateMainDataFromFile();
     }
+
     const std::filesystem::path& ECSAsset::getSourceFile() const noexcept
     {
         return _meta.pathToSource;
@@ -169,6 +170,29 @@ namespace Core
             return operator==(*other);
         }
         return false;
+    }
+
+    void ECSAsset::PackObjectToAsset(ECSAsset& out, const BaseComponent* data)
+    {
+        if (!Verify(data)) [[unlikely]]
+        {
+            globalLog.errorLog("Was passed nullptr to ECSAsset::PackObjectToAsset");
+            return;
+        }
+
+        out._data = data->clone();
+        out._meta.type = data->getComponentType();
+    }
+
+    nlohmann::json ECSAsset::toJson() const
+    {
+        nlohmann::json j;
+
+        j[StreamData::type] = _meta.type;
+        j[StreamData::name] = _meta.name;
+        j[StreamData::assetData] = nlohmann::json::object();
+
+        return j;
     }
 
     void ECSAsset::load()
@@ -335,7 +359,7 @@ namespace Core
     }
 
     NXSceneAsset::NXSceneAsset(const NXSceneAsset& other)
-        : IntrusiveRefCounter(),
+        : IntrusiveRefCounter(other),
           _asset(other._asset),
           _data(other._data->clone())
     {

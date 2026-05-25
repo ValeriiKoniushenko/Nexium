@@ -173,6 +173,16 @@ namespace Core
     void ModalCreateBlueprintEWC::performBlueprintCreation(const std::string& type,
                                                            const std::string& name)
     {
+        auto* tmp = GetGlobalComponentFactory().create(StringAtom::Intern(type));
+        if (!tmp) [[unlikely]]
+        {
+            criticalLog("ECS issue. Can't create component of type: {}"_f << type);
+            return;
+        }
+
+        ECSAsset asset("");
+        ECSAsset::PackObjectToAsset(asset, tmp);
+        auto j = asset.toJson();
     }
 
 } // namespace Core

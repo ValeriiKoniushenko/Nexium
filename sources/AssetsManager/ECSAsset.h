@@ -42,6 +42,10 @@ namespace Core
     class ECSAssetImpl
     {
     public:
+        ECSAssetImpl(const ECSAssetImpl&) = default;
+        ECSAssetImpl(ECSAssetImpl&&) = delete;
+        ECSAssetImpl& operator=(const ECSAssetImpl&) = default;
+        ECSAssetImpl& operator=(ECSAssetImpl&&) = delete;
         virtual ~ECSAssetImpl() = default;
 
         virtual void load(const ECSAsset& asset, BaseComponent* dataOwner,
@@ -147,6 +151,10 @@ namespace Core
 
         [[nodiscard]] bool operator==(const ECSAsset& other) const;
         [[nodiscard]] bool operator==(const IntrusivePtr<ECSAsset>& other) const;
+
+        [[nodiscard]] static void PackObjectToAsset(ECSAsset& out, const BaseComponent* data);
+
+        [[nodiscard]] nlohmann::json toJson() const;
 
     protected:
         void load();
