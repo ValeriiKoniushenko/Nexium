@@ -38,6 +38,7 @@ namespace Core
         class ListModelBased;
         class Button;
         class TextInput;
+        class Label;
     } // namespace Gui
 
     class ModalCreateBlueprintEWC : public BaseEWC
@@ -45,8 +46,8 @@ namespace Core
         ECS_COMPONENT_DECL(ModalCreateBlueprintEWC, BaseEWC);
 
     public:
-        void open(StringAtom text, const std::function<void()>& callback);
-        static void Open(StringAtom text, const std::function<void()>& callback);
+        void open(StringAtom text);
+        static void Open(StringAtom text);
 
     protected:
         void onInitialize() override;
@@ -59,17 +60,21 @@ namespace Core
 
         void endWindowDraw() override;
 
-        void performBlueprintCreation(const std::string& type, const std::string& name);
+        void performBlueprintCreation(const std::string& type, const std::string& name,
+                                      const std::string& path);
+
+        void tryToDetectReplacingOfExistingFile();
 
     protected:
         DelegateSubscriberPoolGuard _subscriptionPool;
-        std::function<void()> _callback;
 
         StringAtom _caption = "ModalCreateBlueprintEWC";
         Gui::VerticalLayout _layout;
         Gui::ListModelBased* _list = nullptr;
         Gui::LabelRow<Gui::TextInput>* _nameField = nullptr;
         Gui::LabelRow<Gui::TextInput>* _typeField = nullptr;
+        Gui::LabelRow<Gui::TextInput>* _pathField = nullptr;
+        Gui::Label* _errorOutput = nullptr;
         Gui::Button* _okButton = nullptr;
         Gui::Button* _cancelButton = nullptr;
         bool _hasOpenRequest = false;

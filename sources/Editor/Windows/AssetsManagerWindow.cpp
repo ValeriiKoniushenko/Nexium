@@ -388,9 +388,7 @@ namespace Core
 
             if (ImGui::Button("Create Blueprint", glm::vec2(w, 0)))
             {
-                ModalCreateBlueprintEWC::Open("Create Blueprint", [](){
-
-                });
+                ModalCreateBlueprintEWC::Open("Create Blueprint");
             }
             ImGui::Dummy({});
 

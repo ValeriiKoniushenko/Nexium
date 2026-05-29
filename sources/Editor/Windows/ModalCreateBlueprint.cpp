@@ -32,12 +32,13 @@
 #include "Editor/GuiComponents/List.h"
 #include "Editor/GuiComponents/Separator.h"
 #include "GameplaySystem/Framework/GameInstance.h"
+#include "Misc/Configs.h"
 
 namespace Core
 {
     ECS_COMPONENT_IMPL(ModalCreateBlueprintEWC);
 
-    void ModalCreateBlueprintEWC::open(StringAtom text, const std::function<void()>& callback)
+    void ModalCreateBlueprintEWC::open(StringAtom text)
     {
         initialize();
         enable();
@@ -50,12 +51,11 @@ namespace Core
         }
         _caption = std::move(text);
         _hasOpenRequest = true;
-        _callback = callback;
     }
 
-    void ModalCreateBlueprintEWC::Open(StringAtom text, const std::function<void()>& callback)
+    void ModalCreateBlueprintEWC::Open(StringAtom text)
     {
-        GetEditor().tryToOpenWindow<ModalCreateBlueprintEWC>(".*", std::move(text), callback);
+        GetEditor().tryToOpenWindow<ModalCreateBlueprintEWC>(".*", std::move(text));
     }
 
     void ModalCreateBlueprintEWC::onInitialize()
@@ -72,10 +72,7 @@ namespace Core
             _nameField->label->setWidth(80.f);
             _nameField->input->setFlex(Gui::Flex::FlexWidth);
             _subscriptionPool << _nameField->input->onInput->subscribeAndGetID(
-                [this](const char* data)
-                {
-                    //
-                });
+                [this](const char* data) { tryToDetectReplacingOfExistingFile(); });
         }
 
         {
@@ -93,6 +90,24 @@ namespace Core
                         _list->setRegexFilter(StringAtom(data));
                     }
                 });
+        }
+
+        {
+            auto* h = _layout.addChildComponent<Gui::HorizontalLayout>();
+            _pathField = h->addChildComponent<Gui::LabelRow<Gui::TextInput>>();
+            _pathField->label->setText("Path");
+            _pathField->label->setWidth(80.f);
+            _pathField->input->setFlex(Gui::Flex::FlexWidth);
+            _pathField->input->setInputtedData(Config::Path::assets);
+            _subscriptionPool << _pathField->input->onInput->subscribeAndGetID(
+                [this](const char* data) { tryToDetectReplacingOfExistingFile(); });
+        }
+
+        {
+            auto* h = _layout.addChildComponent<Gui::HorizontalLayout>();
+            _errorOutput = h->addChildComponent<Gui::Label>();
+            _errorOutput->setTextColor(Color4_Red);
+            _errorOutput->setText("");
         }
 
         {
@@ -123,34 +138,48 @@ namespace Core
             _okButton->onClick->subscribe(
                 [this]()
                 {
-                    if (!Verify(!!_callback))
-                    {
-                        return;
-                    }
+                    std::string error;
 
-                    _typeField->input->resetTextColor();
-                    if (_typeField->input->getInputtedData().empty())
-                    {
-                        _typeField->input->setBorderColor(Color4_Red);
-                        return;
-                    }
+                    _errorOutput->setText("");
+                    _nameField->input->resetBorderColor();
+                    _typeField->input->resetBorderColor();
+                    _pathField->input->resetBorderColor();
 
-                    if (!GetGlobalComponentFactory().containsSuchType(
-                            _typeField->input->getInputtedData().data()))
-                    {
-                        _typeField->input->setBorderColor(Color4_Red);
-                        return;
-                    }
-
-                    _nameField->input->resetTextColor();
-                    if (_typeField->input->getInputtedData().empty())
+                    if (_nameField->input->getInputtedData().empty())
                     {
                         _nameField->input->setBorderColor(Color4_Red);
+                        error = "Name is empty";
+                    }
+
+                    if (_typeField->input->getInputtedData().empty())
+                    {
+                        _typeField->input->setBorderColor(Color4_Red);
+                        error = "Type is emtpy";
+                    }
+                    else if (!GetGlobalComponentFactory().containsSuchType(
+                                 _typeField->input->getInputtedData().data()))
+                    {
+                        _typeField->input->setBorderColor(Color4_Red);
+                        error = "Type is not recognized in ECS system";
+                    }
+
+                    if (!std::filesystem::exists(_pathField->input->getInputtedData()))
+                    {
+                        error = "Provided path doesn't exist or incorrect";
+                        _pathField->input->setBorderColor(Color4_Red);
+                    }
+
+                    if (!error.empty())
+                    {
+                        _errorOutput->setText(error.c_str());
                         return;
                     }
 
                     performBlueprintCreation(_typeField->input->getInputtedData(),
-                                             _nameField->input->getInputtedData());
+                                             _nameField->input->getInputtedData(),
+                                             _pathField->input->getInputtedData());
+
+                    closeWindow();
                 });
 
             _cancelButton = h->addChildComponent<Gui::Button>("Cancel");
@@ -192,8 +221,11 @@ namespace Core
     }
 
     void ModalCreateBlueprintEWC::performBlueprintCreation(const std::string& type,
-                                                           const std::string& name)
+                                                           const std::string& name,
+                                                           const std::string& path)
     {
+        namespace fs = std::filesystem;
+
         auto* tmp = GetGlobalComponentFactory().create(StringAtom::Intern(type));
         if (!tmp) [[unlikely]]
         {
@@ -201,9 +233,40 @@ namespace Core
             return;
         }
 
-        ECSAsset asset("");
+        ECSAsset asset(""_atom);
         ECSAsset::PackObjectToAsset(asset, tmp);
-        auto j = asset.toJson();
+        auto&& j = asset.toJson().dump(4);
+
+        auto namePath = fs::path(_nameField->input->getInputtedData() + ".nx");
+        auto pathPath = fs::path(_pathField->input->getInputtedData());
+        auto finalPath = pathPath / namePath;
+
+        std::ofstream file(finalPath);
+        if (!file.is_open()) [[unlikely]]
+        {
+            criticalLog("Impossible to create or open a file: {}"_f << finalPath.generic_string());
+            return;
+        }
+
+        file.write(j.c_str(), static_cast<std::streamsize>(j.size()));
+    }
+
+    void ModalCreateBlueprintEWC::tryToDetectReplacingOfExistingFile()
+    {
+        namespace fs = std::filesystem;
+
+        auto name = fs::path(_nameField->input->getInputtedData() + ".nx");
+        auto path = fs::path(_pathField->input->getInputtedData());
+        auto finalPath = path / name;
+
+        if (fs::exists(finalPath))
+        {
+            _errorOutput->setText("Such file already exists! After creation it will be replaced!");
+        }
+        else
+        {
+            _errorOutput->setText("");
+        }
     }
 
 } // namespace Core

@@ -192,6 +192,8 @@ namespace Core
         j[StreamData::name] = _meta.name;
         j[StreamData::assetData] = nlohmann::json::object();
 
+        j[StreamData::data] = _data->serialize();
+
         return j;
     }
 
