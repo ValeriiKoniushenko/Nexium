@@ -128,6 +128,27 @@ namespace Core
                         return;
                     }
 
+                    _typeField->input->resetTextColor();
+                    if (_typeField->input->getInputtedData().empty())
+                    {
+                        _typeField->input->setBorderColor(Color4_Red);
+                        return;
+                    }
+
+                    if (!GetGlobalComponentFactory().containsSuchType(
+                            _typeField->input->getInputtedData().data()))
+                    {
+                        _typeField->input->setBorderColor(Color4_Red);
+                        return;
+                    }
+
+                    _nameField->input->resetTextColor();
+                    if (_typeField->input->getInputtedData().empty())
+                    {
+                        _nameField->input->setBorderColor(Color4_Red);
+                        return;
+                    }
+
                     performBlueprintCreation(_typeField->input->getInputtedData(),
                                              _nameField->input->getInputtedData());
                 });

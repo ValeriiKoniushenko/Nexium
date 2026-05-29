@@ -333,11 +333,12 @@ namespace Core
         template<class T>
         bool registerNewType(const StringAtom& type, bool isTemplateType = false);
 
-        [[nodiscard]] spdlog::logger* getLogger() const override;
-
         [[nodiscard]] std::vector<StringAtom> getRegisteredTypesAsVector(bool sort = false) const;
+        [[nodiscard]] bool containsSuchType(const StringAtom& type) const;
 
         [[nodiscard]] std::optional<std::type_index> getTypeIdByTypeName(const StringAtom& type);
+
+        [[nodiscard]] spdlog::logger* getLogger() const override;
 
     private:
         std::unordered_map<StringAtom, BaseComponent* (*)()> _map;

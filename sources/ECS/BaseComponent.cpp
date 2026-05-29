@@ -112,6 +112,11 @@ namespace Core
         return out;
     }
 
+    bool GlobalComponentFactory::containsSuchType(const StringAtom& type) const
+    {
+        return _map.contains(type);
+    }
+
     std::optional<std::type_index> GlobalComponentFactory::getTypeIdByTypeName(
         const StringAtom& type)
     {
