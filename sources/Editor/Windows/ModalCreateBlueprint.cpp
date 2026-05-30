@@ -234,6 +234,8 @@ namespace Core
             return;
         }
 
+        tmp->setComponentName(StringAtom(name));
+
         ECSAsset asset(""_atom);
         ECSAsset::PackObjectToAsset(asset, tmp);
         auto&& j = asset.toJson().dump(4);

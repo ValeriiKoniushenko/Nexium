@@ -5,7 +5,7 @@
         "_isDrawOutline": false,
         "_isEnabled": true,
         "_isPostDraw": false,
-        "_name": "",
+        "_name": "DefaultCamera",
         "_noTick": false,
         "_origin": [
             0.0,
@@ -29,6 +29,6 @@
         ],
         "_type": "BaseCamera"
     },
-    "name": "",
+    "name": "DefaultCamera",
     "type": "BaseCamera"
 }

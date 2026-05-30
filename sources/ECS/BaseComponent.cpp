@@ -247,6 +247,14 @@ namespace Core
         {
             _type = StringAtom::Intern(_type);
         }
+
+        for (auto&& child : _children)
+        {
+            if (!child->_parent)
+            {
+                child->_parent = this;
+            }
+        }
     }
 
     void BaseComponent::onPreSerialize(const AbstractComponent* obj) const

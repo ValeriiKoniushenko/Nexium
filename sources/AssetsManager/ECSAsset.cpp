@@ -182,6 +182,7 @@ namespace Core
 
         out._data = data->clone();
         out._meta.type = data->getComponentType();
+        out._meta.name = data->getComponentName();
     }
 
     nlohmann::json ECSAsset::toJson() const

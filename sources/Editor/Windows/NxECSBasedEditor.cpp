@@ -46,11 +46,11 @@ namespace Core
 
     void ECSEditorMimeAdapter::applyAssetRawData(const nlohmann::json& json)
     {
-        if (json.empty())
-        {
-            globalLog.warnLog("Can't apply asset data. No data.");
-            return;
-        }
+        // if (json.empty())
+        // {
+        //     globalLog.warnLog("Can't apply asset data. No data.");
+        //     return;
+        // }
 
         onApplyAssetData(json);
     }
@@ -373,7 +373,13 @@ namespace Core
         }
 
         ImGui::PushID(++id);
-        const bool isOpened = ImGui::TreeNodeEx(comp->getComponentName().c_str(), flags);
+
+        StringAtom name = comp->getComponentName();
+        if (name.isEmpty())
+        {
+            name = id == 1 ? "Root" : "<no name>";
+        }
+        const bool isOpened = ImGui::TreeNodeEx(name.c_str(), flags);
 
         if (isDisabled)
         {
