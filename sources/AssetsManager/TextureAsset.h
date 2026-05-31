@@ -32,7 +32,7 @@ namespace Core
 {
 
     CLASS();
-    class TextureAsset : public BaseAsset
+    class [[deprecated]] TextureAsset : public BaseAsset
     {
         R_FRIEND_DECL(TextureAsset);
 

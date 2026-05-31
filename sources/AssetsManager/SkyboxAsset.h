@@ -33,7 +33,7 @@ namespace Core
     class BaseCamera;
 
     CLASS();
-    class SkyboxAsset : public BaseAsset
+    class [[deprecated]] SkyboxAsset : public BaseAsset
     {
         R_FRIEND_DECL(SkyboxAsset, Core::BaseAsset);
 

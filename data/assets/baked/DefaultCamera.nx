@@ -1,34 +1,6 @@
 {
-    "assetData": {},
-    "data": {
-        "_children": null,
-        "_isDrawOutline": false,
-        "_isEnabled": true,
-        "_isPostDraw": false,
-        "_name": "DefaultCamera",
-        "_noTick": false,
-        "_origin": [
-            0.0,
-            0.0,
-            0.0
-        ],
-        "_position": [
-            0.0,
-            0.0,
-            0.0
-        ],
-        "_rotation": [
-            0.0,
-            0.0,
-            0.0
-        ],
-        "_scale": [
-            1.0,
-            1.0,
-            1.0
-        ],
-        "_type": "BaseCamera"
-    },
+    "assetData": null,
+    "data": {},
     "name": "DefaultCamera",
     "type": "BaseCamera"
 }

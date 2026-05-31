@@ -98,7 +98,7 @@ namespace Core
             _pathField->label->setText("Path");
             _pathField->label->setWidth(80.f);
             _pathField->input->setFlex(Gui::Flex::FlexWidth);
-            _pathField->input->setInputtedData(Config::Path::assets);
+            _pathField->input->setInputtedData(Config::Path::assets.generic_string());
             _subscriptionPool << _pathField->input->onInput->subscribeAndGetID(
                 [this](const char* data) { tryToDetectReplacingOfExistingFile(); });
         }
