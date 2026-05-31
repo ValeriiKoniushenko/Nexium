@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018-2025 Valerii Koniushenko
+ * Copyright (c) 2018-2027 Valerii Koniushenko
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -6547,9 +6547,9 @@ struct ImFontConfig
 // store a single u32 or we can rework this)
 struct ImFontGlyph
 {
-    unsigned int
-        Colored : 1; // Flag to indicate glyph is colored and should generally ignore tinting (make
-                     // it usable with no shift on little-endian as this is used in loops)
+    unsigned int Colored
+        : 1; // Flag to indicate glyph is colored and should generally ignore tinting (make
+             // it usable with no shift on little-endian as this is used in loops)
     unsigned int Visible : 1;    // Flag to indicate glyph has no visible pixels (e.g. space). Allow
                                  // early out when rendering.
     unsigned int SourceIdx : 4;  // Index of source in parent font
@@ -6952,15 +6952,15 @@ struct ImFontBaked
                                            // approximate the cost of padding between glyphs)
     unsigned int WantDestroy : 1;          // 0  //     // Queued for destroy
     unsigned int LoadNoFallback : 1; // 0  //     // Disable loading fallback in lower-level calls.
-    unsigned int
-        LoadNoRenderOnLayout : 1; // 0  //     // Enable a two-steps mode where CalcTextSize() calls
-                                  // will load AdvanceX *without* rendering/packing glyphs. Only
-                                  // advantagous if you know that the glyph is unlikely to actually
-                                  // be rendered, otherwise it is slower because we'd do one query
-                                  // on the first CalcTextSize and one query on the first Draw.
-    int LastUsedFrame;            // 4  //     // Record of that time this was bounds
-    ImGuiID BakedId;              // 4     //     // Unique ID for this baked storage
-    ImFont* ContainerFont;        // 4-8   // in  // Parent font
+    unsigned int LoadNoRenderOnLayout
+        : 1;               // 0  //     // Enable a two-steps mode where CalcTextSize() calls
+                           // will load AdvanceX *without* rendering/packing glyphs. Only
+                           // advantagous if you know that the glyph is unlikely to actually
+                           // be rendered, otherwise it is slower because we'd do one query
+                           // on the first CalcTextSize and one query on the first Draw.
+    int LastUsedFrame;     // 4  //     // Record of that time this was bounds
+    ImGuiID BakedId;       // 4     //     // Unique ID for this baked storage
+    ImFont* ContainerFont; // 4-8   // in  // Parent font
     void* FontLoaderDatas; // 4-8   //     // Font loader opaque storage (per baked font * sources):
                            // single contiguous buffer allocated by imgui, passed to loader.
 

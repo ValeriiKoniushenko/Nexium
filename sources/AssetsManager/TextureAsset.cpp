@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018-2025 Valerii Koniushenko
+ * Copyright (c) 2018-2027 Valerii Koniushenko
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@
 namespace Core
 {
     R_FRIEND_IMPL(TextureAsset);
-    
+
     void TextureAsset::setFilePath(const std::filesystem::path& value)
     {
         Assert(value.is_relative(), "Path should be relative");
