@@ -55,6 +55,24 @@ namespace Core
         glm::vec2 _offset = {};
         float _zoom = 1.0f;
     };
+
+    CLASS();
+    class DummyEWC : public BaseFloatEWC
+    {
+        R_FRIEND_DECL(Core::DummyEWC, Core::BaseFloatEWC);
+        ECS_COMPONENT_DECL(DummyEWC, BaseFloatEWC);
+
+    public:
+        [[nodiscard]] const char* getIcon() override;
+
+    protected:
+        void onInitialize() override;
+        void onUpdate() override;
+        void onDraw() override;
+
+    protected:
+    };
+
 } // namespace Core
 
 #include "ImageViewer.generated.h" // added by the code generator. Better don't move it.

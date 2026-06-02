@@ -23,3 +23,42 @@
  */
 
 #include "gtest/gtest.h"
+
+class IEditorFieldsFetcher
+{
+public:
+    struct FieldUnit
+    {
+        std::string name;
+        std::string type;
+        void* getter = nullptr;
+        void* setter = nullptr;
+    };
+
+public:
+    virtual ~IEditorFieldsFetcher() = default;
+
+protected:
+    IEditorFieldsFetcher() = default;
+};
+
+class Human : public IEditorFieldsFetcher
+{
+public:
+    Human() = default;
+
+    [[nodiscard]] const std::string& getName() const noexcept { return _name; }
+    [[nodiscard]] int getAge() const noexcept { return _age; }
+
+    void setName(const std::string& value) noexcept { _name = value; }
+    void setAge(int value) noexcept { _age = value; }
+
+private:
+    std::string _name = "Anton";
+    int _age = 21;
+};
+
+TEST(FieldsAccessTests, Interface)
+{
+    Human h;
+}

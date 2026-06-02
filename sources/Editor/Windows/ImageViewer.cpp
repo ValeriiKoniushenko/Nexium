@@ -95,4 +95,17 @@ namespace Core
         ImGui::Text("%s: %dx%d", _path.c_str(), _image->getSize().width, _image->getSize().height);
         ImGui::Image(_image->getTextureId(), displaySize);
     }
+
+    void DummyEWC::onInitialize()
+    {
+        BaseFloatEWC::onInitialize();
+    }
+
+    void DummyEWC::onUpdate()
+    {
+    }
+
+    void DummyEWC::onDraw()
+    {
+    }
 } // namespace Core
