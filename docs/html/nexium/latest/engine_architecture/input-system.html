@@ -3,8 +3,11 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Untitled :: Nexium Engine</title>
-    <meta name="generator" content="Antora 3.1.14">
+    <title>Input Actions :: Nexium Engine</title>
+    <link rel="prev" href="ecs-overview.html">
+    <link rel="next" href="../rendering/index.html">
+    <meta name="description" content="Core module for binding keys and mouse buttons to named, triggerable actions.">
+    <meta name="generator" content="Antora 3.1.15">
     <link rel="stylesheet" href="../../../_/css/site.css">
   </head>
   <body class="article">
@@ -96,6 +99,9 @@
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="ecs-overview.html">ECS Overview</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="input-system.html">Input System</a>
   </li>
 </ul>
   </li>
@@ -305,6 +311,11 @@
 <button class="nav-toggle"></button>
   <a href="../index.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Nexium Engine Documentation</a></li>
+    <li>Engine Architecture</li>
+    <li><a href="input-system.html">Input System</a></li>
+  </ul>
 </nav>
 <div class="edit-this-page"><a href="file:///home/valerii/workspace/Nexium//docs/nexium/modules/engine_architecture/pages/input-system.adoc">Edit this Page</a></div>
 </div>
@@ -313,7 +324,621 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
+<h1 class="page">Input Actions</h1>
+<div class="sect1">
+<h2 id="_overview"><a class="anchor" href="#_overview"></a>Overview</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <strong>Input Actions</strong> module (namespace <code>Core</code>) provides a thin, composable abstraction between raw hardware input and game logic.
+Instead of polling <code>Keyboard</code> or <code>Mouse</code> states directly in gameplay code, you create named <strong>actions</strong>, bind them to a key or button, and subscribe to their delegates.
+The action object takes care of press state tracking, repeat filtering, and frequency throttling.</p>
+</div>
+<div class="ulist">
+<div class="title">Key ideas</div>
+<ul>
+<li>
+<p><code>InputAction&lt;KeyT&gt;</code> — base template; key-type–agnostic logic lives here.</p>
+</li>
+<li>
+<p><code>KeyboardInputAction</code> (<code>KeyboardIA</code>) — specialisation for <code>Keyboard::Key</code>.</p>
+</li>
+<li>
+<p><code>MouseInputAction</code> (<code>MouseIA</code>) — specialisation for <code>Mouse::Key</code>; additionally tracks cursor movement and drag.</p>
+</li>
+<li>
+<p><code>IsInputAction</code> — concept for compile-time validation of action types.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The typical lifetime is: <strong>create → bind key → subscribe delegate → call <code>update()</code> each frame.</strong></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_class_inputactionkeytparam"><a class="anchor" href="#_class_inputactionkeytparam"></a>Class <code>InputAction&lt;KeyTParam&gt;</code></h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template&lt;class KeyTParam&gt;
+class InputAction : public IntrusiveRefCounter&lt;InputAction&lt;KeyTParam&gt;&gt;;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Base class for all input actions.
+Manages press-state tracking, repeat behaviour, frequency throttling, and delegate firing.
+Instances are always heap-allocated and owned through <code>IntrusivePtr</code>.</p>
+</div>
+<div class="sect2">
+<h3 id="_template_parameters"><a class="anchor" href="#_template_parameters"></a>Template parameters</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>KeyTParam</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The type used to identify a key or button (e.g. <code>Keyboard::Key</code>, <code>Mouse::Key</code>).</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_type_aliases"><a class="anchor" href="#_type_aliases"></a>Type aliases</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Alias</th>
+<th class="tableblock halign-left valign-top">Resolved type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Self</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>InputAction&lt;KeyTParam&gt;</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Ptr</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IntrusivePtr&lt;Self&gt;</code> — non-const owning pointer.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CPtr</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IntrusivePtr&lt;const Self&gt;</code> — const owning pointer.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AdaptivePtr&lt;bool isConst&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CPtr</code> when <code>isConst</code> is <code>true</code>, <code>Ptr</code> otherwise.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TimeT</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::chrono::milliseconds</code> — unit used for frequency throttling.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>KeyT</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>KeyTParam</code> — the key type for this instantiation.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_nested_type_speckeysstate"><a class="anchor" href="#_nested_type_speckeysstate"></a>Nested type <code>SpecKeysState</code></h3>
+<div class="paragraph">
+<p>Snapshot of the three common modifier keys at the moment an action fires.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">struct SpecKeysState
+{
+    Keyboard::KeyState leftShift;
+    Keyboard::KeyState leftAlt;
+    Keyboard::KeyState leftCtrl;
 
+    static SpecKeysState fillAndGet();
+};</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Member</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>leftShift</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Current state of the left Shift key.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>leftAlt</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Current state of the left Alt key.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>leftCtrl</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Current state of the left Ctrl key.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>static fillAndGet()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reads the live hardware state of all three modifiers and returns a populated <code>SpecKeysState</code>.
+Called internally by <code>update()</code> just before delegates are triggered.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_constructors"><a class="anchor" href="#_constructors"></a>Constructors</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Signature</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>InputAction()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Default constructor. No name, no key bound.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>InputAction(StringAtom name)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Constructs an action with a name but no key binding.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>InputAction(StringAtom name, KeyT key)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Constructs a fully configured action with both a name and a key binding.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_public_member_functions"><a class="anchor" href="#_public_member_functions"></a>Public member functions</h3>
+<div class="sect3">
+<h4 id="_getname"><a class="anchor" href="#_getname"></a><code>getName</code></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">[[nodiscard]] const StringAtom&amp; getName() const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Returns the action&#8217;s name atom.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_setname"><a class="anchor" href="#_setname"></a><code>setName</code></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">void setName(const StringAtom&amp; newName);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Replaces the action&#8217;s name.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_setfrequency_getfrequency"><a class="anchor" href="#_setfrequency_getfrequency"></a><code>setFrequency</code> / <code>getFrequency</code></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">void setFrequency(TimeT value);
+[[nodiscard]] TimeT getFrequency() const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Controls the minimum interval between consecutive delegate firings while the key is held.
+A value of <code>0 ms</code> (the default) means the action fires every frame the key is held (subject to <code>_isRepeatable</code>).
+Setting a higher value throttles repeat firings — useful for cursor-key scrolling or turbo-fire scenarios.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_update"><a class="anchor" href="#_update"></a><code>update</code></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">virtual void update();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Must be called once per frame (or polling tick).
+Internal logic:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>If no key is bound, the method returns immediately.</p>
+</li>
+<li>
+<p>Calls the pure-virtual <code>isKeyPressed()</code>.</p>
+</li>
+<li>
+<p>If pressed <strong>and</strong> (not already in <code>Pressed</code> state <strong>or</strong> <code>_isRepeatable</code> is <code>true</code>):</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Checks that <code>_frequency</code> milliseconds have elapsed since <code>_lastUpdate</code>.</p>
+</li>
+<li>
+<p>If so, snapshots <code>SpecKeysState</code> and fires <code>onPress</code> and <code>_onActionPrivate</code>.</p>
+</li>
+<li>
+<p>Updates <code>_lastUpdate</code> and transitions <code>_lastState</code> to <code>Pressed</code>.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>If not pressed, resets <code>_lastState</code> to <code>None</code>.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_setkey_getkey"><a class="anchor" href="#_setkey_getkey"></a><code>setKey</code> / <code>getKey</code></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">void setKey(KeyT key);
+[[nodiscard]] std::optional&lt;KeyT&gt; getKey() const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Binds or queries the key associated with this action.
+<code>getKey()</code> returns <code>std::nullopt</code> when no key has been set.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_getisrepeatable_setisrepeatable"><a class="anchor" href="#_getisrepeatable_setisrepeatable"></a><code>getIsRepeatable</code> / <code>setIsRepeatable</code></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">[[nodiscard]] bool getIsRepeatable() const;
+void setIsRepeatable(bool isRepeatable);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Controls whether the action re-fires on every frame while the key remains held (<code>true</code>, default) or fires only on the initial press transition (<code>false</code>).</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_public_delegates"><a class="anchor" href="#_public_delegates"></a>Public delegates</h3>
+<div class="sect3">
+<h4 id="_onpress"><a class="anchor" href="#_onpress"></a><code>onPress</code></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">Delegate&lt;void(SpecKeysState)&gt;::Ptr onPress;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Fired by <code>update()</code> each time the action triggers (respecting <code>_isRepeatable</code> and <code>_frequency</code>).
+Subscribe here to react to the action in gameplay code.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example subscription</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">myAction-&gt;onPress-&gt;subscribe([](Core::InputAction&lt;Keyboard::Key&gt;::SpecKeysState mods)
+{
+    if (mods.leftCtrl == Keyboard::KeyState::Pressed)
+        doCtrlAction();
+    else
+        doNormalAction();
+});</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_class_keyboardinputaction"><a class="anchor" href="#_class_keyboardinputaction"></a>Class <code>KeyboardInputAction</code></h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">class KeyboardInputAction : public InputAction&lt;Keyboard::Key&gt;;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Alias: <code>KeyboardIA</code></p>
+</div>
+<div class="paragraph">
+<p>Specialises <code>InputAction</code> for keyboard keys.
+<code>isKeyPressed()</code> queries <code>Keyboard::getKeyState</code> for the bound <code>Keyboard::Key</code>.</p>
+</div>
+<div class="paragraph">
+<p>Prefer constructing instances through <code>KeyboardInputManager</code> rather than directly, so the manager can register and <code>update()</code> them automatically.</p>
+</div>
+<div class="sect2">
+<h3 id="_type_aliases_2"><a class="anchor" href="#_type_aliases_2"></a>Type aliases</h3>
+<div class="paragraph">
+<p>Inherits all aliases from <code>InputAction&lt;Keyboard::Key&gt;</code>.
+<code>KeyT</code> resolves to <code>Keyboard::Key</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_static_factory"><a class="anchor" href="#_static_factory"></a>Static factory</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">static Ptr Create();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Heap-allocates a default-constructed <code>KeyboardInputAction</code> and returns it wrapped in an <code>IntrusivePtr</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_constructors_2"><a class="anchor" href="#_constructors_2"></a>Constructors</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Signature</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>KeyboardInputAction()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Default constructor. No name, no key.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>KeyboardInputAction(const StringAtom&amp; name, KeyT key)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Constructs with a name and a bound keyboard key.</p></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_class_mouseinputaction"><a class="anchor" href="#_class_mouseinputaction"></a>Class <code>MouseInputAction</code></h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">class MouseInputAction : public InputAction&lt;Mouse::Key&gt;;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Alias: <code>MouseIA</code></p>
+</div>
+<div class="paragraph">
+<p>Extends <code>InputAction</code> with cursor tracking.
+In addition to the inherited <code>onPress</code> delegate, it provides delegates for movement, drag, and click.
+<code>isKeyPressed()</code> queries <code>Mouse::getKeyState</code> for the bound <code>Mouse::Key</code>.</p>
+</div>
+<div class="paragraph">
+<p>Prefer constructing instances through <code>MouseInputManager</code>.</p>
+</div>
+<div class="sect2">
+<h3 id="_type_aliases_3"><a class="anchor" href="#_type_aliases_3"></a>Type aliases</h3>
+<div class="paragraph">
+<p>Inherits all aliases from <code>InputAction&lt;Mouse::Key&gt;</code>.
+<code>KeyT</code> resolves to <code>Mouse::Key</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_static_factory_2"><a class="anchor" href="#_static_factory_2"></a>Static factory</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">static Ptr Create();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Heap-allocates a default-constructed <code>MouseInputAction</code> and returns it wrapped in an <code>IntrusivePtr</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_constructors_3"><a class="anchor" href="#_constructors_3"></a>Constructors</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Signature</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>MouseInputAction()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Default constructor.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>MouseInputAction(const StringAtom&amp; name, KeyT key)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Constructs with a name and a bound mouse button. <code>key</code> defaults to <code>Mouse::Key::None</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>MouseInputAction(const StringAtom&amp; name)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Constructs with only a name; useful for move/drag-only actions with no button binding.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_public_delegates_2"><a class="anchor" href="#_public_delegates_2"></a>Public delegates</h3>
+<div class="paragraph">
+<p>Inherits <code>onPress</code> from <code>InputAction</code>.</p>
+</div>
+<div class="sect3">
+<h4 id="_ondrag"><a class="anchor" href="#_ondrag"></a><code>onDrag</code></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">Delegate&lt;void(glm::vec2, SpecKeysState)&gt;::Ptr onDrag;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Fired when the cursor moves <strong>while</strong> the bound mouse button is held.
+The <code>glm::vec2</code> argument carries the delta (offset) of the cursor since the previous frame.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_onmove"><a class="anchor" href="#_onmove"></a><code>onMove</code></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">Delegate&lt;void(glm::vec2, SpecKeysState)&gt;::Ptr onMove;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Fired whenever the cursor moves, regardless of button state.
+The <code>glm::vec2</code> argument carries the cursor delta.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_onmouseclick"><a class="anchor" href="#_onmouseclick"></a><code>onMouseClick</code></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">Delegate&lt;void(glm::vec2, SpecKeysState)&gt;::Ptr onMouseClick;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Fired when the bound mouse button is clicked.
+The <code>glm::vec2</code> argument carries the cursor position at the moment of the click.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_overridden_update"><a class="anchor" href="#_overridden_update"></a>Overridden <code>update</code></h3>
+<div class="paragraph">
+<p><code>MouseInputAction::update()</code> extends the base logic with cursor-position diffing.
+It reads the current cursor position each frame, computes the delta against <code>_lastMousePosition</code>, and fires <code>onMove</code> and/or <code>onDrag</code> as appropriate before delegating to the base <code>update()</code> for button-press handling.</p>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_concept_isinputaction"><a class="anchor" href="#_concept_isinputaction"></a>Concept <code>IsInputAction</code></h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template&lt;class T&gt;
+concept IsInputAction = requires(T) {
+    typename T::KeyT;
+    typename T::Ptr;
+    typename T::CPtr;
+    typename T::Parent;
+    requires std::derived_from&lt;std::remove_reference_t&lt;T&gt;, InputAction&lt;typename T::KeyT&gt;&gt;;
+};</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Satisfied by any type that:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>exposes nested type aliases <code>KeyT</code>, <code>Ptr</code>, <code>CPtr</code>, and <code>Parent</code>;</p>
+</li>
+<li>
+<p>derives from <code>InputAction&lt;KeyT&gt;</code>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Use this concept in template constraints anywhere a generic action type is expected, to catch misuse at compile time rather than at link time or runtime.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example usage</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template&lt;Core::IsInputAction ActionT&gt;
+void registerAction(typename ActionT::Ptr action)
+{
+    // guaranteed to be a valid InputAction subtype
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_type_alias_summary"><a class="anchor" href="#_type_alias_summary"></a>Type alias summary</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Alias</th>
+<th class="tableblock halign-left valign-top">Resolved type</th>
+<th class="tableblock halign-left valign-top">Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>KeyboardIA</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>KeyboardInputAction</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Shorthand used throughout the engine.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>MouseIA</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>MouseInputAction</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Shorthand used throughout the engine.</p></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_usage_example"><a class="anchor" href="#_usage_example"></a>Usage example</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">// Create and configure a keyboard action
+auto jumpAction = Core::KeyboardInputAction::Create();
+jumpAction-&gt;setName(StringAtom("Jump"));
+jumpAction-&gt;setKey(Keyboard::Key::Space);
+jumpAction-&gt;setIsRepeatable(false); // fire once per press
+
+jumpAction-&gt;onPress-&gt;subscribe([](auto mods)
+{
+    player.jump();
+});
+
+// Create a mouse drag action (no button needed for move tracking)
+auto cameraAction = Core::MouseInputAction::Create();
+cameraAction-&gt;setName(StringAtom("CameraOrbit"));
+cameraAction-&gt;setKey(Mouse::Key::Right);
+
+cameraAction-&gt;onDrag-&gt;subscribe([](glm::vec2 delta, auto mods)
+{
+    camera.orbit(delta);
+});
+
+// Register with managers so update() is called automatically each frame
+keyboardInputManager-&gt;add(jumpAction);
+mouseInputManager-&gt;add(cameraAction);</code></pre>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="ecs-overview.html">ECS Overview</a></span>
+  <span class="next"><a href="../rendering/index.html">Overview</a></span>
+</nav>
 </article>
   </div>
 </main>

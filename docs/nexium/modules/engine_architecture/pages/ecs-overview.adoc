@@ -1,2 +1,529 @@
-= Entity Component System (ECS)
+[[ecs-components]]
+= ECS Component System
+:description: Reference documentation for the Entity Component System component layer in Nexium.
 
+// ---------------------------------------------------------------
+//  OVERVIEW
+// ---------------------------------------------------------------
+== Overview
+
+The *ECS Component System* is the foundation of Nexium's Entity Component System architecture.
+It provides a type-safe, factory-driven hierarchy of components that can be created, cloned, serialized, ticked, and composed into trees at runtime.
+
+The public surface is split across three cooperating layers:
+
+[cols="1,3",options="header"]
+|===
+| Layer | Responsibility
+
+| `AbstractComponent`
+| Lifecycle (tick, enable/disable), cast helpers, serialization hooks.
+
+| `BaseComponent`
+| Named, typed, factory-registered node in a component tree.
+Manages parent/child relationships and JSON serialization.
+
+| `GlobalComponentFactory`
+| Singleton registry. Maps `StringAtom` type names to factory functions
+so components can be created by name at runtime.
+|===
+
+Registration of new component types is handled entirely by a family of macros — you never touch `GlobalComponentFactory` directly in normal usage.
+
+// ---------------------------------------------------------------
+//  REGISTRATION MACROS
+// ---------------------------------------------------------------
+== Registration Macros
+
+Macros are the primary extension point of the ECS.
+They inject boilerplate — `componentType`, `Create()`, `clone()`, and an optional default constructor — into your class, and register the type with the global factory.
+
+=== Non-template Components
+
+[source,cpp]
+----
+// MyComponent.h
+class MyComponent : public BaseComponent {
+    ECS_COMPONENT_DECL(MyComponent, BaseComponent);
+    // optionally add fields and methods here
+};
+
+// MyComponent.cpp
+ECS_COMPONENT_IMPL(MyComponent);
+----
+
+[cols="1,3",options="header"]
+|===
+| Macro | Where to use
+
+| `ECS_COMPONENT_DECL(ClassName, BaseComponentClass)`
+| Inside the class body. Injects `componentType`, `Create()`, `clone()`,
+and a default constructor that accepts an optional `StringAtom` name.
+
+| `ECS_COMPONENT_DECL_NO_CNSTR(ClassName, BaseComponentClass)`
+| Inside the class body. Same as above but does *not* generate a constructor,
+letting you write your own. Your constructor must forward `componentType`
+and `name` to the parent.
+
+| `ECS_COMPONENT_IMPL(ClassName)`
+| In the `.cpp` file. Defines `componentType` (triggering factory registration)
+and out-of-line bodies for `Create()` and `clone()`.
+|===
+
+=== Template Components
+
+Template components follow the same pattern but require extra macro arguments because the compiler cannot deduce the full type name automatically.
+
+[source,cpp]
+----
+// declaration
+template<class T>
+class MyGeneric : public BaseComponent {
+    ECS_TEMPLATE_COMPONENT_DECL(MyGeneric, BaseComponent, T);
+};
+
+// implementation (below the class or in a .inl file)
+ECS_TEMPLATE_COMPONENT_IMPL(
+    BRACKETS(MyGeneric<T>),
+    BRACKETS(class T)
+);
+----
+
+[cols="1,3",options="header"]
+|===
+| Macro | Purpose
+
+| `ECS_TEMPLATE_COMPONENT_DECL(ClassName, BaseComponentClass, ...)`
+| Class-body declaration for a template component. Variadic tail lists all
+template parameters (e.g. `T` or `std::size_t Size, class T`).
+
+| `ECS_TEMPLATE_COMPONENT_DECL_NO_CNSTR(ClassName, BaseComponentClass, ...)`
+| Same but suppresses the generated constructor.
+
+| `ECS_TEMPLATE_COMPONENT_IMPL(TypeName, Template)`
+| Defines `componentType`, `Create()`, and `clone()` for a template
+specialisation. Both arguments *must* be wrapped in `BRACKETS(...)`.
+
+| `BRACKETS(...)`
+| Helper that passes a comma-containing token sequence as a single macro
+argument. Only needed with `ECS_TEMPLATE_COMPONENT_IMPL`.
+|===
+
+WARNING: Template components use `typeid(...).name()` for their type string, which is implementation-defined and not portable across compilers.
+Reflection via `GlobalComponentFactory` is therefore unsupported for template components.
+
+// ---------------------------------------------------------------
+//  CONCEPTS
+// ---------------------------------------------------------------
+== Concepts
+
+All concepts live in `namespace Core`.
+
+[cols="1,3",options="header"]
+|===
+| Concept | Meaning
+
+| `IsComponent<T>`
+| `T` inherits from `BaseComponent` and exposes `getComponentType()` plus
+a static `componentType` member.
+
+| `IsComponentOrBase<T>`
+| Satisfied by any `IsComponent<T>` type *or* `BaseComponent` itself.
+Used in traversal helpers that may operate on the root node.
+
+| `IsComponentOrVoid<T>`
+| Satisfied by `IsComponent<T>` or `void`. Used where "no component"
+is a valid template argument.
+
+| `IsIntrusiveComponent<T>`
+| `T` is an `IntrusivePtr` whose pointee derives from `BaseComponent`.
+
+| `IsComponentRange<T>`
+| `T` is a range whose value type is either a `BaseComponent`-derived object
+or an `IsIntrusiveComponent` smart pointer.
+|===
+
+// ---------------------------------------------------------------
+//  CLASS: AbstractComponent
+// ---------------------------------------------------------------
+== `Core::AbstractComponent`
+
+Declared in `<AbstractComponent.h>` (internal header — prefer `BaseComponent`).
+
+`AbstractComponent` is the root of the component hierarchy.
+It owns the tick loop, the enable/disable flag, and the serialization lifecycle hooks.
+You normally do not inherit from it directly; inherit from `BaseComponent` instead.
+
+=== Public Member Functions
+
+==== Tick & Lifecycle
+
+`void tick(float delta)`::
+Called by the engine's main loop.
+Dispatches to `onTick(delta)` when the component is initialized, enabled, and not marked no-tick.
+
+`void clear()`::
+Resets the component to an uninitialized state.
+Virtual; override to release owned resources.
+
+`void setEnabled(bool v)` / `void enable()` / `void disable()`::
+Enable or disable the component.
+Disabled components are skipped by `tick`.
+
+`bool isEnabled() const noexcept`::
+Returns `true` if the component is enabled.
+
+`void setNoTick(bool v)` / `bool getNoTick() const noexcept`::
+When `noTick` is `true`, `tick()` will not call `onTick` even if the component is enabled.
+Useful for purely data-carrying components.
+
+==== Casting
+
+All four cast helpers are templated on any `IsComponent` type.
+
+`T* castTo<T>()`::
+`const T* castTo<T>() const`::
+Dynamic cast.
+Asserts on failure — use only when the type is known.
+
+`T* unsafeCastTo<T>() noexcept`::
+`const T* unsafeCastTo<T>() const noexcept`::
+`reinterpret_cast` — no overhead, no safety.
+Only call when you are certain of the runtime type.
+
+`T* tryCastTo<T>()`::
+`const T* tryCastTo<T>() const`::
+Dynamic cast that returns `nullptr` on failure instead of asserting.
+
+==== Serialization Hooks
+
+These are called by the serialization framework around `serialize()` /
+`deserialize()`.
+Override to inject pre/post processing logic.
+
+`virtual nlohmann::json serialize() const`::
+Returns a JSON representation of this component.
+
+`virtual void deserialize(RResourceStream<RJsonResourceStream>& stream)`::
+Populates the component from the supplied stream.
+
+`virtual void onPreDeserialize(AbstractComponent* obj)`::
+Called before deserialization starts. `obj` is the component being populated.
+
+`virtual void onPostDeserialize(AbstractComponent* obj, const RLogsCollector& logs)`::
+Called after deserialization finishes.
+
+`virtual void onPreSerialize(const AbstractComponent* obj) const`::
+Called before serialization starts.
+
+`virtual void onPostSerialize(const AbstractComponent* obj, const RLogsCollector& logs) const`::
+Called after serialization finishes.
+
+// ---------------------------------------------------------------
+//  CLASS: BaseComponent
+// ---------------------------------------------------------------
+== `Core::BaseComponent`
+
+`BaseComponent` extends `AbstractComponent` with a *name*, a *type atom*,
+*parent/child* tree relationships, and factory integration.
+It is the class you inherit from when writing new components.
+
+=== Type Aliases
+
+[source,cpp]
+----
+using Ptr  = IntrusivePtr<BaseComponent>;
+using CPtr = IntrusivePtr<const BaseComponent>;
+
+template<bool isConst>
+using AdaptivePtr = IntrusivePtr<std::conditional_t<isConst, const BaseComponent, BaseComponent>>;
+----
+
+Every concrete component generated by `ECS_COMPONENT_DECL` also gets its own
+`Ptr`, `CPtr`, and `AdaptivePtr<isConst>` aliases scoped to that type.
+
+=== Static Members
+
+`static const StringAtom componentType`::
+The interned type name of this component class.
+Initialized once at program startup by `ECS_COMPONENT_IMPL`.
+Concrete subclasses each have their own `componentType` that shadows this one.
+
+=== Public Member Functions
+
+==== Factory & Cloning
+
+`static Ptr Create()`::
+Allocates and returns a new default-initialized instance via the engine allocator.
+Injected by `ECS_COMPONENT_DECL`.
+
+`virtual BaseComponent::Ptr clone() const`::
+Deep-copies this component (copy-constructs if `T` is copy-constructible) and marks the result uninitialized so `initialize()` will be called again.
+Returns `nullptr` for abstract types.
+
+==== Identity
+
+`const StringAtom& getComponentName() const noexcept`::
+Returns the human-readable name assigned to this instance.
+
+`void setComponentName(const StringAtom& name)`::
+`void setComponentName(StringAtom&& name)`::
+Changes the instance name.
+
+`const StringAtom& getComponentType() const noexcept`::
+Returns the static type atom (same value as `componentType` for the concrete class).
+
+`template<IsComponent T> bool isTypeOf() const`::
+Returns `true` when this component's runtime type matches `T::componentType`.
+
+`std::size_t makeHash() const`::
+Computes a hash of the component, used by `std::hash` specializations.
+
+`virtual bool operator==(const BaseComponent& other) const`::
+Equality comparison.
+Override in subclasses when value-based equality is meaningful.
+
+==== Lifecycle
+
+`virtual void initialize()`::
+Calls `onPreInitialize()`, then `onInitialize()`, then marks the component initialized.
+Call once after construction.
+Do not call again unless you first call `invalidate()`.
+
+`bool isInitialized() const noexcept`::
+Returns `true` after `initialize()` has been called (and before `invalidate()`).
+
+`void invalidate()`::
+Clears the initialized flag, allowing `initialize()` to be called again.
+Also called internally after `clone()`.
+
+`virtual bool isValid() const`::
+Override to define domain-specific validity.
+The base implementation checks that the type atom is non-empty.
+
+`void clear() override`::
+Detaches all children, resets name and type, and delegates to
+`AbstractComponent::clear()`.
+
+==== Parent / Owner Navigation
+
+`const BaseComponent* getParent() const noexcept`::
+`BaseComponent* getParent() noexcept`::
+Returns the immediate parent node, or `nullptr` if this is a root component.
+
+`bool hasParent() const noexcept`::
+Returns `true` when a parent is set.
+
+`BaseComponent* getOwner() noexcept`::
+`const BaseComponent* getOwner() const noexcept`::
+Walks up the parent chain and returns the topmost ancestor (the owner / entity root).
+
+`template<IsComponent T> const T* getParentAs() const noexcept`::
+`template<IsComponent T> T* getParentAs() noexcept`::
+Returns the immediate parent cast to `T`, or `nullptr` if the parent is absent or not of that type.
+
+==== Child Management
+
+`std::size_t getChildrenCount() const noexcept`::
+`bool hasChildren() const noexcept`::
+Query the number of direct children.
+
+`template<IsComponent ComponentT> bool hasChildrenAs() const noexcept`::
+Returns `true` if at least one child can be cast to `ComponentT`.
+
+`IntrusivePtr<BaseComponent> getFirstChild()`::
+`IntrusivePtr<BaseComponent> getLastChild()`::
+Access the first or last child without type casting.
+
+`template<IsComponent T> T::Ptr getFirstChildAs()`::
+`template<IsComponent T> T::Ptr getLastChildAs()`::
+Same as above with a `castTo<T>()` applied.
+Returns `nullptr` if the child cannot be cast.
+
+`IntrusivePtr<BaseComponent> getChildAt(std::size_t i)`::
+`IntrusivePtr<const BaseComponent> getChildAt(std::size_t i) const`::
+Index-based child access.
+Throws `std::out_of_range` on bad index (delegates to `std::vector::at`).
+
+`const std::vector<IntrusivePtr<BaseComponent>>& getChildren() const noexcept`::
+`std::vector<IntrusivePtr<BaseComponent>>& getChildren() noexcept`::
+Direct access to the underlying child vector.
+Prefer the typed helpers for normal use.
+
+`template<IsComponent ComponentT> ComponentT* findFirstChildOf(const StringAtom& name = ""_atom)`::
+`template<IsComponent ComponentT> const ComponentT* findFirstChildOf(...) const`::
+BFS search for the first descendant of type `ComponentT`.
+Optionally filters by name when `name` is non-empty.
+Returns `nullptr` if not found.
+
+`template<IsComponent ComponentT, class... Args> ComponentT* addChildComponent(Args&&... args)`::
+Constructs a new `ComponentT` in-place (forwarding `args`) and attaches it as a child.
+Returns a raw pointer to the new child.
+
+`template<IsComponent ComponentT, class... Args> ComponentT* addUniqueTypeChildComponent(Args&&... args)`::
+Like `addChildComponent` but first searches for an existing child that can be cast to `ComponentT`.
+Returns the existing child if found; otherwise creates and attaches a new one.
+
+`template<IsComponent ComponentT, class... Args> ComponentT* getOrAddChildComponent(Args&&... args)`::
+Equivalent to `addUniqueTypeChildComponent` — returns the first matching child, creating it if absent.
+
+`BaseComponent* attachChild(const BaseComponent::Ptr& child)`::
+Clones `child` and attaches the clone as a direct child.
+
+`BaseComponent* attachUniqueChild(const BaseComponent::Ptr& child)`::
+Like `attachChild` but only attaches if no child of the same type already exists.
+
+`void detachChild(BaseComponent* child)`::
+Removes `child` from the child list and clears its parent pointer, but does not destroy it.
+
+`void removeChild(const BaseComponent* child)`::
+`void removeChild(const IntrusivePtr<const BaseComponent>& child)`::
+Removes and destroys the specified child.
+
+`void removeChildIf(const std::function<bool(const BaseComponent*)>& pred)`::
+Removes all children for which `pred` returns `true`.
+
+`template<IsComponent ComponentT> void removeChildOf(const StringAtom& name = ""_atom)`::
+Convenience wrapper: removes the first child that can be cast to `ComponentT`
+(optionally matched by name).
+
+==== Tree Traversal
+
+Both BFS and DFS variants accept a callback with one of two signatures:
+
+* `void(BaseComponent*)` — visits every node.
+* `bool(BaseComponent*)` — visits nodes until the callback returns `false`.
+
+`template<class FuncT> void forEach(FuncT&& callback)`::
+`template<class FuncT> void forEach(FuncT&& callback) const`::
+Breadth-first traversal of this node and all descendants.
+
+`template<class FuncT> void forEachDFS(FuncT&& callback)`::
+`template<class FuncT> void forEachDFS(FuncT&& callback) const`::
+Depth-first traversal of this node and all descendants.
+
+==== Serialization
+
+`nlohmann::json serialize() const override`::
+Produces a JSON object containing at minimum `type` and `name`, plus all registered `FIELD()` members and the serialized child array.
+
+`void deserialize(RResourceStream<RJsonResourceStream>& stream) override`::
+Populates this component from the JSON stream.
+Calls the pre/post lifecycle hooks and recursively deserializes children.
+
+// ---------------------------------------------------------------
+//  CLASS: GlobalComponentFactory
+// ---------------------------------------------------------------
+== `Core::GlobalComponentFactory`
+
+Singleton.
+Access via `Core::GetGlobalComponentFactory()`.
+
+You rarely call this class directly — the `ECS_COMPONENT_IMPL` macro handles registration automatically at static initialization time.
+
+=== Public Member Functions
+
+`BaseComponent* create(const StringAtom& type)`::
+Allocates and returns a new component of the given type, or `nullptr` if the type is not registered.
+
+`template<class T> bool registerNewType(const StringAtom& type, bool isTemplateType = false)`::
+Registers `T` under `type`.
+Returns `false` if the type is already registered.
+Called by `ECS_COMPONENT_IMPL` — prefer using the macro.
+
+`std::vector<StringAtom> getRegisteredTypesAsVector(bool sort = false) const`::
+Returns all registered type names.
+Pass `sort = true` for alphabetical order.
+
+`bool containsSuchType(const StringAtom& type) const`::
+Returns `true` if `type` has been registered.
+
+`std::optional<std::type_index> getTypeIdByTypeName(const StringAtom& type)`::
+Returns the `std::type_index` associated with a registered type name, or
+`std::nullopt` if not found.
+Not available for template components (see warning in <<Registration Macros>>).
+
+// ---------------------------------------------------------------
+//  JSON ADAPTERS
+// ---------------------------------------------------------------
+== JSON Adapters
+
+The following free functions are injected into `namespace Core` to integrate with `nlohmann::json`'s ADL serialization.
+
+[cols="1,3",options="header"]
+|===
+| Overload | Behaviour
+
+| `to_json(json&, const CompT&)` where `IsComponentOrBase<CompT>`
+| Delegates to `comp.serialize()`.
+
+| `to_json(json&, const CompT&)` where `IsIntrusiveComponent<CompT>`
+| Serializes through the resource system (`R<T>::Serialize`). No-ops on a
+null pointer.
+
+| `to_json(json&, const RangeT&)` where `IsComponentRange<RangeT>`
+| Iterates the range, serializes each element, and appends to a JSON array.
+
+| `from_json(const json&, CompT&)` where `IsComponentOrBase<CompT>`
+| Delegates to `comp.deserialize(j)`.
+
+| `from_json(const json&, CompT&)` where `IsIntrusiveComponent<CompT>`
+| Deserializes through the resource system.
+
+| `from_json(const json&, RangeT&)` where `IsComponentRange<RangeT>`
+| Populates the range from a JSON array.
+|===
+
+// ---------------------------------------------------------------
+//  std::hash SPECIALIZATIONS
+// ---------------------------------------------------------------
+== `std::hash` Specializations
+
+Three specializations are provided so components and their smart-pointer wrappers can be used as keys in unordered containers.
+
+[source,cpp]
+----
+std::hash<Core::BaseComponent>       // hashes by value via makeHash()
+std::hash<Core::BaseComponent::Ptr>  // dereferences then hashes
+std::hash<Core::BaseComponent::CPtr> // dereferences then hashes
+----
+
+// ---------------------------------------------------------------
+//  QUICK-START EXAMPLE
+// ---------------------------------------------------------------
+== Quick-Start Example
+
+[source,cpp]
+----
+// TransformComponent.h
+#pragma once
+#include <ecs/BaseComponent.h>
+#include <math/Vec3.h>
+
+class TransformComponent : public Core::BaseComponent
+{
+    ECS_COMPONENT_DECL(TransformComponent, Core::BaseComponent);
+
+public:
+    Math::Vec3 position;
+    Math::Vec3 scale{ 1.f, 1.f, 1.f };
+};
+
+// TransformComponent.cpp
+#include "TransformComponent.h"
+ECS_COMPONENT_IMPL(TransformComponent);
+
+// Usage
+auto root = Core::BaseComponent::Ptr{ new Core::BaseComponent("root"_atom, ""_atom) };
+auto* transform = root->addChildComponent<TransformComponent>();
+transform->position = { 0.f, 1.f, 0.f };
+transform->initialize();
+
+root->forEach([](Core::BaseComponent* node) {
+    // visits root, then TransformComponent
+});
+
+// Factory creation by name
+auto& factory = Core::GetGlobalComponentFactory();
+auto* comp = factory.create("TransformComponent"_atom);
+----

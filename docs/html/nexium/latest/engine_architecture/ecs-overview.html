@@ -3,10 +3,11 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Entity Component System (ECS) :: Nexium Engine</title>
+    <title>ECS Component System :: Nexium Engine</title>
     <link rel="prev" href="file-io.html">
-    <link rel="next" href="../rendering/index.html">
-    <meta name="generator" content="Antora 3.1.14">
+    <link rel="next" href="input-system.html">
+    <meta name="description" content="Reference documentation for the Entity Component System component layer in Nexium.">
+    <meta name="generator" content="Antora 3.1.15">
     <link rel="stylesheet" href="../../../_/css/site.css">
   </head>
   <body class="article">
@@ -98,6 +99,9 @@
   </li>
   <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="ecs-overview.html">ECS Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="input-system.html">Input System</a>
   </li>
 </ul>
   </li>
@@ -320,11 +324,758 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Entity Component System (ECS)</h1>
+<h1 class="page">ECS Component System</h1>
+<div class="sect1">
+<h2 id="_overview"><a class="anchor" href="#_overview"></a>Overview</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <strong>ECS Component System</strong> is the foundation of Nexium&#8217;s Entity Component System architecture.
+It provides a type-safe, factory-driven hierarchy of components that can be created, cloned, serialized, ticked, and composed into trees at runtime.</p>
+</div>
+<div class="paragraph">
+<p>The public surface is split across three cooperating layers:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Layer</th>
+<th class="tableblock halign-left valign-top">Responsibility</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AbstractComponent</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Lifecycle (tick, enable/disable), cast helpers, serialization hooks.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>BaseComponent</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Named, typed, factory-registered node in a component tree.
+Manages parent/child relationships and JSON serialization.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>GlobalComponentFactory</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Singleton registry. Maps <code>StringAtom</code> type names to factory functions
+so components can be created by name at runtime.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Registration of new component types is handled entirely by a family of macros — you never touch <code>GlobalComponentFactory</code> directly in normal usage.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_registration_macros"><a class="anchor" href="#_registration_macros"></a>Registration Macros</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Macros are the primary extension point of the ECS.
+They inject boilerplate — <code>componentType</code>, <code>Create()</code>, <code>clone()</code>, and an optional default constructor — into your class, and register the type with the global factory.</p>
+</div>
+<div class="sect2">
+<h3 id="_non_template_components"><a class="anchor" href="#_non_template_components"></a>Non-template Components</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">// MyComponent.h
+class MyComponent : public BaseComponent {
+    ECS_COMPONENT_DECL(MyComponent, BaseComponent);
+    // optionally add fields and methods here
+};
 
+// MyComponent.cpp
+ECS_COMPONENT_IMPL(MyComponent);</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Macro</th>
+<th class="tableblock halign-left valign-top">Where to use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ECS_COMPONENT_DECL(ClassName, BaseComponentClass)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Inside the class body. Injects <code>componentType</code>, <code>Create()</code>, <code>clone()</code>,
+and a default constructor that accepts an optional <code>StringAtom</code> name.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ECS_COMPONENT_DECL_NO_CNSTR(ClassName, BaseComponentClass)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Inside the class body. Same as above but does <strong>not</strong> generate a constructor,
+letting you write your own. Your constructor must forward <code>componentType</code>
+and <code>name</code> to the parent.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ECS_COMPONENT_IMPL(ClassName)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">In the <code>.cpp</code> file. Defines <code>componentType</code> (triggering factory registration)
+and out-of-line bodies for <code>Create()</code> and <code>clone()</code>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_template_components"><a class="anchor" href="#_template_components"></a>Template Components</h3>
+<div class="paragraph">
+<p>Template components follow the same pattern but require extra macro arguments because the compiler cannot deduce the full type name automatically.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">// declaration
+template&lt;class T&gt;
+class MyGeneric : public BaseComponent {
+    ECS_TEMPLATE_COMPONENT_DECL(MyGeneric, BaseComponent, T);
+};
+
+// implementation (below the class or in a .inl file)
+ECS_TEMPLATE_COMPONENT_IMPL(
+    BRACKETS(MyGeneric&lt;T&gt;),
+    BRACKETS(class T)
+);</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Macro</th>
+<th class="tableblock halign-left valign-top">Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ECS_TEMPLATE_COMPONENT_DECL(ClassName, BaseComponentClass, &#8230;&#8203;)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Class-body declaration for a template component. Variadic tail lists all
+template parameters (e.g. <code>T</code> or <code>std::size_t Size, class T</code>).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ECS_TEMPLATE_COMPONENT_DECL_NO_CNSTR(ClassName, BaseComponentClass, &#8230;&#8203;)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Same but suppresses the generated constructor.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ECS_TEMPLATE_COMPONENT_IMPL(TypeName, Template)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Defines <code>componentType</code>, <code>Create()</code>, and <code>clone()</code> for a template
+specialisation. Both arguments <strong>must</strong> be wrapped in <code>BRACKETS(&#8230;&#8203;)</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>BRACKETS(&#8230;&#8203;)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Helper that passes a comma-containing token sequence as a single macro
+argument. Only needed with <code>ECS_TEMPLATE_COMPONENT_IMPL</code>.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+Template components use <code>typeid(&#8230;&#8203;).name()</code> for their type string, which is implementation-defined and not portable across compilers.
+Reflection via <code>GlobalComponentFactory</code> is therefore unsupported for template components.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_concepts"><a class="anchor" href="#_concepts"></a>Concepts</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>All concepts live in <code>namespace Core</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Concept</th>
+<th class="tableblock halign-left valign-top">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IsComponent&lt;T&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>T</code> inherits from <code>BaseComponent</code> and exposes <code>getComponentType()</code> plus
+a static <code>componentType</code> member.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IsComponentOrBase&lt;T&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Satisfied by any <code>IsComponent&lt;T&gt;</code> type <strong>or</strong> <code>BaseComponent</code> itself.
+Used in traversal helpers that may operate on the root node.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IsComponentOrVoid&lt;T&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Satisfied by <code>IsComponent&lt;T&gt;</code> or <code>void</code>. Used where "no component"
+is a valid template argument.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IsIntrusiveComponent&lt;T&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>T</code> is an <code>IntrusivePtr</code> whose pointee derives from <code>BaseComponent</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IsComponentRange&lt;T&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>T</code> is a range whose value type is either a <code>BaseComponent</code>-derived object
+or an <code>IsIntrusiveComponent</code> smart pointer.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_coreabstractcomponent"><a class="anchor" href="#_coreabstractcomponent"></a><code>Core::AbstractComponent</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Declared in <code>&lt;AbstractComponent.h&gt;</code> (internal header — prefer <code>BaseComponent</code>).</p>
+</div>
+<div class="paragraph">
+<p><code>AbstractComponent</code> is the root of the component hierarchy.
+It owns the tick loop, the enable/disable flag, and the serialization lifecycle hooks.
+You normally do not inherit from it directly; inherit from <code>BaseComponent</code> instead.</p>
+</div>
+<div class="sect2">
+<h3 id="_public_member_functions"><a class="anchor" href="#_public_member_functions"></a>Public Member Functions</h3>
+<div class="sect3">
+<h4 id="_tick_lifecycle"><a class="anchor" href="#_tick_lifecycle"></a>Tick &amp; Lifecycle</h4>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>void tick(float delta)</code></dt>
+<dd>
+<p>Called by the engine&#8217;s main loop.
+Dispatches to <code>onTick(delta)</code> when the component is initialized, enabled, and not marked no-tick.</p>
+</dd>
+<dt class="hdlist1"><code>void clear()</code></dt>
+<dd>
+<p>Resets the component to an uninitialized state.
+Virtual; override to release owned resources.</p>
+</dd>
+<dt class="hdlist1"><code>void setEnabled(bool v)</code> / <code>void enable()</code> / <code>void disable()</code></dt>
+<dd>
+<p>Enable or disable the component.
+Disabled components are skipped by <code>tick</code>.</p>
+</dd>
+<dt class="hdlist1"><code>bool isEnabled() const noexcept</code></dt>
+<dd>
+<p>Returns <code>true</code> if the component is enabled.</p>
+</dd>
+<dt class="hdlist1"><code>void setNoTick(bool v)</code> / <code>bool getNoTick() const noexcept</code></dt>
+<dd>
+<p>When <code>noTick</code> is <code>true</code>, <code>tick()</code> will not call <code>onTick</code> even if the component is enabled.
+Useful for purely data-carrying components.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_casting"><a class="anchor" href="#_casting"></a>Casting</h4>
+<div class="paragraph">
+<p>All four cast helpers are templated on any <code>IsComponent</code> type.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>T* castTo&lt;T&gt;()</code></dt>
+<dt class="hdlist1"><code>const T* castTo&lt;T&gt;() const</code></dt>
+<dd>
+<p>Dynamic cast.
+Asserts on failure — use only when the type is known.</p>
+</dd>
+<dt class="hdlist1"><code>T* unsafeCastTo&lt;T&gt;() noexcept</code></dt>
+<dt class="hdlist1"><code>const T* unsafeCastTo&lt;T&gt;() const noexcept</code></dt>
+<dd>
+<p><code>reinterpret_cast</code> — no overhead, no safety.
+Only call when you are certain of the runtime type.</p>
+</dd>
+<dt class="hdlist1"><code>T* tryCastTo&lt;T&gt;()</code></dt>
+<dt class="hdlist1"><code>const T* tryCastTo&lt;T&gt;() const</code></dt>
+<dd>
+<p>Dynamic cast that returns <code>nullptr</code> on failure instead of asserting.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_serialization_hooks"><a class="anchor" href="#_serialization_hooks"></a>Serialization Hooks</h4>
+<div class="paragraph">
+<p>These are called by the serialization framework around <code>serialize()</code> /
+<code>deserialize()</code>.
+Override to inject pre/post processing logic.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>virtual nlohmann::json serialize() const</code></dt>
+<dd>
+<p>Returns a JSON representation of this component.</p>
+</dd>
+<dt class="hdlist1"><code>virtual void deserialize(RResourceStream&lt;RJsonResourceStream&gt;&amp; stream)</code></dt>
+<dd>
+<p>Populates the component from the supplied stream.</p>
+</dd>
+<dt class="hdlist1"><code>virtual void onPreDeserialize(AbstractComponent* obj)</code></dt>
+<dd>
+<p>Called before deserialization starts. <code>obj</code> is the component being populated.</p>
+</dd>
+<dt class="hdlist1"><code>virtual void onPostDeserialize(AbstractComponent* obj, const RLogsCollector&amp; logs)</code></dt>
+<dd>
+<p>Called after deserialization finishes.</p>
+</dd>
+<dt class="hdlist1"><code>virtual void onPreSerialize(const AbstractComponent* obj) const</code></dt>
+<dd>
+<p>Called before serialization starts.</p>
+</dd>
+<dt class="hdlist1"><code>virtual void onPostSerialize(const AbstractComponent* obj, const RLogsCollector&amp; logs) const</code></dt>
+<dd>
+<p>Called after serialization finishes.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_corebasecomponent"><a class="anchor" href="#_corebasecomponent"></a><code>Core::BaseComponent</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>BaseComponent</code> extends <code>AbstractComponent</code> with a <strong>name</strong>, a <strong>type atom</strong>,
+<strong>parent/child</strong> tree relationships, and factory integration.
+It is the class you inherit from when writing new components.</p>
+</div>
+<div class="sect2">
+<h3 id="_type_aliases"><a class="anchor" href="#_type_aliases"></a>Type Aliases</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">using Ptr  = IntrusivePtr&lt;BaseComponent&gt;;
+using CPtr = IntrusivePtr&lt;const BaseComponent&gt;;
+
+template&lt;bool isConst&gt;
+using AdaptivePtr = IntrusivePtr&lt;std::conditional_t&lt;isConst, const BaseComponent, BaseComponent&gt;&gt;;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Every concrete component generated by <code>ECS_COMPONENT_DECL</code> also gets its own
+<code>Ptr</code>, <code>CPtr</code>, and <code>AdaptivePtr&lt;isConst&gt;</code> aliases scoped to that type.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_static_members"><a class="anchor" href="#_static_members"></a>Static Members</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>static const StringAtom componentType</code></dt>
+<dd>
+<p>The interned type name of this component class.
+Initialized once at program startup by <code>ECS_COMPONENT_IMPL</code>.
+Concrete subclasses each have their own <code>componentType</code> that shadows this one.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_public_member_functions_2"><a class="anchor" href="#_public_member_functions_2"></a>Public Member Functions</h3>
+<div class="sect3">
+<h4 id="_factory_cloning"><a class="anchor" href="#_factory_cloning"></a>Factory &amp; Cloning</h4>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>static Ptr Create()</code></dt>
+<dd>
+<p>Allocates and returns a new default-initialized instance via the engine allocator.
+Injected by <code>ECS_COMPONENT_DECL</code>.</p>
+</dd>
+<dt class="hdlist1"><code>virtual BaseComponent::Ptr clone() const</code></dt>
+<dd>
+<p>Deep-copies this component (copy-constructs if <code>T</code> is copy-constructible) and marks the result uninitialized so <code>initialize()</code> will be called again.
+Returns <code>nullptr</code> for abstract types.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_identity"><a class="anchor" href="#_identity"></a>Identity</h4>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>const StringAtom&amp; getComponentName() const noexcept</code></dt>
+<dd>
+<p>Returns the human-readable name assigned to this instance.</p>
+</dd>
+<dt class="hdlist1"><code>void setComponentName(const StringAtom&amp; name)</code></dt>
+<dt class="hdlist1"><code>void setComponentName(StringAtom&amp;&amp; name)</code></dt>
+<dd>
+<p>Changes the instance name.</p>
+</dd>
+<dt class="hdlist1"><code>const StringAtom&amp; getComponentType() const noexcept</code></dt>
+<dd>
+<p>Returns the static type atom (same value as <code>componentType</code> for the concrete class).</p>
+</dd>
+<dt class="hdlist1"><code>template&lt;IsComponent T&gt; bool isTypeOf() const</code></dt>
+<dd>
+<p>Returns <code>true</code> when this component&#8217;s runtime type matches <code>T::componentType</code>.</p>
+</dd>
+<dt class="hdlist1"><code>std::size_t makeHash() const</code></dt>
+<dd>
+<p>Computes a hash of the component, used by <code>std::hash</code> specializations.</p>
+</dd>
+<dt class="hdlist1"><code>virtual bool operator==(const BaseComponent&amp; other) const</code></dt>
+<dd>
+<p>Equality comparison.
+Override in subclasses when value-based equality is meaningful.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_lifecycle"><a class="anchor" href="#_lifecycle"></a>Lifecycle</h4>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>virtual void initialize()</code></dt>
+<dd>
+<p>Calls <code>onPreInitialize()</code>, then <code>onInitialize()</code>, then marks the component initialized.
+Call once after construction.
+Do not call again unless you first call <code>invalidate()</code>.</p>
+</dd>
+<dt class="hdlist1"><code>bool isInitialized() const noexcept</code></dt>
+<dd>
+<p>Returns <code>true</code> after <code>initialize()</code> has been called (and before <code>invalidate()</code>).</p>
+</dd>
+<dt class="hdlist1"><code>void invalidate()</code></dt>
+<dd>
+<p>Clears the initialized flag, allowing <code>initialize()</code> to be called again.
+Also called internally after <code>clone()</code>.</p>
+</dd>
+<dt class="hdlist1"><code>virtual bool isValid() const</code></dt>
+<dd>
+<p>Override to define domain-specific validity.
+The base implementation checks that the type atom is non-empty.</p>
+</dd>
+<dt class="hdlist1"><code>void clear() override</code></dt>
+<dd>
+<p>Detaches all children, resets name and type, and delegates to
+<code>AbstractComponent::clear()</code>.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_parent_owner_navigation"><a class="anchor" href="#_parent_owner_navigation"></a>Parent / Owner Navigation</h4>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>const BaseComponent* getParent() const noexcept</code></dt>
+<dt class="hdlist1"><code>BaseComponent* getParent() noexcept</code></dt>
+<dd>
+<p>Returns the immediate parent node, or <code>nullptr</code> if this is a root component.</p>
+</dd>
+<dt class="hdlist1"><code>bool hasParent() const noexcept</code></dt>
+<dd>
+<p>Returns <code>true</code> when a parent is set.</p>
+</dd>
+<dt class="hdlist1"><code>BaseComponent* getOwner() noexcept</code></dt>
+<dt class="hdlist1"><code>const BaseComponent* getOwner() const noexcept</code></dt>
+<dd>
+<p>Walks up the parent chain and returns the topmost ancestor (the owner / entity root).</p>
+</dd>
+<dt class="hdlist1"><code>template&lt;IsComponent T&gt; const T* getParentAs() const noexcept</code></dt>
+<dt class="hdlist1"><code>template&lt;IsComponent T&gt; T* getParentAs() noexcept</code></dt>
+<dd>
+<p>Returns the immediate parent cast to <code>T</code>, or <code>nullptr</code> if the parent is absent or not of that type.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_child_management"><a class="anchor" href="#_child_management"></a>Child Management</h4>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>std::size_t getChildrenCount() const noexcept</code></dt>
+<dt class="hdlist1"><code>bool hasChildren() const noexcept</code></dt>
+<dd>
+<p>Query the number of direct children.</p>
+</dd>
+<dt class="hdlist1"><code>template&lt;IsComponent ComponentT&gt; bool hasChildrenAs() const noexcept</code></dt>
+<dd>
+<p>Returns <code>true</code> if at least one child can be cast to <code>ComponentT</code>.</p>
+</dd>
+<dt class="hdlist1"><code>IntrusivePtr&lt;BaseComponent&gt; getFirstChild()</code></dt>
+<dt class="hdlist1"><code>IntrusivePtr&lt;BaseComponent&gt; getLastChild()</code></dt>
+<dd>
+<p>Access the first or last child without type casting.</p>
+</dd>
+<dt class="hdlist1"><code>template&lt;IsComponent T&gt; T::Ptr getFirstChildAs()</code></dt>
+<dt class="hdlist1"><code>template&lt;IsComponent T&gt; T::Ptr getLastChildAs()</code></dt>
+<dd>
+<p>Same as above with a <code>castTo&lt;T&gt;()</code> applied.
+Returns <code>nullptr</code> if the child cannot be cast.</p>
+</dd>
+<dt class="hdlist1"><code>IntrusivePtr&lt;BaseComponent&gt; getChildAt(std::size_t i)</code></dt>
+<dt class="hdlist1"><code>IntrusivePtr&lt;const BaseComponent&gt; getChildAt(std::size_t i) const</code></dt>
+<dd>
+<p>Index-based child access.
+Throws <code>std::out_of_range</code> on bad index (delegates to <code>std::vector::at</code>).</p>
+</dd>
+<dt class="hdlist1"><code>const std::vector&lt;IntrusivePtr&lt;BaseComponent&gt;&gt;&amp; getChildren() const noexcept</code></dt>
+<dt class="hdlist1"><code>std::vector&lt;IntrusivePtr&lt;BaseComponent&gt;&gt;&amp; getChildren() noexcept</code></dt>
+<dd>
+<p>Direct access to the underlying child vector.
+Prefer the typed helpers for normal use.</p>
+</dd>
+<dt class="hdlist1"><code>template&lt;IsComponent ComponentT&gt; ComponentT* findFirstChildOf(const StringAtom&amp; name = ""_atom)</code></dt>
+<dt class="hdlist1"><code>template&lt;IsComponent ComponentT&gt; const ComponentT* findFirstChildOf(&#8230;&#8203;) const</code></dt>
+<dd>
+<p>BFS search for the first descendant of type <code>ComponentT</code>.
+Optionally filters by name when <code>name</code> is non-empty.
+Returns <code>nullptr</code> if not found.</p>
+</dd>
+<dt class="hdlist1"><code>template&lt;IsComponent ComponentT, class&#8230;&#8203; Args&gt; ComponentT* addChildComponent(Args&amp;&amp;&#8230;&#8203; args)</code></dt>
+<dd>
+<p>Constructs a new <code>ComponentT</code> in-place (forwarding <code>args</code>) and attaches it as a child.
+Returns a raw pointer to the new child.</p>
+</dd>
+<dt class="hdlist1"><code>template&lt;IsComponent ComponentT, class&#8230;&#8203; Args&gt; ComponentT* addUniqueTypeChildComponent(Args&amp;&amp;&#8230;&#8203; args)</code></dt>
+<dd>
+<p>Like <code>addChildComponent</code> but first searches for an existing child that can be cast to <code>ComponentT</code>.
+Returns the existing child if found; otherwise creates and attaches a new one.</p>
+</dd>
+<dt class="hdlist1"><code>template&lt;IsComponent ComponentT, class&#8230;&#8203; Args&gt; ComponentT* getOrAddChildComponent(Args&amp;&amp;&#8230;&#8203; args)</code></dt>
+<dd>
+<p>Equivalent to <code>addUniqueTypeChildComponent</code> — returns the first matching child, creating it if absent.</p>
+</dd>
+<dt class="hdlist1"><code>BaseComponent* attachChild(const BaseComponent::Ptr&amp; child)</code></dt>
+<dd>
+<p>Clones <code>child</code> and attaches the clone as a direct child.</p>
+</dd>
+<dt class="hdlist1"><code>BaseComponent* attachUniqueChild(const BaseComponent::Ptr&amp; child)</code></dt>
+<dd>
+<p>Like <code>attachChild</code> but only attaches if no child of the same type already exists.</p>
+</dd>
+<dt class="hdlist1"><code>void detachChild(BaseComponent* child)</code></dt>
+<dd>
+<p>Removes <code>child</code> from the child list and clears its parent pointer, but does not destroy it.</p>
+</dd>
+<dt class="hdlist1"><code>void removeChild(const BaseComponent* child)</code></dt>
+<dt class="hdlist1"><code>void removeChild(const IntrusivePtr&lt;const BaseComponent&gt;&amp; child)</code></dt>
+<dd>
+<p>Removes and destroys the specified child.</p>
+</dd>
+<dt class="hdlist1"><code>void removeChildIf(const std::function&lt;bool(const BaseComponent*)&gt;&amp; pred)</code></dt>
+<dd>
+<p>Removes all children for which <code>pred</code> returns <code>true</code>.</p>
+</dd>
+<dt class="hdlist1"><code>template&lt;IsComponent ComponentT&gt; void removeChildOf(const StringAtom&amp; name = ""_atom)</code></dt>
+<dd>
+<p>Convenience wrapper: removes the first child that can be cast to <code>ComponentT</code>
+(optionally matched by name).</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_tree_traversal"><a class="anchor" href="#_tree_traversal"></a>Tree Traversal</h4>
+<div class="paragraph">
+<p>Both BFS and DFS variants accept a callback with one of two signatures:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>void(BaseComponent*)</code> — visits every node.</p>
+</li>
+<li>
+<p><code>bool(BaseComponent*)</code> — visits nodes until the callback returns <code>false</code>.</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>template&lt;class FuncT&gt; void forEach(FuncT&amp;&amp; callback)</code></dt>
+<dt class="hdlist1"><code>template&lt;class FuncT&gt; void forEach(FuncT&amp;&amp; callback) const</code></dt>
+<dd>
+<p>Breadth-first traversal of this node and all descendants.</p>
+</dd>
+<dt class="hdlist1"><code>template&lt;class FuncT&gt; void forEachDFS(FuncT&amp;&amp; callback)</code></dt>
+<dt class="hdlist1"><code>template&lt;class FuncT&gt; void forEachDFS(FuncT&amp;&amp; callback) const</code></dt>
+<dd>
+<p>Depth-first traversal of this node and all descendants.</p>
+</dd>
+</dl>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_serialization"><a class="anchor" href="#_serialization"></a>Serialization</h4>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>nlohmann::json serialize() const override</code></dt>
+<dd>
+<p>Produces a JSON object containing at minimum <code>type</code> and <code>name</code>, plus all registered <code>FIELD()</code> members and the serialized child array.</p>
+</dd>
+<dt class="hdlist1"><code>void deserialize(RResourceStream&lt;RJsonResourceStream&gt;&amp; stream) override</code></dt>
+<dd>
+<p>Populates this component from the JSON stream.
+Calls the pre/post lifecycle hooks and recursively deserializes children.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_coreglobalcomponentfactory"><a class="anchor" href="#_coreglobalcomponentfactory"></a><code>Core::GlobalComponentFactory</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Singleton.
+Access via <code>Core::GetGlobalComponentFactory()</code>.</p>
+</div>
+<div class="paragraph">
+<p>You rarely call this class directly — the <code>ECS_COMPONENT_IMPL</code> macro handles registration automatically at static initialization time.</p>
+</div>
+<div class="sect2">
+<h3 id="_public_member_functions_3"><a class="anchor" href="#_public_member_functions_3"></a>Public Member Functions</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>BaseComponent* create(const StringAtom&amp; type)</code></dt>
+<dd>
+<p>Allocates and returns a new component of the given type, or <code>nullptr</code> if the type is not registered.</p>
+</dd>
+<dt class="hdlist1"><code>template&lt;class T&gt; bool registerNewType(const StringAtom&amp; type, bool isTemplateType = false)</code></dt>
+<dd>
+<p>Registers <code>T</code> under <code>type</code>.
+Returns <code>false</code> if the type is already registered.
+Called by <code>ECS_COMPONENT_IMPL</code> — prefer using the macro.</p>
+</dd>
+<dt class="hdlist1"><code>std::vector&lt;StringAtom&gt; getRegisteredTypesAsVector(bool sort = false) const</code></dt>
+<dd>
+<p>Returns all registered type names.
+Pass <code>sort = true</code> for alphabetical order.</p>
+</dd>
+<dt class="hdlist1"><code>bool containsSuchType(const StringAtom&amp; type) const</code></dt>
+<dd>
+<p>Returns <code>true</code> if <code>type</code> has been registered.</p>
+</dd>
+<dt class="hdlist1"><code>std::optional&lt;std::type_index&gt; getTypeIdByTypeName(const StringAtom&amp; type)</code></dt>
+<dd>
+<p>Returns the <code>std::type_index</code> associated with a registered type name, or
+<code>std::nullopt</code> if not found.
+Not available for template components (see warning in <a href="#_registration_macros">Registration Macros</a>).</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_json_adapters"><a class="anchor" href="#_json_adapters"></a>JSON Adapters</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The following free functions are injected into <code>namespace Core</code> to integrate with `nlohmann::json&#8217;s ADL serialization.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Overload</th>
+<th class="tableblock halign-left valign-top">Behaviour</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>to_json(json&amp;, const CompT&amp;)</code> where <code>IsComponentOrBase&lt;CompT&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Delegates to <code>comp.serialize()</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>to_json(json&amp;, const CompT&amp;)</code> where <code>IsIntrusiveComponent&lt;CompT&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Serializes through the resource system (<code>R&lt;T&gt;::Serialize</code>). No-ops on a
+null pointer.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>to_json(json&amp;, const RangeT&amp;)</code> where <code>IsComponentRange&lt;RangeT&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Iterates the range, serializes each element, and appends to a JSON array.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>from_json(const json&amp;, CompT&amp;)</code> where <code>IsComponentOrBase&lt;CompT&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Delegates to <code>comp.deserialize(j)</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>from_json(const json&amp;, CompT&amp;)</code> where <code>IsIntrusiveComponent&lt;CompT&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Deserializes through the resource system.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>from_json(const json&amp;, RangeT&amp;)</code> where <code>IsComponentRange&lt;RangeT&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Populates the range from a JSON array.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_stdhash_specializations"><a class="anchor" href="#_stdhash_specializations"></a><code>std::hash</code> Specializations</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Three specializations are provided so components and their smart-pointer wrappers can be used as keys in unordered containers.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">std::hash&lt;Core::BaseComponent&gt;       // hashes by value via makeHash()
+std::hash&lt;Core::BaseComponent::Ptr&gt;  // dereferences then hashes
+std::hash&lt;Core::BaseComponent::CPtr&gt; // dereferences then hashes</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_quick_start_example"><a class="anchor" href="#_quick_start_example"></a>Quick-Start Example</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">// TransformComponent.h
+#pragma once
+#include &lt;ecs/BaseComponent.h&gt;
+#include &lt;math/Vec3.h&gt;
+
+class TransformComponent : public Core::BaseComponent
+{
+    ECS_COMPONENT_DECL(TransformComponent, Core::BaseComponent);
+
+public:
+    Math::Vec3 position;
+    Math::Vec3 scale{ 1.f, 1.f, 1.f };
+};
+
+// TransformComponent.cpp
+#include "TransformComponent.h"
+ECS_COMPONENT_IMPL(TransformComponent);
+
+// Usage
+auto root = Core::BaseComponent::Ptr{ new Core::BaseComponent("root"_atom, ""_atom) };
+auto* transform = root-&gt;addChildComponent&lt;TransformComponent&gt;();
+transform-&gt;position = { 0.f, 1.f, 0.f };
+transform-&gt;initialize();
+
+root-&gt;forEach([](Core::BaseComponent* node) {
+    // visits root, then TransformComponent
+});
+
+// Factory creation by name
+auto&amp; factory = Core::GetGlobalComponentFactory();
+auto* comp = factory.create("TransformComponent"_atom);</code></pre>
+</div>
+</div>
+</div>
+</div>
 <nav class="pagination">
   <span class="prev"><a href="file-io.html">File I/O</a></span>
-  <span class="next"><a href="../rendering/index.html">Overview</a></span>
+  <span class="next"><a href="input-system.html">Input System</a></span>
 </nav>
 </article>
   </div>

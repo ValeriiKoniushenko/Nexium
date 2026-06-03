@@ -11,6 +11,7 @@
 ** xref:engine_architecture:resource-system.adoc[Resource System]
 ** xref:engine_architecture:file-io.adoc[File I/O]
 ** xref:engine_architecture:ecs-overview.adoc[ECS Overview]
+** xref:engine_architecture:input-system.adoc[Input System]
 
 * Rendering
 ** xref:rendering:index.adoc[Overview]

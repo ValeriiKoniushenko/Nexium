@@ -1,0 +1,421 @@
+= Input Actions
+:description: Core module for binding keys and mouse buttons to named, triggerable actions.
+:source-highlighter: highlight.js
+:icons: font
+
+== Overview
+
+The *Input Actions* module (namespace `Core`) provides a thin, composable abstraction between raw hardware input and game logic.
+Instead of polling `Keyboard` or `Mouse` states directly in gameplay code, you create named *actions*, bind them to a key or button, and subscribe to their delegates.
+The action object takes care of press state tracking, repeat filtering, and frequency throttling.
+
+.Key ideas
+* `InputAction<KeyT>` — base template; key-type–agnostic logic lives here.
+* `KeyboardInputAction` (`KeyboardIA`) — specialisation for `Keyboard::Key`.
+* `MouseInputAction` (`MouseIA`) — specialisation for `Mouse::Key`; additionally tracks cursor movement and drag.
+* `IsInputAction` — concept for compile-time validation of action types.
+
+The typical lifetime is: *create → bind key → subscribe delegate → call `update()` each frame.*
+
+== Class `InputAction<KeyTParam>`
+
+[source,cpp]
+----
+template<class KeyTParam>
+class InputAction : public IntrusiveRefCounter<InputAction<KeyTParam>>;
+----
+
+Base class for all input actions.
+Manages press-state tracking, repeat behaviour, frequency throttling, and delegate firing.
+Instances are always heap-allocated and owned through `IntrusivePtr`.
+
+=== Template parameters
+
+[cols="1,3"]
+|===
+|Parameter |Description
+
+|`KeyTParam`
+|The type used to identify a key or button (e.g. `Keyboard::Key`, `Mouse::Key`).
+|===
+
+=== Type aliases
+
+[cols="1,3"]
+|===
+|Alias |Resolved type
+
+|`Self`
+|`InputAction<KeyTParam>`
+
+|`Ptr`
+|`IntrusivePtr<Self>` — non-const owning pointer.
+
+|`CPtr`
+|`IntrusivePtr<const Self>` — const owning pointer.
+
+|`AdaptivePtr<bool isConst>`
+|`CPtr` when `isConst` is `true`, `Ptr` otherwise.
+
+|`TimeT`
+|`std::chrono::milliseconds` — unit used for frequency throttling.
+
+|`KeyT`
+|`KeyTParam` — the key type for this instantiation.
+|===
+
+=== Nested type `SpecKeysState`
+
+Snapshot of the three common modifier keys at the moment an action fires.
+
+[source,cpp]
+----
+struct SpecKeysState
+{
+    Keyboard::KeyState leftShift;
+    Keyboard::KeyState leftAlt;
+    Keyboard::KeyState leftCtrl;
+
+    static SpecKeysState fillAndGet();
+};
+----
+
+[cols="1,3"]
+|===
+|Member |Description
+
+|`leftShift`
+|Current state of the left Shift key.
+
+|`leftAlt`
+|Current state of the left Alt key.
+
+|`leftCtrl`
+|Current state of the left Ctrl key.
+
+|`static fillAndGet()`
+|Reads the live hardware state of all three modifiers and returns a populated `SpecKeysState`.
+Called internally by `update()` just before delegates are triggered.
+|===
+
+=== Constructors
+
+[cols="1,3"]
+|===
+|Signature |Description
+
+|`InputAction()`
+|Default constructor. No name, no key bound.
+
+|`InputAction(StringAtom name)`
+|Constructs an action with a name but no key binding.
+
+|`InputAction(StringAtom name, KeyT key)`
+|Constructs a fully configured action with both a name and a key binding.
+|===
+
+=== Public member functions
+
+==== `getName`
+
+[source,cpp]
+----
+[[nodiscard]] const StringAtom& getName() const;
+----
+
+Returns the action's name atom.
+
+==== `setName`
+
+[source,cpp]
+----
+void setName(const StringAtom& newName);
+----
+
+Replaces the action's name.
+
+==== `setFrequency` / `getFrequency`
+
+[source,cpp]
+----
+void setFrequency(TimeT value);
+[[nodiscard]] TimeT getFrequency() const;
+----
+
+Controls the minimum interval between consecutive delegate firings while the key is held.
+A value of `0 ms` (the default) means the action fires every frame the key is held (subject to `_isRepeatable`).
+Setting a higher value throttles repeat firings — useful for cursor-key scrolling or turbo-fire scenarios.
+
+==== `update`
+
+[source,cpp]
+----
+virtual void update();
+----
+
+Must be called once per frame (or polling tick).
+Internal logic:
+
+. If no key is bound, the method returns immediately.
+. Calls the pure-virtual `isKeyPressed()`.
+. If pressed *and* (not already in `Pressed` state *or* `_isRepeatable` is `true`):
+.. Checks that `_frequency` milliseconds have elapsed since `_lastUpdate`.
+.. If so, snapshots `SpecKeysState` and fires `onPress` and `_onActionPrivate`.
+.. Updates `_lastUpdate` and transitions `_lastState` to `Pressed`.
+. If not pressed, resets `_lastState` to `None`.
+
+==== `setKey` / `getKey`
+
+[source,cpp]
+----
+void setKey(KeyT key);
+[[nodiscard]] std::optional<KeyT> getKey() const;
+----
+
+Binds or queries the key associated with this action.
+`getKey()` returns `std::nullopt` when no key has been set.
+
+==== `getIsRepeatable` / `setIsRepeatable`
+
+[source,cpp]
+----
+[[nodiscard]] bool getIsRepeatable() const;
+void setIsRepeatable(bool isRepeatable);
+----
+
+Controls whether the action re-fires on every frame while the key remains held (`true`, default) or fires only on the initial press transition (`false`).
+
+=== Public delegates
+
+==== `onPress`
+
+[source,cpp]
+----
+Delegate<void(SpecKeysState)>::Ptr onPress;
+----
+
+Fired by `update()` each time the action triggers (respecting `_isRepeatable` and `_frequency`).
+Subscribe here to react to the action in gameplay code.
+
+.Example subscription
+[source,cpp]
+----
+myAction->onPress->subscribe([](Core::InputAction<Keyboard::Key>::SpecKeysState mods)
+{
+    if (mods.leftCtrl == Keyboard::KeyState::Pressed)
+        doCtrlAction();
+    else
+        doNormalAction();
+});
+----
+
+---
+
+== Class `KeyboardInputAction`
+
+[source,cpp]
+----
+class KeyboardInputAction : public InputAction<Keyboard::Key>;
+----
+
+Alias: `KeyboardIA`
+
+Specialises `InputAction` for keyboard keys.
+`isKeyPressed()` queries `Keyboard::getKeyState` for the bound `Keyboard::Key`.
+
+Prefer constructing instances through `KeyboardInputManager` rather than directly, so the manager can register and `update()` them automatically.
+
+=== Type aliases
+
+Inherits all aliases from `InputAction<Keyboard::Key>`.
+`KeyT` resolves to `Keyboard::Key`.
+
+=== Static factory
+
+[source,cpp]
+----
+static Ptr Create();
+----
+
+Heap-allocates a default-constructed `KeyboardInputAction` and returns it wrapped in an `IntrusivePtr`.
+
+=== Constructors
+
+[cols="1,3"]
+|===
+|Signature |Description
+
+|`KeyboardInputAction()`
+|Default constructor. No name, no key.
+
+|`KeyboardInputAction(const StringAtom& name, KeyT key)`
+|Constructs with a name and a bound keyboard key.
+|===
+
+---
+
+== Class `MouseInputAction`
+
+[source,cpp]
+----
+class MouseInputAction : public InputAction<Mouse::Key>;
+----
+
+Alias: `MouseIA`
+
+Extends `InputAction` with cursor tracking.
+In addition to the inherited `onPress` delegate, it provides delegates for movement, drag, and click.
+`isKeyPressed()` queries `Mouse::getKeyState` for the bound `Mouse::Key`.
+
+Prefer constructing instances through `MouseInputManager`.
+
+=== Type aliases
+
+Inherits all aliases from `InputAction<Mouse::Key>`.
+`KeyT` resolves to `Mouse::Key`.
+
+=== Static factory
+
+[source,cpp]
+----
+static Ptr Create();
+----
+
+Heap-allocates a default-constructed `MouseInputAction` and returns it wrapped in an `IntrusivePtr`.
+
+=== Constructors
+
+[cols="1,3"]
+|===
+|Signature |Description
+
+|`MouseInputAction()`
+|Default constructor.
+
+|`MouseInputAction(const StringAtom& name, KeyT key)`
+|Constructs with a name and a bound mouse button. `key` defaults to `Mouse::Key::None`.
+
+|`MouseInputAction(const StringAtom& name)`
+|Constructs with only a name; useful for move/drag-only actions with no button binding.
+|===
+
+=== Public delegates
+
+Inherits `onPress` from `InputAction`.
+
+==== `onDrag`
+
+[source,cpp]
+----
+Delegate<void(glm::vec2, SpecKeysState)>::Ptr onDrag;
+----
+
+Fired when the cursor moves *while* the bound mouse button is held.
+The `glm::vec2` argument carries the delta (offset) of the cursor since the previous frame.
+
+==== `onMove`
+
+[source,cpp]
+----
+Delegate<void(glm::vec2, SpecKeysState)>::Ptr onMove;
+----
+
+Fired whenever the cursor moves, regardless of button state.
+The `glm::vec2` argument carries the cursor delta.
+
+==== `onMouseClick`
+
+[source,cpp]
+----
+Delegate<void(glm::vec2, SpecKeysState)>::Ptr onMouseClick;
+----
+
+Fired when the bound mouse button is clicked.
+The `glm::vec2` argument carries the cursor position at the moment of the click.
+
+=== Overridden `update`
+
+`MouseInputAction::update()` extends the base logic with cursor-position diffing.
+It reads the current cursor position each frame, computes the delta against `_lastMousePosition`, and fires `onMove` and/or `onDrag` as appropriate before delegating to the base `update()` for button-press handling.
+
+---
+
+== Concept `IsInputAction`
+
+[source,cpp]
+----
+template<class T>
+concept IsInputAction = requires(T) {
+    typename T::KeyT;
+    typename T::Ptr;
+    typename T::CPtr;
+    typename T::Parent;
+    requires std::derived_from<std::remove_reference_t<T>, InputAction<typename T::KeyT>>;
+};
+----
+
+Satisfied by any type that:
+
+* exposes nested type aliases `KeyT`, `Ptr`, `CPtr`, and `Parent`;
+* derives from `InputAction<KeyT>`.
+
+Use this concept in template constraints anywhere a generic action type is expected, to catch misuse at compile time rather than at link time or runtime.
+
+.Example usage
+[source,cpp]
+----
+template<Core::IsInputAction ActionT>
+void registerAction(typename ActionT::Ptr action)
+{
+    // guaranteed to be a valid InputAction subtype
+}
+----
+
+---
+
+== Type alias summary
+
+[cols="1,1,3"]
+|===
+|Alias |Resolved type |Notes
+
+|`KeyboardIA`
+|`KeyboardInputAction`
+|Shorthand used throughout the engine.
+
+|`MouseIA`
+|`MouseInputAction`
+|Shorthand used throughout the engine.
+|===
+
+---
+
+== Usage example
+
+[source,cpp]
+----
+// Create and configure a keyboard action
+auto jumpAction = Core::KeyboardInputAction::Create();
+jumpAction->setName(StringAtom("Jump"));
+jumpAction->setKey(Keyboard::Key::Space);
+jumpAction->setIsRepeatable(false); // fire once per press
+
+jumpAction->onPress->subscribe([](auto mods)
+{
+    player.jump();
+});
+
+// Create a mouse drag action (no button needed for move tracking)
+auto cameraAction = Core::MouseInputAction::Create();
+cameraAction->setName(StringAtom("CameraOrbit"));
+cameraAction->setKey(Mouse::Key::Right);
+
+cameraAction->onDrag->subscribe([](glm::vec2 delta, auto mods)
+{
+    camera.orbit(delta);
+});
+
+// Register with managers so update() is called automatically each frame
+keyboardInputManager->add(jumpAction);
+mouseInputManager->add(cameraAction);
+----
