@@ -110,10 +110,6 @@ namespace Core
         };
 
     public:
-        Window(const Window&) = delete;
-        Window(Window&&) = delete;
-        Window& operator=(const Window&) = delete;
-        Window& operator=(Window&&) = delete;
         ~Window() override;
 
         void create(const StringAtom& title, ISize2 size = ISize2{ 300, 300 });
