@@ -29,7 +29,7 @@
 #include "Core/Delegate.h"
 #include "GameplaySystem/Framework/WorldObject.h"
 #include "Grid.h"
-#include "RawDataManagement/DataStream.h"
+#include "ResourceManagement/DataStream.h"
 #include "SceneObject.h"
 
 #include <vector>

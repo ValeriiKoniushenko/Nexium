@@ -26,7 +26,7 @@
 
 #include "Core/IntrusivePtr.h"
 #include "Misc/BaseLog.h"
-#include "RawDataManagement/JsonAdapter.h"
+#include "ResourceManagement/JsonAdapter.h"
 
 #include <queue>
 #include <stack>

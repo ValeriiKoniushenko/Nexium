@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "../RawDataManagement/DataStream.h"
+#include "../ResourceManagement/DataStream.h"
 #include "Core/String.h"
 #include "Misc/BaseLog.h"
 #include "nlohmann/json.hpp"

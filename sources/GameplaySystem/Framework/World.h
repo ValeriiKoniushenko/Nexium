@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "../../RawDataManagement/DataStream.h"
+#include "../../ResourceManagement/DataStream.h"
 #include "Core/Color.h"
 #include "GameState.h"
 #include "LevelData.h"

@@ -24,7 +24,7 @@
 
 #include "Window.h"
 
-#include "../RawDataManagement/JsonAdapter.h"
+#include "../ResourceManagement/JsonAdapter.h"
 #include "ImGui/imgui.h"
 #include "ModuleInfo.h"
 

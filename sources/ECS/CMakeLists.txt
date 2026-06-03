@@ -23,7 +23,7 @@ target_include_directories(${TARGET_NAME} PUBLIC ..)
 
 target_link_libraries(${TARGET_NAME} PUBLIC
     Utils::Core
-    Nexium::RawDataManagement
+    Nexium::ResourceManagement
 )
 
 CoreAddCompileOptionsTo(${TARGET_NAME})

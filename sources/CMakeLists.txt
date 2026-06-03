@@ -1,6 +1,6 @@
 add_subdirectory(ECS)
 add_subdirectory(Misc)
-add_subdirectory(RawDataManagement)
+add_subdirectory(ResourceManagement)
 
 
 set(TARGET_NAME "__Nexium")
@@ -51,7 +51,7 @@ target_link_libraries(${TARGET_NAME} PUBLIC
     
     Nexium::Misc
     Nexium::ECS
-    Nexium::RawDataManagement
+    Nexium::ResourceManagement
     
     assimp::assimp
     nlohmann_json

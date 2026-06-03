@@ -26,7 +26,7 @@
 
 #include "BaseAsset.h"
 #include "Graphics/Texture.h"
-#include "RawDataManagement/JsonAdapter.h"
+#include "ResourceManagement/JsonAdapter.h"
 
 namespace Core
 {

@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "../RawDataManagement/DataStream.h"
+#include "../ResourceManagement/DataStream.h"
 #include "InputAction.h"
 #include "Misc/BaseLog.h"
 #include "ModuleInfo.h"

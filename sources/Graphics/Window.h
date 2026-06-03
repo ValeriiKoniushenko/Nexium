@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "../RawDataManagement/DataStream.h"
+#include "../ResourceManagement/DataStream.h"
 #include "Core/Delegate.h"
 #include "Core/Singleton.h"
 #include "Core/Size.h"

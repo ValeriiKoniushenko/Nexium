@@ -28,7 +28,7 @@
 #include "ECS/BaseComponent.h"
 #include "ImGui/imgui.h"
 #include "InputDevices/Keyboard.h"
-#include "RawDataManagement/JsonAdapter.h"
+#include "ResourceManagement/JsonAdapter.h"
 
 namespace Core::Gui
 {

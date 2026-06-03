@@ -24,8 +24,8 @@
 
 #pragma once
 
-#include "RawDataManagement/DataStream.h"
-#include "RawDataManagement/JsonAdapter.h"
+#include "ResourceManagement/DataStream.h"
+#include "ResourceManagement/JsonAdapter.h"
 #include "ShaderProgram.h"
 #include "assimp/mesh.h"
 

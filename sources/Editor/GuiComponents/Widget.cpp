@@ -27,7 +27,7 @@
 #include "InputDevices/Keyboard.h"
 #include "InputDevices/Mouse.h"
 #include "Misc/Configs.h"
-#include "RawDataManagement/JsonAdapter.h"
+#include "ResourceManagement/JsonAdapter.h"
 
 namespace Core::Gui
 {

@@ -27,7 +27,7 @@
 #include "Core/Delegate.h"
 #include "Core/Size.h"
 #include "ECS/BaseComponent.h"
-#include "RawDataManagement/DataStream.h"
+#include "ResourceManagement/DataStream.h"
 
 namespace Core
 {
