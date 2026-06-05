@@ -22,13 +22,16 @@
  * SOFTWARE.
  */
 
-#include "ResourceManagement/ResourceManager.h"
+#pragma once
 
-#include "gtest/gtest.h"
-
-using namespace Core;
-
-TEST(ResourceManagementTests, Main)
+namespace spdlog
 {
-    auto& am = GetAssetsManager();
+    class logger;
 }
+
+namespace ResourceManagement
+{
+
+    [[nodiscard]] spdlog::logger* getLogger();
+
+} // namespace ResourceManagement

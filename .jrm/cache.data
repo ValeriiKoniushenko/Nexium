@@ -105,7 +105,8 @@
 1780256529056546513 sources/RawDataManagement/JsonAdapter.h
 1780256529663630622 sources/ResourceManagement/DataStream.h
 1780256529056546513 sources/ResourceManagement/JsonAdapter.h
-1780520563622335520 sources/ResourceManagement/ResourceManager.h
+1780701363872350835 sources/ResourceManagement/ModuleInfo.h
+1780702075500926197 sources/ResourceManagement/ResourceManager.h
 1780256530186702966 sources/Scene/Grid.h
 1779478841149792578 sources/Scene/IRenderable.h
 1780256529380591409 sources/Scene/ModuleInfo.h

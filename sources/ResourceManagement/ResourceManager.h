@@ -27,13 +27,15 @@
 #pragma once
 
 #include "Core/Singleton.h"
+#include "Misc/BaseLog.h"
+
+#include <filesystem>
 
 namespace Core
 {
-    
+
     class IBlueprint
     {
-
     public:
         IBlueprint(const IBlueprint&) = default;
         IBlueprint& operator=(const IBlueprint&) = default;
@@ -46,24 +48,79 @@ namespace Core
         IBlueprint() = default;
     };
 
-    class BlueprintManager : public Singleton<BlueprintManager>
+    //
+    //
+    //
+
+    class BlueprintManager : public Singleton<BlueprintManager>, public BaseLog
     {
         SINGLETONS_FRIEND(BlueprintManager);
 
     public:
         ~BlueprintManager() override = default;
 
+        [[nodiscard]] spdlog::logger* getLogger() const override;
+        [[nodiscard]] const char* getPrefix() const override;
+
     protected:
     };
-    
-    class AssetsManager : public Singleton<AssetsManager>
+
+    [[nodiscard]] inline BlueprintManager& GetBlueprintManager()
+    {
+        return BlueprintManager::Instance();
+    }
+
+    //
+    //
+    //
+
+    class AssetsManager : public Singleton<AssetsManager>, public BaseLog
     {
         SINGLETONS_FRIEND(AssetsManager);
 
     public:
         ~AssetsManager() override = default;
 
+        [[nodiscard]] spdlog::logger* getLogger() const override;
+        [[nodiscard]] const char* getPrefix() const override;
+
     protected:
+        [[nodiscard]] bool isValidPath(const std::filesystem::path& path) const;
+
+        /// Converts an absolute asset path to a path relative to the project root.
+        ///
+        /// Guarantees:
+        ///   - No filesystem access (lexical operations only)
+        ///   - No exceptions thrown
+        ///   - Cross-platform (Linux, Windows, macOS)
+        ///
+        /// Limitations (by design - FS access is disallowed):
+        ///   - Symlinks (Linux/macOS) are NOT resolved
+        ///   - NTFS junctions/reparse points (Windows) are NOT resolved
+        ///   - Windows .lnk shell links are stripped by extension only (target NOT followed)
+        ///   If real symlink resolution is needed, canonicalize the path before calling this.
+        ///
+        /// Returns an empty path on an unrecoverable error.
+        [[nodiscard]] std::filesystem::path toProjectRelativePath(
+            const std::filesystem::path& path);
+
+        /// Strips known link-like suffixes that can be detected lexically.
+        /// This is purely a filename-level heuristic - no FS access.
+        ///
+        /// NOTE: Symlinks (Linux) and NTFS junctions (Windows) are fully opaque
+        /// without filesystem access; they cannot be resolved here. If the caller
+        /// needs real symlink resolution, they must do so before passing the path.
+        [[nodiscard]] std::filesystem::path stripLexicalLinkSuffixes(
+            const std::filesystem::path& p);
+
+        /// Lexically normalizes a path: resolves "." and ".." purely by token
+        /// manipulation - no filesystem access, no exceptions.
+        [[nodiscard]] std::filesystem::path lexicallyNormalize(const std::filesystem::path& p);
     };
+
+    [[nodiscard]] inline AssetsManager& GetAssetsManager()
+    {
+        return AssetsManager::Instance();
+    }
 
 } // namespace Core

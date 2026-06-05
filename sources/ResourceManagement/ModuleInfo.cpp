@@ -22,13 +22,18 @@
  * SOFTWARE.
  */
 
-#include "ResourceManagement/ResourceManager.h"
+#include "ModuleInfo.h"
 
-#include "gtest/gtest.h"
+#include "Misc/BaseLog.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
 
-using namespace Core;
-
-TEST(ResourceManagementTests, Main)
+namespace ResourceManagement
 {
-    auto& am = GetAssetsManager();
-}
+
+    spdlog::logger* getLogger()
+    {
+        static auto logger = spdlog::stdout_color_mt("ResourceManagement");
+        return logger.get();
+    }
+
+} // namespace ResourceManagement
