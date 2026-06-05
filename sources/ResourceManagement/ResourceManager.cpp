@@ -28,10 +28,11 @@
 
 #include "Misc/Configs.h"
 #include "ModuleInfo.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
 
 namespace fs = std::filesystem;
 
-namespace Core
+namespace Core::Test
 {
 
     spdlog::logger* BlueprintManager::getLogger() const
@@ -51,6 +52,33 @@ namespace Core
     const char* AssetsManager::getPrefix() const
     {
         return "AssetsManager";
+    }
+
+    Texture::Ptr AssetsManager::getTexture(const std::string& path,
+                                           bool isFlipVertically /* = true*/)
+    {
+        std::filesystem::path p = path;
+        if (!isValidPath(p))
+        {
+            warnLog("Was passed absolute path. Try to avoid it. Path: {}"_f << path);
+            p = toProjectRelativePath(path);
+        }
+
+        if (auto it = _textures.find(p.generic_string()); it != _textures.end())
+        {
+            return it->second;
+        }
+
+        auto texture = Texture::Create();
+        if (texture->loadFromFile(p, isFlipVertically))
+        {
+            criticalLog("The texture wasn't loaded by the next path: {}"_f << path);
+            return {};
+        }
+
+        _textures.emplace(std::move(p.generic_string()), texture);
+
+        return texture;
     }
 
     bool AssetsManager::isValidPath(const std::filesystem::path& path) const
@@ -210,4 +238,4 @@ namespace Core
         return relative;
     }
 
-} // namespace Core
+} // namespace Core::Test

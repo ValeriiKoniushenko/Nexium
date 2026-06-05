@@ -1,6 +1,4 @@
-add_subdirectory(ECS)
 add_subdirectory(Misc)
-add_subdirectory(ResourceManagement)
 
 
 set(TARGET_NAME "__Nexium")
@@ -9,10 +7,12 @@ file(GLOB_RECURSE CPP_SOURCES
     CONFIGURE_DEPENDS
     "AssetsManager/*.cpp"
     "AssimpMisc/*.cpp"
+    "ECS/*.cpp"
     "Editor/*.cpp"
     "GameplaySystem/*.cpp"
     "Graphics/*.cpp"
     "InputDevices/*.cpp"
+    "ResourceManagement/*.cpp"
     "Scene/*.cpp"
 )
 set_source_files_properties(${CPP_SOURCES} PROPERTIES LANGUAGE CXX)
@@ -21,10 +21,12 @@ file(GLOB_RECURSE CPP_HEADERS
     CONFIGURE_DEPENDS
     "AssetsManager/*.h"
     "AssimpMisc/*.h"
+    "ECS/*.h"
     "Editor/*.h"
     "GameplaySystem/*.h"
     "Graphics/*.h"
     "InputDevices/*.h"
+    "ResourceManagement/*.h"
     "Scene/*.h"
 )
 
@@ -50,9 +52,7 @@ target_link_libraries(${TARGET_NAME} PUBLIC
     Utils::Core
     
     Nexium::Misc
-    Nexium::ECS
-    Nexium::ResourceManagement
-    
+
     assimp::assimp
     nlohmann_json
     JustReflectMe::Adapter

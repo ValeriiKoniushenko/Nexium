@@ -67,7 +67,7 @@ namespace Core
         return Graphics::getLogger();
     }
 
-    std::set<std::string> Image::SupportedExtensions()
+    std::unordered_set<std::string> Image::SupportedExtensions()
     {
         return {
             // Read & Write

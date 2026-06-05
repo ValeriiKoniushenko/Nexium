@@ -27,19 +27,22 @@
 #include "Image.h"
 #include "OpenGL.h"
 
+#include <Core/IntrusivePtr.h>
 #include <filesystem>
 
 namespace Core
 {
-    class Texture
+    class Texture : public IntrusiveRefCounter<Texture>
     {
+        INTRUSIVE_PTR_ADAPTERS(Texture);
+
     public:
         Texture() = default;
         Texture(const Texture&) = delete;
         Texture& operator=(const Texture&) = delete;
         Texture(Texture&&) noexcept;
         Texture& operator=(Texture&&) noexcept;
-        virtual ~Texture();
+        ~Texture() override;
 
         bool loadFromFile(const std::filesystem::path& path, bool isFlipVertically = true);
         void loadFromImage(const Image& data);

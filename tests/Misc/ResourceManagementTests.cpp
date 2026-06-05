@@ -30,5 +30,7 @@ using namespace Core;
 
 TEST(ResourceManagementTests, Main)
 {
-    auto& am = GetAssetsManager();
+    auto& am = Core::Test::GetAssetsManager();
+    auto t = am.getTexture("/home/valerii/workspace/Nexium/data/assets/images/document.png");
+    int i = 1;
 }

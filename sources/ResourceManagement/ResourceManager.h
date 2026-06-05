@@ -27,11 +27,13 @@
 #pragma once
 
 #include "Core/Singleton.h"
+#include "Graphics/Texture.h"
 #include "Misc/BaseLog.h"
 
+#include <Core/IntrusivePtr.h>
 #include <filesystem>
 
-namespace Core
+namespace Core::Test
 {
 
     class IBlueprint
@@ -84,6 +86,9 @@ namespace Core
         [[nodiscard]] spdlog::logger* getLogger() const override;
         [[nodiscard]] const char* getPrefix() const override;
 
+        [[nodiscard]] Texture::Ptr getTexture(const std::string& path,
+                                              bool isFlipVertically = true);
+
     protected:
         [[nodiscard]] bool isValidPath(const std::filesystem::path& path) const;
 
@@ -116,6 +121,9 @@ namespace Core
         /// Lexically normalizes a path: resolves "." and ".." purely by token
         /// manipulation - no filesystem access, no exceptions.
         [[nodiscard]] std::filesystem::path lexicallyNormalize(const std::filesystem::path& p);
+
+    protected:
+        std::unordered_map<std::string, Texture::Ptr> _textures; // std::string -> path
     };
 
     [[nodiscard]] inline AssetsManager& GetAssetsManager()
@@ -123,4 +131,4 @@ namespace Core
         return AssetsManager::Instance();
     }
 
-} // namespace Core
+} // namespace Core::Test

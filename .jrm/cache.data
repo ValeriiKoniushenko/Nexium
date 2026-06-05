@@ -80,7 +80,7 @@
 1780519808013412654 sources/Graphics/GraphicsComponents.h
 1780519807949412527 sources/Graphics/IDrawable.h
 1780256529535612887 sources/Graphics/IOutliner.h
-1780256528899524690 sources/Graphics/Image.h
+1780702467641108629 sources/Graphics/Image.h
 1780256529890662077 sources/Graphics/ModuleInfo.h
 1780256528952532070 sources/Graphics/OpenGL.h
 1780256528905525525 sources/Graphics/Primitives/Rectangle.h
@@ -90,7 +90,7 @@
 1780256529647628406 sources/Graphics/ShaderManager.h
 1780256528806511741 sources/Graphics/ShaderProgram.h
 1780256530039682697 sources/Graphics/ShaderProgramMeta.h
-1780256528818513411 sources/Graphics/Texture.h
+1780703155417548685 sources/Graphics/Texture.h
 1780520580206130663 sources/Graphics/Window.h
 1780256528976535412 sources/InputDevices/InputAction.h
 1780519807954412536 sources/InputDevices/InputManager.h
@@ -106,7 +106,7 @@
 1780256529663630622 sources/ResourceManagement/DataStream.h
 1780256529056546513 sources/ResourceManagement/JsonAdapter.h
 1780701363872350835 sources/ResourceManagement/ModuleInfo.h
-1780702075500926197 sources/ResourceManagement/ResourceManager.h
+1780703660853462422 sources/ResourceManagement/ResourceManager.h
 1780256530186702966 sources/Scene/Grid.h
 1779478841149792578 sources/Scene/IRenderable.h
 1780256529380591409 sources/Scene/ModuleInfo.h

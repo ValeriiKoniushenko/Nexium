@@ -29,8 +29,8 @@
 #include "OpenGL.h"
 
 #include <filesystem>
-#include <set>
 #include <string>
+#include <unordered_set>
 
 namespace Core
 {
@@ -86,7 +86,7 @@ namespace Core
             std::swap(first._channel, second._channel);
         }
 
-        [[nodiscard]] static std::set<std::string> SupportedExtensions();
+        [[nodiscard]] static std::unordered_set<std::string> SupportedExtensions();
 
     private:
         void init();
