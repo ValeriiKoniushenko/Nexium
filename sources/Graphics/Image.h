@@ -29,6 +29,7 @@
 #include "OpenGL.h"
 
 #include <filesystem>
+#include <set>
 #include <string>
 
 namespace Core
@@ -84,6 +85,8 @@ namespace Core
             std::swap(first._size, second._size);
             std::swap(first._channel, second._channel);
         }
+
+        [[nodiscard]] static std::set<std::string> SupportedExtensions();
 
     private:
         void init();
