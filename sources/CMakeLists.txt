@@ -1,6 +1,5 @@
 add_subdirectory(Misc)
 
-
 set(TARGET_NAME "__Nexium")
 
 file(GLOB_RECURSE CPP_SOURCES

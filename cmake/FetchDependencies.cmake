@@ -8,7 +8,6 @@ FetchContent_Declare(NlohmannJson
 )
 set(JSON_BuildTests OFF CACHE BOOL "" FORCE)
 set(JSON_MultipleHeaders OFF CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(NlohmannJson)
 
 
 FetchContent_Declare(Glfw
@@ -22,7 +21,6 @@ set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
 
-FetchContent_MakeAvailable(Glfw)
 
 
 FetchContent_Declare(SpdLog
@@ -35,7 +33,6 @@ set(SPDLOG_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(SPDLOG_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(SPDLOG_BUILD_BENCH OFF CACHE BOOL "" FORCE)
 
-FetchContent_MakeAvailable(SpdLog)
 
 
 FetchContent_Declare(Assimp
@@ -49,7 +46,6 @@ set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "" FORCE)
 set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "" FORCE)
 set(ASSIMP_WARNINGS_AS_ERRORS OFF CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(Assimp)
 
 
 FetchContent_Declare(Utils
@@ -68,7 +64,6 @@ if(NOT DEFINED USE_LINK_NO_FETCH__JRM)
         GIT_PROGRESS TRUE
     )
     set(JRM_DISABLE_TESTS ON)
-    FetchContent_MakeAvailable(JustReflectMe)
 endif()
 
 set(SKIP_INSTALL_ALL ON CACHE BOOL "" FORCE)
@@ -84,4 +79,12 @@ FetchContent_Declare(Freetype
     GIT_SHALLOW TRUE
     GIT_PROGRESS TRUE
 )
-FetchContent_MakeAvailable(Freetype)
+
+# =========================================== #
+
+FetchContent_MakeAvailable(Utils Freetype Assimp SpdLog Glfw NlohmannJson)
+
+if(NOT DEFINED USE_LINK_NO_FETCH__JRM)
+    FetchContent_MakeAvailable(JustReflectMe)
+endif()
+

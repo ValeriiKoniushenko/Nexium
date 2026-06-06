@@ -15,6 +15,81 @@
 #include <vector>
 
 template<>
+struct R<Core::BaseGraphicsData::Modifier>
+{
+    static constexpr std::string_view Name() { return "Modifier"; }
+    static constexpr std::size_t Size() { return 3; }
+    static constexpr std::string_view ParentScope() { return "Core::BaseGraphicsData"; }
+
+    static std::string_view ToString(::Core::BaseGraphicsData::Modifier value)
+    {
+        const auto& data = R<Core::BaseGraphicsData::Modifier>::ToMapCN();
+        const auto it = data.find(value);
+        if (it != data.end()) [[likely]]
+        {
+            return it->second;
+        }
+        static const std::string_view empty{};
+        return empty;
+    }
+
+    static std::optional<::Core::BaseGraphicsData::Modifier> FromString(std::string_view value)
+    {
+        const auto& data = R<Core::BaseGraphicsData::Modifier>::ToMapNC();
+        const auto it = data.find(value);
+        if (it != data.end()) [[likely]]
+        {
+            return it->second;
+        }
+        return std::nullopt;
+    }
+
+    static constexpr const std::array<::Core::BaseGraphicsData::Modifier, 3>& ToArrayC()
+    {
+        static constexpr std::array<::Core::BaseGraphicsData::Modifier, 3> constants = {
+				::Core::BaseGraphicsData::Modifier::None,
+				::Core::BaseGraphicsData::Modifier::Enable,
+				::Core::BaseGraphicsData::Modifier::Disable
+        };
+
+        return constants;
+    }
+
+    static constexpr const std::array<std::string_view, 3>& ToArrayN()
+    {
+        static constexpr std::array<std::string_view, 3> names = {
+				std::string_view("None"),
+				std::string_view("Enable"),
+				std::string_view("Disable")
+        };
+
+        return names;
+    }
+
+    static const std::unordered_map<::Core::BaseGraphicsData::Modifier, std::string_view>& ToMapCN()
+    {
+        static const std::unordered_map<::Core::BaseGraphicsData::Modifier, std::string_view> map = {
+				{ ::Core::BaseGraphicsData::Modifier::None, "None" },
+				{ ::Core::BaseGraphicsData::Modifier::Enable, "Enable" },
+				{ ::Core::BaseGraphicsData::Modifier::Disable, "Disable" }
+        };
+
+        return map;
+    }
+
+    static const std::unordered_map<std::string_view, ::Core::BaseGraphicsData::Modifier>& ToMapNC()
+    {
+        static const std::unordered_map<std::string_view, ::Core::BaseGraphicsData::Modifier> map = {
+				{ "None", ::Core::BaseGraphicsData::Modifier::None },
+				{ "Enable", ::Core::BaseGraphicsData::Modifier::Enable },
+				{ "Disable", ::Core::BaseGraphicsData::Modifier::Disable }
+        };
+
+        return map;
+    }
+}; // struct R<Core::BaseGraphicsData::Modifier>
+
+template<>
 struct R<Core::BaseGraphicsData::ModifiedValue>
 {
     static constexpr std::string_view Name() { return "ModifiedValue"; }
@@ -156,81 +231,6 @@ struct R<Core::BaseGraphicsData::ModifiedValue>
         return map;
     }
 }; // struct R<Core::BaseGraphicsData::ModifiedValue>
-
-template<>
-struct R<Core::BaseGraphicsData::Modifier>
-{
-    static constexpr std::string_view Name() { return "Modifier"; }
-    static constexpr std::size_t Size() { return 3; }
-    static constexpr std::string_view ParentScope() { return "Core::BaseGraphicsData"; }
-
-    static std::string_view ToString(::Core::BaseGraphicsData::Modifier value)
-    {
-        const auto& data = R<Core::BaseGraphicsData::Modifier>::ToMapCN();
-        const auto it = data.find(value);
-        if (it != data.end()) [[likely]]
-        {
-            return it->second;
-        }
-        static const std::string_view empty{};
-        return empty;
-    }
-
-    static std::optional<::Core::BaseGraphicsData::Modifier> FromString(std::string_view value)
-    {
-        const auto& data = R<Core::BaseGraphicsData::Modifier>::ToMapNC();
-        const auto it = data.find(value);
-        if (it != data.end()) [[likely]]
-        {
-            return it->second;
-        }
-        return std::nullopt;
-    }
-
-    static constexpr const std::array<::Core::BaseGraphicsData::Modifier, 3>& ToArrayC()
-    {
-        static constexpr std::array<::Core::BaseGraphicsData::Modifier, 3> constants = {
-				::Core::BaseGraphicsData::Modifier::None,
-				::Core::BaseGraphicsData::Modifier::Enable,
-				::Core::BaseGraphicsData::Modifier::Disable
-        };
-
-        return constants;
-    }
-
-    static constexpr const std::array<std::string_view, 3>& ToArrayN()
-    {
-        static constexpr std::array<std::string_view, 3> names = {
-				std::string_view("None"),
-				std::string_view("Enable"),
-				std::string_view("Disable")
-        };
-
-        return names;
-    }
-
-    static const std::unordered_map<::Core::BaseGraphicsData::Modifier, std::string_view>& ToMapCN()
-    {
-        static const std::unordered_map<::Core::BaseGraphicsData::Modifier, std::string_view> map = {
-				{ ::Core::BaseGraphicsData::Modifier::None, "None" },
-				{ ::Core::BaseGraphicsData::Modifier::Enable, "Enable" },
-				{ ::Core::BaseGraphicsData::Modifier::Disable, "Disable" }
-        };
-
-        return map;
-    }
-
-    static const std::unordered_map<std::string_view, ::Core::BaseGraphicsData::Modifier>& ToMapNC()
-    {
-        static const std::unordered_map<std::string_view, ::Core::BaseGraphicsData::Modifier> map = {
-				{ "None", ::Core::BaseGraphicsData::Modifier::None },
-				{ "Enable", ::Core::BaseGraphicsData::Modifier::Enable },
-				{ "Disable", ::Core::BaseGraphicsData::Modifier::Disable }
-        };
-
-        return map;
-    }
-}; // struct R<Core::BaseGraphicsData::Modifier>
 
 template<>
 struct R<Core::BaseGraphicsData>

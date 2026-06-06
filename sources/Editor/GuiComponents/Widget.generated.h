@@ -15,89 +15,6 @@
 #include <vector>
 
 template<>
-struct R<Core::Gui::Flex>
-{
-    static constexpr std::string_view Name() { return "Flex"; }
-    static constexpr std::size_t Size() { return 5; }
-    static constexpr std::string_view ParentScope() { return "Core::Gui"; }
-
-    static std::string_view ToString(::Core::Gui::Flex value)
-    {
-        const auto& data = R<Core::Gui::Flex>::ToMapCN();
-        const auto it = data.find(value);
-        if (it != data.end()) [[likely]]
-        {
-            return it->second;
-        }
-        static const std::string_view empty{};
-        return empty;
-    }
-
-    static std::optional<::Core::Gui::Flex> FromString(std::string_view value)
-    {
-        const auto& data = R<Core::Gui::Flex>::ToMapNC();
-        const auto it = data.find(value);
-        if (it != data.end()) [[likely]]
-        {
-            return it->second;
-        }
-        return std::nullopt;
-    }
-
-    static constexpr const std::array<::Core::Gui::Flex, 5>& ToArrayC()
-    {
-        static constexpr std::array<::Core::Gui::Flex, 5> constants = {
-				::Core::Gui::Flex::None,
-				::Core::Gui::Flex::Fixed,
-				::Core::Gui::Flex::FlexWidth,
-				::Core::Gui::Flex::FlexHeight,
-				::Core::Gui::Flex::FlexWidthAndHeight
-        };
-
-        return constants;
-    }
-
-    static constexpr const std::array<std::string_view, 5>& ToArrayN()
-    {
-        static constexpr std::array<std::string_view, 5> names = {
-				std::string_view("None"),
-				std::string_view("Fixed"),
-				std::string_view("FlexWidth"),
-				std::string_view("FlexHeight"),
-				std::string_view("FlexWidthAndHeight")
-        };
-
-        return names;
-    }
-
-    static const std::unordered_map<::Core::Gui::Flex, std::string_view>& ToMapCN()
-    {
-        static const std::unordered_map<::Core::Gui::Flex, std::string_view> map = {
-				{ ::Core::Gui::Flex::None, "None" },
-				{ ::Core::Gui::Flex::Fixed, "Fixed" },
-				{ ::Core::Gui::Flex::FlexWidth, "FlexWidth" },
-				{ ::Core::Gui::Flex::FlexHeight, "FlexHeight" },
-				{ ::Core::Gui::Flex::FlexWidthAndHeight, "FlexWidthAndHeight" }
-        };
-
-        return map;
-    }
-
-    static const std::unordered_map<std::string_view, ::Core::Gui::Flex>& ToMapNC()
-    {
-        static const std::unordered_map<std::string_view, ::Core::Gui::Flex> map = {
-				{ "None", ::Core::Gui::Flex::None },
-				{ "Fixed", ::Core::Gui::Flex::Fixed },
-				{ "FlexWidth", ::Core::Gui::Flex::FlexWidth },
-				{ "FlexHeight", ::Core::Gui::Flex::FlexHeight },
-				{ "FlexWidthAndHeight", ::Core::Gui::Flex::FlexWidthAndHeight }
-        };
-
-        return map;
-    }
-}; // struct R<Core::Gui::Flex>
-
-template<>
 struct R<Core::Gui::Align>
 {
     static constexpr std::string_view Name() { return "Align"; }
@@ -187,6 +104,89 @@ struct R<Core::Gui::Align>
         return map;
     }
 }; // struct R<Core::Gui::Align>
+
+template<>
+struct R<Core::Gui::Flex>
+{
+    static constexpr std::string_view Name() { return "Flex"; }
+    static constexpr std::size_t Size() { return 5; }
+    static constexpr std::string_view ParentScope() { return "Core::Gui"; }
+
+    static std::string_view ToString(::Core::Gui::Flex value)
+    {
+        const auto& data = R<Core::Gui::Flex>::ToMapCN();
+        const auto it = data.find(value);
+        if (it != data.end()) [[likely]]
+        {
+            return it->second;
+        }
+        static const std::string_view empty{};
+        return empty;
+    }
+
+    static std::optional<::Core::Gui::Flex> FromString(std::string_view value)
+    {
+        const auto& data = R<Core::Gui::Flex>::ToMapNC();
+        const auto it = data.find(value);
+        if (it != data.end()) [[likely]]
+        {
+            return it->second;
+        }
+        return std::nullopt;
+    }
+
+    static constexpr const std::array<::Core::Gui::Flex, 5>& ToArrayC()
+    {
+        static constexpr std::array<::Core::Gui::Flex, 5> constants = {
+				::Core::Gui::Flex::None,
+				::Core::Gui::Flex::Fixed,
+				::Core::Gui::Flex::FlexWidth,
+				::Core::Gui::Flex::FlexHeight,
+				::Core::Gui::Flex::FlexWidthAndHeight
+        };
+
+        return constants;
+    }
+
+    static constexpr const std::array<std::string_view, 5>& ToArrayN()
+    {
+        static constexpr std::array<std::string_view, 5> names = {
+				std::string_view("None"),
+				std::string_view("Fixed"),
+				std::string_view("FlexWidth"),
+				std::string_view("FlexHeight"),
+				std::string_view("FlexWidthAndHeight")
+        };
+
+        return names;
+    }
+
+    static const std::unordered_map<::Core::Gui::Flex, std::string_view>& ToMapCN()
+    {
+        static const std::unordered_map<::Core::Gui::Flex, std::string_view> map = {
+				{ ::Core::Gui::Flex::None, "None" },
+				{ ::Core::Gui::Flex::Fixed, "Fixed" },
+				{ ::Core::Gui::Flex::FlexWidth, "FlexWidth" },
+				{ ::Core::Gui::Flex::FlexHeight, "FlexHeight" },
+				{ ::Core::Gui::Flex::FlexWidthAndHeight, "FlexWidthAndHeight" }
+        };
+
+        return map;
+    }
+
+    static const std::unordered_map<std::string_view, ::Core::Gui::Flex>& ToMapNC()
+    {
+        static const std::unordered_map<std::string_view, ::Core::Gui::Flex> map = {
+				{ "None", ::Core::Gui::Flex::None },
+				{ "Fixed", ::Core::Gui::Flex::Fixed },
+				{ "FlexWidth", ::Core::Gui::Flex::FlexWidth },
+				{ "FlexHeight", ::Core::Gui::Flex::FlexHeight },
+				{ "FlexWidthAndHeight", ::Core::Gui::Flex::FlexWidthAndHeight }
+        };
+
+        return map;
+    }
+}; // struct R<Core::Gui::Flex>
 
 template<>
 struct R<Core::Gui::Widget>

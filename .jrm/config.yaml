@@ -11,6 +11,7 @@ excludedPaths:
   - data
   - docs
   - cmake
+  - out
 
 # Array of the file extensions that will be scanned through the filesystem.
 parsableFileExtensions:
