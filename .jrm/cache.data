@@ -77,6 +77,7 @@
 1780519807976412580 sources/GameplaySystem/Framework/World.h
 1780256529365589330 sources/GameplaySystem/Framework/WorldObject.h
 1780256529283577968 sources/GameplaySystem/Framework/WorldObjectManager.h
+1780765196389467477 sources/Graphics/Graphics.h
 1780519808013412654 sources/Graphics/GraphicsComponents.h
 1780519807949412527 sources/Graphics/IDrawable.h
 1780256529535612887 sources/Graphics/IOutliner.h
@@ -106,7 +107,7 @@
 1780256529663630622 sources/ResourceManagement/DataStream.h
 1780256529056546513 sources/ResourceManagement/JsonAdapter.h
 1780701363872350835 sources/ResourceManagement/ModuleInfo.h
-1780703660853462422 sources/ResourceManagement/ResourceManager.h
+1780703773228457888 sources/ResourceManagement/ResourceManager.h
 1780256530186702966 sources/Scene/Grid.h
 1779478841149792578 sources/Scene/IRenderable.h
 1780256529380591409 sources/Scene/ModuleInfo.h

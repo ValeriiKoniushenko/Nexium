@@ -33,6 +33,41 @@ add_custom_target(CodeGenerator ALL
     COMMAND jrm ${CMAKE_SOURCE_DIR}
 )
 
+
+# ── Graphics backend selection ────────────────────────────────────────────────
+#
+# Usage:
+#   cmake -B build -DNEXIUM_GRAPHICS_BACKEND=opengl   # default
+#   cmake -B build -DNEXIUM_GRAPHICS_BACKEND=null      # headless / tests
+
+set(NEXIUM_GRAPHICS_BACKEND "opengl" CACHE STRING "Graphics backend: opengl | null")
+set_property(CACHE NEXIUM_GRAPHICS_BACKEND PROPERTY STRINGS opengl null)
+
+set(GRAPHICS_ALIAS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/sources/Graphics")
+message(STATUS "NEXIUM_GRAPHICS_BACKEND: '${NEXIUM_GRAPHICS_BACKEND}'")
+
+if (NEXIUM_GRAPHICS_BACKEND STREQUAL "opengl")
+    file(WRITE "${GRAPHICS_ALIAS_DIR}/Graphics.h"
+        "#pragma once\n\n"
+        "#include \" GLGraphics.h\"\n\n"
+        "using Graphics = GLGraphics;\n"
+    )
+    set(GRAPHICS_BACKEND_SOURCES
+        "${CMAKE_CURRENT_SOURCE_DIR}/sources/Graphics/Implementations/OpenGL/GLGraphics.cpp"
+    )
+    set(GRAPHICS_BACKEND_LIBS Core::Glad)
+elseif (NEXIUM_GRAPHICS_BACKEND STREQUAL "null")
+    file(WRITE "${GRAPHICS_ALIAS_DIR}/Graphics.h"
+        "#pragma once\n"
+        "#include \"NullGraphics.hpp\"\n"
+        "using Graphics = NullGraphics;\n"
+    )
+    set(GRAPHICS_BACKEND_SOURCES "")   # NullGraphics is header-only
+    set(GRAPHICS_BACKEND_LIBS "")
+else ()
+    message(FATAL_ERROR "Unknown NEXIUM_GRAPHICS_BACKEND: '${NEXIUM_GRAPHICS_BACKEND}'")
+endif ()
+
 # ========= Main deps pipeline =========
 add_subdirectory(dependencies)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FetchDependencies.cmake)

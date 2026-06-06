@@ -91,9 +91,12 @@ namespace Core
 
     void Texture::release()
     {
-        glDeleteTextures(1, &_textureId);
-        _textureId = 0;
-        _size = {};
+        if (_size.height != 0 && _textureId != 0)
+        {
+            glDeleteTextures(1, &_textureId);
+            _textureId = 0;
+            _size = {};
+        }
     }
 
     void Texture::activateTextureUnit(GLuint unit) const

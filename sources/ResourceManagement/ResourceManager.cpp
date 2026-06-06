@@ -70,7 +70,7 @@ namespace Core::Test
         }
 
         auto texture = Texture::Create();
-        if (texture->loadFromFile(p, isFlipVertically))
+        if (texture->loadFromFile(Config::Path::projectAbsPath / p, isFlipVertically))
         {
             criticalLog("The texture wasn't loaded by the next path: {}"_f << path);
             return {};

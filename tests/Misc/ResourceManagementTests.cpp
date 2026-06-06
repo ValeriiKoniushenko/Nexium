@@ -31,6 +31,12 @@ using namespace Core;
 TEST(ResourceManagementTests, Main)
 {
     auto& am = Core::Test::GetAssetsManager();
-    auto t = am.getTexture("/home/valerii/workspace/Nexium/data/assets/images/document.png");
+    auto t1 = am.getTexture("/home/valerii/workspace/Nexium/data/assets/images/document.png");
+    auto t2 = am.getTexture("/home/valerii/workspace/Nexium/data/assets/images/document.png");
+    auto t3 = am.getTexture("data/assets/images/document.png");
+
+    ASSERT_EQ(t1.get(), t2.get());
+    ASSERT_EQ(t1.get(), t3.get());
+
     int i = 1;
 }
