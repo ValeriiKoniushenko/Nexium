@@ -23,6 +23,7 @@ target_include_directories(${TARGET_NAME} PUBLIC ..)
 
 target_link_libraries(${TARGET_NAME} PUBLIC
     Utils::Core
+    Utils::Utils
     spdlog::spdlog
     nlohmann_json
     JustReflectMe::Adapter

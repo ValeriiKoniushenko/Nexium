@@ -146,8 +146,8 @@ namespace Core::Test
                     warnLog(
                         "toProjectRelativePath: component '{}' appears to be a Windows shell "
                         "link (.lnk). Stripping extension lexically - real link target requires "
-                        "FS access and is NOT resolved.",
-                        str);
+                        "FS access and is NOT resolved."_f
+                        << str);
                     result /= fs::path(stripped);
                     continue;
                 }
