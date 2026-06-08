@@ -20,6 +20,8 @@ function(CoreAddCompileOptionsTo Target)
         )
 
         target_compile_definitions(${Target} PRIVATE -DNOMINMAX)
+    elseif (MINGW)
+        target_link_options(${Target} PRIVATE -Wl,--allow-multiple-definition)
     else ()
         target_compile_options(${Target} PRIVATE
             "-Wall"

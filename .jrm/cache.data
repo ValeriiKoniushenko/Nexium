@@ -74,7 +74,7 @@
 134252334965746964 sources/GameplaySystem/Framework/World.h
 134252334965757045 sources/GameplaySystem/Framework/WorldObject.h
 134252334965767048 sources/GameplaySystem/Framework/WorldObjectManager.h
-134254147385621181 sources/Graphics/Graphics.h
+134254165969852895 sources/Graphics/Graphics.h
 134252334965802098 sources/Graphics/GraphicsComponents.h
 134252334965815236 sources/Graphics/IDrawable.h
 134252334965825351 sources/Graphics/IOutliner.h
@@ -115,3 +115,6 @@
 134252334966346279 tests/ECSTests/DummyComponent.h
 134252334966346279 tests/ECSTests/DummyComponent.h
 134252334966346279 tests/ECSTests/DummyComponent.h
+134252334966346279 tests/ECSTests/DummyComponent.h
+134252334966346279 tests/ECSTests/DummyComponent.h
+134252334966346279 tests/ECSTests/DummyComponent.h

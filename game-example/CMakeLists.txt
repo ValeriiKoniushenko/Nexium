@@ -11,4 +11,9 @@ target_link_libraries(${TARGET_NAME} PUBLIC
     Nexium::Core
 )
 
+if(MINGW)
+    target_link_options(TemplateGame PRIVATE -Wl,--allow-multiple-definition)
+endif()
+
+
 CoreAddCompileOptionsTo(${TARGET_NAME})
