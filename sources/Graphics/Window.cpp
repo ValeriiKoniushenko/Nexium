@@ -100,6 +100,26 @@ namespace Core
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_MAXIMIZED, _isMaximized ? GLFW_TRUE : GLFW_FALSE);
 
+        if (!((_window
+       = glfwCreateWindow(_size.width, _size.height, title.c_str(), nullptr, nullptr))))
+        {
+            glfwTerminate();
+            criticalThrowingLog("Failed to create GLFW window");
+        }
+
+        debugLog("The window was created");
+
+        glfwMakeContextCurrent(_window);
+        if (_isMaximized)
+        {
+            glfwMaximizeWindow(_window);
+        }
+
+        if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
+        {
+            criticalThrowingLog("Impossible to initialize GLAD.");
+        }
+
 #if defined(_DEBUG)
         glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
         glEnable(GL_DEBUG_OUTPUT);
@@ -128,20 +148,6 @@ namespace Core
             _size = ISize2{ 300, 300 };
         }
 
-        if (!((_window
-               = glfwCreateWindow(_size.width, _size.height, title.c_str(), nullptr, nullptr))))
-        {
-            glfwTerminate();
-            criticalThrowingLog("Failed to create GLFW window");
-        }
-
-        debugLog("The window was created");
-
-        glfwMakeContextCurrent(_window);
-        if (_isMaximized)
-        {
-            glfwMaximizeWindow(_window);
-        }
 
         glfwSetMouseButtonCallback(_window, MouseKeyPressHandler);
         glfwSetCursorPosCallback(_window, MouseMoveHandler);
@@ -151,11 +157,6 @@ namespace Core
         glfwSetScrollCallback(_window, MouseScrollHandler);
         glfwSetWindowSizeCallback(_window, WindowSizeCallback);
         glfwSwapInterval(_swapInterval);
-
-        if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
-        {
-            criticalThrowingLog("Impossible to initialize GLAD.");
-        }
 
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
