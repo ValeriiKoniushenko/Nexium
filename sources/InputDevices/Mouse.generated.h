@@ -13,15 +13,15 @@
 #include <unordered_map>
 
 template<>
-struct R<Core::Mouse::Mod>
+struct R<Core::Mouse::State>
 {
-    static constexpr std::string_view Name() { return "Mod"; }
-    static constexpr std::size_t Size() { return 7; }
+    static constexpr std::string_view Name() { return "State"; }
+    static constexpr std::size_t Size() { return 3; }
     static constexpr std::string_view ParentScope() { return "Core::Mouse"; }
 
-    static std::string_view ToString(::Core::Mouse::Mod value)
+    static std::string_view ToString(::Core::Mouse::State value)
     {
-        const auto& data = R<Core::Mouse::Mod>::ToMapCN();
+        const auto& data = R<Core::Mouse::State>::ToMapCN();
         const auto it = data.find(value);
         if (it != data.end()) [[likely]]
         {
@@ -31,9 +31,9 @@ struct R<Core::Mouse::Mod>
         return empty;
     }
 
-    static std::optional<::Core::Mouse::Mod> FromString(std::string_view value)
+    static std::optional<::Core::Mouse::State> FromString(std::string_view value)
     {
-        const auto& data = R<Core::Mouse::Mod>::ToMapNC();
+        const auto& data = R<Core::Mouse::State>::ToMapNC();
         const auto it = data.find(value);
         if (it != data.end()) [[likely]]
         {
@@ -42,66 +42,50 @@ struct R<Core::Mouse::Mod>
         return std::nullopt;
     }
 
-    static constexpr const std::array<::Core::Mouse::Mod, 7>& ToArrayC()
+    static constexpr const std::array<::Core::Mouse::State, 3>& ToArrayC()
     {
-        static constexpr std::array<::Core::Mouse::Mod, 7> constants = {
-				::Core::Mouse::Mod::None,
-				::Core::Mouse::Mod::Shift,
-				::Core::Mouse::Mod::Control,
-				::Core::Mouse::Mod::Alt,
-				::Core::Mouse::Mod::Super,
-				::Core::Mouse::Mod::CapsLock,
-				::Core::Mouse::Mod::NumLock
+        static constexpr std::array<::Core::Mouse::State, 3> constants = {
+				::Core::Mouse::State::None,
+				::Core::Mouse::State::Press,
+				::Core::Mouse::State::Release
         };
 
         return constants;
     }
 
-    static constexpr const std::array<std::string_view, 7>& ToArrayN()
+    static constexpr const std::array<std::string_view, 3>& ToArrayN()
     {
-        static constexpr std::array<std::string_view, 7> names = {
+        static constexpr std::array<std::string_view, 3> names = {
 				std::string_view("None"),
-				std::string_view("Shift"),
-				std::string_view("Control"),
-				std::string_view("Alt"),
-				std::string_view("Super"),
-				std::string_view("CapsLock"),
-				std::string_view("NumLock")
+				std::string_view("Press"),
+				std::string_view("Release")
         };
 
         return names;
     }
 
-    static const std::unordered_map<::Core::Mouse::Mod, std::string_view>& ToMapCN()
+    static const std::unordered_map<::Core::Mouse::State, std::string_view>& ToMapCN()
     {
-        static const std::unordered_map<::Core::Mouse::Mod, std::string_view> map = {
-				{ ::Core::Mouse::Mod::None, "None" },
-				{ ::Core::Mouse::Mod::Shift, "Shift" },
-				{ ::Core::Mouse::Mod::Control, "Control" },
-				{ ::Core::Mouse::Mod::Alt, "Alt" },
-				{ ::Core::Mouse::Mod::Super, "Super" },
-				{ ::Core::Mouse::Mod::CapsLock, "CapsLock" },
-				{ ::Core::Mouse::Mod::NumLock, "NumLock" }
+        static const std::unordered_map<::Core::Mouse::State, std::string_view> map = {
+				{ ::Core::Mouse::State::None, "None" },
+				{ ::Core::Mouse::State::Press, "Press" },
+				{ ::Core::Mouse::State::Release, "Release" }
         };
 
         return map;
     }
 
-    static const std::unordered_map<std::string_view, ::Core::Mouse::Mod>& ToMapNC()
+    static const std::unordered_map<std::string_view, ::Core::Mouse::State>& ToMapNC()
     {
-        static const std::unordered_map<std::string_view, ::Core::Mouse::Mod> map = {
-				{ "None", ::Core::Mouse::Mod::None },
-				{ "Shift", ::Core::Mouse::Mod::Shift },
-				{ "Control", ::Core::Mouse::Mod::Control },
-				{ "Alt", ::Core::Mouse::Mod::Alt },
-				{ "Super", ::Core::Mouse::Mod::Super },
-				{ "CapsLock", ::Core::Mouse::Mod::CapsLock },
-				{ "NumLock", ::Core::Mouse::Mod::NumLock }
+        static const std::unordered_map<std::string_view, ::Core::Mouse::State> map = {
+				{ "None", ::Core::Mouse::State::None },
+				{ "Press", ::Core::Mouse::State::Press },
+				{ "Release", ::Core::Mouse::State::Release }
         };
 
         return map;
     }
-}; // struct R<Core::Mouse::Mod>
+}; // struct R<Core::Mouse::State>
 
 template<>
 struct R<Core::Mouse::Key>
@@ -219,15 +203,15 @@ struct R<Core::Mouse::Key>
 }; // struct R<Core::Mouse::Key>
 
 template<>
-struct R<Core::Mouse::State>
+struct R<Core::Mouse::Mod>
 {
-    static constexpr std::string_view Name() { return "State"; }
-    static constexpr std::size_t Size() { return 3; }
+    static constexpr std::string_view Name() { return "Mod"; }
+    static constexpr std::size_t Size() { return 7; }
     static constexpr std::string_view ParentScope() { return "Core::Mouse"; }
 
-    static std::string_view ToString(::Core::Mouse::State value)
+    static std::string_view ToString(::Core::Mouse::Mod value)
     {
-        const auto& data = R<Core::Mouse::State>::ToMapCN();
+        const auto& data = R<Core::Mouse::Mod>::ToMapCN();
         const auto it = data.find(value);
         if (it != data.end()) [[likely]]
         {
@@ -237,9 +221,9 @@ struct R<Core::Mouse::State>
         return empty;
     }
 
-    static std::optional<::Core::Mouse::State> FromString(std::string_view value)
+    static std::optional<::Core::Mouse::Mod> FromString(std::string_view value)
     {
-        const auto& data = R<Core::Mouse::State>::ToMapNC();
+        const auto& data = R<Core::Mouse::Mod>::ToMapNC();
         const auto it = data.find(value);
         if (it != data.end()) [[likely]]
         {
@@ -248,49 +232,65 @@ struct R<Core::Mouse::State>
         return std::nullopt;
     }
 
-    static constexpr const std::array<::Core::Mouse::State, 3>& ToArrayC()
+    static constexpr const std::array<::Core::Mouse::Mod, 7>& ToArrayC()
     {
-        static constexpr std::array<::Core::Mouse::State, 3> constants = {
-				::Core::Mouse::State::None,
-				::Core::Mouse::State::Press,
-				::Core::Mouse::State::Release
+        static constexpr std::array<::Core::Mouse::Mod, 7> constants = {
+				::Core::Mouse::Mod::None,
+				::Core::Mouse::Mod::Shift,
+				::Core::Mouse::Mod::Control,
+				::Core::Mouse::Mod::Alt,
+				::Core::Mouse::Mod::Super,
+				::Core::Mouse::Mod::CapsLock,
+				::Core::Mouse::Mod::NumLock
         };
 
         return constants;
     }
 
-    static constexpr const std::array<std::string_view, 3>& ToArrayN()
+    static constexpr const std::array<std::string_view, 7>& ToArrayN()
     {
-        static constexpr std::array<std::string_view, 3> names = {
+        static constexpr std::array<std::string_view, 7> names = {
 				std::string_view("None"),
-				std::string_view("Press"),
-				std::string_view("Release")
+				std::string_view("Shift"),
+				std::string_view("Control"),
+				std::string_view("Alt"),
+				std::string_view("Super"),
+				std::string_view("CapsLock"),
+				std::string_view("NumLock")
         };
 
         return names;
     }
 
-    static const std::unordered_map<::Core::Mouse::State, std::string_view>& ToMapCN()
+    static const std::unordered_map<::Core::Mouse::Mod, std::string_view>& ToMapCN()
     {
-        static const std::unordered_map<::Core::Mouse::State, std::string_view> map = {
-				{ ::Core::Mouse::State::None, "None" },
-				{ ::Core::Mouse::State::Press, "Press" },
-				{ ::Core::Mouse::State::Release, "Release" }
+        static const std::unordered_map<::Core::Mouse::Mod, std::string_view> map = {
+				{ ::Core::Mouse::Mod::None, "None" },
+				{ ::Core::Mouse::Mod::Shift, "Shift" },
+				{ ::Core::Mouse::Mod::Control, "Control" },
+				{ ::Core::Mouse::Mod::Alt, "Alt" },
+				{ ::Core::Mouse::Mod::Super, "Super" },
+				{ ::Core::Mouse::Mod::CapsLock, "CapsLock" },
+				{ ::Core::Mouse::Mod::NumLock, "NumLock" }
         };
 
         return map;
     }
 
-    static const std::unordered_map<std::string_view, ::Core::Mouse::State>& ToMapNC()
+    static const std::unordered_map<std::string_view, ::Core::Mouse::Mod>& ToMapNC()
     {
-        static const std::unordered_map<std::string_view, ::Core::Mouse::State> map = {
-				{ "None", ::Core::Mouse::State::None },
-				{ "Press", ::Core::Mouse::State::Press },
-				{ "Release", ::Core::Mouse::State::Release }
+        static const std::unordered_map<std::string_view, ::Core::Mouse::Mod> map = {
+				{ "None", ::Core::Mouse::Mod::None },
+				{ "Shift", ::Core::Mouse::Mod::Shift },
+				{ "Control", ::Core::Mouse::Mod::Control },
+				{ "Alt", ::Core::Mouse::Mod::Alt },
+				{ "Super", ::Core::Mouse::Mod::Super },
+				{ "CapsLock", ::Core::Mouse::Mod::CapsLock },
+				{ "NumLock", ::Core::Mouse::Mod::NumLock }
         };
 
         return map;
     }
-}; // struct R<Core::Mouse::State>
+}; // struct R<Core::Mouse::Mod>
 
 // clang-format on
