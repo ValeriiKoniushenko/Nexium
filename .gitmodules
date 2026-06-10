@@ -1,0 +1,23 @@
+[submodule "dependencies/nlohmann_json"]
+	path = dependencies/nlohmann_json
+	url = https://github.com/nlohmann/json.git
+[submodule "dependencies/glfw"]
+	path = dependencies/glfw
+	url = https://github.com/glfw/glfw.git
+[submodule "dependencies/spdlog"]
+	path = dependencies/spdlog
+	url = https://github.com/gabime/spdlog.git
+[submodule "dependencies/assimp"]
+	path = dependencies/assimp
+	url = https://github.com/assimp/assimp.git
+[submodule "dependencies/freetype"]
+	path = dependencies/freetype
+	url = https://github.com/freetype/freetype.git
+[submodule "dependencies/Utils"]
+	path = dependencies/Utils
+	url = https://github.com/ValeriiKoniushenko/Utils.git
+	branch = develop
+[submodule "dependencies/JustReflectMe"]
+	path = dependencies/JustReflectMe
+	url = https://github.com/ValeriiKoniushenko/JustReflectMe.git
+	branch = develop
