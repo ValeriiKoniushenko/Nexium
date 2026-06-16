@@ -15,81 +15,6 @@
 #include <vector>
 
 template<>
-struct R<Core::Window::CursorMode>
-{
-    static constexpr std::string_view Name() { return "CursorMode"; }
-    static constexpr std::size_t Size() { return 3; }
-    static constexpr std::string_view ParentScope() { return "Core::Window"; }
-
-    static std::string_view ToString(::Core::Window::CursorMode value)
-    {
-        const auto& data = R<Core::Window::CursorMode>::ToMapCN();
-        const auto it = data.find(value);
-        if (it != data.end()) [[likely]]
-        {
-            return it->second;
-        }
-        static const std::string_view empty{};
-        return empty;
-    }
-
-    static std::optional<::Core::Window::CursorMode> FromString(std::string_view value)
-    {
-        const auto& data = R<Core::Window::CursorMode>::ToMapNC();
-        const auto it = data.find(value);
-        if (it != data.end()) [[likely]]
-        {
-            return it->second;
-        }
-        return std::nullopt;
-    }
-
-    static constexpr const std::array<::Core::Window::CursorMode, 3>& ToArrayC()
-    {
-        static constexpr std::array<::Core::Window::CursorMode, 3> constants = {
-				::Core::Window::CursorMode::Normal,
-				::Core::Window::CursorMode::Disabled,
-				::Core::Window::CursorMode::Hidden
-        };
-
-        return constants;
-    }
-
-    static constexpr const std::array<std::string_view, 3>& ToArrayN()
-    {
-        static constexpr std::array<std::string_view, 3> names = {
-				std::string_view("Normal"),
-				std::string_view("Disabled"),
-				std::string_view("Hidden")
-        };
-
-        return names;
-    }
-
-    static const std::unordered_map<::Core::Window::CursorMode, std::string_view>& ToMapCN()
-    {
-        static const std::unordered_map<::Core::Window::CursorMode, std::string_view> map = {
-				{ ::Core::Window::CursorMode::Normal, "Normal" },
-				{ ::Core::Window::CursorMode::Disabled, "Disabled" },
-				{ ::Core::Window::CursorMode::Hidden, "Hidden" }
-        };
-
-        return map;
-    }
-
-    static const std::unordered_map<std::string_view, ::Core::Window::CursorMode>& ToMapNC()
-    {
-        static const std::unordered_map<std::string_view, ::Core::Window::CursorMode> map = {
-				{ "Normal", ::Core::Window::CursorMode::Normal },
-				{ "Disabled", ::Core::Window::CursorMode::Disabled },
-				{ "Hidden", ::Core::Window::CursorMode::Hidden }
-        };
-
-        return map;
-    }
-}; // struct R<Core::Window::CursorMode>
-
-template<>
 struct R<Core::DragAndDrop::State>
 {
     static constexpr std::string_view Name() { return "State"; }
@@ -163,6 +88,81 @@ struct R<Core::DragAndDrop::State>
         return map;
     }
 }; // struct R<Core::DragAndDrop::State>
+
+template<>
+struct R<Core::Window::CursorMode>
+{
+    static constexpr std::string_view Name() { return "CursorMode"; }
+    static constexpr std::size_t Size() { return 3; }
+    static constexpr std::string_view ParentScope() { return "Core::Window"; }
+
+    static std::string_view ToString(::Core::Window::CursorMode value)
+    {
+        const auto& data = R<Core::Window::CursorMode>::ToMapCN();
+        const auto it = data.find(value);
+        if (it != data.end()) [[likely]]
+        {
+            return it->second;
+        }
+        static const std::string_view empty{};
+        return empty;
+    }
+
+    static std::optional<::Core::Window::CursorMode> FromString(std::string_view value)
+    {
+        const auto& data = R<Core::Window::CursorMode>::ToMapNC();
+        const auto it = data.find(value);
+        if (it != data.end()) [[likely]]
+        {
+            return it->second;
+        }
+        return std::nullopt;
+    }
+
+    static constexpr const std::array<::Core::Window::CursorMode, 3>& ToArrayC()
+    {
+        static constexpr std::array<::Core::Window::CursorMode, 3> constants = {
+				::Core::Window::CursorMode::Normal,
+				::Core::Window::CursorMode::Disabled,
+				::Core::Window::CursorMode::Hidden
+        };
+
+        return constants;
+    }
+
+    static constexpr const std::array<std::string_view, 3>& ToArrayN()
+    {
+        static constexpr std::array<std::string_view, 3> names = {
+				std::string_view("Normal"),
+				std::string_view("Disabled"),
+				std::string_view("Hidden")
+        };
+
+        return names;
+    }
+
+    static const std::unordered_map<::Core::Window::CursorMode, std::string_view>& ToMapCN()
+    {
+        static const std::unordered_map<::Core::Window::CursorMode, std::string_view> map = {
+				{ ::Core::Window::CursorMode::Normal, "Normal" },
+				{ ::Core::Window::CursorMode::Disabled, "Disabled" },
+				{ ::Core::Window::CursorMode::Hidden, "Hidden" }
+        };
+
+        return map;
+    }
+
+    static const std::unordered_map<std::string_view, ::Core::Window::CursorMode>& ToMapNC()
+    {
+        static const std::unordered_map<std::string_view, ::Core::Window::CursorMode> map = {
+				{ "Normal", ::Core::Window::CursorMode::Normal },
+				{ "Disabled", ::Core::Window::CursorMode::Disabled },
+				{ "Hidden", ::Core::Window::CursorMode::Hidden }
+        };
+
+        return map;
+    }
+}; // struct R<Core::Window::CursorMode>
 
 template<>
 struct R<Core::Window>

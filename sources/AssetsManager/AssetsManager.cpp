@@ -46,10 +46,10 @@
 using namespace Core;
 
 namespace fs = std::filesystem;
+
 namespace
 {
-
-    template<class T>
+    template <class T>
     T getAssetOf(const StringAtom& logicPath,
                  std::unordered_map<StringAtom, AssetRef<BaseAsset>>& lookupContainer)
     {
@@ -94,7 +94,7 @@ namespace
             }
 
             GetAssetsManager().criticalLog("Asset is not found by the next path: {}"_f
-                                           << logicPath);
+                << logicPath);
             return T();
         }
 
@@ -109,12 +109,67 @@ namespace Core
         registerNewAssetPath(Config::Path::data);
     }
 
-    void AssetsManager::rescanFileSystem()
+    void AssetsManager::initScanFileSystem()
     {
-        _textures.clear();
-        _skyboxes.clear();
-        _assets.clear();
+        static std::once_flag flag;
 
+        std::call_once(flag, [this]()
+        {
+            _textures.clear();
+            _skyboxes.clear();
+            _assets.clear();
+
+            for (auto&& path : _registeredPaths)
+            {
+                try
+                {
+                    for (const auto& entry : fs::recursive_directory_iterator(path))
+                    {
+                        if (!entry.is_regular_file())
+                        {
+                            continue;
+                        }
+
+                        const auto absPath = fs::absolute(entry.path());
+                        const auto ext = absPath.extension().generic_string();
+
+                        // check for non baked
+                        if (ext.size() < 3 || strncmp(ext.c_str(), ".nx", 3) != 0)
+                        {
+                            continue;
+                        }
+
+                        auto relPath = fs::relative(absPath, Config::Path::projectAbsPath);
+
+                        auto id = StringAtom::Intern(relPath.generic_string());
+                        if (ext == ".nx")
+                        {
+                            _assets.emplace(id, new ECSAsset(id))
+                                   .first->second->connectSourceFile(absPath);
+                        }
+                        if (ext == NXTexture::AssetT::fileExtension)
+                        {
+                            _textures.emplace(id, new TextureAsset(id))
+                                     .first->second->attachAndReadFromFile(absPath);
+                        }
+                        else if (ext == NXSkybox::AssetT::fileExtension)
+                        {
+                            _skyboxes.emplace(id, new SkyboxAsset(id))
+                                     .first->second->attachAndReadFromFile(absPath);
+                        }
+                    }
+                }
+                catch (fs::filesystem_error& e)
+                {
+                    criticalLog("Got a error while scanning a folder '{}' for assets. Details: {}"_f
+                        << path.generic_string() << e.what());
+                }
+            }
+        });
+    }
+
+    void AssetsManager::refreshFilesSystem()
+    {
         for (auto&& path : _registeredPaths)
         {
             try
@@ -129,36 +184,32 @@ namespace Core
                     const auto absPath = fs::absolute(entry.path());
                     const auto ext = absPath.extension().generic_string();
 
-                    // check for non baked
-                    if (ext.size() < 3 || strncmp(ext.c_str(), ".nx", 3) != 0)
-                    {
-                        continue;
-                    }
-
                     auto relPath = fs::relative(absPath, Config::Path::projectAbsPath);
 
                     auto id = StringAtom::Intern(relPath.generic_string());
                     if (ext == ".nx")
                     {
                         _assets.emplace(id, new ECSAsset(id))
-                            .first->second->connectSourceFile(absPath);
+                               .first->second->connectSourceFile(absPath);
                     }
                     if (ext == NXTexture::AssetT::fileExtension)
                     {
-                        _textures.emplace(id, new TextureAsset(id))
-                            .first->second->attachAndReadFromFile(absPath);
+                        if (_textures.contains(id))
+                        {
+                            _textures[id]->attachAndReadFromFile(absPath);
+                        }
                     }
                     else if (ext == NXSkybox::AssetT::fileExtension)
                     {
                         _skyboxes.emplace(id, new SkyboxAsset(id))
-                            .first->second->attachAndReadFromFile(absPath);
+                                 .first->second->attachAndReadFromFile(absPath);
                     }
                 }
             }
             catch (fs::filesystem_error& e)
             {
                 criticalLog("Got a error while scanning a folder '{}' for assets. Details: {}"_f
-                            << path.generic_string() << e.what());
+                    << path.generic_string() << e.what());
             }
         }
     }
@@ -401,7 +452,7 @@ namespace Core
         {
             Assert(false);
             traceLog("Path is invalid. Expected extension is {} but passed {}"_f << requiredExt
-                                                                                 << found);
+                << found);
             return false;
         }
 

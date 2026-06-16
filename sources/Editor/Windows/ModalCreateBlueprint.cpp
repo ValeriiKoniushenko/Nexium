@@ -180,7 +180,7 @@ namespace Core
                                              _pathField->input->getInputtedData());
 
                     closeWindow();
-                    GetAssetsManager().rescanFileSystem();
+                    GetAssetsManager().refreshFilesSystem();
                 });
 
             _cancelButton = h->addChildComponent<Gui::Button>("Cancel");
