@@ -83,7 +83,7 @@ namespace Core
                                                                  { updateViewport(); });
 
         //-------------------- ASSETS MANAGER ---------------------
-        GetAssetsManager().rescanFileSystem();
+        GetAssetsManager().initScanFileSystem();
 
         //-------------------- SHADER MANAGER ---------------------
         shaderManager.loadShaders(Config::Path::shaders);
