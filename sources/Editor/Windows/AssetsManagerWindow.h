@@ -104,6 +104,16 @@ namespace Core
     private:
         [[nodiscard]] bool isFiltered(const std::filesystem::path& p) const;
 
+
+        // -------------- LOGIC -------------------------
+        void renameFile(std::filesystem::path& path, const std::string& originalFileName,
+                        glm::vec2 size) const;
+
+        // -------------- RENDER -------------------------
+        void drawToolTip(const std::filesystem::directory_entry& entry) const;
+        void drawContextMenu(const std::filesystem::directory_entry& entry, bool& invalidate, bool& needOpen);
+
+
         void drawExplorerTree();
 
         void drawExplorer();
