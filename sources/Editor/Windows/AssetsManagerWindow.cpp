@@ -428,61 +428,102 @@ namespace Core
         }
     }
 
-    void AssetsManagerWindowEWC::drawContextMenu(const std::filesystem::directory_entry& entry, bool& invalidate,
-                                                 bool& needOpen)
+    void AssetsManagerWindowEWC::drawExplorerContextMenu()
     {
-        const auto path = entry.path();
+        if (ImGui::BeginPopupContextWindow("ExplorerContextMenu",
+                                      ImGuiPopupFlags_MouseButtonRight
+                                          | ImGuiPopupFlags_NoOpenOverItems))
+        {
+            if (ImGui::MenuItem(ICON_FA_CHEVRON_LEFT " Back"))
+            {
+                tryOpenParentDir();
+            }
+            if (!_selectedPath.empty() && ImGui::MenuItem(ICON_FA_ARROW_DOWN " Paste"))
+            {
+                pasteTo(_openedPath);
+            }
+            if (ImGui::MenuItem(ICON_FA_REFRESH " Refresh"))
+            {
+                refresh();
+            }
+            if (ImGui::MenuItem(ICON_FA_PLUS " Create a folder"))
+            {
+                createFolderAutoName(_openedPath);
+            }
+            if (ImGui::MenuItem(ICON_FA_PLUS " Create a file"))
+            {
+                createFileAutoName(_openedPath);
+            }
 
-        if (ImGui::MenuItem(ICON_FA_FOLDER_OPEN_O " Open"))
-        {
-            needOpen = true;
+            ImGui::Separator();
+
+            if (ImGui::MenuItem("Open in explorer"))
+            {
+                AssetsManager::OpenPathFromOSExplorer(_openedPath);
+            }
+
+            ImGui::EndPopup();
         }
-        if (ImGui::MenuItem(ICON_FA_FILES_O " Copy"))
+    }
+
+    void AssetsManagerWindowEWC::drawAssetsContextMenu(const std::filesystem::directory_entry& entry, bool& invalidate,
+                                                       bool& needOpen)
+    {
+        const auto& path = entry.path();
+        if (ImGui::BeginPopup(path.filename().generic_string().c_str()))
         {
-            copyFrom(path);
-        }
-        if (ImGui::MenuItem(ICON_FA_SCISSORS " Cut"))
-        {
-            cutFrom(path);
-        }
-        if (!_selectedPath.empty() && entry.is_directory()
-            && ImGui::MenuItem(ICON_FA_ARROW_DOWN " Paste"))
-        {
-            pasteTo(path);
-        }
-        if (ImGui::MenuItem(ICON_FA_TRASH " Delete"))
-        {
-            ModalPopUp::Open("Do you really want to delete the {}: {}?"_f
+            if (ImGui::MenuItem(ICON_FA_FOLDER_OPEN_O " Open"))
+            {
+                needOpen = true;
+            }
+            if (ImGui::MenuItem(ICON_FA_FILES_O " Copy"))
+            {
+                copyFrom(path);
+            }
+            if (ImGui::MenuItem(ICON_FA_SCISSORS " Cut"))
+            {
+                cutFrom(path);
+            }
+            if (!_selectedPath.empty() && entry.is_directory()
+                && ImGui::MenuItem(ICON_FA_ARROW_DOWN " Paste"))
+            {
+                pasteTo(path);
+            }
+            if (ImGui::MenuItem(ICON_FA_TRASH " Delete"))
+            {
+                ModalPopUp::Open("Do you really want to delete the {}: {}?"_f
                                  << (entry.is_directory() ? "directory" : "file")
                                  << path.generic_string(),
-                             [this, path](bool isOk)
-                             {
-                                 if (isOk)
+                                 [this, path](const bool isOk)
                                  {
-                                     deleteAt(path);
-                                 }
-                             });
+                                     if (isOk)
+                                     {
+                                         deleteAt(path);
+                                     }
+                                 });
 
-            invalidate = true;
-        }
-
-        ImGui::Separator();
-
-        if (ImGui::MenuItem("Open in explorer"))
-        {
-            AssetsManager::OpenPathFromOSExplorer(entry.is_directory() ? path : _openedPath);
-        }
-
-        const auto weakAsset = GetAssetsManager().getWeakAssetByPath(path.generic_string());
-        if (auto asset = weakAsset.tryLoad();
-            asset && asset->canProcessAction(AssetAction::AA_Spawn))
-        {
-            if (ImGui::MenuItem("Spawn on scene"))
-            {
-                asset->processAction(AssetAction::AA_Spawn);
+                invalidate = true;
             }
-        }
 
+            ImGui::Separator();
+
+            if (ImGui::MenuItem("Open in explorer"))
+            {
+                AssetsManager::OpenPathFromOSExplorer(entry.is_directory() ? path : _openedPath);
+            }
+
+            const auto weakAsset = GetAssetsManager().getWeakAssetByPath(path.generic_string());
+            if (auto asset = weakAsset.tryLoad();
+                asset && asset->canProcessAction(AssetAction::AA_Spawn))
+            {
+                if (ImGui::MenuItem("Spawn on scene"))
+                {
+                    asset->processAction(AssetAction::AA_Spawn);
+                }
+            }
+
+            ImGui::EndPopup();
+        }
     }
 
     void AssetsManagerWindowEWC::drawExplorerTree()
@@ -521,40 +562,7 @@ namespace Core
             const int maxCountPerWidth
                 = static_cast<int>(availX / (_thumbnailSize.x + (defaultSpace.x * 2.f)));
 
-            if (ImGui::BeginPopupContextWindow("ExplorerContextMenu",
-                                               ImGuiPopupFlags_MouseButtonRight
-                                                   | ImGuiPopupFlags_NoOpenOverItems))
-            {
-                if (ImGui::MenuItem(ICON_FA_CHEVRON_LEFT " Back"))
-                {
-                    tryOpenParentDir();
-                }
-                if (!_selectedPath.empty() && ImGui::MenuItem(ICON_FA_ARROW_DOWN " Paste"))
-                {
-                    pasteTo(_openedPath);
-                }
-                if (ImGui::MenuItem(ICON_FA_REFRESH " Refresh"))
-                {
-                    refresh();
-                }
-                if (ImGui::MenuItem(ICON_FA_PLUS " Create a folder"))
-                {
-                    createFolderAutoName(_openedPath);
-                }
-                if (ImGui::MenuItem(ICON_FA_PLUS " Create a file"))
-                {
-                    createFileAutoName(_openedPath);
-                }
-
-                ImGui::Separator();
-
-                if (ImGui::MenuItem("Open in explorer"))
-                {
-                    AssetsManager::OpenPathFromOSExplorer(_openedPath);
-                }
-
-                ImGui::EndPopup();
-            }
+            drawExplorerContextMenu();
 
             ImGui::SetCursorPosX(ImGui::GetCursorPosX() + padding);
             ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0.0f);
@@ -691,12 +699,12 @@ namespace Core
             ImGui::OpenPopup(filename.c_str());
         }
 
-        if (ImGui::BeginPopup(filename.c_str()))
+        if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
         {
-            drawContextMenu(entry, invalidate, needOpen);
-
-            ImGui::EndPopup();
+            ImGui::OpenPopup(filename.c_str());
         }
+
+        drawAssetsContextMenu(entry, invalidate, needOpen);
 
         if (!invalidate)
         {

@@ -111,7 +111,9 @@ namespace Core
 
         // -------------- RENDER -------------------------
         void drawToolTip(const std::filesystem::directory_entry& entry) const;
-        void drawContextMenu(const std::filesystem::directory_entry& entry, bool& invalidate, bool& needOpen);
+        void drawExplorerContextMenu();
+        void drawAssetsContextMenu(const std::filesystem::directory_entry& entry, bool& invalidate,
+                                   bool& needOpen);
 
 
         void drawExplorerTree();
