@@ -403,24 +403,40 @@ namespace Core
         }
     }
 
-    void AssetsManagerWindowEWC::highlightSelectedAsset(const std::filesystem::path& path) const
-    {
-        if (!isSelected(path))
-            return;
-
-        const auto min = ImGui::GetItemRectMin();
-        const auto max = ImGui::GetItemRectMax();
-
-        auto* dl = ImGui::GetWindowDrawList();
-
-        dl->AddRectFilled(min, max, IM_COL32(0, 120, 255, 105));
-    }
-
     bool AssetsManagerWindowEWC::isSelected(const std::filesystem::path& path) const
     {
         return std::find(_selectedPaths.begin(),
                          _selectedPaths.end(),
                          path) != _selectedPaths.end();
+    }
+
+    void AssetsManagerWindowEWC::openSelectedFile(const std::filesystem::directory_entry& entry, const bool needOpen,
+                                                  const bool invalidate)
+    {
+        if (needOpen && !invalidate)
+        {
+            if (entry.is_directory())
+                openPath(entry.path());
+            else if (entry.is_regular_file())
+                AssetsManager::TryToOpenFile(entry);
+        }
+    }
+
+    void AssetsManagerWindowEWC::handleSelection(const std::filesystem::path& path)
+    {
+        if (!ImGui::IsItemClicked(ImGuiMouseButton_Left))
+            return;
+
+        _selectedPath = path;
+
+        if (ImGui::GetIO().KeyCtrl)
+        {
+            toggleSelection(path);
+            return;
+        }
+
+        _selectedPaths.clear();
+        _selectedPaths.push_back(path);
     }
 
     void AssetsManagerWindowEWC::drawToolTip(const std::filesystem::directory_entry& entry) const
@@ -486,11 +502,6 @@ namespace Core
 
             ImGui::EndPopup();
         }
-    }
-
-    void AssetsManagerWindowEWC::drawFileTexture(ImTextureID texture, const std::filesystem::directory_entry& entry,
-        glm::vec2 size)
-    {
     }
 
     void AssetsManagerWindowEWC::drawAssetsContextMenu(const std::filesystem::directory_entry& entry, bool& invalidate,
@@ -625,6 +636,13 @@ namespace Core
 
             ImGui::PopStyleVar();
 
+            if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)
+                && ImGui::IsWindowHovered(ImGuiHoveredFlags_ChildWindows)
+                && !ImGui::IsAnyItemHovered())
+            {
+                _selectedPaths.clear();
+            }
+
             ImGui::Dummy({});
         }
         ImGui::EndChild();
@@ -705,59 +723,44 @@ namespace Core
         auto path = entry.path();
         const auto filename = path.filename().generic_string();
         const auto& originalFileName = filename;
-        const bool isSelected = path == _selectedPath;
         bool needOpen = false;
         bool invalidate = false;
 
-        if (isSelected)
-            ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.6f);
-
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetStyle().ItemSpacing.x);
 
-        ImGui::BeginGroup();
+        {
+            ImGui::BeginGroup();
 
-        size -= ImGui::GetStyle().FramePadding * 2.f;
-        ImGui::PushStyleColor(ImGuiCol_Button, glm::vec4(0, 0, 0, 0));
-        ImGui::ImageButton(filename.data(), texture, size);
-        ImGui::PopStyleColor();
-        size += ImGui::GetStyle().FramePadding * 2.f;
+            size -= ImGui::GetStyle().FramePadding * 2.f;
+            ImGui::PushStyleColor(ImGuiCol_Button, isSelected(path)
+                                      ? ImGui::GetStyleColorVec4(ImGuiCol_ButtonHovered)
+                                      : glm::vec4{0, 0, 0, 0});
+            ImGui::ImageButton(filename.data(), texture, size);
+            ImGui::PopStyleColor();
+            size += ImGui::GetStyle().FramePadding * 2.f;
 
-        highlightSelectedAsset(path);
+            handleSelection(path);
 
-        if (ImGui::IsItemHovered() && (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) || ImGui::IsKeyPressed(
-            ImGuiKey_Enter, false)))
-            needOpen = true;
+            if (ImGui::IsItemHovered() && (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) || ImGui::IsKeyPressed(
+                ImGuiKey_Enter, false)))
+                needOpen = true;
 
-        if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
-            toggleSelection(path);
 
-        if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
-            ImGui::OpenPopup(filename.c_str());
+            if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
+                ImGui::OpenPopup(filename.c_str());
 
-        drawAssetsContextMenu(entry, invalidate, needOpen);
+            drawAssetsContextMenu(entry, invalidate, needOpen);
 
-        if (!invalidate)
-            renameFile(path, originalFileName, size);
+            if (!invalidate)
+                renameFile(path, originalFileName, size);
 
-        ImGui::EndGroup();
+            ImGui::EndGroup();
+        }
 
         if (ImGui::IsItemHovered() && !invalidate)
             drawToolTip(entry);
 
-        if (needOpen && !invalidate)
-        {
-            if (entry.is_directory())
-            {
-                openPath(path);
-            }
-            else if (entry.is_regular_file())
-            {
-                AssetsManager::TryToOpenFile(entry);
-            }
-        }
-
-        if (isSelected)
-            ImGui::PopStyleVar();
+        openSelectedFile(entry, needOpen, invalidate);
 
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetStyle().ItemSpacing.x);
     }

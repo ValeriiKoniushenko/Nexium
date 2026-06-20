@@ -104,20 +104,20 @@ namespace Core
 
     private:
         [[nodiscard]] bool isFiltered(const std::filesystem::path& p) const;
+        [[nodiscard]] bool isSelected(const std::filesystem::path& path) const;
 
 
         // -------------- LOGIC -------------------------
-        bool isSelected(const std::filesystem::path& path) const;
+        void openSelectedFile(const std::filesystem::directory_entry& entry, bool needOpen,
+                              bool invalidate);
+        void handleSelection(const std::filesystem::path& path);
         void toggleSelection(const std::filesystem::path& path);
         void renameFile(std::filesystem::path& path, const std::string& originalFileName,
                         glm::vec2 size) const;
-        void highlightSelectedAsset(const std::filesystem::path& path) const;
 
         // -------------- RENDER -------------------------
         void drawToolTip(const std::filesystem::directory_entry& entry) const;
         void drawExplorerContextMenu();
-        void drawFileTexture(ImTextureID texture, const std::filesystem::directory_entry& entry,
-                             glm::vec2 size);
         void drawAssetsContextMenu(const std::filesystem::directory_entry& entry, bool& invalidate,
                                    bool& needOpen);
 
