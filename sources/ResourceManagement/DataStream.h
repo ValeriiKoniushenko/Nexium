@@ -145,10 +145,8 @@ namespace Core
             // CriticalErrorIfCantRead = 1 << 5
         };
 
-        /**
-         * Rules for streaming of an object. For the whole object and for
-         * every field (if it's necessary).
-         */
+        /// Rules for streaming of an object. For the whole object and for
+        /// every field (if it's necessary).
         struct Rules final
         {
             uint32_t main = Rule::None;
@@ -212,13 +210,11 @@ namespace Core
         void setMode(Mode mode) noexcept { _data->mode = mode; }
         [[nodiscard]] Mode getMode() const noexcept { return _data->mode; }
 
-        /**
-         * @tparam T data type. Can be any data that is convenient for you.
-         * @param key name inside a cache system
-         * @param field data type that will be read/write
-         * @param defaultValue default value
-         * @return the result of an operation
-         */
+        /// @tparam T data type. Can be any data that is convenient for you.
+        /// @param key name inside a cache system
+        /// @param field data type that will be read/write
+        /// @param defaultValue default value
+        /// @return the result of an operation
         template<class T>
         Result field(const char* key, T& field, const T& defaultValue = {})
         {
@@ -249,17 +245,15 @@ namespace Core
 
         Result field(IDataUpdateBridge& bridge);
 
-        /**
-         * @tparam T data type. Can be any data that is convenient for you.
-         * @tparam ReaderFunc should take T& and const nlohmann::json& and manually fetch data to T.
-         * No return.
-         * @tparam WriterFunc should take const nlohmann::json& process it and return T
-         * @param key name inside a cache system
-         * @param field data type that will be read/write
-         * @param reader callback for reading
-         * @param writer callback for writing
-         * @return
-         */
+        /// @tparam T data type. Can be any data that is convenient for you.
+        /// @tparam ReaderFunc should take T& and const nlohmann::json& and manually fetch data to
+        /// T. No return.
+        /// @tparam WriterFunc should take const nlohmann::json& process it and return T
+        /// @param key name inside a cache system
+        /// @param field data type that will be read/write
+        /// @param reader callback for reading
+        /// @param writer callback for writing
+        /// @return
         template<class T, class ReaderFunc, class WriterFunc>
         Result field(const char* key, T& field, const ReaderFunc& reader, const WriterFunc& writer)
         {

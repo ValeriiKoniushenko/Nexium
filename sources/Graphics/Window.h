@@ -142,46 +142,32 @@ namespace Core
 
         [[nodiscard]] GLFWwindow* getRawWindow() noexcept { return _window; }
 
-        /**
-         * @param glm::vec2 mouse position (X & Y)
-         */
+        /// @param glm::vec2 mouse position (X & Y)
         Delegate<void(glm::vec2)>::Ptr onMouseMove = Delegate<void(glm::vec2)>::Create();
 
-        /**
-         * @param Mouse::Key is a key
-         * @param Mouse::State pressed or released
-         * @param Mouse::Mod is a mod
-         */
+        /// @param Mouse::Key is a key
+        /// @param Mouse::State pressed or released
+        /// @param Mouse::Mod is a mod
         Delegate<void(Mouse::Key, Mouse::State, Mouse::Mod)>::Ptr onMouseKeyPressed
             = Delegate<void(Mouse::Key, Mouse::State, Mouse::Mod)>::Create();
 
-        /**
-         * @param glm::vec2 mouse scroll offsets (X & Y)
-         */
+        /// @param glm::vec2 mouse scroll offsets (X & Y)
         Delegate<void(glm::vec2)>::Ptr onMouseWheel = Delegate<void(glm::vec2)>::Create();
 
-        /**
-         * @param Keyboard::Key is a key
-         * @param int is a scancode
-         * @param Keyboard::KeyState is an action: GLFW_PRESS, GLFW_RELEASE or GLFW_REPEAT
-         * @param int is a mod
-         */
+        /// @param Keyboard::Key is a key
+        /// @param int is a scancode
+        /// @param Keyboard::KeyState is an action: GLFW_PRESS, GLFW_RELEASE or GLFW_REPEAT
+        /// @param int is a mod
         Delegate<void(Keyboard::Key, int, Keyboard::KeyState, int)>::Ptr onKeyPressed
             = Delegate<void(Keyboard::Key, int, Keyboard::KeyState, int)>::Create();
 
-        /**
-         * @param unsigned int is a Scancode
-         */
+        /// @param unsigned int is a Scancode
         Delegate<void(unsigned int)>::Ptr onTextInput = Delegate<void(unsigned int)>::Create();
 
-        /**
-         * @param bool is Entered the cursor or no
-         */
+        /// @param bool is Entered the cursor or no
         Delegate<void(bool)>::Ptr onCursorEntered = Delegate<void(bool)>::Create();
 
-        /**
-         * @param ISize2 new window size
-         */
+        /// @param ISize2 new window size
         Delegate<void(ISize2)>::Ptr onResize = Delegate<void(ISize2)>::Create();
 
         [[nodiscard]] spdlog::logger* getLogger() const override;

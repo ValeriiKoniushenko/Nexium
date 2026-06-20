@@ -143,40 +143,38 @@ namespace Core
             return _vbo != 0 && _ebo != 0 && _vao != 0 && _shader != nullptr;
         }
 
-        /**
-         * direct draw if was set up vertex, index and optionally texture buffers.
-         * @details this function from the family of 'low-abstract' functionality.
-         * It can give you the ability for fast setup & draw to the scene but without huge
-         * or at least some small optimizations. Just hard-drawn in the old-school opengl
-         * style.
-         * Example code(little bit pseudo):
-         * @code
-         * std::vector<float> vertices = {
-         *      0.5f,  0.5f, 0.0f,  // top right
-         *      0.5f, -0.5f, 0.0f,  // bottom right
-         *     -0.5f, -0.5f, 0.0f,  // bottom left
-         *     -0.5f,  0.5f, 0.0f,  // top left
-         * };
-         *
-         * std::vector<float> indices = {
-         *      0, 1, 3,  // first Triangle
-         *      1, 2, 3   // second Triangle
-         * };
-         *
-         * InterleavedGraphicsData x;
-         * x.generate();
-         * x.setVertexBuffer(vertices);
-         * x.setIndexBuffer(indices);
-         * x.setShader(some_compiled_shader_program);
-         *
-         * while(...)
-         * {
-         *     ...
-         *     x.directDraw(GL_TRIANGLES);
-         *     ...
-         * }
-         * @endcode
-         */
+        /// direct draw if was set up vertex, index and optionally texture buffers.
+        /// @details this function from the family of 'low-abstract' functionality.
+        /// It can give you the ability for fast setup & draw to the scene but without huge
+        /// or at least some small optimizations. Just hard-drawn in the old-school opengl
+        /// style.
+        /// Example code(little bit pseudo):
+        /// @code
+        /// std::vector<float> vertices = {
+        ///      0.5f,  0.5f, 0.0f,  // top right
+        ///      0.5f, -0.5f, 0.0f,  // bottom right
+        ///     -0.5f, -0.5f, 0.0f,  // bottom left
+        ///     -0.5f,  0.5f, 0.0f,  // top left
+        /// };
+        ///
+        /// std::vector<float> indices = {
+        ///      0, 1, 3,  // first Triangle
+        ///      1, 2, 3   // second Triangle
+        /// };
+        ///
+        /// InterleavedGraphicsData x;
+        /// x.generate();
+        /// x.setVertexBuffer(vertices);
+        /// x.setIndexBuffer(indices);
+        /// x.setShader(some_compiled_shader_program);
+        ///
+        /// while(...)
+        /// {
+        ///     ...
+        ///     x.directDraw(GL_TRIANGLES);
+        ///     ...
+        /// }
+        /// @endcode
         virtual void directDraw(GLenum drawMode = GL_TRIANGLES,
                                 GLenum bindTextureType = GL_TEXTURE_2D, GLenum textureIndex = 0);
 
@@ -307,16 +305,14 @@ namespace Core
         InterleavedGraphicsData& operator=(const InterleavedGraphicsData& other) = default;
         InterleavedGraphicsData& operator=(InterleavedGraphicsData&& other) noexcept;
 
-        /**
-         * loads & constructs from aiMesh GPU data.
-         * @param mesh from Assimp::Importer
-         * @param isAppendNormals if it true - than it will append to every vertex data 'normals'
-         * @param isAppendUV if it true - than it will append to every vertex data 'UV'
-         * @param scale mesh scaler
-         *
-         * Example of one vertex data:
-         * pos.x, pos.y, pos.z,  [normal.x, normal.y, normal.z]  [cv.x, cv.y]
-         */
+        /// loads & constructs from aiMesh GPU data.
+        /// @param mesh from Assimp::Importer
+        /// @param isAppendNormals if it true - than it will append to every vertex data 'normals'
+        /// @param isAppendUV if it true - than it will append to every vertex data 'UV'
+        /// @param scale mesh scaler
+        ///
+        /// Example of one vertex data:
+        /// pos.x, pos.y, pos.z,  [normal.x, normal.y, normal.z]  [cv.x, cv.y]
         void setMesh(const aiMesh* mesh, bool isAppendNormals = false, bool isAppendUV = false,
                      float scale = 1.f);
 

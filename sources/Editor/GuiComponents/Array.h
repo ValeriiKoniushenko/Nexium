@@ -79,14 +79,12 @@ namespace Core::Gui
         }
     };
 
-    /**
-     * it provides a user-based GUI array.
-     * @tparam T is your data to save inside this array and show the user.
-     * @tparam ArrayCellViewerFunc pass a function of type Gui::HorizontalLayout::Ptr(const T&)
-     * It should construct ready to use, filled HorizontalLayout as viewer of you data.
-     * @tparam ViewFetchFunc provide a function which will take a HorizontalLayout and return
-     * data of your type T: T(HorizontalLayout*)
-     */
+    /// it provides a user-based GUI array.
+    /// @tparam T is your data to save inside this array and show the user.
+    /// @tparam ArrayCellViewerFunc pass a function of type Gui::HorizontalLayout::Ptr(const T&)
+    /// It should construct ready to use, filled HorizontalLayout as viewer of you data.
+    /// @tparam ViewFetchFunc provide a function which will take a HorizontalLayout and return
+    /// data of your type T: T(HorizontalLayout*)
     template<class T, class ArrayCellViewerFunc, class ViewFetchFunc>
     class BaseArray : public VerticalLayout
     {

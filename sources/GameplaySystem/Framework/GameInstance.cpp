@@ -33,6 +33,7 @@
 #include "Misc/Configs.h"
 #include "Misc/FPSCounter.h"
 #include "ModuleInfo.h"
+#include "ResourceManagement/ResourceManager.h"
 #include "Scene/Rectangle.h"
 #include "Scene/Spectator.h"
 #include "spdlog/spdlog.h"
@@ -74,8 +75,6 @@ namespace Core
         std::cout << std::fixed << std::setprecision(15);
         spdlog::set_pattern(Config::spdlogPattern);
 
-        // tryReadFromCache();
-
         //-------------------- WINDOW ---------------------
         window = &GetWindow();
         window->create(Config::defaultWindowName, Config::defaultWindowSize);
@@ -105,7 +104,10 @@ namespace Core
         startUpReadCache();
         loadCoreResources();
 
-        runMainLoop();
+        auto&& am = Core::Test::GetAssetsManager();
+        auto t1 = am.getTexture("/home/valerii/workspace/Nexium/data/assets/images/document.png");
+
+        // runMainLoop();
 
         saveAll();
     }

@@ -31,12 +31,10 @@
 
 namespace Core
 {
-    /**
-     * Core editor class managing GUI windows and editor lifecycle.
-     *
-     * Provides initialization, ticking, and management of editor windows.
-     * Also handles font configuration and ImGui setup.
-     */
+    /// Core editor class managing GUI windows and editor lifecycle.
+    ///
+    /// Provides initialization, ticking, and management of editor windows.
+    /// Also handles font configuration and ImGui setup.
     class GameEditor : public BaseLog
     {
     public:
@@ -57,14 +55,12 @@ namespace Core
         [[nodiscard]] bool isEnabled() const noexcept { return _isEnabled; }
         void setIsEnabled(bool v) noexcept { _isEnabled = v; }
 
-        /**
-         * Register a new editor window of type T.
-         * Initializes it, optionally sets its name, and enables it.
-         * @tparam T Type of the editor window component.
-         * @param name Optional name for the window.
-         * @param isEnabled Whether the window is enabled initially.
-         * @return Shared a pointer to the newly registered window.
-         */
+        /// Register a new editor window of type T.
+        /// Initializes it, optionally sets its name, and enables it.
+        /// @tparam T Type of the editor window component.
+        /// @param name Optional name for the window.
+        /// @param isEnabled Whether the window is enabled initially.
+        /// @return Shared a pointer to the newly registered window.
         template<IsEditorWindowComponent T>
         T::Ptr registerNewWindow(StringAtom name, bool isEnabled = false)
         {
@@ -92,12 +88,10 @@ namespace Core
             return IntrusivePtr<T>(static_cast<T*>(a.get()));
         }
 
-        /**
-         * Find a window by type and optional name regex.
-         * @tparam WindowT Type of window to search for (default is BaseEWC).
-         * @param regexName Regular expression to match the window title.
-         * @return Pointer to the first matching window or nullptr if none found.
-         */
+        /// Find a window by type and optional name regex.
+        /// @tparam WindowT Type of window to search for (default is BaseEWC).
+        /// @param regexName Regular expression to match the window title.
+        /// @return Pointer to the first matching window or nullptr if none found.
         template<IsEditorWindowComponentOrBase WindowT>
         [[nodiscard]] WindowT* getWindow(const StringAtom& regexName = ".*")
         {
@@ -135,13 +129,11 @@ namespace Core
             wnd->open(std::forward<ArgsT>(args)...);
         }
 
-        /**
-         * Show and enable a window matching the type and regex name.
-         * Optionally, pass string arguments to the window.
-         * @tparam WindowT Type of window to show (default is BaseEWC).
-         * @param regexName Regular expression to match the window title.
-         * @param args Optional arguments to pass to the window.
-         */
+        /// Show and enable a window matching the type and regex name.
+        /// Optionally, pass string arguments to the window.
+        /// @tparam WindowT Type of window to show (default is BaseEWC).
+        /// @param regexName Regular expression to match the window title.
+        /// @param args Optional arguments to pass to the window.
         template<IsEditorWindowComponentOrBase WindowT = BaseEWC>
         void showWindow(const StringAtom& regexName = ".*", const StringAtom& args = ""_atom)
         {
@@ -151,9 +143,7 @@ namespace Core
             }
         }
 
-        /**
-         * Totally destroy the object. Will call automatically at the destructor.
-         */
+        /// Totally destroy the object. Will call automatically at the destructor.
         void destroy();
 
         [[nodiscard]] bool getIsRunSimulation() const noexcept { return _isRunSimulation; }

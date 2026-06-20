@@ -34,11 +34,9 @@ namespace Core
     class StaticMeshBundle;
     class StaticMesh;
 
-    /**
-     * Use this class to select objects on the scene.
-     * @details mediator class to involve all needed functionality
-     * after picking up some scene's object.
-     */
+    /// Use this class to select objects on the scene.
+    /// @details mediator class to involve all needed functionality
+    /// after picking up some scene's object.
     class ObjectSelectorManager
     {
     public:
@@ -55,10 +53,8 @@ namespace Core
             return _selectedObjects;
         }
 
-        /**
-         * @param BaseComponent* affected component
-         * @param bool selected is true; deselected is false
-         */
+        /// @param BaseComponent* affected component
+        /// @param bool selected is true; deselected is false
         Delegate<void(BaseComponent*, bool)>::Ptr onChange
             = Delegate<void(BaseComponent*, bool)>::Create();
 

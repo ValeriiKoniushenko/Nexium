@@ -46,16 +46,12 @@ namespace Core
         StaticMeshBundle& operator=(const StaticMeshBundle& other);
         StaticMeshBundle& operator=(StaticMeshBundle&& other) = default;
 
-        /**
-         * will draw with the default shader & logic. Single draw bundle!
-         */
+        /// will draw with the default shader & logic. Single draw bundle!
         void draw(BaseCamera&) override;
 
-        /**
-         * only draw call with graphics modifiers - nothing more.
-         * Before using of this function you must manually prepare the shader &
-         * 'use' it.
-         */
+        /// only draw call with graphics modifiers - nothing more.
+        /// Before using of this function you must manually prepare the shader &
+        /// 'use' it.
         void pureDraw(const std::function<void(StaticMesh*)>& onUniformSet,
                       const std::function<bool(const Actor*)>& conditional) override;
 
@@ -93,25 +89,19 @@ namespace Core
             return _bundles;
         }
 
-        /**
-         * It controls will be object selected by ObjectSelectorManager or no
-         * @return true - will be ignored; false - otherwise
-         */
+        /// It controls will be object selected by ObjectSelectorManager or no
+        /// @return true - will be ignored; false - otherwise
         [[nodiscard]] bool isIgnoreSelect() const noexcept { return _ignoreSelect; }
 
-        /**
-         * It controls will be object selected by ObjectSelectorManager or no
-         * @param value true - will be ignored; false - otherwise
-         */
+        /// It controls will be object selected by ObjectSelectorManager or no
+        /// @param value true - will be ignored; false - otherwise
         void setIsIgnoreSelect(bool value) noexcept { _ignoreSelect = value; }
 
         [[nodiscard]] uint32_t getID() const noexcept { return _id; }
 
         void recalculateMatrices(const glm::mat4& mat = glm::mat4(1.f)) override;
 
-        /**
-         * This function will be called after a mouse click on this object.
-         */
+        /// This function will be called after a mouse click on this object.
         virtual void onMousePicked(StaticMesh* clickedPart) {}
 
         friend void swap(StaticMeshBundle& a, StaticMeshBundle& b) noexcept

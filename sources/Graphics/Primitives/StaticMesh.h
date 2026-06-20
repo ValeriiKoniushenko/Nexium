@@ -69,16 +69,12 @@ namespace Core
 
         [[nodiscard]] const StaticMeshBundle* tryToGetRootBundle() const;
 
-        /**
-         * will draw with the default shader & logic. Single draw object!
-         */
+        /// will draw with the default shader & logic. Single draw object!
         void draw(BaseCamera& camera);
 
-        /**
-         * only draw call with graphics modifiers - nothing more.
-         * Before using of this function you must manually prepare the shader &
-         * 'use' it.
-         */
+        /// only draw call with graphics modifiers - nothing more.
+        /// Before using of this function you must manually prepare the shader &
+        /// 'use' it.
         void pureDraw(const std::function<void(StaticMesh*)>& onUniformSet);
 
         void generate() override;

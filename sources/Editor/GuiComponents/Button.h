@@ -151,10 +151,8 @@ namespace Core::Gui
         ECS_COMPONENT_DECL(ToggleButton, Button);
 
     public: // Delegates
-        /**
-         * will be called when toggled
-         * @prarm bool true - if it becomes active; false - in another case
-         */
+        /// will be called when toggled
+        /// @prarm bool true - if it becomes active; false - in another case
         Delegate<void(bool)>::Ptr onToggle = Delegate<void(bool)>::Create();
 
         void setActive(bool value) noexcept { _isActive = value; }

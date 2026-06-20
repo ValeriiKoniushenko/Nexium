@@ -31,9 +31,7 @@
 
 namespace Core
 {
-    /**
-     * BaseEditorWindowComponent or briefly BaseEWC
-     */
+    /// BaseEditorWindowComponent or briefly BaseEWC
     CLASS();
     class BaseEWC : public BaseComponent, public IDataIO
     {
@@ -110,11 +108,9 @@ namespace Core
         [[nodiscard]] glm::vec2 getPosition() const noexcept { return _position; }
         [[nodiscard]] glm::vec2 getInnerPosition() const noexcept { return _innerPosition; }
 
-        /**
-         * will be called while the window's size changing
-         * @param FSize2 new outer(full) size
-         * @param FSize2 new inner size
-         */
+        /// will be called while the window's size changing
+        /// @param FSize2 new outer(full) size
+        /// @param FSize2 new inner size
         Delegate<void(FSize2, FSize2)>::Ptr onSizeChanged
             = Delegate<void(FSize2, FSize2)>::Create();
 
