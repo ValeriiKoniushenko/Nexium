@@ -403,8 +403,29 @@ namespace Core
         }
     }
 
+    void AssetsManagerWindowEWC::highlightSelectedAsset(const std::filesystem::path& path) const
+    {
+        if (!isSelected(path))
+            return;
+
+        const auto min = ImGui::GetItemRectMin();
+        const auto max = ImGui::GetItemRectMax();
+
+        auto* dl = ImGui::GetWindowDrawList();
+
+        dl->AddRectFilled(min, max, IM_COL32(0, 120, 255, 105));
+    }
+
+    bool AssetsManagerWindowEWC::isSelected(const std::filesystem::path& path) const
+    {
+        return std::find(_selectedPaths.begin(),
+                         _selectedPaths.end(),
+                         path) != _selectedPaths.end();
+    }
+
     void AssetsManagerWindowEWC::drawToolTip(const std::filesystem::directory_entry& entry) const
     {
+        ImGui::BeginTooltip();
         const auto path = entry.path();
         const auto filename = path.filename().generic_string();
         const auto& originalFileName = filename;
@@ -426,6 +447,7 @@ namespace Core
             const auto fileSize = static_cast<uint32_t>(std::filesystem::file_size(path));
             ImGui::Text("File size: %s", PrettyBytes(fileSize).c_str());
         }
+        ImGui::EndTooltip();
     }
 
     void AssetsManagerWindowEWC::drawExplorerContextMenu()
@@ -464,6 +486,11 @@ namespace Core
 
             ImGui::EndPopup();
         }
+    }
+
+    void AssetsManagerWindowEWC::drawFileTexture(ImTextureID texture, const std::filesystem::directory_entry& entry,
+        glm::vec2 size)
+    {
     }
 
     void AssetsManagerWindowEWC::drawAssetsContextMenu(const std::filesystem::directory_entry& entry, bool& invalidate,
@@ -661,21 +688,29 @@ namespace Core
         }
     }
 
+    void AssetsManagerWindowEWC::toggleSelection(const std::filesystem::path& path)
+    {
+        const auto it = std::find(_selectedPaths.begin(), _selectedPaths.end(), path);
+
+        if (it == _selectedPaths.end())
+            _selectedPaths.push_back(path);
+        else
+            _selectedPaths.erase(it);
+    }
+
     void AssetsManagerWindowEWC::drawFileThumbnail(ImTextureID texture,
                                                    const std::filesystem::directory_entry& entry,
                                                    glm::vec2 size)
     {
         auto path = entry.path();
-        auto filename = path.filename().generic_string();
+        const auto filename = path.filename().generic_string();
         const auto& originalFileName = filename;
-        bool needOpen = false;
         const bool isSelected = path == _selectedPath;
+        bool needOpen = false;
         bool invalidate = false;
 
         if (isSelected)
-        {
             ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.6f);
-        }
 
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetStyle().ItemSpacing.x);
 
@@ -687,38 +722,27 @@ namespace Core
         ImGui::PopStyleColor();
         size += ImGui::GetStyle().FramePadding * 2.f;
 
-        if (ImGui::IsItemHovered()
-            && (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)
-                || ImGui::IsKeyPressed(ImGuiKey_Enter, false)))
-        {
+        highlightSelectedAsset(path);
+
+        if (ImGui::IsItemHovered() && (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) || ImGui::IsKeyPressed(
+            ImGuiKey_Enter, false)))
             needOpen = true;
-        }
+
+        if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
+            toggleSelection(path);
 
         if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
-        {
             ImGui::OpenPopup(filename.c_str());
-        }
-
-        if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
-        {
-            ImGui::OpenPopup(filename.c_str());
-        }
 
         drawAssetsContextMenu(entry, invalidate, needOpen);
 
         if (!invalidate)
-        {
             renameFile(path, originalFileName, size);
-        }
 
         ImGui::EndGroup();
 
         if (ImGui::IsItemHovered() && !invalidate)
-        {
-            ImGui::BeginTooltip();
             drawToolTip(entry);
-            ImGui::EndTooltip();
-        }
 
         if (needOpen && !invalidate)
         {
@@ -733,9 +757,7 @@ namespace Core
         }
 
         if (isSelected)
-        {
             ImGui::PopStyleVar();
-        }
 
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetStyle().ItemSpacing.x);
     }
