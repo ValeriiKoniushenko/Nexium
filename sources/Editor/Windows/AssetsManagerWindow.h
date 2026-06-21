@@ -73,6 +73,7 @@ namespace Core
         void createFolderAutoName(const std::filesystem::path& basePath);
         void createFile(const std::filesystem::path& path);
         void createFileAutoName(const std::filesystem::path& basePath);
+        bool renamePath(const std::filesystem::path& path, const std::string& newName);
 
         [[nodiscard]] std::filesystem::path getExclusiveFileName(
             const std::filesystem::path& path) const;
@@ -114,10 +115,10 @@ namespace Core
                               bool invalidate);
         void handleSelection(const std::filesystem::path& path);
         void toggleSelection(const std::filesystem::path& path);
-        void renameFile(std::filesystem::path& path, const std::string& originalFileName,
-                        glm::vec2 size) const;
+        void requestRename(const std::filesystem::path& path);
 
         // -------------- RENDER -------------------------
+        void drawRenamePopup();
         void drawToolTip(const std::filesystem::directory_entry& entry) const;
         void drawExplorerContextMenu();
         void drawAssetsContextMenu(const std::filesystem::directory_entry& entry, bool& invalidate,
@@ -138,6 +139,10 @@ namespace Core
 
     private:
         std::filesystem::path _openedPath;
+        std::filesystem::path _renamePath;
+        std::string _renameBuffer;
+        std::string _renameError;
+        bool _openRenamePopup = false;
         bool _isCopy = true;
     };
 } // namespace Core
