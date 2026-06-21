@@ -125,9 +125,9 @@ namespace Core
         static void OpenPathFromOSExplorer(const std::filesystem::path& path);
 
         // ================= MAIN ======================
-        void rescanFileSystem();
+        void initScanFileSystem();
 
-        void refreshResources();
+        void refreshFilesSystem();
 
         void unloadAllResources();
 

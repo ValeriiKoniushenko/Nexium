@@ -109,8 +109,6 @@ namespace Core
         // auto t1 =
         // am.getTexture("/home/valerii/workspace/Nexium/data/assets/images/document.png");
 
-        bm.;
-
         runMainLoop();
 
         saveAll();

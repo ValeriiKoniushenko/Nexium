@@ -15,81 +15,6 @@
 #include <vector>
 
 template<>
-struct R<Core::DragAndDrop::State>
-{
-    static constexpr std::string_view Name() { return "State"; }
-    static constexpr std::size_t Size() { return 3; }
-    static constexpr std::string_view ParentScope() { return "Core::DragAndDrop"; }
-
-    static std::string_view ToString(::Core::DragAndDrop::State value)
-    {
-        const auto& data = R<Core::DragAndDrop::State>::ToMapCN();
-        const auto it = data.find(value);
-        if (it != data.end()) [[likely]]
-        {
-            return it->second;
-        }
-        static const std::string_view empty{};
-        return empty;
-    }
-
-    static std::optional<::Core::DragAndDrop::State> FromString(std::string_view value)
-    {
-        const auto& data = R<Core::DragAndDrop::State>::ToMapNC();
-        const auto it = data.find(value);
-        if (it != data.end()) [[likely]]
-        {
-            return it->second;
-        }
-        return std::nullopt;
-    }
-
-    static constexpr const std::array<::Core::DragAndDrop::State, 3>& ToArrayC()
-    {
-        static constexpr std::array<::Core::DragAndDrop::State, 3> constants = {
-				::Core::DragAndDrop::State::Idle,
-				::Core::DragAndDrop::State::Started,
-				::Core::DragAndDrop::State::Dragging
-        };
-
-        return constants;
-    }
-
-    static constexpr const std::array<std::string_view, 3>& ToArrayN()
-    {
-        static constexpr std::array<std::string_view, 3> names = {
-				std::string_view("Idle"),
-				std::string_view("Started"),
-				std::string_view("Dragging")
-        };
-
-        return names;
-    }
-
-    static const std::unordered_map<::Core::DragAndDrop::State, std::string_view>& ToMapCN()
-    {
-        static const std::unordered_map<::Core::DragAndDrop::State, std::string_view> map = {
-				{ ::Core::DragAndDrop::State::Idle, "Idle" },
-				{ ::Core::DragAndDrop::State::Started, "Started" },
-				{ ::Core::DragAndDrop::State::Dragging, "Dragging" }
-        };
-
-        return map;
-    }
-
-    static const std::unordered_map<std::string_view, ::Core::DragAndDrop::State>& ToMapNC()
-    {
-        static const std::unordered_map<std::string_view, ::Core::DragAndDrop::State> map = {
-				{ "Idle", ::Core::DragAndDrop::State::Idle },
-				{ "Started", ::Core::DragAndDrop::State::Started },
-				{ "Dragging", ::Core::DragAndDrop::State::Dragging }
-        };
-
-        return map;
-    }
-}; // struct R<Core::DragAndDrop::State>
-
-template<>
 struct R<Core::Window::CursorMode>
 {
     static constexpr std::string_view Name() { return "CursorMode"; }
@@ -163,6 +88,81 @@ struct R<Core::Window::CursorMode>
         return map;
     }
 }; // struct R<Core::Window::CursorMode>
+
+template<>
+struct R<Core::DragAndDrop::State>
+{
+    static constexpr std::string_view Name() { return "State"; }
+    static constexpr std::size_t Size() { return 3; }
+    static constexpr std::string_view ParentScope() { return "Core::DragAndDrop"; }
+
+    static std::string_view ToString(::Core::DragAndDrop::State value)
+    {
+        const auto& data = R<Core::DragAndDrop::State>::ToMapCN();
+        const auto it = data.find(value);
+        if (it != data.end()) [[likely]]
+        {
+            return it->second;
+        }
+        static const std::string_view empty{};
+        return empty;
+    }
+
+    static std::optional<::Core::DragAndDrop::State> FromString(std::string_view value)
+    {
+        const auto& data = R<Core::DragAndDrop::State>::ToMapNC();
+        const auto it = data.find(value);
+        if (it != data.end()) [[likely]]
+        {
+            return it->second;
+        }
+        return std::nullopt;
+    }
+
+    static constexpr const std::array<::Core::DragAndDrop::State, 3>& ToArrayC()
+    {
+        static constexpr std::array<::Core::DragAndDrop::State, 3> constants = {
+				::Core::DragAndDrop::State::Idle,
+				::Core::DragAndDrop::State::Started,
+				::Core::DragAndDrop::State::Dragging
+        };
+
+        return constants;
+    }
+
+    static constexpr const std::array<std::string_view, 3>& ToArrayN()
+    {
+        static constexpr std::array<std::string_view, 3> names = {
+				std::string_view("Idle"),
+				std::string_view("Started"),
+				std::string_view("Dragging")
+        };
+
+        return names;
+    }
+
+    static const std::unordered_map<::Core::DragAndDrop::State, std::string_view>& ToMapCN()
+    {
+        static const std::unordered_map<::Core::DragAndDrop::State, std::string_view> map = {
+				{ ::Core::DragAndDrop::State::Idle, "Idle" },
+				{ ::Core::DragAndDrop::State::Started, "Started" },
+				{ ::Core::DragAndDrop::State::Dragging, "Dragging" }
+        };
+
+        return map;
+    }
+
+    static const std::unordered_map<std::string_view, ::Core::DragAndDrop::State>& ToMapNC()
+    {
+        static const std::unordered_map<std::string_view, ::Core::DragAndDrop::State> map = {
+				{ "Idle", ::Core::DragAndDrop::State::Idle },
+				{ "Started", ::Core::DragAndDrop::State::Started },
+				{ "Dragging", ::Core::DragAndDrop::State::Dragging }
+        };
+
+        return map;
+    }
+}; // struct R<Core::DragAndDrop::State>
 
 template<>
 struct R<Core::Window>
