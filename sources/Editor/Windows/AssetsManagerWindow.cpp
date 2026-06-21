@@ -320,13 +320,22 @@ namespace Core
             return;
         }
 
-        const std::string baseName = "NewFile_";
-        std::size_t i = 0;
-        while (std::filesystem::exists(basePath / (baseName + std::to_string(i++))))
+        constexpr std::string_view baseName = "NewFile";
+
+        if (!std::filesystem::exists(basePath / baseName))
         {
+            createFile(basePath / baseName);
+            return;
         }
 
-        createFile(basePath / (baseName + std::to_string(i)));
+        std::size_t i = 1;
+        while (
+            std::filesystem::exists(basePath / (std::string(baseName) + "_" + std::to_string(i))))
+        {
+            ++i;
+        }
+
+        createFile(basePath / (std::string(baseName) + "_" + std::to_string(i)));
     }
 
     std::filesystem::path AssetsManagerWindowEWC::getExclusiveFileName(
