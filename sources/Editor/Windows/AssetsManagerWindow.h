@@ -49,6 +49,9 @@ namespace Core
         ECS_COMPONENT_DECL(AssetsManagerWindowEWC, BaseFloatEWC);
 
     public:
+        constexpr static std::string_view defaultNewFileName = "NewFile";
+
+    public:
         void tryOpenParentDir();
         void tryOpenPath(const std::filesystem::path& p);
 

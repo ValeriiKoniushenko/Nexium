@@ -471,7 +471,7 @@ namespace Core
 
         auto type = GetNodeType(entry);
 
-        if (type == NodeType::Code)
+        if (type == NodeType::Code || type == NodeType::Default)
         {
             gGameInstance->gameEditor.showWindow<TextEditorEWC>(
                 ".*", entry.path().generic_string().data());
@@ -605,7 +605,7 @@ namespace Core
     {
         if (path.extension().generic_string() != NXAsset::ValueT::fileExtension)
         {
-            return {};
+            return _assets.end();
         }
 
         for (auto&& registered : GetAssetsManager().getRegisteredPaths())
@@ -641,6 +641,6 @@ namespace Core
             }
         }
 
-        return {};
+        return _assets.end();
     }
 } // namespace Core

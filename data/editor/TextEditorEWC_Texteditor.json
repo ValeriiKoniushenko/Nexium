@@ -1,32 +1,32 @@
 {
     "_children": null,
     "_innerPosition": [
-        0.0,
-        0.0
+        68.0,
+        116.0
     ],
     "_innerSize": {
-        "height": 0.0,
-        "width": 0.0
+        "height": 436.0,
+        "width": 484.0
     },
-    "_isEnabled": false,
+    "_isEnabled": true,
     "_isFitContent": false,
     "_minWindowSize": {
-        "height": 200.0,
-        "width": 200.0
+        "height": 500.0,
+        "width": 500.0
     },
     "_name": " Text editor",
     "_noTick": false,
     "_oldSize": {
-        "height": -1.0,
-        "width": -1.0
+        "height": 500.0,
+        "width": 500.0
     },
     "_position": [
-        0.0,
-        0.0
+        60.0,
+        60.0
     ],
     "_size": {
-        "height": 0.0,
-        "width": 0.0
+        "height": 500.0,
+        "width": 500.0
     },
     "_type": "TextEditorEWC"
 }
