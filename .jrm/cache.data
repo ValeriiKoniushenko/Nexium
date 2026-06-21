@@ -1,7 +1,7 @@
 134258210676081535 game-example/TemplateGameInstance.h
 134258210676101509 sources/AssetsManager/AssetImpls/Factory.h
 134258210676101509 sources/AssetsManager/AssetImpls/StaticMeshBundle.h
-134261091917675385 sources/AssetsManager/AssetsManager.h
+134261879709788614 sources/AssetsManager/AssetsManager.h
 134258210676161680 sources/AssetsManager/BaseAsset.h
 134258210676181742 sources/AssetsManager/ECSAsset.h
 134258210676181742 sources/AssetsManager/ModuleInfo.h
@@ -33,7 +33,7 @@
 134258210676553198 sources/Editor/ModuleInfo.h
 134258210676563132 sources/Editor/ObjectSelectorManager.h
 134258210676573157 sources/Editor/SlowObjectPicker.h
-134258210676593170 sources/Editor/Windows/AssetsManagerWindow.h
+134265053571208827 sources/Editor/Windows/AssetsManagerWindow.h
 134258210676603145 sources/Editor/Windows/BaseWindow.h
 134258210676618336 sources/Editor/Windows/ECSAdapters/BaseComponentAdapter.h
 134258210676638442 sources/Editor/Windows/ECSAdapters/EditorActorAdapter.h

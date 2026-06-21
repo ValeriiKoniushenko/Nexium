@@ -96,6 +96,7 @@ namespace Core
 
         CacheNode _rootCacheNode;
         std::filesystem::path _selectedPath;
+        std::vector<std::filesystem::path> _selectedPaths;
 
         glm::vec2 _thumbnailSize = glm::vec2(70, 70);
         int _commonTreeFlags = ImGuiTreeNodeFlags_OpenOnDoubleClick;
@@ -103,6 +104,23 @@ namespace Core
 
     private:
         [[nodiscard]] bool isFiltered(const std::filesystem::path& p) const;
+        [[nodiscard]] bool isSelected(const std::filesystem::path& path) const;
+
+
+        // -------------- LOGIC -------------------------
+        void openSelectedFile(const std::filesystem::directory_entry& entry, bool needOpen,
+                              bool invalidate);
+        void handleSelection(const std::filesystem::path& path);
+        void toggleSelection(const std::filesystem::path& path);
+        void renameFile(std::filesystem::path& path, const std::string& originalFileName,
+                        glm::vec2 size) const;
+
+        // -------------- RENDER -------------------------
+        void drawToolTip(const std::filesystem::directory_entry& entry) const;
+        void drawExplorerContextMenu();
+        void drawAssetsContextMenu(const std::filesystem::directory_entry& entry, bool& invalidate,
+                                   bool& needOpen);
+
 
         void drawExplorerTree();
 

@@ -376,6 +376,194 @@ namespace Core
         return !p.generic_string().contains(filter);
     }
 
+    void AssetsManagerWindowEWC::renameFile(std::filesystem::path& path,
+                                            const std::string& originalFileName, const glm::vec2 size) const
+    {
+        const auto filename = path.filename().generic_string();
+
+        std::string value = filename;
+        if (InputText(filename.data(), value, size.x, ImGuiInputTextFlags_EnterReturnsTrue))
+        {
+            if (value != originalFileName)
+            {
+                std::error_code ec;
+
+                const auto newPath = path.parent_path() / value;
+                std::filesystem::rename(path, newPath, ec);
+                if (ec)
+                {
+                    errorLog("Can't rename file from: '{}' to '{}'. Reason: {}"_f
+                        << filename << value << ec.message());
+                }
+                else
+                {
+                    path = newPath;
+                }
+            }
+        }
+    }
+
+    bool AssetsManagerWindowEWC::isSelected(const std::filesystem::path& path) const
+    {
+        return std::find(_selectedPaths.begin(),
+                         _selectedPaths.end(),
+                         path) != _selectedPaths.end();
+    }
+
+    void AssetsManagerWindowEWC::openSelectedFile(const std::filesystem::directory_entry& entry, const bool needOpen,
+                                                  const bool invalidate)
+    {
+        if (needOpen && !invalidate)
+        {
+            if (entry.is_directory())
+                openPath(entry.path());
+            else if (entry.is_regular_file())
+                AssetsManager::TryToOpenFile(entry);
+        }
+    }
+
+    void AssetsManagerWindowEWC::handleSelection(const std::filesystem::path& path)
+    {
+        if (!ImGui::IsItemClicked(ImGuiMouseButton_Left))
+            return;
+
+        _selectedPath = path;
+
+        if (ImGui::GetIO().KeyCtrl)
+        {
+            toggleSelection(path);
+            return;
+        }
+
+        _selectedPaths.clear();
+        _selectedPaths.push_back(path);
+    }
+
+    void AssetsManagerWindowEWC::drawToolTip(const std::filesystem::directory_entry& entry) const
+    {
+        ImGui::BeginTooltip();
+        const auto path = entry.path();
+        const auto filename = path.filename().generic_string();
+        const auto& originalFileName = filename;
+
+        std::error_code ec;
+        const auto lastWrite = std::chrono::clock_cast<std::chrono::system_clock>(
+            std::filesystem::last_write_time(path, ec));
+        if (ec)
+        {
+            errorLog("Some error of std::filesystem::last_write_time: {}"_f << ec.message());
+        }
+
+        ImGui::Text("Name:      %s", originalFileName.data());
+        ImGui::Text("Modified:  %s", std::format("{}", lastWrite).data());
+        ImGui::Text("Location:  %s", path.generic_string().data());
+
+        if (entry.is_regular_file())
+        {
+            const auto fileSize = static_cast<uint32_t>(std::filesystem::file_size(path));
+            ImGui::Text("File size: %s", PrettyBytes(fileSize).c_str());
+        }
+        ImGui::EndTooltip();
+    }
+
+    void AssetsManagerWindowEWC::drawExplorerContextMenu()
+    {
+        if (ImGui::BeginPopupContextWindow("ExplorerContextMenu",
+                                      ImGuiPopupFlags_MouseButtonRight
+                                          | ImGuiPopupFlags_NoOpenOverItems))
+        {
+            if (ImGui::MenuItem(ICON_FA_CHEVRON_LEFT " Back"))
+            {
+                tryOpenParentDir();
+            }
+            if (!_selectedPath.empty() && ImGui::MenuItem(ICON_FA_ARROW_DOWN " Paste"))
+            {
+                pasteTo(_openedPath);
+            }
+            if (ImGui::MenuItem(ICON_FA_REFRESH " Refresh"))
+            {
+                refresh();
+            }
+            if (ImGui::MenuItem(ICON_FA_PLUS " Create a folder"))
+            {
+                createFolderAutoName(_openedPath);
+            }
+            if (ImGui::MenuItem(ICON_FA_PLUS " Create a file"))
+            {
+                createFileAutoName(_openedPath);
+            }
+
+            ImGui::Separator();
+
+            if (ImGui::MenuItem("Open in explorer"))
+            {
+                AssetsManager::OpenPathFromOSExplorer(_openedPath);
+            }
+
+            ImGui::EndPopup();
+        }
+    }
+
+    void AssetsManagerWindowEWC::drawAssetsContextMenu(const std::filesystem::directory_entry& entry, bool& invalidate,
+                                                       bool& needOpen)
+    {
+        const auto& path = entry.path();
+        if (ImGui::BeginPopup(path.filename().generic_string().c_str()))
+        {
+            if (ImGui::MenuItem(ICON_FA_FOLDER_OPEN_O " Open"))
+            {
+                needOpen = true;
+            }
+            if (ImGui::MenuItem(ICON_FA_FILES_O " Copy"))
+            {
+                copyFrom(path);
+            }
+            if (ImGui::MenuItem(ICON_FA_SCISSORS " Cut"))
+            {
+                cutFrom(path);
+            }
+            if (!_selectedPath.empty() && entry.is_directory()
+                && ImGui::MenuItem(ICON_FA_ARROW_DOWN " Paste"))
+            {
+                pasteTo(path);
+            }
+            if (ImGui::MenuItem(ICON_FA_TRASH " Delete"))
+            {
+                ModalPopUp::Open("Do you really want to delete the {}: {}?"_f
+                                 << (entry.is_directory() ? "directory" : "file")
+                                 << path.generic_string(),
+                                 [this, path](const bool isOk)
+                                 {
+                                     if (isOk)
+                                     {
+                                         deleteAt(path);
+                                     }
+                                 });
+
+                invalidate = true;
+            }
+
+            ImGui::Separator();
+
+            if (ImGui::MenuItem("Open in explorer"))
+            {
+                AssetsManager::OpenPathFromOSExplorer(entry.is_directory() ? path : _openedPath);
+            }
+
+            const auto weakAsset = GetAssetsManager().getWeakAssetByPath(path.generic_string());
+            if (auto asset = weakAsset.tryLoad();
+                asset && asset->canProcessAction(AssetAction::AA_Spawn))
+            {
+                if (ImGui::MenuItem("Spawn on scene"))
+                {
+                    asset->processAction(AssetAction::AA_Spawn);
+                }
+            }
+
+            ImGui::EndPopup();
+        }
+    }
+
     void AssetsManagerWindowEWC::drawExplorerTree()
     {
         if (ImGui::BeginChild("Explorer tree", glm::vec2(200.0f, 0), ImGuiChildFlags_ResizeX))
@@ -412,40 +600,7 @@ namespace Core
             const int maxCountPerWidth
                 = static_cast<int>(availX / (_thumbnailSize.x + (defaultSpace.x * 2.f)));
 
-            if (ImGui::BeginPopupContextWindow("ExplorerContextMenu",
-                                               ImGuiPopupFlags_MouseButtonRight
-                                                   | ImGuiPopupFlags_NoOpenOverItems))
-            {
-                if (ImGui::MenuItem(ICON_FA_CHEVRON_LEFT " Back"))
-                {
-                    tryOpenParentDir();
-                }
-                if (!_selectedPath.empty() && ImGui::MenuItem(ICON_FA_ARROW_DOWN " Paste"))
-                {
-                    pasteTo(_openedPath);
-                }
-                if (ImGui::MenuItem(ICON_FA_REFRESH " Refresh"))
-                {
-                    refresh();
-                }
-                if (ImGui::MenuItem(ICON_FA_PLUS " Create a folder"))
-                {
-                    createFolderAutoName(_openedPath);
-                }
-                if (ImGui::MenuItem(ICON_FA_PLUS " Create a file"))
-                {
-                    createFileAutoName(_openedPath);
-                }
-
-                ImGui::Separator();
-
-                if (ImGui::MenuItem("Open in explorer"))
-                {
-                    AssetsManager::OpenPathFromOSExplorer(_openedPath);
-                }
-
-                ImGui::EndPopup();
-            }
+            drawExplorerContextMenu();
 
             ImGui::SetCursorPosX(ImGui::GetCursorPosX() + padding);
             ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0.0f);
@@ -480,6 +635,13 @@ namespace Core
             }
 
             ImGui::PopStyleVar();
+
+            if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)
+                && ImGui::IsWindowHovered(ImGuiHoveredFlags_ChildWindows)
+                && !ImGui::IsAnyItemHovered())
+            {
+                _selectedPaths.clear();
+            }
 
             ImGui::Dummy({});
         }
@@ -544,165 +706,61 @@ namespace Core
         }
     }
 
+    void AssetsManagerWindowEWC::toggleSelection(const std::filesystem::path& path)
+    {
+        const auto it = std::find(_selectedPaths.begin(), _selectedPaths.end(), path);
+
+        if (it == _selectedPaths.end())
+            _selectedPaths.push_back(path);
+        else
+            _selectedPaths.erase(it);
+    }
+
     void AssetsManagerWindowEWC::drawFileThumbnail(ImTextureID texture,
                                                    const std::filesystem::directory_entry& entry,
                                                    glm::vec2 size)
     {
         auto path = entry.path();
-        auto filename = path.filename().generic_string();
+        const auto filename = path.filename().generic_string();
         const auto& originalFileName = filename;
         bool needOpen = false;
-        const bool isSelected = path == _selectedPath;
         bool invalidate = false;
-
-        if (isSelected)
-        {
-            ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.6f);
-        }
 
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetStyle().ItemSpacing.x);
 
-        ImGui::BeginGroup();
-
-        size -= ImGui::GetStyle().FramePadding * 2.f;
-        ImGui::PushStyleColor(ImGuiCol_Button, glm::vec4(0, 0, 0, 0));
-        ImGui::ImageButton(filename.data(), texture, size);
-        ImGui::PopStyleColor();
-        size += ImGui::GetStyle().FramePadding * 2.f;
-
-        if (ImGui::IsItemHovered()
-            && (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)
-                || ImGui::IsKeyPressed(ImGuiKey_Enter, false)))
         {
-            needOpen = true;
-        }
+            ImGui::BeginGroup();
 
-        if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
-        {
-            ImGui::OpenPopup(filename.c_str());
-        }
+            size -= ImGui::GetStyle().FramePadding * 2.f;
+            ImGui::PushStyleColor(ImGuiCol_Button, isSelected(path)
+                                      ? ImGui::GetStyleColorVec4(ImGuiCol_ButtonHovered)
+                                      : glm::vec4{0, 0, 0, 0});
+            ImGui::ImageButton(filename.data(), texture, size);
+            ImGui::PopStyleColor();
+            size += ImGui::GetStyle().FramePadding * 2.f;
 
-        if (ImGui::BeginPopup(filename.c_str()))
-        {
-            if (ImGui::MenuItem(ICON_FA_FOLDER_OPEN_O " Open"))
-            {
+            handleSelection(path);
+
+            if (ImGui::IsItemHovered() && (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) || ImGui::IsKeyPressed(
+                ImGuiKey_Enter, false)))
                 needOpen = true;
-            }
-            if (ImGui::MenuItem(ICON_FA_FILES_O " Copy"))
-            {
-                copyFrom(path);
-            }
-            if (ImGui::MenuItem(ICON_FA_SCISSORS " Cut"))
-            {
-                cutFrom(path);
-            }
-            if (!_selectedPath.empty() && entry.is_directory()
-                && ImGui::MenuItem(ICON_FA_ARROW_DOWN " Paste"))
-            {
-                pasteTo(path);
-            }
-            if (ImGui::MenuItem(ICON_FA_TRASH " Delete"))
-            {
-                ModalPopUp::Open("Do you really want to delete the {}: {}?"_f
-                                     << (entry.is_directory() ? "directory" : "file")
-                                     << path.generic_string(),
-                                 [this, path](bool isOk)
-                                 {
-                                     if (isOk)
-                                     {
-                                         deleteAt(path);
-                                     }
-                                 });
 
-                invalidate = true;
-            }
 
-            ImGui::Separator();
+            if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
+                ImGui::OpenPopup(filename.c_str());
 
-            if (ImGui::MenuItem("Open in explorer"))
-            {
-                AssetsManager::OpenPathFromOSExplorer(entry.is_directory() ? path : _openedPath);
-            }
+            drawAssetsContextMenu(entry, invalidate, needOpen);
 
-            const auto weakAsset = GetAssetsManager().getWeakAssetByPath(path.generic_string());
-            if (auto asset = weakAsset.tryLoad();
-                asset && asset->canProcessAction(AssetAction::AA_Spawn))
-            {
-                if (ImGui::MenuItem("Spawn on scene"))
-                {
-                    asset->processAction(AssetAction::AA_Spawn);
-                }
-            }
+            if (!invalidate)
+                renameFile(path, originalFileName, size);
 
-            ImGui::EndPopup();
+            ImGui::EndGroup();
         }
-
-        if (!invalidate)
-        {
-            std::string value = filename;
-            if (InputText(filename.data(), value, size.x, ImGuiInputTextFlags_EnterReturnsTrue))
-            {
-                if (value != originalFileName)
-                {
-                    std::error_code ec;
-
-                    const auto newPath = path.parent_path() / value;
-                    std::filesystem::rename(path, newPath, ec);
-                    if (ec)
-                    {
-                        errorLog("Can't rename file from: '{}' to '{}'. Reason: {}"_f
-                                 << filename << value << ec.message());
-                    }
-                    else
-                    {
-                        path = newPath;
-                    }
-                }
-            }
-        }
-
-        ImGui::EndGroup();
 
         if (ImGui::IsItemHovered() && !invalidate)
-        {
-            ImGui::BeginTooltip();
+            drawToolTip(entry);
 
-            std::error_code ec;
-            const auto lastWrite = std::chrono::clock_cast<std::chrono::system_clock>(
-                std::filesystem::last_write_time(path, ec));
-            if (ec)
-            {
-                errorLog("Some error of std::filesystem::last_write_time: {}"_f << ec.message());
-            }
-
-            ImGui::Text("Name:      %s", originalFileName.data());
-            ImGui::Text("Modified:  %s", std::format("{}", lastWrite).data());
-            ImGui::Text("Location:  %s", path.generic_string().data());
-
-            if (entry.is_regular_file())
-            {
-                const auto fileSize = static_cast<uint32_t>(std::filesystem::file_size(path));
-                ImGui::Text("File size: %s", PrettyBytes(fileSize).c_str());
-            }
-            ImGui::EndTooltip();
-        }
-
-        if (needOpen && !invalidate)
-        {
-            if (entry.is_directory())
-            {
-                openPath(path);
-            }
-            else if (entry.is_regular_file())
-            {
-                AssetsManager::TryToOpenFile(entry);
-            }
-        }
-
-        if (isSelected)
-        {
-            ImGui::PopStyleVar();
-        }
+        openSelectedFile(entry, needOpen, invalidate);
 
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetStyle().ItemSpacing.x);
     }
@@ -744,5 +802,6 @@ namespace Core
 
         _rootCacheNode.path = Config::Path::assets;
         rescanPhysicalDrive(_rootCacheNode);
+        GetAssetsManager().refreshFilesSystem();
     }
 } // namespace Core
