@@ -34,11 +34,11 @@ namespace fs = std::filesystem;
 
 namespace Core::Test
 {
-
     spdlog::logger* BlueprintManager::getLogger() const
     {
         return ResourceManagement::getLogger();
     }
+
     const char* BlueprintManager::getPrefix() const
     {
         return "BlueprintManager";
@@ -70,7 +70,7 @@ namespace Core::Test
         }
 
         auto texture = Texture::Create();
-        if (texture->loadFromFile(Config::Path::projectAbsPath / p, isFlipVertically))
+        if (!texture->loadFromFile(Config::Path::projectAbsPath / p, isFlipVertically))
         {
             criticalLog("The texture wasn't loaded by the next path: {}"_f << path);
             return {};
@@ -237,5 +237,4 @@ namespace Core::Test
 
         return relative;
     }
-
 } // namespace Core::Test

@@ -105,7 +105,11 @@ namespace Core
         loadCoreResources();
 
         auto&& am = Core::Test::GetAssetsManager();
-        auto t1 = am.getTexture("/home/valerii/workspace/Nexium/data/assets/images/document.png");
+        auto&& bm = Core::Test::GetBlueprintManager();
+        // auto t1 =
+        // am.getTexture("/home/valerii/workspace/Nexium/data/assets/images/document.png");
+
+        bm.;
 
         runMainLoop();
 
