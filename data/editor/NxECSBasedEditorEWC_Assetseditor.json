@@ -1,14 +1,43 @@
 {
-    "_children": null,
+    "_children": [
+        {
+            "_children": null,
+            "_isEnabled": true,
+            "_name": "",
+            "_noTick": false,
+            "_type": "ECSBaseComponentAdapter"
+        },
+        {
+            "_children": null,
+            "_isEnabled": true,
+            "_name": "",
+            "_noTick": false,
+            "_type": "ECSEditorActorAdapter"
+        },
+        {
+            "_children": null,
+            "_isEnabled": false,
+            "_name": "",
+            "_noTick": false,
+            "_type": "ECSEditorStaticMeshBundleAdapter"
+        },
+        {
+            "_children": null,
+            "_isEnabled": false,
+            "_name": "",
+            "_noTick": false,
+            "_type": "ECSEditorInterleavedGraphicsDataAdapter"
+        }
+    ],
     "_innerPosition": [
-        0.0,
-        0.0
+        313.0,
+        88.0
     ],
     "_innerSize": {
-        "height": 0.0,
-        "width": 0.0
+        "height": 582.0,
+        "width": 1136.0
     },
-    "_isEnabled": false,
+    "_isEnabled": true,
     "_isFitContent": false,
     "_minWindowSize": {
         "height": 200.0,
@@ -17,16 +46,16 @@
     "_name": " Assets editor",
     "_noTick": false,
     "_oldSize": {
-        "height": -1.0,
-        "width": -1.0
+        "height": 646.0,
+        "width": 1152.0
     },
     "_position": [
-        0.0,
-        0.0
+        305.0,
+        32.0
     ],
     "_size": {
-        "height": 0.0,
-        "width": 0.0
+        "height": 646.0,
+        "width": 1152.0
     },
     "_type": "NxECSBasedEditorEWC"
 }

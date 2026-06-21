@@ -802,5 +802,6 @@ namespace Core
 
         _rootCacheNode.path = Config::Path::assets;
         rescanPhysicalDrive(_rootCacheNode);
+        GetAssetsManager().refreshFilesSystem();
     }
 } // namespace Core
