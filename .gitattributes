@@ -1,3 +1,6 @@
-.jrm/cache.data -diff -merge
 **/*.generated.cpp -diff
 **/*.generated.h -diff
+.jrm/cache.data -diff -merge
+data/cache/*.json -diff -merge
+data/config/*.json -diff -merge
+data/scenes/*.json -diff -merge
