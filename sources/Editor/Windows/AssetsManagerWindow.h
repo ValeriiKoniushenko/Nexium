@@ -137,7 +137,6 @@ namespace Core
 
     private:
         std::filesystem::path _openedPath;
-        std::vector<std::filesystem::path> _openedPaths;
         bool _isCopy = true;
     };
 } // namespace Core
