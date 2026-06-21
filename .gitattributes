@@ -1,0 +1,3 @@
+.jrm/cache.data -diff -merge
+**/*.generated.cpp -diff
+**/*.generated.h -diff

@@ -106,7 +106,6 @@ namespace Core
         [[nodiscard]] bool isFiltered(const std::filesystem::path& p) const;
         [[nodiscard]] bool isSelected(const std::filesystem::path& path) const;
 
-
         // -------------- LOGIC -------------------------
         void openSelectedFile(const std::filesystem::directory_entry& entry, bool needOpen,
                               bool invalidate);
@@ -120,7 +119,6 @@ namespace Core
         void drawExplorerContextMenu();
         void drawAssetsContextMenu(const std::filesystem::directory_entry& entry, bool& invalidate,
                                    bool& needOpen);
-
 
         void drawExplorerTree();
 
