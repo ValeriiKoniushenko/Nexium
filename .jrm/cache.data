@@ -33,7 +33,7 @@
 134258210676553198 sources/Editor/ModuleInfo.h
 134265085161753281 sources/Editor/ObjectSelectorManager.h
 134265085161753281 sources/Editor/SlowObjectPicker.h
-134265085161783419 sources/Editor/Windows/AssetsManagerWindow.h
+134265107136763915 sources/Editor/Windows/AssetsManagerWindow.h
 134265085161783419 sources/Editor/Windows/BaseWindow.h
 134258210676618336 sources/Editor/Windows/ECSAdapters/BaseComponentAdapter.h
 134258210676638442 sources/Editor/Windows/ECSAdapters/EditorActorAdapter.h
