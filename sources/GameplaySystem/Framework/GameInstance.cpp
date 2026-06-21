@@ -107,7 +107,7 @@ namespace Core
         auto&& am = Core::Test::GetAssetsManager();
         auto t1 = am.getTexture("/home/valerii/workspace/Nexium/data/assets/images/document.png");
 
-        // runMainLoop();
+        runMainLoop();
 
         saveAll();
     }

@@ -1,7 +1,7 @@
 -4656547738009937408 game-example/TemplateGameInstance.h
 -4656547738009937408 sources/AssetsManager/AssetImpls/Factory.h
 -4656547738008937391 sources/AssetsManager/AssetImpls/StaticMeshBundle.h
--4655988509401759929 sources/AssetsManager/AssetsManager.h
+-4655707435728754673 sources/AssetsManager/AssetsManager.h
 -4655988509401759929 sources/AssetsManager/BaseAsset.h
 -4656547738008937391 sources/AssetsManager/ECSAsset.h
 -4656547738008937391 sources/AssetsManager/ModuleInfo.h
@@ -100,10 +100,10 @@
 -4656547738002937289 sources/Misc/Configs.h
 -4656547738002937289 sources/Misc/FPSCounter.h
 -4656547738002937289 sources/Misc/IconsFontAwesome.h
--4655988509399759963 sources/ResourceManagement/DataStream.h
+-4655707435639756197 sources/ResourceManagement/DataStream.h
 -4656547738002937289 sources/ResourceManagement/JsonAdapter.h
 -4656547738002937289 sources/ResourceManagement/ModuleInfo.h
--4655988461894559229 sources/ResourceManagement/ResourceManager.h
+-4655707435637756231 sources/ResourceManagement/ResourceManager.h
 -4656547738002937289 sources/Scene/Grid.h
 -4656547738002937289 sources/Scene/ModuleInfo.h
 -4656547738002937289 sources/Scene/Rectangle.h

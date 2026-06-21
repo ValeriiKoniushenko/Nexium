@@ -1,0 +1,26 @@
+<svg width="100%" viewBox="0 0 680 280" role="img" xmlns="http://www.w3.org/2000/svg" style="">
+  <title style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">Nexium NX compact logo</title>
+  <desc style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">Compact rectangular logo for Nexium game engine using the NX abbreviation</desc>
+
+  
+
+  
+  <rect x="140" y="20" width="400" height="240" rx="12" style="fill:rgb(15, 15, 23);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+  
+  <rect x="140" y="20" width="4" height="240" rx="2" style="fill:rgb(124, 106, 247);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+  
+  
+  <polygon points="242,72 300,105 300,175 242,208 184,175 184,105" fill="none" stroke-width="2" style="fill:none;stroke:rgb(226, 232, 240);color:rgb(0, 0, 0);stroke-width:2px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  
+  <text x="242" y="156" font-size="48" font-weight="700" text-anchor="middle" letter-spacing="-2" style="fill:rgb(124, 106, 247);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;SF Mono&quot;, &quot;Fira Mono&quot;, &quot;JetBrains Mono&quot;, monospace;font-size:48px;font-weight:700;text-anchor:middle;dominant-baseline:auto">NX</text>
+
+  
+  <line x1="320" y1="80" x2="320" y2="200" stroke-width="1" style="fill:rgb(0, 0, 0);stroke:rgb(124, 106, 247);color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+  
+  <text x="344" y="134" font-size="40" font-weight="600" letter-spacing="0" style="fill:rgb(226, 232, 240);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;SF Mono&quot;, &quot;Fira Mono&quot;, &quot;JetBrains Mono&quot;, monospace;font-size:40px;font-weight:600;text-anchor:start;dominant-baseline:auto">NEXIUM</text>
+  <text x="344" y="170" font-size="12" font-weight="400" letter-spacing="4" style="fill:rgb(100, 116, 139);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;SF Mono&quot;, &quot;Fira Mono&quot;, &quot;JetBrains Mono&quot;, monospace;font-size:12px;font-weight:400;text-anchor:start;dominant-baseline:auto">GAME ENGINE</text>
+
+</svg>
