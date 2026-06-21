@@ -65,9 +65,7 @@ namespace Core
         virtual void onLoadRequest() = 0;
         virtual void onUnloadRequest() = 0;
 
-        /**
-         * @return true if you support hot reload. By default - false
-         */
+        /// @return true if you support hot reload. By default - false
         virtual bool onHotReload() { return false; }
         virtual void ioFieldsUpdate(DataStream& out) {}
 

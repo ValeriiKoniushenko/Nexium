@@ -1,5 +1,3 @@
-
-
 /*
  * MIT License
  *
@@ -35,13 +33,15 @@
 
 namespace Core::Test
 {
-
     class IBlueprint
     {
     public:
         IBlueprint(const IBlueprint&) = default;
+
         IBlueprint& operator=(const IBlueprint&) = default;
+
         IBlueprint(IBlueprint&&) = default;
+
         IBlueprint& operator=(IBlueprint&&) = default;
 
         virtual ~IBlueprint() = default;
@@ -53,7 +53,6 @@ namespace Core::Test
     //
     //
     //
-
     class BlueprintManager : public Singleton<BlueprintManager>, public BaseLog
     {
         SINGLETONS_FRIEND(BlueprintManager);
@@ -62,6 +61,7 @@ namespace Core::Test
         ~BlueprintManager() override = default;
 
         [[nodiscard]] spdlog::logger* getLogger() const override;
+
         [[nodiscard]] const char* getPrefix() const override;
 
     protected:
@@ -72,10 +72,12 @@ namespace Core::Test
         return BlueprintManager::Instance();
     }
 
-    //
-    //
-    //
-
+    /// It helps to work with assets in an easier way. It tracks how many things refer to some
+    /// asset, and after some type of logic it will destroy unused assets. Also, it seems to be some
+    /// type of GarbageCollector
+    ///
+    /// The final Asset is a type of atomic information that can't be divided or somehow
+    /// extended with extra logic. E.g.: images (.png, .jpg), audio (.wav, .mp3), 3D models, etc.
     class AssetsManager : public Singleton<AssetsManager>, public BaseLog
     {
         SINGLETONS_FRIEND(AssetsManager);
@@ -84,6 +86,7 @@ namespace Core::Test
         ~AssetsManager() override = default;
 
         [[nodiscard]] spdlog::logger* getLogger() const override;
+
         [[nodiscard]] const char* getPrefix() const override;
 
         [[nodiscard]] Texture::Ptr getTexture(const std::string& path,
@@ -130,5 +133,4 @@ namespace Core::Test
     {
         return AssetsManager::Instance();
     }
-
 } // namespace Core::Test

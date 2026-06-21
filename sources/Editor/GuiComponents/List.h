@@ -96,24 +96,20 @@ namespace Core::Gui
         ECS_COMPONENT_DECL(ListModelBased, BaseList);
 
     public:
-        /**
-         * Set your own data provider. Just a function that will do a few things:
-         * 1. Get index of element, that want to be processed(by you)
-         * 2. Fill up second argument StringAtom with some string. It will be shown for user
-         * 3. Return a pointer to your data. It will be used only by you in the future. If you want
-         * to get 'an index' to your data, you can just fetch current pointer(index), and get the
-         * pointer to your data.
-         */
+        /// Set your own data provider. Just a function that will do a few things:
+        /// 1. Get index of element, that want to be processed(by you)
+        /// 2. Fill up second argument StringAtom with some string. It will be shown for user
+        /// 3. Return a pointer to your data. It will be used only by you in the future. If you want
+        /// to get 'an index' to your data, you can just fetch current pointer(index), and get the
+        /// pointer to your data.
         void setDataProvider(const std::function<void*(std::size_t, StringAtom&)>& callback);
 
-        /**
-         * Set your own data provider. Just a function that will do a few things:
-         * 1. Get index of element, that want to be processed(by you)
-         * 2. Fill up second argument StringAtom with some string. It will be shown for user
-         * 3. Return a pointer to your data. It will be used only by you in the future. If you want
-         * to get 'an index' to your data, you can just fetch current pointer(index), and get the
-         * pointer to your data.
-         */
+        /// Set your own data provider. Just a function that will do a few things:
+        /// 1. Get index of element, that want to be processed(by you)
+        /// 2. Fill up second argument StringAtom with some string. It will be shown for user
+        /// 3. Return a pointer to your data. It will be used only by you in the future. If you want
+        /// to get 'an index' to your data, you can just fetch current pointer(index), and get the
+        /// pointer to your data.
         void setSizeProvider(const std::function<std::size_t()>& callback);
 
         void setCurrentIndex(std::size_t i) noexcept;

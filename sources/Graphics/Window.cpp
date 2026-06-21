@@ -101,9 +101,9 @@ namespace Core
         glfwWindowHint(GLFW_MAXIMIZED, _isMaximized ? GLFW_TRUE : GLFW_FALSE);
 
         if (!((_window
-       = glfwCreateWindow(_size.width, _size.height, title.c_str(), nullptr, nullptr))))
+               = glfwCreateWindow(_size.width, _size.height, title.c_str(), nullptr, nullptr))))
         {
-            glfwTerminate();
+            destroy();
             criticalThrowingLog("Failed to create GLFW window");
         }
 
@@ -148,7 +148,6 @@ namespace Core
             _size = ISize2{ 300, 300 };
         }
 
-
         glfwSetMouseButtonCallback(_window, MouseKeyPressHandler);
         glfwSetCursorPosCallback(_window, MouseMoveHandler);
         glfwSetKeyCallback(_window, KeyPressHandler);
@@ -178,6 +177,7 @@ namespace Core
     void Window::destroy()
     {
         ImGui::DestroyContext();
+        glfwDestroyWindow(_window);
         glfwTerminate();
     }
 

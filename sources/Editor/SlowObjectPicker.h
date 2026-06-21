@@ -32,10 +32,8 @@ namespace Core
     class StaticMesh;
     class StaticMeshBundle;
 
-    /**
-     * yes, it's slow but convenient way to pick up an object with
-     * pixel accuracy. Only for editor's aims.
-     */
+    /// yes, it's slow but convenient way to pick up an object with
+    /// pixel accuracy. Only for editor's aims.
     class SlowObjectPicker
     {
     public:

@@ -98,46 +98,44 @@ public:
 // ===============================================================
 //
 //
-/**
- * Use this macro inside your class body to declare a new component.
- * @param ClassName only name of your class
- * @param BaseComponentClass put the type of your parent here
- * @details It will register a component, and will be added new static field to your class
- * with the name 'componentType'. You can refer to this static field to get a type of your
- * component. Also, this macro will create a default constructor which can optionally take one
- * argument - the new component's name. Example:
- * @code{cpp}
- * // Foo.h
- * class Foo : public BaseComponent
- * {
- *      ECS_COMPONENT_DECL(Foo, BaseComponent);
- * };
- *
- * // If you want to implement a constructor by your own hands, use the macro:
- * // ECS_COMPONENT_DECL_NO_CNSTR - but look at the parent initialization
- * // you must pass at lest your component's type name.
- * class FooBar : public BaseComponent
- * {
- *      ECS_COMPONENT_DECL_NO_CNSTR(Foo, BaseComponent);
- *  public:
- *  FooBar(const StringAtom name = "") :
- *      BaseComponent(componentType, name)
- *      {
- *          std::cout << componentType; //> FooBar
- *      }
- * };
- * @endcode
- * Let's implement your new type. For that just put in the .cpp file for you class
- * the last macro: ECS_COMPONENT_IMPL and pass only class name.
- * @code{cpp}
- * // Foo.cpp
- * ECS_COMPONENT_IMPL(Foo);
- * ECS_COMPONENT_IMPL(FooBar);
- * @endcode
- * If you want to know why we need it:
- * It will register your component inside Entity Component System abstraction. I.g. using
- * GlobalComponentFactory, you can create necessary type known only name of your type.
- */
+/// Use this macro inside your class body to declare a new component.
+/// @param ClassName only name of your class
+/// @param BaseComponentClass put the type of your parent here
+/// @details It will register a component, and will be added new static field to your class
+/// with the name 'componentType'. You can refer to this static field to get a type of your
+/// component. Also, this macro will create a default constructor which can optionally take one
+/// argument - the new component's name. Example:
+/// @code{cpp}
+/// // Foo.h
+/// class Foo : public BaseComponent
+/// {
+///      ECS_COMPONENT_DECL(Foo, BaseComponent);
+/// };
+///
+/// // If you want to implement a constructor by your own hands, use the macro:
+/// // ECS_COMPONENT_DECL_NO_CNSTR - but look at the parent initialization
+/// // you must pass at lest your component's type name.
+/// class FooBar : public BaseComponent
+/// {
+///      ECS_COMPONENT_DECL_NO_CNSTR(Foo, BaseComponent);
+///  public:
+///  FooBar(const StringAtom name = "") :
+///      BaseComponent(componentType, name)
+///      {
+///          std::cout << componentType; //> FooBar
+///      }
+/// };
+/// @endcode
+/// Let's implement your new type. For that just put in the .cpp file for you class
+/// the last macro: ECS_COMPONENT_IMPL and pass only class name.
+/// @code{cpp}
+/// // Foo.cpp
+/// ECS_COMPONENT_IMPL(Foo);
+/// ECS_COMPONENT_IMPL(FooBar);
+/// @endcode
+/// If you want to know why we need it:
+/// It will register your component inside Entity Component System abstraction. I.g. using
+/// GlobalComponentFactory, you can create necessary type known only name of your type.
 #define ECS_COMPONENT_DECL(ClassName, BaseComponentClass)                                          \
     _ECS_COMPONENT_DECL(ClassName, ClassName, BaseComponentClass)                                  \
     _ECS_DEFAULT_PUBLIC_CONSTRUCTOR(ClassName, BaseComponentClass)                                 \
@@ -158,64 +156,62 @@ public:
 // ===============================================================
 //
 //
-/**
- * WARNING!!! Template ECS doesn't support any reflection due to type mangling by the compiler!
- * Use this macro inside your class body to declare a new component.
- * @param ClassName only name of your class
- * @param BaseComponentClass put the type of your parent here
- * @param ... all you template identifiers, separated with comma
- * @details It will register a component, and will be added new static field to your class
- * with the name 'componentType'. You can refer to this static field to get type of you component.
- * Also, this macro will create a default constructor which can optionally take one argument -
- * the new component's name. Example:
- * @code
- * template<class T>
- * class Foo : public BaseComponent
- * {
- *      ECS_TEMPLATE_COMPONENT_DECL(Foo, BaseComponent, T);
- * };
- * @endcode
- * That's only component declaration! To implement it, just continue reading...
- * More complex example:
- * @code{cpp}
- * template<std::size_t Size, class T>
- * class FooBar : public SomeCounterComponent
- * {
- *      ECS_TEMPLATE_COMPONENT_DECL(FooBar, BaseComponent, Size, T);
- * };
- *
- * // Or if you want to use constructor use another macro *_NO_CNSTR
- * template<std::size_t Size, class T>
- * class FooBar : public SomeCounterComponent
- * {
- *      ECS_TEMPLATE_COMPONENT_DECL_NO_CNSTR(Foo, BaseComponent, Size, T);
- *  public:
- *  FooBar(const StringAtom name = "") :
- *      SomeCounterComponent(componentType, name)
- *      {
- *      }
- * };
- * @endcode
- * Let's implement your new type. For that just under your class put a macro
- * ECS_TEMPLATE_COMPONENT_IMPL and pass the full class name with all template params,
- * and all parameters of your template (above your class). But, due to compiler-
- * specific behavior, you MUST wrap the first and second argument with macro BRACKETS.
- * @code{cpp}
- * // declaration of you classed above! Now only implementations:
- * ECS_TEMPLATE_COMPONENT_IMPL(
- *      BRACKETS(Foo<T>),
- *      BRACKETS(class T)
- * );
- *
- * ECS_TEMPLATE_COMPONENT_IMPL(
- *      BRACKETS(FooBar<Size, T>),
- *      BRACKETS(std::size_t Size, class T)
- * );
- * @endcode
- * If you want to know why we need it:
- * It will register your component inside Entity Component System abstraction. I.g. using
- * GlobalComponentFactory, you can create necessary type known only name of your type.
- */
+/// WARNING!!! Template ECS doesn't support any reflection due to type mangling by the compiler!
+/// Use this macro inside your class body to declare a new component.
+/// @param ClassName only name of your class
+/// @param BaseComponentClass put the type of your parent here
+/// @param ... all you template identifiers, separated with comma
+/// @details It will register a component, and will be added new static field to your class
+/// with the name 'componentType'. You can refer to this static field to get type of you component.
+/// Also, this macro will create a default constructor which can optionally take one argument -
+/// the new component's name. Example:
+/// @code
+/// template<class T>
+/// class Foo : public BaseComponent
+/// {
+///      ECS_TEMPLATE_COMPONENT_DECL(Foo, BaseComponent, T);
+/// };
+/// @endcode
+/// That's only component declaration! To implement it, just continue reading...
+/// More complex example:
+/// @code{cpp}
+/// template<std::size_t Size, class T>
+/// class FooBar : public SomeCounterComponent
+/// {
+///      ECS_TEMPLATE_COMPONENT_DECL(FooBar, BaseComponent, Size, T);
+/// };
+///
+/// // Or if you want to use constructor use another macro *_NO_CNSTR
+/// template<std::size_t Size, class T>
+/// class FooBar : public SomeCounterComponent
+/// {
+///      ECS_TEMPLATE_COMPONENT_DECL_NO_CNSTR(Foo, BaseComponent, Size, T);
+///  public:
+///  FooBar(const StringAtom name = "") :
+///      SomeCounterComponent(componentType, name)
+///      {
+///      }
+/// };
+/// @endcode
+/// Let's implement your new type. For that just under your class put a macro
+/// ECS_TEMPLATE_COMPONENT_IMPL and pass the full class name with all template params,
+/// and all parameters of your template (above your class). But, due to compiler-
+/// specific behavior, you MUST wrap the first and second argument with macro BRACKETS.
+/// @code{cpp}
+/// // declaration of you classed above! Now only implementations:
+/// ECS_TEMPLATE_COMPONENT_IMPL(
+///      BRACKETS(Foo<T>),
+///      BRACKETS(class T)
+/// );
+///
+/// ECS_TEMPLATE_COMPONENT_IMPL(
+///      BRACKETS(FooBar<Size, T>),
+///      BRACKETS(std::size_t Size, class T)
+/// );
+/// @endcode
+/// If you want to know why we need it:
+/// It will register your component inside Entity Component System abstraction. I.g. using
+/// GlobalComponentFactory, you can create necessary type known only name of your type.
 #define ECS_TEMPLATE_COMPONENT_DECL(ClassName, BaseComponentClass, ...)                            \
     _ECS_COMPONENT_DECL(ClassName, BRACKETS(ClassName<__VA_ARGS__>), BaseComponentClass)           \
     _ECS_DEFAULT_PUBLIC_CONSTRUCTOR(ClassName, BaseComponentClass)
@@ -254,12 +250,10 @@ namespace Core
     class BaseComponent;
 
     // ========================= CONCEPTS =========================
-    /**
-     * Concept to identify valid components.
-     * A type satisfies IsComponent if it inherits from BaseComponent and provides:
-     *   - a member function getComponentType()
-     *   - a static member componentType
-     */
+    /// Concept to identify valid components.
+    /// A type satisfies IsComponent if it inherits from BaseComponent and provides:
+    ///   - a member function getComponentType()
+    ///   - a static member componentType
     template<class T>
     concept IsComponent
         = std::derived_from<std::remove_reference_t<std::remove_cv_t<T>>, BaseComponent>
@@ -268,18 +262,14 @@ namespace Core
                  { T::componentType };
              };
 
-    /**
-     * Concept for either a BaseComponent-derived type or BaseComponent itself.
-     */
+    /// Concept for either a BaseComponent-derived type or BaseComponent itself.
     template<class T>
     concept IsComponentOrBase
         = IsComponent<T>
           || std::is_same_v<BaseComponent, std::remove_reference_t<std::remove_cv_t<T>>>;
 
-    /**
-     * Concept for either a BaseComponent-derived type or void.
-     * Useful for template functions where void indicates "no component".
-     */
+    /// Concept for either a BaseComponent-derived type or void.
+    /// Useful for template functions where void indicates "no component".
     template<class T>
     concept IsComponentOrVoid = IsComponent<T> || std::is_void_v<T>;
 
@@ -305,31 +295,25 @@ namespace Core
     //  \____/ \___/ |_| |_| |_|| .__/ (_)\_|     \__,_| \___| \__| \___/ |_|    \__, |
     //                          | |                                               __/ |
     //                          |_|                                              |___/
-    /**
-     * Global factory for creating and registering components by type.
-     * Manages mapping between component type names and factory functions.
-     * Provides logging and debug tracking of component types in DEBUG mode.
-     * Try to don't use it by your own hands, it will register a new component
-     * automatically. How? See the first comment above class BaseComponent
-     */
+    /// Global factory for creating and registering components by type.
+    /// Manages mapping between component type names and factory functions.
+    /// Provides logging and debug tracking of component types in DEBUG mode.
+    /// Try to don't use it by your own hands, it will register a new component
+    /// automatically. How? See the first comment above class BaseComponent
     class GlobalComponentFactory final : public Singleton<GlobalComponentFactory>, public BaseLog
     {
         SINGLETONS_FRIEND(GlobalComponentFactory);
 
     public:
-        /**
-         * Create a component by its registered type.
-         * @param type The type identifier (StringAtom) of the component.
-         * @return Pointer to a new BaseComponent instance, or nullptr if type not registered.
-         */
+        /// Create a component by its registered type.
+        /// @param type The type identifier (StringAtom) of the component.
+        /// @return Pointer to a new BaseComponent instance, or nullptr if type not registered.
         BaseComponent* create(const StringAtom& type);
 
-        /**
-         * Register a new component type in the factory.
-         * @param type The type identifier (StringAtom).
-         * @param callback Function that creates instances of this type.
-         * @return True if registration succeeds, false if the type already exists.
-         */
+        /// Register a new component type in the factory.
+        /// @param type The type identifier (StringAtom).
+        /// @param callback Function that creates instances of this type.
+        /// @return True if registration succeeds, false if the type already exists.
         template<class T>
         bool registerNewType(const StringAtom& type, bool isTemplateType = false);
 
@@ -345,7 +329,7 @@ namespace Core
         std::unordered_map<StringAtom, std::type_index> _typeToNameMap;
     };
 
-    /** Shortcut to access the global component factory singleton. */
+    /// Shortcut to access the global component factory singleton.
     inline GlobalComponentFactory& GetGlobalComponentFactory()
     {
         return GlobalComponentFactory::Instance();
@@ -358,10 +342,8 @@ namespace Core
     //   |  _  || '_ \ / __|| __|| '__| / _` | / __|| __| | |
     //   | | | || |_) |\__ \| |_ | |   | (_| || (__ | |_  | \__/\ _
     //   \_| |_/|_.__/ |___/ \__||_|    \__,_| \___| \__|  \____/(_)
-    /**
-     * Abstract base class for all components.
-     * Provides lifecycle hooks, ticking mechanism, and JSON/XML/etc serialization.
-     */
+    /// Abstract base class for all components.
+    /// Provides lifecycle hooks, ticking mechanism, and JSON/XML/etc serialization.
     CLASS();
     class AbstractComponent : public IntrusiveRefCounter<BaseComponent>, public BaseLog
     {
@@ -382,20 +364,18 @@ namespace Core
             std::swap(a._noTick, b._noTick);
         }
 
-        /**
-         * Call it in your main loop. After that if several conditions
-         * will be matched (is initialized, is enabled, etc.) will be called
-         * onTick. Inherit from onTick - and implement your own logic for
-         * update and/or draw.
-         */
+        /// Call it in your main loop. After that if several conditions
+        /// will be matched (is initialized, is enabled, etc.) will be called
+        /// onTick. Inherit from onTick - and implement your own logic for
+        /// update and/or draw.
         void tick(float delta);
 
         [[nodiscard]] spdlog::logger* getLogger() const override;
 
-        /** Reset the component to an uninitialized state. */
+        /// Reset the component to an uninitialized state.
         virtual void clear() {}
 
-        /** Safe cast to a derived component type. Asserts if cast fails. */
+        /// Safe cast to a derived component type. Asserts if cast fails.
         template<IsComponent T>
         [[nodiscard]] T* castTo()
         {
@@ -404,7 +384,7 @@ namespace Core
             return casted;
         }
 
-        /** Safe cast to a derived component type. Asserts if cast fails. */
+        /// Safe cast to a derived component type. Asserts if cast fails.
         template<IsComponent T>
         [[nodiscard]] const T* castTo() const
         {
@@ -413,28 +393,28 @@ namespace Core
             return casted;
         }
 
-        /** Unsafe & fast cast to a derived component type. */
+        /// Unsafe & fast cast to a derived component type.
         template<IsComponent T>
         [[nodiscard]] T* unsafeCastTo() noexcept
         {
             return reinterpret_cast<std::remove_reference_t<T>*>(this);
         }
 
-        /** Unsafe & fast cast to a derived component type. */
+        /// Unsafe & fast cast to a derived component type.
         template<IsComponent T>
         [[nodiscard]] const T* unsafeCastTo() const noexcept
         {
             return reinterpret_cast<const std::remove_reference_t<T>*>(this);
         }
 
-        /** Attempt to cast to a derived component type. Returns nullptr if cast fails. */
+        /// Attempt to cast to a derived component type. Returns nullptr if cast fails.
         template<IsComponent T>
         [[nodiscard]] T* tryCastTo()
         {
             return dynamic_cast<std::remove_reference_t<T>*>(this);
         }
 
-        /** Attempt to cast to a derived component type. Returns nullptr if cast fails. */
+        /// Attempt to cast to a derived component type. Returns nullptr if cast fails.
         template<IsComponent T>
         [[nodiscard]] const T* tryCastTo() const
         {
@@ -460,9 +440,7 @@ namespace Core
 
     protected:
         AbstractComponent() = default;
-        /**
-         * This method will be called automatically. Don't call it directly.
-         */
+        /// This method will be called automatically. Don't call it directly.
         virtual void onTick(float delta) {}
 
         FIELD();
@@ -480,46 +458,44 @@ namespace Core
     //   | ___ \ / _` |/ __| / _ \| |
     //   | |_/ /| (_| |\__ \|  __/| \__/\ _
     //   \____/  \__,_||___/ \___| \____/(_)
-    /**
-     * Base class for all your custom components.
-     * To create your own component you should do only several things:
-     * 1. Create your component's class. I.e. MyNewComponent and inherit from BaseComponent
-     * 2. Register as component: inside your new class put a macros ECS_COMPONENT_DECL
-     * 3. Register as type: inside .cpp file put ECS_COMPONENT_IMPL
-     * @code{cpp}
-     * // MyNewComponent.h
-     * class MyNewComponent : public BaseComponent {
-     *      ECS_COMPONENT_DECL(MyNewComponent, BaseComponent);
-     * };
-     * @endcode
-     * Implementation of new component:
-     * @code{cpp}
-     * // MyNewComponent.cpp
-     * ECS_COMPONENT_IMPL(MyNewComponent);
-     * @endcode
-     * More complex example with MyParentComponent and MyChildComponent
-     * @code{cpp}
-     * // MyNewComponent.h
-     * class MyParentComponent : public BaseComponent {
-     *      ECS_COMPONENT_DECL(MyParentComponent, BaseComponent);
-     * };
-     * class MyChildComponent : public MyParentComponent {
-     *      ECS_COMPONENT_DECL(MyChildComponent, MyParentComponent);
-     * };
-     * @endcode
-     * This ECS_COMPONENT_DECL macro will create one default constructor. And
-     * it can optionally take a component's name. If you want to create a component's
-     * constructor by your own hand, use instead ECS_COMPONENT_DECL_NO_CNSTR.
-     * To get more info about that, check the declaration of this macro.
-     * Implementation of new components:
-     * @code{cpp}
-     * // MyNewComponent.cpp
-     * ECS_COMPONENT_IMPL(MyParentComponent);
-     * ECS_COMPONENT_IMPL(MyChildComponent);
-     * @endcode
-     * But, if you still want to create a class, but not usual but template - see
-     * declaration (and comment above) of macro ECS_TEMPLATE_COMPONENT_DECL
-     */
+    /// Base class for all your custom components.
+    /// To create your own component you should do only several things:
+    /// 1. Create your component's class. I.e. MyNewComponent and inherit from BaseComponent
+    /// 2. Register as component: inside your new class put a macros ECS_COMPONENT_DECL
+    /// 3. Register as type: inside .cpp file put ECS_COMPONENT_IMPL
+    /// @code{cpp}
+    /// // MyNewComponent.h
+    /// class MyNewComponent : public BaseComponent {
+    ///      ECS_COMPONENT_DECL(MyNewComponent, BaseComponent);
+    /// };
+    /// @endcode
+    /// Implementation of new component:
+    /// @code{cpp}
+    /// // MyNewComponent.cpp
+    /// ECS_COMPONENT_IMPL(MyNewComponent);
+    /// @endcode
+    /// More complex example with MyParentComponent and MyChildComponent
+    /// @code{cpp}
+    /// // MyNewComponent.h
+    /// class MyParentComponent : public BaseComponent {
+    ///      ECS_COMPONENT_DECL(MyParentComponent, BaseComponent);
+    /// };
+    /// class MyChildComponent : public MyParentComponent {
+    ///      ECS_COMPONENT_DECL(MyChildComponent, MyParentComponent);
+    /// };
+    /// @endcode
+    /// This ECS_COMPONENT_DECL macro will create one default constructor. And
+    /// it can optionally take a component's name. If you want to create a component's
+    /// constructor by your own hand, use instead ECS_COMPONENT_DECL_NO_CNSTR.
+    /// To get more info about that, check the declaration of this macro.
+    /// Implementation of new components:
+    /// @code{cpp}
+    /// // MyNewComponent.cpp
+    /// ECS_COMPONENT_IMPL(MyParentComponent);
+    /// ECS_COMPONENT_IMPL(MyChildComponent);
+    /// @endcode
+    /// But, if you still want to create a class, but not usual but template - see
+    /// declaration (and comment above) of macro ECS_TEMPLATE_COMPONENT_DECL
     CLASS();
     class BaseComponent : public AbstractComponent
     {
@@ -616,22 +592,16 @@ namespace Core
             return _type == T::componentType;
         }
 
-        /**
-         * This method will be called automatically. Don't call it directly.
-         */
+        /// This method will be called automatically. Don't call it directly.
         void onTick(float delta) override;
 
-        /**
-         * Call this function directly only if you sure in it.
-         * It should be called only once per one component.
-         */
+        /// Call this function directly only if you sure in it.
+        /// It should be called only once per one component.
         virtual void initialize();
 
         [[nodiscard]] bool isInitialized() const noexcept { return _isInitialized; }
 
-        /**
-         * Call this function if you want to this object was re-inited later.
-         */
+        /// Call this function if you want to this object was re-inited later.
         void invalidate() { _isInitialized = false; }
 
         // ========================== WORKING WITH CHILDREN ==========================
@@ -728,10 +698,8 @@ namespace Core
             return static_cast<ComponentT*>(rawAddChildComponent(newOne.get()));
         }
 
-        /**
-         * attach an existing child or just a new one. Your child will be cloned
-         * to this class/owner
-         */
+        /// attach an existing child or just a new one. Your child will be cloned
+        /// to this class/owner
         BaseComponent* attachChild(const BaseComponent::Ptr& child);
 
         BaseComponent* attachUniqueChild(const BaseComponent::Ptr& child);
@@ -756,56 +724,48 @@ namespace Core
 
         // ========================== FOR EACHes ==========================
 
-        /**
-         * Iterate over every child and root recursively(BFS).
-         * Can take a functions of next types:
-         * 1. bool([const] BaseComponent*) - this function will work until it gets 'false'
-         * in return
-         * 2. void([const] BaseComponent*) - will iterate without stopping through all a
-         * tree
-         */
+        /// Iterate over every child and root recursively(BFS).
+        /// Can take a functions of next types:
+        /// 1. bool([const] BaseComponent*) - this function will work until it gets 'false'
+        /// in return
+        /// 2. void([const] BaseComponent*) - will iterate without stopping through all a
+        /// tree
         template<class FuncT>
         void forEach(FuncT&& callback)
         {
             Impl_forEach_BFS<BaseComponent>(this, std::forward<decltype(callback)>(callback));
         }
 
-        /**
-         * Iterate over every child and root recursively (BFS).
-         * Can take a function of next types:
-         * 1. bool(const BaseComponent*) - this function will work until it gets 'false'
-         * in return
-         * 2. void(const BaseComponent*) - will iterate without stopping through all a
-         * tree
-         */
+        /// Iterate over every child and root recursively (BFS).
+        /// Can take a function of next types:
+        /// 1. bool(const BaseComponent*) - this function will work until it gets 'false'
+        /// in return
+        /// 2. void(const BaseComponent*) - will iterate without stopping through all a
+        /// tree
         template<class FuncT>
         void forEach(FuncT&& callback) const
         {
             Impl_forEach_BFS<const BaseComponent>(this, std::forward<decltype(callback)>(callback));
         }
 
-        /**
-         * Iterate over every child and root recursively(DFS).
-         * Can take a functions of next types:
-         * 1. bool([const] BaseComponent*) - this function will work until it gets 'false'
-         * in return
-         * 2. void([const] BaseComponent*) - will iterate without stopping through all a
-         * tree
-         */
+        /// Iterate over every child and root recursively(DFS).
+        /// Can take a functions of next types:
+        /// 1. bool([const] BaseComponent*) - this function will work until it gets 'false'
+        /// in return
+        /// 2. void([const] BaseComponent*) - will iterate without stopping through all a
+        /// tree
         template<class FuncT>
         void forEachDFS(FuncT&& callback)
         {
             Impl_forEach_DFS<BaseComponent>(this, std::forward<decltype(callback)>(callback));
         }
 
-        /**
-         * Iterate over every child and root recursively(DFS).
-         * Can take a functions of next types:
-         * 1. bool(const BaseComponent*) - this function will work until it gets 'false'
-         * in return
-         * 2. void(const BaseComponent*) - will iterate without stopping through all a
-         * tree
-         */
+        /// Iterate over every child and root recursively(DFS).
+        /// Can take a functions of next types:
+        /// 1. bool(const BaseComponent*) - this function will work until it gets 'false'
+        /// in return
+        /// 2. void(const BaseComponent*) - will iterate without stopping through all a
+        /// tree
         template<class FuncT>
         void forEachDFS(FuncT&& callback) const
         {
@@ -837,14 +797,10 @@ namespace Core
 #endif
         }
 
-        /**
-         * This method will be called automatically. Don't call it directly.
-         */
+        /// This method will be called automatically. Don't call it directly.
         virtual void onInitialize() {}
 
-        /**
-         * This method will be called automatically. Don't call it directly.
-         */
+        /// This method will be called automatically. Don't call it directly.
         virtual void onPreInitialize() {}
 
     protected:

@@ -46,20 +46,16 @@ namespace Core
         IDrawable& operator=(IDrawable&&) noexcept = default;
         ~IDrawable() override = default;
 
-        /**
-         * In the best world, you shouldn't call this function directly; another class does a
-         * drawing process. But if you really need it: it will draw an object with the default
-         * shader. Single draw bundle!
-         */
+        /// In the best world, you shouldn't call this function directly; another class does a
+        /// drawing process. But if you really need it: it will draw an object with the default
+        /// shader. Single draw bundle!
         virtual void draw(BaseCamera&) {}
 
-        /**
-         * In the best world, you shouldn't call this function directly; another class does a
-         * drawing process. But if you really need it:
-         * It makes the minimal draw only with graphics modifiers - nothing more.
-         * Before using of this function you must manually prepare the shader &
-         * 'use' it.
-         */
+        /// In the best world, you shouldn't call this function directly; another class does a
+        /// drawing process. But if you really need it:
+        /// It makes the minimal draw only with graphics modifiers - nothing more.
+        /// Before using of this function you must manually prepare the shader &
+        /// 'use' it.
         virtual void pureDraw(const std::function<void(StaticMesh*)>& onUniformSet,
                               const std::function<bool(const Actor*)>& conditional)
         {

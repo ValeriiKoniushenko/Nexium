@@ -34,14 +34,12 @@
 
 namespace Core
 {
-    /**
-     * Base input action class for handling generic key inputs.
-     *
-     * Represents a generic input action bound to a key or button. Handles
-     * repeatable presses, timing, and delegates for when the action occurs.
-     *
-     * @tparam KeyTParam Type representing a key (e.g., int, enum, etc.).
-     */
+    /// Base input action class for handling generic key inputs.
+    ///
+    /// Represents a generic input action bound to a key or button. Handles
+    /// repeatable presses, timing, and delegates for when the action occurs.
+    ///
+    /// @tparam KeyTParam Type representing a key (e.g., int, enum, etc.).
     template<class KeyTParam>
     class InputAction : public IntrusiveRefCounter<InputAction<KeyTParam>>
     {
@@ -61,19 +59,15 @@ namespace Core
         using TimeT = std::chrono::milliseconds;
         using KeyT = KeyTParam;
 
-        /**
-         * Represents the state of special modifier keys (Shift, Alt, Ctrl).
-         */
+        /// Represents the state of special modifier keys (Shift, Alt, Ctrl).
         struct SpecKeysState
         {
             Keyboard::KeyState leftShift = Keyboard::KeyState::None;
             Keyboard::KeyState leftAlt = Keyboard::KeyState::None;
             Keyboard::KeyState leftCtrl = Keyboard::KeyState::None;
 
-            /**
-             * Reads the current state of modifier keys and returns it.
-             * @return SpecKeysState with current states of Shift, Alt, and Ctrl.
-             */
+            /// Reads the current state of modifier keys and returns it.
+            /// @return SpecKeysState with current states of Shift, Alt, and Ctrl.
             static SpecKeysState fillAndGet()
             {
                 return { .leftShift = Keyboard::getKeyState(Keyboard::Key::Left_Shift),
@@ -106,12 +100,10 @@ namespace Core
 
         [[nodiscard]] TimeT getFrequency() const { return _frequency; }
 
-        /**
-         * Updates the input action state.
-         *
-         * Checks if the bound key is pressed and triggers delegates if conditions
-         * (repeatable, frequency, etc.) are met.
-         */
+        /// Updates the input action state.
+        ///
+        /// Checks if the bound key is pressed and triggers delegates if conditions
+        /// (repeatable, frequency, etc.) are met.
         virtual void update()
         {
             if (_key)
@@ -149,23 +141,17 @@ namespace Core
 
         void setIsRepeatable(bool isRepeatable) { _isRepeatable = isRepeatable; }
 
-        /**
-         * Delegate triggered while pressing the assigned key.
-         * @param SpecKeysState Current states of special modifier keys.
-         */
+        /// Delegate triggered while pressing the assigned key.
+        /// @param SpecKeysState Current states of special modifier keys.
         Delegate<void(SpecKeysState)>::Ptr onPress = Delegate<void(SpecKeysState)>::Create();
 
     protected:
-        /**
-         * Checks if the bound key is currently pressed.
-         * Must be implemented by derived classes.
-         */
+        /// Checks if the bound key is currently pressed.
+        /// Must be implemented by derived classes.
         [[nodiscard]] virtual bool isKeyPressed() const = 0;
 
-        /**
-         * will be called while pressing on the necessary button.
-         * @param SpecKeysState states of special keys
-         */
+        /// will be called while pressing on the necessary button.
+        /// @param SpecKeysState states of special keys
         Delegate<void(SpecKeysState)>::Ptr _onActionPrivate
             = Delegate<void(SpecKeysState)>::Create();
 
@@ -178,11 +164,9 @@ namespace Core
         bool _isRepeatable = true;
     };
 
-    /**
-     * Handles input actions specifically from the keyboard.
-     * Also, can be called as KeyboardIA.
-     * Better to create it using KeyboardInputManger. I.e.:
-     */
+    /// Handles input actions specifically from the keyboard.
+    /// Also, can be called as KeyboardIA.
+    /// Better to create it using KeyboardInputManger. I.e.:
     class KeyboardInputAction : public InputAction<Keyboard::Key>
     {
     public:
@@ -202,11 +186,9 @@ namespace Core
         [[nodiscard]] bool isKeyPressed() const override;
     };
 
-    /**
-     * Handles input actions specifically from the mouse.
-     * Also, can be called as MousedIA
-     * Better to create it using MouseInputManger. I.e.:
-     */
+    /// Handles input actions specifically from the mouse.
+    /// Also, can be called as MousedIA
+    /// Better to create it using MouseInputManger. I.e.:
     class MouseInputAction : public InputAction<Mouse::Key>
     {
     public:
@@ -243,15 +225,13 @@ namespace Core
         std::optional<glm::vec2> _lastMousePosition = {};
     };
 
-    /** Alias for KeyboardInputAction. */
+    /// Alias for KeyboardInputAction.
     using KeyboardIA = KeyboardInputAction;
 
-    /** Alias for MouseInputAction. */
+    /// Alias for MouseInputAction.
     using MouseIA = MouseInputAction;
 
-    /**
-     * Concept for compile-time checking of InputAction types.
-     */
+    /// Concept for compile-time checking of InputAction types.
     template<class T>
     concept IsInputAction = requires(T) {
         typename T::KeyT;
