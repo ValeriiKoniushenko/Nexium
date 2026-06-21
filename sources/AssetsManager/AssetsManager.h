@@ -89,7 +89,6 @@ namespace Core
     {
     public:
         ENUM_CLASS();
-
         enum class NodeType
         {
             Default,

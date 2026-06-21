@@ -1,7 +1,7 @@
 -4656547738009937408 game-example/TemplateGameInstance.h
 -4656547738009937408 sources/AssetsManager/AssetImpls/Factory.h
 -4656547738008937391 sources/AssetsManager/AssetImpls/StaticMeshBundle.h
--4655630416965099145 sources/AssetsManager/AssetsManager.h
+-4655630351128492185 sources/AssetsManager/AssetsManager.h
 -4655630450471901130 sources/AssetsManager/BaseAsset.h
 -4656547738008937391 sources/AssetsManager/ECSAsset.h
 -4656547738008937391 sources/AssetsManager/ModuleInfo.h
