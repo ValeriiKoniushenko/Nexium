@@ -605,7 +605,7 @@ namespace Core
     {
         if (path.extension().generic_string() != NXAsset::ValueT::fileExtension)
         {
-            return {};
+            return _assets.end();
         }
 
         for (auto&& registered : GetAssetsManager().getRegisteredPaths())
@@ -641,6 +641,6 @@ namespace Core
             }
         }
 
-        return {};
+        return _assets.end();
     }
 } // namespace Core
