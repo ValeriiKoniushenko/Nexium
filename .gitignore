@@ -8,7 +8,10 @@
 /libs/
 /more/
 /tools/
-.cache
 /dependencies/JustReflectMe
+/.jrm/cache.data
+/.cache
 string_metrics.csv
 iwyu.log
+*.generated.*
+
