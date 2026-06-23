@@ -34,8 +34,11 @@
 #include "ModalCreateBlueprint.h"
 #include "ModalPopUp.h"
 
+#include <algorithm>
+#include <cctype>
 #include <format>
 #include <fstream>
+#include <string_view>
 
 using NodeType = Core::AssetsManager::NodeType;
 
@@ -71,6 +74,28 @@ namespace
             << ' ' << suffixes[i];
 
         return out.str();
+    }
+
+    std::string TrimWhitespace(std::string value)
+    {
+        const auto isNotSpace = [](unsigned char ch) { return !std::isspace(ch); };
+
+        value.erase(value.begin(), std::find_if(value.begin(), value.end(), isNotSpace));
+        value.erase(std::find_if(value.rbegin(), value.rend(), isNotSpace).base(), value.end());
+
+        return value;
+    }
+
+    bool ContainsInvalidFilenameCharacter(std::string_view value)
+    {
+        static constexpr std::string_view invalidChars = "<>:\"/\\|?*";
+
+        return std::ranges::any_of(value,
+                                   [](unsigned char ch)
+                                   {
+                                       return ch < 32 || invalidChars.find(static_cast<char>(ch))
+                                                           != std::string_view::npos;
+                                   });
     }
 
 } // namespace
@@ -322,8 +347,8 @@ namespace Core
         }
 
         std::size_t i = 1;
-        while (
-            std::filesystem::exists(basePath / (std::string(defaultNewFileName) + "_" + std::to_string(i))))
+        while (std::filesystem::exists(
+            basePath / (std::string(defaultNewFileName) + "_" + std::to_string(i))))
         {
             ++i;
         }
@@ -334,14 +359,33 @@ namespace Core
     bool AssetsManagerWindowEWC::renamePath(const std::filesystem::path& path,
                                             const std::string& newName)
     {
-        if (newName.empty())
+        const auto normalizedName = TrimWhitespace(newName);
+        if (normalizedName.empty())
         {
             _renameError = "Name can't be empty.";
             return false;
         }
 
-        const std::filesystem::path newNamePath(newName);
-        if (newName == "." || newName == ".." || newNamePath.is_absolute()
+        if (normalizedName.size() > 255)
+        {
+            _renameError = "Name is too long.";
+            return false;
+        }
+
+        if (ContainsInvalidFilenameCharacter(normalizedName))
+        {
+            _renameError = "Name contains invalid characters.";
+            return false;
+        }
+
+        if (normalizedName.back() == '.')
+        {
+            _renameError = "Name can't end with a dot.";
+            return false;
+        }
+
+        const std::filesystem::path newNamePath(normalizedName);
+        if (normalizedName == "." || normalizedName == ".." || newNamePath.is_absolute()
             || newNamePath.has_parent_path())
         {
             _renameError = "Name can't contain path separators.";
@@ -349,12 +393,12 @@ namespace Core
         }
 
         const auto oldName = path.filename().generic_string();
-        if (newName == oldName)
+        if (normalizedName == oldName)
         {
             return true;
         }
 
-        const auto newPath = path.parent_path() / newName;
+        const auto newPath = path.parent_path() / normalizedName;
         if (std::filesystem::exists(newPath))
         {
             _renameError = "A file or folder with this name already exists.";
@@ -367,7 +411,7 @@ namespace Core
         {
             _renameError = ec.message();
             errorLog("Can't rename file from: '{}' to '{}'. Reason: {}"_f
-                     << oldName << newName << ec.message());
+                     << oldName << normalizedName << ec.message());
             return false;
         }
 
@@ -507,9 +551,9 @@ namespace Core
             ImGui::SetKeyboardFocusHere();
         }
 
-        const bool enterPressed = ImGui::InputText(
-            "##RenameInput", &_renameBuffer,
-            ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll);
+        const bool enterPressed = ImGui::InputText("##RenameInput", &_renameBuffer,
+                                                   ImGuiInputTextFlags_EnterReturnsTrue
+                                                       | ImGuiInputTextFlags_AutoSelectAll);
         ImGui::PopItemWidth();
 
         if (!_renameError.empty())
@@ -526,6 +570,7 @@ namespace Core
         const auto buttonWidth = 120.f;
         if (ImGui::Button("Rename", glm::vec2(buttonWidth, 0.f)) || enterPressed)
         {
+            _renameBuffer = TrimWhitespace(_renameBuffer);
             if (renamePath(_renamePath, _renameBuffer))
             {
                 _renamePath.clear();
