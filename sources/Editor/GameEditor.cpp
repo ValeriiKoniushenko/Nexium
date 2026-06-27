@@ -24,7 +24,7 @@
 
 #include "GameEditor.h"
 
-#include "Editor/Windows/AssetsManagerWindow.h"
+#include "Windows/AssetsExplorer/AssetsManagerWindow.h"
 #include "Editor/Windows/EditorMenuBarWindow.h"
 #include "Editor/Windows/EditorSettings.h"
 #include "Editor/Windows/GameViewport.h"

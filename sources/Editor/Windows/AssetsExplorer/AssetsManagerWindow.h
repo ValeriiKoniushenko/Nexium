@@ -24,9 +24,10 @@
 
 #pragma once
 
+#include "RenamePopUpWindow.h"
 #include "AssetsManager/AssetsManager.h"
 #include "AssetsManager/TextureAsset.h"
-#include "BaseWindow.h"
+#include "../BaseWindow.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 
 namespace Core
@@ -110,15 +111,11 @@ namespace Core
         [[nodiscard]] bool isFiltered(const std::filesystem::path& p) const;
         [[nodiscard]] bool isSelected(const std::filesystem::path& path) const;
 
-        // -------------- LOGIC -------------------------
         void openSelectedFile(const std::filesystem::directory_entry& entry, bool needOpen,
                               bool invalidate);
         void handleSelection(const std::filesystem::path& path);
         void toggleSelection(const std::filesystem::path& path);
-        void requestRename(const std::filesystem::path& path);
 
-        // -------------- RENDER -------------------------
-        void drawRenamePopup();
         void drawToolTip(const std::filesystem::directory_entry& entry) const;
         void drawExplorerContextMenu();
         void drawAssetsContextMenu(const std::filesystem::directory_entry& entry, bool& invalidate,
@@ -139,12 +136,10 @@ namespace Core
 
     private:
         std::filesystem::path _openedPath;
-        std::filesystem::path _renamePath;
-        std::string _renameBuffer;
-        std::string _renameError;
+        RenamePopUpWindow _renamePopup;
         bool _openRenamePopup = false;
         bool _isCopy = true;
     };
 } // namespace Core
 
-#include "AssetsManagerWindow.generated.h" // added by the code generator. Better don't move it.
+#include "AssetsManagerWindow.generated.h"
