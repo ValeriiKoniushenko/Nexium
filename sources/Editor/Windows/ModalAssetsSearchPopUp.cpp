@@ -35,8 +35,7 @@ namespace Core
 {
     ECS_COMPONENT_IMPL(ModalAssetsSearchPopUpEWC);
 
-    void ModalAssetsSearchPopUpEWC::open(StringAtom text,
-                                         const std::function<void(NXECSAsset)>& callback)
+    void ModalAssetsSearchPopUpEWC::open(StringAtom text)
     {
         initialize();
         enable();
@@ -49,13 +48,11 @@ namespace Core
         }
         _caption = std::move(text);
         _hasOpenRequest = true;
-        _callback = callback;
     }
 
-    void ModalAssetsSearchPopUpEWC::Open(StringAtom text,
-                                         const std::function<void(NXECSAsset)>& callback)
+    void ModalAssetsSearchPopUpEWC::Open(StringAtom text)
     {
-        GetEditor().tryToOpenWindow<ModalAssetsSearchPopUpEWC>(".*", std::move(text), callback);
+        GetEditor().tryToOpenWindow<ModalAssetsSearchPopUpEWC>(".*", std::move(text));
     }
 
     void ModalAssetsSearchPopUpEWC::onInitialize()
@@ -84,13 +81,13 @@ namespace Core
             _list = _layout.addChildComponent<Gui::ListModelBased>();
             _list->setFlex(Gui::Flex::FlexWidthAndHeight);
             _list->setDataProvider(
-                [](std::size_t index, StringAtom& out) -> void*
+                [](std::size_t index, StringAtom& out) -> const void*
                 {
                     if (auto asset
                         = GetAssetsManager().getWeakEcsAssetAt(index, Tag_WorldObject).tryLoad())
                     {
                         out = asset->getName();
-                        return asset.get();
+                        return asset->getName().c_str();
                     }
 
                     Assert(false);
@@ -107,32 +104,11 @@ namespace Core
 
             _okButton = h->addChildComponent<Gui::Button>("Add");
             _okButton->setFlex(Gui::Flex::FlexWidth);
-            _okButton->onClick->subscribe(
-                [this]()
-                {
-                    if (!Verify(!!_callback))
-                    {
-                        return;
-                    }
-
-                    /*auto comp
-                        = GlobalComponentFactory::Instance().create(_listView->getCurrentData());
-                    if (!Verify(comp))
-                    {
-                        criticalLog("Can't fetch the asset: {}"_f << _listView->getCurrentData());
-                        return;
-                    }
-
-                    comp->setComponentName(_nameInput->input->getInputtedData().c_str());
-
-                    closeWindow();
-
-                    _callback(comp);*/
-                });
+            _okButton->onClick->subscribe([this]() { okButtonClicked(); });
 
             _cancelButton = h->addChildComponent<Gui::Button>("Cancel");
             _cancelButton->setFlex(Gui::Flex::FlexWidth);
-            _cancelButton->onClick->subscribe([this]() { closeWindow(); });
+            _cancelButton->onClick->subscribe([this]() { cancelButtonClicked(); });
         }
     }
 
@@ -166,5 +142,38 @@ namespace Core
 
     void ModalAssetsSearchPopUpEWC::endWindowDraw()
     {
+    }
+
+    void ModalAssetsSearchPopUpEWC::okButtonClicked()
+    {
+        auto weakAsset
+            = GetAssetsManager().getWeakEcsAssetAt(_list->getCurrentIndex(), Tag_WorldObject);
+
+        if (!weakAsset)
+        {
+            criticalLog("Impossible to create a scene object. The asset '{}' is inaccessible."_f
+                        << _list->tryGetCurrentDataAsString());
+            closeWindow();
+            return;
+        }
+
+        auto loadedAsset = weakAsset.tryLoad();
+        if (!loadedAsset)
+        {
+            criticalLog(
+                "Impossible to create a scene object. The asset '{}' can't load it's own data."_f
+                << _list->tryGetCurrentDataAsString());
+            closeWindow();
+            return;
+        }
+
+        gGameInstance->gameScene.addBlueprintObjectToScene(loadedAsset);
+
+        closeWindow();
+    }
+
+    void ModalAssetsSearchPopUpEWC::cancelButtonClicked()
+    {
+        closeWindow();
     }
 } // namespace Core

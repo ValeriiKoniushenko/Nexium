@@ -84,13 +84,15 @@ namespace Core
         template<IsComponent T>
         [[nodiscard]] T::Ptr gerFirstOf();
 
-        Delegate<void(WorldObject*)>::Ptr onObjectAdded = Delegate<void(WorldObject*)>::Create();
+        void addBlueprintObjectToScene(const WeakData<ECSAsset>& asset);
 
         [[nodiscard]] nlohmann::json serialize() const;
         void deserialize(RResourceStream<RJsonResourceStream>& data);
         [[nodiscard]] std::filesystem::path getCacheDir() const override;
         [[nodiscard]] StringAtom getCacheHash() const override;
         [[nodiscard]] spdlog::logger* getLogger() const override;
+
+        Delegate<void(WorldObject*)>::Ptr onObjectAdded = Delegate<void(WorldObject*)>::Create();
 
     public:
         Grid grid;

@@ -86,8 +86,7 @@ namespace Core::Gui
     }
 
     void ListModelBased::setDataProvider(
-
-        const std::function<void*(std::size_t, StringAtom&)>& callback)
+        const std::function<const void*(std::size_t, StringAtom&)>& callback)
     {
         _dataProvider = callback;
     }
@@ -107,6 +106,14 @@ namespace Core::Gui
         }
     }
 
+    StringAtom ListModelBased::tryGetCurrentDataAsString() const
+    {
+        const auto size = _sizeProvider();
+        StringAtom item;
+        (void)_dataProvider(_currentIndex, item);
+        return item;
+    }
+
     void ListModelBased::onDraw()
     {
         if (!_dataProvider || !_sizeProvider)
@@ -118,7 +125,7 @@ namespace Core::Gui
         for (std::size_t i = 0; i < _cache.size(); ++i)
         {
             StringAtom label;
-            void* ptr = _dataProvider(i, label);
+            const void* ptr = _dataProvider(i, label);
 
             _cache[i].first = ptr;
             _cache[i].second = std::move(label);

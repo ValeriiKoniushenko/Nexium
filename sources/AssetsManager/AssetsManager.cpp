@@ -254,6 +254,12 @@ namespace Core
         return _ecsAssets.at(logicPath);
     }
 
+    BaseComponent::Ptr AssetsManager::getUniqueEcsAsset(const StringAtom& logicPath)
+    {
+        const auto& asset = _ecsAssets.at(logicPath);
+        return asset->uniqueLoad();
+    }
+
     WeakNXECSAsset AssetsManager::getWeakEcsAsset(const StringAtom& logicPath)
     {
         return _ecsAssets.at(logicPath);

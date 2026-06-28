@@ -102,7 +102,7 @@ namespace Core::Gui
         /// 3. Return a pointer to your data. It will be used only by you in the future. If you want
         /// to get 'an index' to your data, you can just fetch current pointer(index), and get the
         /// pointer to your data.
-        void setDataProvider(const std::function<void*(std::size_t, StringAtom&)>& callback);
+        void setDataProvider(const std::function<const void*(std::size_t, StringAtom&)>& callback);
 
         /// Set your own data provider. Just a function that will do a few things:
         /// 1. Get index of element, that want to be processed(by you)
@@ -115,22 +115,25 @@ namespace Core::Gui
         void setCurrentIndex(std::size_t i) noexcept;
 
         [[nodiscard]] std::size_t getCurrentIndex() const noexcept { return _currentIndex; }
-        [[nodiscard]] void* getCurrentData() const noexcept { return _currentData; }
+        [[nodiscard]] const void* getCurrentData() const noexcept { return _currentData; }
+
+        [[nodiscard]] StringAtom tryGetCurrentDataAsString() const;
 
     public: // Delegates
-        Delegate<void(void*, StringAtom)>::Ptr onSelect
-            = Delegate<void(void*, StringAtom)>::Create();
+        Delegate<void(const void*, StringAtom)>::Ptr onSelect
+            = Delegate<void(const void*, StringAtom)>::Create();
 
     protected:
         void onDraw() override;
 
     protected:
-        std::function<void*(std::size_t, StringAtom&)> _dataProvider;
+        std::function<const void*(std::size_t, StringAtom&)> _dataProvider;
         std::function<std::size_t()> _sizeProvider;
-        std::vector<std::pair<void*, StringAtom>> _cache;
-        void* _currentData = nullptr;
+        std::vector<std::pair<const void*, StringAtom>> _cache;
+        const void* _currentData = nullptr;
         std::size_t _currentIndex = 0;
     };
+
 } // namespace Core::Gui
 
 #include "List.generated.h" // added by the code generator. Better don't move it.

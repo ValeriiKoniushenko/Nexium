@@ -205,6 +205,42 @@ namespace Core
         return j;
     }
 
+    BaseComponent::Ptr ECSAsset::uniqueLoad() const
+    {
+        auto componentData = GetGlobalComponentFactory().create(_meta.type);
+        if (!componentData)
+        {
+            throw std::runtime_error(
+                "Can't parse & recreate RTTI type. Maybe, the ECS type was not registered, or "
+                "type is template(it can cause problems).");
+        }
+
+        // Fetching main asset's data
+        const auto json
+            = nlohmann::json::parse(Utils::GetTextFileContentAs<std::string>(_meta.pathToSource));
+
+        RResourceStream<RJsonResourceStream> data(json[StreamData::data]);
+        componentData->deserialize(data);
+
+        // [opt] making loading of essential data (texture loading, 3D model loading, etc)
+        if (_impl)
+        {
+            _impl->load(*this, _data.get(), json[StreamData::assetData]);
+        }
+
+        if (!data.logs().empty())
+        {
+            warnLog("{} field(s) couldn't be deserialized. The asset: {} "_f << data.logs().size()
+                                                                             << _meta.logicPath);
+            for (auto&& [field, code] : data.logs())
+            {
+                warnLog("Field '{}' - {} "_f << field << RStatusToString(code));
+            }
+        }
+
+        return componentData;
+    }
+
     void ECSAsset::load()
     {
         if (_status != Status::PreLoaded)

@@ -161,6 +161,10 @@ namespace Core
 
         [[nodiscard]] Tag getTags() const noexcept { return _meta.tags; }
 
+        [[nodiscard]] const Meta& getMeta() const noexcept { return _meta; }
+
+        [[nodiscard]] BaseComponent::Ptr uniqueLoad() const;
+
     protected:
         void load();
         void unload();

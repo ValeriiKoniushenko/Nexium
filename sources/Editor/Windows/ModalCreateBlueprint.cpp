@@ -115,7 +115,7 @@ namespace Core
             _list->setFlex(Gui::Flex::FlexWidthAndHeight);
             _list->setHeight(100.f);
             _list->setDataProvider(
-                [](std::size_t index, StringAtom& out) -> void*
+                [](std::size_t index, StringAtom& out) -> const void*
                 {
                     out = GetGlobalComponentFactory().getRegisteredTypesAsVector(true).at(index);
                     return nullptr;
@@ -124,7 +124,7 @@ namespace Core
                 []()
                 { return GetGlobalComponentFactory().getRegisteredTypesAsVector(true).size(); });
             _subscriptionPool << _list->onSelect->subscribeAndGetID(
-                [this](void* data, StringAtom type)
+                [this](const void* data, StringAtom type)
                 { _typeField->input->setInputtedData(type.toStdString()); });
         }
 

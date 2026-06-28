@@ -145,6 +145,8 @@ namespace Core
         /// @return Strong reference to the asset
         [[nodiscard]] NXECSAsset getEcsAsset(const StringAtom& logicPath);
 
+        [[nodiscard]] BaseComponent::Ptr getUniqueEcsAsset(const StringAtom& logicPath);
+
         /// @brief Get an asset by its logical path without loading it. Returns nullptr if the asset
         /// wasn't loaded previously.
         /// @param logicPath Logical path to the asset

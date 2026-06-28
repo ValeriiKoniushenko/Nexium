@@ -27,6 +27,7 @@
 #include "GameplaySystem/Entities/Actor.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Graphics/Primitives/StaticMeshBundle.h"
+#include "ModuleInfo.h"
 
 namespace Core
 {
@@ -153,6 +154,33 @@ namespace Core
         }
     }
 
+    void Scene::addBlueprintObjectToScene(const WeakData<ECSAsset>& asset)
+    {
+        // GetAssetsManager().getEcsAsset()
+
+        const auto& meta = asset->getMeta();
+
+        auto finalAsset = GetAssetsManager().getUniqueEcsAsset(meta.logicPath);
+        SceneObject::Ptr obj = DynamicCast<SceneObject>(finalAsset);
+        if (!obj)
+        {
+            errorLog("Blueprint '{}' isn't SceneObject. Impossible to add it to the scene."_f
+                     << meta.logicPath);
+            return;
+        }
+        _sceneObjects.emplace_back(obj);
+
+        if (!gGameInstance->currentCamera)
+        {
+            if (auto camera = DynamicCast<BaseCamera>(obj))
+            {
+                gGameInstance->currentCamera = camera.get();
+            }
+        }
+
+        infoLog("Blueprint '{}' was spawned at the scene: '{}'"_f << meta.logicPath << _sceneName);
+    }
+
     [[nodiscard]] nlohmann::json Scene::serialize() const
     {
         auto json = R<Scene>::Serialize(*this).getData();
@@ -201,7 +229,7 @@ namespace Core
 
     spdlog::logger* Scene::getLogger() const
     {
-        return Scene::getLogger();
+        return ::Scene::getLogger();
     }
 
     void Scene::initialize()
