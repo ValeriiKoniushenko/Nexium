@@ -21,4 +21,3 @@ iwyu.log
 /data/editor/*.json
 /data/scene/*.json
 /data/config/**/*.json
-/data/config/**/*.ini

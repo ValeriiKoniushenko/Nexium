@@ -4,7 +4,7 @@
 
 **Nexium Engine is a feature-packed, cross-platform game engine to create 3D games from a unified interface. It provides
 a comprehensive set of common tools so that users can focus on making games without having to reinvent the wheel.** Now,
-it is currenty under active development. In the future games can be exported with one click to a number of platforms,
+it is currently under active development. In the future games can be exported with one click to a number of platforms,
 including the major desktop platforms (Linux, macOS, Windows), mobile platforms (Android, iOS)
 
 ## Free, open source
