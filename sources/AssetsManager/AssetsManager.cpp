@@ -119,7 +119,7 @@ namespace Core
             {
                 _textures.clear();
                 _skyboxes.clear();
-                _assets.clear();
+                _ecsAssets.clear();
 
                 for (auto&& path : _registeredPaths)
                 {
@@ -146,7 +146,7 @@ namespace Core
                             auto id = StringAtom::Intern(relPath.generic_string());
                             if (ext == ".nx")
                             {
-                                _assets.emplace(id, new ECSAsset(id))
+                                _ecsAssets.emplace(id, new ECSAsset(id))
                                     .first->second->connectSourceFile(absPath);
                             }
                             if (ext == NXTexture::AssetT::fileExtension)
@@ -192,7 +192,7 @@ namespace Core
                     auto id = StringAtom::Intern(relPath.generic_string());
                     if (ext == ".nx")
                     {
-                        _assets.emplace(id, new ECSAsset(id))
+                        _ecsAssets.emplace(id, new ECSAsset(id))
                             .first->second->connectSourceFile(absPath);
                     }
                     if (ext == NXTexture::AssetT::fileExtension)
@@ -251,24 +251,24 @@ namespace Core
 
     NXECSAsset AssetsManager::getEcsAsset(const StringAtom& logicPath)
     {
-        return _assets.at(logicPath);
+        return _ecsAssets.at(logicPath);
     }
 
     WeakNXECSAsset AssetsManager::getWeakEcsAsset(const StringAtom& logicPath)
     {
-        return _assets.at(logicPath);
+        return _ecsAssets.at(logicPath);
     }
 
     NXECSAsset AssetsManager::getEcsAssetAt(std::size_t index, AssetAction filter)
     {
-        if (index >= _assets.size()) [[unlikely]]
+        if (index >= _ecsAssets.size()) [[unlikely]]
         {
             errorLog("Can't get asset at index {} because it is out of range"_f << index);
             return {};
         }
 
         std::size_t i = 0;
-        for (auto&& [key, asset] : _assets)
+        for (auto&& [key, asset] : _ecsAssets)
         {
             if (filter == AA_None || asset->canProcessAction(filter))
             {
@@ -285,14 +285,14 @@ namespace Core
 
     WeakNXECSAsset AssetsManager::getWeakEcsAssetAt(std::size_t index, AssetAction filter)
     {
-        if (index >= _assets.size()) [[unlikely]]
+        if (index >= _ecsAssets.size()) [[unlikely]]
         {
             errorLog("Can't get asset at index {} because it is out of range"_f << index);
             return {};
         }
 
         std::size_t i = 0;
-        for (auto&& [key, asset] : _assets)
+        for (auto&& [key, asset] : _ecsAssets)
         {
             if (filter == AA_None || asset->canProcessAction(filter))
             {
@@ -310,7 +310,7 @@ namespace Core
     NXECSAsset AssetsManager::getEcsAssetByPath(const fs::path& path)
     {
         const auto it = findAssetByPath(path);
-        if (it == _assets.end()) [[unlikely]]
+        if (it == _ecsAssets.end()) [[unlikely]]
         {
             return {};
         }
@@ -320,7 +320,7 @@ namespace Core
     WeakNXECSAsset AssetsManager::getWeakEcsAssetByPath(const fs::path& path)
     {
         const auto it = findAssetByPath(path);
-        if (it == _assets.end()) [[unlikely]]
+        if (it == _ecsAssets.end()) [[unlikely]]
         {
             return {};
         }
@@ -331,11 +331,11 @@ namespace Core
     {
         if (filter == AA_None)
         {
-            return _assets.size();
+            return _ecsAssets.size();
         }
 
         std::size_t count = 0;
-        for (auto&& [key, asset] : _assets)
+        for (auto&& [key, asset] : _ecsAssets)
         {
             if (asset->canProcessAction(filter))
             {
@@ -607,7 +607,7 @@ namespace Core
     {
         if (path.extension().generic_string() != NXECSAsset::ValueT::fileExtension)
         {
-            return _assets.end();
+            return _ecsAssets.end();
         }
 
         for (auto&& registered : GetAssetsManager().getRegisteredPaths())
@@ -625,7 +625,7 @@ namespace Core
                 const auto relative = fs::relative(path, realRegistered);
                 const auto id = StringAtom(relative.generic_string());
 
-                if (auto&& it = _assets.find(id); it != _assets.end())
+                if (auto&& it = _ecsAssets.find(id); it != _ecsAssets.end())
                 {
                     return it;
                 }
@@ -643,6 +643,6 @@ namespace Core
             }
         }
 
-        return _assets.end();
+        return _ecsAssets.end();
     }
 } // namespace Core

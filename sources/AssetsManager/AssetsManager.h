@@ -113,31 +113,34 @@ namespace Core
         [[nodiscard]] static NodeType GetNodeType(const std::filesystem::directory_entry& entry);
 
         static void TryToOpenFile(const std::filesystem::directory_entry& entry);
-
         static void TryToOpenNxFile(const std::filesystem::directory_entry& entry);
-
         static void OpenPathFromOSExplorer(const std::filesystem::path& path);
 
         // ================= MAIN ======================
         void initScanFileSystem();
-
         void refreshFilesSystem();
-
         void unloadAllResources();
 
-        void generateTextureAtlas(const std::filesystem::path& atlasFolder);
 
+        // ====== Path registration ======
         [[nodiscard]] const std::set<std::filesystem::path>& getRegisteredPaths() const noexcept;
-
         void registerNewAssetPath(std::filesystem::path path);
-
         [[nodiscard]] bool validatePath(const StringAtom& logicPath, const char* requiredExt);
 
-        [[nodiscard]] NXTexture getTexture(const StringAtom& logicPath);
-        [[nodiscard]] NXSkybox getSkybox(const StringAtom& logicPath);
 
         // ============== WORKING WITH ASSETS ==========
 
+        // ====== Texture Atlas ======
+        void generateTextureAtlas(const std::filesystem::path& atlasFolder);
+        [[nodiscard]] TextureAtlas& getTextureAtlas() noexcept { return _textureAtlas; }
+
+        // ========== Textures =======
+        [[nodiscard]] NXTexture getTexture(const StringAtom& logicPath);
+
+        // =========== Skybox ========
+        [[nodiscard]] NXSkybox getSkybox(const StringAtom& logicPath);
+
+        // ============ ECS ==========
         /// @brief Get an asset by its logical path. Will load the asset if it wasn't loaded
         /// previously.
         /// @param logicPath Logical path to the asset
@@ -150,7 +153,7 @@ namespace Core
         /// @return Weak reference to the asset if it's loaded, nullptr otherwise
         [[nodiscard]] WeakNXECSAsset getWeakEcsAsset(const StringAtom& logicPath);
 
-        /// @brief Get an asset by its index in the assets collection. Will load the asset if it wasn't
+        /// @brief Get an asset by its index in the assets' collection. Will load the asset if it wasn't
         /// loaded previously.
         /// @param index Index of the asset in the collection
         /// @param filter Filter to apply when searching for assets
@@ -181,8 +184,6 @@ namespace Core
         /// @return Number of assets matching the filter
         [[nodiscard]] std::size_t getEcsAssetCount(AssetAction filter = AA_None) const;
 
-        [[nodiscard]] TextureAtlas& getTextureAtlas() noexcept { return _textureAtlas; }
-
         // ================ OVERRIDEs ==================
         // override BaseLog
         [[nodiscard]] spdlog::logger* getLogger() const override;
@@ -194,7 +195,7 @@ namespace Core
     protected:
         TextureAtlas _textureAtlas;
         std::set<std::filesystem::path> _registeredPaths;
-        std::unordered_map<StringAtom, NXECSAsset> _assets;
+        std::unordered_map<StringAtom, NXECSAsset> _ecsAssets;
         std::unordered_map<StringAtom, AssetRef<BaseAsset>> _textures;
         std::unordered_map<StringAtom, AssetRef<BaseAsset>> _skyboxes;
     };
