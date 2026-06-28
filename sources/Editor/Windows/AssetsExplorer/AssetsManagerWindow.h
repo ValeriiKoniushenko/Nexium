@@ -24,9 +24,10 @@
 
 #pragma once
 
+#include "RenamePopUpWindow.h"
 #include "AssetsManager/AssetsManager.h"
 #include "AssetsManager/TextureAsset.h"
-#include "BaseWindow.h"
+#include "../BaseWindow.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 
 namespace Core
@@ -73,6 +74,7 @@ namespace Core
         void createFolderAutoName(const std::filesystem::path& basePath);
         void createFile(const std::filesystem::path& path);
         void createFileAutoName(const std::filesystem::path& basePath);
+        bool renamePath(const std::filesystem::path& path, const std::string& newName);
 
         [[nodiscard]] std::filesystem::path getExclusiveFileName(
             const std::filesystem::path& path) const;
@@ -105,19 +107,19 @@ namespace Core
         int _commonTreeFlags = ImGuiTreeNodeFlags_OpenOnDoubleClick;
         bool _renderFilesInTreeView = false;
 
+        void refresh();
     private:
         [[nodiscard]] bool isFiltered(const std::filesystem::path& p) const;
         [[nodiscard]] bool isSelected(const std::filesystem::path& path) const;
 
-        // -------------- LOGIC -------------------------
+        void saveThumbnailSelectionAfterRename(const std::filesystem::path& oldPath,
+                                               const std::filesystem::path& newPath);
+
         void openSelectedFile(const std::filesystem::directory_entry& entry, bool needOpen,
                               bool invalidate);
         void handleSelection(const std::filesystem::path& path);
         void toggleSelection(const std::filesystem::path& path);
-        void renameFile(std::filesystem::path& path, const std::string& originalFileName,
-                        glm::vec2 size) const;
 
-        // -------------- RENDER -------------------------
         void drawToolTip(const std::filesystem::directory_entry& entry) const;
         void drawExplorerContextMenu();
         void drawAssetsContextMenu(const std::filesystem::directory_entry& entry, bool& invalidate,
@@ -134,12 +136,16 @@ namespace Core
 
         void rescanPhysicalDrive(CacheNode& node);
 
-        void refresh();
+        static std::filesystem::path Normalize(const std::filesystem::path& p)
+        {
+            return std::filesystem::weakly_canonical(p);
+        }
 
     private:
         std::filesystem::path _openedPath;
+        bool _openRenamePopup = false;
         bool _isCopy = true;
     };
 } // namespace Core
 
-#include "AssetsManagerWindow.generated.h" // added by the code generator. Better don't move it.
+#include "AssetsManagerWindow.generated.h"

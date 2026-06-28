@@ -28,13 +28,19 @@
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/Spacer.h"
 #include "GameplaySystem/Framework/GameInstance.h"
+#include "ImGui/misc/cpp/imgui_stdlib.h"
 #include "Misc/Configs.h"
 #include "Misc/IconsFontAwesome.h"
-#include "ModalCreateBlueprint.h"
-#include "ModalPopUp.h"
+#include "../ModalCreateBlueprint.h"
+#include "../ModalPopUp.h"
 
+#include <algorithm>
+#include <cctype>
 #include <format>
 #include <fstream>
+#include <string_view>
+
+#include "RenamePopUpWindow.h"
 
 using NodeType = Core::AssetsManager::NodeType;
 
@@ -72,12 +78,18 @@ namespace
         return out.str();
     }
 
-    bool InputText(const Core::StringAtom& label, std::string& value, float size, int flags)
+
+
+    bool ContainsInvalidFilenameCharacter(std::string_view value)
     {
-        ImGui::PushItemWidth(size);
-        const auto out = ImGui::InputText(("##" + label).c_str(), value.data(), flags);
-        ImGui::PopItemWidth();
-        return out;
+        static constexpr std::string_view invalidChars = "<>:\"/\\|?*";
+
+        return std::ranges::any_of(value,
+                                   [](unsigned char ch)
+                                   {
+                                       return ch < 32 || invalidChars.find(static_cast<char>(ch))
+                                                           != std::string_view::npos;
+                                   });
     }
 
 } // namespace
@@ -194,8 +206,8 @@ namespace Core
         drawExplorerTree();
         ImGui::SameLine();
         drawExplorer();
-
-        if (ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows))
+        if (ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows)
+            && !ImGui::GetIO().WantTextInput)
         {
             if (ImGui::IsKeyPressed(ImGuiKey_Backspace, false))
             {
@@ -327,8 +339,8 @@ namespace Core
         }
 
         std::size_t i = 1;
-        while (
-            std::filesystem::exists(basePath / (std::string(defaultNewFileName) + "_" + std::to_string(i))))
+        while (std::filesystem::exists(
+            basePath / (std::string(defaultNewFileName) + "_" + std::to_string(i))))
         {
             ++i;
         }
@@ -383,38 +395,23 @@ namespace Core
         return !p.generic_string().contains(filter);
     }
 
-    void AssetsManagerWindowEWC::renameFile(std::filesystem::path& path,
-                                            const std::string& originalFileName,
-                                            const glm::vec2 size) const
-    {
-        const auto filename = path.filename().generic_string();
-
-        std::string value = filename;
-        if (InputText(filename.data(), value, size.x, ImGuiInputTextFlags_EnterReturnsTrue))
-        {
-            if (value != originalFileName)
-            {
-                std::error_code ec;
-
-                const auto newPath = path.parent_path() / value;
-                std::filesystem::rename(path, newPath, ec);
-                if (ec)
-                {
-                    errorLog("Can't rename file from: '{}' to '{}'. Reason: {}"_f
-                             << filename << value << ec.message());
-                }
-                else
-                {
-                    path = newPath;
-                }
-            }
-        }
-    }
-
     bool AssetsManagerWindowEWC::isSelected(const std::filesystem::path& path) const
     {
         return std::find(_selectedPaths.begin(), _selectedPaths.end(), path)
                != _selectedPaths.end();
+    }
+
+    void AssetsManagerWindowEWC::saveThumbnailSelectionAfterRename(const std::filesystem::path& oldPath,
+                                                                   const std::filesystem::path& newPath)
+    {
+        const auto normOld = Normalize(oldPath);
+        if (Normalize(_selectedPath) == normOld)
+            _selectedPath = newPath;
+        for (auto& p : _selectedPaths)
+        {
+            if (Normalize(p) == normOld)
+                p = newPath;
+        }
     }
 
     void AssetsManagerWindowEWC::openSelectedFile(const std::filesystem::directory_entry& entry,
@@ -435,21 +432,19 @@ namespace Core
 
     void AssetsManagerWindowEWC::handleSelection(const std::filesystem::path& path)
     {
-        if (!ImGui::IsItemClicked(ImGuiMouseButton_Left))
+        if (ImGui::IsItemClicked(ImGuiMouseButton_Left) || ImGui::IsItemClicked(ImGuiMouseButton_Right))
         {
-            return;
+            _selectedPath = path;
+
+            if (ImGui::GetIO().KeyCtrl)
+            {
+                toggleSelection(path);
+                return;
+            }
+
+            _selectedPaths.clear();
+            _selectedPaths.push_back(path);
         }
-
-        _selectedPath = path;
-
-        if (ImGui::GetIO().KeyCtrl)
-        {
-            toggleSelection(path);
-            return;
-        }
-
-        _selectedPaths.clear();
-        _selectedPaths.push_back(path);
     }
 
     void AssetsManagerWindowEWC::drawToolTip(const std::filesystem::directory_entry& entry) const
@@ -539,6 +534,16 @@ namespace Core
                 && ImGui::MenuItem(ICON_FA_ARROW_DOWN " Paste"))
             {
                 pasteTo(path);
+            }
+
+            if (ImGui::MenuItem(ICON_FA_PENCIL " Rename"))
+            {
+                RenamePopUpWindow::Open("Rename file name", path, [this](const std::filesystem::path& oldPath,
+                                                                         const std::filesystem::path& newPath)
+                {
+                    saveThumbnailSelectionAfterRename(oldPath, newPath);
+                    refresh();
+                });
             }
             if (ImGui::MenuItem(ICON_FA_TRASH " Delete"))
             {
@@ -739,7 +744,6 @@ namespace Core
     {
         auto path = entry.path();
         const auto filename = path.filename().generic_string();
-        const auto& originalFileName = filename;
         bool needOpen = false;
         bool invalidate = false;
 
@@ -772,10 +776,16 @@ namespace Core
 
             drawAssetsContextMenu(entry, invalidate, needOpen);
 
-            if (!invalidate)
+            const auto labelStartX = ImGui::GetCursorPosX();
+            const auto labelSize = ImGui::CalcTextSize(filename.c_str(), nullptr, false, size.x);
+            if (labelSize.x < size.x)
             {
-                renameFile(path, originalFileName, size);
+                ImGui::SetCursorPosX(labelStartX + (size.x - labelSize.x) * 0.5f);
             }
+
+            ImGui::PushTextWrapPos(labelStartX + size.x);
+            ImGui::TextUnformatted(filename.c_str());
+            ImGui::PopTextWrapPos();
 
             ImGui::EndGroup();
         }

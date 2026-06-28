@@ -25,7 +25,7 @@
 #include "EditorMenuBarWindow.h"
 
 #include "ECSAdapters/EditorStaticMeshBundleAdapter.h"
-#include "Editor/Windows/AssetsManagerWindow.h"
+#include "AssetsExplorer/AssetsManagerWindow.h"
 #include "Editor/Windows/EditorSettings.h"
 #include "Editor/Windows/GameViewport.h"
 #include "Editor/Windows/LogsWindow.h"

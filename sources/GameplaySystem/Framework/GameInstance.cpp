@@ -107,10 +107,6 @@ namespace Core
         auto&& am = Core::Test::GetAssetsManager();
         auto&& bm = Core::Test::GetBlueprintManager();
 
-        Texture::Ptr doc
-            = am.getTexture("/home/valerii/workspace/Nexium/data/assets/images/document.png");
-        std::cout << doc->getSize().width << doc->getSize().height << std::endl;
-
         runMainLoop();
 
         saveAll();
