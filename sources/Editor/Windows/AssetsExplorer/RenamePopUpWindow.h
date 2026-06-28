@@ -85,7 +85,7 @@ namespace Core
 
         std::string _renameBuffer;
         std::string _renameError;
-        std::filesystem::path _renameToPath{};
+        std::filesystem::path _renameToPath;
         bool _hasOpenRequest = false;
     };
 } // namespace Core
