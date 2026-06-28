@@ -82,6 +82,9 @@ namespace Core::Gui
         [[nodiscard]] const StringAtom& getPlaceholder() const noexcept { return _placeholder; }
 
         void setReadOnly(bool value);
+        void requestFocus() noexcept { _needFocus = true; }
+        void requestSelectAll() noexcept { _needSelectAll = true; }
+
 
         [[nodiscard]] bool isReadOnly() const noexcept;
 
@@ -107,6 +110,10 @@ namespace Core::Gui
         Core::StringAtom _placeholder;
         FIELD();
         int _flags = ImGuiInputTextFlags_None;
+        FIELD();
+        bool _needFocus = false;
+        FIELD();
+        bool _needSelectAll = false;
     };
 
     template<Utils::IsArithmetic Type>

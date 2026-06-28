@@ -40,6 +40,8 @@
 #include <fstream>
 #include <string_view>
 
+#include "RenamePopUpWindow.h"
+
 using NodeType = Core::AssetsManager::NodeType;
 
 namespace
@@ -204,7 +206,6 @@ namespace Core
         drawExplorerTree();
         ImGui::SameLine();
         drawExplorer();
-        _renamePopup.draw();
         if (ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows)
             && !ImGui::GetIO().WantTextInput)
         {
@@ -525,7 +526,7 @@ namespace Core
             }
             if (ImGui::MenuItem(ICON_FA_PENCIL " Rename"))
             {
-                _renamePopup.open(path, entry.path().generic_string());
+                RenamePopUpWindow::Open("Rename file name", path, [this]() { refresh(); });
             }
             if (ImGui::MenuItem(ICON_FA_TRASH " Delete"))
             {

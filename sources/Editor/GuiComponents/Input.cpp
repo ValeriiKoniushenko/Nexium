@@ -125,21 +125,42 @@ namespace Core::Gui
         pushedStyles += ImGui::OptPushStyleColor(ImGuiCol_Text, _textColor);
         pushedStyles += ImGui::OptPushStyleColor(ImGuiCol_Border, _borderColor);
 
-        const int flags = ImGuiInputTextFlags_CallbackResize | _flags;
+        int flags = ImGuiInputTextFlags_CallbackResize | _flags;
+
+        if (_needSelectAll)
+        {
+            flags |= ImGuiInputTextFlags_AutoSelectAll;
+        }
+
         const bool isRO = isReadOnly();
         if (isRO)
         {
             ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
         }
 
+        if (_needFocus)
+        {
+            ImGui::SetKeyboardFocusHere();
+            _needFocus = false;
+        }
+
         InputTextCallback_UserData cb_user_data;
         cb_user_data.Str = &_buffer;
-        if (ImGui::InputTextEx("", _placeholder.c_str(), _buffer.data(),
-                               static_cast<int>(_buffer.capacity() + 1), _size, flags,
-                               InputTextCallback, &cb_user_data))
+
+        if (ImGui::InputTextEx(
+            "",
+            _placeholder.c_str(),
+            _buffer.data(),
+            static_cast<int>(_buffer.capacity() + 1),
+            _size,
+            flags,
+            InputTextCallback,
+            &cb_user_data))
         {
-            onInput->trigger(_buffer.c_str() ? _buffer.c_str() : "");
+            onInput->trigger(_buffer.c_str());
         }
+
+        _needSelectAll = false;
 
         if (isRO)
         {

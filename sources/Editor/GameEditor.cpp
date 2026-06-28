@@ -49,6 +49,7 @@
 #include "Windows/NxECSBasedEditor.h"
 #include "Windows/NxTextureEditor.h"
 #include "Windows/WorldLightning.h"
+#include "Windows/AssetsExplorer/RenamePopUpWindow.h"
 
 using namespace Core;
 
@@ -109,6 +110,7 @@ namespace Core
         registerNewWindow<ModalECSSearchPopUpEWC>("ModalECSSearchPopUp"_atom);
         registerNewWindow<ModalAssetsSearchPopUpEWC>("ModalAssetsSearchPopUpEWC"_atom);
         registerNewWindow<ModalCreateBlueprintEWC>("ModalCreateBlueprint"_atom);
+        registerNewWindow<RenamePopUpWindow>("ModalRenameFileWindow"_atom);
         registerNewWindow<WorldLightningEWC>("World Lightning"_atom);
         registerNewWindow<NxTextureEditorEWC>("NX Texture Editor"_atom);
         registerNewWindow<NxECSBasedEditorEWC>("Assets editor"_atom);

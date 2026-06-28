@@ -107,6 +107,7 @@ namespace Core
         int _commonTreeFlags = ImGuiTreeNodeFlags_OpenOnDoubleClick;
         bool _renderFilesInTreeView = false;
 
+        void refresh();
     private:
         [[nodiscard]] bool isFiltered(const std::filesystem::path& p) const;
         [[nodiscard]] bool isSelected(const std::filesystem::path& path) const;
@@ -132,11 +133,9 @@ namespace Core
 
         void rescanPhysicalDrive(CacheNode& node);
 
-        void refresh();
 
     private:
         std::filesystem::path _openedPath;
-        RenamePopUpWindow _renamePopup;
         bool _openRenamePopup = false;
         bool _isCopy = true;
     };

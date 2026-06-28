@@ -24,34 +24,66 @@
 
 #pragma once
 
+#include "AssetsManagerWindow.h"
+#include "Core/Delegate.h"
+#include "Editor/GuiComponents/VerticalLayout.h"
+#include "Editor/Windows/BaseWindow.h"
 #include "JustReflectMe/Adapter.h"
 
 namespace Core
 {
-    CLASS();
-    class RenamePopUpWindow
+    namespace Gui
     {
-        R_FRIEND(RenamePopUpWindow);
+        class Label;
+        class Button;
+        class TextInput;
+    }
+
+    CLASS();
+
+    class RenamePopUpWindow : public BaseEWC
+    {
+        ECS_COMPONENT_DECL(RenamePopUpWindow, BaseEWC);
 
     public:
-        void open(const std::filesystem::path& path, const std::string& fileName);
+        void open(const StringAtom& text, const std::filesystem::path& path, std::function<void()> onRenameCallback);
+        static void Open(const StringAtom& text, const std::filesystem::path& path,
+                         const std::function<void()>& onRenameCallback);
 
-        void draw();
+    protected:
+        void onDraw() override;
+        void onInitialize() override;
+        void preOpenedEndWindowDraw() override;
+        [[nodiscard]] bool beginWindowDraw() override;
+
+        void endWindowDraw() override;
 
     private:
-        void drawPopup();
-        void closeWindow();
         void updateSelectedPathAfterRename();
         std::string TrimWhitespace(std::string value);
         bool ContainsInvalidFilenameCharacter(std::string_view value);
-        bool renamePath(const std::filesystem::path& path, const std::string& newName);
+        bool renamePath(const std::string& newName);
 
     private:
-        std::string _renameBuffer{};
-        std::string _renameError{};
+        DelegateSubscriberPoolGuard _subscriptionPool;
+
+        Gui::VerticalLayout _layout;
+
+        Gui::Label* _label{nullptr};
+        Gui::Button* _applyButton{nullptr};
+        Gui::Button* _cancelButton{nullptr};
+        Gui::TextInput* _fileNameInput{nullptr};
+
+    private:
+        std::function<void()> _onRenameCallback;
+
+        StringAtom _caption = "ModalRenameFileName";
+
+        std::string _renameBuffer;
+        std::string _renameError;
         std::filesystem::path _renamePath{};
 
-        bool _needOpen{false};
+        bool _hasOpenRequest = false;
     };
 }
 

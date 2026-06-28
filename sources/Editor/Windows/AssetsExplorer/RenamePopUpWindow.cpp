@@ -25,104 +25,124 @@
 
 #include "RenamePopUpWindow.h"
 
+#include <ranges>
+
+#include <algorithm>
+#include <utility>
+
 #include "ImGui/imgui.h"
-#include "Misc/IconsFontAwesome.h"
-#include "ImGui/misc/cpp/imgui_stdlib.h"
+#include "Editor/GuiComponents/Button.h"
+#include "Editor/GuiComponents/HorizontalLayout.h"
+#include "Editor/GuiComponents/Input.h"
+#include "Editor/GuiComponents/Label.h"
+#include "GameplaySystem/Framework/GameInstance.h"
 
 namespace Core
 {
-    void RenamePopUpWindow::open(const std::filesystem::path& path, const std::string& fileName)
+    ECS_COMPONENT_IMPL(RenamePopUpWindow);
+
+    void RenamePopUpWindow::open(const StringAtom& text,
+                                 const std::filesystem::path& path, std::function<void()> onRenameCallback)
     {
-        _needOpen = true;
+        initialize();
+        enable();
+
+        if (_hasOpenRequest)
+        {
+            warnLog(
+                "Can't open second time ModalCreateBlueprintEWC. It's already processing the "
+                "request.");
+            return;
+        }
+        _caption = text;
+        _hasOpenRequest = true;
+        _onRenameCallback = std::move(onRenameCallback);
         _renamePath = path;
         _renameError.clear();
         _renameBuffer = path.filename().generic_string();
+
+        if (_fileNameInput)
+        {
+            _fileNameInput->setInputtedData(_renameBuffer);
+            _fileNameInput->requestFocus();
+            _fileNameInput->requestSelectAll();
+        }
     }
 
-    void RenamePopUpWindow::draw()
+    void RenamePopUpWindow::Open(const StringAtom& text,
+                                 const std::filesystem::path& path, const std::function<void()>& onRenameCallback)
     {
-        drawPopup();
+        GetEditor().tryToOpenWindow<RenamePopUpWindow>(".*", std::move(text), path, onRenameCallback);
     }
 
-    void RenamePopUpWindow::drawPopup()
+    void RenamePopUpWindow::onDraw()
     {
-        constexpr const char* popupName = ICON_FA_PENCIL
-            " Rename";
+        _layout.tick(GetWorld().timeDelta);
 
-        if (_needOpen)
-        {
-            ImGui::OpenPopup(popupName);
-            _needOpen = false;
-        }
+        ImGui::Dummy({});
 
-        ImGui::SetNextWindowSize(glm::vec2(360.f, 0.f), ImGuiCond_Appearing);
-        if (!ImGui::BeginPopupModal(popupName, nullptr, ImGuiWindowFlags_AlwaysAutoResize))
-        {
-            return;
-        }
-
-        if (ImGui::IsKeyPressed(ImGuiKey_Escape))
+        if (ImGui::IsKeyPressed(ImGuiKey_Escape, false))
         {
             closeWindow();
-            ImGui::EndPopup();
-            return;
         }
+    }
 
-        ImGui::TextUnformatted("New name");
-        ImGui::PushItemWidth(-FLT_MIN);
+    void RenamePopUpWindow::onInitialize()
+    {
+        BaseEWC::onInitialize();
+
+        _label = _layout.addChildComponent<Gui::Label>("New name");
+        _fileNameInput = _layout.addChildComponent<Gui::TextInput>();
+        _fileNameInput->setFlex(Gui::Flex::FlexWidth);
+        _fileNameInput->setInputtedData(_renameBuffer);
         if (ImGui::IsWindowAppearing())
         {
             ImGui::SetKeyboardFocusHere();
         }
 
-        const bool enterPressed = ImGui::InputText("##RenameInput", &_renameBuffer,
-                                                   ImGuiInputTextFlags_EnterReturnsTrue
-                                                   | ImGuiInputTextFlags_AutoSelectAll);
-        ImGui::PopItemWidth();
+        auto* hLayout = _layout.addChildComponent<Gui::HorizontalLayout>();
 
-        if (!_renameError.empty())
+        _applyButton = hLayout->addChildComponent<Gui::Button>("Apply");
+        _applyButton->setFlex(Gui::Flex::FlexWidth);
+        _cancelButton = hLayout->addChildComponent<Gui::Button>("Cancel");
+        _cancelButton->setFlex(Gui::Flex::FlexWidth);
+
+        _subscriptionPool << _applyButton->onClick->subscribeAndGetID([this]()
         {
-            ImGui::Dummy({});
-            ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "%s",
-                               _renameError.c_str());
-        }
-
-        ImGui::Dummy({});
-        ImGui::Separator();
-        ImGui::Dummy({});
-
-        const auto buttonWidth = 120.f;
-        if (ImGui::Button("Rename", glm::vec2(buttonWidth, 0.f)) || enterPressed)
-        {
-            _renameBuffer = TrimWhitespace(_renameBuffer);
-            if (renamePath(_renamePath, _renameBuffer))
+            _renameBuffer = TrimWhitespace(_fileNameInput->getInputtedData());
+            if (renamePath(_renameBuffer))
             {
-                _renamePath.clear();
-                _renameBuffer.clear();
-                _renameError.clear();
-                ImGui::CloseCurrentPopup();
+                closeWindow();
             }
-        }
-
-        ImGui::SameLine();
-        if (ImGui::Button("Cancel", glm::vec2(buttonWidth, 0.f)))
+        });
+        _subscriptionPool << _cancelButton->onClick->subscribeAndGetID([this]()
         {
+            closeWindow();
             _renamePath.clear();
             _renameBuffer.clear();
             _renameError.clear();
             ImGui::CloseCurrentPopup();
-        }
+        });
+    }
 
+    void RenamePopUpWindow::preOpenedEndWindowDraw()
+    {
         ImGui::EndPopup();
     }
 
-    void RenamePopUpWindow::closeWindow()
+    bool RenamePopUpWindow::beginWindowDraw()
     {
-        _renamePath.clear();
-        _renameBuffer.clear();
-        _renameError.clear();
+        if (_hasOpenRequest)
+        {
+            ImGui::OpenPopup(_caption.c_str());
+            ImGui::SetNextWindowSize(glm::vec2(400, 0), ImGuiCond_Appearing);
+            _hasOpenRequest = false;
+        }
+        return ImGui::BeginPopupModal(_caption.c_str(), nullptr, ImGuiWindowFlags_NoCollapse);
+    }
 
-        ImGui::CloseCurrentPopup();
+    void RenamePopUpWindow::endWindowDraw()
+    {
     }
 
     void RenamePopUpWindow::updateSelectedPathAfterRename()
@@ -145,13 +165,13 @@ namespace Core
     {
         const auto isNotSpace = [](unsigned char ch) { return !std::isspace(ch); };
 
-        value.erase(value.begin(), std::find_if(value.begin(), value.end(), isNotSpace));
-        value.erase(std::find_if(value.rbegin(), value.rend(), isNotSpace).base(), value.end());
+        value.erase(value.begin(), std::ranges::find_if(value, isNotSpace));
+        value.erase(std::ranges::find_if(std::views::reverse(value), isNotSpace).base(), value.end());
 
         return value;
     }
 
-    bool RenamePopUpWindow::renamePath(const std::filesystem::path& path, const std::string& newName)
+    bool RenamePopUpWindow::renamePath(const std::string& newName)
     {
         const auto normalizedName = TrimWhitespace(newName);
         if (normalizedName.empty())
@@ -186,13 +206,13 @@ namespace Core
             return false;
         }
 
-        const auto oldName = path.filename().generic_string();
+        const auto oldName = _renamePath.filename().generic_string();
         if (normalizedName == oldName)
         {
             return true;
         }
 
-        const auto newPath = path.parent_path() / normalizedName;
+        const auto newPath = _renamePath.parent_path() / normalizedName;
         if (std::filesystem::exists(newPath))
         {
             _renameError = "A file or folder with this name already exists.";
@@ -200,18 +220,19 @@ namespace Core
         }
 
         std::error_code ec;
-        std::filesystem::rename(path, newPath, ec);
+        std::filesystem::rename(_renamePath, newPath, ec);
         if (ec)
         {
             _renameError = ec.message();
-            // errorLog("Can't rename file from: '{}' to '{}'. Reason: {}"_f
-            //          << oldName << normalizedName << ec.message());
+            errorLog("Can't rename file from: '{}' to '{}'. Reason: {}"_f
+                << oldName << normalizedName << ec.message());
             return false;
         }
 
         updateSelectedPathAfterRename();
+        if (_onRenameCallback)
+            _onRenameCallback();
 
-        // refresh();
         return true;
     }
 
