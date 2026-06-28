@@ -34,7 +34,7 @@ namespace Core
 {
     class ECSAsset;
 
-    enum AssetAction : uint16_t
+    enum [[deprecated]] AssetAction : uint16_t
     {
         AA_None = 0,
         AA_Spawn = 1 << 0
@@ -158,6 +158,8 @@ namespace Core
         static void PackObjectToAsset(ECSAsset& out, const BaseComponent* data);
 
         [[nodiscard]] nlohmann::json toJson() const;
+
+        [[nodiscard]] Tag getTags() const noexcept { return _meta.tags; }
 
     protected:
         void load();

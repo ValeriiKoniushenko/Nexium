@@ -259,7 +259,7 @@ namespace Core
         return _ecsAssets.at(logicPath);
     }
 
-    NXECSAsset AssetsManager::getEcsAssetAt(std::size_t index, AssetAction filter)
+    NXECSAsset AssetsManager::getEcsAssetAt(std::size_t index, Tag tagMask)
     {
         if (index >= _ecsAssets.size()) [[unlikely]]
         {
@@ -268,9 +268,9 @@ namespace Core
         }
 
         std::size_t i = 0;
-        for (auto&& [key, asset] : _ecsAssets)
+        for (auto& asset : _ecsAssets | std::views::values)
         {
-            if (filter == AA_None || asset->canProcessAction(filter))
+            if (asset->getTags() & tagMask)
             {
                 if (i == index)
                 {
@@ -283,7 +283,7 @@ namespace Core
         return {};
     }
 
-    WeakNXECSAsset AssetsManager::getWeakEcsAssetAt(std::size_t index, AssetAction filter)
+    WeakNXECSAsset AssetsManager::getWeakEcsAssetAt(std::size_t index, Tag tagMask)
     {
         if (index >= _ecsAssets.size()) [[unlikely]]
         {
@@ -292,9 +292,9 @@ namespace Core
         }
 
         std::size_t i = 0;
-        for (auto&& [key, asset] : _ecsAssets)
+        for (auto& asset : _ecsAssets | std::views::values)
         {
-            if (filter == AA_None || asset->canProcessAction(filter))
+            if (asset->getTags() & tagMask)
             {
                 if (i == index)
                 {
@@ -327,17 +327,18 @@ namespace Core
         return it->second;
     }
 
-    std::size_t AssetsManager::getEcsAssetCount(AssetAction filter) const
+    std::size_t AssetsManager::getEcsAssetCountByTag(Tag tagMask) const
     {
-        if (filter == AA_None)
+        std::size_t count = 0;
+
+        if (tagMask == Tag_None)
         {
-            return _ecsAssets.size();
+            return count;
         }
 
-        std::size_t count = 0;
-        for (auto&& [key, asset] : _ecsAssets)
+        for (auto&& [_, asset] : _ecsAssets)
         {
-            if (asset->canProcessAction(filter))
+            if (asset->getTags() & tagMask)
             {
                 ++count;
             }

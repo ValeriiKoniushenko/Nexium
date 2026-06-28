@@ -36,6 +36,7 @@ namespace Core
         Tag_None = 0,
         Tag_WorldObject = 1 << 0,
         Tag_GuiObject = 1 << 1,
+        Tag_Any = 0xFFFFFFFF
     };
 
     struct TagHelper
