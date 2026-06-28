@@ -26,9 +26,11 @@
 
 #include "ResourceManager.h"
 
-#include "Misc/Configs.h"
-#include "ModuleInfo.h"
-#include "spdlog/sinks/stdout_color_sinks.h"
+#if 0
+
+    #include "Misc/Configs.h"
+    #include "ModuleInfo.h"
+    #include "spdlog/sinks/stdout_color_sinks.h"
 
 namespace fs = std::filesystem;
 
@@ -132,7 +134,7 @@ namespace Core::Test
                 continue;
             }
 
-#if defined(_WIN32)
+    #if defined(_WIN32)
             // Windows Shell Links (.lnk): purely a file with a special extension.
             // We can strip it lexically. The actual binary target inside the .lnk
             // requires COM (IShellLink) + FS access - out of scope here.
@@ -152,7 +154,7 @@ namespace Core::Test
                     continue;
                 }
             }
-#endif
+    #endif
 
             // Linux/Windows symlinks and NTFS junctions are invisible at this level.
             // We cannot detect or resolve them without stat()/readlink()/DeviceIoControl().
@@ -238,3 +240,5 @@ namespace Core::Test
         return relative;
     }
 } // namespace Core::Test
+
+#endif

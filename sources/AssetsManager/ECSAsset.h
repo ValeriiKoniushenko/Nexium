@@ -152,7 +152,7 @@ namespace Core
         [[nodiscard]] bool operator==(const ECSAsset& other) const;
         [[nodiscard]] bool operator==(const IntrusivePtr<ECSAsset>& other) const;
 
-        [[nodiscard]] static void PackObjectToAsset(ECSAsset& out, const BaseComponent* data);
+        static void PackObjectToAsset(ECSAsset& out, const BaseComponent* data);
 
         [[nodiscard]] nlohmann::json toJson() const;
 
@@ -179,8 +179,8 @@ namespace Core
         Status _status = Status::NotLoaded;
     };
 
-    using NXAsset = IntrusivePtr<ECSAsset>;
-    using WeakNXAsset = WeakPtr<ECSAsset>;
+    using NXECSAsset = IntrusivePtr<ECSAsset>;
+    using WeakNXECSAsset = WeakPtr<ECSAsset>;
 
     class NXSceneAsset : public IntrusiveRefCounter<NXSceneAsset>
     {
@@ -194,7 +194,7 @@ namespace Core
         ~NXSceneAsset() override = default;
 
         void setAsset(ECSAsset& asset);
-        void setAsset(NXAsset asset);
+        void setAsset(NXECSAsset asset);
         bool setData(const BaseComponent* comp);
 
         template<IsComponent T, class... Args>
@@ -210,7 +210,7 @@ namespace Core
             return true;
         }
 
-        [[nodiscard]] const NXAsset& getAsset() const noexcept { return _asset; }
+        [[nodiscard]] const NXECSAsset& getAsset() const noexcept { return _asset; }
         [[nodiscard]] const BaseComponent* getData() const noexcept { return _data.get(); }
         [[nodiscard]] BaseComponent* getData() noexcept { return _data.get(); }
 
@@ -218,7 +218,7 @@ namespace Core
         [[nodiscard]] bool validateInputSetData(const BaseComponent* comp);
 
     protected:
-        NXAsset _asset;
+        NXECSAsset _asset;
         BaseComponent::Ptr _data;
     };
 

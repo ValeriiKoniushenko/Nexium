@@ -249,17 +249,17 @@ namespace Core
         _registeredPaths.emplace(std::move(path));
     }
 
-    NXAsset AssetsManager::getAsset(const StringAtom& logicPath)
+    NXECSAsset AssetsManager::getAsset(const StringAtom& logicPath)
     {
         return _assets.at(logicPath);
     }
 
-    WeakNXAsset AssetsManager::getWeakAsset(const StringAtom& logicPath)
+    WeakNXECSAsset AssetsManager::getWeakAsset(const StringAtom& logicPath)
     {
         return _assets.at(logicPath);
     }
 
-    NXAsset AssetsManager::getAssetAt(std::size_t index, AssetAction filter)
+    NXECSAsset AssetsManager::getAssetAt(std::size_t index, AssetAction filter)
     {
         if (index >= _assets.size()) [[unlikely]]
         {
@@ -283,7 +283,7 @@ namespace Core
         return {};
     }
 
-    WeakNXAsset AssetsManager::getWeakAssetAt(std::size_t index, AssetAction filter)
+    WeakNXECSAsset AssetsManager::getWeakAssetAt(std::size_t index, AssetAction filter)
     {
         if (index >= _assets.size()) [[unlikely]]
         {
@@ -307,7 +307,7 @@ namespace Core
         return {};
     }
 
-    NXAsset AssetsManager::getAssetByPath(const fs::path& path)
+    NXECSAsset AssetsManager::getAssetByPath(const fs::path& path)
     {
         const auto it = findAssetByPath(path);
         if (it == _assets.end()) [[unlikely]]
@@ -317,7 +317,7 @@ namespace Core
         return it->second;
     }
 
-    WeakNXAsset AssetsManager::getWeakAssetByPath(const fs::path& path)
+    WeakNXECSAsset AssetsManager::getWeakAssetByPath(const fs::path& path)
     {
         const auto it = findAssetByPath(path);
         if (it == _assets.end()) [[unlikely]]
@@ -441,8 +441,9 @@ namespace Core
             return false;
         }
 
-        Assert(logicPath.isStatic(), "You must use only _atom strings!");
+        Assert(logicPath.isStatic(), "You must use only _atom strings for asset paths!");
 
+#if defined(DEBUG)
         auto* found = logicPath.reverseFind(".nx");
         if (!found)
         {
@@ -458,6 +459,7 @@ namespace Core
                                                                                  << found);
             return false;
         }
+#endif
 
         return true;
     }
@@ -496,7 +498,7 @@ namespace Core
 
         const auto path = entry.path();
         const auto ext = path.extension().generic_string();
-        if (ext == NXAsset::ValueT::fileExtension)
+        if (ext == NXECSAsset::ValueT::fileExtension)
         {
             gGameInstance->gameEditor.showWindow<NxECSBasedEditorEWC>(".*",
                                                                       path.generic_string().data());
@@ -600,10 +602,10 @@ namespace Core
         std::system(command.c_str());
     }
 
-    std::unordered_map<StringAtom, NXAsset>::iterator AssetsManager::findAssetByPath(
+    std::unordered_map<StringAtom, NXECSAsset>::iterator AssetsManager::findAssetByPath(
         const fs::path& path)
     {
-        if (path.extension().generic_string() != NXAsset::ValueT::fileExtension)
+        if (path.extension().generic_string() != NXECSAsset::ValueT::fileExtension)
         {
             return _assets.end();
         }

@@ -100,15 +100,10 @@ namespace Core
 
     public:
         AssetsManager();
-
         AssetsManager(const AssetsManager&) = delete;
-
         AssetsManager(AssetsManager&&) = delete;
-
         AssetsManager& operator=(const AssetsManager&) = delete;
-
         AssetsManager& operator=(AssetsManager&&) = delete;
-
         ~AssetsManager() override = default;
 
         // ================= STATIC ======================
@@ -138,10 +133,7 @@ namespace Core
 
         [[nodiscard]] bool validatePath(const StringAtom& logicPath, const char* requiredExt);
 
-        // TODO: remove it, merge to main NXAsset
         [[nodiscard]] NXTexture getTexture(const StringAtom& logicPath);
-
-        // TODO: remove it, merge to main NXAsset
         [[nodiscard]] NXSkybox getSkybox(const StringAtom& logicPath);
 
         // ============== WORKING WITH ASSETS ==========
@@ -150,38 +142,39 @@ namespace Core
         /// previously.
         /// @param logicPath Logical path to the asset
         /// @return Strong reference to the asset
-        [[nodiscard]] NXAsset getAsset(const StringAtom& logicPath);
+        [[nodiscard]] NXECSAsset getAsset(const StringAtom& logicPath);
 
         /// @brief Get asset by its logical path without loading it. Returns nullptr if asset wasn't
         /// loaded previously.
         /// @param logicPath Logical path to the asset
         /// @return Weak reference to the asset if it's loaded, nullptr otherwise
-        [[nodiscard]] WeakNXAsset getWeakAsset(const StringAtom& logicPath);
+        [[nodiscard]] WeakNXECSAsset getWeakAsset(const StringAtom& logicPath);
 
         /// @brief Get asset by its index in assets collection. Will load the asset if it wasn't
         /// loaded previously.
         /// @param index Index of the asset in collection
         /// @param filter Filter to apply when searching assets
         /// @return Strong reference to the asset
-        [[nodiscard]] NXAsset getAssetAt(std::size_t index, AssetAction filter = AA_None);
+        [[nodiscard]] NXECSAsset getAssetAt(std::size_t index, AssetAction filter = AA_None);
 
         /// @brief Get asset by its index without loading it. Returns nullptr if asset wasn't loaded
         /// previously.
         /// @param index Index of the asset in collection
         /// @param filter Filter to apply when searching assets
         /// @return Weak reference to the asset if it's loaded, nullptr otherwise
-        [[nodiscard]] WeakNXAsset getWeakAssetAt(std::size_t index, AssetAction filter = AA_None);
+        [[nodiscard]] WeakNXECSAsset getWeakAssetAt(std::size_t index,
+                                                    AssetAction filter = AA_None);
 
         /// @brief Get asset by filesystem path. Will load the asset if it wasn't loaded previously.
         /// @param path Filesystem path to the asset
         /// @return Strong reference to the asset
-        [[nodiscard]] NXAsset getAssetByPath(const std::filesystem::path& path);
+        [[nodiscard]] NXECSAsset getAssetByPath(const std::filesystem::path& path);
 
         /// @brief Get asset by filesystem path without loading it. Returns nullptr if asset wasn't
         /// loaded previously.
         /// @param path Filesystem path to the asset
         /// @return Weak reference to the asset if it's loaded, nullptr otherwise
-        [[nodiscard]] WeakNXAsset getWeakAssetByPath(const std::filesystem::path& path);
+        [[nodiscard]] WeakNXECSAsset getWeakAssetByPath(const std::filesystem::path& path);
 
         /// @brief Get total count of assets matching the filter
         /// @param filter Filter to apply when counting assets
@@ -195,13 +188,13 @@ namespace Core
         [[nodiscard]] spdlog::logger* getLogger() const override;
 
     protected:
-        [[nodiscard]] std::unordered_map<StringAtom, NXAsset>::iterator findAssetByPath(
+        [[nodiscard]] std::unordered_map<StringAtom, NXECSAsset>::iterator findAssetByPath(
             const std::filesystem::path& path);
 
     protected:
         TextureAtlas _textureAtlas;
         std::set<std::filesystem::path> _registeredPaths;
-        std::unordered_map<StringAtom, NXAsset> _assets;
+        std::unordered_map<StringAtom, NXECSAsset> _assets;
         std::unordered_map<StringAtom, AssetRef<BaseAsset>> _textures;
         std::unordered_map<StringAtom, AssetRef<BaseAsset>> _skyboxes;
     };

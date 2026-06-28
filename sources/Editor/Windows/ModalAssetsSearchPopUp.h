@@ -42,8 +42,8 @@ namespace Core
         ECS_COMPONENT_DECL(ModalAssetsSearchPopUpEWC, BaseEWC);
 
     public:
-        void open(StringAtom text, const std::function<void(NXAsset)>& callback);
-        static void Open(StringAtom text, const std::function<void(NXAsset)>& callback);
+        void open(StringAtom text, const std::function<void(NXECSAsset)>& callback);
+        static void Open(StringAtom text, const std::function<void(NXECSAsset)>& callback);
 
     protected:
         void onInitialize() override;
@@ -58,7 +58,7 @@ namespace Core
 
     protected:
         DelegateSubscriberPoolGuard _subscriptionPool;
-        std::function<void(NXAsset)> _callback;
+        std::function<void(NXECSAsset)> _callback;
 
         StringAtom _caption = "ModalAssetsSearchPopUpEWC";
         Gui::VerticalLayout _layout;

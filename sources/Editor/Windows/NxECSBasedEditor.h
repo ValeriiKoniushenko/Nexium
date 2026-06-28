@@ -62,7 +62,7 @@ namespace Core
         void makeParentDirty();
         [[nodiscard]] BaseComponent* getTargetComponent();
         [[nodiscard]] const BaseComponent* getTargetComponent() const;
-        [[nodiscard]] NXAsset getTargetAsset();
+        [[nodiscard]] NXECSAsset getTargetAsset();
     };
 
     class NxECSBasedEditorEWC : public NxEditorBaseEditorEWC
@@ -73,8 +73,8 @@ namespace Core
         [[nodiscard]] BaseComponent* getTargetComponent() noexcept;
         [[nodiscard]] const BaseComponent* getTargetComponent() const noexcept;
 
-        [[nodiscard]] NXAsset getTargetAsset();
-        [[nodiscard]] const NXAsset getTargetAsset() const;
+        [[nodiscard]] NXECSAsset getTargetAsset();
+        [[nodiscard]] const NXECSAsset getTargetAsset() const;
 
         [[nodiscard]] bool hasTarget() const noexcept { return _targetComponent && _targetAsset; }
 
@@ -110,7 +110,7 @@ namespace Core
         Gui::LabelRow<Gui::TextInput>* _logicalPath = nullptr;
         Gui::LabelRow<Gui::TextInput>* _assetType = nullptr;
 
-        NXAsset _targetAsset;
+        NXECSAsset _targetAsset;
         BaseComponent* _targetComponent = nullptr;
     };
 

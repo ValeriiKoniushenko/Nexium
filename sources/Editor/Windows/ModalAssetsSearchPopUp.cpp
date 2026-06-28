@@ -36,7 +36,7 @@ namespace Core
     ECS_COMPONENT_IMPL(ModalAssetsSearchPopUpEWC);
 
     void ModalAssetsSearchPopUpEWC::open(StringAtom text,
-                                         const std::function<void(NXAsset)>& callback)
+                                         const std::function<void(NXECSAsset)>& callback)
     {
         initialize();
         enable();
@@ -53,7 +53,7 @@ namespace Core
     }
 
     void ModalAssetsSearchPopUpEWC::Open(StringAtom text,
-                                         const std::function<void(NXAsset)>& callback)
+                                         const std::function<void(NXECSAsset)>& callback)
     {
         GetEditor().tryToOpenWindow<ModalAssetsSearchPopUpEWC>(".*", std::move(text), callback);
     }

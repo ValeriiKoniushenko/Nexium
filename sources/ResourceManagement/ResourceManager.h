@@ -24,12 +24,14 @@
 
 #pragma once
 
-#include "Core/Singleton.h"
-#include "Graphics/Texture.h"
-#include "Misc/BaseLog.h"
+#if 0
 
-#include <Core/IntrusivePtr.h>
-#include <filesystem>
+    #include "Core/Singleton.h"
+    #include "Graphics/Texture.h"
+    #include "Misc/BaseLog.h"
+
+    #include <Core/IntrusivePtr.h>
+    #include <filesystem>
 
 namespace Core::Test
 {
@@ -134,3 +136,5 @@ namespace Core::Test
         return AssetsManager::Instance();
     }
 } // namespace Core::Test
+
+#endif

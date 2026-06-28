@@ -104,9 +104,6 @@ namespace Core
         startUpReadCache();
         loadCoreResources();
 
-        auto&& am = Core::Test::GetAssetsManager();
-        auto&& bm = Core::Test::GetBlueprintManager();
-
         runMainLoop();
 
         saveAll();
@@ -134,15 +131,6 @@ namespace Core
 
         onSaveAll();
     }
-
-    /*void GameInstance::ioFieldsUpdate(DataStream& out)
-    {
-        auto stream = out.dedicatedNesting("GameInstance");
-
-        int iRenderMode = static_cast<int>(renderMode);
-        stream.field("renderMode", iRenderMode);
-        renderMode = static_cast<RenderMode>(iRenderMode);
-    }*/
 
     void GameInstance::runMainLoop()
     {

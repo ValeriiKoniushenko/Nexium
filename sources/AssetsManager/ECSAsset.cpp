@@ -392,7 +392,7 @@ namespace Core
         }
     }
 
-    void NXSceneAsset::setAsset(NXAsset asset)
+    void NXSceneAsset::setAsset(NXECSAsset asset)
     {
         if (Verify(asset)) [[likely]]
         {
