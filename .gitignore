@@ -11,7 +11,14 @@
 /dependencies/JustReflectMe
 /.jrm/cache.data
 /.cache
+
 string_metrics.csv
 iwyu.log
-*.generated.*
 
+/sources/**/*.generated.h
+/sources/**/*.generated.cpp
+
+/data/editor/*.json
+/data/scene/*.json
+/data/config/**/*.json
+/data/config/**/*.ini
