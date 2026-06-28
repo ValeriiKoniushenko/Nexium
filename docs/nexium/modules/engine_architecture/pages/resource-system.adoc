@@ -1,19 +1,81 @@
 = Resource system
 
 The resource system here is straightforward.
-It has the main controlling class `AssetsManager` which you can find inside the god-object `gGameInstance`.
+It has a few entry points to work with it:
 
-`AssetsManager` implement the logic of the main storage\provider for any assets.
-If you want to get some texture, 3D model, image, you must ask about that the `AssetsManager`.
-To get the object of this class, you can use such approaches:
+* `Core::GetAssetsManager()`
+* `Core::GetBlueprintManager()`
+
+Both of them are responsible for their own part of logic.
+
+== Assets manager
+
+It's responsible for atomic resources:
+
+* Images: .png, .jpg, .jpeg, etc - Fonts: .ttf
+* Fonts: .ttf, .otf
+* 3D models: .obj, .fbx, .stl, etc
+* ....
+
+So, it represents only *one resource*.
+The current goal of the Assets Manager it is to provide easy access for controlling of the resources.
+Where the final user shouldn't worry about 'when to delete the resource XYZ', 'when to refresh it', 'when to save it', etc.
+EVerything it is covered by the logic of `AssetsManager`.
+
+For now, it doesn't cover the ability to give some commands to make a specific logic of the resource.
+Everything that it does is just a load a resource and store it inside.
+It seems to smart pointer.
+
+The code example:
 
 [sources,cpp]
 ----
-#include "GameplaySystem/Framework/GameInstance.h"
+#include "ResourceManager/ResourceManager.h"
 
-Core::AssetsManager& am1 = gGameInstance->assets;
-Core::AssetsManager& am2 = GetAssetsManager();
+auto&& am = Core::Test::GetAssetsManager();
+Texture::Ptr doc = am.getTexture("/home/valerii/workspace/Nexium/data/assets/images/document.png");
+std::cout << doc->getSize().width << doc->getSize().height << std::endl;
 ----
+
+== Blueprint Manager
+
+The Blueprint Manager, on the other hand, is a more complex tool.
+It handles some functional stuff that can be extended, changed and scaled later.
+It handles the data in the same way – you should only ask it to give you some data with a simple string; and if it exists, it will be loaded in the correct way and provided to you.
+
+[sources,cpp]
+----
+#include "ResourceManager/ResourceManager.h"
+
+auto&& bm = Core::Test::GetBlueprintManager();
+auto&& blueprint = bm.findBlueprint("BaseCamera");
+auto&& baseCamera = blueprint.exposeData();
+----
+
+== Blueprint - what is it?
+
+The blueprint is a thing that describes the data, what it looks like, from what types it should be constructed, what values should be applied to it.
+Under implementation (for today) is just a .json file that can describe some complex objects.
+Technically, it looks like this (pseudocode):
+
+[sources,cpp]
+----
+{
+    "name": "SomeName",
+    "type": "SomeBlueprintParserType",
+    "data": {
+        ...
+    }
+}
+----
+
+The definition of the fields is:
+
+* *"name"* – given component name.
+It will be used while spawning of the object, or for similar scenarios.
+* *"type"* – the type of the parser for this blueprint(e.g. BlueprintImageParser, Blueprint3DObjectSParser).
+
+== The info below is DEPRECATED
 
 == Main pipeline
 
@@ -88,7 +150,7 @@ It's the best way to get what you need.
 
 Let's see at the main pipeline behind all extra information.
 
-[source, cpp]
+[source,cpp]
 ----
 // First scan at the engine's initialization. You shouldn't do that directly!
 gGameInstance->assets.rescanFileSystem();
