@@ -65,6 +65,9 @@ namespace Core
 
         void tryToDetectReplacingOfExistingFile();
 
+        void okButtonClicked();
+        void cancelButtonClicked();
+
     protected:
         DelegateSubscriberPoolGuard _subscriptionPool;
 

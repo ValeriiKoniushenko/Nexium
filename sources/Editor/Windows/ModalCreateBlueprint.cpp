@@ -135,57 +135,11 @@ namespace Core
 
             _okButton = h->addChildComponent<Gui::Button>("Create");
             _okButton->setFlex(Gui::Flex::FlexWidth);
-            _okButton->onClick->subscribe(
-                [this]()
-                {
-                    std::string error;
-
-                    _errorOutput->setText("");
-                    _nameField->input->resetBorderColor();
-                    _typeField->input->resetBorderColor();
-                    _pathField->input->resetBorderColor();
-
-                    if (_nameField->input->getInputtedData().empty())
-                    {
-                        _nameField->input->setBorderColor(Color4_Red);
-                        error = "Name is empty";
-                    }
-
-                    if (_typeField->input->getInputtedData().empty())
-                    {
-                        _typeField->input->setBorderColor(Color4_Red);
-                        error = "Type is emtpy";
-                    }
-                    else if (!GetGlobalComponentFactory().containsSuchType(
-                                 _typeField->input->getInputtedData().data()))
-                    {
-                        _typeField->input->setBorderColor(Color4_Red);
-                        error = "Type is not recognized in ECS system";
-                    }
-
-                    if (!std::filesystem::exists(_pathField->input->getInputtedData()))
-                    {
-                        error = "Provided path doesn't exist or incorrect";
-                        _pathField->input->setBorderColor(Color4_Red);
-                    }
-
-                    if (!error.empty())
-                    {
-                        _errorOutput->setText(error.c_str());
-                        return;
-                    }
-
-                    performBlueprintCreation(_typeField->input->getInputtedData(),
-                                             _nameField->input->getInputtedData(),
-                                             _pathField->input->getInputtedData());
-
-                    closeWindow();
-                    GetAssetsManager().refreshFilesSystem();
-                });
+            _okButton->onClick->subscribe([this]() { okButtonClicked(); });
 
             _cancelButton = h->addChildComponent<Gui::Button>("Cancel");
             _cancelButton->setFlex(Gui::Flex::FlexWidth);
-            _cancelButton->onClick->subscribe([this]() { closeWindow(); });
+            _cancelButton->onClick->subscribe([this]() { cancelButtonClicked(); });
         }
     }
 
@@ -270,6 +224,58 @@ namespace Core
         {
             _errorOutput->setText("");
         }
+    }
+
+    void ModalCreateBlueprintEWC::cancelButtonClicked()
+    {
+        closeWindow();
+    }
+
+    void ModalCreateBlueprintEWC::okButtonClicked()
+    {
+        std::string error;
+
+        _errorOutput->setText("");
+        _nameField->input->resetBorderColor();
+        _typeField->input->resetBorderColor();
+        _pathField->input->resetBorderColor();
+
+        if (_nameField->input->getInputtedData().empty())
+        {
+            _nameField->input->setBorderColor(Color4_Red);
+            error = "Name is empty";
+        }
+
+        if (_typeField->input->getInputtedData().empty())
+        {
+            _typeField->input->setBorderColor(Color4_Red);
+            error = "Type is empty";
+        }
+        else if (!GetGlobalComponentFactory().containsSuchType(
+                     _typeField->input->getInputtedData().data()))
+        {
+            _typeField->input->setBorderColor(Color4_Red);
+            error = "Type is not recognized in ECS system";
+        }
+
+        if (!std::filesystem::exists(_pathField->input->getInputtedData()))
+        {
+            error = "Provided path doesn't exist or incorrect";
+            _pathField->input->setBorderColor(Color4_Red);
+        }
+
+        if (!error.empty())
+        {
+            _errorOutput->setText(error.c_str());
+            return;
+        }
+
+        performBlueprintCreation(_typeField->input->getInputtedData(),
+                                 _nameField->input->getInputtedData(),
+                                 _pathField->input->getInputtedData());
+
+        closeWindow();
+        GetAssetsManager().refreshFilesSystem();
     }
 
 } // namespace Core
