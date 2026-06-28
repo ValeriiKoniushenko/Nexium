@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "AssetsManager/ITagHolder.h"
 #include "ECS/BaseComponent.h"
 #include "ECS/Transformable.h"
 #include "Graphics/IDrawable.h"
@@ -47,7 +48,8 @@ namespace Core
         public BaseComponent,
         public IOutliner,
         public Transformable,
-        public IDrawable
+        public IDrawable,
+        public ITagHolder
     {
         ECS_COMPONENT_DECL(SceneObject, BaseComponent);
         R_FRIEND_DECL(Core::SceneObject, Core::BaseComponent, Core::Transformable, Core::IOutliner,
@@ -72,6 +74,8 @@ namespace Core
             swap(static_cast<Transformable&>(a), static_cast<Transformable&>(b));
             swap(static_cast<IDrawable&>(a), static_cast<IDrawable&>(b));
         }
+
+        [[nodiscard]] Tag getTags() const override;
 
     protected:
         void onOutlineStatusChange(bool newStatus) override;

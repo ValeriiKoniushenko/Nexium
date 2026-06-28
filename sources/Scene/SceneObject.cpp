@@ -45,6 +45,11 @@ namespace Core
                  .assetType = getComponentType() };
     }
 
+    Tag SceneObject::getTags() const
+    {
+        return Tag_WorldObject;
+    }
+
     void SceneObject::onOutlineStatusChange(bool newStatus)
     {
     }

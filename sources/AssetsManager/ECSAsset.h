@@ -26,6 +26,7 @@
 
 #include "Core/IntrusivePtr.h"
 #include "ECS/BaseComponent.h"
+#include "ITagHolder.h"
 
 #include <filesystem>
 
@@ -100,6 +101,7 @@ namespace Core
 
             static constexpr const char* type = "type";
             static constexpr const char* name = "name";
+            static constexpr const char* tags = "tags";
             static constexpr const char* data = "data";
             static constexpr const char* assetData = "assetData";
         };
@@ -111,6 +113,7 @@ namespace Core
 
             StringAtom name;
             StringAtom type;
+            Tag tags = Tag_None;
         };
 
     public:

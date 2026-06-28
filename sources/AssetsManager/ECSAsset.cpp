@@ -111,6 +111,7 @@ namespace Core
         nlohmann::json json;
         json[StreamData::type] = _meta.type;
         json[StreamData::name] = _meta.name;
+        json[StreamData::tags] = TagHelper::JoinAllToString(_meta.tags);
         json[StreamData::data] = nlohmann::json::object();
 
         json[StreamData::assetData] = assetData;
@@ -183,6 +184,11 @@ namespace Core
         out._data = data->clone();
         out._meta.type = data->getComponentType();
         out._meta.name = data->getComponentName();
+
+        if (const auto* t = dynamic_cast<const ITagHolder*>(data))
+        {
+            out._meta.tags = t->getTags();
+        }
     }
 
     nlohmann::json ECSAsset::toJson() const
@@ -191,6 +197,7 @@ namespace Core
 
         j[StreamData::type] = _meta.type;
         j[StreamData::name] = _meta.name;
+        j[StreamData::tags] = TagHelper::JoinAllToString(_meta.tags);
         j[StreamData::assetData] = nlohmann::json::object();
 
         j[StreamData::data] = _data->serialize();
@@ -317,6 +324,12 @@ namespace Core
             if (_meta.type.isEmpty())
             {
                 throw std::runtime_error("Asset's source file contains empty 'type' field.");
+            }
+
+            if (json.contains(StreamData::tags))
+            {
+                _meta.tags = TagHelper::SplitToTagFromString(
+                    json[StreamData::tags].get<std::string_view>());
             }
 
             if (json.contains(StreamData::name))

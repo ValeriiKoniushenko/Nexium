@@ -43,9 +43,9 @@ namespace Core
     {
         IDataIO() = default;
         IDataIO(const IDataIO&) = default;
-        IDataIO(IDataIO&&) = delete;
+        IDataIO(IDataIO&&) = default;
         IDataIO& operator=(const IDataIO&) = default;
-        IDataIO& operator=(IDataIO&&) = delete;
+        IDataIO& operator=(IDataIO&&) = default;
         virtual ~IDataIO() = default;
 
         [[nodiscard]] virtual std::filesystem::path getCacheDir() const { return "cache"; };
