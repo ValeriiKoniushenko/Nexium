@@ -568,7 +568,7 @@ namespace Core
                 AssetsManager::OpenPathFromOSExplorer(entry.is_directory() ? path : _openedPath);
             }
 
-            const auto weakAsset = GetAssetsManager().getWeakAssetByPath(path.generic_string());
+            const auto weakAsset = GetAssetsManager().getWeakEcsAssetByPath(path.generic_string());
             if (auto asset = weakAsset.tryLoad();
                 asset && asset->canProcessAction(AssetAction::AA_Spawn))
             {

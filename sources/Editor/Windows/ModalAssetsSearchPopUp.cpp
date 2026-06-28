@@ -86,7 +86,7 @@ namespace Core
             _list->setDataProvider(
                 [](std::size_t index, StringAtom& out) -> void*
                 {
-                    if (auto asset = GetAssetsManager().getWeakAssetAt(index, AA_Spawn).tryLoad())
+                    if (auto asset = GetAssetsManager().getWeakEcsAssetAt(index, AA_Spawn).tryLoad())
                     {
                         out = asset->getName();
                         return asset.get();
@@ -95,7 +95,7 @@ namespace Core
                     Assert(false);
                     return nullptr;
                 });
-            _list->setSizeProvider([]() { return GetAssetsManager().getAssetCount(AA_Spawn); });
+            _list->setSizeProvider([]() { return GetAssetsManager().getEcsAssetCount(AA_Spawn); });
         }
 
         _layout.addChildComponent<Gui::Separator>();

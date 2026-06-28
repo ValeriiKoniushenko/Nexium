@@ -321,7 +321,7 @@ namespace Core
 
     bool NxECSBasedEditorEWC::onOpenFromPath(const std::filesystem::path& path)
     {
-        _targetAsset = GetAssetsManager().getAssetByPath(path);
+        _targetAsset = GetAssetsManager().getEcsAssetByPath(path);
         if (!_targetAsset)
         {
             errorLog("Requested asset not found: " + path.generic_string());

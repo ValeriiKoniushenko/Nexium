@@ -73,7 +73,7 @@ namespace Core
     /// Assets tab create it (at the moment of writing this doc - it's not impl.)
     /// @details How AssetsManager works:
     /// 1. At the start of the game/editor it will read all .nX files from the configured
-    /// path (where is it, you can check at Core::Config::Path::bakedAssets).
+    /// path (where it is, you can check at Core::Config::Path::bakedAssets).
     /// 2. It reads all found data to the RAM to provide the best speed.
     /// 3. Use provided functionality to get the necessary asset. I.e.,
     /// @code{cpp}
@@ -138,48 +138,48 @@ namespace Core
 
         // ============== WORKING WITH ASSETS ==========
 
-        /// @brief Get asset by its logical path. Will load the asset if it wasn't loaded
+        /// @brief Get an asset by its logical path. Will load the asset if it wasn't loaded
         /// previously.
         /// @param logicPath Logical path to the asset
         /// @return Strong reference to the asset
-        [[nodiscard]] NXECSAsset getAsset(const StringAtom& logicPath);
+        [[nodiscard]] NXECSAsset getEcsAsset(const StringAtom& logicPath);
 
-        /// @brief Get asset by its logical path without loading it. Returns nullptr if asset wasn't
+        /// @brief Get an asset by its logical path without loading it. Returns nullptr if the asset wasn't
         /// loaded previously.
         /// @param logicPath Logical path to the asset
         /// @return Weak reference to the asset if it's loaded, nullptr otherwise
-        [[nodiscard]] WeakNXECSAsset getWeakAsset(const StringAtom& logicPath);
+        [[nodiscard]] WeakNXECSAsset getWeakEcsAsset(const StringAtom& logicPath);
 
-        /// @brief Get asset by its index in assets collection. Will load the asset if it wasn't
+        /// @brief Get an asset by its index in the assets collection. Will load the asset if it wasn't
         /// loaded previously.
-        /// @param index Index of the asset in collection
-        /// @param filter Filter to apply when searching assets
+        /// @param index Index of the asset in the collection
+        /// @param filter Filter to apply when searching for assets
         /// @return Strong reference to the asset
-        [[nodiscard]] NXECSAsset getAssetAt(std::size_t index, AssetAction filter = AA_None);
+        [[nodiscard]] NXECSAsset getEcsAssetAt(std::size_t index, AssetAction filter = AA_None);
 
-        /// @brief Get asset by its index without loading it. Returns nullptr if asset wasn't loaded
+        /// @brief Get an asset by its index without loading it. Returns nullptr if the asset wasn't loaded
         /// previously.
-        /// @param index Index of the asset in collection
-        /// @param filter Filter to apply when searching assets
+        /// @param index Index of the asset in the collection
+        /// @param filter Filter to apply when searching for assets
         /// @return Weak reference to the asset if it's loaded, nullptr otherwise
-        [[nodiscard]] WeakNXECSAsset getWeakAssetAt(std::size_t index,
+        [[nodiscard]] WeakNXECSAsset getWeakEcsAssetAt(std::size_t index,
                                                     AssetAction filter = AA_None);
 
         /// @brief Get asset by filesystem path. Will load the asset if it wasn't loaded previously.
         /// @param path Filesystem path to the asset
         /// @return Strong reference to the asset
-        [[nodiscard]] NXECSAsset getAssetByPath(const std::filesystem::path& path);
+        [[nodiscard]] NXECSAsset getEcsAssetByPath(const std::filesystem::path& path);
 
-        /// @brief Get asset by filesystem path without loading it. Returns nullptr if asset wasn't
+        /// @brief Get asset by filesystem path without loading it. Returns nullptr if the asset wasn't
         /// loaded previously.
         /// @param path Filesystem path to the asset
         /// @return Weak reference to the asset if it's loaded, nullptr otherwise
-        [[nodiscard]] WeakNXECSAsset getWeakAssetByPath(const std::filesystem::path& path);
+        [[nodiscard]] WeakNXECSAsset getWeakEcsAssetByPath(const std::filesystem::path& path);
 
-        /// @brief Get total count of assets matching the filter
+        /// @brief Get the total count of assets matching the filter
         /// @param filter Filter to apply when counting assets
         /// @return Number of assets matching the filter
-        [[nodiscard]] std::size_t getAssetCount(AssetAction filter = AA_None) const;
+        [[nodiscard]] std::size_t getEcsAssetCount(AssetAction filter = AA_None) const;
 
         [[nodiscard]] TextureAtlas& getTextureAtlas() noexcept { return _textureAtlas; }
 

@@ -249,17 +249,17 @@ namespace Core
         _registeredPaths.emplace(std::move(path));
     }
 
-    NXECSAsset AssetsManager::getAsset(const StringAtom& logicPath)
+    NXECSAsset AssetsManager::getEcsAsset(const StringAtom& logicPath)
     {
         return _assets.at(logicPath);
     }
 
-    WeakNXECSAsset AssetsManager::getWeakAsset(const StringAtom& logicPath)
+    WeakNXECSAsset AssetsManager::getWeakEcsAsset(const StringAtom& logicPath)
     {
         return _assets.at(logicPath);
     }
 
-    NXECSAsset AssetsManager::getAssetAt(std::size_t index, AssetAction filter)
+    NXECSAsset AssetsManager::getEcsAssetAt(std::size_t index, AssetAction filter)
     {
         if (index >= _assets.size()) [[unlikely]]
         {
@@ -283,7 +283,7 @@ namespace Core
         return {};
     }
 
-    WeakNXECSAsset AssetsManager::getWeakAssetAt(std::size_t index, AssetAction filter)
+    WeakNXECSAsset AssetsManager::getWeakEcsAssetAt(std::size_t index, AssetAction filter)
     {
         if (index >= _assets.size()) [[unlikely]]
         {
@@ -307,7 +307,7 @@ namespace Core
         return {};
     }
 
-    NXECSAsset AssetsManager::getAssetByPath(const fs::path& path)
+    NXECSAsset AssetsManager::getEcsAssetByPath(const fs::path& path)
     {
         const auto it = findAssetByPath(path);
         if (it == _assets.end()) [[unlikely]]
@@ -317,7 +317,7 @@ namespace Core
         return it->second;
     }
 
-    WeakNXECSAsset AssetsManager::getWeakAssetByPath(const fs::path& path)
+    WeakNXECSAsset AssetsManager::getWeakEcsAssetByPath(const fs::path& path)
     {
         const auto it = findAssetByPath(path);
         if (it == _assets.end()) [[unlikely]]
@@ -327,7 +327,7 @@ namespace Core
         return it->second;
     }
 
-    std::size_t AssetsManager::getAssetCount(AssetAction filter) const
+    std::size_t AssetsManager::getEcsAssetCount(AssetAction filter) const
     {
         if (filter == AA_None)
         {
