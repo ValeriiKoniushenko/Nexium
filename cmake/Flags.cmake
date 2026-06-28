@@ -9,7 +9,6 @@ function(CoreAddCompileOptionsTo Target)
             "/we4715"            # treat "not all control paths return a value" as error (-Werror=return-type)
 
             # Debug config
-            "$<$<CONFIG:DEBUG>:/Zi>"
             "$<$<CONFIG:DEBUG>:/Od>"
             "$<$<CONFIG:DEBUG>:/Ob0>"
             "$<$<CONFIG:DEBUG>:/Oy->"

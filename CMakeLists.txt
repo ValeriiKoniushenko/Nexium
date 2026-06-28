@@ -2,20 +2,17 @@ cmake_minimum_required(VERSION 3.30..)
 
 project(Nexium VERSION 1.0 LANGUAGES CXX)
 
+cmake_policy(SET CMP0141 NEW)
+set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT
+        "$<$<CONFIG:Debug,RelWithDebInfo>:Embedded>"
+)
+
 if (CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
     find_program(CCACHE_PROGRAM ccache)
     if (CCACHE_PROGRAM)
         set(CMAKE_C_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
         set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
         message(STATUS "ccache: ${CCACHE_PROGRAM}")
-    endif ()
-
-    if (MSVC AND CCACHE_PROGRAM)
-        foreach (flag_var
-            CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELWITHDEBINFO
-            CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELWITHDEBINFO)
-            string(REPLACE "/Zi" "/Z7" ${flag_var} "${${flag_var}}")
-        endforeach ()
     endif ()
 endif ()
 
