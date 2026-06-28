@@ -147,22 +147,6 @@ namespace Core
     {
     }
 
-    void RenamePopUpWindow::updateSelectedPathAfterRename()
-    {
-        // for (auto& selectedPath : _selectedPaths)
-        // {
-        //     if (selectedPath == path)
-        //     {
-        //         selectedPath = newPath;
-        //     }
-        // }
-        //
-        // if (_selectedPath == path)
-        // {
-        //     _selectedPath = newPath;
-        // }
-    }
-
     std::string RenamePopUpWindow::TrimWhitespace(std::string value)
     {
         const auto isNotSpace = [](unsigned char ch) { return !std::isspace(ch); };
@@ -231,7 +215,6 @@ namespace Core
             return false;
         }
 
-        updateSelectedPathAfterRename();
         if (_onRenameCallback)
             _onRenameCallback(_renameToPath, newPath);
         return true;

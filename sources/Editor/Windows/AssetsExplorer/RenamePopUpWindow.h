@@ -39,10 +39,8 @@ namespace Core
         class TextInput;
     }
 
-    CLASS();
     class RenamePopUpWindow : public BaseEWC
     {
-        R_FRIEND_DECL (RenamePopUpWindow);
         ECS_COMPONENT_DECL(RenamePopUpWindow, BaseEWC);
 
     public:
@@ -64,7 +62,6 @@ namespace Core
         void endWindowDraw() override;
 
     private:
-        void updateSelectedPathAfterRename();
         std::string TrimWhitespace(std::string value);
         bool ContainsInvalidFilenameCharacter(std::string_view value);
         bool renamePath(const std::string& newName);
