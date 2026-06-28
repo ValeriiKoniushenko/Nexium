@@ -41,8 +41,9 @@ namespace Core
 {
     ECS_COMPONENT_IMPL(RenamePopUpWindow);
 
-    void RenamePopUpWindow::open(const StringAtom& text,
-                                 const std::filesystem::path& path, std::function<void()> onRenameCallback)
+    void RenamePopUpWindow::open(const StringAtom& text, const std::filesystem::path& path, std::function<void(
+                                     const std::filesystem::path& oldPath,
+                                     const std::filesystem::path& newPath)> onRenameCallback)
     {
         initialize();
         enable();
@@ -57,7 +58,7 @@ namespace Core
         _caption = text;
         _hasOpenRequest = true;
         _onRenameCallback = std::move(onRenameCallback);
-        _renamePath = path;
+        _renameToPath = path;
         _renameError.clear();
         _renameBuffer = path.filename().generic_string();
 
@@ -69,8 +70,9 @@ namespace Core
         }
     }
 
-    void RenamePopUpWindow::Open(const StringAtom& text,
-                                 const std::filesystem::path& path, const std::function<void()>& onRenameCallback)
+    void RenamePopUpWindow::Open(const StringAtom& text, const std::filesystem::path& path, std::function<void(
+                                     const std::filesystem::path& oldPath,
+                                     const std::filesystem::path& newPath)> onRenameCallback)
     {
         GetEditor().tryToOpenWindow<RenamePopUpWindow>(".*", std::move(text), path, onRenameCallback);
     }
@@ -118,7 +120,7 @@ namespace Core
         _subscriptionPool << _cancelButton->onClick->subscribeAndGetID([this]()
         {
             closeWindow();
-            _renamePath.clear();
+            _renameToPath.clear();
             _renameBuffer.clear();
             _renameError.clear();
             ImGui::CloseCurrentPopup();
@@ -206,13 +208,13 @@ namespace Core
             return false;
         }
 
-        const auto oldName = _renamePath.filename().generic_string();
+        const auto oldName = _renameToPath.filename().generic_string();
         if (normalizedName == oldName)
         {
             return true;
         }
 
-        const auto newPath = _renamePath.parent_path() / normalizedName;
+        const auto newPath = _renameToPath.parent_path() / normalizedName;
         if (std::filesystem::exists(newPath))
         {
             _renameError = "A file or folder with this name already exists.";
@@ -220,7 +222,7 @@ namespace Core
         }
 
         std::error_code ec;
-        std::filesystem::rename(_renamePath, newPath, ec);
+        std::filesystem::rename(_renameToPath, newPath, ec);
         if (ec)
         {
             _renameError = ec.message();
@@ -231,8 +233,7 @@ namespace Core
 
         updateSelectedPathAfterRename();
         if (_onRenameCallback)
-            _onRenameCallback();
-
+            _onRenameCallback(_renameToPath, newPath);
         return true;
     }
 

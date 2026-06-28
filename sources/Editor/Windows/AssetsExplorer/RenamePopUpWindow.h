@@ -40,15 +40,20 @@ namespace Core
     }
 
     CLASS();
-
     class RenamePopUpWindow : public BaseEWC
     {
+        R_FRIEND_DECL (RenamePopUpWindow);
         ECS_COMPONENT_DECL(RenamePopUpWindow, BaseEWC);
 
     public:
-        void open(const StringAtom& text, const std::filesystem::path& path, std::function<void()> onRenameCallback);
+        void open(const StringAtom& text, const std::filesystem::path& path, std::function<void(
+                      const std::filesystem::path& oldPath,
+                      const std::filesystem::path& newPath)> onRenameCallback);
+
         static void Open(const StringAtom& text, const std::filesystem::path& path,
-                         const std::function<void()>& onRenameCallback);
+                         std::function<void(
+                             const std::filesystem::path& oldPath,
+                             const std::filesystem::path& newPath)> onRenameCallback);
 
     protected:
         void onDraw() override;
@@ -75,13 +80,14 @@ namespace Core
         Gui::TextInput* _fileNameInput{nullptr};
 
     private:
-        std::function<void()> _onRenameCallback;
+        std::function<void(const std::filesystem::path& oldPath,
+                           const std::filesystem::path& newPath)> _onRenameCallback;
 
         StringAtom _caption = "ModalRenameFileName";
 
         std::string _renameBuffer;
         std::string _renameError;
-        std::filesystem::path _renamePath{};
+        std::filesystem::path _renameToPath{};
 
         bool _hasOpenRequest = false;
     };

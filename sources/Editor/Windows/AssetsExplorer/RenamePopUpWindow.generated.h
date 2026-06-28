@@ -11,4 +11,59 @@
 #include <string_view>
 #include <vector>
 
+template<>
+struct R<Core::RenamePopUpWindow>
+{
+    static constexpr std::string_view Name() { return "RenamePopUpWindow"; }
+    static constexpr std::string_view ParentScope() { return "Core"; }
+    static constexpr std::size_t GetFieldNumbers() { return 0; }
+    static constexpr std::vector<RClassField> GetFields() {
+        return {
+		};
+    }
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Core::RenamePopUpWindow& obj, bool noSignals = false)
+    {
+        RResourceStream<RImpl> s;if (!noSignals)
+        {
+            _RTryCallPreSerialize<Core::RenamePopUpWindow>(obj);
+        }
+
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize<Core::RenamePopUpWindow>(obj, s.logs());
+        }
+        return s;
+    }
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    static void Serialize(const Core::RenamePopUpWindow& obj, RResourceStream<RImpl>& s, bool noSignals = false)
+    {
+        if (!noSignals)
+        {
+            _RTryCallPreSerialize<Core::RenamePopUpWindow>(obj);
+        }
+
+        if (!noSignals)
+        {
+            _RTryCallPostSerialize<Core::RenamePopUpWindow>(obj, s.logs());
+        }
+    }
+
+
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    static void Deserialize(const RResourceStream<RImpl>& s, Core::RenamePopUpWindow& obj, bool noSignals = false)
+    {
+        if (!noSignals)
+        {
+            _RTryCallPreDeserialize<Core::RenamePopUpWindow>(obj);
+        }
+
+        if (!noSignals)
+        {
+            _RTryCallPostDeserialize<Core::RenamePopUpWindow>(obj, s.logs());
+        }
+    }
+}; // struct R<Core::RenamePopUpWindow>
 // clang-format on

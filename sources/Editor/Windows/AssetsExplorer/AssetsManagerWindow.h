@@ -112,6 +112,9 @@ namespace Core
         [[nodiscard]] bool isFiltered(const std::filesystem::path& p) const;
         [[nodiscard]] bool isSelected(const std::filesystem::path& path) const;
 
+        void saveThumbnailSelectionAfterRename(const std::filesystem::path& oldPath,
+                                               const std::filesystem::path& newPath);
+
         void openSelectedFile(const std::filesystem::directory_entry& entry, bool needOpen,
                               bool invalidate);
         void handleSelection(const std::filesystem::path& path);
@@ -133,6 +136,10 @@ namespace Core
 
         void rescanPhysicalDrive(CacheNode& node);
 
+        static std::filesystem::path Normalize(const std::filesystem::path& p)
+        {
+            return std::filesystem::weakly_canonical(p);
+        }
 
     private:
         std::filesystem::path _openedPath;

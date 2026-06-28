@@ -401,6 +401,19 @@ namespace Core
                != _selectedPaths.end();
     }
 
+    void AssetsManagerWindowEWC::saveThumbnailSelectionAfterRename(const std::filesystem::path& oldPath,
+                                                                   const std::filesystem::path& newPath)
+    {
+        const auto normOld = Normalize(oldPath);
+        if (Normalize(_selectedPath) == normOld)
+            _selectedPath = newPath;
+        for (auto& p : _selectedPaths)
+        {
+            if (Normalize(p) == normOld)
+                p = newPath;
+        }
+    }
+
     void AssetsManagerWindowEWC::openSelectedFile(const std::filesystem::directory_entry& entry,
                                                   const bool needOpen, const bool invalidate)
     {
@@ -419,21 +432,19 @@ namespace Core
 
     void AssetsManagerWindowEWC::handleSelection(const std::filesystem::path& path)
     {
-        if (!ImGui::IsItemClicked(ImGuiMouseButton_Left))
+        if (ImGui::IsItemClicked(ImGuiMouseButton_Left) || ImGui::IsItemClicked(ImGuiMouseButton_Right))
         {
-            return;
+            _selectedPath = path;
+
+            if (ImGui::GetIO().KeyCtrl)
+            {
+                toggleSelection(path);
+                return;
+            }
+
+            _selectedPaths.clear();
+            _selectedPaths.push_back(path);
         }
-
-        _selectedPath = path;
-
-        if (ImGui::GetIO().KeyCtrl)
-        {
-            toggleSelection(path);
-            return;
-        }
-
-        _selectedPaths.clear();
-        _selectedPaths.push_back(path);
     }
 
     void AssetsManagerWindowEWC::drawToolTip(const std::filesystem::directory_entry& entry) const
@@ -524,9 +535,15 @@ namespace Core
             {
                 pasteTo(path);
             }
+
             if (ImGui::MenuItem(ICON_FA_PENCIL " Rename"))
             {
-                RenamePopUpWindow::Open("Rename file name", path, [this]() { refresh(); });
+                RenamePopUpWindow::Open("Rename file name", path, [this](const std::filesystem::path& oldPath,
+                                                                         const std::filesystem::path& newPath)
+                {
+                    saveThumbnailSelectionAfterRename(oldPath, newPath);
+                    refresh();
+                });
             }
             if (ImGui::MenuItem(ICON_FA_TRASH " Delete"))
             {
