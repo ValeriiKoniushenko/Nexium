@@ -26,6 +26,8 @@
 
 #include "AssetsManager/ECSAsset.h"
 #include "BaseWindow.h"
+#include "Editor/GuiComponents/Input.h"
+#include "Editor/GuiComponents/LabelRow.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 
 namespace Core
@@ -35,6 +37,12 @@ namespace Core
     {
         class ListModelBased;
         class Button;
+
+        template<class T>
+        class LabelRow;
+
+        class TextInput;
+
     } // namespace Gui
 
     class ModalAssetsSearchPopUpEWC : public BaseEWC
@@ -59,6 +67,8 @@ namespace Core
         DelegateSubscriberPoolGuard _subscriptionPool;
 
         StringAtom _caption = "ModalAssetsSearchPopUpEWC";
+
+        Gui::LabelRow<Gui::TextInput>* _nameField = nullptr;
         Gui::VerticalLayout _layout;
         Gui::ListModelBased* _list = nullptr;
         Gui::Button* _okButton = nullptr;

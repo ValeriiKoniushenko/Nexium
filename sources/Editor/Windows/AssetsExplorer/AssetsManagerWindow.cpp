@@ -647,6 +647,76 @@ namespace Core
         }
     }
 
+    void AssetsManagerWindowEWC::drawAssetsContextMenu(
+        const std::filesystem::directory_entry& entry, bool& invalidate, bool& needOpen)
+    {
+        const auto& path = entry.path();
+        if (ImGui::BeginPopup(path.filename().generic_string().c_str()))
+        {
+            if (ImGui::MenuItem(ICON_FA_FOLDER_OPEN_O " Open"))
+            {
+                needOpen = true;
+            }
+            if (ImGui::MenuItem(ICON_FA_FILES_O " Copy"))
+            {
+                copyFrom(path);
+            }
+            if (ImGui::MenuItem(ICON_FA_SCISSORS " Cut"))
+            {
+                cutFrom(path);
+            }
+            if (!_selectedPath.empty() && entry.is_directory()
+                && ImGui::MenuItem(ICON_FA_ARROW_DOWN " Paste"))
+            {
+                pasteTo(path);
+            }
+
+            if (ImGui::MenuItem(ICON_FA_PENCIL " Rename"))
+            {
+                RenamePopUpWindow::Open("Rename file name", path,
+                                        [this](const std::filesystem::path& oldPath,
+                                               const std::filesystem::path& newPath)
+                                        {
+                                            saveThumbnailSelectionAfterRename(oldPath, newPath);
+                                            refresh();
+                                        });
+            }
+            if (ImGui::MenuItem(ICON_FA_TRASH " Delete"))
+            {
+                ModalPopUp::Open("Do you really want to delete the {}: {}?"_f
+                                     << (entry.is_directory() ? "directory" : "file")
+                                     << path.generic_string(),
+                                 [this, path](const bool isOk)
+                                 {
+                                     if (isOk)
+                                     {
+                                         deleteAt(path);
+                                     }
+                                 });
+
+                invalidate = true;
+            }
+
+            ImGui::Separator();
+
+            if (ImGui::MenuItem("Open in explorer"))
+            {
+                AssetsManager::OpenPathFromOSExplorer(entry.is_directory() ? path : _openedPath);
+            }
+
+            const auto weakAsset = GetAssetsManager().getWeakEcsAssetByPath(path.generic_string());
+            if (auto asset = weakAsset.tryLoad(); asset && (asset->getTags() & Tag_WorldObject))
+            {
+                if (ImGui::MenuItem("Spawn on scene"))
+                {
+                    gGameInstance->gameScene.addBlueprintObjectToScene(asset);
+                }
+            }
+
+            ImGui::EndPopup();
+        }
+    }
+
     void AssetsManagerWindowEWC::drawExplorerTree()
     {
         if (ImGui::BeginChild("Explorer tree", glm::vec2(200.0f, 0), ImGuiChildFlags_ResizeX))

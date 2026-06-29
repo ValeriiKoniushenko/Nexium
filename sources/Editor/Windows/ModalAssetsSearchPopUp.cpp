@@ -29,6 +29,7 @@
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/List.h"
 #include "Editor/GuiComponents/Separator.h"
+#include "Editor/GuiComponents/Spacer.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 
 namespace Core
@@ -63,11 +64,19 @@ namespace Core
         _layout.setFlex(Gui::Flex::FlexWidthAndHeight);
 
         {
-            auto* h = _layout.addChildComponent<Gui::HorizontalLayout>();
-            auto* input = h->addChildComponent<Gui::TextInput>();
-            input->setPlaceholder("Regex filter..");
-            input->setFlex(Gui::Flex::FlexWidth);
-            _subscriptionPool << input->onInput->subscribeAndGetID(
+            _nameField = _layout.addChildComponent<Gui::LabelRow<Gui::TextInput>>();
+            _nameField->label->setText("Name");
+            _nameField->label->setWidth(80.f);
+            _nameField->input->setFlex(Gui::Flex::FlexWidth);
+        }
+
+        _layout.addChildComponent<Gui::Spacer>();
+
+        {
+            auto* h = _layout.addChildComponent<Gui::TextInput>();
+            h->setPlaceholder("Regex filter..");
+            h->setFlex(Gui::Flex::FlexWidth);
+            _subscriptionPool << h->onInput->subscribeAndGetID(
                 [this](const char* data)
                 {
                     if (_list && data)
@@ -146,6 +155,16 @@ namespace Core
 
     void ModalAssetsSearchPopUpEWC::okButtonClicked()
     {
+        StringAtom name = _nameField->input->getInputtedData().c_str();
+        name.trim(' ');
+
+        _nameField->input->resetBorderColor();
+        if (name.isEmpty())
+        {
+            _nameField->input->setBorderColor(Color4_Red);
+            return;
+        }
+
         auto weakAsset
             = GetAssetsManager().getWeakEcsAssetAt(_list->getCurrentIndex(), Tag_WorldObject);
 
@@ -167,7 +186,7 @@ namespace Core
             return;
         }
 
-        gGameInstance->gameScene.addBlueprintObjectToScene(loadedAsset);
+        gGameInstance->gameScene.addBlueprintObjectToScene(loadedAsset, name);
 
         closeWindow();
     }

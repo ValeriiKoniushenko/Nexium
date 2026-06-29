@@ -117,6 +117,10 @@ namespace Core
             name = "Unnamed object #{}"_f << ++_uniqueCounterName;
             object->setComponentName(name);
         }
+        else if (name.size() != object->getComponentName().size())
+        {
+            object->setComponentName(name);
+        }
 
         _sceneObjects.emplace_back(object);
         onObjectAdded->trigger(object);
@@ -142,7 +146,7 @@ namespace Core
         infoLog("Object '{} was spawned at the scene: '{}'"_f << object->stringify() << _sceneName);
     }
 
-    void Scene::addBlueprintObjectToScene(const WeakData<ECSAsset>& asset)
+    void Scene::addBlueprintObjectToScene(const WeakData<ECSAsset>& asset, const StringAtom& name)
     {
         const auto& meta = asset->getMeta();
 
@@ -155,6 +159,7 @@ namespace Core
             return;
         }
 
+        obj->setComponentName(name);
         internal_addObjectToScene(obj.get());
 
         infoLog("Blueprint's object '{}' was spawned at the scene: '{}'"_f << obj->stringify()
