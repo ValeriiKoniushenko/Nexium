@@ -1,5 +1,5 @@
 /*
-* MIT License
+ * MIT License
  *
  * Copyright (c) 2018-2027 Valerii Koniushenko
  *
@@ -22,28 +22,41 @@
  * SOFTWARE.
  */
 
-
 #include "RenamePopUpWindow.h"
 
-#include <ranges>
-
-#include <algorithm>
-#include <utility>
-
-#include "ImGui/imgui.h"
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/Label.h"
 #include "GameplaySystem/Framework/GameInstance.h"
+#include "ImGui/imgui.h"
+
+#include <algorithm>
+#include <ranges>
+#include <utility>
+
+namespace
+{
+    std::string TrimWhitespace(std::string value)
+    {
+        const auto isNotSpace = [](unsigned char ch) { return !std::isspace(ch); };
+
+        value.erase(value.begin(), std::ranges::find_if(value, isNotSpace));
+        value.erase(std::ranges::find_if(std::views::reverse(value), isNotSpace).base(),
+                    value.end());
+
+        return value;
+    }
+} // namespace
 
 namespace Core
 {
     ECS_COMPONENT_IMPL(RenamePopUpWindow);
 
-    void RenamePopUpWindow::open(const StringAtom& text, const std::filesystem::path& path, std::function<void(
-                                     const std::filesystem::path& oldPath,
-                                     const std::filesystem::path& newPath)> onRenameCallback)
+    void RenamePopUpWindow::open(const StringAtom& text, const std::filesystem::path& path,
+                                 std::function<void(const std::filesystem::path& oldPath,
+                                                    const std::filesystem::path& newPath)>
+                                     onRenameCallback)
     {
         initialize();
         enable();
@@ -70,11 +83,13 @@ namespace Core
         }
     }
 
-    void RenamePopUpWindow::Open(const StringAtom& text, const std::filesystem::path& path, std::function<void(
-                                     const std::filesystem::path& oldPath,
-                                     const std::filesystem::path& newPath)> onRenameCallback)
+    void RenamePopUpWindow::Open(const StringAtom& text, const std::filesystem::path& path,
+                                 std::function<void(const std::filesystem::path& oldPath,
+                                                    const std::filesystem::path& newPath)>
+                                     onRenameCallback)
     {
-        GetEditor().tryToOpenWindow<RenamePopUpWindow>(".*", std::move(text), path, onRenameCallback);
+        GetEditor().tryToOpenWindow<RenamePopUpWindow>(".*", std::move(text), path,
+                                                       onRenameCallback);
     }
 
     void RenamePopUpWindow::onDraw()
@@ -85,7 +100,12 @@ namespace Core
 
         if (ImGui::IsKeyPressed(ImGuiKey_Escape, false))
         {
-            closeWindow();
+            cancelChangesAndCloseWindow();
+        }
+
+        if (ImGui::IsKeyPressed(ImGuiKey_Enter, false))
+        {
+            applyChangesAndCloseWindow();
         }
     }
 
@@ -109,22 +129,10 @@ namespace Core
         _cancelButton = hLayout->addChildComponent<Gui::Button>("Cancel");
         _cancelButton->setFlex(Gui::Flex::FlexWidth);
 
-        _subscriptionPool << _applyButton->onClick->subscribeAndGetID([this]()
-        {
-            _renameBuffer = TrimWhitespace(_fileNameInput->getInputtedData());
-            if (renamePath(_renameBuffer))
-            {
-                closeWindow();
-            }
-        });
-        _subscriptionPool << _cancelButton->onClick->subscribeAndGetID([this]()
-        {
-            closeWindow();
-            _renameToPath.clear();
-            _renameBuffer.clear();
-            _renameError.clear();
-            ImGui::CloseCurrentPopup();
-        });
+        _subscriptionPool << _applyButton->onClick->subscribeAndGetID(
+            [this]() { applyChangesAndCloseWindow(); });
+        _subscriptionPool << _cancelButton->onClick->subscribeAndGetID(
+            [this]() { cancelChangesAndCloseWindow(); });
     }
 
     void RenamePopUpWindow::preOpenedEndWindowDraw()
@@ -147,14 +155,27 @@ namespace Core
     {
     }
 
-    std::string RenamePopUpWindow::TrimWhitespace(std::string value)
+    void RenamePopUpWindow::onClose()
     {
-        const auto isNotSpace = [](unsigned char ch) { return !std::isspace(ch); };
+        BaseEWC::onClose();
+        _renameToPath.clear();
+        _renameBuffer.clear();
+        _renameError.clear();
+        ImGui::CloseCurrentPopup();
+    }
 
-        value.erase(value.begin(), std::ranges::find_if(value, isNotSpace));
-        value.erase(std::ranges::find_if(std::views::reverse(value), isNotSpace).base(), value.end());
+    void RenamePopUpWindow::applyChangesAndCloseWindow()
+    {
+        _renameBuffer = TrimWhitespace(_fileNameInput->getInputtedData());
+        if (renamePath(_renameBuffer))
+        {
+            closeWindow();
+        }
+    }
 
-        return value;
+    void RenamePopUpWindow::cancelChangesAndCloseWindow()
+    {
+        closeWindow();
     }
 
     bool RenamePopUpWindow::renamePath(const std::string& newName)
@@ -211,12 +232,14 @@ namespace Core
         {
             _renameError = ec.message();
             errorLog("Can't rename file from: '{}' to '{}'. Reason: {}"_f
-                << oldName << normalizedName << ec.message());
+                     << oldName << normalizedName << ec.message());
             return false;
         }
 
         if (_onRenameCallback)
+        {
             _onRenameCallback(_renameToPath, newPath);
+        }
         return true;
     }
 
@@ -227,8 +250,9 @@ namespace Core
         return std::ranges::any_of(value,
                                    [](unsigned char ch)
                                    {
-                                       return ch < 32 || invalidChars.find(static_cast<char>(ch))
-                                           != std::string_view::npos;
+                                       return ch < 32
+                                              || invalidChars.find(static_cast<char>(ch))
+                                                     != std::string_view::npos;
                                    });
     }
-}
+} // namespace Core

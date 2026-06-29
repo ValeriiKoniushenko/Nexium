@@ -1,5 +1,5 @@
 /*
-* MIT License
+ * MIT License
  *
  * Copyright (c) 2018-2027 Valerii Koniushenko
  *
@@ -37,21 +37,22 @@ namespace Core
         class Label;
         class Button;
         class TextInput;
-    }
+    } // namespace Gui
 
     class RenamePopUpWindow : public BaseEWC
     {
         ECS_COMPONENT_DECL(RenamePopUpWindow, BaseEWC);
 
     public:
-        void open(const StringAtom& text, const std::filesystem::path& path, std::function<void(
-                      const std::filesystem::path& oldPath,
-                      const std::filesystem::path& newPath)> onRenameCallback);
+        using RenameCallbackT = std::function<void(const std::filesystem::path& oldPath,
+                                                   const std::filesystem::path& newPath)>;
+
+    public:
+        void open(const StringAtom& text, const std::filesystem::path& path,
+                  RenameCallbackT onRenameCallback);
 
         static void Open(const StringAtom& text, const std::filesystem::path& path,
-                         std::function<void(
-                             const std::filesystem::path& oldPath,
-                             const std::filesystem::path& newPath)> onRenameCallback);
+                         RenameCallbackT onRenameCallback);
 
     protected:
         void onDraw() override;
@@ -60,34 +61,33 @@ namespace Core
         [[nodiscard]] bool beginWindowDraw() override;
 
         void endWindowDraw() override;
+        void onClose() override;
+
+        void applyChangesAndCloseWindow();
+        void cancelChangesAndCloseWindow();
 
     private:
-        std::string TrimWhitespace(std::string value);
-        bool ContainsInvalidFilenameCharacter(std::string_view value);
-        bool renamePath(const std::string& newName);
+        [[nodiscard]] bool ContainsInvalidFilenameCharacter(std::string_view value);
+        [[nodiscard]] bool renamePath(const std::string& newName);
 
     private:
         DelegateSubscriberPoolGuard _subscriptionPool;
 
         Gui::VerticalLayout _layout;
 
-        Gui::Label* _label{nullptr};
-        Gui::Button* _applyButton{nullptr};
-        Gui::Button* _cancelButton{nullptr};
-        Gui::TextInput* _fileNameInput{nullptr};
-
-    private:
-        std::function<void(const std::filesystem::path& oldPath,
-                           const std::filesystem::path& newPath)> _onRenameCallback;
+        Gui::Label* _label{ nullptr };
+        Gui::Button* _applyButton{ nullptr };
+        Gui::Button* _cancelButton{ nullptr };
+        Gui::TextInput* _fileNameInput{ nullptr };
+        RenameCallbackT _onRenameCallback;
 
         StringAtom _caption = "ModalRenameFileName";
 
         std::string _renameBuffer;
         std::string _renameError;
-        std::filesystem::path _renameToPath{};
-
+        std::filesystem::path _renameToPath;
         bool _hasOpenRequest = false;
     };
-}
+} // namespace Core
 
 #include "RenamePopUpWindow.generated.h" // added by the code generator. Better don't move it.
