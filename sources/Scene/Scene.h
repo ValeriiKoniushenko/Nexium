@@ -76,6 +76,7 @@ namespace Core
         template<IsComponent T>
         [[nodiscard]] T::Ptr gerFirstOf();
 
+        void addUniqueObjectToScene(SceneObject::Ptr object);
         void addObjectToScene(SceneObject::Ptr object);
         void addBlueprintObjectToScene(const WeakData<ECSAsset>& asset);
 
@@ -100,7 +101,7 @@ namespace Core
         StringAtom _sceneName = "Default";
 
     private:
-        void internal_addObjectToScene(SceneObject::Ptr& object);
+        void internal_addObjectToScene(SceneObject* object);
 
     private:
         // TODO: get rid of it, deprecated

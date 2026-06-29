@@ -107,7 +107,7 @@ namespace Core
         }
     }
 
-    void Scene::internal_addObjectToScene(SceneObject::Ptr& object)
+    void Scene::internal_addObjectToScene(SceneObject* object)
     {
         auto name = object->getComponentName();
         name.trim(' ');
@@ -119,12 +119,25 @@ namespace Core
         }
 
         _sceneObjects.emplace_back(object);
-        onObjectAdded->trigger(object.get());
+        onObjectAdded->trigger(object);
+    }
+
+    void Scene::addUniqueObjectToScene(SceneObject::Ptr object)
+    {
+        for (auto&& obj : _sceneObjects)
+        {
+            if (obj->getComponentName() == object->getComponentName())
+            {
+                return;
+            }
+        }
+
+        addObjectToScene(std::move(object));
     }
 
     void Scene::addObjectToScene(SceneObject::Ptr object)
     {
-        internal_addObjectToScene(object);
+        internal_addObjectToScene(object.get());
 
         infoLog("Object '{} was spawned at the scene: '{}'"_f << object->stringify() << _sceneName);
     }
@@ -142,7 +155,7 @@ namespace Core
             return;
         }
 
-        internal_addObjectToScene(obj);
+        internal_addObjectToScene(obj.get());
 
         infoLog("Blueprint's object '{}' was spawned at the scene: '{}'"_f << obj->stringify()
                                                                            << _sceneName);
@@ -155,7 +168,7 @@ namespace Core
         json[StreamData::sceneObjects] = nlohmann::json::array();
         for (const auto& obj : _sceneObjects)
         {
-            json[StreamData::sceneObjects].push_back(obj->getSceneState());
+            // json[StreamData::sceneObjects].push_back(obj->getSceneState());
         }
 
         return json;
@@ -180,7 +193,8 @@ namespace Core
                     << states.assetType << states.name);
                 continue;
             }
-            _sceneObjects.emplace_back(sceneObj);
+
+            internal_addObjectToScene(sceneObj);
         }
     }
 

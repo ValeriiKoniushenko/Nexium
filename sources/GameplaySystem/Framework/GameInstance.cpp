@@ -333,7 +333,9 @@ namespace Core
     {
         GetAssetsManager().generateTextureAtlas(Config::Path::images / "atlas");
 
-        gameScene.addObjectToScene(SceneObj::Rectangle::Create());
+        auto rect = SceneObj::Rectangle::Create();
+        rect->setComponentName("Test Rect");
+        gameScene.addUniqueObjectToScene(rect);
 
         onLoadCoreResources();
     }
