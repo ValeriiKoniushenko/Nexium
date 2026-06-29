@@ -103,12 +103,9 @@ namespace Core
         }
 
         int32_t internalId = 0;
-        for (auto&& node : _scene->getObjects())
+        for (auto&& object : _scene->getObjects())
         {
-            if (auto* object = node->getData()) [[likely]]
-            {
-                drawTreeNode(object, internalId++);
-            }
+            drawTreeNode(object.get(), internalId++);
         }
         _lastSelectedObject = selectedObject;
 
@@ -187,7 +184,14 @@ namespace Core
         {
             ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetStyle().Colors[ImGuiCol_TextDisabled]);
         }
-        const bool isOpened = ImGui::TreeNodeEx(n->getComponentName().c_str(), flags);
+
+        auto componentName = n->getComponentName();
+        if (componentName.isEmpty())
+        {
+            componentName = "<no name>";
+        }
+
+        const bool isOpened = ImGui::TreeNodeEx(componentName.c_str(), flags);
         if (!isEnabled)
         {
             ImGui::PopStyleColor(1);

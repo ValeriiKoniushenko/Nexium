@@ -50,6 +50,17 @@ namespace Core
         return Tag_WorldObject;
     }
 
+    StringAtom SceneObject::stringify() const
+    {
+        auto name = getComponentName();
+        if (name.isEmpty())
+        {
+            return "<no name>"_atom;
+        }
+
+        return "{} [{}]"_f << name << getComponentType();
+    }
+
     void SceneObject::onOutlineStatusChange(bool newStatus)
     {
     }

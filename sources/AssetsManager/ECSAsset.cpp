@@ -139,26 +139,6 @@ namespace Core
         }
     }
 
-    bool ECSAsset::canProcessAction(AssetAction action) const
-    {
-        if (!_impl)
-        {
-            return false;
-        }
-
-        return _impl->canProcessAction(action);
-    }
-
-    void ECSAsset::processAction(AssetAction action)
-    {
-        if (!_impl || !canProcessAction(action))
-        {
-            return;
-        }
-
-        _impl->processAction(action, *this);
-    }
-
     bool ECSAsset::operator==(const ECSAsset& other) const
     {
         return other._meta.logicPath == _meta.logicPath;

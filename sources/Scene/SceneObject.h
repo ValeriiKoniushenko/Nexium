@@ -77,6 +77,8 @@ namespace Core
 
         [[nodiscard]] Tag getTags() const override;
 
+        [[nodiscard]] virtual StringAtom stringify() const;
+
     protected:
         void onOutlineStatusChange(bool newStatus) override;
     };

@@ -100,6 +100,8 @@ namespace Core
 
         gameEditor.initialize();
         gameScene.initialize();
+        _subscriptionPool << gameScene.onObjectAdded->subscribeAndGetID(
+            [this](SceneObject* obj) { internal_onAddObjectToScene(obj); });
 
         startUpReadCache();
         loadCoreResources();
@@ -319,11 +321,19 @@ namespace Core
         return "GameInstance"_atom;
     }
 
+    void GameInstance::internal_onAddObjectToScene(SceneObject* obj)
+    {
+        if (auto* camera = dynamic_cast<BaseCamera*>(obj))
+        {
+            currentCamera = camera;
+        }
+    }
+
     void GameInstance::loadCoreResources()
     {
         GetAssetsManager().generateTextureAtlas(Config::Path::images / "atlas");
 
-        gameScene._sceneObjects.emplace_back(SceneObj::Rectangle::Create());
+        gameScene.addObjectToScene(SceneObj::Rectangle::Create());
 
         onLoadCoreResources();
     }

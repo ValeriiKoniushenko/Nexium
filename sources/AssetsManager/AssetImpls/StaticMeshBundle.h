@@ -72,12 +72,6 @@ namespace Core::AssetImpl
         void load(const ECSAsset& asset, BaseComponent* dataOwner,
                   const nlohmann::json& assetData) override;
         void unload(const ECSAsset& asset, BaseComponent* dataOwner) override;
-
-        bool processAction(AssetAction action, ECSAsset& asset) override;
-        [[nodiscard]] bool canProcessAction(AssetAction action) const override;
-
-    private:
-        void spawn(ECSAsset& asset);
     };
 
 } // namespace Core::AssetImpl

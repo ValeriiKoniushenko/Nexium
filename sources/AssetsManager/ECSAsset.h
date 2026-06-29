@@ -34,12 +34,6 @@ namespace Core
 {
     class ECSAsset;
 
-    enum [[deprecated]] AssetAction : uint16_t
-    {
-        AA_None = 0,
-        AA_Spawn = 1 << 0
-    };
-
     class ECSAssetImpl
     {
     public:
@@ -52,9 +46,6 @@ namespace Core
         virtual void load(const ECSAsset& asset, BaseComponent* dataOwner,
                           const nlohmann::json& assetData) = 0;
         virtual void unload(const ECSAsset& asset, BaseComponent* dataOwner) = 0;
-
-        [[nodiscard]] virtual bool canProcessAction(AssetAction action) const { return false; }
-        virtual bool processAction(AssetAction action, ECSAsset& asset) { return false; }
 
     protected:
         ECSAssetImpl() = default;
@@ -148,9 +139,6 @@ namespace Core
         void syncAssetWithMemory(const nlohmann::json& assetData);
 
         [[nodiscard]] int getAdapterIndex() const noexcept { return _adapterIndex; }
-
-        [[nodiscard]] bool canProcessAction(AssetAction action) const;
-        void processAction(AssetAction action);
 
         [[nodiscard]] bool operator==(const ECSAsset& other) const;
         [[nodiscard]] bool operator==(const IntrusivePtr<ECSAsset>& other) const;

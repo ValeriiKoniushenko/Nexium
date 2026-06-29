@@ -109,34 +109,4 @@ namespace Core::AssetImpl
     {
     }
 
-    bool StaticMeshBundle::processAction(AssetAction action, ECSAsset& asset)
-    {
-        if (ECSAssetImpl::processAction(action, asset))
-        {
-            return true;
-        }
-
-        if (action & AssetAction::AA_Spawn)
-        {
-            spawn(asset);
-            return true;
-        }
-
-        return false;
-    }
-    bool StaticMeshBundle::canProcessAction(AssetAction action) const
-    {
-        if (action & AssetAction::AA_Spawn)
-        {
-            return true;
-        }
-
-        return ECSAssetImpl::canProcessAction(action);
-    }
-
-    void StaticMeshBundle::spawn(ECSAsset& asset)
-    {
-        gGameInstance->gameScene.addToScene(asset);
-    }
-
 } // namespace Core::AssetImpl

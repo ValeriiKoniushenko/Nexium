@@ -81,6 +81,7 @@ namespace Core
         virtual void onLoadShaders() {}
         virtual void onLoadCoreResources() {}
         virtual void onInitializeReadCache() {}
+        void internal_onAddObjectToScene(SceneObject* obj);
 
     protected:
         DelegateSubscriberPoolGuard _subscriptionPool;

@@ -27,7 +27,6 @@
 #include "AssetsManager/ECSAsset.h"
 #include "AssetsManager/SkyboxAsset.h"
 #include "Core/Delegate.h"
-#include "GameplaySystem/Framework/WorldObject.h"
 #include "Grid.h"
 #include "ResourceManagement/DataStream.h"
 #include "SceneObject.h"
@@ -44,8 +43,7 @@ namespace Core
         R_FRIEND(Scene);
 
     public:
-        // TODO: change to another data structure!!! It's awful
-        using ObjectContainerT = std::vector<WorldObject::Ptr>;
+        using ObjectContainerT = std::vector<SceneObject::Ptr>;
 
         struct StreamData
         {
@@ -72,18 +70,13 @@ namespace Core
 
         [[nodiscard]] const StringAtom& getSceneName() const noexcept;
 
-        void addToScene(const BaseComponent* object, bool readFromCache = false);
-        void addToScene(ECSAsset& asset, bool readFromCache = false);
-
-        template<IsComponent T, class... Args>
-        [[nodiscard]] typename T::Ptr createAndGet(Args... args);
-
-        [[nodiscard]] const ObjectContainerT& getObjects() const noexcept { return _objects; }
-        [[nodiscard]] ObjectContainerT& getObjects() noexcept { return _objects; }
+        [[nodiscard]] const ObjectContainerT& getObjects() const noexcept { return _sceneObjects; }
+        [[nodiscard]] ObjectContainerT& getObjects() noexcept { return _sceneObjects; }
 
         template<IsComponent T>
         [[nodiscard]] T::Ptr gerFirstOf();
 
+        void addObjectToScene(SceneObject::Ptr object);
         void addBlueprintObjectToScene(const WeakData<ECSAsset>& asset);
 
         [[nodiscard]] nlohmann::json serialize() const;
@@ -92,57 +85,38 @@ namespace Core
         [[nodiscard]] StringAtom getCacheHash() const override;
         [[nodiscard]] spdlog::logger* getLogger() const override;
 
-        Delegate<void(WorldObject*)>::Ptr onObjectAdded = Delegate<void(WorldObject*)>::Create();
+        Delegate<void(SceneObject*)>::Ptr onObjectAdded = Delegate<void(SceneObject*)>::Create();
 
     public:
         Grid grid;
         NXSkybox skybox;
-        std::vector<SceneObject::Ptr> _sceneObjects;
+        ObjectContainerT _sceneObjects;
 
     protected:
         void writeToCacheSeparateData();
 
     protected:
-        // TODO: get rid of it, deprecated
-        ObjectContainerT _objects;
-
         FIELD();
         StringAtom _sceneName = "Default";
 
     private:
+        void internal_addObjectToScene(SceneObject::Ptr& object);
+
+    private:
         // TODO: get rid of it, deprecated
         std::vector<Actor*> _postDrawBuffer;
+
+        uint32_t _uniqueCounterName = 0;
     };
-
-    template<IsComponent T, class... Args>
-    typename T::Ptr Scene::createAndGet(Args... args)
-    {
-        _objects.emplace_back(new WorldObject);
-        auto* sceneAsset = _objects.back().get();
-
-        if (!sceneAsset->spawnData<T>(std::forward<Args>(args)...))
-        {
-            return nullptr;
-        }
-
-        auto* added = sceneAsset->getData();
-
-        added->initialize();
-        onObjectAdded->trigger(sceneAsset);
-        return static_cast<T*>(added);
-    }
 
     template<IsComponent T>
     typename T::Ptr Scene::gerFirstOf()
     {
-        for (auto&& asset : _objects)
+        for (auto&& obj : _sceneObjects)
         {
-            if (auto* obj = asset->getData())
+            if (auto t = DynamicCast<T>(obj))
             {
-                if (auto* t = dynamic_cast<T*>(obj))
-                {
-                    return typename T::Ptr(static_cast<T*>(obj));
-                }
+                return t;
             }
         }
 

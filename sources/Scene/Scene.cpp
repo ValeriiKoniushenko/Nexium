@@ -50,10 +50,8 @@ namespace Core
 
         _postDrawBuffer.resize(0);
 
-        for (auto&& asset : _objects)
+        for (auto&& object : _sceneObjects)
         {
-            auto* object = asset->getData();
-
             if (!object->isEnabled())
             {
                 continue;
@@ -98,54 +96,9 @@ namespace Core
         return _sceneName;
     }
 
-    void Scene::addToScene(const BaseComponent* object, bool readFromCache)
-    {
-        if (!Verify(object)) [[unlikely]]
-        {
-            return;
-        }
-
-        _objects.emplace_back(new WorldObject);
-        auto* sceneAsset = _objects.back().get();
-
-        if (!sceneAsset->setData(object))
-        {
-            return;
-        }
-
-        auto* added = sceneAsset->getData();
-
-        added->initialize();
-        if (readFromCache)
-        {
-            // added->tryReadFromCache();
-        }
-
-        onObjectAdded->trigger(sceneAsset);
-    }
-
-    void Scene::addToScene(ECSAsset& asset, bool readFromCache)
-    {
-        _objects.emplace_back(new WorldObject);
-        auto* sceneAsset = _objects.back().get();
-        sceneAsset->setAsset(asset);
-
-        if (auto* added = sceneAsset->getData(); Verify(added)) [[likely]]
-        {
-            added->initialize();
-
-            if (readFromCache)
-            {
-                // added->tryReadFromCache();
-            }
-
-            onObjectAdded->trigger(sceneAsset);
-        }
-    }
-
     void Scene::writeToCacheSeparateData()
     {
-        for (auto&& asset : _objects)
+        // for (auto&& asset : _objects)
         {
             // if (auto* object = asset->getData())
             {
@@ -154,10 +107,30 @@ namespace Core
         }
     }
 
+    void Scene::internal_addObjectToScene(SceneObject::Ptr& object)
+    {
+        auto name = object->getComponentName();
+        name.trim(' ');
+
+        if (name.isEmpty())
+        {
+            name = "Unnamed object #{}"_f << ++_uniqueCounterName;
+            object->setComponentName(name);
+        }
+
+        _sceneObjects.emplace_back(object);
+        onObjectAdded->trigger(object.get());
+    }
+
+    void Scene::addObjectToScene(SceneObject::Ptr object)
+    {
+        internal_addObjectToScene(object);
+
+        infoLog("Object '{} was spawned at the scene: '{}'"_f << object->stringify() << _sceneName);
+    }
+
     void Scene::addBlueprintObjectToScene(const WeakData<ECSAsset>& asset)
     {
-        // GetAssetsManager().getEcsAsset()
-
         const auto& meta = asset->getMeta();
 
         auto finalAsset = GetAssetsManager().getUniqueEcsAsset(meta.logicPath);
@@ -168,17 +141,11 @@ namespace Core
                      << meta.logicPath);
             return;
         }
-        _sceneObjects.emplace_back(obj);
 
-        if (!gGameInstance->currentCamera)
-        {
-            if (auto camera = DynamicCast<BaseCamera>(obj))
-            {
-                gGameInstance->currentCamera = camera.get();
-            }
-        }
+        internal_addObjectToScene(obj);
 
-        infoLog("Blueprint '{}' was spawned at the scene: '{}'"_f << meta.logicPath << _sceneName);
+        infoLog("Blueprint's object '{}' was spawned at the scene: '{}'"_f << obj->stringify()
+                                                                           << _sceneName);
     }
 
     [[nodiscard]] nlohmann::json Scene::serialize() const
@@ -239,12 +206,9 @@ namespace Core
 
     void Scene::tick(float timeDelta)
     {
-        for (auto&& asset : _objects)
+        for (auto&& object : _sceneObjects)
         {
-            if (auto* object = asset->getData()) [[likely]]
-            {
-                object->tick(timeDelta);
-            }
+            object->tick(timeDelta);
         }
     }
 } // namespace Core
