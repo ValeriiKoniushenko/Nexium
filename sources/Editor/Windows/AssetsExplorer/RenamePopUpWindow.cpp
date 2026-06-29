@@ -105,6 +105,20 @@ namespace Core
 
         ImGui::Dummy({});
 
+        if (ImGui::IsKeyPressed(ImGuiKey_Enter, false)
+            || ImGui::IsKeyPressed(ImGuiKey_KeypadEnter, false))
+        {
+            _renameBuffer = TrimWhitespace(_fileNameInput->getInputtedData());
+            if (renamePath(_renameBuffer))
+            {
+                _renameToPath.clear();
+                _renameBuffer.clear();
+                _renameError.clear();
+                closeWindow();
+                ImGui::CloseCurrentPopup();
+            }
+        }
+
         if (ImGui::IsKeyPressed(ImGuiKey_Escape, false))
         {
             cancelChangesAndCloseWindow();

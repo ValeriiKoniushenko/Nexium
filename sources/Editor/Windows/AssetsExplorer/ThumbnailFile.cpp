@@ -246,7 +246,7 @@ namespace Core
             }
 
             const auto weakAsset
-                = GetAssetsManager().getWeakAssetByPath(_path.generic_string());
+                = GetAssetsManager().getWeakEcsAssetByPath(_path.generic_string());
             if (auto asset = weakAsset.tryLoad();
                 asset && asset->canProcessAction(AssetAction::AA_Spawn))
             {
