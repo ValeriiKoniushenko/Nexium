@@ -243,7 +243,7 @@ namespace Core
                 R<Keyboard::Key>::ToString(Widget::Input::editorImGuiShowRect).data());
         }
 
-        if (auto spectator = gGameInstance->gameScene.gerFirstOf<Spectator>(); Verify(spectator))
+        if (auto spectator = gGameInstance->gameScene.gerFirstOf<Spectator>())
         {
             layout.addChildComponent<Spacer>();
             layout.addChildComponent<Label>()->setText("Spectator");

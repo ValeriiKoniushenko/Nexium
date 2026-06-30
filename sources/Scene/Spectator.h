@@ -29,13 +29,18 @@
 
 namespace Core
 {
+    CLASS();
     class Spectator : public Actor
     {
+        R_FRIEND_DECL(Spectator);
         ECS_COMPONENT_DECL(Spectator, Actor);
 
     public:
         // TODO: Move it to Controller
+        FIELD();
         float speed = 600.f;
+
+        FIELD();
         float mouseSensitivity = 0.5f;
 
         KeyboardInputManger keyboardInput;
@@ -43,12 +48,13 @@ namespace Core
 
     public:
         [[nodiscard]] StringAtom getCacheHash() const override;
+        void onTick(float delta) override;
 
     protected:
         DelegateSubscriberPoolGuard _subscriptionPool;
 
-        void onTick(float delta) override;
-
         void onInitialize() override;
     };
 } // namespace Core
+
+#include "Spectator.generated.h" // added by the code generator. Better don't move it.

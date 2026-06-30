@@ -35,7 +35,6 @@
 #include "ModuleInfo.h"
 #include "ResourceManagement/ResourceManager.h"
 #include "Scene/Rectangle.h"
-#include "Scene/Spectator.h"
 #include "spdlog/spdlog.h"
 
 std::unique_ptr<Core::GameInstance> gGameInstance = nullptr;

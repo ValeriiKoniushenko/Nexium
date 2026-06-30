@@ -1,0 +1,10 @@
+{
+    "assetData": {},
+    "data": {
+        "mouseSensitivity": 0.5,
+        "speed": 600.0
+    },
+    "name": "BaseSpectator",
+    "tags": "WorldObject",
+    "type": "Spectator"
+}

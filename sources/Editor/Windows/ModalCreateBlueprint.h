@@ -54,6 +54,10 @@ namespace Core
 
         void onDraw() override;
 
+        void onClose() override;
+
+        void resetGUI();
+
         void preOpenedEndWindowDraw() override;
 
         [[nodiscard]] bool beginWindowDraw() override;

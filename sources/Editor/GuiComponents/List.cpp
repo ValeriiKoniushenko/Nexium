@@ -50,6 +50,12 @@ namespace Core::Gui
         _size.y = newHeight;
     }
 
+    void BaseList::resetListNavigation()
+    {
+        resetRegexFilter();
+        resetCurrentIndex();
+    }
+
     void BaseList::onInitialize()
     {
         Widget::onInitialize();
@@ -70,10 +76,10 @@ namespace Core::Gui
                     continue;
                 }
 
-                const bool isSelected = (_currentItem == i);
+                const bool isSelected = (_currentIndex == i);
                 if (ImGui::Selectable(_items.at(i).c_str(), isSelected))
                 {
-                    _currentItem = i;
+                    _currentIndex = i;
                     onSelect->trigger(_items.at(i));
                 }
                 if (isSelected)
@@ -96,7 +102,7 @@ namespace Core::Gui
         _sizeProvider = callback;
     }
 
-    void ListModelBased::setCurrentIndex(std::size_t i) noexcept
+    void ListModelBased::setCurrentIndex(std::size_t i)
     {
         if (Verify(_sizeProvider && _dataProvider))
         {
@@ -112,6 +118,13 @@ namespace Core::Gui
         StringAtom item;
         (void)_dataProvider(_currentIndex, item);
         return item;
+    }
+
+    void ListModelBased::resetListNavigation()
+    {
+        BaseList::resetListNavigation();
+
+        _currentData = nullptr;
     }
 
     void ListModelBased::onDraw()

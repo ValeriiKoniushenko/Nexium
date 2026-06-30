@@ -45,8 +45,16 @@ namespace Core::Gui
 
         void setHeight(float newHeight) override;
 
+        void resetRegexFilter() { _filter.clear(); }
         void setRegexFilter(const StringAtom& filter) { _filter = filter; }
         [[nodiscard]] const StringAtom& getFilter() const noexcept { return _filter; }
+
+        void resetCurrentIndex() noexcept { _currentIndex = 0; }
+        [[nodiscard]] std::size_t getCurrentIndex() const noexcept { return _currentIndex; }
+
+        virtual void setCurrentIndex(std::size_t i) = 0;
+
+        virtual void resetListNavigation();
 
     protected:
         void onInitialize() override;
@@ -57,6 +65,9 @@ namespace Core::Gui
 
         FIELD();
         glm::vec2 _size = glm::vec2(100.f, 150.f);
+
+        FIELD();
+        std::size_t _currentIndex = 0;
     };
 
     CLASS();
@@ -70,13 +81,12 @@ namespace Core::Gui
         void setData(const std::vector<StringAtom>& items) { _items = items; }
         const std::vector<StringAtom>& getData() const noexcept { return _items; }
 
-        void setCurrentIndex(std::size_t i) noexcept
+        void setCurrentIndex(std::size_t i) override
         {
-            _currentItem = std::min(i, _items.size() - 1);
+            _currentIndex = std::min(i, _items.size() - 1);
         }
 
-        [[nodiscard]] std::size_t getCurrentIndex() const noexcept { return _currentItem; }
-        [[nodiscard]] StringAtom getCurrentData() const { return _items.at(_currentItem); }
+        [[nodiscard]] StringAtom getCurrentData() const { return _items.at(_currentIndex); }
 
     public: // Delegates
         Delegate<void(StringAtom)>::Ptr onSelect = Delegate<void(StringAtom)>::Create();
@@ -86,7 +96,6 @@ namespace Core::Gui
 
     protected:
         std::vector<StringAtom> _items;
-        std::size_t _currentItem = 0;
     };
 
     CLASS();
@@ -112,12 +121,13 @@ namespace Core::Gui
         /// pointer to your data.
         void setSizeProvider(const std::function<std::size_t()>& callback);
 
-        void setCurrentIndex(std::size_t i) noexcept;
+        void setCurrentIndex(std::size_t i) override;
 
-        [[nodiscard]] std::size_t getCurrentIndex() const noexcept { return _currentIndex; }
         [[nodiscard]] const void* getCurrentData() const noexcept { return _currentData; }
 
         [[nodiscard]] StringAtom tryGetCurrentDataAsString() const;
+
+        void resetListNavigation() override;
 
     public: // Delegates
         Delegate<void(const void*, StringAtom)>::Ptr onSelect
@@ -131,7 +141,6 @@ namespace Core::Gui
         std::function<std::size_t()> _sizeProvider;
         std::vector<std::pair<const void*, StringAtom>> _cache;
         const void* _currentData = nullptr;
-        std::size_t _currentIndex = 0;
     };
 
 } // namespace Core::Gui

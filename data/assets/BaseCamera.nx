@@ -1,0 +1,35 @@
+{
+    "assetData": {},
+    "data": {
+        "_children": null,
+        "_isDrawOutline": false,
+        "_isEnabled": true,
+        "_isPostDraw": false,
+        "_name": "BaseCamera",
+        "_noTick": false,
+        "_origin": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "_position": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "_rotation": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "_scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "_type": "BaseCamera"
+    },
+    "name": "BaseCamera",
+    "tags": "WorldObject",
+    "type": "BaseCamera"
+}

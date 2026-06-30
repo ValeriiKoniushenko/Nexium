@@ -155,6 +155,42 @@ namespace Core
         }
     }
 
+    void ModalCreateBlueprintEWC::onClose()
+    {
+        BaseEWC::onClose();
+        resetGUI();
+    }
+
+    void ModalCreateBlueprintEWC::resetGUI()
+    {
+        if (_nameField)
+        {
+            _nameField->input->setInputtedData("");
+            _nameField->input->resetBorderColor();
+        }
+
+        if (_typeField)
+        {
+            _typeField->input->setInputtedData("");
+            _typeField->input->resetBorderColor();
+        }
+
+        if (_errorOutput)
+        {
+            _errorOutput->setText("");
+        }
+
+        if (_pathField)
+        {
+            _pathField->input->resetBorderColor();
+        }
+
+        if (_list)
+        {
+            _list->resetListNavigation();
+        }
+    }
+
     void ModalCreateBlueprintEWC::preOpenedEndWindowDraw()
     {
         ImGui::EndPopup();

@@ -29,19 +29,8 @@
 
 namespace Core
 {
+    R_FRIEND_IMPL(Spectator);
     ECS_COMPONENT_IMPL(Spectator);
-    /*
-    void Spectator::ioFieldsUpdate(DataStream& out)
-    {
-        Actor::ioFieldsUpdate(out);
-
-        auto stream = out.dedicatedNesting("Spectator");
-
-        stream.field("speed", speed);
-        stream.field("mouseSensitivity", mouseSensitivity);
-        stream.field(keyboardInput);
-        // stream.field("mouseInput", mouseInput);
-    }*/
 
     StringAtom Spectator::getCacheHash() const
     {
@@ -59,8 +48,6 @@ namespace Core
     void Spectator::onInitialize()
     {
         Actor::onInitialize();
-
-        // tryReadFromCache();
 
         BaseCamera& camera = *getOrAddChildComponent<BaseCamera>();
 
