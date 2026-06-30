@@ -61,6 +61,38 @@ namespace Core
         return "{} [{}]"_f << name << getComponentType();
     }
 
+    void SceneObject::onPreDeserialize(AbstractComponent* obj)
+    {
+        BaseComponent::onPreDeserialize(obj);
+    }
+
+    void SceneObject::onPostDeserialize(AbstractComponent* obj, const RLogsCollector& logs)
+    {
+        BaseComponent::onPostDeserialize(obj, logs);
+        Transformable::onPostDeserialize(dynamic_cast<Transformable*>(obj), logs);
+    }
+
+    void SceneObject::onPreSerialize(const AbstractComponent* obj) const
+    {
+        BaseComponent::onPreSerialize(obj);
+    }
+
+    void SceneObject::onPostSerialize(const AbstractComponent* obj,
+                                      const RLogsCollector& logs) const
+    {
+        BaseComponent::onPostSerialize(obj, logs);
+    }
+
+    void SceneObject::onInitialize()
+    {
+        BaseComponent::onInitialize();
+    }
+
+    void SceneObject::onPreInitialize()
+    {
+        BaseComponent::onPreInitialize();
+    }
+
     void SceneObject::onOutlineStatusChange(bool newStatus)
     {
     }

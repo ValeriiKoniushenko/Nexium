@@ -79,7 +79,15 @@ namespace Core
 
         [[nodiscard]] virtual StringAtom stringify() const;
 
+        void onPreDeserialize(AbstractComponent* obj) override;
+        void onPostDeserialize(AbstractComponent* obj, const RLogsCollector& logs) override;
+        void onPreSerialize(const AbstractComponent* obj) const override;
+        void onPostSerialize(const AbstractComponent* obj,
+                             const RLogsCollector& logs) const override;
+
     protected:
+        void onInitialize() override;
+        void onPreInitialize() override;
         void onOutlineStatusChange(bool newStatus) override;
     };
 
