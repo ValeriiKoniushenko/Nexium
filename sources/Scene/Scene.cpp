@@ -143,7 +143,8 @@ namespace Core
     {
         internal_addObjectToScene(object.get());
 
-        infoLog("Object '{} was spawned at the scene: '{}'"_f << object->stringify() << _sceneName);
+        infoLog("Object '{}' was spawned at the scene: '{}'"_f << object->stringify()
+                                                               << _sceneName);
     }
 
     void Scene::addBlueprintObjectToScene(const WeakData<ECSAsset>& asset, const StringAtom& name)

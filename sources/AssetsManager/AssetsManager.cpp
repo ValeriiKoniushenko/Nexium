@@ -241,6 +241,7 @@ namespace Core
     {
         _textures.clear();
         _skyboxes.clear();
+        _ecsAssets.clear();
     }
 
     void AssetsManager::registerNewAssetPath(fs::path path)

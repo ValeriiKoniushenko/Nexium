@@ -248,6 +248,7 @@ namespace Core
 
             RResourceStream<RJsonResourceStream> data(json[StreamData::data]);
             _data->deserialize(data);
+            _data->onPostDeserialize(_data.get(), data.logs());
 
             // [opt] making loading of essential data (texture loading, 3D model loading, etc)
             if (_impl)
