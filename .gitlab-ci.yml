@@ -1,0 +1,9 @@
+stages:
+  - build
+
+build-job:
+  stage: build
+  tags:
+    - pull-request
+  script:
+    - echo "Build job"
