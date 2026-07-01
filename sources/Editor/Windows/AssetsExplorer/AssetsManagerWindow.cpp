@@ -366,10 +366,9 @@ namespace Core
         return !p.generic_string().contains(filter);
     }
 
-    bool AssetsManagerWindowEWC::isSelected(const std::filesystem::path& path) const
+    bool AssetsManagerWindowEWC::isSelected(const std::filesystem::path& p) const
     {
-        return std::find(_selectedPaths.begin(), _selectedPaths.end(), path)
-               != _selectedPaths.end();
+        return std::find(_selectedPaths.begin(), _selectedPaths.end(), p) != _selectedPaths.end();
     }
 
     void AssetsManagerWindowEWC::saveThumbnailSelectionAfterRename(
@@ -387,6 +386,86 @@ namespace Core
                 p = newPath;
             }
         }
+    }
+
+    ThumbnailActions AssetsManagerWindowEWC::buildThumbnailActions()
+    {
+        return ThumbnailActions{
+            .cut = [this](const std::filesystem::path& p) { cutFrom(p); },
+            .copy = [this](const std::filesystem::path& p) { copyFrom(p); },
+            .open = [this](const std::filesystem::path& p) { tryOpenPath(p); },
+
+            .openInExplorer =
+                [this](const std::filesystem::path& p)
+            {
+                std::error_code ec;
+                const auto pathToOpen = std::filesystem::is_directory(p, ec) ? p : _openedPath;
+
+                AssetsManager::OpenPathFromOSExplorer(pathToOpen);
+            },
+
+            .paste = [this](const std::filesystem::path& p) { pasteTo(p); },
+            .remove = [this](const std::filesystem::path& p) { deleteAt(p); },
+
+            .rename =
+                [this](const std::filesystem::path& p)
+            {
+                RenamePopUpWindow::Open(
+                    "Rename file name", p,
+                    [this](const std::filesystem::path& oldP, const std::filesystem::path& newP)
+                    {
+                        saveThumbnailSelectionAfterRename(oldP, newP);
+                        refresh();
+                    });
+            },
+
+            .select
+            = [this](const std::filesystem::path& p, bool additive) { selectPath(p, additive); },
+        };
+    }
+
+    std::vector<std::filesystem::directory_entry> AssetsManagerWindowEWC::prepareExplorerEntries()
+        const
+    {
+        std::vector<std::filesystem::directory_entry> entries;
+
+        try
+        {
+            for (const auto& entry : std::filesystem::directory_iterator(_openedPath))
+            {
+                if (!isFiltered(entry.path()))
+                {
+                    entries.push_back(entry);
+                }
+            }
+        }
+        catch (const std::filesystem::filesystem_error& e)
+        {
+            criticalLog("Scan error in '{}': {}"_f << _openedPath.generic_string() << e.what());
+            return {};
+        }
+
+        std::ranges::sort(entries,
+                          [](const auto& a, const auto& b)
+                          {
+                              const bool aDir = a.is_directory();
+                              const bool bDir = b.is_directory();
+
+                              if (aDir != bDir)
+                              {
+                                  return aDir; // folders first
+                              }
+
+                              auto an = a.path().filename().string();
+                              auto bn = b.path().filename().string();
+
+                              std::ranges::transform(an, an.begin(), ::tolower);
+                              std::ranges::transform(bn, bn.begin(), ::tolower);
+
+                              return an < bn;
+                          });
+
+        return entries;
     }
 
     void AssetsManagerWindowEWC::selectPath(const std::filesystem::path& path, const bool additive)
@@ -449,7 +528,8 @@ namespace Core
             ImGui::Dummy({});
             ImGui::SameLine();
 
-            float w = ImGui::GetContentRegionAvail().x - (ImGui::GetStyle().ItemSpacing.x * 1.f);
+            float const w
+                = ImGui::GetContentRegionAvail().x - (ImGui::GetStyle().ItemSpacing.x * 1.f);
 
             if (ImGui::Button("Create Blueprint", glm::vec2(w, 0)))
             {
@@ -466,100 +546,68 @@ namespace Core
 
     void AssetsManagerWindowEWC::drawExplorer()
     {
-        const auto defaultSpace = ImGui::GetStyle().ItemSpacing;
-        const auto padding = ImGui::GetStyle().WindowPadding.x;
+        const auto& style = ImGui::GetStyle();
+        const auto defaultSpace = style.ItemSpacing;
+        const auto padding = style.WindowPadding.x;
 
-        if (ImGui::BeginChild("Explorer"))
+        if (!ImGui::BeginChild("Explorer"))
         {
-            _toolbarLayout.tick(GetWorld().timeDelta);
-            const auto availX = ImGui::GetContentRegionAvail().x - (padding * 2.f);
-
-            const int maxCountPerWidth
-                = static_cast<int>(availX / (_thumbnailSize.x + (defaultSpace.x * 2.f)));
-
-            drawExplorerContextMenu();
-
-            ImGui::SetCursorPosX(ImGui::GetCursorPosX() + padding);
-            ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0.0f);
-
-            try
-            {
-                int i = 1;
-                for (auto&& entry : std::filesystem::directory_iterator(_openedPath))
-                {
-                    const auto& path = entry.path();
-                    const auto fileFormat = AssetsManager::GetNodeType(entry);
-
-                    if (isFiltered(path))
-                    {
-                        continue;
-                    }
-
-                    const ImTextureID texture
-                        = _nodeTypesData[fileFormat]->getData().getTextureId();
-                    const auto actions = ThumbnailActions{
-                        .cut = [this](const std::filesystem::path& p) { cutFrom(p); },
-                        .copy = [this](const std::filesystem::path& p) { copyFrom(p); },
-                        .open = [this](const std::filesystem::path& p) { tryOpenPath(p); },
-                        .openInExplorer =
-                            [this](const std::filesystem::path& p)
-                        {
-                            std::error_code ec;
-                            const auto pathToOpen
-                                = std::filesystem::is_directory(p, ec) ? p : _openedPath;
-                            AssetsManager::OpenPathFromOSExplorer(pathToOpen);
-                        },
-                        .paste = [this](const std::filesystem::path& p) { pasteTo(p); },
-                        .remove = [this](const std::filesystem::path& p) { deleteAt(p); },
-                        .rename =
-                            [this](const std::filesystem::path& p)
-                        {
-                            RenamePopUpWindow::Open("Rename file name", p,
-                                                    [this](const std::filesystem::path& oldP,
-                                                           const std::filesystem::path& newP)
-                                                    {
-                                                        saveThumbnailSelectionAfterRename(oldP,
-                                                                                          newP);
-                                                        refresh();
-                                                    });
-                        },
-                        .select =
-                            [this](const std::filesystem::path& p, const bool additive)
-                        {
-                            selectPath(p, additive);
-                        },
-                    };
-
-                    ThumbnailFile thumbnail(actions, texture, entry, isSelected(entry.path()),
-                                            !_selectedPath.empty());
-                    thumbnail.draw();
-
-                    if (maxCountPerWidth != 0 && i % maxCountPerWidth != 0)
-                    {
-                        ImGui::SameLine();
-                    }
-
-                    ++i;
-                }
-            }
-            catch (std::filesystem::filesystem_error& e)
-            {
-                criticalLog("Got a error while scanning a folder '{}' for assets. Details: {}"_f
-                            << _openedPath.generic_string() << e.what());
-            }
-
-            ImGui::PopStyleVar();
-
-            if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)
-                && ImGui::IsWindowHovered(ImGuiHoveredFlags_ChildWindows)
-                && !ImGui::IsAnyItemHovered())
-            {
-                _selectedPaths.clear();
-            }
-
-            ImGui::Dummy({});
+            return;
         }
+
+        _toolbarLayout.tick(GetWorld().timeDelta);
+
+        const auto availX = ImGui::GetContentRegionAvail().x - (padding * 2.f);
+
+        const int maxCountPerWidth
+            = static_cast<int>(availX / (_thumbnailSize.x + (defaultSpace.x * 2.f)));
+
+        drawExplorerContextMenu();
+
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + padding);
+        ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0.0f);
+
+        const auto entries = prepareExplorerEntries();
+        const auto actions = buildThumbnailActions();
+
+        drawExplorerItems(entries, maxCountPerWidth, actions);
+
+        ImGui::PopStyleVar();
+
+        if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)
+            && ImGui::IsWindowHovered(ImGuiHoveredFlags_ChildWindows) && !ImGui::IsAnyItemHovered())
+        {
+            _selectedPaths.clear();
+        }
+
+        ImGui::Dummy({});
         ImGui::EndChild();
+    }
+
+    void AssetsManagerWindowEWC::drawExplorerItems(
+        const std::vector<std::filesystem::directory_entry>& entries, const int maxCountPerWidth,
+        const ThumbnailActions& actions)
+    {
+        int i = 1;
+
+        for (const auto& entry : entries)
+        {
+            const auto& path = entry.path();
+            const auto fileFormat = AssetsManager::GetNodeType(entry);
+            const ImTextureID texture = _nodeTypesData[fileFormat]->getData().getTextureId();
+
+            ThumbnailFile thumbnail(actions, texture, entry, isSelected(path),
+                                    !_selectedPath.empty());
+
+            thumbnail.draw();
+
+            if (maxCountPerWidth != 0 && i % maxCountPerWidth != 0)
+            {
+                ImGui::SameLine();
+            }
+
+            ++i;
+        }
     }
 
     void AssetsManagerWindowEWC::drawOneLevel(CacheNode& rootNode, bool& isSelected)

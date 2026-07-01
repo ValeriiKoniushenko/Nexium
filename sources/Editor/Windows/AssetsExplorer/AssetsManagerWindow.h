@@ -110,10 +110,13 @@ namespace Core
         void refresh();
     private:
         [[nodiscard]] bool isFiltered(const std::filesystem::path& p) const;
-        [[nodiscard]] bool isSelected(const std::filesystem::path& path) const;
+        [[nodiscard]] bool isSelected(const std::filesystem::path& p) const;
+        [[nodiscard]] std::vector<std::filesystem::directory_entry> prepareExplorerEntries() const;
 
         void saveThumbnailSelectionAfterRename(const std::filesystem::path& oldPath,
                                                const std::filesystem::path& newPath);
+
+        ThumbnailActions buildThumbnailActions();
 
         void selectPath(const std::filesystem::path& path, bool additive);
         void toggleSelection(const std::filesystem::path& path);
@@ -121,8 +124,10 @@ namespace Core
         void drawExplorerContextMenu();
 
         void drawExplorerTree();
-
         void drawExplorer();
+
+        void drawExplorerItems(const std::vector<std::filesystem::directory_entry>& entries,
+                               int maxCountPerWidth, const ThumbnailActions& actions);
 
         void drawOneLevel(CacheNode& rootNode, bool& isSelected);
 
