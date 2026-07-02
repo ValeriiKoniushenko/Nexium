@@ -345,7 +345,7 @@ namespace Core
     /// Abstract base class for all components.
     /// Provides lifecycle hooks, ticking mechanism, and JSON/XML/etc serialization.
     CLASS();
-    class AbstractComponent : public IntrusiveRefCounter<BaseComponent>, public BaseLog
+    class AbstractComponent : public IntrusiveRefCounter<AbstractComponent>, public BaseLog
     {
         R_FRIEND(AbstractComponent);
 
@@ -584,7 +584,7 @@ namespace Core
 
         [[nodiscard]] std::size_t makeHash() const;
 
-        virtual BaseComponent::Ptr clone() const { return nullptr; }
+        [[nodiscard]] virtual BaseComponent::Ptr clone() const { return nullptr; }
 
         template<IsComponent T>
         [[nodiscard]] bool isTypeOf() const
@@ -761,7 +761,7 @@ namespace Core
         }
 
         /// Iterate over every child and root recursively(DFS).
-        /// Can take a functions of next types:
+        /// Can take a function of next types:
         /// 1. bool(const BaseComponent*) - this function will work until it gets 'false'
         /// in return
         /// 2. void(const BaseComponent*) - will iterate without stopping through all a

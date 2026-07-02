@@ -68,6 +68,8 @@ namespace Core
             _nameField->label->setText("Name");
             _nameField->label->setWidth(80.f);
             _nameField->input->setFlex(Gui::Flex::FlexWidth);
+            _nameField->input->onInput->subscribe([this](const char* data)
+                                                  { _wasManuallyEdited = true; });
         }
 
         _layout.addChildComponent<Gui::Spacer>();
@@ -104,6 +106,14 @@ namespace Core
                 });
             _list->setSizeProvider(
                 []() { return GetAssetsManager().getEcsAssetCountByTag(Tag_WorldObject); });
+            _subscriptionPool << _list->onSelect->subscribeAndGetID(
+                [this](const void*, StringAtom name)
+                {
+                    if (!_wasManuallyEdited)
+                    {
+                        _nameField->input->setInputtedData(name.toStdString());
+                    }
+                });
         }
 
         _layout.addChildComponent<Gui::Separator>();
@@ -113,11 +123,13 @@ namespace Core
 
             _okButton = h->addChildComponent<Gui::Button>("Add");
             _okButton->setFlex(Gui::Flex::FlexWidth);
-            _okButton->onClick->subscribe([this]() { okButtonClicked(); });
+            _subscriptionPool << _okButton->onClick->subscribeAndGetID([this]()
+                                                                       { okButtonClicked(); });
 
             _cancelButton = h->addChildComponent<Gui::Button>("Cancel");
             _cancelButton->setFlex(Gui::Flex::FlexWidth);
-            _cancelButton->onClick->subscribe([this]() { cancelButtonClicked(); });
+            _subscriptionPool << _cancelButton->onClick->subscribeAndGetID(
+                [this]() { cancelButtonClicked(); });
         }
     }
 
@@ -194,5 +206,12 @@ namespace Core
     void ModalAssetsSearchPopUpEWC::cancelButtonClicked()
     {
         closeWindow();
+    }
+
+    void ModalAssetsSearchPopUpEWC::onClose()
+    {
+        BaseEWC::onClose();
+
+        _wasManuallyEdited = false;
     }
 } // namespace Core

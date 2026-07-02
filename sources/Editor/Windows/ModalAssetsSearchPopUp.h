@@ -62,8 +62,7 @@ namespace Core
 
         void okButtonClicked();
         void cancelButtonClicked();
-
-    protected:
+        void onClose() override;
         DelegateSubscriberPoolGuard _subscriptionPool;
 
         StringAtom _caption = "ModalAssetsSearchPopUpEWC";
@@ -75,5 +74,6 @@ namespace Core
         Gui::Button* _cancelButton = nullptr;
 
         bool _hasOpenRequest = false;
+        bool _wasManuallyEdited = false;
     };
 } // namespace Core
