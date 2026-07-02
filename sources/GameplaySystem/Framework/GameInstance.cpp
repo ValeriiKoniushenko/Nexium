@@ -322,9 +322,12 @@ namespace Core
 
     void GameInstance::internal_onAddObjectToScene(SceneObject* obj)
     {
-        if (auto* camera = dynamic_cast<BaseCamera*>(obj))
+        if (!currentCamera)
         {
-            currentCamera = camera;
+            if (auto* camera = dynamic_cast<BaseCamera*>(obj))
+            {
+                currentCamera = camera;
+            }
         }
     }
 

@@ -220,6 +220,13 @@ namespace Core
         bool invalidate = false;
         if (ImGui::BeginPopup("ContextSceneItemMenu"))
         {
+            if (auto* camera = n->tryCastTo<BaseCamera>())
+            {
+                if (ImGui::MenuItem("Set as a main camera"))
+                {
+                    gGameInstance->currentCamera = camera;
+                }
+            }
             if (ImGui::MenuItem(ICON_FA_TRASH " Delete"))
             {
                 invalidate = true;

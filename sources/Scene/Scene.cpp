@@ -29,6 +29,48 @@
 #include "Graphics/Primitives/StaticMeshBundle.h"
 #include "ModuleInfo.h"
 
+namespace
+{
+    using ObjectContainerT = Core::Scene::ObjectContainerT;
+    using SceneObject = Core::SceneObject;
+
+    // Returns true if `name` exists among objects' component names.
+    bool nameExists(const ObjectContainerT& objects, const Core::StringAtom& name)
+    {
+        for (auto&& obj : objects)
+        {
+            if (obj->getComponentName() == name)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Finds a unique name for `obj` given existing `objects`, and sets it.
+    void unifyObjectName(const ObjectContainerT& objects, SceneObject* obj)
+    {
+        const auto baseName = obj->getComponentName();
+
+        if (!nameExists(objects, baseName))
+        {
+            return; // already unique, nothing to do
+        }
+
+        // baseName is taken -> find next free suffix N in "baseName_N"
+        int suffix = 0;
+        Core::StringAtom candidate;
+        do
+        {
+            candidate = baseName + "_" + Core::StringAtom::MakeFrom(suffix);
+            ++suffix;
+        } while (nameExists(objects, candidate));
+
+        obj->setComponentName(candidate);
+    }
+
+} // namespace
+
 namespace Core
 {
 
@@ -122,7 +164,10 @@ namespace Core
             object->setComponentName(name);
         }
 
+        // TODO: optimize it! Absolutely slow.
+        unifyObjectName(_sceneObjects, object);
         _sceneObjects.emplace_back(object);
+
         onObjectAdded->trigger(object);
     }
 
