@@ -76,6 +76,12 @@ namespace Core::Gui
                     continue;
                 }
 
+                if (_needsFocus && i == _currentIndex)
+                {
+                    ImGui::SetKeyboardFocusHere();
+                    _needsFocus = false;
+                }
+
                 const bool isSelected = (_currentIndex == i);
                 if (ImGui::Selectable(_items.at(i).c_str(), isSelected))
                 {
@@ -152,6 +158,12 @@ namespace Core::Gui
                 if (!_filter.isEmpty() && !string.regexFind(_filter))
                 {
                     continue;
+                }
+
+                if (_needsFocus && i == _currentIndex)
+                {
+                    ImGui::SetKeyboardFocusHere();
+                    _needsFocus = false;
                 }
 
                 const bool isSelected = (_currentIndex == i);

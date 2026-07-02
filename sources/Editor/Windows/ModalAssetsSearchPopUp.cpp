@@ -49,6 +49,8 @@ namespace Core
         }
         _caption = std::move(text);
         _hasOpenRequest = true;
+
+        onOpen();
     }
 
     void ModalAssetsSearchPopUpEWC::Open(StringAtom text)
@@ -141,7 +143,12 @@ namespace Core
 
         if (ImGui::IsKeyPressed(ImGuiKey_Escape, false))
         {
-            closeWindow();
+            cancelButtonClicked();
+        }
+
+        if (ImGui::IsKeyPressed(ImGuiKey_Enter, false))
+        {
+            okButtonClicked();
         }
     }
 
@@ -213,5 +220,24 @@ namespace Core
         BaseEWC::onClose();
 
         _wasManuallyEdited = false;
+        if (_nameField)
+        {
+            _nameField->input->setInputtedData("");
+        }
+
+        if (_list)
+        {
+            _list->resetListNavigation();
+        }
+    }
+
+    void ModalAssetsSearchPopUpEWC::onOpen()
+    {
+        BaseEWC::onOpen();
+
+        if (_list)
+        {
+            _list->setKeyboardFocusAtStart();
+        }
     }
 } // namespace Core

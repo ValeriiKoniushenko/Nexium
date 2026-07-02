@@ -63,6 +63,7 @@ namespace Core
         void okButtonClicked();
         void cancelButtonClicked();
         void onClose() override;
+        void onOpen() override;
         DelegateSubscriberPoolGuard _subscriptionPool;
 
         StringAtom _caption = "ModalAssetsSearchPopUpEWC";

@@ -52,6 +52,10 @@ namespace Core::Gui
         void resetCurrentIndex() noexcept { _currentIndex = 0; }
         [[nodiscard]] std::size_t getCurrentIndex() const noexcept { return _currentIndex; }
 
+        void setKeyboardFocusAtStart() noexcept { _needsFocus = true; }
+        [[nodiscard]] bool hasKeyboardFocusAtStart() noexcept { return _needsFocus; }
+        void resetKeyboardFocusAtStart() noexcept { _needsFocus = false; }
+
         virtual void setCurrentIndex(std::size_t i) = 0;
 
         virtual void resetListNavigation();
@@ -68,6 +72,8 @@ namespace Core::Gui
 
         FIELD();
         std::size_t _currentIndex = 0;
+
+        bool _needsFocus = false;
     };
 
     CLASS();
