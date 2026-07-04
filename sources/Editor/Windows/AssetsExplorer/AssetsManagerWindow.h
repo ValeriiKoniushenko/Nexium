@@ -136,13 +136,15 @@ namespace Core
         static std::filesystem::path Normalize(const std::filesystem::path& p)
         {
             std::error_code ec;
-            auto normalized = std::filesystem::weakly_canonical(p, ec);
-            if (ec)
+
+            auto canonical = std::filesystem::weakly_canonical(p, ec);
+
+            if (!ec)
             {
-                normalized = p.lexically_normal();
+                return canonical;
             }
 
-            return normalized;
+            return p.lexically_normal();
         }
 
     private:

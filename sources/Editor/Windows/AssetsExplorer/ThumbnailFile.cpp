@@ -140,30 +140,44 @@ namespace Core
     void ThumbnailFile::drawToolTip()
     {
         ImGui::BeginTooltip();
-        const auto path = _path;
-        const auto& originalFileName = _fileName;
 
-        std::error_code ec;
-        const auto lastWrite = std::chrono::clock_cast<std::chrono::system_clock>(
-            std::filesystem::last_write_time(path, ec));
-        if (ec)
+        const auto& path = _path;
+
+        ImGui::Text("Name:      %s", _fileName.c_str());
+
         {
-            // errorLog("Some error of std::filesystem::last_write_time: {}"_f << ec.message());
+            std::error_code ec;
+            const auto fsTime = std::filesystem::last_write_time(path, ec);
+
+            if (!ec)
+            {
+                const auto sysTime = std::chrono::clock_cast<std::chrono::system_clock>(fsTime);
+
+                ImGui::Text("Modified:  %s", std::format("{}", sysTime).c_str());
+            }
+            else
+            {
+                ImGui::Text("Modified:  N/A");
+            }
         }
 
-        ImGui::Text("Name:      %s", originalFileName.data());
-        ImGui::Text("Modified:  %s", std::format("{}", lastWrite).data());
-        ImGui::Text("Location:  %s", path.generic_string().data());
+        ImGui::Text("Location:  %s", path.generic_string().c_str());
 
         if (_isRegularFile)
         {
             std::error_code ec;
-            const auto fileSize = static_cast<uint32_t>(std::filesystem::file_size(path, ec));
+            const auto size = std::filesystem::file_size(path, ec);
+
             if (!ec)
             {
-                ImGui::Text("File size: %s", PrettyBytes(fileSize).c_str());
+                ImGui::Text("File size: %s", PrettyBytes(size).c_str());
+            }
+            else
+            {
+                ImGui::Text("File size: N/A");
             }
         }
+
         ImGui::EndTooltip();
     }
 
@@ -245,8 +259,7 @@ namespace Core
                 }
             }
 
-            const auto weakAsset
-                = GetAssetsManager().getWeakEcsAssetByPath(_path.generic_string());
+            const auto weakAsset = GetAssetsManager().getWeakEcsAssetByPath(_path.generic_string());
             if (auto asset = weakAsset.tryLoad();
                 asset && asset->canProcessAction(AssetAction::AA_Spawn))
             {

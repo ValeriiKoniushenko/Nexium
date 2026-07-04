@@ -241,11 +241,9 @@ namespace Core
             _selectedPath.clear();
         }
 
-        std::erase_if(_selectedPaths,
-                      [&normalizedPath](const std::filesystem::path& selectedPath)
-                      {
-                          return AssetsManagerWindowEWC::Normalize(selectedPath) == normalizedPath;
-                      });
+        std::erase_if(
+            _selectedPaths, [&normalizedPath](const std::filesystem::path& selectedPath)
+            { return AssetsManagerWindowEWC::Normalize(selectedPath) == normalizedPath; });
         refresh();
     }
 
@@ -390,37 +388,114 @@ namespace Core
 
     ThumbnailActions AssetsManagerWindowEWC::buildThumbnailActions()
     {
+        using WeakSelf = WeakPtr<BaseComponent>;
+        WeakSelf self(this);
+
+        auto loadSelf = [self]() -> AssetsManagerWindowEWC*
+        {
+            auto data = self.tryLoad();
+
+            if (!data.isValid())
+            {
+                return nullptr;
+            }
+
+            return data->tryCastTo<AssetsManagerWindowEWC>();
+        };
+
         return ThumbnailActions{
-            .cut = [this](const std::filesystem::path& p) { cutFrom(p); },
-            .copy = [this](const std::filesystem::path& p) { copyFrom(p); },
-            .open = [this](const std::filesystem::path& p) { tryOpenPath(p); },
+            .cut =
+                [loadSelf](const std::filesystem::path& p)
+            {
+                if (auto* w = loadSelf())
+                {
+                    w->cutFrom(p);
+                }
+            },
+
+            .copy =
+                [loadSelf](const std::filesystem::path& p)
+            {
+                if (auto* w = loadSelf())
+                {
+                    w->copyFrom(p);
+                }
+            },
+
+            .open =
+                [loadSelf](const std::filesystem::path& p)
+            {
+                if (auto* w = loadSelf())
+                {
+                    w->tryOpenPath(p);
+                }
+            },
 
             .openInExplorer =
-                [this](const std::filesystem::path& p)
+                [loadSelf](const std::filesystem::path& p)
             {
                 std::error_code ec;
-                const auto pathToOpen = std::filesystem::is_directory(p, ec) ? p : _openedPath;
+                const bool isDir = std::filesystem::is_directory(p, ec);
+
+                if (ec)
+                {
+                    AssetsManager::OpenPathFromOSExplorer(p);
+                    return;
+                }
+
+                auto* w = loadSelf();
+
+                const auto pathToOpen = (w && isDir) ? p : (w ? w->_openedPath : p);
 
                 AssetsManager::OpenPathFromOSExplorer(pathToOpen);
             },
 
-            .paste = [this](const std::filesystem::path& p) { pasteTo(p); },
-            .remove = [this](const std::filesystem::path& p) { deleteAt(p); },
+            .paste =
+                [loadSelf](const std::filesystem::path& p)
+            {
+                if (auto* w = loadSelf())
+                {
+                    w->pasteTo(p);
+                }
+            },
+
+            .remove =
+                [loadSelf](const std::filesystem::path& p)
+            {
+                if (auto* w = loadSelf())
+                {
+                    w->deleteAt(p);
+                }
+            },
 
             .rename =
-                [this](const std::filesystem::path& p)
+                [loadSelf](const std::filesystem::path& p)
             {
+                if (!loadSelf())
+                {
+                    return;
+                }
+
                 RenamePopUpWindow::Open(
                     "Rename file name", p,
-                    [this](const std::filesystem::path& oldP, const std::filesystem::path& newP)
+                    [loadSelf](const std::filesystem::path& oldP, const std::filesystem::path& newP)
                     {
-                        saveThumbnailSelectionAfterRename(oldP, newP);
-                        refresh();
+                        if (auto* w = loadSelf())
+                        {
+                            w->saveThumbnailSelectionAfterRename(oldP, newP);
+                            w->refresh();
+                        }
                     });
             },
 
-            .select
-            = [this](const std::filesystem::path& p, bool additive) { selectPath(p, additive); },
+            .select =
+                [loadSelf](const std::filesystem::path& p, bool additive)
+            {
+                if (auto* w = loadSelf())
+                {
+                    w->selectPath(p, additive);
+                }
+            },
         };
     }
 
