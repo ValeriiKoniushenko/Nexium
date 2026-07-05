@@ -192,11 +192,19 @@ namespace Core
         ImGui::ImageButton(_fileName.c_str(), _textureId, _size);
         ImGui::PopStyleColor();
 
-        if ((ImGui::IsItemClicked(ImGuiMouseButton_Left)
-             || ImGui::IsItemClicked(ImGuiMouseButton_Right))
-            && _actions.select)
+        if (_actions.select)
         {
-            _actions.select(_path, ImGui::GetIO().KeyCtrl);
+            if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
+            {
+                _actions.select(_path, ImGui::GetIO().KeyCtrl);
+            }
+            else if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
+            {
+                if (!_isSelected)
+                {
+                    _actions.select(_path, false);
+                }
+            }
         }
 
         _size += ImGui::GetStyle().FramePadding * 2.f;
@@ -232,21 +240,43 @@ namespace Core
             {
                 _actions.rename(_path);
             }
-            if (ImGui::MenuItem(ICON_FA_TRASH " Delete"))
+            const bool deleteMultiple
+                = _actions.isMultiSelection && _actions.isMultiSelection(_path);
+
+            if (deleteMultiple)
             {
-                const auto pathCopy = _path;
-                const auto remove = _actions.remove;
-                const auto isDirectory = _isDirectory;
-                ModalPopUp::Open("Do you really want to delete the {}: {}?"_f
-                                     << (isDirectory ? "directory" : "file")
-                                     << pathCopy.generic_string(),
-                                 [remove, pathCopy](const bool isOk)
-                                 {
-                                     if (isOk && remove)
+                if (ImGui::MenuItem(ICON_FA_TRASH " Delete selected files"))
+                {
+                    const auto removeSelected = _actions.removeSelected;
+
+                    ModalPopUp::Open("Do you really want to delete selected files?",
+                                     [removeSelected](bool isOk)
                                      {
-                                         remove(pathCopy);
-                                     }
-                                 });
+                                         if (isOk && removeSelected)
+                                         {
+                                             removeSelected();
+                                         }
+                                     });
+                }
+            }
+            else
+            {
+                if (ImGui::MenuItem(ICON_FA_TRASH " Delete"))
+                {
+                    const auto pathCopy = _path;
+                    const auto remove = _actions.remove;
+                    const auto isDirectory = _isDirectory;
+                    ModalPopUp::Open("Do you really want to delete the {}: {}?"_f
+                                         << (isDirectory ? "directory" : "file")
+                                         << pathCopy.generic_string(),
+                                     [remove, pathCopy](const bool isOk)
+                                     {
+                                         if (isOk && remove)
+                                         {
+                                             remove(pathCopy);
+                                         }
+                                     });
+                }
             }
 
             ImGui::Separator();

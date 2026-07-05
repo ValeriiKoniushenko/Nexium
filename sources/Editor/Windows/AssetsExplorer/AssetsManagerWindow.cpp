@@ -404,6 +404,14 @@ namespace Core
         };
 
         return ThumbnailActions{
+            .removeSelected =
+                [loadSelf]()
+            {
+                if (auto* w = loadSelf())
+                {
+                    w->deleteSelectedFiles();
+                }
+            },
             .cut =
                 [loadSelf](const std::filesystem::path& p)
             {
@@ -486,6 +494,16 @@ namespace Core
                             w->refresh();
                         }
                     });
+            },
+            .isMultiSelection =
+                [loadSelf](const std::filesystem::path& p)
+            {
+                if (auto* w = loadSelf())
+                {
+                    return w->isSelected(p) && w->_selectedPaths.size() > 1;
+                }
+
+                return false;
             },
 
             .select =
@@ -741,6 +759,19 @@ namespace Core
                 ImGui::TreePop();
             }
         }
+    }
+
+    void AssetsManagerWindowEWC::deleteSelectedFiles()
+    {
+        const auto selected = _selectedPaths;
+
+        for (const auto& path : selected)
+        {
+            deleteAt(path);
+        }
+
+        _selectedPaths.clear();
+        refresh();
     }
 
     void AssetsManagerWindowEWC::toggleSelection(const std::filesystem::path& path)

@@ -35,6 +35,7 @@ namespace Core
 
     struct ThumbnailActions
     {
+        std::function<void()> removeSelected;
         std::function<void(const std::filesystem::path&)> cut;
         std::function<void(const std::filesystem::path&)> copy;
         std::function<void(const std::filesystem::path&)> open;
@@ -42,6 +43,7 @@ namespace Core
         std::function<void(const std::filesystem::path&)> paste;
         std::function<void(const std::filesystem::path&)> remove;
         std::function<void(const std::filesystem::path&)> rename;
+        std::function<bool(const std::filesystem::path&)> isMultiSelection;
         std::function<void(const std::filesystem::path&, bool additive)> select;
     };
 

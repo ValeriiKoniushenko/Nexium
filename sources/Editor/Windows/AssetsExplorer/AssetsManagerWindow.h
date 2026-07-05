@@ -118,8 +118,9 @@ namespace Core
 
         ThumbnailActions buildThumbnailActions();
 
-        void selectPath(const std::filesystem::path& path, bool additive);
+        void deleteSelectedFiles();
         void toggleSelection(const std::filesystem::path& path);
+        void selectPath(const std::filesystem::path& path, bool additive);
 
         void drawExplorerContextMenu();
 
