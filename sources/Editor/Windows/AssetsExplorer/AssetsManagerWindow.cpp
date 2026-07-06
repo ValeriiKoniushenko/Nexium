@@ -388,130 +388,139 @@ namespace Core
 
     ThumbnailActions AssetsManagerWindowEWC::buildThumbnailActions()
     {
-        using WeakSelf = WeakPtr<BaseComponent>;
-        WeakSelf self(this);
-
-        auto loadSelf = [self]() -> AssetsManagerWindowEWC*
-        {
-            auto data = self.tryLoad();
-
-            if (!data.isValid())
-            {
-                return nullptr;
-            }
-
-            return data->tryCastTo<AssetsManagerWindowEWC>();
-        };
-
         return ThumbnailActions{
             .removeSelected =
-                [loadSelf]()
+                [w = WeakPtr(this)]()
             {
-                if (auto* w = loadSelf())
+                if (w)
                 {
-                    w->deleteSelectedFiles();
+                    if (auto weakData = w.tryLoad())
+                    {
+                        weakData->deleteSelectedFiles();
+                    }
                 }
             },
             .cut =
-                [loadSelf](const std::filesystem::path& p)
+                [w = WeakPtr(this)](const std::filesystem::path& p)
             {
-                if (auto* w = loadSelf())
+                if (w)
                 {
-                    w->cutFrom(p);
+                    if (auto weakData = w.tryLoad())
+                    {
+                        weakData->cutFrom(p);
+                    }
                 }
             },
 
             .copy =
-                [loadSelf](const std::filesystem::path& p)
+                [w = WeakPtr(this)](const std::filesystem::path& p)
             {
-                if (auto* w = loadSelf())
+                if (w)
                 {
-                    w->copyFrom(p);
+                    if (auto weakData = w.tryLoad())
+                    {
+                        weakData->copyFrom(p);
+                    }
                 }
             },
 
             .open =
-                [loadSelf](const std::filesystem::path& p)
+                [w = WeakPtr(this)](const std::filesystem::path& p)
             {
-                if (auto* w = loadSelf())
+                if (w)
                 {
-                    w->tryOpenPath(p);
+                    if (auto weakData = w.tryLoad())
+                    {
+                        weakData->tryOpenPath(p);
+                    }
                 }
             },
 
             .openInExplorer =
-                [loadSelf](const std::filesystem::path& p)
+                [w = WeakPtr(this)](const std::filesystem::path& p)
             {
-                std::error_code ec;
-                const bool isDir = std::filesystem::is_directory(p, ec);
-
-                if (ec)
+                if (w)
                 {
-                    AssetsManager::OpenPathFromOSExplorer(p);
-                    return;
+                    std::error_code ec;
+                    const bool isDir = std::filesystem::is_directory(p, ec);
+
+                    if (ec)
+                    {
+                        AssetsManager::OpenPathFromOSExplorer(p);
+                        return;
+                    }
+                    if (auto weakData = w.tryLoad())
+                    {
+                        const auto pathToOpen = (w && isDir) ? p : (w ? weakData->_openedPath : p);
+                        AssetsManager::OpenPathFromOSExplorer(pathToOpen);
+                    }
                 }
-
-                auto* w = loadSelf();
-
-                const auto pathToOpen = (w && isDir) ? p : (w ? w->_openedPath : p);
-
-                AssetsManager::OpenPathFromOSExplorer(pathToOpen);
             },
 
             .paste =
-                [loadSelf](const std::filesystem::path& p)
+                [w = WeakPtr(this)](const std::filesystem::path& p)
             {
-                if (auto* w = loadSelf())
+                if (w)
                 {
-                    w->pasteTo(p);
+                    if (auto weakData = w.tryLoad())
+                    {
+                        weakData->pasteTo(p);
+                    }
                 }
             },
 
             .remove =
-                [loadSelf](const std::filesystem::path& p)
+                [w = WeakPtr(this)](const std::filesystem::path& p)
             {
-                if (auto* w = loadSelf())
+                if (w)
                 {
-                    w->deleteAt(p);
+                    if (auto weakData = w.tryLoad())
+                    {
+                        weakData->deleteAt(p);
+                    }
                 }
             },
 
             .rename =
-                [loadSelf](const std::filesystem::path& p)
+                [w = WeakPtr(this)](const std::filesystem::path& p)
             {
-                if (!loadSelf())
-                {
-                    return;
-                }
-
                 RenamePopUpWindow::Open(
                     "Rename file name", p,
-                    [loadSelf](const std::filesystem::path& oldP, const std::filesystem::path& newP)
+                    [w](const std::filesystem::path& oldP, const std::filesystem::path& newP)
                     {
-                        if (auto* w = loadSelf())
+                        if (w)
                         {
-                            w->saveThumbnailSelectionAfterRename(oldP, newP);
-                            w->refresh();
+                            if (auto weakData = w.tryLoad())
+                            {
+                                weakData->saveThumbnailSelectionAfterRename(oldP, newP);
+                                weakData->refresh();
+                            }
                         }
                     });
             },
             .isMultiSelection =
-                [loadSelf](const std::filesystem::path& p)
+                [w = WeakPtr(this)](const std::filesystem::path& p)
             {
-                if (auto* w = loadSelf())
+                if (w)
                 {
-                    return w->isSelected(p) && w->_selectedPaths.size() > 1;
+                    if (auto weakData = w.tryLoad())
+                    {
+                        return weakData->isSelected(p) && weakData->_selectedPaths.size() > 1;
+                    }
                 }
 
                 return false;
             },
 
             .select =
-                [loadSelf](const std::filesystem::path& p, bool additive)
+                [w = WeakPtr(this)](const std::filesystem::path& p, bool additive)
             {
-                if (auto* w = loadSelf())
+                if (w)
                 {
-                    w->selectPath(p, additive);
+                    if (auto weakData = w.tryLoad())
+                    {
+                        weakData->selectPath(p, additive);
+                    }
                 }
             },
         };
