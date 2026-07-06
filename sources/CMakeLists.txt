@@ -49,7 +49,7 @@ target_link_libraries(${TARGET_NAME} PUBLIC
     Core::Rectpack2D
 
     Utils::Core
-    
+
     Nexium::Misc
 
     assimp::assimp

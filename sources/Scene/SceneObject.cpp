@@ -61,6 +61,19 @@ namespace Core
         return "{} [{}]"_f << name << getComponentType();
     }
 
+    void SceneObject::recalculateMatrices(const glm::mat4& mat)
+    {
+        Transformable::recalculateMatrices(mat);
+
+        for (auto&& comp : _children)
+        {
+            if (auto* trans = dynamic_cast<Transformable*>(comp.get()))
+            {
+                trans->recalculateMatrices(_cachedModelMatrix);
+            }
+        }
+    }
+
     void SceneObject::onPreDeserialize(AbstractComponent* obj)
     {
         BaseComponent::onPreDeserialize(obj);
@@ -83,6 +96,18 @@ namespace Core
         BaseComponent::onPostSerialize(obj, logs);
     }
 
+    void SceneObject::makeTransformableTreeDirty()
+    {
+        forEach(
+            [](BaseComponent* obj)
+            {
+                if (auto* t = dynamic_cast<Transformable*>(obj))
+                {
+                    t->setDirtyMatrices();
+                }
+            });
+    }
+
     void SceneObject::onInitialize()
     {
         BaseComponent::onInitialize();
@@ -95,6 +120,12 @@ namespace Core
 
     void SceneObject::onOutlineStatusChange(bool newStatus)
     {
+    }
+
+    void SceneObject::onDirtyMatrix()
+    {
+        Transformable::onDirtyMatrix();
+        makeTransformableTreeDirty();
     }
 
     void to_json(nlohmann::json& j, const SceneState& v)

@@ -49,26 +49,29 @@ namespace Core
     {
         Actor::onInitialize();
 
-        BaseCamera& camera = *getOrAddChildComponent<BaseCamera>();
+        (void)addUniqueTypeChildComponent<BaseCamera>();
 
-        static auto getRealSpeed = [this](KeyboardIA::SpecKeysState state)
+        const auto getSpeed = [this](KeyboardIA::SpecKeysState state)
+        { return speed / (state.leftShift == Keyboard::KeyState::Pressed ? 8.f : 1.f); };
+
+        const auto bindMovement
+            = [this, &getSpeed](const char* name, Keyboard::Key key, auto movement, float direction)
         {
-            const float div = state.leftShift == Keyboard::KeyState::Pressed ? 8.f : 1.f;
-            return speed / div;
+            _subscriptionPool << keyboardInput.getOrCreate(name, key)->onPress->subscribeAndGetID(
+                [=](KeyboardIA::SpecKeysState state)
+                { movement(direction * getSpeed(state) * gGameInstance->world.timeDelta); });
         };
 
-        // clang-format off
-        _subscriptionPool << keyboardInput.getOrCreate("Move forward", Keyboard::Key::W)->onPress->subscribeAndGetID([&](auto state){ camera.moveForward(-getRealSpeed(state) * gGameInstance->world.timeDelta); });
-        _subscriptionPool << keyboardInput.getOrCreate("Move backward", Keyboard::Key::S)->onPress->subscribeAndGetID([&](auto state){ camera.moveForward(getRealSpeed(state) * gGameInstance->world.timeDelta); });
-        _subscriptionPool << keyboardInput.getOrCreate("Move right", Keyboard::Key::D)->onPress->subscribeAndGetID([&](auto state){ camera.moveRight(getRealSpeed(state) * gGameInstance->world.timeDelta); });
-        _subscriptionPool << keyboardInput.getOrCreate("Move left", Keyboard::Key::A)->onPress->subscribeAndGetID([&](auto state){ camera.moveRight(-getRealSpeed(state) * gGameInstance->world.timeDelta); });
-        _subscriptionPool << keyboardInput.getOrCreate("Move up", Keyboard::Key::R)->onPress->subscribeAndGetID([&](auto state){ camera.moveUp(getRealSpeed(state) * gGameInstance->world.timeDelta); });
-        _subscriptionPool << keyboardInput.getOrCreate("Move down", Keyboard::Key::F)->onPress->subscribeAndGetID([&](auto state){ camera.moveUp(-getRealSpeed(state) * gGameInstance->world.timeDelta); });
-        // clang-format on
+        bindMovement("Move forward", Keyboard::Key::W, [this](float v) { moveForward(v); }, -1.f);
+        bindMovement("Move backward", Keyboard::Key::S, [this](float v) { moveForward(v); }, 1.f);
+        bindMovement("Move right", Keyboard::Key::D, [this](float v) { moveRight(v); }, 1.f);
+        bindMovement("Move left", Keyboard::Key::A, [this](float v) { moveRight(v); }, -1.f);
+        bindMovement("Move up", Keyboard::Key::R, [this](float v) { moveUp(v); }, 1.f);
+        bindMovement("Move down", Keyboard::Key::F, [this](float v) { moveUp(v); }, -1.f);
 
         _subscriptionPool << mouseInput.getOrCreate("mouseRotation", Mouse::Key::Right)
                                  ->onDrag->subscribeAndGetID(
-                                     [this](glm::vec2 delta, auto spec)
+                                     [this](glm::vec2 delta, auto)
                                      {
                                          if (gGameInstance->currentCamera
                                              && !gDragDrop.isTypeOf<Gizmo::DragData>())

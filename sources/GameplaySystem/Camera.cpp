@@ -34,6 +34,7 @@
 namespace Core
 {
     ECS_COMPONENT_IMPL(BaseCamera);
+
     const glm::mat4& BaseCamera::getMatrix()
     {
         if (_isDirtyProjMatrix)
@@ -147,9 +148,18 @@ namespace Core
 
     void BaseCamera::recalculateCameraMatrices()
     {
-        auto& mat = _cachedModelMatrix;
+        if (auto* parent = getParent())
+        {
+            if (auto* trans = dynamic_cast<Transformable*>(parent))
+            {
+                trans->tryToRecalculateMatrices(trans->getModelMatrix());
+            }
+        }
 
+        auto& mat = _cachedModelMatrix;
         mat = glm::mat4(1.f);
+
+        // mat = glm::mat4(1.f);
 
         mat = glm::rotate(mat, glm::radians(_rotation.x), glm::vec3(1.f, 0.f, 0.f));
         mat = glm::rotate(mat, glm::radians(_rotation.y), glm::vec3(0.f, 1.f, 0.f));

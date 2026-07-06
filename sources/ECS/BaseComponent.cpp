@@ -26,6 +26,8 @@
 
 #include "ModuleInfo.h"
 
+#include <set>
+
 namespace
 {
     template<typename T, typename... Rest>
@@ -128,6 +130,37 @@ namespace Core
         }
 
         criticalLog("Can't find typeid by typename '{}' inside type-map"_f << type);
+
+        static std::once_flag onceFlag;
+        std::call_once(onceFlag,
+                       [this]()
+                       {
+                           std::set<StringAtom> sorted;
+                           for (auto regType : _typeToNameMap | std::views::keys)
+                           {
+                               // Limit super-long type names
+                               if (regType.size() > 32)
+                               {
+                                   regType.resize(30);
+                                   regType += "..";
+                               }
+                               sorted.emplace(std::move(regType));
+                           }
+
+                           std::string out;
+                           out.reserve(1024);
+                           out = "Registered types: ";
+                           for (auto&& s : sorted)
+                           {
+                               out += s;
+                               out += ", ";
+                           }
+                           out.pop_back();
+                           out.pop_back();
+
+                           infoLog(out);
+                       });
+
         return std::nullopt;
     }
 

@@ -79,6 +79,8 @@ namespace Core
 
         [[nodiscard]] virtual StringAtom stringify() const;
 
+        void recalculateMatrices(const glm::mat4& mat = glm::mat4(1.f)) override;
+
         void onPreDeserialize(AbstractComponent* obj) override;
         void onPostDeserialize(AbstractComponent* obj, const RLogsCollector& logs) override;
         void onPreSerialize(const AbstractComponent* obj) const override;
@@ -86,9 +88,12 @@ namespace Core
                              const RLogsCollector& logs) const override;
 
     protected:
+        void makeTransformableTreeDirty();
         void onInitialize() override;
         void onPreInitialize() override;
         void onOutlineStatusChange(bool newStatus) override;
+
+        void onDirtyMatrix() override;
     };
 
 } // namespace Core

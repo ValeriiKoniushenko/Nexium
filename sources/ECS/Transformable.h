@@ -107,6 +107,7 @@ namespace Core
 
         [[nodiscard]] glm::mat4& getModelMatrix() noexcept { return _cachedModelMatrix; }
         void setDirtyMatrices(bool v = true) noexcept { _isDirtyModelMatrix = v; }
+        [[nodiscard]] bool hasDirtyMatrices() noexcept { return _isDirtyModelMatrix; }
 
         friend void swap(Transformable& a, Transformable& b) noexcept
         {
