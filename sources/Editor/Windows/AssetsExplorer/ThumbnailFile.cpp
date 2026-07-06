@@ -139,6 +139,8 @@ namespace Core
 
     void ThumbnailFile::drawToolTip()
     {
+        // TODO: needs tooltip logic integration
+
         ImGui::BeginTooltip();
 
         const auto& path = _path;
