@@ -28,6 +28,7 @@
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/Spacer.h"
+#include "Editor/Windows/ModalPopUp.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Misc/Configs.h"
 #include "Misc/IconsFontAwesome.h"
@@ -48,31 +49,6 @@ namespace
     {
         const auto rel = std::filesystem::relative(original, sub);
         return !rel.empty() && rel.native()[0] != '.';
-    }
-
-    std::string PrettyBytes(uint64_t bytes)
-    {
-        static const std::array<const char*, 6> suffixes = { "B", "KB", "MB", "GB", "TB", "PB" };
-
-        if (bytes == 0)
-        {
-            return "0 B";
-        }
-
-        int i = 0;
-        auto count = static_cast<double>(bytes);
-
-        while (count >= 1024.0 && i < static_cast<int>(suffixes.size()) - 1)
-        {
-            count /= 1024.0;
-            ++i;
-        }
-
-        std::ostringstream out;
-        out << std::fixed << std::setprecision(count < 10 ? 2 : (count < 100 ? 1 : 0)) << count
-            << ' ' << suffixes[i];
-
-        return out.str();
     }
 
 } // namespace
@@ -709,7 +685,7 @@ namespace Core
             {
                 if (ImGui::MenuItem("Spawn on scene"))
                 {
-                    gGameInstance->gameScene.addBlueprintObjectToScene(asset);
+                    gGameInstance->gameScene.addBlueprintObjectToScene(asset, "");
                 }
             }
 

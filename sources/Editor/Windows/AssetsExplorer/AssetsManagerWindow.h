@@ -108,6 +108,7 @@ namespace Core
         bool _renderFilesInTreeView = false;
 
         void refresh();
+
     private:
         [[nodiscard]] bool isFiltered(const std::filesystem::path& p) const;
         [[nodiscard]] bool isSelected(const std::filesystem::path& p) const;
@@ -133,6 +134,9 @@ namespace Core
         void drawOneLevel(CacheNode& rootNode, bool& isSelected);
 
         void rescanPhysicalDrive(CacheNode& node);
+
+        void drawAssetsContextMenu(const std::filesystem::directory_entry& entry, bool& invalidate,
+                                   bool& needOpen);
 
         static std::filesystem::path Normalize(const std::filesystem::path& p)
         {

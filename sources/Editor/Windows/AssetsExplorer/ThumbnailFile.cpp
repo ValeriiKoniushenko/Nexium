@@ -292,12 +292,11 @@ namespace Core
             }
 
             const auto weakAsset = GetAssetsManager().getWeakEcsAssetByPath(_path.generic_string());
-            if (auto asset = weakAsset.tryLoad();
-                asset && asset->canProcessAction(AssetAction::AA_Spawn))
+            if (auto asset = weakAsset.tryLoad(); asset && asset->getTags() & Tag_WorldObject)
             {
                 if (ImGui::MenuItem("Spawn on scene"))
                 {
-                    asset->processAction(AssetAction::AA_Spawn);
+                    gGameInstance->gameScene.addBlueprintObjectToScene(asset, "");
                 }
             }
 
