@@ -24,11 +24,12 @@
 
 #pragma once
 
-#include "RenamePopUpWindow.h"
+#include "../BaseWindow.h"
 #include "AssetsManager/AssetsManager.h"
 #include "AssetsManager/TextureAsset.h"
-#include "../BaseWindow.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
+#include "RenamePopUpWindow.h"
+#include "ThumbnailFile.h"
 
 namespace Core
 {
@@ -74,7 +75,6 @@ namespace Core
         void createFolderAutoName(const std::filesystem::path& basePath);
         void createFile(const std::filesystem::path& path);
         void createFileAutoName(const std::filesystem::path& basePath);
-        bool renamePath(const std::filesystem::path& path, const std::string& newName);
 
         [[nodiscard]] std::filesystem::path getExclusiveFileName(
             const std::filesystem::path& path) const;
@@ -110,40 +110,46 @@ namespace Core
         void refresh();
     private:
         [[nodiscard]] bool isFiltered(const std::filesystem::path& p) const;
-        [[nodiscard]] bool isSelected(const std::filesystem::path& path) const;
+        [[nodiscard]] bool isSelected(const std::filesystem::path& p) const;
+        [[nodiscard]] std::vector<std::filesystem::directory_entry> prepareExplorerEntries() const;
 
         void saveThumbnailSelectionAfterRename(const std::filesystem::path& oldPath,
                                                const std::filesystem::path& newPath);
 
-        void openSelectedFile(const std::filesystem::directory_entry& entry, bool needOpen,
-                              bool invalidate);
-        void handleSelection(const std::filesystem::path& path);
-        void toggleSelection(const std::filesystem::path& path);
+        ThumbnailActions buildThumbnailActions();
 
-        void drawToolTip(const std::filesystem::directory_entry& entry) const;
+        void deleteSelectedFiles();
+        void toggleSelection(const std::filesystem::path& path);
+        void selectPath(const std::filesystem::path& path, bool additive);
+
         void drawExplorerContextMenu();
-        void drawAssetsContextMenu(const std::filesystem::directory_entry& entry, bool& invalidate,
-                                   bool& needOpen);
 
         void drawExplorerTree();
-
         void drawExplorer();
 
-        void drawOneLevel(CacheNode& rootNode, bool& isSelected);
+        void drawExplorerItems(const std::vector<std::filesystem::directory_entry>& entries,
+                               int maxCountPerWidth, const ThumbnailActions& actions);
 
-        void drawFileThumbnail(ImTextureID texture, const std::filesystem::directory_entry& entry,
-                               glm::vec2 size);
+        void drawOneLevel(CacheNode& rootNode, bool& isSelected);
 
         void rescanPhysicalDrive(CacheNode& node);
 
         static std::filesystem::path Normalize(const std::filesystem::path& p)
         {
-            return std::filesystem::weakly_canonical(p);
+            std::error_code ec;
+
+            auto canonical = std::filesystem::weakly_canonical(p, ec);
+
+            if (!ec)
+            {
+                return canonical;
+            }
+
+            return p.lexically_normal();
         }
 
     private:
         std::filesystem::path _openedPath;
-        bool _openRenamePopup = false;
         bool _isCopy = true;
     };
 } // namespace Core

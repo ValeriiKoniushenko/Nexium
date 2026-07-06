@@ -64,7 +64,7 @@ namespace Core
         if (_hasOpenRequest)
         {
             warnLog(
-                "Can't open second time ModalCreateBlueprintEWC. It's already processing the "
+                "Can't open second time RenamePopUpWindow. It's already processing the "
                 "request.");
             return;
         }
@@ -96,7 +96,28 @@ namespace Core
     {
         _layout.tick(GetWorld().timeDelta);
 
+        if (!_renameError.empty())
+        {
+            ImGui::Dummy({});
+            ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "%s",
+                               _renameError.c_str());
+        }
+
         ImGui::Dummy({});
+
+        if (ImGui::IsKeyPressed(ImGuiKey_Enter, false)
+            || ImGui::IsKeyPressed(ImGuiKey_KeypadEnter, false))
+        {
+            _renameBuffer = TrimWhitespace(_fileNameInput->getInputtedData());
+            if (renamePath(_renameBuffer))
+            {
+                _renameToPath.clear();
+                _renameBuffer.clear();
+                _renameError.clear();
+                closeWindow();
+                ImGui::CloseCurrentPopup();
+            }
+        }
 
         if (ImGui::IsKeyPressed(ImGuiKey_Escape, false))
         {

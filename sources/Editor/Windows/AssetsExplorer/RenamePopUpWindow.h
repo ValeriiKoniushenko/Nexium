@@ -24,11 +24,15 @@
 
 #pragma once
 
-#include "AssetsManagerWindow.h"
 #include "Core/Delegate.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "Editor/Windows/BaseWindow.h"
 #include "JustReflectMe/Adapter.h"
+
+#include <filesystem>
+#include <functional>
+#include <string>
+#include <string_view>
 
 namespace Core
 {
