@@ -26,8 +26,8 @@
 
 #include "Editor/Windows/ImageViewer.h"
 #include "Editor/Windows/NxECSBasedEditor.h"
-#include "Editor/Windows/NxTextureEditor.h"
-#include "Editor/Windows/TextEditor.h"
+#include "Editor/Windows/Editors/NxTextureEditor.h"
+#include "Editor/Windows/Editors/TextEditor.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Misc/Configs.h"
 #include "ModuleInfo.h"

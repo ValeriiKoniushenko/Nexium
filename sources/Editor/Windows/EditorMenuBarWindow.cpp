@@ -35,7 +35,7 @@
 #include "ImageViewer.h"
 #include "Misc/IconsFontAwesome.h"
 #include "ShaderManager.h"
-#include "TextEditor.h"
+#include "Editors/TextEditor.h"
 #include "WorldLightning.h"
 
 namespace

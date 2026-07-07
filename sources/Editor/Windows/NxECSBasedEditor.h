@@ -27,7 +27,7 @@
 #include "AssetsManager/ECSAsset.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "InputDevices/InputManager.h"
-#include "NxEditorBaseEditor.h"
+#include "Editors/NxEditorBaseEditor.h"
 
 namespace Core
 {

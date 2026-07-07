@@ -34,7 +34,7 @@
 #include "Editor/Windows/RootDockWindow.h"
 #include "Editor/Windows/SceneTreeWindow.h"
 #include "Editor/Windows/ShaderManager.h"
-#include "Editor/Windows/TextEditor.h"
+#include "Editor/Windows/Editors/TextEditor.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Graphics/Primitives/StaticMeshBundle.h"
 #include "ImGui/backends/imgui_impl_glfw.h"
@@ -47,7 +47,7 @@
 #include "Windows/ModalECSSearchPopUp.h"
 #include "Windows/ModalPopUp.h"
 #include "Windows/NxECSBasedEditor.h"
-#include "Windows/NxTextureEditor.h"
+#include "Windows/Editors/NxTextureEditor.h"
 #include "Windows/WorldLightning.h"
 #include "Windows/AssetsExplorer/RenamePopUpWindow.h"
 

@@ -26,7 +26,7 @@
 
 #include "AssetsManager/TextureAsset.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
-#include "Editor/Windows/NxEditorBaseEditor.h"
+#include "Editor/Windows/Editors/NxEditorBaseEditor.h"
 
 namespace Core
 {

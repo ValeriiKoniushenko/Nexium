@@ -34,7 +34,7 @@
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Misc/Configs.h"
 #include "Misc/IconsFontAwesome.h"
-#include "TextEditor.h"
+#include "Editors/TextEditor.h"
 
 using namespace Core::Gui;
 

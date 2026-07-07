@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "BaseWindow.h"
+#include "Editor/Windows/BaseWindow.h"
 
 #include <set>
 

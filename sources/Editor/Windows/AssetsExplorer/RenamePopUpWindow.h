@@ -51,6 +51,13 @@ namespace Core
         using RenameCallbackT = std::function<void(const std::filesystem::path& oldPath,
                                                    const std::filesystem::path& newPath)>;
 
+        struct ToastNotification
+        {
+            std::string text;
+            float lifetime = 3.f;
+            float elapsed = 0.f;
+        };
+
     public:
         void open(const StringAtom& text, const std::filesystem::path& path,
                   RenameCallbackT onRenameCallback);
