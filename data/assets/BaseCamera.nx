@@ -2,10 +2,17 @@
     "assetData": {},
     "data": {
         "_children": null,
+        "_far": 10000.0,
+        "_fov": 75.0,
+        "_frameSize": {
+            "height": 600.0,
+            "width": 600.0
+        },
         "_isDrawOutline": false,
         "_isEnabled": true,
         "_isPostDraw": false,
         "_name": "BaseCamera",
+        "_near": 0.10000000149011612,
         "_noTick": false,
         "_origin": [
             0.0,

@@ -29,8 +29,10 @@
 
 namespace Core
 {
+    CLASS();
     class BaseCamera : public Actor
     {
+        R_FRIEND_DECL(Core::BaseCamera, Core::Actor);
         ECS_COMPONENT_DECL(BaseCamera, Actor);
 
     public:
@@ -81,10 +83,18 @@ namespace Core
         glm::mat4 _cachedCalculatedMatrix = glm::mat4(1.f);
         glm::vec3 _worldRotation = glm::vec3(0.f);
         glm::vec3 _worldPos = glm::vec3(0.f);
-        FSize2 _frameSize = FSize2{ 600, 600 };
+
+        FIELD();
+        Core::FSize2 _frameSize = Core::FSize2{ 600, 600 };
+        FIELD();
         float _fov = 75.f;
+        FIELD();
         float _far = 10'000.f;
+        FIELD();
         float _near = 0.1f;
+
         bool _isDirtyProjMatrix = true;
     };
 } // namespace Core
+
+#include "Camera.generated.h" // added by the code generator. Better don't move it.
