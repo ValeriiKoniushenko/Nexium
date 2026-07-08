@@ -62,17 +62,14 @@ namespace Core
 
         [[nodiscard]] float getFar() const noexcept { return _far; }
 
-        void yaw(float y);
-
-        void pitch(float x);
-
-        void yawAndPitch(glm::vec2 xy);
-
         [[nodiscard]] StringAtom getCacheHash() const override;
 
         [[nodiscard]] FSize2 getOutputFrameSize();
 
         [[nodiscard]] glm::vec3 putMouseRay(float length);
+
+        [[nodiscard]] glm::vec3 getGlobalPos() const noexcept { return _worldPos; }
+        [[nodiscard]] glm::vec3 getGlobalRotation() const noexcept { return _worldRotation; }
 
     protected:
         void recalculateCameraMatrices();
@@ -82,6 +79,8 @@ namespace Core
     protected:
         glm::mat4 _cachedProjMatrix = glm::mat4(1.f);
         glm::mat4 _cachedCalculatedMatrix = glm::mat4(1.f);
+        glm::vec3 _worldRotation = glm::vec3(0.f);
+        glm::vec3 _worldPos = glm::vec3(0.f);
         FSize2 _frameSize = FSize2{ 600, 600 };
         float _fov = 75.f;
         float _far = 10'000.f;

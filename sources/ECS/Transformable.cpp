@@ -179,6 +179,27 @@ namespace Core
         // clang-format on
     }
 
+    void Transformable::yaw(float y)
+    {
+        rotateY(y);
+    }
+
+    void Transformable::pitch(float x)
+    {
+        if (static_cast<float>(std::fabs(_rotation.x + x)) > 90.f)
+        {
+            return;
+        }
+
+        rotateX(x);
+    }
+
+    void Transformable::yawAndPitch(glm::vec2 xy)
+    {
+        yaw(xy.x);
+        pitch(xy.y);
+    }
+
     glm::vec3 Transformable::getUpVector() const noexcept
     {
         auto r = glm::vec2(glm::radians(_rotation.x), glm::radians(_rotation.y));

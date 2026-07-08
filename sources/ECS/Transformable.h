@@ -109,6 +109,12 @@ namespace Core
         void setDirtyMatrices(bool v = true) noexcept { _isDirtyModelMatrix = v; }
         [[nodiscard]] bool hasDirtyMatrices() noexcept { return _isDirtyModelMatrix; }
 
+        void yaw(float y);
+
+        void pitch(float x);
+
+        void yawAndPitch(glm::vec2 xy);
+
         friend void swap(Transformable& a, Transformable& b) noexcept
         {
             std::swap(a._cachedModelMatrix, b._cachedModelMatrix);

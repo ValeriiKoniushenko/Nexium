@@ -156,7 +156,7 @@ namespace Core
 
         if (name.isEmpty())
         {
-            name = "Unnamed object #{}"_f << ++_uniqueCounterName;
+            name = "{}_{}"_f << object->getComponentType() << ++_uniqueCounterName;
             object->setComponentName(name);
         }
         else if (name.size() != object->getComponentName().size())

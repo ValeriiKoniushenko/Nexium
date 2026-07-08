@@ -28,6 +28,8 @@
 #include "Graphics/Window.h"
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/matrix_transform.hpp"
+#define GLM_ENABLE_EXPERIMENTAL
+#include "glm/gtx/string_cast.hpp"
 
 #include <cmath>
 
@@ -93,27 +95,6 @@ namespace Core
         _isDirtyProjMatrix = true;
     }
 
-    void BaseCamera::yaw(float y)
-    {
-        rotateY(y);
-    }
-
-    void BaseCamera::pitch(float x)
-    {
-        if (static_cast<float>(std::fabs(_rotation.x + x)) > 90.f)
-        {
-            return;
-        }
-
-        rotateX(x);
-    }
-
-    void BaseCamera::yawAndPitch(glm::vec2 xy)
-    {
-        yaw(xy.x);
-        pitch(xy.y);
-    }
-
     StringAtom BaseCamera::getCacheHash() const
     {
         return getComponentType() + "_" + getComponentName();
@@ -148,24 +129,28 @@ namespace Core
 
     void BaseCamera::recalculateCameraMatrices()
     {
-        if (auto* parent = getParent())
+        _worldPos = glm::vec3(0);
+        _worldRotation = glm::vec3(0);
+
+        BaseComponent* p = this;
+        while (p)
         {
-            if (auto* trans = dynamic_cast<Transformable*>(parent))
+            if (auto* t = dynamic_cast<Transformable*>(p))
             {
-                trans->tryToRecalculateMatrices(trans->getModelMatrix());
+                _worldPos += t->getPosition();
+                _worldRotation += t->getRotation();
             }
+            p = p->getParent();
         }
 
         auto& mat = _cachedModelMatrix;
         mat = glm::mat4(1.f);
 
-        // mat = glm::mat4(1.f);
+        mat = glm::rotate(mat, glm::radians(_worldRotation.x), glm::vec3(1.f, 0.f, 0.f));
+        mat = glm::rotate(mat, glm::radians(_worldRotation.y), glm::vec3(0.f, 1.f, 0.f));
+        mat = glm::rotate(mat, glm::radians(_worldRotation.z), glm::vec3(0.f, 0.f, 1.f));
 
-        mat = glm::rotate(mat, glm::radians(_rotation.x), glm::vec3(1.f, 0.f, 0.f));
-        mat = glm::rotate(mat, glm::radians(_rotation.y), glm::vec3(0.f, 1.f, 0.f));
-        mat = glm::rotate(mat, glm::radians(_rotation.z), glm::vec3(0.f, 0.f, 1.f));
-
-        mat = glm::translate(mat, _position * -1.f);
+        mat = glm::translate(mat, _worldPos * -1.f);
         mat = glm::translate(mat, _origin);
 
         _isDirtyModelMatrix = false;

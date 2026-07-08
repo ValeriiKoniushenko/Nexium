@@ -36,8 +36,10 @@ namespace Core
         auto* shader = GetShaderManager().getShaderProgram("skybox"_atom);
 
         auto view = glm::mat4(1.f);
-        view = glm::rotate(view, glm::radians(camera.getRotationX()), glm::vec3(1.f, 0.f, 0.f));
-        view = glm::rotate(view, glm::radians(camera.getRotationY()), glm::vec3(0.f, 1.f, 0.f));
+        view = glm::rotate(view, glm::radians(camera.getGlobalRotation().x),
+                           glm::vec3(1.f, 0.f, 0.f));
+        view = glm::rotate(view, glm::radians(camera.getGlobalRotation().y),
+                           glm::vec3(0.f, 1.f, 0.f));
 
         shader->use();
         shader->setUniform("uView"_atom, view);

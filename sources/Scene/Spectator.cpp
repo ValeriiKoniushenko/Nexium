@@ -49,7 +49,7 @@ namespace Core
     {
         Actor::onInitialize();
 
-        (void)addUniqueTypeChildComponent<BaseCamera>();
+        auto camera = addUniqueTypeChildComponent<BaseCamera>();
 
         const auto getSpeed = [this](KeyboardIA::SpecKeysState state)
         { return speed / (state.leftShift == Keyboard::KeyState::Pressed ? 8.f : 1.f); };
@@ -73,11 +73,9 @@ namespace Core
                                  ->onDrag->subscribeAndGetID(
                                      [this](glm::vec2 delta, auto)
                                      {
-                                         if (gGameInstance->currentCamera
-                                             && !gDragDrop.isTypeOf<Gizmo::DragData>())
+                                         if (!gDragDrop.isTypeOf<Gizmo::DragData>())
                                          {
-                                             gGameInstance->currentCamera->yawAndPitch(
-                                                 delta * mouseSensitivity);
+                                             yawAndPitch(delta * mouseSensitivity);
                                          }
                                      });
     }
