@@ -24,6 +24,7 @@
 
 #include "ModalCreateBlueprint.h"
 
+#include "AssetsExplorer/AssetsManagerWindow.h"
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
@@ -51,6 +52,8 @@ namespace Core
         }
         _caption = std::move(text);
         _hasOpenRequest = true;
+
+        onOpen();
     }
 
     void ModalCreateBlueprintEWC::Open(StringAtom text)
@@ -265,6 +268,17 @@ namespace Core
     void ModalCreateBlueprintEWC::cancelButtonClicked()
     {
         closeWindow();
+    }
+
+    void ModalCreateBlueprintEWC::onOpen()
+    {
+        BaseEWC::onOpen();
+
+        if (_pathField)
+        {
+            _pathField->input->setInputtedData(
+                gGameInstance->gameEditor.getWindow<AssetsManagerWindowEWC>()->getOpenedPath());
+        }
     }
 
     void ModalCreateBlueprintEWC::okButtonClicked()

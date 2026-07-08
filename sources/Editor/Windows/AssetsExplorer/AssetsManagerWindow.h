@@ -59,6 +59,8 @@ namespace Core
 
         [[nodiscard]] const char* getIcon() override;
 
+        [[nodiscard]] std::filesystem::path getOpenedPath() const { return _openedPath; }
+
     protected:
         void onPreInitialize() override;
         void onInitialize() override;

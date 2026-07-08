@@ -49,7 +49,7 @@ namespace Core
     {
         Actor::onInitialize();
 
-        auto camera = addUniqueTypeChildComponent<BaseCamera>();
+        (void)addUniqueTypeChildComponent<BaseCamera>();
 
         const auto getSpeed = [this](KeyboardIA::SpecKeysState state)
         { return speed / (state.leftShift == Keyboard::KeyState::Pressed ? 8.f : 1.f); };

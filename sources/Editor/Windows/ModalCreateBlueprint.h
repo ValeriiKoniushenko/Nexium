@@ -72,6 +72,8 @@ namespace Core
         void okButtonClicked();
         void cancelButtonClicked();
 
+        void onOpen() override;
+
     protected:
         DelegateSubscriberPoolGuard _subscriptionPool;
 
