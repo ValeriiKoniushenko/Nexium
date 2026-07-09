@@ -270,18 +270,7 @@ namespace Core
         }
 #endif
 
-        for (auto&& child : _children)
-        {
-            if (auto* adapter = child->tryCastTo<ECSEditorMimeAdapter>())
-            {
-                if (adapter->canWorkWith(_targetAsset->getData().get()))
-                {
-                    assetData = adapter->packAssetDataFromObject();
-                    break;
-                }
-            }
-        }
-
+        assetData = _targetAsset->getData()->serialize();
         _targetAsset->syncAssetWithMemory(assetData);
     }
 

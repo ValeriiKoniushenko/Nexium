@@ -23,7 +23,7 @@ Checks: >
   -cppcoreguidelines-avoid-non-const-global-variables,
   -cppcoreguidelines-pro-type-const-cast,
   -cppcoreguidelines-pro-type-reinterpret-cast,
-  -performance-no-int-to-ptr,
+  -cppcoreguidelines-pro-bounds-avoid-unchecked-container-access,
   
   -modernize-use-trailing-return-type,
   -modernize-concat-nested-namespaces,
@@ -53,7 +53,8 @@ Checks: >
   -misc-unused-parameters,
   -misc-no-recursion,
 
-  -performance-enum-size
+  -performance-enum-size,
+  -performance-no-int-to-ptr
 
 # Treat all enabled warnings as errors
 WarningsAsErrors: ""

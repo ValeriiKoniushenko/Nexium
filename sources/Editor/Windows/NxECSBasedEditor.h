@@ -40,6 +40,7 @@ namespace Core
         class TextInput;
 
     } // namespace Gui
+
     class ECSEditorMimeAdapter : public BaseComponent
     {
         ECS_COMPONENT_DECL(ECSEditorMimeAdapter, BaseComponent);
@@ -52,10 +53,9 @@ namespace Core
 
         [[nodiscard]] virtual StringAtom getProcessedAssetType() const = 0;
 
-        [[nodiscard]] virtual nlohmann::json packAssetDataFromObject() const { return {}; }
+        [[nodiscard]] const char* getPrefix() const override { return "ECSEditorMimeAdapter"; }
 
     protected:
-        [[nodiscard]] const char* getPrefix() const override { return "ECSEditorMimeAdapter"; }
         virtual void onDraw(float dt) = 0;
         virtual void onApplyAssetData(const nlohmann::json& json) = 0;
 
@@ -77,6 +77,7 @@ namespace Core
         [[nodiscard]] const NXECSAsset getTargetAsset() const;
 
         [[nodiscard]] bool hasTarget() const noexcept { return _targetComponent && _targetAsset; }
+        [[nodiscard]] const char* getPrefix() const override { return "NxECSBasedEditorEWC"; }
 
     protected:
         void onInitialize() override;
@@ -97,8 +98,6 @@ namespace Core
 
         void reset();
         void setup();
-
-        [[nodiscard]] const char* getPrefix() const override { return "NxECSBasedEditorEWC"; }
 
         void removeCurrentComponent(BaseComponent* component);
 

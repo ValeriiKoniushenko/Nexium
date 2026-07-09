@@ -87,8 +87,6 @@ namespace Core
         [[nodiscard]] bool canWorkWith(BaseComponent* component) const override;
         [[nodiscard]] StringAtom getProcessedAssetType() const override;
 
-        [[nodiscard]] nlohmann::json packAssetDataFromObject() const override;
-
     protected:
         [[nodiscard]] std::size_t convertShaderNameToIndex(const StringAtom& shaderName) const;
         [[nodiscard]] StringAtom convertIndexToShaderName(std::size_t index) const;

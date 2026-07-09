@@ -205,7 +205,11 @@ namespace Core
             return;
         }
 
-        obj->setComponentName(name);
+        if (obj->getComponentName().isEmpty())
+        {
+            obj->setComponentName(name);
+        }
+
         internal_addObjectToScene(obj.get());
 
         infoLog("Blueprint's object '{}' was spawned at the scene: '{}'"_f << obj->stringify()
@@ -219,7 +223,7 @@ namespace Core
         json[StreamData::sceneObjects] = nlohmann::json::array();
         for (const auto& obj : _sceneObjects)
         {
-            // json[StreamData::sceneObjects].push_back(obj->getSceneState());
+            json[StreamData::sceneObjects].push_back(obj->getSceneState());
         }
 
         return json;

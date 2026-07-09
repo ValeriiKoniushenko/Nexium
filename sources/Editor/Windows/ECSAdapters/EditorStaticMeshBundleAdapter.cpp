@@ -196,7 +196,7 @@ namespace Core
         return dynamic_cast<StaticMeshBundle*>(component) != nullptr;
     }
 
-    nlohmann::json ECSEditorStaticMeshBundleAdapter::packAssetDataFromObject() const
+    /*nlohmann::json ECSEditorStaticMeshBundleAdapter::packAssetDataFromObject() const
     {
         nlohmann::json json;
 
@@ -217,7 +217,7 @@ namespace Core
         }
 
         return json;
-    }
+    }*/
 
     std::size_t ECSEditorStaticMeshBundleAdapter::convertShaderNameToIndex(
         const StringAtom& shaderName) const

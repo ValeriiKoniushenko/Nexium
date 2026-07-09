@@ -29,6 +29,58 @@
 #include "Utils/Functions.h"
 #include "nlohmann/json.hpp"
 
+namespace
+{
+    struct JsonKeyChange
+    {
+        std::string path;
+        nlohmann::json oldValue;
+        nlohmann::json newValue;
+    };
+
+    std::vector<JsonKeyChange> MergeExistingKeys(nlohmann::json& target,
+                                                 const nlohmann::json& patch,
+                                                 const std::string& basePath = "")
+    {
+        std::vector<JsonKeyChange> changes;
+
+        if (!target.is_object() || !patch.is_object())
+        {
+            return changes;
+        }
+
+        for (auto it = patch.begin(); it != patch.end(); ++it)
+        {
+            const std::string& key = it.key();
+            auto targetIt = target.find(key);
+            if (targetIt == target.end())
+            {
+                continue;
+            }
+
+            auto currentPath = basePath.empty() ? key : basePath + "." + key;
+
+            if (targetIt->is_object() && it->is_object())
+            {
+                auto nested = MergeExistingKeys(*targetIt, *it, currentPath);
+                changes.insert(changes.end(), std::make_move_iterator(nested.begin()),
+                               std::make_move_iterator(nested.end()));
+            }
+            else
+            {
+                if (*targetIt != *it)
+                {
+                    changes.push_back({ currentPath, *targetIt, *it });
+                    *targetIt = *it;
+                }
+            }
+        }
+
+        return changes;
+    }
+
+} // namespace
+
 namespace Core
 {
 
@@ -73,12 +125,12 @@ namespace Core
         {
             const auto json = nlohmann::json::parse(Utils::GetFileContent(_meta.pathToSource));
 
-            if (!json.contains(StreamData::assetData))
+            if (!json.contains(StreamData::data))
             {
                 return {};
             }
 
-            return json[StreamData::assetData];
+            return json[StreamData::data];
         }
         catch (const std::exception& e)
         {
@@ -114,7 +166,22 @@ namespace Core
         json[StreamData::tags] = TagHelper::JoinAllToString(_meta.tags);
         json[StreamData::data] = nlohmann::json::object();
 
-        json[StreamData::assetData] = assetData;
+        auto baseAssetData = getAssetData();
+        std::cout << baseAssetData.dump(4) << std::endl;
+
+        auto changes = MergeExistingKeys(baseAssetData, assetData);
+
+        std::string patchedOutput;
+        patchedOutput.reserve(256);
+        for (const auto& change : changes)
+        {
+            patchedOutput += change.path + ": " + change.oldValue.dump() + " -> "
+                             + change.newValue.dump() + " | ";
+        }
+
+        std::cout << baseAssetData.dump(4) << std::endl;
+
+        json[StreamData::data] = baseAssetData;
 
         if (_status == Status::Loaded)
         {
@@ -130,7 +197,12 @@ namespace Core
         if (out.is_open())
         {
             out << json.dump(4);
-            traceLog("Asset: {} was updated successfully"_f << _meta.logicPath);
+            out.close();
+
+            traceLog("Asset: {} was updated successfully. Patch: {}"_f << _meta.logicPath
+                                                                       << patchedOutput.empty()
+                         ? "None"
+                         : patchedOutput);
         }
         else
         {
@@ -178,7 +250,7 @@ namespace Core
         j[StreamData::type] = _meta.type;
         j[StreamData::name] = _meta.name;
         j[StreamData::tags] = TagHelper::JoinAllToString(_meta.tags);
-        j[StreamData::assetData] = nlohmann::json::object();
+        j[StreamData::data] = nlohmann::json::object();
 
         j[StreamData::data] = _data->serialize();
 
@@ -205,7 +277,7 @@ namespace Core
         // [opt] making loading of essential data (texture loading, 3D model loading, etc)
         if (_impl)
         {
-            _impl->load(*this, _data.get(), json[StreamData::assetData]);
+            _impl->load(*this, _data.get(), json[StreamData::data]);
         }
 
         if (!data.logs().empty())
@@ -252,7 +324,7 @@ namespace Core
             // [opt] making loading of essential data (texture loading, 3D model loading, etc)
             if (_impl)
             {
-                _impl->load(*this, _data.get(), json[StreamData::assetData]);
+                _impl->load(*this, _data.get(), json[StreamData::data]);
             }
 
             if (!data.logs().empty())
