@@ -277,7 +277,9 @@ namespace Core
         if (_pathField)
         {
             _pathField->input->setInputtedData(
-                gGameInstance->gameEditor.getWindow<AssetsManagerWindowEWC>()->getOpenedPath());
+                gGameInstance->gameEditor.getWindow<AssetsManagerWindowEWC>()
+                    ->getOpenedPath()
+                    .string());
         }
     }
 

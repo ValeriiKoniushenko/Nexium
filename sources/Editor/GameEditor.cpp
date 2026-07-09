@@ -51,6 +51,9 @@
 #include "Windows/WorldLightning.h"
 #include "Windows/AssetsExplorer/RenamePopUpWindow.h"
 
+#include <exception>
+#include <string>
+
 using namespace Core;
 
 namespace
@@ -139,6 +142,7 @@ namespace Core
             {
                 wnd->tick(delta);
             }
+            notifications.tick(delta);
 
             ImGui::Render();
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -173,6 +177,31 @@ namespace Core
 
     void GameEditor::readFromCache()
     {
+    }
+
+    void GameEditor::saveAllWithToast()
+    {
+        try
+        {
+            gGameInstance->saveAll();
+
+            Editor::NotificationPopUp notif;
+            notif.setImagePath("C:\\Users\\Alexandr\\Desktop\\images.jpg");
+            notif.setText("Error");
+            notif.setBorderColor(Color4_Red);
+            notif.setTimeout(10000);
+
+            Editor::NotificationPopUp::Success("Saved!").show();
+            notif.show();
+        }
+        catch (const std::exception& e)
+        {
+            Editor::NotificationPopUp::Error("Save failed: " + std::string(e.what())).show();
+        }
+        catch (...)
+        {
+            Editor::NotificationPopUp::Error("Save failed by unknown reason.").show();
+        }
     }
 
     void GameEditor::setupImGuiStyles()
@@ -337,7 +366,7 @@ namespace Core
             {
                 if (spec.leftCtrl == Keyboard::KeyState::Pressed)
                 {
-                    gGameInstance->saveAll();
+                    saveAllWithToast();
                 }
             });
 

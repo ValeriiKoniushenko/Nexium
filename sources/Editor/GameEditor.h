@@ -27,6 +27,7 @@
 #include "InputDevices/InputManager.h"
 #include "Misc/BaseLog.h"
 #include "SlowObjectPicker.h"
+#include "ToastNotifications.h"
 #include "Windows/BaseWindow.h"
 
 namespace Core
@@ -154,9 +155,11 @@ namespace Core
 
         void writeToCache();
         void readFromCache();
+        void saveAllWithToast();
 
     public:
         SlowObjectPicker slowObjectPicker;
+        Editor::NotificationPopUpManager notifications;
         KeyboardInputManger keyboardInput;
         MouseInputManger mouseInput;
 
