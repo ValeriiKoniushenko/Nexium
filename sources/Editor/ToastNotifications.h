@@ -65,23 +65,20 @@ namespace Editor
         void setTitle(std::string title) { _title = std::move(title); }
         [[nodiscard]] const std::string& getTitle() const noexcept { return _title; }
 
-        void setBorderColor(const Core::Color4 color) noexcept { _borderColor = color; }
+        void setBorderColor(Core::Color4 color) noexcept { _borderColor = color; }
         [[nodiscard]] Core::Color4 getBorderColor() const noexcept { return _borderColor; }
 
-        void setBackgroundColor(const Core::Color4 color) noexcept { _backgroundColor = color; }
+        void setBackgroundColor(Core::Color4 color) noexcept { _backgroundColor = color; }
         [[nodiscard]] Core::Color4 getBackgroundColor() const noexcept { return _backgroundColor; }
-
-        void setImage(Core::StringAtom image) { setImagePath(std::move(image)); }
-        [[nodiscard]] const Core::StringAtom& getImage() const noexcept { return _image; }
 
         void setImagePath(Core::StringAtom image) { _image = std::move(image); }
         [[nodiscard]] const Core::StringAtom& getImagePath() const noexcept { return _image; }
 
-        void setTimeout(const Timeout timeout) noexcept { _timeout = timeout; }
-        void setTimeout(const int milliseconds) noexcept { _timeout = Timeout(milliseconds); }
+        void setTimeout(Timeout timeout) noexcept { _timeout = timeout; }
+        void setTimeout(int milliseconds) noexcept { _timeout = Timeout(milliseconds); }
         [[nodiscard]] Timeout getTimeout() const noexcept { return _timeout; }
 
-        void setClosable(const bool value) noexcept { _isClosable = value; }
+        void setClosable(bool value) noexcept { _isClosable = value; }
         [[nodiscard]] bool isClosable() const noexcept { return _isClosable; }
 
         [[nodiscard]] Type getType() const noexcept { return _type; }
