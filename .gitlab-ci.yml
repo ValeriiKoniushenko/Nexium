@@ -6,4 +6,4 @@ build-job:
   tags:
     - pull-request
   script:
-    - echo "Build job"
+    - echo "Build job sss"
