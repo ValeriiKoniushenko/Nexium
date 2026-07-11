@@ -189,6 +189,7 @@ namespace Core
             notif.setImagePath("C:\\Users\\Alexandr\\Desktop\\images.jpg");
             notif.setText("Error");
             notif.setBorderColor(Color4_Red);
+            notif.setType(Editor::NotificationPopUp::Type::Error);
             notif.setTimeout(10000);
 
             Editor::NotificationPopUp::Success("Saved!").show();

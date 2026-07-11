@@ -81,6 +81,7 @@ namespace Editor
         void setClosable(bool value) noexcept { _isClosable = value; }
         [[nodiscard]] bool isClosable() const noexcept { return _isClosable; }
 
+        void setType(Type type) noexcept { _type = type; }
         [[nodiscard]] Type getType() const noexcept { return _type; }
 
     private:
