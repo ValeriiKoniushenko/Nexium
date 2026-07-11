@@ -173,9 +173,17 @@ namespace Core
         registerEvents();
 
 #ifdef _WIN32
-        HICON hIcon = LoadIcon(GetModuleHandle(nullptr), MAKEINTRESOURCE(IDI_ICON1));
-        SendMessage(hwnd, WM_SETICON, ICON_BIG, (LPARAM)hIcon);
-        SendMessage(hwnd, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
+        HWND hwnd = glfwGetWin32Window(_window);
+        if (hwnd)
+        {
+            HICON hIcon = LoadIcon(GetModuleHandle(nullptr), MAKEINTRESOURCE(IDI_ICON1));
+            SendMessage(hwnd, WM_SETICON, ICON_BIG, (LPARAM)hIcon);
+            SendMessage(hwnd, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
+        }
+        else
+        {
+            errorLog("Can't get a window's HWND");
+        }
 #endif
     }
 
