@@ -96,6 +96,23 @@ namespace Core
         BaseComponent::onPostSerialize(obj, logs);
     }
 
+    StringAtom SceneObject::getReferencedAsset() const noexcept
+    {
+#if defined(DEBUG)
+        Assert(_referencedAsset.isStatic());
+#endif
+        return _referencedAsset;
+    }
+
+    void SceneObject::_setReferencedAsset(const StringAtom& logicPath)
+    {
+        _referencedAsset = logicPath;
+
+#if defined(DEBUG)
+        Assert(_referencedAsset.isStatic());
+#endif
+    }
+
     void SceneObject::makeTransformableTreeDirty()
     {
         forEach(

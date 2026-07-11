@@ -87,6 +87,9 @@ namespace Core
         void onPostSerialize(const AbstractComponent* obj,
                              const RLogsCollector& logs) const override;
 
+        [[nodiscard]] StringAtom getReferencedAsset() const noexcept;
+        void _setReferencedAsset(const StringAtom& logicPath);
+
     protected:
         void makeTransformableTreeDirty();
         void onInitialize() override;
@@ -94,6 +97,9 @@ namespace Core
         void onOutlineStatusChange(bool newStatus) override;
 
         void onDirtyMatrix() override;
+
+    private:
+        StringAtom _referencedAsset;
     };
 
 } // namespace Core

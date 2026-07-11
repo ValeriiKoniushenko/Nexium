@@ -205,6 +205,7 @@ namespace Core
             return;
         }
 
+        obj->_setReferencedAsset(meta.logicPath);
         if (obj->getComponentName().isEmpty())
         {
             obj->setComponentName(name);
