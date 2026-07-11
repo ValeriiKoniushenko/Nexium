@@ -5,7 +5,11 @@ set_source_files_properties(${CPP_SOURCES} PROPERTIES LANGUAGE CXX)
 
 file(GLOB_RECURSE HEADERS "*.h")
 
-add_executable(${TARGET_NAME} ${CPP_SOURCES} ${HEADERS})
+if (WIN32)
+    set(APP_ICON_RESOURCE ${CMAKE_SOURCE_DIR}/data/artifacts/resources/app.rc)
+endif ()
+
+add_executable(${TARGET_NAME} ${CPP_SOURCES} ${HEADERS} ${APP_ICON_RESOURCE})
 if(MSVC)
     target_link_libraries(${TARGET_NAME} PRIVATE Nexium::Core)
     target_link_options(${TARGET_NAME} PRIVATE

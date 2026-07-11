@@ -28,6 +28,10 @@
 #include "ImGui/imgui.h"
 #include "ModuleInfo.h"
 
+#ifdef _WIN32
+    #include <windows.h>
+#endif
+
 using namespace Core;
 
 namespace
@@ -167,6 +171,12 @@ namespace Core
                  << reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION)));
 
         registerEvents();
+
+#ifdef _WIN32
+        HICON hIcon = LoadIcon(GetModuleHandle(nullptr), MAKEINTRESOURCE(IDI_ICON1));
+        SendMessage(hwnd, WM_SETICON, ICON_BIG, (LPARAM)hIcon);
+        SendMessage(hwnd, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
+#endif
     }
 
     void Window::close()

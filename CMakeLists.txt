@@ -4,7 +4,7 @@ project(Nexium VERSION 1.0 LANGUAGES CXX)
 
 cmake_policy(SET CMP0141 NEW)
 set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT
-        "$<$<CONFIG:Debug,RelWithDebInfo>:Embedded>"
+    "$<$<CONFIG:Debug,RelWithDebInfo>:Embedded>"
 )
 
 if (CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
