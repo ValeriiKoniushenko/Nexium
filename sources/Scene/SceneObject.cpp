@@ -159,7 +159,7 @@ namespace Core
         v.name = j.at("name").get<std::string>();
         R<Transformable>::Deserialize({ j.at("trans") }, v.trans);
         v.assetType = j.at("assetType").get<StringAtom>();
-        v.referenceAsset = j.at("referenceAsset").get<StringAtom>();
+        v.referenceAsset = StringAtom::Intern(j.at("referenceAsset").get<StringAtom>());
     }
 
 } // namespace Core

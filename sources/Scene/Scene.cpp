@@ -249,6 +249,7 @@ namespace Core
             }
 
             sceneObj->setTransformations(states.trans);
+            sceneObj->_setReferencedAsset(states.referenceAsset);
 
             internal_addObjectToScene(sceneObj);
         }
