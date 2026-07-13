@@ -24,9 +24,9 @@
 
 #include "GameEditor.h"
 
-#include "Windows/AssetsExplorer/AssetsManagerWindow.h"
 #include "Editor/Windows/EditorMenuBarWindow.h"
 #include "Editor/Windows/EditorSettings.h"
+#include "Editor/Windows/Editors/TextEditor.h"
 #include "Editor/Windows/GameViewport.h"
 #include "Editor/Windows/LogsWindow.h"
 #include "Editor/Windows/ModalCreateBlueprint.h"
@@ -34,7 +34,6 @@
 #include "Editor/Windows/RootDockWindow.h"
 #include "Editor/Windows/SceneTreeWindow.h"
 #include "Editor/Windows/ShaderManager.h"
-#include "Editor/Windows/Editors/TextEditor.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Graphics/Primitives/StaticMeshBundle.h"
 #include "ImGui/backends/imgui_impl_glfw.h"
@@ -42,14 +41,15 @@
 #include "Misc/Configs.h"
 #include "Misc/IconsFontAwesome.h"
 #include "ModuleInfo.h"
+#include "Windows/AssetsExplorer/AssetsManagerWindow.h"
+#include "Windows/AssetsExplorer/RenamePopUpWindow.h"
+#include "Windows/Editors/NxTextureEditor.h"
 #include "Windows/ImageViewer.h"
 #include "Windows/ModalAssetsSearchPopUp.h"
 #include "Windows/ModalECSSearchPopUp.h"
 #include "Windows/ModalPopUp.h"
 #include "Windows/NxECSBasedEditor.h"
-#include "Windows/Editors/NxTextureEditor.h"
 #include "Windows/WorldLightning.h"
-#include "Windows/AssetsExplorer/RenamePopUpWindow.h"
 
 #include <exception>
 #include <string>
@@ -173,36 +173,12 @@ namespace Core
         {
             cs.write(*wnd);
         }
+
+        Editor::NotificationPopUp::Success("Changes are saved!").show();
     }
 
     void GameEditor::readFromCache()
     {
-    }
-
-    void GameEditor::saveAllWithToast()
-    {
-        try
-        {
-            gGameInstance->saveAll();
-
-            Editor::NotificationPopUp notif;
-            notif.setImagePath("C:\\Users\\Alexandr\\Desktop\\images.jpg");
-            notif.setText("Error");
-            notif.setBorderColor(Color4_Red);
-            notif.setType(Editor::NotificationPopUp::Type::Error);
-            notif.setTimeout(10000);
-
-            Editor::NotificationPopUp::Success("Saved!").show();
-            notif.show();
-        }
-        catch (const std::exception& e)
-        {
-            Editor::NotificationPopUp::Error("Save failed: " + std::string(e.what())).show();
-        }
-        catch (...)
-        {
-            Editor::NotificationPopUp::Error("Save failed by unknown reason.").show();
-        }
     }
 
     void GameEditor::setupImGuiStyles()
@@ -367,7 +343,7 @@ namespace Core
             {
                 if (spec.leftCtrl == Keyboard::KeyState::Pressed)
                 {
-                    saveAllWithToast();
+                    gGameInstance->saveAll();
                 }
             });
 

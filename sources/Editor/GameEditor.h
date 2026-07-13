@@ -155,7 +155,6 @@ namespace Core
 
         void writeToCache();
         void readFromCache();
-        void saveAllWithToast();
 
     public:
         SlowObjectPicker slowObjectPicker;

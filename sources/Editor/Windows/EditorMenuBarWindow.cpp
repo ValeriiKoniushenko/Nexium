@@ -24,18 +24,18 @@
 
 #include "EditorMenuBarWindow.h"
 
-#include "ECSAdapters/EditorStaticMeshBundleAdapter.h"
 #include "AssetsExplorer/AssetsManagerWindow.h"
+#include "ECSAdapters/EditorStaticMeshBundleAdapter.h"
 #include "Editor/Windows/EditorSettings.h"
 #include "Editor/Windows/GameViewport.h"
 #include "Editor/Windows/LogsWindow.h"
 #include "Editor/Windows/ObjectPropertiesWindow.h"
 #include "Editor/Windows/SceneTreeWindow.h"
+#include "Editors/TextEditor.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "ImageViewer.h"
 #include "Misc/IconsFontAwesome.h"
 #include "ShaderManager.h"
-#include "Editors/TextEditor.h"
 #include "WorldLightning.h"
 
 namespace
@@ -76,7 +76,7 @@ namespace Core
         {
             if (ImGui::MenuItem(ICON_FA_FLOPPY_O " Save all"))
             {
-                gGameInstance->gameEditor.saveAllWithToast();
+                gGameInstance->saveAll();
             }
             if (ImGui::MenuItem(ICON_FA_COG " Settings"))
             {
