@@ -115,6 +115,8 @@ namespace Core
 
         void yawAndPitch(glm::vec2 xy);
 
+        void setTransformations(const Transformable& trans);
+
         friend void swap(Transformable& a, Transformable& b) noexcept
         {
             std::swap(a._cachedModelMatrix, b._cachedModelMatrix);

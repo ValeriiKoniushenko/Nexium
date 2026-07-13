@@ -200,6 +200,14 @@ namespace Core
         pitch(xy.y);
     }
 
+    void Transformable::setTransformations(const Transformable& trans)
+    {
+        setScale(trans.getScale());
+        setOrigin(trans.getOrigin());
+        setPosition(trans.getPosition());
+        setRotation(trans.getRotation());
+    }
+
     glm::vec3 Transformable::getUpVector() const noexcept
     {
         auto r = glm::vec2(glm::radians(_rotation.x), glm::radians(_rotation.y));

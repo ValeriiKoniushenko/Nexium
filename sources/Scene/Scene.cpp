@@ -138,17 +138,6 @@ namespace Core
         return _sceneName;
     }
 
-    void Scene::writeToCacheSeparateData()
-    {
-        // for (auto&& asset : _objects)
-        {
-            // if (auto* object = asset->getData())
-            {
-                // object->writeToCache();
-            }
-        }
-    }
-
     void Scene::internal_addObjectToScene(SceneObject* object)
     {
         auto name = object->getComponentName();
@@ -167,6 +156,7 @@ namespace Core
         // TODO: optimize it! Absolutely slow.
         unifyObjectName(_sceneObjects, object);
         _sceneObjects.emplace_back(object);
+        object->initialize();
 
         onObjectAdded->trigger(object);
     }
@@ -238,10 +228,18 @@ namespace Core
 
         for (const auto& [_, value] : arr.items())
         {
-            SceneState states = value.get<SceneState>();
+            const SceneState states = value.get<SceneState>();
 
-            auto* obj = GetGlobalComponentFactory().create(StringAtom::Intern(states.assetType));
-            auto* sceneObj = dynamic_cast<SceneObject*>(obj);
+            auto&& refAsset = GetAssetsManager().getUniqueEcsAsset(states.referenceAsset);
+            if (!refAsset)
+            {
+                errorLog(
+                    "Scene: '{}'. Impossible to spawn an object '{}'({}) to the scene, object is not accessible through AssetManager."_f
+                    << _sceneName << states.referenceAsset << states.name);
+                continue;
+            }
+
+            auto* sceneObj = dynamic_cast<SceneObject*>(refAsset.get());
             if (!sceneObj)
             {
                 errorLog(
@@ -249,6 +247,8 @@ namespace Core
                     << states.assetType << states.name);
                 continue;
             }
+
+            sceneObj->setTransformations(states.trans);
 
             internal_addObjectToScene(sceneObj);
         }

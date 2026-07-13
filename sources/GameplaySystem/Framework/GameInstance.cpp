@@ -114,9 +114,6 @@ namespace Core
     {
         gameEditor.readFromCache();
         GetCacheSystem().tryRead(gameScene);
-
-        // world.tryReadFromCache();
-        // gameScene.tryReadFromCache();
         onInitializeReadCache();
 
         ImGui::LoadIniSettingsFromDisk(Config::Path::imGuiWindowsIni.generic_string().c_str());
@@ -324,10 +321,16 @@ namespace Core
     {
         if (!currentCamera)
         {
-            if (auto* camera = dynamic_cast<BaseCamera*>(obj))
-            {
-                currentCamera = camera;
-            }
+            obj->forEach(
+                [this](BaseComponent* obj)
+                {
+                    if (auto* camera = dynamic_cast<BaseCamera*>(obj))
+                    {
+                        currentCamera = camera;
+                        return false;
+                    }
+                    return true;
+                });
         }
     }
 

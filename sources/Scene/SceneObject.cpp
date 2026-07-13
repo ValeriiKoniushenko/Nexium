@@ -42,7 +42,8 @@ namespace Core
         auto&& name = getComponentName().toStdString();
         return { .name = (name.empty() ? "None" : name),
                  .trans = static_cast<const Transformable&>(*this),
-                 .assetType = getComponentType() };
+                 .assetType = getComponentType(),
+                 .referenceAsset = _referencedAsset };
     }
 
     Tag SceneObject::getTags() const
@@ -150,6 +151,7 @@ namespace Core
         j["name"] = v.name;
         j["trans"] = R<Transformable>::Serialize(v.trans).getData();
         j["assetType"] = v.assetType;
+        j["referenceAsset"] = v.referenceAsset;
     }
 
     void from_json(const nlohmann::json& j, SceneState& v)
@@ -157,6 +159,7 @@ namespace Core
         v.name = j.at("name").get<std::string>();
         R<Transformable>::Deserialize({ j.at("trans") }, v.trans);
         v.assetType = j.at("assetType").get<StringAtom>();
+        v.referenceAsset = j.at("referenceAsset").get<StringAtom>();
     }
 
 } // namespace Core

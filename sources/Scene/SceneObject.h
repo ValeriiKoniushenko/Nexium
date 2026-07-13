@@ -38,6 +38,7 @@ namespace Core
         std::string name;
         Transformable trans;
         StringAtom assetType;
+        StringAtom referenceAsset;
     };
 
     void to_json(nlohmann::json& j, const SceneState& v);

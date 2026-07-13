@@ -94,9 +94,6 @@ namespace Core
         ObjectContainerT _sceneObjects;
 
     protected:
-        void writeToCacheSeparateData();
-
-    protected:
         FIELD();
         StringAtom _sceneName = "Default";
 
