@@ -207,6 +207,29 @@ namespace Core
                                                                            << _sceneName);
     }
 
+    void Scene::deleteFromScene(const StringAtom& name)
+    {
+    }
+
+    void Scene::deleteFromScene(const BaseComponent* obj)
+    {
+        if (!obj)
+        {
+            errorLog("Can't delete the NULL object from the scene");
+            return;
+        }
+
+        for (auto it = _sceneObjects.begin(); it != _sceneObjects.end(); ++it)
+        {
+            if (it->get() == obj)
+            {
+                infoLog("The object is deleted from the scene: {}"_f << obj->getComponentName());
+                _sceneObjects.erase(it);
+                return;
+            }
+        }
+    }
+
     [[nodiscard]] nlohmann::json Scene::serialize() const
     {
         auto json = R<Scene>::Serialize(*this).getData();

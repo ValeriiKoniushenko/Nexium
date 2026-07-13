@@ -57,7 +57,11 @@ namespace Core
                       Core::IDrawable);
 
     public:
-        ~SceneObject() override = default;
+        ~SceneObject() override
+        {
+            ///
+            int i = 123;
+        }
         SceneObject(const SceneObject&) = default;
         SceneObject(SceneObject&&) = default;
         SceneObject& operator=(const SceneObject&) = default;

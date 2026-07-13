@@ -79,6 +79,8 @@ namespace Core
         void addUniqueObjectToScene(SceneObject::Ptr object);
         void addObjectToScene(SceneObject::Ptr object);
         void addBlueprintObjectToScene(const WeakData<ECSAsset>& asset, const StringAtom& name);
+        void deleteFromScene(const StringAtom& name);
+        void deleteFromScene(const BaseComponent* obj);
 
         [[nodiscard]] nlohmann::json serialize() const;
         void deserialize(RResourceStream<RJsonResourceStream>& data);

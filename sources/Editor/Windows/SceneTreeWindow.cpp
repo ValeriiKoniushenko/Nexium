@@ -229,6 +229,7 @@ namespace Core
             }
             if (ImGui::MenuItem(ICON_FA_TRASH " Delete"))
             {
+                gGameInstance->gameScene.deleteFromScene(n);
                 invalidate = true;
             }
 
