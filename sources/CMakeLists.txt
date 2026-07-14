@@ -26,6 +26,7 @@ file(GLOB_RECURSE CPP_HEADERS
     "Graphics/*.h"
     "InputDevices/*.h"
     "ResourceManagement/*.h"
+    "Resources/*.h"
     "Scene/*.h"
 )
 

@@ -29,6 +29,8 @@
 #include "ModuleInfo.h"
 
 #ifdef _WIN32
+    #include "Resources/Resources.h"
+
     #include <windows.h>
 #endif
 
@@ -176,13 +178,26 @@ namespace Core
         HWND hwnd = glfwGetWin32Window(_window);
         if (hwnd)
         {
-            HICON hIcon = LoadIcon(GetModuleHandle(nullptr), MAKEINTRESOURCE(IDI_ICON1));
-            SendMessage(hwnd, WM_SETICON, ICON_BIG, (LPARAM)hIcon);
-            SendMessage(hwnd, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
+            HICON hIcon = (HICON)LoadImage(
+                GetModuleHandle(nullptr),
+                MAKEINTRESOURCE(IDI_ICON1),
+                IMAGE_ICON,
+                0, 0,           // width, height — 0,0 uses the icon's actual size
+                LR_DEFAULTSIZE | LR_SHARED
+            );
+            if (hIcon)
+            {
+                SendMessage(hwnd, WM_SETICON, ICON_BIG, (LPARAM)hIcon);
+                SendMessage(hwnd, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
+            }
+            else
+            {
+                errorLog("Can't load application's icon due to internal reasons.");
+            }
         }
         else
         {
-            errorLog("Can't get a window's HWND");
+            criticalLog("Can't get a window's HWND");
         }
 #endif
     }
