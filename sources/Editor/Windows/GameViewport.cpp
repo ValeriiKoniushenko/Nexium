@@ -71,8 +71,27 @@ namespace Core
             const auto& r = gGameInstance->gameViewport;
             const glm::vec2 renderSize = { static_cast<float>(r.getRenderSize().width),
                                            static_cast<float>(r.getRenderSize().height) };
-            ImGui::Image(r.getTextureId(), renderSize, glm::vec2(0.0f, 1.0f),
-                         glm::vec2(1.0f, 0.0f));
+
+            glm::vec2 p = {};
+
+            if (isFocused())
+            {
+                p = ImGui::GetCursorScreenPos();
+            }
+
+            ImGui::Image(r.getTextureId(), glm::vec2(renderSize.x, renderSize.y),
+                         glm::vec2(0.0f, 1.0f), glm::vec2(1.0f, 0.0f));
+
+            if (isFocused())
+            {
+                ImDrawList* drawList = ImGui::GetWindowDrawList();
+                drawList->AddRect(p, glm::vec2(p.x + renderSize.x, p.y + renderSize.y),
+                                  IM_COL32(255, 255, 0, 255), // Yellow
+                                  0.0f,                       // Rounding
+                                  0,                          // Flags
+                                  2.0f                        // Border thickness
+                );
+            }
         }
     }
 } // namespace Core

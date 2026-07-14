@@ -209,6 +209,20 @@ namespace Core
 
     void Scene::deleteFromScene(const StringAtom& name)
     {
+        for (auto it = _sceneObjects.begin(); it != _sceneObjects.end(); ++it)
+        {
+            const auto* obj = it->get();
+            if (Verify(obj))
+            {
+                if (obj->getComponentName() == name)
+                {
+                    traceLog("The object is deleted from the scene: {}"_f
+                             << obj->getComponentName());
+                    _sceneObjects.erase(it);
+                    return;
+                }
+            }
+        }
     }
 
     void Scene::deleteFromScene(const BaseComponent* obj)
@@ -223,7 +237,7 @@ namespace Core
         {
             if (it->get() == obj)
             {
-                infoLog("The object is deleted from the scene: {}"_f << obj->getComponentName());
+                traceLog("The object is deleted from the scene: {}"_f << obj->getComponentName());
                 _sceneObjects.erase(it);
                 return;
             }
