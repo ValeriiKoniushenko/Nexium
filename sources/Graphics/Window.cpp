@@ -178,17 +178,25 @@ namespace Core
         HWND hwnd = glfwGetWin32Window(_window);
         if (hwnd)
         {
-            HICON hIcon = (HICON)LoadImage(
+            if (HICON hIcon = (HICON)LoadImage(
                 GetModuleHandle(nullptr),
-                MAKEINTRESOURCE(IDI_ICON1),
+                MAKEINTRESOURCE(IDI_ICON_SMALL),
                 IMAGE_ICON,
                 0, 0,           // width, height — 0,0 uses the icon's actual size
                 LR_DEFAULTSIZE | LR_SHARED
-            );
-            if (hIcon)
+            ))
+            {
+                SendMessage(hwnd, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
+            }
+            if (HICON hIcon = (HICON)LoadImage(
+                GetModuleHandle(nullptr),
+                MAKEINTRESOURCE(IDI_ICON_BIG),
+                IMAGE_ICON,
+                0, 0,           // width, height — 0,0 uses the icon's actual size
+                LR_DEFAULTSIZE | LR_SHARED
+            ))
             {
                 SendMessage(hwnd, WM_SETICON, ICON_BIG, (LPARAM)hIcon);
-                SendMessage(hwnd, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
             }
             else
             {
