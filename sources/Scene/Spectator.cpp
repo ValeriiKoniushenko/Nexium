@@ -68,6 +68,22 @@ namespace Core
         bindMovement("Move up", Keyboard::Key::R, [this](float v) { moveUp(v); }, 1.f);
         bindMovement("Move down", Keyboard::Key::F, [this](float v) { moveUp(v); }, -1.f);
 
+        // TODO: awful approach with direct window call. Refactor.
+        _subscriptionPool << GetWindow().onMouseWheel->subscribeAndGetID(
+            [s = WeakPtr(this)](glm::vec2 offset)
+            {
+                if (s)
+                {
+                    if (auto obj = s.tryLoad())
+                    {
+                        auto mlt
+                            = obj->speed
+                              / (Keyboard::IsKeyPressed(Keyboard::Key::Left_Shift) ? 8.f : 1.f);
+                        obj->moveForward(offset.y * mlt * gGameInstance->world.timeDelta);
+                    }
+                }
+            });
+
         _subscriptionPool << mouseInput.getOrCreate("mouseRotation", Mouse::Key::Right)
                                  ->onDrag->subscribeAndGetID(
                                      [this](glm::vec2 delta, auto)
