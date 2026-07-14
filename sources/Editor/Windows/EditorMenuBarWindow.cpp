@@ -36,7 +36,7 @@
 #include "ImageViewer.h"
 #include "Misc/IconsFontAwesome.h"
 #include "ShaderManager.h"
-#include "WorldLightning.h"
+#include "WorldSettings.h"
 
 namespace
 {
@@ -96,6 +96,7 @@ namespace Core
 
         if (ImGui::BeginMenu("Windows"))
         {
+            WindowMenuItem<WorldSettingsEWC>();
             WindowMenuItem<GameViewportEWC>();
             WindowMenuItem<LogsWindowEWC>();
             WindowMenuItem<ObjectPropertiesWindowEWC>();
@@ -107,12 +108,6 @@ namespace Core
             WindowMenuItem<NxECSBasedEditorEWC>();
             WindowMenuItem<ImageViewerEWC>();
 
-            ImGui::EndMenu();
-        }
-
-        if (ImGui::BeginMenu("World"))
-        {
-            WindowMenuItem<WorldLightningEWC>();
             ImGui::EndMenu();
         }
 

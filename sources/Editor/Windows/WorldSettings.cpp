@@ -22,26 +22,25 @@
  * SOFTWARE.
  */
 
-#include "WorldLightning.h"
-
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/Label.h"
 #include "Editor/GuiComponents/VecInput.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Misc/IconsFontAwesome.h"
+#include "WorldSettings.h"
 
 namespace Core
 {
-    ECS_COMPONENT_IMPL(WorldLightningEWC);
-    R_FRIEND_IMPL(WorldLightningEWC);
+    ECS_COMPONENT_IMPL(WorldSettingsEWC);
+    R_FRIEND_IMPL(WorldSettingsEWC);
 
-    const char* WorldLightningEWC::getIcon()
+    const char* WorldSettingsEWC::getIcon()
     {
         return ICON_FA_SUN_O;
     }
 
-    void WorldLightningEWC::onInitialize()
+    void WorldSettingsEWC::onInitialize()
     {
         BaseFloatEWC::onInitialize();
 
@@ -125,7 +124,7 @@ namespace Core
                 [](glm::vec3 value) { GetWorld().lightning.sunDirection = value; });
         }
     }
-    void WorldLightningEWC::onOpen()
+    void WorldSettingsEWC::onOpen()
     {
         BaseFloatEWC::onOpen();
 
@@ -155,11 +154,11 @@ namespace Core
         }
     }
 
-    void WorldLightningEWC::onUpdate()
+    void WorldSettingsEWC::onUpdate()
     {
     }
 
-    void WorldLightningEWC::onDraw()
+    void WorldSettingsEWC::onDraw()
     {
         _layout.tick(GetWorld().timeDelta);
     }

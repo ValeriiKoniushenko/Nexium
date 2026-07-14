@@ -46,10 +46,10 @@ namespace Core
     } // namespace Gui
 
     CLASS();
-    class WorldLightningEWC : public BaseFloatEWC
+    class WorldSettingsEWC : public BaseFloatEWC
     {
-        R_FRIEND_DECL(Core::WorldLightningEWC, Core::BaseFloatEWC);
-        ECS_COMPONENT_DECL(WorldLightningEWC, BaseFloatEWC);
+        R_FRIEND_DECL(Core::WorldSettingsEWC, Core::BaseFloatEWC);
+        ECS_COMPONENT_DECL(WorldSettingsEWC, BaseFloatEWC);
 
     public:
         [[nodiscard]] const char* getIcon() override;
@@ -74,4 +74,4 @@ namespace Core
     };
 } // namespace Core
 
-#include "WorldLightning.generated.h" // added by the code generator. Better don't move it.
+#include "WorldSettings.generated.h"

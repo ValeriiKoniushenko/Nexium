@@ -49,7 +49,7 @@
 #include "Windows/ModalECSSearchPopUp.h"
 #include "Windows/ModalPopUp.h"
 #include "Windows/NxECSBasedEditor.h"
-#include "Windows/WorldLightning.h"
+#include "Windows/WorldSettings.h"
 
 #include <exception>
 #include <string>
@@ -102,7 +102,7 @@ namespace Core
         registerNewWindow<EditorMenuBarWindowEWC>("Menu Bar"_atom, true);
         registerNewWindow<RootDockWindowEWC>("Root dock space"_atom, true);
         registerNewWindow<LogsWindowEWC>("Logs"_atom, true);
-        registerNewWindow<ObjectPropertiesWindowEWC>("Object Properties"_atom, true);
+        registerNewWindow<ObjectPropertiesWindowEWC>("Object properties"_atom, true);
         registerNewWindow<SceneTreeWindowEWC>("Scene"_atom, true);
         registerNewWindow<AssetsManagerWindowEWC>("Assets"_atom, true);
         registerNewWindow<EditorSettingsEWC>("Settings"_atom);
@@ -110,12 +110,12 @@ namespace Core
         registerNewWindow<ImageViewerEWC>("Image viewer"_atom);
         registerNewWindow<ShaderManagerEWC>("Shader manager"_atom);
         registerNewWindow<ModalPopUp>("PopUp"_atom, true);
-        registerNewWindow<ModalECSSearchPopUpEWC>("ModalECSSearchPopUp"_atom);
-        registerNewWindow<ModalAssetsSearchPopUpEWC>("ModalAssetsSearchPopUpEWC"_atom);
-        registerNewWindow<ModalCreateBlueprintEWC>("ModalCreateBlueprint"_atom);
-        registerNewWindow<RenamePopUpWindow>("ModalRenameFileWindow"_atom);
-        registerNewWindow<WorldLightningEWC>("World Lightning"_atom);
-        registerNewWindow<NxTextureEditorEWC>("NX Texture Editor"_atom);
+        registerNewWindow<ModalECSSearchPopUpEWC>("ECS searcher"_atom);
+        registerNewWindow<ModalAssetsSearchPopUpEWC>("Assets searcher"_atom);
+        registerNewWindow<ModalCreateBlueprintEWC>("Create blueprint"_atom);
+        registerNewWindow<RenamePopUpWindow>("Rename window"_atom);
+        registerNewWindow<WorldSettingsEWC>("World Settings"_atom);
+        registerNewWindow<NxTextureEditorEWC>("NX texture editor"_atom);
         registerNewWindow<NxECSBasedEditorEWC>("Assets editor"_atom);
 
         auto viewport = registerNewWindow<GameViewportEWC>("Viewport"_atom, true);
