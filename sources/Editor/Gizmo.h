@@ -35,6 +35,8 @@
 
 namespace Core
 {
+    /// Gizmo class
+    /// Deprecated due to unstable behavior
     class Gizmo : public StaticMeshBundle
     {
         ECS_COMPONENT_DECL(Gizmo, StaticMeshBundle);

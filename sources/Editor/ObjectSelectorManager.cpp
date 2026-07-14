@@ -24,7 +24,6 @@
 
 #include "ObjectSelectorManager.h"
 
-#include "Editor/Gizmo.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 
 namespace Core
@@ -71,7 +70,7 @@ namespace Core
 
     void ObjectSelectorManager::tryToSelectGeneralComponent(BaseComponent* comp)
     {
-        if (_generalSelectedComponent || comp->isTypeOf<Gizmo>())
+        if (_generalSelectedComponent)
         {
             return;
         }
@@ -87,14 +86,12 @@ namespace Core
         }
 
         _generalSelectedComponent = comp;
-        (void)_generalSelectedComponent->addChildComponent<Gizmo>();
     }
 
     void ObjectSelectorManager::tryToDeselectGeneralComponent()
     {
         if (_generalSelectedComponent)
         {
-            _generalSelectedComponent->removeChildOf<Gizmo>();
             _generalSelectedComponent = nullptr;
         }
     }

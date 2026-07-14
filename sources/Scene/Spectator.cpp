@@ -24,7 +24,6 @@
 
 #include "Spectator.h"
 
-#include "Editor/Gizmo.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 
 namespace Core
@@ -73,10 +72,7 @@ namespace Core
                                  ->onDrag->subscribeAndGetID(
                                      [this](glm::vec2 delta, auto)
                                      {
-                                         if (!gDragDrop.isTypeOf<Gizmo::DragData>())
-                                         {
-                                             yawAndPitch(delta * mouseSensitivity);
-                                         }
+                                         yawAndPitch(delta * mouseSensitivity);
                                      });
     }
 } // namespace Core
