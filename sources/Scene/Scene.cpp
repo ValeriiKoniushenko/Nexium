@@ -244,6 +244,31 @@ namespace Core
         }
     }
 
+    void Scene::duplicateSceneObject(const BaseComponent* obj)
+    {
+        if (auto found = find(obj))
+        {
+            auto newObj = DynamicCast<SceneObject>(found->clone());
+            addObjectToScene(std::move(newObj));
+        }
+    }
+
+    IntrusivePtr<SceneObject> Scene::find(const BaseComponent* obj)
+    {
+        for (auto&& o : _sceneObjects)
+        {
+            if (Verify(o))
+            {
+                if (o.get() == obj)
+                {
+                    return o;
+                }
+            }
+        }
+
+        return nullptr;
+    }
+
     [[nodiscard]] nlohmann::json Scene::serialize() const
     {
         auto json = R<Scene>::Serialize(*this).getData();

@@ -105,7 +105,10 @@ namespace Core
         int32_t internalId = 0;
         for (auto&& object : _scene->getObjects())
         {
-            drawTreeNode(object.get(), internalId++);
+            if (!drawTreeNode(object.get(), internalId++))
+            {
+                break;
+            }
         }
         _lastSelectedObject = selectedObject;
 
@@ -218,6 +221,7 @@ namespace Core
         }
 
         bool invalidate = false;
+        bool fullInvalidate = false;
         if (ImGui::BeginPopup("ContextSceneItemMenu"))
         {
             if (auto* camera = n->tryCastTo<BaseCamera>())
@@ -231,6 +235,11 @@ namespace Core
             {
                 gGameInstance->gameScene.deleteFromScene(n);
                 invalidate = true;
+            }
+            if (ImGui::MenuItem(ICON_FA_CLONE " Duplicate"))
+            {
+                gGameInstance->gameScene.duplicateSceneObject(n);
+                invalidate = fullInvalidate = true;
             }
 
             ImGui::EndPopup();
@@ -256,7 +265,7 @@ namespace Core
 
         ImGui::PopID();
 
-        return true;
+        return !fullInvalidate;
     }
 
     void SceneTreeWindowEWC::processAddNewComponentButton()
