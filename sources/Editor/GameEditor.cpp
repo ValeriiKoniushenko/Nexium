@@ -341,7 +341,8 @@ namespace Core
         _subscriptionPool << saveKey->onPress->subscribeAndGetID(
             [&](const KeyboardIA::SpecKeysState& spec)
             {
-                if (spec.leftCtrl == Keyboard::KeyState::Pressed)
+                if (spec.leftCtrl == Keyboard::KeyState::Pressed
+                    && spec.leftShift == Keyboard::KeyState::Pressed)
                 {
                     gGameInstance->saveAll();
                 }
