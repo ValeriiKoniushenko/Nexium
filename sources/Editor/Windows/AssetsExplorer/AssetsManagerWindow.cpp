@@ -182,8 +182,15 @@ namespace Core
 
     void AssetsManagerWindowEWC::openPath(const std::filesystem::path& path)
     {
-        _openedPath = path;
-        _pathInput->setInputtedData(_openedPath.generic_string());
+        auto finalPath = path;
+        if (finalPath.has_filename())
+        {
+            finalPath = finalPath.remove_filename();
+            selectPath(path, false);
+        }
+
+        _openedPath = finalPath;
+        _pathInput->setInputtedData(finalPath.generic_string());
     }
 
     void AssetsManagerWindowEWC::copyFrom(const std::filesystem::path& path)

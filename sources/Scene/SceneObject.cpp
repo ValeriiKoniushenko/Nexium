@@ -97,7 +97,12 @@ namespace Core
         BaseComponent::onPostSerialize(obj, logs);
     }
 
-    StringAtom SceneObject::getReferencedAsset() const noexcept
+    bool SceneObject::hasReferencedAsset() const noexcept
+    {
+        return !_referencedAsset.isEmpty();
+    }
+
+    StringAtom SceneObject::getReferencedAsset() const
     {
 #if defined(DEBUG)
         Assert(_referencedAsset.isStatic());

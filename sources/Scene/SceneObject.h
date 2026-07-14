@@ -92,7 +92,8 @@ namespace Core
         void onPostSerialize(const AbstractComponent* obj,
                              const RLogsCollector& logs) const override;
 
-        [[nodiscard]] StringAtom getReferencedAsset() const noexcept;
+        [[nodiscard]] bool hasReferencedAsset() const noexcept;
+        [[nodiscard]] StringAtom getReferencedAsset() const;
         void _setReferencedAsset(const StringAtom& logicPath);
 
     protected:

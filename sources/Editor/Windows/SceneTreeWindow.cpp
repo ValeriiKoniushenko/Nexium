@@ -24,6 +24,7 @@
 
 #include "SceneTreeWindow.h"
 
+#include "AssetsExplorer/AssetsManagerWindow.h"
 #include "GameplaySystem/Entities/Actor.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "ImGui/imgui.h"
@@ -240,6 +241,17 @@ namespace Core
             {
                 gGameInstance->gameScene.duplicateSceneObject(n);
                 invalidate = fullInvalidate = true;
+            }
+            const auto* sceneObj = dynamic_cast<SceneObject*>(n);
+            if (sceneObj && sceneObj->hasReferencedAsset() && ImGui::MenuItem("Show derived .nx"))
+            {
+                auto* wnd = gGameInstance->gameEditor.getWindow<AssetsManagerWindowEWC>();
+                if (wnd)
+                {
+                    wnd->requestFocus();
+                    auto asset = GetAssetsManager().getEcsAsset(sceneObj->getReferencedAsset());
+                    wnd->tryOpenPath(asset->getMeta().pathToSource);
+                }
             }
 
             ImGui::EndPopup();
