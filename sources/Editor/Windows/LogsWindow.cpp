@@ -34,7 +34,6 @@
 namespace Core
 {
     ECS_COMPONENT_IMPL(LogsWindowEWC);
-    R_FRIEND_IMPL(LogsWindowEWC);
 
     //
     //     _
@@ -58,6 +57,51 @@ namespace Core
     const char* LogsWindowEWC::getIcon()
     {
         return ICON_FA_ALIGN_LEFT;
+    }
+
+    nlohmann::json LogsWindowEWC::serialize() const
+    {
+        auto json = R<LogsWindowEWC>::Serialize<RJsonResourceStream>(*this).getData();
+
+        json["_levelFilter"] = nlohmann::json::array();
+        for (auto&& [level, button] : _levelFilter)
+        {
+            auto j = nlohmann::json::object();
+            j["level"] = std::string(spdlog::level::to_string_view(level).data());
+            j["isActive"] = button->isActive();
+
+            json["_levelFilter"].push_back(std::move(j));
+        }
+
+        return json;
+    }
+
+    void LogsWindowEWC::deserialize(RResourceStream<RJsonResourceStream>& stream)
+    {
+        R<LogsWindowEWC>::Deserialize(stream, *this);
+        auto& rawData = stream.getData();
+
+        if (!rawData.contains("_levelFilter"))
+        {
+            return;
+        }
+
+        for (auto&& j : rawData["_levelFilter"])
+        {
+            if (!j.contains("level") || !j.contains("isActive"))
+            {
+                continue;
+            }
+
+            auto levelStr = j.at("level").get<std::string>();
+            auto level = spdlog::level::from_str(levelStr);
+            auto it = _levelFilter.find(level);
+            if (it == _levelFilter.end() || it->second == nullptr)
+            {
+                continue;
+            }
+            it->second->setActive(j.at("isActive").get<bool>());
+        }
     }
 
     void LogsWindowEWC::addLog(StringAtom&& log, spdlog::level::level_enum level)

@@ -78,29 +78,44 @@ namespace Core
         template<IsDataIO T>
         void read(T& data)
         {
-            RResourceStream<RJsonResourceStream> s;
-            s.getData() = nlohmann::json::parse(
-                [this, &data]() -> std::string
-                {
-                    std::ifstream ifs(getPath(data));
-                    if (!ifs)
+            try
+            {
+                RResourceStream<RJsonResourceStream> s;
+                s.getData() = nlohmann::json::parse(
+                    [this, &data]() -> std::string
                     {
-                        errorLog("Can't read cache for this object {}. Path: {}. Details: {}"_f
-                                 << data.getCacheHash() << getPath(data) << std::strerror(errno));
-                        return {};
-                    }
+                        std::ifstream ifs(getPath(data));
+                        if (!ifs)
+                        {
+                            errorLog("Can't read cache for this object {}. Path: {}. Details: {}"_f
+                                     << data.getCacheHash() << getPath(data)
+                                     << std::strerror(errno));
+                            return {};
+                        }
 
-                    return { (std::istreambuf_iterator<char>(ifs)),
-                             std::istreambuf_iterator<char>() };
-                }());
+                        return { (std::istreambuf_iterator<char>(ifs)),
+                                 std::istreambuf_iterator<char>() };
+                    }());
 
-            if constexpr (requires { data.deserialize(s); })
-            {
-                data.deserialize(s);
+                if constexpr (requires { data.deserialize(s); })
+                {
+                    data.deserialize(s);
+                }
+                else
+                {
+                    R<T>::template Deserialize<RJsonResourceStream>(s, data);
+                }
             }
-            else
+            catch (std::exception& ex)
             {
-                R<T>::template Deserialize<RJsonResourceStream>(s, data);
+                errorLog("Can't read the object from cache: {} {}. Details: {}"_f
+                         << data.getCacheDir().generic_string() << data.getCacheHash()
+                         << ex.what());
+            }
+            catch (...)
+            {
+                errorLog("Can't read the object from cache: {} {}. Due to unknown reasons."_f
+                         << data.getCacheDir().generic_string() << data.getCacheHash());
             }
         }
 

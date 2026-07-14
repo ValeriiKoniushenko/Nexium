@@ -179,6 +179,11 @@ namespace Core
 
     void GameEditor::readFromCache()
     {
+        auto& cs = GetCacheSystem();
+        for (auto& wnd : _windows)
+        {
+            cs.read(*wnd);
+        }
     }
 
     void GameEditor::setupImGuiStyles()

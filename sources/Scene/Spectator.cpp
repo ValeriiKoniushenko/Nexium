@@ -24,10 +24,12 @@
 
 #include "Spectator.h"
 
+#include "Editor/Windows/GameViewport.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 
 namespace Core
 {
+    class GameViewportEWC;
     R_FRIEND_IMPL(Spectator);
     ECS_COMPONENT_IMPL(Spectator);
 
@@ -74,12 +76,16 @@ namespace Core
             {
                 if (s)
                 {
-                    if (auto obj = s.tryLoad())
+                    if (const auto* wnd = gGameInstance->gameEditor.getWindow<GameViewportEWC>();
+                        wnd && wnd->isFocused())
                     {
-                        auto mlt
-                            = obj->speed
-                              / (Keyboard::IsKeyPressed(Keyboard::Key::Left_Shift) ? 8.f : 1.f);
-                        obj->moveForward(offset.y * mlt * gGameInstance->world.timeDelta);
+                        if (auto obj = s.tryLoad())
+                        {
+                            auto mlt
+                                = obj->speed
+                                  / (Keyboard::IsKeyPressed(Keyboard::Key::Left_Shift) ? 8.f : 1.f);
+                            obj->moveForward(offset.y * mlt * gGameInstance->world.timeDelta);
+                        }
                     }
                 }
             });
@@ -87,8 +93,6 @@ namespace Core
         _subscriptionPool << mouseInput.getOrCreate("mouseRotation", Mouse::Key::Right)
                                  ->onDrag->subscribeAndGetID(
                                      [this](glm::vec2 delta, auto)
-                                     {
-                                         yawAndPitch(delta * mouseSensitivity);
-                                     });
+                                     { yawAndPitch(delta * mouseSensitivity); });
     }
 } // namespace Core

@@ -39,7 +39,7 @@ namespace Core
     CLASS();
     class LogsWindowEWC : public BaseFloatEWC
     {
-        R_FRIEND_DECL(Core::LogsWindowEWC, Core::BaseFloatEWC);
+        R_FRIEND(Core::LogsWindowEWC, Core::BaseFloatEWC);
         ECS_COMPONENT_DECL(LogsWindowEWC, BaseFloatEWC);
 
     public:
@@ -55,6 +55,9 @@ namespace Core
         void clearLogs();
 
         [[nodiscard]] const char* getIcon() override;
+
+        [[nodiscard]] nlohmann::json serialize() const override;
+        void deserialize(RResourceStream<RJsonResourceStream>& stream) override;
 
     protected:
         void onPreInitialize() override;
