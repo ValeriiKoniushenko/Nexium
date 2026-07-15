@@ -35,8 +35,7 @@ namespace Core::Config
         const std::filesystem::path editorConfigDir = "editor";
 
         const std::filesystem::path data = projectAbsPath / "data";
-        const std::filesystem::path 
-            assets = data / "assets";
+        const std::filesystem::path assets = data / "assets";
         const std::filesystem::path fonts = assets / "fonts";
         const std::filesystem::path shaders = assets / "shaders";
         const std::filesystem::path images = assets / "images";
