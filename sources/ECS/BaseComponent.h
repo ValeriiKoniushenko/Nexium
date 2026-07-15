@@ -592,6 +592,9 @@ namespace Core
             return _type == T::componentType;
         }
 
+        [[nodiscard]] bool isDescendantOf(const BaseComponent* p) const noexcept;
+        [[nodiscard]] bool IsSelfOrDescendantOf(const BaseComponent* p) const noexcept;
+
         /// This method will be called automatically. Don't call it directly.
         void onTick(float delta) override;
 

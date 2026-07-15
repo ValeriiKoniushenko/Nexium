@@ -33,6 +33,7 @@
 #include "Editor/GuiComponents/VecInput.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Misc/IconsFontAwesome.h"
+#include "SceneTreeWindow.h"
 
 namespace Core
 {
@@ -55,19 +56,30 @@ namespace Core
             h->label->setText("Camera");
             h->label->setWidth(defaultWidth);
 
-            auto* input = h->input->addChildComponent<Gui::TextInput>();
-            input->setReadOnly(true);
-            input->setFlex(Gui::Flex::FlexWidth);
+            _cameraInputField = h->input->addChildComponent<Gui::TextInput>();
+            _cameraInputField->setReadOnly(true);
+            _cameraInputField->setFlex(Gui::Flex::FlexWidth);
 
             _changeCameraButton = h->input->addChildComponent<Gui::Button>(ICON_FA_SUN_O);
             _changeCameraButton->setWidth(30.f);
             _subscriptionPool << _changeCameraButton->onClick->subscribeAndGetID(
                 []() { Editor::NotificationPopUp::Warning("Not implemented").show(); });
 
-            auto* show = h->input->addChildComponent<Gui::Button>(ICON_FA_EYE);
-            show->setWidth(30.f);
-            _subscriptionPool << show->onClick->subscribeAndGetID(
-                []() { Editor::NotificationPopUp::Warning("Not implemented").show(); });
+            _showCameraButton = h->input->addChildComponent<Gui::Button>(ICON_FA_EYE);
+            _showCameraButton->setWidth(30.f);
+            _subscriptionPool << _showCameraButton->onClick->subscribeAndGetID(
+                []()
+                {
+                    if (!gGameInstance->currentCamera)
+                    {
+                        return;
+                    }
+
+                    if (auto sceneTree = GetEditor().getWindow<SceneTreeWindowEWC>())
+                    {
+                        sceneTree->highlightSpecificObject(gGameInstance->currentCamera);
+                    }
+                });
         }
 
         // ===================== LIGHTNING =========================
@@ -187,6 +199,25 @@ namespace Core
 
     void WorldSettingsEWC::onDraw()
     {
+        if (_showCameraButton)
+        {
+            _showCameraButton->setEnabled(!!gGameInstance->currentCamera);
+        }
+        if (_changeCameraButton)
+        {
+            _changeCameraButton->setEnabled(!!gGameInstance->currentCamera);
+        }
+
+        if (_cameraInputField)
+        {
+            std::string str = "";
+            if (gGameInstance->currentCamera)
+            {
+                str = gGameInstance->currentCamera->getComponentName().c_str();
+            }
+            _cameraInputField->setInputtedData(std::move(str));
+        }
+
         if (Gui::CollapsingHeader("Global", ImGuiTreeNodeFlags_DefaultOpen))
         {
             _globalLayout.tick(GetWorld().timeDelta);

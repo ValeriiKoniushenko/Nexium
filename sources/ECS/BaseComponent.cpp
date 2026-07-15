@@ -329,6 +329,26 @@ namespace Core
         _children.clear();
     }
 
+    bool BaseComponent::isDescendantOf(const BaseComponent* p) const noexcept
+    {
+        const auto* i = _parent;
+        while (i)
+        {
+            if (i == p)
+            {
+                return true;
+            }
+
+            i = _parent->_parent;
+        }
+        return false;
+    }
+
+    bool BaseComponent::IsSelfOrDescendantOf(const BaseComponent* p) const noexcept
+    {
+        return this == p || isDescendantOf(p);
+    }
+
     void BaseComponent::onTick(float delta)
     {
         for (auto&& child : _children)

@@ -28,6 +28,7 @@
 
 namespace Core
 {
+    class SceneObject;
     class Scene;
     class Actor;
 
@@ -42,6 +43,8 @@ namespace Core
 
         void setScene(Scene* scene) { _scene = scene; }
         [[nodiscard]] Scene* getScene() const noexcept { return _scene; }
+
+        void highlightSpecificObject(const SceneObject* obj);
 
         [[nodiscard]] const char* getIcon() override;
 
@@ -63,6 +66,9 @@ namespace Core
         Scene* _scene = nullptr;
         int _commonTreeFlags = 0;
         BaseComponent* _lastSelectedObject = nullptr;
+
+    private:
+        const SceneObject* _highlightTracerObject = nullptr;
     };
 
 } // namespace Core

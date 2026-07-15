@@ -52,6 +52,16 @@ namespace Core
           _commonTreeFlags(ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth)
     {
     }
+
+    void SceneTreeWindowEWC::highlightSpecificObject(const SceneObject* obj)
+    {
+        if (!obj) [[unlikely]]
+        {
+            return;
+        }
+        _highlightTracerObject = obj;
+    }
+
     const char* SceneTreeWindowEWC::getIcon()
     {
         return ICON_FA_GLOBE;
@@ -111,6 +121,14 @@ namespace Core
                 break;
             }
         }
+
+        if (ImGui::IsWindowHovered(ImGuiHoveredFlags_ChildWindows)
+            && (ImGui::IsMouseClicked(ImGuiMouseButton_Left)
+                || ImGui::IsMouseClicked(ImGuiMouseButton_Right)))
+        {
+            _highlightTracerObject = nullptr;
+        }
+
         _lastSelectedObject = selectedObject;
 
         if (sceneName != _scene->getSceneName())
@@ -193,6 +211,16 @@ namespace Core
         if (componentName.isEmpty())
         {
             componentName = "<no name>";
+        }
+
+        if (_highlightTracerObject && _highlightTracerObject->IsSelfOrDescendantOf(n))
+        {
+            ImGui::SetNextItemOpen(true);
+        }
+
+        if (_highlightTracerObject == n)
+        {
+            flags |= ImGuiTreeNodeFlags_Selected;
         }
 
         const bool isOpened = ImGui::TreeNodeEx(componentName.c_str(), flags);
