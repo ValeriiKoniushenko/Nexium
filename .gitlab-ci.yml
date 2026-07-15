@@ -66,6 +66,7 @@ clang-format-check:
     artifacts:
         reports:
             codequality: gl-code-quality-report.json
+            annotations: gl-annotations-report.json
         when: always
         expire_in: 1 week
     rules:
