@@ -109,6 +109,7 @@ clang-tidy-check:
         - ls -R build | head -100
         - head -20 build/compile_commands.json
         - clang-tidy --version
+        - jq '.[] | select(.file | endswith("Gizmo.cpp"))' build/compile_commands.json
         - |
             python3 - << 'EOF'
             import json, subprocess, sys, hashlib, os, re
