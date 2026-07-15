@@ -22,13 +22,17 @@
  * SOFTWARE.
  */
 
+#include "WorldSettings.h"
+
+#include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/Label.h"
+#include "Editor/GuiComponents/LabelRow.h"
+#include "Editor/GuiComponents/Misc.h"
 #include "Editor/GuiComponents/VecInput.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Misc/IconsFontAwesome.h"
-#include "WorldSettings.h"
 
 namespace Core
 {
@@ -44,8 +48,31 @@ namespace Core
     {
         BaseFloatEWC::onInitialize();
 
+        constexpr float defaultWidth = 120.f;
+        // ===================== GLOBAL =========================
         {
-            auto* h = _layout.addChildComponent<Gui::HorizontalLayout>();
+            auto* h = _globalLayout.addChildComponent<Gui::LabelRow<Gui::HorizontalLayout>>();
+            h->label->setText("Camera");
+            h->label->setWidth(defaultWidth);
+
+            auto* input = h->input->addChildComponent<Gui::TextInput>();
+            input->setReadOnly(true);
+            input->setFlex(Gui::Flex::FlexWidth);
+
+            _changeCameraButton = h->input->addChildComponent<Gui::Button>(ICON_FA_SUN_O);
+            _changeCameraButton->setWidth(30.f);
+            _subscriptionPool << _changeCameraButton->onClick->subscribeAndGetID(
+                []() { Editor::NotificationPopUp::Warning("Not implemented").show(); });
+
+            auto* show = h->input->addChildComponent<Gui::Button>(ICON_FA_EYE);
+            show->setWidth(30.f);
+            _subscriptionPool << show->onClick->subscribeAndGetID(
+                []() { Editor::NotificationPopUp::Warning("Not implemented").show(); });
+        }
+
+        // ===================== LIGHTNING =========================
+        {
+            auto* h = _lightningLayout.addChildComponent<Gui::HorizontalLayout>();
             h->setHorizontalAlign(Gui::Align::SpaceBetween);
             h->addChildComponent<Gui::Label>("Light color");
             _color3Input = h->addChildComponent<Gui::Color3Input>();
@@ -54,7 +81,7 @@ namespace Core
                 [](Color3 color) { GetWorld().lightning.color = color.toNorm(); });
         }
         {
-            auto* h = _layout.addChildComponent<Gui::HorizontalLayout>();
+            auto* h = _lightningLayout.addChildComponent<Gui::HorizontalLayout>();
             h->setHorizontalAlign(Gui::Align::SpaceBetween);
             h->addChildComponent<Gui::Label>("Ambient strength");
             _ambientStrength = h->addChildComponent<Gui::FloatInput>();
@@ -67,7 +94,7 @@ namespace Core
                 [](float value) { GetWorld().lightning.ambientStrength = value; });
         }
         {
-            auto* h = _layout.addChildComponent<Gui::HorizontalLayout>();
+            auto* h = _lightningLayout.addChildComponent<Gui::HorizontalLayout>();
             h->setHorizontalAlign(Gui::Align::SpaceBetween);
             h->addChildComponent<Gui::Label>("Min light strength");
             _minLightStrength = h->addChildComponent<Gui::FloatInput>();
@@ -79,7 +106,7 @@ namespace Core
                 [](float value) { GetWorld().lightning.minLightStrength = value; });
         }
         {
-            auto* h = _layout.addChildComponent<Gui::HorizontalLayout>();
+            auto* h = _lightningLayout.addChildComponent<Gui::HorizontalLayout>();
             h->setHorizontalAlign(Gui::Align::SpaceBetween);
             h->addChildComponent<Gui::Label>("Specular strength");
             _specularStrength = h->addChildComponent<Gui::FloatInput>();
@@ -92,7 +119,7 @@ namespace Core
                 [](float value) { GetWorld().lightning.specularStrength = value; });
         }
         {
-            auto* h = _layout.addChildComponent<Gui::HorizontalLayout>();
+            auto* h = _lightningLayout.addChildComponent<Gui::HorizontalLayout>();
             h->setHorizontalAlign(Gui::Align::SpaceBetween);
             h->addChildComponent<Gui::Label>("Specular pow");
             _specularPow = h->addChildComponent<Gui::FloatInput>();
@@ -105,7 +132,7 @@ namespace Core
                 [](float value) { GetWorld().lightning.specularPow = value; });
         }
         {
-            auto* h = _layout.addChildComponent<Gui::HorizontalLayout>();
+            auto* h = _lightningLayout.addChildComponent<Gui::HorizontalLayout>();
             h->setHorizontalAlign(Gui::Align::SpaceBetween);
             h->addChildComponent<Gui::Label>("Sun light direction");
             _sunDirection = h->addChildComponent<Gui::Float3Input>();
@@ -160,6 +187,14 @@ namespace Core
 
     void WorldSettingsEWC::onDraw()
     {
-        _layout.tick(GetWorld().timeDelta);
+        if (Gui::CollapsingHeader("Global", ImGuiTreeNodeFlags_DefaultOpen))
+        {
+            _globalLayout.tick(GetWorld().timeDelta);
+        }
+
+        if (Gui::CollapsingHeader("Lightning", ImGuiTreeNodeFlags_DefaultOpen))
+        {
+            _lightningLayout.tick(GetWorld().timeDelta);
+        }
     }
 } // namespace Core

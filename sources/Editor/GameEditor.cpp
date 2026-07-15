@@ -114,7 +114,7 @@ namespace Core
         registerNewWindow<ModalAssetsSearchPopUpEWC>("Assets searcher"_atom);
         registerNewWindow<ModalCreateBlueprintEWC>("Create blueprint"_atom);
         registerNewWindow<RenamePopUpWindow>("Rename window"_atom);
-        registerNewWindow<WorldSettingsEWC>("World Settings"_atom);
+        registerNewWindow<WorldSettingsEWC>("World settings"_atom);
         registerNewWindow<NxTextureEditorEWC>("NX texture editor"_atom);
         registerNewWindow<NxECSBasedEditorEWC>("Assets editor"_atom);
 

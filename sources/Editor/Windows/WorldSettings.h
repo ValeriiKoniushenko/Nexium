@@ -31,6 +31,7 @@ namespace Core
 {
     namespace Gui
     {
+        class Button;
         template<Utils::IsArithmetic T>
         class NumInput;
 
@@ -63,8 +64,12 @@ namespace Core
 
     protected:
         DelegateSubscriberPoolGuard _subscriptionPool;
-        Gui::VerticalLayout _layout;
+        // Global
+        Gui::VerticalLayout _globalLayout;
+        Gui::Button* _changeCameraButton = nullptr;
 
+        // Lightning
+        Gui::VerticalLayout _lightningLayout;
         Gui::Color3Input* _color3Input = nullptr;
         Gui::FloatInput* _ambientStrength = nullptr;
         Gui::FloatInput* _minLightStrength = nullptr;
