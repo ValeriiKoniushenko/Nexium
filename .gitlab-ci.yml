@@ -78,6 +78,7 @@ build:
         paths:
             - .ccache/
     script:
+        - git submodule update --init --recursive --remote
         - cmake -S . -B build -G Ninja
             -DCMAKE_BUILD_TYPE=Debug
             -DCMAKE_C_COMPILER=clang
