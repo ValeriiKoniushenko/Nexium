@@ -105,6 +105,9 @@ clang-tidy-check:
     needs:
         - build
     script:
+        - pwd
+        - ls -R build | head -100
+        - head -20 build/compile_commands.json
         - clang-tidy --version
         - |
             python3 - << 'EOF'
