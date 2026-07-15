@@ -1,9 +1,23 @@
 stages:
-  - build
+  - lint
 
-build-job:
-  stage: build
+variables:
+  GIT_DEPTH: 0
+
+clang-format-check:
+  stage: lint
+  image: registry.vakon.dev/vakonteam/nexium/engine-ci:latest
   tags:
     - pull-request
   script:
-    - echo "Build job sss"
+    - |
+      files=$(git diff --diff-filter=ACMR --name-only origin/${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}...HEAD -- '*.cpp' '*.cc' '*.h' '*.hpp')
+      if [ -z "$files" ]; then
+        echo "No C++ files changed."
+        exit 0
+      fi
+      echo "Checking files:"
+      echo "$files"
+      clang-format --dry-run --Werror $files
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
