@@ -1,3 +1,9 @@
+stages:
+  - lint
+
+variables:
+  GIT_DEPTH: 0
+
 clang-format-check:
   stage: lint
   image: registry.vakon.dev/vakonteam/nexium/engine-ci:latest
@@ -5,17 +11,27 @@ clang-format-check:
     - pull-request
   script:
     - |
-      files=$(git diff --diff-filter=ACMR --name-only origin/${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}...HEAD -- '*.cpp' '*.cc' '*.h' '*.hpp')
-      echo "[]" > gl-code-quality-report.json
-      if [ -z "$files" ]; then exit 0; fi
-      python3 - "$files" << 'EOF'
+      python3 - << 'EOF'
       import json, subprocess, sys, hashlib
 
-      files = sys.argv[1].split()
+      base = subprocess.run(
+          ["git", "merge-base", f"origin/{__import__('os').environ['CI_MERGE_REQUEST_TARGET_BRANCH_NAME']}", "HEAD"],
+          capture_output=True, text=True
+      ).stdout.strip()
+
+      diff = subprocess.run(
+          ["git", "diff", "--diff-filter=ACMR", "--name-only", base, "HEAD",
+           "--", "*.cpp", "*.cc", "*.h", "*.hpp"],
+          capture_output=True, text=True
+      ).stdout.split()
+
       issues = []
-      for f in files:
-          formatted = subprocess.run(["clang-format", f], capture_output=True, text=True).stdout
-          original = open(f).read()
+      for f in diff:
+          try:
+              formatted = subprocess.run(["clang-format", f], capture_output=True, text=True).stdout
+              original = open(f).read()
+          except FileNotFoundError:
+              continue
           if formatted != original:
               fp = hashlib.md5(f.encode()).hexdigest()
               issues.append({
@@ -25,12 +41,20 @@ clang-format-check:
                   "severity": "major",
                   "location": {"path": f, "lines": {"begin": 1}}
               })
-      json.dump(issues, open("gl-code-quality-report.json", "w"), indent=2)
+
+      with open("gl-code-quality-report.json", "w") as out:
+          json.dump(issues, out, indent=2)
+
+      if issues:
+          print(f"Found {len(issues)} formatting issue(s):")
+          for i in issues:
+              print(f"  - {i['location']['path']}")
+          sys.exit(1)
       EOF
-      python3 -c "import json,sys; data=json.load(open('gl-code-quality-report.json')); sys.exit(1 if data else 0)"
   artifacts:
     reports:
       codequality: gl-code-quality-report.json
     when: always
+    expire_in: 1 week
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
