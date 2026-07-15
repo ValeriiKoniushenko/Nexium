@@ -1,61 +1,72 @@
 stages:
-  - lint
+    - lint
 
 variables:
-  GIT_DEPTH: 0
+    GIT_DEPTH: 0
 
 clang-format-check:
-  stage: lint
-  image: registry.vakon.dev/vakonteam/nexium/engine-ci:latest
-  tags:
-    - pull-request
-  script:
-    - clang-format --version
-    - |
-      python3 - << 'EOF'
-      import json, subprocess, sys, hashlib
+    stage: lint
+    image: registry.vakon.dev/vakonteam/nexium/engine-ci:latest
+    tags:
+        - pull-request
+    script:
+        - clang-format --version
+        - |
+            python3 - << 'EOF'
+            import json, subprocess, sys, hashlib
+            
+            base = subprocess.run(
+                ["git", "merge-base", f"origin/{__import__('os').environ['CI_MERGE_REQUEST_TARGET_BRANCH_NAME']}", "HEAD"],
+                capture_output=True, text=True
+            ).stdout.strip()
+            
+            diff = subprocess.run(
+                ["git", "diff", "--diff-filter=ACMR", "--name-only", base, "HEAD",
+                 "--", "*.cpp", "*.cc", "*.h", "*.hpp"],
+                capture_output=True, text=True
+            ).stdout.split()
+            
+            issues = []
+            for f in diff:
+                try:
+                    formatted = subprocess.run(["clang-format", f], capture_output=True, text=True).stdout
+                    original = open(f).read()
+                except FileNotFoundError:
+                    continue
+                if formatted != original:
+                    fp = hashlib.md5(f.encode()).hexdigest()
+                    issues.append({
+                        "description": f"File is not clang-format compliant: {f}",
+                        "check_name": "clang-format",
+                        "fingerprint": fp,
+                        "severity": "major",
+                        "location": {"path": f, "lines": {"begin": 1}}
+                    })
+            
+            with open("gl-code-quality-report.json", "w") as out:
+                json.dump(issues, out, indent=2)
+            
+            if issues:
+                print(f"Found {len(issues)} formatting issue(s):")
+                for i in issues:
+                    print(f"  - {i['location']['path']}")
+                sys.exit(1)
+            EOF
+        - |
+            python3 - << EOF
+            import json
+            annotations = {
+                "clang-format info": [
+                    {"external_link": {"label": "$CLANG_FORMAT_VERSION", "url": "https://gitlab.vakon.dev/vakonteam/nexium/-/blob/main/ci.Dockerfile"}}
+                ]
+            }
+            json.dump(annotations, open("gl-annotations-report.json", "w"))
+            EOF
 
-      base = subprocess.run(
-          ["git", "merge-base", f"origin/{__import__('os').environ['CI_MERGE_REQUEST_TARGET_BRANCH_NAME']}", "HEAD"],
-          capture_output=True, text=True
-      ).stdout.strip()
-
-      diff = subprocess.run(
-          ["git", "diff", "--diff-filter=ACMR", "--name-only", base, "HEAD",
-           "--", "*.cpp", "*.cc", "*.h", "*.hpp"],
-          capture_output=True, text=True
-      ).stdout.split()
-
-      issues = []
-      for f in diff:
-          try:
-              formatted = subprocess.run(["clang-format", f], capture_output=True, text=True).stdout
-              original = open(f).read()
-          except FileNotFoundError:
-              continue
-          if formatted != original:
-              fp = hashlib.md5(f.encode()).hexdigest()
-              issues.append({
-                  "description": f"File is not clang-format compliant: {f}",
-                  "check_name": "clang-format",
-                  "fingerprint": fp,
-                  "severity": "major",
-                  "location": {"path": f, "lines": {"begin": 1}}
-              })
-
-      with open("gl-code-quality-report.json", "w") as out:
-          json.dump(issues, out, indent=2)
-
-      if issues:
-          print(f"Found {len(issues)} formatting issue(s):")
-          for i in issues:
-              print(f"  - {i['location']['path']}")
-          sys.exit(1)
-      EOF
-  artifacts:
-    reports:
-      codequality: gl-code-quality-report.json
-    when: always
-    expire_in: 1 week
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    artifacts:
+        reports:
+            codequality: gl-code-quality-report.json
+        when: always
+        expire_in: 1 week
+    rules:
+        -   if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
