@@ -1,9 +1,3 @@
-stages:
-  - lint
-
-variables:
-  GIT_DEPTH: 0
-
 clang-format-check:
   stage: lint
   image: registry.vakon.dev/vakonteam/nexium/engine-ci:latest
@@ -12,12 +6,31 @@ clang-format-check:
   script:
     - |
       files=$(git diff --diff-filter=ACMR --name-only origin/${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}...HEAD -- '*.cpp' '*.cc' '*.h' '*.hpp')
-      if [ -z "$files" ]; then
-        echo "No C++ files changed."
-        exit 0
-      fi
-      echo "Checking files:"
-      echo "$files"
-      clang-format --dry-run --Werror $files
+      echo "[]" > gl-code-quality-report.json
+      if [ -z "$files" ]; then exit 0; fi
+      python3 - "$files" << 'EOF'
+      import json, subprocess, sys, hashlib
+
+      files = sys.argv[1].split()
+      issues = []
+      for f in files:
+          formatted = subprocess.run(["clang-format", f], capture_output=True, text=True).stdout
+          original = open(f).read()
+          if formatted != original:
+              fp = hashlib.md5(f.encode()).hexdigest()
+              issues.append({
+                  "description": f"File is not clang-format compliant: {f}",
+                  "check_name": "clang-format",
+                  "fingerprint": fp,
+                  "severity": "major",
+                  "location": {"path": f, "lines": {"begin": 1}}
+              })
+      json.dump(issues, open("gl-code-quality-report.json", "w"), indent=2)
+      EOF
+      python3 -c "import json,sys; data=json.load(open('gl-code-quality-report.json')); sys.exit(1 if data else 0)"
+  artifacts:
+    reports:
+      codequality: gl-code-quality-report.json
+    when: always
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
