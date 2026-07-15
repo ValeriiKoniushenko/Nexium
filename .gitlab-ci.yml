@@ -5,8 +5,12 @@ workflow:
 
 stages:
     - lint
+    - build
+
 variables:
     GIT_DEPTH: 0
+    CCACHE_DIR: "${CI_PROJECT_DIR}/.ccache"
+
 clang-format-check:
     stage: lint
     image: registry.vakon.dev/vakonteam/nexium/engine-ci:latest
@@ -54,6 +58,115 @@ clang-format-check:
                 print(f"Found {len(issues)} formatting issue(s):")
                 for i in issues:
                     print(f"  - {i['location']['path']}")
+                sys.exit(1)
+            EOF
+    artifacts:
+        reports:
+            codequality: gl-code-quality-report.json
+        when: always
+        expire_in: 1 week
+    rules:
+        -   if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+
+build:
+    stage: build
+    image: registry.vakon.dev/vakonteam/nexium/engine-ci:latest
+    tags:
+        - pull-request
+    cache:
+        key: "clang-build-cache"
+        paths:
+            - .ccache/
+    script:
+        - cmake -S . -B build -G Ninja
+            -DCMAKE_BUILD_TYPE=Debug
+            -DCMAKE_C_COMPILER=clang
+            -DCMAKE_CXX_COMPILER=clang++
+            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+            -DCMAKE_C_COMPILER_LAUNCHER=ccache
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+        - cmake --build build
+        - ccache -s
+    artifacts:
+        paths:
+            - build/
+        expire_in: 1 day
+    rules:
+        -   if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+
+clang-tidy-check:
+    stage: build
+    image: registry.vakon.dev/vakonteam/nexium/engine-ci:latest
+    tags:
+        - pull-request
+    needs:
+        - build
+    script:
+        - clang-tidy --version
+        - |
+            python3 - << 'EOF'
+            import json, subprocess, sys, hashlib, os, re
+
+            base = subprocess.run(
+                ["git", "merge-base", f"origin/{os.environ['CI_MERGE_REQUEST_TARGET_BRANCH_NAME']}", "HEAD"],
+                capture_output=True, text=True
+            ).stdout.strip()
+
+            diff = subprocess.run(
+                ["git", "diff", "--diff-filter=ACMR", "--name-only", base, "HEAD",
+                 "--", "*.cpp", "*.cc"],
+                capture_output=True, text=True
+            ).stdout.split()
+
+            SEVERITY_MAP = {
+                "error": "critical",
+                "warning": "major",
+                "note": "minor",
+            }
+
+            # matches e.g.: src/foo.cpp:42:7: warning: message [check-name]
+            DIAG_RE = re.compile(
+                r'^(?P<file>[^:]+):(?P<line>\d+):(?P<col>\d+): '
+                r'(?P<level>error|warning|note): (?P<message>.*?)(?: \[(?P<check>[\w,.\-]+)\])?$'
+            )
+
+            issues = []
+            for f in diff:
+                if not os.path.isfile(f):
+                    continue
+
+                result = subprocess.run(
+                    ["clang-tidy", "-p", "build", f],
+                    capture_output=True, text=True
+                )
+
+                for line in result.stdout.splitlines():
+                    m = DIAG_RE.match(line)
+                    if not m or m.group("level") == "note":
+                        continue
+
+                    check = m.group("check") or "clang-tidy"
+                    fp_src = f"{f}:{m.group('line')}:{m.group('col')}:{check}"
+                    fp = hashlib.md5(fp_src.encode()).hexdigest()
+
+                    issues.append({
+                        "description": f"[{check}] {m.group('message')}",
+                        "check_name": check,
+                        "fingerprint": fp,
+                        "severity": SEVERITY_MAP.get(m.group("level"), "major"),
+                        "location": {
+                            "path": f,
+                            "lines": {"begin": int(m.group("line"))}
+                        }
+                    })
+
+            with open("gl-code-quality-report.json", "w") as out:
+                json.dump(issues, out, indent=2)
+
+            if issues:
+                print(f"Found {len(issues)} clang-tidy issue(s):")
+                for i in issues:
+                    print(f"  - {i['location']['path']}:{i['location']['lines']['begin']}: {i['description']}")
                 sys.exit(1)
             EOF
     artifacts:
