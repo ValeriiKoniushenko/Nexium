@@ -86,11 +86,13 @@ build:
             -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
             -DCMAKE_C_COMPILER_LAUNCHER=ccache
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-        - cmake --build build
+        - cmake --build build || (echo "BUILD FAILED — dumping ccache log:" && cat /tmp/ccache.log; exit 1)
         - ccache -s
     artifacts:
         paths:
             - build/
+            - /tmp/ccache.log
+        when: always
         expire_in: 1 day
     rules:
         -   if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
