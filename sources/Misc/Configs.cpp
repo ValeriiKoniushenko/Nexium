@@ -41,8 +41,7 @@ namespace Core::Config
         const std::filesystem::path images = assets / "images";
         const std::filesystem::path objects3d = assets / "objects-3d";
 
-        const       std::filesystem::path config = 
-                                data / configDir;
+        const std::filesystem::path config = data / configDir;
         const std::filesystem::path imGuiWindowsIni = config / "windows.ini";
         const std::filesystem::path editorFont = fonts / "JetBrainsMono-Regular.ttf";
         const std::filesystem::path fontAwesome = fonts / "fontawesome-webfont.ttf";
