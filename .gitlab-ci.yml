@@ -139,7 +139,7 @@ clang-tidy-check:
                     continue
 
                 result = subprocess.run(
-                    ["clang-tidy", "-p", "build", f],
+                    ["clang-tidy", "--header-filter='^.*/sources/.*'", "-p", "build", f],
                     capture_output=True, text=True
                 )
 
