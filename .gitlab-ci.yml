@@ -10,6 +10,7 @@ clang-format-check:
   tags:
     - pull-request
   script:
+    - clang-format --version
     - |
       python3 - << 'EOF'
       import json, subprocess, sys, hashlib
