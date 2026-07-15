@@ -1,31 +1,30 @@
 stages:
     - lint
-
 variables:
     GIT_DEPTH: 0
-
 clang-format-check:
     stage: lint
     image: registry.vakon.dev/vakonteam/nexium/engine-ci:latest
     tags:
         - pull-request
     script:
-        - clang-format --version
+        - CLANG_FORMAT_VERSION=$(clang-format --version)
+        - echo "$CLANG_FORMAT_VERSION"
         - |
             python3 - << 'EOF'
             import json, subprocess, sys, hashlib
-            
+
             base = subprocess.run(
                 ["git", "merge-base", f"origin/{__import__('os').environ['CI_MERGE_REQUEST_TARGET_BRANCH_NAME']}", "HEAD"],
                 capture_output=True, text=True
             ).stdout.strip()
-            
+
             diff = subprocess.run(
                 ["git", "diff", "--diff-filter=ACMR", "--name-only", base, "HEAD",
                  "--", "*.cpp", "*.cc", "*.h", "*.hpp"],
                 capture_output=True, text=True
             ).stdout.split()
-            
+
             issues = []
             for f in diff:
                 try:
@@ -42,10 +41,10 @@ clang-format-check:
                         "severity": "major",
                         "location": {"path": f, "lines": {"begin": 1}}
                     })
-            
+
             with open("gl-code-quality-report.json", "w") as out:
                 json.dump(issues, out, indent=2)
-            
+
             if issues:
                 print(f"Found {len(issues)} formatting issue(s):")
                 for i in issues:
@@ -57,16 +56,4 @@ clang-format-check:
             import json
             annotations = {
                 "clang-format info": [
-                    {"external_link": {"label": "$CLANG_FORMAT_VERSION", "url": "https://gitlab.vakon.dev/vakonteam/nexium/-/blob/main/ci.Dockerfile"}}
-                ]
-            }
-            json.dump(annotations, open("gl-annotations-report.json", "w"))
-            EOF
-
-    artifacts:
-        reports:
-            codequality: gl-code-quality-report.json
-        when: always
-        expire_in: 1 week
-    rules:
-        -   if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+                    {"external_link": {"label": "$CLANG_FORMAT_VERSION", "url":
