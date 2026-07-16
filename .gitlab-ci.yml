@@ -106,8 +106,6 @@ clang-tidy-check:
         - build
     script:
         - clang-tidy --version
-        - grep -A3 Gizmo.cpp build/compile_commands.json
-        - head -20 build/compile_commands.json
         - |
             python3 - << 'EOF'
             import json, subprocess, sys, hashlib, os, re
