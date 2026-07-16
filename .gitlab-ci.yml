@@ -83,7 +83,7 @@ post-clang-tidy-comments:
     needs:
         - clang-tidy-check
     script:
-        - python3 .ci/post_mr_comments.py --report gl-code-quality-report.json
+        - python3 .ci/post_mr_comments.py --report gl-code-quality-report.json --token glpat-Up6THQS-4eilOV_srS86b286MQp1OjEzCA.01.0y0ntlioj
     rules:
         -   if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
             when: always
