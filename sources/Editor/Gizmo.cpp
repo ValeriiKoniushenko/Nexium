@@ -93,7 +93,9 @@ namespace Core
             gDragDrop.payload.type = DragData::dragType;
             DragData data;
             const char directionChar
-                = static_cast<char>(::toupper(touchedMesh->getComponentName()[0])) - 'X';
+                = static_cast<char>(toupper(touchedMesh->getComponentName()[0])) - 'X';
+
+            int* ptr = NULL;
 
             data.direction = static_cast<Direction>(directionChar);
 
