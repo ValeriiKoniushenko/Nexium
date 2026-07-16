@@ -73,3 +73,17 @@ clang-tidy-check:
         expire_in: 1 week
     rules:
         -   if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+
+post-clang-tidy-comments:
+    stage: build
+    image: registry.vakon.dev/vakonteam/nexium/engine-ci:latest
+    tags:
+        - pull-request
+    needs:
+        - clang-tidy-check
+    script:
+        - python3 ci/post_mr_comments.py --report gl-code-quality-report.json
+    rules:
+        -   if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+            when: always
+    allow_failure: true
