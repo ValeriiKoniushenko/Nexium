@@ -106,7 +106,7 @@ clang-tidy-check:
         - build
     script:
         - clang-tidy --version
-        - jq '.[] | select(.file | endswith("Gizmo.cpp"))' build/compile_commands.json
+        - grep -A3 Gizmo.cpp build/compile_commands.json
         - head -20 build/compile_commands.json
         - pwd
         - ls -R build | head -100
