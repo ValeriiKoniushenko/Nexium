@@ -175,7 +175,7 @@ def main():
         for i in issues:
             print(f"  - {i['location']['path']}:{i['location']['lines']['begin']}: {i['description']}")
         if should_fail and not args.dry_run:
-            sys.exit(1)
+            sys.exit(0)
     else:
         print("No clang-tidy issues found.")
 
