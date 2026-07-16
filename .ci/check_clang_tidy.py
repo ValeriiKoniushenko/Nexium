@@ -12,7 +12,6 @@ Local/debug usage from your machine:
     python3 ci/check_clang_tidy.py --base main --fail-on error   # only fail on 'error' level
     python3 ci/check_clang_tidy.py --base main --dry-run         # don't write report / exit 1
 """
-
 import argparse
 import hashlib
 import json
@@ -78,16 +77,23 @@ def get_changed_files(base_ref: str, explicit_files: list[str] | None, verbose: 
 
 
 def run_clang_tidy(f: str, build_dir: str, header_filter: str, extra_args: list[str], verbose: bool) -> str:
-    cmd = ["clang-tidy", "-v", f"--header-filter={header_filter}", "-p", build_dir, f, *extra_args]
+    # NOTE: clang-tidy has no "-v" flag (that's a run-clang-tidy-ism) and the
+    # target file must be a plain positional arg, not "-f <file>".
+    cmd = ["clang-tidy", f"--header-filter={header_filter}", "-p", build_dir, *extra_args, f]
     if verbose:
         print(f"[debug] running: {' '.join(cmd)}")
 
     result = subprocess.run(cmd, capture_output=True, text=True)
 
-    if verbose and result.returncode != 0:
-        print(f"[debug] clang-tidy exit code {result.returncode} for {f}")
+    if verbose:
+        print(f"[debug] clang-tidy exit code: {result.returncode} for {f}")
+        if result.returncode != 0 and result.stderr:
+            print(f"[debug] stderr: {result.stderr[:2000]}")
+
+    if result.returncode != 0 and not result.stdout.strip():
+        print(f"[error] clang-tidy produced no output and exited {result.returncode} for {f}", file=sys.stderr)
         if result.stderr:
-            print(f"[debug] stderr: {result.stderr[:500]}")
+            print(result.stderr, file=sys.stderr)
 
     return result.stdout
 
@@ -97,7 +103,8 @@ def main():
     parser.add_argument("--base", help="branch/ref to diff against (default: CI var or 'main')")
     parser.add_argument("--files", nargs="+", help="explicit list of files to check, skips git diff")
     parser.add_argument("--build-dir", default="build", help="compile_commands.json directory (default: build)")
-    parser.add_argument("--header-filter", default="^.*/sources/.*", help="clang-tidy --header-filter value")
+    parser.add_argument("--header-filter", default="",
+                        help="clang-tidy --header-filter value (default: '' = don't report on headers, matches run-clang-tidy default)")
     parser.add_argument("--fail-on", choices=["error", "warning", "note"], default="warning",
                         help="minimum level that causes non-zero exit (default: warning)")
     parser.add_argument("--extra-arg", action="append", default=[],

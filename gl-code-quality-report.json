@@ -1,1 +1,38 @@
-[]
+[
+  {
+    "description": "[bugprone-narrowing-conversions,cppcoreguidelines-narrowing-conversions] narrowing conversion from 'int' to signed type 'char' is implementation-defined",
+    "check_name": "bugprone-narrowing-conversions,cppcoreguidelines-narrowing-conversions",
+    "fingerprint": "417f7fa9af5f01082603ff7057b22fba",
+    "severity": "major",
+    "location": {
+      "path": "sources/Editor/Gizmo.cpp",
+      "lines": {
+        "begin": 96
+      }
+    }
+  },
+  {
+    "description": "[misc-const-correctness] pointee of variable 'ptr' of type 'int *' can be declared 'const'",
+    "check_name": "misc-const-correctness",
+    "fingerprint": "0e2e829161240bf6886a4921a4ae71ce",
+    "severity": "major",
+    "location": {
+      "path": "sources/Editor/Gizmo.cpp",
+      "lines": {
+        "begin": 98
+      }
+    }
+  },
+  {
+    "description": "[modernize-use-nullptr] use nullptr",
+    "check_name": "modernize-use-nullptr",
+    "fingerprint": "73a1d1964f0479e30995798680a55b23",
+    "severity": "major",
+    "location": {
+      "path": "sources/Editor/Gizmo.cpp",
+      "lines": {
+        "begin": 98
+      }
+    }
+  }
+]
