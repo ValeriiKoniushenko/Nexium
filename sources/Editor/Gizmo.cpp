@@ -33,7 +33,8 @@ namespace Core
 {
     ECS_COMPONENT_IMPL(Gizmo);
 
-    void Gizmo::draw(BaseCamera& camera)
+    void Gizmo::
+        draw(BaseCamera& camera)
     {
         glDepthFunc(GL_ALWAYS);
         StaticMeshBundle::draw(camera);
