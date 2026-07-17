@@ -95,10 +95,7 @@ namespace Core
             const char directionChar
                 = static_cast<char>(toupper(touchedMesh->getComponentName()[0])) - 'X';
 
-            int* i = nullptr;
-
-            data.direction = 
-                static_cast<Direction>(directionChar);
+            data.direction = static_cast<Direction>(directionChar);
 
             for (auto& obj :
                  gGameInstance->objectSelectorManager.getSelectedObjects() | std::views::values)
