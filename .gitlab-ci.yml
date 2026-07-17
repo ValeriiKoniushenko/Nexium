@@ -18,10 +18,10 @@ clang-format-check:
         - pull-request
     script:
         - clang-format --version
-        - python3 .ci/check_clang_format.py --dry-run --report-path gl-clang-format.json || true
+        - python3 .ci/check_clang_format.py --dry-run --report-path gl-clang-format.json
     artifacts:
-        paths:
-            - gl-clang-format.json
+        reports:
+            codequality: gl-clang-format.json
         when: always
         expire_in: 1 week
     rules:
@@ -66,12 +66,7 @@ clang-tidy-check:
         - clang-format-check
     script:
         - clang-tidy --version
-        - python3 .ci/check_clang_tidy.py --report-path gl-clang-tidy.json || true
-        - python3 -c "
-            import json;
-            a=json.load(open('gl-clang-format.json'));
-            b=json.load(open('gl-clang-tidy.json'));
-            json.dump(a+b, open('gl-code-quality-report.json','w'))"
+        - python3 .ci/check_clang_tidy.py --report-path gl-code-quality-report.json || true
     artifacts:
         reports:
             codequality: gl-code-quality-report.json
