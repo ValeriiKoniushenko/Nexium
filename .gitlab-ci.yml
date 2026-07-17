@@ -67,6 +67,7 @@ clang-tidy-check:
         - build
     script:
         - clang-tidy --version
+        - env | sort | grep '^CI_'
         - python3 .ci/check_clang_tidy.py --report-path gl-code-quality-report.json || true
         - python3 .ci/post_mr_comments.py --report gl-code-quality-report.json --token "$ACCESS_TOKEN"
     artifacts:
