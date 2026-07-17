@@ -99,9 +99,25 @@ file(WRITE "${GRAPHICS_ALIAS_DIR}/Graphics.h"
 )
 
 # ── Main deps pipeline ────────────────────────────────────────────────────────────────
+set(JSON_BuildTests OFF CACHE BOOL "" FORCE)
+set(JSON_MultipleHeaders OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
+set(SPDLOG_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(SPDLOG_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(SPDLOG_BUILD_BENCH OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "" FORCE)
+set(ASSIMP_WARNINGS_AS_ERRORS OFF CACHE BOOL "" FORCE)
+set(UTILS_DISABLE_TESTS ON CACHE BOOL "" FORCE)
+set(UTILS_DISABLE_BENCHMARKS ON CACHE BOOL "" FORCE)
 add_subdirectory(dependencies)
 add_subdirectory(sources)
-add_subdirectory(tests)
+
+if (NOT NEXIUM_DISABLE_TESTS)
+    add_subdirectory(tests)
+endif ()
 
 # TODO: in the future it must be removed
 add_subdirectory(game-example)
