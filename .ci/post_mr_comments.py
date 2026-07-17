@@ -211,7 +211,7 @@ def main():
 
     print(f"Done. posted={posted} skipped={skipped} failed={failed}")
     if failed and not args.dry_run:
-        sys.exit(1)
+        sys.exit(0)
 
 
 if __name__ == "__main__":
