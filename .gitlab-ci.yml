@@ -18,7 +18,7 @@ clang-format-check:
         - pull-request
     script:
         - clang-format --version
-        - python3 .ci/check_clang_format.py --dry-run --report-path gl-clang-format.json
+        - python3 .ci/check_clang_format.py --report-path gl-clang-format.json
     artifacts:
         reports:
             codequality: gl-clang-format.json
