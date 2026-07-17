@@ -95,9 +95,6 @@ namespace Core
             const char directionChar
                 = static_cast<char>(toupper(touchedMesh->getComponentName()[0])) - 'X';
 
-            const 
-                int* ptr = NULL;
-
             data.direction = static_cast<Direction>(directionChar);
 
             for (auto& obj :
