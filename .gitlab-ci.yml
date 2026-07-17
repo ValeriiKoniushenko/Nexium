@@ -68,6 +68,7 @@ clang-tidy-check:
     script:
         - clang-tidy --version
         - python3 .ci/check_clang_tidy.py --report-path gl-code-quality-report.json || true
+        - python3 .ci/post_mr_comments.py --report gl-code-quality-report.json --token "$ACCESS_TOKEN"
     artifacts:
         reports:
             codequality: gl-code-quality-report.json
@@ -75,18 +76,4 @@ clang-tidy-check:
         expire_in: 1 week
     rules:
         -   if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-    allow_failure: true
-
-code-q-report:
-    stage: report
-    image: registry.vakon.dev/vakonteam/nexium/engine-ci:latest
-    tags:
-        - pull-request
-    needs:
-        - clang-tidy-check
-    script:
-        - python3 .ci/post_mr_comments.py --report gl-code-quality-report.json --token "$ACCESS_TOKEN"
-    rules:
-        -   if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-            when: always
     allow_failure: true
