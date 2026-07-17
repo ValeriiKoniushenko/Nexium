@@ -126,9 +126,8 @@ def main():
                 "location": {"path": f, "lines": {"begin": 1}}
             })
 
-    if not args.dry_run:
-        with open(args.report_path, "w") as out:
-            json.dump(issues, out, indent=2)
+    with open(args.report_path, "w") as out:
+        json.dump(issues, out, indent=2)
 
     if issues:
         print(f"Found {len(issues)} formatting issue(s):")

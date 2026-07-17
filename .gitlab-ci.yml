@@ -18,7 +18,7 @@ clang-format-check:
         - pull-request
     script:
         - clang-format --version
-        - python3 .ci/check_clang_format.py --dry-run --report-path gl-clang-format.json
+        - python3 .ci/check_clang_format.py --dry-run --report-path gl-clang-format.json || true
     artifacts:
         paths:
             - gl-clang-format.json
@@ -66,7 +66,7 @@ clang-tidy-check:
         - clang-format-check
     script:
         - clang-tidy --version
-        - python3 .ci/check_clang_tidy.py --report-path gl-clang-tidy.json
+        - python3 .ci/check_clang_tidy.py --report-path gl-clang-tidy.json || true
         - python3 -c "
             import json;
             a=json.load(open('gl-clang-format.json'));

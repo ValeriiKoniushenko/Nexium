@@ -166,16 +166,15 @@ def main():
             if level_rank[m.group("level")] >= fail_threshold:
                 should_fail = True
 
-    if not args.dry_run:
-        with open(args.report_path, "w") as out:
-            json.dump(issues, out, indent=2)
+    with open(args.report_path, "w") as out:
+        json.dump(issues, out, indent=2)
 
     if issues:
         print(f"Found {len(issues)} clang-tidy issue(s):")
         for i in issues:
             print(f"  - {i['location']['path']}:{i['location']['lines']['begin']}: {i['description']}")
         if should_fail and not args.dry_run:
-            sys.exit(0)
+            sys.exit(1)
     else:
         print("No clang-tidy issues found.")
 
