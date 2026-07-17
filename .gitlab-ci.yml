@@ -4,15 +4,17 @@ workflow:
         -   if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
 
 stages:
-    - lint
+    - format-validation
     - build
+    - code-lint
+    - report
 
 variables:
     GIT_DEPTH: 0
     CCACHE_DIR: "${CI_PROJECT_DIR}/.ccache"
 
 clang-format-check:
-    stage: lint
+    stage: format-validation
     image: registry.vakon.dev/vakonteam/nexium/engine-ci:latest
     tags:
         - pull-request
@@ -57,13 +59,12 @@ build:
         -   if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
 
 clang-tidy-check:
-    stage: build
+    stage: code-lint
     image: registry.vakon.dev/vakonteam/nexium/engine-ci:latest
     tags:
         - pull-request
     needs:
         - build
-        - clang-format-check
     script:
         - clang-tidy --version
         - python3 .ci/check_clang_tidy.py --report-path gl-code-quality-report.json || true
@@ -76,8 +77,8 @@ clang-tidy-check:
         -   if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
     allow_failure: true
 
-post-clang-tidy-comments:
-    stage: build
+code-q-report:
+    stage: report
     image: registry.vakon.dev/vakonteam/nexium/engine-ci:latest
     tags:
         - pull-request
