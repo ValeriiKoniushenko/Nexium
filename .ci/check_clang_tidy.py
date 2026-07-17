@@ -37,9 +37,10 @@ def get_target_branch(cli_base: str | None) -> str:
     if cli_base:
         return cli_base
     env_branch = os.environ.get("CI_MERGE_REQUEST_TARGET_BRANCH_NAME")
+    print(env_branch)
     if env_branch:
         return env_branch
-    return "main"
+    return "develop"
 
 
 def get_changed_files(base_ref: str, explicit_files: list[str] | None, verbose: bool) -> list[str]:
