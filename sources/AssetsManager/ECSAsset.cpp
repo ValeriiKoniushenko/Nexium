@@ -199,10 +199,8 @@ namespace Core
             out << json.dump(4);
             out.close();
 
-            traceLog("Asset: {} was updated successfully. Patch: {}"_f << _meta.logicPath
-                                                                       << patchedOutput.empty()
-                         ? "None"
-                         : patchedOutput);
+            traceLog("Asset: {} was updated successfully. Patch: {}"_f
+                     << _meta.logicPath << (patchedOutput.empty() ? "None" : patchedOutput));
         }
         else
         {
