@@ -30,6 +30,7 @@
 #include "Graphics/ShaderManager.h"
 #include "Graphics/Window.h"
 #include "ImGui/imgui.h"
+#include "ImGui/imgui_internal.h"
 #include "Misc/Configs.h"
 #include "Misc/FPSCounter.h"
 #include "ModuleInfo.h"
@@ -172,6 +173,7 @@ namespace Core
 
                 glClear(clearBits);
                 gameEditor.tick(world.timeDelta);
+
                 if (currentCamera)
                 {
                     gameViewport.callMePreDraw();

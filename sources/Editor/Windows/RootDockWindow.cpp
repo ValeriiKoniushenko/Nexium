@@ -29,6 +29,41 @@
 namespace Core
 {
     ECS_COMPONENT_IMPL(RootDockWindowEWC);
+
+    namespace
+    {
+        std::vector<std::string> ListWindowsInDockNode(ImGuiDockNode* node)
+        {
+            if (!node)
+            {
+                return {};
+            }
+
+            std::vector<std::string> out;
+
+            if (node->IsLeafNode())
+            {
+                for (const ImGuiWindow* w : node->Windows)
+                {
+                    if (w->Name && *w->Name)
+                    {
+                        out.emplace_back(w->Name);
+                    }
+                }
+            }
+            else
+            {
+                auto out2 = ListWindowsInDockNode(node->ChildNodes[0]);
+                auto out3 = ListWindowsInDockNode(node->ChildNodes[1]);
+
+                out.insert(out.begin(), out2.begin(), out2.end());
+                out.insert(out.begin(), out3.begin(), out3.end());
+            }
+
+            return out;
+        }
+    } // namespace
+
     //
     //    ______                _   ______               _
     //    | ___ \              | |  |  _  \             | |
@@ -45,6 +80,24 @@ namespace Core
                         | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse
                         | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove
                         | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+    }
+
+    std::vector<std::string> RootDockWindowEWC::getCurrentWindowsList() const
+    {
+        std::vector<std::string> out;
+
+        const ImGuiContext& g = *GImGui;
+        for (const auto& it : g.DockContext.Nodes.Data)
+        {
+            auto* node = static_cast<ImGuiDockNode*>(it.val_p);
+            if (node && node->IsRootNode())
+            {
+                auto out2 = ListWindowsInDockNode(node);
+                out.insert(out.begin(), out2.begin(), out2.end());
+            }
+        }
+
+        return out;
     }
 
     void RootDockWindowEWC::onDraw()

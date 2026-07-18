@@ -149,6 +149,15 @@ namespace Core
 
             keyboardInput.update();
             mouseInput.update();
+
+            // The reason of this code is:
+            // Nexium uses ImGUI as a Windows provider. At the start it loads all settings from
+            // a corresponding .ini file using the default ImGUI approach:
+            // ImGui::LoadIniSettingsFromDisk
+            // The engine, for now, can't control what was loaded, what wasn't. So, we do
+            // 'lazy loading' to finish-loading of all opened windows; opened by ImGUI.
+            static std::once_flag winLazyInit;
+            std::call_once(winLazyInit, [this]() { lazyOneShotInitialization(); });
         }
     }
 
@@ -409,6 +418,20 @@ namespace Core
         else
         {
             gGameInstance->objectSelectorManager.selectObject(mesh);
+        }
+    }
+
+    void GameEditor::lazyOneShotInitialization()
+    {
+        if (auto* dock = getWindow<RootDockWindowEWC>(); Verify(dock))
+        {
+            for (auto&& winName : dock->getCurrentWindowsList())
+            {
+                if (auto* win = getWindow<BaseEWC>(winName.c_str()); Verify(win))
+                {
+                    win->initialize();
+                }
+            }
         }
     }
 

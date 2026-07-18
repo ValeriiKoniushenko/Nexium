@@ -33,7 +33,9 @@ namespace Core
         ECS_COMPONENT_DECL(RootDockWindowEWC, BaseEWC);
 
     public:
-    private:
+        [[nodiscard]] std::vector<std::string> getCurrentWindowsList() const;
+
+    protected:
         void onInitialize() override;
 
         void onDraw() override;

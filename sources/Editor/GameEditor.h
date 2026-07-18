@@ -171,6 +171,7 @@ namespace Core
         void handleMouseDrag(glm::vec2 delta, MouseInputAction::SpecKeysState state);
         void handleMouseClick(glm::vec2 pos, MouseInputAction::SpecKeysState state);
         void responseOnPick(StaticMesh* mesh);
+        void lazyOneShotInitialization();
 
     protected:
         DelegateSubscriberPoolGuard _subscriptionPool;
