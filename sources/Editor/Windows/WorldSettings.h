@@ -71,6 +71,7 @@ namespace Core
         Gui::TextInput* _cameraInputField = nullptr;
         Gui::Button* _changeCameraButton = nullptr;
         Gui::Button* _showCameraButton = nullptr;
+        Gui::Button* _resetCameraButton = nullptr;
 
         // Lightning
         Gui::VerticalLayout _lightningLayout;

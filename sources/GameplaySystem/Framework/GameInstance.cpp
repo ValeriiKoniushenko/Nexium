@@ -131,6 +131,12 @@ namespace Core
         onSaveAll();
     }
 
+    void GameInstance::resetCamera()
+    {
+        currentCamera = nullptr;
+        gameViewport.clearCanvas();
+    }
+
     void GameInstance::runMainLoop()
     {
         FPSCounter fps;

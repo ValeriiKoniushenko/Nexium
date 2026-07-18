@@ -80,6 +80,11 @@ namespace Core
                         sceneTree->highlightSpecificObject(gGameInstance->currentCamera);
                     }
                 });
+
+            _resetCameraButton = h->input->addChildComponent<Gui::Button>(ICON_FA_UNDO);
+            _resetCameraButton->setWidth(30.f);
+            _subscriptionPool << _resetCameraButton->onClick->subscribeAndGetID(
+                []() { gGameInstance->resetCamera(); });
         }
 
         // ===================== LIGHTNING =========================
@@ -201,11 +206,15 @@ namespace Core
     {
         if (_showCameraButton)
         {
-            _showCameraButton->setEnabled(!!gGameInstance->currentCamera);
+            _showCameraButton->disableWidget(!gGameInstance->currentCamera);
         }
         if (_changeCameraButton)
         {
-            _changeCameraButton->setEnabled(!!gGameInstance->currentCamera);
+            _changeCameraButton->disableWidget(!gGameInstance->currentCamera);
+        }
+        if (_resetCameraButton)
+        {
+            _resetCameraButton->disableWidget(!gGameInstance->currentCamera);
         }
 
         if (_cameraInputField)

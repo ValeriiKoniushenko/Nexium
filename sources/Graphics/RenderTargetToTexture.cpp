@@ -79,6 +79,20 @@ namespace Core
         generate();
     }
 
+    void RenderTargetToTexture::clearCanvas() const
+    {
+        GLint previousFbo = 0;
+        glGetIntegerv(GL_FRAMEBUFFER_BINDING, &previousFbo);
+
+        glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
+        glViewport(0, 0, _size.width, _size.height);
+
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+        glBindFramebuffer(GL_FRAMEBUFFER, static_cast<GLuint>(previousFbo));
+    }
+
     void RenderTargetToTexture::destroy()
     {
         glDeleteFramebuffers(1, &_fbo);

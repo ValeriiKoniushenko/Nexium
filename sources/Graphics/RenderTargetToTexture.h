@@ -34,6 +34,8 @@ namespace Core
     public:
         void generate();
 
+        void clearCanvas() const;
+
         void callMePreDraw() const;
 
         void callMeAfterDraw() const;
