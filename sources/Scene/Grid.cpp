@@ -50,7 +50,6 @@ namespace Core
             // gridShader->setUniform("uGridColorThin"_atom, _gridColorThin);
             // gridShader->setUniform("uGridColorThick"_atom, _gridColorThick);
 
-            glEnable(GL_BLEND);
             glDisable(GL_CULL_FACE);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -58,7 +57,6 @@ namespace Core
 
             glBlendFunc(GL_ONE, GL_ZERO);
             glEnable(GL_CULL_FACE);
-            glDisable(GL_BLEND);
         }
     }
 } // namespace Core

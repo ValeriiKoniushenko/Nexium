@@ -144,6 +144,7 @@ namespace Core
         FStopwatch clock;
 
         glClearColor(0.45f, 0.55f, 0.60f, 1.00f);
+        glEnable(GL_BLEND);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
         glEnable(GL_STENCIL_TEST);
