@@ -5,6 +5,7 @@ excludedPaths:
   - .idea
   - .jrm
   - .vscode
+  - .venv
   - build
   - dependencies
   - .jenkins

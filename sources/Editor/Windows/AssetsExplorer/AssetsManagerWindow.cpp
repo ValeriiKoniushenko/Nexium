@@ -183,7 +183,8 @@ namespace Core
     void AssetsManagerWindowEWC::openPath(const std::filesystem::path& path)
     {
         auto finalPath = path;
-        if (finalPath.has_filename())
+
+        if (finalPath.has_filename() && finalPath.has_extension())
         {
             finalPath = finalPath.remove_filename();
             selectPath(path, false);
