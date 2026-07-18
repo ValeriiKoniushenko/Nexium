@@ -45,8 +45,10 @@ namespace Core
 
     } // namespace Gui
 
+    CLASS();
     class ModalAssetsSearchPopUpEWC : public BaseEWC
     {
+        R_FRIEND_DECL(ModalAssetsSearchPopUpEWC, Core::BaseEWC);
         ECS_COMPONENT_DECL(ModalAssetsSearchPopUpEWC, BaseEWC);
 
     public:
@@ -78,3 +80,5 @@ namespace Core
         bool _wasManuallyEdited = false;
     };
 } // namespace Core
+
+#include "ModalAssetsSearchPopUp.generated.h" // added by the code generator. Better don't move it.

@@ -29,9 +29,10 @@
 
 namespace Core
 {
-
+    CLASS();
     class ECSEditorTransformableAdapter : public ECSEditorMimeAdapter
     {
+        R_FRIEND_DECL(ECSEditorTransformableAdapter, Core::ECSEditorMimeAdapter);
         ECS_COMPONENT_DECL(ECSEditorTransformableAdapter, ECSEditorMimeAdapter);
 
     public:
@@ -52,3 +53,5 @@ namespace Core
     };
 
 } // namespace Core
+
+#include "EditorTransformableAdapter.generated.h" // added by the code generator. Better don't move it.

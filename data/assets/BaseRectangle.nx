@@ -27,9 +27,9 @@
             1.0,
             1.0
         ],
-        "_type": "Rectangle"
+        "_type": "Core::SceneObj::Rectangle"
     },
     "name": "BaseRectangle",
     "tags": "WorldObject",
-    "type": "Rectangle"
+    "type": "Core::SceneObj::Rectangle"
 }

@@ -43,8 +43,10 @@ namespace Core
         class TextInput;
     } // namespace Gui
 
+    CLASS();
     class RenamePopUpWindow : public BaseEWC
     {
+        R_FRIEND_DECL(RenamePopUpWindow, Core::BaseEWC);
         ECS_COMPONENT_DECL(RenamePopUpWindow, BaseEWC);
 
     public:

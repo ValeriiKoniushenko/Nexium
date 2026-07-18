@@ -52,9 +52,9 @@ namespace Core
         public IDrawable,
         public ITagHolder
     {
-        ECS_COMPONENT_DECL(SceneObject, BaseComponent);
         R_FRIEND_DECL(Core::SceneObject, Core::BaseComponent, Core::Transformable, Core::IOutliner,
                       Core::IDrawable);
+        ECS_COMPONENT_DECL(SceneObject, BaseComponent);
 
     public:
         ~SceneObject() override

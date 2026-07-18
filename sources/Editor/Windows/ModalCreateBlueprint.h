@@ -41,8 +41,10 @@ namespace Core
         class Label;
     } // namespace Gui
 
+    CLASS();
     class ModalCreateBlueprintEWC : public BaseEWC
     {
+        R_FRIEND_DECL(ModalCreateBlueprintEWC, Core::BaseEWC);
         ECS_COMPONENT_DECL(ModalCreateBlueprintEWC, BaseEWC);
 
     public:
@@ -89,3 +91,5 @@ namespace Core
         bool _hasOpenRequest = false;
     };
 } // namespace Core
+
+#include "ModalCreateBlueprint.generated.h" // added by the code generator. Better don't move it.

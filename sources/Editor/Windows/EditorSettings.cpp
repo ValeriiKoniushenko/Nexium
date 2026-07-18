@@ -40,16 +40,22 @@ namespace Core
 {
     R_FRIEND_IMPL(EditorSettingsEWC);
     ECS_COMPONENT_IMPL(EditorSettingsEWC);
-    ECS_COMPONENT_IMPL(EditorSettingsEWC::BaseListItem);
-    ECS_COMPONENT_IMPL(EditorSettingsEWC::KeymapItem);
-    ECS_COMPONENT_IMPL(EditorSettingsEWC::ColorItem);
+
+    ECS_COMPONENT_IMPL(Internal::BaseListItem);
+    R_FRIEND_IMPL(Internal::BaseListItem);
+
+    ECS_COMPONENT_IMPL(Internal::KeymapItem);
+    R_FRIEND_IMPL(Internal::KeymapItem);
+
+    ECS_COMPONENT_IMPL(Internal::ColorItem);
+    R_FRIEND_IMPL(Internal::ColorItem);
 
     const char* EditorSettingsEWC::getIcon()
     {
         return ICON_FA_COG;
     }
 
-    bool EditorSettingsEWC::BaseListItem::containsString(const StringAtom& str)
+    bool Internal::BaseListItem::containsString(const StringAtom& str)
     {
         if (Verify(_label))
         {
@@ -64,7 +70,7 @@ namespace Core
         return false;
     }
 
-    void EditorSettingsEWC::BaseListItem::setLabel(const StringAtom& label)
+    void Internal::BaseListItem::setLabel(const StringAtom& label)
     {
         if (Verify(_label))
         {
@@ -72,7 +78,7 @@ namespace Core
         }
     }
 
-    void EditorSettingsEWC::BaseListItem::onInitialize()
+    void Internal::BaseListItem::onInitialize()
     {
         HorizontalLayout::onInitialize();
 
@@ -82,7 +88,7 @@ namespace Core
         _label = addChildComponent<Label>("Undefined");
     }
 
-    void EditorSettingsEWC::KeymapItem::setReadOnly(bool value)
+    void Internal::KeymapItem::setReadOnly(bool value)
     {
         if (Verify(_button))
         {
@@ -91,7 +97,7 @@ namespace Core
         }
     }
 
-    bool EditorSettingsEWC::KeymapItem::containsString(const StringAtom& str)
+    bool Internal::KeymapItem::containsString(const StringAtom& str)
     {
         if (BaseListItem::containsString(str))
         {
@@ -109,7 +115,7 @@ namespace Core
         return false;
     }
 
-    void EditorSettingsEWC::KeymapItem::setButtonName(const StringAtom& label)
+    void Internal::KeymapItem::setButtonName(const StringAtom& label)
     {
         if (Verify(_button))
         {
@@ -117,7 +123,7 @@ namespace Core
         }
     }
 
-    void EditorSettingsEWC::KeymapItem::onInitialize()
+    void Internal::KeymapItem::onInitialize()
     {
         BaseListItem::onInitialize();
 
@@ -129,7 +135,7 @@ namespace Core
         _resetButton = holder->addChildComponent<Button>(ICON_FA_SHARE);
     }
 
-    void EditorSettingsEWC::ColorItem::setReadOnly(bool value)
+    void Internal::ColorItem::setReadOnly(bool value)
     {
         if (Verify(_colorInput))
         {
@@ -137,7 +143,7 @@ namespace Core
         }
     }
 
-    void EditorSettingsEWC::ColorItem::setInputData(const StringAtom& data)
+    void Internal::ColorItem::setInputData(const StringAtom& data)
     {
         if (Verify(_colorInput))
         {
@@ -145,7 +151,7 @@ namespace Core
         }
     }
 
-    void EditorSettingsEWC::ColorItem::onInitialize()
+    void Internal::ColorItem::onInitialize()
     {
         BaseListItem::onInitialize();
 
@@ -227,7 +233,7 @@ namespace Core
 
         for (const auto& [fst, snd] : GetEditor().keyboardInput.getMapping())
         {
-            auto* item = layout.addChildComponent<KeymapItem>();
+            auto* item = layout.addChildComponent<Internal::KeymapItem>();
             item->setReadOnly(true);
             item->setLabel(fst);
             item->setButtonName(
@@ -236,7 +242,7 @@ namespace Core
 
         // static keys
         {
-            auto* item = layout.addChildComponent<KeymapItem>();
+            auto* item = layout.addChildComponent<Internal::KeymapItem>();
             item->setReadOnly(true);
             item->setLabel("Show ImGui debug rects");
             item->setButtonName(
@@ -251,7 +257,7 @@ namespace Core
 
             for (const auto& [fst, snd] : spectator->keyboardInput.getMapping())
             {
-                auto* item = layout.addChildComponent<KeymapItem>();
+                auto* item = layout.addChildComponent<Internal::KeymapItem>();
                 item->setReadOnly(true);
                 item->setLabel(fst + (snd->onPress->isEmpty() ? "(disabled)" : ""));
                 item->setButtonName(
@@ -285,7 +291,7 @@ namespace Core
 
         for (int i = 0; i < ImGuiCol_COUNT; ++i)
         {
-            auto* color = layout.addChildComponent<ColorItem>();
+            auto* color = layout.addChildComponent<Internal::ColorItem>();
             color->setLabel(ImGui::GetStyleColorName(i));
             color->setReadOnly(true);
             auto data = Core::Color4::From(NormColor4(colors[i]));

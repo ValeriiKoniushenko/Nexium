@@ -30,9 +30,10 @@
 
 namespace Core
 {
-
+    CLASS();
     class ECSEditorInterleavedGraphicsDataAdapter : public ECSEditorMimeAdapter
     {
+        R_FRIEND_DECL(ECSEditorInterleavedGraphicsDataAdapter, Core::ECSEditorMimeAdapter);
         ECS_COMPONENT_DECL(ECSEditorInterleavedGraphicsDataAdapter, ECSEditorMimeAdapter);
 
     public:
@@ -56,3 +57,5 @@ namespace Core
     };
 
 } // namespace Core
+
+#include "EditorInterleavedGraphicsDataAdapter.generated.h" // added by the code generator. Better don't move it.

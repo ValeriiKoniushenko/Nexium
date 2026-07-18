@@ -40,6 +40,8 @@ namespace
 
 namespace Core
 {
+
+    R_FRIEND_IMPL(InvalidComponent);
     ECS_COMPONENT_IMPL(InvalidComponent);
 
     nlohmann::json AbstractComponent::serialize() const

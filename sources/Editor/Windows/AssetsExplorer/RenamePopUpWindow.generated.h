@@ -15,6 +15,7 @@ template<>
 struct R<Core::RenamePopUpWindow>
 {
     static constexpr std::string_view Name() { return "RenamePopUpWindow"; }
+    static constexpr std::string_view FullName() { return "Core::RenamePopUpWindow"; }
     static constexpr std::string_view ParentScope() { return "Core"; }
     static constexpr std::size_t GetFieldNumbers() { return 0; }
     static constexpr std::vector<RClassField> GetFields() {
@@ -30,6 +31,7 @@ struct R<Core::RenamePopUpWindow>
             _RTryCallPreSerialize<Core::RenamePopUpWindow>(obj);
         }
 
+		s.write(R<Core::BaseEWC>::Serialize<RImpl>(obj).getData());
         if (!noSignals)
         {
             _RTryCallPostSerialize<Core::RenamePopUpWindow>(obj, s.logs());
@@ -45,6 +47,7 @@ struct R<Core::RenamePopUpWindow>
             _RTryCallPreSerialize<Core::RenamePopUpWindow>(obj);
         }
 
+		s.write(R<Core::BaseEWC>::Serialize<RImpl>(obj).getData());
         if (!noSignals)
         {
             _RTryCallPostSerialize<Core::RenamePopUpWindow>(obj, s.logs());
@@ -60,6 +63,7 @@ struct R<Core::RenamePopUpWindow>
             _RTryCallPreDeserialize<Core::RenamePopUpWindow>(obj);
         }
 
+		R<Core::BaseEWC>::Deserialize<RImpl>(s, obj, true);
         if (!noSignals)
         {
             _RTryCallPostDeserialize<Core::RenamePopUpWindow>(obj, s.logs());

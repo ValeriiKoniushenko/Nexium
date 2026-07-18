@@ -42,8 +42,10 @@ namespace Core
         using Float3Input = VecNumInput<3, float>;
     } // namespace Gui
 
+    CLASS();
     class ECSEditorActorAdapter : public ECSEditorMimeAdapter
     {
+        R_FRIEND_DECL(ECSEditorActorAdapter, Core::ECSEditorMimeAdapter);
         ECS_COMPONENT_DECL(ECSEditorActorAdapter, ECSEditorMimeAdapter);
 
     public:
@@ -68,3 +70,5 @@ namespace Core
     };
 
 } // namespace Core
+
+#include "EditorActorAdapter.generated.h" // added by the code generator. Better don't move it.

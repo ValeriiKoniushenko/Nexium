@@ -36,8 +36,8 @@ namespace Core
     CLASS();
     class StaticMeshBundle : public Actor
     {
-        ECS_COMPONENT_DECL(StaticMeshBundle, Actor);
         R_FRIEND_DECL(StaticMeshBundle, Core::Actor);
+        ECS_COMPONENT_DECL(StaticMeshBundle, Actor);
 
     public:
         ~StaticMeshBundle() override;

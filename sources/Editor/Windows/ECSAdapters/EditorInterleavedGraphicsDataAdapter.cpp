@@ -35,6 +35,7 @@ namespace Core
 {
 
     ECS_COMPONENT_IMPL(ECSEditorInterleavedGraphicsDataAdapter);
+    R_FRIEND_IMPL(ECSEditorInterleavedGraphicsDataAdapter);
 
     bool ECSEditorInterleavedGraphicsDataAdapter::canWorkWith(BaseComponent* component) const
     {

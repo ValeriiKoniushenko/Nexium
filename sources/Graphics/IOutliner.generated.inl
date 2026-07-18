@@ -15,6 +15,7 @@ template<>
 struct R<Core::IOutliner>
 {
     static constexpr std::string_view Name() { return "IOutliner"; }
+    static constexpr std::string_view FullName() { return "Core::IOutliner"; }
     static constexpr std::string_view ParentScope() { return "Core"; }
     static constexpr std::size_t GetFieldNumbers() { return 1; }
     static constexpr std::vector<RClassField> GetFields() {

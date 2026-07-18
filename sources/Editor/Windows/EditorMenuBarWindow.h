@@ -29,8 +29,11 @@
 
 namespace Core
 {
+    CLASS();
     class EditorMenuBarWindowEWC : public BaseMenuBarEWC
     {
+        R_FRIEND_DECL(EditorMenuBarWindowEWC, Core::BaseMenuBarEWC);
+
         ECS_COMPONENT_DECL(EditorMenuBarWindowEWC, BaseMenuBarEWC);
 
     public:
@@ -52,3 +55,5 @@ namespace Core
         float _simulationButton = 50.f;
     };
 } // namespace Core
+
+#include "EditorMenuBarWindow.generated.h" // added by the code generator. Better don't move it.

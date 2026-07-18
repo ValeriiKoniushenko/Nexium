@@ -33,9 +33,9 @@
             1.0,
             1.0
         ],
-        "_type": "BaseCamera"
+        "_type": "Core::BaseCamera"
     },
     "name": "BaseCamera",
     "tags": "WorldObject",
-    "type": "BaseCamera"
+    "type": "Core::BaseCamera"
 }

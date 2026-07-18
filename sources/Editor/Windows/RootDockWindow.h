@@ -28,8 +28,11 @@
 
 namespace Core
 {
+
+    CLASS();
     class RootDockWindowEWC : public BaseEWC
     {
+        R_FRIEND_DECL(RootDockWindowEWC, Core::BaseEWC);
         ECS_COMPONENT_DECL(RootDockWindowEWC, BaseEWC);
 
     public:
@@ -46,3 +49,5 @@ namespace Core
         void endWindowDraw() override;
     };
 } // namespace Core
+
+#include "RootDockWindow.generated.h" // added by the code generator. Better don't move it.

@@ -37,6 +37,8 @@ using namespace Core::Gui;
 namespace Core
 {
     ECS_COMPONENT_IMPL(NxTextureEditorEWC);
+    R_FRIEND_IMPL(NxTextureEditorEWC);
+
     const char* NxTextureEditorEWC::getIcon()
     {
         return ICON_FA_COG;

@@ -30,11 +30,13 @@
 namespace Core::Gui
 {
     R_FRIEND_IMPL(BaseCombo);
-    R_FRIEND_IMPL(ComboView);
-    R_FRIEND_IMPL(ComboModelBased);
     ECS_COMPONENT_IMPL(BaseCombo);
-    ECS_COMPONENT_IMPL(ComboView);
+
+    R_FRIEND_IMPL(ComboModelBased);
     ECS_COMPONENT_IMPL(ComboModelBased);
+
+    R_FRIEND_IMPL(ComboView);
+    ECS_COMPONENT_IMPL(ComboView);
 
     glm::vec2 BaseCombo::getRealSize() const
     {

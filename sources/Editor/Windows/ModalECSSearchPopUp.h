@@ -40,8 +40,10 @@ namespace Core
         class Button;
     } // namespace Gui
 
+    CLASS();
     class ModalECSSearchPopUpEWC : public BaseEWC
     {
+        R_FRIEND_DECL(ModalECSSearchPopUpEWC, Core::BaseEWC);
         ECS_COMPONENT_DECL(ModalECSSearchPopUpEWC, BaseEWC);
 
     public:
@@ -73,3 +75,5 @@ namespace Core
         bool _hasOpenRequest = false;
     };
 } // namespace Core
+
+#include "ModalECSSearchPopUp.generated.h" // added by the code generator. Better don't move it.

@@ -49,8 +49,10 @@ namespace Core
             = BaseArray<StringAtom, _StringArray_ArrayCellViewerFunc, _StringArray_ViewFetchFunc>;
     } // namespace Gui
 
+    CLASS();
     class ECSBaseComponentAdapter : public ECSEditorMimeAdapter
     {
+        R_FRIEND_DECL(ECSBaseComponentAdapter, Core::ECSEditorMimeAdapter);
         ECS_COMPONENT_DECL(ECSBaseComponentAdapter, ECSEditorMimeAdapter);
 
     public:
@@ -78,3 +80,5 @@ namespace Core
     };
 
 } // namespace Core
+
+#include "BaseComponentAdapter.generated.h" // added by the code generator. Better don't move it.

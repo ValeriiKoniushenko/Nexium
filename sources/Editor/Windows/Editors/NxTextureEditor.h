@@ -45,8 +45,10 @@ namespace Core
 
     } // namespace Gui
 
+    CLASS();
     class NxTextureEditorEWC : public NxEditorBaseEditorEWC
     {
+        R_FRIEND_DECL(NxTextureEditorEWC, Core::NxEditorBaseEditorEWC);
         ECS_COMPONENT_DECL(NxTextureEditorEWC, NxEditorBaseEditorEWC);
 
     public:
@@ -78,3 +80,5 @@ namespace Core
         NXTexture _targetAsset;
     };
 } // namespace Core
+
+#include "NxTextureEditor.generated.h" // added by the code generator. Better don't move it.

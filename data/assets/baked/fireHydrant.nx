@@ -19,7 +19,7 @@
                 "_noTick": false,
                 "children": [],
                 "_name": "FireHydrant_LOD2",
-                "_type": "StaticMesh",
+                "_type": "Core::SceneObj::StaticMesh",
                 "_drawModifiers": [],
                 "_center": [
                     2.920994758605957,
@@ -57,7 +57,7 @@
                 "_noTick": false,
                 "children": [],
                 "_name": "FireHydrant_LOD1",
-                "_type": "StaticMesh",
+                "_type": "Core::SceneObj::StaticMesh",
                 "_drawModifiers": [],
                 "_center": [
                     2.9461212158203125,
@@ -95,7 +95,7 @@
                 "_noTick": false,
                 "children": [],
                 "_name": "FireHydrant_LOD0",
-                "_type": "StaticMesh",
+                "_type": "Core::SceneObj::StaticMesh",
                 "_drawModifiers": [],
                 "_center": [
                     3.0164947509765625,
@@ -130,7 +130,7 @@
             }
         ],
         "_name": "FireHydrant",
-        "_type": "StaticMeshBundle",
+        "_type": "Core::StaticMeshBundle",
         "_isPostDraw": false,
         "_ignoreSelect": false,
         "_origin": [
@@ -155,5 +155,5 @@
         ]
     },
     "name": "FireHydrant",
-    "type": "StaticMeshBundle"
+    "type": "Core::StaticMeshBundle"
 }

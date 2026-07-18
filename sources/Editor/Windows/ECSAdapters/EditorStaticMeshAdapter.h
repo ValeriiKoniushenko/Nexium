@@ -30,8 +30,10 @@
 namespace Core
 {
 
+    CLASS();
     class ECSEditorStaticMeshAdapter : public ECSEditorMimeAdapter
     {
+        R_FRIEND_DECL(Core::ECSEditorStaticMeshAdapter, Core::ECSEditorMimeAdapter);
         ECS_COMPONENT_DECL(ECSEditorStaticMeshAdapter, ECSEditorMimeAdapter);
 
     public:
@@ -49,3 +51,5 @@ namespace Core
     };
 
 } // namespace Core
+
+#include "EditorStaticMeshAdapter.generated.h" // added by the code generator. Better don't move it.

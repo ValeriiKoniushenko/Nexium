@@ -36,6 +36,7 @@ namespace Core
 {
 
     ECS_COMPONENT_IMPL(ECSBaseComponentAdapter);
+    R_FRIEND_IMPL(ECSBaseComponentAdapter);
 
     void ECSBaseComponentAdapter::onApplyAssetData(const nlohmann::json& json)
     {

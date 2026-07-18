@@ -19,7 +19,7 @@
                 "_noTick": false,
                 "_children": [],
                 "_name": "Tree_LOD1",
-                "_type": "StaticMesh",
+                "_type": "Core::SceneObj::StaticMesh",
                 "_drawModifiers": [],
                 "_center": [
                     -2.5890274047851563,
@@ -57,7 +57,7 @@
                 "_noTick": false,
                 "_children": [],
                 "_name": "Tree_LOD1",
-                "_type": "StaticMesh",
+                "_type": "Core::SceneObj::StaticMesh",
                 "_drawModifiers": [],
                 "_center": [
                     -3.5791473388671875,
@@ -95,7 +95,7 @@
                 "_noTick": false,
                 "_children": [],
                 "_name": "Tree_LOD2",
-                "_type": "StaticMesh",
+                "_type": "Core::SceneObj::StaticMesh",
                 "_drawModifiers": [],
                 "_center": [
                     -2.5890274047851563,
@@ -133,7 +133,7 @@
                 "_noTick": false,
                 "_children": [],
                 "_name": "Tree_LOD2",
-                "_type": "StaticMesh",
+                "_type": "Core::SceneObj::StaticMesh",
                 "_drawModifiers": [],
                 "_center": [
                     -3.5791473388671875,
@@ -171,7 +171,7 @@
                 "_noTick": false,
                 "_children": [],
                 "_name": "Tree_LOD0",
-                "_type": "StaticMesh",
+                "_type": "Core::SceneObj::StaticMesh",
                 "_drawModifiers": [],
                 "_center": [
                     -2.5890274047851563,
@@ -209,7 +209,7 @@
                 "_noTick": false,
                 "_children": [],
                 "_name": "Tree_LOD0",
-                "_type": "StaticMesh",
+                "_type": "Core::SceneObj::StaticMesh",
                 "_drawModifiers": [],
                 "_center": [
                     -3.5791473388671875,
@@ -244,7 +244,7 @@
             }
         ],
         "_name": "Tree",
-        "_type": "StaticMeshBundle",
+        "_type": "Core::StaticMeshBundle",
         "_isPostDraw": false,
         "_ignoreSelect": false,
         "_origin": [
@@ -269,5 +269,5 @@
         ]
     },
     "name": "Tree",
-    "type": "StaticMeshBundle"
+    "type": "Core::StaticMeshBundle"
 }

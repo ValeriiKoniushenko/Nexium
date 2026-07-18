@@ -146,7 +146,7 @@ public:
     static_assert(true, "")
 
 #define ECS_COMPONENT_IMPL(ClassName)                                                              \
-    _ECS_COMPONENT_IMPL(ClassName, ;, #ClassName, false)                                           \
+    _ECS_COMPONENT_IMPL(ClassName, ;, R<ClassName>::FullName(), false)                             \
     static_assert(true, "")
 
 //
@@ -836,9 +836,14 @@ namespace Core
         bool _isInitialized = false;
     };
 
-    struct InvalidComponent : public BaseComponent
+    CLASS();
+    class InvalidComponent : public BaseComponent
     {
+        R_FRIEND_DECL(InvalidComponent, Core::BaseComponent);
         ECS_COMPONENT_DECL(InvalidComponent, BaseComponent);
+
+    public:
+        ~InvalidComponent() override = default;
     };
 
     template<class T>

@@ -27,6 +27,8 @@
 namespace Core::Gui
 {
     ECS_COMPONENT_IMPL(Layout);
+    R_FRIEND_IMPL(Layout);
+
     void Layout::setHorizontalAlign(Align align)
     {
         _align = align;
@@ -61,7 +63,6 @@ namespace Core::Gui
     {
         _width.reset();
     }
-    R_FRIEND_IMPL(Core::Gui::Layout)
 
     void Layout::setPaddings(float left, float right, float top, float bottom)
     {

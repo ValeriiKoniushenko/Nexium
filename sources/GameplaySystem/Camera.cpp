@@ -35,8 +35,8 @@
 
 namespace Core
 {
-    R_FRIEND_IMPL(BaseCamera);
     ECS_COMPONENT_IMPL(BaseCamera);
+    R_FRIEND_IMPL(BaseCamera);
 
     const glm::mat4& BaseCamera::getMatrix()
     {

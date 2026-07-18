@@ -37,8 +37,10 @@ namespace Core
 {
     /// Gizmo class
     /// Deprecated due to unstable behavior
+    CLASS();
     class Gizmo : public StaticMeshBundle
     {
+        R_FRIEND_DECL(Core::Gizmo, Core::StaticMeshBundle);
         ECS_COMPONENT_DECL(Gizmo, StaticMeshBundle);
 
     public:

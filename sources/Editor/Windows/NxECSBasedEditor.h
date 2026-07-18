@@ -26,8 +26,8 @@
 
 #include "AssetsManager/ECSAsset.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
-#include "InputDevices/InputManager.h"
 #include "Editors/NxEditorBaseEditor.h"
+#include "InputDevices/InputManager.h"
 
 namespace Core
 {
@@ -41,8 +41,10 @@ namespace Core
 
     } // namespace Gui
 
+    CLASS();
     class ECSEditorMimeAdapter : public BaseComponent
     {
+        R_FRIEND_DECL(ECSEditorMimeAdapter, Core::BaseComponent);
         ECS_COMPONENT_DECL(ECSEditorMimeAdapter, BaseComponent);
 
     public:
@@ -65,8 +67,10 @@ namespace Core
         [[nodiscard]] NXECSAsset getTargetAsset();
     };
 
+    CLASS();
     class NxECSBasedEditorEWC : public NxEditorBaseEditorEWC
     {
+        R_FRIEND_DECL(NxECSBasedEditorEWC, Core::BaseEWC);
         ECS_COMPONENT_DECL(NxECSBasedEditorEWC, NxEditorBaseEditorEWC);
 
     public:
@@ -114,3 +118,5 @@ namespace Core
     };
 
 } // namespace Core
+
+#include "NxECSBasedEditor.generated.h" // added by the code generator. Better don't move it.

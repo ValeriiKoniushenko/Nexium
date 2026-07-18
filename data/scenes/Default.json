@@ -2,7 +2,7 @@
     "_sceneName": "Default",
     "sceneObjects": [
         {
-            "assetType": "Rectangle",
+            "assetType": "Core::SceneObj::Rectangle",
             "name": "BaseRectangle",
             "referenceAsset": "data/assets/BaseRectangle.nx",
             "trans": {
@@ -29,8 +29,8 @@
             }
         },
         {
-            "assetType": "Spectator",
-            "name": "Spectator_1",
+            "assetType": "Core::Spectator",
+            "name": "Core::Spectator_1",
             "referenceAsset": "data/assets/BaseSpectator.nx",
             "trans": {
                 "_origin": [
@@ -39,9 +39,9 @@
                     0.0
                 ],
                 "_position": [
-                    -251.9616241455078,
-                    223.2358856201172,
-                    323.1312561035156
+                    -361.6938171386719,
+                    384.7680358886719,
+                    557.4508056640625
                 ],
                 "_rotation": [
                     31.9765625,
@@ -56,7 +56,7 @@
             }
         },
         {
-            "assetType": "Rectangle",
+            "assetType": "Core::SceneObj::Rectangle",
             "name": "BaseRectangle_0",
             "referenceAsset": "data/assets/BaseRectangle.nx",
             "trans": {

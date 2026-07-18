@@ -35,6 +35,7 @@
 namespace Core
 {
     ECS_COMPONENT_IMPL(ModalECSSearchPopUpEWC);
+    R_FRIEND_IMPL(ModalECSSearchPopUpEWC);
 
     void ModalECSSearchPopUpEWC::open(StringAtom text,
                                       const std::function<void(BaseComponent::Ptr)>& callback)

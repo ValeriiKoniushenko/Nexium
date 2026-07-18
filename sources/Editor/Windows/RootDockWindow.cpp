@@ -29,6 +29,7 @@
 namespace Core
 {
     ECS_COMPONENT_IMPL(RootDockWindowEWC);
+    R_FRIEND_IMPL(RootDockWindowEWC);
 
     namespace
     {

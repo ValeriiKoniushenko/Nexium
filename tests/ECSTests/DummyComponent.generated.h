@@ -15,6 +15,7 @@ template<>
 struct R<DummyComponent>
 {
     static constexpr std::string_view Name() { return "DummyComponent"; }
+    static constexpr std::string_view FullName() { return "DummyComponent"; }
     static constexpr std::string_view ParentScope() { return ""; }
     static constexpr std::size_t GetFieldNumbers() { return 2; }
     static constexpr std::vector<RClassField> GetFields() {
@@ -82,6 +83,7 @@ template<>
 struct R<HardConstructorComponent>
 {
     static constexpr std::string_view Name() { return "HardConstructorComponent"; }
+    static constexpr std::string_view FullName() { return "HardConstructorComponent"; }
     static constexpr std::string_view ParentScope() { return ""; }
     static constexpr std::size_t GetFieldNumbers() { return 0; }
     static constexpr std::vector<RClassField> GetFields() {
@@ -141,6 +143,7 @@ template<>
 struct R<InitSpyComponent>
 {
     static constexpr std::string_view Name() { return "InitSpyComponent"; }
+    static constexpr std::string_view FullName() { return "InitSpyComponent"; }
     static constexpr std::string_view ParentScope() { return ""; }
     static constexpr std::size_t GetFieldNumbers() { return 0; }
     static constexpr std::vector<RClassField> GetFields() {
@@ -200,6 +203,7 @@ template<>
 struct R<Vehicle>
 {
     static constexpr std::string_view Name() { return "Vehicle"; }
+    static constexpr std::string_view FullName() { return "Vehicle"; }
     static constexpr std::string_view ParentScope() { return ""; }
     static constexpr std::size_t GetFieldNumbers() { return 3; }
     static constexpr std::vector<RClassField> GetFields() {
@@ -271,6 +275,7 @@ template<>
 struct R<BaseCar>
 {
     static constexpr std::string_view Name() { return "BaseCar"; }
+    static constexpr std::string_view FullName() { return "BaseCar"; }
     static constexpr std::string_view ParentScope() { return ""; }
     static constexpr std::size_t GetFieldNumbers() { return 2; }
     static constexpr std::vector<RClassField> GetFields() {
@@ -338,6 +343,7 @@ template<>
 struct R<Sedan>
 {
     static constexpr std::string_view Name() { return "Sedan"; }
+    static constexpr std::string_view FullName() { return "Sedan"; }
     static constexpr std::string_view ParentScope() { return ""; }
     static constexpr std::size_t GetFieldNumbers() { return 2; }
     static constexpr std::vector<RClassField> GetFields() {
@@ -405,6 +411,7 @@ template<>
 struct R<BasePart>
 {
     static constexpr std::string_view Name() { return "BasePart"; }
+    static constexpr std::string_view FullName() { return "BasePart"; }
     static constexpr std::string_view ParentScope() { return ""; }
     static constexpr std::size_t GetFieldNumbers() { return 2; }
     static constexpr std::vector<RClassField> GetFields() {
@@ -472,6 +479,7 @@ template<>
 struct R<Engine>
 {
     static constexpr std::string_view Name() { return "Engine"; }
+    static constexpr std::string_view FullName() { return "Engine"; }
     static constexpr std::string_view ParentScope() { return ""; }
     static constexpr std::size_t GetFieldNumbers() { return 3; }
     static constexpr std::vector<RClassField> GetFields() {
@@ -543,6 +551,7 @@ template<>
 struct R<TurboEngine>
 {
     static constexpr std::string_view Name() { return "TurboEngine"; }
+    static constexpr std::string_view FullName() { return "TurboEngine"; }
     static constexpr std::string_view ParentScope() { return ""; }
     static constexpr std::size_t GetFieldNumbers() { return 2; }
     static constexpr std::vector<RClassField> GetFields() {
@@ -610,6 +619,7 @@ template<>
 struct R<Wheel>
 {
     static constexpr std::string_view Name() { return "Wheel"; }
+    static constexpr std::string_view FullName() { return "Wheel"; }
     static constexpr std::string_view ParentScope() { return ""; }
     static constexpr std::size_t GetFieldNumbers() { return 2; }
     static constexpr std::vector<RClassField> GetFields() {
@@ -677,6 +687,7 @@ template<>
 struct R<Interior>
 {
     static constexpr std::string_view Name() { return "Interior"; }
+    static constexpr std::string_view FullName() { return "Interior"; }
     static constexpr std::string_view ParentScope() { return ""; }
     static constexpr std::size_t GetFieldNumbers() { return 1; }
     static constexpr std::vector<RClassField> GetFields() {
@@ -740,6 +751,7 @@ template<>
 struct R<Seat>
 {
     static constexpr std::string_view Name() { return "Seat"; }
+    static constexpr std::string_view FullName() { return "Seat"; }
     static constexpr std::string_view ParentScope() { return ""; }
     static constexpr std::size_t GetFieldNumbers() { return 2; }
     static constexpr std::vector<RClassField> GetFields() {
@@ -807,6 +819,7 @@ template<>
 struct R<Dashboard>
 {
     static constexpr std::string_view Name() { return "Dashboard"; }
+    static constexpr std::string_view FullName() { return "Dashboard"; }
     static constexpr std::string_view ParentScope() { return ""; }
     static constexpr std::size_t GetFieldNumbers() { return 2; }
     static constexpr std::vector<RClassField> GetFields() {
@@ -874,6 +887,7 @@ template<>
 struct R<Electronics>
 {
     static constexpr std::string_view Name() { return "Electronics"; }
+    static constexpr std::string_view FullName() { return "Electronics"; }
     static constexpr std::string_view ParentScope() { return ""; }
     static constexpr std::size_t GetFieldNumbers() { return 1; }
     static constexpr std::vector<RClassField> GetFields() {
@@ -937,6 +951,7 @@ template<>
 struct R<Sensor>
 {
     static constexpr std::string_view Name() { return "Sensor"; }
+    static constexpr std::string_view FullName() { return "Sensor"; }
     static constexpr std::string_view ParentScope() { return ""; }
     static constexpr std::size_t GetFieldNumbers() { return 2; }
     static constexpr std::vector<RClassField> GetFields() {
@@ -1004,6 +1019,7 @@ template<>
 struct R<Camera>
 {
     static constexpr std::string_view Name() { return "Camera"; }
+    static constexpr std::string_view FullName() { return "Camera"; }
     static constexpr std::string_view ParentScope() { return ""; }
     static constexpr std::size_t GetFieldNumbers() { return 2; }
     static constexpr std::vector<RClassField> GetFields() {

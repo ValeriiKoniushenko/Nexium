@@ -29,7 +29,7 @@
 
 namespace Core
 {
-    class GameViewportEWC;
+
     R_FRIEND_IMPL(Spectator);
     ECS_COMPONENT_IMPL(Spectator);
 

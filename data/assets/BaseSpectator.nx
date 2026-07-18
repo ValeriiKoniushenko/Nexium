@@ -6,5 +6,5 @@
     },
     "name": "BaseSpectator",
     "tags": "WorldObject",
-    "type": "Spectator"
+    "type": "Core::Spectator"
 }

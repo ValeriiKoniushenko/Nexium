@@ -67,8 +67,10 @@ namespace Core
         = Gui::BaseArray<aiPostProcessSteps, _AssimpPostProcessArray_ArrayCellViewerFunc,
                          _AssimpPostProcessArray_ViewFetchFunc>;
 
+    CLASS();
     class ECSEditorStaticMeshBundleAdapter : public ECSEditorMimeAdapter
     {
+        R_FRIEND_DECL(ECSEditorStaticMeshBundleAdapter, Core::ECSEditorMimeAdapter);
         ECS_COMPONENT_DECL(ECSEditorStaticMeshBundleAdapter, ECSEditorMimeAdapter);
 
     public:
@@ -110,3 +112,5 @@ namespace Core
     };
 
 } // namespace Core
+
+#include "EditorStaticMeshBundleAdapter.generated.h" // added by the code generator. Better don't move it.

@@ -37,15 +37,13 @@ namespace Core
         class Button;
     } // namespace Gui
 
-    CLASS();
-    class EditorSettingsEWC : public BaseFloatEWC
+    namespace Internal
     {
-        R_FRIEND_DECL(Core::EditorSettingsEWC, Core::BaseFloatEWC);
-        ECS_COMPONENT_DECL(EditorSettingsEWC, BaseFloatEWC);
 
-    public:
+        CLASS();
         class BaseListItem : public Gui::HorizontalLayout
         {
+            R_FRIEND_DECL(BaseListItem, Core::Gui::HorizontalLayout);
             ECS_COMPONENT_DECL(BaseListItem, HorizontalLayout);
 
         public:
@@ -62,8 +60,10 @@ namespace Core
             Gui::Label* _label = nullptr;
         };
 
+        CLASS();
         class KeymapItem : public BaseListItem
         {
+            R_FRIEND_DECL(KeymapItem, Core::Internal::BaseListItem);
             ECS_COMPONENT_DECL(KeymapItem, BaseListItem);
 
         public:
@@ -81,8 +81,10 @@ namespace Core
             Gui::Button* _resetButton = nullptr;
         };
 
+        CLASS();
         class ColorItem : public BaseListItem
         {
+            R_FRIEND_DECL(ColorItem, Core::Internal::BaseListItem);
             ECS_COMPONENT_DECL(ColorItem, BaseListItem);
 
         public:
@@ -96,6 +98,14 @@ namespace Core
         protected:
             Gui::TextInput* _colorInput = nullptr;
         };
+
+    } // namespace Internal
+
+    CLASS();
+    class EditorSettingsEWC : public BaseFloatEWC
+    {
+        R_FRIEND_DECL(Core::EditorSettingsEWC, Core::BaseFloatEWC);
+        ECS_COMPONENT_DECL(EditorSettingsEWC, BaseFloatEWC);
 
     public:
         [[nodiscard]] const char* getIcon() override;
