@@ -163,9 +163,7 @@ namespace Core::Gui
     };
 
     ECS_TEMPLATE_COMPONENT_IMPL(BRACKETS(VecNumInput<Size, Type>),
-                                BRACKETS(std::size_t Size, Utils::IsArithmetic Type)
-
-    )
+                                BRACKETS(std::size_t Size, Utils::IsArithmetic Type))
 
     using Int4Input = VecNumInput<4, int>;
     using Float4Input = VecNumInput<4, float>;

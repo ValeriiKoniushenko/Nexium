@@ -57,7 +57,7 @@ namespace Core::AssetImpl
             {
                 globalLog.errorLog(
                     "[AssetImpl::Factory] Asset type {} already registered. You are trying re-register it. Your action is canceled."_f
-                    << typeid(typename T::implementedAssetType).name());
+                    << R<typename T::implementedAssetType>::FullName());
                 return;
             }
 
@@ -65,7 +65,7 @@ namespace Core::AssetImpl
                 = []() -> std::unique_ptr<ECSAssetImpl> { return std::make_unique<T>(); };
 
             globalLog.infoLog("[AssetImpl::Factory] Asset type {} has registered."_f
-                              << typeid(typename T::implementedAssetType).name());
+                              << R<typename T::implementedAssetType>::FullName());
         }
 
     private:

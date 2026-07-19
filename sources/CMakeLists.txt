@@ -35,7 +35,7 @@ target_sources(${TARGET_NAME}
     PRIVATE
     ${CPP_SOURCES}
     PUBLIC
-    ${FILTERED_HEADERS}
+    ${CPP_HEADERS}
 )
 
 add_dependencies(${TARGET_NAME} CodeGenerator)

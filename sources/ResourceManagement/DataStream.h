@@ -179,23 +179,6 @@ namespace Core
         [[nodiscard]] virtual Rules* getRules() const noexcept { return nullptr; }
     };
 
-    struct IDataStreamBridge : public IDataUpdateBridge
-    {
-        [[nodiscard]] bool hasCache() const;
-
-        void writeToCache();
-        void readFromCache();
-        void tryReadFromCache();
-
-        void clearCache();
-
-        [[nodiscard]] std::filesystem::path getTargetCachePath() const;
-        [[nodiscard]] std::filesystem::path getTargetCacheDirPath() const;
-
-    protected:
-        [[nodiscard]] virtual std::filesystem::path getCacheDir() const { return {}; }
-    };
-
     class DataStream
     {
     public:
