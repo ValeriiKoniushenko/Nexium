@@ -33,6 +33,7 @@ namespace Core
 {
     namespace Gui
     {
+        class ComboModelBased;
         class CheckBox;
         class TextInput;
 
@@ -58,6 +59,11 @@ namespace Core
         using Float2Input = VecNumInput<2, float>;
 
     } // namespace Gui
+
+    namespace SceneObj
+    {
+        class Rectangle;
+    }
 
     class Transformable;
     class StaticMeshBundle;
@@ -120,6 +126,8 @@ namespace Core
 
         void tryDrawBaseCamera(BaseCamera* comp);
 
+        void tryDrawRectangleComponent(SceneObj::Rectangle* comp);
+
     private:
         DelegateSubscriberPoolGuard _subscriptionPool;
 
@@ -178,6 +186,10 @@ namespace Core
         Gui::Float3Input* _transformRotation = nullptr;
         Gui::Float3Input* _transformScale = nullptr;
         Gui::Float3Input* _transformOrigin = nullptr;
+
+        // SceneObj::Rectangle section:
+        Gui::VerticalLayout _rectLayout;
+        Gui::ComboModelBased* _rectComboRect = nullptr;
 
         AbstractComponent* _target = nullptr;
     };

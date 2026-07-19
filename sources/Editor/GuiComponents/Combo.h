@@ -115,6 +115,8 @@ namespace Core::Gui
         [[nodiscard]] std::size_t getCurrentIndex() const noexcept { return _currentIndex; }
         [[nodiscard]] const void* getCurrentData() const noexcept { return _currentData; }
 
+        [[nodiscard]] StringAtom tryGetCurrentDataAsString() const;
+
     public: // Delegates
         Delegate<void(const void*)>::Ptr onSelect = Delegate<void(const void*)>::Create();
 

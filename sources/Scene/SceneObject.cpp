@@ -43,7 +43,8 @@ namespace Core
         return { .name = (name.empty() ? "None" : name),
                  .trans = static_cast<const Transformable&>(*this),
                  .assetType = getComponentType(),
-                 .referenceAsset = _referencedAsset };
+                 .referenceAsset = _referencedAsset,
+                 .typeSpecificData = getTypeSpecificSceneDataAsJson() };
     }
 
     Tag SceneObject::getTags() const
@@ -51,7 +52,7 @@ namespace Core
         return Tag_WorldObject;
     }
 
-    StringAtom SceneObject::stringify() const
+    StringAtom SceneObject::shortStringify() const
     {
         auto name = getComponentName();
         if (name.isEmpty())
@@ -119,6 +120,15 @@ namespace Core
 #endif
     }
 
+    nlohmann::json SceneObject::getTypeSpecificSceneDataAsJson() const
+    {
+        return {};
+    }
+
+    void SceneObject::applyTypeSpecificSceneData(const nlohmann::json& data)
+    {
+    }
+
     void SceneObject::makeTransformableTreeDirty()
     {
         forEach(
@@ -157,6 +167,7 @@ namespace Core
         j["trans"] = R<Transformable>::Serialize(v.trans).getData();
         j["assetType"] = v.assetType;
         j["referenceAsset"] = v.referenceAsset;
+        j["typeSpecificData"] = v.typeSpecificData;
     }
 
     void from_json(const nlohmann::json& j, SceneState& v)
@@ -165,6 +176,10 @@ namespace Core
         R<Transformable>::Deserialize({ j.at("trans") }, v.trans);
         v.assetType = j.at("assetType").get<StringAtom>();
         v.referenceAsset = StringAtom::Intern(j.at("referenceAsset").get<StringAtom>());
+        if (j.contains("typeSpecificData"))
+        {
+            v.typeSpecificData = j.at("typeSpecificData");
+        }
     }
 
 } // namespace Core

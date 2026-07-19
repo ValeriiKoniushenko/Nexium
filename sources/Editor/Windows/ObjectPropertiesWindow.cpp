@@ -37,6 +37,7 @@
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Graphics/Primitives/StaticMesh.h"
 #include "Graphics/Primitives/StaticMeshBundle.h"
+#include "Scene/Rectangle.h"
 
 using namespace Core;
 using namespace Core::Gui;
@@ -301,6 +302,7 @@ namespace Core
         auto* asInterleavedGraphicsData = dynamic_cast<InterleavedGraphicsData*>(_target);
         auto* asStaticMesh = dynamic_cast<StaticMesh*>(_target);
         auto* asBaseCamera = dynamic_cast<BaseCamera*>(_target);
+        auto* asRectangleComponent = dynamic_cast<SceneObj::Rectangle*>(_target);
 
         tryDrawBaseComponent(asBaseComponent);
         tryDrawTransformable(asTransformable, asBaseComponent);
@@ -308,6 +310,7 @@ namespace Core
         tryDrawStaticMesh(asStaticMesh);
         tryDrawInterleavedGraphicsData(asInterleavedGraphicsData);
         tryDrawBaseCamera(asBaseCamera);
+        tryDrawRectangleComponent(asRectangleComponent);
         tryDrawBaseComponentExtra(asBaseComponent);
     }
 
@@ -454,6 +457,35 @@ namespace Core
 
             out.attachChild(CreateHLayoutAndLabel("Origin", false, defaultLabelWidth));
             _transformOrigin = out.getLastChildAs<HLayout>()->addChildComponent<Float3Input>();
+        }
+
+        // ================= SceneObj::Rectangle ====================
+        {
+            auto& out = _rectLayout;
+
+            out.attachChild(CreateHLayoutAndLabel("Texture", false, defaultLabelWidth));
+            _rectComboRect = out.getLastChildAs<HLayout>()->addChildComponent<ComboModelBased>();
+            _rectComboRect->setFlex(Gui::Flex::FlexWidth);
+            _rectComboRect->setDataProvider(
+                [](std::size_t i, StringAtom& out) -> void*
+                {
+                    out = GetAssetsManager().getTextureAtlas().getRectsAsVector().at(i);
+                    return nullptr;
+                });
+            _rectComboRect->setSizeProvider(
+                []() { return GetAssetsManager().getTextureAtlas().getRectsCount(); });
+            _subscriptionPool << _rectComboRect->onSelect->subscribeAndGetID(
+                [t = WeakPtr(this)](const void*)
+                {
+                    if (t)
+                    {
+                        if (auto obj = t.tryLoad())
+                        {
+                            dynamic_cast<SceneObj::Rectangle*>(obj->_target)
+                                ->setTexture(obj->_rectComboRect->tryGetCurrentDataAsString());
+                        }
+                    }
+                });
         }
     }
 
@@ -791,6 +823,28 @@ namespace Core
             }
 
             _baseCameraLayout.tick(dt);
+        }
+    }
+
+    void ObjectPropertiesWindowEWC::tryDrawRectangleComponent(SceneObj::Rectangle* comp)
+    {
+        if (comp && Gui::CollapsingHeader("Rectangle", ImGuiTreeNodeFlags_DefaultOpen))
+        {
+            const float dt = GetWorld().timeDelta;
+
+            if (_rectComboRect)
+            {
+                // TODO: super slow, fix it.
+                auto textures = GetAssetsManager().getTextureAtlas().getRectsAsVector();
+                if (auto it = std::ranges::find(textures, comp->getTextureName());
+                    it != textures.end())
+                {
+                    const auto ind = it - textures.begin();
+                    _rectComboRect->setCurrentIndex(ind);
+                }
+            }
+
+            _rectLayout.tick(dt);
         }
     }
 

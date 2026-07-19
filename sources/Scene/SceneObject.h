@@ -39,6 +39,7 @@ namespace Core
         Transformable trans;
         StringAtom assetType;
         StringAtom referenceAsset;
+        nlohmann::json typeSpecificData;
     };
 
     void to_json(nlohmann::json& j, const SceneState& v);
@@ -57,11 +58,7 @@ namespace Core
         ECS_COMPONENT_DECL(SceneObject, BaseComponent);
 
     public:
-        ~SceneObject() override
-        {
-            ///
-            int i = 123;
-        }
+        ~SceneObject() override = default;
         SceneObject(const SceneObject&) = default;
         SceneObject(SceneObject&&) = default;
         SceneObject& operator=(const SceneObject&) = default;
@@ -82,7 +79,7 @@ namespace Core
 
         [[nodiscard]] Tag getTags() const override;
 
-        [[nodiscard]] virtual StringAtom stringify() const;
+        [[nodiscard]] virtual StringAtom shortStringify() const;
 
         void recalculateMatrices(const glm::mat4& mat = glm::mat4(1.f)) override;
 
@@ -95,6 +92,11 @@ namespace Core
         [[nodiscard]] bool hasReferencedAsset() const noexcept;
         [[nodiscard]] StringAtom getReferencedAsset() const;
         void _setReferencedAsset(const StringAtom& logicPath);
+
+        [[nodiscard]] virtual nlohmann::json getTypeSpecificSceneDataAsJson() const;
+        virtual void applyTypeSpecificSceneData(const nlohmann::json& data);
+
+        virtual void onAddedToScene() {}
 
     protected:
         void makeTransformableTreeDirty();

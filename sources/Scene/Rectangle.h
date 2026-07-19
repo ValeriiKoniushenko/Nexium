@@ -38,7 +38,15 @@ namespace Core::SceneObj
     public:
         void draw(BaseCamera& camera) override;
 
+        [[nodiscard]] StringAtom getTextureName() const { return _textureName; }
+        void setTexture(const StringAtom& value) { _textureName = value; }
+
+        [[nodiscard]] nlohmann::json getTypeSpecificSceneDataAsJson() const override;
+        void applyTypeSpecificSceneData(const nlohmann::json& data) override;
+
     protected:
+        FIELD();
+        StringAtom _textureName = "red.png"_atom;
     };
 
 } // namespace Core::SceneObj

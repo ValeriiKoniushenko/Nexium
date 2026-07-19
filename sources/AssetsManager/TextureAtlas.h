@@ -69,6 +69,10 @@ namespace Core
             return _rects;
         }
 
+        [[nodiscard]] std::vector<StringAtom> getRectsAsVector() const;
+
+        [[nodiscard]] std::size_t getRectsCount() const noexcept { return _rects.size(); }
+
     private:
         void iterateOverFolderAndFetchImages(const std::filesystem::path& atlasFolder,
                                              std::vector<Image>& images);

@@ -39,6 +39,17 @@ using rect_type = output_rect_t<spaces_type>;
 
 namespace Core
 {
+
+    std::vector<StringAtom> TextureAtlas::getRectsAsVector() const
+    {
+        std::vector<StringAtom> arr;
+        arr.reserve(_rects.size());
+        std::ranges::transform(_rects, std::back_inserter(arr),
+                               [](const auto& pair) { return pair.first; });
+
+        return arr;
+    }
+
     void TextureAtlas::iterateOverFolderAndFetchImages(const std::filesystem::path& atlasFolder,
                                                        std::vector<Image>& images)
     {

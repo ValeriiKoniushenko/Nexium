@@ -81,13 +81,28 @@ namespace Core::SceneObj
 
         atlas.bind();
 
-        auto red = atlas.getRect("red.png"_atom);
+        const auto rect = atlas.getRect(_textureName);
 
-        shader->setUniform("uUVOffset"_atom, red.getLeftTop());
-        shader->setUniform("uUVSize"_atom, red.getRightBottom() - red.getLeftTop());
+        shader->setUniform("uUVOffset"_atom, rect.getLeftTop());
+        shader->setUniform("uUVSize"_atom, rect.getRightBottom() - rect.getLeftTop());
         shader->setUniform("uModel"_atom, getModelMatrix());
 
         gcd.directDraw();
+    }
+
+    nlohmann::json Rectangle::getTypeSpecificSceneDataAsJson() const
+    {
+        auto out = SceneObject::getTypeSpecificSceneDataAsJson();
+        out["_textureName"] = _textureName;
+        return out;
+    }
+
+    void Rectangle::applyTypeSpecificSceneData(const nlohmann::json& data)
+    {
+        if (data.contains("_textureName"))
+        {
+            _textureName = StringAtom::Intern(data.at("_textureName").get<StringAtom>());
+        }
     }
 
 } // namespace Core::SceneObj

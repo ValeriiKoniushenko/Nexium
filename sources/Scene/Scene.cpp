@@ -159,6 +159,8 @@ namespace Core
         object->initialize();
 
         onObjectAdded->trigger(object);
+
+        object->onAddedToScene();
     }
 
     void Scene::addUniqueObjectToScene(SceneObject::Ptr object)
@@ -178,7 +180,7 @@ namespace Core
     {
         internal_addObjectToScene(object.get());
 
-        infoLog("Object '{}' was spawned at the scene: '{}'"_f << object->stringify()
+        infoLog("Object '{}' was spawned at the scene: '{}'"_f << object->shortStringify()
                                                                << _sceneName);
     }
 
@@ -203,7 +205,7 @@ namespace Core
 
         internal_addObjectToScene(obj.get());
 
-        infoLog("Blueprint's object '{}' was spawned at the scene: '{}'"_f << obj->stringify()
+        infoLog("Blueprint's object '{}' was spawned at the scene: '{}'"_f << obj->shortStringify()
                                                                            << _sceneName);
     }
 
@@ -318,6 +320,7 @@ namespace Core
                 continue;
             }
 
+            sceneObj->applyTypeSpecificSceneData(states.typeSpecificData);
             sceneObj->setTransformations(states.trans);
             sceneObj->_setReferencedAsset(states.referenceAsset);
 

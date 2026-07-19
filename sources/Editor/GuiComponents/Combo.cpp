@@ -93,7 +93,6 @@ namespace Core::Gui
     }
 
     void ComboModelBased::setDataProvider(
-
         const std::function<const void*(std::size_t, StringAtom&)>& callback)
     {
         _dataProvider = callback;
@@ -112,6 +111,14 @@ namespace Core::Gui
             StringAtom item;
             _currentData = _dataProvider(_currentIndex, item);
         }
+    }
+
+    StringAtom ComboModelBased::tryGetCurrentDataAsString() const
+    {
+        const auto size = _sizeProvider();
+        StringAtom item;
+        (void)_dataProvider(_currentIndex, item);
+        return item;
     }
 
     void ComboModelBased::onDraw()

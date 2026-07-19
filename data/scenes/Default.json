@@ -2,7 +2,7 @@
     "_sceneName": "Default",
     "sceneObjects": [
         {
-            "assetType": "Core::SceneObj::Rectangle",
+            "assetType": "Rectangle",
             "name": "BaseRectangle",
             "referenceAsset": "data/assets/BaseRectangle.nx",
             "trans": {
@@ -26,11 +26,14 @@
                     1.0,
                     1.0
                 ]
+            },
+            "typeSpecificData": {
+                "_textureName": "yellow.jpg"
             }
         },
         {
-            "assetType": "Core::Spectator",
-            "name": "Core::Spectator_1",
+            "assetType": "Spectator",
+            "name": "Spectator_1",
             "referenceAsset": "data/assets/BaseSpectator.nx",
             "trans": {
                 "_origin": [
@@ -39,13 +42,13 @@
                     0.0
                 ],
                 "_position": [
-                    29.800390243530273,
-                    376.314208984375,
-                    -448.0352783203125
+                    -189.1638946533203,
+                    118.3765869140625,
+                    286.13946533203125
                 ],
                 "_rotation": [
-                    35.15625,
-                    194.091796875,
+                    16.51953125,
+                    17.439453125,
                     0.0
                 ],
                 "_scale": [
@@ -53,10 +56,11 @@
                     1.0,
                     1.0
                 ]
-            }
+            },
+            "typeSpecificData": null
         },
         {
-            "assetType": "Core::SceneObj::Rectangle",
+            "assetType": "Rectangle",
             "name": "BaseRectangle_0",
             "referenceAsset": "data/assets/BaseRectangle.nx",
             "trans": {
@@ -80,33 +84,9 @@
                     1.0,
                     1.0
                 ]
-            }
-        },
-        {
-            "assetType": "Core::SceneObj::Rectangle",
-            "name": "BaseRectangle_1",
-            "referenceAsset": "data/assets/BaseRectangle.nx",
-            "trans": {
-                "_origin": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "_position": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "_rotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "_scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
+            },
+            "typeSpecificData": {
+                "_textureName": "grass.jpeg"
             }
         }
     ]
