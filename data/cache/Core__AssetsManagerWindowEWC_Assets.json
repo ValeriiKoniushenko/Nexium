@@ -2,11 +2,11 @@
     "_children": null,
     "_innerPosition": [
         16.0,
-        698.0
+        1048.0
     ],
     "_innerSize": {
         "height": 305.0,
-        "width": 1459.0
+        "width": 2099.0
     },
     "_isEnabled": true,
     "_isFitContent": false,
@@ -18,15 +18,15 @@
     "_noTick": false,
     "_oldSize": {
         "height": 345.0,
-        "width": 1475.0
+        "width": 2115.0
     },
     "_position": [
         8.0,
-        666.0
+        1016.0
     ],
     "_size": {
         "height": 345.0,
-        "width": 1475.0
+        "width": 2115.0
     },
     "_type": "Core::AssetsManagerWindowEWC"
 }

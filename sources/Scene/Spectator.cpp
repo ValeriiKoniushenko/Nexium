@@ -84,7 +84,7 @@ namespace Core
                             auto mlt
                                 = obj->speed
                                   / (Keyboard::IsKeyPressed(Keyboard::Key::Left_Shift) ? 8.f : 1.f);
-                            obj->moveForward(offset.y * mlt * gGameInstance->world.getTimeDelta());
+                            obj->moveForward(-offset.y * mlt * gGameInstance->world.getTimeDelta());
                         }
                     }
                 }

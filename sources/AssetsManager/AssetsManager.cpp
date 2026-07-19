@@ -24,14 +24,15 @@
 
 #include "AssetsManager.h"
 
-#include "Editor/Windows/ImageViewer.h"
-#include "Editor/Windows/NxECSBasedEditor.h"
 #include "Editor/Windows/Editors/NxTextureEditor.h"
 #include "Editor/Windows/Editors/TextEditor.h"
+#include "Editor/Windows/ImageViewer.h"
+#include "Editor/Windows/NxECSBasedEditor.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Misc/Configs.h"
 #include "ModuleInfo.h"
 
+#include <algorithm>
 #include <array>
 #include <memory>
 
@@ -601,7 +602,8 @@ namespace Core
     void AssetsManager::OpenPathFromOSExplorer(const fs::path& path)
     {
 #ifdef _WIN32
-        const std::string command = "explorer \"" + path.generic_string() + "\"";
+        std::string command = "explorer \"" + path.generic_string() + "\"";
+        std::replace(command.begin(), command.end(), '/', '\\');
 #elif __APPLE__
         const std::string command = "open \"" + path.generic_string() + "\"";
 #else
