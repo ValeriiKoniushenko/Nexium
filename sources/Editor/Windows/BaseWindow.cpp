@@ -101,11 +101,6 @@ namespace Core
         return getComponentType() + "_" + normName;
     }
 
-    std::filesystem::path BaseEWC::getCacheDir() const
-    {
-        return Config::Path::editorConfigDir;
-    }
-
     //
     //    ______                   ______  _                _
     //    | ___ \                  |  ___|| |              | |

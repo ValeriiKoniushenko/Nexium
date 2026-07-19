@@ -36,6 +36,11 @@ namespace fs = std::filesystem;
 namespace Core
 {
 
+    std::filesystem::path IDataIO::getCacheDir() const
+    {
+        return Config::Path::cacheDir;
+    }
+
     void CacheSystem::write(const IDataIO& data, const nlohmann::json& json)
     {
         if (!createCacheDirIfNotExist(data))
@@ -77,7 +82,13 @@ namespace Core
 
     std::filesystem::path CacheSystem::getPath(const IDataIO& data) const
     {
-        return getCachePath(data) / (data.getCacheHash().toStdString() + ".json");
+        std::string out;
+        for (auto c : data.getCacheHash().toStdString())
+        {
+            out += (std::isalnum(c) || c == '_') ? c : '_';
+        }
+
+        return getCachePath(data) / (out + ".json");
     }
 
     std::filesystem::path CacheSystem::getCachePath(const IDataIO& data) const

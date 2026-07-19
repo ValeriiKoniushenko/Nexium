@@ -1,0 +1,36 @@
+{
+    "_children": [
+        {
+            "_children": null,
+            "_isEnabled": true,
+            "_name": "",
+            "_noTick": false,
+            "_type": "Core::ECSBaseComponentAdapter"
+        },
+        {
+            "_children": null,
+            "_isEnabled": true,
+            "_name": "",
+            "_noTick": false,
+            "_type": "Core::ECSEditorActorAdapter"
+        },
+        {
+            "_children": null,
+            "_isEnabled": false,
+            "_name": "",
+            "_noTick": false,
+            "_type": "Core::ECSEditorStaticMeshBundleAdapter"
+        },
+        {
+            "_children": null,
+            "_isEnabled": false,
+            "_name": "",
+            "_noTick": false,
+            "_type": "Core::ECSEditorInterleavedGraphicsDataAdapter"
+        }
+    ],
+    "_isEnabled": true,
+    "_name": " Assets editor",
+    "_noTick": false,
+    "_type": "Core::NxECSBasedEditorEWC"
+}

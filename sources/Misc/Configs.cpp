@@ -33,6 +33,7 @@ namespace Core::Config
         const std::filesystem::path gameConfigModel3DsDir = "model3ds";
         const std::filesystem::path configDir = "config";
         const std::filesystem::path editorConfigDir = "editor";
+        const std::filesystem::path cacheDir = "cache";
 
         const std::filesystem::path data = projectAbsPath / "data";
         const std::filesystem::path assets = data / "assets";

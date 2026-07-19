@@ -1,0 +1,32 @@
+{
+    "_children": null,
+    "_innerPosition": [
+        0.0,
+        0.0
+    ],
+    "_innerSize": {
+        "height": 0.0,
+        "width": 0.0
+    },
+    "_isEnabled": false,
+    "_isFitContent": false,
+    "_minWindowSize": {
+        "height": 200.0,
+        "width": 200.0
+    },
+    "_name": " NX texture editor",
+    "_noTick": false,
+    "_oldSize": {
+        "height": -1.0,
+        "width": -1.0
+    },
+    "_position": [
+        0.0,
+        0.0
+    ],
+    "_size": {
+        "height": 0.0,
+        "width": 0.0
+    },
+    "_type": "Core::NxTextureEditorEWC"
+}

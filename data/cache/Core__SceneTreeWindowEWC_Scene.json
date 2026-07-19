@@ -1,0 +1,32 @@
+{
+    "_children": null,
+    "_innerPosition": [
+        16.0,
+        64.0
+    ],
+    "_innerSize": {
+        "height": 592.0,
+        "width": 352.0
+    },
+    "_isEnabled": true,
+    "_isFitContent": false,
+    "_minWindowSize": {
+        "height": 200.0,
+        "width": 200.0
+    },
+    "_name": " Scene",
+    "_noTick": false,
+    "_oldSize": {
+        "height": 632.0,
+        "width": 368.0
+    },
+    "_position": [
+        8.0,
+        32.0
+    ],
+    "_size": {
+        "height": 632.0,
+        "width": 368.0
+    },
+    "_type": "Core::SceneTreeWindowEWC"
+}

@@ -52,7 +52,6 @@ namespace Core
         void requestFocus() noexcept;
 
         [[nodiscard]] StringAtom getCacheHash() const override;
-        [[nodiscard]] std::filesystem::path getCacheDir() const override;
 
     protected:
         virtual void onOpen() {}

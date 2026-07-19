@@ -49,6 +49,7 @@ namespace Core::Config
         extern const std::filesystem::path gameConfigModel3DsDir;
         extern const std::filesystem::path configDir;
         extern const std::filesystem::path editorConfigDir;
+        extern const std::filesystem::path cacheDir;
 
         extern const std::filesystem::path data;
         extern const std::filesystem::path assets;

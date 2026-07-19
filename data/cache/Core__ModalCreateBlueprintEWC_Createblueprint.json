@@ -1,0 +1,7 @@
+{
+    "_children": null,
+    "_isEnabled": false,
+    "_name": "Create blueprint",
+    "_noTick": false,
+    "_type": "Core::ModalCreateBlueprintEWC"
+}

@@ -1,0 +1,7 @@
+{
+    "_children": null,
+    "_isEnabled": false,
+    "_name": "Assets searcher",
+    "_noTick": false,
+    "_type": "Core::ModalAssetsSearchPopUpEWC"
+}

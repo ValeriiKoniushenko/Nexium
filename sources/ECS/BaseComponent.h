@@ -595,9 +595,6 @@ namespace Core
         [[nodiscard]] bool isDescendantOf(const BaseComponent* p) const noexcept;
         [[nodiscard]] bool IsSelfOrDescendantOf(const BaseComponent* p) const noexcept;
 
-        /// This method will be called automatically. Don't call it directly.
-        void onTick(float delta) override;
-
         /// Call this function directly only if you sure in it.
         /// It should be called only once per one component.
         virtual void initialize();
@@ -785,6 +782,9 @@ namespace Core
                              const RLogsCollector& logs) const override;
 
     protected:
+        /// This method will be called automatically. Don't call it directly.
+        void onTick(float delta) override;
+
         virtual bool addChildValidator(BaseComponent* newChild) { return true; }
 
         virtual void onAddChild(BaseComponent* newChild) {}

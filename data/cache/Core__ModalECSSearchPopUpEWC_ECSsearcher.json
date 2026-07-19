@@ -1,0 +1,7 @@
+{
+    "_children": null,
+    "_isEnabled": false,
+    "_name": "ECS searcher",
+    "_noTick": false,
+    "_type": "Core::ModalECSSearchPopUpEWC"
+}

@@ -48,7 +48,7 @@ namespace Core
         IDataIO& operator=(IDataIO&&) = default;
         virtual ~IDataIO() = default;
 
-        [[nodiscard]] virtual std::filesystem::path getCacheDir() const { return "cache"; };
+        [[nodiscard]] virtual std::filesystem::path getCacheDir() const;
         [[nodiscard]] virtual StringAtom getCacheHash() const = 0;
     };
 
@@ -84,12 +84,13 @@ namespace Core
                 s.getData() = nlohmann::json::parse(
                     [this, &data]() -> std::string
                     {
-                        std::ifstream ifs(getPath(data));
+                        auto path = getPath(data);
+                        std::ifstream ifs(path);
                         if (!ifs)
                         {
-                            errorLog("Can't read cache for this object {}. Path: {}. Details: {}"_f
-                                     << data.getCacheHash() << getPath(data)
-                                     << std::strerror(errno));
+                            warnLog("Can't read cache for this object {}. Path: {}. Details: {}"_f
+                                    << data.getCacheHash() << getPath(data)
+                                    << std::strerror(errno));
                             return {};
                         }
 
@@ -108,14 +109,13 @@ namespace Core
             }
             catch (std::exception& ex)
             {
-                errorLog("Can't read the object from cache: {} {}. Details: {}"_f
-                         << data.getCacheDir().generic_string() << data.getCacheHash()
-                         << ex.what());
+                warnLog("Can't read the object from cache: {} {}. Details: {}"_f
+                        << data.getCacheDir().generic_string() << data.getCacheHash() << ex.what());
             }
             catch (...)
             {
-                errorLog("Can't read the object from cache: {} {}. Due to unknown reasons."_f
-                         << data.getCacheDir().generic_string() << data.getCacheHash());
+                warnLog("Can't read the object from cache: {} {}. Due to unknown reasons."_f
+                        << data.getCacheDir().generic_string() << data.getCacheHash());
             }
         }
 
