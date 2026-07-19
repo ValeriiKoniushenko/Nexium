@@ -830,7 +830,7 @@ namespace Core
     {
         if (comp && Gui::CollapsingHeader("Rectangle", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            const float dt = GetWorld().timeDelta;
+            const float dt = GetWorld().getTimeDelta();
 
             if (_rectComboRect)
             {
