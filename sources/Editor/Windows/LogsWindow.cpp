@@ -290,35 +290,4 @@ namespace Core
     {
     }
 
-    /*void LogsWindowEWC::ioFieldsUpdate(DataStream& out)
-    {
-        if (Verify(_searchInput))
-        {
-            std::string out = _searchInput->getInputtedData();
-            stream.field("filter", out);
-            _searchInput->setInputtedData(out);
-        }
-        if (Verify(_regexModeButton))
-        {
-            bool out = _regexModeButton->isActive();
-            stream.field("regexMode", out);
-            _regexModeButton->setActive(out);
-        }
-
-        stream.nesting("severityFilters",
-                       [this](DataStream& nested)
-                       {
-                           for (auto [severity, ptr] : _levelFilter)
-                           {
-                               if (Verify(ptr))
-                               {
-                                   bool out = ptr->isActive();
-                                   nested.field(spdlog::level::to_string_view(severity).data(),
-                                                out);
-                                   ptr->setActive(out);
-                               }
-                           }
-                       });
-    }*/
-
 } // namespace Core

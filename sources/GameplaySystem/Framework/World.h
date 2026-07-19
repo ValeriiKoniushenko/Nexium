@@ -33,14 +33,29 @@
 
 namespace Core
 {
+
+    CLASS();
     struct LightningProps : public IDataIO
     {
+        R_FRIEND(LightningProps);
+
+        FIELD();
         float ambientStrength = 1.f;
+
+        FIELD();
         float minLightStrength = 0.2f;
+
+        FIELD();
         float specularStrength = 0.5f;
+
+        FIELD();
         float specularPow = 32.f;
+
+        FIELD();
         glm::vec3 sunDirection = glm::vec3(0.5f);
-        NormColor3 color = NormColor3(1.f);
+
+        FIELD();
+        Core::NormColor3 color = Core::NormColor3(1.f);
 
         [[nodiscard]] std::filesystem::path getCacheDir() const override;
         [[nodiscard]] StringAtom getCacheHash() const override;
@@ -61,8 +76,10 @@ namespace Core
         LevelData levelData;
         StringAtom worldName = "Default";
 
-    protected:
         [[nodiscard]] std::filesystem::path getCacheDir() const override;
         [[nodiscard]] StringAtom getCacheHash() const override;
     };
+
 } // namespace Core
+
+#include "World.generated.h" // added by the code generator. Better don't move it.

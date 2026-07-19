@@ -39,18 +39,6 @@ namespace Core
         return "LightningProps";
     }
 
-    /*void LightningProps::ioFieldsUpdate(DataStream& out)
-    {
-        auto stream = out.dedicatedNesting("LightningProps");
-
-        stream.field("color", color);
-        stream.field("minLightStrength", minLightStrength);
-        stream.field("ambientStrength", ambientStrength);
-        stream.field("specularStrength", specularStrength);
-        stream.field("specularPow", specularPow);
-        stream.field("sunDirection", sunDirection);
-    }*/
-
     spdlog::logger* World::getLogger() const
     {
         return Framework::getLogger();
@@ -65,12 +53,5 @@ namespace Core
     {
         return worldName;
     }
-
-    /*void World::ioFieldsUpdate(DataStream& out)
-    {
-        auto stream = out.dedicatedNesting("World");
-
-        stream.field("worldName", worldName, "Default"_dyn);
-    }*/
 
 } // namespace Core

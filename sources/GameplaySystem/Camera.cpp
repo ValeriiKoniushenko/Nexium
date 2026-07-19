@@ -165,15 +165,4 @@ namespace Core
         }
     }
 
-    /*void BaseCamera::ioFieldsUpdate(DataStream& out)
-    {
-        Actor::ioFieldsUpdate(out);
-
-        auto stream = out.dedicatedNesting("BaseCamera");
-
-        stream.field("frameSize", _frameSize);
-        stream.field("fov", _fov);
-        stream.field("far", _far);
-        stream.field("near", _near);
-    }*/
 } // namespace Core

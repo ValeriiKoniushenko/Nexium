@@ -28,7 +28,6 @@
 #include "AssetsManager/SkyboxAsset.h"
 #include "Core/Delegate.h"
 #include "Grid.h"
-#include "ResourceManagement/DataStream.h"
 #include "SceneObject.h"
 
 #include <vector>
