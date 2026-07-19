@@ -73,7 +73,7 @@ namespace Core::SceneObj
         }();
         tryToRecalculateMatrices();
 
-        auto& atlas = GetAssetsManager().getTextureAtlas();
+        auto& atlas = GetAssetsManager().getAtlas(_atlasName);
         auto* shader = GetShaderManager().getShaderProgram("2d_rect"_atom);
         shader->use();
         shader->setUniform("uTexture"_atom, 0);
@@ -94,6 +94,7 @@ namespace Core::SceneObj
     {
         auto out = SceneObject::getTypeSpecificSceneDataAsJson();
         out["_textureName"] = _textureName;
+        out["_atlasName"] = _atlasName;
         return out;
     }
 
@@ -102,6 +103,11 @@ namespace Core::SceneObj
         if (data.contains("_textureName"))
         {
             _textureName = StringAtom::Intern(data.at("_textureName").get<StringAtom>());
+        }
+
+        if (data.contains("_atlasName"))
+        {
+            _atlasName = StringAtom::Intern(data.at("_atlasName").get<StringAtom>());
         }
     }
 

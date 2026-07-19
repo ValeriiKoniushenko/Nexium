@@ -463,17 +463,70 @@ namespace Core
         {
             auto& out = _rectLayout;
 
-            out.attachChild(CreateHLayoutAndLabel("Texture", false, defaultLabelWidth));
+            out.attachChild(CreateHLayoutAndLabel("Atlas", false, defaultLabelWidth));
+            _rectComboAtlas = out.getLastChildAs<HLayout>()->addChildComponent<ComboModelBased>();
+            _rectComboAtlas->setFlex(Gui::Flex::FlexWidth);
+            _rectComboAtlas->setDataProvider(
+                [](std::size_t i, StringAtom& out) -> void*
+                {
+                    out = GetAssetsManager().getAtlasesAsVector().at(i);
+                    return nullptr;
+                });
+            _rectComboAtlas->setSizeProvider(
+                []() { return GetAssetsManager().getAtlasesCount(); });
+            _subscriptionPool << _rectComboAtlas->onSelect->subscribeAndGetID(
+                [t = WeakPtr(this)](const void*)
+                {
+                    if (t)
+                    {
+                        if (auto obj = t.tryLoad())
+                        {
+                            auto* rectangle = dynamic_cast<SceneObj::Rectangle*>(obj->_target);
+                            if (!rectangle)
+                            {
+                                return;
+                            }
+
+                            const auto atlasName
+                                = obj->_rectComboAtlas->tryGetCurrentDataAsString();
+                            rectangle->setAtlas(atlasName);
+
+                            const auto frames
+                                = GetAssetsManager().getAtlas(atlasName).getRectsAsVector();
+                            if (!frames.empty())
+                            {
+                                rectangle->setTexture(frames.front());
+                                obj->_rectComboRect->setCurrentIndex(0);
+                            }
+                        }
+                    }
+                });
+
+            out.attachChild(CreateHLayoutAndLabel("Frame", false, defaultLabelWidth));
             _rectComboRect = out.getLastChildAs<HLayout>()->addChildComponent<ComboModelBased>();
             _rectComboRect->setFlex(Gui::Flex::FlexWidth);
             _rectComboRect->setDataProvider(
-                [](std::size_t i, StringAtom& out) -> void*
+                [this](std::size_t i, StringAtom& out) -> void*
                 {
-                    out = GetAssetsManager().getTextureAtlas().getRectsAsVector().at(i);
+                    const auto* rectangle = dynamic_cast<SceneObj::Rectangle*>(_target);
+                    if (rectangle)
+                    {
+                        out = GetAssetsManager()
+                                  .getAtlas(rectangle->getAtlasName())
+                                  .getRectsAsVector()
+                                  .at(i);
+                    }
                     return nullptr;
                 });
             _rectComboRect->setSizeProvider(
-                []() { return GetAssetsManager().getTextureAtlas().getRectsCount(); });
+                [this]()
+                {
+                    const auto* rectangle = dynamic_cast<SceneObj::Rectangle*>(_target);
+                    return rectangle ? GetAssetsManager()
+                                           .getAtlas(rectangle->getAtlasName())
+                                           .getRectsCount()
+                                     : 0;
+                });
             _subscriptionPool << _rectComboRect->onSelect->subscribeAndGetID(
                 [t = WeakPtr(this)](const void*)
                 {
@@ -481,8 +534,12 @@ namespace Core
                     {
                         if (auto obj = t.tryLoad())
                         {
-                            dynamic_cast<SceneObj::Rectangle*>(obj->_target)
-                                ->setTexture(obj->_rectComboRect->tryGetCurrentDataAsString());
+                            if (auto* rectangle
+                                = dynamic_cast<SceneObj::Rectangle*>(obj->_target))
+                            {
+                                rectangle->setTexture(
+                                    obj->_rectComboRect->tryGetCurrentDataAsString());
+                            }
                         }
                     }
                 });
@@ -832,10 +889,21 @@ namespace Core
         {
             const float dt = GetWorld().getTimeDelta();
 
+            if (_rectComboAtlas)
+            {
+                const auto atlases = GetAssetsManager().getAtlasesAsVector();
+                if (auto it = std::ranges::find(atlases, comp->getAtlasName());
+                    it != atlases.end())
+                {
+                    _rectComboAtlas->setCurrentIndex(it - atlases.begin());
+                }
+            }
+
             if (_rectComboRect)
             {
                 // TODO: super slow, fix it.
-                auto textures = GetAssetsManager().getTextureAtlas().getRectsAsVector();
+                auto textures
+                    = GetAssetsManager().getAtlas(comp->getAtlasName()).getRectsAsVector();
                 if (auto it = std::ranges::find(textures, comp->getTextureName());
                     it != textures.end())
                 {

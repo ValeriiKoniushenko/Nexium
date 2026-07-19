@@ -189,6 +189,7 @@ namespace Core
 
         // SceneObj::Rectangle section:
         Gui::VerticalLayout _rectLayout;
+        Gui::ComboModelBased* _rectComboAtlas = nullptr;
         Gui::ComboModelBased* _rectComboRect = nullptr;
 
         AbstractComponent* _target = nullptr;

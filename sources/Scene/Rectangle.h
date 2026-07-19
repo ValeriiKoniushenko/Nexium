@@ -41,12 +41,18 @@ namespace Core::SceneObj
         [[nodiscard]] StringAtom getTextureName() const { return _textureName; }
         void setTexture(const StringAtom& value) { _textureName = value; }
 
+        [[nodiscard]] StringAtom getAtlasName() const { return _atlasName; }
+        void setAtlas(const StringAtom& value) { _atlasName = value; }
+
         [[nodiscard]] nlohmann::json getTypeSpecificSceneDataAsJson() const override;
         void applyTypeSpecificSceneData(const nlohmann::json& data) override;
 
     protected:
         FIELD();
         StringAtom _textureName = "red.png"_atom;
+
+        FIELD();
+        StringAtom _atlasName = "default"_atom;
     };
 
 } // namespace Core::SceneObj

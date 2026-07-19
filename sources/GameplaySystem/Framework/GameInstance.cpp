@@ -346,6 +346,7 @@ namespace Core
     void GameInstance::loadCoreResources()
     {
         GetAssetsManager().generateTextureAtlas(Config::Path::images / "atlas");
+        GetAssetsManager().generateTextureAtlas("santa"_atom, Config::Path::images / "Santa");
 
         onLoadCoreResources();
     }

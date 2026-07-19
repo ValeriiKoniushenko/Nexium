@@ -107,6 +107,7 @@ namespace Core
 {
     AssetsManager::AssetsManager()
     {
+        _textureAtlases.try_emplace("default"_atom);
         registerNewAssetPath(Config::Path::data);
     }
 
@@ -220,7 +221,59 @@ namespace Core
 
     void AssetsManager::generateTextureAtlas(const fs::path& atlasFolder)
     {
-        _textureAtlas.generateTextureAtlas(atlasFolder);
+        generateTextureAtlas("default"_atom, atlasFolder);
+    }
+
+    void AssetsManager::generateTextureAtlas(const StringAtom& atlasName,
+                                             const fs::path& atlasFolder)
+    {
+        _textureAtlases.try_emplace(atlasName).first->second.generateTextureAtlas(atlasFolder);
+    }
+
+    TextureAtlas& AssetsManager::getAtlas(const StringAtom& atlasName)
+    {
+        auto it = _textureAtlases.find(atlasName);
+        if (it == _textureAtlases.end()) [[unlikely]]
+        {
+            throw std::runtime_error("AssetsManager: No texture atlas with name '"
+                                     + atlasName.toStdString() + "' found");
+        }
+
+        return it->second;
+    }
+
+    const TextureAtlas& AssetsManager::getAtlas(const StringAtom& atlasName) const
+    {
+        auto it = _textureAtlases.find(atlasName);
+        if (it == _textureAtlases.end()) [[unlikely]]
+        {
+            throw std::runtime_error("AssetsManager: No texture atlas with name '"
+                                     + atlasName.toStdString() + "' found");
+        }
+
+        return it->second;
+    }
+
+    std::vector<StringAtom> AssetsManager::getAtlasesAsVector() const
+    {
+        std::vector<StringAtom> atlases;
+        atlases.reserve(_textureAtlases.size());
+        std::ranges::transform(_textureAtlases, std::back_inserter(atlases),
+                               [](const auto& pair) { return pair.first; });
+        std::ranges::sort(atlases, [](const auto& lhs, const auto& rhs)
+                          { return lhs.toStdString() < rhs.toStdString(); });
+
+        return atlases;
+    }
+
+    TextureAtlas& AssetsManager::getTextureAtlas()
+    {
+        return getAtlas("default"_atom);
+    }
+
+    const TextureAtlas& AssetsManager::getTextureAtlas() const
+    {
+        return getAtlas("default"_atom);
     }
 
     NXTexture AssetsManager::getTexture(const StringAtom& logicPath)
