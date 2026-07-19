@@ -46,58 +46,6 @@ add_custom_target(CodeGenerator ALL
     COMMAND jrm ${CMAKE_SOURCE_DIR}
 )
 
-
-# ── Graphics backend selection ────────────────────────────────────────────────
-#
-# Usage:
-#   cmake -B build -DNEXIUM_GRAPHICS_BACKEND=opengl    # default
-#   cmake -B build -DNEXIUM_GRAPHICS_BACKEND=null      # headless / tests
-
-set(NEXIUM_GRAPHICS_BACKEND "opengl" CACHE STRING "Graphics backend: opengl | null")
-set_property(CACHE NEXIUM_GRAPHICS_BACKEND PROPERTY STRINGS opengl null)
-
-set(GRAPHICS_ALIAS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/sources/Graphics")
-message(STATUS "NEXIUM_GRAPHICS_BACKEND: '${NEXIUM_GRAPHICS_BACKEND}'")
-
-set(GRAPHICS_HEADER_BANNER
-    "/* ----------------------------------------------------------- */
-/*                                                             */
-/*                 THIS FILE IS AUTO GENERATED                 */
-/*                                                             */
-/* ----------------------------------------------------------- */
-
-#pragma once
-
-"
-)
-
-if (NEXIUM_GRAPHICS_BACKEND STREQUAL "opengl")
-    set(GRAPHICS_INCLUDE "#include \"GLGraphics.h\"")
-    set(GRAPHICS_ALIAS "using Graphics = GLGraphics;")
-
-    set(GRAPHICS_BACKEND_SOURCES
-        "${CMAKE_CURRENT_SOURCE_DIR}/sources/Graphics/Implementations/OpenGL/GLGraphics.cpp"
-    )
-    set(GRAPHICS_BACKEND_LIBS Core::Glad)
-
-elseif (NEXIUM_GRAPHICS_BACKEND STREQUAL "null")
-    set(GRAPHICS_INCLUDE "#include \"NullGraphics.hpp\"")
-    set(GRAPHICS_ALIAS "using Graphics = NullGraphics;")
-
-    set(GRAPHICS_BACKEND_SOURCES) # header-only
-    set(GRAPHICS_BACKEND_LIBS)
-
-else ()
-    message(FATAL_ERROR
-        "Unknown NEXIUM_GRAPHICS_BACKEND: '${NEXIUM_GRAPHICS_BACKEND}'")
-endif ()
-
-file(WRITE "${GRAPHICS_ALIAS_DIR}/Graphics.h"
-    "${GRAPHICS_HEADER_BANNER}"
-    "${GRAPHICS_INCLUDE}\n\n"
-    "${GRAPHICS_ALIAS}\n"
-)
-
 # ── Main deps pipeline ────────────────────────────────────────────────────────────────
 set(JSON_BuildTests OFF CACHE BOOL "" FORCE)
 set(JSON_MultipleHeaders OFF CACHE BOOL "" FORCE)

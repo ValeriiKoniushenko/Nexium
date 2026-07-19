@@ -85,7 +85,6 @@ namespace Core::Gui
         void requestFocus() noexcept { _needFocus = true; }
         void requestSelectAll() noexcept { _needSelectAll = true; }
 
-
         [[nodiscard]] bool isReadOnly() const noexcept;
 
     public: // Delegates

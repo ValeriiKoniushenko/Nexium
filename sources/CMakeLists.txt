@@ -48,6 +48,7 @@ target_link_libraries(${TARGET_NAME} PUBLIC
     ${GRAPHICS_BACKEND_LIBS}
     Core::ImGui
     Core::Rectpack2D
+    Core::Glad
 
     Utils::Core
 

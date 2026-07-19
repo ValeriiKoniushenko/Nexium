@@ -288,7 +288,7 @@ namespace Core
 
         if (!data.getData().contains(StreamData::sceneObjects))
         {
-warnLog(
+            warnLog(
                 "Scene '{}' doesn't have a property '{}' in the saved file to serialize some data."_f
                 << _sceneName << StreamData::sceneObjects);
             return;

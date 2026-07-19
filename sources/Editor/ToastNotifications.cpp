@@ -157,9 +157,9 @@ namespace Editor
         float height = 0.f;
 
         const ImGuiViewport* viewport = ImGui::GetMainViewport();
-        const glm::vec2 position = { viewport->WorkPos.x + viewport->WorkSize.x
-                                         - NotificationMargin,
-                                     viewport->WorkPos.y + yOffset };
+        const glm::vec2 position
+            = { viewport->WorkPos.x + viewport->WorkSize.x - NotificationMargin,
+                viewport->WorkPos.y + yOffset };
         ImGui::SetNextWindowPos(position, ImGuiCond_Always, { 1.f, 0.f });
         ImGui::SetNextWindowSize({ NotificationWidth, 0.f }, ImGuiCond_Always);
         ImGui::SetNextWindowViewport(viewport->ID);
