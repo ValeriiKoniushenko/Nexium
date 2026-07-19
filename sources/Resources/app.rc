@@ -1,4 +1,4 @@
 #include "Resources.h"
 
-IDI_ICON_SMALL  ICON "../../data/artifacts/logo256.ico"
-IDI_ICON_BIG    ICON "../../data/artifacts/logo256.ico"
+IDI_ICON_SMALL  ICON "../../data/internal/logo256.ico"
+IDI_ICON_BIG    ICON "../../data/internal/logo256.ico"
