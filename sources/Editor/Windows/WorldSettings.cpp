@@ -229,12 +229,12 @@ namespace Core
 
         if (Gui::CollapsingHeader("Global", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            _globalLayout.tick(GetWorld().timeDelta);
+            _globalLayout.tick(GetWorld().getTimeDelta());
         }
 
         if (Gui::CollapsingHeader("Lightning", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            _lightningLayout.tick(GetWorld().timeDelta);
+            _lightningLayout.tick(GetWorld().getTimeDelta());
         }
     }
 } // namespace Core

@@ -98,7 +98,7 @@ namespace Core
         ImGui::Separator();
         ImGui::Dummy({});
 
-        _layout.tick(GetWorld().timeDelta);
+        _layout.tick(GetWorld().getTimeDelta());
 
         ImGui::Dummy({});
     }

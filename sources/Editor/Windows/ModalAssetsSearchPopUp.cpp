@@ -138,7 +138,7 @@ namespace Core
 
     void ModalAssetsSearchPopUpEWC::onDraw()
     {
-        _layout.tick(GetWorld().timeDelta);
+        _layout.tick(GetWorld().getTimeDelta());
 
         ImGui::Dummy({});
 

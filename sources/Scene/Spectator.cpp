@@ -60,7 +60,7 @@ namespace Core
         {
             _subscriptionPool << keyboardInput.getOrCreate(name, key)->onPress->subscribeAndGetID(
                 [=](KeyboardIA::SpecKeysState state)
-                { movement(direction * getSpeed(state) * gGameInstance->world.timeDelta); });
+                { movement(direction * getSpeed(state) * gGameInstance->world.getTimeDelta()); });
         };
 
         bindMovement("Move forward", Keyboard::Key::W, [this](float v) { moveForward(v); }, -1.f);
@@ -84,7 +84,7 @@ namespace Core
                             auto mlt
                                 = obj->speed
                                   / (Keyboard::IsKeyPressed(Keyboard::Key::Left_Shift) ? 8.f : 1.f);
-                            obj->moveForward(offset.y * mlt * gGameInstance->world.timeDelta);
+                            obj->moveForward(offset.y * mlt * gGameInstance->world.getTimeDelta());
                         }
                     }
                 }

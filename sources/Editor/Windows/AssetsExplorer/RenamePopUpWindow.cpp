@@ -95,7 +95,7 @@ namespace Core
 
     void RenamePopUpWindow::onDraw()
     {
-        _layout.tick(GetWorld().timeDelta);
+        _layout.tick(GetWorld().getTimeDelta());
 
         if (!_renameError.empty())
         {

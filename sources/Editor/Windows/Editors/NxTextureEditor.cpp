@@ -108,7 +108,7 @@ namespace Core
 
         if (Gui::CollapsingHeader("General", ImGuiTreeNodeFlags_DefaultOpen, gap))
         {
-            _layout.tick(GetWorld().timeDelta);
+            _layout.tick(GetWorld().getTimeDelta());
         }
     }
 

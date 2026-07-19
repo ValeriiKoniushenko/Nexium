@@ -170,7 +170,7 @@ namespace Core
 
     void EditorSettingsEWC::onDraw()
     {
-        const float tick = gGameInstance->world.timeDelta;
+        const float tick = gGameInstance->world.getTimeDelta();
 
         if (ImGui::BeginChild("MainMenu", glm::vec2(120.f, 0), ImGuiChildFlags_ResizeX))
         {

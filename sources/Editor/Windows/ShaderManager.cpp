@@ -31,10 +31,10 @@
 #include "Editor/GuiComponents/Label.h"
 #include "Editor/GuiComponents/Misc.h"
 #include "Editor/GuiComponents/Spacer.h"
+#include "Editors/TextEditor.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Misc/Configs.h"
 #include "Misc/IconsFontAwesome.h"
-#include "Editors/TextEditor.h"
 
 using namespace Core::Gui;
 
@@ -190,7 +190,7 @@ namespace Core
 
     void ShaderManagerEWC::onDraw()
     {
-        const float dt = gGameInstance->world.timeDelta;
+        const float dt = gGameInstance->world.getTimeDelta();
         _headLayout.tick(dt);
 
         ImGui::Dummy({ 0, ImGui::GetStyle().ItemSpacing.y * 2.f });

@@ -149,7 +149,7 @@ namespace Core
 
     void ModalCreateBlueprintEWC::onDraw()
     {
-        _layout.tick(GetWorld().timeDelta);
+        _layout.tick(GetWorld().getTimeDelta());
 
         ImGui::Dummy({});
 

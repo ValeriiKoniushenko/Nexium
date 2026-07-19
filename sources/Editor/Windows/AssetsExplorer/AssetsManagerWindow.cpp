@@ -737,7 +737,7 @@ namespace Core
             return;
         }
 
-        _toolbarLayout.tick(GetWorld().timeDelta);
+        _toolbarLayout.tick(GetWorld().getTimeDelta());
 
         const auto availX = ImGui::GetContentRegionAvail().x - (padding * 2.f);
 

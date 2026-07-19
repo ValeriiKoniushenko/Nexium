@@ -618,7 +618,7 @@ namespace Core
     {
         if (comp && Gui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            const float dt = GetWorld().timeDelta;
+            const float dt = GetWorld().getTimeDelta();
 
             if (_transformPosition)
             {
@@ -648,7 +648,7 @@ namespace Core
     {
         if (comp && Gui::CollapsingHeader("General", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            const float dt = GetWorld().timeDelta;
+            const float dt = GetWorld().getTimeDelta();
 
             if (_objectName)
             {
@@ -673,7 +673,7 @@ namespace Core
     {
         if (comp && Gui::CollapsingHeader("Graphics", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            const float dt = GetWorld().timeDelta;
+            const float dt = GetWorld().getTimeDelta();
 
             if (_graphicsTriangles)
             {
@@ -713,7 +713,7 @@ namespace Core
     {
         if (comp && Gui::CollapsingHeader("Component data", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            const float dt = GetWorld().timeDelta;
+            const float dt = GetWorld().getTimeDelta();
 
             if (_childrenCount)
             {
@@ -748,7 +748,7 @@ namespace Core
     {
         if (comp && Gui::CollapsingHeader("Static mesh", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            const float dt = GetWorld().timeDelta;
+            const float dt = GetWorld().getTimeDelta();
 
             if (_outlineShader)
             {
@@ -767,7 +767,7 @@ namespace Core
     {
         if (comp && Gui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            const float dt = GetWorld().timeDelta;
+            const float dt = GetWorld().getTimeDelta();
 
             if (_cameraFov)
             {
@@ -839,7 +839,7 @@ namespace Core
     {
         if (comp && Gui::CollapsingHeader("Static mesh bundle", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            const float dt = GetWorld().timeDelta;
+            const float dt = GetWorld().getTimeDelta();
 
             if (_renderMeshesCount)
             {

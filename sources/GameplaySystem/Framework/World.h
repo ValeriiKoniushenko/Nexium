@@ -61,23 +61,36 @@ namespace Core
         [[nodiscard]] StringAtom getCacheHash() const override;
     };
 
+    CLASS();
     class World : public BaseLog, public IDataIO
     {
-    public:
-        [[nodiscard]] spdlog::logger* getLogger() const override;
-        [[nodiscard]] const char* getPrefix() const override { return "world"; }
+        R_FRIEND(World);
 
     public:
-        float timeDelta = 0.f;
-
         LightningProps lightning;
+
         PlayerState playerState;
+
         GameState gameState;
+
         LevelData levelData;
+
+        FIELD();
         StringAtom worldName = "Default";
 
         [[nodiscard]] std::filesystem::path getCacheDir() const override;
         [[nodiscard]] StringAtom getCacheHash() const override;
+
+    public:
+        [[nodiscard]] spdlog::logger* getLogger() const override;
+        [[nodiscard]] const char* getPrefix() const override { return "world"; }
+
+        [[nodiscard]] float getTimeDelta() const noexcept { return timeDelta; }
+
+    private:
+        float timeDelta = 0.f;
+
+        friend class GameInstance;
     };
 
 } // namespace Core

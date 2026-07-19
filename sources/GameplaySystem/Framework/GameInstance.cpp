@@ -158,7 +158,7 @@ namespace Core
 
             if (renderMode == RenderMode::GameOnly)
             {
-                gameScene.tick(world.timeDelta);
+                gameScene.tick(world.getTimeDelta());
 
                 glClear(clearBits);
 
@@ -167,7 +167,7 @@ namespace Core
                 if (currentCamera)
                 {
                     gameScene.directDraw();
-                    onTick(world.timeDelta);
+                    onTick(world.getTimeDelta());
                 }
             }
             else
@@ -175,11 +175,11 @@ namespace Core
                 if (const auto* wnd = gameEditor.getWindow<GameViewportEWC>();
                     wnd && wnd->isFocused())
                 {
-                    gameScene.tick(world.timeDelta);
+                    gameScene.tick(world.getTimeDelta());
                 }
 
                 glClear(clearBits);
-                gameEditor.tick(world.timeDelta);
+                gameEditor.tick(world.getTimeDelta());
 
                 if (currentCamera)
                 {
@@ -187,7 +187,7 @@ namespace Core
                     glClear(clearBits);
 
                     gameScene.directDraw();
-                    onTick(world.timeDelta);
+                    onTick(world.getTimeDelta());
                     gameViewport.callMeAfterDraw();
                 }
             }

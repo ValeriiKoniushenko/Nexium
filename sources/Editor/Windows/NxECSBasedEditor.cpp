@@ -172,7 +172,7 @@ namespace Core
             return;
         }
 
-        const auto dt = GetWorld().timeDelta;
+        const auto dt = GetWorld().getTimeDelta();
 
         if (_targetComponent == _targetAsset->getData().get())
         {
