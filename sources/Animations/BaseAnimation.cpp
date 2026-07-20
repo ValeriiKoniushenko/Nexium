@@ -26,9 +26,48 @@
 
 namespace Core
 {
+    void BaseAnimation::stop()
+    {
+        _isStopped = true;
+        _isPaused = false;
+    }
+
+    void BaseAnimation::start()
+    {
+        _isStopped = false;
+        _isPaused = false;
+        _isFinished = false;
+    }
+
     void BaseAnimation::reset()
     {
+        _isStopped = true;
+        _isPaused = false;
         _isFinished = false;
+    }
+
+    void BaseAnimation::pause()
+    {
+        if (isPlaying())
+        {
+            _isPaused = true;
+        }
+    }
+
+    void BaseAnimation::resume()
+    {
+        if (_isPaused && !_isFinished)
+        {
+            _isStopped = false;
+            _isPaused = false;
+        }
+    }
+
+    void BaseAnimation::finish()
+    {
+        _isStopped = true;
+        _isPaused = false;
+        _isFinished = true;
     }
 
 } // namespace Core

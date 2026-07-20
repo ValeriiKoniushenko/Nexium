@@ -38,23 +38,30 @@ namespace Core
 
         [[nodiscard]] StringAtom getAnimationName() const { return _animationName; }
 
-        void stop();
-        void start();
-        void reset();
-        void pause();
-        void resume();
+        virtual void stop();
+        virtual void start();
+        virtual void reset();
+        virtual void pause();
+        virtual void resume();
+        virtual void finish();
 
         void setLoop(bool value) { _isLooping = value; }
 
-        [[nodiscard]] bool isStopped() const { return _isStopped; }
-        [[nodiscard]] bool isLooping() const { return _isLooping; }
-        [[nodiscard]] bool isFinished() const { return _isFinished; }
+        [[nodiscard]] bool isStopped() const noexcept { return _isStopped; }
+        [[nodiscard]] bool isPaused() const noexcept { return _isPaused; }
+        [[nodiscard]] bool isLooping() const noexcept { return _isLooping; }
+        [[nodiscard]] bool isFinished() const noexcept { return _isFinished; }
+        [[nodiscard]] bool isPlaying() const noexcept
+        {
+            return !_isStopped && !_isPaused && !_isFinished;
+        }
 
     protected:
         StringAtom _animationName;
 
         bool _isLooping{ false };
-        bool _isStopped{ false };
+        bool _isStopped{ true };
+        bool _isPaused{ false };
         bool _isFinished{ false };
     };
 
