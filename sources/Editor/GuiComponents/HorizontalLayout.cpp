@@ -28,7 +28,7 @@
 
 namespace Core::Gui
 {
-    R_FRIEND_IMPL(Core::Gui::HorizontalLayout)
+    R_FRIEND_IMPL(HorizontalLayout)
     ECS_COMPONENT_IMPL(HorizontalLayout);
 
     HorizontalLayout::HorizontalLayout(const StringAtom& name)

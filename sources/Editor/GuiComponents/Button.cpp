@@ -31,13 +31,13 @@
 
 namespace Core::Gui
 {
-    R_FRIEND_IMPL(Core::Gui::Button);
+    R_FRIEND_IMPL(Button);
     ECS_COMPONENT_IMPL(Button);
 
-    R_FRIEND_IMPL(Core::Gui::ToggleButton);
+    R_FRIEND_IMPL(ToggleButton);
     ECS_COMPONENT_IMPL(ToggleButton);
 
-    R_FRIEND_IMPL(Core::Gui::ImageButton);
+    R_FRIEND_IMPL(ImageButton);
     ECS_COMPONENT_IMPL(ImageButton);
 
     void Button::setButtonColor(const Color4& value)
