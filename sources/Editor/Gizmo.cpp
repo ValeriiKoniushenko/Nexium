@@ -31,8 +31,7 @@
 
 namespace Core
 {
-    R_FRIEND_IMPL(Gizmo);
-    ECS_COMPONENT_IMPL(Gizmo);
+    ECS_IMPL(Gizmo);
 
     void Gizmo::draw(BaseCamera& camera)
     {

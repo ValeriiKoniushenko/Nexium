@@ -41,11 +41,8 @@ using namespace Core::Gui;
 namespace Core
 {
 
-    ECS_COMPONENT_IMPL(NxECSBasedEditorEWC);
-    R_FRIEND_IMPL(NxECSBasedEditorEWC);
-
-    ECS_COMPONENT_IMPL(ECSEditorMimeAdapter);
-    R_FRIEND_IMPL(ECSEditorMimeAdapter);
+    ECS_IMPL(NxECSBasedEditorEWC);
+    ECS_IMPL(ECSEditorMimeAdapter);
 
     void ECSEditorMimeAdapter::applyAssetRawData(const nlohmann::json& json)
     {

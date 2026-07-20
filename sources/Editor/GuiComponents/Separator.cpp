@@ -26,8 +26,7 @@
 
 namespace Core::Gui
 {
-    R_FRIEND_IMPL(Separator);
-    ECS_COMPONENT_IMPL(Separator);
+    ECS_IMPL(Separator);
 
     void Separator::onDraw()
     {

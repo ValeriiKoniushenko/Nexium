@@ -31,8 +31,7 @@ using namespace Core::Gui;
 namespace Core
 {
 
-    R_FRIEND_IMPL(ECSEditorStaticMeshAdapter);
-    ECS_COMPONENT_IMPL(ECSEditorStaticMeshAdapter);
+    ECS_IMPL(ECSEditorStaticMeshAdapter);
 
     StringAtom ECSEditorStaticMeshAdapter::getProcessedAssetType() const
     {

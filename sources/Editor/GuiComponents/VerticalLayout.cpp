@@ -26,8 +26,7 @@
 
 namespace Core::Gui
 {
-    R_FRIEND_IMPL(VerticalLayout);
-    ECS_COMPONENT_IMPL(VerticalLayout);
+    ECS_IMPL(VerticalLayout);
 
     VerticalLayout::VerticalLayout(const StringAtom& name)
         : Layout(componentType, name)

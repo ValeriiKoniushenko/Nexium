@@ -26,8 +26,7 @@
 
 namespace Core::Gui
 {
-    R_FRIEND_IMPL(ArrayCell);
-    ECS_COMPONENT_IMPL(ArrayCell);
+    ECS_IMPL(ArrayCell);
     HorizontalLayout::Ptr _StringArray_ArrayCellViewerFunc::operator()(const StringAtom& str) const
     {
         auto l = HorizontalLayout::Create();
