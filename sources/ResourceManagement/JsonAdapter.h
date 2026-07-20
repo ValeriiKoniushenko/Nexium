@@ -36,7 +36,7 @@
                                                                                                    \
 public:                                                                                            \
     [[nodiscard]] nlohmann::json serialize() const override;                                       \
-    void deserialize(RResourceStream<RJsonResourceStream>& stream) override;
+    void deserialize(RResourceStream<RJsonResourceStream>& stream) override
 
 #define R_FRIEND_IMPL(TypeName)                                                                    \
     nlohmann::json TypeName::serialize() const                                                     \

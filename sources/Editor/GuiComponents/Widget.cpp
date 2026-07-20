@@ -31,8 +31,7 @@
 
 namespace Core::Gui
 {
-    ECS_COMPONENT_IMPL(Widget);
-    R_FRIEND_IMPL(Core::Gui::Widget);
+    ECS_IMPL(Widget);
 
     void Widget::unhandledDraw()
     {
