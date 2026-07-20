@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "Animations/FrameByFrame/FrameByFrameAnimator.h"
 #include "Scene/SceneObject.h"
 
 namespace Core::SceneObj
@@ -33,9 +34,11 @@ namespace Core::SceneObj
     class Rectangle : public SceneObject
     {
         R_FRIEND_DECL(Core::SceneObj::Rectangle, Core::SceneObject);
-        ECS_COMPONENT_DECL(Rectangle, SceneObject);
+        ECS_COMPONENT_DECL_NO_CNSTR(Rectangle, SceneObject);
 
     public:
+        Rectangle();
+
         void draw(BaseCamera& camera) override;
 
         [[nodiscard]] StringAtom getTextureName() const { return _textureName; }
@@ -46,6 +49,12 @@ namespace Core::SceneObj
 
         [[nodiscard]] nlohmann::json getTypeSpecificSceneDataAsJson() const override;
         void applyTypeSpecificSceneData(const nlohmann::json& data) override;
+
+    private:
+
+        void createAnimations();
+
+        FrameByFrameAnimator _animator;
 
     protected:
         FIELD();

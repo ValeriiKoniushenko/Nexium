@@ -5,6 +5,7 @@ set(TARGET_NAME "__Nexium")
 file(GLOB_RECURSE CPP_SOURCES
     CONFIGURE_DEPENDS
     "AssetsManager/*.cpp"
+    "Animations/*.cpp"
     "AssimpMisc/*.cpp"
     "ECS/*.cpp"
     "Editor/*.cpp"
@@ -19,6 +20,7 @@ set_source_files_properties(${CPP_SOURCES} PROPERTIES LANGUAGE CXX)
 file(GLOB_RECURSE CPP_HEADERS
     CONFIGURE_DEPENDS
     "AssetsManager/*.h"
+    "Animations/*.h"
     "AssimpMisc/*.h"
     "ECS/*.h"
     "Editor/*.h"

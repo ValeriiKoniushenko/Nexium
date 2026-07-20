@@ -2,36 +2,6 @@
     "_sceneName": "Default",
     "sceneObjects": [
         {
-            "assetType": "Core::SceneObj::Rectangle",
-            "name": "BaseRectangle",
-            "referenceAsset": "data/assets/BaseRectangle.nx",
-            "trans": {
-                "_origin": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "_position": [
-                    -218.6999969482422,
-                    0.0,
-                    0.0
-                ],
-                "_rotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "_scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            },
-            "typeSpecificData": {
-                "_textureName": "yellow.jpg"
-            }
-        },
-        {
             "assetType": "Core::Spectator",
             "name": "Core::Spectator_1",
             "referenceAsset": "data/assets/BaseSpectator.nx",
@@ -42,13 +12,41 @@
                     0.0
                 ],
                 "_position": [
-                    -189.1638946533203,
-                    118.3765869140625,
-                    286.13946533203125
+                    74.66336059570313,
+                    26.920024871826172,
+                    187.10250854492188
                 ],
                 "_rotation": [
-                    16.51953125,
-                    17.439453125,
+                    -1.5,
+                    -8.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": null
+        },
+        {
+            "assetType": "Core::BaseCamera",
+            "name": "BaseCamera1",
+            "referenceAsset": "data/assets/BaseCamera.nx",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
                     0.0
                 ],
                 "_scale": [
@@ -61,6 +59,37 @@
         },
         {
             "assetType": "Core::SceneObj::Rectangle",
+            "name": "BaseRectangle",
+            "referenceAsset": "data/assets/BaseRectangle.nx",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    0.4000000059604645,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_atlasName": "santa_walk",
+                "_textureName": "Walk_10.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::Rectangle",
             "name": "BaseRectangle_0",
             "referenceAsset": "data/assets/BaseRectangle.nx",
             "trans": {
@@ -70,7 +99,7 @@
                     0.0
                 ],
                 "_position": [
-                    -91.19999694824219,
+                    49.5,
                     0.0,
                     0.0
                 ],
@@ -86,7 +115,8 @@
                 ]
             },
             "typeSpecificData": {
-                "_textureName": "grass.jpeg"
+                "_atlasName": "santa_walk",
+                "_textureName": "Walk_10.png"
             }
         }
     ]
