@@ -43,8 +43,7 @@ namespace Core
         CLASS();
         class BaseListItem : public Gui::HorizontalLayout
         {
-            R_FRIEND_DECL(BaseListItem, Core::Gui::HorizontalLayout);
-            ECS_COMPONENT_DECL(BaseListItem, HorizontalLayout);
+            ECS_DECL(BaseListItem, Core::Gui::HorizontalLayout);
 
         public:
             [[nodiscard]] virtual bool containsString(const StringAtom& str);
@@ -63,8 +62,7 @@ namespace Core
         CLASS();
         class KeymapItem : public BaseListItem
         {
-            R_FRIEND_DECL(KeymapItem, Core::Internal::BaseListItem);
-            ECS_COMPONENT_DECL(KeymapItem, BaseListItem);
+            ECS_DECL(KeymapItem, Core::Internal::BaseListItem);
 
         public:
             void setButtonName(const StringAtom& label);
@@ -84,8 +82,7 @@ namespace Core
         CLASS();
         class ColorItem : public BaseListItem
         {
-            R_FRIEND_DECL(ColorItem, Core::Internal::BaseListItem);
-            ECS_COMPONENT_DECL(ColorItem, BaseListItem);
+            ECS_DECL(ColorItem, Core::Internal::BaseListItem);
 
         public:
             void setReadOnly(bool value = true) override;
@@ -104,8 +101,7 @@ namespace Core
     CLASS();
     class EditorSettingsEWC : public BaseFloatEWC
     {
-        R_FRIEND_DECL(EditorSettingsEWC, Core::BaseFloatEWC);
-        ECS_COMPONENT_DECL(EditorSettingsEWC, BaseFloatEWC);
+        ECS_DECL(EditorSettingsEWC, Core::BaseFloatEWC);
 
     public:
         [[nodiscard]] const char* getIcon() override;

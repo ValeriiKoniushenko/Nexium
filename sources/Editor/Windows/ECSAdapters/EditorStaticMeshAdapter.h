@@ -33,8 +33,7 @@ namespace Core
     CLASS();
     class ECSEditorStaticMeshAdapter : public ECSEditorMimeAdapter
     {
-        R_FRIEND_DECL(ECSEditorStaticMeshAdapter, Core::ECSEditorMimeAdapter);
-        ECS_COMPONENT_DECL(ECSEditorStaticMeshAdapter, ECSEditorMimeAdapter);
+        ECS_DECL(ECSEditorStaticMeshAdapter, Core::ECSEditorMimeAdapter);
 
     public:
         [[nodiscard]] bool canWorkWith(BaseComponent* component) const override;

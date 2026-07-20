@@ -35,8 +35,7 @@ namespace Core
     CLASS();
     class SceneTreeWindowEWC : public BaseFloatEWC
     {
-        R_FRIEND_DECL(SceneTreeWindowEWC, Core::BaseFloatEWC);
-        ECS_COMPONENT_DECL_NO_CNSTR(SceneTreeWindowEWC, BaseFloatEWC);
+        ECS_DECL_NO_CNSTR(SceneTreeWindowEWC, Core::BaseFloatEWC);
 
     public:
         SceneTreeWindowEWC(const StringAtom& name = ""_atom);

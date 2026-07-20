@@ -39,8 +39,7 @@ namespace Core::Gui
     CLASS();
     class ArrayCell : public HorizontalLayout
     {
-        R_FRIEND_DECL(ArrayCell, Core::Gui::HorizontalLayout);
-        ECS_COMPONENT_DECL_NO_CNSTR(ArrayCell, HorizontalLayout);
+        ECS_DECL_NO_CNSTR(ArrayCell, Core::Gui::HorizontalLayout);
 
     public:
         Label* label = nullptr;

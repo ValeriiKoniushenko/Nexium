@@ -48,8 +48,7 @@ namespace Core
     CLASS();
     class ModalAssetsSearchPopUpEWC : public BaseEWC
     {
-        R_FRIEND_DECL(ModalAssetsSearchPopUpEWC, Core::BaseEWC);
-        ECS_COMPONENT_DECL(ModalAssetsSearchPopUpEWC, BaseEWC);
+        ECS_DECL(ModalAssetsSearchPopUpEWC, Core::BaseEWC);
 
     public:
         void open(StringAtom text);

@@ -32,8 +32,7 @@ namespace Core
     CLASS();
     class ECSEditorTransformableAdapter : public ECSEditorMimeAdapter
     {
-        R_FRIEND_DECL(ECSEditorTransformableAdapter, Core::ECSEditorMimeAdapter);
-        ECS_COMPONENT_DECL(ECSEditorTransformableAdapter, ECSEditorMimeAdapter);
+        ECS_DECL(ECSEditorTransformableAdapter, Core::ECSEditorMimeAdapter);
 
     public:
         [[nodiscard]] bool canWorkWith(BaseComponent* component) const override;

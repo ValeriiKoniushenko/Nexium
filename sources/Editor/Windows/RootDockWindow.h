@@ -32,8 +32,7 @@ namespace Core
     CLASS();
     class RootDockWindowEWC : public BaseEWC
     {
-        R_FRIEND_DECL(RootDockWindowEWC, Core::BaseEWC);
-        ECS_COMPONENT_DECL(RootDockWindowEWC, BaseEWC);
+        ECS_DECL(RootDockWindowEWC, Core::BaseEWC);
 
     public:
         [[nodiscard]] std::vector<std::string> getCurrentWindowsList() const;

@@ -31,8 +31,7 @@ namespace Core::Gui
     CLASS();
     class HorizontalLayout : public Layout
     {
-        R_FRIEND_DECL(HorizontalLayout, Core::Gui::Layout);
-        ECS_COMPONENT_DECL_NO_CNSTR(HorizontalLayout, Layout);
+        ECS_DECL_NO_CNSTR(HorizontalLayout, Core::Gui::Layout);
 
     public:
         explicit HorizontalLayout(const StringAtom& name = ""_atom);

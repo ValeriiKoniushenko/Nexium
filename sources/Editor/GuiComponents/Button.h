@@ -33,8 +33,7 @@ namespace Core::Gui
     CLASS();
     class Button : public Widget
     {
-        R_FRIEND_DECL(Button, Core::Gui::Widget);
-        ECS_COMPONENT_DECL(Button, Widget);
+        ECS_DECL(Button, Core::Gui::Widget);
 
     public:
         void setButtonColor(const Color4& value);
@@ -147,8 +146,7 @@ namespace Core::Gui
     CLASS();
     class ToggleButton : public Button
     {
-        R_FRIEND_DECL(ToggleButton, Core::Gui::Button);
-        ECS_COMPONENT_DECL(ToggleButton, Button);
+        ECS_DECL(ToggleButton, Core::Gui::Button);
 
     public: // Delegates
         /// will be called when toggled
@@ -173,8 +171,7 @@ namespace Core::Gui
     CLASS();
     class ImageButton : public Button
     {
-        R_FRIEND_DECL(ImageButton, Core::Gui::Button);
-        ECS_COMPONENT_DECL(ImageButton, Button);
+        ECS_DECL(ImageButton, Core::Gui::Button);
 
     public:
         void setImage(const NXTexture& texture) { _texture = texture; }

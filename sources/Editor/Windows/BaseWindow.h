@@ -35,8 +35,7 @@ namespace Core
     CLASS();
     class BaseEWC : public BaseComponent, public IDataIO
     {
-        R_FRIEND_DECL(BaseEWC, Core::BaseComponent);
-        ECS_COMPONENT_DECL(BaseEWC, BaseComponent);
+        ECS_DECL(BaseEWC, Core::BaseComponent);
 
     public:
         [[nodiscard]] const StringAtom& getWindowTitle() { return getComponentName(); }
@@ -90,8 +89,7 @@ namespace Core
     CLASS();
     class BaseFloatEWC : public BaseEWC
     {
-        R_FRIEND_DECL(BaseFloatEWC, Core::BaseEWC);
-        ECS_COMPONENT_DECL(BaseFloatEWC, BaseEWC);
+        ECS_DECL(BaseFloatEWC, Core::BaseEWC);
 
     public:
         [[nodiscard]] FSize2 getWindowSize() const noexcept { return _size; }
@@ -147,13 +145,10 @@ namespace Core
     CLASS();
     class BaseMenuBarEWC : public BaseEWC
     {
-        R_FRIEND_DECL(BaseMenuBarEWC, Core::BaseEWC);
-        ECS_COMPONENT_DECL(BaseMenuBarEWC, BaseEWC);
-
-    public:
-        void onInitialize() override;
+        ECS_DECL(BaseMenuBarEWC, Core::BaseEWC);
 
     protected:
+        void onInitialize() override;
         [[nodiscard]] bool beginWindowDraw() override;
 
         void endWindowDraw() override;

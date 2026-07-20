@@ -32,8 +32,7 @@ namespace Core::Gui
     CLASS();
     class CheckBox : public Widget
     {
-        R_FRIEND_DECL(CheckBox, Core::Gui::Widget);
-        ECS_COMPONENT_DECL(CheckBox, Widget);
+        ECS_DECL(CheckBox, Core::Gui::Widget);
 
     public:
         [[nodiscard]] glm::vec2 getRealSize() const;

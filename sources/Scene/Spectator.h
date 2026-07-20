@@ -32,8 +32,7 @@ namespace Core
     CLASS();
     class Spectator : public Actor
     {
-        R_FRIEND_DECL(Spectator);
-        ECS_COMPONENT_DECL(Spectator, Actor);
+        ECS_DECL(Spectator, Core::Actor);
 
     public:
         // TODO: Move it to Controller

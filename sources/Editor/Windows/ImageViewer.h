@@ -32,8 +32,7 @@ namespace Core
     CLASS();
     class ImageViewerEWC : public BaseFloatEWC
     {
-        R_FRIEND_DECL(ImageViewerEWC, Core::BaseFloatEWC);
-        ECS_COMPONENT_DECL(ImageViewerEWC, BaseFloatEWC);
+        ECS_DECL(ImageViewerEWC, Core::BaseFloatEWC);
 
     public:
         void openImageFromFile(const std::filesystem::path& path);
@@ -59,8 +58,7 @@ namespace Core
     CLASS();
     class DummyEWC : public BaseFloatEWC
     {
-        R_FRIEND_DECL(DummyEWC, Core::BaseFloatEWC);
-        ECS_COMPONENT_DECL(DummyEWC, BaseFloatEWC);
+        ECS_DECL(DummyEWC, Core::BaseFloatEWC);
 
     public:
         [[nodiscard]] const char* getIcon() override;

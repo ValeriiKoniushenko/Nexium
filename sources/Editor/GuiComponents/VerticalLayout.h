@@ -31,8 +31,7 @@ namespace Core::Gui
     CLASS();
     class VerticalLayout : public Layout
     {
-        R_FRIEND_DECL(VerticalLayout, Core::Gui::Layout);
-        ECS_COMPONENT_DECL_NO_CNSTR(VerticalLayout, Layout);
+        ECS_DECL_NO_CNSTR(VerticalLayout, Core::Gui::Layout);
 
     public:
         explicit VerticalLayout(const StringAtom& name = "");

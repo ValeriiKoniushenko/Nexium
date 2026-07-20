@@ -50,8 +50,7 @@ namespace Core
     CLASS();
     class ShaderManagerEWC : public BaseFloatEWC
     {
-        R_FRIEND_DECL(ShaderManagerEWC, Core::BaseFloatEWC);
-        ECS_COMPONENT_DECL(ShaderManagerEWC, BaseFloatEWC);
+        ECS_DECL(ShaderManagerEWC, Core::BaseFloatEWC);
 
     public:
         [[nodiscard]] const char* getIcon() override;

@@ -40,8 +40,7 @@ namespace Core
     CLASS();
     class Gizmo : public StaticMeshBundle
     {
-        R_FRIEND_DECL(Gizmo, Core::StaticMeshBundle);
-        ECS_COMPONENT_DECL(Gizmo, StaticMeshBundle);
+        ECS_DECL(Gizmo, Core::StaticMeshBundle);
 
     public:
         ENUM_CLASS();

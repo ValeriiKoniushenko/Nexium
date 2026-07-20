@@ -31,8 +31,7 @@ namespace Core
     CLASS();
     class TextEditorEWC : public BaseFloatEWC
     {
-        R_FRIEND_DECL(TextEditorEWC, Core::BaseFloatEWC);
-        ECS_COMPONENT_DECL(TextEditorEWC, BaseFloatEWC);
+        ECS_DECL(TextEditorEWC, Core::BaseFloatEWC);
 
     public:
         void putArguments(const StringAtom& args) override;

@@ -33,8 +33,7 @@ namespace Core
     CLASS();
     class ECSEditorInterleavedGraphicsDataAdapter : public ECSEditorMimeAdapter
     {
-        R_FRIEND_DECL(ECSEditorInterleavedGraphicsDataAdapter, Core::ECSEditorMimeAdapter);
-        ECS_COMPONENT_DECL(ECSEditorInterleavedGraphicsDataAdapter, ECSEditorMimeAdapter);
+        ECS_DECL(ECSEditorInterleavedGraphicsDataAdapter, Core::ECSEditorMimeAdapter);
 
     public:
         [[nodiscard]] bool canWorkWith(BaseComponent* component) const override;

@@ -32,8 +32,7 @@ namespace Core::Gui
     CLASS();
     class BaseCombo : public Widget
     {
-        R_FRIEND_DECL(BaseCombo, Core::Gui::Widget);
-        ECS_COMPONENT_DECL(BaseCombo, Widget);
+        ECS_DECL(BaseCombo, Core::Gui::Widget);
 
     public:
         [[nodiscard]] glm::vec2 getRealSize() const;
@@ -56,8 +55,7 @@ namespace Core::Gui
     CLASS();
     class ComboView : public BaseCombo
     {
-        R_FRIEND_DECL(ComboView, Core::Gui::BaseCombo);
-        ECS_COMPONENT_DECL(ComboView, BaseCombo);
+        ECS_DECL(ComboView, Core::Gui::BaseCombo);
 
     public:
         void setData(std::vector<StringAtom>&& items) { _items = std::move(items); }
@@ -90,8 +88,7 @@ namespace Core::Gui
     CLASS();
     class ComboModelBased : public BaseCombo
     {
-        R_FRIEND_DECL(ComboModelBased, Core::Gui::BaseCombo);
-        ECS_COMPONENT_DECL(ComboModelBased, BaseCombo);
+        ECS_DECL(ComboModelBased, Core::Gui::BaseCombo);
 
     public:
         /// Set your own data provider. Just a function that will do a few things:

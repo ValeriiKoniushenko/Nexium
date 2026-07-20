@@ -51,8 +51,7 @@ namespace Core
     CLASS();
     class WorldSettingsEWC : public BaseFloatEWC
     {
-        R_FRIEND_DECL(WorldSettingsEWC, Core::BaseFloatEWC);
-        ECS_COMPONENT_DECL(WorldSettingsEWC, BaseFloatEWC);
+        ECS_DECL(WorldSettingsEWC, Core::BaseFloatEWC);
 
     public:
         [[nodiscard]] const char* getIcon() override;

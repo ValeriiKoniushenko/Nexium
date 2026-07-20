@@ -37,8 +37,7 @@ namespace Core
     CLASS();
     class ModalPopUp : public BaseEWC
     {
-        R_FRIEND_DECL(ModalPopUp, Core::BaseEWC);
-        ECS_COMPONENT_DECL_NO_CNSTR(ModalPopUp, BaseEWC);
+        ECS_DECL_NO_CNSTR(ModalPopUp, Core::BaseEWC);
 
     public:
         explicit ModalPopUp(const Core::StringAtom& name = ""_atom);

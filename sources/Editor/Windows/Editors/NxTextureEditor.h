@@ -48,8 +48,7 @@ namespace Core
     CLASS();
     class NxTextureEditorEWC : public NxEditorBaseEditorEWC
     {
-        R_FRIEND_DECL(NxTextureEditorEWC, Core::NxEditorBaseEditorEWC);
-        ECS_COMPONENT_DECL(NxTextureEditorEWC, NxEditorBaseEditorEWC);
+        ECS_DECL(NxTextureEditorEWC, Core::NxEditorBaseEditorEWC);
 
     public:
         [[nodiscard]] const char* getIcon() override;

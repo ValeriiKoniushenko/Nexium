@@ -31,11 +31,9 @@ namespace Core::Gui
     CLASS();
     class Spacer : public Widget
     {
-        R_FRIEND_DECL(Spacer, Core::Gui::Widget);
-        ECS_COMPONENT_DECL_NO_CNSTR(Spacer, Widget);
+        ECS_DECL(Spacer, Core::Gui::Widget);
 
     public:
-        Spacer(const StringAtom& name = ""_atom);
 
         [[nodiscard]] glm::vec2 getRealSize() const;
 

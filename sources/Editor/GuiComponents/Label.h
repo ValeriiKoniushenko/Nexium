@@ -31,8 +31,7 @@ namespace Core::Gui
     CLASS();
     class Label : public Widget
     {
-        R_FRIEND_DECL(Label, Core::Gui::Widget);
-        ECS_COMPONENT_DECL(Label, Widget);
+        ECS_DECL(Label, Core::Gui::Widget);
 
     public:
         void setWidth(float newWidth) override;

@@ -31,8 +31,7 @@ namespace Core
     CLASS();
     class GameViewportEWC : public BaseFloatEWC
     {
-        R_FRIEND_DECL(GameViewportEWC, Core::BaseFloatEWC);
-        ECS_COMPONENT_DECL(GameViewportEWC, BaseFloatEWC);
+        ECS_DECL(GameViewportEWC, Core::BaseFloatEWC);
 
     public:
         [[nodiscard]] const char* getIcon() override;

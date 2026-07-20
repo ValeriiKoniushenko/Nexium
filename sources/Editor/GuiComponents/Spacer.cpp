@@ -29,11 +29,6 @@ namespace Core::Gui
     R_FRIEND_IMPL(Spacer);
     ECS_COMPONENT_IMPL(Spacer);
 
-    Spacer::Spacer(const StringAtom& name)
-        : Widget(componentType, name)
-    {
-    }
-
     glm::vec2 Spacer::getRealSize() const
     {
         return _size + style().ItemSpacing;

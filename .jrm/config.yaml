@@ -44,4 +44,6 @@ ignoreSerializationSignals: true
 rFriendAliases:
   - R_FRIEND
   - ECS_DECL
+  - ECS_DECL_NO_CNSTR
+  - ECS_DECL_NO_SER
   - R_FRIEND_DECL
