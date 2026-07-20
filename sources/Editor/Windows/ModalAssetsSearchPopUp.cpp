@@ -34,8 +34,7 @@
 
 namespace Core
 {
-    ECS_COMPONENT_IMPL(ModalAssetsSearchPopUpEWC);
-    R_FRIEND_IMPL(ModalAssetsSearchPopUpEWC);
+    ECS_IMPL(ModalAssetsSearchPopUpEWC);
 
     void ModalAssetsSearchPopUpEWC::open(StringAtom text)
     {

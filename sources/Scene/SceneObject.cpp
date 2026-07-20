@@ -29,8 +29,7 @@
 namespace Core
 {
 
-    ECS_COMPONENT_IMPL(SceneObject);
-    R_FRIEND_IMPL(SceneObject);
+    ECS_IMPL(SceneObject);
 
     spdlog::logger* Core::SceneObject::getLogger() const
     {

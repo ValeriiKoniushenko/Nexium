@@ -52,8 +52,7 @@ namespace
 
 namespace Core
 {
-    ECS_COMPONENT_IMPL(EditorMenuBarWindowEWC);
-    R_FRIEND_IMPL(EditorMenuBarWindowEWC);
+    ECS_IMPL(EditorMenuBarWindowEWC);
 
     void EditorMenuBarWindowEWC::onInitialize()
     {

@@ -26,8 +26,7 @@
 
 namespace Core
 {
-    ECS_COMPONENT_IMPL(Actor);
-    R_FRIEND_IMPL(Actor);
+    ECS_IMPL(Actor);
 
     void Actor::onInitialize()
     {

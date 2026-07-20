@@ -37,8 +37,7 @@
 
 namespace Core
 {
-    ECS_COMPONENT_IMPL(ModalCreateBlueprintEWC);
-    R_FRIEND_IMPL(ModalCreateBlueprintEWC);
+    ECS_IMPL(ModalCreateBlueprintEWC);
 
     void ModalCreateBlueprintEWC::open(StringAtom text)
     {

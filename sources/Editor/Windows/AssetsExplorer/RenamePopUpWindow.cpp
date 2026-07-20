@@ -51,8 +51,7 @@ namespace
 
 namespace Core
 {
-    ECS_COMPONENT_IMPL(RenamePopUpWindow);
-    R_FRIEND_IMPL(RenamePopUpWindow);
+    ECS_IMPL(RenamePopUpWindow);
 
     void RenamePopUpWindow::open(const StringAtom& text, const std::filesystem::path& path,
                                  std::function<void(const std::filesystem::path& oldPath,

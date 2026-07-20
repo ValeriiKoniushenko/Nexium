@@ -26,8 +26,7 @@
 
 namespace Core::Gui
 {
-    ECS_COMPONENT_IMPL(Layout);
-    R_FRIEND_IMPL(Layout);
+    ECS_IMPL(Layout);
 
     void Layout::setHorizontalAlign(Align align)
     {

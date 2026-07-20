@@ -127,8 +127,7 @@ namespace
 
 namespace Core
 {
-    ECS_COMPONENT_IMPL(ObjectPropertiesWindowEWC);
-    R_FRIEND_IMPL(ObjectPropertiesWindowEWC);
+    ECS_IMPL(ObjectPropertiesWindowEWC);
 
     Gui::HorizontalLayout::Ptr _GraphicsModifiersArray_ArrayCellViewerFunc::operator()(
         BaseGraphicsData::ModifierParam& data) const
