@@ -70,7 +70,7 @@ namespace Core
     CLASS();
     class NxECSBasedEditorEWC : public NxEditorBaseEditorEWC
     {
-        R_FRIEND_DECL(NxECSBasedEditorEWC, Core::BaseEWC);
+        R_FRIEND_DECL(NxECSBasedEditorEWC, Core::NxEditorBaseEditorEWC);
         ECS_COMPONENT_DECL(NxECSBasedEditorEWC, NxEditorBaseEditorEWC);
 
     public:

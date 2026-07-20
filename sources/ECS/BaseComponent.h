@@ -149,6 +149,20 @@ public:
     _ECS_COMPONENT_IMPL(ClassName, ;, R<ClassName>::FullName(), false)                             \
     static_assert(true, "")
 
+// ---------------------------------------------------------
+
+#define ECS_DECL(ClassName, BaseComponentClass)                                                    \
+    R_FRIEND_DECL(ClassName, BaseComponentClass);                                                  \
+    ECS_COMPONENT_DECL(ClassName, BaseComponentClass)
+
+#define ECS_DECL_NO_CNSTR(ClassName, BaseComponentClass)                                           \
+    R_FRIEND_DECL(ClassName, BaseComponentClass);                                                  \
+    ECS_COMPONENT_DECL_NO_CNSTR(ClassName, BaseComponentClass)
+
+#define ECS_IMPL(ClassName)                                                                        \
+    R_FRIEND_IMPL(ClassName);                                                                      \
+    ECS_COMPONENT_IMPL(ClassName)
+
 //
 //
 // ===============================================================
@@ -781,10 +795,10 @@ namespace Core
         void onPostSerialize(const AbstractComponent* obj,
                              const RLogsCollector& logs) const override;
 
-    protected:
         /// This method will be called automatically. Don't call it directly.
         void onTick(float delta) override;
 
+    protected:
         virtual bool addChildValidator(BaseComponent* newChild) { return true; }
 
         virtual void onAddChild(BaseComponent* newChild) {}

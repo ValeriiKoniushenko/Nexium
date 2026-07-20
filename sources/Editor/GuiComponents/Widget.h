@@ -57,8 +57,7 @@ namespace Core::Gui
     CLASS();
     class Widget : public BaseComponent
     {
-        R_FRIEND_DECL(Core::Gui::Widget, Core::BaseComponent);
-        ECS_COMPONENT_DECL(Widget, BaseComponent);
+        ECS_DECL(Widget, Core::BaseComponent);
 
     public:
         struct Input
