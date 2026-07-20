@@ -32,7 +32,7 @@ namespace Core
     CLASS();
     class BaseCamera : public Actor
     {
-        R_FRIEND_DECL(Core::BaseCamera, Core::Actor);
+        R_FRIEND_DECL(BaseCamera, Core::Actor);
         ECS_COMPONENT_DECL(BaseCamera, Actor);
 
     public:

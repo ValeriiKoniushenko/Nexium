@@ -31,7 +31,7 @@ namespace Core::Gui
     CLASS();
     class Spacer : public Widget
     {
-        R_FRIEND_DECL(Core::Gui::Spacer, Core::Gui::Widget);
+        R_FRIEND_DECL(Spacer, Core::Gui::Widget);
         ECS_COMPONENT_DECL_NO_CNSTR(Spacer, Widget);
 
     public:

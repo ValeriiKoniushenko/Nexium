@@ -238,7 +238,7 @@ namespace Core
     CLASS();
     class BaseTextureGraphicsData : public BaseGraphicsData
     {
-        R_FRIEND_DECL(Core::BaseTextureGraphicsData, Core::BaseGraphicsData);
+        R_FRIEND_DECL(BaseTextureGraphicsData, Core::BaseGraphicsData);
 
     public:
         BaseTextureGraphicsData() = default;
@@ -294,7 +294,7 @@ namespace Core
     CLASS();
     class InterleavedGraphicsData : public BaseTextureGraphicsData
     {
-        R_FRIEND_DECL(Core::InterleavedGraphicsData, Core::BaseGraphicsData);
+        R_FRIEND_DECL(InterleavedGraphicsData, Core::BaseGraphicsData);
 
     public:
         InterleavedGraphicsData() = default;
@@ -335,7 +335,7 @@ namespace Core
     CLASS();
     class SeparTextureGraphicsData : public BaseTextureGraphicsData
     {
-        R_FRIEND_DECL(Core::SeparTextureGraphicsData, Core::BaseTextureGraphicsData);
+        R_FRIEND_DECL(SeparTextureGraphicsData, Core::BaseTextureGraphicsData);
 
     public:
         SeparTextureGraphicsData() = default;

@@ -31,7 +31,7 @@ namespace Core::Gui
     CLASS();
     class Label : public Widget
     {
-        R_FRIEND_DECL(Core::Gui::Label, Core::Gui::Widget);
+        R_FRIEND_DECL(Label, Core::Gui::Widget);
         ECS_COMPONENT_DECL(Label, Widget);
 
     public:

@@ -50,7 +50,7 @@ namespace Core
     CLASS();
     class ShaderManagerEWC : public BaseFloatEWC
     {
-        R_FRIEND_DECL(Core::ShaderManagerEWC, Core::BaseFloatEWC);
+        R_FRIEND_DECL(ShaderManagerEWC, Core::BaseFloatEWC);
         ECS_COMPONENT_DECL(ShaderManagerEWC, BaseFloatEWC);
 
     public:

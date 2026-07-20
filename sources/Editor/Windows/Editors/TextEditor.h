@@ -31,7 +31,7 @@ namespace Core
     CLASS();
     class TextEditorEWC : public BaseFloatEWC
     {
-        R_FRIEND_DECL(Core::TextEditorEWC, Core::BaseFloatEWC);
+        R_FRIEND_DECL(TextEditorEWC, Core::BaseFloatEWC);
         ECS_COMPONENT_DECL(TextEditorEWC, BaseFloatEWC);
 
     public:

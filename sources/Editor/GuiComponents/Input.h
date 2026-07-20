@@ -35,7 +35,7 @@ namespace Core::Gui
     CLASS();
     class BaseInput : public Widget
     {
-        R_FRIEND_DECL(Core::Gui::BaseInput, Core::Gui::Widget);
+        R_FRIEND_DECL(BaseInput, Core::Gui::Widget);
         ECS_COMPONENT_DECL(BaseInput, Widget);
 
     public:
@@ -71,7 +71,7 @@ namespace Core::Gui
     CLASS();
     class TextInput : public BaseInput
     {
-        R_FRIEND_DECL(Core::Gui::TextInput, Core::Gui::BaseInput);
+        R_FRIEND_DECL(TextInput, Core::Gui::BaseInput);
         ECS_COMPONENT_DECL(TextInput, BaseInput);
 
     public:
@@ -175,7 +175,7 @@ namespace Core::Gui
     CLASS();
     class Color3Input : public BaseInput
     {
-        R_FRIEND_DECL(Core::Gui::Color3Input, Core::Gui::BaseInput);
+        R_FRIEND_DECL(Color3Input, Core::Gui::BaseInput);
         ECS_COMPONENT_DECL(Color3Input, BaseInput);
 
     public:

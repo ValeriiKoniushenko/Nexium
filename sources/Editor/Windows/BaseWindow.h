@@ -35,7 +35,7 @@ namespace Core
     CLASS();
     class BaseEWC : public BaseComponent, public IDataIO
     {
-        R_FRIEND_DECL(Core::BaseEWC, Core::BaseComponent);
+        R_FRIEND_DECL(BaseEWC, Core::BaseComponent);
         ECS_COMPONENT_DECL(BaseEWC, BaseComponent);
 
     public:
@@ -90,7 +90,7 @@ namespace Core
     CLASS();
     class BaseFloatEWC : public BaseEWC
     {
-        R_FRIEND_DECL(Core::BaseFloatEWC, Core::BaseEWC);
+        R_FRIEND_DECL(BaseFloatEWC, Core::BaseEWC);
         ECS_COMPONENT_DECL(BaseFloatEWC, BaseEWC);
 
     public:
@@ -147,7 +147,7 @@ namespace Core
     CLASS();
     class BaseMenuBarEWC : public BaseEWC
     {
-        R_FRIEND_DECL(Core::BaseMenuBarEWC, Core::BaseEWC);
+        R_FRIEND_DECL(BaseMenuBarEWC, Core::BaseEWC);
         ECS_COMPONENT_DECL(BaseMenuBarEWC, BaseEWC);
 
     public:
