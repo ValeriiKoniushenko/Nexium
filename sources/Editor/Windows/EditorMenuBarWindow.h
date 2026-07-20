@@ -32,9 +32,7 @@ namespace Core
     CLASS();
     class EditorMenuBarWindowEWC : public BaseMenuBarEWC
     {
-        R_FRIEND_DECL(EditorMenuBarWindowEWC, Core::BaseMenuBarEWC);
-
-        ECS_COMPONENT_DECL(EditorMenuBarWindowEWC, BaseMenuBarEWC);
+        ECS_DECL(EditorMenuBarWindowEWC, Core::BaseMenuBarEWC);
 
     public:
         ~EditorMenuBarWindowEWC() override = default;

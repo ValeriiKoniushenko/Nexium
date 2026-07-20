@@ -151,8 +151,12 @@ public:
 
 // ---------------------------------------------------------
 
-#define ECS_DECL(ClassName, BaseComponentClass)                                                    \
+#define ECS_DECL(ClassName, BaseComponentClass, ...)                                               \
     R_FRIEND_DECL(ClassName, BaseComponentClass);                                                  \
+    ECS_COMPONENT_DECL(ClassName, BaseComponentClass)
+
+#define ECS_DECL_NO_SER(ClassName, BaseComponentClass, ...)                                        \
+    R_FRIEND(ClassName, BaseComponentClass);                                                       \
     ECS_COMPONENT_DECL(ClassName, BaseComponentClass)
 
 #define ECS_DECL_NO_CNSTR(ClassName, BaseComponentClass)                                           \
@@ -598,7 +602,7 @@ namespace Core
 
         [[nodiscard]] std::size_t makeHash() const;
 
-        [[nodiscard]] virtual BaseComponent::Ptr clone() const { return nullptr; }
+        [[nodiscard]] virtual Ptr clone() const { return nullptr; }
 
         template<IsComponent T>
         [[nodiscard]] bool isTypeOf() const
@@ -795,10 +799,10 @@ namespace Core
         void onPostSerialize(const AbstractComponent* obj,
                              const RLogsCollector& logs) const override;
 
+    protected:
         /// This method will be called automatically. Don't call it directly.
         void onTick(float delta) override;
 
-    protected:
         virtual bool addChildValidator(BaseComponent* newChild) { return true; }
 
         virtual void onAddChild(BaseComponent* newChild) {}
@@ -853,8 +857,7 @@ namespace Core
     CLASS();
     class InvalidComponent : public BaseComponent
     {
-        R_FRIEND_DECL(InvalidComponent, Core::BaseComponent);
-        ECS_COMPONENT_DECL(InvalidComponent, BaseComponent);
+        ECS_DECL(InvalidComponent, Core::BaseComponent);
 
     public:
         ~InvalidComponent() override = default;

@@ -32,8 +32,7 @@ namespace Core
     CLASS();
     class BaseCamera : public Actor
     {
-        R_FRIEND_DECL(BaseCamera, Core::Actor);
-        ECS_COMPONENT_DECL(BaseCamera, Actor);
+        ECS_DECL(BaseCamera, Core::Actor);
 
     public:
         constexpr static float minFov = 5.f;

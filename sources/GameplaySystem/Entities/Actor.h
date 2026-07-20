@@ -33,8 +33,7 @@ namespace Core
     CLASS();
     class Actor : public SceneObject
     {
-        R_FRIEND_DECL(Actor, Core::SceneObject);
-        ECS_COMPONENT_DECL(Actor, SceneObject);
+        ECS_DECL(Actor, Core::SceneObject);
 
     public:
         Actor(Actor&&) = default;

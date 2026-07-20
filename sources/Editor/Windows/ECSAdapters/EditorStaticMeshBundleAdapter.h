@@ -70,8 +70,7 @@ namespace Core
     CLASS();
     class ECSEditorStaticMeshBundleAdapter : public ECSEditorMimeAdapter
     {
-        R_FRIEND_DECL(ECSEditorStaticMeshBundleAdapter, Core::ECSEditorMimeAdapter);
-        ECS_COMPONENT_DECL(ECSEditorStaticMeshBundleAdapter, ECSEditorMimeAdapter);
+        ECS_DECL(ECSEditorStaticMeshBundleAdapter, Core::ECSEditorMimeAdapter);
 
     public:
         struct StreamData

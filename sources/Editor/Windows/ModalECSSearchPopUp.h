@@ -43,8 +43,7 @@ namespace Core
     CLASS();
     class ModalECSSearchPopUpEWC : public BaseEWC
     {
-        R_FRIEND_DECL(ModalECSSearchPopUpEWC, Core::BaseEWC);
-        ECS_COMPONENT_DECL(ModalECSSearchPopUpEWC, BaseEWC);
+        ECS_DECL(ModalECSSearchPopUpEWC, Core::BaseEWC);
 
     public:
         void open(StringAtom text, const std::function<void(BaseComponent::Ptr)>& callback);

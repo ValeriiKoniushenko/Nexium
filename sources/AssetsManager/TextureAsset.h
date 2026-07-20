@@ -25,6 +25,7 @@
 #pragma once
 
 #include "BaseAsset.h"
+#include "ECS/BaseComponent.h"
 #include "Graphics/Texture.h"
 #include "ResourceManagement/JsonAdapter.h"
 
@@ -34,7 +35,7 @@ namespace Core
     CLASS();
     class TextureAsset : public BaseAsset
     {
-        R_FRIEND_DECL(TextureAsset);
+        R_FRIEND_DECL(TextureAsset, Core::BaseAsset);
 
     public:
         inline static const char* fileExtension = ".nxtex";

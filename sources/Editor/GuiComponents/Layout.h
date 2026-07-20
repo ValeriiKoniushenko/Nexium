@@ -31,8 +31,7 @@ namespace Core::Gui
     CLASS();
     class Layout : public Widget
     {
-        R_FRIEND_DECL(Layout, Core::Gui::Widget);
-        ECS_COMPONENT_DECL(Layout, Widget);
+        ECS_DECL(Layout, Core::Gui::Widget);
 
     public:
         void setHorizontalAlign(Align align);

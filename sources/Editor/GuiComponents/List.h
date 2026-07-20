@@ -32,8 +32,7 @@ namespace Core::Gui
     CLASS();
     class BaseList : public Widget
     {
-        R_FRIEND_DECL(BaseList, Core::Gui::Widget);
-        ECS_COMPONENT_DECL(BaseList, Widget);
+        ECS_DECL(BaseList, Core::Gui::Widget);
 
     public:
         [[nodiscard]] glm::vec2 getRealSize() const;
@@ -79,8 +78,7 @@ namespace Core::Gui
     CLASS();
     class ListView : public BaseList
     {
-        R_FRIEND_DECL(ListView, Core::Gui::BaseList);
-        ECS_COMPONENT_DECL(ListView, BaseList);
+        ECS_DECL(ListView, Core::Gui::BaseList);
 
     public:
         void setData(std::vector<StringAtom>&& items) { _items = std::move(items); }
@@ -107,8 +105,7 @@ namespace Core::Gui
     CLASS();
     class ListModelBased : public BaseList
     {
-        R_FRIEND_DECL(ListModelBased, Core::Gui::BaseList);
-        ECS_COMPONENT_DECL(ListModelBased, BaseList);
+        ECS_DECL(ListModelBased, Core::Gui::BaseList);
 
     public:
         /// Set your own data provider. Just a function that will do a few things:

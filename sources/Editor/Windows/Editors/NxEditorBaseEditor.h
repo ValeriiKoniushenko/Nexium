@@ -34,8 +34,7 @@ namespace Core
     CLASS();
     class NxEditorBaseEditorEWC : public BaseFloatEWC
     {
-        R_FRIEND_DECL(NxEditorBaseEditorEWC, Core::BaseFloatEWC);
-        ECS_COMPONENT_DECL(NxEditorBaseEditorEWC, BaseFloatEWC);
+        ECS_DECL(NxEditorBaseEditorEWC, Core::BaseFloatEWC);
 
     public:
         [[nodiscard]] const char* getIcon() override;

@@ -47,8 +47,7 @@ namespace Core
     CLASS();
     class AssetsManagerWindowEWC : public BaseFloatEWC
     {
-        R_FRIEND_DECL(AssetsManagerWindowEWC, Core::BaseFloatEWC);
-        ECS_COMPONENT_DECL(AssetsManagerWindowEWC, BaseFloatEWC);
+        ECS_DECL(AssetsManagerWindowEWC, Core::BaseFloatEWC);
 
     public:
         constexpr static std::string_view defaultNewFileName = "NewFile";

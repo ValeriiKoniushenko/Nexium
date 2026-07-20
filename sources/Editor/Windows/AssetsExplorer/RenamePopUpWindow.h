@@ -46,8 +46,7 @@ namespace Core
     CLASS();
     class RenamePopUpWindow : public BaseEWC
     {
-        R_FRIEND_DECL(RenamePopUpWindow, Core::BaseEWC);
-        ECS_COMPONENT_DECL(RenamePopUpWindow, BaseEWC);
+        ECS_DECL(RenamePopUpWindow, Core::BaseEWC);
 
     public:
         using RenameCallbackT = std::function<void(const std::filesystem::path& oldPath,

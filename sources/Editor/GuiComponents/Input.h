@@ -35,8 +35,7 @@ namespace Core::Gui
     CLASS();
     class BaseInput : public Widget
     {
-        R_FRIEND_DECL(BaseInput, Core::Gui::Widget);
-        ECS_COMPONENT_DECL(BaseInput, Widget);
+        ECS_DECL(BaseInput, Core::Gui::Widget);
 
     public:
         void setTextColor(const Color4& value);
@@ -71,8 +70,7 @@ namespace Core::Gui
     CLASS();
     class TextInput : public BaseInput
     {
-        R_FRIEND_DECL(TextInput, Core::Gui::BaseInput);
-        ECS_COMPONENT_DECL(TextInput, BaseInput);
+        ECS_DECL(TextInput, Core::Gui::BaseInput);
 
     public:
         void setInputtedData(std::string data) { _buffer = std::move(data); }
@@ -175,8 +173,7 @@ namespace Core::Gui
     CLASS();
     class Color3Input : public BaseInput
     {
-        R_FRIEND_DECL(Color3Input, Core::Gui::BaseInput);
-        ECS_COMPONENT_DECL(Color3Input, BaseInput);
+        ECS_DECL(Color3Input, Core::Gui::BaseInput);
 
     public:
         void setInputtedData(const Color3& data);

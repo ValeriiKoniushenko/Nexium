@@ -44,8 +44,7 @@ namespace Core
     CLASS();
     class ECSEditorMimeAdapter : public BaseComponent
     {
-        R_FRIEND_DECL(ECSEditorMimeAdapter, Core::BaseComponent);
-        ECS_COMPONENT_DECL(ECSEditorMimeAdapter, BaseComponent);
+        ECS_DECL(ECSEditorMimeAdapter, Core::BaseComponent);
 
     public:
         void applyAssetRawData(const nlohmann::json& json);
@@ -70,8 +69,7 @@ namespace Core
     CLASS();
     class NxECSBasedEditorEWC : public NxEditorBaseEditorEWC
     {
-        R_FRIEND_DECL(NxECSBasedEditorEWC, Core::NxEditorBaseEditorEWC);
-        ECS_COMPONENT_DECL(NxECSBasedEditorEWC, NxEditorBaseEditorEWC);
+        ECS_DECL(NxECSBasedEditorEWC, Core::NxEditorBaseEditorEWC);
 
     public:
         [[nodiscard]] BaseComponent* getTargetComponent() noexcept;

@@ -32,8 +32,7 @@ namespace Core::SceneObj
     CLASS();
     class Rectangle : public SceneObject
     {
-        R_FRIEND_DECL(Rectangle, Core::SceneObject);
-        ECS_COMPONENT_DECL(Rectangle, SceneObject);
+        ECS_DECL(Rectangle, Core::SceneObject);
 
     public:
         void draw(BaseCamera& camera) override;

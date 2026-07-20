@@ -31,8 +31,7 @@ namespace Core::Gui
     CLASS();
     class Separator : public Widget
     {
-        R_FRIEND_DECL(Separator, Core::Gui::Widget);
-        ECS_COMPONENT_DECL(Separator, Widget);
+        ECS_DECL(Separator, Core::Gui::Widget);
 
     public:
         [[nodiscard]] float getWidth() const override { return -1; }

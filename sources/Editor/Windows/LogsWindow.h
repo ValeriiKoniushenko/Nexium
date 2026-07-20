@@ -39,8 +39,7 @@ namespace Core
     CLASS();
     class LogsWindowEWC : public BaseFloatEWC
     {
-        R_FRIEND(Core::LogsWindowEWC, Core::BaseFloatEWC);
-        ECS_COMPONENT_DECL(LogsWindowEWC, BaseFloatEWC);
+        ECS_DECL_NO_SER(LogsWindowEWC, Core::BaseFloatEWC);
 
     public:
         struct LogLine

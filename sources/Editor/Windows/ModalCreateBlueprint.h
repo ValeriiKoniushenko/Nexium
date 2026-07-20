@@ -44,8 +44,7 @@ namespace Core
     CLASS();
     class ModalCreateBlueprintEWC : public BaseEWC
     {
-        R_FRIEND_DECL(ModalCreateBlueprintEWC, Core::BaseEWC);
-        ECS_COMPONENT_DECL(ModalCreateBlueprintEWC, BaseEWC);
+        ECS_DECL(ModalCreateBlueprintEWC, Core::BaseEWC);
 
     public:
         void open(StringAtom text);
