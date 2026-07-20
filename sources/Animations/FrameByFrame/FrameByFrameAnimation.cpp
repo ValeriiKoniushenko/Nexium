@@ -24,19 +24,19 @@
 
 #include "FrameByFrameAnimation.h"
 
-#include "GameplaySystem/Framework/GameInstance.h"
+#include <cmath>
 
 namespace Core
 {
 
-    void FrameByFrameAnimation::update()
+    void FrameByFrameAnimation::update(float delta)
     {
-        if (_frames.empty() || _isFinished)
+        if (!isPlaying() || _frames.empty() || !std::isfinite(delta) || delta <= 0.f)
         {
             return;
         }
 
-        _timer += GetWorld().getTimeDelta();
+        _timer += delta;
 
         while (_timer >= _frameTime)
         {
@@ -53,7 +53,8 @@ namespace Core
                 else
                 {
                     _currentFrame = static_cast<int>(_frames.size() - 1);
-                    _isFinished = true;
+                    finish();
+                    break;
                 }
             }
         }
@@ -61,17 +62,68 @@ namespace Core
 
     void FrameByFrameAnimation::setFPS(float fps)
     {
-        if (fps <= 0.f)
+        if (!std::isfinite(fps) || fps <= 0.f)
+        {
             throw std::logic_error("FPS must be > 0");
+        }
         _frameTime = 1.0f / fps;
     }
 
-    FRect FrameByFrameAnimation::getCurrentFrame() const
+    void FrameByFrameAnimation::start()
+    {
+        if (isFinished())
+        {
+            reset();
+        }
+        BaseAnimation::start();
+    }
+
+    void FrameByFrameAnimation::reset()
+    {
+        BaseAnimation::reset();
+        _currentFrame = 0;
+        _timer = 0.f;
+    }
+
+    void FrameByFrameAnimation::finish()
+    {
+        if (!_frames.empty())
+        {
+            _currentFrame = static_cast<int>(_frames.size() - 1);
+        }
+        _timer = 0.f;
+        BaseAnimation::finish();
+    }
+
+    bool FrameByFrameAnimation::addFrame(const StringAtom& frameName)
+    {
+        if (frameName.isEmpty())
+        {
+            return false;
+        }
+
+        _frames.emplace_back(frameName);
+        return true;
+    }
+
+    bool FrameByFrameAnimation::isValid() const noexcept
+    {
+        return !_animationName.isEmpty() && !_atlasName.isEmpty() && !_frames.empty()
+            && std::isfinite(_frameTime) && _frameTime > 0.f;
+    }
+
+    const StringAtom& FrameByFrameAnimation::getCurrentFrameName() const
     {
         if (_frames.empty())
         {
-            errorLog("Animation: '{}' has no frames"_f << _animationName);
-            return {};
+            static const StringAtom empty;
+            return empty;
+        }
+
+        if (_currentFrame < 0 || static_cast<std::size_t>(_currentFrame) >= _frames.size())
+        {
+            static const StringAtom empty;
+            return empty;
         }
 
         return _frames[_currentFrame];

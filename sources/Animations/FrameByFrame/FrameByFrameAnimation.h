@@ -24,7 +24,6 @@
 #pragma once
 
 #include "Animations/BaseAnimation.h"
-#include "Core/Rect.h"
 #include "Misc/BaseLog.h"
 
 #include <vector>
@@ -37,18 +36,27 @@ namespace Core
     public:
         FrameByFrameAnimation() = default;
 
-        void update();
+        void update(float delta);
         void setFPS(float fps);
+        void start() override;
+        void reset() override;
+        void finish() override;
 
-        void addFrame(FRect frame) { _frames.emplace_back(frame); }
+        void setAtlasName(const StringAtom& atlasName) { _atlasName = atlasName; }
+        bool addFrame(const StringAtom& frameName);
 
-        [[nodiscard]] FRect getCurrentFrame() const;
+        [[nodiscard]] const StringAtom& getAtlasName() const noexcept { return _atlasName; }
+        [[nodiscard]] const StringAtom& getCurrentFrameName() const;
+        [[nodiscard]] std::size_t getFramesCount() const noexcept { return _frames.size(); }
+        [[nodiscard]] bool hasFrames() const noexcept { return !_frames.empty(); }
+        [[nodiscard]] bool isValid() const noexcept;
 
     protected:
         [[nodiscard]] spdlog::logger* getLogger() const override { return nullptr; }
 
     private:
-        std::vector<FRect> _frames;
+        StringAtom _atlasName;
+        std::vector<StringAtom> _frames;
 
         int _currentFrame{ 0 };
         float _timer{ 0.f };

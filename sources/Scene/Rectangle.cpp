@@ -24,7 +24,6 @@
 
 #include "Rectangle.h"
 
-#include "Animations/FrameByFrame/FrameByFrameAnimation.h"
 #include "GameplaySystem/Camera.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Graphics/GraphicsComponents.h"
@@ -35,12 +34,9 @@ namespace Core::SceneObj
     ECS_COMPONENT_IMPL(Rectangle);
     R_FRIEND_IMPL(Rectangle);
 
-    Rectangle::Rectangle()
+    Rectangle::Rectangle(const StringAtom& name)
+        : SceneObject(componentType, name)
     {
-        createAnimations();
-        _animator.startAnimation("walk"_atom);
-        _atlasName = "santa_walk"_atom;
-
     }
 
     void Rectangle::draw(BaseCamera& camera)
@@ -91,9 +87,7 @@ namespace Core::SceneObj
 
         atlas.bind();
 
-        _animator.update();
-        const auto rect = _animator.getCurrentAnimationFrame();
-        // const auto rect = atlas.getRect(_textureName);
+        const auto rect = atlas.getRect(_textureName);
 
         shader->setUniform("uUVOffset"_atom, rect.getLeftTop());
         shader->setUniform("uUVSize"_atom, rect.getRightBottom() - rect.getLeftTop());
@@ -122,27 +116,5 @@ namespace Core::SceneObj
             _atlasName = StringAtom::Intern(data.at("_atlasName").get<StringAtom>());
         }
     }
-
-    void Rectangle::createAnimations()
-    {
-        const auto& walkAtlas = GetAssetsManager().getAtlas("santa_walk"_atom);
-
-        auto* walkAnimation = new FrameByFrameAnimation();
-
-        walkAnimation->setAnimationName("walk"_atom);
-        walkAnimation->addFrame(walkAtlas.getRect("Walk _1.png"_atom));
-
-        for (int i = 2; i <= 13; ++i)
-        {
-            const auto frameName = StringAtom::Intern("Walk_" + std::to_string(i) + ".png");
-            walkAnimation->addFrame(walkAtlas.getRect(frameName));
-
-        }
-        walkAnimation->setFPS(12.f);
-        walkAnimation->setLoop(true);
-
-        _animator.addAnimation(walkAnimation);
-    }
-
 
 } // namespace Core::SceneObj

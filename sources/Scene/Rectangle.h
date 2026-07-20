@@ -24,7 +24,6 @@
 
 #pragma once
 
-#include "Animations/FrameByFrame/FrameByFrameAnimator.h"
 #include "Scene/SceneObject.h"
 
 namespace Core::SceneObj
@@ -37,7 +36,7 @@ namespace Core::SceneObj
         ECS_COMPONENT_DECL_NO_CNSTR(Rectangle, SceneObject);
 
     public:
-        Rectangle();
+        explicit Rectangle(const StringAtom& name = ""_atom);
 
         void draw(BaseCamera& camera) override;
 
@@ -49,12 +48,6 @@ namespace Core::SceneObj
 
         [[nodiscard]] nlohmann::json getTypeSpecificSceneDataAsJson() const override;
         void applyTypeSpecificSceneData(const nlohmann::json& data) override;
-
-    private:
-
-        void createAnimations();
-
-        FrameByFrameAnimator _animator;
 
     protected:
         FIELD();

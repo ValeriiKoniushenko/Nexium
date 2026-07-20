@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "Core/Rect.h"
+#include "Animations/FrameByFrame/FrameByFrameAnimation.h"
 #include "Core/String.h"
 #include "ECS/BaseComponent.h"
 #include "JustReflectMe/Adapter.h"
@@ -38,21 +38,40 @@ namespace Core
     CLASS();
     class FrameByFrameAnimator : public BaseComponent
     {
-        R_FRIEND_DECL(FrameByFrameAnimation);
+        R_FRIEND_DECL(Core::FrameByFrameAnimator, Core::BaseComponent);
         ECS_COMPONENT_DECL(FrameByFrameAnimator, Core::BaseComponent);
     public:
 
-        void update() const;
+        void update(float delta);
 
-        void startAnimation(const StringAtom& name);
-        void addAnimation(FrameByFrameAnimation* animation);
+        bool startAnimation(const StringAtom& name);
+        bool stopAnimation();
+        bool pauseAnimation();
+        bool resumeAnimation();
+        bool resetAnimation();
+        bool finishAnimation();
 
-        [[nodiscard]] FRect getCurrentAnimationFrame() const;
-        [[nodiscard]] FrameByFrameAnimation* getAnimation(const StringAtom& name) const;
+        bool addAnimation(FrameByFrameAnimation animation);
+        bool removeAnimation(const StringAtom& name);
+        void clearAnimations();
+
+        [[nodiscard]] const StringAtom& getCurrentAtlasName() const;
+        [[nodiscard]] const StringAtom& getCurrentFrameName() const;
+        [[nodiscard]] FrameByFrameAnimation* getAnimation(const StringAtom& name);
+        [[nodiscard]] const FrameByFrameAnimation* getAnimation(const StringAtom& name) const;
+        [[nodiscard]] bool hasAnimation(const StringAtom& name) const;
+        [[nodiscard]] bool hasCurrentAnimation() const;
+        [[nodiscard]] bool isPlaying() const;
+
+    protected:
+        void onTick(float delta) override;
 
     private:
-        std::unordered_map<StringAtom, FrameByFrameAnimation*> _animations;
-        FrameByFrameAnimation* _currentAnimation{ nullptr };
+        void applyCurrentFrame();
+
+        std::unordered_map<StringAtom, FrameByFrameAnimation> _animations;
+
+        FIELD();
         StringAtom _currentState;
     };
 } // namespace Core
