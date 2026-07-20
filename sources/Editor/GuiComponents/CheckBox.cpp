@@ -26,7 +26,7 @@
 
 namespace Core::Gui
 {
-    R_FRIEND_IMPL(Core::Gui::CheckBox);
+    R_FRIEND_IMPL(CheckBox);
     ECS_COMPONENT_IMPL(CheckBox);
 
     glm::vec2 CheckBox::getRealSize() const
