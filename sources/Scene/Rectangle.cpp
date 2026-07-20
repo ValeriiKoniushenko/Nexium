@@ -31,8 +31,7 @@
 namespace Core::SceneObj
 {
 
-    ECS_COMPONENT_IMPL(Rectangle);
-    R_FRIEND_IMPL(Rectangle);
+    ECS_IMPL(Rectangle);
 
     void Rectangle::draw(BaseCamera& camera)
     {

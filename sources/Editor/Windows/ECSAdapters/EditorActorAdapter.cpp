@@ -35,8 +35,7 @@ using namespace Core::Gui;
 namespace Core
 {
 
-    ECS_COMPONENT_IMPL(ECSEditorActorAdapter);
-    R_FRIEND_IMPL(ECSEditorActorAdapter);
+    ECS_IMPL(ECSEditorActorAdapter);
 
     StringAtom ECSEditorActorAdapter::getProcessedAssetType() const
     {

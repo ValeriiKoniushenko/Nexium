@@ -30,8 +30,7 @@
 
 namespace Core
 {
-    ECS_COMPONENT_IMPL(GameViewportEWC);
-    R_FRIEND_IMPL(GameViewportEWC);
+    ECS_IMPL(GameViewportEWC);
 
     //
     //     _   _  _                                      _

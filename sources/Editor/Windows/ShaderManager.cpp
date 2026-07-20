@@ -40,8 +40,7 @@ using namespace Core::Gui;
 
 namespace Core
 {
-    ECS_COMPONENT_IMPL(ShaderManagerEWC);
-    R_FRIEND_IMPL(ShaderManagerEWC);
+    ECS_IMPL(ShaderManagerEWC);
 
     const char* ShaderManagerEWC::getIcon()
     {

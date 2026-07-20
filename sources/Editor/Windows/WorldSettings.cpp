@@ -37,8 +37,7 @@
 
 namespace Core
 {
-    ECS_COMPONENT_IMPL(WorldSettingsEWC);
-    R_FRIEND_IMPL(WorldSettingsEWC);
+    ECS_IMPL(WorldSettingsEWC);
 
     const char* WorldSettingsEWC::getIcon()
     {

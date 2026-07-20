@@ -59,8 +59,7 @@ namespace
 
 namespace Core
 {
-    ECS_COMPONENT_IMPL(StaticMesh);
-    R_FRIEND_IMPL(StaticMesh);
+    ECS_IMPL(StaticMesh);
 
     void StaticMesh::importFrom(const aiMesh* rawMesh, const aiScene* scene,
                                 const std::filesystem::path& modelPath /* = ""*/,
