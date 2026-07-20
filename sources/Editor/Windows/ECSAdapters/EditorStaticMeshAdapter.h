@@ -33,7 +33,7 @@ namespace Core
     CLASS();
     class ECSEditorStaticMeshAdapter : public ECSEditorMimeAdapter
     {
-        R_FRIEND_DECL(Core::ECSEditorStaticMeshAdapter, Core::ECSEditorMimeAdapter);
+        R_FRIEND_DECL(ECSEditorStaticMeshAdapter, Core::ECSEditorMimeAdapter);
         ECS_COMPONENT_DECL(ECSEditorStaticMeshAdapter, ECSEditorMimeAdapter);
 
     public:

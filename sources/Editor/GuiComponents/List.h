@@ -32,7 +32,7 @@ namespace Core::Gui
     CLASS();
     class BaseList : public Widget
     {
-        R_FRIEND_DECL(Core::Gui::BaseList, Core::Gui::Widget);
+        R_FRIEND_DECL(BaseList, Core::Gui::Widget);
         ECS_COMPONENT_DECL(BaseList, Widget);
 
     public:
@@ -79,7 +79,7 @@ namespace Core::Gui
     CLASS();
     class ListView : public BaseList
     {
-        R_FRIEND_DECL(Core::Gui::ListView, Core::Gui::BaseList);
+        R_FRIEND_DECL(ListView, Core::Gui::BaseList);
         ECS_COMPONENT_DECL(ListView, BaseList);
 
     public:
@@ -107,7 +107,7 @@ namespace Core::Gui
     CLASS();
     class ListModelBased : public BaseList
     {
-        R_FRIEND_DECL(Core::Gui::ListModelBased, Core::Gui::BaseList);
+        R_FRIEND_DECL(ListModelBased, Core::Gui::BaseList);
         ECS_COMPONENT_DECL(ListModelBased, BaseList);
 
     public:

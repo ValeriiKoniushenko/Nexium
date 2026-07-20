@@ -32,7 +32,7 @@ namespace Core::Gui
     CLASS();
     class CheckBox : public Widget
     {
-        R_FRIEND_DECL(Core::Gui::CheckBox, Core::Gui::Widget);
+        R_FRIEND_DECL(CheckBox, Core::Gui::Widget);
         ECS_COMPONENT_DECL(CheckBox, Widget);
 
     public:

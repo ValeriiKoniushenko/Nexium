@@ -32,7 +32,7 @@ namespace Core::Gui
     CLASS();
     class BaseCombo : public Widget
     {
-        R_FRIEND_DECL(Core::Gui::BaseCombo, Core::Gui::Widget);
+        R_FRIEND_DECL(BaseCombo, Core::Gui::Widget);
         ECS_COMPONENT_DECL(BaseCombo, Widget);
 
     public:
@@ -56,7 +56,7 @@ namespace Core::Gui
     CLASS();
     class ComboView : public BaseCombo
     {
-        R_FRIEND_DECL(Core::Gui::ComboView, Core::Gui::BaseCombo);
+        R_FRIEND_DECL(ComboView, Core::Gui::BaseCombo);
         ECS_COMPONENT_DECL(ComboView, BaseCombo);
 
     public:
@@ -90,7 +90,7 @@ namespace Core::Gui
     CLASS();
     class ComboModelBased : public BaseCombo
     {
-        R_FRIEND_DECL(Core::Gui::ComboModelBased, Core::Gui::BaseCombo);
+        R_FRIEND_DECL(ComboModelBased, Core::Gui::BaseCombo);
         ECS_COMPONENT_DECL(ComboModelBased, BaseCombo);
 
     public:

@@ -47,7 +47,7 @@ namespace Core
     CLASS();
     class AssetsManagerWindowEWC : public BaseFloatEWC
     {
-        R_FRIEND_DECL(Core::AssetsManagerWindowEWC, Core::BaseFloatEWC);
+        R_FRIEND_DECL(AssetsManagerWindowEWC, Core::BaseFloatEWC);
         ECS_COMPONENT_DECL(AssetsManagerWindowEWC, BaseFloatEWC);
 
     public:

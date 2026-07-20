@@ -53,7 +53,7 @@ namespace Core
         public IDrawable,
         public ITagHolder
     {
-        R_FRIEND_DECL(Core::SceneObject, Core::BaseComponent, Core::Transformable, Core::IOutliner,
+        R_FRIEND_DECL(SceneObject, Core::BaseComponent, Core::Transformable, Core::IOutliner,
                       Core::IDrawable);
         ECS_COMPONENT_DECL(SceneObject, BaseComponent);
 

@@ -104,7 +104,7 @@ namespace Core
     CLASS();
     class EditorSettingsEWC : public BaseFloatEWC
     {
-        R_FRIEND_DECL(Core::EditorSettingsEWC, Core::BaseFloatEWC);
+        R_FRIEND_DECL(EditorSettingsEWC, Core::BaseFloatEWC);
         ECS_COMPONENT_DECL(EditorSettingsEWC, BaseFloatEWC);
 
     public:

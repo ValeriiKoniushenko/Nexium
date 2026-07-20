@@ -87,7 +87,7 @@ namespace Core
     CLASS();
     class ObjectPropertiesWindowEWC : public BaseFloatEWC
     {
-        R_FRIEND_DECL(Core::ObjectPropertiesWindowEWC, Core::BaseFloatEWC);
+        R_FRIEND_DECL(ObjectPropertiesWindowEWC, Core::BaseFloatEWC);
         ECS_COMPONENT_DECL(ObjectPropertiesWindowEWC, BaseFloatEWC);
 
     public:

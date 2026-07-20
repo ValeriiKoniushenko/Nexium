@@ -32,7 +32,7 @@ namespace Core
     CLASS();
     class ImageViewerEWC : public BaseFloatEWC
     {
-        R_FRIEND_DECL(Core::ImageViewerEWC, Core::BaseFloatEWC);
+        R_FRIEND_DECL(ImageViewerEWC, Core::BaseFloatEWC);
         ECS_COMPONENT_DECL(ImageViewerEWC, BaseFloatEWC);
 
     public:
@@ -59,7 +59,7 @@ namespace Core
     CLASS();
     class DummyEWC : public BaseFloatEWC
     {
-        R_FRIEND_DECL(Core::DummyEWC, Core::BaseFloatEWC);
+        R_FRIEND_DECL(DummyEWC, Core::BaseFloatEWC);
         ECS_COMPONENT_DECL(DummyEWC, BaseFloatEWC);
 
     public:

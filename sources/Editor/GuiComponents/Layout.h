@@ -31,7 +31,7 @@ namespace Core::Gui
     CLASS();
     class Layout : public Widget
     {
-        R_FRIEND_DECL(Core::Gui::Layout, Core::Gui::Widget);
+        R_FRIEND_DECL(Layout, Core::Gui::Widget);
         ECS_COMPONENT_DECL(Layout, Widget);
 
     public:

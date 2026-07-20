@@ -31,7 +31,7 @@ namespace Core
     CLASS();
     class GameViewportEWC : public BaseFloatEWC
     {
-        R_FRIEND_DECL(Core::GameViewportEWC, Core::BaseFloatEWC);
+        R_FRIEND_DECL(GameViewportEWC, Core::BaseFloatEWC);
         ECS_COMPONENT_DECL(GameViewportEWC, BaseFloatEWC);
 
     public:

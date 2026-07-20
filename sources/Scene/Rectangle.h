@@ -32,7 +32,7 @@ namespace Core::SceneObj
     CLASS();
     class Rectangle : public SceneObject
     {
-        R_FRIEND_DECL(Core::SceneObj::Rectangle, Core::SceneObject);
+        R_FRIEND_DECL(Rectangle, Core::SceneObject);
         ECS_COMPONENT_DECL(Rectangle, SceneObject);
 
     public:
