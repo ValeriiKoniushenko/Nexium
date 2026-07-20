@@ -354,7 +354,6 @@ namespace Core
                                                 Config::Path::images / "Santa/Santa_Jump");
         GetAssetsManager().generateTextureAtlas("santa_walk"_atom,
                                                 Config::Path::images / "Santa/Santa_Walk");
-        
 
         onLoadCoreResources();
     }
