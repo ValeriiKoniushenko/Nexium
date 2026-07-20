@@ -32,8 +32,7 @@ using namespace Core::Gui;
 namespace Core
 {
 
-    R_FRIEND_IMPL(ECSEditorTransformableAdapter);
-    ECS_COMPONENT_IMPL(ECSEditorTransformableAdapter);
+    ECS_IMPL(ECSEditorTransformableAdapter);
 
     bool ECSEditorTransformableAdapter::canWorkWith(BaseComponent* component) const
     {

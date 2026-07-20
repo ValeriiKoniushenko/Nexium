@@ -30,8 +30,7 @@
 
 namespace Core
 {
-    R_FRIEND_IMPL(ModalPopUp);
-    ECS_COMPONENT_IMPL(ModalPopUp);
+    ECS_IMPL(ModalPopUp);
 
     ModalPopUp::ModalPopUp(const Core::StringAtom& name)
         : BaseEWC(name),

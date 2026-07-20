@@ -26,8 +26,7 @@
 
 namespace Core::Gui
 {
-    R_FRIEND_IMPL(Spacer);
-    ECS_COMPONENT_IMPL(Spacer);
+    ECS_IMPL(Spacer);
 
     glm::vec2 Spacer::getRealSize() const
     {

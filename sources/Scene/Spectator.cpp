@@ -30,8 +30,7 @@
 namespace Core
 {
 
-    R_FRIEND_IMPL(Spectator);
-    ECS_COMPONENT_IMPL(Spectator);
+    ECS_IMPL(Spectator);
 
     StringAtom Spectator::getCacheHash() const
     {

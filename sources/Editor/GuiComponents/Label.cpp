@@ -28,8 +28,7 @@
 
 namespace Core::Gui
 {
-    R_FRIEND_IMPL(Label);
-    ECS_COMPONENT_IMPL(Label);
+    ECS_IMPL(Label);
 
     void Label::setWidth(float newWidth)
     {
