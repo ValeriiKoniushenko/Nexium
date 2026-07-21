@@ -31,12 +31,12 @@ namespace Core
 {
     namespace Gui
     {
+        class ListModelBased;
         template<class T>
         class LabelRow;
 
         class TextInput;
 
-        class ListView;
         class Button;
     } // namespace Gui
 
@@ -66,7 +66,7 @@ namespace Core
 
         StringAtom _caption = "ModalECSSearchPopUpEWC";
         Gui::VerticalLayout _layout;
-        Gui::ListView* _listView = nullptr;
+        Gui::ListModelBased* _listView = nullptr;
         Gui::LabelRow<Gui::TextInput>* _nameInput = nullptr;
         Gui::Button* _okButton = nullptr;
         Gui::Button* _cancelButton = nullptr;

@@ -51,6 +51,8 @@ namespace Core
         _caption = std::move(text);
         _hasOpenRequest = true;
         _callback = callback;
+
+        onOpen();
     }
 
     void ModalECSSearchPopUpEWC::Open(StringAtom text,
@@ -82,11 +84,19 @@ namespace Core
         }
 
         {
-            _listView = _layout.addChildComponent<Gui::ListView>();
+            _listView = _layout.addChildComponent<Gui::ListModelBased>();
             _listView->setFlex(Gui::Flex::FlexWidthAndHeight);
-            auto data = GlobalComponentFactory::Instance().getRegisteredTypesAsVector();
-            std::ranges::sort(data);
-            _listView->setData(data);
+            _listView->setDataProvider(
+                [](std::size_t index, StringAtom& out) -> const void*
+                {
+                    auto data = GlobalComponentFactory::Instance().getRegisteredTypesAsVector(true);
+                    out = data.at(index);
+                    return nullptr;
+                });
+
+            _listView->setSizeProvider(
+                []()
+                { return GlobalComponentFactory::Instance().getRegisteredTypesAsVector().size(); });
         }
 
         {
@@ -119,10 +129,12 @@ namespace Core
                     }
 
                     auto comp
-                        = GlobalComponentFactory::Instance().create(_listView->getCurrentData());
+                        = GlobalComponentFactory::Instance().create(
+                        _listView->tryGetCurrentDataAsString());
                     if (!Verify(comp))
                     {
-                        criticalLog("Can't create component: {}"_f << _listView->getCurrentData());
+                        criticalLog("Can't create component: {}"_f
+                                    << _listView->tryGetCurrentDataAsString());
                         return;
                     }
 
