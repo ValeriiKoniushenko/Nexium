@@ -9,7 +9,7 @@
         },
         {
             "_children": null,
-            "_isEnabled": false,
+            "_isEnabled": true,
             "_name": "",
             "_noTick": false,
             "_type": "Core::ECSEditorActorAdapter"

@@ -121,10 +121,20 @@ namespace Core
     {
         drawMenuBar();
 
+        const float maxWidth = std::min(800.f, ImGui::GetContentRegionAvail().x * 0.7f);
+
+        if (_enablePreview && _lastPropertiesTreeWidth != -1.f
+            && _lastPropertiesTreeWidth > maxWidth)
+        {
+            ImGui::SetNextWindowSize(glm::vec2(maxWidth, 0), ImGuiCond_Always);
+        }
+
         if (ImGui::BeginChild("Properties_and_Tree",
                               glm::vec2(_enablePreview ? _defaultPropertiesWidth : 0, 0),
                               _enablePreview ? ImGuiChildFlags_ResizeX : 0))
         {
+            _lastPropertiesTreeWidth = ImGui::GetContentRegionAvail().x;
+
             if (_enableTree)
             {
                 if (ImGui::BeginChild("Tree", glm::vec2(0, 100.f),
