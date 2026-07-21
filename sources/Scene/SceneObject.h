@@ -24,11 +24,11 @@
 
 #pragma once
 
-#include "AssetsManager/ITagHolder.h"
 #include "ECS/BaseComponent.h"
 #include "ECS/Transformable.h"
 #include "Graphics/IDrawable.h"
 #include "Graphics/IOutliner.h"
+#include "Misc/ITagHolder.h"
 
 namespace Core
 {

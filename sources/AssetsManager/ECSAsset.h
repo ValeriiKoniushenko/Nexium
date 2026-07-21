@@ -26,7 +26,7 @@
 
 #include "Core/IntrusivePtr.h"
 #include "ECS/BaseComponent.h"
-#include "ITagHolder.h"
+#include "Misc/ITagHolder.h"
 
 #include <filesystem>
 

@@ -26,6 +26,7 @@
 
 #include "Core/IntrusivePtr.h"
 #include "Misc/BaseLog.h"
+#include "Misc/ITagHolder.h"
 #include "ResourceManagement/JsonAdapter.h"
 
 #include <queue>
@@ -109,15 +110,15 @@ public:
 /// // Foo.h
 /// class Foo : public BaseComponent
 /// {
-///      ECS_COMPONENT_DECL(Foo, BaseComponent);
+///      ECS_DECL(Foo, BaseComponent);
 /// };
 ///
 /// // If you want to implement a constructor by your own hands, use the macro:
-/// // ECS_COMPONENT_DECL_NO_CNSTR - but look at the parent initialization
+/// // ECS_DECL_NO_CNSTR - but look at the parent initialization
 /// // you must pass at lest your component's type name.
 /// class FooBar : public BaseComponent
 /// {
-///      ECS_COMPONENT_DECL_NO_CNSTR(Foo, BaseComponent);
+///      ECS_DECL_NO_CNSTR(Foo, BaseComponent);
 ///  public:
 ///  FooBar(const StringAtom name = "") :
 ///      BaseComponent(componentType, name)
@@ -136,36 +137,34 @@ public:
 /// If you want to know why we need it:
 /// It will register your component inside Entity Component System abstraction. I.g. using
 /// GlobalComponentFactory, you can create necessary type known only name of your type.
-#define ECS_COMPONENT_DECL(ClassName, BaseComponentClass)                                          \
+#define ECS_DECL(ClassName, BaseComponentClass, ...)                                               \
+    R_FRIEND_DECL(ClassName, BaseComponentClass);                                                  \
     _ECS_COMPONENT_DECL(ClassName, ClassName, BaseComponentClass)                                  \
     _ECS_DEFAULT_PUBLIC_CONSTRUCTOR(ClassName, BaseComponentClass)                                 \
     static_assert(true, "")
 
-#define ECS_COMPONENT_DECL_NO_CNSTR(ClassName, BaseComponentClass)                                 \
-    _ECS_COMPONENT_DECL(ClassName, ClassName, BaseComponentClass)                                  \
-    static_assert(true, "")
-
-#define ECS_COMPONENT_IMPL(ClassName)                                                              \
-    _ECS_COMPONENT_IMPL(ClassName, ;, R<ClassName>::FullName(), false)                             \
-    static_assert(true, "")
-
-// ---------------------------------------------------------
-
-#define ECS_DECL(ClassName, BaseComponentClass, ...)                                               \
-    R_FRIEND_DECL(ClassName, BaseComponentClass);                                                  \
-    ECS_COMPONENT_DECL(ClassName, BaseComponentClass)
-
 #define ECS_DECL_NO_SER(ClassName, BaseComponentClass, ...)                                        \
     R_FRIEND(ClassName, BaseComponentClass);                                                       \
-    ECS_COMPONENT_DECL(ClassName, BaseComponentClass)
+    _ECS_COMPONENT_DECL(ClassName, ClassName, BaseComponentClass)                                  \
+    _ECS_DEFAULT_PUBLIC_CONSTRUCTOR(ClassName, BaseComponentClass)                                 \
+    static_assert(true, "")
 
 #define ECS_DECL_NO_CNSTR(ClassName, BaseComponentClass)                                           \
     R_FRIEND_DECL(ClassName, BaseComponentClass);                                                  \
-    ECS_COMPONENT_DECL_NO_CNSTR(ClassName, BaseComponentClass)
+    _ECS_COMPONENT_DECL(ClassName, ClassName, BaseComponentClass)                                  \
+    static_assert(true, "")
+
+#define ECS_DECL_NO_SER_NO_CNSTR(ClassName, BaseComponentClass, ...)                               \
+    R_FRIEND(ClassName, BaseComponentClass);                                                       \
+    _ECS_COMPONENT_DECL(ClassName, ClassName, BaseComponentClass)                                  \
+    static_assert(true, "")
 
 #define ECS_IMPL(ClassName)                                                                        \
     R_FRIEND_IMPL(ClassName);                                                                      \
-    ECS_COMPONENT_IMPL(ClassName)
+    _ECS_COMPONENT_IMPL(ClassName, ;, R<ClassName>::FullName(), false)
+
+#define ECS_IMPL_NO_SER(ClassName)                                                                 \
+    _ECS_COMPONENT_IMPL(ClassName, ;, R<ClassName>::FullName(), false)
 
 //
 //
@@ -596,6 +595,8 @@ namespace Core
         }
 
         // ========================== MISC & TYPES ==========================
+        [[nodiscard]] virtual Tag getTags() const { return Tag_None; }
+
         void clear() override;
 
         [[nodiscard]] virtual bool isValid() const;

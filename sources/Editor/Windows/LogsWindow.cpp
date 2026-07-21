@@ -33,7 +33,7 @@
 
 namespace Core
 {
-    ECS_COMPONENT_IMPL(LogsWindowEWC);
+    ECS_IMPL_NO_SER(LogsWindowEWC);
 
     //
     //     _
