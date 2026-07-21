@@ -30,9 +30,7 @@
 namespace Core
 {
     ECS_IMPL(BaseEWC);
-
     ECS_IMPL(BaseFloatEWC);
-
     ECS_IMPL(BaseMenuBarEWC);
 
     //

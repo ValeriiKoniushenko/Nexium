@@ -30,7 +30,6 @@
 namespace Core::Gui
 {
     ECS_IMPL(BaseCombo);
-
     ECS_IMPL(ComboModelBased);
 
     ECS_IMPL(ComboView);

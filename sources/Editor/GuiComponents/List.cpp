@@ -27,7 +27,6 @@
 namespace Core::Gui
 {
     ECS_IMPL(BaseList);
-
     ECS_IMPL(ListView);
 
     ECS_IMPL(ListModelBased);
