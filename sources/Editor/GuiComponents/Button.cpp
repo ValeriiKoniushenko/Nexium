@@ -32,7 +32,6 @@
 namespace Core::Gui
 {
     ECS_IMPL(Button);
-
     ECS_IMPL(ToggleButton);
 
     ECS_IMPL(ImageButton);

@@ -34,7 +34,6 @@ namespace Core::Gui
         ECS_DECL(Spacer, Core::Gui::Widget);
 
     public:
-
         [[nodiscard]] glm::vec2 getRealSize() const;
 
         [[nodiscard]] float getWidth() const override { return getRealSize().x; }
