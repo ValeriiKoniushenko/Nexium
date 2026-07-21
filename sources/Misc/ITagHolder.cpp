@@ -42,6 +42,7 @@ namespace
         { Core::Tag_None,        "None" },
         { Core::Tag_WorldObject, "WorldObject" },
         { Core::Tag_GuiObject,   "GuiObject" },
+        { Core::Tag_EditorInternal,   "EditorInternal" },
         };
     // clang-format on
 

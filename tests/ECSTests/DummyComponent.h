@@ -31,8 +31,7 @@
 CLASS();
 class DummyComponent : public Core::BaseComponent
 {
-    R_FRIEND_DECL(DummyComponent, Core::BaseComponent);
-    ECS_COMPONENT_DECL(DummyComponent, Core::BaseComponent);
+    ECS_DECL(DummyComponent, Core::BaseComponent);
 
     FIELD();
     int a = 123;
@@ -44,8 +43,7 @@ class DummyComponent : public Core::BaseComponent
 CLASS();
 class HardConstructorComponent : public Core::BaseComponent
 {
-    R_FRIEND_DECL(HardConstructorComponent, Core::BaseComponent);
-    ECS_COMPONENT_DECL(HardConstructorComponent, BaseComponent);
+    ECS_DECL(HardConstructorComponent, Core::BaseComponent);
 
     HardConstructorComponent(int a, const Core::StringAtom& name, std::string b)
         : BaseComponent(componentType, name),
@@ -61,8 +59,7 @@ class HardConstructorComponent : public Core::BaseComponent
 CLASS();
 class InitSpyComponent : public Core::BaseComponent
 {
-    R_FRIEND_DECL(InitSpyComponent, Core::BaseComponent);
-    ECS_COMPONENT_DECL(InitSpyComponent, BaseComponent);
+    ECS_DECL(InitSpyComponent, Core::BaseComponent);
 
 public:
     int preInitCalls = 0;
@@ -76,8 +73,7 @@ protected:
 CLASS();
 class Vehicle : public Core::BaseComponent
 {
-    R_FRIEND_DECL(Vehicle, Core::BaseComponent);
-    ECS_COMPONENT_DECL(Vehicle, Core::BaseComponent);
+    ECS_DECL(Vehicle, Core::BaseComponent);
 
     FIELD();
     std::string vin = "UNKNOWN";
@@ -90,8 +86,7 @@ class Vehicle : public Core::BaseComponent
 CLASS();
 class BaseCar : public Vehicle
 {
-    R_FRIEND_DECL(BaseCar, Vehicle);
-    ECS_COMPONENT_DECL(BaseCar, Vehicle);
+    ECS_DECL(BaseCar, Vehicle);
 
     FIELD();
     int horsepower = 150;
@@ -102,8 +97,7 @@ class BaseCar : public Vehicle
 CLASS();
 class Sedan : public BaseCar
 {
-    R_FRIEND_DECL(Sedan, BaseCar);
-    ECS_COMPONENT_DECL(Sedan, BaseCar);
+    ECS_DECL(Sedan, BaseCar);
 
     FIELD();
     int doors = 4;
@@ -114,8 +108,7 @@ class Sedan : public BaseCar
 CLASS();
 class BasePart : public Core::BaseComponent
 {
-    R_FRIEND_DECL(BasePart, Core::BaseComponent);
-    ECS_COMPONENT_DECL(BasePart, Core::BaseComponent);
+    ECS_DECL(BasePart, Core::BaseComponent);
 
     FIELD();
     int id = 0;
@@ -126,8 +119,7 @@ class BasePart : public Core::BaseComponent
 CLASS();
 class Engine : public BasePart
 {
-    R_FRIEND_DECL(Engine, BasePart);
-    ECS_COMPONENT_DECL(Engine, BasePart);
+    ECS_DECL(Engine, BasePart);
 
     FIELD();
     int cylinders = 4;
@@ -140,8 +132,7 @@ class Engine : public BasePart
 CLASS();
 class TurboEngine : public Engine
 {
-    R_FRIEND_DECL(TurboEngine, Engine);
-    ECS_COMPONENT_DECL(TurboEngine, Engine);
+    ECS_DECL(TurboEngine, Engine);
 
     FIELD();
     float boostPressure = 1.0f;
@@ -152,8 +143,7 @@ class TurboEngine : public Engine
 CLASS();
 class Wheel : public BasePart
 {
-    R_FRIEND_DECL(Wheel, BasePart);
-    ECS_COMPONENT_DECL(Wheel, BasePart);
+    ECS_DECL(Wheel, BasePart);
 
     FIELD();
     float radius = 17.0f;
@@ -164,8 +154,7 @@ class Wheel : public BasePart
 CLASS();
 class Interior : public BasePart
 {
-    R_FRIEND_DECL(Interior, BasePart);
-    ECS_COMPONENT_DECL(Interior, BasePart);
+    ECS_DECL(Interior, BasePart);
 
     FIELD();
     std::string color = "black";
@@ -174,8 +163,7 @@ class Interior : public BasePart
 CLASS();
 class Seat : public Interior
 {
-    R_FRIEND_DECL(Seat, Interior);
-    ECS_COMPONENT_DECL(Seat, Interior);
+    ECS_DECL(Seat, Interior);
 
     FIELD();
     bool heated = false;
@@ -186,8 +174,7 @@ class Seat : public Interior
 CLASS();
 class Dashboard : public Interior
 {
-    R_FRIEND_DECL(Dashboard, Interior);
-    ECS_COMPONENT_DECL(Dashboard, Interior);
+    ECS_DECL(Dashboard, Interior);
 
     FIELD();
     bool hasDisplay = true;
@@ -198,8 +185,7 @@ class Dashboard : public Interior
 CLASS();
 class Electronics : public BasePart
 {
-    R_FRIEND_DECL(Electronics, BasePart);
-    ECS_COMPONENT_DECL(Electronics, BasePart);
+    ECS_DECL(Electronics, BasePart);
 
     FIELD();
     int firmwareVersion = 1;
@@ -208,8 +194,7 @@ class Electronics : public BasePart
 CLASS();
 class Sensor : public Electronics
 {
-    R_FRIEND_DECL(Sensor, Electronics);
-    ECS_COMPONENT_DECL(Sensor, Electronics);
+    ECS_DECL(Sensor, Electronics);
 
     FIELD();
     std::string type = "generic";
@@ -220,8 +205,7 @@ class Sensor : public Electronics
 CLASS();
 class Camera : public Sensor
 {
-    R_FRIEND_DECL(Camera, Sensor);
-    ECS_COMPONENT_DECL(Camera, Sensor);
+    ECS_DECL(Camera, Sensor);
 
     FIELD();
     int resolution = 1080;
