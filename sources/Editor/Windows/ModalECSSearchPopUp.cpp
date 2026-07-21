@@ -121,6 +121,9 @@ namespace Core
                         _nameInput->input->setInputtedData(name.toStdString());
                     }
                 });
+
+            _subscriptionPool << _list->onDoubleClickSelect->subscribeAndGetID(
+                [this](const void*, StringAtom name) { okButtonClicked(); });
         }
 
         _layout.addChildComponent<Gui::Separator>();
@@ -130,35 +133,7 @@ namespace Core
 
             _okButton = h->addChildComponent<Gui::Button>("Add");
             _okButton->setFlex(Gui::Flex::FlexWidth);
-            _okButton->onClick->subscribe(
-                [this]()
-                {
-                    if (!Verify(_nameInput && _callback))
-                    {
-                        return;
-                    }
-
-                    if (_nameInput->input->getInputtedData().empty())
-                    {
-                        _nameInput->input->setBorderColor(Color4_Red);
-                        return;
-                    }
-
-                    auto comp = GlobalComponentFactory::Instance().create(
-                        _list->tryGetCurrentDataAsString());
-                    if (!Verify(comp))
-                    {
-                        criticalLog("Can't create component: {}"_f
-                                    << _list->tryGetCurrentDataAsString());
-                        return;
-                    }
-
-                    comp->setComponentName(_nameInput->input->getInputtedData().c_str());
-
-                    closeWindow();
-
-                    _callback(comp);
-                });
+            _okButton->onClick->subscribe([this]() { okButtonClicked(); });
 
             _cancelButton = h->addChildComponent<Gui::Button>("Cancel");
             _cancelButton->setFlex(Gui::Flex::FlexWidth);
@@ -174,7 +149,12 @@ namespace Core
 
         if (ImGui::IsKeyPressed(ImGuiKey_Escape, false))
         {
-            closeWindow();
+            cancelButtonClicked();
+        }
+
+        if (ImGui::IsKeyPressed(ImGuiKey_Enter, false))
+        {
+            okButtonClicked();
         }
     }
 
@@ -222,5 +202,36 @@ namespace Core
         {
             _list->setKeyboardFocusAtStart();
         }
+    }
+
+    void ModalECSSearchPopUpEWC::okButtonClicked()
+    {
+        if (!Verify(_nameInput && _list && _callback))
+        {
+            return;
+        }
+
+        if (_nameInput->input->getInputtedData().empty())
+        {
+            _nameInput->input->setBorderColor(Color4_Red);
+            return;
+        }
+
+        auto comp = GlobalComponentFactory::Instance().create(_list->tryGetCurrentDataAsString());
+        if (!Verify(comp))
+        {
+            criticalLog("Can't create component: {}"_f << _list->tryGetCurrentDataAsString());
+            return;
+        }
+        comp->setComponentName(_nameInput->input->getInputtedData().c_str());
+
+        _callback(comp);
+
+        closeWindow();
+    }
+
+    void ModalECSSearchPopUpEWC::cancelButtonClicked()
+    {
+        closeWindow();
     }
 } // namespace Core

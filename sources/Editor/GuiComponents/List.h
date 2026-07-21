@@ -94,6 +94,7 @@ namespace Core::Gui
 
     public: // Delegates
         Delegate<void(StringAtom)>::Ptr onSelect = Delegate<void(StringAtom)>::Create();
+        Delegate<void(StringAtom)>::Ptr onDoubleClickSelect = Delegate<void(StringAtom)>::Create();
 
     protected:
         void onDraw() override;
@@ -134,6 +135,8 @@ namespace Core::Gui
 
     public: // Delegates
         Delegate<void(const void*, StringAtom)>::Ptr onSelect
+            = Delegate<void(const void*, StringAtom)>::Create();
+        Delegate<void(const void*, StringAtom)>::Ptr onDoubleClickSelect
             = Delegate<void(const void*, StringAtom)>::Create();
 
     protected:

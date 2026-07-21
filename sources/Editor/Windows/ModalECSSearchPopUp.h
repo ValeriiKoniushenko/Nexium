@@ -58,6 +58,9 @@ namespace Core
         void onClose() override;
         void onOpen() override;
 
+        void okButtonClicked();
+        void cancelButtonClicked();
+
     protected:
         DelegateSubscriberPoolGuard _subscriptionPool;
         std::function<void(BaseComponent::Ptr)> _callback;

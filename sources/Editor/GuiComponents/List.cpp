@@ -88,6 +88,10 @@ namespace Core::Gui
                 {
                     ImGui::SetItemDefaultFocus();
                 }
+                if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+                {
+                    onDoubleClickSelect->trigger(_items.at(i));
+                }
             }
             ImGui::EndListBox();
         }
@@ -172,6 +176,11 @@ namespace Core::Gui
                 if (isSelected)
                 {
                     ImGui::SetItemDefaultFocus();
+                }
+
+                if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+                {
+                    onDoubleClickSelect->trigger(_cache.at(i).first, string);
                 }
             }
             ImGui::EndListBox();
