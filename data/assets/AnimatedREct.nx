@@ -1,7 +1,15 @@
 {
     "data": {
         "_atlasName": "default",
-        "_children": null,
+        "_children": [
+            {
+                "_children": null,
+                "_isEnabled": true,
+                "_name": "Anomator",
+                "_noTick": false,
+                "_type": "Core::Animation::FrameByFrameAnimator"
+            }
+        ],
         "_isDrawOutline": false,
         "_isEnabled": true,
         "_isPostDraw": false,

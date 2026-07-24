@@ -348,31 +348,8 @@ namespace Core
     void GameInstance::loadCoreResources()
     {
         GetAssetsManager().generateTextureAtlas(Config::Path::images / "atlas");
-        GetAssetsManager().generateTextureAtlas("santa_idle"_atom,
-                                                Config::Path::images / "Santa/Santa_Idle");
-        GetAssetsManager().generateTextureAtlas("santa_jump"_atom,
-                                                Config::Path::images / "Santa/Santa_Jump");
         GetAssetsManager().generateTextureAtlas("santa_walk"_atom,
                                                 Config::Path::images / "Santa/Santa_Walk");
-
-        if (auto rectangle = gameScene.gerFirstOf<SceneObj::Rectangle>())
-        {
-            auto* animator = rectangle->getOrAddChildComponent<FrameByFrameAnimator>();
-
-            FrameByFrameAnimation walk;
-            walk.setAnimationName("walk"_atom);
-            walk.setAtlasName("santa_walk"_atom);
-            walk.addFrame("Walk _1.png"_atom);
-            for (int i = 2; i <= 13; ++i)
-            {
-                walk.addFrame(StringAtom::Intern("Walk_" + std::to_string(i) + ".png"));
-            }
-            walk.setFPS(12.f);
-            walk.setLoop(true);
-
-            animator->addAnimation(std::move(walk));
-            animator->startAnimation("walk"_atom);
-        }
 
         onLoadCoreResources();
     }
