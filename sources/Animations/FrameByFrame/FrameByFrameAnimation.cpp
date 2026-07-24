@@ -24,14 +24,14 @@
 
 #include "FrameByFrameAnimation.h"
 
-#include <cmath>
+#include <limits>
 
 namespace Core::Animation
 {
 
     void FrameByFrameAnimation::update(float delta)
     {
-        if (!isPlaying() || _frames.empty() || !std::isfinite(delta) || delta <= 0.f)
+        if (!isPlaying() || _frames.empty() || delta <= 0.f)
         {
             return;
         }
@@ -52,7 +52,6 @@ namespace Core::Animation
                 }
                 else
                 {
-                    _currentFrame = static_cast<int>(_frames.size() - 1);
                     finish();
                     break;
                 }
@@ -62,9 +61,10 @@ namespace Core::Animation
 
     void FrameByFrameAnimation::setFPS(float fps)
     {
-        if (!std::isfinite(fps) || fps <= 0.f)
+        if (fps <= 0.f)
         {
-            throw std::logic_error("FPS must be > 0");
+            errorLog("FPS must be > 0");
+            return;
         }
         _frameTime = 1.0f / fps;
     }
@@ -87,45 +87,97 @@ namespace Core::Animation
 
     void FrameByFrameAnimation::finish()
     {
+        BaseAnimation::finish();
+
         if (!_frames.empty())
         {
-            _currentFrame = static_cast<int>(_frames.size() - 1);
+            _currentFrame = _frames.size() - 1;
         }
         _timer = 0.f;
-        BaseAnimation::finish();
     }
 
-    bool FrameByFrameAnimation::addFrame(const StringAtom& frameName)
+    bool FrameByFrameAnimation::addFrame(StringAtom textureName)
     {
-        if (frameName.isEmpty())
+        if (textureName.isEmpty())
         {
             return false;
         }
 
-        _frames.emplace_back(frameName);
+        _frames.emplace_back(Frame{ .textureName = std::move(textureName) });
+        return true;
+    }
+
+    bool FrameByFrameAnimation::addFrame(GlobalPosition2F uvOffset, GlobalPosition2F uvSize)
+    {
+        if (uvOffset.x < 0.f || uvOffset.y < 0.f || uvSize.x <= 0.f || uvSize.y <= 0.f
+            || uvOffset.x + uvSize.x > 1.f || uvOffset.y + uvSize.y > 1.f)
+        {
+            return false;
+        }
+
+        _frames.emplace_back(Frame{ .textureName = std::nullopt,
+                                    .uvOffset = std::move(uvOffset),
+                                    .uvSize = std::move(uvSize) });
+        return true;
+    }
+
+    bool FrameByFrameAnimation::addFramesFromSpriteSheet(std::size_t columns, std::size_t rows,
+                                                         std::size_t frameCount)
+    {
+        if (columns == 0 || rows == 0 || columns > std::numeric_limits<std::size_t>::max() / rows)
+        {
+            return false;
+        }
+
+        const auto capacity = columns * rows;
+        if (frameCount == 0)
+        {
+            frameCount = capacity;
+        }
+        if (frameCount > capacity)
+        {
+            return false;
+        }
+
+        const auto frameSize
+            = GlobalPosition2F{ 1.f / static_cast<float>(columns), 1.f / static_cast<float>(rows) };
+        _frames.reserve(_frames.size() + frameCount);
+
+        for (std::size_t index = 0; index < frameCount; ++index)
+        {
+            const auto column = index % columns;
+            const auto row = index / columns;
+            _frames.emplace_back(
+                Frame{ .textureName = std::nullopt,
+                       .uvOffset = GlobalPosition2F{ static_cast<float>(column) * frameSize.x,
+                                                     static_cast<float>(row) * frameSize.y },
+                       .uvSize = frameSize });
+        }
+
         return true;
     }
 
     bool FrameByFrameAnimation::isValid() const noexcept
     {
-        return !_animationName.isEmpty() && !_atlasName.isEmpty() && !_frames.empty()
-               && std::isfinite(_frameTime) && _frameTime > 0.f;
+        if (_animationName.isEmpty() || _atlasName.isEmpty() || _frames.empty()
+            || _frameTime <= 0.f)
+        {
+            return false;
+        }
+
+        return !_textureName.isEmpty()
+               || std::ranges::all_of(
+                   _frames, [](const Frame& frame)
+                   { return frame.textureName && !frame.textureName->isEmpty(); });
     }
 
-    const StringAtom& FrameByFrameAnimation::getCurrentFrameName() const
+    const Frame* FrameByFrameAnimation::getCurrentFrame() const noexcept
     {
-        if (_frames.empty())
+        if (_currentFrame >= _frames.size())
         {
-            static const StringAtom empty;
-            return empty;
+            return nullptr;
         }
 
-        if (_currentFrame < 0 || static_cast<std::size_t>(_currentFrame) >= _frames.size())
-        {
-            static const StringAtom empty;
-            return empty;
-        }
-
-        return _frames[_currentFrame];
+        return &_frames[_currentFrame];
     }
 } // namespace Core::Animation

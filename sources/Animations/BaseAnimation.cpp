@@ -70,4 +70,10 @@ namespace Core::Animation
         _isFinished = true;
     }
 
+    void BaseAnimation::restart()
+    {
+        reset();
+        start();
+    }
+
 } // namespace Core::Animation

@@ -33,7 +33,6 @@
 
 namespace Core::Animation
 {
-    class FrameByFrameAnimation;
 
     CLASS();
     class FrameByFrameAnimator : public BaseComponent
@@ -41,8 +40,6 @@ namespace Core::Animation
         ECS_DECL(FrameByFrameAnimator, Core::BaseComponent);
 
     public:
-        void update(float delta);
-
         bool startAnimation(const StringAtom& name);
         bool stopAnimation();
         bool pauseAnimation();
@@ -50,14 +47,32 @@ namespace Core::Animation
         bool resetAnimation();
         bool finishAnimation();
 
-        bool addAnimation(FrameByFrameAnimation animation);
+        bool addAnimation(FrameByFrameAnimation* animation);
         bool removeAnimation(const StringAtom& name);
         void clearAnimations();
 
         [[nodiscard]] const StringAtom& getCurrentAtlasName() const;
-        [[nodiscard]] const StringAtom& getCurrentFrameName() const;
-        [[nodiscard]] FrameByFrameAnimation* getAnimation(const StringAtom& name);
-        [[nodiscard]] const FrameByFrameAnimation* getAnimation(const StringAtom& name) const;
+        [[nodiscard]] const Frame* getCurrentFrame() const;
+        [[nodiscard]] FrameByFrameAnimation* getAnimation(const StringAtom& name)
+        {
+            const auto it = _animations.find(name);
+            if (it == _animations.end()) [[unlikely]]
+            {
+                return nullptr;
+            }
+            return it->second;
+        }
+
+        [[nodiscard]] const FrameByFrameAnimation*
+            getAnimation(const StringAtom& name) const
+        {
+            const auto it = _animations.find(name);
+            if (it == _animations.end()) [[unlikely]]
+            {
+                return nullptr;
+            }
+            return it->second;
+        }
         [[nodiscard]] bool hasAnimation(const StringAtom& name) const;
         [[nodiscard]] bool hasCurrentAnimation() const;
         [[nodiscard]] bool isPlaying() const;
@@ -67,8 +82,9 @@ namespace Core::Animation
 
     private:
         void applyCurrentFrame();
+        void updateCurrentAnimation(float delta);
 
-        std::unordered_map<StringAtom, FrameByFrameAnimation> _animations;
+        std::unordered_map<StringAtom, FrameByFrameAnimation*> _animations;
 
         FIELD();
         StringAtom _currentState;

@@ -24,43 +24,57 @@
 #pragma once
 
 #include "Animations/BaseAnimation.h"
+#include "Core/Position.h"
 #include "Misc/BaseLog.h"
 
+#include <algorithm>
+#include <optional>
+#include <utility>
 #include <vector>
 
 namespace Core::Animation
 {
 
+    struct Frame
+    {
+        std::optional<StringAtom> textureName;
+        GlobalPosition2F uvOffset{ 0.f, 0.f };
+        GlobalPosition2F uvSize{ 1.f, 1.f };
+    };
+
     class FrameByFrameAnimation : public BaseAnimation, public BaseLog
     {
     public:
-        FrameByFrameAnimation() = default;
-
-        void update(float delta);
         void setFPS(float fps);
         void start() override;
         void reset() override;
         void finish() override;
 
-        void setAtlasName(const StringAtom& atlasName) { _atlasName = atlasName; }
-        bool addFrame(const StringAtom& frameName);
+        void setAtlasName(StringAtom atlasName) { _atlasName = std::move(atlasName); }
+        void setTextureName(StringAtom textureName) { _textureName = std::move(textureName); }
 
-        [[nodiscard]] const StringAtom& getAtlasName() const noexcept { return _atlasName; }
-        [[nodiscard]] const StringAtom& getCurrentFrameName() const;
-        [[nodiscard]] std::size_t getFramesCount() const noexcept { return _frames.size(); }
-        [[nodiscard]] bool hasFrames() const noexcept { return !_frames.empty(); }
+        bool addFrame(StringAtom textureName);
+        bool addFrame(GlobalPosition2F uvOffset, GlobalPosition2F uvSize);
+        bool addFramesFromSpriteSheet(std::size_t columns, std::size_t rows,
+                                      std::size_t frameCount = 0);
+
         [[nodiscard]] bool isValid() const noexcept;
+        [[nodiscard]] const Frame* getCurrentFrame() const noexcept;
+        [[nodiscard]] bool hasFrames() const noexcept { return !_frames.empty(); }
+        [[nodiscard]] std::size_t getFramesCount() const noexcept { return _frames.size(); }
+        [[nodiscard]] const StringAtom& getAtlasName() const noexcept { return _atlasName; }
+        [[nodiscard]] const StringAtom& getTextureName() const noexcept { return _textureName; }
 
-    protected:
-        [[nodiscard]] spdlog::logger* getLogger() const override { return nullptr; }
+        void update(float delta) override;
 
     private:
         StringAtom _atlasName;
-        std::vector<StringAtom> _frames;
+        StringAtom _textureName;
+        std::vector<Frame> _frames;
 
-        int _currentFrame{ 0 };
+        std::size_t _currentFrame{ 0 };
         float _timer{ 0.f };
         float _frameTime{ 0.1f };
     };
 
-} // namespace Core
+} // namespace Core::Animation

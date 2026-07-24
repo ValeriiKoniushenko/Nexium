@@ -30,12 +30,12 @@
         }
     ],
     "_innerPosition": [
-        386.0,
+        304.0,
         88.0
     ],
     "_innerSize": {
-        "height": 560.0,
-        "width": 1079.0
+        "height": 592.0,
+        "width": 1600.0
     },
     "_isEnabled": true,
     "_isFitContent": false,
@@ -46,16 +46,16 @@
     "_name": " Assets editor",
     "_noTick": false,
     "_oldSize": {
-        "height": 624.0,
-        "width": 1105.0
+        "height": 656.0,
+        "width": 1616.0
     },
     "_position": [
-        378.0,
+        296.0,
         32.0
     ],
     "_size": {
-        "height": 624.0,
-        "width": 1105.0
+        "height": 656.0,
+        "width": 1616.0
     },
     "_type": "Core::NxECSBasedEditorEWC"
 }

@@ -35,6 +35,11 @@ namespace Core::Animation
         R_FRIEND(BaseAnimation);
 
     public:
+        BaseAnimation() = default;
+        BaseAnimation(const BaseAnimation&) = default;
+        BaseAnimation(BaseAnimation&&) noexcept = default;
+        BaseAnimation& operator=(const BaseAnimation&) = default;
+        BaseAnimation& operator=(BaseAnimation&&) noexcept = default;
         virtual ~BaseAnimation() = default;
 
         void setAnimationName(const StringAtom& animationName) { _animationName = animationName; }
@@ -47,6 +52,9 @@ namespace Core::Animation
         virtual void pause();
         virtual void resume();
         virtual void finish();
+        virtual void restart();
+
+        virtual void update(float delta) = 0;
 
         void setLoop(bool value) noexcept { _isLooping = value; }
 

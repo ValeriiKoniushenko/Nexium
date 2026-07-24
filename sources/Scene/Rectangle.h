@@ -26,6 +26,8 @@
 
 #include "Scene/SceneObject.h"
 
+#include <utility>
+
 namespace Core::SceneObj
 {
 
@@ -39,6 +41,11 @@ namespace Core::SceneObj
 
         [[nodiscard]] StringAtom getTextureName() const { return _textureName; }
         void setTexture(const StringAtom& value) { _textureName = value; }
+        void setTextureUV(GlobalPosition2F offset, GlobalPosition2F size)
+        {
+            _textureUVOffset = std::move(offset);
+            _textureUVSize = std::move(size);
+        }
 
         [[nodiscard]] StringAtom getAtlasName() const { return _atlasName; }
         void setAtlas(const StringAtom& value) { _atlasName = value; }
@@ -52,6 +59,9 @@ namespace Core::SceneObj
 
         FIELD();
         StringAtom _atlasName = "default"_atom;
+
+        GlobalPosition2F _textureUVOffset{ 0.f, 0.f };
+        GlobalPosition2F _textureUVSize{ 1.f, 1.f };
     };
 
 } // namespace Core::SceneObj

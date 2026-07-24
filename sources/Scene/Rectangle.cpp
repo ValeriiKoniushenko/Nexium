@@ -32,7 +32,7 @@ namespace Core::SceneObj
 {
 
     ECS_IMPL(Rectangle);
-    
+
     void Rectangle::draw(BaseCamera& camera)
     {
         static BaseGraphicsData gcd = []()
@@ -72,7 +72,6 @@ namespace Core::SceneObj
         }();
         tryToRecalculateMatrices();
 
-
         auto& atlas = GetAssetsManager().getAtlas(_atlasName);
         auto* shader = GetShaderManager().getShaderProgram("2d_rect"_atom);
         shader->use();
@@ -82,9 +81,11 @@ namespace Core::SceneObj
         atlas.bind();
 
         const auto rect = atlas.getRect(_textureName);
+        const auto textureOffset = rect.getLeftTop();
+        const auto textureSize = rect.getRightBottom() - textureOffset;
 
-        shader->setUniform("uUVOffset"_atom, rect.getLeftTop());
-        shader->setUniform("uUVSize"_atom, rect.getRightBottom() - rect.getLeftTop());
+        shader->setUniform("uUVOffset"_atom, textureOffset + textureSize * _textureUVOffset);
+        shader->setUniform("uUVSize"_atom, textureSize * _textureUVSize);
         shader->setUniform("uModel"_atom, getModelMatrix());
 
         gcd.directDraw();

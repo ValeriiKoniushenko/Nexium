@@ -31,14 +31,6 @@ namespace Core::Animation
 {
     ECS_IMPL(FrameByFrameAnimator);
 
-    void FrameByFrameAnimator::update(float delta)
-    {
-        if (auto* animation = getAnimation(_currentState))
-        {
-            animation->update(delta);
-        }
-    }
-
     bool FrameByFrameAnimator::startAnimation(const StringAtom& name)
     {
         auto* animation = getAnimation(name);
@@ -48,8 +40,7 @@ namespace Core::Animation
         }
 
         _currentState = name;
-        animation->reset();
-        animation->start();
+        animation->restart();
         applyCurrentFrame();
         return true;
     }
@@ -111,15 +102,15 @@ namespace Core::Animation
         return true;
     }
 
-    bool FrameByFrameAnimator::addAnimation(FrameByFrameAnimation animation)
+    bool FrameByFrameAnimator::addAnimation(FrameByFrameAnimation* animation)
     {
-        if (!animation.isValid())
+        if (!animation->isValid())
         {
             return false;
         }
 
-        const auto name = animation.getAnimationName();
-        _animations.insert_or_assign(name, std::move(animation));
+        const auto name = animation->getAnimationName();
+        _animations.insert_or_assign(name, animation);
         return true;
     }
 
@@ -149,35 +140,14 @@ namespace Core::Animation
         return empty;
     }
 
-    const StringAtom& FrameByFrameAnimator::getCurrentFrameName() const
+    const Frame* FrameByFrameAnimator::getCurrentFrame() const
     {
         if (const auto* animation = getAnimation(_currentState))
         {
-            return animation->getCurrentFrameName();
+            return animation->getCurrentFrame();
         }
 
-        static const StringAtom empty;
-        return empty;
-    }
-
-    FrameByFrameAnimation* FrameByFrameAnimator::getAnimation(const StringAtom& name)
-    {
-        const auto it = _animations.find(name);
-        if (it == _animations.end())
-        {
-            return nullptr;
-        }
-        return &it->second;
-    }
-
-    const FrameByFrameAnimation* FrameByFrameAnimator::getAnimation(const StringAtom& name) const
-    {
-        const auto it = _animations.find(name);
-        if (it == _animations.end())
-        {
-            return nullptr;
-        }
-        return &it->second;
+        return nullptr;
     }
 
     bool FrameByFrameAnimator::hasAnimation(const StringAtom& name) const
@@ -199,7 +169,7 @@ namespace Core::Animation
     void FrameByFrameAnimator::onTick(float delta)
     {
         BaseComponent::onTick(delta);
-        update(delta);
+
         applyCurrentFrame();
     }
 
@@ -212,7 +182,25 @@ namespace Core::Animation
             return;
         }
 
+        const auto* frame = animation->getCurrentFrame();
+        if (!frame)
+        {
+            return;
+        }
+
         rectangle->setAtlas(animation->getAtlasName());
-        rectangle->setTexture(animation->getCurrentFrameName());
+
+        const auto& textureName
+            = frame->textureName ? *frame->textureName : animation->getTextureName();
+        rectangle->setTexture(textureName);
+        rectangle->setTextureUV(frame->uvOffset, frame->uvSize);
+    }
+
+    void FrameByFrameAnimator::updateCurrentAnimation(float delta)
+    {
+        if (auto* animation = getAnimation(_currentState))
+        {
+            animation->update(delta);
+        }
     }
 } // namespace Core::Animation
