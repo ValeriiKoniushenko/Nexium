@@ -46,9 +46,6 @@ namespace Core::Gui
         HorizontalLayout* content = nullptr;
         Button* deleteButton = nullptr;
 
-    public:
-        void onInitialize() override;
-
         void setIndexText(std::size_t i)
         {
             if (Verify(label))
@@ -56,6 +53,9 @@ namespace Core::Gui
                 label->setText(StringAtom::MakeFrom(i) + "#"_atom);
             }
         }
+
+    protected:
+        void onInitialize() override;
     };
 
     /// it provides a user-based GUI array.

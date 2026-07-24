@@ -26,7 +26,9 @@
 
 namespace Core::Gui
 {
-    ECS_IMPL(ArrayCell) void ArrayCell::onInitialize()
+    ECS_IMPL(ArrayCell);
+
+    void ArrayCell::onInitialize()
     {
         HorizontalLayout::onInitialize();
 

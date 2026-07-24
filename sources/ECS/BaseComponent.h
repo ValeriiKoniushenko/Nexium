@@ -337,19 +337,20 @@ namespace Core
 
         /// Register a new component type in the factory.
         /// @param type The type identifier (StringAtom).
-        /// @param callback Function that creates instances of this type.
         /// @return True if registration succeeds, false if the type already exists.
         template<class T>
         bool registerNewType(const StringAtom& type, bool isTemplateType = false);
 
-        [[nodiscard]] std::vector<StringAtom> getRegisteredTypesAsVector(bool sort = false) const;
+        [[nodiscard]] std::vector<StringAtom> getRegisteredTypesAsVector(
+            bool sort = false, const std::function<bool(Tag)>& cond = nullptr) const;
         [[nodiscard]] bool containsSuchType(const StringAtom& type) const;
+        [[nodiscard]] const std::unordered_map<StringAtom, Tag>& getTypeToTagMap() const;
 
         [[nodiscard]] std::optional<std::type_index> getTypeIdByTypeName(const StringAtom& type);
 
-        void _createTypeToTagMap();
-
         [[nodiscard]] spdlog::logger* getLogger() const override;
+
+        void _createTypeToTagMap();
 
     private:
         std::unordered_map<StringAtom, BaseComponent* (*)()> _map;

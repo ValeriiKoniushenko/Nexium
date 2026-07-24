@@ -114,18 +114,27 @@ namespace Core
         }
 
         {
+            static std::function<bool(Tag)> sortOuter
+                = [](Tag tag) -> bool { return tag & Tag_WorldObject; };
+
             _list = _layout.addChildComponent<Gui::ListModelBased>();
             _list->setFlex(Gui::Flex::FlexWidthAndHeight);
             _list->setHeight(100.f);
             _list->setDataProvider(
                 [](std::size_t index, StringAtom& out) -> const void*
                 {
-                    out = GetGlobalComponentFactory().getRegisteredTypesAsVector(true).at(index);
+                    out = GetGlobalComponentFactory()
+                              .getRegisteredTypesAsVector(true, sortOuter)
+                              .at(index);
                     return nullptr;
                 });
             _list->setSizeProvider(
                 []()
-                { return GetGlobalComponentFactory().getRegisteredTypesAsVector(true).size(); });
+                {
+                    return GetGlobalComponentFactory()
+                        .getRegisteredTypesAsVector(true, sortOuter)
+                        .size();
+                });
             _subscriptionPool << _list->onSelect->subscribeAndGetID(
                 [this](const void* data, StringAtom type)
                 { _typeField->input->setInputtedData(type.toStdString()); });

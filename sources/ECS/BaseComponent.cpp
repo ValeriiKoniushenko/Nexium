@@ -110,12 +110,16 @@ namespace Core
     }
 
     std::vector<StringAtom> GlobalComponentFactory::getRegisteredTypesAsVector(
-        bool sort /*= false*/) const
+        bool sort /*= false*/, const std::function<bool(Tag)>& cond /*= nullptr*/) const
     {
         std::vector<StringAtom> out;
         out.reserve(_map.size());
         for (const auto& [type, _] : _map)
         {
+            if (cond && !cond(_typeToTagMap.at(type)))
+            {
+                continue;
+            }
             out.emplace_back(type);
         }
 
@@ -130,6 +134,11 @@ namespace Core
     bool GlobalComponentFactory::containsSuchType(const StringAtom& type) const
     {
         return _map.contains(type);
+    }
+
+    const std::unordered_map<StringAtom, Tag>& GlobalComponentFactory::getTypeToTagMap() const
+    {
+        return _typeToTagMap;
     }
 
     std::optional<std::type_index> GlobalComponentFactory::getTypeIdByTypeName(

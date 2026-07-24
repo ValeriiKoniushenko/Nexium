@@ -50,6 +50,7 @@ namespace Core
         [[nodiscard]] static std::string ToString(Tag tag);
         [[nodiscard]] static std::optional<Tag> ToTag(std::string_view tagStr);
         [[nodiscard]] static std::vector<std::string> ToStrings(uint32_t tags);
+        [[nodiscard]] static std::string StringifyToStrings(uint32_t tags, const char* div = ", ");
         [[nodiscard]] static Tag SplitToTagFromString(std::string_view str, char div = ',');
     };
 
