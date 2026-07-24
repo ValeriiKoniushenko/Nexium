@@ -26,7 +26,28 @@
 
 namespace Core::Gui
 {
-    ECS_IMPL(ArrayCell);
+    ECS_IMPL(ArrayCell) void ArrayCell::onInitialize()
+    {
+        HorizontalLayout::onInitialize();
+
+        if (getComponentName().isEmpty())
+        {
+            setComponentName("ArrayCell"_atom);
+        }
+        setFlex(Flex::FlexWidth);
+        setVerticalAlign(Align::Center);
+        setHorizontalAlign(Align::Left);
+
+        label = addChildComponent<Label>();
+
+        content = addChildComponent<HorizontalLayout>();
+        content->setFlex(Flex::FlexWidth);
+        content->setHorizontalAlign(Align::SpaceBetween);
+        content->setVerticalAlign(Align::Center);
+
+        deleteButton = addChildComponent<Button>();
+        deleteButton->setText(ICON_FA_TRASH);
+    };
     HorizontalLayout::Ptr _StringArray_ArrayCellViewerFunc::operator()(const StringAtom& str) const
     {
         auto l = HorizontalLayout::Create();

@@ -72,6 +72,18 @@ namespace Core
 
     const StringAtom BaseComponent::componentType = "BaseComponent"_atom;
 
+    GlobalComponentFactory::~GlobalComponentFactory()
+    {
+#if defined(DEBUG)
+        if (_startRegTime)
+        {
+            std::cout << "[Debug] GlobalComponentFactory: type registration took: "
+                      << std::chrono::duration<float>(_endRegTime - *_startRegTime).count()
+                      << std::endl;
+        }
+#endif
+    }
+
     BaseComponent* GlobalComponentFactory::create(const StringAtom& type)
     {
         if (const auto found = _map.find(type); found != _map.end()) [[likely]]
@@ -163,6 +175,18 @@ namespace Core
                        });
 
         return std::nullopt;
+    }
+
+    void GlobalComponentFactory::_createTypeToTagMap()
+    {
+        for (auto&& [typeName, creator] : _map)
+        {
+            auto tmp = creator();
+            if (Verify(tmp))
+            {
+                _typeToTagMap.emplace(typeName, tmp->getTags());
+            }
+        }
     }
 
     AbstractComponent::AbstractComponent(AbstractComponent&& other) noexcept

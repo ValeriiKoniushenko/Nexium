@@ -34,6 +34,10 @@
 #include <typeindex>
 #include <unordered_set>
 
+#if defined(DEBUG)
+    #include <chrono>
+#endif
+
 // ===============================================================
 //                         ECS INTERNAL
 // ===============================================================
@@ -324,6 +328,8 @@ namespace Core
         SINGLETONS_FRIEND(GlobalComponentFactory);
 
     public:
+        ~GlobalComponentFactory() override;
+
         /// Create a component by its registered type.
         /// @param type The type identifier (StringAtom) of the component.
         /// @return Pointer to a new BaseComponent instance, or nullptr if type not registered.
@@ -341,11 +347,19 @@ namespace Core
 
         [[nodiscard]] std::optional<std::type_index> getTypeIdByTypeName(const StringAtom& type);
 
+        void _createTypeToTagMap();
+
         [[nodiscard]] spdlog::logger* getLogger() const override;
 
     private:
         std::unordered_map<StringAtom, BaseComponent* (*)()> _map;
         std::unordered_map<StringAtom, std::type_index> _typeToNameMap;
+        std::unordered_map<StringAtom, Tag> _typeToTagMap;
+
+#if defined(DEBUG)
+        std::optional<decltype(std::chrono::high_resolution_clock::now())> _startRegTime;
+        decltype(std::chrono::high_resolution_clock::now()) _endRegTime;
+#endif
     };
 
     /// Shortcut to access the global component factory singleton.
@@ -869,6 +883,13 @@ namespace Core
     template<class T>
     bool GlobalComponentFactory::registerNewType(const StringAtom& type, bool isTemplateType)
     {
+#if defined(DEBUG)
+        if (!_startRegTime)
+        {
+            _startRegTime = std::chrono::high_resolution_clock::now();
+        }
+#endif
+
         Assert(type.isStatic());
 
         // Due to linkage logic, template types can attempt to register a few times. So, let's
@@ -892,6 +913,10 @@ namespace Core
         _typeToNameMap.emplace(type, typeid(T));
 
         traceLog("Type '{}' has been registered."_f << type);
+
+#if defined(DEBUG)
+        _endRegTime = std::chrono::high_resolution_clock::now();
+#endif
         return true;
     }
 

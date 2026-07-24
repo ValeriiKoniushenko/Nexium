@@ -98,6 +98,9 @@ namespace Core
         //-------------------- MISC ---------------------
         gameViewport.generate();
 
+        //-------------------- ECS ---------------------
+        GetGlobalComponentFactory()._createTypeToTagMap();
+
         gameEditor.initialize();
         gameScene.initialize();
         _subscriptionPool << gameScene.onObjectAdded->subscribeAndGetID(

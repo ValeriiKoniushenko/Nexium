@@ -39,7 +39,7 @@ namespace Core::Gui
     CLASS();
     class ArrayCell : public HorizontalLayout
     {
-        ECS_DECL_NO_CNSTR(ArrayCell, Core::Gui::HorizontalLayout);
+        ECS_DECL(ArrayCell, Core::Gui::HorizontalLayout);
 
     public:
         Label* label = nullptr;
@@ -47,27 +47,7 @@ namespace Core::Gui
         Button* deleteButton = nullptr;
 
     public:
-        explicit ArrayCell(const StringAtom& name = "")
-            : HorizontalLayout(componentType, name)
-        {
-            if (name.isEmpty())
-            {
-                setComponentName("ArrayCell"_atom);
-            }
-            setFlex(Flex::FlexWidth);
-            setVerticalAlign(Align::Center);
-            setHorizontalAlign(Align::Left);
-
-            label = addChildComponent<Label>();
-
-            content = addChildComponent<HorizontalLayout>();
-            content->setFlex(Flex::FlexWidth);
-            content->setHorizontalAlign(Align::SpaceBetween);
-            content->setVerticalAlign(Align::Center);
-
-            deleteButton = addChildComponent<Button>();
-            deleteButton->setText(ICON_FA_TRASH);
-        }
+        void onInitialize() override;
 
         void setIndexText(std::size_t i)
         {
