@@ -31,17 +31,16 @@
 
 #include <unordered_map>
 
-namespace Core
+namespace Core::Animation
 {
     class FrameByFrameAnimation;
 
     CLASS();
     class FrameByFrameAnimator : public BaseComponent
     {
-        R_FRIEND_DECL(Core::FrameByFrameAnimator, Core::BaseComponent);
-        ECS_COMPONENT_DECL(FrameByFrameAnimator, Core::BaseComponent);
-    public:
+        ECS_DECL(FrameByFrameAnimator, Core::BaseComponent);
 
+    public:
         void update(float delta);
 
         bool startAnimation(const StringAtom& name);
@@ -74,6 +73,6 @@ namespace Core
         FIELD();
         StringAtom _currentState;
     };
-} // namespace Core
+} // namespace Core::Animation
 
 #include "FrameByFrameAnimator.generated.h" // added by the code generator. Better don't move it.

@@ -35,8 +35,6 @@ namespace Core::SceneObj
         ECS_DECL(Rectangle, Core::SceneObject);
 
     public:
-        explicit Rectangle(const StringAtom& name = ""_atom);
-
         void draw(BaseCamera& camera) override;
 
         [[nodiscard]] StringAtom getTextureName() const { return _textureName; }

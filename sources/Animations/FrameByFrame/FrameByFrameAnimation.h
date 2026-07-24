@@ -28,7 +28,7 @@
 
 #include <vector>
 
-namespace Core
+namespace Core::Animation
 {
 
     class FrameByFrameAnimation : public BaseAnimation, public BaseLog

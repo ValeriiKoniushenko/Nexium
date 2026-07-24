@@ -24,7 +24,7 @@
 
 #include "BaseAnimation.h"
 
-namespace Core
+namespace Core::Animation
 {
     void BaseAnimation::stop()
     {
@@ -70,4 +70,4 @@ namespace Core
         _isFinished = true;
     }
 
-} // namespace Core
+} // namespace Core::Animation

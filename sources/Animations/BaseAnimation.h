@@ -25,13 +25,16 @@
 #pragma once
 
 #include "Core/String.h"
+#include "JustReflectMe/Adapter.h"
 
-namespace Core
+namespace Core::Animation
 {
+    CLASS();
     class BaseAnimation
     {
+        R_FRIEND(BaseAnimation);
+
     public:
-        BaseAnimation() = default;
         virtual ~BaseAnimation() = default;
 
         void setAnimationName(const StringAtom& animationName) { _animationName = animationName; }
@@ -45,7 +48,7 @@ namespace Core
         virtual void resume();
         virtual void finish();
 
-        void setLoop(bool value) { _isLooping = value; }
+        void setLoop(bool value) noexcept { _isLooping = value; }
 
         [[nodiscard]] bool isStopped() const noexcept { return _isStopped; }
         [[nodiscard]] bool isPaused() const noexcept { return _isPaused; }
@@ -57,12 +60,18 @@ namespace Core
         }
 
     protected:
+        FIELD();
         StringAtom _animationName;
-
+        FIELD();
         bool _isLooping{ false };
+        FIELD();
         bool _isStopped{ true };
+        FIELD();
         bool _isPaused{ false };
+        FIELD();
         bool _isFinished{ false };
     };
 
-} // namespace Core
+} // namespace Core::Animation
+
+#include "BaseAnimation.generated.h" // added by the code generator. Better don't move it.

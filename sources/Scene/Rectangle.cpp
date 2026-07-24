@@ -32,12 +32,7 @@ namespace Core::SceneObj
 {
 
     ECS_IMPL(Rectangle);
-
-    Rectangle::Rectangle(const StringAtom& name)
-        : SceneObject(componentType, name)
-    {
-    }
-
+    
     void Rectangle::draw(BaseCamera& camera)
     {
         static BaseGraphicsData gcd = []()

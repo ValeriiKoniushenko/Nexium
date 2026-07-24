@@ -27,10 +27,9 @@
 #include "FrameByFrameAnimation.h"
 #include "Scene/Rectangle.h"
 
-namespace Core
+namespace Core::Animation
 {
-    R_FRIEND_IMPL(FrameByFrameAnimator);
-    ECS_COMPONENT_IMPL(FrameByFrameAnimator);
+    ECS_IMPL(FrameByFrameAnimator);
 
     void FrameByFrameAnimator::update(float delta)
     {
@@ -216,4 +215,4 @@ namespace Core
         rectangle->setAtlas(animation->getAtlasName());
         rectangle->setTexture(animation->getCurrentFrameName());
     }
-} // namespace Core
+} // namespace Core::Animation

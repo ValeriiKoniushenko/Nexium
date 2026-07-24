@@ -26,7 +26,7 @@
 
 #include <cmath>
 
-namespace Core
+namespace Core::Animation
 {
 
     void FrameByFrameAnimation::update(float delta)
@@ -109,7 +109,7 @@ namespace Core
     bool FrameByFrameAnimation::isValid() const noexcept
     {
         return !_animationName.isEmpty() && !_atlasName.isEmpty() && !_frames.empty()
-            && std::isfinite(_frameTime) && _frameTime > 0.f;
+               && std::isfinite(_frameTime) && _frameTime > 0.f;
     }
 
     const StringAtom& FrameByFrameAnimation::getCurrentFrameName() const
@@ -128,4 +128,4 @@ namespace Core
 
         return _frames[_currentFrame];
     }
-} // namespace Core
+} // namespace Core::Animation

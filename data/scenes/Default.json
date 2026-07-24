@@ -12,13 +12,13 @@
                     0.0
                 ],
                 "_position": [
-                    74.66336059570313,
-                    26.920024871826172,
-                    187.10250854492188
+                    -59.267906188964844,
+                    26.59015464782715,
+                    80.4957046508789
                 ],
                 "_rotation": [
-                    -1.5,
-                    -8.0,
+                    6.591796875,
+                    -1.259765625,
                     0.0
                 ],
                 "_scale": [
@@ -116,7 +116,38 @@
             },
             "typeSpecificData": {
                 "_atlasName": "santa_walk",
-                "_textureName": "Walk_10.png"
+                "_textureName": "Walk _1.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::Rectangle",
+            "name": "AnimatedREct",
+            "referenceAsset": "data/assets/AnimatedREct.nx",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_atlasName": "default",
+                "_textureName": "red.png"
             }
         }
     ]
