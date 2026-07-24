@@ -19,6 +19,17 @@ import os
 import subprocess
 import sys
 
+# Paths are relative to the repository root.
+EXCLUDED_PATHS = (
+    "dependencies/",
+)
+
+
+def is_excluded(path: str) -> bool:
+    """Returns True if the file should be skipped."""
+    normalized = path.replace("\\", "/")
+    return any(normalized.startswith(prefix) for prefix in EXCLUDED_PATHS)
+
 
 def get_target_branch(cli_base: str | None) -> str:
     """Resolve the branch/ref to diff against.
@@ -63,10 +74,15 @@ def get_changed_files(base_ref: str, explicit_files: list[str] | None, verbose: 
         capture_output=True, text=True
     ).stdout.split()
 
-    if verbose:
-        print(f"[debug] changed files ({len(diff)}): {diff}")
+    filtered = [f for f in diff if not is_excluded(f)]
 
-    return diff
+    if verbose:
+        skipped = [f for f in diff if is_excluded(f)]
+        print(f"[debug] changed files ({len(filtered)}): {filtered}")
+        if skipped:
+            print(f"[debug] excluded files ({len(skipped)}): {skipped}")
+
+    return filtered
 
 
 def check_file(path: str, fix: bool, verbose: bool) -> tuple[bool, str, str]:

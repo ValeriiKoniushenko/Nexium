@@ -107,14 +107,19 @@ namespace Core
             _list->setDataProvider(
                 [](std::size_t index, StringAtom& out) -> const void*
                 {
-                    auto data = GlobalComponentFactory::Instance().getRegisteredTypesAsVector(true, sortOuter);
+                    auto data = GlobalComponentFactory::Instance().getRegisteredTypesAsVector(
+                        true, sortOuter);
                     out = data.at(index);
                     return nullptr;
                 });
 
             _list->setSizeProvider(
                 []()
-                { return GlobalComponentFactory::Instance().getRegisteredTypesAsVector(false, sortOuter).size(); });
+                {
+                    return GlobalComponentFactory::Instance()
+                        .getRegisteredTypesAsVector(false, sortOuter)
+                        .size();
+                });
             _subscriptionPool << _list->onSelect->subscribeAndGetID(
                 [this](const void*, StringAtom name)
                 {
