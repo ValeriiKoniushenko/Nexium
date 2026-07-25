@@ -76,6 +76,13 @@ compression = true
 max_size = 20G
 ```
 
+### Opt: 2x link speed (Linux)
+
+```sh
+# install 'mold' linker
+sudo apt install mold
+```
+
 ### Opt: Git settings
 
 For a better experience, it is better to enable a few settings in your git:

@@ -1,5 +1,22 @@
 cmake_minimum_required(VERSION 3.30..)
 
+if (NOT DEFINED NEXIUM_LINKER_CONFIGURED)
+    set(NEXIUM_LINKER_CONFIGURED TRUE)
+
+    find_program(MOLD_LINKER mold)
+    find_program(LLD_LINKER ld.lld)
+
+    if (MOLD_LINKER)
+        message(STATUS "Using mold linker")
+        add_link_options(-fuse-ld=mold)
+    elseif (LLD_LINKER)
+        message(STATUS "Using lld linker")
+        add_link_options(-fuse-ld=lld)
+    else ()
+        message(STATUS "Using default system linker")
+    endif ()
+endif ()
+
 project(Nexium VERSION 1.0 LANGUAGES CXX)
 
 cmake_policy(SET CMP0141 NEW)
