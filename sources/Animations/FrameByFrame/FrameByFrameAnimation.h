@@ -41,8 +41,14 @@ namespace Core::Animation
         GlobalPosition2F uvSize{1.f, 1.f};
     };
 
-    class FrameByFrameAnimation : public BaseAnimation, public BaseLog
+    void to_json(nlohmann::json& j, const Frame& v);
+    void from_json(const nlohmann::json& j, Frame& v);
+
+    CLASS();
+    class FrameByFrameAnimation : public BaseAnimation
     {
+        ECS_DECL(FrameByFrameAnimation, Core::Animation::BaseAnimation);
+
     public:
         void setFPS(float fps);
         void start() override;
@@ -66,15 +72,23 @@ namespace Core::Animation
 
         void update(float delta) override;
 
-        [[nodiscard]] virtual spdlog::logger* getLogger() const { return nullptr; };
+        [[nodiscard]] spdlog::logger* getLogger() const override { return Animations::getLogger(); };
 
     private:
+        FIELD();
         StringAtom _atlasName;
+        FIELD();
         StringAtom _textureName;
+        FIELD();
         std::vector<Frame> _frames;
 
-        std::size_t _currentFrame{0};
-        float _timer{0.f};
-        float _frameTime{0.1f};
+        FIELD();
+        std::size_t _currentFrame = 0;
+        FIELD();
+        float _timer = 0.f;
+        FIELD();
+        float _frameTime = 0.1f;
     };
 } // namespace Core::Animation
+
+#include "FrameByFrameAnimation.generated.h" // added by the code generator. Better don't move it.

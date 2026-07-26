@@ -25,22 +25,23 @@
 #pragma once
 
 #include "Core/String.h"
+#include "ECS/BaseComponent.h"
 #include "JustReflectMe/Adapter.h"
+#include "ModuleInfo.h"
 
 namespace Core::Animation
 {
     CLASS();
-    class BaseAnimation
+    class BaseAnimation : public BaseComponent
     {
-        R_FRIEND(BaseAnimation);
+        ECS_DECL(BaseAnimation, Core::BaseComponent);
 
     public:
-        BaseAnimation() = default;
         BaseAnimation(const BaseAnimation&) = default;
         BaseAnimation(BaseAnimation&&) noexcept = default;
         BaseAnimation& operator=(const BaseAnimation&) = default;
         BaseAnimation& operator=(BaseAnimation&&) noexcept = default;
-        virtual ~BaseAnimation() = default;
+        ~BaseAnimation() override = default;
 
         void setAnimationName(const StringAtom& animationName) { _animationName = animationName; }
 
@@ -62,24 +63,26 @@ namespace Core::Animation
         [[nodiscard]] bool isPaused() const noexcept { return _isPaused; }
         [[nodiscard]] bool isLooping() const noexcept { return _isLooping; }
         [[nodiscard]] bool isFinished() const noexcept { return _isFinished; }
+
         [[nodiscard]] bool isPlaying() const noexcept
         {
             return !_isStopped && !_isPaused && !_isFinished;
         }
 
+        [[nodiscard]] spdlog::logger* getLogger() const override { return Animations::getLogger(); };
+
     protected:
         FIELD();
         StringAtom _animationName;
         FIELD();
-        bool _isLooping{ false };
+        bool _isLooping = false;
         FIELD();
-        bool _isStopped{ true };
+        bool _isStopped = true;
         FIELD();
-        bool _isPaused{ false };
+        bool _isPaused = false;
         FIELD();
-        bool _isFinished{ false };
+        bool _isFinished = false;
     };
-
 } // namespace Core::Animation
 
 #include "BaseAnimation.generated.h" // added by the code generator. Better don't move it.

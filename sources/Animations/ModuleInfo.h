@@ -24,14 +24,12 @@
 
 #pragma once
 
-#include "Player.h"
-#include "GameplaySystem/Framework/GameInstance.h"
-
-class TemplateGameInstance : public Core::GameInstance
+namespace spdlog
 {
-protected:
-    void onLoadCoreResources() override;
+    class logger;
+}
 
-private:
-    Game::Player* _player{nullptr};
-};
+namespace Animations
+{
+    [[nodiscard]] spdlog::logger* getLogger();
+} // namespace Animations

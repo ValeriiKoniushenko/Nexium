@@ -22,16 +22,16 @@
  * SOFTWARE.
  */
 
-#pragma once
+#include "ModuleInfo.h"
 
-#include "Player.h"
-#include "GameplaySystem/Framework/GameInstance.h"
+#include "Misc/BaseLog.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
 
-class TemplateGameInstance : public Core::GameInstance
+namespace Animations
 {
-protected:
-    void onLoadCoreResources() override;
-
-private:
-    Game::Player* _player{nullptr};
-};
+    spdlog::logger* getLogger()
+    {
+        static auto logger = spdlog::stdout_color_mt("Animation");
+        return logger.get();
+    }
+} // namespace Animations

@@ -9,7 +9,7 @@ namespace Core::Animation
 
 namespace Game
 {
-    class Player
+    class Player : public  Core::SceneObj::Rectangle
     {
     public:
         bool bind(Core::SceneObj::Rectangle* rectangle);

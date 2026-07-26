@@ -35,11 +35,13 @@ void TemplateGameInstance::onLoadCoreResources()
             continue;
         }
 
-        auto* rectangle = object->tryCastTo<SceneObj::Rectangle>();
-        if (_player.bind(rectangle))
-        {
-            _player.playWalk();
-        }
+      //  _player = object->tryCastTo<SceneObj::Rectangle>();
+
+
+        // if (_player.bind(rectangle))
+        // {
+        //     _player.playWalk();
+        // }
 
         break;
     }

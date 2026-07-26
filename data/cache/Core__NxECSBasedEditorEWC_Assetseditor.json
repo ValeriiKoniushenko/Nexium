@@ -9,7 +9,7 @@
         },
         {
             "_children": null,
-            "_isEnabled": true,
+            "_isEnabled": false,
             "_name": "",
             "_noTick": false,
             "_type": "Core::ECSEditorActorAdapter"
@@ -34,7 +34,7 @@
         88.0
     ],
     "_innerSize": {
-        "height": 568.0,
+        "height": 592.0,
         "width": 1079.0
     },
     "_isEnabled": true,
@@ -46,7 +46,7 @@
     "_name": " Assets editor",
     "_noTick": false,
     "_oldSize": {
-        "height": 632.0,
+        "height": 656.0,
         "width": 1105.0
     },
     "_position": [
@@ -54,7 +54,7 @@
         32.0
     ],
     "_size": {
-        "height": 632.0,
+        "height": 656.0,
         "width": 1105.0
     },
     "_type": "Core::NxECSBasedEditorEWC"

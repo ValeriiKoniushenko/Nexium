@@ -118,37 +118,6 @@
                 "_atlasName": "santa_walk",
                 "_textureName": "Walk_12.png"
             }
-        },
-        {
-            "assetType": "Core::SceneObj::Rectangle",
-            "name": "AnimatedREct",
-            "referenceAsset": "data/assets/AnimatedREct.nx",
-            "trans": {
-                "_origin": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "_position": [
-                    -113.5,
-                    0.0,
-                    0.0
-                ],
-                "_rotation": [
-                    0.10000000149011612,
-                    0.0,
-                    0.0
-                ],
-                "_scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            },
-            "typeSpecificData": {
-                "_atlasName": "santa_walk",
-                "_textureName": "Walk_5.png"
-            }
         }
     ]
 }

@@ -29,6 +29,38 @@
 
 namespace Core::Animation
 {
+    void to_json(nlohmann::json& j, const std::unordered_map<StringAtom, FrameByFrameAnimation>& v)
+    {
+        j = nlohmann::json::object();
+
+        for (const auto& [name, animation] : v)
+        {
+            j[name.c_str()] = animation;
+        }
+    }
+
+    void from_json(const nlohmann::json& j, std::unordered_map<StringAtom, FrameByFrameAnimation>& v)
+    {
+        if (!j.is_object())
+        {
+            throw nlohmann::json::type_error::create(
+                302, "Frame-by-frame animations must be represented by a JSON object", &j);
+        }
+
+        std::unordered_map<StringAtom, FrameByFrameAnimation> animations;
+        animations.reserve(j.size());
+
+        for (const auto& [name, animationJson] : j.items())
+        {
+            FrameByFrameAnimation animation;
+            RResourceStream<RJsonResourceStream> stream{animationJson};
+            animation.deserialize(stream);
+            animations.emplace(StringAtom{name.c_str()}, std::move(animation));
+        }
+
+        v = std::move(animations);
+    }
+
     ECS_IMPL(FrameByFrameAnimator);
 
     bool FrameByFrameAnimator::startAnimation(const StringAtom& name)

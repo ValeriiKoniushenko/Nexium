@@ -26,6 +26,8 @@
 
 namespace Core::Animation
 {
+    ECS_IMPL(BaseAnimation);
+
     void BaseAnimation::stop()
     {
         _isStopped = true;
@@ -75,5 +77,4 @@ namespace Core::Animation
         reset();
         start();
     }
-
 } // namespace Core::Animation

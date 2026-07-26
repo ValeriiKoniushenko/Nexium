@@ -28,6 +28,21 @@
 
 namespace Core::Animation
 {
+    void to_json(nlohmann::json& j, const Frame& v)
+    {
+        j["textureName"]= v.textureName;
+        j["uvOffset"]= v.uvOffset;
+        j["uvSize"]= v.uvSize;
+    }
+
+    void from_json(const nlohmann::json& j, Frame& v)
+    {
+        v.textureName= j["textureName"].get<std::string>();
+        v.uvOffset= j["uvOffset"].get<GlobalPosition2F>();
+        v.uvSize= j["uvSize"].get<GlobalPosition2F>();
+    }
+
+    ECS_IMPL(Core::Animation::FrameByFrameAnimation);
 
     void FrameByFrameAnimation::update(float delta)
     {
@@ -103,7 +118,7 @@ namespace Core::Animation
             return false;
         }
 
-        _frames.emplace_back(Frame{ .textureName = std::move(textureName) });
+        _frames.emplace_back(Frame{.textureName = std::move(textureName)});
         return true;
     }
 
@@ -115,9 +130,11 @@ namespace Core::Animation
             return false;
         }
 
-        _frames.emplace_back(Frame{ .textureName = std::nullopt,
-                                    .uvOffset = std::move(uvOffset),
-                                    .uvSize = std::move(uvSize) });
+        _frames.emplace_back(Frame{
+            .textureName = std::nullopt,
+            .uvOffset = std::move(uvOffset),
+            .uvSize = std::move(uvSize)
+        });
         return true;
     }
 
@@ -140,7 +157,7 @@ namespace Core::Animation
         }
 
         const auto frameSize
-            = GlobalPosition2F{ 1.f / static_cast<float>(columns), 1.f / static_cast<float>(rows) };
+            = GlobalPosition2F{1.f / static_cast<float>(columns), 1.f / static_cast<float>(rows)};
         _frames.reserve(_frames.size() + frameCount);
 
         for (std::size_t index = 0; index < frameCount; ++index)
@@ -148,10 +165,14 @@ namespace Core::Animation
             const auto column = index % columns;
             const auto row = index / columns;
             _frames.emplace_back(
-                Frame{ .textureName = std::nullopt,
-                       .uvOffset = GlobalPosition2F{ static_cast<float>(column) * frameSize.x,
-                                                     static_cast<float>(row) * frameSize.y },
-                       .uvSize = frameSize });
+                Frame{
+                    .textureName = std::nullopt,
+                    .uvOffset = GlobalPosition2F{
+                        static_cast<float>(column) * frameSize.x,
+                        static_cast<float>(row) * frameSize.y
+                    },
+                    .uvSize = frameSize
+                });
         }
 
         return true;
@@ -166,9 +187,11 @@ namespace Core::Animation
         }
 
         return !_textureName.isEmpty()
-               || std::ranges::all_of(
-                   _frames, [](const Frame& frame)
-                   { return frame.textureName && !frame.textureName->isEmpty(); });
+            || std::ranges::all_of(
+                _frames, [](const Frame& frame)
+                {
+                    return frame.textureName && !frame.textureName->isEmpty();
+                });
     }
 
     const Frame* FrameByFrameAnimation::getCurrentFrame() const noexcept

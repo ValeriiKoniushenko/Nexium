@@ -1,10 +1,19 @@
 {
     "data": {
-        "_children": null,
+        "_atlasName": "default",
+        "_children": [
+            {
+                "_children": null,
+                "_isEnabled": true,
+                "_name": "Animator",
+                "_noTick": false,
+                "_type": "Core::Animation::FrameByFrameAnimator"
+            }
+        ],
         "_isDrawOutline": false,
         "_isEnabled": true,
         "_isPostDraw": false,
-        "_name": "Player",
+        "_name": "AnimatedPlayersa",
         "_noTick": false,
         "_origin": [
             0.0,
@@ -29,7 +38,7 @@
         "_textureName": "red.png",
         "_type": "Core::SceneObj::Rectangle"
     },
-    "name": "Player",
+    "name": "AnimatedPlayer",
     "tags": "WorldObject",
     "type": "Core::SceneObj::Rectangle"
 }

@@ -33,7 +33,6 @@
 
 namespace Core::Animation
 {
-
     CLASS();
     class FrameByFrameAnimator : public BaseComponent
     {
@@ -53,6 +52,7 @@ namespace Core::Animation
 
         [[nodiscard]] const StringAtom& getCurrentAtlasName() const;
         [[nodiscard]] const Frame* getCurrentFrame() const;
+
         [[nodiscard]] FrameByFrameAnimation* getAnimation(const StringAtom& name)
         {
             const auto it = _animations.find(name);
@@ -64,7 +64,7 @@ namespace Core::Animation
         }
 
         [[nodiscard]] const FrameByFrameAnimation*
-            getAnimation(const StringAtom& name) const
+        getAnimation(const StringAtom& name) const
         {
             const auto it = _animations.find(name);
             if (it == _animations.end()) [[unlikely]]
@@ -73,6 +73,7 @@ namespace Core::Animation
             }
             return &it->second;
         }
+
         [[nodiscard]] bool hasAnimation(const StringAtom& name) const;
         [[nodiscard]] bool hasCurrentAnimation() const;
         [[nodiscard]] bool isPlaying() const;
@@ -84,11 +85,15 @@ namespace Core::Animation
         void applyCurrentFrame();
         void updateCurrentAnimation(float delta);
 
+        FIELD();
         std::unordered_map<StringAtom, FrameByFrameAnimation> _animations;
 
         FIELD();
         StringAtom _currentState;
     };
+
+    void to_json(nlohmann::json& j, const std::unordered_map<StringAtom, FrameByFrameAnimation>& v);
+    void from_json(const nlohmann::json& j, std::unordered_map<StringAtom, FrameByFrameAnimation>& v);
 } // namespace Core::Animation
 
 #include "FrameByFrameAnimator.generated.h" // added by the code generator. Better don't move it.
