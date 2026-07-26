@@ -83,6 +83,7 @@ namespace Core
         constexpr static float _defaultPropertiesWidth = 500.0f;
 
     private:
+        float _lastPropertiesTreeWidth = -1.f;
         bool _isDirty = false;
         bool _enablePreview = false;
         bool _enableTree = false;

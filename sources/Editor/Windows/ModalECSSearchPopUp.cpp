@@ -51,6 +51,8 @@ namespace Core
         _caption = std::move(text);
         _hasOpenRequest = true;
         _callback = callback;
+
+        onOpen();
     }
 
     void ModalECSSearchPopUpEWC::Open(StringAtom text,
@@ -66,6 +68,21 @@ namespace Core
         _layout.setHorizontalAlign(Gui::Align::Center);
         _layout.setFlex(Gui::Flex::FlexWidthAndHeight);
 
+        constexpr float defaultWidth = 80.f;
+
+        {
+            _nameInput = _layout.addChildComponent<Gui::LabelRow<Gui::TextInput>>();
+            _nameInput->label->setText("Name");
+            _nameInput->label->setWidth(defaultWidth);
+
+            _nameInput->input->setPlaceholder("Put name here..");
+            _nameInput->input->setFlex(Gui::Flex::FlexWidth);
+            _subscriptionPool << _nameInput->input->onInput->subscribeAndGetID(
+                [this](const char* data) { _nameInput->input->resetBorderColor(); });
+            _subscriptionPool << _nameInput->input->onInput->subscribeAndGetID(
+                [this](const char* data) { _wasManuallyEdited = true; });
+        }
+
         {
             auto* h = _layout.addChildComponent<Gui::HorizontalLayout>();
             auto* input = h->addChildComponent<Gui::TextInput>();
@@ -74,27 +91,39 @@ namespace Core
             _subscriptionPool << input->onInput->subscribeAndGetID(
                 [this](const char* data)
                 {
-                    if (_listView && data)
+                    if (_list && data)
                     {
-                        _listView->setRegexFilter(StringAtom(data));
+                        _list->setRegexFilter(StringAtom(data));
                     }
                 });
         }
 
         {
-            _listView = _layout.addChildComponent<Gui::ListView>();
-            _listView->setFlex(Gui::Flex::FlexWidthAndHeight);
-            auto data = GlobalComponentFactory::Instance().getRegisteredTypesAsVector();
-            std::ranges::sort(data);
-            _listView->setData(data);
-        }
+            _list = _layout.addChildComponent<Gui::ListModelBased>();
+            _list->setFlex(Gui::Flex::FlexWidthAndHeight);
+            _list->setDataProvider(
+                [](std::size_t index, StringAtom& out) -> const void*
+                {
+                    auto data = GlobalComponentFactory::Instance().getRegisteredTypesAsVector(true);
+                    out = data.at(index);
+                    return nullptr;
+                });
 
-        {
-            _nameInput = _layout.addChildComponent<Gui::LabelRow<Gui::TextInput>>();
-            _nameInput->input->setPlaceholder("Put name here..");
-            _nameInput->input->setFlex(Gui::Flex::FlexWidth);
-            _subscriptionPool << _nameInput->input->onInput->subscribeAndGetID(
-                [this](const char* data) { _nameInput->input->resetBorderColor(); });
+            _list->setSizeProvider(
+                []()
+                { return GlobalComponentFactory::Instance().getRegisteredTypesAsVector().size(); });
+            _subscriptionPool << _list->onSelect->subscribeAndGetID(
+                [this](const void*, StringAtom name)
+                {
+                    if (!_wasManuallyEdited)
+                    {
+                        name.replaceAll("::", "-");
+                        _nameInput->input->setInputtedData(name.toStdString());
+                    }
+                });
+
+            _subscriptionPool << _list->onDoubleClickSelect->subscribeAndGetID(
+                [this](const void*, StringAtom name) { okButtonClicked(); });
         }
 
         _layout.addChildComponent<Gui::Separator>();
@@ -104,34 +133,7 @@ namespace Core
 
             _okButton = h->addChildComponent<Gui::Button>("Add");
             _okButton->setFlex(Gui::Flex::FlexWidth);
-            _okButton->onClick->subscribe(
-                [this]()
-                {
-                    if (!Verify(_nameInput && _callback))
-                    {
-                        return;
-                    }
-
-                    if (_nameInput->input->getInputtedData().empty())
-                    {
-                        _nameInput->input->setBorderColor(Color4_Red);
-                        return;
-                    }
-
-                    auto comp
-                        = GlobalComponentFactory::Instance().create(_listView->getCurrentData());
-                    if (!Verify(comp))
-                    {
-                        criticalLog("Can't create component: {}"_f << _listView->getCurrentData());
-                        return;
-                    }
-
-                    comp->setComponentName(_nameInput->input->getInputtedData().c_str());
-
-                    closeWindow();
-
-                    _callback(comp);
-                });
+            _okButton->onClick->subscribe([this]() { okButtonClicked(); });
 
             _cancelButton = h->addChildComponent<Gui::Button>("Cancel");
             _cancelButton->setFlex(Gui::Flex::FlexWidth);
@@ -147,7 +149,12 @@ namespace Core
 
         if (ImGui::IsKeyPressed(ImGuiKey_Escape, false))
         {
-            closeWindow();
+            cancelButtonClicked();
+        }
+
+        if (ImGui::IsKeyPressed(ImGuiKey_Enter, false))
+        {
+            okButtonClicked();
         }
     }
 
@@ -169,5 +176,62 @@ namespace Core
 
     void ModalECSSearchPopUpEWC::endWindowDraw()
     {
+    }
+
+    void ModalECSSearchPopUpEWC::onClose()
+    {
+        BaseEWC::onClose();
+
+        _wasManuallyEdited = false;
+        if (_nameInput)
+        {
+            _nameInput->input->setInputtedData("");
+        }
+
+        if (_list)
+        {
+            _list->resetListNavigation();
+        }
+    }
+
+    void ModalECSSearchPopUpEWC::onOpen()
+    {
+        BaseEWC::onOpen();
+
+        if (_list)
+        {
+            _list->setKeyboardFocusAtStart();
+        }
+    }
+
+    void ModalECSSearchPopUpEWC::okButtonClicked()
+    {
+        if (!Verify(_nameInput && _list && _callback))
+        {
+            return;
+        }
+
+        if (_nameInput->input->getInputtedData().empty())
+        {
+            _nameInput->input->setBorderColor(Color4_Red);
+            return;
+        }
+
+        auto comp = GlobalComponentFactory::Instance().create(_list->tryGetCurrentDataAsString());
+        if (!Verify(comp))
+        {
+            criticalLog("Can't create component: {}"_f << _list->tryGetCurrentDataAsString());
+            return;
+        }
+        comp->setComponentName(_nameInput->input->getInputtedData().c_str());
+
+        _callback(comp);
+
+        closeWindow();
+    }
+
+    void ModalECSSearchPopUpEWC::cancelButtonClicked()
+    {
+        closeWindow();
     }
 } // namespace Core

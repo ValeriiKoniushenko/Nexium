@@ -9,13 +9,13 @@ function(CoreAddCompileOptionsTo Target)
             "/we4715"            # treat "not all control paths return a value" as error (-Werror=return-type)
 
             # Debug config
-            "$<$<CONFIG:DEBUG>:/Od>"
-            "$<$<CONFIG:DEBUG>:/Ob0>"
-            "$<$<CONFIG:DEBUG>:/Oy->"
+            "$<$<CONFIG:Debug>:/Od>"
+            "$<$<CONFIG:Debug>:/Ob0>"
+            "$<$<CONFIG:Debug>:/Oy->"
 
             # Release config
-            "$<$<CONFIG:RELEASE>:/O2>"
-            # "$<$<CONFIG:RELEASE>:/fp:fast>"
+            "$<$<CONFIG:Release>:/O2>"
+            # "$<$<CONFIG:Release>:/fp:fast>"
         )
 
         target_compile_definitions(${Target} PRIVATE -DNOMINMAX)
@@ -27,20 +27,19 @@ function(CoreAddCompileOptionsTo Target)
             "-Wextra"
             "-Wno-comment"
             # "-Werror"
-            "-Wno-error=unused-variable"
-            "-Wno-error=unused-but-set-variable"
+            # "-Wno-error=unused-variable"
+            # "-Wno-error=unused-but-set-variable"
             "-Wno-unused-variable"
             "-Wno-unused-parameter"
             "-Wno-unused-but-set-variable"
             "-Werror=return-type"
 
             # Debug config
-            "$<$<CONFIG:DEBUG>:-g>"
-            "$<$<CONFIG:DEBUG>:-gdwarf-5>"
-            "$<$<CONFIG:DEBUG>:-O0>"
-            "$<$<CONFIG:DEBUG>:-gsplit-dwarf>"
-            "$<$<CONFIG:DEBUG>:-fno-inline>"
-            "$<$<CONFIG:DEBUG>:-fno-omit-frame-pointer>"
+            "$<$<CONFIG:Debug>:-g>"
+            "$<$<CONFIG:Debug>:-gdwarf-5>"
+            "$<$<CONFIG:Debug>:-O0>"
+            "$<$<CONFIG:Debug>:-gsplit-dwarf>"
+            "$<$<CONFIG:Debug>:-fno-omit-frame-pointer>"
 
             "$<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:Clang>>:-fdebug-info-for-profiling>"
 
@@ -51,8 +50,8 @@ function(CoreAddCompileOptionsTo Target)
             "$<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:GCC>>:-fno-inline-atomics>"
 
             # Release config
-            "$<$<CONFIG:RELEASE>:-O3>"
-            # "$<$<CONFIG:RELEASE>:-ffast-math>"
+            "$<$<CONFIG:Release>:-O3>"
+            # "$<$<CONFIG:Release>:-ffast-math>"
         )
     endif ()
 endfunction()

@@ -31,12 +31,12 @@ namespace Core
 {
     namespace Gui
     {
+        class ListModelBased;
         template<class T>
         class LabelRow;
 
         class TextInput;
 
-        class ListView;
         class Button;
     } // namespace Gui
 
@@ -51,14 +51,15 @@ namespace Core
 
     protected:
         void onInitialize() override;
-
         void onDraw() override;
-
         void preOpenedEndWindowDraw() override;
-
         [[nodiscard]] bool beginWindowDraw() override;
-
         void endWindowDraw() override;
+        void onClose() override;
+        void onOpen() override;
+
+        void okButtonClicked();
+        void cancelButtonClicked();
 
     protected:
         DelegateSubscriberPoolGuard _subscriptionPool;
@@ -66,12 +67,13 @@ namespace Core
 
         StringAtom _caption = "ModalECSSearchPopUpEWC";
         Gui::VerticalLayout _layout;
-        Gui::ListView* _listView = nullptr;
+        Gui::ListModelBased* _list = nullptr;
         Gui::LabelRow<Gui::TextInput>* _nameInput = nullptr;
         Gui::Button* _okButton = nullptr;
         Gui::Button* _cancelButton = nullptr;
 
         bool _hasOpenRequest = false;
+        bool _wasManuallyEdited = false;
     };
 } // namespace Core
 

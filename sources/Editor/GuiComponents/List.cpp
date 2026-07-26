@@ -67,7 +67,7 @@ namespace Core::Gui
         {
             for (std::size_t i = 0; i < _items.size(); ++i)
             {
-                if (!_filter.isEmpty() && !_items.at(i).regexMatch(_filter))
+                if (!_filter.isEmpty() && !_items.at(i).regexFind(_filter))
                 {
                     continue;
                 }
@@ -87,6 +87,10 @@ namespace Core::Gui
                 if (isSelected)
                 {
                     ImGui::SetItemDefaultFocus();
+                }
+                if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+                {
+                    onDoubleClickSelect->trigger(_items.at(i));
                 }
             }
             ImGui::EndListBox();
@@ -172,6 +176,11 @@ namespace Core::Gui
                 if (isSelected)
                 {
                     ImGui::SetItemDefaultFocus();
+                }
+
+                if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+                {
+                    onDoubleClickSelect->trigger(_cache.at(i).first, string);
                 }
             }
             ImGui::EndListBox();
