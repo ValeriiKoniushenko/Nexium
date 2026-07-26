@@ -65,7 +65,7 @@ namespace Core
             if (ext == ".png" || ext == ".jpg" || ext == ".jpeg")
             {
                 Image img;
-                if (img.loadFromFile(entry.path()))
+                if (img.loadFromFile(entry.path(), true, true))
                 {
                     images.push_back(std::move(img));
                 }
@@ -97,7 +97,7 @@ namespace Core
                     << img.getPath().generic_string()
                     << R<Image::Channel>::ToString(img.getChannel())
                     << R<Image::Channel>::ToString(images.front().getChannel()));
-                return;
+                // return;
             }
         }
 
