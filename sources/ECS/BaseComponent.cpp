@@ -195,6 +195,7 @@ namespace Core
             {
                 _typeToTagMap.emplace(typeName, tmp->getTags());
             }
+            delete tmp;
         }
     }
 

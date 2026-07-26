@@ -60,7 +60,7 @@ namespace Core
                 continue;
             }
 
-            const auto ext = entry.path().extension().string();
+            const auto ext = entry.path().extension().generic_string();
 
             if (ext == ".png" || ext == ".jpg" || ext == ".jpeg")
             {
