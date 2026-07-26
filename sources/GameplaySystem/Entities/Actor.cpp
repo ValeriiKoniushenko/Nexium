@@ -30,7 +30,7 @@ namespace Core
 
     void Actor::onInitialize()
     {
-        BaseComponent::onInitialize();
+        SceneObject::onInitialize();
 
         if (_name.isEmpty())
         {
@@ -40,22 +40,22 @@ namespace Core
 
     void Actor::onPreDeserialize(AbstractComponent* obj)
     {
-        BaseComponent::onPreDeserialize(obj);
+        SceneObject::onPreDeserialize(obj);
     }
 
     void Actor::onPostDeserialize(AbstractComponent* obj, const RLogsCollector& logs)
     {
-        BaseComponent::onPostDeserialize(obj, logs);
+        SceneObject::onPostDeserialize(obj, logs);
     }
 
     void Actor::onPreSerialize(const AbstractComponent* obj) const
     {
-        BaseComponent::onPreSerialize(obj);
+        SceneObject::onPreSerialize(obj);
     }
 
     void Actor::onPostSerialize(const AbstractComponent* obj, const RLogsCollector& logs) const
     {
-        BaseComponent::onPostSerialize(obj, logs);
+        SceneObject::onPostSerialize(obj, logs);
     }
 
 } // namespace Core

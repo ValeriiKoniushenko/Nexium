@@ -3,9 +3,11 @@
         "_atlasName": "default",
         "_children": [
             {
+                "_animations": {},
                 "_children": null,
+                "_currentState": "",
                 "_isEnabled": true,
-                "_name": "Animator",
+                "_name": "Animator1",
                 "_noTick": false,
                 "_type": "Core::Animation::FrameByFrameAnimator"
             }
