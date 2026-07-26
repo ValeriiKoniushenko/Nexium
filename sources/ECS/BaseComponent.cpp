@@ -190,7 +190,7 @@ namespace Core
     {
         for (auto&& [typeName, creator] : _map)
         {
-            auto tmp = creator();
+            const auto tmp = creator();
             if (Verify(tmp))
             {
                 _typeToTagMap.emplace(typeName, tmp->getTags());
