@@ -47,7 +47,7 @@ namespace Core::Animation
         bool resetAnimation();
         bool finishAnimation();
 
-        bool addAnimation(FrameByFrameAnimation* animation);
+        bool addAnimation(FrameByFrameAnimation animation);
         bool removeAnimation(const StringAtom& name);
         void clearAnimations();
 
@@ -60,7 +60,7 @@ namespace Core::Animation
             {
                 return nullptr;
             }
-            return it->second;
+            return &it->second;
         }
 
         [[nodiscard]] const FrameByFrameAnimation*
@@ -71,7 +71,7 @@ namespace Core::Animation
             {
                 return nullptr;
             }
-            return it->second;
+            return &it->second;
         }
         [[nodiscard]] bool hasAnimation(const StringAtom& name) const;
         [[nodiscard]] bool hasCurrentAnimation() const;
@@ -84,7 +84,7 @@ namespace Core::Animation
         void applyCurrentFrame();
         void updateCurrentAnimation(float delta);
 
-        std::unordered_map<StringAtom, FrameByFrameAnimation*> _animations;
+        std::unordered_map<StringAtom, FrameByFrameAnimation> _animations;
 
         FIELD();
         StringAtom _currentState;

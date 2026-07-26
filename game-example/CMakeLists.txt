@@ -6,7 +6,9 @@ set_source_files_properties(${CPP_SOURCES} PROPERTIES LANGUAGE CXX)
 file(GLOB_RECURSE HEADERS "*.h")
 
 if (WIN32)
-    set(APP_ICON_RESOURCE ${CMAKE_SOURCE_DIR}/sources/Resources/app.rc)
+    set(APP_ICON_RESOURCE ${CMAKE_SOURCE_DIR}/sources/Resources/app.rc
+            Player.cpp
+            Player.h)
 endif ()
 
 add_executable(${TARGET_NAME} ${CPP_SOURCES} ${HEADERS} ${APP_ICON_RESOURCE})

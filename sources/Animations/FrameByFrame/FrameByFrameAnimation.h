@@ -34,12 +34,11 @@
 
 namespace Core::Animation
 {
-
     struct Frame
     {
         std::optional<StringAtom> textureName;
-        GlobalPosition2F uvOffset{ 0.f, 0.f };
-        GlobalPosition2F uvSize{ 1.f, 1.f };
+        GlobalPosition2F uvOffset{0.f, 0.f};
+        GlobalPosition2F uvSize{1.f, 1.f};
     };
 
     class FrameByFrameAnimation : public BaseAnimation, public BaseLog
@@ -67,14 +66,15 @@ namespace Core::Animation
 
         void update(float delta) override;
 
+        [[nodiscard]] virtual spdlog::logger* getLogger() const { return nullptr; };
+
     private:
         StringAtom _atlasName;
         StringAtom _textureName;
         std::vector<Frame> _frames;
 
-        std::size_t _currentFrame{ 0 };
-        float _timer{ 0.f };
-        float _frameTime{ 0.1f };
+        std::size_t _currentFrame{0};
+        float _timer{0.f};
+        float _frameTime{0.1f};
     };
-
 } // namespace Core::Animation

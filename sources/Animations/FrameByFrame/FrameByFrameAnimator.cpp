@@ -102,15 +102,15 @@ namespace Core::Animation
         return true;
     }
 
-    bool FrameByFrameAnimator::addAnimation(FrameByFrameAnimation* animation)
+    bool FrameByFrameAnimator::addAnimation(FrameByFrameAnimation animation)
     {
-        if (!animation->isValid())
+        if (!animation.isValid())
         {
             return false;
         }
 
-        const auto name = animation->getAnimationName();
-        _animations.insert_or_assign(name, animation);
+        const auto name = animation.getAnimationName();
+        _animations.insert_or_assign(name, std::move(animation));
         return true;
     }
 
@@ -169,7 +169,7 @@ namespace Core::Animation
     void FrameByFrameAnimator::onTick(float delta)
     {
         BaseComponent::onTick(delta);
-
+        updateCurrentAnimation(delta);
         applyCurrentFrame();
     }
 

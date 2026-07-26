@@ -28,4 +28,19 @@ using namespace Core;
 
 void TemplateGameInstance::onLoadCoreResources()
 {
+    for (auto& object : gameScene.getObjects())
+    {
+        if (object->getComponentName() != "AnimatedREct"_atom)
+        {
+            continue;
+        }
+
+        auto* rectangle = object->tryCastTo<SceneObj::Rectangle>();
+        if (_player.bind(rectangle))
+        {
+            _player.playWalk();
+        }
+
+        break;
+    }
 }
