@@ -117,7 +117,7 @@ namespace Core
         registerNewWindow<WorldSettingsEWC>("World settings"_atom);
         registerNewWindow<NxTextureEditorEWC>("NX texture editor"_atom);
         registerNewWindow<NxECSBasedEditorEWC>("Assets editor"_atom);
-        registerNewWindow<DummyEWC>("Dummy window"_atom, true);
+        registerNewWindow<DummyEWC>("Dummy window"_atom, false);
 
         auto viewport = registerNewWindow<GameViewportEWC>("Viewport"_atom, true);
         _subscriptionPool << viewport->onSizeChanged->subscribeAndGetID(

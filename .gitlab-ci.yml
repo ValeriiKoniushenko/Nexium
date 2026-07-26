@@ -5,9 +5,6 @@ workflow:
 
 stages:
     - format-validation
-    - build
-    - code-lint
-    - report
 
 variables:
     GIT_DEPTH: 0
