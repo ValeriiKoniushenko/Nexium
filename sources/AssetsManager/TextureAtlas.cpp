@@ -93,7 +93,7 @@ namespace Core
             if (img.getChannelAsOpenGLType() != firstChannel)
             {
                 criticalLog(
-                    "All images in the atlas folder must have the same number of channels. Image '{}' has {} channels, while the first image has {} channels."_f
+                    "All images in the atlas folder must have the same number of channels. Image '{}' has {} channels, while the first(anchored) image has {} channels."_f
                     << img.getPath().generic_string()
                     << R<Image::Channel>::ToString(img.getChannel())
                     << R<Image::Channel>::ToString(images.front().getChannel()));
