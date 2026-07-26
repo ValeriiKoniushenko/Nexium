@@ -161,10 +161,12 @@ public:
 
 #define ECS_IMPL(ClassName)                                                                        \
     R_FRIEND_IMPL(ClassName);                                                                      \
-    _ECS_COMPONENT_IMPL(ClassName, ;, R<ClassName>::FullName(), false)
+    _ECS_COMPONENT_IMPL(ClassName, ;, R<ClassName>::FullName(), false)                             \
+    static_assert(true, "")
 
 #define ECS_IMPL_NO_SER(ClassName)                                                                 \
-    _ECS_COMPONENT_IMPL(ClassName, ;, R<ClassName>::FullName(), false)
+    _ECS_COMPONENT_IMPL(ClassName, ;, R<ClassName>::FullName(), false)                             \
+    static_assert(true, "")
 
 //
 //

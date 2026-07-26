@@ -61,8 +61,6 @@ namespace Core
         ECS_DECL(DummyEWC, Core::BaseFloatEWC);
 
     public:
-        [[nodiscard]] const char* getIcon() override;
-
     protected:
         void onInitialize() override;
         void onUpdate() override;
