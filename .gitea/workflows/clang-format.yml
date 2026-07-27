@@ -8,7 +8,7 @@ on:
 
 jobs:
   clang-format:
-    runs-on: linux
+    runs-on: ubuntu-latest
 
     container:
       image: cpp-ci:latest
