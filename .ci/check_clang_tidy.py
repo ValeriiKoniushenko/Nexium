@@ -19,6 +19,7 @@ import os
 import re
 import subprocess
 import sys
+from utils import get_target_branch, get_changed_files, ChangedFile, is_changed_line
 
 SEVERITY_MAP = {
     "error": "critical",
@@ -32,66 +33,34 @@ DIAG_RE = re.compile(
     r'(?P<level>error|warning|note): (?P<message>.*?)(?: \[(?P<check>[\w,.\-]+)\])?$'
 )
 
-
-def get_target_branch(cli_base: str | None) -> str:
-    if cli_base:
-        return cli_base
-    env_branch = os.environ.get("CI_MERGE_REQUEST_TARGET_BRANCH_NAME")
-    print(env_branch)
-    if env_branch:
-        return env_branch
-    return "develop"
-
-
-def get_changed_files(base_ref: str, explicit_files: list[str] | None, verbose: bool) -> list[str]:
-    if explicit_files:
-        if verbose:
-            print(f"[debug] using explicit file list: {explicit_files}")
-        return explicit_files
-
-    merge_base = subprocess.run(
-        ["git", "merge-base", f"origin/{base_ref}", "HEAD"],
-        capture_output=True, text=True
-    )
-    if merge_base.returncode != 0:
-        if verbose:
-            print(f"[debug] 'origin/{base_ref}' not found, falling back to local ref '{base_ref}'")
-        merge_base = subprocess.run(
-            ["git", "merge-base", base_ref, "HEAD"],
-            capture_output=True, text=True
-        )
-    base = merge_base.stdout.strip()
-
-    if verbose:
-        print(f"[debug] base ref: {base_ref} -> merge-base commit: {base}")
-
-    diff = subprocess.run(
-        ["git", "diff", "--diff-filter=ACMR", "--name-only", base, "HEAD", "--", "*.cpp", "*.cc"],
-        capture_output=True, text=True
-    ).stdout.split()
-
-    if verbose:
-        print(f"[debug] changed files ({len(diff)}): {diff}")
-
-    return diff
-
-
-def run_clang_tidy(f: str, build_dir: str, header_filter: str, extra_args: list[str], verbose: bool) -> str:
+def run_clang_tidy(file: ChangedFile,build_dir: str,header_filter: str,extra_args: list[str],verbose: bool) -> str:
     # NOTE: clang-tidy has no "-v" flag (that's a run-clang-tidy-ism) and the
     # target file must be a plain positional arg, not "-f <file>".
-    cmd = ["clang-tidy", f"--header-filter={header_filter}", "-p", build_dir, *extra_args, f]
+    cmd = [
+        "clang-tidy",
+        f"--header-filter={header_filter}",
+        "-p",
+        build_dir,
+        *extra_args,
+        file.path,
+    ]
+
     if verbose:
         print(f"[debug] running: {' '.join(cmd)}")
 
     result = subprocess.run(cmd, capture_output=True, text=True)
 
     if verbose:
-        print(f"[debug] clang-tidy exit code: {result.returncode} for {f}")
+        print(f"[debug] clang-tidy exit code: {result.returncode} for {file.path}")
         if result.returncode != 0 and result.stderr:
             print(f"[debug] stderr: {result.stderr[:2000]}")
 
     if result.returncode != 0 and not result.stdout.strip():
-        print(f"[error] clang-tidy produced no output and exited {result.returncode} for {f}", file=sys.stderr)
+        print(
+            f"[error] clang-tidy produced no output and exited "
+            f"{result.returncode} for {file.path}",
+            file=sys.stderr,
+        )
         if result.stderr:
             print(result.stderr, file=sys.stderr)
 
@@ -130,15 +99,15 @@ def main():
     should_fail = False
 
     for f in changed:
-        if not os.path.isfile(f):
+        if not os.path.isfile(f.path):
             if args.verbose:
-                print(f"[debug] skipping missing file: {f}")
+                print(f"[debug] skipping missing file: {f.path}")
             continue
 
         stdout = run_clang_tidy(f, args.build_dir, args.header_filter, args.extra_arg, args.verbose)
 
         if args.verbose:
-            print(f"[debug] --- raw clang-tidy output for {f} ---")
+            print(f"[debug] --- raw clang-tidy output for {f.path} ---")
             print(stdout)
             print("[debug] --- end output ---")
 
@@ -147,8 +116,14 @@ def main():
             if not m or m.group("level") == "note":
                 continue
 
+            line_no = int(m.group("line"))
+
+            if not is_changed_line(f, line_no):
+                continue
+
             check = m.group("check") or "clang-tidy"
-            fp_src = f"{f}:{m.group('line')}:{m.group('col')}:{check}"
+
+            fp_src = f"{f.path}:{line_no}:{m.group('col')}:{check}"
             fp = hashlib.md5(fp_src.encode()).hexdigest()
 
             issues.append({
@@ -157,8 +132,8 @@ def main():
                 "fingerprint": fp,
                 "severity": SEVERITY_MAP.get(m.group("level"), "major"),
                 "location": {
-                    "path": f,
-                    "lines": {"begin": int(m.group("line"))}
+                    "path": f.path,
+                    "lines": {"begin": line_no}
                 }
             })
 

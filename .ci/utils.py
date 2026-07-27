@@ -37,6 +37,11 @@ def get_target_branch(cli_base: str | None) -> str:
         return env_branch
     return "main"
 
+def is_changed_line(file: ChangedFile, line: int) -> bool:
+    for begin, end in file.ranges:
+        if begin <= line <= end:
+            return True
+    return False
 
 def get_changed_files(base_ref: str, explicit_files: list[str] | None, verbose: bool) -> list[ChangedFile]:
     if explicit_files:
