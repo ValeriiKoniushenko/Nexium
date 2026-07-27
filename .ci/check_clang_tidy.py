@@ -4,13 +4,13 @@ Runs clang-tidy over changed C/C++ files and reports issues in
 GitLab code-quality JSON format.
 
 CI usage (unchanged behavior):
-    python3 ci/check_clang_tidy.py
+    python3 .ci/check_clang_tidy.py
 
 Local/debug usage from your machine:
-    python3 ci/check_clang_tidy.py --base main --verbose
-    python3 ci/check_clang_tidy.py --files src/foo.cpp --build-dir build --verbose
-    python3 ci/check_clang_tidy.py --base main --fail-on error   # only fail on 'error' level
-    python3 ci/check_clang_tidy.py --base main --dry-run         # don't write report / exit 1
+    python3 .ci/check_clang_tidy.py --base develop --verbose
+    python3 .ci/check_clang_tidy.py --files src/foo.cpp --build-dir build --verbose
+    python3 .ci/check_clang_tidy.py --base develop --fail-on error   # only fail on 'error' level
+    python3 .ci/check_clang_tidy.py --base develop --dry-run         # don't write report / exit 1
 """
 import argparse
 import hashlib
@@ -66,8 +66,7 @@ def get_changed_files(base_ref: str, explicit_files: list[str] | None, verbose: 
         print(f"[debug] base ref: {base_ref} -> merge-base commit: {base}")
 
     diff = subprocess.run(
-        ["git", "diff", "--diff-filter=ACMR", "--name-only", base, "HEAD",
-         "--", "*.cpp", "*.cc"],
+        ["git", "diff", "--diff-filter=ACMR", "--name-only", base, "HEAD", "--", "*.cpp", "*.cc"],
         capture_output=True, text=True
     ).stdout.split()
 
@@ -117,8 +116,7 @@ def main():
     args = parser.parse_args()
 
     if not os.path.isdir(args.build_dir):
-        print(f"[error] build dir '{args.build_dir}' not found. "
-              f"Run cmake configure first, or pass --build-dir.", file=sys.stderr)
+        print(f"[error] build dir '{args.build_dir}' not found. Run cmake configure first, or pass --build-dir.", file=sys.stderr)
         sys.exit(2)
 
     base_ref = get_target_branch(args.base)
