@@ -3,13 +3,13 @@
 Checks that changed C/C++ files are clang-format compliant.
 
 CI usage (unchanged behavior):
-    python3 ci/check_clang_format.py
+    python3 .ci/check_clang_format.py
 
 Local/debug usage from your machine:
-    python3 ci/check_clang_format.py --base main --verbose
-    python3 ci/check_clang_format.py --base main --fix          # auto-apply formatting
-    python3 ci/check_clang_format.py --files src/foo.cpp src/bar.h
-    python3 ci/check_clang_format.py --base main --dry-run      # show diff, don't write report/exit 1
+    python3 .ci/check_clang_format.py --base develop --verbose
+    python3 .ci/check_clang_format.py --base develop --fix          # auto-apply formatting
+    python3 .ci/check_clang_format.py --files src/foo.cpp src/bar.h
+    python3 .ci/check_clang_format.py --base develop --dry-run      # show diff, don't write report/exit 1
 """
 
 import argparse
@@ -18,12 +18,23 @@ import json
 import os
 import subprocess
 import sys
+import re
+from dataclasses import dataclass
 
 # Paths are relative to the repository root.
 EXCLUDED_PATHS = (
     "dependencies/",
+    "docs/",
+    "cmake/",
+    "data/",
 )
+HUNK_RE = re.compile(r"^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@")
 
+
+@dataclass
+class ChangedFile:
+    path: str
+    ranges: list[tuple[int, int]]
 
 def is_excluded(path: str) -> bool:
     """Returns True if the file should be skipped."""
@@ -44,70 +55,110 @@ def get_target_branch(cli_base: str | None) -> str:
     return "main"
 
 
-def get_changed_files(base_ref: str, explicit_files: list[str] | None, verbose: bool) -> list[str]:
+def get_changed_files(base_ref: str, explicit_files: list[str] | None, verbose: bool) -> list[ChangedFile]:
     if explicit_files:
-        if verbose:
-            print(f"[debug] using explicit file list: {explicit_files}")
-        return explicit_files
+        return [ChangedFile(f, []) for f in explicit_files]
 
     merge_base = subprocess.run(
         ["git", "merge-base", f"origin/{base_ref}", "HEAD"],
-        capture_output=True, text=True
+        capture_output=True,
+        text=True,
     )
+
     if merge_base.returncode != 0:
-        # Fall back to local ref (useful when 'origin/<branch>' doesn't exist locally,
-        # e.g. running against a local branch without a remote tracking ref)
-        if verbose:
-            print(f"[debug] 'origin/{base_ref}' not found, falling back to local ref '{base_ref}'")
         merge_base = subprocess.run(
             ["git", "merge-base", base_ref, "HEAD"],
-            capture_output=True, text=True
+            capture_output=True,
+            text=True,
         )
+
     base = merge_base.stdout.strip()
 
-    if verbose:
-        print(f"[debug] base ref: {base_ref} -> merge-base commit: {base}")
-
     diff = subprocess.run(
-        ["git", "diff", "--diff-filter=ACMR", "--name-only", base, "HEAD",
-         "--", "*.cpp", "*.cc", "*.h", "*.hpp"],
-        capture_output=True, text=True
-    ).stdout.split()
+        [
+            "git",
+            "diff",
+            "--diff-filter=ACMR",
+            "-U0",
+            base,
+            "HEAD",
+            "--",
+            "*.cpp",
+            "*.cc",
+            "*.h",
+            "*.hpp",
+        ],
+        capture_output=True,
+        text=True,
+    ).stdout.splitlines()
 
-    filtered = [f for f in diff if not is_excluded(f)]
+    files: list[ChangedFile] = []
+    current = None
+
+    for line in diff:
+        if line.startswith("+++ b/"):
+            path = line[6:]
+
+            if is_excluded(path):
+                current = None
+                continue
+
+            current = ChangedFile(path, [])
+            files.append(current)
+            continue
+
+        if current is None:
+            continue
+
+        m = HUNK_RE.match(line)
+        if not m:
+            continue
+
+        start = int(m.group(1))
+        count = int(m.group(2) or "1")
+
+        # deleted-only hunk
+        if count == 0:
+            continue
+
+        current.ranges.append((start, start + count - 1))
 
     if verbose:
-        skipped = [f for f in diff if is_excluded(f)]
-        print(f"[debug] changed files ({len(filtered)}): {filtered}")
-        if skipped:
-            print(f"[debug] excluded files ({len(skipped)}): {skipped}")
+        print("[debug] changed files:")
+        for f in files:
+            print(f"  {f.path}: {f.ranges}")
 
-    return filtered
+    return files
 
 
-def check_file(path: str, fix: bool, verbose: bool) -> tuple[bool, str, str]:
-    """Returns (is_compliant, formatted_text, original_text)."""
+def check_file(file: ChangedFile, fix: bool, verbose: bool) -> tuple[bool, str, str]:
+    path = file.path
+
     try:
-        original = open(path).read()
+        with open(path) as f:
+            original = f.read()
     except FileNotFoundError:
-        if verbose:
-            print(f"[debug] skipping missing file: {path}")
         return True, "", ""
 
-    result = subprocess.run(["clang-format", path], capture_output=True, text=True)
-    formatted = result.stdout
+    cmd = ["clang-format", path]
+
+    for begin, end in file.ranges:
+        cmd.append(f"--lines={begin}:{end}")
+
+    result = subprocess.run(cmd, capture_output=True, text=True)
 
     if result.returncode != 0:
-        print(f"[warn] clang-format failed on {path}: {result.stderr.strip()}", file=sys.stderr)
+        print(result.stderr, file=sys.stderr)
         return True, original, original
+
+    formatted = result.stdout
 
     compliant = formatted == original
 
     if not compliant and fix:
-        with open(path, "w") as out:
-            out.write(formatted)
-        print(f"[fix] reformatted {path}")
-        compliant = True  # treat as resolved after fixing
+        with open(path, "w") as f:
+            f.write(formatted)
+        compliant = True
 
     return compliant, formatted, original
 
@@ -127,19 +178,23 @@ def main():
     changed = get_changed_files(base_ref, args.files, args.verbose)
 
     issues = []
-    for f in changed:
-        compliant, formatted, original = check_file(f, args.fix, args.verbose)
-        if args.verbose:
-            print(f"[debug] {f}: {'OK' if compliant else 'NEEDS FORMATTING'}")
+    for file in changed:
+        compliant, formatted, original = check_file(file, args.fix, args.verbose)
 
         if not compliant:
-            fp = hashlib.md5(f.encode()).hexdigest()
+            fp = hashlib.md5(file.path.encode()).hexdigest()
+
             issues.append({
-                "description": f"File is not clang-format compliant: {f}",
+                "description": f"Formatting issue in modified lines: {file.path}",
                 "check_name": "clang-format",
                 "fingerprint": fp,
                 "severity": "major",
-                "location": {"path": f, "lines": {"begin": 1}}
+                "location": {
+                    "path": file.path,
+                    "lines": {
+                        "begin": file.ranges[0][0]
+                    }
+                }
             })
 
     with open(args.report_path, "w") as out:
