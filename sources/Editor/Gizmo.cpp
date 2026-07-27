@@ -57,7 +57,8 @@ namespace Core
 
     void Gizmo::onTick(float delta)
     {
-        StaticMeshBundle::onTick(delta);
+        StaticMeshBundle::
+            onTick(delta);
 
         handleDrag();
     }
