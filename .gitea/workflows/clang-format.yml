@@ -20,11 +20,20 @@ jobs:
           fetch-depth: 0
 
       - name: Check clang-format
+        id: clang-format
+        continue-on-error: true
         run: |
-          python3 .ci/check_clang_format.py --base develop --report-path clang-format-report.json
+          python3 .ci/check_clang_format.py \
+            --base develop \
+            --report-path clang-format-report.json
 
       - name: Upload clang-format report
+        if: always()
         uses: actions/upload-artifact@v3
         with:
           name: clang-format-report
           path: clang-format-report.json
+
+      - name: Fail if clang-format failed
+        if: steps.clang-format.outcome == 'failure'
+        run: exit 1
