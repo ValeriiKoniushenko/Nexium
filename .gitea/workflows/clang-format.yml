@@ -21,4 +21,10 @@ jobs:
 
       - name: Check clang-format
         run: |
-          python3 .ci/check_clang_format.py --base develop
+          python3 .ci/check_clang_format.py --base develop --report-path clang-format-report.json
+
+      - name: Upload clang-format report
+        uses: actions/upload-artifact@v3
+        with:
+          name: clang-format-report
+          path: clang-format-report.json
