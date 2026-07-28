@@ -12,9 +12,9 @@
                     0.0
                 ],
                 "_position": [
-                    -56.72308349609375,
-                    34.23135757446289,
-                    115.4005126953125
+                    -60.29884338378906,
+                    34.31687927246094,
+                    83.01860809326172
                 ],
                 "_rotation": [
                     -0.150390625,
@@ -147,9 +147,9 @@
             },
             "typeSpecificData": {
                 "_animationFPS": 10.0,
-                "_animationName": "test",
-                "_atlasName": "player_walk",
-                "_textureName": "MPlayer_walk.png"
+                "_animationName": "New animation",
+                "_atlasName": "santa_walk",
+                "_textureName": "Walk_9.png"
             }
         }
     ]

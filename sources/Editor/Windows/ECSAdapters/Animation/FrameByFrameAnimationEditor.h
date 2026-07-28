@@ -33,9 +33,17 @@ namespace Core
     private:
         void copyDraftToBuffers();
         void applyBuffersToDraft();
+        [[nodiscard]] std::vector<StringAtom> drawAtlasSelector();
+        void drawBaseRegionSelector(const std::vector<StringAtom>& regionNames);
+        void drawEditorContent(float dt, const std::vector<StringAtom>& regionNames);
         void drawFrames();
         void drawNamedFrames(const std::vector<StringAtom>& regionNames);
         void drawSpriteSheet();
+        void drawFooter(const std::vector<StringAtom>& regionNames,
+                        const SaveCallback& onSave);
+        void save(const SaveCallback& onSave);
+        [[nodiscard]] bool hasMissingUvBase(
+            const std::vector<StringAtom>& regionNames) const;
         [[nodiscard]] bool hasNameConflict() const;
 
         Animation::FrameByFrameAnimator* _animator = nullptr;

@@ -246,21 +246,8 @@ namespace Core
             && (_isCreating || _draft.getAnimationName() != _editedName);
     }
 
-    void FrameByFrameAnimationEditor::draw(float dt, const SaveCallback& onSave)
+    std::vector<StringAtom> FrameByFrameAnimationEditor::drawAtlasSelector()
     {
-        if (!_isOpen || !_animator)
-        {
-            return;
-        }
-
-        ImGui::OpenPopup("Frame-by-frame animation editor");
-        if (!ImGui::BeginPopupModal("Frame-by-frame animation editor", &_isOpen,
-                                    ImGuiWindowFlags_AlwaysAutoResize))
-        {
-            return;
-        }
-
-        ImGui::InputText("Name", _name.data(), _name.size());
         const auto atlasNames = GetAssetsManager().getAtlasesAsVector();
         const char* atlasPreview = _atlas[0] ? _atlas.data() : "Select atlas";
         if (ImGui::BeginCombo("Atlas", atlasPreview))
@@ -286,13 +273,19 @@ namespace Core
             ImGui::EndCombo();
         }
 
-        std::vector<StringAtom> regionNames;
         if (_atlas[0]
             && std::ranges::find(atlasNames, StringAtom{_atlas.data()}) != atlasNames.end())
         {
-            regionNames
-                = GetAssetsManager().getAtlas(StringAtom{_atlas.data()}).getRectsAsVector();
+            return GetAssetsManager()
+                .getAtlas(StringAtom{_atlas.data()})
+                .getRectsAsVector();
         }
+        return {};
+    }
+
+    void FrameByFrameAnimationEditor::drawBaseRegionSelector(
+        const std::vector<StringAtom>& regionNames)
+    {
         if (!regionNames.empty())
         {
             const char* basePreview = _texture[0] ? _texture.data() : "Select base region";
@@ -319,7 +312,12 @@ namespace Core
             _texture.fill('\0');
             ImGui::TextDisabled("This atlas has no named regions; UV uses the whole texture.");
         }
+    }
 
+    void FrameByFrameAnimationEditor::drawEditorContent(
+        float dt, const std::vector<StringAtom>& regionNames)
+    {
+        drawBaseRegionSelector(regionNames);
         ImGui::DragFloat("FPS", &_fps, 0.25f, 0.01f, 1000.f, "%.2f");
         ImGui::Checkbox("Loop", &_loop);
         applyBuffersToDraft();
@@ -327,10 +325,41 @@ namespace Core
         drawFrames();
         drawNamedFrames(regionNames);
         drawSpriteSheet();
+    }
 
-        const bool missingUvBase = !regionNames.empty() && _draft.getTextureName().isEmpty()
+    bool FrameByFrameAnimationEditor::hasMissingUvBase(
+        const std::vector<StringAtom>& regionNames) const
+    {
+        return !regionNames.empty() && _draft.getTextureName().isEmpty()
             && std::ranges::any_of(_draft.getFrames(),
                                    [](const auto& frame) { return !frame.textureName; });
+    }
+
+    void FrameByFrameAnimationEditor::save(const SaveCallback& onSave)
+    {
+        const bool wasCurrent
+            = !_isCreating && _animator->getCurrentAnimationName() == _editedName;
+        if (!_isCreating && _editedName != _draft.getAnimationName())
+        {
+            _animator->removeAnimation(_editedName);
+        }
+        _animator->addAnimation(_draft);
+        if (wasCurrent)
+        {
+            _animator->startAnimation(_draft.getAnimationName());
+        }
+        if (onSave)
+        {
+            onSave();
+        }
+        _isOpen = false;
+        ImGui::CloseCurrentPopup();
+    }
+
+    void FrameByFrameAnimationEditor::drawFooter(
+        const std::vector<StringAtom>& regionNames, const SaveCallback& onSave)
+    {
+        const bool missingUvBase = hasMissingUvBase(regionNames);
         const bool nameConflict = hasNameConflict();
         ImGui::Separator();
         if (!_draft.isValid() || missingUvBase)
@@ -348,23 +377,7 @@ namespace Core
         ImGui::BeginDisabled(!_draft.isValid() || missingUvBase || nameConflict);
         if (ImGui::Button("Save"))
         {
-            const bool wasCurrent
-                = !_isCreating && _animator->getCurrentAnimationName() == _editedName;
-            if (!_isCreating && _editedName != _draft.getAnimationName())
-            {
-                _animator->removeAnimation(_editedName);
-            }
-            _animator->addAnimation(_draft);
-            if (wasCurrent)
-            {
-                _animator->startAnimation(_draft.getAnimationName());
-            }
-            if (onSave)
-            {
-                onSave();
-            }
-            _isOpen = false;
-            ImGui::CloseCurrentPopup();
+            save(onSave);
         }
         ImGui::EndDisabled();
         ImGui::SameLine();
@@ -373,6 +386,26 @@ namespace Core
             _isOpen = false;
             ImGui::CloseCurrentPopup();
         }
+    }
+
+    void FrameByFrameAnimationEditor::draw(float dt, const SaveCallback& onSave)
+    {
+        if (!_isOpen || !_animator)
+        {
+            return;
+        }
+
+        ImGui::OpenPopup("Frame-by-frame animation editor");
+        if (!ImGui::BeginPopupModal("Frame-by-frame animation editor", &_isOpen,
+                                    ImGuiWindowFlags_AlwaysAutoResize))
+        {
+            return;
+        }
+
+        ImGui::InputText("Name", _name.data(), _name.size());
+        const auto regionNames = drawAtlasSelector();
+        drawEditorContent(dt, regionNames);
+        drawFooter(regionNames, onSave);
         ImGui::EndPopup();
     }
 } // namespace Core
