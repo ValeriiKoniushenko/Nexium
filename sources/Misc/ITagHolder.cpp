@@ -25,6 +25,7 @@
 #include "ITagHolder.h"
 
 #include <algorithm>
+#include <cstring>
 #include <sstream>
 #include <string_view>
 
@@ -135,6 +136,23 @@ namespace Core
         }
 
         return result;
+    }
+
+    std::string TagHelper::StringifyToStrings(uint32_t tags, const char* div)
+    {
+        std::string out;
+        for (auto&& str : TagHelper::ToStrings(tags))
+        {
+            out += str + div;
+        }
+
+        if (!out.empty())
+        {
+            const auto len = strlen(div);
+            out.erase(out.size() - len, len);
+        }
+
+        return out;
     }
 
     Tag TagHelper::SplitToTagFromString(std::string_view str, char div)

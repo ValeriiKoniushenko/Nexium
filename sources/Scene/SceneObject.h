@@ -50,8 +50,7 @@ namespace Core
         public BaseComponent,
         public IOutliner,
         public Transformable,
-        public IDrawable,
-        public ITagHolder
+        public IDrawable
     {
         ECS_DECL(SceneObject, Core::BaseComponent, Core::Transformable, Core::IOutliner,
                  Core::IDrawable);

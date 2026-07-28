@@ -28,6 +28,7 @@
 
 namespace Core
 {
+
     class SceneObject;
     class Scene;
     class Actor;

@@ -96,6 +96,11 @@ namespace Core
         return getComponentType() + "_" + normName;
     }
 
+    Tag BaseEWC::getTags() const
+    {
+        return Tag_EditorInternal;
+    }
+
     //
     //    ______                   ______  _                _
     //    | ___ \                  |  ___|| |              | |

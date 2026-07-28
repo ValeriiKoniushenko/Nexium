@@ -34,6 +34,10 @@
 #include <typeindex>
 #include <unordered_set>
 
+#if defined(DEBUG)
+    #include <chrono>
+#endif
+
 // ===============================================================
 //                         ECS INTERNAL
 // ===============================================================
@@ -161,10 +165,12 @@ public:
 
 #define ECS_IMPL(ClassName)                                                                        \
     R_FRIEND_IMPL(ClassName);                                                                      \
-    _ECS_COMPONENT_IMPL(ClassName, ;, R<ClassName>::FullName(), false)
+    _ECS_COMPONENT_IMPL(ClassName, ;, R<ClassName>::FullName(), false)                             \
+    static_assert(true, "")
 
 #define ECS_IMPL_NO_SER(ClassName)                                                                 \
-    _ECS_COMPONENT_IMPL(ClassName, ;, R<ClassName>::FullName(), false)
+    _ECS_COMPONENT_IMPL(ClassName, ;, R<ClassName>::FullName(), false)                             \
+    static_assert(true, "")
 
 //
 //
@@ -322,6 +328,8 @@ namespace Core
         SINGLETONS_FRIEND(GlobalComponentFactory);
 
     public:
+        ~GlobalComponentFactory() override;
+
         /// Create a component by its registered type.
         /// @param type The type identifier (StringAtom) of the component.
         /// @return Pointer to a new BaseComponent instance, or nullptr if type not registered.
@@ -329,21 +337,30 @@ namespace Core
 
         /// Register a new component type in the factory.
         /// @param type The type identifier (StringAtom).
-        /// @param callback Function that creates instances of this type.
         /// @return True if registration succeeds, false if the type already exists.
         template<class T>
         bool registerNewType(const StringAtom& type, bool isTemplateType = false);
 
-        [[nodiscard]] std::vector<StringAtom> getRegisteredTypesAsVector(bool sort = false) const;
+        [[nodiscard]] std::vector<StringAtom> getRegisteredTypesAsVector(
+            bool sort = false, const std::function<bool(Tag)>& cond = nullptr) const;
         [[nodiscard]] bool containsSuchType(const StringAtom& type) const;
+        [[nodiscard]] const std::unordered_map<StringAtom, Tag>& getTypeToTagMap() const;
 
         [[nodiscard]] std::optional<std::type_index> getTypeIdByTypeName(const StringAtom& type);
 
         [[nodiscard]] spdlog::logger* getLogger() const override;
 
+        void _createTypeToTagMap();
+
     private:
         std::unordered_map<StringAtom, BaseComponent* (*)()> _map;
         std::unordered_map<StringAtom, std::type_index> _typeToNameMap;
+        std::unordered_map<StringAtom, Tag> _typeToTagMap;
+
+#if defined(DEBUG)
+        std::optional<decltype(std::chrono::high_resolution_clock::now())> _startRegTime;
+        decltype(std::chrono::high_resolution_clock::now()) _endRegTime;
+#endif
     };
 
     /// Shortcut to access the global component factory singleton.
@@ -867,6 +884,13 @@ namespace Core
     template<class T>
     bool GlobalComponentFactory::registerNewType(const StringAtom& type, bool isTemplateType)
     {
+#if defined(DEBUG)
+        if (!_startRegTime)
+        {
+            _startRegTime = std::chrono::high_resolution_clock::now();
+        }
+#endif
+
         Assert(type.isStatic());
 
         // Due to linkage logic, template types can attempt to register a few times. So, let's
@@ -890,6 +914,10 @@ namespace Core
         _typeToNameMap.emplace(type, typeid(T));
 
         traceLog("Type '{}' has been registered."_f << type);
+
+#if defined(DEBUG)
+        _endRegTime = std::chrono::high_resolution_clock::now();
+#endif
         return true;
     }
 

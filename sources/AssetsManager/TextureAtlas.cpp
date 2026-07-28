@@ -60,12 +60,12 @@ namespace Core
                 continue;
             }
 
-            const auto ext = entry.path().extension().string();
+            const auto ext = entry.path().extension().generic_string();
 
             if (ext == ".png" || ext == ".jpg" || ext == ".jpeg")
             {
                 Image img;
-                if (img.loadFromFile(entry.path()))
+                if (img.loadFromFile(entry.path(), true, true))
                 {
                     images.push_back(std::move(img));
                 }
@@ -93,11 +93,11 @@ namespace Core
             if (img.getChannelAsOpenGLType() != firstChannel)
             {
                 criticalLog(
-                    "All images in the atlas folder must have the same number of channels. Image '{}' has {} channels, while the first image has {} channels."_f
+                    "All images in the atlas folder must have the same number of channels. Image '{}' has {} channels, while the first(anchored) image has {} channels."_f
                     << img.getPath().generic_string()
                     << R<Image::Channel>::ToString(img.getChannel())
                     << R<Image::Channel>::ToString(images.front().getChannel()));
-                return;
+                // return;
             }
         }
 

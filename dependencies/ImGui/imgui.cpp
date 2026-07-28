@@ -5188,6 +5188,7 @@ glm::vec2 ImGui::CalcTextSize(const char* text, const char* text_end, bool hide_
         text_display_end = text_end;
 
     ImFont* font = g.Font;
+    if (!font) return glm::vec2(0);
     const float font_size = g.FontSize;
     if (text == text_display_end)
         return glm::vec2(0.0f, font_size);

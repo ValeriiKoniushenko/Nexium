@@ -72,6 +72,18 @@ namespace Core
 
     const StringAtom BaseComponent::componentType = "BaseComponent"_atom;
 
+    GlobalComponentFactory::~GlobalComponentFactory()
+    {
+#if defined(DEBUG)
+        if (_startRegTime)
+        {
+            std::cout << "[Debug] GlobalComponentFactory: type registration took: "
+                      << std::chrono::duration<float>(_endRegTime - *_startRegTime).count()
+                      << std::endl;
+        }
+#endif
+    }
+
     BaseComponent* GlobalComponentFactory::create(const StringAtom& type)
     {
         if (const auto found = _map.find(type); found != _map.end()) [[likely]]
@@ -98,12 +110,16 @@ namespace Core
     }
 
     std::vector<StringAtom> GlobalComponentFactory::getRegisteredTypesAsVector(
-        bool sort /*= false*/) const
+        bool sort /*= false*/, const std::function<bool(Tag)>& cond /*= nullptr*/) const
     {
         std::vector<StringAtom> out;
         out.reserve(_map.size());
         for (const auto& [type, _] : _map)
         {
+            if (cond && !cond(_typeToTagMap.at(type)))
+            {
+                continue;
+            }
             out.emplace_back(type);
         }
 
@@ -118,6 +134,11 @@ namespace Core
     bool GlobalComponentFactory::containsSuchType(const StringAtom& type) const
     {
         return _map.contains(type);
+    }
+
+    const std::unordered_map<StringAtom, Tag>& GlobalComponentFactory::getTypeToTagMap() const
+    {
+        return _typeToTagMap;
     }
 
     std::optional<std::type_index> GlobalComponentFactory::getTypeIdByTypeName(
@@ -163,6 +184,19 @@ namespace Core
                        });
 
         return std::nullopt;
+    }
+
+    void GlobalComponentFactory::_createTypeToTagMap()
+    {
+        for (auto&& [typeName, creator] : _map)
+        {
+            const auto tmp = creator();
+            if (Verify(tmp))
+            {
+                _typeToTagMap.emplace(typeName, tmp->getTags());
+            }
+            delete tmp;
+        }
     }
 
     AbstractComponent::AbstractComponent(AbstractComponent&& other) noexcept

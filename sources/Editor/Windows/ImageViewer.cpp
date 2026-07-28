@@ -33,6 +33,7 @@
 namespace Core
 {
     ECS_IMPL(ImageViewerEWC);
+    ECS_IMPL(DummyEWC);
 
     const char* ImageViewerEWC::getIcon()
     {

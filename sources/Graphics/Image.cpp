@@ -95,7 +95,8 @@ namespace Core
         return GL_RED;
     }
 
-    bool Image::loadFromFile(const std::filesystem::path& path, bool isFlipVertically)
+    bool Image::loadFromFile(const std::filesystem::path& path, bool isFlipVertically /* = true*/,
+                             bool forceRGBA /* = false*/)
     {
         if (!std::filesystem::exists(path)) [[unlikely]]
         {
@@ -115,7 +116,8 @@ namespace Core
         clear();
         stbi_set_flip_vertically_on_load(isFlipVertically);
         int channel = 0;
-        _data = stbi_load(path.string().c_str(), &_size.width, &_size.height, &channel, 0);
+        _data = stbi_load(path.string().c_str(), &_size.width, &_size.height, &channel,
+                          forceRGBA ? 4 : 0);
         if (isEmpty())
         {
             clear();
@@ -124,7 +126,7 @@ namespace Core
             return false; // was missing
         }
 
-        _channel = static_cast<Channel>(channel);
+        _channel = forceRGBA ? Channel::RGBA : static_cast<Channel>(channel);
         _path = path;
 
         return true;

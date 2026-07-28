@@ -67,7 +67,8 @@ namespace Core
 
         [[nodiscard]] const unsigned char* data() const noexcept { return _data; }
 
-        bool loadFromFile(const std::filesystem::path& path, bool isFlipVertically = true);
+        bool loadFromFile(const std::filesystem::path& path, bool isFlipVertically = true,
+                          bool forceRGBA = false);
         bool loadFromMemory(const uint8_t* data, std::size_t size, bool isFlipVertically = true);
 
         void clear();
