@@ -50,6 +50,9 @@ namespace Core::SceneObj
         [[nodiscard]] StringAtom getAtlasName() const { return _atlasName; }
         void setAtlas(const StringAtom& value) { _atlasName = value; }
 
+        [[nodiscard]] bool isBlendingEnabled() const noexcept { return _blendingEnabled; }
+        void setBlendingEnabled(bool value) noexcept { _blendingEnabled = value; }
+
         void setAnimationOverride(const StringAtom& animationName, float fps);
         [[nodiscard]] const StringAtom& getAnimationOverrideName() const noexcept
         {
@@ -72,6 +75,8 @@ namespace Core::SceneObj
 
         GlobalPosition2F _textureUVOffset{ 0.f, 0.f };
         GlobalPosition2F _textureUVSize{ 1.f, 1.f };
+
+        bool _blendingEnabled = true;
 
         StringAtom _animationOverrideName;
         float _animationOverrideFPS = 0.f;

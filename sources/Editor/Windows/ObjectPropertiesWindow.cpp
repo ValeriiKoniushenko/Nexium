@@ -544,6 +544,21 @@ namespace Core
                     }
                 });
 
+            out.attachChild(::Create<CheckBox>("Alpha blending", false, defaultLabelWidth));
+            _rectBlending = out.getLastChildAs<HLayout>()->getLastChildAs<CheckBox>().get();
+            _subscriptionPool << _rectBlending->onChange->subscribeAndGetID(
+                [t = WeakPtr(this)](bool enabled)
+                {
+                    if (auto obj = t.tryLoad())
+                    {
+                        if (auto* rectangle
+                            = dynamic_cast<SceneObj::Rectangle*>(obj->_target))
+                        {
+                            rectangle->setBlendingEnabled(enabled);
+                        }
+                    }
+                });
+
             out.attachChild(CreateHLayoutAndLabel("Animation", false, defaultLabelWidth));
             _rectAnimationRow = out.getLastChildAs<HLayout>().get();
             _rectComboAnimation
@@ -1005,6 +1020,11 @@ namespace Core
                     const auto ind = it - textures.begin();
                     _rectComboRect->setCurrentIndex(ind);
                 }
+            }
+
+            if (_rectBlending)
+            {
+                _rectBlending->setValue(comp->isBlendingEnabled());
             }
 
             auto* animator = comp->findFirstChildOf<Animation::FrameByFrameAnimator>();

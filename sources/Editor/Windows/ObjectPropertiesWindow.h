@@ -190,6 +190,7 @@ namespace Core
         Gui::VerticalLayout _rectLayout;
         Gui::ComboModelBased* _rectComboAtlas = nullptr;
         Gui::ComboModelBased* _rectComboRect = nullptr;
+        Gui::CheckBox* _rectBlending = nullptr;
         Gui::HorizontalLayout* _rectAnimationRow = nullptr;
         Gui::ComboModelBased* _rectComboAnimation = nullptr;
         Gui::HorizontalLayout* _rectAnimationFPSRow = nullptr;

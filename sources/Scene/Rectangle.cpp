@@ -93,7 +93,11 @@ namespace Core::SceneObj
         shader->setUniform("uUVOffset"_atom, textureOffset + textureSize * _textureUVOffset);
         shader->setUniform("uUVSize"_atom, textureSize * _textureUVSize);
         shader->setUniform("uModel"_atom, getModelMatrix());
+        shader->setUniform("uAlphaBlendingEnabled"_atom,
+                           static_cast<GLint>(_blendingEnabled));
 
+        glBlendFunc(_blendingEnabled ? GL_SRC_ALPHA : GL_ONE,
+                    _blendingEnabled ? GL_ONE_MINUS_SRC_ALPHA : GL_ZERO);
         gcd.directDraw();
     }
 
@@ -102,6 +106,7 @@ namespace Core::SceneObj
         auto out = SceneObject::getTypeSpecificSceneDataAsJson();
         out["_textureName"] = _textureName;
         out["_atlasName"] = _atlasName;
+        out["_blendingEnabled"] = _blendingEnabled;
         if (!_animationOverrideName.isEmpty() && _animationOverrideFPS > 0.f)
         {
             out["_animationName"] = _animationOverrideName;
@@ -121,6 +126,8 @@ namespace Core::SceneObj
         {
             _atlasName = StringAtom::Intern(data.at("_atlasName").get<StringAtom>());
         }
+
+        _blendingEnabled = data.value("_blendingEnabled", true);
 
         if (data.contains("_animationName") && data.contains("_animationFPS"))
         {
