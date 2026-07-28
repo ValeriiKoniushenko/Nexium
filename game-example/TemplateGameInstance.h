@@ -24,14 +24,9 @@
 
 #pragma once
 
-#include "Player.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 
 class TemplateGameInstance : public Core::GameInstance
 {
-protected:
-    void onLoadCoreResources() override;
 
-private:
-    Game::Player* _player{nullptr};
 };
