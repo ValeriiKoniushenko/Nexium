@@ -146,10 +146,10 @@
                 ]
             },
             "typeSpecificData": {
-                "_animationFPS": 20.0,
-                "_animationName": "New animation",
-                "_atlasName": "santa_walk",
-                "_textureName": "Walk_5.png"
+                "_animationFPS": 10.0,
+                "_animationName": "test",
+                "_atlasName": "player_walk",
+                "_textureName": "MPlayer_walk.png"
             }
         }
     ]

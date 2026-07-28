@@ -22,12 +22,11 @@
  * SOFTWARE.
  */
 #pragma once
-#include "Animations/FrameByFrame/FrameByFrameAnimation.h"
 #include "Core/Delegate.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "Editor/Windows/NxECSBasedEditor.h"
+#include "FrameByFrameAnimationEditor.h"
 
-#include <array>
 #include <unordered_map>
 
 namespace Core
@@ -52,38 +51,13 @@ namespace Core
         void onApplyAssetData(const nlohmann::json&) override {}
 
     private:
-        void beginCreate();
-        void beginEdit(const StringAtom& name);
         void drawAnimationCards();
-        void drawAnimationEditor();
-        void drawPreview(const Animation::FrameByFrameAnimation& animation, float dt,
-                         float size, const StringAtom& previewId);
-        void copyDraftToBuffers();
-        void applyBuffersToDraft();
 
         Gui::VerticalLayout _layout;
         Gui::Button* _addAnimButton = nullptr;
         DelegateSubscriberPoolGuard _subscriptionPool;
-
-        Animation::FrameByFrameAnimation _draft;
-        StringAtom _editedName;
-        bool _showEditor = false;
-        bool _isCreating = false;
-        std::array<char, 128> _name{};
-        std::array<char, 256> _atlas{};
-        std::array<char, 256> _texture{};
-        std::array<char, 256> _frameTexture{};
-        float _fps = 10.f;
-        bool _loop = true;
-        int _sheetColumns = 1;
-        int _sheetRows = 1;
-        int _sheetSelectedRow = 1;
-        struct PreviewState
-        {
-            std::size_t frame = 0;
-            float timer = 0.f;
-        };
-        std::unordered_map<StringAtom, PreviewState> _previewStates;
+        FrameByFrameAnimationEditor _animationEditor;
+        std::unordered_map<StringAtom, FrameByFrameAnimationEditor::PreviewState> _previewStates;
     };
 }
 
