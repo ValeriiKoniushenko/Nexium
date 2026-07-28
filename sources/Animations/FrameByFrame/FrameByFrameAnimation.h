@@ -36,6 +36,7 @@ namespace Core::Animation
 {
     struct Frame
     {
+        StringAtom name;
         std::optional<StringAtom> textureName;
         GlobalPosition2F uvOffset{0.f, 0.f};
         GlobalPosition2F uvSize{1.f, 1.f};
@@ -51,6 +52,7 @@ namespace Core::Animation
 
     public:
         void setFPS(float fps);
+        [[nodiscard]] float getFPS() const noexcept { return _fps; }
         void start() override;
         void reset() override;
         void finish() override;
@@ -61,12 +63,17 @@ namespace Core::Animation
         bool addFrame(StringAtom textureName);
         bool addFrame(GlobalPosition2F uvOffset, GlobalPosition2F uvSize);
         bool addFramesFromSpriteSheet(std::size_t columns, std::size_t rows,
-                                      std::size_t frameCount = 0);
+                                      std::size_t frameCount = 0,
+                                      std::size_t startRow = 0);
+        bool setFrame(std::size_t index, Frame frame);
+        bool removeFrame(std::size_t index);
+        void clearFrames();
 
         [[nodiscard]] bool isValid() const noexcept;
         [[nodiscard]] const Frame* getCurrentFrame() const noexcept;
         [[nodiscard]] bool hasFrames() const noexcept { return !_frames.empty(); }
         [[nodiscard]] std::size_t getFramesCount() const noexcept { return _frames.size(); }
+        [[nodiscard]] const std::vector<Frame>& getFrames() const noexcept { return _frames; }
         [[nodiscard]] const StringAtom& getAtlasName() const noexcept { return _atlasName; }
         [[nodiscard]] const StringAtom& getTextureName() const noexcept { return _textureName; }
 
@@ -87,7 +94,7 @@ namespace Core::Animation
         FIELD();
         float _timer = 0.f;
         FIELD();
-        float _frameTime = 0.1f;
+        float _fps = 10.f;
     };
 } // namespace Core::Animation
 

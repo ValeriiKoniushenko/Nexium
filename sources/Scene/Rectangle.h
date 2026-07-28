@@ -50,6 +50,16 @@ namespace Core::SceneObj
         [[nodiscard]] StringAtom getAtlasName() const { return _atlasName; }
         void setAtlas(const StringAtom& value) { _atlasName = value; }
 
+        void setAnimationOverride(const StringAtom& animationName, float fps);
+        [[nodiscard]] const StringAtom& getAnimationOverrideName() const noexcept
+        {
+            return _animationOverrideName;
+        }
+        [[nodiscard]] float getAnimationOverrideFPS() const noexcept
+        {
+            return _animationOverrideFPS;
+        }
+
         [[nodiscard]] nlohmann::json getTypeSpecificSceneDataAsJson() const override;
         void applyTypeSpecificSceneData(const nlohmann::json& data) override;
 
@@ -62,6 +72,9 @@ namespace Core::SceneObj
 
         GlobalPosition2F _textureUVOffset{ 0.f, 0.f };
         GlobalPosition2F _textureUVSize{ 1.f, 1.f };
+
+        StringAtom _animationOverrideName;
+        float _animationOverrideFPS = 0.f;
     };
 
 } // namespace Core::SceneObj

@@ -77,6 +77,15 @@ namespace Core::Animation
         [[nodiscard]] bool hasAnimation(const StringAtom& name) const;
         [[nodiscard]] bool hasCurrentAnimation() const;
         [[nodiscard]] bool isPlaying() const;
+        [[nodiscard]] const StringAtom& getCurrentAnimationName() const noexcept
+        {
+            return _currentState;
+        }
+        [[nodiscard]] const std::unordered_map<StringAtom, FrameByFrameAnimation>&
+        getAnimations() const noexcept
+        {
+            return _animations;
+        }
 
     protected:
         void onTick(float delta) override;

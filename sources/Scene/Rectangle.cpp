@@ -24,6 +24,7 @@
 
 #include "Rectangle.h"
 
+#include "Animations/FrameByFrame/FrameByFrameAnimator.h"
 #include "GameplaySystem/Camera.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Graphics/GraphicsComponents.h"
@@ -80,9 +81,14 @@ namespace Core::SceneObj
 
         atlas.bind();
 
-        const auto rect = atlas.getRect(_textureName);
-        const auto textureOffset = rect.getLeftTop();
-        const auto textureSize = rect.getRightBottom() - textureOffset;
+        glm::vec2 textureOffset{0.f, 0.f};
+        glm::vec2 textureSize{1.f, 1.f};
+        if (!_textureName.isEmpty())
+        {
+            const auto rect = atlas.getRect(_textureName);
+            textureOffset = rect.getLeftTop();
+            textureSize = rect.getRightBottom() - textureOffset;
+        }
 
         shader->setUniform("uUVOffset"_atom, textureOffset + textureSize * _textureUVOffset);
         shader->setUniform("uUVSize"_atom, textureSize * _textureUVSize);
@@ -96,6 +102,11 @@ namespace Core::SceneObj
         auto out = SceneObject::getTypeSpecificSceneDataAsJson();
         out["_textureName"] = _textureName;
         out["_atlasName"] = _atlasName;
+        if (!_animationOverrideName.isEmpty() && _animationOverrideFPS > 0.f)
+        {
+            out["_animationName"] = _animationOverrideName;
+            out["_animationFPS"] = _animationOverrideFPS;
+        }
         return out;
     }
 
@@ -109,6 +120,29 @@ namespace Core::SceneObj
         if (data.contains("_atlasName"))
         {
             _atlasName = StringAtom::Intern(data.at("_atlasName").get<StringAtom>());
+        }
+
+        if (data.contains("_animationName") && data.contains("_animationFPS"))
+        {
+            setAnimationOverride(data.at("_animationName").get<StringAtom>(),
+                                 data.at("_animationFPS").get<float>());
+        }
+    }
+
+    void Rectangle::setAnimationOverride(const StringAtom& animationName, float fps)
+    {
+        _animationOverrideName = animationName;
+        _animationOverrideFPS = fps;
+
+        auto* animator = findFirstChildOf<Animation::FrameByFrameAnimator>();
+        if (!animator || animationName.isEmpty() || fps <= 0.f)
+        {
+            return;
+        }
+        if (auto* animation = animator->getAnimation(animationName))
+        {
+            animation->setFPS(fps);
+            animator->startAnimation(animationName);
         }
     }
 

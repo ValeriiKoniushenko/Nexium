@@ -32,7 +32,9 @@ file(GLOB_RECURSE CPP_HEADERS
     "Scene/*.h"
 )
 
-add_library(${TARGET_NAME} STATIC)
+add_library(${TARGET_NAME} STATIC
+        Editor/Windows/ECSAdapters/Animation/ECSEditorFrameByFrameAnimationAdapter.cpp
+        Editor/Windows/ECSAdapters/Animation/ECSEditorFrameByFrameAnimationAdapter.h)
 target_sources(${TARGET_NAME}
     PRIVATE
     ${CPP_SOURCES}

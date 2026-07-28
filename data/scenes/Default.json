@@ -12,13 +12,13 @@
                     0.0
                 ],
                 "_position": [
-                    -29.13266944885254,
-                    41.751564025878906,
-                    174.28477478027344
+                    -56.72308349609375,
+                    34.23135757446289,
+                    115.4005126953125
                 ],
                 "_rotation": [
-                    3.119140625,
-                    6.205078125,
+                    -0.150390625,
+                    -6.513671875,
                     0.0
                 ],
                 "_scale": [
@@ -115,8 +115,41 @@
                 ]
             },
             "typeSpecificData": {
+                "_atlasName": "player_walk",
+                "_textureName": "MPlayer_walk.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::Rectangle",
+            "name": "AnimatedPlayersa",
+            "referenceAsset": "data/assets/AnimatedPlayer.nx",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    -116.69999694824219,
+                    0.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationFPS": 20.0,
+                "_animationName": "New animation",
                 "_atlasName": "santa_walk",
-                "_textureName": "Walk_12.png"
+                "_textureName": "Walk_5.png"
             }
         }
     ]

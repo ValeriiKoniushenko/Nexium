@@ -27,6 +27,13 @@
             "_name": "",
             "_noTick": false,
             "_type": "Core::ECSEditorInterleavedGraphicsDataAdapter"
+        },
+        {
+            "_children": null,
+            "_isEnabled": true,
+            "_name": "",
+            "_noTick": false,
+            "_type": "Core::ECSEditorFrameByFrameAnimationAdapter"
         }
     ],
     "_innerPosition": [
