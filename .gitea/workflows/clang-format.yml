@@ -21,6 +21,8 @@ jobs:
 
       - name: Check clang-format
         id: clang-format
+        env:
+          GITEA_TOKEN: ${{ secrets.GITEATOKEN }}
         continue-on-error: true
         run: |
           python3 .ci/check_clang_format.py \

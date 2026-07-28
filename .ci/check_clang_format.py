@@ -169,7 +169,6 @@ def main():
         publish_gitea_comment(issue, args.verbose)
         
     if issues:
-
         print(f"Found {len(issues)} formatting issue(s):")
         for i in issues:
             print(f"  - {i['location']['path']}")
