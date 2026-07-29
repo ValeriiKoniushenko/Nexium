@@ -26,14 +26,20 @@ class GiteaClient:
         repo: str,
         *,
         verbose: bool = False,
+        auth_scheme: str | None = None,
+        token_source: str = "unknown",
     ) -> None:
         self.server = server.rstrip("/")
-        self.token = token
+        self.token = token.strip()
         self.owner = owner
         self.repo = repo
         self.verbose = verbose
+        self.token_source = token_source
+        # Personal access tokens use "token"; OAuth2 / Actions task tokens use "Bearer".
+        self.auth_scheme = (auth_scheme or os.environ.get("GITEA_AUTH_SCHEME") or "").strip()
         self._pending_comments: list[dict[str, Any]] = []
         self._user_id: int | None = None
+        self._auth_resolved = False
 
     @classmethod
     def from_env(cls, verbose: bool = False) -> GiteaClient | None:
@@ -41,7 +47,15 @@ class GiteaClient:
 
         Returns None when required variables are missing (e.g. local runs).
         """
-        token = os.environ.get("GITEA_TOKEN") or os.environ.get("GITHUB_TOKEN")
+        token = None
+        token_source = None
+        for key in ("GITEA_TOKEN", "GITHUB_TOKEN"):
+            value = os.environ.get(key)
+            if value and value.strip():
+                token = value
+                token_source = key
+                break
+
         repo = (
             os.environ.get("GITEA_REPOSITORY")
             or os.environ.get("GITHUB_REPOSITORY")
@@ -66,7 +80,20 @@ class GiteaClient:
             return None
 
         owner, name = repo.split("/", 1)
-        return cls(server, token, owner, name, verbose=verbose)
+        client = cls(
+            server,
+            token,
+            owner,
+            name,
+            verbose=verbose,
+            token_source=token_source or "unknown",
+        )
+        if verbose:
+            print(
+                f"[gitea] server={client.server} repo={owner}/{name} "
+                f"token_source={client.token_source} token_len={len(client.token)}"
+            )
+        return client
 
     @staticmethod
     def resolve_pr_number() -> int | None:
@@ -92,11 +119,23 @@ class GiteaClient:
 
     # ------------------------------------------------------------------ API
 
-    def _request(
+    def _auth_header(self, scheme: str) -> str:
+        return f"{scheme} {self.token}"
+
+    def _candidate_schemes(self) -> list[str]:
+        if self.auth_scheme:
+            return [self.auth_scheme]
+        # Prefer Bearer for the automatic Actions token; PATs use "token".
+        if self.token_source == "GITHUB_TOKEN":
+            return ["Bearer", "token"]
+        return ["token", "Bearer"]
+
+    def _do_request(
         self,
         method: str,
         path: str,
-        payload: dict[str, Any] | None = None,
+        payload: dict[str, Any] | None,
+        scheme: str,
     ) -> Any:
         url = f"{self.server}/api/v1{path}"
         data = None if payload is None else json.dumps(payload).encode()
@@ -105,20 +144,77 @@ class GiteaClient:
             data=data,
             method=method,
             headers={
-                "Authorization": f"token {self.token}",
+                "Authorization": self._auth_header(scheme),
                 "Content-Type": "application/json",
                 "Accept": "application/json",
             },
         )
+        with urllib.request.urlopen(request) as response:
+            body = response.read()
+            if self.verbose:
+                print(f"[gitea] {method} {path} -> HTTP {response.status}")
+            if not body or response.status == 204:
+                return None
+            return json.loads(body)
 
-        try:
-            with urllib.request.urlopen(request) as response:
-                body = response.read()
+    def _resolve_auth(self) -> None:
+        """Probe GET /user once so we know which Authorization scheme works."""
+        if self._auth_resolved:
+            return
+
+        schemes = self._candidate_schemes()
+        last_error: urllib.error.HTTPError | None = None
+
+        for scheme in schemes:
+            try:
+                user = self._do_request("GET", "/user", None, scheme)
+                self.auth_scheme = scheme
+                self._auth_resolved = True
+                if user and "id" in user:
+                    self._user_id = int(user["id"])
                 if self.verbose:
-                    print(f"[gitea] {method} {path} -> HTTP {response.status}")
-                if not body or response.status == 204:
-                    return None
-                return json.loads(body)
+                    login = (user or {}).get("login", "?")
+                    print(f"[gitea] authenticated as {login!r} via {scheme!r}")
+                return
+            except urllib.error.HTTPError as e:
+                last_error = e
+                if e.code != 401:
+                    err = e.read().decode(errors="replace")
+                    print(
+                        f"[gitea] GET /user failed: HTTP {e.code} {err[:500]}",
+                        file=sys.stderr,
+                    )
+                    raise
+                if self.verbose:
+                    print(
+                        f"[gitea] auth scheme {scheme!r} rejected (401), trying next…",
+                        file=sys.stderr,
+                    )
+
+        print(
+            "[gitea] authentication failed (HTTP 401).\n"
+            f"  token_source={self.token_source} token_len={len(self.token)}\n"
+            "  Check that secrets.GITEATOKEN is a valid Personal Access Token\n"
+            "  (Settings → Applications) with repository write scope, or set\n"
+            "  GITEA_TOKEN to ${{ gitea.token }} / ${{ github.token }} in the workflow.\n"
+            "  Verify with:\n"
+            f"    curl -H 'Authorization: token <PAT>' {self.server}/api/v1/user",
+            file=sys.stderr,
+        )
+        if last_error is not None:
+            raise last_error
+        raise RuntimeError("gitea authentication failed")
+
+    def _request(
+        self,
+        method: str,
+        path: str,
+        payload: dict[str, Any] | None = None,
+    ) -> Any:
+        self._resolve_auth()
+        assert self.auth_scheme
+        try:
+            return self._do_request(method, path, payload, self.auth_scheme)
         except urllib.error.HTTPError as e:
             err = e.read().decode(errors="replace")
             print(
