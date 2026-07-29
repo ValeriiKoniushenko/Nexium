@@ -15,86 +15,109 @@ Local/debug usage from your machine:
 import argparse
 import hashlib
 import json
-import sys
-import os
 import subprocess
-import urllib.request
-import urllib.error
-from utils import get_target_branch, get_changed_files, ChangedFile
+import sys
 
-def publish_gitea_comment(issue: dict, verbose: bool):
-    token = os.environ.get("GITEA_TOKEN")
+from gitea_client import GiteaClient
+from utils import ChangedFile, get_changed_files, get_target_branch, is_changed_line
 
-    if not token:
+
+def first_mismatch_line(original: str, formatted: str, file: ChangedFile) -> int:
+    """Return the best line number for an inline comment on a formatting diff."""
+    orig_lines = original.splitlines()
+    fmt_lines = formatted.splitlines()
+
+    candidates: list[int] = []
+    for i, (a, b) in enumerate(zip(orig_lines, fmt_lines), start=1):
+        if a != b:
+            candidates.append(i)
+
+    if len(orig_lines) != len(fmt_lines):
+        candidates.append(min(len(orig_lines), len(fmt_lines)) + 1)
+
+    for line in candidates:
+        if not file.ranges or is_changed_line(file, line):
+            return line
+
+    if file.ranges:
+        return file.ranges[0][0]
+    return candidates[0] if candidates else 1
+
+
+def publish_inline_review(
+    client: GiteaClient,
+    issues: list[dict],
+    *,
+    dry_run: bool,
+    verbose: bool,
+) -> None:
+    pr_number = GiteaClient.resolve_pr_number()
+    sha = GiteaClient.resolve_sha() or ""
+
+    if pr_number is None:
         if verbose:
-            print("GITEA_TOKEN not set, skipping PR comment")
+            print("[gitea] not a pull_request event — skipping review comments")
+        if sha and not dry_run:
+            state = "failure" if issues else "success"
+            desc = (
+                f"{len(issues)} formatting issue(s)"
+                if issues
+                else "clang-format clean"
+            )
+            try:
+                client.publish_check(sha, state, "clang-format", desc)
+            except Exception:
+                pass
         return
 
-    repo = os.environ.get("GITEA_REPOSITORY")
-    sha = os.environ.get("GITEA_SHA")
-    server = os.environ.get("GITEA_SERVER_URL")
-
-    if not all([repo, sha, server]):
-        if verbose:
-            print("Missing Gitea environment variables, skipping PR comment")
+    if dry_run:
+        print(f"[dry-run] would dismiss previous reviews on PR #{pr_number}")
+        for issue in issues:
+            loc = issue["location"]
+            print(
+                f"[dry-run] would comment {loc['path']}:{loc['lines']['begin']}"
+            )
         return
-
-    # Find PR number from Gitea event payload
-    event_path = os.environ.get("GITEA_EVENT_PATH")
-    if not event_path:
-        return
-
-    with open(event_path) as f:
-        event = json.load(f)
-
-    pr_number = event.get("number")
-    if not pr_number:
-        if verbose:
-            print("Not running in pull request context")
-        return
-
-    owner, name = repo.split("/", 1)
-
-    url = (
-        f"{server}/api/v1/repos/{owner}/{name}"
-        f"/issues/{pr_number}/comments"
-    )
-
-    location = issue["location"]
-
-    body = (
-        f"❌ **clang-format violation**\n\n"
-        f"File: `{location['path']}`\n"
-        f"Line: `{location['lines']['begin']}`\n\n"
-        f"{issue['description']}"
-    )
-
-    payload = json.dumps({
-        "body": body
-    }).encode()
-
-    request = urllib.request.Request(
-        url,
-        data=payload,
-        headers={
-            "Authorization": f"token {token}",
-            "Content-Type": "application/json",
-        },
-        method="POST",
-    )
 
     try:
-        with urllib.request.urlopen(request) as response:
-            if verbose:
-                print(
-                    f"Created Gitea comment: {response.status}"
-                )
+        client.dismiss_previous_reviews(pr_number)
+    except Exception as e:
+        print(f"[gitea] failed to clear previous reviews: {e}", file=sys.stderr)
 
-    except urllib.error.HTTPError as e:
-        print(
-            f"Failed to create Gitea comment: {e.code} {e.reason}",
-            file=sys.stderr,
+    if issues:
+        for issue in issues:
+            loc = issue["location"]
+            path = loc["path"]
+            line = loc["lines"]["begin"]
+            body = (
+                f"**clang-format** violation on modified lines\n\n"
+                f"{issue['description']}\n\n"
+                f"Run `clang-format -i {path}` (or pass `--fix`) to apply."
+            )
+            client.add_review_comment(path, body, new_position=line)
+
+        try:
+            client.create_review(
+                pr_number,
+                body=f"clang-format found {len(issues)} issue(s).",
+                event="COMMENT",
+                commit_id=sha,
+            )
+        except Exception as e:
+            print(f"[gitea] failed to create review: {e}", file=sys.stderr)
+
+    if sha:
+        state = "failure" if issues else "success"
+        desc = (
+            f"{len(issues)} formatting issue(s)"
+            if issues
+            else "clang-format clean"
         )
+        try:
+            client.publish_check(sha, state, "clang-format", desc)
+        except Exception as e:
+            print(f"[gitea] failed to publish check: {e}", file=sys.stderr)
+
 
 def check_file(file: ChangedFile, fix: bool, verbose: bool) -> tuple[bool, str, str]:
     path = file.path
@@ -129,14 +152,45 @@ def check_file(file: ChangedFile, fix: bool, verbose: bool) -> tuple[bool, str, 
 
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--base", help="branch/ref to diff against (default: CI var or 'main')")
-    parser.add_argument("--files", nargs="+", help="explicit list of files to check, skips git diff")
-    parser.add_argument("--fix", action="store_true", help="auto-apply clang-format instead of just reporting")
-    parser.add_argument("--dry-run", action="store_true", help="print results but don't write report or exit 1")
-    parser.add_argument("--verbose", "-v", action="store_true", help="print debug info")
-    parser.add_argument("--report-path", default="gl-code-quality-report.json",
-                        help="output path for codequality report")
+    parser = argparse.ArgumentParser(
+        description=__doc__,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    parser.add_argument(
+        "--base",
+        help="branch/ref to diff against (default: CI var or 'main')",
+    )
+    parser.add_argument(
+        "--files",
+        nargs="+",
+        help="explicit list of files to check, skips git diff",
+    )
+    parser.add_argument(
+        "--fix",
+        action="store_true",
+        help="auto-apply clang-format instead of just reporting",
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="print results but don't write report, post reviews, or exit 1",
+    )
+    parser.add_argument(
+        "--verbose",
+        "-v",
+        action="store_true",
+        help="print debug info",
+    )
+    parser.add_argument(
+        "--report-path",
+        default="gl-code-quality-report.json",
+        help="output path for codequality report (kept for CI artifacts)",
+    )
+    parser.add_argument(
+        "--no-gitea",
+        action="store_true",
+        help="skip Gitea review / check API calls",
+    )
     args = parser.parse_args()
 
     base_ref = get_target_branch(args.base)
@@ -147,31 +201,42 @@ def main():
         compliant, formatted, original = check_file(file, args.fix, args.verbose)
 
         if not compliant:
+            line = first_mismatch_line(original, formatted, file)
             fp = hashlib.md5(file.path.encode()).hexdigest()
 
-            issues.append({
-                "description": f"Formatting issue in modified lines: {file.path}",
-                "check_name": "clang-format",
-                "fingerprint": fp,
-                "severity": "major",
-                "location": {
-                    "path": file.path,
-                    "lines": {
-                        "begin": file.ranges[0][0]
-                    }
+            issues.append(
+                {
+                    "description": f"Formatting issue in modified lines: {file.path}",
+                    "check_name": "clang-format",
+                    "fingerprint": fp,
+                    "severity": "major",
+                    "location": {
+                        "path": file.path,
+                        "lines": {"begin": line},
+                    },
                 }
-            })
+            )
 
-    with open(args.report_path, "w") as out:
-        json.dump(issues, out, indent=2)
+    if not args.dry_run:
+        with open(args.report_path, "w") as out:
+            json.dump(issues, out, indent=2)
 
-    for issue in issues:
-        publish_gitea_comment(issue, args.verbose)
-        
+    if not args.no_gitea:
+        client = GiteaClient.from_env(verbose=args.verbose)
+        if client is not None:
+            publish_inline_review(
+                client,
+                issues,
+                dry_run=args.dry_run,
+                verbose=args.verbose,
+            )
+        elif args.verbose:
+            print("[gitea] client not configured — skipping review publish")
+
     if issues:
         print(f"Found {len(issues)} formatting issue(s):")
         for i in issues:
-            print(f"  - {i['location']['path']}")
+            print(f"  - {i['location']['path']}:{i['location']['lines']['begin']}")
         if not args.dry_run:
             sys.exit(1)
     else:

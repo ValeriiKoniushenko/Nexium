@@ -28,13 +28,22 @@ def is_excluded(path: str) -> bool:
 def get_target_branch(cli_base: str | None) -> str:
     """Resolve the branch/ref to diff against.
 
-    Priority: --base flag > CI_MERGE_REQUEST_TARGET_BRANCH_NAME (GitLab CI) > 'main'.
+    Priority:
+      --base flag
+      > GITEA_BASE_REF / GITHUB_BASE_REF (Gitea Actions pull_request)
+      > CI_MERGE_REQUEST_TARGET_BRANCH_NAME (GitLab CI)
+      > 'main'
     """
     if cli_base:
         return cli_base
-    env_branch = os.environ.get("CI_MERGE_REQUEST_TARGET_BRANCH_NAME")
-    if env_branch:
-        return env_branch
+    for key in (
+        "GITEA_BASE_REF",
+        "GITHUB_BASE_REF",
+        "CI_MERGE_REQUEST_TARGET_BRANCH_NAME",
+    ):
+        env_branch = os.environ.get(key)
+        if env_branch:
+            return env_branch
     return "main"
 
 def is_changed_line(file: ChangedFile, line: int) -> bool:
