@@ -18,7 +18,7 @@ import json
 import subprocess
 import sys
 
-from gitea_client import GiteaClient
+from gitea_client import GiteaClient, review_marker
 from utils import ChangedFile, get_changed_files, get_target_branch
 
 
@@ -29,6 +29,7 @@ def publish_inline_review(
     dry_run: bool,
     verbose: bool,
 ) -> None:
+    marker = review_marker("clang-format")
     pr_number = GiteaClient.resolve_pr_number()
     sha = GiteaClient.resolve_sha() or ""
 
@@ -58,7 +59,7 @@ def publish_inline_review(
         return
 
     try:
-        client.dismiss_previous_reviews(pr_number)
+        client.dismiss_previous_reviews(pr_number, marker=marker)
     except Exception as e:
         print(f"[gitea] failed to clear previous reviews: {e}", file=sys.stderr)
 
@@ -76,6 +77,7 @@ def publish_inline_review(
                 body=f"clang-format found {len(issues)} issue(s).",
                 event="COMMENT",
                 commit_id=sha,
+                marker=marker,
             )
         except Exception as e:
             print(f"[gitea] failed to create review: {e}", file=sys.stderr)

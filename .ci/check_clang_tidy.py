@@ -19,6 +19,7 @@ import os
 import re
 import subprocess
 import sys
+from gitea_client import GiteaClient, review_marker
 from utils import get_target_branch, get_changed_files, ChangedFile, is_changed_line
 
 SEVERITY_MAP = {
@@ -32,6 +33,72 @@ DIAG_RE = re.compile(
     r'^(?P<file>[^:]+):(?P<line>\d+):(?P<col>\d+): '
     r'(?P<level>error|warning|note): (?P<message>.*?)(?: \[(?P<check>[\w,.\-]+)\])?$'
 )
+
+
+def publish_inline_review(
+    client: GiteaClient,
+    issues: list[dict],
+    *,
+    failed: bool,
+    dry_run: bool,
+    verbose: bool,
+) -> None:
+    """Replace this check's previous review with the current diagnostics."""
+    pr_number = GiteaClient.resolve_pr_number()
+    sha = GiteaClient.resolve_sha() or ""
+    marker = review_marker("clang-tidy")
+
+    if pr_number is None:
+        if verbose:
+            print("[gitea] not a pull_request event — skipping review comments")
+        if sha and not dry_run:
+            state = "failure" if failed else "success"
+            desc = f"{len(issues)} clang-tidy issue(s)" if issues else "clang-tidy clean"
+            try:
+                client.publish_check(sha, state, "clang-tidy", desc)
+            except Exception as e:
+                print(f"[gitea] failed to publish check: {e}", file=sys.stderr)
+        return
+
+    if dry_run:
+        print(f"[dry-run] would dismiss previous clang-tidy review on PR #{pr_number}")
+        for issue in issues:
+            loc = issue["location"]
+            print(f"[dry-run] would comment {loc['path']}:{loc['lines']['begin']}")
+        return
+
+    try:
+        client.dismiss_previous_reviews(pr_number, marker=marker)
+    except Exception as e:
+        print(f"[gitea] failed to clear previous clang-tidy reviews: {e}", file=sys.stderr)
+
+    if issues:
+        for issue in issues:
+            loc = issue["location"]
+            client.add_review_comment(
+                loc["path"],
+                f"**clang-tidy** `{issue['check_name']}`\n\n{issue['description']}",
+                new_position=loc["lines"]["begin"],
+            )
+
+        try:
+            client.create_review(
+                pr_number,
+                body=f"clang-tidy found {len(issues)} issue(s) on modified lines.",
+                event="COMMENT",
+                commit_id=sha,
+                marker=marker,
+            )
+        except Exception as e:
+            print(f"[gitea] failed to create review: {e}", file=sys.stderr)
+
+    if sha:
+        state = "failure" if failed else "success"
+        desc = f"{len(issues)} clang-tidy issue(s)" if issues else "clang-tidy clean"
+        try:
+            client.publish_check(sha, state, "clang-tidy", desc)
+        except Exception as e:
+            print(f"[gitea] failed to publish check: {e}", file=sys.stderr)
 
 def run_clang_tidy(file: ChangedFile,build_dir: str,header_filter: str,extra_args: list[str],verbose: bool) -> str:
     # NOTE: clang-tidy has no "-v" flag (that's a run-clang-tidy-ism) and the
@@ -82,6 +149,8 @@ def main():
     parser.add_argument("--verbose", "-v", action="store_true", help="print debug info incl. raw clang-tidy output")
     parser.add_argument("--report-path", default="gl-code-quality-report.json",
                         help="output path for codequality report")
+    parser.add_argument("--no-gitea", action="store_true",
+                        help="skip Gitea review / check API calls")
     args = parser.parse_args()
 
     if not os.path.isdir(args.build_dir):
@@ -140,8 +209,22 @@ def main():
             if level_rank[m.group("level")] >= fail_threshold:
                 should_fail = True
 
-    with open(args.report_path, "w") as out:
-        json.dump(issues, out, indent=2)
+    if not args.dry_run and args.report_path:
+        with open(args.report_path, "w") as out:
+            json.dump(issues, out, indent=2)
+
+    if not args.no_gitea:
+        client = GiteaClient.from_env(verbose=args.verbose)
+        if client is not None:
+            publish_inline_review(
+                client,
+                issues,
+                failed=should_fail,
+                dry_run=args.dry_run,
+                verbose=args.verbose,
+            )
+        elif args.verbose:
+            print("[gitea] client not configured — skipping review publish")
 
     if issues:
         print(f"Found {len(issues)} clang-tidy issue(s):")

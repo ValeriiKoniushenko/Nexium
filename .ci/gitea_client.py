@@ -11,8 +11,13 @@ import urllib.request
 from typing import Any
 
 
-# Embedded in review bodies so we can find and remove our own reviews later.
+# Embedded in review bodies so CI jobs can replace only their own annotations.
 REVIEW_MARKER = "<!-- ci:clang-format -->"
+
+
+def review_marker(check_name: str) -> str:
+    """Return the marker used to identify reviews created by a CI check."""
+    return f"<!-- ci:{check_name} -->"
 
 # Env vars probed for the API token, in priority order.
 _TOKEN_ENV_KEYS = (
@@ -474,6 +479,7 @@ class GiteaClient:
         event: str = "COMMENT",
         commit_id: str = "",
         comments: list[dict[str, Any]] | None = None,
+        marker: str = REVIEW_MARKER,
     ) -> dict[str, Any] | None:
         """Submit a pull-request review, optionally with inline comments.
 
@@ -489,8 +495,8 @@ class GiteaClient:
             return None
 
         marked_body = body
-        if REVIEW_MARKER not in marked_body:
-            marked_body = f"{body.rstrip()}\n\n{REVIEW_MARKER}"
+        if marker and marker not in marked_body:
+            marked_body = f"{body.rstrip()}\n\n{marker}"
 
         payload: dict[str, Any] = {
             "body": marked_body,

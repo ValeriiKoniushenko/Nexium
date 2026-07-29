@@ -1,0 +1,34 @@
+name: clang-tidy
+
+on:
+  pull_request:
+  push:
+    branches:
+      - develop
+
+jobs:
+  clang-tidy:
+    runs-on: linux
+
+    container:
+      image: cpp-ci:latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Configure compile database
+        run: |
+          cmake -S . -B build \
+            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+            -DNEXIUM_DISABLE_TESTS=ON
+
+      - name: Check clang-tidy
+        id: clang-tidy
+        env:
+          GITEATOKEN: ${{ secrets.GITEATOKEN }}
+        run: |
+          python3 .ci/check_clang_tidy.py --base develop --build-dir build
