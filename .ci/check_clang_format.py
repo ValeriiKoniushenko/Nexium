@@ -19,29 +19,7 @@ import subprocess
 import sys
 
 from gitea_client import GiteaClient
-from utils import ChangedFile, get_changed_files, get_target_branch, is_changed_line
-
-
-def first_mismatch_line(original: str, formatted: str, file: ChangedFile) -> int:
-    """Return the best line number for an inline comment on a formatting diff."""
-    orig_lines = original.splitlines()
-    fmt_lines = formatted.splitlines()
-
-    candidates: list[int] = []
-    for i, (a, b) in enumerate(zip(orig_lines, fmt_lines), start=1):
-        if a != b:
-            candidates.append(i)
-
-    if len(orig_lines) != len(fmt_lines):
-        candidates.append(min(len(orig_lines), len(fmt_lines)) + 1)
-
-    for line in candidates:
-        if not file.ranges or is_changed_line(file, line):
-            return line
-
-    if file.ranges:
-        return file.ranges[0][0]
-    return candidates[0] if candidates else 1
+from utils import ChangedFile, get_changed_files, get_target_branch
 
 
 def publish_inline_review(
@@ -197,7 +175,7 @@ def main():
         compliant, formatted, original = check_file(file, args.fix, args.verbose)
 
         if not compliant:
-            line = first_mismatch_line(original, formatted, file)
+            last_line = len(original.splitlines()) or 1
             fp = hashlib.md5(file.path.encode()).hexdigest()
 
             issues.append(
@@ -208,7 +186,7 @@ def main():
                     "severity": "major",
                     "location": {
                         "path": file.path,
-                        "lines": {"begin": 1},
+                        "lines": {"begin": last_line},
                     },
                 }
             )
