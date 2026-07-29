@@ -89,11 +89,7 @@ def publish_inline_review(
             loc = issue["location"]
             path = loc["path"]
             line = loc["lines"]["begin"]
-            body = (
-                f"**clang-format** violation on modified lines\n\n"
-                f"{issue['description']}\n\n"
-                f"Run `clang-format -i {path}` (or pass `--fix`) to apply."
-            )
+            body = (f"**clang-format** violation on modified line(s)")
             client.add_review_comment(path, body, new_position=line)
 
         try:
@@ -183,7 +179,7 @@ def main():
     )
     parser.add_argument(
         "--report-path",
-        default="gl-code-quality-report.json",
+        default="",
         help="output path for codequality report (kept for CI artifacts)",
     )
     parser.add_argument(
@@ -217,7 +213,7 @@ def main():
                 }
             )
 
-    if not args.dry_run:
+    if not args.dry_run and len(args.report_path) > 0:
         with open(args.report_path, "w") as out:
             json.dump(issues, out, indent=2)
 
