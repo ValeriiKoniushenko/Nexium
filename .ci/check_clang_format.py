@@ -89,7 +89,7 @@ def publish_inline_review(
             loc = issue["location"]
             path = loc["path"]
             line = loc["lines"]["begin"]
-            body = (f"**clang-format** violation on modified line(s)")
+            body = (f"**clang-format** violation on modified line(s) in this file.")
             client.add_review_comment(path, body, new_position=line)
 
         try:
@@ -208,7 +208,7 @@ def main():
                     "severity": "major",
                     "location": {
                         "path": file.path,
-                        "lines": {"begin": line},
+                        "lines": {"begin": 1},
                     },
                 }
             )
