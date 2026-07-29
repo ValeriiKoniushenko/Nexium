@@ -49,7 +49,7 @@ class GiteaClient:
         """
         token = None
         token_source = None
-        for key in ("GITEA_TOKEN", "GITHUB_TOKEN"):
+        for key in ("GITEATOKEN", "GITHUB_TOKEN"):
             value = os.environ.get(key)
             if value and value.strip():
                 token = value
@@ -68,7 +68,7 @@ class GiteaClient:
         if not all([token, repo, server]):
             if verbose:
                 print(
-                    "[gitea] missing GITEA_TOKEN / GITEA_REPOSITORY / "
+                    "[gitea] missing GITEATOKEN / GITEA_REPOSITORY / "
                     "GITEA_SERVER_URL — skipping API calls",
                     file=sys.stderr,
                 )
@@ -196,7 +196,7 @@ class GiteaClient:
             f"  token_source={self.token_source} token_len={len(self.token)}\n"
             "  Check that secrets.GITEATOKEN is a valid Personal Access Token\n"
             "  (Settings → Applications) with repository write scope, or set\n"
-            "  GITEA_TOKEN to ${{ gitea.token }} / ${{ github.token }} in the workflow.\n"
+            "  GITEATOKEN to ${{ gitea.token }} / ${{ github.token }} in the workflow.\n"
             "  Verify with:\n"
             f"    curl -H 'Authorization: token <PAT>' {self.server}/api/v1/user",
             file=sys.stderr,
