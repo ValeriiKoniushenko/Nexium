@@ -14,6 +14,26 @@ from typing import Any
 # Embedded in review bodies so we can find and remove our own reviews later.
 REVIEW_MARKER = "<!-- ci:clang-format -->"
 
+# Env vars probed for the API token, in priority order.
+_TOKEN_ENV_KEYS = (
+    "GITEATOKEN",
+    "GITEA_TOKEN",
+    "GITHUB_TOKEN",
+)
+
+
+def _token_preview(token: str, *, head: int = 4, tail: int = 2) -> str:
+    """Return a safe redacted preview of a secret token."""
+    if not token:
+        return "<empty>"
+    if len(token) <= head + tail + 3:
+        return f"{token[:1]}…({len(token)} chars)"
+    return f"{token[:head]}…{token[-tail:]} (len={len(token)})"
+
+
+def _looks_quoted(value: str) -> bool:
+    return len(value) >= 2 and value[0] == value[-1] and value[0] in "'\""
+
 
 class GiteaClient:
     """Thin wrapper around the Gitea REST API used by CI scripts."""
@@ -41,46 +61,151 @@ class GiteaClient:
         self._user_id: int | None = None
         self._auth_resolved = False
 
+        self._trace(
+            f"client init: server={self.server!r} owner={self.owner!r} "
+            f"repo={self.repo!r} token_source={self.token_source!r} "
+            f"token={_token_preview(self.token)} "
+            f"auth_scheme={self.auth_scheme or '<auto>'!r}"
+        )
+        self._warn_token_shape(token)
+
+    # -------------------------------------------------------------- logging
+
+    def _trace(self, message: str) -> None:
+        print(f"[gitea] {message}", file=sys.stderr)
+
+    def _debug(self, message: str) -> None:
+        if self.verbose:
+            print(f"[gitea:debug] {message}", file=sys.stderr)
+
+    def _warn(self, message: str) -> None:
+        print(f"[gitea:warn] {message}", file=sys.stderr)
+
+    def _warn_token_shape(self, raw_token: str) -> None:
+        """Emit warnings for common secret-misconfiguration mistakes."""
+        if not raw_token:
+            self._warn("token is empty")
+            return
+
+        if raw_token != raw_token.strip():
+            self._warn(
+                "token has leading/trailing whitespace "
+                f"(raw_len={len(raw_token)}, stripped_len={len(raw_token.strip())})"
+            )
+
+        if "\n" in raw_token or "\r" in raw_token:
+            self._warn("token contains newline/carriage-return characters")
+
+        if _looks_quoted(raw_token.strip()):
+            self._warn(
+                "token appears wrapped in quotes — paste the raw token value "
+                "into the secret, without surrounding quotes"
+            )
+
+        if " " in self.token:
+            self._warn("stripped token still contains spaces (suspicious)")
+
+        if len(self.token) < 20:
+            self._warn(
+                f"token looks unusually short ({len(self.token)} chars) — "
+                "check that secrets.GITEATOKEN is set correctly"
+            )
+
+        # Actions / Gitea sometimes expose placeholder or literal template text.
+        lowered = self.token.lower()
+        for bad in ("your_token", "changeme", "***", "${{", "giteatoken"):
+            if bad in lowered:
+                self._warn(f"token contains suspicious substring {bad!r}")
+
     @classmethod
     def from_env(cls, verbose: bool = False) -> GiteaClient | None:
         """Build a client from Gitea Actions environment variables.
 
         Returns None when required variables are missing (e.g. local runs).
         """
+        print("[gitea] resolving client from environment…", file=sys.stderr)
+
+        # Show which token-related env keys are present (not their values).
+        for key in _TOKEN_ENV_KEYS:
+            raw = os.environ.get(key)
+            if raw is None:
+                print(f"[gitea]   env {key}: <unset>", file=sys.stderr)
+            elif not raw.strip():
+                print(
+                    f"[gitea]   env {key}: <set but empty/whitespace "
+                    f"raw_len={len(raw)}>",
+                    file=sys.stderr,
+                )
+            else:
+                print(
+                    f"[gitea]   env {key}: set preview={_token_preview(raw.strip())}",
+                    file=sys.stderr,
+                )
+
         token = None
         token_source = None
-        for key in ("GITEATOKEN", "GITHUB_TOKEN"):
+        for key in _TOKEN_ENV_KEYS:
             value = os.environ.get(key)
             if value and value.strip():
                 token = value
                 token_source = key
                 break
 
-        repo = (
-            os.environ.get("GITEA_REPOSITORY")
-            or os.environ.get("GITHUB_REPOSITORY")
-        )
-        server = (
-            os.environ.get("GITEA_SERVER_URL")
-            or os.environ.get("GITHUB_SERVER_URL")
-        )
+        repo_key = None
+        repo = None
+        for key in ("GITEA_REPOSITORY", "GITHUB_REPOSITORY"):
+            value = os.environ.get(key)
+            if value is None:
+                print(f"[gitea]   env {key}: <unset>", file=sys.stderr)
+            else:
+                print(f"[gitea]   env {key}: {value!r}", file=sys.stderr)
+                if value and not repo:
+                    repo = value
+                    repo_key = key
 
-        if not all([token, repo, server]):
-            if verbose:
-                print(
-                    "[gitea] missing GITEATOKEN / GITEA_REPOSITORY / "
-                    "GITEA_SERVER_URL — skipping API calls",
-                    file=sys.stderr,
-                )
+        server_key = None
+        server = None
+        for key in ("GITEA_SERVER_URL", "GITHUB_SERVER_URL"):
+            value = os.environ.get(key)
+            if value is None:
+                print(f"[gitea]   env {key}: <unset>", file=sys.stderr)
+            else:
+                print(f"[gitea]   env {key}: {value!r}", file=sys.stderr)
+                if value and not server:
+                    server = value
+                    server_key = key
+
+        missing = [
+            name
+            for name, val in (
+                ("token", token),
+                ("repository", repo),
+                ("server", server),
+            )
+            if not val
+        ]
+        if missing:
+            print(
+                f"[gitea:warn] missing required config: {', '.join(missing)} "
+                "— skipping API calls",
+                file=sys.stderr,
+            )
             return None
 
         if "/" not in repo:
-            if verbose:
-                print(f"[gitea] invalid repository value: {repo!r}", file=sys.stderr)
+            print(
+                f"[gitea:warn] invalid repository value from {repo_key}: {repo!r}",
+                file=sys.stderr,
+            )
             return None
 
         owner, name = repo.split("/", 1)
-        client = cls(
+        print(
+            f"[gitea] using token_source={token_source} "
+            f"repo_source={repo_key} server_source={server_key}",
+            file=sys.stderr,
+        )
+        return cls(
             server,
             token,
             owner,
@@ -88,12 +213,6 @@ class GiteaClient:
             verbose=verbose,
             token_source=token_source or "unknown",
         )
-        if verbose:
-            print(
-                f"[gitea] server={client.server} repo={owner}/{name} "
-                f"token_source={client.token_source} token_len={len(client.token)}"
-            )
-        return client
 
     @staticmethod
     def resolve_pr_number() -> int | None:
@@ -102,7 +221,14 @@ class GiteaClient:
             os.environ.get("GITEA_EVENT_PATH")
             or os.environ.get("GITHUB_EVENT_PATH")
         )
-        if not event_path or not os.path.isfile(event_path):
+        if not event_path:
+            print("[gitea] PR number: no GITEA/GITHUB_EVENT_PATH set", file=sys.stderr)
+            return None
+        if not os.path.isfile(event_path):
+            print(
+                f"[gitea:warn] PR number: event path does not exist: {event_path!r}",
+                file=sys.stderr,
+            )
             return None
 
         with open(event_path) as f:
@@ -111,11 +237,41 @@ class GiteaClient:
         number = event.get("number")
         if number is None:
             number = event.get("pull_request", {}).get("number")
-        return int(number) if number is not None else None
+
+        event_name = (
+            os.environ.get("GITEA_EVENT_NAME")
+            or os.environ.get("GITHUB_EVENT_NAME")
+            or event.get("action")
+            or "?"
+        )
+        if number is None:
+            print(
+                f"[gitea] PR number: not found in event payload "
+                f"(event_path={event_path!r} event_name={event_name!r} "
+                f"top_keys={sorted(event.keys())})",
+                file=sys.stderr,
+            )
+            return None
+
+        print(
+            f"[gitea] PR number={number} (event_path={event_path!r} "
+            f"event_name={event_name!r})",
+            file=sys.stderr,
+        )
+        return int(number)
 
     @staticmethod
     def resolve_sha() -> str | None:
-        return os.environ.get("GITEA_SHA") or os.environ.get("GITHUB_SHA")
+        for key in ("GITEA_SHA", "GITHUB_SHA"):
+            value = os.environ.get(key)
+            if value:
+                print(
+                    f"[gitea] sha={value} (from {key})",
+                    file=sys.stderr,
+                )
+                return value
+        print("[gitea:warn] sha: GITEA_SHA / GITHUB_SHA unset", file=sys.stderr)
+        return None
 
     # ------------------------------------------------------------------ API
 
@@ -139,6 +295,14 @@ class GiteaClient:
     ) -> Any:
         url = f"{self.server}/api/v1{path}"
         data = None if payload is None else json.dumps(payload).encode()
+        self._trace(
+            f"HTTP {method} {url} auth={scheme!r} "
+            f"token={_token_preview(self.token)} "
+            f"payload_bytes={0 if data is None else len(data)}"
+        )
+        if payload is not None:
+            self._debug(f"payload keys={sorted(payload.keys())}")
+
         request = urllib.request.Request(
             url,
             data=data,
@@ -151,8 +315,10 @@ class GiteaClient:
         )
         with urllib.request.urlopen(request) as response:
             body = response.read()
-            if self.verbose:
-                print(f"[gitea] {method} {path} -> HTTP {response.status}")
+            self._trace(
+                f"HTTP {method} {path} -> {response.status} "
+                f"body_bytes={len(body)}"
+            )
             if not body or response.status == 204:
                 return None
             return json.loads(body)
@@ -160,9 +326,15 @@ class GiteaClient:
     def _resolve_auth(self) -> None:
         """Probe GET /user once so we know which Authorization scheme works."""
         if self._auth_resolved:
+            self._debug(f"auth already resolved: scheme={self.auth_scheme!r}")
             return
 
         schemes = self._candidate_schemes()
+        self._trace(
+            f"probing auth schemes={schemes} "
+            f"token_source={self.token_source!r} "
+            f"token={_token_preview(self.token)}"
+        )
         last_error: urllib.error.HTTPError | None = None
 
         for scheme in schemes:
@@ -172,34 +344,32 @@ class GiteaClient:
                 self._auth_resolved = True
                 if user and "id" in user:
                     self._user_id = int(user["id"])
-                if self.verbose:
-                    login = (user or {}).get("login", "?")
-                    print(f"[gitea] authenticated as {login!r} via {scheme!r}")
+                login = (user or {}).get("login", "?")
+                email = (user or {}).get("email", "")
+                self._trace(
+                    f"authenticated as login={login!r} id={self._user_id} "
+                    f"email={email!r} via scheme={scheme!r}"
+                )
                 return
             except urllib.error.HTTPError as e:
                 last_error = e
+                err_body = e.read().decode(errors="replace")
+                self._warn(
+                    f"auth scheme {scheme!r} failed: HTTP {e.code} "
+                    f"body={err_body[:300]!r}"
+                )
                 if e.code != 401:
-                    err = e.read().decode(errors="replace")
-                    print(
-                        f"[gitea] GET /user failed: HTTP {e.code} {err[:500]}",
-                        file=sys.stderr,
-                    )
                     raise
-                if self.verbose:
-                    print(
-                        f"[gitea] auth scheme {scheme!r} rejected (401), trying next…",
-                        file=sys.stderr,
-                    )
 
-        print(
-            "[gitea] authentication failed (HTTP 401).\n"
-            f"  token_source={self.token_source} token_len={len(self.token)}\n"
+        self._warn(
+            "authentication failed (HTTP 401) for all schemes.\n"
+            f"  token_source={self.token_source} "
+            f"token={_token_preview(self.token)}\n"
             "  Check that secrets.GITEATOKEN is a valid Personal Access Token\n"
             "  (Settings → Applications) with repository write scope, or set\n"
-            "  GITEATOKEN to ${{ gitea.token }} / ${{ github.token }} in the workflow.\n"
+            "  GITEA_TOKEN to ${{ gitea.token }} / ${{ github.token }} in the workflow.\n"
             "  Verify with:\n"
-            f"    curl -H 'Authorization: token <PAT>' {self.server}/api/v1/user",
-            file=sys.stderr,
+            f"    curl -H 'Authorization: token <PAT>' {self.server}/api/v1/user"
         )
         if last_error is not None:
             raise last_error
@@ -217,10 +387,13 @@ class GiteaClient:
             return self._do_request(method, path, payload, self.auth_scheme)
         except urllib.error.HTTPError as e:
             err = e.read().decode(errors="replace")
-            print(
-                f"[gitea] {method} {path} failed: HTTP {e.code} {err[:500]}",
-                file=sys.stderr,
+            self._warn(
+                f"{method} {path} failed: HTTP {e.code} {err[:500]} "
+                f"(auth={self.auth_scheme!r} token={_token_preview(self.token)})"
             )
+            raise
+        except urllib.error.URLError as e:
+            self._warn(f"{method} {path} network error: {e}")
             raise
 
     def _current_user_id(self) -> int | None:
@@ -228,9 +401,11 @@ class GiteaClient:
             return self._user_id
         try:
             user = self._request("GET", "/user")
-        except urllib.error.HTTPError:
+        except (urllib.error.HTTPError, urllib.error.URLError):
+            self._warn("could not resolve current user id")
             return None
         self._user_id = int(user["id"])
+        self._trace(f"current user id={self._user_id}")
         return self._user_id
 
     def publish_check(
@@ -254,6 +429,10 @@ class GiteaClient:
         if target_url:
             payload["target_url"] = target_url
 
+        self._trace(
+            f"publish_check sha={sha[:12]}… state={state!r} "
+            f"context={context!r} description={description!r}"
+        )
         self._request(
             "POST",
             f"/repos/{self.owner}/{self.repo}/statuses/{sha}",
@@ -280,6 +459,11 @@ class GiteaClient:
             "old_position": old_position,
         }
         self._pending_comments.append(comment)
+        self._trace(
+            f"queued review comment #{len(self._pending_comments)} "
+            f"path={path!r} new_position={new_position} "
+            f"body_len={len(body)}"
+        )
         return comment
 
     def create_review(
@@ -301,8 +485,7 @@ class GiteaClient:
             self._pending_comments.clear()
 
         if not comments and not body.strip():
-            if self.verbose:
-                print("[gitea] create_review: nothing to submit")
+            self._trace("create_review: nothing to submit")
             return None
 
         marked_body = body
@@ -317,11 +500,29 @@ class GiteaClient:
         if commit_id:
             payload["commit_id"] = commit_id
 
-        return self._request(
+        self._trace(
+            f"create_review pr=#{pr_number} event={event!r} "
+            f"commit_id={commit_id[:12] + '…' if commit_id else '<default>'} "
+            f"comments={len(comments)} body_len={len(marked_body)}"
+        )
+        for i, c in enumerate(comments, start=1):
+            self._trace(
+                f"  comment[{i}] path={c.get('path')!r} "
+                f"new_position={c.get('new_position')} "
+                f"old_position={c.get('old_position')}"
+            )
+
+        result = self._request(
             "POST",
             f"/repos/{self.owner}/{self.repo}/pulls/{pr_number}/reviews",
             payload,
         )
+        if isinstance(result, dict):
+            self._trace(
+                f"create_review ok id={result.get('id')} "
+                f"state={result.get('state')!r}"
+            )
+        return result
 
     def dismiss_previous_reviews(
         self,
@@ -335,41 +536,58 @@ class GiteaClient:
         annotations, so we delete matching reviews owned by the token user.
         Returns the number of reviews removed.
         """
+        self._trace(f"dismiss_previous_reviews pr=#{pr_number} marker={marker!r}")
         try:
             reviews = self._request(
                 "GET",
                 f"/repos/{self.owner}/{self.repo}/pulls/{pr_number}/reviews",
             )
-        except urllib.error.HTTPError:
+        except (urllib.error.HTTPError, urllib.error.URLError):
+            self._warn("could not list reviews — skipping dismiss")
             return 0
 
         if not reviews:
+            self._trace("no existing reviews on this PR")
             return 0
 
+        self._trace(f"listed {len(reviews)} review(s)")
         user_id = self._current_user_id()
         removed = 0
 
         for review in reviews:
-            if review.get("dismissed"):
-                continue
-
-            body = review.get("body") or ""
-            if marker not in body:
-                continue
-
+            review_id = review.get("id")
             reviewer = review.get("user") or {}
+            body = review.get("body") or ""
+            dismissed = bool(review.get("dismissed"))
+            has_marker = marker in body
+
+            self._debug(
+                f"review id={review_id} reviewer_id={reviewer.get('id')} "
+                f"login={reviewer.get('login')!r} dismissed={dismissed} "
+                f"has_marker={has_marker} body_len={len(body)}"
+            )
+
+            if dismissed:
+                continue
+            if not has_marker:
+                continue
             if user_id is not None and reviewer.get("id") != user_id:
+                self._trace(
+                    f"skip review id={review_id}: owned by "
+                    f"{reviewer.get('login')!r}, not current user"
+                )
                 continue
 
-            review_id = review["id"]
             try:
                 self._request(
                     "DELETE",
                     f"/repos/{self.owner}/{self.repo}/pulls/{pr_number}/reviews/{review_id}",
                 )
+                self._trace(f"deleted review id={review_id}")
                 removed += 1
-            except urllib.error.HTTPError:
+            except (urllib.error.HTTPError, urllib.error.URLError):
                 # Fall back to dismiss if delete is forbidden.
+                self._warn(f"delete review id={review_id} failed — trying dismiss")
                 try:
                     self._request(
                         "POST",
@@ -377,10 +595,10 @@ class GiteaClient:
                         f"/reviews/{review_id}/dismissals",
                         {"message": "Superseded by a newer CI run", "priors": False},
                     )
+                    self._trace(f"dismissed review id={review_id}")
                     removed += 1
-                except urllib.error.HTTPError:
-                    pass
+                except (urllib.error.HTTPError, urllib.error.URLError):
+                    self._warn(f"could not delete or dismiss review id={review_id}")
 
-        if self.verbose:
-            print(f"[gitea] dismissed/removed {removed} previous review(s)")
+        self._trace(f"dismissed/removed {removed} previous review(s)")
         return removed
