@@ -75,6 +75,11 @@ jobs:
       - name: Build
         run: cmake --build build -j$(nproc)
 
+      - name: Debug build freshness
+        run: |
+          git -C /repo-cache log -1 --oneline
+          stat build/compile_commands.json
+
       - name: Save build cache
         run: rsync -a --delete build/ /build-cache/
 
@@ -121,6 +126,17 @@ jobs:
         run: |
           mkdir -p build
           rsync -a /build-cache/ build/
+
+      - name: Debug compile commands
+        run: |
+          echo "--- build-cache mtime ---"
+          stat /build-cache/compile_commands.json
+          echo "--- restored build mtime ---"
+          stat build/compile_commands.json
+          echo "--- first few lines ---"
+          head -c 500 build/compile_commands.json
+          echo "--- checking the specific file with violation ---"
+          grep -A2 "your_violating_file.cpp" build/compile_commands.json
 
       - name: Check clang-tidy
         env:
