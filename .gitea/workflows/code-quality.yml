@@ -31,16 +31,35 @@ jobs:
       image: cpp-ci:latest
       volumes:
         - /srv/ci-cache/ccache:/ccache
+        - /srv/ci-cache/git-repo:/repo-cache
     env:
       CCACHE_DIR: /ccache
       CC: clang
       CXX: clang++
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-          submodules: recursive
+      - name: Debug env
+        run: |
+          echo "GITHUB_REF=$GITHUB_REF"
+          echo "GITHUB_REPOSITORY=$GITHUB_REPOSITORY"
+          echo "GITHUB_SERVER_URL=$GITHUB_SERVER_URL"
+          echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
+          echo "GITHUB_SHA=$GITHUB_SHA"
+      - name: Sync repo cache
+        run: |
+          if [ -d /repo-cache/.git ]; then
+            cd /repo-cache
+            git fetch --depth=1 origin "$GITHUB_REF" || git fetch origin
+            git checkout -f FETCH_HEAD
+            git submodule sync --recursive
+            git submodule update --init --recursive --depth=1
+          else
+            git clone --depth=1 --recurse-submodules --shallow-submodules \
+              "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" /repo-cache
+            cd /repo-cache
+            git fetch --depth=1 origin "$GITHUB_REF"
+            git checkout -f FETCH_HEAD
+          fi
+          cp -a /repo-cache/. "$GITHUB_WORKSPACE"/
 
       - name: Configure
         run: |
