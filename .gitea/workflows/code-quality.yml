@@ -26,6 +26,7 @@ jobs:
 
   build:
     name: "Build: Linux | Clang 22.1.8"
+    needs: clang-format
     runs-on: linux
     container:
       image: cpp-ci:latest
