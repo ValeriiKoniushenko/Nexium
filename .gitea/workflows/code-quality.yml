@@ -24,8 +24,8 @@ jobs:
         run: |
           python3 .gitea/check_clang_format.py --base develop
 
-  clang-tidy:
-    name: clang-tidy
+  build:
+    name: "Build: Linux | Clang 18.1"
     runs-on: linux
     container:
       image: cpp-ci:latest
@@ -33,6 +33,39 @@ jobs:
         - /srv/ci-cache/ccache:/ccache
     env:
       CCACHE_DIR: /ccache
+      CC: clang
+      CXX: clang++
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          submodules: recursive
+
+      - name: Configure
+        run: |
+          cmake -S . -B build \
+            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+            -DNEXIUM_DISABLE_TESTS=ON \
+            -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+
+      - name: Build
+        run: cmake --build build -j$(nproc)
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: build/
+          retention-days: 1
+
+  clang-tidy:
+    name: clang-tidy
+    needs: build
+    runs-on: linux
+    container:
+      image: cpp-ci:latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -44,16 +77,11 @@ jobs:
         run: |
           git fetch --depth=1 origin develop:refs/remotes/origin/develop
 
-      - name: Configure compile database
-        env:
-          CC: clang
-          CXX: clang++
-        run: |
-          cmake -S . -B build \
-            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
-            -DNEXIUM_DISABLE_TESTS=ON \
-            -DCMAKE_C_COMPILER_LAUNCHER=ccache \
-            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
+          path: build/
 
       - name: Check clang-tidy
         env:
