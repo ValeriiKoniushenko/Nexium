@@ -16,7 +16,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # needed: diffing against develop
+          fetch-depth: 0
 
       - name: Check clang-format
         env:
@@ -32,6 +32,7 @@ jobs:
       volumes:
         - /srv/ci-cache/ccache:/ccache
         - /srv/ci-cache/git-repo:/repo-cache
+        - /srv/ci-cache/build-cache:/build-cache
     env:
       CCACHE_DIR: /ccache
       CC: clang
@@ -59,7 +60,6 @@ jobs:
             git checkout -f "$GITHUB_SHA"
           fi
 
-          echo "Copying into workspace"
           mkdir -p "$GITHUB_WORKSPACE"
           cp -a /repo-cache/. "$GITHUB_WORKSPACE"/
 
@@ -74,48 +74,55 @@ jobs:
       - name: Build
         run: cmake --build build -j$(nproc)
 
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: build-output
-          path: build/
-          retention-days: 5
+      - name: Save build cache
+        run: rsync -a --delete build/ /build-cache/
 
   clang-tidy:
-      name: clang-tidy
-      needs: build
-      runs-on: linux
-      container:
-        image: cpp-ci:latest
-        volumes:
-          - /srv/ci-cache/git-repo:/repo-cache
-      steps:
-        - name: Sync repo cache
-          env:
-            GITEATOKEN: ${{ secrets.GITEATOKEN }}
-          run: |
-            REPO_URL="https://oauth2:${GITEATOKEN}@gitea.vakon.dev/${GITHUB_REPOSITORY}.git"
+    name: clang-tidy
+    needs: build
+    runs-on: linux
+    container:
+      image: cpp-ci:latest
+      volumes:
+        - /srv/ci-cache/git-repo:/repo-cache
+        - /srv/ci-cache/build-cache:/build-cache
+    steps:
+      - name: Sync repo cache
+        env:
+          GITEATOKEN: ${{ secrets.GITEATOKEN }}
+        run: |
+          REPO_URL="https://oauth2:${GITEATOKEN}@gitea.vakon.dev/${GITHUB_REPOSITORY}.git"
+
+          if [ -d /repo-cache/.git ]; then
+            echo "Using existing repo cache"
             cd /repo-cache
             git remote set-url origin "$REPO_URL"
             git fetch --depth=1 origin "$GITHUB_SHA"
             git checkout -f "$GITHUB_SHA"
             git submodule sync --recursive
             git submodule update --init --recursive --depth=1
-            mkdir -p "$GITHUB_WORKSPACE"
-            cp -a /repo-cache/. "$GITHUB_WORKSPACE"/
+          else
+            echo "No cache found, cloning fresh"
+            git clone --recurse-submodules --shallow-submodules "$REPO_URL" /repo-cache
+            cd /repo-cache
+            git fetch --depth=1 origin "$GITHUB_SHA"
+            git checkout -f "$GITHUB_SHA"
+          fi
 
-        - name: Fetch develop for diffing
-          run: |
-            git fetch --depth=1 origin develop:refs/remotes/origin/develop
+          mkdir -p "$GITHUB_WORKSPACE"
+          cp -a /repo-cache/. "$GITHUB_WORKSPACE"/
 
-        - name: Download build artifacts
-          uses: actions/download-artifact@v3  
-          with:
-            name: build-output
-            path: build/
+      - name: Fetch develop for diffing
+        run: |
+          git fetch --depth=1 origin develop:refs/remotes/origin/develop
 
-        - name: Check clang-tidy
-          env:
-            GITEATOKEN: ${{ secrets.GITEATOKEN }}
-          run: |
-            python3 .gitea/check_clang_tidy.py --base develop --build-dir build
+      - name: Restore build output
+        run: |
+          mkdir -p build
+          rsync -a /build-cache/ build/
+
+      - name: Check clang-tidy
+        env:
+          GITEATOKEN: ${{ secrets.GITEATOKEN }}
+        run: |
+          python3 .gitea/check_clang_tidy.py --base develop --build-dir build
