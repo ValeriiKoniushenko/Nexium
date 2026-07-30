@@ -25,7 +25,7 @@ jobs:
           python3 .gitea/check_clang_format.py --base develop
 
   build:
-    name: "Build: Linux | Clang 18.1"
+    name: "Build: Linux | Clang 22.1.8"
     runs-on: linux
     container:
       image: cpp-ci:latest
@@ -75,11 +75,11 @@ jobs:
         run: cmake --build build -j$(nproc)
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: build-output
           path: build/
-          retention-days: 1
+          retention-days: 5
 
   clang-tidy:
     name: clang-tidy
@@ -89,7 +89,7 @@ jobs:
       image: cpp-ci:latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
         with:
           fetch-depth: 1
           submodules: recursive
