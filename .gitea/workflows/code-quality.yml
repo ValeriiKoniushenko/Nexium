@@ -37,28 +37,30 @@ jobs:
       CC: clang
       CXX: clang++
     steps:
-      - name: Debug env
-        run: |
-          echo "GITHUB_REF=$GITHUB_REF"
-          echo "GITHUB_REPOSITORY=$GITHUB_REPOSITORY"
-          echo "GITHUB_SERVER_URL=$GITHUB_SERVER_URL"
-          echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
-          echo "GITHUB_SHA=$GITHUB_SHA"
       - name: Sync repo cache
+        env:
+          GITEATOKEN: ${{ secrets.GITEATOKEN }}
         run: |
+          REPO_URL="https://oauth2:${GITEATOKEN}@gitea.vakon.dev/${GITHUB_REPOSITORY}.git"
+
           if [ -d /repo-cache/.git ]; then
+            echo "Using existing repo cache"
             cd /repo-cache
-            git fetch --depth=1 origin "$GITHUB_REF" || git fetch origin
-            git checkout -f FETCH_HEAD
+            git remote set-url origin "$REPO_URL"
+            git fetch --depth=1 origin "$GITHUB_SHA"
+            git checkout -f "$GITHUB_SHA"
             git submodule sync --recursive
             git submodule update --init --recursive --depth=1
           else
-            git clone --depth=1 --recurse-submodules --shallow-submodules \
-              "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" /repo-cache
+            echo "No cache found, cloning fresh"
+            git clone --recurse-submodules --shallow-submodules "$REPO_URL" /repo-cache
             cd /repo-cache
-            git fetch --depth=1 origin "$GITHUB_REF"
-            git checkout -f FETCH_HEAD
+            git fetch --depth=1 origin "$GITHUB_SHA"
+            git checkout -f "$GITHUB_SHA"
           fi
+
+          echo "Copying into workspace"
+          mkdir -p "$GITHUB_WORKSPACE"
           cp -a /repo-cache/. "$GITHUB_WORKSPACE"/
 
       - name: Configure
