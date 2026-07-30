@@ -4,13 +4,13 @@ Runs clang-tidy over changed C/C++ files and reports issues in
 GitLab code-quality JSON format.
 
 CI usage (unchanged behavior):
-    python3 .ci/check_clang_tidy.py
+    python3 .gitea/check_clang_tidy.py
 
 Local/debug usage from your machine:
-    python3 .ci/check_clang_tidy.py --base develop --verbose
-    python3 .ci/check_clang_tidy.py --files src/foo.cpp --build-dir build --verbose
-    python3 .ci/check_clang_tidy.py --base develop --fail-on error   # only fail on 'error' level
-    python3 .ci/check_clang_tidy.py --base develop --dry-run         # don't write report / exit 1
+    python3 .gitea/check_clang_tidy.py --base develop --verbose
+    python3 .gitea/check_clang_tidy.py --files src/foo.cpp --build-dir build --verbose
+    python3 .gitea/check_clang_tidy.py --base develop --fail-on error   # only fail on 'error' level
+    python3 .gitea/check_clang_tidy.py --base develop --dry-run         # don't write report / exit 1
 """
 import argparse
 import hashlib

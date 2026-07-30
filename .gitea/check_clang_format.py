@@ -3,13 +3,13 @@
 Checks that changed C/C++ files are clang-format compliant.
 
 CI usage (unchanged behavior):
-    python3 .ci/check_clang_format.py
+    python3 .gitea/check_clang_format.py
 
 Local/debug usage from your machine:
-    python3 .ci/check_clang_format.py --base develop --verbose
-    python3 .ci/check_clang_format.py --base develop --fix          # auto-apply formatting
-    python3 .ci/check_clang_format.py --files src/foo.cpp src/bar.h
-    python3 .ci/check_clang_format.py --base develop --dry-run      # show diff, don't write report/exit 1
+    python3 .gitea/check_clang_format.py --base develop --verbose
+    python3 .gitea/check_clang_format.py --base develop --fix          # auto-apply formatting
+    python3 .gitea/check_clang_format.py --files src/foo.cpp src/bar.h
+    python3 .gitea/check_clang_format.py --base develop --dry-run      # show diff, don't write report/exit 1
 """
 
 import argparse

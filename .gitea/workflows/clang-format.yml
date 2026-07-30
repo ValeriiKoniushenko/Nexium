@@ -24,4 +24,4 @@ jobs:
         env:
           GITEATOKEN: ${{ secrets.GITEATOKEN }}
         run: |
-          python3 .ci/check_clang_format.py --base develop
+          python3 .gitea/check_clang_format.py --base develop
