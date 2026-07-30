@@ -51,7 +51,7 @@ namespace Core
     void Gizmo::onMousePicked(StaticMesh* clickedPart)
     {
         StaticMeshBundle::onMousePicked(clickedPart);
-
+int * a = NULL;
         handleDragStart(clickedPart);
     }
 
