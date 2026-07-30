@@ -127,4 +127,4 @@ jobs:
         env:
           GITEATOKEN: ${{ secrets.GITEATOKEN }}
         run: |
-          python3 .gitea/check_clang_tidy.py --base develop --build-dir build || true
+          python3 .gitea/check_clang_tidy.py --base develop --build-dir build --dry-run
