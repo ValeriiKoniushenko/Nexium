@@ -127,4 +127,10 @@ jobs:
         env:
           GITEATOKEN: ${{ secrets.GITEATOKEN }}
         run: |
-          python3 .gitea/check_clang_tidy.py --base develop --build-dir build --dry-run
+          python3 .gitea/check_clang_tidy.py --base develop --build-dir build
+          exit_code=$?
+          if [ $exit_code -eq 1 ]; then
+            echo "clang-tidy found issues, but continuing (non-blocking mode)"
+            exit 0
+          fi
+          exit $exit_code
