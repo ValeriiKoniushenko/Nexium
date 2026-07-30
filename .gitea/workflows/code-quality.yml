@@ -1,0 +1,66 @@
+name: Code Quality
+
+on:
+  pull_request:
+  push:
+    branches:
+      - develop
+
+jobs:
+  clang-format:
+    name: clang-format
+    runs-on: linux
+    container:
+      image: cpp-ci:latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # needed: diffing against develop
+
+      - name: Check clang-format
+        env:
+          GITEATOKEN: ${{ secrets.GITEATOKEN }}
+        run: |
+          python3 .gitea/check_clang_format.py --base develop
+  clang-tidy:
+    name: clang-tidy
+    runs-on: linux
+    container:
+      image: cpp-ci:latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1          # shallow — we don't need full history here
+          submodules: recursive
+
+      - name: Fetch develop for diffing
+        run: |
+          git fetch --depth=1 origin develop:refs/remotes/origin/develop
+
+      - name: Restore ccache
+        uses: actions/cache@v4
+        with:
+          path: ~/.ccache
+          key: ccache-clang-tidy-${{ runner.os }}-${{ github.ref }}
+          restore-keys: |
+            ccache-clang-tidy-${{ runner.os }}-
+
+      - name: Configure compile database
+        env:
+          CC: clang
+          CXX: clang++
+        run: |
+          cmake -S . -B build \
+            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+            -DNEXIUM_DISABLE_TESTS=ON \
+            -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+            -G Ninja
+
+      - name: Check clang-tidy
+        env:
+          GITEATOKEN: ${{ secrets.GITEATOKEN }}
+        run: |
+          python3 .gitea/check_clang_tidy.py --base develop --build-dir build
