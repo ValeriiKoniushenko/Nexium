@@ -45,47 +45,19 @@ namespace Core::Animation
         bool removeAnimation(const StringAtom& name);
         void clearAnimations();
 
-        [[nodiscard]] FrameByFrameAnimation* getAnimation(const StringAtom& name)
-        {
-            const auto it = _animations.find(name);
-            if (it == _animations.end()) [[unlikely]]
-            {
-                return nullptr;
-            }
-            return dynamic_cast<FrameByFrameAnimation*>(it->second.get());
-        }
+        [[nodiscard]] FrameByFrameAnimation* getAnimation(const StringAtom& name);
 
-        [[nodiscard]] const FrameByFrameAnimation*
-        getAnimation(const StringAtom& name) const
-        {
-            const auto it = _animations.find(name);
-            if (it == _animations.end()) [[unlikely]]
-            {
-                return nullptr;
-            }
-            return dynamic_cast<const FrameByFrameAnimation*>(it->second.get());
-        }
+        [[nodiscard]] const FrameByFrameAnimation* getAnimation(const StringAtom& name) const;
 
-        [[nodiscard]] FrameByFrameAnimation* getActiveAnimation()
-        {
-            return getAnimation(_currentAnimationName);
-        }
-
-        [[nodiscard]] const FrameByFrameAnimation* getActiveAnimation() const
-        {
-            return getAnimation(_currentAnimationName);
-        }
+        [[nodiscard]] FrameByFrameAnimation* getActiveAnimation();
+        [[nodiscard]] const FrameByFrameAnimation* getActiveAnimation() const;
 
         [[nodiscard]] bool containAnimation(const StringAtom& name) const;
         [[nodiscard]] const StringAtom& getActiveAnimationName() const noexcept
         {
             return _currentAnimationName;
         }
-        [[nodiscard]] const std::unordered_map<StringAtom, BaseAnimation::Ptr>&
-        getAnimations() const noexcept
-        {
-            return _animations;
-        }
+        [[nodiscard]] const auto& getAnimations() const noexcept { return _animations; }
 
     protected:
         void onTick(float delta) override;
@@ -94,6 +66,7 @@ namespace Core::Animation
         void applyCurrentFrameToRectangle();
         void updateCurrentAnimation(float delta);
 
+    private:
         FIELD();
         std::unordered_map<StringAtom, BaseAnimation::Ptr> _animations;
 
@@ -102,8 +75,7 @@ namespace Core::Animation
     };
 
     void to_json(nlohmann::json& j, const std::unordered_map<StringAtom, BaseAnimation::Ptr>& v);
-    void from_json(const nlohmann::json& j,
-                   std::unordered_map<StringAtom, BaseAnimation::Ptr>& v);
+    void from_json(const nlohmann::json& j, std::unordered_map<StringAtom, BaseAnimation::Ptr>& v);
 } // namespace Core::Animation
 
 #include "FrameByFrameAnimator.generated.h" // added by the code generator. Better don't move it.

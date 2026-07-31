@@ -24,11 +24,11 @@
 
 #include "NxECSBasedEditor.h"
 
+#include "ECSAdapters/Animation/ECSEditorFrameByFrameAnimationAdapter.h"
 #include "ECSAdapters/BaseComponentAdapter.h"
 #include "ECSAdapters/EditorActorAdapter.h"
 #include "ECSAdapters/EditorInterleavedGraphicsDataAdapter.h"
 #include "ECSAdapters/EditorStaticMeshBundleAdapter.h"
-#include "ECSAdapters/Animation/ECSEditorFrameByFrameAnimationAdapter.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/LabelRow.h"
 #include "Editor/GuiComponents/Misc.h"

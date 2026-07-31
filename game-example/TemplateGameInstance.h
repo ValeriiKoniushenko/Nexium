@@ -28,5 +28,4 @@
 
 class TemplateGameInstance : public Core::GameInstance
 {
-
 };

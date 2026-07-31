@@ -2,12 +2,11 @@
 
 #include "Animations/FrameByFrame/FrameByFrameAnimator.h"
 #include "GameplaySystem/Framework/GameInstance.h"
+#include "ImGui/imgui.h"
 #include "Misc/IconsFontAwesome.h"
 
 #include <algorithm>
 #include <cstring>
-
-#include "ImGui/imgui.h"
 
 namespace
 {
@@ -18,7 +17,7 @@ namespace
         const auto& text = source.toStdString();
         std::memcpy(destination.data(), text.data(), std::min(text.size(), Size - 1));
     }
-}
+} // namespace
 
 namespace Core
 {
@@ -65,16 +64,15 @@ namespace Core
 
     void FrameByFrameAnimationEditor::applyBuffersToDraft()
     {
-        _draft.setComponentName(StringAtom{_name.data()});
-        _draft.setAtlasName(StringAtom{_atlas.data()});
-        _draft.setTextureName(StringAtom{_texture.data()});
+        _draft.setComponentName(StringAtom{ _name.data() });
+        _draft.setAtlasName(StringAtom{ _atlas.data() });
+        _draft.setTextureName(StringAtom{ _texture.data() });
         _draft.setFPS(std::max(_fps, 0.01f));
         _draft.setLoop(_loop);
     }
 
-    void FrameByFrameAnimationEditor::drawPreview(
-        const Animation::FrameByFrameAnimation& animation, float dt, float size,
-        PreviewState& state)
+    void FrameByFrameAnimationEditor::drawPreview(const Animation::FrameByFrameAnimation& animation,
+                                                  float dt, float size, PreviewState& state)
     {
         const auto& frames = animation.getFrames();
         if (frames.empty())
@@ -102,8 +100,8 @@ namespace Core
 
         const auto& atlas = GetAssetsManager().getAtlas(animation.getAtlasName());
         const auto& frame = frames[state.frame];
-        glm::vec2 uv0{frame.uvOffset};
-        glm::vec2 uv1 = uv0 + glm::vec2{frame.uvSize};
+        glm::vec2 uv0{ frame.uvOffset };
+        glm::vec2 uv1 = uv0 + glm::vec2{ frame.uvSize };
         const StringAtom regionName = frame.textureName.value_or(animation.getTextureName());
         if (!regionName.isEmpty() && atlas.getRects().contains(regionName))
         {
@@ -116,8 +114,8 @@ namespace Core
         auto& texture = const_cast<Texture&>(atlas.getTexture());
         if (texture.isValid())
         {
-            ImGui::Image(texture.getTextureId(), {size, size},
-                         glm::vec2{uv0.x, uv1.y}, glm::vec2{uv1.x, uv0.y});
+            ImGui::Image(texture.getTextureId(), { size, size }, glm::vec2{ uv0.x, uv1.y },
+                         glm::vec2{ uv1.x, uv0.y });
             ImGui::SameLine();
         }
         ImGui::Text("%zu / %zu", state.frame + 1, frames.size());
@@ -131,7 +129,7 @@ namespace Core
         }
 
         ImGui::TextDisabled("%zu frame(s)", _draft.getFramesCount());
-        ImGui::BeginChild("AnimationFrames", {520.f, 260.f}, true,
+        ImGui::BeginChild("AnimationFrames", { 520.f, 260.f }, true,
                           ImGuiWindowFlags_AlwaysVerticalScrollbar);
         std::optional<std::size_t> frameToDelete;
         for (std::size_t i = 0; i < _draft.getFramesCount(); ++i)
@@ -154,7 +152,7 @@ namespace Core
             auto edited = frame;
             if (ImGui::InputText("Name", frameName.data(), frameName.size()))
             {
-                edited.name = StringAtom{frameName.data()};
+                edited.name = StringAtom{ frameName.data() };
             }
             ImGui::DragFloat2("UV offset", &uvOffset.x, 0.005f, 0.f, 1.f);
             ImGui::DragFloat2("UV size", &uvSize.x, 0.005f, 0.001f, 1.f);
@@ -171,8 +169,7 @@ namespace Core
         ImGui::EndChild();
     }
 
-    void FrameByFrameAnimationEditor::drawNamedFrames(
-        const std::vector<StringAtom>& regionNames)
+    void FrameByFrameAnimationEditor::drawNamedFrames(const std::vector<StringAtom>& regionNames)
     {
         if (!ImGui::CollapsingHeader("Named atlas frames", ImGuiTreeNodeFlags_DefaultOpen))
         {
@@ -189,7 +186,7 @@ namespace Core
         {
             for (const auto& regionName : regionNames)
             {
-                const bool selected = regionName == StringAtom{_frameTexture.data()};
+                const bool selected = regionName == StringAtom{ _frameTexture.data() };
                 if (ImGui::Selectable(regionName.c_str(), selected))
                 {
                     CopyToBuffer(_frameTexture, regionName);
@@ -204,22 +201,21 @@ namespace Core
         ImGui::BeginDisabled(_frameTexture[0] == '\0');
         if (ImGui::Button("Add selected region"))
         {
-            _draft.addFrame(StringAtom{_frameTexture.data()});
+            _draft.addFrame(StringAtom{ _frameTexture.data() });
         }
         ImGui::EndDisabled();
     }
 
     void FrameByFrameAnimationEditor::drawSpriteSheet()
     {
-        if (!ImGui::CollapsingHeader("Sprite sheet / UV frames",
-                                     ImGuiTreeNodeFlags_DefaultOpen))
+        if (!ImGui::CollapsingHeader("Sprite sheet / UV frames", ImGuiTreeNodeFlags_DefaultOpen))
         {
             return;
         }
         ImGui::TextDisabled("Import one complete row from a uniformly spaced sprite sheet.");
         if (ImGui::Button("Add full-size UV frame"))
         {
-            _draft.addFrame(GlobalPosition2F{0.f, 0.f}, GlobalPosition2F{1.f, 1.f});
+            _draft.addFrame(GlobalPosition2F{ 0.f, 0.f }, GlobalPosition2F{ 1.f, 1.f });
         }
         ImGui::SetNextItemWidth(80.f);
         ImGui::InputInt("Frames in row", &_sheetColumns);
@@ -233,8 +229,7 @@ namespace Core
         if (ImGui::Button("Import selected row"))
         {
             _draft.addFramesFromSpriteSheet(
-                static_cast<std::size_t>(_sheetColumns),
-                static_cast<std::size_t>(_sheetRows),
+                static_cast<std::size_t>(_sheetColumns), static_cast<std::size_t>(_sheetRows),
                 static_cast<std::size_t>(_sheetColumns),
                 static_cast<std::size_t>(_sheetRows - _sheetSelectedRow));
         }
@@ -243,7 +238,7 @@ namespace Core
     bool FrameByFrameAnimationEditor::hasNameConflict() const
     {
         return _animator && _animator->containAnimation(_draft.getComponentName())
-            && (_isCreating || _draft.getComponentName() != _editedName);
+               && (_isCreating || _draft.getComponentName() != _editedName);
     }
 
     std::vector<StringAtom> FrameByFrameAnimationEditor::drawAtlasSelector()
@@ -254,7 +249,7 @@ namespace Core
         {
             for (const auto& atlasName : atlasNames)
             {
-                const bool selected = atlasName == StringAtom{_atlas.data()};
+                const bool selected = atlasName == StringAtom{ _atlas.data() };
                 if (ImGui::Selectable(atlasName.c_str(), selected))
                 {
                     CopyToBuffer(_atlas, atlasName);
@@ -274,11 +269,9 @@ namespace Core
         }
 
         if (_atlas[0]
-            && std::ranges::find(atlasNames, StringAtom{_atlas.data()}) != atlasNames.end())
+            && std::ranges::find(atlasNames, StringAtom{ _atlas.data() }) != atlasNames.end())
         {
-            return GetAssetsManager()
-                .getAtlas(StringAtom{_atlas.data()})
-                .getRectsAsVector();
+            return GetAssetsManager().getAtlas(StringAtom{ _atlas.data() }).getRectsAsVector();
         }
         return {};
     }
@@ -293,7 +286,7 @@ namespace Core
             {
                 for (const auto& regionName : regionNames)
                 {
-                    const bool selected = regionName == StringAtom{_texture.data()};
+                    const bool selected = regionName == StringAtom{ _texture.data() };
                     if (ImGui::Selectable(regionName.c_str(), selected))
                     {
                         CopyToBuffer(_texture, regionName);
@@ -314,8 +307,8 @@ namespace Core
         }
     }
 
-    void FrameByFrameAnimationEditor::drawEditorContent(
-        float dt, const std::vector<StringAtom>& regionNames)
+    void FrameByFrameAnimationEditor::drawEditorContent(float dt,
+                                                        const std::vector<StringAtom>& regionNames)
     {
         drawBaseRegionSelector(regionNames);
         ImGui::DragFloat("FPS", &_fps, 0.25f, 0.01f, 1000.f, "%.2f");
@@ -331,14 +324,13 @@ namespace Core
         const std::vector<StringAtom>& regionNames) const
     {
         return !regionNames.empty() && _draft.getTextureName().isEmpty()
-            && std::ranges::any_of(_draft.getFrames(),
-                                   [](const auto& frame) { return !frame.textureName; });
+               && std::ranges::any_of(_draft.getFrames(),
+                                      [](const auto& frame) { return !frame.textureName; });
     }
 
     void FrameByFrameAnimationEditor::save(const SaveCallback& onSave)
     {
-        const bool wasCurrent
-            = !_isCreating && _animator->getActiveAnimationName() == _editedName;
+        const bool wasCurrent = !_isCreating && _animator->getActiveAnimationName() == _editedName;
         if (!_isCreating && _editedName != _draft.getComponentName())
         {
             _animator->removeAnimation(_editedName);
@@ -356,25 +348,25 @@ namespace Core
         ImGui::CloseCurrentPopup();
     }
 
-    void FrameByFrameAnimationEditor::drawFooter(
-        const std::vector<StringAtom>& regionNames, const SaveCallback& onSave)
+    void FrameByFrameAnimationEditor::drawFooter(const std::vector<StringAtom>& regionNames,
+                                                 const SaveCallback& onSave)
     {
         const bool missingUvBase = hasMissingUvBase(regionNames);
         const bool nameConflict = hasNameConflict();
         ImGui::Separator();
-        if (!_draft.isReady() || missingUvBase)
+        if (!_draft.isValid() || missingUvBase)
         {
-            ImGui::TextColored({1.f, .45f, .35f, 1.f},
+            ImGui::TextColored({ 1.f, .45f, .35f, 1.f },
                                missingUvBase
                                    ? "Select UV base region for frames without their own region."
                                    : "Name, atlas and at least one valid frame are required.");
         }
         else if (nameConflict)
         {
-            ImGui::TextColored({1.f, .45f, .35f, 1.f}, "Animation name already exists.");
+            ImGui::TextColored({ 1.f, .45f, .35f, 1.f }, "Animation name already exists.");
         }
 
-        ImGui::BeginDisabled(!_draft.isReady() || missingUvBase || nameConflict);
+        ImGui::BeginDisabled(!_draft.isValid() || missingUvBase || nameConflict);
         if (ImGui::Button("Save"))
         {
             save(onSave);

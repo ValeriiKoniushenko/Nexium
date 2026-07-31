@@ -472,8 +472,7 @@ namespace Core
                     out = GetAssetsManager().getAtlasesAsVector().at(i);
                     return nullptr;
                 });
-            _rectComboAtlas->setSizeProvider(
-                []() { return GetAssetsManager().getAtlasesCount(); });
+            _rectComboAtlas->setSizeProvider([]() { return GetAssetsManager().getAtlasesCount(); });
             _subscriptionPool << _rectComboAtlas->onSelect->subscribeAndGetID(
                 [t = WeakPtr(this)](const void*)
                 {
@@ -534,8 +533,7 @@ namespace Core
                     {
                         if (auto obj = t.tryLoad())
                         {
-                            if (auto* rectangle
-                                = dynamic_cast<SceneObj::Rectangle*>(obj->_target))
+                            if (auto* rectangle = dynamic_cast<SceneObj::Rectangle*>(obj->_target))
                             {
                                 rectangle->setTexture(
                                     obj->_rectComboRect->tryGetCurrentDataAsString());
@@ -551,8 +549,7 @@ namespace Core
                 {
                     if (auto obj = t.tryLoad())
                     {
-                        if (auto* rectangle
-                            = dynamic_cast<SceneObj::Rectangle*>(obj->_target))
+                        if (auto* rectangle = dynamic_cast<SceneObj::Rectangle*>(obj->_target))
                         {
                             rectangle->setBlendingEnabled(enabled);
                         }
@@ -561,16 +558,15 @@ namespace Core
 
             out.attachChild(CreateHLayoutAndLabel("Animation", false, defaultLabelWidth));
             _rectAnimationRow = out.getLastChildAs<HLayout>().get();
-            _rectComboAnimation
-                = _rectAnimationRow->addChildComponent<ComboModelBased>();
+            _rectComboAnimation = _rectAnimationRow->addChildComponent<ComboModelBased>();
             _rectComboAnimation->setFlex(Gui::Flex::FlexWidth);
             _rectComboAnimation->setDataProvider(
                 [this](std::size_t i, StringAtom& result) -> const void*
                 {
                     const auto* rectangle = dynamic_cast<SceneObj::Rectangle*>(_target);
-                    const auto* animator = rectangle
-                        ? rectangle->findFirstChildOf<Animation::FrameByFrameAnimator>()
-                        : nullptr;
+                    const auto* animator
+                        = rectangle ? rectangle->findFirstChildOf<Animation::FrameByFrameAnimator>()
+                                    : nullptr;
                     if (!animator)
                     {
                         return nullptr;
@@ -582,11 +578,8 @@ namespace Core
                     {
                         names.push_back(name);
                     }
-                    std::ranges::sort(names,
-                                      [](const auto& lhs, const auto& rhs)
-                                      {
-                                          return lhs.toStdString() < rhs.toStdString();
-                                      });
+                    std::ranges::sort(names, [](const auto& lhs, const auto& rhs)
+                                      { return lhs.toStdString() < rhs.toStdString(); });
                     if (i >= names.size())
                     {
                         return nullptr;
@@ -598,10 +591,10 @@ namespace Core
                 [this]
                 {
                     const auto* rectangle = dynamic_cast<SceneObj::Rectangle*>(_target);
-                    const auto* animator = rectangle
-                        ? rectangle->findFirstChildOf<Animation::FrameByFrameAnimator>()
-                        : nullptr;
-                    return animator ? animator->getAnimations().size() : std::size_t{0};
+                    const auto* animator
+                        = rectangle ? rectangle->findFirstChildOf<Animation::FrameByFrameAnimator>()
+                                    : nullptr;
+                    return animator ? animator->getAnimations().size() : std::size_t{ 0 };
                 });
             _subscriptionPool << _rectComboAnimation->onSelect->subscribeAndGetID(
                 [t = WeakPtr(this)](const void*)
@@ -609,17 +602,17 @@ namespace Core
                     if (auto obj = t.tryLoad())
                     {
                         auto* rectangle = dynamic_cast<SceneObj::Rectangle*>(obj->_target);
-                        auto* animator = rectangle
-                            ? rectangle->findFirstChildOf<Animation::FrameByFrameAnimator>()
-                            : nullptr;
+                        auto* animator
+                            = rectangle
+                                  ? rectangle->findFirstChildOf<Animation::FrameByFrameAnimator>()
+                                  : nullptr;
                         if (animator)
                         {
                             const auto animationName
                                 = obj->_rectComboAnimation->tryGetCurrentDataAsString();
                             if (auto* animation = animator->getAnimation(animationName))
                             {
-                                rectangle->setAnimationOverride(animationName,
-                                                                animation->getFPS());
+                                rectangle->setAnimationOverride(animationName, animation->getFPS());
                             }
                         }
                     }
@@ -638,17 +631,18 @@ namespace Core
                     if (auto obj = t.tryLoad())
                     {
                         auto* rectangle = dynamic_cast<SceneObj::Rectangle*>(obj->_target);
-                        auto* animator = rectangle
-                            ? rectangle->findFirstChildOf<Animation::FrameByFrameAnimator>()
-                            : nullptr;
+                        auto* animator
+                            = rectangle
+                                  ? rectangle->findFirstChildOf<Animation::FrameByFrameAnimator>()
+                                  : nullptr;
                         if (animator)
                         {
                             if (auto* animation
                                 = animator->getAnimation(animator->getActiveAnimationName()))
                             {
                                 animation->setFPS(fps);
-                                rectangle->setAnimationOverride(
-                                    animator->getActiveAnimationName(), fps);
+                                rectangle->setAnimationOverride(animator->getActiveAnimationName(),
+                                                                fps);
                             }
                         }
                     }
@@ -1002,8 +996,7 @@ namespace Core
             if (_rectComboAtlas)
             {
                 const auto atlases = GetAssetsManager().getAtlasesAsVector();
-                if (auto it = std::ranges::find(atlases, comp->getAtlasName());
-                    it != atlases.end())
+                if (auto it = std::ranges::find(atlases, comp->getAtlasName()); it != atlases.end())
                 {
                     _rectComboAtlas->setCurrentIndex(it - atlases.begin());
                 }
@@ -1034,8 +1027,7 @@ namespace Core
             }
             if (_rectAnimationFPSRow)
             {
-                _rectAnimationFPSRow->setEnabled(
-                    animator && animator->getActiveAnimation());
+                _rectAnimationFPSRow->setEnabled(animator && animator->getActiveAnimation());
             }
             if (animator && _rectComboAnimation && animator->getActiveAnimation())
             {
@@ -1045,11 +1037,10 @@ namespace Core
                 {
                     animationNames.push_back(name);
                 }
-                std::ranges::sort(animationNames,
-                                  [](const auto& lhs, const auto& rhs)
+                std::ranges::sort(animationNames, [](const auto& lhs, const auto& rhs)
                                   { return lhs.toStdString() < rhs.toStdString(); });
-                if (const auto it = std::ranges::find(
-                        animationNames, animator->getActiveAnimationName());
+                if (const auto it
+                    = std::ranges::find(animationNames, animator->getActiveAnimationName());
                     it != animationNames.end())
                 {
                     _rectComboAnimation->setCurrentIndex(it - animationNames.begin());

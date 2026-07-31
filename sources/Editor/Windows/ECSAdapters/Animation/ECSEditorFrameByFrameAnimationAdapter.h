@@ -1,5 +1,5 @@
 /*
-* MIT License
+ * MIT License
  *
  * Copyright (c) 2018-2027 Valerii Koniushenko
  *
@@ -59,6 +59,6 @@ namespace Core
         FrameByFrameAnimationEditor _animationEditor;
         std::unordered_map<StringAtom, FrameByFrameAnimationEditor::PreviewState> _previewStates;
     };
-}
+} // namespace Core
 
 #include "ECSEditorFrameByFrameAnimationAdapter.generated.h"

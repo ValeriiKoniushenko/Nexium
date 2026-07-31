@@ -30,25 +30,13 @@ namespace Core::Animation
 {
     void to_json(nlohmann::json& j, const Frame& v)
     {
-        j["name"] = v.name;
-        j["textureName"] = v.textureName;
-        j["uvOffset"] = v.uvOffset;
-        j["uvSize"] = v.uvSize;
+        j = R<Frame>::Serialize(v).getData();
     }
 
     void from_json(const nlohmann::json& j, Frame& v)
     {
-        v.name = j.value("name", StringAtom{});
-        if (j.contains("textureName") && !j["textureName"].is_null())
-        {
-            v.textureName = j["textureName"].get<StringAtom>();
-        }
-        else
-        {
-            v.textureName = std::nullopt;
-        }
-        v.uvOffset = j["uvOffset"].get<GlobalPosition2F>();
-        v.uvSize = j["uvSize"].get<GlobalPosition2F>();
+        RResourceStream<RJsonResourceStream> data(j);
+        R<Frame>::Deserialize(data, v);
     }
 
     ECS_IMPL(Core::Animation::FrameByFrameAnimation);
@@ -86,11 +74,6 @@ namespace Core::Animation
 
     void FrameByFrameAnimation::setFPS(float fps)
     {
-        if (fps <= 0.f)
-        {
-            errorLog("FPS must be > 0");
-            return;
-        }
         _fps = std::max(fps, 0.f);
     }
 
@@ -128,10 +111,7 @@ namespace Core::Animation
             return false;
         }
 
-        _frames.emplace_back(Frame{
-            .name = textureName,
-            .textureName = std::move(textureName)
-        });
+        _frames.emplace_back(Frame{ .name = textureName, .textureName = std::move(textureName) });
         return true;
     }
 
@@ -143,12 +123,11 @@ namespace Core::Animation
             return false;
         }
 
-        _frames.emplace_back(Frame{
-            .name = "Frame "_atom + StringAtom::MakeFrom(_frames.size() + 1),
-            .textureName = std::nullopt,
-            .uvOffset = std::move(uvOffset),
-            .uvSize = std::move(uvSize)
-        });
+        _frames.emplace_back(
+            Frame{ .name = "Frame "_atom + StringAtom::MakeFrom(_frames.size() + 1),
+                   .textureName = std::nullopt,
+                   .uvOffset = std::move(uvOffset),
+                   .uvSize = std::move(uvSize) });
         return true;
     }
 
@@ -176,7 +155,7 @@ namespace Core::Animation
         }
 
         const auto frameSize
-            = GlobalPosition2F{1.f / static_cast<float>(columns), 1.f / static_cast<float>(rows)};
+            = GlobalPosition2F{ 1.f / static_cast<float>(columns), 1.f / static_cast<float>(rows) };
         _frames.reserve(_frames.size() + frameCount);
 
         for (std::size_t index = 0; index < frameCount; ++index)
@@ -185,15 +164,11 @@ namespace Core::Animation
             const auto column = sheetIndex % columns;
             const auto row = sheetIndex / columns;
             _frames.emplace_back(
-                Frame{
-                    .name = "Frame "_atom + StringAtom::MakeFrom(_frames.size() + 1),
-                    .textureName = std::nullopt,
-                    .uvOffset = GlobalPosition2F{
-                        static_cast<float>(column) * frameSize.x,
-                        static_cast<float>(row) * frameSize.y
-                    },
-                    .uvSize = frameSize
-                });
+                Frame{ .name = "Frame "_atom + StringAtom::MakeFrom(_frames.size() + 1),
+                       .textureName = std::nullopt,
+                       .uvOffset = GlobalPosition2F{ static_cast<float>(column) * frameSize.x,
+                                                     static_cast<float>(row) * frameSize.y },
+                       .uvSize = frameSize });
         }
 
         return true;
@@ -203,8 +178,7 @@ namespace Core::Animation
     {
         if (index >= _frames.size() || frame.uvOffset.x < 0.f || frame.uvOffset.y < 0.f
             || frame.uvSize.x <= 0.f || frame.uvSize.y <= 0.f
-            || frame.uvOffset.x + frame.uvSize.x > 1.f
-            || frame.uvOffset.y + frame.uvSize.y > 1.f)
+            || frame.uvOffset.x + frame.uvSize.x > 1.f || frame.uvOffset.y + frame.uvSize.y > 1.f)
         {
             return false;
         }
@@ -219,8 +193,8 @@ namespace Core::Animation
             return false;
         }
         _frames.erase(_frames.begin() + static_cast<std::ptrdiff_t>(index));
-        _currentFrame = std::min(_currentFrame, _frames.empty() ? std::size_t{0}
-                                                                : _frames.size() - 1);
+        _currentFrame
+            = std::min(_currentFrame, _frames.empty() ? std::size_t{ 0 } : _frames.size() - 1);
         return true;
     }
 
@@ -231,26 +205,31 @@ namespace Core::Animation
         _frameTimeAccumulator = 0.f;
     }
 
-    bool FrameByFrameAnimation::isReady() const noexcept
+    bool FrameByFrameAnimation::isValid() const
     {
-        if (getComponentName().isEmpty() || _atlasName.isEmpty() || _frames.empty()
-            || _fps <= 0.f)
+        if (!BaseAnimation::isValid())
         {
             return false;
         }
 
-        return std::ranges::all_of(
-            _frames, [this](const Frame& frame)
-            {
-                const bool validUV = frame.uvOffset.x >= 0.f && frame.uvOffset.y >= 0.f
-                    && frame.uvSize.x > 0.f && frame.uvSize.y > 0.f
-                    && frame.uvOffset.x + frame.uvSize.x <= 1.f
-                    && frame.uvOffset.y + frame.uvSize.y <= 1.f;
-                return validUV;
-            });
+        if (getComponentName().isEmpty() || _atlasName.isEmpty() || _frames.empty() || _fps <= 0.f)
+        {
+            return false;
+        }
+
+        return std::ranges::all_of(_frames,
+                                   [](const Frame& frame)
+                                   {
+                                       const bool validUV
+                                           = frame.uvOffset.x >= 0.f && frame.uvOffset.y >= 0.f
+                                             && frame.uvSize.x > 0.f && frame.uvSize.y > 0.f
+                                             && frame.uvOffset.x + frame.uvSize.x <= 1.f
+                                             && frame.uvOffset.y + frame.uvSize.y <= 1.f;
+                                       return validUV;
+                                   });
     }
 
-    const Frame* FrameByFrameAnimation::getCurrentFrame() const noexcept
+    const Frame* FrameByFrameAnimation::getCurrentFrame() const
     {
         if (_currentFrame >= _frames.size())
         {

@@ -354,7 +354,7 @@ namespace Core
         GetAssetsManager().generateTextureAtlas("santa_walk"_atom,
                                                 Config::Path::images / "Santa/Santa_Walk");
         GetAssetsManager().generateTextureAtlas("player_walk"_atom,
-                                                    Config::Path::images / "Player_SpriteSheet");
+                                                Config::Path::images / "Player_SpriteSheet");
         onLoadCoreResources();
     }
 } // namespace Core

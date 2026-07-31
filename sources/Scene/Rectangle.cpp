@@ -81,8 +81,8 @@ namespace Core::SceneObj
 
         atlas.bind();
 
-        glm::vec2 textureOffset{0.f, 0.f};
-        glm::vec2 textureSize{1.f, 1.f};
+        glm::vec2 textureOffset{ 0.f, 0.f };
+        glm::vec2 textureSize{ 1.f, 1.f };
         if (!_textureName.isEmpty())
         {
             const auto rect = atlas.getRect(_textureName);
@@ -93,8 +93,7 @@ namespace Core::SceneObj
         shader->setUniform("uUVOffset"_atom, textureOffset + textureSize * _textureUVOffset);
         shader->setUniform("uUVSize"_atom, textureSize * _textureUVSize);
         shader->setUniform("uModel"_atom, getModelMatrix());
-        shader->setUniform("uAlphaBlendingEnabled"_atom,
-                           static_cast<GLint>(_blendingEnabled));
+        shader->setUniform("uAlphaBlendingEnabled"_atom, static_cast<GLint>(_blendingEnabled));
 
         glBlendFunc(_blendingEnabled ? GL_SRC_ALPHA : GL_ONE,
                     _blendingEnabled ? GL_ONE_MINUS_SRC_ALPHA : GL_ZERO);

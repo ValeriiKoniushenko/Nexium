@@ -34,12 +34,20 @@
 
 namespace Core::Animation
 {
+
+    CLASS();
     struct Frame
     {
+        R_FRIEND(Frame);
+
+        FIELD();
         StringAtom name;
+        FIELD();
         std::optional<StringAtom> textureName;
-        GlobalPosition2F uvOffset{0.f, 0.f};
-        GlobalPosition2F uvSize{1.f, 1.f};
+        FIELD();
+        GlobalPosition2F uvOffset = Core::GlobalPosition2F{ 0.f, 0.f };
+        FIELD();
+        GlobalPosition2F uvSize = Core::GlobalPosition2F{ 1.f, 1.f };
     };
 
     void to_json(nlohmann::json& j, const Frame& v);
@@ -63,14 +71,13 @@ namespace Core::Animation
         bool addFrame(StringAtom textureName);
         bool addFrame(GlobalPosition2F uvOffset, GlobalPosition2F uvSize);
         bool addFramesFromSpriteSheet(std::size_t columns, std::size_t rows,
-                                      std::size_t frameCount = 0,
-                                      std::size_t startRow = 0);
+                                      std::size_t frameCount = 0, std::size_t startRow = 0);
         bool setFrame(std::size_t index, Frame frame);
         bool removeFrame(std::size_t index);
         void clearFrames();
 
-        [[nodiscard]] bool isReady() const noexcept;
-        [[nodiscard]] const Frame* getCurrentFrame() const noexcept;
+        [[nodiscard]] bool isValid() const override;
+        [[nodiscard]] const Frame* getCurrentFrame() const;
         [[nodiscard]] bool hasFrames() const noexcept { return !_frames.empty(); }
         [[nodiscard]] std::size_t getFramesCount() const noexcept { return _frames.size(); }
         [[nodiscard]] const std::vector<Frame>& getFrames() const noexcept { return _frames; }
@@ -79,7 +86,10 @@ namespace Core::Animation
 
         void update(float delta) override;
 
-        [[nodiscard]] spdlog::logger* getLogger() const override { return Animations::getLogger(); };
+        [[nodiscard]] spdlog::logger* getLogger() const override
+        {
+            return Animations::getLogger();
+        };
 
     private:
         FIELD();

@@ -29,8 +29,7 @@
 
 namespace Core::Animation
 {
-    void to_json(nlohmann::json& j,
-                 const std::unordered_map<StringAtom, BaseAnimation::Ptr>& v)
+    void to_json(nlohmann::json& j, const std::unordered_map<StringAtom, BaseAnimation::Ptr>& v)
     {
         j = nlohmann::json::object();
 
@@ -43,8 +42,7 @@ namespace Core::Animation
         }
     }
 
-    void from_json(const nlohmann::json& j,
-                   std::unordered_map<StringAtom, BaseAnimation::Ptr>& v)
+    void from_json(const nlohmann::json& j, std::unordered_map<StringAtom, BaseAnimation::Ptr>& v)
     {
         if (!j.is_object() && !j.is_array())
         {
@@ -64,8 +62,7 @@ namespace Core::Animation
                 return;
             }
 
-            const auto type
-                = StringAtom::Intern(animationJson["_type"].get<StringAtom>());
+            const auto type = StringAtom::Intern(animationJson["_type"].get<StringAtom>());
             BaseComponent::Ptr component = GetGlobalComponentFactory().create(type);
             auto* animation = dynamic_cast<BaseAnimation*>(component.get());
             if (!animation)
@@ -96,7 +93,7 @@ namespace Core::Animation
         {
             for (const auto& [name, animationJson] : j.items())
             {
-                deserializeAnimation(animationJson, StringAtom{name.c_str()});
+                deserializeAnimation(animationJson, StringAtom{ name.c_str() });
             }
         }
 
@@ -121,7 +118,7 @@ namespace Core::Animation
 
     bool FrameByFrameAnimator::addAnimation(FrameByFrameAnimation animation)
     {
-        if (!animation.isReady())
+        if (!animation.isValid())
         {
             return false;
         }
@@ -129,8 +126,7 @@ namespace Core::Animation
         const auto name = animation.getComponentName();
         auto storedAnimation = FrameByFrameAnimation::Create();
         *storedAnimation = std::move(animation);
-        _animations.insert_or_assign(name, std::move(storedAnimation));
-        return true;
+        return _animations.insert_or_assign(name, std::move(storedAnimation)).second;
     }
 
     bool FrameByFrameAnimator::removeAnimation(const StringAtom& name)
@@ -146,6 +142,35 @@ namespace Core::Animation
     {
         _currentAnimationName.clear();
         _animations.clear();
+    }
+    FrameByFrameAnimation* FrameByFrameAnimator::getAnimation(const StringAtom& name)
+    {
+        const auto it = _animations.find(name);
+        if (it == _animations.end()) [[unlikely]]
+        {
+            return nullptr;
+        }
+        return dynamic_cast<FrameByFrameAnimation*>(it->second.get());
+    }
+
+    const FrameByFrameAnimation* FrameByFrameAnimator::getAnimation(const StringAtom& name) const
+    {
+        const auto it = _animations.find(name);
+        if (it == _animations.end())
+        {
+            return nullptr;
+        }
+        return dynamic_cast<const FrameByFrameAnimation*>(it->second.get());
+    }
+
+    FrameByFrameAnimation* FrameByFrameAnimator::getActiveAnimation()
+    {
+        return getAnimation(_currentAnimationName);
+    }
+
+    const FrameByFrameAnimation* FrameByFrameAnimator::getActiveAnimation() const
+    {
+        return getAnimation(_currentAnimationName);
     }
 
     bool FrameByFrameAnimator::containAnimation(const StringAtom& name) const
@@ -164,11 +189,9 @@ namespace Core::Animation
     {
         auto* rectangle = getParentAs<SceneObj::Rectangle>();
         const auto* animation = getActiveAnimation();
-        if (!Verify(
-                rectangle,
-                ("Only '{}' type is supported for animations."_f
-                 << R<SceneObj::Rectangle>::FullName())
-                    .c_str())
+        if (!Verify(rectangle, ("Only '{}' type is supported for animations."_f
+                                << R<SceneObj::Rectangle>::FullName())
+                                   .c_str())
             || !animation)
         {
             return;

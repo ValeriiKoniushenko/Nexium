@@ -107,7 +107,10 @@ namespace Core::Animation
             return !_isStopped && !_isPaused && !_isFinished;
         }
 
-        [[nodiscard]] spdlog::logger* getLogger() const override { return Animations::getLogger(); };
+        [[nodiscard]] spdlog::logger* getLogger() const override
+        {
+            return Animations::getLogger();
+        };
 
     protected:
         FIELD();

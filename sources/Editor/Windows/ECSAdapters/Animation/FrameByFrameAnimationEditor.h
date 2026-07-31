@@ -39,13 +39,12 @@ namespace Core
         void drawFrames();
         void drawNamedFrames(const std::vector<StringAtom>& regionNames);
         void drawSpriteSheet();
-        void drawFooter(const std::vector<StringAtom>& regionNames,
-                        const SaveCallback& onSave);
+        void drawFooter(const std::vector<StringAtom>& regionNames, const SaveCallback& onSave);
         void save(const SaveCallback& onSave);
-        [[nodiscard]] bool hasMissingUvBase(
-            const std::vector<StringAtom>& regionNames) const;
+        [[nodiscard]] bool hasMissingUvBase(const std::vector<StringAtom>& regionNames) const;
         [[nodiscard]] bool hasNameConflict() const;
 
+    private:
         Animation::FrameByFrameAnimator* _animator = nullptr;
         Animation::FrameByFrameAnimation _draft;
         StringAtom _editedName;

@@ -22,12 +22,11 @@
  * SOFTWARE.
  */
 
-#include "DummyComponent.h"
-
 #include "Animations/FrameByFrame/FrameByFrameAnimator.h"
+#include "DummyComponent.h"
 #include "Scene/Rectangle.h"
-#include "gtest/gtest.h"
 
+#include "gtest/gtest.h"
 #include <fstream>
 
 using namespace Core;
@@ -1002,19 +1001,19 @@ TEST_F(ECSTreeVehicleTests, FullDeserializationCheck)
 
 TEST(FrameByFrameAnimatorTests, AddedAnimationIsSerializedWithAnimatedPlayer)
 {
-    std::ifstream input{NEXIUM_PROJECT_DIR "/data/assets/AnimatedPlayer.nx"};
+    std::ifstream input{ NEXIUM_PROJECT_DIR "/data/assets/AnimatedPlayer.nx" };
     const auto assetJson = nlohmann::json::parse(input);
 
     SceneObj::Rectangle player;
-    RResourceStream<RJsonResourceStream> stream{assetJson["data"]};
+    RResourceStream<RJsonResourceStream> stream{ assetJson["data"] };
     player.deserialize(stream);
 
     auto* animator = player.findFirstChildOf<Animation::FrameByFrameAnimator>();
     ASSERT_NE(animator, nullptr);
 
-    Animation::FrameByFrameAnimation animation{"Serialization test"_atom};
+    Animation::FrameByFrameAnimation animation{ "Serialization test"_atom };
     animation.setAtlasName("default"_atom);
-    ASSERT_TRUE(animation.addFrame({0.f, 0.f}, {1.f, 1.f}));
+    ASSERT_TRUE(animation.addFrame({ 0.f, 0.f }, { 1.f, 1.f }));
     ASSERT_TRUE(animator->addAnimation(std::move(animation)));
 
     const auto serializedPlayer = player.serialize();

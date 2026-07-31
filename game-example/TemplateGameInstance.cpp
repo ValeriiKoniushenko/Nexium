@@ -25,5 +25,3 @@
 #include "TemplateGameInstance.h"
 
 using namespace Core;
-
-

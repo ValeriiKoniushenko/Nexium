@@ -30,7 +30,7 @@ namespace Core
     void ECSEditorFrameByFrameAnimationAdapter::onInitialize()
     {
         ECSEditorMimeAdapter::onInitialize();
-        _layout.setPaddings(glm::vec4{ImGui::GetStyle().ItemSpacing.x});
+        _layout.setPaddings(glm::vec4{ ImGui::GetStyle().ItemSpacing.x });
         _addAnimButton = _layout.addChildComponent<Gui::Button>();
         _addAnimButton->setText(ICON_FA_PLUS " Add animation");
         _addAnimButton->setFlex(Gui::Flex::FlexWidth);
@@ -56,8 +56,7 @@ namespace Core
         {
             names.push_back(name);
         }
-        std::ranges::sort(names,
-                          [](const auto& lhs, const auto& rhs)
+        std::ranges::sort(names, [](const auto& lhs, const auto& rhs)
                           { return lhs.toStdString() < rhs.toStdString(); });
 
         for (const auto& name : names)
@@ -74,9 +73,8 @@ namespace Core
             ImGui::SameLine();
             ImGui::TextDisabled("%zu frames | %.1f FPS%s", animation->getFramesCount(),
                                 animation->getFPS(), animation->isLooping() ? " | loop" : "");
-            FrameByFrameAnimationEditor::drawPreview(
-                *animation, ImGui::GetIO().DeltaTime, 112.f,
-                _previewStates["card:"_atom + name]);
+            FrameByFrameAnimationEditor::drawPreview(*animation, ImGui::GetIO().DeltaTime, 112.f,
+                                                     _previewStates["card:"_atom + name]);
             if (ImGui::Button(ICON_FA_PENCIL " Edit"))
             {
                 _animationEditor.edit(animator, name);
@@ -96,8 +94,7 @@ namespace Core
 
     void ECSEditorFrameByFrameAnimationAdapter::onDraw(float dt)
     {
-        if (Gui::CollapsingHeader("Frame-by-frame animations",
-                                  ImGuiTreeNodeFlags_DefaultOpen))
+        if (Gui::CollapsingHeader("Frame-by-frame animations", ImGuiTreeNodeFlags_DefaultOpen))
         {
             _layout.tick(dt);
             drawAnimationCards();
