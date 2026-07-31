@@ -36,27 +36,32 @@ namespace Core::Animation
 
         for (const auto& [name, animation] : v)
         {
-            j[name.c_str()] = animation;
+            if (animation)
+            {
+                j[name.c_str()] = animation->serialize();
+            }
         }
     }
 
     void from_json(const nlohmann::json& j,
                    std::unordered_map<StringAtom, BaseAnimation::Ptr>& v)
     {
-        if (!j.is_object())
+        if (!j.is_object() && !j.is_array())
         {
             throw nlohmann::json::type_error::create(
-                302, "Frame-by-frame animations must be represented by a JSON object", &j);
+                302, "Animations must be represented by a JSON array or object", &j);
         }
 
         std::unordered_map<StringAtom, BaseAnimation::Ptr> animations;
         animations.reserve(j.size());
 
-        for (const auto& [name, animationJson] : j.items())
+        const auto deserializeAnimation
+            = [&animations](const nlohmann::json& animationJson,
+                            const StringAtom& fallbackName = StringAtom{})
         {
             if (!animationJson.contains("_type"))
             {
-                continue;
+                return;
             }
 
             const auto type
@@ -65,14 +70,34 @@ namespace Core::Animation
             auto* animation = dynamic_cast<BaseAnimation*>(component.get());
             if (!animation)
             {
-                continue;
+                return;
             }
 
             RResourceStream<RJsonResourceStream> stream{ animationJson };
             animation->deserialize(stream);
-            StringAtom animationName{ name.c_str() };
-            animation->setComponentName(animationName);
-            animations.emplace(std::move(animationName), animation);
+            if (animation->getComponentName().isEmpty())
+            {
+                animation->setComponentName(fallbackName);
+            }
+            if (!animation->getComponentName().isEmpty())
+            {
+                animations.insert_or_assign(animation->getComponentName(), animation);
+            }
+        };
+
+        if (j.is_array())
+        {
+            for (const auto& animationJson : j)
+            {
+                deserializeAnimation(animationJson);
+            }
+        }
+        else
+        {
+            for (const auto& [name, animationJson] : j.items())
+            {
+                deserializeAnimation(animationJson, StringAtom{name.c_str()});
+            }
         }
 
         v = std::move(animations);

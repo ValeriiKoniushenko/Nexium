@@ -12,9 +12,9 @@
                     0.0
                 ],
                 "_position": [
-                    -74.13346099853516,
-                    55.03404998779297,
-                    106.03366088867188
+                    -43.64704895019531,
+                    87.24829864501953,
+                    343.9142761230469
                 ],
                 "_rotation": [
                     7.875,
@@ -117,7 +117,7 @@
             },
             "typeSpecificData": {
                 "_atlasName": "player_walk",
-                "_blendingEnabled": false,
+                "_blendingEnabled": true,
                 "_textureName": "MPlayer_walk.png"
             }
         },
@@ -149,10 +149,10 @@
             },
             "typeSpecificData": {
                 "_animationFPS": 10.0,
-                "_animationName": "New animation",
-                "_atlasName": "santa_walk",
+                "_animationName": "test",
+                "_atlasName": "player_walk",
                 "_blendingEnabled": true,
-                "_textureName": "Walk_6.png"
+                "_textureName": "MPlayer_walk.png"
             }
         }
     ]

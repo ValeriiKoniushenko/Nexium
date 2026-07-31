@@ -5,7 +5,7 @@
         64.0
     ],
     "_innerSize": {
-        "height": 963.0,
+        "height": 931.0,
         "width": 411.0
     },
     "_isEnabled": true,
@@ -17,7 +17,7 @@
     "_name": " Object properties",
     "_noTick": false,
     "_oldSize": {
-        "height": 1003.0,
+        "height": 971.0,
         "width": 427.0
     },
     "_position": [
@@ -25,7 +25,7 @@
         32.0
     ],
     "_size": {
-        "height": 1003.0,
+        "height": 971.0,
         "width": 427.0
     },
     "_type": "Core::ObjectPropertiesWindowEWC"
