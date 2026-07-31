@@ -42,6 +42,8 @@ Checks: >
   -readability-redundant-access-specifiers,
   -readability-identifier-naming,
   -readability-const-return-type,
+  -readability-simplify-boolean-expr,
+  -readability-math-missing-parentheses
 
   -bugprone-easily-swappable-parameters,
   -bugprone-crtp-constructor-accessibility,

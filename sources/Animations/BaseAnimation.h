@@ -93,8 +93,6 @@ namespace Core::Animation
          */
         virtual void restart();
 
-        virtual void update(float delta) = 0;
-
         void setLoop(bool value) noexcept { _isLooping = value; }
 
         [[nodiscard]] bool isStopped() const noexcept { return _isStopped; }

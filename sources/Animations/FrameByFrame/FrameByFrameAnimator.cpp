@@ -116,7 +116,7 @@ namespace Core::Animation
         return true;
     }
 
-    bool FrameByFrameAnimator::addAnimation(FrameByFrameAnimation animation)
+    bool FrameByFrameAnimator::addAnimation(const FrameByFrameAnimation& animation)
     {
         if (!animation.isValid())
         {
@@ -215,7 +215,7 @@ namespace Core::Animation
     {
         if (auto* animation = getActiveAnimation())
         {
-            animation->update(delta);
+            animation->tick(delta);
         }
     }
 } // namespace Core::Animation

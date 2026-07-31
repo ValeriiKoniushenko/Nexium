@@ -65,14 +65,14 @@ namespace Core::Animation
         void reset() override;
         void finish() override;
 
-        void setAtlasName(StringAtom atlasName) { _atlasName = std::move(atlasName); }
-        void setTextureName(StringAtom textureName) { _textureName = std::move(textureName); }
+        void setAtlasName(const StringAtom& atlasName) { _atlasName = atlasName; }
+        void setTextureName(const StringAtom& textureName) { _textureName = textureName; }
 
         bool addFrame(StringAtom textureName);
         bool addFrame(GlobalPosition2F uvOffset, GlobalPosition2F uvSize);
         bool addFramesFromSpriteSheet(std::size_t columns, std::size_t rows,
                                       std::size_t frameCount = 0, std::size_t startRow = 0);
-        bool setFrame(std::size_t index, Frame frame);
+        bool setFrame(std::size_t index, const Frame& frame);
         bool removeFrame(std::size_t index);
         void clearFrames();
 
@@ -84,7 +84,7 @@ namespace Core::Animation
         [[nodiscard]] const StringAtom& getAtlasName() const noexcept { return _atlasName; }
         [[nodiscard]] const StringAtom& getTextureName() const noexcept { return _textureName; }
 
-        void update(float delta) override;
+        void onTick(float delta) override;
 
         [[nodiscard]] spdlog::logger* getLogger() const override
         {

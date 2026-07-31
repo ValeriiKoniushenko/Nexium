@@ -35,14 +35,16 @@ namespace Core::Animation
 
     void from_json(const nlohmann::json& j, Frame& v)
     {
-        RResourceStream<RJsonResourceStream> data(j);
+        const RResourceStream<RJsonResourceStream> data(j);
         R<Frame>::Deserialize(data, v);
     }
 
     ECS_IMPL(Core::Animation::FrameByFrameAnimation);
 
-    void FrameByFrameAnimation::update(float delta)
+    void FrameByFrameAnimation::onTick(float delta)
     {
+        BaseAnimation::onTick(delta);
+
         if (!isPlaying() || _frames.empty() || delta <= 0.f)
         {
             return;
@@ -111,6 +113,9 @@ namespace Core::Animation
             return false;
         }
 
+        textureName.trim();
+        textureName.shrinkToFit();
+
         _frames.emplace_back(Frame{ .name = textureName, .textureName = std::move(textureName) });
         return true;
     }
@@ -174,7 +179,7 @@ namespace Core::Animation
         return true;
     }
 
-    bool FrameByFrameAnimation::setFrame(std::size_t index, Frame frame)
+    bool FrameByFrameAnimation::setFrame(std::size_t index, const Frame& frame)
     {
         if (index >= _frames.size() || frame.uvOffset.x < 0.f || frame.uvOffset.y < 0.f
             || frame.uvSize.x <= 0.f || frame.uvSize.y <= 0.f
@@ -182,7 +187,7 @@ namespace Core::Animation
         {
             return false;
         }
-        _frames[index] = std::move(frame);
+        _frames[index] = frame;
         return true;
     }
 

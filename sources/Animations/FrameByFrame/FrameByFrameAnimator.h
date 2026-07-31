@@ -41,7 +41,7 @@ namespace Core::Animation
     public:
         bool startAnimation(const StringAtom& name);
 
-        bool addAnimation(FrameByFrameAnimation animation);
+        bool addAnimation(const FrameByFrameAnimation& animation);
         bool removeAnimation(const StringAtom& name);
         void clearAnimations();
 
