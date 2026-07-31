@@ -644,11 +644,11 @@ namespace Core
                         if (animator)
                         {
                             if (auto* animation
-                                = animator->getAnimation(animator->getCurrentAnimationName()))
+                                = animator->getAnimation(animator->getActiveAnimationName()))
                             {
                                 animation->setFPS(fps);
                                 rectangle->setAnimationOverride(
-                                    animator->getCurrentAnimationName(), fps);
+                                    animator->getActiveAnimationName(), fps);
                             }
                         }
                     }
@@ -1034,9 +1034,10 @@ namespace Core
             }
             if (_rectAnimationFPSRow)
             {
-                _rectAnimationFPSRow->setEnabled(animator && animator->hasCurrentAnimation());
+                _rectAnimationFPSRow->setEnabled(
+                    animator && animator->getActiveAnimation());
             }
-            if (animator && _rectComboAnimation && animator->hasCurrentAnimation())
+            if (animator && _rectComboAnimation && animator->getActiveAnimation())
             {
                 std::vector<StringAtom> animationNames;
                 animationNames.reserve(animator->getAnimations().size());
@@ -1048,15 +1049,14 @@ namespace Core
                                   [](const auto& lhs, const auto& rhs)
                                   { return lhs.toStdString() < rhs.toStdString(); });
                 if (const auto it = std::ranges::find(
-                        animationNames, animator->getCurrentAnimationName());
+                        animationNames, animator->getActiveAnimationName());
                     it != animationNames.end())
                 {
                     _rectComboAnimation->setCurrentIndex(it - animationNames.begin());
                 }
                 if (_rectAnimationFPS)
                 {
-                    if (const auto* animation
-                        = animator->getAnimation(animator->getCurrentAnimationName()))
+                    if (const auto* animation = animator->getActiveAnimation())
                     {
                         _rectAnimationFPS->setInputtedData(animation->getFPS());
                     }

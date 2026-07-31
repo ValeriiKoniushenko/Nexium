@@ -29,7 +29,8 @@
 
 namespace Core::Animation
 {
-    void to_json(nlohmann::json& j, const std::unordered_map<StringAtom, FrameByFrameAnimation>& v)
+    void to_json(nlohmann::json& j,
+                 const std::unordered_map<StringAtom, BaseAnimation::Ptr>& v)
     {
         j = nlohmann::json::object();
 
@@ -39,7 +40,8 @@ namespace Core::Animation
         }
     }
 
-    void from_json(const nlohmann::json& j, std::unordered_map<StringAtom, FrameByFrameAnimation>& v)
+    void from_json(const nlohmann::json& j,
+                   std::unordered_map<StringAtom, BaseAnimation::Ptr>& v)
     {
         if (!j.is_object())
         {
@@ -47,17 +49,30 @@ namespace Core::Animation
                 302, "Frame-by-frame animations must be represented by a JSON object", &j);
         }
 
-        std::unordered_map<StringAtom, FrameByFrameAnimation> animations;
+        std::unordered_map<StringAtom, BaseAnimation::Ptr> animations;
         animations.reserve(j.size());
 
         for (const auto& [name, animationJson] : j.items())
         {
-            FrameByFrameAnimation animation;
-            RResourceStream<RJsonResourceStream> stream{animationJson};
-            animation.deserialize(stream);
-            StringAtom animationName{name.c_str()};
-            animation.setComponentName(animationName);
-            animations.emplace(std::move(animationName), std::move(animation));
+            if (!animationJson.contains("_type"))
+            {
+                continue;
+            }
+
+            const auto type
+                = StringAtom::Intern(animationJson["_type"].get<StringAtom>());
+            BaseComponent::Ptr component = GetGlobalComponentFactory().create(type);
+            auto* animation = dynamic_cast<BaseAnimation*>(component.get());
+            if (!animation)
+            {
+                continue;
+            }
+
+            RResourceStream<RJsonResourceStream> stream{ animationJson };
+            animation->deserialize(stream);
+            StringAtom animationName{ name.c_str() };
+            animation->setComponentName(animationName);
+            animations.emplace(std::move(animationName), animation);
         }
 
         v = std::move(animations);
@@ -73,145 +88,63 @@ namespace Core::Animation
             return false;
         }
 
-        _currentState = name;
+        _currentAnimationName = name;
         animation->restart();
-        applyCurrentFrame();
-        return true;
-    }
-
-    bool FrameByFrameAnimator::stopAnimation()
-    {
-        auto* animation = getAnimation(_currentState);
-        if (!animation)
-        {
-            return false;
-        }
-        animation->stop();
-        return true;
-    }
-
-    bool FrameByFrameAnimator::pauseAnimation()
-    {
-        auto* animation = getAnimation(_currentState);
-        if (!animation || !animation->isPlaying())
-        {
-            return false;
-        }
-        animation->pause();
-        return true;
-    }
-
-    bool FrameByFrameAnimator::resumeAnimation()
-    {
-        auto* animation = getAnimation(_currentState);
-        if (!animation || !animation->isPaused())
-        {
-            return false;
-        }
-        animation->resume();
-        return true;
-    }
-
-    bool FrameByFrameAnimator::resetAnimation()
-    {
-        auto* animation = getAnimation(_currentState);
-        if (!animation)
-        {
-            return false;
-        }
-        animation->reset();
-        applyCurrentFrame();
-        return true;
-    }
-
-    bool FrameByFrameAnimator::finishAnimation()
-    {
-        auto* animation = getAnimation(_currentState);
-        if (!animation)
-        {
-            return false;
-        }
-        animation->finish();
-        applyCurrentFrame();
+        applyCurrentFrameToRectangle();
         return true;
     }
 
     bool FrameByFrameAnimator::addAnimation(FrameByFrameAnimation animation)
     {
-        if (!animation.isValid())
+        if (!animation.isReady())
         {
             return false;
         }
 
         const auto name = animation.getComponentName();
-        _animations.insert_or_assign(name, std::move(animation));
+        auto storedAnimation = FrameByFrameAnimation::Create();
+        *storedAnimation = std::move(animation);
+        _animations.insert_or_assign(name, std::move(storedAnimation));
         return true;
     }
 
     bool FrameByFrameAnimator::removeAnimation(const StringAtom& name)
     {
-        if (_currentState == name)
+        if (_currentAnimationName == name)
         {
-            _currentState = StringAtom{};
+            _currentAnimationName.clear();
         }
         return _animations.erase(name) > 0;
     }
 
     void FrameByFrameAnimator::clearAnimations()
     {
-        _currentState = StringAtom{};
+        _currentAnimationName.clear();
         _animations.clear();
     }
 
-    const StringAtom& FrameByFrameAnimator::getCurrentAtlasName() const
-    {
-        if (const auto* animation = getAnimation(_currentState))
-        {
-            return animation->getAtlasName();
-        }
-
-        static const StringAtom empty;
-        return empty;
-    }
-
-    const Frame* FrameByFrameAnimator::getCurrentFrame() const
-    {
-        if (const auto* animation = getAnimation(_currentState))
-        {
-            return animation->getCurrentFrame();
-        }
-
-        return nullptr;
-    }
-
-    bool FrameByFrameAnimator::hasAnimation(const StringAtom& name) const
+    bool FrameByFrameAnimator::containAnimation(const StringAtom& name) const
     {
         return _animations.contains(name);
-    }
-
-    bool FrameByFrameAnimator::hasCurrentAnimation() const
-    {
-        return getAnimation(_currentState) != nullptr;
-    }
-
-    bool FrameByFrameAnimator::isPlaying() const
-    {
-        const auto* animation = getAnimation(_currentState);
-        return animation && animation->isPlaying();
     }
 
     void FrameByFrameAnimator::onTick(float delta)
     {
         BaseComponent::onTick(delta);
         updateCurrentAnimation(delta);
-        applyCurrentFrame();
+        applyCurrentFrameToRectangle();
     }
 
-    void FrameByFrameAnimator::applyCurrentFrame()
+    void FrameByFrameAnimator::applyCurrentFrameToRectangle()
     {
         auto* rectangle = getParentAs<SceneObj::Rectangle>();
-        auto* animation = getAnimation(_currentState);
-        if (!rectangle || !animation)
+        const auto* animation = getActiveAnimation();
+        if (!Verify(
+                rectangle,
+                ("Only '{}' type is supported for animations."_f
+                 << R<SceneObj::Rectangle>::FullName())
+                    .c_str())
+            || !animation)
         {
             return;
         }
@@ -232,7 +165,7 @@ namespace Core::Animation
 
     void FrameByFrameAnimator::updateCurrentAnimation(float delta)
     {
-        if (auto* animation = getAnimation(_currentState))
+        if (auto* animation = getActiveAnimation())
         {
             animation->update(delta);
         }

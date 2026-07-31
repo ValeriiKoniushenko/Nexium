@@ -69,7 +69,7 @@ namespace Core::Animation
         bool removeFrame(std::size_t index);
         void clearFrames();
 
-        [[nodiscard]] bool isValid() const noexcept;
+        [[nodiscard]] bool isReady() const noexcept;
         [[nodiscard]] const Frame* getCurrentFrame() const noexcept;
         [[nodiscard]] bool hasFrames() const noexcept { return !_frames.empty(); }
         [[nodiscard]] std::size_t getFramesCount() const noexcept { return _frames.size(); }
@@ -92,7 +92,7 @@ namespace Core::Animation
         FIELD();
         std::size_t _currentFrame = 0;
         FIELD();
-        float _timer = 0.f;
+        float _frameTimeAccumulator = 0.f;
         FIELD();
         float _fps = 10.f;
     };

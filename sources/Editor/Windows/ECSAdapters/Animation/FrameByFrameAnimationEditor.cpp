@@ -242,7 +242,7 @@ namespace Core
 
     bool FrameByFrameAnimationEditor::hasNameConflict() const
     {
-        return _animator && _animator->hasAnimation(_draft.getComponentName())
+        return _animator && _animator->containAnimation(_draft.getComponentName())
             && (_isCreating || _draft.getComponentName() != _editedName);
     }
 
@@ -338,7 +338,7 @@ namespace Core
     void FrameByFrameAnimationEditor::save(const SaveCallback& onSave)
     {
         const bool wasCurrent
-            = !_isCreating && _animator->getCurrentAnimationName() == _editedName;
+            = !_isCreating && _animator->getActiveAnimationName() == _editedName;
         if (!_isCreating && _editedName != _draft.getComponentName())
         {
             _animator->removeAnimation(_editedName);
@@ -362,7 +362,7 @@ namespace Core
         const bool missingUvBase = hasMissingUvBase(regionNames);
         const bool nameConflict = hasNameConflict();
         ImGui::Separator();
-        if (!_draft.isValid() || missingUvBase)
+        if (!_draft.isReady() || missingUvBase)
         {
             ImGui::TextColored({1.f, .45f, .35f, 1.f},
                                missingUvBase
@@ -374,7 +374,7 @@ namespace Core
             ImGui::TextColored({1.f, .45f, .35f, 1.f}, "Animation name already exists.");
         }
 
-        ImGui::BeginDisabled(!_draft.isValid() || missingUvBase || nameConflict);
+        ImGui::BeginDisabled(!_draft.isReady() || missingUvBase || nameConflict);
         if (ImGui::Button("Save"))
         {
             save(onSave);

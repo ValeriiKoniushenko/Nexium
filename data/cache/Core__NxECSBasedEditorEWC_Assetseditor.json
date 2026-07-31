@@ -37,12 +37,12 @@
         }
     ],
     "_innerPosition": [
-        386.0,
+        247.0,
         88.0
     ],
     "_innerSize": {
         "height": 592.0,
-        "width": 1079.0
+        "width": 1218.0
     },
     "_isEnabled": true,
     "_isFitContent": false,
@@ -54,15 +54,15 @@
     "_noTick": false,
     "_oldSize": {
         "height": 656.0,
-        "width": 1105.0
+        "width": 1244.0
     },
     "_position": [
-        378.0,
+        239.0,
         32.0
     ],
     "_size": {
         "height": 656.0,
-        "width": 1105.0
+        "width": 1244.0
     },
     "_type": "Core::NxECSBasedEditorEWC"
 }

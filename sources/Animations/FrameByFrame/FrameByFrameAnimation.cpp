@@ -60,12 +60,12 @@ namespace Core::Animation
             return;
         }
 
-        _timer += delta;
+        _frameTimeAccumulator += delta;
 
-        const float frameTime = 1.f / _fps;
-        while (_timer >= frameTime)
+        const float frameDuration = 1.f / _fps;
+        while (_frameTimeAccumulator >= frameDuration)
         {
-            _timer -= frameTime;
+            _frameTimeAccumulator -= frameDuration;
             _currentFrame++;
 
             if (_currentFrame >= _frames.size())
@@ -91,7 +91,7 @@ namespace Core::Animation
             errorLog("FPS must be > 0");
             return;
         }
-        _fps = fps;
+        _fps = std::max(fps, 0.f);
     }
 
     void FrameByFrameAnimation::start()
@@ -107,7 +107,7 @@ namespace Core::Animation
     {
         BaseAnimation::reset();
         _currentFrame = 0;
-        _timer = 0.f;
+        _frameTimeAccumulator = 0.f;
     }
 
     void FrameByFrameAnimation::finish()
@@ -118,7 +118,7 @@ namespace Core::Animation
         {
             _currentFrame = _frames.size() - 1;
         }
-        _timer = 0.f;
+        _frameTimeAccumulator = 0.f;
     }
 
     bool FrameByFrameAnimation::addFrame(StringAtom textureName)
@@ -228,10 +228,10 @@ namespace Core::Animation
     {
         _frames.clear();
         _currentFrame = 0;
-        _timer = 0.f;
+        _frameTimeAccumulator = 0.f;
     }
 
-    bool FrameByFrameAnimation::isValid() const noexcept
+    bool FrameByFrameAnimation::isReady() const noexcept
     {
         if (getComponentName().isEmpty() || _atlasName.isEmpty() || _frames.empty()
             || _fps <= 0.f)

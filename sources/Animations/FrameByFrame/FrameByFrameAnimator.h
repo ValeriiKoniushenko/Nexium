@@ -40,18 +40,10 @@ namespace Core::Animation
 
     public:
         bool startAnimation(const StringAtom& name);
-        bool stopAnimation();
-        bool pauseAnimation();
-        bool resumeAnimation();
-        bool resetAnimation();
-        bool finishAnimation();
 
         bool addAnimation(FrameByFrameAnimation animation);
         bool removeAnimation(const StringAtom& name);
         void clearAnimations();
-
-        [[nodiscard]] const StringAtom& getCurrentAtlasName() const;
-        [[nodiscard]] const Frame* getCurrentFrame() const;
 
         [[nodiscard]] FrameByFrameAnimation* getAnimation(const StringAtom& name)
         {
@@ -60,7 +52,7 @@ namespace Core::Animation
             {
                 return nullptr;
             }
-            return &it->second;
+            return dynamic_cast<FrameByFrameAnimation*>(it->second.get());
         }
 
         [[nodiscard]] const FrameByFrameAnimation*
@@ -71,17 +63,25 @@ namespace Core::Animation
             {
                 return nullptr;
             }
-            return &it->second;
+            return dynamic_cast<const FrameByFrameAnimation*>(it->second.get());
         }
 
-        [[nodiscard]] bool hasAnimation(const StringAtom& name) const;
-        [[nodiscard]] bool hasCurrentAnimation() const;
-        [[nodiscard]] bool isPlaying() const;
-        [[nodiscard]] const StringAtom& getCurrentAnimationName() const noexcept
+        [[nodiscard]] FrameByFrameAnimation* getActiveAnimation()
         {
-            return _currentState;
+            return getAnimation(_currentAnimationName);
         }
-        [[nodiscard]] const std::unordered_map<StringAtom, FrameByFrameAnimation>&
+
+        [[nodiscard]] const FrameByFrameAnimation* getActiveAnimation() const
+        {
+            return getAnimation(_currentAnimationName);
+        }
+
+        [[nodiscard]] bool containAnimation(const StringAtom& name) const;
+        [[nodiscard]] const StringAtom& getActiveAnimationName() const noexcept
+        {
+            return _currentAnimationName;
+        }
+        [[nodiscard]] const std::unordered_map<StringAtom, BaseAnimation::Ptr>&
         getAnimations() const noexcept
         {
             return _animations;
@@ -91,18 +91,19 @@ namespace Core::Animation
         void onTick(float delta) override;
 
     private:
-        void applyCurrentFrame();
+        void applyCurrentFrameToRectangle();
         void updateCurrentAnimation(float delta);
 
         FIELD();
-        std::unordered_map<StringAtom, FrameByFrameAnimation> _animations;
+        std::unordered_map<StringAtom, BaseAnimation::Ptr> _animations;
 
         FIELD();
-        StringAtom _currentState;
+        StringAtom _currentAnimationName;
     };
 
-    void to_json(nlohmann::json& j, const std::unordered_map<StringAtom, FrameByFrameAnimation>& v);
-    void from_json(const nlohmann::json& j, std::unordered_map<StringAtom, FrameByFrameAnimation>& v);
+    void to_json(nlohmann::json& j, const std::unordered_map<StringAtom, BaseAnimation::Ptr>& v);
+    void from_json(const nlohmann::json& j,
+                   std::unordered_map<StringAtom, BaseAnimation::Ptr>& v);
 } // namespace Core::Animation
 
 #include "FrameByFrameAnimator.generated.h" // added by the code generator. Better don't move it.
