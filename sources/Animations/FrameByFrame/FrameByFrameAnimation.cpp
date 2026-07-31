@@ -233,7 +233,7 @@ namespace Core::Animation
 
     bool FrameByFrameAnimation::isValid() const noexcept
     {
-        if (_animationName.isEmpty() || _atlasName.isEmpty() || _frames.empty()
+        if (getComponentName().isEmpty() || _atlasName.isEmpty() || _frames.empty()
             || _fps <= 0.f)
         {
             return false;

@@ -54,7 +54,7 @@ namespace Core
 
     void FrameByFrameAnimationEditor::copyDraftToBuffers()
     {
-        CopyToBuffer(_name, _draft.getAnimationName());
+        CopyToBuffer(_name, _draft.getComponentName());
         CopyToBuffer(_atlas, _draft.getAtlasName());
         CopyToBuffer(_texture, _draft.getTextureName());
         _frameTexture.fill('\0');
@@ -65,7 +65,7 @@ namespace Core
 
     void FrameByFrameAnimationEditor::applyBuffersToDraft()
     {
-        _draft.setAnimationName(StringAtom{_name.data()});
+        _draft.setComponentName(StringAtom{_name.data()});
         _draft.setAtlasName(StringAtom{_atlas.data()});
         _draft.setTextureName(StringAtom{_texture.data()});
         _draft.setFPS(std::max(_fps, 0.01f));
@@ -242,8 +242,8 @@ namespace Core
 
     bool FrameByFrameAnimationEditor::hasNameConflict() const
     {
-        return _animator && _animator->hasAnimation(_draft.getAnimationName())
-            && (_isCreating || _draft.getAnimationName() != _editedName);
+        return _animator && _animator->hasAnimation(_draft.getComponentName())
+            && (_isCreating || _draft.getComponentName() != _editedName);
     }
 
     std::vector<StringAtom> FrameByFrameAnimationEditor::drawAtlasSelector()
@@ -339,14 +339,14 @@ namespace Core
     {
         const bool wasCurrent
             = !_isCreating && _animator->getCurrentAnimationName() == _editedName;
-        if (!_isCreating && _editedName != _draft.getAnimationName())
+        if (!_isCreating && _editedName != _draft.getComponentName())
         {
             _animator->removeAnimation(_editedName);
         }
         _animator->addAnimation(_draft);
         if (wasCurrent)
         {
-            _animator->startAnimation(_draft.getAnimationName());
+            _animator->startAnimation(_draft.getComponentName());
         }
         if (onSave)
         {

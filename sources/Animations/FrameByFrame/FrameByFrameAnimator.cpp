@@ -55,7 +55,9 @@ namespace Core::Animation
             FrameByFrameAnimation animation;
             RResourceStream<RJsonResourceStream> stream{animationJson};
             animation.deserialize(stream);
-            animations.emplace(StringAtom{name.c_str()}, std::move(animation));
+            StringAtom animationName{name.c_str()};
+            animation.setComponentName(animationName);
+            animations.emplace(std::move(animationName), std::move(animation));
         }
 
         v = std::move(animations);
@@ -141,7 +143,7 @@ namespace Core::Animation
             return false;
         }
 
-        const auto name = animation.getAnimationName();
+        const auto name = animation.getComponentName();
         _animations.insert_or_assign(name, std::move(animation));
         return true;
     }
