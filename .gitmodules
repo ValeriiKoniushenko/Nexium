@@ -26,4 +26,5 @@
 [submodule "dependencies/JustReflectMe"]
 	path = dependencies/JustReflectMe
 	url = https://github.com/ValeriiKoniushenko/JustReflectMe.git
-	branch = develop
+    branch = develop
+    ignore = dirty
