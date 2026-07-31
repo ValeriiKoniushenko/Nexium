@@ -51,7 +51,6 @@ namespace Core
     void Gizmo::onMousePicked(StaticMesh* clickedPart)
     {
         StaticMeshBundle::onMousePicked(clickedPart);
-
         handleDragStart(clickedPart);
     }
 
@@ -93,6 +92,7 @@ namespace Core
             gDragDrop.payload.type = DragData::dragType;
             DragData data;
             const char directionChar
+
                 = static_cast<char>(toupper(touchedMesh->getComponentName()[0])) - 'X';
 
             data.direction = static_cast<Direction>(directionChar);

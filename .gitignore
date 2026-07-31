@@ -12,8 +12,11 @@
 /.jrm/cache.data
 /.cache
 
+.vscode
 string_metrics.csv
 iwyu.log
+
+__pycache__
 
 /sources/**/*.generated.h
 /sources/**/*.generated.cpp

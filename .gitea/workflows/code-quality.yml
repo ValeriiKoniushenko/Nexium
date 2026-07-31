@@ -1,0 +1,138 @@
+name: Code Quality
+
+on:
+  pull_request:
+  push:
+    branches:
+      - develop
+
+jobs:
+  clang-format:
+    name: clang-format
+    runs-on: linux
+    container:
+      image: cpp-ci:latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check clang-format
+        env:
+          GITEATOKEN: ${{ secrets.GITEATOKEN }}
+        run: |
+          python3 .gitea/check_clang_format.py --base develop
+
+  build:
+    name: "Build: Linux | Clang 22.1.8"
+    needs: clang-format
+    runs-on: linux
+    container:
+      image: cpp-ci:latest
+      volumes:
+        - /srv/ci-cache/ccache:/ccache
+        - /srv/ci-cache/git-repo:/repo-cache
+        - /srv/ci-cache/build-cache:/build-cache
+    env:
+      CCACHE_DIR: /ccache
+      CC: clang
+      CXX: clang++
+    steps:
+      - name: Sync repo cache
+        env:
+          GITEATOKEN: ${{ secrets.GITEATOKEN }}
+        run: |
+          REPO_URL="https://oauth2:${GITEATOKEN}@gitea.vakon.dev/${GITHUB_REPOSITORY}.git"
+
+          if [ -d /repo-cache/.git ]; then
+            echo "Using existing repo cache"
+            cd /repo-cache
+            git remote set-url origin "$REPO_URL"
+            git fetch origin "$GITHUB_SHA" develop
+            git checkout -f "$GITHUB_SHA"
+            git submodule sync --recursive
+            git submodule update --init --recursive --depth=1
+          else
+            echo "No cache found, cloning fresh"
+            git clone --recurse-submodules --shallow-submodules "$REPO_URL" /repo-cache
+            cd /repo-cache
+            git fetch --depth=1 origin "$GITHUB_SHA"
+            git checkout -f "$GITHUB_SHA"
+          fi
+
+          mkdir -p "$GITHUB_WORKSPACE"
+          cp -a /repo-cache/. "$GITHUB_WORKSPACE"/
+
+      - name: Configure
+        run: |
+          cmake -S . -B build \
+            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+            -DNEXIUM_DISABLE_TESTS=ON \
+            -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+
+      - name: Build
+        run: cmake --build build -j$(nproc)
+
+      - name: Save build cache
+        run: rsync -a --delete build/ /build-cache/
+
+  clang-tidy:
+    name: clang-tidy
+    needs: build
+    runs-on: linux
+    container:
+      image: cpp-ci:latest
+      volumes:
+        - /srv/ci-cache/git-repo:/repo-cache
+        - /srv/ci-cache/build-cache:/build-cache
+    steps:
+      - name: Sync repo cache
+        env:
+          GITEATOKEN: ${{ secrets.GITEATOKEN }}
+        run: |
+          REPO_URL="https://oauth2:${GITEATOKEN}@gitea.vakon.dev/${GITHUB_REPOSITORY}.git"
+
+          if [ -d /repo-cache/.git ]; then
+            echo "Using existing repo cache"
+            cd /repo-cache
+            git remote set-url origin "$REPO_URL"
+            git fetch --depth=1 origin "$GITHUB_SHA"
+            git checkout -f "$GITHUB_SHA"
+            git submodule sync --recursive
+            git submodule update --init --recursive --depth=1
+          else
+            echo "No cache found, cloning fresh"
+            git clone --recurse-submodules --shallow-submodules "$REPO_URL" /repo-cache
+            cd /repo-cache
+            git fetch --depth=1 origin "$GITHUB_SHA"
+            git checkout -f "$GITHUB_SHA"
+          fi
+
+          mkdir -p "$GITHUB_WORKSPACE"
+          cp -a /repo-cache/. "$GITHUB_WORKSPACE"/
+
+      - name: Fetch develop for diffing
+        run: |
+          git fetch --unshallow origin || true
+          git fetch origin develop:refs/remotes/origin/develop
+
+      - name: Restore build output
+        run: |
+          mkdir -p build
+          rsync -a /build-cache/ build/
+
+      - name: Check clang-tidy
+        env:
+          GITEATOKEN: ${{ secrets.GITEATOKEN }}
+        run: |
+          set +e
+          python3 .gitea/check_clang_tidy.py --base develop --build-dir build
+          exit_code=$?
+          set -e
+          if [ $exit_code -eq 1 ]; then
+            echo "clang-tidy found issues, but continuing (non-blocking mode)"
+            exit 0
+          fi
+          exit $exit_code
