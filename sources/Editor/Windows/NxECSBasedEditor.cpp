@@ -24,6 +24,7 @@
 
 #include "NxECSBasedEditor.h"
 
+#include "ECSAdapters/Animation/ECSEditorFrameByFrameAnimationAdapter.h"
 #include "ECSAdapters/BaseComponentAdapter.h"
 #include "ECSAdapters/EditorActorAdapter.h"
 #include "ECSAdapters/EditorInterleavedGraphicsDataAdapter.h"
@@ -138,6 +139,7 @@ namespace Core
         addUniqueTypeChildComponent<ECSEditorActorAdapter>();
         addUniqueTypeChildComponent<ECSEditorStaticMeshBundleAdapter>();
         addUniqueTypeChildComponent<ECSEditorInterleavedGraphicsDataAdapter>();
+        addUniqueTypeChildComponent<ECSEditorFrameByFrameAnimationAdapter>();
 
         setEnablePreview(true);
         setEnableTree(true);

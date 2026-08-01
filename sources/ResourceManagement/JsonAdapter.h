@@ -25,6 +25,7 @@
 #pragma once
 
 #include "Core/Color.h"
+#include "Core/Position.h"
 #include "Core/Size.h"
 #include "JustReflectMe/Adapter.h"
 #include "nlohmann/json.hpp"
@@ -102,6 +103,25 @@ namespace Core
 
     void to_json(nlohmann::json& j, const NormColor4& color);
 
+    template<glm::length_t L, typename T, glm::qualifier Q = glm::defaultp>
+    void to_json(nlohmann::json& j, const GlobalPosition<L, T, Q>& v)
+    {
+        auto out = nlohmann::json::array();
+        // clang-format off
+        if constexpr (L > 0) out.push_back(v.x);
+        if constexpr (L > 1) out.push_back(v.y);
+        if constexpr (L > 2) out.push_back(v.z);
+        if constexpr (L > 3) out.push_back(v.w);
+        // clang-format on
+
+        if constexpr (L > 4)
+        {
+            static_assert(false, "Can't convert to json unrecognized GlobalPosition length");
+        }
+
+        j = out;
+    }
+
     void from_json(const nlohmann::json& j, Color3& color);
 
     void from_json(const nlohmann::json& j, Color4& color);
@@ -110,6 +130,21 @@ namespace Core
 
     void from_json(const nlohmann::json& j, NormColor4& color);
 
+    template<glm::length_t L, typename T, glm::qualifier Q = glm::defaultp>
+    void from_json(const nlohmann::json& j, GlobalPosition<L, T, Q>& v)
+    {
+        // clang-format off
+        if constexpr (L > 0) j.at(0).get_to(v.x);
+        if constexpr (L > 1) j.at(1).get_to(v.y);
+        if constexpr (L > 2) j.at(2).get_to(v.z);
+        if constexpr (L > 3) j.at(3).get_to(v.w);
+        // clang-format on
+
+        if constexpr (L > 4)
+        {
+            static_assert(false, "Can't convert from json unrecognized GlobalPosition length");
+        }
+    }
 } // namespace Core
 
 template<class T>

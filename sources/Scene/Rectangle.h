@@ -26,6 +26,8 @@
 
 #include "Scene/SceneObject.h"
 
+#include <utility>
+
 namespace Core::SceneObj
 {
 
@@ -39,6 +41,27 @@ namespace Core::SceneObj
 
         [[nodiscard]] StringAtom getTextureName() const { return _textureName; }
         void setTexture(const StringAtom& value) { _textureName = value; }
+        void setTextureUV(GlobalPosition2F offset, GlobalPosition2F size)
+        {
+            _textureUVOffset = std::move(offset);
+            _textureUVSize = std::move(size);
+        }
+
+        [[nodiscard]] StringAtom getAtlasName() const { return _atlasName; }
+        void setAtlas(const StringAtom& value) { _atlasName = value; }
+
+        [[nodiscard]] bool isBlendingEnabled() const noexcept { return _blendingEnabled; }
+        void setBlendingEnabled(bool value) noexcept { _blendingEnabled = value; }
+
+        void setAnimationOverride(const StringAtom& animationName, float fps);
+        [[nodiscard]] const StringAtom& getAnimationOverrideName() const noexcept
+        {
+            return _animationOverrideName;
+        }
+        [[nodiscard]] float getAnimationOverrideFPS() const noexcept
+        {
+            return _animationOverrideFPS;
+        }
 
         [[nodiscard]] nlohmann::json getTypeSpecificSceneDataAsJson() const override;
         void applyTypeSpecificSceneData(const nlohmann::json& data) override;
@@ -46,6 +69,17 @@ namespace Core::SceneObj
     protected:
         FIELD();
         StringAtom _textureName = "red.png"_atom;
+
+        FIELD();
+        StringAtom _atlasName = "default"_atom;
+
+        GlobalPosition2F _textureUVOffset{ 0.f, 0.f };
+        GlobalPosition2F _textureUVSize{ 1.f, 1.f };
+
+        bool _blendingEnabled = true;
+
+        StringAtom _animationOverrideName;
+        float _animationOverrideFPS = 0.f;
     };
 
 } // namespace Core::SceneObj

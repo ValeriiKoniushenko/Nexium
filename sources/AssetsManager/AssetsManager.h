@@ -130,7 +130,20 @@ namespace Core
 
         // ====== Texture Atlas ======
         void generateTextureAtlas(const std::filesystem::path& atlasFolder);
-        [[nodiscard]] TextureAtlas& getTextureAtlas() noexcept { return _textureAtlas; }
+        void generateTextureAtlas(const StringAtom& atlasName,
+                                  const std::filesystem::path& atlasFolder);
+
+        [[nodiscard]] TextureAtlas& getAtlas(const StringAtom& atlasName);
+        [[nodiscard]] const TextureAtlas& getAtlas(const StringAtom& atlasName) const;
+        [[nodiscard]] std::vector<StringAtom> getAtlasesAsVector() const;
+        [[nodiscard]] std::size_t getAtlasesCount() const noexcept
+        {
+            return _textureAtlases.size();
+        }
+
+        // Backward-compatible access to the default atlas.
+        [[nodiscard]] TextureAtlas& getTextureAtlas();
+        [[nodiscard]] const TextureAtlas& getTextureAtlas() const;
 
         // ========== Textures =======
         [[nodiscard]] NXTexture getTexture(const StringAtom& logicPath);
@@ -192,7 +205,7 @@ namespace Core
             const std::filesystem::path& path);
 
     protected:
-        TextureAtlas _textureAtlas;
+        std::unordered_map<StringAtom, TextureAtlas> _textureAtlases;
         std::set<std::filesystem::path> _registeredPaths;
         std::unordered_map<StringAtom, NXECSAsset> _ecsAssets;
         std::unordered_map<StringAtom, AssetRef<BaseAsset>> _textures;

@@ -2,36 +2,6 @@
     "_sceneName": "Default",
     "sceneObjects": [
         {
-            "assetType": "Core::SceneObj::Rectangle",
-            "name": "BaseRectangle",
-            "referenceAsset": "data/assets/BaseRectangle.nx",
-            "trans": {
-                "_origin": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "_position": [
-                    -218.6999969482422,
-                    0.0,
-                    0.0
-                ],
-                "_rotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "_scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            },
-            "typeSpecificData": {
-                "_textureName": "yellow.jpg"
-            }
-        },
-        {
             "assetType": "Core::Spectator",
             "name": "Core::Spectator_1",
             "referenceAsset": "data/assets/BaseSpectator.nx",
@@ -42,13 +12,41 @@
                     0.0
                 ],
                 "_position": [
-                    -189.1638946533203,
-                    118.3765869140625,
-                    286.13946533203125
+                    -43.64704895019531,
+                    87.24829864501953,
+                    343.9142761230469
                 ],
                 "_rotation": [
-                    16.51953125,
-                    17.439453125,
+                    7.875,
+                    6.498046875,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": null
+        },
+        {
+            "assetType": "Core::BaseCamera",
+            "name": "BaseCamera1",
+            "referenceAsset": "data/assets/BaseCamera.nx",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
                     0.0
                 ],
                 "_scale": [
@@ -61,6 +59,38 @@
         },
         {
             "assetType": "Core::SceneObj::Rectangle",
+            "name": "BaseRectangle",
+            "referenceAsset": "data/assets/BaseRectangle.nx",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    0.4000000059604645,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_atlasName": "player_walk",
+                "_blendingEnabled": true,
+                "_textureName": "MPlayer_walk.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::Rectangle",
             "name": "BaseRectangle_0",
             "referenceAsset": "data/assets/BaseRectangle.nx",
             "trans": {
@@ -70,7 +100,39 @@
                     0.0
                 ],
                 "_position": [
-                    -91.19999694824219,
+                    105.19999694824219,
+                    0.0,
+                    0.0
+                ],
+                "_rotation": [
+                    -1.100000023841858,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_atlasName": "player_walk",
+                "_blendingEnabled": true,
+                "_textureName": "MPlayer_walk.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::Rectangle",
+            "name": "AnimatedPlayersa",
+            "referenceAsset": "data/assets/AnimatedPlayer.nx",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    -116.69999694824219,
                     0.0,
                     0.0
                 ],
@@ -86,7 +148,11 @@
                 ]
             },
             "typeSpecificData": {
-                "_textureName": "grass.jpeg"
+                "_animationFPS": 10.0,
+                "_animationName": "test",
+                "_atlasName": "player_walk",
+                "_blendingEnabled": true,
+                "_textureName": "MPlayer_walk.png"
             }
         }
     ]

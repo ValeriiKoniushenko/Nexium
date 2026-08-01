@@ -40,7 +40,7 @@ namespace Core
     class TextureAtlas final : public BaseLog
     {
     public:
-        constexpr static const int max_side = 1000;
+        constexpr static const int max_side = 4096;
         constexpr static const int discard_step = -4;
         constexpr static const auto runtime_flipping_mode = rectpack2D::flipping_option::ENABLED;
 

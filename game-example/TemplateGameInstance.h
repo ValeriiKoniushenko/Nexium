@@ -28,6 +28,4 @@
 
 class TemplateGameInstance : public Core::GameInstance
 {
-protected:
-    void onLoadCoreResources() override;
 };

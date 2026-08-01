@@ -25,7 +25,3 @@
 #include "TemplateGameInstance.h"
 
 using namespace Core;
-
-void TemplateGameInstance::onLoadCoreResources()
-{
-}

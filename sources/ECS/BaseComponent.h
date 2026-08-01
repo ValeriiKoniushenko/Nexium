@@ -1079,7 +1079,7 @@ namespace Core
     {
         if (comp) [[likely]]
         {
-            j = R<typename CompT::ValueT>::Serialize(*comp).getData();
+            j = comp->serialize();
         }
     }
 

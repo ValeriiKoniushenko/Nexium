@@ -5,14 +5,19 @@ out vec4 FragColor;
 in vec2 ioUV;
 
 uniform sampler2D uTexture;
+uniform bool uAlphaBlendingEnabled;
 
 void main()
 {
     vec4 texColor = texture(uTexture, ioUV);
 
-    if (texColor.a < 0.1)
+    if (uAlphaBlendingEnabled && texColor.a < 0.1)
     {
-        // discard;
+        discard;
+    }
+    if (!uAlphaBlendingEnabled)
+    {
+        texColor.a = 1.0;
     }
 
     FragColor = texColor;

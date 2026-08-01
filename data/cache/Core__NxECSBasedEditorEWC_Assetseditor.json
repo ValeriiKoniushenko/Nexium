@@ -9,7 +9,7 @@
         },
         {
             "_children": null,
-            "_isEnabled": true,
+            "_isEnabled": false,
             "_name": "",
             "_noTick": false,
             "_type": "Core::ECSEditorActorAdapter"
@@ -27,15 +27,22 @@
             "_name": "",
             "_noTick": false,
             "_type": "Core::ECSEditorInterleavedGraphicsDataAdapter"
+        },
+        {
+            "_children": null,
+            "_isEnabled": true,
+            "_name": "",
+            "_noTick": false,
+            "_type": "Core::ECSEditorFrameByFrameAnimationAdapter"
         }
     ],
     "_innerPosition": [
-        386.0,
+        247.0,
         88.0
     ],
     "_innerSize": {
-        "height": 568.0,
-        "width": 1079.0
+        "height": 560.0,
+        "width": 1218.0
     },
     "_isEnabled": true,
     "_isFitContent": false,
@@ -46,16 +53,16 @@
     "_name": " Assets editor",
     "_noTick": false,
     "_oldSize": {
-        "height": 632.0,
-        "width": 1105.0
+        "height": 624.0,
+        "width": 1244.0
     },
     "_position": [
-        378.0,
+        239.0,
         32.0
     ],
     "_size": {
-        "height": 632.0,
-        "width": 1105.0
+        "height": 624.0,
+        "width": 1244.0
     },
     "_type": "Core::NxECSBasedEditorEWC"
 }

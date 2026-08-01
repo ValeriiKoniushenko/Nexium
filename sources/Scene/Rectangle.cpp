@@ -24,6 +24,7 @@
 
 #include "Rectangle.h"
 
+#include "Animations/FrameByFrame/FrameByFrameAnimator.h"
 #include "GameplaySystem/Camera.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Graphics/GraphicsComponents.h"
@@ -72,7 +73,7 @@ namespace Core::SceneObj
         }();
         tryToRecalculateMatrices();
 
-        auto& atlas = GetAssetsManager().getTextureAtlas();
+        auto& atlas = GetAssetsManager().getAtlas(_atlasName);
         auto* shader = GetShaderManager().getShaderProgram("2d_rect"_atom);
         shader->use();
         shader->setUniform("uTexture"_atom, 0);
@@ -80,12 +81,22 @@ namespace Core::SceneObj
 
         atlas.bind();
 
-        const auto rect = atlas.getRect(_textureName);
+        glm::vec2 textureOffset{ 0.f, 0.f };
+        glm::vec2 textureSize{ 1.f, 1.f };
+        if (!_textureName.isEmpty())
+        {
+            const auto rect = atlas.getRect(_textureName);
+            textureOffset = rect.getLeftTop();
+            textureSize = rect.getRightBottom() - textureOffset;
+        }
 
-        shader->setUniform("uUVOffset"_atom, rect.getLeftTop());
-        shader->setUniform("uUVSize"_atom, rect.getRightBottom() - rect.getLeftTop());
+        shader->setUniform("uUVOffset"_atom, textureOffset + textureSize * _textureUVOffset);
+        shader->setUniform("uUVSize"_atom, textureSize * _textureUVSize);
         shader->setUniform("uModel"_atom, getModelMatrix());
+        shader->setUniform("uAlphaBlendingEnabled"_atom, static_cast<GLint>(_blendingEnabled));
 
+        glBlendFunc(_blendingEnabled ? GL_SRC_ALPHA : GL_ONE,
+                    _blendingEnabled ? GL_ONE_MINUS_SRC_ALPHA : GL_ZERO);
         gcd.directDraw();
     }
 
@@ -93,6 +104,13 @@ namespace Core::SceneObj
     {
         auto out = SceneObject::getTypeSpecificSceneDataAsJson();
         out["_textureName"] = _textureName;
+        out["_atlasName"] = _atlasName;
+        out["_blendingEnabled"] = _blendingEnabled;
+        if (!_animationOverrideName.isEmpty() && _animationOverrideFPS > 0.f)
+        {
+            out["_animationName"] = _animationOverrideName;
+            out["_animationFPS"] = _animationOverrideFPS;
+        }
         return out;
     }
 
@@ -101,6 +119,36 @@ namespace Core::SceneObj
         if (data.contains("_textureName"))
         {
             _textureName = StringAtom::Intern(data.at("_textureName").get<StringAtom>());
+        }
+
+        if (data.contains("_atlasName"))
+        {
+            _atlasName = StringAtom::Intern(data.at("_atlasName").get<StringAtom>());
+        }
+
+        _blendingEnabled = data.value("_blendingEnabled", true);
+
+        if (data.contains("_animationName") && data.contains("_animationFPS"))
+        {
+            setAnimationOverride(data.at("_animationName").get<StringAtom>(),
+                                 data.at("_animationFPS").get<float>());
+        }
+    }
+
+    void Rectangle::setAnimationOverride(const StringAtom& animationName, float fps)
+    {
+        _animationOverrideName = animationName;
+        _animationOverrideFPS = fps;
+
+        auto* animator = findFirstChildOf<Animation::FrameByFrameAnimator>();
+        if (!animator || animationName.isEmpty() || fps <= 0.f)
+        {
+            return;
+        }
+        if (auto* animation = animator->getAnimation(animationName))
+        {
+            animation->setFPS(fps);
+            animator->startAnimation(animationName);
         }
     }
 

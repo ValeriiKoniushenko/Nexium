@@ -25,6 +25,8 @@
 #include "GameInstance.h"
 
 #include "../Camera.h"
+#include "Animations/FrameByFrame/FrameByFrameAnimation.h"
+#include "Animations/FrameByFrame/FrameByFrameAnimator.h"
 #include "Core/Timer.h"
 #include "Editor/Windows/GameViewport.h"
 #include "Graphics/ShaderManager.h"
@@ -349,7 +351,10 @@ namespace Core
     void GameInstance::loadCoreResources()
     {
         GetAssetsManager().generateTextureAtlas(Config::Path::images / "atlas");
-
+        GetAssetsManager().generateTextureAtlas("santa_walk"_atom,
+                                                Config::Path::images / "Santa/Santa_Walk");
+        GetAssetsManager().generateTextureAtlas("player_walk"_atom,
+                                                Config::Path::images / "Player_SpriteSheet");
         onLoadCoreResources();
     }
 } // namespace Core
