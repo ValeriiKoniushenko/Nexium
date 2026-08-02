@@ -531,7 +531,7 @@ namespace Core
     /// But, if you still want to create a class, but not usual but template - see
     /// declaration (and comment above) of macro ECS_TEMPLATE_COMPONENT_DECL
     CLASS();
-    class BaseComponent : public AbstractComponent
+    class BaseComponent : public AbstractComponent, public ITagHolder
     {
         R_FRIEND(BaseComponent, Core::AbstractComponent);
 
@@ -612,7 +612,7 @@ namespace Core
         }
 
         // ========================== MISC & TYPES ==========================
-        [[nodiscard]] virtual Tag getTags() const { return Tag_None; }
+        [[nodiscard]] Tag getTags() const override { return Tag_None; }
 
         void clear() override;
 
