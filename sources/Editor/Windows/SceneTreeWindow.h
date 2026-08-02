@@ -57,7 +57,7 @@ namespace Core
         void onUpdate() override;
 
     private:
-        bool drawTreeNode(BaseComponent* n, int32_t id, bool isInSelectedSubtree = false);
+        void drawTreeNode(BaseComponent* n, int32_t id, bool isInSelectedSubtree = false);
         void processAddNewComponentButton();
 
     protected:

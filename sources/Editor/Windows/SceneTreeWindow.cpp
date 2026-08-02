@@ -113,12 +113,9 @@ namespace Core
         }
 
         int32_t internalId = 0;
-        for (auto&& object : _scene->getObjects())
+        for (auto object : _scene->getObjects())
         {
-            if (!drawTreeNode(object.get(), internalId++))
-            {
-                break;
-            }
+            drawTreeNode(object.get(), internalId++);
         }
 
         if (ImGui::IsWindowHovered(ImGuiHoveredFlags_ChildWindows)
@@ -141,12 +138,12 @@ namespace Core
         BaseFloatEWC::onUpdate();
     }
 
-    bool SceneTreeWindowEWC::drawTreeNode(BaseComponent* n, int32_t id,
+    void SceneTreeWindowEWC::drawTreeNode(BaseComponent* n, int32_t id,
                                           bool isInSelectedSubtree /* = false*/)
     {
         if (!n)
         {
-            return true;
+            return;
         }
 
         if (const auto* actor = n->tryCastTo<Actor>())
@@ -154,7 +151,7 @@ namespace Core
             // Trying to exclude NOW any post draw actors.
             if (actor->isPostDraw())
             {
-                return true;
+                return;
             }
         }
 
@@ -239,17 +236,9 @@ namespace Core
             if (_lastSelectedObject != selectedObject)
             {
                 gGameInstance->objectSelectorManager.selectObject(n);
-                ImGui::PopID();
-                if (isOpened)
-                {
-                    ImGui::TreePop();
-                }
-                return false;
             }
         }
 
-        bool invalidate = false;
-        bool fullInvalidate = false;
         if (ImGui::BeginPopup("ContextSceneItemMenu"))
         {
             if (auto* camera = n->tryCastTo<BaseCamera>())
@@ -262,12 +251,10 @@ namespace Core
             if (ImGui::MenuItem(ICON_FA_TRASH " Delete"))
             {
                 gGameInstance->gameScene.deleteFromScene(n);
-                invalidate = true;
             }
             if (ImGui::MenuItem(ICON_FA_CLONE " Duplicate"))
             {
                 gGameInstance->gameScene.duplicateSceneObject(n);
-                invalidate = fullInvalidate = true;
             }
             const auto* sceneObj = dynamic_cast<SceneObject*>(n);
             if (sceneObj && sceneObj->hasReferencedAsset() && ImGui::MenuItem("Show derived .nx"))
@@ -286,25 +273,15 @@ namespace Core
 
         if (isOpened)
         {
-            if (!invalidate)
+            for (auto& child : n->getChildren())
             {
-                for (auto& child : n->getChildren())
-                {
-                    if (!drawTreeNode(child.get(), ++id))
-                    {
-                        ImGui::PopID();
-                        ImGui::TreePop();
-                        return false;
-                    }
-                }
+                drawTreeNode(child.get(), ++id);
             }
 
             ImGui::TreePop();
         }
 
         ImGui::PopID();
-
-        return !fullInvalidate;
     }
 
     void SceneTreeWindowEWC::processAddNewComponentButton()
