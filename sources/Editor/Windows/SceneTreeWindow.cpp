@@ -269,7 +269,6 @@ namespace Core
             if (ImGui::IsKeyPressed(ImGuiKey_Delete))
             {
                 _objectPendingDeletion = n;
-                invalidate = fullInvalidate = true;
             }
             else if (ImGui::IsItemClicked())
             {
@@ -286,7 +285,6 @@ namespace Core
             if (ImGui::MenuItem(ICON_FA_TRASH " Delete"))
             {
                 _objectPendingDeletion = n;
-                invalidate = fullInvalidate = true;
             }
             if (ImGui::MenuItem(ICON_FA_CLONE " Duplicate"))
             {

@@ -88,7 +88,7 @@ namespace Core
             gGameInstance->gameEditor.slowObjectPicker.update(*this);
         }
 
-       // grid.draw();
+        // grid.draw();
 
         _postDrawBuffer.resize(0);
 
@@ -122,7 +122,7 @@ namespace Core
             mesh->draw(camera);
         }
 
-        //skybox->draw(camera);
+        // skybox->draw(camera);
     }
 
     void Scene::setSceneName(StringAtom name)
@@ -334,8 +334,8 @@ namespace Core
         const auto& arr = data.getData()[StreamData::sceneObjects];
         if (!arr.is_array())
         {
-            errorLog("Scene '{}': property '{}' must be an array."_f
-                     << _sceneName << StreamData::sceneObjects);
+            errorLog("Scene '{}': property '{}' must be an array."_f << _sceneName
+                                                                     << StreamData::sceneObjects);
             return;
         }
 
@@ -375,15 +375,14 @@ namespace Core
             if (!component)
             {
                 errorLog("Scene '{}': can't create an object of type '{}'."_f << _sceneName
-                                                                               << type);
+                                                                              << type);
                 continue;
             }
 
             auto sceneObj = DynamicCast<SceneObject>(component);
             if (!sceneObj)
             {
-                errorLog("Scene '{}': component '{}' isn't a SceneObject."_f << _sceneName
-                                                                              << type);
+                errorLog("Scene '{}': component '{}' isn't a SceneObject."_f << _sceneName << type);
                 continue;
             }
 

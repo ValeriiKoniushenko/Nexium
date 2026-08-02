@@ -99,14 +99,13 @@ namespace Core
             _layout.tick(dt);
             drawAnimationCards();
         }
-        _animationEditor.draw(
-            dt,
-            [this]
-            {
-                if (auto* editor = getParentAs<NxECSBasedEditorEWC>())
-                {
-                    editor->save();
-                }
-            });
+        _animationEditor.draw(dt,
+                              [this]
+                              {
+                                  if (auto* editor = getParentAs<NxECSBasedEditorEWC>())
+                                  {
+                                      editor->save();
+                                  }
+                              });
     }
 } // namespace Core

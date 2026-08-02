@@ -423,7 +423,6 @@ namespace Core
             out.attachChild(::Create<FloatInput>("Orthographic size", false));
             _cameraOrthographicSize
                 = out.getLastChildAs<HLayout>()->getLastChildAs<FloatInput>().get();
-            _cameraOrthographicSize->setMin(BaseCamera::minOrthographicSize);
             _cameraOrthographicSize->setMax(1'000'000.f);
             _cameraOrthographicSize->setStep(1.f);
 
@@ -697,36 +696,6 @@ namespace Core
                     if (auto* camera = _target->tryCastTo<PerspectiveCamera>())
                     {
                         camera->setFov(newValue);
-                    }
-                });
-        }
-
-        if (_cameraProjection)
-        {
-            _subscriptionPool << _cameraProjection->onSelect->subscribeAndGetID(
-                [this](StringAtom projection)
-                {
-                    if (auto* camera = _target->tryCastTo<BaseCamera>())
-                    {
-                        if (projection == "Orthographic"_atom)
-                        {
-                            camera->setProjectionType(ProjectionType::Orthographic);
-                        }
-                        else if (projection == "Perspective"_atom)
-                        {
-                            camera->setProjectionType(ProjectionType::Perspective);
-                        }
-                    }
-                });
-        }
-        if (_cameraOrthographicSize)
-        {
-            _subscriptionPool << _cameraOrthographicSize->onInput->subscribeAndGetID(
-                [this](float newValue)
-                {
-                    if (auto* camera = _target->tryCastTo<BaseCamera>())
-                    {
-                        camera->setOrthographicSize(newValue);
                     }
                 });
         }
@@ -1008,15 +977,6 @@ namespace Core
             if (_cameraFov)
             {
                 _cameraFov->setInputtedData(comp->getFov());
-            }
-            if (_cameraProjection)
-            {
-                _cameraProjection->setCurrentIndex(
-                    comp->getProjectionType() == ProjectionType::Orthographic ? 1 : 0);
-            }
-            if (_cameraOrthographicSize)
-            {
-                _cameraOrthographicSize->setInputtedData(comp->getOrthographicSize());
             }
             if (_cameraFar)
             {
