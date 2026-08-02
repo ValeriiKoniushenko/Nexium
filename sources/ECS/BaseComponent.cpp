@@ -260,7 +260,7 @@ namespace Core
         }
     }
 
-    void BaseComponent::removeChild(const BaseComponent* child)
+    bool BaseComponent::removeChild(const BaseComponent* child)
     {
         for (auto i = _children.begin(); i != _children.end(); ++i)
         {
@@ -268,16 +268,40 @@ namespace Core
             {
                 onRemoveChild(i->get());
                 _children.erase(i);
-                return;
+                return true;
             }
         }
+
+        return false;
     }
 
-    void BaseComponent::removeChildIf(const std::function<bool(const BaseComponent*)>& pred)
+    bool BaseComponent::removeChildDeep(const BaseComponent* child)
+    {
+        bool wasRemoved = false;
+        forEach(
+            [child, &wasRemoved](BaseComponent* comp)
+            {
+                if (comp == child)
+                {
+                    if (auto* parent = comp->getParent())
+                    {
+                        parent->removeChild(comp);
+                        wasRemoved = true;
+                    }
+                    return false;
+                }
+
+                return true;
+            });
+
+        return wasRemoved;
+    }
+
+    bool BaseComponent::removeChildIf(const std::function<bool(const BaseComponent*)>& pred)
     {
         if (!pred)
         {
-            return;
+            return false;
         }
 
         const auto [first, last] = std::ranges::remove_if(_children,
@@ -290,7 +314,11 @@ namespace Core
                                                               }
                                                               return false;
                                                           });
+
+        const bool removedAnything = (first != last);
         _children.erase(first, last);
+
+        return removedAnything;
     }
 
     nlohmann::json BaseComponent::serialize() const
@@ -338,7 +366,7 @@ namespace Core
 
     BaseComponent* BaseComponent::getOwner() noexcept
     {
-        BaseComponent* comp = this;
+        auto* comp = this;
 
         while (comp)
         {

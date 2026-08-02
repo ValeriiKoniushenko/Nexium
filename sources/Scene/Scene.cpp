@@ -209,7 +209,7 @@ namespace Core
                                                                            << _sceneName);
     }
 
-    void Scene::deleteFromScene(const StringAtom& name)
+    bool Scene::deleteFromScene(const StringAtom& name)
     {
         for (auto it = _sceneObjects.begin(); it != _sceneObjects.end(); ++it)
         {
@@ -221,18 +221,20 @@ namespace Core
                     traceLog("The object is deleted from the scene: {}"_f
                              << obj->getComponentName());
                     _sceneObjects.erase(it);
-                    return;
+                    return true;
                 }
             }
         }
+
+        return false;
     }
 
-    void Scene::deleteFromScene(const BaseComponent* obj)
+    bool Scene::deleteFromScene(const BaseComponent* obj)
     {
         if (!obj)
         {
             errorLog("Can't delete the NULL object from the scene");
-            return;
+            return false;
         }
 
         for (auto it = _sceneObjects.begin(); it != _sceneObjects.end(); ++it)
@@ -241,9 +243,39 @@ namespace Core
             {
                 traceLog("The object is deleted from the scene: {}"_f << obj->getComponentName());
                 _sceneObjects.erase(it);
-                return;
+                return true;
             }
         }
+
+        return false;
+    }
+
+    bool Scene::deleteFromSceneOrFromObject(BaseComponent* obj)
+    {
+        if (deleteFromScene(obj))
+        {
+            return true;
+        }
+
+        auto* owner = obj->getOwner();
+        if (!owner || owner == obj)
+        {
+            return false;
+        }
+
+        for (auto it = _sceneObjects.begin(); it != _sceneObjects.end(); ++it)
+        {
+            if (it->get() == owner)
+            {
+                owner->removeChildDeep(obj);
+
+                traceLog("The object is deleted from the scene: {}"_f << obj->getComponentName());
+                _sceneObjects.erase(it);
+                return true;
+            }
+        }
+
+        return false;
     }
 
     void Scene::duplicateSceneObject(const BaseComponent* obj)

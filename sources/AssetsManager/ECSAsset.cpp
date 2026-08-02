@@ -167,7 +167,6 @@ namespace Core
         json[StreamData::data] = nlohmann::json::object();
 
         auto baseAssetData = getAssetData();
-        std::cout << baseAssetData.dump(4) << std::endl;
 
         auto changes = MergeExistingKeys(baseAssetData, assetData);
 
@@ -178,8 +177,6 @@ namespace Core
             patchedOutput += change.path + ": " + change.oldValue.dump() + " -> "
                              + change.newValue.dump() + " | ";
         }
-
-        std::cout << baseAssetData.dump(4) << std::endl;
 
         json[StreamData::data] = baseAssetData;
 

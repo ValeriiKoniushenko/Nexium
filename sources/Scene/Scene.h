@@ -78,8 +78,9 @@ namespace Core
         void addUniqueObjectToScene(SceneObject::Ptr object);
         void addObjectToScene(SceneObject::Ptr object);
         void addBlueprintObjectToScene(const WeakData<ECSAsset>& asset, const StringAtom& name);
-        void deleteFromScene(const StringAtom& name);
-        void deleteFromScene(const BaseComponent* obj);
+        bool deleteFromScene(const StringAtom& name);
+        bool deleteFromScene(const BaseComponent* obj);
+        bool deleteFromSceneOrFromObject(BaseComponent* obj);
         void duplicateSceneObject(const BaseComponent* obj);
         [[nodiscard]] IntrusivePtr<SceneObject> find(const BaseComponent* obj);
 

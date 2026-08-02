@@ -742,14 +742,16 @@ namespace Core
 
         void detachChild(BaseComponent* child);
 
-        void removeChild(const BaseComponent* child);
+        bool removeChild(const BaseComponent* child);
 
-        void removeChild(const IntrusivePtr<const BaseComponent>& child)
+        bool removeChild(const IntrusivePtr<const BaseComponent>& child)
         {
-            removeChild(child.get());
+            return removeChild(child.get());
         }
 
-        void removeChildIf(const std::function<bool(const BaseComponent*)>& pred);
+        bool removeChildDeep(const BaseComponent* child);
+
+        bool removeChildIf(const std::function<bool(const BaseComponent*)>& pred);
 
         template<IsComponent ComponentT>
         void removeChildOf(const StringAtom& name = ""_atom)

@@ -233,7 +233,7 @@ namespace Core
         {
             if (ImGui::IsKeyPressed(ImGuiKey_Delete))
             {
-                gGameInstance->gameScene.deleteFromScene(n);
+                gGameInstance->gameScene.deleteFromSceneOrFromObject(n);
             }
             else if (ImGui::IsItemClicked())
             {
@@ -249,7 +249,7 @@ namespace Core
         {
             if (ImGui::MenuItem(ICON_FA_TRASH " Delete"))
             {
-                gGameInstance->gameScene.deleteFromScene(n);
+                gGameInstance->gameScene.deleteFromSceneOrFromObject(n);
             }
             if (ImGui::MenuItem(ICON_FA_CLONE " Duplicate"))
             {
