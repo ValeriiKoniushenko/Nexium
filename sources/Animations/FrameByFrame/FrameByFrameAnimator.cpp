@@ -31,13 +31,14 @@ namespace Core::Animation
 {
     void to_json(nlohmann::json& j, const std::unordered_map<StringAtom, BaseAnimation::Ptr>& v)
     {
-        j = nlohmann::json::object();
+        j = nlohmann::json::array();
 
-        for (const auto& [name, animation] : v)
+        for (const auto& entry : v)
         {
+            const auto& animation = entry.second;
             if (animation)
             {
-                j[name.c_str()] = animation->serialize();
+                j.push_back(animation->serialize());
             }
         }
     }

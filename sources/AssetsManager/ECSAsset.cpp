@@ -279,11 +279,7 @@ namespace Core
         out._data = data->clone();
         out._meta.type = data->getComponentType();
         out._meta.name = data->getComponentName();
-
-        if (const auto* t = dynamic_cast<const ITagHolder*>(data))
-        {
-            out._meta.tags = t->getTags();
-        }
+        out._meta.tags = data->getTags();
     }
 
     nlohmann::json ECSAsset::toJson() const

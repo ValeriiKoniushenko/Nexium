@@ -178,7 +178,7 @@
                         "_textureName": "",
                         "_type": "Core::Animation::FrameByFrameAnimation"
                     },
-                    "spritesheet_test": {
+                    "Walk_Right": {
                         "_atlasName": "player_walk",
                         "_children": null,
                         "_currentFrame": 0,
@@ -190,7 +190,7 @@
                                 "textureName": null,
                                 "uvOffset": [
                                     0.0,
-                                    0.875
+                                    0.75
                                 ],
                                 "uvSize": [
                                     0.25,
@@ -202,7 +202,7 @@
                                 "textureName": null,
                                 "uvOffset": [
                                     0.25,
-                                    0.875
+                                    0.75
                                 ],
                                 "uvSize": [
                                     0.25,
@@ -214,7 +214,7 @@
                                 "textureName": null,
                                 "uvOffset": [
                                     0.5,
-                                    0.875
+                                    0.75
                                 ],
                                 "uvSize": [
                                     0.25,
@@ -226,7 +226,7 @@
                                 "textureName": null,
                                 "uvOffset": [
                                     0.75,
-                                    0.875
+                                    0.75
                                 ],
                                 "uvSize": [
                                     0.25,
@@ -239,12 +239,12 @@
                         "_isLooping": true,
                         "_isPaused": false,
                         "_isStopped": true,
-                        "_name": "spritesheet_test",
+                        "_name": "Walk_Right",
                         "_noTick": false,
                         "_textureName": "MPlayer_walk.png",
                         "_type": "Core::Animation::FrameByFrameAnimation"
                     },
-                    "test": {
+                    "Walk_back": {
                         "_atlasName": "player_walk",
                         "_children": null,
                         "_currentFrame": 0,
@@ -256,7 +256,7 @@
                                 "textureName": null,
                                 "uvOffset": [
                                     0.0,
-                                    0.75
+                                    0.625
                                 ],
                                 "uvSize": [
                                     0.25,
@@ -268,7 +268,7 @@
                                 "textureName": null,
                                 "uvOffset": [
                                     0.25,
-                                    0.75
+                                    0.625
                                 ],
                                 "uvSize": [
                                     0.25,
@@ -280,7 +280,7 @@
                                 "textureName": null,
                                 "uvOffset": [
                                     0.5,
-                                    0.75
+                                    0.625
                                 ],
                                 "uvSize": [
                                     0.25,
@@ -292,7 +292,7 @@
                                 "textureName": null,
                                 "uvOffset": [
                                     0.75,
-                                    0.75
+                                    0.625
                                 ],
                                 "uvSize": [
                                     0.25,
@@ -305,12 +305,12 @@
                         "_isLooping": true,
                         "_isPaused": false,
                         "_isStopped": true,
-                        "_name": "test",
+                        "_name": "Walk_back",
                         "_noTick": false,
                         "_textureName": "MPlayer_walk.png",
                         "_type": "Core::Animation::FrameByFrameAnimation"
                     },
-                    "test1": {
+                    "Walk_front": {
                         "_atlasName": "player_walk",
                         "_children": null,
                         "_currentFrame": 0,
@@ -322,7 +322,7 @@
                                 "textureName": null,
                                 "uvOffset": [
                                     0.0,
-                                    0.625
+                                    0.5
                                 ],
                                 "uvSize": [
                                     0.25,
@@ -334,7 +334,7 @@
                                 "textureName": null,
                                 "uvOffset": [
                                     0.25,
-                                    0.625
+                                    0.5
                                 ],
                                 "uvSize": [
                                     0.25,
@@ -346,7 +346,7 @@
                                 "textureName": null,
                                 "uvOffset": [
                                     0.5,
-                                    0.625
+                                    0.5
                                 ],
                                 "uvSize": [
                                     0.25,
@@ -358,7 +358,7 @@
                                 "textureName": null,
                                 "uvOffset": [
                                     0.75,
-                                    0.625
+                                    0.5
                                 ],
                                 "uvSize": [
                                     0.25,
@@ -371,12 +371,12 @@
                         "_isLooping": true,
                         "_isPaused": false,
                         "_isStopped": true,
-                        "_name": "test1",
+                        "_name": "Walk_front",
                         "_noTick": false,
                         "_textureName": "MPlayer_walk.png",
                         "_type": "Core::Animation::FrameByFrameAnimation"
                     },
-                    "ыавпы": {
+                    "Walk_left": {
                         "_atlasName": "player_walk",
                         "_children": null,
                         "_currentFrame": 0,
@@ -388,7 +388,7 @@
                                 "textureName": null,
                                 "uvOffset": [
                                     0.0,
-                                    0.5
+                                    0.875
                                 ],
                                 "uvSize": [
                                     0.25,
@@ -400,7 +400,7 @@
                                 "textureName": null,
                                 "uvOffset": [
                                     0.25,
-                                    0.5
+                                    0.875
                                 ],
                                 "uvSize": [
                                     0.25,
@@ -412,7 +412,7 @@
                                 "textureName": null,
                                 "uvOffset": [
                                     0.5,
-                                    0.5
+                                    0.875
                                 ],
                                 "uvSize": [
                                     0.25,
@@ -424,7 +424,7 @@
                                 "textureName": null,
                                 "uvOffset": [
                                     0.75,
-                                    0.5
+                                    0.875
                                 ],
                                 "uvSize": [
                                     0.25,
@@ -437,45 +437,13 @@
                         "_isLooping": true,
                         "_isPaused": false,
                         "_isStopped": true,
-                        "_name": "ыавпы",
+                        "_name": "Walk_left",
                         "_noTick": false,
                         "_textureName": "MPlayer_walk.png",
                         "_type": "Core::Animation::FrameByFrameAnimation"
                     }
                 },
-                "_children": [
-                    {
-                        "_atlasName": "default",
-                        "_children": null,
-                        "_isDrawOutline": false,
-                        "_isEnabled": true,
-                        "_isPostDraw": false,
-                        "_name": "Core-SceneObj-Rectangle",
-                        "_noTick": false,
-                        "_origin": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ],
-                        "_position": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ],
-                        "_rotation": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ],
-                        "_scale": [
-                            1.0,
-                            1.0,
-                            1.0
-                        ],
-                        "_textureName": "red.png",
-                        "_type": "Core::SceneObj::Rectangle"
-                    }
-                ],
+                "_children": null,
                 "_currentAnimationName": "",
                 "_isEnabled": true,
                 "_name": "Animator1",
