@@ -118,6 +118,41 @@ namespace Core
             drawTreeNode(object.get(), internalId++);
         }
 
+        if (_objectPendingDeletion)
+        {
+            auto isPendingDeletion = [this](const BaseComponent* object)
+            { return object && object->IsSelfOrDescendantOf(_objectPendingDeletion); };
+
+            if (isPendingDeletion(gGameInstance->currentCamera))
+            {
+                gGameInstance->currentCamera = nullptr;
+            }
+            if (isPendingDeletion(_highlightTracerObject))
+            {
+                _highlightTracerObject = nullptr;
+            }
+            if (isPendingDeletion(selectedObject))
+            {
+                selectedObject = nullptr;
+            }
+            if (isPendingDeletion(_lastSelectedObject))
+            {
+                _lastSelectedObject = nullptr;
+            }
+
+            const bool selectedObjectWillBeDeleted = std::ranges::any_of(
+                gGameInstance->objectSelectorManager.getSelectedObjects() | std::views::values,
+                [&isPendingDeletion](const auto& selected)
+                { return isPendingDeletion(selected.get()); });
+            if (selectedObjectWillBeDeleted)
+            {
+                gGameInstance->objectSelectorManager.deselectAllAndClear();
+            }
+
+            gGameInstance->gameScene.deleteFromSceneOrFromObject(_objectPendingDeletion);
+            _objectPendingDeletion = nullptr;
+        }
+
         if (ImGui::IsWindowHovered(ImGuiHoveredFlags_ChildWindows)
             && (ImGui::IsMouseClicked(ImGuiMouseButton_Left)
                 || ImGui::IsMouseClicked(ImGuiMouseButton_Right)))
@@ -233,7 +268,8 @@ namespace Core
         {
             if (ImGui::IsKeyPressed(ImGuiKey_Delete))
             {
-                gGameInstance->gameScene.deleteFromSceneOrFromObject(n);
+                _objectPendingDeletion = n;
+                invalidate = fullInvalidate = true;
             }
             else if (ImGui::IsItemClicked())
             {
@@ -249,7 +285,8 @@ namespace Core
         {
             if (ImGui::MenuItem(ICON_FA_TRASH " Delete"))
             {
-                gGameInstance->gameScene.deleteFromSceneOrFromObject(n);
+                _objectPendingDeletion = n;
+                invalidate = fullInvalidate = true;
             }
             if (ImGui::MenuItem(ICON_FA_CLONE " Duplicate"))
             {
@@ -263,7 +300,6 @@ namespace Core
                     gGameInstance->currentCamera = camera;
                 }
             }
-
             const auto* sceneObj = dynamic_cast<SceneObject*>(n);
             if (sceneObj && sceneObj->hasReferencedAsset() && ImGui::MenuItem("Show derived .nx"))
             {

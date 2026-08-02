@@ -66,6 +66,7 @@ namespace Core
         Scene* _scene = nullptr;
         int _commonTreeFlags = 0;
         BaseComponent* _lastSelectedObject = nullptr;
+        BaseComponent* _objectPendingDeletion = nullptr;
 
     private:
         const SceneObject* _highlightTracerObject = nullptr;
