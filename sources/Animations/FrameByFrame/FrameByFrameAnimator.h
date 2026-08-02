@@ -58,6 +58,7 @@ namespace Core::Animation
             return _currentAnimationName;
         }
         [[nodiscard]] const auto& getAnimations() const noexcept { return _animations; }
+        [[nodiscard]] Tag getTags() const override;
 
     protected:
         void onTick(float delta) override;

@@ -39,6 +39,7 @@ namespace Core
         Tag_WorldObject = 1 << 0,
         Tag_GuiObject = 1 << 1,
         Tag_EditorInternal = 1 << 2,
+        Tag_AnimationController = 1 << 3,
         Tag_Any = 0xFFFFFFFF
     };
 
