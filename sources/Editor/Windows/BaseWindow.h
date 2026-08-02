@@ -35,10 +35,14 @@ namespace Core
     CLASS();
     class BaseEWC : public BaseComponent, public IDataIO
     {
-        ECS_DECL(BaseEWC, Core::BaseComponent);
+        R_FRIEND_DECL(Core::BaseEWC, Core::BaseComponent);
+        ECS_COMPONENT_DECL(BaseEWC, BaseComponent);
 
     public:
-        [[nodiscard]] const StringAtom& getWindowTitle() { return getComponentName(); }
+        [[nodiscard]] const StringAtom& getWindowTitle() const
+        {
+            return _windowTitle.isEmpty() ? getComponentName() : _windowTitle;
+        }
 
         virtual void putArguments(const StringAtom& args) {}
 
@@ -51,8 +55,6 @@ namespace Core
         void requestFocus() noexcept;
 
         [[nodiscard]] StringAtom getCacheHash() const override;
-
-        [[nodiscard]] Tag getTags() const override;
 
     protected:
         virtual void onOpen() {}
@@ -74,6 +76,7 @@ namespace Core
         [[nodiscard]] bool canBeShown() const { return _isEnabled; }
 
     protected:
+        StringAtom _windowTitle;
         int /*ImGuiWindowFlags*/ _windowFlags = 0;
         bool _wasFocusRequested = false;
     };
@@ -91,7 +94,8 @@ namespace Core
     CLASS();
     class BaseFloatEWC : public BaseEWC
     {
-        ECS_DECL(BaseFloatEWC, Core::BaseEWC);
+        R_FRIEND_DECL(Core::BaseFloatEWC, Core::BaseEWC);
+        ECS_COMPONENT_DECL(BaseFloatEWC, BaseEWC);
 
     public:
         [[nodiscard]] FSize2 getWindowSize() const noexcept { return _size; }
@@ -147,10 +151,13 @@ namespace Core
     CLASS();
     class BaseMenuBarEWC : public BaseEWC
     {
-        ECS_DECL(BaseMenuBarEWC, Core::BaseEWC);
+        R_FRIEND_DECL(Core::BaseMenuBarEWC, Core::BaseEWC);
+        ECS_COMPONENT_DECL(BaseMenuBarEWC, BaseEWC);
+
+    public:
+        void onInitialize() override;
 
     protected:
-        void onInitialize() override;
         [[nodiscard]] bool beginWindowDraw() override;
 
         void endWindowDraw() override;

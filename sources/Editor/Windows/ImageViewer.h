@@ -32,7 +32,8 @@ namespace Core
     CLASS();
     class ImageViewerEWC : public BaseFloatEWC
     {
-        ECS_DECL(ImageViewerEWC, Core::BaseFloatEWC);
+        R_FRIEND_DECL(Core::ImageViewerEWC, Core::BaseFloatEWC);
+        ECS_COMPONENT_DECL(ImageViewerEWC, BaseFloatEWC);
 
     public:
         void openImageFromFile(const std::filesystem::path& path);
@@ -48,19 +49,37 @@ namespace Core
 
         void onDraw() override;
 
+    private:
+        [[nodiscard]] static float calculateFitZoom(const glm::vec2& canvasSize,
+                                                    const glm::vec2& rawImageSize);
+
+        void handleZoom(bool isCanvasHovered, const glm::vec2& canvasPosition,
+                        const glm::vec2& canvasSize, const glm::vec2& rawImageSize, float fitZoom);
+
+        void handlePan(bool isCanvasHovered);
+
+        void clampOffset(const glm::vec2& rawImageSize, float fitZoom);
+
+        void drawImage(const glm::vec2& canvasPosition, const glm::vec2& canvasSize,
+                       const glm::vec2& rawImageSize) const;
+
     protected:
         std::unique_ptr<Texture> _image;
         std::string _path;
         glm::vec2 _offset = {};
         float _zoom = 1.0f;
+        bool _fitOnNextDraw = true;
     };
 
     CLASS();
     class DummyEWC : public BaseFloatEWC
     {
-        ECS_DECL(DummyEWC, Core::BaseFloatEWC);
+        R_FRIEND_DECL(Core::DummyEWC, Core::BaseFloatEWC);
+        ECS_COMPONENT_DECL(DummyEWC, BaseFloatEWC);
 
     public:
+        [[nodiscard]] const char* getIcon() override;
+
     protected:
         void onInitialize() override;
         void onUpdate() override;

@@ -30,10 +30,13 @@
 #include "ImGui/imgui.h"
 #include "glm/gtx/string_cast.hpp"
 
+#include <algorithm>
+#include <cmath>
+
 namespace Core
 {
-    ECS_IMPL(ImageViewerEWC);
-    ECS_IMPL(DummyEWC);
+    ECS_COMPONENT_IMPL(ImageViewerEWC);
+    R_FRIEND_IMPL(ImageViewerEWC);
 
     const char* ImageViewerEWC::getIcon()
     {
@@ -50,6 +53,10 @@ namespace Core
         if (_image->loadFromFile(path, false))
         {
             _path = path.generic_string();
+            _windowTitle = "Image Viewer — {}###ImageViewer"_f << _path;
+            _offset = {};
+            _zoom = 1.0f;
+            _fitOnNextDraw = true;
         }
     }
 
@@ -63,10 +70,87 @@ namespace Core
     void ImageViewerEWC::onInitialize()
     {
         BaseFloatEWC::onInitialize();
+
+        _windowFlags |= ImGuiWindowFlags_NoScrollbar;
+        _windowFlags |= ImGuiWindowFlags_NoScrollWithMouse;
     }
 
     void ImageViewerEWC::onUpdate()
     {
+        BaseFloatEWC::onUpdate();
+    }
+
+    float ImageViewerEWC::calculateFitZoom(const glm::vec2& canvasSize,
+                                           const glm::vec2& rawImageSize)
+    {
+        return std::min({ 1.0f, canvasSize.x / rawImageSize.x, canvasSize.y / rawImageSize.y });
+    }
+
+    void ImageViewerEWC::handleZoom(bool isCanvasHovered, const glm::vec2& canvasPosition,
+                                    const glm::vec2& canvasSize, const glm::vec2& rawImageSize,
+                                    float fitZoom)
+    {
+        const auto& io = ImGui::GetIO();
+        if (!isCanvasHovered || !io.KeyCtrl || io.MouseWheel == 0.0f)
+        {
+            return;
+        }
+
+        const glm::vec2 oldDisplaySize = rawImageSize * _zoom;
+        const glm::vec2 oldImagePosition
+            = canvasPosition + (canvasSize - oldDisplaySize) * 0.5f + _offset;
+        const glm::vec2 mousePosition = ImGui::GetMousePos();
+
+        const bool isMouseOverImage = mousePosition.x >= oldImagePosition.x
+                                      && mousePosition.y >= oldImagePosition.y
+                                      && mousePosition.x <= oldImagePosition.x + oldDisplaySize.x
+                                      && mousePosition.y <= oldImagePosition.y + oldDisplaySize.y;
+        const glm::vec2 anchor = isMouseOverImage
+                                     ? (mousePosition - oldImagePosition) / oldDisplaySize
+                                     : glm::vec2(0.5f);
+        const glm::vec2 anchorPosition
+            = isMouseOverImage ? mousePosition : oldImagePosition + oldDisplaySize * 0.5f;
+
+        constexpr float zoomStep = 1.15f;
+        _zoom = std::max(_zoom * std::pow(zoomStep, io.MouseWheel), fitZoom);
+
+        const glm::vec2 newDisplaySize = rawImageSize * _zoom;
+        const glm::vec2 centeredImagePosition
+            = canvasPosition + (canvasSize - newDisplaySize) * 0.5f;
+        _offset = anchorPosition - anchor * newDisplaySize - centeredImagePosition;
+    }
+
+    void ImageViewerEWC::handlePan(bool isCanvasHovered)
+    {
+        if (!isCanvasHovered || !ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+        {
+            return;
+        }
+
+        const auto drag = ImGui::GetMouseDragDelta(ImGuiMouseButton_Left);
+        ImGui::ResetMouseDragDelta(ImGuiMouseButton_Left);
+        _offset += drag;
+    }
+
+    void ImageViewerEWC::clampOffset(const glm::vec2& rawImageSize, float fitZoom)
+    {
+        const glm::vec2 displaySize = rawImageSize * _zoom;
+        const glm::vec2 fittedImageSize = rawImageSize * fitZoom;
+        const glm::vec2 maxOffset = (displaySize - fittedImageSize) * 0.5f;
+        _offset = glm::clamp(_offset, -maxOffset, maxOffset);
+    }
+
+    void ImageViewerEWC::drawImage(const glm::vec2& canvasPosition, const glm::vec2& canvasSize,
+                                   const glm::vec2& rawImageSize) const
+    {
+        const glm::vec2 displaySize = rawImageSize * _zoom;
+        const glm::vec2 imagePosition
+            = canvasPosition + (canvasSize - displaySize) * 0.5f + _offset;
+
+        auto* drawList = ImGui::GetWindowDrawList();
+        drawList->PushClipRect(canvasPosition, canvasPosition + canvasSize, true);
+        drawList->AddImage(_image->getTextureId(), imagePosition, imagePosition + displaySize);
+        drawList->PopClipRect();
     }
 
     void ImageViewerEWC::onDraw()
@@ -76,24 +160,39 @@ namespace Core
             return;
         }
 
-        if (ImGui::IsWindowHovered() && ImGui::GetIO().MouseWheel != 0.0f)
+        const glm::vec2 canvasPosition = ImGui::GetCursorScreenPos();
+        glm::vec2 canvasSize = ImGui::GetContentRegionAvail();
+        if (canvasSize.x <= 0.0f || canvasSize.y <= 0.0f)
         {
-            _zoom = std::max(0.1f, _zoom + ImGui::GetIO().MouseWheel * 0.1f);
+            return;
         }
 
-        if (ImGui::IsWindowHovered() && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+        const glm::vec2 rawImageSize = { static_cast<float>(_image->getSize().width),
+                                         static_cast<float>(_image->getSize().height) };
+        if (rawImageSize.x <= 0.0f || rawImageSize.y <= 0.0f)
         {
-            const auto drag = ImGui::GetMouseDragDelta(ImGuiMouseButton_Left);
-            ImGui::ResetMouseDragDelta(ImGuiMouseButton_Left);
-            _offset.x += drag.x;
-            _offset.y += drag.y;
+            return;
         }
-        const auto displaySize
-            = glm::vec2(_image->getSize().width * _zoom, _image->getSize().height * _zoom);
-        ImGui::SetCursorPos(ImGui::GetCursorPos() + _offset);
 
-        ImGui::Text("%s: %dx%d", _path.c_str(), _image->getSize().width, _image->getSize().height);
-        ImGui::Image(_image->getTextureId(), displaySize);
+        const float fitZoom = calculateFitZoom(canvasSize, rawImageSize);
+        if (_fitOnNextDraw)
+        {
+            _zoom = fitZoom;
+            _offset = {};
+            _fitOnNextDraw = false;
+        }
+        else
+        {
+            _zoom = std::max(_zoom, fitZoom);
+        }
+
+        ImGui::InvisibleButton("##ImageViewerCanvas", canvasSize, ImGuiButtonFlags_MouseButtonLeft);
+        const bool isCanvasHovered = ImGui::IsItemHovered();
+
+        handleZoom(isCanvasHovered, canvasPosition, canvasSize, rawImageSize, fitZoom);
+        handlePan(isCanvasHovered);
+        clampOffset(rawImageSize, fitZoom);
+        drawImage(canvasPosition, canvasSize, rawImageSize);
     }
 
     void DummyEWC::onInitialize()

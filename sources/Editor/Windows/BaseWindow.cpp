@@ -29,9 +29,14 @@
 
 namespace Core
 {
-    ECS_IMPL(BaseEWC);
-    ECS_IMPL(BaseFloatEWC);
-    ECS_IMPL(BaseMenuBarEWC);
+    R_FRIEND_IMPL(BaseEWC);
+    ECS_COMPONENT_IMPL(BaseEWC);
+
+    R_FRIEND_IMPL(BaseFloatEWC);
+    ECS_COMPONENT_IMPL(BaseFloatEWC);
+
+    R_FRIEND_IMPL(BaseMenuBarEWC);
+    ECS_COMPONENT_IMPL(BaseMenuBarEWC);
 
     //
     //    ______
@@ -96,11 +101,6 @@ namespace Core
         return getComponentType() + "_" + normName;
     }
 
-    Tag BaseEWC::getTags() const
-    {
-        return Tag_EditorInternal;
-    }
-
     //
     //    ______                   ______  _                _
     //    | ___ \                  |  ___|| |              | |
@@ -147,6 +147,11 @@ namespace Core
 
     bool BaseFloatEWC::beginWindowDraw()
     {
+        if (_windowTitle.isEmpty())
+        {
+            _windowTitle = getComponentName();
+        }
+
         ImGui::SetNextWindowSizeConstraints(glm::vec2(_minWindowSize.width, _minWindowSize.height),
                                             glm::vec2(FLT_MAX, FLT_MAX));
 
@@ -161,10 +166,10 @@ namespace Core
         }
 
         bool prevEnabledState = _isEnabled;
-        const auto res = ImGui::Begin(getComponentName().c_str(), &_isEnabled, _windowFlags);
+        const auto res = ImGui::Begin(_windowTitle.c_str(), &_isEnabled, _windowFlags);
         if (_wasFocusRequested)
         {
-            ImGui::SetWindowFocus(getComponentName().c_str());
+            ImGui::SetWindowFocus(_windowTitle.c_str());
             _wasFocusRequested = false;
         }
         if (prevEnabledState != _isEnabled)
