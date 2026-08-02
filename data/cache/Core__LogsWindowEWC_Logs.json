@@ -13,19 +13,7 @@
     "_levelFilter": [
         {
             "isActive": true,
-            "level": "trace"
-        },
-        {
-            "isActive": true,
-            "level": "debug"
-        },
-        {
-            "isActive": true,
-            "level": "info"
-        },
-        {
-            "isActive": true,
-            "level": "warning"
+            "level": "critical"
         },
         {
             "isActive": true,
@@ -33,7 +21,19 @@
         },
         {
             "isActive": true,
-            "level": "critical"
+            "level": "warning"
+        },
+        {
+            "isActive": true,
+            "level": "info"
+        },
+        {
+            "isActive": true,
+            "level": "debug"
+        },
+        {
+            "isActive": true,
+            "level": "trace"
         }
     ],
     "_logLimit": 500,

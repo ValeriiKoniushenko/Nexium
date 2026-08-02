@@ -88,7 +88,7 @@ namespace Core
             gGameInstance->gameEditor.slowObjectPicker.update(*this);
         }
 
-        grid.draw();
+       // grid.draw();
 
         _postDrawBuffer.resize(0);
 
@@ -122,7 +122,7 @@ namespace Core
             mesh->draw(camera);
         }
 
-        skybox->draw(camera);
+        //skybox->draw(camera);
     }
 
     void Scene::setSceneName(StringAtom name)

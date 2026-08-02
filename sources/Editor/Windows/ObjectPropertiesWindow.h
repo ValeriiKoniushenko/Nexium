@@ -34,6 +34,7 @@ namespace Core
     namespace Gui
     {
         class ComboModelBased;
+        class ComboView;
         class CheckBox;
         class TextInput;
 
@@ -171,6 +172,8 @@ namespace Core
         // BaseCamera section:
         Gui::VerticalLayout _baseCameraLayout;
         Gui::FloatInput* _cameraFov = nullptr;
+        Gui::ComboView* _cameraProjection = nullptr;
+        Gui::FloatInput* _cameraOrthographicSize = nullptr;
         Gui::FloatInput* _cameraFar = nullptr;
         Gui::FloatInput* _cameraNear = nullptr;
         Gui::Float2Input* _cameraFrame = nullptr;

@@ -87,9 +87,9 @@ namespace Core
                 }
             });
 
-        _subscriptionPool << mouseInput.getOrCreate("mouseRotation", Mouse::Key::Right)
-                                 ->onDrag->subscribeAndGetID(
-                                     [this](glm::vec2 delta, auto)
-                                     { yawAndPitch(delta * mouseSensitivity); });
+        // _subscriptionPool << mouseInput.getOrCreate("mouseRotation", Mouse::Key::Right)
+        //                          ->onDrag->subscribeAndGetID(
+        //                              [this](glm::vec2 delta, auto)
+        //                              { yawAndPitch(delta * mouseSensitivity); });
     }
 } // namespace Core
