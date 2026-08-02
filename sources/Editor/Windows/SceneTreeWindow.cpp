@@ -229,25 +229,24 @@ namespace Core
         {
             ImGui::OpenPopup("ContextSceneItemMenu");
         }
-        else if (ImGui::IsItemClicked() || (ImGui::IsItemFocused() && isHovered()))
+        else if (ImGui::IsItemFocused() && isHovered())
         {
-            selectedObject = n;
-
-            if (_lastSelectedObject != selectedObject)
+            if (ImGui::IsKeyPressed(ImGuiKey_Delete))
             {
-                gGameInstance->objectSelectorManager.selectObject(n);
+                gGameInstance->gameScene.deleteFromScene(n);
+            }
+            else if (ImGui::IsItemClicked())
+            {
+                selectedObject = n;
+                if (_lastSelectedObject != selectedObject)
+                {
+                    gGameInstance->objectSelectorManager.selectObject(n);
+                }
             }
         }
 
         if (ImGui::BeginPopup("ContextSceneItemMenu"))
         {
-            if (auto* camera = n->tryCastTo<BaseCamera>())
-            {
-                if (ImGui::MenuItem("Set as a main camera"))
-                {
-                    gGameInstance->currentCamera = camera;
-                }
-            }
             if (ImGui::MenuItem(ICON_FA_TRASH " Delete"))
             {
                 gGameInstance->gameScene.deleteFromScene(n);
@@ -256,6 +255,15 @@ namespace Core
             {
                 gGameInstance->gameScene.duplicateSceneObject(n);
             }
+
+            if (auto* camera = n->tryCastTo<BaseCamera>())
+            {
+                if (ImGui::MenuItem("Set as a main camera"))
+                {
+                    gGameInstance->currentCamera = camera;
+                }
+            }
+
             const auto* sceneObj = dynamic_cast<SceneObject*>(n);
             if (sceneObj && sceneObj->hasReferencedAsset() && ImGui::MenuItem("Show derived .nx"))
             {
