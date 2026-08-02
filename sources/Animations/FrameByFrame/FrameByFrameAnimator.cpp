@@ -178,6 +178,11 @@ namespace Core::Animation
         return _animations.contains(name);
     }
 
+    Tag FrameByFrameAnimator::getTags() const
+    {
+        return BaseComponent::getTags() | Tag_AnimationController;
+    }
+
     void FrameByFrameAnimator::onTick(float delta)
     {
         BaseComponent::onTick(delta);
