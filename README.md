@@ -48,7 +48,12 @@ cmake --build build
    ```
 2. `CMake 3.6` >
 3. `Clang 22` > or `GCC 16` >
-4. Opt: `ccache 4.x` >
+4. Set `git nuke` alias and execute it after every checkout:
+    ```sh
+    git config --global alias.nuke '!rm -f .jrm/cache.data && git submodule update --init --recursive --remote'
+    ```
+5. Opt: `ccache 4.x` >
+6. Opt: `mold 2.x` (linker)
 
 #### Building
 
