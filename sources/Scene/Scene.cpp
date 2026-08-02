@@ -310,7 +310,10 @@ namespace Core
         json[StreamData::sceneObjects] = nlohmann::json::array();
         for (const auto& obj : _sceneObjects)
         {
-            json[StreamData::sceneObjects].push_back(obj->getSceneState());
+            if (obj)
+            {
+                json[StreamData::sceneObjects].push_back(obj->serialize());
+            }
         }
 
         return json;
@@ -328,35 +331,65 @@ namespace Core
             return;
         }
 
-        auto&& arr = data.getData()[StreamData::sceneObjects];
-
-        for (const auto& [_, value] : arr.items())
+        const auto& arr = data.getData()[StreamData::sceneObjects];
+        if (!arr.is_array())
         {
-            const SceneState states = value.get<SceneState>();
+            errorLog("Scene '{}': property '{}' must be an array."_f
+                     << _sceneName << StreamData::sceneObjects);
+            return;
+        }
 
-            auto&& refAsset = GetAssetsManager().getUniqueEcsAsset(states.referenceAsset);
-            if (!refAsset)
+        _sceneObjects.clear();
+
+        for (const auto& value : arr)
+        {
+            if (!value.contains("_type"))
             {
-                errorLog(
-                    "Scene: '{}'. Impossible to spawn an object '{}'({}) to the scene, object is not accessible through AssetManager."_f
-                    << _sceneName << states.referenceAsset << states.name);
+                // Backward compatibility with the old asset + SceneState format.
+                const SceneState states = value.get<SceneState>();
+                auto refAsset = GetAssetsManager().getUniqueEcsAsset(states.referenceAsset);
+                if (!refAsset)
+                {
+                    errorLog("Scene '{}': can't load the referenced object '{}'."_f
+                             << _sceneName << states.referenceAsset);
+                    continue;
+                }
+
+                auto* sceneObj = dynamic_cast<SceneObject*>(refAsset.get());
+                if (!sceneObj)
+                {
+                    errorLog("Scene '{}': asset '{}' isn't a SceneObject."_f
+                             << _sceneName << states.referenceAsset);
+                    continue;
+                }
+
+                sceneObj->applyTypeSpecificSceneData(states.typeSpecificData);
+                sceneObj->setTransformations(states.trans);
+                sceneObj->_setReferencedAsset(states.referenceAsset);
+                internal_addObjectToScene(sceneObj);
                 continue;
             }
 
-            auto* sceneObj = dynamic_cast<SceneObject*>(refAsset.get());
+            const auto type = StringAtom::Intern(value.at("_type").get<StringAtom>());
+            BaseComponent::Ptr component = GetGlobalComponentFactory().create(type);
+            if (!component)
+            {
+                errorLog("Scene '{}': can't create an object of type '{}'."_f << _sceneName
+                                                                               << type);
+                continue;
+            }
+
+            auto sceneObj = DynamicCast<SceneObject>(component);
             if (!sceneObj)
             {
-                errorLog(
-                    "Scene object isn't SceneObject. Impossible to add it to the scene. Asset type is: {}; name is: {}"_f
-                    << states.assetType << states.name);
+                errorLog("Scene '{}': component '{}' isn't a SceneObject."_f << _sceneName
+                                                                              << type);
                 continue;
             }
 
-            sceneObj->applyTypeSpecificSceneData(states.typeSpecificData);
-            sceneObj->setTransformations(states.trans);
-            sceneObj->_setReferencedAsset(states.referenceAsset);
-
-            internal_addObjectToScene(sceneObj);
+            RResourceStream<RJsonResourceStream> objectData(value);
+            sceneObj->deserialize(objectData);
+            internal_addObjectToScene(sceneObj.get());
         }
     }
 

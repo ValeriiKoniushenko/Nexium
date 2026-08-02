@@ -105,6 +105,7 @@ namespace Core
         void onDirtyMatrix() override;
 
     private:
+        FIELD();
         StringAtom _referencedAsset;
     };
 
