@@ -83,6 +83,20 @@ namespace Core
         return static_cast<FSize2>(GetWindow().getSize());
     }
 
+    const glm::mat4& OrthographicCamera::getMatrix()
+    {
+        return _cachedCalculatedMatrix;
+    }
+
+    glm::vec3 OrthographicCamera::putMouseRay(float length)
+    {
+        return glm::vec3(0);
+    }
+
+    void OrthographicCamera::onRecalculateCameraMatrices()
+    {
+    }
+
     const glm::mat4& PerspectiveCamera::getMatrix()
     {
         if (_isDirtyProjMatrix)

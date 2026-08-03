@@ -29,16 +29,23 @@
 
 namespace Core
 {
+    ENUM_CLASS();
+    enum class CameraType : uint8_t
+    {
+        Perspective,
+        Orthographic,
+    };
+
     CLASS();
     class BaseCamera : public Actor
     {
         ECS_DECL(BaseCamera, Core::Actor);
 
     public:
-        constexpr static float minFov = 5.f;
-        constexpr static float maxFov = 175.f;
-
-    public:
+        BaseCamera(const BaseCamera&) = default;
+        BaseCamera(BaseCamera&&) noexcept = default;
+        BaseCamera& operator=(const BaseCamera&) = default;
+        BaseCamera& operator=(BaseCamera&&) noexcept = default;
         ~BaseCamera() override = default;
 
         [[nodiscard]] virtual const glm::mat4& getMatrix() = 0;
@@ -52,6 +59,8 @@ namespace Core
         [[nodiscard]] glm::vec3 getGlobalRotation() const noexcept { return _worldRotation; }
 
         [[nodiscard]] StringAtom getCacheHash() const override;
+
+        [[nodiscard]] virtual CameraType getType() const noexcept = 0;
 
         void tryToRecalculateCameraMatrices();
 
@@ -74,6 +83,21 @@ namespace Core
         ECS_DECL(OrthographicCamera, Core::BaseCamera);
 
     public:
+        OrthographicCamera(OrthographicCamera&&) noexcept = default;
+        OrthographicCamera& operator=(const OrthographicCamera&) = default;
+        OrthographicCamera& operator=(OrthographicCamera&&) noexcept = default;
+        ~OrthographicCamera() override = default;
+
+        [[nodiscard]] const glm::mat4& getMatrix() override;
+        [[nodiscard]] glm::vec3 putMouseRay(float length) override;
+
+        [[nodiscard]] CameraType getType() const noexcept override
+        {
+            return CameraType::Orthographic;
+        }
+
+    protected:
+        void onRecalculateCameraMatrices() override;
     };
 
     CLASS();
@@ -86,6 +110,10 @@ namespace Core
         constexpr static float maxFov = 175.f;
 
     public:
+        PerspectiveCamera(const PerspectiveCamera&) = default;
+        PerspectiveCamera(PerspectiveCamera&&) noexcept = default;
+        PerspectiveCamera& operator=(const PerspectiveCamera&) = default;
+        PerspectiveCamera& operator=(PerspectiveCamera&&) noexcept = default;
         ~PerspectiveCamera() override = default;
 
         [[nodiscard]] const glm::mat4& getMatrix() override;
@@ -105,6 +133,11 @@ namespace Core
         [[nodiscard]] float getFar() const noexcept { return _far; }
 
         [[nodiscard]] glm::vec3 putMouseRay(float length) override;
+
+        [[nodiscard]] CameraType getType() const noexcept override
+        {
+            return CameraType::Perspective;
+        }
 
     protected:
         void onRecalculateCameraMatrices() override;

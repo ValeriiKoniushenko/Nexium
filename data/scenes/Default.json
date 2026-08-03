@@ -30,7 +30,7 @@
             "typeSpecificData": null
         },
         {
-            "assetType": "Core::BaseCamera",
+            "assetType": "Core::PerspectiveCamera",
             "name": "BaseCamera1",
             "referenceAsset": "data/assets/BaseCamera.nx",
             "trans": {
