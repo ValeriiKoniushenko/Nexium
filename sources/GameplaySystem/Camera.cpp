@@ -36,13 +36,59 @@
 namespace Core
 {
     ECS_IMPL(BaseCamera);
+    ECS_IMPL(OrthographicCamera);
+    ECS_IMPL(PerspectiveCamera);
 
-    const glm::mat4& BaseCamera::getMatrix()
+    void BaseCamera::recalculateCameraMatrices()
+    {
+        _worldPos = glm::vec3(0);
+        _worldRotation = glm::vec3(0);
+
+        BaseComponent* p = this;
+        while (p)
+        {
+            if (auto* t = dynamic_cast<Transformable*>(p))
+            {
+                _worldPos += t->getPosition();
+                _worldRotation += t->getRotation();
+            }
+            p = p->getParent();
+        }
+
+        onRecalculateCameraMatrices();
+
+        _isDirtyModelMatrix = false;
+    }
+
+    void BaseCamera::tryToRecalculateCameraMatrices()
+    {
+        if (_isDirtyModelMatrix)
+        {
+            recalculateCameraMatrices();
+        }
+    }
+
+    StringAtom BaseCamera::getCacheHash() const
+    {
+        return getComponentType() + "_" + getComponentName();
+    }
+
+    FSize2 BaseCamera::getOutputFrameSize()
+    {
+        if (gGameInstance->renderMode == GameInstance::RenderMode::Editor)
+        {
+            return static_cast<FSize2>(gGameInstance->gameViewport.getRenderSize());
+        }
+
+        return static_cast<FSize2>(GetWindow().getSize());
+    }
+
+    const glm::mat4& PerspectiveCamera::getMatrix()
     {
         if (_isDirtyProjMatrix)
         {
-            _cachedProjMatrix = glm::perspective(glm::radians(_fov),
-                                                 _frameSize.width / _frameSize.height, _near, _far);
+            _cachedProjMatrix
+                = glm::perspective(glm::radians(_fov), _aspect.width / _aspect.height, _near, _far);
 
             _cachedCalculatedMatrix
                 = _cachedProjMatrix * _cachedModelMatrix; // in such a context Model == View
@@ -61,7 +107,7 @@ namespace Core
         return _cachedCalculatedMatrix;
     }
 
-    void BaseCamera::lookAt(const glm::vec3& targetPosition)
+    void PerspectiveCamera::lookAt(const glm::vec3& targetPosition)
     {
         const auto direction = glm::normalize(targetPosition - getPosition());
 
@@ -71,46 +117,31 @@ namespace Core
         setRotation({ pitch, yaw, 0.0f });
     }
 
-    void BaseCamera::setFrameSize(FSize2 size) noexcept
+    void PerspectiveCamera::setAspect(FSize2 size) noexcept
     {
-        _frameSize = size;
+        _aspect = size;
         _isDirtyProjMatrix = true;
     }
 
-    void BaseCamera::setFov(float fov) noexcept
+    void PerspectiveCamera::setFov(float fov) noexcept
     {
         _fov = std::clamp(fov, minFov, maxFov);
         _isDirtyProjMatrix = true;
     }
 
-    void BaseCamera::setNear(float value) noexcept
+    void PerspectiveCamera::setNear(float value) noexcept
     {
         _near = value;
         _isDirtyProjMatrix = true;
     }
 
-    void BaseCamera::setFar(float value) noexcept
+    void PerspectiveCamera::setFar(float value) noexcept
     {
         _far = value;
         _isDirtyProjMatrix = true;
     }
 
-    StringAtom BaseCamera::getCacheHash() const
-    {
-        return getComponentType() + "_" + getComponentName();
-    }
-
-    FSize2 BaseCamera::getOutputFrameSize()
-    {
-        if (gGameInstance->renderMode == GameInstance::RenderMode::Editor)
-        {
-            return static_cast<FSize2>(gGameInstance->gameViewport.getRenderSize());
-        }
-
-        return static_cast<FSize2>(GetWindow().getSize());
-    }
-
-    glm::vec3 BaseCamera::putMouseRay(float length)
+    glm::vec3 PerspectiveCamera::putMouseRay(float length)
     {
         const auto mouse = Mouse::GetInViewportPosition();
 
@@ -127,22 +158,8 @@ namespace Core
         return _position + ray_world * length;
     }
 
-    void BaseCamera::recalculateCameraMatrices()
+    void PerspectiveCamera::onRecalculateCameraMatrices()
     {
-        _worldPos = glm::vec3(0);
-        _worldRotation = glm::vec3(0);
-
-        BaseComponent* p = this;
-        while (p)
-        {
-            if (auto* t = dynamic_cast<Transformable*>(p))
-            {
-                _worldPos += t->getPosition();
-                _worldRotation += t->getRotation();
-            }
-            p = p->getParent();
-        }
-
         auto& mat = _cachedModelMatrix;
         mat = glm::mat4(1.f);
 
@@ -152,16 +169,6 @@ namespace Core
 
         mat = glm::translate(mat, _worldPos * -1.f);
         mat = glm::translate(mat, _origin);
-
-        _isDirtyModelMatrix = false;
-    }
-
-    void BaseCamera::tryToRecalculateCameraMatrices()
-    {
-        if (_isDirtyModelMatrix)
-        {
-            recalculateCameraMatrices();
-        }
     }
 
 } // namespace Core

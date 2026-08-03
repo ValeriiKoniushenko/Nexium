@@ -301,7 +301,7 @@ namespace Core
         auto* asStaticMeshBundle = dynamic_cast<StaticMeshBundle*>(_target);
         auto* asInterleavedGraphicsData = dynamic_cast<InterleavedGraphicsData*>(_target);
         auto* asStaticMesh = dynamic_cast<StaticMesh*>(_target);
-        auto* asBaseCamera = dynamic_cast<BaseCamera*>(_target);
+        auto* asBaseCamera = dynamic_cast<PerspectiveCamera*>(_target);
         auto* asRectangleComponent = dynamic_cast<SceneObj::Rectangle*>(_target);
 
         tryDrawBaseComponent(asBaseComponent);
@@ -416,8 +416,8 @@ namespace Core
 
             out.attachChild(::Create<FloatInput>("FOV", false));
             _cameraFov = out.getLastChildAs<HLayout>()->getLastChildAs<FloatInput>().get();
-            _cameraFov->setMin(BaseCamera::minFov);
-            _cameraFov->setMax(BaseCamera::maxFov);
+            _cameraFov->setMin(PerspectiveCamera::minFov);
+            _cameraFov->setMax(PerspectiveCamera::maxFov);
             _cameraFov->setStep(1.f);
 
             out.attachChild(::Create<FloatInput>("Far plane", false));
@@ -681,7 +681,7 @@ namespace Core
             _subscriptionPool << _cameraFov->onInput->subscribeAndGetID(
                 [this](float newValue)
                 {
-                    if (auto* camera = _target->tryCastTo<BaseCamera>())
+                    if (auto* camera = _target->tryCastTo<PerspectiveCamera>())
                     {
                         camera->setFov(newValue);
                     }
@@ -693,7 +693,7 @@ namespace Core
             _subscriptionPool << _cameraFar->onInput->subscribeAndGetID(
                 [this](float newValue)
                 {
-                    if (auto* camera = _target->tryCastTo<BaseCamera>())
+                    if (auto* camera = _target->tryCastTo<PerspectiveCamera>())
                     {
                         camera->setFar(newValue);
                     }
@@ -705,7 +705,7 @@ namespace Core
             _subscriptionPool << _cameraNear->onInput->subscribeAndGetID(
                 [this](float newValue)
                 {
-                    if (auto* camera = _target->tryCastTo<BaseCamera>())
+                    if (auto* camera = _target->tryCastTo<PerspectiveCamera>())
                     {
                         camera->setNear(newValue);
                     }
@@ -716,9 +716,9 @@ namespace Core
             _subscriptionPool << _cameraFrame->onInput->subscribeAndGetID(
                 [this](glm::vec2 newValue)
                 {
-                    if (auto* camera = _target->tryCastTo<BaseCamera>())
+                    if (auto* camera = _target->tryCastTo<PerspectiveCamera>())
                     {
-                        camera->setFrameSize(FSize2(newValue));
+                        camera->setAspect(FSize2(newValue));
                     }
                 });
         }
@@ -956,7 +956,7 @@ namespace Core
         }
     }
 
-    void ObjectPropertiesWindowEWC::tryDrawBaseCamera(BaseCamera* comp)
+    void ObjectPropertiesWindowEWC::tryDrawBaseCamera(PerspectiveCamera* comp)
     {
         if (comp && Gui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen))
         {
@@ -976,7 +976,7 @@ namespace Core
             }
             if (_cameraFrame)
             {
-                _cameraFrame->setInputtedData(comp->getFrameSize().toGlm());
+                _cameraFrame->setInputtedData(comp->getAspect().toGlm());
             }
             if (_cameraOutput)
             {

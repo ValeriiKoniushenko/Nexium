@@ -69,6 +69,7 @@ namespace Core
     class StaticMeshBundle;
     class StaticMesh;
     class BaseCamera;
+    class PerspectiveCamera;
 
     struct _GraphicsModifiersArray_ArrayCellViewerFunc
     {
@@ -123,7 +124,7 @@ namespace Core
 
         void tryDrawInterleavedGraphicsData(InterleavedGraphicsData* comp);
 
-        void tryDrawBaseCamera(BaseCamera* comp);
+        void tryDrawBaseCamera(PerspectiveCamera* comp);
 
         void tryDrawRectangleComponent(SceneObj::Rectangle* comp);
 

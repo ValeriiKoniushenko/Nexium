@@ -30,7 +30,7 @@
         },
         {
             "_children": null,
-            "_isEnabled": true,
+            "_isEnabled": false,
             "_name": "",
             "_noTick": false,
             "_type": "Core::ECSEditorFrameByFrameAnimationAdapter"

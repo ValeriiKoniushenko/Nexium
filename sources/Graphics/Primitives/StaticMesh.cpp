@@ -266,7 +266,11 @@ namespace Core
         _outlineShader->setUniform("uProjAndView"_atom, camera.getMatrix());
 
         const float distance = glm::length(camera.getPosition() - glm::vec3(getPosition()));
-        const float ndcDistance = distance / camera.getFar();
+        float ndcDistance = 0.f;
+        if (auto* perspectiveCamera = dynamic_cast<PerspectiveCamera*>(&camera))
+        {
+            ndcDistance = distance / perspectiveCamera->getFar();
+        }
         _outlineShader->setUniform("uCameraObjectNDCDistance"_atom, ndcDistance);
 
         bindVAO();

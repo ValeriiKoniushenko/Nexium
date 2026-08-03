@@ -41,41 +41,23 @@ namespace Core
     public:
         ~BaseCamera() override = default;
 
-        [[nodiscard]] const glm::mat4& getMatrix();
+        [[nodiscard]] virtual const glm::mat4& getMatrix() = 0;
+        [[nodiscard]] virtual glm::vec3 putMouseRay(float length) = 0;
 
         [[nodiscard]] const glm::mat4& getCachedProjectionMatrix() { return _cachedProjMatrix; }
 
-        void lookAt(const glm::vec3& targetPosition);
-
-        void setFrameSize(FSize2 size) noexcept;
-
-        [[nodiscard]] FSize2 getFrameSize() const noexcept { return _frameSize; }
-
-        void setFov(float fov) noexcept;
-
-        [[nodiscard]] float getFov() const noexcept { return _fov; }
-
-        void setNear(float value) noexcept;
-
-        [[nodiscard]] float getNear() const noexcept { return _near; }
-
-        void setFar(float value) noexcept;
-
-        [[nodiscard]] float getFar() const noexcept { return _far; }
-
-        [[nodiscard]] StringAtom getCacheHash() const override;
-
         [[nodiscard]] FSize2 getOutputFrameSize();
-
-        [[nodiscard]] glm::vec3 putMouseRay(float length);
 
         [[nodiscard]] glm::vec3 getGlobalPos() const noexcept { return _worldPos; }
         [[nodiscard]] glm::vec3 getGlobalRotation() const noexcept { return _worldRotation; }
 
-    protected:
-        void recalculateCameraMatrices();
+        [[nodiscard]] StringAtom getCacheHash() const override;
 
         void tryToRecalculateCameraMatrices();
+
+    protected:
+        void recalculateCameraMatrices();
+        virtual void onRecalculateCameraMatrices() = 0;
 
     protected:
         glm::mat4 _cachedProjMatrix = glm::mat4(1.f);
@@ -83,17 +65,61 @@ namespace Core
         glm::vec3 _worldRotation = glm::vec3(0.f);
         glm::vec3 _worldPos = glm::vec3(0.f);
 
+        bool _isDirtyProjMatrix = true;
+    };
+
+    CLASS();
+    class OrthographicCamera : public BaseCamera
+    {
+        ECS_DECL(OrthographicCamera, Core::BaseCamera);
+
+    public:
+    };
+
+    CLASS();
+    class PerspectiveCamera : public BaseCamera
+    {
+        ECS_DECL(PerspectiveCamera, Core::BaseCamera);
+
+    public:
+        constexpr static float minFov = 5.f;
+        constexpr static float maxFov = 175.f;
+
+    public:
+        ~PerspectiveCamera() override = default;
+
+        [[nodiscard]] const glm::mat4& getMatrix() override;
+
+        void lookAt(const glm::vec3& targetPosition);
+
+        void setAspect(FSize2 size) noexcept;
+        [[nodiscard]] FSize2 getAspect() const noexcept { return _aspect; }
+
+        void setFov(float fov) noexcept;
+        [[nodiscard]] float getFov() const noexcept { return _fov; }
+
+        void setNear(float value) noexcept;
+        [[nodiscard]] float getNear() const noexcept { return _near; }
+
+        void setFar(float value) noexcept;
+        [[nodiscard]] float getFar() const noexcept { return _far; }
+
+        [[nodiscard]] glm::vec3 putMouseRay(float length) override;
+
+    protected:
+        void onRecalculateCameraMatrices() override;
+
+    protected:
         FIELD();
-        Core::FSize2 _frameSize = Core::FSize2{ 600, 600 };
+        Core::FSize2 _aspect = Core::FSize2{ 1.f, 1.f };
         FIELD();
         float _fov = 75.f;
         FIELD();
         float _far = 10'000.f;
         FIELD();
         float _near = 0.1f;
-
-        bool _isDirtyProjMatrix = true;
     };
+
 } // namespace Core
 
 #include "Camera.generated.h" // added by the code generator. Better don't move it.
