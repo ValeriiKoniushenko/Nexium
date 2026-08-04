@@ -2,34 +2,6 @@
     "_sceneName": "Default",
     "sceneObjects": [
         {
-            "assetType": "Core::Spectator",
-            "name": "Core::Spectator_1",
-            "referenceAsset": "data/assets/BaseSpectator.nx",
-            "trans": {
-                "_origin": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "_position": [
-                    -43.64704895019531,
-                    87.24829864501953,
-                    343.9142761230469
-                ],
-                "_rotation": [
-                    7.875,
-                    6.498046875,
-                    0.0
-                ],
-                "_scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            },
-            "typeSpecificData": null
-        },
-        {
             "assetType": "Core::PerspectiveCamera",
             "name": "BaseCamera1",
             "referenceAsset": "data/assets/BaseCamera.nx",
@@ -154,6 +126,34 @@
                 "_blendingEnabled": true,
                 "_textureName": "MPlayer_walk.png"
             }
+        },
+        {
+            "assetType": "Core::Spectator",
+            "name": "Core::Spectator",
+            "referenceAsset": "data/assets/BaseSpectator.nx",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    0.0,
+                    91.86788177490234,
+                    222.23248291015625
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": null
         }
     ]
 }

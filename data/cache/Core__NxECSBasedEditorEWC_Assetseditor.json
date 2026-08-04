@@ -9,7 +9,7 @@
         },
         {
             "_children": null,
-            "_isEnabled": false,
+            "_isEnabled": true,
             "_name": "",
             "_noTick": false,
             "_type": "Core::ECSEditorActorAdapter"
@@ -42,7 +42,7 @@
     ],
     "_innerSize": {
         "height": 568.0,
-        "width": 1218.0
+        "width": 1228.0
     },
     "_isEnabled": true,
     "_isFitContent": false,

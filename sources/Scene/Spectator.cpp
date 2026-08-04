@@ -49,8 +49,6 @@ namespace Core
     {
         Actor::onInitialize();
 
-        (void)addUniqueTypeChildComponent<PerspectiveCamera>();
-
         const auto getSpeed = [this](KeyboardIA::SpecKeysState state)
         { return speed / (state.leftShift == Keyboard::KeyState::Pressed ? 8.f : 1.f); };
 

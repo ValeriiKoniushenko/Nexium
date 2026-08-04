@@ -33,32 +33,58 @@ namespace
 {
     struct JsonKeyChange
     {
+        enum class ChangeType
+        {
+            Updated,
+            Added,
+            Removed
+        };
+
         std::string path;
-        nlohmann::json oldValue;
-        nlohmann::json newValue;
+        ChangeType changeType;
+        nlohmann::json oldValue; // null for Added
+        nlohmann::json newValue; // null for Removed
     };
+
+    std::string ToString(JsonKeyChange::ChangeType type)
+    {
+        switch (type)
+        {
+            case JsonKeyChange::ChangeType::Updated:
+                return "Updated";
+            case JsonKeyChange::ChangeType::Added:
+                return "Added";
+            case JsonKeyChange::ChangeType::Removed:
+                return "Removed";
+        }
+        return "Unknown";
+    }
 
     std::vector<JsonKeyChange> MergeExistingKeys(nlohmann::json& target,
                                                  const nlohmann::json& patch,
                                                  const std::string& basePath = "")
     {
         std::vector<JsonKeyChange> changes;
-
         if (!target.is_object() || !patch.is_object())
         {
             return changes;
         }
 
+        // 1. Walk patch keys: update existing, add missing
         for (auto it = patch.begin(); it != patch.end(); ++it)
         {
             const std::string& key = it.key();
+            auto currentPath = basePath.empty() ? key : basePath + "." + key;
             auto targetIt = target.find(key);
+
             if (targetIt == target.end())
             {
+                // Key doesn't exist in target -> add it
+                target[key] = *it;
+                changes.push_back({ currentPath, JsonKeyChange::ChangeType::Added,
+                                    nlohmann::json(nullptr), *it });
                 continue;
             }
-
-            auto currentPath = basePath.empty() ? key : basePath + "." + key;
 
             if (targetIt->is_object() && it->is_object())
             {
@@ -70,9 +96,27 @@ namespace
             {
                 if (*targetIt != *it)
                 {
-                    changes.push_back({ currentPath, *targetIt, *it });
+                    changes.push_back(
+                        { currentPath, JsonKeyChange::ChangeType::Updated, *targetIt, *it });
                     *targetIt = *it;
                 }
+            }
+        }
+
+        // 2. Walk target keys: remove any not present in patch
+        for (auto it = target.begin(); it != target.end();)
+        {
+            const std::string& key = it.key();
+            if (patch.find(key) == patch.end())
+            {
+                auto currentPath = basePath.empty() ? key : basePath + "." + key;
+                changes.push_back({ currentPath, JsonKeyChange::ChangeType::Removed, *it,
+                                    nlohmann::json(nullptr) });
+                it = target.erase(it);
+            }
+            else
+            {
+                ++it;
             }
         }
 
@@ -168,16 +212,20 @@ namespace Core
 
         auto baseAssetData = getAssetData();
 
+#if defined(DEBUG)
+        std::string xxx1 = baseAssetData.dump(4);
+        std::string xxx2 = assetData.dump(4);
+#endif
+
         auto changes = MergeExistingKeys(baseAssetData, assetData);
 
         std::string patchedOutput;
         patchedOutput.reserve(256);
         for (const auto& change : changes)
         {
-            patchedOutput += change.path + ": " + change.oldValue.dump() + " -> "
-                             + change.newValue.dump() + " | ";
+            patchedOutput += "[" + ToString(change.changeType) + "] " + change.path + ": "
+                             + change.oldValue.dump() + " -> " + change.newValue.dump() + " | ";
         }
-
         json[StreamData::data] = baseAssetData;
 
         if (_status == Status::Loaded)
