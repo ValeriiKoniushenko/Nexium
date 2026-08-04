@@ -414,18 +414,6 @@ namespace Core
         {
             auto& out = _baseCameraLayout;
 
-            out.attachChild(CreateHLayoutAndLabel("Projection", false));
-            _cameraProjection = out.getLastChildAs<HLayout>()->addChildComponent<ComboView>();
-            _cameraProjection->setFlex(Flex::FlexWidth);
-            _cameraProjection->setData(
-                std::vector<StringAtom>{ "Perspective"_atom, "Orthographic"_atom });
-
-            out.attachChild(::Create<FloatInput>("Orthographic size", false));
-            _cameraOrthographicSize
-                = out.getLastChildAs<HLayout>()->getLastChildAs<FloatInput>().get();
-            _cameraOrthographicSize->setMax(1'000'000.f);
-            _cameraOrthographicSize->setStep(1.f);
-
             out.attachChild(::Create<FloatInput>("FOV", false));
             _cameraFov = out.getLastChildAs<HLayout>()->getLastChildAs<FloatInput>().get();
             _cameraFov->setMin(PerspectiveCamera::minFov);
