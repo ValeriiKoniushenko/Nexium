@@ -35,8 +35,8 @@
 
 namespace Core
 {
-    ECS_COMPONENT_IMPL(ImageViewerEWC);
-    R_FRIEND_IMPL(ImageViewerEWC);
+    ECS_IMPL(ImageViewerEWC);
+    ECS_IMPL(DummyEWC);
 
     const char* ImageViewerEWC::getIcon()
     {
@@ -193,6 +193,11 @@ namespace Core
         handlePan(isCanvasHovered);
         clampOffset(rawImageSize, fitZoom);
         drawImage(canvasPosition, canvasSize, rawImageSize);
+    }
+
+    const char* DummyEWC::getIcon()
+    {
+        return ICON_FA_PICTURE_O;
     }
 
     void DummyEWC::onInitialize()
