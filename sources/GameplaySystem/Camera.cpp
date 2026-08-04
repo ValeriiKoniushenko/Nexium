@@ -55,7 +55,15 @@ namespace Core
             p = p->getParent();
         }
 
-        onRecalculateCameraMatrices();
+        auto& mat = _cachedModelMatrix;
+        mat = glm::mat4(1.f);
+
+        mat = glm::rotate(mat, glm::radians(_worldRotation.x), glm::vec3(1.f, 0.f, 0.f));
+        mat = glm::rotate(mat, glm::radians(_worldRotation.y), glm::vec3(0.f, 1.f, 0.f));
+        mat = glm::rotate(mat, glm::radians(_worldRotation.z), glm::vec3(0.f, 0.f, 1.f));
+
+        mat = glm::translate(mat, _worldPos * -1.f);
+        mat = glm::translate(mat, _origin);
 
         _isDirtyModelMatrix = false;
     }
@@ -83,18 +91,45 @@ namespace Core
         return static_cast<FSize2>(GetWindow().getSize());
     }
 
+    void BaseCamera::setNear(float value) noexcept
+    {
+        _near = value;
+        _isDirtyProjMatrix = true;
+    }
+
+    void BaseCamera::setFar(float value) noexcept
+    {
+        _far = value;
+        _isDirtyProjMatrix = true;
+    }
+
     const glm::mat4& OrthographicCamera::getMatrix()
     {
+        if (_isDirtyProjMatrix)
+        {
+            _cachedProjMatrix
+                = glm::ortho(_topLeft.x, _bottomRight.x, _topLeft.y, _bottomRight.y, _near, _far);
+
+            _cachedCalculatedMatrix
+                = _cachedProjMatrix * _cachedModelMatrix; // in such a context Model == View
+
+            _isDirtyProjMatrix = false;
+        }
+
+        if (_isDirtyModelMatrix)
+        {
+            recalculateCameraMatrices();
+
+            _cachedCalculatedMatrix
+                = _cachedProjMatrix * _cachedModelMatrix; // in such context Model == View
+        }
+
         return _cachedCalculatedMatrix;
     }
 
     glm::vec3 OrthographicCamera::putMouseRay(float length)
     {
         return glm::vec3(0);
-    }
-
-    void OrthographicCamera::onRecalculateCameraMatrices()
-    {
     }
 
     const glm::mat4& PerspectiveCamera::getMatrix()
@@ -143,18 +178,6 @@ namespace Core
         _isDirtyProjMatrix = true;
     }
 
-    void PerspectiveCamera::setNear(float value) noexcept
-    {
-        _near = value;
-        _isDirtyProjMatrix = true;
-    }
-
-    void PerspectiveCamera::setFar(float value) noexcept
-    {
-        _far = value;
-        _isDirtyProjMatrix = true;
-    }
-
     glm::vec3 PerspectiveCamera::putMouseRay(float length)
     {
         const auto mouse = Mouse::GetInViewportPosition();
@@ -170,19 +193,6 @@ namespace Core
             = glm::normalize(glm::vec3(glm::inverse(_cachedModelMatrix) * rayEye));
 
         return _position + ray_world * length;
-    }
-
-    void PerspectiveCamera::onRecalculateCameraMatrices()
-    {
-        auto& mat = _cachedModelMatrix;
-        mat = glm::mat4(1.f);
-
-        mat = glm::rotate(mat, glm::radians(_worldRotation.x), glm::vec3(1.f, 0.f, 0.f));
-        mat = glm::rotate(mat, glm::radians(_worldRotation.y), glm::vec3(0.f, 1.f, 0.f));
-        mat = glm::rotate(mat, glm::radians(_worldRotation.z), glm::vec3(0.f, 0.f, 1.f));
-
-        mat = glm::translate(mat, _worldPos * -1.f);
-        mat = glm::translate(mat, _origin);
     }
 
 } // namespace Core

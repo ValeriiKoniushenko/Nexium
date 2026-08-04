@@ -12,7 +12,7 @@
                 "_isDrawOutline": false,
                 "_isEnabled": true,
                 "_isPostDraw": false,
-                "_name": "Core-PerspectiveCamera",
+                "_name": "PerspectiveCamera",
                 "_near": 0.10000000149011612,
                 "_noTick": false,
                 "_origin": [
@@ -36,6 +36,35 @@
                     1.0
                 ],
                 "_type": "Core::PerspectiveCamera"
+            },
+            {
+                "_children": null,
+                "_isDrawOutline": false,
+                "_isEnabled": false,
+                "_isPostDraw": false,
+                "_name": "OrthographicCamera",
+                "_noTick": false,
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "_type": "Core::OrthographicCamera"
             }
         ],
         "_isDrawOutline": false,

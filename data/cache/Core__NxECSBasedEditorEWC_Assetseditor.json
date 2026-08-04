@@ -42,7 +42,7 @@
     ],
     "_innerSize": {
         "height": 568.0,
-        "width": 1228.0
+        "width": 1147.0
     },
     "_isEnabled": true,
     "_isFitContent": false,
@@ -54,7 +54,7 @@
     "_noTick": false,
     "_oldSize": {
         "height": 632.0,
-        "width": 1244.0
+        "width": 1173.0
     },
     "_position": [
         239.0,
@@ -62,7 +62,7 @@
     ],
     "_size": {
         "height": 632.0,
-        "width": 1244.0
+        "width": 1173.0
     },
     "_type": "Core::NxECSBasedEditorEWC"
 }

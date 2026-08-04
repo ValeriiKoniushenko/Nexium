@@ -50,6 +50,7 @@ namespace Core
 
         [[nodiscard]] virtual const glm::mat4& getMatrix() = 0;
         [[nodiscard]] virtual glm::vec3 putMouseRay(float length) = 0;
+        [[nodiscard]] virtual CameraType getType() const noexcept = 0;
 
         [[nodiscard]] const glm::mat4& getCachedProjectionMatrix() { return _cachedProjMatrix; }
 
@@ -58,21 +59,29 @@ namespace Core
         [[nodiscard]] glm::vec3 getGlobalPos() const noexcept { return _worldPos; }
         [[nodiscard]] glm::vec3 getGlobalRotation() const noexcept { return _worldRotation; }
 
-        [[nodiscard]] StringAtom getCacheHash() const override;
+        void setNear(float value) noexcept;
+        [[nodiscard]] float getNear() const noexcept { return _near; }
 
-        [[nodiscard]] virtual CameraType getType() const noexcept = 0;
+        void setFar(float value) noexcept;
+        [[nodiscard]] float getFar() const noexcept { return _far; }
+
+        [[nodiscard]] StringAtom getCacheHash() const override;
 
         void tryToRecalculateCameraMatrices();
 
     protected:
         void recalculateCameraMatrices();
-        virtual void onRecalculateCameraMatrices() = 0;
 
     protected:
         glm::mat4 _cachedProjMatrix = glm::mat4(1.f);
         glm::mat4 _cachedCalculatedMatrix = glm::mat4(1.f);
         glm::vec3 _worldRotation = glm::vec3(0.f);
         glm::vec3 _worldPos = glm::vec3(0.f);
+
+        FIELD();
+        float _far = 10'000.f;
+        FIELD();
+        float _near = 0.1f;
 
         bool _isDirtyProjMatrix = true;
     };
@@ -97,7 +106,10 @@ namespace Core
         }
 
     protected:
-        void onRecalculateCameraMatrices() override;
+        FIELD();
+        glm::vec2 _topLeft = glm::vec2(0.f, 0.f);
+        FIELD();
+        glm::vec2 _bottomRight = glm::vec2(800.f, 600.f);
     };
 
     CLASS();
@@ -126,12 +138,6 @@ namespace Core
         void setFov(float fov) noexcept;
         [[nodiscard]] float getFov() const noexcept { return _fov; }
 
-        void setNear(float value) noexcept;
-        [[nodiscard]] float getNear() const noexcept { return _near; }
-
-        void setFar(float value) noexcept;
-        [[nodiscard]] float getFar() const noexcept { return _far; }
-
         [[nodiscard]] glm::vec3 putMouseRay(float length) override;
 
         [[nodiscard]] CameraType getType() const noexcept override
@@ -140,17 +146,11 @@ namespace Core
         }
 
     protected:
-        void onRecalculateCameraMatrices() override;
-
     protected:
         FIELD();
         Core::FSize2 _aspect = Core::FSize2{ 1.f, 1.f };
         FIELD();
         float _fov = 75.f;
-        FIELD();
-        float _far = 10'000.f;
-        FIELD();
-        float _near = 0.1f;
     };
 
 } // namespace Core
