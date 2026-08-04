@@ -34,7 +34,7 @@ namespace Core::SceneObj
 
     ECS_IMPL(Rectangle);
 
-    void Rectangle::draw(BaseCamera& camera)
+    void Rectangle::onDraw(BaseCamera& camera)
     {
         static BaseGraphicsData gcd = []()
         {

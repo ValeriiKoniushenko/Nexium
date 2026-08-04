@@ -37,8 +37,6 @@ namespace Core::SceneObj
         ECS_DECL(Rectangle, Core::SceneObject);
 
     public:
-        void draw(BaseCamera& camera) override;
-
         [[nodiscard]] StringAtom getTextureName() const { return _textureName; }
         void setTexture(const StringAtom& value) { _textureName = value; }
         void setTextureUV(GlobalPosition2F offset, GlobalPosition2F size)
@@ -65,6 +63,9 @@ namespace Core::SceneObj
 
         [[nodiscard]] nlohmann::json getTypeSpecificSceneDataAsJson() const override;
         void applyTypeSpecificSceneData(const nlohmann::json& data) override;
+
+    protected:
+        void onDraw(BaseCamera& camera) override;
 
     protected:
         FIELD();

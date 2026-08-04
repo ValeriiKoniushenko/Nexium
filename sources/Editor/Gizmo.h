@@ -59,8 +59,6 @@ namespace Core
             std::vector<Transformable*> attachedObjects;
         };
 
-        void draw(BaseCamera& camera) override;
-
         void pureDraw(const std::function<void(StaticMesh*)>& onUniformSet,
                       const std::function<bool(const Actor*)>& conditional) override;
 
@@ -69,14 +67,11 @@ namespace Core
         void onTick(float delta) override;
 
     protected:
+        void onDraw(BaseCamera& camera) override;
         void initialize() override;
-
         void load3DModel();
-
         void handleDragStart(StaticMesh* touchedMesh);
-
         void handleDrag();
-
         void recalculateMatrices(const glm::mat4& mat) override;
 
     private:

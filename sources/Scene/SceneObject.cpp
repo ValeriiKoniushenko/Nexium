@@ -128,6 +128,18 @@ namespace Core
     {
     }
 
+    void SceneObject::draw(BaseCamera& camera)
+    {
+        IDrawable::draw(camera);
+
+        if (!isEnabled())
+        {
+            return;
+        }
+
+        onDraw(camera);
+    }
+
     void SceneObject::makeTransformableTreeDirty()
     {
         forEach(

@@ -96,6 +96,9 @@ namespace Core
 
         virtual void onAddedToScene() {}
 
+        void draw(BaseCamera& camera) final;
+        virtual void onDraw(BaseCamera& camera) {}
+
     protected:
         void makeTransformableTreeDirty();
         void onInitialize() override;

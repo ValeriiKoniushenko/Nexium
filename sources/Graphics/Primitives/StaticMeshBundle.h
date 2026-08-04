@@ -45,9 +45,6 @@ namespace Core
         StaticMeshBundle& operator=(const StaticMeshBundle& other);
         StaticMeshBundle& operator=(StaticMeshBundle&& other) = default;
 
-        /// will draw with the default shader & logic. Single draw bundle!
-        void draw(BaseCamera&) override;
-
         /// only draw call with graphics modifiers - nothing more.
         /// Before using of this function you must manually prepare the shader &
         /// 'use' it.
@@ -114,6 +111,7 @@ namespace Core
         }
 
     protected:
+        void onDraw(BaseCamera&) override;
         void onOutlineStatusChange(bool newStatus) override;
         void onAddChild(BaseComponent* newChild) override;
         void onRemoveChild(BaseComponent* child) override;

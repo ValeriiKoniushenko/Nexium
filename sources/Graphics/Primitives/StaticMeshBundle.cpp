@@ -81,13 +81,8 @@ namespace Core
         return *this;
     }
 
-    void StaticMeshBundle::draw(BaseCamera& camera)
+    void StaticMeshBundle::onDraw(BaseCamera& camera)
     {
-        if (!_isEnabled)
-        {
-            return;
-        }
-
         tryToRecalculateMatrices();
 
         for (auto* mesh : _meshes)
