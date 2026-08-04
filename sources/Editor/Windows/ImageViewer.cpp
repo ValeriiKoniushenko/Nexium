@@ -161,7 +161,7 @@ namespace Core
         }
 
         const glm::vec2 canvasPosition = ImGui::GetCursorScreenPos();
-        glm::vec2 canvasSize = ImGui::GetContentRegionAvail();
+        const glm::vec2 canvasSize = ImGui::GetContentRegionAvail();
         if (canvasSize.x <= 0.0f || canvasSize.y <= 0.0f)
         {
             return;
