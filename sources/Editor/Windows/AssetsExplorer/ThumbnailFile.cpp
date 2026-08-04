@@ -25,6 +25,7 @@
 #include "ThumbnailFile.h"
 
 #include "AssetsManager/AssetsManager.h"
+#include "Editor/Windows/Editors/TextEditor.h"
 #include "Editor/Windows/ModalPopUp.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Misc/IconsFontAwesome.h"
@@ -225,6 +226,15 @@ namespace Core
             {
                 _needOpen = true;
             }
+            if (_path.extension() == ".nx")
+            {
+                if (ImGui::MenuItem(ICON_FA_FILE_CODE_O " Open with text editor"))
+                {
+                    gGameInstance->gameEditor.showWindow<TextEditorEWC>(
+                        ".*", _path.generic_string().data());
+                }
+            }
+
             if (ImGui::MenuItem(ICON_FA_FILES_O " Copy"))
             {
                 _actions.copy(_path);
