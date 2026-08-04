@@ -132,6 +132,18 @@ namespace Core
         return glm::vec3(0);
     }
 
+    void OrthographicCamera::setTopLeft(const glm::vec2& topLeft) noexcept
+    {
+        _topLeft = topLeft;
+        _isDirtyProjMatrix = true;
+    }
+
+    void OrthographicCamera::setBottomRight(const glm::vec2& bottomRight) noexcept
+    {
+        _bottomRight = bottomRight;
+        _isDirtyProjMatrix = true;
+    }
+
     const glm::mat4& PerspectiveCamera::getMatrix()
     {
         if (_isDirtyProjMatrix)

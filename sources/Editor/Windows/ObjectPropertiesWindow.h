@@ -124,7 +124,7 @@ namespace Core
 
         void tryDrawInterleavedGraphicsData(InterleavedGraphicsData* comp);
 
-        void tryDrawBaseCamera(PerspectiveCamera* comp);
+        void tryDrawBaseCamera(BaseCamera* comp);
 
         void tryDrawRectangleComponent(SceneObj::Rectangle* comp);
 
@@ -168,13 +168,21 @@ namespace Core
 
         void setGraphicsModifiers(AbstractComponent* comp);
 
-        // BaseCamera section:
-        Gui::VerticalLayout _baseCameraLayout;
+        // PerspectiveCamera section:
+        Gui::VerticalLayout _perspectiveCameraLayout;
         Gui::FloatInput* _cameraFov = nullptr;
-        Gui::FloatInput* _cameraFar = nullptr;
-        Gui::FloatInput* _cameraNear = nullptr;
         Gui::Float2Input* _cameraFrame = nullptr;
         Gui::Float2Input* _cameraOutput = nullptr;
+
+        // OrthoCamera section:
+        Gui::VerticalLayout _orthoCameraLayout;
+        Gui::Float2Input* _orthoCameraLeftTop = nullptr;
+        Gui::Float2Input* _orthoCameraRightBottom = nullptr;
+
+        // BaseCamera section:
+        Gui::VerticalLayout _baseCameraLayout;
+        Gui::FloatInput* _cameraFar = nullptr;
+        Gui::FloatInput* _cameraNear = nullptr;
 
         // StaticMesh section:
         Gui::VerticalLayout _staticMeshLayout;

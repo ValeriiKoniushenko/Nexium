@@ -301,7 +301,7 @@ namespace Core
         auto* asStaticMeshBundle = dynamic_cast<StaticMeshBundle*>(_target);
         auto* asInterleavedGraphicsData = dynamic_cast<InterleavedGraphicsData*>(_target);
         auto* asStaticMesh = dynamic_cast<StaticMesh*>(_target);
-        auto* asBaseCamera = dynamic_cast<PerspectiveCamera*>(_target);
+        auto* asBaseCamera = dynamic_cast<BaseCamera*>(_target);
         auto* asRectangleComponent = dynamic_cast<SceneObj::Rectangle*>(_target);
 
         tryDrawBaseComponent(asBaseComponent);
@@ -414,12 +414,6 @@ namespace Core
         {
             auto& out = _baseCameraLayout;
 
-            out.attachChild(::Create<FloatInput>("FOV", false));
-            _cameraFov = out.getLastChildAs<HLayout>()->getLastChildAs<FloatInput>().get();
-            _cameraFov->setMin(PerspectiveCamera::minFov);
-            _cameraFov->setMax(PerspectiveCamera::maxFov);
-            _cameraFov->setStep(1.f);
-
             out.attachChild(::Create<FloatInput>("Far plane", false));
             _cameraFar = out.getLastChildAs<HLayout>()->getLastChildAs<FloatInput>().get();
             _cameraFar->setMin(100.f);
@@ -431,8 +425,33 @@ namespace Core
             _cameraNear->setMin(0.1f);
             _cameraNear->setMax(1000.f);
             _cameraNear->setStep(0.1f);
+        }
 
-            out.attachChild(CreateHLayoutAndLabel("Frame size(ration)", false));
+        // ================= PerspectiveCamera ====================
+        {
+            auto& out = _orthoCameraLayout;
+
+            out.attachChild(CreateHLayoutAndLabel("Top left", false));
+            _orthoCameraLeftTop = out.getLastChildAs<HLayout>()->addChildComponent<Float2Input>();
+            _orthoCameraLeftTop->setLabelText({ 'L', 'T' });
+
+            out.attachChild(CreateHLayoutAndLabel("Bottom right", false));
+            _orthoCameraRightBottom
+                = out.getLastChildAs<HLayout>()->addChildComponent<Float2Input>();
+            _orthoCameraRightBottom->setLabelText({ 'R', 'B' });
+        }
+
+        // ================= PerspectiveCamera ====================
+        {
+            auto& out = _perspectiveCameraLayout;
+
+            out.attachChild(::Create<FloatInput>("FOV", false));
+            _cameraFov = out.getLastChildAs<HLayout>()->getLastChildAs<FloatInput>().get();
+            _cameraFov->setMin(PerspectiveCamera::minFov);
+            _cameraFov->setMax(PerspectiveCamera::maxFov);
+            _cameraFov->setStep(1.f);
+
+            out.attachChild(CreateHLayoutAndLabel("Aspect", false));
             _cameraFrame = out.getLastChildAs<HLayout>()->addChildComponent<Float2Input>();
             _cameraFrame->setLabelText({ 'W', 'H' });
 
@@ -693,7 +712,7 @@ namespace Core
             _subscriptionPool << _cameraFar->onInput->subscribeAndGetID(
                 [this](float newValue)
                 {
-                    if (auto* camera = _target->tryCastTo<PerspectiveCamera>())
+                    if (auto* camera = _target->tryCastTo<BaseCamera>())
                     {
                         camera->setFar(newValue);
                     }
@@ -705,7 +724,7 @@ namespace Core
             _subscriptionPool << _cameraNear->onInput->subscribeAndGetID(
                 [this](float newValue)
                 {
-                    if (auto* camera = _target->tryCastTo<PerspectiveCamera>())
+                    if (auto* camera = _target->tryCastTo<BaseCamera>())
                     {
                         camera->setNear(newValue);
                     }
@@ -719,6 +738,28 @@ namespace Core
                     if (auto* camera = _target->tryCastTo<PerspectiveCamera>())
                     {
                         camera->setAspect(FSize2(newValue));
+                    }
+                });
+        }
+        if (_orthoCameraRightBottom)
+        {
+            _subscriptionPool << _orthoCameraRightBottom->onInput->subscribeAndGetID(
+                [this](auto newValue)
+                {
+                    if (auto* camera = _target->tryCastTo<OrthographicCamera>())
+                    {
+                        camera->setBottomRight(newValue);
+                    }
+                });
+        }
+        if (_orthoCameraLeftTop)
+        {
+            _subscriptionPool << _orthoCameraLeftTop->onInput->subscribeAndGetID(
+                [this](auto newValue)
+                {
+                    if (auto* camera = _target->tryCastTo<OrthographicCamera>())
+                    {
+                        camera->setTopLeft(newValue);
                     }
                 });
         }
@@ -902,6 +943,57 @@ namespace Core
         }
     }
 
+    void ObjectPropertiesWindowEWC::tryDrawBaseCamera(BaseCamera* comp)
+    {
+        if (comp && Gui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen))
+        {
+            const float dt = GetWorld().getTimeDelta();
+
+            if (_cameraFar)
+            {
+                _cameraFar->setInputtedData(comp->getFar());
+            }
+            if (_cameraNear)
+            {
+                _cameraNear->setInputtedData(comp->getNear());
+            }
+
+            _baseCameraLayout.tick(dt);
+
+            if (auto* camera = dynamic_cast<PerspectiveCamera*>(comp))
+            {
+                if (_cameraFov)
+                {
+                    _cameraFov->setInputtedData(camera->getFov());
+                }
+                if (_cameraFrame)
+                {
+                    _cameraFrame->setInputtedData(camera->getAspect().toGlm());
+                }
+                if (_cameraOutput)
+                {
+                    _cameraOutput->setInputtedData(camera->getOutputFrameSize().toGlm());
+                }
+
+                _perspectiveCameraLayout.tick(dt);
+            }
+
+            if (auto* camera = dynamic_cast<OrthographicCamera*>(comp))
+            {
+                if (_orthoCameraLeftTop)
+                {
+                    _orthoCameraLeftTop->setInputtedData(camera->getTopLeft());
+                }
+                if (_orthoCameraRightBottom)
+                {
+                    _orthoCameraRightBottom->setInputtedData(camera->getBottomRight());
+                }
+
+                _orthoCameraLayout.tick(dt);
+            }
+        }
+    }
+
     void ObjectPropertiesWindowEWC::tryDrawBaseComponentExtra(BaseComponent* comp)
     {
         if (comp && Gui::CollapsingHeader("Component data", ImGuiTreeNodeFlags_DefaultOpen))
@@ -953,37 +1045,6 @@ namespace Core
                 _outlineShader->setInputtedData(shader);
             }
             _staticMeshLayout.tick(dt);
-        }
-    }
-
-    void ObjectPropertiesWindowEWC::tryDrawBaseCamera(PerspectiveCamera* comp)
-    {
-        if (comp && Gui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen))
-        {
-            const float dt = GetWorld().getTimeDelta();
-
-            if (_cameraFov)
-            {
-                _cameraFov->setInputtedData(comp->getFov());
-            }
-            if (_cameraFar)
-            {
-                _cameraFar->setInputtedData(comp->getFar());
-            }
-            if (_cameraNear)
-            {
-                _cameraNear->setInputtedData(comp->getNear());
-            }
-            if (_cameraFrame)
-            {
-                _cameraFrame->setInputtedData(comp->getAspect().toGlm());
-            }
-            if (_cameraOutput)
-            {
-                _cameraOutput->setInputtedData(comp->getOutputFrameSize().toGlm());
-            }
-
-            _baseCameraLayout.tick(dt);
         }
     }
 
