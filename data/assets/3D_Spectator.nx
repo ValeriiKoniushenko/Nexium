@@ -11,7 +11,10 @@
                     },
                     {
                         "action": "Move backward",
-                        "requiredKeys": [],
+                        "requiredKeys": [
+                            "Left_Control",
+                            "Left_Shift"
+                        ],
                         "trigger": "WhileHeld",
                         "triggerKey": "S"
                     },
