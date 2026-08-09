@@ -32,6 +32,8 @@
 #include "Graphics/ShaderManager.h"
 #include "Graphics/Window.h"
 #include "ImGui/imgui.h"
+#include "InputDevices/Internal/InputSystem.h"
+#include "ImGui/imgui_internal.h"
 #include "Misc/Configs.h"
 #include "Misc/FPSCounter.h"
 #include "ModuleInfo.h"
@@ -116,6 +118,7 @@ namespace Core
         //-------------------- WINDOW ---------------------
         window = &GetWindow();
         window->create(Config::defaultWindowName, Config::defaultWindowSize);
+        Internal::GetInputSystem().initialize(*window);
         _subscriptionPool << window->onResize->subscribeAndGetID([this](ISize2 newSize)
                                                                  { updateViewport(); });
 
@@ -193,6 +196,7 @@ namespace Core
         {
             clock.start();
             Window::pollEvent();
+            Internal::GetInputSystem().processEvents();
 
             if (renderMode == RenderMode::GameOnly)
             {
