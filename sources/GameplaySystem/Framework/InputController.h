@@ -41,8 +41,8 @@ namespace Core
         class InputSystem;
     }
 
-    CLASS();
     /// @brief ECS component that maps routed keyboard chords to named gameplay actions.
+    CLASS();
     class InputController : public BaseComponent
     {
         ECS_DECL(InputController, Core::BaseComponent);

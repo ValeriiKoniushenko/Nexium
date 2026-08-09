@@ -31,10 +31,55 @@
 #include "Editor/GuiComponents/Separator.h"
 #include "Editor/GuiComponents/Spacer.h"
 #include "GameplaySystem/Framework/GameInstance.h"
+#include "GameplaySystem/Framework/InputController.h"
 #include "Misc/IconsFontAwesome.h"
 #include "Scene/Spectator.h"
 
+#include <string>
+#include <string_view>
+
 using namespace Core::Gui;
+
+namespace
+{
+    std::string_view GetKeyLabel(Core::Keyboard::Key key)
+    {
+        using Key = Core::Keyboard::Key;
+        if (key == Key::Left_Control) return "Ctrl";
+        if (key == Key::Left_Shift) return "Shift";
+        if (key == Key::Left_Alt) return "Alt";
+        if (key == Key::Left_Super) return "Super";
+        return R<Key>::ToString(key);
+    }
+
+    Core::StringAtom GetChordLabel(const Core::KeyChord& chord)
+    {
+        std::string result;
+        const auto append = [&result](std::string_view key)
+        {
+            if (!result.empty()) result += " + ";
+            result += key;
+        };
+
+        for (const auto key : chord.requiredKeys)
+            append(GetKeyLabel(key));
+        if (chord.triggerKey != Core::Keyboard::Key::None)
+            append(GetKeyLabel(chord.triggerKey));
+
+        return Core::StringAtom::Intern(result);
+    }
+
+    std::string_view GetTriggerLabel(Core::InputActionTrigger trigger)
+    {
+        switch (trigger)
+        {
+            case Core::InputActionTrigger::WhileHeld: return "While held";
+            case Core::InputActionTrigger::OnPress: return "On press";
+            case Core::InputActionTrigger::OnRelease: return "On release";
+        }
+        return "Unknown";
+    }
+} // namespace
 
 namespace Core
 {
@@ -244,17 +289,21 @@ namespace Core
 
         if (auto spectator = gGameInstance->gameScene.gerFirstOf<Spectator>())
         {
-            layout.addChildComponent<Spacer>();
-            layout.addChildComponent<Label>()->setText("Spectator");
-            layout.addChildComponent<Separator>();
-
-            for (const auto& [fst, snd] : spectator->keyboardInput.getMapping())
+            if (const auto* input = spectator->findFirstChildOf<InputController>())
             {
-                auto* item = layout.addChildComponent<Internal::KeymapItem>();
-                item->setReadOnly(true);
-                item->setLabel(fst + (snd->onPress->isEmpty() ? "(disabled)" : ""));
-                item->setButtonName(
-                    R<Keyboard::Key>::ToString(snd->getKey().value_or(Keyboard::Key::None)).data());
+                layout.addChildComponent<Spacer>();
+                layout.addChildComponent<Label>()->setText("Spectator");
+                layout.addChildComponent<Separator>();
+
+                for (const auto& binding : input->getBindings())
+                {
+                    auto* item = layout.addChildComponent<Internal::KeymapItem>();
+                    item->setReadOnly(true);
+                    item->setLabel(StringAtom::Intern(
+                        binding.action.toStdString() + " (" + GetTriggerLabel(binding.trigger).data()
+                        + ")"));
+                    item->setButtonName(GetChordLabel(binding.chord));
+                }
             }
         }
     }
