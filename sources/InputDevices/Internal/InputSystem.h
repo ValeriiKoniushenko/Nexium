@@ -27,8 +27,8 @@
 #include "Core/IntrusivePtr.h"
 #include "InputDevices/InputTypes.h"
 
-#include <deque>
 #include <cstdint>
+#include <deque>
 #include <unordered_map>
 #include <vector>
 
@@ -37,31 +37,58 @@ namespace Core
     class InputController;
     class Window;
 
+    /// @brief Engine implementation details hidden from gameplay-facing input APIs.
     namespace Internal
     {
-        // Engine-only subsystem. Gameplay code should use InputController instead.
+        /// @brief Collects raw keyboard events and routes them through active InputControllers.
         class InputSystem final
         {
         public:
+            /// @brief Subscribes the input system to keyboard events produced by a window.
             void initialize(Window& window);
+
+            /// @brief Starts an input frame, updates controllers and dispatches queued events.
             void processEvents();
+
+            /// @brief Adds an initialized InputController to the routing registry.
             void registerController(InputController* controller);
+
+            /// @brief Moves a controller to the newest position in automatic routing order.
             void activateController(InputController* controller);
 
         private:
+            /// @brief Converts and queues a raw window keyboard event.
             void pushKeyEvent(Keyboard::Key key, int scancode, Keyboard::KeyState state, int mods);
+
+            /// @brief Routes one normalized event according to blocking, specificity and recency.
             void dispatch(const KeyInputEvent& event);
+
+            /// @brief Removes destroyed controllers and invalid event owners.
             void removeExpiredControllers();
 
+            /// @brief Keyboard events waiting to be processed during the next input frame.
             std::deque<KeyInputEvent> _events;
+
+            /// @brief Non-owning registry of all initialized InputController components.
             std::vector<WeakPtr<InputController>> _controllers;
+
+            /// @brief Controllers that own pressed trigger keys and receive their repeat events.
             std::unordered_map<Keyboard::Key, WeakPtr<InputController>> _keyOwners;
+
+            /// @brief Normalized keyboard keys currently held by the user.
             std::vector<Keyboard::Key> _pressedKeys;
+
+            /// @brief Monotonic counter used to assign automatic controller activation order.
             std::uint64_t _nextActivationOrder = 0;
+
+            /// @brief Keeps window input subscriptions alive for the lifetime of the system.
             DelegateSubscriberPoolGuard _subscriptions;
+
+            /// @brief Prevents subscribing to the window more than once.
             bool _initialized = false;
         };
 
+        /// @brief Returns the engine-owned singleton input router.
         [[nodiscard]] InputSystem& GetInputSystem();
     } // namespace Internal
 } // namespace Core
