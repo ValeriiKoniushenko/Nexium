@@ -2,6 +2,51 @@
     "data": {
         "_children": [
             {
+                "_bindings": [
+                    {
+                        "action": "Move forward",
+                        "requiredKeys": [],
+                        "trigger": "WhileHeld",
+                        "triggerKey": "W"
+                    },
+                    {
+                        "action": "Move backward",
+                        "requiredKeys": [],
+                        "trigger": "WhileHeld",
+                        "triggerKey": "S"
+                    },
+                    {
+                        "action": "Move right",
+                        "requiredKeys": [],
+                        "trigger": "WhileHeld",
+                        "triggerKey": "D"
+                    },
+                    {
+                        "action": "Move left",
+                        "requiredKeys": [],
+                        "trigger": "WhileHeld",
+                        "triggerKey": "A"
+                    },
+                    {
+                        "action": "Move up",
+                        "requiredKeys": [],
+                        "trigger": "WhileHeld",
+                        "triggerKey": "R"
+                    },
+                    {
+                        "action": "Move down",
+                        "requiredKeys": [],
+                        "trigger": "WhileHeld",
+                        "triggerKey": "F"
+                    }
+                ],
+                "_children": null,
+                "_isEnabled": true,
+                "_name": "Core-InputController",
+                "_noTick": false,
+                "_type": "Core::InputController"
+            },
+            {
                 "_aspect": {
                     "height": 1.0,
                     "width": 1.0
