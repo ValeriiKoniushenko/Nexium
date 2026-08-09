@@ -29,6 +29,7 @@
 #include "ECSAdapters/EditorActorAdapter.h"
 #include "ECSAdapters/EditorInterleavedGraphicsDataAdapter.h"
 #include "ECSAdapters/EditorStaticMeshBundleAdapter.h"
+#include "ECSAdapters/Input/ECSEditorInputControllerAdapter.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/LabelRow.h"
 #include "Editor/GuiComponents/Misc.h"
@@ -140,6 +141,7 @@ namespace Core
         addUniqueTypeChildComponent<ECSEditorStaticMeshBundleAdapter>();
         addUniqueTypeChildComponent<ECSEditorInterleavedGraphicsDataAdapter>();
         addUniqueTypeChildComponent<ECSEditorFrameByFrameAnimationAdapter>();
+        addUniqueTypeChildComponent<ECSEditorInputControllerAdapter>();
 
         setEnablePreview(true);
         setEnableTree(true);
