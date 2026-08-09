@@ -25,9 +25,21 @@
 #pragma once
 
 #include "GameplaySystem/Framework/GameInstance.h"
+#include "GameplaySystem/Framework/InputController.h"
+#include "Scene/Spectator.h"
 
 class TemplateGameInstance : public Core::GameInstance
 {
 public:
     TemplateGameInstance(int argc, char** argv);
+
+protected:
+    void onInitializeReadCache() override;
+    void onTick(float delta) override;
+
+private:
+    [[nodiscard]] float getSpectatorSpeed(const Core::StringAtom& action) const;
+
+    Core::WeakPtr<Core::Spectator> _spectator;
+    Core::WeakPtr<Core::InputController> _spectatorInput;
 };

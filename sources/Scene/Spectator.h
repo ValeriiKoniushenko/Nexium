@@ -25,7 +25,6 @@
 #pragma once
 
 #include "../GameplaySystem/Entities/Actor.h"
-#include "InputDevices/InputManager.h"
 
 namespace Core
 {
@@ -41,9 +40,6 @@ namespace Core
 
         FIELD();
         float mouseSensitivity = 0.5f;
-
-        KeyboardInputManger keyboardInput;
-        MouseInputManger mouseInput;
 
     public:
         [[nodiscard]] StringAtom getCacheHash() const override;
