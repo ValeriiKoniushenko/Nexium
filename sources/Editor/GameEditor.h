@@ -25,6 +25,7 @@
 #pragma once
 
 #include "InputDevices/InputManager.h"
+#include "GameplaySystem/Framework/InputController.h"
 #include "Misc/BaseLog.h"
 #include "ObjectPicker.h"
 #include "ToastNotifications.h"
@@ -168,6 +169,7 @@ namespace Core
         void setupShortcuts();
 
     private:
+        InputController::Ptr _inputController;
         void handleMouseDrag(glm::vec2 delta, MouseInputAction::SpecKeysState state);
         void handleMouseClick(glm::vec2 pos, MouseInputAction::SpecKeysState state);
         void responseOnPick(Transformable* object);
