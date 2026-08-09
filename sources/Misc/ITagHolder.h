@@ -40,6 +40,7 @@ namespace Core
         Tag_GuiObject = 1 << 1,
         Tag_EditorInternal = 1 << 2,
         Tag_AnimationController = 1 << 3,
+        Tag_InputController = 1 << 4,
         Tag_Any = 0xFFFFFFFF
     };
 
