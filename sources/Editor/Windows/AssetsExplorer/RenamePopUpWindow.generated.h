@@ -22,21 +22,9 @@ struct R<Core::RenamePopUpWindow>
         return {
 		};
     }
-
-    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Core::RenamePopUpWindow& obj, bool noSignals = false)
+    static constexpr std::unordered_map<std::string, RClassField> GetFieldsMap()
     {
-        RResourceStream<RImpl> s;if (!noSignals)
-        {
-            _RTryCallPreSerialize<Core::RenamePopUpWindow>(obj);
-        }
-
-		s.write(R<Core::BaseEWC>::Serialize<RImpl>(obj).getData());
-        if (!noSignals)
-        {
-            _RTryCallPostSerialize<Core::RenamePopUpWindow>(obj, s.logs());
-        }
-        return s;
+        return RInternal::GetClassFieldsAsMap(GetFields());
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
@@ -54,6 +42,13 @@ struct R<Core::RenamePopUpWindow>
         }
     }
 
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Core::RenamePopUpWindow& obj, bool noSignals = false)
+    {
+        RResourceStream<RImpl> s;
+        Serialize(obj, s, noSignals);
+        return s;
+    }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, Core::RenamePopUpWindow& obj, bool noSignals = false)

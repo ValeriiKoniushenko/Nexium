@@ -70,8 +70,8 @@ namespace Core
             _nameField->label->setText("Name");
             _nameField->label->setWidth(80.f);
             _nameField->input->setFlex(Gui::Flex::FlexWidth);
-            _nameField->input->onInput->subscribe([this](const char* data)
-                                                  { _wasManuallyEdited = true; });
+            _subscriptionPool << _nameField->input->onInput->subscribeAndGetID(
+                [this](const char* data) { _wasManuallyEdited = true; });
         }
 
         _layout.addChildComponent<Gui::Spacer>();

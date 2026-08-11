@@ -24,23 +24,9 @@ struct R<DummyComponent>
 			{ "std::string", "name" },
 		};
     }
-
-    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    [[nodiscard]] static RResourceStream<RImpl> Serialize(const DummyComponent& obj, bool noSignals = false)
+    static constexpr std::unordered_map<std::string, RClassField> GetFieldsMap()
     {
-        RResourceStream<RImpl> s;if (!noSignals)
-        {
-            _RTryCallPreSerialize<DummyComponent>(obj);
-        }
-
-		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
-		s.write("a", obj.a);
-		s.write("name", obj.name);
-        if (!noSignals)
-        {
-            _RTryCallPostSerialize<DummyComponent>(obj, s.logs());
-        }
-        return s;
+        return RInternal::GetClassFieldsAsMap(GetFields());
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
@@ -60,6 +46,13 @@ struct R<DummyComponent>
         }
     }
 
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const DummyComponent& obj, bool noSignals = false)
+    {
+        RResourceStream<RImpl> s;
+        Serialize(obj, s, noSignals);
+        return s;
+    }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, DummyComponent& obj, bool noSignals = false)
@@ -90,21 +83,9 @@ struct R<HardConstructorComponent>
         return {
 		};
     }
-
-    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    [[nodiscard]] static RResourceStream<RImpl> Serialize(const HardConstructorComponent& obj, bool noSignals = false)
+    static constexpr std::unordered_map<std::string, RClassField> GetFieldsMap()
     {
-        RResourceStream<RImpl> s;if (!noSignals)
-        {
-            _RTryCallPreSerialize<HardConstructorComponent>(obj);
-        }
-
-		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
-        if (!noSignals)
-        {
-            _RTryCallPostSerialize<HardConstructorComponent>(obj, s.logs());
-        }
-        return s;
+        return RInternal::GetClassFieldsAsMap(GetFields());
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
@@ -122,6 +103,13 @@ struct R<HardConstructorComponent>
         }
     }
 
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const HardConstructorComponent& obj, bool noSignals = false)
+    {
+        RResourceStream<RImpl> s;
+        Serialize(obj, s, noSignals);
+        return s;
+    }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, HardConstructorComponent& obj, bool noSignals = false)
@@ -150,21 +138,9 @@ struct R<InitSpyComponent>
         return {
 		};
     }
-
-    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    [[nodiscard]] static RResourceStream<RImpl> Serialize(const InitSpyComponent& obj, bool noSignals = false)
+    static constexpr std::unordered_map<std::string, RClassField> GetFieldsMap()
     {
-        RResourceStream<RImpl> s;if (!noSignals)
-        {
-            _RTryCallPreSerialize<InitSpyComponent>(obj);
-        }
-
-		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
-        if (!noSignals)
-        {
-            _RTryCallPostSerialize<InitSpyComponent>(obj, s.logs());
-        }
-        return s;
+        return RInternal::GetClassFieldsAsMap(GetFields());
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
@@ -182,6 +158,13 @@ struct R<InitSpyComponent>
         }
     }
 
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const InitSpyComponent& obj, bool noSignals = false)
+    {
+        RResourceStream<RImpl> s;
+        Serialize(obj, s, noSignals);
+        return s;
+    }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, InitSpyComponent& obj, bool noSignals = false)
@@ -213,24 +196,9 @@ struct R<Vehicle>
 			{ "bool", "running" },
 		};
     }
-
-    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Vehicle& obj, bool noSignals = false)
+    static constexpr std::unordered_map<std::string, RClassField> GetFieldsMap()
     {
-        RResourceStream<RImpl> s;if (!noSignals)
-        {
-            _RTryCallPreSerialize<Vehicle>(obj);
-        }
-
-		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
-		s.write("vin", obj.vin);
-		s.write("mileage", obj.mileage);
-		s.write("running", obj.running);
-        if (!noSignals)
-        {
-            _RTryCallPostSerialize<Vehicle>(obj, s.logs());
-        }
-        return s;
+        return RInternal::GetClassFieldsAsMap(GetFields());
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
@@ -251,6 +219,13 @@ struct R<Vehicle>
         }
     }
 
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Vehicle& obj, bool noSignals = false)
+    {
+        RResourceStream<RImpl> s;
+        Serialize(obj, s, noSignals);
+        return s;
+    }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, Vehicle& obj, bool noSignals = false)
@@ -284,23 +259,9 @@ struct R<BaseCar>
 			{ "float", "fuelLevel" },
 		};
     }
-
-    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    [[nodiscard]] static RResourceStream<RImpl> Serialize(const BaseCar& obj, bool noSignals = false)
+    static constexpr std::unordered_map<std::string, RClassField> GetFieldsMap()
     {
-        RResourceStream<RImpl> s;if (!noSignals)
-        {
-            _RTryCallPreSerialize<BaseCar>(obj);
-        }
-
-		s.write(R<Vehicle>::Serialize<RImpl>(obj).getData());
-		s.write("horsepower", obj.horsepower);
-		s.write("fuelLevel", obj.fuelLevel);
-        if (!noSignals)
-        {
-            _RTryCallPostSerialize<BaseCar>(obj, s.logs());
-        }
-        return s;
+        return RInternal::GetClassFieldsAsMap(GetFields());
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
@@ -320,6 +281,13 @@ struct R<BaseCar>
         }
     }
 
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const BaseCar& obj, bool noSignals = false)
+    {
+        RResourceStream<RImpl> s;
+        Serialize(obj, s, noSignals);
+        return s;
+    }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, BaseCar& obj, bool noSignals = false)
@@ -352,23 +320,9 @@ struct R<Sedan>
 			{ "bool", "hasSunroof" },
 		};
     }
-
-    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Sedan& obj, bool noSignals = false)
+    static constexpr std::unordered_map<std::string, RClassField> GetFieldsMap()
     {
-        RResourceStream<RImpl> s;if (!noSignals)
-        {
-            _RTryCallPreSerialize<Sedan>(obj);
-        }
-
-		s.write(R<BaseCar>::Serialize<RImpl>(obj).getData());
-		s.write("doors", obj.doors);
-		s.write("hasSunroof", obj.hasSunroof);
-        if (!noSignals)
-        {
-            _RTryCallPostSerialize<Sedan>(obj, s.logs());
-        }
-        return s;
+        return RInternal::GetClassFieldsAsMap(GetFields());
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
@@ -388,6 +342,13 @@ struct R<Sedan>
         }
     }
 
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Sedan& obj, bool noSignals = false)
+    {
+        RResourceStream<RImpl> s;
+        Serialize(obj, s, noSignals);
+        return s;
+    }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, Sedan& obj, bool noSignals = false)
@@ -420,23 +381,9 @@ struct R<BasePart>
 			{ "std::string", "manufacturer" },
 		};
     }
-
-    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    [[nodiscard]] static RResourceStream<RImpl> Serialize(const BasePart& obj, bool noSignals = false)
+    static constexpr std::unordered_map<std::string, RClassField> GetFieldsMap()
     {
-        RResourceStream<RImpl> s;if (!noSignals)
-        {
-            _RTryCallPreSerialize<BasePart>(obj);
-        }
-
-		s.write(R<Core::BaseComponent>::Serialize<RImpl>(obj).getData());
-		s.write("id", obj.id);
-		s.write("manufacturer", obj.manufacturer);
-        if (!noSignals)
-        {
-            _RTryCallPostSerialize<BasePart>(obj, s.logs());
-        }
-        return s;
+        return RInternal::GetClassFieldsAsMap(GetFields());
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
@@ -456,6 +403,13 @@ struct R<BasePart>
         }
     }
 
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const BasePart& obj, bool noSignals = false)
+    {
+        RResourceStream<RImpl> s;
+        Serialize(obj, s, noSignals);
+        return s;
+    }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, BasePart& obj, bool noSignals = false)
@@ -489,24 +443,9 @@ struct R<Engine>
 			{ "bool", "started" },
 		};
     }
-
-    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Engine& obj, bool noSignals = false)
+    static constexpr std::unordered_map<std::string, RClassField> GetFieldsMap()
     {
-        RResourceStream<RImpl> s;if (!noSignals)
-        {
-            _RTryCallPreSerialize<Engine>(obj);
-        }
-
-		s.write(R<BasePart>::Serialize<RImpl>(obj).getData());
-		s.write("cylinders", obj.cylinders);
-		s.write("volume", obj.volume);
-		s.write("started", obj.started);
-        if (!noSignals)
-        {
-            _RTryCallPostSerialize<Engine>(obj, s.logs());
-        }
-        return s;
+        return RInternal::GetClassFieldsAsMap(GetFields());
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
@@ -527,6 +466,13 @@ struct R<Engine>
         }
     }
 
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Engine& obj, bool noSignals = false)
+    {
+        RResourceStream<RImpl> s;
+        Serialize(obj, s, noSignals);
+        return s;
+    }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, Engine& obj, bool noSignals = false)
@@ -560,23 +506,9 @@ struct R<TurboEngine>
 			{ "bool", "turboEnabled" },
 		};
     }
-
-    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    [[nodiscard]] static RResourceStream<RImpl> Serialize(const TurboEngine& obj, bool noSignals = false)
+    static constexpr std::unordered_map<std::string, RClassField> GetFieldsMap()
     {
-        RResourceStream<RImpl> s;if (!noSignals)
-        {
-            _RTryCallPreSerialize<TurboEngine>(obj);
-        }
-
-		s.write(R<Engine>::Serialize<RImpl>(obj).getData());
-		s.write("boostPressure", obj.boostPressure);
-		s.write("turboEnabled", obj.turboEnabled);
-        if (!noSignals)
-        {
-            _RTryCallPostSerialize<TurboEngine>(obj, s.logs());
-        }
-        return s;
+        return RInternal::GetClassFieldsAsMap(GetFields());
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
@@ -596,6 +528,13 @@ struct R<TurboEngine>
         }
     }
 
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const TurboEngine& obj, bool noSignals = false)
+    {
+        RResourceStream<RImpl> s;
+        Serialize(obj, s, noSignals);
+        return s;
+    }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, TurboEngine& obj, bool noSignals = false)
@@ -628,23 +567,9 @@ struct R<Wheel>
 			{ "float", "pressure" },
 		};
     }
-
-    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Wheel& obj, bool noSignals = false)
+    static constexpr std::unordered_map<std::string, RClassField> GetFieldsMap()
     {
-        RResourceStream<RImpl> s;if (!noSignals)
-        {
-            _RTryCallPreSerialize<Wheel>(obj);
-        }
-
-		s.write(R<BasePart>::Serialize<RImpl>(obj).getData());
-		s.write("radius", obj.radius);
-		s.write("pressure", obj.pressure);
-        if (!noSignals)
-        {
-            _RTryCallPostSerialize<Wheel>(obj, s.logs());
-        }
-        return s;
+        return RInternal::GetClassFieldsAsMap(GetFields());
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
@@ -664,6 +589,13 @@ struct R<Wheel>
         }
     }
 
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Wheel& obj, bool noSignals = false)
+    {
+        RResourceStream<RImpl> s;
+        Serialize(obj, s, noSignals);
+        return s;
+    }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, Wheel& obj, bool noSignals = false)
@@ -695,22 +627,9 @@ struct R<Interior>
 			{ "std::string", "color" },
 		};
     }
-
-    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Interior& obj, bool noSignals = false)
+    static constexpr std::unordered_map<std::string, RClassField> GetFieldsMap()
     {
-        RResourceStream<RImpl> s;if (!noSignals)
-        {
-            _RTryCallPreSerialize<Interior>(obj);
-        }
-
-		s.write(R<BasePart>::Serialize<RImpl>(obj).getData());
-		s.write("color", obj.color);
-        if (!noSignals)
-        {
-            _RTryCallPostSerialize<Interior>(obj, s.logs());
-        }
-        return s;
+        return RInternal::GetClassFieldsAsMap(GetFields());
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
@@ -729,6 +648,13 @@ struct R<Interior>
         }
     }
 
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Interior& obj, bool noSignals = false)
+    {
+        RResourceStream<RImpl> s;
+        Serialize(obj, s, noSignals);
+        return s;
+    }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, Interior& obj, bool noSignals = false)
@@ -760,23 +686,9 @@ struct R<Seat>
 			{ "int", "position" },
 		};
     }
-
-    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Seat& obj, bool noSignals = false)
+    static constexpr std::unordered_map<std::string, RClassField> GetFieldsMap()
     {
-        RResourceStream<RImpl> s;if (!noSignals)
-        {
-            _RTryCallPreSerialize<Seat>(obj);
-        }
-
-		s.write(R<Interior>::Serialize<RImpl>(obj).getData());
-		s.write("heated", obj.heated);
-		s.write("position", obj.position);
-        if (!noSignals)
-        {
-            _RTryCallPostSerialize<Seat>(obj, s.logs());
-        }
-        return s;
+        return RInternal::GetClassFieldsAsMap(GetFields());
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
@@ -796,6 +708,13 @@ struct R<Seat>
         }
     }
 
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Seat& obj, bool noSignals = false)
+    {
+        RResourceStream<RImpl> s;
+        Serialize(obj, s, noSignals);
+        return s;
+    }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, Seat& obj, bool noSignals = false)
@@ -828,23 +747,9 @@ struct R<Dashboard>
 			{ "int", "brightness" },
 		};
     }
-
-    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Dashboard& obj, bool noSignals = false)
+    static constexpr std::unordered_map<std::string, RClassField> GetFieldsMap()
     {
-        RResourceStream<RImpl> s;if (!noSignals)
-        {
-            _RTryCallPreSerialize<Dashboard>(obj);
-        }
-
-		s.write(R<Interior>::Serialize<RImpl>(obj).getData());
-		s.write("hasDisplay", obj.hasDisplay);
-		s.write("brightness", obj.brightness);
-        if (!noSignals)
-        {
-            _RTryCallPostSerialize<Dashboard>(obj, s.logs());
-        }
-        return s;
+        return RInternal::GetClassFieldsAsMap(GetFields());
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
@@ -864,6 +769,13 @@ struct R<Dashboard>
         }
     }
 
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Dashboard& obj, bool noSignals = false)
+    {
+        RResourceStream<RImpl> s;
+        Serialize(obj, s, noSignals);
+        return s;
+    }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, Dashboard& obj, bool noSignals = false)
@@ -895,22 +807,9 @@ struct R<Electronics>
 			{ "int", "firmwareVersion" },
 		};
     }
-
-    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Electronics& obj, bool noSignals = false)
+    static constexpr std::unordered_map<std::string, RClassField> GetFieldsMap()
     {
-        RResourceStream<RImpl> s;if (!noSignals)
-        {
-            _RTryCallPreSerialize<Electronics>(obj);
-        }
-
-		s.write(R<BasePart>::Serialize<RImpl>(obj).getData());
-		s.write("firmwareVersion", obj.firmwareVersion);
-        if (!noSignals)
-        {
-            _RTryCallPostSerialize<Electronics>(obj, s.logs());
-        }
-        return s;
+        return RInternal::GetClassFieldsAsMap(GetFields());
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
@@ -929,6 +828,13 @@ struct R<Electronics>
         }
     }
 
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Electronics& obj, bool noSignals = false)
+    {
+        RResourceStream<RImpl> s;
+        Serialize(obj, s, noSignals);
+        return s;
+    }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, Electronics& obj, bool noSignals = false)
@@ -960,23 +866,9 @@ struct R<Sensor>
 			{ "float", "value" },
 		};
     }
-
-    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Sensor& obj, bool noSignals = false)
+    static constexpr std::unordered_map<std::string, RClassField> GetFieldsMap()
     {
-        RResourceStream<RImpl> s;if (!noSignals)
-        {
-            _RTryCallPreSerialize<Sensor>(obj);
-        }
-
-		s.write(R<Electronics>::Serialize<RImpl>(obj).getData());
-		s.write("type", obj.type);
-		s.write("value", obj.value);
-        if (!noSignals)
-        {
-            _RTryCallPostSerialize<Sensor>(obj, s.logs());
-        }
-        return s;
+        return RInternal::GetClassFieldsAsMap(GetFields());
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
@@ -996,6 +888,13 @@ struct R<Sensor>
         }
     }
 
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Sensor& obj, bool noSignals = false)
+    {
+        RResourceStream<RImpl> s;
+        Serialize(obj, s, noSignals);
+        return s;
+    }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, Sensor& obj, bool noSignals = false)
@@ -1028,23 +927,9 @@ struct R<Camera>
 			{ "bool", "hdr" },
 		};
     }
-
-    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Camera& obj, bool noSignals = false)
+    static constexpr std::unordered_map<std::string, RClassField> GetFieldsMap()
     {
-        RResourceStream<RImpl> s;if (!noSignals)
-        {
-            _RTryCallPreSerialize<Camera>(obj);
-        }
-
-		s.write(R<Sensor>::Serialize<RImpl>(obj).getData());
-		s.write("resolution", obj.resolution);
-		s.write("hdr", obj.hdr);
-        if (!noSignals)
-        {
-            _RTryCallPostSerialize<Camera>(obj, s.logs());
-        }
-        return s;
+        return RInternal::GetClassFieldsAsMap(GetFields());
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
@@ -1064,6 +949,13 @@ struct R<Camera>
         }
     }
 
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Camera& obj, bool noSignals = false)
+    {
+        RResourceStream<RImpl> s;
+        Serialize(obj, s, noSignals);
+        return s;
+    }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, Camera& obj, bool noSignals = false)

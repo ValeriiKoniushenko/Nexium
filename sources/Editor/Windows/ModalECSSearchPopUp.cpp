@@ -141,11 +141,13 @@ namespace Core
 
             _okButton = h->addChildComponent<Gui::Button>("Add");
             _okButton->setFlex(Gui::Flex::FlexWidth);
-            _okButton->onClick->subscribe([this]() { okButtonClicked(); });
+            _subscriptionPool << _okButton->onClick->subscribeAndGetID([this]()
+                                                                       { okButtonClicked(); });
 
             _cancelButton = h->addChildComponent<Gui::Button>("Cancel");
             _cancelButton->setFlex(Gui::Flex::FlexWidth);
-            _cancelButton->onClick->subscribe([this]() { closeWindow(); });
+            _subscriptionPool << _cancelButton->onClick->subscribeAndGetID([this]()
+                                                                           { closeWindow(); });
         }
     }
 

@@ -23,21 +23,9 @@ struct R<Core::IOutliner>
 			{ "bool", "_isDrawOutline" },
 		};
     }
-
-    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
-    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Core::IOutliner& obj, bool noSignals = false)
+    static constexpr std::unordered_map<std::string, RClassField> GetFieldsMap()
     {
-        RResourceStream<RImpl> s;if (!noSignals)
-        {
-            _RTryCallPreSerialize<Core::IOutliner>(obj);
-        }
-
-		s.write("_isDrawOutline", obj._isDrawOutline);
-        if (!noSignals)
-        {
-            _RTryCallPostSerialize<Core::IOutliner>(obj, s.logs());
-        }
-        return s;
+        return RInternal::GetClassFieldsAsMap(GetFields());
     }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
@@ -55,6 +43,13 @@ struct R<Core::IOutliner>
         }
     }
 
+    template<IsResourceStreamImpl RImpl = RJsonResourceStream>
+    [[nodiscard]] static RResourceStream<RImpl> Serialize(const Core::IOutliner& obj, bool noSignals = false)
+    {
+        RResourceStream<RImpl> s;
+        Serialize(obj, s, noSignals);
+        return s;
+    }
 
     template<IsResourceStreamImpl RImpl = RJsonResourceStream>
     static void Deserialize(const RResourceStream<RImpl>& s, Core::IOutliner& obj, bool noSignals = false)

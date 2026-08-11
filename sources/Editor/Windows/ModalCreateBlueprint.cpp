@@ -147,11 +147,13 @@ namespace Core
 
             _okButton = h->addChildComponent<Gui::Button>("Create");
             _okButton->setFlex(Gui::Flex::FlexWidth);
-            _okButton->onClick->subscribe([this]() { okButtonClicked(); });
+            _subscriptionPool << _okButton->onClick->subscribeAndGetID([this]()
+                                                                       { okButtonClicked(); });
 
             _cancelButton = h->addChildComponent<Gui::Button>("Cancel");
             _cancelButton->setFlex(Gui::Flex::FlexWidth);
-            _cancelButton->onClick->subscribe([this]() { cancelButtonClicked(); });
+            _subscriptionPool << _cancelButton->onClick->subscribeAndGetID(
+                [this]() { cancelButtonClicked(); });
         }
     }
 
@@ -338,5 +340,4 @@ namespace Core
         closeWindow();
         GetAssetsManager().refreshFilesSystem();
     }
-
 } // namespace Core
