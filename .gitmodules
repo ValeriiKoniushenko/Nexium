@@ -31,3 +31,7 @@
 [submodule ".agents/Agents"]
 	path = .agents/Agents
 	url = https://github.com/ValeriiKoniushenko/Agents.git
+[submodule "dependencies/miniaudio"]
+	path = dependencies/miniaudio
+	url = https://github.com/mackron/miniaudio.git
+	ignore = dirty

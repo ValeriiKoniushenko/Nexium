@@ -16,6 +16,34 @@ add_subdirectory(ImGui)
 add_subdirectory(Rectpack2D)
 add_subdirectory(Stb)
 
+# ── miniaudio ─────────────────────────────────────────────────────────────────────
+set(MINIAUDIO_TARGET "__Core_Miniaudio")
+set(MINIAUDIO_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/miniaudio/miniaudio.c")
+
+set_source_files_properties(${MINIAUDIO_SOURCE} PROPERTIES LANGUAGE CXX)
+
+add_library(${MINIAUDIO_TARGET} STATIC ${MINIAUDIO_SOURCE})
+add_library(Core::Miniaudio ALIAS ${MINIAUDIO_TARGET})
+
+target_include_directories(${MINIAUDIO_TARGET} SYSTEM PUBLIC
+    "${CMAKE_CURRENT_SOURCE_DIR}/miniaudio"
+)
+
+target_compile_definitions(${MINIAUDIO_TARGET} PUBLIC
+    MA_NO_ENCODING
+    MA_NO_GENERATION
+    MA_USE_STDINT
+)
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME MATCHES ".*BSD")
+    find_package(Threads REQUIRED)
+    target_link_libraries(${MINIAUDIO_TARGET} PUBLIC
+        Threads::Threads
+        ${CMAKE_DL_LIBS}
+        m
+    )
+endif()
+
 # ── nlohmann/json ─────────────────────────────────────────────────────────────
 set(JSON_BuildTests       OFF CACHE BOOL "" FORCE)
 set(JSON_MultipleHeaders  OFF CACHE BOOL "" FORCE)
