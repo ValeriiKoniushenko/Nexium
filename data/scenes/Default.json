@@ -56,8 +56,10 @@
                 ]
             },
             "typeSpecificData": {
+                "_animationEnabled": true,
                 "_atlasName": "player_walk",
                 "_blendingEnabled": true,
+                "_smoothingEnabled": true,
                 "_textureName": "MPlayer_walk.png"
             }
         },
@@ -88,9 +90,11 @@
                 ]
             },
             "typeSpecificData": {
-                "_atlasName": "player_walk",
+                "_animationEnabled": true,
+                "_atlasName": "santa_walk",
                 "_blendingEnabled": true,
-                "_textureName": "MPlayer_walk.png"
+                "_smoothingEnabled": true,
+                "_textureName": "Walk_11.png"
             }
         },
         {
@@ -104,7 +108,7 @@
                     0.0
                 ],
                 "_position": [
-                    -116.69999694824219,
+                    31.0,
                     0.0,
                     0.0
                 ],
@@ -120,11 +124,13 @@
                 ]
             },
             "typeSpecificData": {
-                "_animationFPS": 10.0,
-                "_animationName": "test",
-                "_atlasName": "player_walk",
+                "_animationEnabled": true,
+                "_animationFPS": 70.5,
+                "_animationName": "New animation",
+                "_atlasName": "santa_walk",
                 "_blendingEnabled": true,
-                "_textureName": "MPlayer_walk.png"
+                "_smoothingEnabled": false,
+                "_textureName": "Walk_12.png"
             }
         },
         {
@@ -138,13 +144,13 @@
                     0.0
                 ],
                 "_position": [
-                    -704.0061645507813,
-                    460.2438659667969,
-                    1386.4459228515625
+                    75.97795104980469,
+                    32.746971130371094,
+                    32.667999267578125
                 ],
                 "_rotation": [
-                    28.611328125,
-                    11.68359375,
+                    5.111328125,
+                    -1.81640625,
                     0.0
                 ],
                 "_scale": [

@@ -38,11 +38,20 @@ namespace Core::SceneObj
 
     public:
         [[nodiscard]] StringAtom getTextureName() const { return _textureName; }
-        void setTexture(const StringAtom& value) { _textureName = value; }
+        void setTexture(const StringAtom& value)
+        {
+            _textureName = value;
+            resetTextureUV();
+        }
         void setTextureUV(GlobalPosition2F offset, GlobalPosition2F size)
         {
             _textureUVOffset = std::move(offset);
             _textureUVSize = std::move(size);
+        }
+        void resetTextureUV() noexcept
+        {
+            _textureUVOffset = { 0.f, 0.f };
+            _textureUVSize = { 1.f, 1.f };
         }
 
         [[nodiscard]] StringAtom getAtlasName() const { return _atlasName; }
@@ -50,6 +59,12 @@ namespace Core::SceneObj
 
         [[nodiscard]] bool isBlendingEnabled() const noexcept { return _blendingEnabled; }
         void setBlendingEnabled(bool value) noexcept { _blendingEnabled = value; }
+
+        [[nodiscard]] bool isSmoothingEnabled() const noexcept { return _smoothingEnabled; }
+        void setSmoothingEnabled(bool value) noexcept { _smoothingEnabled = value; }
+
+        [[nodiscard]] bool isAnimationEnabled() const noexcept { return _animationEnabled; }
+        void setAnimationEnabled(bool value);
 
         void setAnimationOverride(const StringAtom& animationName, float fps);
         [[nodiscard]] const StringAtom& getAnimationOverrideName() const noexcept
@@ -78,6 +93,8 @@ namespace Core::SceneObj
         GlobalPosition2F _textureUVSize{ 1.f, 1.f };
 
         bool _blendingEnabled = true;
+        bool _smoothingEnabled = true;
+        bool _animationEnabled = true;
 
         StringAtom _animationOverrideName;
         float _animationOverrideFPS = 0.f;

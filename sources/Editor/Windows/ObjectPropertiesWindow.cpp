@@ -561,8 +561,10 @@ namespace Core
                     }
                 });
 
-            out.attachChild(::Create<CheckBox>("Alpha blending", false, defaultLabelWidth));
-            _rectBlending = out.getLastChildAs<HLayout>()->getLastChildAs<CheckBox>().get();
+            out.attachChild(CreateHLayoutAndLabel("Rendering", false, defaultLabelWidth));
+            auto* renderingRow = out.getLastChildAs<HLayout>().get();
+            renderingRow->addChildComponent<Label>("Blending");
+            _rectBlending = renderingRow->addChildComponent<CheckBox>();
             _subscriptionPool << _rectBlending->onChange->subscribeAndGetID(
                 [t = WeakPtr(this)](bool enabled)
                 {
@@ -571,6 +573,34 @@ namespace Core
                         if (auto* rectangle = dynamic_cast<SceneObj::Rectangle*>(obj->_target))
                         {
                             rectangle->setBlendingEnabled(enabled);
+                        }
+                    }
+                });
+
+            renderingRow->addChildComponent<Label>("Smooth");
+            _textureSmoothing = renderingRow->addChildComponent<CheckBox>();
+            _subscriptionPool << _textureSmoothing->onChange->subscribeAndGetID(
+                [t = WeakPtr(this)](bool enabled)
+                {
+                    if (auto obj = t.tryLoad())
+                    {
+                        if (auto* rectangle = dynamic_cast<SceneObj::Rectangle*>(obj->_target))
+                        {
+                            rectangle->setSmoothingEnabled(enabled);
+                        }
+                    }
+                });
+
+            out.attachChild(::Create<CheckBox>("Animate", false, defaultLabelWidth));
+            _activateAnimation = out.getLastChildAs<HLayout>()->getLastChildAs<CheckBox>().get();
+            _subscriptionPool << _activateAnimation->onChange->subscribeAndGetID(
+                [t = WeakPtr(this)](bool enabled)
+                {
+                    if (auto obj = t.tryLoad())
+                    {
+                        if (auto* rectangle = dynamic_cast<SceneObj::Rectangle*>(obj->_target))
+                        {
+                            rectangle->setAnimationEnabled(enabled);
                         }
                     }
                 });
@@ -1081,16 +1111,37 @@ namespace Core
                 _rectBlending->setValue(comp->isBlendingEnabled());
             }
 
+            if (_textureSmoothing)
+            {
+                _textureSmoothing->setValue(comp->isSmoothingEnabled());
+            }
+
             auto* animator = comp->findFirstChildOf<Animation::FrameByFrameAnimator>();
-            if (_rectAnimationRow)
+            const bool hasAnimations = animator && !animator->getAnimations().empty();
+            const bool animationEnabled = hasAnimations && comp->isAnimationEnabled();
+            if (_activateAnimation)
             {
-                _rectAnimationRow->setEnabled(animator != nullptr);
+                _activateAnimation->disableWidget(!hasAnimations);
+                _activateAnimation->setValue(animationEnabled);
             }
-            if (_rectAnimationFPSRow)
+            if (_rectComboAtlas)
             {
-                _rectAnimationFPSRow->setEnabled(animator && animator->getActiveAnimation());
+                _rectComboAtlas->disableWidget(animationEnabled);
             }
-            if (animator && _rectComboAnimation && animator->getActiveAnimation())
+            if (_rectComboRect)
+            {
+                _rectComboRect->disableWidget(animationEnabled);
+            }
+            if (_rectComboAnimation)
+            {
+                _rectComboAnimation->disableWidget(!animationEnabled);
+            }
+            if (_rectAnimationFPS)
+            {
+                _rectAnimationFPS->disableWidget(!animationEnabled
+                                                 || !animator->getActiveAnimation());
+            }
+            if (animationEnabled && _rectComboAnimation && animator->getActiveAnimation())
             {
                 std::vector<StringAtom> animationNames;
                 animationNames.reserve(animator->getAnimations().size());

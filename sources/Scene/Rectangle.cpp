@@ -81,6 +81,10 @@ namespace Core::SceneObj
 
         atlas.bind();
 
+        const GLint textureFilter = _smoothingEnabled ? GL_LINEAR : GL_NEAREST;
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, textureFilter);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, textureFilter);
+
         glm::vec2 textureOffset{ 0.f, 0.f };
         glm::vec2 textureSize{ 1.f, 1.f };
         if (!_textureName.isEmpty())
@@ -106,6 +110,8 @@ namespace Core::SceneObj
         out["_textureName"] = _textureName;
         out["_atlasName"] = _atlasName;
         out["_blendingEnabled"] = _blendingEnabled;
+        out["_smoothingEnabled"] = _smoothingEnabled;
+        out["_animationEnabled"] = _animationEnabled;
         if (!_animationOverrideName.isEmpty() && _animationOverrideFPS > 0.f)
         {
             out["_animationName"] = _animationOverrideName;
@@ -127,11 +133,46 @@ namespace Core::SceneObj
         }
 
         _blendingEnabled = data.value("_blendingEnabled", true);
+        _smoothingEnabled = data.value("_smoothingEnabled", true);
+        _animationEnabled = data.value("_animationEnabled", true);
 
         if (data.contains("_animationName") && data.contains("_animationFPS"))
         {
             setAnimationOverride(data.at("_animationName").get<StringAtom>(),
                                  data.at("_animationFPS").get<float>());
+        }
+
+        setAnimationEnabled(_animationEnabled);
+    }
+
+    void Rectangle::setAnimationEnabled(bool value)
+    {
+        _animationEnabled = value;
+
+        auto* animator = findFirstChildOf<Animation::FrameByFrameAnimator>();
+        if (!animator)
+        {
+            return;
+        }
+
+        animator->setEnabled(value);
+        if (!value)
+        {
+            if (auto* animation = animator->getActiveAnimation())
+            {
+                animation->stop();
+            }
+            resetTextureUV();
+            return;
+        }
+
+        if (!_animationOverrideName.isEmpty())
+        {
+            animator->startAnimation(_animationOverrideName);
+        }
+        else if (!animator->getActiveAnimationName().isEmpty())
+        {
+            animator->startAnimation(animator->getActiveAnimationName());
         }
     }
 
@@ -148,7 +189,10 @@ namespace Core::SceneObj
         if (auto* animation = animator->getAnimation(animationName))
         {
             animation->setFPS(fps);
-            animator->startAnimation(animationName);
+            if (_animationEnabled)
+            {
+                animator->startAnimation(animationName);
+            }
         }
     }
 
