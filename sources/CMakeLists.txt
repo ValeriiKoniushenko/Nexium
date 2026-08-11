@@ -65,4 +65,8 @@ target_link_libraries(${TARGET_NAME} PUBLIC
     JustReflectMe::Adapter
 )
 
+target_link_libraries(${TARGET_NAME} PRIVATE
+    Core::Miniaudio
+)
+
 CoreAddCompileOptionsTo(${TARGET_NAME})
