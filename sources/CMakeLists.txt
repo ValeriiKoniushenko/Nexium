@@ -6,6 +6,7 @@ file(GLOB_RECURSE CPP_SOURCES
     CONFIGURE_DEPENDS
     "AssetsManager/*.cpp"
     "Animations/*.cpp"
+    "Audio/*.cpp"
     "AssimpMisc/*.cpp"
     "ECS/*.cpp"
     "Editor/*.cpp"
@@ -21,6 +22,7 @@ file(GLOB_RECURSE CPP_HEADERS
     CONFIGURE_DEPENDS
     "AssetsManager/*.h"
     "Animations/*.h"
+    "Audio/*.h"
     "AssimpMisc/*.h"
     "ECS/*.h"
     "Editor/*.h"
