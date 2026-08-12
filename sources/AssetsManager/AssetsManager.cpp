@@ -105,6 +105,7 @@ namespace Core
     {
         _textures.clear();
         _skyboxes.clear();
+        _audioClips.clear();
         _ecsAssets.clear();
         scanFileSystem(false);
     }
@@ -119,6 +120,7 @@ namespace Core
         std::unordered_set<StringAtom> foundEcsAssets;
         std::unordered_set<StringAtom> foundTextures;
         std::unordered_set<StringAtom> foundSkyboxes;
+        std::unordered_set<StringAtom> foundAudioClips;
         bool scanCompleted = true;
 
         for (const auto& registeredPath : _registeredPaths)
@@ -176,6 +178,11 @@ namespace Core
                         }
                         it->second->attachAndReadFromFile(absPath);
                     }
+                    else if (ext == AudioClipAsset::fileExtension)
+                    {
+                        foundAudioClips.emplace(id);
+                        indexAudioClip(id, absPath);
+                    }
                 }
             }
             catch (const fs::filesystem_error& e)
@@ -194,6 +201,8 @@ namespace Core
                           { return !foundTextures.contains(item.first); });
             std::erase_if(_skyboxes, [&foundSkyboxes](const auto& item)
                           { return !foundSkyboxes.contains(item.first); });
+            std::erase_if(_audioClips, [&foundAudioClips](const auto& item)
+                          { return !foundAudioClips.contains(item.first); });
         }
     }
 
@@ -264,6 +273,11 @@ namespace Core
         return getAssetOf<NXSkybox>(*this, logicPath, _skyboxes);
     }
 
+    NXAudioClip AssetsManager::getAudioClip(const StringAtom& logicPath)
+    {
+        return getAssetOf<NXAudioClip>(*this, logicPath, _audioClips);
+    }
+
     spdlog::logger* AssetsManager::getLogger() const
     {
         return ::AssetsManager::getLogger();
@@ -273,6 +287,7 @@ namespace Core
     {
         _textures.clear();
         _skyboxes.clear();
+        _audioClips.clear();
         _ecsAssets.clear();
     }
 
@@ -280,6 +295,17 @@ namespace Core
     {
         infoLog("Registered new asset path: " + path.generic_string());
         _registeredPaths.emplace(std::move(path));
+    }
+
+    void AssetsManager::indexAudioClip(const StringAtom& logicPath,
+                                       const fs::path& sourcePath)
+    {
+        auto asset = _audioClips.find(logicPath);
+        if (asset == _audioClips.end())
+        {
+            asset = _audioClips.emplace(logicPath, new AudioClipAsset(logicPath)).first;
+        }
+        asset->second->attachAndReadFromFile(sourcePath);
     }
 
     NXECSAsset AssetsManager::getEcsAsset(const StringAtom& logicPath)

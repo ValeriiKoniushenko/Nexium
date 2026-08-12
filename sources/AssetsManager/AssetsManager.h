@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "AudioClipAsset.h"
 #include "AssetsManager/TextureAtlas.h"
 #include "ECSAsset.h"
 #include "SkyboxAsset.h"
@@ -151,6 +152,9 @@ namespace Core
         // =========== Skybox ========
         [[nodiscard]] NXSkybox getSkybox(const StringAtom& logicPath);
 
+        // ========== Audio clips =======
+        [[nodiscard]] NXAudioClip getAudioClip(const StringAtom& logicPath);
+
         // ============ ECS ==========
         /// @brief Get an asset by its logical path. Will load the asset if it wasn't loaded
         /// previously.
@@ -214,12 +218,17 @@ namespace Core
         [[nodiscard]] std::unordered_map<StringAtom, NXECSAsset>::iterator findAssetByPath(
             const std::filesystem::path& path);
 
+    private:
+        void indexAudioClip(const StringAtom& logicPath,
+                            const std::filesystem::path& sourcePath);
+
     protected:
         std::unordered_map<StringAtom, TextureAtlas> _textureAtlases;
         std::set<std::filesystem::path> _registeredPaths;
         std::unordered_map<StringAtom, NXECSAsset> _ecsAssets;
         std::unordered_map<StringAtom, AssetRef<BaseAsset>> _textures;
         std::unordered_map<StringAtom, AssetRef<BaseAsset>> _skyboxes;
+        std::unordered_map<StringAtom, AssetRef<BaseAsset>> _audioClips;
     };
 } // namespace Core
 
