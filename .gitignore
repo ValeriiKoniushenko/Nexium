@@ -19,7 +19,12 @@ iwyu.log
 __pycache__
 
 /sources/**/*.generated.h
+/sources/**/*.generated.inl
 /sources/**/*.generated.cpp
+
+/tests/**/*.generated.h
+/tests/**/*.generated.inl
+/tests/**/*.generated.cpp
 
 /data/editor/*.json
 /data/scene/*.json

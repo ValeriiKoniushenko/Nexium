@@ -78,6 +78,55 @@ jobs:
       - name: Save build cache
         run: rsync -a --delete build/ /build-cache/
 
+  build-gcc:
+    name: "Build: Linux | GCC"
+    needs: clang-format
+    runs-on: linux
+    container:
+      image: cpp-ci:latest
+      volumes:
+        - /srv/ci-cache/ccache:/ccache
+        - /srv/ci-cache/git-repo:/repo-cache
+        - /srv/ci-cache/build-cache-gcc:/build-cache
+    env:
+      CCACHE_DIR: /ccache
+      CC: gcc
+      CXX: g++
+    steps:
+      - name: Sync repo cache
+        env:
+          GITEATOKEN: ${{ secrets.GITEATOKEN }}
+        run: |
+          REPO_URL="https://oauth2:${GITEATOKEN}@gitea.vakon.dev/${GITHUB_REPOSITORY}.git"
+          if [ -d /repo-cache/.git ]; then
+            echo "Using existing repo cache"
+            cd /repo-cache
+            git remote set-url origin "$REPO_URL"
+            git fetch origin "$GITHUB_SHA" develop
+            git checkout -f "$GITHUB_SHA"
+            git submodule sync --recursive
+            git submodule update --init --recursive --depth=1
+          else
+            echo "No cache found, cloning fresh"
+            git clone --recurse-submodules --shallow-submodules "$REPO_URL" /repo-cache
+            cd /repo-cache
+            git fetch --depth=1 origin "$GITHUB_SHA"
+            git checkout -f "$GITHUB_SHA"
+          fi
+          mkdir -p "$GITHUB_WORKSPACE"
+          cp -a /repo-cache/. "$GITHUB_WORKSPACE"/
+      - name: Configure
+        run: |
+          cmake -S . -B build \
+            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+            -DNEXIUM_DISABLE_TESTS=ON \
+            -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+      - name: Build
+        run: cmake --build build -j$(nproc)
+      - name: Save build cache
+        run: rsync -a --delete build/ /build-cache/
+
   clang-tidy:
     name: clang-tidy
     needs: build

@@ -210,8 +210,8 @@ namespace Core
 
         _uniformBufferObjects.clear();
 
-        constexpr GLenum props[] = { GL_NUM_ACTIVE_VARIABLES, GL_ACTIVE_VARIABLES,
-                                     GL_BUFFER_BINDING, GL_BUFFER_DATA_SIZE };
+        constexpr GLenum props[]
+            = { GL_NUM_ACTIVE_VARIABLES, GL_BUFFER_BINDING, GL_BUFFER_DATA_SIZE };
         constexpr GLenum lineProps[] = { GL_NAME_LENGTH, GL_TYPE, GL_OFFSET };
 
         GLint count = 0;
@@ -222,13 +222,13 @@ namespace Core
             ShaderUBO outData;
 
             // =========== Getting main data ===========
-            GLint values[4] = {};
-            glGetProgramResourceiv(shaderProgramId, GL_UNIFORM_BLOCK, i, 4, props, 4, nullptr,
+            GLint values[3] = {};
+            glGetProgramResourceiv(shaderProgramId, GL_UNIFORM_BLOCK, i, 3, props, 3, nullptr,
                                    values);
 
             outData.vars.resize(values[0]);
-            outData.binding = values[2];
-            outData.size = values[3];
+            outData.binding = values[1];
+            outData.size = values[2];
 
             // =========== Getting name ===========
             GLint nameLen = 0;
