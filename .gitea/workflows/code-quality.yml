@@ -79,7 +79,7 @@ jobs:
         run: rsync -a --delete build/ /build-cache/
 
   build-gcc:
-    name: "Build: Linux | GCC"
+    name: "Build: Linux | GCC 16.1.1"
     needs: clang-format
     runs-on: linux
     container:
