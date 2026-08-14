@@ -3,11 +3,11 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Input Actions :: Nexium Engine</title>
+    <title>ECS Input Routing :: Nexium Engine</title>
     <link rel="prev" href="ecs-overview.html">
     <link rel="next" href="../rendering/index.html">
-    <meta name="description" content="Core module for binding keys and mouse buttons to named, triggerable actions.">
-    <meta name="generator" content="Antora 3.1.15">
+    <meta name="description" content="High-level design and usage guide for Nexium keyboard input routing.">
+    <meta name="generator" content="Antora 3.1.12">
     <link rel="stylesheet" href="../../../_/css/site.css">
   </head>
   <body class="article">
@@ -317,621 +317,571 @@
     <li><a href="input-system.html">Input System</a></li>
   </ul>
 </nav>
-<div class="edit-this-page"><a href="file:///home/valerii/workspace/Nexium//docs/nexium/modules/engine_architecture/pages/input-system.adoc">Edit this Page</a></div>
+<div class="edit-this-page"><a href="file:///C:/Users/Alex/Desktop/Nexium//docs/nexium/modules/engine_architecture/pages/input-system.adoc">Edit this Page</a></div>
 </div>
   <div class="content">
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Input Actions</h1>
+<h1 class="page">ECS Input Routing</h1>
 <div class="sect1">
-<h2 id="_overview"><a class="anchor" href="#_overview"></a>Overview</h2>
+<h2 id="_purpose"><a class="anchor" href="#_purpose"></a>Purpose</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <strong>Input Actions</strong> module (namespace <code>Core</code>) provides a thin, composable abstraction between raw hardware input and game logic.
-Instead of polling <code>Keyboard</code> or <code>Mouse</code> states directly in gameplay code, you create named <strong>actions</strong>, bind them to a key or button, and subscribe to their delegates.
-The action object takes care of press state tracking, repeat filtering, and frequency throttling.</p>
+<p>The input routing system converts raw keyboard events into named ECS actions such as <code>Move forward</code>, <code>Save game</code>, or <code>Open inventory</code>.
+Gameplay code depends on those semantic names instead of polling hardware keys directly.</p>
+</div>
+<div class="paragraph">
+<p>The system is designed to solve three related problems:</p>
 </div>
 <div class="ulist">
-<div class="title">Key ideas</div>
 <ul>
 <li>
-<p><code>InputAction&lt;KeyT&gt;</code> — base template; key-type–agnostic logic lives here.</p>
+<p>the same shortcut may have different meanings in different parts of the application;</p>
 </li>
 <li>
-<p><code>KeyboardInputAction</code> (<code>KeyboardIA</code>) — specialisation for <code>Keyboard::Key</code>.</p>
+<p>an active UI or gameplay context must be able to consume input before lower contexts receive it;</p>
 </li>
 <li>
-<p><code>MouseInputAction</code> (<code>MouseIA</code>) — specialisation for <code>Mouse::Key</code>; additionally tracks cursor movement and drag.</p>
-</li>
-<li>
-<p><code>IsInputAction</code> — concept for compile-time validation of action types.</p>
+<p>input configuration must be serializable and editable without creating bindings in gameplay code.</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>The typical lifetime is: <strong>create → bind key → subscribe delegate → call <code>update()</code> each frame.</strong></p>
+<p>For example, both gameplay and an inventory may bind <code>Ctrl + S</code>.
+While the inventory is active, it receives and consumes the shortcut.
+After the inventory is deactivated, the same shortcut reaches gameplay again.</p>
+</div>
+<div class="paragraph">
+<p>The current router handles keyboard input.
+Existing mouse actions still use the older mouse input APIs.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_class_inputactionkeytparam"><a class="anchor" href="#_class_inputactionkeytparam"></a>Class <code>InputAction&lt;KeyTParam&gt;</code></h2>
+<h2 id="_system_at_a_glance"><a class="anchor" href="#_system_at_a_glance"></a>System at a glance</h2>
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template&lt;class KeyTParam&gt;
-class InputAction : public IntrusiveRefCounter&lt;InputAction&lt;KeyTParam&gt;&gt;;</code></pre>
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">Window keyboard callback
+        |
+        v
+Internal::InputSystem
+  - queues raw events
+  - tracks held keys
+  - orders active controllers
+  - routes until Consumed
+        |
+        v
+InputController ECS components
+  - match KeyChord bindings
+  - maintain named action state
+  - emit semantic action events
+        |
+        v
+Gameplay code
+  - polls isActionPressed("Move forward")
+  - or subscribes to onAction</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Base class for all input actions.
-Manages press-state tracking, repeat behaviour, frequency throttling, and delegate firing.
-Instances are always heap-allocated and owned through <code>IntrusivePtr</code>.</p>
+<p>There are two distinct responsibilities:</p>
 </div>
-<div class="sect2">
-<h3 id="_template_parameters"><a class="anchor" href="#_template_parameters"></a>Template parameters</h3>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 75%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parameter</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>KeyTParam</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The type used to identify a key or button (e.g. <code>Keyboard::Key</code>, <code>Mouse::Key</code>).</p></td>
-</tr>
-</tbody>
-</table>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>Internal::InputSystem</code></dt>
+<dd>
+<p>Engine-owned infrastructure. It receives window events and decides which controller gets each event. Gameplay code should not access it.</p>
+</dd>
+<dt class="hdlist1"><code>InputController</code></dt>
+<dd>
+<p>A serializable ECS component. It owns bindings and exposes named actions to gameplay code.</p>
+</dd>
+</dl>
 </div>
-<div class="sect2">
-<h3 id="_type_aliases"><a class="anchor" href="#_type_aliases"></a>Type aliases</h3>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 75%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Alias</th>
-<th class="tableblock halign-left valign-top">Resolved type</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Self</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>InputAction&lt;KeyTParam&gt;</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Ptr</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IntrusivePtr&lt;Self&gt;</code> — non-const owning pointer.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CPtr</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IntrusivePtr&lt;const Self&gt;</code> — const owning pointer.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AdaptivePtr&lt;bool isConst&gt;</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CPtr</code> when <code>isConst</code> is <code>true</code>, <code>Ptr</code> otherwise.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TimeT</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::chrono::milliseconds</code> — unit used for frequency throttling.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>KeyT</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>KeyTParam</code> — the key type for this instantiation.</p></td>
-</tr>
-</tbody>
-</table>
 </div>
+</div>
+<div class="sect1">
+<h2 id="_core_concepts"><a class="anchor" href="#_core_concepts"></a>Core concepts</h2>
+<div class="sectionbody">
 <div class="sect2">
-<h3 id="_nested_type_speckeysstate"><a class="anchor" href="#_nested_type_speckeysstate"></a>Nested type <code>SpecKeysState</code></h3>
+<h3 id="_binding"><a class="anchor" href="#_binding"></a>Binding</h3>
 <div class="paragraph">
-<p>Snapshot of the three common modifier keys at the moment an action fires.</p>
+<p>A binding associates a semantic action with a keyboard chord and an activation mode.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">struct SpecKeysState
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">struct Binding
 {
-    Keyboard::KeyState leftShift;
-    Keyboard::KeyState leftAlt;
-    Keyboard::KeyState leftCtrl;
-
-    static SpecKeysState fillAndGet();
+    StringAtom action;
+    KeyChord chord;
+    InputActionTrigger trigger;
 };</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>The action name is the contract between data and gameplay code.
+Changing the physical shortcut does not require changing gameplay logic.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_key_chord"><a class="anchor" href="#_key_chord"></a>Key chord</h3>
+<div class="paragraph">
+<p>A chord consists of one trigger key and zero or more required keys.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">KeyChord{
+    .triggerKey = Keyboard::Key::B,
+    .requiredKeys = {
+        Keyboard::Key::Left_Control,
+        Keyboard::Key::A
+    }
+};</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This represents <code>Ctrl + A + B</code>.
+The required keys must already be held when the trigger key is pressed.</p>
+</div>
+<div class="paragraph">
+<p>The trigger key makes the activation moment unambiguous.
+In <code>Ctrl + A + B</code>, pressing <code>B</code> starts the action; pressing only <code>Ctrl + A</code> does not.</p>
+</div>
+<div class="paragraph">
+<p>Left and right versions of <code>Ctrl</code>, <code>Shift</code>, <code>Alt</code>, and <code>Super</code> are normalized by the engine, so a recorded modifier is not tied to one physical side of the keyboard.</p>
+</div>
+<div class="paragraph">
+<p>Additional held keys do not invalidate a chord.
+Conflict resolution therefore considers a chord with more required keys more specific.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_activation_modes"><a class="anchor" href="#_activation_modes"></a>Activation modes</h3>
+<div class="paragraph">
+<p><code>InputActionTrigger</code> defines the value returned by <code>isActionPressed()</code>:</p>
+</div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
-<col style="width: 25%;">
-<col style="width: 75%;">
+<col style="width: 20%;">
+<col style="width: 40%;">
+<col style="width: 40%;">
 </colgroup>
 <thead>
 <tr>
-<th class="tableblock halign-left valign-top">Member</th>
-<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Mode</th>
+<th class="tableblock halign-left valign-top">Action state</th>
+<th class="tableblock halign-left valign-top">Typical use</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>leftShift</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Current state of the left Shift key.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>WhileHeld</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code> from chord activation until any chord key is released.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Movement, sprinting, camera controls.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>leftAlt</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Current state of the left Alt key.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OnPress</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code> for one input frame when the trigger key is pressed.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Jump, fire, open a menu, save.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>leftCtrl</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Current state of the left Ctrl key.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>static fillAndGet()</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Reads the live hardware state of all three modifiers and returns a populated <code>SpecKeysState</code>.
-Called internally by <code>update()</code> just before delegates are triggered.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OnRelease</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code> for one input frame when any active chord key is released.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Charged actions, confirmation on release.</p></td>
 </tr>
 </tbody>
 </table>
+<div class="paragraph">
+<p>One-frame actions are reset at the beginning of the next input frame.
+They can therefore be consumed through the same polling API as held actions.</p>
 </div>
-<div class="sect2">
-<h3 id="_constructors"><a class="anchor" href="#_constructors"></a>Constructors</h3>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 75%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Signature</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>InputAction()</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Default constructor. No name, no key bound.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>InputAction(StringAtom name)</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Constructs an action with a name but no key binding.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>InputAction(StringAtom name, KeyT key)</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Constructs a fully configured action with both a name and a key binding.</p></td>
-</tr>
-</tbody>
-</table>
+<div class="paragraph">
+<p>The <code>onAction</code> delegate fires when the configured mode activates:</p>
 </div>
-<div class="sect2">
-<h3 id="_public_member_functions"><a class="anchor" href="#_public_member_functions"></a>Public member functions</h3>
-<div class="sect3">
-<h4 id="_getname"><a class="anchor" href="#_getname"></a><code>getName</code></h4>
+<div class="ulist">
+<ul>
+<li>
+<p><code>WhileHeld</code> and <code>OnPress</code> fire on the initial press;</p>
+</li>
+<li>
+<p><code>OnRelease</code> fires on release;</p>
+</li>
+<li>
+<p>operating-system key-repeat events do not fire the action again.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_frame_lifecycle"><a class="anchor" href="#_frame_lifecycle"></a>Frame lifecycle</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>GameInstance</code> initializes the router after creating the window.
+Every game-loop iteration polls the window and then processes queued input:</p>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">[[nodiscard]] const StringAtom&amp; getName() const;</code></pre>
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">Window::pollEvent();
+Internal::GetInputSystem().processEvents();</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Returns the action&#8217;s name atom.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_setname"><a class="anchor" href="#_setname"></a><code>setName</code></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">void setName(const StringAtom&amp; newName);</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Replaces the action&#8217;s name.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_setfrequency_getfrequency"><a class="anchor" href="#_setfrequency_getfrequency"></a><code>setFrequency</code> / <code>getFrequency</code></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">void setFrequency(TimeT value);
-[[nodiscard]] TimeT getFrequency() const;</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Controls the minimum interval between consecutive delegate firings while the key is held.
-A value of <code>0 ms</code> (the default) means the action fires every frame the key is held (subject to <code>_isRepeatable</code>).
-Setting a higher value throttles repeat firings — useful for cursor-key scrolling or turbo-fire scenarios.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_update"><a class="anchor" href="#_update"></a><code>update</code></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">virtual void update();</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Must be called once per frame (or polling tick).
-Internal logic:</p>
+<p>One input frame performs the following work:</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>If no key is bound, the method returns immediately.</p>
+<p>Remove expired weak references to destroyed controllers.</p>
 </li>
 <li>
-<p>Calls the pure-virtual <code>isKeyPressed()</code>.</p>
+<p>Clear <code>OnPress</code> and <code>OnRelease</code> actions left active from the previous frame.</p>
 </li>
 <li>
-<p>If pressed <strong>and</strong> (not already in <code>Pressed</code> state <strong>or</strong> <code>_isRepeatable</code> is <code>true</code>):</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>Checks that <code>_frequency</code> milliseconds have elapsed since <code>_lastUpdate</code>.</p>
+<p>Detect controller activation and deactivation transitions.</p>
 </li>
 <li>
-<p>If so, snapshots <code>SpecKeysState</code> and fires <code>onPress</code> and <code>_onActionPrivate</code>.</p>
+<p>Dispatch every queued key event in order.</p>
 </li>
 <li>
-<p>Updates <code>_lastUpdate</code> and transitions <code>_lastState</code> to <code>Pressed</code>.</p>
+<p>Leave the resulting action state available for the gameplay tick.</p>
 </li>
 </ol>
 </div>
+<div class="paragraph">
+<p>Window callbacks only enqueue events.
+They do not execute gameplay logic immediately, which keeps input state changes aligned with the game loop.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_routing_and_conflict_resolution"><a class="anchor" href="#_routing_and_conflict_resolution"></a>Routing and conflict resolution</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Only effectively active controllers participate in routing.
+A controller is effectively active when all of the following are true:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">isEnabled()
+&amp;&amp; inputActive
+&amp;&amp; (!activationPredicate || activationPredicate())</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For a key press, active controllers are ordered by these rules:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>A controller using <code>BlockKeyboard</code> is checked before passthrough controllers.</p>
 </li>
 <li>
-<p>If not pressed, resets <code>_lastState</code> to <code>None</code>.</p>
+<p>Among passthrough controllers, a matching chord is checked before a non-matching controller.</p>
+</li>
+<li>
+<p>The matching chord with more required keys is checked first.</p>
+</li>
+<li>
+<p>Equal shortcuts are ordered by activation recency; the most recently activated controller wins.</p>
 </li>
 </ol>
 </div>
+<div class="paragraph">
+<p>There are no public numeric priorities.
+Activation order is assigned internally and cannot become a collection of unrelated magic numbers.</p>
 </div>
-<div class="sect3">
-<h4 id="_setkey_getkey"><a class="anchor" href="#_setkey_getkey"></a><code>setKey</code> / <code>getKey</code></h4>
+<div class="paragraph">
+<p>When a controller handles a matching binding, it returns <code>Consumed</code> and routing stops.
+If it returns <code>Ignored</code>, the next controller is checked.</p>
+</div>
+<div class="sect2">
+<h3 id="_specificity_example"><a class="anchor" href="#_specificity_example"></a>Specificity example</h3>
+<div class="paragraph">
+<p>Assume these bindings are active:</p>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">void setKey(KeyT key);
-[[nodiscard]] std::optional&lt;KeyT&gt; getKey() const;</code></pre>
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">Spectator: S
+Editor:    Ctrl + Shift + S</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Binds or queries the key associated with this action.
-<code>getKey()</code> returns <code>std::nullopt</code> when no key has been set.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_getisrepeatable_setisrepeatable"><a class="anchor" href="#_getisrepeatable_setisrepeatable"></a><code>getIsRepeatable</code> / <code>setIsRepeatable</code></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">[[nodiscard]] bool getIsRepeatable() const;
-void setIsRepeatable(bool isRepeatable);</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Controls whether the action re-fires on every frame while the key remains held (<code>true</code>, default) or fires only on the initial press transition (<code>false</code>).</p>
-</div>
+<p>For <code>Ctrl + Shift + S</code>, both chords can technically match because additional held keys are allowed.
+The editor chord has two required keys and is therefore more specific, so it is routed first.
+The spectator never sees the consumed event.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_public_delegates"><a class="anchor" href="#_public_delegates"></a>Public delegates</h3>
-<div class="sect3">
-<h4 id="_onpress"><a class="anchor" href="#_onpress"></a><code>onPress</code></h4>
+<h3 id="_context_example"><a class="anchor" href="#_context_example"></a>Context example</h3>
+<div class="paragraph">
+<p>Assume gameplay and an inventory both bind <code>Ctrl + S</code>.
+The inventory is activated after gameplay when it opens.
+Their chords have equal specificity, so activation recency routes the shortcut to the inventory.</p>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">Delegate&lt;void(SpecKeysState)&gt;::Ptr onPress;</code></pre>
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">inventoryInput-&gt;setInputActive(true);  // becomes the newest active controller
+// Ctrl + S is handled by the inventory
+
+inventoryInput-&gt;setInputActive(false);
+// Ctrl + S can reach gameplay again</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Fired by <code>update()</code> each time the action triggers (respecting <code>_isRepeatable</code> and <code>_frequency</code>).
-Subscribe here to react to the action in gameplay code.</p>
+<p>For modal contexts that must suppress all lower keyboard input, use:</p>
 </div>
 <div class="listingblock">
-<div class="title">Example subscription</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">myAction-&gt;onPress-&gt;subscribe([](Core::InputAction&lt;Keyboard::Key&gt;::SpecKeysState mods)
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">modalInput-&gt;setBlockingPolicy(InputBlockingPolicy::BlockKeyboard);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>BlockKeyboard</code> consumes even keys for which that controller has no binding.
+Use it for pause menus and true modal dialogs, not for ordinary passthrough UI.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_configuring_an_inputcontroller_in_the_editor"><a class="anchor" href="#_configuring_an_inputcontroller_in_the_editor"></a>Configuring an InputController in the editor</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Add an <code>InputController</code> as an ECS child of the object that owns the input configuration.
+For example, the base spectator asset contains both a camera and an input controller.</p>
+</div>
+<div class="paragraph">
+<p>The Input Controller adapter displays every binding in the asset editor.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Enter a semantic action name, for example <code>Move forward</code>.</p>
+</li>
+<li>
+<p>Press <code>Record</code>.</p>
+</li>
+<li>
+<p>Press the desired keys in order, for example <code>Ctrl</code>, <code>A</code>, then <code>B</code>.</p>
+</li>
+<li>
+<p>Verify the displayed <code>Ctrl + A + B</code> chord.</p>
+</li>
+<li>
+<p>Select <code>While held</code>, <code>On press</code>, or <code>On release</code>.</p>
+</li>
+<li>
+<p>Press <code>Apply</code>.</p>
+</li>
+<li>
+<p>Save the asset.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Recorded keys do not need to remain held simultaneously while editing.
+The recorder accumulates unique keys.
+The last ordinary, non-modifier key becomes the trigger key; preceding keys become required keys.</p>
+</div>
+<div class="paragraph">
+<p>Bindings are serialized with the component:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "action": "Move forward",
+    "requiredKeys": [],
+    "trigger": "WhileHeld",
+    "triggerKey": "W"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The deserializer also understands the previous <code>key</code> and <code>requiredModifiers</code> fields so existing assets can migrate forward.
+Newly saved assets use only the current representation.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_using_actions_from_gameplay_code"><a class="anchor" href="#_using_actions_from_gameplay_code"></a>Using actions from gameplay code</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Gameplay code locates the ECS controller and works with action names.
+It does not recreate editor-authored shortcuts.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto spectator = gameScene.gerFirstOf&lt;Spectator&gt;();
+auto* input = spectator ? spectator-&gt;findFirstChildOf&lt;InputController&gt;() : nullptr;
+
+if (!input)
 {
-    if (mods.leftCtrl == Keyboard::KeyState::Pressed)
-        doCtrlAction();
-    else
-        doNormalAction();
-});</code></pre>
+    errorLog("InputController was not found under Spectator.");
+    return;
+}</code></pre>
 </div>
 </div>
-<hr>
+<div class="sect2">
+<h3 id="_polling_action_state"><a class="anchor" href="#_polling_action_state"></a>Polling action state</h3>
+<div class="paragraph">
+<p>Polling is appropriate for continuous gameplay behaviour and also supports one-frame actions:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">if (input-&gt;isActionPressed("Move forward"_atom))
+    spectator-&gt;moveForward(-spectator-&gt;speed * delta);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The current modifier snapshot can affect behaviour without changing the binding:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">const bool shift = (input-&gt;getActionModifiers("Move forward"_atom)
+                    &amp; InputModifier::Shift) != InputModifier::None;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_subscribing_to_actions"><a class="anchor" href="#_subscribing_to_actions"></a>Subscribing to actions</h3>
+<div class="paragraph">
+<p>Delegates are useful for command-style actions:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">subscriptions &lt;&lt; input-&gt;onAction-&gt;subscribeAndGetID(
+    [](const InputActionEvent&amp; event)
+    {
+        if (event.action == "Save game"_atom)
+            saveGame();
+    });</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Do not use both polling and a delegate to perform the same command unless two executions are intentional.</p>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_class_keyboardinputaction"><a class="anchor" href="#_class_keyboardinputaction"></a>Class <code>KeyboardInputAction</code></h2>
+<h2 id="_runtime_activation_conditions"><a class="anchor" href="#_runtime_activation_conditions"></a>Runtime activation conditions</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p><code>setInputActive()</code> is the explicit on/off switch for a controller.
+An activation predicate adds a runtime condition without changing serialized data.</p>
+</div>
+<div class="paragraph">
+<p>The spectator uses a predicate so its input works in game-only mode or while the game viewport is focused:</p>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">class KeyboardInputAction : public InputAction&lt;Keyboard::Key&gt;;</code></pre>
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">input-&gt;setActivationPredicate(
+    [this]
+    {
+        if (renderMode == RenderMode::GameOnly)
+            return true;
+
+        const auto* viewport = gameEditor.getWindow&lt;GameViewportEWC&gt;();
+        return viewport &amp;&amp; viewport-&gt;isFocused();
+    });</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Alias: <code>KeyboardIA</code></p>
-</div>
-<div class="paragraph">
-<p>Specialises <code>InputAction</code> for keyboard keys.
-<code>isKeyPressed()</code> queries <code>Keyboard::getKeyState</code> for the bound <code>Keyboard::Key</code>.</p>
-</div>
-<div class="paragraph">
-<p>Prefer constructing instances through <code>KeyboardInputManager</code> rather than directly, so the manager can register and <code>update()</code> them automatically.</p>
-</div>
-<div class="sect2">
-<h3 id="_type_aliases_2"><a class="anchor" href="#_type_aliases_2"></a>Type aliases</h3>
-<div class="paragraph">
-<p>Inherits all aliases from <code>InputAction&lt;Keyboard::Key&gt;</code>.
-<code>KeyT</code> resolves to <code>Keyboard::Key</code>.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_static_factory"><a class="anchor" href="#_static_factory"></a>Static factory</h3>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">static Ptr Create();</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Heap-allocates a default-constructed <code>KeyboardInputAction</code> and returns it wrapped in an <code>IntrusivePtr</code>.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_constructors_2"><a class="anchor" href="#_constructors_2"></a>Constructors</h3>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 75%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Signature</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>KeyboardInputAction()</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Default constructor. No name, no key.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>KeyboardInputAction(const StringAtom&amp; name, KeyT key)</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Constructs with a name and a bound keyboard key.</p></td>
-</tr>
-</tbody>
-</table>
-<hr>
+<p>When the predicate changes from <code>false</code> to <code>true</code>, the controller becomes the newest active controller automatically.
+When it changes from <code>true</code> to <code>false</code>, held and transient actions are cleared to prevent stuck input.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_class_mouseinputaction"><a class="anchor" href="#_class_mouseinputaction"></a>Class <code>MouseInputAction</code></h2>
+<h2 id="_ownership_and_release_handling"><a class="anchor" href="#_ownership_and_release_handling"></a>Ownership and release handling</h2>
 <div class="sectionbody">
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">class MouseInputAction : public InputAction&lt;Mouse::Key&gt;;</code></pre>
-</div>
+<div class="paragraph">
+<p>After a controller consumes a trigger-key press, the router records that controller as the key owner.
+Operating-system repeat events for that trigger key return to the same controller instead of being routed again.</p>
 </div>
 <div class="paragraph">
-<p>Alias: <code>MouseIA</code></p>
+<p>Release events are offered to registered controllers because an action must end when any member of its chord is released, not only its trigger key.
+For example, releasing <code>Ctrl</code>, <code>A</code>, or <code>B</code> ends an active <code>Ctrl + A + B</code> chord.</p>
 </div>
 <div class="paragraph">
-<p>Extends <code>InputAction</code> with cursor tracking.
-In addition to the inherited <code>onPress</code> delegate, it provides delegates for movement, drag, and click.
-<code>isKeyPressed()</code> queries <code>Mouse::getKeyState</code> for the bound <code>Mouse::Key</code>.</p>
-</div>
-<div class="paragraph">
-<p>Prefer constructing instances through <code>MouseInputManager</code>.</p>
-</div>
-<div class="sect2">
-<h3 id="_type_aliases_3"><a class="anchor" href="#_type_aliases_3"></a>Type aliases</h3>
-<div class="paragraph">
-<p>Inherits all aliases from <code>InputAction&lt;Mouse::Key&gt;</code>.
-<code>KeyT</code> resolves to <code>Mouse::Key</code>.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_static_factory_2"><a class="anchor" href="#_static_factory_2"></a>Static factory</h3>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">static Ptr Create();</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Heap-allocates a default-constructed <code>MouseInputAction</code> and returns it wrapped in an <code>IntrusivePtr</code>.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_constructors_3"><a class="anchor" href="#_constructors_3"></a>Constructors</h3>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 75%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Signature</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>MouseInputAction()</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Default constructor.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>MouseInputAction(const StringAtom&amp; name, KeyT key)</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Constructs with a name and a bound mouse button. <code>key</code> defaults to <code>Mouse::Key::None</code>.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>MouseInputAction(const StringAtom&amp; name)</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Constructs with only a name; useful for move/drag-only actions with no button binding.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect2">
-<h3 id="_public_delegates_2"><a class="anchor" href="#_public_delegates_2"></a>Public delegates</h3>
-<div class="paragraph">
-<p>Inherits <code>onPress</code> from <code>InputAction</code>.</p>
-</div>
-<div class="sect3">
-<h4 id="_ondrag"><a class="anchor" href="#_ondrag"></a><code>onDrag</code></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">Delegate&lt;void(glm::vec2, SpecKeysState)&gt;::Ptr onDrag;</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Fired when the cursor moves <strong>while</strong> the bound mouse button is held.
-The <code>glm::vec2</code> argument carries the delta (offset) of the cursor since the previous frame.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_onmove"><a class="anchor" href="#_onmove"></a><code>onMove</code></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">Delegate&lt;void(glm::vec2, SpecKeysState)&gt;::Ptr onMove;</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Fired whenever the cursor moves, regardless of button state.
-The <code>glm::vec2</code> argument carries the cursor delta.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_onmouseclick"><a class="anchor" href="#_onmouseclick"></a><code>onMouseClick</code></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">Delegate&lt;void(glm::vec2, SpecKeysState)&gt;::Ptr onMouseClick;</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Fired when the bound mouse button is clicked.
-The <code>glm::vec2</code> argument carries the cursor position at the moment of the click.</p>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_overridden_update"><a class="anchor" href="#_overridden_update"></a>Overridden <code>update</code></h3>
-<div class="paragraph">
-<p><code>MouseInputAction::update()</code> extends the base logic with cursor-position diffing.
-It reads the current cursor position each frame, computes the delta against <code>_lastMousePosition</code>, and fires <code>onMove</code> and/or <code>onDrag</code> as appropriate before delegating to the base <code>update()</code> for button-press handling.</p>
-</div>
-<hr>
+<p>Controllers are stored as weak pointers.
+The router does not extend ECS component lifetimes, and expired entries are removed before event processing.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_concept_isinputaction"><a class="anchor" href="#_concept_isinputaction"></a>Concept <code>IsInputAction</code></h2>
+<h2 id="_public_and_internal_boundaries"><a class="anchor" href="#_public_and_internal_boundaries"></a>Public and internal boundaries</h2>
 <div class="sectionbody">
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template&lt;class T&gt;
-concept IsInputAction = requires(T) {
-    typename T::KeyT;
-    typename T::Ptr;
-    typename T::CPtr;
-    typename T::Parent;
-    requires std::derived_from&lt;std::remove_reference_t&lt;T&gt;, InputAction&lt;typename T::KeyT&gt;&gt;;
-};</code></pre>
-</div>
-</div>
 <div class="paragraph">
-<p>Satisfied by any type that:</p>
+<p>Gameplay-facing code should use:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>exposes nested type aliases <code>KeyT</code>, <code>Ptr</code>, <code>CPtr</code>, and <code>Parent</code>;</p>
+<p><code>InputController</code>;</p>
 </li>
 <li>
-<p>derives from <code>InputAction&lt;KeyT&gt;</code>.</p>
+<p><code>Binding</code> and <code>KeyChord</code>;</p>
+</li>
+<li>
+<p><code>isActionPressed()</code> and <code>getActionModifiers()</code>;</p>
+</li>
+<li>
+<p><code>onAction</code>;</p>
+</li>
+<li>
+<p><code>setInputActive()</code>, <code>setActivationPredicate()</code>, and <code>setBlockingPolicy()</code>.</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>Use this concept in template constraints anywhere a generic action type is expected, to catch misuse at compile time rather than at link time or runtime.</p>
+<p>Gameplay-facing code should not use:</p>
 </div>
-<div class="listingblock">
-<div class="title">Example usage</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template&lt;Core::IsInputAction ActionT&gt;
-void registerAction(typename ActionT::Ptr action)
-{
-    // guaranteed to be a valid InputAction subtype
-}</code></pre>
+<div class="ulist">
+<ul>
+<li>
+<p><code>Internal::InputSystem</code>;</p>
+</li>
+<li>
+<p>activation-order counters;</p>
+</li>
+<li>
+<p>raw event queues or key-owner maps.</p>
+</li>
+</ul>
 </div>
+<div class="paragraph">
+<p>Those details belong to the engine and may change without changing the gameplay API.</p>
 </div>
-<hr>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_type_alias_summary"><a class="anchor" href="#_type_alias_summary"></a>Type alias summary</h2>
-<div class="sectionbody">
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 20%;">
-<col style="width: 20%;">
-<col style="width: 60%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Alias</th>
-<th class="tableblock halign-left valign-top">Resolved type</th>
-<th class="tableblock halign-left valign-top">Notes</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>KeyboardIA</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>KeyboardInputAction</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Shorthand used throughout the engine.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>MouseIA</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>MouseInputAction</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Shorthand used throughout the engine.</p></td>
-</tr>
-</tbody>
-</table>
-<hr>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_usage_example"><a class="anchor" href="#_usage_example"></a>Usage example</h2>
+<h2 id="_expected_usage_rules"><a class="anchor" href="#_expected_usage_rules"></a>Expected usage rules</h2>
 <div class="sectionbody">
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">// Create and configure a keyboard action
-auto jumpAction = Core::KeyboardInputAction::Create();
-jumpAction-&gt;setName(StringAtom("Jump"));
-jumpAction-&gt;setKey(Keyboard::Key::Space);
-jumpAction-&gt;setIsRepeatable(false); // fire once per press
-
-jumpAction-&gt;onPress-&gt;subscribe([](auto mods)
-{
-    player.jump();
-});
-
-// Create a mouse drag action (no button needed for move tracking)
-auto cameraAction = Core::MouseInputAction::Create();
-cameraAction-&gt;setName(StringAtom("CameraOrbit"));
-cameraAction-&gt;setKey(Mouse::Key::Right);
-
-cameraAction-&gt;onDrag-&gt;subscribe([](glm::vec2 delta, auto mods)
-{
-    camera.orbit(delta);
-});
-
-// Register with managers so update() is called automatically each frame
-keyboardInputManager-&gt;add(jumpAction);
-mouseInputManager-&gt;add(cameraAction);</code></pre>
-</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Prefer semantic action names over direct keyboard polling in gameplay systems.</p>
+</li>
+<li>
+<p>Configure reusable bindings in ECS assets rather than recreating them in code.</p>
+</li>
+<li>
+<p>Use <code>WhileHeld</code> for continuous behaviour and <code>OnPress</code> or <code>OnRelease</code> for one-frame commands.</p>
+</li>
+<li>
+<p>Use activation state or predicates to represent focus and open/closed contexts.</p>
+</li>
+<li>
+<p>Use <code>Passthrough</code> by default; reserve <code>BlockKeyboard</code> for truly modal contexts.</p>
+</li>
+<li>
+<p>Do not introduce numeric input priorities. Specificity and activation recency resolve conflicts automatically.</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
