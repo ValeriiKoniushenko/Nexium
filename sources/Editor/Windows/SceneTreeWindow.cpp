@@ -260,7 +260,7 @@ namespace Core
             {
                 if (ImGui::MenuItem("Set as a main camera"))
                 {
-                    gGameInstance->currentCamera = camera;
+                    GetWorld().currentCamera = camera;
                 }
             }
 

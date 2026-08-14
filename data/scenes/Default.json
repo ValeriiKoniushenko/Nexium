@@ -2,34 +2,6 @@
     "_sceneName": "Default",
     "sceneObjects": [
         {
-            "assetType": "Core::PerspectiveCamera",
-            "name": "BaseCamera1",
-            "referenceAsset": "data/assets/BaseCamera.nx",
-            "trans": {
-                "_origin": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "_position": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "_rotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "_scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            },
-            "typeSpecificData": null
-        },
-        {
             "assetType": "Core::SceneObj::Rectangle",
             "name": "BaseRectangle",
             "referenceAsset": "data/assets/BaseRectangle.nx",
@@ -130,7 +102,7 @@
                 "_atlasName": "santa_walk",
                 "_blendingEnabled": true,
                 "_smoothingEnabled": false,
-                "_textureName": "Walk_12.png"
+                "_textureName": "Walk_9.png"
             }
         },
         {
@@ -144,13 +116,13 @@
                     0.0
                 ],
                 "_position": [
-                    75.97795104980469,
-                    32.746971130371094,
-                    32.667999267578125
+                    -301.4087829589844,
+                    -303.9915771484375,
+                    15.057574272155762
                 ],
                 "_rotation": [
-                    5.111328125,
-                    -1.81640625,
+                    0.0,
+                    0.0,
                     0.0
                 ],
                 "_scale": [

@@ -83,9 +83,9 @@ namespace Core
 
     BaseCamera::~BaseCamera()
     {
-        if (this == gGameInstance->currentCamera)
+        if (this == GetWorld().currentCamera)
         {
-            gGameInstance->currentCamera = nullptr;
+            gGameInstance->resetCamera();
         }
     }
 

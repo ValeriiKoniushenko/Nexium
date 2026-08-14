@@ -76,12 +76,12 @@ namespace Core
 
     void Scene::directDraw()
     {
-        if (!gGameInstance->currentCamera)
+        if (!GetWorld().currentCamera)
         {
             return;
         }
 
-        auto& camera = *gGameInstance->currentCamera;
+        auto& camera = *GetWorld().currentCamera;
 
         if (gGameInstance->renderMode == GameInstance::RenderMode::Editor)
         {

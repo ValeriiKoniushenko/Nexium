@@ -69,14 +69,14 @@ namespace Core
             _subscriptionPool << _showCameraButton->onClick->subscribeAndGetID(
                 []()
                 {
-                    if (!gGameInstance->currentCamera)
+                    if (!GetWorld().currentCamera)
                     {
                         return;
                     }
 
                     if (auto sceneTree = GetEditor().getWindow<SceneTreeWindowEWC>())
                     {
-                        sceneTree->highlightSpecificObject(gGameInstance->currentCamera);
+                        sceneTree->highlightSpecificObject(GetWorld().currentCamera);
                     }
                 });
 
@@ -205,23 +205,23 @@ namespace Core
     {
         if (_showCameraButton)
         {
-            _showCameraButton->disableWidget(!gGameInstance->currentCamera);
+            _showCameraButton->disableWidget(!GetWorld().currentCamera);
         }
         if (_changeCameraButton)
         {
-            _changeCameraButton->disableWidget(!gGameInstance->currentCamera);
+            _changeCameraButton->disableWidget(!GetWorld().currentCamera);
         }
         if (_resetCameraButton)
         {
-            _resetCameraButton->disableWidget(!gGameInstance->currentCamera);
+            _resetCameraButton->disableWidget(!GetWorld().currentCamera);
         }
 
         if (_cameraInputField)
         {
             std::string str = "";
-            if (gGameInstance->currentCamera)
+            if (GetWorld().currentCamera)
             {
-                str = gGameInstance->currentCamera->getComponentName().c_str();
+                str = GetWorld().currentCamera->getComponentName().c_str();
             }
             _cameraInputField->setInputtedData(std::move(str));
         }

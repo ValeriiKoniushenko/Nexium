@@ -33,6 +33,7 @@
 
 namespace Core
 {
+    class BaseCamera;
 
     CLASS();
     struct LightningProps : public IDataIO
@@ -78,6 +79,9 @@ namespace Core
         FIELD();
         StringAtom worldName = "Default";
 
+        BaseCamera* currentCamera = nullptr;
+
+    public:
         [[nodiscard]] std::filesystem::path getCacheDir() const override;
         [[nodiscard]] StringAtom getCacheHash() const override;
 

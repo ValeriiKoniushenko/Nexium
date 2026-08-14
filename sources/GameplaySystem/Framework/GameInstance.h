@@ -67,7 +67,6 @@ namespace Core
         AssetsManager assets;
 
         void resetCamera();
-        BaseCamera* currentCamera = nullptr;
         RenderMode renderMode = RenderMode::Editor;
         GameEditor gameEditor;
         RenderTargetToTexture gameViewport;

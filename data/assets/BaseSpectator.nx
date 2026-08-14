@@ -2,17 +2,16 @@
     "data": {
         "_children": [
             {
-                "_aspect": {
-                    "height": 1.0,
-                    "width": 1.0
-                },
+                "_bottomRight": [
+                    800.0,
+                    600.0
+                ],
                 "_children": null,
                 "_far": 10000.0,
-                "_fov": 75.0,
                 "_isDrawOutline": false,
                 "_isEnabled": true,
                 "_isPostDraw": false,
-                "_name": "PerspectiveCamera",
+                "_name": "OrthographicCamera",
                 "_near": 0.10000000149011612,
                 "_noTick": false,
                 "_origin": [
@@ -35,34 +34,9 @@
                     1.0,
                     1.0
                 ],
-                "_type": "Core::PerspectiveCamera"
-            },
-            {
-                "_children": null,
-                "_isDrawOutline": false,
-                "_isEnabled": false,
-                "_isPostDraw": false,
-                "_name": "OrthographicCamera",
-                "_noTick": false,
-                "_origin": [
-                    0.0,
+                "_topLeft": [
                     0.0,
                     0.0
-                ],
-                "_position": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "_rotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "_scale": [
-                    1.0,
-                    1.0,
-                    1.0
                 ],
                 "_type": "Core::OrthographicCamera"
             }

@@ -75,9 +75,9 @@ namespace Core
             return;
         }
 
-        if (gGameInstance->currentCamera)
+        if (GetWorld().currentCamera)
         {
-            const auto* cameraOwner = gGameInstance->currentCamera->getOwner();
+            const auto* cameraOwner = GetWorld().currentCamera->getOwner();
             const auto* compOwner = comp->getOwner();
             if (cameraOwner == compOwner)
             {

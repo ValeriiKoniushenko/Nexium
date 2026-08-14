@@ -32,7 +32,6 @@
 #include "Graphics/ShaderManager.h"
 #include "Graphics/Window.h"
 #include "ImGui/imgui.h"
-#include "ImGui/imgui_internal.h"
 #include "Misc/Configs.h"
 #include "Misc/FPSCounter.h"
 #include "ModuleInfo.h"
@@ -138,7 +137,7 @@ namespace Core
 
     void GameInstance::resetCamera()
     {
-        currentCamera = nullptr;
+        world.currentCamera = nullptr;
         gameViewport.clearCanvas();
     }
 
@@ -169,7 +168,7 @@ namespace Core
 
                 gameEditor.keyboardInput.update(); // force update
 
-                if (currentCamera)
+                if (world.currentCamera)
                 {
                     gameScene.directDraw();
                     onTick(world.getTimeDelta());
@@ -186,7 +185,7 @@ namespace Core
                 glClear(clearBits);
                 gameEditor.tick(world.getTimeDelta());
 
-                if (currentCamera)
+                if (world.currentCamera)
                 {
                     gameViewport.callMePreDraw();
                     glClear(clearBits);
@@ -333,14 +332,14 @@ namespace Core
 
     void GameInstance::internal_onAddObjectToScene(SceneObject* obj)
     {
-        if (!currentCamera)
+        if (!world.currentCamera)
         {
             obj->forEach(
                 [this](BaseComponent* obj)
                 {
                     if (auto* camera = dynamic_cast<BaseCamera*>(obj))
                     {
-                        currentCamera = camera;
+                        world.currentCamera = camera;
                         return false;
                     }
                     return true;

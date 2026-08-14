@@ -37,7 +37,7 @@ namespace Core
             return;
         }
 
-        auto* camera = gGameInstance->currentCamera;
+        auto* camera = GetWorld().currentCamera;
         if (!camera)
         {
             return;
