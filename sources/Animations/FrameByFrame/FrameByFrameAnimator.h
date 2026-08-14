@@ -69,7 +69,7 @@ namespace Core::Animation
 
     private:
         FIELD();
-        std::unordered_map<StringAtom, BaseAnimation::Ptr> _animations;
+        std::unordered_map<Core::StringAtom, BaseAnimation::Ptr> _animations;
 
         FIELD();
         StringAtom _currentAnimationName;

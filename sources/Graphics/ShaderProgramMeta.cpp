@@ -210,9 +210,9 @@ namespace Core
 
         _uniformBufferObjects.clear();
 
-        constexpr GLenum props[]
+        constexpr std::array<GLenum, 3> props
             = { GL_NUM_ACTIVE_VARIABLES, GL_BUFFER_BINDING, GL_BUFFER_DATA_SIZE };
-        constexpr GLenum lineProps[] = { GL_NAME_LENGTH, GL_TYPE, GL_OFFSET };
+        constexpr std::array<GLenum, 3> lineProps = { GL_NAME_LENGTH, GL_TYPE, GL_OFFSET };
 
         GLint count = 0;
         glGetProgramInterfaceiv(shaderProgramId, GL_UNIFORM_BLOCK, GL_ACTIVE_RESOURCES, &count);
@@ -222,9 +222,9 @@ namespace Core
             ShaderUBO outData;
 
             // =========== Getting main data ===========
-            GLint values[3] = {};
-            glGetProgramResourceiv(shaderProgramId, GL_UNIFORM_BLOCK, i, 3, props, 3, nullptr,
-                                   values);
+            std::array<GLint, 3> values;
+            glGetProgramResourceiv(shaderProgramId, GL_UNIFORM_BLOCK, i, values.size(),
+                                   props.data(), values.size(), nullptr, values.data());
 
             outData.vars.resize(values[0]);
             outData.binding = values[1];
@@ -255,9 +255,10 @@ namespace Core
             {
                 ShaderVariable var;
 
-                GLint uboContent[3] = {};
-                glGetProgramResourceiv(shaderProgramId, GL_UNIFORM, varId, 3, lineProps, 3, nullptr,
-                                       uboContent);
+                std::array<GLint, 3> uboContent;
+                glGetProgramResourceiv(shaderProgramId, GL_UNIFORM, varId, uboContent.size(),
+                                       lineProps.data(), uboContent.size(), nullptr,
+                                       uboContent.data());
 
                 var.name.resize(uboContent[0]);
                 glGetProgramResourceName(shaderProgramId, GL_UNIFORM, varId, uboContent[0], nullptr,

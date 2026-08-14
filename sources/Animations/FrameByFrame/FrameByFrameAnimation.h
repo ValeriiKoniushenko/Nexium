@@ -41,13 +41,13 @@ namespace Core::Animation
         R_FRIEND(Frame);
 
         FIELD();
-        StringAtom name;
+        Core::StringAtom name;
         FIELD();
-        std::optional<StringAtom> textureName;
+        std::optional<Core::StringAtom> textureName;
         FIELD();
-        GlobalPosition2F uvOffset = Core::GlobalPosition2F{ 0.f, 0.f };
+        Core::GlobalPosition2F uvOffset = Core::GlobalPosition2F{ 0.f, 0.f };
         FIELD();
-        GlobalPosition2F uvSize = Core::GlobalPosition2F{ 1.f, 1.f };
+        Core::GlobalPosition2F uvSize = Core::GlobalPosition2F{ 1.f, 1.f };
     };
 
     void to_json(nlohmann::json& j, const Frame& v);
@@ -93,11 +93,11 @@ namespace Core::Animation
 
     private:
         FIELD();
-        StringAtom _atlasName;
+        Core::StringAtom _atlasName;
         FIELD();
-        StringAtom _textureName;
+        Core::StringAtom _textureName;
         FIELD();
-        std::vector<Frame> _frames;
+        std::vector<Core::Animation::Frame> _frames;
 
         FIELD();
         std::size_t _currentFrame = 0;

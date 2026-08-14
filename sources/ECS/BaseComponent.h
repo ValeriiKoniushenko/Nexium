@@ -846,13 +846,13 @@ namespace Core
 
     protected:
         FIELD();
-        std::vector<IntrusivePtr<BaseComponent>> _children;
+        std::vector<Core::IntrusivePtr<Core::BaseComponent>> _children;
 
         FIELD();
-        StringAtom _name;
+        Core::StringAtom _name;
 
         FIELD();
-        StringAtom _type;
+        Core::StringAtom _type;
 
         BaseComponent* _parent = nullptr;
 
