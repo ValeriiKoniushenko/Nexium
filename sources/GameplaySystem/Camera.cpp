@@ -81,6 +81,14 @@ namespace Core
         return getComponentType() + "_" + getComponentName();
     }
 
+    BaseCamera::~BaseCamera()
+    {
+        if (this == gGameInstance->currentCamera)
+        {
+            gGameInstance->currentCamera = nullptr;
+        }
+    }
+
     FSize2 BaseCamera::getOutputFrameSize()
     {
         if (gGameInstance->renderMode == GameInstance::RenderMode::Editor)

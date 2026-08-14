@@ -270,7 +270,6 @@ namespace Core
                 owner->removeChildDeep(obj);
 
                 traceLog("The object is deleted from the scene: {}"_f << obj->getComponentName());
-                _sceneObjects.erase(it);
                 return true;
             }
         }

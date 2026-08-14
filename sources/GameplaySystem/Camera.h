@@ -46,7 +46,7 @@ namespace Core
         BaseCamera(BaseCamera&&) noexcept = default;
         BaseCamera& operator=(const BaseCamera&) = default;
         BaseCamera& operator=(BaseCamera&&) noexcept = default;
-        ~BaseCamera() override = default;
+        ~BaseCamera() override;
 
         [[nodiscard]] virtual const glm::mat4& getMatrix() = 0;
         [[nodiscard]] virtual glm::vec3 putMouseRay(float length) = 0;
