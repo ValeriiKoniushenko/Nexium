@@ -79,12 +79,6 @@ namespace Core::Internal
         }
     } // namespace
 
-    InputSystem& GetInputSystem()
-    {
-        static InputSystem instance;
-        return instance;
-    }
-
     void InputSystem::initialize(Window& window)
     {
         if (_initialized)
