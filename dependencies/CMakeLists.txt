@@ -1,3 +1,15 @@
+set(_saved_c_flags "${CMAKE_C_FLAGS}")
+set(_saved_cxx_flags "${CMAKE_CXX_FLAGS}")
+
+if (MSVC)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /W0")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W0")
+else ()
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -w")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w")
+endif ()
+
+
 # ── Vendored (already in-tree, no submodule) ──────────────────────────────────
 add_subdirectory(Glad)
 add_subdirectory(ImGui)
@@ -38,8 +50,13 @@ set(FT_BUILD_UTILS    OFF CACHE BOOL "" FORCE)
 add_subdirectory(freetype)
 
 # ── Utils ─────────────────────────────────────────────────────────────────────
+set(UTILS_DISABLE_TESTS ON CACHE BOOL "" FORCE)
+set(UTILS_DISABLE_BENCHMARKS ON CACHE BOOL "" FORCE)
 add_subdirectory(Utils)
 
 # ── JustReflectMe ─────────────────────────────────────────────────────────────
 set(JRM_DISABLE_TESTS ON)
 add_subdirectory(JustReflectMe)
+
+set(CMAKE_C_FLAGS "${_saved_c_flags}")
+set(CMAKE_CXX_FLAGS "${_saved_cxx_flags}")
