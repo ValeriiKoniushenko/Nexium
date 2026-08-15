@@ -59,7 +59,24 @@ Checks: >
   -performance-no-int-to-ptr
 
 # Treat all enabled warnings as errors
-WarningsAsErrors: "modernize-avoid-c-arrays"
+WarningsAsErrors: "modernize-avoid-c-arrays,
+  bugprone-use-after-move,
+  bugprone-integer-division,
+  bugprone-undefined-memory-manipulation,
+  bugprone-dangling-handle,
+  bugprone-use-after-free,
+  bugprone-unused-return-value,
+  bugprone-signed-char-misuse,
+  bugprone-suspicious-memory-comparison,
+  bugprone-string-constructor,
+  bugprone-fold-init-type,
+  bugprone-move-forwarding-reference,
+  clang-analyzer-core.*,
+  clang-analyzer-cplusplus.NewDeleteLeaks,
+  clang-analyzer-cplusplus.NewDelete,
+  clang-analyzer-deadcode.DeadStores,
+  cppcoreguidelines-pro-type-cstyle-cast,
+  cppcoreguidelines-pro-bounds-array-to-pointer-decay"
 
 HeaderFilterRegex: '.*Nexium/sources/.*'
 
