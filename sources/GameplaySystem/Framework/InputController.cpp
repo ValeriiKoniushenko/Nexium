@@ -199,7 +199,7 @@ namespace Core
     {
         BaseComponent::onInitialize();
         _wasEffectivelyActive = isInputActive();
-        Internal::GetInputSystem().registerController(this);
+        Internal::InputSystem::Instance().registerController(this);
     }
 
     InputResult InputController::handleRoutedEvent(const KeyInputEvent& event)
@@ -322,7 +322,7 @@ namespace Core
         }
         else if (!_wasEffectivelyActive && active)
         {
-            Internal::GetInputSystem().activateController(this);
+            Internal::InputSystem::Instance().activateController(this);
         }
         _wasEffectivelyActive = active;
     }
