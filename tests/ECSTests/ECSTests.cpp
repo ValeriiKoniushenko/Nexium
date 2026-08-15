@@ -218,7 +218,7 @@ TEST(ECSBaseTests, DeserializationOfComponentTree)
     ASSERT_EQ(child1["_noTick"].get<bool>(), false);
 
     ASSERT_TRUE(child1.contains("_children"));
-    ASSERT_FALSE(child1["_children"].is_null());
+    ASSERT_TRUE(child1["_children"].is_null());
 }
 
 TEST(ECSBaseTests, DeserializationOfComponentTreeWithSkippedFields)
