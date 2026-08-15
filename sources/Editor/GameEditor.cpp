@@ -359,7 +359,7 @@ namespace Core
                 if (spec.leftCtrl == Keyboard::KeyState::Pressed
                     && spec.leftShift == Keyboard::KeyState::Pressed)
                 {
-                    gGameInstance->saveAll();
+                    gGameInstance->saveAllToCache();
                 }
             });
 

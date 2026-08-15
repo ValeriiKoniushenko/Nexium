@@ -57,7 +57,7 @@ namespace Core
 
         void toggleRenderMode();
 
-        void saveAll();
+        void saveAllToCache();
 
     public:
         Scene gameScene;

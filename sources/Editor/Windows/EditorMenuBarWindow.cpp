@@ -77,7 +77,7 @@ namespace Core
         {
             if (ImGui::MenuItem(ICON_FA_FLOPPY_O " Save all"))
             {
-                gGameInstance->saveAll();
+                gGameInstance->saveAllToCache();
             }
             if (ImGui::MenuItem(ICON_FA_COG " Settings"))
             {
