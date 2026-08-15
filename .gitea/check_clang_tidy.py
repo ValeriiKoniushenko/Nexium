@@ -195,8 +195,10 @@ def main():
             fp_src = f"{f.path}:{line_no}:{m.group('col')}:{check}"
             fp = hashlib.md5(fp_src.encode()).hexdigest()
 
+            is_error = "❗️**ERROR:**" if "-warnings-as-errors" in check else ""
+
             issues.append({
-                "description": f"[{check}] {m.group('message')}",
+                "description": f"{is_error} {m.group('message')}",
                 "check_name": check,
                 "fingerprint": fp,
                 "severity": SEVERITY_MAP.get(m.group("level"), "major"),
