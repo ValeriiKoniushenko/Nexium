@@ -233,7 +233,7 @@ TEST(ECSBaseTests, DeserializationOfComponentTreeWithSkippedFields)
         stream = R<decltype(obj)>::Serialize(obj).getData();
     }
 
-    std::cout << stream.dump(4) << std::endl;
+    // std::cout << stream.dump(4) << std::endl;
 
     // Removing one field
     stream.erase("a");
