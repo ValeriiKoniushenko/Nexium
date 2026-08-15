@@ -1,0 +1,38 @@
+[
+  {
+    "description": "[cppcoreguidelines-avoid-c-arrays,modernize-avoid-c-arrays,-warnings-as-errors] do not declare C-style arrays, use 'std::array' instead",
+    "check_name": "cppcoreguidelines-avoid-c-arrays,modernize-avoid-c-arrays,-warnings-as-errors",
+    "fingerprint": "b854886709e83cd48049bbf234dfd34f",
+    "severity": "critical",
+    "location": {
+      "path": "sources/GameplaySystem/Framework/GameInstance.cpp",
+      "lines": {
+        "begin": 137
+      }
+    }
+  },
+  {
+    "description": "[misc-const-correctness] variable 'i' of type 'int[5]' can be declared 'const'",
+    "check_name": "misc-const-correctness",
+    "fingerprint": "e5ea142ecfc968a227bffca7c2cf53bd",
+    "severity": "major",
+    "location": {
+      "path": "sources/GameplaySystem/Framework/GameInstance.cpp",
+      "lines": {
+        "begin": 137
+      }
+    }
+  },
+  {
+    "description": "[performance-avoid-endl] do not use 'std::endl' with streams; use '\\n' instead",
+    "check_name": "performance-avoid-endl",
+    "fingerprint": "5b013165a49c62ca3c3c1902f8fef8d1",
+    "severity": "major",
+    "location": {
+      "path": "sources/GameplaySystem/Framework/GameInstance.cpp",
+      "lines": {
+        "begin": 138
+      }
+    }
+  }
+]

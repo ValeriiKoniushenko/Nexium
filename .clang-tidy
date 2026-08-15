@@ -59,7 +59,7 @@ Checks: >
   -performance-no-int-to-ptr
 
 # Treat all enabled warnings as errors
-WarningsAsErrors: ""
+WarningsAsErrors: "modernize-avoid-c-arrays"
 
 HeaderFilterRegex: '.*Nexium/sources/.*'
 
