@@ -41,7 +41,7 @@ namespace Core
     namespace Internal
     {
         /// @brief Collects raw keyboard events and routes them through active InputControllers.
-        class InputSystem final
+        class InputSystem final : public Singleton<InputSystem>
         {
         public:
             /// @brief Subscribes the input system to keyboard events produced by a window.
@@ -88,7 +88,5 @@ namespace Core
             bool _initialized = false;
         };
 
-        /// @brief Returns the engine-owned singleton input router.
-        [[nodiscard]] InputSystem& GetInputSystem();
     } // namespace Internal
 } // namespace Core
