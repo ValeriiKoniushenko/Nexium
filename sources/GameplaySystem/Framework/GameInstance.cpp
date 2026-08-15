@@ -133,9 +133,6 @@ namespace Core
         GetCacheSystem().write(gameScene);
 
         onSaveAll();
-
-        int i[5] = { 1 };
-        std::cout << i[0] << std::endl;
     }
 
     void GameInstance::resetCamera()
