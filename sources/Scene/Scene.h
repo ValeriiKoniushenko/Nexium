@@ -95,9 +95,10 @@ namespace Core
     public:
         Grid grid;
         NXSkybox skybox;
-        ObjectContainerT _sceneObjects;
 
     protected:
+        ObjectContainerT _sceneObjects;
+
         FIELD();
         StringAtom _sceneName = "Default";
 

@@ -26,6 +26,7 @@
 
 #include "../../ResourceManagement/DataStream.h"
 #include "Core/Color.h"
+#include "Editor/ObjectPicker.h"
 #include "GameState.h"
 #include "LevelData.h"
 #include "Misc/BaseLog.h"
@@ -68,17 +69,16 @@ namespace Core
         R_FRIEND(World);
 
     public:
-        LightningProps lightning;
-
-        PlayerState playerState;
-
-        GameState gameState;
-
-        LevelData levelData;
-
         FIELD();
         StringAtom worldName = "Default";
 
+        LightningProps lightning;
+        PlayerState playerState;
+        GameState gameState;
+        LevelData levelData;
+        ObjectPickerAggregator objectSelector;
+
+        // It a reference to the real camera. It doesn't own it.
         BaseCamera* currentCamera = nullptr;
 
     public:

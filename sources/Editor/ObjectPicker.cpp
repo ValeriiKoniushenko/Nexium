@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-#include "SlowObjectPicker.h"
+#include "ObjectPicker.h"
 
 #include "Editor/Windows/GameViewport.h"
 #include "GameplaySystem/Framework/GameInstance.h"
@@ -30,19 +30,27 @@
 
 namespace Core
 {
-    void SlowObjectPicker::update(Scene& scene)
+    void BaseObjectPicker::update(Scene& scene)
     {
-        if (!_requested)
+        const auto* world = GetWorld();
+        if (!_requested || !world || !world->currentCamera)
         {
             return;
         }
 
-        auto* camera = GetWorld()->currentCamera;
-        if (!camera)
-        {
-            return;
-        }
+        onRequest(scene, world->currentCamera);
 
+        _requested = false;
+    }
+
+    void BaseObjectPicker::requestPick(const std::function<void(Transformable*)>& callback)
+    {
+        _callback = callback;
+        _requested = true;
+    }
+
+    void SlowObjectPicker::onRequest(Scene& scene, BaseCamera* camera)
+    {
         auto* shader = gGameInstance->shaderManager.getShaderProgram("objectIdentifier"_atom);
         if (!Verify(shader)) [[unlikely]]
         {
@@ -149,13 +157,41 @@ namespace Core
             }
         }
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        _requested = false;
     }
 
-    void SlowObjectPicker::requestPick(std::function<void(StaticMesh*)>&& callback)
+    void RectangleBasedObjectPicker::onRequest(Scene& scene, BaseCamera* camera)
     {
-        _callback = std::forward<decltype(callback)>(callback);
+    }
+
+    ObjectPickerAggregator::ObjectPickerAggregator()
+    {
+        _pickers.emplace_back(std::make_unique<SlowObjectPicker>());
+        _pickers.emplace_back(std::make_unique<RectangleBasedObjectPicker>());
+    }
+
+    void ObjectPickerAggregator::update(Scene& scene)
+    {
+        for (const auto& picker : _pickers)
+        {
+            picker->update(scene);
+        }
+    }
+
+    void ObjectPickerAggregator::requestPick(const std::function<void(Transformable*)>& callback)
+    {
+        _callback = callback;
         _requested = true;
+        for (const auto& picker : _pickers)
+        {
+            picker->requestPick(
+                [this](Transformable* object)
+                {
+                    if (_requested)
+                    {
+                        _callback(object);
+                        _requested = false;
+                    }
+                });
+        }
     }
 } // namespace Core

@@ -26,7 +26,7 @@
 
 #include "InputDevices/InputManager.h"
 #include "Misc/BaseLog.h"
-#include "SlowObjectPicker.h"
+#include "ObjectPicker.h"
 #include "ToastNotifications.h"
 #include "Windows/BaseWindow.h"
 
@@ -157,7 +157,6 @@ namespace Core
         void readFromCache();
 
     public:
-        SlowObjectPicker slowObjectPicker;
         Editor::NotificationPopUpManager notifications;
         KeyboardInputManger keyboardInput;
         MouseInputManger mouseInput;
@@ -170,7 +169,7 @@ namespace Core
     private:
         void handleMouseDrag(glm::vec2 delta, MouseInputAction::SpecKeysState state);
         void handleMouseClick(glm::vec2 pos, MouseInputAction::SpecKeysState state);
-        void responseOnPick(StaticMesh* mesh);
+        void responseOnPick(Transformable* object);
         void lazyOneShotInitialization();
 
     protected:

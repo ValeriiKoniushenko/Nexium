@@ -76,16 +76,17 @@ namespace Core
 
     void Scene::directDraw()
     {
-        if (!GetWorld()->currentCamera)
+        auto* world = GetWorld();
+        if (!world || !world->currentCamera)
         {
             return;
         }
 
-        auto& camera = *GetWorld()->currentCamera;
+        auto& camera = *world->currentCamera;
 
         if (gGameInstance->renderMode == GameInstance::RenderMode::Editor)
         {
-            gGameInstance->gameEditor.slowObjectPicker.update(*this);
+            world->objectSelector.update(*this);
             grid.draw();
         }
 
@@ -121,7 +122,7 @@ namespace Core
             mesh->draw(camera);
         }
 
-        if (GetWorld()->currentCamera->getType() == CameraType::Perspective)
+        if (world->currentCamera->getType() == CameraType::Perspective)
         {
             skybox->draw(camera);
         }

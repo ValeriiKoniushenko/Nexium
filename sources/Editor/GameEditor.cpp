@@ -392,10 +392,14 @@ namespace Core
             return;
         }
 
-        slowObjectPicker.requestPick([this](StaticMesh* mesh) { responseOnPick(mesh); });
+        if (auto* world = GetWorld())
+        {
+            world->objectSelector.requestPick([this](Transformable* object)
+                                              { responseOnPick(object); });
+        }
     }
 
-    void GameEditor::responseOnPick(StaticMesh* mesh)
+    void GameEditor::responseOnPick(Transformable* object)
     {
         if (const auto* wnd = gGameInstance->gameEditor.getWindow<GameViewportEWC>();
             !wnd || !wnd->isHovered())
@@ -403,6 +407,7 @@ namespace Core
             return;
         }
 
+        auto* mesh = dynamic_cast<StaticMesh*>(object);
         if (!mesh)
         {
             return;
