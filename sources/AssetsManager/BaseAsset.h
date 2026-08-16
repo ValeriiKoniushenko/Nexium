@@ -32,6 +32,7 @@
 namespace Core
 {
 
+    // TODO: remove this class. It's unsafe
     CLASS();
     class BaseAsset : public BaseLog
     {
