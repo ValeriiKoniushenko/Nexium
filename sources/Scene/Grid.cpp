@@ -70,7 +70,8 @@ namespace Core
 
     void Grid::rebuildBasis()
     {
-        glm::vec3 helper = (std::abs(_normal.y) > 0.999f) ? glm::vec3(1, 0, 0) : glm::vec3(0, 1, 0);
+        const glm::vec3 helper
+            = (std::abs(_normal.y) > 0.999f) ? glm::vec3(1, 0, 0) : glm::vec3(0, 1, 0);
         _right = glm::normalize(glm::cross(helper, _normal));
         _up = glm::normalize(glm::cross(_normal, _right));
     }
