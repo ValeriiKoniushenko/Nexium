@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "Core/Color.h"
 #include "Graphics/RenderTargetToTexture.h"
 
 namespace Core
@@ -33,6 +34,7 @@ namespace Core
     class StaticMesh;
     class StaticMeshBundle;
     class Transformable;
+    class GameViewportEWC;
 
     class BaseObjectPicker
     {
@@ -48,7 +50,8 @@ namespace Core
         void update(Scene& scene);
 
     protected:
-        virtual void onRequest(Scene& scene, BaseCamera* camera) = 0;
+        virtual void onRequest(Scene& scene, BaseCamera* camera, glm::vec2 pickPos) = 0;
+        [[nodiscard]] glm::vec2 getPickedObject(const GameViewportEWC* wnd);
 
     protected:
         std::function<void(Transformable*)> _callback;
@@ -59,6 +62,7 @@ namespace Core
 
     /// yes, it's slow but convenient way to pick up an object with
     /// pixel accuracy. Only for editor's aims.
+    /// Also, now, it works only with StaticMeshBundle
     class SlowObjectPicker : public BaseObjectPicker
     {
     public:
@@ -70,7 +74,12 @@ namespace Core
         ~SlowObjectPicker() override = default;
 
     protected:
-        void onRequest(Scene& scene, BaseCamera* camera) override;
+        void onRequest(Scene& scene, BaseCamera* camera, glm::vec2 pickPos) override;
+
+    private:
+        std::optional<Color3> drawingPreparations(Scene& scene, BaseCamera* camera,
+                                                  glm::vec2 pickPos);
+        void pickingUpTheObjectBasedOnColor(Scene& scene, Color3 pickedColor);
 
     private:
         RenderTargetToTexture _canvas;
@@ -87,7 +96,7 @@ namespace Core
         ~RectangleBasedObjectPicker() override = default;
 
     protected:
-        void onRequest(Scene& scene, BaseCamera* camera) override;
+        void onRequest(Scene& scene, BaseCamera* camera, glm::vec2 pickPos) override;
     };
 
     class ObjectPickerAggregator final

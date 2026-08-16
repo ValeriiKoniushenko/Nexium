@@ -35,12 +35,36 @@ namespace Core
         const auto* world = GetWorld();
         if (!_requested || !world || !world->currentCamera)
         {
+            _requested = false;
             return;
         }
-
-        onRequest(scene, world->currentCamera);
-
         _requested = false;
+
+        glm::vec2 pickPos = {};
+        auto* gameViewportWnd = gGameInstance->gameEditor.getWindow<GameViewportEWC>();
+        if (!gameViewportWnd)
+        {
+            return;
+        }
+        pickPos = getPickedObject(gameViewportWnd);
+
+        onRequest(scene, world->currentCamera, pickPos);
+    }
+
+    glm::vec2 BaseObjectPicker::getPickedObject(const GameViewportEWC* wnd)
+    {
+        if (!wnd) [[unlikely]]
+        {
+            return {};
+        }
+
+        const auto wndPos = wnd->getInnerPosition();
+        auto pickPos = Mouse::GetPosition();
+        pickPos.x -= wndPos.x;
+        pickPos.y -= wndPos.y;
+        pickPos.y = wnd->getInnerWindowSize().height - pickPos.y - 1;
+
+        return pickPos;
     }
 
     void BaseObjectPicker::requestPick(const std::function<void(Transformable*)>& callback)
@@ -49,12 +73,24 @@ namespace Core
         _requested = true;
     }
 
-    void SlowObjectPicker::onRequest(Scene& scene, BaseCamera* camera)
+    void SlowObjectPicker::onRequest(Scene& scene, BaseCamera* camera, glm::vec2 pickPos)
+    {
+        const auto pickedColor = drawingPreparations(scene, camera, pickPos);
+        if (!pickedColor)
+        {
+            return;
+        }
+
+        pickingUpTheObjectBasedOnColor(scene, *pickedColor);
+    }
+
+    std::optional<Color3> SlowObjectPicker::drawingPreparations(Scene& scene, BaseCamera* camera,
+                                                                glm::vec2 pickPos)
     {
         auto* shader = gGameInstance->shaderManager.getShaderProgram("objectIdentifier"_atom);
         if (!Verify(shader)) [[unlikely]]
         {
-            return;
+            return std::nullopt;
         }
 
         auto onUniformSet = [&shader](StaticMesh* mesh)
@@ -62,13 +98,17 @@ namespace Core
             shader->setUniform("uModel"_atom, mesh->getModelMatrix());
             shader->setUniform("uPickingColor"_atom, NormColor3::From(mesh->toUniqueColor()));
         };
-
         static auto preRenderCond = [](const Actor* actor) { return !actor->isPostDraw(); };
-
         static auto postRenderCond = [](const Actor* actor) { return actor->isPostDraw(); };
 
+        // Drawing with needed shader to highlight possible for pick up objects.
+        // The idea is to draw all objects in different colors. And the picked up object
+        // will literally means that the mouse cursor is overlapping some color(and the color ->
+        // it's a real object). E.g.: red -> Tree; blue -> House; purple -> Car.
         shader->use();
         shader->setUniform("uProjAndView"_atom, camera->getMatrix());
+
+        // First shot with preRenderCond
         for (auto&& object : scene.getObjects())
         {
             if (!object->isEnabled())
@@ -82,6 +122,7 @@ namespace Core
             }
         }
 
+        // Second shot with postRenderCond
         for (auto&& object : scene.getObjects())
         {
             if (!object->isEnabled())
@@ -100,66 +141,63 @@ namespace Core
 
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-        if (auto* wnd = gGameInstance->gameEditor.getWindow<GameViewportEWC>())
+        std::array<unsigned char, 4> pickedData = { 0 };
+        glReadPixels(static_cast<GLint>(pickPos.x), static_cast<GLint>(pickPos.y), 1, 1, GL_RGBA,
+                     GL_UNSIGNED_BYTE, pickedData.data());
+
+        return Color3{ pickedData[0], pickedData[1], pickedData[2] };
+    }
+
+    void SlowObjectPicker::pickingUpTheObjectBasedOnColor(Scene& scene, Color3 pickedColor)
+    {
+        // The image with all objects are generated above.
+        // Now, let's calculate the logic.
+        StaticMesh* found = nullptr;
+        for (auto&& object : scene.getObjects())
         {
-            const auto wndPos = wnd->getInnerPosition();
-            auto pickPos = Mouse::GetPosition();
-            pickPos.x -= wndPos.x;
-            pickPos.y -= wndPos.y;
-            pickPos.y = wnd->getInnerWindowSize().height - pickPos.y - 1;
-
-            unsigned char pickedData[4] = { 0 };
-            glReadPixels(static_cast<GLint>(pickPos.x), static_cast<GLint>(pickPos.y), 1, 1,
-                         GL_RGBA, GL_UNSIGNED_BYTE, pickedData);
-
-            Color3 pickedColor{ pickedData[0], pickedData[1], pickedData[2] };
-
-            StaticMesh* found = nullptr;
-            for (auto&& object : scene.getObjects())
+            if (!object->isEnabled())
             {
-                if (!object->isEnabled())
-                {
-                    continue;
-                }
-
-                auto* bundle = object->tryCastTo<StaticMeshBundle>();
-                if (!bundle)
-                {
-                    continue;
-                }
-
-                bundle->forEach(
-                    [pickedColor, &found](BaseComponent* component)
-                    {
-                        Assert(component);
-                        if (component && component->isEnabled()
-                            && component->isTypeOf<StaticMesh>())
-                        {
-                            auto* mesh = component->castTo<StaticMesh>();
-                            if (mesh->isMatchUniqueColor(pickedColor))
-                            {
-                                found = mesh;
-                                return false;
-                            }
-                        }
-                        return true;
-                    });
-
-                if (found)
-                {
-                    break;
-                }
+                continue;
             }
 
-            if (_callback)
+            auto* bundle = object->tryCastTo<StaticMeshBundle>();
+            if (!bundle)
             {
-                _callback(found);
+                continue;
+            }
+
+            // Checking the StaticMesh components of the StaticMeshBundle
+            bundle->forEach(
+                [pickedColor, &found](BaseComponent* component)
+                {
+                    Assert(component);
+                    if (component && component->isEnabled() && component->isTypeOf<StaticMesh>())
+                    {
+                        auto* mesh = component->castTo<StaticMesh>();
+                        if (mesh->isMatchUniqueColor(pickedColor))
+                        {
+                            found = mesh;
+                            return false;
+                        }
+                    }
+                    return true;
+                });
+
+            if (found)
+            {
+                break;
             }
         }
+
+        if (_callback)
+        {
+            _callback(found);
+        }
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    void RectangleBasedObjectPicker::onRequest(Scene& scene, BaseCamera* camera)
+    void RectangleBasedObjectPicker::onRequest(Scene& scene, BaseCamera* camera, glm::vec2 pickPos)
     {
     }
 
