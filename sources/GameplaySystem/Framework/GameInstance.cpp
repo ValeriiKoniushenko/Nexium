@@ -27,6 +27,7 @@
 #include "../Camera.h"
 #include "Animations/FrameByFrame/FrameByFrameAnimation.h"
 #include "Animations/FrameByFrame/FrameByFrameAnimator.h"
+#include "Audio/MiniaudioBackend.h"
 #include "Core/Timer.h"
 #include "Editor/Windows/GameViewport.h"
 #include "Graphics/ShaderManager.h"
@@ -83,6 +84,7 @@ namespace Core
     }
 
     GameInstance::GameInstance(int argc, char** argv)
+        : audioSystem(std::make_unique<Audio::MiniaudioBackend>())
     {
         if (argc == 1)
         {
@@ -100,6 +102,11 @@ namespace Core
             Assert(false, str);
             errorLog(str);
         }
+    }
+
+    Audio::AudioSystem& GetAudioSystem()
+    {
+        return gGameInstance->audioSystem;
     }
 
     spdlog::logger* GameInstance::getLogger() const
@@ -124,6 +131,9 @@ namespace Core
 
         //-------------------- ASSETS MANAGER ---------------------
         GetAssetsManager()->initScanFileSystem();
+
+        //-------------------- AUDIO ---------------------
+        (void)GetAudioSystem().initialize();
 
         //-------------------- SHADER MANAGER ---------------------
         shaderManager.loadShaders(Config::Path::shaders);
@@ -248,6 +258,8 @@ namespace Core
                     gameEditor.gameViewport.callMeAfterDraw();
                 }
             }
+
+            GetAudioSystem().update();
 
             if (glfwGetWindowAttrib(window->getRawWindow(), GLFW_ICONIFIED)
                 || glfwGetWindowAttrib(window->getRawWindow(), GLFW_FOCUSED) == GLFW_FALSE)

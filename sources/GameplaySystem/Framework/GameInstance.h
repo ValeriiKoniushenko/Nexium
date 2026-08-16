@@ -26,6 +26,7 @@
 
 #include "../Camera.h"
 #include "AssetsManager/AssetsManager.h"
+#include "Audio/AudioSystem.h"
 #include "Editor/GameEditor.h"
 #include "Editor/ObjectSelectorManager.h"
 #include "Graphics/RenderTargetToTexture.h"
@@ -67,11 +68,12 @@ namespace Core
         void saveAllToCache();
 
     public:
+        AssetsManager assets;
+        Audio::AudioSystem audioSystem;
         Scene gameScene;
         ShaderManager shaderManager;
         World world;
         UserInterface userInterface;
-        AssetsManager assets;
 
         void resetCamera();
         RenderMode renderMode = RenderMode::Editor;
@@ -110,6 +112,8 @@ namespace Core
     [[nodiscard]] World* GetWorld();
 
     [[nodiscard]] AssetsManager* GetAssetsManager();
+
+    [[nodiscard]] Audio::AudioSystem& GetAudioSystem();
 } // namespace Core
 
 extern std::unique_ptr<Core::GameInstance> gGameInstance;
