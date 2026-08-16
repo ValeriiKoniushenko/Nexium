@@ -44,16 +44,17 @@ namespace Core::Audio
         [[nodiscard]] bool initialize() noexcept override;
         void shutdown() noexcept override;
 
-        [[nodiscard]] VoiceId play(const AudioClipData& clip,
-                                   const PlayParams& params) noexcept override;
+        [[nodiscard("The returned voice must be managed and eventually destroyed")]]
+        VoiceId createAndStartVoice(const AudioClipData& clip,
+                                    const PlayParams& params) noexcept override;
         void destroyVoice(VoiceId voice) noexcept override;
 
-        [[nodiscard]] bool pause(VoiceId voice) noexcept override;
-        [[nodiscard]] bool resume(VoiceId voice) noexcept override;
-        [[nodiscard]] bool stop(VoiceId voice) noexcept override;
+        bool pause(VoiceId voice) noexcept override;
+        bool resume(VoiceId voice) noexcept override;
+        bool stop(VoiceId voice) noexcept override;
 
-        [[nodiscard]] bool setVolume(VoiceId voice, float volume) noexcept override;
-        [[nodiscard]] bool setLooping(VoiceId voice, bool looping) noexcept override;
+        bool setVolume(VoiceId voice, float volume) noexcept override;
+        bool setLooping(VoiceId voice, bool looping) noexcept override;
 
         [[nodiscard]] bool isAtEnd(VoiceId voice) const noexcept override;
 

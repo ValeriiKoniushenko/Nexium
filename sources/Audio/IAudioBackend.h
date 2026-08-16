@@ -42,16 +42,17 @@ namespace Core::Audio
         [[nodiscard]] virtual bool initialize() noexcept = 0;
         virtual void shutdown() noexcept = 0;
 
-        [[nodiscard]] virtual VoiceId play(const AudioClipData& clip,
-                                           const PlayParams& params) noexcept = 0;
+        [[nodiscard("The returned voice must be managed and eventually destroyed")]]
+        virtual VoiceId createAndStartVoice(const AudioClipData& clip,
+                                            const PlayParams& params) noexcept = 0;
         virtual void destroyVoice(VoiceId voice) noexcept = 0;
 
-        [[nodiscard]] virtual bool pause(VoiceId voice) noexcept = 0;
-        [[nodiscard]] virtual bool resume(VoiceId voice) noexcept = 0;
-        [[nodiscard]] virtual bool stop(VoiceId voice) noexcept = 0;
+        virtual bool pause(VoiceId voice) noexcept = 0;
+        virtual bool resume(VoiceId voice) noexcept = 0;
+        virtual bool stop(VoiceId voice) noexcept = 0;
 
-        [[nodiscard]] virtual bool setVolume(VoiceId voice, float volume) noexcept = 0;
-        [[nodiscard]] virtual bool setLooping(VoiceId voice, bool looping) noexcept = 0;
+        virtual bool setVolume(VoiceId voice, float volume) noexcept = 0;
+        virtual bool setLooping(VoiceId voice, bool looping) noexcept = 0;
 
         [[nodiscard]] virtual bool isAtEnd(VoiceId voice) const noexcept = 0;
     };
