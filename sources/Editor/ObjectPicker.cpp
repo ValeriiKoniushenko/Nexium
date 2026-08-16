@@ -27,6 +27,7 @@
 #include "Editor/Windows/GameViewport.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Graphics/Primitives/StaticMeshBundle.h"
+#include "Scene/Rectangle.h"
 
 namespace Core
 {
@@ -199,8 +200,34 @@ namespace Core
 
     void RectangleBasedObjectPicker::onRequest(Scene& scene, BaseCamera* camera, glm::vec2 pickPos)
     {
-    }
+        return; // Not impl
 
+        // std::cout << pickPos.x << "  " << pickPos.y << std::endl;
+
+        SceneObj::Rectangle* pickedRect = nullptr;
+
+        for (auto& object : scene.getObjects())
+        {
+            if (!object->isEnabled())
+            {
+                continue;
+            }
+
+            auto* rectangle = object->tryCastTo<SceneObj::Rectangle>();
+            if (!rectangle)
+            {
+                continue;
+            }
+
+            auto rectPos = rectangle->getPosition();
+            auto rectSize = rectangle->getDrawRectSize();
+        }
+
+        if (_callback && pickedRect)
+        {
+            _callback(pickedRect);
+        }
+    }
     ObjectPickerAggregator::ObjectPickerAggregator()
     {
         _pickers.emplace_back(std::make_unique<SlowObjectPicker>());

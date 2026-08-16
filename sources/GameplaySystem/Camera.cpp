@@ -137,7 +137,24 @@ namespace Core
 
     glm::vec3 OrthographicCamera::putMouseRay(float length)
     {
-        return glm::vec3(0);
+        const auto mouse = Mouse::GetInViewportPosition();
+
+        const auto frame = getOutputFrameSize();
+        const float x = (2.0f * mouse.x / frame.width) - 1.0f;
+        const float y = 1.0f - (2.0f * mouse.y / frame.height);
+
+        const auto rayClip = glm::vec4(x, y, -1.0f, 1.0f);
+        glm::vec4 rayEye = glm::inverse(_cachedProjMatrix) * rayClip;
+        rayEye.z = -1.0f;
+        rayEye.w = 1.0f;
+
+        const auto rayOriginWorld = glm::vec3(glm::inverse(_cachedModelMatrix) * rayEye);
+
+        constexpr glm::vec4 forwardEye(0.0f, 0.0f, -1.0f, 0.0f);
+        const glm::vec3 ray_world
+            = glm::normalize(glm::vec3(glm::inverse(_cachedModelMatrix) * forwardEye));
+
+        return rayOriginWorld + ray_world * length;
     }
 
     void OrthographicCamera::setTopLeft(const glm::vec2& topLeft) noexcept

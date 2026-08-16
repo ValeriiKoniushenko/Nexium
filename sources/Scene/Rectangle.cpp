@@ -34,16 +34,21 @@ namespace Core::SceneObj
 
     ECS_IMPL(Rectangle);
 
+    FSize2 Rectangle::getDrawRectSize() const noexcept
+    {
+        return FSize2(getDefaultDrawRectSize() * glm::vec2(_scale));
+    }
+
     void Rectangle::onDraw(BaseCamera& camera)
     {
-        static BaseGraphicsData gcd = []()
+        static BaseGraphicsData gcd = [defSize = Rectangle::getDefaultDrawRectSize()]()
         {
             std::vector<BaseGraphicsData::ModifierParam> modifiers
                 = { { .value = BaseGraphicsData::ModifiedValue::CullFace,
                       .modifier = BaseGraphicsData::Modifier::Disable } };
 
-            float w = 100.f;
-            float h = 50.f;
+            float w = defSize;
+            float h = defSize;
 
             const std::vector<float> vert = {
                 0, h, 0, // 0  top-left         | (0 , 64) * (0, 1)

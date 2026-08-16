@@ -79,6 +79,9 @@ namespace Core::SceneObj
         [[nodiscard]] nlohmann::json getTypeSpecificSceneDataAsJson() const override;
         void applyTypeSpecificSceneData(const nlohmann::json& data) override;
 
+        [[nodiscard]] constexpr static float getDefaultDrawRectSize() noexcept { return 100.f; }
+        [[nodiscard]] FSize2 getDrawRectSize() const noexcept;
+
     protected:
         void onDraw(BaseCamera& camera) override;
 
