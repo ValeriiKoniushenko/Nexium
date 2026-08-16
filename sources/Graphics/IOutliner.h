@@ -67,4 +67,4 @@ namespace Core
     };
 } // namespace Core
 
-#include "IOutliner.generated.inl" // added by the code generator. Better don't move it.
+#include "IOutliner.generated.h" // added by the code generator. Better don't move it.

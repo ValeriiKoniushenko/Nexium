@@ -49,9 +49,14 @@ cmake --build build
 2. `CMake 3.6` >
 3. `Clang 22` > or `GCC 16` >
 4. Set `git nuke` alias and execute it after every checkout:
-    ```sh
-    git config --global alias.nuke '!rm -f .jrm/cache.data && git submodule update --init --recursive --remote'
-    ```
+    - **Linux** shell:
+         ```sh
+         git config alias.nuke '!rm -f .jrm/cache.data && find -name '*.generated.*' -delete && git submodule update --init --recursive --remote'
+         ```
+    - **Windows** PowerShell:
+        ```pwsh
+        git config alias.nuke '!powershell -NoProfile -Command "Remove-Item -Force -ErrorAction SilentlyContinue .jrm/cache.data; Get-ChildItem -Recurse -Filter '\''*.generated.*'\'' -File | Remove-Item -Force; git submodule update --init --recursive --remote"'
+        ```
 5. Opt: `ccache 4.x` >
 6. Opt: `mold 2.x` (linker)
 
@@ -86,14 +91,6 @@ max_size = 20G
 ```sh
 # install 'mold' linker
 sudo apt install mold
-```
-
-### Opt: Git settings
-
-For a better experience, it is better to enable a few settings in your git:
-
-```
-
 ```
 
 ## Documentation and demos

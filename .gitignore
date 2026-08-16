@@ -29,3 +29,5 @@ __pycache__
 /data/editor/*.json
 /data/scene/*.json
 /data/config/**/*.json
+
+gl-code-quality-report.json
