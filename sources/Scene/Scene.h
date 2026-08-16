@@ -93,8 +93,7 @@ namespace Core
         Delegate<void(SceneObject*)>::Ptr onObjectAdded = Delegate<void(SceneObject*)>::Create();
 
     public:
-        HorizontalGrid horizontalGrid;
-        VerticalGrid verticalGrid;
+        Grid grid;
         NXSkybox skybox;
         ObjectContainerT _sceneObjects;
 

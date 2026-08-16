@@ -88,8 +88,7 @@ namespace Core
             gGameInstance->gameEditor.slowObjectPicker.update(*this);
         }
 
-        // horizontalGrid.draw();
-        verticalGrid.draw();
+        grid.draw();
 
         _postDrawBuffer.resize(0);
 
