@@ -1,8 +1,8 @@
 **/*.generated.cpp -diff
 **/*.generated.h -diff
-.jrm/cache.data -diff -merge
-data/cache/*.json -diff -merge
-data/config/*.json -diff -merge
-data/config/*.ini -diff -merge
-data/editor/*.json -diff -merge
-data/scenes/*.json -diff -merge
+.jrm/cache.data text -diff
+data/cache/*.json text -diff
+data/config/*.json text -diff
+data/config/*.ini text -diff
+data/editor/*.json text -diff
+data/scenes/*.json text -diff
