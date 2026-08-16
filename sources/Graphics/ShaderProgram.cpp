@@ -114,7 +114,7 @@ namespace Core
             constexpr auto size = 512;
             char infoLog[size];
             glGetProgramInfoLog(_shaderProgramId, 512, nullptr, infoLog);
-            criticalThrowingLog("Shader program compilation error: "_f << infoLog);
+            criticalThrowingLog("Shader program compilation error: {}"_f << infoLog);
         }
 
         infoLog("The shader program '{}' linked successfully."_f << shaderName);

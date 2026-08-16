@@ -6,12 +6,11 @@ uniform float uGlobalGridSize = 10000.0;
 uniform float uMinimalDistanceBetweenPixels = 2.5;
 uniform float uGridCellSize = 100.0;
 uniform vec4 uGridColorThin = vec4(0.5, 0.5, 0.5, 0.5);
-uniform vec4 uGridColorThick = vec4(0.0, 0.0, 0.0, 0.0);
+uniform vec4 uGridColorThick = vec4(0.0, 0.0, 0.0, 1.0);
 
-// NEW
 uniform vec4 uAxisColorX = vec4(1.0, 0.0, 0.0, 1.0); // red
 uniform vec4 uAxisColorY = vec4(0.0, 0.0, 1.0, 1.0); // blue
-uniform float uAxisLineWidth = 2.0; // in pixels, roughly
+uniform float uAxisLineWidth = 4.0; // in pixels, roughly
 
 in vec3 ioWorldPos;
 in vec2 ioPlanePos;
@@ -67,15 +66,13 @@ void main()
     float fallOff = 1.0 - clamp(length(ioPlanePos) / uGlobalGridSize, 0.0, 1.0);
     color.a *= fallOff;
 
-    // NEW: axis highlighting, drawn on top of the grid color
-    // Distance in pixels from each axis line (planePos.y == 0 is the "X axis", planePos.x == 0 is the "Y axis")
+    // Axis highlighting, drawn on top of the grid color
     vec2 axisDist = abs(ioPlanePos) / dudv; // in pixel units
-    float axisXLine = 1.0 - clamp(axisDist.y / uAxisLineWidth, 0.0, 1.0); // line along Y=0 -> the X axis
-    float axisYLine = 1.0 - clamp(axisDist.x / uAxisLineWidth, 0.0, 1.0); // line along X=0 -> the Y axis
+    float axisXLine = 1.0 - clamp(axisDist.y / uAxisLineWidth, 0.0, 1.0); // planePos.y == 0 -> X axis
+    float axisYLine = 1.0 - clamp(axisDist.x / uAxisLineWidth, 0.0, 1.0); // planePos.x == 0 -> Y axis
 
     vec4 axisColor = vec4(0.0);
     float axisAlpha = 0.0;
-
     if (axisXLine > axisYLine)
     {
         axisColor = uAxisColorX;
@@ -86,9 +83,10 @@ void main()
         axisColor = uAxisColorY;
         axisAlpha = axisYLine;
     }
-
     axisAlpha *= fallOff;
-    color.rgb = mix(color.rgb, axisColor.rgb, axisAlpha);
+
+    float axisRgbMix = axisAlpha * axisColor.a; // FIX: fold axisColor.a into rgb blend, not just final alpha
+    color.rgb = mix(color.rgb, axisColor.rgb, axisRgbMix);
     color.a = max(color.a, axisAlpha * axisColor.a);
 
     if (color.a < 0.01)
