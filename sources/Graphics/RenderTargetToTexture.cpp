@@ -88,7 +88,9 @@ namespace Core
         glViewport(0, 0, _size.width, _size.height);
 
         glClearColor(0.45f, 0.55f, 0.60f, 1.00f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        constexpr int clearBits = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
+
+        glClear(clearBits);
 
         glBindFramebuffer(GL_FRAMEBUFFER, static_cast<GLuint>(previousFbo));
     }

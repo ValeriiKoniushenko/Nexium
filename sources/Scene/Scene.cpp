@@ -86,9 +86,8 @@ namespace Core
         if (gGameInstance->renderMode == GameInstance::RenderMode::Editor)
         {
             gGameInstance->gameEditor.slowObjectPicker.update(*this);
+            grid.draw();
         }
-
-        grid.draw();
 
         _postDrawBuffer.resize(0);
 
