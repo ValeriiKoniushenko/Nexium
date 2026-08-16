@@ -58,7 +58,7 @@ namespace Core
 
     void ModalCreateBlueprintEWC::Open(StringAtom text)
     {
-        GetEditor().tryToOpenWindow<ModalCreateBlueprintEWC>(".*", std::move(text));
+        GetEditor()->tryToOpenWindow<ModalCreateBlueprintEWC>(".*", std::move(text));
     }
 
     void ModalCreateBlueprintEWC::onInitialize()
@@ -159,7 +159,7 @@ namespace Core
 
     void ModalCreateBlueprintEWC::onDraw()
     {
-        _layout.tick(GetWorld().getTimeDelta());
+        _layout.tick(GetWorld()->getTimeDelta());
 
         ImGui::Dummy({});
 
@@ -338,6 +338,6 @@ namespace Core
                                  _pathField->input->getInputtedData());
 
         closeWindow();
-        GetAssetsManager().refreshFilesSystem();
+        GetAssetsManager()->refreshFilesSystem();
     }
 } // namespace Core

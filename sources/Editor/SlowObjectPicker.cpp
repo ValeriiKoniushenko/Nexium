@@ -37,7 +37,7 @@ namespace Core
             return;
         }
 
-        auto* camera = GetWorld().currentCamera;
+        auto* camera = GetWorld()->currentCamera;
         if (!camera)
         {
             return;

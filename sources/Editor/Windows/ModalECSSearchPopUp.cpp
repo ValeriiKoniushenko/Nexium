@@ -58,7 +58,7 @@ namespace Core
     void ModalECSSearchPopUpEWC::Open(StringAtom text,
                                       const std::function<void(BaseComponent::Ptr)>& callback)
     {
-        GetEditor().tryToOpenWindow<ModalECSSearchPopUpEWC>(".*", std::move(text), callback);
+        GetEditor()->tryToOpenWindow<ModalECSSearchPopUpEWC>(".*", std::move(text), callback);
     }
 
     void ModalECSSearchPopUpEWC::onInitialize()
@@ -153,7 +153,7 @@ namespace Core
 
     void ModalECSSearchPopUpEWC::onDraw()
     {
-        _layout.tick(GetWorld().getTimeDelta());
+        _layout.tick(GetWorld()->getTimeDelta());
 
         ImGui::Dummy({});
 

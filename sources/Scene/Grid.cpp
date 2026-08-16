@@ -36,13 +36,13 @@ namespace Core
             return;
         }
 
-        auto* gridShader = GetShaderManager().getShaderProgram("grid"_atom);
-        if (Verify(gridShader) && GetWorld().currentCamera)
+        auto* gridShader = GetShaderManager()->getShaderProgram("grid"_atom);
+        if (Verify(gridShader) && GetWorld()->currentCamera)
         {
             gridShader->use();
 
-            gridShader->setUniform("uProjAndView"_atom, GetWorld().currentCamera->getMatrix());
-            gridShader->setUniform("uCameraPos"_atom, GetWorld().currentCamera->getPosition());
+            gridShader->setUniform("uProjAndView"_atom, GetWorld()->currentCamera->getMatrix());
+            gridShader->setUniform("uCameraPos"_atom, GetWorld()->currentCamera->getPosition());
             gridShader->setUniform("uGlobalGridSize"_atom, _gridSize);
             gridShader->setUniform("uGridCellSize"_atom, _cellSize);
 

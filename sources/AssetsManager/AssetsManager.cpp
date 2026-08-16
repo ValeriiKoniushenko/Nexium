@@ -54,7 +54,7 @@ namespace
     T getAssetOf(const StringAtom& logicPath,
                  std::unordered_map<StringAtom, AssetRef<BaseAsset>>& lookupContainer)
     {
-        if (!GetAssetsManager().validatePath(logicPath, T::AssetT::fileExtension))
+        if (!GetAssetsManager()->validatePath(logicPath, T::AssetT::fileExtension))
         {
             return T();
         }
@@ -62,7 +62,7 @@ namespace
         if (!lookupContainer.contains(logicPath))
         {
             const fs::path path = logicPath.data();
-            for (auto&& registered : GetAssetsManager().getRegisteredPaths())
+            for (auto&& registered : GetAssetsManager()->getRegisteredPaths())
             {
                 try
                 {
@@ -83,19 +83,19 @@ namespace
                 }
                 catch (const fs::filesystem_error& e)
                 {
-                    GetAssetsManager().errorLog(
+                    GetAssetsManager()->errorLog(
                         "Can't resolve a path due to internal error, of was met junction symlink: {}"_f
                         << e.what());
                 }
                 catch (...)
                 {
-                    GetAssetsManager().errorLog(
+                    GetAssetsManager()->errorLog(
                         "Can't resolve a path due to internal error, of was met junction symlink");
                 }
             }
 
-            GetAssetsManager().criticalLog("Asset is not found by the next path: {}"_f
-                                           << logicPath);
+            GetAssetsManager()->criticalLog("Asset is not found by the next path: {}"_f
+                                            << logicPath);
             return T();
         }
 
@@ -673,7 +673,7 @@ namespace Core
             return _ecsAssets.end();
         }
 
-        for (auto&& registered : GetAssetsManager().getRegisteredPaths())
+        for (auto&& registered : GetAssetsManager()->getRegisteredPaths())
         {
             try
             {
@@ -695,13 +695,13 @@ namespace Core
             }
             catch (const fs::filesystem_error& e)
             {
-                GetAssetsManager().errorLog(
+                GetAssetsManager()->errorLog(
                     "Can't resolve a path due to internal error, of was met junction symlink: {}"_f
                     << e.what());
             }
             catch (...)
             {
-                GetAssetsManager().errorLog(
+                GetAssetsManager()->errorLog(
                     "Can't resolve a path due to internal error, of was met junction symlink");
             }
         }

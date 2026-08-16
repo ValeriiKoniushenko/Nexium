@@ -52,9 +52,9 @@ namespace Core
 
         auto shaderDataProvider = [](std::size_t inputIndex, StringAtom& out) -> const void*
         {
-            auto it = GetShaderManager().getShaderMetas().begin();
+            auto it = GetShaderManager()->getShaderMetas().begin();
             std::advance(it, inputIndex);
-            if (it == GetShaderManager().getShaderMetas().end())
+            if (it == GetShaderManager()->getShaderMetas().end())
             {
                 Assert(false, "Internal error, can't get specified shader");
                 return nullptr;
@@ -63,7 +63,7 @@ namespace Core
             out = it->first;
             return nullptr;
         };
-        auto shaderSizeProvider = [] { return GetShaderManager().getShaderMetas().size(); };
+        auto shaderSizeProvider = [] { return GetShaderManager()->getShaderMetas().size(); };
 
         _layout.setPaddings(glm::vec4{ ImGui::GetStyle().ItemSpacing.x });
 
@@ -223,15 +223,15 @@ namespace Core
     std::size_t ECSEditorStaticMeshBundleAdapter::convertShaderNameToIndex(
         const StringAtom& shaderName) const
     {
-        const auto it = GetShaderManager().getShaderMetas().find(shaderName);
-        return std::distance(GetShaderManager().getShaderMetas().begin(), it);
+        const auto it = GetShaderManager()->getShaderMetas().find(shaderName);
+        return std::distance(GetShaderManager()->getShaderMetas().begin(), it);
     }
 
     StringAtom ECSEditorStaticMeshBundleAdapter::convertIndexToShaderName(std::size_t index) const
     {
-        auto it = GetShaderManager().getShaderMetas().begin();
+        auto it = GetShaderManager()->getShaderMetas().begin();
         std::advance(it, index);
-        Assert(it != GetShaderManager().getShaderMetas().end());
+        Assert(it != GetShaderManager()->getShaderMetas().end());
         return it->first;
     }
 } // namespace Core

@@ -301,7 +301,8 @@ namespace Core
                 }
             }
 
-            const auto weakAsset = GetAssetsManager().getWeakEcsAssetByPath(_path.generic_string());
+            const auto weakAsset
+                = GetAssetsManager()->getWeakEcsAssetByPath(_path.generic_string());
             if (auto asset = weakAsset.tryLoad(); asset && asset->getTags() & Tag_WorldObject)
             {
                 if (ImGui::MenuItem("Spawn on scene"))

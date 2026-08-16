@@ -224,7 +224,7 @@ namespace Core
         layout.addChildComponent<Label>()->setText("General");
         layout.addChildComponent<Separator>();
 
-        for (const auto& [fst, snd] : GetEditor().keyboardInput.getMapping())
+        for (const auto& [fst, snd] : GetEditor()->keyboardInput.getMapping())
         {
             auto* item = layout.addChildComponent<Internal::KeymapItem>();
             item->setReadOnly(true);

@@ -125,12 +125,12 @@ namespace Core
             return;
         }
 
-        if (!GetWorld().currentCamera)
+        if (!GetWorld()->currentCamera)
         {
             return;
         }
 
-        auto* camera = GetWorld().currentCamera;
+        auto* camera = GetWorld()->currentCamera;
         const float distance = glm::length(camera->getPosition() - glm::vec3(getPosition()));
         auto ray = camera->putMouseRay(distance);
 

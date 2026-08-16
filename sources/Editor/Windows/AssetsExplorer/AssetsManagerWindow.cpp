@@ -96,15 +96,15 @@ namespace Core
         BaseFloatEWC::onPreInitialize();
         _nodeTypesData = {
             { NodeType::Default,
-              GetAssetsManager().getTexture("data/assets/baked/document.nxtex"_atom) },
+              GetAssetsManager()->getTexture("data/assets/baked/document.nxtex"_atom) },
             { NodeType::Code,
-              GetAssetsManager().getTexture("data/assets/baked/code_document.nxtex"_atom) },
+              GetAssetsManager()->getTexture("data/assets/baked/code_document.nxtex"_atom) },
             { NodeType::Image,
-              GetAssetsManager().getTexture("data/assets/baked/image_document.nxtex"_atom) },
+              GetAssetsManager()->getTexture("data/assets/baked/image_document.nxtex"_atom) },
             { NodeType::Folder,
-              GetAssetsManager().getTexture("data/assets/baked/folder.nxtex"_atom) },
+              GetAssetsManager()->getTexture("data/assets/baked/folder.nxtex"_atom) },
             { NodeType::NxFile,
-              GetAssetsManager().getTexture("data/assets/baked/nxfile.nxtex"_atom) },
+              GetAssetsManager()->getTexture("data/assets/baked/nxfile.nxtex"_atom) },
         };
 
         const auto gap = ImGui::GetStyle().WindowPadding.x;
@@ -688,7 +688,7 @@ namespace Core
                 AssetsManager::OpenPathFromOSExplorer(entry.is_directory() ? path : _openedPath);
             }
 
-            const auto weakAsset = GetAssetsManager().getWeakEcsAssetByPath(path.generic_string());
+            const auto weakAsset = GetAssetsManager()->getWeakEcsAssetByPath(path.generic_string());
             if (auto asset = weakAsset.tryLoad(); asset && (asset->getTags() & Tag_WorldObject))
             {
                 if (ImGui::MenuItem("Spawn on scene"))
@@ -736,7 +736,7 @@ namespace Core
             return;
         }
 
-        _toolbarLayout.tick(GetWorld().getTimeDelta());
+        _toolbarLayout.tick(GetWorld()->getTimeDelta());
 
         const auto availX = ImGui::GetContentRegionAvail().x - (padding * 2.f);
 
@@ -913,6 +913,6 @@ namespace Core
 
         _rootCacheNode.path = Config::Path::assets;
         rescanPhysicalDrive(_rootCacheNode);
-        GetAssetsManager().refreshFilesSystem();
+        GetAssetsManager()->refreshFilesSystem();
     }
 } // namespace Core

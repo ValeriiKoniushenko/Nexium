@@ -260,7 +260,7 @@ namespace Core
             {
                 if (ImGui::MenuItem("Set as a main camera"))
                 {
-                    GetWorld().currentCamera = camera;
+                    GetWorld()->currentCamera = camera;
                 }
             }
 
@@ -271,7 +271,7 @@ namespace Core
                 if (wnd)
                 {
                     wnd->requestFocus();
-                    auto asset = GetAssetsManager().getEcsAsset(sceneObj->getReferencedAsset());
+                    auto asset = GetAssetsManager()->getEcsAsset(sceneObj->getReferencedAsset());
                     wnd->tryOpenPath(asset->getMeta().pathToSource);
                 }
             }

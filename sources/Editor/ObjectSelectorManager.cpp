@@ -75,9 +75,9 @@ namespace Core
             return;
         }
 
-        if (GetWorld().currentCamera)
+        if (GetWorld()->currentCamera)
         {
-            const auto* cameraOwner = GetWorld().currentCamera->getOwner();
+            const auto* cameraOwner = GetWorld()->currentCamera->getOwner();
             const auto* compOwner = comp->getOwner();
             if (cameraOwner == compOwner)
             {

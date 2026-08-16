@@ -60,7 +60,7 @@ namespace Core::SceneObj
             BaseGraphicsData data;
             data.generate();
 
-            auto* shader = GetShaderManager().getShaderProgram("2d_rect"_atom);
+            auto* shader = GetShaderManager()->getShaderProgram("2d_rect"_atom);
             data.setShader(shader);
 
             data.setDrawModifiers(std::move(modifiers));
@@ -73,8 +73,8 @@ namespace Core::SceneObj
         }();
         tryToRecalculateMatrices();
 
-        auto& atlas = GetAssetsManager().getAtlas(_atlasName);
-        auto* shader = GetShaderManager().getShaderProgram("2d_rect"_atom);
+        auto& atlas = GetAssetsManager()->getAtlas(_atlasName);
+        auto* shader = GetShaderManager()->getShaderProgram("2d_rect"_atom);
         shader->use();
         shader->setUniform("uTexture"_atom, 0);
         shader->setUniform("uProjAndView"_atom, camera.getMatrix());

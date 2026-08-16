@@ -88,13 +88,13 @@ namespace Core
                                                     const std::filesystem::path& newPath)>
                                      onRenameCallback)
     {
-        GetEditor().tryToOpenWindow<RenamePopUpWindow>(".*", std::move(text), path,
-                                                       onRenameCallback);
+        GetEditor()->tryToOpenWindow<RenamePopUpWindow>(".*", std::move(text), path,
+                                                        onRenameCallback);
     }
 
     void RenamePopUpWindow::onDraw()
     {
-        _layout.tick(GetWorld().getTimeDelta());
+        _layout.tick(GetWorld()->getTimeDelta());
 
         if (!_renameError.empty())
         {

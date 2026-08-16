@@ -159,7 +159,7 @@ namespace Core
     void LogsWindowEWC::onDraw()
     {
         detectManualScroll();
-        _toolbar.tick(GetWorld().getTimeDelta());
+        _toolbar.tick(GetWorld()->getTimeDelta());
 
         logsDraw();
     }

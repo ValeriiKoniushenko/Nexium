@@ -151,7 +151,7 @@ namespace Core
         glBindTexture(GL_TEXTURE_2D, getTextureId());
         glBindBuffer(GL_UNIFORM_BUFFER, _uboLight);
 
-        const auto& lightning = GetWorld().lightning;
+        const auto& lightning = GetWorld()->lightning;
         shader->setUniformObject(
             ShaderReflector_default::uLight,
             ShaderReflector_default::Light{ .ambientStrength = lightning.ambientStrength,

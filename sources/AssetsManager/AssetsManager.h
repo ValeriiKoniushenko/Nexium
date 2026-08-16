@@ -79,11 +79,11 @@ namespace Core
     /// @code{cpp}
     /// // Use only atomic string to speed up search of the necessary asset.
     /// // CORRECT way:
-    /// auto texture = GetAssetsManager().getTexture("/path/to/my/texture.png"_atom);
+    /// auto texture = GetAssetsManager()->getTexture("/path/to/my/texture.png"_atom);
     ///
     /// // Don't use some type of dynamic string or string literals directly.
     /// // WRONG:
-    /// auto texture = GetAssetsManager().getTexture("/path/to/my/texture.png");
+    /// auto texture = GetAssetsManager()->getTexture("/path/to/my/texture.png");
     /// @endcode
     class AssetsManager : public BaseLog
     {

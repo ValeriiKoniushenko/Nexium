@@ -33,7 +33,7 @@ namespace Core
 
     void SkyboxAsset::draw(BaseCamera& camera)
     {
-        auto* shader = GetShaderManager().getShaderProgram("skybox"_atom);
+        auto* shader = GetShaderManager()->getShaderProgram("skybox"_atom);
 
         auto view = glm::mat4(1.f);
         view = glm::rotate(view, glm::radians(camera.getGlobalRotation().x),
@@ -89,10 +89,10 @@ namespace Core
             = { { .value = BaseGraphicsData::ModifiedValue::CullFace,
                   .modifier = BaseGraphicsData::Modifier::Disable } };
 
-        auto* shader = GetShaderManager().getShaderProgram("skybox"_atom);
+        auto* shader = GetShaderManager()->getShaderProgram("skybox"_atom);
 
         _gcd.generate();
-        _gcd.setShader(GetShaderManager().getShaderProgram("skybox"_atom));
+        _gcd.setShader(GetShaderManager()->getShaderProgram("skybox"_atom));
         _gcd.setVertexBuffer(skyboxVertices);
         _gcd.setIndexBuffer(skyboxIndices);
         _gcd.setDrawModifiers(std::move(modifiers));

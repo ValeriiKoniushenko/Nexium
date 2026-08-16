@@ -100,7 +100,7 @@ namespace Core
             auto* input = ext->addChildComponent<TextInput>();
             input->setReadOnly(true);
             input->setFlex(Flex::FlexWidth);
-            input->setInputtedData(GetShaderManager().getInputDir().generic_string());
+            input->setInputtedData(GetShaderManager()->getInputDir().generic_string());
         }
         {
             auto* shaderSelect = _headLayout.addChildComponent<HorizontalLayout>();
@@ -314,12 +314,12 @@ namespace Core
         if (_validExtensions)
         {
             std::string extensions;
-            for (auto&& extension : GetShaderManager().getSuitableFragFileExtensions())
+            for (auto&& extension : GetShaderManager()->getSuitableFragFileExtensions())
             {
                 extensions += extension;
                 extensions.push_back(' ');
             }
-            for (auto&& extension : GetShaderManager().getSuitableVertFileExtensions())
+            for (auto&& extension : GetShaderManager()->getSuitableVertFileExtensions())
             {
                 extensions += extension;
                 extensions.push_back(' ');
@@ -334,13 +334,13 @@ namespace Core
 
         if (_totalShaders)
         {
-            _totalShaders->setInputtedData(static_cast<int>(GetShaderManager().countOfShaders()));
+            _totalShaders->setInputtedData(static_cast<int>(GetShaderManager()->countOfShaders()));
         }
 
         if (_failedShaders)
         {
             _failedShaders->setInputtedData(
-                static_cast<int>(GetShaderManager().countOfFailedShaders()));
+                static_cast<int>(GetShaderManager()->countOfFailedShaders()));
         }
     }
 
@@ -351,7 +351,7 @@ namespace Core
 
     void ShaderManagerEWC::openEditor(const std::string& path)
     {
-        GetEditor().showWindow<TextEditorEWC>(".*", path.data());
+        GetEditor()->showWindow<TextEditorEWC>(".*", path.data());
     }
 
     void ShaderManagerEWC::recompileSelectedShader()
@@ -367,7 +367,7 @@ namespace Core
             return;
         }
 
-        auto&& metas = GetShaderManager().getShaderMetas();
+        auto&& metas = GetShaderManager()->getShaderMetas();
         if (Verify(metas.contains(name)))
         {
             bool result = metas[name].safeRecreateFromSources();
@@ -390,7 +390,7 @@ namespace Core
 
     void ShaderManagerEWC::selectShader(const StringAtom& name)
     {
-        auto&& metas = GetShaderManager().getShaderMetas();
+        auto&& metas = GetShaderManager()->getShaderMetas();
         if (!Verify(metas.contains(name)))
         {
             errorLog("Selected shader: {} - not found."_f << name);

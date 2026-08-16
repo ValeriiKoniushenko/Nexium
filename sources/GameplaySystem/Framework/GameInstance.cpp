@@ -43,24 +43,41 @@ std::unique_ptr<Core::GameInstance> gGameInstance = nullptr;
 
 namespace Core
 {
-    ShaderManager& GetShaderManager()
+    ShaderManager* GetShaderManager()
     {
-        return gGameInstance->shaderManager;
+        if (gGameInstance) [[likely]]
+        {
+            return &gGameInstance->shaderManager;
+        }
+
+        return nullptr;
     }
 
-    GameEditor& GetEditor()
+    GameEditor* GetEditor()
     {
-        return gGameInstance->gameEditor;
+        if (gGameInstance) [[likely]]
+        {
+            return &gGameInstance->gameEditor;
+        }
+        return nullptr;
     }
 
-    World& GetWorld()
+    World* GetWorld()
     {
-        return gGameInstance->world;
+        if (gGameInstance) [[likely]]
+        {
+            return &gGameInstance->world;
+        }
+        return nullptr;
     }
 
-    AssetsManager& GetAssetsManager()
+    AssetsManager* GetAssetsManager()
     {
-        return gGameInstance->assets;
+        if (gGameInstance) [[likely]]
+        {
+            return &gGameInstance->assets;
+        }
+        return nullptr;
     }
 
     spdlog::logger* GameInstance::getLogger() const
@@ -83,7 +100,7 @@ namespace Core
                                                                  { updateViewport(); });
 
         //-------------------- ASSETS MANAGER ---------------------
-        GetAssetsManager().initScanFileSystem();
+        GetAssetsManager()->initScanFileSystem();
 
         //-------------------- SHADER MANAGER ---------------------
         shaderManager.loadShaders(Config::Path::shaders);
@@ -349,11 +366,11 @@ namespace Core
 
     void GameInstance::loadCoreResources()
     {
-        GetAssetsManager().generateTextureAtlas(Config::Path::images / "atlas");
-        GetAssetsManager().generateTextureAtlas("santa_walk"_atom,
-                                                Config::Path::images / "Santa/Santa_Walk");
-        GetAssetsManager().generateTextureAtlas("player_walk"_atom,
-                                                Config::Path::images / "Player_SpriteSheet");
+        GetAssetsManager()->generateTextureAtlas(Config::Path::images / "atlas");
+        GetAssetsManager()->generateTextureAtlas("santa_walk"_atom,
+                                                 Config::Path::images / "Santa/Santa_Walk");
+        GetAssetsManager()->generateTextureAtlas("player_walk"_atom,
+                                                 Config::Path::images / "Player_SpriteSheet");
         onLoadCoreResources();
     }
 } // namespace Core

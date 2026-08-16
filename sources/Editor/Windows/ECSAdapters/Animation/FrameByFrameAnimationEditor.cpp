@@ -90,7 +90,7 @@ namespace Core
             state.frame = (state.frame + 1) % frames.size();
         }
 
-        const auto atlasNames = GetAssetsManager().getAtlasesAsVector();
+        const auto atlasNames = GetAssetsManager()->getAtlasesAsVector();
         if (std::ranges::find(atlasNames, animation.getAtlasName()) == atlasNames.end())
         {
             ImGui::TextDisabled("Preview unavailable (atlas '%s' is not loaded)",
@@ -98,7 +98,7 @@ namespace Core
             return;
         }
 
-        const auto& atlas = GetAssetsManager().getAtlas(animation.getAtlasName());
+        const auto& atlas = GetAssetsManager()->getAtlas(animation.getAtlasName());
         const auto& frame = frames[state.frame];
         glm::vec2 uv0{ frame.uvOffset };
         glm::vec2 uv1 = uv0 + glm::vec2{ frame.uvSize };
@@ -243,7 +243,7 @@ namespace Core
 
     std::vector<StringAtom> FrameByFrameAnimationEditor::drawAtlasSelector()
     {
-        const auto atlasNames = GetAssetsManager().getAtlasesAsVector();
+        const auto atlasNames = GetAssetsManager()->getAtlasesAsVector();
         const char* atlasPreview = _atlas[0] ? _atlas.data() : "Select atlas";
         if (ImGui::BeginCombo("Atlas", atlasPreview))
         {
@@ -271,7 +271,7 @@ namespace Core
         if (_atlas[0]
             && std::ranges::find(atlasNames, StringAtom{ _atlas.data() }) != atlasNames.end())
         {
-            return GetAssetsManager().getAtlas(StringAtom{ _atlas.data() }).getRectsAsVector();
+            return GetAssetsManager()->getAtlas(StringAtom{ _atlas.data() }).getRectsAsVector();
         }
         return {};
     }

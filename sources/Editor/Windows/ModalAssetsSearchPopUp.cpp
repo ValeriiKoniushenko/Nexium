@@ -55,7 +55,7 @@ namespace Core
 
     void ModalAssetsSearchPopUpEWC::Open(StringAtom text)
     {
-        GetEditor().tryToOpenWindow<ModalAssetsSearchPopUpEWC>(".*", std::move(text));
+        GetEditor()->tryToOpenWindow<ModalAssetsSearchPopUpEWC>(".*", std::move(text));
     }
 
     void ModalAssetsSearchPopUpEWC::onInitialize()
@@ -97,7 +97,7 @@ namespace Core
                 [](std::size_t index, StringAtom& out) -> const void*
                 {
                     if (auto asset
-                        = GetAssetsManager().getWeakEcsAssetAt(index, Tag_WorldObject).tryLoad())
+                        = GetAssetsManager()->getWeakEcsAssetAt(index, Tag_WorldObject).tryLoad())
                     {
                         out = asset->getName();
                         return asset->getName().c_str();
@@ -107,7 +107,7 @@ namespace Core
                     return nullptr;
                 });
             _list->setSizeProvider(
-                []() { return GetAssetsManager().getEcsAssetCountByTag(Tag_WorldObject); });
+                []() { return GetAssetsManager()->getEcsAssetCountByTag(Tag_WorldObject); });
             _subscriptionPool << _list->onSelect->subscribeAndGetID(
                 [this](const void*, StringAtom name)
                 {
@@ -137,7 +137,7 @@ namespace Core
 
     void ModalAssetsSearchPopUpEWC::onDraw()
     {
-        _layout.tick(GetWorld().getTimeDelta());
+        _layout.tick(GetWorld()->getTimeDelta());
 
         ImGui::Dummy({});
 
@@ -185,7 +185,7 @@ namespace Core
         }
 
         auto weakAsset
-            = GetAssetsManager().getWeakEcsAssetAt(_list->getCurrentIndex(), Tag_WorldObject);
+            = GetAssetsManager()->getWeakEcsAssetAt(_list->getCurrentIndex(), Tag_WorldObject);
 
         if (!weakAsset)
         {

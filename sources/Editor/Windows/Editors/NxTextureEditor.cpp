@@ -107,7 +107,7 @@ namespace Core
 
         if (Gui::CollapsingHeader("General", ImGuiTreeNodeFlags_DefaultOpen, gap))
         {
-            _layout.tick(GetWorld().getTimeDelta());
+            _layout.tick(GetWorld()->getTimeDelta());
         }
     }
 
@@ -149,7 +149,7 @@ namespace Core
     void NxTextureEditorEWC::onDiscardChanges()
     {
         _targetAsset
-            = GetAssetsManager().getTexture(StringAtom::Intern(_assetFilePath.generic_string()));
+            = GetAssetsManager()->getTexture(StringAtom::Intern(_assetFilePath.generic_string()));
     }
 
     void NxTextureEditorEWC::onSave()
@@ -166,7 +166,7 @@ namespace Core
 
     bool NxTextureEditorEWC::onOpenFromPath(const std::filesystem::path& path)
     {
-        _targetAsset = GetAssetsManager().getTexture(StringAtom::Intern(path.generic_string()));
+        _targetAsset = GetAssetsManager()->getTexture(StringAtom::Intern(path.generic_string()));
         if (_targetAsset)
         {
             _offset = _lastPreviewRegionSize

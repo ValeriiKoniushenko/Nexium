@@ -76,12 +76,12 @@ namespace Core
 
     void Scene::directDraw()
     {
-        if (!GetWorld().currentCamera)
+        if (!GetWorld()->currentCamera)
         {
             return;
         }
 
-        auto& camera = *GetWorld().currentCamera;
+        auto& camera = *GetWorld()->currentCamera;
 
         if (gGameInstance->renderMode == GameInstance::RenderMode::Editor)
         {
@@ -122,7 +122,7 @@ namespace Core
             mesh->draw(camera);
         }
 
-        if (GetWorld().currentCamera->getType() == CameraType::Perspective)
+        if (GetWorld()->currentCamera->getType() == CameraType::Perspective)
         {
             skybox->draw(camera);
         }
@@ -191,7 +191,7 @@ namespace Core
     {
         const auto& meta = asset->getMeta();
 
-        auto finalAsset = GetAssetsManager().getUniqueEcsAsset(meta.logicPath);
+        auto finalAsset = GetAssetsManager()->getUniqueEcsAsset(meta.logicPath);
         SceneObject::Ptr obj = DynamicCast<SceneObject>(finalAsset);
         if (!obj)
         {
@@ -336,7 +336,7 @@ namespace Core
         {
             const SceneState states = value.get<SceneState>();
 
-            auto&& refAsset = GetAssetsManager().getUniqueEcsAsset(states.referenceAsset);
+            auto&& refAsset = GetAssetsManager()->getUniqueEcsAsset(states.referenceAsset);
             if (!refAsset)
             {
                 errorLog(
@@ -379,7 +379,7 @@ namespace Core
 
     void Scene::initialize()
     {
-        skybox = GetAssetsManager().getSkybox("data/assets/baked/skybox/default.nxsky"_atom);
+        skybox = GetAssetsManager()->getSkybox("data/assets/baked/skybox/default.nxsky"_atom);
     }
 
     void Scene::tick(float timeDelta)

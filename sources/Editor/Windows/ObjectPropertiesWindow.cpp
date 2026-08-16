@@ -488,10 +488,11 @@ namespace Core
             _rectComboAtlas->setDataProvider(
                 [](std::size_t i, StringAtom& out) -> void*
                 {
-                    out = GetAssetsManager().getAtlasesAsVector().at(i);
+                    out = GetAssetsManager()->getAtlasesAsVector().at(i);
                     return nullptr;
                 });
-            _rectComboAtlas->setSizeProvider([]() { return GetAssetsManager().getAtlasesCount(); });
+            _rectComboAtlas->setSizeProvider([]()
+                                             { return GetAssetsManager()->getAtlasesCount(); });
             _subscriptionPool << _rectComboAtlas->onSelect->subscribeAndGetID(
                 [t = WeakPtr(this)](const void*)
                 {
@@ -510,7 +511,7 @@ namespace Core
                             rectangle->setAtlas(atlasName);
 
                             const auto frames
-                                = GetAssetsManager().getAtlas(atlasName).getRectsAsVector();
+                                = GetAssetsManager()->getAtlas(atlasName).getRectsAsVector();
                             if (!frames.empty())
                             {
                                 rectangle->setTexture(frames.front());
@@ -530,7 +531,7 @@ namespace Core
                     if (rectangle)
                     {
                         out = GetAssetsManager()
-                                  .getAtlas(rectangle->getAtlasName())
+                                  ->getAtlas(rectangle->getAtlasName())
                                   .getRectsAsVector()
                                   .at(i);
                     }
@@ -541,7 +542,7 @@ namespace Core
                 {
                     const auto* rectangle = dynamic_cast<SceneObj::Rectangle*>(_target);
                     return rectangle ? GetAssetsManager()
-                                           .getAtlas(rectangle->getAtlasName())
+                                           ->getAtlas(rectangle->getAtlasName())
                                            .getRectsCount()
                                      : 0;
                 });
@@ -882,7 +883,7 @@ namespace Core
     {
         if (comp && Gui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            const float dt = GetWorld().getTimeDelta();
+            const float dt = GetWorld()->getTimeDelta();
 
             if (_transformPosition)
             {
@@ -912,7 +913,7 @@ namespace Core
     {
         if (comp && Gui::CollapsingHeader("General", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            const float dt = GetWorld().getTimeDelta();
+            const float dt = GetWorld()->getTimeDelta();
 
             if (_objectName)
             {
@@ -937,7 +938,7 @@ namespace Core
     {
         if (comp && Gui::CollapsingHeader("Graphics", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            const float dt = GetWorld().getTimeDelta();
+            const float dt = GetWorld()->getTimeDelta();
 
             if (_graphicsTriangles)
             {
@@ -977,7 +978,7 @@ namespace Core
     {
         if (comp && Gui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            const float dt = GetWorld().getTimeDelta();
+            const float dt = GetWorld()->getTimeDelta();
 
             if (_cameraFar)
             {
@@ -1028,7 +1029,7 @@ namespace Core
     {
         if (comp && Gui::CollapsingHeader("Component data", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            const float dt = GetWorld().getTimeDelta();
+            const float dt = GetWorld()->getTimeDelta();
 
             if (_childrenCount)
             {
@@ -1063,7 +1064,7 @@ namespace Core
     {
         if (comp && Gui::CollapsingHeader("Static mesh", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            const float dt = GetWorld().getTimeDelta();
+            const float dt = GetWorld()->getTimeDelta();
 
             if (_outlineShader)
             {
@@ -1082,11 +1083,11 @@ namespace Core
     {
         if (comp && Gui::CollapsingHeader("Rectangle", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            const float dt = GetWorld().getTimeDelta();
+            const float dt = GetWorld()->getTimeDelta();
 
             if (_rectComboAtlas)
             {
-                const auto atlases = GetAssetsManager().getAtlasesAsVector();
+                const auto atlases = GetAssetsManager()->getAtlasesAsVector();
                 if (auto it = std::ranges::find(atlases, comp->getAtlasName()); it != atlases.end())
                 {
                     _rectComboAtlas->setCurrentIndex(it - atlases.begin());
@@ -1097,7 +1098,7 @@ namespace Core
             {
                 // TODO: super slow, fix it.
                 auto textures
-                    = GetAssetsManager().getAtlas(comp->getAtlasName()).getRectsAsVector();
+                    = GetAssetsManager()->getAtlas(comp->getAtlasName()).getRectsAsVector();
                 if (auto it = std::ranges::find(textures, comp->getTextureName());
                     it != textures.end())
                 {
@@ -1215,7 +1216,7 @@ namespace Core
     {
         if (comp && Gui::CollapsingHeader("Static mesh bundle", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            const float dt = GetWorld().getTimeDelta();
+            const float dt = GetWorld()->getTimeDelta();
 
             if (_renderMeshesCount)
             {

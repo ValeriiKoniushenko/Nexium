@@ -89,17 +89,17 @@ namespace Core::AssetImpl
         {
             if (auto* owner = dataOwner->castTo<Core::StaticMeshBundle>())
             {
-                static auto& sm = GetShaderManager();
+                static auto* sm = GetShaderManager();
                 owner->importFrom(scene->mRootNode, scene,
                                   Config::Path::projectAbsPath / extractedData.meshPath,
                                   extractedData.onLoadScale);
                 if (!extractedData.mainShader.isEmpty())
                 {
-                    owner->setShader(sm.getShaderProgram(extractedData.mainShader));
+                    owner->setShader(sm->getShaderProgram(extractedData.mainShader));
                 }
                 if (!extractedData.outlineShader.isEmpty())
                 {
-                    owner->setOutlineShader(sm.getShaderProgram(extractedData.outlineShader));
+                    owner->setOutlineShader(sm->getShaderProgram(extractedData.outlineShader));
                 }
             }
         }
