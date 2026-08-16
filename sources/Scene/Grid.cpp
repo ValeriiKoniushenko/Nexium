@@ -29,7 +29,7 @@
 
 namespace Core
 {
-    void Grid::draw()
+    void HorizontalGrid::draw()
     {
         if (!_isDraw)
         {
@@ -44,17 +44,37 @@ namespace Core
             gridShader->setUniform("uProjAndView"_atom, GetWorld().currentCamera->getMatrix());
             gridShader->setUniform("uCameraPos"_atom, GetWorld().currentCamera->getPosition());
             gridShader->setUniform("uGlobalGridSize"_atom, _gridSize);
-            /*gridShader->setUniform("uMinimalDistanceBetweenPixels"_atom,
-                                   _minimalDistanceBetweenPixels);*/
             gridShader->setUniform("uGridCellSize"_atom, _cellSize);
-            // gridShader->setUniform("uGridColorThin"_atom, _gridColorThin);
-            // gridShader->setUniform("uGridColorThick"_atom, _gridColorThick);
 
             glDisable(GL_CULL_FACE);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
             glDrawArrays(GL_TRIANGLES, 0, 6);
 
+            glBlendFunc(GL_ONE, GL_ZERO);
+            glEnable(GL_CULL_FACE);
+        }
+    }
+
+    void VerticalGrid::draw()
+    {
+        if (!_isDraw)
+        {
+            return;
+        }
+
+        auto* gridShader = GetShaderManager().getShaderProgram("grid2d"_atom);
+        Assert(gridShader);
+        if (gridShader && GetWorld().currentCamera)
+        {
+            gridShader->use();
+            gridShader->setUniform("uProjAndView"_atom, GetWorld().currentCamera->getMatrix());
+            gridShader->setUniform("uCameraPos"_atom, GetWorld().currentCamera->getPosition());
+            gridShader->setUniform("uGlobalGridSize"_atom, _gridSize);
+            gridShader->setUniform("uGridCellSize"_atom, _cellSize);
+            glDisable(GL_CULL_FACE);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glDrawArrays(GL_TRIANGLES, 0, 6);
             glBlendFunc(GL_ONE, GL_ZERO);
             glEnable(GL_CULL_FACE);
         }

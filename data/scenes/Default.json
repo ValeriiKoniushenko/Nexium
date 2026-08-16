@@ -102,7 +102,7 @@
                 "_atlasName": "santa_walk",
                 "_blendingEnabled": true,
                 "_smoothingEnabled": false,
-                "_textureName": "Walk_11.png"
+                "_textureName": "Walk_13.png"
             }
         },
         {
@@ -116,37 +116,9 @@
                     0.0
                 ],
                 "_position": [
-                    -312.51519775390625,
-                    50.83660125732422,
-                    1589.5355224609375
-                ],
-                "_rotation": [
-                    9.556640625,
-                    -0.203125,
-                    0.0
-                ],
-                "_scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            },
-            "typeSpecificData": null
-        },
-        {
-            "assetType": "Core::PerspectiveCamera",
-            "name": "BaseCamera1",
-            "referenceAsset": "data/assets/BaseCamera.nx",
-            "trans": {
-                "_origin": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "_position": [
-                    0.0,
-                    0.0,
-                    0.0
+                    -404.3722839355469,
+                    -272.11053466796875,
+                    158.72003173828125
                 ],
                 "_rotation": [
                     0.0,

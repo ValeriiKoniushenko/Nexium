@@ -1,14 +1,14 @@
 {
     "_children": null,
     "_innerPosition": [
-        0.0,
-        0.0
+        1299.0,
+        64.0
     ],
     "_innerSize": {
-        "height": 0.0,
-        "width": 0.0
+        "height": 939.0,
+        "width": 605.0
     },
-    "_isEnabled": false,
+    "_isEnabled": true,
     "_isFitContent": false,
     "_minWindowSize": {
         "height": 200.0,
@@ -17,16 +17,16 @@
     "_name": " Shader manager",
     "_noTick": false,
     "_oldSize": {
-        "height": -1.0,
-        "width": -1.0
+        "height": 979.0,
+        "width": 621.0
     },
     "_position": [
-        0.0,
-        0.0
+        1291.0,
+        32.0
     ],
     "_size": {
-        "height": 0.0,
-        "width": 0.0
+        "height": 979.0,
+        "width": 621.0
     },
     "_type": "Core::ShaderManagerEWC"
 }
