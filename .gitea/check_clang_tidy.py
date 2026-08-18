@@ -209,6 +209,7 @@ def main():
             })
 
             if level_rank[m.group("level")] >= fail_threshold:
+                print(f"[info] Should fail due to: {check} - {m.group('message')} ({m.group('level')})")
                 should_fail = True
 
     if not args.dry_run and args.report_path:
