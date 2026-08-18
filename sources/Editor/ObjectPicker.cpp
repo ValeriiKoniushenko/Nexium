@@ -153,7 +153,7 @@ namespace Core
     {
         // The image with all objects are generated above.
         // Now, let's calculate the logic.
-        const StaticMesh* found = nullptr;
+        StaticMesh* found = nullptr;
         for (auto&& object : scene.getObjects())
         {
             if (!object->isEnabled())
@@ -202,7 +202,7 @@ namespace Core
     {
         return; // Not impl
 
-        const SceneObj::Rectangle* pickedRect = nullptr;
+        SceneObj::Rectangle* pickedRect = nullptr;
 
         for (auto& object : scene.getObjects())
         {
