@@ -126,7 +126,7 @@ namespace Core
 
         static void pollEvent();
 
-        void updateViewport(float aspect, ViewportMode mode = ViewportMode::Default);
+        void updateViewport();
 
         [[nodiscard]] ISize2 getSize() const;
 

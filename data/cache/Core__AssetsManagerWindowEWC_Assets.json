@@ -2,11 +2,11 @@
     "_children": null,
     "_innerPosition": [
         16.0,
-        807.0
+        804.0
     ],
     "_innerSize": {
-        "height": 196.0,
-        "width": 1288.0
+        "height": 199.0,
+        "width": 1208.0
     },
     "_isEnabled": true,
     "_isFitContent": false,
@@ -17,16 +17,16 @@
     "_name": " Assets",
     "_noTick": false,
     "_oldSize": {
-        "height": 236.0,
-        "width": 1304.0
+        "height": 239.0,
+        "width": 1224.0
     },
     "_position": [
         8.0,
-        775.0
+        772.0
     ],
     "_size": {
-        "height": 236.0,
-        "width": 1304.0
+        "height": 239.0,
+        "width": 1224.0
     },
     "_type": "Core::AssetsManagerWindowEWC"
 }

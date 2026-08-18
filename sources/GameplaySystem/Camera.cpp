@@ -76,6 +76,11 @@ namespace Core
         }
     }
 
+    void BaseCamera::invalidateCameraMatrices()
+    {
+        _isDirtyProjMatrix = true;
+    }
+
     StringAtom BaseCamera::getCacheHash() const
     {
         return getComponentType() + "_" + getComponentName();
@@ -116,8 +121,8 @@ namespace Core
         if (_isDirtyProjMatrix)
         {
             auto frame = getOutputFrameSize();
-            // _cachedProjMatrix = glm::ortho(0.f, frame.width, 0.f, frame.height, _near, _far);
-            _cachedProjMatrix = glm::ortho(0.f, 800.f, 0.f, 600.f, _near, _far);
+            _cachedProjMatrix = glm::ortho(0.f, frame.width, 0.f, frame.height, _near, _far);
+            // _cachedProjMatrix = glm::ortho(0.f, 1800.f, 0.f, 600.f, _near, _far);
 
             _cachedCalculatedMatrix
                 = _cachedProjMatrix * _cachedModelMatrix; // in such a context Model == View

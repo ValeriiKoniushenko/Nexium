@@ -311,8 +311,13 @@ namespace Core
 
     BaseComponent::Ptr AssetsManager::getUniqueEcsAsset(const StringAtom& logicPath)
     {
-        const auto& asset = _ecsAssets.at(logicPath);
-        return asset->uniqueLoad();
+        auto&& it = _ecsAssets.find(logicPath);
+        if (it == _ecsAssets.end() || !Verify(it->second.isValid()))
+        {
+            return nullptr;
+        }
+
+        return it->second->uniqueLoad();
     }
 
     WeakNXECSAsset AssetsManager::getWeakEcsAsset(const StringAtom& logicPath)

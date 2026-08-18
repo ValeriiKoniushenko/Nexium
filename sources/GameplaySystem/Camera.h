@@ -68,6 +68,7 @@ namespace Core
         [[nodiscard]] StringAtom getCacheHash() const override;
 
         void tryToRecalculateCameraMatrices();
+        void invalidateCameraMatrices();
 
     protected:
         void recalculateCameraMatrices();

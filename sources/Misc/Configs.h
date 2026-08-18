@@ -64,7 +64,6 @@ namespace Core::Config
         extern const std::filesystem::path fontAwesome;
     } // namespace Path
 
-    static constexpr float windowAspectRatio = 16.f / 9.f;
     static constexpr float defaultEditorFontSize = 16.f;
     static constexpr float defaultEmojiScale = 0.8f;
 

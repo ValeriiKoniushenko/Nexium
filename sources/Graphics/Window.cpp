@@ -231,9 +231,9 @@ namespace Core
         glfwPollEvents();
     }
 
-    void Window::updateViewport(float aspect, ViewportMode mode /* = ViewportMode::Default*/)
+    void Window::updateViewport()
     {
-        UpdateGlViewport(static_cast<FSize2>(_size), aspect, mode);
+        UpdateGlViewport(static_cast<FSize2>(_size));
     }
 
     void Window::clear(int code)

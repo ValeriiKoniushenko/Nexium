@@ -25,6 +25,7 @@
 #include "OpenGL.h"
 
 #include "Core/Assert.h"
+#include "GameplaySystem/Framework/GameInstance.h"
 
 namespace Core
 {
@@ -59,10 +60,28 @@ namespace Core
             pos.y = 0;
         }
 
-        // glViewport(static_cast<GLint>(pos.x), static_cast<GLint>(pos.y),
-        //            static_cast<GLsizei>(view.width), static_cast<GLsizei>(view.height));
+        glViewport(static_cast<GLint>(pos.x), static_cast<GLint>(pos.y),
+                   static_cast<GLsizei>(view.width), static_cast<GLsizei>(view.height));
 
-        glViewport(0, 0, 800, 600);
+        if (const auto* world = GetWorld())
+        {
+            if (world->currentCamera)
+            {
+                world->currentCamera->invalidateCameraMatrices();
+            }
+        }
+    }
+
+    void UpdateGlViewport(FSize2 size)
+    {
+        glViewport(0, 0, static_cast<GLsizei>(size.width), static_cast<GLsizei>(size.height));
+        if (const auto* world = GetWorld())
+        {
+            if (world->currentCamera)
+            {
+                world->currentCamera->invalidateCameraMatrices();
+            }
+        }
     }
 
     const char* glTypeToString(GLenum value)

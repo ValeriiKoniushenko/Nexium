@@ -51,7 +51,8 @@ namespace Core
         ZoomIn
     };
 
-    void UpdateGlViewport(FSize2 originalSize, float aspectRatio, ViewportMode mode);
+    void UpdateGlViewport(FSize2 originalSize, float aspect, ViewportMode mode);
+    void UpdateGlViewport(FSize2 size);
 
     [[nodiscard]] const char* glTypeToString(GLenum value);
 } // namespace Core

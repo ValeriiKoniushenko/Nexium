@@ -340,7 +340,7 @@ namespace Core
             if (!refAsset)
             {
                 errorLog(
-                    "Scene: '{}'. Impossible to spawn an object '{}'({}) to the scene, object is not accessible through AssetManager."_f
+                    "Scene: '{}'. Impossible to spawn an object '{}' ({}) on the scene, object is not accessible through AssetManager."_f
                     << _sceneName << states.referenceAsset << states.name);
                 continue;
             }

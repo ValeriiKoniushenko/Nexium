@@ -231,12 +231,11 @@ namespace Core
     {
         if (renderMode == RenderMode::GameOnly)
         {
-            window->updateViewport(Config::windowAspectRatio, ViewportMode::ZoomIn);
+            window->updateViewport();
         }
         else
         {
-            UpdateGlViewport(static_cast<FSize2>(gameViewport.getRenderSize()),
-                             Config::windowAspectRatio, ViewportMode::Default);
+            UpdateGlViewport(static_cast<FSize2>(gameViewport.getRenderSize()));
         }
     }
 
