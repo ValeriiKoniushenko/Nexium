@@ -39,7 +39,7 @@ namespace
     };
 
     // clang-format off
-    constexpr std::array<TagInfo, 6> kTagTable =
+    constexpr std::array<TagInfo, 7> kTagTable =
     {{
         { .tag = Core::Tag_None,             .name = "None" },
         { .tag = Core::Tag_WorldObject,      .name = "WorldObject" },
@@ -47,6 +47,7 @@ namespace
         { .tag = Core::Tag_EditorInternal,   .name = "EditorInternal" },
         { .tag = Core::Tag_AnimationController, .name = "AnimationController" },
         { .tag = Core::Tag_InputController, .name = "InputController" },
+        { .tag = Core::Tag_AudioSource,      .name = "AudioSource" },
     }};
     // clang-format on
 
