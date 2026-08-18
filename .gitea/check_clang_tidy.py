@@ -195,7 +195,10 @@ def main():
             fp_src = f"{f.path}:{line_no}:{m.group('col')}:{check}"
             fp = hashlib.md5(fp_src.encode()).hexdigest()
 
-            is_error = "❗️**ERROR:**" if "-warnings-as-errors" in check else ""
+            is_error = ""
+            if level_rank[m.group("level")] >= fail_threshold and check != "clang-diagnostic-error":
+                is_error = "❗️**ERROR:**"
+                should_fail = True
 
             issues.append({
                 "description": f"{is_error} {m.group('message')}",
@@ -207,10 +210,6 @@ def main():
                     "lines": {"begin": line_no}
                 }
             })
-
-            if level_rank[m.group("level")] >= fail_threshold:
-                print(f"[info] Should fail due to: {check} - {m.group('message')} ({m.group('level')})")
-                should_fail = True
 
     if not args.dry_run and args.report_path:
         with open(args.report_path, "w") as out:
