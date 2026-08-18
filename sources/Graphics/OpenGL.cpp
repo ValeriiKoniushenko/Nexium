@@ -59,8 +59,10 @@ namespace Core
             pos.y = 0;
         }
 
-        glViewport(static_cast<GLint>(pos.x), static_cast<GLint>(pos.y),
-                   static_cast<GLsizei>(view.width), static_cast<GLsizei>(view.height));
+        // glViewport(static_cast<GLint>(pos.x), static_cast<GLint>(pos.y),
+        //            static_cast<GLsizei>(view.width), static_cast<GLsizei>(view.height));
+
+        glViewport(0, 0, 800, 600);
     }
 
     const char* glTypeToString(GLenum value)

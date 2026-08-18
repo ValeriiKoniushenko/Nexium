@@ -779,7 +779,7 @@ namespace Core
                 {
                     if (auto* camera = _target->tryCastTo<OrthographicCamera>())
                     {
-                        camera->setBottomRight(newValue);
+                        // camera->setBottomRight(newValue);
                     }
                 });
         }
@@ -790,7 +790,7 @@ namespace Core
                 {
                     if (auto* camera = _target->tryCastTo<OrthographicCamera>())
                     {
-                        camera->setTopLeft(newValue);
+                        // camera->setTopLeft(newValue);
                     }
                 });
         }
@@ -1011,16 +1011,6 @@ namespace Core
 
             if (auto* camera = dynamic_cast<OrthographicCamera*>(comp))
             {
-                if (_orthoCameraLeftTop)
-                {
-                    _orthoCameraLeftTop->setInputtedData(camera->getTopLeft());
-                }
-                if (_orthoCameraRightBottom)
-                {
-                    _orthoCameraRightBottom->setInputtedData(camera->getBottomRight());
-                }
-
-                _orthoCameraLayout.tick(dt);
             }
         }
     }

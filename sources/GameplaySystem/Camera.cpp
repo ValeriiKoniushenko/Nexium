@@ -115,8 +115,9 @@ namespace Core
     {
         if (_isDirtyProjMatrix)
         {
-            _cachedProjMatrix
-                = glm::ortho(_topLeft.x, _bottomRight.x, _topLeft.y, _bottomRight.y, _near, _far);
+            auto frame = getOutputFrameSize();
+            // _cachedProjMatrix = glm::ortho(0.f, frame.width, 0.f, frame.height, _near, _far);
+            _cachedProjMatrix = glm::ortho(0.f, 800.f, 0.f, 600.f, _near, _far);
 
             _cachedCalculatedMatrix
                 = _cachedProjMatrix * _cachedModelMatrix; // in such a context Model == View
@@ -155,18 +156,6 @@ namespace Core
             = glm::normalize(glm::vec3(glm::inverse(_cachedModelMatrix) * forwardEye));
 
         return rayOriginWorld + ray_world * length;
-    }
-
-    void OrthographicCamera::setTopLeft(const glm::vec2& topLeft) noexcept
-    {
-        _topLeft = topLeft;
-        _isDirtyProjMatrix = true;
-    }
-
-    void OrthographicCamera::setBottomRight(const glm::vec2& bottomRight) noexcept
-    {
-        _bottomRight = bottomRight;
-        _isDirtyProjMatrix = true;
     }
 
     const glm::mat4& PerspectiveCamera::getMatrix()

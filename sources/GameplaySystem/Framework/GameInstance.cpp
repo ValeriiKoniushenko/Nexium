@@ -236,7 +236,7 @@ namespace Core
         else
         {
             UpdateGlViewport(static_cast<FSize2>(gameViewport.getRenderSize()),
-                             Config::windowAspectRatio, ViewportMode::ZoomIn);
+                             Config::windowAspectRatio, ViewportMode::Default);
         }
     }
 

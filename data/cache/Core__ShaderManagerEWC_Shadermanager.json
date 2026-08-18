@@ -1,12 +1,12 @@
 {
     "_children": null,
     "_innerPosition": [
-        1119.0,
+        1322.0,
         64.0
     ],
     "_innerSize": {
         "height": 939.0,
-        "width": 785.0
+        "width": 582.0
     },
     "_isEnabled": true,
     "_isFitContent": false,
@@ -18,15 +18,15 @@
     "_noTick": false,
     "_oldSize": {
         "height": 979.0,
-        "width": 801.0
+        "width": 598.0
     },
     "_position": [
-        1111.0,
+        1314.0,
         32.0
     ],
     "_size": {
         "height": 979.0,
-        "width": 801.0
+        "width": 598.0
     },
     "_type": "Core::ShaderManagerEWC"
 }

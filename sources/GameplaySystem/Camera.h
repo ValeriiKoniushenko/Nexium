@@ -105,17 +105,9 @@ namespace Core
             return CameraType::Orthographic;
         }
 
-        void setTopLeft(const glm::vec2& topLeft) noexcept;
-        [[nodiscard]] const glm::vec2& getTopLeft() const noexcept { return _topLeft; }
-
-        void setBottomRight(const glm::vec2& bottomRight) noexcept;
-        [[nodiscard]] const glm::vec2& getBottomRight() const noexcept { return _bottomRight; }
-
     protected:
         FIELD();
-        glm::vec2 _topLeft = glm::vec2(0.f, 0.f);
-        FIELD();
-        glm::vec2 _bottomRight = glm::vec2(800.f, 600.f);
+        float _zoom = 1.f;
     };
 
     CLASS();
