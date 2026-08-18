@@ -39,6 +39,95 @@ namespace Core::Audio
         setNoTick(true);
     }
 
+    AudioSource::AudioSource(const AudioSource& other)
+        : BaseComponent(other),
+          _clipPath(other._clipPath),
+          _volume(other._volume),
+          _loop(other._loop),
+          _maxPolyphony(other._maxPolyphony)
+    {
+        setNoTick(true);
+    }
+
+    AudioSource::AudioSource(AudioSource&& other) noexcept
+        : BaseComponent(std::move(other)),
+          _clipPath(std::move(other._clipPath)),
+          _volume(other._volume),
+          _loop(other._loop),
+          _maxPolyphony(other._maxPolyphony),
+          _clip(std::move(other._clip)),
+          _voices(std::move(other._voices))
+    {
+        setNoTick(true);
+        other._clip = {};
+        other._voices.clear();
+        other.setNoTick(true);
+    }
+
+    AudioSource& AudioSource::operator=(const AudioSource& other)
+    {
+        if (this == &other)
+            return *this;
+
+        const bool refreshRuntimeState = isInitialized();
+        stop();
+        _clip = {};
+
+        BaseComponent::operator=(other);
+        _clipPath = other._clipPath;
+        _volume = other._volume;
+        _loop = other._loop;
+        _maxPolyphony = other._maxPolyphony;
+        normalizeConfiguration();
+
+        if (refreshRuntimeState)
+        {
+            if (isInitialized())
+            {
+                _voices.reserve(_maxPolyphony);
+                resolveConfiguredClip();
+            }
+            else
+            {
+                initialize();
+            }
+        }
+        else
+            invalidate();
+
+        return *this;
+    }
+
+    AudioSource& AudioSource::operator=(AudioSource&& other) noexcept
+    {
+        if (this == &other)
+            return *this;
+
+        const bool sourceWasInitialized = other.isInitialized();
+        stop();
+        _clip = {};
+
+        BaseComponent::operator=(std::move(other));
+        _clipPath = std::move(other._clipPath);
+        _volume = other._volume;
+        _loop = other._loop;
+        _maxPolyphony = other._maxPolyphony;
+        _clip = std::move(other._clip);
+        _voices = std::move(other._voices);
+
+        setNoTick(true);
+        other._clip = {};
+        other._voices.clear();
+        other.setNoTick(true);
+
+        if (sourceWasInitialized && !isInitialized())
+            initialize();
+        else if (!sourceWasInitialized)
+            invalidate();
+
+        return *this;
+    }
+
     AudioSource::~AudioSource()
     {
         if (!_voices.empty())
@@ -51,7 +140,8 @@ namespace Core::Audio
         if (!_clip || !_clip->isReady())
             return {};
 
-        stop();
+        while (_voices.size() >= _maxPolyphony)
+            stopOldestVoice();
 
         const auto voice = GetAudioSystem().play(
             _clip, PlayParams{ .volume = _volume, .loop = _loop });
@@ -91,6 +181,7 @@ namespace Core::Audio
 
     bool AudioSource::stop()
     {
+        pruneInvalidVoices();
         if (_voices.empty())
             return false;
 
@@ -145,10 +236,10 @@ namespace Core::Audio
     {
         _volume = std::isnan(volume) ? maxVolume : std::clamp(volume, minVolume, maxVolume);
 
+        pruneInvalidVoices();
         if (_voices.empty())
             return;
 
-        pruneInvalidVoices();
         auto& audioSystem = GetAudioSystem();
         for (const auto voice : _voices)
             audioSystem.setVolume(voice, _volume);
@@ -156,14 +247,15 @@ namespace Core::Audio
 
     void AudioSource::setLooping(const bool loop)
     {
-        _loop = loop;
-        if (_loop)
-            _maxPolyphony = minPolyphony;
+        if (loop)
+            setMaxPolyphony(minPolyphony);
 
+        _loop = loop;
+
+        pruneInvalidVoices();
         if (_voices.empty())
             return;
 
-        pruneInvalidVoices();
         auto& audioSystem = GetAudioSystem();
         for (const auto voice : _voices)
             audioSystem.setLooping(voice, _loop);
@@ -171,12 +263,24 @@ namespace Core::Audio
 
     void AudioSource::setMaxPolyphony(const std::uint32_t maxPolyphony)
     {
-        _maxPolyphony = _loop ? minPolyphony
-                              : std::clamp(maxPolyphony, minPolyphony, AudioSource::maxPolyphony);
+        const auto normalized = _loop
+                                    ? minPolyphony
+                                    : std::clamp(maxPolyphony, minPolyphony,
+                                                 AudioSource::maxPolyphony);
+
+        if (isInitialized() && normalized > _voices.capacity())
+            _voices.reserve(normalized);
+
+        _maxPolyphony = normalized;
+
+        pruneInvalidVoices();
+        while (_voices.size() > _maxPolyphony)
+            stopOldestVoice();
     }
 
     PlaybackState AudioSource::getPlaybackState() const
     {
+        pruneInvalidVoices();
         if (_voices.empty())
             return PlaybackState::Stopped;
 
@@ -218,18 +322,10 @@ namespace Core::Audio
     {
         BaseComponent::onPostDeserialize(obj, logs);
 
-        const bool refreshRuntimeState = isInitialized();
-        if (refreshRuntimeState)
-            stop();
-
+        stop();
         _clip = {};
+        invalidate();
         normalizeConfiguration();
-
-        if (refreshRuntimeState)
-        {
-            _voices.reserve(_maxPolyphony);
-            resolveConfiguredClip();
-        }
     }
 
     void AudioSource::onInitialize()
@@ -252,7 +348,7 @@ namespace Core::Audio
         _clip = _clipPath.isEmpty() ? NXAudioClip{} : GetAssetsManager().getAudioClip(_clipPath);
     }
 
-    void AudioSource::pruneInvalidVoices()
+    void AudioSource::pruneInvalidVoices() const
     {
         if (_voices.empty())
             return;
@@ -261,5 +357,14 @@ namespace Core::Audio
         std::erase_if(_voices,
                       [&audioSystem](const VoiceHandle voice)
                       { return !audioSystem.isValid(voice); });
+    }
+
+    void AudioSource::stopOldestVoice()
+    {
+        if (_voices.empty())
+            return;
+
+        GetAudioSystem().stop(_voices.front());
+        _voices.erase(_voices.begin());
     }
 } // namespace Core::Audio

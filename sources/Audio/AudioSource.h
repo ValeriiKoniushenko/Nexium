@@ -44,6 +44,10 @@ namespace Core::Audio
         inline static constexpr std::uint32_t maxPolyphony = 32;
 
         explicit AudioSource(const StringAtom& name = ""_atom);
+        AudioSource(const AudioSource& other);
+        AudioSource(AudioSource&& other) noexcept;
+        AudioSource& operator=(const AudioSource& other);
+        AudioSource& operator=(AudioSource&& other) noexcept;
         ~AudioSource() override;
 
         VoiceHandle play();
@@ -76,7 +80,8 @@ namespace Core::Audio
     private:
         void normalizeConfiguration();
         void resolveConfiguredClip();
-        void pruneInvalidVoices();
+        void pruneInvalidVoices() const;
+        void stopOldestVoice();
 
         FIELD();
         StringAtom _clipPath;
@@ -91,7 +96,7 @@ namespace Core::Audio
         std::uint32_t _maxPolyphony = 1;
 
         NXAudioClip _clip;
-        std::vector<VoiceHandle> _voices;
+        mutable std::vector<VoiceHandle> _voices;
     };
 } // namespace Core::Audio
 

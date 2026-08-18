@@ -27,6 +27,7 @@
 #include "gtest/gtest.h"
 
 #include <limits>
+#include <type_traits>
 
 namespace Core::Audio
 {
@@ -152,5 +153,52 @@ namespace Core::Audio
         EXPECT_EQ(cloned->isLooping(), source.isLooping());
         EXPECT_EQ(cloned->getMaxPolyphony(), source.getMaxPolyphony());
         EXPECT_TRUE(cloned->getNoTick());
+        EXPECT_FALSE(cloned->isInitialized());
+        EXPECT_TRUE(cloned->isStopped());
+    }
+
+    TEST(AudioSourceTests, CopyAndMoveOperationsHaveExplicitRuntimeSemantics)
+    {
+        static_assert(std::is_nothrow_move_constructible_v<AudioSource>);
+        static_assert(std::is_nothrow_move_assignable_v<AudioSource>);
+
+        AudioSource source("Footsteps"_atom);
+        source.setClip("audio/sfx/footsteps.nxaudio"_atom);
+        source.setVolume(0.35f);
+        source.setMaxPolyphony(4);
+
+        AudioSource copied(source);
+        EXPECT_EQ(copied.getComponentName(), source.getComponentName());
+        EXPECT_EQ(copied.getClipPath(), source.getClipPath());
+        EXPECT_FLOAT_EQ(copied.getVolume(), source.getVolume());
+        EXPECT_EQ(copied.getMaxPolyphony(), source.getMaxPolyphony());
+        EXPECT_FALSE(copied.isInitialized());
+        EXPECT_TRUE(copied.isStopped());
+
+        AudioSource copyAssigned("CopyDestination"_atom);
+        copyAssigned = source;
+        EXPECT_EQ(copyAssigned.getComponentName(), source.getComponentName());
+        EXPECT_EQ(copyAssigned.getClipPath(), source.getClipPath());
+        EXPECT_FLOAT_EQ(copyAssigned.getVolume(), source.getVolume());
+        EXPECT_EQ(copyAssigned.getMaxPolyphony(), source.getMaxPolyphony());
+        EXPECT_FALSE(copyAssigned.isInitialized());
+        EXPECT_TRUE(copyAssigned.isStopped());
+
+        AudioSource moved(std::move(copied));
+        EXPECT_EQ(moved.getClipPath(), source.getClipPath());
+        EXPECT_FLOAT_EQ(moved.getVolume(), source.getVolume());
+        EXPECT_EQ(moved.getMaxPolyphony(), source.getMaxPolyphony());
+        EXPECT_FALSE(moved.isInitialized());
+        EXPECT_TRUE(moved.isStopped());
+        EXPECT_TRUE(copied.isStopped());
+
+        AudioSource moveAssigned("MoveDestination"_atom);
+        moveAssigned = std::move(copyAssigned);
+        EXPECT_EQ(moveAssigned.getClipPath(), source.getClipPath());
+        EXPECT_FLOAT_EQ(moveAssigned.getVolume(), source.getVolume());
+        EXPECT_EQ(moveAssigned.getMaxPolyphony(), source.getMaxPolyphony());
+        EXPECT_FALSE(moveAssigned.isInitialized());
+        EXPECT_TRUE(moveAssigned.isStopped());
+        EXPECT_TRUE(copyAssigned.isStopped());
     }
 } // namespace Core::Audio
