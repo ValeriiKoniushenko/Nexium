@@ -102,13 +102,13 @@
                 "_atlasName": "santa_walk",
                 "_blendingEnabled": true,
                 "_smoothingEnabled": false,
-                "_textureName": "Walk_12.png"
+                "_textureName": "Walk_5.png"
             }
         },
         {
             "assetType": "Core::Spectator",
-            "name": "Core::Spectator",
-            "referenceAsset": "data/assets/BaseSpectator.nx",
+            "name": "2D_Spectator",
+            "referenceAsset": "data/assets/2D_Spectator.nx",
             "trans": {
                 "_origin": [
                     0.0,
@@ -116,9 +116,9 @@
                     0.0
                 ],
                 "_position": [
-                    -380.6165466308594,
-                    -230.05880737304688,
-                    332.7935791015625
+                    -434.00164794921875,
+                    -279.6320495605469,
+                    113.58071899414063
                 ],
                 "_rotation": [
                     0.0,

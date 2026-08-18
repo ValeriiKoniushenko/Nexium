@@ -2,10 +2,6 @@
     "data": {
         "_children": [
             {
-                "_bottomRight": [
-                    600.0,
-                    600.0
-                ],
                 "_children": null,
                 "_far": 10000.0,
                 "_isDrawOutline": false,
@@ -34,17 +30,14 @@
                     1.0,
                     1.0
                 ],
-                "_topLeft": [
-                    0.0,
-                    0.0
-                ],
-                "_type": "Core::OrthographicCamera"
+                "_type": "Core::OrthographicCamera",
+                "_zoom": 1.0
             }
         ],
         "_isDrawOutline": false,
         "_isEnabled": true,
         "_isPostDraw": false,
-        "_name": "Core::Spectator",
+        "_name": "2D_Spectator",
         "_noTick": false,
         "_origin": [
             0.0,
