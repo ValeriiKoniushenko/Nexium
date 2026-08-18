@@ -153,7 +153,7 @@ namespace Core
     {
         // The image with all objects are generated above.
         // Now, let's calculate the logic.
-        StaticMesh* found = nullptr;
+        const StaticMesh* found = nullptr;
         for (auto&& object : scene.getObjects())
         {
             if (!object->isEnabled())
@@ -202,9 +202,7 @@ namespace Core
     {
         return; // Not impl
 
-        // std::cout << pickPos.x << "  " << pickPos.y << std::endl;
-
-        SceneObj::Rectangle* pickedRect = nullptr;
+        const SceneObj::Rectangle* pickedRect = nullptr;
 
         for (auto& object : scene.getObjects())
         {
@@ -228,6 +226,7 @@ namespace Core
             _callback(pickedRect);
         }
     }
+
     ObjectPickerAggregator::ObjectPickerAggregator()
     {
         _pickers.emplace_back(std::make_unique<SlowObjectPicker>());
