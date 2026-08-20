@@ -36,12 +36,12 @@ namespace Core::SceneObj
 
     FSize2 Rectangle::getDrawRectSize() const noexcept
     {
-        return FSize2(getDefaultDrawRectSize() * glm::vec2(_scale));
+        return FSize2(GetDefaultDrawRectSize() * glm::vec2(_scale));
     }
 
     void Rectangle::onDraw(BaseCamera& camera)
     {
-        static BaseGraphicsData gcd = [defSize = Rectangle::getDefaultDrawRectSize()]()
+        static BaseGraphicsData gcd = [defSize = Rectangle::GetDefaultDrawRectSize()]()
         {
             std::vector<BaseGraphicsData::ModifierParam> modifiers
                 = { { .value = BaseGraphicsData::ModifiedValue::CullFace,
@@ -99,9 +99,12 @@ namespace Core::SceneObj
             textureSize = rect.getRightBottom() - textureOffset;
         }
 
+        auto modelMatrix = getModelMatrix();
+        modelMatrix[3][1] -= Rectangle::GetDefaultDrawRectSize();
+
         shader->setUniform("uUVOffset"_atom, textureOffset + textureSize * _textureUVOffset);
         shader->setUniform("uUVSize"_atom, textureSize * _textureUVSize);
-        shader->setUniform("uModel"_atom, getModelMatrix());
+        shader->setUniform("uModel"_atom, modelMatrix);
         shader->setUniform("uAlphaBlendingEnabled"_atom, static_cast<GLint>(_blendingEnabled));
 
         glBlendFunc(_blendingEnabled ? GL_SRC_ALPHA : GL_ONE,
