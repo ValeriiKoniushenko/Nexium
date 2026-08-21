@@ -102,6 +102,28 @@ namespace Core::Animation
 
     ECS_IMPL(FrameByFrameAnimator);
 
+    FrameByFrameAnimator::FrameByFrameAnimator(const FrameByFrameAnimator& other)
+        : BaseComponent(other),
+          onEvent(Delegate<void(const AnimationEvent&)>::Create()),
+          _animations(other._animations),
+          _currentAnimationName(other._currentAnimationName)
+    {
+    }
+
+    FrameByFrameAnimator& FrameByFrameAnimator::operator=(const FrameByFrameAnimator& other)
+    {
+        if (this == &other)
+            return *this;
+
+        auto eventDelegate = Delegate<void(const AnimationEvent&)>::Create();
+
+        BaseComponent::operator=(other);
+        onEvent = std::move(eventDelegate);
+        _animations = other._animations;
+        _currentAnimationName = other._currentAnimationName;
+        return *this;
+    }
+
     bool FrameByFrameAnimator::startAnimation(const StringAtom& name)
     {
         auto* animation = getAnimation(name);
@@ -113,6 +135,7 @@ namespace Core::Animation
         _currentAnimationName = name;
         animation->restart();
         applyCurrentFrameToRectangle();
+        emitFrameEvents(*animation, _currentAnimationName, 0);
         return true;
     }
 
@@ -218,9 +241,31 @@ namespace Core::Animation
 
     void FrameByFrameAnimator::updateCurrentAnimation(float delta)
     {
-        if (auto* animation = getActiveAnimation())
+        FrameByFrameAnimation::Ptr animation = getActiveAnimation();
+        if (!animation || !animation->isEnabled() || animation->getNoTick())
+            return;
+
+        const auto animationName = _currentAnimationName;
+        animation->advance(
+            delta,
+            [this, animation, animationName](const std::size_t frameIndex)
+            { emitFrameEvents(*animation, animationName, frameIndex); });
+    }
+
+    void FrameByFrameAnimator::emitFrameEvents(const FrameByFrameAnimation& animation,
+                                               const StringAtom& animationName,
+                                               const std::size_t frameIndex)
+    {
+        if (!onEvent || frameIndex >= animation.getFramesCount())
+            return;
+
+        const auto events = animation.getFrames()[frameIndex].events;
+        for (const auto& eventName : events)
         {
-            animation->tick(delta);
+            onEvent->trigger(AnimationEvent{ .animationName = animationName,
+                                             .frameIndex = frameIndex,
+                                             .eventName = eventName });
         }
     }
+
 } // namespace Core::Animation

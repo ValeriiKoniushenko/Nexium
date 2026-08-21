@@ -35,6 +35,7 @@ namespace Core::Animation
 
     void from_json(const nlohmann::json& j, Frame& v)
     {
+        v.events.clear();
         const RResourceStream<RJsonResourceStream> data(j);
         R<Frame>::Deserialize(data, v);
     }
@@ -42,6 +43,12 @@ namespace Core::Animation
     ECS_IMPL(Core::Animation::FrameByFrameAnimation);
 
     void FrameByFrameAnimation::onTick(float delta)
+    {
+        advance(delta, {});
+    }
+
+    void FrameByFrameAnimation::advance(float delta,
+                                        const FrameEnteredCallback& onFrameEntered)
     {
         BaseAnimation::onTick(delta);
 
@@ -71,6 +78,9 @@ namespace Core::Animation
                     break;
                 }
             }
+
+            if (onFrameEntered)
+                onFrameEntered(_currentFrame);
         }
     }
 
@@ -116,7 +126,9 @@ namespace Core::Animation
         textureName.trim();
         textureName.shrinkToFit();
 
-        _frames.emplace_back(Frame{ .name = textureName, .textureName = std::move(textureName) });
+        _frames.emplace_back(Frame{ .name = textureName,
+                                    .textureName = std::move(textureName),
+                                    .events = {} });
         return true;
     }
 
@@ -132,7 +144,8 @@ namespace Core::Animation
             Frame{ .name = "Frame "_atom + StringAtom::MakeFrom(_frames.size() + 1),
                    .textureName = std::nullopt,
                    .uvOffset = std::move(uvOffset),
-                   .uvSize = std::move(uvSize) });
+                   .uvSize = std::move(uvSize),
+                   .events = {} });
         return true;
     }
 
@@ -173,7 +186,8 @@ namespace Core::Animation
                        .textureName = std::nullopt,
                        .uvOffset = GlobalPosition2F{ static_cast<float>(column) * frameSize.x,
                                                      static_cast<float>(row) * frameSize.y },
-                       .uvSize = frameSize });
+                       .uvSize = frameSize,
+                       .events = {} });
         }
 
         return true;

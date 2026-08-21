@@ -25,9 +25,11 @@
 #pragma once
 
 #include "Animations/FrameByFrame/FrameByFrameAnimation.h"
+#include "Core/Delegate.h"
 #include "Core/String.h"
 #include "ECS/BaseComponent.h"
 #include "JustReflectMe/Adapter.h"
+#include "Animations/AnimationEvent.h"
 
 #include <unordered_map>
 
@@ -39,6 +41,9 @@ namespace Core::Animation
         ECS_DECL(FrameByFrameAnimator, Core::BaseComponent);
 
     public:
+        FrameByFrameAnimator(const FrameByFrameAnimator& other);
+        FrameByFrameAnimator& operator=(const FrameByFrameAnimator& other);
+
         bool startAnimation(const StringAtom& name);
 
         bool addAnimation(const FrameByFrameAnimation& animation);
@@ -60,12 +65,17 @@ namespace Core::Animation
         [[nodiscard]] const auto& getAnimations() const noexcept { return _animations; }
         [[nodiscard]] Tag getTags() const override;
 
+        Delegate<void(const AnimationEvent&)>::Ptr onEvent
+            = Delegate<void(const AnimationEvent&)>::Create();
+
     protected:
         void onTick(float delta) override;
 
     private:
         void applyCurrentFrameToRectangle();
         void updateCurrentAnimation(float delta);
+        void emitFrameEvents(const FrameByFrameAnimation& animation,
+                             const StringAtom& animationName, std::size_t frameIndex);
 
     private:
         FIELD();

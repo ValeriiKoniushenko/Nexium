@@ -28,12 +28,14 @@
 #include "Misc/BaseLog.h"
 
 #include <algorithm>
+#include <functional>
 #include <optional>
 #include <utility>
 #include <vector>
 
 namespace Core::Animation
 {
+    class FrameByFrameAnimator;
 
     CLASS();
     struct Frame
@@ -48,6 +50,8 @@ namespace Core::Animation
         Core::GlobalPosition2F uvOffset = Core::GlobalPosition2F{ 0.f, 0.f };
         FIELD();
         Core::GlobalPosition2F uvSize = Core::GlobalPosition2F{ 1.f, 1.f };
+        FIELD();
+        std::vector<StringAtom> events;
     };
 
     void to_json(nlohmann::json& j, const Frame& v);
@@ -93,6 +97,12 @@ namespace Core::Animation
         void onTick(float delta) override;
 
     private:
+        using FrameEnteredCallback = std::function<void(std::size_t)>;
+
+        void advance(float delta, const FrameEnteredCallback& onFrameEntered);
+
+        friend class FrameByFrameAnimator;
+
         FIELD();
         Core::StringAtom _atlasName;
         FIELD();
