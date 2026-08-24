@@ -309,15 +309,17 @@ namespace Core
             || IsIntrusiveComponent<std::ranges::range_value_t<T>>          //
         );
 
-    //
-    //  _____                             ______               _
-    // /  __ \                            |  ___|             | |
-    // | /  \/  ___   _ __ ___   _ __     | |_     __ _   ___ | |_   ___   _ __  _   _
-    // | |     / _ \ | '_ ` _ \ | '_ \    |  _|   / _` | / __|| __| / _ \ | '__|| | | |
-    // | \__/\| (_) || | | | | || |_) | _ | |    | (_| || (__ | |_ | (_) || |   | |_| |
-    //  \____/ \___/ |_| |_| |_|| .__/ (_)\_|     \__,_| \___| \__| \___/ |_|    \__, |
-    //                          | |                                               __/ |
-    //                          |_|                                              |___/
+    /// ╔──────────────────────────────────────────────────────────────────────────────────╗
+    /// │                                                                                  │
+    /// │      ______                              ______           __                     │
+    /// │     / ____/___  ____ ___  ____          / ____/___ ______/ /_____  _______  __   │
+    /// │    / /   / __ \/ __ `__ \/ __ \        / /_  / __ `/ ___/ __/ __ \/ ___/ / / /   │
+    /// │   / /___/ /_/ / / / / / / /_/ /       / __/ / /_/ / /__/ /_/ /_/ / /  / /_/ /    │
+    /// │   \____/\____/_/ /_/ /_/ .___(_)     /_/    \__,_/\___/\__/\____/_/   \__, /     │
+    /// │                       /_/                                            /____/      │
+    /// │                                                                                  │
+    /// ╚──────────────────────────────────────────────────────────────────────────────────╝
+    ;
     /// Global factory for creating and registering components by type.
     /// Manages mapping between component type names and factory functions.
     /// Provides logging and debug tracking of component types in DEBUG mode.
@@ -369,13 +371,17 @@ namespace Core
         return GlobalComponentFactory::Instance();
     }
 
-    //
-    //     ___   _           _                       _     _____
-    //    / _ \ | |         | |                     | |   /  __ \
-    //   / /_\ \| |__   ___ | |_  _ __   __ _   ___ | |_  | /  \/
-    //   |  _  || '_ \ / __|| __|| '__| / _` | / __|| __| | |
-    //   | | | || |_) |\__ \| |_ | |   | (_| || (__ | |_  | \__/\ _
-    //   \_| |_/|_.__/ |___/ \__||_|    \__,_| \___| \__|  \____/(_)
+    /// ╔──────────────────────────────────────────────────────────────────────────────────╗
+    /// │                                                                                  │
+    /// │       ___    __         __                  __     ______                        │
+    /// │      /   |  / /_  _____/ /__________ ______/ /_   / ____/___  ____ ___  ____     │
+    /// │     / /| | / __ \/ ___/ __/ ___/ __ `/ ___/ __/  / /   / __ \/ __ `__ \/ __ \    │
+    /// │    / ___ |/ /_/ (__  ) /_/ /  / /_/ / /__/ /_   / /___/ /_/ / / / / / / /_/ /    │
+    /// │   /_/  |_/_.___/____/\__/_/   \__,_/\___/\__/   \____/\____/_/ /_/ /_/ .___(_)   │
+    /// │                                                                     /_/          │
+    /// │                                                                                  │
+    /// ╚──────────────────────────────────────────────────────────────────────────────────╝
+    ;
     /// Abstract base class for all components.
     /// Provides lifecycle hooks, ticking mechanism, and JSON/XML/etc serialization.
     CLASS();
@@ -485,13 +491,17 @@ namespace Core
         bool _noTick = false;
     };
 
-    //
-    //   ______                    _____
-    //   | ___ \                  /  __ \
-    //   | |_/ /  __ _  ___   ___ | /  \/
-    //   | ___ \ / _` |/ __| / _ \| |
-    //   | |_/ /| (_| |\__ \|  __/| \__/\ _
-    //   \____/  \__,_||___/ \___| \____/(_)
+    /// ╔──────────────────────────────────────────────────────────────────────────────────────────╗
+    /// │                                                                                          │
+    /// │       ____                      ______                                             __    │
+    /// │      / __ )____ _________      / ____/___  ____ ___  ____  ____  ____  ___  ____  / /_   │
+    /// │     / __  / __ `/ ___/ _ \    / /   / __ \/ __ `__ \/ __ \/ __ \/ __ \/ _ \/ __ \/ __/   │
+    /// │    / /_/ / /_/ (__  )  __/   / /___/ /_/ / / / / / / /_/ / /_/ / / / /  __/ / / / /_     │
+    /// │   /_____/\__,_/____/\___/    \____/\____/_/ /_/ /_/ .___/\____/_/ /_/\___/_/ /_/\__/     │
+    /// │                                                  /_/                                     │
+    /// │                                                                                          │
+    /// ╚──────────────────────────────────────────────────────────────────────────────────────────╝
+    ;
     /// Base class for all your custom components.
     /// To create your own component you should do only several things:
     /// 1. Create your component's class. I.e. MyNewComponent and inherit from BaseComponent
@@ -844,18 +854,6 @@ namespace Core
         /// This method will be called automatically. Don't call it directly.
         virtual void onPreInitialize() {}
 
-    protected:
-        FIELD();
-        std::vector<Core::IntrusivePtr<Core::BaseComponent>> _children;
-
-        FIELD();
-        Core::StringAtom _name;
-
-        FIELD();
-        Core::StringAtom _type;
-
-        BaseComponent* _parent = nullptr;
-
     private:
         [[nodiscard]] BaseComponent* rawAddChildComponent(BaseComponent* newOne);
 
@@ -869,6 +867,18 @@ namespace Core
         template<IsComponent TargetT>
         [[nodiscard]] static const TargetT* Impl_findFirstChildOf(const BaseComponent* me,
                                                                   const StringAtom& name);
+
+    protected:
+        FIELD();
+        std::vector<Core::IntrusivePtr<Core::BaseComponent>> _children;
+
+        FIELD();
+        Core::StringAtom _name;
+
+        FIELD();
+        Core::StringAtom _type;
+
+        BaseComponent* _parent = nullptr;
 
     private:
         bool _isInitialized = false;

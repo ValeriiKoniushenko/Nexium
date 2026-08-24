@@ -36,9 +36,18 @@ namespace Core
             return;
         }
 
+        static const GLuint gridVAO = []()
+        {
+            GLuint vao = 0;
+            glGenVertexArrays(1, &vao);
+            return vao;
+        }();
+
         auto* gridShader = GetShaderManager()->getShaderProgram("grid"_atom);
         if (Verify(gridShader) && GetWorld()->currentCamera)
         {
+            glBindVertexArray(gridVAO);
+
             gridShader->use();
 
             gridShader->setUniform("uProjAndView"_atom, GetWorld()->currentCamera->getMatrix());

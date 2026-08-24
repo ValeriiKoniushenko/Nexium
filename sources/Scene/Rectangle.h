@@ -28,6 +28,10 @@
 
 #include <utility>
 
+namespace Core
+{
+    class BaseGraphicsData;
+}
 namespace Core::SceneObj
 {
 
@@ -58,6 +62,7 @@ namespace Core::SceneObj
         [[nodiscard]] FSize2 getDrawRectSize() const noexcept;
 
     protected:
+        void tryDrawOutline(BaseCamera& camera);
         void onDraw(BaseCamera& camera) override;
 
     protected:

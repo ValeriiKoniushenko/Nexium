@@ -166,7 +166,7 @@ namespace Core
         shader->setUniform(ShaderReflector_default::uProjAndView, camera.getMatrix());
         shader->setUniform(ShaderReflector_default::uModel, _cachedModelMatrix);
 
-        if (getIsDrawOutline())
+        if (shouldDrawOutline())
         {
             glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
             glStencilFunc(GL_ALWAYS, 1, 0xFF);

@@ -338,6 +338,20 @@ namespace Core
                 });
         }
 
+        auto* lineShader = shaderManager.getShaderProgram("line"_atom);
+        if (Verify(lineShader))
+        {
+            lineShader->setSetEventCallback(
+                [](ShaderProgram::Event event)
+                {
+                    if (event == ShaderProgram::Event::OnSetIndexAndVertexBuffer)
+                    {
+                        glEnableVertexAttribArray(0);
+                        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), nullptr);
+                    }
+                });
+        }
+
         onLoadShaders();
     }
 

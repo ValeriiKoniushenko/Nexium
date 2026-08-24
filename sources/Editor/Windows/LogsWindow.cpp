@@ -35,17 +35,6 @@ namespace Core
 {
     ECS_IMPL_NO_SER(LogsWindowEWC);
 
-    //
-    //     _
-    //    | |
-    //    | |     ___   __ _ ___
-    //    | |    / _ \ / _` / __|
-    //    | |___| (_) | (_| \__ \
-    //    \_____/\___/ \__, |___/
-    //                  __/ |
-    //                 |___/
-    // ========================================================================
-
     const std::unordered_map<spdlog::level::level_enum, Color4> LogsWindowEWC::_levelColor
         = { { spdlog::level::level_enum::critical, Config::ColorRed },
             { spdlog::level::level_enum::err, Config::ColorYellow },

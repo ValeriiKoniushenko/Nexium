@@ -49,7 +49,7 @@ namespace Core
         }
 
         void toggleIsDrawOutline() noexcept { setIsDrawOutline(!_isDrawOutline); }
-        [[nodiscard]] bool getIsDrawOutline() const noexcept { return _isDrawOutline; }
+        [[nodiscard]] bool shouldDrawOutline() const noexcept { return _isDrawOutline; }
 
         friend void swap(IOutliner& a, IOutliner& b) noexcept
         {
