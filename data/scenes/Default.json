@@ -100,7 +100,7 @@
                 "_atlasName": "santa_walk",
                 "_blendingEnabled": true,
                 "_isEnabled": true,
-                "_textureName": "Walk_2.png"
+                "_textureName": "Walk_8.png"
             }
         },
         {
@@ -114,9 +114,9 @@
                     0.0
                 ],
                 "_position": [
-                    -323.1040954589844,
-                    -260.53131103515625,
-                    217.832275390625
+                    -253.5575408935547,
+                    -200.4466094970703,
+                    307.6241149902344
                 ],
                 "_rotation": [
                     0.0,

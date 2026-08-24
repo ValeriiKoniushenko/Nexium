@@ -218,14 +218,9 @@ namespace Core
                 continue;
             }
 
-            std::cout << "Pick pos: " << glm::to_string(pickPos) << std::endl;
-            std::cout << "Camera pos: " << glm::to_string(camera->getGlobalPosition()) << std::endl;
-
             auto rectPos = rectangle->getPosition();
             auto rectSize = rectangle->getDrawRectSize();
-
-            std::cout << "Rect pos: " << glm::to_string(glm::vec3(rectPos)) << std::endl;
-            std::cout << std::endl;
+            rectPos -= camera->getGlobalPosition();
 
             if (rectPos.x <= pickPos.x && pickPos.x <= rectPos.x + rectSize.width
                 && rectPos.y <= pickPos.y && pickPos.y <= rectPos.y + rectSize.height)

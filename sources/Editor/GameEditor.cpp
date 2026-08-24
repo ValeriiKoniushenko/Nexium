@@ -429,7 +429,7 @@ namespace Core
         }
         else if (auto* comp = dynamic_cast<BaseComponent*>(object))
         {
-            gGameInstance->objectSelectorManager.toggleObject(comp);
+            gGameInstance->objectSelectorManager.selectSingleObject(comp);
         }
     }
 
