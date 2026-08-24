@@ -44,6 +44,9 @@ namespace Core::Debug
         static void Draw(const ShaderProgram* shader, const glm::mat4& projViewMatric,
                          const glm::vec3& start, const glm::vec3& end,
                          const NormColor4& color = Color4_Yellow);
+
+        static void Draw(const ShaderProgram* shader, const glm::mat4& projViewMatric,
+                         glm::vec2 start, glm::vec2 end, const NormColor4& color = Color4_Yellow);
     };
 
 } // namespace Core::Debug

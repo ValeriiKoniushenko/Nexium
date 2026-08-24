@@ -91,17 +91,16 @@ namespace Core::SceneObj
 
     void Rectangle::tryDrawOutline(BaseCamera& camera)
     {
-        // if (!shouldDrawOutline())
-        // {
-        //     return;
-        // }
+        if (!shouldDrawOutline())
+        {
+            return;
+        }
 
         const auto* shader = GetShaderManager()->getShaderProgram("line"_atom);
 
         if (!shader) [[unlikely]]
         {
-            LOG_CRITICAL_ONCE("Can't get shader program 'line'.");
-            AssertOnce(false);
+            LOG_ASSERT_CRITICAL_ONCE("Can't get shader program 'line'.");
             return;
         }
 

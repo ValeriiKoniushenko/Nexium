@@ -83,4 +83,10 @@ namespace Core::Debug
         glDrawArrays(GL_LINES, 0, 2);
     }
 
+    void Line::Draw(const ShaderProgram* shader, const glm::mat4& projViewMatric, glm::vec2 start,
+                    glm::vec2 end, const NormColor4& color)
+    {
+        Draw(shader, projViewMatric, glm::vec3(start, 0.f), glm::vec3(end, 0.f), color);
+    }
+
 } // namespace Core::Debug
