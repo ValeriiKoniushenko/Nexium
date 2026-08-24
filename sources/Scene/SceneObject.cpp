@@ -121,11 +121,19 @@ namespace Core
 
     nlohmann::json SceneObject::getTypeSpecificSceneDataAsJson() const
     {
-        return {};
+        nlohmann::json out;
+
+        out["_isEnabled"] = _isEnabled;
+
+        return out;
     }
 
     void SceneObject::applyTypeSpecificSceneData(const nlohmann::json& data)
     {
+        if (data.contains("_isEnabled"))
+        {
+            _isEnabled = data.value("_isEnabled", true);
+        }
     }
 
     void SceneObject::draw(BaseCamera& camera)

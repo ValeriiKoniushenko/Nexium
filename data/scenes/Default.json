@@ -30,6 +30,7 @@
             "typeSpecificData": {
                 "_atlasName": "player_walk",
                 "_blendingEnabled": true,
+                "_isEnabled": true,
                 "_textureName": "MPlayer_walk.png"
             }
         },
@@ -62,6 +63,7 @@
             "typeSpecificData": {
                 "_atlasName": "santa_walk",
                 "_blendingEnabled": true,
+                "_isEnabled": true,
                 "_textureName": "Walk_11.png"
             }
         },
@@ -97,7 +99,8 @@
                 "_animationName": "New animation",
                 "_atlasName": "santa_walk",
                 "_blendingEnabled": true,
-                "_textureName": "Walk_11.png"
+                "_isEnabled": true,
+                "_textureName": "Walk_2.png"
             }
         },
         {
@@ -113,7 +116,7 @@
                 "_position": [
                     -323.1040954589844,
                     -260.53131103515625,
-                    100.52210998535156
+                    217.832275390625
                 ],
                 "_rotation": [
                     0.0,
@@ -126,7 +129,9 @@
                     1.0
                 ]
             },
-            "typeSpecificData": null
+            "typeSpecificData": {
+                "_isEnabled": true
+            }
         }
     ]
 }
