@@ -58,7 +58,6 @@ namespace Core
             gridShader->setUniform("uPlaneOrigin"_atom, _origin);
             gridShader->setUniform("uPlaneRight"_atom, _right);
             gridShader->setUniform("uPlaneUp"_atom, _up);
-            // gridShader->setUniform("uPlaneNormal"_atom, _normal);
 
             glDisable(GL_CULL_FACE);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

@@ -380,6 +380,7 @@ namespace Core
     void Scene::initialize()
     {
         skybox = GetAssetsManager()->getSkybox("data/assets/baked/skybox/default.nxsky"_atom);
+        grid.setPlane(glm::vec3(0.0f, 0.0f, -1.f), glm::vec3(0.0f, 0.0f, 1.0f));
     }
 
     void Scene::tick(float timeDelta)

@@ -70,6 +70,9 @@ namespace Core
         void tryToRecalculateCameraMatrices();
         void invalidateCameraMatrices();
 
+        [[nodiscard]] nlohmann::json getTypeSpecificSceneDataAsJson() const override;
+        void applyTypeSpecificSceneData(const nlohmann::json& data) override;
+
     protected:
         void recalculateCameraMatrices();
 
@@ -105,6 +108,9 @@ namespace Core
         {
             return CameraType::Orthographic;
         }
+
+        [[nodiscard]] nlohmann::json getTypeSpecificSceneDataAsJson() const override;
+        void applyTypeSpecificSceneData(const nlohmann::json& data) override;
 
     protected:
         FIELD();
@@ -144,7 +150,6 @@ namespace Core
             return CameraType::Perspective;
         }
 
-    protected:
     protected:
         FIELD();
         Core::FSize2 _aspect = Core::FSize2{ 1.f, 1.f };

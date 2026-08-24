@@ -80,6 +80,27 @@ namespace Core
     {
         _isDirtyProjMatrix = true;
     }
+    nlohmann::json BaseCamera::getTypeSpecificSceneDataAsJson() const
+    {
+        auto out = Actor::getTypeSpecificSceneDataAsJson();
+
+        out["_near"] = _near;
+        out["_far"] = _far;
+        return out;
+    }
+    void BaseCamera::applyTypeSpecificSceneData(const nlohmann::json& data)
+    {
+        Actor::applyTypeSpecificSceneData(data);
+
+        if (data.contains("_near"))
+        {
+            _near = data.value("_near", 0.1f);
+        }
+        if (data.contains("_far"))
+        {
+            _far = data.value("_far", 1000.f);
+        }
+    }
 
     StringAtom BaseCamera::getCacheHash() const
     {
@@ -161,6 +182,25 @@ namespace Core
             = glm::normalize(glm::vec3(glm::inverse(_cachedModelMatrix) * forwardEye));
 
         return rayOriginWorld + ray_world * length;
+    }
+
+    nlohmann::json OrthographicCamera::getTypeSpecificSceneDataAsJson() const
+    {
+        auto out = BaseCamera::getTypeSpecificSceneDataAsJson();
+
+        out["_zoom"] = _zoom;
+
+        return out;
+    }
+
+    void OrthographicCamera::applyTypeSpecificSceneData(const nlohmann::json& data)
+    {
+        BaseCamera::applyTypeSpecificSceneData(data);
+
+        if (data.contains("_zoom"))
+        {
+            _zoom = data.value("_zoom", 1.f);
+        }
     }
 
     const glm::mat4& PerspectiveCamera::getMatrix()
