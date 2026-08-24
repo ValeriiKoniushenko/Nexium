@@ -302,7 +302,7 @@ namespace Core
         auto* asInterleavedGraphicsData = dynamic_cast<InterleavedGraphicsData*>(_target);
         auto* asStaticMesh = dynamic_cast<StaticMesh*>(_target);
         auto* asBaseCamera = dynamic_cast<BaseCamera*>(_target);
-        auto* asRectangleComponent = dynamic_cast<SceneObj::Rectangle*>(_target);
+        auto* asRectangleComponent = dynamic_cast<SceneObj::RectangleAnimated*>(_target);
 
         tryDrawBaseComponent(asBaseComponent);
         tryDrawTransformable(asTransformable, asBaseComponent);
@@ -500,7 +500,8 @@ namespace Core
                     {
                         if (auto obj = t.tryLoad())
                         {
-                            auto* rectangle = dynamic_cast<SceneObj::Rectangle*>(obj->_target);
+                            auto* rectangle
+                                = dynamic_cast<SceneObj::RectangleAnimated*>(obj->_target);
                             if (!rectangle)
                             {
                                 return;
@@ -527,7 +528,7 @@ namespace Core
             _rectComboRect->setDataProvider(
                 [this](std::size_t i, StringAtom& out) -> void*
                 {
-                    const auto* rectangle = dynamic_cast<SceneObj::Rectangle*>(_target);
+                    const auto* rectangle = dynamic_cast<SceneObj::RectangleAnimated*>(_target);
                     if (rectangle)
                     {
                         out = GetAssetsManager()
@@ -540,7 +541,7 @@ namespace Core
             _rectComboRect->setSizeProvider(
                 [this]()
                 {
-                    const auto* rectangle = dynamic_cast<SceneObj::Rectangle*>(_target);
+                    const auto* rectangle = dynamic_cast<SceneObj::RectangleAnimated*>(_target);
                     return rectangle ? GetAssetsManager()
                                            ->getAtlas(rectangle->getAtlasName())
                                            .getRectsCount()
@@ -553,7 +554,8 @@ namespace Core
                     {
                         if (auto obj = t.tryLoad())
                         {
-                            if (auto* rectangle = dynamic_cast<SceneObj::Rectangle*>(obj->_target))
+                            if (auto* rectangle
+                                = dynamic_cast<SceneObj::RectangleAnimated*>(obj->_target))
                             {
                                 rectangle->setTexture(
                                     obj->_rectComboRect->tryGetCurrentDataAsString());
@@ -571,23 +573,10 @@ namespace Core
                 {
                     if (auto obj = t.tryLoad())
                     {
-                        if (auto* rectangle = dynamic_cast<SceneObj::Rectangle*>(obj->_target))
+                        if (auto* rectangle
+                            = dynamic_cast<SceneObj::RectangleAnimated*>(obj->_target))
                         {
                             rectangle->setBlendingEnabled(enabled);
-                        }
-                    }
-                });
-
-            renderingRow->addChildComponent<Label>("Smooth");
-            _textureSmoothing = renderingRow->addChildComponent<CheckBox>();
-            _subscriptionPool << _textureSmoothing->onChange->subscribeAndGetID(
-                [t = WeakPtr(this)](bool enabled)
-                {
-                    if (auto obj = t.tryLoad())
-                    {
-                        if (auto* rectangle = dynamic_cast<SceneObj::Rectangle*>(obj->_target))
-                        {
-                            rectangle->setSmoothingEnabled(enabled);
                         }
                     }
                 });
@@ -599,7 +588,8 @@ namespace Core
                 {
                     if (auto obj = t.tryLoad())
                     {
-                        if (auto* rectangle = dynamic_cast<SceneObj::Rectangle*>(obj->_target))
+                        if (auto* rectangle
+                            = dynamic_cast<SceneObj::RectangleAnimated*>(obj->_target))
                         {
                             rectangle->setAnimationEnabled(enabled);
                         }
@@ -613,7 +603,7 @@ namespace Core
             _rectComboAnimation->setDataProvider(
                 [this](std::size_t i, StringAtom& result) -> const void*
                 {
-                    const auto* rectangle = dynamic_cast<SceneObj::Rectangle*>(_target);
+                    const auto* rectangle = dynamic_cast<SceneObj::RectangleAnimated*>(_target);
                     const auto* animator
                         = rectangle ? rectangle->findFirstChildOf<Animation::FrameByFrameAnimator>()
                                     : nullptr;
@@ -640,7 +630,7 @@ namespace Core
             _rectComboAnimation->setSizeProvider(
                 [this]
                 {
-                    const auto* rectangle = dynamic_cast<SceneObj::Rectangle*>(_target);
+                    const auto* rectangle = dynamic_cast<SceneObj::RectangleAnimated*>(_target);
                     const auto* animator
                         = rectangle ? rectangle->findFirstChildOf<Animation::FrameByFrameAnimator>()
                                     : nullptr;
@@ -651,7 +641,7 @@ namespace Core
                 {
                     if (auto obj = t.tryLoad())
                     {
-                        auto* rectangle = dynamic_cast<SceneObj::Rectangle*>(obj->_target);
+                        auto* rectangle = dynamic_cast<SceneObj::RectangleAnimated*>(obj->_target);
                         auto* animator
                             = rectangle
                                   ? rectangle->findFirstChildOf<Animation::FrameByFrameAnimator>()
@@ -680,7 +670,7 @@ namespace Core
                 {
                     if (auto obj = t.tryLoad())
                     {
-                        auto* rectangle = dynamic_cast<SceneObj::Rectangle*>(obj->_target);
+                        auto* rectangle = dynamic_cast<SceneObj::RectangleAnimated*>(obj->_target);
                         auto* animator
                             = rectangle
                                   ? rectangle->findFirstChildOf<Animation::FrameByFrameAnimator>()
@@ -1069,7 +1059,7 @@ namespace Core
         }
     }
 
-    void ObjectPropertiesWindowEWC::tryDrawRectangleComponent(SceneObj::Rectangle* comp)
+    void ObjectPropertiesWindowEWC::tryDrawRectangleComponent(SceneObj::RectangleAnimated* comp)
     {
         if (comp && Gui::CollapsingHeader("Rectangle", ImGuiTreeNodeFlags_DefaultOpen))
         {
@@ -1100,11 +1090,6 @@ namespace Core
             if (_rectBlending)
             {
                 _rectBlending->setValue(comp->isBlendingEnabled());
-            }
-
-            if (_textureSmoothing)
-            {
-                _textureSmoothing->setValue(comp->isSmoothingEnabled());
             }
 
             auto* animator = comp->findFirstChildOf<Animation::FrameByFrameAnimator>();

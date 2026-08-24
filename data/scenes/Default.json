@@ -28,10 +28,8 @@
                 ]
             },
             "typeSpecificData": {
-                "_animationEnabled": true,
                 "_atlasName": "player_walk",
                 "_blendingEnabled": true,
-                "_smoothingEnabled": true,
                 "_textureName": "MPlayer_walk.png"
             }
         },
@@ -62,15 +60,13 @@
                 ]
             },
             "typeSpecificData": {
-                "_animationEnabled": true,
                 "_atlasName": "santa_walk",
                 "_blendingEnabled": true,
-                "_smoothingEnabled": true,
                 "_textureName": "Walk_11.png"
             }
         },
         {
-            "assetType": "Core::SceneObj::Rectangle",
+            "assetType": "Core::SceneObj::RectangleAnimated",
             "name": "AnimatedPlayersa",
             "referenceAsset": "data/assets/AnimatedPlayer.nx",
             "trans": {
@@ -101,8 +97,7 @@
                 "_animationName": "New animation",
                 "_atlasName": "santa_walk",
                 "_blendingEnabled": true,
-                "_smoothingEnabled": false,
-                "_textureName": "Walk_8.png"
+                "_textureName": "Walk_3.png"
             }
         },
         {
@@ -118,7 +113,7 @@
                 "_position": [
                     -434.00164794921875,
                     -279.6320495605469,
-                    114.09117126464844
+                    106.17281341552734
                 ],
                 "_rotation": [
                     0.0,

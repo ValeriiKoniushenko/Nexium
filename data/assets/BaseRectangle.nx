@@ -1,5 +1,6 @@
 {
     "data": {
+        "_atlasName": "default",
         "_children": null,
         "_isDrawOutline": false,
         "_isEnabled": true,
@@ -26,6 +27,7 @@
             1.0,
             1.0
         ],
+        "_textureName": "red.png",
         "_type": "Core::SceneObj::Rectangle"
     },
     "name": "BaseRectangle",

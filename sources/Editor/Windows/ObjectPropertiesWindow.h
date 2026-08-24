@@ -62,8 +62,8 @@ namespace Core
 
     namespace SceneObj
     {
-        class Rectangle;
-    }
+        class RectangleAnimated;
+    } // namespace SceneObj
 
     class Transformable;
     class StaticMeshBundle;
@@ -126,7 +126,7 @@ namespace Core
 
         void tryDrawBaseCamera(BaseCamera* comp);
 
-        void tryDrawRectangleComponent(SceneObj::Rectangle* comp);
+        void tryDrawRectangleComponent(SceneObj::RectangleAnimated* comp);
 
     private:
         DelegateSubscriberPoolGuard _subscriptionPool;
@@ -201,7 +201,6 @@ namespace Core
         Gui::ComboModelBased* _rectComboRect = nullptr;
         Gui::CheckBox* _rectBlending = nullptr;
         Gui::CheckBox* _activateAnimation = nullptr;
-        Gui::CheckBox* _textureSmoothing = nullptr;
         Gui::HorizontalLayout* _rectAnimationRow = nullptr;
         Gui::ComboModelBased* _rectComboAnimation = nullptr;
         Gui::HorizontalLayout* _rectAnimationFPSRow = nullptr;

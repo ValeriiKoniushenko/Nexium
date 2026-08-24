@@ -29,6 +29,45 @@
 
 #include <queue>
 
+#define LOG_ONCE_P(logProvider, level, ...)                                                        \
+    do                                                                                             \
+    {                                                                                              \
+        static bool _ = true;                                                                      \
+        if (_) [[unlikely]]                                                                        \
+        {                                                                                          \
+            logProvider.pushLog(level, __VA_ARGS__);                                               \
+            _ = false;                                                                             \
+        }                                                                                          \
+    } while (0)
+
+#define LOG_INFO_ONCE_P(logProvider, ...)  LOG_ONCE_P(logProvider, spdlog::level::info, __VA_ARGS__)
+#define LOG_WARN_ONCE_P(logProvider, ...)  LOG_ONCE_P(logProvider, spdlog::level::warn, __VA_ARGS__)
+#define LOG_ERROR_ONCE_P(logProvider, ...) LOG_ONCE_P(logProvider, spdlog::level::err, __VA_ARGS__)
+#define LOG_CRITICAL_ONCE_P(logProvider, ...)                                                      \
+    LOG_ONCE_P(logProvider, spdlog::level::critical, __VA_ARGS__)
+#define LOG_DEBUG_ONCE_P(logProvider, ...)                                                         \
+    LOG_ONCE_P(logProvider, spdlog::level::debug, __VA_ARGS__)
+#define LOG_TRACE_ONCE_P(logProvider, ...)                                                         \
+    LOG_ONCE_P(logProvider, spdlog::level::trace, __VA_ARGS__)
+
+#define LOG_ONCE(level, ...)                                                                       \
+    do                                                                                             \
+    {                                                                                              \
+        static bool _ = true;                                                                      \
+        if (_) [[unlikely]]                                                                        \
+        {                                                                                          \
+            pushLog(level, __VA_ARGS__);                                                           \
+            _ = false;                                                                             \
+        }                                                                                          \
+    } while (0)
+
+#define LOG_INFO_ONCE(...)     LOG_ONCE(spdlog::level::info, __VA_ARGS__)
+#define LOG_WARN_ONCE(...)     LOG_ONCE(spdlog::level::warn, __VA_ARGS__)
+#define LOG_ERROR_ONCE(...)    LOG_ONCE(spdlog::level::err, __VA_ARGS__)
+#define LOG_CRITICAL_ONCE(...) LOG_ONCE(spdlog::level::critical, __VA_ARGS__)
+#define LOG_DEBUG_ONCE(...)    LOG_ONCE(spdlog::level::debug, __VA_ARGS__)
+#define LOG_TRACE_ONCE(...)    LOG_ONCE(spdlog::level::trace, __VA_ARGS__)
+
 namespace spdlog
 {
     class logger;
@@ -131,14 +170,14 @@ namespace Core
             criticalThrowingLog(s.c_str());
         }
 
+        void pushLog(level l, const char* str) const;
+
         [[nodiscard]] virtual const char* getPrefix() const { return nullptr; }
 
         [[nodiscard]] virtual spdlog::logger* getLogger() const = 0;
 
     private:
         [[nodiscard]] StringAtom getCompleteText(const char* str) const;
-
-        void pushLog(level l, const char* str) const;
     };
 
     class GlobalLog : public BaseLog

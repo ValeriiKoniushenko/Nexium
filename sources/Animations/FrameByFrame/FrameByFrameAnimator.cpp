@@ -183,6 +183,11 @@ namespace Core::Animation
         return BaseComponent::getTags() | Tag_AnimationController;
     }
 
+    const char* FrameByFrameAnimator::getPrefix() const
+    {
+        return "FrameByFrameAnimator";
+    }
+
     void FrameByFrameAnimator::onTick(float delta)
     {
         BaseComponent::onTick(delta);
@@ -192,13 +197,14 @@ namespace Core::Animation
 
     void FrameByFrameAnimator::applyCurrentFrameToRectangle()
     {
-        auto* rectangle = getParentAs<SceneObj::Rectangle>();
+        auto* rectangle = getParentAs<SceneObj::RectangleAnimated>();
         const auto* animation = getActiveAnimation();
-        if (!Verify(rectangle, ("Only '{}' type is supported for animations."_f
-                                << R<SceneObj::Rectangle>::FullName())
-                                   .c_str())
-            || !animation)
+        if (!rectangle || !animation)
         {
+            LOG_ERROR_ONCE(("Only '{}' type is supported for animations."_f
+                            << R<SceneObj::RectangleAnimated>::FullName())
+                               .c_str());
+            Assert(false);
             return;
         }
 

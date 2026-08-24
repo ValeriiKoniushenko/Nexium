@@ -60,6 +60,8 @@ namespace Core::Animation
         [[nodiscard]] const auto& getAnimations() const noexcept { return _animations; }
         [[nodiscard]] Tag getTags() const override;
 
+        [[nodiscard]] const char* getPrefix() const override;
+
     protected:
         void onTick(float delta) override;
 

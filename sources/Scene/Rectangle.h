@@ -37,44 +37,19 @@ namespace Core::SceneObj
         ECS_DECL(Rectangle, Core::SceneObject);
 
     public:
-        [[nodiscard]] StringAtom getTextureName() const { return _textureName; }
-        void setTexture(const StringAtom& value)
-        {
-            _textureName = value;
-            resetTextureUV();
-        }
-        void setTextureUV(GlobalPosition2F offset, GlobalPosition2F size)
-        {
-            _textureUVOffset = std::move(offset);
-            _textureUVSize = std::move(size);
-        }
-        void resetTextureUV() noexcept
-        {
-            _textureUVOffset = { 0.f, 0.f };
-            _textureUVSize = { 1.f, 1.f };
-        }
+        ~Rectangle() override = default;
+        Rectangle(const Rectangle&) = default;
+        Rectangle(Rectangle&&) noexcept = default;
+        Rectangle& operator=(const Rectangle&) = default;
+        Rectangle& operator=(Rectangle&&) noexcept = default;
 
-        [[nodiscard]] StringAtom getAtlasName() const { return _atlasName; }
-        void setAtlas(const StringAtom& value) { _atlasName = value; }
+        [[nodiscard]] StringAtom getTextureName() const { return _textureName; }
+        void setTexture(const StringAtom& value);
+        void setTextureUV(glm::vec2 offset, glm::vec2 size);
+        void resetTextureUV() noexcept;
 
         [[nodiscard]] bool isBlendingEnabled() const noexcept { return _blendingEnabled; }
         void setBlendingEnabled(bool value) noexcept { _blendingEnabled = value; }
-
-        [[nodiscard]] bool isSmoothingEnabled() const noexcept { return _smoothingEnabled; }
-        void setSmoothingEnabled(bool value) noexcept { _smoothingEnabled = value; }
-
-        [[nodiscard]] bool isAnimationEnabled() const noexcept { return _animationEnabled; }
-        void setAnimationEnabled(bool value);
-
-        void setAnimationOverride(const StringAtom& animationName, float fps);
-        [[nodiscard]] const StringAtom& getAnimationOverrideName() const noexcept
-        {
-            return _animationOverrideName;
-        }
-        [[nodiscard]] float getAnimationOverrideFPS() const noexcept
-        {
-            return _animationOverrideFPS;
-        }
 
         [[nodiscard]] nlohmann::json getTypeSpecificSceneDataAsJson() const override;
         void applyTypeSpecificSceneData(const nlohmann::json& data) override;
@@ -92,11 +67,38 @@ namespace Core::SceneObj
         FIELD();
         StringAtom _atlasName = "default"_atom;
 
-        GlobalPosition2F _textureUVOffset{ 0.f, 0.f };
-        GlobalPosition2F _textureUVSize{ 1.f, 1.f };
+        glm::vec2 _textureUVOffset{ 0.f, 0.f };
+        glm::vec2 _textureUVSize{ 1.f, 1.f };
 
         bool _blendingEnabled = true;
-        bool _smoothingEnabled = true;
+    };
+
+    CLASS();
+    class RectangleAnimated : public Rectangle
+    {
+        ECS_DECL(RectangleAnimated, Core::SceneObj::Rectangle);
+
+    public:
+        ~RectangleAnimated() override = default;
+        RectangleAnimated(const RectangleAnimated&) = default;
+        RectangleAnimated(RectangleAnimated&&) noexcept = default;
+        RectangleAnimated& operator=(const RectangleAnimated&) = default;
+        RectangleAnimated& operator=(RectangleAnimated&&) noexcept = default;
+
+        [[nodiscard]] StringAtom getAtlasName() const { return _atlasName; }
+        void setAtlas(const StringAtom& value) { _atlasName = value; }
+
+        [[nodiscard]] bool isAnimationEnabled() const noexcept { return _animationEnabled; }
+        void setAnimationEnabled(bool value);
+
+        void setAnimationOverride(const StringAtom& animationName, float fps);
+        [[nodiscard]] const StringAtom& getAnimationOverrideName() const noexcept;
+        [[nodiscard]] float getAnimationOverrideFPS() const noexcept;
+
+        [[nodiscard]] nlohmann::json getTypeSpecificSceneDataAsJson() const override;
+        void applyTypeSpecificSceneData(const nlohmann::json& data) override;
+
+    protected:
         bool _animationEnabled = true;
 
         StringAtom _animationOverrideName;

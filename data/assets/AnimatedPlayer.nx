@@ -473,7 +473,7 @@
                             1.0
                         ],
                         "_textureName": "red.png",
-                        "_type": "Core::SceneObj::Rectangle"
+                        "_type": "Core::SceneObj::RectangleAnimated"
                     }
                 ],
                 "_currentAnimationName": "",
@@ -509,9 +509,9 @@
             1.0
         ],
         "_textureName": "red.png",
-        "_type": "Core::SceneObj::Rectangle"
+        "_type": "Core::SceneObj::RectangleAnimated"
     },
     "name": "AnimatedPlayer",
     "tags": "WorldObject",
-    "type": "Core::SceneObj::Rectangle"
+    "type": "Core::SceneObj::RectangleAnimated"
 }

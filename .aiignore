@@ -1,1 +1,10 @@
-.jrm/cache.data
+/.jrm/cache.data
+/.idea
+/build
+/out
+/.vscode
+/docs/build
+
+string_metrics.csv
+iwyu.log
+__pycache__
