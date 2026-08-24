@@ -49,6 +49,12 @@
     LOG_ONCE_P(logProvider, spdlog::level::debug, __VA_ARGS__)
 #define LOG_TRACE_ONCE_P(logProvider, ...)                                                         \
     LOG_ONCE_P(logProvider, spdlog::level::trace, __VA_ARGS__)
+#define LOG_ASSERT_ERROR_ONCE_P(logProvider, ...)                                                  \
+    LOG_ONCE_P(logProvider, spdlog::level::err, __VA_ARGS__);                                      \
+    Assert(false, __VA_ARGS__)
+#define LOG_ASSERT_CRITICAL_ONCE_P(logProvider, ...)                                               \
+    LOG_ONCE_P(logProvider, spdlog::level::critical, __VA_ARGS__);                                 \
+    Assert(false, __VA_ARGS__)
 
 #define LOG_ONCE(level, ...)                                                                       \
     do                                                                                             \
@@ -67,6 +73,13 @@
 #define LOG_CRITICAL_ONCE(...) LOG_ONCE(spdlog::level::critical, __VA_ARGS__)
 #define LOG_DEBUG_ONCE(...)    LOG_ONCE(spdlog::level::debug, __VA_ARGS__)
 #define LOG_TRACE_ONCE(...)    LOG_ONCE(spdlog::level::trace, __VA_ARGS__)
+
+#define LOG_ASSERT_ERROR_ONCE(...)                                                                 \
+    LOG_ONCE(spdlog::level::err, __VA_ARGS__);                                                     \
+    Assert(false, __VA_ARGS__)
+#define LOG_ASSERT_CRITICAL_ONCE(...)                                                              \
+    LOG_ONCE(spdlog::level::critical, __VA_ARGS__);                                                \
+    Assert(false, __VA_ARGS__)
 
 namespace spdlog
 {

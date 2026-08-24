@@ -29,6 +29,7 @@
 #include "GameplaySystem/Camera.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Graphics/GraphicsComponents.h"
+#include "Graphics/Line.h"
 
 using namespace Core;
 
@@ -75,46 +76,6 @@ namespace
         return data;
     }
 
-    struct LineVertex
-    {
-        glm::vec3 position;
-    };
-
-    void DrawLine(const ShaderProgram* shader, BaseCamera& camera, const glm::vec3& start,
-                  const glm::vec3& end, const NormColor4& color = Color4_Yellow)
-    {
-        static BaseGraphicsData gcd = []() -> BaseGraphicsData
-        {
-            BaseGraphicsData data;
-            data.generate();
-
-            auto* lineShader = GetShaderManager()->getShaderProgram("2d_rect"_atom);
-            if (!Verify(lineShader))
-            {
-                globalLog.criticalLog("Can't get shader program '2d_rect'.");
-                return {};
-            }
-            data.setShader(lineShader);
-
-            data.bindAllBuffers();
-            glBufferData(GL_ARRAY_BUFFER, sizeof(LineVertex) * 2, nullptr, GL_STREAM_DRAW);
-            lineShader->callSetEvent(ShaderProgram::Event::OnSetIndexAndVertexBuffer);
-
-            return data;
-        }();
-
-        const LineVertex vertices[] = { { start }, { end } };
-
-        shader->use();
-        shader->setUniform("uProjAndView"_atom, camera.getMatrix());
-        shader->setUniform("uColor"_atom, color);
-
-        gcd.bindAllBuffers();
-
-        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-
-        glDrawArrays(GL_LINES, 0, 2);
-    }
 } // namespace
 
 namespace Core::SceneObj
@@ -135,7 +96,7 @@ namespace Core::SceneObj
         //     return;
         // }
 
-        auto* shader = GetShaderManager()->getShaderProgram("line"_atom);
+        const auto* shader = GetShaderManager()->getShaderProgram("line"_atom);
 
         if (!shader) [[unlikely]]
         {
@@ -144,7 +105,7 @@ namespace Core::SceneObj
             return;
         }
 
-        DrawLine(shader, camera, glm::vec3(0.f), glm::vec3(100.f));
+        Debug::Line::Draw(shader, camera.getMatrix(), glm::vec3(0.f), glm::vec3(100.f));
     }
 
     void Rectangle::onDraw(BaseCamera& camera)
