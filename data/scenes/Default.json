@@ -51,7 +51,7 @@
                 "_rotation": [
                     -1.100000023841858,
                     0.0,
-                    0.0
+                    -45.20000076293945
                 ],
                 "_scale": [
                     1.0,
@@ -97,7 +97,7 @@
                 "_animationName": "New animation",
                 "_atlasName": "santa_walk",
                 "_blendingEnabled": true,
-                "_textureName": "Walk_3.png"
+                "_textureName": "Walk_13.png"
             }
         },
         {
@@ -111,9 +111,9 @@
                     0.0
                 ],
                 "_position": [
-                    -434.00164794921875,
-                    -279.6320495605469,
-                    106.17281341552734
+                    -343.4081115722656,
+                    -260.53131103515625,
+                    100.0
                 ],
                 "_rotation": [
                     0.0,

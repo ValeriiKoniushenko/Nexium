@@ -61,7 +61,8 @@ namespace
 namespace Core::Debug
 {
     void Line::Draw(const ShaderProgram* shader, const glm::mat4& projViewMatric,
-                    const glm::vec3& start, const glm::vec3& end, const NormColor4& color)
+                    const glm::vec3& start, const glm::vec3& end, float thickness,
+                    const NormColor4& color)
     {
         if (!shader) [[likely]]
         {
@@ -80,13 +81,14 @@ namespace Core::Debug
         const std::array<LineVertex, 2> vertices = { LineVertex{ start }, LineVertex{ end } };
         glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices.data());
 
+        glLineWidth(thickness);
         glDrawArrays(GL_LINES, 0, 2);
     }
 
     void Line::Draw(const ShaderProgram* shader, const glm::mat4& projViewMatric, glm::vec2 start,
-                    glm::vec2 end, const NormColor4& color)
+                    glm::vec2 end, float thickness, const NormColor4& color)
     {
-        Draw(shader, projViewMatric, glm::vec3(start, 0.f), glm::vec3(end, 0.f), color);
+        Draw(shader, projViewMatric, glm::vec3(start, 0.f), glm::vec3(end, 0.f), thickness, color);
     }
 
 } // namespace Core::Debug

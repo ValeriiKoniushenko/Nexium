@@ -29,6 +29,9 @@
 #include "Graphics/Primitives/StaticMeshBundle.h"
 #include "Scene/Rectangle.h"
 
+#define GLM_ENABLE_EXPERIMENTAL
+#include "glm/gtx/string_cast.hpp"
+
 namespace Core
 {
     void BaseObjectPicker::update(Scene& scene)
@@ -215,8 +218,14 @@ namespace Core
                 continue;
             }
 
+            std::cout << "Pick pos: " << glm::to_string(pickPos) << std::endl;
+            std::cout << "Camera pos: " << glm::to_string(camera->getGlobalPosition()) << std::endl;
+
             auto rectPos = rectangle->getPosition();
             auto rectSize = rectangle->getDrawRectSize();
+
+            std::cout << "Rect pos: " << glm::to_string(glm::vec3(rectPos)) << std::endl;
+            std::cout << std::endl;
 
             if (rectPos.x <= pickPos.x && pickPos.x <= rectPos.x + rectSize.width
                 && rectPos.y <= pickPos.y && pickPos.y <= rectPos.y + rectSize.height)

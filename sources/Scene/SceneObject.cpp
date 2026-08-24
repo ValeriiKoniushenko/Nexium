@@ -140,6 +140,40 @@ namespace Core
         onDraw(camera);
     }
 
+    glm::vec3 SceneObject::getGlobalPosition() const
+    {
+        auto out = glm::vec3(0);
+
+        const BaseComponent* p = this;
+        while (p)
+        {
+            if (auto* t = dynamic_cast<const Transformable*>(p))
+            {
+                out += t->getPosition();
+            }
+            p = p->getParent();
+        }
+
+        return out;
+    }
+
+    glm::vec3 SceneObject::getGlobalRotation() const
+    {
+        auto out = glm::vec3(0);
+
+        const BaseComponent* p = this;
+        while (p)
+        {
+            if (auto* t = dynamic_cast<const Transformable*>(p))
+            {
+                out += t->getRotation();
+            }
+            p = p->getParent();
+        }
+
+        return out;
+    }
+
     void SceneObject::makeTransformableTreeDirty()
     {
         forEach(

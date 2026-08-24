@@ -56,8 +56,8 @@ namespace Core
 
         [[nodiscard]] FSize2 getOutputFrameSize();
 
-        [[nodiscard]] glm::vec3 getGlobalPos() const noexcept { return _worldPos; }
-        [[nodiscard]] glm::vec3 getGlobalRotation() const noexcept { return _worldRotation; }
+        [[nodiscard]] glm::vec3 getGlobalPosition() const override { return _worldPos; }
+        [[nodiscard]] glm::vec3 getGlobalRotation() const override { return _worldRotation; }
 
         void setNear(float value) noexcept;
         [[nodiscard]] float getNear() const noexcept { return _near; }

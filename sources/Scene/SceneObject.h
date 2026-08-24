@@ -98,6 +98,9 @@ namespace Core
 
         void draw(BaseCamera& camera) final;
 
+        [[nodiscard]] virtual glm::vec3 getGlobalPosition() const;
+        [[nodiscard]] virtual glm::vec3 getGlobalRotation() const;
+
     protected:
         virtual void onDraw(BaseCamera& camera) {}
 

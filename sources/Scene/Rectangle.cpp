@@ -104,12 +104,38 @@ namespace Core::SceneObj
             return;
         }
 
-        Debug::Line::Draw(shader, camera.getMatrix(), glm::vec3(0.f), glm::vec3(100.f));
+        auto pos = getGlobalPosition();
+        auto rot = glm::radians(getGlobalRotation());
+        auto size = getDrawRectSize().toGlm();
+
+        // // Converting Left-Bottom origin -> Left-Top origin
+        // pos.y -= GetDefaultDrawRectSize();
+
+        glm::quat rotation = glm::quat(rot);
+        glm::vec2 half = size * 0.5f;
+
+        std::array<glm::vec3, 4> localCorners = {
+            glm::vec3(0.0f, 0.0f, 0.0f),     // top-left (pivot)
+            glm::vec3(size.x, 0.0f, 0.0f),   // top-right
+            glm::vec3(size.x, size.y, 0.0f), // bottom-right
+            glm::vec3(0.0f, size.y, 0.0f)    // bottom-left
+        };
+
+        std::array<glm::vec3, 4> worldCorners;
+        for (int i = 0; i < 4; ++i)
+        {
+            worldCorners[i] = pos + rotation * localCorners[i];
+        }
+
+        Debug::Line::Draw(shader, camera.getMatrix(), worldCorners[0], worldCorners[1]);
+        Debug::Line::Draw(shader, camera.getMatrix(), worldCorners[1], worldCorners[2]);
+        Debug::Line::Draw(shader, camera.getMatrix(), worldCorners[2], worldCorners[3]);
+        Debug::Line::Draw(shader, camera.getMatrix(), worldCorners[3], worldCorners[0]);
     }
 
     void Rectangle::onDraw(BaseCamera& camera)
     {
-        static BaseGraphicsData gcd = GetDefaultGraphicsData(Rectangle::GetDefaultDrawRectSize());
+        static BaseGraphicsData gcd = GetDefaultGraphicsData(GetDefaultDrawRectSize());
         tryToRecalculateMatrices();
 
         auto& atlas = GetAssetsManager()->getAtlas(_atlasName);
@@ -141,8 +167,8 @@ namespace Core::SceneObj
 
         auto modelMatrix = getModelMatrix();
 
-        // Converting Left-Bottom origin -> Left-Top origin
-        modelMatrix[3][1] -= GetDefaultDrawRectSize();
+        // // Converting Left-Bottom origin -> Left-Top origin
+        // modelMatrix[3][1] -= GetDefaultDrawRectSize();
 
         shader->setUniform("uUVOffset"_atom, textureOffset + textureSize * _textureUVOffset);
         shader->setUniform("uUVSize"_atom, textureSize * _textureUVSize);
