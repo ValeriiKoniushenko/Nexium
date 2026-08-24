@@ -240,7 +240,7 @@ namespace Core
                 selectedObject = n;
                 if (_lastSelectedObject != selectedObject)
                 {
-                    gGameInstance->objectSelectorManager.selectObject(n);
+                    gGameInstance->objectSelectorManager.selectSingleObject(n);
                 }
             }
         }

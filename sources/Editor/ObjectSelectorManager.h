@@ -40,10 +40,11 @@ namespace Core
     class ObjectSelectorManager
     {
     public:
-        void selectObject(BaseComponent* comp);
-
+        void toggleObject(BaseComponent* comp);
+        void selectSingleObject(BaseComponent* comp);
         void addSelectedObject(BaseComponent* comp);
 
+        void deselectSingleObject(BaseComponent* comp);
         void deselectAllAndClear();
 
         [[nodiscard]] bool isSelected(BaseComponent* comp) const;
@@ -59,12 +60,9 @@ namespace Core
             = Delegate<void(BaseComponent*, bool)>::Create();
 
     private:
-        void tryToSelectGeneralComponent(BaseComponent* comp);
-
-        void tryToDeselectGeneralComponent();
+        void changeSelectionState(BaseComponent* comp, bool newState);
 
     private:
         std::unordered_map<void*, BaseComponent::Ptr> _selectedObjects;
-        BaseComponent* _generalSelectedComponent = nullptr;
     };
 } // namespace Core

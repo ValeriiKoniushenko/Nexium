@@ -28,7 +28,19 @@
 
 namespace Core
 {
-    void ObjectSelectorManager::selectObject(BaseComponent* comp)
+    void ObjectSelectorManager::toggleObject(BaseComponent* comp)
+    {
+        if (isSelected(comp))
+        {
+            deselectSingleObject(comp);
+        }
+        else
+        {
+            addSelectedObject(comp);
+        }
+    }
+
+    void ObjectSelectorManager::selectSingleObject(BaseComponent* comp)
     {
         deselectAllAndClear();
         addSelectedObject(comp);
@@ -38,29 +50,38 @@ namespace Core
     {
         for (auto& obj : _selectedObjects | std::views::values)
         {
-            if (auto* outliner = dynamic_cast<IOutliner*>(obj.get()))
+            if (obj) [[likely]]
             {
-                outliner->setIsDrawOutline(false);
+                changeSelectionState(obj.get(), false);
             }
-
-            onChange->trigger(obj.get(), false);
         }
 
-        tryToDeselectGeneralComponent();
         _selectedObjects.clear();
     }
 
     void ObjectSelectorManager::addSelectedObject(BaseComponent* comp)
     {
-        tryToSelectGeneralComponent(comp);
-
-        if (auto* outliner = dynamic_cast<IOutliner*>(comp))
+        if (!comp) [[unlikely]]
         {
-            outliner->setIsDrawOutline(true);
+            return;
         }
 
-        onChange->trigger(comp, true);
+        changeSelectionState(comp, true);
         _selectedObjects.emplace(comp, comp);
+    }
+
+    void ObjectSelectorManager::deselectSingleObject(BaseComponent* comp)
+    {
+        if (!comp) [[unlikely]]
+        {
+            return;
+        }
+
+        if (const auto it = _selectedObjects.find(comp); it != _selectedObjects.end())
+        {
+            changeSelectionState(comp, false);
+            _selectedObjects.erase(it);
+        }
     }
 
     bool ObjectSelectorManager::isSelected(BaseComponent* comp) const
@@ -68,31 +89,14 @@ namespace Core
         return _selectedObjects.contains(comp);
     }
 
-    void ObjectSelectorManager::tryToSelectGeneralComponent(BaseComponent* comp)
+    void ObjectSelectorManager::changeSelectionState(BaseComponent* comp, bool newState)
     {
-        if (_generalSelectedComponent)
+        if (auto* outliner = dynamic_cast<IOutliner*>(comp))
         {
-            return;
+            outliner->setIsDrawOutline(newState);
         }
 
-        if (GetWorld()->currentCamera)
-        {
-            const auto* cameraOwner = GetWorld()->currentCamera->getOwner();
-            const auto* compOwner = comp->getOwner();
-            if (cameraOwner == compOwner)
-            {
-                return;
-            }
-        }
-
-        _generalSelectedComponent = comp;
+        onChange->trigger(comp, newState);
     }
 
-    void ObjectSelectorManager::tryToDeselectGeneralComponent()
-    {
-        if (_generalSelectedComponent)
-        {
-            _generalSelectedComponent = nullptr;
-        }
-    }
 } // namespace Core

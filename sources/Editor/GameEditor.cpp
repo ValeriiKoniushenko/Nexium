@@ -401,29 +401,35 @@ namespace Core
 
     void GameEditor::responseOnPick(Transformable* object)
     {
+        if (!object)
+        {
+            return;
+        }
+
         if (const auto* wnd = gGameInstance->gameEditor.getWindow<GameViewportEWC>();
             !wnd || !wnd->isHovered())
         {
             return;
         }
 
-        auto* mesh = dynamic_cast<StaticMesh*>(object);
-        if (!mesh)
+        if (auto* mesh = dynamic_cast<StaticMesh*>(object))
         {
-            return;
-        }
-
-        if (auto* bundle = mesh->tryToGetRootBundle())
-        {
-            if (!bundle->isIgnoreSelect())
+            if (auto* bundle = mesh->tryToGetRootBundle())
             {
-                gGameInstance->objectSelectorManager.selectObject(bundle);
+                if (!bundle->isIgnoreSelect())
+                {
+                    gGameInstance->objectSelectorManager.selectSingleObject(bundle);
+                }
+                bundle->onMousePicked(mesh);
             }
-            bundle->onMousePicked(mesh);
+            else
+            {
+                gGameInstance->objectSelectorManager.selectSingleObject(mesh);
+            }
         }
-        else
+        else if (auto* comp = dynamic_cast<BaseComponent*>(object))
         {
-            gGameInstance->objectSelectorManager.selectObject(mesh);
+            gGameInstance->objectSelectorManager.toggleObject(comp);
         }
     }
 

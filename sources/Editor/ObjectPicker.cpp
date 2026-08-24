@@ -190,7 +190,7 @@ namespace Core
             }
         }
 
-        if (_callback)
+        if (_callback && found)
         {
             _callback(found);
         }
@@ -200,8 +200,6 @@ namespace Core
 
     void RectangleBasedObjectPicker::onRequest(Scene& scene, BaseCamera* camera, glm::vec2 pickPos)
     {
-        return; // Not impl
-
         SceneObj::Rectangle* pickedRect = nullptr;
 
         for (auto& object : scene.getObjects())
@@ -219,11 +217,18 @@ namespace Core
 
             auto rectPos = rectangle->getPosition();
             auto rectSize = rectangle->getDrawRectSize();
+
+            if (rectPos.x <= pickPos.x && pickPos.x <= rectPos.x + rectSize.width
+                && rectPos.y <= pickPos.y && pickPos.y <= rectPos.y + rectSize.height)
+            {
+                pickedRect = rectangle;
+                break;
+            }
         }
 
         if (_callback && pickedRect)
         {
-            _callback(pickedRect);
+            std::invoke(_callback, pickedRect);
         }
     }
 
