@@ -81,8 +81,10 @@ namespace
             {
                 // Key doesn't exist in target -> add it
                 target[key] = *it;
-                changes.push_back({ currentPath, JsonKeyChange::ChangeType::Added,
-                                    nlohmann::json(nullptr), *it });
+                changes.push_back({ .path = currentPath,
+                                    .changeType = JsonKeyChange::ChangeType::Added,
+                                    .oldValue = nlohmann::json(nullptr),
+                                    .newValue = *it });
                 continue;
             }
 
@@ -96,8 +98,10 @@ namespace
             {
                 if (*targetIt != *it)
                 {
-                    changes.push_back(
-                        { currentPath, JsonKeyChange::ChangeType::Updated, *targetIt, *it });
+                    changes.push_back({ .path = currentPath,
+                                        .changeType = JsonKeyChange::ChangeType::Updated,
+                                        .oldValue = *targetIt,
+                                        .newValue = *it });
                     *targetIt = *it;
                 }
             }
@@ -110,8 +114,10 @@ namespace
             if (patch.find(key) == patch.end())
             {
                 auto currentPath = basePath.empty() ? key : basePath + "." + key;
-                changes.push_back({ currentPath, JsonKeyChange::ChangeType::Removed, *it,
-                                    nlohmann::json(nullptr) });
+                changes.push_back({ .path = currentPath,
+                                    .changeType = JsonKeyChange::ChangeType::Removed,
+                                    .oldValue = *it,
+                                    .newValue = nlohmann::json(nullptr) });
                 it = target.erase(it);
             }
             else

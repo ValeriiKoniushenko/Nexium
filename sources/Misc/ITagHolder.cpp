@@ -41,10 +41,10 @@ namespace
     // clang-format off
     constexpr std::array<TagInfo, 4> kTagTable =
     {{
-        { Core::Tag_None,             "None" },
-        { Core::Tag_WorldObject,      "WorldObject" },
-        { Core::Tag_GuiObject,        "GuiObject" },
-        { Core::Tag_EditorInternal,   "EditorInternal" },
+        { .tag = Core::Tag_None,             .name = "None" },
+        { .tag = Core::Tag_WorldObject,      .name = "WorldObject" },
+        { .tag = Core::Tag_GuiObject,        .name = "GuiObject" },
+        { .tag = Core::Tag_EditorInternal,   .name = "EditorInternal" },
     }};
     // clang-format on
 
