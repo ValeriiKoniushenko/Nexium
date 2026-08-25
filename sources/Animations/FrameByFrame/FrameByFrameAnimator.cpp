@@ -183,11 +183,6 @@ namespace Core::Animation
         return BaseComponent::getTags() | Tag_AnimationController;
     }
 
-    const char* FrameByFrameAnimator::getPrefix() const
-    {
-        return "FrameByFrameAnimator";
-    }
-
     void FrameByFrameAnimator::onTick(float delta)
     {
         BaseComponent::onTick(delta);

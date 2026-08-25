@@ -54,8 +54,6 @@ namespace Core
 
         [[nodiscard]] virtual StringAtom getProcessedAssetType() const = 0;
 
-        [[nodiscard]] const char* getPrefix() const override { return "ECSEditorMimeAdapter"; }
-
     protected:
         virtual void onDraw(float dt) = 0;
         virtual void onApplyAssetData(const nlohmann::json& json) = 0;
@@ -79,7 +77,6 @@ namespace Core
         [[nodiscard]] const NXECSAsset getTargetAsset() const;
 
         [[nodiscard]] bool hasTarget() const noexcept { return _targetComponent && _targetAsset; }
-        [[nodiscard]] const char* getPrefix() const override { return "NxECSBasedEditorEWC"; }
 
     protected:
         void onInitialize() override;

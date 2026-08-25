@@ -53,6 +53,10 @@ public:                                                                         
 public:                                                                                            \
     [[nodiscard]] BaseComponent::Ptr clone() const override;                                       \
     [[nodiscard]] static Ptr Create();                                                             \
+    [[nodiscard]] const char* getPrefix() const override                                           \
+    {                                                                                              \
+        return #ClassName;                                                                         \
+    }                                                                                              \
                                                                                                    \
 protected:                                                                                         \
     explicit ClassName(const Core::StringAtom& type, const Core::StringAtom& name)                 \

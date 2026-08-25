@@ -87,7 +87,7 @@ namespace Core
 
     public:
         [[nodiscard]] spdlog::logger* getLogger() const override;
-        [[nodiscard]] const char* getPrefix() const override { return "world"; }
+        [[nodiscard]] const char* getPrefix() const override { return "World"; }
 
         [[nodiscard]] float getTimeDelta() const noexcept { return timeDelta; }
 
