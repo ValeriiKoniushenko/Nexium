@@ -44,10 +44,12 @@ cmake --build build
 
 1. You need to install the next components to build the project.
    ```
-   sudo apt install libwayland-dev libx11-dev libxi-dev libxrandr-dev libxinerama-dev libxkbcommon-dev libxcursor-dev libgl1-mesa-dev
+   sudo apt install libwayland-dev wayland-protocols libxkbcommon-dev \ 
+    libxkbcommon-x11-dev libx11-dev libxrandr-dev libxinerama-dev \
+    libgl1-mesa-dev pkg-config libxcursor-dev libxi-dev
    ```
 2. `CMake 3.6` >
-3. `Clang 22` > or `GCC 16` >
+3. `Clang 22` >= or `GCC 14` >=
 4. Set `git nuke` alias and execute it after every checkout:
     - **Linux** shell:
          ```sh
@@ -96,8 +98,8 @@ sudo apt install mold
 ## Documentation and demos
 
 Take into account, due to active development, the real game & engine were not divided. So, now you can write your own
-game as a part of the engine. It will be fixed in the nearest future.
-Also, you can find a Demo Game in the root of the project under the name 'game-example'.~~~~ After successfully building
+game as a part of the engine. It will be fixed in the nearest future. Also, you can find a Demo Game in the root of the
+project under the name 'game-example'. After successfully building
 you can run it by the next path: ```<build_dir>/bin/TemplateGame```.
 
 About documentation: the same reason. After the first beta version, all documentation will be added here.

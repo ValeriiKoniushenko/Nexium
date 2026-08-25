@@ -26,8 +26,6 @@
 
 #include "JustReflectMe/Adapter.h"
 
-#include <utility>
-
 namespace Core
 {
 
@@ -43,10 +41,7 @@ namespace Core
         IOutliner& operator=(IOutliner&&) noexcept = default;
         virtual ~IOutliner() = default;
 
-        void setIsDrawOutline(bool value) noexcept
-        {
-            onOutlineStatusChange(_isDrawOutline = value);
-        }
+        void setIsDrawOutline(bool value) { onOutlineStatusChange(_isDrawOutline = value); }
 
         void toggleIsDrawOutline() noexcept { setIsDrawOutline(!_isDrawOutline); }
         [[nodiscard]] bool shouldDrawOutline() const noexcept { return _isDrawOutline; }
