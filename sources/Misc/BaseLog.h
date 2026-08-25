@@ -125,59 +125,38 @@ namespace Core
         virtual ~BaseLog() = default;
 
         void infoLog(const char* str) const { pushLog(level::info, str); }
-
         void infoLog(const std::string& str) const { infoLog(str.c_str()); }
-
         void infoLog(const StringAtom& str) const { infoLog(str.c_str()); }
-
         void infoLog(const StringFormatter<char>& str) const { infoLog(str.c_str()); }
 
         void warnLog(const char* str) const { pushLog(level::warn, str); }
-
         void warnLog(const std::string& str) const { warnLog(str.c_str()); }
-
         void warnLog(const StringAtom& str) const { warnLog(str.c_str()); }
-
         void warnLog(const StringFormatter<char>& str) const { warnLog(str.c_str()); }
 
         void criticalLog(const char* str) const { pushLog(level::critical, str); }
-
         void criticalLog(const std::string& str) const { criticalLog(str.c_str()); }
-
         void criticalLog(const StringAtom& str) const { criticalLog(str.c_str()); }
-
         void criticalLog(const StringFormatter<char>& str) const { criticalLog(str.c_str()); }
 
         void errorLog(const char* str) const { pushLog(level::err, str); }
-
         void errorLog(const std::string& str) const { errorLog(str.c_str()); }
-
         void errorLog(const StringAtom& str) const { errorLog(str.c_str()); }
-
         void errorLog(const StringFormatter<char>& str) const { errorLog(str.c_str()); }
 
         void debugLog(const char* str) const { pushLog(level::debug, str); }
-
         void debugLog(const std::string& str) const { debugLog(str.c_str()); }
-
         void debugLog(const StringAtom& str) const { debugLog(str.c_str()); }
-
         void debugLog(const StringFormatter<char>& str) const { debugLog(str.c_str()); }
 
         void traceLog(const char* str) const { pushLog(level::trace, str); }
-
         void traceLog(const std::string& str) const { traceLog(str.c_str()); }
-
         void traceLog(const StringAtom& str) const { traceLog(str.c_str()); }
-
         void traceLog(const StringFormatter<char>& str) const { traceLog(str.c_str()); }
 
         void criticalThrowingLog(const char* str) const;
-
         void criticalThrowingLog(const std::string& str) const { criticalThrowingLog(str.c_str()); }
-
         void criticalThrowingLog(const StringAtom& s) const { criticalThrowingLog(s.c_str()); }
-
         void criticalThrowingLog(const StringFormatter<char>& s) const
         {
             criticalThrowingLog(s.c_str());

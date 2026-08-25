@@ -196,10 +196,9 @@ namespace Core::Animation
         const auto* animation = getActiveAnimation();
         if (!rectangle || !animation)
         {
-            LOG_ERROR_ONCE(("Only '{}' type is supported for animations."_f
-                            << R<SceneObj::RectangleAnimated>::FullName())
-                               .c_str());
-            Assert(false);
+            LOG_ASSERT_ERROR_ONCE(("Only '{}' type is supported for animations."_f
+                                   << R<SceneObj::RectangleAnimated>::FullName())
+                                      .c_str());
             return;
         }
 
