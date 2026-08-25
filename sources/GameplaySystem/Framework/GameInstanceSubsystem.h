@@ -35,6 +35,8 @@ namespace Core
         ~GameInstanceSubsystem() override = default;
         GameInstanceSubsystem(const GameInstanceSubsystem&) = delete;
         GameInstanceSubsystem(GameInstanceSubsystem&&) noexcept = delete;
+        GameInstanceSubsystem& operator=(const GameInstanceSubsystem&) = delete;
+        GameInstanceSubsystem& operator=(GameInstanceSubsystem&&) noexcept = delete;
 
         [[nodiscard]] spdlog::logger* getLogger() const override;
         [[nodiscard]] const char* getPrefix() const override { return "GameInstanceSubsystem"; }

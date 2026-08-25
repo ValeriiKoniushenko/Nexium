@@ -56,10 +56,10 @@ namespace Core
             : BaseAsset(logicPath)
         {
         }
-        SkyboxAsset(const SkyboxAsset&) = default;
-        SkyboxAsset(SkyboxAsset&&) = default;
-        SkyboxAsset& operator=(const SkyboxAsset&) = default;
-        SkyboxAsset& operator=(SkyboxAsset&&) = default;
+        SkyboxAsset(const SkyboxAsset&) = delete;
+        SkyboxAsset(SkyboxAsset&&) noexcept = delete;
+        SkyboxAsset& operator=(const SkyboxAsset&) = delete;
+        SkyboxAsset& operator=(SkyboxAsset&&) noexcept = delete;
         ~SkyboxAsset() override = default;
 
         void draw(BaseCamera& camera);

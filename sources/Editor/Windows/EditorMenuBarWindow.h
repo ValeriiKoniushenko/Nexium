@@ -35,6 +35,10 @@ namespace Core
         ECS_DECL(EditorMenuBarWindowEWC, Core::BaseMenuBarEWC);
 
     public:
+        EditorMenuBarWindowEWC(const EditorMenuBarWindowEWC&) = delete;
+        EditorMenuBarWindowEWC(EditorMenuBarWindowEWC&&) noexcept = delete;
+        EditorMenuBarWindowEWC& operator=(const EditorMenuBarWindowEWC&) = delete;
+        EditorMenuBarWindowEWC& operator=(EditorMenuBarWindowEWC&&) noexcept = delete;
         ~EditorMenuBarWindowEWC() override = default;
 
     protected:

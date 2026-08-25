@@ -35,6 +35,8 @@ namespace Core
         ~ActorManager() override = default;
         ActorManager(const ActorManager&) = delete;
         ActorManager(ActorManager&&) noexcept = delete;
+        ActorManager& operator=(const ActorManager&) = delete;
+        ActorManager& operator=(ActorManager&&) noexcept = delete;
 
         [[nodiscard]] spdlog::logger* getLogger() const override;
         [[nodiscard]] const char* getPrefix() const override { return "ActorManager"; }

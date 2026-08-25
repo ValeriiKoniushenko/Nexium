@@ -96,6 +96,7 @@ namespace Core
         ECS_DECL(OrthographicCamera, Core::BaseCamera);
 
     public:
+        OrthographicCamera(const OrthographicCamera&) = default;
         OrthographicCamera(OrthographicCamera&&) noexcept = default;
         OrthographicCamera& operator=(const OrthographicCamera&) = default;
         OrthographicCamera& operator=(OrthographicCamera&&) noexcept = default;

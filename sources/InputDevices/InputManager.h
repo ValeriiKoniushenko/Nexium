@@ -44,6 +44,10 @@ namespace Core
         InputManger() = default;
 
         ~InputManger() override = default;
+        InputManger(const InputManger&) = delete;
+        InputManger(InputManger&&) noexcept = delete;
+        InputManger& operator=(const InputManger&) = delete;
+        InputManger& operator=(InputManger&&) noexcept = delete;
 
         virtual void update()
         {

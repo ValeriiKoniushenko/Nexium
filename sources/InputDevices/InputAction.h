@@ -90,6 +90,11 @@ namespace Core
         {
         }
 
+        InputAction(const InputAction&) = delete;
+        InputAction(InputAction&&) noexcept = delete;
+        InputAction& operator=(const InputAction&) = delete;
+        InputAction& operator=(InputAction&&) noexcept = delete;
+
         virtual ~InputAction() = default;
 
         [[nodiscard]] const StringAtom& getName() const { return _name; }

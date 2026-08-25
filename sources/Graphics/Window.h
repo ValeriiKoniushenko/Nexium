@@ -39,6 +39,11 @@ namespace Core
     {
         struct Data
         {
+            Data() = default;
+            Data(const Data&) = default;
+            Data(Data&&) noexcept = default;
+            Data& operator=(const Data&) = default;
+            Data& operator=(Data&&) noexcept = default;
             virtual ~Data() = default;
         };
 

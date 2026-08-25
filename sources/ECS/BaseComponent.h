@@ -894,6 +894,10 @@ namespace Core
         ECS_DECL(InvalidComponent, Core::BaseComponent);
 
     public:
+        InvalidComponent(const InvalidComponent&) = default;
+        InvalidComponent(InvalidComponent&&) noexcept = default;
+        InvalidComponent& operator=(const InvalidComponent&) = default;
+        InvalidComponent& operator=(InvalidComponent&&) noexcept = default;
         ~InvalidComponent() override = default;
     };
 

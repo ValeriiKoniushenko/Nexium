@@ -35,6 +35,8 @@ namespace Core
         ~CameraManager() override = default;
         CameraManager(const CameraManager&) = delete;
         CameraManager(CameraManager&&) noexcept = delete;
+        CameraManager& operator=(const CameraManager&) = delete;
+        CameraManager& operator=(CameraManager&&) noexcept = delete;
 
         [[nodiscard]] spdlog::logger* getLogger() const override;
         [[nodiscard]] const char* getPrefix() const override { return "CameraManager"; }

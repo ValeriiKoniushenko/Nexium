@@ -60,6 +60,8 @@ namespace Core
         SINGLETONS_FRIEND(CacheSystem);
 
     public:
+        ~CacheSystem() override = default;
+
         template<IsDataIO T>
         void write(const T& data)
         {
@@ -171,6 +173,11 @@ namespace Core
                                           uint32_t flag) const noexcept;
         };
 
+        IDataUpdateBridge() = default;
+        IDataUpdateBridge(const IDataUpdateBridge&) = default;
+        IDataUpdateBridge(IDataUpdateBridge&&) noexcept = default;
+        IDataUpdateBridge& operator=(const IDataUpdateBridge&) = default;
+        IDataUpdateBridge& operator=(IDataUpdateBridge&&) noexcept = default;
         virtual ~IDataUpdateBridge() = default;
 
         virtual void ioFieldsUpdate(DataStream& out) = 0;
@@ -204,6 +211,10 @@ namespace Core
     public:
         DataStream();
         virtual ~DataStream() = default;
+        DataStream(const DataStream&) = default;
+        DataStream(DataStream&&) noexcept = default;
+        DataStream& operator=(const DataStream&) = default;
+        DataStream& operator=(DataStream&&) noexcept = default;
 
         void setMode(Mode mode) noexcept { _data->mode = mode; }
         [[nodiscard]] Mode getMode() const noexcept { return _data->mode; }

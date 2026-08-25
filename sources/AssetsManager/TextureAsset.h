@@ -47,6 +47,10 @@ namespace Core
         }
 
         ~TextureAsset() override = default;
+        TextureAsset(const TextureAsset&) = delete;
+        TextureAsset(TextureAsset&&) noexcept = delete;
+        TextureAsset& operator=(const TextureAsset&) = delete;
+        TextureAsset& operator=(TextureAsset&&) noexcept = delete;
 
         [[nodiscard]] const Texture& getData() const noexcept { return _data; }
         [[nodiscard]] Texture& getData() noexcept { return _data; }

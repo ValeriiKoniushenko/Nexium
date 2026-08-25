@@ -35,6 +35,8 @@ namespace Core
         ~GameState() override = default;
         GameState(const GameState&) = delete;
         GameState(GameState&&) noexcept = delete;
+        GameState& operator=(const GameState&) = delete;
+        GameState& operator=(GameState&&) noexcept = delete;
 
         [[nodiscard]] spdlog::logger* getLogger() const override;
         [[nodiscard]] const char* getPrefix() const override { return "GameState"; }

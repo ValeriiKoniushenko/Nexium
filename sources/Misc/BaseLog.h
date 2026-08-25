@@ -93,6 +93,8 @@ namespace Core
     {
         SINGLETONS_FRIEND(LogQueue)
     public:
+        ~LogQueue() override = default;
+
         struct LogLine
         {
             StringAtom author;
@@ -121,6 +123,12 @@ namespace Core
     {
     public:
         using level = spdlog::level::level_enum;
+
+        BaseLog() = default;
+        BaseLog(const BaseLog&) = default;
+        BaseLog(BaseLog&&) noexcept = default;
+        BaseLog& operator=(const BaseLog&) = default;
+        BaseLog& operator=(BaseLog&&) noexcept = default;
 
         virtual ~BaseLog() = default;
 

@@ -39,6 +39,8 @@ namespace Core::AssetImpl
     {
         SINGLETONS_FRIEND(Factory)
     public:
+        ~Factory() override = default;
+
         [[nodiscard]] std::unique_ptr<ECSAssetImpl> trySpawnImpl(std::type_index i)
         {
             const auto it = _map.find(i);

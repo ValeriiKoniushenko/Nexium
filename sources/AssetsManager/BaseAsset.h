@@ -47,6 +47,10 @@ namespace Core
         }
 
         ~BaseAsset() override = default;
+        BaseAsset(const BaseAsset&) = delete;
+        BaseAsset(BaseAsset&&) noexcept = delete;
+        BaseAsset& operator=(const BaseAsset&) = delete;
+        BaseAsset& operator=(BaseAsset&&) noexcept = delete;
 
         [[nodiscard]] bool isLoaded() const { return _refCount > 1; }
 

@@ -35,6 +35,8 @@ namespace Core
         ~ControllerManager() override = default;
         ControllerManager(const ControllerManager&) = delete;
         ControllerManager(ControllerManager&&) noexcept = delete;
+        ControllerManager& operator=(const ControllerManager&) = delete;
+        ControllerManager& operator=(ControllerManager&&) noexcept = delete;
 
         [[nodiscard]] spdlog::logger* getLogger() const override;
         [[nodiscard]] const char* getPrefix() const override { return "ControllerManager"; }
