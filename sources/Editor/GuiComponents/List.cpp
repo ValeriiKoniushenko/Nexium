@@ -120,7 +120,6 @@ namespace Core::Gui
 
     StringAtom ListModelBased::tryGetCurrentDataAsString() const
     {
-        const auto size = _sizeProvider();
         StringAtom item;
         (void)_dataProvider(_currentIndex, item);
         return item;

@@ -112,7 +112,6 @@ namespace Core::SceneObj
         // pos.y -= GetDefaultDrawRectSize();
 
         glm::quat rotation = glm::quat(rot);
-        glm::vec2 half = size * 0.5f;
 
         std::array<glm::vec3, 4> localCorners = {
             glm::vec3(0.0f, 0.0f, 0.0f),     // top-left (pivot)

@@ -275,12 +275,7 @@ namespace Core
             return;
         }
 
-        glm::vec4* colors = style->Colors;
-        if (!Verify(colors))
-        {
-            errorLog("Can't setup ImGUI colors. ImGui::GetStyle()->Colors return nullptr");
-            return;
-        }
+        auto& colors = style->Colors;
 
         for (int i = 0; i < ImGuiCol_COUNT; ++i)
         {

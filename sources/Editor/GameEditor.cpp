@@ -253,12 +253,7 @@ namespace Core
             return;
         }
 
-        glm::vec4* colors = style->Colors;
-        if (!Verify(colors))
-        {
-            errorLog("Can't setup ImGUI colors. ImGui::GetStyle()->Colors return nullptr");
-            return;
-        }
+        auto& colors = style->Colors;
 
         // clang-format off
         colors[ImGuiCol_Text]                  = Color4(234, 237, 239, 255).toNorm(); // Light grey text for readability

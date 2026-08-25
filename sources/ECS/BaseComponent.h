@@ -729,7 +729,10 @@ namespace Core
         template<IsComponent ComponentT, class... Args>
         ComponentT* addChildComponent(Args&&... args)
         {
-            typename ComponentT::Ptr newOne = new ComponentT(std::forward<Args>(args)...);
+            // The forwarded args may include array types (e.g. string literals) where decay is
+            // intended for ctor overloads taking pointers.
+            typename ComponentT::Ptr newOne = new ComponentT(std::forward<Args>(
+                args)...); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
             return static_cast<ComponentT*>(rawAddChildComponent(newOne.get()));
         }
 
@@ -744,7 +747,10 @@ namespace Core
                 }
             }
 
-            typename ComponentT::Ptr newOne = new ComponentT(std::forward<Args>(args)...);
+            // The forwarded args may include array types (e.g. string literals) where decay is
+            // intended for ctor overloads taking pointers.
+            typename ComponentT::Ptr newOne = new ComponentT(std::forward<Args>(
+                args)...); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
             return static_cast<ComponentT*>(rawAddChildComponent(newOne.get()));
         }
 

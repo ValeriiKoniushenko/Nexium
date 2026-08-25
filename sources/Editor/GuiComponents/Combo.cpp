@@ -111,7 +111,6 @@ namespace Core::Gui
 
     StringAtom ComboModelBased::tryGetCurrentDataAsString() const
     {
-        const auto size = _sizeProvider();
         StringAtom item;
         (void)_dataProvider(_currentIndex, item);
         return item;

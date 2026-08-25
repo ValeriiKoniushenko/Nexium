@@ -116,14 +116,13 @@ namespace Core
 
         const auto& style = ImGui::GetStyle();
 
-        float offset = ImGui::GetWindowWidth();
-        offset -= _fpsTextSize - style.ItemSpacing.x;
+        const float offset = ImGui::GetWindowWidth() - (_fpsTextSize - style.ItemSpacing.x);
         ImGui::SetCursorPosX(offset);
         ImGui::TextUnformatted(_cachedFpsText.c_str());
         ImGui::SameLine(0, 0);
-        offset -= style.ItemSpacing.x * 2.f;
 
         /*
+        offset -= style.ItemSpacing.x * 2.f;
         offset -= _simulationButton - style.ItemSpacing.x;
         ImGui::SetCursorPosX(offset);
 

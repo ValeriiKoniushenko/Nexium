@@ -85,7 +85,6 @@ namespace Core
 
         if (gDragDrop.getState() == DragAndDrop::State::Dragging)
         {
-            auto k = _key.value();
             if (_key == Mouse::Key::None || (_key != Mouse::Key::None && isKeyPressed()))
             {
                 onDrag->trigger(pos - *_lastMousePosition, SpecKeysState::fillAndGet());
