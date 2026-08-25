@@ -25,6 +25,7 @@
 #include "ITagHolder.h"
 
 #include <algorithm>
+#include <array>
 #include <cstring>
 #include <sstream>
 #include <string_view>
@@ -38,13 +39,13 @@ namespace
     };
 
     // clang-format off
-     constexpr TagInfo kTagTable[] =
-    {
-        { Core::Tag_None,        "None" },
-        { Core::Tag_WorldObject, "WorldObject" },
-        { Core::Tag_GuiObject,   "GuiObject" },
+    constexpr std::array<TagInfo, 4> kTagTable =
+    {{
+        { Core::Tag_None,             "None" },
+        { Core::Tag_WorldObject,      "WorldObject" },
+        { Core::Tag_GuiObject,        "GuiObject" },
         { Core::Tag_EditorInternal,   "EditorInternal" },
-        };
+    }};
     // clang-format on
 
 } // namespace

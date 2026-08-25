@@ -28,6 +28,8 @@
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 
+#include <array>
+
 namespace Core
 {
     namespace Gui
@@ -128,7 +130,7 @@ namespace Core
         void createPage_Appearance();
 
     protected:
-        Gui::VerticalLayout _layouts[Menu_COUNT];
+        std::array<Gui::VerticalLayout, Menu_COUNT> _layouts;
         Menu _currentMenu = static_cast<Menu>(0);
         int _defaultTreeNodeFlags = ImGuiTreeNodeFlags_SpanAvailWidth;
     };

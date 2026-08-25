@@ -27,6 +27,8 @@
 #include "ModuleInfo.h"
 #include "ShaderProgramMeta.h"
 
+#include <array>
+
 namespace Core
 {
     ShaderProgram::ShaderProgram(ShaderProgram&& other) noexcept
@@ -112,9 +114,10 @@ namespace Core
             clear();
 
             constexpr auto size = 512;
-            char infoLog[size];
-            glGetProgramInfoLog(_shaderProgramId, 512, nullptr, infoLog);
-            criticalThrowingLog("Shader program compilation error: {}"_f << infoLog);
+            std::array<char, size> infoLog{};
+            glGetProgramInfoLog(_shaderProgramId, static_cast<GLsizei>(infoLog.size()), nullptr,
+                                infoLog.data());
+            criticalThrowingLog("Shader program compilation error: {}"_f << infoLog.data());
         }
 
         infoLog("The shader program '{}' linked successfully."_f << shaderName);

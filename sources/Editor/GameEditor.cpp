@@ -51,6 +51,7 @@
 #include "Windows/NxECSBasedEditor.h"
 #include "Windows/WorldSettings.h"
 
+#include <array>
 #include <exception>
 #include <string>
 
@@ -227,11 +228,12 @@ namespace Core
             ImFontConfig config;
             config.MergeMode = true;
             config.PixelSnapH = true; // often helps with icons
-            static constexpr ImWchar iconRanges[]
+            static constexpr std::array<ImWchar, 3> iconRanges
                 = { ICON_MIN_FA, ICON_MAX_FA, 0 }; // Font Awesome range
             const ImFont* font = io.Fonts->AddFontFromFileTTF(
                 Config::Path::fontAwesome.generic_string().c_str(),
-                Config::defaultEditorFontSize * Config::defaultEmojiScale, &config, iconRanges);
+                Config::defaultEditorFontSize * Config::defaultEmojiScale, &config,
+                iconRanges.data());
             if (!font)
             {
                 errorLog("Emoji wasn't loaded by internal reasons. Font: "

@@ -253,7 +253,7 @@ namespace Core
     }
 
     BaseTextureGraphicsData::BaseTextureGraphicsData(BaseTextureGraphicsData&& other) noexcept
-        : BaseGraphicsData(std::move(other)),
+        : BaseGraphicsData(std::move(static_cast<BaseGraphicsData&>(other))),
           _texture(other._texture)
     {
         other._texture = 0;
@@ -419,7 +419,7 @@ namespace Core
     }
 
     SeparTextureGraphicsData::SeparTextureGraphicsData(SeparTextureGraphicsData&& other) noexcept
-        : BaseTextureGraphicsData(std::move(other)),
+        : BaseTextureGraphicsData(std::move(static_cast<BaseTextureGraphicsData&>(other))),
           _textureVbo(other._textureVbo)
     {
         other._textureVbo = 0;

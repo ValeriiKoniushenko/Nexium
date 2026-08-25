@@ -436,7 +436,7 @@ namespace Core
     }
 
     BaseComponent::BaseComponent(BaseComponent&& other) noexcept
-        : AbstractComponent(std::move(other)),
+        : AbstractComponent(std::move(static_cast<AbstractComponent&>(other))),
           _children(std::move(other._children)),
           _name(std::move(other._name)),
           _type(std::move(other._type)),

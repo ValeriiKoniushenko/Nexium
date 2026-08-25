@@ -29,6 +29,7 @@
 #include "spdlog/async_logger.h"
 
 #include <algorithm>
+#include <array>
 
 namespace Core
 {
@@ -135,10 +136,11 @@ namespace Core
         glGetShaderiv(shaderId, GL_COMPILE_STATUS, &success);
         if (!success)
         {
-            char infoLog[logSize]{};
-            glGetShaderInfoLog(shaderId, logSize, nullptr, infoLog);
+            std::array<char, logSize> infoLog{};
+            glGetShaderInfoLog(shaderId, static_cast<GLsizei>(infoLog.size()), nullptr,
+                               infoLog.data());
             std::string msg = shaderType + " shader compilation error: ";
-            msg += infoLog;
+            msg += infoLog.data();
             throw std::runtime_error(msg);
         }
     }
@@ -165,7 +167,7 @@ namespace Core
                                       { GL_PROGRAM_INPUT, _inputs },
                                       { GL_PROGRAM_OUTPUT, _outputs } };
 
-        constexpr GLenum props[] = { GL_NAME_LENGTH, GL_TYPE, GL_LOCATION };
+        constexpr std::array<GLenum, 3> props = { GL_NAME_LENGTH, GL_TYPE, GL_LOCATION };
 
         for (const auto& [interfaceType, output] : groups)
         {
@@ -174,9 +176,10 @@ namespace Core
 
             for (GLint i = 0; i < count; ++i)
             {
-                GLint values[3] = {};
-                glGetProgramResourceiv(shaderProgramId, interfaceType, i, 3, props, 3, nullptr,
-                                       values);
+                std::array<GLint, 3> values{};
+                glGetProgramResourceiv(shaderProgramId, interfaceType, i,
+                                       static_cast<GLsizei>(props.size()), props.data(),
+                                       static_cast<GLsizei>(values.size()), nullptr, values.data());
 
                 const GLint nameLen = values[0];
                 const GLenum type = values[1];

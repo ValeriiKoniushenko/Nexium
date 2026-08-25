@@ -949,6 +949,8 @@ namespace Core
             return;
         }
 
+        auto callbackLocal = std::forward<FuncT>(callback);
+
         std::unordered_set<ThisT*> visited;
         std::queue<ThisT*> q;
 
@@ -970,13 +972,13 @@ namespace Core
             {
                 if (auto target = dynamic_cast<TargetT*>(root))
                 {
-                    if constexpr (std::is_void_v<decltype(callback(target))>)
+                    if constexpr (std::is_void_v<decltype(callbackLocal(target))>)
                     {
-                        std::invoke(std::forward<decltype(callback)>(callback), target);
+                        std::invoke(callbackLocal, target);
                     }
                     else
                     {
-                        if (!std::invoke(std::forward<decltype(callback)>(callback), target))
+                        if (!std::invoke(callbackLocal, target))
                         {
                             return;
                         }
@@ -1002,6 +1004,8 @@ namespace Core
         {
             return;
         }
+
+        auto callbackLocal = std::forward<FuncT>(callback);
 
         std::unordered_set<ThisT*> visited;
         std::stack<ThisT*> s;
@@ -1030,13 +1034,13 @@ namespace Core
             {
                 if (auto target = dynamic_cast<TargetT*>(root))
                 {
-                    if constexpr (std::is_void_v<decltype(callback(target))>)
+                    if constexpr (std::is_void_v<decltype(callbackLocal(target))>)
                     {
-                        std::invoke(std::forward<decltype(callback)>(callback), target);
+                        std::invoke(callbackLocal, target);
                     }
                     else
                     {
-                        if (!std::invoke(std::forward<decltype(callback)>(callback), target))
+                        if (!std::invoke(callbackLocal, target))
                         {
                             return;
                         }

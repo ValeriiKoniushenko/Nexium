@@ -29,6 +29,8 @@
 #include "Misc/IconsFontAwesome.h"
 #include "Utils/Functions.h"
 
+#include <array>
+
 namespace Core
 {
     ECS_IMPL(TextEditorEWC);
@@ -133,15 +135,15 @@ namespace Core
         if (!file.is_open())
         {
             int const err = errno;
-            char err_buf[256];
+            std::array<char, 256> err_buf{};
 #if defined(_MSC_VER)
-            strerror_s(err_buf, sizeof(err_buf), err);
+            strerror_s(err_buf.data(), err_buf.size(), err);
 #else
-            std::strncpy(err_buf, std::strerror(err), sizeof(err_buf));
-            err_buf[sizeof(err_buf) - 1] = '\0';
+            std::strncpy(err_buf.data(), std::strerror(err), err_buf.size());
+            err_buf.back() = '\0';
 #endif
 
-            errorLog("File: {} - wasn't opened. Reason: {}"_f << _path << err_buf);
+            errorLog("File: {} - wasn't opened. Reason: {}"_f << _path << err_buf.data());
             return;
         }
 
