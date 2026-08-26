@@ -93,6 +93,8 @@ namespace Core
 
     void GameEditor::initialize()
     {
+        gameViewport.generate();
+
         setupImGuiStyles();
         setupShortcuts();
 
@@ -126,7 +128,7 @@ namespace Core
             {
                 if (gGameInstance->renderMode == GameInstance::RenderMode::Editor)
                 {
-                    gGameInstance->gameViewport.setRenderSize(static_cast<ISize2>(inner));
+                    GetEditor()->gameViewport.setRenderSize(static_cast<ISize2>(inner));
                     gGameInstance->updateViewport();
                 }
             });

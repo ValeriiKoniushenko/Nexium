@@ -160,6 +160,7 @@ namespace Core
         Editor::NotificationPopUpManager notifications;
         KeyboardInputManger keyboardInput;
         MouseInputManger mouseInput;
+        RenderTargetToTexture gameViewport;
 
     protected:
         void setupImGuiStyles();

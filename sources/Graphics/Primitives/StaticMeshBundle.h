@@ -57,8 +57,6 @@ namespace Core
         void setShader(ShaderProgram* sp, bool ignoreVertexAttribSetup = false);
         void setOutlineShader(ShaderProgram* sp, bool ignoreVertexAttribSetup = false);
 
-        void onTick(float delta) override;
-
         void clear() override;
 
         void clearMeshes();
@@ -111,6 +109,7 @@ namespace Core
         }
 
     protected:
+        void onTick(float delta) override;
         void onDraw(BaseCamera&) override;
         void onOutlineStatusChange(bool newStatus) override;
         void onAddChild(BaseComponent* newChild) override;

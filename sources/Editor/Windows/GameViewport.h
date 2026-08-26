@@ -38,9 +38,7 @@ namespace Core
 
     protected:
         void onInitialize() override;
-
         void onUpdate() override;
-
         void onDraw() override;
     };
 } // namespace Core

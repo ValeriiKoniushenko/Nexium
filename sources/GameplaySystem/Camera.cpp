@@ -119,7 +119,7 @@ namespace Core
     {
         if (gGameInstance->renderMode == GameInstance::RenderMode::Editor)
         {
-            return static_cast<FSize2>(gGameInstance->gameViewport.getRenderSize());
+            return static_cast<FSize2>(GetEditor()->gameViewport.getRenderSize());
         }
 
         return static_cast<FSize2>(GetWindow().getSize());

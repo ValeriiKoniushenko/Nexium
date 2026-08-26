@@ -66,6 +66,9 @@ namespace Core
 
         [[nodiscard]] spdlog::logger* getLogger() const override;
 
+        [[nodiscard]] virtual nlohmann::json serialize() const;
+        virtual void deserialize(RResourceStream<RJsonResourceStream>& data);
+
     protected:
         virtual void onLoadRequest() = 0;
         virtual void onUnloadRequest() = 0;
@@ -73,9 +76,6 @@ namespace Core
         /// @return true if you support hot reload. By default - false
         virtual bool onHotReload() { return false; }
         virtual void ioFieldsUpdate(DataStream& out) {}
-
-        [[nodiscard]] virtual nlohmann::json serialize() const;
-        virtual void deserialize(RResourceStream<RJsonResourceStream>& data);
 
     protected:
         std::filesystem::path _assetPath;

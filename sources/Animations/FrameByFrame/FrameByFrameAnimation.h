@@ -84,12 +84,13 @@ namespace Core::Animation
         [[nodiscard]] const StringAtom& getAtlasName() const noexcept { return _atlasName; }
         [[nodiscard]] const StringAtom& getTextureName() const noexcept { return _textureName; }
 
-        void onTick(float delta) override;
-
         [[nodiscard]] spdlog::logger* getLogger() const override
         {
             return Animations::getLogger();
         };
+
+    protected:
+        void onTick(float delta) override;
 
     private:
         FIELD();

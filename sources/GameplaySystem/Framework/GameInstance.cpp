@@ -113,9 +113,6 @@ namespace Core
         }
         initializeShaders();
 
-        //-------------------- MISC ---------------------
-        gameViewport.generate();
-
         //-------------------- ECS ---------------------
         GetGlobalComponentFactory()._createTypeToTagMap();
 
@@ -155,7 +152,7 @@ namespace Core
     void GameInstance::resetCamera()
     {
         world.currentCamera = nullptr;
-        gameViewport.clearCanvas();
+        gameEditor.gameViewport.clearCanvas();
     }
 
     void GameInstance::runMainLoop()
@@ -204,12 +201,12 @@ namespace Core
 
                 if (world.currentCamera)
                 {
-                    gameViewport.callMePreDraw();
+                    gameEditor.gameViewport.callMePreDraw();
                     glClear(clearBits);
 
                     gameScene.directDraw();
                     onTick(world.getTimeDelta());
-                    gameViewport.callMeAfterDraw();
+                    gameEditor.gameViewport.callMeAfterDraw();
                 }
             }
 
@@ -235,7 +232,7 @@ namespace Core
         }
         else
         {
-            UpdateGlViewport(static_cast<FSize2>(gameViewport.getRenderSize()));
+            UpdateGlViewport(static_cast<FSize2>(gameEditor.gameViewport.getRenderSize()));
         }
     }
 

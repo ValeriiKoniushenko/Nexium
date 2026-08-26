@@ -151,7 +151,7 @@ namespace Core
     {
         ECS_DECL(BaseMenuBarEWC, Core::BaseEWC);
 
-    public:
+    protected:
         void onInitialize() override;
 
     protected:

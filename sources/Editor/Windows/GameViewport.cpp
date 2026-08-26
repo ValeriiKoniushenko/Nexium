@@ -54,32 +54,34 @@ namespace Core
 
     void GameViewportEWC::onDraw()
     {
-        if (gGameInstance->renderMode == GameInstance::RenderMode::Editor)
+        if (gGameInstance->renderMode != GameInstance::RenderMode::Editor)
         {
-            const auto& r = gGameInstance->gameViewport;
-            const glm::vec2 renderSize = { static_cast<float>(r.getRenderSize().width),
-                                           static_cast<float>(r.getRenderSize().height) };
+            return;
+        }
 
-            glm::vec2 p = {};
+        const auto& r = GetEditor()->gameViewport;
+        const glm::vec2 renderSize = { static_cast<float>(r.getRenderSize().width),
+                                       static_cast<float>(r.getRenderSize().height) };
 
-            if (isFocused())
-            {
-                p = ImGui::GetCursorScreenPos();
-            }
+        glm::vec2 p = {};
 
-            ImGui::Image(r.getTextureId(), glm::vec2(renderSize.x, renderSize.y),
-                         glm::vec2(0.0f, 1.0f), glm::vec2(1.0f, 0.0f));
+        if (isFocused())
+        {
+            p = ImGui::GetCursorScreenPos();
+        }
 
-            if (isFocused())
-            {
-                ImDrawList* drawList = ImGui::GetWindowDrawList();
-                drawList->AddRect(p, glm::vec2(p.x + renderSize.x, p.y + renderSize.y),
-                                  IM_COL32(255, 255, 0, 255), // Yellow
-                                  0.0f,                       // Rounding
-                                  0,                          // Flags
-                                  2.0f                        // Border thickness
-                );
-            }
+        ImGui::Image(r.getTextureId(), glm::vec2(renderSize.x, renderSize.y), glm::vec2(0.0f, 1.0f),
+                     glm::vec2(1.0f, 0.0f));
+
+        if (isFocused())
+        {
+            ImDrawList* drawList = ImGui::GetWindowDrawList();
+            drawList->AddRect(p, glm::vec2(p.x + renderSize.x, p.y + renderSize.y),
+                              IM_COL32(255, 255, 0, 255), // Yellow
+                              0.0f,                       // Rounding
+                              0,                          // Flags
+                              2.0f                        // Border thickness
+            );
         }
     }
 } // namespace Core

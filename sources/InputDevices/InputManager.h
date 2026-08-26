@@ -182,7 +182,7 @@ namespace Core
 
     class MouseInputManger : public InputManger<MouseInputAction>
     {
-    protected:
+    public:
         [[nodiscard]] StringAtom getCacheHash() const override { return "MouseInputManger"_atom; }
     };
 } // namespace Core

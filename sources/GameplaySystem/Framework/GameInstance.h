@@ -69,7 +69,6 @@ namespace Core
         void resetCamera();
         RenderMode renderMode = RenderMode::Editor;
         GameEditor gameEditor;
-        RenderTargetToTexture gameViewport;
         ObjectSelectorManager objectSelectorManager;
         Window* window = nullptr;
 

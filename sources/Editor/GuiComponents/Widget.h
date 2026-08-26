@@ -111,9 +111,8 @@ namespace Core::Gui
         /// If you want to draw your component - call the function BaseComponent::tick
         void unhandledDraw();
 
-        void onTick(float delta) override;
-
     protected:
+        void onTick(float delta) override;
         virtual void onDraw() = 0;
 
         bool addChildValidator(BaseComponent* newChild) override;

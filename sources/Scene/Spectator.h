@@ -47,9 +47,9 @@ namespace Core
 
     public:
         [[nodiscard]] StringAtom getCacheHash() const override;
-        void onTick(float delta) override;
 
     protected:
+        void onTick(float delta) override;
         DelegateSubscriberPoolGuard _subscriptionPool;
 
         void onInitialize() override;
