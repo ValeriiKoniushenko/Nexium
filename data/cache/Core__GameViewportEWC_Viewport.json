@@ -1,12 +1,12 @@
 {
     "_children": null,
     "_innerPosition": [
-        247.0,
+        373.0,
         64.0
     ],
     "_innerSize": {
-        "height": 698.0,
-        "width": 977.0
+        "height": 722.0,
+        "width": 968.0
     },
     "_isEnabled": true,
     "_isFitContent": false,
@@ -17,16 +17,16 @@
     "_name": " Viewport",
     "_noTick": false,
     "_oldSize": {
-        "height": 738.0,
-        "width": 993.0
+        "height": 762.0,
+        "width": 984.0
     },
     "_position": [
-        239.0,
+        365.0,
         32.0
     ],
     "_size": {
-        "height": 738.0,
-        "width": 993.0
+        "height": 762.0,
+        "width": 984.0
     },
     "_type": "Core::GameViewportEWC"
 }

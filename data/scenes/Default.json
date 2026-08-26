@@ -88,14 +88,14 @@
                     0.0
                 ],
                 "_scale": [
-                    1.0,
+                    2.0,
                     1.0,
                     1.0
                 ]
             },
             "typeSpecificData": {
                 "_animationEnabled": true,
-                "_animationFPS": 70.5,
+                "_animationFPS": 18.25,
                 "_animationName": "New animation",
                 "_atlasName": "santa_walk",
                 "_blendingEnabled": true,
@@ -119,8 +119,8 @@
                     1434.81787109375
                 ],
                 "_rotation": [
-                    0.0,
-                    0.0,
+                    8.720703125,
+                    1.8984375,
                     0.0
                 ],
                 "_scale": [
