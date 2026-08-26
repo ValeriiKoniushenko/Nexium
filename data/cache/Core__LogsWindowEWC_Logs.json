@@ -2,11 +2,11 @@
     "_children": null,
     "_innerPosition": [
         16.0,
-        804.0
+        828.0
     ],
     "_innerSize": {
         "height": 199.0,
-        "width": 1208.0
+        "width": 1888.0
     },
     "_isEnabled": true,
     "_isFitContent": false,
@@ -45,15 +45,15 @@
     "_noTick": false,
     "_oldSize": {
         "height": 239.0,
-        "width": 1224.0
+        "width": 1904.0
     },
     "_position": [
         8.0,
-        772.0
+        796.0
     ],
     "_size": {
         "height": 239.0,
-        "width": 1224.0
+        "width": 1904.0
     },
     "_type": "Core::LogsWindowEWC"
 }
