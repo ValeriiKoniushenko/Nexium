@@ -34,6 +34,23 @@ using namespace Core;
 namespace
 {
 
+    std::vector<StringAtom> collectNames(const BaseComponent& root, bool depthFirst = false)
+    {
+        std::vector<StringAtom> names;
+        const auto visit = [&names](const BaseComponent* component)
+        { names.push_back(component->getComponentName()); };
+
+        if (depthFirst)
+        {
+            root.forEachDFS(visit);
+        }
+        else
+        {
+            root.forEach(visit);
+        }
+        return names;
+    }
+
     class ECSTreeTests : public ::testing::Test
     {
     protected:
@@ -500,56 +517,36 @@ TEST_F(ECSTreeTests, ComplexDeSerealization)
 
 TEST_F(ECSTreeTests, BFSIteratorTest)
 {
-    StringAtom trunk;
+    ASSERT_EQ((std::vector<StringAtom>{ "Top1", "Top2", "Middle1", "Middle1", "Middle2", "Bottom1",
+                                        "SuperBottom1" }),
+              collectNames(root));
 
-    root.forEach([&](BaseComponent* c) { trunk.pushBack(c->getComponentName()); });
-
-    root.forEach([&](const BaseComponent* c) { trunk.pushBack(c->getComponentName()); });
-
+    std::vector<StringAtom> stopped;
     root.forEach(
-        [&](const BaseComponent* c)
+        [&stopped](const BaseComponent* component)
         {
-            trunk.pushBack(c->getComponentName());
-            return c->getComponentName() != "Middle2";
+            stopped.push_back(component->getComponentName());
+            return component->getComponentName() != "Middle2";
         });
-
-    const auto& croot = static_cast<const decltype(root)&>(root);
-
-    croot.forEach([&](const BaseComponent* c) { trunk.pushBack(c->getComponentName()); });
-
-    croot.forEach(
-        [&](const BaseComponent* c)
-        {
-            trunk.pushBack(c->getComponentName());
-            return c->getComponentName() != "Middle2";
-        });
+    ASSERT_EQ((std::vector<StringAtom>{ "Top1", "Top2", "Middle1", "Middle1", "Middle2" }),
+              stopped);
 }
 
 TEST_F(ECSTreeTests, DFSIteratorTest)
 {
-    StringAtom trunk;
+    ASSERT_EQ((std::vector<StringAtom>{ "Top1", "Middle1", "Top2", "Middle1", "Middle2", "Bottom1",
+                                        "SuperBottom1" }),
+              collectNames(root, true));
 
-    root.forEachDFS([&](BaseComponent* c) { trunk.pushBack(c->getComponentName()); });
-
-    root.forEachDFS([&](const BaseComponent* c) { trunk.pushBack(c->getComponentName()); });
-
+    std::vector<StringAtom> stopped;
     root.forEachDFS(
-        [&](const BaseComponent* c)
+        [&stopped](const BaseComponent* component)
         {
-            trunk.pushBack(c->getComponentName());
-            return c->getComponentName() != "Middle2";
+            stopped.push_back(component->getComponentName());
+            return component->getComponentName() != "Middle2";
         });
-
-    const auto& croot = static_cast<const decltype(root)&>(root);
-
-    croot.forEachDFS([&](const BaseComponent* c) { trunk.pushBack(c->getComponentName()); });
-
-    croot.forEachDFS(
-        [&](const BaseComponent* c)
-        {
-            trunk.pushBack(c->getComponentName());
-            return c->getComponentName() != "Middle2";
-        });
+    ASSERT_EQ((std::vector<StringAtom>{ "Top1", "Middle1", "Top2", "Middle1", "Middle2" }),
+              stopped);
 }
 
 TEST_F(ECSTreeTests, DeepTreeCopy)
@@ -654,6 +651,37 @@ TEST(ECSBaseTests, FindFirstChildOfByTypeAndName)
     ASSERT_EQ(nullptr, root.findFirstChildOf<DummyComponent>("DoesNotExist"));
 }
 
+TEST(ECSBaseTests, TraversalAndLookupDoNotIncludeTheStartingComponent)
+{
+    DummyComponent root("Root");
+    auto* child = root.addChildComponent<DummyComponent>("Child");
+    child->addChildComponent<HardConstructorComponent>(7, "GrandChild", "payload");
+
+    ASSERT_EQ(nullptr, root.findFirstChildOf<DummyComponent>("Root"));
+    ASSERT_EQ(child, root.findFirstChildOf<DummyComponent>());
+    ASSERT_EQ(nullptr, root.findFirstChildOf<HardConstructorComponent>("Missing"));
+    ASSERT_EQ(child->getChildAt(0).get(),
+              root.findFirstChildOf<HardConstructorComponent>("GrandChild"));
+}
+
+TEST(ECSBaseTests, ParentQueriesDistinguishDirectAndDistantAncestors)
+{
+    DummyComponent root("Root");
+    auto* child = root.addChildComponent<DummyComponent>("Child");
+    auto* grandChild = child->addChildComponent<HardConstructorComponent>(1, "GrandChild", "x");
+
+    ASSERT_EQ(&root, child->getOwner());
+    ASSERT_EQ(&root, grandChild->getOwner());
+    ASSERT_EQ(child, grandChild->getParent());
+    ASSERT_EQ(child, grandChild->getParentAs<DummyComponent>());
+    ASSERT_EQ(nullptr, grandChild->getParentAs<HardConstructorComponent>());
+    ASSERT_TRUE(grandChild->isDescendantOf(&root));
+    ASSERT_TRUE(grandChild->isDescendantOf(child));
+    ASSERT_FALSE(grandChild->isDescendantOf(grandChild));
+    ASSERT_TRUE(grandChild->IsSelfOrDescendantOf(grandChild));
+    ASSERT_FALSE(root.isDescendantOf(grandChild));
+}
+
 TEST(ECSBaseTests, AddUniqueTypeChildComponentReturnsSameInstance)
 {
     DummyComponent root("Root");
@@ -665,6 +693,19 @@ TEST(ECSBaseTests, AddUniqueTypeChildComponentReturnsSameInstance)
     ASSERT_NE(nullptr, second);
     ASSERT_EQ(first, second);
     ASSERT_EQ(1, root.getChildrenCount());
+}
+
+TEST(ECSBaseTests, UniqueTypeLookupUsesComponentInheritance)
+{
+    Sedan root("Root");
+    auto* engine = root.addUniqueTypeChildComponent<TurboEngine>("Engine");
+    auto* sameBase = root.addUniqueTypeChildComponent<Engine>("OtherName");
+    auto* samePart = root.addUniqueTypeChildComponent<BasePart>("Part");
+
+    ASSERT_EQ(engine, sameBase);
+    ASSERT_EQ(engine, samePart);
+    ASSERT_EQ(1u, root.getChildrenCount());
+    ASSERT_EQ("Engine", engine->getComponentName());
 }
 
 TEST(ECSBaseTests, GetOrAddChildComponentReturnsExisting)
@@ -708,6 +749,48 @@ TEST(ECSBaseTests, DetachChildRemovesFromChildrenList)
     root.detachChild(child);
     ASSERT_EQ(0, root.getChildrenCount());
     ASSERT_FALSE(root.hasChildren());
+    ASSERT_EQ(nullptr, child->getParent());
+}
+
+TEST(ECSBaseTests, RemoveChildDeepRemovesNestedNodeAndReportsWhetherItChangedTree)
+{
+    DummyComponent root("Root");
+    auto* branch = root.addChildComponent<DummyComponent>("Branch");
+    auto* target = branch->addChildComponent<DummyComponent>("Target");
+    target->addChildComponent<DummyComponent>("Nested");
+
+    ASSERT_TRUE(root.removeChildDeep(target));
+    ASSERT_EQ(0u, branch->getChildrenCount());
+    ASSERT_EQ(nullptr, target->getParent());
+    ASSERT_FALSE(root.removeChildDeep(target));
+    ASSERT_FALSE(root.removeChildDeep(nullptr));
+}
+
+TEST(ECSBaseTests, RemoveChildIfClearsParentLinksAndHandlesEmptyPredicate)
+{
+    DummyComponent root("Root");
+    auto* keep = root.addChildComponent<DummyComponent>("Keep");
+    auto* remove = root.addChildComponent<DummyComponent>("Remove");
+
+    ASSERT_FALSE(root.removeChildIf({}));
+    ASSERT_TRUE(root.removeChildIf([](const BaseComponent* component)
+                                   { return component->getComponentName() == "Remove"; }));
+    ASSERT_EQ(keep, root.getChildAt(0).get());
+    ASSERT_EQ(nullptr, remove->getParent());
+    ASSERT_FALSE(root.removeChildIf([](const BaseComponent* component)
+                                    { return component->getComponentName() == "Absent"; }));
+}
+
+TEST(ECSBaseTests, ClearOrphansExistingChildren)
+{
+    DummyComponent root("Root");
+    auto* child = root.addChildComponent<DummyComponent>("Child");
+
+    root.clear();
+
+    ASSERT_FALSE(root.hasChildren());
+    ASSERT_EQ(nullptr, child->getParent());
+    ASSERT_TRUE(root.getComponentType() == DummyComponent::componentType);
 }
 
 TEST(ECSBaseTests, RemoveChildOfRemovesAllMatchingTypes)
