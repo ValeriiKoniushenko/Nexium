@@ -52,13 +52,15 @@ jobs:
             git fetch origin "$GITHUB_SHA" develop
             git checkout -f "$GITHUB_SHA"
             git submodule sync --recursive
-            git submodule update --init --recursive --depth=1
+            git submodule update --init --recursive --remote --force
           else
             echo "No cache found, cloning fresh"
-            git clone --recurse-submodules --shallow-submodules "$REPO_URL" /repo-cache
+            git clone "$REPO_URL" /repo-cache
             cd /repo-cache
             git fetch --depth=1 origin "$GITHUB_SHA"
             git checkout -f "$GITHUB_SHA"
+            git submodule sync --recursive
+            git submodule update --init --recursive --remote --force
           fi
 
           mkdir -p "$GITHUB_WORKSPACE"
@@ -134,13 +136,15 @@ jobs:
             git fetch origin "$GITHUB_SHA" develop
             git checkout -f "$GITHUB_SHA"
             git submodule sync --recursive
-            git submodule update --init --recursive --depth=1
+            git submodule update --init --recursive --remote --force
           else
             echo "No cache found, cloning fresh"
-            git clone --recurse-submodules --shallow-submodules "$REPO_URL" /repo-cache
+            git clone "$REPO_URL" /repo-cache
             cd /repo-cache
             git fetch --depth=1 origin "$GITHUB_SHA"
             git checkout -f "$GITHUB_SHA"
+            git submodule sync --recursive
+            git submodule update --init --recursive --remote --force
           fi
           mkdir -p "$GITHUB_WORKSPACE"
           cp -a /repo-cache/. "$GITHUB_WORKSPACE"/
@@ -208,13 +212,15 @@ jobs:
             git fetch origin "$GITHUB_SHA" develop
             git checkout -f "$GITHUB_SHA"
             git submodule sync --recursive
-            git submodule update --init --recursive --depth=1
+            git submodule update --init --recursive --remote --force
           else
             echo "No cache found, cloning fresh"
-            git clone --recurse-submodules --shallow-submodules "$REPO_URL" /repo-cache
+            git clone "$REPO_URL" /repo-cache
             cd /repo-cache
             git fetch --depth=1 origin "$GITHUB_SHA"
             git checkout -f "$GITHUB_SHA"
+            git submodule sync --recursive
+            git submodule update --init --recursive --remote --force
           fi
           mkdir -p "$GITHUB_WORKSPACE"
           cp -a /repo-cache/. "$GITHUB_WORKSPACE"/
@@ -250,13 +256,15 @@ jobs:
             git fetch --depth=1 origin "$GITHUB_SHA"
             git checkout -f "$GITHUB_SHA"
             git submodule sync --recursive
-            git submodule update --init --recursive --depth=1
+            git submodule update --init --recursive --remote --force
           else
             echo "No cache found, cloning fresh"
-            git clone --recurse-submodules --shallow-submodules "$REPO_URL" /repo-cache
+            git clone "$REPO_URL" /repo-cache
             cd /repo-cache
             git fetch --depth=1 origin "$GITHUB_SHA"
             git checkout -f "$GITHUB_SHA"
+            git submodule sync --recursive
+            git submodule update --init --recursive --remote --force
           fi
 
           mkdir -p "$GITHUB_WORKSPACE"
