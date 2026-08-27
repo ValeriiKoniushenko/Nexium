@@ -82,7 +82,9 @@ jobs:
         run: |
           REPO_URL="https://oauth2:${GITEATOKEN}@gitea.vakon.dev/${GITHUB_REPOSITORY}.git"
 
-          rm -rf "$GITHUB_WORKSPACE"
+          # The runner keeps this directory mounted as its working directory.
+          # Clear its contents without attempting to remove the mount point.
+          find "$GITHUB_WORKSPACE" -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +
           cd /repo-cache
           git remote set-url origin "$REPO_URL"
           git fetch --prune origin "$GITHUB_SHA" develop
@@ -93,7 +95,6 @@ jobs:
           git submodule update --init --recursive --remote --force
           git submodule foreach --recursive 'git reset --hard && git clean -ffdx'
 
-          mkdir -p "$GITHUB_WORKSPACE"
           cp -a /repo-cache/. "$GITHUB_WORKSPACE"/
           cd "$GITHUB_WORKSPACE"
           cmake -S . -B build \
@@ -158,7 +159,9 @@ jobs:
         run: |
           REPO_URL="https://oauth2:${GITEATOKEN}@gitea.vakon.dev/${GITHUB_REPOSITORY}.git"
 
-          rm -rf "$GITHUB_WORKSPACE"
+          # The runner keeps this directory mounted as its working directory.
+          # Clear its contents without attempting to remove the mount point.
+          find "$GITHUB_WORKSPACE" -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +
           cd /repo-cache
           git remote set-url origin "$REPO_URL"
           git fetch --prune origin "$GITHUB_SHA" develop
@@ -169,7 +172,6 @@ jobs:
           git submodule update --init --recursive --remote --force
           git submodule foreach --recursive 'git reset --hard && git clean -ffdx'
 
-          mkdir -p "$GITHUB_WORKSPACE"
           cp -a /repo-cache/. "$GITHUB_WORKSPACE"/
           cd "$GITHUB_WORKSPACE"
           cmake -S . -B build \
