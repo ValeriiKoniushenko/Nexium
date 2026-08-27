@@ -32,8 +32,8 @@
 #include "Graphics/ShaderManager.h"
 #include "Graphics/Window.h"
 #include "ImGui/imgui.h"
-#include "InputDevices/Internal/InputSystem.h"
 #include "ImGui/imgui_internal.h"
+#include "InputDevices/Internal/InputSystem.h"
 #include "Misc/Configs.h"
 #include "Misc/FPSCounter.h"
 #include "ModuleInfo.h"
@@ -196,6 +196,12 @@ namespace Core
         {
             clock.start();
             Window::pollEvent();
+
+            const auto* viewport = gameEditor.getWindow<GameViewportEWC>();
+            const bool gameplayInputActive
+                = renderMode == RenderMode::GameOnly || (viewport && viewport->isFocused());
+            Internal::InputSystem::Instance().setActiveContext(
+                gameplayInputActive ? InputContext::Gameplay : InputContext::Editor);
             Internal::InputSystem::Instance().processEvents();
 
             if (renderMode == RenderMode::GameOnly)

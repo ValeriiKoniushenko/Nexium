@@ -27,7 +27,6 @@
 #include "GameplaySystem/Framework/InputController.h"
 #include "Graphics/Window.h"
 
-#include <algorithm>
 #include <ranges>
 
 namespace Core::Internal
@@ -103,45 +102,60 @@ namespace Core::Internal
 
     void InputSystem::registerController(InputController* controller)
     {
-        if (!controller)
+        if (!controller || !controller->isEnabled())
         {
             return;
         }
 
-        const auto alreadyRegistered
-            = std::ranges::any_of(_controllers,
-                                  [controller](const auto& weak)
-                                  {
-                                      const auto loaded = weak.tryLoad();
-                                      return loaded && loaded.get() == controller;
-                                  });
-        if (!alreadyRegistered)
+        auto& contextController = controllerFor(controller->getInputContext());
+        if (!contextController)
         {
-            _controllers.emplace_back(controller);
-            if (controller->isInputActive())
-                activateController(controller);
+            activateController(controller);
         }
     }
 
     void InputSystem::activateController(InputController* controller)
     {
         if (!controller)
+        {
             return;
+        }
 
-        controller->_activationOrder = ++_nextActivationOrder;
+        auto& contextController = controllerFor(controller->getInputContext());
+        if (auto active = contextController.tryLoad(); active && active.get() != controller)
+        {
+            active->releaseAllActions();
+        }
+
+        contextController = WeakPtr<InputController>(controller);
+    }
+
+    void InputSystem::deactivateController(InputController* controller)
+    {
+        auto& contextController = controllerFor(controller->getInputContext());
+        auto active = contextController.tryLoad();
+        if (!active || active.get() != controller)
+        {
+            return;
+        }
+
+        active->releaseAllActions();
+        contextController = {};
     }
 
     void InputSystem::processEvents()
     {
-        removeExpiredControllers();
-
-        for (const auto& weak : _controllers)
+        auto controller = selectController();
+        auto previouslyRouted = _routedController.tryLoad();
+        if (previouslyRouted && (!controller || previouslyRouted.get() != controller.get()))
         {
-            if (auto controller = weak.tryLoad())
-            {
-                controller->beginInputFrame();
-                controller->refreshActiveState();
-            }
+            previouslyRouted->releaseAllActions();
+        }
+
+        _routedController = controller ? WeakPtr<InputController>(controller) : WeakPtr<InputController>{};
+        if (controller)
+        {
+            controller->beginInputFrame();
         }
 
         while (!_events.empty())
@@ -164,76 +178,34 @@ namespace Core::Internal
 
         if (event.state == Keyboard::KeyState::Released)
         {
-            // A chord ends when either its trigger or any required key is released.
-            for (const auto& weak : _controllers)
-            {
-                if (auto controller = weak.tryLoad())
-                {
-                    (void)controller->handleRoutedEvent(routedEvent);
-                }
-            }
             std::erase(_pressedKeys, event.key);
-            _keyOwners.erase(event.key);
-            return;
         }
 
-        if (event.state == Keyboard::KeyState::Repeated)
+        if (auto controller = _routedController.tryLoad();
+            controller && controller->isEnabled())
         {
-            if (const auto ownerIt = _keyOwners.find(event.key); ownerIt != _keyOwners.end())
-            {
-                if (auto owner = ownerIt->second.tryLoad())
-                {
-                    (void)owner->handleRoutedEvent(routedEvent);
-                }
-            }
-            return;
-        }
-
-        std::vector<IntrusivePtr<InputController>> activeControllers;
-        activeControllers.reserve(_controllers.size());
-        for (const auto& weak : _controllers)
-        {
-            if (auto controller = weak.tryLoad(); controller && controller->isInputActive())
-            {
-                activeControllers.emplace_back(controller.get());
-            }
-        }
-
-        std::ranges::stable_sort(
-            activeControllers,
-            [&routedEvent](const auto& lhs, const auto& rhs)
-            {
-                const bool lhsBlocks
-                    = lhs->getBlockingPolicy() == InputBlockingPolicy::BlockKeyboard;
-                const bool rhsBlocks
-                    = rhs->getBlockingPolicy() == InputBlockingPolicy::BlockKeyboard;
-                if (lhsBlocks != rhsBlocks)
-                    return lhsBlocks;
-                if (lhsBlocks)
-                    return lhs->_activationOrder > rhs->_activationOrder;
-
-                const auto lhsSpecificity = lhs->getMatchingSpecificity(routedEvent);
-                const auto rhsSpecificity = rhs->getMatchingSpecificity(routedEvent);
-                if (lhsSpecificity.has_value() != rhsSpecificity.has_value())
-                    return lhsSpecificity.has_value();
-                if (lhsSpecificity && *lhsSpecificity != *rhsSpecificity)
-                    return *lhsSpecificity > *rhsSpecificity;
-                return lhs->_activationOrder > rhs->_activationOrder;
-            });
-
-        for (auto& controller : activeControllers)
-        {
-            if (controller->handleRoutedEvent(routedEvent) == InputResult::Consumed)
-            {
-                _keyOwners.insert_or_assign(event.key, WeakPtr<InputController>(controller));
-                return;
-            }
+            controller->handleRoutedEvent(routedEvent);
         }
     }
 
-    void InputSystem::removeExpiredControllers()
+    WeakPtr<InputController>& InputSystem::controllerFor(InputContext context)
     {
-        std::erase_if(_controllers, [](const auto& weak) { return !weak; });
-        std::erase_if(_keyOwners, [](const auto& pair) { return !pair.second; });
+        return context == InputContext::Editor ? _editorController : _gameplayController;
+    }
+
+    const WeakPtr<InputController>& InputSystem::controllerFor(InputContext context) const
+    {
+        return context == InputContext::Editor ? _editorController : _gameplayController;
+    }
+
+    IntrusivePtr<InputController> InputSystem::selectController() const
+    {
+        if (auto controller = controllerFor(_activeContext).tryLoad();
+            controller && controller->isEnabled())
+        {
+            return IntrusivePtr<InputController>(controller.get());
+        }
+
+        return nullptr;
     }
 } // namespace Core::Internal

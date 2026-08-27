@@ -33,6 +33,12 @@
 
 namespace Core
 {
+    enum class InputContext : std::uint8_t
+    {
+        Editor,
+        Gameplay
+    };
+
     enum class InputModifier : std::uint8_t
     {
         None = 0,
@@ -68,23 +74,11 @@ namespace Core
         }
     };
 
-    enum class InputResult : std::uint8_t
-    {
-        Ignored,
-        Consumed
-    };
-
     enum class InputActionTrigger : std::uint8_t
     {
         WhileHeld,
         OnPress,
         OnRelease
-    };
-
-    enum class InputBlockingPolicy : std::uint8_t
-    {
-        Passthrough,
-        BlockKeyboard
     };
 
     struct KeyInputEvent
