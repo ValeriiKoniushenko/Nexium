@@ -33,7 +33,7 @@ namespace Core
 {
     // !!! Don't forget to update TagInfo kTagTable !!!
 
-    enum Tag : std::uint32_t
+    enum Tag : std::uint32_t // NOLINT(*-use-enum-class)
     {
         Tag_None = 0,
         Tag_WorldObject = 1 << 0,
