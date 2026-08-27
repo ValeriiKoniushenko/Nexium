@@ -126,7 +126,7 @@ namespace
         void writeEcsAsset(const fs::path& path, std::string_view name,
                            std::string_view tags = "WorldObject")
         {
-            DummyComponent component;
+            const DummyComponent component;
             nlohmann::json json = {
                 { ECSAsset::StreamData::type, DummyComponent::componentType },
                 { ECSAsset::StreamData::name, name },
@@ -170,7 +170,7 @@ namespace
 
 TEST_F(AssetsManagerTest, ConstructorRegistersDataPathAndCreatesDefaultAtlas)
 {
-    TestAssetsManager manager;
+    const TestAssetsManager manager;
 
     ASSERT_TRUE(manager.getRegisteredPaths().contains(Config::Path::data));
     ASSERT_EQ(1u, manager.getAtlasesCount());
