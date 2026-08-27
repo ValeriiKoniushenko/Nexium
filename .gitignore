@@ -31,3 +31,4 @@ __pycache__
 /data/config/**/*.json
 
 gl-code-quality-report.json
+valgrind.out
