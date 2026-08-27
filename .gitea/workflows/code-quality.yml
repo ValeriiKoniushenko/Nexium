@@ -64,15 +64,43 @@ jobs:
           mkdir -p "$GITHUB_WORKSPACE"
           cp -a /repo-cache/. "$GITHUB_WORKSPACE"/
 
-      - name: Configure
+      - name: Configure and build
+        id: build
+        continue-on-error: true
         run: |
           cmake -S . -B build \
             -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
             -DCMAKE_C_COMPILER_LAUNCHER=ccache \
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
 
-      - name: Build
-        run: cmake --build build -j$(nproc)
+          cmake --build build -j$(nproc)
+
+      - name: Clean rebuild after failed build
+        if: steps.build.outcome == 'failure'
+        env:
+          GITEATOKEN: ${{ secrets.GITEATOKEN }}
+        run: |
+          REPO_URL="https://oauth2:${GITEATOKEN}@gitea.vakon.dev/${GITHUB_REPOSITORY}.git"
+
+          rm -rf "$GITHUB_WORKSPACE"
+          cd /repo-cache
+          git remote set-url origin "$REPO_URL"
+          git fetch --prune origin "$GITHUB_SHA" develop
+          git checkout -f "$GITHUB_SHA"
+          git reset --hard "$GITHUB_SHA"
+          git clean -ffdx
+          git submodule sync --recursive
+          git submodule update --init --recursive --remote --force
+          git submodule foreach --recursive 'git reset --hard && git clean -ffdx'
+
+          mkdir -p "$GITHUB_WORKSPACE"
+          cp -a /repo-cache/. "$GITHUB_WORKSPACE"/
+          cd "$GITHUB_WORKSPACE"
+          cmake -S . -B build \
+            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+            -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+          cmake --build build -j$(nproc)
 
       - name: Save build cache
         run: rsync -a --delete build/ /build-cache/
@@ -114,14 +142,41 @@ jobs:
           fi
           mkdir -p "$GITHUB_WORKSPACE"
           cp -a /repo-cache/. "$GITHUB_WORKSPACE"/
-      - name: Configure
+      - name: Configure and build
+        id: build
+        continue-on-error: true
         run: |
           cmake -S . -B build \
             -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
             -DCMAKE_C_COMPILER_LAUNCHER=ccache \
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-      - name: Build
-        run: cmake --build build -j$(nproc)
+          cmake --build build -j$(nproc)
+      - name: Clean rebuild after failed build
+        if: steps.build.outcome == 'failure'
+        env:
+          GITEATOKEN: ${{ secrets.GITEATOKEN }}
+        run: |
+          REPO_URL="https://oauth2:${GITEATOKEN}@gitea.vakon.dev/${GITHUB_REPOSITORY}.git"
+
+          rm -rf "$GITHUB_WORKSPACE"
+          cd /repo-cache
+          git remote set-url origin "$REPO_URL"
+          git fetch --prune origin "$GITHUB_SHA" develop
+          git checkout -f "$GITHUB_SHA"
+          git reset --hard "$GITHUB_SHA"
+          git clean -ffdx
+          git submodule sync --recursive
+          git submodule update --init --recursive --remote --force
+          git submodule foreach --recursive 'git reset --hard && git clean -ffdx'
+
+          mkdir -p "$GITHUB_WORKSPACE"
+          cp -a /repo-cache/. "$GITHUB_WORKSPACE"/
+          cd "$GITHUB_WORKSPACE"
+          cmake -S . -B build \
+            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+            -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+          cmake --build build -j$(nproc)
       - name: Save build cache
         run: |
           mkdir -p /build-cache
