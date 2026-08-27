@@ -54,9 +54,21 @@ namespace Core
 
     void BaseGraphicsData::privateClear()
     {
-        glDeleteBuffers(1, &_ebo);
-        glDeleteBuffers(1, &_vbo);
-        glDeleteVertexArrays(1, &_vao);
+        if (_ebo != 0)
+        {
+            glDeleteBuffers(1, &_ebo);
+            _ebo = 0;
+        }
+        if (_vbo != 0)
+        {
+            glDeleteBuffers(1, &_vbo);
+            _vbo = 0;
+        }
+        if (_vao != 0)
+        {
+            glDeleteVertexArrays(1, &_vao);
+            _vao = 0;
+        }
         _shader = nullptr;
         _triangleCount = 0;
     }
@@ -329,7 +341,11 @@ namespace Core
 
     void BaseTextureGraphicsData::privateClear()
     {
-        glDeleteTextures(1, &_texture);
+        if (_texture != 0)
+        {
+            glDeleteTextures(1, &_texture);
+            _texture = 0;
+        }
     }
 
     // ╔════════════════════════════════════════════════════════════════════════════╗
@@ -477,8 +493,11 @@ namespace Core
 
     void SeparTextureGraphicsData::privateClear()
     {
-        glDeleteBuffers(1, &_textureVbo);
-        _textureVbo = 0;
+        if (_textureVbo != 0)
+        {
+            glDeleteBuffers(1, &_textureVbo);
+            _textureVbo = 0;
+        }
     }
 
     // ╔════════════════════════════╗

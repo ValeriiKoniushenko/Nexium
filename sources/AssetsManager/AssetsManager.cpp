@@ -35,6 +35,7 @@
 #include <algorithm>
 #include <array>
 #include <memory>
+#include <unordered_set>
 
 #ifdef _WIN32
 // clang-format off
@@ -50,56 +51,45 @@ namespace fs = std::filesystem;
 
 namespace
 {
+    [[nodiscard]] StringAtom ToLogicPath(const fs::path& path)
+    {
+        auto normalized = path.lexically_normal();
+        if (normalized.is_absolute())
+        {
+            normalized
+                = normalized.lexically_relative(Config::Path::projectAbsPath.lexically_normal());
+        }
+
+        if (normalized.empty())
+        {
+            return {};
+        }
+
+        return StringAtom::Intern(normalized.generic_string());
+    }
+
     template<class T>
-    T getAssetOf(const StringAtom& logicPath,
+    T getAssetOf(Core::AssetsManager& manager, const StringAtom& logicPath,
                  std::unordered_map<StringAtom, AssetRef<BaseAsset>>& lookupContainer)
     {
-        if (!GetAssetsManager()->validatePath(logicPath, T::AssetT::fileExtension))
+        if (!manager.validatePath(logicPath, T::AssetT::fileExtension))
         {
             return T();
         }
 
-        if (!lookupContainer.contains(logicPath))
+        auto it = lookupContainer.find(logicPath);
+        if (it == lookupContainer.end())
         {
-            const fs::path path = logicPath.data();
-            for (auto&& registered : GetAssetsManager()->getRegisteredPaths())
-            {
-                try
-                {
-                    fs::path normalized;
-                    if (registered.is_relative())
-                    {
-                        normalized = Config::Path::projectAbsPath;
-                    }
-                    normalized /= registered;
-
-                    const auto realRegistered = fs::absolute(normalized).parent_path();
-                    const auto relative = fs::relative(path, realRegistered);
-                    if (lookupContainer.contains(StringAtom(relative.generic_string())))
-                    {
-                        return T(reinterpret_cast<T::AssetT&>(
-                            *lookupContainer.at(StringAtom(relative.generic_string()))));
-                    }
-                }
-                catch (const fs::filesystem_error& e)
-                {
-                    GetAssetsManager()->errorLog(
-                        "Can't resolve a path due to internal error, of was met junction symlink: {}"_f
-                        << e.what());
-                }
-                catch (...)
-                {
-                    GetAssetsManager()->errorLog(
-                        "Can't resolve a path due to internal error, of was met junction symlink");
-                }
-            }
-
-            GetAssetsManager()->criticalLog("Asset is not found by the next path: {}"_f
-                                            << logicPath);
-            return T();
+            it = lookupContainer.find(ToLogicPath(fs::path(logicPath.data())));
         }
 
-        return T(reinterpret_cast<T::AssetT&>(*lookupContainer.at(logicPath)));
+        if (it == lookupContainer.end())
+        {
+            manager.criticalLog("Asset is not found by the next path: {}"_f << logicPath);
+            return {};
+        }
+
+        return T(static_cast<T::AssetT&>(*it->second));
     }
 } // namespace
 
@@ -113,109 +103,97 @@ namespace Core
 
     void AssetsManager::initScanFileSystem()
     {
-        static std::once_flag flag;
-
-        std::call_once(
-            flag,
-            [this]()
-            {
-                _textures.clear();
-                _skyboxes.clear();
-                _ecsAssets.clear();
-
-                for (auto&& path : _registeredPaths)
-                {
-                    try
-                    {
-                        for (const auto& entry : fs::recursive_directory_iterator(path))
-                        {
-                            if (!entry.is_regular_file())
-                            {
-                                continue;
-                            }
-
-                            const auto absPath = fs::absolute(entry.path());
-                            const auto ext = absPath.extension().generic_string();
-
-                            // check for non baked
-                            if (ext.size() < 3 || strncmp(ext.c_str(), ".nx", 3) != 0)
-                            {
-                                continue;
-                            }
-
-                            auto relPath = fs::relative(absPath, Config::Path::projectAbsPath);
-
-                            auto id = StringAtom::Intern(relPath.generic_string());
-                            if (ext == ".nx")
-                            {
-                                _ecsAssets.emplace(id, new ECSAsset(id))
-                                    .first->second->connectSourceFile(absPath);
-                            }
-                            if (ext == NXTexture::AssetT::fileExtension)
-                            {
-                                _textures.emplace(id, new TextureAsset(id))
-                                    .first->second->attachAndReadFromFile(absPath);
-                            }
-                            else if (ext == NXSkybox::AssetT::fileExtension)
-                            {
-                                _skyboxes.emplace(id, new SkyboxAsset(id))
-                                    .first->second->attachAndReadFromFile(absPath);
-                            }
-                        }
-                    }
-                    catch (fs::filesystem_error& e)
-                    {
-                        criticalLog(
-                            "Got a error while scanning a folder '{}' for assets. Details: {}"_f
-                            << path.generic_string() << e.what());
-                    }
-                }
-            });
+        _textures.clear();
+        _skyboxes.clear();
+        _ecsAssets.clear();
+        scanFileSystem(false);
     }
 
     void AssetsManager::refreshFilesSystem()
     {
-        for (auto&& path : _registeredPaths)
+        scanFileSystem(true);
+    }
+
+    void AssetsManager::scanFileSystem(bool removeMissingAssets)
+    {
+        std::unordered_set<StringAtom> foundEcsAssets;
+        std::unordered_set<StringAtom> foundTextures;
+        std::unordered_set<StringAtom> foundSkyboxes;
+        bool scanCompleted = true;
+
+        for (const auto& registeredPath : _registeredPaths)
         {
             try
             {
-                for (const auto& entry : fs::recursive_directory_iterator(path))
+                auto scanRoot = registeredPath;
+                if (scanRoot.is_relative())
+                {
+                    scanRoot = Config::Path::projectAbsPath / scanRoot;
+                }
+
+                for (const auto& entry : fs::recursive_directory_iterator(scanRoot))
                 {
                     if (!entry.is_regular_file())
                     {
                         continue;
                     }
 
-                    const auto absPath = fs::absolute(entry.path());
+                    const auto absPath = fs::absolute(entry.path()).lexically_normal();
                     const auto ext = absPath.extension().generic_string();
-
-                    auto relPath = fs::relative(absPath, Config::Path::projectAbsPath);
-
-                    auto id = StringAtom::Intern(relPath.generic_string());
-                    if (ext == ".nx")
+                    const auto id = ToLogicPath(absPath);
+                    if (id.isEmpty())
                     {
-                        _ecsAssets.emplace(id, new ECSAsset(id))
-                            .first->second->connectSourceFile(absPath);
+                        continue;
                     }
-                    if (ext == NXTexture::AssetT::fileExtension)
+
+                    if (ext == ECSAsset::fileExtension)
                     {
-                        if (_textures.contains(id))
+                        foundEcsAssets.emplace(id);
+                        auto it = _ecsAssets.find(id);
+                        if (it == _ecsAssets.end())
                         {
-                            _textures[id]->attachAndReadFromFile(absPath);
+                            it = _ecsAssets.emplace(id, new ECSAsset(id)).first;
                         }
+                        it->second->connectSourceFile(absPath);
                     }
-                    else if (ext == NXSkybox::AssetT::fileExtension)
+                    else if (ext == TextureAsset::fileExtension)
                     {
-                        _skyboxes.emplace(id, new SkyboxAsset(id))
-                            .first->second->attachAndReadFromFile(absPath);
+                        foundTextures.emplace(id);
+                        auto it = _textures.find(id);
+                        if (it == _textures.end())
+                        {
+                            it = _textures.emplace(id, new TextureAsset(id)).first;
+                        }
+                        it->second->attachAndReadFromFile(absPath);
+                    }
+                    else if (ext == SkyboxAsset::fileExtension)
+                    {
+                        foundSkyboxes.emplace(id);
+                        auto it = _skyboxes.find(id);
+                        if (it == _skyboxes.end())
+                        {
+                            it = _skyboxes.emplace(id, new SkyboxAsset(id)).first;
+                        }
+                        it->second->attachAndReadFromFile(absPath);
                     }
                 }
             }
-            catch (fs::filesystem_error& e)
+            catch (const fs::filesystem_error& e)
             {
+                scanCompleted = false;
                 criticalLog("Got a error while scanning a folder '{}' for assets. Details: {}"_f
-                            << path.generic_string() << e.what());
+                            << registeredPath.generic_string() << e.what());
             }
+        }
+
+        if (removeMissingAssets && scanCompleted)
+        {
+            std::erase_if(_ecsAssets, [&foundEcsAssets](const auto& item)
+                          { return !foundEcsAssets.contains(item.first); });
+            std::erase_if(_textures, [&foundTextures](const auto& item)
+                          { return !foundTextures.contains(item.first); });
+            std::erase_if(_skyboxes, [&foundSkyboxes](const auto& item)
+                          { return !foundSkyboxes.contains(item.first); });
         }
     }
 
@@ -278,12 +256,12 @@ namespace Core
 
     NXTexture AssetsManager::getTexture(const StringAtom& logicPath)
     {
-        return getAssetOf<NXTexture>(logicPath, _textures);
+        return getAssetOf<NXTexture>(*this, logicPath, _textures);
     }
 
     NXSkybox AssetsManager::getSkybox(const StringAtom& logicPath)
     {
-        return getAssetOf<NXSkybox>(logicPath, _skyboxes);
+        return getAssetOf<NXSkybox>(*this, logicPath, _skyboxes);
     }
 
     spdlog::logger* AssetsManager::getLogger() const
@@ -306,7 +284,8 @@ namespace Core
 
     NXECSAsset AssetsManager::getEcsAsset(const StringAtom& logicPath)
     {
-        return _ecsAssets.at(logicPath);
+        const auto it = _ecsAssets.find(logicPath);
+        return it == _ecsAssets.end() ? NXECSAsset{} : it->second;
     }
 
     BaseComponent::Ptr AssetsManager::getUniqueEcsAsset(const StringAtom& logicPath)
@@ -322,17 +301,12 @@ namespace Core
 
     WeakNXECSAsset AssetsManager::getWeakEcsAsset(const StringAtom& logicPath)
     {
-        return _ecsAssets.at(logicPath);
+        const auto it = _ecsAssets.find(logicPath);
+        return it == _ecsAssets.end() ? WeakNXECSAsset{} : it->second;
     }
 
     NXECSAsset AssetsManager::getEcsAssetAt(std::size_t index, Tag tagMask)
     {
-        if (index >= _ecsAssets.size()) [[unlikely]]
-        {
-            errorLog("Can't get asset at index {} because it is out of range"_f << index);
-            return {};
-        }
-
         std::size_t i = 0;
         for (auto& asset : _ecsAssets | std::views::values)
         {
@@ -346,17 +320,12 @@ namespace Core
             }
         }
 
+        errorLog("Can't get asset at filtered index {} because it is out of range"_f << index);
         return {};
     }
 
     WeakNXECSAsset AssetsManager::getWeakEcsAssetAt(std::size_t index, Tag tagMask)
     {
-        if (index >= _ecsAssets.size()) [[unlikely]]
-        {
-            errorLog("Can't get asset at index {} because it is out of range"_f << index);
-            return {};
-        }
-
         std::size_t i = 0;
         for (auto& asset : _ecsAssets | std::views::values)
         {
@@ -370,6 +339,7 @@ namespace Core
             }
         }
 
+        errorLog("Can't get asset at filtered index {} because it is out of range"_f << index);
         return {};
     }
 
@@ -678,39 +648,6 @@ namespace Core
             return _ecsAssets.end();
         }
 
-        for (auto&& registered : GetAssetsManager()->getRegisteredPaths())
-        {
-            try
-            {
-                fs::path normalized;
-                if (registered.is_relative())
-                {
-                    normalized = Config::Path::projectAbsPath;
-                }
-                normalized /= registered;
-
-                const auto realRegistered = fs::absolute(normalized).parent_path();
-                const auto relative = fs::relative(path, realRegistered);
-                const auto id = StringAtom(relative.generic_string());
-
-                if (auto&& it = _ecsAssets.find(id); it != _ecsAssets.end())
-                {
-                    return it;
-                }
-            }
-            catch (const fs::filesystem_error& e)
-            {
-                GetAssetsManager()->errorLog(
-                    "Can't resolve a path due to internal error, of was met junction symlink: {}"_f
-                    << e.what());
-            }
-            catch (...)
-            {
-                GetAssetsManager()->errorLog(
-                    "Can't resolve a path due to internal error, of was met junction symlink");
-            }
-        }
-
-        return _ecsAssets.end();
+        return _ecsAssets.find(ToLogicPath(path));
     }
 } // namespace Core

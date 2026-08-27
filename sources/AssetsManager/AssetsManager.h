@@ -201,6 +201,8 @@ namespace Core
         [[nodiscard]] spdlog::logger* getLogger() const override;
 
     protected:
+        void scanFileSystem(bool removeMissingAssets);
+
         [[nodiscard]] std::unordered_map<StringAtom, NXECSAsset>::iterator findAssetByPath(
             const std::filesystem::path& path);
 

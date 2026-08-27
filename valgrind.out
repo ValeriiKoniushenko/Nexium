@@ -1,0 +1,147 @@
+==95386== Memcheck, a memory error detector
+==95386== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
+==95386== Using Valgrind-3.25.1 and LibVEX; rerun with -h for copyright info
+==95386== Command: build/gcc/debug/bin/Nexium_Tests
+==95386== 
+[2026-08-27 21:15:03.986] [Global] [info] [AssetImpl::Factory] Asset type Core::StaticMeshBundle has registered.
+[==========] Running 52 tests from 7 test suites.
+[----------] Global test environment set-up.
+[----------] 6 tests from ITagHolderTests
+[ RUN      ] ITagHolderTests.DefaultAndOverriddenHoldersExposeTheirDeclaredMasks
+[       OK ] ITagHolderTests.DefaultAndOverriddenHoldersExposeTheirDeclaredMasks (14 ms)
+[ RUN      ] ITagHolderTests.BitwiseOperatorsBuildAndFilterCompositeMasks
+[       OK ] ITagHolderTests.BitwiseOperatorsBuildAndFilterCompositeMasks (2 ms)
+[ RUN      ] ITagHolderTests.EveryConcreteTagHasAStableStringRoundTrip
+[       OK ] ITagHolderTests.EveryConcreteTagHasAStableStringRoundTrip (12 ms)
+[ RUN      ] ITagHolderTests.CompositeMasksStringifyInTagDefinitionOrder
+[       OK ] ITagHolderTests.CompositeMasksStringifyInTagDefinitionOrder (12 ms)
+[ RUN      ] ITagHolderTests.EmptyAndUnknownMasksHavePredictableTextRepresentations
+[       OK ] ITagHolderTests.EmptyAndUnknownMasksHavePredictableTextRepresentations (5 ms)
+[ RUN      ] ITagHolderTests.SplitToTagParsesWhitespaceCustomDelimitersAndIgnoresUnknownNames
+[       OK ] ITagHolderTests.SplitToTagParsesWhitespaceCustomDelimitersAndIgnoresUnknownNames (5 ms)
+[----------] 6 tests from ITagHolderTests (58 ms total)
+
+[----------] 32 tests from ECSBaseTests
+[ RUN      ] ECSBaseTests.SerializationOfAbstractComponentClass
+[       OK ] ECSBaseTests.SerializationOfAbstractComponentClass (40 ms)
+[ RUN      ] ECSBaseTests.DeserializationOfAbstractComponentClass
+[       OK ] ECSBaseTests.DeserializationOfAbstractComponentClass (9 ms)
+[ RUN      ] ECSBaseTests.SerializationOfBaseComponentClass
+[       OK ] ECSBaseTests.SerializationOfBaseComponentClass (34 ms)
+[ RUN      ] ECSBaseTests.SerializationOfComponentTree
+[       OK ] ECSBaseTests.SerializationOfComponentTree (51 ms)
+[ RUN      ] ECSBaseTests.DeserializationOfComponentTree
+[       OK ] ECSBaseTests.DeserializationOfComponentTree (68 ms)
+[ RUN      ] ECSBaseTests.DeserializationOfComponentTreeWithSkippedFields
+[       OK ] ECSBaseTests.DeserializationOfComponentTreeWithSkippedFields (14 ms)
+[ RUN      ] ECSBaseTests.SimpleCreation
+[       OK ] ECSBaseTests.SimpleCreation (5 ms)
+[ RUN      ] ECSBaseTests.SimpleCopy
+[       OK ] ECSBaseTests.SimpleCopy (6 ms)
+[ RUN      ] ECSBaseTests.SimpleMove
+[       OK ] ECSBaseTests.SimpleMove (6 ms)
+[ RUN      ] ECSBaseTests.Misc
+[       OK ] ECSBaseTests.Misc (3 ms)
+[ RUN      ] ECSBaseTests.AddingNewChild
+[       OK ] ECSBaseTests.AddingNewChild (10 ms)
+[ RUN      ] ECSBaseTests.AddingNewChildAndCopy
+[       OK ] ECSBaseTests.AddingNewChildAndCopy (18 ms)
+[ RUN      ] ECSBaseTests.AdvancedAddingNewChild
+[       OK ] ECSBaseTests.AdvancedAddingNewChild (9 ms)
+[ RUN      ] ECSBaseTests.RemovingChild
+[       OK ] ECSBaseTests.RemovingChild (8 ms)
+[ RUN      ] ECSBaseTests.RemovingChildIf
+[       OK ] ECSBaseTests.RemovingChildIf (17 ms)
+[ RUN      ] ECSBaseTests.ParentInvalidating
+[       OK ] ECSBaseTests.ParentInvalidating (8 ms)
+[ RUN      ] ECSBaseTests.GlobalFactoryCanCreateRegisteredComponent
+[       OK ] ECSBaseTests.GlobalFactoryCanCreateRegisteredComponent (2 ms)
+[ RUN      ] ECSBaseTests.FindFirstChildOfByTypeAndName
+[       OK ] ECSBaseTests.FindFirstChildOfByTypeAndName (29 ms)
+[ RUN      ] ECSBaseTests.TraversalAndLookupDoNotIncludeTheStartingComponent
+[       OK ] ECSBaseTests.TraversalAndLookupDoNotIncludeTheStartingComponent (11 ms)
+[ RUN      ] ECSBaseTests.ParentQueriesDistinguishDirectAndDistantAncestors
+[       OK ] ECSBaseTests.ParentQueriesDistinguishDirectAndDistantAncestors (8 ms)
+[ RUN      ] ECSBaseTests.AddUniqueTypeChildComponentReturnsSameInstance
+[       OK ] ECSBaseTests.AddUniqueTypeChildComponentReturnsSameInstance (3 ms)
+[ RUN      ] ECSBaseTests.UniqueTypeLookupUsesComponentInheritance
+[       OK ] ECSBaseTests.UniqueTypeLookupUsesComponentInheritance (8 ms)
+[ RUN      ] ECSBaseTests.GetOrAddChildComponentReturnsExisting
+[       OK ] ECSBaseTests.GetOrAddChildComponentReturnsExisting (3 ms)
+[ RUN      ] ECSBaseTests.AttachChildClonesAndSetsParent
+[       OK ] ECSBaseTests.AttachChildClonesAndSetsParent (5 ms)
+[ RUN      ] ECSBaseTests.DetachChildRemovesFromChildrenList
+[       OK ] ECSBaseTests.DetachChildRemovesFromChildrenList (5 ms)
+[ RUN      ] ECSBaseTests.RemoveChildDeepRemovesNestedNodeAndReportsWhetherItChangedTree
+[       OK ] ECSBaseTests.RemoveChildDeepRemovesNestedNodeAndReportsWhetherItChangedTree (26 ms)
+[ RUN      ] ECSBaseTests.RemoveChildIfClearsParentLinksAndHandlesEmptyPredicate
+[       OK ] ECSBaseTests.RemoveChildIfClearsParentLinksAndHandlesEmptyPredicate (8 ms)
+[ RUN      ] ECSBaseTests.ClearOrphansExistingChildren
+[       OK ] ECSBaseTests.ClearOrphansExistingChildren (4 ms)
+[ RUN      ] ECSBaseTests.RemoveChildOfRemovesAllMatchingTypes
+[       OK ] ECSBaseTests.RemoveChildOfRemovesAllMatchingTypes (9 ms)
+[ RUN      ] ECSBaseTests.GetOwnerReturnsTopmostParent
+[       OK ] ECSBaseTests.GetOwnerReturnsTopmostParent (4 ms)
+[ RUN      ] ECSBaseTests.MakeHashDependsOnParentChain
+[       OK ] ECSBaseTests.MakeHashDependsOnParentChain (3 ms)
+[ RUN      ] ECSBaseTests.InitializeIsCalledAndPropagatesToChildren
+[       OK ] ECSBaseTests.InitializeIsCalledAndPropagatesToChildren (8 ms)
+[----------] 32 tests from ECSBaseTests (470 ms total)
+
+[----------] 5 tests from ECSTreeTests
+[ RUN      ] ECSTreeTests.ComplexDeSerealization
+[       OK ] ECSTreeTests.ComplexDeSerealization (77 ms)
+[ RUN      ] ECSTreeTests.BFSIteratorTest
+[       OK ] ECSTreeTests.BFSIteratorTest (17 ms)
+[ RUN      ] ECSTreeTests.DFSIteratorTest
+[       OK ] ECSTreeTests.DFSIteratorTest (12 ms)
+[ RUN      ] ECSTreeTests.DeepTreeCopy
+[       OK ] ECSTreeTests.DeepTreeCopy (19 ms)
+[ RUN      ] ECSTreeTests.DeepTreeCopyFromSpecificMidNode
+[       OK ] ECSTreeTests.DeepTreeCopyFromSpecificMidNode (14 ms)
+[----------] 5 tests from ECSTreeTests (142 ms total)
+
+[----------] 2 tests from ECSTreeVehicleTests
+[ RUN      ] ECSTreeVehicleTests.FullSerializationCheck
+[       OK ] ECSTreeVehicleTests.FullSerializationCheck (121 ms)
+[ RUN      ] ECSTreeVehicleTests.FullDeserializationCheck
+[       OK ] ECSTreeVehicleTests.FullDeserializationCheck (157 ms)
+[----------] 2 tests from ECSTreeVehicleTests (278 ms total)
+
+[----------] 1 test from FrameByFrameAnimatorTests
+[ RUN      ] FrameByFrameAnimatorTests.AddedAnimationIsSerializedWithAnimatedPlayer
+[       OK ] FrameByFrameAnimatorTests.AddedAnimationIsSerializedWithAnimatedPlayer (459 ms)
+[----------] 1 test from FrameByFrameAnimatorTests (460 ms total)
+
+[----------] 5 tests from ShaderManagerFixture
+[ RUN      ] ShaderManagerFixture.TestAssetsDirectoryIsNotEmpty
+[       OK ] ShaderManagerFixture.TestAssetsDirectoryIsNotEmpty (36 ms)
+[ RUN      ] ShaderManagerFixture.CanAddNewFragmentExtension
+[       OK ] ShaderManagerFixture.CanAddNewFragmentExtension (5 ms)
+[ RUN      ] ShaderManagerFixture.CanAddNewVertexExtension
+[       OK ] ShaderManagerFixture.CanAddNewVertexExtension (2 ms)
+[ RUN      ] ShaderManagerFixture.IgnoresIncorrectShaderType
+[2026-08-27 21:15:06.060] [Graphics] [error] ShaderManager | Was passed incorrect shader type for mapping file extensions. Extension '.junk' will be ignored
+[       OK ] ShaderManagerFixture.IgnoresIncorrectShaderType (4 ms)
+[ RUN      ] ShaderManagerFixture.ReturnsEmptyShaderProgramIfNotFound
+[       OK ] ShaderManagerFixture.ReturnsEmptyShaderProgramIfNotFound (4 ms)
+[----------] 5 tests from ShaderManagerFixture (55 ms total)
+
+[----------] 1 test from FieldsAccessTests
+[ RUN      ] FieldsAccessTests.Interface
+[       OK ] FieldsAccessTests.Interface (1 ms)
+[----------] 1 test from FieldsAccessTests (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 52 tests from 7 test suites ran. (1509 ms total)
+[  PASSED  ] 52 tests.
+[Debug] GlobalComponentFactory: type registration took: 0.727775
+==95386== 
+==95386== HEAP SUMMARY:
+==95386==     in use at exit: 0 bytes in 0 blocks
+==95386==   total heap usage: 20,002 allocs, 20,002 frees, 1,588,266 bytes allocated
+==95386== 
+==95386== All heap blocks were freed -- no leaks are possible
+==95386== 
+==95386== For lists of detected and suppressed errors, rerun with: -s
+==95386== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

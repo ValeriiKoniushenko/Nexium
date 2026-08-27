@@ -146,6 +146,12 @@ namespace Core
 
     void ECSAsset::connectSourceFile(const std::filesystem::path& src)
     {
+        const bool shouldReload = getHardRefCount() > 1;
+        if (_status == Status::Loaded)
+        {
+            unload();
+        }
+
         _meta.pathToSource = src;
 
         if (_meta.pathToSource.empty())
@@ -162,6 +168,10 @@ namespace Core
         }
 
         extrudeAndValidateMainDataFromFile();
+        if (shouldReload && _status == Status::PreLoaded)
+        {
+            load();
+        }
     }
 
     const std::filesystem::path& ECSAsset::getSourceFile() const noexcept
@@ -211,12 +221,22 @@ namespace Core
         }
 
         nlohmann::json json;
+        try
+        {
+            json = nlohmann::json::parse(Utils::GetFileContent(_meta.pathToSource));
+        }
+        catch (const std::exception& e)
+        {
+            criticalLog("Can't update asset's file: {}. Reason: {}"_f << _meta.pathToSource
+                                                                      << e.what());
+            return;
+        }
+
         json[StreamData::type] = _meta.type;
         json[StreamData::name] = _meta.name;
         json[StreamData::tags] = TagHelper::JoinAllToString(_meta.tags);
-        json[StreamData::data] = nlohmann::json::object();
 
-        auto baseAssetData = getAssetData();
+        auto baseAssetData = json.value(StreamData::data, nlohmann::json::object());
 
 #if defined(DEBUG)
         std::string xxx1 = baseAssetData.dump(4);
@@ -308,7 +328,7 @@ namespace Core
 
     BaseComponent::Ptr ECSAsset::uniqueLoad() const
     {
-        auto componentData = GetGlobalComponentFactory().create(_meta.type);
+        auto* componentData = GetGlobalComponentFactory().create(_meta.type);
         if (!componentData)
         {
             throw std::runtime_error(
@@ -326,7 +346,8 @@ namespace Core
         // [opt] making loading of essential data (texture loading, 3D model loading, etc)
         if (_impl)
         {
-            _impl->load(*this, _data.get(), json[StreamData::data]);
+            _impl->load(*this, componentData,
+                        json.value(StreamData::assetData, nlohmann::json::object()));
         }
 
         if (!data.logs().empty())
@@ -373,7 +394,8 @@ namespace Core
             // [opt] making loading of essential data (texture loading, 3D model loading, etc)
             if (_impl)
             {
-                _impl->load(*this, _data.get(), json[StreamData::data]);
+                _impl->load(*this, _data.get(),
+                            json.value(StreamData::assetData, nlohmann::json::object()));
             }
 
             if (!data.logs().empty())

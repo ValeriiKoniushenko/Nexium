@@ -27,6 +27,11 @@ cmake --build build --parallel
 - ccache is expected to be on PATH and picked up automatically via CMAKE_CXX_COMPILER_LAUNCHER.
 - Try to check if the build dir is already existing by the next path: `build/{clang,gcc}/{debug,release}`
 
+## Resulting binaries
+
+- `<build_dir>/bin/TemplateGame` - template game executable with real editor UI.
+- `<build_dir>/bin/Nexium_Tests` - Nexium (game engine) tests.
+
 ## Notes
 
 Don't suggest `--clean-first` here — that's the separate clean-build skill.
