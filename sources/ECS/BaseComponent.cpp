@@ -256,6 +256,7 @@ namespace Core
         if (const auto it = std::ranges::find(_children, IntrusivePtr(child));
             it != _children.end())
         {
+            (*it)->_parent = nullptr;
             _children.erase(it);
         }
     }
@@ -267,6 +268,7 @@ namespace Core
             if (i->get() == child)
             {
                 onRemoveChild(i->get());
+                i->get()->_parent = nullptr;
                 _children.erase(i);
                 return true;
             }
@@ -310,6 +312,7 @@ namespace Core
                                                               if (pred(c.get()))
                                                               {
                                                                   onRemoveChild(c.get());
+                                                                  c.get()->_parent = nullptr;
                                                                   return true;
                                                               }
                                                               return false;
@@ -389,6 +392,10 @@ namespace Core
 
         _name.clear();
         _parent = nullptr;
+        for (auto& child : _children)
+        {
+            child->_parent = nullptr;
+        }
         _children.clear();
     }
 
@@ -402,7 +409,7 @@ namespace Core
                 return true;
             }
 
-            i = _parent->_parent;
+            i = i->_parent;
         }
         return false;
     }
