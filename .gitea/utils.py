@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 import os
-import subprocess
 import re
+import subprocess
 from dataclasses import dataclass
 
 # Paths are relative to the repository root.
@@ -13,11 +13,57 @@ EXCLUDED_PATHS = (
     "data/",
 )
 HUNK_RE = re.compile(r"^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@")
+CPP_HEADER_SUFFIXES = {".h", ".hpp"}
+CPP_SOURCE_SUFFIXES = (".cpp", ".cc")
+
 
 @dataclass
 class ChangedFile:
     path: str
     ranges: list[tuple[int, int]]
+
+
+def normalize_repo_path(path: str) -> str:
+    """Return a stable repository-relative path when possible."""
+    absolute = os.path.abspath(path)
+    repo_root = os.path.abspath(os.getcwd())
+
+    try:
+        if os.path.commonpath((repo_root, absolute)) == repo_root:
+            return os.path.relpath(absolute, repo_root).replace("\\", "/")
+    except ValueError:
+        pass
+
+    return os.path.normpath(path).replace("\\", "/")
+
+
+def is_cpp_header(path: str) -> bool:
+    return os.path.splitext(path)[1].lower() in CPP_HEADER_SUFFIXES
+
+
+def get_cpp_analysis_targets(changed: list[ChangedFile]) -> list[str]:
+    """Choose unique translation units while retaining header-only coverage."""
+    targets = []
+    seen = set()
+
+    for changed_file in changed:
+        target = changed_file.path
+
+        if is_cpp_header(target):
+            root, _ = os.path.splitext(target)
+            for source_suffix in CPP_SOURCE_SUFFIXES:
+                sibling = root + source_suffix
+                if os.path.isfile(sibling):
+                    target = sibling
+                    break
+
+        normalized = normalize_repo_path(target)
+        if normalized not in seen:
+            seen.add(normalized)
+            targets.append(normalized)
+
+    return targets
+
 
 def is_excluded(path: str) -> bool:
     """Returns True if the file should be skipped."""
@@ -46,11 +92,13 @@ def get_target_branch(cli_base: str | None) -> str:
             return env_branch
     return "main"
 
+
 def is_changed_line(file: ChangedFile, line: int) -> bool:
     for begin, end in file.ranges:
         if begin <= line <= end:
             return True
     return False
+
 
 def get_changed_files(base_ref: str, explicit_files: list[str] | None, verbose: bool) -> list[ChangedFile]:
     if explicit_files:
@@ -126,4 +174,3 @@ def get_changed_files(base_ref: str, explicit_files: list[str] | None, verbose: 
             print(f"  {f.path}: {f.ranges}")
 
     return files
-

@@ -13,14 +13,24 @@ Local/debug usage from your machine:
     python3 .gitea/check_clang_tidy.py --base develop --dry-run         # don't write report / exit 1
 """
 import argparse
+import concurrent.futures
 import hashlib
 import json
 import os
 import re
 import subprocess
 import sys
+from dataclasses import dataclass
 from gitea_client import GiteaClient, review_marker
-from utils import get_target_branch, get_changed_files, ChangedFile, is_changed_line
+from utils import (
+    ChangedFile,
+    get_changed_files,
+    get_cpp_analysis_targets,
+    get_target_branch,
+    is_changed_line,
+    is_cpp_header,
+    normalize_repo_path,
+)
 
 SEVERITY_MAP = {
     "error": "critical",
@@ -33,6 +43,17 @@ DIAG_RE = re.compile(
     r'^(?P<file>[^:]+):(?P<line>\d+):(?P<col>\d+): '
     r'(?P<level>error|warning|note): (?P<message>.*?)(?: \[(?P<check>[\w,.\-]+)\])?$'
 )
+
+DEFAULT_MAX_JOBS = 4
+
+
+@dataclass
+class TidyResult:
+    path: str
+    command: list[str]
+    returncode: int
+    stdout: str
+    stderr: str
 
 
 def publish_inline_review(
@@ -100,7 +121,26 @@ def publish_inline_review(
         except Exception as e:
             print(f"[gitea] failed to publish check: {e}", file=sys.stderr)
 
-def run_clang_tidy(file: ChangedFile,build_dir: str,header_filter: str,extra_args: list[str],verbose: bool) -> str:
+
+def make_changed_header_filter(changed: list[ChangedFile]) -> str:
+    """Restrict header diagnostics to headers that are part of the diff."""
+    patterns = []
+    for changed_file in changed:
+        if not is_cpp_header(changed_file.path):
+            continue
+
+        path = re.escape(normalize_repo_path(changed_file.path))
+        patterns.append(rf"(?:^|.*/){path}$")
+
+    return "|".join(patterns)
+
+
+def run_clang_tidy(
+    path: str,
+    build_dir: str,
+    header_filter: str,
+    extra_args: list[str],
+) -> TidyResult:
     # NOTE: clang-tidy has no "-v" flag (that's a run-clang-tidy-ism) and the
     # target file must be a plain positional arg, not "-f <file>".
     cmd = [
@@ -109,29 +149,11 @@ def run_clang_tidy(file: ChangedFile,build_dir: str,header_filter: str,extra_arg
         "-p",
         build_dir,
         *extra_args,
-        file.path,
+        path,
     ]
 
-    if verbose:
-        print(f"[debug] running: {' '.join(cmd)}")
-
     result = subprocess.run(cmd, capture_output=True, text=True)
-
-    if verbose:
-        print(f"[debug] clang-tidy exit code: {result.returncode} for {file.path}")
-        if result.returncode != 0 and result.stderr:
-            print(f"[debug] stderr: {result.stderr[:2000]}")
-
-    if result.returncode != 0 and not result.stdout.strip():
-        print(
-            f"[error] clang-tidy produced no output and exited "
-            f"{result.returncode} for {file.path}",
-            file=sys.stderr,
-        )
-        if result.stderr:
-            print(result.stderr, file=sys.stderr)
-
-    return result.stdout
+    return TidyResult(path, cmd, result.returncode, result.stdout, result.stderr)
 
 
 def main():
@@ -139,8 +161,10 @@ def main():
     parser.add_argument("--base", help="branch/ref to diff against (default: CI var or 'main')")
     parser.add_argument("--files", nargs="+", help="explicit list of files to check, skips git diff")
     parser.add_argument("--build-dir", default="build", help="compile_commands.json directory (default: build)")
-    parser.add_argument("--header-filter", default="",
-                        help="clang-tidy --header-filter value (default: '' = don't report on headers, matches run-clang-tidy default)")
+    parser.add_argument("--header-filter",
+                        help="clang-tidy --header-filter value (default: changed headers only)")
+    parser.add_argument("--jobs", "-j", type=int, default=0,
+                        help=f"parallel clang-tidy processes (default: auto, capped at {DEFAULT_MAX_JOBS})")
     parser.add_argument("--fail-on", choices=["error", "warning", "note"], default="warning",
                         help="minimum level that causes non-zero exit (default: warning)")
     parser.add_argument("--extra-arg", action="append", default=[],
@@ -157,43 +181,99 @@ def main():
         print(f"[error] build dir '{args.build_dir}' not found. Run cmake configure first, or pass --build-dir.", file=sys.stderr)
         sys.exit(2)
 
+    if args.jobs < 0:
+        parser.error("--jobs must be zero (auto) or a positive integer")
+
     base_ref = get_target_branch(args.base)
     changed = get_changed_files(base_ref, args.files, args.verbose)
+    analysis_targets = get_cpp_analysis_targets(changed)
+    header_filter = args.header_filter
+    if header_filter is None:
+        header_filter = make_changed_header_filter(changed)
+
+    available_jobs = args.jobs or min(DEFAULT_MAX_JOBS, os.cpu_count() or 1)
+    job_count = min(available_jobs, len(analysis_targets)) if analysis_targets else 0
+
+    if args.verbose:
+        print(f"[debug] analysis targets ({job_count} parallel job(s)):")
+        for target in analysis_targets:
+            print(f"  {target}")
+        print(f"[debug] header filter: {header_filter!r}")
 
     # order: error > warning > note, used to decide whether to fail
     level_rank = {"note": 0, "warning": 1, "error": 2}
     fail_threshold = level_rank[args.fail_on]
 
     issues = []
+    seen_fingerprints = set()
     should_fail = False
 
-    for f in changed:
-        if not os.path.isfile(f.path):
-            if args.verbose:
-                print(f"[debug] skipping missing file: {f.path}")
-            continue
+    existing_targets = []
+    for target in analysis_targets:
+        if os.path.isfile(target):
+            existing_targets.append(target)
+        elif args.verbose:
+            print(f"[debug] skipping missing file: {target}")
 
-        stdout = run_clang_tidy(f, args.build_dir, args.header_filter, args.extra_arg, args.verbose)
+    if existing_targets:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=job_count) as executor:
+            futures = [
+                executor.submit(
+                    run_clang_tidy,
+                    target,
+                    args.build_dir,
+                    header_filter,
+                    args.extra_arg,
+                )
+                for target in existing_targets
+            ]
+            tidy_results = [future.result() for future in futures]
+    else:
+        tidy_results = []
 
+    changed_by_path = {
+        normalize_repo_path(changed_file.path): changed_file
+        for changed_file in changed
+    }
+
+    for result in tidy_results:
         if args.verbose:
-            print(f"[debug] --- raw clang-tidy output for {f.path} ---")
-            print(stdout)
+            print(f"[debug] running: {' '.join(result.command)}")
+            print(f"[debug] clang-tidy exit code: {result.returncode} for {result.path}")
+            if result.returncode != 0 and result.stderr:
+                print(f"[debug] stderr: {result.stderr[:2000]}")
+            print(f"[debug] --- raw clang-tidy output for {result.path} ---")
+            print(result.stdout)
             print("[debug] --- end output ---")
 
-        for line in stdout.splitlines():
+        if result.returncode != 0 and not result.stdout.strip():
+            print(
+                f"[error] clang-tidy produced no output and exited "
+                f"{result.returncode} for {result.path}",
+                file=sys.stderr,
+            )
+            if result.stderr:
+                print(result.stderr, file=sys.stderr)
+
+        for line in result.stdout.splitlines():
             m = DIAG_RE.match(line)
             if not m or m.group("level") == "note":
                 continue
 
             line_no = int(m.group("line"))
+            diagnostic_path = normalize_repo_path(m.group("file"))
+            changed_file = changed_by_path.get(diagnostic_path)
 
-            if not is_changed_line(f, line_no):
+            if changed_file is None or not is_changed_line(changed_file, line_no):
                 continue
 
             check = m.group("check") or "clang-tidy"
 
-            fp_src = f"{f.path}:{line_no}:{m.group('col')}:{check}"
+            fp_src = f"{diagnostic_path}:{line_no}:{m.group('col')}:{check}"
             fp = hashlib.md5(fp_src.encode()).hexdigest()
+            if fp in seen_fingerprints:
+                continue
+            seen_fingerprints.add(fp)
 
             is_error = ""
             if level_rank[m.group("level")] >= fail_threshold and check != "clang-diagnostic-error":
@@ -206,7 +286,7 @@ def main():
                 "fingerprint": fp,
                 "severity": SEVERITY_MAP.get(m.group("level"), "major"),
                 "location": {
-                    "path": f.path,
+                    "path": diagnostic_path,
                     "lines": {"begin": line_no}
                 }
             })
