@@ -8,7 +8,7 @@ on:
 
 jobs:
   clang-format:
-    name: clang-format
+    name: "clang-format 19.1.7"
     runs-on: linux
     container:
       image: cpp-ci:latest
@@ -25,7 +25,7 @@ jobs:
           python3 .gitea/check_clang_format.py --base develop
 
   build-clang:
-    name: "Build: Linux | Clang 22.1.8"
+    name: "Build: Linux | Clang 19.1.7"
     runs-on: linux
     container:
       image: cpp-ci:latest
@@ -77,7 +77,7 @@ jobs:
         run: rsync -a --delete build/ /build-cache/
 
   build-gcc:
-    name: "Build: Linux | GCC 16.1.1"
+    name: "Build: Linux | GCC 14.2.0"
     runs-on: linux
     container:
       image: cpp-ci:latest
@@ -126,7 +126,7 @@ jobs:
           rsync -a --delete build/ /build-cache/
 
   test-clang:
-    name: "Test: Linux | Clang 22.1.8"
+    name: "Test: Linux | Clang 19.1.7"
     needs: build-clang
     runs-on: linux
     container:
@@ -167,7 +167,7 @@ jobs:
         run: build/bin/Nexium_Tests
 
   valgrind:
-    name: "Valgrind: Linux | Clang 22.1.8"
+    name: "Valgrind: Linux | Clang 19.1.7"
     needs: build-clang
     runs-on: linux
     container:
@@ -210,7 +210,7 @@ jobs:
         run: python3 .gitea/check_valgrind.py --executable build/bin/Nexium_Tests --verbose
 
   clang-tidy:
-    name: clang-tidy
+    name: "clang-tidy 19.1.7"
     needs: build-clang
     runs-on: linux
     container:
