@@ -174,7 +174,7 @@ namespace
 
 TEST_F(AssetsManagerTest, ConstructorRegistersDataPathAndCreatesDefaultAtlas)
 {
-    const TestAssetsManager manager;
+    TestAssetsManager manager;
 
     ASSERT_TRUE(manager.getRegisteredPaths().contains(Config::Path::data));
     ASSERT_EQ(1u, manager.getAtlasesCount());
