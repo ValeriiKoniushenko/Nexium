@@ -84,6 +84,7 @@ jobs:
 
           # The runner keeps this directory mounted as its working directory.
           # Clear its contents without attempting to remove the mount point.
+          rm -rf "$GITHUB_WORKSPACE/build"
           find "$GITHUB_WORKSPACE" -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +
           cd /repo-cache
           git remote set-url origin "$REPO_URL"
@@ -161,6 +162,7 @@ jobs:
 
           # The runner keeps this directory mounted as its working directory.
           # Clear its contents without attempting to remove the mount point.
+          rm -rf "$GITHUB_WORKSPACE/build"
           find "$GITHUB_WORKSPACE" -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +
           cd /repo-cache
           git remote set-url origin "$REPO_URL"
