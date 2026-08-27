@@ -742,11 +742,11 @@ TEST(ECSBaseTests, DetachChildRemovesFromChildrenList)
 {
     DummyComponent root("Root");
 
-    auto* child = root.addChildComponent<DummyComponent>("Child");
-    ASSERT_NE(nullptr, child);
+    DummyComponent::Ptr child = root.addChildComponent<DummyComponent>("Child");
+    ASSERT_NE(nullptr, child.get());
     ASSERT_EQ(1, root.getChildrenCount());
 
-    root.detachChild(child);
+    root.detachChild(child.get());
     ASSERT_EQ(0, root.getChildrenCount());
     ASSERT_FALSE(root.hasChildren());
     ASSERT_EQ(nullptr, child->getParent());
@@ -756,21 +756,21 @@ TEST(ECSBaseTests, RemoveChildDeepRemovesNestedNodeAndReportsWhetherItChangedTre
 {
     DummyComponent root("Root");
     auto* branch = root.addChildComponent<DummyComponent>("Branch");
-    auto* target = branch->addChildComponent<DummyComponent>("Target");
+    BaseComponent::Ptr target = branch->addChildComponent<DummyComponent>("Target");
     target->addChildComponent<DummyComponent>("Nested");
 
-    ASSERT_TRUE(root.removeChildDeep(target));
+    ASSERT_TRUE(root.removeChildDeep(target.get()));
     ASSERT_EQ(0u, branch->getChildrenCount());
     ASSERT_EQ(nullptr, target->getParent());
-    ASSERT_FALSE(root.removeChildDeep(target));
+    ASSERT_FALSE(root.removeChildDeep(target.get()));
     ASSERT_FALSE(root.removeChildDeep(nullptr));
 }
 
 TEST(ECSBaseTests, RemoveChildIfClearsParentLinksAndHandlesEmptyPredicate)
 {
     DummyComponent root("Root");
-    auto* keep = root.addChildComponent<DummyComponent>("Keep");
-    auto* remove = root.addChildComponent<DummyComponent>("Remove");
+    DummyComponent::Ptr keep = root.addChildComponent<DummyComponent>("Keep");
+    DummyComponent::Ptr remove = root.addChildComponent<DummyComponent>("Remove");
 
     ASSERT_FALSE(root.removeChildIf({}));
     ASSERT_TRUE(root.removeChildIf([](const BaseComponent* component)
@@ -784,7 +784,7 @@ TEST(ECSBaseTests, RemoveChildIfClearsParentLinksAndHandlesEmptyPredicate)
 TEST(ECSBaseTests, ClearOrphansExistingChildren)
 {
     DummyComponent root("Root");
-    auto* child = root.addChildComponent<DummyComponent>("Child");
+    DummyComponent::Ptr child = root.addChildComponent<DummyComponent>("Child");
 
     root.clear();
 
@@ -810,10 +810,10 @@ TEST(ECSBaseTests, RemoveChildOfRemovesAllMatchingTypes)
 TEST(ECSBaseTests, GetOwnerReturnsTopmostParent)
 {
     DummyComponent root("Root");
-    auto* child = root.addChildComponent<DummyComponent>("Child");
-    auto* grandChild = child->addChildComponent<DummyComponent>("GrandChild");
+    DummyComponent::Ptr child = root.addChildComponent<DummyComponent>("Child");
+    DummyComponent::Ptr grandChild = child->addChildComponent<DummyComponent>("GrandChild");
 
-    ASSERT_NE(nullptr, grandChild);
+    ASSERT_NE(nullptr, grandChild.get());
 
     ASSERT_EQ(grandChild->getOwner(), &root);
     ASSERT_EQ(child->getOwner(), &root);
@@ -825,11 +825,11 @@ TEST(ECSBaseTests, MakeHashDependsOnParentChain)
     DummyComponent rootA("RootA");
     DummyComponent rootB("RootB");
 
-    auto* childA = rootA.addChildComponent<DummyComponent>("Child");
-    auto* childB = rootB.addChildComponent<DummyComponent>("Child");
+    DummyComponent::Ptr childA = rootA.addChildComponent<DummyComponent>("Child");
+    DummyComponent::Ptr childB = rootB.addChildComponent<DummyComponent>("Child");
 
-    ASSERT_NE(nullptr, childA);
-    ASSERT_NE(nullptr, childB);
+    ASSERT_NE(nullptr, childA.get());
+    ASSERT_NE(nullptr, childB.get());
 
     ASSERT_NE(childA->makeHash(), childB->makeHash());
 }
@@ -839,8 +839,8 @@ TEST(ECSBaseTests, InitializeIsCalledAndPropagatesToChildren)
     InitSpyComponent root("Root");
     ASSERT_FALSE(root.isInitialized());
 
-    auto* child = root.addChildComponent<InitSpyComponent>("Child");
-    ASSERT_NE(nullptr, child);
+    InitSpyComponent::Ptr child = root.addChildComponent<InitSpyComponent>("Child");
+    ASSERT_NE(nullptr, child.get());
 
     ASSERT_TRUE(root.isInitialized());
     ASSERT_TRUE(child->isInitialized());
