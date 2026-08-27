@@ -42,8 +42,8 @@ TEST(ITagHolderTests, DefaultAndOverriddenHoldersExposeTheirDeclaredMasks)
 TEST(ITagHolderTests, BitwiseOperatorsBuildAndFilterCompositeMasks)
 {
     constexpr Tag worldAndGui = Tag_WorldObject | Tag_GuiObject;
-    constexpr Tag allKnown = Tag_WorldObject | Tag_GuiObject | Tag_EditorInternal
-                             | Tag_AnimationController;
+    constexpr Tag allKnown
+        = Tag_WorldObject | Tag_GuiObject | Tag_EditorInternal | Tag_AnimationController;
 
     static_assert((worldAndGui & Tag_WorldObject) == Tag_WorldObject);
     static_assert((worldAndGui & Tag_EditorInternal) == Tag_None);
@@ -106,7 +106,6 @@ TEST(ITagHolderTests, SplitToTagParsesWhitespaceCustomDelimitersAndIgnoresUnknow
                   " WorldObject, GuiObject, UnknownTag, AnimationController "));
     ASSERT_EQ(Tag_WorldObject | Tag_EditorInternal,
               TagHelper::SplitToTagFromString("WorldObject|EditorInternal", '|'));
-    ASSERT_EQ(Tag_WorldObject,
-              TagHelper::SplitToTagFromString("WorldObject,WorldObject,Missing"));
+    ASSERT_EQ(Tag_WorldObject, TagHelper::SplitToTagFromString("WorldObject,WorldObject,Missing"));
     ASSERT_EQ(Tag_None, TagHelper::SplitToTagFromString(""));
 }
