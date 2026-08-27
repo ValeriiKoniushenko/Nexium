@@ -169,7 +169,6 @@ namespace Core
     {
         if (_inputController)
         {
-            _inputController->setInputActive(false);
             _inputController.reset();
         }
 
@@ -358,6 +357,7 @@ namespace Core
                                  ->onPress->subscribeAndGetID([&](auto) { GetWindow().close(); });
 
         _inputController = new InputController("Editor input"_atom);
+        _inputController->setInputContext(InputContext::Editor);
         _inputController->bind(
             "Save all"_atom,
             KeyChord{ .triggerKey = Keyboard::Key::S,

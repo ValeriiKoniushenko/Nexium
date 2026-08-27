@@ -51,17 +51,6 @@ void TemplateGameInstance::onInitializeReadCache()
 
     _spectator = spectator;
     _spectatorInput = input;
-
-    input->setActivationPredicate(
-        [this]
-        {
-            if (renderMode == RenderMode::GameOnly)
-                return true;
-
-            const auto* viewport = gameEditor.getWindow<GameViewportEWC>();
-            return viewport && viewport->isFocused();
-        });
-
 }
 
 void TemplateGameInstance::onTick(float delta)
@@ -69,21 +58,23 @@ void TemplateGameInstance::onTick(float delta)
     auto spectator = _spectator.tryLoad();
     auto input = _spectatorInput.tryLoad();
 
-    if (!spectator || !input || !input->isInputActive())
+    if (!spectator || !input || !input->isEnabled())
+    {
         return;
+    }
 
     const auto move = [&](const StringAtom& action, auto callback, float direction)
     {
         if (input->isActionPressed(action))
+        {
             callback(direction * getSpectatorSpeed(action) * delta);
+        }
     };
 
-    move("Move forward"_atom, [&](float value) { spectator->moveForward(value); }, -1.f);
-    move("Move backward"_atom, [&](float value) { spectator->moveForward(value); }, 1.f);
-    move("Move right"_atom, [&](float value) { spectator->moveRight(value); }, 1.f);
-    move("Move left"_atom, [&](float value) { spectator->moveRight(value); }, -1.f);
     move("Move up"_atom, [&](float value) { spectator->moveUp(value); }, 1.f);
     move("Move down"_atom, [&](float value) { spectator->moveUp(value); }, -1.f);
+    move("Move right"_atom, [&](float value) { spectator->moveRight(value); }, 1.f);
+    move("Move left"_atom, [&](float value) { spectator->moveRight(value); }, -1.f);
 }
 
 float TemplateGameInstance::getSpectatorSpeed(const StringAtom& action) const
@@ -91,9 +82,11 @@ float TemplateGameInstance::getSpectatorSpeed(const StringAtom& action) const
     const auto spectator = _spectator.tryLoad();
     const auto input = _spectatorInput.tryLoad();
     if (!spectator || !input)
+    {
         return 0.f;
+    }
 
-    const bool shift = (input->getActionModifiers(action) & InputModifier::Shift)
-                       != InputModifier::None;
+    const bool shift
+        = (input->getActionModifiers(action) & InputModifier::Shift) != InputModifier::None;
     return spectator->speed / (shift ? 8.f : 1.f);
 }
