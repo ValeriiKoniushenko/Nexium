@@ -72,6 +72,10 @@ namespace
             : BaseAsset(logicPath)
         {
         }
+        CountingAsset(const CountingAsset&) = delete;
+        CountingAsset& operator=(const CountingAsset&) = delete;
+        CountingAsset(CountingAsset&&) = delete;
+        CountingAsset& operator=(CountingAsset&&) = delete;
 
         ~CountingAsset() override { ++destructions; }
 
