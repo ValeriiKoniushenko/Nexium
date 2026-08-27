@@ -25,22 +25,19 @@
 
 #include "Core/Delegate.h"
 #include "Core/IntrusivePtr.h"
+#include "GameplaySystem/Framework/InputController.h"
 #include "InputDevices/InputTypes.h"
 
-#include <cstdint>
 #include <deque>
-#include <unordered_map>
 #include <vector>
 
 namespace Core
 {
-    class InputController;
     class Window;
 
     /// @brief Engine implementation details hidden from gameplay-facing input APIs.
     namespace Internal
     {
-        /// @brief Collects raw keyboard events and routes them through active InputControllers.
         class InputSystem final : public Singleton<InputSystem>
         {
         public:
@@ -50,36 +47,37 @@ namespace Core
             /// @brief Starts an input frame, updates controllers and dispatches queued events.
             void processEvents();
 
-            /// @brief Adds an initialized InputController to the routing registry.
+            void setActiveContext(InputContext context) noexcept { _activeContext = context; }
+
+            [[nodiscard]] InputContext getActiveContext() const noexcept { return _activeContext; }
+
             void registerController(InputController* controller);
 
-            /// @brief Moves a controller to the newest position in automatic routing order.
             void activateController(InputController* controller);
+
+            void deactivateController(InputController* controller);
 
         private:
             /// @brief Converts and queues a raw window keyboard event.
             void pushKeyEvent(Keyboard::Key key, int scancode, Keyboard::KeyState state, int mods);
 
-            /// @brief Routes one normalized event according to blocking, specificity and recency.
             void dispatch(const KeyInputEvent& event);
 
-            /// @brief Removes destroyed controllers and invalid event owners.
-            void removeExpiredControllers();
+            [[nodiscard]] IntrusivePtr<InputController> selectController() const;
+            [[nodiscard]] WeakPtr<InputController>& controllerFor(InputContext context);
+
+            [[nodiscard]] const WeakPtr<InputController>& controllerFor(InputContext context) const;
 
             /// @brief Keyboard events waiting to be processed during the next input frame.
             std::deque<KeyInputEvent> _events;
 
-            /// @brief Non-owning registry of all initialized InputController components.
-            std::vector<WeakPtr<InputController>> _controllers;
-
-            /// @brief Controllers that own pressed trigger keys and receive their repeat events.
-            std::unordered_map<Keyboard::Key, WeakPtr<InputController>> _keyOwners;
+            WeakPtr<InputController> _editorController;
+            WeakPtr<InputController> _gameplayController;
+            WeakPtr<InputController> _routedController;
+            InputContext _activeContext = InputContext::Editor;
 
             /// @brief Normalized keyboard keys currently held by the user.
             std::vector<Keyboard::Key> _pressedKeys;
-
-            /// @brief Monotonic counter used to assign automatic controller activation order.
-            std::uint64_t _nextActivationOrder = 0;
 
             /// @brief Keeps window input subscriptions alive for the lifetime of the system.
             DelegateSubscriberPoolGuard _subscriptions;

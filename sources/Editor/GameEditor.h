@@ -24,8 +24,8 @@
 
 #pragma once
 
-#include "InputDevices/InputManager.h"
 #include "GameplaySystem/Framework/InputController.h"
+#include "InputDevices/InputManager.h"
 #include "Misc/BaseLog.h"
 #include "ObjectPicker.h"
 #include "ToastNotifications.h"

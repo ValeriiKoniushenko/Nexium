@@ -161,21 +161,20 @@ namespace Core
         setBindings(static_cast<const std::vector<Binding>&>(bindings));
     }
 
-    void InputController::setInputActive(bool active)
+    void InputController::setInputContext(InputContext context)
     {
-        if (_inputActive == active)
+        if (_inputContext == context)
         {
             return;
         }
 
-        _inputActive = active;
-        refreshActiveState();
-    }
-
-    bool InputController::isInputActive() const
-    {
-        return isEnabled() && _inputActive
-               && (!_activationPredicate || std::invoke(_activationPredicate));
+        auto& inputSystem = Internal::InputSystem::Instance();
+        inputSystem.deactivateController(this);
+        _inputContext = context;
+        if (isEnabled())
+        {
+            inputSystem.activateController(this);
+        }
     }
 
     bool InputController::isActionPressed(const StringAtom& action) const
@@ -198,109 +197,105 @@ namespace Core
     void InputController::onInitialize()
     {
         BaseComponent::onInitialize();
-        _wasEffectivelyActive = isInputActive();
         Internal::InputSystem::Instance().registerController(this);
     }
 
-    InputResult InputController::handleRoutedEvent(const KeyInputEvent& event)
+    void InputController::handleRoutedEvent(const KeyInputEvent& event)
     {
         if (event.state == Keyboard::KeyState::Released)
         {
-            bool released = false;
-            for (auto it = _activeChords.begin(); it != _activeChords.end();)
-            {
-                if (!it->second.contains(event.key))
-                {
-                    ++it;
-                    continue;
-                }
-                const auto action = it->first;
-                it = _activeChords.erase(it);
-                const auto binding = std::ranges::find_if(
-                    _bindings, [&action](const Binding& value) { return value.action == action; });
-                if (binding != _bindings.end())
-                {
-                    if (binding->trigger == InputActionTrigger::WhileHeld)
-                    {
-                        _actionStates.insert_or_assign(action, false);
-                        _actionModifiers.insert_or_assign(action, InputModifier::None);
-                    }
-                    else if (binding->trigger == InputActionTrigger::OnRelease)
-                    {
-                        _actionStates.insert_or_assign(action, true);
-                        _transientActions.insert(action);
-                        onAction->trigger(
-                            InputActionEvent{ .action = action, .state = event.state });
-                    }
-                }
-                released = true;
-            }
-            return released ? InputResult::Consumed : InputResult::Ignored;
+            handleReleasedEvent(event);
+            return;
         }
 
-        if (!isInputActive())
-        {
-            return InputResult::Ignored;
-        }
+        if (!isEnabled())
+            return;
 
         if (event.state == Keyboard::KeyState::Repeated)
-        {
-            const auto active = std::ranges::find_if(_activeChords, [&event](const auto& pair)
-                                                     { return pair.second.triggerKey == event.key; });
-            if (active == _activeChords.end())
-            {
-                return InputResult::Ignored;
-            }
+            return;
 
-            return InputResult::Consumed;
-        }
-
-        auto binding = _bindings.end();
-        for (auto it = _bindings.begin(); it != _bindings.end(); ++it)
-        {
-            if (!it->chord.matches(event.key, event.pressedKeys))
-                continue;
-            if (binding == _bindings.end()
-                || it->chord.requiredKeys.size() > binding->chord.requiredKeys.size())
-                binding = it;
-        }
-        if (binding == _bindings.end())
-        {
-            return _blockingPolicy == InputBlockingPolicy::BlockKeyboard ? InputResult::Consumed
-                                                                         : InputResult::Ignored;
-        }
-
-        _activeChords.insert_or_assign(binding->action, binding->chord);
-        _actionModifiers.insert_or_assign(binding->action, event.modifiers);
-        if (binding->trigger == InputActionTrigger::WhileHeld)
-        {
-            _actionStates.insert_or_assign(binding->action, true);
-            onAction->trigger(
-                InputActionEvent{ .action = binding->action, .state = event.state });
-        }
-        else if (binding->trigger == InputActionTrigger::OnPress)
-        {
-            _actionStates.insert_or_assign(binding->action, true);
-            _transientActions.insert(binding->action);
-            onAction->trigger(InputActionEvent{ .action = binding->action, .state = event.state });
-        }
-        else
-        {
-            _actionStates.insert_or_assign(binding->action, false);
-        }
-        return InputResult::Consumed;
+        handlePressedEvent(event);
     }
 
-    std::optional<std::size_t> InputController::getMatchingSpecificity(
+    void InputController::handleReleasedEvent(const KeyInputEvent& event)
+    {
+        for (auto it = _activeChords.begin(); it != _activeChords.end();)
+        {
+            if (!it->second.contains(event.key))
+            {
+                ++it;
+                continue;
+            }
+
+            const auto action = it->first;
+            it = _activeChords.erase(it);
+            releaseBinding(action, event);
+        }
+    }
+
+    void InputController::handlePressedEvent(const KeyInputEvent& event)
+    {
+        const auto* binding = findBestBinding(event);
+        if (!binding)
+            return;
+
+        activateBinding(*binding, event);
+    }
+
+    const InputController::Binding* InputController::findBestBinding(
         const KeyInputEvent& event) const
     {
-        std::optional<std::size_t> result;
-        for (const auto& binding : _bindings)
+        const Binding* best = nullptr;
+        for (const auto& candidate : _bindings)
         {
-            if (binding.chord.matches(event.key, event.pressedKeys))
-                result = std::max(result.value_or(0), binding.chord.requiredKeys.size());
+            if (!candidate.chord.matches(event.key, event.pressedKeys))
+                continue;
+
+            if (!best
+                || candidate.chord.requiredKeys.size() > best->chord.requiredKeys.size())
+                best = &candidate;
         }
-        return result;
+        return best;
+    }
+
+    void InputController::activateBinding(const Binding& binding, const KeyInputEvent& event)
+    {
+        _activeChords.insert_or_assign(binding.action, binding.chord);
+        _actionModifiers.insert_or_assign(binding.action, event.modifiers);
+
+        if (binding.trigger == InputActionTrigger::OnRelease)
+        {
+            _actionStates.insert_or_assign(binding.action, false);
+            return;
+        }
+
+        _actionStates.insert_or_assign(binding.action, true);
+        if (binding.trigger == InputActionTrigger::OnPress)
+            _transientActions.insert(binding.action);
+
+        onAction->trigger(InputActionEvent{ .action = binding.action, .state = event.state });
+    }
+
+    void InputController::releaseBinding(const StringAtom& action, const KeyInputEvent& event)
+    {
+        const auto binding = std::ranges::find_if(
+            _bindings, [&action](const Binding& value) { return value.action == action; });
+        if (binding == _bindings.end())
+            return;
+
+        if (binding->trigger == InputActionTrigger::WhileHeld)
+        {
+            _actionStates.insert_or_assign(action, false);
+            _actionModifiers.insert_or_assign(action, InputModifier::None);
+            return;
+        }
+
+        if (binding->trigger == InputActionTrigger::OnRelease)
+        {
+            _actionStates.insert_or_assign(action, true);
+            _transientActions.insert(action);
+            onAction->trigger(InputActionEvent{ .action = action, .state = event.state });
+        }
     }
 
     void InputController::beginInputFrame()
@@ -311,20 +306,6 @@ namespace Core
             _actionModifiers.insert_or_assign(action, InputModifier::None);
         }
         _transientActions.clear();
-    }
-
-    void InputController::refreshActiveState()
-    {
-        const bool active = isInputActive();
-        if (_wasEffectivelyActive && !active)
-        {
-            releaseAllActions();
-        }
-        else if (!_wasEffectivelyActive && active)
-        {
-            Internal::InputSystem::Instance().activateController(this);
-        }
-        _wasEffectivelyActive = active;
     }
 
     void InputController::releaseAllActions()
