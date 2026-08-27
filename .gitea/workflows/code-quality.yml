@@ -166,13 +166,7 @@ jobs:
           rsync -a /build-cache/ build/
 
       - name: Run ECS tests
-        run: build/bin/Nexium_ECSTests
-
-      - name: Run Graphics tests
-        run: build/bin/Nexium_GraphicsTests
-
-      - name: Run Misc tests
-        run: build/bin/Nexium_MiscTests
+        run: build/bin/Nexium_Tests
 
   clang-tidy:
     name: clang-tidy
