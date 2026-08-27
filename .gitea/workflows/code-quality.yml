@@ -52,59 +52,27 @@ jobs:
             git fetch origin "$GITHUB_SHA" develop
             git checkout -f "$GITHUB_SHA"
             git submodule sync --recursive
-            git submodule update --init --recursive --remote --force
+            git submodule update --init --recursive --depth=1
           else
             echo "No cache found, cloning fresh"
-            git clone "$REPO_URL" /repo-cache
+            git clone --recurse-submodules --shallow-submodules "$REPO_URL" /repo-cache
             cd /repo-cache
             git fetch --depth=1 origin "$GITHUB_SHA"
             git checkout -f "$GITHUB_SHA"
-            git submodule sync --recursive
-            git submodule update --init --recursive --remote --force
           fi
 
           mkdir -p "$GITHUB_WORKSPACE"
           cp -a /repo-cache/. "$GITHUB_WORKSPACE"/
 
-      - name: Configure and build
-        id: build
-        continue-on-error: true
+      - name: Configure
         run: |
           cmake -S . -B build \
             -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
             -DCMAKE_C_COMPILER_LAUNCHER=ccache \
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
 
-          cmake --build build -j$(nproc)
-
-      - name: Clean rebuild after failed build
-        if: steps.build.outcome == 'failure'
-        env:
-          GITEATOKEN: ${{ secrets.GITEATOKEN }}
-        run: |
-          REPO_URL="https://oauth2:${GITEATOKEN}@gitea.vakon.dev/${GITHUB_REPOSITORY}.git"
-
-          # The runner keeps this directory mounted as its working directory.
-          # Clear its contents without attempting to remove the mount point.
-          rm -rf "$GITHUB_WORKSPACE/build"
-          find "$GITHUB_WORKSPACE" -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +
-          cd /repo-cache
-          git remote set-url origin "$REPO_URL"
-          git fetch --prune origin "$GITHUB_SHA" develop
-          git checkout -f "$GITHUB_SHA"
-          git reset --hard "$GITHUB_SHA"
-          git clean -ffdx
-          git submodule sync --recursive
-          git submodule update --init --recursive --remote --force
-          git submodule foreach --recursive 'git reset --hard && git clean -ffdx'
-
-          cp -a /repo-cache/. "$GITHUB_WORKSPACE"/
-          cd "$GITHUB_WORKSPACE"
-          cmake -S . -B build \
-            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
-            -DCMAKE_C_COMPILER_LAUNCHER=ccache \
-            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-          cmake --build build -j$(nproc)
+      - name: Build
+        run: cmake --build build -j$(nproc)
 
       - name: Save build cache
         run: rsync -a --delete build/ /build-cache/
@@ -136,55 +104,24 @@ jobs:
             git fetch origin "$GITHUB_SHA" develop
             git checkout -f "$GITHUB_SHA"
             git submodule sync --recursive
-            git submodule update --init --recursive --remote --force
+            git submodule update --init --recursive --depth=1
           else
             echo "No cache found, cloning fresh"
-            git clone "$REPO_URL" /repo-cache
+            git clone --recurse-submodules --shallow-submodules "$REPO_URL" /repo-cache
             cd /repo-cache
             git fetch --depth=1 origin "$GITHUB_SHA"
             git checkout -f "$GITHUB_SHA"
-            git submodule sync --recursive
-            git submodule update --init --recursive --remote --force
           fi
           mkdir -p "$GITHUB_WORKSPACE"
           cp -a /repo-cache/. "$GITHUB_WORKSPACE"/
-      - name: Configure and build
-        id: build
-        continue-on-error: true
+      - name: Configure
         run: |
           cmake -S . -B build \
             -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
             -DCMAKE_C_COMPILER_LAUNCHER=ccache \
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-          cmake --build build -j$(nproc)
-      - name: Clean rebuild after failed build
-        if: steps.build.outcome == 'failure'
-        env:
-          GITEATOKEN: ${{ secrets.GITEATOKEN }}
-        run: |
-          REPO_URL="https://oauth2:${GITEATOKEN}@gitea.vakon.dev/${GITHUB_REPOSITORY}.git"
-
-          # The runner keeps this directory mounted as its working directory.
-          # Clear its contents without attempting to remove the mount point.
-          rm -rf "$GITHUB_WORKSPACE/build"
-          find "$GITHUB_WORKSPACE" -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +
-          cd /repo-cache
-          git remote set-url origin "$REPO_URL"
-          git fetch --prune origin "$GITHUB_SHA" develop
-          git checkout -f "$GITHUB_SHA"
-          git reset --hard "$GITHUB_SHA"
-          git clean -ffdx
-          git submodule sync --recursive
-          git submodule update --init --recursive --remote --force
-          git submodule foreach --recursive 'git reset --hard && git clean -ffdx'
-
-          cp -a /repo-cache/. "$GITHUB_WORKSPACE"/
-          cd "$GITHUB_WORKSPACE"
-          cmake -S . -B build \
-            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
-            -DCMAKE_C_COMPILER_LAUNCHER=ccache \
-            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-          cmake --build build -j$(nproc)
+      - name: Build
+        run: cmake --build build -j$(nproc)
       - name: Save build cache
         run: |
           mkdir -p /build-cache
@@ -212,15 +149,13 @@ jobs:
             git fetch origin "$GITHUB_SHA" develop
             git checkout -f "$GITHUB_SHA"
             git submodule sync --recursive
-            git submodule update --init --recursive --remote --force
+            git submodule update --init --recursive --depth=1
           else
             echo "No cache found, cloning fresh"
-            git clone "$REPO_URL" /repo-cache
+            git clone --recurse-submodules --shallow-submodules "$REPO_URL" /repo-cache
             cd /repo-cache
             git fetch --depth=1 origin "$GITHUB_SHA"
             git checkout -f "$GITHUB_SHA"
-            git submodule sync --recursive
-            git submodule update --init --recursive --remote --force
           fi
           mkdir -p "$GITHUB_WORKSPACE"
           cp -a /repo-cache/. "$GITHUB_WORKSPACE"/
@@ -230,8 +165,14 @@ jobs:
           mkdir -p build
           rsync -a /build-cache/ build/
 
-      - name: Run tests
-        run: build/bin/Nexium_Tests
+      - name: Run ECS tests
+        run: build/bin/Nexium_ECSTests
+
+      - name: Run Graphics tests
+        run: build/bin/Nexium_GraphicsTests
+
+      - name: Run Misc tests
+        run: build/bin/Nexium_MiscTests
 
   clang-tidy:
     name: clang-tidy
@@ -256,15 +197,13 @@ jobs:
             git fetch --depth=1 origin "$GITHUB_SHA"
             git checkout -f "$GITHUB_SHA"
             git submodule sync --recursive
-            git submodule update --init --recursive --remote --force
+            git submodule update --init --recursive --depth=1
           else
             echo "No cache found, cloning fresh"
-            git clone "$REPO_URL" /repo-cache
+            git clone --recurse-submodules --shallow-submodules "$REPO_URL" /repo-cache
             cd /repo-cache
             git fetch --depth=1 origin "$GITHUB_SHA"
             git checkout -f "$GITHUB_SHA"
-            git submodule sync --recursive
-            git submodule update --init --recursive --remote --force
           fi
 
           mkdir -p "$GITHUB_WORKSPACE"
