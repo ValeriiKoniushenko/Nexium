@@ -207,7 +207,7 @@ jobs:
       - name: Check Valgrind
         env:
           GITEATOKEN: ${{ secrets.GITEATOKEN }}
-        run: python3 .gitea/check_valgrind.py --executable build/bin/Nexium_Tests
+        run: python3 .gitea/check_valgrind.py --executable build/bin/Nexium_Tests --verbose
 
   clang-tidy:
     name: clang-tidy
