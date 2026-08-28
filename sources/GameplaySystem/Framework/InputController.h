@@ -45,6 +45,12 @@ namespace Core
         ECS_DECL(InputController, Core::BaseComponent);
 
     public:
+        InputController(const StringAtom& name, InputContext context)
+            : InputController(name)
+        {
+            _inputContext = context;
+        }
+
         struct Binding
         {
             StringAtom action;
@@ -60,8 +66,6 @@ namespace Core
 
         void setBindings(std::vector<Binding>&& bindings);
         void setBindings(const std::vector<Binding>& bindings);
-
-        void setInputContext(InputContext context);
 
         [[nodiscard]] InputContext getInputContext() const noexcept { return _inputContext; }
 
@@ -80,6 +84,13 @@ namespace Core
         void onInitialize() override;
 
     private:
+        /**
+         * @brief Calculates the distance between two points.
+         * @param first First point.
+         * @param second Second point.
+         * @return Distance between the points.
+         */
+
         friend class Internal::InputSystem;
 
         void handleRoutedEvent(const KeyInputEvent& event);
@@ -105,7 +116,6 @@ namespace Core
         std::unordered_map<StringAtom, bool> _actionStates;
         std::unordered_map<StringAtom, KeyChord> _activeChords;
         std::unordered_map<StringAtom, InputModifier> _actionModifiers;
-
     };
 
     /// @brief Serializes an input binding to its asset JSON representation.
