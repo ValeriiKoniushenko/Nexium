@@ -7,6 +7,7 @@ import argparse
 import json
 import os
 import re
+import shlex
 import subprocess
 import sys
 import time
@@ -65,6 +66,99 @@ def collect_build_tool_versions() -> list[tuple[str, str]]:
         else:
             versions.append((name, "version command produced no output"))
     return versions
+
+
+@dataclass
+class CmakeBuildConfiguration:
+    cache_path: Path
+    configure_command: str
+    details: list[tuple[str, str]]
+
+
+def find_cmake_cache(executable: Path) -> Path | None:
+    """Find the build directory owning an executable by walking to CMakeCache.txt."""
+    for directory in executable.resolve().parents:
+        cache_path = directory / "CMakeCache.txt"
+        if cache_path.is_file():
+            return cache_path
+    return None
+
+
+def read_cmake_cache(cache_path: Path) -> dict[str, str]:
+    values = {}
+    for line in cache_path.read_text(errors="replace").splitlines():
+        key_with_type, separator, value = line.partition("=")
+        if not separator or key_with_type.startswith(("//", "#")):
+            continue
+        key, _, _ = key_with_type.partition(":")
+        values[key] = value
+    return values
+
+
+def display_path(path: Path) -> str:
+    try:
+        return str(path.relative_to(Path.cwd())) or "."
+    except ValueError:
+        return str(path)
+
+
+def detect_compiler_launcher(build_directory: Path) -> str | None:
+    build_file = build_directory / "build.ninja"
+    try:
+        match = re.search(r"^  LAUNCHER = (.+)$", build_file.read_text(), flags=re.MULTILINE)
+    except OSError:
+        return None
+    return match.group(1).strip() if match else None
+
+
+def collect_cmake_build_configuration(executable: Path) -> CmakeBuildConfiguration | None:
+    """Reconstruct the screenshot build's CMake configuration from its cache."""
+    cache_path = find_cmake_cache(executable)
+    if cache_path is None:
+        return None
+
+    values = read_cmake_cache(cache_path)
+    build_path = cache_path.parent
+    build_directory = display_path(build_path)
+    command = ["cmake", "-S", ".", "-B", build_directory]
+    generator = values.get("CMAKE_GENERATOR")
+    if generator:
+        command.extend(("-G", generator))
+
+    compile_commands = values.get("CMAKE_EXPORT_COMPILE_COMMANDS")
+    if not compile_commands and (build_path / "compile_commands.json").is_file():
+        compile_commands = "ON"
+    compiler_launcher = (
+        values.get("CMAKE_C_COMPILER_LAUNCHER") or detect_compiler_launcher(build_path)
+    )
+    cxx_compiler_launcher = values.get("CMAKE_CXX_COMPILER_LAUNCHER") or compiler_launcher
+    cmake_options = (
+        ("CMAKE_BUILD_TYPE", values.get("CMAKE_BUILD_TYPE")),
+        ("CMAKE_EXPORT_COMPILE_COMMANDS", compile_commands),
+        ("CMAKE_C_COMPILER", values.get("CMAKE_C_COMPILER")),
+        ("CMAKE_CXX_COMPILER", values.get("CMAKE_CXX_COMPILER")),
+        ("CMAKE_C_COMPILER_LAUNCHER", compiler_launcher),
+        ("CMAKE_CXX_COMPILER_LAUNCHER", cxx_compiler_launcher),
+    )
+    for name, value in cmake_options:
+        if value:
+            command.append(f"-D{name}={value}")
+
+    details = [("Build directory", build_directory)]
+    details.extend(
+        (label, value)
+        for label, value in (
+            ("Generator", generator),
+            ("Build type", values.get("CMAKE_BUILD_TYPE") or "default"),
+            ("Compile commands", compile_commands),
+            ("C compiler", values.get("CMAKE_C_COMPILER")),
+            ("C++ compiler", values.get("CMAKE_CXX_COMPILER")),
+            ("C compiler launcher", compiler_launcher),
+            ("C++ compiler launcher", cxx_compiler_launcher),
+        )
+        if value
+    )
+    return CmakeBuildConfiguration(cache_path, shlex.join(command), details)
 
 
 def markdown_inline(value: str) -> str:
@@ -254,6 +348,7 @@ def make_review_body(
     executable_name: str,
     tool_versions: list[tuple[str, str]],
     *,
+    build_configuration: CmakeBuildConfiguration | None,
     image_url: str | None,
     screenshot_error: str | None,
     screen_size: tuple[int, int],
@@ -266,6 +361,22 @@ def make_review_body(
     elif screenshot_error:
         lines.extend(("", f"> Screenshot unavailable: `{markdown_inline(screenshot_error)}`"))
 
+    if build_configuration is None:
+        configuration_lines = ("CMake cache unavailable for this executable.",)
+    else:
+        configuration_lines = (
+            "Reconstructed from the screenshot build's CMake cache and generated build files:",
+            "```sh",
+            build_configuration.configure_command,
+            "```",
+            "| Setting | Value |",
+            "| --- | --- |",
+            *(
+                f"| {markdown_inline(name)} | `{markdown_inline(value)}` |"
+                for name, value in build_configuration.details
+            ),
+        )
+
     lines.extend(
         (
             "",
@@ -273,6 +384,9 @@ def make_review_body(
             "| Tool | Version |",
             "| --- | --- |",
             *(f"| `{name}` | `{markdown_inline(version)}` |" for name, version in tool_versions),
+            "",
+            "### Build Configuration",
+            *configuration_lines,
             "",
             "### Run Statistics",
             "| Metric | Value |",
@@ -301,6 +415,7 @@ def publish_screenshot(
     screenshot: Path,
     executable_name: str,
     tool_versions: list[tuple[str, str]],
+    build_configuration: CmakeBuildConfiguration | None,
     screenshot_error: str | None,
     statistics: RunStatistics,
 ) -> None:
@@ -354,6 +469,7 @@ def publish_screenshot(
     review_body = make_review_body(
         executable_name,
         tool_versions,
+        build_configuration=build_configuration,
         image_url=image_url,
         screenshot_error=screenshot_error,
         screen_size=get_screen_size(),
@@ -406,6 +522,7 @@ def main() -> None:
     screenshot = Path(args.output).resolve()
     executable = Path(args.executable)
     tool_versions = collect_build_tool_versions()
+    build_configuration = collect_cmake_build_configuration(executable)
     statistics = RunStatistics()
     screenshot_error = None
     try:
@@ -429,6 +546,7 @@ def main() -> None:
                 screenshot,
                 executable.name,
                 tool_versions,
+                build_configuration,
                 screenshot_error,
                 statistics,
             )
