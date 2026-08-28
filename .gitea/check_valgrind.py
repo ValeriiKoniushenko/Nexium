@@ -105,7 +105,10 @@ def failure_review_body(result: ValgrindResult) -> str:
     return (
         f"**{title}** (exit code `{result.returncode}`).\n\n"
         f"Command: `{command}`\n\n"
-        f"```text\n{output}\n```"
+        "<details>\n"
+        "<summary>Valgrind output</summary>\n\n"
+        f"```text\n{output}\n```\n\n"
+        "</details>"
     )
 
 

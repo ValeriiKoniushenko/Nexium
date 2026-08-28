@@ -233,6 +233,20 @@ def finish_statistics(statistics: RunStatistics) -> None:
         statistics.cpu_seconds = max(0.0, statistics.last_cpu_seconds - statistics.initial_cpu_seconds)
 
 
+def get_headless_environment() -> dict[str, str]:
+    """Configure a Mesa software-rendered Xvfb environment for a game process."""
+    environment = os.environ.copy()
+    environment["DISPLAY"] = DISPLAY
+    environment.setdefault("LIBGL_ALWAYS_SOFTWARE", "1")
+    # Xvfb's Mesa software renderer provides a 4.5 core context on the CI image.
+    environment["NEXIUM_HEADLESS_GL"] = "1"
+    runtime_dir = Path("/tmp/nexium-xdg-runtime")
+    runtime_dir.mkdir(mode=0o700, exist_ok=True)
+    runtime_dir.chmod(0o700)
+    environment["XDG_RUNTIME_DIR"] = str(runtime_dir)
+    return environment
+
+
 def terminate(process: subprocess.Popen[object], name: str) -> None:
     """Stop a child process, escalating only when it does not exit promptly."""
     if process.poll() is not None:
@@ -280,15 +294,7 @@ def capture_game_ui(
     if not executable.is_file():
         raise FileNotFoundError(f"game executable not found: {executable}")
 
-    environment = os.environ.copy()
-    environment["DISPLAY"] = DISPLAY
-    environment.setdefault("LIBGL_ALWAYS_SOFTWARE", "1")
-    # Xvfb's Mesa software renderer provides a 4.5 core context on the CI image.
-    environment["NEXIUM_HEADLESS_GL"] = "1"
-    runtime_dir = Path("/tmp/nexium-xdg-runtime")
-    runtime_dir.mkdir(mode=0o700, exist_ok=True)
-    runtime_dir.chmod(0o700)
-    environment["XDG_RUNTIME_DIR"] = str(runtime_dir)
+    environment = get_headless_environment()
     screenshot.unlink(missing_ok=True)
     screen_width, screen_height = get_screen_size()
 
@@ -380,6 +386,9 @@ def make_review_body(
     lines.extend(
         (
             "",
+            "<details>",
+            "<summary>Build details</summary>",
+            "",
             "### Build Environment",
             "| Tool | Version |",
             "| --- | --- |",
@@ -387,6 +396,8 @@ def make_review_body(
             "",
             "### Build Configuration",
             *configuration_lines,
+            "",
+            "</details>",
             "",
             "### Run Statistics",
             "| Metric | Value |",
