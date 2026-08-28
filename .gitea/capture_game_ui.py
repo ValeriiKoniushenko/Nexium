@@ -361,7 +361,7 @@ def make_review_body(
     statistics: RunStatistics,
 ) -> str:
     """Build the PR review body for both successful and failed captures."""
-    lines = [f"**Test run of _{markdown_inline(executable_name)}_**"]
+    lines = [f"## Test run of _{markdown_inline(executable_name)}_"]
     if image_url:
         lines.extend(("", f"![{markdown_inline(executable_name)} UI]({image_url})"))
     elif screenshot_error:
@@ -387,7 +387,7 @@ def make_review_body(
         (
             "",
             "<details>",
-            "<summary>Build details</summary>",
+            "<summary><b>Build details</b></summary>",
             "",
             "### Build Environment",
             "| Tool | Version |",

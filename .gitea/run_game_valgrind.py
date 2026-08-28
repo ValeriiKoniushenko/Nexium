@@ -158,7 +158,7 @@ def review_body(executable_name: str, result: ValgrindGameResult) -> str:
 
     output = tail_for_review("\n\n".join(part for part in (result.stdout, result.stderr) if part))
     lines = [
-        f"**Valgrind run of _{markdown_inline(executable_name)}_**",
+        f"## Valgrind run of _{markdown_inline(executable_name)}_",
         "",
     ]
     if result.unexpected_errors:
@@ -185,7 +185,7 @@ def review_body(executable_name: str, result: ValgrindGameResult) -> str:
             f"| Command exit code | `{result.returncode}` |",
             "",
             "<details>",
-            "<summary>Valgrind output</summary>",
+            "<summary><b>Valgrind output</b></summary>",
             "",
             "```text",
             output or "No Valgrind output.",
