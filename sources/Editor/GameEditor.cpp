@@ -362,8 +362,6 @@ namespace Core
                 }
             });
 
-        int* i = new int(1);
-
         auto toggleRenderMode = keyboardInput.getOrCreate("Toggle render mode", Keyboard::Key::F1);
         toggleRenderMode->setIsRepeatable(false);
         _subscriptionPool << toggleRenderMode->onPress->subscribeAndGetID(
