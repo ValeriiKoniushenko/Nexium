@@ -6,12 +6,23 @@ on:
     branches:
       - develop
 
+# All jobs below share host bind-mounted caches (/repo-cache, /build-cache*).
+# Two concurrent runs (e.g. two PRs) would otherwise race on those same
+# directories. This serializes runs on this workflow instead of cancelling
+# or racing them. Requires a Gitea version with `concurrency:` support
+# (1.20+); if your instance predates that, drop this block and namespace
+# the cache paths by ${{ gitea.run_id }} instead.
+concurrency:
+  group: nexium-ci-shared-cache
+  cancel-in-progress: false
+
 jobs:
-  clang-format:
-    name: "clang-format 19.1.7"
+  fmt-clang-format:
+    name: "[fmt] clang-format 19.1.7"
     runs-on: linux
     container:
       image: cpp-ci:latest
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -25,7 +36,7 @@ jobs:
           python3 .gitea/check_clang_format.py --base develop
 
   build-clang:
-    name: "Build: Linux | Clang 19.1.7"
+    name: "[build] clang 19.1.7 (linux)"
     runs-on: linux
     container:
       image: cpp-ci:latest
@@ -37,47 +48,42 @@ jobs:
       CCACHE_DIR: /ccache
       CC: clang
       CXX: clang++
+    timeout-minutes: 30
     steps:
       - name: Sync repo cache
         env:
           GITEATOKEN: ${{ secrets.GITEATOKEN }}
+          EXTRA_REFS: develop
         run: |
-          REPO_URL="https://oauth2:${GITEATOKEN}@gitea.vakon.dev/${GITHUB_REPOSITORY}.git"
-
-          if [ -d /repo-cache/.git ]; then
-            echo "Using existing repo cache"
-            cd /repo-cache
-            git remote set-url origin "$REPO_URL"
-            git fetch origin "$GITHUB_SHA" develop
-            git checkout -f "$GITHUB_SHA"
-            git submodule sync --recursive
-            git submodule update --init --recursive --depth=1
-          else
-            echo "No cache found, cloning fresh"
-            git clone --recurse-submodules --shallow-submodules "$REPO_URL" /repo-cache
-            cd /repo-cache
-            git fetch --depth=1 origin "$GITHUB_SHA"
-            git checkout -f "$GITHUB_SHA"
-          fi
-
-          mkdir -p "$GITHUB_WORKSPACE"
-          cp -a /repo-cache/. "$GITHUB_WORKSPACE"/
+          curl -sSL -H "Authorization: token ${GITEATOKEN}" \
+            "https://gitea.vakon.dev/api/v1/repos/${GITHUB_REPOSITORY}/raw/${GITHUB_SHA}/.gitea/scripts/sync-repo.sh" \
+            -o /tmp/sync-repo.sh
+          bash /tmp/sync-repo.sh
 
       - name: Configure
         run: |
+          echo "::group::CMake configure"
           cmake -S . -B build \
             -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
             -DCMAKE_C_COMPILER_LAUNCHER=ccache \
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+          echo "::endgroup::"
 
       - name: Build
-        run: cmake --build build -j$(nproc)
+        run: |
+          echo "::group::Build"
+          cmake --build build -j$(nproc)
+          echo "::endgroup::"
+          {
+            echo "## Build: clang 19.1.7"
+            echo "Build succeeded."
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Save build cache
         run: rsync -a --delete build/ /build-cache/
 
   build-gcc:
-    name: "Build: Linux | GCC 14.2.0"
+    name: "[build] gcc 14.2.0 (linux)"
     runs-on: linux
     container:
       image: cpp-ci:latest
@@ -89,44 +95,44 @@ jobs:
       CCACHE_DIR: /ccache
       CC: gcc
       CXX: g++
+    timeout-minutes: 30
     steps:
       - name: Sync repo cache
         env:
           GITEATOKEN: ${{ secrets.GITEATOKEN }}
+          EXTRA_REFS: develop
         run: |
-          REPO_URL="https://oauth2:${GITEATOKEN}@gitea.vakon.dev/${GITHUB_REPOSITORY}.git"
-          if [ -d /repo-cache/.git ]; then
-            echo "Using existing repo cache"
-            cd /repo-cache
-            git remote set-url origin "$REPO_URL"
-            git fetch origin "$GITHUB_SHA" develop
-            git checkout -f "$GITHUB_SHA"
-            git submodule sync --recursive
-            git submodule update --init --recursive --depth=1
-          else
-            echo "No cache found, cloning fresh"
-            git clone --recurse-submodules --shallow-submodules "$REPO_URL" /repo-cache
-            cd /repo-cache
-            git fetch --depth=1 origin "$GITHUB_SHA"
-            git checkout -f "$GITHUB_SHA"
-          fi
-          mkdir -p "$GITHUB_WORKSPACE"
-          cp -a /repo-cache/. "$GITHUB_WORKSPACE"/
+          curl -sSL -H "Authorization: token ${GITEATOKEN}" \
+            "https://gitea.vakon.dev/api/v1/repos/${GITHUB_REPOSITORY}/raw/${GITHUB_SHA}/.gitea/scripts/sync-repo.sh" \
+            -o /tmp/sync-repo.sh
+          bash /tmp/sync-repo.sh
+
       - name: Configure
         run: |
+          echo "::group::CMake configure"
           cmake -S . -B build \
             -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
             -DCMAKE_C_COMPILER_LAUNCHER=ccache \
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+          echo "::endgroup::"
+
       - name: Build
-        run: cmake --build build -j$(nproc)
+        run: |
+          echo "::group::Build"
+          cmake --build build -j$(nproc)
+          echo "::endgroup::"
+          {
+            echo "## Build: gcc 14.2.0"
+            echo "Build succeeded."
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Save build cache
         run: |
           mkdir -p /build-cache
           rsync -a --delete build/ /build-cache/
 
   test-clang:
-    name: "Test: Linux | Clang 19.1.7"
+    name: "[test] unit tests (clang)"
     needs: build-clang
     runs-on: linux
     container:
@@ -134,40 +140,35 @@ jobs:
       volumes:
         - /srv/ci-cache/git-repo:/repo-cache
         - /srv/ci-cache/build-cache:/build-cache
+    timeout-minutes: 15
     steps:
       - name: Sync repo cache
         env:
           GITEATOKEN: ${{ secrets.GITEATOKEN }}
+          EXTRA_REFS: develop
         run: |
-          REPO_URL="https://oauth2:${GITEATOKEN}@gitea.vakon.dev/${GITHUB_REPOSITORY}.git"
-          if [ -d /repo-cache/.git ]; then
-            echo "Using existing repo cache"
-            cd /repo-cache
-            git remote set-url origin "$REPO_URL"
-            git fetch origin "$GITHUB_SHA" develop
-            git checkout -f "$GITHUB_SHA"
-            git submodule sync --recursive
-            git submodule update --init --recursive --depth=1
-          else
-            echo "No cache found, cloning fresh"
-            git clone --recurse-submodules --shallow-submodules "$REPO_URL" /repo-cache
-            cd /repo-cache
-            git fetch --depth=1 origin "$GITHUB_SHA"
-            git checkout -f "$GITHUB_SHA"
-          fi
-          mkdir -p "$GITHUB_WORKSPACE"
-          cp -a /repo-cache/. "$GITHUB_WORKSPACE"/
+          curl -sSL -H "Authorization: token ${GITEATOKEN}" \
+            "https://gitea.vakon.dev/api/v1/repos/${GITHUB_REPOSITORY}/raw/${GITHUB_SHA}/.gitea/scripts/sync-repo.sh" \
+            -o /tmp/sync-repo.sh
+          bash /tmp/sync-repo.sh
 
       - name: Restore build output
         run: |
-          mkdir -p build
-          rsync -a /build-cache/ build/
+          curl -sSL -H "Authorization: token ${GITEATOKEN}" \
+            "https://gitea.vakon.dev/api/v1/repos/${GITHUB_REPOSITORY}/raw/${GITHUB_SHA}/.gitea/scripts/restore-build.sh" \
+            -o /tmp/restore-build.sh
+          bash /tmp/restore-build.sh
+        env:
+          GITEATOKEN: ${{ secrets.GITEATOKEN }}
 
       - name: Run ECS tests
-        run: build/bin/Nexium_Tests
+        run: |
+          echo "::group::Nexium_Tests"
+          build/bin/Nexium_Tests
+          echo "::endgroup::"
 
-  template-game-ui:
-    name: "TemplateGame UI: Linux | Clang 19.1.7"
+  ui-template-game:
+    name: "[ui] template-game capture (clang)"
     needs: build-clang
     runs-on: linux
     container:
@@ -175,42 +176,39 @@ jobs:
       volumes:
         - /srv/ci-cache/git-repo:/repo-cache
         - /srv/ci-cache/build-cache:/build-cache
+    timeout-minutes: 15
     steps:
       - name: Sync repo cache
         env:
           GITEATOKEN: ${{ secrets.GITEATOKEN }}
+          EXTRA_REFS: develop
         run: |
-          REPO_URL="https://oauth2:${GITEATOKEN}@gitea.vakon.dev/${GITHUB_REPOSITORY}.git"
-          if [ -d /repo-cache/.git ]; then
-            echo "Using existing repo cache"
-            cd /repo-cache
-            git remote set-url origin "$REPO_URL"
-            git fetch origin "$GITHUB_SHA" develop
-            git checkout -f "$GITHUB_SHA"
-            git submodule sync --recursive
-            git submodule update --init --recursive --depth=1
-          else
-            echo "No cache found, cloning fresh"
-            git clone --recurse-submodules --shallow-submodules "$REPO_URL" /repo-cache
-            cd /repo-cache
-            git fetch --depth=1 origin "$GITHUB_SHA"
-            git checkout -f "$GITHUB_SHA"
-          fi
-          mkdir -p "$GITHUB_WORKSPACE"
-          cp -a /repo-cache/. "$GITHUB_WORKSPACE"/
+          curl -sSL -H "Authorization: token ${GITEATOKEN}" \
+            "https://gitea.vakon.dev/api/v1/repos/${GITHUB_REPOSITORY}/raw/${GITHUB_SHA}/.gitea/scripts/sync-repo.sh" \
+            -o /tmp/sync-repo.sh
+          bash /tmp/sync-repo.sh
 
       - name: Restore build output
+        env:
+          GITEATOKEN: ${{ secrets.GITEATOKEN }}
         run: |
-          mkdir -p build
-          rsync -a /build-cache/ build/
+          curl -sSL -H "Authorization: token ${GITEATOKEN}" \
+            "https://gitea.vakon.dev/api/v1/repos/${GITHUB_REPOSITORY}/raw/${GITHUB_SHA}/.gitea/scripts/restore-build.sh" \
+            -o /tmp/restore-build.sh
+          bash /tmp/restore-build.sh
 
       - name: Capture and publish TemplateGame UI
         env:
           GITEATOKEN: ${{ secrets.GITEATOKEN }}
-        run: python3 .gitea/capture_game_ui.py --executable build/bin/TemplateGame --output template-game-ui.png
+        run: |
+          python3 .gitea/capture_game_ui.py --executable build/bin/TemplateGame --output template-game-ui.png
+          {
+            echo "## TemplateGame UI"
+            echo "Captured \`template-game-ui.png\`"
+          } >> "$GITHUB_STEP_SUMMARY"
 
-  template-game-valgrind:
-    name: "TemplateGame Valgrind: Linux | Clang 19.1.7"
+  test-template-game-valgrind:
+    name: "[test] template-game valgrind (clang)"
     needs: build-clang
     runs-on: linux
     container:
@@ -218,42 +216,34 @@ jobs:
       volumes:
         - /srv/ci-cache/git-repo:/repo-cache
         - /srv/ci-cache/build-cache:/build-cache
+    timeout-minutes: 15
     steps:
       - name: Sync repo cache
         env:
           GITEATOKEN: ${{ secrets.GITEATOKEN }}
+          EXTRA_REFS: develop
         run: |
-          REPO_URL="https://oauth2:${GITEATOKEN}@gitea.vakon.dev/${GITHUB_REPOSITORY}.git"
-          if [ -d /repo-cache/.git ]; then
-            echo "Using existing repo cache"
-            cd /repo-cache
-            git remote set-url origin "$REPO_URL"
-            git fetch origin "$GITHUB_SHA" develop
-            git checkout -f "$GITHUB_SHA"
-            git submodule sync --recursive
-            git submodule update --init --recursive --depth=1
-          else
-            echo "No cache found, cloning fresh"
-            git clone --recurse-submodules --shallow-submodules "$REPO_URL" /repo-cache
-            cd /repo-cache
-            git fetch --depth=1 origin "$GITHUB_SHA"
-            git checkout -f "$GITHUB_SHA"
-          fi
-          mkdir -p "$GITHUB_WORKSPACE"
-          cp -a /repo-cache/. "$GITHUB_WORKSPACE"/
+          curl -sSL -H "Authorization: token ${GITEATOKEN}" \
+            "https://gitea.vakon.dev/api/v1/repos/${GITHUB_REPOSITORY}/raw/${GITHUB_SHA}/.gitea/scripts/sync-repo.sh" \
+            -o /tmp/sync-repo.sh
+          bash /tmp/sync-repo.sh
 
       - name: Restore build output
+        env:
+          GITEATOKEN: ${{ secrets.GITEATOKEN }}
         run: |
-          mkdir -p build
-          rsync -a /build-cache/ build/
+          curl -sSL -H "Authorization: token ${GITEATOKEN}" \
+            "https://gitea.vakon.dev/api/v1/repos/${GITHUB_REPOSITORY}/raw/${GITHUB_SHA}/.gitea/scripts/restore-build.sh" \
+            -o /tmp/restore-build.sh
+          bash /tmp/restore-build.sh
 
       - name: Run TemplateGame under Valgrind
         env:
           GITEATOKEN: ${{ secrets.GITEATOKEN }}
         run: python3 .gitea/run_game_valgrind.py --executable build/bin/TemplateGame --timeout 5
 
-  valgrind:
-    name: "Valgrind: Linux | Clang 19.1.7"
+  test-valgrind:
+    name: "[test] valgrind (clang)"
     needs: build-clang
     runs-on: linux
     container:
@@ -261,42 +251,42 @@ jobs:
       volumes:
         - /srv/ci-cache/git-repo:/repo-cache
         - /srv/ci-cache/build-cache:/build-cache
+    timeout-minutes: 20
     steps:
       - name: Sync repo cache
         env:
           GITEATOKEN: ${{ secrets.GITEATOKEN }}
+          EXTRA_REFS: ""
         run: |
-          REPO_URL="https://oauth2:${GITEATOKEN}@gitea.vakon.dev/${GITHUB_REPOSITORY}.git"
-          if [ -d /repo-cache/.git ]; then
-            echo "Using existing repo cache"
-            cd /repo-cache
-            git remote set-url origin "$REPO_URL"
-            git fetch origin "$GITHUB_SHA"
-            git checkout -f "$GITHUB_SHA"
-            git submodule sync --recursive
-            git submodule update --init --recursive --depth=1
-          else
-            echo "No cache found, cloning fresh"
-            git clone --recurse-submodules --shallow-submodules "$REPO_URL" /repo-cache
-            cd /repo-cache
-            git fetch --depth=1 origin "$GITHUB_SHA"
-            git checkout -f "$GITHUB_SHA"
-          fi
-          mkdir -p "$GITHUB_WORKSPACE"
-          cp -a /repo-cache/. "$GITHUB_WORKSPACE"/
+          curl -sSL -H "Authorization: token ${GITEATOKEN}" \
+            "https://gitea.vakon.dev/api/v1/repos/${GITHUB_REPOSITORY}/raw/${GITHUB_SHA}/.gitea/scripts/sync-repo.sh" \
+            -o /tmp/sync-repo.sh
+          bash /tmp/sync-repo.sh
 
       - name: Restore build output
+        env:
+          GITEATOKEN: ${{ secrets.GITEATOKEN }}
         run: |
-          mkdir -p build
-          rsync -a /build-cache/ build/
+          curl -sSL -H "Authorization: token ${GITEATOKEN}" \
+            "https://gitea.vakon.dev/api/v1/repos/${GITHUB_REPOSITORY}/raw/${GITHUB_SHA}/.gitea/scripts/restore-build.sh" \
+            -o /tmp/restore-build.sh
+          bash /tmp/restore-build.sh
 
       - name: Check Valgrind
         env:
           GITEATOKEN: ${{ secrets.GITEATOKEN }}
-        run: python3 .gitea/check_valgrind.py --executable build/bin/Nexium_Tests --verbose
+        run: |
+          python3 .gitea/check_valgrind.py --executable build/bin/Nexium_Tests --verbose \
+            | tee valgrind-output.txt
+          {
+            echo "## Valgrind (Nexium_Tests)"
+            echo '```'
+            tail -30 valgrind-output.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
 
-  clang-tidy:
-    name: "clang-tidy 19.1.7"
+  lint-clang-tidy:
+    name: "[lint] clang-tidy 19.1.7"
     needs: build-clang
     runs-on: linux
     container:
@@ -304,41 +294,45 @@ jobs:
       volumes:
         - /srv/ci-cache/git-repo:/repo-cache
         - /srv/ci-cache/build-cache:/build-cache
+    timeout-minutes: 20
     steps:
       - name: Sync repo cache
         env:
           GITEATOKEN: ${{ secrets.GITEATOKEN }}
+          EXTRA_REFS: ""
+          SHALLOW: "true"
         run: |
-          REPO_URL="https://oauth2:${GITEATOKEN}@gitea.vakon.dev/${GITHUB_REPOSITORY}.git"
-
-          if [ -d /repo-cache/.git ]; then
-            echo "Using existing repo cache"
-            cd /repo-cache
-            git remote set-url origin "$REPO_URL"
-            git fetch --depth=1 origin "$GITHUB_SHA"
-            git checkout -f "$GITHUB_SHA"
-            git submodule sync --recursive
-            git submodule update --init --recursive --depth=1
-          else
-            echo "No cache found, cloning fresh"
-            git clone --recurse-submodules --shallow-submodules "$REPO_URL" /repo-cache
-            cd /repo-cache
-            git fetch --depth=1 origin "$GITHUB_SHA"
-            git checkout -f "$GITHUB_SHA"
-          fi
-
-          mkdir -p "$GITHUB_WORKSPACE"
-          cp -a /repo-cache/. "$GITHUB_WORKSPACE"/
+          curl -sSL -H "Authorization: token ${GITEATOKEN}" \
+            "https://gitea.vakon.dev/api/v1/repos/${GITHUB_REPOSITORY}/raw/${GITHUB_SHA}/.gitea/scripts/sync-repo.sh" \
+            -o /tmp/sync-repo.sh
+          bash /tmp/sync-repo.sh
 
       - name: Fetch develop for diffing
         run: |
-          git fetch --unshallow origin || true
+          echo "::group::Ensuring full history for diff"
+          # `--unshallow` fails with "already a complete repository" if the
+          # workspace already has full history — that's expected, not an
+          # error. Anything else (auth, network) should fail the job loudly
+          # instead of being silently swallowed by a blanket `|| true`.
+          if ! git fetch --unshallow origin 2> /tmp/unshallow.log; then
+            if grep -q "already a complete repository" /tmp/unshallow.log; then
+              echo "Repo already has full history, continuing"
+            else
+              cat /tmp/unshallow.log
+              exit 1
+            fi
+          fi
           git fetch origin develop:refs/remotes/origin/develop
+          echo "::endgroup::"
 
       - name: Restore build output
+        env:
+          GITEATOKEN: ${{ secrets.GITEATOKEN }}
         run: |
-          mkdir -p build
-          rsync -a /build-cache/ build/
+          curl -sSL -H "Authorization: token ${GITEATOKEN}" \
+            "https://gitea.vakon.dev/api/v1/repos/${GITHUB_REPOSITORY}/raw/${GITHUB_SHA}/.gitea/scripts/restore-build.sh" \
+            -o /tmp/restore-build.sh
+          bash /tmp/restore-build.sh
 
       - name: Check clang-tidy
         env:
