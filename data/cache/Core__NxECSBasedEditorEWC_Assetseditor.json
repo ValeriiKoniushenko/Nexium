@@ -30,10 +30,17 @@
         },
         {
             "_children": null,
-            "_isEnabled": false,
+            "_isEnabled": true,
             "_name": "",
             "_noTick": false,
             "_type": "Core::ECSEditorFrameByFrameAnimationAdapter"
+        },
+        {
+            "_children": null,
+            "_isEnabled": false,
+            "_name": "",
+            "_noTick": false,
+            "_type": "Core::ECSEditorInputControllerAdapter"
         }
     ],
     "_innerPosition": [
@@ -41,10 +48,10 @@
         88.0
     ],
     "_innerSize": {
-        "height": 698.0,
-        "width": 958.0
+        "height": 646.0,
+        "width": 940.0
     },
-    "_isEnabled": false,
+    "_isEnabled": true,
     "_isFitContent": false,
     "_minWindowSize": {
         "height": 200.0,
@@ -53,16 +60,16 @@
     "_name": " Assets editor",
     "_noTick": false,
     "_oldSize": {
-        "height": 762.0,
-        "width": 984.0
+        "height": 710.0,
+        "width": 966.0
     },
     "_position": [
         365.0,
         32.0
     ],
     "_size": {
-        "height": 762.0,
-        "width": 984.0
+        "height": 710.0,
+        "width": 966.0
     },
     "_type": "Core::NxECSBasedEditorEWC"
 }
