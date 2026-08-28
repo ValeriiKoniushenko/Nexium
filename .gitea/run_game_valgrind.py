@@ -21,8 +21,7 @@ from capture_game_ui import (
 )
 from gitea_client import GiteaClient, review_marker
 
-
-EXPECTED_VALGRIND_ERRORS = 10
+EXPECTED_VALGRIND_ERRORS = 3
 ERROR_SUMMARY_RE = re.compile(r"ERROR SUMMARY: (?P<count>\d+) errors?")
 MAX_OUTPUT_CHARS = 8_000
 TIMEOUT_EXIT_CODE = 124
