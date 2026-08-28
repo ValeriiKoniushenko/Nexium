@@ -20,6 +20,14 @@ SCREENSHOT_NAME = "ci-template-game-ui.png"
 SCREENSHOT_PREFIX = "ci-template-game-ui"
 DEFAULT_SCREEN_SIZE = (1920, 1080)
 WINDOW_CACHE_PATH = Path("data/cache/RootWindow.json")
+BUILD_TOOL_COMMANDS = (
+    ("clang", ("clang", "--version")),
+    ("gcc", ("gcc", "--version")),
+    ("cmake", ("cmake", "--version")),
+    ("ninja", ("ninja", "--version")),
+    ("ccache", ("ccache", "--version")),
+    ("mold", ("mold", "--version")),
+)
 
 
 def get_screen_size() -> tuple[int, int]:
@@ -35,6 +43,31 @@ def get_screen_size() -> tuple[int, int]:
         pass
 
     return DEFAULT_SCREEN_SIZE
+
+
+def collect_build_tool_versions() -> list[tuple[str, str]]:
+    """Return first-line version output from the tools installed in this CI container."""
+    versions = []
+    for name, command in BUILD_TOOL_COMMANDS:
+        try:
+            result = subprocess.run(command, capture_output=True, text=True, timeout=10)
+        except (OSError, subprocess.TimeoutExpired) as error:
+            versions.append((name, f"unavailable: {error}"))
+            continue
+
+        output = (result.stdout or result.stderr).strip()
+        if result.returncode != 0:
+            versions.append((name, f"unavailable: exit code {result.returncode}"))
+        elif output:
+            versions.append((name, output.splitlines()[0]))
+        else:
+            versions.append((name, "version command produced no output"))
+    return versions
+
+
+def markdown_inline(value: str) -> str:
+    """Keep command output and errors on one safe Markdown line."""
+    return value.replace("`", "'").replace("\r", " ").replace("\n", " ")
 
 
 def terminate(process: subprocess.Popen[object], name: str) -> None:
@@ -139,17 +172,54 @@ def capture_game_ui(executable: Path, screenshot: Path, warm_up_seconds: float) 
         terminate(xvfb, "Xvfb")
 
 
-def publish_screenshot(client: GiteaClient, screenshot: Path) -> None:
+def make_review_body(
+    tool_versions: list[tuple[str, str]],
+    *,
+    image_url: str | None,
+    screenshot_error: str | None,
+    screen_size: tuple[int, int],
+) -> str:
+    """Build the PR review body for both successful and failed captures."""
+    lines = ["**Test run of the _TemplateGame_**"]
+    if image_url:
+        lines.extend(("", f"![TemplateGame UI]({image_url})"))
+    elif screenshot_error:
+        lines.extend(("", f"> Screenshot unavailable: `{markdown_inline(screenshot_error)}`"))
+
+    lines.extend(
+        (
+            "",
+            "It was built with:",
+            *(f"- `{name}`: `{markdown_inline(version)}`" for name, version in tool_versions),
+            "",
+            f"Virtual display: `{screen_size[0]}x{screen_size[1]}` via Xvfb.",
+        )
+    )
+    return "\n".join(lines)
+
+
+def publish_screenshot(
+    client: GiteaClient,
+    screenshot: Path,
+    tool_versions: list[tuple[str, str]],
+    screenshot_error: str | None,
+) -> None:
     pr_number = GiteaClient.resolve_pr_number()
     sha = GiteaClient.resolve_sha() or ""
+    check_state = "success" if screenshot_error is None else "failure"
+    check_description = (
+        "TemplateGame UI screenshot captured"
+        if screenshot_error is None
+        else f"TemplateGame UI capture failed: {markdown_inline(screenshot_error)}"
+    )
     if pr_number is None:
         print("[gitea] not a pull_request event - skipping screenshot publication")
         if sha:
             client.publish_check(
                 sha,
-                "success",
+                check_state,
                 "template-game-ui",
-                "TemplateGame UI screenshot captured",
+                check_description,
             )
         return
 
@@ -166,9 +236,23 @@ def publish_screenshot(client: GiteaClient, screenshot: Path) -> None:
     except Exception as error:
         print(f"[gitea] failed to remove stale screenshot attachments: {error}", file=sys.stderr)
 
-    attachment = client.upload_issue_attachment(pr_number, str(screenshot), name=SCREENSHOT_NAME)
-    image_url = attachment["browser_download_url"]
-    review_body = f"**TemplateGame UI**\n\n![TemplateGame UI]({image_url})"
+    image_url = None
+    if screenshot_error is None:
+        try:
+            attachment = client.upload_issue_attachment(pr_number, str(screenshot), name=SCREENSHOT_NAME)
+            image_url = attachment["browser_download_url"]
+        except Exception as error:
+            screenshot_error = f"Screenshot upload failed: {error}"
+            check_state = "failure"
+            check_description = "TemplateGame UI screenshot upload failed"
+            print(f"[gitea] {screenshot_error}", file=sys.stderr)
+
+    review_body = make_review_body(
+        tool_versions,
+        image_url=image_url,
+        screenshot_error=screenshot_error,
+        screen_size=get_screen_size(),
+    )
     client.create_review(
         pr_number,
         body=review_body,
@@ -179,9 +263,9 @@ def publish_screenshot(client: GiteaClient, screenshot: Path) -> None:
     if sha:
         client.publish_check(
             sha,
-            "success",
+            check_state,
             "template-game-ui",
-            "TemplateGame UI screenshot captured",
+            check_description,
         )
 
 
@@ -214,23 +298,31 @@ def main() -> None:
         parser.error("--warm-up-seconds must be greater than zero")
 
     screenshot = Path(args.output).resolve()
+    tool_versions = collect_build_tool_versions()
+    screenshot_error = None
     try:
         capture_game_ui(Path(args.executable), screenshot, args.warm_up_seconds)
     except (FileNotFoundError, RuntimeError, OSError, subprocess.SubprocessError) as error:
-        print(f"[error] {error}", file=sys.stderr)
-        sys.exit(1)
+        screenshot_error = str(error)
+        print(f"[error] {screenshot_error}", file=sys.stderr)
 
-    print(f"Captured TemplateGame UI screenshot: {screenshot}")
+    if screenshot_error is None:
+        print(f"Captured TemplateGame UI screenshot: {screenshot}")
     if args.no_gitea:
+        if screenshot_error is not None:
+            sys.exit(1)
         return
 
     client = GiteaClient.from_env()
     if client is not None:
         try:
-            publish_screenshot(client, screenshot)
+            publish_screenshot(client, screenshot, tool_versions, screenshot_error)
         except Exception as error:
             print(f"[error] failed to publish TemplateGame UI screenshot: {error}", file=sys.stderr)
             sys.exit(1)
+
+    if screenshot_error is not None:
+        sys.exit(1)
 
 
 if __name__ == "__main__":
