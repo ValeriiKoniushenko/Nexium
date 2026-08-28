@@ -35,30 +35,20 @@ namespace Core
 {
     class Window;
 
-    /// @brief Engine implementation details hidden from gameplay-facing input APIs.
     namespace Internal
     {
         class InputSystem final : public Singleton<InputSystem>
         {
         public:
-            /// @brief Subscribes the input system to keyboard events produced by a window.
             void initialize(Window& window);
 
-            /// @brief Starts an input frame, updates controllers and dispatches queued events.
             void processEvents();
 
-            void setActiveContext(InputContext context) noexcept { _activeContext = context; }
-
-            [[nodiscard]] InputContext getActiveContext() const noexcept { return _activeContext; }
+            void setActiveContext(InputContext context) noexcept;
 
             void registerController(InputController* controller);
 
-            void activateController(InputController* controller);
-
-            void deactivateController(InputController* controller);
-
         private:
-            /// @brief Converts and queues a raw window keyboard event.
             void pushKeyEvent(Keyboard::Key key, int scancode, Keyboard::KeyState state, int mods);
 
             void dispatch(const KeyInputEvent& event);
@@ -68,7 +58,6 @@ namespace Core
 
             [[nodiscard]] const WeakPtr<InputController>& controllerFor(InputContext context) const;
 
-            /// @brief Keyboard events waiting to be processed during the next input frame.
             std::deque<KeyInputEvent> _events;
 
             WeakPtr<InputController> _editorController;
@@ -76,13 +65,10 @@ namespace Core
             WeakPtr<InputController> _routedController;
             InputContext _activeContext = InputContext::Editor;
 
-            /// @brief Normalized keyboard keys currently held by the user.
             std::vector<Keyboard::Key> _pressedKeys;
 
-            /// @brief Keeps window input subscriptions alive for the lifetime of the system.
             DelegateSubscriberPoolGuard _subscriptions;
 
-            /// @brief Prevents subscribing to the window more than once.
             bool _initialized = false;
         };
 

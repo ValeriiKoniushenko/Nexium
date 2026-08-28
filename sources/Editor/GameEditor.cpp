@@ -356,8 +356,7 @@ namespace Core
         _subscriptionPool << keyboardInput.getOrCreate("Close editor", Keyboard::Key::F12)
                                  ->onPress->subscribeAndGetID([&](auto) { GetWindow().close(); });
 
-        _inputController = new InputController("Editor input"_atom);
-        _inputController->setInputContext(InputContext::Editor);
+        _inputController = new InputController("Editor input"_atom, InputContext::Editor);
         _inputController->bind(
             "Save all"_atom,
             KeyChord{ .triggerKey = Keyboard::Key::S,
