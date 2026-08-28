@@ -1,5 +1,5 @@
 // Shader: color
-#version 460 core
+#version 450 core
 
 // TODO: try to remvoe it
 layout(std140, binding = 0) uniform Light {

@@ -1,5 +1,5 @@
 // Shader: objectIdentifier
-#version 460 core
+#version 450 core
 
 out vec4 FragColor;
 uniform vec3 uPickingColor = vec3(0.0, 0.0, 0.0);

@@ -28,6 +28,8 @@
 #include "ImGui/imgui.h"
 #include "ModuleInfo.h"
 
+#include <cstdlib>
+
 #ifdef _WIN32
     #include "Resources/Resources.h"
 
@@ -109,7 +111,9 @@ namespace Core
             criticalThrowingLog("Failed to initialize GLFW!");
         }
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+        // CI runs through Xvfb's software GLX implementation, which supports OpenGL 4.5.
+        const int contextMinor = std::getenv("NEXIUM_HEADLESS_GL") ? 5 : 6;
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, contextMinor);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_MAXIMIZED, _isMaximized ? GLFW_TRUE : GLFW_FALSE);
 

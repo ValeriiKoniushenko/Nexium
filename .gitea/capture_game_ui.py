@@ -64,6 +64,8 @@ def capture_game_ui(executable: Path, screenshot: Path, warm_up_seconds: float) 
     environment = os.environ.copy()
     environment["DISPLAY"] = DISPLAY
     environment.setdefault("LIBGL_ALWAYS_SOFTWARE", "1")
+    # Xvfb's Mesa software renderer provides a 4.5 core context on the CI image.
+    environment["NEXIUM_HEADLESS_GL"] = "1"
     runtime_dir = Path("/tmp/nexium-xdg-runtime")
     runtime_dir.mkdir(mode=0o700, exist_ok=True)
     runtime_dir.chmod(0o700)
