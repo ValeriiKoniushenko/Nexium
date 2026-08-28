@@ -24,9 +24,9 @@
 
 #include "TemplateGameInstance.h"
 
-int main()
+int main(int argc, char** argv)
 {
-    gGameInstance = std::make_unique<TemplateGameInstance>();
+    gGameInstance = std::make_unique<TemplateGameInstance>(argc, argv);
 
     gGameInstance->initialize();
     gGameInstance.reset();

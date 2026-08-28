@@ -84,17 +84,18 @@ namespace Core
     public:
         [[nodiscard]] std::filesystem::path getCacheDir() const override;
         [[nodiscard]] StringAtom getCacheHash() const override;
-
-    public:
         [[nodiscard]] spdlog::logger* getLogger() const override;
         [[nodiscard]] const char* getPrefix() const override { return "World"; }
+        [[nodiscard]] float getWorldTime() const noexcept { return _activeTime; }
 
-        [[nodiscard]] float getTimeDelta() const noexcept { return timeDelta; }
+        [[nodiscard]] float getTimeDelta() const noexcept { return _timeDelta; }
+        void internal_UpdateTimeDelta(float delta) noexcept;
 
     private:
-        float timeDelta = 0.f;
+        float _timeDelta = 0.f;
 
-        friend class GameInstance;
+        // How long the application(world) is active in seconds
+        float _activeTime = 0.f;
     };
 
 } // namespace Core

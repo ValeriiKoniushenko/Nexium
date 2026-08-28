@@ -44,6 +44,12 @@ namespace Core
         return Framework::getLogger();
     }
 
+    void World::internal_UpdateTimeDelta(float delta) noexcept
+    {
+        _timeDelta = delta;
+        _activeTime += delta;
+    }
+
     std::filesystem::path World::getCacheDir() const
     {
         return "world";

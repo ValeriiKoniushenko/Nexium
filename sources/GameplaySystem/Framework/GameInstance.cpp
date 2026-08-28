@@ -80,6 +80,26 @@ namespace Core
         return nullptr;
     }
 
+    GameInstance::GameInstance(int argc, char** argv)
+    {
+        if (argc == 1)
+        {
+            return;
+        }
+
+        if (argc == 3 && std::string(argv[1]) == "--timeout")
+        {
+            _timeout = std::stof(argv[2]);
+        }
+        else
+        {
+            const char* str
+                = "Invalid arguments for the game instance. Expected: --timeout <timeout in s>";
+            Assert(false, str);
+            errorLog(str);
+        }
+    }
+
     spdlog::logger* GameInstance::getLogger() const
     {
         return Framework::getLogger();
@@ -216,9 +236,19 @@ namespace Core
                 std::this_thread::sleep_for(std::chrono::milliseconds(50));
             }
 
+            if (_timeout != 0.f)
+            {
+                if (world.getWorldTime() > _timeout)
+                {
+                    window->close();
+                    infoLog("Force closing the window due to the passed timeout ({} seconds)."_f
+                            << _timeout);
+                }
+            }
+
             window->swapBuffers();
             fps.newFrameUpdate();
-            world.timeDelta = clock.stop();
+            world.internal_UpdateTimeDelta(clock.stop());
         }
 
         infoLog("Total FPS for this session: {}"_f << fps.getFPS());

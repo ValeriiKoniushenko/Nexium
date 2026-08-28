@@ -48,6 +48,13 @@ namespace Core
         };
 
     public:
+        GameInstance(int argc, char** argv);
+        GameInstance(const GameInstance&) = delete;
+        GameInstance(GameInstance&&) = delete;
+        GameInstance& operator=(const GameInstance&) = delete;
+        GameInstance& operator=(GameInstance&&) = delete;
+        ~GameInstance() override = default;
+
         [[nodiscard]] spdlog::logger* getLogger() const override;
         [[nodiscard]] const char* getPrefix() const override { return "GameInstance"; }
 
@@ -90,6 +97,10 @@ namespace Core
         void startUpReadCache();
         void initializeShaders();
         void runMainLoop();
+
+    private:
+        // Timeout in seconds. 0 - no timeout
+        float _timeout = 0;
     };
 
     [[nodiscard]] ShaderManager* GetShaderManager();

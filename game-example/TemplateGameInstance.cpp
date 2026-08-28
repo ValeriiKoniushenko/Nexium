@@ -25,3 +25,8 @@
 #include "TemplateGameInstance.h"
 
 using namespace Core;
+
+TemplateGameInstance::TemplateGameInstance(int argc, char** argv)
+    : GameInstance(argc, argv)
+{
+}

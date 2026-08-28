@@ -28,4 +28,6 @@
 
 class TemplateGameInstance : public Core::GameInstance
 {
+public:
+    TemplateGameInstance(int argc, char** argv);
 };
