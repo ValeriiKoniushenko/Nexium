@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
-"""Capture TemplateGame's UI and publish it to the pull request that ran CI."""
+"""Capture a game's UI and publish it to the pull request that ran CI."""
 
 from __future__ import annotations
 
 import argparse
 import json
 import os
+import re
 import subprocess
 import sys
 import time
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from gitea_client import GiteaClient, review_marker
@@ -16,10 +18,10 @@ from gitea_client import GiteaClient, review_marker
 
 WARM_UP_SECONDS = 5.0
 DISPLAY = ":99"
-SCREENSHOT_NAME = "ci-template-game-ui.png"
-SCREENSHOT_PREFIX = "ci-template-game-ui"
+DEFAULT_SCREENSHOT_NAME = "game-ui.png"
 DEFAULT_SCREEN_SIZE = (1920, 1080)
 WINDOW_CACHE_PATH = Path("data/cache/RootWindow.json")
+CPU_CLOCK_TICKS = int(os.sysconf("SC_CLK_TCK"))
 BUILD_TOOL_COMMANDS = (
     ("clang", ("clang", "--version")),
     ("gcc", ("gcc", "--version")),
@@ -70,6 +72,73 @@ def markdown_inline(value: str) -> str:
     return value.replace("`", "'").replace("\r", " ").replace("\n", " ")
 
 
+def executable_key(executable_name: str) -> str:
+    """Build a stable identifier for this executable's PR artifacts."""
+    dashed_name = re.sub(r"(?<=[a-z0-9])(?=[A-Z])", "-", executable_name)
+    key = "".join(char.lower() if char.isalnum() else "-" for char in dashed_name)
+    return key.strip("-") or "game"
+
+
+def format_bytes(value: int) -> str:
+    if value <= 0:
+        return "unavailable"
+
+    units = ("B", "KiB", "MiB", "GiB")
+    size = float(value)
+    for unit in units:
+        if size < 1024 or unit == units[-1]:
+            return f"{size:.1f} {unit}"
+        size /= 1024
+    return "unavailable"
+
+
+@dataclass
+class RunStatistics:
+    started_at: float | None = None
+    elapsed_seconds: float | None = None
+    cpu_seconds: float | None = None
+    peak_rss_bytes: int = 0
+    initial_cpu_seconds: float | None = field(default=None, repr=False)
+    last_cpu_seconds: float | None = field(default=None, repr=False)
+
+
+def read_process_usage(pid: int) -> tuple[float, int] | None:
+    """Read CPU time and resident memory for one Linux process from /proc."""
+    try:
+        stat_fields = Path(f"/proc/{pid}/stat").read_text().rsplit(")", maxsplit=1)[1].split()
+        cpu_seconds = (int(stat_fields[11]) + int(stat_fields[12])) / CPU_CLOCK_TICKS
+        status = Path(f"/proc/{pid}/status").read_text().splitlines()
+    except (OSError, IndexError, ValueError):
+        return None
+
+    memory_bytes = 0
+    for line in status:
+        if line.startswith(("VmHWM:", "VmRSS:")):
+            parts = line.split()
+            if len(parts) >= 2:
+                memory_bytes = max(memory_bytes, int(parts[1]) * 1024)
+    return cpu_seconds, memory_bytes
+
+
+def record_process_usage(process: subprocess.Popen[object], statistics: RunStatistics) -> None:
+    usage = read_process_usage(process.pid)
+    if usage is None:
+        return
+
+    cpu_seconds, resident_memory = usage
+    if statistics.initial_cpu_seconds is None:
+        statistics.initial_cpu_seconds = cpu_seconds
+    statistics.last_cpu_seconds = cpu_seconds
+    statistics.peak_rss_bytes = max(statistics.peak_rss_bytes, resident_memory)
+
+
+def finish_statistics(statistics: RunStatistics) -> None:
+    if statistics.started_at is not None:
+        statistics.elapsed_seconds = max(0.0, time.monotonic() - statistics.started_at)
+    if statistics.initial_cpu_seconds is not None and statistics.last_cpu_seconds is not None:
+        statistics.cpu_seconds = max(0.0, statistics.last_cpu_seconds - statistics.initial_cpu_seconds)
+
+
 def terminate(process: subprocess.Popen[object], name: str) -> None:
     """Stop a child process, escalating only when it does not exit promptly."""
     if process.poll() is not None:
@@ -97,20 +166,25 @@ def wait_for_xvfb(process: subprocess.Popen[object], display: str) -> None:
     raise RuntimeError(f"Xvfb did not create display {display} within 10 seconds")
 
 
-def wait_for_game(process: subprocess.Popen[object], seconds: float) -> None:
+def wait_for_game(
+    process: subprocess.Popen[object], seconds: float, executable_name: str, statistics: RunStatistics
+) -> None:
     deadline = time.monotonic() + seconds
     while time.monotonic() < deadline:
+        record_process_usage(process, statistics)
         if process.poll() is not None:
             raise RuntimeError(
-                f"TemplateGame exited before the {seconds:g}-second screenshot delay "
+                f"{executable_name} exited before the {seconds:g}-second screenshot delay "
                 f"(exit code {process.returncode})"
             )
         time.sleep(min(0.1, deadline - time.monotonic()))
 
 
-def capture_game_ui(executable: Path, screenshot: Path, warm_up_seconds: float) -> None:
+def capture_game_ui(
+    executable: Path, screenshot: Path, warm_up_seconds: float, statistics: RunStatistics
+) -> None:
     if not executable.is_file():
-        raise FileNotFoundError(f"TemplateGame executable not found: {executable}")
+        raise FileNotFoundError(f"game executable not found: {executable}")
 
     environment = os.environ.copy()
     environment["DISPLAY"] = DISPLAY
@@ -148,7 +222,8 @@ def capture_game_ui(executable: Path, screenshot: Path, warm_up_seconds: float) 
             cwd=Path.cwd(),
             env=environment,
         )
-        wait_for_game(game, warm_up_seconds)
+        statistics.started_at = time.monotonic()
+        wait_for_game(game, warm_up_seconds, executable.name, statistics)
 
         screenshot_result = subprocess.run(
             ["scrot", str(screenshot)],
@@ -161,38 +236,61 @@ def capture_game_ui(executable: Path, screenshot: Path, warm_up_seconds: float) 
             raise RuntimeError(f"scrot failed with exit code {screenshot_result.returncode}: {output}")
         if not screenshot.is_file() or screenshot.stat().st_size == 0:
             raise RuntimeError("scrot completed without producing a PNG screenshot")
+        record_process_usage(game, statistics)
         if game.poll() is not None:
             raise RuntimeError(
-                f"TemplateGame exited while the UI screenshot was captured "
+                f"{executable.name} exited while the UI screenshot was captured "
                 f"(exit code {game.returncode})"
             )
     finally:
         if game is not None:
-            terminate(game, "TemplateGame")
+            record_process_usage(game, statistics)
+            finish_statistics(statistics)
+            terminate(game, executable.name)
         terminate(xvfb, "Xvfb")
 
 
 def make_review_body(
+    executable_name: str,
     tool_versions: list[tuple[str, str]],
     *,
     image_url: str | None,
     screenshot_error: str | None,
     screen_size: tuple[int, int],
+    statistics: RunStatistics,
 ) -> str:
     """Build the PR review body for both successful and failed captures."""
-    lines = ["**Test run of the _TemplateGame_**"]
+    lines = [f"**Test run of _{markdown_inline(executable_name)}_**"]
     if image_url:
-        lines.extend(("", f"![TemplateGame UI]({image_url})"))
+        lines.extend(("", f"![{markdown_inline(executable_name)} UI]({image_url})"))
     elif screenshot_error:
         lines.extend(("", f"> Screenshot unavailable: `{markdown_inline(screenshot_error)}`"))
 
     lines.extend(
         (
             "",
-            "It was built with:",
-            *(f"- `{name}`: `{markdown_inline(version)}`" for name, version in tool_versions),
+            "### Build Environment",
+            "| Tool | Version |",
+            "| --- | --- |",
+            *(f"| `{name}` | `{markdown_inline(version)}` |" for name, version in tool_versions),
             "",
-            f"Virtual display: `{screen_size[0]}x{screen_size[1]}` via Xvfb.",
+            "### Run Statistics",
+            "| Metric | Value |",
+            "| --- | --- |",
+            f"| Virtual display | `{screen_size[0]}x{screen_size[1]}` via Xvfb |",
+            f"| Elapsed time | `{statistics.elapsed_seconds:.2f} s` |"
+            if statistics.elapsed_seconds is not None
+            else "| Elapsed time | unavailable |",
+            f"| Process CPU time | `{statistics.cpu_seconds:.2f} s` |"
+            if statistics.cpu_seconds is not None
+            else "| Process CPU time | unavailable |",
+            f"| Average CPU utilization | "
+            f"`{statistics.cpu_seconds / statistics.elapsed_seconds * 100:.1f}%` |"
+            if statistics.cpu_seconds is not None
+            and statistics.elapsed_seconds
+            and statistics.elapsed_seconds > 0
+            else "| Average CPU utilization | unavailable |",
+            f"| Peak resident memory | `{format_bytes(statistics.peak_rss_bytes)}` |",
         )
     )
     return "\n".join(lines)
@@ -201,16 +299,20 @@ def make_review_body(
 def publish_screenshot(
     client: GiteaClient,
     screenshot: Path,
+    executable_name: str,
     tool_versions: list[tuple[str, str]],
     screenshot_error: str | None,
+    statistics: RunStatistics,
 ) -> None:
     pr_number = GiteaClient.resolve_pr_number()
     sha = GiteaClient.resolve_sha() or ""
+    check_context = f"{executable_key(executable_name)}-ui"
+    attachment_prefix = f"ci-{check_context}"
     check_state = "success" if screenshot_error is None else "failure"
     check_description = (
-        "TemplateGame UI screenshot captured"
+        f"{executable_name} UI screenshot captured"
         if screenshot_error is None
-        else f"TemplateGame UI capture failed: {markdown_inline(screenshot_error)}"
+        else f"{executable_name} UI capture failed: {markdown_inline(screenshot_error)}"
     )
     if pr_number is None:
         print("[gitea] not a pull_request event - skipping screenshot publication")
@@ -218,19 +320,19 @@ def publish_screenshot(
             client.publish_check(
                 sha,
                 check_state,
-                "template-game-ui",
+                check_context,
                 check_description,
             )
         return
 
-    marker = review_marker("template-game-ui")
+    marker = review_marker(check_context)
     try:
         client.dismiss_previous_reviews(pr_number, marker=marker)
     except Exception as error:
         print(f"[gitea] failed to remove the previous screenshot review: {error}", file=sys.stderr)
 
     try:
-        removed = client.delete_issue_attachments(pr_number, name_prefix=SCREENSHOT_PREFIX)
+        removed = client.delete_issue_attachments(pr_number, name_prefix=attachment_prefix)
         if removed:
             print(f"[gitea] removed {removed} stale screenshot attachment(s)")
     except Exception as error:
@@ -239,19 +341,23 @@ def publish_screenshot(
     image_url = None
     if screenshot_error is None:
         try:
-            attachment = client.upload_issue_attachment(pr_number, str(screenshot), name=SCREENSHOT_NAME)
+            attachment = client.upload_issue_attachment(
+                pr_number, str(screenshot), name=f"{attachment_prefix}.png"
+            )
             image_url = attachment["browser_download_url"]
         except Exception as error:
-            screenshot_error = f"Screenshot upload failed: {error}"
+            screenshot_error = f"{executable_name} screenshot upload failed: {error}"
             check_state = "failure"
-            check_description = "TemplateGame UI screenshot upload failed"
+            check_description = f"{executable_name} UI screenshot upload failed"
             print(f"[gitea] {screenshot_error}", file=sys.stderr)
 
     review_body = make_review_body(
+        executable_name,
         tool_versions,
         image_url=image_url,
         screenshot_error=screenshot_error,
         screen_size=get_screen_size(),
+        statistics=statistics,
     )
     client.create_review(
         pr_number,
@@ -264,7 +370,7 @@ def publish_screenshot(
         client.publish_check(
             sha,
             check_state,
-            "template-game-ui",
+            check_context,
             check_description,
         )
 
@@ -274,11 +380,11 @@ def main() -> None:
     parser.add_argument(
         "--executable",
         default="build/bin/TemplateGame",
-        help="TemplateGame executable to run",
+        help="game executable to run",
     )
     parser.add_argument(
         "--output",
-        default=SCREENSHOT_NAME,
+        default=DEFAULT_SCREENSHOT_NAME,
         help="PNG screenshot output path",
     )
     parser.add_argument(
@@ -298,16 +404,18 @@ def main() -> None:
         parser.error("--warm-up-seconds must be greater than zero")
 
     screenshot = Path(args.output).resolve()
+    executable = Path(args.executable)
     tool_versions = collect_build_tool_versions()
+    statistics = RunStatistics()
     screenshot_error = None
     try:
-        capture_game_ui(Path(args.executable), screenshot, args.warm_up_seconds)
+        capture_game_ui(executable, screenshot, args.warm_up_seconds, statistics)
     except (FileNotFoundError, RuntimeError, OSError, subprocess.SubprocessError) as error:
         screenshot_error = str(error)
         print(f"[error] {screenshot_error}", file=sys.stderr)
 
     if screenshot_error is None:
-        print(f"Captured TemplateGame UI screenshot: {screenshot}")
+        print(f"Captured {executable.name} UI screenshot: {screenshot}")
     if args.no_gitea:
         if screenshot_error is not None:
             sys.exit(1)
@@ -316,9 +424,16 @@ def main() -> None:
     client = GiteaClient.from_env()
     if client is not None:
         try:
-            publish_screenshot(client, screenshot, tool_versions, screenshot_error)
+            publish_screenshot(
+                client,
+                screenshot,
+                executable.name,
+                tool_versions,
+                screenshot_error,
+                statistics,
+            )
         except Exception as error:
-            print(f"[error] failed to publish TemplateGame UI screenshot: {error}", file=sys.stderr)
+            print(f"[error] failed to publish {executable.name} UI screenshot: {error}", file=sys.stderr)
             sys.exit(1)
 
     if screenshot_error is not None:
