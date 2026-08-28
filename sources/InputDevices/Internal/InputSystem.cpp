@@ -135,8 +135,8 @@ namespace Core::Internal
     /**
      * @brief InputSystem::registerController - Registers a controller for its fixed input context.
      *
-     * Replaces the controller currently associated with the same context and releases its cached
-     * actions before storing the new controller.
+     * Adds the controller to its context without replacing other controllers already registered
+     * there. Expired controller references are removed during registration.
      *
      * @param controller The controller to register. A null pointer is ignored.
      */
@@ -147,33 +147,47 @@ namespace Core::Internal
             return;
         }
 
-        auto& contextController = controllerFor(controller->getInputContext());
-        if (auto previous = contextController.tryLoad(); previous && previous.get() != controller)
+        auto& controllers = controllersFor(controller->getInputContext());
+        std::erase_if(controllers,
+                      [](const WeakPtr<InputController>& value) { return !value.tryLoad(); });
+        if (std::ranges::any_of(controllers,
+                                [controller](const WeakPtr<InputController>& value)
+                                {
+                                    auto registered = value.tryLoad();
+                                    return registered && registered.get() == controller;
+                                }))
         {
-            previous->releaseAllActions();
+            return;
         }
-        contextController = WeakPtr<InputController>(controller);
+        controllers.emplace_back(controller);
     }
 
     /**
      * @brief InputSystem::processEvents - Processes one frame of queued keyboard input.
      *
-     * Selects the controller for the active context, releases the previously routed controller
-     * when routing changes, resets transient actions, and dispatches all queued events.
+     * Selects all enabled controllers for the active context, releases controllers removed from
+     * routing, resets transient actions, and dispatches all queued events.
      */
     void InputSystem::processEvents()
     {
-        auto controller = selectController();
-        auto previouslyRouted = _routedController.tryLoad();
-        if (previouslyRouted && (!controller || previouslyRouted.get() != controller.get()))
+        auto controllers = selectControllers();
+        for (const auto& previousWeak : _routedControllers)
         {
-            previouslyRouted->releaseAllActions();
+            auto previous = previousWeak.tryLoad();
+            if (previous
+                && std::ranges::none_of(controllers, [&previous](const auto& controller)
+                                        { return controller.get() == previous.get(); }))
+            {
+                previous->releaseAllActions();
+            }
         }
 
-        _routedController = controller ? WeakPtr<InputController>(controller) : WeakPtr<InputController>{};
-        if (controller)
+        _routedControllers.clear();
+        _routedControllers.reserve(controllers.size());
+        for (auto& controller : controllers)
         {
             controller->beginInputFrame();
+            _routedControllers.emplace_back(controller);
         }
 
         while (!_events.empty())
@@ -188,7 +202,7 @@ namespace Core::Internal
      * @brief InputSystem::dispatch - Updates keyboard state and routes an event to the controller.
      *
      * Maintains the normalized set of currently pressed keys, attaches that snapshot to the
-     * routed event, and forwards it to the enabled controller selected for this frame.
+     * routed event, and forwards it to every enabled controller selected for this frame.
      *
      * @param event The queued keyboard event to dispatch.
      */
@@ -207,55 +221,60 @@ namespace Core::Internal
             std::erase(_pressedKeys, event.key);
         }
 
-        if (auto controller = _routedController.tryLoad();
-            controller && controller->isEnabled())
+        for (const auto& controllerWeak : _routedControllers)
         {
-            controller->handleRoutedEvent(routedEvent);
+            if (auto controller = controllerWeak.tryLoad(); controller && controller->isEnabled())
+            {
+                controller->handleRoutedEvent(routedEvent);
+            }
         }
     }
 
     /**
-     * @brief InputSystem::controllerFor - Returns the controller slot for an input context.
+     * @brief InputSystem::controllersFor - Returns the controller list for an input context.
      *
-     * Provides mutable access to the editor or gameplay controller slot.
+     * Provides mutable access to the editor or gameplay controller list.
      *
-     * @param context The context whose controller slot should be returned.
-     * @return A mutable reference to the matching weak controller pointer.
+     * @param context The context whose controllers should be returned.
+     * @return A mutable reference to the matching weak controller list.
      */
-    WeakPtr<InputController>& InputSystem::controllerFor(InputContext context)
+    std::vector<WeakPtr<InputController>>& InputSystem::controllersFor(InputContext context)
     {
-        return context == InputContext::Editor ? _editorController : _gameplayController;
+        return context == InputContext::Editor ? _editorControllers : _gameplayControllers;
     }
 
     /**
-     * @brief InputSystem::controllerFor - Returns the controller slot for an input context.
+     * @brief InputSystem::controllersFor - Returns the controller list for an input context.
      *
-     * Provides read-only access to the editor or gameplay controller slot.
+     * Provides read-only access to the editor or gameplay controller list.
      *
-     * @param context The context whose controller slot should be returned.
-     * @return A constant reference to the matching weak controller pointer.
+     * @param context The context whose controllers should be returned.
+     * @return A constant reference to the matching weak controller list.
      */
-    const WeakPtr<InputController>& InputSystem::controllerFor(InputContext context) const
+    const std::vector<WeakPtr<InputController>>& InputSystem::controllersFor(
+        InputContext context) const
     {
-        return context == InputContext::Editor ? _editorController : _gameplayController;
+        return context == InputContext::Editor ? _editorControllers : _gameplayControllers;
     }
 
     /**
-     * @brief InputSystem::selectController - Selects the enabled controller for active routing.
+     * @brief InputSystem::selectControllers - Selects enabled controllers for active routing.
      *
-     * Resolves the controller assigned to the current input context and rejects controllers that
-     * are missing or disabled.
+     * Resolves every live controller assigned to the current input context and excludes disabled
+     * controllers.
      *
-     * @return The controller selected for routing, or nullptr when none is available.
+     * @return The controllers selected for routing. The collection is empty when none are active.
      */
-    IntrusivePtr<InputController> InputSystem::selectController() const
+    std::vector<IntrusivePtr<InputController>> InputSystem::selectControllers() const
     {
-        if (auto controller = controllerFor(_activeContext).tryLoad();
-            controller && controller->isEnabled())
+        std::vector<IntrusivePtr<InputController>> selected;
+        for (const auto& controllerWeak : controllersFor(_activeContext))
         {
-            return IntrusivePtr<InputController>(controller.get());
+            if (auto controller = controllerWeak.tryLoad(); controller && controller->isEnabled())
+            {
+                selected.emplace_back(controller.get());
+            }
         }
-
-        return nullptr;
+        return selected;
     }
 } // namespace Core::Internal

@@ -64,7 +64,6 @@ namespace Core
         void clearBindings();
         bool unbind(const StringAtom& action);
 
-        void setBindings(std::vector<Binding>&& bindings);
         void setBindings(const std::vector<Binding>& bindings);
 
         [[nodiscard]] InputContext getInputContext() const noexcept { return _inputContext; }

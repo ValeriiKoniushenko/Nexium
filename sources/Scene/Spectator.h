@@ -46,7 +46,6 @@ namespace Core
 
     protected:
         void onTick(float delta) override;
-        DelegateSubscriberPoolGuard _subscriptionPool;
 
         void onInitialize() override;
     };

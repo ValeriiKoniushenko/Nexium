@@ -1,0 +1,32 @@
+{
+    "_children": null,
+    "_innerPosition": [
+        68.0,
+        116.0
+    ],
+    "_innerSize": {
+        "height": 436.0,
+        "width": 484.0
+    },
+    "_isEnabled": false,
+    "_isFitContent": false,
+    "_minWindowSize": {
+        "height": 500.0,
+        "width": 500.0
+    },
+    "_name": "Player.nx",
+    "_noTick": false,
+    "_oldSize": {
+        "height": 500.0,
+        "width": 500.0
+    },
+    "_position": [
+        60.0,
+        60.0
+    ],
+    "_size": {
+        "height": 500.0,
+        "width": 500.0
+    },
+    "_type": "Core::TextEditorEWC"
+}
