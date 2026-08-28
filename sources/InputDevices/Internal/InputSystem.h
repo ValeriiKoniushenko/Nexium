@@ -53,16 +53,18 @@ namespace Core
 
             void dispatch(const KeyInputEvent& event);
 
-            [[nodiscard]] IntrusivePtr<InputController> selectController() const;
-            [[nodiscard]] WeakPtr<InputController>& controllerFor(InputContext context);
+            [[nodiscard]] std::vector<IntrusivePtr<InputController>> selectControllers() const;
+            [[nodiscard]] std::vector<WeakPtr<InputController>>& controllersFor(
+                InputContext context);
 
-            [[nodiscard]] const WeakPtr<InputController>& controllerFor(InputContext context) const;
+            [[nodiscard]] const std::vector<WeakPtr<InputController>>& controllersFor(
+                InputContext context) const;
 
             std::deque<KeyInputEvent> _events;
 
-            WeakPtr<InputController> _editorController;
-            WeakPtr<InputController> _gameplayController;
-            WeakPtr<InputController> _routedController;
+            std::vector<WeakPtr<InputController>> _editorControllers;
+            std::vector<WeakPtr<InputController>> _gameplayControllers;
+            std::vector<WeakPtr<InputController>> _routedControllers;
             InputContext _activeContext = InputContext::Editor;
 
             std::vector<Keyboard::Key> _pressedKeys;

@@ -2,108 +2,6 @@
     "_sceneName": "Default",
     "sceneObjects": [
         {
-            "assetType": "Core::SceneObj::Rectangle",
-            "name": "BaseRectangle",
-            "referenceAsset": "data/assets/BaseRectangle.nx",
-            "trans": {
-                "_origin": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "_position": [
-                    200.0,
-                    200.0,
-                    0.0
-                ],
-                "_rotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "_scale": [
-                    0.4000000059604645,
-                    1.0,
-                    1.0
-                ]
-            },
-            "typeSpecificData": {
-                "_atlasName": "player_walk",
-                "_blendingEnabled": true,
-                "_isEnabled": true,
-                "_textureName": "MPlayer_walk.png"
-            }
-        },
-        {
-            "assetType": "Core::SceneObj::Rectangle",
-            "name": "BaseRectangle_0",
-            "referenceAsset": "data/assets/BaseRectangle.nx",
-            "trans": {
-                "_origin": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "_position": [
-                    200.0,
-                    0.0,
-                    0.0
-                ],
-                "_rotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "_scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            },
-            "typeSpecificData": {
-                "_atlasName": "santa_walk",
-                "_blendingEnabled": true,
-                "_isEnabled": true,
-                "_textureName": "Walk_11.png"
-            }
-        },
-        {
-            "assetType": "Core::SceneObj::RectangleAnimated",
-            "name": "AnimatedPlayersa",
-            "referenceAsset": "data/assets/AnimatedPlayer.nx",
-            "trans": {
-                "_origin": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "_position": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "_rotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "_scale": [
-                    2.0,
-                    1.0,
-                    1.0
-                ]
-            },
-            "typeSpecificData": {
-                "_animationEnabled": true,
-                "_animationFPS": 18.25,
-                "_animationName": "New animation",
-                "_atlasName": "santa_walk",
-                "_blendingEnabled": true,
-                "_isEnabled": true,
-                "_textureName": "Walk _1.png"
-            }
-        },
-        {
             "assetType": "Core::Spectator",
             "name": "2D_Spectator",
             "referenceAsset": "data/assets/2D_Spectator.nx",
@@ -114,9 +12,9 @@
                     0.0
                 ],
                 "_position": [
-                    -253.5575408935547,
-                    -200.4466094970703,
-                    1434.81787109375
+                    -106.38220977783203,
+                    -264.1029968261719,
+                    423.0572814941406
                 ],
                 "_rotation": [
                     8.720703125,
@@ -144,9 +42,9 @@
                     0.0
                 ],
                 "_position": [
-                    78.56309509277344,
-                    -24.814916610717773,
-                    -1.0846991926882765e-06
+                    21.857032775878906,
+                    -97.4629135131836,
+                    -4.260237346898066e-06
                 ],
                 "_rotation": [
                     0.0,
