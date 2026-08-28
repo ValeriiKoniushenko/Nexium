@@ -348,14 +348,14 @@ class GiteaClient:
         escaped_name = file_name.replace("\\", "\\\\").replace('"', '\\"')
         body = b"".join(
             (
-                f"--{boundary}\\r\\n".encode(),
+                f"--{boundary}\r\n".encode(),
                 (
                     f'Content-Disposition: form-data; name="{field_name}"; '
-                    f'filename="{escaped_name}"\\r\\n'
+                    f'filename="{escaped_name}"\r\n'
                 ).encode(),
-                b"Content-Type: image/png\\r\\n\\r\\n",
+                b"Content-Type: image/png\r\n\r\n",
                 attachment,
-                f"\\r\\n--{boundary}--\\r\\n".encode(),
+                f"\r\n--{boundary}--\r\n".encode(),
             )
         )
         url = f"{self.server}/api/v1{path}"
