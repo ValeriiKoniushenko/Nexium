@@ -210,19 +210,6 @@ namespace Core
     }
 
     /**
-     * @brief InputController::setBindings - Replaces all bindings with a movable collection.
-     *
-     * Applies the supplied bindings using the same state initialization rules as the copying
-     * overload.
-     *
-     * @param bindings The bindings to apply to the controller.
-     */
-    void InputController::setBindings(std::vector<Binding>&& bindings)
-    {
-        setBindings(static_cast<const std::vector<Binding>&>(bindings));
-    }
-
-    /**
      * @brief InputController::isActionPressed - Checks whether an action is currently active.
      *
      * Reads the cached state produced while processing routed keyboard events.

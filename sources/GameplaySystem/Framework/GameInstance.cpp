@@ -120,7 +120,9 @@ namespace Core
         window->create(Config::defaultWindowName, Config::defaultWindowSize);
         Internal::InputSystem::Instance().initialize(*window);
         _subscriptionPool << window->onResize->subscribeAndGetID([this](ISize2 newSize)
-                                                                 { updateViewport(); });
+        {
+            updateViewport();
+        });
 
         //-------------------- ASSETS MANAGER ---------------------
         GetAssetsManager()->initScanFileSystem();
@@ -182,26 +184,43 @@ namespace Core
     {
         FPSCounter fps;
         fps.start();
+
         FStopwatch clock;
 
         glClearColor(0.45f, 0.55f, 0.60f, 1.00f);
+
         glEnable(GL_BLEND);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
         glEnable(GL_STENCIL_TEST);
 
-        constexpr int clearBits = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
+        constexpr int clearBits =
+            GL_COLOR_BUFFER_BIT |
+            GL_DEPTH_BUFFER_BIT |
+            GL_STENCIL_BUFFER_BIT;
 
         while (!window->shouldClose())
         {
             clock.start();
             Window::pollEvent();
 
-            const auto* viewport = gameEditor.getWindow<GameViewportEWC>();
-            const bool gameplayInputActive
-                = renderMode == RenderMode::GameOnly || (viewport && viewport->isFocused());
-            Internal::InputSystem::Instance().setActiveContext(
-                gameplayInputActive ? InputContext::Gameplay : InputContext::Editor);
+            const auto* viewport =
+                renderMode == RenderMode::GameOnly
+                    ? nullptr
+                    : gameEditor.getWindow<GameViewportEWC>();
+
+            if (renderMode == RenderMode::GameOnly ||
+                (viewport && viewport->isFocused()))
+            {
+                Internal::InputSystem::Instance().setActiveContext(
+                    InputContext::Gameplay);
+            }
+            else
+            {
+                Internal::InputSystem::Instance().setActiveContext(
+                    InputContext::Editor);
+            }
+
             Internal::InputSystem::Instance().processEvents();
 
             if (renderMode == RenderMode::GameOnly)
@@ -220,43 +239,45 @@ namespace Core
             }
             else
             {
-                if (const auto* wnd = gameEditor.getWindow<GameViewportEWC>();
-                    wnd && wnd->isFocused())
+                if (viewport && viewport->isFocused())
                 {
                     gameScene.tick(world.getTimeDelta());
                 }
 
                 glClear(clearBits);
+
                 gameEditor.tick(world.getTimeDelta());
 
                 if (world.currentCamera)
                 {
                     gameEditor.gameViewport.callMePreDraw();
+
                     glClear(clearBits);
 
                     gameScene.directDraw();
                     onTick(world.getTimeDelta());
+
                     gameEditor.gameViewport.callMeAfterDraw();
                 }
             }
 
-            if (glfwGetWindowAttrib(window->getRawWindow(), GLFW_ICONIFIED)
-                || glfwGetWindowAttrib(window->getRawWindow(), GLFW_FOCUSED) == GLFW_FALSE)
+            if (glfwGetWindowAttrib(window->getRawWindow(), GLFW_ICONIFIED) ||
+                glfwGetWindowAttrib(window->getRawWindow(), GLFW_FOCUSED) == GLFW_FALSE)
             {
                 std::this_thread::sleep_for(std::chrono::milliseconds(50));
             }
 
-            if (_timeout != 0.f)
+            if (_timeout != 0.f && world.getWorldTime() > _timeout)
             {
-                if (world.getWorldTime() > _timeout)
-                {
-                    window->close();
-                    infoLog("Force closing the window due to the passed timeout ({} seconds)."_f
-                            << _timeout);
-                }
+                window->close();
+
+                infoLog(
+                    "Force closing the window due to the passed timeout ({} seconds)."_f
+                    << _timeout);
             }
 
             window->swapBuffers();
+
             fps.newFrameUpdate();
             world.internal_UpdateTimeDelta(clock.stop());
         }
