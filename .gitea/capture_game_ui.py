@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import subprocess
 import sys
@@ -17,6 +18,23 @@ WARM_UP_SECONDS = 5.0
 DISPLAY = ":99"
 SCREENSHOT_NAME = "ci-template-game-ui.png"
 SCREENSHOT_PREFIX = "ci-template-game-ui"
+DEFAULT_SCREEN_SIZE = (1920, 1080)
+WINDOW_CACHE_PATH = Path("data/cache/RootWindow.json")
+
+
+def get_screen_size() -> tuple[int, int]:
+    """Match Xvfb to the cached GLFW window so no root-window padding is captured."""
+    try:
+        cache = json.loads(WINDOW_CACHE_PATH.read_text())
+        size = cache["_size"]
+        width = int(size["width"])
+        height = int(size["height"])
+        if width > 0 and height > 0:
+            return width, height
+    except (OSError, ValueError, KeyError, TypeError):
+        pass
+
+    return DEFAULT_SCREEN_SIZE
 
 
 def terminate(process: subprocess.Popen[object], name: str) -> None:
@@ -71,6 +89,7 @@ def capture_game_ui(executable: Path, screenshot: Path, warm_up_seconds: float) 
     runtime_dir.chmod(0o700)
     environment["XDG_RUNTIME_DIR"] = str(runtime_dir)
     screenshot.unlink(missing_ok=True)
+    screen_width, screen_height = get_screen_size()
 
     xvfb = subprocess.Popen(
         [
@@ -78,7 +97,7 @@ def capture_game_ui(executable: Path, screenshot: Path, warm_up_seconds: float) 
             DISPLAY,
             "-screen",
             "0",
-            "1920x1080x24",
+            f"{screen_width}x{screen_height}x24",
             "+extension",
             "GLX",
             "+iglx",
