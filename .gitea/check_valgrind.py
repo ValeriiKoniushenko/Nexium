@@ -82,7 +82,7 @@ def result_description(result: ValgrindResult) -> str:
         details.append(f"{leak_match.group('bytes')} byte(s) definitely lost")
 
     summary = ", ".join(details) or f"exit code {result.returncode}"
-    return f"Valgrind failed: {summary}"
+    return f"❗️Valgrind failed: {summary}"
 
 
 def tail_for_review(text: str, limit: int = MAX_REVIEW_OUTPUT_CHARS) -> str:
