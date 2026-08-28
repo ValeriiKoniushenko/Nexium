@@ -64,10 +64,25 @@ def capture_game_ui(executable: Path, screenshot: Path, warm_up_seconds: float) 
     environment = os.environ.copy()
     environment["DISPLAY"] = DISPLAY
     environment.setdefault("LIBGL_ALWAYS_SOFTWARE", "1")
+    runtime_dir = Path("/tmp/nexium-xdg-runtime")
+    runtime_dir.mkdir(mode=0o700, exist_ok=True)
+    runtime_dir.chmod(0o700)
+    environment["XDG_RUNTIME_DIR"] = str(runtime_dir)
     screenshot.unlink(missing_ok=True)
 
     xvfb = subprocess.Popen(
-        ["Xvfb", DISPLAY, "-screen", "0", "1920x1080x24", "+extension", "GLX", "-nolisten", "tcp"],
+        [
+            "Xvfb",
+            DISPLAY,
+            "-screen",
+            "0",
+            "1920x1080x24",
+            "+extension",
+            "GLX",
+            "+iglx",
+            "-nolisten",
+            "tcp",
+        ],
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
     )
