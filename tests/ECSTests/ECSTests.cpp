@@ -944,8 +944,6 @@ namespace
 
 TEST_F(ECSTreeVehicleTests, FullSerializationCheck)
 {
-    int* i = new int(1);
-
     const auto serialized = R<decltype(root)>::Serialize(root).getData();
 
     // ROOT FIELDS
