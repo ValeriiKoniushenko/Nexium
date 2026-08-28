@@ -7,7 +7,9 @@ import json
 import os
 import sys
 import urllib.error
+import urllib.parse
 import urllib.request
+import uuid
 from typing import Any
 
 
@@ -328,6 +330,59 @@ class GiteaClient:
                 return None
             return json.loads(body)
 
+    def _do_multipart_request(
+        self,
+        method: str,
+        path: str,
+        *,
+        field_name: str,
+        file_path: str,
+        file_name: str,
+        scheme: str,
+    ) -> Any:
+        """Send one file as a multipart/form-data API request."""
+        boundary = f"----NexiumGitea{uuid.uuid4().hex}"
+        with open(file_path, "rb") as attachment_file:
+            attachment = attachment_file.read()
+
+        escaped_name = file_name.replace("\\", "\\\\").replace('"', '\\"')
+        body = b"".join(
+            (
+                f"--{boundary}\\r\\n".encode(),
+                (
+                    f'Content-Disposition: form-data; name="{field_name}"; '
+                    f'filename="{escaped_name}"\\r\\n'
+                ).encode(),
+                b"Content-Type: image/png\\r\\n\\r\\n",
+                attachment,
+                f"\\r\\n--{boundary}--\\r\\n".encode(),
+            )
+        )
+        url = f"{self.server}/api/v1{path}"
+        self._trace(
+            f"HTTP {method} {url} auth={scheme!r} "
+            f"token={_token_preview(self.token)} attachment_bytes={len(attachment)}"
+        )
+        request = urllib.request.Request(
+            url,
+            data=body,
+            method=method,
+            headers={
+                "Authorization": self._auth_header(scheme),
+                "Content-Type": f"multipart/form-data; boundary={boundary}",
+                "Accept": "application/json",
+            },
+        )
+        with urllib.request.urlopen(request) as response:
+            response_body = response.read()
+            self._trace(
+                f"HTTP {method} {path} -> {response.status} "
+                f"body_bytes={len(response_body)}"
+            )
+            if not response_body or response.status == 204:
+                return None
+            return json.loads(response_body)
+
     def _resolve_auth(self) -> None:
         """Probe GET /user once so we know which Authorization scheme works."""
         if self._auth_resolved:
@@ -401,6 +456,37 @@ class GiteaClient:
             self._warn(f"{method} {path} network error: {e}")
             raise
 
+    def _multipart_request(
+        self,
+        method: str,
+        path: str,
+        *,
+        field_name: str,
+        file_path: str,
+        file_name: str,
+    ) -> Any:
+        self._resolve_auth()
+        assert self.auth_scheme
+        try:
+            return self._do_multipart_request(
+                method,
+                path,
+                field_name=field_name,
+                file_path=file_path,
+                file_name=file_name,
+                scheme=self.auth_scheme,
+            )
+        except urllib.error.HTTPError as e:
+            err = e.read().decode(errors="replace")
+            self._warn(
+                f"{method} {path} failed: HTTP {e.code} {err[:500]} "
+                f"(auth={self.auth_scheme!r} token={_token_preview(self.token)})"
+            )
+            raise
+        except urllib.error.URLError as e:
+            self._warn(f"{method} {path} network error: {e}")
+            raise
+
     def _current_user_id(self) -> int | None:
         if self._user_id is not None:
             return self._user_id
@@ -443,6 +529,56 @@ class GiteaClient:
             f"/repos/{self.owner}/{self.repo}/statuses/{sha}",
             payload,
         )
+
+    def upload_issue_attachment(
+        self,
+        issue_number: int,
+        file_path: str,
+        *,
+        name: str,
+    ) -> dict[str, Any]:
+        """Upload an attachment to an issue or pull request."""
+        if not os.path.isfile(file_path):
+            raise FileNotFoundError(f"attachment does not exist: {file_path}")
+
+        encoded_name = urllib.parse.quote(name, safe="")
+        result = self._multipart_request(
+            "POST",
+            f"/repos/{self.owner}/{self.repo}/issues/{issue_number}/assets?name={encoded_name}",
+            field_name="attachment",
+            file_path=file_path,
+            file_name=name,
+        )
+        if not isinstance(result, dict) or not result.get("browser_download_url"):
+            raise RuntimeError(f"unexpected attachment response: {result!r}")
+        self._trace(
+            f"uploaded issue attachment id={result.get('id')} name={result.get('name')!r}"
+        )
+        return result
+
+    def delete_issue_attachments(self, issue_number: int, *, name_prefix: str) -> int:
+        """Delete attachments owned by a CI check before publishing its replacement."""
+        issue = self._request(
+            "GET",
+            f"/repos/{self.owner}/{self.repo}/issues/{issue_number}",
+        )
+        attachments = (issue or {}).get("assets") or []
+        removed = 0
+        for attachment in attachments:
+            name = str(attachment.get("name") or "")
+            attachment_id = attachment.get("id")
+            if not name.startswith(name_prefix) or attachment_id is None:
+                continue
+
+            self._request(
+                "DELETE",
+                f"/repos/{self.owner}/{self.repo}/issues/{issue_number}/assets/{attachment_id}",
+            )
+            self._trace(
+                f"deleted issue attachment id={attachment_id} name={name!r}"
+            )
+            removed += 1
+        return removed
 
     def add_review_comment(
         self,

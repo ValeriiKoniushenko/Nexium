@@ -96,6 +96,13 @@ namespace Core
     {
         GetCacheSystem().tryRead(*this);
 
+        constexpr int minSize = 100;
+        if (_size.width < minSize || _size.height < minSize)
+        {
+            _size = size;
+            _title = title;
+        }
+
         glfwSetErrorCallback(glfwErrorCallback);
         if (!glfwInit())
         {
@@ -141,18 +148,6 @@ namespace Core
             },
             nullptr);
 #endif
-
-        if (!GetCacheSystem().hasCache(*this))
-        {
-            _size = size;
-            _title = title;
-        }
-
-        constexpr int minSize = 10;
-        if (_size.width < minSize || _size.height < minSize)
-        {
-            _size = ISize2{ 300, 300 };
-        }
 
         glfwSetMouseButtonCallback(_window, MouseKeyPressHandler);
         glfwSetCursorPosCallback(_window, MouseMoveHandler);

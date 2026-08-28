@@ -18,8 +18,10 @@ RUN pacman -Syu --noconfirm --needed \
     libxinerama \
     libxrandr \
     mesa \
+    scrot \
     vulkan-headers \
     vulkan-icd-loader \
+    xorg-server-xvfb \
     && pacman -Scc --noconfirm
 
 ENV CCACHE_DIR=/cache/ccache

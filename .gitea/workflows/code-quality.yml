@@ -166,6 +166,49 @@ jobs:
       - name: Run ECS tests
         run: build/bin/Nexium_Tests
 
+  template-game-ui:
+    name: "TemplateGame UI: Linux | Clang 19.1.7"
+    needs: build-clang
+    runs-on: linux
+    container:
+      image: cpp-ci:latest
+      volumes:
+        - /srv/ci-cache/git-repo:/repo-cache
+        - /srv/ci-cache/build-cache:/build-cache
+    steps:
+      - name: Sync repo cache
+        env:
+          GITEATOKEN: ${{ secrets.GITEATOKEN }}
+        run: |
+          REPO_URL="https://oauth2:${GITEATOKEN}@gitea.vakon.dev/${GITHUB_REPOSITORY}.git"
+          if [ -d /repo-cache/.git ]; then
+            echo "Using existing repo cache"
+            cd /repo-cache
+            git remote set-url origin "$REPO_URL"
+            git fetch origin "$GITHUB_SHA" develop
+            git checkout -f "$GITHUB_SHA"
+            git submodule sync --recursive
+            git submodule update --init --recursive --depth=1
+          else
+            echo "No cache found, cloning fresh"
+            git clone --recurse-submodules --shallow-submodules "$REPO_URL" /repo-cache
+            cd /repo-cache
+            git fetch --depth=1 origin "$GITHUB_SHA"
+            git checkout -f "$GITHUB_SHA"
+          fi
+          mkdir -p "$GITHUB_WORKSPACE"
+          cp -a /repo-cache/. "$GITHUB_WORKSPACE"/
+
+      - name: Restore build output
+        run: |
+          mkdir -p build
+          rsync -a /build-cache/ build/
+
+      - name: Capture and publish TemplateGame UI
+        env:
+          GITEATOKEN: ${{ secrets.GITEATOKEN }}
+        run: python3 .gitea/capture_game_ui.py --executable build/bin/TemplateGame --output template-game-ui.png
+
   valgrind:
     name: "Valgrind: Linux | Clang 19.1.7"
     needs: build-clang
