@@ -73,5 +73,10 @@ if (NOT NEXIUM_DISABLE_TESTS)
     add_subdirectory(tests)
 endif ()
 
+option(NEXIUM_DISABLE_BENCHMARKS "Disable Nexium benchmark targets" OFF)
+if (NOT NEXIUM_DISABLE_BENCHMARKS)
+    add_subdirectory(benchmarks)
+endif ()
+
 # TODO: in the future it must be removed
 add_subdirectory(game-example)
