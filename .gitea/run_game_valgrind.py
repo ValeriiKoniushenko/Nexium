@@ -208,13 +208,14 @@ def publish_result(client: GiteaClient, executable_name: str, result: ValgrindGa
     except Exception as error:
         print(f"[gitea] failed to clear previous Valgrind review: {error}", file=sys.stderr)
 
-    client.create_review(
-        pr_number,
-        body=review_body(executable_name, result),
-        event="COMMENT",
-        commit_id=sha,
-        marker=marker,
-    )
+    if result.has_errors:
+        client.create_review(
+            pr_number,
+            body=review_body(executable_name, result),
+            event="COMMENT",
+            commit_id=sha,
+            marker=marker,
+        )
     if sha:
         client.publish_check(sha, result.check_state, check_context, description)
 

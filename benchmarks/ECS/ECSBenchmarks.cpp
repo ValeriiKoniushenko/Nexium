@@ -26,6 +26,7 @@
 
 #include <benchmark/benchmark.h>
 #include <cstddef>
+#include <cstdint>
 #include <mutex>
 #include <vector>
 
@@ -219,8 +220,14 @@ namespace
         std::vector<BenchmarkNode*> nodes{ root.get() };
     };
 
+    [[nodiscard]] std::int64_t toBenchmarkCount(std::size_t count)
+    {
+        return static_cast<std::int64_t>(count);
+    }
+
     void registerBenchmarkComponentTypes()
     {
+        // NOLINTNEXTLINE(misc-const-correctness): std::call_once requires a mutable once_flag.
         static std::once_flag registrationFlag;
         std::call_once(registrationFlag,
                        []()
@@ -304,7 +311,7 @@ namespace
             benchmark::DoNotOptimize(components.data());
         }
 
-        state.SetItemsProcessed(state.iterations() * componentCount);
+        state.SetItemsProcessed(state.iterations() * toBenchmarkCount(componentCount));
     }
 
     void BM_ECS_HierarchyConstruction(benchmark::State& state)
@@ -322,7 +329,7 @@ namespace
             state.ResumeTiming();
         }
 
-        state.SetItemsProcessed(state.iterations() * nodeCount);
+        state.SetItemsProcessed(state.iterations() * toBenchmarkCount(nodeCount));
     }
 
     void BM_ECS_GameplaySceneConstruction(benchmark::State& state)
@@ -340,7 +347,7 @@ namespace
             state.ResumeTiming();
         }
 
-        state.SetItemsProcessed(state.iterations() * entityCount);
+        state.SetItemsProcessed(state.iterations() * toBenchmarkCount(entityCount));
     }
 
     void BM_ECS_BreadthFirstTraversal(benchmark::State& state)
@@ -355,7 +362,7 @@ namespace
             benchmark::DoNotOptimize(visited);
         }
 
-        state.SetItemsProcessed(state.iterations() * (nodeCount - 1));
+        state.SetItemsProcessed(state.iterations() * toBenchmarkCount(nodeCount - 1));
     }
 
     void BM_ECS_DepthFirstTraversal(benchmark::State& state)
@@ -370,7 +377,7 @@ namespace
             benchmark::DoNotOptimize(visited);
         }
 
-        state.SetItemsProcessed(state.iterations() * (nodeCount - 1));
+        state.SetItemsProcessed(state.iterations() * toBenchmarkCount(nodeCount - 1));
     }
 
     void BM_ECS_ComponentLookupBestCase(benchmark::State& state)
@@ -469,7 +476,7 @@ namespace
             state.ResumeTiming();
         }
 
-        state.SetItemsProcessed(state.iterations() * nodeCount);
+        state.SetItemsProcessed(state.iterations() * toBenchmarkCount(nodeCount));
     }
 
     void BM_ECS_RemoveDeepDescendant(benchmark::State& state)
@@ -492,7 +499,7 @@ namespace
             state.ResumeTiming();
         }
 
-        state.SetItemsProcessed(state.iterations() * (nodeCount - 1));
+        state.SetItemsProcessed(state.iterations() * toBenchmarkCount(nodeCount - 1));
     }
 
     void BM_ECS_FactoryCreate(benchmark::State& state)
@@ -527,7 +534,7 @@ namespace
             benchmark::DoNotOptimize(tree.root->getInitializationCount());
         }
 
-        state.SetItemsProcessed(state.iterations() * nodeCount);
+        state.SetItemsProcessed(state.iterations() * toBenchmarkCount(nodeCount));
     }
 
     void BM_ECS_TickActiveGameplayScene(benchmark::State& state)
@@ -541,7 +548,7 @@ namespace
             benchmark::DoNotOptimize(scene.root->getTickAccumulator());
         }
 
-        state.SetItemsProcessed(state.iterations() * scene.nodes.size());
+        state.SetItemsProcessed(state.iterations() * toBenchmarkCount(scene.nodes.size()));
     }
 
     void BM_ECS_TickMixedGameplayScene(benchmark::State& state)
@@ -556,7 +563,7 @@ namespace
             benchmark::DoNotOptimize(scene.root->getTickAccumulator());
         }
 
-        state.SetItemsProcessed(state.iterations() * scene.nodes.size());
+        state.SetItemsProcessed(state.iterations() * toBenchmarkCount(scene.nodes.size()));
     }
 
     void BM_ECS_SerializeTree(benchmark::State& state)
@@ -571,7 +578,7 @@ namespace
             benchmark::ClobberMemory();
         }
 
-        state.SetItemsProcessed(state.iterations() * nodeCount);
+        state.SetItemsProcessed(state.iterations() * toBenchmarkCount(nodeCount));
     }
 
     void BM_ECS_DeserializeTree(benchmark::State& state)
@@ -591,7 +598,7 @@ namespace
             benchmark::ClobberMemory();
         }
 
-        state.SetItemsProcessed(state.iterations() * nodeCount);
+        state.SetItemsProcessed(state.iterations() * toBenchmarkCount(nodeCount));
     }
 } // namespace
 
@@ -613,4 +620,7 @@ BENCHMARK(BM_ECS_TickMixedGameplayScene)->RangeMultiplier(4)->Range(16, 1024);
 BENCHMARK(BM_ECS_SerializeTree)->RangeMultiplier(4)->Range(64, 1024);
 BENCHMARK(BM_ECS_DeserializeTree)->RangeMultiplier(4)->Range(64, 1024);
 
-BENCHMARK_MAIN(); // NOLINT(modernize-avoid-c-arrays): Google Benchmark macro implementation.
+// NOLINTBEGIN(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays): Google Benchmark macro
+// implementation.
+BENCHMARK_MAIN();
+// NOLINTEND(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
