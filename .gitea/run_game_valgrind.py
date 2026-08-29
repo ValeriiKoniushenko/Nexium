@@ -21,7 +21,6 @@ from capture_game_ui import (
 )
 from gitea_client import GiteaClient, review_marker
 
-EXPECTED_VALGRIND_ERRORS = 3
 ERROR_SUMMARY_RE = re.compile(r"ERROR SUMMARY: (?P<count>\d+) errors?")
 MAX_OUTPUT_CHARS = 8_000
 TIMEOUT_EXIT_CODE = 124
@@ -34,7 +33,6 @@ class ValgrindGameResult:
     stdout: str
     stderr: str
     timeout_seconds: float
-    expected_errors: int
 
     @property
     def error_count(self) -> int | None:
@@ -50,15 +48,15 @@ class ValgrindGameResult:
         return self.returncode == 127 or "Fatal error at startup" in self.stderr
 
     @property
-    def unexpected_errors(self) -> bool:
-        return self.error_count is not None and self.error_count > self.expected_errors
+    def has_errors(self) -> bool:
+        return self.error_count is not None and self.error_count != 0
 
     @property
     def failed(self) -> bool:
         return (
             self.infrastructure_error
             or self.error_count is None
-            or self.unexpected_errors
+            or self.has_errors
             or not self.timed_out
         )
 
@@ -69,9 +67,7 @@ class ValgrindGameResult:
         return "failure" if self.failed else "success"
 
 
-def run_game_valgrind(
-    executable: Path, timeout_seconds: float, expected_errors: int
-) -> ValgrindGameResult:
+def run_game_valgrind(executable: Path, timeout_seconds: float) -> ValgrindGameResult:
     command = [
         "timeout",
         "--signal=TERM",
@@ -83,7 +79,7 @@ def run_game_valgrind(
         "--errors-for-leak-kinds=definite",
         "--track-origins=yes",
         "--error-exitcode=42",
-        "--gen-suppressions=all",
+        # "--gen-suppressions=all",
         "--suppressions=valgrind.supp",
         str(executable.resolve()),
     ]
@@ -116,7 +112,7 @@ def run_game_valgrind(
             text=True,
         )
     except (OSError, RuntimeError) as error:
-        return ValgrindGameResult(command, 127, "", str(error), timeout_seconds, expected_errors)
+        return ValgrindGameResult(command, 127, "", str(error), timeout_seconds)
     finally:
         if xvfb is not None:
             terminate(xvfb, "Xvfb")
@@ -127,7 +123,6 @@ def run_game_valgrind(
         completed.stdout,
         completed.stderr,
         timeout_seconds,
-        expected_errors,
     )
 
 
@@ -143,19 +138,19 @@ def result_description(result: ValgrindGameResult) -> str:
         return "Game Valgrind could not run"
     if result.error_count is None:
         return "Game Valgrind did not produce an error summary"
-    if result.unexpected_errors:
-        return f"Game Valgrind found {result.error_count} errors (baseline: {result.expected_errors})"
+    if result.has_errors:
+        return f"Game Valgrind found {result.error_count} errors"
     if not result.timed_out:
         return f"Game exited before the {result.timeout_seconds:g}s limit (exit code {result.returncode})"
-    return f"Game Valgrind accepted baseline: {result.error_count}/{result.expected_errors} errors"
+    return "Game Valgrind clean"
 
 
 def review_body(executable_name: str, result: ValgrindGameResult) -> str:
     error_count = "unavailable" if result.error_count is None else str(result.error_count)
-    status = "Accepted baseline"
+    status = "Clean"
     if result.infrastructure_error or result.error_count is None or not result.timed_out:
         status = "Run failed"
-    elif result.unexpected_errors:
+    elif result.has_errors:
         status = "Issues found"
 
     output = tail_for_review("\n\n".join(part for part in (result.stdout, result.stderr) if part))
@@ -163,18 +158,17 @@ def review_body(executable_name: str, result: ValgrindGameResult) -> str:
         f"## Valgrind run of _{markdown_inline(executable_name)}_",
         "",
     ]
-    if result.unexpected_errors:
+    if result.has_errors:
         lines.extend(
             (
-                f"> **Valgrind issues found:** `{result.error_count}` errors "
-                f"(accepted baseline: `<= {result.expected_errors}`).",
+                f"> **Valgrind issues found:** `{result.error_count}` errors.",
                 "",
             )
         )
     elif status == "Run failed":
         lines.extend((f"> **Valgrind run failed:** {markdown_inline(result_description(result))}.", ""))
     else:
-        lines.extend((f"> **Valgrind baseline accepted:** `{error_count}` errors.", ""))
+        lines.extend(("> **Valgrind clean:** no errors.", ""))
     lines.extend(
         (
             "| Metric | Value |",
@@ -182,7 +176,6 @@ def review_body(executable_name: str, result: ValgrindGameResult) -> str:
             f"| Time limit | `{result.timeout_seconds:g}s` |",
             f"| Process status | `{status}` |",
             f"| Valgrind errors | `{error_count}` |",
-            f"| Accepted baseline | `<= {result.expected_errors}` |",
             f"| Timeout reached | `{'yes' if result.timed_out else 'no'}` |",
             f"| Command exit code | `{result.returncode}` |",
             "",
@@ -230,12 +223,6 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--executable", default="build/bin/TemplateGame", help="game executable to run")
     parser.add_argument("--timeout", type=float, default=5.0, help="maximum game runtime in seconds")
-    parser.add_argument(
-        "--expected-errors",
-        type=int,
-        default=EXPECTED_VALGRIND_ERRORS,
-        help="maximum accepted Valgrind error count",
-    )
     parser.add_argument("--no-gitea", action="store_true")
     args = parser.parse_args()
 
@@ -244,10 +231,7 @@ def main() -> None:
         parser.error(f"game executable not found: {executable}")
     if args.timeout <= 0:
         parser.error("--timeout must be greater than zero")
-    if args.expected_errors < 0:
-        parser.error("--expected-errors must be non-negative")
-
-    result = run_game_valgrind(executable, args.timeout, args.expected_errors)
+    result = run_game_valgrind(executable, args.timeout)
     if result.stdout:
         print(result.stdout, end="" if result.stdout.endswith("\n") else "\n")
     if result.stderr:

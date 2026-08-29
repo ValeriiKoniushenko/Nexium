@@ -111,7 +111,10 @@ def publish_inline_review(
                 pr_number,
                 body=(
                     f"clang-tidy found {len(issues)} issue(s) on modified lines.\n\n"
-                    f"{summary}"
+                    "<details>\n"
+                    "<summary>clang-tidy summary</summary>\n\n"
+                    f"{summary}\n\n"
+                    "</details>"
                 ),
                 event="COMMENT",
                 commit_id=sha,
