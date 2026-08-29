@@ -309,9 +309,11 @@ def main():
             print("[gitea] client not configured — skipping review publish")
 
     if issues:
-        print(f"Found {len(issues)} clang-tidy issue(s):")
+        print(f"Found {len(issues)} g(s):")
         for i in issues:
             print(f"  - {i['location']['path']}:{i['location']['lines']['begin']}: {i['description']}")
+        for i in issues:
+            print(f"{i['location']['path']}: {i['description']}")
         if should_fail and not args.dry_run:
             sys.exit(1)
     else:
