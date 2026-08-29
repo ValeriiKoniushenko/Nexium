@@ -48,6 +48,7 @@ def run_valgrind(executable: str, test_args: list[str]) -> ValgrindResult:
         "--show-leak-kinds=definite",
         "--errors-for-leak-kinds=definite",
         "--track-origins=yes",
+        "--gen-suppressions=all",
         "--suppressions=valgrind.supp",
         f"--error-exitcode={VALGRIND_ERROR_EXIT_CODE}",
         executable,

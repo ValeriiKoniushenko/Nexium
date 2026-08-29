@@ -83,6 +83,7 @@ def run_game_valgrind(
         "--errors-for-leak-kinds=definite",
         "--track-origins=yes",
         "--error-exitcode=42",
+        "--gen-suppressions=all"
         "--suppressions=valgrind.supp",
         str(executable.resolve()),
     ]
