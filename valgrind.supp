@@ -1,0 +1,191 @@
+{
+   <insert_a_suppression_name_here>
+   Memcheck:ReallocZero
+   fun:realloc
+   obj:/usr/lib/libnvidia-eglcore.so.610.57.04
+   obj:/usr/lib/libnvidia-eglcore.so.610.57.04
+   obj:/usr/lib/libnvidia-eglcore.so.610.57.04
+   obj:/usr/lib/libnvidia-eglcore.so.610.57.04
+   fun:NvGlEglApiInit
+   obj:/usr/lib/libEGL_nvidia.so.610.57.04
+   obj:/usr/lib/libEGL_nvidia.so.610.57.04
+   obj:/usr/lib/libEGL_nvidia.so.610.57.04
+   obj:/usr/lib/libEGL_nvidia.so.610.57.04
+   obj:/usr/lib/libEGL_nvidia.so.610.57.04
+   fun:UnknownInlinedFun
+   fun:loadEGLExternalPlatform
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:BadSize
+   fun:posix_memalign
+   obj:/usr/lib/libnvidia-eglcore.so.610.57.04
+   obj:/usr/lib/libnvidia-eglcore.so.610.57.04
+   obj:/usr/lib/libnvidia-eglcore.so.610.57.04
+   obj:/usr/lib/libnvidia-eglcore.so.610.57.04
+   fun:NvGlEglApiInit
+   obj:/usr/lib/libEGL_nvidia.so.610.57.04
+   obj:/usr/lib/libEGL_nvidia.so.610.57.04
+   obj:/usr/lib/libEGL_nvidia.so.610.57.04
+   obj:/usr/lib/libEGL_nvidia.so.610.57.04
+   obj:/usr/lib/libEGL_nvidia.so.610.57.04
+   fun:UnknownInlinedFun
+   fun:loadEGLExternalPlatform
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:realloc
+   fun:FcPatternObjectInsertElt
+   fun:FcPatternObjectListAdd.isra.0
+   fun:FcFontRenderPrepare
+   fun:FcFontSetMatch
+   fun:UnknownInlinedFun
+   fun:fc_thread_func
+   fun:g_thread_proxy
+   fun:start_thread
+   fun:clone
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:realloc
+   fun:FcPatternObjectInsertElt
+   fun:UnknownInlinedFun
+   fun:UnknownInlinedFun
+   fun:IA__FcConfigSubstituteWithPat.part.0
+   fun:pango_cairo_fc_font_map_fontset_key_substitute
+   fun:UnknownInlinedFun
+   fun:UnknownInlinedFun
+   fun:pango_fc_font_map_load_fontset
+   fun:pango_context_get_metrics
+   fun:UnknownInlinedFun
+   fun:UnknownInlinedFun
+   fun:UnknownInlinedFun
+   fun:gtk_label_measure.lto_priv.0
+   fun:gtk_css_custom_gadget_get_preferred_size
+   fun:gtk_css_gadget_get_preferred_size
+   fun:gtk_label_get_preferred_width.lto_priv.0
+   fun:gtk_widget_query_size_for_orientation
+   fun:gtk_widget_get_preferred_width
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:realloc
+   fun:FcPatternObjectInsertElt
+   fun:UnknownInlinedFun
+   fun:UnknownInlinedFun
+   fun:IA__FcConfigSubstituteWithPat.part.0
+   fun:pango_cairo_fc_font_map_fontset_key_substitute
+   fun:UnknownInlinedFun
+   fun:UnknownInlinedFun
+   fun:pango_fc_font_map_load_fontset
+   fun:UnknownInlinedFun
+   fun:UnknownInlinedFun
+   fun:pango_itemize_with_font
+   fun:pango_layout_check_lines.part.0
+   fun:UnknownInlinedFun
+   fun:pango_layout_get_extents_internal
+   fun:_pango_cairo_font_get_metrics
+   fun:get_first_metrics_foreach.lto_priv.0
+   fun:pango_fc_fontset_foreach
+   fun:UnknownInlinedFun
+   fun:pango_context_get_metrics
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:calloc
+   fun:UnknownInlinedFun
+   fun:wl_proxy_create_wrapper
+   obj:*
+   obj:*
+   obj:*
+   fun:_glfwInitEGL
+   fun:_glfwCreateWindowWayland
+   fun:glfwCreateWindow
+   fun:_ZN4Core6Window6createERKNS_10BaseStringIcEENS_4SizeIiLi2EEE
+   fun:_ZN4Core12GameInstance10initializeEv
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:calloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   fun:_glfwInitEGL
+   fun:_glfwCreateWindowWayland
+   fun:glfwCreateWindow
+   fun:_ZN4Core6Window6createERKNS_10BaseStringIcEENS_4SizeIiLi2EEE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   fun:FcPatternObjectInsertElt
+   fun:FcPatternObjectAddWithBinding
+   fun:UnknownInlinedFun
+   fun:UnknownInlinedFun
+   fun:FcFontSetList
+   fun:ensure_families
+   fun:pango_fc_font_map_get_family
+   fun:pango_fc_font_map_get_face
+   fun:UnknownInlinedFun
+   fun:UnknownInlinedFun
+   fun:pango_fc_fontset_get_font_at
+   fun:pango_fc_fontset_foreach
+   fun:UnknownInlinedFun
+   fun:pango_context_get_metrics
+   fun:UnknownInlinedFun
+   fun:UnknownInlinedFun
+   fun:UnknownInlinedFun
+   fun:gtk_label_measure.lto_priv.0
+   fun:gtk_css_custom_gadget_get_preferred_size
+}
