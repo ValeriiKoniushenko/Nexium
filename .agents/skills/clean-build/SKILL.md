@@ -5,14 +5,24 @@ description: Full clean rebuild from scratch, bypassing all caches. Use when the
 
 # Clean Build
 
-Nukes the build dir and cache; use only when incremental build is untrustworthy.
+Nukes the build dir and cache; use only when the incremental build is untrustworthy.
 
 ## Command
 
 ```bash
 rm -rf build
-ccache -C          # clear ccache too — sometimes the corruption is in the cache, not the build dir
-cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug
+cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug
+```
+
+### Linux / macOS
+
+```bash
+cmake --build build -j$(nproc)
+```
+
+### Windows
+
+```powershell
 cmake --build build --parallel
 ```
 
