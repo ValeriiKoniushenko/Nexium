@@ -102,10 +102,17 @@ def publish_inline_review(
                 new_position=loc["lines"]["begin"],
             )
 
+        summary = "\n".join(
+            f"{issue['location']['path']}: {issue['description']}"
+            for issue in issues
+        )
         try:
             client.create_review(
                 pr_number,
-                body=f"clang-tidy found {len(issues)} issue(s) on modified lines.",
+                body=(
+                    f"clang-tidy found {len(issues)} issue(s) on modified lines.\n\n"
+                    f"{summary}"
+                ),
                 event="COMMENT",
                 commit_id=sha,
                 marker=marker,
