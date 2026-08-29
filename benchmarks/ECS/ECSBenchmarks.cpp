@@ -613,4 +613,4 @@ BENCHMARK(BM_ECS_TickMixedGameplayScene)->RangeMultiplier(4)->Range(16, 1024);
 BENCHMARK(BM_ECS_SerializeTree)->RangeMultiplier(4)->Range(64, 1024);
 BENCHMARK(BM_ECS_DeserializeTree)->RangeMultiplier(4)->Range(64, 1024);
 
-BENCHMARK_MAIN();
+BENCHMARK_MAIN(); // NOLINT(modernize-avoid-c-arrays): Google Benchmark macro implementation.
