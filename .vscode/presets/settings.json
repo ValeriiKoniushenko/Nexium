@@ -1,0 +1,11 @@
+{
+    "cmake.configureOnOpen": false,
+    "files.watcherExclude": {
+        "**/build/**": true,
+        "**/cmake-build-*/**": true
+    },
+    "search.exclude": {
+        "**/build/**": true,
+        "**/cmake-build-*/**": true
+    }
+}

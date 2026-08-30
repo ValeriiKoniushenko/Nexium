@@ -1,0 +1,34 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "TemplateGame (Clang/LLDB)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/bin/TemplateGame",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "MIMode": "lldb",
+            "miDebuggerPath": "/usr/bin/lldb",
+            "stopAtEntry": false
+        },
+        {
+            "name": "TemplateGame (GCC/GDB)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/bin/TemplateGame",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "stopAtEntry": false
+        }
+    ]
+}
