@@ -74,5 +74,7 @@ namespace Core
             bool _initialized = false;
         };
 
+        [[nodiscard]] InputSystem* GetInputSystem();
+
     } // namespace Internal
 } // namespace Core
