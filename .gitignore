@@ -12,6 +12,7 @@
 /.jrm/cache.data
 /.cache
 
+/.vscode/*.json
 string_metrics.csv
 iwyu.log
 
