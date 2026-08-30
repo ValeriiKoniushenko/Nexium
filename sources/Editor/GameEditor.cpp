@@ -26,6 +26,7 @@
 
 #include "Editor/Windows/EditorMenuBarWindow.h"
 #include "Editor/Windows/EditorSettings.h"
+#include "Editor/Windows/Editors/NxAudioClipEditor.h"
 #include "Editor/Windows/Editors/TextEditor.h"
 #include "Editor/Windows/GameViewport.h"
 #include "Editor/Windows/LogsWindow.h"
@@ -118,6 +119,7 @@ namespace Core
         registerNewWindow<ModalCreateBlueprintEWC>("Create blueprint"_atom);
         registerNewWindow<RenamePopUpWindow>("Rename window"_atom);
         registerNewWindow<WorldSettingsEWC>("World settings"_atom);
+        registerNewWindow<NxAudioClipEditorEWC>("NX audio clip editor"_atom);
         registerNewWindow<NxTextureEditorEWC>("NX texture editor"_atom);
         registerNewWindow<NxECSBasedEditorEWC>("Assets editor"_atom);
         registerNewWindow<DummyEWC>("Dummy window"_atom, false);

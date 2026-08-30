@@ -31,6 +31,7 @@
 #include "Editor/Windows/LogsWindow.h"
 #include "Editor/Windows/ObjectPropertiesWindow.h"
 #include "Editor/Windows/SceneTreeWindow.h"
+#include "Editors/NxAudioClipEditor.h"
 #include "Editors/TextEditor.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "ImageViewer.h"
@@ -106,6 +107,7 @@ namespace Core
             WindowMenuItem<ShaderManagerEWC>();
             ImGui::Separator();
             WindowMenuItem<TextEditorEWC>();
+            WindowMenuItem<NxAudioClipEditorEWC>();
             WindowMenuItem<NxECSBasedEditorEWC>();
             WindowMenuItem<ImageViewerEWC>();
 

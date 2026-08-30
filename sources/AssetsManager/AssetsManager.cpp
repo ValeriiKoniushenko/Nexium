@@ -24,6 +24,7 @@
 
 #include "AssetsManager.h"
 
+#include "Editor/Windows/Editors/NxAudioClipEditor.h"
 #include "Editor/Windows/Editors/NxTextureEditor.h"
 #include "Editor/Windows/Editors/TextEditor.h"
 #include "Editor/Windows/ImageViewer.h"
@@ -589,6 +590,11 @@ namespace Core
         {
             gGameInstance->gameEditor.showWindow<NxTextureEditorEWC>(".*",
                                                                      path.generic_string().data());
+        }
+        else if (ext == NXAudioClip::AssetT::fileExtension)
+        {
+            gGameInstance->gameEditor.showWindow<NxAudioClipEditorEWC>(
+                ".*", path.generic_string().data());
         }
     }
 

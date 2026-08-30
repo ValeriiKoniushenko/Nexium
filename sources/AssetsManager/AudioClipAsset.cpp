@@ -73,4 +73,9 @@ namespace Core
     {
         _data = {};
     }
+
+    void AudioClipAsset::ioFieldsUpdate(DataStream& out)
+    {
+        out.getRaw()["AssetData"] = serialize();
+    }
 } // namespace Core
