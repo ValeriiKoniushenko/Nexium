@@ -257,6 +257,11 @@ namespace Core::Internal
         return context == InputContext::Editor ? _editorControllers : _gameplayControllers;
     }
 
+    InputSystem* GetInputSystem()
+    {
+        return &InputSystem::Instance();
+    }
+
     /**
      * @brief InputSystem::selectControllers - Selects enabled controllers for active routing.
      *
