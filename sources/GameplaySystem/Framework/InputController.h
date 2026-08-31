@@ -28,16 +28,14 @@
 #include "ECS/BaseComponent.h"
 #include "InputDevices/InputTypes.h"
 
+#include <functional>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
 
 namespace Core
 {
-    namespace Internal
-    {
-        class InputSystem;
-    }
+    class InputSystem;
 
     CLASS();
     class InputController : public BaseComponent
@@ -45,11 +43,17 @@ namespace Core
         ECS_DECL(InputController, Core::BaseComponent);
 
     public:
+        using ActionCallback = std::function<void(const InputActionEvent&)>;
+
         InputController(const StringAtom& name, InputContext context)
             : InputController(name)
         {
             _inputContext = context;
         }
+
+        ~InputController() override;
+
+        [[nodiscard]] static Ptr Create(const StringAtom& name, InputContext context);
 
         struct Binding
         {
@@ -58,7 +62,10 @@ namespace Core
             InputActionTrigger trigger = InputActionTrigger::OnPress;
         };
 
-        bool bind(const StringAtom& action, KeyChord chord,
+        bool bind(const StringAtom& action, const KeyChord& chord,
+                  InputActionTrigger trigger = InputActionTrigger::OnPress);
+
+        bool bind(const StringAtom& action, KeyChord chord, ActionCallback callback,
                   InputActionTrigger trigger = InputActionTrigger::OnPress);
 
         void clearBindings();
@@ -83,14 +90,7 @@ namespace Core
         void onInitialize() override;
 
     private:
-        /**
-         * @brief Calculates the distance between two points.
-         * @param first First point.
-         * @param second Second point.
-         * @return Distance between the points.
-         */
-
-        friend class Internal::InputSystem;
+        friend class InputSystem;
 
         void handleRoutedEvent(const KeyInputEvent& event);
         void handleReleasedEvent(const KeyInputEvent& event);
@@ -115,6 +115,7 @@ namespace Core
         std::unordered_map<StringAtom, bool> _actionStates;
         std::unordered_map<StringAtom, KeyChord> _activeChords;
         std::unordered_map<StringAtom, InputModifier> _actionModifiers;
+        std::unordered_map<StringAtom, ActionCallback> _actionCallbacks;
     };
 
     /// @brief Serializes an input binding to its asset JSON representation.
@@ -122,7 +123,6 @@ namespace Core
 
     /// @brief Deserializes an input binding, including legacy modifier fields.
     void from_json(const nlohmann::json& json, InputController::Binding& binding);
-
 } // namespace Core
 
 #include "InputController.generated.h" // added by the code generator. Better don't move it.

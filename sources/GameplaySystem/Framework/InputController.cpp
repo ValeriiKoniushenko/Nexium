@@ -31,6 +31,18 @@
 
 namespace Core
 {
+    InputController::~InputController()
+    {
+        GetInputSystem()->unregisterController(this);
+    }
+
+    InputController::Ptr InputController::Create(const StringAtom& name, InputContext context)
+    {
+        Ptr controller = new InputController(name, context);
+        controller->initialize();
+        return controller;
+    }
+
     void to_json(nlohmann::json& json, const InputController::Binding& binding)
     {
         json = nlohmann::json{
@@ -56,7 +68,7 @@ namespace Core
             binding.action = StringAtom::Intern(json.at("action").get<StringAtom>());
         }
 
-        const auto keyField = json.contains("triggerKey") ? "triggerKey" : "key";
+        const auto* const keyField = json.contains("triggerKey") ? "triggerKey" : "key";
         if (json.contains(keyField))
         {
             if (json.at(keyField).is_string())
@@ -129,7 +141,8 @@ namespace Core
      * @return true if a new binding was added, false if the input was invalid or an existing
      * binding was updated.
      */
-    bool InputController::bind(const StringAtom& action, KeyChord chord, InputActionTrigger trigger)
+    bool InputController::bind(const StringAtom& action, const KeyChord& chord,
+                               InputActionTrigger trigger)
     {
         if (action.isEmpty() || chord.triggerKey == Keyboard::Key::None)
         {
@@ -148,6 +161,17 @@ namespace Core
         _bindings.push_back({ .action = action, .chord = chord, .trigger = trigger });
         _actionStates.insert_or_assign(action, false);
         return true;
+    }
+
+    bool InputController::bind(const StringAtom& action, KeyChord chord, ActionCallback callback,
+                               InputActionTrigger trigger)
+    {
+        const auto inserted = bind(action, chord, trigger);
+        if (!action.isEmpty() && callback)
+        {
+            _actionCallbacks.insert_or_assign(action, std::move(callback));
+        }
+        return inserted;
     }
 
     /**
@@ -170,6 +194,7 @@ namespace Core
         _actionModifiers.erase(action);
         _transientActions.erase(action);
         _activeChords.erase(action);
+        _actionCallbacks.erase(action);
 
         return oldSize != _bindings.size();
     }
@@ -186,6 +211,7 @@ namespace Core
         _actionStates.clear();
         _actionModifiers.clear();
         _transientActions.clear();
+        _actionCallbacks.clear();
     }
 
     /**
@@ -257,7 +283,7 @@ namespace Core
     void InputController::onInitialize()
     {
         BaseComponent::onInitialize();
-        Internal::InputSystem::Instance().registerController(this);
+        GetInputSystem()->registerController(this);
     }
 
     /**
@@ -386,7 +412,13 @@ namespace Core
             _transientActions.insert(binding.action);
         }
 
-        onAction->trigger(InputActionEvent{ .action = binding.action, .state = event.state });
+        const InputActionEvent actionEvent{ .action = binding.action, .state = event.state };
+        if (const auto callback = _actionCallbacks.find(binding.action);
+            callback != _actionCallbacks.end())
+        {
+            callback->second(actionEvent);
+        }
+        onAction->trigger(actionEvent);
     }
 
     /**
@@ -418,7 +450,13 @@ namespace Core
         {
             _actionStates.insert_or_assign(action, true);
             _transientActions.insert(action);
-            onAction->trigger(InputActionEvent{ .action = action, .state = event.state });
+            const InputActionEvent actionEvent{ .action = action, .state = event.state };
+            if (const auto callback = _actionCallbacks.find(action);
+                callback != _actionCallbacks.end())
+            {
+                callback->second(actionEvent);
+            }
+            onAction->trigger(actionEvent);
         }
     }
 

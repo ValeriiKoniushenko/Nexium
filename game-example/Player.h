@@ -39,8 +39,8 @@ protected:
     void onTick(float delta) override;
 
 private:
-    Core::WeakPtr<Core::InputController> _input;
-    Core::WeakPtr<Core::Animation::FrameByFrameAnimator> _animator;
+    Core::InputController* _input = nullptr;
+    Core::Animation::FrameByFrameAnimator* _animator = nullptr;
 
     float _movementSpeed = 200.f;
 };

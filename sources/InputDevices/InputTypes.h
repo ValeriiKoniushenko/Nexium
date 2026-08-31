@@ -1,5 +1,5 @@
 /*
-* MIT License
+ * MIT License
  *
  * Copyright (c) 2018-2027 Valerii Koniushenko
  *
@@ -28,52 +28,44 @@
 #include "InputDevices/Keyboard.h"
 
 #include <cstdint>
-#include <ranges>
 #include <vector>
 
 namespace Core
 {
+    ENUM_CLASS();
     enum class InputContext : std::uint8_t
     {
         Editor,
         Gameplay
     };
 
+    ENUM_CLASS();
     enum class InputModifier : std::uint8_t
     {
         None = 0,
         Shift = 1 << 0,
         Control = 1 << 1,
         Alt = 1 << 2,
-        Super = 1 << 3
+        Super = 1 << 3,
+        All = (1 << 4) - 1
     };
 
     struct KeyChord
     {
+        /// Key that completes the chord and triggers its action (for example S in Ctrl+Shift+S).
         Keyboard::Key triggerKey = Keyboard::Key::None;
-        std::vector<Keyboard::Key> requiredKeys;
+        /// Keys that must already be held when triggerKey is pressed (for example Ctrl and Shift).
+        std::vector<Keyboard::Key> requiredKeys{};
 
-        [[nodiscard]] static KeyChord Exact(Keyboard::Key key)
-        {
-            return { .triggerKey = key };
-        }
+        [[nodiscard]] static KeyChord Exact(Keyboard::Key key);
 
         [[nodiscard]] bool matches(Keyboard::Key eventKey,
-                                   const std::vector<Keyboard::Key>& pressedKeys) const
-        {
-            if (triggerKey != eventKey)
-                return false;
+                                   const std::vector<Keyboard::Key>& pressedKeys) const;
 
-            return std::ranges::all_of(requiredKeys, [&pressedKeys](Keyboard::Key key)
-                                       { return std::ranges::find(pressedKeys, key) != pressedKeys.end(); });
-        }
-
-        [[nodiscard]] bool contains(Keyboard::Key key) const
-        {
-            return triggerKey == key || std::ranges::find(requiredKeys, key) != requiredKeys.end();
-        }
+        [[nodiscard]] bool contains(Keyboard::Key key) const;
     };
 
+    ENUM_CLASS();
     enum class InputActionTrigger : std::uint8_t
     {
         WhileHeld,
@@ -87,7 +79,7 @@ namespace Core
         Keyboard::KeyState state = Keyboard::KeyState::None;
         InputModifier modifiers = InputModifier::None;
         int scancode = 0;
-        std::vector<Keyboard::Key> pressedKeys;
+        std::vector<Keyboard::Key> pressedKeys{};
     };
 
     struct InputActionEvent
@@ -95,17 +87,17 @@ namespace Core
         StringAtom action;
         Keyboard::KeyState state = Keyboard::KeyState::None;
 
-        [[nodiscard]] bool isPressed() const noexcept
+        [[nodiscard]] constexpr bool isPressed() const noexcept
         {
             return state == Keyboard::KeyState::Pressed;
         }
 
-        [[nodiscard]] bool isReleased() const noexcept
+        [[nodiscard]] constexpr bool isReleased() const noexcept
         {
             return state == Keyboard::KeyState::Released;
         }
 
-        [[nodiscard]] bool isRepeated() const noexcept
+        [[nodiscard]] constexpr bool isRepeated() const noexcept
         {
             return state == Keyboard::KeyState::Repeated;
         }
@@ -115,15 +107,17 @@ namespace Core
 // Keep bitwise operators in the global namespace, consistently with Core::Tag operators.
 // Otherwise a Core::operator| overload hides ::operator|(Core::Tag, Core::Tag) in Core code.
 [[nodiscard]] constexpr Core::InputModifier operator|(Core::InputModifier lhs,
-                                                       Core::InputModifier rhs)
+                                                      Core::InputModifier rhs)
 {
     return static_cast<Core::InputModifier>(static_cast<std::uint8_t>(lhs)
                                             | static_cast<std::uint8_t>(rhs));
 }
 
 [[nodiscard]] constexpr Core::InputModifier operator&(Core::InputModifier lhs,
-                                                       Core::InputModifier rhs)
+                                                      Core::InputModifier rhs)
 {
     return static_cast<Core::InputModifier>(static_cast<std::uint8_t>(lhs)
                                             & static_cast<std::uint8_t>(rhs));
 }
+
+#include "InputTypes.generated.h" // added by the code generator. Better don't move it.
