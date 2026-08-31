@@ -32,6 +32,7 @@ iwyu.log
 __pycache__
 
 /sources/**/*.generated.h
+/game-example/**/*.generated.h
 /sources/**/*.generated.inl
 /sources/**/*.generated.cpp
 

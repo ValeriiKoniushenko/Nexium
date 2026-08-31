@@ -29,54 +29,55 @@
 
 #include <ranges>
 
-namespace Core::Internal
+namespace
 {
-    namespace
+    Core::InputModifier ConvertModifiers(int mods)
     {
-        [[nodiscard]] InputModifier ConvertModifiers(int mods)
+        auto result = Core::InputModifier::None;
+        if (mods & GLFW_MOD_SHIFT)
         {
-            auto result = InputModifier::None;
-            if (mods & GLFW_MOD_SHIFT)
-            {
-                result = result | InputModifier::Shift;
-            }
-            if (mods & GLFW_MOD_CONTROL)
-            {
-                result = result | InputModifier::Control;
-            }
-            if (mods & GLFW_MOD_ALT)
-            {
-                result = result | InputModifier::Alt;
-            }
-            if (mods & GLFW_MOD_SUPER)
-            {
-                result = result | InputModifier::Super;
-            }
-            return result;
+            result = result | Core::InputModifier::Shift;
         }
+        if (mods & GLFW_MOD_CONTROL)
+        {
+            result = result | Core::InputModifier::Control;
+        }
+        if (mods & GLFW_MOD_ALT)
+        {
+            result = result | Core::InputModifier::Alt;
+        }
+        if (mods & GLFW_MOD_SUPER)
+        {
+            result = result | Core::InputModifier::Super;
+        }
+        return result;
+    }
 
-        [[nodiscard]] Keyboard::Key NormalizeModifier(Keyboard::Key key)
+    Core::Keyboard::Key NormalizeModifier(Core::Keyboard::Key key)
+    {
+        using Key = Core::Keyboard::Key;
+        if (key == Key::Right_Shift)
         {
-            using Key = Keyboard::Key;
-            if (key == Key::Right_Shift)
-            {
-                return Key::Left_Shift;
-            }
-            if (key == Key::Right_Control)
-            {
-                return Key::Left_Control;
-            }
-            if (key == Key::Right_Alt)
-            {
-                return Key::Left_Alt;
-            }
-            if (key == Key::Right_Super)
-            {
-                return Key::Left_Super;
-            }
-            return key;
+            return Key::Left_Shift;
         }
-    } // namespace
+        if (key == Key::Right_Control)
+        {
+            return Key::Left_Control;
+        }
+        if (key == Key::Right_Alt)
+        {
+            return Key::Left_Alt;
+        }
+        if (key == Key::Right_Super)
+        {
+            return Key::Left_Super;
+        }
+        return key;
+    }
+} // namespace
+
+namespace Core
+{
 
     /**
      * @brief InputSystem::initialize - Subscribes the input system to window keyboard events.
@@ -102,14 +103,21 @@ namespace Core::Internal
     /**
      * @brief InputSystem::setActiveContext - Selects the context that receives keyboard input.
      *
-     * Stores the editor or gameplay context used to select a controller during the next input
-     * frame. Any previously routed actions are released by processEvents when routing changes.
+     * Rebuilds the routed-controller snapshot immediately when the context changes and releases
+
+     * * actions owned by controllers that no longer receive input.
      *
      * @param context The input context that should become active.
      */
-    void InputSystem::setActiveContext(InputContext context) noexcept
+    void InputSystem::setActiveContext(InputContext context)
     {
+        if (_activeContext == context)
+        {
+            return;
+        }
+
         _activeContext = context;
+        refreshRoutedControllers();
     }
 
     /**
@@ -148,46 +156,44 @@ namespace Core::Internal
         }
 
         auto& controllers = controllersFor(controller->getInputContext());
-        std::erase_if(controllers,
-                      [](const WeakPtr<InputController>& value) { return !value.tryLoad(); });
-        if (std::ranges::any_of(controllers,
-                                [controller](const WeakPtr<InputController>& value)
-                                {
-                                    auto registered = value.tryLoad();
-                                    return registered && registered.get() == controller;
-                                }))
+        if (std::ranges::find(controllers, controller) != controllers.end())
         {
             return;
         }
         controllers.emplace_back(controller);
+        if (controller->getInputContext() == _activeContext)
+        {
+            refreshRoutedControllers();
+        }
+    }
+
+    void InputSystem::unregisterController(InputController* controller)
+    {
+        if (!controller)
+        {
+            return;
+        }
+
+        std::erase(_editorControllers, controller);
+        std::erase(_gameplayControllers, controller);
+        std::erase(_routedControllers, controller);
     }
 
     /**
      * @brief InputSystem::processEvents - Processes one frame of queued keyboard input.
      *
-     * Selects all enabled controllers for the active context, releases controllers removed from
-     * routing, resets transient actions, and dispatches all queued events.
-     */
+     * Resets transient actions on routed controllers and dispatches all queued events. Controller
+
+     * * routing is updated by context and registration events rather than recalculated here.
+ */
     void InputSystem::processEvents()
     {
-        auto controllers = selectControllers();
-        for (const auto& previousWeak : _routedControllers)
+        for (auto* controller : _routedControllers)
         {
-            auto previous = previousWeak.tryLoad();
-            if (previous
-                && std::ranges::none_of(controllers, [&previous](const auto& controller)
-                                        { return controller.get() == previous.get(); }))
+            if (controller->isEnabled())
             {
-                previous->releaseAllActions();
+                controller->beginInputFrame();
             }
-        }
-
-        _routedControllers.clear();
-        _routedControllers.reserve(controllers.size());
-        for (auto& controller : controllers)
-        {
-            controller->beginInputFrame();
-            _routedControllers.emplace_back(controller);
         }
 
         while (!_events.empty())
@@ -221,9 +227,9 @@ namespace Core::Internal
             std::erase(_pressedKeys, event.key);
         }
 
-        for (const auto& controllerWeak : _routedControllers)
+        for (auto* controller : _routedControllers)
         {
-            if (auto controller = controllerWeak.tryLoad(); controller && controller->isEnabled())
+            if (controller->isEnabled())
             {
                 controller->handleRoutedEvent(routedEvent);
             }
@@ -236,9 +242,9 @@ namespace Core::Internal
      * Provides mutable access to the editor or gameplay controller list.
      *
      * @param context The context whose controllers should be returned.
-     * @return A mutable reference to the matching weak controller list.
+     * @return A mutable reference to the matching non-owning controller list.
      */
-    std::vector<WeakPtr<InputController>>& InputSystem::controllersFor(InputContext context)
+    std::vector<InputController*>& InputSystem::controllersFor(InputContext context)
     {
         return context == InputContext::Editor ? _editorControllers : _gameplayControllers;
     }
@@ -249,10 +255,9 @@ namespace Core::Internal
      * Provides read-only access to the editor or gameplay controller list.
      *
      * @param context The context whose controllers should be returned.
-     * @return A constant reference to the matching weak controller list.
+     * @return A constant reference to the matching non-owning controller list.
      */
-    const std::vector<WeakPtr<InputController>>& InputSystem::controllersFor(
-        InputContext context) const
+    const std::vector<InputController*>& InputSystem::controllersFor(InputContext context) const
     {
         return context == InputContext::Editor ? _editorControllers : _gameplayControllers;
     }
@@ -260,6 +265,20 @@ namespace Core::Internal
     InputSystem* GetInputSystem()
     {
         return &InputSystem::Instance();
+    }
+
+    void InputSystem::refreshRoutedControllers()
+    {
+        auto controllers = selectControllers();
+        for (auto* previous : _routedControllers)
+        {
+            if (std::ranges::find(controllers, previous) == controllers.end())
+            {
+                previous->releaseAllActions();
+            }
+        }
+
+        _routedControllers = std::move(controllers);
     }
 
     /**
@@ -270,16 +289,16 @@ namespace Core::Internal
      *
      * @return The controllers selected for routing. The collection is empty when none are active.
      */
-    std::vector<IntrusivePtr<InputController>> InputSystem::selectControllers() const
+    std::vector<InputController*> InputSystem::selectControllers() const
     {
-        std::vector<IntrusivePtr<InputController>> selected;
-        for (const auto& controllerWeak : controllersFor(_activeContext))
+        std::vector<InputController*> selected;
+        for (auto* controller : controllersFor(_activeContext))
         {
-            if (auto controller = controllerWeak.tryLoad(); controller && controller->isEnabled())
+            if (controller->isEnabled())
             {
-                selected.emplace_back(controller.get());
+                selected.emplace_back(controller);
             }
         }
         return selected;
     }
-} // namespace Core::Internal
+} // namespace Core

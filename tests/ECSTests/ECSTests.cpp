@@ -24,21 +24,24 @@
 
 #include "Animations/FrameByFrame/FrameByFrameAnimator.h"
 #include "DummyComponent.h"
+#include "InputDevices/InputTypes.h"
 #include "Scene/Rectangle.h"
 
 #include "gtest/gtest.h"
 #include <fstream>
+#include <ranges>
 
 using namespace Core;
 
 namespace
 {
-
     std::vector<StringAtom> collectNames(const BaseComponent& root, bool depthFirst = false)
     {
         std::vector<StringAtom> names;
         const auto visit = [&names](const BaseComponent* component)
-        { names.push_back(component->getComponentName()); };
+        {
+            names.push_back(component->getComponentName());
+        };
 
         if (depthFirst)
         {
@@ -74,7 +77,6 @@ namespace
 
         DummyComponent root;
     };
-
 } // namespace
 
 TEST(ECSBaseTests, SerializationOfAbstractComponentClass)
@@ -458,7 +460,7 @@ TEST(ECSBaseTests, RemovingChildIf)
     ASSERT_EQ("Root", root.getComponentName());
     ASSERT_EQ("DummyComponent", root.getComponentType());
 
-    std::vector<StringAtom> names = { "Hello", "World", "How", "Are", "AYou", "Idk" };
+    std::vector<StringAtom> names = {"Hello", "World", "How", "Are", "AYou", "Idk"};
 
     for (auto&& name : names)
     {
@@ -518,7 +520,7 @@ TEST_F(ECSTreeTests, ComplexDeSerealization)
 TEST_F(ECSTreeTests, BFSIteratorTest)
 {
     ASSERT_EQ((std::vector<StringAtom>{ "Top1", "Top2", "Middle1", "Middle1", "Middle2", "Bottom1",
-                                        "SuperBottom1" }),
+                  "SuperBottom1" }),
               collectNames(root));
 
     std::vector<StringAtom> stopped;
@@ -535,7 +537,7 @@ TEST_F(ECSTreeTests, BFSIteratorTest)
 TEST_F(ECSTreeTests, DFSIteratorTest)
 {
     ASSERT_EQ((std::vector<StringAtom>{ "Top1", "Middle1", "Top2", "Middle1", "Middle2", "Bottom1",
-                                        "SuperBottom1" }),
+                  "SuperBottom1" }),
               collectNames(root, true));
 
     std::vector<StringAtom> stopped;
@@ -774,11 +776,11 @@ TEST(ECSBaseTests, RemoveChildIfClearsParentLinksAndHandlesEmptyPredicate)
 
     ASSERT_FALSE(root.removeChildIf({}));
     ASSERT_TRUE(root.removeChildIf([](const BaseComponent* component)
-                                   { return component->getComponentName() == "Remove"; }));
+        { return component->getComponentName() == "Remove"; }));
     ASSERT_EQ(keep, root.getChildAt(0).get());
     ASSERT_EQ(nullptr, remove->getParent());
     ASSERT_FALSE(root.removeChildIf([](const BaseComponent* component)
-                                    { return component->getComponentName() == "Absent"; }));
+        { return component->getComponentName() == "Absent"; }));
 }
 
 TEST(ECSBaseTests, ClearOrphansExistingChildren)
@@ -867,7 +869,6 @@ TEST(ECSBaseTests, InitializeIsCalledAndPropagatesToChildren)
 
 namespace
 {
-
     class ECSTreeVehicleTests : public ::testing::Test
     {
     protected:
@@ -939,7 +940,6 @@ namespace
 
         Sedan root;
     };
-
 } // namespace
 
 TEST_F(ECSTreeVehicleTests, FullSerializationCheck)
@@ -1084,24 +1084,60 @@ TEST_F(ECSTreeVehicleTests, FullDeserializationCheck)
 
 TEST(FrameByFrameAnimatorTests, AddedAnimationIsSerializedWithAnimatedPlayer)
 {
-    std::ifstream input{ NEXIUM_PROJECT_DIR "/data/assets/AnimatedPlayer.nx" };
+    std::ifstream input{NEXIUM_PROJECT_DIR "/data/assets/Player.nx"};
+    ASSERT_TRUE(input.is_open());
     const auto assetJson = nlohmann::json::parse(input);
 
     SceneObj::Rectangle player;
-    RResourceStream<RJsonResourceStream> stream{ assetJson["data"] };
+    RResourceStream<RJsonResourceStream> stream{assetJson["data"]};
     player.deserialize(stream);
 
     auto* animator = player.findFirstChildOf<Animation::FrameByFrameAnimator>();
     ASSERT_NE(animator, nullptr);
 
-    Animation::FrameByFrameAnimation animation{ "Serialization test"_atom };
+    Animation::FrameByFrameAnimation animation{"Serialization test"_atom};
     animation.setAtlasName("default"_atom);
     ASSERT_TRUE(animation.addFrame({ 0.f, 0.f }, { 1.f, 1.f }));
     ASSERT_TRUE(animator->addAnimation(std::move(animation)));
 
     const auto serializedPlayer = player.serialize();
-    const auto& serializedAnimations = serializedPlayer["_children"][0]["_animations"];
+    const auto& serializedChildren = serializedPlayer["_children"];
+    const auto serializedAnimator = std::ranges::find_if(
+        serializedChildren,
+        [](const auto& child)
+        {
+            return child.value("_type", std::string{})
+                == Animation::FrameByFrameAnimator::componentType.toStdString();
+        });
+    ASSERT_NE(serializedAnimator, serializedChildren.end());
+
+    const auto& serializedAnimations = (*serializedAnimator)["_animations"];
     ASSERT_TRUE(serializedAnimations.contains("Serialization test"));
-    // EXPECT_EQ(serializedAnimations["Serialization test"]["_type"],
-    //           Animation::FrameByFrameAnimation::componentType);
+    EXPECT_EQ(serializedAnimations["Serialization test"]["_type"].get<std::string>(),
+              Animation::FrameByFrameAnimation::componentType.toStdString());
+}
+
+TEST(InputTypesTests, KeyChordMatchesOnlyItsTriggerWithEveryRequiredKeyPressed)
+{
+    const KeyChord chord{
+        .triggerKey = Keyboard::Key::S,
+        .requiredKeys
+        = {Keyboard::Key::Left_Control, Keyboard::Key::Left_Shift}
+    };
+
+    EXPECT_TRUE(chord.matches(Keyboard::Key::S, { Keyboard::Key::Left_Control,
+        Keyboard::Key::Left_Shift, Keyboard::Key::S }));
+    EXPECT_FALSE(
+        chord.matches(Keyboard::Key::S, { Keyboard::Key::Left_Control, Keyboard::Key::S }));
+    EXPECT_FALSE(chord.matches(Keyboard::Key::A, { Keyboard::Key::Left_Control,
+        Keyboard::Key::Left_Shift, Keyboard::Key::A }));
+}
+
+TEST(InputTypesTests, InputEventsDefaultInitializeOwnedKeyCollections)
+{
+    const KeyChord chord;
+    const KeyInputEvent event;
+
+    EXPECT_TRUE(chord.requiredKeys.empty());
+    EXPECT_TRUE(event.pressedKeys.empty());
 }

@@ -40,16 +40,15 @@ void Player::onTick(float delta)
 {
     SceneObj::RectangleAnimated::onTick(delta);
 
-    auto input = _input.tryLoad();
-    if (!input || !input->isEnabled())
+    if (!_input || !_input->isEnabled())
     {
         return;
     }
 
-    const int horizontal = static_cast<int>(input->isActionPressed("Move right"_atom))
-                           - static_cast<int>(input->isActionPressed("Move left"_atom));
-    const int vertical = static_cast<int>(input->isActionPressed("Move up"_atom))
-                         - static_cast<int>(input->isActionPressed("Move down"_atom));
+    const int horizontal = static_cast<int>(_input->isActionPressed("Move right"_atom))
+                           - static_cast<int>(_input->isActionPressed("Move left"_atom));
+    const int vertical = static_cast<int>(_input->isActionPressed("Move up"_atom))
+                         - static_cast<int>(_input->isActionPressed("Move down"_atom));
 
     constexpr float diagonalFactor = 0.70710678f;
     const float movementFactor = horizontal != 0 && vertical != 0 ? diagonalFactor : 1.f;
@@ -78,25 +77,24 @@ void Player::onTick(float delta)
         animation = "Move right"_atom;
     }
 
-    auto animator = _animator.tryLoad();
-    if (!animator)
+    if (!_animator)
     {
         return;
     }
 
     if (animation.isEmpty())
     {
-        if (auto* activeAnimation = animator->getActiveAnimation())
+        if (auto* activeAnimation = _animator->getActiveAnimation())
         {
             activeAnimation->stop();
         }
         return;
     }
 
-    auto* activeAnimation = animator->getActiveAnimation();
-    if (animator->getActiveAnimationName() != animation || !activeAnimation
+    auto* activeAnimation = _animator->getActiveAnimation();
+    if (_animator->getActiveAnimationName() != animation || !activeAnimation
         || !activeAnimation->isPlaying())
     {
-        animator->startAnimation(animation);
+        _animator->startAnimation(animation);
     }
 }

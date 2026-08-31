@@ -191,7 +191,7 @@ namespace Core
         StringAtom _title;
 
         FIELD();
-        bool _isMaximized = false;
+        bool _isMaximized = true;
 
         FIELD();
         bool _swapInterval = true;

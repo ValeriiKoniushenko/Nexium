@@ -118,11 +118,9 @@ namespace Core
         //-------------------- WINDOW ---------------------
         window = &GetWindow();
         window->create(Config::defaultWindowName, Config::defaultWindowSize);
-        Internal::InputSystem::Instance().initialize(*window);
+        GetInputSystem()->initialize(*window);
         _subscriptionPool << window->onResize->subscribeAndGetID([this](ISize2 newSize)
-        {
-            updateViewport();
-        });
+                                                                 { updateViewport(); });
 
         //-------------------- ASSETS MANAGER ---------------------
         GetAssetsManager()->initScanFileSystem();
@@ -194,34 +192,24 @@ namespace Core
         glEnable(GL_CULL_FACE);
         glEnable(GL_STENCIL_TEST);
 
-        constexpr int clearBits =
-            GL_COLOR_BUFFER_BIT |
-            GL_DEPTH_BUFFER_BIT |
-            GL_STENCIL_BUFFER_BIT;
+        constexpr int clearBits = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
 
         while (!window->shouldClose())
         {
             clock.start();
             Window::pollEvent();
 
-            const auto* viewport =
-                renderMode == RenderMode::GameOnly
-                    ? nullptr
-                    : gameEditor.getWindow<GameViewportEWC>();
+            const auto* viewport = renderMode == RenderMode::GameOnly
+                                       ? nullptr
+                                       : gameEditor.getWindow<GameViewportEWC>();
 
-            if (renderMode == RenderMode::GameOnly ||
-                (viewport && viewport->isFocused()))
-            {
-                Internal::InputSystem::Instance().setActiveContext(
-                    InputContext::Gameplay);
-            }
-            else
-            {
-                Internal::InputSystem::Instance().setActiveContext(
-                    InputContext::Editor);
-            }
+            const auto inputContext
+                = renderMode == RenderMode::GameOnly || (viewport && viewport->isFocused())
+                      ? InputContext::Gameplay
+                      : InputContext::Editor;
+            GetInputSystem()->setActiveContext(inputContext);
 
-            Internal::InputSystem::Instance().processEvents();
+            GetInputSystem()->processEvents();
 
             if (renderMode == RenderMode::GameOnly)
             {
@@ -261,8 +249,8 @@ namespace Core
                 }
             }
 
-            if (glfwGetWindowAttrib(window->getRawWindow(), GLFW_ICONIFIED) ||
-                glfwGetWindowAttrib(window->getRawWindow(), GLFW_FOCUSED) == GLFW_FALSE)
+            if (glfwGetWindowAttrib(window->getRawWindow(), GLFW_ICONIFIED)
+                || glfwGetWindowAttrib(window->getRawWindow(), GLFW_FOCUSED) == GLFW_FALSE)
             {
                 std::this_thread::sleep_for(std::chrono::milliseconds(50));
             }
@@ -271,9 +259,8 @@ namespace Core
             {
                 window->close();
 
-                infoLog(
-                    "Force closing the window due to the passed timeout ({} seconds)."_f
-                    << _timeout);
+                infoLog("Force closing the window due to the passed timeout ({} seconds)."_f
+                        << _timeout);
             }
 
             window->swapBuffers();

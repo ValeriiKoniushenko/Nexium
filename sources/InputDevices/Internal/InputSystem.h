@@ -24,7 +24,6 @@
 #pragma once
 
 #include "Core/Delegate.h"
-#include "Core/IntrusivePtr.h"
 #include "GameplaySystem/Framework/InputController.h"
 #include "InputDevices/InputTypes.h"
 
@@ -35,46 +34,49 @@ namespace Core
 {
     class Window;
 
-    namespace Internal
+    class InputSystem final : public Singleton<InputSystem>
     {
-        class InputSystem final : public Singleton<InputSystem>
-        {
-        public:
-            void initialize(Window& window);
+    public:
+        void initialize(Window& window);
 
-            void processEvents();
+        void processEvents();
 
-            void setActiveContext(InputContext context) noexcept;
+        void setActiveContext(InputContext context);
 
-            void registerController(InputController* controller);
+        void registerController(InputController* controller);
+        void unregisterController(InputController* controller);
 
-        private:
-            void pushKeyEvent(Keyboard::Key key, int scancode, Keyboard::KeyState state, int mods);
+    private:
+        void pushKeyEvent(Keyboard::Key key, int scancode, Keyboard::KeyState state, int mods);
 
-            void dispatch(const KeyInputEvent& event);
+        void dispatch(const KeyInputEvent& event);
 
-            [[nodiscard]] std::vector<IntrusivePtr<InputController>> selectControllers() const;
-            [[nodiscard]] std::vector<WeakPtr<InputController>>& controllersFor(
-                InputContext context);
+        [[nodiscard]] std::vector<InputController*> selectControllers() const;
+        [[nodiscard]] std::vector<InputController*>& controllersFor(InputContext context);
 
-            [[nodiscard]] const std::vector<WeakPtr<InputController>>& controllersFor(
-                InputContext context) const;
+        [[nodiscard]] const std::vector<InputController*>& controllersFor(
+            InputContext context) const;
 
-            std::deque<KeyInputEvent> _events;
+        void refreshRoutedControllers();
 
-            std::vector<WeakPtr<InputController>> _editorControllers;
-            std::vector<WeakPtr<InputController>> _gameplayControllers;
-            std::vector<WeakPtr<InputController>> _routedControllers;
-            InputContext _activeContext = InputContext::Editor;
+        std::deque<KeyInputEvent> _events;
 
-            std::vector<Keyboard::Key> _pressedKeys;
+        /// Non-owning pointers. Every controller unregisters itself before destruction.
+        /// Controllers registered for shortcuts that are active while editor UI owns input.
+        std::vector<InputController*> _editorControllers;
+        /// Controllers registered for gameplay actions such as player or spectator movement.
+        std::vector<InputController*> _gameplayControllers;
+        /// Live snapshot of the active context. Context changes rebuild it immediately; events
+        /// are dispatched only to these controllers until the context changes again.
+        std::vector<InputController*> _routedControllers;
+        InputContext _activeContext = InputContext::Editor;
 
-            DelegateSubscriberPoolGuard _subscriptions;
+        std::vector<Keyboard::Key> _pressedKeys;
 
-            bool _initialized = false;
-        };
+        DelegateSubscriberPoolGuard _subscriptions;
 
-        [[nodiscard]] InputSystem* GetInputSystem();
+        bool _initialized = false;
+    };
 
-    } // namespace Internal
+    [[nodiscard]] InputSystem* GetInputSystem();
 } // namespace Core

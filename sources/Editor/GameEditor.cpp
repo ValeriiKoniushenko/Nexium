@@ -167,11 +167,6 @@ namespace Core
 
     void GameEditor::destroy()
     {
-        if (_inputController)
-        {
-            _inputController.reset();
-        }
-
         if (_isInitImGui)
         {
             ImGui_ImplOpenGL3_Shutdown();
@@ -356,21 +351,12 @@ namespace Core
         _subscriptionPool << keyboardInput.getOrCreate("Close editor", Keyboard::Key::F12)
                                  ->onPress->subscribeAndGetID([&](auto) { GetWindow().close(); });
 
-        _inputController = new InputController("Editor input"_atom, InputContext::Editor);
+        _inputController = InputController::Create("Editor input"_atom, InputContext::Editor);
         _inputController->bind(
             "Save all"_atom,
             KeyChord{ .triggerKey = Keyboard::Key::S,
-                      .requiredKeys = { Keyboard::Key::Left_Control,
-                                        Keyboard::Key::Left_Shift } });
-        _subscriptionPool << _inputController->onAction->subscribeAndGetID(
-            [](const InputActionEvent& event)
-            {
-                if (event.action == "Save all"_atom && event.isPressed())
-                {
-                    gGameInstance->saveAllToCache();
-                }
-            });
-        _inputController->initialize();
+                      .requiredKeys = { Keyboard::Key::Left_Control, Keyboard::Key::Left_Shift } },
+            [](const InputActionEvent&) { gGameInstance->saveAllToCache(); });
 
         auto toggleRenderMode = keyboardInput.getOrCreate("Toggle render mode", Keyboard::Key::F1);
         toggleRenderMode->setIsRepeatable(false);
