@@ -167,7 +167,7 @@ namespace Core
                 changed = true;
             }
 
-            const bool recording = _recordingBinding && *_recordingBinding == i;
+            const auto recording = _recordingBinding && *_recordingBinding == i;
             if (recording)
             {
                 const auto& keys = R<Keyboard::Key>::ToArrayC();
@@ -277,7 +277,7 @@ namespace Core
 
         if (changed)
         {
-            controller->setBindings(std::move(bindings));
+            controller->setBindings(bindings);
             makeParentDirty();
         }
     }

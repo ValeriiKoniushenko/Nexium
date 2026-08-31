@@ -97,6 +97,7 @@ namespace Core
     void Window::create(const StringAtom& title, ISize2 size /* = { 300, 300 }*/)
     {
         GetCacheSystem().tryRead(*this);
+        _isMaximized = true;
 
         constexpr int minSize = 100;
         if (_size.width < minSize || _size.height < minSize)
@@ -115,7 +116,7 @@ namespace Core
         const int contextMinor = std::getenv("NEXIUM_HEADLESS_GL") ? 5 : 6;
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, contextMinor);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-        glfwWindowHint(GLFW_MAXIMIZED, _isMaximized ? GLFW_TRUE : GLFW_FALSE);
+        glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
 
         if (!((_window
                = glfwCreateWindow(_size.width, _size.height, title.c_str(), nullptr, nullptr))))
@@ -127,10 +128,7 @@ namespace Core
         debugLog("The window was created");
 
         glfwMakeContextCurrent(_window);
-        if (_isMaximized)
-        {
-            glfwMaximizeWindow(_window);
-        }
+        glfwMaximizeWindow(_window);
 
         if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
         {
