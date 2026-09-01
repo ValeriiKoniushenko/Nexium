@@ -279,6 +279,18 @@ namespace Core
         return getAssetOf<NXAudioClip>(*this, logicPath, _audioClips);
     }
 
+    std::vector<StringAtom> AssetsManager::getAudioClipsAsVector() const
+    {
+        std::vector<StringAtom> clips;
+        clips.reserve(_audioClips.size());
+        std::ranges::transform(_audioClips, std::back_inserter(clips),
+                               [](const auto& pair) { return pair.first; });
+        std::ranges::sort(clips, [](const auto& lhs, const auto& rhs)
+                          { return lhs.toStdString() < rhs.toStdString(); });
+
+        return clips;
+    }
+
     spdlog::logger* AssetsManager::getLogger() const
     {
         return ::AssetsManager::getLogger();

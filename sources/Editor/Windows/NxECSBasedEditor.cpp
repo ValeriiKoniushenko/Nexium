@@ -27,6 +27,7 @@
 #include "ECSAdapters/Animation/ECSEditorFrameByFrameAnimationAdapter.h"
 #include "ECSAdapters/BaseComponentAdapter.h"
 #include "ECSAdapters/EditorActorAdapter.h"
+#include "ECSAdapters/EditorAudioSourceAdapter.h"
 #include "ECSAdapters/EditorInterleavedGraphicsDataAdapter.h"
 #include "ECSAdapters/EditorStaticMeshBundleAdapter.h"
 #include "ECSAdapters/Input/ECSEditorInputControllerAdapter.h"
@@ -138,6 +139,7 @@ namespace Core
 
         addUniqueTypeChildComponent<ECSBaseComponentAdapter>();
         addUniqueTypeChildComponent<ECSEditorActorAdapter>();
+        addUniqueTypeChildComponent<ECSEditorAudioSourceAdapter>();
         addUniqueTypeChildComponent<ECSEditorStaticMeshBundleAdapter>();
         addUniqueTypeChildComponent<ECSEditorInterleavedGraphicsDataAdapter>();
         addUniqueTypeChildComponent<ECSEditorFrameByFrameAnimationAdapter>();
@@ -443,6 +445,7 @@ namespace Core
         {
             if (child->tryCastTo<ECSEditorMimeAdapter>())
             {
+                child->tryCastTo<ECSEditorMimeAdapter>()->onEditorTargetChanged();
                 child->disable();
             }
         }
@@ -450,6 +453,8 @@ namespace Core
 
     void NxECSBasedEditorEWC::reset()
     {
+        disableAllAdapters();
+        _targetComponent = nullptr;
         _targetAsset.reset();
     }
 
@@ -484,6 +489,7 @@ namespace Core
             resetToParent = true;
         }
 
+        disableAllAdapters();
         comp->getParent()->removeChild(comp);
 
         if (resetToParent)

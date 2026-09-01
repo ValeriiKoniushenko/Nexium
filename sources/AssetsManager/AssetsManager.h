@@ -154,6 +154,7 @@ namespace Core
 
         // ========== Audio clips =======
         [[nodiscard]] NXAudioClip getAudioClip(const StringAtom& logicPath);
+        [[nodiscard]] std::vector<StringAtom> getAudioClipsAsVector() const;
 
         // ============ ECS ==========
         /// @brief Get an asset by its logical path. Will load the asset if it wasn't loaded
