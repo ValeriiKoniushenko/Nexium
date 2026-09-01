@@ -1,421 +1,289 @@
-= Input Actions
-:description: Core module for binding keys and mouse buttons to named, triggerable actions.
+= Input System
+:description: Context-aware keyboard input routing through serializable ECS input controllers.
 :source-highlighter: highlight.js
 :icons: font
 
 == Overview
 
-The *Input Actions* module (namespace `Core`) provides a thin, composable abstraction between raw hardware input and game logic.
-Instead of polling `Keyboard` or `Mouse` states directly in gameplay code, you create named *actions*, bind them to a key or button, and subscribe to their delegates.
-The action object takes care of press state tracking, repeat filtering, and frequency throttling.
+Nexium converts raw keyboard events into named actions and routes those actions through ECS `InputController` components.
+Gameplay code works with names such as `"Move left"_atom` or `"Save all"_atom` instead of querying hardware keys directly.
 
-.Key ideas
-* `InputAction<KeyT>` — base template; key-type–agnostic logic lives here.
-* `KeyboardInputAction` (`KeyboardIA`) — specialisation for `Keyboard::Key`.
-* `MouseInputAction` (`MouseIA`) — specialisation for `Mouse::Key`; additionally tracks cursor movement and drag.
-* `IsInputAction` — concept for compile-time validation of action types.
+The system supports:
 
-The typical lifetime is: *create → bind key → subscribe delegate → call `update()` each frame.*
+* separate `Editor` and `Gameplay` input contexts;
+* single keys and multi-key chords;
+* press, release, and held-action triggers;
+* serializable bindings stored in ECS assets;
+* direct callbacks and a shared action delegate;
+* shortcut editing and recording in the ECS Inspector.
 
-== Class `InputAction<KeyTParam>`
+[NOTE]
+====
+`InputAction`, `KeyboardInputAction`, and `MouseInputAction` are the older polling-based input API.
+They are still used by some engine code, but new keyboard shortcuts and gameplay actions should use `InputController`.
+====
 
-[source,cpp]
-----
-template<class KeyTParam>
-class InputAction : public IntrusiveRefCounter<InputAction<KeyTParam>>;
-----
+== Architecture
 
-Base class for all input actions.
-Manages press-state tracking, repeat behaviour, frequency throttling, and delegate firing.
-Instances are always heap-allocated and owned through `IntrusivePtr`.
+Input is processed once per frame using the following flow:
 
-=== Template parameters
+. `Window` publishes a raw keyboard event.
+. `InputSystem` converts it to a `KeyInputEvent` and queues it.
+. `GameInstance` selects the active `InputContext` and calls `processEvents()`.
+. The event is dispatched only to enabled `InputController` components in that context.
+. Each controller selects the most specific matching `KeyChord` and updates its named action.
+. Gameplay code reads the action state or handles an `InputActionEvent` callback.
+
+`InputSystem` keeps non-owning pointers to registered controllers.
+An `InputController` registers itself during ECS initialization and unregisters itself before destruction.
+Do not register or unregister ECS controllers manually.
+
+== Input contexts
 
 [cols="1,3"]
 |===
-|Parameter |Description
+|Context |Purpose
 
-|`KeyTParam`
-|The type used to identify a key or button (e.g. `Keyboard::Key`, `Mouse::Key`).
+|`InputContext::Editor`
+|Editor commands that remain active while the editor UI owns keyboard focus.
+
+|`InputContext::Gameplay`
+|Game actions such as player or spectator movement.
 |===
 
-=== Type aliases
-
-[cols="1,3"]
-|===
-|Alias |Resolved type
-
-|`Self`
-|`InputAction<KeyTParam>`
-
-|`Ptr`
-|`IntrusivePtr<Self>` — non-const owning pointer.
-
-|`CPtr`
-|`IntrusivePtr<const Self>` — const owning pointer.
-
-|`AdaptivePtr<bool isConst>`
-|`CPtr` when `isConst` is `true`, `Ptr` otherwise.
-
-|`TimeT`
-|`std::chrono::milliseconds` — unit used for frequency throttling.
-
-|`KeyT`
-|`KeyTParam` — the key type for this instantiation.
-|===
-
-=== Nested type `SpecKeysState`
-
-Snapshot of the three common modifier keys at the moment an action fires.
+The game loop changes the active context according to the current render mode and game viewport focus:
 
 [source,cpp]
 ----
-struct SpecKeysState
+const auto inputContext
+    = renderMode == RenderMode::GameOnly || (viewport && viewport->isFocused())
+          ? InputContext::Gameplay
+          : InputContext::Editor;
+
+GetInputSystem()->setActiveContext(inputContext);
+GetInputSystem()->processEvents();
+----
+
+Changing the context rebuilds the routed-controller list immediately.
+Actions belonging to controllers that leave the active route are released, which prevents held keys from leaving actions stuck after focus changes.
+Calling `setActiveContext()` with the current context is a no-op.
+
+== Input bindings
+
+Each binding maps a named action to a key chord and trigger policy:
+
+[source,cpp]
+----
+struct InputController::Binding
 {
-    Keyboard::KeyState leftShift;
-    Keyboard::KeyState leftAlt;
-    Keyboard::KeyState leftCtrl;
-
-    static SpecKeysState fillAndGet();
+    StringAtom action;
+    KeyChord chord;
+    InputActionTrigger trigger = InputActionTrigger::OnPress;
 };
 ----
 
-[cols="1,3"]
-|===
-|Member |Description
+=== Key chords
 
-|`leftShift`
-|Current state of the left Shift key.
+A `KeyChord` contains:
 
-|`leftAlt`
-|Current state of the left Alt key.
+* `triggerKey` — the key that completes the chord;
+* `requiredKeys` — keys that must already be held when the trigger key is pressed.
 
-|`leftCtrl`
-|Current state of the left Ctrl key.
-
-|`static fillAndGet()`
-|Reads the live hardware state of all three modifiers and returns a populated `SpecKeysState`.
-Called internally by `update()` just before delegates are triggered.
-|===
-
-=== Constructors
-
-[cols="1,3"]
-|===
-|Signature |Description
-
-|`InputAction()`
-|Default constructor. No name, no key bound.
-
-|`InputAction(StringAtom name)`
-|Constructs an action with a name but no key binding.
-
-|`InputAction(StringAtom name, KeyT key)`
-|Constructs a fully configured action with both a name and a key binding.
-|===
-
-=== Public member functions
-
-==== `getName`
+For example, `Ctrl+Shift+S` is represented as follows:
 
 [source,cpp]
 ----
-[[nodiscard]] const StringAtom& getName() const;
-----
-
-Returns the action's name atom.
-
-==== `setName`
-
-[source,cpp]
-----
-void setName(const StringAtom& newName);
-----
-
-Replaces the action's name.
-
-==== `setFrequency` / `getFrequency`
-
-[source,cpp]
-----
-void setFrequency(TimeT value);
-[[nodiscard]] TimeT getFrequency() const;
-----
-
-Controls the minimum interval between consecutive delegate firings while the key is held.
-A value of `0 ms` (the default) means the action fires every frame the key is held (subject to `_isRepeatable`).
-Setting a higher value throttles repeat firings — useful for cursor-key scrolling or turbo-fire scenarios.
-
-==== `update`
-
-[source,cpp]
-----
-virtual void update();
-----
-
-Must be called once per frame (or polling tick).
-Internal logic:
-
-. If no key is bound, the method returns immediately.
-. Calls the pure-virtual `isKeyPressed()`.
-. If pressed *and* (not already in `Pressed` state *or* `_isRepeatable` is `true`):
-.. Checks that `_frequency` milliseconds have elapsed since `_lastUpdate`.
-.. If so, snapshots `SpecKeysState` and fires `onPress` and `_onActionPrivate`.
-.. Updates `_lastUpdate` and transitions `_lastState` to `Pressed`.
-. If not pressed, resets `_lastState` to `None`.
-
-==== `setKey` / `getKey`
-
-[source,cpp]
-----
-void setKey(KeyT key);
-[[nodiscard]] std::optional<KeyT> getKey() const;
-----
-
-Binds or queries the key associated with this action.
-`getKey()` returns `std::nullopt` when no key has been set.
-
-==== `getIsRepeatable` / `setIsRepeatable`
-
-[source,cpp]
-----
-[[nodiscard]] bool getIsRepeatable() const;
-void setIsRepeatable(bool isRepeatable);
-----
-
-Controls whether the action re-fires on every frame while the key remains held (`true`, default) or fires only on the initial press transition (`false`).
-
-=== Public delegates
-
-==== `onPress`
-
-[source,cpp]
-----
-Delegate<void(SpecKeysState)>::Ptr onPress;
-----
-
-Fired by `update()` each time the action triggers (respecting `_isRepeatable` and `_frequency`).
-Subscribe here to react to the action in gameplay code.
-
-.Example subscription
-[source,cpp]
-----
-myAction->onPress->subscribe([](Core::InputAction<Keyboard::Key>::SpecKeysState mods)
-{
-    if (mods.leftCtrl == Keyboard::KeyState::Pressed)
-        doCtrlAction();
-    else
-        doNormalAction();
-});
-----
-
----
-
-== Class `KeyboardInputAction`
-
-[source,cpp]
-----
-class KeyboardInputAction : public InputAction<Keyboard::Key>;
-----
-
-Alias: `KeyboardIA`
-
-Specialises `InputAction` for keyboard keys.
-`isKeyPressed()` queries `Keyboard::getKeyState` for the bound `Keyboard::Key`.
-
-Prefer constructing instances through `KeyboardInputManager` rather than directly, so the manager can register and `update()` them automatically.
-
-=== Type aliases
-
-Inherits all aliases from `InputAction<Keyboard::Key>`.
-`KeyT` resolves to `Keyboard::Key`.
-
-=== Static factory
-
-[source,cpp]
-----
-static Ptr Create();
-----
-
-Heap-allocates a default-constructed `KeyboardInputAction` and returns it wrapped in an `IntrusivePtr`.
-
-=== Constructors
-
-[cols="1,3"]
-|===
-|Signature |Description
-
-|`KeyboardInputAction()`
-|Default constructor. No name, no key.
-
-|`KeyboardInputAction(const StringAtom& name, KeyT key)`
-|Constructs with a name and a bound keyboard key.
-|===
-
----
-
-== Class `MouseInputAction`
-
-[source,cpp]
-----
-class MouseInputAction : public InputAction<Mouse::Key>;
-----
-
-Alias: `MouseIA`
-
-Extends `InputAction` with cursor tracking.
-In addition to the inherited `onPress` delegate, it provides delegates for movement, drag, and click.
-`isKeyPressed()` queries `Mouse::getKeyState` for the bound `Mouse::Key`.
-
-Prefer constructing instances through `MouseInputManager`.
-
-=== Type aliases
-
-Inherits all aliases from `InputAction<Mouse::Key>`.
-`KeyT` resolves to `Mouse::Key`.
-
-=== Static factory
-
-[source,cpp]
-----
-static Ptr Create();
-----
-
-Heap-allocates a default-constructed `MouseInputAction` and returns it wrapped in an `IntrusivePtr`.
-
-=== Constructors
-
-[cols="1,3"]
-|===
-|Signature |Description
-
-|`MouseInputAction()`
-|Default constructor.
-
-|`MouseInputAction(const StringAtom& name, KeyT key)`
-|Constructs with a name and a bound mouse button. `key` defaults to `Mouse::Key::None`.
-
-|`MouseInputAction(const StringAtom& name)`
-|Constructs with only a name; useful for move/drag-only actions with no button binding.
-|===
-
-=== Public delegates
-
-Inherits `onPress` from `InputAction`.
-
-==== `onDrag`
-
-[source,cpp]
-----
-Delegate<void(glm::vec2, SpecKeysState)>::Ptr onDrag;
-----
-
-Fired when the cursor moves *while* the bound mouse button is held.
-The `glm::vec2` argument carries the delta (offset) of the cursor since the previous frame.
-
-==== `onMove`
-
-[source,cpp]
-----
-Delegate<void(glm::vec2, SpecKeysState)>::Ptr onMove;
-----
-
-Fired whenever the cursor moves, regardless of button state.
-The `glm::vec2` argument carries the cursor delta.
-
-==== `onMouseClick`
-
-[source,cpp]
-----
-Delegate<void(glm::vec2, SpecKeysState)>::Ptr onMouseClick;
-----
-
-Fired when the bound mouse button is clicked.
-The `glm::vec2` argument carries the cursor position at the moment of the click.
-
-=== Overridden `update`
-
-`MouseInputAction::update()` extends the base logic with cursor-position diffing.
-It reads the current cursor position each frame, computes the delta against `_lastMousePosition`, and fires `onMove` and/or `onDrag` as appropriate before delegating to the base `update()` for button-press handling.
-
----
-
-== Concept `IsInputAction`
-
-[source,cpp]
-----
-template<class T>
-concept IsInputAction = requires(T) {
-    typename T::KeyT;
-    typename T::Ptr;
-    typename T::CPtr;
-    typename T::Parent;
-    requires std::derived_from<std::remove_reference_t<T>, InputAction<typename T::KeyT>>;
+const KeyChord saveChord{
+    .triggerKey = Keyboard::Key::S,
+    .requiredKeys = {
+        Keyboard::Key::Left_Control,
+        Keyboard::Key::Left_Shift,
+    },
 };
 ----
 
-Satisfied by any type that:
+Use `KeyChord::Exact(key)` for a single-key binding.
+Left and right variants of Shift, Control, Alt, and Super are normalized when matching chords, so either side can satisfy the corresponding modifier key.
 
-* exposes nested type aliases `KeyT`, `Ptr`, `CPtr`, and `Parent`;
-* derives from `InputAction<KeyT>`.
+If multiple bindings match the same key event, the controller selects the most specific chord: the binding with the greatest number of required keys.
+This allows `S` and `Ctrl+S` to coexist without both actions firing for `Ctrl+S`.
 
-Use this concept in template constraints anywhere a generic action type is expected, to catch misuse at compile time rather than at link time or runtime.
+=== Trigger policies
 
-.Example usage
+[cols="1,3"]
+|===
+|Trigger |Behavior
+
+|`InputActionTrigger::OnPress`
+|The action becomes active for the press event and is reset at the beginning of the next input frame.
+
+|`InputActionTrigger::OnRelease`
+|The action fires when the chord is released and is reset at the beginning of the next input frame.
+
+|`InputActionTrigger::WhileHeld`
+|The action stays active while its chord remains held and is released when a chord key is released or the controller leaves the active context.
+|===
+
+== Creating a controller in code
+
+Use `InputController::Create()` for standalone controllers.
+The factory initializes the component and registers it with `InputSystem`.
+Keep the returned `InputController::Ptr` alive for as long as the bindings are needed.
+
 [source,cpp]
 ----
-template<Core::IsInputAction ActionT>
-void registerAction(typename ActionT::Ptr action)
+auto editorInput = InputController::Create(
+    "Editor input"_atom,
+    InputContext::Editor);
+
+editorInput->bind(
+    "Save all"_atom,
+    KeyChord{
+        .triggerKey = Keyboard::Key::S,
+        .requiredKeys = {
+            Keyboard::Key::Left_Control,
+            Keyboard::Key::Left_Shift,
+        },
+    },
+    [](const InputActionEvent&)
+    {
+        gGameInstance->saveAllToCache();
+    });
+----
+
+The callback overload associates one callback with the action name.
+Binding the same action again replaces its callback.
+Prefer this overload for action-specific behavior instead of creating a separate `onAction` subscription and filtering by action name.
+
+== Using an ECS controller
+
+`InputController` is a reflected ECS component.
+Controllers attached to a scene object initialize and register through the normal component lifecycle.
+This is the preferred approach for serializable gameplay bindings.
+
+For continuous actions, poll the named state during the object's tick:
+
+[source,cpp]
+----
+void Player::onTick(float delta)
 {
-    // guaranteed to be a valid InputAction subtype
+    if (!_input || !_input->isEnabled())
+    {
+        return;
+    }
+
+    const int horizontal
+        = static_cast<int>(_input->isActionPressed("Move right"_atom))
+        - static_cast<int>(_input->isActionPressed("Move left"_atom));
+
+    moveRight(static_cast<float>(horizontal) * movementSpeed * delta);
 }
 ----
 
----
-
-== Type alias summary
-
-[cols="1,1,3"]
-|===
-|Alias |Resolved type |Notes
-
-|`KeyboardIA`
-|`KeyboardInputAction`
-|Shorthand used throughout the engine.
-
-|`MouseIA`
-|`MouseInputAction`
-|Shorthand used throughout the engine.
-|===
-
----
-
-== Usage example
+`isActionPressed()` is useful for `WhileHeld` bindings.
+`getActionModifiers()` returns the modifier snapshot captured when an action was activated:
 
 [source,cpp]
 ----
-// Create and configure a keyboard action
-auto jumpAction = Core::KeyboardInputAction::Create();
-jumpAction->setName(StringAtom("Jump"));
-jumpAction->setKey(Keyboard::Key::Space);
-jumpAction->setIsRepeatable(false); // fire once per press
-
-jumpAction->onPress->subscribe([](auto mods)
-{
-    player.jump();
-});
-
-// Create a mouse drag action (no button needed for move tracking)
-auto cameraAction = Core::MouseInputAction::Create();
-cameraAction->setName(StringAtom("CameraOrbit"));
-cameraAction->setKey(Mouse::Key::Right);
-
-cameraAction->onDrag->subscribe([](glm::vec2 delta, auto mods)
-{
-    camera.orbit(delta);
-});
-
-// Register with managers so update() is called automatically each frame
-keyboardInputManager->add(jumpAction);
-mouseInputManager->add(cameraAction);
+const bool slowMovement
+    = (input->getActionModifiers("Move up"_atom) & InputModifier::Shift)
+      != InputModifier::None;
 ----
+
+The available modifier flags are `Shift`, `Control`, `Alt`, and `Super`.
+
+== Serialized format
+
+The reflected `_bindings` field is stored with the `InputController` component:
+
+[source,json]
+----
+{
+  "_type": "Core::InputController",
+  "_name": "InputController",
+  "_isEnabled": true,
+  "_bindings": [
+    {
+      "action": "Move up",
+      "triggerKey": "W",
+      "requiredKeys": [],
+      "trigger": "WhileHeld"
+    },
+    {
+      "action": "Save",
+      "triggerKey": "S",
+      "requiredKeys": ["Left_Control"],
+      "trigger": "OnPress"
+    }
+  ]
+}
+----
+
+Bindings are deserialized by symbolic enum name.
+The loader also accepts the legacy `key` field and legacy modifier fields, allowing older input assets to remain readable.
+
+== Editing shortcuts
+
+Select an `InputController` in the ECS editor to open the *Input shortcuts* section.
+For every binding you can:
+
+* edit the action name;
+* choose the trigger policy;
+* record a new shortcut;
+* delete the binding;
+* add another shortcut.
+
+When shortcut recording is active, press the desired key combination.
+The editor stores the last non-modifier key as `triggerKey` and the other recorded keys as `requiredKeys`.
+Apply the recording to update the component and mark its parent asset as modified.
+
+== Runtime behavior and edge cases
+
+* Disabled controllers remain registered but do not receive routed events.
+* Empty action names and chords without a trigger key are rejected by `bind()`.
+* Rebinding an existing action and chord updates the binding instead of adding a duplicate.
+* `unbind()` removes the binding, active state, modifiers, transient state, and direct callback for the action.
+* `clearBindings()` removes all bindings and resets every action state.
+* Releasing any key participating in an active chord releases its `WhileHeld` action.
+* Switching contexts releases actions owned by controllers that are no longer routed.
+* Destroying a controller unregisters it, so stale component pointers are not retained by `InputSystem`.
+
+== API summary
+
+[cols="1,3"]
+|===
+|API |Purpose
+
+|`InputController::Create(name, context)`
+|Creates, initializes, and registers a standalone controller.
+
+|`bind(action, chord, trigger)`
+|Adds or updates a serializable action binding.
+
+|`bind(action, chord, callback, trigger)`
+|Adds a binding and assigns a direct runtime callback.
+
+|`unbind(action)` / `clearBindings()`
+|Removes one or all bindings and their runtime state.
+
+|`setBindings(bindings)`
+|Replaces the complete binding collection.
+
+|`isActionPressed(action)`
+|Returns whether the named action is currently active.
+
+|`getActionModifiers(action)`
+|Returns the modifier keys captured for the active action.
+
+|`onAction`
+|Low-level broadcast of every processed action event. Prefer a callback passed to `bind()` for action-specific behavior.
+
+|`GetInputSystem()`
+|Returns the global input system instance.
+
+|`InputSystem::setActiveContext(context)`
+|Selects which group of controllers receives input.
+
+|`InputSystem::processEvents()`
+|Processes queued keyboard events for the current frame.
+|===
