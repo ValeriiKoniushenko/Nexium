@@ -4,6 +4,7 @@
 
 #include <array>
 #include <functional>
+#include <optional>
 
 namespace Core::Animation
 {
@@ -37,6 +38,7 @@ namespace Core
         void drawBaseRegionSelector(const std::vector<StringAtom>& regionNames);
         void drawEditorContent(float dt, const std::vector<StringAtom>& regionNames);
         void drawFrames();
+        void drawFrameEvents(Animation::Frame& frame, std::size_t frameIndex);
         void drawNamedFrames(const std::vector<StringAtom>& regionNames);
         void drawSpriteSheet();
         void drawFooter(const std::vector<StringAtom>& regionNames, const SaveCallback& onSave);
@@ -60,6 +62,8 @@ namespace Core
         int _sheetColumns = 1;
         int _sheetRows = 1;
         int _sheetSelectedRow = 1;
+        std::array<char, 128> _newEventName{};
+        std::optional<std::size_t> _newEventFrame;
         PreviewState _preview;
     };
 } // namespace Core

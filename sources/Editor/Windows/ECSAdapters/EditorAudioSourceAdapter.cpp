@@ -49,20 +49,6 @@ namespace Core
         stopPreview();
     }
 
-    void ECSEditorAudioSourceAdapter::onInitialize()
-    {
-        ECSEditorMimeAdapter::onInitialize();
-    }
-
-    void ECSEditorAudioSourceAdapter::onApplyAssetData(const nlohmann::json&)
-    {
-        auto* source = dynamic_cast<Audio::AudioSource*>(getTargetComponent());
-        if (!source)
-        {
-            stopPreview();
-        }
-    }
-
     void ECSEditorAudioSourceAdapter::onDraw(float)
     {
         auto* source = dynamic_cast<Audio::AudioSource*>(getTargetComponent());
@@ -142,40 +128,48 @@ namespace Core
 
         ImGui::Spacing();
         ImGui::TextUnformatted("Preview");
+        auto& audioSystem = GetAudioSystem();
+        if (_previewVoice.isValid() && !audioSystem.isValid(_previewVoice))
+        {
+            _previewVoice = {};
+        }
+
         if (ImGui::Button(ICON_FA_PLAY " Play"))
         {
-            if (source->play().isValid())
-            {
-                _previewSource = source;
-            }
+            stopPreview();
+            _previewVoice = source->play();
         }
         ImGui::SameLine();
+        ImGui::BeginDisabled(!_previewVoice.isValid());
         if (ImGui::Button(ICON_FA_PAUSE " Pause"))
         {
-            source->pause();
+            audioSystem.pause(_previewVoice);
         }
         ImGui::SameLine();
         if (ImGui::Button(ICON_FA_PLAY " Resume"))
         {
-            source->resume();
+            audioSystem.resume(_previewVoice);
         }
         ImGui::SameLine();
         if (ImGui::Button(ICON_FA_STOP " Stop"))
         {
-            source->stop();
-            if (_previewSource == source)
-            {
-                _previewSource = nullptr;
-            }
+            stopPreview();
         }
+        ImGui::EndDisabled();
     }
 
     void ECSEditorAudioSourceAdapter::stopPreview()
     {
-        if (_previewSource)
+        if (!_previewVoice.isValid())
         {
-            _previewSource->stop();
-            _previewSource = nullptr;
+            return;
         }
+
+        auto& audioSystem = GetAudioSystem();
+        if (audioSystem.isValid(_previewVoice))
+        {
+            audioSystem.stop(_previewVoice);
+        }
+        _previewVoice = {};
     }
 } // namespace Core

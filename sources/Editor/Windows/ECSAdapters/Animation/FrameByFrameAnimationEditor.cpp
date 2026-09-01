@@ -57,6 +57,8 @@ namespace Core
         CopyToBuffer(_atlas, _draft.getAtlasName());
         CopyToBuffer(_texture, _draft.getTextureName());
         _frameTexture.fill('\0');
+        _newEventName.fill('\0');
+        _newEventFrame.reset();
         _fps = _draft.getFPS();
         _loop = _draft.isLooping();
         _preview = {};
@@ -121,6 +123,64 @@ namespace Core
         ImGui::Text("%zu / %zu", state.frame + 1, frames.size());
     }
 
+    void FrameByFrameAnimationEditor::drawFrameEvents(Animation::Frame& frame,
+                                                       std::size_t frameIndex)
+    {
+        ImGui::TextUnformatted("Event markers");
+        if (frame.events.empty())
+        {
+            ImGui::TextDisabled("No markers");
+        }
+
+        std::optional<std::size_t> markerToDelete;
+        for (std::size_t markerIndex = 0; markerIndex < frame.events.size(); ++markerIndex)
+        {
+            std::array<char, 128> markerName{};
+            CopyToBuffer(markerName, frame.events[markerIndex]);
+
+            ImGui::PushID(static_cast<int>(markerIndex));
+            ImGui::SetNextItemWidth(230.f);
+            if (ImGui::InputText("Marker name", markerName.data(), markerName.size(),
+                                 ImGuiInputTextFlags_EnterReturnsTrue)
+                && markerName[0] != '\0')
+            {
+                frame.events[markerIndex] = StringAtom{ markerName.data() };
+            }
+            ImGui::SameLine();
+            if (ImGui::SmallButton(ICON_FA_TRASH))
+            {
+                markerToDelete = markerIndex;
+            }
+            ImGui::PopID();
+        }
+        if (markerToDelete)
+        {
+            frame.events.erase(frame.events.begin() + *markerToDelete);
+        }
+
+        std::array<char, 128> newMarkerName{};
+        if (_newEventFrame == frameIndex)
+        {
+            newMarkerName = _newEventName;
+        }
+        ImGui::SetNextItemWidth(230.f);
+        if (ImGui::InputText("New marker", newMarkerName.data(), newMarkerName.size()))
+        {
+            _newEventName = newMarkerName;
+            _newEventFrame = frameIndex;
+        }
+        ImGui::SameLine();
+        const bool canAddMarker = _newEventFrame == frameIndex && _newEventName[0] != '\0';
+        ImGui::BeginDisabled(!canAddMarker);
+        if (ImGui::Button("Add marker"))
+        {
+            frame.events.emplace_back(_newEventName.data());
+            _newEventName.fill('\0');
+            _newEventFrame.reset();
+        }
+        ImGui::EndDisabled();
+    }
+
     void FrameByFrameAnimationEditor::drawFrames()
     {
         if (!ImGui::CollapsingHeader("Frames", ImGuiTreeNodeFlags_DefaultOpen))
@@ -158,6 +218,7 @@ namespace Core
             ImGui::DragFloat2("UV size", &uvSize.x, 0.005f, 0.001f, 1.f);
             edited.uvOffset = uvOffset;
             edited.uvSize = uvSize;
+            drawFrameEvents(edited, i);
             _draft.setFrame(i, std::move(edited));
             ImGui::Separator();
             ImGui::PopID();
@@ -165,6 +226,15 @@ namespace Core
         if (frameToDelete)
         {
             _draft.removeFrame(*frameToDelete);
+            if (_newEventFrame == *frameToDelete)
+            {
+                _newEventName.fill('\0');
+                _newEventFrame.reset();
+            }
+            else if (_newEventFrame && *_newEventFrame > *frameToDelete)
+            {
+                --*_newEventFrame;
+            }
         }
         ImGui::EndChild();
     }

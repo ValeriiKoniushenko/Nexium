@@ -40,15 +40,14 @@ namespace Core
         void onEditorTargetChanged() override;
 
     protected:
-        void onInitialize() override;
-        void onApplyAssetData(const nlohmann::json& json) override;
+        void onApplyAssetData(const nlohmann::json&) override {}
         void onDraw(float dt) override;
 
     private:
         void stopPreview();
 
     private:
-        Audio::AudioSource* _previewSource = nullptr;
+        Audio::VoiceHandle _previewVoice;
     };
 } // namespace Core
 
