@@ -28,3 +28,6 @@
 	url = https://github.com/ValeriiKoniushenko/JustReflectMe.git
     branch = develop
     ignore = dirty
+[submodule ".agents/Agents"]
+	path = .agents/Agents
+	url = git@github.com:ValeriiKoniushenko/Agents.git

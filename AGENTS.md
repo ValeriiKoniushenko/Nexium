@@ -22,6 +22,44 @@ editor.
 - CI runs on self-hosted Gitea (gitea.vakon.dev) via act_runner:
   clang-format, clang-tidy, build (GCC+Clang), unit tests, valgrind.
 
+## Project Workflows
+
+Shared skills under `.agents/skills/` are generic. Read this section for the concrete
+Nexium commands, target names, paths, and options.
+
+- The standard configured build directory is `build/`; legacy local layouts may also use
+  `build/{clang,gcc}/{debug,release}`. Configure the standard debug build with:
+
+  ```sh
+  cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug
+  ```
+
+- Build incrementally with `cmake --build build --parallel` (or `-j$(nproc)` on Linux).
+  A clean build removes only `build/`, then reruns the standard configuration and build.
+- The test target and executable are `Nexium_Tests` and `build/bin/Nexium_Tests`.
+  The editor smoke-test executable is `build/bin/TemplateGame --timeout 5`; verification
+  requires both it and the unit-test executable to exit successfully.
+- CMake runs `jrm ${CMAKE_SOURCE_DIR}` through the `CodeGenerator` target. After changing
+  a JRM-reflected or annotated type, or when generated metadata is stale, delete
+  `.jrm/cache.data` (`Remove-Item .jrm/cache.data` in PowerShell) and run a normal build.
+- ECS performance work uses the `Nexium_ECS_Benchmarks` target from
+  `benchmarks/ECS/ECSBenchmarks.cpp`, producing `build/bin/Nexium_ECS_Benchmarks`.
+  Build only that target with
+  `cmake --build build --parallel --target Nexium_ECS_Benchmarks`. List cases with
+  `build/bin/Nexium_ECS_Benchmarks --benchmark_list_tests`; use the benchmark filter,
+  repetitions, and aggregate-report options for focused comparison runs. Benchmark-only
+  components are not JRM-reflected; run code generation first if an annotated engine
+  header changes.
+- Format changed C++ files with `clang-format`; CI runs clang-format, clang-tidy, the GCC
+  and Clang builds, unit tests, and valgrind. Select the active `compile_commands.json`
+  from the configured build directory before running `run-clang-tidy`. The project memory
+  check is:
+
+  ```sh
+  valgrind --leak-check=full --show-leak-kinds=definite --track-origins=yes \
+    build/bin/Nexium_Tests
+  ```
+
 ## Conventions
 
 - Target standard: **C++26** (`-std=c++2c` on GCC/Clang). Support is still partial across compilers — verify a given
