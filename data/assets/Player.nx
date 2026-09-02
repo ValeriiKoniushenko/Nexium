@@ -5,28 +5,10 @@
             {
                 "_bindings": [
                     {
-                        "action": "Move up",
+                        "action": "Jump",
                         "requiredKeys": [],
-                        "trigger": "WhileHeld",
-                        "triggerKey": "Up"
-                    },
-                    {
-                        "action": "Move down",
-                        "requiredKeys": [],
-                        "trigger": "WhileHeld",
-                        "triggerKey": "Down"
-                    },
-                    {
-                        "action": "Move right",
-                        "requiredKeys": [],
-                        "trigger": "WhileHeld",
-                        "triggerKey": "Right"
-                    },
-                    {
-                        "action": "Move left",
-                        "requiredKeys": [],
-                        "trigger": "WhileHeld",
-                        "triggerKey": "Left"
+                        "trigger": "OnPress",
+                        "triggerKey": "Space"
                     }
                 ],
                 "_children": null,
@@ -37,521 +19,167 @@
             },
             {
                 "_animations": {
-                    "Move DownLeft": {
-                        "_atlasName": "player_walk",
+                    "Santa_run": {
+                        "_atlasName": "santa_walk",
                         "_children": null,
                         "_currentFrame": 0,
                         "_fps": 10.0,
                         "_frameTimeAccumulator": 0.0,
                         "_frames": [
                             {
-                                "name": "Frame 1",
-                                "textureName": null,
-                                "uvOffset": [
-                                    0.0,
-                                    0.375
-                                ],
-                                "uvSize": [
-                                    0.25,
-                                    0.125
-                                ]
-                            },
-                            {
-                                "name": "Frame 2",
-                                "textureName": null,
-                                "uvOffset": [
-                                    0.25,
-                                    0.375
-                                ],
-                                "uvSize": [
-                                    0.25,
-                                    0.125
-                                ]
-                            },
-                            {
-                                "name": "Frame 3",
-                                "textureName": null,
-                                "uvOffset": [
-                                    0.5,
-                                    0.375
-                                ],
-                                "uvSize": [
-                                    0.25,
-                                    0.125
-                                ]
-                            },
-                            {
-                                "name": "Frame 4",
-                                "textureName": null,
-                                "uvOffset": [
-                                    0.75,
-                                    0.375
-                                ],
-                                "uvSize": [
-                                    0.25,
-                                    0.125
-                                ]
-                            }
-                        ],
-                        "_isEnabled": true,
-                        "_isFinished": false,
-                        "_isLooping": true,
-                        "_isPaused": false,
-                        "_isStopped": true,
-                        "_name": "Move DownLeft",
-                        "_noTick": false,
-                        "_textureName": "MPlayer_walk.png",
-                        "_type": "Core::Animation::FrameByFrameAnimation"
-                    },
-                    "Move DownRight": {
-                        "_atlasName": "player_walk",
-                        "_children": null,
-                        "_currentFrame": 0,
-                        "_fps": 10.0,
-                        "_frameTimeAccumulator": 0.0,
-                        "_frames": [
-                            {
-                                "name": "Frame 1",
-                                "textureName": null,
-                                "uvOffset": [
-                                    0.0,
-                                    0.25
-                                ],
-                                "uvSize": [
-                                    0.25,
-                                    0.125
-                                ]
-                            },
-                            {
-                                "name": "Frame 2",
-                                "textureName": null,
-                                "uvOffset": [
-                                    0.25,
-                                    0.25
-                                ],
-                                "uvSize": [
-                                    0.25,
-                                    0.125
-                                ]
-                            },
-                            {
-                                "name": "Frame 3",
-                                "textureName": null,
-                                "uvOffset": [
-                                    0.5,
-                                    0.25
-                                ],
-                                "uvSize": [
-                                    0.25,
-                                    0.125
-                                ]
-                            },
-                            {
-                                "name": "Frame 4",
-                                "textureName": null,
-                                "uvOffset": [
-                                    0.75,
-                                    0.25
-                                ],
-                                "uvSize": [
-                                    0.25,
-                                    0.125
-                                ]
-                            }
-                        ],
-                        "_isEnabled": true,
-                        "_isFinished": false,
-                        "_isLooping": true,
-                        "_isPaused": false,
-                        "_isStopped": true,
-                        "_name": "Move DownRight",
-                        "_noTick": false,
-                        "_textureName": "MPlayer_walk.png",
-                        "_type": "Core::Animation::FrameByFrameAnimation"
-                    },
-                    "Move Up": {
-                        "_atlasName": "player_walk",
-                        "_children": null,
-                        "_currentFrame": 0,
-                        "_fps": 10.0,
-                        "_frameTimeAccumulator": 0.0,
-                        "_frames": [
-                            {
-                                "name": "Frame 1",
-                                "textureName": null,
-                                "uvOffset": [
-                                    0.0,
-                                    0.5
-                                ],
-                                "uvSize": [
-                                    0.25,
-                                    0.125
-                                ]
-                            },
-                            {
-                                "name": "Frame 2",
-                                "textureName": null,
-                                "uvOffset": [
-                                    0.25,
-                                    0.5
-                                ],
-                                "uvSize": [
-                                    0.25,
-                                    0.125
-                                ]
-                            },
-                            {
-                                "name": "Frame 3",
-                                "textureName": null,
-                                "uvOffset": [
-                                    0.5,
-                                    0.5
-                                ],
-                                "uvSize": [
-                                    0.25,
-                                    0.125
-                                ]
-                            },
-                            {
-                                "name": "Frame 4",
-                                "textureName": null,
-                                "uvOffset": [
-                                    0.75,
-                                    0.5
-                                ],
-                                "uvSize": [
-                                    0.25,
-                                    0.125
-                                ]
-                            }
-                        ],
-                        "_isEnabled": true,
-                        "_isFinished": false,
-                        "_isLooping": true,
-                        "_isPaused": false,
-                        "_isStopped": true,
-                        "_name": "Move Up",
-                        "_noTick": false,
-                        "_textureName": "MPlayer_walk.png",
-                        "_type": "Core::Animation::FrameByFrameAnimation"
-                    },
-                    "Move UpLeft": {
-                        "_atlasName": "player_walk",
-                        "_children": null,
-                        "_currentFrame": 0,
-                        "_fps": 10.0,
-                        "_frameTimeAccumulator": 0.0,
-                        "_frames": [
-                            {
-                                "name": "Frame 1",
-                                "textureName": null,
-                                "uvOffset": [
-                                    0.0,
-                                    0.125
-                                ],
-                                "uvSize": [
-                                    0.25,
-                                    0.125
-                                ]
-                            },
-                            {
-                                "name": "Frame 2",
-                                "textureName": null,
-                                "uvOffset": [
-                                    0.25,
-                                    0.125
-                                ],
-                                "uvSize": [
-                                    0.25,
-                                    0.125
-                                ]
-                            },
-                            {
-                                "name": "Frame 3",
-                                "textureName": null,
-                                "uvOffset": [
-                                    0.5,
-                                    0.125
-                                ],
-                                "uvSize": [
-                                    0.25,
-                                    0.125
-                                ]
-                            },
-                            {
-                                "name": "Frame 4",
-                                "textureName": null,
-                                "uvOffset": [
-                                    0.75,
-                                    0.125
-                                ],
-                                "uvSize": [
-                                    0.25,
-                                    0.125
-                                ]
-                            }
-                        ],
-                        "_isEnabled": true,
-                        "_isFinished": false,
-                        "_isLooping": true,
-                        "_isPaused": false,
-                        "_isStopped": true,
-                        "_name": "Move UpLeft",
-                        "_noTick": false,
-                        "_textureName": "MPlayer_walk.png",
-                        "_type": "Core::Animation::FrameByFrameAnimation"
-                    },
-                    "Move UpRight": {
-                        "_atlasName": "player_walk",
-                        "_children": null,
-                        "_currentFrame": 0,
-                        "_fps": 10.0,
-                        "_frameTimeAccumulator": 0.0,
-                        "_frames": [
-                            {
-                                "name": "Frame 1",
-                                "textureName": null,
+                                "name": "Walk _1.png",
+                                "textureName": "Walk _1.png",
                                 "uvOffset": [
                                     0.0,
                                     0.0
                                 ],
                                 "uvSize": [
-                                    0.25,
-                                    0.125
+                                    1.0,
+                                    1.0
                                 ]
                             },
                             {
-                                "name": "Frame 2",
-                                "textureName": null,
+                                "name": "Walk_2.png",
+                                "textureName": "Walk_2.png",
                                 "uvOffset": [
-                                    0.25,
+                                    0.0,
                                     0.0
                                 ],
                                 "uvSize": [
-                                    0.25,
-                                    0.125
+                                    1.0,
+                                    1.0
                                 ]
                             },
                             {
-                                "name": "Frame 3",
-                                "textureName": null,
+                                "name": "Walk_3.png",
+                                "textureName": "Walk_3.png",
                                 "uvOffset": [
-                                    0.5,
+                                    0.0,
                                     0.0
                                 ],
                                 "uvSize": [
-                                    0.25,
-                                    0.125
+                                    1.0,
+                                    1.0
                                 ]
                             },
                             {
-                                "name": "Frame 4",
-                                "textureName": null,
+                                "name": "Walk_4.png",
+                                "textureName": "Walk_4.png",
                                 "uvOffset": [
-                                    0.75,
+                                    0.0,
                                     0.0
                                 ],
                                 "uvSize": [
-                                    0.25,
-                                    0.125
+                                    1.0,
+                                    1.0
                                 ]
-                            }
-                        ],
-                        "_isEnabled": true,
-                        "_isFinished": false,
-                        "_isLooping": true,
-                        "_isPaused": false,
-                        "_isStopped": true,
-                        "_name": "Move UpRight",
-                        "_noTick": false,
-                        "_textureName": "MPlayer_walk.png",
-                        "_type": "Core::Animation::FrameByFrameAnimation"
-                    },
-                    "Move down": {
-                        "_atlasName": "player_walk",
-                        "_children": null,
-                        "_currentFrame": 0,
-                        "_fps": 10.0,
-                        "_frameTimeAccumulator": 0.0,
-                        "_frames": [
+                            },
                             {
-                                "name": "Frame 1",
-                                "textureName": null,
+                                "name": "Walk_5.png",
+                                "textureName": "Walk_5.png",
                                 "uvOffset": [
                                     0.0,
-                                    0.625
+                                    0.0
                                 ],
                                 "uvSize": [
-                                    0.25,
-                                    0.125
+                                    1.0,
+                                    1.0
                                 ]
                             },
                             {
-                                "name": "Frame 2",
-                                "textureName": null,
-                                "uvOffset": [
-                                    0.25,
-                                    0.625
-                                ],
-                                "uvSize": [
-                                    0.25,
-                                    0.125
-                                ]
-                            },
-                            {
-                                "name": "Frame 3",
-                                "textureName": null,
-                                "uvOffset": [
-                                    0.5,
-                                    0.625
-                                ],
-                                "uvSize": [
-                                    0.25,
-                                    0.125
-                                ]
-                            },
-                            {
-                                "name": "Frame 4",
-                                "textureName": null,
-                                "uvOffset": [
-                                    0.75,
-                                    0.625
-                                ],
-                                "uvSize": [
-                                    0.25,
-                                    0.125
-                                ]
-                            }
-                        ],
-                        "_isEnabled": true,
-                        "_isFinished": false,
-                        "_isLooping": true,
-                        "_isPaused": false,
-                        "_isStopped": true,
-                        "_name": "Move down",
-                        "_noTick": false,
-                        "_textureName": "MPlayer_walk.png",
-                        "_type": "Core::Animation::FrameByFrameAnimation"
-                    },
-                    "Move left": {
-                        "_atlasName": "player_walk",
-                        "_children": null,
-                        "_currentFrame": 0,
-                        "_fps": 10.0,
-                        "_frameTimeAccumulator": 0.0,
-                        "_frames": [
-                            {
-                                "name": "Frame 1",
-                                "textureName": null,
+                                "name": "Walk_6.png",
+                                "textureName": "Walk_6.png",
                                 "uvOffset": [
                                     0.0,
-                                    0.875
+                                    0.0
                                 ],
                                 "uvSize": [
-                                    0.25,
-                                    0.125
+                                    1.0,
+                                    1.0
                                 ]
                             },
                             {
-                                "name": "Frame 2",
-                                "textureName": null,
-                                "uvOffset": [
-                                    0.25,
-                                    0.875
-                                ],
-                                "uvSize": [
-                                    0.25,
-                                    0.125
-                                ]
-                            },
-                            {
-                                "name": "Frame 3",
-                                "textureName": null,
-                                "uvOffset": [
-                                    0.5,
-                                    0.875
-                                ],
-                                "uvSize": [
-                                    0.25,
-                                    0.125
-                                ]
-                            },
-                            {
-                                "name": "Frame 4",
-                                "textureName": null,
-                                "uvOffset": [
-                                    0.75,
-                                    0.875
-                                ],
-                                "uvSize": [
-                                    0.25,
-                                    0.125
-                                ]
-                            }
-                        ],
-                        "_isEnabled": true,
-                        "_isFinished": false,
-                        "_isLooping": true,
-                        "_isPaused": false,
-                        "_isStopped": true,
-                        "_name": "Move left",
-                        "_noTick": false,
-                        "_textureName": "MPlayer_walk.png",
-                        "_type": "Core::Animation::FrameByFrameAnimation"
-                    },
-                    "Move right": {
-                        "_atlasName": "player_walk",
-                        "_children": null,
-                        "_currentFrame": 0,
-                        "_fps": 10.0,
-                        "_frameTimeAccumulator": 0.0,
-                        "_frames": [
-                            {
-                                "name": "Frame 1",
-                                "textureName": null,
+                                "name": "Walk_7.png",
+                                "textureName": "Walk_7.png",
                                 "uvOffset": [
                                     0.0,
-                                    0.75
+                                    0.0
                                 ],
                                 "uvSize": [
-                                    0.25,
-                                    0.125
+                                    1.0,
+                                    1.0
                                 ]
                             },
                             {
-                                "name": "Frame 2",
-                                "textureName": null,
+                                "name": "Walk_8.png",
+                                "textureName": "Walk_8.png",
                                 "uvOffset": [
-                                    0.25,
-                                    0.75
+                                    0.0,
+                                    0.0
                                 ],
                                 "uvSize": [
-                                    0.25,
-                                    0.125
+                                    1.0,
+                                    1.0
                                 ]
                             },
                             {
-                                "name": "Frame 3",
-                                "textureName": null,
+                                "name": "Walk_9.png",
+                                "textureName": "Walk_9.png",
                                 "uvOffset": [
-                                    0.5,
-                                    0.75
+                                    0.0,
+                                    0.0
                                 ],
                                 "uvSize": [
-                                    0.25,
-                                    0.125
+                                    1.0,
+                                    1.0
                                 ]
                             },
                             {
-                                "name": "Frame 4",
-                                "textureName": null,
+                                "name": "Walk_10.png",
+                                "textureName": "Walk_10.png",
                                 "uvOffset": [
-                                    0.75,
-                                    0.75
+                                    0.0,
+                                    0.0
                                 ],
                                 "uvSize": [
-                                    0.25,
-                                    0.125
+                                    1.0,
+                                    1.0
+                                ]
+                            },
+                            {
+                                "name": "Walk_11.png",
+                                "textureName": "Walk_11.png",
+                                "uvOffset": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "uvSize": [
+                                    1.0,
+                                    1.0
+                                ]
+                            },
+                            {
+                                "name": "Walk_12.png",
+                                "textureName": "Walk_12.png",
+                                "uvOffset": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "uvSize": [
+                                    1.0,
+                                    1.0
+                                ]
+                            },
+                            {
+                                "name": "Walk_13.png",
+                                "textureName": "Walk_13.png",
+                                "uvOffset": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "uvSize": [
+                                    1.0,
+                                    1.0
                                 ]
                             }
                         ],
@@ -560,9 +188,9 @@
                         "_isLooping": true,
                         "_isPaused": false,
                         "_isStopped": true,
-                        "_name": "Move right",
+                        "_name": "Santa_run",
                         "_noTick": false,
-                        "_textureName": "MPlayer_walk.png",
+                        "_textureName": "Walk _1.png",
                         "_type": "Core::Animation::FrameByFrameAnimation"
                     }
                 },
