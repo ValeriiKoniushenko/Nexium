@@ -2,30 +2,18 @@
     "_children": null,
     "_innerPosition": [
         16.0,
-        796.0
+        794.0
     ],
     "_innerSize": {
         "height": 199.0,
         "width": 1888.0
     },
-    "_isEnabled": true,
+    "_isEnabled": false,
     "_isFitContent": false,
     "_levelFilter": [
         {
-            "isActive": false,
-            "level": "trace"
-        },
-        {
-            "isActive": false,
-            "level": "debug"
-        },
-        {
             "isActive": true,
-            "level": "info"
-        },
-        {
-            "isActive": true,
-            "level": "warning"
+            "level": "critical"
         },
         {
             "isActive": true,
@@ -33,7 +21,19 @@
         },
         {
             "isActive": true,
-            "level": "critical"
+            "level": "warning"
+        },
+        {
+            "isActive": true,
+            "level": "info"
+        },
+        {
+            "isActive": true,
+            "level": "debug"
+        },
+        {
+            "isActive": true,
+            "level": "trace"
         }
     ],
     "_logLimit": 500,
@@ -49,11 +49,11 @@
     },
     "_position": [
         8.0,
-        764.0
+        762.0
     ],
     "_size": {
         "height": 239.0,
         "width": 1904.0
     },
-    "_type": "NX::LogsWindowEWC"
+    "_type": "Core::LogsWindowEWC"
 }

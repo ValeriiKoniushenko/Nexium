@@ -1,9 +1,9 @@
 {
-    "_isMaximized": false,
+    "_isMaximized": true,
     "_size": {
-        "height": 1011,
+        "height": 1009,
         "width": 1920
     },
     "_swapInterval": true,
-    "_title": "Nexium Engine"
+    "_title": ""
 }
