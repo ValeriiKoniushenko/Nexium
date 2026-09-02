@@ -12,9 +12,9 @@
                     0.0
                 ],
                 "_position": [
-                    -106.38220977783203,
-                    -264.1029968261719,
-                    423.0572814941406
+                    -275.8739929199219,
+                    -9.143149375915527,
+                    378.3088073730469
                 ],
                 "_rotation": [
                     8.720703125,
@@ -42,9 +42,9 @@
                     0.0
                 ],
                 "_position": [
-                    21.857032775878906,
-                    -97.4629135131836,
-                    -4.260237346898066e-06
+                    0.0,
+                    0.0,
+                    7.330007974815089e-06
                 ],
                 "_rotation": [
                     0.0,
@@ -52,19 +52,19 @@
                     0.0
                 ],
                 "_scale": [
-                    1.0,
-                    1.0,
+                    2.200000047683716,
+                    2.200000047683716,
                     1.0
                 ]
             },
             "typeSpecificData": {
                 "_animationEnabled": true,
-                "_animationFPS": 31.5,
-                "_animationName": "Move down",
-                "_atlasName": "player_walk",
+                "_animationFPS": 15.0,
+                "_animationName": "Santa_run",
+                "_atlasName": "santa_walk",
                 "_blendingEnabled": true,
                 "_isEnabled": true,
-                "_textureName": "MPlayer_walk.png"
+                "_textureName": "Walk _1.png"
             }
         }
     ]
