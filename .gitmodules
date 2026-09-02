@@ -30,4 +30,4 @@
     ignore = dirty
 [submodule ".agents/Agents"]
 	path = .agents/Agents
-	url = git@github.com:ValeriiKoniushenko/Agents.git
+	url = https://github.com/ValeriiKoniushenko/Agents.git

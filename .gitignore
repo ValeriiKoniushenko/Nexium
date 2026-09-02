@@ -16,6 +16,7 @@
 /.agents/skills/benchmark
 /.agents/skills/build
 /.agents/skills/clean-build
+/.agents/skills/code-coverage
 /.agents/skills/codegen
 /.agents/skills/docs-generation
 /.agents/skills/ecs-benchmarks
