@@ -6,14 +6,11 @@ on:
     branches:
       - develop
 
-# All jobs below share host bind-mounted caches (/repo-cache, /build-cache*).
-# Two concurrent runs (e.g. two PRs) would otherwise race on those same
-# directories. This serializes runs on this workflow instead of cancelling
-# or racing them. Requires a Gitea version with `concurrency:` support
-# (1.20+); if your instance predates that, drop this block and namespace
-# the cache paths by ${{ gitea.run_id }} instead.
+# Build caches are persistent runner-host mounts. Serializing workflow runs keeps
+# separate runs from writing the same compiler-specific cache concurrently. Every
+# job still gets its own checkout, so sibling jobs never share a Git worktree.
 concurrency:
-  group: nexium-ci-shared-cache
+  group: nexium-ci-build-cache
   cancel-in-progress: false
 
 jobs:
@@ -32,8 +29,7 @@ jobs:
       - name: Check clang-format
         env:
           GITEATOKEN: ${{ secrets.GITEATOKEN }}
-        run: |
-          python3 .gitea/check_clang_format.py --base develop
+        run: python3 .gitea/check_clang_format.py --base develop
 
   build-clang:
     name: "[build] clang 19.1.7 (linux)"
@@ -42,34 +38,40 @@ jobs:
       image: cpp-ci:latest
       volumes:
         - /srv/ci-cache/ccache:/ccache
-        - /srv/ci-cache/git-repo:/repo-cache
-        - /srv/ci-cache/build-cache:/build-cache
+        - /srv/ci-cache/nexium/build-clang-debug-v1:/build-cache
     env:
       CCACHE_DIR: /ccache
       CC: clang
       CXX: clang++
     timeout-minutes: 30
     steps:
-      - name: Sync repo cache
-        env:
-          GITEATOKEN: ${{ secrets.GITEATOKEN }}
-          EXTRA_REFS: develop
-        run: |
-          curl -sSL -H "Authorization: token ${GITEATOKEN}" \
-            "https://gitea.vakon.dev/api/v1/repos/${GITHUB_REPOSITORY}/raw/${GITHUB_SHA}/.gitea/scripts/sync-repo.sh" \
-            -o /tmp/sync-repo.sh
-          bash /tmp/sync-repo.sh
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
-      - name: Configure
+      - name: Restore build cache
+        run: |
+          mkdir -p build
+          if grep -Fqx "CMAKE_HOME_DIRECTORY:INTERNAL=$GITHUB_WORKSPACE" /build-cache/CMakeCache.txt 2>/dev/null \
+            && grep -Fqx "CMAKE_BUILD_TYPE:STRING=Debug" /build-cache/CMakeCache.txt 2>/dev/null; then
+            echo "Restoring compatible Clang Debug build cache"
+            rsync -a --delete /build-cache/ build/
+          else
+            echo "No compatible Clang Debug build cache; configuring from scratch"
+          fi
+
+      - name: Configure Debug
         run: |
           echo "::group::CMake configure"
           cmake -S . -B build \
+            -DCMAKE_BUILD_TYPE=Debug \
             -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
             -DCMAKE_C_COMPILER_LAUNCHER=ccache \
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
           echo "::endgroup::"
 
-      - name: Build
+      - name: Build Debug
         run: |
           echo "::group::Build"
           cmake --build build -j$(nproc)
@@ -82,6 +84,16 @@ jobs:
       - name: Save build cache
         run: rsync -a --delete build/ /build-cache/
 
+      - name: Upload Clang runtime executables
+        uses: christopherhx/gitea-upload-artifact@v4
+        with:
+          name: nexium-clang-runtime
+          path: |
+            build/bin/Nexium_Tests
+            build/bin/TemplateGame
+          if-no-files-found: error
+          retention-days: 1
+
   build-gcc:
     name: "[build] gcc 14.2.0 (linux)"
     runs-on: linux
@@ -89,34 +101,40 @@ jobs:
       image: cpp-ci:latest
       volumes:
         - /srv/ci-cache/ccache:/ccache
-        - /srv/ci-cache/git-repo:/repo-cache
-        - /srv/ci-cache/build-cache-gcc:/build-cache
+        - /srv/ci-cache/nexium/build-gcc-debug-v1:/build-cache
     env:
       CCACHE_DIR: /ccache
       CC: gcc
       CXX: g++
     timeout-minutes: 30
     steps:
-      - name: Sync repo cache
-        env:
-          GITEATOKEN: ${{ secrets.GITEATOKEN }}
-          EXTRA_REFS: develop
-        run: |
-          curl -sSL -H "Authorization: token ${GITEATOKEN}" \
-            "https://gitea.vakon.dev/api/v1/repos/${GITHUB_REPOSITORY}/raw/${GITHUB_SHA}/.gitea/scripts/sync-repo.sh" \
-            -o /tmp/sync-repo.sh
-          bash /tmp/sync-repo.sh
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
-      - name: Configure
+      - name: Restore build cache
+        run: |
+          mkdir -p build
+          if grep -Fqx "CMAKE_HOME_DIRECTORY:INTERNAL=$GITHUB_WORKSPACE" /build-cache/CMakeCache.txt 2>/dev/null \
+            && grep -Fqx "CMAKE_BUILD_TYPE:STRING=Debug" /build-cache/CMakeCache.txt 2>/dev/null; then
+            echo "Restoring compatible GCC Debug build cache"
+            rsync -a --delete /build-cache/ build/
+          else
+            echo "No compatible GCC Debug build cache; configuring from scratch"
+          fi
+
+      - name: Configure Debug
         run: |
           echo "::group::CMake configure"
           cmake -S . -B build \
+            -DCMAKE_BUILD_TYPE=Debug \
             -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
             -DCMAKE_C_COMPILER_LAUNCHER=ccache \
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
           echo "::endgroup::"
 
-      - name: Build
+      - name: Build Debug
         run: |
           echo "::group::Build"
           cmake --build build -j$(nproc)
@@ -127,9 +145,7 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Save build cache
-        run: |
-          mkdir -p /build-cache
-          rsync -a --delete build/ /build-cache/
+        run: rsync -a --delete build/ /build-cache/
 
   test-clang:
     name: "[test] unit tests (clang)"
@@ -137,29 +153,21 @@ jobs:
     runs-on: linux
     container:
       image: cpp-ci:latest
-      volumes:
-        - /srv/ci-cache/git-repo:/repo-cache
-        - /srv/ci-cache/build-cache:/build-cache
     timeout-minutes: 15
     steps:
-      - name: Sync repo cache
-        env:
-          GITEATOKEN: ${{ secrets.GITEATOKEN }}
-          EXTRA_REFS: develop
-        run: |
-          curl -sSL -H "Authorization: token ${GITEATOKEN}" \
-            "https://gitea.vakon.dev/api/v1/repos/${GITHUB_REPOSITORY}/raw/${GITHUB_SHA}/.gitea/scripts/sync-repo.sh" \
-            -o /tmp/sync-repo.sh
-          bash /tmp/sync-repo.sh
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
-      - name: Restore build output
-        run: |
-          curl -sSL -H "Authorization: token ${GITEATOKEN}" \
-            "https://gitea.vakon.dev/api/v1/repos/${GITHUB_REPOSITORY}/raw/${GITHUB_SHA}/.gitea/scripts/restore-build.sh" \
-            -o /tmp/restore-build.sh
-          bash /tmp/restore-build.sh
-        env:
-          GITEATOKEN: ${{ secrets.GITEATOKEN }}
+      - name: Download Clang runtime executables
+        uses: christopherhx/gitea-download-artifact@v4
+        with:
+          name: nexium-clang-runtime
+          path: build/bin
+
+      - name: Prepare runtime executables
+        run: chmod +x build/bin/Nexium_Tests build/bin/TemplateGame
 
       - name: Run ECS tests
         run: |
@@ -173,29 +181,21 @@ jobs:
     runs-on: linux
     container:
       image: cpp-ci:latest
-      volumes:
-        - /srv/ci-cache/git-repo:/repo-cache
-        - /srv/ci-cache/build-cache:/build-cache
     timeout-minutes: 15
     steps:
-      - name: Sync repo cache
-        env:
-          GITEATOKEN: ${{ secrets.GITEATOKEN }}
-          EXTRA_REFS: develop
-        run: |
-          curl -sSL -H "Authorization: token ${GITEATOKEN}" \
-            "https://gitea.vakon.dev/api/v1/repos/${GITHUB_REPOSITORY}/raw/${GITHUB_SHA}/.gitea/scripts/sync-repo.sh" \
-            -o /tmp/sync-repo.sh
-          bash /tmp/sync-repo.sh
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
-      - name: Restore build output
-        env:
-          GITEATOKEN: ${{ secrets.GITEATOKEN }}
-        run: |
-          curl -sSL -H "Authorization: token ${GITEATOKEN}" \
-            "https://gitea.vakon.dev/api/v1/repos/${GITHUB_REPOSITORY}/raw/${GITHUB_SHA}/.gitea/scripts/restore-build.sh" \
-            -o /tmp/restore-build.sh
-          bash /tmp/restore-build.sh
+      - name: Download Clang runtime executables
+        uses: christopherhx/gitea-download-artifact@v4
+        with:
+          name: nexium-clang-runtime
+          path: build/bin
+
+      - name: Prepare runtime executables
+        run: chmod +x build/bin/Nexium_Tests build/bin/TemplateGame
 
       - name: Capture and publish TemplateGame UI
         env:
@@ -213,29 +213,21 @@ jobs:
     runs-on: linux
     container:
       image: cpp-ci:latest
-      volumes:
-        - /srv/ci-cache/git-repo:/repo-cache
-        - /srv/ci-cache/build-cache:/build-cache
     timeout-minutes: 15
     steps:
-      - name: Sync repo cache
-        env:
-          GITEATOKEN: ${{ secrets.GITEATOKEN }}
-          EXTRA_REFS: develop
-        run: |
-          curl -sSL -H "Authorization: token ${GITEATOKEN}" \
-            "https://gitea.vakon.dev/api/v1/repos/${GITHUB_REPOSITORY}/raw/${GITHUB_SHA}/.gitea/scripts/sync-repo.sh" \
-            -o /tmp/sync-repo.sh
-          bash /tmp/sync-repo.sh
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
-      - name: Restore build output
-        env:
-          GITEATOKEN: ${{ secrets.GITEATOKEN }}
-        run: |
-          curl -sSL -H "Authorization: token ${GITEATOKEN}" \
-            "https://gitea.vakon.dev/api/v1/repos/${GITHUB_REPOSITORY}/raw/${GITHUB_SHA}/.gitea/scripts/restore-build.sh" \
-            -o /tmp/restore-build.sh
-          bash /tmp/restore-build.sh
+      - name: Download Clang runtime executables
+        uses: christopherhx/gitea-download-artifact@v4
+        with:
+          name: nexium-clang-runtime
+          path: build/bin
+
+      - name: Prepare runtime executables
+        run: chmod +x build/bin/Nexium_Tests build/bin/TemplateGame
 
       - name: Run TemplateGame under Valgrind
         env:
@@ -248,29 +240,21 @@ jobs:
     runs-on: linux
     container:
       image: cpp-ci:latest
-      volumes:
-        - /srv/ci-cache/git-repo:/repo-cache
-        - /srv/ci-cache/build-cache:/build-cache
     timeout-minutes: 20
     steps:
-      - name: Sync repo cache
-        env:
-          GITEATOKEN: ${{ secrets.GITEATOKEN }}
-          EXTRA_REFS: ""
-        run: |
-          curl -sSL -H "Authorization: token ${GITEATOKEN}" \
-            "https://gitea.vakon.dev/api/v1/repos/${GITHUB_REPOSITORY}/raw/${GITHUB_SHA}/.gitea/scripts/sync-repo.sh" \
-            -o /tmp/sync-repo.sh
-          bash /tmp/sync-repo.sh
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
-      - name: Restore build output
-        env:
-          GITEATOKEN: ${{ secrets.GITEATOKEN }}
-        run: |
-          curl -sSL -H "Authorization: token ${GITEATOKEN}" \
-            "https://gitea.vakon.dev/api/v1/repos/${GITHUB_REPOSITORY}/raw/${GITHUB_SHA}/.gitea/scripts/restore-build.sh" \
-            -o /tmp/restore-build.sh
-          bash /tmp/restore-build.sh
+      - name: Download Clang runtime executables
+        uses: christopherhx/gitea-download-artifact@v4
+        with:
+          name: nexium-clang-runtime
+          path: build/bin
+
+      - name: Prepare runtime executables
+        run: chmod +x build/bin/Nexium_Tests build/bin/TemplateGame
 
       - name: Check Valgrind
         env:
@@ -292,50 +276,49 @@ jobs:
     container:
       image: cpp-ci:latest
       volumes:
-        - /srv/ci-cache/git-repo:/repo-cache
-        - /srv/ci-cache/build-cache:/build-cache
+        - /srv/ci-cache/ccache:/ccache
+        - /srv/ci-cache/nexium/build-clang-debug-v1:/build-cache
+    env:
+      CCACHE_DIR: /ccache
+      CC: clang
+      CXX: clang++
     timeout-minutes: 20
     steps:
-      - name: Sync repo cache
-        env:
-          GITEATOKEN: ${{ secrets.GITEATOKEN }}
-          EXTRA_REFS: ""
-          SHALLOW: "true"
-        run: |
-          curl -sSL -H "Authorization: token ${GITEATOKEN}" \
-            "https://gitea.vakon.dev/api/v1/repos/${GITHUB_REPOSITORY}/raw/${GITHUB_SHA}/.gitea/scripts/sync-repo.sh" \
-            -o /tmp/sync-repo.sh
-          bash /tmp/sync-repo.sh
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
 
       - name: Fetch develop for diffing
         run: |
-          echo "::group::Ensuring full history for diff"
-          # `--unshallow` fails with "already a complete repository" if the
-          # workspace already has full history — that's expected, not an
-          # error. Anything else (auth, network) should fail the job loudly
-          # instead of being silently swallowed by a blanket `|| true`.
-          if ! git fetch --unshallow origin 2> /tmp/unshallow.log; then
-            if grep -q "already a complete repository" /tmp/unshallow.log; then
-              echo "Repo already has full history, continuing"
-            else
-              cat /tmp/unshallow.log
-              exit 1
-            fi
-          fi
+          echo "::group::Ensuring develop is available for diffing"
           git fetch origin develop:refs/remotes/origin/develop
           echo "::endgroup::"
 
-      - name: Restore build output
-        env:
-          GITEATOKEN: ${{ secrets.GITEATOKEN }}
+      - name: Restore build cache
         run: |
-          curl -sSL -H "Authorization: token ${GITEATOKEN}" \
-            "https://gitea.vakon.dev/api/v1/repos/${GITHUB_REPOSITORY}/raw/${GITHUB_SHA}/.gitea/scripts/restore-build.sh" \
-            -o /tmp/restore-build.sh
-          bash /tmp/restore-build.sh
+          mkdir -p build
+          if grep -Fqx "CMAKE_HOME_DIRECTORY:INTERNAL=$GITHUB_WORKSPACE" /build-cache/CMakeCache.txt 2>/dev/null \
+            && grep -Fqx "CMAKE_BUILD_TYPE:STRING=Debug" /build-cache/CMakeCache.txt 2>/dev/null; then
+            echo "Restoring compatible Clang Debug build cache"
+            rsync -a --delete /build-cache/ build/
+          else
+            echo "No compatible Clang Debug build cache; configuring from scratch"
+          fi
+
+      - name: Configure Debug for analysis
+        run: |
+          cmake -S . -B build \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+            -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+
+      - name: Generate reflection headers
+        run: cmake --build build --target CodeGenerator -j$(nproc)
 
       - name: Check clang-tidy
         env:
           GITEATOKEN: ${{ secrets.GITEATOKEN }}
-        run: |
-          python3 .gitea/check_clang_tidy.py --base develop --build-dir build --fail-on error
+        run: python3 .gitea/check_clang_tidy.py --base develop --build-dir build --fail-on error
