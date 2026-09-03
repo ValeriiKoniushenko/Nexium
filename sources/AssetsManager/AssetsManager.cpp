@@ -343,6 +343,25 @@ namespace Core
         return {};
     }
 
+    std::optional<ECSAsset::Meta> AssetsManager::getECSAssetMeta(std::size_t index, Tag tagMask)
+    {
+        std::size_t i = 0;
+        for (auto& asset : _ecsAssets | std::views::values)
+        {
+            if (asset->getTags() & tagMask)
+            {
+                if (i == index)
+                {
+                    return asset->getMeta();
+                }
+                ++i;
+            }
+        }
+
+        errorLog("Can't get asset at filtered index {} because it is out of range"_f << index);
+        return std::nullopt;
+    }
+
     NXECSAsset AssetsManager::getEcsAssetByPath(const fs::path& path)
     {
         const auto it = findAssetByPath(path);

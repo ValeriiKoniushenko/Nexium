@@ -180,6 +180,14 @@ namespace Core
         /// @return Weak reference to the asset if it's loaded, nullptr otherwise
         [[nodiscard]] WeakNXECSAsset getWeakEcsAssetAt(std::size_t index, Tag tagMask = Tag_Any);
 
+        /// @brief Get an asset by its index without loading it. Returns nullptr if the asset wasn't
+        /// loaded previously.
+        /// @param index Index of the asset in the collection
+        /// @param tagMask tag to apply when searching for assets
+        /// @return Weak reference to the asset if it's loaded, nullptr otherwise
+        [[nodiscard]] std::optional<ECSAsset::Meta> getECSAssetMeta(std::size_t index,
+                                                                    Tag tagMask = Tag_Any);
+
         /// @brief Get asset by filesystem path. Will load the asset if it wasn't loaded previously.
         /// @param path Filesystem path to the asset
         /// @return Strong reference to the asset

@@ -31,6 +31,7 @@
 #include "Editor/GuiComponents/Separator.h"
 #include "Editor/GuiComponents/Spacer.h"
 #include "GameplaySystem/Framework/GameInstance.h"
+#include "Misc/BaseLog.h"
 
 namespace Core
 {
@@ -96,20 +97,20 @@ namespace Core
             _list->setDataProvider(
                 [](std::size_t index, StringAtom& out) -> const void*
                 {
-                    if (auto asset
-                        = GetAssetsManager()->getWeakEcsAssetAt(index, Tag_WorldObject).tryLoad())
+                    if (auto asset = GetAssetsManager()->getECSAssetMeta(index, Tag_WorldObject))
                     {
-                        out = asset->getName();
-                        return asset->getName().c_str();
+                        out = asset->name;
+                        return nullptr;
                     }
 
-                    Assert(false);
+                    LOG_ERROR_ONCE_P(
+                        globalLog, "ModalAssetsSearchPopUpEWC: Can't get asset meta at some index");
                     return nullptr;
                 });
             _list->setSizeProvider(
                 []() { return GetAssetsManager()->getEcsAssetCountByTag(Tag_WorldObject); });
             _subscriptionPool << _list->onSelect->subscribeAndGetID(
-                [this](const void*, StringAtom name)
+                [this](const void*, const StringAtom& name)
                 {
                     if (!_wasManuallyEdited)
                     {

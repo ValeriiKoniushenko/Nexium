@@ -63,7 +63,7 @@
         "mouseSensitivity": 0.5,
         "speed": 600.0
     },
-    "name": "BaseSpectator",
+    "name": "2D_Spectator",
     "tags": "WorldObject",
     "type": "Core::Spectator"
 }

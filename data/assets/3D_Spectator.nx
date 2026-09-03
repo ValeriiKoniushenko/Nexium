@@ -41,7 +41,7 @@
         "_isDrawOutline": false,
         "_isEnabled": true,
         "_isPostDraw": false,
-        "_name": "Core::Spectator",
+        "_name": "3D_Spectator",
         "_noTick": false,
         "_origin": [
             0.0,
@@ -67,7 +67,7 @@
         "mouseSensitivity": 0.5,
         "speed": 600.0
     },
-    "name": "BaseSpectator",
+    "name": "3D_Spectator",
     "tags": "WorldObject",
     "type": "Core::Spectator"
 }
