@@ -39,6 +39,16 @@ def _parse_environment(values: list[str]) -> dict[str, str]:
     return environment
 
 
+def _application_command(values: list[str]) -> list[str]:
+    """Return an argparse remainder without its optional ``--`` separator."""
+    command = list(values)
+    if command[:1] == ["--"]:
+        command.pop(0)
+    if not command:
+        raise ValueError("an application command is required after '--'")
+    return command
+
+
 def _terminate(process: subprocess.Popen[object], label: str) -> None:
     if process.poll() is not None:
         return
@@ -138,15 +148,14 @@ def _capture(output: Path, *, window_title: str | None, environment: dict[str, s
 
 
 def capture_window(args: argparse.Namespace) -> int:
-    if not args.command:
-        raise ValueError("an application command is required after '--'")
+    command = _application_command(args.command)
     environment = _headless_environment(args.display, args.environment)
     output = Path(args.output).resolve()
     xvfb = _start_xvfb(args.display, args.screen_size)
     application: subprocess.Popen[object] | None = None
     try:
-        print(f"[runtime] starting: {' '.join(args.command)}")
-        application = subprocess.Popen(args.command, cwd=Path.cwd(), env=environment)
+        print(f"[runtime] starting: {' '.join(command)}")
+        application = subprocess.Popen(command, cwd=Path.cwd(), env=environment)
         _wait_for_application(application, args.warmup)
         _capture(output, window_title=args.window_title, environment=environment)
         if application.poll() is not None:
@@ -160,8 +169,7 @@ def capture_window(args: argparse.Namespace) -> int:
 
 
 def run_under_valgrind(args: argparse.Namespace) -> int:
-    if not args.command:
-        raise ValueError("an application command is required after '--'")
+    application_command = _application_command(args.command)
     valgrind = args.valgrind
     if shutil.which(valgrind) is None:
         raise RuntimeError(f"Valgrind command is unavailable: {valgrind}")
@@ -184,7 +192,7 @@ def run_under_valgrind(args: argparse.Namespace) -> int:
     ]
     if args.generate_suppressions:
         valgrind_command.append("--gen-suppressions=all")
-    valgrind_command.extend(args.command)
+    valgrind_command.extend(application_command)
     command = [
         "timeout",
         "--signal=TERM",

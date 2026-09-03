@@ -26,6 +26,7 @@ import sys
 import threading
 from dataclasses import dataclass
 from .gitea_client import GiteaClient, review_marker
+from .reports import write_json_report
 from .diff import (
     ChangedFile,
     DiffError,
@@ -113,7 +114,7 @@ def get_optional_file_digest(path: str) -> str:
 
 def get_compile_command_digest(build_dir: str, target: str) -> str:
     """Return the compile command digest for one clang-tidy target."""
-    compile_commands_path = os.path.join(build_dir, "compile_commands.json")
+    compile_commands_path = os.path.join(os.path.abspath(build_dir), "compile_commands.json")
     digest = hashlib.sha256()
     try:
         with open(compile_commands_path) as source:
@@ -314,11 +315,12 @@ def run_clang_tidy(
 
     # NOTE: clang-tidy has no "-v" flag (that's a run-clang-tidy-ism) and the
     # target file must be a plain positional arg, not "-f <file>".
+    compile_database_dir = os.path.abspath(build_dir)
     cmd = [
         clang_tidy_command(),
         f"--header-filter={header_filter}",
         "-p",
-        build_dir,
+        compile_database_dir,
         *extra_args,
         path,
     ]
@@ -338,7 +340,11 @@ def main(*, excluded_paths: tuple[str, ...] = ()) -> None:
                         help="repository-relative path prefix to exclude; can be repeated")
     parser.add_argument("--extension", action="append", default=[],
                         help="C/C++ extension to analyse; can be repeated")
-    parser.add_argument("--build-dir", default="build", help="compile_commands.json directory (default: build)")
+    parser.add_argument(
+        "--build-dir",
+        default="build",
+        help="directory containing the required compile_commands.json (default: build)",
+    )
     parser.add_argument("--header-filter",
                         help="clang-tidy --header-filter value (default: changed headers only)")
     parser.add_argument("--jobs", "-j", type=int, default=0,
@@ -357,10 +363,21 @@ def main(*, excluded_paths: tuple[str, ...] = ()) -> None:
                         help="persistent clang-tidy result cache directory (disabled by default)")
     args = parser.parse_args()
 
+    args.build_dir = os.path.abspath(args.build_dir)
     if not os.path.isdir(args.build_dir):
         print(f"[error] build dir '{args.build_dir}' not found. Run cmake configure first, or pass --build-dir.",
               file=sys.stderr)
         sys.exit(2)
+
+    compile_commands_path = os.path.join(args.build_dir, "compile_commands.json")
+    if not os.path.isfile(compile_commands_path):
+        print(
+            f"[error] required compilation database is missing: {compile_commands_path}. "
+            "Configure CMake with -DCMAKE_EXPORT_COMPILE_COMMANDS=ON.",
+            file=sys.stderr,
+        )
+        sys.exit(2)
+    print(f"[clang-tidy] using compilation database: {compile_commands_path}")
 
     if args.jobs < 0:
         parser.error("--jobs must be zero (auto) or a positive integer")
@@ -520,8 +537,7 @@ def main(*, excluded_paths: tuple[str, ...] = ()) -> None:
             })
 
     if not args.dry_run and args.report_path:
-        with open(args.report_path, "w") as out:
-            json.dump(issues, out, indent=2)
+        write_json_report(args.report_path, issues)
 
     if not args.no_gitea:
         client = GiteaClient.from_env(verbose=args.verbose)

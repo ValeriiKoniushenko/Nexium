@@ -14,13 +14,13 @@ Local/debug usage from your machine:
 
 import argparse
 import hashlib
-import json
 import os
 import subprocess
 import sys
 
 from .gitea_client import GiteaClient, review_marker
 from .diff import ChangedFile, DiffError, get_changed_files, get_target_branch
+from .reports import write_json_report
 
 
 class ClangFormatError(RuntimeError):
@@ -259,8 +259,7 @@ def main(*, excluded_paths: tuple[str, ...] = ()) -> None:
         sys.exit(2)
 
     if not args.dry_run and len(args.report_path) > 0:
-        with open(args.report_path, "w") as out:
-            json.dump(issues, out, indent=2)
+        write_json_report(args.report_path, issues)
 
     if not args.no_gitea:
         client = GiteaClient.from_env(verbose=args.verbose)
