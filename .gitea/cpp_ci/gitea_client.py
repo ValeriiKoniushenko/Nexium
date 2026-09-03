@@ -430,8 +430,9 @@ class GiteaClient:
             f"  token_source={self.token_source} "
             f"token={_token_preview(self.token)}\n"
             "  Check that secrets.GITEATOKEN is a valid Personal Access Token\n"
-            "  (Settings → Applications) with repository write scope, or set\n"
-            "  GITEA_TOKEN to ${{ gitea.token }} / ${{ github.token }} in the workflow.\n"
+            "  (Settings → Applications) with repository write scope. Map the\n"
+            "  same secrets.GITEATOKEN value to GITEATOKEN and GITEA_TOKEN in\n"
+            "  the workflow.\n"
             "  Verify with:\n"
             f"    curl -H 'Authorization: token <PAT>' {self.server}/api/v1/user"
         )

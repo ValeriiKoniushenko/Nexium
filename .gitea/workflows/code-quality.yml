@@ -1,6 +1,13 @@
 name: C++ Code Quality
 
 on:
+  # Keep this checkout useful until .gitea is extracted into the shared CI
+  # repository.  For direct events the empty workflow_call inputs below fall
+  # back to .gitea and .ci/cpp-ci.json in each shell step.
+  pull_request:
+  push:
+    branches: [develop]
+  workflow_dispatch:
   workflow_call:
     inputs:
       ci_root:
@@ -44,7 +51,7 @@ jobs:
       - name: Check changed C/C++ formatting
         env:
           GITEATOKEN: ${{ secrets.GITEATOKEN }}
-          GITEA_TOKEN: ${{ secrets.GITEA_TOKEN }}
+          GITEA_TOKEN: ${{ secrets.GITEATOKEN }}
         run: |
           ci_root="${CPP_CI_ROOT:-.gitea}"
           ci_config="${CPP_CI_CONFIG:-.ci/cpp-ci.json}"
@@ -71,7 +78,7 @@ jobs:
       - name: Configure and check changed C/C++ with clang-tidy
         env:
           GITEATOKEN: ${{ secrets.GITEATOKEN }}
-          GITEA_TOKEN: ${{ secrets.GITEA_TOKEN }}
+          GITEA_TOKEN: ${{ secrets.GITEATOKEN }}
         run: |
           ci_root="${CPP_CI_ROOT:-.gitea}"
           ci_config="${CPP_CI_CONFIG:-.ci/cpp-ci.json}"
@@ -202,7 +209,7 @@ jobs:
       - name: Run unit tests under Valgrind (copyable suppressions in output)
         env:
           GITEATOKEN: ${{ secrets.GITEATOKEN }}
-          GITEA_TOKEN: ${{ secrets.GITEA_TOKEN }}
+          GITEA_TOKEN: ${{ secrets.GITEATOKEN }}
         run: |
           ci_root="${CPP_CI_ROOT:-.gitea}"
           ci_config="${CPP_CI_CONFIG:-.ci/cpp-ci.json}"

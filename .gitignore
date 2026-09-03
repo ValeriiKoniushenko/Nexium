@@ -8,7 +8,7 @@
 /libs/
 /more/
 /tools/
-# /dependencies/JustReflectMe
+/dependencies/JustReflectMe
 /.jrm/cache.data
 /.cache
 

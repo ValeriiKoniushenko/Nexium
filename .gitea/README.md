@@ -73,10 +73,12 @@ calls this repository's reusable workflow at an immutable tag and passes the
 two paths above.  That lets the common repository centrally control the job
 graph, container image, and tool defaults.
 
-The source workflow itself deliberately exposes only `workflow_call`. Its
-consumer template owns `pull_request`, `push`, and manual-dispatch triggers;
-otherwise the standalone shared repository would try to build itself without a
-consumer CMake project configuration.
+While this directory is still Nexium's `.gitea` directory, the source workflow
+also accepts `pull_request`, `push` to `develop`, and manual-dispatch events.
+It falls back to `.gitea` and `.ci/cpp-ci.json`, so the current Nexium pull
+request runs immediately. After extracting this directory into the standalone
+shared-CI repository, install `templates/consumer-workflow.yml` in each
+consumer; that wrapper owns those triggers and calls the shared workflow.
 
 For an application-specific visual smoke check, enable the `runtime` section
 in the project config. The generic capture and application-Valgrind jobs then
@@ -104,8 +106,9 @@ shared repository, keep its contents intact, then place that repository at
    `.gitea/workflows/code-quality.yml` and replace the repository name and
    immutable ref.
 3. Ensure the consumer can read the private shared repository in Gitea Actions
-   settings, and provide `GITEATOKEN` only if the automatic `GITEA_TOKEN` lacks
-   permission to publish reviews/statuses.
+   settings, and provide one `GITEATOKEN` secret with permission to publish
+   reviews/statuses. The workflow deliberately maps it to both `GITEATOKEN`
+   and `GITEA_TOKEN` for compatible shared helpers.
 4. Delete that consumer's old copied Python CI helpers only after its first
    shared workflow run succeeds.
 
