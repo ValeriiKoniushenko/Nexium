@@ -260,14 +260,21 @@ jobs:
         env:
           GITEATOKEN: ${{ secrets.GITEATOKEN }}
         run: |
+          # Preserve the wrapper's exit status. A pipeline ending in `tee`
+          # would otherwise report success even when Valgrind fails.
+          set +e
           python3 .gitea/check_valgrind.py --executable build/bin/Nexium_Tests --verbose \
-            | tee valgrind-output.txt
+            > valgrind-output.txt 2>&1
+          status=$?
+          set -e
+          cat valgrind-output.txt
           {
             echo "## Valgrind (Nexium_Tests)"
             echo '```'
             tail -30 valgrind-output.txt
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
+          exit "$status"
 
   lint-clang-tidy:
     name: "[lint] clang-tidy 19.1.7"

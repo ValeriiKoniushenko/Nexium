@@ -79,7 +79,9 @@ def run_game_valgrind(executable: Path, timeout_seconds: float) -> ValgrindGameR
         "--errors-for-leak-kinds=definite",
         "--track-origins=yes",
         "--error-exitcode=42",
-        # "--gen-suppressions=all",
+        # Emit a copyable block for every unsuppressed finding. This output is
+        # included in the CI job log and failure review to aid triage.
+        "--gen-suppressions=all",
         "--suppressions=valgrind.supp",
         str(executable.resolve()),
     ]
