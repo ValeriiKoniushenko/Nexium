@@ -15,19 +15,47 @@ Local/debug usage from your machine:
 import argparse
 import hashlib
 import json
+import os
 import subprocess
 import sys
 
-from gitea_client import GiteaClient, review_marker
-from utils import ChangedFile, get_changed_files, get_target_branch
+from .gitea_client import GiteaClient, review_marker
+from .diff import ChangedFile, DiffError, get_changed_files, get_target_branch
+
+
+class ClangFormatError(RuntimeError):
+    """Raised when clang-format cannot perform a reliable format check."""
+
+
+def clang_format_command() -> str:
+    """Allow the common toolchain policy to select an exact binary."""
+    return os.environ.get("CPP_CI_CLANG_FORMAT", "clang-format")
+
+
+def validate_clang_format_config() -> None:
+    try:
+        result = subprocess.run(
+            [clang_format_command(), "--dump-config"],
+            capture_output=True,
+            text=True,
+        )
+    except OSError as error:
+        raise ClangFormatError(f"failed to execute {clang_format_command()}: {error}") from error
+
+    if result.returncode != 0:
+        details = result.stderr.strip() or result.stdout.strip() or "no diagnostic output"
+        raise ClangFormatError(
+            "clang-format configuration validation failed "
+            f"(exit code {result.returncode}):\n{details}"
+        )
 
 
 def publish_inline_review(
-    client: GiteaClient,
-    issues: list[dict],
-    *,
-    dry_run: bool,
-    verbose: bool,
+        client: GiteaClient,
+        issues: list[dict],
+        *,
+        dry_run: bool,
+        verbose: bool,
 ) -> None:
     marker = review_marker("clang-format")
     pr_number = GiteaClient.resolve_pr_number()
@@ -104,16 +132,21 @@ def check_file(file: ChangedFile, fix: bool, verbose: bool) -> tuple[bool, str, 
     except FileNotFoundError:
         return True, "", ""
 
-    cmd = ["clang-format", path]
+    cmd = [clang_format_command(), path]
 
     for begin, end in file.ranges:
         cmd.append(f"--lines={begin}:{end}")
 
-    result = subprocess.run(cmd, capture_output=True, text=True)
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True)
+    except OSError as error:
+        raise ClangFormatError(f"failed to execute clang-format for {path}: {error}") from error
 
     if result.returncode != 0:
-        print(result.stderr, file=sys.stderr)
-        return True, original, original
+        details = result.stderr.strip() or result.stdout.strip() or "no diagnostic output"
+        raise ClangFormatError(
+            f"clang-format failed for {path} (exit code {result.returncode}):\n{details}"
+        )
 
     formatted = result.stdout
 
@@ -127,7 +160,7 @@ def check_file(file: ChangedFile, fix: bool, verbose: bool) -> tuple[bool, str, 
     return compliant, formatted, original
 
 
-def main():
+def main(*, excluded_paths: tuple[str, ...] = ()) -> None:
     parser = argparse.ArgumentParser(
         description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -140,6 +173,18 @@ def main():
         "--files",
         nargs="+",
         help="explicit list of files to check, skips git diff",
+    )
+    parser.add_argument(
+        "--exclude",
+        action="append",
+        default=[],
+        help="repository-relative path prefix to exclude; can be repeated",
+    )
+    parser.add_argument(
+        "--extension",
+        action="append",
+        default=[],
+        help="C/C++ extension to analyse; can be repeated",
     )
     parser.add_argument(
         "--fix",
@@ -169,29 +214,49 @@ def main():
     )
     args = parser.parse_args()
 
+    try:
+        validate_clang_format_config()
+    except ClangFormatError as error:
+        print(error, file=sys.stderr)
+        sys.exit(2)
+
     base_ref = get_target_branch(args.base)
-    changed = get_changed_files(base_ref, args.files, args.verbose)
+    try:
+        changed = get_changed_files(
+            base_ref,
+            args.files,
+            args.verbose,
+            excluded_paths=(*excluded_paths, *args.exclude),
+            extensions=args.extension or None,
+        )
+    except DiffError as error:
+        print(f"[error] {error}", file=sys.stderr)
+        sys.exit(2)
 
     issues = []
-    for file in changed:
-        compliant, formatted, original = check_file(file, args.fix, args.verbose)
+    try:
+        for file in changed:
+            compliant, formatted, original = check_file(file, args.fix, args.verbose)
 
-        if not compliant:
-            last_line = len(original.splitlines()) or 1
-            fp = hashlib.md5(file.path.encode()).hexdigest()
+            if not compliant:
+                last_line = len(original.splitlines()) or 1
+                fp = hashlib.md5(file.path.encode()).hexdigest()
 
-            issues.append(
-                {
-                    "description": f"Formatting issue in modified lines: {file.path}",
-                    "check_name": "clang-format",
-                    "fingerprint": fp,
-                    "severity": "major",
-                    "location": {
-                        "path": file.path,
-                        "lines": {"begin": last_line},
-                    },
-                }
-            )
+                issues.append(
+                    {
+                        "description": f"Formatting issue in modified lines: {file.path}",
+                        "check_name": "clang-format",
+                        "fingerprint": fp,
+                        "severity": "major",
+                        "location": {
+                            "path": file.path,
+                            "lines": {"begin": last_line},
+                        },
+                    }
+                )
+    except ClangFormatError as error:
+        print(error, file=sys.stderr)
+        sys.exit(2)
 
     if not args.dry_run and len(args.report_path) > 0:
         with open(args.report_path, "w") as out:

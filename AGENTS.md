@@ -127,44 +127,50 @@ Report generated-file changes separately from hand-written source changes.
 
 ### `lint-and-format`
 
-CI uses clang-format 19.1.7 and clang-tidy 19.1.7. Use the project helpers so file
-selection and diagnostic handling match CI, and pass `--no-gitea` for local checks:
+CI uses the centrally configured Clang 22 toolchain. Use the shared-CI commands so file
+selection, tool binaries, ccache, and diagnostics match CI, and pass `--no-gitea` for local checks:
+After the shared repository is installed, it lives at `.gitea/ci`; set
+`CPP_CI_ROOT=.gitea` only while developing its source in this checkout.
 
 ```sh
-python3 .gitea/check_clang_format.py --base develop --no-gitea
-python3 .gitea/check_clang_tidy.py --base develop --build-dir build --fail-on error --no-gitea
+python3 "${CPP_CI_ROOT:-.gitea/ci}/bin/cpp-ci.py" format --config .ci/cpp-ci.json --base develop --no-gitea
+python3 "${CPP_CI_ROOT:-.gitea/ci}/bin/cpp-ci.py" tidy --config .ci/cpp-ci.json --base develop --no-gitea
 ```
 
 Apply formatting with:
 
 ```sh
-python3 .gitea/check_clang_format.py --base develop --fix --no-gitea
+python3 "${CPP_CI_ROOT:-.gitea/ci}/bin/cpp-ci.py" format --config .ci/cpp-ci.json --base develop --fix --no-gitea
 ```
 
 The branch-based helpers compare committed changes with `develop`. For uncommitted task
 changes or when that ref is unavailable, pass the exact changed C++ paths with `--files`
-instead. Point `--build-dir` at the directory whose `compile_commands.json` matches the
-active toolchain. The helper excludes `dependencies/`, `docs/`, `cmake/`, and `data/` from
-branch-based C++ analysis; do not widen that scope unless requested.
+instead. `tidy` configures its own isolated `build/ci/clang-tidy` directory. The helper
+excludes `dependencies/`, `docs/`, `cmake/`, `data/`, and `benchmarks/` from branch-based
+C++ analysis; do not widen that scope unless requested.
 
 ### `valgrind`
 
-Valgrind checks are Linux-only and require a Debug build, the `valgrind` executable, and
-the repository-root `valgrind.supp`. Build and run the CI-aligned unit-test wrapper:
+Valgrind checks are Linux-only and require a Clang Debug CI profile, the `valgrind`
+executable, and the repository-root `valgrind.supp`. Build and run the CI-aligned unit-test wrapper:
 
 ```sh
-cmake --build build --parallel --target Nexium_Tests
-python3 .gitea/check_valgrind.py --executable build/bin/Nexium_Tests --no-gitea --verbose
+python3 "${CPP_CI_ROOT:-.gitea/ci}/bin/cpp-ci.py" configure --config .ci/cpp-ci.json --profile clang-debug
+python3 "${CPP_CI_ROOT:-.gitea/ci}/bin/cpp-ci.py" build --config .ci/cpp-ci.json --profile clang-debug
+python3 "${CPP_CI_ROOT:-.gitea/ci}/bin/cpp-ci.py" valgrind --config .ci/cpp-ci.json --profile clang-debug --no-gitea
 ```
 
 Pass focused GoogleTest arguments after `--` only while investigating; run the full suite
 for final verification. The wrapper treats invalid accesses, uninitialized reads, definite
-leaks, test failures, and Valgrind startup failures as failures. CI also checks the game in
-a headless Xvfb environment with:
+leaks, test failures, and Valgrind startup failures as failures, and prints copyable
+suppression blocks for unsuppressed reports. CI can also check the game in a headless Xvfb
+environment with the generic runtime helper:
 
 ```sh
-python3 .gitea/run_game_valgrind.py \
-  --executable build/bin/TemplateGame --timeout 5 --no-gitea
+PYTHONPATH="${CPP_CI_ROOT:-.gitea/ci}" python3 -m cpp_ci.runtime run-under-valgrind \
+  --headless --expect-timeout --timeout 5 --suppression valgrind.supp \
+  --generate-suppressions --environment NEXIUM_HEADLESS_GL=1 -- \
+  build/ci/clang-debug/bin/TemplateGame
 ```
 
 ### `benchmark`

@@ -1,0 +1,19 @@
+# Copy this file into each consumer as .gitea/workflows/code-quality.yml.
+# Replace Vakon/cpp-ci and the immutable ref with the shared repository/tag.
+# The common CI repository must also be checked out as the .gitea/ci submodule.
+name: C++ Code Quality
+
+on:
+  pull_request:
+  push:
+    branches: [develop]
+  workflow_dispatch:
+
+jobs:
+  quality:
+    uses: Vakon/cpp-ci/.gitea/workflows/code-quality.yml@v1
+    with:
+      ci_root: .gitea/ci
+      project_config: .ci/cpp-ci.json
+    secrets:
+      GITEATOKEN: ${{ secrets.GITEATOKEN }}

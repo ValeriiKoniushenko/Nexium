@@ -11,6 +11,9 @@ Local/debug usage from your machine:
     python3 .gitea/check_clang_tidy.py --files src/foo.cpp --build-dir build --verbose
     python3 .gitea/check_clang_tidy.py --base develop --fail-on error   # only fail on 'error' level
     python3 .gitea/check_clang_tidy.py --base develop --dry-run         # don't write report / exit 1
+
+Persistent result cache:
+    python3 .gitea/check_clang_tidy.py --cache-dir /clang-tidy-cache
 """
 import argparse
 import concurrent.futures
@@ -20,10 +23,12 @@ import os
 import re
 import subprocess
 import sys
+import threading
 from dataclasses import dataclass
-from gitea_client import GiteaClient, review_marker
-from utils import (
+from .gitea_client import GiteaClient, review_marker
+from .diff import (
     ChangedFile,
+    DiffError,
     get_changed_files,
     get_cpp_analysis_targets,
     get_target_branch,
@@ -45,6 +50,14 @@ DIAG_RE = re.compile(
 )
 
 DEFAULT_MAX_JOBS = 4
+TIDY_CACHE_VERSION = 1
+HEADER_SUFFIXES = {".h", ".hpp"}
+CACHE_IGNORED_DIRECTORIES = {".git", "build", "dependencies"}
+
+
+def clang_tidy_command() -> str:
+    """Allow the common toolchain policy to select an exact binary."""
+    return os.environ.get("CPP_CI_CLANG_TIDY", "clang-tidy")
 
 
 @dataclass
@@ -54,15 +67,156 @@ class TidyResult:
     returncode: int
     stdout: str
     stderr: str
+    cache_hit: bool = False
+
+
+def sha256_file(path: str) -> str:
+    digest = hashlib.sha256()
+    with open(path, "rb") as source:
+        for chunk in iter(lambda: source.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def get_repository_root() -> str:
+    result = subprocess.run(
+        ["git", "rev-parse", "--show-toplevel"],
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode == 0:
+        return result.stdout.strip()
+    return os.getcwd()
+
+
+def get_project_headers_digest(repository_root: str) -> str:
+    """Return a content digest of project headers relevant to clang-tidy."""
+    digest = hashlib.sha256()
+    for directory, subdirectories, filenames in os.walk(repository_root):
+        subdirectories[:] = sorted(
+            name for name in subdirectories
+            if name not in CACHE_IGNORED_DIRECTORIES
+        )
+        for filename in sorted(filenames):
+            if os.path.splitext(filename)[1].lower() not in HEADER_SUFFIXES:
+                continue
+            path = os.path.join(directory, filename)
+            relative_path = os.path.relpath(path, repository_root).replace("\\", "/")
+            digest.update(relative_path.encode())
+            digest.update(sha256_file(path).encode())
+    return digest.hexdigest()
+
+
+def get_optional_file_digest(path: str) -> str:
+    return sha256_file(path) if os.path.isfile(path) else "missing"
+
+
+def get_compile_command_digest(build_dir: str, target: str) -> str:
+    """Return the compile command digest for one clang-tidy target."""
+    compile_commands_path = os.path.join(build_dir, "compile_commands.json")
+    digest = hashlib.sha256()
+    try:
+        with open(compile_commands_path) as source:
+            commands = json.load(source)
+    except (OSError, json.JSONDecodeError):
+        return "missing"
+
+    target_path = os.path.normcase(os.path.abspath(target))
+    for command in commands:
+        file_path = os.path.normcase(os.path.abspath(command["file"]))
+        if file_path != target_path:
+            continue
+        digest.update(command.get("directory", "").encode())
+        digest.update(command.get("command", "").encode())
+        digest.update("\0".join(command.get("arguments", [])).encode())
+        return digest.hexdigest()
+    return "missing"
+
+
+def get_clang_tidy_version() -> str:
+    result = subprocess.run(
+        [clang_tidy_command(), "--version"],
+        capture_output=True,
+        text=True,
+    )
+    return result.stdout if result.returncode == 0 else "unavailable"
+
+
+def get_submodule_state() -> str:
+    result = subprocess.run(
+        ["git", "submodule", "status", "--recursive"],
+        capture_output=True,
+        text=True,
+    )
+    return result.stdout if result.returncode == 0 else "unavailable"
+
+
+def make_cache_key(
+        path: str,
+        build_dir: str,
+        header_filter: str,
+        extra_args: list[str],
+        project_headers_digest: str,
+        clang_tidy_version: str,
+        submodule_state: str,
+        tidy_config_digest: str,
+) -> str:
+    payload = {
+        "version": TIDY_CACHE_VERSION,
+        "path": normalize_repo_path(path),
+        "source": sha256_file(path),
+        "compile_command": get_compile_command_digest(build_dir, path),
+        "header_filter": header_filter,
+        "extra_args": extra_args,
+        "project_headers": project_headers_digest,
+        "clang_tidy_version": clang_tidy_version,
+        "submodules": submodule_state,
+        "tidy_config": tidy_config_digest,
+    }
+    encoded_payload = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()
+    return hashlib.sha256(encoded_payload).hexdigest()
+
+
+def load_cached_result(cache_dir: str, cache_key: str, path: str) -> TidyResult | None:
+    cache_path = os.path.join(cache_dir, f"{cache_key}.json")
+    try:
+        with open(cache_path) as source:
+            data = json.load(source)
+    except (OSError, json.JSONDecodeError, KeyError, TypeError):
+        return None
+
+    return TidyResult(
+        path=path,
+        command=data["command"],
+        returncode=data["returncode"],
+        stdout=data["stdout"],
+        stderr=data["stderr"],
+        cache_hit=True,
+    )
+
+
+def save_cached_result(cache_dir: str, cache_key: str, result: TidyResult) -> None:
+    os.makedirs(cache_dir, exist_ok=True)
+    cache_path = os.path.join(cache_dir, f"{cache_key}.json")
+    temporary_path = f"{cache_path}.{os.getpid()}.{threading.get_ident()}.tmp"
+    data = {
+        "command": result.command,
+        "returncode": result.returncode,
+        "stdout": result.stdout,
+        "stderr": result.stderr,
+    }
+    with open(temporary_path, "w") as destination:
+        json.dump(data, destination)
+    os.replace(temporary_path, cache_path)
 
 
 def publish_inline_review(
-    client: GiteaClient,
-    issues: list[dict],
-    *,
-    failed: bool,
-    dry_run: bool,
-    verbose: bool,
+        client: GiteaClient,
+        issues: list[dict],
+        *,
+        failed: bool,
+        dry_run: bool,
+        verbose: bool,
 ) -> None:
     """Replace this check's previous review with the current diagnostics."""
     pr_number = GiteaClient.resolve_pr_number()
@@ -146,15 +300,22 @@ def make_changed_header_filter(changed: list[ChangedFile]) -> str:
 
 
 def run_clang_tidy(
-    path: str,
-    build_dir: str,
-    header_filter: str,
-    extra_args: list[str],
+        path: str,
+        build_dir: str,
+        header_filter: str,
+        extra_args: list[str],
+        cache_dir: str | None = None,
+        cache_key: str | None = None,
 ) -> TidyResult:
+    if cache_dir and cache_key:
+        cached_result = load_cached_result(cache_dir, cache_key, path)
+        if cached_result is not None:
+            return cached_result
+
     # NOTE: clang-tidy has no "-v" flag (that's a run-clang-tidy-ism) and the
     # target file must be a plain positional arg, not "-f <file>".
     cmd = [
-        "clang-tidy",
+        clang_tidy_command(),
         f"--header-filter={header_filter}",
         "-p",
         build_dir,
@@ -163,13 +324,20 @@ def run_clang_tidy(
     ]
 
     result = subprocess.run(cmd, capture_output=True, text=True)
-    return TidyResult(path, cmd, result.returncode, result.stdout, result.stderr)
+    tidy_result = TidyResult(path, cmd, result.returncode, result.stdout, result.stderr)
+    if cache_dir and cache_key and result.returncode == 0:
+        save_cached_result(cache_dir, cache_key, tidy_result)
+    return tidy_result
 
 
-def main():
+def main(*, excluded_paths: tuple[str, ...] = ()) -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--base", help="branch/ref to diff against (default: CI var or 'main')")
     parser.add_argument("--files", nargs="+", help="explicit list of files to check, skips git diff")
+    parser.add_argument("--exclude", action="append", default=[],
+                        help="repository-relative path prefix to exclude; can be repeated")
+    parser.add_argument("--extension", action="append", default=[],
+                        help="C/C++ extension to analyse; can be repeated")
     parser.add_argument("--build-dir", default="build", help="compile_commands.json directory (default: build)")
     parser.add_argument("--header-filter",
                         help="clang-tidy --header-filter value (default: changed headers only)")
@@ -185,17 +353,33 @@ def main():
                         help="output path for codequality report")
     parser.add_argument("--no-gitea", action="store_true",
                         help="skip Gitea review / check API calls")
+    parser.add_argument("--cache-dir",
+                        help="persistent clang-tidy result cache directory (disabled by default)")
     args = parser.parse_args()
 
     if not os.path.isdir(args.build_dir):
-        print(f"[error] build dir '{args.build_dir}' not found. Run cmake configure first, or pass --build-dir.", file=sys.stderr)
+        print(f"[error] build dir '{args.build_dir}' not found. Run cmake configure first, or pass --build-dir.",
+              file=sys.stderr)
         sys.exit(2)
 
     if args.jobs < 0:
         parser.error("--jobs must be zero (auto) or a positive integer")
 
+    if args.cache_dir:
+        args.cache_dir = os.path.abspath(args.cache_dir)
+
     base_ref = get_target_branch(args.base)
-    changed = get_changed_files(base_ref, args.files, args.verbose)
+    try:
+        changed = get_changed_files(
+            base_ref,
+            args.files,
+            args.verbose,
+            excluded_paths=(*excluded_paths, *args.exclude),
+            extensions=args.extension or None,
+        )
+    except DiffError as error:
+        print(f"[error] {error}", file=sys.stderr)
+        sys.exit(2)
     analysis_targets = get_cpp_analysis_targets(changed)
     header_filter = args.header_filter
     if header_filter is None:
@@ -225,6 +409,29 @@ def main():
         elif args.verbose:
             print(f"[debug] skipping missing file: {target}")
 
+    cache_keys: dict[str, str] = {}
+    if args.cache_dir and existing_targets:
+        repository_root = get_repository_root()
+        project_headers_digest = get_project_headers_digest(repository_root)
+        clang_tidy_version = get_clang_tidy_version()
+        submodule_state = get_submodule_state()
+        tidy_config_digest = get_optional_file_digest(
+            os.path.join(repository_root, ".clang-tidy")
+        )
+        cache_keys = {
+            target: make_cache_key(
+                target,
+                args.build_dir,
+                header_filter,
+                args.extra_arg,
+                project_headers_digest,
+                clang_tidy_version,
+                submodule_state,
+                tidy_config_digest,
+            )
+            for target in existing_targets
+        }
+
     if existing_targets:
         with concurrent.futures.ThreadPoolExecutor(max_workers=job_count) as executor:
             futures = [
@@ -234,12 +441,19 @@ def main():
                     args.build_dir,
                     header_filter,
                     args.extra_arg,
+                    args.cache_dir,
+                    cache_keys.get(target),
                 )
                 for target in existing_targets
             ]
             tidy_results = [future.result() for future in futures]
     else:
         tidy_results = []
+
+    if args.cache_dir:
+        cache_hits = sum(result.cache_hit for result in tidy_results)
+        cache_misses = len(tidy_results) - cache_hits
+        print(f"[cache] clang-tidy hits: {cache_hits}, misses: {cache_misses}")
 
     changed_by_path = {
         normalize_repo_path(changed_file.path): changed_file
@@ -278,6 +492,8 @@ def main():
                 continue
 
             check = m.group("check") or "clang-tidy"
+            if check == "clang-diagnostic-error":
+                continue
 
             fp_src = f"{diagnostic_path}:{line_no}:{m.group('col')}:{check}"
             fp = hashlib.md5(fp_src.encode()).hexdigest()
@@ -286,7 +502,9 @@ def main():
             seen_fingerprints.add(fp)
 
             is_error = ""
-            if level_rank[m.group("level")] >= fail_threshold and check != "clang-diagnostic-error":
+            if level_rank[m.group("level")] >= fail_threshold:
+                if args.verbose:
+                    print(f"[debug] failing on level: {m.group('level')}")
                 is_error = "❗️**ERROR:**"
                 should_fail = True
 

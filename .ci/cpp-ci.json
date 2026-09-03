@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "project_id": "nexium",
+  "base_ref": "develop",
+  "parallelism": {
+    "build_job_divisor": 5
+  },
+  "cmake": {
+    "arguments": [],
+    "prepare_targets": ["CodeGenerator"]
+  },
+  "analysis": {
+    "excluded_paths": ["dependencies/", "docs/", "cmake/", "data/", "benchmarks/"],
+    "clang_tidy_fail_on": "error"
+  },
+  "unit_tests": {
+    "target": "Nexium_Tests",
+    "command": ["{build_dir}/bin/Nexium_Tests"]
+  },
+  "valgrind": {
+    "suppressions": ["valgrind.supp"],
+    "generate_suppressions": true
+  },
+  "artifacts": {
+    "paths": [
+      "{build_dir}/bin/Nexium_Tests",
+      "{build_dir}/bin/TemplateGame"
+    ]
+  },
+  "runtime": {
+    "enabled": true,
+    "variant": "clang-debug",
+    "command": ["{build_dir}/bin/TemplateGame"],
+    "environment": ["NEXIUM_HEADLESS_GL=1"],
+    "capture_warmup_seconds": 5,
+    "valgrind_timeout_seconds": 5
+  }
+}

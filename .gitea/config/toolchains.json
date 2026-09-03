@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "base_ref": "main",
+  "tools": {
+    "ccache": "ccache",
+    "clang_format": "clang-format-22",
+    "clang_tidy": "clang-tidy-22",
+    "valgrind": "valgrind",
+    "toolchains": {
+      "clang": {
+        "c": "clang-22",
+        "cxx": "clang++-22"
+      },
+      "gcc": {
+        "c": "gcc-14",
+        "cxx": "g++-14"
+      }
+    }
+  },
+  "cmake": {
+    "command": "cmake",
+    "generator": "Ninja",
+    "source_dir": ".",
+    "build_root": "build/ci",
+    "arguments": [],
+    "profile_arguments": {},
+    "prepare_targets": []
+  },
+  "parallelism": {
+    "build_job_divisor": 4,
+    "clang_tidy_jobs": 4
+  },
+  "analysis": {
+    "excluded_paths": [],
+    "extensions": [".c", ".cc", ".cpp", ".cxx", ".h", ".hh", ".hpp", ".hxx"],
+    "clang_tidy_fail_on": "error"
+  },
+  "unit_tests": {
+    "target": "",
+    "command": []
+  },
+  "valgrind": {
+    "enabled": true,
+    "variant": "clang-debug",
+    "suppressions": [],
+    "generate_suppressions": true
+  },
+  "artifacts": {
+    "paths": []
+  },
+  "runtime": {
+    "enabled": false,
+    "variant": "clang-debug",
+    "command": [],
+    "environment": [],
+    "capture_warmup_seconds": 5,
+    "valgrind_timeout_seconds": 5
+  }
+}

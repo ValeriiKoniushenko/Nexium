@@ -10,13 +10,18 @@ import subprocess
 import sys
 from dataclasses import dataclass
 
-from gitea_client import GiteaClient, review_marker
+from .gitea_client import GiteaClient, review_marker
 
 
 VALGRIND_ERROR_EXIT_CODE = 42
 MAX_REVIEW_OUTPUT_CHARS = 8_000
 ERROR_SUMMARY_RE = re.compile(r"ERROR SUMMARY: (?P<count>\d+) errors?")
 DEFINITE_LEAK_RE = re.compile(r"definitely lost: (?P<bytes>[\d,]+) bytes")
+
+
+def valgrind_command() -> str:
+    """Allow the shared toolchain configuration to select Valgrind."""
+    return os.environ.get("CPP_CI_VALGRIND", "valgrind")
 
 
 @dataclass
@@ -41,17 +46,21 @@ class ValgrindResult:
         return "failure" if self.failed else "success"
 
 
-def run_valgrind(executable: str, test_args: list[str]) -> ValgrindResult:
+def run_valgrind(
+        executable: str,
+        test_args: list[str],
+        suppressions: list[str] | tuple[str, ...] = (),
+        *,
+        generate_suppressions: bool = False,
+) -> ValgrindResult:
     command = [
-        "valgrind",
+        valgrind_command(),
         "--leak-check=full",
         "--show-leak-kinds=definite",
         "--errors-for-leak-kinds=definite",
         "--track-origins=yes",
-        # Emit a copyable block for every unsuppressed finding. This output is
-        # included in the CI job log and failure review to aid triage.
-        "--gen-suppressions=all",
-        "--suppressions=valgrind.supp",
+        *( ["--gen-suppressions=all"] if generate_suppressions else [] ),
+        *(f"--suppressions={suppression}" for suppression in suppressions),
         f"--error-exitcode={VALGRIND_ERROR_EXIT_CODE}",
         executable,
         *test_args,
@@ -178,12 +187,16 @@ def publish_result(
             print(f"[gitea] failed to publish check: {error}", file=sys.stderr)
 
 
-def main() -> None:
+def main(
+        *,
+        default_executable: str = "build/bin/Tests",
+        suppressions: str | list[str] | tuple[str, ...] | None = None,
+) -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--executable",
-        default="build/bin/Nexium_Tests",
-        help="test executable to run (default: build/bin/Nexium_Tests)",
+        default=default_executable,
+        help=f"test executable to run (default: {default_executable})",
     )
     parser.add_argument(
         "--dry-run",
@@ -197,21 +210,50 @@ def main() -> None:
     )
     parser.add_argument("--verbose", "-v", action="store_true")
     parser.add_argument(
+        "--suppression",
+        action="append",
+        default=[],
+        help="Valgrind suppression file; can be repeated",
+    )
+    parser.add_argument(
+        "--generate-suppressions",
+        action="store_true",
+        help="include copyable suppression blocks for every unsuppressed finding",
+    )
+    parser.add_argument(
         "test_args",
         nargs=argparse.REMAINDER,
         help="arguments passed to the test executable after '--'",
     )
     args = parser.parse_args()
 
+    default_suppressions: list[str]
+    if suppressions is None:
+        default_suppressions = []
+    elif isinstance(suppressions, str):
+        default_suppressions = [suppressions]
+    else:
+        default_suppressions = list(suppressions)
+    all_suppressions = [*default_suppressions, *args.suppression]
+
     if not os.path.isfile(args.executable):
         print(f"[error] test executable not found: {args.executable}", file=sys.stderr)
         sys.exit(2)
+    for suppression in all_suppressions:
+        if not os.path.isfile(suppression):
+            print(f"[error] Valgrind suppression file not found: {suppression}", file=sys.stderr)
+            sys.exit(2)
 
     test_args = args.test_args
     if test_args and test_args[0] == "--":
         test_args = test_args[1:]
 
-    result = run_valgrind(args.executable, test_args)
+    result = run_valgrind(
+        args.executable,
+        test_args,
+        all_suppressions,
+        generate_suppressions=args.generate_suppressions,
+    )
 
     if args.verbose:
         print(f"[debug] running: {' '.join(result.command)}")

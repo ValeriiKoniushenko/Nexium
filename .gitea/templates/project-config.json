@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "project_id": "replace-me",
+  "base_ref": "develop",
+  "cmake": {
+    "arguments": [],
+    "profile_arguments": {},
+    "prepare_targets": []
+  },
+  "analysis": {
+    "excluded_paths": ["dependencies/", "docs/", "cmake/", "data/"],
+    "clang_tidy_fail_on": "error"
+  },
+  "unit_tests": {
+    "target": "ProjectTests",
+    "command": ["{build_dir}/bin/ProjectTests"]
+  },
+  "valgrind": {
+    "suppressions": ["valgrind.supp"],
+    "generate_suppressions": true
+  },
+  "artifacts": {
+    "paths": ["{build_dir}/bin/ProjectTests"]
+  },
+  "runtime": {
+    "enabled": false
+  }
+}

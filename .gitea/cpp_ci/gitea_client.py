@@ -4,14 +4,13 @@
 from __future__ import annotations
 
 import json
+import mimetypes
 import os
 import sys
 import urllib.error
-import urllib.parse
 import urllib.request
 import uuid
 from typing import Any
-
 
 # Embedded in review bodies so CI jobs can replace only their own annotations.
 REVIEW_MARKER = "<!-- ci:clang-format -->"
@@ -20,6 +19,7 @@ REVIEW_MARKER = "<!-- ci:clang-format -->"
 def review_marker(check_name: str) -> str:
     """Return the marker used to identify reviews created by a CI check."""
     return f"<!-- ci:{check_name} -->"
+
 
 # Env vars probed for the API token, in priority order.
 _TOKEN_ENV_KEYS = (
@@ -30,12 +30,15 @@ _TOKEN_ENV_KEYS = (
 
 
 def _token_preview(token: str, *, head: int = 4, tail: int = 2) -> str:
-    """Return a safe redacted preview of a secret token."""
+    """Describe a secret without exposing any of its characters.
+
+    Secret masking normally knows the complete value only.  Logging a prefix or
+    suffix can therefore leak it, so shared CI must never print token fragments.
+    """
     if not token:
         return "<empty>"
-    if len(token) <= head + tail + 3:
-        return f"{token[:1]}…({len(token)} chars)"
-    return f"{token[:head]}…{token[-tail:]} (len={len(token)})"
+    del head, tail
+    return f"<redacted; {len(token)} chars>"
 
 
 def _looks_quoted(value: str) -> bool:
@@ -46,15 +49,15 @@ class GiteaClient:
     """Thin wrapper around the Gitea REST API used by CI scripts."""
 
     def __init__(
-        self,
-        server: str,
-        token: str,
-        owner: str,
-        repo: str,
-        *,
-        verbose: bool = False,
-        auth_scheme: str | None = None,
-        token_source: str = "unknown",
+            self,
+            server: str,
+            token: str,
+            owner: str,
+            repo: str,
+            *,
+            verbose: bool = False,
+            auth_scheme: str | None = None,
+            token_source: str = "unknown",
     ) -> None:
         self.server = server.rstrip("/")
         self.token = token.strip()
@@ -225,8 +228,8 @@ class GiteaClient:
     def resolve_pr_number() -> int | None:
         """Read the pull-request index from the Actions event payload."""
         event_path = (
-            os.environ.get("GITEA_EVENT_PATH")
-            or os.environ.get("GITHUB_EVENT_PATH")
+                os.environ.get("GITEA_EVENT_PATH")
+                or os.environ.get("GITHUB_EVENT_PATH")
         )
         if not event_path:
             print("[gitea] PR number: no GITEA/GITHUB_EVENT_PATH set", file=sys.stderr)
@@ -246,10 +249,10 @@ class GiteaClient:
             number = event.get("pull_request", {}).get("number")
 
         event_name = (
-            os.environ.get("GITEA_EVENT_NAME")
-            or os.environ.get("GITHUB_EVENT_NAME")
-            or event.get("action")
-            or "?"
+                os.environ.get("GITEA_EVENT_NAME")
+                or os.environ.get("GITHUB_EVENT_NAME")
+                or event.get("action")
+                or "?"
         )
         if number is None:
             print(
@@ -294,11 +297,11 @@ class GiteaClient:
         return ["token", "Bearer"]
 
     def _do_request(
-        self,
-        method: str,
-        path: str,
-        payload: dict[str, Any] | None,
-        scheme: str,
+            self,
+            method: str,
+            path: str,
+            payload: dict[str, Any] | None,
+            scheme: str,
     ) -> Any:
         url = f"{self.server}/api/v1{path}"
         data = None if payload is None else json.dumps(payload).encode()
@@ -331,17 +334,18 @@ class GiteaClient:
             return json.loads(body)
 
     def _do_multipart_request(
-        self,
-        method: str,
-        path: str,
-        *,
-        field_name: str,
-        file_path: str,
-        file_name: str,
-        scheme: str,
+            self,
+            method: str,
+            path: str,
+            *,
+            field_name: str,
+            file_path: str,
+            file_name: str,
+            content_type: str,
+            scheme: str,
     ) -> Any:
         """Send one file as a multipart/form-data API request."""
-        boundary = f"----NexiumGitea{uuid.uuid4().hex}"
+        boundary = f"----CppCiGitea{uuid.uuid4().hex}"
         with open(file_path, "rb") as attachment_file:
             attachment = attachment_file.read()
 
@@ -353,7 +357,7 @@ class GiteaClient:
                     f'Content-Disposition: form-data; name="{field_name}"; '
                     f'filename="{escaped_name}"\r\n'
                 ).encode(),
-                b"Content-Type: image/png\r\n\r\n",
+                f"Content-Type: {content_type}\r\n\r\n".encode(),
                 attachment,
                 f"\r\n--{boundary}--\r\n".encode(),
             )
@@ -436,10 +440,10 @@ class GiteaClient:
         raise RuntimeError("gitea authentication failed")
 
     def _request(
-        self,
-        method: str,
-        path: str,
-        payload: dict[str, Any] | None = None,
+            self,
+            method: str,
+            path: str,
+            payload: dict[str, Any] | None = None,
     ) -> Any:
         self._resolve_auth()
         assert self.auth_scheme
@@ -457,13 +461,14 @@ class GiteaClient:
             raise
 
     def _multipart_request(
-        self,
-        method: str,
-        path: str,
-        *,
-        field_name: str,
-        file_path: str,
-        file_name: str,
+            self,
+            method: str,
+            path: str,
+            *,
+            field_name: str,
+            file_path: str,
+            file_name: str,
+            content_type: str | None = None,
     ) -> Any:
         self._resolve_auth()
         assert self.auth_scheme
@@ -474,6 +479,11 @@ class GiteaClient:
                 field_name=field_name,
                 file_path=file_path,
                 file_name=file_name,
+                content_type=(
+                    content_type
+                    or mimetypes.guess_type(file_name)[0]
+                    or "application/octet-stream"
+                ),
                 scheme=self.auth_scheme,
             )
         except urllib.error.HTTPError as e:
@@ -500,13 +510,13 @@ class GiteaClient:
         return self._user_id
 
     def publish_check(
-        self,
-        sha: str,
-        state: str,
-        context: str,
-        description: str,
-        *,
-        target_url: str = "",
+            self,
+            sha: str,
+            state: str,
+            context: str,
+            description: str,
+            *,
+            target_url: str = "",
     ) -> None:
         """Create a commit status (shown next to the commit / PR checks).
 
@@ -531,23 +541,24 @@ class GiteaClient:
         )
 
     def upload_issue_attachment(
-        self,
-        issue_number: int,
-        file_path: str,
-        *,
-        name: str,
+            self,
+            issue_number: int,
+            file_path: str,
+            *,
+            name: str,
+            content_type: str | None = None,
     ) -> dict[str, Any]:
         """Upload an attachment to an issue or pull request."""
         if not os.path.isfile(file_path):
             raise FileNotFoundError(f"attachment does not exist: {file_path}")
 
-        encoded_name = urllib.parse.quote(name, safe="")
         result = self._multipart_request(
             "POST",
-            f"/repos/{self.owner}/{self.repo}/issues/{issue_number}/assets?name={encoded_name}",
+            f"/repos/{self.owner}/{self.repo}/issues/{issue_number}/assets",
             field_name="attachment",
             file_path=file_path,
             file_name=name,
+            content_type=content_type,
         )
         if not isinstance(result, dict) or not result.get("browser_download_url"):
             raise RuntimeError(f"unexpected attachment response: {result!r}")
@@ -581,12 +592,12 @@ class GiteaClient:
         return removed
 
     def add_review_comment(
-        self,
-        path: str,
-        body: str,
-        *,
-        new_position: int,
-        old_position: int = 0,
+            self,
+            path: str,
+            body: str,
+            *,
+            new_position: int,
+            old_position: int = 0,
     ) -> dict[str, Any]:
         """Queue an inline (Files Changed) review comment.
 
@@ -608,14 +619,14 @@ class GiteaClient:
         return comment
 
     def create_review(
-        self,
-        pr_number: int,
-        body: str,
-        *,
-        event: str = "COMMENT",
-        commit_id: str = "",
-        comments: list[dict[str, Any]] | None = None,
-        marker: str = REVIEW_MARKER,
+            self,
+            pr_number: int,
+            body: str,
+            *,
+            event: str = "COMMENT",
+            commit_id: str = "",
+            comments: list[dict[str, Any]] | None = None,
+            marker: str = REVIEW_MARKER,
     ) -> dict[str, Any] | None:
         """Submit a pull-request review, optionally with inline comments.
 
@@ -667,10 +678,10 @@ class GiteaClient:
         return result
 
     def dismiss_previous_reviews(
-        self,
-        pr_number: int,
-        *,
-        marker: str = REVIEW_MARKER,
+            self,
+            pr_number: int,
+            *,
+            marker: str = REVIEW_MARKER,
     ) -> int:
         """Delete previous CI reviews (and their inline comments) for this PR.
 

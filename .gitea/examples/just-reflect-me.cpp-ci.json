@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "project_id": "just-reflect-me",
+  "base_ref": "develop",
+  "parallelism": {
+    "build_job_divisor": 5
+  },
+  "cmake": {
+    "arguments": ["-DJRM_DISABLE_TESTS=OFF"]
+  },
+  "analysis": {
+    "excluded_paths": ["dependencies/", "docs/", "cmake/", "benchmarks/"],
+    "clang_tidy_fail_on": "error"
+  },
+  "unit_tests": {
+    "target": "JRMTests",
+    "command": ["{build_dir}/bin/JRMTests"]
+  },
+  "valgrind": {
+    "suppressions": [],
+    "generate_suppressions": true
+  },
+  "artifacts": {
+    "paths": ["{build_dir}/bin/JRMTests"]
+  }
+}
