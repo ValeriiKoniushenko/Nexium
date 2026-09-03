@@ -2,10 +2,12 @@
     "cmake.configureOnOpen": false,
     "files.watcherExclude": {
         "**/build/**": true,
-        "**/cmake-build-*/**": true
+        "**/cmake-build-*/**": true,
+        "**/dependencies/**": true
     },
     "search.exclude": {
         "**/build/**": true,
-        "**/cmake-build-*/**": true
+        "**/cmake-build-*/**": true,
+        "**/dependencies/**": true
     }
 }
