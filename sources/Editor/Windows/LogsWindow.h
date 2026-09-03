@@ -110,7 +110,7 @@ namespace Core
         float _lastScrollPercent = 0.f;
 
         bool _needScroll = false;
-        std::vector<LogLine> _logs;
+        std::deque<LogLine> _logs;
     };
 } // namespace Core
 

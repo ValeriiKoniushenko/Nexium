@@ -99,6 +99,11 @@ namespace Core
         l.message = std::move(log);
         l.level = level;
         _logs.push_back(std::move(l));
+
+        if (_logs.size() > _logLimit)
+        {
+            _logs.pop_front();
+        }
     }
 
     void LogsWindowEWC::clearLogs()
