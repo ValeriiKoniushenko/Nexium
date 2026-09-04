@@ -19,7 +19,7 @@ COMMON_ROOT = Path(__file__).resolve().parents[1]
 if str(COMMON_ROOT) not in sys.path:
     sys.path.insert(0, str(COMMON_ROOT))
 
-from cpp_ci import artifacts, cmake, submodules  # noqa: E402
+from cpp_ci import artifacts, cleanup, cmake, submodules  # noqa: E402
 from cpp_ci.config import BuildProfile, ConfigurationError, load_project_configuration  # noqa: E402
 from cpp_ci.diff import DiffError, prepare_base_ref  # noqa: E402
 
@@ -208,6 +208,21 @@ def submodules_command(args: argparse.Namespace) -> None:
     )
 
 
+def cleanup_command(args: argparse.Namespace) -> None:
+    """Remove annotations produced by earlier runs of this CI workflow."""
+    del args
+    cleanup.main(
+        review_contexts=(
+            "clang-format",
+            "clang-tidy",
+            "valgrind",
+            "unit-tests",
+            "code-coverage",
+        ),
+        attachment_prefixes=("ci-code-coverage",),
+    )
+
+
 def _runtime_command(config, profile: BuildProfile, *, if_enabled: bool = False) -> list[str] | None:
     runtime = config.data["runtime"]
     if not runtime["enabled"]:
@@ -386,6 +401,11 @@ def parser() -> argparse.ArgumentParser:
         help="parallel submodule update work, including cached worktree checkout",
     )
     submodule_prepare.set_defaults(handler=submodules_command)
+
+    cleanup_reviews = commands.add_parser(
+        "cleanup", help="remove prior CI review comments from the current pull request"
+    )
+    cleanup_reviews.set_defaults(handler=cleanup_command)
 
     capture = commands.add_parser("runtime-capture", help="capture a configured optional application under Xvfb")
     _add_config_argument(capture)

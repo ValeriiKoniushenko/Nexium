@@ -16,14 +16,14 @@ clang-format
     |
 clang Debug / clang Release / gcc Debug / gcc Release
     |
-unit tests for all four compiler/configuration variants
-    |
-clang-tidy (reuses the clang Debug compilation database)
-    |
-Valgrind unit tests (clang Debug runtime artifact)
-        |
-optional configured application capture + Valgrind (clang Debug)
+unit tests for all four variants / clang-tidy / Valgrind unit tests /
+optional configured application capture + application Valgrind
 ```
+
+Every item in the final line is an independent job. A failed unit-test job
+does not skip clang-tidy, Valgrind, or either optional application check; they
+all consume the completed build artifacts directly. clang-tidy, Valgrind, and
+the optional checks use the Clang Debug artifacts where applicable.
 
 Every profile has a fresh, job-local directory:
 
@@ -35,8 +35,8 @@ build/ci/gcc-release
 ```
 
 The Clang Debug job additionally uploads its small `compile_commands.json`
-artifact. The later clang-tidy job restores and relocates that database into
-its own checkout, so it uses the exact completed Clang Debug configuration
+artifact. The parallel clang-tidy job restores and relocates that database
+into its own checkout, so it uses the exact completed Clang Debug configuration
 without transferring a CMake/Ninja tree or configuring a fifth build.
 
 There is intentionally no persistent CMake/Ninja build-tree mount.  Those

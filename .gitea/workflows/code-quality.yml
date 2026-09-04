@@ -58,6 +58,14 @@ jobs:
             git submodule update --init --depth 1 -- "$ci_root"
           fi
 
+      - name: Remove previous CI pull-request comments
+        env:
+          GITEATOKEN: ${{ secrets.GITEATOKEN }}
+          GITEA_TOKEN: ${{ secrets.GITEATOKEN }}
+        run: |
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          python3 "$ci_root/bin/cpp-ci.py" cleanup
+
       - name: Check changed C/C++ formatting
         env:
           GITEATOKEN: ${{ secrets.GITEATOKEN }}
@@ -477,7 +485,7 @@ jobs:
 
   clang-tidy:
     name: "[lint] clang-tidy"
-    needs: [unit-test-clang-debug, unit-test-clang-release, unit-test-gcc-debug, unit-test-gcc-release]
+    needs: [build-clang-debug, build-clang-release, build-gcc-debug, build-gcc-release]
     runs-on: linux
     container:
       image: cpp-ci:latest
@@ -532,7 +540,7 @@ jobs:
 
   valgrind:
     name: "[test] Valgrind / clang Debug"
-    needs: clang-tidy
+    needs: [build-clang-debug, build-clang-release, build-gcc-debug, build-gcc-release]
     runs-on: linux
     container:
       image: cpp-ci:latest
@@ -574,7 +582,7 @@ jobs:
 
   runtime-capture:
     name: "[ui] configured application capture / clang Debug"
-    needs: valgrind
+    needs: [build-clang-debug, build-clang-release, build-gcc-debug, build-gcc-release]
     runs-on: linux
     container:
       image: cpp-ci:latest
@@ -622,7 +630,7 @@ jobs:
 
   runtime-valgrind:
     name: "[test] configured application Valgrind / clang Debug"
-    needs: valgrind
+    needs: [build-clang-debug, build-clang-release, build-gcc-debug, build-gcc-release]
     runs-on: linux
     container:
       image: cpp-ci:latest
