@@ -70,6 +70,9 @@ jobs:
   build-clang-debug:
     name: "[build] clang Debug"
     needs: clang-format
+    # Formatting is an independent quality gate: report its failure, but do not
+    # prevent the compiler/test feedback from being collected.
+    if: ${{ always() }}
     runs-on: linux
     container:
       image: cpp-ci:latest
@@ -142,6 +145,7 @@ jobs:
   build-clang-release:
     name: "[build] clang Release"
     needs: clang-format
+    if: ${{ always() }}
     runs-on: linux
     container:
       image: cpp-ci:latest
@@ -200,6 +204,7 @@ jobs:
   build-gcc-debug:
     name: "[build] gcc Debug"
     needs: clang-format
+    if: ${{ always() }}
     runs-on: linux
     container:
       image: cpp-ci:latest
@@ -258,6 +263,7 @@ jobs:
   build-gcc-release:
     name: "[build] gcc Release"
     needs: clang-format
+    if: ${{ always() }}
     runs-on: linux
     container:
       image: cpp-ci:latest
