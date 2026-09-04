@@ -42,6 +42,23 @@ and nested-submodule lock failures.  The only persistent compilation cache is
 unconditionally supplies both C and C++ ccache launchers, and each build
 prints ccache statistics.
 
+The clang-tidy and build jobs also mount a persistent Git metadata cache at
+`/submodule-cache`.  It stores a project-scoped copy of `.git/modules`, never
+a worktree or a CMake build directory.  A job whose pinned submodule graph
+matches the cache copies that metadata locally and checks out without network
+access.  When a pin changes, one locked job uses the previous metadata as a
+starting point, fetches only what is missing, and atomically refreshes the
+cache; concurrent jobs then use the refreshed copy.  This preserves the exact
+gitlinks committed by the consumer project—there is no periodic
+`git submodule update --remote` policy and no stale third-party dependency
+state.
+
+The runner must allow and persist the host bind mount
+`/srv/ci-cache/cpp-ci-submodules:/submodule-cache` (including the matching
+`valid_volumes` entry when act_runner uses an allowlist).  Keep the host cache
+root private to trusted CI jobs.  The helper hashes the consumer repository
+identity, so projects sharing this mount receive separate cache directories.
+
 ## Consumer layout
 
 After this directory is made into its own repository, add it as a submodule at

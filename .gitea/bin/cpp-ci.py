@@ -19,7 +19,7 @@ COMMON_ROOT = Path(__file__).resolve().parents[1]
 if str(COMMON_ROOT) not in sys.path:
     sys.path.insert(0, str(COMMON_ROOT))
 
-from cpp_ci import artifacts, cmake  # noqa: E402
+from cpp_ci import artifacts, cmake, submodules  # noqa: E402
 from cpp_ci.config import BuildProfile, ConfigurationError, load_project_configuration  # noqa: E402
 from cpp_ci.diff import DiffError, prepare_base_ref  # noqa: E402
 
@@ -178,6 +178,14 @@ def artifact_restore_command(args: argparse.Namespace) -> None:
     artifacts.restore(config, profile, archive=archive)
 
 
+def submodules_command(args: argparse.Namespace) -> None:
+    submodules.prepare(
+        Path.cwd(),
+        cache_root=Path(args.cache_root),
+        cache_namespace=args.cache_namespace,
+    )
+
+
 def _runtime_command(config, profile: BuildProfile, *, if_enabled: bool = False) -> list[str] | None:
     runtime = config.data["runtime"]
     if not runtime["enabled"]:
@@ -316,6 +324,21 @@ def parser() -> argparse.ArgumentParser:
     restore.add_argument("--archive", help="path of the downloaded archive")
     restore.set_defaults(handler=artifact_restore_command)
 
+    submodule_prepare = commands.add_parser(
+        "submodules", help="restore or refresh the persistent pinned-submodule metadata cache"
+    )
+    submodule_prepare.add_argument(
+        "--cache-root",
+        default=os.environ.get("CPP_CI_SUBMODULE_CACHE_ROOT", "/submodule-cache"),
+        help="persistent directory mounted by the CI runner",
+    )
+    submodule_prepare.add_argument(
+        "--cache-namespace",
+        default=os.environ.get("GITHUB_REPOSITORY"),
+        help="repository identity used to isolate cache entries",
+    )
+    submodule_prepare.set_defaults(handler=submodules_command)
+
     capture = commands.add_parser("runtime-capture", help="capture a configured optional application under Xvfb")
     _add_config_argument(capture)
     _add_profile_argument(capture, required=False)
@@ -342,7 +365,7 @@ def main() -> None:
     args = parser().parse_args()
     try:
         args.handler(args)
-    except (ConfigurationError, DiffError, OSError, subprocess.CalledProcessError) as error:
+    except (ConfigurationError, DiffError, OSError, submodules.SubmoduleCacheError, subprocess.CalledProcessError) as error:
         print(f"[cpp-ci] {error}", file=sys.stderr)
         raise SystemExit(error.returncode if isinstance(error, subprocess.CalledProcessError) else 2)
 

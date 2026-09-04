@@ -24,8 +24,9 @@ on:
       GITEATOKEN:
         required: false
 
-# No checkout or CMake/Ninja directory is shared between jobs.  ccache is the
-# only persistent compiler cache; it is designed for concurrent clients.
+# No checkout or CMake/Ninja directory is shared between jobs.  ccache and the
+# copied Git submodule metadata cache are persistent; each job still owns its
+# own worktrees and Git configuration.
 concurrency:
   group: cpp-ci-${{ gitea.repository }}
   cancel-in-progress: false
@@ -33,6 +34,7 @@ concurrency:
 env:
   CPP_CI_ROOT: ${{ inputs.ci_root }}
   CPP_CI_CONFIG: ${{ inputs.project_config }}
+  CPP_CI_SUBMODULE_CACHE_ROOT: /submodule-cache
 
 jobs:
   clang-format:
@@ -75,6 +77,7 @@ jobs:
       volumes:
         - /srv/ci-cache/ccache:/ccache
         - /srv/ci-cache/cpp-ci-tidy:/clang-tidy-cache
+        - /srv/ci-cache/cpp-ci-submodules:/submodule-cache
     env:
       CCACHE_DIR: /ccache
     timeout-minutes: 35
@@ -85,12 +88,21 @@ jobs:
           fetch-depth: 0
           submodules: false
 
-      # CMake configuration needs every dependency, including nested pinned
-      # submodules.  A shallow fetch still checks out each recorded revision.
-      - name: Initialize pinned build submodules
+      - name: Initialize shared CI module when necessary
         run: |
-          git submodule sync --recursive
-          git submodule update --init --recursive --depth 1
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          if [ ! -f "$ci_root/bin/cpp-ci.py" ]; then
+            git submodule sync -- "$ci_root"
+            git submodule update --init --depth 1 -- "$ci_root"
+          fi
+
+      # The cache has only Git metadata.  Its contents are copied into this
+      # job before Git creates private worktrees for the pinned dependencies.
+      - name: Restore pinned build submodules from cache
+        run: |
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          python3 "$ci_root/bin/cpp-ci.py" submodules \
+            --cache-root "${CPP_CI_SUBMODULE_CACHE_ROOT:-/submodule-cache}"
 
       - name: Configure and check changed C/C++ with clang-tidy
         env:
@@ -120,6 +132,7 @@ jobs:
       image: cpp-ci:latest
       volumes:
         - /srv/ci-cache/ccache:/ccache
+        - /srv/ci-cache/cpp-ci-submodules:/submodule-cache
     env:
       CCACHE_DIR: /ccache
     timeout-minutes: 40
@@ -129,12 +142,21 @@ jobs:
         with:
           submodules: false
 
-      # CMake configuration needs every dependency, including nested pinned
-      # submodules.  A shallow fetch still checks out each recorded revision.
-      - name: Initialize pinned build submodules
+      - name: Initialize shared CI module when necessary
         run: |
-          git submodule sync --recursive
-          git submodule update --init --recursive --depth 1
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          if [ ! -f "$ci_root/bin/cpp-ci.py" ]; then
+            git submodule sync -- "$ci_root"
+            git submodule update --init --depth 1 -- "$ci_root"
+          fi
+
+      # The cache has only Git metadata.  Its contents are copied into this
+      # job before Git creates private worktrees for the pinned dependencies.
+      - name: Restore pinned build submodules from cache
+        run: |
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          python3 "$ci_root/bin/cpp-ci.py" submodules \
+            --cache-root "${CPP_CI_SUBMODULE_CACHE_ROOT:-/submodule-cache}"
 
       - name: Configure ${{ matrix.label }} with ccache
         run: |
