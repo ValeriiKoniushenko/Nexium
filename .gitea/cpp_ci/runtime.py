@@ -138,9 +138,17 @@ def _capture(output: Path, *, window_title: str | None, environment: dict[str, s
             raise RuntimeError(f"cannot find window titled {window_title!r}: {details}")
         capture_command = ["import", "-window", window_ids[-1], str(output)]
     else:
-        if shutil.which("scrot") is None:
-            raise RuntimeError("scrot is not installed in this CI image")
-        capture_command = ["scrot", str(output)]
+        if shutil.which("scrot") is not None:
+            capture_command = ["scrot", str(output)]
+        elif shutil.which("import") is not None:
+            # ImageMagick is already used for title-targeted captures.  Its
+            # root-window mode is an equivalent fallback when the leaner
+            # scrot package is absent from the CI image.
+            capture_command = ["import", "-window", "root", str(output)]
+        else:
+            raise RuntimeError(
+                "neither scrot nor ImageMagick's import command is installed in the CI image"
+            )
     result = subprocess.run(capture_command, env=environment, capture_output=True, text=True)
     if result.returncode != 0 or not output.is_file() or output.stat().st_size == 0:
         details = (result.stderr or result.stdout).strip() or "no image produced"

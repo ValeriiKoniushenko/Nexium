@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import subprocess
 import unittest
+from pathlib import Path
 from unittest.mock import patch
 
 from cpp_ci import runtime
@@ -38,6 +39,20 @@ class RuntimeTests(unittest.TestCase):
         command = run.call_args.args[0]
         self.assertIn("build/bin/TemplateGame", command)
         self.assertNotIn("--", command)
+
+    def test_root_capture_falls_back_to_imagemagick_when_scrot_is_unavailable(self) -> None:
+        output = Path("/tmp/cpp-ci-runtime-test.png")
+        completed = subprocess.CompletedProcess([], 0, "", "")
+
+        with (
+            patch("cpp_ci.runtime.shutil.which", side_effect=lambda name: "/usr/bin/import" if name == "import" else None),
+            patch("cpp_ci.runtime.subprocess.run", return_value=completed) as run,
+            patch.object(Path, "is_file", return_value=True),
+            patch.object(Path, "stat", return_value=type("Stat", (), {"st_size": 1})()),
+        ):
+            runtime._capture(output, window_title=None, environment={"DISPLAY": ":99"})
+
+        self.assertEqual(run.call_args.args[0], ["import", "-window", "root", str(output)])
 
 
 if __name__ == "__main__":
