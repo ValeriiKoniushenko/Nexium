@@ -143,6 +143,7 @@ namespace Core
 
         startUpReadCache();
         loadCoreResources();
+        int* p = new int[1000]{};
 
         runMainLoop();
 

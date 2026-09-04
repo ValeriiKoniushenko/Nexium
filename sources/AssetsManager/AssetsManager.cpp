@@ -345,8 +345,6 @@ namespace Core
 
     std::optional<ECSAsset::Meta> AssetsManager::getECSAssetMeta(std::size_t index, Tag tagMask)
     {
-        int* p = new int(10);
-
         std::size_t i = 0;
         for (auto& asset : _ecsAssets | std::views::values)
         {
