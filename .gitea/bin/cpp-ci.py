@@ -183,6 +183,7 @@ def submodules_command(args: argparse.Namespace) -> None:
         Path.cwd(),
         cache_root=Path(args.cache_root),
         cache_namespace=args.cache_namespace,
+        jobs=args.jobs,
     )
 
 
@@ -325,7 +326,7 @@ def parser() -> argparse.ArgumentParser:
     restore.set_defaults(handler=artifact_restore_command)
 
     submodule_prepare = commands.add_parser(
-        "submodules", help="restore or refresh the persistent pinned-submodule metadata cache"
+        "submodules", help="materialize pinned submodules from the persistent Git object cache"
     )
     submodule_prepare.add_argument(
         "--cache-root",
@@ -336,6 +337,12 @@ def parser() -> argparse.ArgumentParser:
         "--cache-namespace",
         default=os.environ.get("GITHUB_REPOSITORY"),
         help="repository identity used to isolate cache entries",
+    )
+    submodule_prepare.add_argument(
+        "--jobs",
+        type=int,
+        default=os.environ.get("CPP_CI_SUBMODULE_JOBS", submodules.DEFAULT_SUBMODULE_JOBS),
+        help="parallel submodule update work, including cached worktree checkout",
     )
     submodule_prepare.set_defaults(handler=submodules_command)
 

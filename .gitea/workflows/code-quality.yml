@@ -25,8 +25,8 @@ on:
         required: false
 
 # No checkout or CMake/Ninja directory is shared between jobs.  ccache and the
-# copied Git submodule metadata cache are persistent; each job still owns its
-# own worktrees and Git configuration.
+# append-only Git object cache are persistent; each job still owns its own
+# worktrees and Git configuration.
 concurrency:
   group: cpp-ci-${{ gitea.repository }}
   cancel-in-progress: false
@@ -96,9 +96,9 @@ jobs:
             git submodule update --init --depth 1 -- "$ci_root"
           fi
 
-      # The cache has only Git metadata.  Its contents are copied into this
-      # job before Git creates private worktrees for the pinned dependencies.
-      - name: Restore pinned build submodules from cache
+      # Git metadata/worktrees remain private.  The cache supplies immutable
+      # objects via Git alternates, so jobs do not copy dependency packs.
+      - name: Materialize pinned build submodules from object cache
         run: |
           ci_root="${CPP_CI_ROOT:-.gitea}"
           python3 "$ci_root/bin/cpp-ci.py" submodules \
@@ -150,9 +150,9 @@ jobs:
             git submodule update --init --depth 1 -- "$ci_root"
           fi
 
-      # The cache has only Git metadata.  Its contents are copied into this
-      # job before Git creates private worktrees for the pinned dependencies.
-      - name: Restore pinned build submodules from cache
+      # Git metadata/worktrees remain private.  The cache supplies immutable
+      # objects via Git alternates, so jobs do not copy dependency packs.
+      - name: Materialize pinned build submodules from object cache
         run: |
           ci_root="${CPP_CI_ROOT:-.gitea}"
           python3 "$ci_root/bin/cpp-ci.py" submodules \

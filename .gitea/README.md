@@ -42,16 +42,24 @@ and nested-submodule lock failures.  The only persistent compilation cache is
 unconditionally supplies both C and C++ ccache launchers, and each build
 prints ccache statistics.
 
-The clang-tidy and build jobs also mount a persistent Git metadata cache at
-`/submodule-cache`.  It stores a project-scoped copy of `.git/modules`, never
-a worktree or a CMake build directory.  A job whose pinned submodule graph
-matches the cache copies that metadata locally and checks out without network
-access.  When a pin changes, one locked job uses the previous metadata as a
-starting point, fetches only what is missing, and atomically refreshes the
-cache; concurrent jobs then use the refreshed copy.  This preserves the exact
-gitlinks committed by the consumer project—there is no periodic
+The clang-tidy and build jobs also mount a persistent Git object cache at
+`/submodule-cache`.  Each job receives a private copy of the small
+`.git/modules` metadata snapshot and its own worktrees, but its Git object
+directories use `objects/info/alternates` to read immutable packs from the
+cache.  A warm pinned graph therefore performs neither a network fetch nor an
+831 MiB pack copy per job.  When a pin changes, one locked job fetches only
+the missing objects (up to four submodules in parallel) and appends them to
+the cache; concurrent jobs then use the refreshed metadata.  This preserves
+the exact gitlinks committed by the consumer project—there is no periodic
 `git submodule update --remote` policy and no stale third-party dependency
 state.
+
+The cache owns only Git metadata and immutable object files; it never shares a
+worktree, `.git/config`, or a CMake build directory.  Keep it private to
+trusted CI jobs and do not run `git gc`, `git prune`, or manual cleanup inside
+it while jobs can be running.  Existing version-1 copied-metadata caches are
+migrated in place on their first warm run and retained as a read-only object
+source, so the migration does not reclone every dependency.
 
 The runner must allow and persist the host bind mount
 `/srv/ci-cache/cpp-ci-submodules:/submodule-cache` (including the matching
