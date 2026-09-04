@@ -2,7 +2,7 @@ name: C++ Code Quality
 
 on:
   # Keep this checkout useful until .gitea is extracted into the shared CI
-  # repository.  For direct events the empty workflow_call inputs below fall
+  # repository. For direct events the empty workflow_call inputs below fall
   # back to .gitea and .ci/cpp-ci.json in each shell step.
   pull_request:
   push:
@@ -24,7 +24,7 @@ on:
       GITEATOKEN:
         required: false
 
-# No checkout or CMake/Ninja directory is shared between jobs.  ccache and the
+# No checkout or CMake/Ninja directory is shared between jobs. ccache and the
 # append-only Git object cache are persistent; each job still owns its own
 # worktrees and Git configuration.
 concurrency:
@@ -50,8 +50,6 @@ jobs:
           fetch-depth: 0
           submodules: false
 
-      # Formatting only needs the CI scripts.  Consumer projects can keep those
-      # scripts in a .gitea/ci submodule, while this repository keeps them here.
       - name: Initialize shared CI module when necessary
         run: |
           ci_root="${CPP_CI_ROOT:-.gitea}"
@@ -69,8 +67,411 @@ jobs:
           ci_config="${CPP_CI_CONFIG:-.ci/cpp-ci.json}"
           python3 "$ci_root/bin/cpp-ci.py" format --config "$ci_config"
 
+  build-clang-debug:
+    name: "[build] clang Debug"
+    needs: clang-format
+    runs-on: linux
+    container:
+      image: cpp-ci:latest
+      volumes:
+        - /srv/ci-cache/ccache:/ccache
+        - /srv/ci-cache/cpp-ci-submodules:/submodule-cache
+    env:
+      CCACHE_DIR: /ccache
+    timeout-minutes: 40
+    steps:
+      - name: Checkout this job only
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - name: Initialize shared CI module when necessary
+        run: |
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          if [ ! -f "$ci_root/bin/cpp-ci.py" ]; then
+            git submodule sync -- "$ci_root"
+            git submodule update --init --depth 1 -- "$ci_root"
+          fi
+
+      - name: Materialize pinned build submodules from object cache
+        run: |
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          python3 "$ci_root/bin/cpp-ci.py" submodules \
+            --cache-root "${CPP_CI_SUBMODULE_CACHE_ROOT:-/submodule-cache}"
+
+      - name: Configure clang Debug with ccache
+        run: |
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          ci_config="${CPP_CI_CONFIG:-.ci/cpp-ci.json}"
+          python3 "$ci_root/bin/cpp-ci.py" configure --config "$ci_config" --profile clang-debug
+
+      - name: Build clang Debug
+        run: |
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          ci_config="${CPP_CI_CONFIG:-.ci/cpp-ci.json}"
+          python3 "$ci_root/bin/cpp-ci.py" build --config "$ci_config" --profile clang-debug
+
+      - name: Stage clang Debug compilation database
+        run: |
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          ci_config="${CPP_CI_CONFIG:-.ci/cpp-ci.json}"
+          python3 "$ci_root/bin/cpp-ci.py" compile-db-stage --config "$ci_config" --profile clang-debug
+
+      - name: Upload clang Debug compilation database
+        uses: christopherhx/gitea-upload-artifact@v4
+        with:
+          name: cpp-ci-compile-commands-clang-debug
+          path: ci-artifacts/cpp-ci-compile-commands-clang-debug.tar.gz
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: Stage clang Debug runtime artifact
+        run: |
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          ci_config="${CPP_CI_CONFIG:-.ci/cpp-ci.json}"
+          python3 "$ci_root/bin/cpp-ci.py" artifact-stage --config "$ci_config" --profile clang-debug
+
+      - name: Upload clang Debug runtime artifact
+        uses: christopherhx/gitea-upload-artifact@v4
+        with:
+          name: cpp-ci-runtime-clang-debug
+          path: ci-artifacts/cpp-ci-runtime-clang-debug.tar.gz
+          if-no-files-found: error
+          retention-days: 1
+
+  build-clang-release:
+    name: "[build] clang Release"
+    needs: clang-format
+    runs-on: linux
+    container:
+      image: cpp-ci:latest
+      volumes:
+        - /srv/ci-cache/ccache:/ccache
+        - /srv/ci-cache/cpp-ci-submodules:/submodule-cache
+    env:
+      CCACHE_DIR: /ccache
+    timeout-minutes: 40
+    steps:
+      - name: Checkout this job only
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - name: Initialize shared CI module when necessary
+        run: |
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          if [ ! -f "$ci_root/bin/cpp-ci.py" ]; then
+            git submodule sync -- "$ci_root"
+            git submodule update --init --depth 1 -- "$ci_root"
+          fi
+
+      - name: Materialize pinned build submodules from object cache
+        run: |
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          python3 "$ci_root/bin/cpp-ci.py" submodules \
+            --cache-root "${CPP_CI_SUBMODULE_CACHE_ROOT:-/submodule-cache}"
+
+      - name: Configure clang Release with ccache
+        run: |
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          ci_config="${CPP_CI_CONFIG:-.ci/cpp-ci.json}"
+          python3 "$ci_root/bin/cpp-ci.py" configure --config "$ci_config" --profile clang-release
+
+      - name: Build clang Release
+        run: |
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          ci_config="${CPP_CI_CONFIG:-.ci/cpp-ci.json}"
+          python3 "$ci_root/bin/cpp-ci.py" build --config "$ci_config" --profile clang-release
+
+      - name: Stage clang Release runtime artifact
+        run: |
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          ci_config="${CPP_CI_CONFIG:-.ci/cpp-ci.json}"
+          python3 "$ci_root/bin/cpp-ci.py" artifact-stage --config "$ci_config" --profile clang-release
+
+      - name: Upload clang Release runtime artifact
+        uses: christopherhx/gitea-upload-artifact@v4
+        with:
+          name: cpp-ci-runtime-clang-release
+          path: ci-artifacts/cpp-ci-runtime-clang-release.tar.gz
+          if-no-files-found: error
+          retention-days: 1
+
+  build-gcc-debug:
+    name: "[build] gcc Debug"
+    needs: clang-format
+    runs-on: linux
+    container:
+      image: cpp-ci:latest
+      volumes:
+        - /srv/ci-cache/ccache:/ccache
+        - /srv/ci-cache/cpp-ci-submodules:/submodule-cache
+    env:
+      CCACHE_DIR: /ccache
+    timeout-minutes: 40
+    steps:
+      - name: Checkout this job only
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - name: Initialize shared CI module when necessary
+        run: |
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          if [ ! -f "$ci_root/bin/cpp-ci.py" ]; then
+            git submodule sync -- "$ci_root"
+            git submodule update --init --depth 1 -- "$ci_root"
+          fi
+
+      - name: Materialize pinned build submodules from object cache
+        run: |
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          python3 "$ci_root/bin/cpp-ci.py" submodules \
+            --cache-root "${CPP_CI_SUBMODULE_CACHE_ROOT:-/submodule-cache}"
+
+      - name: Configure gcc Debug with ccache
+        run: |
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          ci_config="${CPP_CI_CONFIG:-.ci/cpp-ci.json}"
+          python3 "$ci_root/bin/cpp-ci.py" configure --config "$ci_config" --profile gcc-debug
+
+      - name: Build gcc Debug
+        run: |
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          ci_config="${CPP_CI_CONFIG:-.ci/cpp-ci.json}"
+          python3 "$ci_root/bin/cpp-ci.py" build --config "$ci_config" --profile gcc-debug
+
+      - name: Stage gcc Debug runtime artifact
+        run: |
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          ci_config="${CPP_CI_CONFIG:-.ci/cpp-ci.json}"
+          python3 "$ci_root/bin/cpp-ci.py" artifact-stage --config "$ci_config" --profile gcc-debug
+
+      - name: Upload gcc Debug runtime artifact
+        uses: christopherhx/gitea-upload-artifact@v4
+        with:
+          name: cpp-ci-runtime-gcc-debug
+          path: ci-artifacts/cpp-ci-runtime-gcc-debug.tar.gz
+          if-no-files-found: error
+          retention-days: 1
+
+  build-gcc-release:
+    name: "[build] gcc Release"
+    needs: clang-format
+    runs-on: linux
+    container:
+      image: cpp-ci:latest
+      volumes:
+        - /srv/ci-cache/ccache:/ccache
+        - /srv/ci-cache/cpp-ci-submodules:/submodule-cache
+    env:
+      CCACHE_DIR: /ccache
+    timeout-minutes: 40
+    steps:
+      - name: Checkout this job only
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - name: Initialize shared CI module when necessary
+        run: |
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          if [ ! -f "$ci_root/bin/cpp-ci.py" ]; then
+            git submodule sync -- "$ci_root"
+            git submodule update --init --depth 1 -- "$ci_root"
+          fi
+
+      - name: Materialize pinned build submodules from object cache
+        run: |
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          python3 "$ci_root/bin/cpp-ci.py" submodules \
+            --cache-root "${CPP_CI_SUBMODULE_CACHE_ROOT:-/submodule-cache}"
+
+      - name: Configure gcc Release with ccache
+        run: |
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          ci_config="${CPP_CI_CONFIG:-.ci/cpp-ci.json}"
+          python3 "$ci_root/bin/cpp-ci.py" configure --config "$ci_config" --profile gcc-release
+
+      - name: Build gcc Release
+        run: |
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          ci_config="${CPP_CI_CONFIG:-.ci/cpp-ci.json}"
+          python3 "$ci_root/bin/cpp-ci.py" build --config "$ci_config" --profile gcc-release
+
+      - name: Stage gcc Release runtime artifact
+        run: |
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          ci_config="${CPP_CI_CONFIG:-.ci/cpp-ci.json}"
+          python3 "$ci_root/bin/cpp-ci.py" artifact-stage --config "$ci_config" --profile gcc-release
+
+      - name: Upload gcc Release runtime artifact
+        uses: christopherhx/gitea-upload-artifact@v4
+        with:
+          name: cpp-ci-runtime-gcc-release
+          path: ci-artifacts/cpp-ci-runtime-gcc-release.tar.gz
+          if-no-files-found: error
+          retention-days: 1
+
+  unit-test-clang-debug:
+    name: "[test] unit tests / clang Debug"
+    needs: [build-clang-debug, build-clang-release, build-gcc-debug, build-gcc-release]
+    runs-on: linux
+    container:
+      image: cpp-ci:latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout this job only
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - name: Initialize shared CI module when necessary
+        run: |
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          if [ ! -f "$ci_root/bin/cpp-ci.py" ]; then
+            git submodule sync -- "$ci_root"
+            git submodule update --init --depth 1 -- "$ci_root"
+          fi
+
+      - name: Download clang Debug runtime artifact
+        uses: christopherhx/gitea-download-artifact@v4
+        with:
+          name: cpp-ci-runtime-clang-debug
+          path: ci-artifacts
+
+      - name: Restore clang Debug runtime artifact
+        run: |
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          ci_config="${CPP_CI_CONFIG:-.ci/cpp-ci.json}"
+          python3 "$ci_root/bin/cpp-ci.py" artifact-restore --config "$ci_config" --profile clang-debug
+
+      - name: Run unit tests / clang Debug
+        run: |
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          ci_config="${CPP_CI_CONFIG:-.ci/cpp-ci.json}"
+          python3 "$ci_root/bin/cpp-ci.py" test --config "$ci_config" --profile clang-debug
+
+  unit-test-clang-release:
+    name: "[test] unit tests / clang Release"
+    needs: [build-clang-debug, build-clang-release, build-gcc-debug, build-gcc-release]
+    runs-on: linux
+    container:
+      image: cpp-ci:latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout this job only
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - name: Initialize shared CI module when necessary
+        run: |
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          if [ ! -f "$ci_root/bin/cpp-ci.py" ]; then
+            git submodule sync -- "$ci_root"
+            git submodule update --init --depth 1 -- "$ci_root"
+          fi
+
+      - name: Download clang Release runtime artifact
+        uses: christopherhx/gitea-download-artifact@v4
+        with:
+          name: cpp-ci-runtime-clang-release
+          path: ci-artifacts
+
+      - name: Restore clang Release runtime artifact
+        run: |
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          ci_config="${CPP_CI_CONFIG:-.ci/cpp-ci.json}"
+          python3 "$ci_root/bin/cpp-ci.py" artifact-restore --config "$ci_config" --profile clang-release
+
+      - name: Run unit tests / clang Release
+        run: |
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          ci_config="${CPP_CI_CONFIG:-.ci/cpp-ci.json}"
+          python3 "$ci_root/bin/cpp-ci.py" test --config "$ci_config" --profile clang-release
+
+  unit-test-gcc-debug:
+    name: "[test] unit tests / gcc Debug"
+    needs: [build-clang-debug, build-clang-release, build-gcc-debug, build-gcc-release]
+    runs-on: linux
+    container:
+      image: cpp-ci:latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout this job only
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - name: Initialize shared CI module when necessary
+        run: |
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          if [ ! -f "$ci_root/bin/cpp-ci.py" ]; then
+            git submodule sync -- "$ci_root"
+            git submodule update --init --depth 1 -- "$ci_root"
+          fi
+
+      - name: Download gcc Debug runtime artifact
+        uses: christopherhx/gitea-download-artifact@v4
+        with:
+          name: cpp-ci-runtime-gcc-debug
+          path: ci-artifacts
+
+      - name: Restore gcc Debug runtime artifact
+        run: |
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          ci_config="${CPP_CI_CONFIG:-.ci/cpp-ci.json}"
+          python3 "$ci_root/bin/cpp-ci.py" artifact-restore --config "$ci_config" --profile gcc-debug
+
+      - name: Run unit tests / gcc Debug
+        run: |
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          ci_config="${CPP_CI_CONFIG:-.ci/cpp-ci.json}"
+          python3 "$ci_root/bin/cpp-ci.py" test --config "$ci_config" --profile gcc-debug
+
+  unit-test-gcc-release:
+    name: "[test] unit tests / gcc Release"
+    needs: [build-clang-debug, build-clang-release, build-gcc-debug, build-gcc-release]
+    runs-on: linux
+    container:
+      image: cpp-ci:latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout this job only
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - name: Initialize shared CI module when necessary
+        run: |
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          if [ ! -f "$ci_root/bin/cpp-ci.py" ]; then
+            git submodule sync -- "$ci_root"
+            git submodule update --init --depth 1 -- "$ci_root"
+          fi
+
+      - name: Download gcc Release runtime artifact
+        uses: christopherhx/gitea-download-artifact@v4
+        with:
+          name: cpp-ci-runtime-gcc-release
+          path: ci-artifacts
+
+      - name: Restore gcc Release runtime artifact
+        run: |
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          ci_config="${CPP_CI_CONFIG:-.ci/cpp-ci.json}"
+          python3 "$ci_root/bin/cpp-ci.py" artifact-restore --config "$ci_config" --profile gcc-release
+
+      - name: Run unit tests / gcc Release
+        run: |
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          ci_config="${CPP_CI_CONFIG:-.ci/cpp-ci.json}"
+          python3 "$ci_root/bin/cpp-ci.py" test --config "$ci_config" --profile gcc-release
+
   clang-tidy:
     name: "[lint] clang-tidy"
+    needs: [unit-test-clang-debug, unit-test-clang-release, unit-test-gcc-debug, unit-test-gcc-release]
     runs-on: linux
     container:
       image: cpp-ci:latest
@@ -96,150 +497,36 @@ jobs:
             git submodule update --init --depth 1 -- "$ci_root"
           fi
 
-      # Git metadata/worktrees remain private.  The cache supplies immutable
-      # objects via Git alternates, so jobs do not copy dependency packs.
       - name: Materialize pinned build submodules from object cache
         run: |
           ci_root="${CPP_CI_ROOT:-.gitea}"
           python3 "$ci_root/bin/cpp-ci.py" submodules \
             --cache-root "${CPP_CI_SUBMODULE_CACHE_ROOT:-/submodule-cache}"
 
-      - name: Configure and check changed C/C++ with clang-tidy
+      - name: Download clang Debug compilation database
+        uses: christopherhx/gitea-download-artifact@v4
+        with:
+          name: cpp-ci-compile-commands-clang-debug
+          path: ci-artifacts
+
+      - name: Restore clang Debug compilation database
+        run: |
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          ci_config="${CPP_CI_CONFIG:-.ci/cpp-ci.json}"
+          python3 "$ci_root/bin/cpp-ci.py" compile-db-restore --config "$ci_config" --profile clang-debug
+
+      - name: Check changed C/C++ with clang-tidy using clang Debug build
         env:
           GITEATOKEN: ${{ secrets.GITEATOKEN }}
           GITEA_TOKEN: ${{ secrets.GITEATOKEN }}
         run: |
           ci_root="${CPP_CI_ROOT:-.gitea}"
           ci_config="${CPP_CI_CONFIG:-.ci/cpp-ci.json}"
-          python3 "$ci_root/bin/cpp-ci.py" tidy --config "$ci_config"
-
-  build:
-    name: "[build] ${{ matrix.label }}"
-    runs-on: linux
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - profile: clang-debug
-            label: clang Debug
-          - profile: clang-release
-            label: clang Release
-          - profile: gcc-debug
-            label: gcc Debug
-          - profile: gcc-release
-            label: gcc Release
-    container:
-      image: cpp-ci:latest
-      volumes:
-        - /srv/ci-cache/ccache:/ccache
-        - /srv/ci-cache/cpp-ci-submodules:/submodule-cache
-    env:
-      CCACHE_DIR: /ccache
-    timeout-minutes: 40
-    steps:
-      - name: Checkout this job only
-        uses: actions/checkout@v4
-        with:
-          submodules: false
-
-      - name: Initialize shared CI module when necessary
-        run: |
-          ci_root="${CPP_CI_ROOT:-.gitea}"
-          if [ ! -f "$ci_root/bin/cpp-ci.py" ]; then
-            git submodule sync -- "$ci_root"
-            git submodule update --init --depth 1 -- "$ci_root"
-          fi
-
-      # Git metadata/worktrees remain private.  The cache supplies immutable
-      # objects via Git alternates, so jobs do not copy dependency packs.
-      - name: Materialize pinned build submodules from object cache
-        run: |
-          ci_root="${CPP_CI_ROOT:-.gitea}"
-          python3 "$ci_root/bin/cpp-ci.py" submodules \
-            --cache-root "${CPP_CI_SUBMODULE_CACHE_ROOT:-/submodule-cache}"
-
-      - name: Configure ${{ matrix.label }} with ccache
-        run: |
-          ci_root="${CPP_CI_ROOT:-.gitea}"
-          ci_config="${CPP_CI_CONFIG:-.ci/cpp-ci.json}"
-          python3 "$ci_root/bin/cpp-ci.py" configure --config "$ci_config" --profile "${{ matrix.profile }}"
-
-      - name: Build ${{ matrix.label }}
-        run: |
-          ci_root="${CPP_CI_ROOT:-.gitea}"
-          ci_config="${CPP_CI_CONFIG:-.ci/cpp-ci.json}"
-          python3 "$ci_root/bin/cpp-ci.py" build --config "$ci_config" --profile "${{ matrix.profile }}"
-
-      - name: Stage runtime artifact
-        run: |
-          ci_root="${CPP_CI_ROOT:-.gitea}"
-          ci_config="${CPP_CI_CONFIG:-.ci/cpp-ci.json}"
-          python3 "$ci_root/bin/cpp-ci.py" artifact-stage --config "$ci_config" --profile "${{ matrix.profile }}"
-
-      - name: Upload ${{ matrix.label }} runtime artifact
-        uses: christopherhx/gitea-upload-artifact@v4
-        with:
-          name: cpp-ci-runtime-${{ matrix.profile }}
-          path: ci-artifacts/cpp-ci-runtime-${{ matrix.profile }}.tar.gz
-          if-no-files-found: error
-          retention-days: 1
-
-  unit-tests:
-    name: "[test] ${{ matrix.label }}"
-    needs: build
-    runs-on: linux
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - profile: clang-debug
-            label: unit tests / clang Debug
-          - profile: clang-release
-            label: unit tests / clang Release
-          - profile: gcc-debug
-            label: unit tests / gcc Debug
-          - profile: gcc-release
-            label: unit tests / gcc Release
-    container:
-      image: cpp-ci:latest
-    timeout-minutes: 20
-    steps:
-      - name: Checkout this job only
-        uses: actions/checkout@v4
-        with:
-          submodules: false
-
-      # This job runs the build artifact; it does not configure or compile the
-      # project.  Avoid recursively cloning build dependencies just for CI code.
-      - name: Initialize shared CI module when necessary
-        run: |
-          ci_root="${CPP_CI_ROOT:-.gitea}"
-          if [ ! -f "$ci_root/bin/cpp-ci.py" ]; then
-            git submodule sync -- "$ci_root"
-            git submodule update --init --depth 1 -- "$ci_root"
-          fi
-
-      - name: Download ${{ matrix.label }} runtime artifact
-        uses: christopherhx/gitea-download-artifact@v4
-        with:
-          name: cpp-ci-runtime-${{ matrix.profile }}
-          path: ci-artifacts
-
-      - name: Restore runtime artifact
-        run: |
-          ci_root="${CPP_CI_ROOT:-.gitea}"
-          ci_config="${CPP_CI_CONFIG:-.ci/cpp-ci.json}"
-          python3 "$ci_root/bin/cpp-ci.py" artifact-restore --config "$ci_config" --profile "${{ matrix.profile }}"
-
-      - name: Run ${{ matrix.label }}
-        run: |
-          ci_root="${CPP_CI_ROOT:-.gitea}"
-          ci_config="${CPP_CI_CONFIG:-.ci/cpp-ci.json}"
-          python3 "$ci_root/bin/cpp-ci.py" test --config "$ci_config" --profile "${{ matrix.profile }}"
+          python3 "$ci_root/bin/cpp-ci.py" tidy --config "$ci_config" --build-dir build/ci/clang-debug
 
   valgrind:
     name: "[test] Valgrind / clang Debug"
-    needs: build
+    needs: clang-tidy
     runs-on: linux
     container:
       image: cpp-ci:latest
@@ -250,8 +537,6 @@ jobs:
         with:
           submodules: false
 
-      # This job runs the build artifact; it does not configure or compile the
-      # project.  Avoid recursively cloning build dependencies just for CI code.
       - name: Initialize shared CI module when necessary
         run: |
           ci_root="${CPP_CI_ROOT:-.gitea}"
@@ -283,7 +568,7 @@ jobs:
 
   runtime-capture:
     name: "[ui] configured application capture / clang Debug"
-    needs: build
+    needs: valgrind
     runs-on: linux
     container:
       image: cpp-ci:latest
@@ -294,8 +579,6 @@ jobs:
         with:
           submodules: false
 
-      # This job runs the build artifact; it does not configure or compile the
-      # project.  Avoid recursively cloning build dependencies just for CI code.
       - name: Initialize shared CI module when necessary
         run: |
           ci_root="${CPP_CI_ROOT:-.gitea}"
@@ -333,7 +616,7 @@ jobs:
 
   runtime-valgrind:
     name: "[test] configured application Valgrind / clang Debug"
-    needs: build
+    needs: valgrind
     runs-on: linux
     container:
       image: cpp-ci:latest
@@ -344,8 +627,6 @@ jobs:
         with:
           submodules: false
 
-      # This job runs the build artifact; it does not configure or compile the
-      # project.  Avoid recursively cloning build dependencies just for CI code.
       - name: Initialize shared CI module when necessary
         run: |
           ci_root="${CPP_CI_ROOT:-.gitea}"

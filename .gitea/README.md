@@ -9,17 +9,18 @@ project-specific suppression policy.
 
 ## What the required pipeline runs
 
-The generic workflow performs these independent jobs:
+The generic workflow is deliberately staged:
 
 ```text
-clang-format     clang-tidy (own clang-tidy build dir)
-      \                 /
-       \               /
- clang Debug / Release     gcc Debug / Release
-        |        |          |          |
-      unit test for every compiler/configuration
-        |
-    Valgrind unit tests (clang Debug)
+clang-format
+    |
+clang Debug / clang Release / gcc Debug / gcc Release
+    |
+unit tests for all four compiler/configuration variants
+    |
+clang-tidy (reuses the clang Debug compilation database)
+    |
+Valgrind unit tests (clang Debug runtime artifact)
         |
 optional configured application capture + Valgrind (clang Debug)
 ```
@@ -31,8 +32,12 @@ build/ci/clang-debug
 build/ci/clang-release
 build/ci/gcc-debug
 build/ci/gcc-release
-build/ci/clang-tidy
 ```
+
+The Clang Debug job additionally uploads its small `compile_commands.json`
+artifact. The later clang-tidy job restores and relocates that database into
+its own checkout, so it uses the exact completed Clang Debug configuration
+without transferring a CMake/Ninja tree or configuring a fifth build.
 
 There is intentionally no persistent CMake/Ninja build-tree mount.  Those
 trees embed a checkout path, submodule state, generator, compiler, and source

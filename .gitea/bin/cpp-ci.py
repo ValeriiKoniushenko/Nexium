@@ -97,8 +97,15 @@ def format_command(args: argparse.Namespace) -> None:
 def tidy_command(args: argparse.Namespace) -> None:
     config = _load(args)
     profile = _analysis_profile(config)
-    cmake.configure(config, profile)
-    cmake.prepare_analysis(config, profile)
+    build_dir = config.resolve_path(args.build_dir) if args.build_dir else profile.build_dir
+    if args.build_dir:
+        if not (build_dir / "compile_commands.json").is_file():
+            raise ConfigurationError(
+                f"reused clang-tidy build directory has no compilation database: {build_dir}"
+            )
+    else:
+        cmake.configure(config, profile)
+        cmake.prepare_analysis(config, profile)
     base = args.base or config.base_ref
     _prepare_diff(config, base, args.files, args.verbose)
     cache_root = Path(os.environ.get("CPP_CI_TIDY_CACHE_ROOT", "/clang-tidy-cache"))
@@ -107,7 +114,7 @@ def tidy_command(args: argparse.Namespace) -> None:
         "--base",
         base,
         "--build-dir",
-        str(profile.build_dir),
+        str(build_dir),
         "--fail-on",
         config.data["analysis"]["clang_tidy_fail_on"],
         "--jobs",
@@ -176,6 +183,20 @@ def artifact_restore_command(args: argparse.Namespace) -> None:
     profile = _profile(config, args.profile)
     archive = config.resolve_path(args.archive) if args.archive else None
     artifacts.restore(config, profile, archive=archive)
+
+
+def compilation_database_stage_command(args: argparse.Namespace) -> None:
+    config = _load(args)
+    profile = _profile(config, args.profile)
+    output = config.resolve_path(args.archive) if args.archive else None
+    artifacts.stage_compilation_database(config, profile, output=output)
+
+
+def compilation_database_restore_command(args: argparse.Namespace) -> None:
+    config = _load(args)
+    profile = _profile(config, args.profile)
+    archive = config.resolve_path(args.archive) if args.archive else None
+    artifacts.restore_compilation_database(config, profile, archive=archive)
 
 
 def submodules_command(args: argparse.Namespace) -> None:
@@ -295,9 +316,13 @@ def parser() -> argparse.ArgumentParser:
     format_check.add_argument("--fix", action="store_true", help="apply clang-format to changed files")
     format_check.set_defaults(handler=format_command)
 
-    tidy = commands.add_parser("tidy", help="configure isolated clang-tidy profile and analyse changed C++")
+    tidy = commands.add_parser("tidy", help="analyse changed C++ with a generated or reused compilation database")
     _add_config_argument(tidy)
     _add_diff_arguments(tidy)
+    tidy.add_argument(
+        "--build-dir",
+        help="reuse an existing build directory instead of configuring the isolated clang-tidy profile",
+    )
     tidy.set_defaults(handler=tidy_command)
 
     test = commands.add_parser("test", help="run a restored unit-test runtime bundle")
@@ -324,6 +349,22 @@ def parser() -> argparse.ArgumentParser:
     _add_profile_argument(restore)
     restore.add_argument("--archive", help="path of the downloaded archive")
     restore.set_defaults(handler=artifact_restore_command)
+
+    compile_db_stage = commands.add_parser(
+        "compile-db-stage", help="archive one profile's compilation database for a later clang-tidy job"
+    )
+    _add_config_argument(compile_db_stage)
+    _add_profile_argument(compile_db_stage)
+    compile_db_stage.add_argument("--archive", help="output archive path")
+    compile_db_stage.set_defaults(handler=compilation_database_stage_command)
+
+    compile_db_restore = commands.add_parser(
+        "compile-db-restore", help="restore and relocate a profile's compilation database"
+    )
+    _add_config_argument(compile_db_restore)
+    _add_profile_argument(compile_db_restore)
+    compile_db_restore.add_argument("--archive", help="path of the downloaded archive")
+    compile_db_restore.set_defaults(handler=compilation_database_restore_command)
 
     submodule_prepare = commands.add_parser(
         "submodules", help="materialize pinned submodules from the persistent Git object cache"
