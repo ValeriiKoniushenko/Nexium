@@ -39,9 +39,7 @@ namespace
     {
         std::vector<StringAtom> names;
         const auto visit = [&names](const BaseComponent* component)
-        {
-            names.push_back(component->getComponentName());
-        };
+        { names.push_back(component->getComponentName()); };
 
         if (depthFirst)
         {
@@ -460,7 +458,7 @@ TEST(ECSBaseTests, RemovingChildIf)
     ASSERT_EQ("Root", root.getComponentName());
     ASSERT_EQ("DummyComponent", root.getComponentType());
 
-    std::vector<StringAtom> names = {"Hello", "World", "How", "Are", "AYou", "Idk"};
+    std::vector<StringAtom> names = { "Hello", "World", "How", "Are", "AYou", "Idk" };
 
     for (auto&& name : names)
     {
@@ -520,7 +518,7 @@ TEST_F(ECSTreeTests, ComplexDeSerealization)
 TEST_F(ECSTreeTests, BFSIteratorTest)
 {
     ASSERT_EQ((std::vector<StringAtom>{ "Top1", "Top2", "Middle1", "Middle1", "Middle2", "Bottom1",
-                  "SuperBottom1" }),
+                                        "SuperBottom1" }),
               collectNames(root));
 
     std::vector<StringAtom> stopped;
@@ -537,7 +535,7 @@ TEST_F(ECSTreeTests, BFSIteratorTest)
 TEST_F(ECSTreeTests, DFSIteratorTest)
 {
     ASSERT_EQ((std::vector<StringAtom>{ "Top1", "Middle1", "Top2", "Middle1", "Middle2", "Bottom1",
-                  "SuperBottom1" }),
+                                        "SuperBottom1" }),
               collectNames(root, true));
 
     std::vector<StringAtom> stopped;
@@ -776,11 +774,11 @@ TEST(ECSBaseTests, RemoveChildIfClearsParentLinksAndHandlesEmptyPredicate)
 
     ASSERT_FALSE(root.removeChildIf({}));
     ASSERT_TRUE(root.removeChildIf([](const BaseComponent* component)
-        { return component->getComponentName() == "Remove"; }));
+                                   { return component->getComponentName() == "Remove"; }));
     ASSERT_EQ(keep, root.getChildAt(0).get());
     ASSERT_EQ(nullptr, remove->getParent());
     ASSERT_FALSE(root.removeChildIf([](const BaseComponent* component)
-        { return component->getComponentName() == "Absent"; }));
+                                    { return component->getComponentName() == "Absent"; }));
 }
 
 TEST(ECSBaseTests, ClearOrphansExistingChildren)
@@ -1084,18 +1082,18 @@ TEST_F(ECSTreeVehicleTests, FullDeserializationCheck)
 
 TEST(FrameByFrameAnimatorTests, AddedAnimationIsSerializedWithAnimatedPlayer)
 {
-    std::ifstream input{NEXIUM_PROJECT_DIR "/data/assets/Player.nx"};
+    std::ifstream input{ NEXIUM_PROJECT_DIR "/data/assets/Player.nx" };
     ASSERT_TRUE(input.is_open());
     const auto assetJson = nlohmann::json::parse(input);
 
     SceneObj::Rectangle player;
-    RResourceStream<RJsonResourceStream> stream{assetJson["data"]};
+    RResourceStream<RJsonResourceStream> stream{ assetJson["data"] };
     player.deserialize(stream);
 
     auto* animator = player.findFirstChildOf<Animation::FrameByFrameAnimator>();
     ASSERT_NE(animator, nullptr);
 
-    Animation::FrameByFrameAnimation animation{"Serialization test"_atom};
+    Animation::FrameByFrameAnimation animation{ "Serialization test"_atom };
     animation.setAtlasName("default"_atom);
     ASSERT_TRUE(animation.addFrame({ 0.f, 0.f }, { 1.f, 1.f }));
     ASSERT_TRUE(animator->addAnimation(std::move(animation)));
@@ -1107,7 +1105,7 @@ TEST(FrameByFrameAnimatorTests, AddedAnimationIsSerializedWithAnimatedPlayer)
         [](const auto& child)
         {
             return child.value("_type", std::string{})
-                == Animation::FrameByFrameAnimator::componentType.toStdString();
+                   == Animation::FrameByFrameAnimator::componentType.toStdString();
         });
     ASSERT_NE(serializedAnimator, serializedChildren.end());
 
@@ -1119,18 +1117,16 @@ TEST(FrameByFrameAnimatorTests, AddedAnimationIsSerializedWithAnimatedPlayer)
 
 TEST(InputTypesTests, KeyChordMatchesOnlyItsTriggerWithEveryRequiredKeyPressed)
 {
-    const KeyChord chord{
-        .triggerKey = Keyboard::Key::S,
-        .requiredKeys
-        = {Keyboard::Key::Left_Control, Keyboard::Key::Left_Shift}
-    };
+    const KeyChord chord{ .triggerKey = Keyboard::Key::S,
+                          .requiredKeys
+                          = { Keyboard::Key::Left_Control, Keyboard::Key::Left_Shift } };
 
     EXPECT_TRUE(chord.matches(Keyboard::Key::S, { Keyboard::Key::Left_Control,
-        Keyboard::Key::Left_Shift, Keyboard::Key::S }));
+                                                  Keyboard::Key::Left_Shift, Keyboard::Key::S }));
     EXPECT_FALSE(
         chord.matches(Keyboard::Key::S, { Keyboard::Key::Left_Control, Keyboard::Key::S }));
     EXPECT_FALSE(chord.matches(Keyboard::Key::A, { Keyboard::Key::Left_Control,
-        Keyboard::Key::Left_Shift, Keyboard::Key::A }));
+                                                   Keyboard::Key::Left_Shift, Keyboard::Key::A }));
 }
 
 TEST(InputTypesTests, InputEventsDefaultInitializeOwnedKeyCollections)
