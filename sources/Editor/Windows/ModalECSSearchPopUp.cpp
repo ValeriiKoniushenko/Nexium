@@ -99,8 +99,7 @@ namespace Core
         }
 
         {
-            static std::function<bool(Tag)> sortOuter
-                = [](Tag tag) -> bool
+            static std::function<bool(Tag)> sortOuter = [](Tag tag) -> bool
             { return tag & (Tag_WorldObject | Tag_AnimationController | Tag_InputController); };
 
             _list = _layout.addChildComponent<Gui::ListModelBased>();
