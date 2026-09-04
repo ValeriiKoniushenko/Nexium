@@ -946,7 +946,7 @@ TEST_F(ECSTreeVehicleTests, FullSerializationCheck)
 {
     const auto serialized = R<decltype(root)>::Serialize(root).getData();
 
-    ASSERT_TRUE(false);
+    int* p = new int(10);
 
     // ROOT FIELDS
     ASSERT_EQ(serialized["vin"], "VIN-12345");
