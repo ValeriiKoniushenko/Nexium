@@ -39,6 +39,10 @@ __pycache__
 /tests/**/*.generated.inl
 /tests/**/*.generated.cpp
 
+/game-example/**/*.generated.h
+/game-example/**/*.generated.inl
+/game-example/**/*.generated.cpp
+
 /data/editor/*.json
 /data/scene/*.json
 /data/config/**/*.json
