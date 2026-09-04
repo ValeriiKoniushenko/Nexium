@@ -36,6 +36,16 @@ class ValgrindResult:
         return self.returncode != 0
 
     @property
+    def valgrind_error(self) -> bool:
+        """Whether Valgrind itself found a configured error.
+
+        ``--error-exitcode`` affects only Valgrind diagnostics.  Otherwise,
+        Valgrind forwards the test program's exit code, so a failing test must
+        not be reported as a memory-check failure.
+        """
+        return self.returncode == VALGRIND_ERROR_EXIT_CODE
+
+    @property
     def infrastructure_error(self) -> bool:
         return self.returncode == 127 or "Fatal error at startup" in self.stderr
 
@@ -84,6 +94,8 @@ def result_description(result: ValgrindResult) -> str:
         return "Valgrind clean"
     if result.infrastructure_error:
         return f"Valgrind could not run (exit code {result.returncode})"
+    if not result.valgrind_error:
+        return f"Test executable failed under Valgrind (exit code {result.returncode})"
 
     error_match = ERROR_SUMMARY_RE.search(result.stderr)
     leak_match = DEFINITE_LEAK_RE.search(result.stderr)
@@ -114,9 +126,8 @@ def failure_review_body(result: ValgrindResult) -> str:
 
     output = tail_for_review("\n\n".join(sections))
     command = " ".join(result.command)
-    title = "Valgrind could not run" if result.infrastructure_error else "Valgrind failed"
     return (
-        f"**{title}** (exit code `{result.returncode}`).\n\n"
+        f"**Valgrind failed** (exit code `{result.returncode}`).\n\n"
         f"Command: `{command}`\n\n"
         "<details>\n"
         "<summary>Valgrind output</summary>\n\n"
@@ -154,7 +165,7 @@ def publish_result(
 
     if dry_run:
         print(f"[dry-run] would remove previous Valgrind review on PR #{pr_number}")
-        if result.failed:
+        if result.valgrind_error:
             print(f"[dry-run] would create Valgrind failure review on PR #{pr_number}")
         return
 
@@ -163,7 +174,7 @@ def publish_result(
     except Exception as error:
         print(f"[gitea] failed to clear previous Valgrind review: {error}", file=sys.stderr)
 
-    if result.failed:
+    if result.valgrind_error:
         try:
             client.create_review(
                 pr_number,
