@@ -37,21 +37,92 @@ namespace Core
     class InputSystem final : public Singleton<InputSystem>
     {
     public:
+        /**
+         * @brief InputSystem::initialize - Subscribes the input system to window keyboard events.
+         *
+         * Registers a keyboard event listener and keeps its subscription alive for the lifetime of
+         * the input system. Repeated initialization calls are ignored.
+         *
+         * @param window The window that produces keyboard events.
+         */
         void initialize(Window& window);
 
+        /**
+         * @brief InputSystem::processEvents - Processes one frame of queued keyboard input.
+         *
+         * Resets transient actions on routed controllers and dispatches all queued events.
+         Controller
+
+         * * routing is updated by context and registration events rather than recalculated here.
+         */
         void processEvents();
 
+        /**
+         * @brief InputSystem::setActiveContext - Selects the context that receives keyboard input.
+         *
+         * Rebuilds the routed-controller snapshot immediately when the context changes and releases
+         * actions owned by controllers that no longer receive input.
+         *
+         * @param context The input context that should become active.
+         */
         void setActiveContext(InputContext context);
 
+        /**
+         * @brief InputSystem::registerController - Registers a controller for its fixed input
+         * context.
+         *
+         * Adds the controller to its context without replacing other controllers already registered
+         * there. Expired controller references are removed during registration.
+         *
+         * @param controller The controller to register. A null pointer is ignored.
+         */
         void registerController(InputController* controller);
         void unregisterController(InputController* controller);
 
     private:
+        /**
+         * @brief InputSystem::pushKeyEvent - Converts and queues a raw keyboard event.
+         *
+         * Normalizes left and right modifier keys, converts GLFW modifier flags, and stores the
+         * event for processing during the next input frame.
+         *
+         * @param key The keyboard key associated with the event.
+         * @param scancode The platform-specific keyboard scancode.
+         * @param state The current state of the key.
+         * @param mods The GLFW modifier flags active when the event was produced.
+         */
         void pushKeyEvent(Keyboard::Key key, int scancode, Keyboard::KeyState state, int mods);
 
+        /**
+         * @brief InputSystem::dispatch - Updates keyboard state and routes an event to the
+         * controller.
+         *
+         * Maintains the normalized set of currently pressed keys, attaches that snapshot to the
+         * routed event, and forwards it to every enabled controller selected for this frame.
+         *
+         * @param event The queued keyboard event to dispatch.
+         */
         void dispatch(const KeyInputEvent& event);
 
+        /**
+         * @brief InputSystem::selectControllers - Selects enabled controllers for active routing.
+         *
+         * Resolves every live controller assigned to the current input context and excludes
+         * disabled controllers.
+         *
+         * @return The controllers selected for routing. The collection is empty when none are
+         * active.
+         */
         [[nodiscard]] std::vector<InputController*> selectControllers() const;
+
+        /**
+         * @brief InputSystem::controllersFor - Returns the controller list for an input context.
+         *
+         * Provides read-only access to the editor or gameplay controller list.
+         *
+         * @param context The context whose controllers should be returned.
+         * @return A constant reference to the matching non-owning controller list.
+         */
         [[nodiscard]] std::vector<InputController*>& controllersFor(InputContext context);
 
         [[nodiscard]] const std::vector<InputController*>& controllersFor(

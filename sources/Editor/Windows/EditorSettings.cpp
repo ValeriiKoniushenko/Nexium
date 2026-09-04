@@ -45,10 +45,22 @@ namespace
     std::string_view GetKeyLabel(Core::Keyboard::Key key)
     {
         using Key = Core::Keyboard::Key;
-        if (key == Key::Left_Control) return "Ctrl";
-        if (key == Key::Left_Shift) return "Shift";
-        if (key == Key::Left_Alt) return "Alt";
-        if (key == Key::Left_Super) return "Super";
+        if (key == Key::Left_Control)
+        {
+            return "Ctrl";
+        }
+        if (key == Key::Left_Shift)
+        {
+            return "Shift";
+        }
+        if (key == Key::Left_Alt)
+        {
+            return "Alt";
+        }
+        if (key == Key::Left_Super)
+        {
+            return "Super";
+        }
         return R<Key>::ToString(key);
     }
 
@@ -57,14 +69,21 @@ namespace
         std::string result;
         const auto append = [&result](std::string_view key)
         {
-            if (!result.empty()) result += " + ";
+            if (!result.empty())
+            {
+                result += " + ";
+            }
             result += key;
         };
 
         for (const auto key : chord.requiredKeys)
+        {
             append(GetKeyLabel(key));
+        }
         if (chord.triggerKey != Core::Keyboard::Key::None)
+        {
             append(GetKeyLabel(chord.triggerKey));
+        }
 
         return Core::StringAtom::Intern(result);
     }
@@ -73,9 +92,12 @@ namespace
     {
         switch (trigger)
         {
-            case Core::InputActionTrigger::WhileHeld: return "While held";
-            case Core::InputActionTrigger::OnPress: return "On press";
-            case Core::InputActionTrigger::OnRelease: return "On release";
+            case Core::InputActionTrigger::WhileHeld:
+                return "While held";
+            case Core::InputActionTrigger::OnPress:
+                return "On press";
+            case Core::InputActionTrigger::OnRelease:
+                return "On release";
         }
         return "Unknown";
     }
@@ -299,9 +321,9 @@ namespace Core
                 {
                     auto* item = layout.addChildComponent<Internal::KeymapItem>();
                     item->setReadOnly(true);
-                    item->setLabel(StringAtom::Intern(
-                        binding.action.toStdString() + " (" + GetTriggerLabel(binding.trigger).data()
-                        + ")"));
+                    item->setLabel(StringAtom::Intern(binding.action.toStdString() + " ("
+                                                      + GetTriggerLabel(binding.trigger).data()
+                                                      + ")"));
                     item->setButtonName(GetChordLabel(binding.chord));
                 }
             }

@@ -42,7 +42,5 @@ namespace Core
     void Spectator::onInitialize()
     {
         Actor::onInitialize();
-
-
     }
 } // namespace Core
