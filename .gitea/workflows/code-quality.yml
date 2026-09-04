@@ -48,10 +48,15 @@ jobs:
           fetch-depth: 0
           submodules: false
 
-      - name: Initialize pinned submodules without force
+      # Formatting only needs the CI scripts.  Consumer projects can keep those
+      # scripts in a .gitea/ci submodule, while this repository keeps them here.
+      - name: Initialize shared CI module when necessary
         run: |
-          git submodule sync --recursive
-          git submodule update --init --recursive
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          if [ ! -f "$ci_root/bin/cpp-ci.py" ]; then
+            git submodule sync -- "$ci_root"
+            git submodule update --init --depth 1 -- "$ci_root"
+          fi
 
       - name: Check changed C/C++ formatting
         env:
@@ -80,10 +85,12 @@ jobs:
           fetch-depth: 0
           submodules: false
 
-      - name: Initialize pinned submodules without force
+      # CMake configuration needs every dependency, including nested pinned
+      # submodules.  A shallow fetch still checks out each recorded revision.
+      - name: Initialize pinned build submodules
         run: |
           git submodule sync --recursive
-          git submodule update --init --recursive
+          git submodule update --init --recursive --depth 1
 
       - name: Configure and check changed C/C++ with clang-tidy
         env:
@@ -122,10 +129,12 @@ jobs:
         with:
           submodules: false
 
-      - name: Initialize pinned submodules without force
+      # CMake configuration needs every dependency, including nested pinned
+      # submodules.  A shallow fetch still checks out each recorded revision.
+      - name: Initialize pinned build submodules
         run: |
           git submodule sync --recursive
-          git submodule update --init --recursive
+          git submodule update --init --recursive --depth 1
 
       - name: Configure ${{ matrix.label }} with ccache
         run: |
@@ -178,10 +187,15 @@ jobs:
         with:
           submodules: false
 
-      - name: Initialize pinned submodules without force
+      # This job runs the build artifact; it does not configure or compile the
+      # project.  Avoid recursively cloning build dependencies just for CI code.
+      - name: Initialize shared CI module when necessary
         run: |
-          git submodule sync --recursive
-          git submodule update --init --recursive
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          if [ ! -f "$ci_root/bin/cpp-ci.py" ]; then
+            git submodule sync -- "$ci_root"
+            git submodule update --init --depth 1 -- "$ci_root"
+          fi
 
       - name: Download ${{ matrix.label }} runtime artifact
         uses: christopherhx/gitea-download-artifact@v4
@@ -214,10 +228,15 @@ jobs:
         with:
           submodules: false
 
-      - name: Initialize pinned submodules without force
+      # This job runs the build artifact; it does not configure or compile the
+      # project.  Avoid recursively cloning build dependencies just for CI code.
+      - name: Initialize shared CI module when necessary
         run: |
-          git submodule sync --recursive
-          git submodule update --init --recursive
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          if [ ! -f "$ci_root/bin/cpp-ci.py" ]; then
+            git submodule sync -- "$ci_root"
+            git submodule update --init --depth 1 -- "$ci_root"
+          fi
 
       - name: Download clang Debug runtime artifact
         uses: christopherhx/gitea-download-artifact@v4
@@ -253,10 +272,15 @@ jobs:
         with:
           submodules: false
 
-      - name: Initialize pinned submodules without force
+      # This job runs the build artifact; it does not configure or compile the
+      # project.  Avoid recursively cloning build dependencies just for CI code.
+      - name: Initialize shared CI module when necessary
         run: |
-          git submodule sync --recursive
-          git submodule update --init --recursive
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          if [ ! -f "$ci_root/bin/cpp-ci.py" ]; then
+            git submodule sync -- "$ci_root"
+            git submodule update --init --depth 1 -- "$ci_root"
+          fi
 
       - name: Download clang Debug runtime artifact
         uses: christopherhx/gitea-download-artifact@v4
@@ -298,10 +322,15 @@ jobs:
         with:
           submodules: false
 
-      - name: Initialize pinned submodules without force
+      # This job runs the build artifact; it does not configure or compile the
+      # project.  Avoid recursively cloning build dependencies just for CI code.
+      - name: Initialize shared CI module when necessary
         run: |
-          git submodule sync --recursive
-          git submodule update --init --recursive
+          ci_root="${CPP_CI_ROOT:-.gitea}"
+          if [ ! -f "$ci_root/bin/cpp-ci.py" ]; then
+            git submodule sync -- "$ci_root"
+            git submodule update --init --depth 1 -- "$ci_root"
+          fi
 
       - name: Download clang Debug runtime artifact
         uses: christopherhx/gitea-download-artifact@v4
