@@ -24,7 +24,7 @@ Once stable, Nexium will support exporting projects to major desktop and mobile 
 
 Nexium emphasizes:
 
-* **modern C\++ architecture** (C++23, clean memory model, shared/static runtime separation)
+* **modern C\++ architecture** (C++26, clean memory model, shared/static runtime separation)
 * **high-performance rendering** (OpenGL for now, planned Vulkan backend)
 * **clean module separation** (Core, Math, Rendering, Windowing, ECS, Resources)
 * **strict cross-platform behavior**

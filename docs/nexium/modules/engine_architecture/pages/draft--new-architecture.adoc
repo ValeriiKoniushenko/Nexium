@@ -1,0 +1,19 @@
+[[engine architecture]]
+= (draft, migrating) Engine Architecture
+
+New engine architecture is totally reworked and original architecture can be found by the next SHA `c6f0d00b4fc2bb348c69b37093bd928324b0b161`.
+
+The goal of the reworking is to fix the globall architecture and dependency mess. Everything was connected to each other, a lot of modules were spreaded though the whole project. It doesn't even make a sense to describe how it was.
+
+Now, everything is devided by layers.
+
+
+```
+# 1 - lowest layer, close to OS. 
+8 Editor             -> 
+5 Nexium Conflated   -> Assets management,
+4 Nexium Fundamental -> ECS, Asset Registry, IO handling, Raw de/serialization
+3 Raw Render         -> OpenGL/Vulkan/etc implementation
+2 Platform           -> Window class & logic, work with filesystem, Raw input system
+1 Foundation         -> Core(StringAtom, Math, common classes/structs), Logging (spdlog)
+```

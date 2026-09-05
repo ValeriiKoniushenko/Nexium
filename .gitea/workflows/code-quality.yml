@@ -64,6 +64,7 @@ jobs:
       - name: Configure Debug
         run: |
           echo "::group::CMake configure"
+          rm -rf build
           cmake -S . -B build \
             -DCMAKE_BUILD_TYPE=Debug \
             -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
@@ -127,6 +128,7 @@ jobs:
       - name: Configure Debug
         run: |
           echo "::group::CMake configure"
+          rm -rf build
           cmake -S . -B build \
             -DCMAKE_BUILD_TYPE=Debug \
             -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
@@ -316,6 +318,7 @@ jobs:
 
       - name: Configure Debug for analysis
         run: |
+          rm -rf build
           cmake -S . -B build \
             -DCMAKE_BUILD_TYPE=Debug \
             -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \

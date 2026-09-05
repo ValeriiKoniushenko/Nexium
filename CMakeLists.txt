@@ -57,7 +57,7 @@ option(NEXIUM_ENABLE_3D_MODULE "Enable Nexium 3D Module" OFF)
 # ── Base setup & Predefinitions ────────────────────────────────────────────────
 # CXX standard installing
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(REQUIRED_CXX_STANDARD cxx_std_23)   # Put preferable cxx standard. It will be checked and exported to CXX_STANDARD
+set(REQUIRED_CXX_STANDARD cxx_std_26)   # Put preferable cxx standard. It will be checked and exported to CXX_STANDARD
 set(CXX_STANDARD)                       # Compiler specific value that was going from REQUIRED_CXX_STANDARD
 InstallCXXStandardVersion()
 
