@@ -35,11 +35,13 @@ set(SPDLOG_BUILD_BENCH    OFF CACHE BOOL "" FORCE)
 add_subdirectory(spdlog)
 
 # ── Assimp ────────────────────────────────────────────────────────────────────
-set(ASSIMP_BUILD_ZLIB         ON  CACHE BOOL "" FORCE)
-set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "" FORCE)
-set(ASSIMP_BUILD_TESTS        OFF CACHE BOOL "" FORCE)
-set(ASSIMP_WARNINGS_AS_ERRORS OFF CACHE BOOL "" FORCE)
-add_subdirectory(assimp)
+if (NEXIUM_ENABLE_3D_MODULE)
+    set(ASSIMP_BUILD_ZLIB         ON  CACHE BOOL "" FORCE)
+    set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "" FORCE)
+    set(ASSIMP_BUILD_TESTS        OFF CACHE BOOL "" FORCE)
+    set(ASSIMP_WARNINGS_AS_ERRORS OFF CACHE BOOL "" FORCE)
+    add_subdirectory(assimp)
+endif()
 
 # ── freetype ──────────────────────────────────────────────────────────────────
 set(SKIP_INSTALL_ALL  ON  CACHE BOOL "" FORCE)

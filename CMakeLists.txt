@@ -25,8 +25,6 @@ if (NOT DEFINED NEXIUM_LINKER_CONFIGURED)
     endif ()
 endif ()
 
-project(Nexium VERSION 1.0 LANGUAGES CXX)
-
 cmake_policy(SET CMP0141 NEW)
 set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT
     "$<$<CONFIG:Debug,RelWithDebInfo>:Embedded>"
@@ -52,6 +50,9 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Flags.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Features.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Predefinitions.cmake)
 
+option(NEXIUM_DISABLE_TESTS "Disable Nexium unit-tests targets" ON)
+option(NEXIUM_DISABLE_BENCHMARKS "Disable Nexium benchmark targets" ON)
+option(NEXIUM_ENABLE_3D_MODULE "Enable Nexium 3D Module" OFF)
 
 # ── Base setup & Predefinitions ────────────────────────────────────────────────
 # CXX standard installing
@@ -73,16 +74,17 @@ add_custom_target(CodeGenerator ALL
 
 # ── Main deps pipeline ────────────────────────────────────────────────────────────────
 add_subdirectory(dependencies)
-add_subdirectory(sources)
+# add_subdirectory(sources)
+add_subdirectory(new_sources)
+
 
 if (NOT NEXIUM_DISABLE_TESTS)
     add_subdirectory(tests)
 endif ()
 
-option(NEXIUM_DISABLE_BENCHMARKS "Disable Nexium benchmark targets" OFF)
 if (NOT NEXIUM_DISABLE_BENCHMARKS)
     add_subdirectory(benchmarks)
 endif ()
 
 # TODO: in the future it must be removed
-add_subdirectory(game-example)
+# add_subdirectory(game-example)
