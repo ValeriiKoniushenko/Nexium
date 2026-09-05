@@ -10,10 +10,12 @@ Now, everything is devided by layers.
 
 ```
 # 1 - lowest layer, close to OS. 
-8 Editor             -> 
-5 Nexium Conflated   -> Assets management,
+8 Editor             -> ImGUI based UI, In-Editor windows, polling the game runtime,
+7 Nexium Runtime     -> mainloop, orchestration of World/Assets/Render/Input
+6 Nexium World       -> World, GameInstance, Actor, Pawn, Controller (IO, AI), Skybox, Gameplay primitives, Animations, Physics
+5 Nexium Conflated   -> Camera, Assets management, Atlas, Non-Raw render(ShaderManager, Shaders stuff), Texture, Image, 2D/3D Model impls, Audio work
 4 Nexium Fundamental -> ECS, Asset Registry, IO handling, Raw de/serialization
-3 Raw Render         -> OpenGL/Vulkan/etc implementation
+3 Raw Output         -> render API, render graph/commands, openGL backend, Raw audio work
 2 Platform           -> Window class & logic, work with filesystem, Raw input system
-1 Foundation         -> Core(StringAtom, Math, common classes/structs), Logging (spdlog)
+1 Foundation         -> Core(StringAtom, Math, common classes/structs), Logging (spdlog), Config
 ```
