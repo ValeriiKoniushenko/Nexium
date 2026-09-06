@@ -30,12 +30,17 @@
 
 namespace Core
 {
+    /// @brief Asset metadata and runtime PCM storage for a short audio clip.
+    ///
+    /// A .nxaudio file serializes only a project-relative source path. Loading decodes that source
+    /// synchronously; decoded data is released when the final AssetRef is unloaded.
     CLASS();
     class AudioClipAsset final : public BaseAsset
     {
         R_FRIEND_DECL(AudioClipAsset, Core::BaseAsset);
 
     public:
+        /// @brief Extension of the serialized audio-clip metadata file.
         inline static constexpr const char* fileExtension = ".nxaudio";
 
     public:
@@ -48,10 +53,16 @@ namespace Core
 
         [[nodiscard]] const char* getPrefix() const override { return "AudioClip"; }
 
+        /// @brief Set the project-relative path of the source WAV, FLAC, or MP3 file.
+        /// @param value Relative source-file path stored in the `.nxaudio` metadata.
         void setFilePath(const std::filesystem::path& value);
         [[nodiscard]] const std::filesystem::path& getFilePath() const noexcept { return _path; }
 
+        /// @brief Get decoded PCM data.
+        /// @return Decoded data; callers must first ensure isReady() is `true`.
         [[nodiscard]] const Audio::AudioClipData& getData() const noexcept { return _data; }
+        /// @brief Check whether the source has been decoded successfully.
+        /// @return `true` when getData() contains valid PCM.
         [[nodiscard]] bool isReady() const noexcept { return _data.isValid(); }
 
     protected:
@@ -66,6 +77,7 @@ namespace Core
         Audio::AudioClipData _data;
     };
 
+    /// @brief Reference-counted handle used to retain a clip while a backend voice plays it.
     using NXAudioClip = AssetRef<AudioClipAsset>;
 } // namespace Core
 

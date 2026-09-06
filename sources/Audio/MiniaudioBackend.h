@@ -30,6 +30,10 @@
 
 namespace Core::Audio
 {
+    /// @brief Miniaudio implementation of IAudioBackend for short non-spatial sound effects.
+    ///
+    /// Native objects live behind a stable heap-allocated implementation so their addresses do
+    /// not change after initialization. No miniaudio type leaks through this public header.
     class MiniaudioBackend final : public IAudioBackend
     {
     public:

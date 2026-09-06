@@ -33,6 +33,7 @@
 
 namespace Core::Audio
 {
+    /// @brief Failure categories returned by the synchronous short-effect decoder.
     enum class AudioDecodeError : std::uint8_t
     {
         EmptyPath,
@@ -49,10 +50,20 @@ namespace Core::Audio
         ReadFailed
     };
 
+    /// @brief Result of decoding an audio file to an owned interleaved float PCM buffer.
     using AudioDecodeResult = std::expected<AudioClipData, AudioDecodeError>;
 
+    /// @brief Decode a WAV, FLAC, or MP3 file into interleaved float PCM.
+    ///
+    /// This operation is synchronous and does not log; the caller owns path context and reporting.
+    /// Successful data always has non-zero channels, sample rate, and frame count.
+    /// @param path Source file path.
+    /// @return Decoded PCM on success or a structured AudioDecodeError on failure.
     [[nodiscard]] AudioDecodeResult decodeAudioFile(const std::filesystem::path& path) noexcept;
 
+    /// @brief Get a stable human-readable description for an AudioDecodeError.
+    /// @param error Decoder error to describe.
+    /// @return Non-owning description with static lifetime.
     [[nodiscard]] std::string_view getAudioDecodeErrorDescription(
         AudioDecodeError error) noexcept;
 } // namespace Core::Audio

@@ -32,12 +32,16 @@
 
 namespace Core
 {
+    /// @brief Editor window for creating, validating, and previewing `.nxaudio` metadata assets.
+    /// Preview voices are always stopped when the target changes or the window closes.
     CLASS();
     class NxAudioClipEditorEWC : public NxEditorBaseEditorEWC
     {
         ECS_DECL(NxAudioClipEditorEWC, Core::NxEditorBaseEditorEWC);
 
     public:
+        /// @brief Get the asset-browser icon for an audio clip.
+        /// @return Icon identifier understood by the editor UI.
         [[nodiscard]] const char* getIcon() override;
 
     protected:

@@ -29,6 +29,8 @@
 
 namespace Core
 {
+    /// @brief Properties-panel adapter for AudioSource configuration and preview playback.
+    /// It owns at most one preview voice and stops it when the selected component changes.
     CLASS();
     class ECSEditorAudioSourceAdapter final : public ECSEditorMimeAdapter
     {

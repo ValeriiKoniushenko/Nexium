@@ -13,9 +13,11 @@ namespace Core::Animation
 
 namespace Core
 {
+    /// @brief Modal editor for frame animations, including named event markers on individual frames.
     class FrameByFrameAnimationEditor
     {
     public:
+        /// @brief Transient progress of the editor-only animation preview.
         struct PreviewState
         {
             std::size_t frame = 0;
@@ -26,6 +28,9 @@ namespace Core
 
         void create(Animation::FrameByFrameAnimator* animator);
         void edit(Animation::FrameByFrameAnimator* animator, const StringAtom& name);
+        /// @brief Draw the active draft and commit it only after validation.
+        /// @param dt Elapsed time in seconds for the preview.
+        /// @param onSave Callback invoked when the user commits the valid draft.
         void draw(float dt, const SaveCallback& onSave);
 
         static void drawPreview(const Animation::FrameByFrameAnimation& animation, float dt,

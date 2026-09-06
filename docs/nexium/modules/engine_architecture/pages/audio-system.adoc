@@ -1,0 +1,69 @@
+= Audio System
+:description: Asset-backed, non-spatial sound-effect playback, ECS controls, and animation cues.
+:source-highlighter: highlight.js
+:icons: font
+
+== Overview
+
+Nexium's audio system plays short, non-spatial sound effects. It supports independent overlapping voices, pause and resume, looping, frame-animation cues, editor preview, and gameplay delegates. The current MVP intentionally does not include streaming music, spatial audio, mixers, buses, or background decoding.
+
+[source,text]
+----
+.nxaudio metadata -> AudioClipAsset -> AudioSource -> AudioSystem -> IAudioBackend -> MiniaudioBackend
+                                      ^
+Frame event marker -> FrameByFrameAnimator::onEvent -> AnimationAudioBinding
+----
+
+`GameInstance` owns `AudioSystem`: it initializes the output backend after the asset scan and calls `AudioSystem::update()` once per frame. Completion is therefore processed on the main thread. Audio callbacks never access ECS, delegates, assets, or voice destruction.
+
+== Audio clip assets
+
+An audio clip is a `.nxaudio` metadata asset. It stores only a path to a source file relative to the project root; decoded PCM is runtime data and is never serialized. The source formats are WAV, FLAC, and MP3.
+
+Create or edit the metadata in the *NX audio clip editor*. The editor validates project-relative paths and can preview a single temporary voice. `AssetsManager` indexes `.nxaudio` files during its normal scan and retrieves them by logical path:
+
+[source,cpp]
+----
+auto clip = Core::GetAssetsManager().getAudioClip(
+    "data/assets/audio/player_punch.nxaudio"_atom);
+----
+
+The first retained `AssetRef` loads and decodes the source synchronously. A playing voice keeps its own `NXAudioClip` reference, so its PCM cannot be released while the backend still consumes it. Decode failures are reported by the asset layer with the source-path context.
+
+== ECS playback
+
+Use `AudioSource` for gameplay-level sound effects. It serializes a clip path, volume, loop option, and maximum polyphony; it does *not* serialize live voices. The corresponding properties adapter provides the same settings and an editor preview.
+
+[source,cpp]
+----
+auto* punch = host->addChildComponent<Core::Audio::AudioSource>("Punch"_atom);
+punch->setClip("data/assets/audio/player_punch.nxaudio"_atom);
+punch->setVolume(0.8f);
+punch->setMaxPolyphony(2);
+punch->play();
+----
+
+`AudioSource::play()` creates an independent voice. When the source is already at its polyphony limit, it stops its oldest active voice before starting the next one. `pause()`, `resume()`, and `stop()` apply to every active voice created by that source.
+
+Use `AudioSystem` directly only when a caller needs an individual voice handle. A `VoiceHandle` is generation-checked and becomes invalid after `stop()` or natural completion. Check `AudioSystem::isValid()` before reusing a stored handle.
+
+== Animation audio cues
+
+Frame-by-frame animation frames have an ordered list of named event markers. The frame-animation editor exposes those markers, and `FrameByFrameAnimator::onEvent` emits each one when its frame is entered. When a large delta crosses several frames, events are still emitted in frame order.
+
+Attach `AnimationAudioBinding` below the same owner that contains the animator and named audio-source components. Each cue contains:
+
+* an animation name;
+* an event marker name;
+* a target `AudioSource` component name; and
+* one command: `Play`, `Pause`, `Resume`, or `Stop`.
+
+The binding subscribes when initialized and dispatches a matching command to the source. Missing animator or source dependencies are logged once per name, rather than on every frame.
+
+== Manual integration example
+
+`TemplateGameInstance` shows three supported integration paths: keyboard actions, a gameplay delegate, and player animation events. The sample binds F5 to mono play, F6 to two-voice layered play, F7/F8 to pause/resume, F9 to stop, and F10 to a delegate-triggered sound. Arrow keys move the sample player; `L` starts its punch animation.
+
+== Threading and lifetime rules
+
+All public Nexium audio commands run on the main thread. `AudioSystem` polls backend completion after frame processing instead of receiving ECS callbacks from audio threads. `MiniaudioBackend` keeps native engine, sound, and data-source objects at stable addresses for their initialized lifetime and hides all miniaudio types behind `IAudioBackend`.

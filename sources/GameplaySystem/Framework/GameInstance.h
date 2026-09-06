@@ -69,6 +69,7 @@ namespace Core
 
     public:
         AssetsManager assets;
+        /// @brief Main-thread audio service initialized with GameInstance and updated every tick.
         Audio::AudioSystem audioSystem;
         Scene gameScene;
         ShaderManager shaderManager;
@@ -113,6 +114,8 @@ namespace Core
 
     [[nodiscard]] AssetsManager* GetAssetsManager();
 
+    /// @brief Get the active GameInstance audio service.
+    /// @return Reference to the globally active audio system.
     [[nodiscard]] Audio::AudioSystem& GetAudioSystem();
 } // namespace Core
 

@@ -32,12 +32,17 @@
 
 namespace Core::Audio
 {
+    /// @brief Serializable ECS component that configures and controls related sound-effect voices.
+    ///
+    /// The configured clip path, gain, loop flag, and polyphony are serialized. Runtime handles
+    /// are not. Starting beyond the polyphony limit stops the oldest active voice first.
     CLASS();
     class AudioSource final : public BaseComponent
     {
         ECS_DECL_NO_CNSTR(AudioSource, Core::BaseComponent);
 
     public:
+        /// @brief Inclusive configuration limits enforced by setters and deserialization.
         inline static constexpr float minVolume = 0.f;
         inline static constexpr float maxVolume = 1.f;
         inline static constexpr std::uint32_t minPolyphony = 1;
@@ -50,15 +55,34 @@ namespace Core::Audio
         AudioSource& operator=(AudioSource&& other) noexcept;
         ~AudioSource() override;
 
+        /// @brief Start a new voice for the configured ready clip.
+        /// @return A valid handle on success; an invalid handle otherwise.
         VoiceHandle play();
+        /// @brief Pause every active voice created by this source.
+        /// @return `true` when at least one voice was paused.
         bool pause();
+        /// @brief Resume every paused voice created by this source.
+        /// @return `true` when at least one voice was resumed.
         bool resume();
+        /// @brief Stop and release every active voice created by this source.
+        /// @return `true` when at least one voice was stopped.
         bool stop();
+        /// @brief Apply a command to all currently active voices of this source.
+        /// @param command Playback command to execute.
+        /// @return `true` when the command affects at least one voice.
         bool execute(AudioCommand command);
 
+        /// @brief Set the logical `.nxaudio` path and resolve it when initialized.
+        /// @param logicalPath Asset-manager logical path, or an empty path to clear the clip.
         void setClip(const StringAtom& logicalPath);
+        /// @brief Set the initial gain for newly created voices.
+        /// @param volume Requested linear gain, clamped to [minVolume, maxVolume].
         void setVolume(float volume);
+        /// @brief Set whether newly created voices loop.
+        /// @param loop `true` to wrap a clip at its end.
         void setLooping(bool loop);
+        /// @brief Limit concurrently active voices.
+        /// @param maxPolyphony Requested limit, clamped to [minPolyphony, maxPolyphony].
         void setMaxPolyphony(std::uint32_t maxPolyphony);
 
         [[nodiscard]] const StringAtom& getClipPath() const noexcept { return _clipPath; }
@@ -66,6 +90,9 @@ namespace Core::Audio
         [[nodiscard]] bool isLooping() const noexcept { return _loop; }
         [[nodiscard]] std::uint32_t getMaxPolyphony() const noexcept { return _maxPolyphony; }
 
+        /// @brief Get the aggregate state of voices owned by this source.
+        /// @return Playing when any voice plays, Paused when none play but one is paused, otherwise
+        /// Stopped.
         [[nodiscard]] PlaybackState getPlaybackState() const;
         [[nodiscard]] bool isPlaying() const;
         [[nodiscard]] bool isPaused() const;

@@ -35,6 +35,7 @@
 
 namespace Core::Animation
 {
+    /// @brief ECS controller for named frame-by-frame animations and ordered frame events.
     CLASS();
     class FrameByFrameAnimator : public BaseComponent
     {
@@ -44,6 +45,9 @@ namespace Core::Animation
         FrameByFrameAnimator(const FrameByFrameAnimator& other);
         FrameByFrameAnimator& operator=(const FrameByFrameAnimator& other);
 
+        /// @brief Activate and restart a named animation.
+        /// @param name Name of a registered animation.
+        /// @return `true` when the animation exists and was activated.
         bool startAnimation(const StringAtom& name);
 
         bool addAnimation(const FrameByFrameAnimation& animation);
@@ -65,6 +69,7 @@ namespace Core::Animation
         [[nodiscard]] const auto& getAnimations() const noexcept { return _animations; }
         [[nodiscard]] Tag getTags() const override;
 
+        /// @brief Fired once for each marker on each entered frame, in frame and marker order.
         Delegate<void(const AnimationEvent&)>::Ptr onEvent
             = Delegate<void(const AnimationEvent&)>::Create();
 

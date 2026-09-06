@@ -153,7 +153,13 @@ namespace Core
         [[nodiscard]] NXSkybox getSkybox(const StringAtom& logicPath);
 
         // ========== Audio clips =======
+        /// @brief Get an audio clip by its logical `.nxaudio` path.
+        /// The asset is loaded on demand through the standard AssetRef lifecycle.
+        /// @param logicPath Logical path of the audio-clip metadata asset.
+        /// @return Strong reference to the audio clip, or an empty reference when it is unknown.
         [[nodiscard]] NXAudioClip getAudioClip(const StringAtom& logicPath);
+        /// @brief Get logical paths of every indexed `.nxaudio` asset.
+        /// @return Snapshot of indexed audio-clip paths.
         [[nodiscard]] std::vector<StringAtom> getAudioClipsAsVector() const;
 
         // ============ ECS ==========
@@ -220,6 +226,9 @@ namespace Core
             const std::filesystem::path& path);
 
     private:
+        /// @brief Read or refresh `.nxaudio` metadata under a logical path.
+        /// @param logicPath Logical path to index.
+        /// @param sourcePath Absolute metadata file path.
         void indexAudioClip(const StringAtom& logicPath,
                             const std::filesystem::path& sourcePath);
 

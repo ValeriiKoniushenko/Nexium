@@ -37,6 +37,8 @@ namespace Core::Animation
 {
     class FrameByFrameAnimator;
 
+    /// @brief One renderable frame and its named event markers.
+    /// Event names are emitted by FrameByFrameAnimator when this frame is entered.
     CLASS();
     struct Frame
     {
@@ -57,6 +59,7 @@ namespace Core::Animation
     void to_json(nlohmann::json& j, const Frame& v);
     void from_json(const nlohmann::json& j, Frame& v);
 
+    /// @brief Time-based sequence of texture or atlas frames with optional per-frame event markers.
     CLASS();
     class FrameByFrameAnimation : public BaseAnimation
     {
@@ -74,6 +77,12 @@ namespace Core::Animation
 
         bool addFrame(StringAtom textureName);
         bool addFrame(GlobalPosition2F uvOffset, GlobalPosition2F uvSize);
+        /// @brief Generate row-major UV frames from a sprite sheet.
+        /// @param columns Number of sprite-sheet columns.
+        /// @param rows Number of sprite-sheet rows.
+        /// @param frameCount Optional maximum number of frames; zero uses every available frame.
+        /// @param startRow Zero-based row at which generation begins.
+        /// @return `true` when the requested grid produces valid frames.
         bool addFramesFromSpriteSheet(std::size_t columns, std::size_t rows,
                                       std::size_t frameCount = 0, std::size_t startRow = 0);
         bool setFrame(std::size_t index, const Frame& frame);
@@ -87,6 +96,12 @@ namespace Core::Animation
         [[nodiscard]] const std::vector<Frame>& getFrames() const noexcept { return _frames; }
         [[nodiscard]] const StringAtom& getAtlasName() const noexcept { return _atlasName; }
         [[nodiscard]] const StringAtom& getTextureName() const noexcept { return _textureName; }
+
+        /// @brief Advance standalone playback by one tick.
+        /// @param delta Elapsed time in seconds.
+        /// Animator-owned playback uses the same internal advance path and receives callbacks for
+        /// each entered frame.
+        void onTick(float delta) override;
 
         [[nodiscard]] spdlog::logger* getLogger() const override
         {

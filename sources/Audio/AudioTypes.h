@@ -31,6 +31,7 @@
 
 namespace Core::Audio
 {
+    /// @brief Lifecycle state exposed for a single logical playback voice.
     enum class PlaybackState : std::uint8_t
     {
         Stopped,
@@ -38,6 +39,7 @@ namespace Core::Audio
         Paused
     };
 
+    /// @brief Command understood by an AudioSource and animation audio cues.
     enum class AudioCommand : std::uint8_t
     {
         Play,
@@ -46,6 +48,10 @@ namespace Core::Audio
         Stop
     };
 
+    /// @brief Generation-checked reference to a voice owned by AudioSystem.
+    ///
+    /// A handle becomes invalid after its voice is stopped or naturally completes. Reusing a slot
+    /// increments its generation, so an old handle can never control the replacement voice.
     struct VoiceHandle
     {
         static constexpr std::uint32_t InvalidIndex = std::numeric_limits<std::uint32_t>::max();
@@ -53,6 +59,9 @@ namespace Core::Audio
         std::uint32_t index = InvalidIndex;
         std::uint32_t generation = 0;
 
+        /// @brief Check whether this handle contains a non-sentinel slot and generation.
+        /// @return `true` for a syntactically usable handle. Use AudioSystem::isValid() to check
+        /// whether the referenced voice is still alive.
         [[nodiscard]] constexpr bool isValid() const noexcept
         {
             return index != InvalidIndex && generation != 0;
@@ -61,18 +70,23 @@ namespace Core::Audio
         constexpr auto operator<=>(const VoiceHandle&) const = default;
     };
 
+    /// @brief Parameters fixed when a new playback voice starts.
     struct PlayParams
     {
         float volume = 1.f;
         bool loop = false;
     };
 
+    /// @brief Immutable decoded PCM buffer used by audio assets and backend voices.
+    /// Samples are interleaved by frame and channel and must remain stable while a voice uses them.
     struct AudioClipData
     {
         std::vector<float> interleavedSamples;
         std::uint32_t channels = 0;
         std::uint32_t sampleRate = 0;
 
+        /// @brief Get the number of complete PCM frames.
+        /// @return Zero when the channel count or interleaved sample layout is malformed.
         [[nodiscard]] std::uint64_t frameCount() const noexcept
         {
             if (channels == 0 || interleavedSamples.size() % channels != 0)
@@ -83,6 +97,8 @@ namespace Core::Audio
             return static_cast<std::uint64_t>(interleavedSamples.size() / channels);
         }
 
+        /// @brief Check whether this object describes non-empty, internally consistent PCM data.
+        /// @return `true` when sample rate, channel layout, and frame count are valid.
         [[nodiscard]] bool isValid() const noexcept
         {
             return sampleRate != 0 && frameCount() != 0;
