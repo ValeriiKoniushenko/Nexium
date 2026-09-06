@@ -56,7 +56,7 @@ namespace Core::Animation
             return animation;
         }
 
-        FrameByFrameAnimator* AddAnimator(SceneObj::Rectangle& owner)
+        FrameByFrameAnimator* AddAnimator(SceneObj::RectangleAnimated& owner)
         {
             return owner.addChildComponent<FrameByFrameAnimator>("Animator"_atom);
         }
@@ -125,7 +125,7 @@ namespace Core::Animation
 
     TEST(FrameByFrameAnimatorEventTests, EmitsEveryCrossedMarkerInOrderIncludingLoopWrap)
     {
-        SceneObj::Rectangle owner{ "Owner"_atom };
+        SceneObj::RectangleAnimated owner{ "Owner"_atom };
         auto* animator = AddAnimator(owner);
         ASSERT_NE(animator, nullptr);
         ASSERT_TRUE(animator->addAnimation(MakeEventAnimation("Loop"_atom, true)));
@@ -156,7 +156,7 @@ namespace Core::Animation
 
     TEST(FrameByFrameAnimatorEventTests, PauseResumeAndFinishDoNotDuplicateMarkers)
     {
-        SceneObj::Rectangle owner{ "Owner"_atom };
+        SceneObj::RectangleAnimated owner{ "Owner"_atom };
         auto* animator = AddAnimator(owner);
         ASSERT_NE(animator, nullptr);
         ASSERT_TRUE(animator->addAnimation(MakeEventAnimation("Once"_atom, false)));
@@ -189,7 +189,7 @@ namespace Core::Animation
 
     TEST(FrameByFrameAnimatorEventTests, RestartEmitsFrameZeroAgain)
     {
-        SceneObj::Rectangle owner{ "Owner"_atom };
+        SceneObj::RectangleAnimated owner{ "Owner"_atom };
         auto* animator = AddAnimator(owner);
         ASSERT_NE(animator, nullptr);
         ASSERT_TRUE(animator->addAnimation(MakeEventAnimation("Restart"_atom, true)));

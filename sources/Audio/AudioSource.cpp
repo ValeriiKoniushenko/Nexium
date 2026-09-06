@@ -345,7 +345,7 @@ namespace Core::Audio
 
     void AudioSource::resolveConfiguredClip()
     {
-        _clip = _clipPath.isEmpty() ? NXAudioClip{} : GetAssetsManager().getAudioClip(_clipPath);
+        _clip = _clipPath.isEmpty() ? NXAudioClip{} : GetAssetsManager()->getAudioClip(_clipPath);
     }
 
     void AudioSource::pruneInvalidVoices() const

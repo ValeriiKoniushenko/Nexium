@@ -177,7 +177,7 @@ namespace Core
         }
 
         stopPreview();
-        _targetAsset = GetAssetsManager().getAudioClip(StringAtom::Intern(assetPath->generic_string()));
+        _targetAsset = GetAssetsManager()->getAudioClip(StringAtom::Intern(assetPath->generic_string()));
         if (!_targetAsset)
         {
             errorLog("Requested audio clip was not found: " + assetPath->generic_string());
@@ -290,7 +290,7 @@ namespace Core
         output << nlohmann::json{{"AssetData", {{"_path", sourcePath->generic_string()}}}}.dump(4);
         output.close();
 
-        GetAssetsManager().refreshFilesSystem();
+        GetAssetsManager()->refreshFilesSystem();
         openFromPath(*assetPath);
         _isNewAssetDialogOpen = false;
         ImGui::CloseCurrentPopup();

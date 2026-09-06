@@ -54,8 +54,6 @@ namespace Core
 
         [[nodiscard]] virtual StringAtom getProcessedAssetType() const = 0;
 
-        [[nodiscard]] const char* getPrefix() const override { return "ECSEditorMimeAdapter"; }
-
         virtual void onEditorTargetChanged() {}
 
     protected:

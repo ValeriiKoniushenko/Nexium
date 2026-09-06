@@ -62,7 +62,7 @@ namespace Core
             return;
         }
 
-        const auto clips = GetAssetsManager().getAudioClipsAsVector();
+        const auto clips = GetAssetsManager()->getAudioClipsAsVector();
         const auto& currentClip = source->getClipPath();
         const char* preview = currentClip.isEmpty() ? "<None>" : currentClip.c_str();
         if (ImGui::BeginCombo("Clip", preview))
