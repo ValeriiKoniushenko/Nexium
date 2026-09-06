@@ -2,13 +2,13 @@
 set(_saved_c_flags "${CMAKE_C_FLAGS}")
 set(_saved_cxx_flags "${CMAKE_CXX_FLAGS}")
 
-if (MSVC)
+if(MSVC)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /W0")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W0")
-else ()
+else()
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -w")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w")
-endif ()
+endif()
 
 
 # ── Vendored (already in-tree, no submodule) ──────────────────────────────────
@@ -17,39 +17,35 @@ add_subdirectory(ImGui)
 add_subdirectory(Rectpack2D)
 add_subdirectory(Stb)
 
-# ── nlohmann/json ─────────────────────────────────────────────────────────────
-set(JSON_BuildTests       OFF CACHE BOOL "" FORCE)
-set(JSON_MultipleHeaders  OFF CACHE BOOL "" FORCE)
-add_subdirectory(nlohmann_json)
-
 # ── GLFW ──────────────────────────────────────────────────────────────────────
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_TESTS    OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_DOCS     OFF CACHE BOOL "" FORCE)
-set(GLFW_INSTALL        OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
 add_subdirectory(glfw)
 
 # ── spdlog ────────────────────────────────────────────────────────────────────
-set(SPDLOG_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-set(SPDLOG_BUILD_TESTS    OFF CACHE BOOL "" FORCE)
-set(SPDLOG_BUILD_BENCH    OFF CACHE BOOL "" FORCE)
+set(SPDLOG_BUILD_EXAMPLE OFF CACHE BOOL "" FORCE)
+set(SPDLOG_BUILD_EXAMPLE_HO OFF CACHE BOOL "" FORCE)
+set(SPDLOG_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(SPDLOG_BUILD_BENCH OFF CACHE BOOL "" FORCE)
 add_subdirectory(spdlog)
 
 # ── Assimp ────────────────────────────────────────────────────────────────────
-if (NEXIUM_ENABLE_3D_MODULE)
-    set(ASSIMP_BUILD_ZLIB         ON  CACHE BOOL "" FORCE)
+if(NEXIUM_ENABLE_3D_MODULE)
+    set(ASSIMP_BUILD_ZLIB ON CACHE BOOL "" FORCE)
     set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "" FORCE)
-    set(ASSIMP_BUILD_TESTS        OFF CACHE BOOL "" FORCE)
+    set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
     set(ASSIMP_WARNINGS_AS_ERRORS OFF CACHE BOOL "" FORCE)
     add_subdirectory(assimp)
 endif()
 
 # ── freetype ──────────────────────────────────────────────────────────────────
-set(SKIP_INSTALL_ALL  ON  CACHE BOOL "" FORCE)
+set(SKIP_INSTALL_ALL ON CACHE BOOL "" FORCE)
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
-set(FT_BUILD_TESTS    OFF CACHE BOOL "" FORCE)
+set(FT_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(FT_BUILD_PROGRAMS OFF CACHE BOOL "" FORCE)
-set(FT_BUILD_UTILS    OFF CACHE BOOL "" FORCE)
+set(FT_BUILD_UTILS OFF CACHE BOOL "" FORCE)
 add_subdirectory(freetype)
 
 # ── Utils ─────────────────────────────────────────────────────────────────────
