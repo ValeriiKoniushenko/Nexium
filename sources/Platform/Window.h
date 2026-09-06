@@ -28,6 +28,7 @@
 #include "Core/Singleton.h"
 #include "Core/Size.h"
 #include "Foundation/BaseLog.h"
+#include "Foundation/Interfaces/DataStream.h"
 #include "Keyboard.h"
 #include "Mouse.h"
 
@@ -98,7 +99,10 @@ namespace Platform
     extern DragAndDrop gDragDrop;
 
     CLASS();
-    class Window : public Foundation::BaseLog, public Core::Singleton<Window>
+    class Window :
+        public Foundation::BaseLog,
+        public Core::Singleton<Window>,
+        public Foundation::IDataIO
     {
         SINGLETONS_FRIEND(Window);
         R_FRIEND(Window);
@@ -143,6 +147,11 @@ namespace Platform
 
         [[nodiscard]] GLFWwindow* getRawWindow() noexcept { return _window; }
 
+        [[nodiscard]] Core::StringAtom getCacheHash() const override;
+        [[nodiscard]] spdlog::logger* getLogger() const override;
+        [[nodiscard]] const char* getPrefix() const override { return "Window"; }
+
+    public:
         /// @param glm::vec2 mouse position (X & Y)
         Core::Delegate<void(glm::vec2)>::Ptr onMouseMove
             = Core::Delegate<void(glm::vec2)>::Create();
@@ -174,9 +183,6 @@ namespace Platform
         /// @param ISize2 new window size
         Core::Delegate<void(Core::ISize2)>::Ptr onResize
             = Core::Delegate<void(Core::ISize2)>::Create();
-
-        [[nodiscard]] spdlog::logger* getLogger() const override;
-        [[nodiscard]] const char* getPrefix() const override { return "Window"; }
 
     protected:
         Core::DelegateSubscriberPoolGuard _subscriptionPool;

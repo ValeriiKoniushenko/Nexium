@@ -82,5 +82,6 @@ WarningsAsErrors: "modernize-avoid-c-arrays,
   cppcoreguidelines-special-member-functions"
 
 HeaderFilterRegex: '.*Nexium/sources/.*'
+ExcludeHeaderFilterRegex: '.*\.generated\..*'
 
 FormatStyle: file

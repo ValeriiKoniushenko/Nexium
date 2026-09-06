@@ -111,8 +111,8 @@ namespace Platform
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_MAXIMIZED, _isMaximized ? GLFW_TRUE : GLFW_FALSE);
 
-        if (!((_window
-               = glfwCreateWindow(_size.width, _size.height, title.c_str(), nullptr, nullptr))))
+        _window = glfwCreateWindow(_size.width, _size.height, title.c_str(), nullptr, nullptr);
+        if (!_window)
         {
             destroy();
             criticalThrowingLog("Failed to create GLFW window");
@@ -317,6 +317,11 @@ namespace Platform
     spdlog::logger* Window::getLogger() const
     {
         return nullptr;
+    }
+
+    StringAtom Window::getCacheHash() const
+    {
+        return "RootWindow"_atom;
     }
 
     /*void Window::ioFieldsUpdate(DataStream& out)
