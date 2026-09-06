@@ -1,12 +1,12 @@
 {
     "_children": null,
     "_innerPosition": [
-        0.0,
-        0.0
+        68.0,
+        92.0
     ],
     "_innerSize": {
-        "height": 0.0,
-        "width": 0.0
+        "height": 390.0,
+        "width": 440.0
     },
     "_isEnabled": false,
     "_isFitContent": false,
@@ -17,16 +17,16 @@
     "_name": " Image viewer",
     "_noTick": false,
     "_oldSize": {
-        "height": -1.0,
-        "width": -1.0
+        "height": 430.0,
+        "width": 456.0
     },
     "_position": [
-        0.0,
-        0.0
+        60.0,
+        60.0
     ],
     "_size": {
-        "height": 0.0,
-        "width": 0.0
+        "height": 430.0,
+        "width": 456.0
     },
     "_type": "Core::ImageViewerEWC"
 }

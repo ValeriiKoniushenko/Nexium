@@ -49,6 +49,7 @@ namespace Core::SceneObj
 
         [[nodiscard]] StringAtom getTextureName() const { return _textureName; }
         void setTexture(const StringAtom& value);
+        void setTexture(const StringAtom& atlasName,const StringAtom& textureName);
         void setTextureUV(glm::vec2 offset, glm::vec2 size);
         void resetTextureUV() noexcept;
 

@@ -143,6 +143,12 @@ namespace Core
 
     void Scene::internal_addObjectToScene(SceneObject* object)
     {
+        if (_isTicking)
+        {
+            _pendingObjects.emplace_back(object);
+            return;
+        }
+
         auto name = object->getComponentName();
         name.trim(' ');
 
@@ -168,6 +174,14 @@ namespace Core
 
     void Scene::addUniqueObjectToScene(SceneObject::Ptr object)
     {
+        for (const auto& pending : _pendingObjects)
+        {
+            if (pending->getComponentName() == object->getComponentName())
+            {
+                return;
+            }
+        }
+
         for (auto&& obj : _sceneObjects)
         {
             if (obj->getComponentName() == object->getComponentName())
@@ -385,9 +399,26 @@ namespace Core
 
     void Scene::tick(float timeDelta)
     {
-        for (auto&& object : _sceneObjects)
+        _isTicking = true;
+        try
         {
-            object->tick(timeDelta);
+            for (auto&& object : _sceneObjects)
+            {
+                object->tick(timeDelta);
+            }
+        }
+        catch (...)
+        {
+            _isTicking = false;
+            throw;
+        }
+        _isTicking = false;
+
+        ObjectContainerT pending;
+        pending.swap(_pendingObjects);
+        for (const auto& object : pending)
+        {
+            internal_addObjectToScene(object.get());
         }
     }
 } // namespace Core

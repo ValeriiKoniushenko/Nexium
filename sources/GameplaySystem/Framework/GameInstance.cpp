@@ -425,6 +425,7 @@ namespace Core
     void GameInstance::loadCoreResources()
     {
         GetAssetsManager()->generateTextureAtlas(Config::Path::images / "atlas");
+        GetAssetsManager()->generateTextureAtlas("Tiles", Config::Path::images / "Tiles");
         GetAssetsManager()->generateTextureAtlas("santa_walk"_atom,
                                                  Config::Path::images / "Santa/Santa_Walk");
         GetAssetsManager()->generateTextureAtlas("player_walk"_atom,

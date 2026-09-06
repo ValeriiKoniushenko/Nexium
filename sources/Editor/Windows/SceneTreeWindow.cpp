@@ -146,6 +146,12 @@ namespace Core
             return;
         }
 
+        if (const auto* object = n->tryCastTo<SceneObject>();
+            object && !object->isVisibleInSceneTree())
+        {
+            return;
+        }
+
         if (const auto* actor = n->tryCastTo<Actor>())
         {
             // Trying to exclude NOW any post draw actors.

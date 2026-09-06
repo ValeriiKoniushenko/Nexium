@@ -24,6 +24,12 @@
 
 #include "Player.h"
 
+#include "AssetsManager/AssetsManager.h"
+#include "GameplaySystem/Framework/GameInstance.h"
+#include "InputDevices/InputTypes.h"
+#include "InputDevices/Keyboard.h"
+#include "Scene/Rectangle.h"
+
 using namespace Core;
 
 ECS_IMPL(Player);
@@ -34,11 +40,40 @@ void Player::onInitialize()
 
     _input = findFirstChildOf<InputController>();
     _animator = findFirstChildOf<Animation::FrameByFrameAnimator>();
+
+    _input->bind(
+        "spawnTree"_atom, KeyChord::Exact(Keyboard::Key::Enter),
+        [this](const InputActionEvent&)
+        {
+            auto component = GetAssetsManager()->getUniqueEcsAsset(
+                "data/assets/AnimatedRectangle.nx"_atom);
+  
+            auto tree = DynamicCast<SceneObj::RectangleAnimated>(component);
+            if (!tree)
+            {
+                errorLog("Can't load AnimatedRectangle asset");
+                return;
+            }
+  
+            tree->setComponentName("Tree"_atom);
+            tree->setPosition(getPosition());
+            tree->setTexture("Tree_2.png"_atom);
+
+            gGameInstance->gameScene.addObjectToScene(std::move(tree));
+
+            infoLog("Tree spawned");
+        },
+        InputActionTrigger::OnPress);
 }
 
 void Player::onTick(float delta)
 {
     RectangleAnimated::onTick(delta);
+
+    if (_input->isActionPressed("SpawnTree"_atom))
+    {
+        SceneObj::RectangleAnimated tree;
+    }
 
     if (_isGrounded)
     {

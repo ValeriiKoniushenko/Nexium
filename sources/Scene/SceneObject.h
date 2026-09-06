@@ -66,6 +66,9 @@ namespace Core
 
         [[nodiscard]] SceneState getSceneState() const;
 
+        void setVisibleInSceneTree(bool visible) noexcept { _visibleInSceneTree = visible; }
+        [[nodiscard]] bool isVisibleInSceneTree() const noexcept { return _visibleInSceneTree; }
+
         friend void swap(SceneObject& a, SceneObject& b) noexcept
         {
             using std::swap;
@@ -73,6 +76,7 @@ namespace Core
             swap(static_cast<IOutliner&>(a), static_cast<IOutliner&>(b));
             swap(static_cast<Transformable&>(a), static_cast<Transformable&>(b));
             swap(static_cast<IDrawable&>(a), static_cast<IDrawable&>(b));
+            swap(a._visibleInSceneTree, b._visibleInSceneTree);
         }
 
         [[nodiscard]] Tag getTags() const override;
@@ -112,6 +116,8 @@ namespace Core
         void onDirtyMatrix() override;
 
     private:
+        // Temporary runtime-only filter until generated map tiles have an editor hierarchy.
+        bool _visibleInSceneTree = true;
         StringAtom _referencedAsset;
     };
 
