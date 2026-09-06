@@ -1,0 +1,37 @@
+{
+    "data": {
+        "_animationEnabled": true,
+        "_atlasName": "default",
+        "_children": null,
+        "_isDrawOutline": false,
+        "_isEnabled": true,
+        "_isPostDraw": false,
+        "_name": "AnimatedRectangle",
+        "_noTick": false,
+        "_origin": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "_position": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "_rotation": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "_scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "_textureName": "red.png",
+        "_type": "Core::SceneObj::RectangleAnimated"
+    },
+    "name": "AnimatedRectangle",
+    "tags": "WorldObject",
+    "type": "Core::SceneObj::RectangleAnimated"
+}

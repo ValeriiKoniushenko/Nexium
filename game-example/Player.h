@@ -22,53 +22,34 @@
  * SOFTWARE.
  */
 
-#include "Player.h"
+#pragma once
 
-using namespace Core;
+#include "Animations/FrameByFrame/FrameByFrameAnimator.h"
+#include "GameplaySystem/Framework/InputController.h"
+#include "Scene/Rectangle.h"
 
-ECS_IMPL(Player);
-
-void Player::onInitialize()
+CLASS();
+class Player : public Core::SceneObj::RectangleAnimated
 {
-    SceneObj::RectangleAnimated::onInitialize();
+    ECS_DECL(Player, Core::SceneObj::RectangleAnimated);
 
-    _input = findFirstChildOf<InputController>();
-    _animator = findFirstChildOf<Animation::FrameByFrameAnimator>();
-}
+public:
+protected:
+    void onInitialize() override;
+    void onTick(float delta) override;
 
-void Player::onTick(float delta)
-{
-    RectangleAnimated::onTick(delta);
+private:
+    Core::InputController* _input = nullptr;
+    Core::Animation::FrameByFrameAnimator* _animator = nullptr;
 
-    if (_isGrounded)
-    {
-        if (!_animator->getAnimation("Santa_run")->isPlaying())
-        {
-            _animator->startAnimation("Santa_run");
-        }
-    }
-    else
-    {
-        // TODO: Add animation "santa_jump"
-    }
+    float _movementSpeed = 200.f;
 
-    if (_isGrounded && _input->isActionPressed("Jump"_atom))
-    {
-        _isGrounded = false;
-        _velocityY = _jumpForce;
-    }
+    constexpr static float _gravity = -1800.f;
+    constexpr static float _groundCoords = 0.f;
+    constexpr static float _jumpForce = 650.f;
 
-    _velocityY += _gravity * delta;
+    float _velocityY = 0.f;
+    bool _isGrounded = true;
+};
 
-    auto pos = getPosition();
-    pos.y += _velocityY * delta;
-
-    if (pos.y <= _groundCoords)
-    {
-        pos.y = _groundCoords;
-        _velocityY = 0.f;
-        _isGrounded = true;
-    }
-
-    setPosition(pos);
-}
+#include "Player.generated.h" // added by the code generator. Better don't move it.
