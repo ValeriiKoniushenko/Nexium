@@ -99,6 +99,7 @@ namespace Platform
     extern DragAndDrop gDragDrop;
 
     CLASS();
+    // NOLINTNEXTLINE(misc-multiple-inheritance): combines logging, singleton access, and data I/O.
     class Window :
         public Foundation::BaseLog,
         public Core::Singleton<Window>,

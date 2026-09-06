@@ -124,7 +124,6 @@ namespace Foundation
     public:
         using level = spdlog::level::level_enum;
 
-        BaseLog() = default;
         BaseLog(const BaseLog&) = default;
         BaseLog(BaseLog&&) noexcept = default;
         BaseLog& operator=(const BaseLog&) = default;
@@ -178,6 +177,9 @@ namespace Foundation
         [[nodiscard]] virtual const char* getPrefix() const { return nullptr; }
 
         [[nodiscard]] virtual spdlog::logger* getLogger() const = 0;
+
+    protected:
+        BaseLog() = default;
 
     private:
         [[nodiscard]] Core::StringAtom getCompleteText(const char* str) const;
