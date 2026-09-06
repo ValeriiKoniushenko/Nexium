@@ -76,7 +76,6 @@ add_custom_target(CodeGenerator ALL
 add_subdirectory(dependencies)
 add_subdirectory(sources)
 
-
 if(NOT NEXIUM_DISABLE_TESTS)
     add_subdirectory(tests)
 endif()

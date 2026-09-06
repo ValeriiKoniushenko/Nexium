@@ -63,4 +63,12 @@ target_link_libraries(Nexium_Platform_Input
     Nexium_Platform_PrivateModule
 )
 
+# =========================================
+
+CoreAddCompileOptionsTo(Nexium_Platform_PrivateModule)
+CoreAddCompileOptionsTo(Nexium_Platform_Graphics)
 CoreAddCompileOptionsTo(Nexium_Platform_Input)
+
+add_dependencies(Nexium_Platform_PrivateModule CodeGenerator)
+add_dependencies(Nexium_Platform_Graphics CodeGenerator)
+add_dependencies(Nexium_Platform_Input CodeGenerator)

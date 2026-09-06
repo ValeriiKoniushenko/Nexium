@@ -1,2 +1,2 @@
-add_subdirectory(Platform)
 add_subdirectory(Foundation)
+add_subdirectory(Platform)
