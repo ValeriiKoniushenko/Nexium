@@ -36,50 +36,12 @@ jobs:
       CC: ${{ matrix.cc }}
       CXX: ${{ matrix.cxx }}
       BUILD_DIR: build/${{ matrix.compiler }}-${{ matrix.build_type }}
-      CCACHE_DIR: build/.ccache
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Determine submodule revision
-        id: submodule-revision
-        shell: bash
-        run: |
-          echo "hash=$(git submodule status | sha256sum | cut -d ' ' -f 1)" >> "$GITHUB_OUTPUT"
-
-      - name: Restore submodules
-        id: submodules-cache
-        uses: actions/cache/restore@v4
         with:
-          path: |
-            .agents/Agents
-            dependencies
-            .git/modules
-          key: nexium-submodules-v1-${{ steps.submodule-revision.outputs.hash }}
-
-      - name: Initialize submodules on cache miss
-        if: steps.submodules-cache.outputs.cache-hit != 'true'
-        shell: bash
-        run: |
-          git submodule sync --recursive
-          git submodule update --init --recursive
-
-      - name: Restore build cache
-        id: build-cache
-        uses: actions/cache/restore@v4
-        with:
-          path: build
-          key: nexium-build-v1-${{ matrix.compiler }}-${{ matrix.build_type }}-${{ github.sha }}
-          restore-keys: |
-            nexium-build-v1-${{ matrix.compiler }}-${{ matrix.build_type }}-
-
-      - name: Show selected toolchain
-        shell: bash
-        run: |
-          command -v "$CC"
-          command -v "$CXX"
-          cmake --version
+          submodules: recursive
 
       - name: Configure CMake (${{ matrix.build_type }})
         shell: bash
@@ -91,20 +53,3 @@ jobs:
         shell: bash
         run: |
           time cmake --build "$BUILD_DIR" --parallel --verbose
-
-      - name: Save build cache
-        if: success() && steps.build-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v4
-        with:
-          path: build
-          key: ${{ steps.build-cache.outputs.cache-primary-key }}
-
-      - name: Save submodules
-        if: success() && steps.submodules-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v4
-        with:
-          path: |
-            .agents/Agents
-            dependencies
-            .git/modules
-          key: ${{ steps.submodules-cache.outputs.cache-primary-key }}
