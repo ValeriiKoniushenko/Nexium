@@ -24,6 +24,22 @@ Now, everything is devided by layers.
 
 == 1 - Foundation
 
-It includes:
-- The dependecy cmake modules Utils::Utils, Utils::Core (StringAtom, Math, Delegates, etc). Path to module: `dependencies/Utils`
+- Target name: `Nexium_Foundation` (`Nexium::Foundation`)
+- Cmake dependency: `Utils::Utils`, `Utils::Core` (StringAtom, Math, Delegates, etc). Path to module: `dependencies/Utils`
 - The files: `Foundation/Configs.*`, `Foundation/BaseLog.*`
+- Path to this module is: `sources/Foundation`
+
+== 1 - Platform
+
+It has three main targets.
+1. Private: Nexium_Platform_PrivateModule
+    - It includes: `sources/Platform/PrivateModuleInfo.*`
+    - Cmake dependency is: `Nexium::Foundation`
+2. Public: Nexium_Platform_Graphics (Nexium::Platform::Graphics)
+    - It includes: `sources/Platform/{Graphics}.*`
+    - Cmake dependency is: `glfw`, `Core::Glad`
+3. Public: Nexium_Platform_Input (Nexium::Platform::Input)
+    - It includes: `sources/Platform/{Keyboard,Mouse,Window}.*`
+    - Cmake dependency is: `Nexium::Foundation`, `Nexium::Platform::Graphics`
+
+- Path to these modules is: `sources/Platform`

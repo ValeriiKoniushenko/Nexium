@@ -29,9 +29,9 @@ namespace spdlog
     class logger;
 }
 
-namespace Graphics
+namespace ThisModule
 {
 
     [[nodiscard]] spdlog::logger* getLogger();
 
-} // namespace Graphics
+} // namespace ThisModule
