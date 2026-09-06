@@ -1,0 +1,20 @@
+If:
+    PathMatch: .*/build/.*/_deps/.*
+Diagnostics:
+    Suppress: ["*"]
+    UnusedIncludes: None
+
+---
+CompileFlags:
+    Remove:
+        - -W*
+        - -fdeps-format=*
+        - -fdeps-file=*
+        - -fdeps-target=*
+        - -fmodules-ts
+        - -fmodule-mapper=*
+        - -MD
+    CompilationDatabase: build/
+
+Index:
+    Background: Build

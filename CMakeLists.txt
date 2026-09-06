@@ -75,7 +75,7 @@ add_custom_target(CodeGenerator ALL
 # ── Main deps pipeline ────────────────────────────────────────────────────────────────
 add_subdirectory(dependencies)
 # add_subdirectory(sources)
-# add_subdirectory(new_sources)
+add_subdirectory(new_sources)
 
 
 if(NOT NEXIUM_DISABLE_TESTS)

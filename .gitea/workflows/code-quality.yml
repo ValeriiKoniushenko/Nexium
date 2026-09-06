@@ -86,20 +86,3 @@ jobs:
           trap report_elapsed EXIT
 
           cmake --build "$BUILD_DIR" --parallel --verbose
-
-      - name: Inspect linked executables
-        shell: bash
-        run: |
-          set -euo pipefail
-          SECONDS=0
-          report_elapsed() {
-            status=$?
-            echo "METRIC: link inspection completed in ${SECONDS}s (exit ${status})"
-          }
-          trap report_elapsed EXIT
-
-          while IFS= read -r executable; do
-            echo "===== $executable ====="
-            file "$executable"
-            ldd "$executable" || true
-          done < <(find "$BUILD_DIR/bin" -maxdepth 1 -type f -executable -print | sort)
