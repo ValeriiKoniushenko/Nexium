@@ -26,7 +26,7 @@
 
 #include "Window.h"
 
-namespace Core
+namespace Platform
 {
 
     glm::vec2 Mouse::GetPosition()
@@ -71,4 +71,4 @@ namespace Core
     {
         return glfwGetMouseButton(GetWindow().getRawWindow(), static_cast<int>(key)) == GLFW_REPEAT;
     }
-} // namespace Core
+} // namespace Platform

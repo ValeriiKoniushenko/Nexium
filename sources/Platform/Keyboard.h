@@ -24,14 +24,10 @@
 
 #pragma once
 
-// clang-format off
-#include "glad/glad.h"
-#include "GLFW/glfw3.h"
-// clang-format on
-
+#include "Graphics.h"
 #include "JustReflectMe/Adapter.h"
 
-namespace Core
+namespace Platform
 {
     class Keyboard final
     {
@@ -182,6 +178,6 @@ namespace Core
 
         [[nodiscard]] static bool IsKeyReleased(Key key);
     };
-} // namespace Core
+} // namespace Platform
 
 #include "Keyboard.generated.h" // added by the code generator. Better don't move it.

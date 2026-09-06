@@ -29,7 +29,7 @@
 
 #include <shared_mutex>
 
-namespace Core
+namespace Foundation
 {
     GlobalLog globalLog = {};
 
@@ -55,7 +55,7 @@ namespace Core
         return logger.get();
     }
 
-    StringAtom LogQueue::LogLine::toString() const
+    Core::StringAtom LogQueue::LogLine::toString() const
     {
         const std::time_t rawTime = std::time(nullptr);
         std::tm tm_struct{};
@@ -78,7 +78,7 @@ namespace Core
         throw std::runtime_error(str);
     }
 
-    StringAtom BaseLog::getCompleteText(const char* str) const
+    Core::StringAtom BaseLog::getCompleteText(const char* str) const
     {
         if (const auto* const prefix = getPrefix())
         {
@@ -86,4 +86,4 @@ namespace Core
         }
         return str;
     }
-} // namespace Core
+} // namespace Foundation

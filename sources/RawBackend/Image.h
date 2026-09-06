@@ -32,9 +32,9 @@
 #include <string>
 #include <unordered_set>
 
-namespace Core
+namespace RawBackend
 {
-    class Image : public BaseLog
+    class Image : public Foundation::BaseLog
     {
     public:
         // The next values were taken from the stb_image.h documentation.
@@ -59,7 +59,7 @@ namespace Core
         Image(const Image& obj) = delete;
         Image& operator=(const Image& obj) = delete;
 
-        [[nodiscard]] ISize2 getSize() const noexcept { return _size; }
+        [[nodiscard]] Core::ISize2 getSize() const noexcept { return _size; }
         [[nodiscard]] Channel getChannel() const noexcept { return _channel; }
         [[nodiscard]] int getChannelsCount() const noexcept { return static_cast<int>(_channel); }
 
@@ -93,9 +93,9 @@ namespace Core
     private:
         std::filesystem::path _path;
         unsigned char* _data{};
-        ISize2 _size;
+        Core::ISize2 _size;
         Channel _channel = Channel::None;
     };
-} // namespace Core
+} // namespace RawBackend
 
 #include "Image.generated.h" // added by the code generator. Better don't move it.

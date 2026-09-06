@@ -46,3 +46,9 @@ It has three main targets.
 
 == 3 - Raw Backend
 
+It has one target.
+1. Public: Nexium_RawBackend (Nexium::RawBackend)
+    - It includes: `sources/RawBackend/{Image,IDrawable}.*`
+    - Cmake dependency is: `Nexium::Foundation`, `Core::Stb` (dependencies/Stb)
+
+- Path to these modules is: `sources/RawBackend`

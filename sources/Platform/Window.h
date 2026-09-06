@@ -31,7 +31,7 @@
 #include "Keyboard.h"
 #include "Mouse.h"
 
-namespace Core
+namespace Platform
 {
     struct DragAndDrop
     {
@@ -48,7 +48,7 @@ namespace Core
         struct Payload
         {
             std::unique_ptr<Data> data;
-            StringAtom type;
+            Core::StringAtom type;
         };
 
         ENUM_CLASS();
@@ -98,7 +98,7 @@ namespace Core
     extern DragAndDrop gDragDrop;
 
     CLASS();
-    class Window : public BaseLog, public Singleton<Window>
+    class Window : public Foundation::BaseLog, public Core::Singleton<Window>
     {
         SINGLETONS_FRIEND(Window);
         R_FRIEND(Window);
@@ -115,7 +115,7 @@ namespace Core
     public:
         ~Window() override;
 
-        void create(const StringAtom& title, ISize2 size = ISize2{ 300, 300 });
+        void create(const Core::StringAtom& title, Core::ISize2 size = Core::ISize2{ 300, 300 });
 
         void close();
 
@@ -129,7 +129,7 @@ namespace Core
 
         static void pollEvent();
 
-        [[nodiscard]] ISize2 getSize() const;
+        [[nodiscard]] Core::ISize2 getSize() const;
 
         void setCursorPosition(float x, float y);
 
@@ -144,45 +144,49 @@ namespace Core
         [[nodiscard]] GLFWwindow* getRawWindow() noexcept { return _window; }
 
         /// @param glm::vec2 mouse position (X & Y)
-        Delegate<void(glm::vec2)>::Ptr onMouseMove = Delegate<void(glm::vec2)>::Create();
+        Core::Delegate<void(glm::vec2)>::Ptr onMouseMove
+            = Core::Delegate<void(glm::vec2)>::Create();
 
         /// @param Mouse::Key is a key
         /// @param Mouse::State pressed or released
         /// @param Mouse::Mod is a mod
-        Delegate<void(Mouse::Key, Mouse::State, Mouse::Mod)>::Ptr onMouseKeyPressed
-            = Delegate<void(Mouse::Key, Mouse::State, Mouse::Mod)>::Create();
+        Core::Delegate<void(Mouse::Key, Mouse::State, Mouse::Mod)>::Ptr onMouseKeyPressed
+            = Core::Delegate<void(Mouse::Key, Mouse::State, Mouse::Mod)>::Create();
 
         /// @param glm::vec2 mouse scroll offsets (X & Y)
-        Delegate<void(glm::vec2)>::Ptr onMouseWheel = Delegate<void(glm::vec2)>::Create();
+        Core::Delegate<void(glm::vec2)>::Ptr onMouseWheel
+            = Core::Delegate<void(glm::vec2)>::Create();
 
         /// @param Keyboard::Key is a key
         /// @param int is a scancode
         /// @param Keyboard::KeyState is an action: GLFW_PRESS, GLFW_RELEASE or GLFW_REPEAT
         /// @param int is a mod
-        Delegate<void(Keyboard::Key, int, Keyboard::KeyState, int)>::Ptr onKeyPressed
-            = Delegate<void(Keyboard::Key, int, Keyboard::KeyState, int)>::Create();
+        Core::Delegate<void(Keyboard::Key, int, Keyboard::KeyState, int)>::Ptr onKeyPressed
+            = Core::Delegate<void(Keyboard::Key, int, Keyboard::KeyState, int)>::Create();
 
         /// @param unsigned int is a Scancode
-        Delegate<void(unsigned int)>::Ptr onTextInput = Delegate<void(unsigned int)>::Create();
+        Core::Delegate<void(unsigned int)>::Ptr onTextInput
+            = Core::Delegate<void(unsigned int)>::Create();
 
         /// @param bool is Entered the cursor or no
-        Delegate<void(bool)>::Ptr onCursorEntered = Delegate<void(bool)>::Create();
+        Core::Delegate<void(bool)>::Ptr onCursorEntered = Core::Delegate<void(bool)>::Create();
 
         /// @param ISize2 new window size
-        Delegate<void(ISize2)>::Ptr onResize = Delegate<void(ISize2)>::Create();
+        Core::Delegate<void(Core::ISize2)>::Ptr onResize
+            = Core::Delegate<void(Core::ISize2)>::Create();
 
         [[nodiscard]] spdlog::logger* getLogger() const override;
         [[nodiscard]] const char* getPrefix() const override { return "Window"; }
 
     protected:
-        DelegateSubscriberPoolGuard _subscriptionPool;
+        Core::DelegateSubscriberPoolGuard _subscriptionPool;
         GLFWwindow* _window{};
 
         FIELD();
-        ISize2 _size;
+        Core::ISize2 _size;
 
         FIELD();
-        StringAtom _title;
+        Core::StringAtom _title;
 
         FIELD();
         bool _isMaximized = false;
@@ -195,6 +199,6 @@ namespace Core
     };
 
     Window& GetWindow();
-} // namespace Core
+} // namespace Platform
 
 #include "Window.generated.h" // added by the code generator. Better don't move it.

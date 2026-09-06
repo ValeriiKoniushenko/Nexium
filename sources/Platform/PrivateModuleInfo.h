@@ -29,9 +29,9 @@ namespace spdlog
     class logger;
 }
 
-namespace ThisModule
+namespace Platform
 {
 
     [[nodiscard]] spdlog::logger* getLogger();
 
-} // namespace ThisModule
+} // namespace Platform

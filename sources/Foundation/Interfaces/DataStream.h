@@ -28,7 +28,7 @@
 
 #include <filesystem>
 
-namespace Core
+namespace Foundation
 {
     struct IDataIO
     {
@@ -40,7 +40,7 @@ namespace Core
         virtual ~IDataIO() = default;
 
         [[nodiscard]] virtual std::filesystem::path getCacheDir() const;
-        [[nodiscard]] virtual StringAtom getCacheHash() const = 0;
+        [[nodiscard]] virtual Core::StringAtom getCacheHash() const = 0;
     };
 
-} // namespace Core
+} // namespace Foundation

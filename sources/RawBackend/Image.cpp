@@ -25,10 +25,9 @@
 #include "Image.h"
 
 #include "PrivateModuleInfo.h"
-
 #include "Stb/Image.h"
 
-namespace Core
+namespace RawBackend
 {
     Image::Image(const std::filesystem::path& path)
     {
@@ -64,7 +63,7 @@ namespace Core
 
     spdlog::logger* Image::getLogger() const
     {
-        return ThisModule::getLogger();
+        return RawBackend::getLogger();
     }
 
     std::unordered_set<std::string> Image::SupportedExtensions()
@@ -80,21 +79,21 @@ namespace Core
         };
     }
 
-/*     GLenum Image::getChannelAsOpenGLType() const noexcept
-    {
-        if (static_cast<int>(_channel) == 3)
+    /*     GLenum Image::getChannelAsOpenGLType() const noexcept
         {
-            return GL_RGB;
-        }
+            if (static_cast<int>(_channel) == 3)
+            {
+                return GL_RGB;
+            }
 
-        if (static_cast<int>(_channel) == 4)
-        {
-            return GL_RGBA;
-        }
+            if (static_cast<int>(_channel) == 4)
+            {
+                return GL_RGBA;
+            }
 
-        return GL_RED;
-    }
- */
+            return GL_RED;
+        }
+     */
     bool Image::loadFromFile(const std::filesystem::path& path, bool isFlipVertically /* = true*/,
                              bool forceRGBA /* = false*/)
     {
@@ -167,4 +166,4 @@ namespace Core
         _size = {};
         _channel = Channel::None;
     }
-} // namespace Core
+} // namespace RawBackend

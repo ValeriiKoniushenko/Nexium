@@ -26,7 +26,7 @@
 
 #include "Window.h"
 
-namespace Core
+namespace Platform
 {
     Keyboard::KeyState Keyboard::getKeyState(Key key)
     {
@@ -47,4 +47,4 @@ namespace Core
     {
         return glfwGetKey(GetWindow().getRawWindow(), static_cast<int>(key)) == GLFW_RELEASE;
     }
-} // namespace Core
+} // namespace Platform

@@ -28,14 +28,14 @@
 
 #include <functional>
 
-namespace Core
+namespace RawBackend
 {
     class StaticMesh;
     class Actor;
     class BaseCamera;
 
     CLASS();
-    class [[deprecated("Arch. layers violation with StaticMesh & Actor")]] IDrawable
+    class IDrawable
     {
         R_FRIEND(IDrawable);
 
@@ -71,6 +71,6 @@ namespace Core
         FIELD();
         bool _isPostDraw = false;
     };
-} // namespace Core
+} // namespace RawBackend
 
 #include "IDrawable.generated.h" // added by the code generator. Better don't move it.

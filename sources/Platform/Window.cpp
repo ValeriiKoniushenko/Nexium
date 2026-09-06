@@ -32,13 +32,14 @@
     #include <windows.h>
 #endif
 
+using namespace Platform;
 using namespace Core;
 
 namespace
 {
     void glfwErrorCallback(int error, const char* description)
     {
-        globalLog.errorLog("GLFW Error [{}]: {}"_f << error << description);
+        Foundation::globalLog.errorLog("GLFW Error [{}]: {}"_f << error << description);
     }
 
     void MouseMoveHandler(GLFWwindow*, double x, double y)
@@ -80,7 +81,7 @@ namespace
     }
 } // namespace
 
-namespace Core
+namespace Platform
 {
     DragAndDrop gDragDrop;
 
@@ -338,4 +339,4 @@ namespace Core
         return Window::Instance();
     }
 
-} // namespace Core
+} // namespace Platform

@@ -26,12 +26,12 @@
 
 #include "Foundation/Configs.h"
 
-namespace Core
+namespace Foundation
 {
 
     std::filesystem::path IDataIO::getCacheDir() const
     {
-        return Config::Path::cacheDir;
+        return Foundation::Config::Path::cacheDir;
     }
 
-} // namespace Core
+} // namespace Foundation

@@ -29,18 +29,18 @@
 
 #include <filesystem>
 
-namespace Core::Config
+namespace Foundation::Config
 {
     // Default color pallet
-    constexpr Color4 ColorRed = Color4(255, 25, 25, 255);
-    constexpr Color4 ColorGreen = Color4(25, 255, 25, 255);
-    constexpr Color4 ColorSoftGreen = Color4(25, 204, 25, 204);
-    constexpr Color4 ColorGrey = Color4(153, 153, 153, 255);
-    constexpr Color4 ColorSoftWhite = Color4(190, 190, 190, 255);
-    constexpr Color4 ColorWhite = Color4(234, 237, 239, 255);
-    constexpr Color4 ColorYellow = Color4(255, 255, 25, 255);
-    constexpr Color4 ColorHalfYellow = Color4(204, 102, 25, 255);
-    constexpr Color4 ColorBlue = Color4(25, 25, 255, 255);
+    constexpr Core::Color4 ColorRed = Core::Color4(255, 25, 25, 255);
+    constexpr Core::Color4 ColorGreen = Core::Color4(25, 255, 25, 255);
+    constexpr Core::Color4 ColorSoftGreen = Core::Color4(25, 204, 25, 204);
+    constexpr Core::Color4 ColorGrey = Core::Color4(153, 153, 153, 255);
+    constexpr Core::Color4 ColorSoftWhite = Core::Color4(190, 190, 190, 255);
+    constexpr Core::Color4 ColorWhite = Core::Color4(234, 237, 239, 255);
+    constexpr Core::Color4 ColorYellow = Core::Color4(255, 255, 25, 255);
+    constexpr Core::Color4 ColorHalfYellow = Core::Color4(204, 102, 25, 255);
+    constexpr Core::Color4 ColorBlue = Core::Color4(25, 25, 255, 255);
 
     namespace Path
     {
@@ -70,6 +70,6 @@ namespace Core::Config
 
     inline static const char* spdlogPattern = "%D [%L] [%n] %v";
     inline static const char* defaultWindowName = "Nexium Engine";
-    static constexpr ISize2 defaultWindowSize = ISize2{ 1200, 800 };
+    static constexpr Core::ISize2 defaultWindowSize = Core::ISize2{ 1200, 800 };
 
-} // namespace Core::Config
+} // namespace Foundation::Config

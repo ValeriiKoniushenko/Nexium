@@ -28,7 +28,7 @@
 #include "JustReflectMe/Adapter.h"
 #include "glm/glm.hpp"
 
-namespace Core
+namespace Platform
 {
     class Mouse
     {
@@ -84,6 +84,6 @@ namespace Core
 
         [[nodiscard]] static bool isKeyRepeated(Key key);
     };
-} // namespace Core
+} // namespace Platform
 
 #include "Mouse.generated.h" // added by the code generator. Better don't move it.

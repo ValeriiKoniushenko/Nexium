@@ -29,9 +29,9 @@ namespace spdlog
     class logger;
 }
 
-namespace ThisModule
+namespace RawBackend
 {
 
     [[nodiscard]] spdlog::logger* getLogger();
 
-} // namespace ThisModule
+} // namespace RawBackend
