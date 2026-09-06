@@ -203,6 +203,13 @@ namespace NX::SceneObj
         _blendingEnabled = data.value("_blendingEnabled", true);
     }
 
+    void Rectangle::setTexture(const StringAtom& atlasName, const StringAtom& textureName)
+    {
+        _atlasName = atlasName;
+        _textureName = textureName;
+        resetTextureUV();
+    }
+
     void Rectangle::setTexture(const StringAtom& value)
     {
         _textureName = value;

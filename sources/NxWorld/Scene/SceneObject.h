@@ -53,6 +53,9 @@ namespace NX
 
         [[nodiscard]] SceneState getSceneState() const;
 
+        void setVisibleInSceneTree(bool visible) noexcept { _visibleInSceneTree = visible; }
+        [[nodiscard]] bool isVisibleInSceneTree() const noexcept { return _visibleInSceneTree; }
+
         friend void swap(SceneObject& a, SceneObject& b) noexcept
         {
             using std::swap;
@@ -60,6 +63,7 @@ namespace NX
             swap(static_cast<Foundation::IOutliner&>(a), static_cast<Foundation::IOutliner&>(b));
             swap(static_cast<Transformable&>(a), static_cast<Transformable&>(b));
             swap(static_cast<RawBackend::IDrawable&>(a), static_cast<RawBackend::IDrawable&>(b));
+            swap(a._visibleInSceneTree, b._visibleInSceneTree);
         }
 
         [[nodiscard]] Tag getTags() const override;
@@ -101,6 +105,7 @@ namespace NX
         void onDirtyMatrix() override;
 
     private:
+        bool _visibleInSceneTree = true;
         Core::StringAtom _referencedAsset;
     };
 

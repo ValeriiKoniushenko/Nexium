@@ -37,7 +37,7 @@
         },
         {
             "_children": null,
-            "_isEnabled": true,
+            "_isEnabled": false,
             "_name": "",
             "_noTick": false,
             "_type": "Core::ECSEditorInputControllerAdapter"
@@ -49,7 +49,7 @@
     ],
     "_innerSize": {
         "height": 698.0,
-        "width": 968.0
+        "width": 957.0
     },
     "_isEnabled": true,
     "_isFitContent": false,
@@ -61,7 +61,7 @@
     "_noTick": false,
     "_oldSize": {
         "height": 762.0,
-        "width": 984.0
+        "width": 983.0
     },
     "_position": [
         365.0,
@@ -69,7 +69,7 @@
     ],
     "_size": {
         "height": 762.0,
-        "width": 984.0
+        "width": 983.0
     },
     "_type": "Core::NxECSBasedEditorEWC"
 }

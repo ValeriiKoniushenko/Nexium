@@ -62,6 +62,7 @@ namespace NX
         [[nodiscard]] T::Ptr gerFirstOf();
 
         void addUniqueObjectToScene(SceneObject::Ptr object);
+        // Additions requested during tick become visible after the current scene update.
         void addObjectToScene(SceneObject::Ptr object);
         void addBlueprintObjectToScene(const Core::WeakData<ECSAsset>& asset,
                                        const Core::StringAtom& name);
@@ -98,6 +99,8 @@ namespace NX
         std::vector<Actor*> _postDrawBuffer;
 
         uint32_t _uniqueCounterName = 0;
+        ObjectContainerT _pendingObjects;
+        bool _isTicking = false;
     };
 
     template<IsComponent T>

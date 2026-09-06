@@ -12,9 +12,9 @@
                     0.0
                 ],
                 "_position": [
-                    -275.8739929199219,
-                    -9.143149375915527,
-                    378.3088073730469
+                    29.18383026123047,
+                    -283.4009704589844,
+                    430.51287841796875
                 ],
                 "_rotation": [
                     8.720703125,
@@ -42,7 +42,7 @@
                     0.0
                 ],
                 "_position": [
-                    200.60000610351563,
+                    100.0,
                     0.0,
                     7.330007974815089e-06
                 ],
@@ -52,8 +52,8 @@
                     0.0
                 ],
                 "_scale": [
-                    2.200000047683716,
-                    2.200000047683716,
+                    2.0,
+                    1.7999999523162842,
                     1.0
                 ]
             },
@@ -64,13 +64,13 @@
                 "_atlasName": "santa_walk",
                 "_blendingEnabled": true,
                 "_isEnabled": true,
-                "_textureName": "Walk_12.png"
+                "_textureName": "Walk_3.png"
             }
         },
         {
-            "assetType": "Core::SceneObj::RectangleAnimated",
-            "name": "AnimatedRectangle",
-            "referenceAsset": "data/assets/AnimatedRectangle.nx",
+            "assetType": "Map",
+            "name": "Map",
+            "referenceAsset": "data/assets/Map.nx",
             "trans": {
                 "_origin": [
                     0.0,
@@ -78,7 +78,7 @@
                     0.0
                 ],
                 "_position": [
-                    370.0,
+                    0.0,
                     0.0,
                     0.0
                 ],
@@ -88,7 +88,4287 @@
                     0.0
                 ],
                 "_scale": [
-                    0.800000011920929,
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_isEnabled": true
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    0.0,
+                    -100.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "2.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_0",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    100.0,
+                    -100.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "2.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_1",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    200.0,
+                    -100.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "2.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_2",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    300.0,
+                    -100.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "2.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_3",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    400.0,
+                    -100.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "2.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_4",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    500.0,
+                    -100.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "2.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_5",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    600.0,
+                    -100.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "2.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_6",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    700.0,
+                    -100.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "2.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_7",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    800.0,
+                    -100.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "2.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_8",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    900.0,
+                    -100.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "2.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_9",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1000.0,
+                    -100.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "2.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_10",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1100.0,
+                    -100.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "2.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_11",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1200.0,
+                    -100.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "2.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_12",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1300.0,
+                    -100.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "2.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_13",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1400.0,
+                    -100.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "2.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_14",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1500.0,
+                    -100.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "2.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_15",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1600.0,
+                    -100.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "2.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_16",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1700.0,
+                    -100.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "2.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_17",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1800.0,
+                    -100.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "2.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_18",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1900.0,
+                    -100.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "2.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_19",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    2000.0,
+                    -100.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "2.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_20",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    2100.0,
+                    -100.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "2.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_21",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    2200.0,
+                    -100.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "2.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_22",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    2300.0,
+                    -100.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "2.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_23",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    2400.0,
+                    -100.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "2.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_24",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    0.0,
+                    -200.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_25",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    100.0,
+                    -200.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_26",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    200.0,
+                    -200.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_27",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    300.0,
+                    -200.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_28",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    400.0,
+                    -200.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_29",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    500.0,
+                    -200.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_30",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    600.0,
+                    -200.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_31",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    700.0,
+                    -200.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_32",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    800.0,
+                    -200.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_33",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    900.0,
+                    -200.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_34",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1000.0,
+                    -200.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_35",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1100.0,
+                    -200.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_36",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1200.0,
+                    -200.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_37",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1300.0,
+                    -200.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_38",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1400.0,
+                    -200.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_39",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1500.0,
+                    -200.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_40",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1600.0,
+                    -200.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_41",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1700.0,
+                    -200.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_42",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1800.0,
+                    -200.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_43",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1900.0,
+                    -200.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_44",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    2000.0,
+                    -200.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_45",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    2100.0,
+                    -200.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_46",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    2200.0,
+                    -200.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_47",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    2300.0,
+                    -200.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_48",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    2400.0,
+                    -200.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_49",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    0.0,
+                    -300.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_50",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    100.0,
+                    -300.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_51",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    200.0,
+                    -300.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_52",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    300.0,
+                    -300.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_53",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    400.0,
+                    -300.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_54",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    500.0,
+                    -300.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_55",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    600.0,
+                    -300.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_56",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    700.0,
+                    -300.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_57",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    800.0,
+                    -300.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_58",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    900.0,
+                    -300.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_59",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1000.0,
+                    -300.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_60",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1100.0,
+                    -300.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_61",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1200.0,
+                    -300.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_62",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1300.0,
+                    -300.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_63",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1400.0,
+                    -300.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_64",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1500.0,
+                    -300.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_65",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1600.0,
+                    -300.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_66",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1700.0,
+                    -300.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_67",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1800.0,
+                    -300.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_68",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1900.0,
+                    -300.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_69",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    2000.0,
+                    -300.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_70",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    2100.0,
+                    -300.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_71",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    2200.0,
+                    -300.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_72",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    2300.0,
+                    -300.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_73",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    2400.0,
+                    -300.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_74",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    0.0,
+                    -400.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_75",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    100.0,
+                    -400.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_76",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    200.0,
+                    -400.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_77",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    300.0,
+                    -400.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_78",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    400.0,
+                    -400.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_79",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    500.0,
+                    -400.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_80",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    600.0,
+                    -400.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_81",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    700.0,
+                    -400.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_82",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    800.0,
+                    -400.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_83",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    900.0,
+                    -400.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_84",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1000.0,
+                    -400.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_85",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1100.0,
+                    -400.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_86",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1200.0,
+                    -400.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_87",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1300.0,
+                    -400.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_88",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1400.0,
+                    -400.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_89",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1500.0,
+                    -400.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_90",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1600.0,
+                    -400.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_91",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1700.0,
+                    -400.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_92",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1800.0,
+                    -400.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_93",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1900.0,
+                    -400.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_94",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    2000.0,
+                    -400.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_95",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    2100.0,
+                    -400.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_96",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    2200.0,
+                    -400.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_97",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    2300.0,
+                    -400.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_98",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    2400.0,
+                    -400.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_99",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    0.0,
+                    -500.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_100",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    100.0,
+                    -500.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_101",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    200.0,
+                    -500.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_102",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    300.0,
+                    -500.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_103",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    400.0,
+                    -500.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_104",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    500.0,
+                    -500.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_105",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    600.0,
+                    -500.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_106",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    700.0,
+                    -500.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_107",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    800.0,
+                    -500.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_108",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    900.0,
+                    -500.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_109",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1000.0,
+                    -500.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_110",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1100.0,
+                    -500.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_111",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1200.0,
+                    -500.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_112",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1300.0,
+                    -500.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_113",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1400.0,
+                    -500.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_114",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1500.0,
+                    -500.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_115",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1600.0,
+                    -500.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_116",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1700.0,
+                    -500.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_117",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1800.0,
+                    -500.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_118",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    1900.0,
+                    -500.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_119",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    2000.0,
+                    -500.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_120",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    2100.0,
+                    -500.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_121",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    2200.0,
+                    -500.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_122",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    2300.0,
+                    -500.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_123",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    2400.0,
+                    -500.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "Tiles",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "5.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_124",
+            "referenceAsset": "",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    300.0,
+                    0.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
                     1.0,
                     1.0
                 ]

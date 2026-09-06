@@ -6,7 +6,7 @@
     ],
     "_innerSize": {
         "height": 199.0,
-        "width": 1325.0
+        "width": 1324.0
     },
     "_isEnabled": true,
     "_isFitContent": false,
@@ -18,7 +18,7 @@
     "_noTick": false,
     "_oldSize": {
         "height": 239.0,
-        "width": 1341.0
+        "width": 1340.0
     },
     "_position": [
         8.0,
@@ -26,7 +26,7 @@
     ],
     "_size": {
         "height": 239.0,
-        "width": 1341.0
+        "width": 1340.0
     },
     "_type": "Core::AssetsManagerWindowEWC"
 }
