@@ -17,7 +17,7 @@ Now, everything is devided by layers.
 6 Nexium World        -> World, GameInstance, Actor, Pawn, Controller (consumes Subsystems' Input System, AI), Skybox, gameplay primitives, animations, Extensions/Plugins (e.g. Physics)
 5 Nexium Subsystems   -> Camera, Asset management, Atlas, non-raw render (ShaderManager), Texture/Image, 2D/3D model impls, Audio work, Input System (wraps Platform's raw input)
 4 Nexium Fundamental  -> ECS, Asset Registry, File I/O handling, raw de/serialization
-3 Raw Output          -> render API, render graph/commands, OpenGL backend, raw audio work
+3 Raw Backend          -> render API, render graph/commands, OpenGL backend, raw audio work
 2 Platform            -> Window class & logic, filesystem, raw input system
 1 Foundation          -> Core (StringAtom, Math, common classes/structs), Logging (spdlog), Config
 ```
@@ -29,7 +29,7 @@ Now, everything is devided by layers.
 - The files: `Foundation/Configs.*`, `Foundation/BaseLog.*`
 - Path to this module is: `sources/Foundation`
 
-== 1 - Platform
+== 2 - Platform
 
 It has three main targets.
 1. Private: Nexium_Platform_PrivateModule
@@ -43,3 +43,6 @@ It has three main targets.
     - Cmake dependency is: `Nexium::Foundation`, `Nexium::Platform::Graphics`
 
 - Path to these modules is: `sources/Platform`
+
+== 3 - Raw Backend
+

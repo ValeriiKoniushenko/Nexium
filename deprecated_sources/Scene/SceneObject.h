@@ -50,7 +50,8 @@ namespace Core
         public BaseComponent,
         public IOutliner,
         public Transformable,
-        public IDrawable
+        public IDrawable,
+        public IDataIO
     {
         ECS_DECL(SceneObject, Core::BaseComponent, Core::Transformable, Core::IOutliner,
                  Core::IDrawable);
@@ -100,6 +101,8 @@ namespace Core
 
         [[nodiscard]] virtual glm::vec3 getGlobalPosition() const;
         [[nodiscard]] virtual glm::vec3 getGlobalRotation() const;
+
+        [[nodiscard]] StringAtom getCacheHash() const override { return "IDrawable"_atom; }
 
     protected:
         virtual void onDraw(BaseCamera& camera) {}

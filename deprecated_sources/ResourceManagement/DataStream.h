@@ -49,7 +49,7 @@ namespace Core
         virtual ~IDataIO() = default;
 
         [[nodiscard]] virtual std::filesystem::path getCacheDir() const;
-        [[nodiscard]] virtual StringAtom getCacheHash() const = 0;
+        [[nodiscard]] virtual std::string getCacheHash() const = 0;
     };
 
     template<class T>

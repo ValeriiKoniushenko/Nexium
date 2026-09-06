@@ -1,11 +1,15 @@
 set(SOURCES
     Configs.cpp
     BaseLog.cpp
+
+    Interfaces/DataStream.cpp
 )
 
 set(HEADERS
     Configs.h
     BaseLog.h
+
+    Interfaces/DataStream.h
 )
 
 add_library(Nexium_Foundation STATIC)
