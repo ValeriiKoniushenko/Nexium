@@ -71,6 +71,7 @@ namespace Core
             Release = GLFW_RELEASE,
         };
 
+    public:
         Mouse() = delete;
 
         [[nodiscard]] static glm::vec2 GetPosition();

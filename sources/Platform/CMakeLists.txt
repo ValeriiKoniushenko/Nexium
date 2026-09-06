@@ -1,4 +1,17 @@
-# ============== GLFW/GLAD ===============
+# ============== Per Module Private Info ===============
+
+add_library(Nexium_Platform_PrivateModule STATIC)
+target_sources(Nexium_Platform_PrivateModule PRIVATE
+    PrivateModuleInfo.cpp
+    PrivateModuleInfo.h
+)
+target_include_directories(Nexium_Platform_PrivateModule PRIVATE ../)
+target_link_libraries(Nexium_Platform_PrivateModule PRIVATE Nexium::Foundation)
+target_compile_definitions(Nexium_Platform_PrivateModule PRIVATE PRIVATE_MODULE_NAME="Platform")
+
+CoreAddCompileOptionsTo(Nexium_Platform_PrivateModule)
+
+# ============== Graphics ===============
 
 set(SOURCES
     Graphics.cpp
@@ -13,7 +26,13 @@ add_library(Nexium::Platform::Graphics ALIAS Nexium_Platform_Graphics)
 set_source_files_properties(${SOURCES} PROPERTIES LANGUAGE CXX)
 target_sources(Nexium_Platform_Graphics PRIVATE ${SOURCES} PUBLIC ${HEADERS})
 
-target_link_libraries(Nexium_Platform_Graphics PUBLIC glfw Core::Glad)
+target_link_libraries(Nexium_Platform_Graphics
+    PUBLIC
+    glfw
+    Core::Glad
+    PRIVATE
+    Nexium_Platform_PrivateModule
+)
 target_include_directories(Nexium_Platform_Graphics PUBLIC ../)
 
 # ================ INPUT =================
@@ -41,6 +60,7 @@ target_link_libraries(Nexium_Platform_Input
     Nexium::Platform::Graphics
     PRIVATE
     JustReflectMe::Adapter
+    Nexium_Platform_PrivateModule
 )
 
 CoreAddCompileOptionsTo(Nexium_Platform_Input)
