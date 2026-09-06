@@ -21,3 +21,9 @@ Now, everything is devided by layers.
 2 Platform            -> Window class & logic, filesystem, raw input system
 1 Foundation          -> Core (StringAtom, Math, common classes/structs), Logging (spdlog), Config
 ```
+
+== 1 - Foundation
+
+It includes:
+- The dependecy cmake modules Utils::Utils, Utils::Core (StringAtom, Math, Delegates, etc). Path to module: `dependencies/Utils`
+- The files: `Foundation/Configs.*`, `Foundation/BaseLog.*`

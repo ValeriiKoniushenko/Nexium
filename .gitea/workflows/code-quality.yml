@@ -46,14 +46,6 @@ jobs:
       - name: Show selected toolchain
         shell: bash
         run: |
-          set -euo pipefail
-          SECONDS=0
-          report_elapsed() {
-            status=$?
-            echo "METRIC: toolchain inspection completed in ${SECONDS}s (exit ${status})"
-          }
-          trap report_elapsed EXIT
-
           command -v "$CC"
           command -v "$CXX"
           cmake --version
@@ -61,28 +53,11 @@ jobs:
       - name: Configure CMake (${{ matrix.build_type }})
         shell: bash
         run: |
-          set -euo pipefail
-          SECONDS=0
-          report_elapsed() {
-            status=$?
-            echo "METRIC: CMake configure completed in ${SECONDS}s (exit ${status})"
-          }
-          trap report_elapsed EXIT
-
-          cmake -S . -B "$BUILD_DIR" -G Ninja \
+          time cmake -S . -B "$BUILD_DIR" -G Ninja \
             -DCMAKE_BUILD_TYPE="${{ matrix.build_type }}" \
-            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
-            -DCMAKE_VERBOSE_MAKEFILE=ON
+            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
       - name: Build and show link commands
         shell: bash
         run: |
-          set -euo pipefail
-          SECONDS=0
-          report_elapsed() {
-            status=$?
-            echo "METRIC: CMake build completed in ${SECONDS}s (exit ${status})"
-          }
-          trap report_elapsed EXIT
-
-          cmake --build "$BUILD_DIR" --parallel --verbose
+          time cmake --build "$BUILD_DIR" --parallel --verbose
