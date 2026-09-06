@@ -8,36 +8,36 @@ include("${CMAKE_CURRENT_SOURCE_DIR}/.agents/Agents/CMakeLists.txt")
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-if (NOT DEFINED NEXIUM_LINKER_CONFIGURED)
+if(NOT DEFINED NEXIUM_LINKER_CONFIGURED)
     set(NEXIUM_LINKER_CONFIGURED TRUE)
 
     find_program(MOLD_LINKER mold)
     find_program(LLD_LINKER ld.lld)
 
-    if (MOLD_LINKER)
+    if(MOLD_LINKER)
         message(STATUS "Using mold linker")
         add_link_options(-fuse-ld=mold)
-    elseif (LLD_LINKER)
+    elseif(LLD_LINKER)
         message(STATUS "Using lld linker")
         add_link_options(-fuse-ld=lld)
-    else ()
+    else()
         message(STATUS "Using default system linker")
-    endif ()
-endif ()
+    endif()
+endif()
 
 cmake_policy(SET CMP0141 NEW)
 set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT
     "$<$<CONFIG:Debug,RelWithDebInfo>:Embedded>"
 )
 
-if (CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
+if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
     find_program(CCACHE_PROGRAM ccache)
-    if (CCACHE_PROGRAM)
+    if(CCACHE_PROGRAM)
         set(CMAKE_C_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
         set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
         message(STATUS "ccache: ${CCACHE_PROGRAM}")
-    endif ()
-endif ()
+    endif()
+endif()
 
 set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -57,8 +57,8 @@ option(NEXIUM_ENABLE_3D_MODULE "Enable Nexium 3D Module" OFF)
 # ── Base setup & Predefinitions ────────────────────────────────────────────────
 # CXX standard installing
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(REQUIRED_CXX_STANDARD cxx_std_26)   # Put preferable cxx standard. It will be checked and exported to CXX_STANDARD
-set(CXX_STANDARD)                       # Compiler specific value that was going from REQUIRED_CXX_STANDARD
+set(REQUIRED_CXX_STANDARD cxx_std_26) # Put preferable cxx standard. It will be checked and exported to CXX_STANDARD
+set(CXX_STANDARD) # Compiler specific value that was going from REQUIRED_CXX_STANDARD
 InstallCXXStandardVersion()
 
 # Installing gtest benchmark options
@@ -75,16 +75,16 @@ add_custom_target(CodeGenerator ALL
 # ── Main deps pipeline ────────────────────────────────────────────────────────────────
 add_subdirectory(dependencies)
 # add_subdirectory(sources)
-add_subdirectory(new_sources)
+# add_subdirectory(new_sources)
 
 
-if (NOT NEXIUM_DISABLE_TESTS)
+if(NOT NEXIUM_DISABLE_TESTS)
     add_subdirectory(tests)
-endif ()
+endif()
 
-if (NOT NEXIUM_DISABLE_BENCHMARKS)
+if(NOT NEXIUM_DISABLE_BENCHMARKS)
     add_subdirectory(benchmarks)
-endif ()
+endif()
 
 # TODO: in the future it must be removed
 # add_subdirectory(game-example)

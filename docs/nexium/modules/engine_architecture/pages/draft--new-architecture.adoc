@@ -7,15 +7,17 @@ The goal of the reworking is to fix the globall architecture and dependency mess
 
 Now, everything is devided by layers.
 
-
 ```
-# 1 - lowest layer, close to OS. 
-8 Editor             -> ImGUI based UI, In-Editor windows, polling the game runtime,
-7 Nexium Runtime     -> mainloop, orchestration of World/Assets/Render/Input
-6 Nexium World       -> World, GameInstance, Actor, Pawn, Controller (IO, AI), Skybox, Gameplay primitives, Animations, Physics
-5 Nexium Conflated   -> Camera, Assets management, Atlas, Non-Raw render(ShaderManager, Shaders stuff), Texture, Image, 2D/3D Model impls, Audio work
-4 Nexium Fundamental -> ECS, Asset Registry, IO handling, Raw de/serialization
-3 Raw Output         -> render API, render graph/commands, openGL backend, Raw audio work
-2 Platform           -> Window class & logic, work with filesystem, Raw input system
-1 Foundation         -> Core(StringAtom, Math, common classes/structs), Logging (spdlog), Config
+# Rule: dependencies only ever point downward (higher number -> lower number). Never the reverse.
+# Exception: Foundation (1) is a shared kernel, callable directly from any layer (math, logging, config).
+# Extensions/Plugins inherit their host layer's rules — no quiet exceptions for "just this once."
+
+8 Editor              -> ImGui UI, in-editor windows; attaches to a running Runtime like a debugger (pause/step/inspect — a good fit for reflection-driven access via JustReflectMe rather than hard #includes); never linked into the shipped build
+7 Nexium Runtime      -> mainloop; orchestrates World and Nexium Subsystems (Assets/Render/Audio/Input)
+6 Nexium World        -> World, GameInstance, Actor, Pawn, Controller (consumes Subsystems' Input System, AI), Skybox, gameplay primitives, animations, Extensions/Plugins (e.g. Physics)
+5 Nexium Subsystems   -> Camera, Asset management, Atlas, non-raw render (ShaderManager), Texture/Image, 2D/3D model impls, Audio work, Input System (wraps Platform's raw input)
+4 Nexium Fundamental  -> ECS, Asset Registry, File I/O handling, raw de/serialization
+3 Raw Output          -> render API, render graph/commands, OpenGL backend, raw audio work
+2 Platform            -> Window class & logic, filesystem, raw input system
+1 Foundation          -> Core (StringAtom, Math, common classes/structs), Logging (spdlog), Config
 ```

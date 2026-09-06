@@ -44,6 +44,12 @@ namespace
         const float w = defSize;
         const float h = defSize;
 
+        int time = ::clock();
+
+        if (time >= 1000)
+        {
+        }
+
         const std::vector<float> vert = {
             0, h, 0, // 0  top-left         | (0 , 64) * (0, 1)
             0, 0, 0, // 1  bottom-left      | (0 , 0 ) * (0, 0)
