@@ -58,8 +58,7 @@ set(UTILS_DISABLE_BENCHMARKS ON CACHE BOOL "" FORCE)
 add_subdirectory(Utils)
 
 # ── JustReflectMe ─────────────────────────────────────────────────────────────
-set(JRM_DISABLE_TESTS ON)
-add_subdirectory(JustReflectMe)
+include("${PROJECT_SOURCE_DIR}/cmake/JustReflectMe.cmake")
 
 set(CMAKE_C_FLAGS "${_saved_c_flags}")
 set(CMAKE_CXX_FLAGS "${_saved_cxx_flags}")

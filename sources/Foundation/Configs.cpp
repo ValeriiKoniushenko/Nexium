@@ -24,7 +24,7 @@
 
 #include "Configs.h"
 
-namespace Core::Config
+namespace Foundation::Config
 {
     namespace Path
     {
@@ -49,4 +49,4 @@ namespace Core::Config
         const std::filesystem::path fontAwesome = fonts / "fontawesome-webfont.ttf";
     } // namespace Path
 
-} // namespace Core::Config
+} // namespace Foundation::Config

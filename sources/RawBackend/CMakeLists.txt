@@ -5,11 +5,8 @@ target_sources(Nexium_RawBackend_PrivateModule PRIVATE
     PrivateModuleInfo.cpp
     PrivateModuleInfo.h
 )
-target_include_directories(Nexium_RawBackend_PrivateModule PRIVATE ../)
 target_link_libraries(Nexium_RawBackend_PrivateModule PRIVATE Nexium::Foundation)
 target_compile_definitions(Nexium_RawBackend_PrivateModule PRIVATE PRIVATE_MODULE_NAME="RawBackend")
-
-CoreAddCompileOptionsTo(Nexium_RawBackend_PrivateModule)
 
 # ================ RawBackend =================
 set(SOURCES
@@ -24,24 +21,20 @@ set(HEADERS
 
 add_library(Nexium_RawBackend STATIC)
 add_library(Nexium::RawBackend ALIAS Nexium_RawBackend)
-set_source_files_properties(${SOURCES} PROPERTIES LANGUAGE CXX)
-target_sources(Nexium_RawBackend PRIVATE ${SOURCES} PUBLIC ${HEADERS})
+target_sources(Nexium_RawBackend PRIVATE ${SOURCES} ${HEADERS})
 
-target_include_directories(Nexium_RawBackend PUBLIC ../)
 target_link_libraries(Nexium_RawBackend
     PUBLIC
     Nexium::Foundation
-    Core::Stb
-    PRIVATE
     JustReflectMe::Adapter
+    PRIVATE
+    Core::Stb
     Nexium_RawBackend_PrivateModule
-
 )
 
 # =========================================
 
-CoreAddCompileOptionsTo(Nexium_RawBackend_PrivateModule)
-CoreAddCompileOptionsTo(Nexium_RawBackend)
+nexium_configure_target(Nexium_RawBackend_PrivateModule)
+nexium_configure_target(Nexium_RawBackend)
 
-add_dependencies(Nexium_RawBackend_PrivateModule CodeGenerator)
 add_dependencies(Nexium_RawBackend CodeGenerator)

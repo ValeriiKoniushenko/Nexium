@@ -18,10 +18,8 @@ function(CoreAddCompileOptionsTo Target)
             # "$<$<CONFIG:Release>:/fp:fast>"
         )
 
-        target_compile_definitions(${Target} PRIVATE -DNOMINMAX)
-    elseif (MINGW)
-        target_link_options(${Target} PRIVATE -Wl,--allow-multiple-definition)
-    else ()
+        target_compile_definitions(${Target} PUBLIC NOMINMAX)
+    elseif (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
         target_compile_options(${Target} PRIVATE
             "-Wall"
             "-Wextra"
@@ -43,11 +41,11 @@ function(CoreAddCompileOptionsTo Target)
 
             "$<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:Clang>>:-fdebug-info-for-profiling>"
 
-            "$<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:GCC>>:-fno-inline-small-functions>"
-            "$<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:GCC>>:-fno-inline-functions-called-once>"
-            "$<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:GCC>>:-fno-default-inline>"
-            "$<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:GCC>>:-fno-early-inlining>"
-            "$<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:GCC>>:-fno-inline-atomics>"
+            "$<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:GNU>>:-fno-inline-small-functions>"
+            "$<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:GNU>>:-fno-inline-functions-called-once>"
+            "$<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:GNU>>:-fno-default-inline>"
+            "$<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:GNU>>:-fno-early-inlining>"
+            "$<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:GNU>>:-fno-inline-atomics>"
 
             # Release config
             "$<$<CONFIG:Release>:-O3>"
