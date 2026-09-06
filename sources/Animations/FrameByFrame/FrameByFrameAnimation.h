@@ -97,18 +97,16 @@ namespace Core::Animation
         [[nodiscard]] const StringAtom& getAtlasName() const noexcept { return _atlasName; }
         [[nodiscard]] const StringAtom& getTextureName() const noexcept { return _textureName; }
 
-        /// @brief Advance standalone playback by one tick.
-        /// @param delta Elapsed time in seconds.
-        /// Animator-owned playback uses the same internal advance path and receives callbacks for
-        /// each entered frame.
-        void onTick(float delta) override;
-
         [[nodiscard]] spdlog::logger* getLogger() const override
         {
             return Animations::getLogger();
         };
 
     protected:
+        /// @brief Advance standalone playback by one tick.
+        /// @param delta Elapsed time in seconds.
+        /// Animator-owned playback uses the same internal advance path and receives callbacks for
+        /// each entered frame.
         void onTick(float delta) override;
 
     private:
