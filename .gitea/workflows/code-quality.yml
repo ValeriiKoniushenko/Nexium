@@ -4,6 +4,9 @@ on:
   push:
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   build:
     name: ${{ matrix.compiler }} / ${{ matrix.build_type }}
@@ -38,10 +41,30 @@ jobs:
       BUILD_DIR: build/${{ matrix.compiler }}-${{ matrix.build_type }}
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
+      # Avoid downloading actions/checkout from an external action registry.  Fetch the
+      # exact commit selected by Gitea, while limiting the job token to read-only access.
+      - name: Checkout source and submodules
+        shell: bash
+        env:
+          CHECKOUT_TOKEN: ${{ secrets.GITEA_TOKEN }}
+          CHECKOUT_SERVER_URL: ${{ gitea.server_url }}
+          CHECKOUT_REPOSITORY: ${{ gitea.repository }}
+          CHECKOUT_SHA: ${{ gitea.sha }}
+        run: |
+          set -euo pipefail
+
+          server_url="${CHECKOUT_SERVER_URL%/}"
+          auth_header="$(printf 'x-access-token:%s' "$CHECKOUT_TOKEN" | base64 | tr -d '\n')"
+
+          git init "$GITHUB_WORKSPACE"
+          git -C "$GITHUB_WORKSPACE" config --local \
+            "http.${server_url}/.extraheader" "Authorization: Basic ${auth_header}"
+          git -C "$GITHUB_WORKSPACE" remote add origin \
+            "${server_url}/${CHECKOUT_REPOSITORY}.git"
+          git -C "$GITHUB_WORKSPACE" fetch --no-tags --depth=1 origin "$CHECKOUT_SHA"
+          git -C "$GITHUB_WORKSPACE" checkout --detach FETCH_HEAD
+          git -C "$GITHUB_WORKSPACE" submodule sync --recursive
+          git -C "$GITHUB_WORKSPACE" submodule update --init --recursive --depth=1
 
       - name: Show selected toolchain
         shell: bash
