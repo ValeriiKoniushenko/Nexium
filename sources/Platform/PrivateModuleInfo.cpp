@@ -27,7 +27,7 @@
 #include "Foundation/BaseLog.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 
-namespace ThisModule
+namespace Platform
 {
 
     spdlog::logger* getLogger()
@@ -36,4 +36,4 @@ namespace ThisModule
         return logger.get();
     }
 
-} // namespace ThisModule
+} // namespace Platform

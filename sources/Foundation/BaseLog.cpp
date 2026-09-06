@@ -51,7 +51,7 @@ namespace Foundation
 
     spdlog::logger* GlobalLog::getLogger() const
     {
-        static std::shared_ptr<spdlog::logger> logger = spdlog::stdout_color_mt("Global");
+        const static std::shared_ptr<spdlog::logger> logger = spdlog::stdout_color_mt("Global");
         return logger.get();
     }
 
