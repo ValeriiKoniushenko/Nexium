@@ -48,8 +48,8 @@
         88.0
     ],
     "_innerSize": {
-        "height": 664.0,
-        "width": 958.0
+        "height": 698.0,
+        "width": 968.0
     },
     "_isEnabled": true,
     "_isFitContent": false,
@@ -60,7 +60,7 @@
     "_name": " Assets editor",
     "_noTick": false,
     "_oldSize": {
-        "height": 728.0,
+        "height": 762.0,
         "width": 984.0
     },
     "_position": [
@@ -68,7 +68,7 @@
         32.0
     ],
     "_size": {
-        "height": 728.0,
+        "height": 762.0,
         "width": 984.0
     },
     "_type": "Core::NxECSBasedEditorEWC"

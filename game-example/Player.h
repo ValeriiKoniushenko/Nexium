@@ -43,6 +43,13 @@ private:
     Core::Animation::FrameByFrameAnimator* _animator = nullptr;
 
     float _movementSpeed = 200.f;
+
+    constexpr static float _gravity = -1800.f;
+    constexpr static float _groundCoords = 0.f;
+    constexpr static float _jumpForce = 650.f;
+
+    float _velocityY = 0.f;
+    bool _isGrounded = true;
 };
 
 #include "Player.generated.h" // added by the code generator. Better don't move it.
