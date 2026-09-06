@@ -106,6 +106,11 @@ namespace Core::Audio
         _cues.clear();
     }
 
+    Tag AnimationAudioBinding::getTags() const
+    {
+        return BaseComponent::getTags() | Tag_AnimationController;
+    }
+
     void AnimationAudioBinding::onInitialize()
     {
         subscribeToOwnerAnimator();

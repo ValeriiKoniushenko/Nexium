@@ -35,11 +35,14 @@
 
 namespace Core::Audio
 {
+    /// @brief Serialized rule that maps one animation frame event to an AudioSource command.
     CLASS();
     struct AnimationAudioCue
     {
         R_FRIEND(AnimationAudioCue);
 
+        /// @brief Validate the cue before it is stored or executed.
+        /// @return `true` when all lookup names are set and the command is recognized.
         [[nodiscard]] bool isValid() const noexcept;
 
         FIELD();
@@ -55,9 +58,20 @@ namespace Core::Audio
         Core::Audio::AudioCommand command = Core::Audio::AudioCommand::Play;
     };
 
+    /// @brief Serialize a cue through Nexium reflection.
+    /// @param json Destination JSON object.
+    /// @param cue Cue to serialize.
     void to_json(nlohmann::json& json, const AnimationAudioCue& cue);
+    /// @brief Deserialize a cue through Nexium reflection.
+    /// @param json Source JSON object.
+    /// @param cue Destination cue.
     void from_json(const nlohmann::json& json, AnimationAudioCue& cue);
 
+    /// @brief ECS component that dispatches AudioSource commands from frame-animation events.
+    ///
+    /// On initialization it subscribes to the first FrameByFrameAnimator under its owner. Each
+    /// matching cue resolves an AudioSource by name under that same owner. Missing dependencies
+    /// produce one warning per name rather than one warning per frame.
     CLASS();
     class AnimationAudioBinding final : public BaseComponent
     {
@@ -67,14 +81,23 @@ namespace Core::Audio
         AnimationAudioBinding(const AnimationAudioBinding& other);
         AnimationAudioBinding& operator=(const AnimationAudioBinding& other);
 
+        /// @brief Add a valid animation-to-audio cue.
+        /// @param cue Cue to add.
+        /// @return `true` when the cue is valid and was added.
         bool addCue(const AnimationAudioCue& cue);
+        /// @brief Remove the cue at an index.
+        /// @param index Zero-based cue index.
+        /// @return `true` when the cue existed and was removed.
         bool removeCue(std::size_t index);
+        /// @brief Remove every configured cue.
         void clearCues() noexcept;
 
         [[nodiscard]] const std::vector<AnimationAudioCue>& getCues() const noexcept
         {
             return _cues;
         }
+
+        [[nodiscard]] Tag getTags() const override;
 
     protected:
         void onInitialize() override;

@@ -26,6 +26,7 @@
 
 #include "Animations/FrameByFrame/FrameByFrameAnimator.h"
 #include "Audio/AudioSource.h"
+#include "Misc/ITagHolder.h"
 #include "Scene/Rectangle.h"
 #include "gtest/gtest.h"
 #include "spdlog/logger.h"
@@ -172,6 +173,13 @@ namespace Core::Audio
         ASSERT_NE(factoryObject, nullptr);
         EXPECT_NE(dynamic_cast<AnimationAudioBinding*>(factoryObject), nullptr);
         delete factoryObject;
+    }
+
+    TEST(AnimationAudioBindingTests, IsDiscoverableAlongsideAnimationControllers)
+    {
+        AnimationAudioBinding binding;
+
+        EXPECT_NE(binding.getTags() & Tag_AnimationController, Tag_None);
     }
 
     TEST(AnimationAudioBindingTests, SubscribesAndUnsubscribesWithComponentLifetime)
