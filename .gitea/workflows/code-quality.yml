@@ -36,6 +36,7 @@ jobs:
       CC: ${{ matrix.cc }}
       CXX: ${{ matrix.cxx }}
       BUILD_DIR: build/${{ matrix.compiler }}-${{ matrix.build_type }}
+      CCACHE_DIR: build/.ccache
 
     steps:
       - name: Checkout
@@ -68,7 +69,7 @@ jobs:
         id: build-cache
         uses: actions/cache/restore@v4
         with:
-          path: ${{ env.BUILD_DIR }}
+          path: build
           key: nexium-build-v1-${{ matrix.compiler }}-${{ matrix.build_type }}-${{ github.sha }}
           restore-keys: |
             nexium-build-v1-${{ matrix.compiler }}-${{ matrix.build_type }}-
@@ -95,7 +96,7 @@ jobs:
         if: success() && steps.build-cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@v4
         with:
-          path: ${{ env.BUILD_DIR }}
+          path: build
           key: ${{ steps.build-cache.outputs.cache-primary-key }}
 
       - name: Save submodules
