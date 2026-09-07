@@ -15,6 +15,10 @@ target_compile_definitions(${MODULE_PRIVATE_TARGET} PRIVATE PRIVATE_MODULE_NAME=
 
 # ================ NexiumFundamental =================
 set(SOURCES
+    Assets/BaseAsset.cpp
+    Assets/ECSAsset.cpp
+    Assets/TextureAtlas.cpp
+    
     ECS/BaseComponent.cpp
 
     ResourceManagement/DataStream.cpp
@@ -25,6 +29,10 @@ set(SOURCES
 )
 
 set(HEADERS
+    Assets/BaseAsset.h
+    Assets/ECSAsset.h
+    Assets/TextureAtlas.h
+
     ECS/BaseComponent.h
 
     ResourceManagement/DataStream.h
@@ -43,6 +51,7 @@ target_link_libraries(${MODULE_TARGET}
     Nexium::RawBackend
     JustReflectMe::Adapter
     PRIVATE
+    Core::Rectpack2D
     ${MODULE_PRIVATE_TARGET}
 )
 

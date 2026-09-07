@@ -49,7 +49,7 @@ namespace Core
     {
         // if (json.empty())
         // {
-        //     globalLog.warnLog("Can't apply asset data. No data.");
+        //     gGlobalLog.warnLog("Can't apply asset data. No data.");
         //     return;
         // }
 

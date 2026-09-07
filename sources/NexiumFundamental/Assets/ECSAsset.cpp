@@ -24,10 +24,12 @@
 
 #include "ECSAsset.h"
 
-#include "AssetImpls/Factory.h"
-#include "ModuleInfo.h"
+#include "../PrivateModuleInfo.h"
+#include "Factory.h"
 #include "Utils/Functions.h"
 #include "nlohmann/json.hpp"
+
+using namespace Core;
 
 namespace
 {
@@ -111,7 +113,7 @@ namespace
         for (auto it = target.begin(); it != target.end();)
         {
             const std::string& key = it.key();
-            if (patch.find(key) == patch.end())
+            if (patch.contains(key))
             {
                 auto currentPath = basePath.empty() ? key : basePath + "." + key;
                 changes.push_back({ .path = currentPath,
@@ -131,7 +133,7 @@ namespace
 
 } // namespace
 
-namespace Core
+namespace NX
 {
 
     ECSAsset::~ECSAsset()
@@ -141,7 +143,7 @@ namespace Core
 
     spdlog::logger* ECSAsset::getLogger() const
     {
-        return ::AssetsManager::getLogger();
+        return NexiumFundamental::getLogger();
     }
 
     void ECSAsset::connectSourceFile(const std::filesystem::path& src)
@@ -298,7 +300,7 @@ namespace Core
     {
         if (!Verify(data)) [[unlikely]]
         {
-            globalLog.errorLog("Was passed nullptr to ECSAsset::PackObjectToAsset");
+            gGlobalLog.errorLog("Was passed nullptr to ECSAsset::PackObjectToAsset");
             return;
         }
 
@@ -503,7 +505,7 @@ namespace Core
 
             if (const auto id = GetGlobalComponentFactory().getTypeIdByTypeName(_meta.type))
             {
-                _impl = AssetImpl::GetFactory().trySpawnImpl(id.value());
+                _impl = GetFactory().trySpawnImpl(id.value());
             }
 
             _status = Status::PreLoaded;
@@ -597,7 +599,7 @@ namespace Core
                 Assert(_asset->getData()->getComponentType().isStatic());
                 Assert(comp->getComponentType().isStatic());
 
-                globalLog.errorLog(
+                gGlobalLog.errorLog(
                     "Attempt to assign data of type '{}' to different type of the asset '{}'"_f
                     << comp->getComponentType() << _asset->getData()->getComponentType());
 
@@ -608,4 +610,4 @@ namespace Core
         return true;
     }
 
-} // namespace Core
+} // namespace NX

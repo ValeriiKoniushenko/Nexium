@@ -29,7 +29,7 @@
 #include "Graphics/Texture.h"
 #include "ResourceManagement/JsonAdapter.h"
 
-namespace Core
+namespace NX
 {
 
     CLASS();

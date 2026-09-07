@@ -29,9 +29,10 @@
 
 #include <shared_mutex>
 
+Foundation::GlobalLog gGlobalLog = {};
+
 namespace Foundation
 {
-    GlobalLog globalLog = {};
 
     void BaseLog::pushLog(level l, const char* str) const
     {

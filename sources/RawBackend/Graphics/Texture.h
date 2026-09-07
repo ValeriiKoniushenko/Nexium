@@ -24,15 +24,15 @@
 
 #pragma once
 
-#include "Image.h"
-#include "OpenGL.h"
+#include "../Image.h"
+#include "Platform/Graphics.h"
 
 #include <Core/IntrusivePtr.h>
 #include <filesystem>
 
-namespace Core
+namespace RawBackend
 {
-    class Texture : public IntrusiveRefCounter<Texture>
+    class Texture : public Core::IntrusiveRefCounter<Texture>
     {
         INTRUSIVE_PTR_ADAPTERS(Texture);
 
@@ -63,7 +63,7 @@ namespace Core
         [[nodiscard]] GLuint getTextureId() noexcept { return _textureId; }
 
         [[nodiscard]] bool isValid() const noexcept { return _textureId != 0; }
-        [[nodiscard]] ISize2 getSize() const noexcept { return _size; }
+        [[nodiscard]] Core::ISize2 getSize() const noexcept { return _size; }
 
         void release();
 
@@ -75,6 +75,6 @@ namespace Core
 
     protected:
         GLuint _textureId = 0;
-        ISize2 _size;
+        Core::ISize2 _size;
     };
-} // namespace Core
+} // namespace RawBackend

@@ -26,18 +26,18 @@
 
 #include "Core/Rect.h"
 #include "Core/String.h"
-#include "Graphics/Image.h"
-#include "Graphics/Texture.h"
-#include "Misc/BaseLog.h"
+#include "Foundation/BaseLog.h"
+#include "RawBackend/Graphics/Texture.h"
+#include "RawBackend/Image.h"
 #include "Rectpack2D/empty_spaces.h"
 
 #include <filesystem>
 #include <unordered_map>
 
-namespace Core
+namespace NX
 {
 
-    class TextureAtlas final : public BaseLog
+    class TextureAtlas final : public Foundation::BaseLog
     {
     public:
         constexpr static const int max_side = 4096;
@@ -60,25 +60,26 @@ namespace Core
 
         [[nodiscard]] spdlog::logger* getLogger() const override;
 
-        [[nodiscard]] const Texture& getTexture() const noexcept { return _texture; }
+        [[nodiscard]] const RawBackend::Texture& getTexture() const noexcept { return _texture; }
 
-        [[nodiscard]] const FRect& getRect(const StringAtom& name) const;
+        [[nodiscard]] const Core::FRect& getRect(const Core::StringAtom& name) const;
 
-        [[nodiscard]] const std::unordered_map<StringAtom, FRect>& getRects() const noexcept
+        [[nodiscard]] const std::unordered_map<Core::StringAtom, Core::FRect>& getRects()
+            const noexcept
         {
             return _rects;
         }
 
-        [[nodiscard]] std::vector<StringAtom> getRectsAsVector() const;
+        [[nodiscard]] std::vector<Core::StringAtom> getRectsAsVector() const;
 
         [[nodiscard]] std::size_t getRectsCount() const noexcept { return _rects.size(); }
 
     private:
         void iterateOverFolderAndFetchImages(const std::filesystem::path& atlasFolder,
-                                             std::vector<Image>& images);
+                                             std::vector<RawBackend::Image>& images);
 
     private:
-        Texture _texture;
-        std::unordered_map<StringAtom, FRect> _rects;
+        RawBackend::Texture _texture;
+        std::unordered_map<Core::StringAtom, Core::FRect> _rects;
     };
-} // namespace Core
+} // namespace NX

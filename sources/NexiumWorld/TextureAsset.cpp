@@ -22,18 +22,45 @@
  * SOFTWARE.
  */
 
-#include "ModuleInfo.h"
+#include "TextureAsset.h"
 
-#include "Misc/BaseLog.h"
-#include "spdlog/sinks/stdout_color_sinks.h"
+#include "Misc/Configs.h"
 
-namespace AssetsManager
+namespace NX
 {
+    R_FRIEND_IMPL(TextureAsset);
 
-    spdlog::logger* getLogger()
+    void TextureAsset::setFilePath(const std::filesystem::path& value)
     {
-        static auto logger = spdlog::stdout_color_mt("AssetsManager");
-        return logger.get();
+        Assert(value.is_relative(), "Path should be relative");
+        _path = value;
     }
 
-} // namespace AssetsManager
+    void TextureAsset::onLoadRequest()
+    {
+        _data.release();
+
+        if (_path.empty()) [[unlikely]]
+        {
+            errorLog("Can't load the texture. The path is empty.");
+            return;
+        }
+
+        Image img;
+        if (!img.loadFromFile(Config::Path::projectAbsPath / _path, _isFlipVertically))
+        {
+            return;
+        }
+
+        _size = img.getSize();
+        _channels = img.getChannel();
+
+        _data.loadFromImage(img);
+    }
+
+    void TextureAsset::onUnloadRequest()
+    {
+        _data.release();
+    }
+
+} // namespace Core

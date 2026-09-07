@@ -25,12 +25,12 @@
 #pragma once
 
 #include "Core/IntrusivePtr.h"
-#include "ECS/BaseComponent.h"
-#include "Misc/ITagHolder.h"
+#include "NexiumFundamental/ECS/BaseComponent.h"
+#include "NexiumFundamental/ITagHolder.h"
 
 #include <filesystem>
 
-namespace Core
+namespace NX
 {
     class ECSAsset;
 
@@ -54,7 +54,7 @@ namespace Core
     template<typename T>
     concept IsAssetImpl = std::derived_from<std::remove_reference_t<T>, ECSAssetImpl>;
 
-    class ECSAsset : public IntrusiveRefCounter<ECSAsset>, public BaseLog
+    class ECSAsset : public Core::IntrusiveRefCounter<ECSAsset>, public Foundation::BaseLog
     {
     public:
         inline static const char* fileExtension = ".nx";
@@ -66,7 +66,7 @@ namespace Core
                 return a._meta.logicPath.makeHash();
             }
 
-            size_t operator()(const IntrusivePtr<ECSAsset>& a) const noexcept
+            size_t operator()(const Core::IntrusivePtr<ECSAsset>& a) const noexcept
             {
                 if (Verify(a)) [[likely]]
                 {
@@ -100,15 +100,15 @@ namespace Core
         struct Meta
         {
             std::filesystem::path pathToSource;
-            StringAtom logicPath;
+            Core::StringAtom logicPath;
 
-            StringAtom name;
-            StringAtom type;
+            Core::StringAtom name;
+            Core::StringAtom type;
             Tag tags = Tag_None;
         };
 
     public:
-        explicit ECSAsset(const StringAtom& logicPath)
+        explicit ECSAsset(const Core::StringAtom& logicPath)
         {
             _meta.logicPath = logicPath;
             Assert(_meta.logicPath.isStatic());
@@ -128,9 +128,12 @@ namespace Core
 
         [[nodiscard]] const std::filesystem::path& getSourceFile() const noexcept;
 
-        [[nodiscard]] const StringAtom& getName() const noexcept { return _meta.name; }
-        [[nodiscard]] const StringAtom& getType() const noexcept { return _meta.type; }
-        [[nodiscard]] const StringAtom& getLogicPath() const noexcept { return _meta.logicPath; }
+        [[nodiscard]] const Core::StringAtom& getName() const noexcept { return _meta.name; }
+        [[nodiscard]] const Core::StringAtom& getType() const noexcept { return _meta.type; }
+        [[nodiscard]] const Core::StringAtom& getLogicPath() const noexcept
+        {
+            return _meta.logicPath;
+        }
 
         [[nodiscard]] BaseComponent::Ptr getData() const noexcept { return _data; }
 
@@ -141,7 +144,7 @@ namespace Core
         [[nodiscard]] int getAdapterIndex() const noexcept { return _adapterIndex; }
 
         [[nodiscard]] bool operator==(const ECSAsset& other) const;
-        [[nodiscard]] bool operator==(const IntrusivePtr<ECSAsset>& other) const;
+        [[nodiscard]] bool operator==(const Core::IntrusivePtr<ECSAsset>& other) const;
 
         static void PackObjectToAsset(ECSAsset& out, const BaseComponent* data);
 
@@ -176,10 +179,10 @@ namespace Core
         Status _status = Status::NotLoaded;
     };
 
-    using NXECSAsset = IntrusivePtr<ECSAsset>;
-    using WeakNXECSAsset = WeakPtr<ECSAsset>;
+    using NXECSAsset = Core::IntrusivePtr<ECSAsset>;
+    using WeakNXECSAsset = Core::WeakPtr<ECSAsset>;
 
-    class NXSceneAsset : public IntrusiveRefCounter<NXSceneAsset>
+    class NXSceneAsset : public Core::IntrusiveRefCounter<NXSceneAsset>
     {
         INTRUSIVE_PTR_ADAPTERS(NXSceneAsset)
     public:
@@ -219,6 +222,6 @@ namespace Core
         BaseComponent::Ptr _data;
     };
 
-} // namespace Core
+} // namespace NX
 
 #include "ECSAsset.generated.h" // added by the code generator. Better don't move it.

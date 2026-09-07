@@ -360,7 +360,7 @@ namespace Core
     {
         if (!mesh) [[unlikely]]
         {
-            globalLog.errorLog("Impossible to set mesh. Mesh object is NULL.");
+            gGlobalLog.errorLog("Impossible to set mesh. Mesh object is NULL.");
             return;
         }
 
@@ -412,7 +412,7 @@ namespace Core
 
         // if (!mesh->mName.Empty()) [[likely]]
         // {
-        //     globalLog.debugLog("Mesh '{}' was loaded to the world."_f
+        //     gGlobalLog.debugLog("Mesh '{}' was loaded to the world."_f
         //                        << mesh->mName.C_Str());
         // }
     }

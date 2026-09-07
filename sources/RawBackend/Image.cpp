@@ -79,21 +79,6 @@ namespace RawBackend
         };
     }
 
-    /*     GLenum Image::getChannelAsOpenGLType() const noexcept
-        {
-            if (static_cast<int>(_channel) == 3)
-            {
-                return GL_RGB;
-            }
-
-            if (static_cast<int>(_channel) == 4)
-            {
-                return GL_RGBA;
-            }
-
-            return GL_RED;
-        }
-     */
     bool Image::loadFromFile(const std::filesystem::path& path, bool isFlipVertically /* = true*/,
                              bool forceRGBA /* = false*/)
     {

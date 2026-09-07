@@ -24,7 +24,7 @@
 
 #include "TextureAtlas.h"
 
-#include "AssetsManager/ModuleInfo.h"
+#include "../PrivateModuleInfo.h"
 #include "Core/Rect.h"
 #include "Core/String.h"
 #include "Rectpack2D/finders_interface.h"
@@ -32,12 +32,33 @@
 #include <filesystem>
 
 namespace fs = std::filesystem;
+
 using namespace rectpack2D;
+using namespace Core;
+using namespace RawBackend;
 
 using spaces_type = empty_spaces<true>;
 using rect_type = output_rect_t<spaces_type>;
 
-namespace Core
+namespace
+{
+    GLenum GetChannelAsOpenGLType(const RawBackend::Image& data) noexcept
+    {
+        if (static_cast<int>(data.getChannel()) == 3)
+        {
+            return GL_RGB;
+        }
+
+        if (static_cast<int>(data.getChannel()) == 4)
+        {
+            return GL_RGBA;
+        }
+
+        return GL_RED;
+    }
+} // namespace
+
+namespace NX
 {
 
     std::vector<StringAtom> TextureAtlas::getRectsAsVector() const
@@ -87,10 +108,10 @@ namespace Core
         }
 
         // validation for data consistency
-        const auto firstChannel = images.front().getChannelAsOpenGLType();
+        const auto firstChannel = GetChannelAsOpenGLType(images.front());
         for (const auto& img : images)
         {
-            if (img.getChannelAsOpenGLType() != firstChannel)
+            if (GetChannelAsOpenGLType(img) != firstChannel)
             {
                 criticalLog(
                     "All images in the atlas folder must have the same number of channels. Image '{}' has {} channels, while the first(anchored) image has {} channels."_f
@@ -182,7 +203,7 @@ namespace Core
 
     spdlog::logger* TextureAtlas::getLogger() const
     {
-        return ::AssetsManager::getLogger();
+        return NexiumFundamental::getLogger();
     }
 
     const FRect& TextureAtlas::getRect(const StringAtom& name) const
@@ -196,4 +217,4 @@ namespace Core
         return it->second;
     }
 
-} // namespace Core
+} // namespace NX

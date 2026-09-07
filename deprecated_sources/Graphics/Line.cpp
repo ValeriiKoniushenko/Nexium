@@ -45,7 +45,7 @@ namespace
         auto* lineShader = GetShaderManager()->getShaderProgram("2d_rect"_atom);
         if (!lineShader)
         {
-            LOG_ASSERT_ERROR_ONCE_P(globalLog, "Can't get shader program '2d_rect'.");
+            LOG_ASSERT_ERROR_ONCE_P(gGlobalLog, "Can't get shader program '2d_rect'.");
             return {};
         }
         data.setShader(lineShader);
@@ -66,7 +66,7 @@ namespace Core::Debug
     {
         if (!shader) [[likely]]
         {
-            LOG_ASSERT_ERROR_ONCE_P(globalLog, "Can't draw a line. Shader is empty.");
+            LOG_ASSERT_ERROR_ONCE_P(gGlobalLog, "Can't draw a line. Shader is empty.");
             return;
         }
 

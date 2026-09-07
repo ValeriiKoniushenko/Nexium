@@ -68,7 +68,7 @@ namespace
         auto* shader = GetShaderManager()->getShaderProgram("2d_rect"_atom);
         if (!Verify(shader))
         {
-            globalLog.criticalLog("Can't get shader program '2d_rect'.");
+            gGlobalLog.criticalLog("Can't get shader program '2d_rect'.");
             return {};
         }
         data.setShader(shader);

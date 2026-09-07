@@ -39,7 +39,7 @@ namespace
 {
     void glfwErrorCallback(int error, const char* description)
     {
-        Foundation::globalLog.errorLog("GLFW Error [{}]: {}"_f << error << description);
+        gGlobalLog.errorLog("GLFW Error [{}]: {}"_f << error << description);
     }
 
     void MouseMoveHandler(GLFWwindow*, double x, double y)
@@ -141,7 +141,7 @@ namespace Platform
             {
                 if (severity != GL_DEBUG_SEVERITY_NOTIFICATION)
                 {
-                    globalLog.errorLog("[GL] {}"_f << msg);
+                    gGlobalLog.errorLog("[GL] {}"_f << msg);
                 }
             },
             nullptr);

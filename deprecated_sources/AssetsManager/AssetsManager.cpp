@@ -464,7 +464,7 @@ namespace Core
                                                                             });
         if (!pipe)
         {
-            Core::globalLog.criticalLog("Can't open CMD for file selection dialog");
+            Core::gGlobalLog.criticalLog("Can't open CMD for file selection dialog");
             return {};
         }
 

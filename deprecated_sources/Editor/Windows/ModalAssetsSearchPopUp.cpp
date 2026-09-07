@@ -104,7 +104,8 @@ namespace Core
                     }
 
                     LOG_ERROR_ONCE_P(
-                        globalLog, "ModalAssetsSearchPopUpEWC: Can't get asset meta at some index");
+                        gGlobalLog,
+                        "ModalAssetsSearchPopUpEWC: Can't get asset meta at some index");
                     return nullptr;
                 });
             _list->setSizeProvider(

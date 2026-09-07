@@ -28,14 +28,14 @@
 #include "Graphics/GraphicsComponents.h"
 #include "ResourceManagement/JsonAdapter.h"
 
-namespace Core
+namespace NX
 {
     class BaseCamera;
 
     CLASS();
     class SkyboxAsset : public BaseAsset
     {
-        R_FRIEND_DECL(SkyboxAsset, Core::BaseAsset);
+        R_FRIEND_DECL(SkyboxAsset, NX::BaseAsset);
 
     public:
         inline static const char* fileExtension = ".nxsky";
@@ -52,7 +52,7 @@ namespace Core
         };
 
     public:
-        explicit SkyboxAsset(const StringAtom& logicPath)
+        explicit SkyboxAsset(const Core::StringAtom& logicPath)
             : BaseAsset(logicPath)
         {
         }
@@ -82,6 +82,6 @@ namespace Core
     };
 
     using NXSkybox = AssetRef<SkyboxAsset>;
-} // namespace Core
+} // namespace NX
 
 #include "SkyboxAsset.generated.h" // added by the code generator. Better don't move it.

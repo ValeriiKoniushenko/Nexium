@@ -191,6 +191,6 @@ namespace Foundation
         [[nodiscard]] spdlog::logger* getLogger() const final;
     };
 
-    extern GlobalLog globalLog;
-
 } // namespace Foundation
+
+extern Foundation::GlobalLog gGlobalLog;

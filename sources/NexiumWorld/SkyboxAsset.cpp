@@ -27,7 +27,7 @@
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Misc/Configs.h"
 
-namespace Core
+namespace NX
 {
     R_FRIEND_IMPL(SkyboxAsset);
 

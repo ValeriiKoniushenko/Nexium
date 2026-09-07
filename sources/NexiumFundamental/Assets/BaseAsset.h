@@ -24,23 +24,23 @@
 
 #pragma once
 
-#include "../ResourceManagement/DataStream.h"
 #include "Core/String.h"
-#include "Misc/BaseLog.h"
+#include "Foundation/BaseLog.h"
+#include "NexiumFundamental/ResourceManagement/DataStream.h"
 #include "nlohmann/json.hpp"
 
-namespace Core
+namespace NX
 {
 
     // TODO: remove this class. It's unsafe
     CLASS();
-    class BaseAsset : public BaseLog
+    class BaseAsset : public Foundation::BaseLog
     {
         R_FRIEND(BaseAsset);
 
     public:
-        explicit BaseAsset(const StringAtom& logicPath)
-            : _logicPath(logicPath)
+        explicit BaseAsset(Core::StringAtom logicPath)
+            : _logicPath(std::move(logicPath))
         {
             Assert(std::filesystem::path(_logicPath.c_str()).is_relative(),
                    "Logic path must be relative. It's ID, it's not a real path.");
@@ -54,7 +54,7 @@ namespace Core
 
         [[nodiscard]] bool isLoaded() const { return _refCount > 1; }
 
-        [[nodiscard]] const StringAtom& getLogicPath() const { return _logicPath; }
+        [[nodiscard]] const Core::StringAtom& getLogicPath() const { return _logicPath; }
 
         void loadRequest();
         void unloadRequest();
@@ -79,7 +79,7 @@ namespace Core
 
     protected:
         std::filesystem::path _assetPath;
-        StringAtom _logicPath;
+        Core::StringAtom _logicPath;
         uint32_t _refCount = 0;
 
         template<class T>
@@ -200,6 +200,6 @@ namespace Core
     private:
         T* _asset = nullptr;
     };
-} // namespace Core
+} // namespace NX
 
 #include "BaseAsset.generated.h" // added by the code generator. Better don't move it.

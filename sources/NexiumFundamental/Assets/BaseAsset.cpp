@@ -24,13 +24,15 @@
 
 #include "BaseAsset.h"
 
-#include "../Misc/Configs.h"
-#include "ModuleInfo.h"
+#include "../PrivateModuleInfo.h"
+#include "Foundation/Configs.h"
 #include "Utils/Functions.h"
 
 #include <fstream>
 
-namespace Core
+using namespace Core;
+
+namespace NX
 {
 
     void BaseAsset::loadRequest()
@@ -137,7 +139,7 @@ namespace Core
 
     spdlog::logger* BaseAsset::getLogger() const
     {
-        return AssetsManager::getLogger();
+        return NexiumFundamental::getLogger();
     }
 
     nlohmann::json BaseAsset::serialize() const
@@ -150,4 +152,4 @@ namespace Core
         R<BaseAsset>::Deserialize(data, *this);
     }
 
-} // namespace Core
+} // namespace NX

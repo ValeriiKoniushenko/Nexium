@@ -24,8 +24,27 @@
 
 #include "Texture.h"
 
-namespace Core
+namespace
 {
+    GLenum GetChannelAsOpenGLType(const RawBackend::Image& data) noexcept
+    {
+        if (static_cast<int>(data.getChannel()) == 3)
+        {
+            return GL_RGB;
+        }
+
+        if (static_cast<int>(data.getChannel()) == 4)
+        {
+            return GL_RGBA;
+        }
+
+        return GL_RED;
+    }
+} // namespace
+
+namespace RawBackend
+{
+
     Texture::Texture(Texture&& other) noexcept
         : _textureId(other._textureId),
           _size(other._size)
@@ -68,7 +87,7 @@ namespace Core
         bind();
 
         putImage(0, GL_RGBA, img.getSize().width, img.getSize().height, 0,
-                 img.getChannelAsOpenGLType(), GL_UNSIGNED_BYTE, img.data());
+                 GetChannelAsOpenGLType(img), GL_UNSIGNED_BYTE, img.data());
 
         generateMipmap(GL_LINEAR, GL_LINEAR);
 
@@ -83,7 +102,7 @@ namespace Core
         bind();
 
         putImage(0, GL_RGBA, data.getSize().width, data.getSize().height, 0,
-                 data.getChannelAsOpenGLType(), GL_UNSIGNED_BYTE, data.data());
+                 GetChannelAsOpenGLType(data), GL_UNSIGNED_BYTE, data.data());
 
         generateMipmap(GL_LINEAR, GL_LINEAR);
         unbind();
@@ -164,4 +183,4 @@ namespace Core
         glGenerateMipmap(GL_TEXTURE_2D);
     }
 
-} // namespace Core
+} // namespace RawBackend

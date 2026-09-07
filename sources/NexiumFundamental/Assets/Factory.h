@@ -26,16 +26,16 @@
 
 #pragma once
 
-#include "AssetsManager/ECSAsset.h"
 #include "Core/Singleton.h"
 #include "Core/String.h"
+#include "ECSAsset.h"
 
 #include <unordered_map>
 
-namespace Core::AssetImpl
+namespace NX
 {
 
-    class Factory final : public Singleton<Factory>
+    class Factory final : public Core::Singleton<Factory>
     {
         SINGLETONS_FRIEND(Factory)
     public:
@@ -57,7 +57,7 @@ namespace Core::AssetImpl
         {
             if (_map.contains(typeid(typename T::implementedAssetType)))
             {
-                globalLog.errorLog(
+                gGlobalLog.errorLog(
                     "[AssetImpl::Factory] Asset type {} already registered. You are trying re-register it. Your action is canceled."_f
                     << R<typename T::implementedAssetType>::FullName());
                 return;
@@ -66,7 +66,7 @@ namespace Core::AssetImpl
             _map[typeid(typename T::implementedAssetType)]
                 = []() -> std::unique_ptr<ECSAssetImpl> { return std::make_unique<T>(); };
 
-            globalLog.infoLog("[AssetImpl::Factory] Asset type {} has registered."_f
+            gGlobalLog.infoLog("[AssetImpl::Factory] Asset type {} has registered."_f
                               << R<typename T::implementedAssetType>::FullName());
         }
 
@@ -78,4 +78,4 @@ namespace Core::AssetImpl
 
     [[nodiscard]] Factory& GetFactory();
 
-} // namespace Core::AssetImpl
+} // namespace NX

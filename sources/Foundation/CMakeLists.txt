@@ -17,6 +17,7 @@ set(HEADERS
     BaseLog.h
 
     Interfaces/DataStream.h
+    Interfaces/IOutliner.h
 )
 
 add_library(${MODULE_TARGET} STATIC)
@@ -27,6 +28,7 @@ target_link_libraries(${MODULE_TARGET} PUBLIC
     Utils::Core
     Utils::Utils
     spdlog::spdlog
+    JustReflectMe::Adapter
 )
 
 # ============== Per Module Private Info ===============
