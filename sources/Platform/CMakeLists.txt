@@ -63,4 +63,5 @@ nexium_configure_target(Nexium_Platform_PrivateModule)
 nexium_configure_target(Nexium_Platform_Graphics)
 nexium_configure_target(Nexium_Platform_Input)
 
+add_dependencies(Nexium_Platform_Graphics CodeGenerator)
 add_dependencies(Nexium_Platform_Input CodeGenerator)

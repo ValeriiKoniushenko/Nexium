@@ -52,3 +52,8 @@ It has one target.
     - Cmake dependency is: `Nexium::Foundation`, `Core::Stb` (dependencies/Stb)
 
 - Path to these modules is: `sources/RawBackend`
+
+== Notes
+
+- One layer == One folder inside `sources/<layer_name>`. But, it doesn't mean that every layer is built from one CMake module/taget. It easily may be more than one.
+- Every layer (folder) conain its' own totally private module. The name of this module it: `Nexium_<layer_name>_PrivateModule`. The sense of it is to contain `PrivateModuleInfo.{h,cpp}` with all related to module information: module name, logger synk

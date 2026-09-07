@@ -29,10 +29,11 @@
 
 namespace RawBackend
 {
+    const std::string_view gModuleName = PRIVATE_MODULE_NAME;
 
     spdlog::logger* getLogger()
     {
-        static auto logger = spdlog::stdout_color_mt(PRIVATE_MODULE_NAME);
+        static auto logger = spdlog::stdout_color_mt(gModuleName.data());
         return logger.get();
     }
 

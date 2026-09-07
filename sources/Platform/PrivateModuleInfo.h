@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include <string_view>
 namespace spdlog
 {
     class logger;
@@ -31,6 +32,8 @@ namespace spdlog
 
 namespace Platform
 {
+
+    extern const std::string_view gModuleName;
 
     [[nodiscard]] spdlog::logger* getLogger();
 

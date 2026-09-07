@@ -1,3 +1,5 @@
+# ============== Foundation ===============
+
 set(SOURCES
     Configs.cpp
     BaseLog.cpp
@@ -22,4 +24,19 @@ target_link_libraries(Nexium_Foundation PUBLIC
     spdlog::spdlog
 )
 
+# ============== Per Module Private Info ===============
+
+add_library(Nexium_Foundation_PrivateModule STATIC)
+target_sources(Nexium_Foundation_PrivateModule PRIVATE
+    PrivateModuleInfo.cpp
+    PrivateModuleInfo.h
+)
+target_link_libraries(Nexium_Foundation_PrivateModule PRIVATE Nexium::Foundation)
+target_compile_definitions(Nexium_Foundation_PrivateModule PRIVATE PRIVATE_MODULE_NAME="Foundation")
+
+# =========================================
+
+nexium_configure_target(Nexium_Foundation_PrivateModule)
 nexium_configure_target(Nexium_Foundation)
+
+add_dependencies(Nexium_Foundation CodeGenerator)

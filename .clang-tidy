@@ -13,6 +13,7 @@ Checks: >
   -bugprone-easily-swappable-parameters,
   -bugprone-reserved-identifier,
   -bugprone-throwing-static-initialization,
+  -bugprone-suspicious-stringview-data-usage,
   
   -clang-diagnostic-error,
   -cppcoreguidelines-avoid-do-while,
