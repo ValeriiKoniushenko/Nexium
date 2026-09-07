@@ -3,9 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Resource system :: Nexium Engine</title>
-    <link rel="prev" href="memory.html">
-    <link rel="next" href="file-io.html">
+    <title>Untitled :: Nexium Engine</title>
     <meta name="generator" content="Antora 3.1.15">
     <link rel="stylesheet" href="../../../_/css/site.css">
   </head>
@@ -90,7 +88,7 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="memory.html">Memory Model</a>
   </li>
-  <li class="nav-item is-current-page" data-depth="2">
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="resource-system.html">Resource System</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -310,303 +308,227 @@
 <button class="nav-toggle"></button>
   <a href="../index.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
-  <ul>
-    <li><a href="../index.html">Nexium Engine Documentation</a></li>
-    <li>Engine Architecture</li>
-    <li><a href="resource-system.html">Resource System</a></li>
-  </ul>
 </nav>
-<div class="edit-this-page"><a href="file:///home/valerii/workspace/Nexium//docs/nexium/modules/engine_architecture/pages/resource-system.adoc">Edit this Page</a></div>
+<div class="edit-this-page"><a href="file:///home/valerii/workspace/Nexium//docs/nexium/modules/engine_architecture/pages/draft--new-architecture.adoc">Edit this Page</a></div>
 </div>
   <div class="content">
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Resource system</h1>
-<div id="preamble">
-<div class="sectionbody">
 <div class="paragraph">
-<p>The resource system here is straightforward.
-It has a few entry points to work with it:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>Core::GetAssetsManager()</code></p>
-</li>
-<li>
-<p><code>Core::GetBlueprintManager()</code></p>
-</li>
-</ul>
+<p>[[engine architecture]]
+= (draft, migrating) Engine Architecture</p>
 </div>
 <div class="paragraph">
-<p>Both of them are responsible for their own part of logic.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_assets_manager"><a class="anchor" href="#_assets_manager"></a>Assets manager</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>It&#8217;s responsible for atomic resources:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Images: .png, .jpg, .jpeg, etc - Fonts: .ttf</p>
-</li>
-<li>
-<p>Fonts: .ttf, .otf</p>
-</li>
-<li>
-<p>3D models: .obj, .fbx, .stl, etc</p>
-</li>
-<li>
-<p>&#8230;&#8203;.</p>
-</li>
-</ul>
+<p>New engine architecture is totally reworked and original architecture can be found by the next SHA <code>c6f0d00b4fc2bb348c69b37093bd928324b0b161</code>.</p>
 </div>
 <div class="paragraph">
-<p>So, it represents only <strong>one resource</strong>.
-The current goal of the Assets Manager it is to provide easy access for controlling of the resources.
-Where the final user shouldn&#8217;t worry about 'when to delete the resource XYZ', 'when to refresh it', 'when to save it', etc.
-EVerything it is covered by the logic of <code>AssetsManager</code>.</p>
+<p>The goal of the reworking is to fix the globall architecture and dependency mess. Everything was connected to each other, a lot of modules were spreaded though the whole project. It doesn&#8217;t even make a sense to describe how it was.</p>
 </div>
 <div class="paragraph">
-<p>For now, it doesn&#8217;t cover the ability to give some commands to make a specific logic of the resource.
-Everything that it does is just a load a resource and store it inside.
-It seems to smart pointer.</p>
-</div>
-<div class="paragraph">
-<p>The code example:</p>
+<p>Now, everything is devided by layers.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>#include "ResourceManager/ResourceManager.h"
+<pre class="highlightjs highlight"><code class="language-none hljs"># Rule: dependencies only ever point downward (higher number -&gt; lower number). Never the reverse.
+# Exception: Foundation (1) is a shared kernel, callable directly from any layer (math, logging, config).
+# Extensions/Plugins inherit their host layer's rules — no quiet exceptions for "just this once."
 
-auto&amp;&amp; am = Core::Test::GetAssetsManager();
-Texture::Ptr doc = am.getTexture("/home/valerii/workspace/Nexium/data/assets/images/document.png");
-std::cout &lt;&lt; doc-&gt;getSize().width &lt;&lt; doc-&gt;getSize().height &lt;&lt; std::endl;</pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_blueprint_manager"><a class="anchor" href="#_blueprint_manager"></a>Blueprint Manager</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The Blueprint Manager, on the other hand, is a more complex tool.
-It handles some functional stuff that can be extended, changed and scaled later.
-It handles the data in the same way – you should only ask it to give you some data with a simple string; and if it exists, it will be loaded in the correct way and provided to you.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>#include "ResourceManager/ResourceManager.h"
-
-auto&amp;&amp; bm = Core::Test::GetBlueprintManager();
-auto&amp;&amp; blueprint = bm.findBlueprint("BaseCamera");
-auto&amp;&amp; baseCamera = blueprint.exposeData();</pre>
-</div>
-</div>
+8 Editor              -&gt; ImGui UI, in-editor windows; attaches to a running Runtime like a debugger (pause/step/inspect — a good fit for reflection-driven access via JustReflectMe rather than hard #includes); never linked into the shipped build
+7 Nexium Runtime      -&gt; mainloop; orchestrates World and Nexium Subsystems (Assets/Render/Audio/Input)
+6 Nexium World        -&gt; World, GameInstance, Actor, Pawn, Controller (consumes Subsystems' Input System, AI), Skybox, gameplay primitives, animations, Extensions/Plugins (e.g. Physics)
+5 Nexium Subsystems   -&gt; Camera, Asset management, Atlas, non-raw render (ShaderManager), Texture/Image, 2D/3D model impls, Audio work, Input System (wraps Platform's raw input)
+4 Nexium Fundamental  -&gt; ECS, Asset Registry, File I/O handling, raw de/serialization
+3 Raw Backend         -&gt; render API, render graph/commands, OpenGL backend, raw audio work
+2 Platform            -&gt; Window class &amp; logic, filesystem, raw input system
+1 Foundation          -&gt; Core (StringAtom, Math, common classes/structs), Logging (spdlog), Config</code></pre>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_blueprint_what_is_it"><a class="anchor" href="#_blueprint_what_is_it"></a>Blueprint - what is it?</h2>
+<h2 id="_1_foundation"><a class="anchor" href="#_1_foundation"></a>1 - Foundation</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>The blueprint is a thing that describes the data, what it looks like, from what types it should be constructed, what values should be applied to it.
-Under implementation (for today) is just a .json file that can describe some complex objects.
-Technically, it looks like this (pseudocode):</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>{
-    "name": "SomeName",
-    "type": "SomeBlueprintParserType",
-    "data": {
-        ...
-    }
-}</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The definition of the fields is:</p>
-</div>
 <div class="ulist">
 <ul>
 <li>
-<p><strong>"name"</strong> – given component name.
-It will be used while spawning of the object, or for similar scenarios.</p>
+<p>Target name: <code>Nexium_Foundation</code> (<code>Nexium::Foundation</code>)</p>
 </li>
 <li>
-<p><strong>"type"</strong> – the type of the parser for this blueprint(e.g. BlueprintImageParser, Blueprint3DObjectSParser).</p>
+<p>Cmake dependency: <code>Utils::Utils</code>, <code>Utils::Core</code> (StringAtom, Math, Delegates, etc). Path to module: <code>dependencies/Utils</code></p>
+</li>
+<li>
+<p>The files: <code>Foundation/Configs.<strong></code>, <code>Foundation/BaseLog.</strong></code></p>
+</li>
+<li>
+<p>Path to this module is: <code>sources/Foundation</code></p>
 </li>
 </ul>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_the_info_below_is_deprecated"><a class="anchor" href="#_the_info_below_is_deprecated"></a>The info below is DEPRECATED</h2>
+<h2 id="_2_platform"><a class="anchor" href="#_2_platform"></a>2 - Platform</h2>
 <div class="sectionbody">
-
+<div class="paragraph">
+<p>It has three main targets.
+1. Private: Nexium_Platform_PrivateModule
+    - It includes: <code>sources/Platform/PrivateModuleInfo.<strong></code>
+    - Cmake dependency is: <code>Nexium::Foundation</code>
+2. Public: Nexium_Platform_Graphics (Nexium::Platform::Graphics)
+    - It includes: <code>sources/Platform/{Graphics}.</strong></code>
+    - Cmake dependency is: <code>glfw</code>, <code>Core::Glad</code>
+3. Public: Nexium_Platform_Input (Nexium::Platform::Input)
+    - It includes: <code>sources/Platform/{Keyboard,Mouse,Window}.*</code>
+    - Cmake dependency is: <code>Nexium::Foundation</code>, <code>Nexium::Platform::Graphics</code></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Path to these modules is: <code>sources/Platform</code></p>
+</li>
+</ul>
+</div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_main_pipeline"><a class="anchor" href="#_main_pipeline"></a>Main pipeline</h2>
+<h2 id="_3_raw_backend"><a class="anchor" href="#_3_raw_backend"></a>3 - Raw Backend</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The main pipeline 'how it works' I will try to explain below.
-In general, it&#8217;s easy and it has main steps as:</p>
+<p>It has one target.
+1. Public: Nexium_RawBackend (Nexium::RawBackend)
+    - It includes: <code>sources/RawBackend/{Image,IDrawable}.*</code>
+    - Cmake dependency is: <code>Nexium::Foundation</code>, <code>Core::Stb</code> (dependencies/Stb)</p>
 </div>
-<div class="sect2">
-<h3 id="_initial_reading"><a class="anchor" href="#_initial_reading"></a>Initial reading</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Path to these modules is: <code>sources/RawBackend</code></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_4_nexium_fundamental"><a class="anchor" href="#_4_nexium_fundamental"></a>4 - Nexium Fundamental</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>At the engine <a href="module-graph.html" class="xref page">init phase</a> it scans the filesystem with pre-registered paths to find all files with matchable extension(i.e. *.nx).
-What is 'a pre-registered' path&#8201;&#8212;&#8201;it&#8217;s a built-in path that was registered at the engine&#8217;s init stage.
-For example, the main 'pre-registered' path is: <code>&lt;engine_root&gt;/data/assets</code>.
-This object will call a function <code>AssetsManager::rescanFileSystem()</code> to find all new assets.</p>
-</div>
-<div class="paragraph">
-<p>How to understand what asset will be scanned?
-At the moment of writing this doc, it&#8217;s a little bit floating question.
-Because it&#8217;s under active development.
-But, anyway, the main asset&#8217;s extension is <code>*.nx</code>&#8201;&#8212;&#8201;and this logic will try to make all efforts to scan &amp; register it inside the internal buffer.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_internal_storing_preloading"><a class="anchor" href="#_internal_storing_preloading"></a>Internal storing [preloading]</h3>
-<div class="paragraph">
-<p>When it finds some file (i.g. <code>MyCube.nx</code>) it will register this asset inside internal storage with the mapped 'logical path'.
-If to add more details, so it will read an asset file, write the <strong>minimum amount of information</strong> about scanned asset(type, name) and will put this info under the mapped name&#8201;&#8212;&#8201;logical path.
-Also, it will mark an asset with a status <code>PreLoaded</code> (to get this status you can call a function <code>ECSAsset::getLoadingStatus()</code>)</p>
-</div>
-<div class="sect3">
-<h4 id="_ramdisk_storing_loading"><a class="anchor" href="#_ramdisk_storing_loading"></a>RAM\Disk storing &amp; loading</h4>
-<div class="paragraph">
-<p>You should keep in your mind that it has different stages of loading of your assets' main information.
-It can&#8217;t just totally load all assets and store it inside the RAM.
-It&#8217;s impossible due to the huge number of data( models, textures, etc).
-So, it will load only assets that you really need &amp; want to use NOW (In the nearest future I&#8217;ll add a new system\logic to put some priority or time-gap when to unload an asset).
-But you should know only one rule: <em>you are using the asset <code>X</code> -&gt; it stores its data in RAM.
-If you don&#8217;t use (i.e. delete from a scene) -&gt; it will be immediately unloading from the RAM.
-And after a future\new request to this asset <code>X</code> it will be read again <strong>main data</strong> from the disk</em></p>
-</div>
-<div class="paragraph">
-<p>Now, main 'stages' of your assets you can read at the enum class <code>ECSAsset::Status</code>.
-Briefly, it has the main point:</p>
+<p>It has one private target, five focused public targets, and one aggregate compatibility target.</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p><strong>NotLoaded</strong>&#8201;&#8212;&#8201;Absolutely not loaded.
-Asset&#8217;s type is undefined</p>
+<p>Private: <code>Nexium_Fundamental_PrivateModule</code></p>
+<div class="ulist">
+<ul>
+<li>
+<p>It includes: <code>sources/NexiumFundamental/PrivateModuleInfo.*</code></p>
 </li>
 <li>
-<p><strong>PreLoaded</strong>&#8201;&#8212;&#8201;Loaded only the main information: type &amp; ID &amp; name</p>
+<p>CMake dependency is: <code>Nexium::Foundation</code></p>
 </li>
-<li>
-<p><strong>Loaded</strong>&#8201;&#8212;&#8201;Full asset&#8217;s data is loaded (corresponding to asset&#8217;s type)</p>
-</li>
-<li>
-<p><strong>PreLoadingError</strong>&#8201;&#8212;&#8201;Error while preloading data</p>
-</li>
-<li>
-<p><strong>LoadingError</strong>&#8201;&#8212;&#8201;Error while loading of the main data</p>
-</li>
-</ol>
+</ul>
 </div>
-</div>
-<div class="sect3">
-<h4 id="_regarding_logical_path"><a class="anchor" href="#_regarding_logical_path"></a>Regarding 'logical path'</h4>
-<div class="paragraph">
-<p>To be honest with you, the logical path is just a string, but it represents the path to this asset and it should be unique.
-To don&#8217;t worry about the uniqueness of the assets through the engine, we can delegate this work to the OS filesystem.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_example"><a class="anchor" href="#_example"></a>Example</h4>
-<div class="paragraph">
-<p>Let&#8217;s check a small example.
-We have the default configuration of the engine.
-Only one path(default one) has registered inside the <code>AssetsManager</code> is <code>&lt;engine_root&gt;/data/assets</code>.
-Also, we have only one asset <code>MyCube.nx</code></p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>At the engine&#8217;s init stage it will call a function <code>AssetsManager::rescanFileSystem()</code></p>
 </li>
 <li>
-<p>After that, it will scan the folder recursively and will find our asset <code>MyCube.nx</code> inside the folder: <code>&lt;engine_root&gt;/data/assets/3d-models/MyCube.nx</code></p>
+<p>Public base: <code>Nexium_Fundamental_Base</code> (<code>Nexium::Fundamental::Base</code>)</p>
+<div class="ulist">
+<ul>
+<li>
+<p>It includes: <code>sources/NexiumFundamental/{ITagHolder,Transformable}.*</code></p>
 </li>
 <li>
-<p>The <code>AssetsManager</code> will register this asset under the logical path <code>3d-models/MyCube</code>&#8201;&#8212;&#8201;<strong>it will the unique identifier of your asset</strong>.</p>
+<p>CMake dependency is: <code>Nexium::Foundation</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Public resource management: <code>Nexium_Fundamental_ResourceManagement</code> (<code>Nexium::Fundamental::ResourceManagement</code>)</p>
+<div class="ulist">
+<ul>
+<li>
+<p>It includes: <code>sources/NexiumFundamental/ResourceManagement/{DataStream,JsonAdapter}.*</code></p>
+</li>
+<li>
+<p>CMake dependency is: <code>Nexium::Foundation</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Public ECS: <code>Nexium_Fundamental_ECS</code> (<code>Nexium::Fundamental::ECS</code>)</p>
+<div class="ulist">
+<ul>
+<li>
+<p>It includes: <code>sources/NexiumFundamental/ECS/BaseComponent.*</code></p>
+</li>
+<li>
+<p>CMake dependency is: <code>Nexium::Fundamental::Base</code>, <code>Nexium::Fundamental::ResourceManagement</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Public assets: <code>Nexium_Fundamental_Assets</code> (<code>Nexium::Fundamental::Assets</code>)</p>
+<div class="ulist">
+<ul>
+<li>
+<p>It includes: <code>sources/NexiumFundamental/Assets/{BaseAsset,ECSAsset}.*</code></p>
+</li>
+<li>
+<p>CMake dependency is: <code>Nexium::Fundamental::ECS</code>, <code>Nexium::Fundamental::ResourceManagement</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Public texture atlas: <code>Nexium_Fundamental_TextureAtlas</code> (<code>Nexium::Fundamental::TextureAtlas</code>)</p>
+<div class="ulist">
+<ul>
+<li>
+<p>It includes: <code>sources/NexiumFundamental/Assets/TextureAtlas.*</code></p>
+</li>
+<li>
+<p>CMake dependency is: <code>Nexium::Foundation</code>, <code>Nexium::RawBackend</code>, <code>Core::Rectpack2D</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Aggregate compatibility target: <code>Nexium_Fundamental</code> (<code>Nexium::Fundamental</code>)</p>
+<div class="ulist">
+<ul>
+<li>
+<p>It links all five public targets. New consumers should link the narrowest target they need.</p>
+</li>
+<li>
+<p><code>Nexium::NexiumFundamental</code> remains as a temporary alias for the former target name.</p>
+</li>
+<li>
+<p>Path to these modules is: <code>sources/NexiumFundamental</code></p>
+</li>
+</ul>
+</div>
 </li>
 </ol>
 </div>
 </div>
 </div>
-</div>
-</div>
 <div class="sect1">
-<h2 id="_extra_path_registration"><a class="anchor" href="#_extra_path_registration"></a>Extra path registration</h2>
+<h2 id="_notes"><a class="anchor" href="#_notes"></a>Notes</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>As far as you know, it has only one pre-registered path: <code>&lt;engine_root&gt;/data/assets</code>
-But, if you need you can add\register more paths if you need it using <code>AssetsManager::registerNewAssetPath(your_path)</code>.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>One layer == One folder inside <code>sources/&lt;layer_name&gt;</code>. But, it doesn&#8217;t mean that every layer is built from one CMake module/taget. It easily may be more than one.</p>
+</li>
+<li>
+<p>Every layer (folder) conain its' own totally private module. The name of this module it: <code>Nexium_&lt;layer_name&gt;_PrivateModule</code>. The sense of it is to contain <code>PrivateModuleInfo.{h,cpp}</code> with all related to module information: module name, logger synk</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
-<div class="sect1">
-<h2 id="_getting_loaded_assets"><a class="anchor" href="#_getting_loaded_assets"></a>Getting loaded assets</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>At the moment of writing this doc, to retrieve some assets, you need to get the object of the described class and call a function <code>Core::AssetsManager::getAsset(logical_path)</code>.
-It&#8217;s the best way to get what you need.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_real_code_example"><a class="anchor" href="#_real_code_example"></a>Real code example</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Let&#8217;s see at the main pipeline behind all extra information.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">// First scan at the engine's initialization. You shouldn't do that directly!
-gGameInstance-&gt;assets.rescanFileSystem();
-// or
-// GetAssetsManager().rescanFileSystem()
-
-// For example we have only one asset: data/assets/3d-models/MyCube.nx
-// The rescanFileSystem() found this asset and put into internal storage.
-// It wrote the meta data of this asset:
-//    type: StaticMeshBundle
-//    name: MyFirstCube
-//    logicPath: 3d-models/MyCube.nx
-//    pathToSource: &lt;engine_root&gt;/data/assets/3d-models/MyCube.nx
-//    status: PreLoaded
-
-// Let's try to get this asset &amp; make a full load
-NXAsset cube = GetAssetsManager().getAsset("3d-models/MyCube.nx"_atom);
-// At the moment of getting this assets, the subsystem sees that you want to get all data.
-// So, it reads all really main data about it from the corresponsing file, and loads it
-// just at this line. So, at the next line you can use it as you want!
-
-if (cube)
-{
-    cout &lt;&lt; cube.getLoadingStatus() == ECSAsset::StatusLoaded; // true
-}</code></pre>
-</div>
-</div>
-</div>
-</div>
-<nav class="pagination">
-  <span class="prev"><a href="memory.html">Memory Model</a></span>
-  <span class="next"><a href="file-io.html">File I/O</a></span>
-</nav>
 </article>
   </div>
 </main>
