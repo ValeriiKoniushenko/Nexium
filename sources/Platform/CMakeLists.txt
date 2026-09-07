@@ -1,13 +1,21 @@
+get_filename_component(MODULE_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
+set(MODULE_TARGET_PREFIX Nexium_${MODULE_NAME})
+set(MODULE_PRIVATE_TARGET ${MODULE_TARGET_PREFIX}_PrivateModule)
+set(MODULE_ALIAS_PREFIX Nexium::${MODULE_NAME})
+set(GRAPHICS_TARGET ${MODULE_TARGET_PREFIX}_Graphics)
+set(GRAPHICS_ALIAS ${MODULE_ALIAS_PREFIX}::Graphics)
+set(INPUT_TARGET ${MODULE_TARGET_PREFIX}_Input)
+set(INPUT_ALIAS ${MODULE_ALIAS_PREFIX}::Input)
+
 # ============== Per Module Private Info ===============
 
-add_library(Nexium_Platform_PrivateModule STATIC)
-target_sources(Nexium_Platform_PrivateModule PRIVATE
+add_library(${MODULE_PRIVATE_TARGET} STATIC)
+target_sources(${MODULE_PRIVATE_TARGET} PRIVATE
     PrivateModuleInfo.cpp
     PrivateModuleInfo.h
 )
-target_link_libraries(Nexium_Platform_PrivateModule PRIVATE Nexium::Foundation)
-get_filename_component(CURRENT_DIR_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
-target_compile_definitions(Nexium_Platform_PrivateModule PRIVATE PRIVATE_MODULE_NAME="${CURRENT_DIR_NAME}")
+target_link_libraries(${MODULE_PRIVATE_TARGET} PRIVATE Nexium::Foundation)
+target_compile_definitions(${MODULE_PRIVATE_TARGET} PRIVATE PRIVATE_MODULE_NAME="${MODULE_NAME}")
 
 # ============== Graphics ===============
 
@@ -19,16 +27,16 @@ set(HEADERS
     Graphics.h
 )
 
-add_library(Nexium_Platform_Graphics STATIC)
-add_library(Nexium::Platform::Graphics ALIAS Nexium_Platform_Graphics)
-target_sources(Nexium_Platform_Graphics PRIVATE ${SOURCES} ${HEADERS})
+add_library(${GRAPHICS_TARGET} STATIC)
+add_library(${GRAPHICS_ALIAS} ALIAS ${GRAPHICS_TARGET})
+target_sources(${GRAPHICS_TARGET} PRIVATE ${SOURCES} ${HEADERS})
 
-target_link_libraries(Nexium_Platform_Graphics
+target_link_libraries(${GRAPHICS_TARGET}
     PUBLIC
     glfw
     Core::Glad
     PRIVATE
-    Nexium_Platform_PrivateModule
+    ${MODULE_PRIVATE_TARGET}
 )
 
 # ================ INPUT =================
@@ -44,25 +52,25 @@ set(HEADERS
     Window.h
 )
 
-add_library(Nexium_Platform_Input STATIC)
-add_library(Nexium::Platform::Input ALIAS Nexium_Platform_Input)
-target_sources(Nexium_Platform_Input PRIVATE ${SOURCES} ${HEADERS})
+add_library(${INPUT_TARGET} STATIC)
+add_library(${INPUT_ALIAS} ALIAS ${INPUT_TARGET})
+target_sources(${INPUT_TARGET} PRIVATE ${SOURCES} ${HEADERS})
 
-target_link_libraries(Nexium_Platform_Input
+target_link_libraries(${INPUT_TARGET}
     PUBLIC
     Nexium::Foundation
     Nexium::Platform::Graphics
     JustReflectMe::Adapter
     glm
     PRIVATE
-    Nexium_Platform_PrivateModule
+    ${MODULE_PRIVATE_TARGET}
 )
 
 # =========================================
 
-nexium_configure_target(Nexium_Platform_PrivateModule)
-nexium_configure_target(Nexium_Platform_Graphics)
-nexium_configure_target(Nexium_Platform_Input)
+nexium_configure_target(${MODULE_PRIVATE_TARGET})
+nexium_configure_target(${GRAPHICS_TARGET})
+nexium_configure_target(${INPUT_TARGET})
 
-add_dependencies(Nexium_Platform_Graphics CodeGenerator)
-add_dependencies(Nexium_Platform_Input CodeGenerator)
+add_dependencies(${GRAPHICS_TARGET} CodeGenerator)
+add_dependencies(${INPUT_TARGET} CodeGenerator)

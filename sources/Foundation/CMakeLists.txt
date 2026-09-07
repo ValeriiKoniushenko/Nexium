@@ -1,3 +1,8 @@
+get_filename_component(MODULE_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
+set(MODULE_TARGET Nexium_${MODULE_NAME})
+set(MODULE_PRIVATE_TARGET ${MODULE_TARGET}_PrivateModule)
+set(MODULE_ALIAS Nexium::${MODULE_NAME})
+
 # ============== Foundation ===============
 
 set(SOURCES
@@ -14,11 +19,11 @@ set(HEADERS
     Interfaces/DataStream.h
 )
 
-add_library(Nexium_Foundation STATIC)
-add_library(Nexium::Foundation ALIAS Nexium_Foundation)
-target_sources(Nexium_Foundation PRIVATE ${SOURCES} ${HEADERS})
+add_library(${MODULE_TARGET} STATIC)
+add_library(${MODULE_ALIAS} ALIAS ${MODULE_TARGET})
+target_sources(${MODULE_TARGET} PRIVATE ${SOURCES} ${HEADERS})
 
-target_link_libraries(Nexium_Foundation PUBLIC
+target_link_libraries(${MODULE_TARGET} PUBLIC
     Utils::Core
     Utils::Utils
     spdlog::spdlog
@@ -26,18 +31,17 @@ target_link_libraries(Nexium_Foundation PUBLIC
 
 # ============== Per Module Private Info ===============
 
-add_library(Nexium_Foundation_PrivateModule STATIC)
-target_sources(Nexium_Foundation_PrivateModule PRIVATE
+add_library(${MODULE_PRIVATE_TARGET} STATIC)
+target_sources(${MODULE_PRIVATE_TARGET} PRIVATE
     PrivateModuleInfo.cpp
     PrivateModuleInfo.h
 )
-target_link_libraries(Nexium_Foundation_PrivateModule PRIVATE Nexium::Foundation)
-get_filename_component(CURRENT_DIR_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
-target_compile_definitions(Nexium_Foundation_PrivateModule PRIVATE PRIVATE_MODULE_NAME="${CURRENT_DIR_NAME}")
+target_link_libraries(${MODULE_PRIVATE_TARGET} PRIVATE ${MODULE_ALIAS})
+target_compile_definitions(${MODULE_PRIVATE_TARGET} PRIVATE PRIVATE_MODULE_NAME="${MODULE_NAME}")
 
 # =========================================
 
-nexium_configure_target(Nexium_Foundation_PrivateModule)
-nexium_configure_target(Nexium_Foundation)
+nexium_configure_target(${MODULE_PRIVATE_TARGET})
+nexium_configure_target(${MODULE_TARGET})
 
-add_dependencies(Nexium_Foundation CodeGenerator)
+add_dependencies(${MODULE_TARGET} CodeGenerator)
