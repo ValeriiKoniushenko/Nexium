@@ -46,7 +46,7 @@ public:                                                                         
     using Ptr = Core::IntrusivePtr<TypeName>;                                                      \
     using CPtr = Core::IntrusivePtr<const TypeName>;                                               \
     template<bool isConst>                                                                         \
-    using AdaptivePtr = Core::IntrusivePtr<std::conditional_t<isConst, const TypeName, TypeName>>; \
+    using AdaptivePtr = std::conditional_t<isConst, CPtr, Ptr>;                                    \
                                                                                                    \
     static const Core::StringAtom componentType;                                                   \
                                                                                                    \
@@ -72,10 +72,10 @@ public:
     Template const Core::StringAtom TypeName::componentType = []()                                 \
     {                                                                                              \
         auto newType = Core::StringAtom::Intern(TypeNameAsStr);                                    \
-        NX::GetGlobalComponentFactory().registerNewType<TypeName>(newType, isTemplate);          \
+        NX::GetGlobalComponentFactory().registerNewType<TypeName>(newType, isTemplate);            \
         return newType;                                                                            \
     }();                                                                                           \
-    Template NX::BaseComponent::Ptr TypeName::clone() const                                      \
+    Template NX::BaseComponent::Ptr TypeName::clone() const                                        \
     {                                                                                              \
         auto out = static_cast<TypeName*>(::_tryAllocateECSObject<TypeName>(this));                \
         out->invalidate();                                                                         \
@@ -329,7 +329,9 @@ namespace NX
     /// Provides logging and debug tracking of component types in DEBUG mode.
     /// Try to don't use it by your own hands, it will register a new component
     /// automatically. How? See the first comment above class BaseComponent
-    class GlobalComponentFactory final : public Core::Singleton<GlobalComponentFactory>, public Foundation::BaseLog
+    class GlobalComponentFactory final :
+        public Core::Singleton<GlobalComponentFactory>,
+        public Foundation::BaseLog
     {
         SINGLETONS_FRIEND(GlobalComponentFactory);
 
@@ -352,7 +354,8 @@ namespace NX
         [[nodiscard]] bool containsSuchType(const Core::StringAtom& type) const;
         [[nodiscard]] const std::unordered_map<Core::StringAtom, Tag>& getTypeToTagMap() const;
 
-        [[nodiscard]] std::optional<std::type_index> getTypeIdByTypeName(const Core::StringAtom& type);
+        [[nodiscard]] std::optional<std::type_index> getTypeIdByTypeName(
+            const Core::StringAtom& type);
 
         [[nodiscard]] spdlog::logger* getLogger() const override;
 
@@ -389,7 +392,9 @@ namespace NX
     /// Abstract base class for all components.
     /// Provides lifecycle hooks, ticking mechanism, and JSON/XML/etc serialization.
     CLASS();
-    class AbstractComponent : public Core::IntrusiveRefCounter<AbstractComponent>, public Foundation::BaseLog
+    class AbstractComponent :
+        public Core::IntrusiveRefCounter<AbstractComponent>,
+        public Foundation::BaseLog
     {
         R_FRIEND(AbstractComponent);
 
@@ -655,7 +660,10 @@ namespace NX
         void invalidate() { _isInitialized = false; }
 
         // ========================== WORKING WITH CHILDREN ==========================
-        [[nodiscard]] Core::IntrusivePtr<BaseComponent> getFirstChild() { return _children.front(); }
+        [[nodiscard]] Core::IntrusivePtr<BaseComponent> getFirstChild()
+        {
+            return _children.front();
+        }
         [[nodiscard]] Core::IntrusivePtr<BaseComponent> getLastChild() { return _children.back(); }
 
         template<IsComponent T>
@@ -686,7 +694,8 @@ namespace NX
         {
             return _children.at(i);
         }
-        [[nodiscard]] const std::vector<Core::IntrusivePtr<BaseComponent>>& getChildren() const noexcept
+        [[nodiscard]] const std::vector<Core::IntrusivePtr<BaseComponent>>& getChildren()
+            const noexcept
         {
             return _children;
         }
@@ -710,7 +719,8 @@ namespace NX
         }
 
         template<IsComponent ComponentT>
-        [[nodiscard]] const ComponentT* findFirstChildOf(const Core::StringAtom& name = ""_atom) const
+        [[nodiscard]] const ComponentT* findFirstChildOf(const Core::StringAtom& name
+                                                         = ""_atom) const
         {
             return Impl_findFirstChildOf<ComponentT>(this, name);
         }
@@ -1175,7 +1185,7 @@ namespace NX
             range.push_back(obj);
         }
     }
-} // namespace Core
+} // namespace NX
 
 template<>
 struct std::hash<NX::BaseComponent>
@@ -1195,10 +1205,7 @@ struct std::hash<NX::BaseComponent::CPtr>
 template<>
 struct std::hash<NX::BaseComponent::Ptr>
 {
-    std::size_t operator()(const NX::BaseComponent::Ptr& x) const noexcept
-    {
-        return x->makeHash();
-    }
+    std::size_t operator()(const NX::BaseComponent::Ptr& x) const noexcept { return x->makeHash(); }
 };
 
 #include "BaseComponent.generated.h" // added by the code generator. Better don't move it.
