@@ -31,6 +31,7 @@ Checks: >
   -cppcoreguidelines-pro-type-reinterpret-cast,
   -cppcoreguidelines-pro-type-union-access,
   -cppcoreguidelines-pro-type-vararg,
+  -cppcoreguidelines-use-enum-class,
   
   -misc-include-cleaner,
   -misc-no-recursion,

@@ -26,43 +26,26 @@
 
 #include "Core/IntrusivePtr.h"
 #include "Core/Singleton.h"
-#include "Core/String.h"
+#include "Foundation/BaseLog.h"
+#include "Foundation/Interfaces/DataStream.h"
 #include "JustReflectMe/Adapter.h"
-#include "Misc/BaseLog.h"
 #include "nlohmann/json.hpp"
 
 #include <fstream>
 #include <functional>
-#include <type_traits>
 
-namespace Core
+namespace NX
 {
     class DataStream;
 
-    struct IDataIO
-    {
-        IDataIO() = default;
-        IDataIO(const IDataIO&) = default;
-        IDataIO(IDataIO&&) = default;
-        IDataIO& operator=(const IDataIO&) = default;
-        IDataIO& operator=(IDataIO&&) = default;
-        virtual ~IDataIO() = default;
-
-        [[nodiscard]] virtual std::filesystem::path getCacheDir() const;
-        [[nodiscard]] virtual std::string getCacheHash() const = 0;
-    };
-
-    template<class T>
-    concept IsDataIO = std::derived_from<std::remove_reference_t<T>, IDataIO>;
-
-    class CacheSystem : public BaseLog, public Singleton<CacheSystem>
+    class CacheSystem : public Foundation::BaseLog, public Core::Singleton<CacheSystem>
     {
         SINGLETONS_FRIEND(CacheSystem);
 
     public:
         ~CacheSystem() override = default;
 
-        template<IsDataIO T>
+        template<Foundation::IsDataIO T>
         void write(const T& data)
         {
             if constexpr (requires { data.serialize(); })
@@ -75,9 +58,9 @@ namespace Core
             }
         }
 
-        void write(const IDataIO& data, const nlohmann::json& json);
+        void write(const Foundation::IDataIO& data, const nlohmann::json& json);
 
-        template<IsDataIO T>
+        template<Foundation::IsDataIO T>
         void read(T& data)
         {
             try
@@ -121,7 +104,7 @@ namespace Core
             }
         }
 
-        template<IsDataIO T>
+        template<Foundation::IsDataIO T>
         bool tryRead(T& data)
         {
             if (hasCache(data))
@@ -132,16 +115,16 @@ namespace Core
             return false;
         }
 
-        [[nodiscard]] bool hasCache(const IDataIO& data) const;
+        [[nodiscard]] bool hasCache(const Foundation::IDataIO& data) const;
 
-        void clearCache(const IDataIO& data);
+        void clearCache(const Foundation::IDataIO& data);
 
         [[nodiscard]] spdlog::logger* getLogger() const override;
 
     private:
-        [[nodiscard]] std::filesystem::path getPath(const IDataIO& data) const;
-        [[nodiscard]] std::filesystem::path getCachePath(const IDataIO& data) const;
-        [[nodiscard]] bool createCacheDirIfNotExist(const IDataIO& data) const;
+        [[nodiscard]] std::filesystem::path getPath(const Foundation::IDataIO& data) const;
+        [[nodiscard]] std::filesystem::path getCachePath(const Foundation::IDataIO& data) const;
+        [[nodiscard]] bool createCacheDirIfNotExist(const Foundation::IDataIO& data) const;
     };
 
     [[nodiscard]] inline CacheSystem& GetCacheSystem()
@@ -167,9 +150,9 @@ namespace Core
         struct Rules final
         {
             uint32_t main = Rule::None;
-            std::unordered_map<StringAtom, uint32_t> field;
+            std::unordered_map<Core::StringAtom, uint32_t> field;
 
-            [[nodiscard]] bool checkField(const StringAtom& fieldName,
+            [[nodiscard]] bool checkField(const Core::StringAtom& fieldName,
                                           uint32_t flag) const noexcept;
         };
 
@@ -181,7 +164,7 @@ namespace Core
         virtual ~IDataUpdateBridge() = default;
 
         virtual void ioFieldsUpdate(DataStream& out) = 0;
-        [[nodiscard]] virtual StringAtom getCacheHash() const = 0;
+        [[nodiscard]] virtual Core::StringAtom getCacheHash() const = 0;
 
         [[nodiscard]] virtual Rules* getRules() const noexcept { return nullptr; }
     };
@@ -323,8 +306,8 @@ namespace Core
             return _data->errors;
         }
 
-        [[nodiscard]] Json& getRaw() noexcept { return finalJson(); }
-        [[nodiscard]] const Json& getRaw() const noexcept { return finalJson(); }
+        [[nodiscard]] Json& getRaw() { return finalJson(); }
+        [[nodiscard]] const Json& getRaw() const { return finalJson(); }
 
         [[nodiscard]] DataStream dedicatedNesting(const char* key);
 
@@ -338,7 +321,8 @@ namespace Core
             Mode mode = Mode::Input;
         };
 
-        DataStream(const IntrusivePtr<DataProvider>& viewing, const StringAtom& nesting);
+        DataStream(const Core::IntrusivePtr<DataProvider>& viewing,
+                   const Core::StringAtom& nesting);
 
         Json& finalJson();
         [[nodiscard]] const Json& finalJson() const
@@ -347,12 +331,12 @@ namespace Core
         }
 
     protected:
-        IntrusivePtr<DataProvider> _data;
+        Core::IntrusivePtr<DataProvider> _data;
 
         std::string _extraNestingKey;
         bool _isViewer = false;
     };
 
-} // namespace Core
+} // namespace NX
 
 #include "DataStream.generated.h"

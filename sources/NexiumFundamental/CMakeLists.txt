@@ -15,11 +15,21 @@ target_compile_definitions(${MODULE_PRIVATE_TARGET} PRIVATE PRIVATE_MODULE_NAME=
 
 # ================ NexiumFundamental =================
 set(SOURCES
+    ECS/BaseComponent.cpp
+
+    ResourceManagement/DataStream.cpp
+    ResourceManagement/JsonAdapter.cpp
+
     ITagHolder.cpp
     Transformable.cpp
 )
 
 set(HEADERS
+    ECS/BaseComponent.h
+
+    ResourceManagement/DataStream.h
+    ResourceManagement/JsonAdapter.h
+
     ITagHolder.h
     Transformable.h
 )
@@ -30,10 +40,9 @@ target_sources(${MODULE_TARGET} PRIVATE ${SOURCES} ${HEADERS})
 
 target_link_libraries(${MODULE_TARGET}
     PUBLIC
-    Nexium::Foundation
+    Nexium::RawBackend
     JustReflectMe::Adapter
     PRIVATE
-    Core::Stb
     ${MODULE_PRIVATE_TARGET}
 )
 

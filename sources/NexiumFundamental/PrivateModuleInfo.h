@@ -31,11 +31,11 @@ namespace spdlog
     class logger;
 }
 
-namespace RawBackend
+namespace NexiumFundamental
 {
 
     extern const std::string_view gModuleName;
 
     [[nodiscard]] spdlog::logger* getLogger();
 
-} // namespace RawBackend
+} // namespace NexiumFundamental

@@ -30,7 +30,8 @@ target_sources(${MODULE_TARGET} PRIVATE ${SOURCES} ${HEADERS})
 
 target_link_libraries(${MODULE_TARGET}
     PUBLIC
-    Nexium::Foundation
+    Nexium::Platform::Input
+    Nexium::Platform::Graphics
     JustReflectMe::Adapter
     PRIVATE
     Core::Stb

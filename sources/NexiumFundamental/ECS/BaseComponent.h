@@ -25,9 +25,9 @@
 #pragma once
 
 #include "Core/IntrusivePtr.h"
-#include "Misc/BaseLog.h"
-#include "Misc/ITagHolder.h"
-#include "ResourceManagement/JsonAdapter.h"
+#include "Foundation/BaseLog.h"
+#include "NexiumFundamental/ITagHolder.h"
+#include "NexiumFundamental/ResourceManagement/JsonAdapter.h"
 
 #include <queue>
 #include <stack>
@@ -72,10 +72,10 @@ public:
     Template const Core::StringAtom TypeName::componentType = []()                                 \
     {                                                                                              \
         auto newType = Core::StringAtom::Intern(TypeNameAsStr);                                    \
-        Core::GetGlobalComponentFactory().registerNewType<TypeName>(newType, isTemplate);          \
+        NX::GetGlobalComponentFactory().registerNewType<TypeName>(newType, isTemplate);          \
         return newType;                                                                            \
     }();                                                                                           \
-    Template Core::BaseComponent::Ptr TypeName::clone() const                                      \
+    Template NX::BaseComponent::Ptr TypeName::clone() const                                      \
     {                                                                                              \
         auto out = static_cast<TypeName*>(::_tryAllocateECSObject<TypeName>(this));                \
         out->invalidate();                                                                         \
@@ -128,7 +128,7 @@ public:
 /// {
 ///      ECS_DECL_NO_CNSTR(Foo, BaseComponent);
 ///  public:
-///  FooBar(const StringAtom name = "") :
+///  FooBar(const Core::StringAtom name = "") :
 ///      BaseComponent(componentType, name)
 ///      {
 ///          std::cout << componentType; //> FooBar
@@ -214,7 +214,7 @@ public:
 /// {
 ///      ECS_TEMPLATE_COMPONENT_DECL_NO_CNSTR(Foo, BaseComponent, Size, T);
 ///  public:
-///  FooBar(const StringAtom name = "") :
+///  FooBar(const Core::StringAtom name = "") :
 ///      SomeCounterComponent(componentType, name)
 ///      {
 ///      }
@@ -272,7 +272,7 @@ void* _tryAllocateECSObject(const T* data)
     }
 }
 
-namespace Core
+namespace NX
 {
     class BaseComponent;
 
@@ -302,7 +302,7 @@ namespace Core
 
     template<class T>
     concept IsIntrusiveComponent
-        = IsIntrusivePtrHelper<T>::value
+        = Core::IsIntrusivePtrHelper<T>::value
           && std::derived_from<std::remove_cv_t<typename T::ValueT>, BaseComponent>;
 
     template<typename T>
@@ -329,7 +329,7 @@ namespace Core
     /// Provides logging and debug tracking of component types in DEBUG mode.
     /// Try to don't use it by your own hands, it will register a new component
     /// automatically. How? See the first comment above class BaseComponent
-    class GlobalComponentFactory final : public Singleton<GlobalComponentFactory>, public BaseLog
+    class GlobalComponentFactory final : public Core::Singleton<GlobalComponentFactory>, public Foundation::BaseLog
     {
         SINGLETONS_FRIEND(GlobalComponentFactory);
 
@@ -337,31 +337,31 @@ namespace Core
         ~GlobalComponentFactory() override;
 
         /// Create a component by its registered type.
-        /// @param type The type identifier (StringAtom) of the component.
+        /// @param type The type identifier (Core::StringAtom) of the component.
         /// @return Pointer to a new BaseComponent instance, or nullptr if type not registered.
-        BaseComponent* create(const StringAtom& type);
+        BaseComponent* create(const Core::StringAtom& type);
 
         /// Register a new component type in the factory.
-        /// @param type The type identifier (StringAtom).
+        /// @param type The type identifier (Core::StringAtom).
         /// @return True if registration succeeds, false if the type already exists.
         template<class T>
-        bool registerNewType(const StringAtom& type, bool isTemplateType = false);
+        bool registerNewType(const Core::StringAtom& type, bool isTemplateType = false);
 
-        [[nodiscard]] std::vector<StringAtom> getRegisteredTypesAsVector(
+        [[nodiscard]] std::vector<Core::StringAtom> getRegisteredTypesAsVector(
             bool sort = false, const std::function<bool(Tag)>& cond = nullptr) const;
-        [[nodiscard]] bool containsSuchType(const StringAtom& type) const;
-        [[nodiscard]] const std::unordered_map<StringAtom, Tag>& getTypeToTagMap() const;
+        [[nodiscard]] bool containsSuchType(const Core::StringAtom& type) const;
+        [[nodiscard]] const std::unordered_map<Core::StringAtom, Tag>& getTypeToTagMap() const;
 
-        [[nodiscard]] std::optional<std::type_index> getTypeIdByTypeName(const StringAtom& type);
+        [[nodiscard]] std::optional<std::type_index> getTypeIdByTypeName(const Core::StringAtom& type);
 
         [[nodiscard]] spdlog::logger* getLogger() const override;
 
         void _createTypeToTagMap();
 
     private:
-        std::unordered_map<StringAtom, BaseComponent* (*)()> _map;
-        std::unordered_map<StringAtom, std::type_index> _typeToNameMap;
-        std::unordered_map<StringAtom, Tag> _typeToTagMap;
+        std::unordered_map<Core::StringAtom, BaseComponent* (*)()> _map;
+        std::unordered_map<Core::StringAtom, std::type_index> _typeToNameMap;
+        std::unordered_map<Core::StringAtom, Tag> _typeToTagMap;
 
 #if defined(DEBUG)
         std::optional<decltype(std::chrono::high_resolution_clock::now())> _startRegTime;
@@ -389,7 +389,7 @@ namespace Core
     /// Abstract base class for all components.
     /// Provides lifecycle hooks, ticking mechanism, and JSON/XML/etc serialization.
     CLASS();
-    class AbstractComponent : public IntrusiveRefCounter<AbstractComponent>, public BaseLog
+    class AbstractComponent : public Core::IntrusiveRefCounter<AbstractComponent>, public Foundation::BaseLog
     {
         R_FRIEND(AbstractComponent);
 
@@ -547,16 +547,16 @@ namespace Core
     CLASS();
     class BaseComponent : public AbstractComponent, public ITagHolder
     {
-        R_FRIEND(BaseComponent, Core::AbstractComponent);
+        R_FRIEND(BaseComponent, NX::AbstractComponent);
 
     public:
         using Self = BaseComponent;
         template<bool isConst>
-        using AdaptivePtr = IntrusivePtr<std::conditional_t<isConst, const Self, Self>>;
-        using Ptr = IntrusivePtr<Self>;
-        using CPtr = IntrusivePtr<const Self>;
+        using AdaptivePtr = Core::IntrusivePtr<std::conditional_t<isConst, const Self, Self>>;
+        using Ptr = Core::IntrusivePtr<Self>;
+        using CPtr = Core::IntrusivePtr<const Self>;
 
-        static const StringAtom componentType;
+        static const Core::StringAtom componentType;
 
         struct StreamData
         {
@@ -595,11 +595,11 @@ namespace Core
         }
 
         // ========================== WORKING WITH NAME ==========================
-        void setComponentName(const StringAtom& name);
-        void setComponentName(StringAtom&& name);
+        void setComponentName(const Core::StringAtom& name);
+        void setComponentName(Core::StringAtom&& name);
 
-        [[nodiscard]] const StringAtom& getComponentName() const noexcept { return _name; }
-        [[nodiscard]] const StringAtom& getComponentType() const noexcept { return _type; }
+        [[nodiscard]] const Core::StringAtom& getComponentName() const noexcept { return _name; }
+        [[nodiscard]] const Core::StringAtom& getComponentType() const noexcept { return _type; }
 
         // ========================== WORKING WITH PARENT ==========================
         [[nodiscard]] const BaseComponent* getParent() const noexcept { return _parent; }
@@ -655,8 +655,8 @@ namespace Core
         void invalidate() { _isInitialized = false; }
 
         // ========================== WORKING WITH CHILDREN ==========================
-        [[nodiscard]] IntrusivePtr<BaseComponent> getFirstChild() { return _children.front(); }
-        [[nodiscard]] IntrusivePtr<BaseComponent> getLastChild() { return _children.back(); }
+        [[nodiscard]] Core::IntrusivePtr<BaseComponent> getFirstChild() { return _children.front(); }
+        [[nodiscard]] Core::IntrusivePtr<BaseComponent> getLastChild() { return _children.back(); }
 
         template<IsComponent T>
         [[nodiscard]] T::Ptr getFirstChildAs()
@@ -678,19 +678,19 @@ namespace Core
             return nullptr;
         }
 
-        [[nodiscard]] IntrusivePtr<BaseComponent> getChildAt(std::size_t i)
+        [[nodiscard]] Core::IntrusivePtr<BaseComponent> getChildAt(std::size_t i)
         {
             return _children.at(i);
         }
-        [[nodiscard]] IntrusivePtr<const BaseComponent> getChildAt(std::size_t i) const
+        [[nodiscard]] Core::IntrusivePtr<const BaseComponent> getChildAt(std::size_t i) const
         {
             return _children.at(i);
         }
-        [[nodiscard]] const std::vector<IntrusivePtr<BaseComponent>>& getChildren() const noexcept
+        [[nodiscard]] const std::vector<Core::IntrusivePtr<BaseComponent>>& getChildren() const noexcept
         {
             return _children;
         }
-        [[nodiscard]] std::vector<IntrusivePtr<BaseComponent>>& getChildren() noexcept
+        [[nodiscard]] std::vector<Core::IntrusivePtr<BaseComponent>>& getChildren() noexcept
         {
             return _children;
         }
@@ -704,13 +704,13 @@ namespace Core
         }
 
         template<IsComponent ComponentT>
-        [[nodiscard]] ComponentT* findFirstChildOf(const StringAtom& name = ""_atom)
+        [[nodiscard]] ComponentT* findFirstChildOf(const Core::StringAtom& name = ""_atom)
         {
             return const_cast<ComponentT*>(Impl_findFirstChildOf<const ComponentT>(this, name));
         }
 
         template<IsComponent ComponentT>
-        [[nodiscard]] const ComponentT* findFirstChildOf(const StringAtom& name = ""_atom) const
+        [[nodiscard]] const ComponentT* findFirstChildOf(const Core::StringAtom& name = ""_atom) const
         {
             return Impl_findFirstChildOf<ComponentT>(this, name);
         }
@@ -764,7 +764,7 @@ namespace Core
 
         bool removeChild(const BaseComponent* child);
 
-        bool removeChild(const IntrusivePtr<const BaseComponent>& child)
+        bool removeChild(const Core::IntrusivePtr<const BaseComponent>& child)
         {
             return removeChild(child.get());
         }
@@ -774,7 +774,7 @@ namespace Core
         bool removeChildIf(const std::function<bool(const BaseComponent*)>& pred);
 
         template<IsComponent ComponentT>
-        void removeChildOf(const StringAtom& name = ""_atom)
+        void removeChildOf(const Core::StringAtom& name = ""_atom)
         {
             removeChildIf([](auto* child)
                           { return child->template tryCastTo<ComponentT>() != nullptr; });
@@ -849,7 +849,7 @@ namespace Core
 
         virtual void onRemoveChild(BaseComponent* child) {}
 
-        explicit BaseComponent(StringAtom type, StringAtom name)
+        explicit BaseComponent(Core::StringAtom type, Core::StringAtom name)
             : _name{ std::move(name) },
               _type{ std::move(type) }
         {
@@ -876,11 +876,11 @@ namespace Core
 
         template<IsComponent TargetT>
         [[nodiscard]] static const TargetT* Impl_findFirstChildOf(const BaseComponent* me,
-                                                                  const StringAtom& name);
+                                                                  const Core::StringAtom& name);
 
     protected:
         FIELD();
-        std::vector<Core::IntrusivePtr<Core::BaseComponent>> _children;
+        std::vector<Core::IntrusivePtr<NX::BaseComponent>> _children;
 
         FIELD();
         Core::StringAtom _name;
@@ -897,7 +897,7 @@ namespace Core
     CLASS();
     class InvalidComponent : public BaseComponent
     {
-        ECS_DECL(InvalidComponent, Core::BaseComponent);
+        ECS_DECL(InvalidComponent, NX::BaseComponent);
 
     public:
         InvalidComponent(const InvalidComponent&) = default;
@@ -908,7 +908,7 @@ namespace Core
     };
 
     template<class T>
-    bool GlobalComponentFactory::registerNewType(const StringAtom& type, bool isTemplateType)
+    bool GlobalComponentFactory::registerNewType(const Core::StringAtom& type, bool isTemplateType)
     {
 #if defined(DEBUG)
         if (!_startRegTime)
@@ -992,7 +992,7 @@ namespace Core
                 }
             }
 
-            for (auto comp : root->_children)
+            for (auto&& comp : root->_children)
             {
                 if (!visited.contains(comp.get()))
                 {
@@ -1066,7 +1066,7 @@ namespace Core
 
     template<IsComponent TargetT>
     const TargetT* BaseComponent::Impl_findFirstChildOf(const BaseComponent* me,
-                                                        const StringAtom& name)
+                                                        const Core::StringAtom& name)
     {
         const TargetT* found = nullptr;
 
@@ -1156,7 +1156,7 @@ namespace Core
                 continue;
             }
 
-            const auto type = StringAtom::Intern(json["_type"].get<StringAtom>());
+            const auto type = Core::StringAtom::Intern(json["_type"].get<Core::StringAtom>());
             Assert(type.isStatic());
 
             if (!Verify(!type.isEmpty())) [[unlikely]]
@@ -1164,7 +1164,7 @@ namespace Core
                 continue;
             }
 
-            auto obj = GetGlobalComponentFactory().create(type);
+            auto* obj = GetGlobalComponentFactory().create(type);
             if (!Verify(obj))
             {
                 continue;
@@ -1178,24 +1178,24 @@ namespace Core
 } // namespace Core
 
 template<>
-struct std::hash<Core::BaseComponent>
+struct std::hash<NX::BaseComponent>
 {
-    std::size_t operator()(const Core::BaseComponent& x) const noexcept { return x.makeHash(); }
+    std::size_t operator()(const NX::BaseComponent& x) const noexcept { return x.makeHash(); }
 };
 
 template<>
-struct std::hash<Core::BaseComponent::CPtr>
+struct std::hash<NX::BaseComponent::CPtr>
 {
-    std::size_t operator()(const Core::BaseComponent::CPtr& x) const noexcept
+    std::size_t operator()(const NX::BaseComponent::CPtr& x) const noexcept
     {
         return x->makeHash();
     }
 };
 
 template<>
-struct std::hash<Core::BaseComponent::Ptr>
+struct std::hash<NX::BaseComponent::Ptr>
 {
-    std::size_t operator()(const Core::BaseComponent::Ptr& x) const noexcept
+    std::size_t operator()(const NX::BaseComponent::Ptr& x) const noexcept
     {
         return x->makeHash();
     }

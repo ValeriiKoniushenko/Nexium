@@ -27,7 +27,7 @@
 #include "Foundation/BaseLog.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 
-namespace RawBackend
+namespace NexiumFundamental
 {
     const std::string_view gModuleName = PRIVATE_MODULE_NAME;
 
@@ -37,4 +37,4 @@ namespace RawBackend
         return logger.get();
     }
 
-} // namespace RawBackend
+} // namespace NexiumFundamental

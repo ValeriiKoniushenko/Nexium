@@ -56,7 +56,7 @@ namespace NX
 
     std::string TagHelper::JoinAllToString(Tag tags, char div)
     {
-        const uint32_t value = static_cast<uint32_t>(tags);
+        const auto value = static_cast<uint32_t>(tags);
 
         if (value == 0)
         {

@@ -24,22 +24,16 @@
 
 #include "DataStream.h"
 
-#include "Misc/BaseLog.h"
-#include "Misc/Configs.h"
+#include "Foundation/Configs.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 
-#include <filesystem>
-#include <fstream>
+using namespace Foundation;
+using namespace Core;
 
 namespace fs = std::filesystem;
 
-namespace Core
+namespace NX
 {
-
-    std::filesystem::path IDataIO::getCacheDir() const
-    {
-        return Config::Path::cacheDir;
-    }
 
     void CacheSystem::write(const IDataIO& data, const nlohmann::json& json)
     {
@@ -233,7 +227,7 @@ namespace Core
 
     DataStream DataStream::dedicatedNesting(const char* key)
     {
-        return DataStream(_data, key);
+        return { _data, key };
     }
 
     void DataStream::tryPushBackEmptyArrayElement()
@@ -249,10 +243,10 @@ namespace Core
     }
 
     DataStream::DataStream(const IntrusivePtr<DataProvider>& viewing, const StringAtom& nesting)
+        : _data{ viewing },
+          _extraNestingKey{ nesting },
+          _isViewer{ true }
     {
-        _data = viewing;
-        _extraNestingKey = nesting;
-        _isViewer = true;
     }
 
     DataStream::Json& DataStream::finalJson()
@@ -293,4 +287,4 @@ namespace Core
         _data = new DataProvider();
     }
 
-} // namespace Core
+} // namespace NX

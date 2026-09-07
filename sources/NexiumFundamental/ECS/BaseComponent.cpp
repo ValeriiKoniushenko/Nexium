@@ -24,9 +24,11 @@
 
 #include "BaseComponent.h"
 
-#include "ModuleInfo.h"
+#include "../PrivateModuleInfo.h"
 
 #include <set>
+
+using namespace Core;
 
 namespace
 {
@@ -38,7 +40,7 @@ namespace
     }
 } // namespace
 
-namespace Core
+namespace NX
 {
 
     ECS_IMPL(InvalidComponent);
@@ -106,7 +108,7 @@ namespace Core
 
     spdlog::logger* GlobalComponentFactory::getLogger() const
     {
-        return Ecs::getLogger();
+        return NexiumFundamental::getLogger();
     }
 
     std::vector<StringAtom> GlobalComponentFactory::getRegisteredTypesAsVector(
@@ -190,7 +192,7 @@ namespace Core
     {
         for (auto&& [typeName, creator] : _map)
         {
-            const auto tmp = creator();
+            const auto* tmp = creator();
             if (Verify(tmp))
             {
                 _typeToTagMap.emplace(typeName, tmp->getTags());
@@ -230,7 +232,7 @@ namespace Core
 
     spdlog::logger* AbstractComponent::getLogger() const
     {
-        return Ecs::getLogger();
+        return NexiumFundamental::getLogger();
     }
 
     BaseComponent* BaseComponent::attachChild(const BaseComponent::Ptr& child)
@@ -566,4 +568,4 @@ namespace Core
         return *this;
     }
 
-} // namespace Core
+} // namespace NX

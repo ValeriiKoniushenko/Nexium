@@ -27,6 +27,7 @@
 #include "Core/String.h"
 
 #include <filesystem>
+#include <type_traits>
 
 namespace Foundation
 {
@@ -42,5 +43,8 @@ namespace Foundation
         [[nodiscard]] virtual std::filesystem::path getCacheDir() const;
         [[nodiscard]] virtual Core::StringAtom getCacheHash() const = 0;
     };
+
+    template<class T>
+    concept IsDataIO = std::derived_from<std::remove_reference_t<T>, IDataIO>;
 
 } // namespace Foundation

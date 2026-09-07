@@ -183,7 +183,8 @@ namespace NX
 
     void Transformable::pitch(float x)
     {
-        if (static_cast<float>(std::fabs(_rotation.x + x)) > 90.f)
+        if (static_cast<float>(std::fabs(_rotation.x + x))
+            > 90.f) // NOLINT(readability-redundant-casting)
         {
             return;
         }

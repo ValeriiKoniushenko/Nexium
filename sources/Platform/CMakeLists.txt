@@ -35,6 +35,7 @@ target_link_libraries(${GRAPHICS_TARGET}
     PUBLIC
     glfw
     Core::Glad
+    JustReflectMe::Adapter
     PRIVATE
     ${MODULE_PRIVATE_TARGET}
 )
