@@ -34,24 +34,24 @@ namespace
 {
     struct TagInfo
     {
-        Core::Tag tag;
+        NX::Tag tag;
         std::string_view name;
     };
 
     // clang-format off
     constexpr std::array<TagInfo, 5> kTagTable =
     {{
-        { .tag = Core::Tag_None,             .name = "None" },
-        { .tag = Core::Tag_WorldObject,      .name = "WorldObject" },
-        { .tag = Core::Tag_GuiObject,        .name = "GuiObject" },
-        { .tag = Core::Tag_EditorInternal,   .name = "EditorInternal" },
-        { .tag = Core::Tag_AnimationController, .name = "AnimationController" },
+        { .tag = NX::Tag_None,             .name = "None" },
+        { .tag = NX::Tag_WorldObject,      .name = "WorldObject" },
+        { .tag = NX::Tag_GuiObject,        .name = "GuiObject" },
+        { .tag = NX::Tag_EditorInternal,   .name = "EditorInternal" },
+        { .tag = NX::Tag_AnimationController, .name = "AnimationController" },
     }};
     // clang-format on
 
 } // namespace
 
-namespace Core
+namespace NX
 {
 
     std::string TagHelper::JoinAllToString(Tag tags, char div)
@@ -198,4 +198,4 @@ namespace Core
         return result;
     }
 
-} // namespace Core
+} // namespace NX

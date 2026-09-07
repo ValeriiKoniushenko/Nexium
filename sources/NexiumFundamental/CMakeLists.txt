@@ -13,15 +13,15 @@ target_sources(${MODULE_PRIVATE_TARGET} PRIVATE
 target_link_libraries(${MODULE_PRIVATE_TARGET} PRIVATE Nexium::Foundation)
 target_compile_definitions(${MODULE_PRIVATE_TARGET} PRIVATE PRIVATE_MODULE_NAME="${MODULE_NAME}")
 
-# ================ RawBackend =================
+# ================ NexiumFundamental =================
 set(SOURCES
-    IDrawable.cpp
-    Image.cpp
+    ITagHolder.cpp
+    Transformable.cpp
 )
 
 set(HEADERS
-    IDrawable.h
-    Image.h
+    ITagHolder.h
+    Transformable.h
 )
 
 add_library(${MODULE_TARGET} STATIC)

@@ -29,10 +29,9 @@
 #include <string>
 #include <vector>
 
-namespace Core
+namespace NX
 {
     // !!! Don't forget to update TagInfo kTagTable !!!
-
     enum Tag : std::uint32_t // NOLINT(*-use-enum-class)
     {
         Tag_None = 0,
@@ -75,33 +74,33 @@ namespace Core
 //-----------------------------------------------------------------------------
 // Bitwise operators
 //-----------------------------------------------------------------------------
-constexpr Core::Tag operator|(Core::Tag lhs, Core::Tag rhs)
+constexpr NX::Tag operator|(NX::Tag lhs, NX::Tag rhs)
 {
-    return static_cast<Core::Tag>(static_cast<uint32_t>(lhs) | static_cast<uint32_t>(rhs));
+    return static_cast<NX::Tag>(static_cast<uint32_t>(lhs) | static_cast<uint32_t>(rhs));
 }
 
-constexpr Core::Tag operator&(Core::Tag lhs, Core::Tag rhs)
+constexpr NX::Tag operator&(NX::Tag lhs, NX::Tag rhs)
 {
-    return static_cast<Core::Tag>(static_cast<uint32_t>(lhs) & static_cast<uint32_t>(rhs));
+    return static_cast<NX::Tag>(static_cast<uint32_t>(lhs) & static_cast<uint32_t>(rhs));
 }
 
-constexpr Core::Tag operator^(Core::Tag lhs, Core::Tag rhs)
+constexpr NX::Tag operator^(NX::Tag lhs, NX::Tag rhs)
 {
-    return static_cast<Core::Tag>(static_cast<uint32_t>(lhs) ^ static_cast<uint32_t>(rhs));
+    return static_cast<NX::Tag>(static_cast<uint32_t>(lhs) ^ static_cast<uint32_t>(rhs));
 }
 
-constexpr Core::Tag operator~(Core::Tag tag)
+constexpr NX::Tag operator~(NX::Tag tag)
 {
-    return static_cast<Core::Tag>(~static_cast<uint32_t>(tag));
+    return static_cast<NX::Tag>(~static_cast<uint32_t>(tag));
 }
 
-constexpr Core::Tag& operator|=(Core::Tag& lhs, Core::Tag rhs)
+constexpr NX::Tag& operator|=(NX::Tag& lhs, NX::Tag rhs)
 {
     lhs = lhs | rhs;
     return lhs;
 }
 
-constexpr Core::Tag& operator&=(Core::Tag& lhs, Core::Tag rhs)
+constexpr NX::Tag& operator&=(NX::Tag& lhs, NX::Tag rhs)
 {
     lhs = lhs & rhs;
     return lhs;

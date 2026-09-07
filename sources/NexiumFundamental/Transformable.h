@@ -25,12 +25,12 @@
 #include "Core/Position.h"
 #include "JustReflectMe/Adapter.h"
 
-namespace Core
+namespace NX
 {
-    using GPos3 = GlobalPosition3F;
-    using GPos2 = GlobalPosition2F;
-    using RPos3 = RelativePosition3F;
-    using RPos2 = RelativePosition2F;
+    using GPos3 = Core::GlobalPosition3F;
+    using GPos2 = Core::GlobalPosition2F;
+    using RPos3 = Core::RelativePosition3F;
+    using RPos2 = Core::RelativePosition2F;
 
     CLASS();
     class Transformable
@@ -141,13 +141,13 @@ namespace Core
         glm::vec3 _origin = glm::vec3(0.f);
 
         FIELD();
-        GPos3 _position = Core::GPos3(0.f);
+        GPos3 _position = NX::GPos3(0.f);
 
         FIELD();
         glm::vec3 _rotation = glm::vec3(0.f);
 
         bool _isDirtyModelMatrix = true;
     };
-} // namespace Core
+} // namespace NX
 
 #include "Transformable.generated.h" // added by the code generator. Better don't move it.

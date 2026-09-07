@@ -26,10 +26,7 @@
 
 #include "glm/ext/matrix_transform.hpp"
 
-#define GLM_ENABLE_EXPERIMENTAL
-#include "glm/gtx/string_cast.hpp"
-
-namespace Core
+namespace NX
 {
     void Transformable::setPosition(const GPos3& position) noexcept
     {
@@ -280,4 +277,4 @@ namespace Core
         return _origin;
     }
 
-} // namespace Core
+} // namespace NX
