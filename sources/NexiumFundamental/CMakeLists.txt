@@ -1,63 +1,117 @@
 # ============== Per Module Private Info ===============
 
-get_filename_component(MODULE_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
-set(MODULE_TARGET Nexium_${MODULE_NAME})
-set(MODULE_PRIVATE_TARGET ${MODULE_TARGET}_PrivateModule)
-set(MODULE_ALIAS Nexium::${MODULE_NAME})
-
-add_library(${MODULE_PRIVATE_TARGET} STATIC)
-target_sources(${MODULE_PRIVATE_TARGET} PRIVATE
+add_library(Nexium_Fundamental_PrivateModule STATIC)
+target_sources(Nexium_Fundamental_PrivateModule PRIVATE
     PrivateModuleInfo.cpp
     PrivateModuleInfo.h
 )
-target_link_libraries(${MODULE_PRIVATE_TARGET} PRIVATE Nexium::Foundation)
-target_compile_definitions(${MODULE_PRIVATE_TARGET} PRIVATE PRIVATE_MODULE_NAME="${MODULE_NAME}")
-
-# ================ NexiumFundamental =================
-set(SOURCES
-    Assets/BaseAsset.cpp
-    Assets/ECSAsset.cpp
-    Assets/TextureAtlas.cpp
-    
-    ECS/BaseComponent.cpp
-
-    ResourceManagement/DataStream.cpp
-    ResourceManagement/JsonAdapter.cpp
-
-    ITagHolder.cpp
-    Transformable.cpp
+target_link_libraries(Nexium_Fundamental_PrivateModule PRIVATE Nexium::Foundation)
+target_compile_definitions(Nexium_Fundamental_PrivateModule
+    PRIVATE PRIVATE_MODULE_NAME="NexiumFundamental"
 )
 
-set(HEADERS
-    Assets/BaseAsset.h
-    Assets/ECSAsset.h
-    Assets/TextureAtlas.h
+# ================ Fundamental base =================
 
-    ECS/BaseComponent.h
-
-    ResourceManagement/DataStream.h
-    ResourceManagement/JsonAdapter.h
-
+add_library(Nexium_Fundamental_Base STATIC)
+add_library(Nexium::Fundamental::Base ALIAS Nexium_Fundamental_Base)
+target_sources(Nexium_Fundamental_Base PRIVATE
+    ITagHolder.cpp
     ITagHolder.h
+    Transformable.cpp
     Transformable.h
 )
+target_link_libraries(Nexium_Fundamental_Base PUBLIC Nexium::Foundation)
 
-add_library(${MODULE_TARGET} STATIC)
-add_library(${MODULE_ALIAS} ALIAS ${MODULE_TARGET})
-target_sources(${MODULE_TARGET} PRIVATE ${SOURCES} ${HEADERS})
+# ================ Resource management =================
 
-target_link_libraries(${MODULE_TARGET}
+add_library(Nexium_Fundamental_ResourceManagement STATIC)
+add_library(Nexium::Fundamental::ResourceManagement
+    ALIAS Nexium_Fundamental_ResourceManagement
+)
+target_sources(Nexium_Fundamental_ResourceManagement PRIVATE
+    ResourceManagement/DataStream.cpp
+    ResourceManagement/DataStream.h
+    ResourceManagement/JsonAdapter.cpp
+    ResourceManagement/JsonAdapter.h
+)
+target_link_libraries(Nexium_Fundamental_ResourceManagement
+    PUBLIC Nexium::Foundation
+    PRIVATE Nexium_Fundamental_PrivateModule
+)
+
+# ================ ECS =================
+
+add_library(Nexium_Fundamental_ECS STATIC)
+add_library(Nexium::Fundamental::ECS ALIAS Nexium_Fundamental_ECS)
+target_sources(Nexium_Fundamental_ECS PRIVATE
+    ECS/BaseComponent.cpp
+    ECS/BaseComponent.h
+)
+target_link_libraries(Nexium_Fundamental_ECS
     PUBLIC
-    Nexium::RawBackend
-    JustReflectMe::Adapter
-    PRIVATE
-    Core::Rectpack2D
-    ${MODULE_PRIVATE_TARGET}
+        Nexium::Fundamental::Base
+        Nexium::Fundamental::ResourceManagement
+    PRIVATE Nexium_Fundamental_PrivateModule
+)
+
+# ================ Assets =================
+
+add_library(Nexium_Fundamental_Assets STATIC)
+add_library(Nexium::Fundamental::Assets ALIAS Nexium_Fundamental_Assets)
+target_sources(Nexium_Fundamental_Assets PRIVATE
+    Assets/BaseAsset.cpp
+    Assets/BaseAsset.h
+    Assets/ECSAsset.cpp
+    Assets/ECSAsset.h
+)
+target_link_libraries(Nexium_Fundamental_Assets
+    PUBLIC
+        Nexium::Fundamental::ECS
+        Nexium::Fundamental::ResourceManagement
+    PRIVATE Nexium_Fundamental_PrivateModule
+)
+
+# ================ Texture atlas =================
+
+add_library(Nexium_Fundamental_TextureAtlas STATIC)
+add_library(Nexium::Fundamental::TextureAtlas ALIAS Nexium_Fundamental_TextureAtlas)
+target_sources(Nexium_Fundamental_TextureAtlas PRIVATE
+    Assets/TextureAtlas.cpp
+    Assets/TextureAtlas.h
+)
+target_link_libraries(Nexium_Fundamental_TextureAtlas
+    PUBLIC
+        Nexium::Foundation
+        Nexium::RawBackend
+        Core::Rectpack2D
+    PRIVATE Nexium_Fundamental_PrivateModule
+)
+
+# ================ Aggregate compatibility target =================
+
+add_library(Nexium_Fundamental INTERFACE)
+add_library(Nexium::Fundamental ALIAS Nexium_Fundamental)
+# The old target name was derived from the directory name. Keep it usable while
+# consumers move to the narrower public targets above.
+add_library(Nexium::NexiumFundamental ALIAS Nexium_Fundamental)
+target_link_libraries(Nexium_Fundamental INTERFACE
+    Nexium::Fundamental::Base
+    Nexium::Fundamental::ResourceManagement
+    Nexium::Fundamental::ECS
+    Nexium::Fundamental::Assets
+    Nexium::Fundamental::TextureAtlas
 )
 
 # =========================================
 
-nexium_configure_target(${MODULE_PRIVATE_TARGET})
-nexium_configure_target(${MODULE_TARGET})
-
-add_dependencies(${MODULE_TARGET} CodeGenerator)
+foreach(TARGET_NAME IN ITEMS
+    Nexium_Fundamental_PrivateModule
+    Nexium_Fundamental_Base
+    Nexium_Fundamental_ResourceManagement
+    Nexium_Fundamental_ECS
+    Nexium_Fundamental_Assets
+    Nexium_Fundamental_TextureAtlas
+)
+    nexium_configure_target(${TARGET_NAME})
+    add_dependencies(${TARGET_NAME} CodeGenerator)
+endforeach()

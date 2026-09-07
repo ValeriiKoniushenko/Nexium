@@ -15,11 +15,13 @@ target_compile_definitions(${MODULE_PRIVATE_TARGET} PRIVATE PRIVATE_MODULE_NAME=
 
 # ================ RawBackend =================
 set(SOURCES
+    Graphics/Texture.cpp
     IDrawable.cpp
     Image.cpp
 )
 
 set(HEADERS
+    Graphics/Texture.h
     IDrawable.h
     Image.h
 )

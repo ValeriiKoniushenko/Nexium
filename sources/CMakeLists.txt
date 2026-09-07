@@ -1,4 +1,4 @@
 add_subdirectory(Foundation)
-add_subdirectory(NexiumFundamental)
 add_subdirectory(Platform)
 add_subdirectory(RawBackend)
+add_subdirectory(NexiumFundamental)

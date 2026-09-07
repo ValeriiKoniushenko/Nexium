@@ -53,6 +53,34 @@ It has one target.
 
 - Path to these modules is: `sources/RawBackend`
 
+== 4 - Nexium Fundamental
+
+It has one private target, five focused public targets, and one aggregate compatibility target.
+
+1. Private: `Nexium_Fundamental_PrivateModule`
+    - It includes: `sources/NexiumFundamental/PrivateModuleInfo.*`
+    - CMake dependency is: `Nexium::Foundation`
+2. Public base: `Nexium_Fundamental_Base` (`Nexium::Fundamental::Base`)
+    - It includes: `sources/NexiumFundamental/{ITagHolder,Transformable}.*`
+    - CMake dependency is: `Nexium::Foundation`
+3. Public resource management: `Nexium_Fundamental_ResourceManagement` (`Nexium::Fundamental::ResourceManagement`)
+    - It includes: `sources/NexiumFundamental/ResourceManagement/{DataStream,JsonAdapter}.*`
+    - CMake dependency is: `Nexium::Foundation`
+4. Public ECS: `Nexium_Fundamental_ECS` (`Nexium::Fundamental::ECS`)
+    - It includes: `sources/NexiumFundamental/ECS/BaseComponent.*`
+    - CMake dependency is: `Nexium::Fundamental::Base`, `Nexium::Fundamental::ResourceManagement`
+5. Public assets: `Nexium_Fundamental_Assets` (`Nexium::Fundamental::Assets`)
+    - It includes: `sources/NexiumFundamental/Assets/{BaseAsset,ECSAsset}.*`
+    - CMake dependency is: `Nexium::Fundamental::ECS`, `Nexium::Fundamental::ResourceManagement`
+6. Public texture atlas: `Nexium_Fundamental_TextureAtlas` (`Nexium::Fundamental::TextureAtlas`)
+    - It includes: `sources/NexiumFundamental/Assets/TextureAtlas.*`
+    - CMake dependency is: `Nexium::Foundation`, `Nexium::RawBackend`, `Core::Rectpack2D`
+7. Aggregate compatibility target: `Nexium_Fundamental` (`Nexium::Fundamental`)
+    - It links all five public targets. New consumers should link the narrowest target they need.
+    - `Nexium::NexiumFundamental` remains as a temporary alias for the former target name.
+
+- Path to these modules is: `sources/NexiumFundamental`
+
 == Notes
 
 - One layer == One folder inside `sources/<layer_name>`. But, it doesn't mean that every layer is built from one CMake module/taget. It easily may be more than one.
