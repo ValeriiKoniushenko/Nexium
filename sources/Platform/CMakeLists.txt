@@ -6,7 +6,8 @@ target_sources(Nexium_Platform_PrivateModule PRIVATE
     PrivateModuleInfo.h
 )
 target_link_libraries(Nexium_Platform_PrivateModule PRIVATE Nexium::Foundation)
-target_compile_definitions(Nexium_Platform_PrivateModule PRIVATE PRIVATE_MODULE_NAME="Platform")
+get_filename_component(CURRENT_DIR_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
+target_compile_definitions(Nexium_Platform_PrivateModule PRIVATE PRIVATE_MODULE_NAME="${CURRENT_DIR_NAME}")
 
 # ============== Graphics ===============
 
