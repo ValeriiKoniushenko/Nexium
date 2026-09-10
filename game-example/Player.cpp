@@ -25,6 +25,7 @@
 #include "Player.h"
 
 #include "AssetsManager/AssetsManager.h"
+#include "Core/Size.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "InputDevices/InputTypes.h"
 #include "InputDevices/Keyboard.h"
@@ -37,6 +38,7 @@ ECS_IMPL(Player);
 void Player::onInitialize()
 {
     SceneObj::RectangleAnimated::onInitialize();
+    setPosition({ 0.f, 0.f, 0.f });
 
     _input = findFirstChildOf<InputController>();
     _animator = findFirstChildOf<Animation::FrameByFrameAnimator>();
@@ -45,16 +47,16 @@ void Player::onInitialize()
         "spawnTree"_atom, KeyChord::Exact(Keyboard::Key::Enter),
         [this](const InputActionEvent&)
         {
-            auto component = GetAssetsManager()->getUniqueEcsAsset(
-                "data/assets/AnimatedRectangle.nx"_atom);
-  
+            auto component
+                = GetAssetsManager()->getUniqueEcsAsset("data/assets/AnimatedRectangle.nx"_atom);
+
             auto tree = DynamicCast<SceneObj::RectangleAnimated>(component);
             if (!tree)
             {
                 errorLog("Can't load AnimatedRectangle asset");
                 return;
             }
-  
+
             tree->setComponentName("Tree"_atom);
             tree->setPosition(getPosition());
             tree->setTexture("Tree_2.png"_atom);
@@ -69,11 +71,6 @@ void Player::onInitialize()
 void Player::onTick(float delta)
 {
     RectangleAnimated::onTick(delta);
-
-    if (_input->isActionPressed("SpawnTree"_atom))
-    {
-        SceneObj::RectangleAnimated tree;
-    }
 
     if (_isGrounded)
     {
@@ -98,11 +95,19 @@ void Player::onTick(float delta)
     auto pos = getPosition();
     pos.y += _velocityY * delta;
 
-    if (pos.y <= _groundCoords)
+    setPosition(pos);
+
+    const float textureLocalPosY = pos.y + getLocalTextureRect()->getLeftBottom().y * getScale().y;
+
+    if (_velocityY <= 0.f && textureLocalPosY <= _groundCoords)
     {
-        pos.y = _groundCoords;
+        pos.y += _groundCoords - textureLocalPosY;
         _velocityY = 0.f;
         _isGrounded = true;
+    }
+    else
+    {
+        _isGrounded = false;
     }
 
     setPosition(pos);

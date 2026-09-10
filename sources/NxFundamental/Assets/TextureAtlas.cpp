@@ -81,6 +81,9 @@ namespace NX
 
     void TextureAtlas::generateTextureAtlas(const fs::path& atlasFolder)
     {
+        _rects.clear();
+        _alphaMasks.clear();
+        _animationBounds.clear();
         std::vector<Image> images;
         std::vector<rect_type> rectangles;
 
@@ -153,6 +156,13 @@ namespace NX
             const auto name = fs::relative(images[i].getPath(), atlasFolder).generic_string();
             auto& r = _rects[StringAtom::Intern(name)];
 
+            const auto& image = images[i];
+            const auto pixelBytes = static_cast<std::size_t>(image.getSize().width)
+                                    * image.getSize().height * image.getChannelsCount();
+            _alphaMasks.try_emplace(StringAtom::Intern(name),
+                                    std::span<const unsigned char>(image.data(), pixelBytes),
+                                    image.getSize(), image.getChannelsCount());
+
             const int flipped_y = rect.y;
 
             r.setLeftTop(GlobalPosition2F(
@@ -190,6 +200,35 @@ namespace NX
     spdlog::logger* TextureAtlas::getLogger() const
     {
         return NxFundamental::getLogger();
+    }
+
+    std::optional<FRect> TextureAtlas::getAlphaBounds(
+        const std::vector<TextureRegion>& regions) const
+    {
+        for (const auto& [key, bounds] : _animationBounds)
+        {
+            if (key == regions)
+            {
+                return bounds;
+            }
+        }
+        std::vector<std::optional<FRect>> bounds;
+        bounds.reserve(regions.size());
+        for (const auto& region : regions)
+        {
+            bounds.push_back(region.textureName.isEmpty()
+                                 ? std::nullopt
+                                 : getAlphaBounds(region.textureName, region.offset, region.size));
+        }
+        const auto result = ImageAlphaMask::UnionBounds(bounds);
+        _animationBounds.emplace_back(regions, result);
+        return result;
+    }
+
+    std::optional<FRect> TextureAtlas::getAlphaBounds(const StringAtom& name, glm::vec2 offset,
+                                                      glm::vec2 size) const
+    {
+        return _alphaMasks.at(name).getAlphaBounds(offset, size);
     }
 
     const FRect& TextureAtlas::getRect(const StringAtom& name) const

@@ -9,8 +9,10 @@
 
 #pragma once
 
+#include "Core/Rect.h"
 #include "NxWorld/Scene/SceneObject.h"
 
+#include <optional>
 #include <utility>
 
 namespace NX
@@ -47,7 +49,17 @@ namespace NX::SceneObj
         [[nodiscard]] constexpr static float GetDefaultDrawRectSize() noexcept { return 100.f; }
         [[nodiscard]] Core::FSize2 getDrawRectSize() const noexcept;
 
+        // Texture's alpha > 0 bounds in untransformed geometry coordinates (base size 100).
+        // Does not include position, scale, rotation, origin or parent transforms.
+        // Returns nullopt for a transparent frame or UVs outside the image.
+        [[nodiscard]] virtual std::optional<Core::FRect> getLocalTextureRect() const;
+
+        // World XY axis-aligned bounds of all four transformed local corners.
+        // Includes current position, scale, rotation, origin and all parent transforms.
+        [[nodiscard]] std::optional<Core::FRect> getGlobalTextureRect() const;
+
     protected:
+        [[nodiscard]] std::optional<Core::FRect> toLocalTextureRect(std::optional<Core::FRect> bounds) const;
         void tryDrawOutline(BaseCamera& camera);
         void onDraw(BaseCamera& camera) override;
 
@@ -80,6 +92,8 @@ namespace NX::SceneObj
         void setAtlas(const Core::StringAtom& value) { _atlasName = value; }
 
         [[nodiscard]] bool isAnimationEnabled() const noexcept { return _animationEnabled; }
+        // Stable union of every frame of the active animation; falls back to the texture.
+        [[nodiscard]] std::optional<Core::FRect> getLocalTextureRect() const override;
         void setAnimationEnabled(bool value);
 
         void setAnimationOverride(const Core::StringAtom& animationName, float fps);

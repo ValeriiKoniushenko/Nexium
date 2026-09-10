@@ -10,6 +10,7 @@
 #pragma once
 
 #include "Core/Rect.h"
+#include "Graphics/ImageAlphaMask.h"
 #include "Core/String.h"
 #include "Foundation/BaseLog.h"
 #include "RawBackend/Graphics/Texture.h"
@@ -24,6 +25,17 @@ namespace NX
     class TextureAtlas final : public Foundation::BaseLog
     {
     public:
+        struct TextureRegion
+        {
+            Core::StringAtom textureName;
+            glm::vec2 offset{ 0.f, 0.f };
+            glm::vec2 size{ 1.f, 1.f };
+            bool operator==(const TextureRegion&) const = default;
+        };
+
+        [[nodiscard]] std::optional<Core::FRect> getAlphaBounds(
+            const std::vector<TextureRegion>& regions) const;
+
         constexpr static const int max_side = 4096;
         constexpr static const int discard_step = -4;
 
@@ -47,6 +59,11 @@ namespace NX
 
         [[nodiscard]] const Core::FRect& getRect(const Core::StringAtom& name) const;
 
+        // Visible bounds relative to the selected frame, in normalized Y-up coordinates.
+        [[nodiscard]] std::optional<Core::FRect> getAlphaBounds(const Core::StringAtom& name,
+                                                          glm::vec2 offset = { 0.f, 0.f },
+                                                          glm::vec2 size = { 1.f, 1.f }) const;
+
         [[nodiscard]] const std::unordered_map<Core::StringAtom, Core::FRect>& getRects()
             const noexcept
         {
@@ -64,5 +81,7 @@ namespace NX
     private:
         RawBackend::Texture _texture;
         std::unordered_map<Core::StringAtom, Core::FRect> _rects;
+        std::unordered_map<Core::StringAtom, Core::ImageAlphaMask> _alphaMasks;
+        mutable std::vector<std::pair<std::vector<TextureRegion>, std::optional<Core::FRect>>> _animationBounds;
     };
 } // namespace NX
