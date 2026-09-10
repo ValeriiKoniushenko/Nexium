@@ -58,7 +58,7 @@ namespace NX
     {
         const auto value = static_cast<uint32_t>(tags);
 
-        if (value == 0)
+        if (value == 0) [[unlikely]]
         {
             return "None";
         }
