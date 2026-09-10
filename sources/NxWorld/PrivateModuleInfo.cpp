@@ -22,20 +22,19 @@
  * SOFTWARE.
  */
 
-#pragma once
+#include "PrivateModuleInfo.h"
 
-#include <string_view>
+#include "Foundation/BaseLog.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
 
-namespace spdlog
+namespace NxRuntime
 {
-    class logger;
-}
+    const std::string_view gModuleName = PRIVATE_MODULE_NAME;
 
-namespace NexiumSubsystems
-{
+    spdlog::logger* getLogger()
+    {
+        static auto logger = spdlog::stdout_color_mt(gModuleName.data());
+        return logger.get();
+    }
 
-    extern const std::string_view gModuleName;
-
-    [[nodiscard]] spdlog::logger* getLogger();
-
-} // namespace NexiumSubsystems
+} // namespace NxRuntime

@@ -139,7 +139,7 @@ namespace NX
 
     spdlog::logger* BaseAsset::getLogger() const
     {
-        return NexiumFundamental::getLogger();
+        return NxFundamental::getLogger();
     }
 
     nlohmann::json BaseAsset::serialize() const

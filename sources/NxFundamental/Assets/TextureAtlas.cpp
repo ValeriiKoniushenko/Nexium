@@ -203,7 +203,7 @@ namespace NX
 
     spdlog::logger* TextureAtlas::getLogger() const
     {
-        return NexiumFundamental::getLogger();
+        return NxFundamental::getLogger();
     }
 
     const FRect& TextureAtlas::getRect(const StringAtom& name) const

@@ -108,7 +108,7 @@ namespace NX
 
     spdlog::logger* GlobalComponentFactory::getLogger() const
     {
-        return NexiumFundamental::getLogger();
+        return NxFundamental::getLogger();
     }
 
     std::vector<StringAtom> GlobalComponentFactory::getRegisteredTypesAsVector(
@@ -232,7 +232,7 @@ namespace NX
 
     spdlog::logger* AbstractComponent::getLogger() const
     {
-        return NexiumFundamental::getLogger();
+        return NxFundamental::getLogger();
     }
 
     BaseComponent* BaseComponent::attachChild(const BaseComponent::Ptr& child)

@@ -31,11 +31,11 @@ namespace spdlog
     class logger;
 }
 
-namespace NexiumRuntime
+namespace NxRuntime
 {
 
     extern const std::string_view gModuleName;
 
     [[nodiscard]] spdlog::logger* getLogger();
 
-} // namespace NexiumRuntime
+} // namespace NxRuntime

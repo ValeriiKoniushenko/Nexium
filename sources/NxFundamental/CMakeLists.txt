@@ -7,7 +7,7 @@ target_sources(Nexium_Fundamental_PrivateModule PRIVATE
 )
 target_link_libraries(Nexium_Fundamental_PrivateModule PRIVATE Nexium::Foundation)
 target_compile_definitions(Nexium_Fundamental_PrivateModule
-    PRIVATE PRIVATE_MODULE_NAME="NexiumFundamental"
+    PRIVATE PRIVATE_MODULE_NAME="NxFundamental"
 )
 
 # ================ Fundamental base =================
@@ -93,7 +93,7 @@ add_library(Nexium_Fundamental INTERFACE)
 add_library(Nexium::Fundamental ALIAS Nexium_Fundamental)
 # The old target name was derived from the directory name. Keep it usable while
 # consumers move to the narrower public targets above.
-add_library(Nexium::NexiumFundamental ALIAS Nexium_Fundamental)
+add_library(Nexium::NxFundamental ALIAS Nexium_Fundamental)
 target_link_libraries(Nexium_Fundamental INTERFACE
     Nexium::Fundamental::Base
     Nexium::Fundamental::ResourceManagement

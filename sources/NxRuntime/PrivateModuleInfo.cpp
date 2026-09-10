@@ -27,7 +27,7 @@
 #include "Foundation/BaseLog.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 
-namespace NexiumRuntime
+namespace NxRuntime
 {
     const std::string_view gModuleName = PRIVATE_MODULE_NAME;
 
@@ -37,4 +37,4 @@ namespace NexiumRuntime
         return logger.get();
     }
 
-} // namespace NexiumRuntime
+} // namespace NxRuntime

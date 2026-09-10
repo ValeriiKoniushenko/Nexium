@@ -25,8 +25,8 @@
 #pragma once
 
 #include "Core/IntrusivePtr.h"
-#include "NexiumFundamental/ECS/BaseComponent.h"
-#include "NexiumFundamental/ITagHolder.h"
+#include "NxFundamental/ECS/BaseComponent.h"
+#include "NxFundamental/ITagHolder.h"
 
 #include <filesystem>
 

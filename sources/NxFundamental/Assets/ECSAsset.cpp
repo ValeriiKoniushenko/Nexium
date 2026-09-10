@@ -143,7 +143,7 @@ namespace NX
 
     spdlog::logger* ECSAsset::getLogger() const
     {
-        return NexiumFundamental::getLogger();
+        return NxFundamental::getLogger();
     }
 
     void ECSAsset::connectSourceFile(const std::filesystem::path& src)
