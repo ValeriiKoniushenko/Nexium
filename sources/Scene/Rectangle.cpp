@@ -89,6 +89,82 @@ namespace Core::SceneObj
         return FSize2(GetDefaultDrawRectSize() * glm::vec2(_scale));
     }
 
+    std::optional<FRect> Rectangle::getLocalTextureRect() const
+    {
+        if (_textureName.isEmpty())
+        {
+            return std::nullopt;
+        }
+        return toLocalTextureRect(
+            GetAssetsManager()
+                ->getAtlas(_atlasName)
+                .getAlphaBounds(_textureName, _textureUVOffset, _textureUVSize));
+    }
+
+    std::optional<FRect> Rectangle::getGlobalTextureRect() const
+    {
+        const auto bounds = getLocalTextureRect();
+        if (!bounds)
+        {
+            return std::nullopt;
+        }
+        glm::mat4 matrix(1.f);
+        for (const BaseComponent* component = this; component; component = component->getParent())
+        {
+            if (const auto* transform = dynamic_cast<const Transformable*>(component))
+            {
+                // Compute from current properties, independently of the render cache.
+                Transformable local(*transform);
+                local.recalculateMatrices();
+                matrix = local.getModelMatrix() * matrix;
+            }
+        }
+        const std::array corners{ bounds->getLeftBottom(), bounds->getLeftTop(),
+                                  bounds->getRightBottom(), bounds->getRightTop() };
+        auto low = glm::vec2(matrix * glm::vec4(corners.front().x, corners.front().y, 0.f, 1.f));
+        auto high = low;
+        for (const auto& corner : corners)
+        {
+            const auto point = glm::vec2(matrix * glm::vec4(corner.x, corner.y, 0.f, 1.f));
+            low = glm::min(low, point);
+            high = glm::max(high, point);
+        }
+        return FRect(low.x, high.y, high.x, low.y);
+    }
+
+    std::optional<FRect> Rectangle::toLocalTextureRect(std::optional<FRect> bounds) const
+    {
+        if (!bounds)
+        {
+            return std::nullopt;
+        }
+        const auto size = glm::vec2(GetDefaultDrawRectSize());
+        const auto a = glm::vec2(bounds->getLeftBottom()) * size;
+        const auto b = glm::vec2(bounds->getRightTop()) * size;
+        const auto low = glm::min(a, b);
+        const auto high = glm::max(a, b);
+        return FRect(low.x, high.y, high.x, low.y);
+    }
+
+    std::optional<FRect> RectangleAnimated::getLocalTextureRect() const
+    {
+        const auto* animator = findFirstChildOf<Animation::FrameByFrameAnimator>();
+        const auto* animation = animator ? animator->getActiveAnimation() : nullptr;
+        if (!_animationEnabled || !animation || !animation->hasFrames())
+        {
+            return Rectangle::getLocalTextureRect();
+        }
+        std::vector<TextureAtlas::TextureRegion> regions;
+        regions.reserve(animation->getFramesCount());
+        for (const auto& frame : animation->getFrames())
+        {
+            regions.push_back({ frame.textureName.value_or(animation->getTextureName()),
+                                frame.uvOffset, frame.uvSize });
+        }
+        return toLocalTextureRect(
+            GetAssetsManager()->getAtlas(animation->getAtlasName()).getAlphaBounds(regions));
+    }
+
     void Rectangle::tryDrawOutline(BaseCamera& camera)
     {
         if (!shouldDrawOutline())

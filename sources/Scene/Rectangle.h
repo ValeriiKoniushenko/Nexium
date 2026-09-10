@@ -24,8 +24,10 @@
 
 #pragma once
 
+#include "Core/Rect.h"
 #include "Scene/SceneObject.h"
 
+#include <optional>
 #include <utility>
 
 namespace Core
@@ -49,7 +51,7 @@ namespace Core::SceneObj
 
         [[nodiscard]] StringAtom getTextureName() const { return _textureName; }
         void setTexture(const StringAtom& value);
-        void setTexture(const StringAtom& atlasName,const StringAtom& textureName);
+        void setTexture(const StringAtom& atlasName, const StringAtom& textureName);
         void setTextureUV(glm::vec2 offset, glm::vec2 size);
         void resetTextureUV() noexcept;
 
@@ -62,7 +64,17 @@ namespace Core::SceneObj
         [[nodiscard]] constexpr static float GetDefaultDrawRectSize() noexcept { return 100.f; }
         [[nodiscard]] FSize2 getDrawRectSize() const noexcept;
 
+        // Texture's alpha > 0 bounds in untransformed geometry coordinates (base size 100).
+        // Does not include position, scale, rotation, origin or parent transforms.
+        // Returns nullopt for a transparent frame or UVs outside the image.
+        [[nodiscard]] virtual std::optional<FRect> getLocalTextureRect() const;
+
+        // World XY axis-aligned bounds of all four transformed local corners.
+        // Includes current position, scale, rotation, origin and all parent transforms.
+        [[nodiscard]] std::optional<FRect> getGlobalTextureRect() const;
+
     protected:
+        [[nodiscard]] std::optional<FRect> toLocalTextureRect(std::optional<FRect> bounds) const;
         void tryDrawOutline(BaseCamera& camera);
         void onDraw(BaseCamera& camera) override;
 
@@ -95,6 +107,8 @@ namespace Core::SceneObj
         void setAtlas(const StringAtom& value) { _atlasName = value; }
 
         [[nodiscard]] bool isAnimationEnabled() const noexcept { return _animationEnabled; }
+        // Stable union of every frame of the active animation; falls back to the texture.
+        [[nodiscard]] std::optional<FRect> getLocalTextureRect() const override;
         void setAnimationEnabled(bool value);
 
         void setAnimationOverride(const StringAtom& animationName, float fps);

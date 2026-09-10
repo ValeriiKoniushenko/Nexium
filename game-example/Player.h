@@ -25,6 +25,7 @@
 #pragma once
 
 #include "Animations/FrameByFrame/FrameByFrameAnimator.h"
+#include "Core/Size.h"
 #include "GameplaySystem/Framework/InputController.h"
 #include "Scene/Rectangle.h"
 
@@ -33,10 +34,12 @@ class Player : public Core::SceneObj::RectangleAnimated
 {
     ECS_DECL(Player, Core::SceneObj::RectangleAnimated);
 
-public:
 protected:
     void onInitialize() override;
     void onTick(float delta) override;
+
+private:
+    void checkPlayerGrounded();
 
 private:
     Core::InputController* _input = nullptr;

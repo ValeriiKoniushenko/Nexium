@@ -27,6 +27,7 @@
 #include "Core/Rect.h"
 #include "Core/String.h"
 #include "Graphics/Image.h"
+#include "Graphics/ImageAlphaMask.h"
 #include "Graphics/Texture.h"
 #include "Misc/BaseLog.h"
 #include "Rectpack2D/empty_spaces.h"
@@ -40,6 +41,17 @@ namespace Core
     class TextureAtlas final : public BaseLog
     {
     public:
+        struct TextureRegion
+        {
+            StringAtom textureName;
+            glm::vec2 offset{ 0.f, 0.f };
+            glm::vec2 size{ 1.f, 1.f };
+            bool operator==(const TextureRegion&) const = default;
+        };
+
+        [[nodiscard]] std::optional<FRect> getAlphaBounds(
+            const std::vector<TextureRegion>& regions) const;
+
         constexpr static const int max_side = 4096;
         constexpr static const int discard_step = -4;
         constexpr static const auto runtime_flipping_mode = rectpack2D::flipping_option::ENABLED;
@@ -64,6 +76,11 @@ namespace Core
 
         [[nodiscard]] const FRect& getRect(const StringAtom& name) const;
 
+        // Visible bounds relative to the selected frame, in normalized Y-up coordinates.
+        [[nodiscard]] std::optional<FRect> getAlphaBounds(const StringAtom& name,
+                                                          glm::vec2 offset = { 0.f, 0.f },
+                                                          glm::vec2 size = { 1.f, 1.f }) const;
+
         [[nodiscard]] const std::unordered_map<StringAtom, FRect>& getRects() const noexcept
         {
             return _rects;
@@ -80,5 +97,8 @@ namespace Core
     private:
         Texture _texture;
         std::unordered_map<StringAtom, FRect> _rects;
+        std::unordered_map<StringAtom, ImageAlphaMask> _alphaMasks;
+        mutable std::vector<std::pair<std::vector<TextureRegion>, std::optional<FRect>>>
+            _animationBounds;
     };
 } // namespace Core
