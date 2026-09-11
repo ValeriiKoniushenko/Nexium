@@ -37,7 +37,7 @@
 
 namespace Core
 {
-    class GameInstance : public Foundation::BaseLog, public IDataIO
+    class GameInstance : public Foundation::BaseLog, public Foundation::IDataIO
     {
     public:
         ENUM_CLASS();

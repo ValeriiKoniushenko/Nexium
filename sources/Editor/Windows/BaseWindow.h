@@ -27,13 +27,13 @@
 #include "Core/Delegate.h"
 #include "Core/Size.h"
 #include "ECS/BaseComponent.h"
-#include "ResourceManagement/DataStream.h"
+#include "Foundation/Interfaces/DataStream.h"
 
 namespace Core
 {
     /// BaseEditorWindowComponent or briefly BaseEWC
     CLASS();
-    class BaseEWC : public BaseComponent, public IDataIO
+    class BaseEWC : public BaseComponent, public Foundation::IDataIO
     {
         ECS_DECL(BaseEWC, Core::BaseComponent);
 

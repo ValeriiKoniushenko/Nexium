@@ -24,8 +24,8 @@
 
 #pragma once
 
-#include "../ResourceManagement/DataStream.h"
 #include "Foundation/BaseLog.h"
+#include "Foundation/Interfaces/DataStream.h"
 #include "InputAction.h"
 #include "PrivateModuleInfo.h"
 
@@ -34,7 +34,7 @@
 namespace Core
 {
     template<IsInputAction InputTParam>
-    class InputManger : public Foundation::BaseLog, public IDataIO
+    class InputManger : public Foundation::BaseLog, public Foundation::IDataIO
     {
     public:
         using Self = InputManger;

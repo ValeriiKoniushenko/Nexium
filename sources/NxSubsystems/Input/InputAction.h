@@ -26,8 +26,8 @@
 
 #include "Core/Delegate.h"
 #include "Core/IntrusivePtr.h"
-#include "Keyboard.h"
-#include "Mouse.h"
+#include "Platform/Keyboard.h"
+#include "Platform/Mouse.h"
 #include "glm/glm.hpp"
 
 #include <chrono>
@@ -62,29 +62,32 @@ namespace Core
         /// Represents the state of special modifier keys (Shift, Alt, Ctrl).
         struct SpecKeysState
         {
-            Keyboard::KeyState leftShift = Keyboard::KeyState::None;
-            Keyboard::KeyState leftAlt = Keyboard::KeyState::None;
-            Keyboard::KeyState leftCtrl = Keyboard::KeyState::None;
+            Platform::Keyboard::KeyState leftShift = Platform::Keyboard::KeyState::None;
+            Platform::Keyboard::KeyState leftAlt = Platform::Keyboard::KeyState::None;
+            Platform::Keyboard::KeyState leftCtrl = Platform::Keyboard::KeyState::None;
 
             /// Reads the current state of modifier keys and returns it.
             /// @return SpecKeysState with current states of Shift, Alt, and Ctrl.
             static SpecKeysState fillAndGet()
             {
-                return { .leftShift = Keyboard::getKeyState(Keyboard::Key::Left_Shift),
-                         .leftAlt = Keyboard::getKeyState(Keyboard::Key::Left_Alt),
-                         .leftCtrl = Keyboard::getKeyState(Keyboard::Key::Left_Control) };
+                return { .leftShift
+                         = Platform::Keyboard::getKeyState(Platform::Keyboard::Key::Left_Shift),
+                         .leftAlt
+                         = Platform::Keyboard::getKeyState(Platform::Keyboard::Key::Left_Alt),
+                         .leftCtrl
+                         = Platform::Keyboard::getKeyState(Platform::Keyboard::Key::Left_Control) };
             }
         };
 
     public:
         InputAction() = default;
 
-        explicit InputAction(StringAtom name)
+        explicit InputAction(Core::StringAtom name)
             : _name(std::move(name))
         {
         }
 
-        InputAction(StringAtom name, KeyT key)
+        InputAction(Core::StringAtom name, KeyT key)
             : _name(std::move(name)),
               _key(key)
         {
@@ -97,9 +100,9 @@ namespace Core
 
         virtual ~InputAction() = default;
 
-        [[nodiscard]] const StringAtom& getName() const { return _name; }
+        [[nodiscard]] const Core::StringAtom& getName() const { return _name; }
 
-        void setName(const StringAtom& newName) { _name = newName; }
+        void setName(const Core::StringAtom& newName) { _name = newName; }
 
         void setFrequency(TimeT value) { _frequency = value; }
 
@@ -161,7 +164,7 @@ namespace Core
             = Delegate<void(SpecKeysState)>::Create();
 
     protected:
-        StringAtom _name;
+        Core::StringAtom _name;
         std::optional<KeyT> _key{};
         TimeT _frequency = TimeT(0);
         std::chrono::system_clock::time_point _lastUpdate{};
@@ -185,7 +188,7 @@ namespace Core
 
         KeyboardInputAction() = default;
 
-        KeyboardInputAction(const StringAtom& name, KeyT key);
+        KeyboardInputAction(const Core::StringAtom& name, KeyT key);
 
     protected:
         [[nodiscard]] bool isKeyPressed() const override;
@@ -207,9 +210,9 @@ namespace Core
 
         MouseInputAction();
 
-        explicit MouseInputAction(const StringAtom& name, KeyT key = Mouse::Key::None);
+        explicit MouseInputAction(const Core::StringAtom& name, KeyT key = Mouse::Key::None);
 
-        explicit MouseInputAction(const StringAtom& name);
+        explicit MouseInputAction(const Core::StringAtom& name);
 
         Delegate<void(glm::vec2, SpecKeysState)>::Ptr onDrag
             = Delegate<void(glm::vec2, SpecKeysState)>::Create();

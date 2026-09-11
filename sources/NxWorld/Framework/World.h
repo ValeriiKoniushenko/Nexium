@@ -24,10 +24,10 @@
 
 #pragma once
 
-#include "../../ResourceManagement/DataStream.h"
 #include "Core/Color.h"
 #include "Editor/ObjectPicker.h"
 #include "Foundation/BaseLog.h"
+#include "Foundation/Interfaces/DataStream.h"
 #include "GameState.h"
 #include "LevelData.h"
 #include "PlayerState.h"
@@ -37,7 +37,7 @@ namespace Core
     class BaseCamera;
 
     CLASS();
-    struct LightningProps : public IDataIO
+    struct LightningProps : public Foundation::IDataIO
     {
         R_FRIEND(LightningProps);
 
@@ -64,7 +64,7 @@ namespace Core
     };
 
     CLASS();
-    class World : public Foundation::BaseLog, public IDataIO
+    class World : public Foundation::BaseLog, public Foundation::IDataIO
     {
         R_FRIEND(World);
 

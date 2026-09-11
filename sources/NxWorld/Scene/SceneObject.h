@@ -51,7 +51,7 @@ namespace Core
         public IOutliner,
         public Transformable,
         public IDrawable,
-        public IDataIO
+        public Foundation::IDataIO
     {
         ECS_DECL(SceneObject, Core::BaseComponent, Core::Transformable, Core::IOutliner,
                  Core::IDrawable);
