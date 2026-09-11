@@ -1,0 +1,76 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 30,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "generator": "Ninja",
+      "cacheVariables": {
+        "NEXIUM_DISABLE_TESTS": "ON",
+        "NEXIUM_DISABLE_BENCHMARKS": "ON",
+        "NEXIUM_ENABLE_3D_MODULE": "OFF"
+      }
+    },
+    {
+      "name": "debug",
+      "displayName": "Debug",
+      "inherits": "base",
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "release",
+      "displayName": "Release",
+      "inherits": "base",
+      "binaryDir": "${sourceDir}/build/release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "debug-3d",
+      "displayName": "Debug with Assimp",
+      "inherits": "base",
+      "binaryDir": "${sourceDir}/build/debug-3d",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "NEXIUM_ENABLE_3D_MODULE": "ON"
+      }
+    },
+    {
+      "name": "release-3d",
+      "displayName": "Release with Assimp",
+      "inherits": "base",
+      "binaryDir": "${sourceDir}/build/release-3d",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "NEXIUM_ENABLE_3D_MODULE": "ON"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "debug",
+      "configurePreset": "debug"
+    },
+    {
+      "name": "release",
+      "configurePreset": "release"
+    },
+    {
+      "name": "debug-3d",
+      "configurePreset": "debug-3d"
+    },
+    {
+      "name": "release-3d",
+      "configurePreset": "release-3d"
+    }
+  ]
+}

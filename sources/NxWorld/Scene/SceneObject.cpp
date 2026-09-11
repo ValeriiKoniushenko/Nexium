@@ -104,7 +104,7 @@ namespace Core
 
     StringAtom SceneObject::getReferencedAsset() const
     {
-#if defined(DEBUG)
+#if defined(NEXIUM_DEBUG)
         Assert(_referencedAsset.isStatic());
 #endif
         return _referencedAsset;
@@ -114,7 +114,7 @@ namespace Core
     {
         _referencedAsset = logicPath;
 
-#if defined(DEBUG)
+#if defined(NEXIUM_DEBUG)
         Assert(_referencedAsset.isStatic());
 #endif
     }

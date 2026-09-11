@@ -98,7 +98,7 @@ namespace Core
 
     void GameInstance::initialize()
     {
-#ifdef DEBUG
+#ifdef NEXIUM_DEBUG
         spdlog::set_level(spdlog::level::trace);
 #endif
         std::cout << std::fixed << std::setprecision(15);

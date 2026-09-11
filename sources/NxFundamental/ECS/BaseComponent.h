@@ -34,7 +34,7 @@
 #include <typeindex>
 #include <unordered_set>
 
-#if defined(DEBUG)
+#if defined(NEXIUM_DEBUG)
     #include <chrono>
 #endif
 
@@ -362,7 +362,7 @@ namespace NX
         std::unordered_map<Core::StringAtom, std::type_index> _typeToNameMap;
         std::unordered_map<Core::StringAtom, Tag> _typeToTagMap;
 
-#if defined(DEBUG)
+#if defined(NEXIUM_DEBUG)
         std::optional<decltype(std::chrono::high_resolution_clock::now())> _startRegTime;
         decltype(std::chrono::high_resolution_clock::now()) _endRegTime;
 #endif
@@ -851,7 +851,7 @@ namespace NX
             : _name{ std::move(name) },
               _type{ std::move(type) }
         {
-#ifdef DEBUG
+#ifdef NEXIUM_DEBUG
             Assert(_type.isStatic());
 #endif
         }
@@ -908,7 +908,7 @@ namespace NX
     template<class T>
     bool GlobalComponentFactory::registerNewType(const Core::StringAtom& type, bool isTemplateType)
     {
-#if defined(DEBUG)
+#if defined(NEXIUM_DEBUG)
         if (!_startRegTime)
         {
             _startRegTime = std::chrono::high_resolution_clock::now();
@@ -924,7 +924,7 @@ namespace NX
             return true;
         }
 
-#if defined(DEBUG)
+#if defined(NEXIUM_DEBUG)
         if (_map.contains(type))
         {
             criticalLog("You're trying to register the type '{}' second(or more) time."_f << type);
@@ -939,7 +939,7 @@ namespace NX
 
         traceLog("Type '{}' has been registered."_f << type);
 
-#if defined(DEBUG)
+#if defined(NEXIUM_DEBUG)
         _endRegTime = std::chrono::high_resolution_clock::now();
 #endif
         return true;

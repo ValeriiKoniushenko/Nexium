@@ -1,9 +1,11 @@
 cmake_minimum_required(VERSION 3.30)
 
-# Initialize MSVC with embedded debug information (/Z7), including compiler checks.
-set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT
-    "$<$<CONFIG:Debug,RelWithDebInfo>:Embedded>"
-)
+if(MSVC)
+    # Use /Z7 so debug builds remain compatible with ccache.
+    set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT
+        "$<$<CONFIG:Debug,RelWithDebInfo>:Embedded>"
+    )
+endif()
 
 project(Nexium VERSION 1.0 LANGUAGES CXX)
 
@@ -12,7 +14,6 @@ project(Nexium VERSION 1.0 LANGUAGES CXX)
 include("${CMAKE_CURRENT_SOURCE_DIR}/.agents/Agents/CMakeLists.txt")
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(NEXIUM_ENABLE_3D_MODULE ON)
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     find_program(MOLD_LINKER mold)
@@ -65,6 +66,14 @@ set(BENCHMARK_ENABLE_TESTING OFF)
 # ── Main deps pipeline ────────────────────────────────────────────────────────────────
 # Configure vendored targets, but build only those required by active layers.
 add_subdirectory(dependencies EXCLUDE_FROM_ALL)
+
+if(NEXIUM_ENABLE_3D_MODULE AND NOT TARGET assimp::assimp)
+    message(FATAL_ERROR
+        "NEXIUM_ENABLE_3D_MODULE=ON requires the vendored assimp::assimp target. "
+        "Initialize the assimp dependency or configure with NEXIUM_ENABLE_3D_MODULE=OFF."
+    )
+endif()
+
 add_subdirectory(sources)
 
 if(NOT NEXIUM_DISABLE_TESTS)

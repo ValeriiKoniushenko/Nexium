@@ -112,7 +112,7 @@ namespace NX
         void create(const Core::StringAtom& shaderName);
 
         void clear();
-#ifdef GRAPHICS_DEBUG
+#ifdef NEXIUM_GRAPHICS_DEBUG
         void use() const noexcept
         {
             if (isEmpty())
@@ -175,7 +175,7 @@ namespace NX
         template<typename T>
         void setUniformObject(const Core::StringAtom& name, T&& value) const
         {
-#ifdef GRAPHICS_DEBUG
+#ifdef NEXIUM_GRAPHICS_DEBUG
             Assert(name.isStatic(), "Use atomic string. Add _atom to your uniform's str");
             Assert(_ubos.contains(name));
             // Assert(_ubos.at(name) != 0);

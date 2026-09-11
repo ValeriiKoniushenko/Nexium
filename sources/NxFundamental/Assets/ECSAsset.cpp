@@ -240,7 +240,7 @@ namespace NX
 
         auto baseAssetData = json.value(StreamData::data, nlohmann::json::object());
 
-#if defined(DEBUG)
+#if defined(NEXIUM_DEBUG)
         std::string xxx1 = baseAssetData.dump(4);
         std::string xxx2 = assetData.dump(4);
 #endif

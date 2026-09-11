@@ -65,7 +65,7 @@ namespace NX
         if (!_name.isStatic())
         {
             _name.shrinkToFit();
-#ifdef GRAPHICS_DEBUG
+#ifdef NEXIUM_GRAPHICS_DEBUG
             warnLog(
                 "The shader's '{}' vairable '_name' is not atom. Make it atom for best performance."_f
                 << _name);
@@ -188,7 +188,7 @@ namespace NX
 
     void ShaderProgram::debugUniform(const Core::StringAtom& name) const
     {
-#ifdef GRAPHICS_DEBUG
+#ifdef NEXIUM_GRAPHICS_DEBUG
         Assert(name.isStatic(), "Use atomic string. Add _atom to your uniform's str");
         Assert(_uniforms.contains(name));
         Assert(_uniforms.at(name) != -1);

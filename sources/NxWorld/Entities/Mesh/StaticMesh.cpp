@@ -212,7 +212,7 @@ namespace NX
 
     void StaticMesh::calculateSizeBaseOnMesh(const aiMesh* rawMesh, const aiMatrix4x4& transform)
     {
-#ifdef DEBUG
+#ifdef NEXIUM_DEBUG
         FStopwatch s;
         s.start();
 #endif

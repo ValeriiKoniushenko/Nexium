@@ -200,7 +200,7 @@ namespace NX
 
     void BaseGraphicsData::setDrawModifiers(std::vector<ModifierParam>&& values)
     {
-#if defined(DEBUG)
+#if defined(NEXIUM_DEBUG)
         std::map<GLenum, int> map;
 
         for (auto& [value, modifier] : values)
@@ -215,7 +215,7 @@ namespace NX
 
     void BaseGraphicsData::setDrawModifiers(const std::vector<ModifierParam>& values)
     {
-#if defined(DEBUG)
+#if defined(NEXIUM_DEBUG)
         std::map<GLenum, int> map;
 
         for (const auto& [value, modifier] : values)
@@ -355,6 +355,7 @@ namespace NX
     // ║     ╩┘└┘ ┴ └─┘┴└─┴─┘└─┘┴ ┴ └┘ └─┘─┴┘╚═╝┴└─┴ ┴┴  ┴ ┴┴└─┘└─┘═╩╝┴ ┴ ┴ ┴ ┴     ║
     // ║                                                                            ║
     // ╚════════════════════════════════════════════════════════════════════════════╝
+#if NEXIUM_HAS_ASSIMP
     void InterleavedGraphicsData::setMesh(const aiMesh* mesh, bool isAppendNormals /* = false*/,
                                           bool isAppendUV /* = false*/, float scale /* = 1.f*/)
     {
@@ -416,6 +417,8 @@ namespace NX
         //                        << mesh->mName.C_Str());
         // }
     }
+
+#endif
 
     Core::StringAtom InterleavedGraphicsData::getCacheHash() const
     {

@@ -76,7 +76,7 @@ namespace NX
 
     GlobalComponentFactory::~GlobalComponentFactory()
     {
-#if defined(DEBUG)
+#if defined(NEXIUM_DEBUG)
         if (_startRegTime)
         {
             std::cout << "[Debug] GlobalComponentFactory: type registration took: "

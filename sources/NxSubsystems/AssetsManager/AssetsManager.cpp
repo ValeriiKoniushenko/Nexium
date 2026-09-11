@@ -498,7 +498,7 @@ namespace NX
 
         Assert(logicPath.isStatic(), "You must use only _atom strings for asset paths!");
 
-#if defined(DEBUG)
+#if defined(NEXIUM_DEBUG)
         auto* found = logicPath.reverseFind(".nx");
         if (!found)
         {

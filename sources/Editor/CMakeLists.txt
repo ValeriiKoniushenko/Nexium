@@ -8,8 +8,9 @@ set(MODULE_ALIAS Nexium::${MODULE_NAME})
 add_library(${MODULE_PRIVATE_TARGET} STATIC)
 target_sources(${MODULE_PRIVATE_TARGET} PRIVATE
     PrivateModuleInfo.cpp
-    PrivateModuleInfo.h
 )
 
 target_link_libraries(${MODULE_PRIVATE_TARGET} PRIVATE Nexium::Foundation)
 target_compile_definitions(${MODULE_PRIVATE_TARGET} PRIVATE PRIVATE_MODULE_NAME="${MODULE_NAME}")
+
+nexium_configure_target(${MODULE_PRIVATE_TARGET})

@@ -6,7 +6,6 @@ set(MODULE_PRIVATE_TARGET Nexium_${MODULE_NAME}_PrivateModule)
 add_library(${MODULE_PRIVATE_TARGET} STATIC)
 target_sources(${MODULE_PRIVATE_TARGET} PRIVATE
     PrivateModuleInfo.cpp
-    PrivateModuleInfo.h
 )
 target_link_libraries(${MODULE_PRIVATE_TARGET} PRIVATE spdlog::spdlog Utils::Core)
 target_compile_definitions(${MODULE_PRIVATE_TARGET} PRIVATE PRIVATE_MODULE_NAME="${MODULE_NAME}")
@@ -16,8 +15,10 @@ target_compile_definitions(${MODULE_PRIVATE_TARGET} PRIVATE PRIVATE_MODULE_NAME=
 add_library(Nexium_Platform_Graphics STATIC)
 add_library(Nexium::Platform::Graphics ALIAS Nexium_Platform_Graphics)
 target_sources(Nexium_Platform_Graphics PRIVATE
-    Graphics.h
     Graphics.cpp
+)
+nexium_add_public_headers(Nexium_Platform_Graphics
+    Platform/Graphics.h
 )
 
 target_link_libraries(Nexium_Platform_Graphics
@@ -30,12 +31,17 @@ target_link_libraries(Nexium_Platform_Graphics
 add_library(Nexium_Platform_Input STATIC)
 add_library(Nexium::Platform::Input ALIAS Nexium_Platform_Input)
 target_sources(Nexium_Platform_Input PRIVATE
-    Keyboard.h
     Keyboard.cpp
-    Mouse.h
     Mouse.cpp
-    Window.h
     Window.cpp
+)
+nexium_add_public_headers(Nexium_Platform_Input
+    Platform/Keyboard.h
+    Platform/Keyboard.generated.h
+    Platform/Mouse.h
+    Platform/Mouse.generated.h
+    Platform/Window.h
+    Platform/Window.generated.h
 )
 
 target_link_libraries(Nexium_Platform_Input

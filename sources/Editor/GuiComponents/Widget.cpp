@@ -42,7 +42,7 @@ namespace Core::Gui
 
         _pos = ImGui::GetCursorPos();
 
-#if defined(DEBUG)
+#if defined(NEXIUM_DEBUG)
         if (Keyboard::IsKeyPressed(Widget::Input::editorImGuiShowRect)
             && getGlobalBounds().isIntersects(Mouse::GetPosition()))
         {

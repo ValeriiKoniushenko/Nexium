@@ -7,7 +7,6 @@ if(0) # It's disabled due to it's unused. Feel free to active it when it will be
     add_library(${MODULE_PRIVATE_TARGET} STATIC)
     target_sources(${MODULE_PRIVATE_TARGET} PRIVATE
         PrivateModuleInfo.cpp
-        PrivateModuleInfo.h
     )
     target_link_libraries(${MODULE_PRIVATE_TARGET} PRIVATE spdlog::spdlog Utils::Core)
     target_compile_definitions(${MODULE_PRIVATE_TARGET} PRIVATE PRIVATE_MODULE_NAME="${MODULE_NAME}")
@@ -18,15 +17,17 @@ endif()
 add_library(Nexium_Foundation STATIC)
 add_library(Nexium::Foundation ALIAS Nexium_Foundation)
 target_sources(Nexium_Foundation PRIVATE
-    Configs.h
     Configs.cpp
-    BaseLog.h
     BaseLog.cpp
-
-    Interfaces/DataStream.h
     Interfaces/DataStream.cpp
+)
 
-    Interfaces/IOutliner.h
+nexium_add_public_headers(Nexium_Foundation
+    Foundation/Configs.h
+    Foundation/BaseLog.h
+    Foundation/Interfaces/DataStream.h
+    Foundation/Interfaces/IOutliner.h
+    Foundation/Interfaces/IOutliner.generated.h
 )
 
 target_link_libraries(Nexium_Foundation
@@ -42,6 +43,6 @@ endif()
 
 # =========================================
 
-nexium_configure_target(Nexium_Foundation)
+nexium_configure_target(Nexium_Foundation PROJECT_DIR)
 
 add_dependencies(Nexium_Foundation CodeGenerator)

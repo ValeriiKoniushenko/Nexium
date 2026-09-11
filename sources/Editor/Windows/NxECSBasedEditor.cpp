@@ -240,7 +240,7 @@ namespace Core
 
         nlohmann::json assetData;
 
-#if defined(DEBUG)
+#if defined(NEXIUM_DEBUG)
         int counter = 0;
         const ECSEditorMimeAdapter* firstAdapter = nullptr;
         for (auto&& child : _children)

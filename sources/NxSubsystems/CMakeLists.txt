@@ -1,12 +1,11 @@
 get_filename_component(MODULE_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
-set(MODULE_PRIVATE_TARGET Nexium_${MODULE_TARGET}_PrivateModule)
+set(MODULE_PRIVATE_TARGET Nexium_${MODULE_NAME}_PrivateModule)
 
 # ============== Per Module Private Info ===============
 
 add_library(${MODULE_PRIVATE_TARGET} STATIC)
 target_sources(${MODULE_PRIVATE_TARGET} PRIVATE
     PrivateModuleInfo.cpp
-    PrivateModuleInfo.h
 )
 target_link_libraries(${MODULE_PRIVATE_TARGET} PRIVATE spdlog::spdlog Utils::Core)
 target_compile_definitions(${MODULE_PRIVATE_TARGET} PRIVATE PRIVATE_MODULE_NAME="${MODULE_NAME}")
@@ -16,17 +15,20 @@ target_compile_definitions(${MODULE_PRIVATE_TARGET} PRIVATE PRIVATE_MODULE_NAME=
 add_library(Nexium_Subsystem_Graphics STATIC)
 add_library(Nexium::Subsystem::Graphics ALIAS Nexium_Subsystem_Graphics)
 target_sources(Nexium_Subsystem_Graphics PRIVATE
-    Graphics/Debug/Line.h
     Graphics/Debug/Line.cpp
-
-    Graphics/GraphicsComponents.h
     Graphics/GraphicsComponents.cpp
-    Graphics/ShaderManager.h
     Graphics/ShaderManager.cpp
-    Graphics/ShaderProgram.h
     Graphics/ShaderProgram.cpp
-    Graphics/ShaderProgramMeta.h
     Graphics/ShaderProgramMeta.cpp
+)
+nexium_add_public_headers(Nexium_Subsystem_Graphics
+    NxSubsystems/Graphics/Debug/Line.h
+    NxSubsystems/Graphics/GraphicsComponents.h
+    NxSubsystems/Graphics/GraphicsComponents.generated.h
+    NxSubsystems/Graphics/ShaderManager.h
+    NxSubsystems/Graphics/ShaderProgram.h
+    NxSubsystems/Graphics/ShaderProgramMeta.h
+    NxSubsystems/Graphics/ShaderProgramMeta.generated.h
 )
 
 target_link_libraries(Nexium_Subsystem_Graphics
@@ -39,19 +41,26 @@ target_link_libraries(Nexium_Subsystem_Graphics
     ${MODULE_PRIVATE_TARGET}
 )
 
-if (TARGET assimp::assimp)
+if(NEXIUM_ENABLE_3D_MODULE)
     target_link_libraries(Nexium_Subsystem_Graphics PUBLIC assimp::assimp)
-endif ()
+endif()
+target_compile_definitions(Nexium_Subsystem_Graphics
+    PUBLIC "NEXIUM_HAS_ASSIMP=$<BOOL:${NEXIUM_ENABLE_3D_MODULE}>"
+)
 
 # ================ NxSubsystem::AssetsManager =================
 
 add_library(Nexium_Subsystem_AssetsManager STATIC)
 add_library(Nexium::Subsystem::AssetsManager ALIAS Nexium_Subsystem_AssetsManager)
 target_sources(Nexium_Subsystem_AssetsManager PRIVATE
-    AssetsManager/AssetsManager.h
     AssetsManager/AssetsManager.cpp
-    AssetsManager/TextureAsset.h
     AssetsManager/TextureAsset.cpp
+)
+nexium_add_public_headers(Nexium_Subsystem_AssetsManager
+    NxSubsystems/AssetsManager/AssetsManager.h
+    NxSubsystems/AssetsManager/AssetsManager.generated.h
+    NxSubsystems/AssetsManager/TextureAsset.h
+    NxSubsystems/AssetsManager/TextureAsset.generated.h
 )
 target_link_libraries(Nexium_Subsystem_AssetsManager 
     PUBLIC 
@@ -68,10 +77,13 @@ target_link_libraries(Nexium_Subsystem_AssetsManager
 add_library(Nexium_Subsystem_Input STATIC)
 add_library(Nexium::Subsystem::Input ALIAS Nexium_Subsystem_Input)
 target_sources(Nexium_Subsystem_Input PRIVATE
-    Input/InputAction.h
     Input/InputAction.cpp
-    Input/InputManager.h
     Input/InputManager.cpp
+)
+nexium_add_public_headers(Nexium_Subsystem_Input
+    NxSubsystems/Input/InputAction.h
+    NxSubsystems/Input/InputManager.h
+    NxSubsystems/PrivateModuleInfo.h
 )
 target_link_libraries(Nexium_Subsystem_Input 
     PUBLIC 
@@ -87,6 +99,7 @@ nexium_configure_target(${MODULE_PRIVATE_TARGET})
 nexium_configure_target(Nexium_Subsystem_Graphics)
 nexium_configure_target(Nexium_Subsystem_AssetsManager)
 nexium_configure_target(Nexium_Subsystem_Input)
+nexium_enable_graphics_debug_api(Nexium_Subsystem_Graphics)
 
 add_dependencies(Nexium_Subsystem_Graphics CodeGenerator)
 add_dependencies(Nexium_Subsystem_AssetsManager CodeGenerator)

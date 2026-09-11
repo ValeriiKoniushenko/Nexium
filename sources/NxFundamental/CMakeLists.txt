@@ -3,7 +3,6 @@
 add_library(Nexium_Fundamental_PrivateModule STATIC)
 target_sources(Nexium_Fundamental_PrivateModule PRIVATE
     PrivateModuleInfo.cpp
-    PrivateModuleInfo.h
 )
 target_link_libraries(Nexium_Fundamental_PrivateModule PRIVATE Nexium::Foundation)
 target_compile_definitions(Nexium_Fundamental_PrivateModule
@@ -16,9 +15,12 @@ add_library(Nexium_Fundamental_Base STATIC)
 add_library(Nexium::Fundamental::Base ALIAS Nexium_Fundamental_Base)
 target_sources(Nexium_Fundamental_Base PRIVATE
     ITagHolder.cpp
-    ITagHolder.h
     Transformable.cpp
-    Transformable.h
+)
+nexium_add_public_headers(Nexium_Fundamental_Base
+    NxFundamental/ITagHolder.h
+    NxFundamental/Transformable.h
+    NxFundamental/Transformable.generated.h
 )
 target_link_libraries(Nexium_Fundamental_Base PUBLIC Nexium::Foundation)
 
@@ -30,9 +32,12 @@ add_library(Nexium::Fundamental::ResourceManagement
 )
 target_sources(Nexium_Fundamental_ResourceManagement PRIVATE
     ResourceManagement/DataStream.cpp
-    ResourceManagement/DataStream.h
     ResourceManagement/JsonAdapter.cpp
-    ResourceManagement/JsonAdapter.h
+)
+nexium_add_public_headers(Nexium_Fundamental_ResourceManagement
+    NxFundamental/ResourceManagement/DataStream.h
+    NxFundamental/ResourceManagement/DataStream.generated.h
+    NxFundamental/ResourceManagement/JsonAdapter.h
 )
 target_link_libraries(Nexium_Fundamental_ResourceManagement
     PUBLIC Nexium::Foundation
@@ -45,7 +50,10 @@ add_library(Nexium_Fundamental_ECS STATIC)
 add_library(Nexium::Fundamental::ECS ALIAS Nexium_Fundamental_ECS)
 target_sources(Nexium_Fundamental_ECS PRIVATE
     ECS/BaseComponent.cpp
-    ECS/BaseComponent.h
+)
+nexium_add_public_headers(Nexium_Fundamental_ECS
+    NxFundamental/ECS/BaseComponent.h
+    NxFundamental/ECS/BaseComponent.generated.h
 )
 target_link_libraries(Nexium_Fundamental_ECS
     PUBLIC
@@ -60,11 +68,15 @@ add_library(Nexium_Fundamental_Assets STATIC)
 add_library(Nexium::Fundamental::Assets ALIAS Nexium_Fundamental_Assets)
 target_sources(Nexium_Fundamental_Assets PRIVATE
     Assets/BaseAsset.cpp
-    Assets/BaseAsset.h
     Assets/ECSAsset.cpp
-    Assets/ECSAsset.h
-    Assets/Factory.h
     Assets/Factory.cpp
+)
+nexium_add_public_headers(Nexium_Fundamental_Assets
+    NxFundamental/Assets/BaseAsset.h
+    NxFundamental/Assets/BaseAsset.generated.h
+    NxFundamental/Assets/ECSAsset.h
+    NxFundamental/Assets/ECSAsset.generated.h
+    NxFundamental/Assets/Factory.h
 )
 target_link_libraries(Nexium_Fundamental_Assets
     PUBLIC
@@ -81,7 +93,9 @@ add_library(Nexium_Fundamental_TextureAtlas STATIC)
 add_library(Nexium::Fundamental::TextureAtlas ALIAS Nexium_Fundamental_TextureAtlas)
 target_sources(Nexium_Fundamental_TextureAtlas PRIVATE
     Assets/TextureAtlas.cpp
-    Assets/TextureAtlas.h
+)
+nexium_add_public_headers(Nexium_Fundamental_TextureAtlas
+    NxFundamental/Assets/TextureAtlas.h
 )
 target_link_libraries(Nexium_Fundamental_TextureAtlas
     PUBLIC
@@ -119,3 +133,5 @@ foreach(TARGET_NAME IN ITEMS
     nexium_configure_target(${TARGET_NAME})
     add_dependencies(${TARGET_NAME} CodeGenerator)
 endforeach()
+
+nexium_enable_debug_api(Nexium_Fundamental_ECS)

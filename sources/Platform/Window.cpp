@@ -131,7 +131,7 @@ namespace Platform
             criticalThrowingLog("Impossible to initialize GLAD.");
         }
 
-#if defined(_DEBUG)
+#if defined(NEXIUM_DEBUG)
         glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
         glEnable(GL_DEBUG_OUTPUT);
         glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS); // fires on the offending call's stack frame

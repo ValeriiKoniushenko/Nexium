@@ -27,7 +27,9 @@
 #include "Foundation/Interfaces/DataStream.h"
 #include "NxFundamental/ResourceManagement/JsonAdapter.h"
 #include "NxSubsystems/Graphics/ShaderManager.h"
-#include "assimp/mesh.h"
+#if NEXIUM_HAS_ASSIMP
+    #include "assimp/mesh.h"
+#endif
 
 namespace NX
 {
@@ -298,16 +300,10 @@ namespace NX
         InterleavedGraphicsData& operator=(const InterleavedGraphicsData& other) = default;
         InterleavedGraphicsData& operator=(InterleavedGraphicsData&& other) noexcept;
 
-        /// loads & constructs from aiMesh GPU data.
-        /// @param mesh from Assimp::Importer
-        /// @param isAppendNormals if it true - than it will append to every vertex data 'normals'
-        /// @param isAppendUV if it true - than it will append to every vertex data 'UV'
-        /// @param scale mesh scaler
-        ///
-        /// Example of one vertex data:
-        /// pos.x, pos.y, pos.z,  [normal.x, normal.y, normal.z]  [cv.x, cv.y]
+#if NEXIUM_HAS_ASSIMP
         void setMesh(const aiMesh* mesh, bool isAppendNormals = false, bool isAppendUV = false,
                      float scale = 1.f);
+#endif
 
         // =================== MISC ===================
         friend void swap(InterleavedGraphicsData& a, InterleavedGraphicsData& b) noexcept
