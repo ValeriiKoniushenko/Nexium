@@ -24,8 +24,8 @@
 
 #pragma once
 
-#include "AssetsManager/TextureAtlas.h"
-#include "ECSAsset.h"
+#include "NxFundamental/Assets/ECSAsset.h"
+#include "NxFundamental/Assets/TextureAtlas.h"
 #include "SkyboxAsset.h"
 #include "TextureAsset.h"
 #include "Utils/Functions.h"
@@ -85,7 +85,7 @@ namespace Core
     /// // WRONG:
     /// auto texture = GetAssetsManager()->getTexture("/path/to/my/texture.png");
     /// @endcode
-    class AssetsManager : public BaseLog
+    class AssetsManager : public Foundation::BaseLog
     {
     public:
         ENUM_CLASS();
@@ -107,7 +107,7 @@ namespace Core
         ~AssetsManager() override = default;
 
         // ================= STATIC ======================
-        [[nodiscard]] static StringAtom OpenFileSelectionDialog(
+        [[nodiscard]] static Core::StringAtom OpenFileSelectionDialog(
             const std::vector<std::string>& filter);
 
         [[nodiscard]] static NodeType GetNodeType(const std::filesystem::directory_entry& entry);
@@ -124,85 +124,88 @@ namespace Core
         // ====== Path registration ======
         [[nodiscard]] const std::set<std::filesystem::path>& getRegisteredPaths() const noexcept;
         void registerNewAssetPath(std::filesystem::path path);
-        [[nodiscard]] bool validatePath(const StringAtom& logicPath, const char* requiredExt);
+        [[nodiscard]] bool validatePath(const Core::StringAtom& logicPath, const char* requiredExt);
 
         // ============== WORKING WITH ASSETS ==========
 
         // ====== Texture Atlas ======
         void generateTextureAtlas(const std::filesystem::path& atlasFolder);
-        void generateTextureAtlas(const StringAtom& atlasName,
+        void generateTextureAtlas(const Core::StringAtom& atlasName,
                                   const std::filesystem::path& atlasFolder);
 
-        [[nodiscard]] TextureAtlas& getAtlas(const StringAtom& atlasName);
-        [[nodiscard]] const TextureAtlas& getAtlas(const StringAtom& atlasName) const;
-        [[nodiscard]] std::vector<StringAtom> getAtlasesAsVector() const;
+        [[nodiscard]] NX::TextureAtlas& getAtlas(const Core::StringAtom& atlasName);
+        [[nodiscard]] const NX::TextureAtlas& getAtlas(const Core::StringAtom& atlasName) const;
+        [[nodiscard]] std::vector<Core::StringAtom> getAtlasesAsVector() const;
         [[nodiscard]] std::size_t getAtlasesCount() const noexcept
         {
             return _textureAtlases.size();
         }
 
         // Backward-compatible access to the default atlas.
-        [[nodiscard]] TextureAtlas& getTextureAtlas();
-        [[nodiscard]] const TextureAtlas& getTextureAtlas() const;
+        [[nodiscard]] NX::TextureAtlas& getTextureAtlas();
+        [[nodiscard]] const NX::TextureAtlas& getTextureAtlas() const;
 
         // ========== Textures =======
-        [[nodiscard]] NXTexture getTexture(const StringAtom& logicPath);
+        [[nodiscard]] NXTexture getTexture(const Core::StringAtom& logicPath);
 
         // =========== Skybox ========
-        [[nodiscard]] NXSkybox getSkybox(const StringAtom& logicPath);
+        [[nodiscard]] NXSkybox getSkybox(const Core::StringAtom& logicPath);
 
         // ============ ECS ==========
         /// @brief Get an asset by its logical path. Will load the asset if it wasn't loaded
         /// previously.
         /// @param logicPath Logical path to the asset
         /// @return Strong reference to the asset
-        [[nodiscard]] NXECSAsset getEcsAsset(const StringAtom& logicPath);
+        [[nodiscard]] NX::NXECSAsset getEcsAsset(const Core::StringAtom& logicPath);
 
-        [[nodiscard]] BaseComponent::Ptr getUniqueEcsAsset(const StringAtom& logicPath);
+        [[nodiscard]] NX::BaseComponent::Ptr getUniqueEcsAsset(const Core::StringAtom& logicPath);
 
         /// @brief Get an asset by its logical path without loading it. Returns nullptr if the asset
         /// wasn't loaded previously.
         /// @param logicPath Logical path to the asset
         /// @return Weak reference to the asset if it's loaded, nullptr otherwise
-        [[nodiscard]] WeakNXECSAsset getWeakEcsAsset(const StringAtom& logicPath);
+        [[nodiscard]] NX::WeakNXECSAsset getWeakEcsAsset(const Core::StringAtom& logicPath);
 
         /// @brief Get an asset by its index in the assets' collection. Will load the asset if it
         /// wasn't loaded previously.
         /// @param index Index of the asset in the collection
         /// @param tagMask tag to apply when searching for assets
         /// @return Strong reference to the asset
-        [[nodiscard]] NXECSAsset getEcsAssetAt(std::size_t index, Tag tagMask = Tag_Any);
+        [[nodiscard]] NX::NXECSAsset getEcsAssetAt(std::size_t index,
+                                                   NX::Tag tagMask = NX::Tag_Any);
 
         /// @brief Get an asset by its index without loading it. Returns nullptr if the asset wasn't
         /// loaded previously.
         /// @param index Index of the asset in the collection
         /// @param tagMask tag to apply when searching for assets
         /// @return Weak reference to the asset if it's loaded, nullptr otherwise
-        [[nodiscard]] WeakNXECSAsset getWeakEcsAssetAt(std::size_t index, Tag tagMask = Tag_Any);
+        [[nodiscard]] NX::WeakNXECSAsset getWeakEcsAssetAt(std::size_t index,
+                                                           NX::Tag tagMask = NX::Tag_Any);
 
         /// @brief Get an asset by its index without loading it. Returns nullptr if the asset wasn't
         /// loaded previously.
         /// @param index Index of the asset in the collection
         /// @param tagMask tag to apply when searching for assets
         /// @return Weak reference to the asset if it's loaded, nullptr otherwise
-        [[nodiscard]] std::optional<ECSAsset::Meta> getECSAssetMeta(std::size_t index,
-                                                                    Tag tagMask = Tag_Any);
+        [[nodiscard]] std::optional<NX::ECSAsset::Meta> getECSAssetMeta(std::size_t index,
+                                                                        NX::Tag tagMask
+                                                                        = NX::Tag_Any);
 
         /// @brief Get asset by filesystem path. Will load the asset if it wasn't loaded previously.
         /// @param path Filesystem path to the asset
         /// @return Strong reference to the asset
-        [[nodiscard]] NXECSAsset getEcsAssetByPath(const std::filesystem::path& path);
+        [[nodiscard]] NX::NXECSAsset getEcsAssetByPath(const std::filesystem::path& path);
 
         /// @brief Get asset by filesystem path without loading it. Returns nullptr if the asset
         /// wasn't loaded previously.
         /// @param path Filesystem path to the asset
         /// @return Weak reference to the asset if it's loaded, nullptr otherwise
-        [[nodiscard]] WeakNXECSAsset getWeakEcsAssetByPath(const std::filesystem::path& path);
+        [[nodiscard]] NX::WeakNXECSAsset getWeakEcsAssetByPath(const std::filesystem::path& path);
 
         /// @brief Get the total count of assets matching the filter
         /// @param tagMask Filter to apply when counting assets
         /// @return Number of assets matching the filter
-        [[nodiscard]] std::size_t getEcsAssetCountByTag(Tag tagMask) const;
+        [[nodiscard]] std::size_t getEcsAssetCountByNX::Tag(NX::Tag tagMask) const;
 
         // ================ OVERRIDEs ==================
         // override BaseLog
@@ -211,15 +214,15 @@ namespace Core
     protected:
         void scanFileSystem(bool removeMissingAssets);
 
-        [[nodiscard]] std::unordered_map<StringAtom, NXECSAsset>::iterator findAssetByPath(
-            const std::filesystem::path& path);
+        [[nodiscard]] std::unordered_map<Core::StringAtom, NX::NXECSAsset>::iterator
+            findAssetByPath(const std::filesystem::path& path);
 
     protected:
-        std::unordered_map<StringAtom, TextureAtlas> _textureAtlases;
+        std::unordered_map<Core::StringAtom, NX::TextureAtlas> _textureAtlases;
         std::set<std::filesystem::path> _registeredPaths;
-        std::unordered_map<StringAtom, NXECSAsset> _ecsAssets;
-        std::unordered_map<StringAtom, AssetRef<BaseAsset>> _textures;
-        std::unordered_map<StringAtom, AssetRef<BaseAsset>> _skyboxes;
+        std::unordered_map<Core::StringAtom, NX::NXECSAsset> _ecsAssets;
+        std::unordered_map<Core::StringAtom, NX::AssetRef<NX::BaseAsset>> _textures;
+        std::unordered_map<Core::StringAtom, NX::AssetRef<NX::BaseAsset>> _skyboxes;
     };
 } // namespace Core
 

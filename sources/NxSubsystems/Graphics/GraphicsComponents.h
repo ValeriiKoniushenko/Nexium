@@ -24,23 +24,16 @@
 
 #pragma once
 
-#include "ResourceManagement/DataStream.h"
-#include "ResourceManagement/JsonAdapter.h"
+#include "Foundation/Interfaces/DataStream.h"
+#include "NxFundamental/ResourceManagement/JsonAdapter.h"
 #include "ShaderProgram.h"
 #include "assimp/mesh.h"
 
 namespace Core
 {
 
-    // ╔════════════════════════════════════════════════════════╗
-    // ║                                                        ║
-    // ║     ╔╗ ┌─┐┌─┐┌─┐╔═╗┬─┐┌─┐┌─┐┬ ┬┬┌─┐┌─┐╔╦╗┌─┐┌┬┐┌─┐     ║
-    // ║     ╠╩╗├─┤└─┐├┤ ║ ╦├┬┘├─┤├─┘├─┤││  └─┐ ║║├─┤ │ ├─┤     ║
-    // ║     ╚═╝┴ ┴└─┘└─┘╚═╝┴└─┴ ┴┴  ┴ ┴┴└─┘└─┘═╩╝┴ ┴ ┴ ┴ ┴     ║
-    // ║                                                        ║
-    // ╚════════════════════════════════════════════════════════╝
     CLASS();
-    class BaseGraphicsData : public IDataIO
+    class BaseGraphicsData : public Foundation::IDataIO
     {
         R_FRIEND(BaseGraphicsData);
 

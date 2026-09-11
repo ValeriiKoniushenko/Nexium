@@ -68,6 +68,8 @@ target_link_libraries(Nexium_Fundamental_Assets
     PUBLIC
         Nexium::Fundamental::ECS
         Nexium::Fundamental::ResourceManagement
+        Nexium::Platform::Graphics
+        Core::Rectpack2D
     PRIVATE Nexium_Fundamental_PrivateModule
 )
 
