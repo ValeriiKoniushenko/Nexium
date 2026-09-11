@@ -24,9 +24,12 @@
 
 #include "Line.h"
 
-#include "GameplaySystem/Framework/GameInstance.h"
-#include "GraphicsComponents.h"
-#include "ShaderProgram.h"
+#include "../GraphicsComponents.h"
+#include "../ShaderManager.h"
+#include "../ShaderProgram.h"
+
+using namespace NX;
+using namespace Core;
 
 namespace
 {
@@ -35,14 +38,14 @@ namespace
         glm::vec3 position;
     };
 
-    Core::BaseGraphicsData GenerateDefaultLineBaseGraphicsData()
+    BaseGraphicsData GenerateDefaultLineBaseGraphicsData()
     {
         using namespace Core;
 
         BaseGraphicsData data;
         data.generate();
 
-        auto* lineShader = GetShaderManager()->getShaderProgram("2d_rect"_atom);
+        auto* lineShader = GetShaderManager().getShaderProgram("2d_rect"_atom);
         if (!lineShader)
         {
             LOG_ASSERT_ERROR_ONCE_P(gGlobalLog, "Can't get shader program '2d_rect'.");
@@ -58,7 +61,7 @@ namespace
     }
 } // namespace
 
-namespace Core::Debug
+namespace NX::Debug
 {
     void Line::Draw(const ShaderProgram* shader, const glm::mat4& projViewMatric,
                     const glm::vec3& start, const glm::vec3& end, float thickness,
@@ -91,4 +94,4 @@ namespace Core::Debug
         Draw(shader, projViewMatric, glm::vec3(start, 0.f), glm::vec3(end, 0.f), thickness, color);
     }
 
-} // namespace Core::Debug
+} // namespace NX::Debug

@@ -28,6 +28,12 @@
 
 namespace NX
 {
+
+    ShaderManager& GetShaderManager()
+    {
+        return ShaderManager::Instance();
+    }
+
     void ShaderManager::loadShaders(const std::filesystem::path& inputPath)
     {
         _shaderMetas.clear();

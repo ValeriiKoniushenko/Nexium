@@ -1,22 +1,23 @@
 get_filename_component(MODULE_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
-set(MODULE_TARGET Nexium_${MODULE_NAME})
-set(MODULE_PRIVATE_TARGET ${MODULE_TARGET}_PrivateModule)
-set(MODULE_ALIAS Nexium::${MODULE_NAME})
+set(MODULE_PRIVATE_TARGET Nexium_${MODULE_NAME}_PrivateModule)
 
 # ============== Per Module Private Info ===============
 
-add_library(${MODULE_PRIVATE_TARGET} STATIC)
-target_sources(${MODULE_PRIVATE_TARGET} PRIVATE
-    PrivateModuleInfo.cpp
-    PrivateModuleInfo.h
-)
-target_link_libraries(${MODULE_PRIVATE_TARGET} PRIVATE Nexium::Foundation)
-target_compile_definitions(${MODULE_PRIVATE_TARGET} PRIVATE PRIVATE_MODULE_NAME="${MODULE_NAME}")
+if(0) # It's disabled due to it's unused. Feel free to active it when it will be needed.
+    add_library(${MODULE_PRIVATE_TARGET} STATIC)
+    target_sources(${MODULE_PRIVATE_TARGET} PRIVATE
+        PrivateModuleInfo.cpp
+        PrivateModuleInfo.h
+    )
+    target_link_libraries(${MODULE_PRIVATE_TARGET} PRIVATE spdlog::spdlog Utils::Core)
+    target_compile_definitions(${MODULE_PRIVATE_TARGET} PRIVATE PRIVATE_MODULE_NAME="${MODULE_NAME}")
+    nexium_configure_target(${MODULE_PRIVATE_TARGET})
+endif()
 
 # ============== Foundation ===============
-add_library(${MODULE_TARGET} STATIC)
-add_library(${MODULE_ALIAS} ALIAS ${MODULE_TARGET})
-target_sources(${MODULE_TARGET} PRIVATE
+add_library(Nexium_Foundation STATIC)
+add_library(Nexium::Foundation ALIAS Nexium_Foundation)
+target_sources(Nexium_Foundation PRIVATE
     Configs.h
     Configs.cpp
     BaseLog.h
@@ -28,21 +29,19 @@ target_sources(${MODULE_TARGET} PRIVATE
     Interfaces/IOutliner.h
 )
 
-target_link_libraries(${MODULE_TARGET} 
+target_link_libraries(Nexium_Foundation
     PUBLIC
     Utils::Core
-    Utils::Utils
     spdlog::spdlog
     JustReflectMe::Adapter
-
-    PRIVATE
-    ${MODULE_PRIVATE_TARGET}
 )
 
+if(TARGET ${MODULE_PRIVATE_TARGET})
+    target_link_libraries(Nexium_Foundation PRIVATE ${MODULE_PRIVATE_TARGET})
+endif()
 
 # =========================================
 
-nexium_configure_target(${MODULE_PRIVATE_TARGET})
-nexium_configure_target(${MODULE_TARGET})
+nexium_configure_target(Nexium_Foundation)
 
-add_dependencies(${MODULE_TARGET} CodeGenerator)
+add_dependencies(Nexium_Foundation CodeGenerator)

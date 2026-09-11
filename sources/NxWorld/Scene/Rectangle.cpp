@@ -65,7 +65,7 @@ namespace
         BaseGraphicsData data;
         data.generate();
 
-        auto* shader = GetShaderManager()->getShaderProgram("2d_rect"_atom);
+        auto* shader = GetShaderManager().getShaderProgram("2d_rect"_atom);
         if (!Verify(shader))
         {
             gGlobalLog.criticalLog("Can't get shader program '2d_rect'.");
@@ -102,7 +102,7 @@ namespace Core::SceneObj
             return;
         }
 
-        const auto* shader = GetShaderManager()->getShaderProgram("line"_atom);
+        const auto* shader = GetShaderManager().getShaderProgram("line"_atom);
 
         if (!shader) [[unlikely]]
         {
@@ -144,7 +144,7 @@ namespace Core::SceneObj
         tryToRecalculateMatrices();
 
         auto& atlas = GetAssetsManager()->getAtlas(_atlasName);
-        auto* shader = GetShaderManager()->getShaderProgram("2d_rect"_atom);
+        auto* shader = GetShaderManager().getShaderProgram("2d_rect"_atom);
         if (!shader) [[unlikely]]
         {
             AssertOnce(false);

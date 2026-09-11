@@ -10,33 +10,28 @@ target_sources(${MODULE_PRIVATE_TARGET} PRIVATE
     PrivateModuleInfo.cpp
     PrivateModuleInfo.h
 )
-target_link_libraries(${MODULE_PRIVATE_TARGET} PRIVATE Nexium::Foundation)
+target_link_libraries(${MODULE_PRIVATE_TARGET} PRIVATE spdlog::spdlog Utils::Core)
 target_compile_definitions(${MODULE_PRIVATE_TARGET} PRIVATE PRIVATE_MODULE_NAME="${MODULE_NAME}")
 
 # ================ RawBackend =================
-set(SOURCES
+add_library(${MODULE_TARGET} STATIC)
+add_library(${MODULE_ALIAS} ALIAS ${MODULE_TARGET})
+target_sources(${MODULE_TARGET} PRIVATE
+    Graphics/Texture.h
     Graphics/Texture.cpp
+    Graphics/RenderTargetToTexture.h
+    Graphics/RenderTargetToTexture.cpp
 
+    IDrawable.h
     IDrawable.cpp
+    Image.h
     Image.cpp
 )
 
-set(HEADERS
-    Graphics/Texture.h
-    
-    IDrawable.h
-    Image.h
-)
-
-add_library(${MODULE_TARGET} STATIC)
-add_library(${MODULE_ALIAS} ALIAS ${MODULE_TARGET})
-target_sources(${MODULE_TARGET} PRIVATE ${SOURCES} ${HEADERS})
-
 target_link_libraries(${MODULE_TARGET}
     PUBLIC
-    Nexium::Platform::Input
+    Nexium::Foundation
     Nexium::Platform::Graphics
-    JustReflectMe::Adapter
     PRIVATE
     Core::Stb
     ${MODULE_PRIVATE_TARGET}

@@ -25,9 +25,9 @@
 #pragma once
 
 #include "Core/Size.h"
-#include "OpenGL.h"
+#include "Platform/Graphics.h"
 
-namespace Core
+namespace NX
 {
     class RenderTargetToTexture
     {
@@ -41,15 +41,15 @@ namespace Core
         void callMeAfterDraw() const;
 
         [[nodiscard]] GLuint getTextureId() const noexcept { return _tex; }
-        [[nodiscard]] ISize2 getRenderSize() const noexcept { return _size; }
+        [[nodiscard]] Core::ISize2 getRenderSize() const noexcept { return _size; }
 
-        void setRenderSize(ISize2 size);
+        void setRenderSize(Core::ISize2 size);
 
         void destroy();
 
     private:
-        ISize2 _size = ISize2{ 400, 400 };
+        Core::ISize2 _size = Core::ISize2{ 400, 400 };
         GLuint _fbo = 0, _tex = 0, _rbo = 0;
         bool _isGenerated = false;
     };
-} // namespace Core
+} // namespace NX

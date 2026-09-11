@@ -25,7 +25,28 @@
 #include "SkyboxAsset.h"
 
 #include "Foundation/Configs.h"
-#include "GameplaySystem/Framework/GameInstance.h"
+#include "RawBackend/Image.h"
+
+using namespace RawBackend;
+using namespace Foundation;
+
+namespace
+{
+    GLenum GetChannelAsOpenGLType(const RawBackend::Image& data) noexcept
+    {
+        if (static_cast<int>(data.getChannel()) == 3)
+        {
+            return GL_RGB;
+        }
+
+        if (static_cast<int>(data.getChannel()) == 4)
+        {
+            return GL_RGBA;
+        }
+
+        return GL_RED;
+    }
+} // namespace
 
 namespace NX
 {
@@ -33,7 +54,7 @@ namespace NX
 
     void SkyboxAsset::draw(BaseCamera& camera)
     {
-        auto* shader = GetShaderManager()->getShaderProgram("skybox"_atom);
+        auto* shader = GetShaderManager().getShaderProgram("skybox"_atom);
 
         auto view = glm::mat4(1.f);
         view = glm::rotate(view, glm::radians(camera.getGlobalRotation().x),
@@ -89,10 +110,10 @@ namespace NX
             = { { .value = BaseGraphicsData::ModifiedValue::CullFace,
                   .modifier = BaseGraphicsData::Modifier::Disable } };
 
-        auto* shader = GetShaderManager()->getShaderProgram("skybox"_atom);
+        auto* shader = GetShaderManager().getShaderProgram("skybox"_atom);
 
         _gcd.generate();
-        _gcd.setShader(GetShaderManager()->getShaderProgram("skybox"_atom));
+        _gcd.setShader(GetShaderManager().getShaderProgram("skybox"_atom));
         _gcd.setVertexBuffer(skyboxVertices);
         _gcd.setIndexBuffer(skyboxIndices);
         _gcd.setDrawModifiers(std::move(modifiers));
@@ -131,9 +152,10 @@ namespace NX
                         "different.");
                 }
 
-                glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, img.getChannelAsOpenGLType(),
-                             img.getSize().width, img.getSize().height, 0,
-                             img.getChannelAsOpenGLType(), GL_UNSIGNED_BYTE, img.data());
+                glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0,
+                             static_cast<GLint>(GetChannelAsOpenGLType(img)), img.getSize().width,
+                             img.getSize().height, 0, GetChannelAsOpenGLType(img), GL_UNSIGNED_BYTE,
+                             img.data());
             }
         }
 

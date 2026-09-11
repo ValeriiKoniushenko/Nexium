@@ -26,6 +26,9 @@
 
 #include "Foundation/Configs.h"
 
+using namespace RawBackend;
+using namespace Foundation;
+
 namespace NX
 {
     R_FRIEND_IMPL(TextureAsset);

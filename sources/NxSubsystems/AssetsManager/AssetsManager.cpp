@@ -163,16 +163,16 @@ namespace NX
                         }
                         it->second->attachAndReadFromFile(absPath);
                     }
-                    else if (ext == SkyboxAsset::fileExtension)
-                    {
-                        foundSkyboxes.emplace(id);
-                        auto it = _skyboxes.find(id);
-                        if (it == _skyboxes.end())
-                        {
-                            it = _skyboxes.emplace(id, new SkyboxAsset(id)).first;
-                        }
-                        it->second->attachAndReadFromFile(absPath);
-                    }
+                    // else if (ext == SkyboxAsset::fileExtension)
+                    // {
+                    //     foundSkyboxes.emplace(id);
+                    //     auto it = _skyboxes.find(id);
+                    //     if (it == _skyboxes.end())
+                    //     {
+                    //         it = _skyboxes.emplace(id, new SkyboxAsset(id)).first;
+                    //     }
+                    //     it->second->attachAndReadFromFile(absPath);
+                    // }
                 }
             }
             catch (const fs::filesystem_error& e)
@@ -256,14 +256,16 @@ namespace NX
         return getAssetOf<NXTexture>(*this, logicPath, _textures);
     }
 
-    NXSkybox AssetsManager::getSkybox(const Core::StringAtom& logicPath)
+    NX::AssetRef<NX::BaseAsset> AssetsManager::getSkybox(const Core::StringAtom& logicPath)
     {
-        return getAssetOf<NXSkybox>(*this, logicPath, _skyboxes);
+        Assert(false, "Not implemented");
+        return {};
+        // return getAssetOf<NXSkybox>(*this, logicPath, _skyboxes);
     }
 
     spdlog::logger* AssetsManager::getLogger() const
     {
-        return ::AssetsManager::getLogger();
+        return NxSubsystems::getLogger();
     }
 
     void AssetsManager::unloadAllResources()

@@ -43,15 +43,6 @@ std::unique_ptr<Core::GameInstance> gGameInstance = nullptr;
 
 namespace Core
 {
-    ShaderManager* GetShaderManager()
-    {
-        if (gGameInstance) [[likely]]
-        {
-            return &gGameInstance->shaderManager;
-        }
-
-        return nullptr;
-    }
 
     GameEditor* GetEditor()
     {

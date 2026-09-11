@@ -26,7 +26,9 @@
 
 #include "Foundation/BaseLog.h"
 
-namespace Core
+using namespace Core;
+
+namespace NX
 {
     void RenderTargetToTexture::generate()
     {
@@ -104,4 +106,4 @@ namespace Core
         _fbo = _tex = _rbo = 0;
         _isGenerated = false;
     }
-} // namespace Core
+} // namespace NX

@@ -1,11 +1,5 @@
 get_filename_component(MODULE_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
-set(MODULE_TARGET_PREFIX Nexium_${MODULE_NAME})
-set(MODULE_PRIVATE_TARGET ${MODULE_TARGET_PREFIX}_PrivateModule)
-set(MODULE_ALIAS_PREFIX Nexium::${MODULE_NAME})
-set(GRAPHICS_TARGET ${MODULE_TARGET_PREFIX}_Graphics)
-set(GRAPHICS_ALIAS ${MODULE_ALIAS_PREFIX}::Graphics)
-set(INPUT_TARGET ${MODULE_TARGET_PREFIX}_Input)
-set(INPUT_ALIAS ${MODULE_ALIAS_PREFIX}::Input)
+set(MODULE_PRIVATE_TARGET Nexium_${MODULE_NAME}_PrivateModule)
 
 # ============== Per Module Private Info ===============
 
@@ -14,47 +8,39 @@ target_sources(${MODULE_PRIVATE_TARGET} PRIVATE
     PrivateModuleInfo.cpp
     PrivateModuleInfo.h
 )
-target_link_libraries(${MODULE_PRIVATE_TARGET} PRIVATE Nexium::Foundation)
+target_link_libraries(${MODULE_PRIVATE_TARGET} PRIVATE spdlog::spdlog Utils::Core)
 target_compile_definitions(${MODULE_PRIVATE_TARGET} PRIVATE PRIVATE_MODULE_NAME="${MODULE_NAME}")
 
 # ============== Graphics ===============
 
-add_library(${GRAPHICS_TARGET} STATIC)
-add_library(${GRAPHICS_ALIAS} ALIAS ${GRAPHICS_TARGET})
-target_sources(${GRAPHICS_TARGET} PRIVATE
+add_library(Nexium_Platform_Graphics STATIC)
+add_library(Nexium::Platform::Graphics ALIAS Nexium_Platform_Graphics)
+target_sources(Nexium_Platform_Graphics PRIVATE
     Graphics.h
     Graphics.cpp
 )
 
-target_link_libraries(${GRAPHICS_TARGET}
+target_link_libraries(Nexium_Platform_Graphics
     PUBLIC
     glfw
     Core::Glad
-    JustReflectMe::Adapter
-    PRIVATE
-    ${MODULE_PRIVATE_TARGET}
 )
 
 # ================ INPUT =================
-set(SOURCES
+add_library(Nexium_Platform_Input STATIC)
+add_library(Nexium::Platform::Input ALIAS Nexium_Platform_Input)
+target_sources(Nexium_Platform_Input PRIVATE
+    Keyboard.h
     Keyboard.cpp
+    Mouse.h
     Mouse.cpp
+    Window.h
     Window.cpp
 )
 
-set(HEADERS
-    Keyboard.h
-    Mouse.h
-    Window.h
-)
-
-add_library(${INPUT_TARGET} STATIC)
-add_library(${INPUT_ALIAS} ALIAS ${INPUT_TARGET})
-target_sources(${INPUT_TARGET} PRIVATE ${SOURCES} ${HEADERS})
-
-target_link_libraries(${INPUT_TARGET}
+target_link_libraries(Nexium_Platform_Input
     PUBLIC
-    Nexium::Foundation
+    Utils::Core
     Nexium::Platform::Graphics
     JustReflectMe::Adapter
     glm
@@ -65,8 +51,8 @@ target_link_libraries(${INPUT_TARGET}
 # =========================================
 
 nexium_configure_target(${MODULE_PRIVATE_TARGET})
-nexium_configure_target(${GRAPHICS_TARGET})
-nexium_configure_target(${INPUT_TARGET})
+nexium_configure_target(Nexium_Platform_Graphics)
+nexium_configure_target(Nexium_Platform_Input)
 
-add_dependencies(${GRAPHICS_TARGET} CodeGenerator)
-add_dependencies(${INPUT_TARGET} CodeGenerator)
+add_dependencies(Nexium_Platform_Graphics CodeGenerator)
+add_dependencies(Nexium_Platform_Input CodeGenerator)

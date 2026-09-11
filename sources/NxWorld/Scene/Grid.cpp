@@ -43,7 +43,7 @@ namespace Core
             return vao;
         }();
 
-        auto* gridShader = GetShaderManager()->getShaderProgram("grid"_atom);
+        auto* gridShader = GetShaderManager().getShaderProgram("grid"_atom);
         if (Verify(gridShader) && GetWorld()->currentCamera)
         {
             glBindVertexArray(gridVAO);

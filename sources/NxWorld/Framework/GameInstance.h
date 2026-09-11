@@ -103,8 +103,6 @@ namespace Core
         float _timeout = 0;
     };
 
-    [[nodiscard]] ShaderManager* GetShaderManager();
-
     [[nodiscard]] GameEditor* GetEditor();
 
     [[nodiscard]] World* GetWorld();

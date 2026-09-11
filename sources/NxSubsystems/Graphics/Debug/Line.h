@@ -28,12 +28,12 @@
 #include "glm/fwd.hpp"
 #include "glm/vec3.hpp"
 
-namespace Core
+namespace NX
 {
     class ShaderProgram;
 }
 
-namespace Core::Debug
+namespace NX::Debug
 {
 
     class Line
@@ -43,11 +43,11 @@ namespace Core::Debug
 
         static void Draw(const ShaderProgram* shader, const glm::mat4& projViewMatric,
                          const glm::vec3& start, const glm::vec3& end, float thickness = 4.f,
-                         const NormColor4& color = Color4_Yellow);
+                         const Core::NormColor4& color = Core::Color4_Yellow);
 
         static void Draw(const ShaderProgram* shader, const glm::mat4& projViewMatric,
                          glm::vec2 start, glm::vec2 end, float thickness = 4.f,
-                         const NormColor4& color = Color4_Yellow);
+                         const Core::NormColor4& color = Core::Color4_Yellow);
     };
 
-} // namespace Core::Debug
+} // namespace NX::Debug

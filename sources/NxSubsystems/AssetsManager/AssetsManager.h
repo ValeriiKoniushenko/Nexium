@@ -27,7 +27,6 @@
 #include "NxFundamental/Assets/ECSAsset.h"
 #include "NxFundamental/Assets/TextureAtlas.h"
 #include "NxSubsystems/AssetsManager/TextureAsset.h"
-#include "SkyboxAsset.h"
 #include "Utils/Functions.h"
 
 #include <set>
@@ -149,7 +148,7 @@ namespace NX
         [[nodiscard]] NXTexture getTexture(const Core::StringAtom& logicPath);
 
         // =========== Skybox ========
-        [[nodiscard]] NXSkybox getSkybox(const Core::StringAtom& logicPath);
+        [[nodiscard]] NX::AssetRef<NX::BaseAsset> getSkybox(const Core::StringAtom& logicPath);
 
         // ============ ECS ==========
         /// @brief Get an asset by its logical path. Will load the asset if it wasn't loaded
