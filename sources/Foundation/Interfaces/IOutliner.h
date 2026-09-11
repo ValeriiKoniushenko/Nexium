@@ -26,7 +26,7 @@
 
 #include "JustReflectMe/Adapter.h"
 
-namespace Core
+namespace Foundation
 {
 
     CLASS();

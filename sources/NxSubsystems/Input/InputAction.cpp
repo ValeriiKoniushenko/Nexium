@@ -24,8 +24,10 @@
 
 #include "InputAction.h"
 
-#include "Graphics/Window.h"
-#include "Keyboard.h"
+#include "Platform/Keyboard.h"
+#include "Platform/Window.h"
+
+using namespace Platform;
 
 namespace NX
 {
@@ -62,10 +64,7 @@ namespace NX
 
     bool MouseInputAction::isKeyPressed() const
     {
-        if (_key
-            && _key
-
-                   != Mouse::Key::None)
+        if (_key && _key != Mouse::Key::None)
         {
             return Mouse::IsKeyPressed(_key.value());
         }
@@ -101,6 +100,7 @@ namespace NX
     void MouseInputAction::init()
     {
         _subscription = _onActionPrivate->subscribeAndGetID(
-            [this](SpecKeysState states) { onMouseClick->trigger(Mouse::GetPosition(), states); });
+            [this](SpecKeysState states)
+            { onMouseClick->trigger(Platform::Mouse::GetPosition(), states); });
     }
 } // namespace NX

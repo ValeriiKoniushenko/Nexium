@@ -32,6 +32,8 @@ target_link_libraries(Nexium_Subsystem_Graphics
     PUBLIC
     Nexium::Foundation
     Nexium::Platform::Graphics
+    PRIVATE
+    ${MODULE_PRIVATE_TARGET}
 )
 
 if (TARGET assimp::assimp)
@@ -49,4 +51,24 @@ target_sources(Nexium_Subsystem_AssetsManager PRIVATE
 target_link_libraries(Nexium_Subsystem_AssetsManager 
     PUBLIC 
     Nexium::Subsystem::Graphics
+    PRIVATE
+    ${MODULE_PRIVATE_TARGET}
+)
+
+# ================ NxSubsystem::Input =================
+
+add_library(Nexium_Subsystem_Input STATIC)
+add_library(Nexium::Subsystem::Input ALIAS Nexium_Subsystem_Input)
+target_sources(Nexium_Subsystem_Input PRIVATE
+    Input/InputAction.h
+    Input/InputAction.cpp
+    Input/InputManager.h
+    Input/InputManager.cpp
+)
+target_link_libraries(Nexium_Subsystem_Input 
+    PUBLIC 
+    Nexium::Foundation
+    Nexium::Subsystem::Graphics
+    PRIVATE
+    ${MODULE_PRIVATE_TARGET}
 )

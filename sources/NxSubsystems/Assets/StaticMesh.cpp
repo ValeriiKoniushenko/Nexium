@@ -26,8 +26,7 @@
 
 #include "Core/Assert.h"
 #include "Core/Timer.h"
-#include "GameplaySystem/Framework/GameInstance.h"
-#include "Graphics/Image.h"
+#include "RawBackend/Image.h"
 #include "StaticMeshBundle.h"
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
@@ -78,7 +77,7 @@ namespace NX
         aiString texturePath;
         if (material->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath) == AI_SUCCESS)
         {
-            Image image;
+            RawBackend::Image image;
             if (const aiTexture* tex = scene->GetEmbeddedTexture(texturePath.C_Str()))
             {
                 image.loadFromMemory(reinterpret_cast<const uint8_t*>(tex->pcData), tex->mWidth);

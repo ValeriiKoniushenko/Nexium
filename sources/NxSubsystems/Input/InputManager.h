@@ -24,10 +24,10 @@
 
 #pragma once
 
+#include "../PrivateModuleInfo.h"
 #include "Foundation/BaseLog.h"
 #include "Foundation/Interfaces/DataStream.h"
 #include "InputAction.h"
-#include "PrivateModuleInfo.h"
 
 #include <unordered_map>
 
@@ -36,10 +36,11 @@ namespace NX
     template<IsInputAction InputTParam>
     class InputManger : public Foundation::BaseLog, public Foundation::IDataIO
     {
+        INTRUSIVE_PTR_ADAPTERS(InputManger);
+
     public:
-        using Self = InputManger;
         using InputT = InputTParam;
-        using MappingT = std::unordered_map<Core::StringAtom, IntrusivePtr<InputT>>;
+        using MappingT = std::unordered_map<Core::StringAtom, Core::IntrusivePtr<InputT>>;
 
         InputManger() = default;
 
@@ -80,7 +81,7 @@ namespace NX
 
         [[nodiscard]] InputT::CPtr get(InputT::KeyT key) const { return impl_get<true>(this, key); }
 
-        [[nodiscard]] IntrusivePtr<InputT> get(const Core::StringAtom& name)
+        [[nodiscard]] Core::IntrusivePtr<InputT> get(const Core::StringAtom& name)
         {
             auto it = _mapping.find(name);
             if (it == _mapping.cend())
@@ -91,7 +92,7 @@ namespace NX
             return it->second;
         }
 
-        [[nodiscard]] IntrusivePtr<const InputT> get(const Core::StringAtom& name) const
+        [[nodiscard]] Core::IntrusivePtr<const InputT> get(const Core::StringAtom& name) const
         {
             auto it = _mapping.find(name);
             if (it == _mapping.cend())
@@ -144,7 +145,7 @@ namespace NX
 
         [[nodiscard]] spdlog::logger* getLogger() const override
         {
-            return InputDevices::getLogger();
+            return NxSubsystems::getLogger();
         }
 
         [[nodiscard]] std::filesystem::path getCacheDir() const override { return "Inputs"; }
@@ -174,18 +175,12 @@ namespace NX
     class KeyboardInputManger : public InputManger<KeyboardInputAction>
     {
     public:
-        [[nodiscard]] Core::StringAtom getCacheHash() const override
-        {
-            return "KeyboardInputManger"_atom;
-        }
+        [[nodiscard]] Core::StringAtom getCacheHash() const override;
     };
 
     class MouseInputManger : public InputManger<MouseInputAction>
     {
     public:
-        [[nodiscard]] Core::StringAtom getCacheHash() const override
-        {
-            return "MouseInputManger"_atom;
-        }
+        [[nodiscard]] Core::StringAtom getCacheHash() const override;
     };
 } // namespace NX

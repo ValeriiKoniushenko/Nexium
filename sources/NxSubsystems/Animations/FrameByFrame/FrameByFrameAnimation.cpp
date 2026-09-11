@@ -39,7 +39,7 @@ namespace NX::Animation
         R<Frame>::Deserialize(data, v);
     }
 
-    ECS_IMPL(Core::Animation::FrameByFrameAnimation);
+    ECS_IMPL(NX::Animation::FrameByFrameAnimation);
 
     void FrameByFrameAnimation::onTick(float delta)
     {

@@ -26,6 +26,7 @@
 
 #include "Core/Delegate.h"
 #include "Core/IntrusivePtr.h"
+#include "Core/String.h"
 #include "Platform/Keyboard.h"
 #include "Platform/Mouse.h"
 #include "glm/glm.hpp"
@@ -37,11 +38,11 @@ namespace NX
     /// Base input action class for handling generic key inputs.
     ///
     /// Represents a generic input action bound to a key or button. Handles
-    /// repeatable presses, timing, and delegates for when the action occurs.
+    /// repeatable presses, timing, and Core::Delegates for when the action occurs.
     ///
     /// @tparam KeyTParam Type representing a key (e.g., int, enum, etc.).
     template<class KeyTParam>
-    class InputAction : public IntrusiveRefCounter<InputAction<KeyTParam>>
+    class InputAction : public Core::IntrusiveRefCounter<InputAction<KeyTParam>>
     {
     private:
         enum class State
@@ -52,8 +53,8 @@ namespace NX
 
     public:
         using Self = InputAction;
-        using Ptr = IntrusivePtr<Self>;
-        using CPtr = IntrusivePtr<const Self>;
+        using Ptr = Core::IntrusivePtr<Self>;
+        using CPtr = Core::IntrusivePtr<const Self>;
         template<bool isConst>
         using AdaptivePtr = std::conditional_t<isConst, CPtr, Ptr>;
         using TimeT = std::chrono::milliseconds;
@@ -110,7 +111,7 @@ namespace NX
 
         /// Updates the input action state.
         ///
-        /// Checks if the bound key is pressed and triggers delegates if conditions
+        /// Checks if the bound key is pressed and triggers Core::Delegates if conditions
         /// (repeatable, frequency, etc.) are met.
         virtual void update()
         {
@@ -149,9 +150,10 @@ namespace NX
 
         void setIsRepeatable(bool isRepeatable) { _isRepeatable = isRepeatable; }
 
-        /// Delegate triggered while pressing the assigned key.
+        /// Core::Delegate triggered while pressing the assigned key.
         /// @param SpecKeysState Current states of special modifier keys.
-        Delegate<void(SpecKeysState)>::Ptr onPress = Delegate<void(SpecKeysState)>::Create();
+        Core::Delegate<void(SpecKeysState)>::Ptr onPress
+            = Core::Delegate<void(SpecKeysState)>::Create();
 
     protected:
         /// Checks if the bound key is currently pressed.
@@ -160,8 +162,8 @@ namespace NX
 
         /// will be called while pressing on the necessary button.
         /// @param SpecKeysState states of special keys
-        Delegate<void(SpecKeysState)>::Ptr _onActionPrivate
-            = Delegate<void(SpecKeysState)>::Create();
+        Core::Delegate<void(SpecKeysState)>::Ptr _onActionPrivate
+            = Core::Delegate<void(SpecKeysState)>::Create();
 
     protected:
         Core::StringAtom _name;
@@ -175,13 +177,13 @@ namespace NX
     /// Handles input actions specifically from the keyboard.
     /// Also, can be called as KeyboardIA.
     /// Better to create it using KeyboardInputManger. I.e.:
-    class KeyboardInputAction : public InputAction<Keyboard::Key>
+    class KeyboardInputAction : public InputAction<Platform::Keyboard::Key>
     {
+        INTRUSIVE_PTR_ADAPTERS(KeyboardInputAction);
+
     public:
         using Parent = InputAction;
         using Self = KeyboardInputAction;
-        using Ptr = IntrusivePtr<Self>;
-        using CPtr = IntrusivePtr<const Self>;
         using KeyT = KeyT;
 
         static Ptr Create() { return { new Self }; }
@@ -197,29 +199,30 @@ namespace NX
     /// Handles input actions specifically from the mouse.
     /// Also, can be called as MousedIA
     /// Better to create it using MouseInputManger. I.e.:
-    class MouseInputAction : public InputAction<Mouse::Key>
+    class MouseInputAction : public InputAction<Platform::Mouse::Key>
     {
     public:
         using Parent = InputAction;
         using Self = MouseInputAction;
-        using Ptr = IntrusivePtr<Self>;
-        using CPtr = IntrusivePtr<const Self>;
+        using Ptr = Core::IntrusivePtr<Self>;
+        using CPtr = Core::IntrusivePtr<const Self>;
         using KeyT = KeyT;
 
         static Ptr Create() { return { new Self }; }
 
         MouseInputAction();
 
-        explicit MouseInputAction(const Core::StringAtom& name, KeyT key = Mouse::Key::None);
+        explicit MouseInputAction(const Core::StringAtom& name,
+                                  KeyT key = Platform::Mouse::Key::None);
 
         explicit MouseInputAction(const Core::StringAtom& name);
 
-        Delegate<void(glm::vec2, SpecKeysState)>::Ptr onDrag
-            = Delegate<void(glm::vec2, SpecKeysState)>::Create();
-        Delegate<void(glm::vec2, SpecKeysState)>::Ptr onMove
-            = Delegate<void(glm::vec2, SpecKeysState)>::Create();
-        Delegate<void(glm::vec2, SpecKeysState)>::Ptr onMouseClick
-            = Delegate<void(glm::vec2, SpecKeysState)>::Create();
+        Core::Delegate<void(glm::vec2, SpecKeysState)>::Ptr onDrag
+            = Core::Delegate<void(glm::vec2, SpecKeysState)>::Create();
+        Core::Delegate<void(glm::vec2, SpecKeysState)>::Ptr onMove
+            = Core::Delegate<void(glm::vec2, SpecKeysState)>::Create();
+        Core::Delegate<void(glm::vec2, SpecKeysState)>::Ptr onMouseClick
+            = Core::Delegate<void(glm::vec2, SpecKeysState)>::Create();
 
         void update() override;
 
@@ -229,8 +232,8 @@ namespace NX
     private:
         void init();
 
-        DelegateSubscriber _subscription;
-        std::optional<glm::vec2> _lastMousePosition = {};
+        Core::DelegateSubscriber _subscription;
+        std::optional<glm::vec2> _lastMousePosition = std::nullopt;
     };
 
     /// Alias for KeyboardInputAction.

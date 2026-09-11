@@ -24,10 +24,10 @@
 
 #pragma once
 
-#include "ECS/Transformable.h"
-#include "Graphics/GraphicsComponents.h"
-#include "Graphics/IOutliner.h"
+#include "Foundation/Interfaces/IOutliner.h"
 #include "NxFundamental/ECS/BaseComponent.h"
+#include "NxFundamental/Transformable.h"
+#include "NxSubsystems/Graphics/GraphicsComponents.h"
 #include "assimp/matrix4x4.h"
 #include "assimp/mesh.h"
 #include "assimp/scene.h"
@@ -44,19 +44,19 @@ namespace NX
         public InterleavedGraphicsData,
         public Transformable,
         public BaseComponent,
-        public IOutliner
+        public Foundation::IOutliner
     {
-        ECS_DECL(StaticMesh, NX::BaseComponent, Core::Transformable, Core::InterleavedGraphicsData);
+        ECS_DECL(StaticMesh, NX::BaseComponent, NX::Transformable, NX::InterleavedGraphicsData);
 
     public:
-        constexpr static Color4 outlineColor = Color4{ 252, 186, 3, 255 };
+        constexpr static Core::Color4 outlineColor = Core::Color4{ 252, 186, 3, 255 };
         constexpr static float outlineSize = 40.f;
 
     public:
         void importFrom(const aiMesh* rawMesh, const aiScene* scene,
                         const std::filesystem::path& modelPath = "", float scale = 1.f);
 
-        [[nodiscard]] FSize3 getSize() const noexcept { return _size; }
+        [[nodiscard]] Core::FSize3 getSize() const noexcept { return _size; }
         [[nodiscard]] glm::vec3 getCenter() const noexcept { return _center; }
 
         [[nodiscard]] ShaderProgram* getOutlineShader() noexcept { return _outlineShader; }
@@ -78,7 +78,7 @@ namespace NX
         void generate() override;
         void clear() override;
 
-        [[nodiscard]] Color3 toUniqueColor() const noexcept
+        [[nodiscard]] Core::Color3 toUniqueColor() const noexcept
         {
             const auto id = const_cast<StaticMesh*>(this)->getVboId()
                             ^ reinterpret_cast<std::uintptr_t>(this);
@@ -91,7 +91,7 @@ namespace NX
             return colorId;
         }
 
-        [[nodiscard]] bool isMatchUniqueColor(Color3 color) const noexcept
+        [[nodiscard]] bool isMatchUniqueColor(Core::Color3 color) const noexcept
         {
             return toUniqueColor() == color;
         }
@@ -111,7 +111,7 @@ namespace NX
 
     protected:
         FIELD();
-        FSize3 _size;
+        Core::FSize3 _size;
 
         FIELD();
         glm::vec3 _center = glm::vec3(0);

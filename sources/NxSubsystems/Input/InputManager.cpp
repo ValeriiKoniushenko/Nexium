@@ -27,6 +27,16 @@
 namespace NX
 {
 
+    Core::StringAtom KeyboardInputManger::getCacheHash() const
+    {
+        return "KeyboardInputManger"_atom;
+    }
+
+    Core::StringAtom MouseInputManger::getCacheHash() const
+    {
+        return "MouseInputManger"_atom;
+    }
+
     /*void KeyboardInputManger::ioFieldsUpdate(DataStream& out)
     {
         Assert(false, "Not implemented");
