@@ -30,8 +30,8 @@
 #include "Editor/GuiComponents/List.h"
 #include "Editor/GuiComponents/Separator.h"
 #include "Editor/GuiComponents/Spacer.h"
+#include "Foundation/BaseLog.h"
 #include "GameplaySystem/Framework/GameInstance.h"
-#include "Misc/BaseLog.h"
 
 namespace Core
 {

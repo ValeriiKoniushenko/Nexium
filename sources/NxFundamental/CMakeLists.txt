@@ -63,6 +63,8 @@ target_sources(Nexium_Fundamental_Assets PRIVATE
     Assets/BaseAsset.h
     Assets/ECSAsset.cpp
     Assets/ECSAsset.h
+    Assets/Factory.h
+    Assets/Factory.cpp
 )
 target_link_libraries(Nexium_Fundamental_Assets
     PUBLIC

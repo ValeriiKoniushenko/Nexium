@@ -24,11 +24,11 @@
 
 #pragma once
 
-#include "Misc/BaseLog.h"
+#include "Foundation/BaseLog.h"
 
 namespace Core
 {
-    class WorldObjectManager : public BaseLog
+    class WorldObjectManager : public Foundation::BaseLog
     {
     public:
         [[nodiscard]] spdlog::logger* getLogger() const override;

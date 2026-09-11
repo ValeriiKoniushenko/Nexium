@@ -24,11 +24,11 @@
 
 #pragma once
 
-#include "Misc/BaseLog.h"
+#include "Foundation/BaseLog.h"
 
 namespace Core
 {
-    class ActorManager : public BaseLog
+    class ActorManager : public Foundation::BaseLog
     {
     public:
         ActorManager() = default;

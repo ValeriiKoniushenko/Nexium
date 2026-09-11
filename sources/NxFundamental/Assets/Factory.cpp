@@ -26,16 +26,16 @@
 
 #include "Factory.h"
 
-#include "StaticMeshBundle.h"
+// #include "StaticMeshBundle.h"
 
-namespace Core::AssetImpl
+namespace NX
 {
 
     bool Factory::_BuiltinAssetTypesRegistration = []()
     {
         auto& f = Factory::Instance();
 
-        f.registerAssetType<AssetImpl::StaticMeshBundle>();
+        // f.registerAssetType<AssetImpl::StaticMeshBundle>();
 
         return true;
     }();
@@ -44,4 +44,4 @@ namespace Core::AssetImpl
     {
         return Factory::Instance();
     }
-} // namespace Core::AssetImpl
+} // namespace NX

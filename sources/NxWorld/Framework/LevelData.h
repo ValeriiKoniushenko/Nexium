@@ -27,12 +27,12 @@
 #include "ActorManager.h"
 #include "CameraManager.h"
 #include "ControllerManager.h"
-#include "Misc/BaseLog.h"
+#include "Foundation/BaseLog.h"
 #include "WorldObjectManager.h"
 
 namespace Core
 {
-    class LevelData : public BaseLog
+    class LevelData : public Foundation::BaseLog
     {
     public:
         [[nodiscard]] spdlog::logger* getLogger() const override;

@@ -22,9 +22,8 @@
  * SOFTWARE.
  */
 
-#include "ModuleInfo.h"
-
-#include "Misc/BaseLog.h"
+#include "Foundation/BaseLog.h"
+#include "PrivateModuleInfo.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 
 namespace Framework

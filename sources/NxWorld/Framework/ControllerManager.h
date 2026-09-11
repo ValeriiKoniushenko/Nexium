@@ -24,11 +24,11 @@
 
 #pragma once
 
-#include "Misc/BaseLog.h"
+#include "Foundation/BaseLog.h"
 
 namespace Core
 {
-    class ControllerManager : public BaseLog
+    class ControllerManager : public Foundation::BaseLog
     {
     public:
         ControllerManager() = default;

@@ -34,7 +34,7 @@
 #include "ImGui/imgui.h"
 #include "Misc/Configs.h"
 #include "Misc/FPSCounter.h"
-#include "ModuleInfo.h"
+#include "PrivateModuleInfo.h"
 #include "ResourceManagement/ResourceManager.h"
 #include "Scene/Rectangle.h"
 #include "spdlog/spdlog.h"

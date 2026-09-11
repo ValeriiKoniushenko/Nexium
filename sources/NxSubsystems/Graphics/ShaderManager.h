@@ -30,7 +30,7 @@
 
 namespace Core
 {
-    class ShaderManager final : public BaseLog
+    class ShaderManager final : public Foundation::BaseLog
     {
     public:
         ShaderManager() = default;

@@ -24,7 +24,7 @@
 
 #include "ShaderProgram.h"
 
-#include "ModuleInfo.h"
+#include "../PrivateModuleInfo.h"
 #include "ShaderProgramMeta.h"
 
 #include <array>
@@ -133,7 +133,7 @@ namespace Core
 
     spdlog::logger* ShaderProgram::getLogger() const
     {
-        return Graphics::getLogger();
+        return NxSubsystems::getLogger();
     }
 
     void ShaderProgram::setDataFromMeta(const ShaderProgramMeta& meta)

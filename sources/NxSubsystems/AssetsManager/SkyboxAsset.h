@@ -25,7 +25,7 @@
 #pragma once
 
 #include "NxFundamental/Assets/BaseAsset.h"
-#include "RawBackend/GraphicsComponents.h"
+#include "NxSubsystems/Graphics/GraphicsComponents.h"
 #include "ResourceManagement/JsonAdapter.h"
 
 namespace NX

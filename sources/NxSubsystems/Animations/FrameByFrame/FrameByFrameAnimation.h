@@ -25,7 +25,7 @@
 
 #include "Animations/BaseAnimation.h"
 #include "Core/Position.h"
-#include "Misc/BaseLog.h"
+#include "Foundation/BaseLog.h"
 
 #include <algorithm>
 #include <optional>

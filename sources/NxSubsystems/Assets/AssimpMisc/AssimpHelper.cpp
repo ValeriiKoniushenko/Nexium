@@ -24,7 +24,7 @@
 
 #include "AssimpHelper.h"
 
-#include "Misc/BaseLog.h"
+#include "Foundation/BaseLog.h"
 
 namespace Assimp
 {

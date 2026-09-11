@@ -24,7 +24,7 @@
 
 #include "GameState.h"
 
-#include "ModuleInfo.h"
+#include "PrivateModuleInfo.h"
 
 namespace Core
 {

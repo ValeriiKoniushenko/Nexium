@@ -20,10 +20,34 @@ target_compile_definitions(${MODULE_PRIVATE_TARGET} PRIVATE PRIVATE_MODULE_NAME=
 # target_sources(Nexium_Subsystem_AssetsManager PRIVATE
 #     AssetsManager/AssetsManager.cpp
 #     AssetsManager/AssetsManager.h
-# 
 # )
 # target_link_libraries(Nexium_Subsystem_AssetsManager 
 #     PUBLIC 
 #     Nexium::Foundation
 #     Nexium::Fundamental::Assets
 # )
+
+# ================ NxSubsystem::Graphics =================
+
+add_library(Nexium_Subsystem_Graphics STATIC)
+add_library(Nexium::Subsystem::Graphics ALIAS Nexium_Subsystem_Graphics)
+target_sources(Nexium_Subsystem_Graphics PRIVATE
+    Graphics/GraphicsComponents.h
+    Graphics/GraphicsComponents.cpp
+    Graphics/ShaderManager.h
+    Graphics/ShaderManager.cpp
+    Graphics/ShaderProgram.h
+    Graphics/ShaderProgram.cpp
+    Graphics/ShaderProgramMeta.h
+    Graphics/ShaderProgramMeta.cpp
+)
+
+target_link_libraries(Nexium_Subsystem_Graphics
+    PUBLIC
+    Nexium::Foundation
+    Nexium::Platform::Graphics
+)
+
+if (TARGET assimp::assimp)
+    target_link_libraries(Nexium_Subsystem_Graphics PUBLIC assimp::assimp)
+endif ()

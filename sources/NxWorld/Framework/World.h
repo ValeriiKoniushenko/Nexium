@@ -27,9 +27,9 @@
 #include "../../ResourceManagement/DataStream.h"
 #include "Core/Color.h"
 #include "Editor/ObjectPicker.h"
+#include "Foundation/BaseLog.h"
 #include "GameState.h"
 #include "LevelData.h"
-#include "Misc/BaseLog.h"
 #include "PlayerState.h"
 
 namespace Core
@@ -64,7 +64,7 @@ namespace Core
     };
 
     CLASS();
-    class World : public BaseLog, public IDataIO
+    class World : public Foundation::BaseLog, public IDataIO
     {
         R_FRIEND(World);
 

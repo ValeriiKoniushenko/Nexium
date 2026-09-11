@@ -37,7 +37,7 @@ namespace Core
     class Actor;
 
     CLASS();
-    class Scene : public IDataIO, public BaseLog
+    class Scene : public IDataIO, public Foundation::BaseLog
     {
         R_FRIEND(Scene);
 

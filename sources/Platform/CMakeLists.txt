@@ -19,17 +19,12 @@ target_compile_definitions(${MODULE_PRIVATE_TARGET} PRIVATE PRIVATE_MODULE_NAME=
 
 # ============== Graphics ===============
 
-set(SOURCES
-    Graphics.cpp
-)
-
-set(HEADERS
-    Graphics.h
-)
-
 add_library(${GRAPHICS_TARGET} STATIC)
 add_library(${GRAPHICS_ALIAS} ALIAS ${GRAPHICS_TARGET})
-target_sources(${GRAPHICS_TARGET} PRIVATE ${SOURCES} ${HEADERS})
+target_sources(${GRAPHICS_TARGET} PRIVATE
+    Graphics.h
+    Graphics.cpp
+)
 
 target_link_libraries(${GRAPHICS_TARGET}
     PUBLIC

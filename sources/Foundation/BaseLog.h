@@ -185,7 +185,7 @@ namespace Foundation
         [[nodiscard]] Core::StringAtom getCompleteText(const char* str) const;
     };
 
-    class GlobalLog : public BaseLog
+    class GlobalLog : public Foundation::BaseLog
     {
     public:
         [[nodiscard]] spdlog::logger* getLogger() const final;

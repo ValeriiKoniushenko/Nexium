@@ -26,7 +26,7 @@
 
 #include "Foundation/Interfaces/DataStream.h"
 #include "NxFundamental/ResourceManagement/JsonAdapter.h"
-#include "ShaderProgram.h"
+#include "NxSubsystems/Graphics/ShaderManager.h"
 #include "assimp/mesh.h"
 
 namespace Core

@@ -27,7 +27,7 @@
 #include "Core/String.h"
 #include "ECS/BaseComponent.h"
 #include "JustReflectMe/Adapter.h"
-#include "ModuleInfo.h"
+#include "PrivateModuleInfo.h"
 
 namespace Core::Animation
 {

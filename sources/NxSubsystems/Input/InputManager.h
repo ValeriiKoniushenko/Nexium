@@ -25,16 +25,16 @@
 #pragma once
 
 #include "../ResourceManagement/DataStream.h"
+#include "Foundation/BaseLog.h"
 #include "InputAction.h"
-#include "Misc/BaseLog.h"
-#include "ModuleInfo.h"
+#include "PrivateModuleInfo.h"
 
 #include <unordered_map>
 
 namespace Core
 {
     template<IsInputAction InputTParam>
-    class InputManger : public BaseLog, public IDataIO
+    class InputManger : public Foundation::BaseLog, public IDataIO
     {
     public:
         using Self = InputManger;

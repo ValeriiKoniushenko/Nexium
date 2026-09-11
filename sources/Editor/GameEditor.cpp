@@ -40,7 +40,7 @@
 #include "ImGui/backends/imgui_impl_opengl3.h"
 #include "Misc/Configs.h"
 #include "Misc/IconsFontAwesome.h"
-#include "ModuleInfo.h"
+#include "PrivateModuleInfo.h"
 #include "Windows/AssetsExplorer/AssetsManagerWindow.h"
 #include "Windows/AssetsExplorer/RenamePopUpWindow.h"
 #include "Windows/Editors/NxTextureEditor.h"

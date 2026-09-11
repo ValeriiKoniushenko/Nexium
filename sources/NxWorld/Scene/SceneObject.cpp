@@ -24,7 +24,7 @@
 
 #include "SceneObject.h"
 
-#include "Scene/ModuleInfo.h"
+#include "Scene/PrivateModuleInfo.h"
 
 namespace Core
 {

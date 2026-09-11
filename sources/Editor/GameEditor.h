@@ -24,8 +24,8 @@
 
 #pragma once
 
+#include "Foundation/BaseLog.h"
 #include "InputDevices/InputManager.h"
-#include "Misc/BaseLog.h"
 #include "ObjectPicker.h"
 #include "ToastNotifications.h"
 #include "Windows/BaseWindow.h"
@@ -36,7 +36,7 @@ namespace Core
     ///
     /// Provides initialization, ticking, and management of editor windows.
     /// Also handles font configuration and ImGui setup.
-    class GameEditor : public BaseLog
+    class GameEditor : public Foundation::BaseLog
     {
     public:
         static const int defaultEditorImGuiFlags;

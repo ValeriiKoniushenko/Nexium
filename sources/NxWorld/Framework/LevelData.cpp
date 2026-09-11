@@ -24,7 +24,7 @@
 
 #include "LevelData.h"
 
-#include "ModuleInfo.h"
+#include "PrivateModuleInfo.h"
 
 namespace Core
 {

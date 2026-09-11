@@ -24,7 +24,7 @@
 
 #include "ShaderManager.h"
 
-#include "ModuleInfo.h"
+#include "../PrivateModuleInfo.h"
 
 namespace Core
 {
@@ -144,7 +144,7 @@ namespace Core
 
     spdlog::logger* ShaderManager::getLogger() const
     {
-        return Graphics::getLogger();
+        return NxSubsystems::getLogger();
     }
 
     std::filesystem::path ShaderManager::getPathToShaderBasedOn(

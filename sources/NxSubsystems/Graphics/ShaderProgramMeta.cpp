@@ -24,7 +24,7 @@
 
 #include "ShaderProgramMeta.h"
 
-#include "ModuleInfo.h"
+#include "../PrivateModuleInfo.h"
 #include "Utils/Functions.h"
 #include "spdlog/async_logger.h"
 
@@ -120,7 +120,7 @@ namespace Core
 
     spdlog::logger* ShaderProgramMeta::getLogger() const
     {
-        return Graphics::getLogger();
+        return NxSubsystems::getLogger();
     }
 
     void ShaderProgramMeta::setShaderName(const std::string& name)

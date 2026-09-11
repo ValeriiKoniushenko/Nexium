@@ -24,11 +24,11 @@
 
 #pragma once
 
-#include "Misc/BaseLog.h"
+#include "Foundation/BaseLog.h"
 
 namespace Core
 {
-    class GameState : public BaseLog
+    class GameState : public Foundation::BaseLog
     {
     public:
         GameState() = default;

@@ -24,7 +24,7 @@
 
 #include "World.h"
 
-#include "ModuleInfo.h"
+#include "PrivateModuleInfo.h"
 
 namespace Core
 {

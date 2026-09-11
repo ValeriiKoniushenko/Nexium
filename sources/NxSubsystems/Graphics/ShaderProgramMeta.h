@@ -25,7 +25,8 @@
 #pragma once
 
 #include "Core/String.h"
-#include "Misc/BaseLog.h"
+#include "Foundation/BaseLog.h"
+#include "JustReflectMe/Adapter.h"
 #include "ShaderProgram.h"
 
 #include <unordered_set>
@@ -41,7 +42,7 @@ namespace Core
         Geometry = GL_GEOMETRY_SHADER
     };
 
-    class ShaderProgramMeta final : public BaseLog
+    class ShaderProgramMeta final : public Foundation::BaseLog
     {
     public:
         struct Hasher

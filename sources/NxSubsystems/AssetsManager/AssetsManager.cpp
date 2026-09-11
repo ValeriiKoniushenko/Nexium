@@ -30,7 +30,7 @@
 #include "Editor/Windows/NxECSBasedEditor.h"
 #include "GameplaySystem/Framework/GameInstance.h"
 #include "Misc/Configs.h"
-#include "ModuleInfo.h"
+#include "PrivateModuleInfo.h"
 
 #include <algorithm>
 #include <array>

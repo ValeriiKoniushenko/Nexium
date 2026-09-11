@@ -24,7 +24,7 @@
 
 #include "RenderTargetToTexture.h"
 
-#include "Misc/BaseLog.h"
+#include "Foundation/BaseLog.h"
 
 namespace Core
 {

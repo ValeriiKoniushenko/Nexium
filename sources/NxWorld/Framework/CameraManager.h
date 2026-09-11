@@ -24,11 +24,11 @@
 
 #pragma once
 
-#include "Misc/BaseLog.h"
+#include "Foundation/BaseLog.h"
 
 namespace Core
 {
-    class CameraManager : public BaseLog
+    class CameraManager : public Foundation::BaseLog
     {
     public:
         CameraManager() = default;

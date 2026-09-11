@@ -24,11 +24,11 @@
 
 #pragma once
 
-#include "Misc/BaseLog.h"
+#include "Foundation/BaseLog.h"
 
 namespace Core
 {
-    class GameInstanceSubsystem : public BaseLog
+    class GameInstanceSubsystem : public Foundation::BaseLog
     {
     public:
         GameInstanceSubsystem() = default;

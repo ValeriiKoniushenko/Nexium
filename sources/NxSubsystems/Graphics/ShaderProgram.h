@@ -25,10 +25,11 @@
 #pragma once
 
 #include "Core/Color.h"
-#include "Misc/BaseLog.h"
-#include "OpenGL.h"
+#include "Foundation/BaseLog.h"
+#include "Platform/Graphics.h"
 #include "glm/fwd.hpp"
 #include "glm/gtc/type_ptr.hpp"
+
 namespace Core
 {
     class ShaderProgramMeta;
@@ -72,7 +73,7 @@ namespace Core
         [[nodiscard]] bool operator==(const ShaderUBO& other) const { return name == other.name; }
     };
 
-    class ShaderProgram : public BaseLog
+    class ShaderProgram : public Foundation::BaseLog
     {
     public:
         enum Event
