@@ -23,7 +23,7 @@
  */
 #pragma once
 
-#include "Animations/BaseAnimation.h"
+#include "../BaseAnimation.h"
 #include "Core/Position.h"
 #include "Foundation/BaseLog.h"
 
@@ -89,7 +89,7 @@ namespace NX::Animation
 
         [[nodiscard]] spdlog::logger* getLogger() const override
         {
-            return Animations::getLogger();
+            return NxSubsystems::getLogger();
         };
 
     protected:

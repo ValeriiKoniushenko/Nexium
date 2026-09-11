@@ -77,4 +77,14 @@ namespace NX::Animation
         reset();
         start();
     }
+
+    spdlog::logger* BaseAnimation::getLogger() const
+    {
+        return NxSubsystems::getLogger();
+    };
+
+    bool BaseAnimation::isPlaying() const noexcept
+    {
+        return !_isStopped && !_isPaused && !_isFinished;
+    }
 } // namespace NX::Animation

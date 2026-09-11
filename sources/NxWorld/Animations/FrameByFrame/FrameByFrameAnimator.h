@@ -24,8 +24,8 @@
 
 #pragma once
 
-#include "Animations/FrameByFrame/FrameByFrameAnimation.h"
 #include "Core/String.h"
+#include "FrameByFrameAnimation.h"
 #include "JustReflectMe/Adapter.h"
 #include "NxFundamental/ECS/BaseComponent.h"
 

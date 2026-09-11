@@ -128,7 +128,7 @@ namespace NX::Animation
 
         const auto name = animation.getComponentName();
         auto storedAnimation = FrameByFrameAnimation::Create();
-        *storedAnimation = std::move(animation);
+        *storedAnimation = animation;
         return _animations.insert_or_assign(name, std::move(storedAnimation)).second;
     }
 
