@@ -29,7 +29,6 @@
 #include "Foundation/BaseLog.h"
 #include "RawBackend/Graphics/Texture.h"
 #include "RawBackend/Image.h"
-#include "Rectpack2D/empty_spaces.h"
 
 #include <filesystem>
 #include <unordered_map>
@@ -42,7 +41,6 @@ namespace NX
     public:
         constexpr static const int max_side = 4096;
         constexpr static const int discard_step = -4;
-        constexpr static const auto runtime_flipping_mode = rectpack2D::flipping_option::ENABLED;
 
     public:
         TextureAtlas() = default;

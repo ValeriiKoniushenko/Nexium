@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "../../Misc/Configs.h"
+#include "../../Foundation/Configs.h"
 #include "HorizontalLayout.h"
 #include "Input.h"
 #include "Label.h"

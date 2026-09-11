@@ -25,8 +25,8 @@
 #pragma once
 
 #include "NxFundamental/Assets/BaseAsset.h"
+#include "NxFundamental/ResourceManagement/JsonAdapter.h"
 #include "NxSubsystems/Graphics/GraphicsComponents.h"
-#include "ResourceManagement/JsonAdapter.h"
 
 namespace NX
 {
@@ -71,7 +71,7 @@ namespace NX
         void onUnloadRequest() override;
 
     protected:
-        InterleavedGraphicsData _gcd;
+        NX::InterleavedGraphicsData _gcd;
         // properties
 
         FIELD();

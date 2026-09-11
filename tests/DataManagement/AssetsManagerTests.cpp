@@ -1,7 +1,7 @@
 #include "../ECSTests/DummyComponent.h"
 #include "AssetsManager/AssetImpls/Factory.h"
 #include "AssetsManager/AssetsManager.h"
-#include "Misc/Configs.h"
+#include "Foundation/Configs.h"
 
 #include "gtest/gtest.h"
 #include <chrono>

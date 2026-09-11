@@ -24,8 +24,8 @@
 
 #include "BaseWindow.h"
 
+#include "Foundation/Configs.h"
 #include "ImGui/imgui.h"
-#include "Misc/Configs.h"
 
 namespace Core
 {

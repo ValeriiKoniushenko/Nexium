@@ -32,7 +32,7 @@
 #include <utility>
 #include <vector>
 
-namespace Core::Animation
+namespace NX::Animation
 {
 
     CLASS();
@@ -56,7 +56,7 @@ namespace Core::Animation
     CLASS();
     class FrameByFrameAnimation : public BaseAnimation
     {
-        ECS_DECL(FrameByFrameAnimation, Core::Animation::BaseAnimation);
+        ECS_DECL(FrameByFrameAnimation, NX::Animation::BaseAnimation);
 
     public:
         void setFPS(float fps);
@@ -65,10 +65,10 @@ namespace Core::Animation
         void reset() override;
         void finish() override;
 
-        void setAtlasName(const StringAtom& atlasName) { _atlasName = atlasName; }
-        void setTextureName(const StringAtom& textureName) { _textureName = textureName; }
+        void setAtlasName(const Core::StringAtom& atlasName) { _atlasName = atlasName; }
+        void setTextureName(const Core::StringAtom& textureName) { _textureName = textureName; }
 
-        bool addFrame(StringAtom textureName);
+        bool addFrame(Core::StringAtom textureName);
         bool addFrame(GlobalPosition2F uvOffset, GlobalPosition2F uvSize);
         bool addFramesFromSpriteSheet(std::size_t columns, std::size_t rows,
                                       std::size_t frameCount = 0, std::size_t startRow = 0);
@@ -81,8 +81,11 @@ namespace Core::Animation
         [[nodiscard]] bool hasFrames() const noexcept { return !_frames.empty(); }
         [[nodiscard]] std::size_t getFramesCount() const noexcept { return _frames.size(); }
         [[nodiscard]] const std::vector<Frame>& getFrames() const noexcept { return _frames; }
-        [[nodiscard]] const StringAtom& getAtlasName() const noexcept { return _atlasName; }
-        [[nodiscard]] const StringAtom& getTextureName() const noexcept { return _textureName; }
+        [[nodiscard]] const Core::StringAtom& getAtlasName() const noexcept { return _atlasName; }
+        [[nodiscard]] const Core::StringAtom& getTextureName() const noexcept
+        {
+            return _textureName;
+        }
 
         [[nodiscard]] spdlog::logger* getLogger() const override
         {
@@ -98,7 +101,7 @@ namespace Core::Animation
         FIELD();
         Core::StringAtom _textureName;
         FIELD();
-        std::vector<Core::Animation::Frame> _frames;
+        std::vector<NX::Animation::Frame> _frames;
 
         FIELD();
         std::size_t _currentFrame = 0;
@@ -107,6 +110,6 @@ namespace Core::Animation
         FIELD();
         float _fps = 10.f;
     };
-} // namespace Core::Animation
+} // namespace NX::Animation
 
 #include "FrameByFrameAnimation.generated.h" // added by the code generator. Better don't move it.

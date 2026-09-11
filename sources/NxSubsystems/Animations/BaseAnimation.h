@@ -25,16 +25,16 @@
 #pragma once
 
 #include "Core/String.h"
-#include "ECS/BaseComponent.h"
 #include "JustReflectMe/Adapter.h"
+#include "NxFundamental/ECS/BaseComponent.h"
 #include "PrivateModuleInfo.h"
 
-namespace Core::Animation
+namespace NX::Animation
 {
     CLASS();
     class BaseAnimation : public BaseComponent
     {
-        ECS_DECL(BaseAnimation, Core::BaseComponent);
+        ECS_DECL(BaseAnimation, NX::BaseComponent);
 
     public:
         BaseAnimation(const BaseAnimation&) = default;
@@ -120,6 +120,6 @@ namespace Core::Animation
         FIELD();
         bool _isFinished = false;
     };
-} // namespace Core::Animation
+} // namespace NX::Animation
 
 #include "BaseAnimation.generated.h" // added by the code generator. Better don't move it.

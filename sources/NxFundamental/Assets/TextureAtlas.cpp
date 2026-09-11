@@ -139,8 +139,9 @@ namespace NX
         };
 
         const auto result_size = find_best_packing_dont_sort<spaces_type>(
-            rectangles, make_finder_input(max_side, discard_step, report_successful,
-                                          report_unsuccessful, runtime_flipping_mode));
+            rectangles,
+            make_finder_input(max_side, discard_step, report_successful, report_unsuccessful,
+                              rectpack2D::flipping_option::ENABLED));
 
         if (discarded)
         {

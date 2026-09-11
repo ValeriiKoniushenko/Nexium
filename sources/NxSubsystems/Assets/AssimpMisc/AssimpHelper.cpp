@@ -65,7 +65,7 @@ namespace Assimp
         if (val == aiProcess_ValidateDataStructure) return "ValidateDataStructure"_atom;
         // clang-format on
 
-        Core::gGlobalLog.warnLog("Passed invalid aiPostProcessStep value");
+        gGlobalLog.warnLog("Passed invalid aiPostProcessStep value");
         return ""_atom;
     }
 
@@ -106,7 +106,7 @@ namespace Assimp
         if (val == "ValidateDataStructure"_atom) return aiProcess_ValidateDataStructure;
         // clang-format on
 
-        Core::gGlobalLog.warnLog("Passed invalid aiPostProcessStep string-value");
+        gGlobalLog.warnLog("Passed invalid aiPostProcessStep string-value");
         return std::nullopt;
     }
 

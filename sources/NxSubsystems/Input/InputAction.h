@@ -32,7 +32,7 @@
 
 #include <chrono>
 
-namespace Core
+namespace NX
 {
     /// Base input action class for handling generic key inputs.
     ///
@@ -248,4 +248,4 @@ namespace Core
         typename T::Parent;
         requires std::derived_from<std::remove_reference_t<T>, InputAction<typename T::KeyT>>;
     };
-} // namespace Core
+} // namespace NX

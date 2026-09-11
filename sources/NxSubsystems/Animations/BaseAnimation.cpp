@@ -24,7 +24,7 @@
 
 #include "BaseAnimation.h"
 
-namespace Core::Animation
+namespace NX::Animation
 {
     ECS_IMPL(BaseAnimation);
 
@@ -77,4 +77,4 @@ namespace Core::Animation
         reset();
         start();
     }
-} // namespace Core::Animation
+} // namespace NX::Animation

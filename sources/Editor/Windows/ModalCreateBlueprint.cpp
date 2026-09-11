@@ -32,8 +32,8 @@
 #include "Editor/GuiComponents/LabelRow.h"
 #include "Editor/GuiComponents/List.h"
 #include "Editor/GuiComponents/Separator.h"
+#include "Foundation/Configs.h"
 #include "GameplaySystem/Framework/GameInstance.h"
-#include "Misc/Configs.h"
 
 namespace Core
 {

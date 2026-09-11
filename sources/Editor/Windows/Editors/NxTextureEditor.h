@@ -24,9 +24,9 @@
 
 #pragma once
 
-#include "AssetsManager/TextureAsset.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "Editor/Windows/Editors/NxEditorBaseEditor.h"
+#include "NxSubsystems/AssetsManager/TextureAsset.h"
 
 namespace Core
 {

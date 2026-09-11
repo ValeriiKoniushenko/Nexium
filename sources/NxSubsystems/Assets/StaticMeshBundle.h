@@ -30,7 +30,7 @@
 struct aiScene;
 struct aiNode;
 
-namespace Core
+namespace NX
 {
 
     CLASS();
@@ -129,6 +129,6 @@ namespace Core
     private:
         void privateClear();
     };
-} // namespace Core
+} // namespace NX
 
 #include "StaticMeshBundle.generated.h" // added by the code generator. Better don't move it.

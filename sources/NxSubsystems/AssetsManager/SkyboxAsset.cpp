@@ -24,8 +24,8 @@
 
 #include "SkyboxAsset.h"
 
+#include "Foundation/Configs.h"
 #include "GameplaySystem/Framework/GameInstance.h"
-#include "Misc/Configs.h"
 
 namespace NX
 {
@@ -150,4 +150,4 @@ namespace NX
         _gcd.clear();
     }
 
-} // namespace Core
+} // namespace NX

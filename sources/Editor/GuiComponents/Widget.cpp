@@ -24,10 +24,10 @@
 
 #include "Widget.h"
 
+#include "Foundation/Configs.h"
 #include "InputDevices/Keyboard.h"
 #include "InputDevices/Mouse.h"
-#include "Misc/Configs.h"
-#include "ResourceManagement/JsonAdapter.h"
+#include "NxFundamental/ResourceManagement/JsonAdapter.h"
 
 namespace Core::Gui
 {

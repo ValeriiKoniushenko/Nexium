@@ -27,7 +27,7 @@
 #include "Core/Size.h"
 #include "Entities/Actor.h"
 
-namespace Core
+namespace NX
 {
     ENUM_CLASS();
     enum class CameraType : uint8_t
@@ -65,7 +65,7 @@ namespace Core
         void setFar(float value) noexcept;
         [[nodiscard]] float getFar() const noexcept { return _far; }
 
-        [[nodiscard]] StringAtom getCacheHash() const override;
+        [[nodiscard]] Core::StringAtom getCacheHash() const override;
 
         void tryToRecalculateCameraMatrices();
         void invalidateCameraMatrices();
@@ -158,6 +158,6 @@ namespace Core
         float _fov = 75.f;
     };
 
-} // namespace Core
+} // namespace NX
 
 #include "Camera.generated.h" // added by the code generator. Better don't move it.

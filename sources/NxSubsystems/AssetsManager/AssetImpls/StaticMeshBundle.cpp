@@ -25,12 +25,12 @@
 #include "StaticMeshBundle.h"
 
 #include "AssimpMisc/AssimpHelper.h"
+#include "Foundation/Configs.h"
 #include "GameplaySystem/Framework/GameInstance.h"
-#include "Misc/Configs.h"
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
 
-namespace Core::AssetImpl
+namespace NX::AssetImpl
 {
 
     nlohmann::json StaticMeshBundle::AssetData::serialize() const
@@ -51,8 +51,8 @@ namespace Core::AssetImpl
             }
         }
 
-        mainShader = StringAtom::Intern(mainShader);
-        outlineShader = StringAtom::Intern(outlineShader);
+        mainShader = Core::StringAtom::Intern(mainShader);
+        outlineShader = Core::StringAtom::Intern(outlineShader);
     }
 
     void StaticMeshBundle::load(const ECSAsset& asset, BaseComponent* dataOwner,
@@ -109,4 +109,4 @@ namespace Core::AssetImpl
     {
     }
 
-} // namespace Core::AssetImpl
+} // namespace NX::AssetImpl

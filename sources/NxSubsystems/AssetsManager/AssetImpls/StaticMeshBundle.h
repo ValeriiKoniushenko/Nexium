@@ -27,7 +27,7 @@
 #include "../ECSAsset.h"
 #include "Graphics/Primitives/StaticMeshBundle.h"
 
-namespace Core::AssetImpl
+namespace NX::AssetImpl
 {
 
     class StaticMeshBundle : public ECSAssetImpl
@@ -45,10 +45,10 @@ namespace Core::AssetImpl
             std::filesystem::path meshPath;
 
             FIELD();
-            StringAtom mainShader;
+            Core::StringAtom mainShader;
 
             FIELD();
-            StringAtom outlineShader;
+            Core::StringAtom outlineShader;
 
             FIELD();
             float onLoadScale = 1.0f;
@@ -74,6 +74,6 @@ namespace Core::AssetImpl
         void unload(const ECSAsset& asset, BaseComponent* dataOwner) override;
     };
 
-} // namespace Core::AssetImpl
+} // namespace NX::AssetImpl
 
 #include "StaticMeshBundle.generated.h" // added by the code generator. Better don't move it.

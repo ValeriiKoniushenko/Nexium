@@ -31,7 +31,7 @@
 #include <algorithm>
 #include <array>
 
-namespace Core
+namespace NX
 {
     std::size_t ShaderProgramMeta::Hasher::operator()(const ShaderProgramMeta& self) const
     {
@@ -113,9 +113,9 @@ namespace Core
         glShaderSource(_shaderProgram.getFragmentShader(), 1, &fragmentRaw, nullptr);
     }
 
-    void ShaderProgramMeta::setShaderName(const StringAtom& name)
+    void ShaderProgramMeta::setShaderName(const Core::StringAtom& name)
     {
-        _shaderName = StringAtom::Intern(name);
+        _shaderName = Core::StringAtom::Intern(name);
     }
 
     spdlog::logger* ShaderProgramMeta::getLogger() const
@@ -125,7 +125,7 @@ namespace Core
 
     void ShaderProgramMeta::setShaderName(const std::string& name)
     {
-        _shaderName = StringAtom::Intern(name);
+        _shaderName = Core::StringAtom::Intern(name);
     }
 
     void ShaderProgramMeta::checkShaderCompileStatus(GLuint shaderId, const std::string& shaderType)
@@ -198,7 +198,7 @@ namespace Core
                     name.pop_back();
                 }
 
-                output.insert(ShaderVariable{ StringAtom::Intern(name), type, { location } });
+                output.insert(ShaderVariable{ Core::StringAtom::Intern(name), type, { location } });
             }
         }
     }
@@ -245,7 +245,7 @@ namespace Core
             {
                 blockName.pop_back();
             }
-            outData.name = StringAtom::Intern(blockName);
+            outData.name = Core::StringAtom::Intern(blockName);
 
             // =========== Getting fields/vars ===========
             std::vector<GLint> vars(outData.vars.size());
@@ -309,4 +309,4 @@ namespace Core
             return false;
         }
     }
-} // namespace Core
+} // namespace NX

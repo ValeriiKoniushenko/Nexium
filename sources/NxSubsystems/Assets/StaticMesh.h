@@ -24,17 +24,17 @@
 
 #pragma once
 
-#include "ECS/BaseComponent.h"
 #include "ECS/Transformable.h"
 #include "Graphics/GraphicsComponents.h"
 #include "Graphics/IOutliner.h"
+#include "NxFundamental/ECS/BaseComponent.h"
 #include "assimp/matrix4x4.h"
 #include "assimp/mesh.h"
 #include "assimp/scene.h"
 
 #include <filesystem>
 
-namespace Core
+namespace NX
 {
     class StaticMeshBundle;
     class BaseCamera;
@@ -46,8 +46,7 @@ namespace Core
         public BaseComponent,
         public IOutliner
     {
-        ECS_DECL(StaticMesh, Core::BaseComponent, Core::Transformable,
-                 Core::InterleavedGraphicsData);
+        ECS_DECL(StaticMesh, NX::BaseComponent, Core::Transformable, Core::InterleavedGraphicsData);
 
     public:
         constexpr static Color4 outlineColor = Color4{ 252, 186, 3, 255 };
@@ -99,7 +98,7 @@ namespace Core
 
         void recalculateMatrices(const glm::mat4& mat = glm::mat4(1.f)) override;
 
-        [[nodiscard]] StringAtom getCacheHash() const override;
+        [[nodiscard]] Core::StringAtom getCacheHash() const override;
 
     protected:
         void onDirtyMatrix() override;
@@ -128,12 +127,12 @@ namespace Core
     public:
         StaticMeshFactory() = delete;
 
-        [[nodiscard]] static StaticMesh CreateBase(const StringAtom& name = ""_atom);
+        [[nodiscard]] static StaticMesh CreateBase(const Core::StringAtom& name = ""_atom);
 
-        [[nodiscard]] static StaticMesh CreateBiSide(const StringAtom& name = ""_atom);
+        [[nodiscard]] static StaticMesh CreateBiSide(const Core::StringAtom& name = ""_atom);
 
-        [[nodiscard]] static StaticMesh CreateBiBlendSide(const StringAtom& name = ""_atom);
+        [[nodiscard]] static StaticMesh CreateBiBlendSide(const Core::StringAtom& name = ""_atom);
     };
-} // namespace Core
+} // namespace NX
 
 #include "StaticMesh.generated.h" // added by the code generator. Better don't move it.

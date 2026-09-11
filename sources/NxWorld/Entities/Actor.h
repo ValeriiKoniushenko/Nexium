@@ -24,8 +24,8 @@
 
 #pragma once
 
-#include "ECS/BaseComponent.h"
 #include "Graphics/IDrawable.h"
+#include "NxFundamental/ECS/BaseComponent.h"
 #include "Scene/SceneObject.h"
 
 namespace Core

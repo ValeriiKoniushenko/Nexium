@@ -31,7 +31,7 @@
 
 #include <unordered_set>
 
-namespace Core
+namespace NX
 {
     ENUM_CLASS();
     enum class ShaderType : GLenum
@@ -90,9 +90,9 @@ namespace Core
 
         void setShaderName(const std::string& name);
 
-        void setShaderName(const StringAtom& name);
+        void setShaderName(const Core::StringAtom& name);
 
-        [[nodiscard]] const StringAtom& getShaderName() const { return _shaderName; }
+        [[nodiscard]] const Core::StringAtom& getShaderName() const { return _shaderName; }
 
         [[nodiscard]] spdlog::logger* getLogger() const override;
 
@@ -129,7 +129,7 @@ namespace Core
 
     private:
         ShaderProgram _shaderProgram;
-        StringAtom _shaderName;
+        Core::StringAtom _shaderName;
 
         std::unordered_set<ShaderVariable, ShaderVariable::Hasher> _uniforms;
         std::unordered_set<ShaderVariable, ShaderVariable::Hasher> _inputs;
@@ -139,6 +139,6 @@ namespace Core
         std::filesystem::path _vertexShaderPath;
         std::filesystem::path _fragmentShaderPath;
     };
-} // namespace Core
+} // namespace NX
 
 #include "ShaderProgramMeta.generated.h" // added by the code generator. Better don't move it.

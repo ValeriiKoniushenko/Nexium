@@ -26,7 +26,7 @@
 
 #include <limits>
 
-namespace Core::Animation
+namespace NX::Animation
 {
     void to_json(nlohmann::json& j, const Frame& v)
     {
@@ -106,7 +106,7 @@ namespace Core::Animation
         _frameTimeAccumulator = 0.f;
     }
 
-    bool FrameByFrameAnimation::addFrame(StringAtom textureName)
+    bool FrameByFrameAnimation::addFrame(Core::StringAtom textureName)
     {
         if (textureName.isEmpty())
         {
@@ -129,7 +129,7 @@ namespace Core::Animation
         }
 
         _frames.emplace_back(
-            Frame{ .name = "Frame "_atom + StringAtom::MakeFrom(_frames.size() + 1),
+            Frame{ .name = "Frame "_atom + Core::StringAtom::MakeFrom(_frames.size() + 1),
                    .textureName = std::nullopt,
                    .uvOffset = std::move(uvOffset),
                    .uvSize = std::move(uvSize) });
@@ -169,7 +169,7 @@ namespace Core::Animation
             const auto column = sheetIndex % columns;
             const auto row = sheetIndex / columns;
             _frames.emplace_back(
-                Frame{ .name = "Frame "_atom + StringAtom::MakeFrom(_frames.size() + 1),
+                Frame{ .name = "Frame "_atom + Core::StringAtom::MakeFrom(_frames.size() + 1),
                        .textureName = std::nullopt,
                        .uvOffset = GlobalPosition2F{ static_cast<float>(column) * frameSize.x,
                                                      static_cast<float>(row) * frameSize.y },
@@ -243,4 +243,4 @@ namespace Core::Animation
 
         return &_frames[_currentFrame];
     }
-} // namespace Core::Animation
+} // namespace NX::Animation

@@ -26,34 +26,34 @@
 
 #include "Animations/FrameByFrame/FrameByFrameAnimation.h"
 #include "Core/String.h"
-#include "ECS/BaseComponent.h"
 #include "JustReflectMe/Adapter.h"
+#include "NxFundamental/ECS/BaseComponent.h"
 
 #include <unordered_map>
 
-namespace Core::Animation
+namespace NX::Animation
 {
     CLASS();
     class FrameByFrameAnimator : public BaseComponent
     {
-        ECS_DECL(FrameByFrameAnimator, Core::BaseComponent);
+        ECS_DECL(FrameByFrameAnimator, NX::BaseComponent);
 
     public:
-        bool startAnimation(const StringAtom& name);
+        bool startAnimation(const Core::StringAtom& name);
 
         bool addAnimation(const FrameByFrameAnimation& animation);
-        bool removeAnimation(const StringAtom& name);
+        bool removeAnimation(const Core::StringAtom& name);
         void clearAnimations();
 
-        [[nodiscard]] FrameByFrameAnimation* getAnimation(const StringAtom& name);
+        [[nodiscard]] FrameByFrameAnimation* getAnimation(const Core::StringAtom& name);
 
-        [[nodiscard]] const FrameByFrameAnimation* getAnimation(const StringAtom& name) const;
+        [[nodiscard]] const FrameByFrameAnimation* getAnimation(const Core::StringAtom& name) const;
 
         [[nodiscard]] FrameByFrameAnimation* getActiveAnimation();
         [[nodiscard]] const FrameByFrameAnimation* getActiveAnimation() const;
 
-        [[nodiscard]] bool containAnimation(const StringAtom& name) const;
-        [[nodiscard]] const StringAtom& getActiveAnimationName() const noexcept
+        [[nodiscard]] bool containAnimation(const Core::StringAtom& name) const;
+        [[nodiscard]] const Core::StringAtom& getActiveAnimationName() const noexcept
         {
             return _currentAnimationName;
         }
@@ -72,11 +72,13 @@ namespace Core::Animation
         std::unordered_map<Core::StringAtom, BaseAnimation::Ptr> _animations;
 
         FIELD();
-        StringAtom _currentAnimationName;
+        Core::StringAtom _currentAnimationName;
     };
 
-    void to_json(nlohmann::json& j, const std::unordered_map<StringAtom, BaseAnimation::Ptr>& v);
-    void from_json(const nlohmann::json& j, std::unordered_map<StringAtom, BaseAnimation::Ptr>& v);
-} // namespace Core::Animation
+    void to_json(nlohmann::json& j,
+                 const std::unordered_map<Core::StringAtom, BaseAnimation::Ptr>& v);
+    void from_json(const nlohmann::json& j,
+                   std::unordered_map<Core::StringAtom, BaseAnimation::Ptr>& v);
+} // namespace NX::Animation
 
 #include "FrameByFrameAnimator.generated.h" // added by the code generator. Better don't move it.

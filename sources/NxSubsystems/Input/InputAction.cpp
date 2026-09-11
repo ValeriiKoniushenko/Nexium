@@ -27,9 +27,9 @@
 #include "Graphics/Window.h"
 #include "Keyboard.h"
 
-namespace Core
+namespace NX
 {
-    KeyboardInputAction::KeyboardInputAction(const StringAtom& name, KeyT key)
+    KeyboardInputAction::KeyboardInputAction(const Core::StringAtom& name, KeyT key)
         : InputAction(name, key)
     {
     }
@@ -48,13 +48,13 @@ namespace Core
         init();
     }
 
-    MouseInputAction::MouseInputAction(const StringAtom& name, KeyT key)
+    MouseInputAction::MouseInputAction(const Core::StringAtom& name, KeyT key)
         : InputAction(name, key)
     {
         init();
     }
 
-    MouseInputAction::MouseInputAction(const StringAtom& name)
+    MouseInputAction::MouseInputAction(const Core::StringAtom& name)
         : InputAction(name)
     {
         init();
@@ -103,4 +103,4 @@ namespace Core
         _subscription = _onActionPrivate->subscribeAndGetID(
             [this](SpecKeysState states) { onMouseClick->trigger(Mouse::GetPosition(), states); });
     }
-} // namespace Core
+} // namespace NX

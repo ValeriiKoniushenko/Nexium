@@ -27,9 +27,10 @@
 #include "FrameByFrameAnimation.h"
 #include "Scene/Rectangle.h"
 
-namespace Core::Animation
+namespace NX::Animation
 {
-    void to_json(nlohmann::json& j, const std::unordered_map<StringAtom, BaseAnimation::Ptr>& v)
+    void to_json(nlohmann::json& j,
+                 const std::unordered_map<Core::StringAtom, BaseAnimation::Ptr>& v)
     {
         j = nlohmann::json::object();
 
@@ -42,7 +43,8 @@ namespace Core::Animation
         }
     }
 
-    void from_json(const nlohmann::json& j, std::unordered_map<StringAtom, BaseAnimation::Ptr>& v)
+    void from_json(const nlohmann::json& j,
+                   std::unordered_map<Core::StringAtom, BaseAnimation::Ptr>& v)
     {
         if (!j.is_object() && !j.is_array())
         {
@@ -50,19 +52,20 @@ namespace Core::Animation
                 302, "Animations must be represented by a JSON array or object", &j);
         }
 
-        std::unordered_map<StringAtom, BaseAnimation::Ptr> animations;
+        std::unordered_map<Core::StringAtom, BaseAnimation::Ptr> animations;
         animations.reserve(j.size());
 
         const auto deserializeAnimation
             = [&animations](const nlohmann::json& animationJson,
-                            const StringAtom& fallbackName = StringAtom{})
+                            const Core::StringAtom& fallbackName = Core::StringAtom{})
         {
             if (!animationJson.contains("_type"))
             {
                 return;
             }
 
-            const auto type = StringAtom::Intern(animationJson["_type"].get<StringAtom>());
+            const auto type
+                = Core::StringAtom::Intern(animationJson["_type"].get<Core::StringAtom>());
             BaseComponent::Ptr component = GetGlobalComponentFactory().create(type);
             auto* animation = dynamic_cast<BaseAnimation*>(component.get());
             if (!animation)
@@ -93,7 +96,7 @@ namespace Core::Animation
         {
             for (const auto& [name, animationJson] : j.items())
             {
-                deserializeAnimation(animationJson, StringAtom{ name.c_str() });
+                deserializeAnimation(animationJson, Core::StringAtom{ name.c_str() });
             }
         }
 
@@ -102,7 +105,7 @@ namespace Core::Animation
 
     ECS_IMPL(FrameByFrameAnimator);
 
-    bool FrameByFrameAnimator::startAnimation(const StringAtom& name)
+    bool FrameByFrameAnimator::startAnimation(const Core::StringAtom& name)
     {
         auto* animation = getAnimation(name);
         if (!animation)
@@ -129,7 +132,7 @@ namespace Core::Animation
         return _animations.insert_or_assign(name, std::move(storedAnimation)).second;
     }
 
-    bool FrameByFrameAnimator::removeAnimation(const StringAtom& name)
+    bool FrameByFrameAnimator::removeAnimation(const Core::StringAtom& name)
     {
         if (_currentAnimationName == name)
         {
@@ -143,7 +146,7 @@ namespace Core::Animation
         _currentAnimationName.clear();
         _animations.clear();
     }
-    FrameByFrameAnimation* FrameByFrameAnimator::getAnimation(const StringAtom& name)
+    FrameByFrameAnimation* FrameByFrameAnimator::getAnimation(const Core::StringAtom& name)
     {
         const auto it = _animations.find(name);
         if (it == _animations.end()) [[unlikely]]
@@ -153,7 +156,8 @@ namespace Core::Animation
         return dynamic_cast<FrameByFrameAnimation*>(it->second.get());
     }
 
-    const FrameByFrameAnimation* FrameByFrameAnimator::getAnimation(const StringAtom& name) const
+    const FrameByFrameAnimation* FrameByFrameAnimator::getAnimation(
+        const Core::StringAtom& name) const
     {
         const auto it = _animations.find(name);
         if (it == _animations.end())
@@ -173,7 +177,7 @@ namespace Core::Animation
         return getAnimation(_currentAnimationName);
     }
 
-    bool FrameByFrameAnimator::containAnimation(const StringAtom& name) const
+    bool FrameByFrameAnimator::containAnimation(const Core::StringAtom& name) const
     {
         return _animations.contains(name);
     }
@@ -223,4 +227,4 @@ namespace Core::Animation
             animation->tick(delta);
         }
     }
-} // namespace Core::Animation
+} // namespace NX::Animation

@@ -29,7 +29,7 @@
 #include "NxSubsystems/Graphics/ShaderManager.h"
 #include "assimp/mesh.h"
 
-namespace Core
+namespace NX
 {
 
     CLASS();
@@ -199,7 +199,7 @@ namespace Core
             std::swap(a._vao, b._vao);
         }
 
-        [[nodiscard]] StringAtom getCacheHash() const override;
+        [[nodiscard]] Core::StringAtom getCacheHash() const override;
 
     protected:
         virtual void onBindBuffers(GLenum bindTextureType, GLenum textureIndex) {}
@@ -231,7 +231,7 @@ namespace Core
     CLASS();
     class BaseTextureGraphicsData : public BaseGraphicsData
     {
-        R_FRIEND_DECL(BaseTextureGraphicsData, Core::BaseGraphicsData);
+        R_FRIEND_DECL(BaseTextureGraphicsData, NX::BaseGraphicsData);
 
     public:
         BaseTextureGraphicsData() = default;
@@ -265,7 +265,7 @@ namespace Core
             swap(static_cast<BaseGraphicsData&>(a), static_cast<BaseGraphicsData&>(b));
             std::swap(a._texture, b._texture);
         }
-        [[nodiscard]] StringAtom getCacheHash() const override;
+        [[nodiscard]] Core::StringAtom getCacheHash() const override;
 
     protected:
         void onBindBuffers(GLenum bindTextureType, GLenum textureIndex) override;
@@ -287,7 +287,7 @@ namespace Core
     CLASS();
     class InterleavedGraphicsData : public BaseTextureGraphicsData
     {
-        R_FRIEND_DECL(InterleavedGraphicsData, Core::BaseGraphicsData);
+        R_FRIEND_DECL(InterleavedGraphicsData, NX::BaseGraphicsData);
 
     public:
         InterleavedGraphicsData() = default;
@@ -315,7 +315,7 @@ namespace Core
             swap(static_cast<BaseTextureGraphicsData&>(a),
                  static_cast<BaseTextureGraphicsData&>(b));
         }
-        [[nodiscard]] StringAtom getCacheHash() const override;
+        [[nodiscard]] Core::StringAtom getCacheHash() const override;
     };
 
     // ╔═════════════════════════════════════════════════════════════════════════════════╗
@@ -328,7 +328,7 @@ namespace Core
     CLASS();
     class SeparTextureGraphicsData : public BaseTextureGraphicsData
     {
-        R_FRIEND_DECL(SeparTextureGraphicsData, Core::BaseTextureGraphicsData);
+        R_FRIEND_DECL(SeparTextureGraphicsData, NX::BaseTextureGraphicsData);
 
     public:
         SeparTextureGraphicsData() = default;
@@ -367,7 +367,7 @@ namespace Core
             std::swap(a._textureVbo, b._textureVbo);
         }
 
-        [[nodiscard]] StringAtom getCacheHash() const override;
+        [[nodiscard]] Core::StringAtom getCacheHash() const override;
 
     private:
         void privateClear();
@@ -383,9 +383,9 @@ namespace Core
     // ║     ╚═╝┴─┘└─┘└─┘┴ ┴┴─┘     ║
     // ║                            ║
     // ╚════════════════════════════╝
-    void to_json(nlohmann::json& j, const Core::BaseGraphicsData::ModifierParam& v);
-    void from_json(const nlohmann::json& j, Core::BaseGraphicsData::ModifierParam& v);
+    void to_json(nlohmann::json& j, const NX::BaseGraphicsData::ModifierParam& v);
+    void from_json(const nlohmann::json& j, NX::BaseGraphicsData::ModifierParam& v);
 
-} // namespace Core
+} // namespace NX
 
 #include "GraphicsComponents.generated.h" // added by the code generator. Better don't move it.

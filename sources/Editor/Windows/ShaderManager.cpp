@@ -32,8 +32,8 @@
 #include "Editor/GuiComponents/Misc.h"
 #include "Editor/GuiComponents/Spacer.h"
 #include "Editors/TextEditor.h"
+#include "Foundation/Configs.h"
 #include "GameplaySystem/Framework/GameInstance.h"
-#include "Misc/Configs.h"
 #include "Misc/IconsFontAwesome.h"
 
 using namespace Core::Gui;

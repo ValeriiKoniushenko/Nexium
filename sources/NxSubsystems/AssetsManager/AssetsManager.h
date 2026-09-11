@@ -26,14 +26,14 @@
 
 #include "NxFundamental/Assets/ECSAsset.h"
 #include "NxFundamental/Assets/TextureAtlas.h"
+#include "NxSubsystems/AssetsManager/TextureAsset.h"
 #include "SkyboxAsset.h"
-#include "TextureAsset.h"
 #include "Utils/Functions.h"
 
 #include <set>
 #include <unordered_map>
 
-namespace Core
+namespace NX
 {
     /// Assets manager class to get/load/find/free some asset.
     /// In general this class we must use to manage some assets. It stores & works
@@ -205,7 +205,7 @@ namespace Core
         /// @brief Get the total count of assets matching the filter
         /// @param tagMask Filter to apply when counting assets
         /// @return Number of assets matching the filter
-        [[nodiscard]] std::size_t getEcsAssetCountByNX::Tag(NX::Tag tagMask) const;
+        [[nodiscard]] std::size_t getEcsAssetCountByTag(NX::Tag tagMask) const;
 
         // ================ OVERRIDEs ==================
         // override BaseLog
@@ -224,6 +224,6 @@ namespace Core
         std::unordered_map<Core::StringAtom, NX::AssetRef<NX::BaseAsset>> _textures;
         std::unordered_map<Core::StringAtom, NX::AssetRef<NX::BaseAsset>> _skyboxes;
     };
-} // namespace Core
+} // namespace NX
 
 #include "AssetsManager.generated.h" // added by the code generator. Better don't move it.

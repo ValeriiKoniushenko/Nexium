@@ -24,10 +24,10 @@
 
 #pragma once
 
-#include "BaseAsset.h"
-#include "ECS/BaseComponent.h"
-#include "Graphics/Texture.h"
-#include "ResourceManagement/JsonAdapter.h"
+#include "NxFundamental/Assets/BaseAsset.h"
+#include "NxFundamental/ECS/BaseComponent.h"
+#include "NxFundamental/ResourceManagement/JsonAdapter.h"
+#include "RawBackend/Graphics/Texture.h"
 
 namespace NX
 {
@@ -35,13 +35,13 @@ namespace NX
     CLASS();
     class TextureAsset : public BaseAsset
     {
-        R_FRIEND_DECL(TextureAsset, Core::BaseAsset);
+        R_FRIEND_DECL(TextureAsset, NX::BaseAsset);
 
     public:
         inline static const char* fileExtension = ".nxtex";
 
     public:
-        explicit TextureAsset(const StringAtom& logicPath)
+        explicit TextureAsset(const Core::StringAtom& logicPath)
             : BaseAsset(logicPath)
         {
         }
@@ -52,8 +52,8 @@ namespace NX
         TextureAsset& operator=(const TextureAsset&) = delete;
         TextureAsset& operator=(TextureAsset&&) noexcept = delete;
 
-        [[nodiscard]] const Texture& getData() const noexcept { return _data; }
-        [[nodiscard]] Texture& getData() noexcept { return _data; }
+        [[nodiscard]] const RawBackend::Texture& getData() const noexcept { return _data; }
+        [[nodiscard]] RawBackend::Texture& getData() noexcept { return _data; }
 
         [[nodiscard]] const char* getPrefix() const override { return "Texture"; }
 
@@ -63,29 +63,29 @@ namespace NX
         void setFlipVertically(bool value) noexcept { _isFlipVertically = value; }
         [[nodiscard]] bool isFlipVertically() const noexcept { return _isFlipVertically; }
 
-        [[nodiscard]] Image::Channel getChannels() const noexcept { return _channels; }
-        [[nodiscard]] ISize2 getSize() const noexcept { return _size; }
+        [[nodiscard]] RawBackend::Image::Channel getChannels() const noexcept { return _channels; }
+        [[nodiscard]] Core::ISize2 getSize() const noexcept { return _size; }
 
     protected:
         void onLoadRequest() override;
         void onUnloadRequest() override;
 
     protected:
-        Texture _data;
+        RawBackend::Texture _data;
 
         // properties
 
         FIELD();
         std::filesystem::path _path;
 
-        Image::Channel _channels = Image::Channel::None;
-        ISize2 _size = {};
+        RawBackend::Image::Channel _channels = RawBackend::Image::Channel::None;
+        Core::ISize2 _size = {};
 
         FIELD();
         bool _isFlipVertically = false;
     };
 
     using NXTexture = AssetRef<TextureAsset>;
-} // namespace Core
+} // namespace NX
 
 #include "TextureAsset.generated.h" // added by the code generator. Better don't move it.

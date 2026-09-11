@@ -13,20 +13,6 @@ target_sources(${MODULE_PRIVATE_TARGET} PRIVATE
 target_link_libraries(${MODULE_PRIVATE_TARGET} PRIVATE Nexium::Foundation)
 target_compile_definitions(${MODULE_PRIVATE_TARGET} PRIVATE PRIVATE_MODULE_NAME="${MODULE_NAME}")
 
-# ================ NxSubsystem::AssetsManager =================
-
-add_library(Nexium_Subsystem_AssetsManager STATIC)
-add_library(Nexium::Subsystem::AssetsManager ALIAS Nexium_Subsystem_AssetsManager)
-target_sources(Nexium_Subsystem_AssetsManager PRIVATE
-    AssetsManager/AssetsManager.cpp
-    AssetsManager/AssetsManager.h
-)
-target_link_libraries(Nexium_Subsystem_AssetsManager 
-    PUBLIC 
-    Nexium::Foundation
-    Nexium::Fundamental::Assets
-)
-
 # ================ NxSubsystem::Graphics =================
 
 add_library(Nexium_Subsystem_Graphics STATIC)
@@ -51,3 +37,16 @@ target_link_libraries(Nexium_Subsystem_Graphics
 if (TARGET assimp::assimp)
     target_link_libraries(Nexium_Subsystem_Graphics PUBLIC assimp::assimp)
 endif ()
+
+# ================ NxSubsystem::AssetsManager =================
+
+add_library(Nexium_Subsystem_AssetsManager STATIC)
+add_library(Nexium::Subsystem::AssetsManager ALIAS Nexium_Subsystem_AssetsManager)
+target_sources(Nexium_Subsystem_AssetsManager PRIVATE
+    AssetsManager/AssetsManager.cpp
+    AssetsManager/AssetsManager.h
+)
+target_link_libraries(Nexium_Subsystem_AssetsManager 
+    PUBLIC 
+    Nexium::Subsystem::Graphics
+)

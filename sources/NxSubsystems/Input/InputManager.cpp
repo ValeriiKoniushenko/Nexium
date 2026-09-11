@@ -24,7 +24,7 @@
 
 #include "InputManager.h"
 
-namespace Core
+namespace NX
 {
 
     /*void KeyboardInputManger::ioFieldsUpdate(DataStream& out)
@@ -50,4 +50,4 @@ namespace Core
     {
         auto stream = out.dedicatedNesting("MouseInputManger");
     }*/
-} // namespace Core
+} // namespace NX

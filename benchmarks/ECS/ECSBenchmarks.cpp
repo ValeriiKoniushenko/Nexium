@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-#include "ECS/BaseComponent.h"
+#include "NxFundamental/ECS/BaseComponent.h"
 
 #include <benchmark/benchmark.h>
 #include <cstddef>

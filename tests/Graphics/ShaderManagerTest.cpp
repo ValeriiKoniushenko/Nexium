@@ -24,7 +24,7 @@
 
 #include "Graphics/ShaderManager.h"
 
-#include "Misc/Configs.h"
+#include "Foundation/Configs.h"
 #include "spdlog/spdlog.h"
 
 #include "gtest/gtest.h"

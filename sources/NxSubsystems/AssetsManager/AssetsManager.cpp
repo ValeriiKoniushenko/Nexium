@@ -24,13 +24,8 @@
 
 #include "AssetsManager.h"
 
-#include "Editor/Windows/Editors/NxTextureEditor.h"
-#include "Editor/Windows/Editors/TextEditor.h"
-#include "Editor/Windows/ImageViewer.h"
-#include "Editor/Windows/NxECSBasedEditor.h"
-#include "GameplaySystem/Framework/GameInstance.h"
-#include "Misc/Configs.h"
-#include "PrivateModuleInfo.h"
+#include "../PrivateModuleInfo.h"
+#include "Foundation/Configs.h"
 
 #include <algorithm>
 #include <array>
@@ -45,13 +40,15 @@
 // clang-format on
 #endif
 
-using namespace Core;
+using namespace NX;
+using namespace Foundation;
+using namespace NX;
 
 namespace fs = std::filesystem;
 
 namespace
 {
-    [[nodiscard]] StringAtom ToLogicPath(const fs::path& path)
+    [[nodiscard]] Core::StringAtom ToLogicPath(const fs::path& path)
     {
         auto normalized = path.lexically_normal();
         if (normalized.is_absolute())
@@ -65,12 +62,12 @@ namespace
             return {};
         }
 
-        return StringAtom::Intern(normalized.generic_string());
+        return Core::StringAtom::Intern(normalized.generic_string());
     }
 
     template<class T>
-    T getAssetOf(Core::AssetsManager& manager, const StringAtom& logicPath,
-                 std::unordered_map<StringAtom, AssetRef<BaseAsset>>& lookupContainer)
+    T getAssetOf(AssetsManager& manager, const Core::StringAtom& logicPath,
+                 std::unordered_map<Core::StringAtom, AssetRef<BaseAsset>>& lookupContainer)
     {
         if (!manager.validatePath(logicPath, T::AssetT::fileExtension))
         {
@@ -93,7 +90,7 @@ namespace
     }
 } // namespace
 
-namespace Core
+namespace NX
 {
     AssetsManager::AssetsManager()
     {
@@ -116,9 +113,9 @@ namespace Core
 
     void AssetsManager::scanFileSystem(bool removeMissingAssets)
     {
-        std::unordered_set<StringAtom> foundEcsAssets;
-        std::unordered_set<StringAtom> foundTextures;
-        std::unordered_set<StringAtom> foundSkyboxes;
+        std::unordered_set<Core::StringAtom> foundEcsAssets;
+        std::unordered_set<Core::StringAtom> foundTextures;
+        std::unordered_set<Core::StringAtom> foundSkyboxes;
         bool scanCompleted = true;
 
         for (const auto& registeredPath : _registeredPaths)
@@ -202,13 +199,13 @@ namespace Core
         generateTextureAtlas("default"_atom, atlasFolder);
     }
 
-    void AssetsManager::generateTextureAtlas(const StringAtom& atlasName,
+    void AssetsManager::generateTextureAtlas(const Core::StringAtom& atlasName,
                                              const fs::path& atlasFolder)
     {
         _textureAtlases.try_emplace(atlasName).first->second.generateTextureAtlas(atlasFolder);
     }
 
-    TextureAtlas& AssetsManager::getAtlas(const StringAtom& atlasName)
+    TextureAtlas& AssetsManager::getAtlas(const Core::StringAtom& atlasName)
     {
         auto it = _textureAtlases.find(atlasName);
         if (it == _textureAtlases.end()) [[unlikely]]
@@ -220,7 +217,7 @@ namespace Core
         return it->second;
     }
 
-    const TextureAtlas& AssetsManager::getAtlas(const StringAtom& atlasName) const
+    const TextureAtlas& AssetsManager::getAtlas(const Core::StringAtom& atlasName) const
     {
         auto it = _textureAtlases.find(atlasName);
         if (it == _textureAtlases.end()) [[unlikely]]
@@ -232,9 +229,9 @@ namespace Core
         return it->second;
     }
 
-    std::vector<StringAtom> AssetsManager::getAtlasesAsVector() const
+    std::vector<Core::StringAtom> AssetsManager::getAtlasesAsVector() const
     {
-        std::vector<StringAtom> atlases;
+        std::vector<Core::StringAtom> atlases;
         atlases.reserve(_textureAtlases.size());
         std::ranges::transform(_textureAtlases, std::back_inserter(atlases),
                                [](const auto& pair) { return pair.first; });
@@ -254,12 +251,12 @@ namespace Core
         return getAtlas("default"_atom);
     }
 
-    NXTexture AssetsManager::getTexture(const StringAtom& logicPath)
+    NXTexture AssetsManager::getTexture(const Core::StringAtom& logicPath)
     {
         return getAssetOf<NXTexture>(*this, logicPath, _textures);
     }
 
-    NXSkybox AssetsManager::getSkybox(const StringAtom& logicPath)
+    NXSkybox AssetsManager::getSkybox(const Core::StringAtom& logicPath)
     {
         return getAssetOf<NXSkybox>(*this, logicPath, _skyboxes);
     }
@@ -282,13 +279,13 @@ namespace Core
         _registeredPaths.emplace(std::move(path));
     }
 
-    NXECSAsset AssetsManager::getEcsAsset(const StringAtom& logicPath)
+    NXECSAsset AssetsManager::getEcsAsset(const Core::StringAtom& logicPath)
     {
         const auto it = _ecsAssets.find(logicPath);
         return it == _ecsAssets.end() ? NXECSAsset{} : it->second;
     }
 
-    BaseComponent::Ptr AssetsManager::getUniqueEcsAsset(const StringAtom& logicPath)
+    BaseComponent::Ptr AssetsManager::getUniqueEcsAsset(const Core::StringAtom& logicPath)
     {
         auto&& it = _ecsAssets.find(logicPath);
         if (it == _ecsAssets.end() || !Verify(it->second.isValid()))
@@ -299,7 +296,7 @@ namespace Core
         return it->second->uniqueLoad();
     }
 
-    WeakNXECSAsset AssetsManager::getWeakEcsAsset(const StringAtom& logicPath)
+    WeakNXECSAsset AssetsManager::getWeakEcsAsset(const Core::StringAtom& logicPath)
     {
         const auto it = _ecsAssets.find(logicPath);
         return it == _ecsAssets.end() ? WeakNXECSAsset{} : it->second;
@@ -406,7 +403,7 @@ namespace Core
         return _registeredPaths;
     }
 
-    StringAtom AssetsManager::OpenFileSelectionDialog(const std::vector<std::string>& filter)
+    Core::StringAtom AssetsManager::OpenFileSelectionDialog(const std::vector<std::string>& filter)
     {
         constexpr std::size_t maxFilePath = 4096;
         std::array<char, maxFilePath> buffer{};
@@ -464,7 +461,7 @@ namespace Core
                                                                             });
         if (!pipe)
         {
-            Core::gGlobalLog.criticalLog("Can't open CMD for file selection dialog");
+            gGlobalLog.criticalLog("Can't open CMD for file selection dialog");
             return {};
         }
 
@@ -477,7 +474,7 @@ namespace Core
             return {};
         }
 
-        StringAtom out(buffer.data(), strlen(buffer.data()));
+        Core::StringAtom out(buffer.data(), strlen(buffer.data()));
         out.trim('\n');
 
         if (fs::is_directory(out.data()))
@@ -488,7 +485,7 @@ namespace Core
         return out;
     }
 
-    bool AssetsManager::validatePath(const StringAtom& logicPath, const char* requiredExt)
+    bool AssetsManager::validatePath(const Core::StringAtom& logicPath, const char* requiredExt)
     {
         if (logicPath.isEmpty() || !requiredExt)
         {
@@ -529,20 +526,21 @@ namespace Core
 
         auto type = GetNodeType(entry);
 
-        if (type == NodeType::Code || type == NodeType::Default)
-        {
-            gGameInstance->gameEditor.showWindow<TextEditorEWC>(
-                ".*", entry.path().generic_string().data());
-        }
-        else if (type == NodeType::Image)
-        {
-            gGameInstance->gameEditor.showWindow<ImageViewerEWC>(
-                ".*", entry.path().generic_string().data());
-        }
-        else if (type == NodeType::NxFile)
-        {
-            TryToOpenNxFile(entry);
-        }
+        Assert(false, "Not implemented functionality below (commented code)");
+        // if (type == NodeType::Code || type == NodeType::Default)
+        // {
+        //     gGameInstance->gameEditor.showWindow<TextEditorEWC>(
+        //         ".*", entry.path().generic_string().data());
+        // }
+        // else if (type == NodeType::Image)
+        // {
+        //     gGameInstance->gameEditor.showWindow<ImageViewerEWC>(
+        //         ".*", entry.path().generic_string().data());
+        // }
+        // else if (type == NodeType::NxFile)
+        // {
+        //     TryToOpenNxFile(entry);
+        // }
     }
 
     void AssetsManager::TryToOpenNxFile(const fs::directory_entry& entry)
@@ -552,18 +550,19 @@ namespace Core
             return;
         }
 
-        const auto path = entry.path();
-        const auto ext = path.extension().generic_string();
-        if (ext == NXECSAsset::ValueT::fileExtension)
-        {
-            gGameInstance->gameEditor.showWindow<NxECSBasedEditorEWC>(".*",
-                                                                      path.generic_string().data());
-        }
-        else if (ext == NXTexture::AssetT::fileExtension)
-        {
-            gGameInstance->gameEditor.showWindow<NxTextureEditorEWC>(".*",
-                                                                     path.generic_string().data());
-        }
+        Assert(false, "Not implemented functionality below (commented code)");
+        // const auto path = entry.path();
+        // const auto ext = path.extension().generic_string();
+        // if (ext == NXECSAsset::ValueT::fileExtension)
+        // {
+        //     gGameInstance->gameEditor.showWindow<NxECSBasedEditorEWC>(".*",
+        //                                                               path.generic_string().data());
+        // }
+        // else if (ext == NXTexture::AssetT::fileExtension)
+        // {
+        //     gGameInstance->gameEditor.showWindow<NxTextureEditorEWC>(".*",
+        //                                                              path.generic_string().data());
+        // }
     }
 
     AssetsManager::NodeType AssetsManager::GetNodeType(const fs::directory_entry& entry)
@@ -659,7 +658,7 @@ namespace Core
         std::system(command.c_str());
     }
 
-    std::unordered_map<StringAtom, NXECSAsset>::iterator AssetsManager::findAssetByPath(
+    std::unordered_map<Core::StringAtom, NXECSAsset>::iterator AssetsManager::findAssetByPath(
         const fs::path& path)
     {
         if (path.extension().generic_string() != NXECSAsset::ValueT::fileExtension)
@@ -669,4 +668,4 @@ namespace Core
 
         return _ecsAssets.find(ToLogicPath(path));
     }
-} // namespace Core
+} // namespace NX

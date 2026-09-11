@@ -31,7 +31,7 @@
 
 #include <unordered_map>
 
-namespace Core
+namespace NX
 {
     template<IsInputAction InputTParam>
     class InputManger : public Foundation::BaseLog, public Foundation::IDataIO
@@ -39,7 +39,7 @@ namespace Core
     public:
         using Self = InputManger;
         using InputT = InputTParam;
-        using MappingT = std::unordered_map<StringAtom, IntrusivePtr<InputT>>;
+        using MappingT = std::unordered_map<Core::StringAtom, IntrusivePtr<InputT>>;
 
         InputManger() = default;
 
@@ -59,7 +59,7 @@ namespace Core
 
         [[nodiscard]] const MappingT& getMapping() const noexcept { return _mapping; }
 
-        [[nodiscard]] InputT::Ptr getOrCreate(const StringAtom& name, InputT::KeyT key)
+        [[nodiscard]] InputT::Ptr getOrCreate(const Core::StringAtom& name, InputT::KeyT key)
         {
             if (isExist(name))
             {
@@ -71,7 +71,7 @@ namespace Core
 
         [[nodiscard]] bool isExist(InputT::KeyT key) const { return !!impl_get<true>(this, key); }
 
-        [[nodiscard]] bool isExist(const StringAtom& name) const { return !!get(name); }
+        [[nodiscard]] bool isExist(const Core::StringAtom& name) const { return !!get(name); }
 
         [[nodiscard]] typename InputT::Ptr get(typename InputT::KeyT key)
         {
@@ -80,7 +80,7 @@ namespace Core
 
         [[nodiscard]] InputT::CPtr get(InputT::KeyT key) const { return impl_get<true>(this, key); }
 
-        [[nodiscard]] IntrusivePtr<InputT> get(const StringAtom& name)
+        [[nodiscard]] IntrusivePtr<InputT> get(const Core::StringAtom& name)
         {
             auto it = _mapping.find(name);
             if (it == _mapping.cend())
@@ -91,7 +91,7 @@ namespace Core
             return it->second;
         }
 
-        [[nodiscard]] IntrusivePtr<const InputT> get(const StringAtom& name) const
+        [[nodiscard]] IntrusivePtr<const InputT> get(const Core::StringAtom& name) const
         {
             auto it = _mapping.find(name);
             if (it == _mapping.cend())
@@ -102,7 +102,7 @@ namespace Core
             return it->second;
         }
 
-        [[nodiscard]] InputT::Ptr create(const StringAtom& name, InputT::KeyT key)
+        [[nodiscard]] InputT::Ptr create(const Core::StringAtom& name, InputT::KeyT key)
         {
             if (isExist(name))
             {
@@ -115,7 +115,7 @@ namespace Core
             return _mapping[name];
         }
 
-        bool remove(const StringAtom& name)
+        bool remove(const Core::StringAtom& name)
         {
             auto found = _mapping.find(name);
             if (found == _mapping.cend())
@@ -174,7 +174,7 @@ namespace Core
     class KeyboardInputManger : public InputManger<KeyboardInputAction>
     {
     public:
-        [[nodiscard]] StringAtom getCacheHash() const override
+        [[nodiscard]] Core::StringAtom getCacheHash() const override
         {
             return "KeyboardInputManger"_atom;
         }
@@ -183,6 +183,9 @@ namespace Core
     class MouseInputManger : public InputManger<MouseInputAction>
     {
     public:
-        [[nodiscard]] StringAtom getCacheHash() const override { return "MouseInputManger"_atom; }
+        [[nodiscard]] Core::StringAtom getCacheHash() const override
+        {
+            return "MouseInputManger"_atom;
+        }
     };
-} // namespace Core
+} // namespace NX

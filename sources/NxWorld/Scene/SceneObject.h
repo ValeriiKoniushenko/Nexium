@@ -24,11 +24,11 @@
 
 #pragma once
 
-#include "ECS/BaseComponent.h"
 #include "ECS/Transformable.h"
 #include "Graphics/IDrawable.h"
 #include "Graphics/IOutliner.h"
 #include "Misc/ITagHolder.h"
+#include "NxFundamental/ECS/BaseComponent.h"
 
 namespace Core
 {
@@ -53,7 +53,7 @@ namespace Core
         public IDrawable,
         public Foundation::IDataIO
     {
-        ECS_DECL(SceneObject, Core::BaseComponent, Core::Transformable, Core::IOutliner,
+        ECS_DECL(SceneObject, NX::BaseComponent, Core::Transformable, Core::IOutliner,
                  Core::IDrawable);
 
     public:

@@ -26,8 +26,8 @@
 
 #include "Core/Delegate.h"
 #include "Core/Size.h"
-#include "ECS/BaseComponent.h"
 #include "Foundation/Interfaces/DataStream.h"
+#include "NxFundamental/ECS/BaseComponent.h"
 
 namespace Core
 {

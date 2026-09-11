@@ -28,7 +28,7 @@
 
 #include <unordered_set>
 
-namespace Core
+namespace NX
 {
     class ShaderManager final : public Foundation::BaseLog
     {
@@ -57,15 +57,16 @@ namespace Core
             return _suitableVertExtensions;
         }
 
-        [[nodiscard]] ShaderProgram* getShaderProgram(const StringAtom& shaderName);
+        [[nodiscard]] ShaderProgram* getShaderProgram(const Core::StringAtom& shaderName);
 
-        [[nodiscard]] const std::unordered_map<StringAtom, ShaderProgramMeta>& getShaderMetas()
-            const noexcept
+        [[nodiscard]] const std::unordered_map<Core::StringAtom, ShaderProgramMeta>&
+            getShaderMetas() const noexcept
         {
             return _shaderMetas;
         }
 
-        [[nodiscard]] std::unordered_map<StringAtom, ShaderProgramMeta>& getShaderMetas() noexcept
+        [[nodiscard]] std::unordered_map<Core::StringAtom, ShaderProgramMeta>&
+            getShaderMetas() noexcept
         {
             return _shaderMetas;
         }
@@ -94,7 +95,7 @@ namespace Core
             const std::unordered_set<std::string>& set, std::filesystem::path path) const;
 
     private:
-        std::unordered_map<StringAtom, ShaderProgramMeta> _shaderMetas;
+        std::unordered_map<Core::StringAtom, ShaderProgramMeta> _shaderMetas;
 
         std::unordered_set<std::string> _suitableFragExtensions = { defaultFragmentFileExtension };
         std::unordered_set<std::string> _suitableVertExtensions = { defaultVertexFileExtension };
@@ -103,4 +104,4 @@ namespace Core
 
         std::filesystem::path _inputPath;
     };
-} // namespace Core
+} // namespace NX

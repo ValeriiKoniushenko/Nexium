@@ -24,7 +24,7 @@
 
 #include "GraphicsComponents.h"
 
-namespace Core
+namespace NX
 {
     R_FRIEND_IMPL(BaseTextureGraphicsData);
     R_FRIEND_IMPL(InterleavedGraphicsData);
@@ -73,7 +73,7 @@ namespace Core
         _triangleCount = 0;
     }
 
-    StringAtom BaseGraphicsData::getCacheHash() const
+    Core::StringAtom BaseGraphicsData::getCacheHash() const
     {
         return "BaseGraphicsData"_atom;
     }
@@ -293,7 +293,7 @@ namespace Core
         }
     }
 
-    StringAtom BaseTextureGraphicsData::getCacheHash() const
+    Core::StringAtom BaseTextureGraphicsData::getCacheHash() const
     {
         return "BaseTextureGraphicsData"_atom;
     }
@@ -417,7 +417,7 @@ namespace Core
         // }
     }
 
-    StringAtom InterleavedGraphicsData::getCacheHash() const
+    Core::StringAtom InterleavedGraphicsData::getCacheHash() const
     {
         return "InterleavedGraphicsData"_atom;
     }
@@ -486,7 +486,7 @@ namespace Core
         }
     }
 
-    StringAtom SeparTextureGraphicsData::getCacheHash() const
+    Core::StringAtom SeparTextureGraphicsData::getCacheHash() const
     {
         return "SeparTextureGraphicsData"_atom;
     }
@@ -507,13 +507,13 @@ namespace Core
     // ║     ╚═╝┴─┘└─┘└─┘┴ ┴┴─┘     ║
     // ║                            ║
     // ╚════════════════════════════╝
-    void to_json(nlohmann::json& j, const Core::BaseGraphicsData::ModifierParam& v)
+    void to_json(nlohmann::json& j, const NX::BaseGraphicsData::ModifierParam& v)
     {
         j["modifier"] = R<BaseGraphicsData::Modifier>::ToString(v.modifier);
         j["value"] = R<BaseGraphicsData::ModifiedValue>::ToString(v.value);
     }
 
-    void from_json(const nlohmann::json& j, Core::BaseGraphicsData::ModifierParam& v)
+    void from_json(const nlohmann::json& j, NX::BaseGraphicsData::ModifierParam& v)
     {
         v.modifier = R<BaseGraphicsData::Modifier>::FromString(j["modifier"].get<std::string>())
                          .value_or(BaseGraphicsData::Modifier::None);
@@ -521,4 +521,4 @@ namespace Core
                       .value_or(BaseGraphicsData::ModifiedValue::None);
     }
 
-} // namespace Core
+} // namespace NX

@@ -33,7 +33,7 @@
 
 #include <cmath>
 
-namespace Core
+namespace NX
 {
     ECS_IMPL(BaseCamera);
     ECS_IMPL(OrthographicCamera);
@@ -102,7 +102,7 @@ namespace Core
         }
     }
 
-    StringAtom BaseCamera::getCacheHash() const
+    Core::StringAtom BaseCamera::getCacheHash() const
     {
         return getComponentType() + "_" + getComponentName();
     }
@@ -266,4 +266,4 @@ namespace Core
         return _position + ray_world * length;
     }
 
-} // namespace Core
+} // namespace NX

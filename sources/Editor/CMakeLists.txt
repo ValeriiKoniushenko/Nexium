@@ -13,4 +13,3 @@ target_sources(${MODULE_PRIVATE_TARGET} PRIVATE
 
 target_link_libraries(${MODULE_PRIVATE_TARGET} PRIVATE Nexium::Foundation)
 target_compile_definitions(${MODULE_PRIVATE_TARGET} PRIVATE PRIVATE_MODULE_NAME="${MODULE_NAME}")
-

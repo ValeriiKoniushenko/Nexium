@@ -27,7 +27,7 @@
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
 
-using namespace Core;
+using namespace NX;
 
 namespace
 {
@@ -50,7 +50,7 @@ namespace
     }
 } // namespace
 
-namespace Core
+namespace NX
 {
     ECS_IMPL(StaticMeshBundle);
 
@@ -331,4 +331,4 @@ namespace Core
             }
         }
     }
-} // namespace Core
+} // namespace NX

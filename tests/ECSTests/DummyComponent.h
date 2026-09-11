@@ -26,12 +26,12 @@
 
 #pragma once
 
-#include "ECS/BaseComponent.h"
+#include "NxFundamental/ECS/BaseComponent.h"
 
 CLASS();
-class DummyComponent : public Core::BaseComponent
+class DummyComponent : public NX::BaseComponent
 {
-    ECS_DECL(DummyComponent, Core::BaseComponent);
+    ECS_DECL(DummyComponent, NX::BaseComponent);
 
     FIELD();
     int a = 123;
@@ -41,9 +41,9 @@ class DummyComponent : public Core::BaseComponent
 };
 
 CLASS();
-class HardConstructorComponent : public Core::BaseComponent
+class HardConstructorComponent : public NX::BaseComponent
 {
-    ECS_DECL(HardConstructorComponent, Core::BaseComponent);
+    ECS_DECL(HardConstructorComponent, NX::BaseComponent);
 
     HardConstructorComponent(int a, const Core::StringAtom& name, std::string b)
         : BaseComponent(componentType, name),
@@ -57,9 +57,9 @@ class HardConstructorComponent : public Core::BaseComponent
 };
 
 CLASS();
-class InitSpyComponent : public Core::BaseComponent
+class InitSpyComponent : public NX::BaseComponent
 {
-    ECS_DECL(InitSpyComponent, Core::BaseComponent);
+    ECS_DECL(InitSpyComponent, NX::BaseComponent);
 
 public:
     int preInitCalls = 0;
@@ -71,9 +71,9 @@ protected:
 };
 
 CLASS();
-class Vehicle : public Core::BaseComponent
+class Vehicle : public NX::BaseComponent
 {
-    ECS_DECL(Vehicle, Core::BaseComponent);
+    ECS_DECL(Vehicle, NX::BaseComponent);
 
     FIELD();
     std::string vin = "UNKNOWN";
@@ -106,9 +106,9 @@ class Sedan : public BaseCar
 };
 
 CLASS();
-class BasePart : public Core::BaseComponent
+class BasePart : public NX::BaseComponent
 {
-    ECS_DECL(BasePart, Core::BaseComponent);
+    ECS_DECL(BasePart, NX::BaseComponent);
 
     FIELD();
     int id = 0;

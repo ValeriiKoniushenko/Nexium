@@ -57,7 +57,7 @@ namespace
 
 } // namespace
 
-namespace Core
+namespace NX
 {
     ECS_IMPL(StaticMesh);
 
@@ -85,7 +85,7 @@ namespace Core
             }
             else
             {
-                auto relative = StringAtom(texturePath.C_Str());
+                auto relative = Core::StringAtom(texturePath.C_Str());
                 relative.replaceAll("\\", "/");
                 const auto resolved
                     = (modelPath.parent_path() / relative.toStdString()).lexically_normal();
@@ -103,7 +103,7 @@ namespace Core
         setMesh(rawMesh, true, true, scale);
     }
 
-    StringAtom StaticMesh::getCacheHash() const
+    Core::StringAtom StaticMesh::getCacheHash() const
     {
         return getComponentName();
     }
@@ -260,7 +260,7 @@ namespace Core
         }
 
         _outlineShader->use();
-        _outlineShader->setUniform("uOutlineColor"_atom, NormColor4::From(outlineColor));
+        _outlineShader->setUniform("uOutlineColor"_atom, Core::NormColor4::From(outlineColor));
         _outlineShader->setUniform("uOutlineSize"_atom, outlineSize);
         _outlineShader->setUniform("uModel"_atom, _cachedModelMatrix);
         _outlineShader->setUniform("uProjAndView"_atom, camera.getMatrix());
@@ -408,12 +408,12 @@ namespace Core
         return const_cast<StaticMesh*>(this)->tryToGetRootBundle();
     }
 
-    StaticMesh StaticMeshFactory::CreateBase(const StringAtom& name /* = ""_atom*/)
+    StaticMesh StaticMeshFactory::CreateBase(const Core::StringAtom& name /* = ""_atom*/)
     {
         return StaticMesh{ name };
     }
 
-    StaticMesh StaticMeshFactory::CreateBiSide(const StringAtom& name /* = ""_atom*/)
+    StaticMesh StaticMeshFactory::CreateBiSide(const Core::StringAtom& name /* = ""_atom*/)
     {
         StaticMesh out{ name };
 
@@ -425,7 +425,7 @@ namespace Core
         return out;
     }
 
-    StaticMesh StaticMeshFactory::CreateBiBlendSide(const StringAtom& name)
+    StaticMesh StaticMeshFactory::CreateBiBlendSide(const Core::StringAtom& name)
     {
         StaticMesh out{ name };
 
@@ -438,4 +438,4 @@ namespace Core
 
         return out;
     }
-} // namespace Core
+} // namespace NX

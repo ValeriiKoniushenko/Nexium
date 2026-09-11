@@ -25,10 +25,10 @@
 #pragma once
 
 #include "Core/Color.h"
-#include "ECS/BaseComponent.h"
 #include "ImGui/imgui.h"
 #include "InputDevices/Keyboard.h"
-#include "ResourceManagement/JsonAdapter.h"
+#include "NxFundamental/ECS/BaseComponent.h"
+#include "NxFundamental/ResourceManagement/JsonAdapter.h"
 
 namespace Core::Gui
 {

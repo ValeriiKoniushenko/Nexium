@@ -24,7 +24,7 @@
 
 #include "TextureAsset.h"
 
-#include "Misc/Configs.h"
+#include "Foundation/Configs.h"
 
 namespace NX
 {
@@ -63,4 +63,4 @@ namespace NX
         _data.release();
     }
 
-} // namespace Core
+} // namespace NX

@@ -29,7 +29,7 @@
 
 #include <array>
 
-namespace Core
+namespace NX
 {
     ShaderProgram::ShaderProgram(ShaderProgram&& other) noexcept
         : _uniforms(std::move(other._uniforms)),
@@ -58,7 +58,7 @@ namespace Core
         return *this;
     }
 
-    void ShaderProgram::setName(const StringAtom& name)
+    void ShaderProgram::setName(const Core::StringAtom& name)
     {
         _name = name;
 
@@ -73,7 +73,7 @@ namespace Core
         }
     }
 
-    void ShaderProgram::create(const StringAtom& shaderName)
+    void ShaderProgram::create(const Core::StringAtom& shaderName)
     {
         clearOnlyShaderProgram();
 
@@ -186,7 +186,7 @@ namespace Core
         }
     }
 
-    void ShaderProgram::debugUniform(const StringAtom& name) const
+    void ShaderProgram::debugUniform(const Core::StringAtom& name) const
     {
 #ifdef GRAPHICS_DEBUG
         Assert(name.isStatic(), "Use atomic string. Add _atom to your uniform's str");
@@ -194,4 +194,4 @@ namespace Core
         Assert(_uniforms.at(name) != -1);
 #endif
     }
-} // namespace Core
+} // namespace NX

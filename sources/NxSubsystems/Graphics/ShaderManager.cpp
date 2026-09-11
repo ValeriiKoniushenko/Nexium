@@ -26,7 +26,7 @@
 
 #include "../PrivateModuleInfo.h"
 
-namespace Core
+namespace NX
 {
     void ShaderManager::loadShaders(const std::filesystem::path& inputPath)
     {
@@ -123,7 +123,7 @@ namespace Core
         }
     }
 
-    ShaderProgram* ShaderManager::getShaderProgram(const StringAtom& shaderName)
+    ShaderProgram* ShaderManager::getShaderProgram(const Core::StringAtom& shaderName)
     {
         Assert(shaderName.isStatic());
 
@@ -161,4 +161,4 @@ namespace Core
 
         return {};
     }
-} // namespace Core
+} // namespace NX
