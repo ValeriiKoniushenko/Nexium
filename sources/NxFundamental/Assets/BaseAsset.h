@@ -26,7 +26,8 @@
 
 #include "Core/String.h"
 #include "Foundation/BaseLog.h"
-#include "Foundation/Interfaces/DataStream.h"
+#include "JustReflectMe/Adapter.h"
+#include "NxFundamental/ResourceManagement/DataStream.h"
 #include "nlohmann/json.hpp"
 
 namespace NX
