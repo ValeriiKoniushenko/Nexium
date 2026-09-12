@@ -10,7 +10,7 @@
 #pragma once
 
 #include "Core/Rect.h"
-#include "Graphics/ImageAlphaMask.h"
+#include "RawBackend/ImageAlphaMask.h"
 #include "Core/String.h"
 #include "Foundation/BaseLog.h"
 #include "RawBackend/Graphics/Texture.h"
