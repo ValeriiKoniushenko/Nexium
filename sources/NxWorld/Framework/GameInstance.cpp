@@ -24,16 +24,12 @@
 
 #include "GameInstance.h"
 
-#include "../Camera.h"
 #include "Animations/FrameByFrame/FrameByFrameAnimation.h"
 #include "Animations/FrameByFrame/FrameByFrameAnimator.h"
 #include "Core/Timer.h"
-#include "Editor/Windows/GameViewport.h"
 #include "Foundation/Configs.h"
-#include "Graphics/ShaderManager.h"
-#include "Graphics/Window.h"
-#include "ImGui/imgui.h"
 #include "Misc/FPSCounter.h"
+#include "Platform/Glfw.h"
 #include "PrivateModuleInfo.h"
 #include "ResourceManagement/ResourceManager.h"
 #include "Scene/Rectangle.h"
@@ -43,15 +39,6 @@ std::unique_ptr<Core::GameInstance> gGameInstance = nullptr;
 
 namespace Core
 {
-
-    GameEditor* GetEditor()
-    {
-        if (gGameInstance) [[likely]]
-        {
-            return &gGameInstance->gameEditor;
-        }
-        return nullptr;
-    }
 
     World* GetWorld()
     {
@@ -93,7 +80,36 @@ namespace Core
 
     spdlog::logger* GameInstance::getLogger() const
     {
-        return Framework::getLogger();
+        return NxWorld::getLogger();
+    }
+
+    void GameInstance::setApplicationIntegration(ApplicationIntegration* integration) noexcept
+    {
+        _applicationIntegration = integration;
+        if (!integration && renderMode == RenderMode::Editor)
+        {
+            renderMode = RenderMode::GameOnly;
+        }
+    }
+
+    bool GameInstance::isEditorMode() const noexcept
+    {
+        return renderMode == RenderMode::Editor && _applicationIntegration != nullptr;
+    }
+
+    bool GameInstance::isApplicationViewportFocused() const
+    {
+        return !isEditorMode() || _applicationIntegration->isViewportFocused();
+    }
+
+    ISize2 GameInstance::getRenderSize() const
+    {
+        if (isEditorMode())
+        {
+            return _applicationIntegration->getRenderSize();
+        }
+
+        return window ? window->getSize() : ISize2{};
     }
 
     void GameInstance::initialize()
@@ -127,7 +143,10 @@ namespace Core
         //-------------------- ECS ---------------------
         GetGlobalComponentFactory()._createTypeToTagMap();
 
-        gameEditor.initialize();
+        if (_applicationIntegration)
+        {
+            _applicationIntegration->initialize();
+        }
         gameScene.initialize();
         _subscriptionPool << gameScene.onObjectAdded->subscribeAndGetID(
             [this](SceneObject* obj) { internal_onAddObjectToScene(obj); });
@@ -142,18 +161,21 @@ namespace Core
 
     void GameInstance::startUpReadCache()
     {
-        gameEditor.readFromCache();
+        if (_applicationIntegration)
+        {
+            _applicationIntegration->readFromCache();
+        }
         GetCacheSystem().tryRead(gameScene);
         onInitializeReadCache();
-
-        ImGui::LoadIniSettingsFromDisk(Config::Path::imGuiWindowsIni.generic_string().c_str());
     }
 
     void GameInstance::saveAllToCache()
     {
-        gameEditor.writeToCache();
+        if (_applicationIntegration)
+        {
+            _applicationIntegration->writeToCache();
+        }
         // world.writeToCache();
-        ImGui::SaveIniSettingsToDisk(Config::Path::imGuiWindowsIni.generic_string().c_str());
 
         GetCacheSystem().write(gameScene);
 
@@ -163,7 +185,10 @@ namespace Core
     void GameInstance::resetCamera()
     {
         world.currentCamera = nullptr;
-        gameEditor.gameViewport.clearCanvas();
+        if (_applicationIntegration)
+        {
+            _applicationIntegration->clearSceneRenderTarget();
+        }
     }
 
     void GameInstance::runMainLoop()
@@ -185,39 +210,42 @@ namespace Core
             clock.start();
             Window::pollEvent();
 
-            if (renderMode == RenderMode::GameOnly)
+            if (!isEditorMode())
             {
                 gameScene.tick(world.getTimeDelta());
 
                 glClear(clearBits);
 
-                gameEditor.keyboardInput.update(); // force update
+                if (_applicationIntegration)
+                {
+                    _applicationIntegration->updateInput();
+                }
 
                 if (world.currentCamera)
                 {
-                    gameScene.directDraw();
+                    gameScene.directDraw(shaderManager.getShaderProgram("skybox"_atom));
                     onTick(world.getTimeDelta());
                 }
             }
             else
             {
-                if (const auto* wnd = gameEditor.getWindow<GameViewportEWC>();
-                    wnd && wnd->isFocused())
+                if (_applicationIntegration->isViewportFocused())
                 {
                     gameScene.tick(world.getTimeDelta());
                 }
 
                 glClear(clearBits);
-                gameEditor.tick(world.getTimeDelta());
+                _applicationIntegration->tick(world.getTimeDelta());
 
                 if (world.currentCamera)
                 {
-                    gameEditor.gameViewport.callMePreDraw();
+                    _applicationIntegration->updateSceneInteraction(gameScene);
+                    _applicationIntegration->beforeSceneDraw();
                     glClear(clearBits);
 
-                    gameScene.directDraw();
+                    gameScene.directDraw(shaderManager.getShaderProgram("skybox"_atom));
                     onTick(world.getTimeDelta());
-                    gameEditor.gameViewport.callMeAfterDraw();
+                    _applicationIntegration->afterSceneDraw();
                 }
             }
 
@@ -247,20 +275,21 @@ namespace Core
 
     void GameInstance::updateViewport()
     {
-        if (renderMode == RenderMode::GameOnly)
+        if (!isEditorMode())
         {
             window->updateViewport();
         }
         else
         {
-            UpdateGlViewport(static_cast<FSize2>(gameEditor.gameViewport.getRenderSize()));
+            const auto size = _applicationIntegration->getRenderSize();
+            glViewport(0, 0, size.width, size.height);
         }
     }
 
     void GameInstance::toggleRenderMode()
     {
         using R = RenderMode;
-        renderMode = renderMode == R::GameOnly ? R::Editor : R::GameOnly;
+        renderMode = renderMode == R::GameOnly && _applicationIntegration ? R::Editor : R::GameOnly;
         gGameInstance->updateViewport();
     }
 

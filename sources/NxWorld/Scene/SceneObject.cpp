@@ -33,7 +33,7 @@ namespace Core
 
     spdlog::logger* Core::SceneObject::getLogger() const
     {
-        return ::Scene::getLogger();
+        return NxWorld::getLogger();
     }
 
     SceneState SceneObject::getSceneState() const

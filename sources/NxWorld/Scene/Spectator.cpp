@@ -24,8 +24,7 @@
 
 #include "Spectator.h"
 
-#include "Editor/Windows/GameViewport.h"
-#include "GameplaySystem/Framework/GameInstance.h"
+#include "NxWorld/Framework/GameInstance.h"
 
 namespace Core
 {
@@ -73,8 +72,7 @@ namespace Core
             {
                 if (s)
                 {
-                    if (const auto* wnd = gGameInstance->gameEditor.getWindow<GameViewportEWC>();
-                        wnd && wnd->isFocused())
+                    if (gGameInstance->isApplicationViewportFocused())
                     {
                         if (auto obj = s.tryLoad())
                         {

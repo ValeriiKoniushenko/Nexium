@@ -25,7 +25,7 @@
 #pragma once
 
 #include "../ECSAsset.h"
-#include "Graphics/Primitives/StaticMeshBundle.h"
+#include "NxWorld/Entities/Mesh/StaticMeshBundle.h"
 
 namespace NX::AssetImpl
 {

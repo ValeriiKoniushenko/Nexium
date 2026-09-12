@@ -25,7 +25,7 @@
 #include "Grid.h"
 
 #include "Core/String.h"
-#include "GameplaySystem/Framework/GameInstance.h"
+#include "NxWorld/Framework/GameInstance.h"
 
 namespace Core
 {

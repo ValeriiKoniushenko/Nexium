@@ -26,6 +26,7 @@
 
 #include "Core/Assert.h"
 #include "Core/Timer.h"
+#include "NxSubsystems/Graphics/Import/AssimpMeshImporter.h"
 #include "RawBackend/Image.h"
 #include "StaticMeshBundle.h"
 #include "assimp/Importer.hpp"
@@ -99,7 +100,7 @@ namespace NX
             }
         }
 
-        setMesh(rawMesh, true, true, scale);
+        AssimpMeshImporter::upload(*this, *rawMesh, true, true, scale);
     }
 
     Core::StringAtom StaticMesh::getCacheHash() const

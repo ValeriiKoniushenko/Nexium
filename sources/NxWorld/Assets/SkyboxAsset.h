@@ -31,6 +31,7 @@
 namespace NX
 {
     class BaseCamera;
+    class ShaderProgram;
 
     CLASS();
     class SkyboxAsset : public BaseAsset
@@ -62,7 +63,7 @@ namespace NX
         SkyboxAsset& operator=(SkyboxAsset&&) noexcept = delete;
         ~SkyboxAsset() override = default;
 
-        void draw(BaseCamera& camera);
+        void draw(BaseCamera& camera, ShaderProgram& shader);
 
         [[nodiscard]] const char* getPrefix() const override { return "Skybox"; }
 
@@ -72,6 +73,7 @@ namespace NX
 
     protected:
         NX::InterleavedGraphicsData _gcd;
+        ShaderProgram* _shader = nullptr;
         // properties
 
         FIELD();

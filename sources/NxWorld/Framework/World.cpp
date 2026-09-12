@@ -41,7 +41,7 @@ namespace Core
 
     spdlog::logger* World::getLogger() const
     {
-        return Framework::getLogger();
+        return NxWorld::getLogger();
     }
 
     void World::internal_UpdateTimeDelta(float delta) noexcept

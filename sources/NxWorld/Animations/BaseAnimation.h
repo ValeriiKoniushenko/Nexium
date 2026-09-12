@@ -24,10 +24,10 @@
 
 #pragma once
 
-#include "../PrivateModuleInfo.h"
 #include "Core/String.h"
 #include "JustReflectMe/Adapter.h"
 #include "NxFundamental/ECS/BaseComponent.h"
+#include "NxSubsystems/PrivateModuleInfo.h"
 
 namespace NX::Animation
 {
@@ -103,7 +103,6 @@ namespace NX::Animation
         [[nodiscard]] bool isPlaying() const noexcept;
 
         [[nodiscard]] spdlog::logger* getLogger() const override;
-        [[nodiscard]] const char* getPrefix() const override { return "Animation"; }
 
     protected:
         FIELD();

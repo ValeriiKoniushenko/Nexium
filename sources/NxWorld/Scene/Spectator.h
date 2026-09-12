@@ -24,8 +24,8 @@
 
 #pragma once
 
-#include "../GameplaySystem/Entities/Actor.h"
 #include "InputDevices/InputManager.h"
+#include "NxWorld/Entities/Actor.h"
 
 namespace Core
 {

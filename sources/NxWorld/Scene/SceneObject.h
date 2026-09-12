@@ -25,10 +25,10 @@
 #pragma once
 
 #include "ECS/Transformable.h"
-#include "Graphics/IDrawable.h"
-#include "Graphics/IOutliner.h"
+#include "Foundation/Interfaces/IOutliner.h"
 #include "Misc/ITagHolder.h"
 #include "NxFundamental/ECS/BaseComponent.h"
+#include "RawBackend/IDrawable.h"
 
 namespace Core
 {

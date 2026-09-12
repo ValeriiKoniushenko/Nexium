@@ -31,7 +31,7 @@ namespace Core
 
     spdlog::logger* CameraManager::getLogger() const
     {
-        return Framework::getLogger();
+        return NxWorld::getLogger();
     }
 
 } // namespace Core

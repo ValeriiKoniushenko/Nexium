@@ -24,14 +24,11 @@
 
 #pragma once
 
-#include "../Camera.h"
-#include "AssetsManager/AssetsManager.h"
-#include "Editor/GameEditor.h"
-#include "Editor/ObjectSelectorManager.h"
-#include "Graphics/RenderTargetToTexture.h"
-#include "Graphics/ShaderManager.h"
-#include "Graphics/Window.h"
-#include "Scene/Scene.h"
+#include "ApplicationIntegration.h"
+#include "NxSubsystems/AssetsManager/AssetsManager.h"
+#include "NxSubsystems/Graphics/ShaderManager.h"
+#include "NxWorld/Scene/Scene.h"
+#include "Platform/Window.h"
 #include "UserInterface.h"
 #include "World.h"
 
@@ -66,6 +63,15 @@ namespace Core
 
         void saveAllToCache();
 
+        void setApplicationIntegration(ApplicationIntegration* integration) noexcept;
+        [[nodiscard]] ApplicationIntegration* getApplicationIntegration() const noexcept
+        {
+            return _applicationIntegration;
+        }
+        [[nodiscard]] bool isEditorMode() const noexcept;
+        [[nodiscard]] bool isApplicationViewportFocused() const;
+        [[nodiscard]] ISize2 getRenderSize() const;
+
     public:
         Scene gameScene;
         ShaderManager shaderManager;
@@ -75,8 +81,6 @@ namespace Core
 
         void resetCamera();
         RenderMode renderMode = RenderMode::Editor;
-        GameEditor gameEditor;
-        ObjectSelectorManager objectSelectorManager;
         Window* window = nullptr;
 
         [[nodiscard]] StringAtom getCacheHash() const override;
@@ -99,11 +103,11 @@ namespace Core
         void runMainLoop();
 
     private:
+        ApplicationIntegration* _applicationIntegration = nullptr;
+
         // Timeout in seconds. 0 - no timeout
         float _timeout = 0;
     };
-
-    [[nodiscard]] GameEditor* GetEditor();
 
     [[nodiscard]] World* GetWorld();
 

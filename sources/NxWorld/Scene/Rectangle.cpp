@@ -26,10 +26,10 @@
 
 #include "Animations/FrameByFrame/FrameByFrameAnimator.h"
 #include "Core/Assert.h"
-#include "GameplaySystem/Camera.h"
-#include "GameplaySystem/Framework/GameInstance.h"
-#include "Graphics/GraphicsComponents.h"
-#include "Graphics/Line.h"
+#include "NxSubsystems/Graphics/Debug/Line.h"
+#include "NxSubsystems/Graphics/GraphicsComponents.h"
+#include "NxWorld/Entities/Camera/Camera.h"
+#include "NxWorld/Framework/GameInstance.h"
 
 using namespace Core;
 

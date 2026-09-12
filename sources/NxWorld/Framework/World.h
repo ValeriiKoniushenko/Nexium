@@ -25,7 +25,6 @@
 #pragma once
 
 #include "Core/Color.h"
-#include "Editor/ObjectPicker.h"
 #include "Foundation/BaseLog.h"
 #include "Foundation/Interfaces/DataStream.h"
 #include "GameState.h"
@@ -76,8 +75,6 @@ namespace Core
         PlayerState playerState;
         GameState gameState;
         LevelData levelData;
-        ObjectPickerAggregator objectSelector;
-
         // It a reference to the real camera. It doesn't own it.
         BaseCamera* currentCamera = nullptr;
 

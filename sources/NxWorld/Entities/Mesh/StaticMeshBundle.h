@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "GameplaySystem/Entities/Actor.h"
+#include "NxWorld/Entities/Actor.h"
 #include "StaticMesh.h"
 
 struct aiScene;

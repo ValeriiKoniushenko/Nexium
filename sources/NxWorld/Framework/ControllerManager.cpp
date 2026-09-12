@@ -30,7 +30,7 @@ namespace Core
 {
     spdlog::logger* ControllerManager::getLogger() const
     {
-        return Framework::getLogger();
+        return NxWorld::getLogger();
     }
 
 } // namespace Core

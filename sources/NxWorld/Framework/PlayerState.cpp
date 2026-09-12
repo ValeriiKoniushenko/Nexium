@@ -30,6 +30,6 @@ namespace Core
 {
     spdlog::logger* PlayerState::getLogger() const
     {
-        return Framework::getLogger();
+        return NxWorld::getLogger();
     }
 } // namespace Core

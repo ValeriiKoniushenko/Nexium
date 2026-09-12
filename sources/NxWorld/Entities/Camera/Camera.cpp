@@ -22,10 +22,10 @@
  * SOFTWARE.
  */
 
-#include "GameplaySystem/Camera.h"
+#include "Camera.h"
 
-#include "GameplaySystem/Framework/GameInstance.h"
-#include "Graphics/Window.h"
+#include "NxWorld/Framework/GameInstance.h"
+#include "Platform/Window.h"
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/matrix_transform.hpp"
 #define GLM_ENABLE_EXPERIMENTAL
@@ -117,12 +117,7 @@ namespace NX
 
     FSize2 BaseCamera::getOutputFrameSize()
     {
-        if (gGameInstance->renderMode == GameInstance::RenderMode::Editor)
-        {
-            return static_cast<FSize2>(GetEditor()->gameViewport.getRenderSize());
-        }
-
-        return static_cast<FSize2>(GetWindow().getSize());
+        return static_cast<FSize2>(gGameInstance->getRenderSize());
     }
 
     void BaseCamera::setNear(float value) noexcept

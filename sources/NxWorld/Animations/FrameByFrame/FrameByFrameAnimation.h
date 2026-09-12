@@ -34,6 +34,7 @@
 
 namespace NX::Animation
 {
+    using Core::GlobalPosition2F;
 
     CLASS();
     struct Frame

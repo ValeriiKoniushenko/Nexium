@@ -27,7 +27,7 @@
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/spdlog.h"
 
-namespace NxRuntime
+namespace NxWorld
 {
     const std::string_view gModuleName = PRIVATE_MODULE_NAME;
 
@@ -37,4 +37,4 @@ namespace NxRuntime
         return logger.get();
     }
 
-} // namespace NxRuntime
+} // namespace NxWorld

@@ -24,9 +24,9 @@
 
 #include "Scene.h"
 
-#include "GameplaySystem/Entities/Actor.h"
-#include "GameplaySystem/Framework/GameInstance.h"
-#include "Graphics/Primitives/StaticMeshBundle.h"
+#include "NxWorld/Entities/Actor.h"
+#include "NxWorld/Entities/Mesh/StaticMeshBundle.h"
+#include "NxWorld/Framework/GameInstance.h"
 #include "PrivateModuleInfo.h"
 
 namespace
@@ -74,7 +74,7 @@ namespace
 namespace Core
 {
 
-    void Scene::directDraw()
+    void Scene::directDraw(NX::ShaderProgram* skyboxShader)
     {
         auto* world = GetWorld();
         if (!world || !world->currentCamera)
@@ -84,9 +84,8 @@ namespace Core
 
         auto& camera = *world->currentCamera;
 
-        if (gGameInstance->renderMode == GameInstance::RenderMode::Editor)
+        if (gGameInstance->isEditorMode())
         {
-            world->objectSelector.update(*this);
             grid.draw();
         }
 
@@ -122,9 +121,9 @@ namespace Core
             mesh->draw(camera);
         }
 
-        if (world->currentCamera->getType() == CameraType::Perspective)
+        if (world->currentCamera->getType() == CameraType::Perspective && skyboxShader)
         {
-            skybox->draw(camera);
+            skybox->draw(camera, *skyboxShader);
         }
     }
 
@@ -374,7 +373,7 @@ namespace Core
 
     spdlog::logger* Scene::getLogger() const
     {
-        return ::Scene::getLogger();
+        return NxWorld::getLogger();
     }
 
     void Scene::initialize()

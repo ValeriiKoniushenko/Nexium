@@ -24,10 +24,10 @@
 
 #pragma once
 
-#include "AssetsManager/ECSAsset.h"
-#include "AssetsManager/SkyboxAsset.h"
 #include "Core/Delegate.h"
 #include "Grid.h"
+#include "NxFundamental/Assets/ECSAsset.h"
+#include "NxWorld/Assets/SkyboxAsset.h"
 #include "SceneObject.h"
 
 #include <vector>
@@ -63,7 +63,7 @@ namespace Core
 
         void tick(float timeDelta);
 
-        void directDraw();
+        void directDraw(NX::ShaderProgram* skyboxShader = nullptr);
 
         void setSceneName(StringAtom name);
 

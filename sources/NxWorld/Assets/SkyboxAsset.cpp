@@ -52,9 +52,13 @@ namespace NX
 {
     R_FRIEND_IMPL(SkyboxAsset);
 
-    void SkyboxAsset::draw(BaseCamera& camera)
+    void SkyboxAsset::draw(BaseCamera& camera, ShaderProgram& shader)
     {
-        auto* shader = GetShaderManager().getShaderProgram("skybox"_atom);
+        if (_shader != &shader)
+        {
+            _shader = &shader;
+            _gcd.setShader(_shader);
+        }
 
         auto view = glm::mat4(1.f);
         view = glm::rotate(view, glm::radians(camera.getGlobalRotation().x),
@@ -62,9 +66,10 @@ namespace NX
         view = glm::rotate(view, glm::radians(camera.getGlobalRotation().y),
                            glm::vec3(0.f, 1.f, 0.f));
 
-        shader->use();
-        shader->setUniform("uView"_atom, view);
-        shader->setUniform("uProj"_atom, camera.getCachedProjectionMatrix());
+        shader.use();
+        shader.setUniform("uSkybox"_atom, 0);
+        shader.setUniform("uView"_atom, view);
+        shader.setUniform("uProj"_atom, camera.getCachedProjectionMatrix());
 
         glDepthFunc(GL_LEQUAL);
         _gcd.directDraw(GL_TRIANGLES, GL_TEXTURE_CUBE_MAP, 0);
@@ -110,16 +115,10 @@ namespace NX
             = { { .value = BaseGraphicsData::ModifiedValue::CullFace,
                   .modifier = BaseGraphicsData::Modifier::Disable } };
 
-        auto* shader = GetShaderManager().getShaderProgram("skybox"_atom);
-
         _gcd.generate();
-        _gcd.setShader(GetShaderManager().getShaderProgram("skybox"_atom));
         _gcd.setVertexBuffer(skyboxVertices);
         _gcd.setIndexBuffer(skyboxIndices);
         _gcd.setDrawModifiers(std::move(modifiers));
-
-        shader->use();
-        shader->setUniform("uSkybox"_atom, 0);
 
         _gcd.bindVAO();
         _gcd.bindTexture(GL_TEXTURE_CUBE_MAP);
@@ -170,6 +169,7 @@ namespace NX
     void SkyboxAsset::onUnloadRequest()
     {
         _gcd.clear();
+        _shader = nullptr;
     }
 
 } // namespace NX
