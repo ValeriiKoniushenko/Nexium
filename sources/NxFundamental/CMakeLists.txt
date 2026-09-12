@@ -4,7 +4,7 @@ add_library(Nexium_Fundamental_PrivateModule STATIC)
 target_sources(Nexium_Fundamental_PrivateModule PRIVATE
     PrivateModuleInfo.cpp
 )
-target_link_libraries(Nexium_Fundamental_PrivateModule PRIVATE Nexium::Foundation)
+target_link_libraries(Nexium_Fundamental_PrivateModule PRIVATE spdlog::spdlog)
 target_compile_definitions(Nexium_Fundamental_PrivateModule
     PRIVATE PRIVATE_MODULE_NAME="NxFundamental"
 )

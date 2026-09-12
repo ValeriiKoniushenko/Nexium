@@ -7,7 +7,7 @@ add_library(${MODULE_PRIVATE_TARGET} STATIC)
 target_sources(${MODULE_PRIVATE_TARGET} PRIVATE
     PrivateModuleInfo.cpp
 )
-target_link_libraries(${MODULE_PRIVATE_TARGET} PRIVATE spdlog::spdlog Utils::Core)
+target_link_libraries(${MODULE_PRIVATE_TARGET} PRIVATE spdlog::spdlog)
 target_compile_definitions(${MODULE_PRIVATE_TARGET} PRIVATE PRIVATE_MODULE_NAME="${MODULE_NAME}")
 
 # ================ NxSubsystem::Graphics =================
@@ -42,11 +42,19 @@ target_link_libraries(Nexium_Subsystem_Graphics
 )
 
 if(NEXIUM_ENABLE_3D_MODULE)
-    target_link_libraries(Nexium_Subsystem_Graphics PUBLIC assimp::assimp)
+    add_library(Nexium_Subsystem_AssimpImporter STATIC)
+    add_library(Nexium::Subsystem::AssimpImporter ALIAS Nexium_Subsystem_AssimpImporter)
+    target_sources(Nexium_Subsystem_AssimpImporter PRIVATE
+        Graphics/Import/AssimpMeshImporter.cpp
+    )
+    nexium_add_public_headers(Nexium_Subsystem_AssimpImporter
+        NxSubsystems/Graphics/Import/AssimpMeshImporter.h
+    )
+    target_link_libraries(Nexium_Subsystem_AssimpImporter
+        PUBLIC Nexium::Subsystem::Graphics
+        PRIVATE assimp::assimp
+    )
 endif()
-target_compile_definitions(Nexium_Subsystem_Graphics
-    PUBLIC "NEXIUM_HAS_ASSIMP=$<BOOL:${NEXIUM_ENABLE_3D_MODULE}>"
-)
 
 # ================ NxSubsystem::AssetsManager =================
 
@@ -88,7 +96,7 @@ nexium_add_public_headers(Nexium_Subsystem_Input
 target_link_libraries(Nexium_Subsystem_Input 
     PUBLIC 
     Nexium::Foundation
-    Nexium::Subsystem::Graphics
+    Nexium::Platform::Input
     PRIVATE
     ${MODULE_PRIVATE_TARGET}
 )
@@ -99,8 +107,14 @@ nexium_configure_target(${MODULE_PRIVATE_TARGET})
 nexium_configure_target(Nexium_Subsystem_Graphics)
 nexium_configure_target(Nexium_Subsystem_AssetsManager)
 nexium_configure_target(Nexium_Subsystem_Input)
+if(TARGET Nexium_Subsystem_AssimpImporter)
+    nexium_configure_target(Nexium_Subsystem_AssimpImporter)
+endif()
 nexium_enable_graphics_debug_api(Nexium_Subsystem_Graphics)
 
 add_dependencies(Nexium_Subsystem_Graphics CodeGenerator)
 add_dependencies(Nexium_Subsystem_AssetsManager CodeGenerator)
 add_dependencies(Nexium_Subsystem_Input CodeGenerator)
+if(TARGET Nexium_Subsystem_AssimpImporter)
+    add_dependencies(Nexium_Subsystem_AssimpImporter CodeGenerator)
+endif()

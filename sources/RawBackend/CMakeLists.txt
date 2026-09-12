@@ -9,7 +9,7 @@ add_library(${MODULE_PRIVATE_TARGET} STATIC)
 target_sources(${MODULE_PRIVATE_TARGET} PRIVATE
     PrivateModuleInfo.cpp
 )
-target_link_libraries(${MODULE_PRIVATE_TARGET} PRIVATE spdlog::spdlog Utils::Core)
+target_link_libraries(${MODULE_PRIVATE_TARGET} PRIVATE spdlog::spdlog)
 target_compile_definitions(${MODULE_PRIVATE_TARGET} PRIVATE PRIVATE_MODULE_NAME="${MODULE_NAME}")
 
 # ================ RawBackend =================

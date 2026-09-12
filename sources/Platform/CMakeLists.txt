@@ -7,7 +7,7 @@ add_library(${MODULE_PRIVATE_TARGET} STATIC)
 target_sources(${MODULE_PRIVATE_TARGET} PRIVATE
     PrivateModuleInfo.cpp
 )
-target_link_libraries(${MODULE_PRIVATE_TARGET} PRIVATE spdlog::spdlog Utils::Core)
+target_link_libraries(${MODULE_PRIVATE_TARGET} PRIVATE spdlog::spdlog)
 target_compile_definitions(${MODULE_PRIVATE_TARGET} PRIVATE PRIVATE_MODULE_NAME="${MODULE_NAME}")
 
 # ============== Graphics ===============
@@ -23,7 +23,6 @@ nexium_add_public_headers(Nexium_Platform_Graphics
 
 target_link_libraries(Nexium_Platform_Graphics
     PUBLIC
-    glfw
     Core::Glad
 )
 
@@ -36,6 +35,7 @@ target_sources(Nexium_Platform_Input PRIVATE
     Window.cpp
 )
 nexium_add_public_headers(Nexium_Platform_Input
+    Platform/Glfw.h
     Platform/Keyboard.h
     Platform/Keyboard.generated.h
     Platform/Mouse.h
@@ -46,11 +46,12 @@ nexium_add_public_headers(Nexium_Platform_Input
 
 target_link_libraries(Nexium_Platform_Input
     PUBLIC
+    glfw
     Utils::Core
-    Nexium::Platform::Graphics
     JustReflectMe::Adapter
     glm
     PRIVATE
+    Nexium::Platform::Graphics
     ${MODULE_PRIVATE_TARGET}
 )
 
