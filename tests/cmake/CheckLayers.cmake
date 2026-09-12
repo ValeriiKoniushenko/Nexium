@@ -13,7 +13,7 @@ int main() { return Foundation::Config::Path::projectAbsPath.empty(); }
 ]=])
     file(WRITE "${_directory}/Graphics.cpp" [=[
 #include "Platform/Graphics.h"
-int main() { return glfwGetVersionString() == nullptr; }
+int main() { return GL_NO_ERROR != 0; }
 ]=])
     file(WRITE "${_directory}/Input.cpp" [=[
 #include "Platform/Window.h"

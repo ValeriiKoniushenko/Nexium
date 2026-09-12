@@ -53,6 +53,8 @@ include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/NexiumTargets.cmake")
 option(NEXIUM_DISABLE_TESTS "Disable Nexium unit-tests targets" ON)
 option(NEXIUM_DISABLE_BENCHMARKS "Disable Nexium benchmark targets" ON)
 option(NEXIUM_ENABLE_3D_MODULE "Enable Nexium 3D Module" OFF)
+option(NEXIUM_VERIFY_INTERFACE_HEADER_SETS "Create public-header verification targets" ON)
+option(NEXIUM_ENABLE_LAYER_CHECKS "Create CMake layer consumer checks" ON)
 
 # ── Base setup & Predefinitions ────────────────────────────────────────────────
 # CXX standard installing
@@ -82,6 +84,10 @@ endif()
 
 if(NOT NEXIUM_DISABLE_BENCHMARKS)
     add_subdirectory(benchmarks)
+endif()
+
+if(NEXIUM_ENABLE_LAYER_CHECKS)
+    include("${CMAKE_CURRENT_SOURCE_DIR}/tests/cmake/CheckLayers.cmake")
 endif()
 
 # TODO: in the future it must be removed

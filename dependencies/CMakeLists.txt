@@ -60,6 +60,13 @@ if(NOT NEXIUM_DISABLE_TESTS)
     add_subdirectory(Utils/dependencies/googletest EXCLUDE_FROM_ALL)
 endif()
 
+# ── Google Benchmark ─────────────────────────────────────────────────────────
+if(NOT NEXIUM_DISABLE_BENCHMARKS)
+    set(BENCHMARK_ENABLE_GTEST_TESTS OFF CACHE BOOL "" FORCE)
+    set(BENCHMARK_ENABLE_INSTALL OFF CACHE BOOL "" FORCE)
+    add_subdirectory(Utils/dependencies/benchmark EXCLUDE_FROM_ALL)
+endif()
+
 # ── JustReflectMe ─────────────────────────────────────────────────────────────
 include("${PROJECT_SOURCE_DIR}/cmake/JustReflectMe.cmake")
 

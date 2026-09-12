@@ -6,9 +6,9 @@ add_executable(Nexium_ECS_Benchmarks
 
 target_link_libraries(Nexium_ECS_Benchmarks
     PRIVATE
-    Nexium::Core
+    Nexium::Fundamental::ECS
     Nexium::BenchmarkDependencies
 )
 
 add_dependencies(Nexium_ECS_Benchmarks CodeGenerator)
-CoreAddCompileOptionsTo(Nexium_ECS_Benchmarks)
+nexium_configure_target(Nexium_ECS_Benchmarks)

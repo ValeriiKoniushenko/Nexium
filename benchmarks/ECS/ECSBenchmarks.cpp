@@ -31,6 +31,7 @@
 #include <vector>
 
 using namespace Core;
+using namespace NX;
 
 // clang-format off
 /*

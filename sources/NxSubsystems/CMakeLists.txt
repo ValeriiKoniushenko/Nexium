@@ -79,6 +79,9 @@ target_link_libraries(Nexium_Subsystem_AssetsManager
     PRIVATE
     ${MODULE_PRIVATE_TARGET}
 )
+if(WIN32)
+    target_link_libraries(Nexium_Subsystem_AssetsManager PRIVATE comdlg32)
+endif()
 
 # ================ NxSubsystem::Input =================
 

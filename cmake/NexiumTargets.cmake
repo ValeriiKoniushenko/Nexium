@@ -12,12 +12,23 @@ function(nexium_configure_target target)
     endif()
 
     CoreAddCompileOptionsTo(${target})
+
+    if(NEXIUM_VERIFY_INTERFACE_HEADER_SETS)
+        get_property(header_sets TARGET ${target} PROPERTY HEADER_SETS)
+        if(header_sets)
+            set_property(TARGET ${target} PROPERTY VERIFY_INTERFACE_HEADER_SETS ON)
+        endif()
+    endif()
 endfunction()
 
 function(nexium_add_public_headers target)
     set(headers)
     foreach(header IN LISTS ARGN)
-        list(APPEND headers "${PROJECT_SOURCE_DIR}/sources/${header}")
+        set(header_path "${PROJECT_SOURCE_DIR}/sources/${header}")
+        list(APPEND headers "${header_path}")
+        if(header MATCHES "\\.generated\\.h$")
+            set_source_files_properties(${header_path} PROPERTIES SKIP_LINTING TRUE)
+        endif()
     endforeach()
 
     target_sources(${target}
