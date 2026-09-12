@@ -24,7 +24,7 @@
 
 #include "EditorStaticMeshAdapter.h"
 
-#include "Graphics/Primitives/StaticMesh.h"
+#include "NxWorld/Entities/Mesh/StaticMesh.h"
 
 using namespace Core::Gui;
 

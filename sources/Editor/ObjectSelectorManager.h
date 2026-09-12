@@ -25,7 +25,7 @@
 #pragma once
 
 #include "Core/Delegate.h"
-#include "Graphics/Primitives/StaticMesh.h"
+#include "NxWorld/Entities/Mesh/StaticMesh.h"
 
 #include <unordered_map>
 

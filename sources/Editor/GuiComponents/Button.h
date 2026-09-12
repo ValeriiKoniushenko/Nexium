@@ -24,8 +24,8 @@
 
 #pragma once
 
-#include "AssetsManager/TextureAsset.h"
 #include "Core/Delegate.h"
+#include "NxSubsystems/AssetsManager/TextureAsset.h"
 #include "Widget.h"
 
 namespace Core::Gui

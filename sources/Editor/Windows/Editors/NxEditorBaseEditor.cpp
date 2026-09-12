@@ -24,9 +24,9 @@
 
 #include "NxEditorBaseEditor.h"
 
-#include "AssetsManager/AssetsManager.h"
 #include "ImGui/imgui.h"
 #include "Misc/IconsFontAwesome.h"
+#include "NxSubsystems/AssetsManager/AssetsManager.h"
 
 namespace Core
 {

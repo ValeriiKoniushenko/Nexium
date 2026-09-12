@@ -30,8 +30,8 @@
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/LabelRow.h"
 #include "Editor/GuiComponents/Misc.h"
-#include "GameplaySystem/Framework/GameInstance.h"
-#include "Graphics/Primitives/StaticMeshBundle.h"
+#include "NxWorld/Entities/Mesh/StaticMeshBundle.h"
+#include "NxWorld/Framework/GameInstance.h"
 
 using namespace Core::Gui;
 

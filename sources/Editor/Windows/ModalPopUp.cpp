@@ -24,8 +24,8 @@
 
 #include "ModalPopUp.h"
 
+#include "Editor/EditorIntegration.h"
 #include "Editor/GuiComponents/Button.h"
-#include "GameplaySystem/Framework/GameInstance.h"
 #include "Misc/IconsFontAwesome.h"
 
 namespace Core

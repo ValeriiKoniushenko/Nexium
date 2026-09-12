@@ -24,15 +24,16 @@
 
 #include "EditorSettings.h"
 
+#include "Editor/EditorIntegration.h"
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/Label.h"
 #include "Editor/GuiComponents/Separator.h"
 #include "Editor/GuiComponents/Spacer.h"
-#include "GameplaySystem/Framework/GameInstance.h"
 #include "Misc/IconsFontAwesome.h"
-#include "Scene/Spectator.h"
+#include "NxWorld/Framework/GameInstance.h"
+#include "NxWorld/Scene/Spectator.h"
 
 using namespace Core::Gui;
 

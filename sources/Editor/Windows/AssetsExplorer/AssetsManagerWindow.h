@@ -25,9 +25,9 @@
 #pragma once
 
 #include "../BaseWindow.h"
-#include "AssetsManager/AssetsManager.h"
-#include "AssetsManager/TextureAsset.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
+#include "NxSubsystems/AssetsManager/AssetsManager.h"
+#include "NxSubsystems/AssetsManager/TextureAsset.h"
 #include "RenamePopUpWindow.h"
 #include "ThumbnailFile.h"
 

@@ -24,11 +24,12 @@
 
 #include "ThumbnailFile.h"
 
-#include "AssetsManager/AssetsManager.h"
+#include "Editor/EditorIntegration.h"
 #include "Editor/Windows/Editors/TextEditor.h"
 #include "Editor/Windows/ModalPopUp.h"
-#include "GameplaySystem/Framework/GameInstance.h"
 #include "Misc/IconsFontAwesome.h"
+#include "NxSubsystems/AssetsManager/AssetsManager.h"
+#include "NxWorld/Framework/GameInstance.h"
 
 #include <array>
 #include <chrono>
@@ -230,8 +231,7 @@ namespace Core
             {
                 if (ImGui::MenuItem(ICON_FA_FILE_CODE_O " Open with text editor"))
                 {
-                    gGameInstance->gameEditor.showWindow<TextEditorEWC>(
-                        ".*", _path.generic_string().data());
+                    GetEditor()->showWindow<TextEditorEWC>(".*", _path.generic_string().data());
                 }
             }
 

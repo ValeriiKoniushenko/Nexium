@@ -24,11 +24,11 @@
 
 #include "RenamePopUpWindow.h"
 
+#include "Editor/EditorIntegration.h"
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/Label.h"
-#include "GameplaySystem/Framework/GameInstance.h"
 #include "ImGui/imgui.h"
 
 #include <algorithm>

@@ -24,7 +24,6 @@
 
 #include "PrivateModuleInfo.h"
 
-#include "Foundation/BaseLog.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 
 namespace Editor

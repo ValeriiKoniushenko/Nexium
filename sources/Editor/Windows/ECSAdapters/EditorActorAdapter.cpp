@@ -28,7 +28,7 @@
 #include "Editor/GuiComponents/LabelRow.h"
 #include "Editor/GuiComponents/Misc.h"
 #include "Editor/GuiComponents/VecInput.h"
-#include "GameplaySystem/Entities/Actor.h"
+#include "NxWorld/Entities/Actor.h"
 
 using namespace Core::Gui;
 

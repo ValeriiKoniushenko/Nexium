@@ -27,7 +27,7 @@
 #include "BaseWindow.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
-#include "Graphics/GraphicsComponents.h"
+#include "NxSubsystems/Graphics/GraphicsComponents.h"
 
 namespace Core
 {

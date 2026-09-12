@@ -24,6 +24,7 @@
 
 #include "GameEditor.h"
 
+#include "Editor/EditorIntegration.h"
 #include "Editor/Windows/EditorMenuBarWindow.h"
 #include "Editor/Windows/EditorSettings.h"
 #include "Editor/Windows/Editors/TextEditor.h"
@@ -35,11 +36,11 @@
 #include "Editor/Windows/SceneTreeWindow.h"
 #include "Editor/Windows/ShaderManager.h"
 #include "Foundation/Configs.h"
-#include "GameplaySystem/Framework/GameInstance.h"
-#include "Graphics/Primitives/StaticMeshBundle.h"
 #include "ImGui/backends/imgui_impl_glfw.h"
 #include "ImGui/backends/imgui_impl_opengl3.h"
 #include "Misc/IconsFontAwesome.h"
+#include "NxWorld/Entities/Mesh/StaticMeshBundle.h"
+#include "NxWorld/Framework/GameInstance.h"
 #include "PrivateModuleInfo.h"
 #include "Windows/AssetsExplorer/AssetsManagerWindow.h"
 #include "Windows/AssetsExplorer/RenamePopUpWindow.h"
@@ -370,9 +371,7 @@ namespace Core
         _subscriptionPool << keyboardInput.getOrCreate("Cancel action", Keyboard::Key::Escape)
                                  ->onPress->subscribeAndGetID(
                                      [&](auto)
-                                     {
-                                         gGameInstance->objectSelectorManager.deselectAllAndClear();
-                                     });
+                                     { GetObjectSelectorManager()->deselectAllAndClear(); });
 
         auto mouseMove = mouseInput.getOrCreate("mouseMove", Mouse::Key::Right);
         _subscriptionPool << mouseMove->onDrag->subscribeAndGetID(
@@ -391,10 +390,9 @@ namespace Core
             return;
         }
 
-        if (auto* world = GetWorld())
+        if (auto* objectPicker = GetObjectPicker())
         {
-            world->objectSelector.requestPick([this](Transformable* object)
-                                              { responseOnPick(object); });
+            objectPicker->requestPick([this](Transformable* object) { responseOnPick(object); });
         }
     }
 
@@ -405,8 +403,7 @@ namespace Core
             return;
         }
 
-        if (const auto* wnd = gGameInstance->gameEditor.getWindow<GameViewportEWC>();
-            !wnd || !wnd->isHovered())
+        if (const auto* wnd = GetEditor()->getWindow<GameViewportEWC>(); !wnd || !wnd->isHovered())
         {
             return;
         }
@@ -417,18 +414,18 @@ namespace Core
             {
                 if (!bundle->isIgnoreSelect())
                 {
-                    gGameInstance->objectSelectorManager.selectSingleObject(bundle);
+                    GetObjectSelectorManager()->selectSingleObject(bundle);
                 }
                 bundle->onMousePicked(mesh);
             }
             else
             {
-                gGameInstance->objectSelectorManager.selectSingleObject(mesh);
+                GetObjectSelectorManager()->selectSingleObject(mesh);
             }
         }
         else if (auto* comp = dynamic_cast<BaseComponent*>(object))
         {
-            gGameInstance->objectSelectorManager.selectSingleObject(comp);
+            GetObjectSelectorManager()->selectSingleObject(comp);
         }
     }
 

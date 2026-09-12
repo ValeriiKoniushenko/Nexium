@@ -25,13 +25,14 @@
 #include "SceneTreeWindow.h"
 
 #include "AssetsExplorer/AssetsManagerWindow.h"
-#include "GameplaySystem/Entities/Actor.h"
-#include "GameplaySystem/Framework/GameInstance.h"
+#include "Editor/EditorIntegration.h"
 #include "ImGui/imgui.h"
 #include "ImGui/misc/cpp/imgui_stdlib.h"
 #include "Misc/IconsFontAwesome.h"
 #include "ModalAssetsSearchPopUp.h"
-#include "Scene/Scene.h"
+#include "NxWorld/Entities/Actor.h"
+#include "NxWorld/Framework/GameInstance.h"
+#include "NxWorld/Scene/Scene.h"
 
 namespace Core
 {
@@ -72,7 +73,7 @@ namespace Core
 
         setScene(&gGameInstance->gameScene);
 
-        _subscriptionPool << gGameInstance->objectSelectorManager.onChange->subscribeAndGetID(
+        _subscriptionPool << GetObjectSelectorManager()->onChange->subscribeAndGetID(
             [this](BaseComponent* comp, bool newValue)
             {
                 if (newValue)
@@ -162,7 +163,7 @@ namespace Core
             isInSelectedSubtree = true;
         }
 
-        if (isInSelectedSubtree || gGameInstance->objectSelectorManager.isSelected(n))
+        if (isInSelectedSubtree || GetObjectSelectorManager()->isSelected(n))
         {
             flags |= ImGuiTreeNodeFlags_Selected | ImGuiTreeNodeFlags_SpanAvailWidth;
         }
@@ -240,7 +241,7 @@ namespace Core
                 selectedObject = n;
                 if (_lastSelectedObject != selectedObject)
                 {
-                    gGameInstance->objectSelectorManager.selectSingleObject(n);
+                    GetObjectSelectorManager()->selectSingleObject(n);
                 }
             }
         }
@@ -267,7 +268,7 @@ namespace Core
             const auto* sceneObj = dynamic_cast<SceneObject*>(n);
             if (sceneObj && sceneObj->hasReferencedAsset() && ImGui::MenuItem("Show derived .nx"))
             {
-                auto* wnd = gGameInstance->gameEditor.getWindow<AssetsManagerWindowEWC>();
+                auto* wnd = GetEditor()->getWindow<AssetsManagerWindowEWC>();
                 if (wnd)
                 {
                     wnd->requestFocus();

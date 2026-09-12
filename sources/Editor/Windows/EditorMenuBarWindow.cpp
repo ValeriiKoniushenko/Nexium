@@ -26,15 +26,16 @@
 
 #include "AssetsExplorer/AssetsManagerWindow.h"
 #include "ECSAdapters/EditorStaticMeshBundleAdapter.h"
+#include "Editor/EditorIntegration.h"
 #include "Editor/Windows/EditorSettings.h"
 #include "Editor/Windows/GameViewport.h"
 #include "Editor/Windows/LogsWindow.h"
 #include "Editor/Windows/ObjectPropertiesWindow.h"
 #include "Editor/Windows/SceneTreeWindow.h"
 #include "Editors/TextEditor.h"
-#include "GameplaySystem/Framework/GameInstance.h"
 #include "ImageViewer.h"
 #include "Misc/IconsFontAwesome.h"
+#include "NxWorld/Framework/GameInstance.h"
 #include "ShaderManager.h"
 #include "WorldSettings.h"
 
@@ -43,9 +44,9 @@ namespace
     template<Core::IsEditorWindowComponent T>
     void WindowMenuItem()
     {
-        if (ImGui::MenuItem(gGameInstance->gameEditor.getWindow<T>()->getComponentName().c_str()))
+        if (ImGui::MenuItem(GetEditor()->getWindow<T>()->getComponentName().c_str()))
         {
-            gGameInstance->gameEditor.showWindow<T>();
+            GetEditor()->showWindow<T>();
         }
     }
 } // namespace
@@ -81,7 +82,7 @@ namespace Core
             }
             if (ImGui::MenuItem(ICON_FA_COG " Settings"))
             {
-                gGameInstance->gameEditor.showWindow<EditorSettingsEWC>();
+                GetEditor()->showWindow<EditorSettingsEWC>();
             }
             ImGui::EndMenu();
         }
@@ -90,7 +91,7 @@ namespace Core
         {
             if (ImGui::MenuItem("Deselect"))
             {
-                gGameInstance->objectSelectorManager.deselectAllAndClear();
+                GetObjectSelectorManager()->deselectAllAndClear();
             }
             ImGui::EndMenu();
         }
@@ -126,10 +127,10 @@ namespace Core
         offset -= _simulationButton - style.ItemSpacing.x;
         ImGui::SetCursorPosX(offset);
 
-        if (ToggleButton(ICON_FA_PLAY_CIRCLE, gGameInstance->gameEditor.getIsRunSimulation(),
+        if (ToggleButton(ICON_FA_PLAY_CIRCLE, GetEditor()->getIsRunSimulation(),
                          BaseEWC::ColorSoftGreen, BaseEWC::ColorRed))
         {
-            gGameInstance->gameEditor.toggleSimulation();
+            GetEditor()->toggleSimulation();
         }
         ImGui::SameLine(0,0);
         offset -= style.ItemSpacing.x * 2.f;

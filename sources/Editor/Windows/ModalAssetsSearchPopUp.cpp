@@ -24,6 +24,7 @@
 
 #include "ModalAssetsSearchPopUp.h"
 
+#include "Editor/EditorIntegration.h"
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
@@ -31,7 +32,6 @@
 #include "Editor/GuiComponents/Separator.h"
 #include "Editor/GuiComponents/Spacer.h"
 #include "Foundation/BaseLog.h"
-#include "GameplaySystem/Framework/GameInstance.h"
 
 namespace Core
 {

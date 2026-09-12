@@ -30,8 +30,8 @@
 #include "Editor/GuiComponents/Spacer.h"
 #include "Editor/Windows/ModalPopUp.h"
 #include "Foundation/Configs.h"
-#include "GameplaySystem/Framework/GameInstance.h"
 #include "Misc/IconsFontAwesome.h"
+#include "NxWorld/Framework/GameInstance.h"
 #include "RenamePopUpWindow.h"
 #include "ThumbnailFile.h"
 

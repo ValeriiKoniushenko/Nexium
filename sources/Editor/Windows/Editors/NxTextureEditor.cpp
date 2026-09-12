@@ -29,8 +29,8 @@
 #include "Editor/GuiComponents/LabelRow.h"
 #include "Editor/GuiComponents/Misc.h"
 #include "Editor/GuiComponents/VecInput.h"
-#include "GameplaySystem/Framework/GameInstance.h"
 #include "Misc/IconsFontAwesome.h"
+#include "NxWorld/Framework/GameInstance.h"
 
 using namespace Core::Gui;
 

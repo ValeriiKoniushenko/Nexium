@@ -24,6 +24,7 @@
 
 #include "WorldSettings.h"
 
+#include "Editor/EditorIntegration.h"
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
@@ -31,8 +32,8 @@
 #include "Editor/GuiComponents/LabelRow.h"
 #include "Editor/GuiComponents/Misc.h"
 #include "Editor/GuiComponents/VecInput.h"
-#include "GameplaySystem/Framework/GameInstance.h"
 #include "Misc/IconsFontAwesome.h"
+#include "NxWorld/Framework/GameInstance.h"
 #include "SceneTreeWindow.h"
 
 namespace Core

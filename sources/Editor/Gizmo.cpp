@@ -24,7 +24,7 @@
 
 #include "Gizmo.h"
 
-#include "GameplaySystem/Framework/GameInstance.h"
+#include "Editor/EditorIntegration.h"
 #include "assimp/Importer.hpp"
 #include "assimp/postprocess.h"
 #include "assimp/scene.h"
@@ -97,8 +97,7 @@ namespace Core
 
             data.direction = static_cast<Direction>(directionChar);
 
-            for (auto& obj :
-                 gGameInstance->objectSelectorManager.getSelectedObjects() | std::views::values)
+            for (auto& obj : GetObjectSelectorManager()->getSelectedObjects() | std::views::values)
             {
                 if (auto* trans = dynamic_cast<Transformable*>(obj.get()))
                 {

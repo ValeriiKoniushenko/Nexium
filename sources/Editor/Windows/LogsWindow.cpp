@@ -28,8 +28,8 @@
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/Spacer.h"
 #include "Foundation/Configs.h"
-#include "GameplaySystem/Framework/GameInstance.h"
 #include "Misc/IconsFontAwesome.h"
+#include "NxWorld/Framework/GameInstance.h"
 
 namespace Core
 {

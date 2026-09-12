@@ -53,6 +53,13 @@ set(UTILS_DISABLE_TESTS ON CACHE BOOL "" FORCE)
 set(UTILS_DISABLE_BENCHMARKS ON CACHE BOOL "" FORCE)
 add_subdirectory(Utils)
 
+# ── GoogleTest ───────────────────────────────────────────────────────────────
+if(NOT NEXIUM_DISABLE_TESTS)
+    set(BUILD_GMOCK OFF CACHE BOOL "" FORCE)
+    set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
+    add_subdirectory(Utils/dependencies/googletest EXCLUDE_FROM_ALL)
+endif()
+
 # ── JustReflectMe ─────────────────────────────────────────────────────────────
 include("${PROJECT_SOURCE_DIR}/cmake/JustReflectMe.cmake")
 

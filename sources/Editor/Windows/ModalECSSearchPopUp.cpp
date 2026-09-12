@@ -24,13 +24,13 @@
 
 #include "ModalECSSearchPopUp.h"
 
+#include "Editor/EditorIntegration.h"
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/LabelRow.h"
 #include "Editor/GuiComponents/List.h"
 #include "Editor/GuiComponents/Separator.h"
-#include "GameplaySystem/Framework/GameInstance.h"
 
 namespace Core
 {

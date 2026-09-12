@@ -24,7 +24,7 @@
 
 #include "ToastNotifications.h"
 
-#include "GameplaySystem/Framework/GameInstance.h"
+#include "Editor/EditorIntegration.h"
 #include "ImGui/imgui.h"
 #include "Misc/IconsFontAwesome.h"
 
@@ -102,7 +102,7 @@ namespace Editor
     {
         if (gGameInstance)
         {
-            gGameInstance->gameEditor.notifications.show(*this);
+            Core::GetEditor()->notifications.show(*this);
         }
     }
 

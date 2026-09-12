@@ -27,7 +27,7 @@
 #include "Editor/GuiComponents/Array.h"
 #include "Editor/GuiComponents/LabelRow.h"
 #include "Editor/GuiComponents/Misc.h"
-#include "Graphics/GraphicsComponents.h"
+#include "NxSubsystems/Graphics/GraphicsComponents.h"
 
 using namespace Core::Gui;
 

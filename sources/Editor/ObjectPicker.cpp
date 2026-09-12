@@ -24,10 +24,11 @@
 
 #include "ObjectPicker.h"
 
+#include "Editor/EditorIntegration.h"
 #include "Editor/Windows/GameViewport.h"
-#include "GameplaySystem/Framework/GameInstance.h"
-#include "Graphics/Primitives/StaticMeshBundle.h"
-#include "Scene/Rectangle.h"
+#include "NxWorld/Entities/Mesh/StaticMeshBundle.h"
+#include "NxWorld/Framework/GameInstance.h"
+#include "NxWorld/Scene/Rectangle.h"
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include "glm/gtx/string_cast.hpp"
@@ -45,7 +46,7 @@ namespace Core
         _requested = false;
 
         glm::vec2 pickPos = {};
-        auto* gameViewportWnd = gGameInstance->gameEditor.getWindow<GameViewportEWC>();
+        auto* gameViewportWnd = GetEditor()->getWindow<GameViewportEWC>();
         if (!gameViewportWnd)
         {
             return;

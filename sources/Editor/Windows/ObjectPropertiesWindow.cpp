@@ -26,6 +26,7 @@
 
 #include "Animations/FrameByFrame/FrameByFrameAnimator.h"
 #include "ECS/Transformable.h"
+#include "Editor/EditorIntegration.h"
 #include "Editor/GuiComponents/Array.h"
 #include "Editor/GuiComponents/CheckBox.h"
 #include "Editor/GuiComponents/Combo.h"
@@ -34,11 +35,11 @@
 #include "Editor/GuiComponents/Label.h"
 #include "Editor/GuiComponents/Misc.h"
 #include "Editor/GuiComponents/VecInput.h"
-#include "GameplaySystem/Camera.h"
-#include "GameplaySystem/Framework/GameInstance.h"
-#include "Graphics/Primitives/StaticMesh.h"
-#include "Graphics/Primitives/StaticMeshBundle.h"
-#include "Scene/Rectangle.h"
+#include "NxWorld/Entities/Camera/Camera.h"
+#include "NxWorld/Entities/Mesh/StaticMesh.h"
+#include "NxWorld/Entities/Mesh/StaticMeshBundle.h"
+#include "NxWorld/Framework/GameInstance.h"
+#include "NxWorld/Scene/Rectangle.h"
 
 using namespace Core;
 using namespace Core::Gui;
@@ -270,7 +271,7 @@ namespace Core
         createGui();
         registerGuiEvents();
 
-        _subscriptionPool << gGameInstance->objectSelectorManager.onChange->subscribeAndGetID(
+        _subscriptionPool << GetObjectSelectorManager()->onChange->subscribeAndGetID(
             [this](BaseComponent* comp, bool newValue)
             {
                 if (newValue)

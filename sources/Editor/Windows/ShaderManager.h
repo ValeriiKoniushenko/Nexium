@@ -26,7 +26,7 @@
 
 #include "BaseWindow.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
-#include "Graphics/ShaderProgram.h"
+#include "NxSubsystems/Graphics/ShaderProgram.h"
 
 namespace Core
 {

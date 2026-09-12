@@ -24,6 +24,7 @@
 
 #include "ShaderManager.h"
 
+#include "Editor/EditorIntegration.h"
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/Combo.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
@@ -33,7 +34,6 @@
 #include "Editor/GuiComponents/Spacer.h"
 #include "Editors/TextEditor.h"
 #include "Foundation/Configs.h"
-#include "GameplaySystem/Framework/GameInstance.h"
 #include "Misc/IconsFontAwesome.h"
 
 using namespace Core::Gui;

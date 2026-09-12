@@ -25,6 +25,7 @@
 #include "ModalCreateBlueprint.h"
 
 #include "AssetsExplorer/AssetsManagerWindow.h"
+#include "Editor/EditorIntegration.h"
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
@@ -33,7 +34,7 @@
 #include "Editor/GuiComponents/List.h"
 #include "Editor/GuiComponents/Separator.h"
 #include "Foundation/Configs.h"
-#include "GameplaySystem/Framework/GameInstance.h"
+#include "NxWorld/Framework/GameInstance.h"
 
 namespace Core
 {
@@ -288,9 +289,7 @@ namespace Core
         if (_pathField)
         {
             _pathField->input->setInputtedData(
-                gGameInstance->gameEditor.getWindow<AssetsManagerWindowEWC>()
-                    ->getOpenedPath()
-                    .string());
+                GetEditor()->getWindow<AssetsManagerWindowEWC>()->getOpenedPath().string());
         }
     }
 

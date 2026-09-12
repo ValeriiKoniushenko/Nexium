@@ -1,9 +1,9 @@
 #include "FrameByFrameAnimationEditor.h"
 
 #include "Animations/FrameByFrame/FrameByFrameAnimator.h"
-#include "GameplaySystem/Framework/GameInstance.h"
 #include "ImGui/imgui.h"
 #include "Misc/IconsFontAwesome.h"
+#include "NxWorld/Framework/GameInstance.h"
 
 #include <algorithm>
 #include <cstring>

@@ -24,10 +24,10 @@
 
 #pragma once
 
-#include "AssetsManager/ECSAsset.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "Editors/NxEditorBaseEditor.h"
 #include "InputDevices/InputManager.h"
+#include "NxFundamental/Assets/ECSAsset.h"
 
 namespace Core
 {

@@ -24,8 +24,6 @@
 
 #include "ObjectSelectorManager.h"
 
-#include "GameplaySystem/Framework/GameInstance.h"
-
 namespace Core
 {
     void ObjectSelectorManager::toggleObject(BaseComponent* comp)

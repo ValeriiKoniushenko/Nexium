@@ -27,9 +27,9 @@
 #include "../Foundation/Configs.h"
 #include "../GameplaySystem/Entities/Actor.h"
 #include "Core/Delegate.h"
-#include "Graphics/Primitives/StaticMeshBundle.h"
-#include "Graphics/Window.h"
 #include "InputDevices/InputAction.h"
+#include "NxWorld/Entities/Mesh/StaticMeshBundle.h"
+#include "Platform/Window.h"
 
 #include <filesystem>
 
