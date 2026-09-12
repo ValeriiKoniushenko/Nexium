@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-#include "Graphics/ShaderManager.h"
+#include "NxSubsystems/Graphics/ShaderManager.h"
 
 #include "Foundation/Configs.h"
 #include "spdlog/spdlog.h"
@@ -30,6 +30,7 @@
 #include "gtest/gtest.h"
 
 using namespace Core;
+using namespace NX;
 
 class ShaderManagerFixture : public ::testing::Test
 {
@@ -43,13 +44,13 @@ protected:
         manager.pushSuitableFileExtension(".vert", ShaderType::Vertex);
     }
 
-    ShaderManager manager;
+    ShaderManager& manager = ShaderManager::Instance();
 };
 
 TEST_F(ShaderManagerFixture, TestAssetsDirectoryIsNotEmpty)
 {
     namespace fs = std::filesystem;
-    const auto testAssetsDir = Core::Config::Path::projectAbsPath / "tests/assets/shaders";
+    const auto testAssetsDir = Foundation::Config::Path::projectAbsPath / "tests/assets/shaders";
 
     if (!fs::exists(testAssetsDir))
     {

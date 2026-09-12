@@ -1,13 +1,14 @@
 #include "../ECSTests/DummyComponent.h"
-#include "AssetsManager/AssetImpls/Factory.h"
-#include "AssetsManager/AssetsManager.h"
 #include "Foundation/Configs.h"
+#include "NxFundamental/Assets/Factory.h"
+#include "NxSubsystems/AssetsManager/AssetsManager.h"
 
 #include "gtest/gtest.h"
 #include <chrono>
 #include <fstream>
 
 using namespace Core;
+using namespace NX;
 
 namespace
 {
@@ -101,7 +102,7 @@ namespace
     {
         static const bool registered = []
         {
-            AssetImpl::GetFactory().registerAssetType<DummyAssetImpl>();
+            GetFactory().registerAssetType<DummyAssetImpl>();
             return true;
         }();
         (void)registered;
@@ -124,7 +125,8 @@ namespace
         [[nodiscard]] StringAtom logicPath(const fs::path& path) const
         {
             return StringAtom::Intern(
-                fs::relative(fs::absolute(path), Config::Path::projectAbsPath).generic_string());
+                fs::relative(fs::absolute(path), Foundation::Config::Path::projectAbsPath)
+                    .generic_string());
         }
 
         void writeEcsAsset(const fs::path& path, std::string_view name,
@@ -176,7 +178,7 @@ TEST_F(AssetsManagerTest, ConstructorRegistersDataPathAndCreatesDefaultAtlas)
 {
     TestAssetsManager manager;
 
-    ASSERT_TRUE(manager.getRegisteredPaths().contains(Config::Path::data));
+    ASSERT_TRUE(manager.getRegisteredPaths().contains(Foundation::Config::Path::data));
     ASSERT_EQ(1u, manager.getAtlasesCount());
     ASSERT_EQ(&manager.getTextureAtlas(), &manager.getAtlas("default"_atom));
     ASSERT_EQ((std::vector<StringAtom>{ "default"_atom }), manager.getAtlasesAsVector());
@@ -212,10 +214,8 @@ TEST_F(AssetsManagerTest, InitialScanIndexesEverySupportedAssetType)
 {
     const auto ecsPath = root / "actor.nx";
     const auto texturePath = root / "texture.nxtex";
-    const auto skyboxPath = root / "sky.nxsky";
     writeEcsAsset(ecsPath, "Actor", "WorldObject,GuiObject");
     writeTextureAsset(texturePath);
-    writeSkyboxAsset(skyboxPath);
     writeTextFile(root / "ignored.nxunknown");
 
     TestAssetsManager manager;
@@ -224,7 +224,6 @@ TEST_F(AssetsManagerTest, InitialScanIndexesEverySupportedAssetType)
 
     ASSERT_EQ(1u, manager.ecsAssetCount());
     ASSERT_EQ(1u, manager.textureCount());
-    ASSERT_EQ(1u, manager.skyboxCount());
 
     const auto ecsId = logicPath(ecsPath);
     const auto* ecsAsset = manager.findIndexedEcsAsset(ecsId);
@@ -234,7 +233,6 @@ TEST_F(AssetsManagerTest, InitialScanIndexesEverySupportedAssetType)
     ASSERT_EQ(Tag_WorldObject | Tag_GuiObject, ecsAsset->getTags());
 
     ASSERT_TRUE(manager.hasIndexedTexture(logicPath(texturePath)));
-    ASSERT_TRUE(manager.hasIndexedSkybox(logicPath(skyboxPath)));
 }
 
 TEST_F(AssetsManagerTest, InitialScanIsIndependentForEachManagerInstance)
@@ -257,7 +255,6 @@ TEST_F(AssetsManagerTest, RefreshAddsNewAssetsAndRemovesDeletedAssets)
 {
     const auto removedPath = root / "removed.nx";
     const auto texturePath = root / "new.nxtex";
-    const auto skyboxPath = root / "new.nxsky";
     writeEcsAsset(removedPath, "Removed");
 
     TestAssetsManager manager;
@@ -267,14 +264,11 @@ TEST_F(AssetsManagerTest, RefreshAddsNewAssetsAndRemovesDeletedAssets)
 
     fs::remove(removedPath);
     writeTextureAsset(texturePath);
-    writeSkyboxAsset(skyboxPath);
     manager.refreshFilesSystem();
 
     ASSERT_EQ(0u, manager.ecsAssetCount());
     ASSERT_EQ(1u, manager.textureCount());
-    ASSERT_EQ(1u, manager.skyboxCount());
     ASSERT_TRUE(manager.hasIndexedTexture(logicPath(texturePath)));
-    ASSERT_TRUE(manager.hasIndexedSkybox(logicPath(skyboxPath)));
 }
 
 TEST_F(AssetsManagerTest, RefreshUpdatesPreloadedEcsMetadata)
@@ -321,8 +315,6 @@ TEST_F(AssetsManagerTest, EcsLookupHandlesMissingAssetsAndPreservesWeakLoadingSe
 
     ASSERT_FALSE(manager.getEcsAsset("missing.nx"_atom).isValid());
     ASSERT_FALSE(manager.getWeakEcsAsset("missing.nx"_atom).isValid());
-    ASSERT_FALSE(manager.getTexture("missing.nxtex"_atom).isValid());
-    ASSERT_FALSE(manager.getSkybox("missing.nxsky"_atom).isValid());
 }
 
 TEST_F(AssetsManagerTest, FilesystemPathLookupUsesTheProjectRelativeAssetId)

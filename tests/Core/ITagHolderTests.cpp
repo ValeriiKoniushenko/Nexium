@@ -1,8 +1,8 @@
-#include "Misc/ITagHolder.h"
+#include "NxFundamental/ITagHolder.h"
 
 #include "gtest/gtest.h"
 
-using namespace Core;
+using namespace NX;
 
 namespace
 {
