@@ -31,11 +31,11 @@ namespace spdlog
     class logger;
 }
 
-namespace Platform
+namespace Foundation
 {
 
     extern const std::string_view gModuleName;
 
     [[nodiscard]] spdlog::logger* getLogger();
 
-} // namespace Platform
+} // namespace Foundation

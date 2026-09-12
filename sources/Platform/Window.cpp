@@ -24,6 +24,8 @@
 
 #include "Window.h"
 
+#include "Graphics.h"
+
 #include <cstdlib>
 
 #ifdef _WIN32

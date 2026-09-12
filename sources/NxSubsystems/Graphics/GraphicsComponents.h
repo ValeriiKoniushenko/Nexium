@@ -27,9 +27,6 @@
 #include "Foundation/Interfaces/DataStream.h"
 #include "NxFundamental/ResourceManagement/JsonAdapter.h"
 #include "NxSubsystems/Graphics/ShaderManager.h"
-#if NEXIUM_HAS_ASSIMP
-    #include "assimp/mesh.h"
-#endif
 
 namespace NX
 {
@@ -299,11 +296,6 @@ namespace NX
         InterleavedGraphicsData(InterleavedGraphicsData&& other) noexcept;
         InterleavedGraphicsData& operator=(const InterleavedGraphicsData& other) = default;
         InterleavedGraphicsData& operator=(InterleavedGraphicsData&& other) noexcept;
-
-#if NEXIUM_HAS_ASSIMP
-        void setMesh(const aiMesh* mesh, bool isAppendNormals = false, bool isAppendUV = false,
-                     float scale = 1.f);
-#endif
 
         // =================== MISC ===================
         friend void swap(InterleavedGraphicsData& a, InterleavedGraphicsData& b) noexcept

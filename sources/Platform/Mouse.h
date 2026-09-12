@@ -24,9 +24,11 @@
 
 #pragma once
 
-#include "Graphics.h"
+#include "Glfw.h"
 #include "JustReflectMe/Adapter.h"
 #include "glm/glm.hpp"
+
+#include <cstdint>
 
 namespace Platform
 {
@@ -64,7 +66,7 @@ namespace Platform
         };
 
         ENUM_CLASS();
-        enum class State : GLenum
+        enum class State : std::int32_t
         {
             None = 0,
             Press = GLFW_PRESS,

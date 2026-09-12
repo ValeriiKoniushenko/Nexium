@@ -37,24 +37,10 @@ namespace Platform
         return { static_cast<float>(x), static_cast<float>(y) };
     }
 
-    /*glm::vec2 Mouse::GetInViewportPosition()
+    glm::vec2 Mouse::GetInViewportPosition()
     {
-        if (gGameInstance->renderMode == GameInstance::RenderMode::Editor)
-        {
-            if (auto* wnd = gGameInstance->gameEditor.getWindow<GameViewportEWC>())
-            {
-                const auto wndPos = wnd->getInnerPosition();
-                auto mouse = GetPosition();
-                mouse.x -= wndPos.x;
-                mouse.y -= wndPos.y;
-                mouse.y = wnd->getInnerWindowSize().height - mouse.y - 1;
-
-                return mouse;
-            }
-        }
-
         return GetPosition();
-    }*/
+    }
 
     bool Mouse::IsKeyPressed(Key key)
     {

@@ -27,7 +27,7 @@
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/spdlog.h"
 
-namespace Platform
+namespace Foundation
 {
 
     const std::string_view gModuleName = PRIVATE_MODULE_NAME;
@@ -38,4 +38,4 @@ namespace Platform
         return logger.get();
     }
 
-} // namespace Platform
+} // namespace Foundation

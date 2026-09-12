@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "Graphics.h"
+#include "Glfw.h"
 #include "JustReflectMe/Adapter.h"
 
 namespace Platform

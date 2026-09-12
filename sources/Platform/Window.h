@@ -29,6 +29,7 @@
 #include "Core/Size.h"
 #include "Foundation/BaseLog.h"
 #include "Foundation/Interfaces/DataStream.h"
+#include "Glfw.h"
 #include "Keyboard.h"
 #include "Mouse.h"
 
