@@ -221,8 +221,8 @@ namespace NX::SceneObj
         atlas.bind();
         // end::rectangle_bind_shader[]
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
         glm::vec2 textureOffset{ 0.f, 0.f };
         glm::vec2 textureSize{ 1.f, 1.f };

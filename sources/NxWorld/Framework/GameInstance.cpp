@@ -111,6 +111,8 @@ namespace NX
                        Foundation::Config::defaultWindowSize);
         _subscriptionPool << window->onResize->subscribeAndGetID([this](Core::ISize2 newSize)
                                                                  { updateViewport(); });
+        glfwSetFramebufferSizeCallback(window->getRawWindow(), [](GLFWwindow*, int, int)
+                                       { gGameInstance->updateViewport(); });
 
         //-------------------- ASSETS MANAGER ---------------------
         GetAssetsManager()->initScanFileSystem();

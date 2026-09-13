@@ -149,6 +149,7 @@ namespace Platform
                  << reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION)));
 
         registerEvents();
+        glfwGetWindowSize(_window, &_size.width, &_size.height);
 
 #ifdef _WIN32
         HWND hwnd = glfwGetWin32Window(_window);
@@ -206,10 +207,12 @@ namespace Platform
         glfwPollEvents();
     }
 
-    // void Window::updateViewport()
-    // {
-    //     UpdateGlViewport(static_cast<FSize2>(_size));
-    // }
+    void Window::updateViewport()
+    {
+        ISize2 framebufferSize;
+        glfwGetFramebufferSize(_window, &framebufferSize.width, &framebufferSize.height);
+        UpdateGlViewport(static_cast<FSize2>(framebufferSize));
+    }
 
     void Window::clear(int code)
     {
