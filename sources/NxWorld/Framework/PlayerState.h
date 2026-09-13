@@ -11,7 +11,7 @@
 
 #include "Foundation/BaseLog.h"
 
-namespace Core
+namespace NX
 {
     class PlayerState : public Foundation::BaseLog
     {
@@ -21,4 +21,4 @@ namespace Core
 
     public:
     };
-} // namespace Core
+} // namespace NX

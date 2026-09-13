@@ -10,14 +10,17 @@
 #include "Scene.h"
 
 #include "NxWorld/Entities/Actor.h"
-#include "NxWorld/Entities/Mesh/StaticMeshBundle.h"
+#include "NxWorld/Entities/Camera/Camera.h"
+#ifdef NEXIUM_ENABLE_3D_MODULE
+    #include "NxWorld/Entities/Mesh/StaticMeshBundle.h"
+#endif
 #include "NxWorld/Framework/GameInstance.h"
-#include "PrivateModuleInfo.h"
+#include "NxWorld/PrivateModuleInfo.h"
 
 namespace
 {
-    using ObjectContainerT = Core::Scene::ObjectContainerT;
-    using SceneObject = Core::SceneObject;
+    using ObjectContainerT = NX::Scene::ObjectContainerT;
+    using SceneObject = NX::SceneObject;
 
     // Returns true if `name` exists among objects' component names.
     bool nameExists(const ObjectContainerT& objects, const Core::StringAtom& name)
@@ -56,10 +59,10 @@ namespace
 
 } // namespace
 
-namespace Core
+namespace NX
 {
 
-    void Scene::directDraw(NX::ShaderProgram* skyboxShader)
+    void Scene::directDraw(NX::ShaderProgram* skyboxShader, NX::ShaderProgram* gridShader)
     {
         auto* world = GetWorld();
         if (!world || !world->currentCamera)
@@ -71,7 +74,7 @@ namespace Core
 
         if (gGameInstance->isEditorMode())
         {
-            grid.draw();
+            grid.draw(gridShader, &camera);
         }
 
         _postDrawBuffer.resize(0);
@@ -83,6 +86,7 @@ namespace Core
                 continue;
             }
 
+#ifdef NEXIUM_ENABLE_3D_MODULE
             if (auto* mesh = object->tryCastTo<StaticMeshBundle>())
             {
                 if (!mesh->isPostDraw())
@@ -94,6 +98,7 @@ namespace Core
                     _postDrawBuffer.push_back(mesh);
                 }
             }
+#endif
         }
 
         for (auto& obj : _sceneObjects)
@@ -112,7 +117,7 @@ namespace Core
         }
     }
 
-    void Scene::setSceneName(StringAtom name)
+    void Scene::setSceneName(Core::StringAtom name)
     {
         if (Verify(!name.isEmpty()))
         {
@@ -120,7 +125,7 @@ namespace Core
         }
     }
 
-    const StringAtom& Scene::getSceneName() const noexcept
+    const Core::StringAtom& Scene::getSceneName() const noexcept
     {
         return _sceneName;
     }
@@ -171,12 +176,13 @@ namespace Core
                                                                << _sceneName);
     }
 
-    void Scene::addBlueprintObjectToScene(const WeakData<ECSAsset>& asset, const StringAtom& name)
+    void Scene::addBlueprintObjectToScene(const Core::WeakData<ECSAsset>& asset,
+                                          const Core::StringAtom& name)
     {
         const auto& meta = asset->getMeta();
 
         auto finalAsset = GetAssetsManager()->getUniqueEcsAsset(meta.logicPath);
-        SceneObject::Ptr obj = DynamicCast<SceneObject>(finalAsset);
+        SceneObject::Ptr obj = Core::DynamicCast<SceneObject>(finalAsset);
         if (!obj)
         {
             errorLog("Blueprint '{}' isn't SceneObject. Impossible to add it to the scene."_f
@@ -196,7 +202,7 @@ namespace Core
                                                                            << _sceneName);
     }
 
-    bool Scene::deleteFromScene(const StringAtom& name)
+    bool Scene::deleteFromScene(const Core::StringAtom& name)
     {
         for (auto it = _sceneObjects.begin(); it != _sceneObjects.end(); ++it)
         {
@@ -268,12 +274,12 @@ namespace Core
     {
         if (auto found = find(obj))
         {
-            auto newObj = DynamicCast<SceneObject>(found->clone());
+            auto newObj = Core::DynamicCast<SceneObject>(found->clone());
             addObjectToScene(std::move(newObj));
         }
     }
 
-    IntrusivePtr<SceneObject> Scene::find(const BaseComponent* obj)
+    Core::IntrusivePtr<SceneObject> Scene::find(const BaseComponent* obj)
     {
         for (auto&& o : _sceneObjects)
         {
@@ -351,7 +357,7 @@ namespace Core
         return "scenes";
     }
 
-    StringAtom Scene::getCacheHash() const
+    Core::StringAtom Scene::getCacheHash() const
     {
         return _sceneName;
     }
@@ -363,7 +369,8 @@ namespace Core
 
     void Scene::initialize()
     {
-        skybox = GetAssetsManager()->getSkybox("data/assets/baked/skybox/default.nxsky"_atom);
+        auto asset = GetAssetsManager()->getSkybox("data/assets/baked/skybox/default.nxsky"_atom);
+        skybox = NXSkybox{ dynamic_cast<SkyboxAsset*>(asset.get()) };
         grid.setPlane(glm::vec3(0.0f, 0.0f, -1.f), glm::vec3(0.0f, 0.0f, 1.0f));
     }
 
@@ -374,4 +381,4 @@ namespace Core
             object->tick(timeDelta);
         }
     }
-} // namespace Core
+} // namespace NX

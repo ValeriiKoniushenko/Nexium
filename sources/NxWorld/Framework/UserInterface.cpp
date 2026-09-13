@@ -9,12 +9,12 @@
 
 #include "UserInterface.h"
 
-#include "PrivateModuleInfo.h"
+#include "NxWorld/PrivateModuleInfo.h"
 
-namespace Core
+namespace NX
 {
     spdlog::logger* UserInterface::getLogger() const
     {
         return NxWorld::getLogger();
     }
-} // namespace Core
+} // namespace NX

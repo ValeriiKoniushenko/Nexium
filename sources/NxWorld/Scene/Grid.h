@@ -11,8 +11,11 @@
 
 #include "Core/Color.h"
 
-namespace Core
+namespace NX
 {
+    class BaseCamera;
+    class ShaderProgram;
+
     class Grid
     {
     public:
@@ -24,7 +27,7 @@ namespace Core
         [[nodiscard]] bool isDraw() const noexcept { return _isDraw; }
         void setIsDraw(bool value) noexcept { _isDraw = value; }
 
-        void draw();
+        void draw(const ShaderProgram* gridShader, BaseCamera* camera);
 
         void setPlane(const glm::vec3& origin, const glm::vec3& normal);
         void rebuildBasis();
@@ -39,4 +42,4 @@ namespace Core
         float _cellSize = 100.f;
         bool _isDraw = true;
     };
-} // namespace Core
+} // namespace NX

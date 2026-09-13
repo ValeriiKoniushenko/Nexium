@@ -10,15 +10,15 @@
 #pragma once
 
 #include "NxFundamental/ECS/BaseComponent.h"
+#include "NxWorld/Scene/SceneObject.h"
 #include "RawBackend/IDrawable.h"
-#include "Scene/SceneObject.h"
 
-namespace Core
+namespace NX
 {
     CLASS();
     class Actor : public SceneObject
     {
-        ECS_DECL(Actor, Core::SceneObject);
+        ECS_DECL(Actor, NX::SceneObject);
 
     public:
         Actor(Actor&&) = default;
@@ -46,6 +46,6 @@ namespace Core
     template<class T>
     concept IsActorBased = std::is_base_of_v<Actor, T>;
 
-} // namespace Core
+} // namespace NX
 
 #include "Actor.generated.h" // added by the code generator. Better don't move it.

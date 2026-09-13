@@ -9,20 +9,20 @@
 
 #include "GameInstance.h"
 
-#include "Animations/FrameByFrame/FrameByFrameAnimation.h"
-#include "Animations/FrameByFrame/FrameByFrameAnimator.h"
 #include "Core/Timer.h"
 #include "Foundation/Configs.h"
-#include "Misc/FPSCounter.h"
+#include "NxRuntime/GameUtils/FPSCounter.h"
+#include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimation.h"
+#include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimator.h"
+#include "NxWorld/Entities/Camera/Camera.h"
+#include "NxWorld/PrivateModuleInfo.h"
+#include "NxWorld/Scene/Rectangle.h"
 #include "Platform/Glfw.h"
-#include "PrivateModuleInfo.h"
-#include "ResourceManagement/ResourceManager.h"
-#include "Scene/Rectangle.h"
 #include "spdlog/spdlog.h"
 
-std::unique_ptr<Core::GameInstance> gGameInstance = nullptr;
+std::unique_ptr<NX::GameInstance> gGameInstance = nullptr;
 
-namespace Core
+namespace NX
 {
 
     World* GetWorld()
@@ -87,14 +87,14 @@ namespace Core
         return !isEditorMode() || _applicationIntegration->isViewportFocused();
     }
 
-    ISize2 GameInstance::getRenderSize() const
+    Core::ISize2 GameInstance::getRenderSize() const
     {
         if (isEditorMode())
         {
             return _applicationIntegration->getRenderSize();
         }
 
-        return window ? window->getSize() : ISize2{};
+        return window ? window->getSize() : Core::ISize2{};
     }
 
     void GameInstance::initialize()
@@ -103,19 +103,20 @@ namespace Core
         spdlog::set_level(spdlog::level::trace);
 #endif
         std::cout << std::fixed << std::setprecision(15);
-        spdlog::set_pattern(Config::spdlogPattern);
+        spdlog::set_pattern(Foundation::Config::spdlogPattern);
 
         //-------------------- WINDOW ---------------------
-        window = &GetWindow();
-        window->create(Config::defaultWindowName, Config::defaultWindowSize);
-        _subscriptionPool << window->onResize->subscribeAndGetID([this](ISize2 newSize)
+        window = &Platform::GetWindow();
+        window->create(Foundation::Config::defaultWindowName,
+                       Foundation::Config::defaultWindowSize);
+        _subscriptionPool << window->onResize->subscribeAndGetID([this](Core::ISize2 newSize)
                                                                  { updateViewport(); });
 
         //-------------------- ASSETS MANAGER ---------------------
         GetAssetsManager()->initScanFileSystem();
 
         //-------------------- SHADER MANAGER ---------------------
-        shaderManager.loadShaders(Config::Path::shaders);
+        shaderManager.loadShaders(Foundation::Config::Path::shaders);
         shaderManager.debugLog("Was loaded {} shaders."_f << shaderManager.countOfShaders());
         for (const auto& notLoadedShader : shaderManager.getFailedShaders())
         {
@@ -178,9 +179,9 @@ namespace Core
 
     void GameInstance::runMainLoop()
     {
-        FPSCounter fps;
+        Core::FPSCounter fps;
         fps.start();
-        FStopwatch clock;
+        Core::FStopwatch clock;
 
         glClearColor(0.45f, 0.55f, 0.60f, 1.00f);
         glEnable(GL_BLEND);
@@ -193,7 +194,7 @@ namespace Core
         while (!window->shouldClose())
         {
             clock.start();
-            Window::pollEvent();
+            Platform::Window::pollEvent();
 
             if (!isEditorMode())
             {
@@ -208,7 +209,8 @@ namespace Core
 
                 if (world.currentCamera)
                 {
-                    gameScene.directDraw(shaderManager.getShaderProgram("skybox"_atom));
+                    gameScene.directDraw(shaderManager.getShaderProgram("skybox"_atom),
+                                         shaderManager.getShaderProgram("grid"_atom));
                     onTick(world.getTimeDelta());
                 }
             }
@@ -228,7 +230,8 @@ namespace Core
                     _applicationIntegration->beforeSceneDraw();
                     glClear(clearBits);
 
-                    gameScene.directDraw(shaderManager.getShaderProgram("skybox"_atom));
+                    gameScene.directDraw(shaderManager.getShaderProgram("skybox"_atom),
+                                         shaderManager.getShaderProgram("grid"_atom));
                     onTick(world.getTimeDelta());
                     _applicationIntegration->afterSceneDraw();
                 }
@@ -262,7 +265,8 @@ namespace Core
     {
         if (!isEditorMode())
         {
-            window->updateViewport();
+            const auto size = window->getSize();
+            glViewport(0, 0, size.width, size.height);
         }
         else
         {
@@ -387,7 +391,7 @@ namespace Core
         onLoadShaders();
     }
 
-    StringAtom GameInstance::getCacheHash() const
+    Core::StringAtom GameInstance::getCacheHash() const
     {
         return "GameInstance"_atom;
     }
@@ -411,11 +415,11 @@ namespace Core
 
     void GameInstance::loadCoreResources()
     {
-        GetAssetsManager()->generateTextureAtlas(Config::Path::images / "atlas");
-        GetAssetsManager()->generateTextureAtlas("santa_walk"_atom,
-                                                 Config::Path::images / "Santa/Santa_Walk");
-        GetAssetsManager()->generateTextureAtlas("player_walk"_atom,
-                                                 Config::Path::images / "Player_SpriteSheet");
+        GetAssetsManager()->generateTextureAtlas(Foundation::Config::Path::images / "atlas");
+        GetAssetsManager()->generateTextureAtlas("santa_walk"_atom, Foundation::Config::Path::images
+                                                                        / "Santa/Santa_Walk");
+        GetAssetsManager()->generateTextureAtlas(
+            "player_walk"_atom, Foundation::Config::Path::images / "Player_SpriteSheet");
         onLoadCoreResources();
     }
-} // namespace Core
+} // namespace NX

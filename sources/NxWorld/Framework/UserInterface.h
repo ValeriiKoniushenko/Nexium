@@ -11,7 +11,7 @@
 
 #include "Foundation/BaseLog.h"
 
-namespace Core
+namespace NX
 {
     class UserInterface : public Foundation::BaseLog
     {
@@ -19,4 +19,4 @@ namespace Core
         [[nodiscard]] spdlog::logger* getLogger() const override;
         [[nodiscard]] const char* getPrefix() const override { return "UserInterface"; }
     };
-} // namespace Core
+} // namespace NX

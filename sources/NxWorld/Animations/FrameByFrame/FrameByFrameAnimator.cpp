@@ -10,7 +10,7 @@
 #include "FrameByFrameAnimator.h"
 
 #include "FrameByFrameAnimation.h"
-#include "Scene/Rectangle.h"
+#include "NxWorld/Scene/Rectangle.h"
 
 namespace NX::Animation
 {

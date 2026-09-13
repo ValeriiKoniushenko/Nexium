@@ -9,15 +9,15 @@
 
 #pragma once
 
-#include "InputDevices/InputManager.h"
+#include "NxSubsystems/Input/InputManager.h"
 #include "NxWorld/Entities/Actor.h"
 
-namespace Core
+namespace NX
 {
     CLASS();
     class Spectator : public Actor
     {
-        ECS_DECL(Spectator, Core::Actor);
+        ECS_DECL(Spectator, NX::Actor);
 
     public:
         // TODO: Move it to Controller
@@ -31,14 +31,14 @@ namespace Core
         MouseInputManger mouseInput;
 
     public:
-        [[nodiscard]] StringAtom getCacheHash() const override;
+        [[nodiscard]] Core::StringAtom getCacheHash() const override;
 
     protected:
         void onTick(float delta) override;
-        DelegateSubscriberPoolGuard _subscriptionPool;
+        Core::DelegateSubscriberPoolGuard _subscriptionPool;
 
         void onInitialize() override;
     };
-} // namespace Core
+} // namespace NX
 
 #include "Spectator.generated.h" // added by the code generator. Better don't move it.

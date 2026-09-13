@@ -65,7 +65,7 @@ namespace NX::Animation
 
     spdlog::logger* BaseAnimation::getLogger() const
     {
-        return NxSubsystems::getLogger();
+        return NxWorld::getLogger();
     };
 
     bool BaseAnimation::isPlaying() const noexcept

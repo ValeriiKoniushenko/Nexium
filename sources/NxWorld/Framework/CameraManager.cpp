@@ -9,9 +9,9 @@
 
 #include "CameraManager.h"
 
-#include "PrivateModuleInfo.h"
+#include "NxWorld/PrivateModuleInfo.h"
 
-namespace Core
+namespace NX
 {
 
     spdlog::logger* CameraManager::getLogger() const
@@ -19,4 +19,4 @@ namespace Core
         return NxWorld::getLogger();
     }
 
-} // namespace Core
+} // namespace NX

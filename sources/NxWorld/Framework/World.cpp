@@ -9,9 +9,9 @@
 
 #include "World.h"
 
-#include "PrivateModuleInfo.h"
+#include "NxWorld/PrivateModuleInfo.h"
 
-namespace Core
+namespace NX
 {
 
     std::filesystem::path LightningProps::getCacheDir() const
@@ -19,7 +19,7 @@ namespace Core
         return "LightningProps";
     }
 
-    StringAtom LightningProps::getCacheHash() const
+    Core::StringAtom LightningProps::getCacheHash() const
     {
         return "LightningProps";
     }
@@ -40,9 +40,9 @@ namespace Core
         return "world";
     }
 
-    StringAtom World::getCacheHash() const
+    Core::StringAtom World::getCacheHash() const
     {
         return worldName;
     }
 
-} // namespace Core
+} // namespace NX

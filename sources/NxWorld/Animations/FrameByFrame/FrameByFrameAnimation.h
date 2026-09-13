@@ -74,10 +74,7 @@ namespace NX::Animation
             return _textureName;
         }
 
-        [[nodiscard]] spdlog::logger* getLogger() const override
-        {
-            return NxSubsystems::getLogger();
-        };
+        [[nodiscard]] spdlog::logger* getLogger() const override { return NxWorld::getLogger(); };
 
     protected:
         void onTick(float delta) override;

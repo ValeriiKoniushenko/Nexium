@@ -9,10 +9,10 @@
 
 #include "Rectangle.h"
 
-#include "Animations/FrameByFrame/FrameByFrameAnimator.h"
 #include "Core/Assert.h"
 #include "NxSubsystems/Graphics/Debug/Line.h"
 #include "NxSubsystems/Graphics/GraphicsComponents.h"
+#include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimator.h"
 #include "NxWorld/Entities/Camera/Camera.h"
 #include "NxWorld/Framework/GameInstance.h"
 
@@ -20,11 +20,11 @@ using namespace Core;
 
 namespace
 {
-    [[nodiscard]] BaseGraphicsData GetDefaultGraphicsData(float defSize)
+    [[nodiscard]] NX::BaseGraphicsData GetDefaultGraphicsData(float defSize)
     {
-        std::vector<BaseGraphicsData::ModifierParam> modifiers
-            = { { .value = BaseGraphicsData::ModifiedValue::CullFace,
-                  .modifier = BaseGraphicsData::Modifier::Disable } };
+        std::vector<NX::BaseGraphicsData::ModifierParam> modifiers
+            = { { .value = NX::BaseGraphicsData::ModifiedValue::CullFace,
+                  .modifier = NX::BaseGraphicsData::Modifier::Disable } };
 
         const float w = defSize;
         const float h = defSize;
@@ -47,10 +47,10 @@ namespace
             2, 3, 0  // triangle 2
         };
 
-        BaseGraphicsData data;
+        NX::BaseGraphicsData data;
         data.generate();
 
-        auto* shader = GetShaderManager().getShaderProgram("2d_rect"_atom);
+        auto* shader = NX::GetShaderManager().getShaderProgram("2d_rect"_atom);
         if (!Verify(shader))
         {
             gGlobalLog.criticalLog("Can't get shader program '2d_rect'.");
@@ -62,14 +62,14 @@ namespace
 
         data.setVertexBuffer(vert);
         data.setIndexBuffer(ind);
-        shader->callSetEvent(ShaderProgram::Event::OnSetIndexAndVertexBuffer);
+        shader->callSetEvent(NX::ShaderProgram::Event::OnSetIndexAndVertexBuffer);
 
         return data;
     }
 
 } // namespace
 
-namespace Core::SceneObj
+namespace NX::SceneObj
 {
 
     ECS_IMPL(Rectangle);
@@ -305,4 +305,4 @@ namespace Core::SceneObj
         setAnimationEnabled(_animationEnabled);
     }
 
-} // namespace Core::SceneObj
+} // namespace NX::SceneObj

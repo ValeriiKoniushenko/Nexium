@@ -9,12 +9,12 @@
 
 #include "GameState.h"
 
-#include "PrivateModuleInfo.h"
+#include "NxWorld/PrivateModuleInfo.h"
 
-namespace Core
+namespace NX
 {
     spdlog::logger* GameState::getLogger() const
     {
         return NxWorld::getLogger();
     }
-} // namespace Core
+} // namespace NX

@@ -15,7 +15,7 @@
 #include "Foundation/BaseLog.h"
 #include "WorldObjectManager.h"
 
-namespace Core
+namespace NX
 {
     class LevelData : public Foundation::BaseLog
     {
@@ -29,4 +29,4 @@ namespace Core
         ControllerManager controllerManager;
         CameraManager cameraManager;
     };
-} // namespace Core
+} // namespace NX

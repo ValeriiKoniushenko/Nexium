@@ -12,7 +12,7 @@
 #include "Core/String.h"
 #include "JustReflectMe/Adapter.h"
 #include "NxFundamental/ECS/BaseComponent.h"
-#include "NxSubsystems/PrivateModuleInfo.h"
+#include "NxWorld/PrivateModuleInfo.h"
 
 namespace NX::Animation
 {

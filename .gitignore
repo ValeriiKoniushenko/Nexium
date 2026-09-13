@@ -2,7 +2,7 @@
 /.idea
 /.continue
 /cmake-build-*/
-/build
+/build*
 /docs/build
 /out
 /libs/
@@ -46,6 +46,8 @@ __pycache__
 /data/editor/*.json
 /data/scene/*.json
 /data/config/**/*.json
+
+build/
 
 gl-code-quality-report.json
 valgrind.out

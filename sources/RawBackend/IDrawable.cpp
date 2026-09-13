@@ -9,7 +9,7 @@
 
 #include "IDrawable.h"
 
-namespace Core
+namespace RawBackend
 {
 
-} // namespace Core
+} // namespace RawBackend

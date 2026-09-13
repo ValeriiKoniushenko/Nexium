@@ -8,7 +8,7 @@
 //     http://www.apache.org/licenses/LICENSE-2.0
 
 #include "Foundation/BaseLog.h"
-#include "PrivateModuleInfo.h"
+#include "NxWorld/PrivateModuleInfo.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 
 namespace Framework

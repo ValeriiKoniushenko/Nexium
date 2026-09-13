@@ -17,7 +17,7 @@
 
 #include <vector>
 
-namespace Core
+namespace NX
 {
     class Actor;
 
@@ -48,11 +48,12 @@ namespace Core
 
         void tick(float timeDelta);
 
-        void directDraw(NX::ShaderProgram* skyboxShader = nullptr);
+        void directDraw(NX::ShaderProgram* skyboxShader = nullptr,
+                        NX::ShaderProgram* gridShader = nullptr);
 
-        void setSceneName(StringAtom name);
+        void setSceneName(Core::StringAtom name);
 
-        [[nodiscard]] const StringAtom& getSceneName() const noexcept;
+        [[nodiscard]] const Core::StringAtom& getSceneName() const noexcept;
 
         [[nodiscard]] const ObjectContainerT& getObjects() const noexcept { return _sceneObjects; }
         [[nodiscard]] ObjectContainerT& getObjects() noexcept { return _sceneObjects; }
@@ -62,20 +63,22 @@ namespace Core
 
         void addUniqueObjectToScene(SceneObject::Ptr object);
         void addObjectToScene(SceneObject::Ptr object);
-        void addBlueprintObjectToScene(const WeakData<ECSAsset>& asset, const StringAtom& name);
-        bool deleteFromScene(const StringAtom& name);
+        void addBlueprintObjectToScene(const Core::WeakData<ECSAsset>& asset,
+                                       const Core::StringAtom& name);
+        bool deleteFromScene(const Core::StringAtom& name);
         bool deleteFromScene(const BaseComponent* obj);
         bool deleteFromSceneOrFromObject(BaseComponent* obj);
         void duplicateSceneObject(const BaseComponent* obj);
-        [[nodiscard]] IntrusivePtr<SceneObject> find(const BaseComponent* obj);
+        [[nodiscard]] Core::IntrusivePtr<SceneObject> find(const BaseComponent* obj);
 
         [[nodiscard]] nlohmann::json serialize() const;
         void deserialize(RResourceStream<RJsonResourceStream>& data);
         [[nodiscard]] std::filesystem::path getCacheDir() const override;
-        [[nodiscard]] StringAtom getCacheHash() const override;
+        [[nodiscard]] Core::StringAtom getCacheHash() const override;
         [[nodiscard]] spdlog::logger* getLogger() const override;
 
-        Delegate<void(SceneObject*)>::Ptr onObjectAdded = Delegate<void(SceneObject*)>::Create();
+        Core::Delegate<void(SceneObject*)>::Ptr onObjectAdded
+            = Core::Delegate<void(SceneObject*)>::Create();
 
     public:
         Grid grid;
@@ -85,7 +88,7 @@ namespace Core
         ObjectContainerT _sceneObjects;
 
         FIELD();
-        StringAtom _sceneName = "Default";
+        Core::StringAtom _sceneName = "Default";
 
     private:
         void internal_addObjectToScene(SceneObject* object);
@@ -111,5 +114,5 @@ namespace Core
         return nullptr;
     }
 
-} // namespace Core
+} // namespace NX
 #include "Scene.generated.h" // added by the code generator. Better don't move it.

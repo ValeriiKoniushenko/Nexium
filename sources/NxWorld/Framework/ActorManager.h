@@ -11,7 +11,7 @@
 
 #include "Foundation/BaseLog.h"
 
-namespace Core
+namespace NX
 {
     class ActorManager : public Foundation::BaseLog
     {
@@ -26,4 +26,4 @@ namespace Core
         [[nodiscard]] spdlog::logger* getLogger() const override;
         [[nodiscard]] const char* getPrefix() const override { return "ActorManager"; }
     };
-} // namespace Core
+} // namespace NX

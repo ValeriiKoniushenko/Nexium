@@ -13,10 +13,11 @@
 #include "Foundation/BaseLog.h"
 #include "Foundation/Interfaces/DataStream.h"
 #include "GameState.h"
+#include "JustReflectMe/Adapter.h"
 #include "LevelData.h"
 #include "PlayerState.h"
 
-namespace Core
+namespace NX
 {
     class BaseCamera;
 
@@ -44,7 +45,7 @@ namespace Core
         Core::NormColor3 color = Core::NormColor3(1.f);
 
         [[nodiscard]] std::filesystem::path getCacheDir() const override;
-        [[nodiscard]] StringAtom getCacheHash() const override;
+        [[nodiscard]] Core::StringAtom getCacheHash() const override;
     };
 
     CLASS();
@@ -54,7 +55,7 @@ namespace Core
 
     public:
         FIELD();
-        StringAtom worldName = "Default";
+        Core::StringAtom worldName = "Default";
 
         LightningProps lightning;
         PlayerState playerState;
@@ -65,7 +66,7 @@ namespace Core
 
     public:
         [[nodiscard]] std::filesystem::path getCacheDir() const override;
-        [[nodiscard]] StringAtom getCacheHash() const override;
+        [[nodiscard]] Core::StringAtom getCacheHash() const override;
         [[nodiscard]] spdlog::logger* getLogger() const override;
         [[nodiscard]] const char* getPrefix() const override { return "World"; }
         [[nodiscard]] float getWorldTime() const noexcept { return _activeTime; }
@@ -80,6 +81,6 @@ namespace Core
         float _activeTime = 0.f;
     };
 
-} // namespace Core
+} // namespace NX
 
 #include "World.generated.h" // added by the code generator. Better don't move it.

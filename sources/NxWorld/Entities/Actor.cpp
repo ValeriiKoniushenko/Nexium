@@ -9,7 +9,7 @@
 
 #include "Actor.h"
 
-namespace Core
+namespace NX
 {
     ECS_IMPL(Actor);
 
@@ -43,4 +43,4 @@ namespace Core
         SceneObject::onPostSerialize(obj, logs);
     }
 
-} // namespace Core
+} // namespace NX

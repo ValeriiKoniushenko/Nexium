@@ -9,14 +9,14 @@
 
 #include "SceneObject.h"
 
-#include "Scene/PrivateModuleInfo.h"
+#include "NxWorld/PrivateModuleInfo.h"
 
-namespace Core
+namespace NX
 {
 
     ECS_IMPL(SceneObject);
 
-    spdlog::logger* Core::SceneObject::getLogger() const
+    spdlog::logger* SceneObject::getLogger() const
     {
         return NxWorld::getLogger();
     }
@@ -36,7 +36,7 @@ namespace Core
         return Tag_WorldObject;
     }
 
-    StringAtom SceneObject::shortStringify() const
+    Core::StringAtom SceneObject::shortStringify() const
     {
         auto name = getComponentName();
         if (name.isEmpty())
@@ -87,7 +87,7 @@ namespace Core
         return !_referencedAsset.isEmpty();
     }
 
-    StringAtom SceneObject::getReferencedAsset() const
+    Core::StringAtom SceneObject::getReferencedAsset() const
     {
 #if defined(NEXIUM_DEBUG)
         Assert(_referencedAsset.isStatic());
@@ -95,7 +95,7 @@ namespace Core
         return _referencedAsset;
     }
 
-    void SceneObject::_setReferencedAsset(const StringAtom& logicPath)
+    void SceneObject::_setReferencedAsset(const Core::StringAtom& logicPath)
     {
         _referencedAsset = logicPath;
 
@@ -123,7 +123,7 @@ namespace Core
 
     void SceneObject::draw(BaseCamera& camera)
     {
-        IDrawable::draw(camera);
+        RawBackend::IDrawable::draw(camera);
 
         if (!isEnabled())
         {
@@ -212,12 +212,12 @@ namespace Core
     {
         v.name = j.at("name").get<std::string>();
         R<Transformable>::Deserialize({ j.at("trans") }, v.trans);
-        v.assetType = j.at("assetType").get<StringAtom>();
-        v.referenceAsset = StringAtom::Intern(j.at("referenceAsset").get<StringAtom>());
+        v.assetType = j.at("assetType").get<Core::StringAtom>();
+        v.referenceAsset = Core::StringAtom::Intern(j.at("referenceAsset").get<Core::StringAtom>());
         if (j.contains("typeSpecificData"))
         {
             v.typeSpecificData = j.at("typeSpecificData");
         }
     }
 
-} // namespace Core
+} // namespace NX

@@ -9,21 +9,22 @@
 
 #pragma once
 
-#include "ECS/Transformable.h"
+#include "Foundation/Interfaces/DataStream.h"
 #include "Foundation/Interfaces/IOutliner.h"
-#include "Misc/ITagHolder.h"
 #include "NxFundamental/ECS/BaseComponent.h"
+#include "NxFundamental/ITagHolder.h"
+#include "NxFundamental/Transformable.h"
 #include "RawBackend/IDrawable.h"
 
-namespace Core
+namespace NX
 {
 
     struct SceneState
     {
         std::string name;
         Transformable trans;
-        StringAtom assetType;
-        StringAtom referenceAsset;
+        Core::StringAtom assetType;
+        Core::StringAtom referenceAsset;
         nlohmann::json typeSpecificData;
     };
 
@@ -33,13 +34,13 @@ namespace Core
     CLASS();
     class SceneObject :
         public BaseComponent,
-        public IOutliner,
+        public Foundation::IOutliner,
         public Transformable,
-        public IDrawable,
+        public RawBackend::IDrawable,
         public Foundation::IDataIO
     {
-        ECS_DECL(SceneObject, NX::BaseComponent, Core::Transformable, Core::IOutliner,
-                 Core::IDrawable);
+        ECS_DECL(SceneObject, NX::BaseComponent, NX::Transformable, Foundation::IOutliner,
+                 RawBackend::IDrawable);
 
     public:
         ~SceneObject() override = default;
@@ -56,14 +57,14 @@ namespace Core
         {
             using std::swap;
             swap(static_cast<BaseComponent&>(a), static_cast<BaseComponent&>(b));
-            swap(static_cast<IOutliner&>(a), static_cast<IOutliner&>(b));
+            swap(static_cast<Foundation::IOutliner&>(a), static_cast<Foundation::IOutliner&>(b));
             swap(static_cast<Transformable&>(a), static_cast<Transformable&>(b));
-            swap(static_cast<IDrawable&>(a), static_cast<IDrawable&>(b));
+            swap(static_cast<RawBackend::IDrawable&>(a), static_cast<RawBackend::IDrawable&>(b));
         }
 
         [[nodiscard]] Tag getTags() const override;
 
-        [[nodiscard]] virtual StringAtom shortStringify() const;
+        [[nodiscard]] virtual Core::StringAtom shortStringify() const;
 
         void recalculateMatrices(const glm::mat4& mat = glm::mat4(1.f)) override;
 
@@ -74,8 +75,8 @@ namespace Core
                              const RLogsCollector& logs) const override;
 
         [[nodiscard]] bool hasReferencedAsset() const noexcept;
-        [[nodiscard]] StringAtom getReferencedAsset() const;
-        void _setReferencedAsset(const StringAtom& logicPath);
+        [[nodiscard]] Core::StringAtom getReferencedAsset() const;
+        void _setReferencedAsset(const Core::StringAtom& logicPath);
 
         [[nodiscard]] virtual nlohmann::json getTypeSpecificSceneDataAsJson() const;
         virtual void applyTypeSpecificSceneData(const nlohmann::json& data);
@@ -87,7 +88,7 @@ namespace Core
         [[nodiscard]] virtual glm::vec3 getGlobalPosition() const;
         [[nodiscard]] virtual glm::vec3 getGlobalRotation() const;
 
-        [[nodiscard]] StringAtom getCacheHash() const override { return "IDrawable"_atom; }
+        [[nodiscard]] Core::StringAtom getCacheHash() const override { return "IDrawable"_atom; }
 
     protected:
         virtual void onDraw(BaseCamera& camera) {}
@@ -100,9 +101,9 @@ namespace Core
         void onDirtyMatrix() override;
 
     private:
-        StringAtom _referencedAsset;
+        Core::StringAtom _referencedAsset;
     };
 
-} // namespace Core
+} // namespace NX
 
 #include "SceneObject.generated.h" // added by the code generator. Better don't move it.

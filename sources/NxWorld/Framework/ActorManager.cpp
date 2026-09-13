@@ -9,12 +9,12 @@
 
 #include "ActorManager.h"
 
-#include "PrivateModuleInfo.h"
+#include "NxWorld/PrivateModuleInfo.h"
 
-namespace Core
+namespace NX
 {
     spdlog::logger* ActorManager::getLogger() const
     {
         return NxWorld::getLogger();
     }
-} // namespace Core
+} // namespace NX

@@ -9,21 +9,21 @@
 
 #pragma once
 
-#include "Scene/SceneObject.h"
+#include "NxWorld/Scene/SceneObject.h"
 
 #include <utility>
 
-namespace Core
+namespace NX
 {
     class BaseGraphicsData;
 }
-namespace Core::SceneObj
+namespace NX::SceneObj
 {
 
     CLASS();
     class Rectangle : public SceneObject
     {
-        ECS_DECL(Rectangle, Core::SceneObject);
+        ECS_DECL(Rectangle, NX::SceneObject);
 
     public:
         ~Rectangle() override = default;
@@ -32,8 +32,8 @@ namespace Core::SceneObj
         Rectangle& operator=(const Rectangle&) = default;
         Rectangle& operator=(Rectangle&&) noexcept = default;
 
-        [[nodiscard]] StringAtom getTextureName() const { return _textureName; }
-        void setTexture(const StringAtom& value);
+        [[nodiscard]] Core::StringAtom getTextureName() const { return _textureName; }
+        void setTexture(const Core::StringAtom& value);
         void setTextureUV(glm::vec2 offset, glm::vec2 size);
         void resetTextureUV() noexcept;
 
@@ -44,7 +44,7 @@ namespace Core::SceneObj
         void applyTypeSpecificSceneData(const nlohmann::json& data) override;
 
         [[nodiscard]] constexpr static float GetDefaultDrawRectSize() noexcept { return 100.f; }
-        [[nodiscard]] FSize2 getDrawRectSize() const noexcept;
+        [[nodiscard]] Core::FSize2 getDrawRectSize() const noexcept;
 
     protected:
         void tryDrawOutline(BaseCamera& camera);
@@ -52,10 +52,10 @@ namespace Core::SceneObj
 
     protected:
         FIELD();
-        StringAtom _textureName = "red.png"_atom;
+        Core::StringAtom _textureName = "red.png"_atom;
 
         FIELD();
-        StringAtom _atlasName = "default"_atom;
+        Core::StringAtom _atlasName = "default"_atom;
 
         glm::vec2 _textureUVOffset{ 0.f, 0.f };
         glm::vec2 _textureUVSize{ 1.f, 1.f };
@@ -66,7 +66,7 @@ namespace Core::SceneObj
     CLASS();
     class RectangleAnimated : public Rectangle
     {
-        ECS_DECL(RectangleAnimated, Core::SceneObj::Rectangle);
+        ECS_DECL(RectangleAnimated, NX::SceneObj::Rectangle);
 
     public:
         ~RectangleAnimated() override = default;
@@ -75,14 +75,14 @@ namespace Core::SceneObj
         RectangleAnimated& operator=(const RectangleAnimated&) = default;
         RectangleAnimated& operator=(RectangleAnimated&&) noexcept = default;
 
-        [[nodiscard]] StringAtom getAtlasName() const { return _atlasName; }
-        void setAtlas(const StringAtom& value) { _atlasName = value; }
+        [[nodiscard]] Core::StringAtom getAtlasName() const { return _atlasName; }
+        void setAtlas(const Core::StringAtom& value) { _atlasName = value; }
 
         [[nodiscard]] bool isAnimationEnabled() const noexcept { return _animationEnabled; }
         void setAnimationEnabled(bool value);
 
-        void setAnimationOverride(const StringAtom& animationName, float fps);
-        [[nodiscard]] const StringAtom& getAnimationOverrideName() const noexcept;
+        void setAnimationOverride(const Core::StringAtom& animationName, float fps);
+        [[nodiscard]] const Core::StringAtom& getAnimationOverrideName() const noexcept;
         [[nodiscard]] float getAnimationOverrideFPS() const noexcept;
 
         [[nodiscard]] nlohmann::json getTypeSpecificSceneDataAsJson() const override;
@@ -91,10 +91,10 @@ namespace Core::SceneObj
     protected:
         bool _animationEnabled = true;
 
-        StringAtom _animationOverrideName;
+        Core::StringAtom _animationOverrideName;
         float _animationOverrideFPS = 0.f;
     };
 
-} // namespace Core::SceneObj
+} // namespace NX::SceneObj
 
 #include "Rectangle.generated.h" // added by the code generator. Better don't move it.

@@ -11,7 +11,7 @@
 
 #include "Core/Size.h"
 
-namespace Core
+namespace NX
 {
     class Scene;
 
@@ -30,6 +30,6 @@ namespace Core
         virtual void beforeSceneDraw() = 0;
         virtual void afterSceneDraw() = 0;
         virtual void clearSceneRenderTarget() = 0;
-        [[nodiscard]] virtual ISize2 getRenderSize() const = 0;
+        [[nodiscard]] virtual Core::ISize2 getRenderSize() const = 0;
     };
-} // namespace Core
+} // namespace NX

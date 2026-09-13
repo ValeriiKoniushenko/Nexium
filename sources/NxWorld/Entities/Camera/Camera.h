@@ -10,7 +10,7 @@
 #pragma once
 
 #include "Core/Size.h"
-#include "Entities/Actor.h"
+#include "NxWorld/Entities/Actor.h"
 
 namespace NX
 {
@@ -24,7 +24,7 @@ namespace NX
     CLASS();
     class BaseCamera : public Actor
     {
-        ECS_DECL(BaseCamera, Core::Actor);
+        ECS_DECL(BaseCamera, NX::Actor);
 
     public:
         BaseCamera(const BaseCamera&) = default;
@@ -39,7 +39,7 @@ namespace NX
 
         [[nodiscard]] const glm::mat4& getCachedProjectionMatrix() { return _cachedProjMatrix; }
 
-        [[nodiscard]] FSize2 getOutputFrameSize();
+        [[nodiscard]] Core::FSize2 getOutputFrameSize();
 
         [[nodiscard]] glm::vec3 getGlobalPosition() const override { return _worldPos; }
         [[nodiscard]] glm::vec3 getGlobalRotation() const override { return _worldRotation; }
@@ -78,7 +78,7 @@ namespace NX
     CLASS();
     class OrthographicCamera : public BaseCamera
     {
-        ECS_DECL(OrthographicCamera, Core::BaseCamera);
+        ECS_DECL(OrthographicCamera, NX::BaseCamera);
 
     public:
         OrthographicCamera(const OrthographicCamera&) = default;
@@ -106,7 +106,7 @@ namespace NX
     CLASS();
     class PerspectiveCamera : public BaseCamera
     {
-        ECS_DECL(PerspectiveCamera, Core::BaseCamera);
+        ECS_DECL(PerspectiveCamera, NX::BaseCamera);
 
     public:
         constexpr static float minFov = 5.f;
@@ -123,8 +123,8 @@ namespace NX
 
         void lookAt(const glm::vec3& targetPosition);
 
-        void setAspect(FSize2 size) noexcept;
-        [[nodiscard]] FSize2 getAspect() const noexcept { return _aspect; }
+        void setAspect(Core::FSize2 size) noexcept;
+        [[nodiscard]] Core::FSize2 getAspect() const noexcept { return _aspect; }
 
         void setFov(float fov) noexcept;
         [[nodiscard]] float getFov() const noexcept { return _fov; }

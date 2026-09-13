@@ -9,12 +9,12 @@
 
 #include "WorldObjectManager.h"
 
-#include "PrivateModuleInfo.h"
+#include "NxWorld/PrivateModuleInfo.h"
 
-namespace Core
+namespace NX
 {
     spdlog::logger* WorldObjectManager::getLogger() const
     {
         return NxWorld::getLogger();
     }
-} // namespace Core
+} // namespace NX

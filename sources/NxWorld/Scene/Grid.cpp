@@ -10,13 +10,14 @@
 #include "Grid.h"
 
 #include "Core/String.h"
-#include "NxWorld/Framework/GameInstance.h"
+#include "NxSubsystems/Graphics/ShaderManager.h"
+#include "NxWorld/Entities/Camera/Camera.h"
 
-namespace Core
+namespace NX
 {
-    void Grid::draw()
+    void Grid::draw(const ShaderProgram* gridShader, BaseCamera* camera)
     {
-        if (!_isDraw)
+        if (!_isDraw || !camera || !gridShader)
         {
             return;
         }
@@ -28,30 +29,26 @@ namespace Core
             return vao;
         }();
 
-        auto* gridShader = GetShaderManager().getShaderProgram("grid"_atom);
-        if (Verify(gridShader) && GetWorld()->currentCamera)
-        {
-            glBindVertexArray(gridVAO);
+        glBindVertexArray(gridVAO);
 
-            gridShader->use();
+        gridShader->use();
 
-            gridShader->setUniform("uProjAndView"_atom, GetWorld()->currentCamera->getMatrix());
-            gridShader->setUniform("uCameraPos"_atom, GetWorld()->currentCamera->getPosition());
-            gridShader->setUniform("uGlobalGridSize"_atom, _gridSize);
-            gridShader->setUniform("uGridCellSize"_atom, _cellSize);
+        gridShader->setUniform("uProjAndView"_atom, camera->getMatrix());
+        gridShader->setUniform("uCameraPos"_atom, camera->getPosition());
+        gridShader->setUniform("uGlobalGridSize"_atom, _gridSize);
+        gridShader->setUniform("uGridCellSize"_atom, _cellSize);
 
-            gridShader->setUniform("uPlaneOrigin"_atom, _origin);
-            gridShader->setUniform("uPlaneRight"_atom, _right);
-            gridShader->setUniform("uPlaneUp"_atom, _up);
+        gridShader->setUniform("uPlaneOrigin"_atom, _origin);
+        gridShader->setUniform("uPlaneRight"_atom, _right);
+        gridShader->setUniform("uPlaneUp"_atom, _up);
 
-            glDisable(GL_CULL_FACE);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glDisable(GL_CULL_FACE);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-            glDrawArrays(GL_TRIANGLES, 0, 6);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
 
-            glBlendFunc(GL_ONE, GL_ZERO);
-            glEnable(GL_CULL_FACE);
-        }
+        glBlendFunc(GL_ONE, GL_ZERO);
+        glEnable(GL_CULL_FACE);
     }
 
     void Grid::setPlane(const glm::vec3& origin, const glm::vec3& normal)
@@ -69,4 +66,4 @@ namespace Core
         _up = glm::normalize(glm::cross(_normal, _right));
     }
 
-} // namespace Core
+} // namespace NX

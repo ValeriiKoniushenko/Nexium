@@ -9,13 +9,13 @@
 
 #include "ControllerManager.h"
 
-#include "PrivateModuleInfo.h"
+#include "NxWorld/PrivateModuleInfo.h"
 
-namespace Core
+namespace NX
 {
     spdlog::logger* ControllerManager::getLogger() const
     {
         return NxWorld::getLogger();
     }
 
-} // namespace Core
+} // namespace NX

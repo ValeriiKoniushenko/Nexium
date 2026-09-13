@@ -100,9 +100,9 @@ namespace NX
         }
     }
 
-    FSize2 BaseCamera::getOutputFrameSize()
+    Core::FSize2 BaseCamera::getOutputFrameSize()
     {
-        return static_cast<FSize2>(gGameInstance->getRenderSize());
+        return static_cast<Core::FSize2>(gGameInstance->getRenderSize());
     }
 
     void BaseCamera::setNear(float value) noexcept
@@ -144,7 +144,7 @@ namespace NX
 
     glm::vec3 OrthographicCamera::putMouseRay(float length)
     {
-        const auto mouse = Mouse::GetInViewportPosition();
+        const auto mouse = Platform::Mouse::GetInViewportPosition();
 
         const auto frame = getOutputFrameSize();
         const float x = (2.0f * mouse.x / frame.width) - 1.0f;
@@ -217,7 +217,7 @@ namespace NX
         setRotation({ pitch, yaw, 0.0f });
     }
 
-    void PerspectiveCamera::setAspect(FSize2 size) noexcept
+    void PerspectiveCamera::setAspect(Core::FSize2 size) noexcept
     {
         _aspect = size;
         _isDirtyProjMatrix = true;
@@ -231,7 +231,7 @@ namespace NX
 
     glm::vec3 PerspectiveCamera::putMouseRay(float length)
     {
-        const auto mouse = Mouse::GetInViewportPosition();
+        const auto mouse = Platform::Mouse::GetInViewportPosition();
 
         const auto frame = getOutputFrameSize();
         const float x = (2.0f * mouse.x / frame.width) - 1.0f;

@@ -10,6 +10,7 @@
 #include "SkyboxAsset.h"
 
 #include "Foundation/Configs.h"
+#include "NxWorld/Entities/Camera/Camera.h"
 #include "RawBackend/Image.h"
 
 using namespace RawBackend;

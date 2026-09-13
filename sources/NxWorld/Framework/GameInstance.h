@@ -17,7 +17,9 @@
 #include "UserInterface.h"
 #include "World.h"
 
-namespace Core
+#include <memory>
+
+namespace NX
 {
     class GameInstance : public Foundation::BaseLog, public Foundation::IDataIO
     {
@@ -55,20 +57,20 @@ namespace Core
         }
         [[nodiscard]] bool isEditorMode() const noexcept;
         [[nodiscard]] bool isApplicationViewportFocused() const;
-        [[nodiscard]] ISize2 getRenderSize() const;
+        [[nodiscard]] Core::ISize2 getRenderSize() const;
 
     public:
         Scene gameScene;
-        ShaderManager shaderManager;
+        ShaderManager& shaderManager = GetShaderManager();
         World world;
         UserInterface userInterface;
         AssetsManager assets;
 
         void resetCamera();
         RenderMode renderMode = RenderMode::Editor;
-        Window* window = nullptr;
+        Platform::Window* window = nullptr;
 
-        [[nodiscard]] StringAtom getCacheHash() const override;
+        [[nodiscard]] Core::StringAtom getCacheHash() const override;
 
     protected:
         virtual void onSaveAll() {}
@@ -79,7 +81,7 @@ namespace Core
         void internal_onAddObjectToScene(SceneObject* obj);
 
     protected:
-        DelegateSubscriberPoolGuard _subscriptionPool;
+        Core::DelegateSubscriberPoolGuard _subscriptionPool;
 
     private:
         void loadCoreResources();
@@ -97,7 +99,7 @@ namespace Core
     [[nodiscard]] World* GetWorld();
 
     [[nodiscard]] AssetsManager* GetAssetsManager();
-} // namespace Core
+} // namespace NX
 
-extern std::unique_ptr<Core::GameInstance> gGameInstance;
+extern std::unique_ptr<NX::GameInstance> gGameInstance;
 #include "GameInstance.generated.h" // added by the code generator. Better don't move it.
