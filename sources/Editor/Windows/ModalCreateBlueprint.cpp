@@ -90,7 +90,14 @@ namespace Core
                 {
                     if (_list && data)
                     {
-                        _list->setRegexFilter(StringAtom(data));
+                        if (*data == '\0')
+                        {
+                            _list->resetRegexFilter();
+                        }
+                        else
+                        {
+                            _list->setRegexFilter("(?i){}"_f << data);
+                        }
                     }
                 });
         }
