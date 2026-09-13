@@ -10,6 +10,8 @@
 #include "NxRuntime/Runtime.h"
 #include "TemplateGameInstance.h"
 
+#include <iostream>
+
 int main(int argc, char** argv)
 {
     gGameInstance = std::make_unique<TemplateGameInstance>(argc, argv);

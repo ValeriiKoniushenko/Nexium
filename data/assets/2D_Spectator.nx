@@ -30,7 +30,7 @@
                     1.0,
                     1.0
                 ],
-                "_type": "Core::OrthographicCamera",
+                "_type": "NX::OrthographicCamera",
                 "_zoom": 1.0
             }
         ],
@@ -59,11 +59,11 @@
             1.0,
             1.0
         ],
-        "_type": "Core::Spectator",
+        "_type": "NX::Spectator",
         "mouseSensitivity": 0.5,
         "speed": 600.0
     },
     "name": "2D_Spectator",
     "tags": "WorldObject",
-    "type": "Core::Spectator"
+    "type": "NX::Spectator"
 }

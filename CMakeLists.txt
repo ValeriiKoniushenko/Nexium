@@ -91,4 +91,4 @@ if(NEXIUM_ENABLE_LAYER_CHECKS)
 endif()
 
 # TODO: in the future it must be removed
-# add_subdirectory(game-example)
+add_subdirectory(game-example)

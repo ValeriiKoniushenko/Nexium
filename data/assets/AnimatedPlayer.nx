@@ -176,7 +176,7 @@
                         "_name": "New animation",
                         "_noTick": false,
                         "_textureName": "",
-                        "_type": "Core::Animation::FrameByFrameAnimation"
+                        "_type": "NX::Animation::FrameByFrameAnimation"
                     },
                     "spritesheet_test": {
                         "_atlasName": "player_walk",
@@ -242,7 +242,7 @@
                         "_name": "spritesheet_test",
                         "_noTick": false,
                         "_textureName": "MPlayer_walk.png",
-                        "_type": "Core::Animation::FrameByFrameAnimation"
+                        "_type": "NX::Animation::FrameByFrameAnimation"
                     },
                     "test": {
                         "_atlasName": "player_walk",
@@ -308,7 +308,7 @@
                         "_name": "test",
                         "_noTick": false,
                         "_textureName": "MPlayer_walk.png",
-                        "_type": "Core::Animation::FrameByFrameAnimation"
+                        "_type": "NX::Animation::FrameByFrameAnimation"
                     },
                     "test1": {
                         "_atlasName": "player_walk",
@@ -374,7 +374,7 @@
                         "_name": "test1",
                         "_noTick": false,
                         "_textureName": "MPlayer_walk.png",
-                        "_type": "Core::Animation::FrameByFrameAnimation"
+                        "_type": "NX::Animation::FrameByFrameAnimation"
                     },
                     "ыавпы": {
                         "_atlasName": "player_walk",
@@ -440,7 +440,7 @@
                         "_name": "ыавпы",
                         "_noTick": false,
                         "_textureName": "MPlayer_walk.png",
-                        "_type": "Core::Animation::FrameByFrameAnimation"
+                        "_type": "NX::Animation::FrameByFrameAnimation"
                     }
                 },
                 "_children": [
@@ -473,14 +473,14 @@
                             1.0
                         ],
                         "_textureName": "red.png",
-                        "_type": "Core::SceneObj::RectangleAnimated"
+                        "_type": "NX::SceneObj::RectangleAnimated"
                     }
                 ],
                 "_currentAnimationName": "",
                 "_isEnabled": true,
                 "_name": "Animator1",
                 "_noTick": false,
-                "_type": "Core::Animation::FrameByFrameAnimator"
+                "_type": "NX::Animation::FrameByFrameAnimator"
             }
         ],
         "_isDrawOutline": false,
@@ -509,9 +509,9 @@
             1.0
         ],
         "_textureName": "red.png",
-        "_type": "Core::SceneObj::RectangleAnimated"
+        "_type": "NX::SceneObj::RectangleAnimated"
     },
     "name": "AnimatedPlayer",
     "tags": "WorldObject",
-    "type": "Core::SceneObj::RectangleAnimated"
+    "type": "NX::SceneObj::RectangleAnimated"
 }

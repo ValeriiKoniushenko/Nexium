@@ -10,6 +10,7 @@
 #include "Window.h"
 
 #include "Graphics.h"
+#include "Platform/PrivateModuleInfo.h"
 
 #include <cstdlib>
 
@@ -303,7 +304,7 @@ namespace Platform
 
     spdlog::logger* Window::getLogger() const
     {
-        return nullptr;
+        return Platform::getLogger();
     }
 
     StringAtom Window::getCacheHash() const

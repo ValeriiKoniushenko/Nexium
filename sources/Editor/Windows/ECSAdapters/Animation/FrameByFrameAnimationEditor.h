@@ -14,7 +14,7 @@
 #include <array>
 #include <functional>
 
-namespace Core::Animation
+namespace NX::Animation
 {
     class FrameByFrameAnimator;
 }

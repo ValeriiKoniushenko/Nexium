@@ -369,8 +369,9 @@ namespace NX
 
     void Scene::initialize()
     {
-        auto asset = GetAssetsManager()->getSkybox("data/assets/baked/skybox/default.nxsky"_atom);
-        skybox = NXSkybox{ dynamic_cast<SkyboxAsset*>(asset.get()) };
+        // auto asset =
+        // GetAssetsManager()->getSkybox("data/assets/baked/skybox/default.nxsky"_atom); skybox =
+        // NXSkybox{ dynamic_cast<SkyboxAsset*>(asset.get()) };
         grid.setPlane(glm::vec3(0.0f, 0.0f, -1.f), glm::vec3(0.0f, 0.0f, 1.0f));
     }
 

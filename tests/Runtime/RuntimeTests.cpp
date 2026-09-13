@@ -7,6 +7,7 @@
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 
+#include "NxFundamental/ECS/BaseComponent.h"
 #include "NxRuntime/Runtime.h"
 #include "NxWorld/Framework/GameInstance.h"
 
@@ -20,4 +21,12 @@ TEST(RuntimeTests, KeepsBoundGameInstance)
     NX::Runtime runtime{ gameInstance };
 
     EXPECT_EQ(&runtime.getGameInstance(), &gameInstance);
+}
+
+TEST(RuntimeTests, LinksWorldComponentRegistrars)
+{
+    const auto& factory = NX::GetGlobalComponentFactory();
+
+    EXPECT_TRUE(factory.containsSuchType("NX::SceneObj::Rectangle"_atom));
+    EXPECT_TRUE(factory.containsSuchType("NX::SceneObj::RectangleAnimated"_atom));
 }

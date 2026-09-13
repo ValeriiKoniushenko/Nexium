@@ -25,7 +25,7 @@ nexium_add_public_headers(Nexium_Runtime
     NxRuntime/Runtime.h
 )
 target_link_libraries(Nexium_Runtime
-    PUBLIC Nexium::World
+    PUBLIC "$<LINK_LIBRARY:WHOLE_ARCHIVE,Nexium::World>"
     PRIVATE ${MODULE_PRIVATE_TARGET}
 )
 

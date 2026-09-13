@@ -2,7 +2,7 @@
     "_sceneName": "Default",
     "sceneObjects": [
         {
-            "assetType": "Core::SceneObj::Rectangle",
+            "assetType": "NX::SceneObj::Rectangle",
             "name": "BaseRectangle",
             "referenceAsset": "data/assets/BaseRectangle.nx",
             "trans": {
@@ -35,7 +35,7 @@
             }
         },
         {
-            "assetType": "Core::SceneObj::Rectangle",
+            "assetType": "NX::SceneObj::Rectangle",
             "name": "BaseRectangle_0",
             "referenceAsset": "data/assets/BaseRectangle.nx",
             "trans": {
@@ -68,7 +68,7 @@
             }
         },
         {
-            "assetType": "Core::SceneObj::RectangleAnimated",
+            "assetType": "NX::SceneObj::RectangleAnimated",
             "name": "AnimatedPlayersa",
             "referenceAsset": "data/assets/AnimatedPlayer.nx",
             "trans": {
@@ -104,7 +104,7 @@
             }
         },
         {
-            "assetType": "Core::Spectator",
+            "assetType": "NX::Spectator",
             "name": "2D_Spectator",
             "referenceAsset": "data/assets/2D_Spectator.nx",
             "trans": {
