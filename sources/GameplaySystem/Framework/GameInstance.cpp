@@ -121,6 +121,8 @@ namespace Core
         GetInputSystem()->initialize(*window);
         _subscriptionPool << window->onResize->subscribeAndGetID([this](ISize2 newSize)
                                                                  { updateViewport(); });
+        glfwSetFramebufferSizeCallback(window->getRawWindow(), [](GLFWwindow*, int, int)
+                                       { gGameInstance->updateViewport(); });
 
         //-------------------- ASSETS MANAGER ---------------------
         GetAssetsManager()->initScanFileSystem();
@@ -215,6 +217,7 @@ namespace Core
             {
                 gameScene.tick(world.getTimeDelta());
 
+                window->updateViewport();
                 glClear(clearBits);
 
                 gameEditor.keyboardInput.update(); // force update

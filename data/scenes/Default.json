@@ -64,7 +64,7 @@
                 "_atlasName": "santa_walk",
                 "_blendingEnabled": true,
                 "_isEnabled": true,
-                "_textureName": "Walk _1.png"
+                "_textureName": "Walk_9.png"
             }
         },
         {
@@ -4350,6 +4350,40 @@
         {
             "assetType": "Core::SceneObj::RectangleAnimated",
             "name": "AnimatedRectangle_124",
+            "referenceAsset": "data/assets/AnimatedRectangle.nx",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    0.0,
+                    -490.0,
+                    -0.800000011920929
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    20.0,
+                    20.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "default",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "BG.png"
+            }
+        },
+        {
+            "assetType": "Core::SceneObj::RectangleAnimated",
+            "name": "AnimatedRectangle_125",
             "referenceAsset": "",
             "trans": {
                 "_origin": [
@@ -4358,7 +4392,7 @@
                     0.0
                 ],
                 "_position": [
-                    2379.26025390625,
+                    356.7959289550781,
                     0.0,
                     0.0
                 ],
