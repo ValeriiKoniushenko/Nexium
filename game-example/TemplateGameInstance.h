@@ -9,9 +9,9 @@
 
 #pragma once
 
-#include "GameplaySystem/Framework/GameInstance.h"
+#include "NxWorld/Framework/GameInstance.h"
 
-class TemplateGameInstance : public Core::GameInstance
+class TemplateGameInstance : public NX::GameInstance
 {
 public:
     TemplateGameInstance(int argc, char** argv);

@@ -44,6 +44,8 @@ namespace NX
 
         void initialize();
 
+        void tick(float delta) { onTick(delta); }
+
         void updateViewport();
 
         void toggleRenderMode();
@@ -58,6 +60,7 @@ namespace NX
         [[nodiscard]] bool isEditorMode() const noexcept;
         [[nodiscard]] bool isApplicationViewportFocused() const;
         [[nodiscard]] Core::ISize2 getRenderSize() const;
+        [[nodiscard]] float getTimeout() const noexcept { return _timeout; }
 
     public:
         Scene gameScene;
@@ -87,7 +90,6 @@ namespace NX
         void loadCoreResources();
         void startUpReadCache();
         void initializeShaders();
-        void runMainLoop();
 
     private:
         ApplicationIntegration* _applicationIntegration = nullptr;

@@ -9,9 +9,7 @@
 
 #include "GameInstance.h"
 
-#include "Core/Timer.h"
 #include "Foundation/Configs.h"
-#include "NxRuntime/GameUtils/FPSCounter.h"
 #include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimation.h"
 #include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimator.h"
 #include "NxWorld/Entities/Camera/Camera.h"
@@ -139,10 +137,6 @@ namespace NX
 
         startUpReadCache();
         loadCoreResources();
-
-        runMainLoop();
-
-        saveAllToCache();
     }
 
     void GameInstance::startUpReadCache()
@@ -175,90 +169,6 @@ namespace NX
         {
             _applicationIntegration->clearSceneRenderTarget();
         }
-    }
-
-    void GameInstance::runMainLoop()
-    {
-        Core::FPSCounter fps;
-        fps.start();
-        Core::FStopwatch clock;
-
-        glClearColor(0.45f, 0.55f, 0.60f, 1.00f);
-        glEnable(GL_BLEND);
-        glEnable(GL_DEPTH_TEST);
-        glEnable(GL_CULL_FACE);
-        glEnable(GL_STENCIL_TEST);
-
-        constexpr int clearBits = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
-
-        while (!window->shouldClose())
-        {
-            clock.start();
-            Platform::Window::pollEvent();
-
-            if (!isEditorMode())
-            {
-                gameScene.tick(world.getTimeDelta());
-
-                glClear(clearBits);
-
-                if (_applicationIntegration)
-                {
-                    _applicationIntegration->updateInput();
-                }
-
-                if (world.currentCamera)
-                {
-                    gameScene.directDraw(shaderManager.getShaderProgram("skybox"_atom),
-                                         shaderManager.getShaderProgram("grid"_atom));
-                    onTick(world.getTimeDelta());
-                }
-            }
-            else
-            {
-                if (_applicationIntegration->isViewportFocused())
-                {
-                    gameScene.tick(world.getTimeDelta());
-                }
-
-                glClear(clearBits);
-                _applicationIntegration->tick(world.getTimeDelta());
-
-                if (world.currentCamera)
-                {
-                    _applicationIntegration->updateSceneInteraction(gameScene);
-                    _applicationIntegration->beforeSceneDraw();
-                    glClear(clearBits);
-
-                    gameScene.directDraw(shaderManager.getShaderProgram("skybox"_atom),
-                                         shaderManager.getShaderProgram("grid"_atom));
-                    onTick(world.getTimeDelta());
-                    _applicationIntegration->afterSceneDraw();
-                }
-            }
-
-            if (glfwGetWindowAttrib(window->getRawWindow(), GLFW_ICONIFIED)
-                || glfwGetWindowAttrib(window->getRawWindow(), GLFW_FOCUSED) == GLFW_FALSE)
-            {
-                std::this_thread::sleep_for(std::chrono::milliseconds(50));
-            }
-
-            if (_timeout != 0.f)
-            {
-                if (world.getWorldTime() > _timeout)
-                {
-                    window->close();
-                    infoLog("Force closing the window due to the passed timeout ({} seconds)."_f
-                            << _timeout);
-                }
-            }
-
-            window->swapBuffers();
-            fps.newFrameUpdate();
-            world.internal_UpdateTimeDelta(clock.stop());
-        }
-
-        infoLog("Total FPS for this session: {}"_f << fps.getFPS());
     }
 
     void GameInstance::updateViewport()

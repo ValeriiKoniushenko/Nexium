@@ -48,7 +48,6 @@ target_sources(Nexium_World PRIVATE
     Framework/GameInstanceSubsystem.cpp
     Framework/GameState.cpp
     Framework/LevelData.cpp
-    Framework/ModuleInfo.cpp
     Framework/PlayerState.cpp
     Framework/UserInterface.cpp
     Framework/World.cpp
@@ -77,7 +76,6 @@ nexium_add_public_headers(Nexium_World
     NxWorld/Framework/GameInstanceSubsystem.h
     NxWorld/Framework/GameState.h
     NxWorld/Framework/LevelData.h
-    NxWorld/Framework/ModuleInfo.h
     NxWorld/Framework/PlayerState.h
     NxWorld/Framework/UserInterface.h
     NxWorld/Framework/World.h

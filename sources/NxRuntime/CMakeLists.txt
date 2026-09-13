@@ -18,13 +18,16 @@ add_library(Nexium::Runtime ALIAS Nexium_Runtime)
 add_library(Nexium::NxRuntime ALIAS Nexium_Runtime)
 target_sources(Nexium_Runtime PRIVATE
     GameUtils/FPSCounter.cpp
+    Runtime.cpp
 )
 nexium_add_public_headers(Nexium_Runtime
     NxRuntime/GameUtils/FPSCounter.h
+    NxRuntime/Runtime.h
 )
-target_link_libraries(Nexium_Runtime PRIVATE ${MODULE_PRIVATE_TARGET})
-
-target_link_libraries(Nexium_World PRIVATE Nexium_Runtime)
+target_link_libraries(Nexium_Runtime
+    PUBLIC Nexium::World
+    PRIVATE ${MODULE_PRIVATE_TARGET}
+)
 
 foreach(TARGET_NAME IN ITEMS
     ${MODULE_PRIVATE_TARGET}

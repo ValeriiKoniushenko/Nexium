@@ -7,6 +7,7 @@ target_link_libraries(Nexium_Tests PRIVATE
     Nexium::Fundamental::Base
     Nexium::Fundamental::ECS
     Nexium::Subsystem::AssetsManager
+    Nexium::Runtime
     Nexium::World::Animation
 )
 add_dependencies(Nexium_Tests CodeGenerator)

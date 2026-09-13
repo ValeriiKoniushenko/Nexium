@@ -7,12 +7,16 @@
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 
+#include "NxRuntime/Runtime.h"
 #include "TemplateGameInstance.h"
 
 int main(int argc, char** argv)
 {
     gGameInstance = std::make_unique<TemplateGameInstance>(argc, argv);
 
-    gGameInstance->initialize();
+    {
+        NX::Runtime runtime{ *gGameInstance };
+        runtime.run();
+    }
     gGameInstance.reset();
 }

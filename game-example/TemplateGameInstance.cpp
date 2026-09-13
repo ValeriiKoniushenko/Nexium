@@ -9,7 +9,7 @@
 
 #include "TemplateGameInstance.h"
 
-using namespace Core;
+using namespace NX;
 
 TemplateGameInstance::TemplateGameInstance(int argc, char** argv)
     : GameInstance(argc, argv)
