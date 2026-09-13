@@ -412,14 +412,19 @@ namespace NX
             return false;
         }
 
-        auto&& filter = _filterInput->getInputtedData();
-
-        if (filter.empty() || filter[0] == '\0')
+        std::string filter = _filterInput->getInputtedData().c_str();
+        if (filter.empty())
         {
             return false;
         }
 
-        return !p.generic_string().contains(filter);
+        std::string filename = p.filename().generic_string();
+        const auto toLower = [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); };
+
+        std::ranges::transform(filter, filter.begin(), toLower);
+        std::ranges::transform(filename, filename.begin(), toLower);
+
+        return !filename.contains(filter);
     }
 
     bool AssetsManagerWindowEWC::isSelected(const std::filesystem::path& p) const
