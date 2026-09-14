@@ -24,15 +24,55 @@
 
 #include "AnimationPreviewPanel.h"
 
+#include "AnimationFrameThumbnail.h"
+
 #include <algorithm>
 
 namespace Core
 {
-    void AnimationPreviewPanel::drawEmptyPreview()
+    void AnimationPreviewPanel::setDraft(const Animation::FrameByFrameAnimation& draft)
+    {
+        _draft = &draft;
+        _preview = draft;
+        _preview.restart();
+    }
+
+    void AnimationPreviewPanel::synchronizeDraft()
+    {
+        if (!_draft)
+        {
+            return;
+        }
+        _preview.setComponentName(_draft->getComponentName());
+        _preview.setAtlasName(_draft->getAtlasName());
+        _preview.setTextureName(_draft->getTextureName());
+        _preview.setFPS(_draft->getFPS());
+        _preview.setLoop(_draft->isLooping());
+
+        // Update frame data without replacing the animation's playback state.
+        while (_preview.getFramesCount() > _draft->getFramesCount())
+        {
+            _preview.removeFrame(_preview.getFramesCount() - 1);
+        }
+        for (std::size_t i = 0; i < _draft->getFramesCount(); ++i)
+        {
+            if (i == _preview.getFramesCount())
+            {
+                _preview.addFrame(GlobalPosition2F{ 0.f, 0.f }, GlobalPosition2F{ 1.f, 1.f });
+            }
+            _preview.setFrame(i, _draft->getFrames()[i]);
+        }
+    }
+
+    std::size_t AnimationPreviewPanel::currentFrameIndex() const
+    {
+        const auto* frame = _preview.getCurrentFrame();
+        return frame ? static_cast<std::size_t>(frame - _preview.getFrames().data()) : 0U;
+    }
+
+    void AnimationPreviewPanel::drawCanvas(glm::vec2 size)
     {
         const auto origin = ImGui::GetCursorScreenPos();
-        const auto available = ImGui::GetContentRegionAvail();
-        const auto size = glm::vec2{ std::max(available.x, 1.f), std::max(available.y, 1.f) };
         auto* drawList = ImGui::GetWindowDrawList();
         constexpr float cellSize = 16.f;
         const auto dark = ImGui::GetColorU32(ImGuiCol_WindowBg);
@@ -51,21 +91,75 @@ namespace Core
             }
         }
 
-        const auto message = "Add frames to preview your animation"_atom;
-        const auto textSize = ImGui::CalcTextSize(message.c_str());
-        drawList->AddText({ origin.x + std::max(0.f, (size.x - textSize.x) * 0.5f),
-                            origin.y + std::max(0.f, (size.y - textSize.y) * 0.5f) },
-                          ImGui::GetColorU32(ImGuiCol_TextDisabled), message.c_str());
+        const bool hasFrames = _preview.hasFrames();
+        if (!hasFrames
+            || !AnimationFrameThumbnail::drawFrame(_preview, currentFrameIndex(), origin, size))
+        {
+            const auto message = hasFrames ? "Preview unavailable: check atlas"_atom
+                                           : "Add frames to preview your animation"_atom;
+            const auto textSize = ImGui::CalcTextSize(message.c_str());
+            drawList->AddText({ origin.x + std::max(0.f, (size.x - textSize.x) * 0.5f),
+                                origin.y + std::max(0.f, (size.y - textSize.y) * 0.5f) },
+                              ImGui::GetColorU32(ImGuiCol_TextDisabled), message.c_str());
+        }
         ImGui::Dummy(size);
+    }
+
+    void AnimationPreviewPanel::onInitialize()
+    {
+        Gui::VerticalLayout::onInitialize();
+        _title.setText("Animation preview"_atom);
+        _title.initialize();
+        _controls.setFitContent(true);
+        _controls.setVerticalAlign(Gui::Align::Center);
+        _play = _controls.addChildComponent<Gui::Button>("Preview playback"_atom);
+        _play->setText("Pause"_atom);
+        _play->setSize({ 76.f, 26.f });
+        _restart = _controls.addChildComponent<Gui::Button>("Restart preview"_atom);
+        _restart->setText("Restart"_atom);
+        _restart->setSize({ 76.f, 26.f });
+        _position = _controls.addChildComponent<Gui::Label>();
+        _subscriptions << _play->onClick->subscribeAndGetID(
+            [this]
+            {
+                if (_preview.isPlaying())
+                {
+                    _preview.pause();
+                }
+                else if (_preview.isPaused())
+                {
+                    _preview.resume();
+                }
+                else
+                {
+                    _preview.start();
+                }
+            });
+        _subscriptions << _restart->onClick->subscribeAndGetID([this] { _preview.restart(); });
     }
 
     void AnimationPreviewPanel::onDraw()
     {
         if (ImGui::BeginChild("PreviewPanel", { getWidth(), getHeight() }, true))
         {
-            ImGui::TextUnformatted("Animation preview");
-            ImGui::Separator();
-            drawEmptyPreview();
+            _title.tick(ImGui::GetIO().DeltaTime);
+            synchronizeDraft();
+            _preview.tick(ImGui::GetIO().DeltaTime);
+            const auto count = _preview.getFramesCount();
+            _play->disableWidget(count == 0);
+            _restart->disableWidget(count == 0);
+            _play->setText(_preview.isPlaying() ? "Pause"_atom : "Play"_atom);
+            _position->setText(count == 0 ? "No frames"_atom
+                                          : StringAtom::MakeFrom(currentFrameIndex() + 1)
+                                                + " / "_atom + StringAtom::MakeFrom(count));
+            const auto available = ImGui::GetContentRegionAvail();
+            drawCanvas({ std::max(available.x, 1.f),
+                         std::max(1.f, available.y - _controls.getHeight()
+                                           - ImGui::GetStyle().ItemSpacing.y) });
+            const auto origin = ImGui::GetCursorPos();
+            _controls.tick(ImGui::GetIO().DeltaTime);
+            ImGui::SetCursorPos(origin);
+            ImGui::Dummy({ _controls.getWidth(), _controls.getHeight() });
         }
         ImGui::EndChild();
     }

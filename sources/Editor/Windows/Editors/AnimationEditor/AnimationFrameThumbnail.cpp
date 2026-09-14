@@ -49,31 +49,43 @@ namespace Core
 
     void AnimationFrameThumbnail::onDraw()
     {
+        const auto origin = ImGui::GetCursorScreenPos();
+        const auto bounds = glm::vec2(getWidth(), getHeight());
+        ImGui::GetWindowDrawList()->AddRectFilled(origin, origin + bounds,
+                                                  ImGui::GetColorU32(ImGuiCol_FrameBg));
+        if (!drawFrame(_animation, _index, origin, bounds))
+        {
+            _unavailable.tick(ImGui::GetIO().DeltaTime);
+            ImGui::SetCursorScreenPos(origin);
+        }
+        ImGui::Dummy(bounds);
+    }
+
+    bool AnimationFrameThumbnail::drawFrame(const Animation::FrameByFrameAnimation& animation,
+                                            std::size_t index, glm::vec2 origin, glm::vec2 bounds)
+    {
         auto* assets = GetAssetsManager();
         if (!assets)
         {
-            _unavailable.tick(ImGui::GetIO().DeltaTime);
-            return;
+            return false;
         }
         const auto atlasNames = assets->getAtlasesAsVector();
-        if (_index >= _animation.getFramesCount()
-            || std::ranges::find(atlasNames, _animation.getAtlasName()) == atlasNames.end())
+        if (index >= animation.getFramesCount()
+            || std::ranges::find(atlasNames, animation.getAtlasName()) == atlasNames.end())
         {
-            _unavailable.tick(ImGui::GetIO().DeltaTime);
-            return;
+            return false;
         }
-        const auto& atlas = GetAssetsManager()->getAtlas(_animation.getAtlasName());
+        const auto& atlas = GetAssetsManager()->getAtlas(animation.getAtlasName());
         const auto& texture = atlas.getTexture();
-        const auto& frame = _animation.getFrames()[_index];
+        const auto& frame = animation.getFrames()[index];
         auto offset = glm::vec2(frame.uvOffset);
         auto size = glm::vec2(frame.uvSize);
-        const auto regionName = frame.textureName.value_or(_animation.getTextureName());
+        const auto regionName = frame.textureName.value_or(animation.getTextureName());
         if (!regionName.isEmpty())
         {
             if (!atlas.getRects().contains(regionName))
             {
-                _unavailable.tick(ImGui::GetIO().DeltaTime);
-                return;
+                return false;
             }
             const auto& rect = atlas.getRect(regionName);
             const auto regionSize = rect.getRightBottom() - rect.getLeftTop();
@@ -84,20 +96,16 @@ namespace Core
         const auto pixels = size * glm::vec2(textureSize.width, textureSize.height);
         if (!texture.isValid() || pixels.x <= 0.f || pixels.y <= 0.f)
         {
-            _unavailable.tick(ImGui::GetIO().DeltaTime);
-            return;
+            return false;
         }
-        const auto origin = ImGui::GetCursorScreenPos();
-        const float scale = std::min(getWidth() / pixels.x, getHeight() / pixels.y);
+        const float scale = std::min(bounds.x / pixels.x, bounds.y / pixels.y);
         const auto imageSize = pixels * scale;
-        const auto topLeft = origin + (glm::vec2(getWidth(), getHeight()) - imageSize) * 0.5f;
+        const auto topLeft = origin + (glm::vec2(bounds.x, bounds.y) - imageSize) * 0.5f;
         auto* drawList = ImGui::GetWindowDrawList();
-        drawList->AddRectFilled(origin, origin + glm::vec2(getWidth(), getHeight()),
-                                ImGui::GetColorU32(ImGuiCol_FrameBg));
         drawList->AddImage(const_cast<Texture&>(texture).getTextureId(), topLeft,
                            topLeft + imageSize, { offset.x, offset.y + size.y },
                            { offset.x + size.x, offset.y });
-        ImGui::Dummy({ getWidth(), getHeight() });
+        return true;
     }
 
 } // namespace Core

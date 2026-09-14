@@ -36,6 +36,9 @@ namespace Core
         AnimationFrameThumbnail(const Animation::FrameByFrameAnimation& animation,
                                 std::size_t index);
 
+        [[nodiscard]] static bool drawFrame(const Animation::FrameByFrameAnimation& animation,
+                                            std::size_t index, glm::vec2 origin, glm::vec2 bounds);
+
     protected:
         void onInitialize() override;
         void onDraw() override;
