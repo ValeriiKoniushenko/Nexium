@@ -2,30 +2,18 @@
     "_children": null,
     "_innerPosition": [
         16.0,
-        776.0
+        796.0
     ],
     "_innerSize": {
         "height": 199.0,
-        "width": 1870.0
+        "width": 1888.0
     },
     "_isEnabled": true,
     "_isFitContent": false,
     "_levelFilter": [
         {
             "isActive": true,
-            "level": "critical"
-        },
-        {
-            "isActive": true,
-            "level": "error"
-        },
-        {
-            "isActive": true,
-            "level": "warning"
-        },
-        {
-            "isActive": true,
-            "level": "info"
+            "level": "trace"
         },
         {
             "isActive": true,
@@ -33,7 +21,19 @@
         },
         {
             "isActive": true,
-            "level": "trace"
+            "level": "info"
+        },
+        {
+            "isActive": true,
+            "level": "warning"
+        },
+        {
+            "isActive": true,
+            "level": "error"
+        },
+        {
+            "isActive": true,
+            "level": "critical"
         }
     ],
     "_logLimit": 500,
@@ -45,15 +45,15 @@
     "_noTick": false,
     "_oldSize": {
         "height": 239.0,
-        "width": 1886.0
+        "width": 1904.0
     },
     "_position": [
         8.0,
-        744.0
+        764.0
     ],
     "_size": {
         "height": 239.0,
-        "width": 1886.0
+        "width": 1904.0
     },
     "_type": "Core::LogsWindowEWC"
 }

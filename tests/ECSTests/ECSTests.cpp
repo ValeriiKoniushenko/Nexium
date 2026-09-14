@@ -24,11 +24,13 @@
 
 #include "Animations/FrameByFrame/FrameByFrameAnimator.h"
 #include "DummyComponent.h"
+#include "Editor/Windows/Editors/AnimationEditor/AnimationPropertiesPanel.h"
 #include "InputDevices/InputTypes.h"
 #include "Scene/Rectangle.h"
 
 #include "gtest/gtest.h"
 #include <fstream>
+#include <limits>
 #include <ranges>
 
 using namespace Core;
@@ -1136,4 +1138,54 @@ TEST(InputTypesTests, InputEventsDefaultInitializeOwnedKeyCollections)
 
     EXPECT_TRUE(chord.requiredKeys.empty());
     EXPECT_TRUE(event.pressedKeys.empty());
+}
+
+TEST(AnimationEditorFrameRect, ConvertsTopLeftPixelsToBottomLeftUV)
+{
+    const auto frame = AnimationPropertiesPanel::frameFromPixelRect({ 16, 8, 32, 16 }, { 128, 64 });
+    ASSERT_TRUE(frame);
+    EXPECT_FALSE(frame->textureName);
+    EXPECT_FLOAT_EQ(frame->uvOffset.x, 0.125f);
+    EXPECT_FLOAT_EQ(frame->uvOffset.y, 0.625f);
+    EXPECT_FLOAT_EQ(frame->uvSize.x, 0.25f);
+    EXPECT_FLOAT_EQ(frame->uvSize.y, 0.25f);
+}
+
+TEST(AnimationEditorFrameRect, AcceptsFullTextureAndBottomRightEdge)
+{
+    const auto full = AnimationPropertiesPanel::frameFromPixelRect({ 0, 0, 128, 64 }, { 128, 64 });
+    ASSERT_TRUE(full);
+    EXPECT_FLOAT_EQ(full->uvOffset.y, 0.f);
+    EXPECT_FLOAT_EQ(full->uvSize.x, 1.f);
+    EXPECT_FLOAT_EQ(full->uvSize.y, 1.f);
+    const auto edge = AnimationPropertiesPanel::frameFromPixelRect({ 96, 48, 32, 16 }, { 128, 64 });
+    ASSERT_TRUE(edge);
+    EXPECT_FLOAT_EQ(edge->uvOffset.x, 0.75f);
+    EXPECT_FLOAT_EQ(edge->uvOffset.y, 0.f);
+}
+
+TEST(AnimationEditorFrameRect, RejectsInvalidDimensionsAndOutOfBoundsWithoutOverflow)
+{
+    EXPECT_FALSE(AnimationPropertiesPanel::frameFromPixelRect({ -1, 0, 1, 1 }, { 128, 64 }));
+    EXPECT_FALSE(AnimationPropertiesPanel::frameFromPixelRect({ 0, -1, 1, 1 }, { 128, 64 }));
+    EXPECT_FALSE(AnimationPropertiesPanel::frameFromPixelRect({ 0, 0, 0, 1 }, { 128, 64 }));
+    EXPECT_FALSE(AnimationPropertiesPanel::frameFromPixelRect({ 0, 0, 1, -1 }, { 128, 64 }));
+    EXPECT_FALSE(AnimationPropertiesPanel::frameFromPixelRect({ 127, 0, 2, 1 }, { 128, 64 }));
+    EXPECT_FALSE(AnimationPropertiesPanel::frameFromPixelRect({ 0, 63, 1, 2 }, { 128, 64 }));
+    EXPECT_FALSE(AnimationPropertiesPanel::frameFromPixelRect({ 0, 0, 1, 1 }, { 0, 64 }));
+    EXPECT_FALSE(AnimationPropertiesPanel::frameFromPixelRect(
+        { std::numeric_limits<int>::max(), 0, std::numeric_limits<int>::max(), 1 }, { 128, 64 }));
+}
+
+TEST(AnimationEditorFrameRect, CanMixNamedRegionsAndPixelRectangles)
+{
+    Animation::FrameByFrameAnimation animation;
+    ASSERT_TRUE(animation.addFrame("Run_01"_atom));
+    const auto frame = AnimationPropertiesPanel::frameFromPixelRect({ 2, 0, 1, 3 }, { 3, 3 });
+    ASSERT_TRUE(frame);
+    ASSERT_TRUE(animation.addFrame(frame->uvOffset, frame->uvSize));
+    ASSERT_EQ(animation.getFramesCount(), 2U);
+    ASSERT_TRUE(animation.getFrames()[0].textureName);
+    EXPECT_EQ(*animation.getFrames()[0].textureName, "Run_01"_atom);
+    EXPECT_FALSE(animation.getFrames()[1].textureName);
 }

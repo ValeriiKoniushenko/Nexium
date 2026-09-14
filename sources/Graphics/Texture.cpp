@@ -146,6 +146,10 @@ namespace Core
 
         glTexImage2D(GL_TEXTURE_2D, level, internalformat, width, height, border, format, type,
                      pixels);
+        if (level == 0)
+        {
+            _size = ISize2(width, height);
+        }
     }
 
     void Texture::putSubImage(GLint level, GLint xoffset, GLint yoffset, GLsizei width,

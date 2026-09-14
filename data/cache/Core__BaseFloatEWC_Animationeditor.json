@@ -1,0 +1,32 @@
+{
+    "_children": null,
+    "_innerPosition": [
+        373.0,
+        64.0
+    ],
+    "_innerSize": {
+        "height": 690.0,
+        "width": 968.0
+    },
+    "_isEnabled": true,
+    "_isFitContent": false,
+    "_minWindowSize": {
+        "height": 600.0,
+        "width": 800.0
+    },
+    "_name": "Animation editor",
+    "_noTick": false,
+    "_oldSize": {
+        "height": 730.0,
+        "width": 984.0
+    },
+    "_position": [
+        365.0,
+        32.0
+    ],
+    "_size": {
+        "height": 730.0,
+        "width": 984.0
+    },
+    "_type": "Core::BaseFloatEWC"
+}

@@ -9,6 +9,8 @@
 #include "Animations/FrameByFrame/FrameByFrameAnimator.h"
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/Misc.h"
+#include "Editor/Windows/Editors/AnimationEditor/AnimationEditor.h"
+#include "GameplaySystem/Framework/GameInstance.h"
 #include "Misc/IconsFontAwesome.h"
 
 #include <algorithm>
@@ -37,6 +39,7 @@ namespace Core
         _subscriptionPool << _addAnimButton->onClick->subscribeAndGetID(
             [this]
             {
+                GetEditor()->showWindow<AnimationEditorEWC>();
                 _animationEditor.create(
                     dynamic_cast<Animation::FrameByFrameAnimator*>(getTargetComponent()));
             });
