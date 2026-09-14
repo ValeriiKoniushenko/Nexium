@@ -152,7 +152,7 @@ namespace RawBackend
                      pixels);
         if (level == 0)
         {
-            _size = ISize2(width, height);
+            _size = Core::ISize2(width, height);
         }
     }
 

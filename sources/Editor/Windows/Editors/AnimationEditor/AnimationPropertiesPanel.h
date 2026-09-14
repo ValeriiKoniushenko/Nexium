@@ -24,14 +24,14 @@
 
 #pragma once
 
-#include "Animations/FrameByFrame/FrameByFrameAnimation.h"
+#include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimation.h"
 #include "Editor/GuiComponents/CheckBox.h"
 #include "Editor/GuiComponents/Combo.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/Label.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 
-namespace Core
+namespace NX
 {
     class AnimationPropertiesPanel final : public Gui::VerticalLayout
     {
@@ -39,6 +39,7 @@ namespace Core
         using VerticalLayout::VerticalLayout;
 
         void setDraft(Animation::FrameByFrameAnimation& draft) { _draft = &draft; }
+        void setAtlasFrames(const StringAtom& atlasName, std::vector<StringAtom> regions);
         [[nodiscard]] static std::optional<Animation::Frame> frameFromPixelRect(
             glm::ivec4 rect, glm::ivec2 textureSize);
 
@@ -47,33 +48,20 @@ namespace Core
         void onDraw() override;
 
     private:
-        void addFrame();
-        void initializeFrameSource();
-        void updateFrameSource();
+        void updateAtlas();
 
         Gui::VerticalLayout _fields;
-        Gui::VerticalLayout* _rectFields = nullptr;
-        Gui::VerticalLayout* _regionFields = nullptr;
-
         Gui::ComboView* _atlas = nullptr;
-        Gui::ComboView* _region = nullptr;
-        Gui::ComboView* _frameSource = nullptr;
 
         Gui::Label* _atlasHint = nullptr;
         Gui::Label* _frameStatus = nullptr;
 
         Gui::NumInput<float>* _fps = nullptr;
-        Gui::NumInput<int>* _rectX = nullptr;
-        Gui::NumInput<int>* _rectY = nullptr;
-        Gui::NumInput<int>* _rectWidth = nullptr;
-        Gui::NumInput<int>* _rectHeight = nullptr;
-
         Gui::TextInput* _name = nullptr;
         Gui::CheckBox* _loop = nullptr;
 
-        StringAtom _regionAtlas;
+        StringAtom _selectedAtlas;
         Animation::FrameByFrameAnimation* _draft = nullptr;
-        DelegateSubscriber _addFrameSubscription;
     };
 
-} // namespace Core
+} // namespace NX

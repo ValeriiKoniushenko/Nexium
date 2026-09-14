@@ -24,20 +24,37 @@
 
 #pragma once
 
+#include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimation.h"
+#include "Editor/GuiComponents/Button.h"
+#include "Editor/GuiComponents/HorizontalLayout.h"
+#include "Editor/GuiComponents/Label.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 
-namespace Core
+namespace NX
 {
-    class AnimationPreviewPanel final : public Core::Gui::VerticalLayout
+    class AnimationPreviewPanel final : public NX::Gui::VerticalLayout
     {
     public:
         using VerticalLayout::VerticalLayout;
+        void setDraft(const Animation::FrameByFrameAnimation& draft);
 
     protected:
+        void onInitialize() override;
         void onDraw() override;
 
     private:
-        void drawEmptyPreview();
+        void synchronizeDraft();
+        [[nodiscard]] std::size_t currentFrameIndex() const;
+        void drawCanvas(glm::vec2 size);
+
+        const Animation::FrameByFrameAnimation* _draft = nullptr;
+        Animation::FrameByFrameAnimation _preview;
+        Gui::HorizontalLayout _controls;
+        Gui::Button* _play = nullptr;
+        Gui::Button* _restart = nullptr;
+        Gui::Label* _position = nullptr;
+        Gui::Label _title;
+        DelegateSubscriberPoolGuard _subscriptions;
     };
 
-} // namespace Core
+} // namespace NX

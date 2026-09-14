@@ -1134,3 +1134,34 @@ TEST(AnimationEditorFrameRect, CanMixNamedRegionsAndPixelRectangles)
     EXPECT_EQ(*animation.getFrames()[0].textureName, "Run_01"_atom);
     EXPECT_FALSE(animation.getFrames()[1].textureName);
 }
+
+TEST(AnimationEditorAtlas, LoadsAllRegionsInNameOrderAndReplacesPreviousFrames)
+{
+    Animation::FrameByFrameAnimation draft;
+    draft.setFPS(12.f);
+    draft.setLoop(true);
+    draft.setTextureName("old texture"_atom);
+    ASSERT_TRUE(draft.addFrame("old frame"_atom));
+    AnimationPropertiesPanel panel;
+    panel.setDraft(draft);
+    panel.setAtlasFrames("first atlas"_atom, { "walk_03"_atom, "walk_01"_atom, "walk_02"_atom });
+    ASSERT_EQ(draft.getFramesCount(), 3U);
+    EXPECT_EQ(draft.getAtlasName(), "first atlas"_atom);
+    EXPECT_FALSE(draft.getTextureName());
+    EXPECT_EQ(draft.getFrames()[0].textureName, "walk_01"_atom);
+    EXPECT_EQ(draft.getFrames()[1].textureName, "walk_02"_atom);
+    EXPECT_EQ(draft.getFrames()[2].textureName, "walk_03"_atom);
+    EXPECT_FLOAT_EQ(draft.getFPS(), 12.f);
+    EXPECT_TRUE(draft.isLooping());
+
+    panel.setAtlasFrames("second atlas"_atom, { "run_03"_atom, "run_01"_atom, "run_02"_atom });
+    ASSERT_EQ(draft.getFramesCount(), 3U);
+    EXPECT_EQ(draft.getAtlasName(), "second atlas"_atom);
+    EXPECT_EQ(draft.getFrames()[0].textureName, "run_01"_atom);
+    panel.setAtlasFrames("empty atlas"_atom, {});
+    EXPECT_FALSE(draft.hasFrames());
+    EXPECT_EQ(draft.getAtlasName(), "empty atlas"_atom);
+    panel.setAtlasFrames({}, {});
+    EXPECT_FALSE(draft.hasFrames());
+    EXPECT_FALSE(draft.getAtlasName());
+}

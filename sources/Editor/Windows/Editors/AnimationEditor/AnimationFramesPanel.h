@@ -24,12 +24,12 @@
 
 #pragma once
 
-#include "Animations/FrameByFrame/FrameByFrameAnimation.h"
+#include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimation.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Label.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 
-namespace Core
+namespace NX
 {
     class AnimationFramesPanel final : public Gui::VerticalLayout
     {
@@ -45,7 +45,8 @@ namespace Core
         const Animation::FrameByFrameAnimation* _draft = nullptr;
         Gui::HorizontalLayout _strip;
         Gui::Label _empty;
+        StringAtom _displayedAtlas;
         std::size_t _displayedFrames = 0;
     };
 
-} // namespace Core
+} // namespace NX

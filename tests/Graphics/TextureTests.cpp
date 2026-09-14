@@ -1,4 +1,4 @@
-#include "Graphics/Texture.h"
+#include "RawBackend/Graphics/Texture.h"
 
 #include "gtest/gtest.h"
 
@@ -7,7 +7,7 @@ namespace
     class TextureUploadTest : public ::testing::Test
     {
     protected:
-        class TestTexture final : public Core::Texture
+        class TestTexture final : public RawBackend::Texture
         {
         public:
             TestTexture() { _textureId = 1; }

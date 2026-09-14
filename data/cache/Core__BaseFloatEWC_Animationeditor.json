@@ -5,8 +5,8 @@
         64.0
     ],
     "_innerSize": {
-        "height": 690.0,
-        "width": 968.0
+        "height": 684.0,
+        "width": 1006.0
     },
     "_isEnabled": true,
     "_isFitContent": false,
@@ -17,16 +17,16 @@
     "_name": "Animation editor",
     "_noTick": false,
     "_oldSize": {
-        "height": 730.0,
-        "width": 984.0
+        "height": 724.0,
+        "width": 1022.0
     },
     "_position": [
         365.0,
         32.0
     ],
     "_size": {
-        "height": 730.0,
-        "width": 984.0
+        "height": 724.0,
+        "width": 1022.0
     },
     "_type": "Core::BaseFloatEWC"
 }

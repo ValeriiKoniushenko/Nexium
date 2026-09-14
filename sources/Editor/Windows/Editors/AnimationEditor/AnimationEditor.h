@@ -24,12 +24,12 @@
 
 #pragma once
 
-#include "Animations/FrameByFrame/FrameByFrameAnimation.h"
+#include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimation.h"
 #include "Editor/GuiComponents/Label.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "Editor/Windows/BaseWindow.h"
 
-namespace Core
+namespace NX
 {
     class AnimationEditorEWC : public BaseFloatEWC
     {
@@ -44,4 +44,4 @@ namespace Core
         Gui::Label* _frameCount = nullptr;
     };
 
-} // namespace Core
+} // namespace NX

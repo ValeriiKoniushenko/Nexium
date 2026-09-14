@@ -26,14 +26,14 @@
 
 #include "AnimationFrameThumbnail.h"
 
-namespace Core
+namespace NX
 {
     void AnimationFramesPanel::onInitialize()
     {
         Gui::VerticalLayout::onInitialize();
         _strip.setFitContent(true);
         _strip.setVerticalAlign(Gui::Align::Top);
-        _empty.setText("Added frames will appear here"_atom);
+        _empty.setText("Select an atlas to load its frames"_atom);
         _empty.initialize();
     }
 
@@ -43,7 +43,8 @@ namespace Core
         {
             return;
         }
-        if (_displayedFrames != _draft->getFramesCount())
+        if (_displayedFrames != _draft->getFramesCount()
+            || _displayedAtlas != _draft->getAtlasName())
         {
             _strip.removeChildIf([](const BaseComponent*) { return true; });
             for (std::size_t i = 0; i < _draft->getFramesCount(); ++i)
@@ -59,6 +60,7 @@ namespace Core
                 name->setWidth(112.f);
                 name->setText(_draft->getFrames()[i].name);
             }
+            _displayedAtlas = _draft->getAtlasName();
             _displayedFrames = _draft->getFramesCount();
         }
         if (ImGui::BeginChild("AnimationFrames", { getWidth(), getHeight() }, true,
@@ -80,4 +82,4 @@ namespace Core
         ImGui::EndChild();
     }
 
-} // namespace Core
+} // namespace NX

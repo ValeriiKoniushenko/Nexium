@@ -9,11 +9,12 @@
 
 #include "ECSEditorFrameByFrameAnimationAdapter.h"
 
+#include "Editor/EditorIntegration.h"
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/Misc.h"
 #include "Editor/IconsFontAwesome.h"
-#include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimator.h"
 #include "Editor/Windows/Editors/AnimationEditor/AnimationEditor.h"
+#include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimator.h"
 #include "NxWorld/Framework/GameInstance.h"
 
 #include <algorithm>

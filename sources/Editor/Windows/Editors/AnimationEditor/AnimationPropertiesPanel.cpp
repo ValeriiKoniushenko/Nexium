@@ -24,21 +24,19 @@
 
 #include "AnimationPropertiesPanel.h"
 
-#include "Editor/GuiComponents/Button.h"
-#include "Editor/GuiComponents/LabelRow.h"
+#include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Separator.h"
-#include "GameplaySystem/Framework/GameInstance.h"
+#include "NxWorld/Framework/GameInstance.h"
 
 #include <algorithm>
 #include <array>
 #include <cmath>
 
-namespace Core
+namespace NX
 {
     void AnimationPropertiesPanel::onInitialize()
     {
         static constexpr float defaultLabelWidth = 50.0f;
-        static constexpr float defaultLabelWidthBig = 150.0f;
 
         Gui::VerticalLayout::onInitialize();
         _fields.setHorizontalAlign(Gui::Align::Left);
@@ -97,15 +95,9 @@ namespace Core
             _loop = checkBox;
             _loop->setValue(true);
         }
-        initializeFrameSource();
-
-        auto* add = _fields.addChildComponent<Gui::Button>("Add animation frame"_atom);
-        add->setText("+ Add frame"_atom);
-        add->setFlex(Gui::Flex::FlexWidth);
-        _addFrameSubscription = add->onClick->subscribeAndGetID([this] { addFrame(); });
         _frameStatus = _fields.addChildComponent<Gui::Label>();
         _frameStatus->setFlex(Gui::Flex::FlexWidth);
-        _frameStatus->setText("Select a source to add frames"_atom);
+        _frameStatus->setText("Select an atlas to load all frames"_atom);
     }
 
     std::optional<Animation::Frame> AnimationPropertiesPanel::frameFromPixelRect(
@@ -130,132 +122,38 @@ namespace Core
         return frame;
     }
 
-    void AnimationPropertiesPanel::addFrame()
+    void AnimationPropertiesPanel::setAtlasFrames(const StringAtom& atlasName,
+                                                  std::vector<StringAtom> regions)
     {
         if (!_draft)
         {
             return;
         }
-        const auto atlasNames = GetAssetsManager()->getAtlasesAsVector();
-        const auto atlasName = _atlas->getSelectedString();
-        if (_atlas->getCurrentIndex() == 0
-            || std::ranges::find(atlasNames, atlasName) == atlasNames.end())
+        std::ranges::sort(regions);
+        _draft->clearFrames();
+        _draft->setAtlasName(atlasName);
+        _draft->setTextureName({});
+        for (const auto& region : regions)
         {
-            _frameStatus->setText("Select a loaded atlas"_atom);
-            return;
-        }
-        if (_draft->hasFrames() && _draft->getAtlasName() != atlasName)
-        {
-            _frameStatus->setText("Frames must use the same atlas"_atom);
-            return;
-        }
-        const auto& atlas = GetAssetsManager()->getAtlas(atlasName);
-        bool added = false;
-        if (_frameSource->getCurrentIndex() == 0)
-        {
-            if (_regionAtlas != atlasName || _region->getCurrentIndex() == 0
-                || !atlas.getRects().contains(_region->getSelectedString()))
-            {
-                _frameStatus->setText("Select a valid atlas region"_atom);
-                return;
-            }
-            added = _draft->addFrame(_region->getSelectedString());
-        }
-        else
-        {
-            const auto& texture = atlas.getTexture();
-            const auto size = texture.getSize();
-            const auto frame = frameFromPixelRect(
-                { _rectX->getInputtedData(), _rectY->getInputtedData(),
-                  _rectWidth->getInputtedData(), _rectHeight->getInputtedData() },
-                { size.width, size.height });
-            if (!texture.isValid() || !frame)
-            {
-                _frameStatus->setText("Rectangle must fit the texture"_atom);
-                return;
-            }
-            added = _draft->addFrame(frame->uvOffset, frame->uvSize);
-        }
-        if (added)
-        {
-            _draft->setAtlasName(atlasName);
-            _draft->setTextureName({});
-            _frameStatus->setText("Frame added"_atom);
-        }
-        else
-        {
-            _frameStatus->setText("Could not add this frame"_atom);
+            _draft->addFrame(region);
         }
     }
 
-    void AnimationPropertiesPanel::initializeFrameSource()
+    void AnimationPropertiesPanel::updateAtlas()
     {
-        _fields.addChildComponent<Gui::Separator>();
-        _fields.addChildComponent<Gui::Label>()->setText("Frame source"_atom);
-        _frameSource = _fields.addChildComponent<Gui::ComboView>("Frame source"_atom);
-        _frameSource->setFlex(Gui::Flex::FlexWidth);
-        _frameSource->setData(
-            std::vector<StringAtom>{ "Named atlas region"_atom, "Sprite sheet rectangle"_atom });
-
-        _regionFields = _fields.addChildComponent<Gui::VerticalLayout>("Atlas regions"_atom);
-        _regionFields->setHorizontalAlign(Gui::Align::Left);
-        _regionFields->addChildComponent<Gui::Label>()->setText("Region"_atom);
-        _region = _regionFields->addChildComponent<Gui::ComboView>("Region"_atom);
-        _region->setFlex(Gui::Flex::FlexWidth);
-        _region->setData(std::vector<StringAtom>{ "Select atlas first"_atom });
-
-        _rectFields = _fields.addChildComponent<Gui::VerticalLayout>("Frame rectangle"_atom);
-        _rectFields->setHorizontalAlign(Gui::Align::Left);
-        _rectFields->addChildComponent<Gui::Label>()->setText("Rectangle in pixels"_atom);
-        _rectFields->addChildComponent<Gui::Label>()->setText("Origin: top-left of texture"_atom);
-
-        const auto addCoordinate = [this](const StringAtom& label, int minimum, int initial)
+        const auto atlasName
+            = _atlas->getCurrentIndex() == 0 ? StringAtom{} : _atlas->getSelectedString();
+        if (!_draft || atlasName == _selectedAtlas)
         {
-            auto* row
-                = _rectFields->addChildComponent<Gui::LabelRow<Gui::NumInput<int>>>(label, 70.f);
-            row->input->setFlex(Gui::Flex::FlexWidth);
-            row->input->setMin(minimum);
-            row->input->setStep(1);
-            row->input->setInputtedData(initial);
-            return row->input;
-        };
-        _rectX = addCoordinate("X"_atom, 0, 0);
-        _rectY = addCoordinate("Y"_atom, 0, 0);
-        _rectWidth = addCoordinate("Width"_atom, 1, 32);
-        _rectHeight = addCoordinate("Height"_atom, 1, 32);
-        _rectFields->setEnabled(false);
-    }
-
-    void AnimationPropertiesPanel::updateFrameSource()
-    {
-        const bool namedRegion = _frameSource->getCurrentIndex() == 0;
-        _regionFields->setEnabled(namedRegion);
-        _rectFields->setEnabled(!namedRegion);
-
-        const bool hasAtlas = _atlas->getCurrentIndex() != 0;
-        const auto atlasName = hasAtlas ? _atlas->getSelectedString() : StringAtom{};
-        auto regions = hasAtlas ? GetAssetsManager()->getAtlas(atlasName).getRectsAsVector()
-                                : std::vector<StringAtom>{};
-        const bool hasRegions = !regions.empty();
-        regions.insert(regions.begin(), !hasAtlas    ? "Select atlas first"_atom
-                                        : hasRegions ? "Select region"_atom
-                                                     : "No named regions"_atom);
-        if (atlasName != _regionAtlas || regions != _region->getData())
-        {
-            const auto previous = _region->getSelectedString();
-            const auto found = std::ranges::find(regions, previous);
-            const auto index = atlasName == _regionAtlas && found != regions.end()
-                                   ? static_cast<std::size_t>(found - regions.begin())
-                                   : 0U;
-            _region->setData(std::move(regions));
-            _region->setCurrentIndex(index);
-            _regionAtlas = atlasName;
+            return;
         }
-        _region->disableWidget(!hasRegions);
-        _rectX->setInputtedData(std::max(0, _rectX->getInputtedData()));
-        _rectY->setInputtedData(std::max(0, _rectY->getInputtedData()));
-        _rectWidth->setInputtedData(std::max(1, _rectWidth->getInputtedData()));
-        _rectHeight->setInputtedData(std::max(1, _rectHeight->getInputtedData()));
+        setAtlasFrames(atlasName, atlasName
+                                      ? GetAssetsManager()->getAtlas(atlasName).getRectsAsVector()
+                                      : std::vector<StringAtom>{});
+        _selectedAtlas = atlasName;
+        _frameStatus->setText(!atlasName            ? "Select an atlas to load all frames"_atom
+                              : _draft->hasFrames() ? "All atlas regions loaded"_atom
+                                                    : "Atlas has no regions"_atom);
     }
 
     void AnimationPropertiesPanel::onDraw()
@@ -275,9 +173,8 @@ namespace Core
                 _atlas->setData(std::move(atlasNames));
                 _atlas->setCurrentIndex(index);
             }
-            _atlas->disableWidget(_draft && _draft->hasFrames());
-            updateFrameSource();
             _fields.tick(ImGui::GetIO().DeltaTime);
+            updateAtlas();
             const float fps = _fps->getInputtedData();
             _fps->setInputtedData(std::isfinite(fps) ? std::clamp(fps, 0.01f, 1000.f) : 10.f);
             if (_draft)
@@ -290,4 +187,4 @@ namespace Core
         ImGui::EndChild();
     }
 
-} // namespace Core
+} // namespace NX

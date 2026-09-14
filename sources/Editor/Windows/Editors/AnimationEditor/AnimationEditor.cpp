@@ -28,7 +28,7 @@
 #include "AnimationPreviewPanel.h"
 #include "AnimationPropertiesPanel.h"
 
-namespace Core
+namespace NX
 {
     void AnimationEditorEWC::onInitialize()
     {
@@ -46,13 +46,14 @@ namespace Core
 
         auto* preview = content->addChildComponent<AnimationPreviewPanel>("Animation preview"_atom);
         preview->setFlex(Gui::Flex::FlexWidth);
-        preview->setHeight(450.f);
+        preview->setHeight(400.f);
+        preview->setDraft(_draft);
 
         auto* properties
             = content->addChildComponent<AnimationPropertiesPanel>("Animation properties"_atom);
         properties->setFlex(Gui::Flex::Fixed);
         properties->setWidth(300.f);
-        properties->setHeight(450.f);
+        properties->setHeight(400.f);
         properties->setDraft(_draft);
         _frameCount = _layout.addChildComponent<Gui::Label>("Animation frame count"_atom);
         _frameCount->setText("0 frames"_atom);
@@ -68,4 +69,4 @@ namespace Core
         _layout.tick(ImGui::GetIO().DeltaTime);
     }
 
-} // namespace Core
+} // namespace NX

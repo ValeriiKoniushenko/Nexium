@@ -24,11 +24,11 @@
 
 #pragma once
 
-#include "Animations/FrameByFrame/FrameByFrameAnimation.h"
+#include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimation.h"
 #include "Editor/GuiComponents/Label.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 
-namespace Core
+namespace NX
 {
     class AnimationFrameThumbnail final : public Gui::VerticalLayout
     {
@@ -36,14 +36,19 @@ namespace Core
         AnimationFrameThumbnail(const Animation::FrameByFrameAnimation& animation,
                                 std::size_t index);
 
+        [[nodiscard]] static bool drawFrame(const Animation::FrameByFrameAnimation& animation,
+                                            std::size_t index, glm::vec2 origin, glm::vec2 bounds);
+
     protected:
         void onInitialize() override;
         void onDraw() override;
 
     private:
         const Animation::FrameByFrameAnimation& _animation;
+        ImDrawList* _drawList{ nullptr };
+
         std::size_t _index;
         Gui::Label _unavailable;
     };
 
-} // namespace Core
+} // namespace NX
