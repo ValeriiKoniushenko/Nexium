@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "../ECSAsset.h"
+#include "NxFundamental/Assets/ECSAsset.h"
 #include "NxWorld/Entities/Mesh/StaticMeshBundle.h"
 
 namespace NX::AssetImpl
@@ -18,7 +18,7 @@ namespace NX::AssetImpl
     class StaticMeshBundle : public ECSAssetImpl
     {
     public:
-        using implementedAssetType = Core::StaticMeshBundle;
+        using implementedAssetType = NX::StaticMeshBundle;
 
         CLASS();
         class AssetData

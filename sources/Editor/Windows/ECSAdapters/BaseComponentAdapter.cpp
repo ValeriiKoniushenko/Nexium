@@ -16,6 +16,7 @@
 #include "Editor/GuiComponents/Misc.h"
 
 using namespace Core::Gui;
+using namespace NX;
 
 namespace Core
 {

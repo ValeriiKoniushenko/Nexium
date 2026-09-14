@@ -1,17 +1,30 @@
-= Module graph
-:imagesdir:../
+= Module Graph
 
-The main modules you can observe in the image below. For now, it's quite easy. Due to a lot of work over the editor, not the core system.
+The xref:draft--new-architecture.adoc#_layer_map[layer map] and xref:draft--new-architecture.adoc#_build_modules[target tables] describe the current build graph.
+The previous diagram represented the pre-migration architecture and is no longer used as the current module map.
 
-image::top-level-modules.drawio.png[Main modules,width=100%]
+[cols="2,5",options="header"]
+|===
+|Consumer |Main dependencies
+|TemplateGame |Editor, retaining its static archive with whole-archive linkage.
+|Editor |Runtime and ImGui.
+|Runtime |World, retaining its component registration translation units.
+|World |World Animation, Fundamental, Subsystems, Platform, RawBackend.
+|Subsystems |Focused Fundamental, Platform, Foundation, and RawBackend targets.
+|Fundamental |Foundation; asset-related targets additionally consume graphics/atlas dependencies.
+|RawBackend |Foundation and Platform Graphics.
+|Platform |GLFW, Glad, Utils core, JRM adapter, and GLM as required by each target.
+|Foundation |Utils core, spdlog, JRM adapter.
+|===
 
-The biggest part of the main classes & logic stores at the main god-object `gGameInstance` of the `class GameInstance`. The `extern` pointer `gGameInstance` you can find by the next path: `GameplaySystem/Framework/GameInstance.h`
+These are dependency groups, not complete link lines; the draft records narrower target boundaries.
+One source directory may produce several libraries, and compatibility aliases do not create additional modules.
 
-In general, the main concept of this class(GameInstance) is to store controlling nodes(different managers) and the most common things as: `currentScene`, `currentWorld`, `currentCamera`.
+== Ownership is a separate graph
 
-Regarding other modules, you can read the next topics:
+GameInstance owns Scene and World as siblings, together with AssetsManager and UserInterface.
+Runtime references GameInstance.
+EditorIntegration owns the editor tools and attaches through a non-owning ApplicationIntegration pointer.
+Scene owns its root component trees; World references the active camera.
 
-* xref:ecs-overview.adoc[Entity Component System (ECS)]
-* xref:resource-system.adoc[Resource system]
-* xref:rendering:index.adoc[Rendering]
-* xref:lifecycle.adoc[Lifecycle]
+See xref:draft--new-architecture.adoc#_object_model_and_ownership[Object model and ownership] and xref:lifecycle.adoc[Application Lifecycle].

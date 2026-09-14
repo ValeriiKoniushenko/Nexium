@@ -10,9 +10,14 @@
 #include "Gizmo.h"
 
 #include "Editor/EditorIntegration.h"
+#include "NxWorld/Entities/Camera/Camera.h"
+#include "NxWorld/Framework/GameInstance.h"
 #include "assimp/Importer.hpp"
 #include "assimp/postprocess.h"
 #include "assimp/scene.h"
+
+using namespace NX;
+using namespace Platform;
 
 namespace Core
 {
@@ -57,7 +62,7 @@ namespace Core
 
     void Gizmo::load3DModel()
     {
-        const auto defaultModelPath = Config::Path::objects3d / "Models/FBX/gizmo.fbx";
+        const auto defaultModelPath = Foundation::Config::Path::objects3d / "Models/FBX/gizmo.fbx";
 
         static Assimp::Importer importer;
         static const aiScene* scene

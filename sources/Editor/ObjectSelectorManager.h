@@ -10,44 +10,41 @@
 #pragma once
 
 #include "Core/Delegate.h"
-#include "NxWorld/Entities/Mesh/StaticMesh.h"
+#include "NxFundamental/ECS/BaseComponent.h"
 
 #include <unordered_map>
 
 namespace Core
 {
-    class StaticMeshBundle;
-    class StaticMesh;
-
     /// Use this class to select objects on the scene.
     /// @details mediator class to involve all needed functionality
     /// after picking up some scene's object.
     class ObjectSelectorManager
     {
     public:
-        void toggleObject(BaseComponent* comp);
-        void selectSingleObject(BaseComponent* comp);
-        void addSelectedObject(BaseComponent* comp);
+        void toggleObject(NX::BaseComponent* comp);
+        void selectSingleObject(NX::BaseComponent* comp);
+        void addSelectedObject(NX::BaseComponent* comp);
 
-        void deselectSingleObject(BaseComponent* comp);
+        void deselectSingleObject(NX::BaseComponent* comp);
         void deselectAllAndClear();
 
-        [[nodiscard]] bool isSelected(BaseComponent* comp) const;
+        [[nodiscard]] bool isSelected(NX::BaseComponent* comp) const;
 
-        [[nodiscard]] std::unordered_map<void*, BaseComponent::Ptr>& getSelectedObjects()
+        [[nodiscard]] std::unordered_map<void*, NX::BaseComponent::Ptr>& getSelectedObjects()
         {
             return _selectedObjects;
         }
 
         /// @param BaseComponent* affected component
         /// @param bool selected is true; deselected is false
-        Delegate<void(BaseComponent*, bool)>::Ptr onChange
-            = Delegate<void(BaseComponent*, bool)>::Create();
+        Delegate<void(NX::BaseComponent*, bool)>::Ptr onChange
+            = Delegate<void(NX::BaseComponent*, bool)>::Create();
 
     private:
-        void changeSelectionState(BaseComponent* comp, bool newState);
+        void changeSelectionState(NX::BaseComponent* comp, bool newState);
 
     private:
-        std::unordered_map<void*, BaseComponent::Ptr> _selectedObjects;
+        std::unordered_map<void*, NX::BaseComponent::Ptr> _selectedObjects;
     };
 } // namespace Core

@@ -11,12 +11,18 @@
 
 #include "Editor/EditorIntegration.h"
 #include "Editor/Windows/GameViewport.h"
-#include "NxWorld/Entities/Mesh/StaticMeshBundle.h"
+#include "NxWorld/Entities/Camera/Camera.h"
+#ifdef NEXIUM_ENABLE_3D_MODULE
+    #include "NxWorld/Entities/Mesh/StaticMeshBundle.h"
+#endif
 #include "NxWorld/Framework/GameInstance.h"
 #include "NxWorld/Scene/Rectangle.h"
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include "glm/gtx/string_cast.hpp"
+
+using namespace NX;
+using namespace Platform;
 
 namespace Core
 {
@@ -63,6 +69,7 @@ namespace Core
         _requested = true;
     }
 
+#ifdef NEXIUM_ENABLE_3D_MODULE
     void SlowObjectPicker::onRequest(Scene& scene, BaseCamera* camera, glm::vec2 pickPos)
     {
         const auto pickedColor = drawingPreparations(scene, camera, pickPos);
@@ -186,6 +193,7 @@ namespace Core
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
+#endif
 
     void RectangleBasedObjectPicker::onRequest(Scene& scene, BaseCamera* camera, glm::vec2 pickPos)
     {
@@ -224,7 +232,9 @@ namespace Core
 
     ObjectPickerAggregator::ObjectPickerAggregator()
     {
+#ifdef NEXIUM_ENABLE_3D_MODULE
         _pickers.emplace_back(std::make_unique<SlowObjectPicker>());
+#endif
         _pickers.emplace_back(std::make_unique<RectangleBasedObjectPicker>());
     }
 

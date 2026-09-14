@@ -9,10 +9,11 @@
 
 #include "EditorTransformableAdapter.h"
 
-#include "ECS/Transformable.h"
 #include "Editor/GuiComponents/Misc.h"
+#include "NxFundamental/Transformable.h"
 
 using namespace Core::Gui;
+using namespace NX;
 
 namespace Core
 {

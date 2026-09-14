@@ -7,6 +7,7 @@
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 
+#include "Editor/EditorIntegration.h"
 #include "NxRuntime/Runtime.h"
 #include "TemplateGameInstance.h"
 
@@ -17,6 +18,7 @@ int main(int argc, char** argv)
     gGameInstance = std::make_unique<TemplateGameInstance>(argc, argv);
 
     {
+        Core::EditorIntegration editor{ *gGameInstance };
         NX::Runtime runtime{ *gGameInstance };
         runtime.run();
     }

@@ -31,10 +31,12 @@ add_library(Nexium::Fundamental::ResourceManagement
     ALIAS Nexium_Fundamental_ResourceManagement
 )
 target_sources(Nexium_Fundamental_ResourceManagement PRIVATE
+    ResourceManagement/AtomicFile.cpp
     ResourceManagement/DataStream.cpp
     ResourceManagement/JsonAdapter.cpp
 )
 nexium_add_public_headers(Nexium_Fundamental_ResourceManagement
+    NxFundamental/ResourceManagement/AtomicFile.h
     NxFundamental/ResourceManagement/DataStream.h
     NxFundamental/ResourceManagement/DataStream.generated.h
     NxFundamental/ResourceManagement/JsonAdapter.h

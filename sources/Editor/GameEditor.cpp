@@ -10,6 +10,7 @@
 #include "GameEditor.h"
 
 #include "Editor/EditorIntegration.h"
+#include "Editor/IconsFontAwesome.h"
 #include "Editor/Windows/EditorMenuBarWindow.h"
 #include "Editor/Windows/EditorSettings.h"
 #include "Editor/Windows/Editors/TextEditor.h"
@@ -23,8 +24,9 @@
 #include "Foundation/Configs.h"
 #include "ImGui/backends/imgui_impl_glfw.h"
 #include "ImGui/backends/imgui_impl_opengl3.h"
-#include "Misc/IconsFontAwesome.h"
-#include "NxWorld/Entities/Mesh/StaticMeshBundle.h"
+#ifdef NEXIUM_ENABLE_3D_MODULE
+    #include "NxWorld/Entities/Mesh/StaticMeshBundle.h"
+#endif
 #include "NxWorld/Framework/GameInstance.h"
 #include "PrivateModuleInfo.h"
 #include "Windows/AssetsExplorer/AssetsManagerWindow.h"
@@ -42,6 +44,9 @@
 #include <string>
 
 using namespace Core;
+using namespace NX;
+using namespace Platform;
+namespace Config = Foundation::Config;
 
 namespace
 {
@@ -74,11 +79,17 @@ namespace Core
 
     GameEditor::~GameEditor()
     {
+        ImGui::DestroyContext();
         destroy();
     }
 
     void GameEditor::initialize()
     {
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGuiIO& io = ImGui::GetIO();
+        io.IniFilename = nullptr;
+
         gameViewport.generate();
 
         setupImGuiStyles();
@@ -393,6 +404,7 @@ namespace Core
             return;
         }
 
+#ifdef NEXIUM_ENABLE_3D_MODULE
         if (auto* mesh = dynamic_cast<StaticMesh*>(object))
         {
             if (auto* bundle = mesh->tryToGetRootBundle())
@@ -408,7 +420,9 @@ namespace Core
                 GetObjectSelectorManager()->selectSingleObject(mesh);
             }
         }
-        else if (auto* comp = dynamic_cast<BaseComponent*>(object))
+        else
+#endif
+            if (auto* comp = dynamic_cast<BaseComponent*>(object))
         {
             GetObjectSelectorManager()->selectSingleObject(comp);
         }

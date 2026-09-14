@@ -9,10 +9,10 @@
 
 #pragma once
 
-#include "../Foundation/Configs.h"
-#include "../GameplaySystem/Entities/Actor.h"
 #include "Core/Delegate.h"
-#include "InputDevices/InputAction.h"
+#include "Foundation/Configs.h"
+#include "NxSubsystems/Input/InputAction.h"
+#include "NxWorld/Entities/Actor.h"
 #include "NxWorld/Entities/Mesh/StaticMeshBundle.h"
 #include "Platform/Window.h"
 
@@ -23,9 +23,9 @@ namespace Core
     /// Gizmo class
     /// Deprecated due to unstable behavior
     CLASS();
-    class Gizmo : public StaticMeshBundle
+    class Gizmo : public NX::StaticMeshBundle
     {
-        ECS_DECL(Gizmo, Core::StaticMeshBundle);
+        ECS_DECL(Gizmo, NX::StaticMeshBundle);
 
     public:
         ENUM_CLASS();
@@ -36,26 +36,26 @@ namespace Core
             Z
         };
 
-        struct DragData : public DragAndDrop::Data
+        struct DragData : public Platform::DragAndDrop::Data
         {
             inline static auto dragType = "gizmo_move"_atom;
 
             Direction direction;
-            std::vector<Transformable*> attachedObjects;
+            std::vector<NX::Transformable*> attachedObjects;
         };
 
-        void pureDraw(const std::function<void(StaticMesh*)>& onUniformSet,
-                      const std::function<bool(const Actor*)>& conditional) override;
+        void pureDraw(const std::function<void(NX::StaticMesh*)>& onUniformSet,
+                      const std::function<bool(const NX::Actor*)>& conditional) override;
 
-        void onMousePicked(StaticMesh* clickedPart) override;
+        void onMousePicked(NX::StaticMesh* clickedPart) override;
 
         void onTick(float delta) override;
 
     protected:
-        void onDraw(BaseCamera& camera) override;
+        void onDraw(NX::BaseCamera& camera) override;
         void initialize() override;
         void load3DModel();
-        void handleDragStart(StaticMesh* touchedMesh);
+        void handleDragStart(NX::StaticMesh* touchedMesh);
         void handleDrag();
         void recalculateMatrices(const glm::mat4& mat) override;
 

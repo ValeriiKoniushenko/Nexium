@@ -12,6 +12,7 @@
 #include "NxWorld/Entities/Mesh/StaticMesh.h"
 
 using namespace Core::Gui;
+using namespace NX;
 
 namespace Core
 {

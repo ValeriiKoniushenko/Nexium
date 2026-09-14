@@ -9,6 +9,7 @@
 
 #include "DataStream.h"
 
+#include "AtomicFile.h"
 #include "Foundation/Configs.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 
@@ -22,6 +23,12 @@ namespace NX
 
     void CacheSystem::write(const IDataIO& data, const nlohmann::json& json)
     {
+        if (_failedReads.contains(getPath(data)))
+        {
+            errorLog("Save blocked after a failed load: {}. Reload successfully before saving."_f
+                     << getPath(data));
+            return;
+        }
         if (!createCacheDirIfNotExist(data))
         {
             return;
@@ -29,15 +36,15 @@ namespace NX
 
         const auto str = json.dump(4);
 
-        std::ofstream ofs(getPath(data));
-        if (!ofs)
+        try
         {
-            errorLog("Can't write cache for this object {}. Path: {}. Details: {}"_f
-                     << data.getCacheHash() << getPath(data) << std::strerror(errno));
-            return;
+            WriteFileAtomically(getPath(data), str);
         }
-
-        ofs.write(str.c_str(), static_cast<std::streamsize>(str.size()));
+        catch (const std::filesystem::filesystem_error& error)
+        {
+            errorLog("Can't save object {}. Path: {}. Details: {}"_f
+                     << data.getCacheHash() << getPath(data) << error.what());
+        }
     }
 
     bool CacheSystem::hasCache(const IDataIO& data) const
@@ -56,6 +63,10 @@ namespace NX
                 errorLog("Can't clear cache for this object {}. Path: {}. Details: {}"_f
                          << data.getCacheHash() << getPath(data) << ec.message());
             }
+        }
+        if (!hasCache(data))
+        {
+            _failedReads.erase(getPath(data));
         }
     }
 

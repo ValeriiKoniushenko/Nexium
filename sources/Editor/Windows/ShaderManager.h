@@ -13,7 +13,7 @@
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "NxSubsystems/Graphics/ShaderProgram.h"
 
-namespace Core
+namespace NX
 {
     class ShaderProgramMeta;
 }
@@ -49,9 +49,9 @@ namespace Core
 
         void drawTableWith(
             const char* label,
-            const std::unordered_set<ShaderVariable, ShaderVariable::Hasher>& inputData);
+            const std::unordered_set<NX::ShaderVariable, NX::ShaderVariable::Hasher>& inputData);
 
-        void drawUBOs(const std::unordered_set<ShaderUBO, ShaderUBO::Hasher>& ubos);
+        void drawUBOs(const std::unordered_set<NX::ShaderUBO, NX::ShaderUBO::Hasher>& ubos);
         void invalidateShaderCache();
 
         void openEditor(const std::filesystem::path& path);
@@ -80,7 +80,7 @@ namespace Core
         Gui::TextInput* _vertPath = nullptr;
         Gui::Label* _recompileResult = nullptr;
 
-        ShaderProgramMeta* _selectedRawShader = nullptr;
+        NX::ShaderProgramMeta* _selectedRawShader = nullptr;
 
         StringAtom _selectedShader;
         std::size_t _currentItem = 0;

@@ -10,11 +10,9 @@ if (WIN32)
 endif ()
 
 add_executable(${TARGET_NAME} ${CPP_SOURCES} ${HEADERS} ${APP_ICON_RESOURCE})
-target_link_libraries(${TARGET_NAME} PRIVATE Nexium::Runtime)
-
-if (MINGW)
-    target_link_options(TemplateGame PRIVATE -Wl,--allow-multiple-definition)
-endif ()
+target_link_libraries(${TARGET_NAME} PRIVATE
+    "$<LINK_LIBRARY:WHOLE_ARCHIVE,Nexium::Editor>"
+)
 
 
 nexium_configure_target(${TARGET_NAME})

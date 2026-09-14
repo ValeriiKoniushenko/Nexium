@@ -159,8 +159,8 @@ namespace Core::Gui
         ECS_DECL(ImageButton, Core::Gui::Button);
 
     public:
-        void setImage(const NXTexture& texture) { _texture = texture; }
-        [[nodiscard]] const NXTexture& getImage() const noexcept { return _texture; }
+        void setImage(const NX::NXTexture& texture) { _texture = texture; }
+        [[nodiscard]] const NX::NXTexture& getImage() const noexcept { return _texture; }
 
         void setPaddingSize(glm::vec2 value) { _paddingSize = value; }
         [[nodiscard]] std::optional<glm::vec2> getPaddingSize() const { return _paddingSize; }
@@ -175,7 +175,7 @@ namespace Core::Gui
     protected:
         FIELD();
         std::optional<glm::vec2> _paddingSize;
-        NXTexture _texture;
+        NX::NXTexture _texture;
     };
 } // namespace Core::Gui
 

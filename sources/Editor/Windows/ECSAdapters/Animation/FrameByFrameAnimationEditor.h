@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "Animations/FrameByFrame/FrameByFrameAnimation.h"
+#include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimation.h"
 
 #include <array>
 #include <functional>
@@ -32,11 +32,11 @@ namespace Core
 
         using SaveCallback = std::function<void()>;
 
-        void create(Animation::FrameByFrameAnimator* animator);
-        void edit(Animation::FrameByFrameAnimator* animator, const StringAtom& name);
+        void create(NX::Animation::FrameByFrameAnimator* animator);
+        void edit(NX::Animation::FrameByFrameAnimator* animator, const StringAtom& name);
         void draw(float dt, const SaveCallback& onSave);
 
-        static void drawPreview(const Animation::FrameByFrameAnimation& animation, float dt,
+        static void drawPreview(const NX::Animation::FrameByFrameAnimation& animation, float dt,
                                 float size, PreviewState& state);
 
     private:
@@ -54,8 +54,8 @@ namespace Core
         [[nodiscard]] bool hasNameConflict() const;
 
     private:
-        Animation::FrameByFrameAnimator* _animator = nullptr;
-        Animation::FrameByFrameAnimation _draft;
+        NX::Animation::FrameByFrameAnimator* _animator = nullptr;
+        NX::Animation::FrameByFrameAnimation _draft;
         StringAtom _editedName;
         bool _isOpen = false;
         bool _isCreating = false;

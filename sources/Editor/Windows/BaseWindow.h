@@ -16,11 +16,13 @@
 
 namespace Core
 {
+    using NX::BaseComponent;
+
     /// BaseEditorWindowComponent or briefly BaseEWC
     CLASS();
-    class BaseEWC : public BaseComponent, public Foundation::IDataIO
+    class BaseEWC : public NX::BaseComponent, public Foundation::IDataIO
     {
-        ECS_DECL(BaseEWC, Core::BaseComponent);
+        ECS_DECL(BaseEWC, NX::BaseComponent);
 
     public:
         [[nodiscard]] const StringAtom& getWindowTitle() const
@@ -67,7 +69,7 @@ namespace Core
 
     template<class T>
     concept IsEditorWindowComponent
-        = std::derived_from<std::remove_reference_t<T>, BaseEWC> && IsComponent<T>;
+        = std::derived_from<std::remove_reference_t<T>, BaseEWC> && NX::IsComponent<T>;
 
     template<class T>
     concept IsEditorWindowComponentOrVoid = IsEditorWindowComponent<T> || std::is_void_v<T>;

@@ -144,11 +144,6 @@ namespace Platform
         glfwSetWindowSizeCallback(_window, WindowSizeCallback);
         glfwSwapInterval(_swapInterval);
 
-        // IMGUI_CHECKVERSION();
-        // ImGui::CreateContext();
-        // ImGuiIO& io = ImGui::GetIO();
-        // io.IniFilename = nullptr;
-
         debugLog("OpenGL version: {}"_f << reinterpret_cast<const char*>(glGetString(GL_VERSION)));
         debugLog("GLFW version: {}"_f
                  << reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION)));
@@ -192,7 +187,6 @@ namespace Platform
 
     void Window::destroy()
     {
-        // ImGui::DestroyContext();
         glfwDestroyWindow(_window);
         glfwTerminate();
     }

@@ -11,9 +11,17 @@
 
 #include "Core/Color.h"
 #include "ImGui/imgui.h"
-#include "InputDevices/Keyboard.h"
 #include "NxFundamental/ECS/BaseComponent.h"
 #include "NxFundamental/ResourceManagement/JsonAdapter.h"
+#include "Platform/Keyboard.h"
+#include "Platform/Mouse.h"
+
+namespace Core
+{
+    using NX::BaseComponent;
+    using Platform::Keyboard;
+    using Platform::Mouse;
+} // namespace Core
 
 namespace Core::Gui
 {
@@ -40,14 +48,15 @@ namespace Core::Gui
     };
 
     CLASS();
-    class Widget : public BaseComponent
+    class Widget : public NX::BaseComponent
     {
-        ECS_DECL(Widget, Core::BaseComponent);
+        ECS_DECL(Widget, NX::BaseComponent);
 
     public:
         struct Input
         {
-            constexpr static Keyboard::Key editorImGuiShowRect = Keyboard::Key::F2;
+            constexpr static Platform::Keyboard::Key editorImGuiShowRect
+                = Platform::Keyboard::Key::F2;
         };
 
         struct Bounds
@@ -100,7 +109,7 @@ namespace Core::Gui
         void onTick(float delta) override;
         virtual void onDraw() = 0;
 
-        bool addChildValidator(BaseComponent* newChild) override;
+        bool addChildValidator(NX::BaseComponent* newChild) override;
 
         void onInitialize() override;
 

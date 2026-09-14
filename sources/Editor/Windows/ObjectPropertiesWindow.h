@@ -14,6 +14,22 @@
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "NxSubsystems/Graphics/GraphicsComponents.h"
 
+namespace NX
+{
+    class AbstractComponent;
+    class BaseCamera;
+    class BaseComponent;
+    class PerspectiveCamera;
+    class StaticMesh;
+    class StaticMeshBundle;
+    class Transformable;
+
+    namespace SceneObj
+    {
+        class RectangleAnimated;
+    }
+} // namespace NX
+
 namespace Core
 {
     namespace Gui
@@ -45,28 +61,17 @@ namespace Core
 
     } // namespace Gui
 
-    namespace SceneObj
-    {
-        class RectangleAnimated;
-    } // namespace SceneObj
-
-    class Transformable;
-    class StaticMeshBundle;
-    class StaticMesh;
-    class BaseCamera;
-    class PerspectiveCamera;
-
     struct _GraphicsModifiersArray_ArrayCellViewerFunc
     {
-        Gui::HorizontalLayout::Ptr operator()(BaseGraphicsData::ModifierParam& data) const;
+        Gui::HorizontalLayout::Ptr operator()(NX::BaseGraphicsData::ModifierParam& data) const;
     };
 
     struct _GraphicsModifiersArray_ViewFetchFunc
     {
-        BaseGraphicsData::ModifierParam operator()(Gui::HorizontalLayout* layout) const;
+        NX::BaseGraphicsData::ModifierParam operator()(Gui::HorizontalLayout* layout) const;
     };
 
-    using GraphicsModifiersArray = Gui::BaseArray<BaseGraphicsData::ModifierParam,
+    using GraphicsModifiersArray = Gui::BaseArray<NX::BaseGraphicsData::ModifierParam,
                                                   _GraphicsModifiersArray_ArrayCellViewerFunc,
                                                   _GraphicsModifiersArray_ViewFetchFunc>;
 
@@ -80,7 +85,7 @@ namespace Core
         static constexpr float defaultLabelWidthBig = 150.0f;
 
     public:
-        void setTargetObject(AbstractComponent* actor);
+        void setTargetObject(NX::AbstractComponent* actor);
 
         void resetTargetObject();
 
@@ -97,21 +102,21 @@ namespace Core
 
         void registerGuiEvents();
 
-        void tryDrawBaseComponent(BaseComponent* comp);
+        void tryDrawBaseComponent(NX::BaseComponent* comp);
 
-        void tryDrawTransformable(Transformable* comp, BaseComponent* base);
+        void tryDrawTransformable(NX::Transformable* comp, NX::BaseComponent* base);
 
-        void tryDrawStaticMeshBundle(StaticMeshBundle* comp);
+        void tryDrawStaticMeshBundle(NX::StaticMeshBundle* comp);
 
-        void tryDrawBaseComponentExtra(BaseComponent* comp);
+        void tryDrawBaseComponentExtra(NX::BaseComponent* comp);
 
-        void tryDrawStaticMesh(StaticMesh* static_mesh);
+        void tryDrawStaticMesh(NX::StaticMesh* static_mesh);
 
-        void tryDrawInterleavedGraphicsData(InterleavedGraphicsData* comp);
+        void tryDrawInterleavedGraphicsData(NX::InterleavedGraphicsData* comp);
 
-        void tryDrawBaseCamera(BaseCamera* comp);
+        void tryDrawBaseCamera(NX::BaseCamera* comp);
 
-        void tryDrawRectangleComponent(SceneObj::RectangleAnimated* comp);
+        void tryDrawRectangleComponent(NX::SceneObj::RectangleAnimated* comp);
 
     private:
         DelegateSubscriberPoolGuard _subscriptionPool;
@@ -136,7 +141,7 @@ namespace Core
         Gui::IntInput* _childrenCount = nullptr;
         Gui::StringArray* _childrenList = nullptr;
 
-        void setChildListData(AbstractComponent* comp);
+        void setChildListData(NX::AbstractComponent* comp);
 
         Gui::CheckBox* _isInited = nullptr;
         Gui::CheckBox* _disabledTicks = nullptr;
@@ -151,7 +156,7 @@ namespace Core
         Gui::IntInput* _graphicsTexture = nullptr;
         GraphicsModifiersArray* _graphicsModifiers = nullptr;
 
-        void setGraphicsModifiers(AbstractComponent* comp);
+        void setGraphicsModifiers(NX::AbstractComponent* comp);
 
         // PerspectiveCamera section:
         Gui::VerticalLayout _perspectiveCameraLayout;
@@ -191,7 +196,7 @@ namespace Core
         Gui::HorizontalLayout* _rectAnimationFPSRow = nullptr;
         Gui::FloatInput* _rectAnimationFPS = nullptr;
 
-        AbstractComponent* _target = nullptr;
+        NX::AbstractComponent* _target = nullptr;
     };
 } // namespace Core
 

@@ -13,16 +13,19 @@
 #include "ECSAdapters/BaseComponentAdapter.h"
 #include "ECSAdapters/EditorActorAdapter.h"
 #include "ECSAdapters/EditorInterleavedGraphicsDataAdapter.h"
-#include "ECSAdapters/EditorStaticMeshBundleAdapter.h"
+#ifdef NEXIUM_ENABLE_3D_MODULE
+    #include "ECSAdapters/EditorStaticMeshBundleAdapter.h"
+#endif
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/LabelRow.h"
 #include "Editor/GuiComponents/Misc.h"
+#include "Editor/IconsFontAwesome.h"
 #include "ImGui/imgui_internal.h"
-#include "Misc/IconsFontAwesome.h"
 #include "ModalECSSearchPopUp.h"
 #include "NxWorld/Framework/GameInstance.h"
 
 using namespace Core::Gui;
+using namespace NX;
 
 namespace Core
 {
@@ -122,7 +125,9 @@ namespace Core
 
         addUniqueTypeChildComponent<ECSBaseComponentAdapter>();
         addUniqueTypeChildComponent<ECSEditorActorAdapter>();
+#ifdef NEXIUM_ENABLE_3D_MODULE
         addUniqueTypeChildComponent<ECSEditorStaticMeshBundleAdapter>();
+#endif
         addUniqueTypeChildComponent<ECSEditorInterleavedGraphicsDataAdapter>();
         addUniqueTypeChildComponent<ECSEditorFrameByFrameAnimationAdapter>();
 

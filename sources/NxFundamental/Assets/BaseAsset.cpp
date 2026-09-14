@@ -11,6 +11,7 @@
 
 #include "../PrivateModuleInfo.h"
 #include "Foundation/Configs.h"
+#include "NxFundamental/ResourceManagement/AtomicFile.h"
 #include "Utils/Functions.h"
 
 #include <fstream>
@@ -113,13 +114,14 @@ namespace NX
         ioFieldsUpdate(stream);
 
         const auto data = stream.getRaw().dump(4);
-        std::ofstream out(_assetPath);
-        if (!out.is_open())
+        try
         {
-            criticalLog("Can't open file for write: {}"_f << _assetPath);
-            return;
+            WriteFileAtomically(_assetPath, data);
         }
-        out.write(data.c_str(), static_cast<std::streamsize>(data.length()));
+        catch (const std::filesystem::filesystem_error& error)
+        {
+            criticalLog("Can't save asset: {}. Details: {}"_f << _assetPath << error.what());
+        }
     }
 
     spdlog::logger* BaseAsset::getLogger() const

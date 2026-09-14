@@ -68,7 +68,7 @@ namespace Core
     protected:
         struct CacheNode
         {
-            AssetsManager::NodeType type = AssetsManager::NodeType::Default;
+            NX::AssetsManager::NodeType type = NX::AssetsManager::NodeType::Default;
             std::filesystem::path path;
             std::vector<CacheNode> children;
         };
@@ -76,7 +76,7 @@ namespace Core
     protected:
         DelegateSubscriberPoolGuard _subscriptionPool;
 
-        std::unordered_map<AssetsManager::NodeType, NXTexture> _nodeTypesData;
+        std::unordered_map<NX::AssetsManager::NodeType, NX::NXTexture> _nodeTypesData;
 
         Gui::HorizontalLayout _toolbarLayout;
         Gui::Button* _refreshButton = nullptr;

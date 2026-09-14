@@ -10,9 +10,9 @@
 #include "Widget.h"
 
 #include "Foundation/Configs.h"
-#include "InputDevices/Keyboard.h"
-#include "InputDevices/Mouse.h"
 #include "NxFundamental/ResourceManagement/JsonAdapter.h"
+#include "Platform/Keyboard.h"
+#include "Platform/Mouse.h"
 
 namespace Core::Gui
 {
@@ -66,7 +66,7 @@ namespace Core::Gui
         return out;
     }
 
-    bool Widget::addChildValidator(BaseComponent* newChild)
+    bool Widget::addChildValidator(NX::BaseComponent* newChild)
     {
         return !!newChild->tryCastTo<Widget>();
     }

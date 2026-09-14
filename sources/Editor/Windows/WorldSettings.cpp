@@ -17,9 +17,12 @@
 #include "Editor/GuiComponents/LabelRow.h"
 #include "Editor/GuiComponents/Misc.h"
 #include "Editor/GuiComponents/VecInput.h"
-#include "Misc/IconsFontAwesome.h"
+#include "Editor/IconsFontAwesome.h"
+#include "NxWorld/Entities/Camera/Camera.h"
 #include "NxWorld/Framework/GameInstance.h"
 #include "SceneTreeWindow.h"
+
+using namespace NX;
 
 namespace Core
 {

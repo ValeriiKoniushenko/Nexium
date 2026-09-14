@@ -11,9 +11,9 @@
 
 #include "Button.h"
 #include "Core/Delegate.h"
+#include "Editor/IconsFontAwesome.h"
 #include "HorizontalLayout.h"
 #include "Label.h"
-#include "Misc/IconsFontAwesome.h"
 #include "VerticalLayout.h"
 
 namespace Core::Gui

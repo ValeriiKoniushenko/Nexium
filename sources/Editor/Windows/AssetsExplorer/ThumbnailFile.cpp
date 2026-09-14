@@ -10,9 +10,9 @@
 #include "ThumbnailFile.h"
 
 #include "Editor/EditorIntegration.h"
+#include "Editor/IconsFontAwesome.h"
 #include "Editor/Windows/Editors/TextEditor.h"
 #include "Editor/Windows/ModalPopUp.h"
-#include "Misc/IconsFontAwesome.h"
 #include "NxSubsystems/AssetsManager/AssetsManager.h"
 #include "NxWorld/Framework/GameInstance.h"
 
@@ -21,6 +21,8 @@
 #include <format>
 #include <iomanip>
 #include <sstream>
+
+using namespace NX;
 
 namespace
 {

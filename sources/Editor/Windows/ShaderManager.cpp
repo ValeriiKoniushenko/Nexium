@@ -17,11 +17,13 @@
 #include "Editor/GuiComponents/Label.h"
 #include "Editor/GuiComponents/Misc.h"
 #include "Editor/GuiComponents/Spacer.h"
+#include "Editor/IconsFontAwesome.h"
 #include "Editors/TextEditor.h"
 #include "Foundation/Configs.h"
-#include "Misc/IconsFontAwesome.h"
+#include "NxWorld/Framework/GameInstance.h"
 
 using namespace Core::Gui;
+using namespace NX;
 
 namespace Core
 {
@@ -85,7 +87,7 @@ namespace Core
             auto* input = ext->addChildComponent<TextInput>();
             input->setReadOnly(true);
             input->setFlex(Flex::FlexWidth);
-            input->setInputtedData(GetShaderManager()->getInputDir().generic_string());
+            input->setInputtedData(GetShaderManager().getInputDir().generic_string());
         }
         {
             auto* shaderSelect = _headLayout.addChildComponent<HorizontalLayout>();
@@ -234,7 +236,7 @@ namespace Core
                 ImGui::TextUnformatted(data.name.data());
 
                 ImGui::TableSetColumnIndex(2);
-                ImGui::TextUnformatted(glTypeToString(data.type));
+                ImGui::Text("0x%X", data.type);
 
                 ImGui::TableSetColumnIndex(3);
                 ImGui::Text("%d", data.location);
@@ -271,7 +273,7 @@ namespace Core
                     ImGui::TextUnformatted(data.name.data());
 
                     ImGui::TableSetColumnIndex(2);
-                    ImGui::TextUnformatted(glTypeToString(data.type));
+                    ImGui::Text("0x%X", data.type);
 
                     ImGui::TableSetColumnIndex(3);
                     ImGui::Text("%d", data.offset);
@@ -299,12 +301,12 @@ namespace Core
         if (_validExtensions)
         {
             std::string extensions;
-            for (auto&& extension : GetShaderManager()->getSuitableFragFileExtensions())
+            for (auto&& extension : GetShaderManager().getSuitableFragFileExtensions())
             {
                 extensions += extension;
                 extensions.push_back(' ');
             }
-            for (auto&& extension : GetShaderManager()->getSuitableVertFileExtensions())
+            for (auto&& extension : GetShaderManager().getSuitableVertFileExtensions())
             {
                 extensions += extension;
                 extensions.push_back(' ');
@@ -319,13 +321,13 @@ namespace Core
 
         if (_totalShaders)
         {
-            _totalShaders->setInputtedData(static_cast<int>(GetShaderManager()->countOfShaders()));
+            _totalShaders->setInputtedData(static_cast<int>(GetShaderManager().countOfShaders()));
         }
 
         if (_failedShaders)
         {
             _failedShaders->setInputtedData(
-                static_cast<int>(GetShaderManager()->countOfFailedShaders()));
+                static_cast<int>(GetShaderManager().countOfFailedShaders()));
         }
     }
 
@@ -352,7 +354,7 @@ namespace Core
             return;
         }
 
-        auto&& metas = GetShaderManager()->getShaderMetas();
+        auto&& metas = GetShaderManager().getShaderMetas();
         if (Verify(metas.contains(name)))
         {
             bool result = metas[name].safeRecreateFromSources();
@@ -361,12 +363,12 @@ namespace Core
             {
                 if (result)
                 {
-                    _recompileResult->setTextColor(Config::ColorSoftGreen);
+                    _recompileResult->setTextColor(Foundation::Config::ColorSoftGreen);
                     _recompileResult->setText("Successfully recompiled");
                 }
                 else
                 {
-                    _recompileResult->setTextColor(Config::ColorRed);
+                    _recompileResult->setTextColor(Foundation::Config::ColorRed);
                     _recompileResult->setText("Recompile failed. Check logs for details.");
                 }
             }
@@ -375,7 +377,7 @@ namespace Core
 
     void ShaderManagerEWC::selectShader(const StringAtom& name)
     {
-        auto&& metas = GetShaderManager()->getShaderMetas();
+        auto&& metas = GetShaderManager().getShaderMetas();
         if (!Verify(metas.contains(name)))
         {
             errorLog("Selected shader: {} - not found."_f << name);

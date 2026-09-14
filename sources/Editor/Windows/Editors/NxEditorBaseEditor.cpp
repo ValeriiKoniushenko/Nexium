@@ -9,9 +9,11 @@
 
 #include "NxEditorBaseEditor.h"
 
+#include "Editor/IconsFontAwesome.h"
 #include "ImGui/imgui.h"
-#include "Misc/IconsFontAwesome.h"
 #include "NxSubsystems/AssetsManager/AssetsManager.h"
+
+using namespace NX;
 
 namespace Core
 {

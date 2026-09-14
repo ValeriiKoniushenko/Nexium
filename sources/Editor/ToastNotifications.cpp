@@ -10,8 +10,9 @@
 #include "ToastNotifications.h"
 
 #include "Editor/EditorIntegration.h"
+#include "Editor/IconsFontAwesome.h"
 #include "ImGui/imgui.h"
-#include "Misc/IconsFontAwesome.h"
+#include "NxWorld/Framework/GameInstance.h"
 
 #include <algorithm>
 #include <utility>

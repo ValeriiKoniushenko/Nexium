@@ -92,7 +92,7 @@ namespace Editor
         struct ActiveNotification
         {
             NotificationPopUp notification;
-            std::optional<Core::Texture> loadedImage;
+            std::optional<RawBackend::Texture> loadedImage;
             float elapsed = 0.f;
             std::uint64_t id = 0;
             bool isClosed = false;

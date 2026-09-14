@@ -9,12 +9,14 @@
 
 #include "ECSEditorFrameByFrameAnimationAdapter.h"
 
-#include "Animations/FrameByFrame/FrameByFrameAnimator.h"
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/Misc.h"
-#include "Misc/IconsFontAwesome.h"
+#include "Editor/IconsFontAwesome.h"
+#include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimator.h"
 
 #include <algorithm>
+
+using namespace NX;
 
 namespace Core
 {

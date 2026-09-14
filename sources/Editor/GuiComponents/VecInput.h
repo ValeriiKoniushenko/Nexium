@@ -116,10 +116,10 @@ namespace Core::Gui
             HorizontalLayout::onInitialize();
 
             const std::vector<std::pair<Color4, StringAtom>> defaults = {
-                { Config::ColorRed, "X:"_atom },
-                { Config::ColorGreen, "Y:"_atom },
-                { Config::ColorBlue, "Z:"_atom },
-                { Config::ColorYellow, "W:"_atom },
+                { Foundation::Config::ColorRed, "X:"_atom },
+                { Foundation::Config::ColorGreen, "Y:"_atom },
+                { Foundation::Config::ColorBlue, "Z:"_atom },
+                { Foundation::Config::ColorYellow, "W:"_atom },
             };
 
             _children.clear();

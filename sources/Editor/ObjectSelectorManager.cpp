@@ -9,6 +9,10 @@
 
 #include "ObjectSelectorManager.h"
 
+#include "Foundation/Interfaces/IOutliner.h"
+
+using namespace NX;
+
 namespace Core
 {
     void ObjectSelectorManager::toggleObject(BaseComponent* comp)
@@ -74,7 +78,7 @@ namespace Core
 
     void ObjectSelectorManager::changeSelectionState(BaseComponent* comp, bool newState)
     {
-        if (auto* outliner = dynamic_cast<IOutliner*>(comp))
+        if (auto* outliner = dynamic_cast<Foundation::IOutliner*>(comp))
         {
             outliner->setIsDrawOutline(newState);
         }

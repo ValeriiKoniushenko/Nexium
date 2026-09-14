@@ -10,8 +10,8 @@
 #include "EditorMenuBarWindow.h"
 
 #include "AssetsExplorer/AssetsManagerWindow.h"
-#include "ECSAdapters/EditorStaticMeshBundleAdapter.h"
 #include "Editor/EditorIntegration.h"
+#include "Editor/IconsFontAwesome.h"
 #include "Editor/Windows/EditorSettings.h"
 #include "Editor/Windows/GameViewport.h"
 #include "Editor/Windows/LogsWindow.h"
@@ -19,7 +19,7 @@
 #include "Editor/Windows/SceneTreeWindow.h"
 #include "Editors/TextEditor.h"
 #include "ImageViewer.h"
-#include "Misc/IconsFontAwesome.h"
+#include "NxECSBasedEditor.h"
 #include "NxWorld/Framework/GameInstance.h"
 #include "ShaderManager.h"
 #include "WorldSettings.h"
@@ -29,9 +29,9 @@ namespace
     template<Core::IsEditorWindowComponent T>
     void WindowMenuItem()
     {
-        if (ImGui::MenuItem(GetEditor()->getWindow<T>()->getComponentName().c_str()))
+        if (ImGui::MenuItem(Core::GetEditor()->getWindow<T>()->getComponentName().c_str()))
         {
-            GetEditor()->showWindow<T>();
+            Core::GetEditor()->showWindow<T>();
         }
     }
 } // namespace

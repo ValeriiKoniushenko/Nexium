@@ -11,11 +11,14 @@
 
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "Editors/NxEditorBaseEditor.h"
-#include "InputDevices/InputManager.h"
 #include "NxFundamental/Assets/ECSAsset.h"
+#include "NxSubsystems/Input/InputManager.h"
 
 namespace Core
 {
+    using NX::BaseComponent;
+    using NX::KeyboardInputManger;
+    using NX::NXECSAsset;
 
     namespace Gui
     {
@@ -27,9 +30,9 @@ namespace Core
     } // namespace Gui
 
     CLASS();
-    class ECSEditorMimeAdapter : public BaseComponent
+    class ECSEditorMimeAdapter : public NX::BaseComponent
     {
-        ECS_DECL(ECSEditorMimeAdapter, Core::BaseComponent);
+        ECS_DECL(ECSEditorMimeAdapter, NX::BaseComponent);
 
     public:
         void applyAssetRawData(const nlohmann::json& json);

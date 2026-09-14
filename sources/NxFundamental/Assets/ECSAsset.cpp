@@ -11,6 +11,7 @@
 
 #include "../PrivateModuleInfo.h"
 #include "Factory.h"
+#include "NxFundamental/ResourceManagement/AtomicFile.h"
 #include "Utils/Functions.h"
 #include "nlohmann/json.hpp"
 
@@ -251,19 +252,16 @@ namespace NX
             // json[StreamData::data] = std::move(stream.getRaw());
         }
 
-        std::fstream out(_meta.pathToSource, std::ios::out);
-        if (out.is_open())
+        try
         {
-            out << json.dump(4);
-            out.close();
-
+            WriteFileAtomically(_meta.pathToSource, json.dump(4));
             traceLog("Asset: {} was updated successfully. Patch: {}"_f
                      << _meta.logicPath << (patchedOutput.empty() ? "None" : patchedOutput));
         }
-        else
+        catch (const std::filesystem::filesystem_error& error)
         {
-            criticalLog("Can't open file for write: {} - to update Asset:: {}"_f
-                        << _meta.pathToSource << _meta.logicPath);
+            criticalLog("Can't save asset: {}. Details: {}"_f << _meta.pathToSource
+                                                              << error.what());
         }
     }
 
@@ -315,7 +313,7 @@ namespace NX
 
     BaseComponent::Ptr ECSAsset::uniqueLoad() const
     {
-        auto* componentData = GetGlobalComponentFactory().create(_meta.type);
+        BaseComponent::Ptr componentData = GetGlobalComponentFactory().create(_meta.type);
         if (!componentData)
         {
             throw std::runtime_error(
@@ -333,7 +331,7 @@ namespace NX
         // [opt] making loading of essential data (texture loading, 3D model loading, etc)
         if (_impl)
         {
-            _impl->load(*this, componentData,
+            _impl->load(*this, componentData.get(),
                         json.value(StreamData::assetData, nlohmann::json::object()));
         }
 

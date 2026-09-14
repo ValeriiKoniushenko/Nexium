@@ -9,7 +9,7 @@
 
 #include "ImageViewer.h"
 
-#include "Misc/IconsFontAwesome.h"
+#include "Editor/IconsFontAwesome.h"
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include "ImGui/imgui.h"
@@ -17,6 +17,8 @@
 
 #include <algorithm>
 #include <cmath>
+
+using namespace RawBackend;
 
 namespace Core
 {

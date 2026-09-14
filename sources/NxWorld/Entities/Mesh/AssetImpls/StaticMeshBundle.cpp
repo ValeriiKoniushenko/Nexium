@@ -9,8 +9,8 @@
 
 #include "StaticMeshBundle.h"
 
-#include "AssimpMisc/AssimpHelper.h"
 #include "Foundation/Configs.h"
+#include "NxWorld/Entities/Mesh/AssimpMisc/AssimpHelper.h"
 #include "NxWorld/Framework/GameInstance.h"
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
@@ -68,23 +68,23 @@ namespace NX::AssetImpl
 
         Assimp::Importer importer;
         const aiScene* scene = importer.ReadFile(
-            (Config::Path::projectAbsPath / extractedData.meshPath).generic_string(),
+            (Foundation::Config::Path::projectAbsPath / extractedData.meshPath).generic_string(),
             extractedData.getAssimpPostProcessFlagsAsInt());
         if (Verify(scene) && Verify(scene->mRootNode))
         {
-            if (auto* owner = dataOwner->castTo<Core::StaticMeshBundle>())
+            if (auto* owner = dataOwner->castTo<NX::StaticMeshBundle>())
             {
-                static auto* sm = GetShaderManager();
+                static auto& sm = GetShaderManager();
                 owner->importFrom(scene->mRootNode, scene,
-                                  Config::Path::projectAbsPath / extractedData.meshPath,
+                                  Foundation::Config::Path::projectAbsPath / extractedData.meshPath,
                                   extractedData.onLoadScale);
                 if (!extractedData.mainShader.isEmpty())
                 {
-                    owner->setShader(sm->getShaderProgram(extractedData.mainShader));
+                    owner->setShader(sm.getShaderProgram(extractedData.mainShader));
                 }
                 if (!extractedData.outlineShader.isEmpty())
                 {
-                    owner->setOutlineShader(sm->getShaderProgram(extractedData.outlineShader));
+                    owner->setOutlineShader(sm.getShaderProgram(extractedData.outlineShader));
                 }
             }
         }

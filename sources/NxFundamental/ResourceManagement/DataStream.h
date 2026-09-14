@@ -18,6 +18,7 @@
 
 #include <fstream>
 #include <functional>
+#include <unordered_set>
 
 namespace NX
 {
@@ -76,14 +77,17 @@ namespace NX
                 {
                     R<T>::template Deserialize<RJsonResourceStream>(s, data);
                 }
+                _failedReads.erase(getPath(data));
             }
             catch (std::exception& ex)
             {
+                _failedReads.insert(getPath(data));
                 warnLog("Can't read the object from cache: {} {}. Details: {}"_f
                         << data.getCacheDir().generic_string() << data.getCacheHash() << ex.what());
             }
             catch (...)
             {
+                _failedReads.insert(getPath(data));
                 warnLog("Can't read the object from cache: {} {}. Due to unknown reasons."_f
                         << data.getCacheDir().generic_string() << data.getCacheHash());
             }
@@ -110,6 +114,9 @@ namespace NX
         [[nodiscard]] std::filesystem::path getPath(const Foundation::IDataIO& data) const;
         [[nodiscard]] std::filesystem::path getCachePath(const Foundation::IDataIO& data) const;
         [[nodiscard]] bool createCacheDirIfNotExist(const Foundation::IDataIO& data) const;
+
+        // A failed load must not let shutdown autosave overwrite the unread document.
+        std::unordered_set<std::filesystem::path> _failedReads;
     };
 
     [[nodiscard]] inline CacheSystem& GetCacheSystem()

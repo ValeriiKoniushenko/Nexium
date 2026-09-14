@@ -21,7 +21,7 @@ namespace NX
     CLASS();
     class StaticMeshBundle : public Actor
     {
-        ECS_DECL(StaticMeshBundle, Core::Actor);
+        ECS_DECL(StaticMeshBundle, NX::Actor);
 
     public:
         ~StaticMeshBundle() override;

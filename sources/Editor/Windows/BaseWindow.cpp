@@ -11,6 +11,9 @@
 
 #include "Foundation/Configs.h"
 #include "ImGui/imgui.h"
+#include "NxFundamental/ResourceManagement/DataStream.h"
+
+using namespace NX;
 
 namespace Core
 {

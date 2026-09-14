@@ -48,7 +48,7 @@ namespace Core
                        const glm::vec2& rawImageSize) const;
 
     protected:
-        std::unique_ptr<Texture> _image;
+        std::unique_ptr<RawBackend::Texture> _image;
         std::string _path;
         glm::vec2 _offset = {};
         float _zoom = 1.0f;

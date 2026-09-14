@@ -68,7 +68,7 @@ namespace NX
             const auto id = const_cast<StaticMesh*>(this)->getVboId()
                             ^ reinterpret_cast<std::uintptr_t>(this);
 
-            Color3 colorId;
+            Core::Color3 colorId;
             colorId.r = static_cast<uint8_t>((id & 0x0000FF) >> 0);
             colorId.g = static_cast<uint8_t>((id & 0x00FF00) >> 8);
             colorId.b = static_cast<uint8_t>((id & 0xFF0000) >> 16);

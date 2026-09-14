@@ -15,10 +15,13 @@
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/Label.h"
 #include "ImGui/imgui.h"
+#include "NxWorld/Framework/GameInstance.h"
 
 #include <algorithm>
 #include <ranges>
 #include <utility>
+
+using namespace NX;
 
 namespace
 {

@@ -12,6 +12,8 @@
 #include "Core/Assert.h"
 #include "Core/Timer.h"
 #include "NxSubsystems/Graphics/Import/AssimpMeshImporter.h"
+#include "NxWorld/Entities/Camera/Camera.h"
+#include "NxWorld/Framework/GameInstance.h"
 #include "RawBackend/Image.h"
 #include "StaticMeshBundle.h"
 #include "assimp/Importer.hpp"
@@ -199,7 +201,7 @@ namespace NX
     void StaticMesh::calculateSizeBaseOnMesh(const aiMesh* rawMesh, const aiMatrix4x4& transform)
     {
 #ifdef NEXIUM_DEBUG
-        FStopwatch s;
+        Core::FStopwatch s;
         s.start();
 #endif
 
@@ -220,7 +222,7 @@ namespace NX
             max.z = std::max(max.z, v.z);
         }
 
-        _size = FSize3(max - min);
+        _size = Core::FSize3(max - min);
         _center = (max + min) * 0.5f;
     }
 

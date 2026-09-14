@@ -17,10 +17,32 @@
 #include "NxWorld/Framework/GameInstance.h"
 #include "NxWorld/PrivateModuleInfo.h"
 
+#include <stdexcept>
+
 namespace
 {
     using ObjectContainerT = NX::Scene::ObjectContainerT;
     using SceneObject = NX::SceneObject;
+
+    void validateSceneComponent(const nlohmann::json& data)
+    {
+        const auto type = Core::StringAtom::Intern(data.at("_type").get<Core::StringAtom>());
+        if (!NX::GetGlobalComponentFactory().containsSuchType(type))
+        {
+            throw std::runtime_error("Unregistered scene component type: " + type.toStdString());
+        }
+        if (data.contains("_children") && !data["_children"].is_null())
+        {
+            if (!data["_children"].is_array())
+            {
+                throw std::runtime_error("Scene component children must be an array.");
+            }
+            for (const auto& child : data["_children"])
+            {
+                validateSceneComponent(child);
+            }
+        }
+    }
 
     // Returns true if `name` exists among objects' component names.
     bool nameExists(const ObjectContainerT& objects, const Core::StringAtom& name)
@@ -298,57 +320,102 @@ namespace NX
     [[nodiscard]] nlohmann::json Scene::serialize() const
     {
         auto json = R<Scene>::Serialize(*this).getData();
-
+        json["formatVersion"] = 1;
         json[StreamData::sceneObjects] = nlohmann::json::array();
         for (const auto& obj : _sceneObjects)
         {
-            json[StreamData::sceneObjects].push_back(obj->getSceneState());
+            nlohmann::json state = obj->getSceneState();
+            if (!obj->hasReferencedAsset())
+            {
+                state["componentData"] = obj->serialize();
+            }
+            json[StreamData::sceneObjects].push_back(std::move(state));
         }
-
         return json;
     }
 
     void Scene::deserialize(RResourceStream<RJsonResourceStream>& data)
     {
-        R<Scene>::Deserialize(data, *this);
-
-        if (!data.getData().contains(StreamData::sceneObjects))
+        const auto& json = data.getData();
+        const auto version = json.value("formatVersion", nlohmann::json(0));
+        if (!version.is_number_integer() || version < 0 || version > 1)
         {
-            warnLog(
-                "Scene '{}' doesn't have a property '{}' in the saved file to serialize some data."_f
-                << _sceneName << StreamData::sceneObjects);
-            return;
+            throw std::runtime_error("Unsupported scene format version: " + version.dump());
+        }
+        if (!json.contains(StreamData::sceneObjects) || !json[StreamData::sceneObjects].is_array())
+        {
+            throw std::runtime_error("Scene must contain a sceneObjects array.");
         }
 
-        auto&& arr = data.getData()[StreamData::sceneObjects];
-
-        for (const auto& [_, value] : arr.items())
+        // Validate and reconstruct before replacing the authored scene.
+        Scene replacement;
+        R<Scene>::Deserialize(data, replacement);
+        if (replacement._sceneName.isEmpty())
         {
-            const SceneState states = value.get<SceneState>();
-
-            auto&& refAsset = GetAssetsManager()->getUniqueEcsAsset(states.referenceAsset);
-            if (!refAsset)
+            throw std::runtime_error("Scene name must not be empty.");
+        }
+        for (const auto& value : json[StreamData::sceneObjects])
+        {
+            const SceneState state = value.get<SceneState>();
+            BaseComponent::Ptr component;
+            if (!state.referenceAsset.isEmpty())
             {
-                errorLog(
-                    "Scene: '{}'. Impossible to spawn an object '{}' ({}) on the scene, object is not accessible through AssetManager."_f
-                    << _sceneName << states.referenceAsset << states.name);
-                continue;
+                auto* assets = GetAssetsManager();
+                if (assets)
+                {
+                    component = assets->getUniqueEcsAsset(state.referenceAsset);
+                }
+            }
+            else if (value.contains("componentData"))
+            {
+                const auto& componentJson = value["componentData"];
+                validateSceneComponent(componentJson);
+                const auto type = Core::StringAtom::Intern(state.assetType);
+                if (componentJson.at("_type").get<Core::StringAtom>() != type)
+                {
+                    throw std::runtime_error("Inline scene object type does not match its data.");
+                }
+                component = GetGlobalComponentFactory().create(type);
+                auto stream = RResourceStream<RJsonResourceStream>(componentJson);
+                component->deserialize(stream);
             }
 
-            auto* sceneObj = dynamic_cast<SceneObject*>(refAsset.get());
-            if (!sceneObj)
+            auto object = Core::DynamicCast<SceneObject>(component);
+            if (!object || object->getComponentType() != state.assetType)
             {
-                errorLog(
-                    "Scene object isn't SceneObject. Impossible to add it to the scene. Asset type is: {}; name is: {}"_f
-                    << states.assetType << states.name);
-                continue;
+                throw std::runtime_error("Cannot restore scene object '" + state.name
+                                         + "' from asset '" + state.referenceAsset.toStdString()
+                                         + "'.");
             }
+            const auto name = Core::StringAtom::MakeFrom(state.name);
+            if (name.isEmpty() || nameExists(replacement._sceneObjects, name))
+            {
+                throw std::runtime_error("Empty or duplicate scene object name: " + state.name);
+            }
+            object->setComponentName(name);
+            object->applyTypeSpecificSceneData(state.typeSpecificData);
+            object->setTransformations(state.trans);
+            if (!state.referenceAsset.isEmpty())
+            {
+                object->_setReferencedAsset(state.referenceAsset);
+            }
+            replacement._sceneObjects.push_back(std::move(object));
+        }
 
-            sceneObj->applyTypeSpecificSceneData(states.typeSpecificData);
-            sceneObj->setTransformations(states.trans);
-            sceneObj->_setReferencedAsset(states.referenceAsset);
-
-            internal_addObjectToScene(sceneObj);
+        if (gGameInstance && &gGameInstance->gameScene == this)
+        {
+            gGameInstance->resetCamera();
+        }
+        _sceneObjects.swap(replacement._sceneObjects);
+        _sceneName = std::move(replacement._sceneName);
+        _uniqueCounterName = 0;
+        _postDrawBuffer.clear();
+        replacement._sceneObjects.clear();
+        for (auto& object : _sceneObjects)
+        {
+            object->initialize();
+            onObjectAdded->trigger(object.get());
+            object->onAddedToScene();
         }
     }
 

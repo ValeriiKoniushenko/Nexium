@@ -14,10 +14,11 @@
 #include "Editor/GuiComponents/LabelRow.h"
 #include "Editor/GuiComponents/Misc.h"
 #include "Editor/GuiComponents/VecInput.h"
-#include "Misc/IconsFontAwesome.h"
+#include "Editor/IconsFontAwesome.h"
 #include "NxWorld/Framework/GameInstance.h"
 
 using namespace Core::Gui;
+using namespace NX;
 
 namespace Core
 {
@@ -37,7 +38,7 @@ namespace Core
 
         _imageSize->input->setInputtedData(_targetAsset->getSize().toGlm());
         _imageChannelType->input->setInputtedData(
-            R<Image::Channel>::ToString(_targetAsset->getChannels()).data());
+            R<RawBackend::Image::Channel>::ToString(_targetAsset->getChannels()).data());
         _pathToImage->input->setInputtedData(_targetAsset->getFilePath().generic_string());
         _isFlipVertical->input->setValue(_targetAsset->isFlipVertically());
     }

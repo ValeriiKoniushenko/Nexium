@@ -21,7 +21,7 @@ namespace
 
 namespace Core
 {
-    EditorIntegration::EditorIntegration(GameInstance& instance)
+    EditorIntegration::EditorIntegration(NX::GameInstance& instance)
         : _instance(instance)
     {
         Assert(!gEditorIntegration, "Only one editor integration can be active.");
@@ -46,13 +46,15 @@ namespace Core
     void EditorIntegration::readFromCache()
     {
         _editor.readFromCache();
-        ImGui::LoadIniSettingsFromDisk(Config::Path::imGuiWindowsIni.generic_string().c_str());
+        ImGui::LoadIniSettingsFromDisk(
+            Foundation::Config::Path::imGuiWindowsIni.generic_string().c_str());
     }
 
     void EditorIntegration::writeToCache()
     {
         _editor.writeToCache();
-        ImGui::SaveIniSettingsToDisk(Config::Path::imGuiWindowsIni.generic_string().c_str());
+        ImGui::SaveIniSettingsToDisk(
+            Foundation::Config::Path::imGuiWindowsIni.generic_string().c_str());
     }
 
     void EditorIntegration::updateInput()
@@ -65,7 +67,7 @@ namespace Core
         _editor.tick(delta);
     }
 
-    void EditorIntegration::updateSceneInteraction(Scene& scene)
+    void EditorIntegration::updateSceneInteraction(NX::Scene& scene)
     {
         _objectPicker.update(scene);
     }

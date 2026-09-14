@@ -14,14 +14,17 @@
 #include "ObjectPicker.h"
 #include "ObjectSelectorManager.h"
 
-namespace Core
+namespace NX
 {
     class GameInstance;
+}
 
-    class EditorIntegration final : public ApplicationIntegration
+namespace Core
+{
+    class EditorIntegration final : public NX::ApplicationIntegration
     {
     public:
-        explicit EditorIntegration(GameInstance& instance);
+        explicit EditorIntegration(NX::GameInstance& instance);
         ~EditorIntegration() override;
 
         void initialize() override;
@@ -29,7 +32,7 @@ namespace Core
         void writeToCache() override;
         void updateInput() override;
         void tick(float delta) override;
-        void updateSceneInteraction(Scene& scene) override;
+        void updateSceneInteraction(NX::Scene& scene) override;
         [[nodiscard]] bool isViewportFocused() const override;
         void beforeSceneDraw() override;
         void afterSceneDraw() override;
@@ -44,7 +47,7 @@ namespace Core
         [[nodiscard]] ObjectPickerAggregator& getObjectPicker() noexcept { return _objectPicker; }
 
     private:
-        GameInstance& _instance;
+        NX::GameInstance& _instance;
         GameEditor _editor;
         ObjectSelectorManager _objectSelectorManager;
         ObjectPickerAggregator _objectPicker;

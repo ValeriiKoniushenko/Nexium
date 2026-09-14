@@ -16,6 +16,7 @@
 #include "NxWorld/Entities/Actor.h"
 
 using namespace Core::Gui;
+using namespace NX;
 
 namespace Core
 {

@@ -10,7 +10,7 @@
 #pragma once
 
 #include "Foundation/BaseLog.h"
-#include "InputDevices/InputManager.h"
+#include "NxSubsystems/Input/InputManager.h"
 #include "ObjectPicker.h"
 #include "ToastNotifications.h"
 #include "Windows/BaseWindow.h"
@@ -101,6 +101,12 @@ namespace Core
             return nullptr;
         }
 
+        template<IsEditorWindowComponentOrBase WindowT>
+        [[nodiscard]] const WindowT* getWindow(const StringAtom& regexName = ".*") const
+        {
+            return const_cast<GameEditor*>(this)->getWindow<WindowT>(regexName);
+        }
+
         template<IsEditorWindowComponentOrBase WindowT, class... ArgsT>
         void tryToOpenWindow(const StringAtom& regexName = ".*", ArgsT&&... args)
         {
@@ -143,9 +149,9 @@ namespace Core
 
     public:
         Editor::NotificationPopUpManager notifications;
-        KeyboardInputManger keyboardInput;
-        MouseInputManger mouseInput;
-        RenderTargetToTexture gameViewport;
+        NX::KeyboardInputManger keyboardInput;
+        NX::MouseInputManger mouseInput;
+        NX::RenderTargetToTexture gameViewport;
 
     protected:
         void setupImGuiStyles();
@@ -153,9 +159,9 @@ namespace Core
         void setupShortcuts();
 
     private:
-        void handleMouseDrag(glm::vec2 delta, MouseInputAction::SpecKeysState state);
-        void handleMouseClick(glm::vec2 pos, MouseInputAction::SpecKeysState state);
-        void responseOnPick(Transformable* object);
+        void handleMouseDrag(glm::vec2 delta, NX::MouseInputAction::SpecKeysState state);
+        void handleMouseClick(glm::vec2 pos, NX::MouseInputAction::SpecKeysState state);
+        void responseOnPick(NX::Transformable* object);
         void lazyOneShotInitialization();
 
     protected:

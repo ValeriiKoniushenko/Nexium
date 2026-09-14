@@ -15,6 +15,7 @@
 #include "NxSubsystems/Graphics/GraphicsComponents.h"
 
 using namespace Core::Gui;
+using namespace NX;
 
 namespace Core
 {

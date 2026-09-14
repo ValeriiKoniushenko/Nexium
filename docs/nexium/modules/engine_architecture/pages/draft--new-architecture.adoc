@@ -1,87 +1,223 @@
-[[engine architecture]]
-= (draft, migrating) Engine Architecture
+[[engine-architecture]]
+= Engine Architecture (Migration Draft)
 
-New engine architecture is totally reworked and original architecture can be found by the next SHA `c6f0d00b4fc2bb348c69b37093bd928324b0b161`.
+This page describes the implemented architecture as reviewed on 2026-09-14.
+Nexium targets personal games developed by a small team, with 2D as the current focus and optional 3D support.
+The pre-migration architecture is available at commit `c6f0d00b4fc2bb348c69b37093bd928324b0b161`.
 
-The goal of the reworking is to fix the globall architecture and dependency mess. Everything was connected to each other, a lot of modules were spreaded though the whole project. It doesn't even make a sense to describe how it was.
+The migration separates build dependencies and editor integration while retaining the existing component and asset systems.
+UE-style names express intended responsibilities; they do not imply that the corresponding UE feature exists here.
 
-Now, everything is devided by layers.
+== Layer map
 
-```
-# Rule: dependencies only ever point downward (higher number -> lower number). Never the reverse.
-# Exception: Foundation (1) is a shared kernel, callable directly from any layer (math, logging, config).
-# Extensions/Plugins inherit their host layer's rules — no quiet exceptions for "just this once."
+A layer is a directory under `sources/`, not necessarily a single CMake target.
+Higher layers consume lower layers directly when needed; dependencies do not have to pass through every intermediate layer.
+The intended dependency direction is downward, with remaining semantic coupling described below.
 
-8 Editor              -> ImGui UI, in-editor windows; attaches to a running Runtime like a debugger (pause/step/inspect — a good fit for reflection-driven access via JustReflectMe rather than hard #includes); never linked into the shipped build
-7 Nexium Runtime      -> mainloop; orchestrates World and Nexium Subsystems (Assets/Render/Audio/Input)
-6 Nexium World        -> World, GameInstance, Actor, Pawn, Controller (consumes Subsystems' Input System, AI), Skybox, gameplay primitives, animations, Extensions/Plugins (e.g. Physics)
-5 Nexium Subsystems   -> Camera, Asset management, Atlas, non-raw render (ShaderManager), Texture/Image, 2D/3D model impls, Audio work, Input System (wraps Platform's raw input)
-4 Nexium Fundamental  -> ECS, Asset Registry, File I/O handling, raw de/serialization
-3 Raw Backend         -> render API, render graph/commands, OpenGL backend, raw audio work
-2 Platform            -> Window class & logic, filesystem, raw input system
-1 Foundation          -> Core (StringAtom, Math, common classes/structs), Logging (spdlog), Config
-```
+[cols="1,2,5",options="header"]
+|===
+|Layer |Directory |Current responsibility
+|8 |`Editor` |ImGui editor, windows, property adapters, picking, selection, viewport integration.
+|7 |`NxRuntime` |Application loop, frame timing, initialization/save orchestration.
+|6 |`NxWorld` |GameInstance, world state, scene ownership, actors, cameras, rectangles, animation, optional meshes.
+|5 |`NxSubsystems` |Asset indexing/loading, shaders and graphics data, mapped input, optional Assimp importer.
+|4 |`NxFundamental` |Component trees, registration, transforms, serialization, asset abstractions, texture atlases.
+|3 |`RawBackend` |Images, GPU textures, render-to-texture resources, drawable interface.
+|2 |`Platform` |Window, raw keyboard/mouse input, OpenGL loading/access.
+|1 |`Foundation` |Shared configuration, logging, serialization interfaces, access to Utils core facilities.
+|===
 
-== 1 - Foundation
+The main application dependency chain is `TemplateGame -> Editor -> Runtime -> World`.
+World consumes Fundamental, Subsystems, RawBackend, and Platform targets.
+Subsystems consume the lower targets relevant to each service.
+This describes build dependencies, not object ownership.
 
-- Target name: `Nexium_Foundation` (`Nexium::Foundation`)
-- Cmake dependency: `Utils::Utils`, `Utils::Core` (StringAtom, Math, Delegates, etc). Path to module: `dependencies/Utils`
-- The files: `Foundation/Configs.*`, `Foundation/BaseLog.*`
-- Path to this module is: `sources/Foundation`
+== Build modules
 
-== 2 - Platform
+The tables list public aliases and their principal direct dependencies.
+Concrete engine libraries are static unless marked as an interface aggregate.
+Module-local logging helpers are private targets linked to `spdlog::spdlog`; Foundation's separate private helper is currently disabled.
 
-It has three main targets.
-1. Private: Nexium_Platform_PrivateModule
-    - It includes: `sources/Platform/PrivateModuleInfo.*`
-    - Cmake dependency is: `Nexium::Foundation`
-2. Public: Nexium_Platform_Graphics (Nexium::Platform::Graphics)
-    - It includes: `sources/Platform/{Graphics}.*`
-    - Cmake dependency is: `glfw`, `Core::Glad`
-3. Public: Nexium_Platform_Input (Nexium::Platform::Input)
-    - It includes: `sources/Platform/{Keyboard,Mouse,Window}.*`
-    - Cmake dependency is: `Nexium::Foundation`, `Nexium::Platform::Graphics`
+=== Foundation, Platform, and RawBackend
 
-- Path to these modules is: `sources/Platform`
+[cols="3,4,4",options="header"]
+|===
+|Public target |Contents |Direct dependencies
+|`Nexium::Foundation`
+|`Configs`, `BaseLog`, `IDataIO`, `IOutliner`
+|Public: `Utils::Core`, `spdlog::spdlog`, `JustReflectMe::Adapter`.
+|`Nexium::Platform::Graphics`
+|OpenGL access in `Platform/Graphics.*`
+|Public: `Core::Glad`.
+|`Nexium::Platform::Input`
+|`Window`, `Keyboard`, `Mouse`
+|Public: `glfw`, `Utils::Core`, `JustReflectMe::Adapter`, `glm`. Private: Platform Graphics and module logging.
+|`Nexium::RawBackend`
+|`Image`, `Texture`, `RenderTargetToTexture`, `IDrawable`
+|Public: Foundation, Platform Graphics. Private: `Core::Stb` and module logging.
+|===
 
-== 3 - Raw Backend
+Source definitions: `sources/{Foundation,Platform,RawBackend}/CMakeLists.txt`.
+RawBackend is currently OpenGL-oriented; a render graph, general command scheduler, and audio backend are not implemented by these targets.
+Its `IDrawable` interface still mentions World types (`NX::BaseCamera`, `Actor`, `StaticMesh`).
+Forward declarations avoid a link dependency but leave a semantic dependency to resolve if the renderer is extracted.
 
-It has one target.
-1. Public: Nexium_RawBackend (Nexium::RawBackend)
-    - It includes: `sources/RawBackend/{Image,IDrawable}.*`
-    - Cmake dependency is: `Nexium::Foundation`, `Core::Stb` (dependencies/Stb)
+=== Fundamental
 
-- Path to these modules is: `sources/RawBackend`
+All targets below live in `sources/NxFundamental`.
+Aliases share the prefix `Nexium::Fundamental::`.
 
-== 4 - Nexium Fundamental
+[cols="2,4,4",options="header"]
+|===
+|Alias suffix |Contents |Direct public dependencies
+|`Base` |`ITagHolder`, `Transformable` |Foundation.
+|`ResourceManagement` |`DataStream`, `CacheSystem`, atomic file replacement, JSON adapter |Foundation.
+|`ECS` |`AbstractComponent`, `BaseComponent`, `GlobalComponentFactory` |Fundamental Base and ResourceManagement.
+|`Assets` |`BaseAsset`, `ECSAsset`, asset factory |Fundamental ECS and ResourceManagement, Platform Graphics, `Core::Rectpack2D`.
+|`TextureAtlas` |Atlas construction |Foundation, RawBackend, `Core::Rectpack2D`.
+|===
 
-It has one private target, five focused public targets, and one aggregate compatibility target.
+`Nexium::Fundamental` is an interface aggregate of these five targets.
+`Nexium::NxFundamental` remains a compatibility alias.
+New consumers should link the focused targets they actually use.
+The asset abstractions and the concrete AssetsManager are separate modules; the former already exposes some graphics dependencies.
 
-1. Private: `Nexium_Fundamental_PrivateModule`
-    - It includes: `sources/NexiumFundamental/PrivateModuleInfo.*`
-    - CMake dependency is: `Nexium::Foundation`
-2. Public base: `Nexium_Fundamental_Base` (`Nexium::Fundamental::Base`)
-    - It includes: `sources/NexiumFundamental/{ITagHolder,Transformable}.*`
-    - CMake dependency is: `Nexium::Foundation`
-3. Public resource management: `Nexium_Fundamental_ResourceManagement` (`Nexium::Fundamental::ResourceManagement`)
-    - It includes: `sources/NexiumFundamental/ResourceManagement/{DataStream,JsonAdapter}.*`
-    - CMake dependency is: `Nexium::Foundation`
-4. Public ECS: `Nexium_Fundamental_ECS` (`Nexium::Fundamental::ECS`)
-    - It includes: `sources/NexiumFundamental/ECS/BaseComponent.*`
-    - CMake dependency is: `Nexium::Fundamental::Base`, `Nexium::Fundamental::ResourceManagement`
-5. Public assets: `Nexium_Fundamental_Assets` (`Nexium::Fundamental::Assets`)
-    - It includes: `sources/NexiumFundamental/Assets/{BaseAsset,ECSAsset}.*`
-    - CMake dependency is: `Nexium::Fundamental::ECS`, `Nexium::Fundamental::ResourceManagement`
-6. Public texture atlas: `Nexium_Fundamental_TextureAtlas` (`Nexium::Fundamental::TextureAtlas`)
-    - It includes: `sources/NexiumFundamental/Assets/TextureAtlas.*`
-    - CMake dependency is: `Nexium::Foundation`, `Nexium::RawBackend`, `Core::Rectpack2D`
-7. Aggregate compatibility target: `Nexium_Fundamental` (`Nexium::Fundamental`)
-    - It links all five public targets. New consumers should link the narrowest target they need.
-    - `Nexium::NexiumFundamental` remains as a temporary alias for the former target name.
+=== Subsystems
 
-- Path to these modules is: `sources/NexiumFundamental`
+These targets live in `sources/NxSubsystems` and use the prefix `Nexium::Subsystem::`.
 
-== Notes
+[cols="2,4,4",options="header"]
+|===
+|Alias suffix |Contents |Direct public dependencies
+|`Graphics` |`ShaderManager`, `ShaderProgram`, shader metadata, graphics data, debug lines |Foundation, Platform Graphics, Fundamental ResourceManagement.
+|`AssetsManager` |Filesystem indexing, asset lookup/loading, `TextureAsset` |Subsystem Graphics, Fundamental Assets and TextureAtlas, RawBackend.
+|`Input` |Keyboard/mouse actions and input mappings |Foundation, Platform Input.
+|`AssimpImporter` |Optional mesh import |Subsystem Graphics; Assimp is private to this target.
+|===
 
-- One layer == One folder inside `sources/<layer_name>`. But, it doesn't mean that every layer is built from one CMake module/taget. It easily may be more than one.
-- Every layer (folder) conain its' own totally private module. The name of this module it: `Nexium_<layer_name>_PrivateModule`. The sense of it is to contain `PrivateModuleInfo.{h,cpp}` with all related to module information: module name, logger synk
+Graphics also uses `Utils::Utils` privately.
+AssetsManager links `comdlg32` privately on Windows.
+The Assimp importer exists only with `NEXIUM_ENABLE_3D_MODULE=ON`.
+
+“Subsystems” currently names a group of libraries and services.
+It does not mean automatic discovery or lifecycle management through `GameInstanceSubsystem`.
+
+=== World
+
+`Nexium::World::Animation` contains `BaseAnimation` and `FrameByFrameAnimation`, and publicly depends on Fundamental ECS.
+
+`Nexium::World` contains scenes, actors, cameras, rectangles, `FrameByFrameAnimator`, skybox support, and framework classes.
+Its public dependencies include World Animation, Fundamental Assets/ECS, Subsystem AssetsManager/Graphics/Input, both Platform targets, and RawBackend.
+`Nexium::NxWorld` and `Nexium::World::Scene` are aliases of the same World target, not additional libraries.
+
+With 3D enabled, World adds mesh implementations and exposes the Assimp importer and `assimp::assimp`.
+The default 2D configuration still uses 3D math and camera types; the option primarily gates mesh/import functionality.
+
+Source definition: `sources/NxWorld/CMakeLists.txt`.
+
+=== Runtime and Editor
+
+`Nexium::Runtime` contains `NX::Runtime` and the FPS counter.
+It publicly links World using `WHOLE_ARCHIVE`, retaining component registrars even when no direct symbol references pull their translation units into the executable.
+`Nexium::NxRuntime` is a compatibility alias.
+
+`Nexium::Editor` publicly links Runtime and `Core::ImGui`.
+`Core::EditorIntegration` implements the World-owned `NX::ApplicationIntegration` interface.
+Runtime uses that interface for viewport sizing/focus, input, editor ticking, cache operations, picking, and render-target hooks.
+It does not include Editor implementation headers.
+
+The current `TemplateGame` executable links Editor using `WHOLE_ARCHIVE` and constructs the integration explicitly.
+Editor is always added by `sources/CMakeLists.txt`.
+A separately configured, editor-free shipped game remains a migration goal; the current example is an editor-enabled application.
+Pause/step controls and isolated Play sessions should not be inferred from the integration interface.
+
+== Object model and ownership
+
+[cols="3,6",options="header"]
+|===
+|Object |Ownership and role
+|`gGameInstance` |Global `std::unique_ptr<NX::GameInstance>`, populated by the application entry point.
+|`GameInstance` |Owns `gameScene`, `world`, `assets`, and `userInterface`. References the shared ShaderManager and Platform Window; stores a non-owning application-integration pointer.
+|`Runtime` |Holds a non-owning GameInstance reference and drives its execution.
+|`EditorIntegration` |Owns GameEditor, selection manager, and picker. Attaches to GameInstance on construction and detaches on destruction.
+|`World` |Holds lighting, time, game/player/level state, and a non-owning `currentCamera` pointer. It does not currently own Scene.
+|`Scene` |Owns root SceneObjects through intrusive pointers, plus grid/skybox state; handles insertion, deletion, ticking, drawing, and scene serialization.
+|`BaseComponent` |Owns child components through intrusive pointers and tracks a non-owning parent link. Provides initialization, traversal, cloning, serialization, and ticking.
+|===
+
+Source interfaces: `NxWorld/Framework/{GameInstance,World}.h`, `NxWorld/Scene/Scene.h`, `NxFundamental/ECS/BaseComponent.h`, and `Editor/EditorIntegration.h` under `sources/`.
+
+`SceneObject` combines BaseComponent, Transformable, drawable, outline, and serialization interfaces.
+`Actor` derives from SceneObject.
+The ECS is therefore a reflected object/component tree, not an archetype/chunk storage design.
+Editor widgets also reuse BaseComponent behavior.
+
+`GetWorld()` and `GetAssetsManager()` resolve through `gGameInstance`.
+Cameras, scene rendering, and other consumers still use that global context.
+Passing a GameInstance reference to Runtime does not yet make multiple independently running instances supported.
+
+== Reflection and persistence
+
+JustReflectMe (JRM) generates metadata for annotated types; native C++ reflection is not used.
+Component declaration/implementation macros connect reflected types to the global component factory.
+The same component model supports editor adapters, serialized templates, and cloning.
+
+AssetsManager indexes assets and supplies shared or unique loaded data.
+`ECSAsset` represents serialized component templates; the editor's “Blueprint” workflow instantiates these templates.
+This is not a visual scripting system.
+`BaseAsset`/`AssetRef` provide another resource path, including TextureAsset and reference-driven loading/unloading.
+
+Scene serialization stores each object's name, transform, asset type/reference, and type-specific data.
+Scene format version 1 reconstructs asset-backed objects from their references and stores a reflected `componentData` tree for objects without an asset reference.
+Unversioned asset-backed scenes remain readable; unsupported versions are rejected.
+Loading validates and reconstructs the incoming objects before replacing the current roots, restoring instance names and transforms.
+Malformed records or unresolved references leave the current roots unchanged.
+Asset-backed instances retain the existing type-specific override contract; they do not store a complete independent copy of their asset.
+
+GameInstance reads/writes scenes through CacheSystem; scene files resolve under `data/scenes`.
+Treat those files as authored state, despite the cache API name.
+CacheSystem and both asset save paths write an exclusively created sibling temporary file, check write/flush/close success, then replace the destination.
+Failed loads block CacheSystem saves to that path until a successful reload or explicit cache deletion, preventing shutdown autosave from replacing unread content.
+Temporary-file replacement protects against partial application writes; it does not promise power-loss durability on every filesystem.
+Asset references are logical paths, and the editor rename path currently renames the file and refreshes the index without rewriting saved scene references.
+
+== Build infrastructure
+
+`cmake/NexiumTargets.cmake` centralizes target settings, C++26 requirements, debug definitions, and public header sets.
+Most engine targets list source files explicitly; Editor uses recursive globs with `CONFIGURE_DEPENDS`.
+Public header sets share the `sources` include root, so they describe interfaces without preventing all cross-module includes.
+
+`cmake/JustReflectMe.cmake` builds JRM separately in Release and builds its adapter with the engine toolchain.
+The always-built CodeGenerator target runs the imported generator through `cmake/RunJRM.cmake`.
+The wrapper serializes writers and invalidates incremental state when the tool/configuration changes or tracked generated outputs disappear.
+Generated files live beside their source headers and must not be edited manually.
+The output manifest currently tracks `sources/`, although JRM also scans test headers.
+
+[cols="3,1,5",options="header"]
+|===
+|Root option |Default |Effect
+|`NEXIUM_DISABLE_TESTS` |ON |Unit-test target is omitted unless explicitly enabled.
+|`NEXIUM_DISABLE_BENCHMARKS` |ON |ECS benchmark target is omitted unless explicitly enabled.
+|`NEXIUM_ENABLE_3D_MODULE` |OFF |Gates Assimp, mesh code, and related editor code.
+|`NEXIUM_VERIFY_INTERFACE_HEADER_SETS` |ON |Creates separate public-header verification targets.
+|`NEXIUM_ENABLE_LAYER_CHECKS` |ON |Creates runnable lower-layer consumer checks.
+|===
+
+The `debug` and `release` presets use 2D; their `-3d` variants enable Assimp.
+Tests and benchmarks remain disabled in all four presets.
+Header verification and `Nexium_CheckLayers` require explicit target builds; an ordinary all-target build does not execute them.
+The current Gitea workflow builds GCC/Clang Debug/Release but does not enable/run the unit suite or these checks.
+
+== Migration boundaries
+
+The following remain intentions or incomplete contracts:
+
+* Framework managers such as ActorManager, CameraManager, ControllerManager, WorldObjectManager, and GameInstanceSubsystem mostly contain logging/construction scaffolding.
+* Editor/GameOnly selects rendering behavior on the same mutable scene. It does not create or restore a Play-session copy.
+* GameInstance's own tick currently depends on an active camera, even though scene ticks have separate conditions.
+* Content paths are derived from a compiled-in project root, and GameInstance still loads example-specific atlases.
+* Runtime-only packaging, explicit world lifetimes, and reference-safe asset moves still need completion.
+
+These gaps do not require new layers by themselves.
+Keep the existing boundaries while defining their behavior through consumers and tests.
+See xref:lifecycle.adoc[Application Lifecycle] for the current execution sequence.

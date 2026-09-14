@@ -16,11 +16,13 @@
 #include "Editor/GuiComponents/Label.h"
 #include "Editor/GuiComponents/Separator.h"
 #include "Editor/GuiComponents/Spacer.h"
-#include "Misc/IconsFontAwesome.h"
+#include "Editor/IconsFontAwesome.h"
 #include "NxWorld/Framework/GameInstance.h"
 #include "NxWorld/Scene/Spectator.h"
 
 using namespace Core::Gui;
+using namespace NX;
+using namespace Platform;
 
 namespace Core
 {

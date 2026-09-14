@@ -9,8 +9,6 @@
 
 #include "ObjectPropertiesWindow.h"
 
-#include "Animations/FrameByFrame/FrameByFrameAnimator.h"
-#include "ECS/Transformable.h"
 #include "Editor/EditorIntegration.h"
 #include "Editor/GuiComponents/Array.h"
 #include "Editor/GuiComponents/CheckBox.h"
@@ -20,13 +18,18 @@
 #include "Editor/GuiComponents/Label.h"
 #include "Editor/GuiComponents/Misc.h"
 #include "Editor/GuiComponents/VecInput.h"
+#include "NxFundamental/Transformable.h"
+#include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimator.h"
 #include "NxWorld/Entities/Camera/Camera.h"
-#include "NxWorld/Entities/Mesh/StaticMesh.h"
-#include "NxWorld/Entities/Mesh/StaticMeshBundle.h"
+#ifdef NEXIUM_ENABLE_3D_MODULE
+    #include "NxWorld/Entities/Mesh/StaticMesh.h"
+    #include "NxWorld/Entities/Mesh/StaticMeshBundle.h"
+#endif
 #include "NxWorld/Framework/GameInstance.h"
 #include "NxWorld/Scene/Rectangle.h"
 
 using namespace Core;
+using namespace NX;
 using namespace Core::Gui;
 
 namespace
@@ -128,7 +131,7 @@ namespace Core
 
                 std::vector<std::string> out(m.begin(), m.end());
                 std::ranges::sort(out);
-                auto r = std::ranges::remove(out, "None");
+                auto r = std::ranges::remove(out, std::string{ "None" });
                 out.erase(r.begin(), r.end());
                 return out;
             }();
@@ -152,7 +155,7 @@ namespace Core
 
                 std::vector<std::string> out(m.begin(), m.end());
                 std::ranges::sort(out);
-                auto r = std::ranges::remove(out, "None");
+                auto r = std::ranges::remove(out, std::string{ "None" });
                 out.erase(r.begin(), r.end());
                 return out;
             }();
@@ -189,7 +192,7 @@ namespace Core
 
                 std::vector<std::string> out(m.begin(), m.end());
                 std::ranges::sort(out);
-                auto r = std::ranges::remove(out, "None");
+                auto r = std::ranges::remove(out, std::string{ "None" });
                 out.erase(r.begin(), r.end());
                 return out;
             }();
@@ -212,7 +215,7 @@ namespace Core
 
                 std::vector<std::string> out(m.begin(), m.end());
                 std::ranges::sort(out);
-                auto r = std::ranges::remove(out, "None");
+                auto r = std::ranges::remove(out, std::string{ "None" });
                 out.erase(r.begin(), r.end());
                 return out;
             }();
@@ -274,16 +277,16 @@ namespace Core
     {
         auto* asBaseComponent = dynamic_cast<BaseComponent*>(_target);
         auto* asTransformable = dynamic_cast<Transformable*>(_target);
-        auto* asStaticMeshBundle = dynamic_cast<StaticMeshBundle*>(_target);
         auto* asInterleavedGraphicsData = dynamic_cast<InterleavedGraphicsData*>(_target);
-        auto* asStaticMesh = dynamic_cast<StaticMesh*>(_target);
         auto* asBaseCamera = dynamic_cast<BaseCamera*>(_target);
         auto* asRectangleComponent = dynamic_cast<SceneObj::RectangleAnimated*>(_target);
 
         tryDrawBaseComponent(asBaseComponent);
         tryDrawTransformable(asTransformable, asBaseComponent);
-        tryDrawStaticMeshBundle(asStaticMeshBundle);
-        tryDrawStaticMesh(asStaticMesh);
+#ifdef NEXIUM_ENABLE_3D_MODULE
+        tryDrawStaticMeshBundle(dynamic_cast<StaticMeshBundle*>(_target));
+        tryDrawStaticMesh(dynamic_cast<StaticMesh*>(_target));
+#endif
         tryDrawInterleavedGraphicsData(asInterleavedGraphicsData);
         tryDrawBaseCamera(asBaseCamera);
         tryDrawRectangleComponent(asRectangleComponent);
@@ -1016,6 +1019,7 @@ namespace Core
         }
     }
 
+#ifdef NEXIUM_ENABLE_3D_MODULE
     void ObjectPropertiesWindowEWC::tryDrawStaticMesh(StaticMesh* comp)
     {
         if (comp && Gui::CollapsingHeader("Static mesh", ImGuiTreeNodeFlags_DefaultOpen))
@@ -1034,6 +1038,7 @@ namespace Core
             _staticMeshLayout.tick(dt);
         }
     }
+#endif
 
     void ObjectPropertiesWindowEWC::tryDrawRectangleComponent(SceneObj::RectangleAnimated* comp)
     {
@@ -1163,6 +1168,7 @@ namespace Core
         }
     }
 
+#ifdef NEXIUM_ENABLE_3D_MODULE
     void ObjectPropertiesWindowEWC::tryDrawStaticMeshBundle(StaticMeshBundle* comp)
     {
         if (comp && Gui::CollapsingHeader("Static mesh bundle", ImGuiTreeNodeFlags_DefaultOpen))
@@ -1194,4 +1200,5 @@ namespace Core
             _staticMeshBundleLayout.tick(dt);
         }
     }
+#endif
 } // namespace Core

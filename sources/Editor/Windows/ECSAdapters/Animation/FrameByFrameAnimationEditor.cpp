@@ -9,13 +9,15 @@
 
 #include "FrameByFrameAnimationEditor.h"
 
-#include "Animations/FrameByFrame/FrameByFrameAnimator.h"
+#include "Editor/IconsFontAwesome.h"
 #include "ImGui/imgui.h"
-#include "Misc/IconsFontAwesome.h"
+#include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimator.h"
 #include "NxWorld/Framework/GameInstance.h"
 
 #include <algorithm>
 #include <cstring>
+
+using namespace NX;
 
 namespace
 {
@@ -120,7 +122,7 @@ namespace Core
             uv1 = rect.getLeftTop() + regionSize * (frame.uvOffset + frame.uvSize);
         }
 
-        auto& texture = const_cast<Texture&>(atlas.getTexture());
+        auto& texture = const_cast<RawBackend::Texture&>(atlas.getTexture());
         if (texture.isValid())
         {
             ImGui::Image(texture.getTextureId(), { size, size }, glm::vec2{ uv0.x, uv1.y },

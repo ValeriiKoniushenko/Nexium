@@ -13,9 +13,9 @@
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/Spacer.h"
+#include "Editor/IconsFontAwesome.h"
 #include "Editor/Windows/ModalPopUp.h"
 #include "Foundation/Configs.h"
-#include "Misc/IconsFontAwesome.h"
 #include "NxWorld/Framework/GameInstance.h"
 #include "RenamePopUpWindow.h"
 #include "ThumbnailFile.h"
@@ -25,7 +25,8 @@
 #include <format>
 #include <fstream>
 
-using NodeType = Core::AssetsManager::NodeType;
+using NodeType = NX::AssetsManager::NodeType;
+using namespace NX;
 
 namespace
 {
@@ -72,7 +73,7 @@ namespace Core
         stream.field("openedPath", _openedPath);
         if (stream.getMode() == DataStream::Mode::Input && !std::filesystem::exists(_openedPath))
         {
-            _openedPath = Config::Path::projectAbsPath;
+            _openedPath = Foundation::Config::Path::projectAbsPath;
         }
     }*/
 
@@ -118,7 +119,7 @@ namespace Core
                                                                      { tryOpenParentDir(); });
         _subscriptionPool << _refreshButton->onClick->subscribeAndGetID([this]() { refresh(); });
         _subscriptionPool << _homeButton->onClick->subscribeAndGetID(
-            [this]() { openPath(Config::Path::assets); });
+            [this]() { openPath(Foundation::Config::Path::assets); });
         _subscriptionPool << _pathInput->onInput->subscribeAndGetID(
             [this](const char* path)
             {
@@ -135,7 +136,7 @@ namespace Core
 
         if (_openedPath.empty())
         {
-            openPath(Config::Path::assets);
+            openPath(Foundation::Config::Path::assets);
         }
         else
         {
@@ -896,7 +897,7 @@ namespace Core
     {
         _rootCacheNode = {};
 
-        _rootCacheNode.path = Config::Path::assets;
+        _rootCacheNode.path = Foundation::Config::Path::assets;
         rescanPhysicalDrive(_rootCacheNode);
         GetAssetsManager()->refreshFilesSystem();
     }

@@ -11,12 +11,15 @@
 
 #include "BaseWindow.h"
 
-namespace Core
+namespace NX
 {
-
     class SceneObject;
     class Scene;
     class Actor;
+} // namespace NX
+
+namespace Core
+{
 
     CLASS();
     class SceneTreeWindowEWC : public BaseFloatEWC
@@ -26,15 +29,15 @@ namespace Core
     public:
         SceneTreeWindowEWC(const StringAtom& name = ""_atom);
 
-        void setScene(Scene* scene) { _scene = scene; }
-        [[nodiscard]] Scene* getScene() const noexcept { return _scene; }
+        void setScene(NX::Scene* scene) { _scene = scene; }
+        [[nodiscard]] NX::Scene* getScene() const noexcept { return _scene; }
 
-        void highlightSpecificObject(const SceneObject* obj);
+        void highlightSpecificObject(const NX::SceneObject* obj);
 
         [[nodiscard]] const char* getIcon() override;
 
     public:
-        BaseComponent* selectedObject = nullptr;
+        NX::BaseComponent* selectedObject = nullptr;
 
     protected:
         void onInitialize() override;
@@ -42,18 +45,18 @@ namespace Core
         void onUpdate() override;
 
     private:
-        void drawTreeNode(BaseComponent* n, int32_t id, bool isInSelectedSubtree = false);
+        void drawTreeNode(NX::BaseComponent* n, int32_t id, bool isInSelectedSubtree = false);
         void processAddNewComponentButton();
 
     protected:
         DelegateSubscriberPoolGuard _subscriptionPool;
 
-        Scene* _scene = nullptr;
+        NX::Scene* _scene = nullptr;
         int _commonTreeFlags = 0;
-        BaseComponent* _lastSelectedObject = nullptr;
+        NX::BaseComponent* _lastSelectedObject = nullptr;
 
     private:
-        const SceneObject* _highlightTracerObject = nullptr;
+        const NX::SceneObject* _highlightTracerObject = nullptr;
     };
 
 } // namespace Core

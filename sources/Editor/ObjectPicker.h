@@ -12,13 +12,19 @@
 #include "Core/Color.h"
 #include "RawBackend/Graphics/RenderTargetToTexture.h"
 
-namespace Core
+#include <memory>
+
+namespace NX
 {
     class BaseCamera;
     class Scene;
     class StaticMesh;
     class StaticMeshBundle;
     class Transformable;
+} // namespace NX
+
+namespace Core
+{
     class GameViewportEWC;
 
     class BaseObjectPicker
@@ -31,23 +37,21 @@ namespace Core
         BaseObjectPicker& operator=(BaseObjectPicker&&) = delete;
         virtual ~BaseObjectPicker() = default;
 
-        void requestPick(const std::function<void(Transformable*)>& callback);
-        void update(Scene& scene);
+        void requestPick(const std::function<void(NX::Transformable*)>& callback);
+        void update(NX::Scene& scene);
 
     protected:
-        virtual void onRequest(Scene& scene, BaseCamera* camera, glm::vec2 pickPos) = 0;
+        virtual void onRequest(NX::Scene& scene, NX::BaseCamera* camera, glm::vec2 pickPos) = 0;
         [[nodiscard]] glm::vec2 getPickedObject(const GameViewportEWC* wnd);
 
     protected:
-        std::function<void(Transformable*)> _callback;
+        std::function<void(NX::Transformable*)> _callback;
 
     private:
         bool _requested = false;
     };
 
-    /// yes, it's slow but convenient way to pick up an object with
-    /// pixel accuracy. Only for editor's aims.
-    /// Also, now, it works only with StaticMeshBundle
+#ifdef NEXIUM_ENABLE_3D_MODULE
     class SlowObjectPicker : public BaseObjectPicker
     {
     public:
@@ -59,16 +63,17 @@ namespace Core
         ~SlowObjectPicker() override = default;
 
     protected:
-        void onRequest(Scene& scene, BaseCamera* camera, glm::vec2 pickPos) override;
+        void onRequest(NX::Scene& scene, NX::BaseCamera* camera, glm::vec2 pickPos) override;
 
     private:
-        std::optional<Color3> drawingPreparations(Scene& scene, BaseCamera* camera,
+        std::optional<Color3> drawingPreparations(NX::Scene& scene, NX::BaseCamera* camera,
                                                   glm::vec2 pickPos);
-        void pickingUpTheObjectBasedOnColor(Scene& scene, Color3 pickedColor);
+        void pickingUpTheObjectBasedOnColor(NX::Scene& scene, Color3 pickedColor);
 
     private:
-        RenderTargetToTexture _canvas;
+        NX::RenderTargetToTexture _canvas;
     };
+#endif
 
     class RectangleBasedObjectPicker : public BaseObjectPicker
     {
@@ -81,7 +86,7 @@ namespace Core
         ~RectangleBasedObjectPicker() override = default;
 
     protected:
-        void onRequest(Scene& scene, BaseCamera* camera, glm::vec2 pickPos) override;
+        void onRequest(NX::Scene& scene, NX::BaseCamera* camera, glm::vec2 pickPos) override;
     };
 
     class ObjectPickerAggregator final
@@ -94,12 +99,12 @@ namespace Core
         ObjectPickerAggregator& operator=(ObjectPickerAggregator&&) = delete;
         ~ObjectPickerAggregator() = default;
 
-        void update(Scene& scene);
-        void requestPick(const std::function<void(Transformable*)>& callback);
+        void update(NX::Scene& scene);
+        void requestPick(const std::function<void(NX::Transformable*)>& callback);
 
     private:
         std::vector<std::unique_ptr<BaseObjectPicker>> _pickers;
-        std::function<void(Transformable*)> _callback;
+        std::function<void(NX::Transformable*)> _callback;
         bool _requested = false;
     };
 

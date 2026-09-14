@@ -12,21 +12,23 @@
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/Spacer.h"
+#include "Editor/IconsFontAwesome.h"
 #include "Foundation/Configs.h"
-#include "Misc/IconsFontAwesome.h"
 #include "NxWorld/Framework/GameInstance.h"
+
+using namespace NX;
 
 namespace Core
 {
     ECS_IMPL_NO_SER(LogsWindowEWC);
 
     const std::unordered_map<spdlog::level::level_enum, Color4> LogsWindowEWC::_levelColor
-        = { { spdlog::level::level_enum::critical, Config::ColorRed },
-            { spdlog::level::level_enum::err, Config::ColorYellow },
-            { spdlog::level::level_enum::warn, Config::ColorHalfYellow },
-            { spdlog::level::level_enum::info, Config::ColorWhite },
-            { spdlog::level::level_enum::debug, Config::ColorSoftWhite },
-            { spdlog::level::level_enum::trace, Config::ColorGrey } };
+        = { { spdlog::level::level_enum::critical, Foundation::Config::ColorRed },
+            { spdlog::level::level_enum::err, Foundation::Config::ColorYellow },
+            { spdlog::level::level_enum::warn, Foundation::Config::ColorHalfYellow },
+            { spdlog::level::level_enum::info, Foundation::Config::ColorWhite },
+            { spdlog::level::level_enum::debug, Foundation::Config::ColorSoftWhite },
+            { spdlog::level::level_enum::trace, Foundation::Config::ColorGrey } };
 
     const char* LogsWindowEWC::getIcon()
     {
@@ -152,7 +154,7 @@ namespace Core
 
     void LogsWindowEWC::fetchLogs()
     {
-        auto& q = LogQueue::Instance();
+        auto& q = Foundation::LogQueue::Instance();
 
         if (!q.isEmpty() && (_autoScrollButton && _autoScrollButton->isActive()))
         {

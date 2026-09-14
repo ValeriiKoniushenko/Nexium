@@ -61,7 +61,7 @@ namespace Core
 
         glm::vec2 _lastPreviewRegionSize = {};
 
-        NXTexture _targetAsset;
+        NX::NXTexture _targetAsset;
     };
 } // namespace Core
 

@@ -21,6 +21,8 @@
 #include "Foundation/Configs.h"
 #include "NxWorld/Framework/GameInstance.h"
 
+using namespace NX;
+
 namespace Core
 {
     ECS_IMPL(ModalCreateBlueprintEWC);
@@ -87,7 +89,7 @@ namespace Core
             _pathField->label->setText("Path");
             _pathField->label->setWidth(80.f);
             _pathField->input->setFlex(Gui::Flex::FlexWidth);
-            _pathField->input->setInputtedData(Config::Path::assets.generic_string());
+            _pathField->input->setInputtedData(Foundation::Config::Path::assets.generic_string());
             _subscriptionPool << _pathField->input->onInput->subscribeAndGetID(
                 [this](const char* data) { tryToDetectReplacingOfExistingFile(); });
         }

@@ -17,6 +17,9 @@
 #include "Editor/GuiComponents/Separator.h"
 #include "Editor/GuiComponents/Spacer.h"
 #include "Foundation/BaseLog.h"
+#include "NxWorld/Framework/GameInstance.h"
+
+using namespace NX;
 
 namespace Core
 {

@@ -10,9 +10,11 @@
 #include "GameViewport.h"
 
 #include "Editor/EditorIntegration.h"
+#include "Editor/IconsFontAwesome.h"
 #include "ImGui/imgui_internal.h"
-#include "Misc/IconsFontAwesome.h"
 #include "NxWorld/Framework/GameInstance.h"
+
+using namespace NX;
 
 namespace Core
 {

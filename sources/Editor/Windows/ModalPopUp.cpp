@@ -11,7 +11,10 @@
 
 #include "Editor/EditorIntegration.h"
 #include "Editor/GuiComponents/Button.h"
-#include "Misc/IconsFontAwesome.h"
+#include "Editor/IconsFontAwesome.h"
+#include "NxWorld/Framework/GameInstance.h"
+
+using namespace NX;
 
 namespace Core
 {

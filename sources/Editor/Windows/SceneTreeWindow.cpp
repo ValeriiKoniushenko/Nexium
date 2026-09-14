@@ -11,13 +11,16 @@
 
 #include "AssetsExplorer/AssetsManagerWindow.h"
 #include "Editor/EditorIntegration.h"
+#include "Editor/IconsFontAwesome.h"
 #include "ImGui/imgui.h"
 #include "ImGui/misc/cpp/imgui_stdlib.h"
-#include "Misc/IconsFontAwesome.h"
 #include "ModalAssetsSearchPopUp.h"
 #include "NxWorld/Entities/Actor.h"
+#include "NxWorld/Entities/Camera/Camera.h"
 #include "NxWorld/Framework/GameInstance.h"
 #include "NxWorld/Scene/Scene.h"
+
+using namespace NX;
 
 namespace Core
 {
