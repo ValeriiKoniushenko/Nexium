@@ -13,6 +13,7 @@
 #include "Editor/IconsFontAwesome.h"
 #include "Editor/Windows/EditorMenuBarWindow.h"
 #include "Editor/Windows/EditorSettings.h"
+#include "Editor/Windows/Editors/AnimationEditor/AnimationEditor.h"
 #include "Editor/Windows/Editors/TextEditor.h"
 #include "Editor/Windows/GameViewport.h"
 #include "Editor/Windows/LogsWindow.h"
@@ -106,6 +107,7 @@ namespace NX
         registerNewWindow<AssetsManagerWindowEWC>("Assets"_atom, true);
         registerNewWindow<EditorSettingsEWC>("Settings"_atom);
         registerNewWindow<TextEditorEWC>("Text editor"_atom);
+        registerNewWindow<AnimationEditorEWC>("Animation editor"_atom);
         registerNewWindow<ImageViewerEWC>("Image viewer"_atom);
         registerNewWindow<ShaderManagerEWC>("Shader manager"_atom);
         registerNewWindow<ModalPopUp>("PopUp"_atom, true);
@@ -193,6 +195,10 @@ namespace NX
         for (auto& wnd : _windows)
         {
             cs.read(*wnd);
+            if (wnd->isEnabled())
+            {
+                wnd->initialize();
+            }
         }
     }
 

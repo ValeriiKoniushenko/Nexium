@@ -13,6 +13,8 @@
 #include "Editor/GuiComponents/Misc.h"
 #include "Editor/IconsFontAwesome.h"
 #include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimator.h"
+#include "Editor/Windows/Editors/AnimationEditor/AnimationEditor.h"
+#include "NxWorld/Framework/GameInstance.h"
 
 #include <algorithm>
 
@@ -42,6 +44,7 @@ namespace NX
         _subscriptionPool << _addAnimButton->onClick->subscribeAndGetID(
             [this]
             {
+                GetEditor()->showWindow<AnimationEditorEWC>();
                 _animationEditor.create(
                     dynamic_cast<Animation::FrameByFrameAnimator*>(getTargetComponent()));
             });

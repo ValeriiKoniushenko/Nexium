@@ -12,11 +12,11 @@
     "_isFitContent": false,
     "_levelFilter": [
         {
-            "isActive": false,
+            "isActive": true,
             "level": "trace"
         },
         {
-            "isActive": false,
+            "isActive": true,
             "level": "debug"
         },
         {
@@ -55,5 +55,5 @@
         "height": 239.0,
         "width": 1904.0
     },
-    "_type": "NX::LogsWindowEWC"
+    "_type": "Core::LogsWindowEWC"
 }

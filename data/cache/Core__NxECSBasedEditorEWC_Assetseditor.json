@@ -1,0 +1,75 @@
+{
+    "_children": [
+        {
+            "_children": null,
+            "_isEnabled": true,
+            "_name": "",
+            "_noTick": false,
+            "_type": "Core::ECSBaseComponentAdapter"
+        },
+        {
+            "_children": null,
+            "_isEnabled": false,
+            "_name": "",
+            "_noTick": false,
+            "_type": "Core::ECSEditorActorAdapter"
+        },
+        {
+            "_children": null,
+            "_isEnabled": false,
+            "_name": "",
+            "_noTick": false,
+            "_type": "Core::ECSEditorStaticMeshBundleAdapter"
+        },
+        {
+            "_children": null,
+            "_isEnabled": false,
+            "_name": "",
+            "_noTick": false,
+            "_type": "Core::ECSEditorInterleavedGraphicsDataAdapter"
+        },
+        {
+            "_children": null,
+            "_isEnabled": true,
+            "_name": "",
+            "_noTick": false,
+            "_type": "Core::ECSEditorFrameByFrameAnimationAdapter"
+        },
+        {
+            "_children": null,
+            "_isEnabled": false,
+            "_name": "",
+            "_noTick": false,
+            "_type": "Core::ECSEditorInputControllerAdapter"
+        }
+    ],
+    "_innerPosition": [
+        16.0,
+        88.0
+    ],
+    "_innerSize": {
+        "height": 907.0,
+        "width": 1888.0
+    },
+    "_isEnabled": true,
+    "_isFitContent": false,
+    "_minWindowSize": {
+        "height": 200.0,
+        "width": 200.0
+    },
+    "_name": " Assets editor",
+    "_noTick": false,
+    "_oldSize": {
+        "height": 971.0,
+        "width": 1904.0
+    },
+    "_position": [
+        8.0,
+        32.0
+    ],
+    "_size": {
+        "height": 971.0,
+        "width": 1904.0
+    },
+    "_type": "Core::NxECSBasedEditorEWC"
+}
