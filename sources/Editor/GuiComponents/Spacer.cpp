@@ -9,7 +9,7 @@
 
 #include "Spacer.h"
 
-namespace Core::Gui
+namespace NX::Gui
 {
     ECS_IMPL(Spacer);
 
@@ -51,4 +51,4 @@ namespace Core::Gui
             setComponentName("Spacer"_atom);
         }
     }
-} // namespace Core::Gui
+} // namespace NX::Gui

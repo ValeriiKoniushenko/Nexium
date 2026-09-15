@@ -16,7 +16,7 @@
 
 #include <array>
 
-namespace Core
+namespace NX
 {
     ECS_IMPL(TextEditorEWC);
 
@@ -146,4 +146,4 @@ namespace Core
         }
         ImGui::PopTextWrapPos();
     }
-} // namespace Core
+} // namespace NX

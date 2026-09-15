@@ -88,7 +88,7 @@ namespace Editor
     {
         if (gGameInstance)
         {
-            Core::GetEditor()->notifications.show(*this);
+            NX::GetEditor()->notifications.show(*this);
         }
     }
 

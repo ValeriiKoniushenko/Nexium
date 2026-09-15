@@ -19,7 +19,7 @@
 using namespace NX;
 using namespace Platform;
 
-namespace Core
+namespace NX
 {
     ECS_IMPL(Gizmo);
 
@@ -170,4 +170,4 @@ namespace Core
         _isDirtyModelMatrix = false;
     }
 
-} // namespace Core
+} // namespace NX

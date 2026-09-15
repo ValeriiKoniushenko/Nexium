@@ -12,7 +12,7 @@
 #include <chrono>
 #include <cstdint>
 
-namespace Core
+namespace NX
 {
     class FPSCounter
     {
@@ -29,4 +29,4 @@ namespace Core
         std::chrono::system_clock::time_point _start;
         uint64_t _frames = 0;
     };
-} // namespace Core
+} // namespace NX

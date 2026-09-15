@@ -125,12 +125,12 @@ namespace NX
         initializeShaders();
 
         //-------------------- ECS ---------------------
-        GetGlobalComponentFactory()._createTypeToTagMap();
-
         if (_applicationIntegration)
         {
             _applicationIntegration->initialize();
         }
+        GetGlobalComponentFactory()._createTypeToTagMap();
+
         gameScene.initialize();
         _subscriptionPool << gameScene.onObjectAdded->subscribeAndGetID(
             [this](SceneObject* obj) { internal_onAddObjectToScene(obj); });

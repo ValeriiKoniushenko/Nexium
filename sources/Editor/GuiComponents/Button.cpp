@@ -14,7 +14,7 @@
 
 #include <algorithm>
 
-namespace Core::Gui
+namespace NX::Gui
 {
     ECS_IMPL(Button);
     ECS_IMPL(ToggleButton);
@@ -326,4 +326,4 @@ namespace Core::Gui
     {
         Button::postDraw();
     }
-} // namespace Core::Gui
+} // namespace NX::Gui

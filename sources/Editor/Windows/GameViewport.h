@@ -11,12 +11,12 @@
 
 #include "BaseWindow.h"
 
-namespace Core
+namespace NX
 {
     CLASS();
     class GameViewportEWC : public BaseFloatEWC
     {
-        ECS_DECL(GameViewportEWC, Core::BaseFloatEWC);
+        ECS_DECL(GameViewportEWC, NX::BaseFloatEWC);
 
     public:
         [[nodiscard]] const char* getIcon() override;
@@ -26,6 +26,6 @@ namespace Core
         void onUpdate() override;
         void onDraw() override;
     };
-} // namespace Core
+} // namespace NX
 
 #include "GameViewport.generated.h" // added by the code generator. Better don't move it.

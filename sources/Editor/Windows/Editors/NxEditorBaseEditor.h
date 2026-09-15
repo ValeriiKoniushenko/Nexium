@@ -13,13 +13,13 @@
 
 #include <set>
 
-namespace Core
+namespace NX
 {
 
     CLASS();
     class NxEditorBaseEditorEWC : public BaseFloatEWC
     {
-        ECS_DECL(NxEditorBaseEditorEWC, Core::BaseFloatEWC);
+        ECS_DECL(NxEditorBaseEditorEWC, NX::BaseFloatEWC);
 
     public:
         [[nodiscard]] const char* getIcon() override;
@@ -74,6 +74,6 @@ namespace Core
         bool _enableTree = false;
     };
 
-} // namespace Core
+} // namespace NX
 
 #include "NxEditorBaseEditor.generated.h" // added by the code generator. Better don't move it.

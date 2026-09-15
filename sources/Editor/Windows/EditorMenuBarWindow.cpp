@@ -26,17 +26,17 @@
 
 namespace
 {
-    template<Core::IsEditorWindowComponent T>
+    template<NX::IsEditorWindowComponent T>
     void WindowMenuItem()
     {
-        if (ImGui::MenuItem(Core::GetEditor()->getWindow<T>()->getComponentName().c_str()))
+        if (ImGui::MenuItem(NX::GetEditor()->getWindow<T>()->getComponentName().c_str()))
         {
-            Core::GetEditor()->showWindow<T>();
+            NX::GetEditor()->showWindow<T>();
         }
     }
 } // namespace
 
-namespace Core
+namespace NX
 {
     ECS_IMPL(EditorMenuBarWindowEWC);
 
@@ -128,4 +128,4 @@ namespace Core
 
         _slowUpdater.startOrUpdate();
     }
-} // namespace Core
+} // namespace NX

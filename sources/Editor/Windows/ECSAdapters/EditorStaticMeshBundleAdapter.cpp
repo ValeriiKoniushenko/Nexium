@@ -18,10 +18,10 @@
 #include "NxWorld/Entities/Mesh/StaticMeshBundle.h"
 #include "NxWorld/Framework/GameInstance.h"
 
-using namespace Core::Gui;
+using namespace NX::Gui;
 using namespace NX;
 
-namespace Core
+namespace NX
 {
     ECS_IMPL(ECSEditorStaticMeshBundleAdapter);
 
@@ -220,4 +220,4 @@ namespace Core
         Assert(it != GetShaderManager().getShaderMetas().end());
         return it->first;
     }
-} // namespace Core
+} // namespace NX

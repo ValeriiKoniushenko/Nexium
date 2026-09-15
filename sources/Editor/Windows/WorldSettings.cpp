@@ -24,7 +24,7 @@
 
 using namespace NX;
 
-namespace Core
+namespace NX
 {
     ECS_IMPL(WorldSettingsEWC);
 
@@ -225,4 +225,4 @@ namespace Core
             _lightningLayout.tick(GetWorld()->getTimeDelta());
         }
     }
-} // namespace Core
+} // namespace NX

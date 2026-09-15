@@ -11,7 +11,7 @@
 
 #include "ImGui/imgui_internal.h"
 
-namespace Core::Gui
+namespace NX::Gui
 {
     ECS_IMPL(Label);
 
@@ -148,4 +148,4 @@ namespace Core::Gui
             _cachedText = _name;
         }
     }
-} // namespace Core::Gui
+} // namespace NX::Gui

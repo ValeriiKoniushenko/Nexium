@@ -16,15 +16,19 @@
 
 namespace NX
 {
-    class GameInstance;
+    class Runtime;
 }
 
-namespace Core
+namespace NX
 {
     class EditorIntegration final : public NX::ApplicationIntegration
     {
     public:
-        explicit EditorIntegration(NX::GameInstance& instance);
+        explicit EditorIntegration(NX::Runtime& instance);
+        EditorIntegration(const EditorIntegration&) = delete;
+        EditorIntegration(EditorIntegration&&) = delete;
+        EditorIntegration& operator=(const EditorIntegration&) = delete;
+        EditorIntegration& operator=(EditorIntegration&&) = delete;
         ~EditorIntegration() override;
 
         void initialize() override;
@@ -47,7 +51,7 @@ namespace Core
         [[nodiscard]] ObjectPickerAggregator& getObjectPicker() noexcept { return _objectPicker; }
 
     private:
-        NX::GameInstance& _instance;
+        NX::Runtime& _runtime;
         GameEditor _editor;
         ObjectSelectorManager _objectSelectorManager;
         ObjectPickerAggregator _objectPicker;
@@ -57,4 +61,4 @@ namespace Core
     [[nodiscard]] GameEditor* GetEditor();
     [[nodiscard]] ObjectSelectorManager* GetObjectSelectorManager();
     [[nodiscard]] ObjectPickerAggregator* GetObjectPicker();
-} // namespace Core
+} // namespace NX

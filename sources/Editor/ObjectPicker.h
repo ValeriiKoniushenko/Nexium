@@ -23,7 +23,7 @@ namespace NX
     class Transformable;
 } // namespace NX
 
-namespace Core
+namespace NX
 {
     class GameViewportEWC;
 
@@ -108,4 +108,4 @@ namespace Core
         bool _requested = false;
     };
 
-} // namespace Core
+} // namespace NX

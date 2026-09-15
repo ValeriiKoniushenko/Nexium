@@ -9,7 +9,7 @@
 
 #include "Layout.h"
 
-namespace Core::Gui
+namespace NX::Gui
 {
     ECS_IMPL(Layout);
 
@@ -83,4 +83,4 @@ namespace Core::Gui
             }
         }
     }
-} // namespace Core::Gui
+} // namespace NX::Gui

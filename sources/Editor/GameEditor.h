@@ -15,7 +15,7 @@
 #include "ToastNotifications.h"
 #include "Windows/BaseWindow.h"
 
-namespace Core
+namespace NX
 {
     /// Core editor class managing GUI windows and editor lifecycle.
     ///
@@ -171,4 +171,4 @@ namespace Core
         bool _isEnabled = true;
         bool _isRunSimulation = false;
     };
-} // namespace Core
+} // namespace NX

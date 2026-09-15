@@ -22,10 +22,10 @@
 #include "Foundation/Configs.h"
 #include "NxWorld/Framework/GameInstance.h"
 
-using namespace Core::Gui;
+using namespace NX::Gui;
 using namespace NX;
 
-namespace Core
+namespace NX
 {
     ECS_IMPL(ShaderManagerEWC);
 
@@ -402,4 +402,4 @@ namespace Core
 
         _selectedRawShader = &shader;
     }
-} // namespace Core
+} // namespace NX

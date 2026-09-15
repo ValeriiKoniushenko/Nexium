@@ -18,8 +18,8 @@ int main(int argc, char** argv)
     gGameInstance = std::make_unique<TemplateGameInstance>(argc, argv);
 
     {
-        Core::EditorIntegration editor{ *gGameInstance };
         NX::Runtime runtime{ *gGameInstance };
+        NX::EditorIntegration editor{ runtime };
         runtime.run();
     }
     gGameInstance.reset();

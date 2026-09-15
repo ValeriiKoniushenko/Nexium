@@ -28,5 +28,5 @@
         "height": 738.0,
         "width": 993.0
     },
-    "_type": "Core::GameViewportEWC"
+    "_type": "NX::GameViewportEWC"
 }

@@ -11,12 +11,12 @@
 
 #include "Widget.h"
 
-namespace Core::Gui
+namespace NX::Gui
 {
     CLASS();
     class Label : public Widget
     {
-        ECS_DECL(Label, Core::Gui::Widget);
+        ECS_DECL(Label, NX::Gui::Widget);
 
     public:
         void setWidth(float newWidth) override;
@@ -63,7 +63,7 @@ namespace Core::Gui
         StringAtom _cachedText;
 
         FIELD();
-        Core::Gui::Align _align = Core::Gui::Align::Left;
+        NX::Gui::Align _align = NX::Gui::Align::Left;
 
         FIELD();
         glm::vec2 _textSize = glm::vec2{};
@@ -77,6 +77,6 @@ namespace Core::Gui
         FIELD();
         bool _isTruncateLongText = true;
     };
-} // namespace Core::Gui
+} // namespace NX::Gui
 
 #include "Label.generated.h" // added by the code generator. Better don't move it.

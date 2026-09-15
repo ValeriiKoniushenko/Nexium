@@ -9,7 +9,7 @@
 
 #include "VerticalLayout.h"
 
-namespace Core::Gui
+namespace NX::Gui
 {
     ECS_IMPL(VerticalLayout);
 
@@ -361,4 +361,4 @@ namespace Core::Gui
             }
         }
     }
-} // namespace Core::Gui
+} // namespace NX::Gui

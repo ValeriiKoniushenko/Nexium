@@ -18,7 +18,7 @@
 
 #include <filesystem>
 
-namespace Core
+namespace NX
 {
     /// Gizmo class
     /// Deprecated due to unstable behavior
@@ -62,6 +62,6 @@ namespace Core
     private:
         std::optional<glm::vec3> _lastRay;
     };
-} // namespace Core
+} // namespace NX
 
 #include "Gizmo.generated.h" // added by the code generator. Better don't move it.

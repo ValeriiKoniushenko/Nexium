@@ -11,12 +11,12 @@
 
 #include "Editor/Windows/BaseWindow.h"
 
-namespace Core
+namespace NX
 {
     CLASS();
     class TextEditorEWC : public BaseFloatEWC
     {
-        ECS_DECL(TextEditorEWC, Core::BaseFloatEWC);
+        ECS_DECL(TextEditorEWC, NX::BaseFloatEWC);
 
     public:
         void putArguments(const StringAtom& args) override;
@@ -40,6 +40,6 @@ namespace Core
         bool _wasEdited = false;
         float _statusMarginRight = 10.f;
     };
-} // namespace Core
+} // namespace NX
 
 #include "TextEditor.generated.h" // added by the code generator. Better don't move it.

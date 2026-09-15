@@ -3,5 +3,5 @@
     "_isEnabled": false,
     "_name": "Assets searcher",
     "_noTick": false,
-    "_type": "Core::ModalAssetsSearchPopUpEWC"
+    "_type": "NX::ModalAssetsSearchPopUpEWC"
 }

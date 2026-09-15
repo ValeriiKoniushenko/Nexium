@@ -12,7 +12,7 @@
 #include "../NxECSBasedEditor.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 
-namespace Core
+namespace NX
 {
     namespace Gui
     {
@@ -30,7 +30,7 @@ namespace Core
     CLASS();
     class ECSEditorActorAdapter : public ECSEditorMimeAdapter
     {
-        ECS_DECL(ECSEditorActorAdapter, Core::ECSEditorMimeAdapter);
+        ECS_DECL(ECSEditorActorAdapter, NX::ECSEditorMimeAdapter);
 
     public:
         [[nodiscard]] bool canWorkWith(BaseComponent* component) const override;
@@ -53,6 +53,6 @@ namespace Core
         Gui::LabelRow<Gui::Float3Input>* _actorOrigin = nullptr;
     };
 
-} // namespace Core
+} // namespace NX
 
 #include "EditorActorAdapter.generated.h" // added by the code generator. Better don't move it.

@@ -9,7 +9,7 @@
 
 #include "Separator.h"
 
-namespace Core::Gui
+namespace NX::Gui
 {
     ECS_IMPL(Separator);
 
@@ -17,4 +17,4 @@ namespace Core::Gui
     {
         ImGui::Separator();
     }
-} // namespace Core::Gui
+} // namespace NX::Gui

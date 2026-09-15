@@ -12,12 +12,12 @@
 #include "BaseWindow.h"
 #include "Core/Timer.h"
 
-namespace Core
+namespace NX
 {
     CLASS();
     class EditorMenuBarWindowEWC : public BaseMenuBarEWC
     {
-        ECS_DECL(EditorMenuBarWindowEWC, Core::BaseMenuBarEWC);
+        ECS_DECL(EditorMenuBarWindowEWC, NX::BaseMenuBarEWC);
 
     public:
         EditorMenuBarWindowEWC(const EditorMenuBarWindowEWC&) = delete;
@@ -41,6 +41,6 @@ namespace Core
         float _fpsTextSize = 50.f;
         float _simulationButton = 50.f;
     };
-} // namespace Core
+} // namespace NX
 
 #include "EditorMenuBarWindow.generated.h" // added by the code generator. Better don't move it.

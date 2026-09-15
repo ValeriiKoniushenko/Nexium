@@ -5,35 +5,35 @@
             "_isEnabled": true,
             "_name": "",
             "_noTick": false,
-            "_type": "Core::ECSBaseComponentAdapter"
+            "_type": "NX::ECSBaseComponentAdapter"
         },
         {
             "_children": null,
             "_isEnabled": false,
             "_name": "",
             "_noTick": false,
-            "_type": "Core::ECSEditorActorAdapter"
+            "_type": "NX::ECSEditorActorAdapter"
         },
         {
             "_children": null,
             "_isEnabled": false,
             "_name": "",
             "_noTick": false,
-            "_type": "Core::ECSEditorStaticMeshBundleAdapter"
+            "_type": "NX::ECSEditorStaticMeshBundleAdapter"
         },
         {
             "_children": null,
             "_isEnabled": false,
             "_name": "",
             "_noTick": false,
-            "_type": "Core::ECSEditorInterleavedGraphicsDataAdapter"
+            "_type": "NX::ECSEditorInterleavedGraphicsDataAdapter"
         },
         {
             "_children": null,
             "_isEnabled": false,
             "_name": "",
             "_noTick": false,
-            "_type": "Core::ECSEditorFrameByFrameAnimationAdapter"
+            "_type": "NX::ECSEditorFrameByFrameAnimationAdapter"
         }
     ],
     "_innerPosition": [
@@ -64,5 +64,5 @@
         "height": 738.0,
         "width": 993.0
     },
-    "_type": "Core::NxECSBasedEditorEWC"
+    "_type": "NX::NxECSBasedEditorEWC"
 }

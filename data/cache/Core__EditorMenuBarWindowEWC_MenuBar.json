@@ -3,5 +3,5 @@
     "_isEnabled": true,
     "_name": "Menu Bar",
     "_noTick": false,
-    "_type": "Core::EditorMenuBarWindowEWC"
+    "_type": "NX::EditorMenuBarWindowEWC"
 }

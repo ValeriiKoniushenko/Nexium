@@ -15,7 +15,7 @@
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "NxFundamental/Assets/ECSAsset.h"
 
-namespace Core
+namespace NX
 {
 
     namespace Gui
@@ -33,7 +33,7 @@ namespace Core
     CLASS();
     class ModalAssetsSearchPopUpEWC : public BaseEWC
     {
-        ECS_DECL(ModalAssetsSearchPopUpEWC, Core::BaseEWC);
+        ECS_DECL(ModalAssetsSearchPopUpEWC, NX::BaseEWC);
 
     public:
         void open(StringAtom text);
@@ -66,6 +66,6 @@ namespace Core
         bool _hasOpenRequest = false;
         bool _wasManuallyEdited = false;
     };
-} // namespace Core
+} // namespace NX
 
 #include "ModalAssetsSearchPopUp.generated.h" // added by the code generator. Better don't move it.

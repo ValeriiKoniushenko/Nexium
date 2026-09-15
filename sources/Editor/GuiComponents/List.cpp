@@ -9,7 +9,7 @@
 
 #include "List.h"
 
-namespace Core::Gui
+namespace NX::Gui
 {
     ECS_IMPL(BaseList);
     ECS_IMPL(ListView);
@@ -170,4 +170,4 @@ namespace Core::Gui
             ImGui::EndListBox();
         }
     }
-} // namespace Core::Gui
+} // namespace NX::Gui

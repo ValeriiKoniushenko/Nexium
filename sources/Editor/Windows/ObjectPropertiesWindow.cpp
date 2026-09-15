@@ -30,7 +30,7 @@
 
 using namespace Core;
 using namespace NX;
-using namespace Core::Gui;
+using namespace NX::Gui;
 
 namespace
 {
@@ -115,7 +115,7 @@ namespace
     // =========================================================
 } // namespace
 
-namespace Core
+namespace NX
 {
     ECS_IMPL(ObjectPropertiesWindowEWC);
 
@@ -1201,4 +1201,4 @@ namespace Core
         }
     }
 #endif
-} // namespace Core
+} // namespace NX

@@ -11,8 +11,8 @@
 
 #include "ImGui/imgui.h"
 
-namespace Core::Gui
+namespace NX::Gui
 {
     [[nodiscard]] bool CollapsingHeader(const char* label, ImGuiTreeNodeFlags flags,
                                         float paddings = 0.f);
-} // namespace Core::Gui
+} // namespace NX::Gui

@@ -64,32 +64,32 @@ namespace glm
 namespace Core
 {
 
-    void to_json(nlohmann::json& j, FSize2);
+    void to_json(nlohmann::json& j, Core::FSize2);
 
-    void to_json(nlohmann::json& j, const FSize3&);
+    void to_json(nlohmann::json& j, const Core::FSize3&);
 
-    void to_json(nlohmann::json& j, ISize2);
+    void to_json(nlohmann::json& j, Core::ISize2);
 
-    void to_json(nlohmann::json& j, const ISize3&);
+    void to_json(nlohmann::json& j, const Core::ISize3&);
 
-    void from_json(const nlohmann::json& j, FSize2& value);
+    void from_json(const nlohmann::json& j, Core::FSize2& value);
 
-    void from_json(const nlohmann::json& j, FSize3& value);
+    void from_json(const nlohmann::json& j, Core::FSize3& value);
 
-    void from_json(const nlohmann::json& j, ISize2& value);
+    void from_json(const nlohmann::json& j, Core::ISize2& value);
 
-    void from_json(const nlohmann::json& j, ISize3& value);
+    void from_json(const nlohmann::json& j, Core::ISize3& value);
 
-    void to_json(nlohmann::json& j, const Color3& color);
+    void to_json(nlohmann::json& j, const Core::Color3& color);
 
-    void to_json(nlohmann::json& j, const Color4& color);
+    void to_json(nlohmann::json& j, const Core::Color4& color);
 
-    void to_json(nlohmann::json& j, const NormColor3& color);
+    void to_json(nlohmann::json& j, const Core::NormColor3& color);
 
-    void to_json(nlohmann::json& j, const NormColor4& color);
+    void to_json(nlohmann::json& j, const Core::NormColor4& color);
 
     template<glm::length_t L, typename T, glm::qualifier Q = glm::defaultp>
-    void to_json(nlohmann::json& j, const GlobalPosition<L, T, Q>& v)
+    void to_json(nlohmann::json& j, const Core::GlobalPosition<L, T, Q>& v)
     {
         auto out = nlohmann::json::array();
         // clang-format off
@@ -107,16 +107,16 @@ namespace Core
         j = out;
     }
 
-    void from_json(const nlohmann::json& j, Color3& color);
+    void from_json(const nlohmann::json& j, Core::Color3& color);
 
-    void from_json(const nlohmann::json& j, Color4& color);
+    void from_json(const nlohmann::json& j, Core::Color4& color);
 
-    void from_json(const nlohmann::json& j, NormColor3& color);
+    void from_json(const nlohmann::json& j, Core::NormColor3& color);
 
-    void from_json(const nlohmann::json& j, NormColor4& color);
+    void from_json(const nlohmann::json& j, Core::NormColor4& color);
 
     template<glm::length_t L, typename T, glm::qualifier Q = glm::defaultp>
-    void from_json(const nlohmann::json& j, GlobalPosition<L, T, Q>& v)
+    void from_json(const nlohmann::json& j, Core::GlobalPosition<L, T, Q>& v)
     {
         // clang-format off
         if constexpr (L > 0) j.at(0).get_to(v.x);

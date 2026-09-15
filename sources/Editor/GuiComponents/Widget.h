@@ -16,14 +16,14 @@
 #include "Platform/Keyboard.h"
 #include "Platform/Mouse.h"
 
-namespace Core
+namespace NX
 {
     using NX::BaseComponent;
     using Platform::Keyboard;
     using Platform::Mouse;
-} // namespace Core
+} // namespace NX
 
-namespace Core::Gui
+namespace NX::Gui
 {
     ENUM_CLASS();
     enum class Align
@@ -128,7 +128,7 @@ namespace Core::Gui
         FIELD();
         glm::vec2 _pos = glm::vec2{ 0.f, 0.f };
         FIELD();
-        Core::Gui::Flex _flex = Core::Gui::Flex::Fixed;
+        NX::Gui::Flex _flex = NX::Gui::Flex::Fixed;
         FIELD();
         bool _autoDraw = true;
         FIELD();
@@ -140,7 +140,7 @@ namespace Core::Gui
     template<class T>
     concept IsWidget = std::derived_from<std::remove_reference_t<T>, Widget>;
 
-} // namespace Core::Gui
+} // namespace NX::Gui
 
 namespace ImGui
 {

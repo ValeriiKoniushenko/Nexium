@@ -12,7 +12,7 @@
 #include "HorizontalLayout.h"
 #include "Label.h"
 
-namespace Core::Gui
+namespace NX::Gui
 {
 
     template<class /*IsWidget*/ T>
@@ -53,4 +53,4 @@ namespace Core::Gui
 
     ECS_TEMPLATE_COMPONENT_IMPL(LabelRow<T>, class T);
 
-} // namespace Core::Gui
+} // namespace NX::Gui

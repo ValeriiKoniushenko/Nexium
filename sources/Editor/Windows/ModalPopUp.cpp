@@ -16,7 +16,7 @@
 
 using namespace NX;
 
-namespace Core
+namespace NX
 {
     ECS_IMPL(ModalPopUp);
 
@@ -108,4 +108,4 @@ namespace Core
     void ModalPopUp::endWindowDraw()
     {
     }
-} // namespace Core
+} // namespace NX

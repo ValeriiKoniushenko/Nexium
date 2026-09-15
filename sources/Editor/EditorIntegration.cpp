@@ -12,28 +12,29 @@
 #include "Editor/Windows/GameViewport.h"
 #include "Foundation/Configs.h"
 #include "ImGui/imgui.h"
+#include "NxRuntime/Runtime.h"
 #include "NxWorld/Framework/GameInstance.h"
 
 namespace
 {
-    Core::EditorIntegration* gEditorIntegration = nullptr;
+    NX::EditorIntegration* gEditorIntegration = nullptr;
 }
 
-namespace Core
+namespace NX
 {
-    EditorIntegration::EditorIntegration(NX::GameInstance& instance)
-        : _instance(instance)
+    EditorIntegration::EditorIntegration(NX::Runtime& instance)
+        : _runtime(instance)
     {
         Assert(!gEditorIntegration, "Only one editor integration can be active.");
         gEditorIntegration = this;
-        _instance.setApplicationIntegration(this);
+        _runtime.getGameInstance().setApplicationIntegration(this);
     }
 
     EditorIntegration::~EditorIntegration()
     {
-        if (_instance.getApplicationIntegration() == this)
+        if (_runtime.getGameInstance().getApplicationIntegration() == this)
         {
-            _instance.setApplicationIntegration(nullptr);
+            _runtime.getGameInstance().setApplicationIntegration(nullptr);
         }
         gEditorIntegration = nullptr;
     }
@@ -117,4 +118,4 @@ namespace Core
     {
         return gEditorIntegration ? &gEditorIntegration->getObjectPicker() : nullptr;
     }
-} // namespace Core
+} // namespace NX

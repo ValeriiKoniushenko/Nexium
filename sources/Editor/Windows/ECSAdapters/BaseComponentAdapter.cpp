@@ -15,10 +15,10 @@
 #include "Editor/GuiComponents/LabelRow.h"
 #include "Editor/GuiComponents/Misc.h"
 
-using namespace Core::Gui;
+using namespace NX::Gui;
 using namespace NX;
 
-namespace Core
+namespace NX
 {
 
     ECS_IMPL(ECSBaseComponentAdapter);
@@ -114,4 +114,4 @@ namespace Core
             _baseEcsLayout.tick(dt);
         }
     }
-} // namespace Core
+} // namespace NX

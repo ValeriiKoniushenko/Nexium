@@ -12,7 +12,7 @@
 #include "ImGui/imgui_internal.h"
 #include "ImGui/misc/cpp/imgui_stdlib.h"
 
-namespace Core::Gui
+namespace NX::Gui
 {
     ECS_IMPL(BaseCombo);
     ECS_IMPL(ComboModelBased);
@@ -143,4 +143,4 @@ namespace Core::Gui
         }
         ImGui::PopItemWidth();
     }
-} // namespace Core::Gui
+} // namespace NX::Gui

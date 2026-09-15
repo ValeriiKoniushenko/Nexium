@@ -16,7 +16,7 @@
 
 using namespace NX;
 
-namespace Core
+namespace NX
 {
     ECS_IMPL(GameViewportEWC);
 
@@ -72,4 +72,4 @@ namespace Core
             );
         }
     }
-} // namespace Core
+} // namespace NX

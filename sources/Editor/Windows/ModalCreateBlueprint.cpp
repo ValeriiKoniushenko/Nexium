@@ -23,7 +23,7 @@
 
 using namespace NX;
 
-namespace Core
+namespace NX
 {
     ECS_IMPL(ModalCreateBlueprintEWC);
 
@@ -326,4 +326,4 @@ namespace Core
         closeWindow();
         GetAssetsManager()->refreshFilesSystem();
     }
-} // namespace Core
+} // namespace NX

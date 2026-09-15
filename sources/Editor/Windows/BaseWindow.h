@@ -14,7 +14,7 @@
 #include "Foundation/Interfaces/DataStream.h"
 #include "NxFundamental/ECS/BaseComponent.h"
 
-namespace Core
+namespace NX
 {
     using NX::BaseComponent;
 
@@ -80,7 +80,7 @@ namespace Core
     CLASS();
     class BaseFloatEWC : public BaseEWC
     {
-        ECS_DECL(BaseFloatEWC, Core::BaseEWC);
+        ECS_DECL(BaseFloatEWC, NX::BaseEWC);
 
     public:
         [[nodiscard]] FSize2 getWindowSize() const noexcept { return _size; }
@@ -136,7 +136,7 @@ namespace Core
     CLASS();
     class BaseMenuBarEWC : public BaseEWC
     {
-        ECS_DECL(BaseMenuBarEWC, Core::BaseEWC);
+        ECS_DECL(BaseMenuBarEWC, NX::BaseEWC);
 
     protected:
         void onInitialize() override;
@@ -146,6 +146,6 @@ namespace Core
 
         void endWindowDraw() override;
     };
-} // namespace Core
+} // namespace NX
 
 #include "BaseWindow.generated.h" // added by the code generator. Better don't move it.

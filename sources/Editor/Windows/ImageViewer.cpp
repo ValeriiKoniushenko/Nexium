@@ -20,7 +20,7 @@
 
 using namespace RawBackend;
 
-namespace Core
+namespace NX
 {
     ECS_IMPL(ImageViewerEWC);
     ECS_IMPL(DummyEWC);
@@ -199,4 +199,4 @@ namespace Core
     void DummyEWC::onDraw()
     {
     }
-} // namespace Core
+} // namespace NX

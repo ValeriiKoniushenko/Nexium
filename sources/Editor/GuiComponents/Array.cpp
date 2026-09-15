@@ -9,7 +9,7 @@
 
 #include "Array.h"
 
-namespace Core::Gui
+namespace NX::Gui
 {
     ECS_IMPL(ArrayCell);
 
@@ -48,4 +48,4 @@ namespace Core::Gui
     {
         return layout->getFirstChildAs<Label>()->getText();
     }
-} // namespace Core::Gui
+} // namespace NX::Gui

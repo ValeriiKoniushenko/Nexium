@@ -12,7 +12,7 @@
 #include "BaseWindow.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 
-namespace Core
+namespace NX
 {
     namespace Gui
     {
@@ -22,7 +22,7 @@ namespace Core
     CLASS();
     class ModalPopUp : public BaseEWC
     {
-        ECS_DECL_NO_CNSTR(ModalPopUp, Core::BaseEWC);
+        ECS_DECL_NO_CNSTR(ModalPopUp, NX::BaseEWC);
 
     public:
         explicit ModalPopUp(const Core::StringAtom& name = ""_atom);
@@ -55,6 +55,6 @@ namespace Core
 
         bool _hasOpenRequest = false;
     };
-} // namespace Core
+} // namespace NX
 
 #include "ModalPopUp.generated.h" // added by the code generator. Better don't move it.

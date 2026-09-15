@@ -15,7 +15,7 @@
 
 using namespace NX;
 
-namespace Core
+namespace NX
 {
     ECS_IMPL(BaseEWC);
     ECS_IMPL(BaseFloatEWC);
@@ -183,4 +183,4 @@ namespace Core
     {
         ImGui::EndMainMenuBar();
     }
-} // namespace Core
+} // namespace NX

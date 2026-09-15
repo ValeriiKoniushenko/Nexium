@@ -30,7 +30,7 @@ namespace NX
     }
 } // namespace NX
 
-namespace Core
+namespace NX
 {
     namespace Gui
     {
@@ -78,7 +78,7 @@ namespace Core
     CLASS();
     class ObjectPropertiesWindowEWC : public BaseFloatEWC
     {
-        ECS_DECL(ObjectPropertiesWindowEWC, Core::BaseFloatEWC);
+        ECS_DECL(ObjectPropertiesWindowEWC, NX::BaseFloatEWC);
 
     public:
         static constexpr float defaultLabelWidth = 100.0f;
@@ -198,6 +198,6 @@ namespace Core
 
         NX::AbstractComponent* _target = nullptr;
     };
-} // namespace Core
+} // namespace NX
 
 #include "ObjectPropertiesWindow.generated.h" // added by the code generator. Better don't move it.

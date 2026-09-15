@@ -12,12 +12,12 @@
 #include "Core/Delegate.h"
 #include "Widget.h"
 
-namespace Core::Gui
+namespace NX::Gui
 {
     CLASS();
     class BaseCombo : public Widget
     {
-        ECS_DECL(BaseCombo, Core::Gui::Widget);
+        ECS_DECL(BaseCombo, NX::Gui::Widget);
 
     public:
         [[nodiscard]] glm::vec2 getRealSize() const;
@@ -40,7 +40,7 @@ namespace Core::Gui
     CLASS();
     class ComboView : public BaseCombo
     {
-        ECS_DECL(ComboView, Core::Gui::BaseCombo);
+        ECS_DECL(ComboView, NX::Gui::BaseCombo);
 
     public:
         void setData(std::vector<StringAtom>&& items) { _items = std::move(items); }
@@ -73,7 +73,7 @@ namespace Core::Gui
     CLASS();
     class ComboModelBased : public BaseCombo
     {
-        ECS_DECL(ComboModelBased, Core::Gui::BaseCombo);
+        ECS_DECL(ComboModelBased, NX::Gui::BaseCombo);
 
     public:
         /// Set your own data provider. Just a function that will do a few things:
@@ -112,6 +112,6 @@ namespace Core::Gui
         const void* _currentData = nullptr;
         std::size_t _currentIndex = 0;
     };
-} // namespace Core::Gui
+} // namespace NX::Gui
 
 #include "Combo.generated.h" // added by the code generator. Better don't move it.

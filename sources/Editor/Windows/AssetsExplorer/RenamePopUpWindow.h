@@ -19,7 +19,7 @@
 #include <string>
 #include <string_view>
 
-namespace Core
+namespace NX
 {
     namespace Gui
     {
@@ -31,7 +31,7 @@ namespace Core
     CLASS();
     class RenamePopUpWindow : public BaseEWC
     {
-        ECS_DECL(RenamePopUpWindow, Core::BaseEWC);
+        ECS_DECL(RenamePopUpWindow, NX::BaseEWC);
 
     public:
         using RenameCallbackT = std::function<void(const std::filesystem::path& oldPath,
@@ -85,6 +85,6 @@ namespace Core
         std::filesystem::path _renameToPath;
         bool _hasOpenRequest = false;
     };
-} // namespace Core
+} // namespace NX
 
 #include "RenamePopUpWindow.generated.h" // added by the code generator. Better don't move it.

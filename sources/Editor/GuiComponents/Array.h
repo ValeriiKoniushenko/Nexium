@@ -16,7 +16,7 @@
 #include "Label.h"
 #include "VerticalLayout.h"
 
-namespace Core::Gui
+namespace NX::Gui
 {
     class Button;
     class Label;
@@ -24,7 +24,7 @@ namespace Core::Gui
     CLASS();
     class ArrayCell : public HorizontalLayout
     {
-        ECS_DECL(ArrayCell, Core::Gui::HorizontalLayout);
+        ECS_DECL(ArrayCell, NX::Gui::HorizontalLayout);
 
     public:
         Label* label = nullptr;
@@ -273,6 +273,6 @@ namespace Core::Gui
 
     using StringArray
         = BaseArray<StringAtom, _StringArray_ArrayCellViewerFunc, _StringArray_ViewFetchFunc>;
-} // namespace Core::Gui
+} // namespace NX::Gui
 
 #include "Array.generated.h" // added by the code generator. Better don't move it.

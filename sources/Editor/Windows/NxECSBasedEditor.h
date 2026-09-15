@@ -14,7 +14,7 @@
 #include "NxFundamental/Assets/ECSAsset.h"
 #include "NxSubsystems/Input/InputManager.h"
 
-namespace Core
+namespace NX
 {
     using NX::BaseComponent;
     using NX::KeyboardInputManger;
@@ -55,7 +55,7 @@ namespace Core
     CLASS();
     class NxECSBasedEditorEWC : public NxEditorBaseEditorEWC
     {
-        ECS_DECL(NxECSBasedEditorEWC, Core::NxEditorBaseEditorEWC);
+        ECS_DECL(NxECSBasedEditorEWC, NX::NxEditorBaseEditorEWC);
 
     public:
         [[nodiscard]] BaseComponent* getTargetComponent() noexcept;
@@ -100,6 +100,6 @@ namespace Core
         BaseComponent* _targetComponent = nullptr;
     };
 
-} // namespace Core
+} // namespace NX
 
 #include "NxECSBasedEditor.generated.h" // added by the code generator. Better don't move it.

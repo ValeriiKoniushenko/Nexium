@@ -15,7 +15,7 @@
 #include "Label.h"
 #include "Widget.h"
 
-namespace Core::Gui
+namespace NX::Gui
 {
     template<std::size_t Size, Utils::IsArithmetic Type>
     class VecNumInput : public HorizontalLayout
@@ -161,4 +161,4 @@ namespace Core::Gui
     using Int2Input = VecNumInput<2, int>;
     using Float2Input = VecNumInput<2, float>;
     using Double2Input = VecNumInput<2, double>;
-} // namespace Core::Gui
+} // namespace NX::Gui

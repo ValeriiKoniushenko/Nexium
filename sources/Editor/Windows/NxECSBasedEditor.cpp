@@ -24,10 +24,10 @@
 #include "ModalECSSearchPopUp.h"
 #include "NxWorld/Framework/GameInstance.h"
 
-using namespace Core::Gui;
+using namespace NX::Gui;
 using namespace NX;
 
-namespace Core
+namespace NX
 {
 
     ECS_IMPL(NxECSBasedEditorEWC);
@@ -483,4 +483,4 @@ namespace Core
         makeDirty();
     }
 
-} // namespace Core
+} // namespace NX

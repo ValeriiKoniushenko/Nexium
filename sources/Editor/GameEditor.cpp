@@ -72,7 +72,7 @@ namespace
     }
 } // namespace
 
-namespace Core
+namespace NX
 {
     const int GameEditor::defaultEditorImGuiFlags
         = ImGuiConfigFlags_NavEnableKeyboard | ImGuiConfigFlags_DockingEnable;
@@ -445,4 +445,4 @@ namespace Core
     void GameEditor::handleMouseDrag(glm::vec2 delta, MouseInputAction::SpecKeysState state)
     {
     }
-} // namespace Core
+} // namespace NX

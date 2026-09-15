@@ -12,7 +12,7 @@
 #include "BaseWindow.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 
-namespace Core
+namespace NX
 {
 
     namespace Gui
@@ -29,7 +29,7 @@ namespace Core
     CLASS();
     class ModalCreateBlueprintEWC : public BaseEWC
     {
-        ECS_DECL(ModalCreateBlueprintEWC, Core::BaseEWC);
+        ECS_DECL(ModalCreateBlueprintEWC, NX::BaseEWC);
 
     public:
         void open(StringAtom text);
@@ -74,6 +74,6 @@ namespace Core
         Gui::Button* _cancelButton = nullptr;
         bool _hasOpenRequest = false;
     };
-} // namespace Core
+} // namespace NX
 
 #include "ModalCreateBlueprint.generated.h" // added by the code generator. Better don't move it.

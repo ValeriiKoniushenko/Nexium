@@ -12,12 +12,12 @@
 #include "BaseWindow.h"
 #include "RawBackend/Graphics/Texture.h"
 
-namespace Core
+namespace NX
 {
     CLASS();
     class ImageViewerEWC : public BaseFloatEWC
     {
-        ECS_DECL(ImageViewerEWC, Core::BaseFloatEWC);
+        ECS_DECL(ImageViewerEWC, NX::BaseFloatEWC);
 
     public:
         void openImageFromFile(const std::filesystem::path& path);
@@ -58,7 +58,7 @@ namespace Core
     CLASS();
     class DummyEWC : public BaseFloatEWC
     {
-        ECS_DECL(DummyEWC, Core::BaseFloatEWC);
+        ECS_DECL(DummyEWC, NX::BaseFloatEWC);
 
     public:
         [[nodiscard]] const char* getIcon() override;
@@ -71,6 +71,6 @@ namespace Core
     protected:
     };
 
-} // namespace Core
+} // namespace NX
 
 #include "ImageViewer.generated.h" // added by the code generator. Better don't move it.

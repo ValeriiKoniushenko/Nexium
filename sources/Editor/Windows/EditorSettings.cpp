@@ -20,11 +20,11 @@
 #include "NxWorld/Framework/GameInstance.h"
 #include "NxWorld/Scene/Spectator.h"
 
-using namespace Core::Gui;
+using namespace NX::Gui;
 using namespace NX;
 using namespace Platform;
 
-namespace Core
+namespace NX
 {
     ECS_IMPL(EditorSettingsEWC);
     ECS_IMPL(Internal::BaseListItem);
@@ -274,4 +274,4 @@ namespace Core
             color->setInputData("{},{},{},{}"_f << data.x << data.y << data.z << data.w);
         }
     }
-} // namespace Core
+} // namespace NX

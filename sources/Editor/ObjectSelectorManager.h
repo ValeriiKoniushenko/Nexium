@@ -14,7 +14,7 @@
 
 #include <unordered_map>
 
-namespace Core
+namespace NX
 {
     /// Use this class to select objects on the scene.
     /// @details mediator class to involve all needed functionality
@@ -47,4 +47,4 @@ namespace Core
     private:
         std::unordered_map<void*, NX::BaseComponent::Ptr> _selectedObjects;
     };
-} // namespace Core
+} // namespace NX

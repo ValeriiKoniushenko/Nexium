@@ -18,7 +18,7 @@ namespace NX
     class ShaderProgramMeta;
 }
 
-namespace Core
+namespace NX
 {
     namespace Gui
     {
@@ -35,7 +35,7 @@ namespace Core
     CLASS();
     class ShaderManagerEWC : public BaseFloatEWC
     {
-        ECS_DECL(ShaderManagerEWC, Core::BaseFloatEWC);
+        ECS_DECL(ShaderManagerEWC, NX::BaseFloatEWC);
 
     public:
         [[nodiscard]] const char* getIcon() override;
@@ -86,6 +86,6 @@ namespace Core
         std::size_t _currentItem = 0;
         float _drawDetailsLabelWidth = 140.f;
     };
-} // namespace Core
+} // namespace NX
 
 #include "ShaderManager.generated.h" // added by the code generator. Better don't move it.

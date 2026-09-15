@@ -21,7 +21,7 @@
 
 using namespace NX;
 
-namespace Core
+namespace NX
 {
     ECS_IMPL(ModalAssetsSearchPopUpEWC);
 
@@ -230,4 +230,4 @@ namespace Core
             _list->setKeyboardFocusAtStart();
         }
     }
-} // namespace Core
+} // namespace NX

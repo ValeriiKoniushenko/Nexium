@@ -12,7 +12,7 @@
 #include "BaseWindow.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 
-namespace Core
+namespace NX
 {
     namespace Gui
     {
@@ -28,7 +28,7 @@ namespace Core
     CLASS();
     class ModalECSSearchPopUpEWC : public BaseEWC
     {
-        ECS_DECL(ModalECSSearchPopUpEWC, Core::BaseEWC);
+        ECS_DECL(ModalECSSearchPopUpEWC, NX::BaseEWC);
 
     public:
         void open(StringAtom text, const std::function<void(BaseComponent::Ptr)>& callback);
@@ -60,6 +60,6 @@ namespace Core
         bool _hasOpenRequest = false;
         bool _wasManuallyEdited = false;
     };
-} // namespace Core
+} // namespace NX
 
 #include "ModalECSSearchPopUp.generated.h" // added by the code generator. Better don't move it.

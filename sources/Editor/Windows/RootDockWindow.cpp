@@ -11,7 +11,7 @@
 
 #include "ImGui/imgui_internal.h"
 
-namespace Core
+namespace NX
 {
     ECS_IMPL(RootDockWindowEWC);
 
@@ -104,4 +104,4 @@ namespace Core
     {
         ImGui::End();
     }
-} // namespace Core
+} // namespace NX

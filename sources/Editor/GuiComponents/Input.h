@@ -15,12 +15,12 @@
 
 #include <limits>
 
-namespace Core::Gui
+namespace NX::Gui
 {
     CLASS();
     class BaseInput : public Widget
     {
-        ECS_DECL(BaseInput, Core::Gui::Widget);
+        ECS_DECL(BaseInput, NX::Gui::Widget);
 
     public:
         void setTextColor(const Color4& value);
@@ -55,7 +55,7 @@ namespace Core::Gui
     CLASS();
     class TextInput : public BaseInput
     {
-        ECS_DECL(TextInput, Core::Gui::BaseInput);
+        ECS_DECL(TextInput, NX::Gui::BaseInput);
 
     public:
         void setInputtedData(std::string data) { _buffer = std::move(data); }
@@ -158,7 +158,7 @@ namespace Core::Gui
     CLASS();
     class Color3Input : public BaseInput
     {
-        ECS_DECL(Color3Input, Core::Gui::BaseInput);
+        ECS_DECL(Color3Input, NX::Gui::BaseInput);
 
     public:
         void setInputtedData(const Color3& data);
@@ -184,6 +184,6 @@ namespace Core::Gui
     using FloatInput = NumInput<float>;
     using IntInput = NumInput<int>;
 
-} // namespace Core::Gui
+} // namespace NX::Gui
 
 #include "Input.generated.h" // added by the code generator. Better don't move it.

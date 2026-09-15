@@ -11,12 +11,12 @@
 
 #include "Layout.h"
 
-namespace Core::Gui
+namespace NX::Gui
 {
     CLASS();
     class HorizontalLayout : public Layout
     {
-        ECS_DECL_NO_CNSTR(HorizontalLayout, Core::Gui::Layout);
+        ECS_DECL_NO_CNSTR(HorizontalLayout, NX::Gui::Layout);
 
     public:
         explicit HorizontalLayout(const StringAtom& name = ""_atom);
@@ -66,6 +66,6 @@ namespace Core::Gui
         FIELD();
         bool _fitContent = false;
     };
-} // namespace Core::Gui
+} // namespace NX::Gui
 
 #include "HorizontalLayout.generated.h" // added by the code generator. Better don't move it.

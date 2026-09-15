@@ -17,10 +17,10 @@
 #include "Editor/IconsFontAwesome.h"
 #include "NxWorld/Framework/GameInstance.h"
 
-using namespace Core::Gui;
+using namespace NX::Gui;
 using namespace NX;
 
-namespace Core
+namespace NX
 {
     ECS_IMPL(NxTextureEditorEWC);
 
@@ -163,4 +163,4 @@ namespace Core
         return true;
     }
 
-} // namespace Core
+} // namespace NX

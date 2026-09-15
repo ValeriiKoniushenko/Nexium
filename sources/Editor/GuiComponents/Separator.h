@@ -11,12 +11,12 @@
 
 #include "Widget.h"
 
-namespace Core::Gui
+namespace NX::Gui
 {
     CLASS();
     class Separator : public Widget
     {
-        ECS_DECL(Separator, Core::Gui::Widget);
+        ECS_DECL(Separator, NX::Gui::Widget);
 
     public:
         [[nodiscard]] float getWidth() const override { return -1; }
@@ -27,6 +27,6 @@ namespace Core::Gui
     protected:
         void onDraw() override;
     };
-} // namespace Core::Gui
+} // namespace NX::Gui
 
 #include "Separator.generated.h" // added by the code generator. Better don't move it.

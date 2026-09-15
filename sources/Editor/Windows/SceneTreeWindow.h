@@ -18,13 +18,13 @@ namespace NX
     class Actor;
 } // namespace NX
 
-namespace Core
+namespace NX
 {
 
     CLASS();
     class SceneTreeWindowEWC : public BaseFloatEWC
     {
-        ECS_DECL_NO_CNSTR(SceneTreeWindowEWC, Core::BaseFloatEWC);
+        ECS_DECL_NO_CNSTR(SceneTreeWindowEWC, NX::BaseFloatEWC);
 
     public:
         SceneTreeWindowEWC(const StringAtom& name = ""_atom);
@@ -59,6 +59,6 @@ namespace Core
         const NX::SceneObject* _highlightTracerObject = nullptr;
     };
 
-} // namespace Core
+} // namespace NX
 
 #include "SceneTreeWindow.generated.h" // added by the code generator. Better don't move it.

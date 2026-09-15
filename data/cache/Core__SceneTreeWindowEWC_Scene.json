@@ -28,5 +28,5 @@
         "height": 738.0,
         "width": 229.0
     },
-    "_type": "Core::SceneTreeWindowEWC"
+    "_type": "NX::SceneTreeWindowEWC"
 }

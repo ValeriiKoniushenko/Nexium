@@ -28,5 +28,5 @@
         "height": 0.0,
         "width": 0.0
     },
-    "_type": "Core::TextEditorEWC"
+    "_type": "NX::TextEditorEWC"
 }

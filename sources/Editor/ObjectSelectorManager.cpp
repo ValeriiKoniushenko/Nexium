@@ -13,7 +13,7 @@
 
 using namespace NX;
 
-namespace Core
+namespace NX
 {
     void ObjectSelectorManager::toggleObject(BaseComponent* comp)
     {
@@ -86,4 +86,4 @@ namespace Core
         onChange->trigger(comp, newState);
     }
 
-} // namespace Core
+} // namespace NX

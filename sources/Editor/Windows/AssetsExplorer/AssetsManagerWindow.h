@@ -16,7 +16,7 @@
 #include "RenamePopUpWindow.h"
 #include "ThumbnailFile.h"
 
-namespace Core
+namespace NX
 {
     namespace Gui
     {
@@ -32,7 +32,7 @@ namespace Core
     CLASS();
     class AssetsManagerWindowEWC : public BaseFloatEWC
     {
-        ECS_DECL(AssetsManagerWindowEWC, Core::BaseFloatEWC);
+        ECS_DECL(AssetsManagerWindowEWC, NX::BaseFloatEWC);
 
     public:
         constexpr static std::string_view defaultNewFileName = "NewFile";
@@ -142,6 +142,6 @@ namespace Core
         std::filesystem::path _openedPath;
         bool _isCopy = true;
     };
-} // namespace Core
+} // namespace NX
 
 #include "AssetsManagerWindow.generated.h"

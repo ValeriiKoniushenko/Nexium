@@ -39,7 +39,7 @@ namespace
 
 } // namespace
 
-namespace Core
+namespace NX
 {
     ECS_IMPL(AssetsManagerWindowEWC);
 
@@ -901,4 +901,4 @@ namespace Core
         rescanPhysicalDrive(_rootCacheNode);
         GetAssetsManager()->refreshFilesSystem();
     }
-} // namespace Core
+} // namespace NX

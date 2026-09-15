@@ -14,10 +14,10 @@
 #include "Editor/GuiComponents/Misc.h"
 #include "NxSubsystems/Graphics/GraphicsComponents.h"
 
-using namespace Core::Gui;
+using namespace NX::Gui;
 using namespace NX;
 
-namespace Core
+namespace NX
 {
 
     ECS_IMPL(ECSEditorInterleavedGraphicsDataAdapter);
@@ -78,4 +78,4 @@ namespace Core
             _layout.tick(dt);
         }
     }
-} // namespace Core
+} // namespace NX

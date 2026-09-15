@@ -12,10 +12,10 @@
 #include "Editor/GuiComponents/Misc.h"
 #include "NxFundamental/Transformable.h"
 
-using namespace Core::Gui;
+using namespace NX::Gui;
 using namespace NX;
 
-namespace Core
+namespace NX
 {
 
     ECS_IMPL(ECSEditorTransformableAdapter);
@@ -49,4 +49,4 @@ namespace Core
             _layout.tick(dt);
         }
     }
-} // namespace Core
+} // namespace NX

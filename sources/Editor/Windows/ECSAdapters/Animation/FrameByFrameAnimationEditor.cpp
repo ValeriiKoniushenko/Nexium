@@ -30,7 +30,7 @@ namespace
     }
 } // namespace
 
-namespace Core
+namespace NX
 {
     void FrameByFrameAnimationEditor::create(Animation::FrameByFrameAnimator* animator)
     {
@@ -411,4 +411,4 @@ namespace Core
         drawFooter(regionNames, onSave);
         ImGui::EndPopup();
     }
-} // namespace Core
+} // namespace NX

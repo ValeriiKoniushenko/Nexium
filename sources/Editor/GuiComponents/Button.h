@@ -13,12 +13,12 @@
 #include "NxSubsystems/AssetsManager/TextureAsset.h"
 #include "Widget.h"
 
-namespace Core::Gui
+namespace NX::Gui
 {
     CLASS();
     class Button : public Widget
     {
-        ECS_DECL(Button, Core::Gui::Widget);
+        ECS_DECL(Button, NX::Gui::Widget);
 
     public:
         void setButtonColor(const Color4& value);
@@ -131,7 +131,7 @@ namespace Core::Gui
     CLASS();
     class ToggleButton : public Button
     {
-        ECS_DECL(ToggleButton, Core::Gui::Button);
+        ECS_DECL(ToggleButton, NX::Gui::Button);
 
     public: // Delegates
         /// will be called when toggled
@@ -156,7 +156,7 @@ namespace Core::Gui
     CLASS();
     class ImageButton : public Button
     {
-        ECS_DECL(ImageButton, Core::Gui::Button);
+        ECS_DECL(ImageButton, NX::Gui::Button);
 
     public:
         void setImage(const NX::NXTexture& texture) { _texture = texture; }
@@ -177,6 +177,6 @@ namespace Core::Gui
         std::optional<glm::vec2> _paddingSize;
         NX::NXTexture _texture;
     };
-} // namespace Core::Gui
+} // namespace NX::Gui
 
 #include "Button.generated.h" // added by the code generator. Better don't move it.

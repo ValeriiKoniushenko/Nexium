@@ -9,7 +9,7 @@
 
 #include "CheckBox.h"
 
-namespace Core::Gui
+namespace NX::Gui
 {
     ECS_IMPL(CheckBox);
 
@@ -54,4 +54,4 @@ namespace Core::Gui
 
         _size = glm::vec2(ImGui::GetFrameHeight());
     }
-} // namespace Core::Gui
+} // namespace NX::Gui

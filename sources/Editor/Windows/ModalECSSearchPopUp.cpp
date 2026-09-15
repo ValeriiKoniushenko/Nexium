@@ -20,7 +20,7 @@
 
 using namespace NX;
 
-namespace Core
+namespace NX
 {
     ECS_IMPL(ModalECSSearchPopUpEWC);
 
@@ -232,4 +232,4 @@ namespace Core
     {
         closeWindow();
     }
-} // namespace Core
+} // namespace NX

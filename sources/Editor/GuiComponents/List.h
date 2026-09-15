@@ -12,12 +12,12 @@
 #include "Core/Delegate.h"
 #include "Widget.h"
 
-namespace Core::Gui
+namespace NX::Gui
 {
     CLASS();
     class BaseList : public Widget
     {
-        ECS_DECL(BaseList, Core::Gui::Widget);
+        ECS_DECL(BaseList, NX::Gui::Widget);
 
     public:
         [[nodiscard]] glm::vec2 getRealSize() const;
@@ -63,7 +63,7 @@ namespace Core::Gui
     CLASS();
     class ListView : public BaseList
     {
-        ECS_DECL(ListView, Core::Gui::BaseList);
+        ECS_DECL(ListView, NX::Gui::BaseList);
 
     public:
         void setData(std::vector<StringAtom>&& items) { _items = std::move(items); }
@@ -91,7 +91,7 @@ namespace Core::Gui
     CLASS();
     class ListModelBased : public BaseList
     {
-        ECS_DECL(ListModelBased, Core::Gui::BaseList);
+        ECS_DECL(ListModelBased, NX::Gui::BaseList);
 
     public:
         /// Set your own data provider. Just a function that will do a few things:
@@ -134,6 +134,6 @@ namespace Core::Gui
         const void* _currentData = nullptr;
     };
 
-} // namespace Core::Gui
+} // namespace NX::Gui
 
 #include "List.generated.h" // added by the code generator. Better don't move it.

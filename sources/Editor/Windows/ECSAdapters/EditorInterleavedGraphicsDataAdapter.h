@@ -13,12 +13,12 @@
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "Editor/Windows/ObjectPropertiesWindow.h"
 
-namespace Core
+namespace NX
 {
     CLASS();
     class ECSEditorInterleavedGraphicsDataAdapter : public ECSEditorMimeAdapter
     {
-        ECS_DECL(ECSEditorInterleavedGraphicsDataAdapter, Core::ECSEditorMimeAdapter);
+        ECS_DECL(ECSEditorInterleavedGraphicsDataAdapter, NX::ECSEditorMimeAdapter);
 
     public:
         [[nodiscard]] bool canWorkWith(BaseComponent* component) const override;
@@ -40,6 +40,6 @@ namespace Core
         DelegateSubscriberPoolGuard _subscriptionPool;
     };
 
-} // namespace Core
+} // namespace NX
 
 #include "EditorInterleavedGraphicsDataAdapter.generated.h" // added by the code generator. Better don't move it.

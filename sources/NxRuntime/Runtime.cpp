@@ -38,7 +38,7 @@ namespace NX
 
     void Runtime::runMainLoop()
     {
-        Core::FPSCounter fps;
+        NX::FPSCounter fps;
         fps.start();
         Core::FStopwatch clock;
 

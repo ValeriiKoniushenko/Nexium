@@ -15,7 +15,7 @@
 
 #include <unordered_map>
 
-namespace Core
+namespace NX
 {
     namespace Gui
     {
@@ -25,7 +25,7 @@ namespace Core
     CLASS();
     class ECSEditorFrameByFrameAnimationAdapter : public ECSEditorMimeAdapter
     {
-        ECS_DECL(ECSEditorFrameByFrameAnimationAdapter, Core::ECSEditorMimeAdapter);
+        ECS_DECL(ECSEditorFrameByFrameAnimationAdapter, NX::ECSEditorMimeAdapter);
 
     public:
         [[nodiscard]] bool canWorkWith(BaseComponent* component) const override;
@@ -45,6 +45,6 @@ namespace Core
         FrameByFrameAnimationEditor _animationEditor;
         std::unordered_map<StringAtom, FrameByFrameAnimationEditor::PreviewState> _previewStates;
     };
-} // namespace Core
+} // namespace NX
 
 #include "ECSEditorFrameByFrameAnimationAdapter.generated.h"

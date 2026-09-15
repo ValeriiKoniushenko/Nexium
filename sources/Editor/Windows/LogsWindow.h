@@ -12,7 +12,7 @@
 #include "BaseWindow.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 
-namespace Core
+namespace NX
 {
     namespace Gui
     {
@@ -24,7 +24,7 @@ namespace Core
     CLASS();
     class LogsWindowEWC : public BaseFloatEWC
     {
-        ECS_DECL_NO_SER(LogsWindowEWC, Core::BaseFloatEWC);
+        ECS_DECL_NO_SER(LogsWindowEWC, NX::BaseFloatEWC);
 
     public:
         struct LogLine
@@ -97,6 +97,6 @@ namespace Core
         bool _needScroll = false;
         std::deque<LogLine> _logs;
     };
-} // namespace Core
+} // namespace NX
 
 #include "LogsWindow.generated.h" // added by the code generator. Better don't move it.

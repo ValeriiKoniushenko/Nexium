@@ -22,7 +22,7 @@
 
 using namespace NX;
 
-namespace Core
+namespace NX
 {
     ECS_IMPL(SceneTreeWindowEWC);
 
@@ -288,4 +288,4 @@ namespace Core
             ModalAssetsSearchPopUpEWC::Open("Choose a scene asset"_dyn);
         }
     }
-} // namespace Core
+} // namespace NX

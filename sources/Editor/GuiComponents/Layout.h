@@ -11,12 +11,12 @@
 
 #include "Widget.h"
 
-namespace Core::Gui
+namespace NX::Gui
 {
     CLASS();
     class Layout : public Widget
     {
-        ECS_DECL(Layout, Core::Gui::Widget);
+        ECS_DECL(Layout, NX::Gui::Widget);
 
     public:
         void setHorizontalAlign(Align align);
@@ -52,11 +52,11 @@ namespace Core::Gui
         glm::vec4 _paddings = glm::vec4{};
 
         FIELD();
-        Core::Gui::Align _align = Core::Gui::Align::None;
+        NX::Gui::Align _align = NX::Gui::Align::None;
 
         FIELD();
-        Core::Gui::Align _secondAlign = Core::Gui::Align::None;
+        NX::Gui::Align _secondAlign = NX::Gui::Align::None;
     };
-} // namespace Core::Gui
+} // namespace NX::Gui
 
 #include "Layout.generated.h" // added by the code generator. Better don't move it.

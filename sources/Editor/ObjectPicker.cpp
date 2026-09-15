@@ -24,7 +24,7 @@
 using namespace NX;
 using namespace Platform;
 
-namespace Core
+namespace NX
 {
     void BaseObjectPicker::update(Scene& scene)
     {
@@ -263,4 +263,4 @@ namespace Core
                 });
         }
     }
-} // namespace Core
+} // namespace NX

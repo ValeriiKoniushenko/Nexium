@@ -52,7 +52,7 @@ namespace
     }
 } // namespace
 
-namespace Core
+namespace NX
 {
 
     ThumbnailFile::ThumbnailFile(const ThumbnailActions& actions, const ImTextureID texture,
@@ -302,4 +302,4 @@ namespace Core
         }
     }
 
-} // namespace Core
+} // namespace NX

@@ -11,7 +11,7 @@
 
 #include "ImGui/imgui_internal.h"
 
-namespace Core::Gui
+namespace NX::Gui
 {
     bool CollapsingHeader(const char* label, ImGuiTreeNodeFlags flags, float paddings)
     {
@@ -27,4 +27,4 @@ namespace Core::Gui
         ImGuiID id = window->GetID(label);
         return TreeNodeBehavior(id, flags | ImGuiTreeNodeFlags_CollapsingHeader, label);
     }
-} // namespace Core::Gui
+} // namespace NX::Gui

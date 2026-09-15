@@ -15,10 +15,10 @@
 #include "Editor/GuiComponents/VecInput.h"
 #include "NxWorld/Entities/Actor.h"
 
-using namespace Core::Gui;
+using namespace NX::Gui;
 using namespace NX;
 
-namespace Core
+namespace NX
 {
 
     ECS_IMPL(ECSEditorActorAdapter);
@@ -132,4 +132,4 @@ namespace Core
             _actorLayout.tick(dt);
         }
     }
-} // namespace Core
+} // namespace NX

@@ -15,7 +15,7 @@
 
 #include <array>
 
-namespace Core
+namespace NX
 {
     namespace Gui
     {
@@ -30,7 +30,7 @@ namespace Core
         CLASS();
         class BaseListItem : public Gui::HorizontalLayout
         {
-            ECS_DECL(BaseListItem, Core::Gui::HorizontalLayout);
+            ECS_DECL(BaseListItem, NX::Gui::HorizontalLayout);
 
         public:
             [[nodiscard]] virtual bool containsString(const StringAtom& str);
@@ -49,7 +49,7 @@ namespace Core
         CLASS();
         class KeymapItem : public BaseListItem
         {
-            ECS_DECL(KeymapItem, Core::Internal::BaseListItem);
+            ECS_DECL(KeymapItem, NX::Internal::BaseListItem);
 
         public:
             void setButtonName(const StringAtom& label);
@@ -69,7 +69,7 @@ namespace Core
         CLASS();
         class ColorItem : public BaseListItem
         {
-            ECS_DECL(ColorItem, Core::Internal::BaseListItem);
+            ECS_DECL(ColorItem, NX::Internal::BaseListItem);
 
         public:
             void setReadOnly(bool value = true) override;
@@ -88,7 +88,7 @@ namespace Core
     CLASS();
     class EditorSettingsEWC : public BaseFloatEWC
     {
-        ECS_DECL(EditorSettingsEWC, Core::BaseFloatEWC);
+        ECS_DECL(EditorSettingsEWC, NX::BaseFloatEWC);
 
     public:
         [[nodiscard]] const char* getIcon() override;
@@ -119,6 +119,6 @@ namespace Core
         Menu _currentMenu = static_cast<Menu>(0);
         int _defaultTreeNodeFlags = ImGuiTreeNodeFlags_SpanAvailWidth;
     };
-} // namespace Core
+} // namespace NX
 
 #include "EditorSettings.generated.h" // added by the code generator. Better don't move it.

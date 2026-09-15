@@ -13,7 +13,7 @@
 #include "Editor/Windows/Editors/NxEditorBaseEditor.h"
 #include "NxSubsystems/AssetsManager/TextureAsset.h"
 
-namespace Core
+namespace NX
 {
     namespace Gui
     {
@@ -33,7 +33,7 @@ namespace Core
     CLASS();
     class NxTextureEditorEWC : public NxEditorBaseEditorEWC
     {
-        ECS_DECL(NxTextureEditorEWC, Core::NxEditorBaseEditorEWC);
+        ECS_DECL(NxTextureEditorEWC, NX::NxEditorBaseEditorEWC);
 
     public:
         [[nodiscard]] const char* getIcon() override;
@@ -63,6 +63,6 @@ namespace Core
 
         NX::NXTexture _targetAsset;
     };
-} // namespace Core
+} // namespace NX
 
 #include "NxTextureEditor.generated.h" // added by the code generator. Better don't move it.

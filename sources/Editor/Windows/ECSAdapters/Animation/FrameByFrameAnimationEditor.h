@@ -19,7 +19,7 @@ namespace NX::Animation
     class FrameByFrameAnimator;
 }
 
-namespace Core
+namespace NX
 {
     class FrameByFrameAnimationEditor
     {
@@ -71,4 +71,4 @@ namespace Core
         int _sheetSelectedRow = 1;
         PreviewState _preview;
     };
-} // namespace Core
+} // namespace NX

@@ -12,7 +12,7 @@
 #include "BaseWindow.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 
-namespace Core
+namespace NX
 {
     namespace Gui
     {
@@ -36,7 +36,7 @@ namespace Core
     CLASS();
     class WorldSettingsEWC : public BaseFloatEWC
     {
-        ECS_DECL(WorldSettingsEWC, Core::BaseFloatEWC);
+        ECS_DECL(WorldSettingsEWC, NX::BaseFloatEWC);
 
     public:
         [[nodiscard]] const char* getIcon() override;
@@ -66,6 +66,6 @@ namespace Core
         Gui::FloatInput* _specularPow = nullptr;
         Gui::Float3Input* _sunDirection = nullptr;
     };
-} // namespace Core
+} // namespace NX
 
 #include "WorldSettings.generated.h"

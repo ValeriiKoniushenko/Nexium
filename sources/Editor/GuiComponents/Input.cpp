@@ -11,7 +11,7 @@
 
 #include "ImGui/imgui_internal.h"
 
-namespace Core::Gui
+namespace NX::Gui
 {
     ECS_IMPL(BaseInput);
     ECS_IMPL(TextInput);
@@ -186,4 +186,4 @@ namespace Core::Gui
         ImGui::PopStyleColor(pushedStyles);
     }
 
-} // namespace Core::Gui
+} // namespace NX::Gui

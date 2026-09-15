@@ -37,7 +37,7 @@ namespace
     }
 } // namespace
 
-namespace Core
+namespace NX
 {
     ECS_IMPL(RenamePopUpWindow);
 
@@ -264,4 +264,4 @@ namespace Core
                                                      != std::string_view::npos;
                                    });
     }
-} // namespace Core
+} // namespace NX

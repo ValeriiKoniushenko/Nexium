@@ -259,6 +259,8 @@ void* _tryAllocateECSObject(const T* data)
 
 namespace NX
 {
+    using namespace Core;
+
     class BaseComponent;
 
     // ========================= CONCEPTS =========================

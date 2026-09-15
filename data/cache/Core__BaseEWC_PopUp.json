@@ -3,5 +3,5 @@
     "_isEnabled": true,
     "_name": "PopUp",
     "_noTick": false,
-    "_type": "Core::BaseEWC"
+    "_type": "NX::BaseEWC"
 }

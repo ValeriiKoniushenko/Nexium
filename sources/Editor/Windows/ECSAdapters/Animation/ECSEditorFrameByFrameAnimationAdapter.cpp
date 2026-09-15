@@ -18,7 +18,7 @@
 
 using namespace NX;
 
-namespace Core
+namespace NX
 {
     ECS_IMPL(ECSEditorFrameByFrameAnimationAdapter);
 
@@ -106,4 +106,4 @@ namespace Core
         }
         _animationEditor.draw(dt, [this] { makeParentDirty(); });
     }
-} // namespace Core
+} // namespace NX

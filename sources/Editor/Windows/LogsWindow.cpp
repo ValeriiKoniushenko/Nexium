@@ -18,7 +18,7 @@
 
 using namespace NX;
 
-namespace Core
+namespace NX
 {
     ECS_IMPL_NO_SER(LogsWindowEWC);
 
@@ -271,4 +271,4 @@ namespace Core
     {
     }
 
-} // namespace Core
+} // namespace NX

@@ -28,5 +28,5 @@
         "height": 979.0,
         "width": 598.0
     },
-    "_type": "Core::ShaderManagerEWC"
+    "_type": "NX::ShaderManagerEWC"
 }

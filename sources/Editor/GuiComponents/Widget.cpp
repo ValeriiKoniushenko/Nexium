@@ -14,7 +14,7 @@
 #include "Platform/Keyboard.h"
 #include "Platform/Mouse.h"
 
-namespace Core::Gui
+namespace NX::Gui
 {
     ECS_IMPL(Widget);
 
@@ -149,7 +149,7 @@ namespace Core::Gui
         return *this;
     }
 
-} // namespace Core::Gui
+} // namespace NX::Gui
 
 namespace ImGui
 {

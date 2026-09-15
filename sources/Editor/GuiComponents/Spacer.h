@@ -11,12 +11,12 @@
 
 #include "Widget.h"
 
-namespace Core::Gui
+namespace NX::Gui
 {
     CLASS();
     class Spacer : public Widget
     {
-        ECS_DECL(Spacer, Core::Gui::Widget);
+        ECS_DECL(Spacer, NX::Gui::Widget);
 
     public:
         [[nodiscard]] glm::vec2 getRealSize() const;
@@ -41,6 +41,6 @@ namespace Core::Gui
         FIELD();
         glm::vec2 _size = glm::vec2{};
     };
-} // namespace Core::Gui
+} // namespace NX::Gui
 
 #include "Spacer.generated.h" // added by the code generator. Better don't move it.

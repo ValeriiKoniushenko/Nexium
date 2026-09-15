@@ -15,7 +15,7 @@
 
 using namespace NX;
 
-namespace Core
+namespace NX
 {
     ECS_IMPL(NxEditorBaseEditorEWC);
 
@@ -231,4 +231,4 @@ namespace Core
         _enableTree = enable;
     }
 
-} // namespace Core
+} // namespace NX

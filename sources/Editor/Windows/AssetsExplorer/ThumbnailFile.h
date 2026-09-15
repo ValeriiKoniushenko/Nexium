@@ -15,7 +15,7 @@
 #include <functional>
 #include <string>
 
-namespace Core
+namespace NX
 {
 
     struct ThumbnailActions
@@ -63,4 +63,4 @@ namespace Core
 
         ThumbnailActions _actions;
     };
-} // namespace Core
+} // namespace NX

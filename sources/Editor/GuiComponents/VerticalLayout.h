@@ -11,12 +11,12 @@
 
 #include "Layout.h"
 
-namespace Core::Gui
+namespace NX::Gui
 {
     CLASS();
     class VerticalLayout : public Layout
     {
-        ECS_DECL_NO_CNSTR(VerticalLayout, Core::Gui::Layout);
+        ECS_DECL_NO_CNSTR(VerticalLayout, NX::Gui::Layout);
 
     public:
         explicit VerticalLayout(const StringAtom& name = "");
@@ -65,6 +65,6 @@ namespace Core::Gui
         FIELD();
         std::optional<float> _spacing;
     };
-} // namespace Core::Gui
+} // namespace NX::Gui
 
 #include "VerticalLayout.generated.h" // added by the code generator. Better don't move it.

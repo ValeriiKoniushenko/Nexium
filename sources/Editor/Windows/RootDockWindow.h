@@ -11,13 +11,13 @@
 
 #include "BaseWindow.h"
 
-namespace Core
+namespace NX
 {
 
     CLASS();
     class RootDockWindowEWC : public BaseEWC
     {
-        ECS_DECL(RootDockWindowEWC, Core::BaseEWC);
+        ECS_DECL(RootDockWindowEWC, NX::BaseEWC);
 
     public:
         [[nodiscard]] std::vector<std::string> getCurrentWindowsList() const;
@@ -32,6 +32,6 @@ namespace Core
 
         void endWindowDraw() override;
     };
-} // namespace Core
+} // namespace NX
 
 #include "RootDockWindow.generated.h" // added by the code generator. Better don't move it.

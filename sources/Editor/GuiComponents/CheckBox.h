@@ -12,12 +12,12 @@
 #include "Core/Delegate.h"
 #include "Widget.h"
 
-namespace Core::Gui
+namespace NX::Gui
 {
     CLASS();
     class CheckBox : public Widget
     {
-        ECS_DECL(CheckBox, Core::Gui::Widget);
+        ECS_DECL(CheckBox, NX::Gui::Widget);
 
     public:
         [[nodiscard]] glm::vec2 getRealSize() const;
@@ -46,6 +46,6 @@ namespace Core::Gui
         FIELD();
         bool _currentValue = false;
     };
-} // namespace Core::Gui
+} // namespace NX::Gui
 
 #include "CheckBox.generated.h" // added by the code generator. Better don't move it.

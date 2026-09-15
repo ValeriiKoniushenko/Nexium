@@ -14,7 +14,7 @@
 #include "Editor/Windows/NxECSBasedEditor.h"
 #include "assimp/postprocess.h"
 
-namespace Core
+namespace NX
 {
     namespace Gui
     {
@@ -55,7 +55,7 @@ namespace Core
     CLASS();
     class ECSEditorStaticMeshBundleAdapter : public ECSEditorMimeAdapter
     {
-        ECS_DECL(ECSEditorStaticMeshBundleAdapter, Core::ECSEditorMimeAdapter);
+        ECS_DECL(ECSEditorStaticMeshBundleAdapter, NX::ECSEditorMimeAdapter);
 
     public:
         struct StreamData
@@ -95,6 +95,6 @@ namespace Core
         int _postProcessFlags = 0;
     };
 
-} // namespace Core
+} // namespace NX
 
 #include "EditorStaticMeshBundleAdapter.generated.h" // added by the code generator. Better don't move it.
