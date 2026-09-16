@@ -38,12 +38,21 @@ int main() {
     target_link_libraries(Nexium_CheckInput PRIVATE Nexium::Platform::Input)
     target_link_libraries(Nexium_CheckRawBackend PRIVATE Nexium::RawBackend)
 
+    add_custom_target(Nexium_CheckGeneratedHeaders
+        COMMAND "${CMAKE_COMMAND}"
+            "-DNEXIUM_SOURCE_DIR=${PROJECT_SOURCE_DIR}"
+            "-DCHECK_DIR=${PROJECT_BINARY_DIR}/cmake-generated-header-checks"
+            -P "${PROJECT_SOURCE_DIR}/tests/cmake/CheckGeneratedHeaders.cmake"
+        VERBATIM
+    )
+
     add_custom_target(Nexium_CheckLayers
         COMMAND "$<TARGET_FILE:Nexium_CheckFoundation>"
         COMMAND "$<TARGET_FILE:Nexium_CheckGraphics>"
         COMMAND "$<TARGET_FILE:Nexium_CheckInput>"
         COMMAND "$<TARGET_FILE:Nexium_CheckRawBackend>"
         DEPENDS Nexium_CheckFoundation Nexium_CheckGraphics Nexium_CheckInput Nexium_CheckRawBackend
+            Nexium_CheckGeneratedHeaders
         COMMENT "Checking public layer dependencies and runtime linkage"
         VERBATIM
     )

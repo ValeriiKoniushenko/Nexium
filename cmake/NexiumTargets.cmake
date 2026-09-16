@@ -25,10 +25,14 @@ function(nexium_add_public_headers target)
     set(headers)
     foreach(header IN LISTS ARGN)
         set(header_path "${PROJECT_SOURCE_DIR}/sources/${header}")
-        list(APPEND headers "${header_path}")
         if(header MATCHES "\\.generated\\.h$")
+            # JRM creates these during the build, after CMake configuration.
+            if(NOT EXISTS "${header_path}")
+                continue()
+            endif()
             set_source_files_properties(${header_path} PROPERTIES SKIP_LINTING TRUE)
         endif()
+        list(APPEND headers "${header_path}")
     endforeach()
 
     target_sources(${target}

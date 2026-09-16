@@ -11,11 +11,12 @@ file(MAKE_DIRECTORY "${_state_dir}")
 file(LOCK "${_state_dir}/lock" GUARD PROCESS TIMEOUT 120)
 
 file(SHA256 "${JRM_EXECUTABLE}" _tool_hash)
+file(SHA256 "${CMAKE_CURRENT_LIST_FILE}" _runner_hash)
 set(_config_hash "")
 if(EXISTS "${PROJECT_ROOT}/.jrm/config.yaml")
     file(SHA256 "${PROJECT_ROOT}/.jrm/config.yaml" _config_hash)
 endif()
-set(_signature "${_tool_hash}\n${_config_hash}\n")
+set(_signature "${_tool_hash}\n${_config_hash}\n${_runner_hash}\n")
 set(_previous_signature "")
 if(EXISTS "${_state_dir}/signature")
     file(READ "${_state_dir}/signature" _previous_signature)
@@ -54,9 +55,9 @@ if(NOT _result STREQUAL "0")
 endif()
 
 file(GLOB_RECURSE _outputs RELATIVE "${PROJECT_ROOT}"
-    "${PROJECT_ROOT}/sources/*.generated.h"
-    "${PROJECT_ROOT}/sources/*.generated.inl"
-    "${PROJECT_ROOT}/sources/*.generated.cpp"
+    "${PROJECT_ROOT}/sources/*.generated.*"
+    "${PROJECT_ROOT}/tests/*.generated.*"
+    "${PROJECT_ROOT}/game-example/*.generated.*"
 )
 list(JOIN _outputs "\n" _output_manifest)
 file(WRITE "${_state_dir}/outputs" "${_output_manifest}\n")
