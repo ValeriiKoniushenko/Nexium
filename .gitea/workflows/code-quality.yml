@@ -1,54 +1,14 @@
-name: Build matrix
-
-on:
-  push:
-
+name: Clang Debug
+on: push
 jobs:
   build:
-    name: ${{ matrix.compiler }} / ${{ matrix.build_type }}
     runs-on: linux
     container:
       image: cpp-ci:latest
-    timeout-minutes: 45
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - compiler: GCC
-            cc: gcc
-            cxx: g++
-            build_type: Debug
-          - compiler: GCC
-            cc: gcc
-            cxx: g++
-            build_type: Release
-          - compiler: Clang
-            cc: clang
-            cxx: clang++
-            build_type: Debug
-          - compiler: Clang
-            cc: clang
-            cxx: clang++
-            build_type: Release
-
-    env:
-      CC: ${{ matrix.cc }}
-      CXX: ${{ matrix.cxx }}
-      BUILD_DIR: build/${{ matrix.compiler }}-${{ matrix.build_type }}
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v3
         with:
           submodules: recursive
-
-      - name: Configure CMake (${{ matrix.build_type }})
-        shell: bash
-        run: |
-          time cmake -S . -B "$BUILD_DIR" -G Ninja \
-            -DCMAKE_BUILD_TYPE="${{ matrix.build_type }}"
-
-      - name: Build and show link commands
-        shell: bash
-        run: |
-          time cmake --build "$BUILD_DIR" --parallel --verbose
+      - run: |
+          CC=clang CXX=clang++ cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug
+          cmake --build build --parallel
