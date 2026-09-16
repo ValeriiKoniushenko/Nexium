@@ -8,7 +8,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          submodules: recursive
+          submodules: true
+          fetch-depth: 1
       - run: |
           CC=clang CXX=clang++ cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug
           cmake --build build --parallel
