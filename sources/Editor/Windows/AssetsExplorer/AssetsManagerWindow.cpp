@@ -10,11 +10,16 @@
 #include "AssetsManagerWindow.h"
 
 #include "../ModalCreateBlueprint.h"
+#include "Editor/EditorIntegration.h"
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/Spacer.h"
 #include "Editor/IconsFontAwesome.h"
+#include "Editor/Windows/Editors/NxTextureEditor.h"
+#include "Editor/Windows/Editors/TextEditor.h"
+#include "Editor/Windows/ImageViewer.h"
 #include "Editor/Windows/ModalPopUp.h"
+#include "Editor/Windows/NxECSBasedEditor.h"
 #include "Foundation/Configs.h"
 #include "NxWorld/Framework/GameInstance.h"
 #include "RenamePopUpWindow.h"
@@ -46,6 +51,60 @@ namespace NX
     const char* AssetsManagerWindowEWC::getIcon()
     {
         return ICON_FA_FOLDER;
+    }
+
+    void AssetsManagerWindowEWC::TryToOpenFile(const std::filesystem::directory_entry& entry)
+    {
+        if (!entry.is_regular_file())
+        {
+            return;
+        }
+
+        auto* editor = GetEditor();
+        if (!editor)
+        {
+            return;
+        }
+
+        const auto type = AssetsManager::GetNodeType(entry);
+        const auto path = Core::StringAtom::Intern(entry.path().generic_string());
+        if (type == NodeType::Code || type == NodeType::Default)
+        {
+            editor->showWindow<TextEditorEWC>(".*"_atom, path);
+        }
+        else if (type == NodeType::Image)
+        {
+            editor->showWindow<ImageViewerEWC>(".*"_atom, path);
+        }
+        else if (type == NodeType::NxFile)
+        {
+            TryToOpenNxFile(entry);
+        }
+    }
+
+    void AssetsManagerWindowEWC::TryToOpenNxFile(const std::filesystem::directory_entry& entry)
+    {
+        if (AssetsManager::GetNodeType(entry) != NodeType::NxFile)
+        {
+            return;
+        }
+
+        auto* editor = GetEditor();
+        if (!editor)
+        {
+            return;
+        }
+
+        const auto path = Core::StringAtom::Intern(entry.path().generic_string());
+        const auto ext = entry.path().extension().generic_string();
+        if (ext == ECSAsset::fileExtension)
+        {
+            editor->showWindow<NxECSBasedEditorEWC>(".*"_atom, path);
+        }
+        else if (ext == NXTexture::AssetT::fileExtension)
+        {
+            editor->showWindow<NxTextureEditorEWC>(".*"_atom, path);
+        }
     }
 
     void AssetsManagerWindowEWC::tryOpenParentDir()

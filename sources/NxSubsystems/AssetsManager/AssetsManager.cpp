@@ -504,54 +504,6 @@ namespace NX
         return true;
     }
 
-    void AssetsManager::TryToOpenFile(const fs::directory_entry& entry)
-    {
-        if (!entry.is_regular_file())
-        {
-            return;
-        }
-
-        auto type = GetNodeType(entry);
-
-        Assert(false, "Not implemented functionality below (commented code)");
-        // if (type == NodeType::Code || type == NodeType::Default)
-        // {
-        //     gGameInstance->gameEditor.showWindow<TextEditorEWC>(
-        //         ".*", entry.path().generic_string().data());
-        // }
-        // else if (type == NodeType::Image)
-        // {
-        //     gGameInstance->gameEditor.showWindow<ImageViewerEWC>(
-        //         ".*", entry.path().generic_string().data());
-        // }
-        // else if (type == NodeType::NxFile)
-        // {
-        //     TryToOpenNxFile(entry);
-        // }
-    }
-
-    void AssetsManager::TryToOpenNxFile(const fs::directory_entry& entry)
-    {
-        if (GetNodeType(entry) != NodeType::NxFile)
-        {
-            return;
-        }
-
-        Assert(false, "Not implemented functionality below (commented code)");
-        // const auto path = entry.path();
-        // const auto ext = path.extension().generic_string();
-        // if (ext == NXECSAsset::ValueT::fileExtension)
-        // {
-        //     gGameInstance->gameEditor.showWindow<NxECSBasedEditorEWC>(".*",
-        //                                                               path.generic_string().data());
-        // }
-        // else if (ext == NXTexture::AssetT::fileExtension)
-        // {
-        //     gGameInstance->gameEditor.showWindow<NxTextureEditorEWC>(".*",
-        //                                                              path.generic_string().data());
-        // }
-    }
-
     AssetsManager::NodeType AssetsManager::GetNodeType(const fs::directory_entry& entry)
     {
         if (entry.is_directory())

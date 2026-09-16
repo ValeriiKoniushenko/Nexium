@@ -38,6 +38,9 @@ namespace NX
         constexpr static std::string_view defaultNewFileName = "NewFile";
 
     public:
+        static void TryToOpenFile(const std::filesystem::directory_entry& entry);
+        static void TryToOpenNxFile(const std::filesystem::directory_entry& entry);
+
         void tryOpenParentDir();
         void tryOpenPath(const std::filesystem::path& p);
 

@@ -9,11 +9,11 @@
 
 #include "ThumbnailFile.h"
 
+#include "AssetsManagerWindow.h"
 #include "Editor/EditorIntegration.h"
 #include "Editor/IconsFontAwesome.h"
 #include "Editor/Windows/Editors/TextEditor.h"
 #include "Editor/Windows/ModalPopUp.h"
-#include "NxSubsystems/AssetsManager/AssetsManager.h"
 #include "NxWorld/Framework/GameInstance.h"
 
 #include <array>
@@ -111,7 +111,7 @@ namespace NX
             }
             else if (_isRegularFile)
             {
-                AssetsManager::TryToOpenFile(std::filesystem::directory_entry(_path));
+                AssetsManagerWindowEWC::TryToOpenFile(std::filesystem::directory_entry(_path));
             }
         }
     }
