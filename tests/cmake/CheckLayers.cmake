@@ -16,10 +16,14 @@ int main() { return Foundation::Config::Path::projectAbsPath.empty(); }
 int main() { return GL_NO_ERROR != 0; }
 ]=])
     file(WRITE "${_directory}/Input.cpp" [=[
+#include "Foundation/Configs.h"
 #include "Platform/Window.h"
 #include "Platform/Keyboard.h"
 #include "Platform/Mouse.h"
-int main() { return !RInternal::GetClassFieldsAsMap({}).empty(); }
+int main() {
+    return Foundation::Config::Path::projectAbsPath.empty()
+        || !RInternal::GetClassFieldsAsMap({}).empty();
+}
 ]=])
     file(WRITE "${_directory}/RawBackend.cpp" [=[
 #include "RawBackend/Image.h"
