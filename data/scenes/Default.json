@@ -1,5 +1,6 @@
 {
     "_sceneName": "Default",
+    "formatVersion": 1,
     "sceneObjects": [
         {
             "assetType": "NX::SceneObj::Rectangle",
@@ -100,7 +101,7 @@
                 "_atlasName": "santa_walk",
                 "_blendingEnabled": true,
                 "_isEnabled": true,
-                "_textureName": "Walk _1.png"
+                "_textureName": "Walk_8.png"
             }
         },
         {
@@ -114,7 +115,7 @@
                     0.0
                 ],
                 "_position": [
-                    -253.5575408935547,
+                    -227.72096252441406,
                     -200.4466094970703,
                     1434.81787109375
                 ],

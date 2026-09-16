@@ -44,7 +44,6 @@ function(CoreAddCompileOptionsTo Target)
             "$<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:GNU>>:-fno-inline-small-functions>"
             "$<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:GNU>>:-fno-inline-functions-called-once>"
             "$<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:GNU>>:-fno-default-inline>"
-            "$<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:GNU>>:-fno-early-inlining>"
             "$<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:GNU>>:-fno-inline-atomics>"
 
             # Release config
