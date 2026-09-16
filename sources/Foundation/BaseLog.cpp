@@ -58,10 +58,22 @@ namespace Foundation
             .data();
     }
 
-    void BaseLog::criticalThrowingLog(const char* str) const
+    void BaseLog::criticalLogAndThrow(const char* str) const
     {
         criticalLog(str);
         throw std::runtime_error(str);
+    }
+
+    void BaseLog::errorLogAndAssert(const char* str) const
+    {
+        errorLog(str);
+        Assert(false, str);
+    }
+
+    void BaseLog::criticalLogAndAssert(const char* str) const
+    {
+        criticalLog(str);
+        Assert(false, str);
     }
 
     Core::StringAtom BaseLog::getCompleteText(const char* str) const

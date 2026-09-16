@@ -90,7 +90,7 @@ namespace Platform
         glfwSetErrorCallback(glfwErrorCallback);
         if (!glfwInit())
         {
-            criticalThrowingLog("Failed to initialize GLFW!");
+            criticalLogAndThrow("Failed to initialize GLFW!");
         }
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
         // CI runs through Xvfb's software GLX implementation, which supports OpenGL 4.5.
@@ -103,7 +103,7 @@ namespace Platform
         if (!_window)
         {
             destroy();
-            criticalThrowingLog("Failed to create GLFW window");
+            criticalLogAndThrow("Failed to create GLFW window");
         }
 
         debugLog("The window was created");
@@ -116,7 +116,7 @@ namespace Platform
 
         if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
         {
-            criticalThrowingLog("Impossible to initialize GLAD.");
+            criticalLogAndThrow("Impossible to initialize GLAD.");
         }
 
 #if defined(NEXIUM_DEBUG)

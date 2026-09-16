@@ -64,14 +64,14 @@ namespace NX
         auto vertexShaderId = glCreateShader(static_cast<GLenum>(ShaderType::Vertex));
         if (vertexShaderId == 0)
         {
-            criticalThrowingLog("Can't create gl vertex shader.");
+            criticalLogAndThrow("Can't create gl vertex shader.");
         }
         _shaderProgram.setVertexShaderId(vertexShaderId);
 
         auto fragmentShaderId = glCreateShader(static_cast<GLenum>(ShaderType::Fragment));
         if (fragmentShaderId == 0)
         {
-            criticalThrowingLog("Can't create gl fragment shader.");
+            criticalLogAndThrow("Can't create gl fragment shader.");
         }
         _shaderProgram.setFragmentShaderId(fragmentShaderId);
     }

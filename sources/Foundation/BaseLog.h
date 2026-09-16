@@ -116,6 +116,7 @@ namespace Foundation
 
         virtual ~BaseLog() = default;
 
+        // clang-format off
         void infoLog(const char* str) const { pushLog(level::info, str); }
         void infoLog(const std::string& str) const { infoLog(str.c_str()); }
         void infoLog(const Core::StringAtom& str) const { infoLog(str.c_str()); }
@@ -131,10 +132,20 @@ namespace Foundation
         void criticalLog(const Core::StringAtom& str) const { criticalLog(str.c_str()); }
         void criticalLog(const Core::StringFormatter<char>& str) const { criticalLog(str.c_str()); }
 
+        void criticalLogAndAssert(const char* str) const;
+        void criticalLogAndAssert(const std::string& str) const{ criticalLogAndAssert(str.c_str()); }
+        void criticalLogAndAssert(const Core::StringAtom& str) const{ criticalLogAndAssert(str.c_str()); }
+        void criticalLogAndAssert(const Core::StringFormatter<char>& str) const{ criticalLogAndAssert(str.c_str()); }
+
         void errorLog(const char* str) const { pushLog(level::err, str); }
         void errorLog(const std::string& str) const { errorLog(str.c_str()); }
         void errorLog(const Core::StringAtom& str) const { errorLog(str.c_str()); }
         void errorLog(const Core::StringFormatter<char>& str) const { errorLog(str.c_str()); }
+
+        void errorLogAndAssert(const char* str) const;
+        void errorLogAndAssert(const std::string& str) const{ errorLogAndAssert(str.c_str()); }
+        void errorLogAndAssert(const Core::StringAtom& str) const{ errorLogAndAssert(str.c_str()); }
+        void errorLogAndAssert(const Core::StringFormatter<char>& str) const{ errorLogAndAssert(str.c_str()); }
 
         void debugLog(const char* str) const { pushLog(level::debug, str); }
         void debugLog(const std::string& str) const { debugLog(str.c_str()); }
@@ -146,16 +157,12 @@ namespace Foundation
         void traceLog(const Core::StringAtom& str) const { traceLog(str.c_str()); }
         void traceLog(const Core::StringFormatter<char>& str) const { traceLog(str.c_str()); }
 
-        void criticalThrowingLog(const char* str) const;
-        void criticalThrowingLog(const std::string& str) const { criticalThrowingLog(str.c_str()); }
-        void criticalThrowingLog(const Core::StringAtom& s) const
-        {
-            criticalThrowingLog(s.c_str());
-        }
-        void criticalThrowingLog(const Core::StringFormatter<char>& s) const
-        {
-            criticalThrowingLog(s.c_str());
-        }
+        void criticalLogAndThrow(const char* str) const;
+        void criticalLogAndThrow(const std::string& str) const { criticalLogAndThrow(str.c_str()); }
+        void criticalLogAndThrow(const Core::StringAtom& s) const { criticalLogAndThrow(s.c_str()); }
+        void criticalLogAndThrow(const Core::StringFormatter<char>& s) const { criticalLogAndThrow(s.c_str()); }
+
+        // clang-format on
 
         void pushLog(level l, const char* str) const;
 

@@ -102,7 +102,7 @@ namespace NX
         {
             if (isEmpty())
             {
-                criticalThrowingLog("Impossible to use not-created shader program.");
+                criticalLogAndThrow("Impossible to use not-created shader program.");
             }
             glUseProgram(_shaderProgramId);
         }

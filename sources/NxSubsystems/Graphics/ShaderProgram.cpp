@@ -68,12 +68,12 @@ namespace NX
 
         if (_vertexShaderId == 0)
         {
-            criticalThrowingLog("Vertex shader is empty. Impossible to create the shader program."_f
+            criticalLogAndThrow("Vertex shader is empty. Impossible to create the shader program."_f
                                 << shaderName);
         }
         if (_fragmentShaderId == 0)
         {
-            criticalThrowingLog(
+            criticalLogAndThrow(
                 "Fragment shader is empty. Impossible to create the shader program."_f
                 << shaderName);
         }
@@ -81,7 +81,7 @@ namespace NX
         _shaderProgramId = glCreateProgram();
         if (_shaderProgramId == 0)
         {
-            criticalThrowingLog("glCreateProgram to create a shader program was failed for '{}'"_f
+            criticalLogAndThrow("glCreateProgram to create a shader program was failed for '{}'"_f
                                 << shaderName);
         }
 
@@ -102,7 +102,7 @@ namespace NX
             std::array<char, size> infoLog{};
             glGetProgramInfoLog(_shaderProgramId, static_cast<GLsizei>(infoLog.size()), nullptr,
                                 infoLog.data());
-            criticalThrowingLog("Shader program compilation error: {}"_f << infoLog.data());
+            criticalLogAndThrow("Shader program compilation error: {}"_f << infoLog.data());
         }
 
         infoLog("The shader program '{}' linked successfully."_f << shaderName);
