@@ -19,6 +19,7 @@ jobs:
           echo "Using $JOBS submodule jobs"
           git submodule update --init --recursive --depth 1 --jobs "$JOBS"
 
+      - name: Build (clang)
       - run: |
           CC=clang CXX=clang++ cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug
           cmake --build build --parallel
