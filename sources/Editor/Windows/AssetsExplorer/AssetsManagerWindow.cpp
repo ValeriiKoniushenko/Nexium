@@ -143,7 +143,8 @@ namespace NX
             openPath(_openedPath);
         }
 
-        refresh();
+        // passed 'true' to ignore scan of already scanned filesystem on the Engine start.
+        refresh(true);
     }
 
     void AssetsManagerWindowEWC::onDraw()
@@ -893,12 +894,16 @@ namespace NX
         }
     }
 
-    void AssetsManagerWindowEWC::refresh()
+    void AssetsManagerWindowEWC::refresh(bool skipRefreshFSScan /* = false */)
     {
         _rootCacheNode = {};
 
         _rootCacheNode.path = Foundation::Config::Path::assets;
         rescanPhysicalDrive(_rootCacheNode);
-        GetAssetsManager()->refreshFilesSystem();
+
+        if (!skipRefreshFSScan)
+        {
+            GetAssetsManager()->refreshFilesSystem();
+        }
     }
 } // namespace NX

@@ -79,7 +79,6 @@ namespace NX
 
     GameEditor::~GameEditor()
     {
-        ImGui::DestroyContext();
         destroy();
     }
 
@@ -168,6 +167,7 @@ namespace NX
         {
             ImGui_ImplOpenGL3_Shutdown();
             ImGui_ImplGlfw_Shutdown();
+            ImGui::DestroyContext();
         }
     }
 

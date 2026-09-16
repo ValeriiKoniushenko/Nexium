@@ -93,7 +93,7 @@ namespace NX
         int _commonTreeFlags = ImGuiTreeNodeFlags_OpenOnDoubleClick;
         bool _renderFilesInTreeView = false;
 
-        void refresh();
+        void refresh(bool skipRefreshFSScan = false);
 
     private:
         [[nodiscard]] bool isFiltered(const std::filesystem::path& p) const;

@@ -301,25 +301,27 @@ namespace Platform
         return Platform::getLogger();
     }
 
+    void Window::onPostDeserialize(Window*, const RLogsCollector&)
+    {
+        if (!_window)
+        {
+            return;
+        }
+
+        glfwSetWindowTitle(_window, _title.c_str());
+        glfwRestoreWindow(_window);
+        glfwSetWindowSize(_window, _size.width, _size.height);
+        if (_isMaximized)
+        {
+            glfwMaximizeWindow(_window);
+        }
+        glfwSwapInterval(_swapInterval);
+    }
+
     StringAtom Window::getCacheHash() const
     {
         return "RootWindow"_atom;
     }
-
-    /*void Window::ioFieldsUpdate(DataStream& out)
-    {
-        auto stream = out.dedicatedNesting("Window");
-
-        stream.field("size", _size);
-        stream.field("title", _title);
-
-        bool bIsMaximized
-            = _window ? glfwGetWindowAttrib(_window, GLFW_MAXIMIZED) == GLFW_TRUE : false;
-        stream.field("isMaximized", bIsMaximized);
-        _isMaximized = bIsMaximized;
-
-        stream.field("vSync", _swapInterval);
-    }*/
 
     Window& GetWindow()
     {

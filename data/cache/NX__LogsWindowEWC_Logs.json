@@ -2,21 +2,21 @@
     "_children": null,
     "_innerPosition": [
         16.0,
-        804.0
+        585.0
     ],
     "_innerSize": {
         "height": 199.0,
-        "width": 1208.0
+        "width": 1168.0
     },
     "_isEnabled": true,
     "_isFitContent": false,
     "_levelFilter": [
         {
-            "isActive": true,
+            "isActive": false,
             "level": "trace"
         },
         {
-            "isActive": true,
+            "isActive": false,
             "level": "debug"
         },
         {
@@ -45,15 +45,15 @@
     "_noTick": false,
     "_oldSize": {
         "height": 239.0,
-        "width": 1224.0
+        "width": 1184.0
     },
     "_position": [
         8.0,
-        772.0
+        553.0
     ],
     "_size": {
         "height": 239.0,
-        "width": 1224.0
+        "width": 1184.0
     },
     "_type": "NX::LogsWindowEWC"
 }

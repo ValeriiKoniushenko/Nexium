@@ -134,6 +134,8 @@ namespace Platform
 
         [[nodiscard]] GLFWwindow* getRawWindow() noexcept { return _window; }
 
+        void onPostDeserialize(Window* v, const RLogsCollector& logs);
+
         [[nodiscard]] Core::StringAtom getCacheHash() const override;
         [[nodiscard]] spdlog::logger* getLogger() const override;
         [[nodiscard]] const char* getPrefix() const override { return "Window"; }

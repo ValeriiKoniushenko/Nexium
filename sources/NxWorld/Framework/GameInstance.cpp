@@ -9,6 +9,7 @@
 
 #include "GameInstance.h"
 
+#include "Core/Size.h"
 #include "Foundation/Configs.h"
 #include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimation.h"
 #include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimator.h"
@@ -16,6 +17,7 @@
 #include "NxWorld/PrivateModuleInfo.h"
 #include "NxWorld/Scene/Rectangle.h"
 #include "Platform/Glfw.h"
+#include "Platform/Window.h"
 #include "spdlog/spdlog.h"
 
 std::unique_ptr<NX::GameInstance> gGameInstance = nullptr;
@@ -145,7 +147,9 @@ namespace NX
         {
             _applicationIntegration->readFromCache();
         }
+        GetCacheSystem().tryRead(Platform::GetWindow());
         GetCacheSystem().tryRead(gameScene);
+        GetCacheSystem().tryRead(*GetWorld());
         onInitializeReadCache();
     }
 
@@ -155,9 +159,10 @@ namespace NX
         {
             _applicationIntegration->writeToCache();
         }
-        // world.writeToCache();
 
+        GetCacheSystem().write(*GetWorld());
         GetCacheSystem().write(gameScene);
+        GetCacheSystem().write(Platform::GetWindow());
 
         onSaveAll();
     }
@@ -182,6 +187,14 @@ namespace NX
         {
             const auto size = _applicationIntegration->getRenderSize();
             glViewport(0, 0, size.width, size.height);
+        }
+
+        if (auto* world = GetWorld())
+        {
+            if (world->currentCamera)
+            {
+                world->currentCamera->invalidateCameraMatrices();
+            }
         }
     }
 
