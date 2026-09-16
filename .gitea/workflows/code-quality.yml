@@ -17,7 +17,7 @@ jobs:
           JOBS=$(( $(nproc) / 4 ))
           JOBS=$(( JOBS < 1 ? 1 : JOBS ))
           echo "Using $JOBS submodule jobs"
-          git submodule update --init --depth 1 --jobs "$JOBS"
+          git submodule update --init --recursive --depth 1 --jobs "$JOBS"
 
       - run: |
           CC=clang CXX=clang++ cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug
