@@ -1,24 +1,28 @@
 = Architecture Overview
 :page-role: landing
 
-Nexium is a personal game engine and ImGui editor for a small development team.
-The current architecture separates Foundation, Platform, RawBackend, Fundamental, Subsystems, World, Runtime, and Editor into CMake modules.
-The implementation is migrating toward clearer ownership and dependency boundaries, with 2D as the immediate focus.
+Nexium is a personal game engine and editor for games made by 1–3 developers.
+Games currently live in the engine repository.
+The immediate goal is a useful 2D authoring workflow; optional 3D and game-only delivery can follow.
 
-== Current architecture
+== Reading the architecture
 
-The xref:draft--new-architecture.adoc[migration draft] describes the implemented modules, public targets, ownership, reflection, persistence, and unfinished contracts.
-It replaces the earlier overview based on `GameplaySystem` and an editor owned directly by GameInstance.
+* xref:module-graph.adoc[Module graph] maps source directories, CMake targets, and ownership.
+* xref:lifecycle.adoc[Application lifecycle] describes actual startup, frame processing, and shutdown.
+* xref:ecs-overview.adoc[Component system] explains composition, registration, and reflection.
+* xref:resource-system.adoc[Resources] and xref:file-io.adoc[File I/O] describe asset and scene persistence.
+* xref:input-system.adoc[Input], xref:memory.adoc[Memory], and xref:threading.adoc[Threading] describe current contracts.
+* xref:build:cmake-structure.adoc[CMake infrastructure] records options, code generation, and checks.
+* xref:ue5-alignment.adoc[UE5 comparison] separates useful design patterns from proposed work.
 
-* xref:module-graph.adoc[Module relationships] distinguishes build dependencies from object ownership.
-* xref:lifecycle.adoc[Application Lifecycle] follows startup, frame processing, and shutdown.
-* xref:ecs-overview.adoc[ECS Overview] covers the component system in more detail.
+The xref:architecture-review.adoc[architecture and migration review] summarizes decisions.
+The repository-root `NEW_STRUCTURE.md` holds the dated assessment and unresolved questions.
 
 == Design direction
 
-Prefer focused libraries and explicit ownership over additional framework layers.
-The reflected component tree supports gameplay composition and editor authoring through JustReflectMe.
-Runtime accesses editor behavior through ApplicationIntegration, while Editor depends on Runtime.
+Keep the existing eight layers, focused libraries, JRM reflection, and component trees.
+Make world ownership, editing operations, and simulation lifetimes explicit before expanding the gameplay framework.
+Build dependencies and object ownership are separate graphs.
 
-The current example still links Editor, and several framework classes remain scaffolding.
-The migration draft marks these distinctions so planned capabilities are not mistaken for implemented behavior.
+The current application links Editor and shares one scene between editor and game rendering.
+UE-style class names describe intended roles; they do not establish UE-equivalent behavior.

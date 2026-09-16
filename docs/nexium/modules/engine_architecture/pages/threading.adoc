@@ -1,3 +1,25 @@
 = Threading
 
-For now, it has only one main thread due to active development of the engine foundation. In the future it will (of course) contain the flexible threading system.
+The application runs scene ticks, editor updates, asset requests, and OpenGL rendering on the main thread.
+There is no engine job scheduler or separate render thread in the current architecture.
+
+Asset scanning, JSON reconstruction, shader work, and atlas generation are synchronous.
+Keep OpenGL resource creation/destruction within a valid context.
+Intrusive or asset reference counting alone does not establish thread safety for payloads and registries.
+
+== Build-time concurrency
+
+CMake/Ninja can compile targets in parallel.
+The JRM generator is a separate build tool, not a runtime worker.
+RunJRM serializes generation into shared source-tree outputs using a lock under .cache/nexium-codegen.
+This coordinates writers across build directories; it does not isolate every build from another build's shared-header changes.
+
+== Recommended growth
+
+Keep the main-thread runtime for the initial 2D editor.
+Measure import/load stalls before adding background work.
+If needed, perform file/CPU decoding in workers and publish completed results at an explicit main-thread point;
+GPU uploads and editor/world mutations remain coordinated there.
+
+Define cancellation, document lifetime, and shutdown behavior before allowing jobs to retain scene objects.
+A UE-sized task graph or threaded renderer is not a prerequisite for the current authoring workflow.

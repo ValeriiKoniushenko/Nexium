@@ -1,0 +1,14 @@
+= Build and Toolchain
+
+Nexium uses CMake 3.30+, C++26, and vendored dependencies.
+The current presets use Ninja and build an editor-enabled TemplateGame.
+
+* xref:cmake-structure.adoc[CMake structure] explains targets, options, generation, and checks.
+* xref:ci-cd.adoc[CI] records what the current workflow actually runs.
+* xref:engine_architecture:module-graph.adoc[Module graph] lists the public libraries.
+
+CMake's C++26 feature check verifies compiler mode availability, not support for every C++26 language/library feature.
+Check features on the actual GCC, Clang, and MSVC toolchains before adopting them.
+
+The normal build does not enable tests or benchmarks automatically.
+Standalone game delivery and cross-compiling the JRM tool are not current workflows.

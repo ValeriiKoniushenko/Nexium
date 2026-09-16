@@ -1,180 +1,83 @@
-= Resource system
+= Resource System
 
-The resource system here is straightforward.
-It has a few entry points to work with it:
+AssetsManager belongs to NxSubsystems; asset abstractions belong to NxFundamental.
+NX::GetAssetsManager resolves the manager through gGameInstance.
+There is no separate GetBlueprintManager in the current API.
 
-* `Core::GetAssetsManager()`
-* `Core::GetBlueprintManager()`
+== Indexing and lookup
 
-Both of them are responsible for their own part of logic.
+AssetsManager initially registers Config::Path::data, not only data/assets.
+initScanFileSystem clears its asset indexes and scans registered roots.
+refreshFilesSystem rescans and removes missing entries only when the scan completes successfully.
 
-== Assets manager
+IDs are normalized paths relative to the compiled project root, including extensions.
+For example, an asset under data/assets remains identified with that prefix.
+Extra roots can be registered; outside-project paths can resolve through relative parent segments.
+The current index has no independent stable asset ID or mount namespace.
 
-It's responsible for atomic resources:
+[cols="2,5",options="header"]
+|===
+|Resource |Current path
+|.nx |ECSAsset; metadata and serialized component template.
+|.nxtex |TextureAsset through BaseAsset/AssetRef; GPU texture loads on consumer request.
+|Images |Asset browser classifies image files; TextureAtlas separately reads images for atlas generation.
+|Shaders |ShaderManager scans/configures shaders through its own service.
+|Skyboxes |Types and drawing exist, but AssetsManager::getSkybox is a stub and scan registration is commented out.
+|3D models |Optional mesh/import functionality; not a universal resource registry.
+|===
 
-* Images: .png, .jpg, .jpeg, etc - Fonts: .ttf
-* Fonts: .ttf, .otf
-* 3D models: .obj, .fbx, .stl, etc
-* ....
+File-browser classification does not imply loader support for every displayed extension.
+Atlas generation is synchronous and belongs to AssetsManager's current initialization/resource workflow.
 
-So, it represents only *one resource*.
-The current goal of the Assets Manager it is to provide easy access for controlling of the resources.
-Where the final user shouldn't worry about 'when to delete the resource XYZ', 'when to refresh it', 'when to save it', etc.
-EVerything it is covered by the logic of `AssetsManager`.
+== Two asset contracts
 
-For now, it doesn't cover the ability to give some commands to make a specific logic of the resource.
-Everything that it does is just a load a resource and store it inside.
-It seems to smart pointer.
+[cols="2,5",options="header"]
+|===
+|API |Behavior
+|ECSAsset / NXECSAsset |Manager-held intrusive asset object; tracks metadata/status and a loaded component template.
+|getEcsAsset |Returns a strong asset reference; reference-count hooks can load the template.
+|getWeakEcsAsset |Observes the indexed asset without requesting its loaded component data.
+|getUniqueEcsAsset |Reconstructs separate component data from the asset file, including its optional adapter.
+|BaseAsset / AssetRef |Separate resource contract with explicit load/unload requests; used for TextureAsset.
+|NXSceneAsset |Pairs a template asset reference with instance component data; separate from the main Scene container.
+|===
 
-The code example:
+ECSAsset statuses are NotLoaded, PreLoaded, Loaded, PreLoadingError, and LoadingError.
+Preloading reads metadata; loading reconstructs the component through GlobalComponentFactory.
+ECSAssetImpl supplies optional resource-specific load/unload work.
 
-[sources,cpp]
-----
-#include "ResourceManager/ResourceManager.h"
+BaseAsset/AssetRef keeps one index reference and loads payload on the first consumer;
+the last consumer releases the payload while the indexed object remains.
+This is resource residency management, not background streaming.
+ECSAsset and BaseAsset use different serialization/error contracts and remain separate APIs.
 
-auto&& am = Core::Test::GetAssetsManager();
-Texture::Ptr doc = am.getTexture("/home/valerii/workspace/Nexium/data/assets/images/document.png");
-std::cout << doc->getSize().width << doc->getSize().height << std::endl;
-----
+== Templates and instances
 
-== Blueprint Manager
+The editor calls serialized component templates “Blueprints.”
+They are prefab-like authoring data; no visual scripting VM or generated gameplay graph exists.
 
-The Blueprint Manager, on the other hand, is a more complex tool.
-It handles some functional stuff that can be extended, changed and scaled later.
-It handles the data in the same way – you should only ask it to give you some data with a simple string; and if it exists, it will be loaded in the correct way and provided to you.
+Spawning through Scene::addBlueprintObjectToScene requests unique component data and records the asset path.
+Editing a scene instance and editing the source template are different operations.
+A source template change can affect a reconstructed asset-backed instance;
+a complete generic property-override/rebase system is not implemented.
 
-[sources,cpp]
-----
-#include "ResourceManager/ResourceManager.h"
+Scene format version 1 saves each root's name, transform, asset type/reference, and type-specific data.
+Objects without an asset reference additionally save a reflected componentData tree.
+Asset-backed objects are reconstructed from their template and then receive the existing overrides.
+Unversioned asset-backed documents remain readable; unsupported versions are rejected.
 
-auto&& bm = Core::Test::GetBlueprintManager();
-auto&& blueprint = bm.findBlueprint("BaseCamera");
-auto&& baseCamera = blueprint.exposeData();
-----
+Loading reconstructs and validates incoming roots before replacing the current roots.
+Bad records or unresolved references preserve the existing roots.
+This does not provide a general rollback of resource loading or initialization side effects.
 
-== Blueprint - what is it?
+== Authoring reliability
 
-The blueprint is a thing that describes the data, what it looks like, from what types it should be constructed, what values should be applied to it.
-Under implementation (for today) is just a .json file that can describe some complex objects.
-Technically, it looks like this (pseudocode):
+CacheSystem writes Scene under data/scenes and World under data/world.
+These are persistent authoring/state files, not disposable caches.
+xref:file-io.adoc[File I/O] describes replacement and failed-load protection.
 
-[sources,cpp]
-----
-{
-    "name": "SomeName",
-    "type": "SomeBlueprintParserType",
-    "data": {
-        ...
-    }
-}
-----
+The browser's rename path renames the filesystem entry and refreshes the index.
+It does not rewrite saved scene/template references.
+Moves, deletion, stable IDs or redirects, and dependency reporting need an explicit authoring contract.
 
-The definition of the fields is:
-
-* *"name"* – given component name.
-It will be used while spawning of the object, or for similar scenarios.
-* *"type"* – the type of the parser for this blueprint(e.g. BlueprintImageParser, Blueprint3DObjectSParser).
-
-== The info below is DEPRECATED
-
-== Main pipeline
-
-The main pipeline 'how it works' I will try to explain below.
-In general, it's easy and it has main steps as:
-
-=== Initial reading
-
-At the engine xref:module-graph.adoc[init phase] it scans the filesystem with pre-registered paths to find all files with matchable extension(i.e. *.nx).
-What is 'a pre-registered' path -- it's a built-in path that was registered at the engine's init stage.
-For example, the main 'pre-registered' path is: `<engine_root>/data/assets`.
-This object will call a function `AssetsManager::rescanFileSystem()` to find all new assets.
-
-How to understand what asset will be scanned?
-At the moment of writing this doc, it's a little bit floating question.
-Because it's under active development.
-But, anyway, the main asset's extension is `*.nx` -- and this logic will try to make all efforts to scan & register it inside the internal buffer.
-
-=== Internal storing [preloading]
-
-When it finds some file (i.g. `MyCube.nx`) it will register this asset inside internal storage with the mapped 'logical path'.
-If to add more details, so it will read an asset file, write the *minimum amount of information* about scanned asset(type, name) and will put this info under the mapped name -- logical path.
-Also, it will mark an asset with a status `PreLoaded` (to get this status you can call a function `ECSAsset::getLoadingStatus()`)
-
-==== RAM\Disk storing & loading
-
-You should keep in your mind that it has different stages of loading of your assets' main information.
-It can't just totally load all assets and store it inside the RAM.
-It's impossible due to the huge number of data( models, textures, etc).
-So, it will load only assets that you really need & want to use NOW (In the nearest future I'll add a new system\logic to put some priority or time-gap when to unload an asset).
-But you should know only one rule: _you are using the asset `X` \-> it stores its data in RAM.
-If you don't use (i.e. delete from a scene) \-> it will be immediately unloading from the RAM.
-And after a future\new request to this asset `X` it will be read again *main data* from the disk_
-
-Now, main 'stages' of your assets you can read at the enum class `ECSAsset::Status`.
-Briefly, it has the main point:
-
-. *NotLoaded* -- Absolutely not loaded.
-Asset's type is undefined
-. *PreLoaded* -- Loaded only the main information: type & ID & name
-. *Loaded* -- Full asset's data is loaded (corresponding to asset's type)
-. *PreLoadingError* -- Error while preloading data
-. *LoadingError* -- Error while loading of the main data
-
-==== Regarding 'logical path'
-
-To be honest with you, the logical path is just a string, but it represents the path to this asset and it should be unique.
-To don't worry about the uniqueness of the assets through the engine, we can delegate this work to the OS filesystem.
-
-==== Example
-
-Let's check a small example.
-We have the default configuration of the engine.
-Only one path(default one) has registered inside the `AssetsManager` is `<engine_root>/data/assets`.
-Also, we have only one asset `MyCube.nx`
-
-. At the engine's init stage it will call a function `AssetsManager::rescanFileSystem()`
-. After that, it will scan the folder recursively and will find our asset `MyCube.nx` inside the folder: `<engine_root>/data/assets/3d-models/MyCube.nx`
-. The `AssetsManager` will register this asset under the logical path `3d-models/MyCube` -- *it will the unique identifier of your asset*.
-
-== Extra path registration
-
-As far as you know, it has only one pre-registered path: `<engine_root>/data/assets`
-But, if you need you can add\register more paths if you need it using `AssetsManager::registerNewAssetPath(your_path)`.
-
-== Getting loaded assets
-
-At the moment of writing this doc, to retrieve some assets, you need to get the object of the described class and call a function `Core::AssetsManager::getAsset(logical_path)`.
-It's the best way to get what you need.
-
-== Real code example
-
-Let's see at the main pipeline behind all extra information.
-
-[source,cpp]
-----
-// First scan at the engine's initialization. You shouldn't do that directly!
-gGameInstance->assets.rescanFileSystem();
-// or
-// GetAssetsManager().rescanFileSystem()
-
-// For example we have only one asset: data/assets/3d-models/MyCube.nx
-// The rescanFileSystem() found this asset and put into internal storage.
-// It wrote the meta data of this asset:
-//    type: StaticMeshBundle
-//    name: MyFirstCube
-//    logicPath: 3d-models/MyCube.nx
-//    pathToSource: <engine_root>/data/assets/3d-models/MyCube.nx
-//    status: PreLoaded
-
-// Let's try to get this asset & make a full load
-NXAsset cube = GetAssetsManager().getAsset("3d-models/MyCube.nx"_atom);
-// At the moment of getting this assets, the subsystem sees that you want to get all data.
-// So, it reads all really main data about it from the corresponsing file, and loads it
-// just at this line. So, at the next line you can use it as you want!
-
-if (cube)
-{
-    cout << cube.getLoadingStatus() == ECSAsset::StatusLoaded; // true
-}
-----
-
+See xref:ue5-alignment.adoc[UE5 comparison] for the proposed resource boundary.

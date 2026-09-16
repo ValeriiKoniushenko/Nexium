@@ -1,0 +1,119 @@
+= CMake Structure
+
+The root CMakeLists configures toolchain settings, dependencies, source layers,
+optional tests/benchmarks, layer checks, and game-example.
+See xref:engine_architecture:module-graph.adoc[Module graph] for the library target map.
+
+== Shared target rules
+
+cmake/NexiumTargets.cmake applies public cxx_std_26, disables compiler extensions,
+adds target compile options/debug definitions, and registers public HEADERS file sets.
+Foundation receives the compiled NEXIUM_PROJECT_DIR value.
+
+NEXIUM_DEBUG is normally private; the ECS target exposes its debug API definition publicly.
+Subsystem Graphics separately exposes NEXIUM_GRAPHICS_DEBUG.
+Definitions affecting public layouts must remain consistent between libraries and consumers.
+
+Most runtime layers list sources explicitly.
+Editor uses recursive CONFIGURE_DEPENDS globs with selected 3D files removed when disabled.
+Tests and game-example still use globs without CONFIGURE_DEPENDS.
+Compatibility aliases do not create extra libraries.
+
+Public HEADERS file sets use sources as their common include root.
+They support interface compilation, but do not enforce private-header isolation or provide install/export packaging.
+
+== Root options
+
+[cols="3,1,5",options="header"]
+|===
+|Option |Default |Effect
+|NEXIUM_DISABLE_TESTS |ON |Omits Nexium_Tests unless OFF.
+|NEXIUM_DISABLE_BENCHMARKS |ON |Omits Nexium_ECS_Benchmarks unless OFF.
+|NEXIUM_ENABLE_3D_MODULE |OFF |Enables Assimp, mesh/import implementation, and related editor files.
+|NEXIUM_VERIFY_INTERFACE_HEADER_SETS |ON |Creates separate interface-header verification targets.
+|NEXIUM_ENABLE_LAYER_CHECKS |ON |Creates explicit lower-layer consumer checks.
+|===
+
+Tests/benchmarks being enabled by default in older guidance is stale.
+The ordinary all-target build does not run unit tests, layer consumers, or header verification.
+The current source list always adds Editor and TemplateGame.
+
+== Presets and artifacts
+
+[cols="2,3,2,2",options="header"]
+|===
+|Preset |Build directory |Configuration |3D
+|debug |build |Debug |OFF
+|release |build/release |Release |OFF
+|debug-3d |build/debug-3d |Debug |ON
+|release-3d |build/release-3d |Release |ON
+|===
+
+All four presets inherit disabled tests and benchmarks.
+Executables go under the selected build directory's bin, libraries under lib.
+Multi-configuration generators normally add their configuration beneath those directories.
+
+To include tests in an existing build, reconfigure with NEXIUM_DISABLE_TESTS=OFF.
+Do the same with NEXIUM_DISABLE_BENCHMARKS=OFF for benchmarks.
+There is currently no root-project coverage workflow or CTest test registration.
+
+== Dependencies and link policy
+
+dependencies is added with EXCLUDE_FROM_ALL: vendored targets are configured,
+but only dependencies reachable from active targets need compilation.
+ImGui, GLFW, image/atlas dependencies, FreeType, Utils, and JRM configuration are still reached by root configuration.
+The 3D option gates Assimp configuration.
+
+Use recorded submodule revisions; synchronize/init recursively when missing.
+Do not use remote submodule updates for an ordinary build.
+
+Linux selects mold, then lld, then the system linker.
+Compiler launchers use ccache when available.
+The intended MSVC Debug/RelWithDebInfo format is embedded /Z7;
+validate a fresh MSVC configure because the root MSVC condition precedes project/toolchain detection.
+See https://cmake.org/cmake/help/latest/variable/CMAKE_MSVC_DEBUG_INFORMATION_FORMAT.html[CMake's debug-format contract].
+
+Runtime links World through WHOLE_ARCHIVE, and TemplateGame similarly retains Editor.
+This preserves static component initialization.
+Keep registration reachability checked by real linked consumers before narrowing that policy.
+
+The Windows game-example resource path still references sources/Resources/app.rc;
+the actual resource is under sources/Platform/Resources.
+This is migration debt requiring a Windows build check, not a verified Windows recipe.
+
+== Reflection build tool
+
+cmake/JustReflectMe.cmake builds the JRM executable in a separate Release ExternalProject under tools/jrm.
+It clears inherited engine flags and builds only the generator.
+The adapter is a separate engine-toolchain library, exposing JSON and runtime reflection.
+
+CodeGenerator is an ALL custom target and invokes the imported generator through cmake/RunJRM.cmake.
+The wrapper locks shared output state, hashes the executable/config, and invalidates JRM cache
+when those inputs change or tracked outputs disappear.
+Generated headers live beside owning headers, not in the build directory.
+
+The output manifest tracks sources; JRM also scans test/game headers.
+Cross-compilation is explicitly rejected.
+BUILD_ALWAYS checks JRM's nested incremental build; it does not recompile unchanged tool sources each time.
+
+== Verification
+
+[cols="2,5",options="header"]
+|===
+|Target or executable |Required check
+|Default build |Incremental compilation through cmake --build build --parallel.
+|Nexium_CheckLayers |Build explicitly; it compiles, links, and runs its consumer executables.
+|all_verify_interface_header_sets |Build explicitly; it compiles public headers independently.
+|build/bin/Nexium_Tests |Run directly after building the test-enabled configuration.
+|build/bin/TemplateGame |Run with --timeout 5 for the graphical smoke check.
+|===
+
+Enable tests before building/running Nexium_Tests.
+Nexium_CheckLayers checks Foundation, Platform Graphics/Input, and RawBackend consumers.
+Header verification checks exposed headers individually.
+Neither proves all higher-layer semantic boundaries.
+
+The full unit executable must pass for a behavior change.
+The graphical smoke check needs a working display/OpenGL context.
+Report unavailable graphics explicitly.
+For performance conclusions use Release benchmarks on a controlled machine.

@@ -4,7 +4,8 @@
 
 * Engine Architecture
 ** xref:engine_architecture:index.adoc[Overview]
-** xref:engine_architecture:draft--new-architecture.adoc[Current Architecture (Migration Draft)]
+** xref:engine_architecture:architecture-review.adoc[Architecture and Migration Review]
+** xref:engine_architecture:ue5-alignment.adoc[UE5 Patterns for Nexium]
 ** xref:engine_architecture:module-graph.adoc[Module Graph]
 ** xref:engine_architecture:lifecycle.adoc[Application Lifecycle]
 ** xref:engine_architecture:threading.adoc[Threading Model]

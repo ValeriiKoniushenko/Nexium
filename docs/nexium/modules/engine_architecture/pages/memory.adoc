@@ -1,3 +1,51 @@
-= Memory
+= Memory and Ownership
 
+Nexium uses deterministic C++ ownership rather than an engine object garbage collector.
+Core::IntrusivePtr/Core::WeakPtr are the project facilities for shared/observed component and asset objects.
+Unique application/tool resources can use unique_ptr or value ownership.
 
+== Current contracts
+
+[cols="2,5",options="header"]
+|===
+|Relationship |Ownership
+|Application -> GameInstance |gGameInstance is a unique pointer.
+|GameInstance -> Scene/World/assets/UI |Value members.
+|Runtime -> GameInstance |Borrowed reference.
+|EditorIntegration -> Runtime |Borrowed reference; integration must detach before the runtime/instance expires.
+|Component -> children |Intrusive strong pointers.
+|Component -> parent |Borrowed pointer; removal/clear repairs parent links.
+|World -> active camera |Borrowed pointer into component data.
+|Selector -> selected components |Strong intrusive references keyed by addresses.
+|AssetsManager -> indexes |Strong ECSAsset pointers and BaseAsset AssetRef entries.
+|===
+
+The global Window and ShaderManager have shared accessor lifetimes.
+Their ownership is outside the main application's explicit object graph.
+
+== Residency and observation
+
+ECSAsset reference hooks and BaseAsset/AssetRef control loaded payloads.
+Releasing a consumer can unload payload while index metadata remains.
+Weak references do not request payload loading.
+This is distinct from deciding whether a component belongs to the current scene.
+
+Selection can keep a removed component alive.
+That avoids immediate destruction but does not make it a member of the replacement scene.
+Scene replacement and future Stop must clear/remap selection and borrowed references.
+
+BaseCamera's destructor clears World's camera when it is the active camera.
+A removed camera still held by another strong pointer can outlive scene membership.
+An explicit removal/invalidation contract is therefore preferable to destruction-only cleanup.
+
+== Extension rules
+
+Keep owning relationships directed: children own no parent.
+Use a borrowed reference only when the owner visibly outlives the consumer.
+Do not use addresses or makeHash as saved identity.
+
+Tree copying already clones descendants.
+Each resource-bearing subclass must define what is copied, shared, reset, or rebound.
+The existing clone machinery is not sufficient evidence that a full running world can be safely duplicated.
+
+See xref:module-graph.adoc[ownership graph] and xref:ue5-alignment.adoc[proposed world/session lifetimes].

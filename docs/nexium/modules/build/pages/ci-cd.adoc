@@ -1,0 +1,31 @@
+= Continuous Integration
+
+The current workflow is `.gitea/workflows/code-quality.yml`.
+Despite its filename, it presently contains a build matrix.
+
+[cols="2,4",options="header"]
+|===
+|Step |Current behavior
+|Checkout |Recursive submodules through actions/checkout.
+|Configure |Ninja; GCC or Clang; Debug or Release.
+|Build |All active targets with parallel, verbose output.
+|Environment |Linux runner, cpp-ci:latest container.
+|===
+
+Root defaults leave unit tests, benchmarks, and 3D disabled.
+The workflow does not currently invoke clang-format, clang-tidy, unit tests,
+Valgrind, header verification, or Nexium_CheckLayers.
+Windows is not part of this matrix.
+Do not infer those checks from the project guidance or workflow filename.
+
+== Recommended gates
+
+Keep GCC/Clang Debug/Release compilation.
+Add an explicitly test-enabled job that runs the full Nexium_Tests executable,
+Nexium_CheckLayers, and all_verify_interface_header_sets.
+Run editor smoke checks in a configured graphics/Xvfb environment.
+
+The repository already has local helpers for formatting, tidy, and Valgrind.
+Reconnect those checks deliberately and add an optional 3D job plus a Windows configure/build check.
+Pin or record compiler/container versions so results can be compared.
+These are recommendations; this documentation change does not modify CI.
