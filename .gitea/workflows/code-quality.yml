@@ -3,7 +3,7 @@ on: push
 
 jobs:
   build:
-    name: ${{ matrix.compiler }} ${{ matrix.build_type }} (3D=${{ matrix.enable_3d }})
+    name: ${{ matrix.compiler }} ${{ matrix.build_type }}
     runs-on: linux
     container:
       image: cpp-ci:latest
@@ -13,11 +13,9 @@ jobs:
       matrix:
         compiler: [clang, gcc]
         build_type: [Debug, Release]
-        enable_3d: ['OFF']
         include:
           - compiler: clang
             build_type: Debug
-            enable_3d: 'OFF'
     steps:
       - uses: actions/checkout@v3
         with:
@@ -35,7 +33,6 @@ jobs:
         env:
           COMPILER: ${{ matrix.compiler }}
           BUILD_TYPE: ${{ matrix.build_type }}
-          ENABLE_3D: ${{ matrix.enable_3d }}
         run: |
           case "$COMPILER" in
             clang) export CC=clang CXX=clang++ ;;
@@ -49,7 +46,7 @@ jobs:
             -DCMAKE_BUILD_TYPE="$BUILD_TYPE" \
             -DNEXIUM_DISABLE_TESTS=OFF \
             -DNEXIUM_DISABLE_BENCHMARKS="$BENCHMARKS_DISABLED" \
-            -DNEXIUM_ENABLE_3D_MODULE="$ENABLE_3D" \
+            -DNEXIUM_ENABLE_3D_MODULE="OFF" \
             -DNEXIUM_VERIFY_INTERFACE_HEADER_SETS=ON \
             -DNEXIUM_ENABLE_LAYER_CHECKS=ON
 

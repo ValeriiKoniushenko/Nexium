@@ -76,6 +76,10 @@ if(NEXIUM_ENABLE_3D_MODULE AND NOT TARGET assimp::assimp)
     )
 endif()
 
+if(UNIX AND NOT APPLE)
+    link_libraries(atomic)
+endif()
+
 add_subdirectory(sources)
 
 if(NOT NEXIUM_DISABLE_TESTS)
