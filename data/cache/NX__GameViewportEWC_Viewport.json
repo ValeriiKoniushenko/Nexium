@@ -6,7 +6,7 @@
     ],
     "_innerSize": {
         "height": 690.0,
-        "width": 1312.0
+        "width": 1135.0
     },
     "_isEnabled": true,
     "_isFitContent": false,
@@ -18,7 +18,7 @@
     "_noTick": false,
     "_oldSize": {
         "height": 730.0,
-        "width": 1328.0
+        "width": 1151.0
     },
     "_position": [
         232.0,
@@ -26,7 +26,7 @@
     ],
     "_size": {
         "height": 730.0,
-        "width": 1328.0
+        "width": 1151.0
     },
     "_type": "NX::GameViewportEWC"
 }

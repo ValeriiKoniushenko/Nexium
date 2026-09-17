@@ -254,88 +254,287 @@ namespace NX
 
         auto& colors = style->Colors;
 
-        // clang-format off
-        colors[ImGuiCol_Text]                  = Color4(234, 237, 239, 255).toNorm(); // Light grey text for readability
-        colors[ImGuiCol_TextDisabled]          = Color4(142, 153, 142, 255).toNorm(); // Subtle grey for disabled text
-        colors[ImGuiCol_WindowBg]              = Color4(35, 35, 40, 255).toNorm(); // Dark background with a hint of blue
-        colors[ImGuiCol_ChildBg]               = Color4(40, 40, 45, 255).toNorm(); // Slightly lighter for child elements
-        colors[ImGuiCol_PopupBg]               = Color4(45, 45, 51, 255).toNorm(); // Popup background
-        colors[ImGuiCol_Border]                = Color4(71, 73, 76, 153).toNorm(); // Soft border color
-        colors[ImGuiCol_BorderShadow]          = Color4(0, 0, 0, 0).toNorm(); // No border shadow
-        colors[ImGuiCol_FrameBg]               = Color4(51, 56, 61, 255).toNorm(); // Frame background
-        colors[ImGuiCol_FrameBgHovered]        = Color4(56, 61, 66, 255).toNorm(); // Frame hover effect
-        colors[ImGuiCol_FrameBgActive]         = Color4(61, 66, 71, 255).toNorm(); // Active frame background
-        colors[ImGuiCol_TitleBg]               = Color4(35, 35, 40, 255).toNorm(); // Title background
-        colors[ImGuiCol_TitleBgActive]         = Color4(40, 40, 45, 255).toNorm(); // Active title background
-        colors[ImGuiCol_TitleBgCollapsed]      = Color4(35, 35, 40, 255).toNorm(); // Collapsed title background
-        colors[ImGuiCol_MenuBarBg]             = Color4(51, 51, 56, 255).toNorm(); // Menu bar background
-        colors[ImGuiCol_ScrollbarBg]           = Color4(40, 40, 45, 255).toNorm(); // Scrollbar background
-        colors[ImGuiCol_ScrollbarGrab]         = Color4(61, 66, 71, 255).toNorm(); // Dark accent for scrollbar grab
-        colors[ImGuiCol_ScrollbarGrabHovered]  = Color4(71, 76, 81, 255).toNorm(); // Scrollbar grab hover
-        colors[ImGuiCol_ScrollbarGrabActive]   = Color4(81, 86, 91, 255).toNorm(); // Scrollbar grab active
-        colors[ImGuiCol_CheckMark]             = Color4(117, 142, 168, 255).toNorm(); // Dark blue checkmark
-        colors[ImGuiCol_SliderGrab]            = Color4(91, 117, 142, 255).toNorm(); // Dark blue slider grab
-        colors[ImGuiCol_SliderGrabActive]      = Color4(102, 127, 153, 255).toNorm(); // Active slider grab
-        colors[ImGuiCol_Button]                = Color4(61, 86, 112, 255).toNorm(); // Dark blue button
-        colors[ImGuiCol_ButtonHovered]         = Color4(71, 96, 122, 255).toNorm(); // Button hover effect
-        colors[ImGuiCol_ButtonActive]          = Color4(81, 107, 132, 255).toNorm(); // Active button
-        colors[ImGuiCol_Header]                = Color4(61, 86, 112, 255).toNorm(); // Header color similar to button
-        colors[ImGuiCol_HeaderHovered]         = Color4(71, 96, 122, 255).toNorm(); // Header hover effect
-        colors[ImGuiCol_HeaderActive]          = Color4(81, 107, 132, 255).toNorm(); // Active header
-        colors[ImGuiCol_Separator]             = Color4(71, 73, 76, 255).toNorm(); // Separator color
-        colors[ImGuiCol_SeparatorHovered]      = Color4(117, 142, 168, 255).toNorm(); // Hover effect for separator
-        colors[ImGuiCol_SeparatorActive]       = Color4(117, 142, 168, 255).toNorm(); // Active separator
-        colors[ImGuiCol_ResizeGrip]            = Color4(91, 117, 142, 255).toNorm(); // Resize grip
-        colors[ImGuiCol_ResizeGripHovered]     = Color4(102, 127, 153, 255).toNorm(); // Hover effect for resize grip
-        colors[ImGuiCol_ResizeGripActive]      = Color4(112, 137, 163, 255).toNorm(); // Active resize grip
-        colors[ImGuiCol_Tab]                   = Color4(51, 56, 61, 255).toNorm(); // Inactive tab
-        colors[ImGuiCol_TabHovered]            = Color4(71, 96, 122, 255).toNorm(); // Hover effect for tab
-        colors[ImGuiCol_TabActive]             = Color4(61, 86, 112, 255).toNorm(); // Active tab color
-        colors[ImGuiCol_TabUnfocused]          = Color4(51, 56, 61, 255).toNorm(); // Unfocused tab
-        colors[ImGuiCol_TabUnfocusedActive]    = Color4(61, 86, 112, 255).toNorm(); // Active but unfocused tab
-        colors[ImGuiCol_PlotLines]             = Color4(117, 142, 168, 255).toNorm(); // Plot lines
-        colors[ImGuiCol_PlotLinesHovered]      = Color4(117, 142, 168, 255).toNorm(); // Hover effect for plot lines
-        colors[ImGuiCol_PlotHistogram]         = Color4(91, 117, 142, 255).toNorm(); // Histogram color
-        colors[ImGuiCol_PlotHistogramHovered]  = Color4(102, 127, 153, 255).toNorm(); // Hover effect for histogram
-        colors[ImGuiCol_TableHeaderBg]         = Color4(51, 56, 61, 255).toNorm(); // Table header background
-        colors[ImGuiCol_TableBorderStrong]     = Color4(71, 73, 76, 255).toNorm(); // Strong border for tables
-        colors[ImGuiCol_TableBorderLight]      = Color4(61, 63, 66, 255).toNorm(); // Light border for tables
-        colors[ImGuiCol_TableRowBg]            = Color4(51, 56, 61, 255).toNorm(); // Table row background
-        colors[ImGuiCol_TableRowBgAlt]         = Color4(56, 61, 66, 255).toNorm(); // Alternate row background
-        colors[ImGuiCol_TextSelectedBg]        = Color4(61, 86, 112, 89).toNorm(); // Selected text background
-        colors[ImGuiCol_DragDropTarget]        = Color4(117, 142, 168, 229).toNorm(); // Drag and drop target
-        colors[ImGuiCol_NavHighlight]          = Color4(117, 142, 168, 255).toNorm(); // Navigation highlight
-        colors[ImGuiCol_NavWindowingHighlight] = Color4(255, 255, 255, 178).toNorm(); // Windowing highlight
-        colors[ImGuiCol_NavWindowingDimBg]     = Color4(204, 204, 204, 51).toNorm(); // Dim background for windowing
-        colors[ImGuiCol_ModalWindowDimBg]      = Color4(204, 204, 204, 89).toNorm(); // Dim background for modal windows
-        // clang-format on
+        constexpr int theme = 2;
+        if constexpr (theme == 0) // default
+        {
+            // clang-format off
+            colors[ImGuiCol_Text]                  = Color4(234, 237, 239, 255).toNorm(); // Light grey text for readability
+            colors[ImGuiCol_TextDisabled]          = Color4(142, 153, 142, 255).toNorm(); // Subtle grey for disabled text
+            colors[ImGuiCol_WindowBg]              = Color4(35, 35, 40, 255).toNorm(); // Dark background with a hint of blue
+            colors[ImGuiCol_ChildBg]               = Color4(40, 40, 45, 255).toNorm(); // Slightly lighter for child elements
+            colors[ImGuiCol_PopupBg]               = Color4(45, 45, 51, 255).toNorm(); // Popup background
+            colors[ImGuiCol_Border]                = Color4(71, 73, 76, 153).toNorm(); // Soft border color
+            colors[ImGuiCol_BorderShadow]          = Color4(0, 0, 0, 0).toNorm(); // No border shadow
+            colors[ImGuiCol_FrameBg]               = Color4(51, 56, 61, 255).toNorm(); // Frame background
+            colors[ImGuiCol_FrameBgHovered]        = Color4(56, 61, 66, 255).toNorm(); // Frame hover effect
+            colors[ImGuiCol_FrameBgActive]         = Color4(61, 66, 71, 255).toNorm(); // Active frame background
+            colors[ImGuiCol_TitleBg]               = Color4(35, 35, 40, 255).toNorm(); // Title background
+            colors[ImGuiCol_TitleBgActive]         = Color4(40, 40, 45, 255).toNorm(); // Active title background
+            colors[ImGuiCol_TitleBgCollapsed]      = Color4(35, 35, 40, 255).toNorm(); // Collapsed title background
+            colors[ImGuiCol_MenuBarBg]             = Color4(51, 51, 56, 255).toNorm(); // Menu bar background
+            colors[ImGuiCol_ScrollbarBg]           = Color4(40, 40, 45, 255).toNorm(); // Scrollbar background
+            colors[ImGuiCol_ScrollbarGrab]         = Color4(61, 66, 71, 255).toNorm(); // Dark accent for scrollbar grab
+            colors[ImGuiCol_ScrollbarGrabHovered]  = Color4(71, 76, 81, 255).toNorm(); // Scrollbar grab hover
+            colors[ImGuiCol_ScrollbarGrabActive]   = Color4(81, 86, 91, 255).toNorm(); // Scrollbar grab active
+            colors[ImGuiCol_CheckMark]             = Color4(117, 142, 168, 255).toNorm(); // Dark blue checkmark
+            colors[ImGuiCol_SliderGrab]            = Color4(91, 117, 142, 255).toNorm(); // Dark blue slider grab
+            colors[ImGuiCol_SliderGrabActive]      = Color4(102, 127, 153, 255).toNorm(); // Active slider grab
+            colors[ImGuiCol_Button]                = Color4(61, 86, 112, 255).toNorm(); // Dark blue button
+            colors[ImGuiCol_ButtonHovered]         = Color4(71, 96, 122, 255).toNorm(); // Button hover effect
+            colors[ImGuiCol_ButtonActive]          = Color4(81, 107, 132, 255).toNorm(); // Active button
+            colors[ImGuiCol_Header]                = Color4(61, 86, 112, 255).toNorm(); // Header color similar to button
+            colors[ImGuiCol_HeaderHovered]         = Color4(71, 96, 122, 255).toNorm(); // Header hover effect
+            colors[ImGuiCol_HeaderActive]          = Color4(81, 107, 132, 255).toNorm(); // Active header
+            colors[ImGuiCol_Separator]             = Color4(71, 73, 76, 255).toNorm(); // Separator color
+            colors[ImGuiCol_SeparatorHovered]      = Color4(117, 142, 168, 255).toNorm(); // Hover effect for separator
+            colors[ImGuiCol_SeparatorActive]       = Color4(117, 142, 168, 255).toNorm(); // Active separator
+            colors[ImGuiCol_ResizeGrip]            = Color4(91, 117, 142, 255).toNorm(); // Resize grip
+            colors[ImGuiCol_ResizeGripHovered]     = Color4(102, 127, 153, 255).toNorm(); // Hover effect for resize grip
+            colors[ImGuiCol_ResizeGripActive]      = Color4(112, 137, 163, 255).toNorm(); // Active resize grip
+            colors[ImGuiCol_Tab]                   = Color4(51, 56, 61, 255).toNorm(); // Inactive tab
+            colors[ImGuiCol_TabHovered]            = Color4(71, 96, 122, 255).toNorm(); // Hover effect for tab
+            colors[ImGuiCol_TabActive]             = Color4(61, 86, 112, 255).toNorm(); // Active tab color
+            colors[ImGuiCol_TabUnfocused]          = Color4(51, 56, 61, 255).toNorm(); // Unfocused tab
+            colors[ImGuiCol_TabUnfocusedActive]    = Color4(61, 86, 112, 255).toNorm(); // Active but unfocused tab
+            colors[ImGuiCol_PlotLines]             = Color4(117, 142, 168, 255).toNorm(); // Plot lines
+            colors[ImGuiCol_PlotLinesHovered]      = Color4(117, 142, 168, 255).toNorm(); // Hover effect for plot lines
+            colors[ImGuiCol_PlotHistogram]         = Color4(91, 117, 142, 255).toNorm(); // Histogram color
+            colors[ImGuiCol_PlotHistogramHovered]  = Color4(102, 127, 153, 255).toNorm(); // Hover effect for histogram
+            colors[ImGuiCol_TableHeaderBg]         = Color4(51, 56, 61, 255).toNorm(); // Table header background
+            colors[ImGuiCol_TableBorderStrong]     = Color4(71, 73, 76, 255).toNorm(); // Strong border for tables
+            colors[ImGuiCol_TableBorderLight]      = Color4(61, 63, 66, 255).toNorm(); // Light border for tables
+            colors[ImGuiCol_TableRowBg]            = Color4(51, 56, 61, 255).toNorm(); // Table row background
+            colors[ImGuiCol_TableRowBgAlt]         = Color4(56, 61, 66, 255).toNorm(); // Alternate row background
+            colors[ImGuiCol_TextSelectedBg]        = Color4(61, 86, 112, 89).toNorm(); // Selected text background
+            colors[ImGuiCol_DragDropTarget]        = Color4(117, 142, 168, 229).toNorm(); // Drag and drop target
+            colors[ImGuiCol_NavHighlight]          = Color4(117, 142, 168, 255).toNorm(); // Navigation highlight
+            colors[ImGuiCol_NavWindowingHighlight] = Color4(255, 255, 255, 178).toNorm(); // Windowing highlight
+            colors[ImGuiCol_NavWindowingDimBg]     = Color4(204, 204, 204, 51).toNorm(); // Dim background for windowing
+            colors[ImGuiCol_ModalWindowDimBg]      = Color4(204, 204, 204, 89).toNorm(); // Dim background for modal windows
+            // clang-format on
 
-        // Style adjustments
-        style->WindowPadding = glm::vec2(8.00f, 8.00f);
-        style->FramePadding = glm::vec2(4.00f, 4.00f);
-        style->CellPadding = glm::vec2(6.00f, 6.00f);
-        style->ItemSpacing = glm::vec2(6.00f, 6.00f);
-        style->ItemInnerSpacing = glm::vec2(6.00f, 6.00f);
-        style->TouchExtraPadding = glm::vec2(4.00f, 4.00f);
-        style->IndentSpacing = 25;
-        style->ScrollbarSize = 10;
-        style->GrabMinSize = 10;
-        style->WindowBorderSize = 1;
-        style->ChildBorderSize = 1;
-        style->PopupBorderSize = 1;
-        style->FrameBorderSize = 1;
-        style->TabBorderSize = 1;
-        style->LogSliderDeadzone = 4;
+            // Style adjustments
+            style->WindowPadding = glm::vec2(8.00f, 8.00f);
+            style->FramePadding = glm::vec2(4.00f, 4.00f);
+            style->CellPadding = glm::vec2(6.00f, 6.00f);
+            style->ItemSpacing = glm::vec2(6.00f, 6.00f);
+            style->ItemInnerSpacing = glm::vec2(6.00f, 6.00f);
+            style->TouchExtraPadding = glm::vec2(4.00f, 4.00f);
+            style->IndentSpacing = 25;
+            style->ScrollbarSize = 10;
+            style->GrabMinSize = 10;
+            style->WindowBorderSize = 1;
+            style->ChildBorderSize = 1;
+            style->PopupBorderSize = 1;
+            style->FrameBorderSize = 1;
+            style->TabBorderSize = 1;
+            style->LogSliderDeadzone = 4;
 
-        constexpr float rounding = 6.f;
-        style->WindowRounding = rounding * 2.f;
-        style->ChildRounding = rounding;
-        style->PopupRounding = rounding;
-        style->FrameRounding = rounding;
-        style->ScrollbarRounding = rounding * 2.f;
-        style->GrabRounding = rounding;
-        style->TabRounding = rounding;
-        style->TreeLinesRounding = rounding;
+            constexpr float rounding = 6.f;
+            style->WindowRounding = rounding * 2.f;
+            style->ChildRounding = rounding;
+            style->PopupRounding = rounding;
+            style->FrameRounding = rounding;
+            style->ScrollbarRounding = rounding * 2.f;
+            style->GrabRounding = rounding;
+            style->TabRounding = rounding;
+            style->TreeLinesRounding = rounding;
+        }
+        else if constexpr (theme == 1) // more dark
+        {
+            // Nexium Editor Theme — "Voidwave" (violet + cyan duotone)
+            // Deeper near-black base than the original slate-blue theme, with a
+            // violet/cyan accent pair instead of a single muted blue. Cyan is reserved
+            // for "active/confirm" signals (checkmarks, active separators, nav),
+            // violet carries the interactive surfaces (buttons, sliders, tabs).
+
+            // clang-format off
+            colors[ImGuiCol_Text]                  = Color4(230, 230, 240, 255).toNorm(); // Crisp off-white text
+            colors[ImGuiCol_TextDisabled]          = Color4(110, 112, 130, 255).toNorm(); // Muted cool grey
+            colors[ImGuiCol_WindowBg]              = Color4(16, 17, 23, 255).toNorm(); // Near-black navy
+            colors[ImGuiCol_ChildBg]               = Color4(20, 21, 28, 255).toNorm(); // Slightly lifted child bg
+            colors[ImGuiCol_PopupBg]               = Color4(24, 25, 33, 255).toNorm(); // Popup background
+            colors[ImGuiCol_Border]                = Color4(52, 54, 68, 140).toNorm(); // Soft cool border
+            colors[ImGuiCol_BorderShadow]          = Color4(0, 0, 0, 0).toNorm(); // No border shadow
+            colors[ImGuiCol_FrameBg]               = Color4(28, 29, 38, 255).toNorm(); // Frame background
+            colors[ImGuiCol_FrameBgHovered]        = Color4(40, 34, 60, 255).toNorm(); // Hint of violet on hover
+            colors[ImGuiCol_FrameBgActive]         = Color4(52, 40, 78, 255).toNorm(); // Stronger violet when active
+            colors[ImGuiCol_TitleBg]               = Color4(16, 17, 23, 255).toNorm(); // Title background
+            colors[ImGuiCol_TitleBgActive]         = Color4(24, 25, 33, 255).toNorm(); // Active title background
+            colors[ImGuiCol_TitleBgCollapsed]      = Color4(16, 17, 23, 255).toNorm(); // Collapsed title background
+            colors[ImGuiCol_MenuBarBg]             = Color4(22, 23, 30, 255).toNorm(); // Menu bar background
+            colors[ImGuiCol_ScrollbarBg]           = Color4(20, 21, 28, 255).toNorm(); // Scrollbar background
+            colors[ImGuiCol_ScrollbarGrab]         = Color4(52, 40, 78, 255).toNorm(); // Violet scrollbar grab
+            colors[ImGuiCol_ScrollbarGrabHovered]  = Color4(72, 56, 112, 255).toNorm(); // Grab hover
+            colors[ImGuiCol_ScrollbarGrabActive]   = Color4(92, 70, 146, 255).toNorm(); // Grab active
+            colors[ImGuiCol_CheckMark]             = Color4(0, 224, 196, 255).toNorm(); // Cyan checkmark (accent #2)
+            colors[ImGuiCol_SliderGrab]            = Color4(124, 92, 246, 255).toNorm(); // Violet slider grab (accent #1)
+            colors[ImGuiCol_SliderGrabActive]      = Color4(150, 120, 255, 255).toNorm(); // Brighter active slider
+            colors[ImGuiCol_Button]                = Color4(76, 58, 133, 255).toNorm(); // Violet button
+            colors[ImGuiCol_ButtonHovered]         = Color4(96, 74, 168, 255).toNorm(); // Button hover
+            colors[ImGuiCol_ButtonActive]          = Color4(116, 90, 204, 255).toNorm(); // Active button
+            colors[ImGuiCol_Header]                = Color4(76, 58, 133, 255).toNorm(); // Header matches button
+            colors[ImGuiCol_HeaderHovered]         = Color4(96, 74, 168, 255).toNorm(); // Header hover
+            colors[ImGuiCol_HeaderActive]          = Color4(116, 90, 204, 255).toNorm(); // Active header
+            colors[ImGuiCol_Separator]             = Color4(52, 54, 68, 255).toNorm(); // Separator color
+            colors[ImGuiCol_SeparatorHovered]      = Color4(0, 224, 196, 255).toNorm(); // Cyan on hover — pops against violet UI
+            colors[ImGuiCol_SeparatorActive]       = Color4(0, 224, 196, 255).toNorm(); // Cyan when active
+            colors[ImGuiCol_ResizeGrip]            = Color4(92, 70, 146, 255).toNorm(); // Resize grip
+            colors[ImGuiCol_ResizeGripHovered]     = Color4(112, 86, 178, 255).toNorm(); // Hover
+            colors[ImGuiCol_ResizeGripActive]      = Color4(132, 102, 210, 255).toNorm(); // Active
+            colors[ImGuiCol_Tab]                   = Color4(28, 29, 38, 255).toNorm(); // Inactive tab
+            colors[ImGuiCol_TabHovered]            = Color4(96, 74, 168, 255).toNorm(); // Hover effect for tab
+            colors[ImGuiCol_TabActive]             = Color4(76, 58, 133, 255).toNorm(); // Active tab color
+            colors[ImGuiCol_TabUnfocused]          = Color4(24, 25, 33, 255).toNorm(); // Unfocused tab
+            colors[ImGuiCol_TabUnfocusedActive]    = Color4(52, 40, 78, 255).toNorm(); // Active but unfocused tab
+            colors[ImGuiCol_PlotLines]             = Color4(0, 224, 196, 255).toNorm(); // Cyan plot lines
+            colors[ImGuiCol_PlotLinesHovered]      = Color4(64, 240, 216, 255).toNorm(); // Hover effect for plot lines
+            colors[ImGuiCol_PlotHistogram]         = Color4(124, 92, 246, 255).toNorm(); // Violet histogram
+            colors[ImGuiCol_PlotHistogramHovered]  = Color4(150, 120, 255, 255).toNorm(); // Hover effect for histogram
+            colors[ImGuiCol_TableHeaderBg]         = Color4(28, 29, 38, 255).toNorm(); // Table header background
+            colors[ImGuiCol_TableBorderStrong]     = Color4(52, 54, 68, 255).toNorm(); // Strong border for tables
+            colors[ImGuiCol_TableBorderLight]      = Color4(38, 40, 50, 255).toNorm(); // Light border for tables
+            colors[ImGuiCol_TableRowBg]            = Color4(20, 21, 28, 255).toNorm(); // Table row background
+            colors[ImGuiCol_TableRowBgAlt]         = Color4(26, 27, 35, 255).toNorm(); // Alternate row background
+            colors[ImGuiCol_TextSelectedBg]        = Color4(124, 92, 246, 89).toNorm(); // Violet selected text background
+            colors[ImGuiCol_DragDropTarget]        = Color4(0, 224, 196, 229).toNorm(); // Cyan drag and drop target
+            colors[ImGuiCol_NavHighlight]          = Color4(0, 224, 196, 255).toNorm(); // Cyan navigation highlight
+            colors[ImGuiCol_NavWindowingHighlight] = Color4(255, 255, 255, 178).toNorm(); // Windowing highlight
+            colors[ImGuiCol_NavWindowingDimBg]     = Color4(10, 10, 14, 102).toNorm(); // Darker dim for windowing (was mid-grey)
+            colors[ImGuiCol_ModalWindowDimBg]      = Color4(10, 10, 14, 140).toNorm(); // Darker modal dim, less washed-out
+            // clang-format on
+
+            // Style adjustments — slightly airier spacing, more pronounced rounding
+            // for a softer "modern flat" feel; mixed rounding sizes instead of one
+            // uniform scale so big surfaces (windows) read as distinctly softer than
+            // small controls (frames/tabs).
+            style->WindowPadding = glm::vec2(10.00f, 10.00f);
+            style->FramePadding = glm::vec2(6.00f, 5.00f);
+            style->CellPadding = glm::vec2(8.00f, 6.00f);
+            style->ItemSpacing = glm::vec2(8.00f, 6.00f);
+            style->ItemInnerSpacing = glm::vec2(6.00f, 6.00f);
+            style->TouchExtraPadding = glm::vec2(4.00f, 4.00f);
+            style->IndentSpacing = 22;
+            style->ScrollbarSize = 12;
+            style->GrabMinSize = 12;
+            style->WindowBorderSize = 1;
+            style->ChildBorderSize = 1;
+            style->PopupBorderSize = 1;
+            style->FrameBorderSize
+                = 0; // borderless frames read as more modern; color contrast carries the shape
+            style->TabBorderSize = 0;
+            style->LogSliderDeadzone = 4;
+
+            constexpr float windowRounding = 12.f;
+            constexpr float controlRounding = 8.f;
+            style->WindowRounding = windowRounding;
+            style->ChildRounding = controlRounding;
+            style->PopupRounding = controlRounding;
+            style->FrameRounding = controlRounding;
+            style->ScrollbarRounding = windowRounding;
+            style->GrabRounding = controlRounding;
+            style->TabRounding = controlRounding;
+            style->TreeLinesRounding = controlRounding;
+        }
+        else if constexpr (theme == 2) // Modifed previous
+        {
+            // Nexium Editor Theme — "Voidwave" (violet + cyan duotone)
+            // Deeper near-black base than the original slate-blue theme, with a
+            // violet/cyan accent pair instead of a single muted blue. Cyan is reserved
+            // for "active/confirm" signals (checkmarks, active separators, nav),
+            // violet carries the interactive surfaces (buttons, sliders, tabs).
+            // WindowBg/TitleBg stay darkest as the anchor; child/frame/popup/table
+            // surfaces sit one step brighter so content inside a window reads as
+            // visibly "lifted" off its background.
+
+            // clang-format off
+            colors[ImGuiCol_Text]                  = Color4(230, 230, 240, 255).toNorm(); // Crisp off-white text
+            colors[ImGuiCol_TextDisabled]          = Color4(110, 112, 130, 255).toNorm(); // Muted cool grey
+            colors[ImGuiCol_WindowBg]              = Color4(16, 17, 23, 255).toNorm(); // Near-black navy
+            colors[ImGuiCol_ChildBg]               = Color4(28, 29, 38, 255).toNorm(); // Brighter lift off WindowBg
+            colors[ImGuiCol_PopupBg]               = Color4(34, 35, 46, 255).toNorm(); // Popup background
+            colors[ImGuiCol_Border]                = Color4(58, 60, 76, 140).toNorm(); // Soft cool border
+            colors[ImGuiCol_BorderShadow]          = Color4(0, 0, 0, 0).toNorm(); // No border shadow
+            colors[ImGuiCol_FrameBg]               = Color4(38, 39, 51, 255).toNorm(); // Frame background — brighter, reads as an inset surface
+            colors[ImGuiCol_FrameBgHovered]        = Color4(50, 44, 72, 255).toNorm(); // Hint of violet on hover
+            colors[ImGuiCol_FrameBgActive]         = Color4(62, 50, 90, 255).toNorm(); // Stronger violet when active
+            colors[ImGuiCol_TitleBg]               = Color4(16, 17, 23, 255).toNorm(); // Title background
+            colors[ImGuiCol_TitleBgActive]         = Color4(24, 25, 33, 255).toNorm(); // Active title background
+            colors[ImGuiCol_TitleBgCollapsed]      = Color4(16, 17, 23, 255).toNorm(); // Collapsed title background
+            colors[ImGuiCol_MenuBarBg]             = Color4(30, 31, 40, 255).toNorm(); // Menu bar background
+            colors[ImGuiCol_ScrollbarBg]           = Color4(28, 29, 38, 255).toNorm(); // Scrollbar background
+            colors[ImGuiCol_ScrollbarGrab]         = Color4(52, 40, 78, 255).toNorm(); // Violet scrollbar grab
+            colors[ImGuiCol_ScrollbarGrabHovered]  = Color4(72, 56, 112, 255).toNorm(); // Grab hover
+            colors[ImGuiCol_ScrollbarGrabActive]   = Color4(92, 70, 146, 255).toNorm(); // Grab active
+            colors[ImGuiCol_CheckMark]             = Color4(0, 224, 196, 255).toNorm(); // Cyan checkmark (accent #2)
+            colors[ImGuiCol_SliderGrab]            = Color4(124, 92, 246, 255).toNorm(); // Violet slider grab (accent #1)
+            colors[ImGuiCol_SliderGrabActive]      = Color4(150, 120, 255, 255).toNorm(); // Brighter active slider
+            colors[ImGuiCol_Button]                = Color4(76, 58, 133, 255).toNorm(); // Violet button
+            colors[ImGuiCol_ButtonHovered]         = Color4(96, 74, 168, 255).toNorm(); // Button hover
+            colors[ImGuiCol_ButtonActive]          = Color4(116, 90, 204, 255).toNorm(); // Active button
+            colors[ImGuiCol_Header]                = Color4(76, 58, 133, 255).toNorm(); // Header matches button
+            colors[ImGuiCol_HeaderHovered]         = Color4(96, 74, 168, 255).toNorm(); // Header hover
+            colors[ImGuiCol_HeaderActive]          = Color4(116, 90, 204, 255).toNorm(); // Active header
+            colors[ImGuiCol_Separator]             = Color4(52, 54, 68, 255).toNorm(); // Separator color
+            colors[ImGuiCol_SeparatorHovered]      = Color4(0, 224, 196, 255).toNorm(); // Cyan on hover — pops against violet UI
+            colors[ImGuiCol_SeparatorActive]       = Color4(0, 224, 196, 255).toNorm(); // Cyan when active
+            colors[ImGuiCol_ResizeGrip]            = Color4(92, 70, 146, 255).toNorm(); // Resize grip
+            colors[ImGuiCol_ResizeGripHovered]     = Color4(112, 86, 178, 255).toNorm(); // Hover
+            colors[ImGuiCol_ResizeGripActive]      = Color4(132, 102, 210, 255).toNorm(); // Active
+            colors[ImGuiCol_Tab]                   = Color4(38, 39, 51, 255).toNorm(); // Inactive tab — brighter to match frame surfaces
+            colors[ImGuiCol_TabHovered]            = Color4(96, 74, 168, 255).toNorm(); // Hover effect for tab
+            colors[ImGuiCol_TabActive]             = Color4(76, 58, 133, 255).toNorm(); // Active tab color
+            colors[ImGuiCol_TabUnfocused]          = Color4(32, 33, 43, 255).toNorm(); // Unfocused tab
+            colors[ImGuiCol_TabUnfocusedActive]    = Color4(62, 50, 90, 255).toNorm(); // Active but unfocused tab
+            colors[ImGuiCol_PlotLines]             = Color4(0, 224, 196, 255).toNorm(); // Cyan plot lines
+            colors[ImGuiCol_PlotLinesHovered]      = Color4(64, 240, 216, 255).toNorm(); // Hover effect for plot lines
+            colors[ImGuiCol_PlotHistogram]         = Color4(124, 92, 246, 255).toNorm(); // Violet histogram
+            colors[ImGuiCol_PlotHistogramHovered]  = Color4(150, 120, 255, 255).toNorm(); // Hover effect for histogram
+            colors[ImGuiCol_TableHeaderBg]         = Color4(38, 39, 51, 255).toNorm(); // Table header background
+            colors[ImGuiCol_TableBorderStrong]     = Color4(58, 60, 76, 255).toNorm(); // Strong border for tables
+            colors[ImGuiCol_TableBorderLight]      = Color4(44, 46, 58, 255).toNorm(); // Light border for tables
+            colors[ImGuiCol_TableRowBg]            = Color4(28, 29, 38, 255).toNorm(); // Table row background
+            colors[ImGuiCol_TableRowBgAlt]         = Color4(34, 35, 45, 255).toNorm(); // Alternate row background
+            colors[ImGuiCol_TextSelectedBg]        = Color4(124, 92, 246, 89).toNorm(); // Violet selected text background
+            colors[ImGuiCol_DragDropTarget]        = Color4(0, 224, 196, 229).toNorm(); // Cyan drag and drop target
+            colors[ImGuiCol_NavHighlight]          = Color4(0, 224, 196, 255).toNorm(); // Cyan navigation highlight
+            colors[ImGuiCol_NavWindowingHighlight] = Color4(255, 255, 255, 178).toNorm(); // Windowing highlight
+            colors[ImGuiCol_NavWindowingDimBg]     = Color4(10, 10, 14, 102).toNorm(); // Darker dim for windowing (was mid-grey)
+            colors[ImGuiCol_ModalWindowDimBg]      = Color4(10, 10, 14, 140).toNorm(); // Darker modal dim, less washed-out
+            // clang-format on
+
+            // Style adjustments — slightly airier spacing, more pronounced rounding
+            // for a softer "modern flat" feel; mixed rounding sizes instead of one
+            // uniform scale so big surfaces (windows) read as distinctly softer than
+            // small controls (frames/tabs).
+            style->WindowPadding = glm::vec2(10.00f, 10.00f);
+            style->FramePadding = glm::vec2(6.00f, 5.00f);
+            style->CellPadding = glm::vec2(8.00f, 6.00f);
+            style->ItemSpacing = glm::vec2(8.00f, 6.00f);
+            style->ItemInnerSpacing = glm::vec2(6.00f, 6.00f);
+            style->TouchExtraPadding = glm::vec2(4.00f, 4.00f);
+            style->IndentSpacing = 22;
+            style->ScrollbarSize = 12;
+            style->GrabMinSize = 12;
+            style->WindowBorderSize = 1;
+            style->ChildBorderSize = 1;
+            style->PopupBorderSize = 1;
+            style->FrameBorderSize
+                = 0; // borderless frames read as more modern; color contrast carries the shape
+            style->TabBorderSize = 0;
+            style->LogSliderDeadzone = 4;
+
+            constexpr float windowRounding = 12.f;
+            constexpr float controlRounding = 8.f;
+            style->WindowRounding = windowRounding;
+            style->ChildRounding = controlRounding;
+            style->PopupRounding = controlRounding;
+            style->FrameRounding = controlRounding;
+            style->ScrollbarRounding = windowRounding;
+            style->GrabRounding = controlRounding;
+            style->TabRounding = controlRounding;
+            style->TreeLinesRounding = controlRounding;
+        }
     }
 
     bool GameEditor::needToDraw()
