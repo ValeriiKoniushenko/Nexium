@@ -1,25 +1,18 @@
 = Threading
 
-The application runs scene ticks, editor updates, asset requests, and OpenGL rendering on the main thread.
-There is no engine job scheduler or separate render thread in the current architecture.
+Scene ticks, editor updates, asset loading, and OpenGL rendering run sequentially on the
+main thread. There is no runtime job scheduler or separate render thread.
+File scans, JSON reconstruction, shader compilation, and atlas generation block their caller.
 
-Asset scanning, JSON reconstruction, shader work, and atlas generation are synchronous.
-Keep OpenGL resource creation/destruction within a valid context.
-Intrusive or asset reference counting alone does not establish thread safety for payloads and registries.
+Keep GPU resource creation and destruction within a valid OpenGL context.
+Reference counting does not make component trees, registries, or resource payloads thread-safe.
 
 == Build-time concurrency
 
-CMake/Ninja can compile targets in parallel.
-The JRM generator is a separate build tool, not a runtime worker.
-RunJRM serializes generation into shared source-tree outputs using a lock under .cache/nexium-codegen.
-This coordinates writers across build directories; it does not isolate every build from another build's shared-header changes.
+CMake can compile targets in parallel. JRM is a separate build tool.
+`cmake/RunJRM.cmake` locks `.cache/nexium-codegen/lock` while generating shared source-tree files.
+This serializes generator writers across build directories, but does not isolate compilers
+from another build's generated-header changes.
 
-== Recommended growth
-
-Keep the main-thread runtime for the initial 2D editor.
-Measure import/load stalls before adding background work.
-If needed, perform file/CPU decoding in workers and publish completed results at an explicit main-thread point;
-GPU uploads and editor/world mutations remain coordinated there.
-
-Define cancellation, document lifetime, and shutdown behavior before allowing jobs to retain scene objects.
-A UE-sized task graph or threaded renderer is not a prerequisite for the current authoring workflow.
+Background loading remains future work: CPU decoding could run in workers, with GPU uploads
+and scene/editor changes applied at a defined main-thread point.

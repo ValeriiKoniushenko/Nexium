@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Untitled :: Nexium Engine</title>
+    <title>Installation :: Nexium Engine</title>
     <link rel="prev" href="getting-started.html">
     <link rel="next" href="engine_architecture/index.html">
     <meta name="generator" content="Antora 3.1.15">
@@ -79,6 +79,12 @@
     <a class="nav-link" href="engine_architecture/index.html">Overview</a>
   </li>
   <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="engine_architecture/architecture-review.html">Architecture and Migration Review</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="engine_architecture/ue5-alignment.html">UE5 Patterns for Nexium</a>
+  </li>
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="engine_architecture/module-graph.html">Module Graph</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -115,44 +121,14 @@
     <a class="nav-link" href="rendering/pipeline.html">Rendering Pipeline</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="rendering/renderer-architecture.html">Renderer Architecture</a>
+    <a class="nav-link" href="rendering/renderer-architecture.html">Rendering Responsibilities</a>
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
     <span class="nav-text">Materials</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="rendering/materials/overview.html">Material System</a>
-  </li>
-  <li class="nav-item" data-depth="3">
     <a class="nav-link" href="rendering/materials/shader-system.html">Shader System</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="rendering/materials/material-instances.html">Material Instances</a>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Meshes</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="rendering/meshes/mesh-format.html">Mesh Format</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="rendering/meshes/mesh-loader.html">Mesh Loader</a>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Textures</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="rendering/textures/texture-loader.html">Texture Loader</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="rendering/textures/compression.html">Texture Compression</a>
   </li>
 </ul>
   </li>
@@ -172,10 +148,10 @@
     <a class="nav-link" href="gameplay/components.html">Components</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="gameplay/scripting.html">Scripting</a>
+    <a class="nav-link" href="gameplay/scripting.html">Gameplay Hooks</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="gameplay/prefabs.html">Prefabs</a>
+    <a class="nav-link" href="gameplay/prefabs.html">Blueprint Templates</a>
   </li>
 </ul>
   </li>
@@ -187,16 +163,7 @@
     <a class="nav-link" href="build/index.html">Overview</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="build/linux-build.html">Linux Build</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="build/windows-build.html">Windows Build</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="build/cmake-structure.html">CMake Structure</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="build/toolchain.html">Toolchain Setup</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="build/ci-cd.html">CI/CD</a>
@@ -204,82 +171,7 @@
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Tutorials</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="tutorials/index.html">Overview</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="tutorials/create-first-scene.html">Create Your First Scene</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="tutorials/loading-models.html">Loading Models</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="tutorials/adding-materials.html">Adding Materials</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="tutorials/building-for-release.html">Building for Release</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="tutorials/debugging.html">Debugging</a>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Reference</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="reference/index.html">Overview</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="reference/cli.html">Command-Line Tools</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="reference/configuration.html">Configuration</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Public API</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="reference/public-api/core-api.html">Core API</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="reference/public-api/math-api.html">Math API</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="reference/public-api/render-api.html">Render API</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="reference/public-api/ecs-api.html">ECS API</a>
-  </li>
-</ul>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">About</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="about/index.html">Overview</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="about/roadmap.html">Roadmap</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="about/contributing.html">Contributing</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="about/license.html">License</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="about/history.html">History</a>
-  </li>
-</ul>
+    <a class="nav-link" href="about/index.html">About</a>
   </li>
 </ul>
   </li>
@@ -323,7 +215,95 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-
+<h1 class="page">Installation</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Nexium currently builds from source as an editor-enabled example game.
+The steps below follow the Linux Clang/Ninja configuration used by CI.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_requirements"><a class="anchor" href="#_requirements"></a>Requirements</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Git with working symlinks, CMake 3.30+, Ninja, and a C/C toolchain with C26 mode and compatible standard-library support.</p>
+</li>
+<li>
+<p>A graphical session and driver supporting OpenGL 4.6 for the normal application.</p>
+</li>
+<li>
+<p>Linux development packages for GLFW&#8217;s X11 and Wayland backends; both are enabled by default.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>On Debian/Ubuntu, the graphics prerequisites include <code>libwayland-dev</code>, <code>wayland-protocols</code>,
+<code>libxkbcommon-dev</code>, <code>libx11-dev</code>, <code>libxrandr-dev</code>, <code>libxinerama-dev</code>, <code>libxcursor-dev</code>,
+<code>libxi-dev</code>, <code>libxext-dev</code>, <code>libgl1-mesa-dev</code>, and <code>pkg-config</code>.
+For an X11-only build, add <code>-DGLFW_BUILD_WAYLAND=OFF</code> when configuring.
+ccache and mold are optional. JRM and the other vendored libraries build with the project.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_get_and_build_the_source"><a class="anchor" href="#_get_and_build_the_source"></a>Get and build the source</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Clone: <code>git clone <a href="https://github.com/ValeriiKoniushenko/Nexium.git" class="bare">https://github.com/ValeriiKoniushenko/Nexium.git</a></code>.</p>
+</li>
+<li>
+<p>Enter the checkout: <code>cd Nexium</code>.</p>
+</li>
+<li>
+<p>Synchronize submodule URLs: <code>git submodule sync --recursive</code>.</p>
+</li>
+<li>
+<p>Fetch the recorded revisions: <code>git submodule update --init --recursive</code>.</p>
+</li>
+<li>
+<p>Configure: <code>CC=clang CXX=clang++ cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug</code>.</p>
+</li>
+<li>
+<p>Build: <code>cmake --build build --parallel</code>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Run these commands from the repository root after entering the checkout.
+Use a fresh build directory when changing compiler or generator.
+Initialize all submodules, including <code>.agents/Agents</code>; a source ZIP alone is insufficient.</p>
+</div>
+<div class="paragraph">
+<p>The executable is <code>build/bin/TemplateGame</code>. The build generates reflection metadata automatically.
+Tests, benchmarks, and optional 3D support are disabled by default; enable them through the
+options in <a href="build/cmake-structure.html" class="xref page">CMake Infrastructure</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_platform_status"><a class="anchor" href="#_platform_status"></a>Platform status</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The Gitea workflow <code>.gitea/workflows/code-quality.yml</code> runs Linux Clang Debug with Ninja
+in <code>cpp-ci:latest</code> on pushes. It builds the default targets; it does not run unit tests,
+graphics smoke checks, GCC/Release builds, or Windows jobs. Tests, benchmarks, and 3D remain disabled.</p>
+</div>
+<div class="paragraph">
+<p>Windows support still needs validation: the application resource path is stale.
+Windows also requires Git symlink support and permission to create symlinks.
+See <a href="build/cmake-structure.html" class="xref page">CMake Infrastructure</a> for the known build limitations.</p>
+</div>
+<div class="paragraph">
+<p>Continue with <a href="getting-started.html" class="xref page">Getting Started</a>.</p>
+</div>
+</div>
+</div>
 <nav class="pagination">
   <span class="prev"><a href="getting-started.html">Getting Started</a></span>
   <span class="next"><a href="engine_architecture/index.html">Overview</a></span>

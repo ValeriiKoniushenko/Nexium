@@ -19,8 +19,8 @@ Render-mode switching currently shares the authored scene; it is not an isolated
 
 == Documentation
 
-Start with xref:engine_architecture:index.adoc[Architecture Overview],
-xref:engine_architecture:ue5-alignment.adoc[UE5 design comparison], and
+Start with xref:engine_architecture:index.adoc[Architecture],
+xref:gameplay:index.adoc[Gameplay], xref:rendering:index.adoc[Rendering], and
 xref:build:cmake-structure.adoc[CMake infrastructure].
 The architecture pages distinguish implemented behavior from recommendations.
 

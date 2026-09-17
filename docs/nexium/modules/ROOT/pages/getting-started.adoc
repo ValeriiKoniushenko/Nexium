@@ -1,0 +1,37 @@
+= Getting Started
+
+Complete xref:installation.adoc[Installation], then run `build/bin/TemplateGame` from the repository root.
+This opens the editor and loads the saved scene and window layout from `data/`.
+Keep the checkout available: resource paths are based on the project location recorded at build time.
+
+== Explore the editor
+
+. Use the *Windows* menu to open *Scene*, *Object properties*, *Assets*, *Viewport*, or *Logs* if hidden.
+. Select an object in the Scene tree to inspect its properties. Expand it to inspect child components.
+. Use the Assets browser to inspect project files and templates; see xref:engine_architecture:resource-system.adoc[Assets].
+. Focus the viewport to allow scene ticks, including camera controls and animation.
+
+Scene drawing requires an active camera. If the viewport is blank, check the scene's camera
+and the Logs window for asset or shader errors.
+
+== Save and switch views
+
+[cols="2,4",options="header"]
+|===
+|Action |Control
+|Save scene, World, and editor/window state |*File → Save all*, or left Ctrl + left Shift + S.
+|Switch Editor/GameOnly rendering |F1.
+|Clear selection |Escape.
+|Close the application |F12.
+|===
+
+F1 uses the same mutable scene; it does not start an isolated Play session.
+Normal shutdown also saves state. Scene files under `data/scenes/` are authored content,
+not disposable caches. Check Logs after saving; the current success notification does not verify every write.
+
+== Next steps
+
+For a brief launch check, run `build/bin/TemplateGame --timeout 5`; it still requires graphics and saves on exit.
+To change gameplay, start with `game-example/TemplateGameInstance` and registered C++ components,
+then rebuild. See xref:gameplay:scripting.adoc[Gameplay Hooks] and
+xref:gameplay:scenes.adoc[Scenes] for update and persistence behavior.

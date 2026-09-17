@@ -1,0 +1,143 @@
+= Shader System
+
+== What a shader controls
+
+A vertex shader transforms geometry and produces interpolated values such as UV coordinates.
+A fragment shader uses those values to produce a pixel's color or discard the fragment.
+Nexium compiles one vertex/fragment pair into a linked OpenGL program.
+Geometry-stage enum values exist, but ShaderManager's loader currently discovers only vertex/fragment pairs.
+
+For a rectangle, the shader transforms a fixed quad and samples part of an atlas.
+Changing its texture/frame changes uniforms, not the shader source or geometry.
+
+== Discovery, compilation, and ownership
+
+=== Three cooperating objects
+
+[cols="2,4",options="header"]
+|===
+|Object |Job and stored state
+|`ShaderManager` |Find source pairs, assign lookup names, and own a map of ShaderProgramMeta entries plus failed-load names.
+|`ShaderProgramMeta` |Store source paths, own a ShaderProgram, compile/recreate it, and inspect its linked GPU interface.
+|`ShaderProgram` |Hold GL handles, cached uniform/block lookups, and vertex-layout callbacks; bind the program and upload draw parameters.
+|===
+
+Shader metadata is queried from OpenGL after linking. It is unrelated to JRM's C++ reflection metadata.
+A meta entry is not a material instance: it describes one program's interface, not per-object appearance.
+
+=== How files become lookup names
+
+At startup, GameInstance scans `Config::Path::shaders` (`data/assets/shaders`).
+The manager recursively pairs files with the same stem; defaults are `.vert` and `.frag`.
+It uses the relative path without the extension as the name:
+
+[cols="3,2",options="header"]
+|===
+|Source pair |Lookup name
+|`2d_rect.vert` + `2d_rect.frag` |`2d_rect`
+|A pair under `effects/glow.vert` and `effects/glow.frag` |`effects/glow`
+|===
+
+The second row illustrates naming; it does not imply a bundled glow shader.
+An incomplete pair is skipped. `pushSuitableFileExtension()` can extend vertex/fragment suffixes;
+avoid competing files for one stage, since extension search uses an unordered set.
+
+For each pair, the meta object reads sources, compiles both stages, links the program,
+queries its interface, and copies uniform lookups into ShaderProgram.
+Compile/link exceptions are logged and the initial load records the failed name in `getFailedShaders()`.
+
+`getShaderProgram()` accepts an interned name and returns a borrowed pointer, or null for an absent entry.
+`loadShaders()` clears and rebuilds the map, invalidating those pointers; consumers must reacquire them
+and restore layout callbacks after a full reload.
+
+== What metadata contains
+
+[cols="2,4",options="header"]
+|===
+|Interface data |Meaning
+|Uniforms |Active standalone names, GL types, and locations for scalar/vector/matrix/sampler updates.
+|Inputs and outputs |Active program interface variables with names, types, and locations.
+|Uniform blocks |Block name, binding, byte size, and members with types/byte offsets, sorted by offset.
+|===
+
+The inspector shows what survived compilation/linking, not every declaration in a source file.
+The ordinary-variable query skips location `-1`; block members are inspected separately.
+Intermediate varyings between vertex and fragment stages are not a complete source-level interface listing.
+
+`setUniform()` looks up the cached location and calls the matching `glUniform*` function.
+Call `use()` first, supply the matching value type, and only set an active uniform.
+A missing name triggers debug assertions and can throw from the lookup; it is not silently ignored.
+
+=== Uniform blocks need caller-owned storage
+
+Metadata describes the layout; it does not allocate or pack a uniform buffer.
+`setUniformObject()` uploads into the currently bound `GL_UNIFORM_BUFFER` and hardcodes binding point 0.
+Its current block-binding/index handling is limited; do not treat it as a general multi-block interface.
+The caller must provide a compatible buffer and match the shader's reported size and member offsets.
+
+== Example: the built-in rectangle shader
+
+=== Vertex stage: transforms and atlas UVs
+
+The source declares position at location 0, matrices `uProjAndView`/`uModel`, and
+`uUVOffset`/`uUVSize`. Its four-entry `corners` array matches the quad's vertex order:
+
+[source,glsl]
+----
+include::example$2d_rect.vert[tag=rectangle_vertex]
+----
+
+The UV calculation depends on those four vertex IDs. Reusing this program with unrelated
+mesh topology requires matching that assumption or changing the shader.
+
+=== Fragment stage: sampling and transparency
+
+`uTexture` is a sampler, `ioUV` is the interpolated vertex output, and
+`uAlphaBlendingEnabled` controls discard/alpha behavior:
+
+[source,glsl]
+----
+include::example$2d_rect.frag[tag=rectangle_fragment]
+----
+
+=== CPU binding and vertex layout
+
+The draw code binds the program, selects sampler unit 0, uploads the camera matrix, and binds the atlas:
+
+[source,cpp]
+----
+include::example$rectangle.cpp[tag=rectangle_bind_shader,indent=0]
+----
+
+Sampler value 0 selects a texture unit, not a texture object ID.
+The draw path must bind the intended texture on that unit.
+Per-object model and atlas/frame uniforms follow; see xref:pipeline.adoc[the complete draw sequence].
+
+Vertex layout is configured separately in `GameInstance::initializeShaders()`.
+The `2d_rect` callback sets position attribute 0 for three floats; the draw buffers must match it.
+`ShaderProgram` stores callbacks for attribute setup and buffer-change events; reflected input names alone
+do not configure a VAO. If a new shader changes locations, stride, or buffer arrangement, update that setup too.
+
+== Recompiling in the editor
+
+The shader window calls `ShaderProgramMeta::safeRecreateFromSources()` for the selected entry.
+It rereads the stored paths and catches standard exceptions, returning false on compilation failure.
+It does not watch files automatically or roll back to the last good GPU program: recreation clears the old program first.
+
+The meta/program C++ object remains in place, but its GPU handle and interface can change.
+Uniform/block lookup maps are populated without clearing removed names, so changing an interface can leave stale entries.
+After interface/layout changes, a restart gives consumers a fresh program and startup configuration.
+The manager's failed-load set describes the full scan; individual editor recompiles do not refresh that set.
+
+[[shader-troubleshooting]]
+== Diagnose failures
+
+[cols="2,4",options="header"]
+|===
+|Symptom |Check
+|Null program pointer |Relative name, both source files, and initial compile/link logs.
+|Uniform assertion or lookup error |Spelling, active metadata, uploaded type, and whether `use()` bound the correct program.
+|Distorted/invisible geometry |Attribute locations, buffer stride, camera/model matrices, and quad vertex-ID assumptions.
+|Wrong image or atlas region |Sampler unit, bound texture, and the combined atlas/frame UVs.
+|Draw breaks after recompile |Compilation result, changed interface/layout, and stale cached names; the old program is not preserved.
+|===

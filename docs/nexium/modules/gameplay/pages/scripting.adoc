@@ -1,0 +1,13 @@
+= Gameplay Hooks
+
+Gameplay behavior currently runs in compiled C++; there is no embedded gameplay scripting runtime.
+Component hooks include `onInitialize()` and `onTick(float)`.
+Call the base tick hook when a derived component must also tick its children.
+
+Game-specific setup lives in the `GameInstance` hooks for shaders, resources, cache loading,
+and saving. `GameInstance::onTick()` runs after drawing and requires an active camera.
+See xref:engine_architecture:lifecycle.adoc[Application Lifecycle] before choosing that hook
+for camera-independent simulation.
+
+The hooks are declared in `NxWorld/Framework/GameInstance.h`.
+`game-example/TemplateGameInstance` currently inherits their default behavior without overrides.

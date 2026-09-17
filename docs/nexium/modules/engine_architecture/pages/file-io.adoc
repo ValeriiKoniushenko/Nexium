@@ -1,72 +1,53 @@
 = File I/O
 
-Foundation::IDataIO supplies cache-directory/hash identity.
-NxFundamental provides CacheSystem, DataStream, JSON adaptation, and WriteFileAtomically.
+`Foundation::IDataIO` defines an object's storage directory and name.
+`NX::CacheSystem`, declared in `NxFundamental/ResourceManagement/DataStream.h`, reads/writes JSON.
+Its “cache” includes persistent authored content.
 
-== Persistent locations
-
-CacheSystem uses Config::Path::data plus each object's getCacheDir.
-It sanitizes getCacheHash into a filename and appends .json.
+== Locations
 
 [cols="2,4",options="header"]
 |===
-|Data |Current location
-|Scene |data/scenes/<scene name>.json, with filename sanitization.
-|World |data/world/<world name>.json, with filename sanitization.
-|Editor/window objects |Object-specific directories beneath data.
-|ImGui layout |Config::Path::imGuiWindowsIni, currently data/cache/windows.ini.
-|Asset documents |Their attached source files, through ECSAsset or BaseAsset.
+|Data |Path relative to the compiled project root
+|Scene |`data/scenes/<sanitized scene name>.json`
+|World |`data/world/<sanitized world name>.json`
+|Editor objects |Object-specific directories beneath `data/`
+|ImGui layout |`data/cache/windows.ini`
+|Assets |Their attached source files; see xref:resource-system.adoc[Assets].
 |===
 
-Different names can sanitize to the same filename.
-These paths are not stable object identities.
-Config::Path derives from NEXIUM_PROJECT_DIR compiled into Foundation.
+CacheSystem combines `Config::Path::data`, `getCacheDir()`, and a sanitized `getCacheHash()`
+with `.json`. Non-alphanumeric characters other than `_` become `_`, so names can collide.
+Paths derive from `NEXIUM_PROJECT_DIR` compiled into Foundation.
 
-== Reading and errors
+== Reads and failures
 
-CacheSystem::read parses JSON and invokes a custom deserializer when present,
-otherwise JRM reflection.
+`read()` parses JSON and calls the object's deserializer, or JRM when none is supplied.
 Exceptions are logged and mark the path as a failed read.
-Successful reads remove that marker.
+`tryRead()` returns whether a file existed and reading was attempted, not whether it succeeded.
 
-tryRead returns whether a file was present and a read was attempted;
-true does not mean deserialization succeeded.
-read/write do not return a structured success/error result to the editor.
+A failed read blocks CacheSystem writes to that path until a successful read or `clearCache()`.
+This guard is specific to CacheSystem; the asset readers use separate error handling.
+Optional reflected-field errors can be logged without rejecting the document.
 
-Failed reads block CacheSystem writes to that path until a successful reload
-or explicit cache deletion.
-This protects unread documents from shutdown autosave.
-The protection is not a general shared error policy for both asset APIs.
+Scene validates and reconstructs incoming roots before replacing existing ones.
+Malformed records preserve the old roots, but resource/initialization side effects are not rolled back.
+See xref:gameplay:scenes.adoc[Scene persistence] for the saved format.
 
-Scene's loader validates/reconstructs roots before replacing them.
-BaseAsset's reader logs parse/deserialization problems through a separate path.
-Reflected optional fields can produce log entries without rejecting a load.
+== Writes
 
-== Writing
+CacheSystem and both asset save paths use `WriteFileAtomically`: create an exclusive sibling
+temporary file, write/flush/close, then replace the destination.
+A failed replacement preserves the old destination and removes the owned temporary file.
+There is no multi-document transaction or cross-platform durable-sync guarantee.
 
-CacheSystem and both asset save paths use WriteFileAtomically.
-It exclusively creates a sibling temporary file, checks write/flush/close,
-then replaces the destination.
-A failed replacement removes the owned temporary file and preserves the old destination.
+CacheSystem write calls return no success value. Filesystem replacement errors are logged;
+serialization errors can escape before replacement. Editor save notifications therefore do not prove success.
 
-Linux uses filesystem rename; Windows uses MoveFileExW with replacement/write-through flags.
-This protects against partial application writes.
-There is no cross-platform fsync/directory-sync durability guarantee or multi-document transaction.
+`BaseAsset` updates existing JSON through `ioFieldsUpdate()`.
+The generic `DataStream::field()` output assignment is disabled; use the implemented serializers,
+not that helper, when persisting new data.
 
-BaseAsset updates an existing JSON document through ioFieldsUpdate.
-ECSAsset merges existing component keys while preserving adapter-specific data.
-DataStream's generic Output field assignment is currently commented out;
-do not treat that helper as a complete general serializer.
-
-== Editor implications
-
-Save success needs to reach the caller before clearing dirty state or displaying success.
-GameEditor currently displays a success notification after its cache write calls,
-whose failures can be logged without being returned.
-
-Separate authored content, editor preferences, runtime saves, and derived caches by policy.
-Retain atomic replacement and failed-load protection when those responsibilities are split.
-
-Existing tests in AtomicFileTests cover replacement failure, concurrent saves,
-serialization failure, and failed-load autosave protection.
-ScenePersistenceTests cover reconstruction and invalid-document preservation.
+Implementation: `ResourceManagement/{DataStream,AtomicFile}.{h,cpp}` in NxFundamental.
+`AtomicFileTests.cpp` covers replacement and failed-load protection; `ScenePersistenceTests.cpp`
+covers scene reconstruction and rejected documents.

@@ -137,11 +137,13 @@ namespace NX::SceneObj
             return;
         }
 
+        // tag::rectangle_bind_shader[]
         shader->use();
         shader->setUniform("uTexture"_atom, 0);
         shader->setUniform("uProjAndView"_atom, camera.getMatrix());
 
         atlas.bind();
+        // end::rectangle_bind_shader[]
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -160,6 +162,7 @@ namespace NX::SceneObj
         // // Converting Left-Bottom origin -> Left-Top origin
         // modelMatrix[3][1] -= GetDefaultDrawRectSize();
 
+        // tag::rectangle_draw_uniforms[]
         shader->setUniform("uUVOffset"_atom, textureOffset + textureSize * _textureUVOffset);
         shader->setUniform("uUVSize"_atom, textureSize * _textureUVSize);
         shader->setUniform("uModel"_atom, modelMatrix);
@@ -168,6 +171,7 @@ namespace NX::SceneObj
         glBlendFunc(_blendingEnabled ? GL_SRC_ALPHA : GL_ONE,
                     _blendingEnabled ? GL_ONE_MINUS_SRC_ALPHA : GL_ZERO);
         gcd.directDraw();
+        // end::rectangle_draw_uniforms[]
 
         tryDrawOutline(camera);
     }

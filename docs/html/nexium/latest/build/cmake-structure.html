@@ -3,9 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Untitled :: Nexium Engine</title>
-    <link rel="prev" href="windows-build.html">
-    <link rel="next" href="toolchain.html">
+    <title>CMake Infrastructure :: Nexium Engine</title>
+    <link rel="prev" href="index.html">
+    <link rel="next" href="ci-cd.html">
     <meta name="generator" content="Antora 3.1.15">
     <link rel="stylesheet" href="../../../_/css/site.css">
   </head>
@@ -79,6 +79,12 @@
     <a class="nav-link" href="../engine_architecture/index.html">Overview</a>
   </li>
   <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../engine_architecture/architecture-review.html">Architecture and Migration Review</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../engine_architecture/ue5-alignment.html">UE5 Patterns for Nexium</a>
+  </li>
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../engine_architecture/module-graph.html">Module Graph</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -115,44 +121,14 @@
     <a class="nav-link" href="../rendering/pipeline.html">Rendering Pipeline</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../rendering/renderer-architecture.html">Renderer Architecture</a>
+    <a class="nav-link" href="../rendering/renderer-architecture.html">Rendering Responsibilities</a>
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
     <span class="nav-text">Materials</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../rendering/materials/overview.html">Material System</a>
-  </li>
-  <li class="nav-item" data-depth="3">
     <a class="nav-link" href="../rendering/materials/shader-system.html">Shader System</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../rendering/materials/material-instances.html">Material Instances</a>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Meshes</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../rendering/meshes/mesh-format.html">Mesh Format</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../rendering/meshes/mesh-loader.html">Mesh Loader</a>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Textures</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../rendering/textures/texture-loader.html">Texture Loader</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../rendering/textures/compression.html">Texture Compression</a>
   </li>
 </ul>
   </li>
@@ -172,10 +148,10 @@
     <a class="nav-link" href="../gameplay/components.html">Components</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../gameplay/scripting.html">Scripting</a>
+    <a class="nav-link" href="../gameplay/scripting.html">Gameplay Hooks</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../gameplay/prefabs.html">Prefabs</a>
+    <a class="nav-link" href="../gameplay/prefabs.html">Blueprint Templates</a>
   </li>
 </ul>
   </li>
@@ -186,17 +162,8 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="index.html">Overview</a>
   </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="linux-build.html">Linux Build</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="windows-build.html">Windows Build</a>
-  </li>
   <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="cmake-structure.html">CMake Structure</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="toolchain.html">Toolchain Setup</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="ci-cd.html">CI/CD</a>
@@ -204,82 +171,7 @@
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Tutorials</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/index.html">Overview</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/create-first-scene.html">Create Your First Scene</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/loading-models.html">Loading Models</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/adding-materials.html">Adding Materials</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/building-for-release.html">Building for Release</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/debugging.html">Debugging</a>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Reference</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../reference/index.html">Overview</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../reference/cli.html">Command-Line Tools</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../reference/configuration.html">Configuration</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Public API</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../reference/public-api/core-api.html">Core API</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../reference/public-api/math-api.html">Math API</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../reference/public-api/render-api.html">Render API</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../reference/public-api/ecs-api.html">ECS API</a>
-  </li>
-</ul>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">About</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/index.html">Overview</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/roadmap.html">Roadmap</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/contributing.html">Contributing</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/license.html">License</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/history.html">History</a>
-  </li>
-</ul>
+    <a class="nav-link" href="../about/index.html">About</a>
   </li>
 </ul>
   </li>
@@ -323,10 +215,157 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-
+<h1 class="page">CMake Infrastructure</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Nexium requires CMake 3.30+ and a compiler accepting its configured C++26 mode.
+<code>cmake/NexiumTargets.cmake</code> applies target settings and public header sets;
+<a href="../engine_architecture/module-graph.html" class="xref page">Module Graph</a> lists the libraries.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_configuration"><a class="anchor" href="#_configuration"></a>Configuration</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 37.5%;">
+<col style="width: 12.5%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-left valign-top">Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NEXIUM_DISABLE_TESTS</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ON</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Omit <code>Nexium_Tests</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NEXIUM_DISABLE_BENCHMARKS</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ON</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Omit <code>Nexium_ECS_Benchmarks</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NEXIUM_ENABLE_3D_MODULE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OFF</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enable Assimp, meshes, and related editor files.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NEXIUM_VERIFY_INTERFACE_HEADER_SETS</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ON</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Create explicit public-header verification targets.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NEXIUM_ENABLE_LAYER_CHECKS</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ON</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Create explicit layer-consumer and generated-header checks.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>There are no repository CMake presets. Configure <code>build/</code> with Ninja and
+<code>CMAKE_BUILD_TYPE=Debug</code>; use a separate directory for Release or another toolchain.
+Set <code>NEXIUM_DISABLE_TESTS=OFF</code> or <code>NEXIUM_DISABLE_BENCHMARKS=OFF</code> when those targets are needed.
+These defaults come from the root <code>CMakeLists.txt</code>; older guidance saying tests are enabled is stale.</p>
+</div>
+<div class="paragraph">
+<p>Executables go to <code>&lt;build_dir&gt;/bin/</code>, libraries to <code>&lt;build_dir&gt;/lib/</code>.
+Multi-configuration generators normally add a configuration subdirectory.
+Editor and TemplateGame are always included. The default build compiles enabled targets but does not run tests.
+There is no root coverage workflow or CTest registration.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_target_and_dependency_rules"><a class="anchor" href="#_target_and_dependency_rules"></a>Target and dependency rules</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Engine targets expose <code>cxx_std_26</code> and disable compiler extensions. This checks language mode,
+not availability of every C++26 feature. Foundation receives the compiled project path.
+Debug definitions affecting the ECS and graphics public APIs propagate to consumers.</p>
+</div>
+<div class="paragraph">
+<p>Most layers list sources explicitly. Editor uses <code>CONFIGURE_DEPENDS</code> globs;
+tests and game-example use ordinary globs and may need reconfiguration after adding files.
+Header sets use the shared <code>sources/</code> include root; they do not enforce private-header isolation.</p>
+</div>
+<div class="paragraph">
+<p>Dependencies are configured with <code>EXCLUDE_FROM_ALL</code>; active targets determine what is built.
+Initialize submodules recursively at recorded revisions. The 3D option gates Assimp.
+Linux prefers mold, then lld; ccache is used when available.
+Runtime retains World with WHOLE_ARCHIVE, and TemplateGame retains Editor for static registrations.</p>
+</div>
+<div class="paragraph">
+<p>Windows still needs validation: the <code>/Z7</code> configuration condition precedes compiler detection,
+and game-example references <code>sources/Resources/app.rc</code> while the file is under <code>sources/Platform/Resources</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_reflection_generation"><a class="anchor" href="#_reflection_generation"></a>Reflection generation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>cmake/JustReflectMe.cmake</code> builds JRM separately in Release under <code>&lt;build_dir&gt;/tools/jrm</code>.
+The reflection adapter uses the engine toolchain. Cross-compilation is rejected.</p>
+</div>
+<div class="paragraph">
+<p>The ALL target <code>CodeGenerator</code> invokes this built tool through <code>cmake/RunJRM.cmake</code>.
+The wrapper locks shared output state and invalidates <code>.jrm/cache.data</code> when the tool,
+runner, configuration, or tracked outputs require regeneration.
+Its manifest covers generated files in <code>sources/</code>, <code>tests/</code>, and <code>game-example/</code>.
+Generated files remain beside their owning headers and must not be edited manually.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_verification"><a class="anchor" href="#_verification"></a>Verification</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Target or executable</th>
+<th class="tableblock halign-left valign-top">Check</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium_CheckLayers</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Compile/link/run Foundation, Platform Graphics/Input, and RawBackend consumers; also run generated-header fixtures.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>all_verify_interface_header_sets</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Compile exposed headers individually.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium_Tests</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Build with tests enabled, then run <code>&lt;build_dir&gt;/bin/Nexium_Tests</code> directly.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TemplateGame</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Run <code>&lt;build_dir&gt;/bin/TemplateGame --timeout 5</code> with a display/OpenGL context.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Build the verification targets explicitly. Layer/header checks do not prove higher-level runtime behavior.
+Use Release benchmarks for performance conclusions. See <a href="ci-cd.html" class="xref page">CI</a> for the smaller set run automatically.</p>
+</div>
+</div>
+</div>
 <nav class="pagination">
-  <span class="prev"><a href="windows-build.html">Windows Build</a></span>
-  <span class="next"><a href="toolchain.html">Toolchain Setup</a></span>
+  <span class="prev"><a href="index.html">Overview</a></span>
+  <span class="next"><a href="ci-cd.html">CI/CD</a></span>
 </nav>
 </article>
   </div>

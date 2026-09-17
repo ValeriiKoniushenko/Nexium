@@ -172,12 +172,14 @@ namespace NX::Animation
         return BaseComponent::getTags() | Tag_AnimationController;
     }
 
+    // tag::animator_tick[]
     void FrameByFrameAnimator::onTick(float delta)
     {
         BaseComponent::onTick(delta);
         updateCurrentAnimation(delta);
         applyCurrentFrameToRectangle();
     }
+    // end::animator_tick[]
 
     void FrameByFrameAnimator::applyCurrentFrameToRectangle()
     {

@@ -1,7 +1,7 @@
 = Build and Toolchain
 
 Nexium uses CMake 3.30+, C++26, and vendored dependencies.
-The current presets use Ninja and build an editor-enabled TemplateGame.
+The standard Ninja build produces the editor-enabled `TemplateGame`.
 
 * xref:cmake-structure.adoc[CMake structure] explains targets, options, generation, and checks.
 * xref:ci-cd.adoc[CI] records what the current workflow actually runs.

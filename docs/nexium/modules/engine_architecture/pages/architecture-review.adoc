@@ -2,9 +2,8 @@
 = Architecture and Migration Review
 :page-aliases: draft--new-architecture.adoc
 
-Reviewed on 2026-09-16 at commit `63bd5ccb`.
-Nexium targets games made inside this repository by 1–3 developers.
-The immediate architecture should serve the 2D editor; optional 3D and separate game delivery follow later.
+This assessment separates implemented boundaries from proposed work.
+The current executable combines the example game and 2D editor; 3D is optional.
 
 == Layer map
 
@@ -21,7 +20,7 @@ The adapter uses the engine toolchain.
 Public-header verification and executable layer consumers make interfaces reviewable.
 
 See xref:build:cmake-structure.adoc[CMake infrastructure] for real options and checks.
-Tests and benchmarks are disabled by default; the current CI only builds its compiler/configuration matrix.
+Tests and benchmarks are disabled by default; the current CI only builds Clang Debug on Linux.
 
 == Object model and ownership
 
@@ -58,7 +57,6 @@ Prioritize these behaviors within the existing modules:
 
 A project-content context should move game-specific atlas setup into game-example.
 Keep the editor-enabled executable while building these contracts.
-Game-only packaging remains deferred as requested.
+Game-only packaging is not implemented.
 
 xref:ue5-alignment.adoc[UE5 alignment] explains the proposed lifetimes and acceptance criteria.
-Repository-root `NEW_STRUCTURE.md` records evidence, confidence, and open questions.

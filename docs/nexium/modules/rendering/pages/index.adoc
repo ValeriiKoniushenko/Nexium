@@ -1,0 +1,33 @@
+= Rendering
+
+== From scene data to pixels
+
+A draw needs four things: geometry, a linked shader program, an active camera, and a render target.
+For a Rectangle, the geometry is a shared indexed quad; the shader receives camera/model matrices
+and a region of a texture atlas. Animation changes that region rather than rebuilding the geometry.
+
+* xref:pipeline.adoc[Rendering Pipeline] traces a frame and a rectangle draw, including atlas coordinates.
+* xref:materials/shader-system.adoc[Shader System] explains discovery, compilation, metadata, uniforms, and recompilation.
+* xref:renderer-architecture.adoc[Rendering Responsibilities] identifies who owns the resources and when they are used.
+
+== Choose the drawing path
+
+[cols="2,4",options="header"]
+|===
+|Content |Current path
+|2D sprites |Rectangle + named atlas + `2d_rect` shader. RectangleAnimated changes the selected frame's UVs.
+|3D meshes |Optional Assimp import and mesh/bundle drawing; enable `NEXIUM_ENABLE_3D_MODULE` when configuring.
+|Editor viewport |Scene rendered into a color texture displayed by ImGui.
+|GameOnly view |The same Scene rendered into the window's framebuffer.
+|===
+
+The normal runtime requests an OpenGL 4.6 context. GPU operations run on the main thread.
+There is no general material graph or separate material-instance asset; appearance is configured
+through component fields, textures, shader uniforms, and draw settings.
+
+== Diagnose a blank view
+
+Check the active camera first, then shader errors in Logs, then the object's atlas/texture selection.
+An unfocused editor viewport stops scene ticks but can still render.
+A missing shader, invalid vertex layout, and failed image load are separate failures;
+xref:materials/shader-system.adoc#shader-troubleshooting[Shader diagnostics] narrows the first two.

@@ -3,9 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Untitled :: Nexium Engine</title>
-    <link rel="prev" href="../reference/public-api/ecs-api.html">
-    <link rel="next" href="roadmap.html">
+    <title>About Nexium :: Nexium Engine</title>
+    <link rel="prev" href="../build/ci-cd.html">
     <meta name="generator" content="Antora 3.1.15">
     <link rel="stylesheet" href="../../../_/css/site.css">
   </head>
@@ -79,6 +78,12 @@
     <a class="nav-link" href="../engine_architecture/index.html">Overview</a>
   </li>
   <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../engine_architecture/architecture-review.html">Architecture and Migration Review</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../engine_architecture/ue5-alignment.html">UE5 Patterns for Nexium</a>
+  </li>
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../engine_architecture/module-graph.html">Module Graph</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -115,44 +120,14 @@
     <a class="nav-link" href="../rendering/pipeline.html">Rendering Pipeline</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../rendering/renderer-architecture.html">Renderer Architecture</a>
+    <a class="nav-link" href="../rendering/renderer-architecture.html">Rendering Responsibilities</a>
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
     <span class="nav-text">Materials</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../rendering/materials/overview.html">Material System</a>
-  </li>
-  <li class="nav-item" data-depth="3">
     <a class="nav-link" href="../rendering/materials/shader-system.html">Shader System</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../rendering/materials/material-instances.html">Material Instances</a>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Meshes</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../rendering/meshes/mesh-format.html">Mesh Format</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../rendering/meshes/mesh-loader.html">Mesh Loader</a>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Textures</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../rendering/textures/texture-loader.html">Texture Loader</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../rendering/textures/compression.html">Texture Compression</a>
   </li>
 </ul>
   </li>
@@ -172,10 +147,10 @@
     <a class="nav-link" href="../gameplay/components.html">Components</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../gameplay/scripting.html">Scripting</a>
+    <a class="nav-link" href="../gameplay/scripting.html">Gameplay Hooks</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../gameplay/prefabs.html">Prefabs</a>
+    <a class="nav-link" href="../gameplay/prefabs.html">Blueprint Templates</a>
   </li>
 </ul>
   </li>
@@ -187,99 +162,15 @@
     <a class="nav-link" href="../build/index.html">Overview</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../build/linux-build.html">Linux Build</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../build/windows-build.html">Windows Build</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../build/cmake-structure.html">CMake Structure</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../build/toolchain.html">Toolchain Setup</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../build/ci-cd.html">CI/CD</a>
   </li>
 </ul>
   </li>
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Tutorials</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/index.html">Overview</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/create-first-scene.html">Create Your First Scene</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/loading-models.html">Loading Models</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/adding-materials.html">Adding Materials</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/building-for-release.html">Building for Release</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/debugging.html">Debugging</a>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Reference</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../reference/index.html">Overview</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../reference/cli.html">Command-Line Tools</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../reference/configuration.html">Configuration</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Public API</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../reference/public-api/core-api.html">Core API</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../reference/public-api/math-api.html">Math API</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../reference/public-api/render-api.html">Render API</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../reference/public-api/ecs-api.html">ECS API</a>
-  </li>
-</ul>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">About</span>
-<ul class="nav-list">
-  <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="index.html">Overview</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="roadmap.html">Roadmap</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="contributing.html">Contributing</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="license.html">License</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="history.html">History</a>
-  </li>
-</ul>
+  <li class="nav-item is-current-page" data-depth="1">
+    <a class="nav-link" href="index.html">About</a>
   </li>
 </ul>
   </li>
@@ -312,8 +203,7 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../index.html">Nexium Engine Documentation</a></li>
-    <li>About</li>
-    <li><a href="index.html">Overview</a></li>
+    <li><a href="index.html">About</a></li>
   </ul>
 </nav>
 <div class="edit-this-page"><a href="file:///home/valerii/workspace/Nexium//docs/nexium/modules/about/pages/index.adoc">Edit this Page</a></div>
@@ -323,10 +213,54 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-
+<h1 class="page">About Nexium</h1>
+<div class="sect1">
+<h2 id="_project_status"><a class="anchor" href="#_project_status"></a>Project status</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Nexium is Valerii Koniushenko&#8217;s personal C++ game engine and editor.
+Development currently focuses on 2D authoring inside this repository; 3D support is optional.
+The example game includes the editor. Separate game packaging and isolated Play/Stop sessions are unfinished.</p>
+</div>
+<div class="paragraph">
+<p>See <a href="../getting-started.html" class="xref page">Getting Started</a> for the working editor workflow and
+<a href="../engine_architecture/architecture-review.html" class="xref page">Architecture Review</a> for proposed improvements.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_contributing"><a class="anchor" href="#_contributing"></a>Contributing</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Follow the repository&#8217;s <code>AGENTS.md</code> and existing code conventions.</p>
+</li>
+<li>
+<p>Include a reproducible case or regression test with behavior changes.</p>
+</li>
+<li>
+<p>Build and run the relevant checks; report unavailable checks explicitly.
+<a href="../build/cmake-structure.html" class="xref page">CMake Infrastructure</a> lists the targets and required options.</p>
+</li>
+<li>
+<p>Keep documentation aligned with the implementation and rebuild the Antora site after edits.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_license"><a class="anchor" href="#_license"></a>License</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The repository&#8217;s <code>LICENSE</code> contains Apache-2.0 terms.
+Dependencies retain their own licenses; check their respective repositories.</p>
+</div>
+</div>
+</div>
 <nav class="pagination">
-  <span class="prev"><a href="../reference/public-api/ecs-api.html">ECS API</a></span>
-  <span class="next"><a href="roadmap.html">Roadmap</a></span>
+  <span class="prev"><a href="../build/ci-cd.html">CI/CD</a></span>
 </nav>
 </article>
   </div>

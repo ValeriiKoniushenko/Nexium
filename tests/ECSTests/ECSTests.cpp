@@ -682,6 +682,7 @@ TEST(ECSBaseTests, AddUniqueTypeChildComponentReturnsSameInstance)
 
 TEST(ECSBaseTests, UniqueTypeLookupUsesComponentInheritance)
 {
+    // tag::component_unique_type[]
     Sedan root("Root");
     auto* engine = root.addUniqueTypeChildComponent<TurboEngine>("Engine");
     auto* sameBase = root.addUniqueTypeChildComponent<Engine>("OtherName");
@@ -691,6 +692,7 @@ TEST(ECSBaseTests, UniqueTypeLookupUsesComponentInheritance)
     ASSERT_EQ(engine, samePart);
     ASSERT_EQ(1u, root.getChildrenCount());
     ASSERT_EQ("Engine", engine->getComponentName());
+    // end::component_unique_type[]
 }
 
 TEST(ECSBaseTests, GetOrAddChildComponentReturnsExisting)
@@ -708,6 +710,7 @@ TEST(ECSBaseTests, GetOrAddChildComponentReturnsExisting)
 
 TEST(ECSBaseTests, AttachChildClonesAndSetsParent)
 {
+    // tag::component_attach_clone[]
     DummyComponent root("Root");
 
     DummyComponent::Ptr externalChild = new DummyComponent("Child");
@@ -721,6 +724,7 @@ TEST(ECSBaseTests, AttachChildClonesAndSetsParent)
     ASSERT_EQ(attached->getComponentName(), externalChild->getComponentName());
     ASSERT_EQ(attached->getParent(), &root);
     ASSERT_EQ(1, root.getChildrenCount());
+    // end::component_attach_clone[]
 }
 
 TEST(ECSBaseTests, DetachChildRemovesFromChildrenList)

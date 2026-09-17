@@ -1,70 +1,51 @@
 = Application Lifecycle
 
-The entry point is `game-example/main.cpp`.
-Runtime owns the loop; GameInstance implements initialization and persistence.
+`game-example/main.cpp` creates `gGameInstance`, then a `Runtime` and `EditorIntegration`.
+Runtime borrows the instance; the integration attaches editor hooks through `ApplicationIntegration`.
 
 == Startup
 
-. The application creates TemplateGameInstance in gGameInstance.
-. It constructs Runtime bound to that instance, then EditorIntegration bound to Runtime.
-. EditorIntegration attaches itself to GameInstance and becomes the single active editor integration.
-. Runtime::run calls GameInstance::initialize.
-. GameInstance creates the Platform window, subscribes to resize, scans assets, and loads/configures shaders.
-. The integration initializes GameEditor. The component factory builds its type/tag map.
-. GameInstance initializes Scene and subscribes to object additions to discover an active camera.
-. Startup reads editor, window, scene, and World state, then calls the game cache hook.
-. Core atlas loading and the game resource hook run before the loop begins.
+`Runtime::run()` initializes the instance, runs the frame loop, then saves state.
+`GameInstance::initialize()` performs these steps:
 
-GameInstance::initialize does not enter the loop.
-It still calls global accessors, so borrowing an instance in Runtime does not make independently running instances supported.
-The built-in resource loader includes Santa/player example atlases.
+. Create the Platform window and subscribe to resize events.
+. Scan assets, load shaders, and configure vertex attributes.
+. Initialize the editor integration and build the component factory's type/tag map.
+. Initialize Scene and subscribe to object additions for camera discovery.
+. Read editor, window, scene, and World state; call `onInitializeReadCache()`.
+. Generate the default and example animation atlases; call `onLoadCoreResources()`.
 
-== Frames
+Initialization still uses global accessors. Binding Runtime to an instance does not provide
+independent concurrent game instances.
 
-Runtime polls window events before ticking.
-Components receive the previous frame's measured delta; the initial delta is zero.
+== Each frame
 
-[cols="2,4,4",options="header"]
+Window events are polled first. Updates use the previous frame's measured delta; the first delta is zero.
+
+[cols="2,3,3",options="header"]
 |===
-|Operation |GameOnly path |Editor path
-|Scene tick |Every frame. |Only while the editor viewport is focused.
-|Input/editor update |Calls integration updateInput if attached; currently editor keyboard shortcuts. |Calls integration tick, which updates editor windows and keyboard/mouse mappings.
-|Scene render |Draws with World's active camera. |Updates picking, binds viewport target, draws scene, completes viewport rendering.
-|GameInstance tick |After drawing, only with an active camera. |After drawing, only with an active camera.
+|Operation |GameOnly |Editor
+|Scene tick |Every frame. |Only while the viewport is focused.
+|Integration update |Keyboard shortcuts, if attached. |Editor windows and keyboard/mouse actions.
+|Drawing |Scene to the window. |Picking, then Scene to the viewport texture.
+|GameInstance tick |After Scene drawing, if a camera exists. |After Scene drawing, if a camera exists.
 |===
 
-Without a camera, scene ticking can continue while GameInstance::onTick is skipped.
-BaseComponent's default onTick propagates into children.
-Disabled/no-tick nodes suppress that tick path; derived hooks must preserve propagation when needed.
+Scene ticking does not require a camera; `GameInstance::onTick` and scene drawing do.
+After updates, the loop throttles unfocused/iconified windows, checks `--timeout`, swaps buffers,
+and records elapsed time in World. Rendering and throttling contribute to that time.
 
-The loop throttles unfocused/iconified windows, checks the optional timeout, swaps buffers,
-updates FPS, and stores elapsed frame duration in World.
-World time currently measures application activity, including rendering and throttling.
-There is no separate paused simulation clock.
+== Modes and shutdown
 
-== Modes and editing
+Editor mode requires both the Editor render mode and an attached integration.
+F1 switches rendering paths, which share the same `gameScene`.
+There is no isolated Play/Stop session or paused simulation clock; gameplay edits can be saved at shutdown.
 
-GameInstance::isEditorMode requires both Editor render mode and an attached integration.
-Without integration, Runtime uses the GameOnly path.
-F1 changes render mode in the current example.
+After a normal loop exit, `saveAllToCache()` writes editor state, World, Scene, and Window,
+then calls `onSaveAll()`. Exceptions escaping initialization or the loop bypass this save call.
 
-Both paths use the same mutable gameScene.
-Viewport focus and render mode are not a Play/Pause/Stop contract.
-Gameplay changes can become shutdown-saved scene state.
+The example destroys EditorIntegration before Runtime and resets `gGameInstance` last.
+Keep that order because both objects borrow their dependencies.
+See xref:file-io.adoc[File I/O] for persistence and xref:memory.adoc[Ownership] for lifetimes.
 
-ApplicationIntegration handles focus, sizing, input, interaction, render-target hooks, and editor persistence.
-EditorIntegration forwards these operations to editor tools.
-GameEditor updates ImGui windows; Scene itself controls object drawing and editor-grid visibility.
-
-== Shutdown
-
-Runtime::run calls saveAllToCache after the loop.
-It writes editor state, World, Scene, and Window, then invokes the game's save hook.
-Scene documents resolve under data/scenes despite the cache API name.
-
-In main, EditorIntegration detaches and is destroyed before Runtime leaves scope;
-gGameInstance is reset afterward.
-Borrowed references require this order.
-Window and ShaderManager use shared accessors rather than an explicit application-owned shutdown graph.
-
-xref:ue5-alignment.adoc[Proposed lifecycle changes] are recommendations, not implemented behavior.
+Implementation: `NxRuntime/Runtime.cpp`, `NxWorld/Framework/GameInstance.cpp`, and `Editor/EditorIntegration.cpp`.

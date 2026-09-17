@@ -1,99 +1,67 @@
 [[ecs-components]]
 = Component System
 
-Nexium's ECS is a reflected object/component tree.
-It provides composition, cloning, type factories, and traversal.
-There is no archetype/chunk storage or central query scheduler in this implementation.
+Nexium's ECS is a reflected component tree with cloning, traversal, and a type factory.
+It does not use archetype storage or a central query scheduler.
 
-== Main types
+== Types and ownership
 
-The component API is declared in `NxFundamental/ECS/BaseComponent.h`, in namespace NX.
+`AbstractComponent` supplies reference counting, enable/no-tick flags, tick dispatch, and serialization.
+`BaseComponent` adds a name, type, child ownership, parent observation, and initialization.
 
-[cols="2,5",options="header"]
-|===
-|Type |Role
-|AbstractComponent |Intrusive reference counting, enable/no-tick flags, casting, reflection serialization, tick dispatch.
-|BaseComponent |Named/typed tree node; intrusive child ownership, borrowed parent, initialization, traversal, cloning.
-|GlobalComponentFactory |Process-wide name-to-creator/type/tag maps.
-|SceneObject |BaseComponent plus Transformable, IDrawable, IOutliner, and IDataIO.
-|Actor |SceneObject subclass; currently a thin extension rather than a separate gameplay ownership model.
-|BaseCamera |Actor subclass; OrthographicCamera/PerspectiveCamera provide projection behavior.
-|Rectangle / RectangleAnimated |Scene objects for 2D drawing and animation.
-|NX::Gui::Widget |Editor component using the same tree machinery for ImGui presentation.
-|===
-
-Scene owns root SceneObjects.
-An object can have non-spatial BaseComponent children.
-Transformable behavior is supplied separately and composed into SceneObject.
-Node inheritance and tree attachment serve different purposes.
+Scene owns root `SceneObject` instances, which combine BaseComponent with transforms,
+drawing, outlining, and persistence. Children can be non-spatial components.
+`Actor`, cameras, rectangles, and editor widgets specialize this tree model.
 
 == Registration and reflection
 
-[cols="3,5",options="header"]
+[cols="2,4",options="header"]
 |===
-|Macro |Current purpose
-|CLASS / ENUM_CLASS / FIELD |JRM annotations for metadata generation.
-|ECS_DECL |Component declaration, JRM bridge, typed pointers, Create/clone, default constructor.
-|ECS_DECL_NO_CNSTR |Declaration with a caller-defined constructor.
-|ECS_DECL_NO_SER |Declaration variant without generated component serialization bridge.
-|ECS_DECL_NO_SER_NO_CNSTR |Combines both declaration variants.
-|ECS_IMPL |Out-of-line reflection bridge, component type definition, creator and clone implementation.
-|ECS_IMPL_NO_SER |Implementation variant without that serialization bridge.
-|ECS_TEMPLATE_COMPONENT_DECL / ECS_TEMPLATE_COMPONENT_IMPL |Template-component variants.
+|Macro |Purpose
+|`CLASS()`, `ENUM_CLASS()`, `FIELD()` |JRM metadata annotations.
+|`ECS_DECL` / `ECS_IMPL` |Declare and implement typed pointers, creation, cloning, registration, and the reflection bridge.
+|`ECS_DECL_NO_CNSTR` |Use a caller-defined constructor.
+|`ECS_DECL_NO_SER` / `ECS_IMPL_NO_SER` |Omit the reflection bridge.
+|`ECS_DECL_NO_SER_NO_CNSTR` |Combine both declaration variants.
+|`ECS_TEMPLATE_COMPONENT_DECL` / `ECS_TEMPLATE_COMPONENT_IMPL` |Template-component variants.
 |===
 
-Use the component macros instead of a hand-maintained registry list.
-ECS_IMPL initializes componentType through a static initializer that registers a creator with GlobalComponentFactory.
-The current component macros do not implement linker-section registration.
-WHOLE_ARCHIVE linkage preserves otherwise unreferenced registration translation units.
+`ECS_IMPL` registers a creator during static initialization of `componentType`.
+There is no hand-maintained type list or linker-section registration in these macros.
+WHOLE_ARCHIVE linking retains registration translation units; JRM separately generates metadata.
+Never edit generated files. The JRM adapter is
+`dependencies/JustReflectMe/sources/JustReflectMe/Adapter.h`.
 
-JRM-generated reflection and factory registration are cooperating mechanisms, not the same registry.
-Generated files are produced during the build and must not be edited manually.
-The adapter lives in `dependencies/JustReflectMe/sources/JustReflectMe/Adapter.h`.
-Native C++ reflection is not used.
+Serialized non-template type names must remain compatible with saved content.
+Template registration uses `typeid` names, which are not portable content identifiers.
 
-Non-template component type names are serialized identifiers.
-Renaming a C++ type or changing its macro-generated identifier needs a content migration.
-Template registration uses typeid names; those are unsuitable as portable saved-content identifiers.
+== Working with children
 
-== Lifecycle and composition
+[cols="2,4",options="header"]
+|===
+|Operation |Behavior
+|`addChildComponent<T>()` |Create a child, establish its parent link, and initialize it; initialize the parent first if needed.
+|`attachChild()` |Clone the supplied child tree into this parent.
+|`addUniqueTypeChildComponent<T>()` |Reuse a direct child castable to T, otherwise create one.
+|`detachChild()` / `removeChild()` |Release a direct child and clear its parent link; another strong reference can keep it alive.
+|`forEach()` / `forEachDFS()` |Visit descendants in breadth/depth-first order; exclude the starting node.
+|`getOwner()` |Return the topmost component ancestor, or itself for a root.
+|===
 
-AbstractComponent::tick dispatches when enabled and not marked no-tick;
-it does not itself require initialization.
-BaseComponent::initialize invokes pre-initialize/initialize hooks once, then initializes children.
+`initialize()` runs hooks and initializes children once, until invalidated.
+`tick()` only checks enabled/no-tick flags; it does not require initialization.
+The default `BaseComponent::onTick()` ticks children, so derived overrides must call the base
+hook when that propagation is wanted. A disabled/no-tick parent stops this default path.
 
-BaseComponent's default onTick visits child components.
-A derived onTick can replace this behavior; call the base hook when child propagation is required.
-A no-tick parent therefore also stops the default child tick path.
+Copies clone descendants; concrete macro-generated clones invalidate their initialized state.
+Derived resource and subscription ownership still needs explicit copy behavior.
 
-Adding a child establishes ownership and its parent link.
-Attaching an existing child through attachChildComponent clones it.
-Copying component trees clones descendants; detached/removed surviving children lose their parent links.
-Generated concrete clone methods invalidate the result for later initialization.
-This does not guarantee that every derived component safely duplicates external resources or live subscriptions.
+== Persistence
 
-Traversal supports BFS/DFS and type/name lookups.
-The forEach traversal and child lookup helpers exclude the starting node.
-getOwner identifies the topmost component ancestor; it does not identify a World context.
+JRM serializes reflected state and child trees. Scene adds instance records described in
+xref:gameplay:scenes.adoc[Scenes]. Names are editable, and `makeHash()` depends on ancestor names;
+neither is a stable identity across rename or reparenting.
 
-== Persistence and identity
-
-Reflected fields store component state and child trees.
-Scene records additionally store transforms, names, asset references, and type-specific overrides.
-xref:resource-system.adoc[Resource persistence] distinguishes templates from scene instances.
-
-Component names are editable labels.
-makeHash depends on the node's name and ancestor names.
-Neither names, that mutable hash, nor pointer addresses provide durable object identity across
-reload, rename, reparenting, or a future Play-session clone.
-
-Keep the tree model for authoring.
-Introduce stable IDs and explicit World context when reference persistence and simulation need them;
-a data-oriented storage rewrite requires measured workload evidence.
-
-== Existing checks
-
-`tests/ECSTests/ECSTests.cpp` exercises serialization, factories, copying, traversal,
-parent repair, attachment, and removal.
-`tests/Runtime/RuntimeTests.cpp` checks Runtime binding and retained World registrations.
-These checks do not prove Play-session isolation or mutation safety during a tick.
+Implementation: `NxFundamental/ECS/BaseComponent.{h,cpp}`.
+`tests/ECSTests/ECSTests.cpp` covers factories, serialization, traversal, cloning, and parent repair;
+`tests/Runtime/RuntimeTests.cpp` checks retained World registrations.

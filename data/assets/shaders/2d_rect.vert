@@ -19,6 +19,7 @@ const vec2 corners[4] = vec2[4](
 );
 // clang-format on
 
+// tag::rectangle_vertex[]
 void main()
 {
     vec2 uvSize = uUVSize;
@@ -26,3 +27,4 @@ void main()
     ioUV = uUVOffset + corners[gl_VertexID % 4] * uvSize;
     gl_Position = uProjAndView * uModel * vec4(aPos, 1.0);
 }
+// end::rectangle_vertex[]

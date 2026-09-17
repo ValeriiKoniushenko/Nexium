@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Untitled :: Nexium Engine</title>
+    <title>Rendering Pipeline :: Nexium Engine</title>
     <link rel="prev" href="index.html">
     <link rel="next" href="renderer-architecture.html">
     <meta name="generator" content="Antora 3.1.15">
@@ -79,6 +79,12 @@
     <a class="nav-link" href="../engine_architecture/index.html">Overview</a>
   </li>
   <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../engine_architecture/architecture-review.html">Architecture and Migration Review</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../engine_architecture/ue5-alignment.html">UE5 Patterns for Nexium</a>
+  </li>
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../engine_architecture/module-graph.html">Module Graph</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -115,44 +121,14 @@
     <a class="nav-link" href="pipeline.html">Rendering Pipeline</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="renderer-architecture.html">Renderer Architecture</a>
+    <a class="nav-link" href="renderer-architecture.html">Rendering Responsibilities</a>
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
     <span class="nav-text">Materials</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="materials/overview.html">Material System</a>
-  </li>
-  <li class="nav-item" data-depth="3">
     <a class="nav-link" href="materials/shader-system.html">Shader System</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="materials/material-instances.html">Material Instances</a>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Meshes</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="meshes/mesh-format.html">Mesh Format</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="meshes/mesh-loader.html">Mesh Loader</a>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Textures</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="textures/texture-loader.html">Texture Loader</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="textures/compression.html">Texture Compression</a>
   </li>
 </ul>
   </li>
@@ -172,10 +148,10 @@
     <a class="nav-link" href="../gameplay/components.html">Components</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../gameplay/scripting.html">Scripting</a>
+    <a class="nav-link" href="../gameplay/scripting.html">Gameplay Hooks</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../gameplay/prefabs.html">Prefabs</a>
+    <a class="nav-link" href="../gameplay/prefabs.html">Blueprint Templates</a>
   </li>
 </ul>
   </li>
@@ -187,16 +163,7 @@
     <a class="nav-link" href="../build/index.html">Overview</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../build/linux-build.html">Linux Build</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../build/windows-build.html">Windows Build</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../build/cmake-structure.html">CMake Structure</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../build/toolchain.html">Toolchain Setup</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../build/ci-cd.html">CI/CD</a>
@@ -204,82 +171,7 @@
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Tutorials</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/index.html">Overview</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/create-first-scene.html">Create Your First Scene</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/loading-models.html">Loading Models</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/adding-materials.html">Adding Materials</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/building-for-release.html">Building for Release</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/debugging.html">Debugging</a>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Reference</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../reference/index.html">Overview</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../reference/cli.html">Command-Line Tools</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../reference/configuration.html">Configuration</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Public API</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../reference/public-api/core-api.html">Core API</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../reference/public-api/math-api.html">Math API</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../reference/public-api/render-api.html">Render API</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../reference/public-api/ecs-api.html">ECS API</a>
-  </li>
-</ul>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">About</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/index.html">Overview</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/roadmap.html">Roadmap</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/contributing.html">Contributing</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/license.html">License</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/history.html">History</a>
-  </li>
-</ul>
+    <a class="nav-link" href="../about/index.html">About</a>
   </li>
 </ul>
   </li>
@@ -323,10 +215,152 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
+<h1 class="page">Rendering Pipeline</h1>
+<div class="sect1">
+<h2 id="_frame_order_and_destinations"><a class="anchor" href="#_frame_order_and_destinations"></a>Frame order and destinations</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The loop in <code>NxRuntime/Runtime.cpp</code> uses the previous frame&#8217;s measured delta; the first delta is zero.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 42.8571%;">
+<col style="width: 42.8572%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Step</th>
+<th class="tableblock halign-left valign-top">GameOnly</th>
+<th class="tableblock halign-left valign-top">Editor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Poll window events and tick Scene.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Poll events; tick Scene only when the viewport is focused.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Clear the window; update integration keyboard actions if attached.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Clear the window; update editor windows/input and submit ImGui drawing.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Use the active camera to draw Scene into the window.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Process picking, bind and clear the viewport target, then draw Scene.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Call GameInstance&#8217;s tick hook after drawing.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Call that hook while the viewport target is still bound, then bind framebuffer 0.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Swap buffers and record elapsed time.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Same.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Steps 3–4 require an active camera. Scene tick and drawing are therefore separate gates.
+The editor submits ImGui before refreshing the viewport texture, so the displayed image can contain
+the previous scene render. There is no independent simulation/render clock.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_scene_draw_order"><a class="anchor" href="#_scene_draw_order"></a>Scene draw order</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>Scene::directDraw()</code> reads World&#8217;s active camera, then:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Draws the grid in Editor mode.</p>
+</li>
+<li>
+<p>Handles enabled root mesh bundles when 3D is compiled in, collecting those marked post-draw.</p>
+</li>
+<li>
+<p>Calls <code>draw()</code> on the root objects.</p>
+</li>
+<li>
+<p>Draws the collected mesh bundles, then attempts a skybox for a perspective camera.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>This is an explicit sequence, not a depth-sorted transparent pass. The general root loop also
+calls mesh roots; do not infer a once-per-object guarantee from the post-draw flag.
+Skybox lookup/initialization is unfinished. Ordinary <code>SceneObject::draw()</code> checks its enabled flag;
+component tick traversal does not automatically imply child rendering.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_example_one_atlas_backed_rectangle"><a class="anchor" href="#_example_one_atlas_backed_rectangle"></a>Example: one atlas-backed rectangle</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_geometry_and_camera"><a class="anchor" href="#_geometry_and_camera"></a>Geometry and camera</h3>
+<div class="paragraph">
+<p><code>Rectangle::onDraw()</code> reuses a shared four-vertex quad and six indices.
+The <code>2d_rect</code> vertex shader expects a position at attribute location 0.
+The model matrix transforms the quad, while <code>uProjAndView</code> applies the camera&#8217;s view/projection.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_atlas_and_frame_coordinates"><a class="anchor" href="#_atlas_and_frame_coordinates"></a>Atlas and frame coordinates</h3>
+<div class="paragraph">
+<p>Atlas lookup returns the packed image&#8217;s offset and size in normalized coordinates.
+The rectangle&#8217;s frame UVs select a region within that image:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Final offset = atlas offset + atlas size × frame offset.</p>
+</li>
+<li>
+<p>Final size = atlas size × frame size.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>For an atlas image at <code>(0.25, 0.5)</code> with size <code>(0.5, 0.25)</code>, selecting its right half
+(frame offset <code>(0.5, 0)</code>, size <code>(0.5, 1)</code>) sends offset <code>(0.5, 0.5)</code> and size <code>(0.25, 0.25)</code>.
+The CPU uploads those values immediately before drawing:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">shader-&gt;setUniform("uUVOffset"_atom, textureOffset + textureSize * _textureUVOffset);
+shader-&gt;setUniform("uUVSize"_atom, textureSize * _textureUVSize);
+shader-&gt;setUniform("uModel"_atom, modelMatrix);
+shader-&gt;setUniform("uAlphaBlendingEnabled"_atom, static_cast&lt;GLint&gt;(_blendingEnabled));
 
+glBlendFunc(_blendingEnabled ? GL_SRC_ALPHA : GL_ONE,
+            _blendingEnabled ? GL_ONE_MINUS_SRC_ALPHA : GL_ZERO);
+gcd.directDraw();</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_alpha_handling"><a class="anchor" href="#_alpha_handling"></a>Alpha handling</h3>
+<div class="paragraph">
+<p>With blending enabled, the fragment shader discards samples below alpha 0.1 and the draw uses
+source-alpha blending. Disabling blending forces fragment alpha to 1 and uses replacement blending.
+Depth testing remains enabled by Runtime; alpha blending alone does not establish correct transparent ordering.</p>
+</div>
+<div class="paragraph">
+<p>See <a href="materials/shader-system.html" class="xref page">Shader System</a> for the matching GLSL and binding sequence.</p>
+</div>
+</div>
+</div>
+</div>
 <nav class="pagination">
   <span class="prev"><a href="index.html">Overview</a></span>
-  <span class="next"><a href="renderer-architecture.html">Renderer Architecture</a></span>
+  <span class="next"><a href="renderer-architecture.html">Rendering Responsibilities</a></span>
 </nav>
 </article>
   </div>

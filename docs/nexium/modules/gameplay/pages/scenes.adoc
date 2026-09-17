@@ -1,0 +1,25 @@
+= Scenes
+
+`NX::Scene` owns root `SceneObject` references; each root owns its component tree.
+Adding a root assigns a usable unique name, initializes it, fires `onObjectAdded`,
+and calls `onAddedToScene()`.
+`GameInstance` listens for additions and searches their descendants for a camera when none is active.
+
+== Saved data
+
+Scene format version 1 stores each root's name, transform, type, asset reference, and type-specific data.
+
+* Asset-backed roots are reconstructed from their `.nx` template, then receive the saved instance values.
+* Roots without an asset reference also save a reflected `componentData` tree.
+
+A template instance therefore does not save every edited component field automatically.
+General property overrides are not implemented. Unversioned asset-backed documents remain readable;
+unsupported versions are rejected.
+
+Loading validates and reconstructs all incoming roots before replacing existing roots.
+An empty valid document clears the scene; malformed records or unresolved references preserve the old roots.
+After replacement, roots initialize and emit addition events. This is not a rollback mechanism for
+resource loading or initialization side effects.
+
+Scene files live under `data/scenes/`; see xref:engine_architecture:file-io.adoc[File I/O].
+Implementation: `NxWorld/Scene/Scene.cpp`; checks: `tests/Runtime/ScenePersistenceTests.cpp`.

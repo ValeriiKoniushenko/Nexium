@@ -1,83 +1,76 @@
 = Resource System
 
-AssetsManager belongs to NxSubsystems; asset abstractions belong to NxFundamental.
-NX::GetAssetsManager resolves the manager through gGameInstance.
-There is no separate GetBlueprintManager in the current API.
+`NX::GetAssetsManager()` accesses the current game's asset manager in NxSubsystems.
+It indexes asset files, then loads their contents synchronously when requested.
+The asset abstractions live in NxFundamental.
 
 == Indexing and lookup
 
-AssetsManager initially registers Config::Path::data, not only data/assets.
-initScanFileSystem clears its asset indexes and scans registered roots.
-refreshFilesSystem rescans and removes missing entries only when the scan completes successfully.
+`initScanFileSystem()` clears the indexes and recursively scans registered roots;
+the default root is `Config::Path::data` (all of `data/`).
+`registerNewAssetPath()` adds a root; scan or refresh afterward to index it.
 
-IDs are normalized paths relative to the compiled project root, including extensions.
-For example, an asset under data/assets remains identified with that prefix.
-Extra roots can be registered; outside-project paths can resolve through relative parent segments.
-The current index has no independent stable asset ID or mount namespace.
+An asset's logical ID is its normalized path relative to the compiled project root,
+including the extension: for example, `data/assets/actor.nx`.
+Use interned `Core::StringAtom` IDs (`_atom` for literals).
+`getEcsAsset`, `getWeakEcsAsset`, and `getUniqueEcsAsset` require the exact ID;
+the `getEcsAssetByPath` / `getWeakEcsAssetByPath` variants normalize filesystem paths.
+External roots can produce IDs containing `..`; there are no stable UUIDs or mount aliases.
 
 [cols="2,5",options="header"]
 |===
-|Resource |Current path
-|.nx |ECSAsset; metadata and serialized component template.
-|.nxtex |TextureAsset through BaseAsset/AssetRef; GPU texture loads on consumer request.
-|Images |Asset browser classifies image files; TextureAtlas separately reads images for atlas generation.
-|Shaders |ShaderManager scans/configures shaders through its own service.
-|Skyboxes |Types and drawing exist, but AssetsManager::getSkybox is a stub and scan registration is commented out.
-|3D models |Optional mesh/import functionality; not a universal resource registry.
+|Resource |How it loads
+|`.nx` |`ECSAsset`: metadata first, component template on request.
+|`.nxtex` |`TextureAsset`: descriptor first, image and GPU texture on request.
+|Raw images |`TextureAtlas` reads images separately during synchronous atlas generation.
+|Shaders |Managed separately by `ShaderManager`.
+|Skyboxes |Not indexed; `getSkybox()` is unimplemented.
 |===
 
-File-browser classification does not imply loader support for every displayed extension.
-Atlas generation is synchronous and belongs to AssetsManager's current initialization/resource workflow.
+Only `.nx` and `.nxtex` are indexed. A file appearing in the browser does not imply loader support.
 
-== Two asset contracts
+== Choosing a reference
 
 [cols="2,5",options="header"]
 |===
 |API |Behavior
-|ECSAsset / NXECSAsset |Manager-held intrusive asset object; tracks metadata/status and a loaded component template.
-|getEcsAsset |Returns a strong asset reference; reference-count hooks can load the template.
-|getWeakEcsAsset |Observes the indexed asset without requesting its loaded component data.
-|getUniqueEcsAsset |Reconstructs separate component data from the asset file, including its optional adapter.
-|BaseAsset / AssetRef |Separate resource contract with explicit load/unload requests; used for TextureAsset.
-|NXSceneAsset |Pairs a template asset reference with instance component data; separate from the main Scene container.
+|`getWeakEcsAsset` |Observe metadata without loading component data.
+|`getEcsAsset` |Get an `NXECSAsset` strong reference to the shared component template.
+|`getUniqueEcsAsset` |Reconstruct independent component data from disk, including optional adapter loading.
+|`getTexture` |Get an `NXTexture` (`AssetRef<TextureAsset>`) for a `.nxtex` descriptor.
 |===
 
-ECSAsset statuses are NotLoaded, PreLoaded, Loaded, PreLoadingError, and LoadingError.
-Preloading reads metadata; loading reconstructs the component through GlobalComponentFactory.
-ECSAssetImpl supplies optional resource-specific load/unload work.
+While indexed, both asset systems keep one manager reference. The first consumer reference
+loads the payload; releasing the last consumer unloads it while keeping the indexed object.
+Unique ECS loads return separate component data without loading the shared template.
 
-BaseAsset/AssetRef keeps one index reference and loads payload on the first consumer;
-the last consumer releases the payload while the indexed object remains.
-This is resource residency management, not background streaming.
-ECSAsset and BaseAsset use different serialization/error contracts and remain separate APIs.
+For `.nx`, preloading reads `type`, `name`, and `tags`; loading reconstructs `data`
+through `GlobalComponentFactory`. An optional `ECSAssetImpl` handles `assetData`.
+Missing IDs return empty references. A valid reference does not guarantee a successful load:
+check `getLoadingStatus()` for `Loaded`, `PreLoadingError`, or `LoadingError`.
+Unique loading can throw.
 
-== Templates and instances
+Textures use the separate `BaseAsset` / `AssetRef` contract.
+The descriptor's `AssetData` stores the image path and vertical-flip setting;
+the image path is relative to the project root, not the descriptor's directory.
+`BaseAsset::isLoaded()` reports reference count, not GPU-load success.
 
-The editor calls serialized component templates “Blueprints.”
-They are prefab-like authoring data; no visual scripting VM or generated gameplay graph exists.
+== Refreshing and editing
 
-Spawning through Scene::addBlueprintObjectToScene requests unique component data and records the asset path.
-Editing a scene instance and editing the source template are different operations.
-A source template change can affect a reconstructed asset-backed instance;
-a complete generic property-override/rebase system is not implemented.
+`refreshFilesSystem()` rereads descriptors and reloads ECS templates with active strong references.
+It removes missing entries only if filesystem traversal succeeds for all roots.
+Texture descriptors are reread, but existing GPU textures are not automatically reloaded.
 
-Scene format version 1 saves each root's name, transform, asset type/reference, and type-specific data.
-Objects without an asset reference additionally save a reflected componentData tree.
-Asset-backed objects are reconstructed from their template and then receive the existing overrides.
-Unversioned asset-backed documents remain readable; unsupported versions are rejected.
+The editor calls ECS templates “Blueprints.” `Scene::addBlueprintObjectToScene`
+creates independent component data and records the template path.
+Editing an instance does not edit its template; refreshing a template does not update existing instances.
 
-Loading reconstructs and validates incoming roots before replacing the current roots.
-Bad records or unresolved references preserve the existing roots.
-This does not provide a general rollback of resource loading or initialization side effects.
+On scene reload, asset-backed roots are reconstructed from their templates, then receive
+saved names, transforms, and type-specific data. Roots without an asset reference store a
+full `componentData` tree. General property overrides are not implemented.
 
-== Authoring reliability
+Renaming a file changes its logical ID. The browser refreshes the index but does not rewrite
+saved references, so update those references too.
 
-CacheSystem writes Scene under data/scenes and World under data/world.
-These are persistent authoring/state files, not disposable caches.
-xref:file-io.adoc[File I/O] describes replacement and failed-load protection.
-
-The browser's rename path renames the filesystem entry and refreshes the index.
-It does not rewrite saved scene/template references.
-Moves, deletion, stable IDs or redirects, and dependency reporting need an explicit authoring contract.
-
-See xref:ue5-alignment.adoc[UE5 comparison] for the proposed resource boundary.
+Scenes in `data/scenes` and worlds in `data/world` are persistent authored files.
+See xref:file-io.adoc[File I/O] for save behavior and failed-load protection.

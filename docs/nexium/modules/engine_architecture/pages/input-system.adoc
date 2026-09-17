@@ -1,55 +1,43 @@
 = Input System
 
-Platform supplies raw Window, Keyboard, Mouse, and DragAndDrop state.
-NxSubsystems supplies named keyboard/mouse actions.
-These APIs currently live in NX and Platform, rather than the old Core input namespace.
+Platform supplies window events, keyboard/button state, cursor position, and drag tracking.
+`NxSubsystems/Input` maps that state to named actions in namespace `NX`.
 
-== Actions and mappings
+== Actions
 
-[cols="2,5",options="header"]
+`KeyboardInputManger` and `MouseInputManger` own intrusive action references indexed by
+`Core::StringAtom` names. “Manger” is the current API spelling.
+`getOrCreate()` reuses the existing name; it does not change that action's key binding.
+
+`InputAction::update()` polls its key, applies repeat/frequency limits, snapshots left
+Shift/Alt/Ctrl, and passes that snapshot to `onPress`.
+Repeat defaults to enabled with zero delay. Disable repeat for one notification per press;
+frequency limits use elapsed `system_clock` milliseconds.
+
+Mouse actions also provide:
+
+* `onMouseClick`: current position on a qualifying press, using the same repeat policy.
+* `onMove`: position delta after the first sample establishes a baseline.
+* `onDrag`: position delta while Platform reports dragging and the action's button condition matches.
+
+A mouse click here is a press notification, not release detection.
+
+== Who updates actions
+
+[cols="2,4",options="header"]
 |===
-|Type |Responsibility
-|NX::InputAction<KeyT> |Optional key binding, name, repeat/frequency state, modifier snapshot, onPress.
-|KeyboardInputAction / KeyboardIA |Polls Platform keyboard state.
-|MouseInputAction / MouseIA |Button press/click, cursor movement, drag notifications.
-|InputManger<InputT> |Name-to-action mapping, lookup/create/remove, per-action update.
-|KeyboardInputManger / MouseInputManger |Concrete mapping managers; “Manger” is the current API spelling.
+|Owner |Update path
+|GameEditor |Keyboard and mouse mappings after drawing editor windows.
+|EditorIntegration in GameOnly mode |Editor keyboard mappings only.
+|Spectator |Its own keyboard and mouse mappings during its scene tick.
 |===
 
-getOrCreate returns an existing mapping by name or creates one for the key.
-Action names use Core::StringAtom; action references use Core intrusive pointers.
+Editor scene ticks require viewport focus. There is no central input-context stack or
+consumption/priority policy; callers must gate actions where needed.
 
-InputAction::update checks the bound key.
-It triggers onPress when the press transition/repeat policy and frequency permit,
-then snapshots modifier keys.
-Repeat is enabled by default.
-Frequency uses system_clock elapsed milliseconds; no monotonic input clock is supplied.
+Editor shortcuts in `GameEditor::setupShortcuts()` are F1 (render mode), Escape (clear selection),
+F12 (close), and left Ctrl + left Shift + S (save).
+Render-mode switching uses the same scene; see xref:lifecycle.adoc[Application Lifecycle].
 
-MouseInputAction first updates button state, then cursor state.
-The first cursor sample establishes its baseline.
-Movement triggers onMove; onDrag depends on Platform DragAndDrop state and the bound button.
-onMouseClick reports current cursor position through the action's private press delegate.
-It is a press notification, not a separate release/click-duration recognizer.
-
-== Current routing
-
-GameEditor owns keyboardInput and mouseInput and updates them while its editor update runs.
-EditorIntegration::updateInput updates editor keyboard mappings in the GameOnly path.
-Spectator owns and updates its own keyboard/mouse mappings through its scene tick.
-
-Editor scene ticking depends on viewport focus.
-The current routing is not a central input-context stack with consumption or priorities.
-ImGui interaction, editor shortcuts, camera controls, and game input can require separate gating.
-
-In GameEditor::setupShortcuts, F1 toggles render mode and Escape clears selection.
-The save binding checks both left Ctrl and left Shift with S.
-Render-mode switching does not start a separate gameplay session.
-
-== Recommended contract
-
-Separate editor-global shortcuts, viewport navigation, and active-game input contexts.
-Route input before simulation and define focus/capture behavior explicitly.
-A text field should consume typing; playing should give game controls the intended viewport focus.
-
-Preserve the current action/delegate API until a real game needs richer mapping.
-Remapping persistence, gamepad support, and a general UE Enhanced Input equivalent are not established features here.
+Implementation: `NxSubsystems/Input/InputAction.{h,cpp}`, `InputManager.h`,
+`Editor/GameEditor.cpp`, and `NxWorld/Scene/Spectator.cpp`.

@@ -16,13 +16,12 @@ The immediate goal is a useful 2D authoring workflow; optional 3D and game-only 
 * xref:ue5-alignment.adoc[UE5 comparison] separates useful design patterns from proposed work.
 
 The xref:architecture-review.adoc[architecture and migration review] summarizes decisions.
-The repository-root `NEW_STRUCTURE.md` holds the dated assessment and unresolved questions.
 
 == Design direction
 
-Keep the existing eight layers, focused libraries, JRM reflection, and component trees.
-Make world ownership, editing operations, and simulation lifetimes explicit before expanding the gameplay framework.
-Build dependencies and object ownership are separate graphs.
+The eight layers use focused libraries, JRM reflection, and component trees.
+Build dependencies and object ownership are separate graphs; see
+xref:gameplay:index.adoc[Gameplay] and xref:lifecycle.adoc[Application Lifecycle] for their runtime use.
 
 The current application links Editor and shares one scene between editor and game rendering.
 UE-style class names describe intended roles; they do not establish UE-equivalent behavior.

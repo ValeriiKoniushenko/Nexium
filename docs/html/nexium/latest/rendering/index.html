@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Untitled :: Nexium Engine</title>
+    <title>Rendering :: Nexium Engine</title>
     <link rel="prev" href="../engine_architecture/input-system.html">
     <link rel="next" href="pipeline.html">
     <meta name="generator" content="Antora 3.1.15">
@@ -79,6 +79,12 @@
     <a class="nav-link" href="../engine_architecture/index.html">Overview</a>
   </li>
   <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../engine_architecture/architecture-review.html">Architecture and Migration Review</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../engine_architecture/ue5-alignment.html">UE5 Patterns for Nexium</a>
+  </li>
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../engine_architecture/module-graph.html">Module Graph</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -115,44 +121,14 @@
     <a class="nav-link" href="pipeline.html">Rendering Pipeline</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="renderer-architecture.html">Renderer Architecture</a>
+    <a class="nav-link" href="renderer-architecture.html">Rendering Responsibilities</a>
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
     <span class="nav-text">Materials</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="materials/overview.html">Material System</a>
-  </li>
-  <li class="nav-item" data-depth="3">
     <a class="nav-link" href="materials/shader-system.html">Shader System</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="materials/material-instances.html">Material Instances</a>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Meshes</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="meshes/mesh-format.html">Mesh Format</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="meshes/mesh-loader.html">Mesh Loader</a>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Textures</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="textures/texture-loader.html">Texture Loader</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="textures/compression.html">Texture Compression</a>
   </li>
 </ul>
   </li>
@@ -172,10 +148,10 @@
     <a class="nav-link" href="../gameplay/components.html">Components</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../gameplay/scripting.html">Scripting</a>
+    <a class="nav-link" href="../gameplay/scripting.html">Gameplay Hooks</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../gameplay/prefabs.html">Prefabs</a>
+    <a class="nav-link" href="../gameplay/prefabs.html">Blueprint Templates</a>
   </li>
 </ul>
   </li>
@@ -187,16 +163,7 @@
     <a class="nav-link" href="../build/index.html">Overview</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../build/linux-build.html">Linux Build</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../build/windows-build.html">Windows Build</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../build/cmake-structure.html">CMake Structure</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../build/toolchain.html">Toolchain Setup</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../build/ci-cd.html">CI/CD</a>
@@ -204,82 +171,7 @@
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Tutorials</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/index.html">Overview</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/create-first-scene.html">Create Your First Scene</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/loading-models.html">Loading Models</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/adding-materials.html">Adding Materials</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/building-for-release.html">Building for Release</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/debugging.html">Debugging</a>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Reference</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../reference/index.html">Overview</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../reference/cli.html">Command-Line Tools</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../reference/configuration.html">Configuration</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Public API</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../reference/public-api/core-api.html">Core API</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../reference/public-api/math-api.html">Math API</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../reference/public-api/render-api.html">Render API</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../reference/public-api/ecs-api.html">ECS API</a>
-  </li>
-</ul>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">About</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/index.html">Overview</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/roadmap.html">Roadmap</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/contributing.html">Contributing</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/license.html">License</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/history.html">History</a>
-  </li>
-</ul>
+    <a class="nav-link" href="../about/index.html">About</a>
   </li>
 </ul>
   </li>
@@ -323,7 +215,81 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-
+<h1 class="page">Rendering</h1>
+<div class="sect1">
+<h2 id="_from_scene_data_to_pixels"><a class="anchor" href="#_from_scene_data_to_pixels"></a>From scene data to pixels</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A draw needs four things: geometry, a linked shader program, an active camera, and a render target.
+For a Rectangle, the geometry is a shared indexed quad; the shader receives camera/model matrices
+and a region of a texture atlas. Animation changes that region rather than rebuilding the geometry.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="pipeline.html" class="xref page">Rendering Pipeline</a> traces a frame and a rectangle draw, including atlas coordinates.</p>
+</li>
+<li>
+<p><a href="materials/shader-system.html" class="xref page">Shader System</a> explains discovery, compilation, metadata, uniforms, and recompilation.</p>
+</li>
+<li>
+<p><a href="renderer-architecture.html" class="xref page">Rendering Responsibilities</a> identifies who owns the resources and when they are used.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_choose_the_drawing_path"><a class="anchor" href="#_choose_the_drawing_path"></a>Choose the drawing path</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Content</th>
+<th class="tableblock halign-left valign-top">Current path</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2D sprites</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rectangle + named atlas + <code>2d_rect</code> shader. RectangleAnimated changes the selected frame&#8217;s UVs.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3D meshes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Optional Assimp import and mesh/bundle drawing; enable <code>NEXIUM_ENABLE_3D_MODULE</code> when configuring.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Editor viewport</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Scene rendered into a color texture displayed by ImGui.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GameOnly view</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The same Scene rendered into the window&#8217;s framebuffer.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The normal runtime requests an OpenGL 4.6 context. GPU operations run on the main thread.
+There is no general material graph or separate material-instance asset; appearance is configured
+through component fields, textures, shader uniforms, and draw settings.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_diagnose_a_blank_view"><a class="anchor" href="#_diagnose_a_blank_view"></a>Diagnose a blank view</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Check the active camera first, then shader errors in Logs, then the object&#8217;s atlas/texture selection.
+An unfocused editor viewport stops scene ticks but can still render.
+A missing shader, invalid vertex layout, and failed image load are separate failures;
+<a href="materials/shader-system.html#shader-troubleshooting" class="xref page">Shader diagnostics</a> narrows the first two.</p>
+</div>
+</div>
+</div>
 <nav class="pagination">
   <span class="prev"><a href="../engine_architecture/input-system.html">Input System</a></span>
   <span class="next"><a href="pipeline.html">Rendering Pipeline</a></span>

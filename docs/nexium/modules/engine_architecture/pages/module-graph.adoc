@@ -1,8 +1,7 @@
 = Module Graph
 
-Reviewed against source and CMake at commit `63bd5ccb`, 2026-09-16.
-A source directory can produce several libraries.
-Dependencies may skip intermediate layers; numbering describes the intended direction.
+A source directory can produce several libraries. The tables follow `sources/*/CMakeLists.txt`.
+Dependencies may skip layers; numbering describes their intended direction.
 
 == Source layers
 
@@ -30,7 +29,7 @@ Foundation's separate private logging target is disabled.
 |Public alias |Contents |Direct public dependencies
 |`Nexium::Foundation` |Configs, BaseLog, IDataIO, IOutliner |Utils::Core, spdlog::spdlog, JustReflectMe::Adapter.
 |`Nexium::Platform::Graphics` |OpenGL access |Core::Glad.
-|`Nexium::Platform::Input` |Window, Keyboard, Mouse |glfw, Utils::Core, JustReflectMe::Adapter, glm.
+|`Nexium::Platform::Input` |Window, Keyboard, Mouse |Foundation, glfw, Utils::Core, JustReflectMe::Adapter, glm.
 |`Nexium::RawBackend` |Image, Texture, RenderTargetToTexture, IDrawable |Foundation, Platform Graphics.
 |`Nexium::Fundamental::Base` |ITagHolder, Transformable |Foundation.
 |`Nexium::Fundamental::ResourceManagement` |CacheSystem, DataStream, atomic replacement, JSON adapter |Foundation.
@@ -59,8 +58,7 @@ AssetsManager privately links comdlg32 on Windows.
 
 The application chain is `TemplateGame -> Editor -> Runtime -> World`.
 TemplateGame retains Editor with WHOLE_ARCHIVE.
-This protects registration translation units from archive extraction, at the cost of retaining the entire selected archive.
-It does not create dynamically loadable modules.
+WHOLE_ARCHIVE retains otherwise unreferenced component registrations in these static libraries.
 
 == Runtime ownership
 
@@ -83,16 +81,12 @@ Source anchors: `Framework/{GameInstance,World}.h`, `Scene/Scene.h` in NxWorld,
 
 == Boundary limits
 
-Runtime and World do not include Editor implementation headers.
-ApplicationIntegration supplies editor hooks through a lower-layer interface.
-This is a useful dependency inversion.
+`ApplicationIntegration` lets Runtime and World call editor hooks without including Editor implementation headers.
 
-RawBackend's IDrawable still names NX::BaseCamera, Actor, and StaticMesh.
-Forward declarations remove a direct build requirement but retain knowledge of higher-level concepts.
-Scene::directDraw also chooses the camera and editor grid through global GameInstance/World access.
+RawBackend's `IDrawable` still names higher-layer camera/actor/mesh types through forward declarations.
+`Scene::directDraw` chooses the camera and editor grid through global GameInstance/World access.
 
-Public header sets use the shared sources include root.
-They describe headers and enable compilation checks, but do not prevent consumers from including another module's private headers.
+Public header sets support compilation checks, but the shared `sources/` include root also exposes private headers.
 “Subsystem” currently means a service library, not automatic lifetime management.
 
 See xref:build:cmake-structure.adoc[CMake infrastructure] and xref:ue5-alignment.adoc[recommended boundaries].
