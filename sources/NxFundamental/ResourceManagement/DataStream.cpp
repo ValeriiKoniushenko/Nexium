@@ -1,0 +1,286 @@
+// Nexium
+// Copyright 2018-2026 Valerii Koniushenko
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+
+#include "DataStream.h"
+
+#include "AtomicFile.h"
+#include "Foundation/Configs.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
+
+using namespace Foundation;
+using namespace Core;
+
+namespace fs = std::filesystem;
+
+namespace NX
+{
+
+    void CacheSystem::write(const IDataIO& data, const nlohmann::json& json)
+    {
+        if (_failedReads.contains(getPath(data)))
+        {
+            errorLog("Save blocked after a failed load: {}. Reload successfully before saving."_f
+                     << getPath(data));
+            return;
+        }
+        if (!createCacheDirIfNotExist(data))
+        {
+            return;
+        }
+
+        const auto str = json.dump(4);
+
+        try
+        {
+            WriteFileAtomically(getPath(data), str);
+        }
+        catch (const std::filesystem::filesystem_error& error)
+        {
+            errorLog("Can't save object {}. Path: {}. Details: {}"_f
+                     << data.getCacheHash() << getPath(data) << error.what());
+        }
+    }
+
+    bool CacheSystem::hasCache(const IDataIO& data) const
+    {
+        return fs::exists(getPath(data));
+    }
+
+    void CacheSystem::clearCache(const IDataIO& data)
+    {
+        if (hasCache(data))
+        {
+            std::error_code ec;
+            fs::remove(getPath(data), ec);
+            if (ec)
+            {
+                errorLog("Can't clear cache for this object {}. Path: {}. Details: {}"_f
+                         << data.getCacheHash() << getPath(data) << ec.message());
+            }
+        }
+        if (!hasCache(data))
+        {
+            _failedReads.erase(getPath(data));
+        }
+    }
+
+    std::filesystem::path CacheSystem::getPath(const IDataIO& data) const
+    {
+        std::string out;
+        for (auto c : data.getCacheHash().toStdString())
+        {
+            out += (std::isalnum(c) || c == '_') ? c : '_';
+        }
+
+        return getCachePath(data) / (out + ".json");
+    }
+
+    std::filesystem::path CacheSystem::getCachePath(const IDataIO& data) const
+    {
+        return Config::Path::data / data.getCacheDir();
+    }
+
+    bool CacheSystem::createCacheDirIfNotExist(const IDataIO& data) const
+    {
+        auto cachePath = getCachePath(data);
+        if (!std::filesystem::exists(cachePath))
+        {
+            std::error_code ec;
+            std::filesystem::create_directories(cachePath, ec);
+            if (ec)
+            {
+                errorLog("Can't create cache directory for this object {}. Path: {}. Details: {}"_f
+                         << data.getCacheHash() << cachePath.generic_string() << ec.message());
+                return false;
+            }
+        }
+        return true;
+    }
+
+    spdlog::logger* CacheSystem::getLogger() const
+    {
+        static auto logger = spdlog::stdout_color_mt("CacheSystem");
+        return logger.get();
+    }
+
+    DataStream::Result DataStream::field(IDataUpdateBridge& bridge)
+    {
+        if (_data->mode == Mode::Input)
+        {
+            if (!contains(bridge.getCacheHash().c_str()))
+            {
+                _data->errors.emplace_back(Result::ReadFailed, bridge.getCacheHash().c_str());
+                return Result::ReadFailed;
+            }
+        }
+
+        bridge.ioFieldsUpdate(*this);
+
+        return Result::Success;
+    }
+
+    DataStream::Result DataStream::nesting(const char* key,
+                                           const std::function<void(DataStream&)>& callback)
+    {
+        if (!key)
+        {
+            _data->errors.emplace_back(Result::InvalidPassedData, "nullptr");
+            return Result::InvalidPassedData;
+        }
+
+        try
+        {
+            DataStream nestedStream;
+            nestedStream.setMode(_data->mode);
+
+            if (_data->mode == Mode::Input)
+            {
+                if (!contains(key))
+                {
+                    _data->errors.emplace_back(Result::ReadFailed, key);
+                    return Result::ReadFailed;
+                }
+
+                nestedStream.getRaw() = finalJson()[key];
+                callback(nestedStream);
+            }
+            else
+            {
+                callback(nestedStream);
+                finalJson()[key] = nestedStream.getRaw();
+            }
+        }
+        catch (const std::exception& er)
+        {
+            _data->errors.emplace_back(Result::CustomProcessingError, er.what());
+            return Result::CustomProcessingError;
+        }
+        catch (...)
+        {
+            _data->errors.emplace_back(Result::CustomProcessingError, "Undefined internal error");
+            return Result::CustomProcessingError;
+        }
+
+        return Result::Success;
+    }
+
+    DataStream::Result DataStream::array(
+        const char* key, const std::function<void(DataStream&, std::size_t)>& callback)
+    {
+        if (!key)
+        {
+            _data->errors.emplace_back(Result::InvalidPassedData, "nullptr");
+            return Result::InvalidPassedData;
+        }
+
+        try
+        {
+            DataStream nestedStream;
+            nestedStream.setMode(_data->mode);
+
+            if (_data->mode == Mode::Input)
+            {
+                if (!contains(key))
+                {
+                    _data->errors.emplace_back(Result::ReadFailed, key);
+                    return Result::ReadFailed;
+                }
+
+                nestedStream.getRaw() = finalJson()[key];
+                callback(nestedStream, finalJson()[key].size());
+            }
+            else
+            {
+                nestedStream.getRaw() = nlohmann::json::array();
+                callback(nestedStream, 0);
+                finalJson()[key] = nestedStream.getRaw();
+            }
+        }
+        catch (const std::exception& er)
+        {
+            _data->errors.emplace_back(Result::CustomProcessingError, er.what());
+            return Result::CustomProcessingError;
+        }
+        catch (...)
+        {
+            _data->errors.emplace_back(Result::CustomProcessingError, "Undefined internal error");
+            return Result::CustomProcessingError;
+        }
+
+        return Result::Success;
+    }
+
+    bool DataStream::contains(const char* key) const
+    {
+        return finalJson().contains(key);
+    }
+
+    DataStream DataStream::dedicatedNesting(const char* key)
+    {
+        return { _data, key };
+    }
+
+    void DataStream::tryPushBackEmptyArrayElement()
+    {
+        if (_data->mode == Mode::Output)
+        {
+            auto& json = finalJson();
+            if (json.is_array())
+            {
+                json.push_back(Json());
+            }
+        }
+    }
+
+    DataStream::DataStream(const IntrusivePtr<DataProvider>& viewing, const StringAtom& nesting)
+        : _data{ viewing },
+          _extraNestingKey{ nesting },
+          _isViewer{ true }
+    {
+    }
+
+    DataStream::Json& DataStream::finalJson()
+    {
+        if (_extraNestingKey.empty())
+        {
+            return _data->json;
+        }
+
+        Json* json = &_data->json;
+        if (json->is_array())
+        {
+            json = &json->back();
+        }
+
+        if (!json->contains(_extraNestingKey))
+        {
+            (*json)[_extraNestingKey] = Json();
+        }
+
+        return (*json)[_extraNestingKey];
+    }
+
+    bool IDataUpdateBridge::Rules::checkField(const StringAtom& fieldName,
+                                              uint32_t flag) const noexcept
+    {
+        const auto it = field.find(fieldName);
+        if (it == field.end())
+        {
+            return false;
+        }
+
+        return (it->second & flag) != 0u;
+    }
+
+    DataStream::DataStream()
+    {
+        _data = new DataProvider();
+    }
+
+} // namespace NX

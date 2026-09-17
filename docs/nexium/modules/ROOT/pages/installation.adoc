@@ -1,0 +1,49 @@
+= Installation
+
+Nexium currently builds from source as an editor-enabled example game.
+The steps below follow the Linux Clang/Ninja configuration used by CI.
+
+== Requirements
+
+* Git with working symlinks, CMake 3.30+, Ninja, and a C/C++ toolchain with C++26 mode and compatible standard-library support.
+* A graphical session and driver supporting OpenGL 4.6 for the normal application.
+* Linux development packages for GLFW's X11 and Wayland backends; both are enabled by default.
+
+On Debian/Ubuntu, the graphics prerequisites include `libwayland-dev`, `wayland-protocols`,
+`libxkbcommon-dev`, `libx11-dev`, `libxrandr-dev`, `libxinerama-dev`, `libxcursor-dev`,
+`libxi-dev`, `libxext-dev`, `libgl1-mesa-dev`, and `pkg-config`.
+For an X11-only build, add `-DGLFW_BUILD_WAYLAND=OFF` when configuring.
+ccache and mold are optional. JRM and the other vendored libraries build with the project.
+
+== Get and build the source
+
+. Clone: `git clone https://github.com/ValeriiKoniushenko/Nexium.git`.
+. Enter the checkout: `cd Nexium`.
+. Synchronize submodule URLs: `git submodule sync --recursive`.
+. Fetch the recorded revisions: `git submodule update --init --recursive`.
+. Configure: `CC=clang CXX=clang++ cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug`.
+. Build: `cmake --build build --parallel`.
+
+Run these commands from the repository root after entering the checkout.
+Use a fresh build directory when changing compiler or generator.
+Initialize all submodules, including `.agents/Agents`; a source ZIP alone is insufficient.
+
+The executable is `build/bin/TemplateGame`. The build generates reflection metadata automatically.
+Tests, benchmarks, and optional 3D support are disabled by default; enable them through the
+options in xref:build:cmake-structure.adoc[CMake Infrastructure].
+
+== Platform status
+
+The Gitea workflow `.gitea/workflows/code-quality.yml` configures five Linux builds on
+pushes: GCC and Clang in Debug/Release with 3D off, plus Clang Debug with 3D on.
+Each builds with Ninja in `cpp-ci:latest`, runs unit tests, and checks public headers
+and layer consumers. Debug jobs add Valgrind checks; Release jobs build and smoke-run
+the ECS benchmarks. See xref:build:ci-cd.adoc[CI coverage] for the exact split.
+These are configured checks; results depend on the latest workflow run. Compiler
+versions come from the container image, and no Windows job is configured.
+
+Windows support still needs validation: the application resource path is stale.
+Windows also requires Git symlink support and permission to create symlinks.
+See xref:build:cmake-structure.adoc[CMake Infrastructure] for the known build limitations.
+
+Continue with xref:getting-started.adoc[Getting Started].

@@ -1,289 +1,43 @@
 = Input System
-:description: Context-aware keyboard input routing through serializable ECS input controllers.
-:source-highlighter: highlight.js
-:icons: font
 
-== Overview
+Platform supplies window events, keyboard/button state, cursor position, and drag tracking.
+`NxSubsystems/Input` maps that state to named actions in namespace `NX`.
 
-Nexium converts raw keyboard events into named actions and routes those actions through ECS `InputController` components.
-Gameplay code works with names such as `"Move left"_atom` or `"Save all"_atom` instead of querying hardware keys directly.
+== Actions
 
-The system supports:
+`KeyboardInputManger` and `MouseInputManger` own intrusive action references indexed by
+`Core::StringAtom` names. “Manger” is the current API spelling.
+`getOrCreate()` reuses the existing name; it does not change that action's key binding.
 
-* separate `Editor` and `Gameplay` input contexts;
-* single keys and multi-key chords;
-* press, release, and held-action triggers;
-* serializable bindings stored in ECS assets;
-* direct callbacks and a shared action delegate;
-* shortcut editing and recording in the ECS Inspector.
+`InputAction::update()` polls its key, applies repeat/frequency limits, snapshots left
+Shift/Alt/Ctrl, and passes that snapshot to `onPress`.
+Repeat defaults to enabled with zero delay. Disable repeat for one notification per press;
+frequency limits use elapsed `system_clock` milliseconds.
 
-[NOTE]
-====
-`InputAction`, `KeyboardInputAction`, and `MouseInputAction` are the older polling-based input API.
-They are still used by some engine code, but new keyboard shortcuts and gameplay actions should use `InputController`.
-====
+Mouse actions also provide:
 
-== Architecture
+* `onMouseClick`: current position on a qualifying press, using the same repeat policy.
+* `onMove`: position delta after the first sample establishes a baseline.
+* `onDrag`: position delta while Platform reports dragging and the action's button condition matches.
 
-Input is processed once per frame using the following flow:
+A mouse click here is a press notification, not release detection.
 
-. `Window` publishes a raw keyboard event.
-. `InputSystem` converts it to a `KeyInputEvent` and queues it.
-. `GameInstance` selects the active `InputContext` and calls `processEvents()`.
-. The event is dispatched only to enabled `InputController` components in that context.
-. Each controller selects the most specific matching `KeyChord` and updates its named action.
-. Gameplay code reads the action state or handles an `InputActionEvent` callback.
+== Who updates actions
 
-`InputSystem` keeps non-owning pointers to registered controllers.
-An `InputController` registers itself during ECS initialization and unregisters itself before destruction.
-Do not register or unregister ECS controllers manually.
-
-== Input contexts
-
-[cols="1,3"]
+[cols="2,4",options="header"]
 |===
-|Context |Purpose
-
-|`InputContext::Editor`
-|Editor commands that remain active while the editor UI owns keyboard focus.
-
-|`InputContext::Gameplay`
-|Game actions such as player or spectator movement.
+|Owner |Update path
+|GameEditor |Keyboard and mouse mappings after drawing editor windows.
+|EditorIntegration in GameOnly mode |Editor keyboard mappings only.
+|Spectator |Its own keyboard and mouse mappings during its scene tick.
 |===
 
-The game loop changes the active context according to the current render mode and game viewport focus:
+Editor scene ticks require viewport focus. There is no central input-context stack or
+consumption/priority policy; callers must gate actions where needed.
 
-[source,cpp]
-----
-const auto inputContext
-    = renderMode == RenderMode::GameOnly || (viewport && viewport->isFocused())
-          ? InputContext::Gameplay
-          : InputContext::Editor;
+Editor shortcuts in `GameEditor::setupShortcuts()` are F1 (render mode), Escape (clear selection),
+F12 (close), and left Ctrl + left Shift + S (save).
+Render-mode switching uses the same scene; see xref:lifecycle.adoc[Application Lifecycle].
 
-GetInputSystem()->setActiveContext(inputContext);
-GetInputSystem()->processEvents();
-----
-
-Changing the context rebuilds the routed-controller list immediately.
-Actions belonging to controllers that leave the active route are released, which prevents held keys from leaving actions stuck after focus changes.
-Calling `setActiveContext()` with the current context is a no-op.
-
-== Input bindings
-
-Each binding maps a named action to a key chord and trigger policy:
-
-[source,cpp]
-----
-struct InputController::Binding
-{
-    StringAtom action;
-    KeyChord chord;
-    InputActionTrigger trigger = InputActionTrigger::OnPress;
-};
-----
-
-=== Key chords
-
-A `KeyChord` contains:
-
-* `triggerKey` — the key that completes the chord;
-* `requiredKeys` — keys that must already be held when the trigger key is pressed.
-
-For example, `Ctrl+Shift+S` is represented as follows:
-
-[source,cpp]
-----
-const KeyChord saveChord{
-    .triggerKey = Keyboard::Key::S,
-    .requiredKeys = {
-        Keyboard::Key::Left_Control,
-        Keyboard::Key::Left_Shift,
-    },
-};
-----
-
-Use `KeyChord::Exact(key)` for a single-key binding.
-Left and right variants of Shift, Control, Alt, and Super are normalized when matching chords, so either side can satisfy the corresponding modifier key.
-
-If multiple bindings match the same key event, the controller selects the most specific chord: the binding with the greatest number of required keys.
-This allows `S` and `Ctrl+S` to coexist without both actions firing for `Ctrl+S`.
-
-=== Trigger policies
-
-[cols="1,3"]
-|===
-|Trigger |Behavior
-
-|`InputActionTrigger::OnPress`
-|The action becomes active for the press event and is reset at the beginning of the next input frame.
-
-|`InputActionTrigger::OnRelease`
-|The action fires when the chord is released and is reset at the beginning of the next input frame.
-
-|`InputActionTrigger::WhileHeld`
-|The action stays active while its chord remains held and is released when a chord key is released or the controller leaves the active context.
-|===
-
-== Creating a controller in code
-
-Use `InputController::Create()` for standalone controllers.
-The factory initializes the component and registers it with `InputSystem`.
-Keep the returned `InputController::Ptr` alive for as long as the bindings are needed.
-
-[source,cpp]
-----
-auto editorInput = InputController::Create(
-    "Editor input"_atom,
-    InputContext::Editor);
-
-editorInput->bind(
-    "Save all"_atom,
-    KeyChord{
-        .triggerKey = Keyboard::Key::S,
-        .requiredKeys = {
-            Keyboard::Key::Left_Control,
-            Keyboard::Key::Left_Shift,
-        },
-    },
-    [](const InputActionEvent&)
-    {
-        gGameInstance->saveAllToCache();
-    });
-----
-
-The callback overload associates one callback with the action name.
-Binding the same action again replaces its callback.
-Prefer this overload for action-specific behavior instead of creating a separate `onAction` subscription and filtering by action name.
-
-== Using an ECS controller
-
-`InputController` is a reflected ECS component.
-Controllers attached to a scene object initialize and register through the normal component lifecycle.
-This is the preferred approach for serializable gameplay bindings.
-
-For continuous actions, poll the named state during the object's tick:
-
-[source,cpp]
-----
-void Player::onTick(float delta)
-{
-    if (!_input || !_input->isEnabled())
-    {
-        return;
-    }
-
-    const int horizontal
-        = static_cast<int>(_input->isActionPressed("Move right"_atom))
-        - static_cast<int>(_input->isActionPressed("Move left"_atom));
-
-    moveRight(static_cast<float>(horizontal) * movementSpeed * delta);
-}
-----
-
-`isActionPressed()` is useful for `WhileHeld` bindings.
-`getActionModifiers()` returns the modifier snapshot captured when an action was activated:
-
-[source,cpp]
-----
-const bool slowMovement
-    = (input->getActionModifiers("Move up"_atom) & InputModifier::Shift)
-      != InputModifier::None;
-----
-
-The available modifier flags are `Shift`, `Control`, `Alt`, and `Super`.
-
-== Serialized format
-
-The reflected `_bindings` field is stored with the `InputController` component:
-
-[source,json]
-----
-{
-  "_type": "Core::InputController",
-  "_name": "InputController",
-  "_isEnabled": true,
-  "_bindings": [
-    {
-      "action": "Move up",
-      "triggerKey": "W",
-      "requiredKeys": [],
-      "trigger": "WhileHeld"
-    },
-    {
-      "action": "Save",
-      "triggerKey": "S",
-      "requiredKeys": ["Left_Control"],
-      "trigger": "OnPress"
-    }
-  ]
-}
-----
-
-Bindings are deserialized by symbolic enum name.
-The loader also accepts the legacy `key` field and legacy modifier fields, allowing older input assets to remain readable.
-
-== Editing shortcuts
-
-Select an `InputController` in the ECS editor to open the *Input shortcuts* section.
-For every binding you can:
-
-* edit the action name;
-* choose the trigger policy;
-* record a new shortcut;
-* delete the binding;
-* add another shortcut.
-
-When shortcut recording is active, press the desired key combination.
-The editor stores the last non-modifier key as `triggerKey` and the other recorded keys as `requiredKeys`.
-Apply the recording to update the component and mark its parent asset as modified.
-
-== Runtime behavior and edge cases
-
-* Disabled controllers remain registered but do not receive routed events.
-* Empty action names and chords without a trigger key are rejected by `bind()`.
-* Rebinding an existing action and chord updates the binding instead of adding a duplicate.
-* `unbind()` removes the binding, active state, modifiers, transient state, and direct callback for the action.
-* `clearBindings()` removes all bindings and resets every action state.
-* Releasing any key participating in an active chord releases its `WhileHeld` action.
-* Switching contexts releases actions owned by controllers that are no longer routed.
-* Destroying a controller unregisters it, so stale component pointers are not retained by `InputSystem`.
-
-== API summary
-
-[cols="1,3"]
-|===
-|API |Purpose
-
-|`InputController::Create(name, context)`
-|Creates, initializes, and registers a standalone controller.
-
-|`bind(action, chord, trigger)`
-|Adds or updates a serializable action binding.
-
-|`bind(action, chord, callback, trigger)`
-|Adds a binding and assigns a direct runtime callback.
-
-|`unbind(action)` / `clearBindings()`
-|Removes one or all bindings and their runtime state.
-
-|`setBindings(bindings)`
-|Replaces the complete binding collection.
-
-|`isActionPressed(action)`
-|Returns whether the named action is currently active.
-
-|`getActionModifiers(action)`
-|Returns the modifier keys captured for the active action.
-
-|`onAction`
-|Low-level broadcast of every processed action event. Prefer a callback passed to `bind()` for action-specific behavior.
-
-|`GetInputSystem()`
-|Returns the global input system instance.
-
-|`InputSystem::setActiveContext(context)`
-|Selects which group of controllers receives input.
-
-|`InputSystem::processEvents()`
-|Processes queued keyboard events for the current frame.
-|===
+Implementation: `NxSubsystems/Input/InputAction.{h,cpp}`, `InputManager.h`,
+`Editor/GameEditor.cpp`, and `NxWorld/Scene/Spectator.cpp`.

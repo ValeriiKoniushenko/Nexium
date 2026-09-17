@@ -1,29 +1,16 @@
-/*
- * MIT License
- *
- * Copyright (c) 2018-2027 Valerii Koniushenko
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+// Nexium
+// Copyright 2018-2026 Valerii Koniushenko
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
 
 #include "GameEditor.h"
 
+#include "Editor/EditorIntegration.h"
+#include "Editor/IconsFontAwesome.h"
 #include "Editor/Windows/EditorMenuBarWindow.h"
 #include "Editor/Windows/EditorSettings.h"
 #include "Editor/Windows/Editors/TextEditor.h"
@@ -34,13 +21,14 @@
 #include "Editor/Windows/RootDockWindow.h"
 #include "Editor/Windows/SceneTreeWindow.h"
 #include "Editor/Windows/ShaderManager.h"
-#include "GameplaySystem/Framework/GameInstance.h"
-#include "Graphics/Primitives/StaticMeshBundle.h"
+#include "Foundation/Configs.h"
 #include "ImGui/backends/imgui_impl_glfw.h"
 #include "ImGui/backends/imgui_impl_opengl3.h"
-#include "Misc/Configs.h"
-#include "Misc/IconsFontAwesome.h"
-#include "ModuleInfo.h"
+#ifdef NEXIUM_ENABLE_3D_MODULE
+    #include "NxWorld/Entities/Mesh/StaticMeshBundle.h"
+#endif
+#include "NxWorld/Framework/GameInstance.h"
+#include "PrivateModuleInfo.h"
 #include "Windows/AssetsExplorer/AssetsManagerWindow.h"
 #include "Windows/AssetsExplorer/RenamePopUpWindow.h"
 #include "Windows/Editors/NxTextureEditor.h"
@@ -56,6 +44,9 @@
 #include <string>
 
 using namespace Core;
+using namespace NX;
+using namespace Platform;
+namespace Config = Foundation::Config;
 
 namespace
 {
@@ -81,7 +72,7 @@ namespace
     }
 } // namespace
 
-namespace Core
+namespace NX
 {
     const int GameEditor::defaultEditorImGuiFlags
         = ImGuiConfigFlags_NavEnableKeyboard | ImGuiConfigFlags_DockingEnable;
@@ -93,6 +84,11 @@ namespace Core
 
     void GameEditor::initialize()
     {
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGuiIO& io = ImGui::GetIO();
+        io.IniFilename = nullptr;
+
         gameViewport.generate();
 
         setupImGuiStyles();
@@ -171,6 +167,7 @@ namespace Core
         {
             ImGui_ImplOpenGL3_Shutdown();
             ImGui_ImplGlfw_Shutdown();
+            ImGui::DestroyContext();
         }
     }
 
@@ -350,13 +347,17 @@ namespace Core
     {
         _subscriptionPool << keyboardInput.getOrCreate("Close editor", Keyboard::Key::F12)
                                  ->onPress->subscribeAndGetID([&](auto) { GetWindow().close(); });
-
-        _inputController = InputController::Create("Editor input"_atom, InputContext::Editor);
-        _inputController->bind(
-            "Save all"_atom,
-            KeyChord{ .triggerKey = Keyboard::Key::S,
-                      .requiredKeys = { Keyboard::Key::Left_Control, Keyboard::Key::Left_Shift } },
-            [](const InputActionEvent&) { gGameInstance->saveAllToCache(); });
+        auto saveKey = keyboardInput.getOrCreate("Save [Ctrl]", Keyboard::Key::S);
+        saveKey->setIsRepeatable(false);
+        _subscriptionPool << saveKey->onPress->subscribeAndGetID(
+            [&](const KeyboardIA::SpecKeysState& spec)
+            {
+                if (spec.leftCtrl == Keyboard::KeyState::Pressed
+                    && spec.leftShift == Keyboard::KeyState::Pressed)
+                {
+                    gGameInstance->saveAllToCache();
+                }
+            });
 
         auto toggleRenderMode = keyboardInput.getOrCreate("Toggle render mode", Keyboard::Key::F1);
         toggleRenderMode->setIsRepeatable(false);
@@ -366,9 +367,7 @@ namespace Core
         _subscriptionPool << keyboardInput.getOrCreate("Cancel action", Keyboard::Key::Escape)
                                  ->onPress->subscribeAndGetID(
                                      [&](auto)
-                                     {
-                                         gGameInstance->objectSelectorManager.deselectAllAndClear();
-                                     });
+                                     { GetObjectSelectorManager()->deselectAllAndClear(); });
 
         auto mouseMove = mouseInput.getOrCreate("mouseMove", Mouse::Key::Right);
         _subscriptionPool << mouseMove->onDrag->subscribeAndGetID(
@@ -387,10 +386,9 @@ namespace Core
             return;
         }
 
-        if (auto* world = GetWorld())
+        if (auto* objectPicker = GetObjectPicker())
         {
-            world->objectSelector.requestPick([this](Transformable* object)
-                                              { responseOnPick(object); });
+            objectPicker->requestPick([this](Transformable* object) { responseOnPick(object); });
         }
     }
 
@@ -401,30 +399,32 @@ namespace Core
             return;
         }
 
-        if (const auto* wnd = gGameInstance->gameEditor.getWindow<GameViewportEWC>();
-            !wnd || !wnd->isHovered())
+        if (const auto* wnd = GetEditor()->getWindow<GameViewportEWC>(); !wnd || !wnd->isHovered())
         {
             return;
         }
 
+#ifdef NEXIUM_ENABLE_3D_MODULE
         if (auto* mesh = dynamic_cast<StaticMesh*>(object))
         {
             if (auto* bundle = mesh->tryToGetRootBundle())
             {
                 if (!bundle->isIgnoreSelect())
                 {
-                    gGameInstance->objectSelectorManager.selectSingleObject(bundle);
+                    GetObjectSelectorManager()->selectSingleObject(bundle);
                 }
                 bundle->onMousePicked(mesh);
             }
             else
             {
-                gGameInstance->objectSelectorManager.selectSingleObject(mesh);
+                GetObjectSelectorManager()->selectSingleObject(mesh);
             }
         }
-        else if (auto* comp = dynamic_cast<BaseComponent*>(object))
+        else
+#endif
+            if (auto* comp = dynamic_cast<BaseComponent*>(object))
         {
-            gGameInstance->objectSelectorManager.selectSingleObject(comp);
+            GetObjectSelectorManager()->selectSingleObject(comp);
         }
     }
 
@@ -445,4 +445,4 @@ namespace Core
     void GameEditor::handleMouseDrag(glm::vec2 delta, MouseInputAction::SpecKeysState state)
     {
     }
-} // namespace Core
+} // namespace NX

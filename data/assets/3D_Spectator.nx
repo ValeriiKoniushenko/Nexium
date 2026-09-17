@@ -2,54 +2,6 @@
     "data": {
         "_children": [
             {
-                "_bindings": [
-                    {
-                        "action": "Move forward",
-                        "requiredKeys": [],
-                        "trigger": "WhileHeld",
-                        "triggerKey": "W"
-                    },
-                    {
-                        "action": "Move backward",
-                        "requiredKeys": [
-                            "Left_Control",
-                            "Left_Shift"
-                        ],
-                        "trigger": "WhileHeld",
-                        "triggerKey": "S"
-                    },
-                    {
-                        "action": "Move right",
-                        "requiredKeys": [],
-                        "trigger": "WhileHeld",
-                        "triggerKey": "D"
-                    },
-                    {
-                        "action": "Move left",
-                        "requiredKeys": [],
-                        "trigger": "WhileHeld",
-                        "triggerKey": "A"
-                    },
-                    {
-                        "action": "Move up",
-                        "requiredKeys": [],
-                        "trigger": "WhileHeld",
-                        "triggerKey": "R"
-                    },
-                    {
-                        "action": "Move down",
-                        "requiredKeys": [],
-                        "trigger": "WhileHeld",
-                        "triggerKey": "F"
-                    }
-                ],
-                "_children": null,
-                "_isEnabled": true,
-                "_name": "Core-InputController",
-                "_noTick": false,
-                "_type": "Core::InputController"
-            },
-            {
                 "_aspect": {
                     "height": 1.0,
                     "width": 1.0
@@ -83,7 +35,7 @@
                     1.0,
                     1.0
                 ],
-                "_type": "Core::PerspectiveCamera"
+                "_type": "NX::PerspectiveCamera"
             }
         ],
         "_isDrawOutline": false,
@@ -111,11 +63,11 @@
             1.0,
             1.0
         ],
-        "_type": "Core::Spectator",
+        "_type": "NX::Spectator",
         "mouseSensitivity": 0.5,
         "speed": 600.0
     },
     "name": "3D_Spectator",
     "tags": "WorldObject",
-    "type": "Core::Spectator"
+    "type": "NX::Spectator"
 }

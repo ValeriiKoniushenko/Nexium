@@ -1,35 +1,25 @@
-/*
- * MIT License
- *
- * Copyright (c) 2018-2027 Valerii Koniushenko
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+// Nexium
+// Copyright 2018-2026 Valerii Koniushenko
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
 
 #include "Gizmo.h"
 
-#include "GameplaySystem/Framework/GameInstance.h"
+#include "Editor/EditorIntegration.h"
+#include "NxWorld/Entities/Camera/Camera.h"
+#include "NxWorld/Framework/GameInstance.h"
 #include "assimp/Importer.hpp"
 #include "assimp/postprocess.h"
 #include "assimp/scene.h"
 
-namespace Core
+using namespace NX;
+using namespace Platform;
+
+namespace NX
 {
     ECS_IMPL(Gizmo);
 
@@ -72,7 +62,7 @@ namespace Core
 
     void Gizmo::load3DModel()
     {
-        const auto defaultModelPath = Config::Path::objects3d / "Models/FBX/gizmo.fbx";
+        const auto defaultModelPath = Foundation::Config::Path::objects3d / "Models/FBX/gizmo.fbx";
 
         static Assimp::Importer importer;
         static const aiScene* scene
@@ -97,8 +87,7 @@ namespace Core
 
             data.direction = static_cast<Direction>(directionChar);
 
-            for (auto& obj :
-                 gGameInstance->objectSelectorManager.getSelectedObjects() | std::views::values)
+            for (auto& obj : GetObjectSelectorManager()->getSelectedObjects() | std::views::values)
             {
                 if (auto* trans = dynamic_cast<Transformable*>(obj.get()))
                 {
@@ -181,4 +170,4 @@ namespace Core
         _isDirtyModelMatrix = false;
     }
 
-} // namespace Core
+} // namespace NX

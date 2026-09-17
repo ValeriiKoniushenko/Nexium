@@ -1,0 +1,70 @@
+= CMake Infrastructure
+
+Nexium requires CMake 3.30+ and a compiler accepting its configured C++26 mode.
+`cmake/NexiumTargets.cmake` applies target settings and public header sets;
+xref:engine_architecture:module-graph.adoc[Module Graph] lists the libraries.
+
+== Configuration
+
+[cols="3,1,4",options="header"]
+|===
+|Option |Default |Effect
+|`NEXIUM_DISABLE_TESTS` |ON |Omit `Nexium_Tests`.
+|`NEXIUM_DISABLE_BENCHMARKS` |ON |Omit `Nexium_ECS_Benchmarks`.
+|`NEXIUM_ENABLE_3D_MODULE` |OFF |Enable Assimp, meshes, and related editor files.
+|`NEXIUM_VERIFY_INTERFACE_HEADER_SETS` |ON |Create explicit public-header verification targets.
+|`NEXIUM_ENABLE_LAYER_CHECKS` |ON |Create explicit layer-consumer and generated-header checks.
+|===
+
+There are no repository CMake presets. Configure `build/` with Ninja and
+`CMAKE_BUILD_TYPE=Debug`; use a separate directory for Release or another toolchain.
+Set `NEXIUM_DISABLE_TESTS=OFF` or `NEXIUM_DISABLE_BENCHMARKS=OFF` when those targets are needed.
+These defaults come from the root `CMakeLists.txt`; older guidance saying tests are enabled is stale.
+
+Executables go to `<build_dir>/bin/`, libraries to `<build_dir>/lib/`.
+Multi-configuration generators normally add a configuration subdirectory.
+Editor and TemplateGame are always included. The default build compiles enabled targets but does not run tests.
+There is no root coverage workflow or CTest registration.
+
+== Target and dependency rules
+
+Engine targets expose `cxx_std_26` and disable compiler extensions. This checks language mode,
+not availability of every C++26 feature. Foundation receives the compiled project path.
+Debug definitions affecting the ECS and graphics public APIs propagate to consumers.
+
+Most layers list sources explicitly. Editor uses `CONFIGURE_DEPENDS` globs;
+tests and game-example use ordinary globs and may need reconfiguration after adding files.
+Header sets use the shared `sources/` include root; they do not enforce private-header isolation.
+
+Dependencies are configured with `EXCLUDE_FROM_ALL`; active targets determine what is built.
+Initialize submodules recursively at recorded revisions. The 3D option gates Assimp.
+Linux prefers mold, then lld; ccache is used when available.
+Runtime retains World with WHOLE_ARCHIVE, and TemplateGame retains Editor for static registrations.
+
+Windows still needs validation: the `/Z7` configuration condition precedes compiler detection,
+and game-example references `sources/Resources/app.rc` while the file is under `sources/Platform/Resources`.
+
+== Reflection generation
+
+`cmake/JustReflectMe.cmake` builds JRM separately in Release under `<build_dir>/tools/jrm`.
+The reflection adapter uses the engine toolchain. Cross-compilation is rejected.
+
+The ALL target `CodeGenerator` invokes this built tool through `cmake/RunJRM.cmake`.
+The wrapper locks shared output state and invalidates `.jrm/cache.data` when the tool,
+runner, configuration, or tracked outputs require regeneration.
+Its manifest covers generated files in `sources/`, `tests/`, and `game-example/`.
+Generated files remain beside their owning headers and must not be edited manually.
+
+== Verification
+
+[cols="2,4",options="header"]
+|===
+|Target or executable |Check
+|`Nexium_CheckLayers` |Compile/link/run Foundation, Platform Graphics/Input, and RawBackend consumers; also run generated-header fixtures.
+|`all_verify_interface_header_sets` |Compile exposed headers individually.
+|`Nexium_Tests` |Build with tests enabled, then run `<build_dir>/bin/Nexium_Tests` directly.
+|`TemplateGame` |Run `<build_dir>/bin/TemplateGame --timeout 5` with a display/OpenGL context.
+|===
+
+Build the verification targets explicitly. Layer/header checks do not prove higher-level runtime behavior.
+Use Release benchmarks for performance conclusions. See xref:ci-cd.adoc[CI] for the smaller set run automatically.

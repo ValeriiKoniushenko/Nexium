@@ -1,55 +1,43 @@
-/*
- * MIT License
- *
- * Copyright (c) 2018-2027 Valerii Koniushenko
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+// Nexium
+// Copyright 2018-2026 Valerii Koniushenko
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
 
 #pragma once
 
 #include "BaseWindow.h"
 
-namespace Core
+namespace NX
 {
-
     class SceneObject;
     class Scene;
     class Actor;
+} // namespace NX
+
+namespace NX
+{
 
     CLASS();
     class SceneTreeWindowEWC : public BaseFloatEWC
     {
-        ECS_DECL_NO_CNSTR(SceneTreeWindowEWC, Core::BaseFloatEWC);
+        ECS_DECL_NO_CNSTR(SceneTreeWindowEWC, NX::BaseFloatEWC);
 
     public:
         SceneTreeWindowEWC(const StringAtom& name = ""_atom);
 
-        void setScene(Scene* scene) { _scene = scene; }
-        [[nodiscard]] Scene* getScene() const noexcept { return _scene; }
+        void setScene(NX::Scene* scene) { _scene = scene; }
+        [[nodiscard]] NX::Scene* getScene() const noexcept { return _scene; }
 
-        void highlightSpecificObject(const SceneObject* obj);
+        void highlightSpecificObject(const NX::SceneObject* obj);
 
         [[nodiscard]] const char* getIcon() override;
 
     public:
-        BaseComponent* selectedObject = nullptr;
+        NX::BaseComponent* selectedObject = nullptr;
 
     protected:
         void onInitialize() override;
@@ -57,20 +45,20 @@ namespace Core
         void onUpdate() override;
 
     private:
-        void drawTreeNode(BaseComponent* n, int32_t id, bool isInSelectedSubtree = false);
+        void drawTreeNode(NX::BaseComponent* n, int32_t id, bool isInSelectedSubtree = false);
         void processAddNewComponentButton();
 
     protected:
         DelegateSubscriberPoolGuard _subscriptionPool;
 
-        Scene* _scene = nullptr;
+        NX::Scene* _scene = nullptr;
         int _commonTreeFlags = 0;
-        BaseComponent* _lastSelectedObject = nullptr;
+        NX::BaseComponent* _lastSelectedObject = nullptr;
 
     private:
-        const SceneObject* _highlightTracerObject = nullptr;
+        const NX::SceneObject* _highlightTracerObject = nullptr;
     };
 
-} // namespace Core
+} // namespace NX
 
 #include "SceneTreeWindow.generated.h" // added by the code generator. Better don't move it.

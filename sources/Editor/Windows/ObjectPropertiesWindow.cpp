@@ -1,31 +1,15 @@
-/*
- * MIT License
- *
- * Copyright (c) 2018-2027 Valerii Koniushenko
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+// Nexium
+// Copyright 2018-2026 Valerii Koniushenko
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
 
 #include "ObjectPropertiesWindow.h"
 
-#include "Animations/FrameByFrame/FrameByFrameAnimator.h"
-#include "ECS/Transformable.h"
+#include "Editor/EditorIntegration.h"
 #include "Editor/GuiComponents/Array.h"
 #include "Editor/GuiComponents/CheckBox.h"
 #include "Editor/GuiComponents/Combo.h"
@@ -34,14 +18,19 @@
 #include "Editor/GuiComponents/Label.h"
 #include "Editor/GuiComponents/Misc.h"
 #include "Editor/GuiComponents/VecInput.h"
-#include "GameplaySystem/Camera.h"
-#include "GameplaySystem/Framework/GameInstance.h"
-#include "Graphics/Primitives/StaticMesh.h"
-#include "Graphics/Primitives/StaticMeshBundle.h"
-#include "Scene/Rectangle.h"
+#include "NxFundamental/Transformable.h"
+#include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimator.h"
+#include "NxWorld/Entities/Camera/Camera.h"
+#ifdef NEXIUM_ENABLE_3D_MODULE
+    #include "NxWorld/Entities/Mesh/StaticMesh.h"
+    #include "NxWorld/Entities/Mesh/StaticMeshBundle.h"
+#endif
+#include "NxWorld/Framework/GameInstance.h"
+#include "NxWorld/Scene/Rectangle.h"
 
 using namespace Core;
-using namespace Core::Gui;
+using namespace NX;
+using namespace NX::Gui;
 
 namespace
 {
@@ -126,7 +115,7 @@ namespace
     // =========================================================
 } // namespace
 
-namespace Core
+namespace NX
 {
     ECS_IMPL(ObjectPropertiesWindowEWC);
 
@@ -142,7 +131,7 @@ namespace Core
 
                 std::vector<std::string> out(m.begin(), m.end());
                 std::ranges::sort(out);
-                auto r = std::ranges::remove(out, "None");
+                auto r = std::ranges::remove(out, std::string{ "None" });
                 out.erase(r.begin(), r.end());
                 return out;
             }();
@@ -166,7 +155,7 @@ namespace Core
 
                 std::vector<std::string> out(m.begin(), m.end());
                 std::ranges::sort(out);
-                auto r = std::ranges::remove(out, "None");
+                auto r = std::ranges::remove(out, std::string{ "None" });
                 out.erase(r.begin(), r.end());
                 return out;
             }();
@@ -203,7 +192,7 @@ namespace Core
 
                 std::vector<std::string> out(m.begin(), m.end());
                 std::ranges::sort(out);
-                auto r = std::ranges::remove(out, "None");
+                auto r = std::ranges::remove(out, std::string{ "None" });
                 out.erase(r.begin(), r.end());
                 return out;
             }();
@@ -226,7 +215,7 @@ namespace Core
 
                 std::vector<std::string> out(m.begin(), m.end());
                 std::ranges::sort(out);
-                auto r = std::ranges::remove(out, "None");
+                auto r = std::ranges::remove(out, std::string{ "None" });
                 out.erase(r.begin(), r.end());
                 return out;
             }();
@@ -270,7 +259,7 @@ namespace Core
         createGui();
         registerGuiEvents();
 
-        _subscriptionPool << gGameInstance->objectSelectorManager.onChange->subscribeAndGetID(
+        _subscriptionPool << GetObjectSelectorManager()->onChange->subscribeAndGetID(
             [this](BaseComponent* comp, bool newValue)
             {
                 if (newValue)
@@ -288,16 +277,16 @@ namespace Core
     {
         auto* asBaseComponent = dynamic_cast<BaseComponent*>(_target);
         auto* asTransformable = dynamic_cast<Transformable*>(_target);
-        auto* asStaticMeshBundle = dynamic_cast<StaticMeshBundle*>(_target);
         auto* asInterleavedGraphicsData = dynamic_cast<InterleavedGraphicsData*>(_target);
-        auto* asStaticMesh = dynamic_cast<StaticMesh*>(_target);
         auto* asBaseCamera = dynamic_cast<BaseCamera*>(_target);
         auto* asRectangleComponent = dynamic_cast<SceneObj::RectangleAnimated*>(_target);
 
         tryDrawBaseComponent(asBaseComponent);
         tryDrawTransformable(asTransformable, asBaseComponent);
-        tryDrawStaticMeshBundle(asStaticMeshBundle);
-        tryDrawStaticMesh(asStaticMesh);
+#ifdef NEXIUM_ENABLE_3D_MODULE
+        tryDrawStaticMeshBundle(dynamic_cast<StaticMeshBundle*>(_target));
+        tryDrawStaticMesh(dynamic_cast<StaticMesh*>(_target));
+#endif
         tryDrawInterleavedGraphicsData(asInterleavedGraphicsData);
         tryDrawBaseCamera(asBaseCamera);
         tryDrawRectangleComponent(asRectangleComponent);
@@ -1030,6 +1019,7 @@ namespace Core
         }
     }
 
+#ifdef NEXIUM_ENABLE_3D_MODULE
     void ObjectPropertiesWindowEWC::tryDrawStaticMesh(StaticMesh* comp)
     {
         if (comp && Gui::CollapsingHeader("Static mesh", ImGuiTreeNodeFlags_DefaultOpen))
@@ -1048,6 +1038,7 @@ namespace Core
             _staticMeshLayout.tick(dt);
         }
     }
+#endif
 
     void ObjectPropertiesWindowEWC::tryDrawRectangleComponent(SceneObj::RectangleAnimated* comp)
     {
@@ -1177,6 +1168,7 @@ namespace Core
         }
     }
 
+#ifdef NEXIUM_ENABLE_3D_MODULE
     void ObjectPropertiesWindowEWC::tryDrawStaticMeshBundle(StaticMeshBundle* comp)
     {
         if (comp && Gui::CollapsingHeader("Static mesh bundle", ImGuiTreeNodeFlags_DefaultOpen))
@@ -1208,4 +1200,5 @@ namespace Core
             _staticMeshBundleLayout.tick(dt);
         }
     }
-} // namespace Core
+#endif
+} // namespace NX

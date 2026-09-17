@@ -1,0 +1,35 @@
+= Rendering Responsibilities
+
+== Resource ownership
+
+[cols="2,3,3",options="header"]
+|===
+|Resource |Owner |Consumer
+|Window and GL context |Platform window accessor |Runtime and every GPU operation.
+|Shader programs and metadata |ShaderManager's map |Draw code and the editor shader inspector borrow entries.
+|Atlas textures and packed regions |AssetsManager's named TextureAtlas objects |Rectangles select atlas/texture names.
+|Viewport framebuffer |GameEditor's RenderTargetToTexture |EditorIntegration binds it around scene drawing.
+|Camera |Component tree; World holds a borrowed pointer |Scene drawing and picking.
+|===
+
+`GameInstance` owns Scene and AssetsManager, and references the shared ShaderManager.
+`Runtime` orders their use. `ApplicationIntegration` supplies editor hooks without requiring
+Runtime to include Editor implementation headers.
+
+== Render targets and resizing
+
+The editor target has an RGBA color texture and a depth/stencil renderbuffer using `GL_DEPTH24_STENCIL8`.
+`setRenderSize()` destroys and recreates its attachments. Viewport updates also invalidate
+camera matrices so projection uses the current output dimensions.
+`callMePreDraw()` binds the target; `callMeAfterDraw()` binds framebuffer 0.
+These hooks assume the window framebuffer is the destination afterward; they do not form a nested target stack.
+
+== Lifetimes to preserve
+
+Create, upload, and release GPU resources while the GL context is valid.
+Reloading ShaderManager replaces its entries and invalidates borrowed program pointers.
+Removing a camera from the scene does not destroy it if another strong reference retains it;
+World's camera pointer and scene membership need separate attention.
+
+See xref:pipeline.adoc[frame order], xref:materials/shader-system.adoc[shader lifetimes], and
+xref:engine_architecture:memory.adoc[component ownership].

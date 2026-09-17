@@ -1,0 +1,312 @@
+// Nexium
+// Copyright 2018-2026 Valerii Koniushenko
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+
+#include "Rectangle.h"
+
+#include "Core/Assert.h"
+#include "NxSubsystems/Graphics/Debug/Line.h"
+#include "NxSubsystems/Graphics/GraphicsComponents.h"
+#include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimator.h"
+#include "NxWorld/Entities/Camera/Camera.h"
+#include "NxWorld/Framework/GameInstance.h"
+
+using namespace Core;
+
+namespace
+{
+    [[nodiscard]] NX::BaseGraphicsData GetDefaultGraphicsData(float defSize)
+    {
+        std::vector<NX::BaseGraphicsData::ModifierParam> modifiers
+            = { { .value = NX::BaseGraphicsData::ModifiedValue::CullFace,
+                  .modifier = NX::BaseGraphicsData::Modifier::Disable } };
+
+        const float w = defSize;
+        const float h = defSize;
+
+        int time = ::clock();
+
+        if (time >= 1000)
+        {
+        }
+
+        const std::vector<float> vert = {
+            0, h, 0, // 0  top-left         | (0 , 64) * (0, 1)
+            0, 0, 0, // 1  bottom-left      | (0 , 0 ) * (0, 0)
+            w, 0, 0, // 2  bottom-right     | (64, 0 ) * (1, 0)
+            w, h, 0  // 3  top-right        | (64, 64) * (1, 1)
+        };
+
+        const std::vector<GLuint> ind = {
+            0, 1, 2, // triangle 1
+            2, 3, 0  // triangle 2
+        };
+
+        NX::BaseGraphicsData data;
+        data.generate();
+
+        auto* shader = NX::GetShaderManager().getShaderProgram("2d_rect"_atom);
+        if (!Verify(shader))
+        {
+            gGlobalLog.criticalLog("Can't get shader program '2d_rect'.");
+            return {};
+        }
+        data.setShader(shader);
+
+        data.setDrawModifiers(std::move(modifiers));
+
+        data.setVertexBuffer(vert);
+        data.setIndexBuffer(ind);
+        shader->callSetEvent(NX::ShaderProgram::Event::OnSetIndexAndVertexBuffer);
+
+        return data;
+    }
+
+} // namespace
+
+namespace NX::SceneObj
+{
+
+    ECS_IMPL(Rectangle);
+    ECS_IMPL(RectangleAnimated);
+
+    FSize2 Rectangle::getDrawRectSize() const noexcept
+    {
+        return FSize2(GetDefaultDrawRectSize() * glm::vec2(_scale));
+    }
+
+    void Rectangle::tryDrawOutline(BaseCamera& camera)
+    {
+        if (!shouldDrawOutline())
+        {
+            return;
+        }
+
+        const auto* shader = GetShaderManager().getShaderProgram("line"_atom);
+
+        if (!shader) [[unlikely]]
+        {
+            LOG_ASSERT_CRITICAL_ONCE("Can't get shader program 'line'.");
+            return;
+        }
+
+        auto pos = getGlobalPosition();
+        auto rot = glm::radians(getGlobalRotation());
+        auto size = getDrawRectSize().toGlm();
+
+        // // Converting Left-Bottom origin -> Left-Top origin
+        // pos.y -= GetDefaultDrawRectSize();
+
+        glm::quat rotation = glm::quat(rot);
+
+        std::array<glm::vec3, 4> localCorners = {
+            glm::vec3(0.0f, 0.0f, 0.0f),     // top-left (pivot)
+            glm::vec3(size.x, 0.0f, 0.0f),   // top-right
+            glm::vec3(size.x, size.y, 0.0f), // bottom-right
+            glm::vec3(0.0f, size.y, 0.0f)    // bottom-left
+        };
+
+        std::array<glm::vec3, 4> worldCorners;
+        for (int i = 0; i < 4; ++i)
+        {
+            worldCorners[i] = pos + rotation * localCorners[i];
+        }
+
+        Debug::Line::Draw(shader, camera.getMatrix(), worldCorners[0], worldCorners[1]);
+        Debug::Line::Draw(shader, camera.getMatrix(), worldCorners[1], worldCorners[2]);
+        Debug::Line::Draw(shader, camera.getMatrix(), worldCorners[2], worldCorners[3]);
+        Debug::Line::Draw(shader, camera.getMatrix(), worldCorners[3], worldCorners[0]);
+    }
+
+    void Rectangle::onDraw(BaseCamera& camera)
+    {
+        static BaseGraphicsData gcd = GetDefaultGraphicsData(GetDefaultDrawRectSize());
+        tryToRecalculateMatrices();
+
+        auto& atlas = GetAssetsManager()->getAtlas(_atlasName);
+        auto* shader = GetShaderManager().getShaderProgram("2d_rect"_atom);
+        if (!shader) [[unlikely]]
+        {
+            AssertOnce(false);
+            LOG_CRITICAL_ONCE("Can't get shader program '2d_rect'.");
+            return;
+        }
+
+        // tag::rectangle_bind_shader[]
+        shader->use();
+        shader->setUniform("uTexture"_atom, 0);
+        shader->setUniform("uProjAndView"_atom, camera.getMatrix());
+
+        atlas.bind();
+        // end::rectangle_bind_shader[]
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        glm::vec2 textureOffset{ 0.f, 0.f };
+        glm::vec2 textureSize{ 1.f, 1.f };
+        if (!_textureName.isEmpty())
+        {
+            const auto rect = atlas.getRect(_textureName);
+            textureOffset = rect.getLeftTop();
+            textureSize = rect.getRightBottom() - textureOffset;
+        }
+
+        auto modelMatrix = getModelMatrix();
+
+        // // Converting Left-Bottom origin -> Left-Top origin
+        // modelMatrix[3][1] -= GetDefaultDrawRectSize();
+
+        // tag::rectangle_draw_uniforms[]
+        shader->setUniform("uUVOffset"_atom, textureOffset + textureSize * _textureUVOffset);
+        shader->setUniform("uUVSize"_atom, textureSize * _textureUVSize);
+        shader->setUniform("uModel"_atom, modelMatrix);
+        shader->setUniform("uAlphaBlendingEnabled"_atom, static_cast<GLint>(_blendingEnabled));
+
+        glBlendFunc(_blendingEnabled ? GL_SRC_ALPHA : GL_ONE,
+                    _blendingEnabled ? GL_ONE_MINUS_SRC_ALPHA : GL_ZERO);
+        gcd.directDraw();
+        // end::rectangle_draw_uniforms[]
+
+        tryDrawOutline(camera);
+    }
+
+    nlohmann::json Rectangle::getTypeSpecificSceneDataAsJson() const
+    {
+        auto out = SceneObject::getTypeSpecificSceneDataAsJson();
+
+        out["_textureName"] = _textureName;
+        out["_atlasName"] = _atlasName;
+        out["_blendingEnabled"] = _blendingEnabled;
+        return out;
+    }
+
+    void Rectangle::applyTypeSpecificSceneData(const nlohmann::json& data)
+    {
+        SceneObject::applyTypeSpecificSceneData(data);
+
+        if (data.contains("_textureName"))
+        {
+            _textureName = StringAtom::Intern(data.at("_textureName").get<StringAtom>());
+        }
+
+        if (data.contains("_atlasName"))
+        {
+            _atlasName = StringAtom::Intern(data.at("_atlasName").get<StringAtom>());
+        }
+
+        _blendingEnabled = data.value("_blendingEnabled", true);
+    }
+
+    void Rectangle::setTexture(const StringAtom& value)
+    {
+        _textureName = value;
+        resetTextureUV();
+    }
+
+    void Rectangle::setTextureUV(glm::vec2 offset, glm::vec2 size)
+    {
+        _textureUVOffset = offset;
+        _textureUVSize = size;
+    }
+
+    void Rectangle::resetTextureUV() noexcept
+    {
+        _textureUVOffset = { 0.f, 0.f };
+        _textureUVSize = { 1.f, 1.f };
+    }
+
+    void RectangleAnimated::setAnimationEnabled(bool value)
+    {
+        _animationEnabled = value;
+
+        auto* animator = findFirstChildOf<Animation::FrameByFrameAnimator>();
+        if (!animator)
+        {
+            return;
+        }
+
+        animator->setEnabled(value);
+        if (!value)
+        {
+            if (auto* animation = animator->getActiveAnimation())
+            {
+                animation->stop();
+            }
+            resetTextureUV();
+            return;
+        }
+
+        if (!_animationOverrideName.isEmpty())
+        {
+            animator->startAnimation(_animationOverrideName);
+        }
+        else if (!animator->getActiveAnimationName().isEmpty())
+        {
+            animator->startAnimation(animator->getActiveAnimationName());
+        }
+    }
+
+    void RectangleAnimated::setAnimationOverride(const StringAtom& animationName, float fps)
+    {
+        _animationOverrideName = animationName;
+        _animationOverrideFPS = fps;
+
+        auto* animator = findFirstChildOf<Animation::FrameByFrameAnimator>();
+        if (!animator || animationName.isEmpty() || fps <= 0.f)
+        {
+            return;
+        }
+        if (auto* animation = animator->getAnimation(animationName))
+        {
+            animation->setFPS(fps);
+            if (_animationEnabled)
+            {
+                animator->startAnimation(animationName);
+            }
+        }
+    }
+
+    const StringAtom& RectangleAnimated::getAnimationOverrideName() const noexcept
+    {
+        return _animationOverrideName;
+    }
+
+    float RectangleAnimated::getAnimationOverrideFPS() const noexcept
+    {
+        return _animationOverrideFPS;
+    }
+
+    nlohmann::json RectangleAnimated::getTypeSpecificSceneDataAsJson() const
+    {
+        auto out = Rectangle::getTypeSpecificSceneDataAsJson();
+        out["_animationEnabled"] = _animationEnabled;
+        if (!_animationOverrideName.isEmpty() && _animationOverrideFPS > 0.f)
+        {
+            out["_animationName"] = _animationOverrideName;
+            out["_animationFPS"] = _animationOverrideFPS;
+        }
+        return out;
+    }
+
+    void RectangleAnimated::applyTypeSpecificSceneData(const nlohmann::json& data)
+    {
+        Rectangle::applyTypeSpecificSceneData(data);
+
+        _animationEnabled = data.value("_animationEnabled", true);
+
+        if (data.contains("_animationName") && data.contains("_animationFPS"))
+        {
+            setAnimationOverride(data.at("_animationName").get<StringAtom>(),
+                                 data.at("_animationFPS").get<float>());
+        }
+
+        setAnimationEnabled(_animationEnabled);
+    }
+
+} // namespace NX::SceneObj

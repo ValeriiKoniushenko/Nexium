@@ -1,331 +1,74 @@
 name: Code Quality
-
-on:
-  pull_request:
-  push:
-    branches:
-      - develop
-
-# Build caches are persistent runner-host mounts. Serializing workflow runs keeps
-# separate runs from writing the same compiler-specific cache concurrently. Every
-# job still gets its own checkout, so sibling jobs never share a Git worktree.
-concurrency:
-  group: nexium-ci-build-cache
-  cancel-in-progress: false
+on: push
 
 jobs:
-  fmt-clang-format:
-    name: "[fmt] clang-format 19.1.7"
+  build:
+    name: ${{ matrix.compiler }} ${{ matrix.build_type }}
     runs-on: linux
     container:
       image: cpp-ci:latest
-    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        compiler: [clang, gcc]
+        build_type: [Debug, Release]
+        include:
+          - compiler: clang
+            build_type: Debug
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          submodules: false
+          fetch-depth: 1
 
-      - name: Check clang-format
+      - name: Init submodules (parallel)
+        run: |
+          git submodule sync --recursive
+          JOBS=$(( $(nproc) / 5 ))
+          JOBS=$(( JOBS < 1 ? 1 : JOBS ))
+          git submodule update --init --recursive --depth 1 --jobs "$JOBS"
+
+      - name: Configure
         env:
-          GITEATOKEN: ${{ secrets.GITEATOKEN }}
-        run: python3 .gitea/check_clang_format.py --base develop
-
-  build-clang:
-    name: "[build] clang 19.1.7 (linux)"
-    runs-on: linux
-    container:
-      image: cpp-ci:latest
-      volumes:
-        - /srv/ci-cache/ccache:/ccache
-        - /srv/ci-cache/nexium/build-clang-debug-v1:/build-cache
-    env:
-      CCACHE_DIR: /ccache
-      CC: clang
-      CXX: clang++
-    timeout-minutes: 30
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-
-      - name: Restore build cache
+          COMPILER: ${{ matrix.compiler }}
+          BUILD_TYPE: ${{ matrix.build_type }}
         run: |
-          mkdir -p build
-          if grep -Fqx "CMAKE_HOME_DIRECTORY:INTERNAL=$GITHUB_WORKSPACE" /build-cache/CMakeCache.txt 2>/dev/null \
-            && grep -Fqx "CMAKE_BUILD_TYPE:STRING=Debug" /build-cache/CMakeCache.txt 2>/dev/null; then
-            echo "Restoring compatible Clang Debug build cache"
-            rsync -a --delete /build-cache/ build/
-          else
-            echo "No compatible Clang Debug build cache; configuring from scratch"
-          fi
+          case "$COMPILER" in
+            clang) export CC=clang CXX=clang++ ;;
+            gcc) export CC=gcc CXX=g++ ;;
+            *) exit 1 ;;
+          esac
+          "$CXX" --version
+          BENCHMARKS_DISABLED=ON
+          if [ "$BUILD_TYPE" = Release ]; then BENCHMARKS_DISABLED=OFF; fi
+          cmake -S . -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE="$BUILD_TYPE" \
+            -DNEXIUM_DISABLE_TESTS=OFF \
+            -DNEXIUM_DISABLE_BENCHMARKS="$BENCHMARKS_DISABLED" \
+            -DNEXIUM_ENABLE_3D_MODULE="OFF" \
+            -DNEXIUM_VERIFY_INTERFACE_HEADER_SETS=ON \
+            -DNEXIUM_ENABLE_LAYER_CHECKS=ON
 
-      - name: Configure Debug
+      - name: Build
         run: |
-          echo "::group::CMake configure"
-          cmake -S . -B build \
-            -DCMAKE_BUILD_TYPE=Debug \
-            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
-            -DCMAKE_C_COMPILER_LAUNCHER=ccache \
-            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-          echo "::endgroup::"
+          JOBS=$(( $(nproc) / 5 ))
+          cmake --build build --parallel "${JOBS:-1}"
 
-      - name: Build Debug
-        run: |
-          echo "::group::Build"
-          cmake --build build -j$(nproc)
-          echo "::endgroup::"
-          {
-            echo "## Build: clang 19.1.7"
-            echo "Build succeeded."
-          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Unit tests
+        run: timeout 5m build/bin/Nexium_Tests
 
-      - name: Save build cache
-        run: rsync -a --delete build/ /build-cache/
+      - name: Public headers and layer checks
+        run: cmake --build build --parallel --target all_verify_interface_header_sets Nexium_CheckLayers
 
-      - name: Upload Clang runtime executables
-        uses: christopherhx/gitea-upload-artifact@v4
-        with:
-          name: nexium-clang-runtime
-          path: |
-            build/bin/Nexium_Tests
-            build/bin/TemplateGame
-          if-no-files-found: error
-          retention-days: 1
+      - name: Unit tests under Valgrind
+        if: matrix.compiler == 'gcc' && matrix.build_type == 'Debug'
+        run: timeout 10m python3 .gitea/check_valgrind.py --executable build/bin/Nexium_Tests --no-gitea --verbose
 
-  build-gcc:
-    name: "[build] gcc 14.2.0 (linux)"
-    runs-on: linux
-    container:
-      image: cpp-ci:latest
-      volumes:
-        - /srv/ci-cache/ccache:/ccache
-        - /srv/ci-cache/nexium/build-gcc-debug-v1:/build-cache
-    env:
-      CCACHE_DIR: /ccache
-      CC: gcc
-      CXX: g++
-    timeout-minutes: 30
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
+      - name: Headless game under Valgrind
+        if: matrix.compiler == 'clang' && matrix.build_type == 'Debug'
+        run: timeout 2m python3 .gitea/run_game_valgrind.py --executable build/bin/TemplateGame --timeout 5 --no-gitea
 
-      - name: Restore build cache
-        run: |
-          mkdir -p build
-          if grep -Fqx "CMAKE_HOME_DIRECTORY:INTERNAL=$GITHUB_WORKSPACE" /build-cache/CMakeCache.txt 2>/dev/null \
-            && grep -Fqx "CMAKE_BUILD_TYPE:STRING=Debug" /build-cache/CMakeCache.txt 2>/dev/null; then
-            echo "Restoring compatible GCC Debug build cache"
-            rsync -a --delete /build-cache/ build/
-          else
-            echo "No compatible GCC Debug build cache; configuring from scratch"
-          fi
-
-      - name: Configure Debug
-        run: |
-          echo "::group::CMake configure"
-          cmake -S . -B build \
-            -DCMAKE_BUILD_TYPE=Debug \
-            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
-            -DCMAKE_C_COMPILER_LAUNCHER=ccache \
-            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-          echo "::endgroup::"
-
-      - name: Build Debug
-        run: |
-          echo "::group::Build"
-          cmake --build build -j$(nproc)
-          echo "::endgroup::"
-          {
-            echo "## Build: gcc 14.2.0"
-            echo "Build succeeded."
-          } >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Save build cache
-        run: rsync -a --delete build/ /build-cache/
-
-  test-clang:
-    name: "[test] unit tests (clang)"
-    needs: build-clang
-    runs-on: linux
-    container:
-      image: cpp-ci:latest
-    timeout-minutes: 15
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-
-      - name: Download Clang runtime executables
-        uses: christopherhx/gitea-download-artifact@v4
-        with:
-          name: nexium-clang-runtime
-          path: build/bin
-
-      - name: Prepare runtime executables
-        run: chmod +x build/bin/Nexium_Tests build/bin/TemplateGame
-
-      - name: Run ECS tests
-        run: |
-          echo "::group::Nexium_Tests"
-          build/bin/Nexium_Tests
-          echo "::endgroup::"
-
-  ui-template-game:
-    name: "[ui] template-game capture (clang)"
-    needs: build-clang
-    runs-on: linux
-    container:
-      image: cpp-ci:latest
-    timeout-minutes: 15
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-
-      - name: Download Clang runtime executables
-        uses: christopherhx/gitea-download-artifact@v4
-        with:
-          name: nexium-clang-runtime
-          path: build/bin
-
-      - name: Prepare runtime executables
-        run: chmod +x build/bin/Nexium_Tests build/bin/TemplateGame
-
-      - name: Capture and publish TemplateGame UI
-        env:
-          GITEATOKEN: ${{ secrets.GITEATOKEN }}
-        run: |
-          python3 .gitea/capture_game_ui.py --executable build/bin/TemplateGame --output template-game-ui.png
-          {
-            echo "## TemplateGame UI"
-            echo "Captured \`template-game-ui.png\`"
-          } >> "$GITHUB_STEP_SUMMARY"
-
-  test-template-game-valgrind:
-    name: "[test] template-game valgrind (clang)"
-    needs: build-clang
-    runs-on: linux
-    container:
-      image: cpp-ci:latest
-    timeout-minutes: 15
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-
-      - name: Download Clang runtime executables
-        uses: christopherhx/gitea-download-artifact@v4
-        with:
-          name: nexium-clang-runtime
-          path: build/bin
-
-      - name: Prepare runtime executables
-        run: chmod +x build/bin/Nexium_Tests build/bin/TemplateGame
-
-      - name: Run TemplateGame under Valgrind
-        env:
-          GITEATOKEN: ${{ secrets.GITEATOKEN }}
-        run: python3 .gitea/run_game_valgrind.py --executable build/bin/TemplateGame --timeout 5
-
-  test-valgrind:
-    name: "[test] valgrind (clang)"
-    needs: build-clang
-    runs-on: linux
-    container:
-      image: cpp-ci:latest
-    timeout-minutes: 20
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-
-      - name: Download Clang runtime executables
-        uses: christopherhx/gitea-download-artifact@v4
-        with:
-          name: nexium-clang-runtime
-          path: build/bin
-
-      - name: Prepare runtime executables
-        run: chmod +x build/bin/Nexium_Tests build/bin/TemplateGame
-
-      - name: Check Valgrind
-        env:
-          GITEATOKEN: ${{ secrets.GITEATOKEN }}
-        run: |
-          # Preserve the wrapper's exit status. A pipeline ending in `tee`
-          # would otherwise report success even when Valgrind fails.
-          set +e
-          python3 .gitea/check_valgrind.py --executable build/bin/Nexium_Tests --verbose \
-            > valgrind-output.txt 2>&1
-          status=$?
-          set -e
-          cat valgrind-output.txt
-          {
-            echo "## Valgrind (Nexium_Tests)"
-            echo '```'
-            tail -30 valgrind-output.txt
-            echo '```'
-          } >> "$GITHUB_STEP_SUMMARY"
-          exit "$status"
-
-  lint-clang-tidy:
-    name: "[lint] clang-tidy 19.1.7"
-    needs: build-clang
-    runs-on: linux
-    container:
-      image: cpp-ci:latest
-      volumes:
-        - /srv/ci-cache/ccache:/ccache
-        - /srv/ci-cache/nexium/build-clang-debug-v1:/build-cache
-    env:
-      CCACHE_DIR: /ccache
-      CC: clang
-      CXX: clang++
-    timeout-minutes: 20
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          submodules: recursive
-
-      - name: Fetch develop for diffing
-        run: |
-          echo "::group::Ensuring develop is available for diffing"
-          git fetch origin develop:refs/remotes/origin/develop
-          echo "::endgroup::"
-
-      - name: Restore build cache
-        run: |
-          mkdir -p build
-          if grep -Fqx "CMAKE_HOME_DIRECTORY:INTERNAL=$GITHUB_WORKSPACE" /build-cache/CMakeCache.txt 2>/dev/null \
-            && grep -Fqx "CMAKE_BUILD_TYPE:STRING=Debug" /build-cache/CMakeCache.txt 2>/dev/null; then
-            echo "Restoring compatible Clang Debug build cache"
-            rsync -a --delete /build-cache/ build/
-          else
-            echo "No compatible Clang Debug build cache; configuring from scratch"
-          fi
-
-      - name: Configure Debug for analysis
-        run: |
-          cmake -S . -B build \
-            -DCMAKE_BUILD_TYPE=Debug \
-            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
-            -DCMAKE_C_COMPILER_LAUNCHER=ccache \
-            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-
-      - name: Generate reflection headers
-        run: cmake --build build --target CodeGenerator -j$(nproc)
-
-      - name: Check clang-tidy
-        env:
-          GITEATOKEN: ${{ secrets.GITEATOKEN }}
-        run: python3 .gitea/check_clang_tidy.py --base develop --build-dir build --fail-on error
+      - name: ECS benchmark smoke run
+        if: matrix.build_type == 'Release'
+        run: timeout 5m build/bin/Nexium_ECS_Benchmarks --benchmark_min_time=0.01s --benchmark_repetitions=1

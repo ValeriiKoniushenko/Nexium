@@ -26,9 +26,9 @@
             1.0,
             1.0
         ],
-        "_type": "Core::OrthographicCamera"
+        "_type": "NX::OrthographicCamera"
     },
     "name": "OrthographicCamera",
     "tags": "None",
-    "type": "Core::OrthographicCamera"
+    "type": "NX::OrthographicCamera"
 }

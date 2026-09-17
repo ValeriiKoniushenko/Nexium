@@ -1,37 +1,22 @@
-/*
- * MIT License
- *
- * Copyright (c) 2018-2027 Valerii Koniushenko
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+// Nexium
+// Copyright 2018-2026 Valerii Koniushenko
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
 
 #pragma once
 
 #include "../BaseWindow.h"
-#include "AssetsManager/AssetsManager.h"
-#include "AssetsManager/TextureAsset.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
+#include "NxSubsystems/AssetsManager/AssetsManager.h"
+#include "NxSubsystems/AssetsManager/TextureAsset.h"
 #include "RenamePopUpWindow.h"
 #include "ThumbnailFile.h"
 
-namespace Core
+namespace NX
 {
     namespace Gui
     {
@@ -47,12 +32,15 @@ namespace Core
     CLASS();
     class AssetsManagerWindowEWC : public BaseFloatEWC
     {
-        ECS_DECL(AssetsManagerWindowEWC, Core::BaseFloatEWC);
+        ECS_DECL(AssetsManagerWindowEWC, NX::BaseFloatEWC);
 
     public:
         constexpr static std::string_view defaultNewFileName = "NewFile";
 
     public:
+        static void TryToOpenFile(const std::filesystem::directory_entry& entry);
+        static void TryToOpenNxFile(const std::filesystem::directory_entry& entry);
+
         void tryOpenParentDir();
         void tryOpenPath(const std::filesystem::path& p);
 
@@ -83,7 +71,7 @@ namespace Core
     protected:
         struct CacheNode
         {
-            AssetsManager::NodeType type = AssetsManager::NodeType::Default;
+            NX::AssetsManager::NodeType type = NX::AssetsManager::NodeType::Default;
             std::filesystem::path path;
             std::vector<CacheNode> children;
         };
@@ -91,7 +79,7 @@ namespace Core
     protected:
         DelegateSubscriberPoolGuard _subscriptionPool;
 
-        std::unordered_map<AssetsManager::NodeType, NXTexture> _nodeTypesData;
+        std::unordered_map<NX::AssetsManager::NodeType, NX::NXTexture> _nodeTypesData;
 
         Gui::HorizontalLayout _toolbarLayout;
         Gui::Button* _refreshButton = nullptr;
@@ -108,7 +96,7 @@ namespace Core
         int _commonTreeFlags = ImGuiTreeNodeFlags_OpenOnDoubleClick;
         bool _renderFilesInTreeView = false;
 
-        void refresh();
+        void refresh(bool skipRefreshFSScan = false);
 
     private:
         [[nodiscard]] bool isFiltered(const std::filesystem::path& p) const;
@@ -157,6 +145,6 @@ namespace Core
         std::filesystem::path _openedPath;
         bool _isCopy = true;
     };
-} // namespace Core
+} // namespace NX
 
 #include "AssetsManagerWindow.generated.h"

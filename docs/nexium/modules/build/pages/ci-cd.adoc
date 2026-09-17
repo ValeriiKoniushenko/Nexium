@@ -1,0 +1,39 @@
+= Continuous Integration
+
+== Build and test coverage
+
+`.gitea/workflows/code-quality.yml` runs on pushes using the `linux` runner and
+`cpp-ci:latest`. Each matrix entry checks out pinned recursive submodules and configures
+its own Ninja build with tests, public-header verification, and layer checks enabled.
+
+[cols="1,1,1,3",options="header"]
+|===
+|Compiler |Configuration |3D |Additional checks
+|Clang |Debug |Off |Headless game under Valgrind
+|Clang |Debug |On |Headless game under Valgrind
+|GCC |Debug |Off |Full unit suite under Valgrind
+|Clang |Release |Off |ECS benchmark smoke run
+|GCC |Release |Off |ECS benchmark smoke run
+|===
+
+Every entry builds the application, runs `Nexium_Tests` directly, and builds
+`all_verify_interface_header_sets` and `Nexium_CheckLayers`. The latter runs layer
+consumers and generated-header checks. CTest is not configured for this project.
+Release builds enable benchmarks and run all registered cases with a short minimum
+time; these runs check execution, not performance regressions.
+
+== Failures and runner requirements
+
+Matrix failures do not cancel the other configurations; at most two jobs run together.
+Unit tests have a five-minute limit, unit Valgrind ten minutes, and benchmark runs five
+minutes. The game helper runs under Xvfb/Valgrind for five seconds, requires a clean
+Valgrind summary, and has an outer two-minute limit.
+
+The container must provide GCC, Clang, CMake 3.30+, Ninja, Python 3, Valgrind, Xvfb,
+and the engine's Linux graphics dependencies. `cpp-ci:latest` does not pin compiler
+versions; configuration prints the selected compiler version. Memory-check helpers
+use `--no-gitea`, so failures appear in job logs without posting reviews.
+
+The matrix describes configured coverage, not a passing-run guarantee. Windows,
+formatting, clang-tidy, and sanitizer jobs are not configured. See
+xref:cmake-structure.adoc[CMake infrastructure] for local targets and limitations.

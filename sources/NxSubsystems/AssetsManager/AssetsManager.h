@@ -1,0 +1,211 @@
+// Nexium
+// Copyright 2018-2026 Valerii Koniushenko
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+
+#pragma once
+
+#include "NxFundamental/Assets/ECSAsset.h"
+#include "NxFundamental/Assets/TextureAtlas.h"
+#include "NxSubsystems/AssetsManager/TextureAsset.h"
+#include "Utils/Functions.h"
+
+#include <set>
+#include <unordered_map>
+
+namespace NX
+{
+    /// Assets manager class to get/load/find/free some asset.
+    /// In general this class we must use to manage some assets. It stores & works
+    /// not directly with a file at the filesystem, but with some 'view' to this file
+    /// in the engine's context. I.e.:
+    /// - Texture (.png, .jpeg, ...) -> .nxtex
+    /// - 3D Model (.fbx, .obj, ...) -> .nx3dmesh
+    /// - XXX thing (.XXX) -> .nXXX
+    /// @details What are .nX files:
+    /// .nX files are a type of data that doesn't contain the referred content itself
+    /// it contains some configurations, settings, and the path to the real asset(i.e.,
+    /// some texture: Stone.png). Roughly speaking, it can contain such a structure for a
+    /// texture:
+    /// @code{cpp}
+    /// struct NXRawTexture {
+    ///     std::filesystem::path path;
+    ///     Core::RGBA colorFilter;
+    /// };
+    /// @endcode
+    /// The final file content can be almost the same as the struct above. Also, want
+    /// to highlight that it's only a 'raw' texture - data representation from the
+    /// filesystem. But finally, inside AssetsManager it will be reworked to smth like
+    /// that (but it's very(!) rough example):
+    /// @code{cpp}
+    /// struct NXTexture : public NXRawTexture {
+    ///     NXTexture* get() { ++refCounter; return ...; }
+    ///     void free() { if (--refCounter) deleteFromGPU(); }
+    /// private:
+    ///     GLuint _idOnGPU = 0;
+    ///     uint64_t refCounter = 0;
+    /// };
+    /// @endcode
+    /// So now, you can get this texture from asset manager and don't worry when it
+    /// should be free or should we load it from the real filesystem or no. Just
+    /// use it!
+    /// In general, to create a necessary .nX file, you should open an editor, and using
+    /// Assets tab create it (at the moment of writing this doc - it's not impl.)
+    /// @details How AssetsManager works:
+    /// 1. At the start of the game/editor it will read all .nX files from the configured
+    /// path (where it is, you can check at Core::Config::Path::bakedAssets).
+    /// 2. It reads all found data to the RAM to provide the best speed.
+    /// 3. Use provided functionality to get the necessary asset. I.e.,
+    /// @code{cpp}
+    /// // Use only atomic string to speed up search of the necessary asset.
+    /// // CORRECT way:
+    /// auto texture = GetAssetsManager()->getTexture("/path/to/my/texture.png"_atom);
+    ///
+    /// // Don't use some type of dynamic string or string literals directly.
+    /// // WRONG:
+    /// auto texture = GetAssetsManager()->getTexture("/path/to/my/texture.png");
+    /// @endcode
+    class AssetsManager : public Foundation::BaseLog
+    {
+    public:
+        ENUM_CLASS();
+        enum class NodeType
+        {
+            Default,
+            Code,
+            Image,
+            Folder,
+            NxFile
+        };
+
+    public:
+        AssetsManager();
+        AssetsManager(const AssetsManager&) = delete;
+        AssetsManager(AssetsManager&&) = delete;
+        AssetsManager& operator=(const AssetsManager&) = delete;
+        AssetsManager& operator=(AssetsManager&&) = delete;
+        ~AssetsManager() override = default;
+
+        // ================= STATIC ======================
+        [[nodiscard]] static Core::StringAtom OpenFileSelectionDialog(
+            const std::vector<std::string>& filter);
+
+        [[nodiscard]] static NodeType GetNodeType(const std::filesystem::directory_entry& entry);
+
+        static void OpenPathFromOSExplorer(const std::filesystem::path& path);
+
+        // ================= MAIN ======================
+        void initScanFileSystem();
+        void refreshFilesSystem();
+        void unloadAllResources();
+
+        // ====== Path registration ======
+        [[nodiscard]] const std::set<std::filesystem::path>& getRegisteredPaths() const noexcept;
+        void registerNewAssetPath(std::filesystem::path path);
+        [[nodiscard]] bool validatePath(const Core::StringAtom& logicPath, const char* requiredExt);
+
+        // ============== WORKING WITH ASSETS ==========
+
+        // ====== Texture Atlas ======
+        void generateTextureAtlas(const std::filesystem::path& atlasFolder);
+        void generateTextureAtlas(const Core::StringAtom& atlasName,
+                                  const std::filesystem::path& atlasFolder);
+
+        [[nodiscard]] NX::TextureAtlas& getAtlas(const Core::StringAtom& atlasName);
+        [[nodiscard]] const NX::TextureAtlas& getAtlas(const Core::StringAtom& atlasName) const;
+        [[nodiscard]] std::vector<Core::StringAtom> getAtlasesAsVector() const;
+        [[nodiscard]] std::size_t getAtlasesCount() const noexcept
+        {
+            return _textureAtlases.size();
+        }
+
+        // Backward-compatible access to the default atlas.
+        [[nodiscard]] NX::TextureAtlas& getTextureAtlas();
+        [[nodiscard]] const NX::TextureAtlas& getTextureAtlas() const;
+
+        // ========== Textures =======
+        [[nodiscard]] NXTexture getTexture(const Core::StringAtom& logicPath);
+
+        // =========== Skybox ========
+        [[nodiscard]] NX::AssetRef<NX::BaseAsset> getSkybox(const Core::StringAtom& logicPath);
+
+        // ============ ECS ==========
+        /// @brief Get an asset by its logical path. Will load the asset if it wasn't loaded
+        /// previously.
+        /// @param logicPath Logical path to the asset
+        /// @return Strong reference to the asset
+        [[nodiscard]] NX::NXECSAsset getEcsAsset(const Core::StringAtom& logicPath);
+
+        [[nodiscard]] NX::BaseComponent::Ptr getUniqueEcsAsset(const Core::StringAtom& logicPath);
+
+        /// @brief Get an asset by its logical path without loading it. Returns nullptr if the asset
+        /// wasn't loaded previously.
+        /// @param logicPath Logical path to the asset
+        /// @return Weak reference to the asset if it's loaded, nullptr otherwise
+        [[nodiscard]] NX::WeakNXECSAsset getWeakEcsAsset(const Core::StringAtom& logicPath);
+
+        /// @brief Get an asset by its index in the assets' collection. Will load the asset if it
+        /// wasn't loaded previously.
+        /// @param index Index of the asset in the collection
+        /// @param tagMask tag to apply when searching for assets
+        /// @return Strong reference to the asset
+        [[nodiscard]] NX::NXECSAsset getEcsAssetAt(std::size_t index,
+                                                   NX::Tag tagMask = NX::Tag_Any);
+
+        /// @brief Get an asset by its index without loading it. Returns nullptr if the asset wasn't
+        /// loaded previously.
+        /// @param index Index of the asset in the collection
+        /// @param tagMask tag to apply when searching for assets
+        /// @return Weak reference to the asset if it's loaded, nullptr otherwise
+        [[nodiscard]] NX::WeakNXECSAsset getWeakEcsAssetAt(std::size_t index,
+                                                           NX::Tag tagMask = NX::Tag_Any);
+
+        /// @brief Get an asset by its index without loading it. Returns nullptr if the asset wasn't
+        /// loaded previously.
+        /// @param index Index of the asset in the collection
+        /// @param tagMask tag to apply when searching for assets
+        /// @return Weak reference to the asset if it's loaded, nullptr otherwise
+        [[nodiscard]] std::optional<NX::ECSAsset::Meta> getECSAssetMeta(std::size_t index,
+                                                                        NX::Tag tagMask
+                                                                        = NX::Tag_Any);
+
+        /// @brief Get asset by filesystem path. Will load the asset if it wasn't loaded previously.
+        /// @param path Filesystem path to the asset
+        /// @return Strong reference to the asset
+        [[nodiscard]] NX::NXECSAsset getEcsAssetByPath(const std::filesystem::path& path);
+
+        /// @brief Get asset by filesystem path without loading it. Returns nullptr if the asset
+        /// wasn't loaded previously.
+        /// @param path Filesystem path to the asset
+        /// @return Weak reference to the asset if it's loaded, nullptr otherwise
+        [[nodiscard]] NX::WeakNXECSAsset getWeakEcsAssetByPath(const std::filesystem::path& path);
+
+        /// @brief Get the total count of assets matching the filter
+        /// @param tagMask Filter to apply when counting assets
+        /// @return Number of assets matching the filter
+        [[nodiscard]] std::size_t getEcsAssetCountByTag(NX::Tag tagMask) const;
+
+        // ================ OVERRIDEs ==================
+        // override BaseLog
+        [[nodiscard]] spdlog::logger* getLogger() const override;
+
+    protected:
+        void scanFileSystem(bool removeMissingAssets);
+
+        [[nodiscard]] std::unordered_map<Core::StringAtom, NX::NXECSAsset>::iterator
+            findAssetByPath(const std::filesystem::path& path);
+
+    protected:
+        std::unordered_map<Core::StringAtom, NX::TextureAtlas> _textureAtlases;
+        std::set<std::filesystem::path> _registeredPaths;
+        std::unordered_map<Core::StringAtom, NX::NXECSAsset> _ecsAssets;
+        std::unordered_map<Core::StringAtom, NX::AssetRef<NX::BaseAsset>> _textures;
+        std::unordered_map<Core::StringAtom, NX::AssetRef<NX::BaseAsset>> _skyboxes;
+    };
+} // namespace NX
+
+#include "AssetsManager.generated.h" // added by the code generator. Better don't move it.

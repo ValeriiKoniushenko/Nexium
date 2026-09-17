@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Resource system :: Nexium Engine</title>
+    <title>Resource System :: Nexium Engine</title>
     <link rel="prev" href="memory.html">
     <link rel="next" href="file-io.html">
     <meta name="generator" content="Antora 3.1.15">
@@ -79,6 +79,12 @@
     <a class="nav-link" href="index.html">Overview</a>
   </li>
   <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="architecture-review.html">Architecture and Migration Review</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ue5-alignment.html">UE5 Patterns for Nexium</a>
+  </li>
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="module-graph.html">Module Graph</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -115,44 +121,14 @@
     <a class="nav-link" href="../rendering/pipeline.html">Rendering Pipeline</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../rendering/renderer-architecture.html">Renderer Architecture</a>
+    <a class="nav-link" href="../rendering/renderer-architecture.html">Rendering Responsibilities</a>
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
     <span class="nav-text">Materials</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../rendering/materials/overview.html">Material System</a>
-  </li>
-  <li class="nav-item" data-depth="3">
     <a class="nav-link" href="../rendering/materials/shader-system.html">Shader System</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../rendering/materials/material-instances.html">Material Instances</a>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Meshes</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../rendering/meshes/mesh-format.html">Mesh Format</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../rendering/meshes/mesh-loader.html">Mesh Loader</a>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Textures</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../rendering/textures/texture-loader.html">Texture Loader</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../rendering/textures/compression.html">Texture Compression</a>
   </li>
 </ul>
   </li>
@@ -172,10 +148,10 @@
     <a class="nav-link" href="../gameplay/components.html">Components</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../gameplay/scripting.html">Scripting</a>
+    <a class="nav-link" href="../gameplay/scripting.html">Gameplay Hooks</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../gameplay/prefabs.html">Prefabs</a>
+    <a class="nav-link" href="../gameplay/prefabs.html">Blueprint Templates</a>
   </li>
 </ul>
   </li>
@@ -187,16 +163,7 @@
     <a class="nav-link" href="../build/index.html">Overview</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../build/linux-build.html">Linux Build</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../build/windows-build.html">Windows Build</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../build/cmake-structure.html">CMake Structure</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../build/toolchain.html">Toolchain Setup</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../build/ci-cd.html">CI/CD</a>
@@ -204,82 +171,7 @@
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Tutorials</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/index.html">Overview</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/create-first-scene.html">Create Your First Scene</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/loading-models.html">Loading Models</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/adding-materials.html">Adding Materials</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/building-for-release.html">Building for Release</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/debugging.html">Debugging</a>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Reference</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../reference/index.html">Overview</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../reference/cli.html">Command-Line Tools</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../reference/configuration.html">Configuration</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Public API</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../reference/public-api/core-api.html">Core API</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../reference/public-api/math-api.html">Math API</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../reference/public-api/render-api.html">Render API</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../reference/public-api/ecs-api.html">ECS API</a>
-  </li>
-</ul>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">About</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/index.html">Overview</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/roadmap.html">Roadmap</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/contributing.html">Contributing</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/license.html">License</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/history.html">History</a>
-  </li>
-</ul>
+    <a class="nav-link" href="../about/index.html">About</a>
   </li>
 </ul>
   </li>
@@ -323,176 +215,149 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Resource system</h1>
+<h1 class="page">Resource System</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>The resource system here is straightforward.
-It has the main controlling class <code>AssetsManager</code> which you can find inside the god-object <code>gGameInstance</code>.</p>
-</div>
-<div class="paragraph">
-<p><code>AssetsManager</code> implement the logic of the main storage\provider for any assets.
-If you want to get some texture, 3D model, image, you must ask about that the <code>AssetsManager</code>.
-To get the object of this class, you can use such approaches:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>#include "GameplaySystem/Framework/GameInstance.h"
-
-Core::AssetsManager&amp; am1 = gGameInstance-&gt;assets;
-Core::AssetsManager&amp; am2 = GetAssetsManager();</pre>
-</div>
+<p><code>NX::GetAssetsManager()</code> accesses the current game&#8217;s asset manager in NxSubsystems.
+It indexes asset files, then loads their contents synchronously when requested.
+The asset abstractions live in NxFundamental.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_main_pipeline"><a class="anchor" href="#_main_pipeline"></a>Main pipeline</h2>
+<h2 id="_indexing_and_lookup"><a class="anchor" href="#_indexing_and_lookup"></a>Indexing and lookup</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The main pipeline 'how it works' I will try to explain below.
-In general, it&#8217;s easy and it has main steps as:</p>
-</div>
-<div class="sect2">
-<h3 id="_initial_reading"><a class="anchor" href="#_initial_reading"></a>Initial reading</h3>
-<div class="paragraph">
-<p>At the engine <a href="module-graph.html" class="xref page">init phase</a> it scans the filesystem with pre-registered paths to find all files with matchable extension(i.e. *.nx).
-What is 'a pre-registered' path&#8201;&#8212;&#8201;it&#8217;s a built-in path that was registered at the engine&#8217;s init stage.
-For example, the main 'pre-registered' path is: <code>&lt;engine_root&gt;/data/assets</code>.
-This object will call a function <code>AssetsManager::rescanFileSystem()</code> to find all new assets.</p>
+<p><code>initScanFileSystem()</code> clears the indexes and recursively scans registered roots;
+the default root is <code>Config::Path::data</code> (all of <code>data/</code>).
+<code>registerNewAssetPath()</code> adds a root; scan or refresh afterward to index it.</p>
 </div>
 <div class="paragraph">
-<p>How to understand what asset will be scanned?
-At the moment of writing this doc, it&#8217;s a little bit floating question.
-Because it&#8217;s under active development.
-But, anyway, the main asset&#8217;s extension is <code>*.nx</code>&#8201;&#8212;&#8201;and this logic will try to make all efforts to scan &amp; register it inside the internal buffer.</p>
+<p>An asset&#8217;s logical ID is its normalized path relative to the compiled project root,
+including the extension: for example, <code>data/assets/actor.nx</code>.
+Use interned <code>Core::StringAtom</code> IDs (<code>_atom</code> for literals).
+<code>getEcsAsset</code>, <code>getWeakEcsAsset</code>, and <code>getUniqueEcsAsset</code> require the exact ID;
+the <code>getEcsAssetByPath</code> / <code>getWeakEcsAssetByPath</code> variants normalize filesystem paths.
+External roots can produce IDs containing <code>..</code>; there are no stable UUIDs or mount aliases.</p>
 </div>
-</div>
-<div class="sect2">
-<h3 id="_internal_storing_preloading"><a class="anchor" href="#_internal_storing_preloading"></a>Internal storing [preloading]</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 28.5714%;">
+<col style="width: 71.4286%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Resource</th>
+<th class="tableblock halign-left valign-top">How it loads</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>.nx</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ECSAsset</code>: metadata first, component template on request.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>.nxtex</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TextureAsset</code>: descriptor first, image and GPU texture on request.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Raw images</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TextureAtlas</code> reads images separately during synchronous atlas generation.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Shaders</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Managed separately by <code>ShaderManager</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Skyboxes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Not indexed; <code>getSkybox()</code> is unimplemented.</p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
-<p>When it finds some file (i.g. <code>MyCube.nx</code>) it will register this asset inside internal storage with the mapped 'logical path'.
-If to add more details, so it will read an asset file, write the <strong>minimum amount of information</strong> about scanned asset(type, name) and will put this info under the mapped name&#8201;&#8212;&#8201;logical path.
-Also, it will mark an asset with a status <code>PreLoaded</code> (to get this status you can call a function <code>ECSAsset::getLoadingStatus()</code>)</p>
-</div>
-<div class="sect3">
-<h4 id="_ramdisk_storing_loading"><a class="anchor" href="#_ramdisk_storing_loading"></a>RAM\Disk storing &amp; loading</h4>
-<div class="paragraph">
-<p>You should keep in your mind that it has different stages of loading of your assets' main information.
-It can&#8217;t just totally load all assets and store it inside the RAM.
-It&#8217;s impossible due to the huge number of data( models, textures, etc).
-So, it will load only assets that you really need &amp; want to use NOW (In the nearest future I&#8217;ll add a new system\logic to put some priority or time-gap when to unload an asset).
-But you should know only one rule: <em>you are using the asset <code>X</code> -&gt; it stores its data in RAM.
-If you don&#8217;t use (i.e. delete from a scene) -&gt; it will be immediately unloading from the RAM.
-And after a future\new request to this asset <code>X</code> it will be read again <strong>main data</strong> from the disk</em></p>
-</div>
-<div class="paragraph">
-<p>Now, main 'stages' of your assets you can read at the enum class <code>ECSAsset::Status</code>.
-Briefly, it has the main point:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p><strong>NotLoaded</strong>&#8201;&#8212;&#8201;Absolutely not loaded.
-Asset&#8217;s type is undefined</p>
-</li>
-<li>
-<p><strong>PreLoaded</strong>&#8201;&#8212;&#8201;Loaded only the main information: type &amp; ID &amp; name</p>
-</li>
-<li>
-<p><strong>Loaded</strong>&#8201;&#8212;&#8201;Full asset&#8217;s data is loaded (corresponding to asset&#8217;s type)</p>
-</li>
-<li>
-<p><strong>PreLoadingError</strong>&#8201;&#8212;&#8201;Error while preloading data</p>
-</li>
-<li>
-<p><strong>LoadingError</strong>&#8201;&#8212;&#8201;Error while loading of the main data</p>
-</li>
-</ol>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_regarding_logical_path"><a class="anchor" href="#_regarding_logical_path"></a>Regarding 'logical path'</h4>
-<div class="paragraph">
-<p>To be honest with you, the logical path is just a string, but it represents the path to this asset and it should be unique.
-To don&#8217;t worry about the uniqueness of the assets through the engine, we can delegate this work to the OS filesystem.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_example"><a class="anchor" href="#_example"></a>Example</h4>
-<div class="paragraph">
-<p>Let&#8217;s check a small example.
-We have the default configuration of the engine.
-Only one path(default one) has registered inside the <code>AssetsManager</code> is <code>&lt;engine_root&gt;/data/assets</code>.
-Also, we have only one asset <code>MyCube.nx</code></p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>At the engine&#8217;s init stage it will call a function <code>AssetsManager::rescanFileSystem()</code></p>
-</li>
-<li>
-<p>After that, it will scan the folder recursively and will find our asset <code>MyCube.nx</code> inside the folder: <code>&lt;engine_root&gt;/data/assets/3d-models/MyCube.nx</code></p>
-</li>
-<li>
-<p>The <code>AssetsManager</code> will register this asset under the logical path <code>3d-models/MyCube</code>&#8201;&#8212;&#8201;<strong>it will the unique identifier of your asset</strong>.</p>
-</li>
-</ol>
-</div>
-</div>
+<p>Only <code>.nx</code> and <code>.nxtex</code> are indexed. A file appearing in the browser does not imply loader support.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_extra_path_registration"><a class="anchor" href="#_extra_path_registration"></a>Extra path registration</h2>
+<h2 id="_choosing_a_reference"><a class="anchor" href="#_choosing_a_reference"></a>Choosing a reference</h2>
 <div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 28.5714%;">
+<col style="width: 71.4286%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">API</th>
+<th class="tableblock halign-left valign-top">Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>getWeakEcsAsset</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Observe metadata without loading component data.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>getEcsAsset</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Get an <code>NXECSAsset</code> strong reference to the shared component template.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>getUniqueEcsAsset</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reconstruct independent component data from disk, including optional adapter loading.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>getTexture</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Get an <code>NXTexture</code> (<code>AssetRef&lt;TextureAsset&gt;</code>) for a <code>.nxtex</code> descriptor.</p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
-<p>As far as you know, it has only one pre-registered path: <code>&lt;engine_root&gt;/data/assets</code>
-But, if you need you can add\register more paths if you need it using <code>AssetsManager::registerNewAssetPath(your_path)</code>.</p>
+<p>While indexed, both asset systems keep one manager reference. The first consumer reference
+loads the payload; releasing the last consumer unloads it while keeping the indexed object.
+Unique ECS loads return separate component data without loading the shared template.</p>
+</div>
+<div class="paragraph">
+<p>For <code>.nx</code>, preloading reads <code>type</code>, <code>name</code>, and <code>tags</code>; loading reconstructs <code>data</code>
+through <code>GlobalComponentFactory</code>. An optional <code>ECSAssetImpl</code> handles <code>assetData</code>.
+Missing IDs return empty references. A valid reference does not guarantee a successful load:
+check <code>getLoadingStatus()</code> for <code>Loaded</code>, <code>PreLoadingError</code>, or <code>LoadingError</code>.
+Unique loading can throw.</p>
+</div>
+<div class="paragraph">
+<p>Textures use the separate <code>BaseAsset</code> / <code>AssetRef</code> contract.
+The descriptor&#8217;s <code>AssetData</code> stores the image path and vertical-flip setting;
+the image path is relative to the project root, not the descriptor&#8217;s directory.
+<code>BaseAsset::isLoaded()</code> reports reference count, not GPU-load success.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_getting_loaded_assets"><a class="anchor" href="#_getting_loaded_assets"></a>Getting loaded assets</h2>
+<h2 id="_refreshing_and_editing"><a class="anchor" href="#_refreshing_and_editing"></a>Refreshing and editing</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>At the moment of writing this doc, to retrieve some assets, you need to get the object of the described class and call a function <code>Core::AssetsManager::getAsset(logical_path)</code>.
-It&#8217;s the best way to get what you need.</p>
+<p><code>refreshFilesSystem()</code> rereads descriptors and reloads ECS templates with active strong references.
+It removes missing entries only if filesystem traversal succeeds for all roots.
+Texture descriptors are reread, but existing GPU textures are not automatically reloaded.</p>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_real_code_example"><a class="anchor" href="#_real_code_example"></a>Real code example</h2>
-<div class="sectionbody">
 <div class="paragraph">
-<p>Let&#8217;s see at the main pipeline behind all extra information.</p>
+<p>The editor calls ECS templates “Blueprints.” <code>Scene::addBlueprintObjectToScene</code>
+creates independent component data and records the template path.
+Editing an instance does not edit its template; refreshing a template does not update existing instances.</p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">// First scan at the engine's initialization. You shouldn't do that directly!
-gGameInstance-&gt;assets.rescanFileSystem();
-// or
-// GetAssetsManager().rescanFileSystem()
-
-// For example we have only one asset: data/assets/3d-models/MyCube.nx
-// The rescanFileSystem() found this asset and put into internal storage.
-// It wrote the meta data of this asset:
-//    type: StaticMeshBundle
-//    name: MyFirstCube
-//    logicPath: 3d-models/MyCube.nx
-//    pathToSource: &lt;engine_root&gt;/data/assets/3d-models/MyCube.nx
-//    status: PreLoaded
-
-// Let's try to get this asset &amp; make a full load
-NXAsset cube = GetAssetsManager().getAsset("3d-models/MyCube.nx"_atom);
-// At the moment of getting this assets, the subsystem sees that you want to get all data.
-// So, it reads all really main data about it from the corresponsing file, and loads it
-// just at this line. So, at the next line you can use it as you want!
-
-if (cube)
-{
-    cout &lt;&lt; cube.getLoadingStatus() == ECSAsset::StatusLoaded; // true
-}</code></pre>
+<div class="paragraph">
+<p>On scene reload, asset-backed roots are reconstructed from their templates, then receive
+saved names, transforms, and type-specific data. Roots without an asset reference store a
+full <code>componentData</code> tree. General property overrides are not implemented.</p>
 </div>
+<div class="paragraph">
+<p>Renaming a file changes its logical ID. The browser refreshes the index but does not rewrite
+saved references, so update those references too.</p>
+</div>
+<div class="paragraph">
+<p>Scenes in <code>data/scenes</code> and worlds in <code>data/world</code> are persistent authored files.
+See <a href="file-io.html" class="xref page">File I/O</a> for save behavior and failed-load protection.</p>
 </div>
 </div>
 </div>

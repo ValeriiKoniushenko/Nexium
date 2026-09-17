@@ -1,36 +1,29 @@
-/*
- * MIT License
- *
- * Copyright (c) 2018-2027 Valerii Koniushenko
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+// Nexium
+// Copyright 2018-2026 Valerii Koniushenko
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
 
 #pragma once
 
 #include "Core/Color.h"
-#include "ECS/BaseComponent.h"
 #include "ImGui/imgui.h"
-#include "InputDevices/Keyboard.h"
-#include "ResourceManagement/JsonAdapter.h"
+#include "NxFundamental/ECS/BaseComponent.h"
+#include "NxFundamental/ResourceManagement/JsonAdapter.h"
+#include "Platform/Keyboard.h"
+#include "Platform/Mouse.h"
 
-namespace Core::Gui
+namespace NX
+{
+    using NX::BaseComponent;
+    using Platform::Keyboard;
+    using Platform::Mouse;
+} // namespace NX
+
+namespace NX::Gui
 {
     ENUM_CLASS();
     enum class Align
@@ -55,14 +48,15 @@ namespace Core::Gui
     };
 
     CLASS();
-    class Widget : public BaseComponent
+    class Widget : public NX::BaseComponent
     {
-        ECS_DECL(Widget, Core::BaseComponent);
+        ECS_DECL(Widget, NX::BaseComponent);
 
     public:
         struct Input
         {
-            constexpr static Keyboard::Key editorImGuiShowRect = Keyboard::Key::F2;
+            constexpr static Platform::Keyboard::Key editorImGuiShowRect
+                = Platform::Keyboard::Key::F2;
         };
 
         struct Bounds
@@ -115,7 +109,7 @@ namespace Core::Gui
         void onTick(float delta) override;
         virtual void onDraw() = 0;
 
-        bool addChildValidator(BaseComponent* newChild) override;
+        bool addChildValidator(NX::BaseComponent* newChild) override;
 
         void onInitialize() override;
 
@@ -134,7 +128,7 @@ namespace Core::Gui
         FIELD();
         glm::vec2 _pos = glm::vec2{ 0.f, 0.f };
         FIELD();
-        Core::Gui::Flex _flex = Core::Gui::Flex::Fixed;
+        NX::Gui::Flex _flex = NX::Gui::Flex::Fixed;
         FIELD();
         bool _autoDraw = true;
         FIELD();
@@ -146,7 +140,7 @@ namespace Core::Gui
     template<class T>
     concept IsWidget = std::derived_from<std::remove_reference_t<T>, Widget>;
 
-} // namespace Core::Gui
+} // namespace NX::Gui
 
 namespace ImGui
 {

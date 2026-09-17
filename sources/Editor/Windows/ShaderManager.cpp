@@ -1,29 +1,15 @@
-/*
- * MIT License
- *
- * Copyright (c) 2018-2027 Valerii Koniushenko
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+// Nexium
+// Copyright 2018-2026 Valerii Koniushenko
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
 
 #include "ShaderManager.h"
 
+#include "Editor/EditorIntegration.h"
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/Combo.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
@@ -31,14 +17,15 @@
 #include "Editor/GuiComponents/Label.h"
 #include "Editor/GuiComponents/Misc.h"
 #include "Editor/GuiComponents/Spacer.h"
+#include "Editor/IconsFontAwesome.h"
 #include "Editors/TextEditor.h"
-#include "GameplaySystem/Framework/GameInstance.h"
-#include "Misc/Configs.h"
-#include "Misc/IconsFontAwesome.h"
+#include "Foundation/Configs.h"
+#include "NxWorld/Framework/GameInstance.h"
 
-using namespace Core::Gui;
+using namespace NX::Gui;
+using namespace NX;
 
-namespace Core
+namespace NX
 {
     ECS_IMPL(ShaderManagerEWC);
 
@@ -100,7 +87,7 @@ namespace Core
             auto* input = ext->addChildComponent<TextInput>();
             input->setReadOnly(true);
             input->setFlex(Flex::FlexWidth);
-            input->setInputtedData(GetShaderManager()->getInputDir().generic_string());
+            input->setInputtedData(GetShaderManager().getInputDir().generic_string());
         }
         {
             auto* shaderSelect = _headLayout.addChildComponent<HorizontalLayout>();
@@ -249,7 +236,7 @@ namespace Core
                 ImGui::TextUnformatted(data.name.data());
 
                 ImGui::TableSetColumnIndex(2);
-                ImGui::TextUnformatted(glTypeToString(data.type));
+                ImGui::Text("0x%X", data.type);
 
                 ImGui::TableSetColumnIndex(3);
                 ImGui::Text("%d", data.location);
@@ -286,7 +273,7 @@ namespace Core
                     ImGui::TextUnformatted(data.name.data());
 
                     ImGui::TableSetColumnIndex(2);
-                    ImGui::TextUnformatted(glTypeToString(data.type));
+                    ImGui::Text("0x%X", data.type);
 
                     ImGui::TableSetColumnIndex(3);
                     ImGui::Text("%d", data.offset);
@@ -314,12 +301,12 @@ namespace Core
         if (_validExtensions)
         {
             std::string extensions;
-            for (auto&& extension : GetShaderManager()->getSuitableFragFileExtensions())
+            for (auto&& extension : GetShaderManager().getSuitableFragFileExtensions())
             {
                 extensions += extension;
                 extensions.push_back(' ');
             }
-            for (auto&& extension : GetShaderManager()->getSuitableVertFileExtensions())
+            for (auto&& extension : GetShaderManager().getSuitableVertFileExtensions())
             {
                 extensions += extension;
                 extensions.push_back(' ');
@@ -334,13 +321,13 @@ namespace Core
 
         if (_totalShaders)
         {
-            _totalShaders->setInputtedData(static_cast<int>(GetShaderManager()->countOfShaders()));
+            _totalShaders->setInputtedData(static_cast<int>(GetShaderManager().countOfShaders()));
         }
 
         if (_failedShaders)
         {
             _failedShaders->setInputtedData(
-                static_cast<int>(GetShaderManager()->countOfFailedShaders()));
+                static_cast<int>(GetShaderManager().countOfFailedShaders()));
         }
     }
 
@@ -367,7 +354,7 @@ namespace Core
             return;
         }
 
-        auto&& metas = GetShaderManager()->getShaderMetas();
+        auto&& metas = GetShaderManager().getShaderMetas();
         if (Verify(metas.contains(name)))
         {
             bool result = metas[name].safeRecreateFromSources();
@@ -376,12 +363,12 @@ namespace Core
             {
                 if (result)
                 {
-                    _recompileResult->setTextColor(Config::ColorSoftGreen);
+                    _recompileResult->setTextColor(Foundation::Config::ColorSoftGreen);
                     _recompileResult->setText("Successfully recompiled");
                 }
                 else
                 {
-                    _recompileResult->setTextColor(Config::ColorRed);
+                    _recompileResult->setTextColor(Foundation::Config::ColorRed);
                     _recompileResult->setText("Recompile failed. Check logs for details.");
                 }
             }
@@ -390,7 +377,7 @@ namespace Core
 
     void ShaderManagerEWC::selectShader(const StringAtom& name)
     {
-        auto&& metas = GetShaderManager()->getShaderMetas();
+        auto&& metas = GetShaderManager().getShaderMetas();
         if (!Verify(metas.contains(name)))
         {
             errorLog("Selected shader: {} - not found."_f << name);
@@ -415,4 +402,4 @@ namespace Core
 
         _selectedRawShader = &shader;
     }
-} // namespace Core
+} // namespace NX

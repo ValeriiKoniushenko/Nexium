@@ -1,0 +1,212 @@
+// Nexium
+// Copyright 2018-2026 Valerii Koniushenko
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+
+#pragma once
+
+#include "Core/IntrusivePtr.h"
+#include "NxFundamental/ECS/BaseComponent.h"
+#include "NxFundamental/ITagHolder.h"
+
+#include <filesystem>
+
+namespace NX
+{
+    class ECSAsset;
+
+    class ECSAssetImpl
+    {
+    public:
+        ECSAssetImpl(const ECSAssetImpl&) = default;
+        ECSAssetImpl(ECSAssetImpl&&) = delete;
+        ECSAssetImpl& operator=(const ECSAssetImpl&) = default;
+        ECSAssetImpl& operator=(ECSAssetImpl&&) = delete;
+        virtual ~ECSAssetImpl() = default;
+
+        virtual void load(const ECSAsset& asset, BaseComponent* dataOwner,
+                          const nlohmann::json& assetData) = 0;
+        virtual void unload(const ECSAsset& asset, BaseComponent* dataOwner) = 0;
+
+    protected:
+        ECSAssetImpl() = default;
+    };
+
+    template<typename T>
+    concept IsAssetImpl = std::derived_from<std::remove_reference_t<T>, ECSAssetImpl>;
+
+    class ECSAsset : public Core::IntrusiveRefCounter<ECSAsset>, public Foundation::BaseLog
+    {
+    public:
+        inline static const char* fileExtension = ".nx";
+
+        struct Hash
+        {
+            size_t operator()(const ECSAsset& a) const noexcept
+            {
+                return a._meta.logicPath.makeHash();
+            }
+
+            size_t operator()(const Core::IntrusivePtr<ECSAsset>& a) const noexcept
+            {
+                if (Verify(a)) [[likely]]
+                {
+                    return a->_meta.logicPath.makeHash();
+                }
+                return 0;
+            }
+        };
+
+        ENUM_CLASS();
+        enum class Status
+        {
+            NotLoaded,       // Absolutely not loaded. Asset's type is undefined
+            PreLoaded,       // Loaded only the main information: type & ID & name
+            Loaded,          // Full asset's data is loaded (corresponding to asset's type)
+            PreLoadingError, // Error while preloading data
+            LoadingError     // Error while loading of the main data
+        };
+
+        struct StreamData
+        {
+            StreamData() = delete;
+
+            static constexpr const char* type = "type";
+            static constexpr const char* name = "name";
+            static constexpr const char* tags = "tags";
+            static constexpr const char* data = "data";
+            static constexpr const char* assetData = "assetData";
+        };
+
+        struct Meta
+        {
+            std::filesystem::path pathToSource;
+            Core::StringAtom logicPath;
+
+            Core::StringAtom name;
+            Core::StringAtom type;
+            Tag tags = Tag_None;
+        };
+
+    public:
+        explicit ECSAsset(const Core::StringAtom& logicPath)
+        {
+            _meta.logicPath = logicPath;
+            Assert(_meta.logicPath.isStatic());
+        }
+        ~ECSAsset() override;
+
+        ECSAsset(const ECSAsset&) = delete;
+        ECSAsset& operator=(const ECSAsset&) = delete;
+        ECSAsset(ECSAsset&&) = delete;
+        ECSAsset& operator=(ECSAsset&&) = delete;
+
+        [[nodiscard]] spdlog::logger* getLogger() const override;
+
+        void connectSourceFile(const std::filesystem::path& src);
+
+        [[nodiscard]] Status getLoadingStatus() const noexcept { return _status; }
+
+        [[nodiscard]] const std::filesystem::path& getSourceFile() const noexcept;
+
+        [[nodiscard]] const Core::StringAtom& getName() const noexcept { return _meta.name; }
+        [[nodiscard]] const Core::StringAtom& getType() const noexcept { return _meta.type; }
+        [[nodiscard]] const Core::StringAtom& getLogicPath() const noexcept
+        {
+            return _meta.logicPath;
+        }
+
+        [[nodiscard]] BaseComponent::Ptr getData() const noexcept { return _data; }
+
+        [[nodiscard]] nlohmann::json getAssetData() const;
+
+        void syncAssetWithMemory(const nlohmann::json& assetData);
+
+        [[nodiscard]] int getAdapterIndex() const noexcept { return _adapterIndex; }
+
+        [[nodiscard]] bool operator==(const ECSAsset& other) const;
+        [[nodiscard]] bool operator==(const Core::IntrusivePtr<ECSAsset>& other) const;
+
+        static void PackObjectToAsset(ECSAsset& out, const BaseComponent* data);
+
+        [[nodiscard]] nlohmann::json toJson() const;
+
+        [[nodiscard]] Tag getTags() const noexcept { return _meta.tags; }
+
+        [[nodiscard]] const Meta& getMeta() const noexcept { return _meta; }
+
+        [[nodiscard]] BaseComponent::Ptr uniqueLoad() const;
+
+    protected:
+        void load();
+        void unload();
+
+        void onIncrementRef(uint32_t count) override;
+        void onDecrementRef(uint32_t count) override;
+
+    private:
+        void extrudeAndValidateMainDataFromFile();
+        void localClear();
+
+    protected:
+        Meta _meta;
+
+        BaseComponent::Ptr _data;
+        std::unique_ptr<ECSAssetImpl> _impl;
+
+        int _adapterIndex = -1;
+
+    private:
+        Status _status = Status::NotLoaded;
+    };
+
+    using NXECSAsset = Core::IntrusivePtr<ECSAsset>;
+    using WeakNXECSAsset = Core::WeakPtr<ECSAsset>;
+
+    class NXSceneAsset : public Core::IntrusiveRefCounter<NXSceneAsset>
+    {
+        INTRUSIVE_PTR_ADAPTERS(NXSceneAsset)
+    public:
+        NXSceneAsset() = default;
+        NXSceneAsset(NXSceneAsset&&) = delete;
+        NXSceneAsset& operator=(NXSceneAsset&&) = delete;
+        NXSceneAsset(const NXSceneAsset& other);
+        NXSceneAsset& operator=(const NXSceneAsset& other);
+        ~NXSceneAsset() override = default;
+
+        void setAsset(ECSAsset& asset);
+        void setAsset(NXECSAsset asset);
+        bool setData(const BaseComponent* comp);
+
+        template<IsComponent T, class... Args>
+        bool spawnData(Args... args)
+        {
+            _data = new T(std::forward<Args>(args)...);
+            if (!validateInputSetData(_data.get()))
+            {
+                _data.reset();
+                return false;
+            }
+
+            return true;
+        }
+
+        [[nodiscard]] const NXECSAsset& getAsset() const noexcept { return _asset; }
+        [[nodiscard]] const BaseComponent* getData() const noexcept { return _data.get(); }
+        [[nodiscard]] BaseComponent* getData() noexcept { return _data.get(); }
+
+    private:
+        [[nodiscard]] bool validateInputSetData(const BaseComponent* comp);
+
+    protected:
+        NXECSAsset _asset;
+        BaseComponent::Ptr _data;
+    };
+
+} // namespace NX
+
+#include "ECSAsset.generated.h" // added by the code generator. Better don't move it.

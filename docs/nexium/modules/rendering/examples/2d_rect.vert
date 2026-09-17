@@ -1,0 +1,1 @@
+../../../../../data/assets/shaders/2d_rect.vert

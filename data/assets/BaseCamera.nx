@@ -33,9 +33,9 @@
             1.0,
             1.0
         ],
-        "_type": "Core::PerspectiveCamera"
+        "_type": "NX::PerspectiveCamera"
     },
     "name": "BaseCamera",
     "tags": "WorldObject",
-    "type": "Core::PerspectiveCamera"
+    "type": "NX::PerspectiveCamera"
 }

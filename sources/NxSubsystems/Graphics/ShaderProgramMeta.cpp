@@ -1,0 +1,297 @@
+// Nexium
+// Copyright 2018-2026 Valerii Koniushenko
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+
+#include "ShaderProgramMeta.h"
+
+#include "../PrivateModuleInfo.h"
+#include "Utils/Functions.h"
+#include "spdlog/async_logger.h"
+
+#include <algorithm>
+#include <array>
+
+namespace NX
+{
+    std::size_t ShaderProgramMeta::Hasher::operator()(const ShaderProgramMeta& self) const
+    {
+        return self._shaderName.makeHash();
+    }
+
+    bool ShaderProgramMeta::operator==(const ShaderProgramMeta& other)
+    {
+        return _shaderName == other._shaderName;
+    }
+
+    void ShaderProgramMeta::create(const std::filesystem::path& vertexShaderPath,
+                                   const std::filesystem::path& fragmentShaderPath)
+    {
+        generateShaderId();
+        readSourceShaderFile(vertexShaderPath, fragmentShaderPath);
+        compileShader();
+
+        _shaderProgram.create(_shaderName);
+        reflectShaderVariablesFor(_shaderProgram.getShaderProgramId());
+        reflectShaderUniformBlocksFor(_shaderProgram.getShaderProgramId());
+        _shaderProgram.setDataFromMeta(*this);
+
+        _vertexShaderPath = vertexShaderPath;
+        _fragmentShaderPath = fragmentShaderPath;
+    }
+
+    void ShaderProgramMeta::compileShader()
+    {
+        glCompileShader(_shaderProgram.getVertexShader());
+        glCompileShader(_shaderProgram.getFragmentShader());
+        requireNoCompileErrors();
+    }
+
+    void ShaderProgramMeta::requireNoCompileErrors()
+    {
+        checkShaderCompileStatus(_shaderProgram.getVertexShader(), "Vertex");
+        checkShaderCompileStatus(_shaderProgram.getFragmentShader(), "Fragment");
+    }
+
+    void ShaderProgramMeta::generateShaderId()
+    {
+        _shaderProgram.clear();
+
+        auto vertexShaderId = glCreateShader(static_cast<GLenum>(ShaderType::Vertex));
+        if (vertexShaderId == 0)
+        {
+            criticalLogAndThrow("Can't create gl vertex shader.");
+        }
+        _shaderProgram.setVertexShaderId(vertexShaderId);
+
+        auto fragmentShaderId = glCreateShader(static_cast<GLenum>(ShaderType::Fragment));
+        if (fragmentShaderId == 0)
+        {
+            criticalLogAndThrow("Can't create gl fragment shader.");
+        }
+        _shaderProgram.setFragmentShaderId(fragmentShaderId);
+    }
+
+    void ShaderProgramMeta::readSourceShaderFile(const std::filesystem::path& vertexShaderPath,
+                                                 const std::filesystem::path& fragmentShaderPath)
+    {
+        // VERTEX SHADER
+        const auto vertexSources = Utils::GetTextFileContentAs<std::string>(vertexShaderPath);
+        if (vertexSources.empty())
+        {
+            return;
+        }
+        const auto* vertexRaw = vertexSources.data();
+        glShaderSource(_shaderProgram.getVertexShader(), 1, &vertexRaw, nullptr);
+
+        // FRAGMENT SAHDER
+        const auto fragmentSources = Utils::GetTextFileContentAs<std::string>(fragmentShaderPath);
+        if (fragmentSources.empty())
+        {
+            return;
+        }
+        const auto* fragmentRaw = fragmentSources.data();
+        glShaderSource(_shaderProgram.getFragmentShader(), 1, &fragmentRaw, nullptr);
+    }
+
+    void ShaderProgramMeta::setShaderName(const Core::StringAtom& name)
+    {
+        _shaderName = Core::StringAtom::Intern(name);
+    }
+
+    spdlog::logger* ShaderProgramMeta::getLogger() const
+    {
+        return NxSubsystems::getLogger();
+    }
+
+    void ShaderProgramMeta::setShaderName(const std::string& name)
+    {
+        _shaderName = Core::StringAtom::Intern(name);
+    }
+
+    void ShaderProgramMeta::checkShaderCompileStatus(GLuint shaderId, const std::string& shaderType)
+    {
+        constexpr GLsizei logSize = 512;
+        GLint success = 0;
+
+        glGetShaderiv(shaderId, GL_COMPILE_STATUS, &success);
+        if (!success)
+        {
+            std::array<char, logSize> infoLog{};
+            glGetShaderInfoLog(shaderId, static_cast<GLsizei>(infoLog.size()), nullptr,
+                               infoLog.data());
+            std::string msg = shaderType + " shader compilation error: ";
+            msg += infoLog.data();
+            throw std::runtime_error(msg);
+        }
+    }
+
+    void ShaderProgramMeta::reflectShaderVariablesFor(GLuint shaderProgramId)
+    {
+        if (!glGetProgramInterfaceiv)
+        {
+            warnLog("The function: glGetProgramInterfaceiv - is unavailable.");
+            return;
+        }
+
+        _uniforms.clear();
+        _inputs.clear();
+        _outputs.clear();
+
+        struct Group
+        {
+            GLenum interfaceType;
+            std::unordered_set<ShaderVariable, ShaderVariable::Hasher>& output;
+        };
+
+        std::vector<Group> groups = { { .interfaceType = GL_UNIFORM, .output = _uniforms },
+                                      { .interfaceType = GL_PROGRAM_INPUT, .output = _inputs },
+                                      { .interfaceType = GL_PROGRAM_OUTPUT, .output = _outputs } };
+
+        constexpr std::array<GLenum, 3> props = { GL_NAME_LENGTH, GL_TYPE, GL_LOCATION };
+
+        for (const auto& [interfaceType, output] : groups)
+        {
+            GLint count = 0;
+            glGetProgramInterfaceiv(shaderProgramId, interfaceType, GL_ACTIVE_RESOURCES, &count);
+
+            for (GLint i = 0; i < count; ++i)
+            {
+                std::array<GLint, 3> values{};
+                glGetProgramResourceiv(shaderProgramId, interfaceType, i,
+                                       static_cast<GLsizei>(props.size()), props.data(),
+                                       static_cast<GLsizei>(values.size()), nullptr, values.data());
+
+                const GLint nameLen = values[0];
+                const GLenum type = values[1];
+                const GLint location = values[2];
+
+                if (location == -1)
+                {
+                    continue;
+                }
+
+                std::string name(nameLen, '\0');
+                glGetProgramResourceName(shaderProgramId, interfaceType, i, nameLen, nullptr,
+                                         name.data());
+                if (!name.empty() && name.back() == '\0')
+                {
+                    name.pop_back();
+                }
+
+                output.insert(ShaderVariable{ Core::StringAtom::Intern(name), type, { location } });
+            }
+        }
+    }
+
+    void ShaderProgramMeta::reflectShaderUniformBlocksFor(GLuint shaderProgramId)
+    {
+        if (!glGetProgramInterfaceiv)
+        {
+            warnLog("The function: glGetProgramInterfaceiv - is unavailable.");
+            return;
+        }
+
+        _uniformBufferObjects.clear();
+
+        constexpr std::array<GLenum, 3> props
+            = { GL_NUM_ACTIVE_VARIABLES, GL_BUFFER_BINDING, GL_BUFFER_DATA_SIZE };
+        constexpr std::array<GLenum, 3> lineProps = { GL_NAME_LENGTH, GL_TYPE, GL_OFFSET };
+
+        GLint count = 0;
+        glGetProgramInterfaceiv(shaderProgramId, GL_UNIFORM_BLOCK, GL_ACTIVE_RESOURCES, &count);
+
+        for (GLint i = 0; i < count; ++i)
+        {
+            ShaderUBO outData;
+
+            // =========== Getting main data ===========
+            std::array<GLint, 3> values;
+            glGetProgramResourceiv(shaderProgramId, GL_UNIFORM_BLOCK, i, values.size(),
+                                   props.data(), values.size(), nullptr, values.data());
+
+            outData.vars.resize(values[0]);
+            outData.binding = values[1];
+            outData.size = values[2];
+
+            // =========== Getting name ===========
+            GLint nameLen = 0;
+            constexpr GLenum nameLenEnum = GL_NAME_LENGTH;
+            glGetProgramResourceiv(shaderProgramId, GL_UNIFORM_BLOCK, i, 1, &nameLenEnum, 1,
+                                   nullptr, &nameLen);
+            std::string blockName(nameLen, '\0');
+            glGetProgramResourceName(shaderProgramId, GL_UNIFORM_BLOCK, i, nameLen, nullptr,
+                                     blockName.data());
+            if (!blockName.empty() && blockName.back() == '\0')
+            {
+                blockName.pop_back();
+            }
+            outData.name = Core::StringAtom::Intern(blockName);
+
+            // =========== Getting fields/vars ===========
+            std::vector<GLint> vars(outData.vars.size());
+            constexpr GLenum activeVarsEnum = GL_ACTIVE_VARIABLES;
+            glGetProgramResourceiv(shaderProgramId, GL_UNIFORM_BLOCK, i, 1, &activeVarsEnum,
+                                   outData.vars.size(), nullptr, vars.data());
+
+            std::size_t varIndex = 0;
+            for (const GLint varId : vars)
+            {
+                ShaderVariable var;
+
+                std::array<GLint, 3> uboContent;
+                glGetProgramResourceiv(shaderProgramId, GL_UNIFORM, varId, uboContent.size(),
+                                       lineProps.data(), uboContent.size(), nullptr,
+                                       uboContent.data());
+
+                var.name.resize(uboContent[0]);
+                glGetProgramResourceName(shaderProgramId, GL_UNIFORM, varId, uboContent[0], nullptr,
+                                         var.name.data());
+                if (!var.name.isEmpty() && var.name.back() == '\0')
+                {
+                    var.name.popBack();
+                }
+
+                var.type = uboContent[1];
+                var.offset = uboContent[2];
+
+                outData.vars.at(varIndex++) = std::move(var);
+            }
+
+            std::ranges::sort(outData.vars, [](const ShaderVariable& a, const ShaderVariable& b)
+                              { return a.offset < b.offset; });
+
+            _uniformBufferObjects.insert(std::move(outData));
+        }
+    }
+
+    void ShaderProgramMeta::recreateFromSources()
+    {
+        if (_fragmentShaderPath.empty() || _vertexShaderPath.empty())
+        {
+            warnLog("Can't recreate a shader '{}', due to invalid paths"_f << _shaderName);
+            return;
+        }
+
+        create(_vertexShaderPath, _fragmentShaderPath);
+    }
+
+    bool ShaderProgramMeta::safeRecreateFromSources()
+    {
+        try
+        {
+            recreateFromSources();
+            return true;
+        }
+        catch (std::exception& err)
+        {
+            errorLog("Can't recreate a shader '{}' due to compile error[s]: {}"_f << _shaderName
+                                                                                  << err.what());
+            return false;
+        }
+    }
+} // namespace NX

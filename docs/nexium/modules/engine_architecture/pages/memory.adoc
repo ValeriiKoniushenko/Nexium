@@ -1,3 +1,37 @@
-= Memory
+= Memory and Ownership
 
+Nexium uses C++ ownership and reference counting. Components use `Core::IntrusivePtr` /
+`Core::WeakPtr`; application resources also use values and `std::unique_ptr`.
 
+[cols="2,4",options="header"]
+|===
+|Relationship |Ownership
+|Application → GameInstance |`gGameInstance` is a unique pointer.
+|GameInstance → Scene, World, assets, UI |Value members.
+|Runtime → GameInstance |Borrowed reference.
+|EditorIntegration → Runtime |Borrowed reference; integration detaches on destruction.
+|Component → children / parent |Strong child references; borrowed parent pointer.
+|World → active camera |Borrowed pointer into component data.
+|Selector → selected components |Strong references keyed by addresses.
+|AssetsManager → indexed assets |Strong ECSAsset references and `AssetRef` entries.
+|===
+
+Window and ShaderManager use shared accessor lifetimes outside this explicit ownership tree.
+
+== Lifetime is not scene membership
+
+Removing a component clears its parent link, but selection or another strong reference can
+keep it alive. Scene replacement does not automatically clear editor selection.
+`BaseCamera` clears World's active camera in its destructor; retaining a removed camera
+therefore also delays that cleanup.
+
+Weak asset references observe without loading payloads. While indexed, the last consumer's
+release unloads the payload while the manager retains the asset object.
+See xref:resource-system.adoc[Assets] for the two reference contracts.
+
+Tree copies clone descendants. Resource-bearing subclasses still need correct copy behavior
+for GPU resources and subscriptions; component cloning alone does not establish safe world duplication.
+Names, address keys, and `makeHash()` are not durable saved identities.
+
+Implementation: `GameInstance.h`, `World.h`, `BaseComponent.{h,cpp}`,
+`Camera.cpp`, and `Editor/ObjectSelectorManager.h`; see the xref:module-graph.adoc[module map] for locations.

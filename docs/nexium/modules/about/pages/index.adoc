@@ -1,0 +1,23 @@
+= About Nexium
+
+== Project status
+
+Nexium is Valerii Koniushenko's personal C++ game engine and editor.
+Development currently focuses on 2D authoring inside this repository; 3D support is optional.
+The example game includes the editor. Separate game packaging and isolated Play/Stop sessions are unfinished.
+
+See xref:ROOT:getting-started.adoc[Getting Started] for the working editor workflow and
+xref:engine_architecture:architecture-review.adoc[Architecture Review] for proposed improvements.
+
+== Contributing
+
+* Follow the repository's `AGENTS.md` and existing code conventions.
+* Include a reproducible case or regression test with behavior changes.
+* Build and run the relevant checks; report unavailable checks explicitly.
+  xref:build:cmake-structure.adoc[CMake Infrastructure] lists the targets and required options.
+* Keep documentation aligned with the implementation and rebuild the Antora site after edits.
+
+== License
+
+The repository's `LICENSE` contains Apache-2.0 terms.
+Dependencies retain their own licenses; check their respective repositories.

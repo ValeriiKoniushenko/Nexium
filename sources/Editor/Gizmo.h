@@ -1,46 +1,31 @@
-/*
- * MIT License
- *
- * Copyright (c) 2018-2027 Valerii Koniushenko
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+// Nexium
+// Copyright 2018-2026 Valerii Koniushenko
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
 
 #pragma once
 
-#include "../GameplaySystem/Entities/Actor.h"
-#include "../Misc/Configs.h"
 #include "Core/Delegate.h"
-#include "Graphics/Primitives/StaticMeshBundle.h"
-#include "Graphics/Window.h"
-#include "InputDevices/InputAction.h"
+#include "Foundation/Configs.h"
+#include "NxSubsystems/Input/InputAction.h"
+#include "NxWorld/Entities/Actor.h"
+#include "NxWorld/Entities/Mesh/StaticMeshBundle.h"
+#include "Platform/Window.h"
 
 #include <filesystem>
 
-namespace Core
+namespace NX
 {
     /// Gizmo class
     /// Deprecated due to unstable behavior
     CLASS();
-    class Gizmo : public StaticMeshBundle
+    class Gizmo : public NX::StaticMeshBundle
     {
-        ECS_DECL(Gizmo, Core::StaticMeshBundle);
+        ECS_DECL(Gizmo, NX::StaticMeshBundle);
 
     public:
         ENUM_CLASS();
@@ -51,32 +36,32 @@ namespace Core
             Z
         };
 
-        struct DragData : public DragAndDrop::Data
+        struct DragData : public Platform::DragAndDrop::Data
         {
             inline static auto dragType = "gizmo_move"_atom;
 
             Direction direction;
-            std::vector<Transformable*> attachedObjects;
+            std::vector<NX::Transformable*> attachedObjects;
         };
 
-        void pureDraw(const std::function<void(StaticMesh*)>& onUniformSet,
-                      const std::function<bool(const Actor*)>& conditional) override;
+        void pureDraw(const std::function<void(NX::StaticMesh*)>& onUniformSet,
+                      const std::function<bool(const NX::Actor*)>& conditional) override;
 
-        void onMousePicked(StaticMesh* clickedPart) override;
+        void onMousePicked(NX::StaticMesh* clickedPart) override;
 
         void onTick(float delta) override;
 
     protected:
-        void onDraw(BaseCamera& camera) override;
+        void onDraw(NX::BaseCamera& camera) override;
         void initialize() override;
         void load3DModel();
-        void handleDragStart(StaticMesh* touchedMesh);
+        void handleDragStart(NX::StaticMesh* touchedMesh);
         void handleDrag();
         void recalculateMatrices(const glm::mat4& mat) override;
 
     private:
         std::optional<glm::vec3> _lastRay;
     };
-} // namespace Core
+} // namespace NX
 
 #include "Gizmo.generated.h" // added by the code generator. Better don't move it.

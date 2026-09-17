@@ -1,40 +1,28 @@
-/*
- * MIT License
- *
- * Copyright (c) 2018-2027 Valerii Koniushenko
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+// Nexium
+// Copyright 2018-2026 Valerii Koniushenko
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
 
 #include "ThumbnailFile.h"
 
-#include "AssetsManager/AssetsManager.h"
+#include "AssetsManagerWindow.h"
+#include "Editor/EditorIntegration.h"
+#include "Editor/IconsFontAwesome.h"
 #include "Editor/Windows/Editors/TextEditor.h"
 #include "Editor/Windows/ModalPopUp.h"
-#include "GameplaySystem/Framework/GameInstance.h"
-#include "Misc/IconsFontAwesome.h"
+#include "NxWorld/Framework/GameInstance.h"
 
 #include <array>
 #include <chrono>
 #include <format>
 #include <iomanip>
 #include <sstream>
+
+using namespace NX;
 
 namespace
 {
@@ -64,7 +52,7 @@ namespace
     }
 } // namespace
 
-namespace Core
+namespace NX
 {
 
     ThumbnailFile::ThumbnailFile(const ThumbnailActions& actions, const ImTextureID texture,
@@ -123,7 +111,7 @@ namespace Core
             }
             else if (_isRegularFile)
             {
-                AssetsManager::TryToOpenFile(std::filesystem::directory_entry(_path));
+                AssetsManagerWindowEWC::TryToOpenFile(std::filesystem::directory_entry(_path));
             }
         }
     }
@@ -230,8 +218,7 @@ namespace Core
             {
                 if (ImGui::MenuItem(ICON_FA_FILE_CODE_O " Open with text editor"))
                 {
-                    gGameInstance->gameEditor.showWindow<TextEditorEWC>(
-                        ".*", _path.generic_string().data());
+                    GetEditor()->showWindow<TextEditorEWC>(".*", _path.generic_string().data());
                 }
             }
 
@@ -315,4 +302,4 @@ namespace Core
         }
     }
 
-} // namespace Core
+} // namespace NX

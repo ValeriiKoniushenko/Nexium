@@ -1,39 +1,24 @@
-/*
- * MIT License
- *
- * Copyright (c) 2018-2027 Valerii Koniushenko
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+// Nexium
+// Copyright 2018-2026 Valerii Koniushenko
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
 
 #pragma once
 
-#include "AssetsManager/TextureAsset.h"
 #include "Core/Delegate.h"
+#include "NxSubsystems/AssetsManager/TextureAsset.h"
 #include "Widget.h"
 
-namespace Core::Gui
+namespace NX::Gui
 {
     CLASS();
     class Button : public Widget
     {
-        ECS_DECL(Button, Core::Gui::Widget);
+        ECS_DECL(Button, NX::Gui::Widget);
 
     public:
         void setButtonColor(const Color4& value);
@@ -146,7 +131,7 @@ namespace Core::Gui
     CLASS();
     class ToggleButton : public Button
     {
-        ECS_DECL(ToggleButton, Core::Gui::Button);
+        ECS_DECL(ToggleButton, NX::Gui::Button);
 
     public: // Delegates
         /// will be called when toggled
@@ -171,11 +156,11 @@ namespace Core::Gui
     CLASS();
     class ImageButton : public Button
     {
-        ECS_DECL(ImageButton, Core::Gui::Button);
+        ECS_DECL(ImageButton, NX::Gui::Button);
 
     public:
-        void setImage(const NXTexture& texture) { _texture = texture; }
-        [[nodiscard]] const NXTexture& getImage() const noexcept { return _texture; }
+        void setImage(const NX::NXTexture& texture) { _texture = texture; }
+        [[nodiscard]] const NX::NXTexture& getImage() const noexcept { return _texture; }
 
         void setPaddingSize(glm::vec2 value) { _paddingSize = value; }
         [[nodiscard]] std::optional<glm::vec2> getPaddingSize() const { return _paddingSize; }
@@ -190,8 +175,8 @@ namespace Core::Gui
     protected:
         FIELD();
         std::optional<glm::vec2> _paddingSize;
-        NXTexture _texture;
+        NX::NXTexture _texture;
     };
-} // namespace Core::Gui
+} // namespace NX::Gui
 
 #include "Button.generated.h" // added by the code generator. Better don't move it.

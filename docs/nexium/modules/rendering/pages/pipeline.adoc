@@ -1,0 +1,66 @@
+= Rendering Pipeline
+
+== Frame order and destinations
+
+The loop in `NxRuntime/Runtime.cpp` uses the previous frame's measured delta; the first delta is zero.
+
+[cols="1,3,3",options="header"]
+|===
+|Step |GameOnly |Editor
+|1 |Poll window events and tick Scene. |Poll events; tick Scene only when the viewport is focused.
+|2 |Clear the window; update integration keyboard actions if attached. |Clear the window; update editor windows/input and submit ImGui drawing.
+|3 |Use the active camera to draw Scene into the window. |Process picking, bind and clear the viewport target, then draw Scene.
+|4 |Call GameInstance's tick hook after drawing. |Call that hook while the viewport target is still bound, then bind framebuffer 0.
+|5 |Swap buffers and record elapsed time. |Same.
+|===
+
+Steps 3–4 require an active camera. Scene tick and drawing are therefore separate gates.
+The editor submits ImGui before refreshing the viewport texture, so the displayed image can contain
+the previous scene render. There is no independent simulation/render clock.
+
+== Scene draw order
+
+`Scene::directDraw()` reads World's active camera, then:
+
+. Draws the grid in Editor mode.
+. Handles enabled root mesh bundles when 3D is compiled in, collecting those marked post-draw.
+. Calls `draw()` on the root objects.
+. Draws the collected mesh bundles, then attempts a skybox for a perspective camera.
+
+This is an explicit sequence, not a depth-sorted transparent pass. The general root loop also
+calls mesh roots; do not infer a once-per-object guarantee from the post-draw flag.
+Skybox lookup/initialization is unfinished. Ordinary `SceneObject::draw()` checks its enabled flag;
+component tick traversal does not automatically imply child rendering.
+
+== Example: one atlas-backed rectangle
+
+=== Geometry and camera
+
+`Rectangle::onDraw()` reuses a shared four-vertex quad and six indices.
+The `2d_rect` vertex shader expects a position at attribute location 0.
+The model matrix transforms the quad, while `uProjAndView` applies the camera's view/projection.
+
+=== Atlas and frame coordinates
+
+Atlas lookup returns the packed image's offset and size in normalized coordinates.
+The rectangle's frame UVs select a region within that image:
+
+* Final offset = atlas offset + atlas size × frame offset.
+* Final size = atlas size × frame size.
+
+For an atlas image at `(0.25, 0.5)` with size `(0.5, 0.25)`, selecting its right half
+(frame offset `(0.5, 0)`, size `(0.5, 1)`) sends offset `(0.5, 0.5)` and size `(0.25, 0.25)`.
+The CPU uploads those values immediately before drawing:
+
+[source,cpp]
+----
+include::example$rectangle.cpp[tag=rectangle_draw_uniforms,indent=0]
+----
+
+=== Alpha handling
+
+With blending enabled, the fragment shader discards samples below alpha 0.1 and the draw uses
+source-alpha blending. Disabling blending forces fragment alpha to 1 and uses replacement blending.
+Depth testing remains enabled by Runtime; alpha blending alone does not establish correct transparent ordering.
+
+See xref:materials/shader-system.adoc[Shader System] for the matching GLSL and binding sequence.

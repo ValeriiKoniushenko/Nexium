@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Architecture and Migration Review :: Nexium Engine</title>
+    <link rel="prev" href="index.html">
+    <link rel="next" href="ue5-alignment.html">
+    <meta name="generator" content="Antora 3.1.15">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="../../..">Nexium Engine</a>
+      <button class="navbar-burger" aria-controls="topbar-nav" aria-expanded="false" aria-label="Toggle main menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Products</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Product A</a>
+            <a class="navbar-item" href="#">Product B</a>
+            <a class="navbar-item" href="#">Product C</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Services</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Service A</a>
+            <a class="navbar-item" href="#">Service B</a>
+            <a class="navbar-item" href="#">Service C</a>
+          </div>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="button is-primary" href="#">Download</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="nexium" data-version="latest">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Nexium Engine Documentation</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../index.html">Overview</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../getting-started.html">Getting Started</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../installation.html">Installation</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Engine Architecture</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="index.html">Overview</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="architecture-review.html">Architecture and Migration Review</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ue5-alignment.html">UE5 Patterns for Nexium</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="module-graph.html">Module Graph</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lifecycle.html">Application Lifecycle</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="threading.html">Threading Model</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="memory.html">Memory Model</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="resource-system.html">Resource System</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="file-io.html">File I/O</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ecs-overview.html">ECS Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="input-system.html">Input System</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Rendering</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../rendering/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../rendering/pipeline.html">Rendering Pipeline</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../rendering/renderer-architecture.html">Rendering Responsibilities</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Materials</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../rendering/materials/shader-system.html">Shader System</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Gameplay</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../gameplay/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../gameplay/scenes.html">Scenes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../gameplay/components.html">Components</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../gameplay/scripting.html">Gameplay Hooks</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../gameplay/prefabs.html">Blueprint Templates</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Build &amp; Toolchain</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../build/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../build/cmake-structure.html">CMake Structure</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../build/ci-cd.html">CI/CD</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../about/index.html">About</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Nexium Engine Documentation</span>
+    <span class="version">latest</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Nexium Engine Documentation</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">latest</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Nexium Engine Documentation</a></li>
+    <li>Engine Architecture</li>
+    <li><a href="architecture-review.html">Architecture and Migration Review</a></li>
+  </ul>
+</nav>
+<div class="edit-this-page"><a href="file:///home/valerii/workspace/Nexium//docs/nexium/modules/engine_architecture/pages/architecture-review.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Architecture and Migration Review</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This assessment separates implemented boundaries from proposed work.
+The current executable combines the example game and 2D editor; 3D is optional.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_layer_map"><a class="anchor" href="#_layer_map"></a>Layer map</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <a href="module-graph.html" class="xref page">source layers and target map</a> describe the implemented eight-layer structure.
+Keep it.
+Focused Fundamental/Subsystem libraries and Runtime&#8217;s interface-based editor integration are useful boundaries.
+New folders and framework names alone do not complete the migration.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_build_modules"><a class="anchor" href="#_build_modules"></a>Build modules</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>CMake now centralizes target settings, declares most source lists explicitly,
+and compiles JRM separately in Release.
+The adapter uses the engine toolchain.
+Public-header verification and executable layer consumers make interfaces reviewable.</p>
+</div>
+<div class="paragraph">
+<p>See <a href="../build/cmake-structure.html" class="xref page">CMake infrastructure</a> for real options and checks.
+Tests and benchmarks are disabled by default. CI enables tests across GCC/Clang Debug
+and Release builds, with a separate Clang Debug 3D build; see <a href="../build/ci-cd.html" class="xref page">CI coverage</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_object_model_and_ownership"><a class="anchor" href="#_object_model_and_ownership"></a>Object model and ownership</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>GameInstance owns Scene and World as siblings, alongside assets and UI.
+Runtime borrows GameInstance; EditorIntegration borrows Runtime and owns editor tools.
+World carries time, lighting, framework state, and an observed camera.
+Scene owns root component trees and handles persistence and drawing.</p>
+</div>
+<div class="paragraph">
+<p>The model is suitable for a small authoring engine.
+World does not yet provide the ownership/lifetime boundary implied by its UE-style name.
+Most new managers and GameInstanceSubsystem have logging scaffolding without operational contracts.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_reflection_and_persistence"><a class="anchor" href="#_reflection_and_persistence"></a>Reflection and persistence</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Keep JRM and the existing reflected component model.
+Component macros perform self-registration through static initializers.
+The serialized “Blueprint” assets are component templates.</p>
+</div>
+<div class="paragraph">
+<p>Keep scene versioning, reconstruction before root replacement, atomic saves,
+and failed-load autosave protection.
+Define generic instance overrides, asset moves/references, stable object identity,
+and caller-visible save errors before relying on the editor for larger authored games.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_migration_boundaries"><a class="anchor" href="#_migration_boundaries"></a>Migration boundaries</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Prioritize these behaviors within the existing modules:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Decouple gameplay ticking from camera presence; define simulation state and time.</p>
+</li>
+<li>
+<p>Give world/scene replacement explicit camera, selection, and subscription invalidation.</p>
+</li>
+<li>
+<p>Introduce editor commands, undo/redo, dirty documents, and accurate save results.</p>
+</li>
+<li>
+<p>Create a disposable Play-session copy from authored state and destroy it on Stop.</p>
+</li>
+<li>
+<p>Add an asset-reference/move policy and portable content identifiers.</p>
+</li>
+<li>
+<p>Extend executable interface checks and CI to the World/Runtime/editor boundary.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>A project-content context should move game-specific atlas setup into game-example.
+Keep the editor-enabled executable while building these contracts.
+Game-only packaging is not implemented.</p>
+</div>
+<div class="paragraph">
+<p><a href="ue5-alignment.html" class="xref page">UE5 alignment</a> explains the proposed lifetimes and acceptance criteria.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="index.html">Overview</a></span>
+  <span class="next"><a href="ue5-alignment.html">UE5 Patterns for Nexium</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

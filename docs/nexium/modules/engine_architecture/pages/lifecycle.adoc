@@ -1,74 +1,51 @@
-= Lifecycle
+= Application Lifecycle
 
-Here you will find maybe the most important (from the top of the view) information about how Nexium processes every frame under the hood.
-Also, here will be a lot of references to the code base & to other documentation's topics.
+`game-example/main.cpp` creates `gGameInstance`, then a `Runtime` and `EditorIntegration`.
+Runtime borrows the instance; the integration attaches editor hooks through `ApplicationIntegration`.
 
-== Main loop
+== Startup
 
-The real main loop of the engine you can find here `GameplaySystem/Framework/GameInstance.cpp`.
-But in general it's not hard to understand.
-I'll try to show you it without any details, just from the concept point of view; so, it looks like:
+`Runtime::run()` initializes the instance, runs the frame loop, then saves state.
+`GameInstance::initialize()` performs these steps:
 
-[sources,cpp]
-----
-while (!window->shouldClose())
-{
-    window->pollEvent();
+. Create the Platform window and subscribe to resize events.
+. Scan assets, load shaders, and configure vertex attributes.
+. Initialize the editor integration and build the component factory's type/tag map.
+. Initialize Scene and subscribe to object additions for camera discovery.
+. Read editor, window, scene, and World state; call `onInitializeReadCache()`.
+. Generate the default and example animation atlases; call `onLoadCoreResources()`.
 
-    gameScene.tick(world.timeDelta);
-    gameEditor.tick(world.timeDelta);
-    gameScene.directDraw();
-    onTick(world.timeDelta);
+Initialization still uses global accessors. Binding Runtime to an instance does not provide
+independent concurrent game instances.
 
-    window->swapBuffers();
-}
-----
+== Each frame
 
-So, nothing hard, yes?
-I think in general the same.
-But, a lot of logic processes under the functionality of two core parts: editor (`gameEditor`) & game instance(`onTick(..)`).
+Window events are polled first. Updates use the previous frame's measured delta; the first delta is zero.
 
-Regarding game editor, I think I will not make documentation in the nearest future.
-But about `onTick` we should talk.
-So, the main goal 'onTick' virtual method is to provide more functionality for your own game main loop.
-Small reminder; I hope you remember that you need to inherit from the `class GameInstance` and implement your own game logic?
-If no, look at the code below:
+[cols="2,3,3",options="header"]
+|===
+|Operation |GameOnly |Editor
+|Scene tick |Every frame. |Only while the viewport is focused.
+|Integration update |Keyboard shortcuts, if attached. |Editor windows and keyboard/mouse actions.
+|Drawing |Scene to the window. |Picking, then Scene to the viewport texture.
+|GameInstance tick |After Scene drawing, if a camera exists. |After Scene drawing, if a camera exists.
+|===
 
-[sources,cpp]
-----
-// MyGameInstance.h
-class MyGameInstance : public Core::GameInstance
-{
-protected:
-    // optionally you can add new logic for tick
-    void onTick(float delta) override;
-};
-----
+Scene ticking does not require a camera; `GameInstance::onTick` and scene drawing do.
+After updates, the loop throttles unfocused/iconified windows, checks `--timeout`, swaps buffers,
+and records elapsed time in World. Rendering and throttling contribute to that time.
 
-So, optionally, you can extend the main logic overriding the necessary methods.
-Now, I don't even want to write here some methods that you can override, because Nexium is under active development.
-So, check please all virtual methods inside `Core::GameInstance` and override them manually.
+== Modes and shutdown
 
-== Scene objects updating
+Editor mode requires both the Editor render mode and an attached integration.
+F1 switches rendering paths, which share the same `gameScene`.
+There is no isolated Play/Stop session or paused simulation clock; gameplay edits can be saved at shutdown.
 
-The scene consists of different ECS objects.
-And absolutely every tick of the window it reloads all objects on the scene.
-Also, I want to highlight one moment; every scene's object is an xref:ecs-overview.adoc[ECS] object, it means that you can disable any ticks for a specific object to optimize the game and remove extra updating.
+After a normal loop exit, `saveAllToCache()` writes editor state, World, Scene, and Window,
+then calls `onSaveAll()`. Exceptions escaping initialization or the loop bypass this save call.
 
-In general, of course, this part is under active development, and I'm planning to extend the current 'tick system': add threads, add 'slow tick', and mix it all with an event-based system(to update not only every frame, but when it gets some event);
+The example destroys EditorIntegration before Runtime and resets `gGameInstance` last.
+Keep that order because both objects borrow their dependencies.
+See xref:file-io.adoc[File I/O] for persistence and xref:memory.adoc[Ownership] for lifetimes.
 
-=== Scene \<\-> Render \<\-> Object -- relations & architecture
-
-I want to provide the understanding of how the scene renders and communicates with objects under the hood.
-I will simplify a lot of things and provide some easy-to-understand data structures, (for example), some approaches, so try to see on the top of the final logic, not on the direct details.
-
-Let's see how Nexium renders the final object on the scene, for example, it will be just a cube under the name 'MyCube'.
-
-But before we can start, let's talk a little bit about how 'MyCube' is presented inside the code.
-'MyCube' corresponding to its name is the 3D object of a cube. So, at the scene it can be moved, rotated, rendered, and can be extended with extra logic using xref:ecs-overview.adoc[ECS components].
-
-What class stores the 3D mesh? This is `class Core::StaticMeshBundle : public Actor` - it's just a class that can work with any type of 3D. Basically, it's just an `Actor`.
-
-What is it `Actor`? This is the class that is responsible for the minimum part of the scene: a tree, a car, an interaction box -- anything visible on the scene. Its class looks like it: `class Actor : public Transformable, public BaseComponent`
-
-What is `WorldObject`? If the actor's instance you can contemplate on the final scene, but the `WorldObject` -- no. Generally, it's logical-only part of the world: weather script, son rotation script, etc.
+Implementation: `NxRuntime/Runtime.cpp`, `NxWorld/Framework/GameInstance.cpp`, and `Editor/EditorIntegration.cpp`.

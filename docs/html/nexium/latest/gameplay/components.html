@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Untitled :: Nexium Engine</title>
+    <title>Gameplay Components :: Nexium Engine</title>
     <link rel="prev" href="scenes.html">
     <link rel="next" href="scripting.html">
     <meta name="generator" content="Antora 3.1.15">
@@ -79,6 +79,12 @@
     <a class="nav-link" href="../engine_architecture/index.html">Overview</a>
   </li>
   <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../engine_architecture/architecture-review.html">Architecture and Migration Review</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../engine_architecture/ue5-alignment.html">UE5 Patterns for Nexium</a>
+  </li>
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../engine_architecture/module-graph.html">Module Graph</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -115,44 +121,14 @@
     <a class="nav-link" href="../rendering/pipeline.html">Rendering Pipeline</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../rendering/renderer-architecture.html">Renderer Architecture</a>
+    <a class="nav-link" href="../rendering/renderer-architecture.html">Rendering Responsibilities</a>
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
     <span class="nav-text">Materials</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../rendering/materials/overview.html">Material System</a>
-  </li>
-  <li class="nav-item" data-depth="3">
     <a class="nav-link" href="../rendering/materials/shader-system.html">Shader System</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../rendering/materials/material-instances.html">Material Instances</a>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Meshes</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../rendering/meshes/mesh-format.html">Mesh Format</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../rendering/meshes/mesh-loader.html">Mesh Loader</a>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Textures</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../rendering/textures/texture-loader.html">Texture Loader</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../rendering/textures/compression.html">Texture Compression</a>
   </li>
 </ul>
   </li>
@@ -172,10 +148,10 @@
     <a class="nav-link" href="components.html">Components</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="scripting.html">Scripting</a>
+    <a class="nav-link" href="scripting.html">Gameplay Hooks</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="prefabs.html">Prefabs</a>
+    <a class="nav-link" href="prefabs.html">Blueprint Templates</a>
   </li>
 </ul>
   </li>
@@ -187,16 +163,7 @@
     <a class="nav-link" href="../build/index.html">Overview</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../build/linux-build.html">Linux Build</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../build/windows-build.html">Windows Build</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../build/cmake-structure.html">CMake Structure</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../build/toolchain.html">Toolchain Setup</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../build/ci-cd.html">CI/CD</a>
@@ -204,82 +171,7 @@
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Tutorials</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/index.html">Overview</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/create-first-scene.html">Create Your First Scene</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/loading-models.html">Loading Models</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/adding-materials.html">Adding Materials</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/building-for-release.html">Building for Release</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/debugging.html">Debugging</a>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Reference</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../reference/index.html">Overview</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../reference/cli.html">Command-Line Tools</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../reference/configuration.html">Configuration</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Public API</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../reference/public-api/core-api.html">Core API</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../reference/public-api/math-api.html">Math API</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../reference/public-api/render-api.html">Render API</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../reference/public-api/ecs-api.html">ECS API</a>
-  </li>
-</ul>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">About</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/index.html">Overview</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/roadmap.html">Roadmap</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/contributing.html">Contributing</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/license.html">License</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/history.html">History</a>
-  </li>
-</ul>
+    <a class="nav-link" href="../about/index.html">About</a>
   </li>
 </ul>
   </li>
@@ -323,10 +215,159 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
+<h1 class="page">Gameplay Components</h1>
+<div class="sect1">
+<h2 id="_choose_behavior_or_a_drawable_object"><a class="anchor" href="#_choose_behavior_or_a_drawable_object"></a>Choose behavior or a drawable object</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Use <code>BaseComponent</code> for behavior attached to another object, such as an animator.
+Use <code>SceneObject</code> when the object needs transforms, scene persistence, and a draw hook.
+A component tree expresses ownership and tick propagation; it does not automatically make every child drawable.
+<code>Actor</code> currently adds little beyond SceneObject, so derive from it only where that existing hierarchy is useful.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_register_and_persist_a_component"><a class="anchor" href="#_register_and_persist_a_component"></a>Register and persist a component</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A concrete component uses <code>ECS_DECL</code> in its declaration and <code>ECS_IMPL</code> in its implementation.
+Use <code>CLASS()</code> and <code>FIELD()</code> for JRM-reflected types/fields, and include the generated header as existing types do.
+The normal build regenerates metadata. The <a href="../engine_architecture/ecs-overview.html" class="xref page">Component System</a>
+lists constructor/template macro variants.</p>
+</div>
+<div class="paragraph">
+<p>Factory registration and field serialization solve different problems: the factory chooses the C++ type,
+then the deserializer restores that type&#8217;s reflected state.
+Renaming a serialized component type needs a content migration; renaming a display label does not change its type.
+Unreflected runtime state, such as subscriptions or borrowed resource pointers, needs explicit setup after reconstruction.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_build_a_tree_without_accidental_copies"><a class="anchor" href="#_build_a_tree_without_accidental_copies"></a>Build a tree without accidental copies</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_creating_versus_attaching"><a class="anchor" href="#_creating_versus_attaching"></a>Creating versus attaching</h3>
+<div class="paragraph">
+<p><code>addChildComponent&lt;T&gt;()</code> creates and owns a new child, assigns its parent, and initializes it.
+<code>attachChild()</code> instead clones the supplied tree. It does not move the original into this parent.
+This existing test demonstrates the pointer and parent differences:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">DummyComponent root("Root");
 
+DummyComponent::Ptr externalChild = new DummyComponent("Child");
+ASSERT_FALSE(externalChild-&gt;hasParent());
+
+BaseComponent* attached = root.attachChild(externalChild);
+ASSERT_NE(nullptr, attached);
+
+ASSERT_NE(attached, externalChild.get()); // must be a clone
+ASSERT_EQ(attached-&gt;getComponentType(), externalChild-&gt;getComponentType());
+ASSERT_EQ(attached-&gt;getComponentName(), externalChild-&gt;getComponentName());
+ASSERT_EQ(attached-&gt;getParent(), &amp;root);
+ASSERT_EQ(1, root.getChildrenCount());</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Keep a strong <code>Core::IntrusivePtr</code> if a component must survive removal from its parent.
+The raw pointer returned by an add operation is borrowed. Detach/removal clears its parent link,
+but selection or another strong reference may keep the object alive.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_one_component_per_compatible_type"><a class="anchor" href="#_one_component_per_compatible_type"></a>One component per compatible type</h3>
+<div class="paragraph">
+<p><code>addUniqueTypeChildComponent&lt;T&gt;()</code> checks direct children using C++ inheritance.
+An existing derived component satisfies a request for its base type; the new name/constructor arguments are ignored.
+The test&#8217;s TurboEngine therefore also satisfies Engine and BasePart:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">Sedan root("Root");
+auto* engine = root.addUniqueTypeChildComponent&lt;TurboEngine&gt;("Engine");
+auto* sameBase = root.addUniqueTypeChildComponent&lt;Engine&gt;("OtherName");
+auto* samePart = root.addUniqueTypeChildComponent&lt;BasePart&gt;("Part");
+
+ASSERT_EQ(engine, sameBase);
+ASSERT_EQ(engine, samePart);
+ASSERT_EQ(1u, root.getChildrenCount());
+ASSERT_EQ("Engine", engine-&gt;getComponentName());</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>getOrAddChildComponent&lt;T&gt;()</code> searches descendants before creating a direct child.
+Choose it only if a match deeper in the tree is acceptable.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_initialization_and_ticking"><a class="anchor" href="#_initialization_and_ticking"></a>Initialization and ticking</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_initialization_can_happen_during_assembly"><a class="anchor" href="#_initialization_can_happen_during_assembly"></a>Initialization can happen during assembly</h3>
+<div class="paragraph">
+<p>Adding a child initializes an uninitialized parent first, then the new child, before returning.
+An <code>onInitialize()</code> hook must not assume siblings that will be added later already exist.
+Repeated <code>initialize()</code> calls do nothing until invalidation; invalidating a parent alone does not invalidate its children.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_preserve_child_updates_deliberately"><a class="anchor" href="#_preserve_child_updates_deliberately"></a>Preserve child updates deliberately</h3>
+<div class="paragraph">
+<p><code>tick()</code> checks enabled/no-tick flags, not initialization. The base tick hook propagates to children.
+Here the animator preserves that traversal before updating its own active animation and applying the frame:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">void FrameByFrameAnimator::onTick(float delta)
+{
+    BaseComponent::onTick(delta);
+    updateCurrentAnimation(delta);
+    applyCurrentFrameToRectangle();
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Disabling or marking a parent no-tick stops this default subtree update path.
+An override that omits the base hook takes responsibility for child ticking.
+Editor viewport focus is another gate; see <a href="../engine_architecture/lifecycle.html" class="xref page">frame scheduling</a>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_example_animating_a_rectangle"><a class="anchor" href="#_example_animating_a_rectangle"></a>Example: animating a rectangle</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A <code>FrameByFrameAnimator</code> must have a <code>RectangleAnimated</code> parent for frame application.
+<code>startAnimation(name)</code> restarts the selected animation and applies its first frame immediately.
+Each subsequent tick advances time, chooses the frame&#8217;s texture or animation default,
+then sets the parent&#8217;s atlas, texture, and UV region.</p>
+</div>
+<div class="paragraph">
+<p>The parent draw converts those frame UVs into atlas coordinates; the <a href="../rendering/pipeline.html" class="xref page">Rendering Pipeline</a>
+shows the calculation. Animation selection changes which pixels are sampled, not the quad&#8217;s vertex data.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_what_a_scene_actually_saves"><a class="anchor" href="#_what_a_scene_actually_saves"></a>What a scene actually saves</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Inline scene roots save their reflected component trees. Template-backed roots save an asset reference
+and supported instance values, not arbitrary changes to every child field.
+Cloning a tree copies descendants but does not prove that GPU resources/subscriptions were safely copied.
+See <a href="scenes.html" class="xref page">Scene persistence</a> before relying on component edits to survive reload.</p>
+</div>
+</div>
+</div>
 <nav class="pagination">
   <span class="prev"><a href="scenes.html">Scenes</a></span>
-  <span class="next"><a href="scripting.html">Scripting</a></span>
+  <span class="next"><a href="scripting.html">Gameplay Hooks</a></span>
 </nav>
 </article>
   </div>

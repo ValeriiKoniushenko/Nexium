@@ -1,43 +1,27 @@
-/*
- * MIT License
- *
- * Copyright (c) 2018-2027 Valerii Koniushenko
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+// Nexium
+// Copyright 2018-2026 Valerii Koniushenko
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
 
 #pragma once
 
-#include "GameplaySystem/Framework/InputController.h"
-#include "InputDevices/InputManager.h"
-#include "Misc/BaseLog.h"
+#include "Foundation/BaseLog.h"
+#include "NxSubsystems/Input/InputManager.h"
 #include "ObjectPicker.h"
 #include "ToastNotifications.h"
 #include "Windows/BaseWindow.h"
 
-namespace Core
+namespace NX
 {
     /// Core editor class managing GUI windows and editor lifecycle.
     ///
     /// Provides initialization, ticking, and management of editor windows.
     /// Also handles font configuration and ImGui setup.
-    class GameEditor : public BaseLog
+    class GameEditor : public Foundation::BaseLog
     {
     public:
         static const int defaultEditorImGuiFlags;
@@ -117,6 +101,12 @@ namespace Core
             return nullptr;
         }
 
+        template<IsEditorWindowComponentOrBase WindowT>
+        [[nodiscard]] const WindowT* getWindow(const StringAtom& regexName = ".*") const
+        {
+            return const_cast<GameEditor*>(this)->getWindow<WindowT>(regexName);
+        }
+
         template<IsEditorWindowComponentOrBase WindowT, class... ArgsT>
         void tryToOpenWindow(const StringAtom& regexName = ".*", ArgsT&&... args)
         {
@@ -159,9 +149,9 @@ namespace Core
 
     public:
         Editor::NotificationPopUpManager notifications;
-        KeyboardInputManger keyboardInput;
-        MouseInputManger mouseInput;
-        RenderTargetToTexture gameViewport;
+        NX::KeyboardInputManger keyboardInput;
+        NX::MouseInputManger mouseInput;
+        NX::RenderTargetToTexture gameViewport;
 
     protected:
         void setupImGuiStyles();
@@ -169,10 +159,9 @@ namespace Core
         void setupShortcuts();
 
     private:
-        InputController::Ptr _inputController;
-        void handleMouseDrag(glm::vec2 delta, MouseInputAction::SpecKeysState state);
-        void handleMouseClick(glm::vec2 pos, MouseInputAction::SpecKeysState state);
-        void responseOnPick(Transformable* object);
+        void handleMouseDrag(glm::vec2 delta, NX::MouseInputAction::SpecKeysState state);
+        void handleMouseClick(glm::vec2 pos, NX::MouseInputAction::SpecKeysState state);
+        void responseOnPick(NX::Transformable* object);
         void lazyOneShotInitialization();
 
     protected:
@@ -182,4 +171,4 @@ namespace Core
         bool _isEnabled = true;
         bool _isRunSimulation = false;
     };
-} // namespace Core
+} // namespace NX

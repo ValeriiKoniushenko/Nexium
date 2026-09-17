@@ -1,16 +1,25 @@
+// Nexium
+// Copyright 2018-2026 Valerii Koniushenko
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+
 #pragma once
 
-#include "Animations/FrameByFrame/FrameByFrameAnimation.h"
+#include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimation.h"
 
 #include <array>
 #include <functional>
 
-namespace Core::Animation
+namespace NX::Animation
 {
     class FrameByFrameAnimator;
 }
 
-namespace Core
+namespace NX
 {
     class FrameByFrameAnimationEditor
     {
@@ -23,11 +32,11 @@ namespace Core
 
         using SaveCallback = std::function<void()>;
 
-        void create(Animation::FrameByFrameAnimator* animator);
-        void edit(Animation::FrameByFrameAnimator* animator, const StringAtom& name);
+        void create(NX::Animation::FrameByFrameAnimator* animator);
+        void edit(NX::Animation::FrameByFrameAnimator* animator, const StringAtom& name);
         void draw(float dt, const SaveCallback& onSave);
 
-        static void drawPreview(const Animation::FrameByFrameAnimation& animation, float dt,
+        static void drawPreview(const NX::Animation::FrameByFrameAnimation& animation, float dt,
                                 float size, PreviewState& state);
 
     private:
@@ -45,8 +54,8 @@ namespace Core
         [[nodiscard]] bool hasNameConflict() const;
 
     private:
-        Animation::FrameByFrameAnimator* _animator = nullptr;
-        Animation::FrameByFrameAnimation _draft;
+        NX::Animation::FrameByFrameAnimator* _animator = nullptr;
+        NX::Animation::FrameByFrameAnimation _draft;
         StringAtom _editedName;
         bool _isOpen = false;
         bool _isCreating = false;
@@ -62,4 +71,4 @@ namespace Core
         int _sheetSelectedRow = 1;
         PreviewState _preview;
     };
-} // namespace Core
+} // namespace NX

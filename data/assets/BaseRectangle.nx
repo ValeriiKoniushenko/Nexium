@@ -28,9 +28,9 @@
             1.0
         ],
         "_textureName": "red.png",
-        "_type": "Core::SceneObj::Rectangle"
+        "_type": "NX::SceneObj::Rectangle"
     },
     "name": "BaseRectangle",
     "tags": "WorldObject",
-    "type": "Core::SceneObj::Rectangle"
+    "type": "NX::SceneObj::Rectangle"
 }

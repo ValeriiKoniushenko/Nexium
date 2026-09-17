@@ -1,0 +1,155 @@
+// Nexium
+// Copyright 2018-2026 Valerii Koniushenko
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+
+#include "ShaderManager.h"
+
+#include "../PrivateModuleInfo.h"
+
+namespace NX
+{
+
+    ShaderManager& GetShaderManager()
+    {
+        return ShaderManager::Instance();
+    }
+
+    void ShaderManager::loadShaders(const std::filesystem::path& inputPath)
+    {
+        _shaderMetas.clear();
+        _failedShaders.clear();
+        _inputPath = inputPath;
+
+        try
+        {
+            std::unordered_set<std::string> processedShaders;
+            for (const auto& entry : std::filesystem::recursive_directory_iterator(inputPath))
+            {
+                if (!entry.is_regular_file())
+                {
+                    continue;
+                }
+
+                const auto fragShaderFile
+                    = getPathToShaderBasedOn(_suitableFragExtensions, entry.path());
+                if (fragShaderFile.empty())
+                {
+                    continue;
+                }
+                const auto vertShaderFile
+                    = getPathToShaderBasedOn(_suitableVertExtensions, entry.path());
+                if (vertShaderFile.empty())
+                {
+                    continue;
+                }
+
+                if (vertShaderFile.stem() != fragShaderFile.stem())
+                {
+                    warnLog("Different stem of shader files: '{}' & '{}'"_f
+                            << fragShaderFile.generic_string() << vertShaderFile.generic_string());
+                    continue;
+                }
+
+                const auto name = std::filesystem::relative(entry.path(), inputPath)
+                                      .replace_extension("")
+                                      .generic_string();
+
+                if (processedShaders.contains(name))
+                {
+                    continue;
+                }
+
+                infoLog("Was found shader: {}"_f << name);
+
+                try
+                {
+                    processedShaders.emplace(name);
+
+                    ShaderProgramMeta meta;
+                    meta.setShaderName(name);
+                    meta.create(vertShaderFile, fragShaderFile);
+
+                    _shaderMetas[meta.getShaderName()] = std::move(meta);
+                }
+                catch (const std::exception& exception)
+                {
+                    criticalLog("Impossible to set up the shader '{}'. Details: {}"_f
+                                << name << exception.what());
+                    _failedShaders.emplace(name);
+                }
+            }
+        }
+        catch (std::filesystem::filesystem_error& e)
+        {
+            errorLog("Got a error while scanning a folder '{}' for assets. Details: {}"_f
+                     << inputPath.generic_string() << e.what());
+        }
+    }
+
+    void ShaderManager::pushSuitableFileExtension(std::string ext, ShaderType type)
+    {
+        if (type == ShaderType::Fragment)
+        {
+            debugLog(
+                "Was added mapping between Fragment shader & file content with extension '{}'."_f
+                << ext);
+            _suitableFragExtensions.emplace(std::move(ext));
+        }
+        else if (type == ShaderType::Vertex)
+        {
+            debugLog("Was added mapping between Vertex shader & file content with extension '{}'."_f
+                     << ext);
+            _suitableVertExtensions.emplace(std::move(ext));
+        }
+        else
+        {
+            errorLog(
+                "Was passed incorrect shader type for mapping file extensions. Extension '{}' will be ignored"_f
+                << ext);
+        }
+    }
+
+    ShaderProgram* ShaderManager::getShaderProgram(const Core::StringAtom& shaderName)
+    {
+        Assert(shaderName.isStatic());
+
+        if (const auto it = _shaderMetas.find(shaderName); it != _shaderMetas.cend())
+        {
+            Assert(it->second.getShaderName().isStatic());
+            return &it->second.getShaderProgram();
+        }
+
+        return nullptr;
+    }
+
+    size_t ShaderManager::countOfValidShaders() const
+    {
+        const std::size_t count = _shaderMetas.size() - _failedShaders.size();
+        return std::max<std::size_t>(0, count);
+    }
+
+    spdlog::logger* ShaderManager::getLogger() const
+    {
+        return NxSubsystems::getLogger();
+    }
+
+    std::filesystem::path ShaderManager::getPathToShaderBasedOn(
+        const std::unordered_set<std::string>& set, std::filesystem::path path) const
+    {
+        for (auto&& ext : set)
+        {
+            path.replace_extension(ext);
+            if (std::filesystem::exists(path))
+            {
+                return path;
+            }
+        }
+
+        return {};
+    }
+} // namespace NX

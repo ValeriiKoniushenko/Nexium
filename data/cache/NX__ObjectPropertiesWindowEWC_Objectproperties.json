@@ -1,0 +1,32 @@
+{
+    "_children": null,
+    "_innerPosition": [
+        1570.0,
+        64.0
+    ],
+    "_innerSize": {
+        "height": 931.0,
+        "width": 334.0
+    },
+    "_isEnabled": true,
+    "_isFitContent": false,
+    "_minWindowSize": {
+        "height": 200.0,
+        "width": 200.0
+    },
+    "_name": " Object properties",
+    "_noTick": false,
+    "_oldSize": {
+        "height": 971.0,
+        "width": 350.0
+    },
+    "_position": [
+        1562.0,
+        32.0
+    ],
+    "_size": {
+        "height": 971.0,
+        "width": 350.0
+    },
+    "_type": "NX::ObjectPropertiesWindowEWC"
+}

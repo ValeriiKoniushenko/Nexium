@@ -1,0 +1,331 @@
+// Nexium
+// Copyright 2018-2026 Valerii Koniushenko
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+
+#include "Window.h"
+
+#include "Graphics.h"
+#include "Platform/PrivateModuleInfo.h"
+
+#include <cstdlib>
+
+#ifdef _WIN32
+    #include "Resources/Resources.h"
+
+    #include <windows.h>
+#endif
+
+using namespace Platform;
+using namespace Core;
+
+namespace
+{
+    void glfwErrorCallback(int error, const char* description)
+    {
+        gGlobalLog.errorLog("GLFW Error [{}]: {}"_f << error << description);
+    }
+
+    void MouseMoveHandler(GLFWwindow*, double x, double y)
+    {
+        GetWindow().onMouseMove->trigger(glm::vec2(static_cast<float>(x), static_cast<float>(y)));
+    }
+
+    void MouseKeyPressHandler(GLFWwindow*, int button, int action, int mods)
+    {
+        GetWindow().onMouseKeyPressed->trigger(static_cast<Mouse::Key>(button),
+                                               static_cast<Mouse::State>(action),
+                                               static_cast<Mouse::Mod>(mods));
+    }
+
+    void KeyPressHandler(auto*, int key, int scancode, int action, int mods)
+    {
+        GetWindow().onKeyPressed->trigger(static_cast<Keyboard::Key>(key), scancode,
+                                          static_cast<Keyboard::KeyState>(action), mods);
+    }
+
+    void TextInputHandler(auto*, unsigned int scancode)
+    {
+        GetWindow().onTextInput->trigger(scancode);
+    }
+
+    void CursorEnterHandler(auto*, int entered)
+    {
+        GetWindow().onCursorEntered->trigger(entered == GLFW_TRUE);
+    }
+
+    void MouseScrollHandler(auto*, double x, double y)
+    {
+        GetWindow().onMouseWheel->trigger(glm::vec2(static_cast<float>(x), static_cast<float>(y)));
+    }
+
+    void WindowSizeCallback(auto*, int width, int height)
+    {
+        GetWindow().onResize->trigger(ISize2(width, height));
+    }
+} // namespace
+
+namespace Platform
+{
+    DragAndDrop gDragDrop;
+
+    Window::~Window()
+    {
+        destroy();
+    }
+
+    void Window::create(const StringAtom& title, ISize2 size /* = { 300, 300 }*/)
+    {
+        constexpr int minSize = 100;
+        if (_size.width < minSize || _size.height < minSize)
+        {
+            _size = size;
+            _title = title;
+        }
+
+        glfwSetErrorCallback(glfwErrorCallback);
+        if (!glfwInit())
+        {
+            criticalLogAndThrow("Failed to initialize GLFW!");
+        }
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+        // CI runs through Xvfb's software GLX implementation, which supports OpenGL 4.5.
+        const int contextMinor = std::getenv("NEXIUM_HEADLESS_GL") ? 5 : 6;
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, contextMinor);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        glfwWindowHint(GLFW_MAXIMIZED, _isMaximized ? GLFW_TRUE : GLFW_FALSE);
+
+        _window = glfwCreateWindow(_size.width, _size.height, title.c_str(), nullptr, nullptr);
+        if (!_window)
+        {
+            destroy();
+            criticalLogAndThrow("Failed to create GLFW window");
+        }
+
+        debugLog("The window was created");
+
+        glfwMakeContextCurrent(_window);
+        if (_isMaximized)
+        {
+            glfwMaximizeWindow(_window);
+        }
+
+        if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
+        {
+            criticalLogAndThrow("Impossible to initialize GLAD.");
+        }
+
+#if defined(NEXIUM_DEBUG)
+        glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+        glEnable(GL_DEBUG_OUTPUT);
+        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS); // fires on the offending call's stack frame
+        glDebugMessageCallback(
+            [](GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei, const GLchar* msg,
+               const void*)
+            {
+                if (severity != GL_DEBUG_SEVERITY_NOTIFICATION)
+                {
+                    gGlobalLog.errorLog("[GL] {}"_f << msg);
+                }
+            },
+            nullptr);
+#endif
+
+        glfwSetMouseButtonCallback(_window, MouseKeyPressHandler);
+        glfwSetCursorPosCallback(_window, MouseMoveHandler);
+        glfwSetKeyCallback(_window, KeyPressHandler);
+        glfwSetCharCallback(_window, TextInputHandler);
+        glfwSetCursorEnterCallback(_window, CursorEnterHandler);
+        glfwSetScrollCallback(_window, MouseScrollHandler);
+        glfwSetWindowSizeCallback(_window, WindowSizeCallback);
+        glfwSwapInterval(_swapInterval);
+
+        debugLog("OpenGL version: {}"_f << reinterpret_cast<const char*>(glGetString(GL_VERSION)));
+        debugLog("GLFW version: {}"_f
+                 << reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION)));
+
+        registerEvents();
+
+#ifdef _WIN32
+        HWND hwnd = glfwGetWin32Window(_window);
+        if (hwnd)
+        {
+            if (HICON hIcon = (HICON)LoadImage(GetModuleHandle(nullptr),
+                                               MAKEINTRESOURCE(IDI_ICON_SMALL), IMAGE_ICON, 0,
+                                               0, // width, height — 0,0 uses the icon's actual size
+                                               LR_DEFAULTSIZE | LR_SHARED))
+            {
+                SendMessage(hwnd, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
+            }
+            if (HICON hIcon = (HICON)LoadImage(GetModuleHandle(nullptr),
+                                               MAKEINTRESOURCE(IDI_ICON_BIG), IMAGE_ICON, 0,
+                                               0, // width, height — 0,0 uses the icon's actual size
+                                               LR_DEFAULTSIZE | LR_SHARED))
+            {
+                SendMessage(hwnd, WM_SETICON, ICON_BIG, (LPARAM)hIcon);
+            }
+            else
+            {
+                errorLog("Can't load application's icon due to internal reasons.");
+            }
+        }
+        else
+        {
+            criticalLog("Can't get a window's HWND");
+        }
+#endif
+    }
+
+    void Window::close()
+    {
+        glfwSetWindowShouldClose(_window, GLFW_TRUE);
+    }
+
+    void Window::destroy()
+    {
+        glfwDestroyWindow(_window);
+        glfwTerminate();
+    }
+
+    bool Window::shouldClose() const
+    {
+        return glfwWindowShouldClose(_window);
+    }
+
+    void Window::swapBuffers()
+    {
+        glfwSwapBuffers(_window);
+    }
+
+    void Window::pollEvent()
+    {
+        glfwPollEvents();
+    }
+
+    // void Window::updateViewport()
+    // {
+    //     UpdateGlViewport(static_cast<FSize2>(_size));
+    // }
+
+    void Window::clear(int code)
+    {
+        glClear(code);
+    }
+
+    ISize2 Window::getSize() const
+    {
+        return _size;
+    }
+
+    void Window::setCursorPosition(float x, float y)
+    {
+        glfwSetCursorPos(_window, x, y);
+    }
+
+    void Window::setCursorPosition(glm::vec2 position)
+    {
+        setCursorPosition(position.x, position.y);
+    }
+
+    void Window::setCursorMode(CursorMode mode)
+    {
+        glfwSetInputMode(GetWindow().getRawWindow(), GLFW_CURSOR, static_cast<int>(mode));
+    }
+
+    Window::CursorMode Window::getCursorMode()
+    {
+        return static_cast<Window::CursorMode>(
+            glfwGetInputMode(GetWindow().getRawWindow(), GLFW_CURSOR));
+    }
+
+    void Window::toggleCursorMode()
+    {
+        setCursorMode(getCursorMode() == CursorMode::Normal ? CursorMode::Disabled
+                                                            : CursorMode::Normal);
+    }
+
+    void Window::registerEvents()
+    {
+        _subscriptionPool << onResize->subscribeAndGetID([this](ISize2 size) { _size = size; });
+
+        _subscriptionPool << onMouseMove->subscribeAndGetID(
+            [](glm::vec2 pos)
+            {
+                static glm::vec2 lastPos = pos;
+                gDragDrop._lastDelta = lastPos - pos;
+                lastPos = pos;
+
+                if (gDragDrop._state == DragAndDrop::State::Started)
+                {
+                    if (glm::distance(pos, gDragDrop._startPos) >= DragAndDrop::dragTreshold)
+                    {
+                        gDragDrop._state = DragAndDrop::State::Dragging;
+                    }
+                }
+                if (gDragDrop._state == DragAndDrop::State::Dragging)
+                {
+                    gDragDrop._currentPos = pos;
+                }
+            });
+
+        _subscriptionPool << onMouseKeyPressed->subscribeAndGetID(
+            [](Mouse::Key key, Mouse::State state, Mouse::Mod mod)
+            {
+                if (state == Mouse::State::Release)
+                {
+                    if (glm::distance(gDragDrop._startPos, Mouse::GetPosition())
+                        >= DragAndDrop::dragTreshold)
+                    {
+                        gDragDrop._state = DragAndDrop::State::Dragging;
+                    }
+                    gDragDrop._state = DragAndDrop::State::Idle;
+                    gDragDrop.payload = {};
+                    gDragDrop._key = Mouse::Key::None;
+                }
+                else if (state == Mouse::State::Press)
+                {
+                    gDragDrop._state = DragAndDrop::State::Started;
+                    gDragDrop._key = key;
+                    gDragDrop.payload.type = ""_atom;
+                    gDragDrop._startPos = Mouse::GetPosition();
+                }
+            });
+    }
+
+    spdlog::logger* Window::getLogger() const
+    {
+        return Platform::getLogger();
+    }
+
+    void Window::onPostDeserialize(Window*, const RLogsCollector&)
+    {
+        if (!_window)
+        {
+            return;
+        }
+
+        glfwSetWindowTitle(_window, _title.c_str());
+        glfwRestoreWindow(_window);
+        glfwSetWindowSize(_window, _size.width, _size.height);
+        if (_isMaximized)
+        {
+            glfwMaximizeWindow(_window);
+        }
+        glfwSwapInterval(_swapInterval);
+    }
+
+    StringAtom Window::getCacheHash() const
+    {
+        return "RootWindow"_atom;
+    }
+
+    Window& GetWindow()
+    {
+        return Window::Instance();
+    }
+
+} // namespace Platform

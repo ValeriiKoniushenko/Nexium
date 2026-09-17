@@ -1,41 +1,28 @@
-/*
- * MIT License
- *
- * Copyright (c) 2018-2027 Valerii Koniushenko
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+// Nexium
+// Copyright 2018-2026 Valerii Koniushenko
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
 
 #pragma once
 
 #include "Core/Delegate.h"
 #include "Core/Size.h"
-#include "ECS/BaseComponent.h"
-#include "ResourceManagement/DataStream.h"
+#include "Foundation/Interfaces/DataStream.h"
+#include "NxFundamental/ECS/BaseComponent.h"
 
-namespace Core
+namespace NX
 {
+    using NX::BaseComponent;
+
     /// BaseEditorWindowComponent or briefly BaseEWC
     CLASS();
-    class BaseEWC : public BaseComponent, public IDataIO
+    class BaseEWC : public NX::BaseComponent, public Foundation::IDataIO
     {
-        ECS_DECL(BaseEWC, Core::BaseComponent);
+        ECS_DECL(BaseEWC, NX::BaseComponent);
 
     public:
         [[nodiscard]] const StringAtom& getWindowTitle() const
@@ -82,7 +69,7 @@ namespace Core
 
     template<class T>
     concept IsEditorWindowComponent
-        = std::derived_from<std::remove_reference_t<T>, BaseEWC> && IsComponent<T>;
+        = std::derived_from<std::remove_reference_t<T>, BaseEWC> && NX::IsComponent<T>;
 
     template<class T>
     concept IsEditorWindowComponentOrVoid = IsEditorWindowComponent<T> || std::is_void_v<T>;
@@ -93,7 +80,7 @@ namespace Core
     CLASS();
     class BaseFloatEWC : public BaseEWC
     {
-        ECS_DECL(BaseFloatEWC, Core::BaseEWC);
+        ECS_DECL(BaseFloatEWC, NX::BaseEWC);
 
     public:
         [[nodiscard]] FSize2 getWindowSize() const noexcept { return _size; }
@@ -149,7 +136,7 @@ namespace Core
     CLASS();
     class BaseMenuBarEWC : public BaseEWC
     {
-        ECS_DECL(BaseMenuBarEWC, Core::BaseEWC);
+        ECS_DECL(BaseMenuBarEWC, NX::BaseEWC);
 
     protected:
         void onInitialize() override;
@@ -159,6 +146,6 @@ namespace Core
 
         void endWindowDraw() override;
     };
-} // namespace Core
+} // namespace NX
 
 #include "BaseWindow.generated.h" // added by the code generator. Better don't move it.

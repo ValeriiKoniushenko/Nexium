@@ -1,81 +1,27 @@
 = Architecture Overview
 :page-role: landing
-:source-highlighter: coderay
 
-In this section will be show the current implementation of the architecture and plans for it.
+Nexium is a personal game engine and editor for games made by 1–3 developers.
+Games currently live in the engine repository.
+The immediate goal is a useful 2D authoring workflow; optional 3D and game-only delivery can follow.
 
-In general, keep in mind that the engine is under active development and some modules can be changed faster than the doc updated.
+== Reading the architecture
 
-But anyway, while developing it follows a few main concepts below
+* xref:module-graph.adoc[Module graph] maps source directories, CMake targets, and ownership.
+* xref:lifecycle.adoc[Application lifecycle] describes actual startup, frame processing, and shutdown.
+* xref:ecs-overview.adoc[Component system] explains composition, registration, and reflection.
+* xref:resource-system.adoc[Resources] and xref:file-io.adoc[File I/O] describe asset and scene persistence.
+* xref:input-system.adoc[Input], xref:memory.adoc[Memory], and xref:threading.adoc[Threading] describe current contracts.
+* xref:build:cmake-structure.adoc[CMake infrastructure] records options, code generation, and checks.
+* xref:ue5-alignment.adoc[UE5 comparison] separates useful design patterns from proposed work.
 
-== Philosophy
+The xref:architecture-review.adoc[architecture and migration review] summarizes decisions.
 
-It follows a few main flows:
+== Design direction
 
-. *YAGNI* -- "You aren't gonna need it" -- if it doesn't exist -- we don't need it.
-Due to the count of the engine developers, (only one :) ) I can't cover all possible functionality as I really want.
-So, I try to keep a balance between the final goal & time for implementation of it.
-. The final UI interface & Code representation must be implemented well, or not implemented at all.
-So, if it was implemented, it was implemented really well.
-I try to avoid any core crutches.
-. "Can't compile time?
-Let's do static-run-time!" -- if we can recalculate something event-based -- we do that.
-Without active recalculation or massive update at the update loop.
-Strictly NO!
+The eight layers use focused libraries, JRM reflection, and component trees.
+Build dependencies and object ownership are separate graphs; see
+xref:gameplay:index.adoc[Gameplay] and xref:lifecycle.adoc[Application Lifecycle] for their runtime use.
 
-== Internal rules
-
-I don't want to write a big letter to overload your brain here.
-Just keep in mind that it tries to implement something in the best way, buy of course, based on the 'power' of one developer (who write it just now) and on the final sense of the feature.
-
-What it means: if you see some core feature (e.g. `AssetsManager`) it should be implemented well.
-But if it's just some minor feature (e.g. `UI Engine Settings`) it has some chance that it was implemented with the functionality prioritize, not quality & scalability.
-Because future overwriting will be cheaper than the initial "well-done".
-
-== Top view
-
-=== Intro
-
-The core of the engine is the xref:ecs-overview.adoc[Entity Component System (ECS)].
-Quite a big count of classes is trying to be inherited from it.
-Sometimes, when you see on a class and think "Why it wasn't?" -- the most common answer is: due to low-level optimization (for example `class InterleavedGraphicsData`).
-
-Also, it tends to be with a minimum count of global/god objects.
-It has only 3 god-objects:
-
-. `class Core::Window`
-. `class Core::GlobalComponentFactory`
-. `extern std::unique_ptr<Core::GameInstance> gGameInstance`
-
-=== Core::GameInstance
-
-Let's start from the end. Because the Window & GlobalComponentFactory relates more to other topics (xref:ecs-overview.adoc[ECS]).
-
-So, you can find `gGameInstance` global variable inside the file in sources by the next path: `GameplaySystem/Framework/GameInstance.h`
-
-==== What is it? And what purposes?
-
-This class, object of this class, it's a main holder of all engine internal stuff: shared manager, your world, assets manager, editor -- everything you can find here.
-
-=== Initial behavior
-
-This pointer at the start of your code execution will be `null` of course. But your own project/game will assign a new game object for this pointer. It looks like that:
-
-[source, cpp]
-----
-#include "TemplateGameInstance.h"
-
-int main()
-{
-    gGameInstance = std::make_unique<TemplateGameInstance>();
-
-    gGameInstance->initialize();
-    gGameInstance.reset(); // Optionally
-}
-----
-
-=== First engine-initialization
-
-The most common initialization will be inside `GameInstance::initialize`. At the start of this function will be inited the main subsystem and will be read all necessary data from a cache(e.g. settings, configs, etc).
-
-At the end of the initialization phase will be started xref:lifecycle.adoc[game-loop]. At the moment of the game-loop all resources must be inited and can be used by your game.
+The current application links Editor and shares one scene between editor and game rendering.
+UE-style class names describe intended roles; they do not establish UE-equivalent behavior.

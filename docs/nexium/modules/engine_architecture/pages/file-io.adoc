@@ -1,1 +1,53 @@
-= File-IO
+= File I/O
+
+`Foundation::IDataIO` defines an object's storage directory and name.
+`NX::CacheSystem`, declared in `NxFundamental/ResourceManagement/DataStream.h`, reads/writes JSON.
+Its “cache” includes persistent authored content.
+
+== Locations
+
+[cols="2,4",options="header"]
+|===
+|Data |Path relative to the compiled project root
+|Scene |`data/scenes/<sanitized scene name>.json`
+|World |`data/world/<sanitized world name>.json`
+|Editor objects |Object-specific directories beneath `data/`
+|ImGui layout |`data/cache/windows.ini`
+|Assets |Their attached source files; see xref:resource-system.adoc[Assets].
+|===
+
+CacheSystem combines `Config::Path::data`, `getCacheDir()`, and a sanitized `getCacheHash()`
+with `.json`. Non-alphanumeric characters other than `_` become `_`, so names can collide.
+Paths derive from `NEXIUM_PROJECT_DIR` compiled into Foundation.
+
+== Reads and failures
+
+`read()` parses JSON and calls the object's deserializer, or JRM when none is supplied.
+Exceptions are logged and mark the path as a failed read.
+`tryRead()` returns whether a file existed and reading was attempted, not whether it succeeded.
+
+A failed read blocks CacheSystem writes to that path until a successful read or `clearCache()`.
+This guard is specific to CacheSystem; the asset readers use separate error handling.
+Optional reflected-field errors can be logged without rejecting the document.
+
+Scene validates and reconstructs incoming roots before replacing existing ones.
+Malformed records preserve the old roots, but resource/initialization side effects are not rolled back.
+See xref:gameplay:scenes.adoc[Scene persistence] for the saved format.
+
+== Writes
+
+CacheSystem and both asset save paths use `WriteFileAtomically`: create an exclusive sibling
+temporary file, write/flush/close, then replace the destination.
+A failed replacement preserves the old destination and removes the owned temporary file.
+There is no multi-document transaction or cross-platform durable-sync guarantee.
+
+CacheSystem write calls return no success value. Filesystem replacement errors are logged;
+serialization errors can escape before replacement. Editor save notifications therefore do not prove success.
+
+`BaseAsset` updates existing JSON through `ioFieldsUpdate()`.
+The generic `DataStream::field()` output assignment is disabled; use the implemented serializers,
+not that helper, when persisting new data.
+
+Implementation: `ResourceManagement/{DataStream,AtomicFile}.{h,cpp}` in NxFundamental.
+`AtomicFileTests.cpp` covers replacement and failed-load protection; `ScenePersistenceTests.cpp`
+covers scene reconstruction and rejected documents.

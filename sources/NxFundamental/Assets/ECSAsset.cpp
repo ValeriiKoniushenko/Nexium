@@ -1,0 +1,596 @@
+// Nexium
+// Copyright 2018-2026 Valerii Koniushenko
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+
+#include "ECSAsset.h"
+
+#include "../PrivateModuleInfo.h"
+#include "Factory.h"
+#include "NxFundamental/ResourceManagement/AtomicFile.h"
+#include "Utils/Functions.h"
+#include "nlohmann/json.hpp"
+
+using namespace Core;
+
+namespace
+{
+    struct JsonKeyChange
+    {
+        enum class ChangeType
+        {
+            Updated,
+            Added,
+            Removed
+        };
+
+        std::string path;
+        ChangeType changeType;
+        nlohmann::json oldValue; // null for Added
+        nlohmann::json newValue; // null for Removed
+    };
+
+    std::string ToString(JsonKeyChange::ChangeType type)
+    {
+        switch (type)
+        {
+            case JsonKeyChange::ChangeType::Updated:
+                return "Updated";
+            case JsonKeyChange::ChangeType::Added:
+                return "Added";
+            case JsonKeyChange::ChangeType::Removed:
+                return "Removed";
+        }
+        return "Unknown";
+    }
+
+    std::vector<JsonKeyChange> MergeExistingKeys(nlohmann::json& target,
+                                                 const nlohmann::json& patch,
+                                                 const std::string& basePath = "")
+    {
+        std::vector<JsonKeyChange> changes;
+        if (!target.is_object() || !patch.is_object())
+        {
+            return changes;
+        }
+
+        // 1. Walk patch keys: update existing, add missing
+        for (auto it = patch.begin(); it != patch.end(); ++it)
+        {
+            const std::string& key = it.key();
+            auto currentPath = basePath.empty() ? key : basePath + "." + key;
+            auto targetIt = target.find(key);
+
+            if (targetIt == target.end())
+            {
+                // Key doesn't exist in target -> add it
+                target[key] = *it;
+                changes.push_back({ .path = currentPath,
+                                    .changeType = JsonKeyChange::ChangeType::Added,
+                                    .oldValue = nlohmann::json(nullptr),
+                                    .newValue = *it });
+                continue;
+            }
+
+            if (targetIt->is_object() && it->is_object())
+            {
+                auto nested = MergeExistingKeys(*targetIt, *it, currentPath);
+                changes.insert(changes.end(), std::make_move_iterator(nested.begin()),
+                               std::make_move_iterator(nested.end()));
+            }
+            else
+            {
+                if (*targetIt != *it)
+                {
+                    changes.push_back({ .path = currentPath,
+                                        .changeType = JsonKeyChange::ChangeType::Updated,
+                                        .oldValue = *targetIt,
+                                        .newValue = *it });
+                    *targetIt = *it;
+                }
+            }
+        }
+
+        // 2. Walk target keys: remove any not present in patch
+        for (auto it = target.begin(); it != target.end();)
+        {
+            const std::string& key = it.key();
+            if (patch.contains(key))
+            {
+                auto currentPath = basePath.empty() ? key : basePath + "." + key;
+                changes.push_back({ .path = currentPath,
+                                    .changeType = JsonKeyChange::ChangeType::Removed,
+                                    .oldValue = *it,
+                                    .newValue = nlohmann::json(nullptr) });
+                it = target.erase(it);
+            }
+            else
+            {
+                ++it;
+            }
+        }
+
+        return changes;
+    }
+
+} // namespace
+
+namespace NX
+{
+
+    ECSAsset::~ECSAsset()
+    {
+        localClear();
+    }
+
+    spdlog::logger* ECSAsset::getLogger() const
+    {
+        return NxFundamental::getLogger();
+    }
+
+    void ECSAsset::connectSourceFile(const std::filesystem::path& src)
+    {
+        const bool shouldReload = getHardRefCount() > 1;
+        if (_status == Status::Loaded)
+        {
+            unload();
+        }
+
+        _meta.pathToSource = src;
+
+        if (_meta.pathToSource.empty())
+        {
+            criticalLog("Empty path was passed to asset's sources");
+            return;
+        }
+
+        if (!std::filesystem::exists(_meta.pathToSource))
+        {
+            criticalLog("Asset's source file doesn't exist: {}"_f << _meta.pathToSource);
+            _meta.pathToSource.clear();
+            return;
+        }
+
+        extrudeAndValidateMainDataFromFile();
+        if (shouldReload && _status == Status::PreLoaded)
+        {
+            load();
+        }
+    }
+
+    const std::filesystem::path& ECSAsset::getSourceFile() const noexcept
+    {
+        return _meta.pathToSource;
+    }
+
+    nlohmann::json ECSAsset::getAssetData() const
+    {
+        try
+        {
+            const auto json = nlohmann::json::parse(Utils::GetFileContent(_meta.pathToSource));
+
+            if (!json.contains(StreamData::data))
+            {
+                return {};
+            }
+
+            return json[StreamData::data];
+        }
+        catch (const std::exception& e)
+        {
+            criticalLog("Can't provide asset's data: {}. Reason: {}"_f << _meta.pathToSource
+                                                                       << e.what());
+        }
+        catch (...)
+        {
+            criticalLog("Can't provide asset's data: {}. Due to internal error."_f
+                        << _meta.pathToSource);
+        }
+
+        return {};
+    }
+
+    void ECSAsset::syncAssetWithMemory(const nlohmann::json& assetData)
+    {
+        if (!Verify(_data))
+        {
+            criticalLog("Can't sync asset with memory. Asset is not loaded properly: data is null");
+            return;
+        }
+
+        if (_status != Status::Loaded && _status != Status::PreLoaded)
+        {
+            warnLog("Can't sync asset with memory. Asset is not loaded properly.");
+            return;
+        }
+
+        nlohmann::json json;
+        try
+        {
+            json = nlohmann::json::parse(Utils::GetFileContent(_meta.pathToSource));
+        }
+        catch (const std::exception& e)
+        {
+            criticalLog("Can't update asset's file: {}. Reason: {}"_f << _meta.pathToSource
+                                                                      << e.what());
+            return;
+        }
+
+        json[StreamData::type] = _meta.type;
+        json[StreamData::name] = _meta.name;
+        json[StreamData::tags] = TagHelper::JoinAllToString(_meta.tags);
+
+        auto baseAssetData = json.value(StreamData::data, nlohmann::json::object());
+
+#if defined(NEXIUM_DEBUG)
+        std::string xxx1 = baseAssetData.dump(4);
+        std::string xxx2 = assetData.dump(4);
+#endif
+
+        auto changes = MergeExistingKeys(baseAssetData, assetData);
+
+        std::string patchedOutput;
+        patchedOutput.reserve(256);
+        for (const auto& change : changes)
+        {
+            patchedOutput += "[" + ToString(change.changeType) + "] " + change.path + ": "
+                             + change.oldValue.dump() + " -> " + change.newValue.dump() + " | ";
+        }
+        json[StreamData::data] = baseAssetData;
+
+        if (_status == Status::Loaded)
+        {
+            // DataStream stream;
+            // stream.setMode(DataStream::Mode::Output);
+            // _data->ioFieldsUpdate(stream);
+            //
+            // json[StreamData::name] = _data->getComponentName();
+            // json[StreamData::data] = std::move(stream.getRaw());
+        }
+
+        try
+        {
+            WriteFileAtomically(_meta.pathToSource, json.dump(4));
+            traceLog("Asset: {} was updated successfully. Patch: {}"_f
+                     << _meta.logicPath << (patchedOutput.empty() ? "None" : patchedOutput));
+        }
+        catch (const std::filesystem::filesystem_error& error)
+        {
+            criticalLog("Can't save asset: {}. Details: {}"_f << _meta.pathToSource
+                                                              << error.what());
+        }
+    }
+
+    bool ECSAsset::operator==(const ECSAsset& other) const
+    {
+        return other._meta.logicPath == _meta.logicPath;
+    }
+
+    bool ECSAsset::operator==(const IntrusivePtr<ECSAsset>& other) const
+    {
+        if (Verify(other)) [[likely]]
+        {
+            return operator==(*other);
+        }
+        return false;
+    }
+
+    void ECSAsset::PackObjectToAsset(ECSAsset& out, const BaseComponent* data)
+    {
+        if (!Verify(data)) [[unlikely]]
+        {
+            gGlobalLog.errorLog("Was passed nullptr to ECSAsset::PackObjectToAsset");
+            return;
+        }
+
+        out._data = data->clone();
+        out._meta.type = data->getComponentType();
+        out._meta.name = data->getComponentName();
+
+        if (const auto* t = dynamic_cast<const ITagHolder*>(data))
+        {
+            out._meta.tags = t->getTags();
+        }
+    }
+
+    nlohmann::json ECSAsset::toJson() const
+    {
+        nlohmann::json j;
+
+        j[StreamData::type] = _meta.type;
+        j[StreamData::name] = _meta.name;
+        j[StreamData::tags] = TagHelper::JoinAllToString(_meta.tags);
+        j[StreamData::data] = nlohmann::json::object();
+
+        j[StreamData::data] = _data->serialize();
+
+        return j;
+    }
+
+    BaseComponent::Ptr ECSAsset::uniqueLoad() const
+    {
+        BaseComponent::Ptr componentData = GetGlobalComponentFactory().create(_meta.type);
+        if (!componentData)
+        {
+            throw std::runtime_error(
+                "Can't parse & recreate RTTI type. Maybe, the ECS type was not registered, or "
+                "type is template(it can cause problems).");
+        }
+
+        // Fetching main asset's data
+        const auto json
+            = nlohmann::json::parse(Utils::GetTextFileContentAs<std::string>(_meta.pathToSource));
+
+        RResourceStream<RJsonResourceStream> data(json[StreamData::data]);
+        componentData->deserialize(data);
+
+        // [opt] making loading of essential data (texture loading, 3D model loading, etc)
+        if (_impl)
+        {
+            _impl->load(*this, componentData.get(),
+                        json.value(StreamData::assetData, nlohmann::json::object()));
+        }
+
+        if (!data.logs().empty())
+        {
+            warnLog("{} field(s) couldn't be deserialized. The asset: {} "_f << data.logs().size()
+                                                                             << _meta.logicPath);
+            for (auto&& [field, code] : data.logs())
+            {
+                warnLog("Field '{}' - {} "_f << field << RStatusToString(code));
+            }
+        }
+
+        return componentData;
+    }
+
+    void ECSAsset::load()
+    {
+        if (_status != Status::PreLoaded)
+        {
+            warnLog("Can't load asset: '{}'. Status is not 'PreLoaded'."_f << _meta.logicPath);
+            return;
+        }
+
+        try
+        {
+            traceLog("Loading of asset: {}"_f << _meta.logicPath);
+
+            _data.reset();
+            _data = GetGlobalComponentFactory().create(_meta.type);
+            if (!_data)
+            {
+                throw std::runtime_error(
+                    "Can't parse & recreate RTTI type. Maybe, the ECS type was not registered, or "
+                    "type is template(it can cause problems).");
+            }
+
+            // Fetching main asset's data
+            const auto json = nlohmann::json::parse(
+                Utils::GetTextFileContentAs<std::string>(_meta.pathToSource));
+
+            RResourceStream<RJsonResourceStream> data(json[StreamData::data]);
+            _data->deserialize(data);
+
+            // [opt] making loading of essential data (texture loading, 3D model loading, etc)
+            if (_impl)
+            {
+                _impl->load(*this, _data.get(),
+                            json.value(StreamData::assetData, nlohmann::json::object()));
+            }
+
+            if (!data.logs().empty())
+            {
+                warnLog("{} field(s) couldn't be deserialized. The asset: {} "_f
+                        << data.logs().size() << _meta.logicPath);
+                for (auto&& [field, code] : data.logs())
+                {
+                    warnLog("Field '{}' - {} "_f << field << RStatusToString(code));
+                }
+            }
+
+            _status = Status::Loaded;
+            traceLog("Asset:: '{}' is: loaded! New status is: 'Loaded'"_f << _meta.logicPath);
+        }
+        catch (const std::exception& e)
+        {
+            criticalLog("Can't load Asset:: '{}'. The reason: {}. New status is: 'LoadingError'"_f
+                        << _meta.logicPath << e.what());
+            _status = Status::LoadingError;
+        }
+        catch (...)
+        {
+            criticalLog(
+                "Can't load Asset:: '{}'. The reason is undefined. New status is: 'LoadingError'"_f
+                << _meta.logicPath);
+            _status = Status::LoadingError;
+        }
+    }
+
+    void ECSAsset::unload()
+    {
+        _status = Status::PreLoaded;
+
+        if (_impl)
+        {
+            _impl->unload(*this, _data.get());
+        }
+        _data.reset();
+
+        traceLog("Asset: '{}' is unloaded its main data. New status is: 'PreLoaded'"_f
+                 << _meta.logicPath);
+    }
+
+    void ECSAsset::onIncrementRef(uint32_t count)
+    {
+        IntrusiveRefCounter<ECSAsset>::onIncrementRef(count);
+
+        // why 2? The first ref is placing at AssetManager like some fake asset
+        // we just know that it was indexed by the system.
+        // With the second ref - the final code wants to use it. So, we must
+        // load it.
+        if (count == 2)
+        {
+            load();
+        }
+    }
+
+    void ECSAsset::onDecrementRef(uint32_t count)
+    {
+        IntrusiveRefCounter<ECSAsset>::onDecrementRef(count);
+
+        if (count == 1)
+        {
+            unload();
+        }
+    }
+
+    void ECSAsset::extrudeAndValidateMainDataFromFile()
+    {
+        try
+        {
+            const auto json = nlohmann::json::parse(Utils::GetFileContent(_meta.pathToSource));
+
+            if (!json.contains(StreamData::type))
+            {
+                throw std::runtime_error("Asset's source file doesn't contain a field: 'type'.");
+            }
+            if (!json.contains(StreamData::data))
+            {
+                throw std::runtime_error("Asset's source file doesn't contain a field: 'data'.");
+            }
+
+            _meta.type = StringAtom::Intern(json[StreamData::type].get<StringAtom>());
+            if (_meta.type.isEmpty())
+            {
+                throw std::runtime_error("Asset's source file contains empty 'type' field.");
+            }
+
+            if (json.contains(StreamData::tags))
+            {
+                _meta.tags = TagHelper::SplitToTagFromString(
+                    json[StreamData::tags].get<std::string_view>());
+            }
+
+            if (json.contains(StreamData::name))
+            {
+                _meta.name = json[StreamData::name].get<StringAtom>();
+            }
+            else
+            {
+                _meta.name = "Asset_" + _meta.pathToSource.stem().generic_string();
+            }
+            _meta.name.shrinkToFit();
+
+            if (const auto id = GetGlobalComponentFactory().getTypeIdByTypeName(_meta.type))
+            {
+                _impl = GetFactory().trySpawnImpl(id.value());
+            }
+
+            _status = Status::PreLoaded;
+            traceLog("Successfully preloaded. New status is: 'PreLoaded'. Asset: {}"_f
+                     << _meta.logicPath);
+        }
+        catch (const std::exception& e)
+        {
+            criticalLog(
+                "Can't parse asset's file: {}. Reason: {}. New status is: 'PreLoadingError'"_f
+                << _meta.pathToSource << e.what());
+            _status = Status::PreLoadingError;
+            _meta.pathToSource.clear();
+        }
+        catch (...)
+        {
+            criticalLog(
+                "Can't parse asset's file: {}. Due to internal error. New status is: 'PreLoadingError'"_f
+                << _meta.pathToSource);
+            _status = Status::PreLoadingError;
+            _meta.pathToSource.clear();
+        }
+    }
+
+    void ECSAsset::localClear()
+    {
+        unload();
+    }
+
+    NXSceneAsset::NXSceneAsset(const NXSceneAsset& other)
+        : IntrusiveRefCounter(other),
+          _asset(other._asset),
+          _data(other._data->clone())
+    {
+    }
+
+    NXSceneAsset& NXSceneAsset::operator=(const NXSceneAsset& other)
+    {
+        if (&other == this) [[unlikely]]
+        {
+            return *this;
+        }
+
+        _asset = other._asset;
+        _data = other._data->clone();
+
+        return *this;
+    }
+
+    void NXSceneAsset::setAsset(ECSAsset& asset)
+    {
+        _data.reset();
+
+        _asset = &asset;
+        if (_asset && _asset->getData())
+        {
+            _data = _asset->getData()->clone();
+        }
+    }
+
+    void NXSceneAsset::setAsset(NXECSAsset asset)
+    {
+        if (Verify(asset)) [[likely]]
+        {
+            setAsset(*asset);
+        }
+    }
+
+    bool NXSceneAsset::setData(const BaseComponent* comp)
+    {
+        if (!validateInputSetData(comp))
+        {
+            return false;
+        }
+
+        _data = comp->clone();
+        return true;
+    }
+
+    bool NXSceneAsset::validateInputSetData(const BaseComponent* comp)
+    {
+        if (!Verify(comp)) [[unlikely]]
+        {
+            return false;
+        }
+
+        if (_asset && _asset->getData())
+        {
+            if (_asset->getData()->getComponentType() != comp->getComponentType())
+            {
+                Assert(_asset->getData()->getComponentType().isStatic());
+                Assert(comp->getComponentType().isStatic());
+
+                gGlobalLog.errorLog(
+                    "Attempt to assign data of type '{}' to different type of the asset '{}'"_f
+                    << comp->getComponentType() << _asset->getData()->getComponentType());
+
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+} // namespace NX

@@ -40,13 +40,13 @@ options, or pass criteria. The sections intentionally match the skill names.
 - If required submodules are missing, synchronize their recorded configuration and check
   out the revisions pinned by this repository:
 
-  ```sh
-  git submodule sync --recursive
-  git submodule update --init --recursive
-  ```
+    ```sh
+    git submodule sync --recursive
+    git submodule update --init --recursive
+    ```
 
-  Do not add `--remote`, force submodule contents, or update submodules beyond the pinned
-  revisions unless the user explicitly requests that operation.
+    Do not add `--remote`, force submodule contents, or update submodules beyond the pinned
+    revisions unless the user explicitly requests that operation.
 
 ### `build`
 
@@ -255,8 +255,8 @@ missing tools, network failures, unresolved includes, or site-build failures exp
 - **Reflection (JustReflectMe / JRM)**: mark types with `CLASS()` / `ENUM_CLASS()`
   macros before the relevant keyword. Full details live in
   `sources/JustReflectMe/Adapter.h` — read that before generating or modifying reflected types.
-  - Generated files update automatically as part of the normal build.
-  - To force a full regen, delete `.jrm/cache.data`.
+    - Generated files update automatically as part of the normal build.
+    - To force a full regen, delete `.jrm/cache.data`.
 - **Strings**: use `Core::StringAtom` + the `_atom` literal for interned/ static strings — don't use raw `std::string`/
   `const char*` for these.
 - **Smart pointers**: use `Core::IntrusivePtr` / `Core::WeakPtr`, not
@@ -272,6 +272,6 @@ missing tools, network failures, unresolved includes, or site-build failures exp
 ## Verification
 
 - After implementing a change, verify it before considering it done:
-  1. **Build** — use the `build` skill to compile and confirm there are no build errors/warnings introduced.
-  2. **Run** — use the `verification-run` skill to run the result and confirm it behaves as expected.
+    1. **Build** — use the `build` skill to compile and confirm there are no build errors/warnings introduced.
+    2. **Run** — use the `verification-run` skill to run the result and confirm it behaves as expected.
 - Don't treat a change as complete on "looks correct" alone — actually build and run it via these skills first.

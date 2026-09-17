@@ -1,40 +1,24 @@
-/*
- * MIT License
- *
- * Copyright (c) 2018-2027 Valerii Koniushenko
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+// Nexium
+// Copyright 2018-2026 Valerii Koniushenko
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
 
-#include "Animations/FrameByFrame/FrameByFrameAnimator.h"
 #include "DummyComponent.h"
-#include "InputDevices/InputTypes.h"
-#include "Scene/Rectangle.h"
+#include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimation.h"
 
 #include "gtest/gtest.h"
 #include <fstream>
-#include <ranges>
 
 using namespace Core;
+using namespace NX;
 
 namespace
 {
+
     std::vector<StringAtom> collectNames(const BaseComponent& root, bool depthFirst = false)
     {
         std::vector<StringAtom> names;
@@ -75,6 +59,7 @@ namespace
 
         DummyComponent root;
     };
+
 } // namespace
 
 TEST(ECSBaseTests, SerializationOfAbstractComponentClass)
@@ -697,6 +682,7 @@ TEST(ECSBaseTests, AddUniqueTypeChildComponentReturnsSameInstance)
 
 TEST(ECSBaseTests, UniqueTypeLookupUsesComponentInheritance)
 {
+    // tag::component_unique_type[]
     Sedan root("Root");
     auto* engine = root.addUniqueTypeChildComponent<TurboEngine>("Engine");
     auto* sameBase = root.addUniqueTypeChildComponent<Engine>("OtherName");
@@ -706,6 +692,7 @@ TEST(ECSBaseTests, UniqueTypeLookupUsesComponentInheritance)
     ASSERT_EQ(engine, samePart);
     ASSERT_EQ(1u, root.getChildrenCount());
     ASSERT_EQ("Engine", engine->getComponentName());
+    // end::component_unique_type[]
 }
 
 TEST(ECSBaseTests, GetOrAddChildComponentReturnsExisting)
@@ -723,6 +710,7 @@ TEST(ECSBaseTests, GetOrAddChildComponentReturnsExisting)
 
 TEST(ECSBaseTests, AttachChildClonesAndSetsParent)
 {
+    // tag::component_attach_clone[]
     DummyComponent root("Root");
 
     DummyComponent::Ptr externalChild = new DummyComponent("Child");
@@ -736,6 +724,7 @@ TEST(ECSBaseTests, AttachChildClonesAndSetsParent)
     ASSERT_EQ(attached->getComponentName(), externalChild->getComponentName());
     ASSERT_EQ(attached->getParent(), &root);
     ASSERT_EQ(1, root.getChildrenCount());
+    // end::component_attach_clone[]
 }
 
 TEST(ECSBaseTests, DetachChildRemovesFromChildrenList)
@@ -867,6 +856,7 @@ TEST(ECSBaseTests, InitializeIsCalledAndPropagatesToChildren)
 
 namespace
 {
+
     class ECSTreeVehicleTests : public ::testing::Test
     {
     protected:
@@ -938,6 +928,7 @@ namespace
 
         Sedan root;
     };
+
 } // namespace
 
 TEST_F(ECSTreeVehicleTests, FullSerializationCheck)
@@ -1080,60 +1071,13 @@ TEST_F(ECSTreeVehicleTests, FullDeserializationCheck)
     ASSERT_EQ(serialized.dump(4), R<decltype(restored)>::Serialize(restored).getData().dump(4));
 }
 
-TEST(FrameByFrameAnimatorTests, AddedAnimationIsSerializedWithAnimatedPlayer)
+TEST(FrameByFrameAnimationTests, AddedFrameIsSerialized)
 {
-    std::ifstream input{ NEXIUM_PROJECT_DIR "/data/assets/Player.nx" };
-    ASSERT_TRUE(input.is_open());
-    const auto assetJson = nlohmann::json::parse(input);
-
-    SceneObj::Rectangle player;
-    RResourceStream<RJsonResourceStream> stream{ assetJson["data"] };
-    player.deserialize(stream);
-
-    auto* animator = player.findFirstChildOf<Animation::FrameByFrameAnimator>();
-    ASSERT_NE(animator, nullptr);
-
     Animation::FrameByFrameAnimation animation{ "Serialization test"_atom };
     animation.setAtlasName("default"_atom);
     ASSERT_TRUE(animation.addFrame({ 0.f, 0.f }, { 1.f, 1.f }));
-    ASSERT_TRUE(animator->addAnimation(std::move(animation)));
 
-    const auto serializedPlayer = player.serialize();
-    const auto& serializedChildren = serializedPlayer["_children"];
-    const auto serializedAnimator = std::ranges::find_if(
-        serializedChildren,
-        [](const auto& child)
-        {
-            return child.value("_type", std::string{})
-                   == Animation::FrameByFrameAnimator::componentType.toStdString();
-        });
-    ASSERT_NE(serializedAnimator, serializedChildren.end());
-
-    const auto& serializedAnimations = (*serializedAnimator)["_animations"];
-    ASSERT_TRUE(serializedAnimations.contains("Serialization test"));
-    EXPECT_EQ(serializedAnimations["Serialization test"]["_type"].get<std::string>(),
-              Animation::FrameByFrameAnimation::componentType.toStdString());
-}
-
-TEST(InputTypesTests, KeyChordMatchesOnlyItsTriggerWithEveryRequiredKeyPressed)
-{
-    const KeyChord chord{ .triggerKey = Keyboard::Key::S,
-                          .requiredKeys
-                          = { Keyboard::Key::Left_Control, Keyboard::Key::Left_Shift } };
-
-    EXPECT_TRUE(chord.matches(Keyboard::Key::S, { Keyboard::Key::Left_Control,
-                                                  Keyboard::Key::Left_Shift, Keyboard::Key::S }));
-    EXPECT_FALSE(
-        chord.matches(Keyboard::Key::S, { Keyboard::Key::Left_Control, Keyboard::Key::S }));
-    EXPECT_FALSE(chord.matches(Keyboard::Key::A, { Keyboard::Key::Left_Control,
-                                                   Keyboard::Key::Left_Shift, Keyboard::Key::A }));
-}
-
-TEST(InputTypesTests, InputEventsDefaultInitializeOwnedKeyCollections)
-{
-    const KeyChord chord;
-    const KeyInputEvent event;
-
-    EXPECT_TRUE(chord.requiredKeys.empty());
-    EXPECT_TRUE(event.pressedKeys.empty());
+    const auto serialized = R<Animation::FrameByFrameAnimation>::Serialize(animation).getData();
+    ASSERT_EQ(serialized["_frames"].size(), 1);
+    EXPECT_EQ(serialized["_type"], Animation::FrameByFrameAnimation::componentType);
 }

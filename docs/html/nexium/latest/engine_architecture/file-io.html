@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>File-IO :: Nexium Engine</title>
+    <title>File I/O :: Nexium Engine</title>
     <link rel="prev" href="resource-system.html">
     <link rel="next" href="ecs-overview.html">
     <meta name="generator" content="Antora 3.1.15">
@@ -79,6 +79,12 @@
     <a class="nav-link" href="index.html">Overview</a>
   </li>
   <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="architecture-review.html">Architecture and Migration Review</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ue5-alignment.html">UE5 Patterns for Nexium</a>
+  </li>
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="module-graph.html">Module Graph</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -115,44 +121,14 @@
     <a class="nav-link" href="../rendering/pipeline.html">Rendering Pipeline</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../rendering/renderer-architecture.html">Renderer Architecture</a>
+    <a class="nav-link" href="../rendering/renderer-architecture.html">Rendering Responsibilities</a>
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
     <span class="nav-text">Materials</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../rendering/materials/overview.html">Material System</a>
-  </li>
-  <li class="nav-item" data-depth="3">
     <a class="nav-link" href="../rendering/materials/shader-system.html">Shader System</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../rendering/materials/material-instances.html">Material Instances</a>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Meshes</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../rendering/meshes/mesh-format.html">Mesh Format</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../rendering/meshes/mesh-loader.html">Mesh Loader</a>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Textures</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../rendering/textures/texture-loader.html">Texture Loader</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../rendering/textures/compression.html">Texture Compression</a>
   </li>
 </ul>
   </li>
@@ -172,10 +148,10 @@
     <a class="nav-link" href="../gameplay/components.html">Components</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../gameplay/scripting.html">Scripting</a>
+    <a class="nav-link" href="../gameplay/scripting.html">Gameplay Hooks</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../gameplay/prefabs.html">Prefabs</a>
+    <a class="nav-link" href="../gameplay/prefabs.html">Blueprint Templates</a>
   </li>
 </ul>
   </li>
@@ -187,16 +163,7 @@
     <a class="nav-link" href="../build/index.html">Overview</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../build/linux-build.html">Linux Build</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../build/windows-build.html">Windows Build</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../build/cmake-structure.html">CMake Structure</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../build/toolchain.html">Toolchain Setup</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../build/ci-cd.html">CI/CD</a>
@@ -204,82 +171,7 @@
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Tutorials</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/index.html">Overview</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/create-first-scene.html">Create Your First Scene</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/loading-models.html">Loading Models</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/adding-materials.html">Adding Materials</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/building-for-release.html">Building for Release</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/debugging.html">Debugging</a>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Reference</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../reference/index.html">Overview</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../reference/cli.html">Command-Line Tools</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../reference/configuration.html">Configuration</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Public API</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../reference/public-api/core-api.html">Core API</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../reference/public-api/math-api.html">Math API</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../reference/public-api/render-api.html">Render API</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../reference/public-api/ecs-api.html">ECS API</a>
-  </li>
-</ul>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">About</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/index.html">Overview</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/roadmap.html">Roadmap</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/contributing.html">Contributing</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/license.html">License</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/history.html">History</a>
-  </li>
-</ul>
+    <a class="nav-link" href="../about/index.html">About</a>
   </li>
 </ul>
   </li>
@@ -323,8 +215,105 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">File-IO</h1>
-
+<h1 class="page">File I/O</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>Foundation::IDataIO</code> defines an object&#8217;s storage directory and name.
+<code>NX::CacheSystem</code>, declared in <code>NxFundamental/ResourceManagement/DataStream.h</code>, reads/writes JSON.
+Its “cache” includes persistent authored content.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_locations"><a class="anchor" href="#_locations"></a>Locations</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Data</th>
+<th class="tableblock halign-left valign-top">Path relative to the compiled project root</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Scene</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data/scenes/&lt;sanitized scene name&gt;.json</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">World</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data/world/&lt;sanitized world name&gt;.json</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Editor objects</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Object-specific directories beneath <code>data/</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ImGui layout</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data/cache/windows.ini</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Assets</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Their attached source files; see <a href="resource-system.html" class="xref page">Assets</a>.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>CacheSystem combines <code>Config::Path::data</code>, <code>getCacheDir()</code>, and a sanitized <code>getCacheHash()</code>
+with <code>.json</code>. Non-alphanumeric characters other than <code><em></code> become <code></em></code>, so names can collide.
+Paths derive from <code>NEXIUM_PROJECT_DIR</code> compiled into Foundation.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_reads_and_failures"><a class="anchor" href="#_reads_and_failures"></a>Reads and failures</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>read()</code> parses JSON and calls the object&#8217;s deserializer, or JRM when none is supplied.
+Exceptions are logged and mark the path as a failed read.
+<code>tryRead()</code> returns whether a file existed and reading was attempted, not whether it succeeded.</p>
+</div>
+<div class="paragraph">
+<p>A failed read blocks CacheSystem writes to that path until a successful read or <code>clearCache()</code>.
+This guard is specific to CacheSystem; the asset readers use separate error handling.
+Optional reflected-field errors can be logged without rejecting the document.</p>
+</div>
+<div class="paragraph">
+<p>Scene validates and reconstructs incoming roots before replacing existing ones.
+Malformed records preserve the old roots, but resource/initialization side effects are not rolled back.
+See <a href="../gameplay/scenes.html" class="xref page">Scene persistence</a> for the saved format.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_writes"><a class="anchor" href="#_writes"></a>Writes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>CacheSystem and both asset save paths use <code>WriteFileAtomically</code>: create an exclusive sibling
+temporary file, write/flush/close, then replace the destination.
+A failed replacement preserves the old destination and removes the owned temporary file.
+There is no multi-document transaction or cross-platform durable-sync guarantee.</p>
+</div>
+<div class="paragraph">
+<p>CacheSystem write calls return no success value. Filesystem replacement errors are logged;
+serialization errors can escape before replacement. Editor save notifications therefore do not prove success.</p>
+</div>
+<div class="paragraph">
+<p><code>BaseAsset</code> updates existing JSON through <code>ioFieldsUpdate()</code>.
+The generic <code>DataStream::field()</code> output assignment is disabled; use the implemented serializers,
+not that helper, when persisting new data.</p>
+</div>
+<div class="paragraph">
+<p>Implementation: <code>ResourceManagement/{DataStream,AtomicFile}.{h,cpp}</code> in NxFundamental.
+<code>AtomicFileTests.cpp</code> covers replacement and failed-load protection; <code>ScenePersistenceTests.cpp</code>
+covers scene reconstruction and rejected documents.</p>
+</div>
+</div>
+</div>
 <nav class="pagination">
   <span class="prev"><a href="resource-system.html">Resource System</a></span>
   <span class="next"><a href="ecs-overview.html">ECS Overview</a></span>

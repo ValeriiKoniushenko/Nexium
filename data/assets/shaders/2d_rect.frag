@@ -7,6 +7,7 @@ in vec2 ioUV;
 uniform sampler2D uTexture;
 uniform bool uAlphaBlendingEnabled;
 
+// tag::rectangle_fragment[]
 void main()
 {
     vec4 texColor = texture(uTexture, ioUV);
@@ -22,3 +23,4 @@ void main()
 
     FragColor = texColor;
 }
+// end::rectangle_fragment[]

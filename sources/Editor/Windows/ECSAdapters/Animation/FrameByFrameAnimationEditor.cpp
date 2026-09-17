@@ -1,12 +1,23 @@
+// Nexium
+// Copyright 2018-2026 Valerii Koniushenko
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+
 #include "FrameByFrameAnimationEditor.h"
 
-#include "Animations/FrameByFrame/FrameByFrameAnimator.h"
-#include "GameplaySystem/Framework/GameInstance.h"
+#include "Editor/IconsFontAwesome.h"
 #include "ImGui/imgui.h"
-#include "Misc/IconsFontAwesome.h"
+#include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimator.h"
+#include "NxWorld/Framework/GameInstance.h"
 
 #include <algorithm>
 #include <cstring>
+
+using namespace NX;
 
 namespace
 {
@@ -19,7 +30,7 @@ namespace
     }
 } // namespace
 
-namespace Core
+namespace NX
 {
     void FrameByFrameAnimationEditor::create(Animation::FrameByFrameAnimator* animator)
     {
@@ -111,7 +122,7 @@ namespace Core
             uv1 = rect.getLeftTop() + regionSize * (frame.uvOffset + frame.uvSize);
         }
 
-        auto& texture = const_cast<Texture&>(atlas.getTexture());
+        auto& texture = const_cast<RawBackend::Texture&>(atlas.getTexture());
         if (texture.isValid())
         {
             ImGui::Image(texture.getTextureId(), { size, size }, glm::vec2{ uv0.x, uv1.y },
@@ -400,4 +411,4 @@ namespace Core
         drawFooter(regionNames, onSave);
         ImGui::EndPopup();
     }
-} // namespace Core
+} // namespace NX

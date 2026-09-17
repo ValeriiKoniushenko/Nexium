@@ -3,9 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Untitled :: Nexium Engine</title>
+    <title>Rendering Responsibilities :: Nexium Engine</title>
     <link rel="prev" href="pipeline.html">
-    <link rel="next" href="materials/overview.html">
+    <link rel="next" href="materials/shader-system.html">
     <meta name="generator" content="Antora 3.1.15">
     <link rel="stylesheet" href="../../../_/css/site.css">
   </head>
@@ -79,6 +79,12 @@
     <a class="nav-link" href="../engine_architecture/index.html">Overview</a>
   </li>
   <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../engine_architecture/architecture-review.html">Architecture and Migration Review</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../engine_architecture/ue5-alignment.html">UE5 Patterns for Nexium</a>
+  </li>
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../engine_architecture/module-graph.html">Module Graph</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -115,44 +121,14 @@
     <a class="nav-link" href="pipeline.html">Rendering Pipeline</a>
   </li>
   <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="renderer-architecture.html">Renderer Architecture</a>
+    <a class="nav-link" href="renderer-architecture.html">Rendering Responsibilities</a>
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
     <span class="nav-text">Materials</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="materials/overview.html">Material System</a>
-  </li>
-  <li class="nav-item" data-depth="3">
     <a class="nav-link" href="materials/shader-system.html">Shader System</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="materials/material-instances.html">Material Instances</a>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Meshes</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="meshes/mesh-format.html">Mesh Format</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="meshes/mesh-loader.html">Mesh Loader</a>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Textures</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="textures/texture-loader.html">Texture Loader</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="textures/compression.html">Texture Compression</a>
   </li>
 </ul>
   </li>
@@ -172,10 +148,10 @@
     <a class="nav-link" href="../gameplay/components.html">Components</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../gameplay/scripting.html">Scripting</a>
+    <a class="nav-link" href="../gameplay/scripting.html">Gameplay Hooks</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../gameplay/prefabs.html">Prefabs</a>
+    <a class="nav-link" href="../gameplay/prefabs.html">Blueprint Templates</a>
   </li>
 </ul>
   </li>
@@ -187,16 +163,7 @@
     <a class="nav-link" href="../build/index.html">Overview</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../build/linux-build.html">Linux Build</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../build/windows-build.html">Windows Build</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../build/cmake-structure.html">CMake Structure</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../build/toolchain.html">Toolchain Setup</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../build/ci-cd.html">CI/CD</a>
@@ -204,82 +171,7 @@
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Tutorials</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/index.html">Overview</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/create-first-scene.html">Create Your First Scene</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/loading-models.html">Loading Models</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/adding-materials.html">Adding Materials</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/building-for-release.html">Building for Release</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/debugging.html">Debugging</a>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Reference</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../reference/index.html">Overview</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../reference/cli.html">Command-Line Tools</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../reference/configuration.html">Configuration</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Public API</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../reference/public-api/core-api.html">Core API</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../reference/public-api/math-api.html">Math API</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../reference/public-api/render-api.html">Render API</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../reference/public-api/ecs-api.html">ECS API</a>
-  </li>
-</ul>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">About</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/index.html">Overview</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/roadmap.html">Roadmap</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/contributing.html">Contributing</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/license.html">License</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/history.html">History</a>
-  </li>
-</ul>
+    <a class="nav-link" href="../about/index.html">About</a>
   </li>
 </ul>
   </li>
@@ -313,7 +205,7 @@
   <ul>
     <li><a href="../index.html">Nexium Engine Documentation</a></li>
     <li>Rendering</li>
-    <li><a href="renderer-architecture.html">Renderer Architecture</a></li>
+    <li><a href="renderer-architecture.html">Rendering Responsibilities</a></li>
   </ul>
 </nav>
 <div class="edit-this-page"><a href="file:///home/valerii/workspace/Nexium//docs/nexium/modules/rendering/pages/renderer-architecture.adoc">Edit this Page</a></div>
@@ -323,10 +215,88 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-
+<h1 class="page">Rendering Responsibilities</h1>
+<div class="sect1">
+<h2 id="_resource_ownership"><a class="anchor" href="#_resource_ownership"></a>Resource ownership</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 37.5%;">
+<col style="width: 37.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Resource</th>
+<th class="tableblock halign-left valign-top">Owner</th>
+<th class="tableblock halign-left valign-top">Consumer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Window and GL context</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Platform window accessor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Runtime and every GPU operation.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Shader programs and metadata</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ShaderManager&#8217;s map</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Draw code and the editor shader inspector borrow entries.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Atlas textures and packed regions</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">AssetsManager&#8217;s named TextureAtlas objects</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rectangles select atlas/texture names.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Viewport framebuffer</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GameEditor&#8217;s RenderTargetToTexture</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">EditorIntegration binds it around scene drawing.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Camera</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Component tree; World holds a borrowed pointer</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Scene drawing and picking.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>GameInstance</code> owns Scene and AssetsManager, and references the shared ShaderManager.
+<code>Runtime</code> orders their use. <code>ApplicationIntegration</code> supplies editor hooks without requiring
+Runtime to include Editor implementation headers.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_render_targets_and_resizing"><a class="anchor" href="#_render_targets_and_resizing"></a>Render targets and resizing</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The editor target has an RGBA color texture and a depth/stencil renderbuffer using <code>GL_DEPTH24_STENCIL8</code>.
+<code>setRenderSize()</code> destroys and recreates its attachments. Viewport updates also invalidate
+camera matrices so projection uses the current output dimensions.
+<code>callMePreDraw()</code> binds the target; <code>callMeAfterDraw()</code> binds framebuffer 0.
+These hooks assume the window framebuffer is the destination afterward; they do not form a nested target stack.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_lifetimes_to_preserve"><a class="anchor" href="#_lifetimes_to_preserve"></a>Lifetimes to preserve</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Create, upload, and release GPU resources while the GL context is valid.
+Reloading ShaderManager replaces its entries and invalidates borrowed program pointers.
+Removing a camera from the scene does not destroy it if another strong reference retains it;
+World&#8217;s camera pointer and scene membership need separate attention.</p>
+</div>
+<div class="paragraph">
+<p>See <a href="pipeline.html" class="xref page">frame order</a>, <a href="materials/shader-system.html" class="xref page">shader lifetimes</a>, and
+<a href="../engine_architecture/memory.html" class="xref page">component ownership</a>.</p>
+</div>
+</div>
+</div>
 <nav class="pagination">
   <span class="prev"><a href="pipeline.html">Rendering Pipeline</a></span>
-  <span class="next"><a href="materials/overview.html">Material System</a></span>
+  <span class="next"><a href="materials/shader-system.html">Shader System</a></span>
 </nav>
 </article>
   </div>

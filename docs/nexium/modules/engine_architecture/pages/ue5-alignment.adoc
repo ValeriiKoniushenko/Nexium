@@ -1,0 +1,96 @@
+= UE5 Patterns for Nexium
+
+This page is a design assessment for the current small-team 2D editor.
+The recommendations below are proposed work, not current features.
+
+== Useful parallels
+
+[cols="2,3,4",options="header"]
+|===
+|Concern |UE5 pattern |Nexium decision
+|Modules |Public/private dependencies and runtime/editor module roles. |Keep focused CMake targets and downward dependencies; narrow exposed headers as consumers require.
+|Session lifetime |GameInstance persists across level changes. |Move toward game-session state/services, with application/window/editor setup outside that role.
+|World lifetime |World provides gameplay context. |Make Scene, simulation time, active camera, and scene services one explicit lifetime.
+|Components |ActorComponent handles reusable behavior; SceneComponent adds spatial attachment. |Keep BaseComponent and Transformable composition; clarify the role of Actor without copying UE's whole hierarchy.
+|Subsystems |Automatically instantiated services with managed owner lifetimes. |Start with explicitly owned services and ordered initialize/shutdown; add automatic discovery only for a real extension need.
+|Play in editor |Preview uses a duplicate level. |Create a disposable runtime copy so Stop preserves authored state.
+|Assets |Registry metadata is distinct from loaded assets; redirects preserve moved paths. |Keep indexing separate from payload loading; choose IDs or a redirect policy before normal content reorganization.
+|===
+
+Epic describes these patterns in
+https://dev.epicgames.com/documentation/en-us/unreal-engine/unreal-engine-modules[Modules],
+https://dev.epicgames.com/documentation/unreal-engine/gameplay-framework-in-unreal-engine[Gameplay Framework],
+https://dev.epicgames.com/documentation/en-us/unreal-engine/components-in-unreal-engine[Components],
+https://dev.epicgames.com/documentation/en-us/unreal-engine/programming-subsystems-in-unreal-engine[Subsystems],
+https://dev.epicgames.com/documentation/en-us/unreal-engine/ineditor-testing-play-and-simulate-in-unreal-engine[Play and Simulate],
+https://dev.epicgames.com/documentation/en-us/unreal-engine/asset-registry-in-unreal-engine[Asset Registry], and
+https://dev.epicgames.com/documentation/en-us/unreal-engine/asset-redirectors-in-unreal-engine[Redirectors].
+The Nexium decisions are inferences from those patterns and this repository's needs.
+
+== Proposed ownership
+
+Use the existing Runtime/application composition and editor tools before introducing more framework classes.
+Names in this table describe responsibilities; they are not prescribed new type names.
+
+[cols="2,5",options="header"]
+|===
+|Lifetime |Proposed contents
+|Application |Window/context, shared graphics/resources, Runtime, editor integration.
+|Editor session |Authored scene document, selection, navigation camera, command history, editor preferences.
+|Game session |GameInstance, game-specific persistent state, an optional active gameplay world.
+|World |Scene object trees, simulation time/state, active game camera and scene services.
+|Play session |A runtime world reconstructed/cloned from the authored document, with reset transient state.
+|Project context |Content roots, source/import settings, scene selection, game-specific startup configuration.
+|===
+
+Application-wide resources can be shared.
+Mutable scene instances, selection, controller state, subscriptions, and simulation clocks need explicit context.
+Do not clone GameInstance wholesale or copy GPU contexts.
+Initial Play can use a tested snapshot/reconstruction path; full simultaneous editable worlds are optional.
+
+Keep authored scene serialization separate from a complete live-runtime snapshot:
+asset-backed scene records currently save only their existing instance overrides.
+Cloning must also reset initialized state and rebind transient references/resources.
+The existing component clone method alone does not establish those guarantees.
+
+== Editor operations
+
+Use one command path for property changes, create/delete/duplicate, transform drags, and reparenting.
+A drag should become one undo step.
+Commands capture enough before/after state and identify affected objects independently of addresses.
+Dirty state belongs to the document and clears only after a successful save.
+
+Epic's https://dev.epicgames.com/documentation/en-us/unreal-engine/API/Editor/UnrealEd/FScopedTransaction[FScopedTransaction]
+is a reference for grouped undoable editor operations.
+Nexium can use a small command history; it does not need UE's object transaction implementation.
+
+Scene replacement and Stop must invalidate/remap selection and cameras.
+Object removal should clear scene membership even when editor references keep the object alive.
+Define whether gameplay can add/remove objects during ticks and, if allowed, apply mutations at a controlled point.
+
+== Acceptance criteria
+
+[cols="2,5",options="header"]
+|===
+|Change |Observable result
+|Simulation |Gameplay tick runs without a camera; pause freezes game time and step advances one defined update.
+|Commands |Create/delete/reparent/property drag undo and redo correctly; restored objects regain references.
+|Persistence |A failed save leaves the document dirty; a bad load retains authored content and reports failure.
+|Play/Stop |Movement, spawning, deletion, and animation during Play leave authored content unchanged after Stop.
+|Asset moves |Renaming a referenced template/texture keeps saved and unopened documents resolvable, or is rejected with dependencies explained.
+|Boundaries |A minimal Runtime consumer compiles/links without Editor/ImGui; each service has a visible owner and teardown order.
+|===
+
+These should be behavioral tests, not another layer-counting exercise.
+
+== Scope control
+
+Keep OpenGL, ImGui, synchronous runtime, and the reflected tree for the first games.
+Rendering should gradually accept an explicit view and target instead of consulting global editor/game state.
+Keep the current backend API while that need is small.
+
+Defer multiplayer-specific GameMode/PlayerState semantics, a visual scripting VM,
+dynamic plugin loading, a general render graph, and archetype ECS work until a game requires them.
+Preserve existing animation behavior.
+Optional meshes/import can continue using the current 3D switch.
+Separate shipped-game targets, content cooking, and delivery are later work.

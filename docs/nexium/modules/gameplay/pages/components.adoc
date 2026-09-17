@@ -1,0 +1,90 @@
+= Gameplay Components
+
+== Choose behavior or a drawable object
+
+Use `BaseComponent` for behavior attached to another object, such as an animator.
+Use `SceneObject` when the object needs transforms, scene persistence, and a draw hook.
+A component tree expresses ownership and tick propagation; it does not automatically make every child drawable.
+`Actor` currently adds little beyond SceneObject, so derive from it only where that existing hierarchy is useful.
+
+== Register and persist a component
+
+A concrete component uses `ECS_DECL` in its declaration and `ECS_IMPL` in its implementation.
+Use `CLASS()` and `FIELD()` for JRM-reflected types/fields, and include the generated header as existing types do.
+The normal build regenerates metadata. The xref:engine_architecture:ecs-overview.adoc[Component System]
+lists constructor/template macro variants.
+
+Factory registration and field serialization solve different problems: the factory chooses the C++ type,
+then the deserializer restores that type's reflected state.
+Renaming a serialized component type needs a content migration; renaming a display label does not change its type.
+Unreflected runtime state, such as subscriptions or borrowed resource pointers, needs explicit setup after reconstruction.
+
+== Build a tree without accidental copies
+
+=== Creating versus attaching
+
+`addChildComponent<T>()` creates and owns a new child, assigns its parent, and initializes it.
+`attachChild()` instead clones the supplied tree. It does not move the original into this parent.
+This existing test demonstrates the pointer and parent differences:
+
+[source,cpp]
+----
+include::example$component-tests.cpp[tag=component_attach_clone,indent=0]
+----
+
+Keep a strong `Core::IntrusivePtr` if a component must survive removal from its parent.
+The raw pointer returned by an add operation is borrowed. Detach/removal clears its parent link,
+but selection or another strong reference may keep the object alive.
+
+=== One component per compatible type
+
+`addUniqueTypeChildComponent<T>()` checks direct children using C++ inheritance.
+An existing derived component satisfies a request for its base type; the new name/constructor arguments are ignored.
+The test's TurboEngine therefore also satisfies Engine and BasePart:
+
+[source,cpp]
+----
+include::example$component-tests.cpp[tag=component_unique_type,indent=0]
+----
+
+`getOrAddChildComponent<T>()` searches descendants before creating a direct child.
+Choose it only if a match deeper in the tree is acceptable.
+
+== Initialization and ticking
+
+=== Initialization can happen during assembly
+
+Adding a child initializes an uninitialized parent first, then the new child, before returning.
+An `onInitialize()` hook must not assume siblings that will be added later already exist.
+Repeated `initialize()` calls do nothing until invalidation; invalidating a parent alone does not invalidate its children.
+
+=== Preserve child updates deliberately
+
+`tick()` checks enabled/no-tick flags, not initialization. The base tick hook propagates to children.
+Here the animator preserves that traversal before updating its own active animation and applying the frame:
+
+[source,cpp]
+----
+include::example$animator.cpp[tag=animator_tick,indent=0]
+----
+
+Disabling or marking a parent no-tick stops this default subtree update path.
+An override that omits the base hook takes responsibility for child ticking.
+Editor viewport focus is another gate; see xref:engine_architecture:lifecycle.adoc[frame scheduling].
+
+== Example: animating a rectangle
+
+A `FrameByFrameAnimator` must have a `RectangleAnimated` parent for frame application.
+`startAnimation(name)` restarts the selected animation and applies its first frame immediately.
+Each subsequent tick advances time, chooses the frame's texture or animation default,
+then sets the parent's atlas, texture, and UV region.
+
+The parent draw converts those frame UVs into atlas coordinates; the xref:rendering:pipeline.adoc[Rendering Pipeline]
+shows the calculation. Animation selection changes which pixels are sampled, not the quad's vertex data.
+
+== What a scene actually saves
+
+Inline scene roots save their reflected component trees. Template-backed roots save an asset reference
+and supported instance values, not arbitrary changes to every child field.
+Cloning a tree copies descendants but does not prove that GPU resources/subscriptions were safely copied.
+See xref:scenes.adoc[Scene persistence] before relying on component edits to survive reload.

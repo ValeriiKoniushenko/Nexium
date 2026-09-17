@@ -1,7 +1,3 @@
-[submodule "dependencies/nlohmann_json"]
-	path = dependencies/nlohmann_json
-	url = https://github.com/nlohmann/json.git
-	ignore = dirty
 [submodule "dependencies/glfw"]
 	path = dependencies/glfw
 	url = https://github.com/glfw/glfw.git
@@ -31,3 +27,8 @@
 [submodule ".agents/Agents"]
 	path = .agents/Agents
 	url = https://github.com/ValeriiKoniushenko/Agents.git
+	branch = develop
+[submodule "scripts"]
+	path = scripts
+	url = https://github.com/ValeriiKoniushenko/Scripts.git
+	branch = develop

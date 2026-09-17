@@ -1,17 +1,92 @@
-= Module graph
-:imagesdir:../
+= Module Graph
 
-The main modules you can observe in the image below. For now, it's quite easy. Due to a lot of work over the editor, not the core system.
+A source directory can produce several libraries. The tables follow `sources/*/CMakeLists.txt`.
+Dependencies may skip layers; numbering describes their intended direction.
 
-image::top-level-modules.drawio.png[Main modules,width=100%]
+== Source layers
 
-The biggest part of the main classes & logic stores at the main god-object `gGameInstance` of the `class GameInstance`. The `extern` pointer `gGameInstance` you can find by the next path: `GameplaySystem/Framework/GameInstance.h`
+[cols="1,2,5",options="header"]
+|===
+|Layer |Directory |Responsibility
+|8 |Editor |ImGui windows, property adapters, selection, picking, asset tools, viewport integration.
+|7 |NxRuntime |Frame loop, timing, startup/save orchestration.
+|6 |NxWorld |GameInstance, World state, Scene, actors, cameras, rectangles, animation, optional meshes.
+|5 |NxSubsystems |AssetsManager, shaders/graphics data, input actions, optional Assimp importer.
+|4 |NxFundamental |Component trees, transforms, tags, serialization, asset abstractions, atlases.
+|3 |RawBackend |CPU images, OpenGL textures/framebuffers, drawable interface.
+|2 |Platform |Window, keyboard/mouse, OpenGL access.
+|1 |Foundation |Configuration, logging, data/outline interfaces, Utils core access.
+|===
 
-In general, the main concept of this class(GameInstance) is to store controlling nodes(different managers) and the most common things as: `currentScene`, `currentWorld`, `currentCamera`.
+== Public build targets
 
-Regarding other modules, you can read the next topics:
+All concrete engine libraries below are static.
+Private module logging targets are omitted.
+Foundation's separate private logging target is disabled.
 
-* xref:ecs-overview.adoc[Entity Component System (ECS)]
-* xref:resource-system.adoc[Resource system]
-* xref:rendering:index.adoc[Rendering]
-* xref:lifecycle.adoc[Lifecycle]
+[cols="3,4,4",options="header"]
+|===
+|Public alias |Contents |Direct public dependencies
+|`Nexium::Foundation` |Configs, BaseLog, IDataIO, IOutliner |Utils::Core, spdlog::spdlog, JustReflectMe::Adapter.
+|`Nexium::Platform::Graphics` |OpenGL access |Core::Glad.
+|`Nexium::Platform::Input` |Window, Keyboard, Mouse |Foundation, glfw, Utils::Core, JustReflectMe::Adapter, glm.
+|`Nexium::RawBackend` |Image, Texture, RenderTargetToTexture, IDrawable |Foundation, Platform Graphics.
+|`Nexium::Fundamental::Base` |ITagHolder, Transformable |Foundation.
+|`Nexium::Fundamental::ResourceManagement` |CacheSystem, DataStream, atomic replacement, JSON adapter |Foundation.
+|`Nexium::Fundamental::ECS` |AbstractComponent, BaseComponent, GlobalComponentFactory |Fundamental Base and ResourceManagement.
+|`Nexium::Fundamental::Assets` |BaseAsset, AssetRef, ECSAsset, Factory |Fundamental ECS and ResourceManagement, Platform Graphics, Core::Rectpack2D.
+|`Nexium::Fundamental::TextureAtlas` |Atlas packing and GPU texture |Foundation, RawBackend, Core::Rectpack2D.
+|`Nexium::Subsystem::Graphics` |ShaderManager, ShaderProgram, metadata, graphics data, debug lines |Foundation, Platform Graphics, Fundamental ResourceManagement.
+|`Nexium::Subsystem::AssetsManager` |Filesystem index and loading, TextureAsset |Subsystem Graphics, Fundamental Assets and TextureAtlas, RawBackend.
+|`Nexium::Subsystem::Input` |InputAction and keyboard/mouse managers |Foundation, Platform Input.
+|`Nexium::Subsystem::AssimpImporter` |Optional mesh importer |Subsystem Graphics.
+|`Nexium::World::Animation` |BaseAnimation, FrameByFrameAnimation |Fundamental ECS.
+|`Nexium::World` |World/framework, Scene, actors, cameras, rectangles, animator, skybox types |World Animation, Fundamental Assets/ECS, Subsystem AssetsManager/Graphics/Input, both Platform targets, RawBackend.
+|`Nexium::Runtime` |Runtime, FPSCounter |World through WHOLE_ARCHIVE.
+|`Nexium::Editor` |EditorIntegration, GameEditor, windows, tools |Runtime, Core::ImGui.
+|===
+
+Platform Input privately links Platform Graphics.
+RawBackend privately links Core::Stb.
+Subsystem Graphics privately links Utils::Utils.
+AssimpImporter privately links assimp::assimp; World additionally exposes Assimp and the importer when 3D is enabled.
+AssetsManager privately links comdlg32 on Windows.
+
+`Nexium::Fundamental` is an INTERFACE aggregate of its five focused targets.
+`Nexium::NxFundamental`, `Nexium::NxWorld`, and `Nexium::NxRuntime` preserve old aliases.
+`Nexium::World::Scene` aliases World; it is not a separate scene library.
+
+The application chain is `TemplateGame -> Editor -> Runtime -> World`.
+TemplateGame retains Editor with WHOLE_ARCHIVE.
+WHOLE_ARCHIVE retains otherwise unreferenced component registrations in these static libraries.
+
+== Runtime ownership
+
+[cols="2,5",options="header"]
+|===
+|Owner or observer |Current relationship
+|`gGameInstance` |Application-owned unique pointer to GameInstance.
+|GameInstance |Owns gameScene, world, assets, userInterface as members; references the shared ShaderManager and Platform Window.
+|Runtime |Borrows GameInstance by reference.
+|EditorIntegration |Borrows Runtime; owns GameEditor, ObjectSelectorManager, ObjectPickerAggregator.
+|GameInstance integration pointer |Borrows ApplicationIntegration; attachment/detachment is explicit.
+|World |Owns lighting/time and game/player/level state; observes currentCamera. Scene is its sibling, not its child.
+|Scene |Owns root SceneObjects through intrusive pointers, plus grid/skybox state.
+|BaseComponent |Owns children through intrusive pointers; observes its parent.
+|ObjectSelectorManager |Holds strong pointers to selected components, keyed by addresses.
+|===
+
+Source anchors: `Framework/{GameInstance,World}.h`, `Scene/Scene.h` in NxWorld,
+`NxFundamental/ECS/BaseComponent.h`, and `Editor/EditorIntegration.h`.
+
+== Boundary limits
+
+`ApplicationIntegration` lets Runtime and World call editor hooks without including Editor implementation headers.
+
+RawBackend's `IDrawable` still names higher-layer camera/actor/mesh types through forward declarations.
+`Scene::directDraw` chooses the camera and editor grid through global GameInstance/World access.
+
+Public header sets support compilation checks, but the shared `sources/` include root also exposes private headers.
+“Subsystem” currently means a service library, not automatic lifetime management.
+
+See xref:build:cmake-structure.adoc[CMake infrastructure] and xref:ue5-alignment.adoc[recommended boundaries].

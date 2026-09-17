@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Module graph :: Nexium Engine</title>
-    <link rel="prev" href="index.html">
+    <title>Module Graph :: Nexium Engine</title>
+    <link rel="prev" href="ue5-alignment.html">
     <link rel="next" href="lifecycle.html">
     <meta name="generator" content="Antora 3.1.15">
     <link rel="stylesheet" href="../../../_/css/site.css">
@@ -78,6 +78,12 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="index.html">Overview</a>
   </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="architecture-review.html">Architecture and Migration Review</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ue5-alignment.html">UE5 Patterns for Nexium</a>
+  </li>
   <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="module-graph.html">Module Graph</a>
   </li>
@@ -115,44 +121,14 @@
     <a class="nav-link" href="../rendering/pipeline.html">Rendering Pipeline</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../rendering/renderer-architecture.html">Renderer Architecture</a>
+    <a class="nav-link" href="../rendering/renderer-architecture.html">Rendering Responsibilities</a>
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
     <span class="nav-text">Materials</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../rendering/materials/overview.html">Material System</a>
-  </li>
-  <li class="nav-item" data-depth="3">
     <a class="nav-link" href="../rendering/materials/shader-system.html">Shader System</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../rendering/materials/material-instances.html">Material Instances</a>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Meshes</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../rendering/meshes/mesh-format.html">Mesh Format</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../rendering/meshes/mesh-loader.html">Mesh Loader</a>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Textures</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../rendering/textures/texture-loader.html">Texture Loader</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../rendering/textures/compression.html">Texture Compression</a>
   </li>
 </ul>
   </li>
@@ -172,10 +148,10 @@
     <a class="nav-link" href="../gameplay/components.html">Components</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../gameplay/scripting.html">Scripting</a>
+    <a class="nav-link" href="../gameplay/scripting.html">Gameplay Hooks</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../gameplay/prefabs.html">Prefabs</a>
+    <a class="nav-link" href="../gameplay/prefabs.html">Blueprint Templates</a>
   </li>
 </ul>
   </li>
@@ -187,16 +163,7 @@
     <a class="nav-link" href="../build/index.html">Overview</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../build/linux-build.html">Linux Build</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../build/windows-build.html">Windows Build</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../build/cmake-structure.html">CMake Structure</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../build/toolchain.html">Toolchain Setup</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../build/ci-cd.html">CI/CD</a>
@@ -204,82 +171,7 @@
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Tutorials</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/index.html">Overview</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/create-first-scene.html">Create Your First Scene</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/loading-models.html">Loading Models</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/adding-materials.html">Adding Materials</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/building-for-release.html">Building for Release</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../tutorials/debugging.html">Debugging</a>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Reference</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../reference/index.html">Overview</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../reference/cli.html">Command-Line Tools</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../reference/configuration.html">Configuration</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Public API</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../reference/public-api/core-api.html">Core API</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../reference/public-api/math-api.html">Math API</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../reference/public-api/render-api.html">Render API</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../reference/public-api/ecs-api.html">ECS API</a>
-  </li>
-</ul>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">About</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/index.html">Overview</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/roadmap.html">Roadmap</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/contributing.html">Contributing</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/license.html">License</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/history.html">History</a>
-  </li>
-</ul>
+    <a class="nav-link" href="../about/index.html">About</a>
   </li>
 </ul>
   </li>
@@ -323,42 +215,284 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Module graph</h1>
+<h1 class="page">Module Graph</h1>
+<div id="preamble">
+<div class="sectionbody">
 <div class="paragraph">
-<p>The main modules you can observe in the image below. For now, it&#8217;s quite easy. Due to a lot of work over the editor, not the core system.</p>
+<p>A source directory can produce several libraries. The tables follow <code>sources/*/CMakeLists.txt</code>.
+Dependencies may skip layers; numbering describes their intended direction.</p>
 </div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/top-level-modules.drawio.png" alt="Main modules" width="100%">
 </div>
+</div>
+<div class="sect1">
+<h2 id="_source_layers"><a class="anchor" href="#_source_layers"></a>Source layers</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 12.5%;">
+<col style="width: 25%;">
+<col style="width: 62.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Layer</th>
+<th class="tableblock halign-left valign-top">Directory</th>
+<th class="tableblock halign-left valign-top">Responsibility</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Editor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ImGui windows, property adapters, selection, picking, asset tools, viewport integration.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">7</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">NxRuntime</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Frame loop, timing, startup/save orchestration.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">6</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">NxWorld</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GameInstance, World state, Scene, actors, cameras, rectangles, animation, optional meshes.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">NxSubsystems</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">AssetsManager, shaders/graphics data, input actions, optional Assimp importer.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">NxFundamental</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Component trees, transforms, tags, serialization, asset abstractions, atlases.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">RawBackend</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CPU images, OpenGL textures/framebuffers, drawable interface.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Platform</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Window, keyboard/mouse, OpenGL access.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Foundation</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Configuration, logging, data/outline interfaces, Utils core access.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_public_build_targets"><a class="anchor" href="#_public_build_targets"></a>Public build targets</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>All concrete engine libraries below are static.
+Private module logging targets are omitted.
+Foundation&#8217;s separate private logging target is disabled.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 27.2727%;">
+<col style="width: 36.3636%;">
+<col style="width: 36.3637%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Public alias</th>
+<th class="tableblock halign-left valign-top">Contents</th>
+<th class="tableblock halign-left valign-top">Direct public dependencies</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Foundation</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Configs, BaseLog, IDataIO, IOutliner</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Utils::Core, spdlog::spdlog, JustReflectMe::Adapter.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Platform::Graphics</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OpenGL access</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Core::Glad.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Platform::Input</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Window, Keyboard, Mouse</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Foundation, glfw, Utils::Core, JustReflectMe::Adapter, glm.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::RawBackend</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Image, Texture, RenderTargetToTexture, IDrawable</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Foundation, Platform Graphics.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Fundamental::Base</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ITagHolder, Transformable</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Foundation.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Fundamental::ResourceManagement</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CacheSystem, DataStream, atomic replacement, JSON adapter</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Foundation.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Fundamental::ECS</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">AbstractComponent, BaseComponent, GlobalComponentFactory</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Fundamental Base and ResourceManagement.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Fundamental::Assets</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BaseAsset, AssetRef, ECSAsset, Factory</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Fundamental ECS and ResourceManagement, Platform Graphics, Core::Rectpack2D.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Fundamental::TextureAtlas</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Atlas packing and GPU texture</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Foundation, RawBackend, Core::Rectpack2D.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Subsystem::Graphics</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ShaderManager, ShaderProgram, metadata, graphics data, debug lines</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Foundation, Platform Graphics, Fundamental ResourceManagement.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Subsystem::AssetsManager</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Filesystem index and loading, TextureAsset</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Subsystem Graphics, Fundamental Assets and TextureAtlas, RawBackend.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Subsystem::Input</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">InputAction and keyboard/mouse managers</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Foundation, Platform Input.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Subsystem::AssimpImporter</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Optional mesh importer</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Subsystem Graphics.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::World::Animation</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BaseAnimation, FrameByFrameAnimation</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Fundamental ECS.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::World</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">World/framework, Scene, actors, cameras, rectangles, animator, skybox types</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">World Animation, Fundamental Assets/ECS, Subsystem AssetsManager/Graphics/Input, both Platform targets, RawBackend.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Runtime</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Runtime, FPSCounter</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">World through WHOLE_ARCHIVE.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Editor</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">EditorIntegration, GameEditor, windows, tools</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Runtime, Core::ImGui.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Platform Input privately links Platform Graphics.
+RawBackend privately links Core::Stb.
+Subsystem Graphics privately links Utils::Utils.
+AssimpImporter privately links assimp::assimp; World additionally exposes Assimp and the importer when 3D is enabled.
+AssetsManager privately links comdlg32 on Windows.</p>
 </div>
 <div class="paragraph">
-<p>The biggest part of the main classes &amp; logic stores at the main god-object <code>gGameInstance</code> of the <code>class GameInstance</code>. The <code>extern</code> pointer <code>gGameInstance</code> you can find by the next path: <code>GameplaySystem/Framework/GameInstance.h</code></p>
+<p><code>Nexium::Fundamental</code> is an INTERFACE aggregate of its five focused targets.
+<code>Nexium::NxFundamental</code>, <code>Nexium::NxWorld</code>, and <code>Nexium::NxRuntime</code> preserve old aliases.
+<code>Nexium::World::Scene</code> aliases World; it is not a separate scene library.</p>
 </div>
 <div class="paragraph">
-<p>In general, the main concept of this class(GameInstance) is to store controlling nodes(different managers) and the most common things as: <code>currentScene</code>, <code>currentWorld</code>, <code>currentCamera</code>.</p>
+<p>The application chain is <code>TemplateGame &#8594; Editor &#8594; Runtime &#8594; World</code>.
+TemplateGame retains Editor with WHOLE_ARCHIVE.
+WHOLE_ARCHIVE retains otherwise unreferenced component registrations in these static libraries.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_runtime_ownership"><a class="anchor" href="#_runtime_ownership"></a>Runtime ownership</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 28.5714%;">
+<col style="width: 71.4286%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Owner or observer</th>
+<th class="tableblock halign-left valign-top">Current relationship</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>gGameInstance</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Application-owned unique pointer to GameInstance.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GameInstance</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Owns gameScene, world, assets, userInterface as members; references the shared ShaderManager and Platform Window.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Runtime</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Borrows GameInstance by reference.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">EditorIntegration</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Borrows Runtime; owns GameEditor, ObjectSelectorManager, ObjectPickerAggregator.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GameInstance integration pointer</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Borrows ApplicationIntegration; attachment/detachment is explicit.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">World</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Owns lighting/time and game/player/level state; observes currentCamera. Scene is its sibling, not its child.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Scene</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Owns root SceneObjects through intrusive pointers, plus grid/skybox state.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BaseComponent</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Owns children through intrusive pointers; observes its parent.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ObjectSelectorManager</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Holds strong pointers to selected components, keyed by addresses.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Source anchors: <code>Framework/{GameInstance,World}.h</code>, <code>Scene/Scene.h</code> in NxWorld,
+<code>NxFundamental/ECS/BaseComponent.h</code>, and <code>Editor/EditorIntegration.h</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_boundary_limits"><a class="anchor" href="#_boundary_limits"></a>Boundary limits</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>ApplicationIntegration</code> lets Runtime and World call editor hooks without including Editor implementation headers.</p>
 </div>
 <div class="paragraph">
-<p>Regarding other modules, you can read the next topics:</p>
+<p>RawBackend&#8217;s <code>IDrawable</code> still names higher-layer camera/actor/mesh types through forward declarations.
+<code>Scene::directDraw</code> chooses the camera and editor grid through global GameInstance/World access.</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="ecs-overview.html" class="xref page">Entity Component System (ECS)</a></p>
-</li>
-<li>
-<p><a href="resource-system.html" class="xref page">Resource system</a></p>
-</li>
-<li>
-<p><a href="../rendering/index.html" class="xref page">Rendering</a></p>
-</li>
-<li>
-<p><a href="lifecycle.html" class="xref page">Lifecycle</a></p>
-</li>
-</ul>
+<div class="paragraph">
+<p>Public header sets support compilation checks, but the shared <code>sources/</code> include root also exposes private headers.
+“Subsystem” currently means a service library, not automatic lifetime management.</p>
+</div>
+<div class="paragraph">
+<p>See <a href="../build/cmake-structure.html" class="xref page">CMake infrastructure</a> and <a href="ue5-alignment.html" class="xref page">recommended boundaries</a>.</p>
+</div>
+</div>
 </div>
 <nav class="pagination">
-  <span class="prev"><a href="index.html">Overview</a></span>
+  <span class="prev"><a href="ue5-alignment.html">UE5 Patterns for Nexium</a></span>
   <span class="next"><a href="lifecycle.html">Application Lifecycle</a></span>
 </nav>
 </article>

@@ -1,0 +1,12 @@
+= Blueprint Templates
+
+The editor calls serialized `.nx` component templates “Blueprints.” They provide reusable object data.
+`Scene::addBlueprintObjectToScene()` reconstructs independent component data and records its asset path.
+The template must produce a `SceneObject` to become a scene root.
+
+Changing an instance does not edit its source template. Template refresh does not update existing
+instances; scene reload reconstructs them from the current template and reapplies saved instance values.
+There is no generic property-override/rebase system or visual scripting graph.
+
+See xref:engine_architecture:resource-system.adoc[Assets] for lookup/loading and
+xref:scenes.adoc[Scenes] for exactly what instance data persists.

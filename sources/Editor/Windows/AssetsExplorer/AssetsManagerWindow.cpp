@@ -1,37 +1,27 @@
-/*
- * MIT License
- *
- * Copyright (c) 2018-2027 Valerii Koniushenko
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+// Nexium
+// Copyright 2018-2026 Valerii Koniushenko
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
 
 #include "AssetsManagerWindow.h"
 
 #include "../ModalCreateBlueprint.h"
+#include "Editor/EditorIntegration.h"
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/Spacer.h"
+#include "Editor/IconsFontAwesome.h"
+#include "Editor/Windows/Editors/NxTextureEditor.h"
+#include "Editor/Windows/Editors/TextEditor.h"
+#include "Editor/Windows/ImageViewer.h"
 #include "Editor/Windows/ModalPopUp.h"
-#include "GameplaySystem/Framework/GameInstance.h"
-#include "Misc/Configs.h"
-#include "Misc/IconsFontAwesome.h"
+#include "Editor/Windows/NxECSBasedEditor.h"
+#include "Foundation/Configs.h"
+#include "NxWorld/Framework/GameInstance.h"
 #include "RenamePopUpWindow.h"
 #include "ThumbnailFile.h"
 
@@ -40,7 +30,8 @@
 #include <format>
 #include <fstream>
 
-using NodeType = Core::AssetsManager::NodeType;
+using NodeType = NX::AssetsManager::NodeType;
+using namespace NX;
 
 namespace
 {
@@ -53,13 +44,67 @@ namespace
 
 } // namespace
 
-namespace Core
+namespace NX
 {
     ECS_IMPL(AssetsManagerWindowEWC);
 
     const char* AssetsManagerWindowEWC::getIcon()
     {
         return ICON_FA_FOLDER;
+    }
+
+    void AssetsManagerWindowEWC::TryToOpenFile(const std::filesystem::directory_entry& entry)
+    {
+        if (!entry.is_regular_file())
+        {
+            return;
+        }
+
+        auto* editor = GetEditor();
+        if (!editor)
+        {
+            return;
+        }
+
+        const auto type = AssetsManager::GetNodeType(entry);
+        const auto path = Core::StringAtom::Intern(entry.path().generic_string());
+        if (type == NodeType::Code || type == NodeType::Default)
+        {
+            editor->showWindow<TextEditorEWC>(".*"_atom, path);
+        }
+        else if (type == NodeType::Image)
+        {
+            editor->showWindow<ImageViewerEWC>(".*"_atom, path);
+        }
+        else if (type == NodeType::NxFile)
+        {
+            TryToOpenNxFile(entry);
+        }
+    }
+
+    void AssetsManagerWindowEWC::TryToOpenNxFile(const std::filesystem::directory_entry& entry)
+    {
+        if (AssetsManager::GetNodeType(entry) != NodeType::NxFile)
+        {
+            return;
+        }
+
+        auto* editor = GetEditor();
+        if (!editor)
+        {
+            return;
+        }
+
+        const auto path = Core::StringAtom::Intern(entry.path().generic_string());
+        const auto ext = entry.path().extension().generic_string();
+        if (ext == ECSAsset::fileExtension)
+        {
+            editor->showWindow<NxECSBasedEditorEWC>(".*"_atom, path);
+        }
+        else if (ext == NXTexture::AssetT::fileExtension)
+        {
+            editor->showWindow<NxTextureEditorEWC>(".*"_atom, path);
+        }
     }
 
     void AssetsManagerWindowEWC::tryOpenParentDir()
@@ -87,7 +132,7 @@ namespace Core
         stream.field("openedPath", _openedPath);
         if (stream.getMode() == DataStream::Mode::Input && !std::filesystem::exists(_openedPath))
         {
-            _openedPath = Config::Path::projectAbsPath;
+            _openedPath = Foundation::Config::Path::projectAbsPath;
         }
     }*/
 
@@ -133,7 +178,7 @@ namespace Core
                                                                      { tryOpenParentDir(); });
         _subscriptionPool << _refreshButton->onClick->subscribeAndGetID([this]() { refresh(); });
         _subscriptionPool << _homeButton->onClick->subscribeAndGetID(
-            [this]() { openPath(Config::Path::assets); });
+            [this]() { openPath(Foundation::Config::Path::assets); });
         _subscriptionPool << _pathInput->onInput->subscribeAndGetID(
             [this](const char* path)
             {
@@ -150,14 +195,15 @@ namespace Core
 
         if (_openedPath.empty())
         {
-            openPath(Config::Path::assets);
+            openPath(Foundation::Config::Path::assets);
         }
         else
         {
             openPath(_openedPath);
         }
 
-        refresh();
+        // passed 'true' to ignore scan of already scanned filesystem on the Engine start.
+        refresh(true);
     }
 
     void AssetsManagerWindowEWC::onDraw()
@@ -907,12 +953,16 @@ namespace Core
         }
     }
 
-    void AssetsManagerWindowEWC::refresh()
+    void AssetsManagerWindowEWC::refresh(bool skipRefreshFSScan /* = false */)
     {
         _rootCacheNode = {};
 
-        _rootCacheNode.path = Config::Path::assets;
+        _rootCacheNode.path = Foundation::Config::Path::assets;
         rescanPhysicalDrive(_rootCacheNode);
-        GetAssetsManager()->refreshFilesSystem();
+
+        if (!skipRefreshFSScan)
+        {
+            GetAssetsManager()->refreshFilesSystem();
+        }
     }
-} // namespace Core
+} // namespace NX

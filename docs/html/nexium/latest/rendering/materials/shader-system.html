@@ -3,9 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Untitled :: Nexium Engine</title>
-    <link rel="prev" href="overview.html">
-    <link rel="next" href="material-instances.html">
+    <title>Shader System :: Nexium Engine</title>
+    <link rel="prev" href="../renderer-architecture.html">
+    <link rel="next" href="../../gameplay/index.html">
     <meta name="generator" content="Antora 3.1.15">
     <link rel="stylesheet" href="../../../../_/css/site.css">
   </head>
@@ -79,6 +79,12 @@
     <a class="nav-link" href="../../engine_architecture/index.html">Overview</a>
   </li>
   <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../engine_architecture/architecture-review.html">Architecture and Migration Review</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../engine_architecture/ue5-alignment.html">UE5 Patterns for Nexium</a>
+  </li>
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../../engine_architecture/module-graph.html">Module Graph</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -115,44 +121,14 @@
     <a class="nav-link" href="../pipeline.html">Rendering Pipeline</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../renderer-architecture.html">Renderer Architecture</a>
+    <a class="nav-link" href="../renderer-architecture.html">Rendering Responsibilities</a>
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
     <span class="nav-text">Materials</span>
 <ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="overview.html">Material System</a>
-  </li>
   <li class="nav-item is-current-page" data-depth="3">
     <a class="nav-link" href="shader-system.html">Shader System</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="material-instances.html">Material Instances</a>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Meshes</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../meshes/mesh-format.html">Mesh Format</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../meshes/mesh-loader.html">Mesh Loader</a>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Textures</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../textures/texture-loader.html">Texture Loader</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../textures/compression.html">Texture Compression</a>
   </li>
 </ul>
   </li>
@@ -172,10 +148,10 @@
     <a class="nav-link" href="../../gameplay/components.html">Components</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../gameplay/scripting.html">Scripting</a>
+    <a class="nav-link" href="../../gameplay/scripting.html">Gameplay Hooks</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../gameplay/prefabs.html">Prefabs</a>
+    <a class="nav-link" href="../../gameplay/prefabs.html">Blueprint Templates</a>
   </li>
 </ul>
   </li>
@@ -187,16 +163,7 @@
     <a class="nav-link" href="../../build/index.html">Overview</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../build/linux-build.html">Linux Build</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../build/windows-build.html">Windows Build</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../../build/cmake-structure.html">CMake Structure</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../build/toolchain.html">Toolchain Setup</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../../build/ci-cd.html">CI/CD</a>
@@ -204,82 +171,7 @@
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Tutorials</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../tutorials/index.html">Overview</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../tutorials/create-first-scene.html">Create Your First Scene</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../tutorials/loading-models.html">Loading Models</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../tutorials/adding-materials.html">Adding Materials</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../tutorials/building-for-release.html">Building for Release</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../tutorials/debugging.html">Debugging</a>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Reference</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../reference/index.html">Overview</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../reference/cli.html">Command-Line Tools</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../reference/configuration.html">Configuration</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Public API</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../../reference/public-api/core-api.html">Core API</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../../reference/public-api/math-api.html">Math API</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../../reference/public-api/render-api.html">Render API</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../../reference/public-api/ecs-api.html">ECS API</a>
-  </li>
-</ul>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">About</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../about/index.html">Overview</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../about/roadmap.html">Roadmap</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../about/contributing.html">Contributing</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../about/license.html">License</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../about/history.html">History</a>
-  </li>
-</ul>
+    <a class="nav-link" href="../../about/index.html">About</a>
   </li>
 </ul>
   </li>
@@ -324,10 +216,292 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
+<h1 class="page">Shader System</h1>
+<div class="sect1">
+<h2 id="_what_a_shader_controls"><a class="anchor" href="#_what_a_shader_controls"></a>What a shader controls</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A vertex shader transforms geometry and produces interpolated values such as UV coordinates.
+A fragment shader uses those values to produce a pixel&#8217;s color or discard the fragment.
+Nexium compiles one vertex/fragment pair into a linked OpenGL program.
+Geometry-stage enum values exist, but ShaderManager&#8217;s loader currently discovers only vertex/fragment pairs.</p>
+</div>
+<div class="paragraph">
+<p>For a rectangle, the shader transforms a fixed quad and samples part of an atlas.
+Changing its texture/frame changes uniforms, not the shader source or geometry.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_discovery_compilation_and_ownership"><a class="anchor" href="#_discovery_compilation_and_ownership"></a>Discovery, compilation, and ownership</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_three_cooperating_objects"><a class="anchor" href="#_three_cooperating_objects"></a>Three cooperating objects</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Object</th>
+<th class="tableblock halign-left valign-top">Job and stored state</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ShaderManager</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Find source pairs, assign lookup names, and own a map of ShaderProgramMeta entries plus failed-load names.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ShaderProgramMeta</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Store source paths, own a ShaderProgram, compile/recreate it, and inspect its linked GPU interface.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ShaderProgram</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Hold GL handles, cached uniform/block lookups, and vertex-layout callbacks; bind the program and upload draw parameters.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Shader metadata is queried from OpenGL after linking. It is unrelated to JRM&#8217;s C++ reflection metadata.
+A meta entry is not a material instance: it describes one program&#8217;s interface, not per-object appearance.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_how_files_become_lookup_names"><a class="anchor" href="#_how_files_become_lookup_names"></a>How files become lookup names</h3>
+<div class="paragraph">
+<p>At startup, GameInstance scans <code>Config::Path::shaders</code> (<code>data/assets/shaders</code>).
+The manager recursively pairs files with the same stem; defaults are <code>.vert</code> and <code>.frag</code>.
+It uses the relative path without the extension as the name:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 60%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Source pair</th>
+<th class="tableblock halign-left valign-top">Lookup name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>2d_rect.vert</code> + <code>2d_rect.frag</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>2d_rect</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A pair under <code>effects/glow.vert</code> and <code>effects/glow.frag</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>effects/glow</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The second row illustrates naming; it does not imply a bundled glow shader.
+An incomplete pair is skipped. <code>pushSuitableFileExtension()</code> can extend vertex/fragment suffixes;
+avoid competing files for one stage, since extension search uses an unordered set.</p>
+</div>
+<div class="paragraph">
+<p>For each pair, the meta object reads sources, compiles both stages, links the program,
+queries its interface, and copies uniform lookups into ShaderProgram.
+Compile/link exceptions are logged and the initial load records the failed name in <code>getFailedShaders()</code>.</p>
+</div>
+<div class="paragraph">
+<p><code>getShaderProgram()</code> accepts an interned name and returns a borrowed pointer, or null for an absent entry.
+<code>loadShaders()</code> clears and rebuilds the map, invalidating those pointers; consumers must reacquire them
+and restore layout callbacks after a full reload.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_what_metadata_contains"><a class="anchor" href="#_what_metadata_contains"></a>What metadata contains</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Interface data</th>
+<th class="tableblock halign-left valign-top">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Uniforms</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Active standalone names, GL types, and locations for scalar/vector/matrix/sampler updates.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Inputs and outputs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Active program interface variables with names, types, and locations.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Uniform blocks</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Block name, binding, byte size, and members with types/byte offsets, sorted by offset.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The inspector shows what survived compilation/linking, not every declaration in a source file.
+The ordinary-variable query skips location <code>-1</code>; block members are inspected separately.
+Intermediate varyings between vertex and fragment stages are not a complete source-level interface listing.</p>
+</div>
+<div class="paragraph">
+<p><code>setUniform()</code> looks up the cached location and calls the matching <code>glUniform*</code> function.
+Call <code>use()</code> first, supply the matching value type, and only set an active uniform.
+A missing name triggers debug assertions and can throw from the lookup; it is not silently ignored.</p>
+</div>
+<div class="sect2">
+<h3 id="_uniform_blocks_need_caller_owned_storage"><a class="anchor" href="#_uniform_blocks_need_caller_owned_storage"></a>Uniform blocks need caller-owned storage</h3>
+<div class="paragraph">
+<p>Metadata describes the layout; it does not allocate or pack a uniform buffer.
+<code>setUniformObject()</code> uploads into the currently bound <code>GL_UNIFORM_BUFFER</code> and hardcodes binding point 0.
+Its current block-binding/index handling is limited; do not treat it as a general multi-block interface.
+The caller must provide a compatible buffer and match the shader&#8217;s reported size and member offsets.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_example_the_built_in_rectangle_shader"><a class="anchor" href="#_example_the_built_in_rectangle_shader"></a>Example: the built-in rectangle shader</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_vertex_stage_transforms_and_atlas_uvs"><a class="anchor" href="#_vertex_stage_transforms_and_atlas_uvs"></a>Vertex stage: transforms and atlas UVs</h3>
+<div class="paragraph">
+<p>The source declares position at location 0, matrices <code>uProjAndView</code>/<code>uModel</code>, and
+<code>uUVOffset</code>/<code>uUVSize</code>. Its four-entry <code>corners</code> array matches the quad&#8217;s vertex order:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-glsl hljs" data-lang="glsl">void main()
+{
+    vec2 uvSize = uUVSize;
 
+    ioUV = uUVOffset + corners[gl_VertexID % 4] * uvSize;
+    gl_Position = uProjAndView * uModel * vec4(aPos, 1.0);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The UV calculation depends on those four vertex IDs. Reusing this program with unrelated
+mesh topology requires matching that assumption or changing the shader.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_fragment_stage_sampling_and_transparency"><a class="anchor" href="#_fragment_stage_sampling_and_transparency"></a>Fragment stage: sampling and transparency</h3>
+<div class="paragraph">
+<p><code>uTexture</code> is a sampler, <code>ioUV</code> is the interpolated vertex output, and
+<code>uAlphaBlendingEnabled</code> controls discard/alpha behavior:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-glsl hljs" data-lang="glsl">void main()
+{
+    vec4 texColor = texture(uTexture, ioUV);
+
+    if (uAlphaBlendingEnabled &amp;&amp; texColor.a &lt; 0.1)
+    {
+        discard;
+    }
+    if (!uAlphaBlendingEnabled)
+    {
+        texColor.a = 1.0;
+    }
+
+    FragColor = texColor;
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_cpu_binding_and_vertex_layout"><a class="anchor" href="#_cpu_binding_and_vertex_layout"></a>CPU binding and vertex layout</h3>
+<div class="paragraph">
+<p>The draw code binds the program, selects sampler unit 0, uploads the camera matrix, and binds the atlas:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">shader-&gt;use();
+shader-&gt;setUniform("uTexture"_atom, 0);
+shader-&gt;setUniform("uProjAndView"_atom, camera.getMatrix());
+
+atlas.bind();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Sampler value 0 selects a texture unit, not a texture object ID.
+The draw path must bind the intended texture on that unit.
+Per-object model and atlas/frame uniforms follow; see <a href="../pipeline.html" class="xref page">the complete draw sequence</a>.</p>
+</div>
+<div class="paragraph">
+<p>Vertex layout is configured separately in <code>GameInstance::initializeShaders()</code>.
+The <code>2d_rect</code> callback sets position attribute 0 for three floats; the draw buffers must match it.
+<code>ShaderProgram</code> stores callbacks for attribute setup and buffer-change events; reflected input names alone
+do not configure a VAO. If a new shader changes locations, stride, or buffer arrangement, update that setup too.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_recompiling_in_the_editor"><a class="anchor" href="#_recompiling_in_the_editor"></a>Recompiling in the editor</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The shader window calls <code>ShaderProgramMeta::safeRecreateFromSources()</code> for the selected entry.
+It rereads the stored paths and catches standard exceptions, returning false on compilation failure.
+It does not watch files automatically or roll back to the last good GPU program: recreation clears the old program first.</p>
+</div>
+<div class="paragraph">
+<p>The meta/program C++ object remains in place, but its GPU handle and interface can change.
+Uniform/block lookup maps are populated without clearing removed names, so changing an interface can leave stale entries.
+After interface/layout changes, a restart gives consumers a fresh program and startup configuration.
+The manager&#8217;s failed-load set describes the full scan; individual editor recompiles do not refresh that set.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="shader-troubleshooting"><a class="anchor" href="#shader-troubleshooting"></a>Diagnose failures</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Symptom</th>
+<th class="tableblock halign-left valign-top">Check</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Null program pointer</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Relative name, both source files, and initial compile/link logs.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Uniform assertion or lookup error</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Spelling, active metadata, uploaded type, and whether <code>use()</code> bound the correct program.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Distorted/invisible geometry</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Attribute locations, buffer stride, camera/model matrices, and quad vertex-ID assumptions.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Wrong image or atlas region</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sampler unit, bound texture, and the combined atlas/frame UVs.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Draw breaks after recompile</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Compilation result, changed interface/layout, and stale cached names; the old program is not preserved.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <nav class="pagination">
-  <span class="prev"><a href="overview.html">Material System</a></span>
-  <span class="next"><a href="material-instances.html">Material Instances</a></span>
+  <span class="prev"><a href="../renderer-architecture.html">Rendering Responsibilities</a></span>
+  <span class="next"><a href="../../gameplay/index.html">Overview</a></span>
 </nav>
 </article>
   </div>

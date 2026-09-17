@@ -1,3 +1,4 @@
+
 set(_saved_c_flags "${CMAKE_C_FLAGS}")
 set(_saved_cxx_flags "${CMAKE_CXX_FLAGS}")
 
@@ -16,11 +17,6 @@ add_subdirectory(ImGui)
 add_subdirectory(Rectpack2D)
 add_subdirectory(Stb)
 
-# ── nlohmann/json ─────────────────────────────────────────────────────────────
-set(JSON_BuildTests       OFF CACHE BOOL "" FORCE)
-set(JSON_MultipleHeaders  OFF CACHE BOOL "" FORCE)
-add_subdirectory(nlohmann_json)
-
 # ── GLFW ──────────────────────────────────────────────────────────────────────
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS    OFF CACHE BOOL "" FORCE)
@@ -29,17 +25,20 @@ set(GLFW_INSTALL        OFF CACHE BOOL "" FORCE)
 add_subdirectory(glfw)
 
 # ── spdlog ────────────────────────────────────────────────────────────────────
-set(SPDLOG_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(SPDLOG_BUILD_EXAMPLE  OFF CACHE BOOL "" FORCE)
+set(SPDLOG_BUILD_EXAMPLE_HO  OFF CACHE BOOL "" FORCE)
 set(SPDLOG_BUILD_TESTS    OFF CACHE BOOL "" FORCE)
 set(SPDLOG_BUILD_BENCH    OFF CACHE BOOL "" FORCE)
 add_subdirectory(spdlog)
 
 # ── Assimp ────────────────────────────────────────────────────────────────────
-set(ASSIMP_BUILD_ZLIB         ON  CACHE BOOL "" FORCE)
-set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "" FORCE)
-set(ASSIMP_BUILD_TESTS        OFF CACHE BOOL "" FORCE)
-set(ASSIMP_WARNINGS_AS_ERRORS OFF CACHE BOOL "" FORCE)
-add_subdirectory(assimp)
+if (NEXIUM_ENABLE_3D_MODULE)
+    set(ASSIMP_BUILD_ZLIB         ON  CACHE BOOL "" FORCE)
+    set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "" FORCE)
+    set(ASSIMP_BUILD_TESTS        OFF CACHE BOOL "" FORCE)
+    set(ASSIMP_WARNINGS_AS_ERRORS OFF CACHE BOOL "" FORCE)
+    add_subdirectory(assimp)
+endif()
 
 # ── freetype ──────────────────────────────────────────────────────────────────
 set(SKIP_INSTALL_ALL  ON  CACHE BOOL "" FORCE)
@@ -54,9 +53,22 @@ set(UTILS_DISABLE_TESTS ON CACHE BOOL "" FORCE)
 set(UTILS_DISABLE_BENCHMARKS ON CACHE BOOL "" FORCE)
 add_subdirectory(Utils)
 
+# ── GoogleTest ───────────────────────────────────────────────────────────────
+if(NOT NEXIUM_DISABLE_TESTS)
+    set(BUILD_GMOCK OFF CACHE BOOL "" FORCE)
+    set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
+    add_subdirectory(Utils/dependencies/googletest EXCLUDE_FROM_ALL)
+endif()
+
+# ── Google Benchmark ─────────────────────────────────────────────────────────
+if(NOT NEXIUM_DISABLE_BENCHMARKS)
+    set(BENCHMARK_ENABLE_GTEST_TESTS OFF CACHE BOOL "" FORCE)
+    set(BENCHMARK_ENABLE_INSTALL OFF CACHE BOOL "" FORCE)
+    add_subdirectory(Utils/dependencies/benchmark EXCLUDE_FROM_ALL)
+endif()
+
 # ── JustReflectMe ─────────────────────────────────────────────────────────────
-set(JRM_DISABLE_TESTS ON)
-add_subdirectory(JustReflectMe)
+include("${PROJECT_SOURCE_DIR}/cmake/JustReflectMe.cmake")
 
 set(CMAKE_C_FLAGS "${_saved_c_flags}")
 set(CMAKE_CXX_FLAGS "${_saved_cxx_flags}")

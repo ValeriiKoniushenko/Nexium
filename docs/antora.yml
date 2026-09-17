@@ -1,0 +1,5 @@
+name: Nexium
+title: Nexium
+version: '0.3.0'
+nav:
+  - modules/ROOT/nav.adoc

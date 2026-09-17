@@ -1,0 +1,63 @@
+[[engine-architecture]]
+= Architecture and Migration Review
+:page-aliases: draft--new-architecture.adoc
+
+This assessment separates implemented boundaries from proposed work.
+The current executable combines the example game and 2D editor; 3D is optional.
+
+== Layer map
+
+The xref:module-graph.adoc[source layers and target map] describe the implemented eight-layer structure.
+Keep it.
+Focused Fundamental/Subsystem libraries and Runtime's interface-based editor integration are useful boundaries.
+New folders and framework names alone do not complete the migration.
+
+== Build modules
+
+CMake now centralizes target settings, declares most source lists explicitly,
+and compiles JRM separately in Release.
+The adapter uses the engine toolchain.
+Public-header verification and executable layer consumers make interfaces reviewable.
+
+See xref:build:cmake-structure.adoc[CMake infrastructure] for real options and checks.
+Tests and benchmarks are disabled by default. CI enables tests across GCC/Clang Debug
+and Release builds, with a separate Clang Debug 3D build; see xref:build:ci-cd.adoc[CI coverage].
+
+== Object model and ownership
+
+GameInstance owns Scene and World as siblings, alongside assets and UI.
+Runtime borrows GameInstance; EditorIntegration borrows Runtime and owns editor tools.
+World carries time, lighting, framework state, and an observed camera.
+Scene owns root component trees and handles persistence and drawing.
+
+The model is suitable for a small authoring engine.
+World does not yet provide the ownership/lifetime boundary implied by its UE-style name.
+Most new managers and GameInstanceSubsystem have logging scaffolding without operational contracts.
+
+== Reflection and persistence
+
+Keep JRM and the existing reflected component model.
+Component macros perform self-registration through static initializers.
+The serialized “Blueprint” assets are component templates.
+
+Keep scene versioning, reconstruction before root replacement, atomic saves,
+and failed-load autosave protection.
+Define generic instance overrides, asset moves/references, stable object identity,
+and caller-visible save errors before relying on the editor for larger authored games.
+
+== Migration boundaries
+
+Prioritize these behaviors within the existing modules:
+
+. Decouple gameplay ticking from camera presence; define simulation state and time.
+. Give world/scene replacement explicit camera, selection, and subscription invalidation.
+. Introduce editor commands, undo/redo, dirty documents, and accurate save results.
+. Create a disposable Play-session copy from authored state and destroy it on Stop.
+. Add an asset-reference/move policy and portable content identifiers.
+. Extend executable interface checks and CI to the World/Runtime/editor boundary.
+
+A project-content context should move game-specific atlas setup into game-example.
+Keep the editor-enabled executable while building these contracts.
+Game-only packaging is not implemented.
+
+xref:ue5-alignment.adoc[UE5 alignment] explains the proposed lifetimes and acceptance criteria.
