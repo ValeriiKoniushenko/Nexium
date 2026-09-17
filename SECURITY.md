@@ -6,7 +6,6 @@ We take the security of this project seriously.
 If you discover a security vulnerability, please report it responsibly by contacting:
 
 - e-mail: <a href="mailto:valeriikoniushenko@gmail.com">valeriikoniushenko@gmail.com</a>
-- telegram: [@valeriikoniushenko](https://t.me/valeriikoniushenko)
 
 When reporting, please include (as much as possible):
 - The affected component(s)

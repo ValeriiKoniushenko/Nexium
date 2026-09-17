@@ -25,7 +25,7 @@ jobs:
       - name: Init submodules (parallel)
         run: |
           git submodule sync --recursive
-          JOBS=$(( $(nproc) / 4 ))
+          JOBS=$(( $(nproc) / 5 ))
           JOBS=$(( JOBS < 1 ? 1 : JOBS ))
           git submodule update --init --recursive --depth 1 --jobs "$JOBS"
 
@@ -51,7 +51,9 @@ jobs:
             -DNEXIUM_ENABLE_LAYER_CHECKS=ON
 
       - name: Build
-        run: cmake --build build --parallel
+        run: |
+          JOBS=$(( $(nproc) / 5 ))
+          cmake --build build --parallel "${JOBS:-1}"
 
       - name: Unit tests
         run: timeout 5m build/bin/Nexium_Tests
