@@ -290,9 +290,13 @@ options in <a href="build/cmake-structure.html" class="xref page">CMake Infrastr
 <h2 id="_platform_status"><a class="anchor" href="#_platform_status"></a>Platform status</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The Gitea workflow <code>.gitea/workflows/code-quality.yml</code> runs Linux Clang Debug with Ninja
-in <code>cpp-ci:latest</code> on pushes. It builds the default targets; it does not run unit tests,
-graphics smoke checks, GCC/Release builds, or Windows jobs. Tests, benchmarks, and 3D remain disabled.</p>
+<p>The Gitea workflow <code>.gitea/workflows/code-quality.yml</code> configures five Linux builds on
+pushes: GCC and Clang in Debug/Release with 3D off, plus Clang Debug with 3D on.
+Each builds with Ninja in <code>cpp-ci:latest</code>, runs unit tests, and checks public headers
+and layer consumers. Debug jobs add Valgrind checks; Release jobs build and smoke-run
+the ECS benchmarks. See <a href="build/ci-cd.html" class="xref page">CI coverage</a> for the exact split.
+These are configured checks; results depend on the latest workflow run. Compiler
+versions come from the container image, and no Windows job is configured.</p>
 </div>
 <div class="paragraph">
 <p>Windows support still needs validation: the application resource path is stale.

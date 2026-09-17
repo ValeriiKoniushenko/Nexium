@@ -20,7 +20,8 @@ The adapter uses the engine toolchain.
 Public-header verification and executable layer consumers make interfaces reviewable.
 
 See xref:build:cmake-structure.adoc[CMake infrastructure] for real options and checks.
-Tests and benchmarks are disabled by default; the current CI only builds Clang Debug on Linux.
+Tests and benchmarks are disabled by default. CI enables tests across GCC/Clang Debug
+and Release builds, with a separate Clang Debug 3D build; see xref:build:ci-cd.adoc[CI coverage].
 
 == Object model and ownership
 

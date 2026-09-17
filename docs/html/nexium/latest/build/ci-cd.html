@@ -216,34 +216,92 @@
 </aside>
 <article class="doc">
 <h1 class="page">Continuous Integration</h1>
+<div class="sect1">
+<h2 id="_build_and_test_coverage"><a class="anchor" href="#_build_and_test_coverage"></a>Build and test coverage</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p><code>.gitea/workflows/code-quality.yml</code> currently runs one Linux Clang Debug build on pushes,
-inside <code>cpp-ci:latest</code>.</p>
+<p><code>.gitea/workflows/code-quality.yml</code> runs on pushes using the <code>linux</code> runner and
+<code>cpp-ci:latest</code>. Each matrix entry checks out pinned recursive submodules and configures
+its own Ninja build with tests, public-header verification, and layer checks enabled.</p>
 </div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Check out the repository with a shallow clone.</p>
-</li>
-<li>
-<p>Synchronize submodules and initialize their pinned revisions recursively, using parallel shallow fetches.</p>
-</li>
-<li>
-<p>Configure Ninja with <code>CC=clang</code>, <code>CXX=clang++</code>, and <code>CMAKE_BUILD_TYPE=Debug</code>.</p>
-</li>
-<li>
-<p>Build all enabled targets in parallel.</p>
-</li>
-</ol>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 50.0002%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Compiler</th>
+<th class="tableblock halign-left valign-top">Configuration</th>
+<th class="tableblock halign-left valign-top">3D</th>
+<th class="tableblock halign-left valign-top">Additional checks</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Clang</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Debug</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Off</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Headless game under Valgrind</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Clang</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Debug</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">On</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Headless game under Valgrind</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GCC</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Debug</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Off</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Full unit suite under Valgrind</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Clang</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Release</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Off</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ECS benchmark smoke run</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GCC</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Release</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Off</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ECS benchmark smoke run</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Every entry builds the application, runs <code>Nexium_Tests</code> directly, and builds
+<code>all_verify_interface_header_sets</code> and <code>Nexium_CheckLayers</code>. The latter runs layer
+consumers and generated-header checks. CTest is not configured for this project.
+Release builds enable benchmarks and run all registered cases with a short minimum
+time; these runs check execution, not performance regressions.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_failures_and_runner_requirements"><a class="anchor" href="#_failures_and_runner_requirements"></a>Failures and runner requirements</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Matrix failures do not cancel the other configurations; at most two jobs run together.
+Unit tests have a five-minute limit, unit Valgrind ten minutes, and benchmark runs five
+minutes. The game helper runs under Xvfb/Valgrind for five seconds, requires a clean
+Valgrind summary, and has an outer two-minute limit.</p>
 </div>
 <div class="paragraph">
-<p>Root defaults disable tests, benchmarks, and 3D. The workflow does not run GCC, Release,
-Windows, formatting, clang-tidy, unit tests, Valgrind, header checks, or layer checks.
-Compiler versions are not pinned by the workflow&#8217;s container tag.</p>
+<p>The container must provide GCC, Clang, CMake 3.30+, Ninja, Python 3, Valgrind, Xvfb,
+and the engine&#8217;s Linux graphics dependencies. <code>cpp-ci:latest</code> does not pin compiler
+versions; configuration prints the selected compiler version. Memory-check helpers
+use <code>--no-gitea</code>, so failures appear in job logs without posting reviews.</p>
 </div>
 <div class="paragraph">
-<p>Local check helpers remain under <code>.gitea/</code>; see <a href="cmake-structure.html" class="xref page">CMake infrastructure</a>
-for the separate verification targets. Their availability does not mean CI runs them.</p>
+<p>The matrix describes configured coverage, not a passing-run guarantee. Windows,
+formatting, clang-tidy, and sanitizer jobs are not configured. See
+<a href="cmake-structure.html" class="xref page">CMake infrastructure</a> for local targets and limitations.</p>
+</div>
+</div>
 </div>
 <nav class="pagination">
   <span class="prev"><a href="cmake-structure.html">CMake Structure</a></span>

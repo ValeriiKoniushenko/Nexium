@@ -1,16 +1,39 @@
 = Continuous Integration
 
-`.gitea/workflows/code-quality.yml` currently runs one Linux Clang Debug build on pushes,
-inside `cpp-ci:latest`.
+== Build and test coverage
 
-. Check out the repository with a shallow clone.
-. Synchronize submodules and initialize their pinned revisions recursively, using parallel shallow fetches.
-. Configure Ninja with `CC=clang`, `CXX=clang++`, and `CMAKE_BUILD_TYPE=Debug`.
-. Build all enabled targets in parallel.
+`.gitea/workflows/code-quality.yml` runs on pushes using the `linux` runner and
+`cpp-ci:latest`. Each matrix entry checks out pinned recursive submodules and configures
+its own Ninja build with tests, public-header verification, and layer checks enabled.
 
-Root defaults disable tests, benchmarks, and 3D. The workflow does not run GCC, Release,
-Windows, formatting, clang-tidy, unit tests, Valgrind, header checks, or layer checks.
-Compiler versions are not pinned by the workflow's container tag.
+[cols="1,1,1,3",options="header"]
+|===
+|Compiler |Configuration |3D |Additional checks
+|Clang |Debug |Off |Headless game under Valgrind
+|Clang |Debug |On |Headless game under Valgrind
+|GCC |Debug |Off |Full unit suite under Valgrind
+|Clang |Release |Off |ECS benchmark smoke run
+|GCC |Release |Off |ECS benchmark smoke run
+|===
 
-Local check helpers remain under `.gitea/`; see xref:cmake-structure.adoc[CMake infrastructure]
-for the separate verification targets. Their availability does not mean CI runs them.
+Every entry builds the application, runs `Nexium_Tests` directly, and builds
+`all_verify_interface_header_sets` and `Nexium_CheckLayers`. The latter runs layer
+consumers and generated-header checks. CTest is not configured for this project.
+Release builds enable benchmarks and run all registered cases with a short minimum
+time; these runs check execution, not performance regressions.
+
+== Failures and runner requirements
+
+Matrix failures do not cancel the other configurations; at most two jobs run together.
+Unit tests have a five-minute limit, unit Valgrind ten minutes, and benchmark runs five
+minutes. The game helper runs under Xvfb/Valgrind for five seconds, requires a clean
+Valgrind summary, and has an outer two-minute limit.
+
+The container must provide GCC, Clang, CMake 3.30+, Ninja, Python 3, Valgrind, Xvfb,
+and the engine's Linux graphics dependencies. `cpp-ci:latest` does not pin compiler
+versions; configuration prints the selected compiler version. Memory-check helpers
+use `--no-gitea`, so failures appear in job logs without posting reviews.
+
+The matrix describes configured coverage, not a passing-run guarantee. Windows,
+formatting, clang-tidy, and sanitizer jobs are not configured. See
+xref:cmake-structure.adoc[CMake infrastructure] for local targets and limitations.

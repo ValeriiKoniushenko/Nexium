@@ -1,10 +1,23 @@
-name: Clang Debug
+name: Code Quality
 on: push
+
 jobs:
   build:
+    name: ${{ matrix.compiler }} ${{ matrix.build_type }} (3D=${{ matrix.enable_3d }})
     runs-on: linux
     container:
       image: cpp-ci:latest
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        compiler: [clang, gcc]
+        build_type: [Debug, Release]
+        enable_3d: ['OFF']
+        include:
+          - compiler: clang
+            build_type: Debug
+            enable_3d: 'ON'
     steps:
       - uses: actions/checkout@v3
         with:
@@ -16,9 +29,47 @@ jobs:
           git submodule sync --recursive
           JOBS=$(( $(nproc) / 4 ))
           JOBS=$(( JOBS < 1 ? 1 : JOBS ))
-          echo "Using $JOBS submodule jobs"
           git submodule update --init --recursive --depth 1 --jobs "$JOBS"
 
-      - run: |
-          CC=clang CXX=clang++ cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug
-          cmake --build build --parallel
+      - name: Configure
+        env:
+          COMPILER: ${{ matrix.compiler }}
+          BUILD_TYPE: ${{ matrix.build_type }}
+          ENABLE_3D: ${{ matrix.enable_3d }}
+        run: |
+          case "$COMPILER" in
+            clang) export CC=clang CXX=clang++ ;;
+            gcc) export CC=gcc CXX=g++ ;;
+            *) exit 1 ;;
+          esac
+          "$CXX" --version
+          BENCHMARKS_DISABLED=ON
+          if [ "$BUILD_TYPE" = Release ]; then BENCHMARKS_DISABLED=OFF; fi
+          cmake -S . -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE="$BUILD_TYPE" \
+            -DNEXIUM_DISABLE_TESTS=OFF \
+            -DNEXIUM_DISABLE_BENCHMARKS="$BENCHMARKS_DISABLED" \
+            -DNEXIUM_ENABLE_3D_MODULE="$ENABLE_3D" \
+            -DNEXIUM_VERIFY_INTERFACE_HEADER_SETS=ON \
+            -DNEXIUM_ENABLE_LAYER_CHECKS=ON
+
+      - name: Build
+        run: cmake --build build --parallel
+
+      - name: Unit tests
+        run: timeout 5m build/bin/Nexium_Tests
+
+      - name: Public headers and layer checks
+        run: cmake --build build --parallel --target all_verify_interface_header_sets Nexium_CheckLayers
+
+      - name: Unit tests under Valgrind
+        if: matrix.compiler == 'gcc' && matrix.build_type == 'Debug'
+        run: timeout 10m python3 .gitea/check_valgrind.py --executable build/bin/Nexium_Tests --no-gitea --verbose
+
+      - name: Headless game under Valgrind
+        if: matrix.compiler == 'clang' && matrix.build_type == 'Debug'
+        run: timeout 2m python3 .gitea/run_game_valgrind.py --executable build/bin/TemplateGame --timeout 5 --no-gitea
+
+      - name: ECS benchmark smoke run
+        if: matrix.build_type == 'Release'
+        run: timeout 5m build/bin/Nexium_ECS_Benchmarks --benchmark_min_time=0.01s --benchmark_repetitions=1
