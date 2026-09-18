@@ -17,7 +17,34 @@
                     "ignoreFailures": true
                 }
             ],
-            "stopAtEntry": false
+            "stopAtEntry": false,
+            "preLaunchTask": "Nexium: build Debug",
+            "miDebuggerArgs": "-iex \"set debuginfod enabled off\""
+        },
+        {
+            "name": "TemplateGame (GDB, catch exceptions)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/bin/TemplateGame",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Stop at the throw site, including caught exceptions",
+                    "text": "-interpreter-exec console \"catch throw\"",
+                    "ignoreFailures": false
+                }
+            ],
+            "stopAtEntry": false,
+            "preLaunchTask": "Nexium: build Debug",
+            "miDebuggerArgs": "-iex \"set debuginfod enabled off\""
         }
     ]
 }

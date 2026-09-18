@@ -36,15 +36,10 @@ function(CoreAddCompileOptionsTo Target)
             "$<$<CONFIG:Debug>:-g>"
             "$<$<CONFIG:Debug>:-gdwarf-5>"
             "$<$<CONFIG:Debug>:-O0>"
-            "$<$<CONFIG:Debug>:-gsplit-dwarf>"
             "$<$<CONFIG:Debug>:-fno-omit-frame-pointer>"
+            "$<$<CONFIG:Debug>:-fno-optimize-sibling-calls>"
 
-            "$<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:Clang>>:-fdebug-info-for-profiling>"
-
-            "$<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:GNU>>:-fno-inline-small-functions>"
-            "$<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:GNU>>:-fno-inline-functions-called-once>"
-            "$<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:GNU>>:-fno-default-inline>"
-            "$<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:GNU>>:-fno-inline-atomics>"
+            "$<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:Clang>>:-fstandalone-debug>"
 
             # Release config
             "$<$<CONFIG:Release>:-O3>"
