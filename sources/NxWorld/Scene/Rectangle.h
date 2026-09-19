@@ -59,7 +59,8 @@ namespace NX::SceneObj
         [[nodiscard]] std::optional<Core::FRect> getGlobalTextureRect() const;
 
     protected:
-        [[nodiscard]] std::optional<Core::FRect> toLocalTextureRect(std::optional<Core::FRect> bounds) const;
+        [[nodiscard]] std::optional<Core::FRect> toLocalTextureRect(
+            std::optional<Core::FRect> bounds) const;
         void tryDrawOutline(BaseCamera& camera);
         void onDraw(BaseCamera& camera) override;
 

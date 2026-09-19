@@ -3,21 +3,6 @@
         "_atlasName": "default",
         "_children": [
             {
-                "_bindings": [
-                    {
-                        "action": "Jump",
-                        "requiredKeys": [],
-                        "trigger": "OnPress",
-                        "triggerKey": "Space"
-                    }
-                ],
-                "_children": null,
-                "_isEnabled": true,
-                "_name": "Core-InputController",
-                "_noTick": false,
-                "_type": "Core::InputController"
-            },
-            {
                 "_animations": {
                     "Santa_run": {
                         "_atlasName": "santa_walk",
@@ -191,7 +176,7 @@
                         "_name": "Santa_run",
                         "_noTick": false,
                         "_textureName": "Walk _1.png",
-                        "_type": "Core::Animation::FrameByFrameAnimation"
+                        "_type": "NX::Animation::FrameByFrameAnimation"
                     }
                 },
                 "_children": null,
@@ -199,7 +184,7 @@
                 "_isEnabled": true,
                 "_name": "Core-Animation-FrameByFrameAnimator",
                 "_noTick": false,
-                "_type": "Core::Animation::FrameByFrameAnimator"
+                "_type": "NX::Animation::FrameByFrameAnimator"
             }
         ],
         "_isDrawOutline": false,

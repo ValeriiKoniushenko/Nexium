@@ -1,11 +1,11 @@
-#include "Scene/Scene.h"
+#include "NxWorld/Scene/Scene.h"
 
 #include "gtest/gtest.h"
 #include <functional>
 
 namespace
 {
-    class TickSceneObject : public Core::SceneObject
+    class TickSceneObject : public NX::SceneObject
     {
     public:
         std::function<void()> update;
@@ -27,7 +27,7 @@ namespace
 
 TEST(SceneTests, SpawnDuringTickIsPublishedAfterTraversalAndTicksNextFrame)
 {
-    Core::Scene scene;
+    NX::Scene scene;
     Core::IntrusivePtr<TickSceneObject> spawner = new TickSceneObject;
     Core::IntrusivePtr<TickSceneObject> observer = new TickSceneObject;
     Core::IntrusivePtr<TickSceneObject> spawned = new TickSceneObject;
@@ -62,13 +62,13 @@ TEST(SceneTests, SpawnDuringTickIsPublishedAfterTraversalAndTicksNextFrame)
 
 TEST(SceneTests, UniqueAdditionAlsoChecksPendingObjects)
 {
-    Core::Scene scene;
+    NX::Scene scene;
     Core::IntrusivePtr<TickSceneObject> spawner = new TickSceneObject;
     scene.addObjectToScene(spawner);
     spawner->update = [&]
     {
-        Core::SceneObject::Ptr first = new TickSceneObject;
-        Core::SceneObject::Ptr second = new TickSceneObject;
+        NX::SceneObject::Ptr first = new TickSceneObject;
+        NX::SceneObject::Ptr second = new TickSceneObject;
         first->setComponentName("Tree"_atom);
         second->setComponentName("Tree"_atom);
         scene.addUniqueObjectToScene(first);

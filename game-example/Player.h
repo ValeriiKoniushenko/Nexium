@@ -24,26 +24,25 @@
 
 #pragma once
 
-#include "Animations/FrameByFrame/FrameByFrameAnimator.h"
 #include "Core/Size.h"
-#include "GameplaySystem/Framework/InputController.h"
-#include "Scene/Rectangle.h"
+#include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimator.h"
+#include "NxWorld/Scene/Rectangle.h"
 
 CLASS();
-class Player : public Core::SceneObj::RectangleAnimated
+class Player : public NX::SceneObj::RectangleAnimated
 {
-    ECS_DECL(Player, Core::SceneObj::RectangleAnimated);
+    ECS_DECL(Player, NX::SceneObj::RectangleAnimated);
 
 protected:
     void onInitialize() override;
     void onTick(float delta) override;
 
 private:
-    void checkPlayerGrounded();
+    void spawnTree();
 
 private:
-    Core::InputController* _input = nullptr;
-    Core::Animation::FrameByFrameAnimator* _animator = nullptr;
+    bool _enterWasPressed = false;
+    NX::Animation::FrameByFrameAnimator* _animator = nullptr;
 
     float _movementSpeed = 200.f;
 

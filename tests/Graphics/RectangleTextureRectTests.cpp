@@ -1,11 +1,11 @@
-#include "Scene/Rectangle.h"
+#include "NxWorld/Scene/Rectangle.h"
 
 #include "gtest/gtest.h"
 #include <cmath>
 
 namespace
 {
-    class TextureRectangle : public Core::SceneObj::RectangleAnimated
+    class TextureRectangle : public NX::SceneObj::RectangleAnimated
     {
     public:
         std::optional<Core::FRect> alphaBounds = Core::FRect(0.1f, 0.8f, 0.4f, 0.2f);
@@ -63,10 +63,10 @@ TEST(RectangleTextureRect, GlobalBoundsTransformAllCornersWithMirroringAndRotati
 
 TEST(RectangleTextureRect, GlobalBoundsIncludeParentAndGrandparent)
 {
-    Core::SceneObject root;
+    NX::SceneObject root;
     root.setPosition({ 100.f, 200.f, 0.f });
     root.setRotationZ(90.f);
-    auto* parent = root.addChildComponent<Core::SceneObject>();
+    auto* parent = root.addChildComponent<NX::SceneObject>();
     parent->setScale({ 2.f, 3.f, 1.f });
     auto* child = parent->addChildComponent<TextureRectangle>();
     child->setPosition({ 5.f, 10.f, 0.f });

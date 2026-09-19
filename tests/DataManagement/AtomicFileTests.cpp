@@ -197,6 +197,18 @@ TEST_F(AtomicFileTest, FailedWriteKeepsPreviousFile)
 }
 #endif
 
+TEST_F(AtomicFileTest, MissingDocumentAllowsFirstSave)
+{
+    TestDocument document;
+    document.directory = root;
+    document.value = 42;
+    auto& cache = NX::GetCacheSystem();
+    cache.read(document);
+    EXPECT_EQ(document.value, 42);
+    cache.write(document, { { "value", document.value } });
+    EXPECT_EQ(nlohmann::json::parse(read(root / "document.json"))["value"], 42);
+}
+
 TEST_F(AtomicFileTest, FailedLoadBlocksAutosaveUntilSuccessfulReload)
 {
     TestDocument document;

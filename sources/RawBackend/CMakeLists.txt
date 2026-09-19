@@ -20,6 +20,7 @@ target_sources(${MODULE_TARGET} PRIVATE
     Graphics/RenderTargetToTexture.cpp
     IDrawable.cpp
     Image.cpp
+    ImageAlphaMask.cpp
 )
 nexium_add_public_headers(${MODULE_TARGET}
     RawBackend/Graphics/Texture.h
@@ -27,6 +28,7 @@ nexium_add_public_headers(${MODULE_TARGET}
     RawBackend/IDrawable.h
     RawBackend/IDrawable.generated.h
     RawBackend/Image.h
+    RawBackend/ImageAlphaMask.h
     RawBackend/Image.generated.h
 )
 

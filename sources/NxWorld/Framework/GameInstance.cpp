@@ -345,7 +345,8 @@ namespace NX
                                                                         / "Santa/Santa_Walk");
         GetAssetsManager()->generateTextureAtlas(
             "player_walk"_atom, Foundation::Config::Path::images / "Player_SpriteSheet");
-        GetAssetsManager()->generateTextureAtlas("Tiles"_atom, Foundation::Config::Path::images / "Tiles");
+        GetAssetsManager()->generateTextureAtlas("Tiles"_atom,
+                                                 Foundation::Config::Path::images / "Tiles");
         onLoadCoreResources();
     }
 } // namespace NX

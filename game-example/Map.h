@@ -24,13 +24,13 @@
 
 #pragma once
 
-#include "Scene/Rectangle.h"
-#include "Scene/SceneObject.h"
+#include "NxWorld/Scene/Rectangle.h"
+#include "NxWorld/Scene/SceneObject.h"
 
 CLASS();
-class Map : public Core::SceneObject
+class Map : public NX::SceneObject
 {
-    ECS_DECL(Map, Core::SceneObject);
+    ECS_DECL(Map, NX::SceneObject);
 
 public:
 protected:
@@ -44,13 +44,11 @@ private:
     void moveTree(float delta);
     void checkCollisions();
 
-
-    Core::IntrusivePtr<Core::SceneObj::RectangleAnimated> _tree{ nullptr };
+    Core::IntrusivePtr<NX::SceneObj::RectangleAnimated> _tree{ nullptr };
 
     Core::FRect _playerTextureRect;
 
     float _treeSpped{ 100.f };
-
 };
 
 #include "Map.generated.h" // added by the code generator. Better don't move it.

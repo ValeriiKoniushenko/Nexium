@@ -10,11 +10,11 @@
 #pragma once
 
 #include "Core/Rect.h"
-#include "RawBackend/ImageAlphaMask.h"
 #include "Core/String.h"
 #include "Foundation/BaseLog.h"
 #include "RawBackend/Graphics/Texture.h"
 #include "RawBackend/Image.h"
+#include "RawBackend/ImageAlphaMask.h"
 
 #include <filesystem>
 #include <unordered_map>
@@ -61,8 +61,9 @@ namespace NX
 
         // Visible bounds relative to the selected frame, in normalized Y-up coordinates.
         [[nodiscard]] std::optional<Core::FRect> getAlphaBounds(const Core::StringAtom& name,
-                                                          glm::vec2 offset = { 0.f, 0.f },
-                                                          glm::vec2 size = { 1.f, 1.f }) const;
+                                                                glm::vec2 offset = { 0.f, 0.f },
+                                                                glm::vec2 size
+                                                                = { 1.f, 1.f }) const;
 
         [[nodiscard]] const std::unordered_map<Core::StringAtom, Core::FRect>& getRects()
             const noexcept
@@ -82,6 +83,7 @@ namespace NX
         RawBackend::Texture _texture;
         std::unordered_map<Core::StringAtom, Core::FRect> _rects;
         std::unordered_map<Core::StringAtom, Core::ImageAlphaMask> _alphaMasks;
-        mutable std::vector<std::pair<std::vector<TextureRegion>, std::optional<Core::FRect>>> _animationBounds;
+        mutable std::vector<std::pair<std::vector<TextureRegion>, std::optional<Core::FRect>>>
+            _animationBounds;
     };
 } // namespace NX

@@ -1,4 +1,4 @@
-#include "Graphics/Image.h"
+#include "RawBackend/Image.h"
 #include "RawBackend/ImageAlphaMask.h"
 
 #include "gtest/gtest.h"
@@ -100,7 +100,7 @@ TEST(ImageAlphaMask, MatchesImageLoaderVerticalFlip)
     encoded[16] = 32;
     encoded[17] = 0x28;
     encoded[21] = 255;
-    Image image;
+    RawBackend::Image image;
     ASSERT_TRUE(image.loadFromMemory(encoded.data(), encoded.size(), true));
     ASSERT_EQ(image.getChannelsCount(), 4);
     const ImageAlphaMask mask(std::span<const unsigned char>(image.data(), 16), image.getSize(),

@@ -51,6 +51,13 @@ namespace NX
         {
             try
             {
+                // A missing document is normal on first use; there is nothing to protect.
+                // Keep an earlier failure blocked until an explicit clear or successful load.
+                if (!hasCache(data))
+                {
+                    return;
+                }
+
                 RResourceStream<RJsonResourceStream> s;
                 s.getData() = nlohmann::json::parse(
                     [this, &data]() -> std::string

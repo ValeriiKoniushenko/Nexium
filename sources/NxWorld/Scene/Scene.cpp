@@ -351,8 +351,8 @@ namespace NX
     void Scene::deserialize(RResourceStream<RJsonResourceStream>& data)
     {
         const auto& json = data.getData();
-        const auto version = json.value("formatVersion", nlohmann::json(0));
-        if (!version.is_number_integer() || version < 0 || version > 1)
+        const auto version = json.value("formatVersion", nlohmann::json());
+        if (!version.is_number_integer() || version != 1)
         {
             throw std::runtime_error("Unsupported scene format version: " + version.dump());
         }
@@ -425,7 +425,8 @@ namespace NX
         _uniqueCounterName = 0;
         _postDrawBuffer.clear();
         replacement._sceneObjects.clear();
-        for (auto& object : _sceneObjects)
+        auto restoredObjects = _sceneObjects;
+        for (auto& object : restoredObjects)
         {
             object->initialize();
             onObjectAdded->trigger(object.get());

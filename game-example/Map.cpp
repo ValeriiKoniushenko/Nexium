@@ -24,11 +24,14 @@
 
 #include "Map.h"
 
-#include "AssetsManager/AssetsManager.h"
 #include "Core/Rect.h"
-#include "GameplaySystem/Framework/GameInstance.h"
+#include "NxSubsystems/AssetsManager/AssetsManager.h"
+#include "NxWorld/Framework/GameInstance.h"
+#include "NxWorld/Scene/Rectangle.h"
 #include "Player.h"
-#include "Scene/Rectangle.h"
+
+using namespace Core;
+using namespace NX;
 
 ECS_IMPL(Map);
 
@@ -40,8 +43,8 @@ void Map::onInitialize()
 void Map::createAllNeededRects()
 {
     auto component
-        = Core::GetAssetsManager()->getUniqueEcsAsset("data/assets/AnimatedRectangle.nx"_atom);
-    _tree = DynamicCast<Core::SceneObj::RectangleAnimated>(component);
+        = NX::GetAssetsManager()->getUniqueEcsAsset("data/assets/AnimatedRectangle.nx"_atom);
+    _tree = DynamicCast<NX::SceneObj::RectangleAnimated>(component);
     if (!_tree)
     {
         errorLog("Can't load AnimatedRectangle asset for: tileRect");
@@ -53,9 +56,9 @@ void Map::createAllNeededRects()
     {
         for (int j = 0; j < 25; ++j)
         {
-            auto component = Core::GetAssetsManager()->getUniqueEcsAsset(
+            auto component = NX::GetAssetsManager()->getUniqueEcsAsset(
                 "data/assets/AnimatedRectangle.nx"_atom);
-            auto tileRect = DynamicCast<Core::SceneObj::RectangleAnimated>(component);
+            auto tileRect = DynamicCast<NX::SceneObj::RectangleAnimated>(component);
 
             if (!tileRect)
             {

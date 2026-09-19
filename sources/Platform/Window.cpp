@@ -211,7 +211,7 @@ namespace Platform
     {
         ISize2 framebufferSize;
         glfwGetFramebufferSize(_window, &framebufferSize.width, &framebufferSize.height);
-        UpdateGlViewport(static_cast<FSize2>(framebufferSize));
+        glViewport(0, 0, framebufferSize.width, framebufferSize.height);
     }
 
     void Window::clear(int code)

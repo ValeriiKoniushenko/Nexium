@@ -29,9 +29,9 @@
             1.0
         ],
         "_textureName": "red.png",
-        "_type": "Core::SceneObj::RectangleAnimated"
+        "_type": "NX::SceneObj::RectangleAnimated"
     },
     "name": "AnimatedRectangle",
     "tags": "WorldObject",
-    "type": "Core::SceneObj::RectangleAnimated"
+    "type": "NX::SceneObj::RectangleAnimated"
 }
