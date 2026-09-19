@@ -20,6 +20,7 @@ namespace NX
     public:
         virtual ~ApplicationIntegration() = default;
 
+        virtual void preInitialize() = 0;
         virtual void initialize() = 0;
         virtual void readFromCache() = 0;
         virtual void writeToCache() = 0;

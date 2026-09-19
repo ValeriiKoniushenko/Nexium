@@ -129,9 +129,13 @@ namespace NX
         //-------------------- ECS ---------------------
         if (_applicationIntegration)
         {
-            _applicationIntegration->initialize();
+            _applicationIntegration->preInitialize();
         }
         GetGlobalComponentFactory()._createTypeToTagMap();
+        if (_applicationIntegration)
+        {
+            _applicationIntegration->initialize();
+        }
 
         gameScene.initialize();
         _subscriptionPool << gameScene.onObjectAdded->subscribeAndGetID(

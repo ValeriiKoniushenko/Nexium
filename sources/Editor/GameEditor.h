@@ -34,6 +34,7 @@ namespace NX
         GameEditor(GameEditor&&) = delete;
         ~GameEditor() override;
 
+        void preInitialize();
         void initialize();
 
         void tick(float delta);

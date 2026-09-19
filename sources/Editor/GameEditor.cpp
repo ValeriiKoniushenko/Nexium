@@ -82,7 +82,7 @@ namespace NX
         destroy();
     }
 
-    void GameEditor::initialize()
+    void GameEditor::preInitialize()
     {
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
@@ -97,7 +97,10 @@ namespace NX
         ImGui_ImplGlfw_InitForOpenGL(GetWindow().getRawWindow(), true);
         ImGui_ImplOpenGL3_Init(GetGlslVersionShaderLike().c_str());
         _isInitImGui = true;
+    }
 
+    void GameEditor::initialize()
+    {
         registerNewWindow<EditorMenuBarWindowEWC>("Menu Bar"_atom, true);
         registerNewWindow<RootDockWindowEWC>("Root dock space"_atom, true);
         registerNewWindow<LogsWindowEWC>("Logs"_atom, true);

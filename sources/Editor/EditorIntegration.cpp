@@ -39,6 +39,11 @@ namespace NX
         gEditorIntegration = nullptr;
     }
 
+    void EditorIntegration::preInitialize()
+    {
+        _editor.preInitialize();
+    }
+
     void EditorIntegration::initialize()
     {
         _editor.initialize();

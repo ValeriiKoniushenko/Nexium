@@ -31,6 +31,7 @@ namespace NX
         EditorIntegration& operator=(EditorIntegration&&) = delete;
         ~EditorIntegration() override;
 
+        void preInitialize() override;
         void initialize() override;
         void readFromCache() override;
         void writeToCache() override;
