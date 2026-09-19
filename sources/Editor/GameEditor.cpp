@@ -9,18 +9,11 @@
 
 #include "GameEditor.h"
 
+#include "Core/IntrusivePtr.h"
 #include "Editor/EditorIntegration.h"
 #include "Editor/IconsFontAwesome.h"
-#include "Editor/Windows/EditorMenuBarWindow.h"
-#include "Editor/Windows/EditorSettings.h"
-#include "Editor/Windows/Editors/TextEditor.h"
 #include "Editor/Windows/GameViewport.h"
-#include "Editor/Windows/LogsWindow.h"
-#include "Editor/Windows/ModalCreateBlueprint.h"
-#include "Editor/Windows/ObjectPropertiesWindow.h"
 #include "Editor/Windows/RootDockWindow.h"
-#include "Editor/Windows/SceneTreeWindow.h"
-#include "Editor/Windows/ShaderManager.h"
 #include "Foundation/Configs.h"
 #include "ImGui/backends/imgui_impl_glfw.h"
 #include "ImGui/backends/imgui_impl_opengl3.h"
@@ -31,15 +24,6 @@
 #endif
 #include "NxWorld/Framework/GameInstance.h"
 #include "PrivateModuleInfo.h"
-#include "Windows/AssetsExplorer/AssetsManagerWindow.h"
-#include "Windows/AssetsExplorer/RenamePopUpWindow.h"
-#include "Windows/Editors/NxTextureEditor.h"
-#include "Windows/ImageViewer.h"
-#include "Windows/ModalAssetsSearchPopUp.h"
-#include "Windows/ModalECSSearchPopUp.h"
-#include "Windows/ModalPopUp.h"
-#include "Windows/NxECSBasedEditor.h"
-#include "Windows/WorldSettings.h"
 
 #include <array>
 #include <exception>
@@ -101,40 +85,51 @@ namespace NX
         _isInitImGui = true;
     }
 
+    IntrusivePtr<BaseEWC> GameEditor::registerNewWindow(IntrusivePtr<BaseEWC> wnd,
+                                                        bool isEnabled /*  = false */)
+    {
+        auto wndType = wnd->getComponentType();
+        Assert(!wndType.isEmpty());
+        if (!wndType.isEmpty() && _windowTypes.contains(wndType))
+        {
+            errorLogAndAssert("Such window '{}' already was registered"_f << wndType);
+            return nullptr;
+        }
+
+        _windowTypes.emplace(wndType);
+        auto& a = _windows.emplace_back(std::move(wnd));
+
+        a->initialize();
+        auto name = a->getComponentName();
+        if (a->getIcon())
+        {
+            name = a->getIcon() + (" " + name);
+        }
+        a->setComponentName(std::move(name));
+
+        if (isEnabled)
+        {
+            a->openWindow();
+        }
+        else
+        {
+            a->closeWindow();
+        }
+
+        return a;
+    }
+
     void GameEditor::initialize()
     {
-        registerNewWindow<EditorMenuBarWindowEWC>();
-        registerNewWindow<RootDockWindowEWC>();
-        registerNewWindow<LogsWindowEWC>();
-        registerNewWindow<ObjectPropertiesWindowEWC>();
-        registerNewWindow<SceneTreeWindowEWC>();
-        registerNewWindow<AssetsManagerWindowEWC>();
-        registerNewWindow<EditorSettingsEWC>();
-        registerNewWindow<TextEditorEWC>();
-        registerNewWindow<ImageViewerEWC>();
-        registerNewWindow<ShaderManagerEWC>();
-        registerNewWindow<ModalPopUp>();
-        registerNewWindow<ModalECSSearchPopUpEWC>();
-        registerNewWindow<ModalAssetsSearchPopUpEWC>();
-        registerNewWindow<ModalCreateBlueprintEWC>();
-        registerNewWindow<RenamePopUpWindow>();
-        registerNewWindow<WorldSettingsEWC>();
-        registerNewWindow<NxTextureEditorEWC>();
-        registerNewWindow<NxECSBasedEditorEWC>();
-        registerNewWindow<DummyEWC>();
-        registerNewWindow<GameViewportEWC>();
-
         auto windows = GetGlobalComponentFactory().getRegisteredTypesAsVector(
             false, [](Tag tag) { return tag & Tag_EditorWindow; });
 
-        // EditorMenuBarWindowEWC
-        // RootDockWindowEWC
-        // LogsWindowEWC
-        // ObjectPropertiesWindowEWC
-        // SceneTreeWindowEWC
-        // AssetsManagerWindowEWC
-        // ModalPopUp
-        // GameViewportEWC
+        for (auto&& wnd : windows)
+        {
+            IntrusivePtr<BaseEWC> tmp
+                = dynamic_cast<BaseEWC*>(GetGlobalComponentFactory().create(wnd));
+            registerNewWindow(std::move(tmp));
+        }
 
         if (auto* viewport = getWindow<GameViewportEWC>(); Verify(viewport))
         {

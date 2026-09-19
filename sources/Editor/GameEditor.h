@@ -10,6 +10,7 @@
 #pragma once
 
 #include "Core/BaseAssert.h"
+#include "Core/IntrusivePtr.h"
 #include "Foundation/BaseLog.h"
 #include "NxSubsystems/Input/InputManager.h"
 #include "ObjectPicker.h"
@@ -53,39 +54,11 @@ namespace NX
         template<IsEditorWindowComponent T>
         T::Ptr registerNewWindow(bool isEnabled = false)
         {
-            auto temp = T::Create();
-
-            auto wndType = temp->getComponentType();
-            Assert(!wndType.isEmpty());
-            if (!wndType.isEmpty() && _windowTypes.contains(wndType))
-            {
-                errorLogAndAssert("Such window '{}' already was registered"_f
-                                  << temp->getComponentName());
-                return nullptr;
-            }
-
-            _windowTypes.emplace(wndType);
-            auto& a = _windows.emplace_back(std::move(temp));
-
-            a->initialize();
-            auto name = a->getComponentName();
-            if (a->getIcon())
-            {
-                name = a->getIcon() + (" " + name);
-            }
-            a->setComponentName(std::move(name));
-
-            if (isEnabled)
-            {
-                a->openWindow();
-            }
-            else
-            {
-                a->closeWindow();
-            }
-
-            return IntrusivePtr<T>(static_cast<T*>(a.get()));
+            return IntrusivePtr<T>(
+                static_cast<T*>(registerNewWindow(T::Create(), isEnabled).get()));
         }
+
+        IntrusivePtr<BaseEWC> registerNewWindow(IntrusivePtr<BaseEWC> wnd, bool isEnabled = false);
 
         /// Find a window by type and optional name regex.
         /// @tparam WindowT Type of window to search for (default is BaseEWC).
