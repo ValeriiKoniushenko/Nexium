@@ -122,14 +122,13 @@ namespace NX
     {
         BaseEWC::onInitialize();
 
+        setComponentName("Rename window"_atom);
+
         _label = _layout.addChildComponent<Gui::Label>("New name");
         _fileNameInput = _layout.addChildComponent<Gui::TextInput>();
         _fileNameInput->setFlex(Gui::Flex::FlexWidth);
         _fileNameInput->setInputtedData(_renameBuffer);
-        if (ImGui::IsWindowAppearing())
-        {
-            ImGui::SetKeyboardFocusHere();
-        }
+        _fileNameInput->requestFocus();
 
         auto* hLayout = _layout.addChildComponent<Gui::HorizontalLayout>();
 

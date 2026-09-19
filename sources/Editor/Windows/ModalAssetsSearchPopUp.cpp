@@ -51,6 +51,8 @@ namespace NX
     {
         BaseEWC::onInitialize();
 
+        setComponentName("Assets searcher"_atom);
+
         _layout.setHorizontalAlign(Gui::Align::Center);
         _layout.setFlex(Gui::Flex::FlexWidthAndHeight);
 

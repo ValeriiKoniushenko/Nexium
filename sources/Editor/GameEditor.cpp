@@ -101,27 +101,35 @@ namespace NX
 
     void GameEditor::initialize()
     {
-        registerNewWindow<EditorMenuBarWindowEWC>("Menu Bar"_atom, true);
-        registerNewWindow<RootDockWindowEWC>("Root dock space"_atom, true);
-        registerNewWindow<LogsWindowEWC>("Logs"_atom, true);
-        registerNewWindow<ObjectPropertiesWindowEWC>("Object properties"_atom, true);
-        registerNewWindow<SceneTreeWindowEWC>("Scene"_atom, true);
-        registerNewWindow<AssetsManagerWindowEWC>("Assets"_atom, true);
-        registerNewWindow<EditorSettingsEWC>("Settings"_atom);
-        registerNewWindow<TextEditorEWC>("Text editor"_atom);
-        registerNewWindow<ImageViewerEWC>("Image viewer"_atom);
-        registerNewWindow<ShaderManagerEWC>("Shader manager"_atom);
-        registerNewWindow<ModalPopUp>("PopUp"_atom, true);
-        registerNewWindow<ModalECSSearchPopUpEWC>("ECS searcher"_atom);
-        registerNewWindow<ModalAssetsSearchPopUpEWC>("Assets searcher"_atom);
-        registerNewWindow<ModalCreateBlueprintEWC>("Create blueprint"_atom);
-        registerNewWindow<RenamePopUpWindow>("Rename window"_atom);
-        registerNewWindow<WorldSettingsEWC>("World settings"_atom);
-        registerNewWindow<NxTextureEditorEWC>("NX texture editor"_atom);
-        registerNewWindow<NxECSBasedEditorEWC>("Assets editor"_atom);
-        registerNewWindow<DummyEWC>("Dummy window"_atom, false);
+        registerNewWindow<EditorMenuBarWindowEWC>();
+        registerNewWindow<RootDockWindowEWC>();
+        registerNewWindow<LogsWindowEWC>();
+        registerNewWindow<ObjectPropertiesWindowEWC>();
+        registerNewWindow<SceneTreeWindowEWC>();
+        registerNewWindow<AssetsManagerWindowEWC>();
+        registerNewWindow<EditorSettingsEWC>();
+        registerNewWindow<TextEditorEWC>();
+        registerNewWindow<ImageViewerEWC>();
+        registerNewWindow<ShaderManagerEWC>();
+        registerNewWindow<ModalPopUp>();
+        registerNewWindow<ModalECSSearchPopUpEWC>();
+        registerNewWindow<ModalAssetsSearchPopUpEWC>();
+        registerNewWindow<ModalCreateBlueprintEWC>();
+        registerNewWindow<RenamePopUpWindow>();
+        registerNewWindow<WorldSettingsEWC>();
+        registerNewWindow<NxTextureEditorEWC>();
+        registerNewWindow<NxECSBasedEditorEWC>();
+        registerNewWindow<DummyEWC>();
+        auto viewport = registerNewWindow<GameViewportEWC>();
 
-        auto viewport = registerNewWindow<GameViewportEWC>("Viewport"_atom, true);
+        // EditorMenuBarWindowEWC
+        // RootDockWindowEWC
+        // LogsWindowEWC
+        // ObjectPropertiesWindowEWC
+        // SceneTreeWindowEWC
+        // AssetsManagerWindowEWC
+        // ModalPopUp
+        // GameViewportEWC
         _subscriptionPool << viewport->onSizeChanged->subscribeAndGetID(
             [](auto outer, auto inner)
             {

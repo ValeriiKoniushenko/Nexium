@@ -47,6 +47,8 @@ namespace NX
     {
         NxEditorBaseEditorEWC::onInitialize();
 
+        setComponentName("NX texture editor"_atom);
+
         setEnablePreview(true);
         _fileFilters.emplace(std::string("*") + NXTexture::AssetT::fileExtension);
 

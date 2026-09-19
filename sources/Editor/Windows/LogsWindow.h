@@ -44,6 +44,7 @@ namespace NX
         void deserialize(RResourceStream<RJsonResourceStream>& stream) override;
 
     protected:
+        void onInitialize() override;
         void onPreInitialize() override;
 
         void onDraw() override;

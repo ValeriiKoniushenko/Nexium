@@ -37,6 +37,8 @@ namespace NX
     {
         BaseFloatEWC::onInitialize();
 
+        setComponentName("World settings"_atom);
+
         constexpr float defaultWidth = 120.f;
         // ===================== GLOBAL =========================
         {

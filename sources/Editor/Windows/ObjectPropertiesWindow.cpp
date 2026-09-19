@@ -256,6 +256,8 @@ namespace NX
     {
         BaseFloatEWC::onInitialize();
 
+        setComponentName("Object properties");
+
         createGui();
         registerGuiEvents();
 

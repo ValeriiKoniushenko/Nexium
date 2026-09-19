@@ -28,6 +28,8 @@ namespace NX
     void GameViewportEWC::onInitialize()
     {
         BaseFloatEWC::onInitialize();
+
+        setComponentName("Viewport"_atom);
     }
 
     void GameViewportEWC::onUpdate()

@@ -123,6 +123,8 @@ namespace NX
     {
         NxEditorBaseEditorEWC::onInitialize();
 
+        setComponentName("Assets editor"_atom);
+
         addUniqueTypeChildComponent<ECSBaseComponentAdapter>();
         addUniqueTypeChildComponent<ECSEditorActorAdapter>();
 #ifdef NEXIUM_ENABLE_3D_MODULE

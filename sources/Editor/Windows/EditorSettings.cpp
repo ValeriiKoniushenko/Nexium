@@ -31,6 +31,13 @@ namespace NX
     ECS_IMPL(Internal::KeymapItem);
     ECS_IMPL(Internal::ColorItem);
 
+    void EditorSettingsEWC::onInitialize()
+    {
+        BaseFloatEWC::onInitialize();
+
+        setComponentName("Settings"_atom);
+    }
+
     const char* EditorSettingsEWC::getIcon()
     {
         return ICON_FA_COG;

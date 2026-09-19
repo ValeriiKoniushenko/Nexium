@@ -44,6 +44,8 @@ namespace NX
     {
         BaseMenuBarEWC::onInitialize();
 
+        setComponentName("Menu Bar");
+
         _slowUpdater.setRepeatTime(1. / 10.);
         _slowUpdater.setCallback(
             [this](auto)

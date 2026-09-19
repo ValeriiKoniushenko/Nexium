@@ -20,8 +20,12 @@ namespace NX
     public:
         virtual ~ApplicationIntegration() = default;
 
+        // Will be called before full ECS type registration
         virtual void preInitialize() = 0;
+
+        // Will be called after full ECS type registration
         virtual void initialize() = 0;
+
         virtual void readFromCache() = 0;
         virtual void writeToCache() = 0;
         virtual void updateInput() = 0;

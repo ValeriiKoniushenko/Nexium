@@ -53,6 +53,8 @@ namespace NX
     {
         BaseEWC::onInitialize();
 
+        setComponentName("Root dock space");
+
         _windowFlags |= ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking
                         | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse
                         | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove

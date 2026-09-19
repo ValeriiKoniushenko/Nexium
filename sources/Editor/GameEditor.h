@@ -43,20 +43,16 @@ namespace NX
         void setIsEnabled(bool v) noexcept { _isEnabled = v; }
 
         /// Register a new editor window of type T.
-        /// Initializes it, optionally sets its name, and enables it.
+        /// Initializes it and sets its initial enabled state.
         /// @tparam T Type of the editor window component.
-        /// @param name Optional name for the window.
         /// @param isEnabled Whether the window is enabled initially.
         /// @return Shared a pointer to the newly registered window.
         template<IsEditorWindowComponent T>
-        T::Ptr registerNewWindow(StringAtom name, bool isEnabled = false)
+        T::Ptr registerNewWindow(bool isEnabled = false)
         {
-            if (!Verify(!!name))
-            {
-                return nullptr;
-            }
-
             auto& a = _windows.emplace_back(new T);
+            a->initialize();
+            auto name = a->getComponentName();
             if (a->getIcon())
             {
                 name = a->getIcon() + (" " + name);

@@ -29,6 +29,8 @@ namespace NX
     {
         BaseFloatEWC::onInitialize();
 
+        setComponentName("Text editor"_atom);
+
         _minWindowSize = FSize2(500.f, 500.f);
         _windowFlags |= ImGuiWindowFlags_MenuBar;
     }

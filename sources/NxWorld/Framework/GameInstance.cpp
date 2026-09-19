@@ -131,7 +131,7 @@ namespace NX
         {
             _applicationIntegration->preInitialize();
         }
-        GetGlobalComponentFactory()._createTypeToTagMap();
+        GetGlobalComponentFactory().initializeTypeToTagMap();
         if (_applicationIntegration)
         {
             _applicationIntegration->initialize();

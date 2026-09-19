@@ -98,6 +98,13 @@ namespace NX
         _logs.clear();
     }
 
+    void LogsWindowEWC::onInitialize()
+    {
+        BaseFloatEWC::onInitialize();
+
+        setComponentName("Logs");
+    }
+
     void LogsWindowEWC::onPreInitialize()
     {
         BaseFloatEWC::onPreInitialize();

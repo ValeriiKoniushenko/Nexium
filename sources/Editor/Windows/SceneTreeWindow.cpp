@@ -59,6 +59,8 @@ namespace NX
     {
         BaseFloatEWC::onInitialize();
 
+        setComponentName("Scene"_atom);
+
         setScene(&gGameInstance->gameScene);
 
         _subscriptionPool << GetObjectSelectorManager()->onChange->subscribeAndGetID(

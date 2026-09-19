@@ -58,6 +58,8 @@ namespace NX
     {
         BaseFloatEWC::onInitialize();
 
+        setComponentName("Image viewer"_atom);
+
         _windowFlags |= ImGuiWindowFlags_NoScrollbar;
         _windowFlags |= ImGuiWindowFlags_NoScrollWithMouse;
     }
@@ -190,6 +192,8 @@ namespace NX
     void DummyEWC::onInitialize()
     {
         BaseFloatEWC::onInitialize();
+
+        setComponentName("Dummy window"_atom);
     }
 
     void DummyEWC::onUpdate()

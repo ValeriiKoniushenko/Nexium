@@ -173,7 +173,7 @@ namespace NX
         return std::nullopt;
     }
 
-    void GlobalComponentFactory::_createTypeToTagMap()
+    void GlobalComponentFactory::initializeTypeToTagMap()
     {
         for (auto&& [typeName, creator] : _map)
         {

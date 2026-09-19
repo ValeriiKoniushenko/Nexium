@@ -42,6 +42,8 @@ namespace NX
     {
         BaseEWC::onInitialize();
 
+        setComponentName("PopUp"_atom);
+
         _okButton = _layout.addChildComponent<Gui::Button>("OK");
         _cancelButton = _layout.addChildComponent<Gui::Button>("Cancel");
 

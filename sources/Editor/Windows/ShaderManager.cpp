@@ -166,6 +166,8 @@ namespace NX
     {
         BaseFloatEWC::onInitialize();
 
+        setComponentName("Shader manager"_atom);
+
         createGui();
         invalidateShaderCache();
         if (_comboView)

@@ -193,6 +193,8 @@ namespace NX
     {
         BaseFloatEWC::onInitialize();
 
+        setComponentName("Assets"_atom);
+
         if (_openedPath.empty())
         {
             openPath(Foundation::Config::Path::assets);

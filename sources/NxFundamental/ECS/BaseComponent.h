@@ -342,7 +342,7 @@ namespace NX
 
         [[nodiscard]] spdlog::logger* getLogger() const override;
 
-        void _createTypeToTagMap();
+        void initializeTypeToTagMap();
 
     private:
         std::unordered_map<Core::StringAtom, BaseComponent* (*)()> _map;
