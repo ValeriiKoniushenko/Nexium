@@ -24,13 +24,14 @@ namespace
     };
 
     // clang-format off
-    constexpr std::array<TagInfo, 5> kTagTable =
+    constexpr std::array<TagInfo, 6> kTagTable =
     {{
-        { .tag = NX::Tag_None,             .name = "None" },
-        { .tag = NX::Tag_WorldObject,      .name = "WorldObject" },
-        { .tag = NX::Tag_GuiObject,        .name = "GuiObject" },
-        { .tag = NX::Tag_EditorInternal,   .name = "EditorInternal" },
+        { .tag = NX::Tag_None,              .name = "None" },
+        { .tag = NX::Tag_WorldObject,       .name = "WorldObject" },
+        { .tag = NX::Tag_GuiObject,         .name = "GuiObject" },
+        { .tag = NX::Tag_EditorInternal,    .name = "EditorInternal" },
         { .tag = NX::Tag_AnimationController, .name = "AnimationController" },
+        { .tag = NX::Tag_EditorWindow,      .name = "EditorWindow" },
     }};
     // clang-format on
 

@@ -24,6 +24,8 @@
 #include "Foundation/Configs.h"
 #include "ImGui/backends/imgui_impl_glfw.h"
 #include "ImGui/backends/imgui_impl_opengl3.h"
+#include "NxFundamental/ECS/BaseComponent.h"
+#include "NxFundamental/ITagHolder.h"
 #ifdef NEXIUM_ENABLE_3D_MODULE
     #include "NxWorld/Entities/Mesh/StaticMeshBundle.h"
 #endif
@@ -121,6 +123,9 @@ namespace NX
         registerNewWindow<NxECSBasedEditorEWC>();
         registerNewWindow<DummyEWC>();
         registerNewWindow<GameViewportEWC>();
+
+        auto windows = GetGlobalComponentFactory().getRegisteredTypesAsVector(
+            false, [](Tag tag) { return tag & Tag_EditorWindow; });
 
         // EditorMenuBarWindowEWC
         // RootDockWindowEWC

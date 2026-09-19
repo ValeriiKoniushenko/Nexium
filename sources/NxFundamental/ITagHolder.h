@@ -19,12 +19,15 @@ namespace NX
     // !!! Don't forget to update TagInfo kTagTable !!!
     enum Tag : std::uint32_t // NOLINT(*-use-enum-class)
     {
-        Tag_None = 0,
-        Tag_WorldObject = 1 << 0,
-        Tag_GuiObject = 1 << 1,
-        Tag_EditorInternal = 1 << 2,
+        // clang-format off
+        Tag_None                = 0,
+        Tag_WorldObject         = 1 << 0,
+        Tag_GuiObject           = 1 << 1,
+        Tag_EditorInternal      = 1 << 2,
         Tag_AnimationController = 1 << 3,
-        Tag_Any = 0xFFFFFFFF
+        Tag_EditorWindow        = (1 << 4) | Tag_EditorInternal,
+        Tag_Any                 = 0xFFFFFFFF
+        // clang-format on
     };
 
     struct TagHelper
