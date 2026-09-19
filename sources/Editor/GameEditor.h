@@ -9,11 +9,14 @@
 
 #pragma once
 
+#include "Core/BaseAssert.h"
 #include "Foundation/BaseLog.h"
 #include "NxSubsystems/Input/InputManager.h"
 #include "ObjectPicker.h"
 #include "ToastNotifications.h"
 #include "Windows/BaseWindow.h"
+
+#include <set>
 
 namespace NX
 {
@@ -50,7 +53,20 @@ namespace NX
         template<IsEditorWindowComponent T>
         T::Ptr registerNewWindow(bool isEnabled = false)
         {
-            auto& a = _windows.emplace_back(new T);
+            auto temp = T::Create();
+
+            auto wndType = temp->getComponentType();
+            Assert(!wndType.isEmpty());
+            if (!wndType.isEmpty() && _windowTypes.contains(wndType))
+            {
+                errorLogAndAssert("Such window '{}' already was registered"_f
+                                  << temp->getComponentName());
+                return nullptr;
+            }
+
+            _windowTypes.emplace(wndType);
+            auto& a = _windows.emplace_back(std::move(temp));
+
             a->initialize();
             auto name = a->getComponentName();
             if (a->getIcon())
@@ -164,6 +180,7 @@ namespace NX
     protected:
         DelegateSubscriberPoolGuard _subscriptionPool;
         std::vector<BaseEWC::Ptr> _windows;
+        std::set<StringAtom> _windowTypes;
         bool _isInitImGui = false;
         bool _isEnabled = true;
         bool _isRunSimulation = false;

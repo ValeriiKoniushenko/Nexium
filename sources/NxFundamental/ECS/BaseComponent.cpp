@@ -103,7 +103,16 @@ namespace NX
         out.reserve(_map.size());
         for (const auto& [type, _] : _map)
         {
-            if (cond && !cond(_typeToTagMap.at(type)))
+            auto it = _typeToTagMap.find(type);
+            if (it == _typeToTagMap.end())
+            {
+                criticalLogAndAssert(
+                    "Can't find a type {} inside _typeToTagMap. Probably, wrong/failed initialization."_f
+                    << type);
+                continue;
+            }
+
+            if (cond && !cond(it->second))
             {
                 continue;
             }

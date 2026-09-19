@@ -11,6 +11,7 @@
 
 #include "Foundation/Configs.h"
 #include "ImGui/imgui.h"
+#include "NxFundamental/ITagHolder.h"
 #include "NxFundamental/ResourceManagement/DataStream.h"
 
 using namespace NX;
@@ -73,6 +74,11 @@ namespace NX
         }
 
         return getComponentType() + "_" + normName;
+    }
+
+    Tag BaseEWC::getTags() const
+    {
+        return BaseComponent::getTags() | Tag_EditorWindow;
     }
 
     void BaseFloatEWC::setFitContent(bool v)

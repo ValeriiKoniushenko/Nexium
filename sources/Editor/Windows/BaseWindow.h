@@ -41,6 +41,7 @@ namespace NX
         void requestFocus() noexcept;
 
         [[nodiscard]] StringAtom getCacheHash() const override;
+        [[nodiscard]] Tag getTags() const override;
 
     protected:
         virtual void onOpen() {}
