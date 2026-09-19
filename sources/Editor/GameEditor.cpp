@@ -120,7 +120,7 @@ namespace NX
         registerNewWindow<NxTextureEditorEWC>();
         registerNewWindow<NxECSBasedEditorEWC>();
         registerNewWindow<DummyEWC>();
-        auto viewport = registerNewWindow<GameViewportEWC>();
+        registerNewWindow<GameViewportEWC>();
 
         // EditorMenuBarWindowEWC
         // RootDockWindowEWC
@@ -130,15 +130,19 @@ namespace NX
         // AssetsManagerWindowEWC
         // ModalPopUp
         // GameViewportEWC
-        _subscriptionPool << viewport->onSizeChanged->subscribeAndGetID(
-            [](auto outer, auto inner)
-            {
-                if (gGameInstance->renderMode == GameInstance::RenderMode::Editor)
+
+        if (auto* viewport = getWindow<GameViewportEWC>(); Verify(viewport))
+        {
+            _subscriptionPool << viewport->onSizeChanged->subscribeAndGetID(
+                [](auto outer, auto inner)
                 {
-                    GetEditor()->gameViewport.setRenderSize(static_cast<ISize2>(inner));
-                    gGameInstance->updateViewport();
-                }
-            });
+                    if (gGameInstance->renderMode == GameInstance::RenderMode::Editor)
+                    {
+                        GetEditor()->gameViewport.setRenderSize(static_cast<ISize2>(inner));
+                        gGameInstance->updateViewport();
+                    }
+                });
+        }
     }
 
     void GameEditor::tick(float delta)
