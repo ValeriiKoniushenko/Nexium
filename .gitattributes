@@ -1,8 +1,9 @@
 **/*.generated.cpp -diff
 **/*.generated.h -diff
 .jrm/cache.data text -diff
+data/cache/*.ini text -diff
 data/cache/*.json text -diff
 data/config/*.json text -diff
 data/config/*.ini text -diff
 data/editor/*.json text -diff
-data/scenes/*.json text -diff
+data/scenes/*.json text diff
