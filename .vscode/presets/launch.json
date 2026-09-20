@@ -18,7 +18,6 @@
                 }
             ],
             "stopAtEntry": false,
-            "preLaunchTask": "Nexium: build Debug",
             "miDebuggerArgs": "-iex \"set debuginfod enabled off\""
         },
         {
@@ -43,7 +42,6 @@
                 }
             ],
             "stopAtEntry": false,
-            "preLaunchTask": "Nexium: build Debug",
             "miDebuggerArgs": "-iex \"set debuginfod enabled off\""
         }
     ]

@@ -9,10 +9,33 @@
 
 #include "HorizontalLayout.h"
 
-#include "ImGui/imgui_internal.h"
+#include <algorithm>
 
 namespace NX::Gui
 {
+    namespace
+    {
+        float measureContentWidth(const HorizontalLayout& layout)
+        {
+            float width = 0.f;
+            bool first = true;
+            for (const auto& child : layout.getChildren())
+            {
+                if (!child->isEnabled())
+                {
+                    continue;
+                }
+                if (!first)
+                {
+                    width += ImGui::GetStyle().ItemSpacing.x;
+                }
+                width += child->unsafeCastTo<Widget>()->getWidth();
+                first = false;
+            }
+            return width;
+        }
+    } // namespace
+
     ECS_IMPL(HorizontalLayout);
 
     HorizontalLayout::HorizontalLayout(const StringAtom& name)
@@ -29,85 +52,35 @@ namespace NX::Gui
 
     float HorizontalLayout::getWidth() const
     {
-        if (_fitContent)
+        if (!_fitContent)
         {
-            if (!hasChildren())
+            if (_width)
             {
-                return 0;
+                return *_width;
             }
-
-            const float defaultSpacing = style().ItemSpacing.x;
-            float width = 0.f;
-            for (auto& child : _children)
+            if (!hasParent())
             {
-                if (!child->isEnabled())
-                {
-                    continue;
-                }
-                width += child->unsafeCastTo<Widget>()->getWidth();
-                width += defaultSpacing;
-            }
-            width -= defaultSpacing;
-            return width;
-        }
-
-        if (_width)
-        {
-            return *_width;
-        }
-
-        if (!hasParent())
-        {
-            return ImGui::GetContentRegionAvail().x;
-        }
-
-        float width = 0.f;
-        std::size_t flexWidthCount = 0;
-        std::size_t total = 0;
-        for (auto&& child : _children)
-        {
-            if (child->isEnabled())
-            {
-                auto* w = child->unsafeCastTo<Widget>();
-                width += w->getWidth();
-                ++total;
-                if ((static_cast<int>(w->getFlex()) & static_cast<int>(Flex::FlexWidth)) != 0)
-                {
-                    ++flexWidthCount;
-                }
+                return ImGui::GetContentRegionAvail().x;
             }
         }
 
-        if (total == flexWidthCount)
-        {
-            return width;
-        }
-
-        if (total > 1)
-        {
-            width += style().ItemSpacing.x * static_cast<float>(total - 1);
-        }
-
-        return width;
+        return measureContentWidth(*this) + _paddings.x + _paddings.y;
     }
 
     float HorizontalLayout::getHeight() const
     {
-        if (_height)
+        float height = _height.value_or(0.f);
+        if (!_height)
         {
-            return *_height + (_paddings.z + _paddings.w);
+            for (const auto& child : _children)
+            {
+                if (child->isEnabled())
+                {
+                    height = std::max(height, child->unsafeCastTo<Widget>()->getHeight());
+                }
+            }
         }
-
-        auto cmp = [](const BaseComponent::Ptr& a, const BaseComponent::Ptr& b)
-        { return a->unsafeCastTo<Widget>()->getHeight() < b->unsafeCastTo<Widget>()->getHeight(); };
-        const auto maxHeightEl = std::ranges::max_element(_children, cmp);
-        if (maxHeightEl == _children.end())
-        {
-            return 0;
-        }
-
-        const auto maxHeight = (*maxHeightEl)->unsafeCastTo<Widget>()->getHeight();
-        return maxHeight + (_paddings.z + _paddings.w);
+        return height + _paddings.z + _paddings.w;
     }
 
     void HorizontalLayout::onAddChild(BaseComponent* newChild)
@@ -123,9 +96,9 @@ namespace NX::Gui
 
     void HorizontalLayout::onDraw()
     {
-        recalcFlexChildren();
-
         const auto originalCursor = ImGui::GetCursorPos();
+        const auto width = getWidth();
+        recalcFlexChildren();
 
         calcYOffsets();
 
@@ -153,17 +126,8 @@ namespace NX::Gui
 
         directDraw();
 
-        if (_width)
-        {
-            ImGui::SetCursorPosX(originalCursor.x + *_width - style().ItemSpacing.x);
-        }
-
-        ImGui::SetCursorPosY(originalCursor.y + getHeight() + style().ItemSpacing.y);
-
-        if (!hasParent())
-        {
-            ImGui::SetCursorPosX(originalCursor.x - style().ItemSpacing.x);
-        }
+        ImGui::SetCursorPos(originalCursor);
+        ImGui::Dummy(glm::vec2(width, getHeight()));
     }
 
     void HorizontalLayout::onInitialize()
@@ -173,25 +137,17 @@ namespace NX::Gui
 
     void HorizontalLayout::prepareAlignSpaceBetween()
     {
-        if (hasChildren() && !atLeastOne(Flex::FlexWidth))
+        _spacing = style().ItemSpacing.x;
+        if (!atLeastOne(Flex::FlexWidth))
         {
-            std::size_t i = 0;
-            _spacing = getWidth();
-            for (const auto& child : _children)
+            const auto count = std::ranges::count_if(_children, [](const auto& child)
+                                                     { return child->isEnabled(); });
+            if (count > 1)
             {
-                if (!child->isEnabled())
-                {
-                    continue;
-                }
-                _spacing -= child->unsafeCastTo<Widget>()->getWidth();
-                ++i;
+                const auto remaining
+                    = getWidth() - _paddings.x - _paddings.y - measureContentWidth(*this);
+                _spacing += std::max(0.f, remaining) / static_cast<float>(count - 1);
             }
-
-            _spacing /= static_cast<float>(i <= 1 ? 1 : i - 1);
-        }
-        else
-        {
-            _spacing = style().ItemSpacing.x;
         }
     }
 
@@ -204,18 +160,9 @@ namespace NX::Gui
     {
         if (hasChildren() && !atLeastOne(Flex::FlexWidth))
         {
-            float spacing = getWidth();
-            for (const auto& child : _children)
-            {
-                if (!child->isEnabled())
-                {
-                    continue;
-                }
-                spacing -= child->unsafeCastTo<Widget>()->getWidth();
-                spacing -= style().ItemSpacing.x;
-            }
-
-            ImGui::SetCursorPosX(ImGui::GetCursorPosX() + spacing);
+            const auto remaining
+                = getWidth() - _paddings.x - _paddings.y - measureContentWidth(*this);
+            ImGui::SetCursorPosX(ImGui::GetCursorPosX() + std::max(0.f, remaining));
         }
     }
 
@@ -223,27 +170,15 @@ namespace NX::Gui
     {
         if (hasChildren() && !atLeastOne(Flex::FlexWidth))
         {
-            float spacing = getWidth();
-            for (const auto& child : _children)
-            {
-                if (!child->isEnabled())
-                {
-                    continue;
-                }
-                spacing -= child->unsafeCastTo<Widget>()->getWidth();
-                spacing -= style().ItemSpacing.x;
-            }
-            spacing -= style().ItemSpacing.x;
-            spacing /= 2.f;
-
-            ImGui::Dummy(glm::vec2(spacing, 0));
-            ImGui::SameLine();
+            const auto remaining
+                = getWidth() - _paddings.x - _paddings.y - measureContentWidth(*this);
+            ImGui::SetCursorPosX(ImGui::GetCursorPosX() + std::max(0.f, remaining) / 2.f);
         }
     }
 
     void HorizontalLayout::calcYOffsets()
     {
-        const auto ownHeight = getHeight();
+        const auto ownHeight = getHeight() - _paddings.z - _paddings.w;
 
         _yOffsets.resize(getChildrenCount());
         std::size_t i = 0;
@@ -256,15 +191,15 @@ namespace NX::Gui
             const auto w = child->unsafeCastTo<Widget>();
             if (_secondAlign == Align::Top)
             {
-                _yOffsets.at(i) = 0;
+                _yOffsets.at(i) = _paddings.z;
             }
             else if (_secondAlign == Align::Bottom)
             {
-                _yOffsets.at(i) = ownHeight - w->getHeight();
+                _yOffsets.at(i) = _paddings.z + ownHeight - w->getHeight();
             }
             else if (_secondAlign == Align::Center)
             {
-                _yOffsets.at(i) = (ownHeight - w->getHeight()) / 2.f;
+                _yOffsets.at(i) = _paddings.z + (ownHeight - w->getHeight()) / 2.f;
             }
             ++i;
         }
@@ -274,97 +209,69 @@ namespace NX::Gui
 
     void HorizontalLayout::directDraw()
     {
-        const auto originalYCursor = ImGui::GetCursorPosY();
-        const auto defaultSpacing = style().ItemSpacing.x;
+        const auto origin = ImGui::GetCursorPos();
+        const auto spacing = _align == Align::SpaceBetween ? _spacing : style().ItemSpacing.x;
+        float x = origin.x + _paddings.x;
         std::size_t i = 0;
 
-        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + _paddings.x);
-
-        for (auto&& child : _children)
-        {
-            if (!child->isEnabled())
-            {
-                continue;
-            }
-            auto start = ImGui::GetCursorPosX();
-            ImGui::SetCursorPosY(originalYCursor + _yOffsets.at(i));
-            child->unsafeCastTo<Widget>()->unhandledDraw();
-
-            const auto childWidth = child->unsafeCastTo<Widget>()->getWidth();
-            auto finalOffset = start + childWidth;
-
-            if (i != _children.size() - 1)
-            {
-                if (_align == Align::SpaceBetween)
-                {
-                    finalOffset += _spacing;
-                }
-                else
-                {
-                    finalOffset += defaultSpacing;
-                }
-            }
-            ImGui::SetCursorPosX(finalOffset);
-
-            ++i;
-        }
-    }
-
-    void HorizontalLayout::recalcFlexChildren()
-    {
-        if (!atLeastOne(Flex::FlexWidth))
-        {
-            return;
-        }
-
-        const float defaultSpacing = style().ItemSpacing.x;
-        float width = getWidth() - (_paddings.x + _paddings.y);
-
-        int fixedCount = 0;
-        int flexWidthCount = 0;
-        for (auto&& child : _children)
-        {
-            if (!child->isEnabled())
-            {
-                continue;
-            }
-            const auto w = child->unsafeCastTo<Widget>();
-            const auto type = static_cast<int>(w->getFlex());
-            if ((type & static_cast<int>(Flex::Fixed)) != 0)
-            {
-                width -= w->getWidth();
-                width -= defaultSpacing;
-                ++fixedCount;
-            }
-            else if ((type & static_cast<int>(Flex::FlexWidth)) != 0)
-            {
-                ++flexWidthCount;
-            }
-        }
-        if (fixedCount != 0)
-        {
-            width += defaultSpacing;
-        }
-
-        int deCounter = flexWidthCount;
         for (auto& child : _children)
         {
             if (!child->isEnabled())
             {
                 continue;
             }
-            auto w = child->unsafeCastTo<Widget>();
-            if ((static_cast<int>(w->getFlex()) & static_cast<int>(Flex::FlexWidth)) != 0)
+            if (i != 0)
             {
-                const float gap = deCounter != 0 ? defaultSpacing : 0;
-                const float finalWidth
-                    = std::max(0.f, width / static_cast<float>(flexWidthCount) - gap);
-                w->setWidth(finalWidth);
-                --deCounter;
+                x += spacing;
             }
-            if (deCounter == 0)
+            ImGui::SetCursorPos(glm::vec2(x, origin.y + _yOffsets.at(i)));
+            auto* widget = child->unsafeCastTo<Widget>();
+            const auto width = widget->getWidth();
+            widget->unhandledDraw();
+            x += width;
+            ++i;
+        }
+    }
+
+    void HorizontalLayout::recalcFlexChildren()
+    {
+        float width = getWidth() - _paddings.x - _paddings.y;
+        std::size_t count = 0;
+        std::size_t flexCount = 0;
+        for (auto& child : _children)
+        {
+            if (!child->isEnabled())
             {
-                break;
+                continue;
+            }
+            ++count;
+            const auto* widget = child->unsafeCastTo<Widget>();
+            if ((static_cast<int>(widget->getFlex()) & static_cast<int>(Flex::FlexWidth)) != 0)
+            {
+                ++flexCount;
+            }
+            else
+            {
+                width -= widget->getWidth();
+            }
+        }
+        if (flexCount == 0)
+        {
+            return;
+        }
+
+        width -= style().ItemSpacing.x * static_cast<float>(count - 1);
+        const auto childWidth = std::max(0.f, width / static_cast<float>(flexCount));
+        for (auto& child : _children)
+        {
+            if (!child->isEnabled())
+            {
+                continue;
+            }
+            auto* widget = child->unsafeCastTo<Widget>();
+            if ((static_cast<int>(widget->getFlex()) & static_cast<int>(Flex::FlexWidth)) != 0)
+            {
+                widget->setWidth(childWidth);
             }
         }
     }

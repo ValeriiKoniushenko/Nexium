@@ -25,7 +25,16 @@ namespace NX
 
     void ECSBaseComponentAdapter::onApplyAssetData(const nlohmann::json& json)
     {
+        if (!_ecsName || !_ecsDisableTicks || !_ecsParent)
+        {
+            errorLogAndAssert(
+                "Impossible to put an asset's data into the window. Window's inputs weren't "
+                "created. Internal error. Maybe missed ::initialize(). ");
+            return;
+        }
+
         auto* comp = getTargetComponent();
+
         _ecsName->input->setInputtedData(comp->getComponentName().toStdString());
         _ecsType->input->setInputtedData(comp->getComponentType().toStdString());
         if (comp->hasParent())
