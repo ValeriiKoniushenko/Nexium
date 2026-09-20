@@ -101,12 +101,12 @@ namespace NX
 
     BaseComponent* NxECSBasedEditorEWC::getTargetComponent() noexcept
     {
-        return _targetComponent;
+        return _targetComponent.get();
     }
 
     const BaseComponent* NxECSBasedEditorEWC::getTargetComponent() const noexcept
     {
-        return _targetComponent;
+        return _targetComponent.get();
     }
 
     NXECSAsset NxECSBasedEditorEWC::getTargetAsset()
@@ -153,7 +153,7 @@ namespace NX
             = _keyboardManager.getOrCreate("Delete selected component", Keyboard::Key::Delete);
         deleteKey->setIsRepeatable(false);
         _subscriptionPool << deleteKey->onPress->subscribeAndGetID(
-            [&](auto) { removeCurrentComponent(_targetComponent); });
+            [&](auto) { removeCurrentComponent(_targetComponent.get()); });
     }
 
     void NxECSBasedEditorEWC::onDrawProperties()
@@ -266,6 +266,7 @@ namespace NX
 
         assetData = _targetAsset->getData()->serialize();
         _targetAsset->syncAssetWithMemory(assetData);
+        _targetComponent = _targetAsset->getData().get();
     }
 
     void NxECSBasedEditorEWC::updateGuiBasedOnAsset()
@@ -286,7 +287,7 @@ namespace NX
         {
             if (auto* adapter = child->tryCastTo<ECSEditorMimeAdapter>())
             {
-                if (adapter->canWorkWith(_targetComponent))
+                if (adapter->canWorkWith(_targetComponent.get()))
                 {
                     adapter->enable();
                     adapter->applyAssetRawData(_targetAsset->getAssetData());
@@ -372,7 +373,7 @@ namespace NX
 
         if (ImGui::IsItemClicked() || (ImGui::IsItemFocused() && isHovered()))
         {
-            const auto* old = _targetComponent;
+            const auto* old = _targetComponent.get();
             _targetComponent = comp;
 
             if (old != comp)

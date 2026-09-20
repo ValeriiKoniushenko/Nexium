@@ -97,7 +97,7 @@ namespace NX
         Gui::LabelRow<Gui::TextInput>* _assetType = nullptr;
 
         NXECSAsset _targetAsset;
-        BaseComponent* _targetComponent = nullptr;
+        BaseComponent::Ptr _targetComponent = nullptr;
     };
 
 } // namespace NX
