@@ -79,11 +79,13 @@ namespace NX
                 }
             });
 
+        // ==== 3D ====
         // _subscriptionPool << mouseInput.getOrCreate("mouseRotation", Platform::Mouse::Key::Right)
         //                          ->onDrag->subscribeAndGetID(
         //                              [this](glm::vec2 delta, auto)
         //                              { yawAndPitch(delta * mouseSensitivity); });
 
+        // ==== 2D ====
         auto mouseMove = [this, getSpeed](glm::vec2 delta, MouseIA::SpecKeysState state)
         {
             auto mlt

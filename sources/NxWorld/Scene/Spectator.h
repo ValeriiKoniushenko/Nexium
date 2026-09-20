@@ -14,6 +14,7 @@
 
 namespace NX
 {
+
     CLASS();
     class Spectator : public Actor
     {
