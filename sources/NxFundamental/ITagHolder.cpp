@@ -58,7 +58,7 @@ namespace NX
                 continue;
             }
 
-            if ((value & static_cast<uint32_t>(info.tag)) == 0)
+            if ((value & static_cast<uint32_t>(info.tag)) != static_cast<uint32_t>(info.tag))
             {
                 continue;
             }
@@ -117,7 +117,7 @@ namespace NX
                 continue;
             }
 
-            if (tags & static_cast<uint32_t>(info.tag))
+            if ((tags & static_cast<uint32_t>(info.tag)) == static_cast<uint32_t>(info.tag))
             {
                 result.emplace_back(info.name);
             }

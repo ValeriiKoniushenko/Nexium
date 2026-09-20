@@ -105,7 +105,7 @@ TEST_F(ScenePersistenceTest, InvalidLoadPreservesExistingScene)
     auto json = source.serialize();
     json["_sceneName"] = "Do not apply";
     json["sceneObjects"].push_back(json["sceneObjects"][0]);
-    json["sceneObjects"][1]["referenceAsset"] = "missing.nx";
+    json["sceneObjects"][1]["componentData"]["_type"] = "UnregisteredSceneObject";
     auto data = RResourceStream<RJsonResourceStream>(json);
     EXPECT_THROW(source.deserialize(data), std::runtime_error);
     EXPECT_EQ(source.getSceneName(), "Default"_atom);

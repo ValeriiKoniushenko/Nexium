@@ -73,6 +73,7 @@ TEST(ITagHolderTests, EveryConcreteTagHasAStableStringRoundTrip)
         { Tag_GuiObject, "GuiObject" },
         { Tag_EditorInternal, "EditorInternal" },
         { Tag_AnimationController, "AnimationController" },
+        { Tag_EditorWindow, "EditorWindow" },
     };
 
     for (const auto& [tag, name] : tags)
@@ -98,6 +99,15 @@ TEST(ITagHolderTests, CompositeMasksStringifyInTagDefinitionOrder)
               TagHelper::ToStrings(static_cast<uint32_t>(tags)));
     ASSERT_EQ("WorldObject / EditorInternal / AnimationController",
               TagHelper::StringifyToStrings(static_cast<uint32_t>(tags), " / "));
+
+    const Tag windowTags = Tag_WorldObject | Tag_EditorWindow;
+    ASSERT_EQ("WorldObject,EditorInternal,EditorWindow", TagHelper::JoinAllToString(windowTags));
+    ASSERT_EQ((std::vector<std::string>{ "WorldObject", "EditorInternal", "EditorWindow" }),
+              TagHelper::ToStrings(static_cast<uint32_t>(windowTags)));
+
+    const auto windowBitOnly = static_cast<Tag>(1u << 4);
+    ASSERT_EQ("", TagHelper::JoinAllToString(windowBitOnly));
+    ASSERT_TRUE(TagHelper::ToStrings(static_cast<uint32_t>(windowBitOnly)).empty());
 }
 
 TEST(ITagHolderTests, EmptyAndUnknownMasksHavePredictableTextRepresentations)
