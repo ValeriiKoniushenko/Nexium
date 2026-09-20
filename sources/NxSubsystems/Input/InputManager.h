@@ -166,6 +166,13 @@ namespace NX
     class MouseInputManger : public InputManger<MouseInputAction>
     {
     public:
+        MouseInputManger();
+
+        Core::Delegate<void(glm::vec2)>::Ptr onWheel = Core::Delegate<void(glm::vec2)>::Create();
+
         [[nodiscard]] Core::StringAtom getCacheHash() const override;
+
+    private:
+        Core::DelegateSubscriber _wheelSubscription;
     };
 } // namespace NX

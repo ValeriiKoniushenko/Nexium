@@ -9,6 +9,7 @@
 
 #include "Spectator.h"
 
+#include "NxWorld/Entities/Camera/Camera.h"
 #include "NxWorld/Framework/GameInstance.h"
 
 namespace NX
@@ -58,35 +59,27 @@ namespace NX
         bindMovement("Move up", Platform::Keyboard::Key::R, [this](float v) { moveUp(v); }, 1.f);
         bindMovement("Move down", Platform::Keyboard::Key::F, [this](float v) { moveUp(v); }, -1.f);
 
-        // TODO: awful approach with direct window call. Refactor.
-        _subscriptionPool << Platform::GetWindow().onMouseWheel->subscribeAndGetID(
-            [s = Core::WeakPtr(this)](glm::vec2 offset)
-            {
-                if (s)
-                {
-                    if (gGameInstance->isApplicationViewportFocused())
-                    {
-                        if (auto obj = s.tryLoad())
-                        {
-                            auto mlt = obj->speed
-                                       / (Platform::Keyboard::IsKeyPressed(
-                                              Platform::Keyboard::Key::Left_Shift)
-                                              ? 8.f
-                                              : 1.f);
-                            obj->moveForward(-offset.y * mlt * gGameInstance->world.getTimeDelta());
-                        }
-                    }
-                }
-            });
-
         // ==== 3D ====
+        // _subscriptionPool << Platform::GetWindow().onMouseWheel->subscribeAndGetID(
+        //     [s = Core::WeakPtr(this)](glm::vec2 offset)
+        //     {
+        //     if (gGameInstance->isApplicationViewportFocused())
+        //     {
+        //         auto mlt
+        //             = speed
+        //               / (Platform::Keyboard::IsKeyPressed(Platform::Keyboard::Key::Left_Shift)
+        //                      ? 8.f
+        //                      : 1.f);
+        //         moveForward(-offset.y * mlt * gGameInstance->world.getTimeDelta());
+        //     }
+        //     });
         // _subscriptionPool << mouseInput.getOrCreate("mouseRotation", Platform::Mouse::Key::Right)
         //                          ->onDrag->subscribeAndGetID(
         //                              [this](glm::vec2 delta, auto)
         //                              { yawAndPitch(delta * mouseSensitivity); });
 
         // ==== 2D ====
-        auto mouseMove = [this, getSpeed](glm::vec2 delta, MouseIA::SpecKeysState state)
+        auto mouseMove = [this](glm::vec2 delta, MouseIA::SpecKeysState state)
         {
             auto mlt
                 = (speed * (state.leftShift == Platform::Keyboard::KeyState::Pressed ? 5.f : 1.f))
@@ -95,8 +88,31 @@ namespace NX
             moveRight(-delta.x * mlt);
             moveUp(delta.y * mlt);
         };
-
         _subscriptionPool << mouseInput.getOrCreate("mouseRotation", Platform::Mouse::Key::Right)
                                  ->onDrag->subscribeAndGetID(mouseMove);
+
+        _subscriptionPool << mouseInput.onWheel->subscribeAndGetID(
+            [this](glm::vec2 offset)
+            {
+                if (gGameInstance->isApplicationViewportFocused())
+                {
+                    float mlt = 2.f;
+
+                    if (Platform::Keyboard::IsKeyPressed(Platform::Keyboard::Key::Left_Shift))
+                    {
+                        mlt = 8.f;
+                    }
+                    else if (Platform::Keyboard::IsKeyPressed(
+                                 Platform::Keyboard::Key::Left_Control))
+                    {
+                        mlt = .4f;
+                    }
+
+                    if (auto* camera = findFirstChildOf<OrthographicCamera>())
+                    {
+                        camera->adjustZoom(offset.y * mlt * gGameInstance->world.getTimeDelta());
+                    }
+                }
+            });
     }
 } // namespace NX

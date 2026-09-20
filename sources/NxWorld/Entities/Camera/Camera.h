@@ -81,6 +81,10 @@ namespace NX
         ECS_DECL(OrthographicCamera, NX::BaseCamera);
 
     public:
+        constexpr static float minZoom = 0.001f;
+        constexpr static float maxZoom = 10000.f;
+
+    public:
         OrthographicCamera(const OrthographicCamera&) = default;
         OrthographicCamera(OrthographicCamera&&) noexcept = default;
         OrthographicCamera& operator=(const OrthographicCamera&) = default;
@@ -94,6 +98,10 @@ namespace NX
         {
             return CameraType::Orthographic;
         }
+
+        void setZoom(float zoom) noexcept;
+        void adjustZoom(float extraValue) noexcept { setZoom(_zoom + extraValue); }
+        [[nodiscard]] float getZoom() const noexcept { return _zoom; }
 
         [[nodiscard]] nlohmann::json getTypeSpecificSceneDataAsJson() const override;
         void applyTypeSpecificSceneData(const nlohmann::json& data) override;

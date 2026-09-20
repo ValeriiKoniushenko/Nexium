@@ -122,8 +122,11 @@ namespace NX
         if (_isDirtyProjMatrix)
         {
             auto frame = getOutputFrameSize();
-            _cachedProjMatrix = glm::ortho(0.f, frame.width, 0.f, frame.height, _near, _far);
-            // _cachedProjMatrix = glm::ortho(0.f, 1800.f, 0.f, 600.f, _near, _far);
+            const auto halfWidth = frame.width / (2.f * _zoom);
+            const auto halfHeight = frame.height / (2.f * _zoom);
+            _cachedProjMatrix = glm::ortho(
+                frame.width / 2.f - halfWidth, frame.width / 2.f + halfWidth,
+                frame.height / 2.f - halfHeight, frame.height / 2.f + halfHeight, _near, _far);
 
             _cachedCalculatedMatrix
                 = _cachedProjMatrix * _cachedModelMatrix; // in such a context Model == View
@@ -140,6 +143,12 @@ namespace NX
         }
 
         return _cachedCalculatedMatrix;
+    }
+
+    void OrthographicCamera::setZoom(float zoom) noexcept
+    {
+        _zoom = std::clamp(zoom, minZoom, maxZoom);
+        _isDirtyProjMatrix = true;
     }
 
     glm::vec3 OrthographicCamera::putMouseRay(float length)
@@ -179,7 +188,7 @@ namespace NX
 
         if (data.contains("_zoom"))
         {
-            _zoom = data.value("_zoom", 1.f);
+            setZoom(data.value("_zoom", 1.f));
         }
     }
 

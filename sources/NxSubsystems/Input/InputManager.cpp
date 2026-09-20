@@ -9,12 +9,20 @@
 
 #include "InputManager.h"
 
+#include "Platform/Window.h"
+
 namespace NX
 {
 
     Core::StringAtom KeyboardInputManger::getCacheHash() const
     {
         return "KeyboardInputManger"_atom;
+    }
+
+    MouseInputManger::MouseInputManger()
+    {
+        _wheelSubscription = Platform::GetWindow().onMouseWheel->subscribeAndGetID(
+            [this](glm::vec2 offset) { onWheel->trigger(offset); });
     }
 
     Core::StringAtom MouseInputManger::getCacheHash() const
