@@ -33,15 +33,18 @@ namespace NX
     {
         Actor::onInitialize();
 
-        const auto getSpeed = [this](KeyboardIA::SpecKeysState state)
-        { return speed / (state.leftShift == Platform::Keyboard::KeyState::Pressed ? 8.f : 1.f); };
+        const auto getSpeed = [this](Platform::Keyboard::KeyState leftShift)
+        { return speed / (leftShift == Platform::Keyboard::KeyState::Pressed ? 8.f : 1.f); };
 
         const auto bindMovement = [this, &getSpeed](const char* name, Platform::Keyboard::Key key,
                                                     auto movement, float direction)
         {
             _subscriptionPool << keyboardInput.getOrCreate(name, key)->onPress->subscribeAndGetID(
                 [=](KeyboardIA::SpecKeysState state)
-                { movement(direction * getSpeed(state) * gGameInstance->world.getTimeDelta()); });
+                {
+                    movement(direction * getSpeed(state.leftShift)
+                             * gGameInstance->world.getTimeDelta());
+                });
         };
 
         bindMovement(
@@ -76,9 +79,22 @@ namespace NX
                 }
             });
 
+        // _subscriptionPool << mouseInput.getOrCreate("mouseRotation", Platform::Mouse::Key::Right)
+        //                          ->onDrag->subscribeAndGetID(
+        //                              [this](glm::vec2 delta, auto)
+        //                              { yawAndPitch(delta * mouseSensitivity); });
+
+        auto mouseMove = [this, getSpeed](glm::vec2 delta, MouseIA::SpecKeysState state)
+        {
+            auto mlt
+                = (speed * (state.leftShift == Platform::Keyboard::KeyState::Pressed ? 5.f : 1.f))
+                  * gGameInstance->world.getTimeDelta();
+
+            moveRight(-delta.x * mlt);
+            moveUp(delta.y * mlt);
+        };
+
         _subscriptionPool << mouseInput.getOrCreate("mouseRotation", Platform::Mouse::Key::Right)
-                                 ->onDrag->subscribeAndGetID(
-                                     [this](glm::vec2 delta, auto)
-                                     { yawAndPitch(delta * mouseSensitivity); });
+                                 ->onDrag->subscribeAndGetID(mouseMove);
     }
 } // namespace NX

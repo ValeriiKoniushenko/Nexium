@@ -61,7 +61,7 @@
         ],
         "_type": "NX::Spectator",
         "mouseSensitivity": 0.5,
-        "speed": 600.0
+        "speed": 100.0
     },
     "name": "2D_Spectator",
     "tags": "WorldObject",
