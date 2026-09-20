@@ -11,6 +11,7 @@
 
 #include "../NxECSBasedEditor.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
+#include "NxFundamental/ECS/BaseComponent.h"
 
 namespace NX
 {
@@ -37,9 +38,16 @@ namespace NX
     CLASS();
     class ECSBaseComponentAdapter : public ECSEditorMimeAdapter
     {
-        ECS_DECL(ECSBaseComponentAdapter, NX::ECSEditorMimeAdapter);
+        ECS_DECL_NO_CNSTR(ECSBaseComponentAdapter, NX::ECSEditorMimeAdapter);
 
     public:
+        explicit ECSBaseComponentAdapter(const Core ::StringAtom& name = ""_atom)
+            : NX ::ECSEditorMimeAdapter(componentType, name)
+        {
+            int i = 123;
+            ///
+        }
+
         [[nodiscard]] bool canWorkWith(BaseComponent* component) const override { return true; }
         [[nodiscard]] StringAtom getProcessedAssetType() const override
         {

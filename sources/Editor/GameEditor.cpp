@@ -97,26 +97,26 @@ namespace NX
         }
 
         _windowTypes.emplace(wndType);
-        auto& a = _windows.emplace_back(std::move(wnd));
+        auto& added = _windows.emplace_back(std::move(wnd));
 
-        a->initialize();
-        auto name = a->getComponentName();
-        if (a->getIcon())
+        added->initialize();
+        auto name = added->getComponentName();
+        if (added->getIcon())
         {
-            name = a->getIcon() + (" " + name);
+            name = added->getIcon() + (" " + name);
         }
-        a->setComponentName(std::move(name));
+        added->setComponentName(std::move(name));
 
         if (isEnabled)
         {
-            a->openWindow();
+            added->openWindow();
         }
         else
         {
-            a->closeWindow();
+            added->closeWindow();
         }
 
-        return a;
+        return added;
     }
 
     void GameEditor::initialize()

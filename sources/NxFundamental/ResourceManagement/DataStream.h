@@ -51,23 +51,23 @@ namespace NX
         {
             try
             {
-                RResourceStream<RJsonResourceStream> s;
-                s.getData() = nlohmann::json::parse(
-                    [this, &data]() -> std::string
-                    {
-                        auto path = getPath(data);
-                        std::ifstream ifs(path);
-                        if (!ifs)
-                        {
-                            warnLog("Can't read cache for this object {}. Path: {}. Details: {}"_f
-                                    << data.getCacheHash() << getPath(data)
-                                    << std::strerror(errno));
-                            return {};
-                        }
+                std::string content;
+                auto path = getPath(data);
 
-                        return { (std::istreambuf_iterator<char>(ifs)),
-                                 std::istreambuf_iterator<char>() };
-                    }());
+                {
+                    std::ifstream ifs(path);
+                    if (!ifs)
+                    {
+                        warnLog("Can't read cache for this object {}. Path: {}. Details: {}"_f
+                                << data.getCacheHash() << path << std::strerror(errno));
+                        return;
+                    }
+                    content = { (std::istreambuf_iterator<char>(ifs)),
+                                std::istreambuf_iterator<char>() };
+                }
+
+                RResourceStream<RJsonResourceStream> s;
+                s.getData() = nlohmann::json::parse(std::move(content));
 
                 if constexpr (requires { data.deserialize(s); })
                 {
@@ -77,7 +77,7 @@ namespace NX
                 {
                     R<T>::template Deserialize<RJsonResourceStream>(s, data);
                 }
-                _failedReads.erase(getPath(data));
+                _failedReads.erase(path);
             }
             catch (std::exception& ex)
             {

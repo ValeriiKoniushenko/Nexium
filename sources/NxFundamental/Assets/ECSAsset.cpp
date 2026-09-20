@@ -244,12 +244,8 @@ namespace NX
 
         if (_status == Status::Loaded)
         {
-            // DataStream stream;
-            // stream.setMode(DataStream::Mode::Output);
-            // _data->ioFieldsUpdate(stream);
-            //
-            // json[StreamData::name] = _data->getComponentName();
-            // json[StreamData::data] = std::move(stream.getRaw());
+            RResourceStream<RJsonResourceStream> stream(json);
+            _data->deserialize(stream);
         }
 
         try

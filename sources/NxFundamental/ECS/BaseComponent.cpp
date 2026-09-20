@@ -350,6 +350,8 @@ namespace NX
                 child->_parent = this;
             }
         }
+
+        initialize();
     }
 
     void BaseComponent::onPreSerialize(const AbstractComponent* obj) const

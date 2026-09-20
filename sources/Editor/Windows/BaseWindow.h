@@ -25,6 +25,12 @@ namespace NX
         ECS_DECL(BaseEWC, NX::BaseComponent);
 
     public:
+        BaseEWC(const BaseEWC&) = default;
+        BaseEWC(BaseEWC&&) = default;
+        BaseEWC& operator=(const BaseEWC&) = default;
+        BaseEWC& operator=(BaseEWC&&) = default;
+        ~BaseEWC() override = default;
+
         [[nodiscard]] const StringAtom& getWindowTitle() const
         {
             return _windowTitle.isEmpty() ? getComponentName() : _windowTitle;
