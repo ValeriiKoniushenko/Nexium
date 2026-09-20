@@ -99,7 +99,7 @@ namespace
         for (auto it = target.begin(); it != target.end();)
         {
             const std::string& key = it.key();
-            if (patch.contains(key))
+            if (!patch.contains(key))
             {
                 auto currentPath = basePath.empty() ? key : basePath + "." + key;
                 changes.push_back({ .path = currentPath,
@@ -240,11 +240,16 @@ namespace NX
             patchedOutput += "[" + ToString(change.changeType) + "] " + change.path + ": "
                              + change.oldValue.dump() + " -> " + change.newValue.dump() + " | ";
         }
+        if (patchedOutput.ends_with(" | "))
+        {
+            patchedOutput.resize(patchedOutput.size() - 3);
+        }
+
         json[StreamData::data] = baseAssetData;
 
         if (_status == Status::Loaded)
         {
-            RResourceStream<RJsonResourceStream> stream(json);
+            RResourceStream<RJsonResourceStream> stream(json[StreamData::data]);
             _data->deserialize(stream);
         }
 
