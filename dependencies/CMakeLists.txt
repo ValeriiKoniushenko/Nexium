@@ -70,5 +70,9 @@ endif()
 # ── JustReflectMe ─────────────────────────────────────────────────────────────
 include("${PROJECT_SOURCE_DIR}/cmake/JustReflectMe.cmake")
 
+# ── ImGuizmo ──────────────────────────────────────────────────────────────────
+set(IMGUIZMO_BUILD_EXAMPLE OFF)
+add_subdirectory(ImGuizmo)
+
 set(CMAKE_C_FLAGS "${_saved_c_flags}")
 set(CMAKE_CXX_FLAGS "${_saved_cxx_flags}")
