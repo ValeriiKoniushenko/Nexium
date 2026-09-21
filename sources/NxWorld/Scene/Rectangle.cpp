@@ -102,7 +102,7 @@ namespace NX::SceneObj
         // // Converting Left-Bottom origin -> Left-Top origin
         // pos.y -= GetDefaultDrawRectSize();
 
-        glm::quat rotation = glm::quat(rot);
+        auto rotation = glm::quat(rot);
 
         std::array<glm::vec3, 4> localCorners = {
             glm::vec3(0.0f, 0.0f, 0.0f),     // top-left (pivot)
@@ -111,16 +111,16 @@ namespace NX::SceneObj
             glm::vec3(0.0f, size.y, 0.0f)    // bottom-left
         };
 
-        std::array<glm::vec3, 4> worldCorners;
+        std::array<glm::vec3, 4> worldCorners{};
         for (int i = 0; i < 4; ++i)
         {
             worldCorners[i] = pos + rotation * localCorners[i];
         }
 
-        Debug::Line::Draw(shader, camera.getMatrix(), worldCorners[0], worldCorners[1]);
-        Debug::Line::Draw(shader, camera.getMatrix(), worldCorners[1], worldCorners[2]);
-        Debug::Line::Draw(shader, camera.getMatrix(), worldCorners[2], worldCorners[3]);
-        Debug::Line::Draw(shader, camera.getMatrix(), worldCorners[3], worldCorners[0]);
+        Debug::Line::Draw(shader, camera.getMatrix(), worldCorners[0], worldCorners[1], 2.f);
+        Debug::Line::Draw(shader, camera.getMatrix(), worldCorners[1], worldCorners[2], 2.f);
+        Debug::Line::Draw(shader, camera.getMatrix(), worldCorners[2], worldCorners[3], 2.f);
+        Debug::Line::Draw(shader, camera.getMatrix(), worldCorners[3], worldCorners[0], 2.f);
     }
 
     void Rectangle::onDraw(BaseCamera& camera)
