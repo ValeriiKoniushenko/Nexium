@@ -2,11 +2,11 @@
     "_children": null,
     "_innerPosition": [
         20.0,
-        687.0
+        809.0
     ],
     "_innerSize": {
-        "height": 193.0,
-        "width": 1148.0
+        "height": 182.0,
+        "width": 1880.0
     },
     "_isEnabled": true,
     "_isFitContent": false,
@@ -17,16 +17,16 @@
     "_name": " Assets",
     "_noTick": false,
     "_oldSize": {
-        "height": 239.0,
-        "width": 1168.0
+        "height": 228.0,
+        "width": 1900.0
     },
     "_position": [
         10.0,
-        651.0
+        773.0
     ],
     "_size": {
-        "height": 239.0,
-        "width": 1168.0
+        "height": 228.0,
+        "width": 1900.0
     },
     "_type": "NX::AssetsManagerWindowEWC"
 }

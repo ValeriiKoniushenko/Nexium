@@ -70,8 +70,8 @@ nexium_add_public_headers(Nexium_Subsystem_AssetsManager
     NxSubsystems/AssetsManager/TextureAsset.h
     NxSubsystems/AssetsManager/TextureAsset.generated.h
 )
-target_link_libraries(Nexium_Subsystem_AssetsManager 
-    PUBLIC 
+target_link_libraries(Nexium_Subsystem_AssetsManager
+    PUBLIC
     Nexium::Subsystem::Graphics
     Nexium::Fundamental::Assets
     Nexium::Fundamental::TextureAtlas
@@ -96,8 +96,8 @@ nexium_add_public_headers(Nexium_Subsystem_Input
     NxSubsystems/Input/InputManager.h
     NxSubsystems/PrivateModuleInfo.h
 )
-target_link_libraries(Nexium_Subsystem_Input 
-    PUBLIC 
+target_link_libraries(Nexium_Subsystem_Input
+    PUBLIC
     Nexium::Foundation
     Nexium::Platform::Input
     PRIVATE

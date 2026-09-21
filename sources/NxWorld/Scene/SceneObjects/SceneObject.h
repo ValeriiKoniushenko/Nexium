@@ -106,4 +106,4 @@ namespace NX
 
 } // namespace NX
 
-#include "SceneObject.generated.h" // added by the code generator. Better don't move it.
+#include "SceneObject.generated.h"

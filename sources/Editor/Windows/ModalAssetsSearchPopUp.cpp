@@ -197,7 +197,7 @@ namespace NX
             return;
         }
 
-        gGameInstance->gameScene.addBlueprintObjectToScene(loadedAsset, name);
+        gGameInstance->scenes.getCurrentScene()->addBlueprintObjectToScene(loadedAsset, name);
 
         closeWindow();
     }

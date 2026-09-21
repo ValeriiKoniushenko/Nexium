@@ -19,7 +19,7 @@
 namespace NX
 {
     template<IsInputAction InputTParam>
-    class InputManger : public Foundation::BaseLog, public Foundation::IDataIO
+        class InputManger : public Foundation::BaseLog, public Foundation::IDataIO
     {
         INTRUSIVE_PTR_ADAPTERS(InputManger);
 

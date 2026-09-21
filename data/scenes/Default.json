@@ -101,11 +101,11 @@
                 "_atlasName": "santa_walk",
                 "_blendingEnabled": true,
                 "_isEnabled": true,
-                "_textureName": "Walk_8.png"
+                "_textureName": "Walk_11.png"
             }
         },
         {
-            "assetType": "NX::Spectator2D",
+            "assetType": "NX::Spectator",
             "name": "2D_Spectator",
             "referenceAsset": "data/assets/2D_Spectator.nx",
             "trans": {
@@ -115,9 +115,9 @@
                     0.0
                 ],
                 "_position": [
-                    -337.3643798828125,
-                    -179.77122497558594,
-                    1005.0285034179688
+                    -300.11749267578125,
+                    -300.2021179199219,
+                    1596.681396484375
                 ],
                 "_rotation": [
                     0.0,
@@ -132,6 +132,40 @@
             },
             "typeSpecificData": {
                 "_isEnabled": true
+            }
+        },
+        {
+            "assetType": "NX::SceneObj::RectangleAnimated",
+            "name": "AnimatedPlayersa_0",
+            "referenceAsset": "data/assets/AnimatedPlayer.nx",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    79.4000015258789,
+                    0.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "default",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "red.png"
             }
         }
     ]

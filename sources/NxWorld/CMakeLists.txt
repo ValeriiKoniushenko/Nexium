@@ -52,15 +52,18 @@ target_sources(Nexium_World PRIVATE
     Framework/UserInterface.cpp
     Framework/World.cpp
     Framework/WorldObjectManager.cpp
-    Scene/Grid.cpp
-    Scene/Rectangle.cpp
-    Scene/Scene.cpp
-    Scene/SceneObject.cpp
-    Scene/Spectator.cpp
+    Scene/SceneObjects/Grid/Grid.cpp
+    Scene/SceneObjects/Rectangle/Rectangle.cpp
+    Scene/SceneObjects/Rectangle/RectangleAnimated.cpp
+    Scene/Scene/Scene.cpp
+    Scene/SceneObjects/SceneObject.cpp
+    Scene/SceneObjects/Spectator/Spectator.cpp
+    Scene/Scene/SceneManager.cpp
 )
 nexium_add_public_headers(Nexium_World
     NxWorld/Animations/FrameByFrame/FrameByFrameAnimator.h
     NxWorld/Animations/FrameByFrame/FrameByFrameAnimator.generated.h
+    NxWorld/Assets/SkyboxAsset.h
     NxWorld/Assets/SkyboxAsset.h
     NxWorld/Assets/SkyboxAsset.generated.h
     NxWorld/Entities/Actor.h
@@ -81,15 +84,18 @@ nexium_add_public_headers(Nexium_World
     NxWorld/Framework/World.h
     NxWorld/Framework/World.generated.h
     NxWorld/Framework/WorldObjectManager.h
-    NxWorld/Scene/Grid.h
-    NxWorld/Scene/Rectangle.h
-    NxWorld/Scene/Rectangle.generated.h
-    NxWorld/Scene/Scene.h
-    NxWorld/Scene/Scene.generated.h
-    NxWorld/Scene/SceneObject.h
-    NxWorld/Scene/SceneObject.generated.h
-    NxWorld/Scene/Spectator.h
-    NxWorld/Scene/Spectator.generated.h
+    NxWorld/Scene/SceneObjects/Grid/Grid.h
+    NxWorld/Scene/SceneObjects/Rectangle/Rectangle.h
+    NxWorld/Scene/SceneObjects/Rectangle/Rectangle.generated.h
+    NxWorld/Scene/SceneObjects/Rectangle/RectangleAnimated.h
+    NxWorld/Scene/SceneObjects/Rectangle/RectangleAnimated.generated.h
+    NxWorld/Scene/Scene/Scene.h
+    NxWorld/Scene/Scene/Scene.generated.h
+    NxWorld/Scene/SceneObjects/SceneObject.h
+    NxWorld/Scene/SceneObjects/SceneObject.generated.h
+    NxWorld/Scene/SceneObjects/Spectator/Spectator.h
+    NxWorld/Scene/Scene/SceneManager.h
+    NxWorld/Scene/SceneObjects/Spectator/Spectator.generated.h
 )
 target_link_libraries(Nexium_World
     PUBLIC

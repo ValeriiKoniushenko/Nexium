@@ -81,4 +81,4 @@ namespace NX
 
 } // namespace NX
 
-#include "Spectator.generated.h" // added by the code generator. Better don't move it.
+#include "Spectator.generated.h"

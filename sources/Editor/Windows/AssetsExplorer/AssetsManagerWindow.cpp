@@ -747,7 +747,7 @@ namespace NX
             {
                 if (ImGui::MenuItem("Spawn on scene"))
                 {
-                    gGameInstance->gameScene.addBlueprintObjectToScene(asset, "");
+                    gGameInstance->scenes.getCurrentScene()->addBlueprintObjectToScene(asset, "");
                 }
             }
 

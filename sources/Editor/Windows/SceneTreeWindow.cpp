@@ -9,6 +9,7 @@
 
 #include "SceneTreeWindow.h"
 
+#include "../../NxWorld/Scene/Scene/Scene.h"
 #include "AssetsExplorer/AssetsManagerWindow.h"
 #include "Editor/EditorIntegration.h"
 #include "Editor/IconsFontAwesome.h"
@@ -18,7 +19,6 @@
 #include "NxWorld/Entities/Actor.h"
 #include "NxWorld/Entities/Camera/Camera.h"
 #include "NxWorld/Framework/GameInstance.h"
-#include "NxWorld/Scene/Scene.h"
 
 using namespace NX;
 
@@ -61,7 +61,7 @@ namespace NX
 
         setComponentName("Scene"_atom);
 
-        setScene(&gGameInstance->gameScene);
+        setScene(gGameInstance->scenes.getCurrentScene());
 
         _subscriptionPool << GetObjectSelectorManager()->onChange->subscribeAndGetID(
             [this](BaseComponent* comp, bool newValue)
@@ -224,7 +224,7 @@ namespace NX
         {
             if (ImGui::IsKeyPressed(ImGuiKey_Delete))
             {
-                gGameInstance->gameScene.deleteFromSceneOrFromObject(n);
+                gGameInstance->scenes.getCurrentScene()->deleteFromSceneOrFromObject(n);
             }
             else if (ImGui::IsItemClicked())
             {
@@ -240,11 +240,11 @@ namespace NX
         {
             if (ImGui::MenuItem(ICON_FA_TRASH " Delete"))
             {
-                gGameInstance->gameScene.deleteFromSceneOrFromObject(n);
+                gGameInstance->scenes.getCurrentScene()->deleteFromSceneOrFromObject(n);
             }
             if (ImGui::MenuItem(ICON_FA_CLONE " Duplicate"))
             {
-                gGameInstance->gameScene.duplicateSceneObject(n);
+                gGameInstance->scenes.getCurrentScene()->duplicateSceneObject(n);
             }
 
             if (auto* camera = n->tryCastTo<BaseCamera>())

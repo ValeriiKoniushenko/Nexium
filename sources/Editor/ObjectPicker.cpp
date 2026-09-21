@@ -15,8 +15,8 @@
 #ifdef NEXIUM_ENABLE_3D_MODULE
     #include "NxWorld/Entities/Mesh/StaticMeshBundle.h"
 #endif
+#include "../NxWorld/Scene/SceneObjects/Rectangle/Rectangle.h"
 #include "NxWorld/Framework/GameInstance.h"
-#include "NxWorld/Scene/Rectangle.h"
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include "glm/gtx/string_cast.hpp"

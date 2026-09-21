@@ -9,13 +9,13 @@
 
 #include "GameInstance.h"
 
+#include "../Scene/SceneObjects/Rectangle/Rectangle.h"
 #include "Core/Size.h"
 #include "Foundation/Configs.h"
 #include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimation.h"
 #include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimator.h"
 #include "NxWorld/Entities/Camera/Camera.h"
 #include "NxWorld/PrivateModuleInfo.h"
-#include "NxWorld/Scene/Rectangle.h"
 #include "Platform/Glfw.h"
 #include "Platform/Window.h"
 #include "spdlog/spdlog.h"
@@ -39,6 +39,15 @@ namespace NX
         if (gGameInstance) [[likely]]
         {
             return &gGameInstance->assets;
+        }
+        return nullptr;
+    }
+
+    SceneManager* GetSceneManager()
+    {
+        if (gGameInstance) [[likely]]
+        {
+            return &gGameInstance->scenes;
         }
         return nullptr;
     }
@@ -137,9 +146,10 @@ namespace NX
             _applicationIntegration->initialize();
         }
 
-        gameScene.initialize();
-        _subscriptionPool << gameScene.onObjectAdded->subscribeAndGetID(
-            [this](SceneObject* obj) { internal_onAddObjectToScene(obj); });
+        gGameInstance->scenes.getCurrentScene()->initialize();
+        _subscriptionPool
+            << gGameInstance->scenes.getCurrentScene()->onObjectAdded->subscribeAndGetID(
+                   [this](SceneObject* obj) { internal_onAddObjectToScene(obj); });
 
         startUpReadCache();
         loadCoreResources();
@@ -152,7 +162,7 @@ namespace NX
             _applicationIntegration->readFromCache();
         }
         GetCacheSystem().tryRead(Platform::GetWindow());
-        GetCacheSystem().tryRead(gameScene);
+        GetCacheSystem().tryRead(*gGameInstance->scenes.getCurrentScene());
         GetCacheSystem().tryRead(*GetWorld());
         onInitializeReadCache();
     }
@@ -165,7 +175,7 @@ namespace NX
         }
 
         GetCacheSystem().write(*GetWorld());
-        GetCacheSystem().write(gameScene);
+        GetCacheSystem().write(*gGameInstance->scenes.getCurrentScene());
         GetCacheSystem().write(Platform::GetWindow());
 
         onSaveAll();
