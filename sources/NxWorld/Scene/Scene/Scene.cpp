@@ -424,7 +424,7 @@ namespace NX
             replacement._sceneObjects.push_back(std::move(object));
         }
 
-        if (gGameInstance && &gGameInstance->gameScene == this)
+        if (gGameInstance && gGameInstance->scenes.getCurrentScene() == this)
         {
             gGameInstance->resetCamera();
         }

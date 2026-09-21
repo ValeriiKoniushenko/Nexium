@@ -9,6 +9,7 @@
 
 #include "EditorSettings.h"
 
+#include "../../NxWorld/Scene/SceneObjects/Spectator/Spectator.h"
 #include "Editor/EditorIntegration.h"
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
@@ -19,7 +20,6 @@
 #include "Editor/IconsFontAwesome.h"
 #include "NxFundamental/Utils/Stringifier.h"
 #include "NxWorld/Framework/GameInstance.h"
-#include "NxWorld/Scene/Spectator.h"
 
 using namespace NX::Gui;
 using namespace NX;
@@ -238,7 +238,7 @@ namespace NX
                 R<Keyboard::Key>::ToString(Widget::Input::editorImGuiShowRect).data());
         }
 
-        if (auto spectator = gGameInstance->gameScene.gerFirstOf<BaseSpectator>())
+        if (auto spectator = gGameInstance->scenes.getCurrentScene()->gerFirstOf<BaseSpectator>())
         {
             layout.addChildComponent<Spacer>();
             layout.addChildComponent<Label>()->setText("Spectator");
