@@ -9,6 +9,7 @@
 
 #include "SceneTreeWindow.h"
 
+#include "../../NxWorld/Scene/Scene/Scene.h"
 #include "AssetsExplorer/AssetsManagerWindow.h"
 #include "Editor/EditorIntegration.h"
 #include "Editor/IconsFontAwesome.h"
@@ -20,7 +21,7 @@
 #include "NxWorld/Entities/Camera/Camera.h"
 #include "NxWorld/Framework/GameInstanceAccess.h"
 #include "NxWorld/Framework/World.h"
-#include "NxWorld/Scene/Scene.h"
+#include "NxWorld/Scene/Scene/Scene.h"
 
 using namespace NX;
 

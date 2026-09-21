@@ -1,8 +1,13 @@
 {
     "_isMaximized": false,
     "_size": {
+<<<<<<< HEAD
         "height": 800,
         "width": 1200
+=======
+        "height": 1043,
+        "width": 1920
+>>>>>>> 2853ab00 (feat(scene): add SceneManager and reorganize scene objects)
     },
     "_swapInterval": true,
     "_title": "Nexium Engine"

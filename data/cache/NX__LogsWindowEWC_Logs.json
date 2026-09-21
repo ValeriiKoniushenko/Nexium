@@ -2,11 +2,19 @@
     "_children": null,
     "_innerPosition": [
         20.0,
+<<<<<<< HEAD
         524.0
     ],
     "_innerSize": {
         "height": 256.0,
         "width": 1160.0
+=======
+        841.0
+    ],
+    "_innerSize": {
+        "height": 182.0,
+        "width": 1880.0
+>>>>>>> 2853ab00 (feat(scene): add SceneManager and reorganize scene objects)
     },
     "_isEnabled": true,
     "_isFitContent": false,
@@ -44,6 +52,7 @@
     "_name": "Logs",
     "_noTick": false,
     "_oldSize": {
+<<<<<<< HEAD
         "height": 302.0,
         "width": 1180.0
     },
@@ -54,6 +63,18 @@
     "_size": {
         "height": 302.0,
         "width": 1180.0
+=======
+        "height": 228.0,
+        "width": 1900.0
+    },
+    "_position": [
+        10.0,
+        805.0
+    ],
+    "_size": {
+        "height": 228.0,
+        "width": 1900.0
+>>>>>>> 2853ab00 (feat(scene): add SceneManager and reorganize scene objects)
     },
     "_type": "NX::LogsWindowEWC"
 }

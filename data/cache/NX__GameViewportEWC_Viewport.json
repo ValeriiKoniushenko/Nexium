@@ -1,12 +1,21 @@
 {
     "_children": null,
     "_innerPosition": [
+<<<<<<< HEAD
         282.0,
         72.0
     ],
     "_innerSize": {
         "height": 404.0,
         "width": 507.0
+=======
+        345.0,
+        72.0
+    ],
+    "_innerSize": {
+        "height": 721.0,
+        "width": 1026.0
+>>>>>>> 2853ab00 (feat(scene): add SceneManager and reorganize scene objects)
     },
     "_isEnabled": true,
     "_isFitContent": false,
@@ -17,6 +26,7 @@
     "_name": "Viewport",
     "_noTick": false,
     "_oldSize": {
+<<<<<<< HEAD
         "height": 450.0,
         "width": 527.0
     },
@@ -27,6 +37,18 @@
     "_size": {
         "height": 450.0,
         "width": 527.0
+=======
+        "height": 767.0,
+        "width": 1046.0
+    },
+    "_position": [
+        335.0,
+        36.0
+    ],
+    "_size": {
+        "height": 767.0,
+        "width": 1046.0
+>>>>>>> 2853ab00 (feat(scene): add SceneManager and reorganize scene objects)
     },
     "_type": "NX::GameViewportEWC"
 }

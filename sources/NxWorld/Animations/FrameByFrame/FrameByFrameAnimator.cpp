@@ -9,8 +9,8 @@
 
 #include "FrameByFrameAnimator.h"
 
+#include "../../Scene/SceneObjects/Rectangle/RectangleAnimated.h"
 #include "FrameByFrameAnimation.h"
-#include "NxWorld/Scene/Rectangle.h"
 
 namespace NX::Animation
 {
@@ -176,7 +176,7 @@ namespace NX::Animation
     void FrameByFrameAnimator::onTick(float delta)
     {
         BaseComponent::onTick(delta);
-        updateCurrentAnimation(delta);
+        updateCurrentAnimation(delta);  
         applyCurrentFrameToRectangle();
     }
     // end::animator_tick[]
@@ -187,9 +187,9 @@ namespace NX::Animation
         const auto* animation = getActiveAnimation();
         if (!rectangle || !animation)
         {
-            LOG_ASSERT_ERROR_ONCE(("Only '{}' type is supported for animations."_f
-                                   << R<SceneObj::RectangleAnimated>::FullName())
-                                      .c_str());
+           // LOG_ASSERT_ERROR_ONCE(("Only '{}' type is supported for animations."_f
+               //                    << R<SceneObj::RectangleAnimated>::FullName())
+                //                      .c_str());
             return;
         }
 

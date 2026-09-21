@@ -25,7 +25,7 @@
 #include "NxSubsystems/AssetsManager/AssetsManager.h"
 #include "NxWorld/Framework/GameInstanceAccess.h"
 #include "NxWorld/Framework/World.h"
-#include "NxWorld/Scene/Scene.h"
+#include "NxWorld/Scene/Scene/Scene.h"
 #include "RenamePopUpWindow.h"
 #include "ThumbnailFile.h"
 

@@ -5,8 +5,13 @@
         72.0
     ],
     "_innerSize": {
+<<<<<<< HEAD
         "height": 404.0,
         "width": 240.0
+=======
+        "height": 721.0,
+        "width": 303.0
+>>>>>>> 2853ab00 (feat(scene): add SceneManager and reorganize scene objects)
     },
     "_isEnabled": true,
     "_isFitContent": false,
@@ -17,16 +22,26 @@
     "_name": "Scene",
     "_noTick": false,
     "_oldSize": {
+<<<<<<< HEAD
         "height": 450.0,
         "width": 260.0
+=======
+        "height": 767.0,
+        "width": 323.0
+>>>>>>> 2853ab00 (feat(scene): add SceneManager and reorganize scene objects)
     },
     "_position": [
         10.0,
         36.0
     ],
     "_size": {
+<<<<<<< HEAD
         "height": 450.0,
         "width": 260.0
+=======
+        "height": 767.0,
+        "width": 323.0
+>>>>>>> 2853ab00 (feat(scene): add SceneManager and reorganize scene objects)
     },
     "_type": "NX::SceneTreeWindowEWC"
 }

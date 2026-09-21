@@ -19,6 +19,8 @@ namespace NX
 
     [[nodiscard]] World* GetWorld();
     [[nodiscard]] AssetsManager* GetAssetsManager();
+    class SceneManager;
+    [[nodiscard]] SceneManager* GetSceneManager();
     [[nodiscard]] Scene* GetGameScene();
     [[nodiscard]] bool IsEditorMode();
 

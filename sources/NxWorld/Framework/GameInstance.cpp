@@ -9,6 +9,7 @@
 
 #include "GameInstance.h"
 
+#include "../Scene/SceneObjects/Rectangle/Rectangle.h"
 #include "Core/Size.h"
 #include "Foundation/Configs.h"
 #include "Foundation/Debug/Latency.h"
@@ -17,7 +18,6 @@
 #include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimator.h"
 #include "NxWorld/Entities/Camera/Camera.h"
 #include "NxWorld/PrivateModuleInfo.h"
-#include "NxWorld/Scene/Rectangle.h"
 #include "Platform/Glfw.h"
 #include "Platform/Window.h"
 #include "spdlog/common.h"
@@ -48,7 +48,12 @@ namespace NX
 
     Scene* GetGameScene()
     {
-        return gGameInstance ? &gGameInstance->gameScene : nullptr;
+        return gGameInstance ? gGameInstance->scenes.getCurrentScene() : nullptr;
+    }
+
+    SceneManager* GetSceneManager()
+    {
+        return gGameInstance ? &gGameInstance->scenes : nullptr;
     }
 
     bool IsEditorMode()
@@ -172,8 +177,8 @@ namespace NX
 
         NX_LATENCY_POINT("ECS - inited");
 
-        gameScene.initialize();
-        _subscriptionPool << gameScene.onObjectAdded->subscribeAndGetID(
+        scenes.getCurrentScene()->initialize();
+        _subscriptionPool << scenes.getCurrentScene()->onObjectAdded->subscribeAndGetID(
             [this](SceneObject* obj) { internal_onAddObjectToScene(obj); });
 
         NX_LATENCY_POINT("Scene - inited");
@@ -193,7 +198,7 @@ namespace NX
             _applicationIntegration->readFromCache();
         }
         GetCacheSystem().tryRead(Platform::GetWindow());
-        GetCacheSystem().tryRead(gameScene);
+        GetCacheSystem().tryRead(*gGameInstance->scenes.getCurrentScene());
         GetCacheSystem().tryRead(*GetWorld());
         onInitializeReadCache();
     }
@@ -206,7 +211,7 @@ namespace NX
         }
 
         GetCacheSystem().write(*GetWorld());
-        GetCacheSystem().write(gameScene);
+        GetCacheSystem().write(*gGameInstance->scenes.getCurrentScene());
         GetCacheSystem().write(Platform::GetWindow());
 
         onSaveAll();

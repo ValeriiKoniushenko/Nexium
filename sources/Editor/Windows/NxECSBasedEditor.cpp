@@ -26,7 +26,7 @@
 #include "NxSubsystems/AssetsManager/AssetsManager.h"
 #include "NxWorld/Framework/GameInstanceAccess.h"
 #include "NxWorld/Framework/World.h"
-#include "NxWorld/Scene/Scene.h"
+#include "NxWorld/Scene/Scene/Scene.h"
 
 using namespace NX::Gui;
 using namespace NX;

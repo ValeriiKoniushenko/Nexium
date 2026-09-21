@@ -69,7 +69,43 @@
             }
         },
         {
-            "assetType": "NX::Spectator2D",
+            "assetType": "NX::SceneObj::RectangleAnimated",
+            "name": "AnimatedPlayersa",
+            "referenceAsset": "data/assets/AnimatedPlayer.nx",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_animationFPS": 70.5,
+                "_animationName": "New animation",
+                "_atlasName": "santa_walk",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "Walk_11.png"
+            }
+        },
+        {
+            "assetType": "NX::Spectator",
             "name": "2D_Spectator",
             "referenceAsset": "data/assets/2D_Spectator.nx",
             "trans": {
@@ -79,9 +115,15 @@
                     0.0
                 ],
                 "_position": [
+<<<<<<< HEAD
                     -281.618896484375,
                     -74.62364959716797,
                     1005.0285034179688
+=======
+                    -300.11749267578125,
+                    -300.2021179199219,
+                    1596.681396484375
+>>>>>>> 2853ab00 (feat(scene): add SceneManager and reorganize scene objects)
                 ],
                 "_rotation": [
                     0.0,
@@ -100,7 +142,7 @@
         },
         {
             "assetType": "NX::SceneObj::RectangleAnimated",
-            "name": "AnimatedPlayersa_3",
+            "name": "AnimatedPlayersa_0",
             "referenceAsset": "data/assets/AnimatedPlayer.nx",
             "trans": {
                 "_origin": [
@@ -109,14 +151,14 @@
                     0.0
                 ],
                 "_position": [
-                    81.10975646972656,
-                    79.40269470214844,
+                    79.4000015258789,
+                    0.0,
                     0.0
                 ],
                 "_rotation": [
-                    -0.0,
                     0.0,
-                    -0.0
+                    0.0,
+                    0.0
                 ],
                 "_scale": [
                     1.0,
@@ -126,12 +168,14 @@
             },
             "typeSpecificData": {
                 "_animationEnabled": true,
-                "_animationFPS": 70.5,
-                "_animationName": "New animation",
-                "_atlasName": "santa_walk",
+                "_atlasName": "default",
                 "_blendingEnabled": true,
                 "_isEnabled": true,
+<<<<<<< HEAD
                 "_textureName": "Walk_12.png"
+=======
+                "_textureName": "red.png"
+>>>>>>> 2853ab00 (feat(scene): add SceneManager and reorganize scene objects)
             }
         }
     ]

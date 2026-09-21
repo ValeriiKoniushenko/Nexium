@@ -9,6 +9,7 @@
 
 #include "EditorSettings.h"
 
+#include "../../NxWorld/Scene/SceneObjects/Spectator/Spectator.h"
 #include "Editor/EditorIntegration.h"
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
@@ -20,8 +21,8 @@
 #include "NxFundamental/Utils/Stringifier.h"
 #include "NxWorld/Framework/GameInstanceAccess.h"
 #include "NxWorld/Framework/World.h"
-#include "NxWorld/Scene/Scene.h"
-#include "NxWorld/Scene/Spectator.h"
+#include "NxWorld/Scene/Scene/Scene.h"
+#include "NxWorld/Scene/SceneObjects/Spectator/Spectator.h"
 
 using namespace NX::Gui;
 using namespace NX;

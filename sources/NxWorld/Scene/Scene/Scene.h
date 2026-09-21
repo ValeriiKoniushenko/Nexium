@@ -11,11 +11,11 @@
 
 #pragma once
 
+#include "../SceneObjects/Grid/Grid.h"
+#include "../SceneObjects/SceneObject.h"
 #include "Core/Delegate.h"
-#include "Grid.h"
 #include "NxFundamental/Assets/ECSAsset.h"
 #include "NxWorld/Assets/SkyboxAsset.h"
-#include "SceneObject.h"
 
 #include <vector>
 
@@ -117,4 +117,4 @@ namespace NX
     }
 
 } // namespace NX
-#include "Scene.generated.h" // added by the code generator. Better don't move it.
+#include "Scene.generated.h"

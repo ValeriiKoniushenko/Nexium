@@ -11,11 +11,12 @@
 
 #pragma once
 
+#include "../Scene/Scene/Scene.h"
 #include "ApplicationIntegration.h"
 #include "GameInstanceAccess.h"
 #include "NxSubsystems/AssetsManager/AssetsManager.h"
 #include "NxSubsystems/Graphics/ShaderManager.h"
-#include "NxWorld/Scene/Scene.h"
+#include "NxWorld/Scene/Scene/SceneManager.h"
 #include "Platform/Window.h"
 #include "UserInterface.h"
 #include "World.h"
@@ -66,11 +67,11 @@ namespace NX
         [[nodiscard]] float getTimeout() const noexcept { return _timeout; }
 
     public:
-        Scene gameScene;
-        ShaderManager& shaderManager = GetShaderManager();
         World world;
-        UserInterface userInterface;
+        SceneManager scenes;
         AssetsManager assets;
+        UserInterface userInterface;
+        ShaderManager& shaderManager = GetShaderManager();
 
         void resetCamera();
         RenderMode renderMode = RenderMode::Editor;
