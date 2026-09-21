@@ -33,10 +33,15 @@ namespace
     public:
         const glm::mat4& getMatrix() override
         {
-            _cachedProjMatrix = glm::ortho(0.f, 800.f, 0.f, 600.f, -10.f, 10.f);
-            _cachedCalculatedMatrix = _cachedProjMatrix;
+            _cachedProjMatrix = useEngineDepth ? glm::ortho(0.f, 800.f, 0.f, 600.f, 0.1f, 10000.f)
+                                               : glm::ortho(0.f, 800.f, 0.f, 600.f, -10.f, 10.f);
+            _cachedModelMatrix = glm::translate(
+                glm::mat4(1.f), glm::vec3(0.f, 0.f, useEngineDepth ? -1000.f : 0.f));
+            _cachedCalculatedMatrix = _cachedProjMatrix * _cachedModelMatrix;
             return _cachedCalculatedMatrix;
         }
+
+        bool useEngineDepth = false;
     };
 
     class SceneGizmoInteractionTests : public ::testing::Test
@@ -98,6 +103,21 @@ namespace
         frame({ 700.f, 500.f }, false);
         EXPECT_FALSE(gizmo.blocksPicking());
     }
+    TEST_F(SceneGizmoInteractionTests, XYPlaneDragPreservesDepthWithEngineClipRange)
+    {
+        camera.useEngineDepth = true;
+        frame({ 335.f, 265.f }, false);
+        frame({ 335.f, 265.f }, false);
+        frame({ 335.f, 265.f }, true);
+        ASSERT_TRUE(ImGuizmo::IsUsing());
+        frame({ 385.f, 240.f }, true);
+        EXPECT_NEAR(rectangle.getPosition().x, 350.f, 0.1f);
+        EXPECT_NEAR(rectangle.getPosition().y, 325.f, 0.1f);
+        EXPECT_NEAR(rectangle.getPosition().z, 0.f, 0.001f);
+        frame({ 385.f, 240.f }, false);
+        EXPECT_NEAR(rectangle.getPosition().z, 0.f, 0.001f);
+    }
+
     TEST_F(SceneGizmoInteractionTests, RotationRingRotatesOnlyAroundZ)
     {
         float radius = 20.f;

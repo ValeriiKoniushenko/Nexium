@@ -82,10 +82,24 @@ namespace NX
         ImGuizmo::SetDrawlist(ImGui::GetWindowDrawList());
         ImGuizmo::SetRect(position.x, position.y, size.x, size.y);
         ImGuizmo::SetOrthographic(camera.getType() == CameraType::Orthographic);
+        ImGuizmo::SetGizmoSizeClipSpace(0.15f);
+        auto& style = ImGuizmo::GetStyle();
+        style.TranslationLineThickness = 5.f;
+        style.TranslationLineArrowSize = 10.f;
+        style.RotationLineThickness = 4.f;
+        style.RotationOuterLineThickness = 5.f;
+        style.CenterCircleSize = 9.f;
         ImGuizmo::Enable(true);
+        // ImGuizmo unprojects depth in [0, 1]; the renderer uses OpenGL's [-1, 1].
+        auto gizmoProjection = camera.getCachedProjectionMatrix();
+        for (int column = 0; column < 4; ++column)
+        {
+            gizmoProjection[column][2]
+                = (gizmoProjection[column][2] + gizmoProjection[column][3]) * 0.5f;
+        }
         if (ImGuizmo::Manipulate(glm::value_ptr(camera.getModelMatrix()),
-                                 glm::value_ptr(camera.getCachedProjectionMatrix()), operation,
-                                 ImGuizmo::WORLD, glm::value_ptr(matrix)))
+                                 glm::value_ptr(gizmoProjection), operation, ImGuizmo::WORLD,
+                                 glm::value_ptr(matrix)))
         {
             ApplyTransform(object, matrix, parent, true);
             root->recalculateMatrices();
