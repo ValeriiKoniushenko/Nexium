@@ -70,7 +70,7 @@ namespace NX
 
             if (!_gameInstance.isEditorMode())
             {
-                _gameInstance.gameScene.tick(_gameInstance.world.getTimeDelta());
+                _gameInstance.scenes.getCurrentScene()->tick(_gameInstance.world.getTimeDelta());
 
                 glClear(clearBits);
 
@@ -81,7 +81,7 @@ namespace NX
 
                 if (_gameInstance.world.currentCamera)
                 {
-                    _gameInstance.gameScene.directDraw(
+                    _gameInstance.scenes.getCurrentScene()->directDraw(
                         _gameInstance.shaderManager.getShaderProgram("skybox"_atom),
                         _gameInstance.shaderManager.getShaderProgram("grid"_atom));
                     _gameInstance.tick(_gameInstance.world.getTimeDelta());
@@ -92,7 +92,7 @@ namespace NX
                 auto* integration = _gameInstance.getApplicationIntegration();
                 if (integration->isViewportFocused())
                 {
-                    _gameInstance.gameScene.tick(_gameInstance.world.getTimeDelta());
+                     _gameInstance.scenes.getCurrentScene()->tick(_gameInstance.world.getTimeDelta());
                 }
 
                 glClear(clearBits);
@@ -100,11 +100,11 @@ namespace NX
 
                 if (_gameInstance.world.currentCamera)
                 {
-                    integration->updateSceneInteraction(_gameInstance.gameScene);
+                    integration->updateSceneInteraction(*_gameInstance.scenes.getCurrentScene());
                     integration->beforeSceneDraw();
                     glClear(clearBits);
 
-                    _gameInstance.gameScene.directDraw(
+                    _gameInstance.scenes.getCurrentScene()->directDraw(
                         _gameInstance.shaderManager.getShaderProgram("skybox"_atom),
                         _gameInstance.shaderManager.getShaderProgram("grid"_atom));
                     _gameInstance.tick(_gameInstance.world.getTimeDelta());

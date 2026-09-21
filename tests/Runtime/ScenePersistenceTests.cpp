@@ -7,9 +7,9 @@
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 
+#include "../../sources/NxWorld/Scene/Scene/Scene.h"
 #include "Foundation/Configs.h"
 #include "NxWorld/Framework/GameInstance.h"
-#include "NxWorld/Scene/Scene.h"
 
 #include "gtest/gtest.h"
 #include <chrono>

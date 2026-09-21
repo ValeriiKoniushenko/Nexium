@@ -29,7 +29,7 @@
 #include "NxSubsystems/AssetsManager/AssetsManager.h"
 #include "NxWorld/Framework/GameInstanceAccess.h"
 #include "NxWorld/Framework/World.h"
-#include "NxWorld/Scene/Rectangle.h"
+#include "NxWorld/Scene/SceneObjects/Rectangle/Rectangle.h"
 
 using namespace Core;
 using namespace NX;

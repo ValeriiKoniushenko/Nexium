@@ -9,8 +9,8 @@
 
 #include "FrameByFrameAnimator.h"
 
+#include "../../Scene/SceneObjects/Rectangle/RectangleAnimated.h"
 #include "FrameByFrameAnimation.h"
-#include "NxWorld/Scene/Rectangle.h"
 
 namespace NX::Animation
 {
@@ -176,7 +176,7 @@ namespace NX::Animation
     void FrameByFrameAnimator::onTick(float delta)
     {
         BaseComponent::onTick(delta);
-        updateCurrentAnimation(delta);
+        updateCurrentAnimation(delta);  
         applyCurrentFrameToRectangle();
     }
     // end::animator_tick[]

@@ -17,7 +17,7 @@
 #include "ImGui/imgui.h"
 #include "NxSubsystems/AssetsManager/AssetsManager.h"
 #include "NxWorld/Framework/GameInstanceAccess.h"
-#include "NxWorld/Scene/Scene.h"
+#include "NxWorld/Scene/Scene/Scene.h"
 
 #include <array>
 #include <chrono>

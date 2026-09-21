@@ -11,7 +11,7 @@
 
 #include "ImGuizmoIntegration.h"
 #include "NxWorld/Entities/Camera/Camera.h"
-#include "NxWorld/Scene/Rectangle.h"
+#include "NxWorld/Scene/SceneObjects/Rectangle/Rectangle.h"
 #include "glm/gtc/type_ptr.hpp"
 
 #define GLM_ENABLE_EXPERIMENTAL

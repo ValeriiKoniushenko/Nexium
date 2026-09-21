@@ -5,8 +5,13 @@
         0.0
     ],
     "_innerSize": {
+<<<<<<< HEAD
         "height": 0.0,
         "width": 0.0
+=======
+        "height": 721.0,
+        "width": 507.0
+>>>>>>> 2853ab00 (feat(scene): add SceneManager and reorganize scene objects)
     },
     "_isEnabled": false,
     "_isFitContent": false,
@@ -17,16 +22,26 @@
     "_name": "Shader manager",
     "_noTick": false,
     "_oldSize": {
+<<<<<<< HEAD
         "height": -1.0,
         "width": -1.0
+=======
+        "height": 767.0,
+        "width": 527.0
+>>>>>>> 2853ab00 (feat(scene): add SceneManager and reorganize scene objects)
     },
     "_position": [
         0.0,
         0.0
     ],
     "_size": {
+<<<<<<< HEAD
         "height": 0.0,
         "width": 0.0
+=======
+        "height": 767.0,
+        "width": 527.0
+>>>>>>> 2853ab00 (feat(scene): add SceneManager and reorganize scene objects)
     },
     "_type": "NX::ShaderManagerEWC"
 }

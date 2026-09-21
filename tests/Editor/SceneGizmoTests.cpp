@@ -10,7 +10,7 @@
 #include "Editor/ImGuizmoIntegration.h"
 #include "Editor/SceneGizmo.h"
 #include "NxWorld/Entities/Camera/Camera.h"
-#include "NxWorld/Scene/Rectangle.h"
+#include "NxWorld/Scene/SceneObjects/Rectangle/Rectangle.h"
 #include "glm/gtc/matrix_transform.hpp"
 
 #include "gtest/gtest.h"
