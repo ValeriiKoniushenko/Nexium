@@ -17,6 +17,7 @@
 #include "Foundation/Configs.h"
 #include "ImGui/backends/imgui_impl_glfw.h"
 #include "ImGui/backends/imgui_impl_opengl3.h"
+#include "ImGuizmoIntegration.h"
 #include "NxFundamental/ECS/BaseComponent.h"
 #include "NxFundamental/ITagHolder.h"
 #ifdef NEXIUM_ENABLE_3D_MODULE
@@ -152,6 +153,7 @@ namespace NX
             ImGui_ImplOpenGL3_NewFrame();
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
+            ImGuizmo::BeginFrame();
 
             for (auto&& wnd : _windows)
             {
@@ -595,6 +597,12 @@ namespace NX
 
     void GameEditor::handleMouseClick(glm::vec2 pos, MouseInputAction::SpecKeysState state)
     {
+        const auto* viewport = getWindow<GameViewportEWC>();
+        if (!viewport || !viewport->isHovered() || viewport->blocksPicking())
+        {
+            return;
+        }
+
         if (gDragDrop.getState() == DragAndDrop::State::Dragging)
         {
             return;

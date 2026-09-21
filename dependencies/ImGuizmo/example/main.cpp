@@ -326,9 +326,9 @@ void TransformStart(float* cameraView, float* cameraProjection, float* matrix, b
     float viewManipulateRight = io.DisplaySize.x;
     float viewManipulateTop = 0;
     static ImGuiWindowFlags gizmoWindowFlags = 0;
-    ImGui::SetNextWindowSize(ImVec2(800, 400), ImGuiCond_Appearing);
-    ImGui::SetNextWindowPos(ImVec2(400, 20), ImGuiCond_Appearing);
-    ImGui::PushStyleColor(ImGuiCol_WindowBg, (ImVec4)ImColor(0.35f, 0.3f, 0.3f));
+    ImGui::SetNextWindowSize(glm::vec2(800, 400), ImGuiCond_Appearing);
+    ImGui::SetNextWindowPos(glm::vec2(400, 20), ImGuiCond_Appearing);
+    ImGui::PushStyleColor(ImGuiCol_WindowBg, (glm::vec4)ImColor(0.35f, 0.3f, 0.3f));
     if (useWindow)
     {
        ImGui::Begin("Gizmo", 0, gizmoWindowFlags);
@@ -353,7 +353,8 @@ void TransformStart(float* cameraView, float* cameraProjection, float* matrix, b
     // Drag in empty viewport area to orbit the camera
     ImGuiIO& ioVP = ImGui::GetIO();
     // Nav-cube rect (top-right corner). Grabbing it moves the view, so it must not also orbit.
-    ImRect viewCubeRect(ImVec2(viewManipulateRight - 128, viewManipulateTop), ImVec2(viewManipulateRight, viewManipulateTop + 128));
+    ImRect viewCubeRect(glm::vec2(viewManipulateRight - 128, viewManipulateTop),
+                        glm::vec2(viewManipulateRight, viewManipulateTop + 128));
     static bool orbiting = false;
     if (!ioVP.MouseDown[0])
        orbiting = false;
@@ -375,7 +376,9 @@ void TransformStart(float* cameraView, float* cameraProjection, float* matrix, b
     ImGuizmo::DrawCubes(cameraView, cameraProjection, &objectMatrix[0][0], gizmoCount);
 
     ImGuizmo::PushID("mainView");
-    ImGuizmo::ViewManipulate(cameraView, camDistance, ImVec2(viewManipulateRight - 128, viewManipulateTop), ImVec2(128, 128), 0x10101010);
+    ImGuizmo::ViewManipulate(cameraView, camDistance,
+                             glm::vec2(viewManipulateRight - 128, viewManipulateTop),
+                             glm::vec2(128, 128), 0x10101010);
     ImGuizmo::PopID();
 }
 
@@ -417,14 +420,14 @@ void SecondView(bool isPerspective, float fov, float viewWidth, bool rightHanded
         prevHandedness2 = handednessNow;
     }
 
-    ImGui::SetNextWindowPos(ImVec2(400, 440), ImGuiCond_Appearing);
-    ImGui::SetNextWindowSize(ImVec2(800, 400), ImGuiCond_Appearing);
-    ImGui::PushStyleColor(ImGuiCol_WindowBg, (ImVec4)ImColor(0.3f, 0.3f, 0.35f));
+    ImGui::SetNextWindowPos(glm::vec2(400, 440), ImGuiCond_Appearing);
+    ImGui::SetNextWindowSize(glm::vec2(800, 400), ImGuiCond_Appearing);
+    ImGui::PushStyleColor(ImGuiCol_WindowBg, (glm::vec4)ImColor(0.3f, 0.3f, 0.35f));
     static ImGuiWindowFlags secondViewFlags = 0;
     ImGui::Begin("Second View", &useSecondView, secondViewFlags);
     ImGuizmo::SetDrawlist();
 
-    ImVec2 winPos = ImGui::GetWindowPos();
+    glm::vec2 winPos = ImGui::GetWindowPos();
     float winWidth = (float)ImGui::GetWindowWidth();
     float winHeight = (float)ImGui::GetWindowHeight();
     ImGuizmo::SetRect(winPos.x, winPos.y, winWidth, winHeight);
@@ -450,7 +453,8 @@ void SecondView(bool isPerspective, float fov, float viewWidth, bool rightHanded
     secondViewFlags = ImGui::IsWindowHovered() && ImGui::IsMouseHoveringRect(window2->InnerRect.Min, window2->InnerRect.Max) ? ImGuiWindowFlags_NoMove : 0;
     bool viewDirty2 = firstFrame2;
     // Drag in empty viewport area to orbit the second camera
-    ImRect viewCubeRect2(ImVec2(winPos.x + winWidth - 128, winPos.y), ImVec2(winPos.x + winWidth, winPos.y + 128));
+    ImRect viewCubeRect2(glm::vec2(winPos.x + winWidth - 128, winPos.y),
+                         glm::vec2(winPos.x + winWidth, winPos.y + 128));
     static bool orbiting2 = false;
     if (!io.MouseDown[0])
         orbiting2 = false;
@@ -490,7 +494,9 @@ void SecondView(bool isPerspective, float fov, float viewWidth, bool rightHanded
     ImGuizmo::PopID();
 
     ImGuizmo::PushID("secondView");
-    ImGuizmo::ViewManipulate(cameraView2, camDistance2, ImVec2(winPos.x + winWidth - 128, winPos.y), ImVec2(128, 128), 0x10101010);
+    ImGuizmo::ViewManipulate(cameraView2, camDistance2,
+                             glm::vec2(winPos.x + winWidth - 128, winPos.y), glm::vec2(128, 128),
+                             0x10101010);
     ImGuizmo::PopID();
 
     ImGui::End();
@@ -508,30 +514,29 @@ struct RampEdit : public ImCurveEdit::Delegate
 {
    RampEdit()
    {
-      mPts[0][0] = ImVec2(-10.f, 0);
-      mPts[0][1] = ImVec2(20.f, 0.6f);
-      mPts[0][2] = ImVec2(25.f, 0.2f);
-      mPts[0][3] = ImVec2(70.f, 0.4f);
-      mPts[0][4] = ImVec2(120.f, 1.f);
-      mPointCount[0] = 5;
+       mPts[0][0] = glm::vec2(-10.f, 0);
+       mPts[0][1] = glm::vec2(20.f, 0.6f);
+       mPts[0][2] = glm::vec2(25.f, 0.2f);
+       mPts[0][3] = glm::vec2(70.f, 0.4f);
+       mPts[0][4] = glm::vec2(120.f, 1.f);
+       mPointCount[0] = 5;
 
-      mPts[1][0] = ImVec2(-50.f, 0.2f);
-      mPts[1][1] = ImVec2(33.f, 0.7f);
-      mPts[1][2] = ImVec2(80.f, 0.2f);
-      mPts[1][3] = ImVec2(82.f, 0.8f);
-      mPointCount[1] = 4;
+       mPts[1][0] = glm::vec2(-50.f, 0.2f);
+       mPts[1][1] = glm::vec2(33.f, 0.7f);
+       mPts[1][2] = glm::vec2(80.f, 0.2f);
+       mPts[1][3] = glm::vec2(82.f, 0.8f);
+       mPointCount[1] = 4;
 
-
-      mPts[2][0] = ImVec2(40.f, 0);
-      mPts[2][1] = ImVec2(60.f, 0.1f);
-      mPts[2][2] = ImVec2(90.f, 0.82f);
-      mPts[2][3] = ImVec2(150.f, 0.24f);
-      mPts[2][4] = ImVec2(200.f, 0.34f);
-      mPts[2][5] = ImVec2(250.f, 0.12f);
-      mPointCount[2] = 6;
-      mbVisible[0] = mbVisible[1] = mbVisible[2] = true;
-      mMax = ImVec2(1.f, 1.f);
-      mMin = ImVec2(0.f, 0.f);
+       mPts[2][0] = glm::vec2(40.f, 0);
+       mPts[2][1] = glm::vec2(60.f, 0.1f);
+       mPts[2][2] = glm::vec2(90.f, 0.82f);
+       mPts[2][3] = glm::vec2(150.f, 0.24f);
+       mPts[2][4] = glm::vec2(200.f, 0.34f);
+       mPts[2][5] = glm::vec2(250.f, 0.12f);
+       mPointCount[2] = 6;
+       mbVisible[0] = mbVisible[1] = mbVisible[2] = true;
+       mMax = glm::vec2(1.f, 1.f);
+       mMin = glm::vec2(0.f, 0.f);
    }
    size_t GetCurveCount()
    {
@@ -552,44 +557,43 @@ struct RampEdit : public ImCurveEdit::Delegate
       uint32_t cols[] = { 0xFF0000FF, 0xFF00FF00, 0xFFFF0000 };
       return cols[curveIndex];
    }
-   ImVec2* GetPoints(size_t curveIndex)
-   {
-      return mPts[curveIndex];
-   }
+   glm::vec2* GetPoints(size_t curveIndex) { return mPts[curveIndex]; }
    virtual ImCurveEdit::CurveType GetCurveType(size_t curveIndex) const { return ImCurveEdit::CurveSmooth; }
-   virtual int EditPoint(size_t curveIndex, int pointIndex, ImVec2 value)
+   virtual int EditPoint(size_t curveIndex, int pointIndex, glm::vec2 value)
    {
-      mPts[curveIndex][pointIndex] = ImVec2(value.x, value.y);
-      SortValues(curveIndex);
-      for (size_t i = 0; i < GetPointCount(curveIndex); i++)
-      {
-         if (mPts[curveIndex][i].x == value.x)
-            return (int)i;
-      }
+       mPts[curveIndex][pointIndex] = glm::vec2(value.x, value.y);
+       SortValues(curveIndex);
+       for (size_t i = 0; i < GetPointCount(curveIndex); i++)
+       {
+           if (mPts[curveIndex][i].x == value.x)
+           {
+               return (int)i;
+           }
+       }
       return pointIndex;
    }
-   virtual void AddPoint(size_t curveIndex, ImVec2 value)
+   virtual void AddPoint(size_t curveIndex, glm::vec2 value)
    {
       if (mPointCount[curveIndex] >= 8)
          return;
       mPts[curveIndex][mPointCount[curveIndex]++] = value;
       SortValues(curveIndex);
    }
-   virtual ImVec2& GetMax() { return mMax; }
-   virtual ImVec2& GetMin() { return mMin; }
+   virtual glm::vec2& GetMax() { return mMax; }
+   virtual glm::vec2& GetMin() { return mMin; }
    virtual unsigned int GetBackgroundColor() { return 0; }
-   ImVec2 mPts[3][8];
+   glm::vec2 mPts[3][8];
    size_t mPointCount[3];
    bool mbVisible[3];
-   ImVec2 mMin;
-   ImVec2 mMax;
-private:
+   glm::vec2 mMin;
+   glm::vec2 mMax;
+
+   private:
    void SortValues(size_t curveIndex)
    {
       auto b = std::begin(mPts[curveIndex]);
       auto e = std::begin(mPts[curveIndex]) + GetPointCount(curveIndex);
-      std::sort(b, e, [](ImVec2 a, ImVec2 b) { return a.x < b.x; });
-
+      std::sort(b, e, [](glm::vec2 a, glm::vec2 b) { return a.x < b.x; });
    }
 };
 
@@ -659,16 +663,18 @@ struct MySequence : public ImSequencer::SequenceInterface
    {
       static const char* labels[] = { "Translation", "Rotation" , "Scale" };
 
-      rampEdit.mMax = ImVec2(float(mFrameMax), 1.f);
-      rampEdit.mMin = ImVec2(float(mFrameMin), 0.f);
+      rampEdit.mMax = glm::vec2(float(mFrameMax), 1.f);
+      rampEdit.mMin = glm::vec2(float(mFrameMin), 0.f);
       draw_list->PushClipRect(legendClippingRect.Min, legendClippingRect.Max, true);
       for (int i = 0; i < 3; i++)
       {
-         ImVec2 pta(legendRect.Min.x + 30, legendRect.Min.y + i * 14.f);
-         ImVec2 ptb(legendRect.Max.x, legendRect.Min.y + (i + 1) * 14.f);
-         draw_list->AddText(pta, rampEdit.mbVisible[i] ? 0xFFFFFFFF : 0x80FFFFFF, labels[i]);
-         if (ImRect(pta, ptb).Contains(ImGui::GetMousePos()) && ImGui::IsMouseClicked(0))
-            rampEdit.mbVisible[i] = !rampEdit.mbVisible[i];
+          glm::vec2 pta(legendRect.Min.x + 30, legendRect.Min.y + i * 14.f);
+          glm::vec2 ptb(legendRect.Max.x, legendRect.Min.y + (i + 1) * 14.f);
+          draw_list->AddText(pta, rampEdit.mbVisible[i] ? 0xFFFFFFFF : 0x80FFFFFF, labels[i]);
+          if (ImRect(pta, ptb).Contains(ImGui::GetMousePos()) && ImGui::IsMouseClicked(0))
+          {
+              rampEdit.mbVisible[i] = !rampEdit.mbVisible[i];
+          }
       }
       draw_list->PopClipRect();
 
@@ -678,21 +684,24 @@ struct MySequence : public ImSequencer::SequenceInterface
 
    virtual void CustomDrawCompact(int index, ImDrawList* draw_list, const ImRect& rc, const ImRect& clippingRect)
    {
-      rampEdit.mMax = ImVec2(float(mFrameMax), 1.f);
-      rampEdit.mMin = ImVec2(float(mFrameMin), 0.f);
-      draw_list->PushClipRect(clippingRect.Min, clippingRect.Max, true);
-      for (int i = 0; i < 3; i++)
-      {
-         for (unsigned int j = 0; j < rampEdit.mPointCount[i]; j++)
-         {
-            float p = rampEdit.mPts[i][j].x;
-            if (p < myItems[index].mFrameStart || p > myItems[index].mFrameEnd)
-               continue;
-            float r = (p - mFrameMin) / float(mFrameMax - mFrameMin);
-            float x = ImLerp(rc.Min.x, rc.Max.x, r);
-            draw_list->AddLine(ImVec2(x, rc.Min.y + 6), ImVec2(x, rc.Max.y - 4), 0xAA000000, 4.f);
-         }
-      }
+       rampEdit.mMax = glm::vec2(float(mFrameMax), 1.f);
+       rampEdit.mMin = glm::vec2(float(mFrameMin), 0.f);
+       draw_list->PushClipRect(clippingRect.Min, clippingRect.Max, true);
+       for (int i = 0; i < 3; i++)
+       {
+           for (unsigned int j = 0; j < rampEdit.mPointCount[i]; j++)
+           {
+               float p = rampEdit.mPts[i][j].x;
+               if (p < myItems[index].mFrameStart || p > myItems[index].mFrameEnd)
+               {
+                   continue;
+               }
+               float r = (p - mFrameMin) / float(mFrameMax - mFrameMin);
+               float x = ImLerp(rc.Min.x, rc.Max.x, r);
+               draw_list->AddLine(glm::vec2(x, rc.Min.y + 6), glm::vec2(x, rc.Max.y - 4),
+                                  0xAA000000, 4.f);
+           }
+       }
       draw_list->PopClipRect();
    }
 };
@@ -732,7 +741,7 @@ struct GraphEditorDelegate : public GraphEditor::Delegate
       mNodes[nodeIndex].mSelected = selected;
    }
 
-   void MoveSelectedNodes(const ImVec2 delta) override
+   void MoveSelectedNodes(const glm::vec2 delta) override
    {
       for (auto& node : mNodes)
       {
@@ -783,13 +792,10 @@ struct GraphEditorDelegate : public GraphEditor::Delegate
    const GraphEditor::Node GetNode(GraphEditor::NodeIndex index) override
    {
       const auto& myNode = mNodes[index];
-      return GraphEditor::Node
-      {
-          myNode.name,
-          myNode.templateIndex,
-          ImRect(ImVec2(myNode.x, myNode.y), ImVec2(myNode.x + 200, myNode.y + 200)),
-          myNode.mSelected
-      };
+      return GraphEditor::Node{ myNode.name, myNode.templateIndex,
+                                ImRect(glm::vec2(myNode.x, myNode.y),
+                                       glm::vec2(myNode.x + 200, myNode.y + 200)),
+                                myNode.mSelected };
    }
 
    const size_t GetLinkCount() override
@@ -874,21 +880,21 @@ static void SeedVectorEditorPath(ImVectorEditor::Path& path, ImVectorEditor::Edi
    path.clear();
 
    ImVectorEditor::Anchor a;
-   a.position = ImVec2(0.0f, 0.0f);
-   a.handleOut = ImVec2(70.0f, -90.0f);
+   a.position = glm::vec2(0.0f, 0.0f);
+   a.handleOut = glm::vec2(70.0f, -90.0f);
    a.hasHandleOut = true;
 
    ImVectorEditor::Anchor b;
-   b.position = ImVec2(180.0f, 0.0f);
-   b.handleIn = ImVec2(-70.0f, -90.0f);
-   b.handleOut = ImVec2(60.0f, 90.0f);
+   b.position = glm::vec2(180.0f, 0.0f);
+   b.handleIn = glm::vec2(-70.0f, -90.0f);
+   b.handleOut = glm::vec2(60.0f, 90.0f);
    b.hasHandleIn = true;
    b.hasHandleOut = true;
    b.handleMode = ImVectorEditor::HandleMode::Free;
 
    ImVectorEditor::Anchor c;
-   c.position = ImVec2(320.0f, 120.0f);
-   c.handleIn = ImVec2(-60.0f, 90.0f);
+   c.position = glm::vec2(320.0f, 120.0f);
+   c.handleIn = glm::vec2(-60.0f, 90.0f);
    c.hasHandleIn = true;
 
    path.anchors = { a, b, c };
@@ -942,13 +948,13 @@ struct VectorEditorUndoDebug : ImVectorEditor::Delegate
    }
 };
 
-static ImVec2 VectorEditorPathCenter(const ImVectorEditor::Path& path)
+static glm::vec2 VectorEditorPathCenter(const ImVectorEditor::Path& path)
 {
    if (path.anchors.empty())
-      return ImVec2(0.0f, 0.0f);
+       return glm::vec2(0.0f, 0.0f);
 
-   ImVec2 minPos = path.anchors.front().position;
-   ImVec2 maxPos = path.anchors.front().position;
+   glm::vec2 minPos = path.anchors.front().position;
+   glm::vec2 maxPos = path.anchors.front().position;
    for (const ImVectorEditor::Anchor& anchor : path.anchors)
    {
       minPos.x = std::min(minPos.x, anchor.position.x);
@@ -956,7 +962,7 @@ static ImVec2 VectorEditorPathCenter(const ImVectorEditor::Path& path)
       maxPos.x = std::max(maxPos.x, anchor.position.x);
       maxPos.y = std::max(maxPos.y, anchor.position.y);
    }
-   return ImVec2((minPos.x + maxPos.x) * 0.5f, (minPos.y + maxPos.y) * 0.5f);
+   return glm::vec2((minPos.x + maxPos.x) * 0.5f, (minPos.y + maxPos.y) * 0.5f);
 }
 
 static void ApplyVectorEditorViewResult(const ImVectorEditor::Result& result,
@@ -970,10 +976,10 @@ static void ApplyVectorEditorViewResult(const ImVectorEditor::Result& result,
       const float oldZoom = config.transform.zoom;
       const float newZoom = std::max(0.25f, std::min(oldZoom * result.viewZoomFactor, 4.0f));
       const float appliedFactor = newZoom / oldZoom;
-      const ImVec2 center = result.viewZoomCenterCanvas;
-      config.transform.pan = ImVec2(
-         center.x - (center.x - config.transform.pan.x) * appliedFactor,
-         center.y - (center.y - config.transform.pan.y) * appliedFactor);
+      const glm::vec2 center = result.viewZoomCenterCanvas;
+      config.transform.pan
+          = glm::vec2(center.x - (center.x - config.transform.pan.x) * appliedFactor,
+                      center.y - (center.y - config.transform.pan.y) * appliedFactor);
       config.transform.zoom = newZoom;
    }
 }
@@ -992,8 +998,8 @@ static void ShowVectorEditorDemo()
    if (!initialized)
    {
       initialized = true;
-      config.transform.pan = ImVec2(80.0f, 90.0f);
-      config.canvasSize = ImVec2(0.0f, 320.0f);
+      config.transform.pan = glm::vec2(80.0f, 90.0f);
+      config.canvasSize = glm::vec2(0.0f, 320.0f);
       SeedVectorEditorPath(path, editor);
    }
 
@@ -1157,7 +1163,7 @@ static bool GizmoRaycastSelfTest()
       -10.263045f,   5.331280f,   0.555734f, 1.f };
    const float modelPos[3] = { model[12], model[13], model[14] };
 
-   const ImVec2 rectPos(0.f, 0.f), rectSize(1957.f, 1000.f);
+   const glm::vec2 rectPos(0.f, 0.f), rectSize(1957.f, 1000.f);
 
    // view * proj (row-vector convention, m16[row*4+col]).
    float vp[16];
@@ -1173,8 +1179,8 @@ static bool GizmoRaycastSelfTest()
    for (int j = 0; j < 4; j++)
        c[j] = modelPos[0] * vp[0 * 4 + j] + modelPos[1] * vp[1 * 4 + j] + modelPos[2] * vp[2 * 4 + j] + vp[3 * 4 + j];
    const float ndcx = c[0] / c[3], ndcy = c[1] / c[3];
-   const ImVec2 mouse((ndcx * 0.5f + 0.5f) * rectSize.x + rectPos.x,
-                      (1.f - (ndcy * 0.5f + 0.5f)) * rectSize.y + rectPos.y);
+   const glm::vec2 mouse((ndcx * 0.5f + 0.5f) * rectSize.x + rectPos.x,
+                         (1.f - (ndcy * 0.5f + 0.5f)) * rectSize.y + rectPos.y);
 
    float o[3], d[3];
    ImGuizmo::ComputeMouseRay(view, proj, mouse, rectPos, rectSize, o, d);
@@ -1287,12 +1293,12 @@ int main(int, char**)
       ImGuizmo::SetOrthographic(!isPerspective);
       ImGuizmo::BeginFrame();
 
-      ImGui::SetNextWindowPos(ImVec2(1024, 100), ImGuiCond_Appearing);
-      ImGui::SetNextWindowSize(ImVec2(256, 256), ImGuiCond_Appearing);
+      ImGui::SetNextWindowPos(glm::vec2(1024, 100), ImGuiCond_Appearing);
+      ImGui::SetNextWindowSize(glm::vec2(256, 256), ImGuiCond_Appearing);
 
       // create a window and insert the inspector
-      ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_Appearing);
-      ImGui::SetNextWindowSize(ImVec2(320, 500), ImGuiCond_Appearing);
+      ImGui::SetNextWindowPos(glm::vec2(10, 10), ImGuiCond_Appearing);
+      ImGui::SetNextWindowSize(glm::vec2(320, 500), ImGuiCond_Appearing);
       ImGui::Begin("Editor");
       if (ImGui::RadioButton("Full view", !useWindow)) useWindow = false;
       ImGui::SameLine();
@@ -1390,15 +1396,16 @@ int main(int, char**)
          SecondView(isPerspective, fov, viewWidth, rightHanded, infiniteFarPlane);
       }
 
-      ImGui::SetNextWindowPos(ImVec2(10, 500), ImGuiCond_Appearing);
+      ImGui::SetNextWindowPos(glm::vec2(10, 500), ImGuiCond_Appearing);
 
-      ImGui::SetNextWindowSize(ImVec2(940, 480), ImGuiCond_Appearing);
+      ImGui::SetNextWindowSize(glm::vec2(940, 480), ImGuiCond_Appearing);
       ImGui::Begin("Other controls");
       if (ImGui::CollapsingHeader("Zoom Slider"))
       {
          static float uMin = 0.4f, uMax = 0.6f;
          static float vMin = 0.4f, vMax = 0.6f;
-         ImGui::Image((ImTextureID)(uint64_t)procTexture, ImVec2(900,300), ImVec2(uMin, vMin), ImVec2(uMax, vMax));
+         ImGui::Image((ImTextureID)(uint64_t)procTexture, glm::vec2(900, 300),
+                      glm::vec2(uMin, vMin), glm::vec2(uMax, vMax));
          {
             ImGui::SameLine();
             ImGui::PushID(18);
@@ -1464,7 +1471,7 @@ int main(int, char**)
          };
          static int lightCount = 3;
          static int selectedLight = -1;
-         selectedLight = ImLightRig::Edit(lights, lightCount, selectedLight, ImVec2(200,200));
+         selectedLight = ImLightRig::Edit(lights, lightCount, selectedLight, glm::vec2(200, 200));
          if (selectedLight >= 0 && selectedLight < lightCount)
          {
             auto& light = lights[selectedLight];

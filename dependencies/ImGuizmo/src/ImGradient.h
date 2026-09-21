@@ -26,20 +26,20 @@
 #pragma once
 #include <cstddef>
 
-struct ImVec4;
-struct ImVec2;
+struct glm::vec4;
+struct glm::vec2;
 
 namespace ImGradient
 {
    struct Delegate
    {
       virtual size_t GetPointCount() = 0;
-      virtual ImVec4* GetPoints() = 0;
-      virtual int EditPoint(int pointIndex, ImVec4 value) = 0;
-      virtual ImVec4 GetPoint(float t) = 0;
-      virtual void AddPoint(ImVec4 value) = 0;
+      virtual glm::vec4* GetPoints() = 0;
+      virtual int EditPoint(int pointIndex, glm::vec4 value) = 0;
+      virtual glm::vec4 GetPoint(float t) = 0;
+      virtual void AddPoint(glm::vec4 value) = 0;
       virtual ~Delegate() = default;
    };
 
-   bool Edit(Delegate& delegate, const ImVec2& size, int& selection);
+   bool Edit(Delegate& delegate, const glm::vec2& size, int& selection);
 }

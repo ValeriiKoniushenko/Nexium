@@ -281,7 +281,15 @@ namespace IMGUIZMO_NAMESPACE
    };
 
    vec_t makeVect(float _x, float _y, float _z = 0.f, float _w = 0.f) { vec_t res; res.x = _x; res.y = _y; res.z = _z; res.w = _w; return res; }
-   vec_t makeVect(ImVec2 v) { vec_t res; res.x = v.x; res.y = v.y; res.z = 0.f; res.w = 0.f; return res; }
+   vec_t makeVect(glm::vec2 v)
+   {
+       vec_t res;
+       res.x = v.x;
+       res.y = v.y;
+       res.z = 0.f;
+       res.w = 0.f;
+       return res;
+   }
    vec_t vec_t::operator * (float f) const { return makeVect(x * f, y * f, z * f, w * f); }
    vec_t vec_t::operator - () const { return makeVect(-x, -y, -z, -w); }
    vec_t vec_t::operator - (const vec_t& v) const { return makeVect(x - v.x, y - v.y, z - v.z, w - v.w); }
@@ -640,21 +648,21 @@ namespace IMGUIZMO_NAMESPACE
       CenterCircleSize           = 6.0f;
 
       // initialize default colors
-      Colors[DIRECTION_X]           = ImVec4(0.666f, 0.000f, 0.000f, 1.000f);
-      Colors[DIRECTION_Y]           = ImVec4(0.000f, 0.666f, 0.000f, 1.000f);
-      Colors[DIRECTION_Z]           = ImVec4(0.000f, 0.000f, 0.666f, 1.000f);
-      Colors[PLANE_X]               = ImVec4(0.666f, 0.000f, 0.000f, 0.380f);
-      Colors[PLANE_Y]               = ImVec4(0.000f, 0.666f, 0.000f, 0.380f);
-      Colors[PLANE_Z]               = ImVec4(0.000f, 0.000f, 0.666f, 0.380f);
-      Colors[SELECTION]             = ImVec4(1.000f, 0.500f, 0.062f, 0.541f);
-      Colors[INACTIVE]              = ImVec4(0.600f, 0.600f, 0.600f, 0.600f);
-      Colors[TRANSLATION_LINE]      = ImVec4(0.666f, 0.666f, 0.666f, 0.666f);
-      Colors[SCALE_LINE]            = ImVec4(0.250f, 0.250f, 0.250f, 1.000f);
-      Colors[ROTATION_USING_BORDER] = ImVec4(1.000f, 0.500f, 0.062f, 1.000f);
-      Colors[ROTATION_USING_FILL]   = ImVec4(1.000f, 0.500f, 0.062f, 0.500f);
-      Colors[HATCHED_AXIS_LINES]    = ImVec4(0.000f, 0.000f, 0.000f, 0.500f);
-      Colors[TEXT]                  = ImVec4(1.000f, 1.000f, 1.000f, 1.000f);
-      Colors[TEXT_SHADOW]           = ImVec4(0.000f, 0.000f, 0.000f, 1.000f);
+      Colors[DIRECTION_X] = glm::vec4(0.666f, 0.000f, 0.000f, 1.000f);
+      Colors[DIRECTION_Y] = glm::vec4(0.000f, 0.666f, 0.000f, 1.000f);
+      Colors[DIRECTION_Z] = glm::vec4(0.000f, 0.000f, 0.666f, 1.000f);
+      Colors[PLANE_X] = glm::vec4(0.666f, 0.000f, 0.000f, 0.380f);
+      Colors[PLANE_Y] = glm::vec4(0.000f, 0.666f, 0.000f, 0.380f);
+      Colors[PLANE_Z] = glm::vec4(0.000f, 0.000f, 0.666f, 0.380f);
+      Colors[SELECTION] = glm::vec4(1.000f, 0.500f, 0.062f, 0.541f);
+      Colors[INACTIVE] = glm::vec4(0.600f, 0.600f, 0.600f, 0.600f);
+      Colors[TRANSLATION_LINE] = glm::vec4(0.666f, 0.666f, 0.666f, 0.666f);
+      Colors[SCALE_LINE] = glm::vec4(0.250f, 0.250f, 0.250f, 1.000f);
+      Colors[ROTATION_USING_BORDER] = glm::vec4(1.000f, 0.500f, 0.062f, 1.000f);
+      Colors[ROTATION_USING_FILL] = glm::vec4(1.000f, 0.500f, 0.062f, 0.500f);
+      Colors[HATCHED_AXIS_LINES] = glm::vec4(0.000f, 0.000f, 0.000f, 0.500f);
+      Colors[TEXT] = glm::vec4(1.000f, 1.000f, 1.000f, 1.000f);
+      Colors[TEXT_SHADOW] = glm::vec4(0.000f, 0.000f, 0.000f, 1.000f);
    }
 
    // Per-id state of a ViewManipulate widget, so several view cubes (one per viewport)
@@ -706,9 +714,9 @@ namespace IMGUIZMO_NAMESPACE
       vec_t mRayVector;
 
       float  mRadiusSquareCenter;
-      ImVec2 mScreenSquareCenter;
-      ImVec2 mScreenSquareMin;
-      ImVec2 mScreenSquareMax;
+      glm::vec2 mScreenSquareCenter;
+      glm::vec2 mScreenSquareMin;
+      glm::vec2 mScreenSquareMax;
 
       float mScreenFactor;
       vec_t mRelativeOrigin;
@@ -849,12 +857,14 @@ namespace IMGUIZMO_NAMESPACE
       return ImGui::ColorConvertFloat4ToU32(gContext.mStyle.Colors[idx]);
    }
 
-   static ImVec2 worldToPos(const vec_t& worldPos, const matrix_t& mat, ImVec2 position = ImVec2(gContext.mX, gContext.mY), ImVec2 size = ImVec2(gContext.mWidth, gContext.mHeight))
+   static glm::vec2 worldToPos(const vec_t& worldPos, const matrix_t& mat,
+                               glm::vec2 position = glm::vec2(gContext.mX, gContext.mY),
+                               glm::vec2 size = glm::vec2(gContext.mWidth, gContext.mHeight))
    {
       vec_t trans;
       trans.TransformPoint(worldPos, mat);
       if (fabsf(trans.w) < FLT_EPSILON)
-         return ImVec2(-FLT_MAX, -FLT_MAX);
+          return glm::vec2(-FLT_MAX, -FLT_MAX);
       trans *= 0.5f / trans.w;
       trans += makeVect(0.5f, 0.5f);
       trans.y = 1.f - trans.y;
@@ -862,10 +872,12 @@ namespace IMGUIZMO_NAMESPACE
       trans.y *= size.y;
       trans.x += position.x;
       trans.y += position.y;
-      return ImVec2(trans.x, trans.y);
+      return glm::vec2(trans.x, trans.y);
    }
 
-   static void ComputeCameraRay(vec_t& rayOrigin, vec_t& rayDir, const matrix_t& viewMatrix, const matrix_t& projectionMatrix, const ImVec2& mousePosition, ImVec2 position, ImVec2 size)
+   static void ComputeCameraRay(vec_t& rayOrigin, vec_t& rayDir, const matrix_t& viewMatrix,
+                                const matrix_t& projectionMatrix, const glm::vec2& mousePosition,
+                                glm::vec2 position, glm::vec2 size)
    {
       matrix_t mViewProjInverse;
       mViewProjInverse.Inverse(viewMatrix * projectionMatrix);
@@ -913,13 +925,17 @@ namespace IMGUIZMO_NAMESPACE
       rayDir = farAtInfinity ? Normalized(nearPoint - eye) : Normalized(farPoint - nearPoint);
    }
 
-   static void ComputeCameraRay(vec_t& rayOrigin, vec_t& rayDir, ImVec2 position = ImVec2(gContext.mX, gContext.mY), ImVec2 size = ImVec2(gContext.mWidth, gContext.mHeight))
+   static void ComputeCameraRay(vec_t& rayOrigin, vec_t& rayDir,
+                                glm::vec2 position = glm::vec2(gContext.mX, gContext.mY),
+                                glm::vec2 size = glm::vec2(gContext.mWidth, gContext.mHeight))
    {
       ImGuiIO& io = ImGui::GetIO();
       ComputeCameraRay(rayOrigin, rayDir, gContext.mViewMat, gContext.mProjectionMat, io.MousePos, position, size);
    }
 
-   void ComputeMouseRay(const float* view, const float* projection, const ImVec2& mousePosition, const ImVec2& rectPosition, const ImVec2& rectSize, float* rayOrigin, float* rayDirection)
+   void ComputeMouseRay(const float* view, const float* projection, const glm::vec2& mousePosition,
+                        const glm::vec2& rectPosition, const glm::vec2& rectSize, float* rayOrigin,
+                        float* rayDirection)
    {
       vec_t origin, dir;
       ComputeCameraRay(origin, dir, *(const matrix_t*)view, *(const matrix_t*)projection, mousePosition, rectPosition, rectSize);
@@ -1015,7 +1031,7 @@ namespace IMGUIZMO_NAMESPACE
       return plan.Dot3(point) + plan.w;
    }
 
-   static bool IsInContextRect(ImVec2 p)
+   static bool IsInContextRect(glm::vec2 p)
    {
       return IsWithin(p.x, gContext.mX, gContext.mXMax) && IsWithin(p.y, gContext.mY, gContext.mYMax);
    }
@@ -1071,7 +1087,7 @@ namespace IMGUIZMO_NAMESPACE
 #else
       ImGuiIO& io = ImGui::GetIO();
       ImGui::SetNextWindowSize(io.DisplaySize);
-      ImGui::SetNextWindowPos(ImVec2(0, 0));
+      ImGui::SetNextWindowPos(glm::vec2(0, 0));
 #endif
 
       ImGui::PushStyleColor(ImGuiCol_WindowBg, 0);
@@ -1225,10 +1241,10 @@ namespace IMGUIZMO_NAMESPACE
       float rightLength = GetSegmentLengthClipSpace(makeVect(0.f, 0.f), rightViewInverse);
       gContext.mScreenFactor = gContext.mGizmoSizeClipSpace / rightLength;
 
-      ImVec2 centerSSpace = worldToPos(makeVect(0.f, 0.f), gContext.mMVP);
+      glm::vec2 centerSSpace = worldToPos(makeVect(0.f, 0.f), gContext.mMVP);
       gContext.mScreenSquareCenter = centerSSpace;
-      gContext.mScreenSquareMin = ImVec2(centerSSpace.x - 10.f, centerSSpace.y - 10.f);
-      gContext.mScreenSquareMax = ImVec2(centerSSpace.x + 10.f, centerSSpace.y + 10.f);
+      gContext.mScreenSquareMin = glm::vec2(centerSSpace.x - 10.f, centerSSpace.y - 10.f);
+      gContext.mScreenSquareMax = glm::vec2(centerSSpace.x + 10.f, centerSSpace.y + 10.f);
 
       ComputeCameraRay(gContext.mRayOrigin, gContext.mRayVector);
    }
@@ -1430,7 +1446,8 @@ namespace IMGUIZMO_NAMESPACE
          const bool usingAxis = (gContext.mbUsing && type == MT_ROTATE_Z - axis);
          const int circleMul = (hasRSC && !usingAxis) ? 1 : 2;
 
-         ImVec2* circlePos = (ImVec2*)alloca(sizeof(ImVec2) * (circleMul * halfCircleSegmentCount + 1));
+         glm::vec2* circlePos
+             = (glm::vec2*)alloca(sizeof(glm::vec2) * (circleMul * halfCircleSegmentCount + 1));
          const bool rightHanded = gContext.mProjectionMat.m[2][3] < 0.f;
          float angleStart = atan2f(viewDirNormalized[(4 - axis) % 3], viewDirNormalized[(3 - axis) % 3]) + (gContext.mIsOrthographic ? ZPI : -ZPI) * 0.5f + (rightHanded ? 0.f : ZPI);
 
@@ -1463,19 +1480,20 @@ namespace IMGUIZMO_NAMESPACE
 
       if (gContext.mbUsing && (gContext.GetCurrentID() == gContext.mEditingID) && IsRotateType(type))
       {
-         ImVec2 circlePos[halfCircleSegmentCount + 1];
+          glm::vec2 circlePos[halfCircleSegmentCount + 1];
 
-         circlePos[0] = worldToPos(gContext.mModel.v.position, gContext.mViewProjection);
-         for (unsigned int i = 1; i < halfCircleSegmentCount + 1; i++)
-         {
-            float ng = gContext.mRotationAngle * ((float)(i - 1) / (float)(halfCircleSegmentCount - 1));
-            matrix_t rotateVectorMatrix;
-            rotateVectorMatrix.RotationAxis(gContext.mTranslationPlan, ng);
-            vec_t pos;
-            pos.TransformPoint(gContext.mRotationVectorSource, rotateVectorMatrix);
-            pos *= gContext.mScreenFactor * rotationDisplayFactor;
-            circlePos[i] = worldToPos(pos + gContext.mModel.v.position, gContext.mViewProjection);
-         }
+          circlePos[0] = worldToPos(gContext.mModel.v.position, gContext.mViewProjection);
+          for (unsigned int i = 1; i < halfCircleSegmentCount + 1; i++)
+          {
+              float ng = gContext.mRotationAngle
+                         * ((float)(i - 1) / (float)(halfCircleSegmentCount - 1));
+              matrix_t rotateVectorMatrix;
+              rotateVectorMatrix.RotationAxis(gContext.mTranslationPlan, ng);
+              vec_t pos;
+              pos.TransformPoint(gContext.mRotationVectorSource, rotateVectorMatrix);
+              pos *= gContext.mScreenFactor * rotationDisplayFactor;
+              circlePos[i] = worldToPos(pos + gContext.mModel.v.position, gContext.mViewProjection);
+          }
          drawList->AddConvexPolyFilled(circlePos, halfCircleSegmentCount + 1, GetColorU32(ROTATION_USING_FILL));
 #if IMGUI_VERSION_NUM < 19276
          drawList->AddPolyline(circlePos, halfCircleSegmentCount + 1, GetColorU32(ROTATION_USING_BORDER), ImDrawFlags_Closed, gContext.mStyle.RotationLineThickness );
@@ -1483,11 +1501,13 @@ namespace IMGUIZMO_NAMESPACE
          drawList->AddPolyline(circlePos, halfCircleSegmentCount + 1, GetColorU32(ROTATION_USING_BORDER), gContext.mStyle.RotationLineThickness, ImDrawFlags_Closed );
 #endif
 
-         ImVec2 destinationPosOnScreen = circlePos[1];
+         glm::vec2 destinationPosOnScreen = circlePos[1];
          char tmps[512];
          ImFormatString(tmps, sizeof(tmps), rotationInfoMask[type - MT_ROTATE_X], (gContext.mRotationAngle / ZPI) * 180.f, gContext.mRotationAngle);
-         drawList->AddText(ImVec2(destinationPosOnScreen.x + 15, destinationPosOnScreen.y + 15), GetColorU32(TEXT_SHADOW), tmps);
-         drawList->AddText(ImVec2(destinationPosOnScreen.x + 14, destinationPosOnScreen.y + 14), GetColorU32(TEXT), tmps);
+         drawList->AddText(glm::vec2(destinationPosOnScreen.x + 15, destinationPosOnScreen.y + 15),
+                           GetColorU32(TEXT_SHADOW), tmps);
+         drawList->AddText(glm::vec2(destinationPosOnScreen.x + 14, destinationPosOnScreen.y + 14),
+                           GetColorU32(TEXT), tmps);
       }
    }
 
@@ -1500,9 +1520,12 @@ namespace IMGUIZMO_NAMESPACE
 
       for (int j = 1; j < 10; j++)
       {
-         ImVec2 baseSSpace2 = worldToPos(axis * 0.05f * (float)(j * 2) * gContext.mScreenFactor, gContext.mMVP);
-         ImVec2 worldDirSSpace2 = worldToPos(axis * 0.05f * (float)(j * 2 + 1) * gContext.mScreenFactor, gContext.mMVP);
-         gContext.mDrawList->AddLine(baseSSpace2, worldDirSSpace2, GetColorU32(HATCHED_AXIS_LINES), gContext.mStyle.HatchedAxisLineThickness);
+          glm::vec2 baseSSpace2
+              = worldToPos(axis * 0.05f * (float)(j * 2) * gContext.mScreenFactor, gContext.mMVP);
+          glm::vec2 worldDirSSpace2 = worldToPos(
+              axis * 0.05f * (float)(j * 2 + 1) * gContext.mScreenFactor, gContext.mMVP);
+          gContext.mDrawList->AddLine(baseSSpace2, worldDirSSpace2, GetColorU32(HATCHED_AXIS_LINES),
+                                      gContext.mStyle.HatchedAxisLineThickness);
       }
    }
 
@@ -1545,9 +1568,13 @@ namespace IMGUIZMO_NAMESPACE
             {
                bool hasTranslateOnAxis = Contains(op, static_cast<OPERATION>(TRANSLATE_X << i));
                float markerScale = hasTranslateOnAxis ? 1.4f : 1.0f;
-               ImVec2 baseSSpace = worldToPos(dirAxis * 0.1f * gContext.mScreenFactor, gContext.mMVP);
-               ImVec2 worldDirSSpaceNoScale = worldToPos(dirAxis * markerScale * gContext.mScreenFactor, gContext.mMVP);
-               ImVec2 worldDirSSpace = worldToPos((dirAxis * markerScale * scaleDisplay[i]) * gContext.mScreenFactor, gContext.mMVP);
+               glm::vec2 baseSSpace
+                   = worldToPos(dirAxis * 0.1f * gContext.mScreenFactor, gContext.mMVP);
+               glm::vec2 worldDirSSpaceNoScale
+                   = worldToPos(dirAxis * markerScale * gContext.mScreenFactor, gContext.mMVP);
+               glm::vec2 worldDirSSpace
+                   = worldToPos((dirAxis * markerScale * scaleDisplay[i]) * gContext.mScreenFactor,
+                                gContext.mMVP);
 
                if (gContext.mbUsing && (gContext.GetCurrentID() == gContext.mEditingID))
                {
@@ -1575,21 +1602,27 @@ namespace IMGUIZMO_NAMESPACE
 
       if (gContext.mbUsing && (gContext.GetCurrentID() == gContext.mEditingID) && IsScaleType(type))
       {
-         //ImVec2 sourcePosOnScreen = worldToPos(gContext.mMatrixOrigin, gContext.mViewProjection);
-         ImVec2 destinationPosOnScreen = worldToPos(gContext.mModel.v.position, gContext.mViewProjection);
-         /*vec_t dif(destinationPosOnScreen.x - sourcePosOnScreen.x, destinationPosOnScreen.y - sourcePosOnScreen.y);
-         dif.Normalize();
-         dif *= 5.f;
-         drawList->AddCircle(sourcePosOnScreen, 6.f, translationLineColor);
-         drawList->AddCircle(destinationPosOnScreen, 6.f, translationLineColor);
-         drawList->AddLine(ImVec2(sourcePosOnScreen.x + dif.x, sourcePosOnScreen.y + dif.y), ImVec2(destinationPosOnScreen.x - dif.x, destinationPosOnScreen.y - dif.y), translationLineColor, 2.f);
-         */
-         char tmps[512];
-         //vec_t deltaInfo = gContext.mModel.v.position - gContext.mMatrixOrigin;
-         int componentInfoIndex = (type - MT_SCALE_X) * 3;
-         ImFormatString(tmps, sizeof(tmps), scaleInfoMask[type - MT_SCALE_X], scaleDisplay[translationInfoIndex[componentInfoIndex]]);
-         drawList->AddText(ImVec2(destinationPosOnScreen.x + 15, destinationPosOnScreen.y + 15), GetColorU32(TEXT_SHADOW), tmps);
-         drawList->AddText(ImVec2(destinationPosOnScreen.x + 14, destinationPosOnScreen.y + 14), GetColorU32(TEXT), tmps);
+          // glm::vec2 sourcePosOnScreen = worldToPos(gContext.mMatrixOrigin,
+          // gContext.mViewProjection);
+          glm::vec2 destinationPosOnScreen
+              = worldToPos(gContext.mModel.v.position, gContext.mViewProjection);
+          /*vec_t dif(destinationPosOnScreen.x - sourcePosOnScreen.x, destinationPosOnScreen.y -
+          sourcePosOnScreen.y); dif.Normalize(); dif *= 5.f;
+          drawList->AddCircle(sourcePosOnScreen, 6.f, translationLineColor);
+          drawList->AddCircle(destinationPosOnScreen, 6.f, translationLineColor);
+          drawList->AddLine(glm::vec2(sourcePosOnScreen.x + dif.x, sourcePosOnScreen.y + dif.y),
+          glm::vec2(destinationPosOnScreen.x - dif.x, destinationPosOnScreen.y - dif.y),
+          translationLineColor, 2.f);
+          */
+          char tmps[512];
+          // vec_t deltaInfo = gContext.mModel.v.position - gContext.mMatrixOrigin;
+          int componentInfoIndex = (type - MT_SCALE_X) * 3;
+          ImFormatString(tmps, sizeof(tmps), scaleInfoMask[type - MT_SCALE_X],
+                         scaleDisplay[translationInfoIndex[componentInfoIndex]]);
+          drawList->AddText(glm::vec2(destinationPosOnScreen.x + 15, destinationPosOnScreen.y + 15),
+                            GetColorU32(TEXT_SHADOW), tmps);
+          drawList->AddText(glm::vec2(destinationPosOnScreen.x + 14, destinationPosOnScreen.y + 14),
+                            GetColorU32(TEXT), tmps);
       }
    }
 
@@ -1633,9 +1666,12 @@ namespace IMGUIZMO_NAMESPACE
             {
                bool hasTranslateOnAxis = Contains(op, static_cast<OPERATION>(TRANSLATE_X << i));
                float markerScale = hasTranslateOnAxis ? 1.4f : 1.0f;
-               //ImVec2 baseSSpace = worldToPos(dirAxis * 0.1f * gContext.mScreenFactor, gContext.mMVPLocal);
-               //ImVec2 worldDirSSpaceNoScale = worldToPos(dirAxis * markerScale * gContext.mScreenFactor, gContext.mMVP);
-               ImVec2 worldDirSSpace = worldToPos((dirAxis * markerScale * scaleDisplay[i]) * gContext.mScreenFactor, gContext.mMVPLocal);
+               // glm::vec2 baseSSpace = worldToPos(dirAxis * 0.1f * gContext.mScreenFactor,
+               // gContext.mMVPLocal); glm::vec2 worldDirSSpaceNoScale = worldToPos(dirAxis *
+               // markerScale * gContext.mScreenFactor, gContext.mMVP);
+               glm::vec2 worldDirSSpace
+                   = worldToPos((dirAxis * markerScale * scaleDisplay[i]) * gContext.mScreenFactor,
+                                gContext.mMVPLocal);
 
 #if 0
                if (gContext.mbUsing && (gContext.GetCurrentID() == gContext.mEditingID))
@@ -1660,21 +1696,27 @@ namespace IMGUIZMO_NAMESPACE
 
       if (gContext.mbUsing && (gContext.GetCurrentID() == gContext.mEditingID) && IsScaleType(type))
       {
-         //ImVec2 sourcePosOnScreen = worldToPos(gContext.mMatrixOrigin, gContext.mViewProjection);
-         ImVec2 destinationPosOnScreen = worldToPos(gContext.mModel.v.position, gContext.mViewProjection);
-         /*vec_t dif(destinationPosOnScreen.x - sourcePosOnScreen.x, destinationPosOnScreen.y - sourcePosOnScreen.y);
-         dif.Normalize();
-         dif *= 5.f;
-         drawList->AddCircle(sourcePosOnScreen, 6.f, translationLineColor);
-         drawList->AddCircle(destinationPosOnScreen, 6.f, translationLineColor);
-         drawList->AddLine(ImVec2(sourcePosOnScreen.x + dif.x, sourcePosOnScreen.y + dif.y), ImVec2(destinationPosOnScreen.x - dif.x, destinationPosOnScreen.y - dif.y), translationLineColor, 2.f);
-         */
-         char tmps[512];
-         //vec_t deltaInfo = gContext.mModel.v.position - gContext.mMatrixOrigin;
-         int componentInfoIndex = (type - MT_SCALE_X) * 3;
-         ImFormatString(tmps, sizeof(tmps), scaleInfoMask[type - MT_SCALE_X], scaleDisplay[translationInfoIndex[componentInfoIndex]]);
-         drawList->AddText(ImVec2(destinationPosOnScreen.x + 15, destinationPosOnScreen.y + 15), GetColorU32(TEXT_SHADOW), tmps);
-         drawList->AddText(ImVec2(destinationPosOnScreen.x + 14, destinationPosOnScreen.y + 14), GetColorU32(TEXT), tmps);
+          // glm::vec2 sourcePosOnScreen = worldToPos(gContext.mMatrixOrigin,
+          // gContext.mViewProjection);
+          glm::vec2 destinationPosOnScreen
+              = worldToPos(gContext.mModel.v.position, gContext.mViewProjection);
+          /*vec_t dif(destinationPosOnScreen.x - sourcePosOnScreen.x, destinationPosOnScreen.y -
+          sourcePosOnScreen.y); dif.Normalize(); dif *= 5.f;
+          drawList->AddCircle(sourcePosOnScreen, 6.f, translationLineColor);
+          drawList->AddCircle(destinationPosOnScreen, 6.f, translationLineColor);
+          drawList->AddLine(glm::vec2(sourcePosOnScreen.x + dif.x, sourcePosOnScreen.y + dif.y),
+          glm::vec2(destinationPosOnScreen.x - dif.x, destinationPosOnScreen.y - dif.y),
+          translationLineColor, 2.f);
+          */
+          char tmps[512];
+          // vec_t deltaInfo = gContext.mModel.v.position - gContext.mMatrixOrigin;
+          int componentInfoIndex = (type - MT_SCALE_X) * 3;
+          ImFormatString(tmps, sizeof(tmps), scaleInfoMask[type - MT_SCALE_X],
+                         scaleDisplay[translationInfoIndex[componentInfoIndex]]);
+          drawList->AddText(glm::vec2(destinationPosOnScreen.x + 15, destinationPosOnScreen.y + 15),
+                            GetColorU32(TEXT_SHADOW), tmps);
+          drawList->AddText(glm::vec2(destinationPosOnScreen.x + 14, destinationPosOnScreen.y + 14),
+                            GetColorU32(TEXT), tmps);
       }
    }
 
@@ -1695,7 +1737,7 @@ namespace IMGUIZMO_NAMESPACE
       ImU32 colors[7];
       ComputeColors(colors, type, TRANSLATE);
 
-      const ImVec2 origin = worldToPos(gContext.mModel.v.position, gContext.mViewProjection);
+      const glm::vec2 origin = worldToPos(gContext.mModel.v.position, gContext.mViewProjection);
 
       // draw
       bool belowAxisLimit = false;
@@ -1710,27 +1752,31 @@ namespace IMGUIZMO_NAMESPACE
             // draw axis
             if (belowAxisLimit && Intersects(op, static_cast<OPERATION>(TRANSLATE_X << i)))
             {
-               ImVec2 baseSSpace = worldToPos(dirAxis * 0.1f * gContext.mScreenFactor, gContext.mMVP);
-               ImVec2 worldDirSSpace = worldToPos(dirAxis * gContext.mScreenFactor, gContext.mMVP);
+                glm::vec2 baseSSpace
+                    = worldToPos(dirAxis * 0.1f * gContext.mScreenFactor, gContext.mMVP);
+                glm::vec2 worldDirSSpace
+                    = worldToPos(dirAxis * gContext.mScreenFactor, gContext.mMVP);
 
-               drawList->AddLine(baseSSpace, worldDirSSpace, colors[i + 1], gContext.mStyle.TranslationLineThickness);
+                drawList->AddLine(baseSSpace, worldDirSSpace, colors[i + 1],
+                                  gContext.mStyle.TranslationLineThickness);
 
-               // Arrow head begin
-               ImVec2 dir(origin - worldDirSSpace);
+                // Arrow head begin
+                glm::vec2 dir(origin - worldDirSSpace);
 
-               float d = sqrtf(ImLengthSqr(dir));
-               dir /= d; // Normalize
-               dir *= gContext.mStyle.TranslationLineArrowSize;
+                float d = sqrtf(ImLengthSqr(dir));
+                dir /= d; // Normalize
+                dir *= gContext.mStyle.TranslationLineArrowSize;
 
-               ImVec2 ortogonalDir(dir.y, -dir.x); // Perpendicular vector
-               ImVec2 a(worldDirSSpace + dir);
-               drawList->AddTriangleFilled(worldDirSSpace - dir, a + ortogonalDir, a - ortogonalDir, colors[i + 1]);
-               // Arrow head end
+                glm::vec2 ortogonalDir(dir.y, -dir.x); // Perpendicular vector
+                glm::vec2 a(worldDirSSpace + dir);
+                drawList->AddTriangleFilled(worldDirSSpace - dir, a + ortogonalDir,
+                                            a - ortogonalDir, colors[i + 1]);
+                // Arrow head end
 
-               if (gContext.GetTripodState().mAxisFactor[i] < 0.f)
-               {
-                  DrawHatchedAxis(dirAxis);
-               }
+                if (gContext.GetTripodState().mAxisFactor[i] < 0.f)
+                {
+                    DrawHatchedAxis(dirAxis);
+                }
             }
          }
          // draw plane
@@ -1738,12 +1784,14 @@ namespace IMGUIZMO_NAMESPACE
          {
             if (belowPlaneLimit && Contains(op, TRANSLATE_PLANS[i]))
             {
-               ImVec2 screenQuadPts[4];
-               for (int j = 0; j < 4; ++j)
-               {
-                  vec_t cornerWorldPos = (dirPlaneX * quadUV[j * 2] + dirPlaneY * quadUV[j * 2 + 1]) * gContext.mScreenFactor;
-                  screenQuadPts[j] = worldToPos(cornerWorldPos, gContext.mMVP);
-               }
+                glm::vec2 screenQuadPts[4];
+                for (int j = 0; j < 4; ++j)
+                {
+                    vec_t cornerWorldPos
+                        = (dirPlaneX * quadUV[j * 2] + dirPlaneY * quadUV[j * 2 + 1])
+                          * gContext.mScreenFactor;
+                    screenQuadPts[j] = worldToPos(cornerWorldPos, gContext.mMVP);
+                }
 #if IMGUI_VERSION_NUM < 19276
                drawList->AddPolyline(screenQuadPts, 4, GetColorU32(DIRECTION_X + i), ImDrawFlags_Closed, 1.0f );
 #else
@@ -1760,21 +1808,27 @@ namespace IMGUIZMO_NAMESPACE
       {
          ImU32 translationLineColor = GetColorU32(TRANSLATION_LINE);
 
-         ImVec2 sourcePosOnScreen = worldToPos(gContext.mMatrixOrigin, gContext.mViewProjection);
-         ImVec2 destinationPosOnScreen = worldToPos(gContext.mModel.v.position, gContext.mViewProjection);
+         glm::vec2 sourcePosOnScreen = worldToPos(gContext.mMatrixOrigin, gContext.mViewProjection);
+         glm::vec2 destinationPosOnScreen
+             = worldToPos(gContext.mModel.v.position, gContext.mViewProjection);
          vec_t dif = { destinationPosOnScreen.x - sourcePosOnScreen.x, destinationPosOnScreen.y - sourcePosOnScreen.y, 0.f, 0.f };
          dif.Normalize();
          dif *= 5.f;
          drawList->AddCircle(sourcePosOnScreen, 6.f, translationLineColor);
          drawList->AddCircle(destinationPosOnScreen, 6.f, translationLineColor);
-         drawList->AddLine(ImVec2(sourcePosOnScreen.x + dif.x, sourcePosOnScreen.y + dif.y), ImVec2(destinationPosOnScreen.x - dif.x, destinationPosOnScreen.y - dif.y), translationLineColor, 2.f);
+         drawList->AddLine(
+             glm::vec2(sourcePosOnScreen.x + dif.x, sourcePosOnScreen.y + dif.y),
+             glm::vec2(destinationPosOnScreen.x - dif.x, destinationPosOnScreen.y - dif.y),
+             translationLineColor, 2.f);
 
          char tmps[512];
          vec_t deltaInfo = gContext.mModel.v.position - gContext.mMatrixOrigin;
          int componentInfoIndex = (type - MT_MOVE_X) * 3;
          ImFormatString(tmps, sizeof(tmps), translationInfoMask[type - MT_MOVE_X], deltaInfo[translationInfoIndex[componentInfoIndex]], deltaInfo[translationInfoIndex[componentInfoIndex + 1]], deltaInfo[translationInfoIndex[componentInfoIndex + 2]]);
-         drawList->AddText(ImVec2(destinationPosOnScreen.x + 15, destinationPosOnScreen.y + 15), GetColorU32(TEXT_SHADOW), tmps);
-         drawList->AddText(ImVec2(destinationPosOnScreen.x + 14, destinationPosOnScreen.y + 14), GetColorU32(TEXT), tmps);
+         drawList->AddText(glm::vec2(destinationPosOnScreen.x + 15, destinationPosOnScreen.y + 15),
+                           GetColorU32(TEXT_SHADOW), tmps);
+         drawList->AddText(glm::vec2(destinationPosOnScreen.x + 14, destinationPosOnScreen.y + 14),
+                           GetColorU32(TEXT), tmps);
       }
    }
 
@@ -1906,15 +1960,16 @@ namespace IMGUIZMO_NAMESPACE
                p1.z = p0.z + (p1.z - p0.z) * t;
                p1.w = wEps;
             }
-            auto clipToScreen = [](const vec_t& c) -> ImVec2
+            auto clipToScreen = [](const vec_t& c) -> glm::vec2
             {
-               float nx = c.x * (0.5f / c.w) + 0.5f;
-               float ny = c.y * (0.5f / c.w) + 0.5f;
-               ny = 1.f - ny;
-               return ImVec2(gContext.mX + nx * gContext.mWidth, gContext.mY + ny * gContext.mHeight);
+                float nx = c.x * (0.5f / c.w) + 0.5f;
+                float ny = c.y * (0.5f / c.w) + 0.5f;
+                ny = 1.f - ny;
+                return glm::vec2(gContext.mX + nx * gContext.mWidth,
+                                 gContext.mY + ny * gContext.mHeight);
             };
-            ImVec2 worldBound1 = clipToScreen(p0);
-            ImVec2 worldBound2 = clipToScreen(p1);
+            glm::vec2 worldBound1 = clipToScreen(p0);
+            glm::vec2 worldBound2 = clipToScreen(p1);
             float boundDistance = sqrtf(ImLengthSqr(worldBound1 - worldBound2));
             int stepCount = (int)(boundDistance / 10.f);
             stepCount = min(stepCount, 1000);
@@ -1923,8 +1978,8 @@ namespace IMGUIZMO_NAMESPACE
                float stepLength = 1.f / (float)stepCount;
                float t1 = (float)j * stepLength;
                float t2 = (float)j * stepLength + stepLength * 0.5f;
-               ImVec2 worldBoundSS1 = ImLerp(worldBound1, worldBound2, ImVec2(t1, t1));
-               ImVec2 worldBoundSS2 = ImLerp(worldBound1, worldBound2, ImVec2(t2, t2));
+               glm::vec2 worldBoundSS1 = ImLerp(worldBound1, worldBound2, glm::vec2(t1, t1));
+               glm::vec2 worldBoundSS2 = ImLerp(worldBound1, worldBound2, glm::vec2(t2, t2));
                //drawList->AddLine(worldBoundSS1, worldBoundSS2, IM_COL32(0, 0, 0, 0) + anchorAlpha, 3.f);
                drawList->AddLine(worldBoundSS1, worldBoundSS2, IM_COL32(0xAA, 0xAA, 0xAA, 0) + anchorAlpha, 2.f);
             }
@@ -1933,8 +1988,8 @@ namespace IMGUIZMO_NAMESPACE
             // small anchor depends only on the midpoint of edge (i, i+1).
             vec_t pCorner; pCorner.TransformPoint(aabb[i], boundsMVP);
             vec_t pMid;    pMid.TransformPoint(midPoint, boundsMVP);
-            ImVec2 worldBoundOrig = worldToPos(aabb[i], boundsMVP);
-            ImVec2 midBound       = worldToPos(midPoint, boundsMVP);
+            glm::vec2 worldBoundOrig = worldToPos(aabb[i], boundsMVP);
+            glm::vec2 midBound = worldToPos(midPoint, boundsMVP);
             bool bigAnchorVisible   = pCorner.w >= wEps && IsInContextRect(worldBoundOrig);
             bool smallAnchorVisible = pMid.w    >= wEps && IsInContextRect(midBound);
 
@@ -2078,14 +2133,19 @@ namespace IMGUIZMO_NAMESPACE
 
             // info text
             char tmps[512];
-            ImVec2 destinationPosOnScreen = worldToPos(gContext.mModel.v.position, gContext.mViewProjection);
+            glm::vec2 destinationPosOnScreen
+                = worldToPos(gContext.mModel.v.position, gContext.mViewProjection);
             ImFormatString(tmps, sizeof(tmps), "X: %.2f Y: %.2f Z: %.2f"
                , (bounds[3] - bounds[0]) * gContext.mBoundsMatrix.component[0].Length() * scale.component[0].Length()
                , (bounds[4] - bounds[1]) * gContext.mBoundsMatrix.component[1].Length() * scale.component[1].Length()
                , (bounds[5] - bounds[2]) * gContext.mBoundsMatrix.component[2].Length() * scale.component[2].Length()
             );
-            drawList->AddText(ImVec2(destinationPosOnScreen.x + 15, destinationPosOnScreen.y + 15), GetColorU32(TEXT_SHADOW), tmps);
-            drawList->AddText(ImVec2(destinationPosOnScreen.x + 14, destinationPosOnScreen.y + 14), GetColorU32(TEXT), tmps);
+            drawList->AddText(
+                glm::vec2(destinationPosOnScreen.x + 15, destinationPosOnScreen.y + 15),
+                GetColorU32(TEXT_SHADOW), tmps);
+            drawList->AddText(
+                glm::vec2(destinationPosOnScreen.x + 14, destinationPosOnScreen.y + 14),
+                GetColorU32(TEXT), tmps);
          }
 
          if (!io.MouseDown[0]) {
@@ -2142,9 +2202,13 @@ namespace IMGUIZMO_NAMESPACE
 
          const float startOffset = Contains(op, static_cast<OPERATION>(TRANSLATE_X << i)) ? 1.0f : 0.1f;
          const float endOffset = Contains(op, static_cast<OPERATION>(TRANSLATE_X << i)) ? 1.4f : 1.0f;
-         const ImVec2 posOnPlanScreen = worldToPos(posOnPlan, gContext.mViewProjection);
-         const ImVec2 axisStartOnScreen = worldToPos(gContext.mModelLocal.v.position + dirAxis * gContext.mScreenFactor * startOffset, gContext.mViewProjection);
-         const ImVec2 axisEndOnScreen = worldToPos(gContext.mModelLocal.v.position + dirAxis * gContext.mScreenFactor * endOffset, gContext.mViewProjection);
+         const glm::vec2 posOnPlanScreen = worldToPos(posOnPlan, gContext.mViewProjection);
+         const glm::vec2 axisStartOnScreen = worldToPos(
+             gContext.mModelLocal.v.position + dirAxis * gContext.mScreenFactor * startOffset,
+             gContext.mViewProjection);
+         const glm::vec2 axisEndOnScreen = worldToPos(
+             gContext.mModelLocal.v.position + dirAxis * gContext.mScreenFactor * endOffset,
+             gContext.mViewProjection);
 
          vec_t closestPointOnAxis = PointOnSegment(makeVect(posOnPlanScreen), makeVect(axisStartOnScreen), makeVect(axisEndOnScreen));
 
@@ -2180,9 +2244,11 @@ namespace IMGUIZMO_NAMESPACE
          {
             bool hasTranslateOnAxis = Contains(op, static_cast<OPERATION>(TRANSLATE_X << i));
             float markerScale = hasTranslateOnAxis ? 1.4f : 1.0f;
-            //ImVec2 baseSSpace = worldToPos(dirAxis * 0.1f * gContext.mScreenFactor, gContext.mMVPLocal);
-            //ImVec2 worldDirSSpaceNoScale = worldToPos(dirAxis * markerScale * gContext.mScreenFactor, gContext.mMVP);
-            ImVec2 worldDirSSpace = worldToPos((dirAxis * markerScale) * gContext.mScreenFactor, gContext.mMVPLocal);
+            // glm::vec2 baseSSpace = worldToPos(dirAxis * 0.1f * gContext.mScreenFactor,
+            // gContext.mMVPLocal); glm::vec2 worldDirSSpaceNoScale = worldToPos(dirAxis *
+            // markerScale * gContext.mScreenFactor, gContext.mMVP);
+            glm::vec2 worldDirSSpace
+                = worldToPos((dirAxis * markerScale) * gContext.mScreenFactor, gContext.mMVPLocal);
 
             float distance = sqrtf(ImLengthSqr(worldDirSSpace - io.MousePos));
             if (distance < 12.f)
@@ -2244,10 +2310,11 @@ namespace IMGUIZMO_NAMESPACE
          const vec_t localPos = intersectWorldPos - gContext.mModel.v.position;
          vec_t idealPosOnCircle = Normalized(localPos);
          idealPosOnCircle.TransformVector(gContext.mModelInverse);
-         const ImVec2 idealPosOnCircleScreen = worldToPos(idealPosOnCircle * rotationDisplayFactor * gContext.mScreenFactor, gContext.mMVP);
+         const glm::vec2 idealPosOnCircleScreen = worldToPos(
+             idealPosOnCircle * rotationDisplayFactor * gContext.mScreenFactor, gContext.mMVP);
 
          //gContext.mDrawList->AddCircle(idealPosOnCircleScreen, 5.f, IM_COL32_WHITE);
-         const ImVec2 distanceOnScreen = idealPosOnCircleScreen - io.MousePos;
+         const glm::vec2 distanceOnScreen = idealPosOnCircleScreen - io.MousePos;
 
          const float distance = makeVect(distanceOnScreen).Length();
          if (distance < 8.f) // pixel size
@@ -2282,7 +2349,7 @@ namespace IMGUIZMO_NAMESPACE
          type = MT_MOVE_SCREEN;
       }
 
-      const vec_t screenCoord = makeVect(io.MousePos - ImVec2(gContext.mX, gContext.mY));
+      const vec_t screenCoord = makeVect(io.MousePos - glm::vec2(gContext.mX, gContext.mY));
 
       // compute
       for (int i = 0; i < 3 && type == MT_NONE; i++)
@@ -2298,8 +2365,14 @@ namespace IMGUIZMO_NAMESPACE
          const float len = IntersectRayPlane(gContext.mRayOrigin, gContext.mRayVector, BuildPlan(gContext.mModel.v.position, dirAxis));
          vec_t posOnPlan = gContext.mRayOrigin + gContext.mRayVector * len;
 
-         const ImVec2 axisStartOnScreen = worldToPos(gContext.mModel.v.position + dirAxis * gContext.mScreenFactor * 0.1f, gContext.mViewProjection) - ImVec2(gContext.mX, gContext.mY);
-         const ImVec2 axisEndOnScreen = worldToPos(gContext.mModel.v.position + dirAxis * gContext.mScreenFactor, gContext.mViewProjection) - ImVec2(gContext.mX, gContext.mY);
+         const glm::vec2 axisStartOnScreen
+             = worldToPos(gContext.mModel.v.position + dirAxis * gContext.mScreenFactor * 0.1f,
+                          gContext.mViewProjection)
+               - glm::vec2(gContext.mX, gContext.mY);
+         const glm::vec2 axisEndOnScreen
+             = worldToPos(gContext.mModel.v.position + dirAxis * gContext.mScreenFactor,
+                          gContext.mViewProjection)
+               - glm::vec2(gContext.mX, gContext.mY);
 
          vec_t closestPointOnAxis = PointOnSegment(screenCoord, makeVect(axisStartOnScreen), makeVect(axisEndOnScreen));
          if ((closestPointOnAxis - screenCoord).Length() < 12.f && Intersects(op, static_cast<OPERATION>(TRANSLATE_X << i))) // pixel size
@@ -2837,17 +2910,20 @@ namespace IMGUIZMO_NAMESPACE
 
    bool Manipulate(const float* view, const float* projection, OPERATION operation, MODE mode, float* matrix, float* deltaMatrix, const float* snap, const float* localBounds, const float* boundsSnap)
    {
-      gContext.mDrawList->PushClipRect (ImVec2 (gContext.mX, gContext.mY), ImVec2 (gContext.mX + gContext.mWidth, gContext.mY + gContext.mHeight), false);
+       gContext.mDrawList->PushClipRect(
+           glm::vec2(gContext.mX, gContext.mY),
+           glm::vec2(gContext.mX + gContext.mWidth, gContext.mY + gContext.mHeight), false);
 
-      // Scale is always local or matrix will be skewed when applying world scale or oriented matrix
-      ComputeContext(view, projection, matrix, (operation & SCALE) ? LOCAL : mode);
-      gContext.mHoveredHandleType = MT_NONE;
+       // Scale is always local or matrix will be skewed when applying world scale or oriented
+       // matrix
+       ComputeContext(view, projection, matrix, (operation & SCALE) ? LOCAL : mode);
+       gContext.mHoveredHandleType = MT_NONE;
 
-      // set delta to identity
-      if (deltaMatrix)
-      {
-         ((matrix_t*)deltaMatrix)->SetToIdentity();
-      }
+       // set delta to identity
+       if (deltaMatrix)
+       {
+           ((matrix_t*)deltaMatrix)->SetToIdentity();
+       }
 
       // behind camera
       vec_t camSpacePosition;
@@ -2994,8 +3070,8 @@ namespace IMGUIZMO_NAMESPACE
                }
 
                // project to screen
-               ImVec2 p0 = worldToPos(vec_t(0.f, 0.f, 0.f), mvp);
-               ImVec2 p1 = worldToPos(endLocal, mvp);
+               glm::vec2 p0 = worldToPos(vec_t(0.f, 0.f, 0.f), mvp);
+               glm::vec2 p1 = worldToPos(endLocal, mvp);
 
                // reject behind camera (clip space)
                vec_t clip0, clip1;
@@ -3021,7 +3097,7 @@ namespace IMGUIZMO_NAMESPACE
       struct CubeFace
       {
          float z;
-         ImVec2 faceCoordsScreen[4];
+         glm::vec2 faceCoordsScreen[4];
          ImU32 color;
       };
       CubeFace* faces = (CubeFace*)_malloca(sizeof(CubeFace) * matrixCount * 6);
@@ -3109,7 +3185,7 @@ namespace IMGUIZMO_NAMESPACE
             CubeFace& cubeFace = faces[cubeFaceCount];
 
             // 3D->2D
-            //ImVec2 faceCoordsScreen[4];
+            // glm::vec2 faceCoordsScreen[4];
             for (unsigned int iCoord = 0; iCoord < 4; iCoord++)
             {
                cubeFace.faceCoordsScreen[iCoord] = worldToPos(faceCoords[iCoord] * 0.5f * invert, res);
@@ -3287,14 +3363,17 @@ namespace IMGUIZMO_NAMESPACE
        }
    }
 
-   void ViewManipulate(float* view, const float* projection, OPERATION operation, MODE mode, float* matrix, float length, ImVec2 position, ImVec2 size, ImU32 backgroundColor)
+   void ViewManipulate(float* view, const float* projection, OPERATION operation, MODE mode,
+                       float* matrix, float length, glm::vec2 position, glm::vec2 size,
+                       ImU32 backgroundColor)
    {
       // Scale is always local or matrix will be skewed when applying world scale or oriented matrix
       ComputeContext(view, projection, matrix, (operation & SCALE) ? LOCAL : mode);
       ViewManipulate(view, length, position, size, backgroundColor);
    }
 
-   void ViewManipulate(float* view, float length, ImVec2 position, ImVec2 size, ImU32 backgroundColor)
+   void ViewManipulate(float* view, float length, glm::vec2 position, glm::vec2 size,
+                       ImU32 backgroundColor)
    {
       // State is bound to the current id (PushID/PopID) so multiple view cubes are independent.
       ViewManipulateState& vms = gContext.GetViewManipulateState();
@@ -3342,13 +3421,15 @@ namespace IMGUIZMO_NAMESPACE
       const matrix_t res = cubeView * cubeProjection;
 
       // panels
-      static const ImVec2 panelPosition[9] = { ImVec2(0.75f,0.75f), ImVec2(0.25f, 0.75f), ImVec2(0.f, 0.75f),
-         ImVec2(0.75f, 0.25f), ImVec2(0.25f, 0.25f), ImVec2(0.f, 0.25f),
-         ImVec2(0.75f, 0.f), ImVec2(0.25f, 0.f), ImVec2(0.f, 0.f) };
+      static const glm::vec2 panelPosition[9]
+          = { glm::vec2(0.75f, 0.75f), glm::vec2(0.25f, 0.75f), glm::vec2(0.f, 0.75f),
+              glm::vec2(0.75f, 0.25f), glm::vec2(0.25f, 0.25f), glm::vec2(0.f, 0.25f),
+              glm::vec2(0.75f, 0.f),   glm::vec2(0.25f, 0.f),   glm::vec2(0.f, 0.f) };
 
-      static const ImVec2 panelSize[9] = { ImVec2(0.25f,0.25f), ImVec2(0.5f, 0.25f), ImVec2(0.25f, 0.25f),
-         ImVec2(0.25f, 0.5f), ImVec2(0.5f, 0.5f), ImVec2(0.25f, 0.5f),
-         ImVec2(0.25f, 0.25f), ImVec2(0.5f, 0.25f), ImVec2(0.25f, 0.25f) };
+      static const glm::vec2 panelSize[9]
+          = { glm::vec2(0.25f, 0.25f), glm::vec2(0.5f, 0.25f), glm::vec2(0.25f, 0.25f),
+              glm::vec2(0.25f, 0.5f),  glm::vec2(0.5f, 0.5f),  glm::vec2(0.25f, 0.5f),
+              glm::vec2(0.25f, 0.25f), glm::vec2(0.5f, 0.25f), glm::vec2(0.25f, 0.25f) };
 
       // tag faces
       bool boxes[27]{};
@@ -3395,9 +3476,9 @@ namespace IMGUIZMO_NAMESPACE
             for (int iPanel = 0; iPanel < 9; iPanel++)
             {
                vec_t boxCoord = boxOrigin + indexVectorX * float(iPanel % 3) + indexVectorY * float(iPanel / 3) + makeVect(1.f, 1.f, 1.f);
-               const ImVec2 p = panelPosition[iPanel] * 2.f;
-               const ImVec2 s = panelSize[iPanel] * 2.f;
-               ImVec2 faceCoordsScreen[4];
+               const glm::vec2 p = panelPosition[iPanel] * 2.f;
+               const glm::vec2 s = panelSize[iPanel] * 2.f;
+               glm::vec2 faceCoordsScreen[4];
                vec_t panelPos[4] = { dx * p.x + dy * p.y,
                                      dx * p.x + dy * (p.y + s.y),
                                      dx * (p.x + s.x) + dy * (p.y + s.y),
@@ -3408,7 +3489,8 @@ namespace IMGUIZMO_NAMESPACE
                   faceCoordsScreen[iCoord] = worldToPos((panelPos[iCoord] + origin) * 0.5f * invert, res, position, size);
                }
 
-               const ImVec2 panelCorners[2] = { panelPosition[iPanel], panelPosition[iPanel] + panelSize[iPanel] };
+               const glm::vec2 panelCorners[2]
+                   = { panelPosition[iPanel], panelPosition[iPanel] + panelSize[iPanel] };
                bool insidePanel = localx > panelCorners[0].x && localx < panelCorners[1].x && localy > panelCorners[0].y && localy < panelCorners[1].y;
                int boxCoordInt = int(boxCoord.x * 9.f + boxCoord.y * 3.f + boxCoord.z);
                IM_ASSERT(boxCoordInt < 27);

@@ -30,24 +30,45 @@
 namespace ImGradient
 {
 #ifndef IMGUI_DEFINE_MATH_OPERATORS
-   static inline ImVec2 operator*(const ImVec2& lhs, const float rhs) { return ImVec2(lhs.x * rhs, lhs.y * rhs); }
-   static inline ImVec2 operator/(const ImVec2& lhs, const float rhs) { return ImVec2(lhs.x / rhs, lhs.y / rhs); }
-   static inline ImVec2 operator+(const ImVec2& lhs, const ImVec2& rhs) { return ImVec2(lhs.x + rhs.x, lhs.y + rhs.y); }
-   static inline ImVec2 operator-(const ImVec2& lhs, const ImVec2& rhs) { return ImVec2(lhs.x - rhs.x, lhs.y - rhs.y); }
-   static inline ImVec2 operator*(const ImVec2& lhs, const ImVec2& rhs) { return ImVec2(lhs.x * rhs.x, lhs.y * rhs.y); }
-   static inline ImVec2 operator/(const ImVec2& lhs, const ImVec2& rhs) { return ImVec2(lhs.x / rhs.x, lhs.y / rhs.y); }
+    static inline glm::vec2 operator*(const glm::vec2& lhs, const float rhs)
+    {
+        return glm::vec2(lhs.x * rhs, lhs.y * rhs);
+    }
+    static inline glm::vec2 operator/(const glm::vec2& lhs, const float rhs)
+    {
+        return glm::vec2(lhs.x / rhs, lhs.y / rhs);
+    }
+    static inline glm::vec2 operator+(const glm::vec2& lhs, const glm::vec2& rhs)
+    {
+        return glm::vec2(lhs.x + rhs.x, lhs.y + rhs.y);
+    }
+    static inline glm::vec2 operator-(const glm::vec2& lhs, const glm::vec2& rhs)
+    {
+        return glm::vec2(lhs.x - rhs.x, lhs.y - rhs.y);
+    }
+    static inline glm::vec2 operator*(const glm::vec2& lhs, const glm::vec2& rhs)
+    {
+        return glm::vec2(lhs.x * rhs.x, lhs.y * rhs.y);
+    }
+    static inline glm::vec2 operator/(const glm::vec2& lhs, const glm::vec2& rhs)
+    {
+        return glm::vec2(lhs.x / rhs.x, lhs.y / rhs.y);
+    }
 #endif
 
-   static int DrawPoint(ImDrawList* draw_list, ImVec4 color, const ImVec2 size, bool editing, ImVec2 pos)
-   {
-      ImGuiIO& io = ImGui::GetIO();
+    static int DrawPoint(ImDrawList* draw_list, glm::vec4 color, const glm::vec2 size, bool editing,
+                         glm::vec2 pos)
+    {
+        ImGuiIO& io = ImGui::GetIO();
 
-      ImVec2 p1 = ImLerp(pos, ImVec2(pos + ImVec2(size.x - size.y, 0.f)), color.w) + ImVec2(3, 3);
-      ImVec2 p2 = ImLerp(pos + ImVec2(size.y, size.y), ImVec2(pos + size), color.w) - ImVec2(3, 3);
-      ImRect rc(p1, p2);
+        glm::vec2 p1 = ImLerp(pos, glm::vec2(pos + glm::vec2(size.x - size.y, 0.f)), color.w)
+                       + glm::vec2(3, 3);
+        glm::vec2 p2 = ImLerp(pos + glm::vec2(size.y, size.y), glm::vec2(pos + size), color.w)
+                       - glm::vec2(3, 3);
+        ImRect rc(p1, p2);
 
-      color.w = 1.f;
-      draw_list->AddRectFilled(p1, p2, ImColor(color));
+        color.w = 1.f;
+        draw_list->AddRectFilled(p1, p2, ImColor(color));
 #if IMGUI_VERSION_NUM < 19276
       if (editing)
          draw_list->AddRect(p1, p2, 0xFFFFFFFF, 2.f, 15, 2.5f);
@@ -69,30 +90,30 @@ namespace ImGradient
       return 0;
    }
 
-   bool Edit(Delegate& delegate, const ImVec2& size, int& selection)
+   bool Edit(Delegate& delegate, const glm::vec2& size, int& selection)
    {
       bool ret = false;
       ImGuiIO& io = ImGui::GetIO();
-      ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
+      ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, glm::vec2(0, 0));
       ImGui::BeginChild(137, size, ImGuiChildFlags_FrameStyle);
 
       ImDrawList* draw_list = ImGui::GetWindowDrawList();
-      const ImVec2 offset = ImGui::GetCursorScreenPos();
+      const glm::vec2 offset = ImGui::GetCursorScreenPos();
 
-      const ImVec4* pts = delegate.GetPoints();
+      const glm::vec4* pts = delegate.GetPoints();
       static int currentSelection = -1;
       static int movingPt = -1;
       if (currentSelection >= int(delegate.GetPointCount()))
          currentSelection = -1;
       if (movingPt != -1)
       {
-         ImVec4 current = pts[movingPt];
-         current.w += io.MouseDelta.x / size.x;
-         current.w = ImClamp(current.w, 0.f, 1.f);
-         delegate.EditPoint(movingPt, current);
-         ret = true;
-         if (!io.MouseDown[0])
-            movingPt = -1;
+          glm::vec4 current = pts[movingPt];
+          current.w += io.MouseDelta.x / size.x;
+          current.w = ImClamp(current.w, 0.f, 1.f);
+          delegate.EditPoint(movingPt, current);
+          ret = true;
+          if (!io.MouseDown[0])
+              movingPt = -1;
       }
       for (size_t i = 0; i < delegate.GetPointCount(); i++)
       {

@@ -10,6 +10,7 @@ target_link_libraries(Nexium_Tests PRIVATE
     Nexium::Runtime
     Nexium::World::Animation
     Nexium::Editor
+    imguizmo::imguizmo
 )
 add_dependencies(Nexium_Tests CodeGenerator)
 

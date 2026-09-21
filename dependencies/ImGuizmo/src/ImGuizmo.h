@@ -226,10 +226,13 @@ namespace IMGUIZMO_NAMESPACE
    // It seems to be a defensive patent in the US. I don't think it will bring troubles using it as
    // other software are using the same mechanics. But just in case, you are now warned!
    //
-   IMGUI_API void ViewManipulate(float* view, float length, ImVec2 position, ImVec2 size, ImU32 backgroundColor);
+   IMGUI_API void ViewManipulate(float* view, float length, glm::vec2 position, glm::vec2 size,
+                                 ImU32 backgroundColor);
 
    // use this version if you did not call Manipulate before and you are just using ViewManipulate
-   IMGUI_API void ViewManipulate(float* view, const float* projection, OPERATION operation, MODE mode, float* matrix, float length, ImVec2 position, ImVec2 size, ImU32 backgroundColor);
+   IMGUI_API void ViewManipulate(float* view, const float* projection, OPERATION operation,
+                                 MODE mode, float* matrix, float length, glm::vec2 position,
+                                 glm::vec2 size, ImU32 backgroundColor);
 
    IMGUI_API void SetAlternativeWindow(ImGuiWindow* window);
 
@@ -306,7 +309,9 @@ namespace IMGUIZMO_NAMESPACE
    // Compute the world-space mouse picking ray from explicit inputs, without reading ImGui IO.
    // Useful for tests/headless usage. view and projection are column-major float[16] (same
    // layout as Manipulate). rayOrigin and rayDirection receive a float[3] each.
-   IMGUI_API void ComputeMouseRay(const float* view, const float* projection, const ImVec2& mousePosition, const ImVec2& rectPosition, const ImVec2& rectSize, float* rayOrigin, float* rayDirection);
+   IMGUI_API void ComputeMouseRay(const float* view, const float* projection,
+                                  const glm::vec2& mousePosition, const glm::vec2& rectPosition,
+                                  const glm::vec2& rectSize, float* rayOrigin, float* rayDirection);
 
    enum COLOR
    {
@@ -341,7 +346,7 @@ namespace IMGUIZMO_NAMESPACE
       float HatchedAxisLineThickness;   // Thickness of hatched axis lines
       float CenterCircleSize;           // Size of circle at the center of the translate/scale gizmo
 
-      ImVec4 Colors[COLOR::COUNT];
+      glm::vec4 Colors[COLOR::COUNT];
    };
 
    IMGUI_API Style& GetStyle();

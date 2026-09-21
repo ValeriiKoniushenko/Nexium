@@ -44,9 +44,9 @@ enum class EditKind {
 };
 
 struct Anchor {
-    ImVec2 position = ImVec2(0.0f, 0.0f);
-    ImVec2 handleIn = ImVec2(0.0f, 0.0f);
-    ImVec2 handleOut = ImVec2(0.0f, 0.0f);
+    glm::vec2 position = glm::vec2(0.0f, 0.0f);
+    glm::vec2 handleIn = glm::vec2(0.0f, 0.0f);
+    glm::vec2 handleOut = glm::vec2(0.0f, 0.0f);
     bool hasHandleIn = false;
     bool hasHandleOut = false;
     HandleMode handleMode = HandleMode::Corner;
@@ -79,15 +79,15 @@ struct Delegate {
 // Host-provided transform state. Points are stored in path-local coordinates.
 // The editor composes object transform first, then canvas pan/zoom.
 struct Transform {
-    ImVec2 pan = ImVec2(0.0f, 0.0f);
+    glm::vec2 pan = glm::vec2(0.0f, 0.0f);
     float zoom = 1.0f;
-    ImVec2 objectPivot = ImVec2(0.0f, 0.0f);
-    ImVec2 objectTranslation = ImVec2(0.0f, 0.0f);
+    glm::vec2 objectPivot = glm::vec2(0.0f, 0.0f);
+    glm::vec2 objectTranslation = glm::vec2(0.0f, 0.0f);
     float objectRotationRadians = 0.0f;
-    ImVec2 objectScale = ImVec2(1.0f, 1.0f);
+    glm::vec2 objectScale = glm::vec2(1.0f, 1.0f);
 
-    ImVec2 LocalToCanvas(const ImVec2& local) const;
-    ImVec2 CanvasToLocal(const ImVec2& canvas) const;
+    glm::vec2 LocalToCanvas(const glm::vec2& local) const;
+    glm::vec2 CanvasToLocal(const glm::vec2& canvas) const;
 };
 
 struct Style {
@@ -111,7 +111,7 @@ struct Style {
 };
 
 struct Config {
-    ImVec2 canvasSize = ImVec2(0.0f, 360.0f);
+    glm::vec2 canvasSize = glm::vec2(0.0f, 360.0f);
     Tool tool = Tool::Pen;
     Transform transform;
     Style style;
@@ -130,8 +130,8 @@ struct Result {
     bool active = false;
     bool wantsMouseCapture = false;
     bool wantsKeyboardCapture = false;
-    ImVec2 viewPanDelta = ImVec2(0.0f, 0.0f);
-    ImVec2 viewZoomCenterCanvas = ImVec2(0.0f, 0.0f);
+    glm::vec2 viewPanDelta = glm::vec2(0.0f, 0.0f);
+    glm::vec2 viewZoomCenterCanvas = glm::vec2(0.0f, 0.0f);
     float viewZoomFactor = 1.0f;
 };
 
@@ -156,28 +156,28 @@ private:
         float distance = 0.0f;
     };
 
-    Hit HitTest(const Path& path, const Config& config, const ImVec2& canvasOrigin,
-                const ImVec2& mouseScreen) const;
-    ImVec2 LocalToScreen(const Config& config, const ImVec2& canvasOrigin,
-                         const ImVec2& local) const;
-    ImVec2 ScreenToLocal(const Config& config, const ImVec2& canvasOrigin,
-                         const ImVec2& screen) const;
+    Hit HitTest(const Path& path, const Config& config, const glm::vec2& canvasOrigin,
+                const glm::vec2& mouseScreen) const;
+    glm::vec2 LocalToScreen(const Config& config, const glm::vec2& canvasOrigin,
+                            const glm::vec2& local) const;
+    glm::vec2 ScreenToLocal(const Config& config, const glm::vec2& canvasOrigin,
+                            const glm::vec2& screen) const;
 
-    void DrawGrid(ImDrawList* drawList, const ImVec2& origin, const ImVec2& size,
+    void DrawGrid(ImDrawList* drawList, const glm::vec2& origin, const glm::vec2& size,
                   const Config& config) const;
     void DrawPath(ImDrawList* drawList, const Path& path, const Config& config,
-                  const ImVec2& canvasOrigin) const;
+                  const glm::vec2& canvasOrigin) const;
     void DrawControls(ImDrawList* drawList, const Path& path, const Config& config,
-                      const ImVec2& canvasOrigin, const Hit& hoveredHit) const;
+                      const glm::vec2& canvasOrigin, const Hit& hoveredHit) const;
 
     bool HandleKeyboard(Path& path, const Config& config, Result& result);
-    bool HandleMouse(Path& path, const Config& config, const ImVec2& canvasOrigin,
+    bool HandleMouse(Path& path, const Config& config, const glm::vec2& canvasOrigin,
                      const Hit& hoveredHit, Result& result);
     bool IsAnchorSelected(int anchor) const;
     void SelectAnchor(int anchor, HitPart part, bool addToSelection);
     void RemoveSelectedAnchors(Path& path);
-    void BeginAnchorDrag(const Path& path, const ImVec2& mouseLocal);
-    void UpdateBoxSelection(Path& path, const Config& config, const ImVec2& canvasOrigin,
+    void BeginAnchorDrag(const Path& path, const glm::vec2& mouseLocal);
+    void UpdateBoxSelection(Path& path, const Config& config, const glm::vec2& canvasOrigin,
                             bool addToSelection);
     void BeginEdit(const Config& config, EditKind kind, int anchorIndex);
     void EndEdit(const Config& config);
@@ -191,10 +191,10 @@ private:
     bool boxSelecting_ = false;
     bool editActive_ = false;
     bool dragEditStarted_ = false;
-    ImVec2 dragStartLocal_ = ImVec2(0.0f, 0.0f);
-    ImVec2 boxSelectStartScreen_ = ImVec2(0.0f, 0.0f);
-    ImVec2 boxSelectCurrentScreen_ = ImVec2(0.0f, 0.0f);
-    std::vector<ImVec2> dragStartAnchorPositions_;
+    glm::vec2 dragStartLocal_ = glm::vec2(0.0f, 0.0f);
+    glm::vec2 boxSelectStartScreen_ = glm::vec2(0.0f, 0.0f);
+    glm::vec2 boxSelectCurrentScreen_ = glm::vec2(0.0f, 0.0f);
+    std::vector<glm::vec2> dragStartAnchorPositions_;
 
     bool hovered_ = false;
     bool active_ = false;

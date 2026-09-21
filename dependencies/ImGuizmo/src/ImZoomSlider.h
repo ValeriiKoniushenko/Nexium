@@ -56,10 +56,11 @@ namespace ImZoomSlider
       static float saveViewHigher;
 
       const bool isVertical = flags & ImGuiZoomSliderFlags_Vertical;
-      const ImVec2 canvasPos = ImGui::GetCursorScreenPos();
-      const ImVec2 canvasSize = ImGui::GetContentRegionAvail();
+      const glm::vec2 canvasPos = ImGui::GetCursorScreenPos();
+      const glm::vec2 canvasSize = ImGui::GetContentRegionAvail();
       const float canvasSizeLength = isVertical ? ImGui::GetItemRectSize().y : canvasSize.x;
-      const ImVec2 scrollBarSize = isVertical ? ImVec2(14.f, canvasSizeLength) : ImVec2(canvasSizeLength, 14.f);
+      const glm::vec2 scrollBarSize
+          = isVertical ? glm::vec2(14.f, canvasSizeLength) : glm::vec2(canvasSizeLength, 14.f);
 
       ImGui::InvisibleButton(controlName, scrollBarSize);
       const ImGuiID currentId = ImGui::GetID(controlName);
@@ -70,15 +71,20 @@ namespace ImZoomSlider
       const bool sizingRBar = usingEditingId ? sizingRBarSvg : false;
       const bool sizingLBar = usingEditingId ? sizingLBarSvg : false;
       const int componentIndex = isVertical ? 1 : 0;
-      const ImVec2 scrollBarMin = ImGui::GetItemRectMin();
-      const ImVec2 scrollBarMax = ImGui::GetItemRectMax();
-      const ImVec2 scrollBarA = ImVec2(scrollBarMin.x, scrollBarMin.y) - (isVertical ? ImVec2(2,0) : ImVec2(0,2));
-      const ImVec2 scrollBarB = isVertical ? ImVec2(scrollBarMax.x - 1.f, scrollBarMin.y + canvasSizeLength) : ImVec2(scrollBarMin.x + canvasSizeLength, scrollBarMax.y - 1.f);
+      const glm::vec2 scrollBarMin = ImGui::GetItemRectMin();
+      const glm::vec2 scrollBarMax = ImGui::GetItemRectMax();
+      const glm::vec2 scrollBarA = glm::vec2(scrollBarMin.x, scrollBarMin.y)
+                                   - (isVertical ? glm::vec2(2, 0) : glm::vec2(0, 2));
+      const glm::vec2 scrollBarB
+          = isVertical ? glm::vec2(scrollBarMax.x - 1.f, scrollBarMin.y + canvasSizeLength)
+                       : glm::vec2(scrollBarMin.x + canvasSizeLength, scrollBarMax.y - 1.f);
       const float scrollStart = ((viewLower - lower) / (higher - lower)) * canvasSizeLength + scrollBarMin[componentIndex];
       const float scrollEnd = ((viewHigher - lower) / (higher - lower)) * canvasSizeLength + scrollBarMin[componentIndex];
       const float screenSize = scrollEnd - scrollStart;
-      const ImVec2 scrollTopLeft = isVertical ? ImVec2(scrollBarMin.x, scrollStart) : ImVec2(scrollStart, scrollBarMin.y);
-      const ImVec2 scrollBottomRight = isVertical ? ImVec2(scrollBarMax.x - 2.f, scrollEnd) : ImVec2(scrollEnd, scrollBarMax.y - 2.f);
+      const glm::vec2 scrollTopLeft = isVertical ? glm::vec2(scrollBarMin.x, scrollStart)
+                                                 : glm::vec2(scrollStart, scrollBarMin.y);
+      const glm::vec2 scrollBottomRight = isVertical ? glm::vec2(scrollBarMax.x - 2.f, scrollEnd)
+                                                     : glm::vec2(scrollEnd, scrollBarMax.y - 2.f);
       const bool inScrollBar = canUseControl && ImRect(scrollTopLeft, scrollBottomRight).Contains(io.MousePos);
       const ImRect scrollBarRect(scrollBarA, scrollBarB);
       const float deltaScreen = io.MousePos[componentIndex] - scrollingSource;
@@ -116,17 +122,19 @@ namespace ImZoomSlider
          {
             const float coordA = middleCoord - handleSize * 0.5f;
             const float coordB = middleCoord + handleSize * 0.5f;
-            ImVec2 base = scrollBarMin;
+            glm::vec2 base = scrollBarMin;
             base.x += scrollBarSize.x * 0.25f * i;
             base.y += scrollBarSize.y * 0.25f * i;
 
             if (isVertical)
             {
-               draw_list->AddLine(ImVec2(base.x, coordA), ImVec2(base.x, coordB), ImGui::GetColorU32(ImGuiCol_SliderGrab));
+                draw_list->AddLine(glm::vec2(base.x, coordA), glm::vec2(base.x, coordB),
+                                   ImGui::GetColorU32(ImGuiCol_SliderGrab));
             }
             else
             {
-               draw_list->AddLine(ImVec2(coordA, base.y), ImVec2(coordB, base.y), ImGui::GetColorU32(ImGuiCol_SliderGrab));
+                draw_list->AddLine(glm::vec2(coordA, base.y), glm::vec2(coordB, base.y),
+                                   ImGui::GetColorU32(ImGuiCol_SliderGrab));
             }
          }
       }
@@ -157,14 +165,28 @@ namespace ImZoomSlider
 
       if (screenSize > handleSize * 2.f && hasAnchors)
       {
-         const ImRect barHandleLeft(scrollTopLeft, isVertical ? ImVec2(scrollBottomRight.x, scrollTopLeft.y + handleSize) : ImVec2(scrollTopLeft.x + handleSize, scrollBottomRight.y));
-         const ImRect barHandleRight(isVertical ? ImVec2(scrollTopLeft.x, scrollBottomRight.y - handleSize) : ImVec2(scrollBottomRight.x - handleSize, scrollTopLeft.y), scrollBottomRight);
+          const ImRect barHandleLeft(
+              scrollTopLeft, isVertical
+                                 ? glm::vec2(scrollBottomRight.x, scrollTopLeft.y + handleSize)
+                                 : glm::vec2(scrollTopLeft.x + handleSize, scrollBottomRight.y));
+          const ImRect barHandleRight(
+              isVertical ? glm::vec2(scrollTopLeft.x, scrollBottomRight.y - handleSize)
+                         : glm::vec2(scrollBottomRight.x - handleSize, scrollTopLeft.y),
+              scrollBottomRight);
 
-         onLeft = barHandleLeft.Contains(io.MousePos);
-         onRight = barHandleRight.Contains(io.MousePos);
+          onLeft = barHandleLeft.Contains(io.MousePos);
+          onRight = barHandleRight.Contains(io.MousePos);
 
-         draw_list->AddRectFilled(barHandleLeft.Min, barHandleLeft.Max, ImGui::GetColorU32((onLeft || sizingLBar) ? ImGuiCol_SliderGrabActive : ImGuiCol_SliderGrab), roundRadius);
-         draw_list->AddRectFilled(barHandleRight.Min, barHandleRight.Max, ImGui::GetColorU32((onRight || sizingRBar) ? ImGuiCol_SliderGrabActive : ImGuiCol_SliderGrab), roundRadius);
+          draw_list->AddRectFilled(barHandleLeft.Min, barHandleLeft.Max,
+                                   ImGui::GetColorU32((onLeft || sizingLBar)
+                                                          ? ImGuiCol_SliderGrabActive
+                                                          : ImGuiCol_SliderGrab),
+                                   roundRadius);
+          draw_list->AddRectFilled(barHandleRight.Min, barHandleRight.Max,
+                                   ImGui::GetColorU32((onRight || sizingRBar)
+                                                          ? ImGuiCol_SliderGrabActive
+                                                          : ImGuiCol_SliderGrab),
+                                   roundRadius);
       }
 
       if (sizingRBar)

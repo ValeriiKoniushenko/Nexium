@@ -8,37 +8,45 @@ namespace {
 
 static constexpr float kMinZoom = 0.0001f;
 
-static ImVec2 add(const ImVec2& a, const ImVec2& b) {
-    return ImVec2(a.x + b.x, a.y + b.y);
+static glm::vec2 add(const glm::vec2& a, const glm::vec2& b)
+{
+    return glm::vec2(a.x + b.x, a.y + b.y);
 }
 
-static ImVec2 sub(const ImVec2& a, const ImVec2& b) {
-    return ImVec2(a.x - b.x, a.y - b.y);
+static glm::vec2 sub(const glm::vec2& a, const glm::vec2& b)
+{
+    return glm::vec2(a.x - b.x, a.y - b.y);
 }
 
-static ImVec2 mul(const ImVec2& a, float s) {
-    return ImVec2(a.x * s, a.y * s);
+static glm::vec2 mul(const glm::vec2& a, float s)
+{
+    return glm::vec2(a.x * s, a.y * s);
 }
 
-static ImVec2 mul(const ImVec2& a, const ImVec2& b) {
-    return ImVec2(a.x * b.x, a.y * b.y);
+static glm::vec2 mul(const glm::vec2& a, const glm::vec2& b)
+{
+    return glm::vec2(a.x * b.x, a.y * b.y);
 }
 
-static float lengthSq(const ImVec2& v) {
+static float lengthSq(const glm::vec2& v)
+{
     return v.x * v.x + v.y * v.y;
 }
 
-static float length(const ImVec2& v) {
+static float length(const glm::vec2& v)
+{
     return std::sqrt(lengthSq(v));
 }
 
-static ImVec2 rotate(const ImVec2& p, float radians) {
+static glm::vec2 rotate(const glm::vec2& p, float radians)
+{
     const float c = std::cos(radians);
     const float s = std::sin(radians);
-    return ImVec2(p.x * c - p.y * s, p.x * s + p.y * c);
+    return glm::vec2(p.x * c - p.y * s, p.x * s + p.y * c);
 }
 
-static ImVec2 snapToAngleIncrement(const ImVec2& v, float incrementRadians) {
+static glm::vec2 snapToAngleIncrement(const glm::vec2& v, float incrementRadians)
+{
     const float len = length(v);
     if (len <= kMinZoom) {
         return v;
@@ -46,7 +54,7 @@ static ImVec2 snapToAngleIncrement(const ImVec2& v, float incrementRadians) {
 
     const float angle = std::atan2(v.y, v.x);
     const float snappedAngle = std::round(angle / incrementRadians) * incrementRadians;
-    return ImVec2(std::cos(snappedAngle) * len, std::sin(snappedAngle) * len);
+    return glm::vec2(std::cos(snappedAngle) * len, std::sin(snappedAngle) * len);
 }
 
 static bool isShiftDown() {
@@ -78,23 +86,24 @@ static bool alignHandles(Anchor& anchor) {
 
     const float inLength = length(anchor.handleIn);
     const float outLength = length(anchor.handleOut);
-    ImVec2 direction = outLength >= inLength ? anchor.handleOut : mul(anchor.handleIn, -1.0f);
+    glm::vec2 direction = outLength >= inLength ? anchor.handleOut : mul(anchor.handleIn, -1.0f);
     float directionLength = length(direction);
     if (directionLength <= kMinZoom) {
         return false;
     }
 
-    const ImVec2 unit = mul(direction, 1.0f / directionLength);
+    const glm::vec2 unit = mul(direction, 1.0f / directionLength);
     anchor.handleOut = mul(unit, outLength);
     anchor.handleIn = mul(unit, -inLength);
     anchor.handleMode = HandleMode::Aligned;
     return true;
 }
 
-static ImVec2 alignedOppositeHandle(const ImVec2& handle, float oppositeLength) {
+static glm::vec2 alignedOppositeHandle(const glm::vec2& handle, float oppositeLength)
+{
     const float handleLength = length(handle);
     if (handleLength <= kMinZoom) {
-        return ImVec2(0.0f, 0.0f);
+        return glm::vec2(0.0f, 0.0f);
     }
 
     return mul(handle, -oppositeLength / handleLength);
@@ -104,40 +113,41 @@ static bool hasCurveBetween(const Anchor& a, const Anchor& b) {
     return a.hasHandleOut || b.hasHandleIn;
 }
 
-static void drawControlPoint(ImDrawList* drawList, const ImVec2& center, float radius,
-                             ControlPointShape shape, ImU32 color) {
+static void drawControlPoint(ImDrawList* drawList, const glm::vec2& center, float radius,
+                             ControlPointShape shape, ImU32 color)
+{
     switch (shape) {
     case ControlPointShape::Circle:
         drawList->AddCircleFilled(center, radius, color);
         break;
     case ControlPointShape::Square:
-        drawList->AddRectFilled(sub(center, ImVec2(radius, radius)),
-                                add(center, ImVec2(radius, radius)), color);
+        drawList->AddRectFilled(sub(center, glm::vec2(radius, radius)),
+                                add(center, glm::vec2(radius, radius)), color);
         break;
     case ControlPointShape::Diamond:
-        drawList->AddQuadFilled(ImVec2(center.x, center.y - radius),
-                                ImVec2(center.x + radius, center.y),
-                                ImVec2(center.x, center.y + radius),
-                                ImVec2(center.x - radius, center.y), color);
+        drawList->AddQuadFilled(
+            glm::vec2(center.x, center.y - radius), glm::vec2(center.x + radius, center.y),
+            glm::vec2(center.x, center.y + radius), glm::vec2(center.x - radius, center.y), color);
         break;
     }
 }
 
-static void drawSegment(ImDrawList* drawList, const Config& config,
-                        const ImVec2& origin, const Anchor& a, const Anchor& b,
-                        ImU32 color, float thickness) {
-    const ImVec2 p0 = add(origin, config.transform.LocalToCanvas(a.position));
-    const ImVec2 p3 = add(origin, config.transform.LocalToCanvas(b.position));
+static void drawSegment(ImDrawList* drawList, const Config& config, const glm::vec2& origin,
+                        const Anchor& a, const Anchor& b, ImU32 color, float thickness)
+{
+    const glm::vec2 p0 = add(origin, config.transform.LocalToCanvas(a.position));
+    const glm::vec2 p3 = add(origin, config.transform.LocalToCanvas(b.position));
 
     if (!hasCurveBetween(a, b)) {
         drawList->AddLine(p0, p3, color, thickness);
         return;
     }
 
-    const ImVec2 cp1Local = add(a.position, a.hasHandleOut ? a.handleOut : ImVec2(0.0f, 0.0f));
-    const ImVec2 cp2Local = add(b.position, b.hasHandleIn ? b.handleIn : ImVec2(0.0f, 0.0f));
-    const ImVec2 cp1 = add(origin, config.transform.LocalToCanvas(cp1Local));
-    const ImVec2 cp2 = add(origin, config.transform.LocalToCanvas(cp2Local));
+    const glm::vec2 cp1Local
+        = add(a.position, a.hasHandleOut ? a.handleOut : glm::vec2(0.0f, 0.0f));
+    const glm::vec2 cp2Local = add(b.position, b.hasHandleIn ? b.handleIn : glm::vec2(0.0f, 0.0f));
+    const glm::vec2 cp1 = add(origin, config.transform.LocalToCanvas(cp1Local));
+    const glm::vec2 cp2 = add(origin, config.transform.LocalToCanvas(cp2Local));
     drawList->AddBezierCubic(p0, cp1, cp2, p3, color, thickness, 32);
 }
 
@@ -160,7 +170,7 @@ bool MakeMirrored(Anchor& anchor) {
         return changed;
     }
 
-    ImVec2 direction = anchor.hasHandleOut ? anchor.handleOut : mul(anchor.handleIn, -1.0f);
+    glm::vec2 direction = anchor.hasHandleOut ? anchor.handleOut : mul(anchor.handleIn, -1.0f);
     float directionLength = length(direction);
     if (directionLength <= kMinZoom) {
         direction = anchor.hasHandleIn ? mul(anchor.handleIn, -1.0f) : anchor.handleOut;
@@ -173,7 +183,7 @@ bool MakeMirrored(Anchor& anchor) {
     const float inLength = anchor.hasHandleIn ? length(anchor.handleIn) : 0.0f;
     const float outLength = anchor.hasHandleOut ? length(anchor.handleOut) : 0.0f;
     const float mirroredLength = std::max(inLength, outLength);
-    const ImVec2 unit = mul(direction, 1.0f / directionLength);
+    const glm::vec2 unit = mul(direction, 1.0f / directionLength);
     anchor.handleOut = mul(unit, mirroredLength);
     anchor.handleIn = mul(unit, -mirroredLength);
     anchor.hasHandleIn = true;
@@ -189,15 +199,15 @@ bool AddHandles(Anchor& anchor, float handleLength) {
 
     if (anchor.hasHandleIn) {
         const float inLength = std::max(length(anchor.handleIn), handleLength);
-        const ImVec2 out = alignedOppositeHandle(anchor.handleIn, inLength);
-        anchor.handleOut = lengthSq(out) > 0.0f ? out : ImVec2(handleLength, 0.0f);
+        const glm::vec2 out = alignedOppositeHandle(anchor.handleIn, inLength);
+        anchor.handleOut = lengthSq(out) > 0.0f ? out : glm::vec2(handleLength, 0.0f);
     } else if (anchor.hasHandleOut) {
         const float outLength = std::max(length(anchor.handleOut), handleLength);
-        const ImVec2 in = alignedOppositeHandle(anchor.handleOut, outLength);
-        anchor.handleIn = lengthSq(in) > 0.0f ? in : ImVec2(-handleLength, 0.0f);
+        const glm::vec2 in = alignedOppositeHandle(anchor.handleOut, outLength);
+        anchor.handleIn = lengthSq(in) > 0.0f ? in : glm::vec2(-handleLength, 0.0f);
     } else {
-        anchor.handleIn = ImVec2(-handleLength, 0.0f);
-        anchor.handleOut = ImVec2(handleLength, 0.0f);
+        anchor.handleIn = glm::vec2(-handleLength, 0.0f);
+        anchor.handleOut = glm::vec2(handleLength, 0.0f);
     }
 
     anchor.hasHandleIn = true;
@@ -212,8 +222,8 @@ bool DeleteHandles(Anchor& anchor) {
         return false;
     }
 
-    anchor.handleIn = ImVec2(0.0f, 0.0f);
-    anchor.handleOut = ImVec2(0.0f, 0.0f);
+    anchor.handleIn = glm::vec2(0.0f, 0.0f);
+    anchor.handleOut = glm::vec2(0.0f, 0.0f);
     anchor.hasHandleIn = false;
     anchor.hasHandleOut = false;
     anchor.handleMode = HandleMode::Corner;
@@ -228,9 +238,10 @@ void ReversePath(Path& path) {
     }
 }
 
-ImVec2 Transform::LocalToCanvas(const ImVec2& local) const {
+glm::vec2 Transform::LocalToCanvas(const glm::vec2& local) const
+{
     const float safeZoom = std::max(zoom, kMinZoom);
-    ImVec2 p = sub(local, objectPivot);
+    glm::vec2 p = sub(local, objectPivot);
     p = mul(p, objectScale);
     p = rotate(p, objectRotationRadians);
     p = add(p, objectPivot);
@@ -239,22 +250,23 @@ ImVec2 Transform::LocalToCanvas(const ImVec2& local) const {
     return add(p, pan);
 }
 
-ImVec2 Transform::CanvasToLocal(const ImVec2& canvas) const {
+glm::vec2 Transform::CanvasToLocal(const glm::vec2& canvas) const
+{
     const float safeZoom = std::max(zoom, kMinZoom);
-    ImVec2 p = sub(canvas, pan);
+    glm::vec2 p = sub(canvas, pan);
     p = mul(p, 1.0f / safeZoom);
     p = sub(p, objectTranslation);
     p = sub(p, objectPivot);
     p = rotate(p, -objectRotationRadians);
     const float sx = std::abs(objectScale.x) < kMinZoom ? kMinZoom : objectScale.x;
     const float sy = std::abs(objectScale.y) < kMinZoom ? kMinZoom : objectScale.y;
-    return add(ImVec2(p.x / sx, p.y / sy), objectPivot);
+    return add(glm::vec2(p.x / sx, p.y / sy), objectPivot);
 }
 
 Result Editor::Draw(const char* id, Path& path, const Config& config) {
     Result result;
 
-    ImVec2 canvasSize = config.canvasSize;
+    glm::vec2 canvasSize = config.canvasSize;
     if (canvasSize.x <= 0.0f) {
         canvasSize.x = ImGui::GetContentRegionAvail().x;
     }
@@ -264,14 +276,14 @@ Result Editor::Draw(const char* id, Path& path, const Config& config) {
     canvasSize.x = std::max(canvasSize.x, 64.0f);
     canvasSize.y = std::max(canvasSize.y, 64.0f);
 
-    const ImVec2 canvasOrigin = ImGui::GetCursorScreenPos();
+    const glm::vec2 canvasOrigin = ImGui::GetCursorScreenPos();
     ImGui::InvisibleButton(id, canvasSize,
                            ImGuiButtonFlags_MouseButtonLeft |
                            ImGuiButtonFlags_MouseButtonMiddle |
                            ImGuiButtonFlags_MouseButtonRight);
 
     hovered_ = ImGui::IsItemHovered();
-    const ImVec2 mouseScreen = ImGui::GetIO().MousePos;
+    const glm::vec2 mouseScreen = ImGui::GetIO().MousePos;
     const Hit inputHit = HitTest(path, config, canvasOrigin, mouseScreen);
 
     if (!config.readOnly) {
@@ -286,7 +298,7 @@ Result Editor::Draw(const char* id, Path& path, const Config& config) {
     result.active = active_;
 
     ImDrawList* drawList = ImGui::GetWindowDrawList();
-    const ImVec2 canvasEnd = add(canvasOrigin, canvasSize);
+    const glm::vec2 canvasEnd = add(canvasOrigin, canvasSize);
     drawList->AddRectFilled(canvasOrigin, canvasEnd,
                             config.style.backgroundColor, 3.0f);
 
@@ -379,7 +391,8 @@ void Editor::RemoveSelectedAnchors(Path& path) {
     ClearSelection();
 }
 
-void Editor::BeginAnchorDrag(const Path& path, const ImVec2& mouseLocal) {
+void Editor::BeginAnchorDrag(const Path& path, const glm::vec2& mouseLocal)
+{
     dragStartLocal_ = mouseLocal;
     dragStartAnchorPositions_.clear();
     for (int anchorIndex : selectedAnchors_) {
@@ -389,8 +402,9 @@ void Editor::BeginAnchorDrag(const Path& path, const ImVec2& mouseLocal) {
     }
 }
 
-void Editor::UpdateBoxSelection(Path& path, const Config& config, const ImVec2& canvasOrigin,
-                                bool addToSelection) {
+void Editor::UpdateBoxSelection(Path& path, const Config& config, const glm::vec2& canvasOrigin,
+                                bool addToSelection)
+{
     const float minX = std::min(boxSelectStartScreen_.x, boxSelectCurrentScreen_.x);
     const float maxX = std::max(boxSelectStartScreen_.x, boxSelectCurrentScreen_.x);
     const float minY = std::min(boxSelectStartScreen_.y, boxSelectCurrentScreen_.y);
@@ -400,7 +414,8 @@ void Editor::UpdateBoxSelection(Path& path, const Config& config, const ImVec2& 
         selectedAnchors_.clear();
     }
     for (int i = 0; i < static_cast<int>(path.anchors.size()); ++i) {
-        const ImVec2 anchorScreen = LocalToScreen(config, canvasOrigin, path.anchors[i].position);
+        const glm::vec2 anchorScreen
+            = LocalToScreen(config, canvasOrigin, path.anchors[i].position);
         if (anchorScreen.x >= minX && anchorScreen.x <= maxX &&
             anchorScreen.y >= minY && anchorScreen.y <= maxY &&
             !IsAnchorSelected(i)) {
@@ -434,23 +449,23 @@ void Editor::EndEdit(const Config& config) {
     }
 }
 
-Editor::Hit Editor::HitTest(const Path& path, const Config& config,
-                            const ImVec2& canvasOrigin,
-                            const ImVec2& mouseScreen) const {
+Editor::Hit Editor::HitTest(const Path& path, const Config& config, const glm::vec2& canvasOrigin,
+                            const glm::vec2& mouseScreen) const
+{
     Hit best;
     best.distance = config.style.hitRadius;
 
     for (int i = 0; i < static_cast<int>(path.anchors.size()); ++i) {
         const Anchor& anchor = path.anchors[i];
-        const ImVec2 anchorScreen = LocalToScreen(config, canvasOrigin, anchor.position);
+        const glm::vec2 anchorScreen = LocalToScreen(config, canvasOrigin, anchor.position);
         const float anchorDistance = length(sub(mouseScreen, anchorScreen));
         if (anchorDistance <= best.distance) {
             best = {i, HitPart::Anchor, anchorDistance};
         }
 
         if (anchor.hasHandleIn) {
-            const ImVec2 handleScreen = LocalToScreen(config, canvasOrigin,
-                                                      add(anchor.position, anchor.handleIn));
+            const glm::vec2 handleScreen
+                = LocalToScreen(config, canvasOrigin, add(anchor.position, anchor.handleIn));
             const float handleDistance = length(sub(mouseScreen, handleScreen));
             if (handleDistance <= best.distance) {
                 best = {i, HitPart::HandleIn, handleDistance};
@@ -458,8 +473,8 @@ Editor::Hit Editor::HitTest(const Path& path, const Config& config,
         }
 
         if (anchor.hasHandleOut) {
-            const ImVec2 handleScreen = LocalToScreen(config, canvasOrigin,
-                                                      add(anchor.position, anchor.handleOut));
+            const glm::vec2 handleScreen
+                = LocalToScreen(config, canvasOrigin, add(anchor.position, anchor.handleOut));
             const float handleDistance = length(sub(mouseScreen, handleScreen));
             if (handleDistance <= best.distance) {
                 best = {i, HitPart::HandleOut, handleDistance};
@@ -470,33 +485,37 @@ Editor::Hit Editor::HitTest(const Path& path, const Config& config,
     return best;
 }
 
-ImVec2 Editor::LocalToScreen(const Config& config, const ImVec2& canvasOrigin,
-                             const ImVec2& local) const {
+glm::vec2 Editor::LocalToScreen(const Config& config, const glm::vec2& canvasOrigin,
+                                const glm::vec2& local) const
+{
     return add(canvasOrigin, config.transform.LocalToCanvas(local));
 }
 
-ImVec2 Editor::ScreenToLocal(const Config& config, const ImVec2& canvasOrigin,
-                             const ImVec2& screen) const {
+glm::vec2 Editor::ScreenToLocal(const Config& config, const glm::vec2& canvasOrigin,
+                                const glm::vec2& screen) const
+{
     return config.transform.CanvasToLocal(sub(screen, canvasOrigin));
 }
 
-void Editor::DrawGrid(ImDrawList* drawList, const ImVec2& origin, const ImVec2& size,
-                      const Config& config) const {
+void Editor::DrawGrid(ImDrawList* drawList, const glm::vec2& origin, const glm::vec2& size,
+                      const Config& config) const
+{
     const float step = std::max(4.0f, config.style.gridStep * config.transform.zoom);
-    const ImVec2 end = add(origin, size);
+    const glm::vec2 end = add(origin, size);
     const float startX = origin.x + std::fmod(config.transform.pan.x, step);
     const float startY = origin.y + std::fmod(config.transform.pan.y, step);
 
     for (float x = startX; x < end.x; x += step) {
-        drawList->AddLine(ImVec2(x, origin.y), ImVec2(x, end.y), config.style.gridColor);
+        drawList->AddLine(glm::vec2(x, origin.y), glm::vec2(x, end.y), config.style.gridColor);
     }
     for (float y = startY; y < end.y; y += step) {
-        drawList->AddLine(ImVec2(origin.x, y), ImVec2(end.x, y), config.style.gridColor);
+        drawList->AddLine(glm::vec2(origin.x, y), glm::vec2(end.x, y), config.style.gridColor);
     }
 }
 
 void Editor::DrawPath(ImDrawList* drawList, const Path& path, const Config& config,
-                      const ImVec2& canvasOrigin) const {
+                      const glm::vec2& canvasOrigin) const
+{
     if (path.anchors.empty()) {
         return;
     }
@@ -518,7 +537,8 @@ void Editor::DrawPath(ImDrawList* drawList, const Path& path, const Config& conf
 }
 
 void Editor::DrawControls(ImDrawList* drawList, const Path& path, const Config& config,
-                          const ImVec2& canvasOrigin, const Hit& hoveredHit) const {
+                          const glm::vec2& canvasOrigin, const Hit& hoveredHit) const
+{
     for (int i = 0; i < static_cast<int>(path.anchors.size()); ++i) {
         const Anchor& anchor = path.anchors[i];
         const bool selected = IsAnchorSelected(i);
@@ -527,11 +547,11 @@ void Editor::DrawControls(ImDrawList* drawList, const Path& path, const Config& 
                                  hoveredHit.part == HitPart::Anchor &&
                                  path.anchors.size() >= 3 &&
                                  !path.closed;
-        const ImVec2 anchorScreen = LocalToScreen(config, canvasOrigin, anchor.position);
+        const glm::vec2 anchorScreen = LocalToScreen(config, canvasOrigin, anchor.position);
 
         if (anchor.hasHandleIn) {
-            const ImVec2 handle = LocalToScreen(config, canvasOrigin,
-                                                add(anchor.position, anchor.handleIn));
+            const glm::vec2 handle
+                = LocalToScreen(config, canvasOrigin, add(anchor.position, anchor.handleIn));
             drawList->AddLine(anchorScreen, handle, config.style.handleLineColor,
                               config.style.handleLineThickness);
             drawControlPoint(drawList, handle, config.style.handleRadius,
@@ -542,8 +562,8 @@ void Editor::DrawControls(ImDrawList* drawList, const Path& path, const Config& 
         }
 
         if (anchor.hasHandleOut) {
-            const ImVec2 handle = LocalToScreen(config, canvasOrigin,
-                                                add(anchor.position, anchor.handleOut));
+            const glm::vec2 handle
+                = LocalToScreen(config, canvasOrigin, add(anchor.position, anchor.handleOut));
             drawList->AddLine(anchorScreen, handle, config.style.handleLineColor,
                               config.style.handleLineThickness);
             drawControlPoint(drawList, handle, config.style.handleRadius,
@@ -624,11 +644,12 @@ bool Editor::HandleKeyboard(Path& path, const Config& config, Result& result) {
     return changed;
 }
 
-bool Editor::HandleMouse(Path& path, const Config& config, const ImVec2& canvasOrigin,
-                         const Hit& hoveredHit, Result& result) {
+bool Editor::HandleMouse(Path& path, const Config& config, const glm::vec2& canvasOrigin,
+                         const Hit& hoveredHit, Result& result)
+{
     bool changed = false;
     const ImGuiIO& io = ImGui::GetIO();
-    const ImVec2 mouseLocal = ScreenToLocal(config, canvasOrigin, io.MousePos);
+    const glm::vec2 mouseLocal = ScreenToLocal(config, canvasOrigin, io.MousePos);
 
     if (hovered_ && io.MouseWheel != 0.0f) {
         result.viewZoomFactor = std::pow(1.1f, io.MouseWheel);
@@ -727,7 +748,7 @@ bool Editor::HandleMouse(Path& path, const Config& config, const ImVec2& canvasO
         Anchor& anchor = path.anchors[selectedAnchor_];
         if (selectedPart_ == HitPart::Anchor) {
             if (newAnchorDrag_) {
-                ImVec2 delta = sub(mouseLocal, dragStartLocal_);
+                glm::vec2 delta = sub(mouseLocal, dragStartLocal_);
                 if (isShiftDown()) {
                     delta = snapToAngleIncrement(delta, 3.14159265358979323846f / 4.0f);
                 }
@@ -745,7 +766,7 @@ bool Editor::HandleMouse(Path& path, const Config& config, const ImVec2& canvasO
                     BeginEdit(config, EditKind::MoveAnchor, selectedAnchor_);
                     dragEditStarted_ = true;
                 }
-                const ImVec2 delta = sub(mouseLocal, dragStartLocal_);
+                const glm::vec2 delta = sub(mouseLocal, dragStartLocal_);
                 for (int i = 0; i < static_cast<int>(selectedAnchors_.size()); ++i) {
                     const int anchorIndex = selectedAnchors_[i];
                     if (anchorIndex >= 0 && anchorIndex < static_cast<int>(path.anchors.size())) {

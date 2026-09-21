@@ -12,6 +12,7 @@
 #include "Editor/EditorIntegration.h"
 #include "Editor/IconsFontAwesome.h"
 #include "ImGui/imgui_internal.h"
+#include "NxWorld/Entities/Camera/Camera.h"
 #include "NxWorld/Framework/GameInstance.h"
 
 using namespace NX;
@@ -44,6 +45,7 @@ namespace NX
 
     void GameViewportEWC::onDraw()
     {
+        _blocksPicking = false;
         if (gGameInstance->renderMode != GameInstance::RenderMode::Editor)
         {
             return;
@@ -53,15 +55,22 @@ namespace NX
         const glm::vec2 renderSize = { static_cast<float>(r.getRenderSize().width),
                                        static_cast<float>(r.getRenderSize().height) };
 
-        glm::vec2 p = {};
-
-        if (isFocused())
-        {
-            p = ImGui::GetCursorScreenPos();
-        }
+        const auto p = ImGui::GetCursorScreenPos();
 
         ImGui::Image(r.getTextureId(), glm::vec2(renderSize.x, renderSize.y), glm::vec2(0.0f, 1.0f),
                      glm::vec2(1.0f, 0.0f));
+
+        const auto& selected = GetObjectSelectorManager()->getSelectedObjects();
+        auto* camera = GetWorld()->currentCamera;
+        if (selected.size() == 1 && camera && renderSize.x > 0.f && renderSize.y > 0.f)
+        {
+            if (auto* object = dynamic_cast<SceneObject*>(selected.begin()->second.get());
+                object && object != camera && object->isEnabled())
+            {
+                _gizmo.draw(*object, *camera, p, renderSize);
+                _blocksPicking = _gizmo.blocksPicking();
+            }
+        }
 
         if (isFocused())
         {

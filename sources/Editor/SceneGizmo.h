@@ -9,29 +9,24 @@
 
 #pragma once
 
-#include "BaseWindow.h"
-#include "Editor/SceneGizmo.h"
+#include "glm/glm.hpp"
 
 namespace NX
 {
-    CLASS();
-    class GameViewportEWC : public BaseFloatEWC
-    {
-        ECS_DECL(GameViewportEWC, NX::BaseFloatEWC);
+    class BaseCamera;
+    class SceneObject;
+    class Transformable;
 
+    class SceneGizmo
+    {
     public:
-        [[nodiscard]] const char* getIcon() override;
+        void draw(SceneObject& object, BaseCamera& camera, glm::vec2 position, glm::vec2 size);
         [[nodiscard]] bool blocksPicking() const noexcept { return _blocksPicking; }
 
-    protected:
-        void onInitialize() override;
-        void onUpdate() override;
-        void onDraw() override;
+        static bool ApplyTransform(Transformable& object, const glm::mat4& worldPivot,
+                                   const glm::mat4& parent, bool rotate);
 
     private:
-        SceneGizmo _gizmo;
         bool _blocksPicking = false;
     };
 } // namespace NX
-
-#include "GameViewport.generated.h" // added by the code generator. Better don't move it.
