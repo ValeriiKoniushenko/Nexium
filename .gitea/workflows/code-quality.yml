@@ -1,6 +1,10 @@
 name: Code Quality
 on: pull_request
 
+permissions:
+  contents: read
+  pull-requests: write
+
 env:
   JOBS: '20'
   COMPILER: gcc
@@ -71,7 +75,10 @@ jobs:
 
       - name: Clang-tidy
         working-directory: ${{ env.PROJECT_DIR }}
-        run: timeout 10m python3 .gitea/check_clang_tidy.py --build-dir "$BUILD_DIR" --fail-on error --no-gitea
+        env:
+          GITEA_TOKEN: ${{ secrets.GITEA_TOKEN }}
+          GITEA_AUTH_SCHEME: Bearer
+        run: timeout 10m python3 .gitea/check_clang_tidy.py --build-dir "$BUILD_DIR" --fail-on error
 
       - name: Build
         run: cmake --build "$BUILD_DIR" --parallel "$JOBS"
