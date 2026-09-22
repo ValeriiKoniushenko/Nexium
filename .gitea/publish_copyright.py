@@ -33,8 +33,8 @@ def main() -> int:
         print("[copyright] Gitea client is not configured", file=sys.stderr)
         return 1
 
-    try:
-        if pr_number is not None:
+    if pr_number is not None:
+        try:
             client.dismiss_previous_reviews(pr_number, marker=marker)
             if issues:
                 details = "\n".join(
@@ -49,8 +49,12 @@ def main() -> int:
                     ),
                     marker=marker,
                 )
+        except Exception as error:
+            print(f"[copyright] failed to publish PR review: {error}", file=sys.stderr)
+            return 1
 
-        if sha:
+    if sha:
+        try:
             client.publish_check(
                 sha,
                 "failure" if issues else "success",
@@ -61,9 +65,11 @@ def main() -> int:
                     else "copyright clean"
                 ),
             )
-    except Exception as error:
-        print(f"[copyright] failed to publish results: {error}", file=sys.stderr)
-        return 1
+        except Exception as error:
+            print(
+                f"[copyright] failed to publish optional commit status: {error}",
+                file=sys.stderr,
+            )
 
     return 0
 
