@@ -22,6 +22,15 @@ def issue_line(path: str, message: str) -> int:
     return int(match.group(1)) if match else 1
 
 
+def issue_message(path: str, message: str) -> str:
+    return re.sub(
+        rf"^{re.escape(path)}(?::\d+)?:\s*",
+        "",
+        message,
+        count=1,
+    )
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--base", help="branch/ref to diff against")
@@ -42,7 +51,7 @@ def main() -> int:
             issues.append({
                 "path": path,
                 "line": issue_line(path, message),
-                "message": message,
+                "message": issue_message(path, message),
             })
 
     with open(args.report_path, "w") as report:
@@ -50,7 +59,10 @@ def main() -> int:
 
     if issues:
         for issue in issues:
-            print(issue["message"], file=sys.stderr)
+            print(
+                f"{issue['path']}:{issue['line']}: {issue['message']}",
+                file=sys.stderr,
+            )
         return 1
 
     print(f"Checked {len(files)} changed C/C++ file(s): copyright notices are valid.")
