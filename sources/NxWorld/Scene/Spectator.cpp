@@ -117,7 +117,5 @@ namespace NX
                     }
                 }
             });
-
-        int* i = new int[1000];
     }
 } // namespace NX
