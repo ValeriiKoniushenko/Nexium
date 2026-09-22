@@ -107,11 +107,11 @@ jobs:
 
       - name: Unit tests under Valgrind
         working-directory: ${{ env.PROJECT_DIR }}
-        run: timeout 5m python3 .gitea/check_valgrind.py --executable "$BUILD_DIR/bin/Nexium_Tests" --no-gitea --verbose
+        run: timeout 5m python3 .gitea/check_valgrind.py --executable "$BUILD_DIR/bin/Nexium_Tests" --verbose
 
       - name: Headless game under Valgrind
         working-directory: ${{ env.PROJECT_DIR }}
-        run: timeout 8m python3 .gitea/run_game_valgrind.py --executable "$BUILD_DIR/bin/TemplateGame" --timeout 5 --no-gitea
+        run: timeout 8m python3 .gitea/run_game_valgrind.py --executable "$BUILD_DIR/bin/TemplateGame" --timeout 5
 
       - name: Precheck results
         if: always()
