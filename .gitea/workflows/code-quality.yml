@@ -34,10 +34,6 @@ jobs:
           fetch-depth: 0
           path: ${{ env.CACHE_VARIANT }}
 
-      - name: Copyright
-        working-directory: ${{ env.PROJECT_DIR }}
-        run: python3 .gitea/check_copyright.py
-
       - name: Init submodules
         working-directory: ${{ env.PROJECT_DIR }}
         run: |
@@ -54,6 +50,19 @@ jobs:
             git submodule update --init --recursive --depth 1 --jobs "$JOBS" "$@"
             printf '%s\n' "$CACHE_KEY" > "$CACHE_STAMP"
           fi
+
+      - name: Copyright
+        working-directory: ${{ env.PROJECT_DIR }}
+        env:
+          GITEA_TOKEN: ${{ secrets.GITEA_TOKEN }}
+          GITEA_AUTH_SCHEME: Bearer
+        run: |
+          COPYRIGHT_FAILED=0
+          python3 .gitea/check_copyright.py \
+            --report-path "$RUNNER_TEMP/copyright-report.json" || COPYRIGHT_FAILED=1
+          python3 .gitea/publish_copyright.py \
+            --report-path "$RUNNER_TEMP/copyright-report.json" || COPYRIGHT_FAILED=1
+          printf 'COPYRIGHT_FAILED=%s\n' "$COPYRIGHT_FAILED" >> "$GITHUB_ENV"
 
       - name: Configure
         run: |
@@ -93,3 +102,11 @@ jobs:
       - name: Headless game under Valgrind
         working-directory: ${{ env.PROJECT_DIR }}
         run: timeout 8m python3 .gitea/run_game_valgrind.py --executable "$BUILD_DIR/bin/TemplateGame" --timeout 5 --no-gitea
+
+      - name: Copyright result
+        if: always()
+        run: |
+          if [ "${COPYRIGHT_FAILED:-0}" -ne 0 ]; then
+            echo "Copyright precheck failed."
+            exit 1
+          fi
