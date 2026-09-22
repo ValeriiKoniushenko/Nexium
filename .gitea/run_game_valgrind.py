@@ -23,7 +23,6 @@ from gitea_client import GiteaClient, review_marker
 
 ERROR_SUMMARY_RE = re.compile(r"ERROR SUMMARY: (?P<count>\d+) errors?")
 MAX_OUTPUT_CHARS = 8_000
-TIMEOUT_EXIT_CODE = 124
 
 
 @dataclass
@@ -40,10 +39,6 @@ class ValgrindGameResult:
         return int(matches[-1].group("count")) if matches else None
 
     @property
-    def timed_out(self) -> bool:
-        return self.returncode == TIMEOUT_EXIT_CODE
-
-    @property
     def infrastructure_error(self) -> bool:
         return self.returncode == 127 or "Fatal error at startup" in self.stderr
 
@@ -57,7 +52,7 @@ class ValgrindGameResult:
             self.infrastructure_error
             or self.error_count is None
             or self.has_errors
-            or not self.timed_out
+            or self.returncode != 0
         )
 
     @property
@@ -69,10 +64,6 @@ class ValgrindGameResult:
 
 def run_game_valgrind(executable: Path, timeout_seconds: float) -> ValgrindGameResult:
     command = [
-        "timeout",
-        "--signal=TERM",
-        "--kill-after=5s",
-        f"{timeout_seconds:g}s",
         "valgrind",
         "--leak-check=full",
         "--show-leak-kinds=definite",
@@ -84,6 +75,8 @@ def run_game_valgrind(executable: Path, timeout_seconds: float) -> ValgrindGameR
         "--gen-suppressions=all",
         "--suppressions=valgrind.supp",
         str(executable.resolve()),
+        "--timeout",
+        f"{timeout_seconds:g}",
     ]
     xvfb: subprocess.Popen[object] | None = None
     try:
@@ -142,18 +135,18 @@ def result_description(result: ValgrindGameResult) -> str:
         return "Game Valgrind did not produce an error summary"
     if result.has_errors:
         return f"Game Valgrind found {result.error_count} errors"
-    if not result.timed_out:
-        return f"Game exited before the {result.timeout_seconds:g}s limit (exit code {result.returncode})"
+    if result.returncode != 0:
+        return f"Game exited with code {result.returncode}"
     return "Game Valgrind clean"
 
 
 def review_body(executable_name: str, result: ValgrindGameResult) -> str:
     error_count = "unavailable" if result.error_count is None else str(result.error_count)
     status = "Clean"
-    if result.infrastructure_error or result.error_count is None or not result.timed_out:
-        status = "Run failed"
-    elif result.has_errors:
+    if result.has_errors:
         status = "Issues found"
+    elif result.infrastructure_error or result.error_count is None or result.returncode != 0:
+        status = "Run failed"
 
     output = tail_for_review("\n\n".join(part for part in (result.stdout, result.stderr) if part))
     lines = [
@@ -175,10 +168,9 @@ def review_body(executable_name: str, result: ValgrindGameResult) -> str:
         (
             "| Metric | Value |",
             "| --- | --- |",
-            f"| Time limit | `{result.timeout_seconds:g}s` |",
+            f"| Game runtime limit | `{result.timeout_seconds:g}s` |",
             f"| Process status | `{status}` |",
             f"| Valgrind errors | `{error_count}` |",
-            f"| Timeout reached | `{'yes' if result.timed_out else 'no'}` |",
             f"| Command exit code | `{result.returncode}` |",
             "",
             "<details>",
