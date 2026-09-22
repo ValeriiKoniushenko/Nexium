@@ -3,28 +3,51 @@ on: push
 
 env:
   JOBS: '20'
+  COMPILER: gcc
+  BUILD_TYPE: Debug
+  CACHE_VARIANT: cache/gcc/debug
+  PROJECT_DIR: /workspace/Vakon/Nexium/cache/gcc/debug
+  BUILD_DIR: /cache/build/gcc/debug
+  CCACHE_DIR: /ccache/gcc/debug
 
 jobs:
   build:
     name: Build
     runs-on: linux
+    concurrency:
+      group: code-quality-gcc-debug
+      cancel-in-progress: false
     container:
       image: cpp-ci:latest
+      volumes:
+        - /srv/ci-cache/ccache:/ccache
+        - /srv/ci-cache/git-repo:/workspace/Vakon/Nexium/cache
+        - /srv/ci-cache/build-cache:/cache/build
     steps:
       - uses: actions/checkout@v3
         with:
           submodules: false
           fetch-depth: 1
+          path: ${{ env.CACHE_VARIANT }}
 
       - name: Init submodules
+        working-directory: ${{ env.PROJECT_DIR }}
         run: |
           git submodule sync --recursive
-          git submodule update --init --recursive --depth 1 --jobs "$JOBS"
+          git submodule update --init --recursive --depth 1 --jobs "$JOBS" \
+            dependencies/JustReflectMe dependencies/Utils
+
+          set -- .agents/Agents dependencies/assimp dependencies/freetype \
+            dependencies/glfw dependencies/spdlog scripts
+          CACHE_KEY="$(date -u +%G-%V)-$(git ls-tree HEAD -- "$@" | sha256sum | cut -d' ' -f1)"
+          CACHE_STAMP=.git/third-party-submodules.cache
+          if [ ! -f "$CACHE_STAMP" ] || [ "$(cat "$CACHE_STAMP")" != "$CACHE_KEY" ] || \
+             git submodule status --recursive "$@" | grep -Eq '^[-+U]'; then
+            git submodule update --init --recursive --depth 1 --jobs "$JOBS" "$@"
+            printf '%s\n' "$CACHE_KEY" > "$CACHE_STAMP"
+          fi
 
       - name: Configure
-        env:
-          COMPILER: gcc
-          BUILD_TYPE: Debug
         run: |
           case "$COMPILER" in
             clang) export CC=clang CXX=clang++ ;;
@@ -34,7 +57,7 @@ jobs:
           "$CXX" --version
           BENCHMARKS_DISABLED=ON
           if [ "$BUILD_TYPE" = Release ]; then BENCHMARKS_DISABLED=OFF; fi
-          cmake -S . -B build -G Ninja \
+          cmake -S "$PROJECT_DIR" -B "$BUILD_DIR" -G Ninja \
             -DCMAKE_BUILD_TYPE="$BUILD_TYPE" \
             -DNEXIUM_DISABLE_TESTS=OFF \
             -DNEXIUM_DISABLE_BENCHMARKS="$BENCHMARKS_DISABLED" \
@@ -43,13 +66,15 @@ jobs:
             -DNEXIUM_ENABLE_LAYER_CHECKS=ON
 
       - name: Build
-        run: cmake --build build --parallel "$JOBS"
+        run: cmake --build "$BUILD_DIR" --parallel "$JOBS"
 
       - name: Unit tests
-        run: timeout 3m build/bin/Nexium_Tests
+        run: timeout 3m "$BUILD_DIR/bin/Nexium_Tests"
 
       - name: Unit tests under Valgrind
-        run: timeout 5m python3 .gitea/check_valgrind.py --executable build/bin/Nexium_Tests --no-gitea --verbose
+        working-directory: ${{ env.PROJECT_DIR }}
+        run: timeout 5m python3 .gitea/check_valgrind.py --executable "$BUILD_DIR/bin/Nexium_Tests" --no-gitea --verbose
 
       - name: Headless game under Valgrind
-        run: timeout 8m python3 .gitea/run_game_valgrind.py --executable build/bin/TemplateGame --timeout 5 --no-gitea
+        working-directory: ${{ env.PROJECT_DIR }}
+        run: timeout 8m python3 .gitea/run_game_valgrind.py --executable "$BUILD_DIR/bin/TemplateGame" --timeout 5 --no-gitea
