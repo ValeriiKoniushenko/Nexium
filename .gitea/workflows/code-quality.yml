@@ -147,3 +147,61 @@ jobs:
             PRECHECK_FAILED=1
           fi
           exit "$PRECHECK_FAILED"
+
+  clang-build:
+    name: Clang Debug Build
+    runs-on: linux
+    concurrency:
+      group: code-quality-clang-debug
+      cancel-in-progress: false
+    env:
+      COMPILER: clang
+      BUILD_TYPE: Debug
+      CACHE_VARIANT: cache/clang/debug
+      PROJECT_DIR: /workspace/Vakon/Nexium/cache/clang/debug
+      BUILD_DIR: /cache/build/clang/debug
+      CCACHE_DIR: /ccache/clang/debug
+    container:
+      image: cpp-ci:latest
+      volumes:
+        - /srv/ci-cache/ccache:/ccache
+        - /srv/ci-cache/git-repo:/workspace/Vakon/Nexium/cache
+        - /srv/ci-cache/build-cache:/cache/build
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: false
+          fetch-depth: 0
+          path: ${{ env.CACHE_VARIANT }}
+
+      - name: Init submodules
+        working-directory: ${{ env.PROJECT_DIR }}
+        run: |
+          git submodule sync --recursive
+          git submodule update --init --recursive --depth 1 --jobs "$JOBS" \
+            dependencies/JustReflectMe dependencies/Utils
+
+          set -- .agents/Agents dependencies/assimp dependencies/freetype \
+            dependencies/glfw dependencies/spdlog scripts
+          CACHE_KEY="$(date -u +%G-%V)-$(git ls-tree HEAD -- "$@" | sha256sum | cut -d' ' -f1)"
+          CACHE_STAMP=.git/third-party-submodules.cache
+          if [ ! -f "$CACHE_STAMP" ] || [ "$(cat "$CACHE_STAMP")" != "$CACHE_KEY" ] || \
+             git submodule status --recursive "$@" | grep -Eq '^[-+U]'; then
+            git submodule update --init --recursive --depth 1 --jobs "$JOBS" "$@"
+            printf '%s\n' "$CACHE_KEY" > "$CACHE_STAMP"
+          fi
+
+      - name: Configure Clang Debug
+        run: |
+          export CC=clang CXX=clang++
+          "$CXX" --version
+          cmake -S "$PROJECT_DIR" -B "$BUILD_DIR" -G Ninja \
+            -DCMAKE_BUILD_TYPE="$BUILD_TYPE" \
+            -DNEXIUM_DISABLE_TESTS=OFF \
+            -DNEXIUM_DISABLE_BENCHMARKS=ON \
+            -DNEXIUM_ENABLE_3D_MODULE=OFF \
+            -DNEXIUM_VERIFY_INTERFACE_HEADER_SETS=ON \
+            -DNEXIUM_ENABLE_LAYER_CHECKS=ON
+
+      - name: Build with Clang
+        run: cmake --build "$BUILD_DIR" --parallel "$JOBS"
