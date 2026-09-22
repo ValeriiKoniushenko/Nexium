@@ -107,10 +107,16 @@ jobs:
 
       - name: Unit tests under Valgrind
         working-directory: ${{ env.PROJECT_DIR }}
+        env:
+          GITEA_TOKEN: ${{ secrets.GITEA_TOKEN }}
+          GITEA_AUTH_SCHEME: Bearer
         run: timeout 5m python3 .gitea/check_valgrind.py --executable "$BUILD_DIR/bin/Nexium_Tests" --verbose
 
       - name: Headless game under Valgrind
         working-directory: ${{ env.PROJECT_DIR }}
+        env:
+          GITEA_TOKEN: ${{ secrets.GITEA_TOKEN }}
+          GITEA_AUTH_SCHEME: Bearer
         run: timeout 8m python3 .gitea/run_game_valgrind.py --executable "$BUILD_DIR/bin/TemplateGame" --timeout 5
 
       - name: Precheck results

@@ -193,7 +193,10 @@ def publish_result(client: GiteaClient, executable_name: str, result: ValgrindGa
     description = result_description(result)
     if pr_number is None:
         if sha:
-            client.publish_check(sha, result.check_state, check_context, description)
+            try:
+                client.publish_check(sha, result.check_state, check_context, description)
+            except Exception as error:
+                print(f"[gitea] failed to publish optional commit status: {error}", file=sys.stderr)
         return
 
     marker = review_marker(check_context)
@@ -202,7 +205,7 @@ def publish_result(client: GiteaClient, executable_name: str, result: ValgrindGa
     except Exception as error:
         print(f"[gitea] failed to clear previous Valgrind review: {error}", file=sys.stderr)
 
-    if result.has_errors:
+    if result.failed:
         client.create_review(
             pr_number,
             body=review_body(executable_name, result),
@@ -211,7 +214,10 @@ def publish_result(client: GiteaClient, executable_name: str, result: ValgrindGa
             marker=marker,
         )
     if sha:
-        client.publish_check(sha, result.check_state, check_context, description)
+        try:
+            client.publish_check(sha, result.check_state, check_context, description)
+        except Exception as error:
+            print(f"[gitea] failed to publish optional commit status: {error}", file=sys.stderr)
 
 
 def main() -> None:
