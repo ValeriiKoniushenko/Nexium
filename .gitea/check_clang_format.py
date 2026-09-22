@@ -29,6 +29,7 @@ def publish_inline_review(
     dry_run: bool,
     verbose: bool,
 ) -> None:
+    issues = list({issue["location"]["path"]: issue for issue in issues}.values())
     marker = review_marker("clang-format")
     pr_number = GiteaClient.resolve_pr_number()
     sha = GiteaClient.resolve_sha() or ""
@@ -64,6 +65,11 @@ def publish_inline_review(
         print(f"[gitea] failed to clear previous reviews: {e}", file=sys.stderr)
 
     if issues:
+        summary = f"clang-format found issues in {len(issues)} file(s)."
+        fallback_summary = (
+            f"{summary}\n\n"
+            + "\n".join(f"- `{issue['location']['path']}`" for issue in issues)
+        )
         for issue in issues:
             loc = issue["location"]
             path = loc["path"]
@@ -74,13 +80,26 @@ def publish_inline_review(
         try:
             client.create_review(
                 pr_number,
-                body=f"clang-format found {len(issues)} issue(s).",
+                body=summary,
                 event="COMMENT",
                 commit_id=sha,
                 marker=marker,
             )
         except Exception as e:
             print(f"[gitea] failed to create review: {e}", file=sys.stderr)
+            try:
+                client.create_review(
+                    pr_number,
+                    body=fallback_summary,
+                    event="COMMENT",
+                    comments=[],
+                    marker=marker,
+                )
+            except Exception as fallback_error:
+                print(
+                    f"[gitea] failed to create summary review: {fallback_error}",
+                    file=sys.stderr,
+                )
 
     if sha:
         state = "failure" if issues else "success"
@@ -125,6 +144,10 @@ def check_file(file: ChangedFile, fix: bool, verbose: bool) -> tuple[bool, str, 
         compliant = True
 
     return compliant, formatted, original
+
+
+def review_line(file: ChangedFile) -> int:
+    return file.ranges[0][0] if file.ranges else 1
 
 
 def main():
@@ -177,7 +200,6 @@ def main():
         compliant, formatted, original = check_file(file, args.fix, args.verbose)
 
         if not compliant:
-            last_line = len(original.splitlines()) or 1
             fp = hashlib.md5(file.path.encode()).hexdigest()
 
             issues.append(
@@ -188,7 +210,7 @@ def main():
                     "severity": "major",
                     "location": {
                         "path": file.path,
-                        "lines": {"begin": last_line},
+                        "lines": {"begin": review_line(file)},
                     },
                 }
             )
