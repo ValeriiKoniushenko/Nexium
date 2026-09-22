@@ -443,12 +443,18 @@ def publish_screenshot(
     if pr_number is None:
         print("[gitea] not a pull_request event - skipping screenshot publication")
         if sha:
-            client.publish_check(
-                sha,
-                check_state,
-                check_context,
-                check_description,
-            )
+            try:
+                client.publish_check(
+                    sha,
+                    check_state,
+                    check_context,
+                    check_description,
+                )
+            except Exception as error:
+                print(
+                    f"[gitea] failed to publish optional commit status: {error}",
+                    file=sys.stderr,
+                )
         return
 
     marker = review_marker(check_context)
@@ -494,12 +500,18 @@ def publish_screenshot(
         marker=marker,
     )
     if sha:
-        client.publish_check(
-            sha,
-            check_state,
-            check_context,
-            check_description,
-        )
+        try:
+            client.publish_check(
+                sha,
+                check_state,
+                check_context,
+                check_description,
+            )
+        except Exception as error:
+            print(
+                f"[gitea] failed to publish optional commit status: {error}",
+                file=sys.stderr,
+            )
 
 
 def main() -> None:

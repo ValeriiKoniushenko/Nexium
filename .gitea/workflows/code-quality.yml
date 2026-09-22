@@ -102,6 +102,21 @@ jobs:
       - name: Build
         run: cmake --build "$BUILD_DIR" --parallel "$JOBS"
 
+      - name: Capture TemplateGame UI
+        working-directory: ${{ env.PROJECT_DIR }}
+        env:
+          GITEA_TOKEN: ${{ secrets.GITEA_TOKEN }}
+          GITEA_AUTH_SCHEME: Bearer
+        run: |
+          SCREENSHOT="$RUNNER_TEMP/template-game-ui.png"
+          timeout 2m python3 .gitea/capture_game_ui.py \
+            --executable "$BUILD_DIR/bin/TemplateGame" \
+            --output "$SCREENSHOT"
+          {
+            echo "## TemplateGame UI"
+            echo "Captured and published \`template-game-ui.png\`."
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Unit tests
         run: timeout 3m "$BUILD_DIR/bin/Nexium_Tests"
 
