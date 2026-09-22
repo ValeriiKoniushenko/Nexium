@@ -117,5 +117,7 @@ namespace NX
                     }
                 }
             });
+
+        int* i = NULL;
     }
 } // namespace NX

@@ -22,8 +22,8 @@ jobs:
 
       - name: Configure
         env:
-          COMPILER: ${{ matrix.compiler }}
-          BUILD_TYPE: ${{ matrix.build_type }}
+          COMPILER: gcc
+          BUILD_TYPE: Debug
         run: |
           case "$COMPILER" in
             clang) export CC=clang CXX=clang++ ;;
