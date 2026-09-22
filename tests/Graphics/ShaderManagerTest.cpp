@@ -65,8 +65,6 @@ TEST_F(ShaderManagerFixture, TestAssetsDirectoryIsNotEmpty)
     }
 
     EXPECT_TRUE(hasFiles) << "Test assets directory is empty: " << testAssetsDir;
-
-    int* n = new int[12312];
 }
 
 TEST_F(ShaderManagerFixture, CanAddNewFragmentExtension)
