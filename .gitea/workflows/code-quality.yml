@@ -1,6 +1,9 @@
 name: Code Quality
 on: push
 
+env:
+  JOBS: '4'
+
 jobs:
   build:
     name: Build
@@ -16,8 +19,6 @@ jobs:
       - name: Init submodules
         run: |
           git submodule sync --recursive
-          JOBS=$(( $(nproc) / 5 ))
-          JOBS=$(( JOBS < 1 ? 1 : JOBS ))
           git submodule update --init --recursive --depth 1 --jobs "$JOBS"
 
       - name: Configure
@@ -42,9 +43,7 @@ jobs:
             -DNEXIUM_ENABLE_LAYER_CHECKS=ON
 
       - name: Build
-        run: |
-          JOBS=$(( $(nproc) / 5 ))
-          cmake --build build --parallel "${JOBS:-1}"
+        run: cmake --build build --parallel "$JOBS"
 
       - name: Unit tests
         run: timeout 5m build/bin/Nexium_Tests

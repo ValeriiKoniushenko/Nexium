@@ -34,13 +34,12 @@ options in xref:build:cmake-structure.adoc[CMake Infrastructure].
 
 == Platform status
 
-The Gitea workflow `.gitea/workflows/code-quality.yml` configures five Linux builds on
-pushes: GCC and Clang in Debug/Release with 3D off, plus Clang Debug with 3D on.
-Each builds with Ninja in `cpp-ci:latest`, runs unit tests, and checks public headers
-and layer consumers. Debug jobs add Valgrind checks; Release jobs build and smoke-run
-the ECS benchmarks. See xref:build:ci-cd.adoc[CI coverage] for the exact split.
+The Gitea workflow `.gitea/workflows/code-quality.yml` configures one Linux GCC Debug
+build on pushes, with 3D disabled. It builds with Ninja in `cpp-ci:latest`, using at
+most four parallel jobs, runs unit tests, and checks public headers and layer consumers.
+No Windows job is configured. See xref:build:ci-cd.adoc[CI coverage] for the workflow.
 These are configured checks; results depend on the latest workflow run. Compiler
-versions come from the container image, and no Windows job is configured.
+versions come from the container image.
 
 Windows support still needs validation: the application resource path is stale.
 Windows also requires Git symlink support and permission to create symlinks.
