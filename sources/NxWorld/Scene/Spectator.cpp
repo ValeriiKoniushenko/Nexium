@@ -118,6 +118,6 @@ namespace NX
                 }
             });
 
-int* i = NULL;
+        int* i = nullptr;
     }
 } // namespace NX

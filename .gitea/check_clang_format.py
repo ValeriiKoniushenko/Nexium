@@ -22,7 +22,7 @@ from gitea_client import GiteaClient, review_marker
 from utils import ChangedFile, get_changed_files, get_target_branch
 
 
-def publish_inline_review(
+def publish_review(
     client: GiteaClient,
     issues: list[dict],
     *,
@@ -52,11 +52,8 @@ def publish_inline_review(
 
     if dry_run:
         print(f"[dry-run] would dismiss previous reviews on PR #{pr_number}")
-        for issue in issues:
-            loc = issue["location"]
-            print(
-                f"[dry-run] would comment {loc['path']}:{loc['lines']['begin']}"
-            )
+        if issues:
+            print(f"[dry-run] would create one review for {len(issues)} file(s)")
         return
 
     try:
@@ -65,41 +62,20 @@ def publish_inline_review(
         print(f"[gitea] failed to clear previous reviews: {e}", file=sys.stderr)
 
     if issues:
-        summary = f"clang-format found issues in {len(issues)} file(s)."
-        fallback_summary = (
-            f"{summary}\n\n"
+        summary = (
+            f"clang-format found issues in {len(issues)} file(s).\n\n"
             + "\n".join(f"- `{issue['location']['path']}`" for issue in issues)
         )
-        for issue in issues:
-            loc = issue["location"]
-            path = loc["path"]
-            line = loc["lines"]["begin"]
-            body = (f"**clang-format** violation on modified line(s) in this file.")
-            client.add_review_comment(path, body, new_position=line)
-
         try:
             client.create_review(
                 pr_number,
                 body=summary,
                 event="COMMENT",
-                commit_id=sha,
+                comments=[],
                 marker=marker,
             )
         except Exception as e:
             print(f"[gitea] failed to create review: {e}", file=sys.stderr)
-            try:
-                client.create_review(
-                    pr_number,
-                    body=fallback_summary,
-                    event="COMMENT",
-                    comments=[],
-                    marker=marker,
-                )
-            except Exception as fallback_error:
-                print(
-                    f"[gitea] failed to create summary review: {fallback_error}",
-                    file=sys.stderr,
-                )
 
     if sha:
         state = "failure" if issues else "success"
@@ -222,7 +198,7 @@ def main():
     if not args.no_gitea:
         client = GiteaClient.from_env(verbose=args.verbose)
         if client is not None:
-            publish_inline_review(
+            publish_review(
                 client,
                 issues,
                 dry_run=args.dry_run,
