@@ -2,7 +2,7 @@ name: Code Quality
 on: push
 
 env:
-  JOBS: '4'
+  JOBS: '20'
 
 jobs:
   build:
@@ -46,12 +46,10 @@ jobs:
         run: cmake --build build --parallel "$JOBS"
 
       - name: Unit tests
-        run: timeout 5m build/bin/Nexium_Tests
+        run: timeout 3m build/bin/Nexium_Tests
 
       - name: Unit tests under Valgrind
-        if: matrix.compiler == 'gcc' && matrix.build_type == 'Debug'
-        run: timeout 10m python3 .gitea/check_valgrind.py --executable build/bin/Nexium_Tests --no-gitea --verbose
+        run: timeout 5m python3 .gitea/check_valgrind.py --executable build/bin/Nexium_Tests --no-gitea --verbose
 
       - name: Headless game under Valgrind
-        if: matrix.compiler == 'clang' && matrix.build_type == 'Debug'
-        run: timeout 2m python3 .gitea/run_game_valgrind.py --executable build/bin/TemplateGame --timeout 5 --no-gitea
+        run: timeout 8m python3 .gitea/run_game_valgrind.py --executable build/bin/TemplateGame --timeout 5 --no-gitea
