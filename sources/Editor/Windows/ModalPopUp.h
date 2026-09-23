@@ -42,6 +42,9 @@ namespace NX
 
         void endWindowDraw() override;
 
+        void okButton();
+        void cancelButton();
+
     protected:
         DelegateSubscriberPoolGuard _subscriptionPool;
 

@@ -12,6 +12,7 @@
 #include "Editor/EditorIntegration.h"
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/IconsFontAwesome.h"
+#include "ImGui/imgui.h"
 #include "NxWorld/Framework/GameInstance.h"
 
 using namespace NX;
@@ -52,24 +53,27 @@ namespace NX
 
         _layout.setHorizontalAlign(Gui::Align::Center);
 
-        _subscriptionPool << _okButton->onClick->subscribeAndGetID(
-            [this]()
-            {
-                if (Verify(!!_okOrCancelCallback))
-                {
-                    _okOrCancelCallback(true);
-                }
-                ImGui::CloseCurrentPopup();
-            });
-        _subscriptionPool << _cancelButton->onClick->subscribeAndGetID(
-            [this]()
-            {
-                if (Verify(!!_okOrCancelCallback))
-                {
-                    _okOrCancelCallback(false);
-                }
-                ImGui::CloseCurrentPopup();
-            });
+        _subscriptionPool << _okButton->onClick->subscribeAndGetID([this]() { okButton(); });
+        _subscriptionPool << _cancelButton->onClick->subscribeAndGetID([this]()
+                                                                       { cancelButton(); });
+    }
+
+    void ModalPopUp::okButton()
+    {
+        if (Verify(!!_okOrCancelCallback))
+        {
+            _okOrCancelCallback(true);
+        }
+        ImGui::CloseCurrentPopup();
+    }
+
+    void ModalPopUp::cancelButton()
+    {
+        if (Verify(!!_okOrCancelCallback))
+        {
+            _okOrCancelCallback(false);
+        }
+        ImGui::CloseCurrentPopup();
     }
 
     void ModalPopUp::onDraw()
@@ -86,6 +90,14 @@ namespace NX
         ImGui::Dummy({});
         ImGui::Separator();
         ImGui::Dummy({});
+
+        if (ImGui::IsWindowFocused())
+        {
+            if (ImGui::IsKeyPressed(ImGuiKey_Escape, false))
+            {
+                cancelButton();
+            }
+        }
 
         _layout.tick(GetWorld()->getTimeDelta());
 
