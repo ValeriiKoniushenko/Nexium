@@ -2,19 +2,11 @@
     "_children": null,
     "_innerPosition": [
         20.0,
-<<<<<<< HEAD
         524.0
     ],
     "_innerSize": {
         "height": 256.0,
         "width": 769.0
-=======
-        809.0
-    ],
-    "_innerSize": {
-        "height": 182.0,
-        "width": 1880.0
->>>>>>> 2853ab00 (feat(scene): add SceneManager and reorganize scene objects)
     },
     "_isEnabled": true,
     "_isFitContent": false,
@@ -25,7 +17,6 @@
     "_name": "Assets",
     "_noTick": false,
     "_oldSize": {
-<<<<<<< HEAD
         "height": 302.0,
         "width": 789.0
     },
@@ -36,18 +27,6 @@
     "_size": {
         "height": 302.0,
         "width": 789.0
-=======
-        "height": 228.0,
-        "width": 1900.0
-    },
-    "_position": [
-        10.0,
-        773.0
-    ],
-    "_size": {
-        "height": 228.0,
-        "width": 1900.0
->>>>>>> 2853ab00 (feat(scene): add SceneManager and reorganize scene objects)
     },
     "_type": "NX::AssetsManagerWindowEWC"
 }

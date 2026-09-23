@@ -1,0 +1,36 @@
+{
+    "_sceneName": "Default",
+    "formatVersion": 1,
+    "sceneObjects": [
+        {
+            "assetType": "NX::Spectator",
+            "name": "2D_Spectator",
+            "referenceAsset": "data/assets/2D_Spectator.nx",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_isEnabled": true
+            }
+        }
+    ]
+}
