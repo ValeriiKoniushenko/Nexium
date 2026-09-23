@@ -197,6 +197,16 @@ namespace NX
 
     void RectangleBasedObjectPicker::onRequest(Scene& scene, BaseCamera* camera, glm::vec2 pickPos)
     {
+        const auto frameSize = camera->getOutputFrameSize();
+        if (frameSize.width <= 0.f || frameSize.height <= 0.f)
+        {
+            return;
+        }
+        const glm::vec2 ndc{
+            2.f * pickPos.x / frameSize.width - 1.f,
+            2.f * pickPos.y / frameSize.height - 1.f,
+        };
+
         SceneObj::Rectangle* pickedRect = nullptr;
 
         for (auto& object : scene.getObjects())
@@ -211,13 +221,39 @@ namespace NX
             {
                 continue;
             }
+            const glm::mat4& model = rectangle->getModelMatrix();
+            const float modelDeterminant = glm::determinant(model);
+            if (!std::isfinite(modelDeterminant) || modelDeterminant == 0.f)
+            {
+                continue;
+            }
+
+            const glm::mat4 inverseMvp = glm::inverse(camera->getMatrix() * model);
+            glm::vec4 nearPoint = inverseMvp * glm::vec4(ndc, -1.f, 1.f);
+            glm::vec4 farPoint = inverseMvp * glm::vec4(ndc, 1.f, 1.f);
+            nearPoint /= nearPoint.w;
+            farPoint /= farPoint.w;
+            const glm::vec3 rayOrigin = nearPoint;
+            const glm::vec3 rayDirection = glm::vec3(farPoint - nearPoint);
+
+            if (std::abs(rayDirection.z) <= std::numeric_limits<float>::epsilon())
+            {
+                continue;
+            }
+            // Intersection with the rectangle's local XY plane.
+            const float t = -rayOrigin.z / rayDirection.z;
+            if (t < 0.f || t > 1.f)
+            {
+                continue;
+            }
+            const glm::vec3 localHit = rayOrigin + rayDirection * t;
+            constexpr float size = SceneObj::Rectangle::GetDefaultDrawRectSize();
 
             auto rectPos = rectangle->getPosition();
             auto rectSize = rectangle->getDrawRectSize();
             rectPos -= camera->getGlobalPosition();
 
-            if (rectPos.x <= pickPos.x && pickPos.x <= rectPos.x + rectSize.width
-                && rectPos.y <= pickPos.y && pickPos.y <= rectPos.y + rectSize.height)
+            if (localHit.x >= 0.f && localHit.x <= size && localHit.y >= 0.f && localHit.y <= size)
             {
                 pickedRect = rectangle;
                 break;
